@@ -1,5 +1,5 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="org.freecodecamp">
+    package="com.example.freecodecamp">
    <application
         android:label="freeCodeCamp"
         android:icon="@mipmap/ic_launcher">

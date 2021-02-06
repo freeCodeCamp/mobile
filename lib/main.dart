@@ -1,8 +1,30 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
+import 'package:splashscreen/splashscreen.dart';
 import 'package:webview_flutter/webview_flutter.dart';
 
-void main() => runApp(MaterialApp(home: FreeCodeCampWebView()));
+void main() => runApp(MaterialApp(home: SpalashScreenView()));
+
+class SpalashScreenView extends StatefulWidget {
+  SpalashScreenView({Key key}) : super(key: key);
+
+  @override
+  _SpalashScreenViewState createState() => _SpalashScreenViewState();
+}
+
+class _SpalashScreenViewState extends State<SpalashScreenView> {
+  @override
+  Widget build(BuildContext context) {
+    double width = MediaQuery.of(context).size.width;
+    return SplashScreen(
+      loaderColor: Color(0xFF0a0a23),
+      photoSize: width * 0.4,
+      image: Image.asset('assets/images/splash_screen.png'),
+      navigateAfterSeconds: FreeCodeCampWebView(),
+      seconds: 5,
+    );
+  }
+}
 
 class FreeCodeCampWebView extends StatefulWidget {
   @override
@@ -17,7 +39,7 @@ class _FreeCodeCampWebViewState extends State<FreeCodeCampWebView> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('freeCodeCamp'),
+        backgroundColor: Color(0xFF0a0a23),
         actions: <Widget>[NavigationControls(_controller.future)],
       ),
       body: Builder(builder: (BuildContext context) {
