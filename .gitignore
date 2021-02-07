@@ -47,3 +47,4 @@ app.*.map.json
 
 # VS Code
 .vscode/
+.env*
