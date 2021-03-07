@@ -2,10 +2,10 @@ import 'package:logger/logger.dart';
 import 'package:stacked/stacked.dart';
 import 'package:freecodecamp/core/logger.dart';
 
-class TrainingViewModel extends BaseViewModel {
+class FaqViewModel extends BaseViewModel {
   Logger log;
 
-  TrainingViewModel() {
+  FaqViewModel() {
     this.log = getLogger(this.runtimeType.toString());
   }
 }

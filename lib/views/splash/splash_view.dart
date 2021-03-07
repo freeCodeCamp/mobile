@@ -24,7 +24,7 @@ class SplashView extends StatelessWidget {
           photoSize: width * 0.4,
           image: Image.asset('assets/images/splash_screen.png'),
           navigateAfterSeconds: TrainingView(),
-          seconds: 4,
+          seconds: 2,
         );
       },
       viewModelBuilder: () => SplashViewModel(),

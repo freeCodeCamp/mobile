@@ -6,13 +6,13 @@ import 'package:freecodecamp/widgets/dumb_widgets/navigation_controls/navigation
 import 'package:freecodecamp/widgets/smart_widgets/drawer_list/drawer_list_widget.dart';
 import 'package:stacked/stacked.dart';
 import 'package:webview_flutter/webview_flutter.dart';
-import 'forum_view_model.dart';
+import 'radio_view_model.dart';
 
-class ForumView extends StatelessWidget {
+class RadioView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    return ViewModelBuilder<ForumViewModel>.reactive(
-      builder: (BuildContext context, ForumViewModel viewModel, Widget _) {
+    return ViewModelBuilder<RadioViewModel>.reactive(
+      builder: (BuildContext context, RadioViewModel viewModel, Widget _) {
         final Completer<WebViewController> _controller =
             Completer<WebViewController>();
         return Scaffold(
@@ -28,12 +28,12 @@ class ForumView extends StatelessWidget {
           body: Builder(builder: (BuildContext context) {
             return CustomWebWidget(
               controller: _controller,
-              url: 'https://forum.freecodecamp.org/',
+              url: 'https://coderadio.freecodecamp.org/',
             );
           }),
         );
       },
-      viewModelBuilder: () => ForumViewModel(),
+      viewModelBuilder: () => RadioViewModel(),
     );
   }
 }
