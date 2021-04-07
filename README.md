@@ -16,3 +16,5 @@ Currently the application is published by @nikunjdk at `https://play.google.com/
 ### Contributing
 
 We are working on the contribution docs for this repository, meanwhile you can come say "hi" in our chat room here: <https://chat.freecodecamp.org/channel/contributors> 
+
+Project Board: https://github.com/orgs/freeCodeCamp/projects/15
