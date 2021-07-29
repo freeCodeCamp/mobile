@@ -26,6 +26,12 @@ flutter:
   uses-material-design: true
   assets:
     - assets/images/splash_screen.png
+    - assets/images/logo.png
+    - assets/images/logo.jpg
+fonts:
+  - family: RobotoMono
+    fonts:
+      - asset: fonts/RobotoMono-Regular.ttf
 
   # To add assets to your application, add an assets section, like this:
   # assets:
