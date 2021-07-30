@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:webview_flutter/webview_flutter.dart';
+import 'fetchArticleData.dart';
 
 void main() {
   WidgetsFlutterBinding.ensureInitialized();
@@ -129,6 +130,16 @@ class _HomeState extends State<Home> {
               onTap: () {
                 controller!.loadUrl('https://www.freecodecamp.org/donate');
                 Navigator.pop(context);
+              },
+            ),
+            ListTile(
+              title: Text(
+                'Articles',
+                style: TextStyle(color: Color(0xFF0a0a23)),
+              ),
+              onTap: () {
+                Navigator.push(context,
+                    MaterialPageRoute(builder: (context) => ArticleApp()));
               },
             ),
           ],
