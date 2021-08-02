@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:freecodecamp/flash_cards.dart';
 import 'package:webview_flutter/webview_flutter.dart';
 
 void main() {
@@ -23,6 +24,11 @@ class Home extends StatefulWidget {
 
 class _HomeState extends State<Home> {
   WebViewController? controller;
+  @override
+  void initState() {
+    super.initState();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -131,6 +137,18 @@ class _HomeState extends State<Home> {
                 Navigator.pop(context);
               },
             ),
+            ListTile(
+              title: Text(
+                'Flash Cards',
+                style: TextStyle(color: Color(0xFF0a0a23)),
+              ),
+              onTap: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => FlashCards()),
+                );
+              },
+            )
           ],
         ),
       ),
