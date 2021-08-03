@@ -14,6 +14,7 @@ dependencies:
   webview_flutter: ^2.0.2
   http: ^0.13.3
   url_launcher: ^6.0.9
+  flutter_dotenv: ^5.0.0
 dev_dependencies:
   flutter_test:
     sdk: flutter
@@ -28,6 +29,7 @@ flutter:
   uses-material-design: true
   assets:
     - assets/images/splash_screen.png
+    - .env
 
   # To add assets to your application, add an assets section, like this:
   # assets:
