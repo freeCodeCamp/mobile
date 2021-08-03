@@ -7,7 +7,7 @@ import 'package:http/http.dart' as http;
 import 'package:url_launcher/url_launcher.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 
-int articleAmount = 0;
+int page = 1;
 
 class ArticleApp extends StatefulWidget {
   const ArticleApp({Key? key}) : super(key: key);
@@ -89,13 +89,17 @@ class _ArticleAppState extends State<ArticleApp> {
   }
 
   Future<Article> fetchArticle() async {
-    articleAmount += 5;
+    page++;
+
     await dotenv.load(fileName: ".env");
-    final response = await http.get(Uri.parse(
-        "https://www.freecodecamp.org/news/ghost/api/v3/content/posts/?key=${dotenv.env['NEWSKEY']}&include=tags,authors&limit=" +
-            articleAmount.toString()));
+
+    String feedUrl =
+        "https://www.freecodecamp.org/news/ghost/api/v3/content/posts/?key=${dotenv.env['NEWSKEY']}&include=tags,authors&page=" +
+            page.toString() +
+            "&fields=title,url,feature_image";
+    dev.log(feedUrl);
+    final response = await http.get(Uri.parse(feedUrl));
     if (response.statusCode == 200) {
-      articles = [];
       var newArticles = json.decode(response.body)['posts'];
       setState(() {
         articles.addAll(newArticles);
@@ -159,7 +163,7 @@ class ArticleTemplate extends StatelessWidget {
               color: Color(0xFF0a0a23),
               child: Padding(
                 padding: const EdgeInsets.all(16.0),
-                child: new Text("by ${articels[i]['primary_author']['name']}",
+                child: new Text("by ${articels[i]['authors'][0]['name']}",
                     style: TextStyle(fontSize: 18, color: Colors.white)),
               ),
             ))
@@ -218,7 +222,7 @@ class ArticleBanner extends StatelessWidget {
                 decoration: BoxDecoration(
                     border: Border.all(width: 4, color: randomBorderColor())),
                 child: Image.network(
-                  articels[i]['primary_author']['profile_image'],
+                  articels[i]['authors'][0]['profile_image'],
                   height: 50,
                   width: 50,
                   fit: BoxFit.fill,
