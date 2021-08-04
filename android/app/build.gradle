@@ -40,7 +40,7 @@ android {
     defaultConfig {
         // TODO: Specify your own unique Application ID (https://developer.android.com/studio/build/application-id.html).
         applicationId "org.freecodecamp"
-        minSdkVersion 16
+        minSdkVersion 20
         targetSdkVersion 30
         // multiDexEnabled true
         versionCode flutterVersionCode.toInteger()

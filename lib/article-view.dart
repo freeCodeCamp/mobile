@@ -4,12 +4,13 @@ import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:http/http.dart' as http;
 import 'article-feed.dart' as border;
+import 'package:flutter_html/flutter_html.dart';
 
 Future<Article> fetchArticle(articleId) async {
   await dotenv.load(fileName: ".env");
 
   final response = await http.get(Uri.parse(
-      'https://www.freecodecamp.org/news/ghost/api/v3/content/posts/$articleId/?key=${dotenv.env['NEWSKEY']}&include=authors&formats=plaintext '));
+      'https://www.freecodecamp.org/news/ghost/api/v3/content/posts/$articleId/?key=${dotenv.env['NEWSKEY']}&include=authors'));
 
   if (response.statusCode == 200) {
     return Article.fromJson(jsonDecode(response.body));
@@ -37,7 +38,7 @@ class Article {
         author: json['posts'][0]['primary_author']['name'],
         authorImage: json['posts'][0]['primary_author']['profile_image'],
         aritcleTitle: json['posts'][0]['title'],
-        articleText: json['posts'][0]['plaintext'],
+        articleText: json['posts'][0]['html'],
         articleImage: json['posts'][0]['feature_image']);
   }
 }
@@ -139,13 +140,23 @@ class _ArticleAppState extends State<ArticleViewTemplate> {
                         children: [
                           Expanded(
                             child: Padding(
-                              padding: const EdgeInsets.all(16.0),
-                              child: Text(
-                                snapshot.data!.articleText,
-                                style: TextStyle(
-                                    color: Colors.white, fontSize: 16),
-                              ),
-                            ),
+                                padding: const EdgeInsets.all(16.0),
+                                child: Html(
+                                  data: snapshot.data!.articleText,
+                                  style: {
+                                    "body": Style(color: Colors.white),
+                                    "p": Style(
+                                      fontSize: FontSize.large,
+                                    ),
+                                    "ul": Style(fontSize: FontSize.large),
+                                    "li":
+                                        Style(margin: EdgeInsets.only(top: 8)),
+                                    "pre": Style(
+                                        color: Colors.white,
+                                        backgroundColor: Color.fromRGBO(
+                                            0x2A, 0x2A, 0x40, 1)),
+                                  },
+                                )),
                           )
                         ],
                       )
