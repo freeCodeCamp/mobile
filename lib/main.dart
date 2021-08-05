@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:freecodecamp/flash_cards.dart';
 import 'package:webview_flutter/webview_flutter.dart';
 import 'article-feed.dart';
 
@@ -24,6 +25,11 @@ class Home extends StatefulWidget {
 
 class _HomeState extends State<Home> {
   WebViewController? controller;
+  @override
+  void initState() {
+    super.initState();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -134,6 +140,7 @@ class _HomeState extends State<Home> {
             ),
             ListTile(
               title: Text(
+
                 'Articles',
                 style: TextStyle(color: Color(0xFF0a0a23)),
               ),
@@ -142,6 +149,18 @@ class _HomeState extends State<Home> {
                     MaterialPageRoute(builder: (context) => ArticleApp()));
               },
             ),
+             ListTile(
+              title: Text(
+                'Flash Cards',
+                style: TextStyle(color: Color(0xFF0a0a23)),
+              ),
+              onTap: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => FlashCards()),
+                );
+              },
+            )
           ],
         ),
       ),
