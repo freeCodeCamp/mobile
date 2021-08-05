@@ -18,7 +18,6 @@ dependencies:
   flip_card: ^0.5.0
   flutter_skeleton: ^0.1.0+1
   flutter_swiper: ^1.1.6
-  flutter_launcher_icons: ^0.9.1
 dev_dependencies:
   flutter_test:
     sdk: flutter
