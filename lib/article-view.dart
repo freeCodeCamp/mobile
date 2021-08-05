@@ -3,8 +3,10 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:http/http.dart' as http;
+import 'package:url_launcher/url_launcher.dart';
 import 'article-feed.dart' as border;
 import 'package:flutter_html/flutter_html.dart';
+import 'package:html/dom.dart' as dom;
 
 Future<Article> fetchArticle(articleId) async {
   await dotenv.load(fileName: ".env");
@@ -136,30 +138,7 @@ class _ArticleAppState extends State<ArticleViewTemplate> {
                           ),
                         ],
                       ),
-                      Row(
-                        children: [
-                          Expanded(
-                            child: Padding(
-                                padding: const EdgeInsets.all(16.0),
-                                child: Html(
-                                  data: snapshot.data!.articleText,
-                                  style: {
-                                    "body": Style(color: Colors.white),
-                                    "p": Style(
-                                      fontSize: FontSize.large,
-                                    ),
-                                    "ul": Style(fontSize: FontSize.large),
-                                    "li":
-                                        Style(margin: EdgeInsets.only(top: 8)),
-                                    "pre": Style(
-                                        color: Colors.white,
-                                        backgroundColor: Color.fromRGBO(
-                                            0x2A, 0x2A, 0x40, 1)),
-                                  },
-                                )),
-                          )
-                        ],
-                      )
+                      htmlView(snapshot)
                     ],
                   );
                 } else if (snapshot.hasError) {
@@ -168,5 +147,63 @@ class _ArticleAppState extends State<ArticleViewTemplate> {
                 return const CircularProgressIndicator();
               })
         ])));
+  }
+
+  Row htmlView(AsyncSnapshot<Article> snapshot) {
+    return Row(
+      children: [
+        Expanded(
+          child: Padding(
+              padding: const EdgeInsets.all(16.0),
+              child: Expanded(
+                  child: Html(
+                      shrinkWrap: true,
+                      data: snapshot.data!.articleText,
+                      style: {
+                        "body": Style(color: Colors.white),
+                        "p": Style(
+                            fontSize: FontSize.large,
+                            textAlign: TextAlign.justify),
+                        "ul": Style(fontSize: FontSize.xLarge),
+                        "li": Style(margin: EdgeInsets.only(top: 8)),
+                        "pre": Style(
+                            color: Colors.white,
+                            width: MediaQuery.of(context).size.width,
+                            backgroundColor:
+                                Color.fromRGBO(0x2A, 0x2A, 0x40, 1),
+                            padding: EdgeInsets.all(25),
+                            textOverflow: TextOverflow.clip),
+                        "table": Style(
+                          backgroundColor:
+                              Color.fromARGB(0x50, 0xee, 0xee, 0xee),
+                        ),
+                        // some other granular customizations are also possible
+                        "tr": Style(
+                          border:
+                              Border(bottom: BorderSide(color: Colors.grey)),
+                        ),
+                        "th": Style(
+                          padding: EdgeInsets.all(6),
+                        ),
+                        "td": Style(
+                          padding: EdgeInsets.all(6),
+                          alignment: Alignment.topLeft,
+                        )
+                      },
+                      onLinkTap: (String? url,
+                          RenderContext context,
+                          Map<String, String> attributes,
+                          dom.Element? element) {
+                        launch(url!);
+                      },
+                      onImageTap: (String? url,
+                          RenderContext context,
+                          Map<String, String> attributes,
+                          dom.Element? element) {
+                        launch(url!);
+                      }))),
+        )
+      ],
+    );
   }
 }

@@ -140,7 +140,6 @@ class _HomeState extends State<Home> {
             ),
             ListTile(
               title: Text(
-
                 'Articles',
                 style: TextStyle(color: Color(0xFF0a0a23)),
               ),
@@ -149,7 +148,7 @@ class _HomeState extends State<Home> {
                     MaterialPageRoute(builder: (context) => ArticleApp()));
               },
             ),
-             ListTile(
+            ListTile(
               title: Text(
                 'Flash Cards',
                 style: TextStyle(color: Color(0xFF0a0a23)),
