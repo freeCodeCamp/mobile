@@ -73,8 +73,10 @@ class _ArticleAppState extends State<ArticleViewTemplate> {
 
   Widget build(BuildContext context) {
     return Scaffold(
-        appBar:
-            AppBar(title: Text('NEWSFEED'), backgroundColor: Color(0xFF0a0a23)),
+        appBar: AppBar(
+          title: Text('NEWSFEED'),
+          backgroundColor: Color(0xFF0a0a23),
+        ),
         backgroundColor: Color(0xFF0a0a23),
         body: SingleChildScrollView(
             child: Column(children: [

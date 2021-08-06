@@ -51,6 +51,7 @@ class Article {
 
 class _ArticleAppState extends State<ArticleApp> {
   List articles = [];
+  bool searchBarActive = false;
 
   late Future<Article> futureArticle;
   ScrollController _scrollController = new ScrollController();
@@ -77,12 +78,7 @@ class _ArticleAppState extends State<ArticleApp> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-          title: const Text(
-            'NEWSFEED',
-            textAlign: TextAlign.center,
-          ),
-          backgroundColor: Color(0xFF0a0a23)),
+      appBar: searchBar(),
       backgroundColor: Color.fromRGBO(0x2A, 0x2A, 0x40, 1),
       body: FutureBuilder<Article>(
           future: futureArticle,
@@ -102,6 +98,36 @@ class _ArticleAppState extends State<ArticleApp> {
             return const CircularProgressIndicator();
           }),
     );
+  }
+
+  AppBar searchBar() {
+    return AppBar(
+        title: !searchBarActive
+            ? Text(
+                'NEWSFEED',
+                textAlign: TextAlign.center,
+              )
+            : TextField(
+                decoration: InputDecoration(
+                    hintText: "SEARCH ARTICLE...",
+                    hintStyle: TextStyle(color: Colors.white),
+                    border: InputBorder.none,
+                    fillColor: Color.fromRGBO(0x2A, 0x2A, 0x40, 1),
+                    filled: true),
+                style: TextStyle(color: Colors.white),
+              ),
+        actions: [
+          IconButton(
+              onPressed: () {
+                setState(() {
+                  this.searchBarActive = !this.searchBarActive;
+                });
+              },
+              icon: !searchBarActive
+                  ? Icon(Icons.search)
+                  : Icon(Icons.clear_sharp))
+        ],
+        backgroundColor: Color(0xFF0a0a23));
   }
 
   Future<Article> fetchArticle() async {
