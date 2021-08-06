@@ -165,14 +165,16 @@ class _ArticleAppState extends State<ArticleViewTemplate> {
       children: [
         Expanded(
           child: Padding(
-              padding: const EdgeInsets.all(16.0),
+              padding: const EdgeInsets.all(8.0),
               child: Html(
                   shrinkWrap: true,
                   data: snapshot.data!.articleText,
                   style: {
                     "body": Style(color: Colors.white),
                     "p": Style(
-                        fontSize: FontSize.large, textAlign: TextAlign.justify),
+                        fontSize: FontSize.large,
+                        textAlign: TextAlign.justify,
+                        lineHeight: LineHeight.em(1.2)),
                     "ul": Style(fontSize: FontSize.xLarge),
                     "li": Style(margin: EdgeInsets.only(top: 8)),
                     "pre": Style(
@@ -181,20 +183,30 @@ class _ArticleAppState extends State<ArticleViewTemplate> {
                         backgroundColor: Color.fromRGBO(0x2A, 0x2A, 0x40, 1),
                         padding: EdgeInsets.all(25),
                         textOverflow: TextOverflow.clip),
-                    "table": Style(
-                      backgroundColor: Color.fromARGB(0x50, 0xee, 0xee, 0xee),
-                    ),
-                    // some other granular customizations are also possible
+                    "code": Style(
+                        backgroundColor: Color.fromRGBO(0x2A, 0x2A, 0x40, 1)),
                     "tr": Style(
-                      border: Border(bottom: BorderSide(color: Colors.grey)),
-                    ),
+                        border: Border(bottom: BorderSide(color: Colors.grey)),
+                        backgroundColor: Colors.white),
                     "th": Style(
-                      padding: EdgeInsets.all(6),
+                      padding: EdgeInsets.all(12),
+                      backgroundColor: Color.fromRGBO(0xdf, 0xdf, 0xe2, 1),
+                      color: Colors.black,
                     ),
                     "td": Style(
-                      padding: EdgeInsets.all(6),
+                      padding: EdgeInsets.all(12),
+                      color: Colors.black,
                       alignment: Alignment.topLeft,
                     )
+                  },
+                  customRender: {
+                    "table": (context, child) {
+                      return SingleChildScrollView(
+                        scrollDirection: Axis.horizontal,
+                        child: (context.tree as TableLayoutElement)
+                            .toWidget(context),
+                      );
+                    }
                   },
                   onLinkTap: (String? url, RenderContext context,
                       Map<String, String> attributes, dom.Element? element) {
