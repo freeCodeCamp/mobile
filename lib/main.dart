@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:freecodecamp/flash_cards.dart';
 import 'package:webview_flutter/webview_flutter.dart';
-import 'article-feed.dart';
+import 'widgets/article/article-feed.dart';
 
 void main() {
   WidgetsFlutterBinding.ensureInitialized();
