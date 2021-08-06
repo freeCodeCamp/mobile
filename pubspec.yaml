@@ -18,6 +18,7 @@ dependencies:
   flip_card: ^0.5.0
   flutter_skeleton: ^0.1.0+1
   flutter_swiper: ^1.1.6
+  path_provider: ^2.0.2
 dev_dependencies:
   flutter_test:
     sdk: flutter
@@ -28,6 +29,7 @@ flutter:
     - .env
     - assets/images/
     - assets/database/cards-jwasham.db
+    - assets/database/bookmarked-article.db
 
   # To add assets to your application, add an assets section, like this:
   # assets:

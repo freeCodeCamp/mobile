@@ -1,18 +1,25 @@
 import 'dart:convert';
+import 'dart:developer' as dev;
+
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:http/http.dart' as http;
 import 'package:url_launcher/url_launcher.dart';
-import 'article-feed.dart' as border;
 import 'package:flutter_html/flutter_html.dart';
 import 'package:html/dom.dart' as dom;
+
+import 'article-feed.dart' as border;
+import 'article-bookmark.dart';
 
 Future<Article> fetchArticle(articleId) async {
   await dotenv.load(fileName: ".env");
 
   final response = await http.get(Uri.parse(
       'https://www.freecodecamp.org/news/ghost/api/v3/content/posts/$articleId/?key=${dotenv.env['NEWSKEY']}&include=authors'));
+
+  dev.log(response.toString());
 
   if (response.statusCode == 200) {
     return Article.fromJson(jsonDecode(response.body));
@@ -24,6 +31,7 @@ Future<Article> fetchArticle(articleId) async {
 class Article {
   final String author;
   final String authorImage;
+  final String articleId;
   final String aritcleTitle;
   final String articleText;
   final String articleImage;
@@ -31,6 +39,7 @@ class Article {
   Article(
       {required this.author,
       required this.authorImage,
+      required this.articleId,
       required this.aritcleTitle,
       required this.articleText,
       required this.articleImage});
@@ -39,6 +48,7 @@ class Article {
     return Article(
         author: json['posts'][0]['primary_author']['name'],
         authorImage: json['posts'][0]['primary_author']['profile_image'],
+        articleId: json['posts'][0]['id'],
         aritcleTitle: json['posts'][0]['title'],
         articleText: json['posts'][0]['html'],
         articleImage: json['posts'][0]['feature_image']);
@@ -138,6 +148,7 @@ class _ArticleAppState extends State<ArticleViewTemplate> {
                           ),
                         ],
                       ),
+                      Bookmark(article: snapshot.data),
                       htmlView(snapshot)
                     ],
                   );
@@ -155,53 +166,44 @@ class _ArticleAppState extends State<ArticleViewTemplate> {
         Expanded(
           child: Padding(
               padding: const EdgeInsets.all(16.0),
-              child: Expanded(
-                  child: Html(
-                      shrinkWrap: true,
-                      data: snapshot.data!.articleText,
-                      style: {
-                        "body": Style(color: Colors.white),
-                        "p": Style(
-                            fontSize: FontSize.large,
-                            textAlign: TextAlign.justify),
-                        "ul": Style(fontSize: FontSize.xLarge),
-                        "li": Style(margin: EdgeInsets.only(top: 8)),
-                        "pre": Style(
-                            color: Colors.white,
-                            width: MediaQuery.of(context).size.width,
-                            backgroundColor:
-                                Color.fromRGBO(0x2A, 0x2A, 0x40, 1),
-                            padding: EdgeInsets.all(25),
-                            textOverflow: TextOverflow.clip),
-                        "table": Style(
-                          backgroundColor:
-                              Color.fromARGB(0x50, 0xee, 0xee, 0xee),
-                        ),
-                        // some other granular customizations are also possible
-                        "tr": Style(
-                          border:
-                              Border(bottom: BorderSide(color: Colors.grey)),
-                        ),
-                        "th": Style(
-                          padding: EdgeInsets.all(6),
-                        ),
-                        "td": Style(
-                          padding: EdgeInsets.all(6),
-                          alignment: Alignment.topLeft,
-                        )
-                      },
-                      onLinkTap: (String? url,
-                          RenderContext context,
-                          Map<String, String> attributes,
-                          dom.Element? element) {
-                        launch(url!);
-                      },
-                      onImageTap: (String? url,
-                          RenderContext context,
-                          Map<String, String> attributes,
-                          dom.Element? element) {
-                        launch(url!);
-                      }))),
+              child: Html(
+                  shrinkWrap: true,
+                  data: snapshot.data!.articleText,
+                  style: {
+                    "body": Style(color: Colors.white),
+                    "p": Style(
+                        fontSize: FontSize.large, textAlign: TextAlign.justify),
+                    "ul": Style(fontSize: FontSize.xLarge),
+                    "li": Style(margin: EdgeInsets.only(top: 8)),
+                    "pre": Style(
+                        color: Colors.white,
+                        width: MediaQuery.of(context).size.width,
+                        backgroundColor: Color.fromRGBO(0x2A, 0x2A, 0x40, 1),
+                        padding: EdgeInsets.all(25),
+                        textOverflow: TextOverflow.clip),
+                    "table": Style(
+                      backgroundColor: Color.fromARGB(0x50, 0xee, 0xee, 0xee),
+                    ),
+                    // some other granular customizations are also possible
+                    "tr": Style(
+                      border: Border(bottom: BorderSide(color: Colors.grey)),
+                    ),
+                    "th": Style(
+                      padding: EdgeInsets.all(6),
+                    ),
+                    "td": Style(
+                      padding: EdgeInsets.all(6),
+                      alignment: Alignment.topLeft,
+                    )
+                  },
+                  onLinkTap: (String? url, RenderContext context,
+                      Map<String, String> attributes, dom.Element? element) {
+                    launch(url!);
+                  },
+                  onImageTap: (String? url, RenderContext context,
+                      Map<String, String> attributes, dom.Element? element) {
+                    launch(url!);
+                  })),
         )
       ],
     );
