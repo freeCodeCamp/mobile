@@ -19,8 +19,6 @@ Future<Article> fetchArticle(articleId) async {
   final response = await http.get(Uri.parse(
       'https://www.freecodecamp.org/news/ghost/api/v3/content/posts/$articleId/?key=${dotenv.env['NEWSKEY']}&include=authors'));
 
-  dev.log(response.toString());
-
   if (response.statusCode == 200) {
     return Article.fromJson(jsonDecode(response.body));
   } else {
@@ -32,7 +30,7 @@ class Article {
   final String author;
   final String authorImage;
   final String articleId;
-  final String aritcleTitle;
+  final String articleTitle;
   final String articleText;
   final String articleImage;
 
@@ -40,7 +38,7 @@ class Article {
       {required this.author,
       required this.authorImage,
       required this.articleId,
-      required this.aritcleTitle,
+      required this.articleTitle,
       required this.articleText,
       required this.articleImage});
 
@@ -49,7 +47,7 @@ class Article {
         author: json['posts'][0]['primary_author']['name'],
         authorImage: json['posts'][0]['primary_author']['profile_image'],
         articleId: json['posts'][0]['id'],
-        aritcleTitle: json['posts'][0]['title'],
+        articleTitle: json['posts'][0]['title'],
         articleText: json['posts'][0]['html'],
         articleImage: json['posts'][0]['feature_image']);
   }
@@ -103,7 +101,7 @@ class _ArticleAppState extends State<ArticleViewTemplate> {
                             width: MediaQuery.of(context).size.width,
                             child: Padding(
                               padding: const EdgeInsets.all(16.0),
-                              child: Text(snapshot.data!.aritcleTitle,
+                              child: Text(snapshot.data!.articleTitle,
                                   style: TextStyle(
                                       fontSize: 24, color: Colors.white)),
                             ),
@@ -143,14 +141,16 @@ class _ArticleAppState extends State<ArticleViewTemplate> {
                                             fontSize: 16, color: Colors.white),
                                       ),
                                     ),
-                                  ))
+                                  )),
+                                  Expanded(
+                                    child: Bookmark(article: snapshot.data),
+                                  )
                                 ],
                               ),
                             ),
                           ),
                         ],
                       ),
-                      Bookmark(article: snapshot.data),
                       htmlView(snapshot)
                     ],
                   );

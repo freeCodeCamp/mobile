@@ -16,6 +16,13 @@ class Bookmark extends StatefulWidget {
 }
 
 class _BookmarkState extends State<Bookmark> {
+  bool isBookmarked = false;
+
+  void initState() {
+    super.initState();
+    articleInDb(widget.article);
+  }
+
   Future<Database> openDbConnection() async {
     WidgetsFlutterBinding.ensureInitialized();
 
@@ -47,37 +54,69 @@ class _BookmarkState extends State<Bookmark> {
 
   Map<String, dynamic> articleToMap(article) {
     return {
-      "articleTitle": article!.aritcleTitle,
+      "articleTitle": article!.articleTitle,
       "articleId": article!.articleId,
       "articleText": article!.articleText,
       "authorName": article!.author
     };
   }
 
-  Future<void> insertArticle(Article article) async {
+  Future<void> insertArticle(Article? article) async {
     final db = await openDbConnection();
 
-    await db.insert('bookmarks', articleToMap(article),
-        conflictAlgorithm: ConflictAlgorithm.replace);
-    dev.log('something was inserted in the database');
+    // Test if article is already in database
+
+    List<Map> isInDatabase = await db.rawQuery(
+        'SELECT * FROM bookmarks WHERE articleId=?', [article!.articleId]);
+
+    if (isInDatabase.length == 0) {
+      await db.insert('bookmarks', articleToMap(article),
+          conflictAlgorithm: ConflictAlgorithm.replace);
+      dev.log('article inserted in db!');
+    } else {
+      dev.log('article already in db!');
+    }
+  }
+
+  Future<void> articleInDb(Article? article) async {
+    final db = await openDbConnection();
+
+    List<Map> isInDatabase = await db.rawQuery(
+        'SELECT * FROM bookmarks WHERE articleId=?', [article!.articleId]);
+
+    if (isInDatabase.length > 0) {
+      setState(() {
+        isBookmarked = true;
+      });
+    }
+  }
+
+  Future<void> bookmarkAndUnbookmark(Article? article) async {
+    final db = await openDbConnection();
+
+    if (isBookmarked) {
+      setState(() {
+        isBookmarked = false;
+      });
+      await db.rawQuery(
+          'DELETE FROM bookmarks WHERE articleId=?', [article!.articleId]);
+    } else {
+      setState(() {
+        isBookmarked = true;
+      });
+      insertArticle(article);
+    }
   }
 
   @override
   Widget build(BuildContext context) {
-    return Row(
-      children: [
-        SizedBox(
-          width: MediaQuery.of(context).size.width,
-          child: ElevatedButton(
-            onPressed: () => {insertArticle(widget.article!)},
-            child: Text(
-              "BOOKMARK FOR LATER",
-              style: TextStyle(color: Colors.white),
-            ),
-            style: ElevatedButton.styleFrom(primary: Colors.blue),
-          ),
-        )
-      ],
-    );
+    return IconButton(
+        iconSize: 50,
+        onPressed: () {
+          bookmarkAndUnbookmark(widget.article);
+        },
+        icon: isBookmarked
+            ? Icon(Icons.bookmark_sharp, color: Colors.white)
+            : Icon(Icons.bookmark_border_sharp, color: Colors.white));
   }
 }
