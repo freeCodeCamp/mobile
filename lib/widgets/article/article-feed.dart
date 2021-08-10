@@ -116,6 +116,7 @@ class _ArticleAppState extends State<ArticleApp> {
                     filled: true),
                 style: TextStyle(color: Colors.white),
               ),
+        centerTitle: true,
         actions: [
           IconButton(
               onPressed: () {

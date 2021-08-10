@@ -8,18 +8,19 @@ import 'dart:io';
 import 'dart:developer' as dev;
 
 import 'article-bookmark-view.dart';
-import 'article-bookmark.dart';
 import 'article-feed.dart';
 
 class BookmarkedArticle {
   late int bookmarkId;
   late String articleTitle;
+  late String articleId;
   late String articleText;
   late String authorName;
 
   BookmarkedArticle.fromMap(Map<String, dynamic> map) {
     bookmarkId = map['bookmark_id'];
     articleTitle = map['articleTitle'];
+    articleId = map['articleId'];
     articleText = map['articleText'];
     authorName = map['authorName'];
   }
@@ -27,6 +28,7 @@ class BookmarkedArticle {
   BookmarkedArticle(
       {required this.bookmarkId,
       required this.articleTitle,
+      required this.articleId,
       required this.articleText,
       required this.authorName});
 }
@@ -76,7 +78,6 @@ class _BookmarkViewTemplateState extends State<BookmarkViewTemplate> {
 
   Future<List<Map<String, dynamic>>> getArticles() async {
     final db = await openDbConnection();
-    dev.log('getting the articles from the table');
     return db.query('bookmarks');
   }
 
@@ -87,7 +88,6 @@ class _BookmarkViewTemplateState extends State<BookmarkViewTemplate> {
     for (int i = 0; i < mapList.length; i++) {
       articleModel.add(BookmarkedArticle.fromMap(mapList[i]));
     }
-    dev.log('this is the list of articles' + articleModel.toString());
     return articleModel;
   }
 
@@ -180,6 +180,7 @@ class _BookmarkViewTemplateState extends State<BookmarkViewTemplate> {
     return Scaffold(
       appBar: AppBar(
           title: Text('BOOKMARKED ARTICLES'),
+          centerTitle: true,
           backgroundColor: Color(0xFF0a0a23)),
       backgroundColor: Color.fromRGBO(0x2A, 0x2A, 0x40, 1),
       body: populateListViewModel(),
