@@ -151,7 +151,7 @@ class _HomeState extends State<Home> {
             ),
             ListTile(
               title: Text(
-                'book marked articles',
+                'bookmarked articles',
                 style: TextStyle(color: Color(0xFF0a0a23)),
               ),
               onTap: () {

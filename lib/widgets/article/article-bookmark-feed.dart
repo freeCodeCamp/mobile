@@ -69,10 +69,8 @@ class _BookmarkViewTemplateState extends State<BookmarkViewTemplate> {
           data.buffer.asUint8List(data.offsetInBytes, data.lengthInBytes);
 
       await File(dbPathArticles).writeAsBytes(bytes, flush: true);
-    } else {
-      dev.log("opening existing database");
     }
-    dev.log(dbPathArticles);
+
     return openDatabase(dbPathArticles, version: 1);
   }
 
@@ -104,7 +102,6 @@ class _BookmarkViewTemplateState extends State<BookmarkViewTemplate> {
     return ListView.builder(
         itemCount: count,
         itemBuilder: (context, index) {
-          dev.log(this._articles[index].articleTitle);
           return Container(
             height: 125,
             decoration: BoxDecoration(
@@ -119,12 +116,9 @@ class _BookmarkViewTemplateState extends State<BookmarkViewTemplate> {
                       child: Padding(
                         padding: const EdgeInsets.all(16.0),
                         child: InkWell(
-                          child: Container(
-                            child: Text(
-                              truncateStr(this._articles[index].articleTitle),
-                              style:
-                                  TextStyle(color: Colors.white, fontSize: 18),
-                            ),
+                          child: Text(
+                            truncateStr(this._articles[index].articleTitle),
+                            style: TextStyle(color: Colors.white, fontSize: 18),
                           ),
                           onTap: () => {
                             Navigator.push(
@@ -154,9 +148,9 @@ class _BookmarkViewTemplateState extends State<BookmarkViewTemplate> {
                 ),
                 Row(
                   children: [
-                    Padding(
-                      padding: const EdgeInsets.all(16.0),
-                      child: Expanded(
+                    Expanded(
+                      child: Padding(
+                        padding: const EdgeInsets.all(16.0),
                         child: Text(
                           'Written by: ' + this._articles[index].authorName,
                           style: TextStyle(color: Colors.white),

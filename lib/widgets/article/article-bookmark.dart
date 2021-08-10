@@ -45,10 +45,8 @@ class _BookmarkState extends State<Bookmark> {
           data.buffer.asUint8List(data.offsetInBytes, data.lengthInBytes);
 
       await File(dbPathArticles).writeAsBytes(bytes, flush: true);
-    } else {
-      dev.log("opening existing database");
     }
-    dev.log(dbPathArticles);
+
     return openDatabase(dbPathArticles, version: 1);
   }
 
@@ -72,9 +70,6 @@ class _BookmarkState extends State<Bookmark> {
     if (isInDatabase.length == 0) {
       await db.insert('bookmarks', articleToMap(article),
           conflictAlgorithm: ConflictAlgorithm.replace);
-      dev.log('article inserted in db!');
-    } else {
-      dev.log('article already in db!');
     }
   }
 
