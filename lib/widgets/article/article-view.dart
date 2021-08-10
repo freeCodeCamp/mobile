@@ -87,7 +87,8 @@ class _ArticleAppState extends State<ArticleViewTemplate> {
                         children: [
                           Expanded(
                               child: Image.network(
-                            snapshot.data!.articleImage,
+                            border.getArticleImage(
+                                snapshot.data!.articleImage, context),
                             height: 250,
                             fit: BoxFit.fitHeight,
                           )),

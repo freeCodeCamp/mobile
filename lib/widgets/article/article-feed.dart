@@ -39,6 +39,27 @@ randomBorderColor() {
   return borderColor[index];
 }
 
+getArticleImage(imgUrl, context) {
+  // Split the url
+  List arr = imgUrl.toString().split('images');
+
+  // Get the last index of the arr which is the name
+
+  double screenSize = MediaQuery.of(context).size.width;
+
+  if (screenSize >= 600) {
+    imgUrl = arr[0] + 'images/size/w1000' + arr[1];
+  } else if (screenSize >= 300) {
+    imgUrl = arr[0] + 'images/size/w600' + arr[1];
+  } else if (screenSize >= 150) {
+    imgUrl = arr[0] + 'images/size/w300' + arr[1];
+  } else {
+    imgUrl = arr[0] + 'images/size/w100' + arr[1];
+  }
+
+  return imgUrl;
+}
+
 class Article {
   final List<dynamic> post;
 
@@ -272,7 +293,7 @@ class ArticleBanner extends StatelessWidget {
                                   articleId: articels[i]["id"])))
                     },
                 child: Image.network(
-                  articels[i]["feature_image"],
+                  getArticleImage(articels[i]["feature_image"], context),
                   height: 210,
                   fit: BoxFit.fill,
                 ))),
