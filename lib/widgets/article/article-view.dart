@@ -157,7 +157,7 @@ class _ArticleAppState extends State<ArticleViewTemplate> {
                 } else if (snapshot.hasError) {
                   return Text('${snapshot.error}');
                 }
-                return const CircularProgressIndicator();
+                return Center(child: const CircularProgressIndicator());
               })
         ])));
   }

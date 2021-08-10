@@ -7,6 +7,10 @@ import 'package:path/path.dart' as path;
 import 'dart:io';
 import 'dart:developer' as dev;
 
+import 'article-bookmark-view.dart';
+import 'article-bookmark.dart';
+import 'article-feed.dart';
+
 class BookmarkedArticle {
   late int bookmarkId;
   late String articleTitle;
@@ -101,10 +105,69 @@ class _BookmarkViewTemplateState extends State<BookmarkViewTemplate> {
         itemCount: count,
         itemBuilder: (context, index) {
           dev.log(this._articles[index].articleTitle);
-          return Card(
-              child: ListTile(
-            title: Text(this._articles[index].articleTitle),
-          ));
+          return Container(
+            height: 125,
+            decoration: BoxDecoration(
+                border:
+                    Border(bottom: BorderSide(width: 2, color: Colors.white))),
+            child: Column(
+              children: [
+                Row(
+                  children: [
+                    Expanded(
+                      flex: 8,
+                      child: Padding(
+                        padding: const EdgeInsets.all(16.0),
+                        child: InkWell(
+                          child: Container(
+                            child: Text(
+                              truncateStr(this._articles[index].articleTitle),
+                              style:
+                                  TextStyle(color: Colors.white, fontSize: 18),
+                            ),
+                          ),
+                          onTap: () => {
+                            Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                    builder: (context) => ArticleBookmarkView(
+                                        article: this._articles[index])))
+                          },
+                        ),
+                      ),
+                    ),
+                    Expanded(
+                        flex: 2,
+                        child: IconButton(
+                            onPressed: () {
+                              Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                      builder: (context) => ArticleBookmarkView(
+                                          article: this._articles[index])));
+                            },
+                            icon: Icon(
+                              Icons.arrow_forward_ios,
+                              color: Colors.white,
+                            )))
+                  ],
+                ),
+                Row(
+                  children: [
+                    Padding(
+                      padding: const EdgeInsets.all(16.0),
+                      child: Expanded(
+                        child: Text(
+                          'Written by: ' + this._articles[index].authorName,
+                          style: TextStyle(color: Colors.white),
+                        ),
+                      ),
+                    )
+                  ],
+                )
+              ],
+            ),
+          );
         });
   }
 
@@ -118,7 +181,7 @@ class _BookmarkViewTemplateState extends State<BookmarkViewTemplate> {
       appBar: AppBar(
           title: Text('BOOKMARKED ARTICLES'),
           backgroundColor: Color(0xFF0a0a23)),
-      backgroundColor: Color(0xFF0a0a23),
+      backgroundColor: Color.fromRGBO(0x2A, 0x2A, 0x40, 1),
       body: populateListViewModel(),
     );
   }

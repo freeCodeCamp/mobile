@@ -95,7 +95,7 @@ class _ArticleAppState extends State<ArticleApp> {
             } else if (snapshot.hasError) {
               return Text('${snapshot.error}');
             }
-            return const CircularProgressIndicator();
+            return Center(child: const CircularProgressIndicator());
           }),
     );
   }
