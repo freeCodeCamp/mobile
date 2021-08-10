@@ -52,6 +52,9 @@ class Article {
 class _ArticleAppState extends State<ArticleApp> {
   List articles = [];
   bool searchBarActive = false;
+  bool hasSearched = false;
+
+  final searchBarController = TextEditingController();
 
   late Future<Article> futureArticle;
   ScrollController _scrollController = new ScrollController();
@@ -71,6 +74,7 @@ class _ArticleAppState extends State<ArticleApp> {
   @override
   void dispose() {
     _scrollController.dispose();
+    searchBarController.dispose();
     super.dispose();
     page = 0;
   }
@@ -108,6 +112,7 @@ class _ArticleAppState extends State<ArticleApp> {
                 textAlign: TextAlign.center,
               )
             : TextField(
+                controller: searchBarController,
                 decoration: InputDecoration(
                     hintText: "SEARCH ARTICLE...",
                     hintStyle: TextStyle(color: Colors.white),
@@ -115,6 +120,13 @@ class _ArticleAppState extends State<ArticleApp> {
                     fillColor: Color.fromRGBO(0x2A, 0x2A, 0x40, 1),
                     filled: true),
                 style: TextStyle(color: Colors.white),
+                onSubmitted: (value) {
+                  dev.log(searchBarController.text);
+                  setState(() {
+                    searchBarActive = false;
+                    hasSearched = true;
+                  });
+                },
               ),
         centerTitle: true,
         actions: [
@@ -131,15 +143,25 @@ class _ArticleAppState extends State<ArticleApp> {
         backgroundColor: Color(0xFF0a0a23));
   }
 
-  Future<Article> fetchArticle() async {
+  Future<Article> fetchArticle({search = ''}) async {
     page++;
 
     await dotenv.load(fileName: ".env");
 
-    String feedUrl =
-        "https://www.freecodecamp.org/news/ghost/api/v3/content/posts/?key=${dotenv.env['NEWSKEY']}&include=tags,authors&page=" +
-            page.toString() +
-            "&fields=title,url,feature_image,id";
+    late String feedUrl;
+
+    if (!hasSearched) {
+      feedUrl =
+          "https://www.freecodecamp.org/news/ghost/api/v3/content/posts/?key=${dotenv.env['NEWSKEY']}&include=tags,authors&page=" +
+              page.toString() +
+              "&fields=title,url,feature_image,id";
+    } else {
+      feedUrl =
+          "https://www.freecodecamp.org/news/ghost/api/v3/content/posts/?key=${dotenv.env['NEWSKEY']}&include=tags,authors&page=" +
+              page.toString() +
+              "&fields=title,url,feature_image,id";
+    }
+
     dev.log(feedUrl);
     final response = await http.get(Uri.parse(feedUrl));
     if (response.statusCode == 200) {
