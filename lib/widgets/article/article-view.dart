@@ -90,7 +90,7 @@ class _ArticleAppState extends State<ArticleViewTemplate> {
                             border.getArticleImage(
                                 snapshot.data!.articleImage, context),
                             height: 250,
-                            fit: BoxFit.fitHeight,
+                            fit: BoxFit.fitWidth,
                           )),
                         ],
                       ),

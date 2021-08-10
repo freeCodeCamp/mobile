@@ -295,7 +295,7 @@ class ArticleBanner extends StatelessWidget {
                 child: Image.network(
                   getArticleImage(articels[i]["feature_image"], context),
                   height: 210,
-                  fit: BoxFit.fill,
+                  fit: BoxFit.fitWidth,
                 ))),
         Padding(
           padding: const EdgeInsets.all(16.0),
