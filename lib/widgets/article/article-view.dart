@@ -127,6 +127,7 @@ class _ArticleAppState extends State<ArticleViewTemplate> {
                                         snapshot.data!.authorImage,
                                         width: 50,
                                         height: 50,
+                                        fit: BoxFit.fill,
                                       ),
                                     ),
                                   ),
