@@ -166,35 +166,36 @@ class _ArticleAppState extends State<ArticleApp> {
                 'NEWSFEED',
                 textAlign: TextAlign.center,
               )
-            : TextField(
-                controller: searchBarController,
-                decoration: InputDecoration(
-                    hintText: "SEARCH ARTICLE...",
-                    hintStyle: TextStyle(color: Colors.white),
-                    border: InputBorder.none,
-                    fillColor: Color.fromRGBO(0x2A, 0x2A, 0x40, 1),
-                    filled: true),
-                style: TextStyle(color: Colors.white),
-                onSubmitted: (value) {
-                  setState(() {
-                    searchBarActive = false;
-                  });
-                  search(searchBarController.text);
-                  searchBarController.text = '';
-                },
-              ),
+            : Text(''),
+        // : TextField(
+        //     controller: searchBarController,
+        //     decoration: InputDecoration(
+        //         hintText: "SEARCH ARTICLE...",
+        //         hintStyle: TextStyle(color: Colors.white),
+        //         border: InputBorder.none,
+        //         fillColor: Color.fromRGBO(0x2A, 0x2A, 0x40, 1),
+        //         filled: true),
+        //     style: TextStyle(color: Colors.white),
+        //     onSubmitted: (value) {
+        //       setState(() {
+        //         searchBarActive = false;
+        //       });
+        //       search(searchBarController.text);
+        //       searchBarController.text = '';
+        //     },
+        //   ),
         centerTitle: true,
-        actions: [
-          IconButton(
-              onPressed: () {
-                setState(() {
-                  this.searchBarActive = !this.searchBarActive;
-                });
-              },
-              icon: !searchBarActive
-                  ? Icon(Icons.search)
-                  : Icon(Icons.clear_sharp))
-        ],
+        // actions: [
+        //   IconButton(
+        //       onPressed: () {
+        //         setState(() {
+        //           this.searchBarActive = !this.searchBarActive;
+        //         });
+        //       },
+        //       icon: !searchBarActive
+        //           ? Icon(Icons.search)
+        //           : Icon(Icons.clear_sharp))
+        // ],
         backgroundColor: Color(0xFF0a0a23));
   }
 
