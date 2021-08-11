@@ -19,7 +19,7 @@ dependencies:
   flutter_skeleton: ^0.1.0+1
   flutter_swiper: ^1.1.6
   path_provider: ^2.0.2
-  dson: ^0.18.0
+  algolia: ^1.0.1
 dev_dependencies:
   flutter_test:
     sdk: flutter

@@ -1,13 +1,14 @@
 import 'dart:convert';
 import 'dart:math';
 import 'dart:developer' as dev;
+
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:flutter_dotenv/flutter_dotenv.dart';
-import 'article-view.dart';
+import 'package:algolia/algolia.dart';
 
-int page = 0;
+import 'article-view.dart';
 
 class ArticleApp extends StatefulWidget {
   const ArticleApp({Key? key}) : super(key: key);
@@ -16,6 +17,8 @@ class ArticleApp extends StatefulWidget {
   _ArticleAppState createState() => _ArticleAppState();
 }
 
+// This shortens the titles if they have a longer length than 55 characters.
+
 truncateStr(str) {
   if (str.length < 55) {
     return str;
@@ -23,6 +26,9 @@ truncateStr(str) {
     return str.toString().substring(0, 55) + '...';
   }
 }
+
+// This returns random border colors for the profile images, these colors are
+// defined in the fcc style guide https://bit.ly/3iEyqIl.
 
 randomBorderColor() {
   final random = new Random();
@@ -38,6 +44,10 @@ randomBorderColor() {
 
   return borderColor[index];
 }
+
+// The base url is returned without a defined size, this means that the orignal
+// image size is returned (Which could be really big) luckly there is a theme
+// we can use https://bit.ly/2U8QFfv, this reduces the image width and height and size
 
 getArticleImage(imgUrl, context) {
   // Split the url
@@ -60,6 +70,9 @@ getArticleImage(imgUrl, context) {
   return imgUrl;
 }
 
+// The article class returns a confirmation that articles have been returned by
+// the api.
+
 class Article {
   final List<dynamic> post;
 
@@ -74,12 +87,12 @@ class _ArticleAppState extends State<ArticleApp> {
   List articles = [];
   bool searchBarActive = false;
   bool hasSearched = false;
+  int page = 0;
 
   final searchBarController = TextEditingController();
 
   late Future<Article> futureArticle;
   ScrollController _scrollController = new ScrollController();
-
   @override
   void initState() {
     super.initState();
@@ -90,6 +103,27 @@ class _ArticleAppState extends State<ArticleApp> {
         fetchArticle();
       }
     });
+  }
+
+  Future<void> search(inputQuery) async {
+    await dotenv.load(fileName: ".env");
+
+    final Algolia algoliaInit = Algolia.init(
+      applicationId: dotenv.env['ALGOLIAAPPID'] as String,
+      apiKey: dotenv.env['ALGOLIAKEY'] as String,
+    );
+
+    Algolia algolia = algoliaInit;
+
+    AlgoliaQuery query = algolia.instance.index('news').query(inputQuery);
+
+    AlgoliaQuerySnapshot snap = await query.getObjects();
+    setState(() {
+      articles = [];
+      hasSearched = true;
+    });
+
+    articles.addAll(snap.hits);
   }
 
   @override
@@ -142,11 +176,11 @@ class _ArticleAppState extends State<ArticleApp> {
                     filled: true),
                 style: TextStyle(color: Colors.white),
                 onSubmitted: (value) {
-                  dev.log(searchBarController.text);
                   setState(() {
                     searchBarActive = false;
-                    hasSearched = true;
                   });
+                  search(searchBarController.text);
+                  searchBarController.text = '';
                 },
               ),
         centerTitle: true,
@@ -164,24 +198,15 @@ class _ArticleAppState extends State<ArticleApp> {
         backgroundColor: Color(0xFF0a0a23));
   }
 
-  Future<Article> fetchArticle({search = ''}) async {
+  Future<Article> fetchArticle() async {
     page++;
 
     await dotenv.load(fileName: ".env");
 
-    late String feedUrl;
-
-    if (!hasSearched) {
-      feedUrl =
-          "https://www.freecodecamp.org/news/ghost/api/v3/content/posts/?key=${dotenv.env['NEWSKEY']}&include=tags,authors&page=" +
-              page.toString() +
-              "&fields=title,url,feature_image,id";
-    } else {
-      feedUrl =
-          "https://www.freecodecamp.org/news/ghost/api/v3/content/posts/?key=${dotenv.env['NEWSKEY']}&include=tags,authors&page=" +
-              page.toString() +
-              "&fields=title,url,feature_image,id";
-    }
+    String feedUrl =
+        "https://www.freecodecamp.org/news/ghost/api/v3/content/posts/?key=${dotenv.env['NEWSKEY']}&include=tags,authors&page=" +
+            page.toString() +
+            "&fields=title,url,feature_image,id";
 
     dev.log(feedUrl);
     final response = await http.get(Uri.parse(feedUrl));
