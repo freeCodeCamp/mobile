@@ -73,6 +73,7 @@ class _ArticleAppState extends State<ArticleViewTemplate> {
         appBar: AppBar(
           title: Text('NEWSFEED'),
           backgroundColor: Color(0xFF0a0a23),
+          centerTitle: true,
         ),
         backgroundColor: Color(0xFF0a0a23),
         body: SingleChildScrollView(
@@ -179,7 +180,10 @@ class _ArticleAppState extends State<ArticleViewTemplate> {
                         textAlign: TextAlign.justify,
                         lineHeight: LineHeight.em(1.2)),
                     "ul": Style(fontSize: FontSize.xLarge),
-                    "li": Style(margin: EdgeInsets.only(top: 8)),
+                    "li": Style(
+                      margin: EdgeInsets.only(top: 8),
+                      fontSize: FontSize.large,
+                    ),
                     "pre": Style(
                         color: Colors.white,
                         width: MediaQuery.of(context).size.width,

@@ -126,7 +126,10 @@ class _ArticleBookmarkViewState extends State<ArticleBookmarkView> {
                                   textAlign: TextAlign.justify,
                                   lineHeight: LineHeight.em(1.2)),
                               "ul": Style(fontSize: FontSize.xLarge),
-                              "li": Style(margin: EdgeInsets.only(top: 8)),
+                              "li": Style(
+                                margin: EdgeInsets.only(top: 8),
+                                fontSize: FontSize.large,
+                              ),
                               "pre": Style(
                                   color: Colors.white,
                                   width: MediaQuery.of(context).size.width,
