@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:freecodecamp/flash_cards.dart';
+import 'package:freecodecamp/widgets/article/article-search.dart';
 import 'package:webview_flutter/webview_flutter.dart';
 import 'widgets/article/article-feed.dart';
 import 'widgets/article/article-bookmark-feed.dart';
@@ -147,6 +148,16 @@ class _HomeState extends State<Home> {
               onTap: () {
                 Navigator.push(context,
                     MaterialPageRoute(builder: (context) => ArticleApp()));
+              },
+            ),
+            ListTile(
+              title: Text(
+                'Search articles',
+                style: TextStyle(color: Color(0xFF0a0a23)),
+              ),
+              onTap: () {
+                Navigator.push(context,
+                    MaterialPageRoute(builder: (context) => ArticleSearch()));
               },
             ),
             ListTile(

@@ -6,7 +6,6 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:flutter_dotenv/flutter_dotenv.dart';
-import 'package:algolia/algolia.dart';
 
 import 'article-view.dart';
 
@@ -105,27 +104,6 @@ class _ArticleAppState extends State<ArticleApp> {
     });
   }
 
-  Future<void> search(inputQuery) async {
-    await dotenv.load(fileName: ".env");
-
-    final Algolia algoliaInit = Algolia.init(
-      applicationId: dotenv.env['ALGOLIAAPPID'] as String,
-      apiKey: dotenv.env['ALGOLIAKEY'] as String,
-    );
-
-    Algolia algolia = algoliaInit;
-
-    AlgoliaQuery query = algolia.instance.index('news').query(inputQuery);
-
-    AlgoliaQuerySnapshot snap = await query.getObjects();
-    setState(() {
-      articles = [];
-      hasSearched = true;
-    });
-
-    articles.addAll(snap.hits);
-  }
-
   @override
   void dispose() {
     _scrollController.dispose();
@@ -161,41 +139,11 @@ class _ArticleAppState extends State<ArticleApp> {
 
   AppBar searchBar() {
     return AppBar(
-        title: !searchBarActive
-            ? Text(
-                'NEWSFEED',
-                textAlign: TextAlign.center,
-              )
-            : Text(''),
-        // : TextField(
-        //     controller: searchBarController,
-        //     decoration: InputDecoration(
-        //         hintText: "SEARCH ARTICLE...",
-        //         hintStyle: TextStyle(color: Colors.white),
-        //         border: InputBorder.none,
-        //         fillColor: Color.fromRGBO(0x2A, 0x2A, 0x40, 1),
-        //         filled: true),
-        //     style: TextStyle(color: Colors.white),
-        //     onSubmitted: (value) {
-        //       setState(() {
-        //         searchBarActive = false;
-        //       });
-        //       search(searchBarController.text);
-        //       searchBarController.text = '';
-        //     },
-        //   ),
+        title: Text(
+          'NEWSFEED',
+          textAlign: TextAlign.center,
+        ),
         centerTitle: true,
-        // actions: [
-        //   IconButton(
-        //       onPressed: () {
-        //         setState(() {
-        //           this.searchBarActive = !this.searchBarActive;
-        //         });
-        //       },
-        //       icon: !searchBarActive
-        //           ? Icon(Icons.search)
-        //           : Icon(Icons.clear_sharp))
-        // ],
         backgroundColor: Color(0xFF0a0a23));
   }
 
