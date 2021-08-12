@@ -19,9 +19,6 @@ Future<Article> fetchArticle(articleId) async {
   final response = await http.get(Uri.parse(
       'https://www.freecodecamp.org/news/ghost/api/v3/content/posts/$articleId/?key=${dotenv.env['NEWSKEY']}&include=authors'));
 
-  dev.log(
-      'https://www.freecodecamp.org/news/ghost/api/v3/content/posts/$articleId/?key=${dotenv.env['NEWSKEY']}&include=authors');
-
   if (response.statusCode == 200) {
     return Article.fromJson(jsonDecode(response.body));
   } else {
@@ -93,12 +90,14 @@ class _ArticleAppState extends State<ArticleViewTemplate> {
                     children: [
                       Stack(
                         children: [
-                          Container(
-                              width: MediaQuery.of(context).size.width,
+                          ConstrainedBox(
+                              constraints: BoxConstraints(
+                                  minHeight: 100,
+                                  maxHeight: 250,
+                                  minWidth: MediaQuery.of(context).size.width),
                               child: Image.network(
                                 border.getArticleImage(
                                     snapshot.data!.articleImage, context),
-                                height: 250,
                                 fit: BoxFit.fitWidth,
                               )),
                           Padding(
@@ -225,7 +224,7 @@ class _ArticleAppState extends State<ArticleViewTemplate> {
                       padding: EdgeInsets.all(12),
                       color: Colors.black,
                       alignment: Alignment.topLeft,
-                    )
+                    ),
                   },
                   customRender: {
                     "table": (context, child) {

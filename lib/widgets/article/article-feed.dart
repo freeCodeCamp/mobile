@@ -54,8 +54,9 @@ getArticleImage(imgUrl, context) {
 
   // Get the last index of the arr which is the name
 
-  double screenSize = MediaQuery.of(context).size.width;
+  if (arr.length == 1) return imgUrl;
 
+  double screenSize = MediaQuery.of(context).size.width;
   if (screenSize >= 600) {
     imgUrl = arr[0] + 'images/size/w1000' + arr[1];
   } else if (screenSize >= 300) {
