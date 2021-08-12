@@ -112,12 +112,12 @@ class _BookmarkState extends State<Bookmark> {
         child: isBookmarked
             ? Padding(
                 padding: const EdgeInsets.only(top: 9.0, left: 10),
-                child: Text('Bookmark for offline access',
+                child: Text('Article bookmarked',
                     style: TextStyle(fontSize: 16, color: Colors.white)),
               )
             : Padding(
                 padding: const EdgeInsets.only(top: 9.0, left: 10),
-                child: Text('Article bookmarked',
+                child: Text('Bookmark for offline access',
                     style: TextStyle(fontSize: 16, color: Colors.white)),
               ));
   }
