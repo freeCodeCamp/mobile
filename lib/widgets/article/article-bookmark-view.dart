@@ -123,13 +123,12 @@ class _ArticleBookmarkViewState extends State<ArticleBookmarkView> {
                             style: {
                               "body": Style(color: Colors.white),
                               "p": Style(
-                                  fontSize: FontSize.large,
-                                  textAlign: TextAlign.justify,
+                                  fontSize: FontSize.rem(1.35),
                                   lineHeight: LineHeight.em(1.2)),
                               "ul": Style(fontSize: FontSize.xLarge),
                               "li": Style(
                                 margin: EdgeInsets.only(top: 8),
-                                fontSize: FontSize.large,
+                                fontSize: FontSize.rem(1.35),
                               ),
                               "pre": Style(
                                   color: Colors.white,

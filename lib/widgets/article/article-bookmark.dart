@@ -105,13 +105,20 @@ class _BookmarkState extends State<Bookmark> {
 
   @override
   Widget build(BuildContext context) {
-    return IconButton(
-        iconSize: 50,
-        onPressed: () {
+    return InkWell(
+        onTap: () {
           bookmarkAndUnbookmark(widget.article);
         },
-        icon: isBookmarked
-            ? Icon(Icons.bookmark_sharp, color: Colors.white)
-            : Icon(Icons.bookmark_border_sharp, color: Colors.white));
+        child: isBookmarked
+            ? Padding(
+                padding: const EdgeInsets.only(top: 9.0, left: 10),
+                child: Text('Bookmark for offline access',
+                    style: TextStyle(fontSize: 16, color: Colors.white)),
+              )
+            : Padding(
+                padding: const EdgeInsets.only(top: 9.0, left: 10),
+                child: Text('Article bookmarked',
+                    style: TextStyle(fontSize: 16, color: Colors.white)),
+              ));
   }
 }
