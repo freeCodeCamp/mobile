@@ -10,7 +10,7 @@ import 'package:url_launcher/url_launcher.dart';
 import 'package:flutter_html/flutter_html.dart';
 import 'package:html/dom.dart' as dom;
 
-import 'article-feed.dart' as border;
+import 'article-feed.dart';
 import 'article-bookmark.dart';
 
 Future<Article> fetchArticle(articleId) async {
@@ -96,7 +96,7 @@ class _ArticleAppState extends State<ArticleViewTemplate> {
                                   maxHeight: 250,
                                   minWidth: MediaQuery.of(context).size.width),
                               child: Image.network(
-                                border.getArticleImage(
+                                getArticleImage(
                                     snapshot.data!.articleImage, context),
                                 fit: BoxFit.fitWidth,
                               )),
@@ -143,10 +143,10 @@ class _ArticleAppState extends State<ArticleViewTemplate> {
                                       decoration: BoxDecoration(
                                           border: Border.all(
                                               width: 4,
-                                              color:
-                                                  border.randomBorderColor())),
+                                              color: randomBorderColor())),
                                       child: Image.network(
-                                        snapshot.data!.authorImage,
+                                        getProfileImage(
+                                            snapshot.data!.authorImage),
                                         width: 50,
                                         height: 50,
                                         fit: BoxFit.fill,

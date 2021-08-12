@@ -70,6 +70,14 @@ getArticleImage(imgUrl, context) {
   return imgUrl;
 }
 
+getProfileImage(imgUrl) {
+  List arr = imgUrl.toString().split('images');
+
+  if (arr.length == 1) return imgUrl;
+
+  return arr[0] + 'images/size/w60' + arr[1];
+}
+
 // The article class returns a confirmation that articles have been returned by
 // the api.
 
