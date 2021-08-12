@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'dart:developer' as dev;
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -18,6 +19,9 @@ Future<Article> fetchArticle(articleId) async {
   final response = await http.get(Uri.parse(
       'https://www.freecodecamp.org/news/ghost/api/v3/content/posts/$articleId/?key=${dotenv.env['NEWSKEY']}&include=authors'));
 
+  dev.log(
+      'https://www.freecodecamp.org/news/ghost/api/v3/content/posts/$articleId/?key=${dotenv.env['NEWSKEY']}&include=authors');
+
   if (response.statusCode == 200) {
     return Article.fromJson(jsonDecode(response.body));
   } else {
@@ -30,6 +34,7 @@ class Article {
   final String authorImage;
   final String articleId;
   final String articleTitle;
+  final String articleUrl;
   final String articleText;
   final String articleImage;
 
@@ -38,6 +43,7 @@ class Article {
       required this.authorImage,
       required this.articleId,
       required this.articleTitle,
+      required this.articleUrl,
       required this.articleText,
       required this.articleImage});
 
@@ -47,6 +53,7 @@ class Article {
         authorImage: json['posts'][0]['primary_author']['profile_image'],
         articleId: json['posts'][0]['id'],
         articleTitle: json['posts'][0]['title'],
+        articleUrl: json['posts'][0]['url'],
         articleText: json['posts'][0]['html'],
         articleImage: json['posts'][0]['feature_image']);
   }
@@ -84,15 +91,30 @@ class _ArticleAppState extends State<ArticleViewTemplate> {
                 if (snapshot.hasData) {
                   return Column(
                     children: [
-                      Row(
+                      Stack(
                         children: [
-                          Expanded(
+                          Container(
+                              width: MediaQuery.of(context).size.width,
                               child: Image.network(
-                            border.getArticleImage(
-                                snapshot.data!.articleImage, context),
-                            height: 250,
-                            fit: BoxFit.fitWidth,
-                          )),
+                                border.getArticleImage(
+                                    snapshot.data!.articleImage, context),
+                                height: 250,
+                                fit: BoxFit.fitWidth,
+                              )),
+                          Padding(
+                            padding: const EdgeInsets.all(16.0),
+                            child: Align(
+                                alignment: Alignment.topRight,
+                                child: ElevatedButton.icon(
+                                  onPressed: () {
+                                    launch(snapshot.data!.articleUrl);
+                                  },
+                                  label: Text('open in browser'),
+                                  icon: Icon(Icons.open_in_new_sharp),
+                                  style: ElevatedButton.styleFrom(
+                                      primary: Color(0xFF0a0a23)),
+                                )),
+                          )
                         ],
                       ),
                       Row(
