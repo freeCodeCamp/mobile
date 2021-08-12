@@ -187,7 +187,7 @@ class ArticleTemplate extends StatelessWidget {
     required this.i,
   }) : super(key: key);
 
-  final List articels;
+  final List? articels;
   final int i;
 
   @override
@@ -204,7 +204,7 @@ class ArticleTemplate extends StatelessWidget {
                 child: Padding(
                     padding: const EdgeInsets.all(16.0),
                     child: new InkWell(
-                        child: new Text(truncateStr(articels[i]["title"]),
+                        child: new Text(truncateStr(articels?[i]["title"]),
                             style:
                                 TextStyle(fontSize: 24, color: Colors.white)),
                         onTap: () => {
@@ -212,7 +212,7 @@ class ArticleTemplate extends StatelessWidget {
                                   context,
                                   MaterialPageRoute(
                                       builder: (context) => ArticleViewTemplate(
-                                          articleId: articels[i]["id"])))
+                                          articleId: articels?[i]["id"])))
                             })),
               ),
             ),
@@ -227,7 +227,9 @@ class ArticleTemplate extends StatelessWidget {
                   child: Padding(
                     padding: const EdgeInsets.all(16.0),
                     child: new Text(
-                      "#${articels[i]['tags'][0]['name']}",
+                      (articels?[i]?['tags'].length > 0
+                          ? "#${articels?[i]?['tags'][0]['name']}"
+                          : "#freeCodeCamp"),
                       style: TextStyle(fontSize: 18, color: Colors.white),
                     ),
                   )),
@@ -238,7 +240,7 @@ class ArticleTemplate extends StatelessWidget {
               color: Color(0xFF0a0a23),
               child: Padding(
                 padding: const EdgeInsets.all(16.0),
-                child: new Text("by ${articels[i]['authors'][0]['name']}",
+                child: new Text("by ${articels?[i]['authors'][0]['name']}",
                     style: TextStyle(fontSize: 18, color: Colors.white)),
               ),
             ))
@@ -256,7 +258,7 @@ class ArticleBanner extends StatelessWidget {
     required this.i,
   }) : super(key: key);
 
-  final List articels;
+  final List? articels;
   final int i;
 
   @override
@@ -273,10 +275,10 @@ class ArticleBanner extends StatelessWidget {
                           context,
                           MaterialPageRoute(
                               builder: (context) => ArticleViewTemplate(
-                                  articleId: articels[i]["id"])))
+                                  articleId: articels?[i]["id"])))
                     },
                 child: Image.network(
-                  getArticleImage(articels[i]["feature_image"], context),
+                  getArticleImage(articels?[i]["feature_image"], context),
                   height: 210,
                   fit: BoxFit.fitWidth,
                 ))),
@@ -288,7 +290,7 @@ class ArticleBanner extends StatelessWidget {
                 decoration: BoxDecoration(
                     border: Border.all(width: 4, color: randomBorderColor())),
                 child: Image.network(
-                  articels[i]['authors'][0]['profile_image'],
+                  articels?[i]['authors'][0]['profile_image'],
                   height: 50,
                   width: 50,
                   fit: BoxFit.fill,
