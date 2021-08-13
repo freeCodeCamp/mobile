@@ -164,14 +164,20 @@ class _ArticleAppState extends State<ArticleViewTemplate> {
                                             fontSize: 16, color: Colors.white),
                                       ),
                                     ),
-                                  )),
-                                  Expanded(
-                                    child: Bookmark(article: snapshot.data),
-                                  )
+                                  ))
                                 ],
                               ),
                             ),
                           ),
+                        ],
+                      ),
+                      Row(
+                        children: [
+                          Container(
+                            color: Color.fromRGBO(0x2A, 0x2A, 0x40, 1),
+                            width: MediaQuery.of(context).size.width,
+                            child: Bookmark(article: snapshot.data),
+                          )
                         ],
                       ),
                       htmlView(snapshot)

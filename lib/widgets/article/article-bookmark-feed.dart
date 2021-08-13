@@ -41,10 +41,12 @@ class BookmarkViewTemplate extends StatefulWidget {
 
 class _BookmarkViewTemplateState extends State<BookmarkViewTemplate> {
   List<BookmarkedArticle> _articles = [];
+  bool userHasBookMarkedArticles = false;
   int count = 0;
 
   void initState() {
     super.initState();
+    hasBookMarkedArticles();
   }
 
   Future<Database> openDbConnection() async {
@@ -87,6 +89,18 @@ class _BookmarkViewTemplateState extends State<BookmarkViewTemplate> {
       articleModel.add(BookmarkedArticle.fromMap(mapList[i]));
     }
     return articleModel;
+  }
+
+  Future<void> hasBookMarkedArticles() async {
+    final db = await openDbConnection();
+
+    List<Map> isInDatabase = await db.rawQuery('SELECT * FROM bookmarks');
+
+    if (isInDatabase.length > 0) {
+      setState(() {
+        userHasBookMarkedArticles = true;
+      });
+    }
   }
 
   updateListView() async {
@@ -172,12 +186,18 @@ class _BookmarkViewTemplateState extends State<BookmarkViewTemplate> {
       updateListView();
     }
     return Scaffold(
-      appBar: AppBar(
-          title: Text('BOOKMARKED ARTICLES'),
-          centerTitle: true,
-          backgroundColor: Color(0xFF0a0a23)),
-      backgroundColor: Color.fromRGBO(0x2A, 0x2A, 0x40, 1),
-      body: populateListViewModel(),
-    );
+        appBar: AppBar(
+            title: Text('BOOKMARKED ARTICLES'),
+            centerTitle: true,
+            backgroundColor: Color(0xFF0a0a23)),
+        backgroundColor: Color.fromRGBO(0x2A, 0x2A, 0x40, 1),
+        body: userHasBookMarkedArticles
+            ? populateListViewModel()
+            : Center(
+                child: Text(
+                'Bookmark articles to view them here',
+                textAlign: TextAlign.center,
+                style: TextStyle(color: Colors.white),
+              )));
   }
 }
