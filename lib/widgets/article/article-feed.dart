@@ -192,62 +192,72 @@ class ArticleTemplate extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Column(
-      children: [
-        ArticleBanner(articels: articels, i: i),
-        Row(
+    return InkWell(
+        onTap: () {
+          Navigator.push(
+              context,
+              MaterialPageRoute(
+                  builder: (context) =>
+                      ArticleViewTemplate(articleId: articels?[i]["id"])));
+        },
+        child: Column(
           children: [
-            Expanded(
-              child: Container(
-                color: Color(0xFF0a0a23),
-                height: 100,
-                child: Padding(
-                    padding: const EdgeInsets.all(16.0),
-                    child: new InkWell(
-                        child: new Text(truncateStr(articels?[i]["title"]),
-                            style:
-                                TextStyle(fontSize: 24, color: Colors.white)),
-                        onTap: () => {
-                              Navigator.push(
-                                  context,
-                                  MaterialPageRoute(
-                                      builder: (context) => ArticleViewTemplate(
-                                          articleId: articels?[i]["id"])))
-                            })),
-              ),
+            ArticleBanner(articels: articels, i: i),
+            Row(
+              children: [
+                Expanded(
+                  child: Container(
+                    color: Color(0xFF0a0a23),
+                    height: 100,
+                    child: Padding(
+                        padding: const EdgeInsets.all(16.0),
+                        child: new InkWell(
+                            child: new Text(truncateStr(articels?[i]["title"]),
+                                style: TextStyle(
+                                    fontSize: 24, color: Colors.white)),
+                            onTap: () => {
+                                  Navigator.push(
+                                      context,
+                                      MaterialPageRoute(
+                                          builder: (context) =>
+                                              ArticleViewTemplate(
+                                                  articleId: articels?[i]
+                                                      ["id"])))
+                                })),
+                  ),
+                ),
+              ],
             ),
-          ],
-        ),
-        Row(
-          children: [
-            Expanded(
-              child: Container(
+            Row(
+              children: [
+                Expanded(
+                  child: Container(
+                      height: 55,
+                      color: Color(0xFF0a0a23),
+                      child: Padding(
+                        padding: const EdgeInsets.all(16.0),
+                        child: new Text(
+                          (articels?[i]?['tags'].length > 0
+                              ? "#${articels?[i]?['tags'][0]['name']}"
+                              : "#freeCodeCamp"),
+                          style: TextStyle(fontSize: 18, color: Colors.white),
+                        ),
+                      )),
+                ),
+                Expanded(
+                    child: Container(
                   height: 55,
                   color: Color(0xFF0a0a23),
                   child: Padding(
                     padding: const EdgeInsets.all(16.0),
-                    child: new Text(
-                      (articels?[i]?['tags'].length > 0
-                          ? "#${articels?[i]?['tags'][0]['name']}"
-                          : "#freeCodeCamp"),
-                      style: TextStyle(fontSize: 18, color: Colors.white),
-                    ),
-                  )),
-            ),
-            Expanded(
-                child: Container(
-              height: 55,
-              color: Color(0xFF0a0a23),
-              child: Padding(
-                padding: const EdgeInsets.all(16.0),
-                child: new Text("by ${articels?[i]['authors'][0]['name']}",
-                    style: TextStyle(fontSize: 18, color: Colors.white)),
-              ),
-            ))
+                    child: new Text("by ${articels?[i]['authors'][0]['name']}",
+                        style: TextStyle(fontSize: 18, color: Colors.white)),
+                  ),
+                ))
+              ],
+            )
           ],
-        )
-      ],
-    );
+        ));
   }
 }
 

@@ -49,6 +49,10 @@ class _BookmarkViewTemplateState extends State<BookmarkViewTemplate> {
     hasBookMarkedArticles();
   }
 
+  void dispose() {
+    super.dispose();
+  }
+
   Future<Database> openDbConnection() async {
     WidgetsFlutterBinding.ensureInitialized();
 
