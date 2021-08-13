@@ -206,9 +206,10 @@ class ArticleTemplate extends StatelessWidget {
             Row(
               children: [
                 Expanded(
+                    child: ConstrainedBox(
+                  constraints: BoxConstraints(minHeight: 50),
                   child: Container(
                     color: Color(0xFF0a0a23),
-                    height: 100,
                     child: Padding(
                         padding: const EdgeInsets.all(16.0),
                         child: new InkWell(
@@ -225,7 +226,7 @@ class ArticleTemplate extends StatelessWidget {
                                                       ["id"])))
                                 })),
                   ),
-                ),
+                )),
               ],
             ),
             Row(

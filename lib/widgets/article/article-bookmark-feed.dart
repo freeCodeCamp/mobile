@@ -120,66 +120,71 @@ class _BookmarkViewTemplateState extends State<BookmarkViewTemplate> {
     return ListView.builder(
         itemCount: count,
         itemBuilder: (context, index) {
-          return Container(
-            height: 125,
-            decoration: BoxDecoration(
-                border:
-                    Border(bottom: BorderSide(width: 2, color: Colors.white))),
-            child: Column(
-              children: [
-                Row(
-                  children: [
-                    Expanded(
-                      flex: 8,
-                      child: Padding(
-                        padding: const EdgeInsets.all(16.0),
-                        child: InkWell(
-                          child: Text(
-                            truncateStr(this._articles[index].articleTitle),
-                            style: TextStyle(color: Colors.white, fontSize: 18),
-                          ),
-                          onTap: () => {
-                            Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                    builder: (context) => ArticleBookmarkView(
-                                        article: this._articles[index])))
-                          },
+          return ConstrainedBox(
+              constraints: BoxConstraints(minHeight: 150),
+              child: Container(
+                  decoration: BoxDecoration(
+                      border: Border(
+                          bottom: BorderSide(width: 2, color: Colors.white))),
+                  child: InkWell(
+                    onTap: () {
+                      Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                              builder: (context) => ArticleBookmarkView(
+                                  article: this._articles[index])));
+                    },
+                    child: Column(
+                      children: [
+                        Row(
+                          children: [
+                            Expanded(
+                              flex: 8,
+                              child: Padding(
+                                padding: const EdgeInsets.all(25.0),
+                                child: Text(
+                                  truncateStr(
+                                      this._articles[index].articleTitle),
+                                  style: TextStyle(
+                                      color: Colors.white, fontSize: 18),
+                                ),
+                              ),
+                            ),
+                            Expanded(
+                                flex: 2,
+                                child: IconButton(
+                                    onPressed: () {
+                                      Navigator.push(
+                                          context,
+                                          MaterialPageRoute(
+                                              builder: (context) =>
+                                                  ArticleBookmarkView(
+                                                      article: this
+                                                          ._articles[index])));
+                                    },
+                                    icon: Icon(
+                                      Icons.arrow_forward_ios,
+                                      color: Colors.white,
+                                    )))
+                          ],
                         ),
-                      ),
+                        Row(
+                          children: [
+                            Expanded(
+                              child: Padding(
+                                padding: const EdgeInsets.all(25.0),
+                                child: Text(
+                                  'Written by: ' +
+                                      this._articles[index].authorName,
+                                  style: TextStyle(color: Colors.white),
+                                ),
+                              ),
+                            )
+                          ],
+                        )
+                      ],
                     ),
-                    Expanded(
-                        flex: 2,
-                        child: IconButton(
-                            onPressed: () {
-                              Navigator.push(
-                                  context,
-                                  MaterialPageRoute(
-                                      builder: (context) => ArticleBookmarkView(
-                                          article: this._articles[index])));
-                            },
-                            icon: Icon(
-                              Icons.arrow_forward_ios,
-                              color: Colors.white,
-                            )))
-                  ],
-                ),
-                Row(
-                  children: [
-                    Expanded(
-                      child: Padding(
-                        padding: const EdgeInsets.all(16.0),
-                        child: Text(
-                          'Written by: ' + this._articles[index].authorName,
-                          style: TextStyle(color: Colors.white),
-                        ),
-                      ),
-                    )
-                  ],
-                )
-              ],
-            ),
-          );
+                  )));
         });
   }
 
