@@ -4,6 +4,7 @@ import 'package:freecodecamp/widgets/broswerview.dart';
 
 import 'widgets/article/article-feed.dart';
 import 'widgets/article/article-bookmark-feed.dart';
+import 'widgets/podcast/podcast-list.dart';
 
 void main() {
   WidgetsFlutterBinding.ensureInitialized();
@@ -97,7 +98,7 @@ class _HomeState extends State<Home> {
                     Expanded(
                         child: navButton(
                             'FORUM',
-                            'https://forum.freecodecamp.org/',
+                            'https://www.google.com/',
                             Icon(
                               Icons.forum_outlined,
                               size: 70,
@@ -110,12 +111,12 @@ class _HomeState extends State<Home> {
                     Expanded(
                         child: navButton(
                             'PODCAST',
-                            'https://www.google.com/',
+                            PodcastApp(),
                             Icon(
                               Icons.podcasts_outlined,
                               size: 70,
                             ),
-                            true)),
+                            false)),
                     Expanded(
                         child: navButton(
                             'RADIO',
@@ -186,14 +187,16 @@ class _HomeState extends State<Home> {
     );
   }
 
-  InkWell navButton(String text, String url, Icon icon, bool isWebComponent) =>
+  InkWell navButton(String text, dynamic url, Icon icon, bool isWebComponent) =>
       InkWell(
         onTap: () {
-          if (isWebComponent) {
+          if (isWebComponent && url is String) {
             Navigator.push(context,
                 MaterialPageRoute(builder: (context) => Browserview(url: url)));
           } else {
             Navigator.pop(context);
+            Navigator.push(context,
+                      MaterialPageRoute(builder: (context) => url));
             setState(() {
               _index = 1;
             });
