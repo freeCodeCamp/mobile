@@ -152,20 +152,10 @@ class _BookmarkViewTemplateState extends State<BookmarkViewTemplate> {
                             ),
                             Expanded(
                                 flex: 2,
-                                child: IconButton(
-                                    onPressed: () {
-                                      Navigator.push(
-                                          context,
-                                          MaterialPageRoute(
-                                              builder: (context) =>
-                                                  ArticleBookmarkView(
-                                                      article: this
-                                                          ._articles[index])));
-                                    },
-                                    icon: Icon(
+                                child: Icon(
                                       Icons.arrow_forward_ios,
                                       color: Colors.white,
-                                    )))
+                                    ))
                           ],
                         ),
                         Row(

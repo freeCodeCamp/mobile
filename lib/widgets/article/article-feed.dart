@@ -216,15 +216,7 @@ class ArticleTemplate extends StatelessWidget {
                             child: new Text(truncateStr(articels?[i]["title"]),
                                 style: TextStyle(
                                     fontSize: 24, color: Colors.white)),
-                            onTap: () => {
-                                  Navigator.push(
-                                      context,
-                                      MaterialPageRoute(
-                                          builder: (context) =>
-                                              ArticleViewTemplate(
-                                                  articleId: articels?[i]
-                                                      ["id"])))
-                                })),
+                            )),
                   ),
                 )),
               ],
@@ -281,13 +273,6 @@ class ArticleBanner extends StatelessWidget {
             decoration: BoxDecoration(
                 border: Border.all(width: 2, color: Colors.white)),
             child: GestureDetector(
-                onTap: () => {
-                      Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                              builder: (context) => ArticleViewTemplate(
-                                  articleId: articels?[i]["id"])))
-                    },
                 child: Image.network(
                   getArticleImage(articels?[i]["feature_image"], context),
                   height: 210,
