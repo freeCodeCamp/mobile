@@ -26,7 +26,7 @@ class _ShowFlashCardWidgetState extends State<ShowFlashCardWidget> {
         if (snapshot.connectionState == ConnectionState.waiting ||
             snapshot.connectionState == ConnectionState.active) {
           return CardSkeleton(
-            isCircularImage: true,
+            isCircularImage: false,
             isBottomLinesActive: true,
           );
         } else if (!snapshot.hasData) {
