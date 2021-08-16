@@ -111,9 +111,7 @@ class _BookmarkState extends State<Bookmark> {
         onPressed: () {
           bookmarkAndUnbookmark(widget.article);
         },
-        style: TextButton.styleFrom(
-            primary: Color.fromRGBO(0x2A, 0x2A, 0x40, 1),
-            alignment: Alignment.centerLeft),
+        style: TextButton.styleFrom(backgroundColor: Color(0xFF0a0a23)),
         icon: Icon(
             isBookmarked ? Icons.bookmark_sharp : Icons.bookmark_border_sharp,
             color: Colors.white),
