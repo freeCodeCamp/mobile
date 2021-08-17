@@ -124,7 +124,6 @@ class _ArticleAppState extends State<ArticleApp> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: searchBar(),
       backgroundColor: Color.fromRGBO(0x2A, 0x2A, 0x40, 1),
       body: FutureBuilder<Article>(
           future: futureArticle,
@@ -144,16 +143,6 @@ class _ArticleAppState extends State<ArticleApp> {
             return Center(child: const CircularProgressIndicator());
           }),
     );
-  }
-
-  AppBar searchBar() {
-    return AppBar(
-        title: Text(
-          'NEWSFEED',
-          textAlign: TextAlign.center,
-        ),
-        centerTitle: true,
-        backgroundColor: Color(0xFF0a0a23));
   }
 
   Future<Article> fetchArticle() async {
@@ -213,10 +202,10 @@ class ArticleTemplate extends StatelessWidget {
                     child: Padding(
                         padding: const EdgeInsets.all(16.0),
                         child: new InkWell(
-                            child: new Text(truncateStr(articels?[i]["title"]),
-                                style: TextStyle(
-                                    fontSize: 24, color: Colors.white)),
-                            )),
+                          child: new Text(truncateStr(articels?[i]["title"]),
+                              style:
+                                  TextStyle(fontSize: 24, color: Colors.white)),
+                        )),
                   ),
                 )),
               ],
@@ -274,10 +263,10 @@ class ArticleBanner extends StatelessWidget {
                 border: Border.all(width: 2, color: Colors.white)),
             child: GestureDetector(
                 child: Image.network(
-                  getArticleImage(articels?[i]["feature_image"], context),
-                  height: 210,
-                  fit: BoxFit.fitWidth,
-                ))),
+              getArticleImage(articels?[i]["feature_image"], context),
+              height: 210,
+              fit: BoxFit.fitWidth,
+            ))),
         Padding(
           padding: const EdgeInsets.all(16.0),
           child: Align(

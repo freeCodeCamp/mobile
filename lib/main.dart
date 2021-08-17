@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:freecodecamp/flash_cards.dart';
 import 'package:freecodecamp/widgets/article/article-search.dart';
-import 'package:webview_flutter/webview_flutter.dart';
+
 import 'widgets/article/article-feed.dart';
 import 'widgets/article/article-bookmark-feed.dart';
+
+import 'package:url_launcher/url_launcher.dart';
 
 void main() {
   WidgetsFlutterBinding.ensureInitialized();
@@ -26,53 +28,37 @@ class Home extends StatefulWidget {
 }
 
 class _HomeState extends State<Home> {
-  WebViewController? controller;
+  int _index = 1;
   @override
   void initState() {
     super.initState();
   }
+
+  void _onTapped(int index) {
+    setState(() {
+      _index = index;
+    });
+  }
+
+  static List<Widget> views = <Widget>[
+    BookmarkViewTemplate(),
+    ArticleApp(),
+    ArticleSearch()
+  ];
+
+  static List<Widget> titles = <Widget>[
+    Text('BOOKMARKED ARTICLES'),
+    Text('NEWSFEED'),
+    Text('SEARCH ARTICLES')
+  ];
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Color(0xFF0a0a23),
-        actions: [
-          Row(
-            children: <Widget>[
-              IconButton(
-                icon: const Icon(Icons.arrow_back_ios),
-                onPressed: () async {
-                  if (await controller!.canGoBack()) {
-                    await controller!.goBack();
-                  } else {
-                    ScaffoldMessenger.of(context).showSnackBar(
-                        SnackBar(content: Text("No back history item")));
-                    return;
-                  }
-                },
-              ),
-              IconButton(
-                icon: const Icon(Icons.arrow_forward_ios),
-                onPressed: () async {
-                  if (await controller!.canGoForward()) {
-                    await controller!.goForward();
-                  } else {
-                    ScaffoldMessenger.of(context).showSnackBar(
-                        SnackBar(content: Text("No forward history item")));
-                    return;
-                  }
-                },
-              ),
-              IconButton(
-                icon: const Icon(Icons.replay),
-                onPressed: () {
-                  controller!.reload();
-                },
-              ),
-            ],
-          ),
-        ],
+        title: titles.elementAt(_index),
+        centerTitle: true,
       ),
       drawer: Drawer(
         child: ListView(
@@ -90,7 +76,7 @@ class _HomeState extends State<Home> {
                   style: TextStyle(color: Color(0xFF0a0a23)),
                 ),
                 onTap: () {
-                  controller!.loadUrl('https://www.freecodecamp.org/learn/');
+                  launch('https://www.freecodecamp.org/learn/');
                   Navigator.pop(context);
                 }),
             ListTile(
@@ -99,7 +85,7 @@ class _HomeState extends State<Home> {
                   style: TextStyle(color: Color(0xFF0a0a23)),
                 ),
                 onTap: () {
-                  controller!.loadUrl('https://forum.freecodecamp.org/');
+                  launch('https://forum.freecodecamp.org/');
                   Navigator.pop(context);
                 }),
             ListTile(
@@ -108,7 +94,7 @@ class _HomeState extends State<Home> {
                   style: TextStyle(color: Color(0xFF0a0a23)),
                 ),
                 onTap: () {
-                  controller!.loadUrl('https://www.freecodecamp.org/news/');
+                  launch('https://www.freecodecamp.org/news/');
                   Navigator.pop(context);
                 }),
             ListTile(
@@ -117,7 +103,7 @@ class _HomeState extends State<Home> {
                   style: TextStyle(color: Color(0xFF0a0a23)),
                 ),
                 onTap: () {
-                  controller!.loadUrl('https://coderadio.freecodecamp.org/');
+                  launch('https://coderadio.freecodecamp.org/');
                   Navigator.pop(context);
                 }),
             ListTile(
@@ -126,7 +112,7 @@ class _HomeState extends State<Home> {
                 style: TextStyle(color: Color(0xFF0a0a23)),
               ),
               onTap: () {
-                controller!.loadUrl('https://www.freecodecamp.org/news/about/');
+                launch('https://www.freecodecamp.org/news/about/');
                 Navigator.pop(context);
               },
             ),
@@ -136,77 +122,40 @@ class _HomeState extends State<Home> {
                 style: TextStyle(color: Color(0xFF0a0a23)),
               ),
               onTap: () {
-                controller!.loadUrl('https://www.freecodecamp.org/donate');
+                launch('https://www.freecodecamp.org/donate');
                 Navigator.pop(context);
               },
             ),
-            ListTile(
-              title: Text(
-                'Articles',
-                style: TextStyle(color: Color(0xFF0a0a23)),
-              ),
-              onTap: () {
-                Navigator.push(context,
-                    MaterialPageRoute(builder: (context) => ArticleApp()));
-              },
-            ),
-            ListTile(
-              title: Text(
-                'Search articles',
-                style: TextStyle(color: Color(0xFF0a0a23)),
-              ),
-              onTap: () {
-                Navigator.push(context,
-                    MaterialPageRoute(builder: (context) => ArticleSearch()));
-              },
-            ),
-            ListTile(
-              title: Text(
-                'bookmarked articles',
-                style: TextStyle(color: Color(0xFF0a0a23)),
-              ),
-              onTap: () {
-                Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                        builder: (context) => BookmarkViewTemplate()));
-              },
-            ),
-            ListTile(
-              title: Text(
-                'Flash Cards',
-                style: TextStyle(color: Color(0xFF0a0a23)),
-              ),
-              onTap: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(builder: (context) => FlashCards()),
-                );
-              },
-            )
           ],
         ),
       ),
-      body: WillPopScope(
-        onWillPop: () async {
-          if (await controller!.canGoBack()) {
-            await controller!.goBack();
-          } else {
-            ScaffoldMessenger.of(context)
-                .showSnackBar(SnackBar(content: Text("No back history item")));
-          }
-          return false;
-        },
-        child: WebView(
-          initialUrl: 'https://www.freecodecamp.org/learn/',
-          userAgent: "random",
-          javascriptMode: JavascriptMode.unrestricted,
-          onWebViewCreated: (WebViewController webViewController) {
-            setState(() {
-              controller = webViewController;
-            });
-          },
-        ),
+      body: views.elementAt(_index),
+      bottomNavigationBar: BottomNavigationBar(
+        backgroundColor: Color(0xFF0a0a23),
+        unselectedItemColor: Colors.white,
+        selectedItemColor: Color.fromRGBO(0x99, 0xc9, 0xff, 1),
+        items: <BottomNavigationBarItem>[
+          BottomNavigationBarItem(
+              icon: Icon(
+                Icons.bookmark_outline_sharp,
+                color: Colors.white,
+              ),
+              label: 'Bookmarks'),
+          BottomNavigationBarItem(
+              icon: Icon(
+                Icons.article_sharp,
+                color: Colors.white,
+              ),
+              label: 'Articles'),
+          BottomNavigationBarItem(
+              icon: Icon(
+                Icons.search_sharp,
+                color: Colors.white,
+              ),
+              label: 'Search')
+        ],
+        currentIndex: _index,
+        onTap: _onTapped,
       ),
     );
   }

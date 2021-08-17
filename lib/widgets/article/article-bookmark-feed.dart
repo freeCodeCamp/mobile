@@ -153,9 +153,9 @@ class _BookmarkViewTemplateState extends State<BookmarkViewTemplate> {
                             Expanded(
                                 flex: 2,
                                 child: Icon(
-                                      Icons.arrow_forward_ios,
-                                      color: Colors.white,
-                                    ))
+                                  Icons.arrow_forward_ios,
+                                  color: Colors.white,
+                                ))
                           ],
                         ),
                         Row(
@@ -185,10 +185,6 @@ class _BookmarkViewTemplateState extends State<BookmarkViewTemplate> {
       updateListView();
     }
     return Scaffold(
-        appBar: AppBar(
-            title: Text('BOOKMARKED ARTICLES'),
-            centerTitle: true,
-            backgroundColor: Color(0xFF0a0a23)),
         backgroundColor: Color.fromRGBO(0x2A, 0x2A, 0x40, 1),
         body: userHasBookMarkedArticles
             ? populateListViewModel()
