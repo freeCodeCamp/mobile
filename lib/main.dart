@@ -1,11 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:freecodecamp/flash_cards.dart';
 import 'package:freecodecamp/widgets/article/article-search.dart';
 
 import 'widgets/article/article-feed.dart';
 import 'widgets/article/article-bookmark-feed.dart';
-
-import 'package:url_launcher/url_launcher.dart';
 
 void main() {
   WidgetsFlutterBinding.ensureInitialized();
@@ -60,73 +57,86 @@ class _HomeState extends State<Home> {
         title: titles.elementAt(_index),
         centerTitle: true,
       ),
-      drawer: Drawer(
-        child: ListView(
-          children: <Widget>[
-            DrawerHeader(
-              child: Text(''),
-              decoration: BoxDecoration(
-                image: DecorationImage(
-                    image: AssetImage('assets/images/splash_screen.png')),
+      drawer: Container(
+        width: MediaQuery.of(context).size.width,
+        child: Drawer(
+          child: Column(
+            children: [
+              Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Column(
+                    children: [
+                      Padding(
+                        padding: const EdgeInsets.all(25),
+                        child: Text(
+                          'MENU',
+                          style: TextStyle(
+                              fontWeight: FontWeight.bold,
+                              color: Color(0xFF0a0a23),
+                              fontSize: 24),
+                        ),
+                      ),
+                    ],
+                  ),
+                ],
               ),
-            ),
-            ListTile(
-                title: Text(
-                  'Training',
-                  style: TextStyle(color: Color(0xFF0a0a23)),
-                ),
-                onTap: () {
-                  launch('https://www.freecodecamp.org/learn/');
-                  Navigator.pop(context);
-                }),
-            ListTile(
-                title: Text(
-                  'Forum',
-                  style: TextStyle(color: Color(0xFF0a0a23)),
-                ),
-                onTap: () {
-                  launch('https://forum.freecodecamp.org/');
-                  Navigator.pop(context);
-                }),
-            ListTile(
-                title: Text(
-                  'News',
-                  style: TextStyle(color: Color(0xFF0a0a23)),
-                ),
-                onTap: () {
-                  launch('https://www.freecodecamp.org/news/');
-                  Navigator.pop(context);
-                }),
-            ListTile(
-                title: Text(
-                  'Radio',
-                  style: TextStyle(color: Color(0xFF0a0a23)),
-                ),
-                onTap: () {
-                  launch('https://coderadio.freecodecamp.org/');
-                  Navigator.pop(context);
-                }),
-            ListTile(
-              title: Text(
-                'FAQ',
-                style: TextStyle(color: Color(0xFF0a0a23)),
+              Row(
+                children: [
+                  Expanded(
+                      child: navButton(
+                          'NEWSFEED',
+                          Icon(
+                            Icons.article,
+                            size: 70,
+                          ))),
+                  Expanded(
+                      child: navButton(
+                          'FORUM',
+                          Icon(
+                            Icons.forum_outlined,
+                            size: 70,
+                          ))),
+                ],
               ),
-              onTap: () {
-                launch('https://www.freecodecamp.org/news/about/');
-                Navigator.pop(context);
-              },
-            ),
-            ListTile(
-              title: Text(
-                'Donate',
-                style: TextStyle(color: Color(0xFF0a0a23)),
+              Row(
+                children: [
+                  Expanded(
+                      child: navButton(
+                          'PODCAST',
+                          Icon(
+                            Icons.podcasts_outlined,
+                            size: 70,
+                          ))),
+                  Expanded(
+                      child: navButton(
+                          'RADIO',
+                          Icon(
+                            Icons.radio,
+                            size: 70,
+                          ))),
+                ],
               ),
-              onTap: () {
-                launch('https://www.freecodecamp.org/donate');
-                Navigator.pop(context);
-              },
-            ),
-          ],
+              Row(
+                children: [
+                  Expanded(
+                      child: navButton(
+                          'DONATE',
+                          Icon(
+                            Icons.favorite,
+                            size: 70,
+                          ))),
+                  Expanded(
+                      child: navButton(
+                          'SETTINGS',
+                          Icon(
+                            Icons.settings,
+                            size: 70,
+                          ))),
+                ],
+              ),
+            ],
+          ),
         ),
       ),
       body: views.elementAt(_index),
@@ -159,4 +169,46 @@ class _HomeState extends State<Home> {
       ),
     );
   }
+
+  InkWell navButton(String text, Icon icon) => InkWell(
+        onTap: () {},
+        child: Padding(
+          padding: const EdgeInsets.all(20.0),
+          child: Container(
+            width: 160,
+            height: 160,
+            decoration: BoxDecoration(
+                color: Color.fromRGBO(0xD0, 0xD0, 0xD5, 1),
+                border: Border.all(color: Colors.black, width: 3)),
+            child: Column(
+              children: [
+                Row(
+                  children: [
+                    Expanded(
+                      child: Padding(
+                        padding: const EdgeInsets.all(8.0),
+                        child: icon,
+                      ),
+                    )
+                  ],
+                ),
+                Row(
+                  children: [
+                    Expanded(
+                        child: Padding(
+                      padding: const EdgeInsets.all(8.0),
+                      child: Text(
+                        text,
+                        style: TextStyle(
+                            fontSize: 18, fontWeight: FontWeight.w600),
+                        textAlign: TextAlign.center,
+                      ),
+                    ))
+                  ],
+                )
+              ],
+            ),
+          ),
+        ),
+      );
 }
