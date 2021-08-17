@@ -7,6 +7,10 @@ environment:
 dependencies:
   flutter:
     sdk: flutter
+  http: ^0.13.3
+  url_launcher: ^6.0.9
+  flutter_dotenv: ^5.0.0
+  flutter_html: ^2.1.1
   cupertino_icons: ^1.0.3
   webview_flutter: ^2.0.6
   sqflite: ^2.0.0+3
@@ -14,14 +18,19 @@ dependencies:
   flip_card: ^0.5.0
   flutter_skeleton: ^0.1.0+1
   flutter_swiper: ^1.1.6
+  path_provider: ^2.0.2
+  algolia: ^1.0.1
 dev_dependencies:
   flutter_test:
     sdk: flutter
 flutter:
   uses-material-design: true
   assets:
+    - assets/images/splash_screen.png
+    - .env
     - assets/images/
     - assets/database/cards-jwasham.db
+    - assets/database/bookmarked-article.db
 
   # To add assets to your application, add an assets section, like this:
   # assets:

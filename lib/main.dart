@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:freecodecamp/flash_cards.dart';
+import 'package:freecodecamp/widgets/article/article-search.dart';
 import 'package:webview_flutter/webview_flutter.dart';
+import 'widgets/article/article-feed.dart';
+import 'widgets/article/article-bookmark-feed.dart';
 
 void main() {
   WidgetsFlutterBinding.ensureInitialized();
@@ -135,6 +138,38 @@ class _HomeState extends State<Home> {
               onTap: () {
                 controller!.loadUrl('https://www.freecodecamp.org/donate');
                 Navigator.pop(context);
+              },
+            ),
+            ListTile(
+              title: Text(
+                'Articles',
+                style: TextStyle(color: Color(0xFF0a0a23)),
+              ),
+              onTap: () {
+                Navigator.push(context,
+                    MaterialPageRoute(builder: (context) => ArticleApp()));
+              },
+            ),
+            ListTile(
+              title: Text(
+                'Search articles',
+                style: TextStyle(color: Color(0xFF0a0a23)),
+              ),
+              onTap: () {
+                Navigator.push(context,
+                    MaterialPageRoute(builder: (context) => ArticleSearch()));
+              },
+            ),
+            ListTile(
+              title: Text(
+                'bookmarked articles',
+                style: TextStyle(color: Color(0xFF0a0a23)),
+              ),
+              onTap: () {
+                Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                        builder: (context) => BookmarkViewTemplate()));
               },
             ),
             ListTile(
