@@ -1,0 +1,2 @@
+- name: Flutter action
+  uses: subosito/flutter-action@v1.5.3
