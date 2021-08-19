@@ -4,6 +4,7 @@ import 'package:freecodecamp/widgets/broswerview.dart';
 
 import 'widgets/article/article-feed.dart';
 import 'widgets/article/article-bookmark-feed.dart';
+import 'widgets/forum/forum-category-feed.dart';
 
 void main() {
   WidgetsFlutterBinding.ensureInitialized();
@@ -189,15 +190,19 @@ class _HomeState extends State<Home> {
   InkWell navButton(String text, String url, Icon icon, bool isWebComponent) =>
       InkWell(
         onTap: () {
-          if (isWebComponent) {
+          if (text == 'FORUM') {
             Navigator.push(context,
-                MaterialPageRoute(builder: (context) => Browserview(url: url)));
-          } else {
-            Navigator.pop(context);
-            setState(() {
-              _index = 1;
-            });
+                MaterialPageRoute(builder: (context) => ForumCategoryView()));
           }
+          // if (isWebComponent) {
+          //   Navigator.push(context,
+          //       MaterialPageRoute(builder: (context) => Browserview(url: url)));
+          // } else {
+          //   Navigator.pop(context);
+          //   setState(() {
+          //     _index = 1;
+          //   });
+          // }
         },
         child: Padding(
           padding: const EdgeInsets.all(20.0),
