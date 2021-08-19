@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:freecodecamp/widgets/article/article-search.dart';
+import 'package:freecodecamp/widgets/broswerview.dart';
 
 import 'widgets/article/article-feed.dart';
 import 'widgets/article/article-bookmark-feed.dart';
@@ -60,82 +61,97 @@ class _HomeState extends State<Home> {
       drawer: Container(
         width: MediaQuery.of(context).size.width,
         child: Drawer(
-          child: Column(
-            children: [
-              Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Column(
-                    children: [
-                      Padding(
-                        padding: const EdgeInsets.all(25),
-                        child: Text(
-                          'MENU',
-                          style: TextStyle(
-                              fontWeight: FontWeight.bold,
-                              color: Color(0xFF0a0a23),
-                              fontSize: 24),
+          child: SingleChildScrollView(
+            child: Column(
+              children: [
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Column(
+                      children: [
+                        Padding(
+                          padding: const EdgeInsets.all(25),
+                          child: Text(
+                            'MENU',
+                            style: TextStyle(
+                                fontWeight: FontWeight.bold,
+                                color: Color(0xFF0a0a23),
+                                fontSize: 24),
+                          ),
                         ),
-                      ),
-                    ],
-                  ),
-                ],
-              ),
-              Row(
-                children: [
-                  Expanded(
-                      child: navButton(
-                          'NEWSFEED',
-                          Icon(
-                            Icons.article,
-                            size: 70,
-                          ))),
-                  Expanded(
-                      child: navButton(
-                          'FORUM',
-                          Icon(
-                            Icons.forum_outlined,
-                            size: 70,
-                          ))),
-                ],
-              ),
-              Row(
-                children: [
-                  Expanded(
-                      child: navButton(
-                          'PODCAST',
-                          Icon(
-                            Icons.podcasts_outlined,
-                            size: 70,
-                          ))),
-                  Expanded(
-                      child: navButton(
-                          'RADIO',
-                          Icon(
-                            Icons.radio,
-                            size: 70,
-                          ))),
-                ],
-              ),
-              Row(
-                children: [
-                  Expanded(
-                      child: navButton(
-                          'DONATE',
-                          Icon(
-                            Icons.favorite,
-                            size: 70,
-                          ))),
-                  Expanded(
+                      ],
+                    ),
+                  ],
+                ),
+                Row(
+                  children: [
+                    Expanded(
+                        child: navButton(
+                            'NEWSFEED',
+                            'https://www.google.com/',
+                            Icon(
+                              Icons.article,
+                              size: 70,
+                            ),
+                            false)),
+                    Expanded(
+                        child: navButton(
+                            'FORUM',
+                            'https://forum.freecodecamp.org/',
+                            Icon(
+                              Icons.forum_outlined,
+                              size: 70,
+                            ),
+                            true)),
+                  ],
+                ),
+                Row(
+                  children: [
+                    Expanded(
+                        child: navButton(
+                            'PODCAST',
+                            'https://www.google.com/',
+                            Icon(
+                              Icons.podcasts_outlined,
+                              size: 70,
+                            ),
+                            true)),
+                    Expanded(
+                        child: navButton(
+                            'RADIO',
+                            'https://coderadio.freecodecamp.org/',
+                            Icon(
+                              Icons.radio,
+                              size: 70,
+                            ),
+                            true)),
+                  ],
+                ),
+                Row(
+                  children: [
+                    Expanded(
+                        child: navButton(
+                            'DONATE',
+                            'https://www.freecodecamp.org/donate/',
+                            Icon(
+                              Icons.favorite,
+                              size: 70,
+                            ),
+                            true)),
+                    Expanded(
                       child: navButton(
                           'SETTINGS',
+                          'https://www.google.com/',
                           Icon(
                             Icons.settings,
                             size: 70,
-                          ))),
-                ],
-              ),
-            ],
+                          ),
+                          true),
+                    ),
+                  ],
+                ),
+              ],
+            ),
           ),
         ),
       ),
@@ -170,13 +186,23 @@ class _HomeState extends State<Home> {
     );
   }
 
-  InkWell navButton(String text, Icon icon) => InkWell(
-        onTap: () {},
+  InkWell navButton(String text, String url, Icon icon, bool isWebComponent) =>
+      InkWell(
+        onTap: () {
+          if (isWebComponent) {
+            Navigator.push(context,
+                MaterialPageRoute(builder: (context) => Browserview(url: url)));
+          } else {
+            Navigator.pop(context);
+            setState(() {
+              _index = 1;
+            });
+          }
+        },
         child: Padding(
           padding: const EdgeInsets.all(20.0),
           child: Container(
             width: 160,
-            height: 160,
             decoration: BoxDecoration(
                 color: Color.fromRGBO(0xD0, 0xD0, 0xD5, 1),
                 border: Border.all(color: Colors.black, width: 3)),
