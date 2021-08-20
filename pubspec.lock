@@ -191,6 +191,13 @@ packages:
     description: flutter
     source: sdk
     version: "0.0.0"
+  hexcolor:
+    dependency: "direct main"
+    description:
+      name: hexcolor
+      url: "https://pub.dartlang.org"
+    source: hosted
+    version: "2.0.5"
   html:
     dependency: transitive
     description:

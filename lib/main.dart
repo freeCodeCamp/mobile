@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:freecodecamp/widgets/article/article-search.dart';
-import 'package:freecodecamp/widgets/broswerview.dart';
 
 import 'widgets/article/article-feed.dart';
 import 'widgets/article/article-bookmark-feed.dart';

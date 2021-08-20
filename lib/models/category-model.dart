@@ -1,3 +1,6 @@
+import 'package:flutter/material.dart';
+import 'dart:developer' as dev;
+
 class CategoryList {
   late List<dynamic>? categories;
   late bool? canCreateTopic;
@@ -17,5 +20,9 @@ class CategoryList {
   factory CategoryList.canEditTopic(Map<String, dynamic> data) {
     return CategoryList(
         canCreateTopic: data["category_list"]["can_create_topic"]);
+  }
+
+  CategoryList.error() {
+    throw Exception('Categories could not be loaded!');
   }
 }
