@@ -10,7 +10,8 @@ class ForumConnect {
 
     var response = await http.get(Uri.parse(baseUrl + endpoint),
         headers: <String, String>{'Accept': 'application/json'});
-    dev.log(response.body);
+    //dev.log(endpoint);
+    //dev.log(response.body);
     return response;
   }
 }

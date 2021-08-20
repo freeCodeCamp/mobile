@@ -1,7 +1,7 @@
 import 'dart:convert';
 import 'dart:developer' as dev;
 import 'package:flutter/material.dart';
-import 'package:flutter_html/flutter_html.dart';
+import 'package:freecodecamp/widgets/forum/forum-post-feed.dart';
 import 'package:hexcolor/hexcolor.dart';
 
 import '/models/category-model.dart';
@@ -12,38 +12,32 @@ class ForumCategoryView extends StatefulWidget {
 }
 
 class _ForumCategoryViewState extends State<ForumCategoryView> {
-  List categories = [];
-
-  late Future<CategoryList> categoryFuture;
+  late Future<List<dynamic>?> categoryFuture;
 
   void initState() {
     super.initState();
     categoryFuture = fetchList();
   }
 
-  Future<CategoryList> fetchList() async {
+  Future<List<dynamic>?> fetchList() async {
     final response = await ForumConnect.connectAndGet('/categories');
 
     if (response.statusCode == 200) {
-      var decodedCategoryList =
-          json.decode(response.body)['category_list']['categories'];
-      categories.addAll(decodedCategoryList);
       return CategoryList.returnCategories(jsonDecode(response.body));
     }
-
-    return CategoryList.error();
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
         backgroundColor: Color.fromRGBO(0x2A, 0x2A, 0x40, 1),
-        body: FutureBuilder<CategoryList>(
+        body: FutureBuilder<List<dynamic>?>(
           future: categoryFuture,
           builder: (context, snapshot) {
             if (snapshot.hasData) {
+              var categories = snapshot.data;
               return ListView.builder(
-                  itemCount: categories.length,
+                  itemCount: snapshot.data?.length,
                   itemBuilder: (BuildContext context, int index) {
                     return CategoryTemplate(
                         categories: categories, index: index);
@@ -64,57 +58,74 @@ class CategoryTemplate extends StatelessWidget {
     required this.index,
   }) : super(key: key);
 
-  final List categories;
+  final List? categories;
 
   int index;
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      decoration: BoxDecoration(
-          border: Border(
-              left: BorderSide(
-                  width: 5,
-                  color: HexColor(
-                    "#" + categories[index]["color"],
-                  )))),
-      child: Column(
-        children: [
-          Row(
-            children: [
-              Expanded(
-                  child: Padding(
-                padding: const EdgeInsets.all(8.0),
-                child: Text(categories[index]["name"],
-                    style: TextStyle(fontSize: 24, color: Colors.white)),
-              )),
-            ],
-          ),
-          Row(
-            children: [
-              Expanded(
-                  child: Padding(
-                padding: const EdgeInsets.all(8.0),
-                child: Text(
-                  categories[index]["description"],
-                  style: TextStyle(fontSize: 16, color: Colors.white),
-                ),
-              ))
-            ],
-          ),
-          Row(
-            children: [
-              Expanded(
-                  child: Padding(
-                padding: const EdgeInsets.all(8.0),
-                child: Text(
-                    categories[index]["topics_week"].toString() +
-                        ' new topics this week',
-                    style: TextStyle(fontSize: 14, color: Colors.white)),
-              ))
-            ],
-          )
-        ],
+    return InkWell(
+      onTap: () {
+        Navigator.push(
+            context,
+            MaterialPageRoute(
+                builder: (context) => ForumPostFeed(
+                      id: categories?[index]["id"],
+                      slug: categories?[index]["slug"],
+                    )));
+      },
+      child: Container(
+        decoration: BoxDecoration(
+            border: Border(
+                left: BorderSide(
+                    width: 5,
+                    color: HexColor(
+                      "#" + categories?[index]["color"],
+                    )))),
+        child: Column(
+          children: [
+            Row(
+              children: [
+                Expanded(
+                    child: Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: Text(categories?[index]["name"],
+                      style: TextStyle(
+                          fontSize: 24,
+                          color: Colors.white,
+                          fontWeight: FontWeight.bold)),
+                )),
+              ],
+            ),
+            Row(
+              children: [
+                Expanded(
+                    child: Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: Text(
+                    categories?[index]["description"],
+                    style: TextStyle(fontSize: 16, color: Colors.white),
+                  ),
+                ))
+              ],
+            ),
+            Row(
+              children: [
+                Expanded(
+                    child: Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: Text(
+                      categories![index]["topics_week"].toString() +
+                          ' new topics this week',
+                      style: TextStyle(
+                          fontSize: 14,
+                          color: Colors.white,
+                          fontWeight: FontWeight.w300)),
+                ))
+              ],
+            )
+          ],
+        ),
       ),
     );
   }
