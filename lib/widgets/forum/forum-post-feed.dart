@@ -104,6 +104,7 @@ class _ForumPostFeedState extends State<ForumPostFeed> {
                 shrinkWrap: true,
                 itemBuilder: (BuildContext context, int index) {
                   return Container(
+                    height: 100,
                     decoration: BoxDecoration(
                         border: Border(
                             bottom: BorderSide(width: 2, color: Colors.white))),
