@@ -1,5 +1,6 @@
 import 'dart:convert';
 import 'dart:developer' as dev;
+import 'dart:io';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:freecodecamp/models/post-model,.dart';
@@ -19,7 +20,8 @@ class ForumPostFeed extends StatefulWidget {
 class _ForumPostFeedState extends State<ForumPostFeed> {
   late Future<List<dynamic>?> postFuture;
   List profileUrls = [];
-
+  List participantNames = [];
+  int count = 0;
   Future<List<dynamic>?> fetchPosts() async {
     final response =
         await ForumConnect.connectAndGet('/c/${widget.slug}/${widget.id}');
@@ -31,31 +33,55 @@ class _ForumPostFeedState extends State<ForumPostFeed> {
     }
   }
 
-  Future<List> fetchUserProfilePictures(String postId) async {
+  Future<void> fetchUserProfilePictures(String postId) async {
     String baseUrl = 'https://forum.freecodecamp.org';
-
     final response = await ForumConnect.connectAndGet('/t/$postId');
 
-    List participantNames = [];
-
     if (response.statusCode == 200) {
+      participantNames = [];
       List participants =
           PostList.returnProfilePictures(json.decode(response.body));
 
       participants.forEach((participant) {
         List size = participant["avatar_template"].toString().split('{size}');
-
-        if (size.length == 1) participantNames.add(size[0]);
-
         String avatarUrl = size[0] + "60" + size[1];
+        bool fromDiscourseCdn = size[0]
+            .toString()
+            .contains(new RegExp(r'discourse-cdn', caseSensitive: false));
 
-        participantNames.add(baseUrl + avatarUrl);
+        if (fromDiscourseCdn) {
+          participantNames.add(avatarUrl);
+        } else if (size.length == 1) {
+          participantNames.add(size[0]);
+        } else {
+          participantNames.add(baseUrl + avatarUrl);
+        }
       });
+      dev.log(participantNames.toString());
       setState(() {
-        profileUrls = participantNames;
+        count = participantNames.length;
       });
+      //dev.log(count.toString());
     }
-    return [];
+  }
+
+  ListView populateProfilePictures(id) {
+    fetchUserProfilePictures(id.toString());
+    return ListView.builder(
+        physics: ClampingScrollPhysics(),
+        shrinkWrap: true,
+        itemCount: count,
+        itemBuilder: (context, index) {
+          return SizedBox(
+            height: 20,
+            width: 20,
+            child: Row(
+              children: [
+                Image.network(participantNames[index]),
+              ],
+            ),
+          );
+        });
   }
 
   void initState() {
@@ -75,9 +101,9 @@ class _ForumPostFeedState extends State<ForumPostFeed> {
 
             return ListView.builder(
                 itemCount: snapshot.data?.length,
+                shrinkWrap: true,
                 itemBuilder: (BuildContext context, int index) {
                   return Container(
-                    height: 400,
                     decoration: BoxDecoration(
                         border: Border(
                             bottom: BorderSide(width: 2, color: Colors.white))),
@@ -88,7 +114,7 @@ class _ForumPostFeedState extends State<ForumPostFeed> {
                             Expanded(
                                 child: Padding(
                               padding: const EdgeInsets.all(8.0),
-                              child: Text(truncateStr(post[index]["title"]),
+                              child: Text(truncateStr(post![index]["title"]),
                                   style: TextStyle(
                                       fontSize: 18,
                                       color: Colors.white,
@@ -96,14 +122,7 @@ class _ForumPostFeedState extends State<ForumPostFeed> {
                             ))
                           ],
                         ),
-                        SizedBox(
-                          height: 100,
-                          child: ListView.builder(
-                              itemCount: profileUrls.length,
-                              itemBuilder: (BuildContext context, int i) {
-                                return Column(children: [Text(profileUrls[i])]);
-                              }),
-                        ),
+                        // populateProfilePictures(post[index]["id"]),
                         Row(
                           children: [
                             Expanded(
