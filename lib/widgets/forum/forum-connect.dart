@@ -1,17 +1,45 @@
+import 'dart:convert';
+
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:http/http.dart' as http;
 import 'dart:developer' as dev;
 
 class ForumConnect {
-  static Future<dynamic> connectAndGet(String endpoint) async {
-    String baseUrl = 'https://forum.freecodecamp.org';
+  static String baseUrl = 'https://forum.freecodecamp.org';
 
+  static Future<dynamic> connectAndGet(String endpoint) async {
     await dotenv.load(fileName: ".env");
 
-    var response = await http.get(Uri.parse(baseUrl + endpoint),
+    final response = await http.get(Uri.parse(baseUrl + endpoint),
         headers: <String, String>{'Accept': 'application/json'});
-    //dev.log(endpoint);
-    //dev.log(response.body);
+
+    return response;
+  }
+
+  static Future<dynamic> connectAndPost(String endpoint,
+      Map<String, String> headers, Map<String, String> body) async {
+    await dotenv.load(fileName: ".env");
+
+    final response = await http.post(Uri.parse(baseUrl + endpoint),
+        headers: headers, body: jsonEncode(body));
+    return response;
+  }
+
+  static Future<dynamic> connectAndPut(String endpoint,
+      Map<String, String> headers, Map<String, String> body) async {
+    await dotenv.load(fileName: ".env");
+
+    final response = await http.put(Uri.parse(baseUrl + endpoint),
+        headers: headers, body: jsonEncode(body));
+    return response;
+  }
+
+  static Future<dynamic> connectAnDelete(String endpoint,
+      Map<String, String> headers, Map<String, String> body) async {
+    await dotenv.load(fileName: ".env");
+
+    final response = await http.delete(Uri.parse(baseUrl + endpoint),
+        headers: headers, body: jsonEncode(body));
     return response;
   }
 }
