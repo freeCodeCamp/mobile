@@ -2,7 +2,11 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_html/flutter_html.dart';
 import 'package:freecodecamp/models/post-model.dart';
+import 'package:flutter_syntax_view/flutter_syntax_view.dart';
+import 'package:html/dom.dart' as dom;
 import 'dart:developer' as dev;
+
+import 'package:url_launcher/url_launcher.dart';
 
 class ForumPostView extends StatefulWidget {
   const ForumPostView(
@@ -17,88 +21,182 @@ class ForumPostView extends StatefulWidget {
 
 class _ForumPostViewState extends State<ForumPostView> {
   late Future<PostModel> futurePost;
-
+  List<PostModel> comments = [];
   void initState() {
     super.initState();
     futurePost = PostModel.fetchPost(widget.refPostId, widget.refSlug);
+  }
+
+  void dispose() {
+    super.dispose();
   }
 
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Color.fromRGBO(0x2A, 0x2A, 0x40, 1),
       body: SingleChildScrollView(
-        child: Column(
-          children: [
-            FutureBuilder<PostModel>(
-                future: futurePost,
-                builder: (context, snapshot) {
-                  if (snapshot.hasData) {
-                    var post = snapshot.data;
-                    return Column(
+        child: postViewTemplate(),
+      ),
+    );
+  }
+
+  Column postViewTemplate() {
+    return Column(
+      children: [
+        FutureBuilder<PostModel>(
+            future: futurePost,
+            builder: (context, snapshot) {
+              if (snapshot.hasData) {
+                var post = snapshot.data;
+                comments.addAll(Comment.returnCommentList(post!.postComments));
+
+                return Column(
+                  children: [
+                    Row(
                       children: [
-                        Row(
-                          children: [
-                            Expanded(
-                              child: Padding(
-                                padding: const EdgeInsets.all(24.0),
-                                child: Text(
-                                  post!.postName,
-                                  style: TextStyle(
-                                      color: Colors.white,
-                                      fontSize: 24,
-                                      fontWeight: FontWeight.bold),
-                                ),
-                              ),
+                        Expanded(
+                          child: Padding(
+                            padding: const EdgeInsets.all(24.0),
+                            child: Text(
+                              post.postName as String,
+                              style: TextStyle(
+                                  color: Colors.white,
+                                  fontSize: 24,
+                                  fontWeight: FontWeight.bold),
                             ),
-                          ],
-                        ),
-                        Row(children: [
-                          Column(
-                            children: [
-                              Padding(
-                                padding: const EdgeInsets.all(24.0),
-                                child: Container(
-                                    decoration: BoxDecoration(
-                                        border: Border.all(
-                                            width: 4,
-                                            color:
-                                                PostModel.randomBorderColor())),
-                                    child: FadeInImage.assetNetwork(
-                                        height: 60,
-                                        placeholder:
-                                            'assets/images/placeholder-profile-img.png',
-                                        image: PostModel.parseProfileAvatUrl(
-                                            post.profieImage))),
-                              ),
-                            ],
                           ),
-                          Column(
-                            children: [
+                        ),
+                      ],
+                    ),
+                    Row(children: [
+                      Column(
+                        children: [
+                          Padding(
+                            padding: const EdgeInsets.all(24.0),
+                            child: Container(
+                                decoration: BoxDecoration(
+                                    border: Border.all(
+                                        width: 4,
+                                        color: PostModel.randomBorderColor())),
+                                child: FadeInImage.assetNetwork(
+                                    height: 60,
+                                    placeholder:
+                                        'assets/images/placeholder-profile-img.png',
+                                    image: PostModel.parseProfileAvatUrl(
+                                        post.profieImage))),
+                          ),
+                        ],
+                      ),
+                      Column(
+                        children: [
+                          Text(
+                            post.username,
+                            style: TextStyle(
+                                color: Colors.white,
+                                fontSize: 24,
+                                fontWeight: FontWeight.bold),
+                          )
+                        ],
+                      )
+                    ]),
+                    Row(children: [
+                      Padding(
+                        padding: const EdgeInsets.all(24.0),
+                        child: Column(
+                          children: [
+                            Row(children: [
                               Text(
-                                post.username,
+                                'REPLIES',
                                 style: TextStyle(
                                     color: Colors.white,
-                                    fontSize: 24,
+                                    fontSize: 16,
                                     fontWeight: FontWeight.bold),
                               )
-                            ],
-                          )
+                            ]),
+                            Row(
+                              children: [
+                                Text(
+                                  post.postComments!.length.toString(),
+                                  style: TextStyle(
+                                      color: Colors.white,
+                                      fontSize: 16,
+                                      fontWeight: FontWeight.bold),
+                                )
+                              ],
+                            )
+                          ],
+                        ),
+                      ),
+                      Padding(
+                        padding: const EdgeInsets.all(24.0),
+                        child: Column(children: [
+                          Row(children: [
+                            Text(
+                              'READS',
+                              style: TextStyle(
+                                  color: Colors.white,
+                                  fontSize: 16,
+                                  fontWeight: FontWeight.bold),
+                            )
+                          ]),
+                          Row(children: [
+                            Text(
+                              post.postReads.toString(),
+                              style: TextStyle(
+                                  color: Colors.white,
+                                  fontSize: 16,
+                                  fontWeight: FontWeight.bold),
+                            )
+                          ])
                         ]),
-                        Container(
-                          color: Color(0xFF0a0a23),
-                          child: htmlView(snapshot, context),
-                        )
-                      ],
-                    );
-                  }
+                      ),
+                      Padding(
+                        padding: const EdgeInsets.all(24.0),
+                        child: Column(
+                          children: [
+                            Row(children: [
+                              Text(
+                                'LIKES',
+                                style: TextStyle(
+                                    color: Colors.white,
+                                    fontSize: 16,
+                                    fontWeight: FontWeight.bold),
+                              )
+                            ]),
+                            Row(children: [
+                              Text(
+                                post.postLikes.toString(),
+                                style: TextStyle(
+                                    color: Colors.white,
+                                    fontSize: 16,
+                                    fontWeight: FontWeight.bold),
+                              )
+                            ])
+                          ],
+                        ),
+                      )
+                    ]),
+                    Container(
+                      color: Color(0xFF0a0a23),
+                      child: htmlView(snapshot, context),
+                    ),
+                    ListView.builder(
+                        shrinkWrap: true,
+                        itemCount: comments.length,
+                        itemBuilder: (context, index) {
+                          return Row(
+                            children: [Text(comments[index].username)],
+                          );
+                        })
+                  ],
+                );
+              }
 
-                  return Center(
-                    child: CircularProgressIndicator(),
-                  );
-                })
-          ],
-        ),
-      ),
+              return Center(
+                child: CircularProgressIndicator(),
+              );
+            })
+      ],
     );
   }
 
@@ -124,7 +222,6 @@ class _ForumPostViewState extends State<ForumPostView> {
                   color: Colors.white,
                   width: MediaQuery.of(context).size.width,
                   backgroundColor: Color.fromRGBO(0x2A, 0x2A, 0x40, 1),
-                  padding: EdgeInsets.all(25),
                   textOverflow: TextOverflow.clip),
               "code":
                   Style(backgroundColor: Color.fromRGBO(0x2A, 0x2A, 0x40, 1)),
@@ -148,7 +245,27 @@ class _ForumPostViewState extends State<ForumPostView> {
                   scrollDirection: Axis.horizontal,
                   child: (context.tree as TableLayoutElement).toWidget(context),
                 );
-              }
+              },
+              "code": (context, child) {
+                var classList = context.tree.elementClasses;
+                if (classList.length > 0 && classList[0] == 'lang-auto')
+                  return ConstrainedBox(
+                    constraints: BoxConstraints(minHeight: 100, maxHeight: 500),
+                    child: SyntaxView(
+                      code: context.tree.element?.text as String,
+                      syntax: Syntax.JAVASCRIPT,
+                      syntaxTheme: SyntaxTheme.vscodeDark(),
+                      fontSize: 16.0,
+                      withZoom: true,
+                      withLinesCount: true,
+                      expanded: false,
+                    ),
+                  );
+              },
+            },
+            onLinkTap: (String? url, RenderContext context,
+                Map<String, String> attributes, dom.Element? element) {
+              launch(url!);
             },
           ),
         ))

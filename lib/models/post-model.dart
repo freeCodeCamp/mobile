@@ -31,12 +31,14 @@ class PostModel {
   final String name;
   final String profieImage;
   final String postId;
-  final String postName;
+  final String? postName;
   final String postCreateDate;
   final String postHtml;
+  final List? postComments;
   final int postType;
   final int postReplyCount;
   final int postReads;
+  final int? postLikes;
 
   PostModel(
       {required this.username,
@@ -44,31 +46,48 @@ class PostModel {
       required this.profieImage,
       required this.postHtml,
       required this.postId,
-      required this.postName,
+      this.postName,
       required this.postCreateDate,
       required this.postType,
       required this.postReplyCount,
-      required this.postReads});
+      required this.postReads,
+      this.postLikes,
+      this.postComments});
 
-  factory PostModel.fromJson(Map<String, dynamic> data) {
+  factory PostModel.fromPostJson(Map<String, dynamic> data) {
     return PostModel(
+        postComments: data["post_stream"]["posts"],
         postId: data["post_stream"]["posts"][0]["id"].toString(),
         postName: data["title"],
         postCreateDate: data["post_stream"]["posts"][0]["created_at"],
         postType: data["post_stream"]["posts"][0]["post_type"],
         postReplyCount: data["post_stream"]["posts"][0]["reply_count"],
-        postReads: data["post_stream"]["posts"][0]["post_reads"],
+        postReads: data["post_stream"]["posts"][0]["reads"],
+        postLikes: data["like_count"],
         postHtml: data["post_stream"]["posts"][0]['cooked'],
         username: data["post_stream"]["posts"][0]["username"],
         profieImage: data["post_stream"]["posts"][0]["avatar_template"],
         name: data["post_stream"]["posts"][0]["name"]);
   }
 
+  factory PostModel.fromCommentJson(Map<String, dynamic> data) {
+    return PostModel(
+        postId: data["id"].toString(),
+        postCreateDate: data["created_at"],
+        postType: data["post_type"],
+        postReplyCount: data["reply_count"],
+        postReads: data["reads"],
+        postHtml: data['cooked'],
+        username: data["username"],
+        profieImage: data["avatar_template"],
+        name: data["name"]);
+  }
+
   static Future<PostModel> fetchPost(String id, String slug) async {
     final response = await ForumConnect.connectAndGet('/t/$slug/$id');
 
     if (response.statusCode == 200) {
-      return PostModel.fromJson(jsonDecode(response.body));
+      return PostModel.fromPostJson(jsonDecode(response.body));
     } else {
       throw Exception('Could not load post');
     }
@@ -114,5 +133,20 @@ class PostCreator {
 
   static bool? userCanEdit(Map<String, bool> data) {
     return data["can_edit"];
+  }
+}
+
+class Comment {
+  static List<PostModel> returnCommentList(data) {
+    List<PostModel> comments = [];
+    List jsonComments = data;
+
+    if (jsonComments.length > 1) {
+      jsonComments.forEach((comment) {
+        comments.add(PostModel.fromCommentJson(comment));
+      });
+      comments.removeAt(0);
+    }
+    return comments;
   }
 }
