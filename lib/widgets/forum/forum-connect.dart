@@ -12,7 +12,8 @@ class ForumConnect {
 
     final response = await http.get(Uri.parse(baseUrl + endpoint),
         headers: <String, String>{'Accept': 'application/json'});
-
+    dev.log(baseUrl + endpoint);
+    //dev.log(response.body.toString());
     return response;
   }
 

@@ -3,9 +3,10 @@ import 'dart:developer' as dev;
 import 'dart:io';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:freecodecamp/models/post-model,.dart';
+import 'package:freecodecamp/models/post-model.dart';
 import 'package:freecodecamp/widgets/article/article-feed.dart';
 import 'package:freecodecamp/widgets/forum/forum-connect.dart';
+import 'package:freecodecamp/widgets/forum/forum-postview.dart';
 
 class ForumPostFeed extends StatefulWidget {
   final String slug;
@@ -103,55 +104,68 @@ class _ForumPostFeedState extends State<ForumPostFeed> {
                 itemCount: snapshot.data?.length,
                 shrinkWrap: true,
                 itemBuilder: (BuildContext context, int index) {
-                  return Container(
-                    height: 100,
-                    decoration: BoxDecoration(
-                        border: Border(
-                            bottom: BorderSide(width: 2, color: Colors.white))),
-                    child: Column(
-                      children: [
-                        Row(
-                          children: [
-                            Expanded(
+                  return InkWell(
+                    onTap: () {
+                      Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                              builder: (context) => ForumPostView(
+                                    refPostId: post![index]["id"].toString(),
+                                    refSlug: post[index]["slug"],
+                                  )));
+                    },
+                    child: Container(
+                      height: 100,
+                      decoration: BoxDecoration(
+                          border: Border(
+                              bottom:
+                                  BorderSide(width: 2, color: Colors.white))),
+                      child: Column(
+                        children: [
+                          Row(
+                            children: [
+                              Expanded(
+                                  child: Padding(
+                                padding: const EdgeInsets.all(8.0),
+                                child: Text(truncateStr(post![index]["title"]),
+                                    style: TextStyle(
+                                        fontSize: 18,
+                                        color: Colors.white,
+                                        fontWeight: FontWeight.bold)),
+                              ))
+                            ],
+                          ),
+                          // populateProfilePictures(post[index]["id"]),
+                          Row(
+                            children: [
+                              Expanded(
                                 child: Padding(
-                              padding: const EdgeInsets.all(8.0),
-                              child: Text(truncateStr(post![index]["title"]),
-                                  style: TextStyle(
-                                      fontSize: 18,
-                                      color: Colors.white,
-                                      fontWeight: FontWeight.bold)),
-                            ))
-                          ],
-                        ),
-                        // populateProfilePictures(post[index]["id"]),
-                        Row(
-                          children: [
-                            Expanded(
-                              child: Padding(
-                                padding: const EdgeInsets.all(8.0),
-                                child: Text(
-                                    'Views: ' + post[index]["views"].toString(),
-                                    style: TextStyle(
-                                        fontSize: 14,
-                                        color: Colors.white,
-                                        fontWeight: FontWeight.w300)),
+                                  padding: const EdgeInsets.all(8.0),
+                                  child: Text(
+                                      'Views: ' +
+                                          post[index]["views"].toString(),
+                                      style: TextStyle(
+                                          fontSize: 14,
+                                          color: Colors.white,
+                                          fontWeight: FontWeight.w300)),
+                                ),
                               ),
-                            ),
-                            Expanded(
-                              child: Padding(
-                                padding: const EdgeInsets.all(8.0),
-                                child: Text(
-                                    'Replies: ' +
-                                        post[index]["reply_count"].toString(),
-                                    style: TextStyle(
-                                        fontSize: 14,
-                                        color: Colors.white,
-                                        fontWeight: FontWeight.w300)),
+                              Expanded(
+                                child: Padding(
+                                  padding: const EdgeInsets.all(8.0),
+                                  child: Text(
+                                      'Replies: ' +
+                                          post[index]["reply_count"].toString(),
+                                      style: TextStyle(
+                                          fontSize: 14,
+                                          color: Colors.white,
+                                          fontWeight: FontWeight.w300)),
+                                ),
                               ),
-                            ),
-                          ],
-                        )
-                      ],
+                            ],
+                          )
+                        ],
+                      ),
                     ),
                   );
                 });
