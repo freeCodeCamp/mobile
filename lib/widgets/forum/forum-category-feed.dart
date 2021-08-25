@@ -1,5 +1,4 @@
 import 'dart:convert';
-import 'dart:developer' as dev;
 import 'package:flutter/material.dart';
 import 'package:freecodecamp/widgets/forum/forum-post-feed.dart';
 import 'package:hexcolor/hexcolor.dart';
@@ -60,7 +59,7 @@ class CategoryTemplate extends StatelessWidget {
 
   final List? categories;
 
-  int index;
+  final int index;
 
   @override
   Widget build(BuildContext context) {

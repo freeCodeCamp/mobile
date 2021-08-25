@@ -5,7 +5,6 @@ import 'package:freecodecamp/models/post-model.dart';
 import 'package:flutter_syntax_view/flutter_syntax_view.dart';
 import 'package:freecodecamp/widgets/forum/forum-comment.dart';
 import 'package:html/dom.dart' as dom;
-import 'dart:developer' as dev;
 
 import 'package:url_launcher/url_launcher.dart';
 

@@ -4,7 +4,7 @@ import 'package:webview_flutter/webview_flutter.dart';
 class Browserview extends StatefulWidget {
   Browserview({Key? key, required this.url}) : super(key: key);
 
-  late String url;
+  late final String url;
 
   _BrowserviewState createState() => _BrowserviewState();
 }
