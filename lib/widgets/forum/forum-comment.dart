@@ -13,6 +13,8 @@ class ForumComment extends StatefulWidget {
 }
 
 class _ForumCommentState extends State<ForumComment> {
+  bool isFavorited = false;
+
   @override
   Widget build(BuildContext context) {
     return ListView.builder(
@@ -20,6 +22,7 @@ class _ForumCommentState extends State<ForumComment> {
         physics: ClampingScrollPhysics(),
         itemCount: widget.comments.length,
         itemBuilder: (context, index) {
+          var post = widget.comments[index];
           return Column(
             children: [
               Row(
@@ -39,14 +42,14 @@ class _ForumCommentState extends State<ForumComment> {
                                   placeholder:
                                       'assets/images/placeholder-profile-img.png',
                                   image: PostModel.parseProfileAvatUrl(
-                                      widget.comments[index].profieImage))),
+                                      post.profieImage))),
                         ),
                       ],
                     ),
                     Column(
                       children: [
                         Text(
-                          widget.comments[index].username,
+                          post.username,
                           style: TextStyle(
                               color: Colors.white,
                               fontSize: 24,
@@ -64,6 +67,7 @@ class _ForumCommentState extends State<ForumComment> {
   }
 
   Column commentHtml(int index, BuildContext context) {
+    var post = widget.comments[index];
     return Column(
       children: [
         Row(
@@ -73,7 +77,7 @@ class _ForumCommentState extends State<ForumComment> {
                 padding: const EdgeInsets.all(16.0),
                 child: Html(
                   shrinkWrap: true,
-                  data: widget.comments[index].postHtml,
+                  data: post.postHtml,
                   style: {
                     "body": Style(color: Colors.white),
                     "p": Style(
@@ -85,12 +89,13 @@ class _ForumCommentState extends State<ForumComment> {
                       fontSize: FontSize.rem(1.35),
                     ),
                     "pre": Style(
-                        color: Colors.white,
-                        width: MediaQuery.of(context).size.width,
-                        backgroundColor: Color.fromRGBO(0x2A, 0x2A, 0x40, 1),
-                        textOverflow: TextOverflow.clip),
+                      color: Colors.white,
+                      width: MediaQuery.of(context).size.width,
+                      backgroundColor: Color.fromRGBO(0x2A, 0x2A, 0x40, 1),
+                    ),
                     "code": Style(
-                        backgroundColor: Color.fromRGBO(0x2A, 0x2A, 0x40, 1)),
+                      backgroundColor: Color.fromRGBO(0x2A, 0x2A, 0x40, 1),
+                    ),
                     "tr": Style(
                         border: Border(bottom: BorderSide(color: Colors.grey)),
                         backgroundColor: Colors.white),
@@ -116,17 +121,21 @@ class _ForumCommentState extends State<ForumComment> {
                     "code": (context, child) {
                       var classList = context.tree.elementClasses;
                       if (classList.length > 0 && classList[0] == 'lang-auto')
-                        return ConstrainedBox(
-                          constraints:
-                              BoxConstraints(minHeight: 100, maxHeight: 800),
-                          child: SyntaxView(
-                            code: context.tree.element?.text as String,
-                            syntax: Syntax.JAVASCRIPT,
-                            syntaxTheme: SyntaxTheme.vscodeDark(),
-                            fontSize: 16.0,
-                            withZoom: true,
-                            withLinesCount: false,
-                            expanded: false,
+                        return Expanded(
+                          child: ConstrainedBox(
+                            constraints: BoxConstraints(
+                              minHeight: 100,
+                              maxHeight: 250,
+                            ),
+                            child: SyntaxView(
+                              code: context.tree.element?.text as String,
+                              syntax: Syntax.JAVASCRIPT,
+                              syntaxTheme: SyntaxTheme.vscodeDark(),
+                              fontSize: 16.0,
+                              withZoom: false,
+                              withLinesCount: false,
+                              expanded: true,
+                            ),
                           ),
                         );
                     },
@@ -149,13 +158,26 @@ class _ForumCommentState extends State<ForumComment> {
               Padding(
                 padding: const EdgeInsets.all(24.0),
                 child: Text(
-                  PostModel.parseDate(widget.comments[index].postCreateDate),
-                  style: TextStyle(color: Colors.white, fontSize: 16),
+                  PostModel.parseDate(post.postCreateDate),
+                  style: TextStyle(color: Colors.white, fontSize: 18),
                 ),
+              ),
+              IconButton(
+                  onPressed: () {},
+                  icon: Icon(
+                    isFavorited ? Icons.favorite : Icons.favorite_border,
+                    color: isFavorited ? Colors.pinkAccent : Colors.white,
+                  )),
+              IconButton(
+                onPressed: () {
+                  PostModel.parseShareUrl(context, post.postSlug, post.postId);
+                },
+                icon: Icon(Icons.share_outlined),
+                color: Colors.white,
               )
             ],
           ),
-        )
+        ),
       ],
     );
   }

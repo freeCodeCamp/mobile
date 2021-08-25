@@ -114,7 +114,7 @@ class _ForumPostFeedState extends State<ForumPostFeed> {
                                   )));
                     },
                     child: Container(
-                      height: 100,
+                      height: 125,
                       decoration: BoxDecoration(
                           border: Border(
                               bottom:
@@ -161,6 +161,19 @@ class _ForumPostFeedState extends State<ForumPostFeed> {
                                           fontWeight: FontWeight.w300)),
                                 ),
                               ),
+                              Expanded(
+                                child: Padding(
+                                  padding: const EdgeInsets.all(8.0),
+                                  child: Text(
+                                      'Posted: ' +
+                                          PostModel.parseDate(
+                                              post[index]["created_at"]),
+                                      style: TextStyle(
+                                          fontSize: 14,
+                                          color: Colors.white,
+                                          fontWeight: FontWeight.w300)),
+                                ),
+                              )
                             ],
                           )
                         ],

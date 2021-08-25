@@ -1,8 +1,10 @@
 import 'dart:convert';
 import 'dart:math';
 import 'dart:ui';
+import 'package:flutter/material.dart';
 import 'package:freecodecamp/widgets/forum/forum-connect.dart';
 import 'package:jiffy/jiffy.dart';
+import 'package:share/share.dart';
 
 class PostList {
   static List<dynamic> returnPosts(Map<String, dynamic> data) {
@@ -32,6 +34,7 @@ class PostModel {
   final String profieImage;
   final String postId;
   final String? postName;
+  final String postSlug;
   final String postCreateDate;
   final String postHtml;
   final List? postComments;
@@ -47,6 +50,7 @@ class PostModel {
       required this.postHtml,
       required this.postId,
       this.postName,
+      required this.postSlug,
       required this.postCreateDate,
       required this.postType,
       required this.postReplyCount,
@@ -59,6 +63,7 @@ class PostModel {
         postComments: data["post_stream"]["posts"],
         postId: data["post_stream"]["posts"][0]["id"].toString(),
         postName: data["title"],
+        postSlug: data["post_stream"]["posts"][0]["topic_slug"],
         postCreateDate: data["post_stream"]["posts"][0]["created_at"],
         postType: data["post_stream"]["posts"][0]["post_type"],
         postReplyCount: data["post_stream"]["posts"][0]["reply_count"],
@@ -79,6 +84,7 @@ class PostModel {
         postReads: data["reads"],
         postHtml: data['cooked'],
         username: data["username"],
+        postSlug: data["topic_slug"],
         profieImage: data["avatar_template"],
         name: data["name"]);
   }
@@ -127,6 +133,11 @@ class PostModel {
 
   static parseDate(String date) {
     return Jiffy(date).fromNow();
+  }
+
+  static parseShareUrl(BuildContext context, String slug, String id) {
+    Share.share('https://forum.freecodecamp.org/$slug/$id',
+        subject: 'Question from the freecodecamp forum');
   }
 }
 

@@ -270,7 +270,7 @@ class _ForumPostViewState extends State<ForumPostView> {
                 var classList = context.tree.elementClasses;
                 if (classList.length > 0 && classList[0] == 'lang-auto')
                   return ConstrainedBox(
-                    constraints: BoxConstraints(minHeight: 100, maxHeight: 800),
+                    constraints: BoxConstraints(minHeight: 100, maxHeight: 500),
                     child: SyntaxView(
                       code: context.tree.element?.text as String,
                       syntax: Syntax.JAVASCRIPT,
@@ -278,7 +278,7 @@ class _ForumPostViewState extends State<ForumPostView> {
                       fontSize: 16.0,
                       withZoom: true,
                       withLinesCount: false,
-                      expanded: false,
+                      expanded: true,
                     ),
                   );
               },
