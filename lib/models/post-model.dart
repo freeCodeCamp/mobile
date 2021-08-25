@@ -3,6 +3,7 @@ import 'dart:developer' as dev;
 import 'dart:math';
 import 'dart:ui';
 import 'package:freecodecamp/widgets/forum/forum-connect.dart';
+import 'package:jiffy/jiffy.dart';
 
 class PostList {
   static List<dynamic> returnPosts(Map<String, dynamic> data) {
@@ -123,6 +124,10 @@ class PostModel {
     int index = random.nextInt(borderColor.length);
 
     return borderColor[index];
+  }
+
+  static parseDate(String date) {
+    return Jiffy(date).fromNow();
   }
 }
 

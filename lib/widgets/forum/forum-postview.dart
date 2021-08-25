@@ -176,6 +176,32 @@ class _ForumPostViewState extends State<ForumPostView> {
                             ])
                           ],
                         ),
+                      ),
+                      Column(
+                        children: [
+                          Row(
+                            children: [
+                              Text(
+                                'POSTED',
+                                style: TextStyle(
+                                    color: Colors.white,
+                                    fontSize: 16,
+                                    fontWeight: FontWeight.bold),
+                              )
+                            ],
+                          ),
+                          Row(
+                            children: [
+                              Text(
+                                PostModel.parseDate(post.postCreateDate),
+                                style: TextStyle(
+                                    color: Colors.white,
+                                    fontSize: 16,
+                                    fontWeight: FontWeight.bold),
+                              )
+                            ],
+                          ),
+                        ],
                       )
                     ]),
                     Container(

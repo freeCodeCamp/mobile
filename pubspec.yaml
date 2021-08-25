@@ -22,6 +22,7 @@ dependencies:
   algolia: ^1.0.1
   hexcolor: ^2.0.5
   flutter_syntax_view: ^4.0.0
+  jiffy: ^4.1.0
 dev_dependencies:
   flutter_test:
     sdk: flutter
