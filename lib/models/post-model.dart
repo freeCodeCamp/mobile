@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:freecodecamp/widgets/forum/forum-connect.dart';
 import 'package:jiffy/jiffy.dart';
 import 'package:share/share.dart';
+import 'dart:developer' as dev;
 
 class PostList {
   static List<dynamic> returnPosts(Map<String, dynamic> data) {
@@ -35,7 +36,7 @@ class PostModel {
   final String postId;
   final String? postName;
   final String postSlug;
-  final String postCreateDate;
+  final dynamic postCreateDate;
   final String postHtml;
   final List? postComments;
   final int postType;
@@ -89,6 +90,20 @@ class PostModel {
         name: data["name"]);
   }
 
+  factory PostModel.fromCommentBotJson(Map<String, dynamic> data) {
+    return PostModel(
+        postId: data["postId"].toString(),
+        postCreateDate: data["postCreateDate"],
+        postType: data["postType"],
+        postReplyCount: data["postReplyCount"],
+        postReads: data["postReads"],
+        postHtml: data['postHtml'],
+        username: data["username"],
+        postSlug: data["postSlug"],
+        profieImage: data["profieImage"],
+        name: data["name"]);
+  }
+
   static Future<PostModel> fetchPost(String id, String slug) async {
     final response = await ForumConnect.connectAndGet('/t/$slug/$id');
 
@@ -99,18 +114,22 @@ class PostModel {
     }
   }
 
-  static String parseProfileAvatUrl(String url) {
-    List size = url.split('{size}');
-    String avatarUrl = size[0] + '60' + size[1];
+  static String parseProfileAvatUrl(String? url) {
+    List size = url!.split('{size}');
+    String avatarUrl = '';
     String baseUrl = 'https://forum.freecodecamp.org';
     bool fromDiscourse = size[0]
         .toString()
         .contains(new RegExp(r'discourse-cdn', caseSensitive: false));
 
-    if (fromDiscourse) {
-      return avatarUrl;
-    } else if (size.length == 1) {
+    if (size.length > 1) {
+      avatarUrl = size[0] + '60' + size[1];
+    }
+
+    if (size.length == 1) {
       return size[0];
+    } else if (fromDiscourse) {
+      return avatarUrl;
     } else {
       return baseUrl + avatarUrl;
     }
@@ -135,8 +154,8 @@ class PostModel {
     return Jiffy(date).fromNow();
   }
 
-  static parseShareUrl(BuildContext context, String slug, String id) {
-    Share.share('https://forum.freecodecamp.org/$slug/$id',
+  static parseShareUrl(BuildContext context, String slug) {
+    Share.share('https://forum.freecodecamp.org/t/$slug',
         subject: 'Question from the freecodecamp forum');
   }
 }
@@ -161,6 +180,21 @@ class Comment {
         comments.add(PostModel.fromCommentJson(comment));
       });
       comments.removeAt(0);
+    } else if (comments.length == 0) {
+      comments.add(PostModel.fromCommentBotJson({
+        "username": 'FreeCodeCamp Bot',
+        "name": 'Cliff',
+        "profieImage":
+            'https://pbs.twimg.com/profile_images/1276770212927410176/qTgTIejk_400x400.jpg',
+        "postHtml":
+            '<p> No comments yet a contributor will be here shortly!</p>',
+        "postId": 9999999,
+        "postSlug": '',
+        "postCreateDate": data[0]["created_at"],
+        "postType": 0,
+        "postReplyCount": 0,
+        "postReads": 0
+      }));
     }
     return comments;
   }

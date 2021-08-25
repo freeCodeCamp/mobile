@@ -158,7 +158,7 @@ class _ForumCommentState extends State<ForumComment> {
               Padding(
                 padding: const EdgeInsets.all(24.0),
                 child: Text(
-                  PostModel.parseDate(post.postCreateDate),
+                  'posted ' + PostModel.parseDate(post.postCreateDate),
                   style: TextStyle(color: Colors.white, fontSize: 18),
                 ),
               ),
@@ -170,7 +170,7 @@ class _ForumCommentState extends State<ForumComment> {
                   )),
               IconButton(
                 onPressed: () {
-                  PostModel.parseShareUrl(context, post.postSlug, post.postId);
+                  PostModel.parseShareUrl(context, post.postSlug);
                 },
                 icon: Icon(Icons.share_outlined),
                 color: Colors.white,

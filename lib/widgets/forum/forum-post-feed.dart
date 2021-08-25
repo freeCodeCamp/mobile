@@ -113,70 +113,92 @@ class _ForumPostFeedState extends State<ForumPostFeed> {
                                     refSlug: post[index]["slug"],
                                   )));
                     },
-                    child: Container(
-                      height: 125,
-                      decoration: BoxDecoration(
-                          border: Border(
-                              bottom:
-                                  BorderSide(width: 2, color: Colors.white))),
-                      child: Column(
-                        children: [
-                          Row(
-                            children: [
-                              Expanded(
+                    child: ConstrainedBox(
+                      constraints: BoxConstraints(minHeight: 125),
+                      child: Container(
+                        decoration: BoxDecoration(
+                            border: Border(
+                                bottom:
+                                    BorderSide(width: 2, color: Colors.white))),
+                        child: Column(
+                          children: [
+                            Row(
+                              children: [
+                                Expanded(
+                                    child: Padding(
+                                  padding: const EdgeInsets.all(8.0),
+                                  child: Text(
+                                      truncateStr(post![index]["title"]),
+                                      style: TextStyle(
+                                          fontSize: 18,
+                                          color: Colors.white,
+                                          fontWeight: FontWeight.bold)),
+                                ))
+                              ],
+                            ),
+                            Row(
+                              children: [
+                                Expanded(
                                   child: Padding(
-                                padding: const EdgeInsets.all(8.0),
-                                child: Text(truncateStr(post![index]["title"]),
-                                    style: TextStyle(
-                                        fontSize: 18,
-                                        color: Colors.white,
-                                        fontWeight: FontWeight.bold)),
-                              ))
-                            ],
-                          ),
-                          // populateProfilePictures(post[index]["id"]),
-                          Row(
-                            children: [
-                              Expanded(
-                                child: Padding(
-                                  padding: const EdgeInsets.all(8.0),
-                                  child: Text(
-                                      'Views: ' +
-                                          post[index]["views"].toString(),
-                                      style: TextStyle(
-                                          fontSize: 14,
-                                          color: Colors.white,
-                                          fontWeight: FontWeight.w300)),
-                                ),
-                              ),
-                              Expanded(
-                                child: Padding(
-                                  padding: const EdgeInsets.all(8.0),
-                                  child: Text(
-                                      'Replies: ' +
-                                          post[index]["reply_count"].toString(),
-                                      style: TextStyle(
-                                          fontSize: 14,
-                                          color: Colors.white,
-                                          fontWeight: FontWeight.w300)),
-                                ),
-                              ),
-                              Expanded(
-                                child: Padding(
-                                  padding: const EdgeInsets.all(8.0),
-                                  child: Text(
-                                      'Posted: ' +
+                                    padding: const EdgeInsets.all(8.0),
+                                    child: Text(
+                                      "posted " +
                                           PostModel.parseDate(
                                               post[index]["created_at"]),
                                       style: TextStyle(
-                                          fontSize: 14,
-                                          color: Colors.white,
-                                          fontWeight: FontWeight.w300)),
+                                        color: Colors.white,
+                                        fontSize: 16,
+                                      ),
+                                    ),
+                                  ),
                                 ),
-                              )
-                            ],
-                          )
-                        ],
+                                Expanded(
+                                  child: Padding(
+                                    padding: const EdgeInsets.all(8.0),
+                                    child: Text(
+                                      "activity " +
+                                          PostModel.parseDate(
+                                              post[index]["bumped_at"]),
+                                      style: TextStyle(
+                                        color: Colors.white,
+                                        fontSize: 16,
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                              ],
+                            ),
+                            Row(
+                              children: [
+                                Expanded(
+                                  child: Padding(
+                                    padding: const EdgeInsets.all(8.0),
+                                    child: Text(
+                                        'Views: ' +
+                                            post[index]["views"].toString(),
+                                        style: TextStyle(
+                                            fontSize: 14,
+                                            color: Colors.white,
+                                            fontWeight: FontWeight.w300)),
+                                  ),
+                                ),
+                                Expanded(
+                                  child: Padding(
+                                    padding: const EdgeInsets.all(8.0),
+                                    child: Text(
+                                        'Replies: ' +
+                                            post[index]["reply_count"]
+                                                .toString(),
+                                        style: TextStyle(
+                                            fontSize: 14,
+                                            color: Colors.white,
+                                            fontWeight: FontWeight.w300)),
+                                  ),
+                                ),
+                              ],
+                            )
+                          ],
+                        ),
                       ),
                     ),
                   );

@@ -7,6 +7,7 @@ import 'package:freecodecamp/widgets/forum/forum-comment.dart';
 import 'package:html/dom.dart' as dom;
 
 import 'package:url_launcher/url_launcher.dart';
+import 'dart:developer' as dev;
 
 class ForumPostView extends StatefulWidget {
   const ForumPostView(
@@ -22,6 +23,7 @@ class ForumPostView extends StatefulWidget {
 class _ForumPostViewState extends State<ForumPostView> {
   late Future<PostModel> futurePost;
   List<PostModel> comments = [];
+  bool isFavorited = false;
   void initState() {
     super.initState();
     futurePost = PostModel.fetchPost(widget.refPostId, widget.refSlug);
@@ -100,9 +102,72 @@ class _ForumPostViewState extends State<ForumPostView> {
                         ],
                       )
                     ]),
+                    Padding(
+                      padding:
+                          const EdgeInsets.only(bottom: 16, left: 24, top: 16),
+                      child: Row(
+                        children: [
+                          Text(
+                            "posted " +
+                                PostModel.parseDate(post.postCreateDate) +
+                                " by " +
+                                post.username,
+                            style: TextStyle(
+                                color: Colors.white,
+                                fontSize: 16,
+                                fontWeight: FontWeight.bold),
+                          )
+                        ],
+                      ),
+                    ),
+                    Column(
+                      children: [
+                        Padding(
+                          padding: const EdgeInsets.only(
+                              bottom: 8, left: 24, right: 8),
+                          child: Row(
+                            children: [
+                              Text(
+                                'SHARE',
+                                style: TextStyle(
+                                    color: Colors.white,
+                                    fontSize: 16,
+                                    fontWeight: FontWeight.bold),
+                              ),
+                              IconButton(
+                                onPressed: () {
+                                  PostModel.parseShareUrl(
+                                      context, post.postSlug);
+                                },
+                                icon: Icon(Icons.share_outlined),
+                                color: Colors.white,
+                              ),
+                              Text(
+                                'LIKE',
+                                style: TextStyle(
+                                    color: Colors.white,
+                                    fontSize: 16,
+                                    fontWeight: FontWeight.bold),
+                              ),
+                              IconButton(
+                                  onPressed: () {},
+                                  icon: Icon(
+                                    isFavorited
+                                        ? Icons.favorite
+                                        : Icons.favorite_border,
+                                    color: isFavorited
+                                        ? Colors.pinkAccent
+                                        : Colors.white,
+                                  )),
+                            ],
+                          ),
+                        ),
+                      ],
+                    ),
                     Row(children: [
                       Padding(
-                        padding: const EdgeInsets.all(24.0),
+                        padding: const EdgeInsets.only(
+                            bottom: 8, left: 24, right: 8, top: 8),
                         child: Column(
                           children: [
                             Row(children: [
@@ -129,7 +194,8 @@ class _ForumPostViewState extends State<ForumPostView> {
                         ),
                       ),
                       Padding(
-                        padding: const EdgeInsets.all(24.0),
+                        padding: const EdgeInsets.only(
+                            bottom: 8, left: 24, right: 8, top: 8),
                         child: Column(children: [
                           Row(children: [
                             Text(
@@ -152,7 +218,8 @@ class _ForumPostViewState extends State<ForumPostView> {
                         ]),
                       ),
                       Padding(
-                        padding: const EdgeInsets.all(24.0),
+                        padding: const EdgeInsets.only(
+                            bottom: 8, left: 24, right: 8, top: 8),
                         child: Column(
                           children: [
                             Row(children: [
@@ -176,32 +243,6 @@ class _ForumPostViewState extends State<ForumPostView> {
                           ],
                         ),
                       ),
-                      Column(
-                        children: [
-                          Row(
-                            children: [
-                              Text(
-                                'POSTED',
-                                style: TextStyle(
-                                    color: Colors.white,
-                                    fontSize: 16,
-                                    fontWeight: FontWeight.bold),
-                              )
-                            ],
-                          ),
-                          Row(
-                            children: [
-                              Text(
-                                PostModel.parseDate(post.postCreateDate),
-                                style: TextStyle(
-                                    color: Colors.white,
-                                    fontSize: 16,
-                                    fontWeight: FontWeight.bold),
-                              )
-                            ],
-                          ),
-                        ],
-                      )
                     ]),
                     Container(
                       color: Color(0xFF0a0a23),
