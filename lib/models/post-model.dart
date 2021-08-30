@@ -5,7 +5,6 @@ import 'package:flutter/material.dart';
 import 'package:freecodecamp/widgets/forum/forum-connect.dart';
 import 'package:jiffy/jiffy.dart';
 import 'package:share/share.dart';
-import 'dart:developer' as dev;
 
 class PostList {
   static List<dynamic> returnPosts(Map<String, dynamic> data) {

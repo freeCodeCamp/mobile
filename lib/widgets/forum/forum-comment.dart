@@ -79,6 +79,8 @@ class _ForumCommentState extends State<ForumComment> {
                   shrinkWrap: true,
                   data: post.postHtml,
                   style: {
+                    "aside": Style(
+                        border: Border.all(width: 2, color: Colors.white)),
                     "body": Style(color: Colors.white),
                     "p": Style(
                         fontSize: FontSize.rem(1.35),

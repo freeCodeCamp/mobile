@@ -1,9 +1,12 @@
 import 'dart:convert';
 import 'package:flutter/material.dart';
+import 'package:freecodecamp/widgets/drawer.dart';
 import 'package:freecodecamp/widgets/forum/forum-post-feed.dart';
+import 'package:freecodecamp/widgets/forum/forum-search.dart';
 import 'package:hexcolor/hexcolor.dart';
 
 import '/models/category-model.dart';
+import 'forum-category-builder.dart';
 import 'forum-connect.dart';
 
 class ForumCategoryView extends StatefulWidget {
@@ -11,41 +14,51 @@ class ForumCategoryView extends StatefulWidget {
 }
 
 class _ForumCategoryViewState extends State<ForumCategoryView> {
-  late Future<List<dynamic>?> categoryFuture;
+  int _index = 1;
 
-  void initState() {
-    super.initState();
-    categoryFuture = fetchList();
+  void _onTapped(int index) {
+    setState(() {
+      _index = index;
+    });
   }
 
-  Future<List<dynamic>?> fetchList() async {
-    final response = await ForumConnect.connectAndGet('/categories');
-
-    if (response.statusCode == 200) {
-      return CategoryList.returnCategories(jsonDecode(response.body));
-    }
-  }
+  List views = <dynamic>[
+    ForumSearch(),
+    CategoryBuilder(),
+    ForumSearch(),
+  ];
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+        appBar: AppBar(
+          backgroundColor: Color(0xFF0a0a23),
+          title: Text('categories'),
+          centerTitle: true,
+        ),
         backgroundColor: Color.fromRGBO(0x2A, 0x2A, 0x40, 1),
-        body: FutureBuilder<List<dynamic>?>(
-          future: categoryFuture,
-          builder: (context, snapshot) {
-            if (snapshot.hasData) {
-              var categories = snapshot.data;
-              return ListView.builder(
-                  itemCount: snapshot.data?.length,
-                  itemBuilder: (BuildContext context, int index) {
-                    return CategoryTemplate(
-                        categories: categories, index: index);
-                  });
-            } else if (snapshot.hasError) {
-              return Text('${snapshot.error}');
-            }
-            return Center(child: const CircularProgressIndicator());
-          },
+        drawer: Menu(),
+        body: views.elementAt(_index),
+        bottomNavigationBar: BottomNavigationBar(
+          backgroundColor: Color(0xFF0a0a23),
+          unselectedItemColor: Colors.white,
+          selectedItemColor: Color.fromRGBO(0x99, 0xc9, 0xff, 1),
+          items: <BottomNavigationBarItem>[
+            BottomNavigationBarItem(
+                icon: Icon(
+                  Icons.add,
+                  color: Colors.white,
+                ),
+                label: 'new'),
+            BottomNavigationBarItem(
+                icon: Icon(Icons.article, color: Colors.white),
+                label: 'categories'),
+            BottomNavigationBarItem(
+                icon: Icon(Icons.search_outlined, color: Colors.white),
+                label: 'search')
+          ],
+          currentIndex: _index,
+          onTap: _onTapped,
         ));
   }
 }
