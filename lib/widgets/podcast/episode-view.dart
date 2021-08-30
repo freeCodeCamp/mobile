@@ -6,6 +6,7 @@ import 'package:flutter_html/style.dart';
 import 'package:podcast_search/podcast_search.dart';
 import 'package:intl/intl.dart';
 import 'dart:developer';
+import 'package:just_audio/just_audio.dart';
 
 class EpisodeView extends StatefulWidget {
   const EpisodeView({Key? key, required this.episode}) : super(key: key);
