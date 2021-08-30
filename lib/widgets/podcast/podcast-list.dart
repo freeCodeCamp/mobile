@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:freecodecamp/widgets/podcast/episode-view.dart';
 import 'package:podcast_search/podcast_search.dart';
 import 'package:intl/intl.dart';
 import 'dart:developer';
@@ -73,6 +74,10 @@ class PodcastEpisodeTemplate extends StatelessWidget {
     return InkWell(
       onTap: () {
         log("Clicked ${episode.title}");
+        Navigator.push(
+            context,
+            MaterialPageRoute(
+                builder: (context) => EpisodeView(episode: episode)));
       },
       child: ConstrainedBox(
         constraints: const BoxConstraints(minHeight: 50),
