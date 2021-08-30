@@ -19,8 +19,8 @@ class _PodcastAppState extends State<PodcastApp> {
     // final podcastURL = 'https://themattwalshblog.com/category/podcast/feed';
 
     Podcast podcast = await Podcast.loadFeed(url: podcastURL);
-    log("Podcast episodes: ${podcast.episodes.length}");
-    return podcast.episodes;
+    log("Podcast episodes: ${podcast.episodes?.length}");
+    return podcast.episodes!;
   }
 
   @override
@@ -107,7 +107,7 @@ class PodcastEpisodeTemplate extends StatelessWidget {
                     Padding(
                       padding: const EdgeInsets.only(top: 8),
                       child: Text(
-                        DateFormat.yMMMd().format(episode.publicationDate),
+                        DateFormat.yMMMd().format(episode.publicationDate!),
                         style: TextStyle(
                           fontSize: 12,
                           color: Colors.white,
