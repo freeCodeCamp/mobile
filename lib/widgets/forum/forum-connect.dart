@@ -20,6 +20,8 @@ class ForumConnect {
   static Future<dynamic> connectAndPost(String endpoint,
       Map<String, String> headers, Map<String, String> body) async {
     await dotenv.load(fileName: ".env");
+    headers['Api-key'] = dotenv.env['DISCOURSE_API'] as String;
+    headers['Api-Username'] = dotenv.env['DISCOURSE_USERNAME'] as String;
 
     final response = await http.post(Uri.parse(baseUrl + endpoint),
         headers: headers, body: jsonEncode(body));
