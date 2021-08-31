@@ -123,24 +123,22 @@ class _ForumCommentState extends State<ForumComment> {
                     "code": (context, child) {
                       var classList = context.tree.elementClasses;
                       if (classList.length > 0 && classList[0] == 'lang-auto')
-                        return Expanded(
-                          child: ConstrainedBox(
-                            constraints: BoxConstraints(
-                              minHeight: 100,
-                              maxHeight: 250,
-                            ),
-                            child: SyntaxView(
-                              code: context.tree.element?.text as String,
-                              syntax: Syntax.JAVASCRIPT,
-                              syntaxTheme: SyntaxTheme.vscodeDark(),
-                              fontSize: 16.0,
-                              withZoom: false,
-                              withLinesCount: false,
-                              expanded: true,
-                            ),
+                        return ConstrainedBox(
+                          constraints: BoxConstraints(
+                            minHeight: 100,
+                            maxHeight: 250,
+                          ),
+                          child: SyntaxView(
+                            code: context.tree.element?.text as String,
+                            syntax: Syntax.JAVASCRIPT,
+                            syntaxTheme: SyntaxTheme.vscodeDark(),
+                            fontSize: 16.0,
+                            withZoom: false,
+                            withLinesCount: false,
+                            expanded: true,
                           ),
                         );
-                    },
+                    }
                   },
                   onLinkTap: (String? url, RenderContext context,
                       Map<String, String> attributes, dom.Element? element) {

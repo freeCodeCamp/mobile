@@ -33,57 +33,6 @@ class _ForumPostFeedState extends State<ForumPostFeed> {
     }
   }
 
-  Future<void> fetchUserProfilePictures(String postId) async {
-    String baseUrl = 'https://forum.freecodecamp.org';
-    final response = await ForumConnect.connectAndGet('/t/$postId');
-
-    if (response.statusCode == 200) {
-      participantNames = [];
-      List participants =
-          PostList.returnProfilePictures(json.decode(response.body));
-
-      participants.forEach((participant) {
-        List size = participant["avatar_template"].toString().split('{size}');
-        String avatarUrl = size[0] + "60" + size[1];
-        bool fromDiscourseCdn = size[0]
-            .toString()
-            .contains(new RegExp(r'discourse-cdn', caseSensitive: false));
-
-        if (fromDiscourseCdn) {
-          participantNames.add(avatarUrl);
-        } else if (size.length == 1) {
-          participantNames.add(size[0]);
-        } else {
-          participantNames.add(baseUrl + avatarUrl);
-        }
-      });
-      dev.log(participantNames.toString());
-      setState(() {
-        count = participantNames.length;
-      });
-      //dev.log(count.toString());
-    }
-  }
-
-  ListView populateProfilePictures(id) {
-    fetchUserProfilePictures(id.toString());
-    return ListView.builder(
-        physics: ClampingScrollPhysics(),
-        shrinkWrap: true,
-        itemCount: count,
-        itemBuilder: (context, index) {
-          return SizedBox(
-            height: 20,
-            width: 20,
-            child: Row(
-              children: [
-                Image.network(participantNames[index]),
-              ],
-            ),
-          );
-        });
-  }
-
   void initState() {
     super.initState();
     postFuture = fetchPosts();

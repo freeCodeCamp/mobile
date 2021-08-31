@@ -6,7 +6,6 @@ import 'package:freecodecamp/widgets/article/article-bookmark-feed.dart';
 import 'package:freecodecamp/widgets/article/article-search.dart';
 import 'package:freecodecamp/widgets/drawer.dart';
 
-import 'article-bookmark-view.dart';
 import 'article-feed-builder.dart';
 import 'article-view.dart';
 

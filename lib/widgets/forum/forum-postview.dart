@@ -5,9 +5,9 @@ import 'package:freecodecamp/models/post-model.dart';
 import 'package:flutter_syntax_view/flutter_syntax_view.dart';
 import 'package:freecodecamp/widgets/forum/forum-comment.dart';
 import 'package:html/dom.dart' as dom;
-
-import 'package:url_launcher/url_launcher.dart';
 import 'dart:developer' as dev;
+import 'package:flutter_svg/flutter_svg.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class ForumPostView extends StatefulWidget {
   const ForumPostView(
@@ -323,6 +323,35 @@ class _ForumPostViewState extends State<ForumPostView> {
                     ),
                   );
               },
+              "aside": (context, child) {
+                var link = context.tree.element!.attributes['data-onebox-src'];
+                if (link!.length > 0) {
+                  return InkWell(
+                    onTap: () {
+                      launch(link);
+                    },
+                    child: Text(
+                      link,
+                      style:
+                          TextStyle(color: Color.fromRGBO(0x00, 0x2e, 0xad, 1)),
+                    ),
+                  );
+                }
+              },
+              "svg": (context, child) {
+                var forbiddenClasses = context.tree.element!.className;
+                if (forbiddenClasses
+                    .toString()
+                    .contains(new RegExp(r'fa ', caseSensitive: false))) {
+                  return null;
+                }
+              },
+              "image": (context, child) {
+                var disableEmoijs = context.tree.element!.className;
+                if (disableEmoijs.toString() == 'emoij') {
+                  return null;
+                }
+              }
             },
             onLinkTap: (String? url, RenderContext context,
                 Map<String, String> attributes, dom.Element? element) {
