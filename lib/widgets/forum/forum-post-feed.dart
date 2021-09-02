@@ -1,8 +1,7 @@
 import 'dart:convert';
-import 'dart:developer' as dev;
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:freecodecamp/models/post-model.dart';
+import 'package:freecodecamp/models/forum-post-model.dart';
 import 'package:freecodecamp/widgets/article/article-feed.dart';
 import 'package:freecodecamp/widgets/forum/forum-connect.dart';
 import 'package:freecodecamp/widgets/forum/forum-postview.dart';

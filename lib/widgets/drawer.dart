@@ -10,8 +10,6 @@ class Menu extends StatefulWidget {
 }
 
 class _MenuState extends State<Menu> {
-  int _index = 1;
-
   Widget build(BuildContext context) {
     return Container(
       width: MediaQuery.of(context).size.width,

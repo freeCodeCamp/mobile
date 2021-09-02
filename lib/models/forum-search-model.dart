@@ -31,7 +31,7 @@ class SearchModel {
     List posts = json.decode(response.body)['topics'];
     dev.log(posts.toString());
 
-    if (query.length <= 2) {
+    if (query.length <= 2 || posts.length == 0) {
       return null;
     }
 

@@ -1,13 +1,11 @@
-import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:freecodecamp/widgets/drawer.dart';
 import 'package:freecodecamp/widgets/forum/forum-post-feed.dart';
 import 'package:freecodecamp/widgets/forum/forum-search.dart';
 import 'package:hexcolor/hexcolor.dart';
 
-import '/models/category-model.dart';
 import 'forum-category-builder.dart';
-import 'forum-connect.dart';
+import 'forum-login.dart';
 
 class ForumCategoryView extends StatefulWidget {
   _ForumCategoryViewState createState() => _ForumCategoryViewState();
@@ -23,7 +21,7 @@ class _ForumCategoryViewState extends State<ForumCategoryView> {
   }
 
   List views = <dynamic>[
-    ForumSearch(),
+    ForumLoginTemplate(),
     CategoryBuilder(),
     ForumSearch(),
   ];

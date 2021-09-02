@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:freecodecamp/models/forum-search-model.dart';
-import 'package:freecodecamp/widgets/forum/forum-post-feed.dart';
 
 import 'forum-postview.dart';
 

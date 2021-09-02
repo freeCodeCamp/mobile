@@ -1,7 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_html/flutter_html.dart';
-import 'package:freecodecamp/models/post-model.dart';
+import 'package:freecodecamp/models/forum-post-model.dart';
 import 'package:flutter_syntax_view/flutter_syntax_view.dart';
 import 'package:freecodecamp/widgets/forum/forum-comment.dart';
 import 'package:html/dom.dart' as dom;

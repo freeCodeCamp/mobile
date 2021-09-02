@@ -1,7 +1,7 @@
 import 'dart:convert';
 
 import 'package:flutter/material.dart';
-import 'package:freecodecamp/models/category-model.dart';
+import 'package:freecodecamp/models/forum-category-model.dart';
 
 import 'forum-category-feed.dart';
 import 'forum-connect.dart';
