@@ -109,6 +109,7 @@ class _ArticleAppState extends State<ArticleApp> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+
       appBar: AppBar(
         backgroundColor: Color(0xFF0a0a23),
         title: Text('articles'),
