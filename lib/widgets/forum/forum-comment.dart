@@ -42,7 +42,7 @@ class _ForumCommentState extends State<ForumComment> {
                                   placeholder:
                                       'assets/images/placeholder-profile-img.png',
                                   image: PostModel.parseProfileAvatUrl(
-                                      post.profieImage))),
+                                      post.profieImage, "60"))),
                         ),
                       ],
                     ),

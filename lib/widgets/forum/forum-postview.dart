@@ -4,6 +4,7 @@ import 'package:flutter_html/flutter_html.dart';
 import 'package:freecodecamp/models/forum-post-model.dart';
 import 'package:flutter_syntax_view/flutter_syntax_view.dart';
 import 'package:freecodecamp/widgets/forum/forum-comment.dart';
+import 'package:freecodecamp/widgets/forum/forum-user-view.dart';
 import 'package:html/dom.dart' as dom;
 import 'package:url_launcher/url_launcher.dart';
 
@@ -69,37 +70,47 @@ class _ForumPostViewState extends State<ForumPostView> {
                         ),
                       ],
                     ),
-                    Row(children: [
-                      Column(
-                        children: [
-                          Padding(
-                            padding: const EdgeInsets.all(24.0),
-                            child: Container(
-                                decoration: BoxDecoration(
-                                    border: Border.all(
-                                        width: 4,
-                                        color: PostModel.randomBorderColor())),
-                                child: FadeInImage.assetNetwork(
-                                    height: 60,
-                                    placeholder:
-                                        'assets/images/placeholder-profile-img.png',
-                                    image: PostModel.parseProfileAvatUrl(
-                                        post.profieImage))),
-                          ),
-                        ],
-                      ),
-                      Column(
-                        children: [
-                          Text(
-                            post.username,
-                            style: TextStyle(
-                                color: Colors.white,
-                                fontSize: 24,
-                                fontWeight: FontWeight.bold),
-                          )
-                        ],
-                      )
-                    ]),
+                    InkWell(
+                      onTap: () {
+                        Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                                builder: (context) =>
+                                    UserTemplate(username: post.username)));
+                      },
+                      child: Row(children: [
+                        Column(
+                          children: [
+                            Padding(
+                              padding: const EdgeInsets.all(24.0),
+                              child: Container(
+                                  decoration: BoxDecoration(
+                                      border: Border.all(
+                                          width: 4,
+                                          color:
+                                              PostModel.randomBorderColor())),
+                                  child: FadeInImage.assetNetwork(
+                                      height: 60,
+                                      placeholder:
+                                          'assets/images/placeholder-profile-img.png',
+                                      image: PostModel.parseProfileAvatUrl(
+                                          post.profieImage, "60"))),
+                            ),
+                          ],
+                        ),
+                        Column(
+                          children: [
+                            Text(
+                              post.username,
+                              style: TextStyle(
+                                  color: Colors.white,
+                                  fontSize: 24,
+                                  fontWeight: FontWeight.bold),
+                            )
+                          ],
+                        )
+                      ]),
+                    ),
                     Padding(
                       padding:
                           const EdgeInsets.only(bottom: 16, left: 24, top: 16),
