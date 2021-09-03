@@ -76,14 +76,15 @@ class User {
     throw Exception('could not load user data: ' + response.body.toString());
   }
 
-  static List<UserTopic>? getUserTopics(data) {
-    int userTopics = data['topics'].length;
-    List<UserTopic> topics = [];
+  static Future<List<UserTopic>?> getUserTopics(username, amount) async {
+    UserSummary userSummary = await fetchUserSummary(username);
 
-    if (userTopics == 0) return null;
+    List<dynamic>? userTopics = userSummary.topics;
+    List<UserTopic>? topics = [];
 
-    for (int i = 0; i < userTopics; i++) {
-      topics.add(UserTopic.fromJson(data['topics'][i]));
+    for (int i = 0; i < userTopics!.length; i++) {
+      if (i == amount) break;
+      topics.add(UserTopic.fromJson(userTopics[i]));
     }
     return topics;
   }
@@ -100,10 +101,10 @@ class User {
 class UserTopic {
   final int id;
   final int postCount;
+  final int likedCount;
   final String title;
   final String slug;
   final String createdAt;
-  final String likedCount;
 
   UserTopic(
       {required this.id,
@@ -116,11 +117,11 @@ class UserTopic {
   factory UserTopic.fromJson(Map<String, dynamic> data) {
     return UserTopic(
         id: data['id'],
-        postCount: data['post_count'],
+        postCount: data['posts_count'],
         title: data['title'],
         slug: data['slug'],
         createdAt: data['created_at'],
-        likedCount: data['liked_count']);
+        likedCount: data['like_count']);
   }
 }
 
@@ -135,16 +136,17 @@ class UserBadge {
   final bool enabled;
   final bool manuallyGrantable;
 
-  UserBadge(
-      {required this.id,
-      required this.grantCount,
-      required this.name,
-      required this.description,
-      required this.slug,
-      required this.allowTitle,
-      required this.listable,
-      required this.enabled,
-      required this.manuallyGrantable});
+  UserBadge({
+    required this.id,
+    required this.grantCount,
+    required this.name,
+    required this.description,
+    required this.slug,
+    required this.allowTitle,
+    required this.listable,
+    required this.enabled,
+    required this.manuallyGrantable,
+  });
 
   factory UserBadge.fromJson(Map<String, dynamic> data) {
     return UserBadge(
@@ -170,6 +172,7 @@ class UserSummary {
   final int postCount;
   final int solvedCount;
   final bool canSeeStats;
+  final List? topics;
 
   UserSummary(
       {required this.likesGiven,
@@ -180,7 +183,8 @@ class UserSummary {
       required this.topicCount,
       required this.postCount,
       required this.solvedCount,
-      required this.canSeeStats});
+      required this.canSeeStats,
+      this.topics});
 
   factory UserSummary.fromJson(Map<String, dynamic> data) {
     return UserSummary(
@@ -192,6 +196,7 @@ class UserSummary {
         topicCount: data['user_summary']['topic_count'],
         postCount: data['user_summary']['post_count'],
         solvedCount: data['user_summary']['solved_count'],
-        canSeeStats: data['user_summary']['can_see_summary_stats']);
+        canSeeStats: data['user_summary']['can_see_summary_stats'],
+        topics: data['topics']);
   }
 }

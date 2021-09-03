@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:freecodecamp/models/forum-post-model.dart';
 import 'package:freecodecamp/models/forum-user-model.dart';
 
+import 'package:freecodecamp/widgets/forum/forum-postview.dart';
+
 class UserTemplate extends StatefulWidget {
   UserTemplate({Key? key, required this.username}) : super(key: key);
   late final String username;
@@ -20,8 +22,10 @@ class _UserTemplateState extends State<UserTemplate> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Color.fromRGBO(0x2A, 0x2A, 0x40, 1),
-      body: Column(
-        children: [userTemplateBuilder(context, userFuture)],
+      body: SingleChildScrollView(
+        child: Column(
+          children: [userTemplateBuilder(context, userFuture)],
+        ),
       ),
     );
   }
@@ -166,26 +170,120 @@ class UserTopicTemplate extends StatelessWidget {
         Row(
           children: [
             Padding(
-              padding: const EdgeInsets.all(16.0),
+              padding: const EdgeInsets.only(top: 16, left: 16),
               child: Text('Topics',
                   style: TextStyle(color: Colors.white, fontSize: 28)),
             )
           ],
         ),
-        Row(children: [
-          // Column(
-          //   children: [
-          //     Padding(
-          //       padding: const EdgeInsets.only(left: 16.0, top: 8),
-          //       child: Text(
-          //         'Seen ' + PostModel.parseDate(user!.),
-          //         style: TextStyle(fontSize: 18, color: Colors.white),
-          //       ),
-          //     )
-          //   ],
-          // )
-        ])
+        FutureBuilder<List<UserTopic>?>(
+          future: User.getUserTopics(user!.username, 10),
+          builder: (context, snapshot) {
+            if (snapshot.hasData) {
+              var topic = snapshot.data;
+              return Column(
+                children: [
+                  UserTopicBuilder(topic: topic),
+                ],
+              );
+            } else if (snapshot.hasError) {
+              throw Exception(snapshot.error);
+            }
+
+            return Center(
+              child: CircularProgressIndicator(),
+            );
+          },
+        )
       ],
+    );
+  }
+}
+
+class UserTopicBuilder extends StatelessWidget {
+  const UserTopicBuilder({
+    Key? key,
+    required this.topic,
+  }) : super(key: key);
+
+  final List<UserTopic>? topic;
+
+  @override
+  Widget build(BuildContext context) {
+    return ListView.builder(
+      itemCount: topic!.length,
+      physics: ClampingScrollPhysics(),
+      shrinkWrap: true,
+      itemBuilder: (context, index) {
+        return InkWell(
+          onTap: () {
+            Navigator.push(
+                context,
+                MaterialPageRoute(
+                    builder: (context) => ForumPostView(
+                          refPostId: topic![index].id.toString(),
+                          refSlug: topic![index].slug,
+                        )));
+          },
+          child: Padding(
+            padding: const EdgeInsets.only(bottom: 16.0),
+            child: Container(
+              decoration: BoxDecoration(
+                  border: Border(
+                      bottom: BorderSide(color: Colors.white, width: 2),
+                      top: BorderSide(color: Colors.white, width: 2))),
+              child: Column(
+                children: [
+                  Row(children: [
+                    Expanded(
+                      child: Padding(
+                        padding: const EdgeInsets.all(8.0),
+                        child: Text(topic![index].title,
+                            style:
+                                TextStyle(color: Colors.white, fontSize: 18)),
+                      ),
+                    )
+                  ]),
+                  Row(
+                    children: [
+                      Padding(
+                        padding: const EdgeInsets.all(8.0),
+                        child: Text(
+                            'posted ' +
+                                PostModel.parseDate(topic![index].createdAt),
+                            style:
+                                TextStyle(color: Colors.white, fontSize: 18)),
+                      ),
+                    ],
+                  ),
+                  Row(
+                    children: [
+                      Expanded(
+                        child: Padding(
+                          padding: const EdgeInsets.all(8.0),
+                          child: Text(
+                              'Likes ' + topic![index].likedCount.toString(),
+                              style:
+                                  TextStyle(color: Colors.white, fontSize: 18)),
+                        ),
+                      ),
+                      Expanded(
+                        child: Padding(
+                          padding: const EdgeInsets.all(8.0),
+                          child: Text(
+                              'Replies ' + topic![index].postCount.toString(),
+                              style:
+                                  TextStyle(color: Colors.white, fontSize: 18)),
+                        ),
+                      )
+                    ],
+                  )
+                ],
+              ),
+            ),
+          ),
+        );
+      },
     );
   }
 }
