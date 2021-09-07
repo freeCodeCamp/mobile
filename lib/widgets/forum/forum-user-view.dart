@@ -90,7 +90,7 @@ FutureBuilder userTemplateBuilder(context, future) {
               Row(children: [
                 Expanded(
                   child: Padding(
-                    padding: const EdgeInsets.all(16.0),
+                    padding: EdgeInsets.all(user.bio != null ? 16.0 : 0),
                     child: Text(
                       user.name,
                       style: TextStyle(color: Colors.white, fontSize: 28),
@@ -102,12 +102,12 @@ FutureBuilder userTemplateBuilder(context, future) {
                 children: [
                   Expanded(
                     child: Padding(
-                      padding: EdgeInsets.all(user.bio != null ? 16 : 0),
-                      child: Text(
-                        user.bio ?? "",
-                        style: TextStyle(fontSize: 16, color: Colors.white),
-                      ),
-                    ),
+                        padding: EdgeInsets.all(user.bio != null ? 16 : 0),
+                        child: user.bio != null
+                            ? Text(user.bio!,
+                                style: TextStyle(
+                                    fontSize: 16, color: Colors.white))
+                            : null),
                   )
                 ],
               ),
@@ -115,7 +115,9 @@ FutureBuilder userTemplateBuilder(context, future) {
                 children: [
                   Expanded(
                     child: Padding(
-                      padding: const EdgeInsets.only(left: 16.0, top: 8),
+                      padding: user.bio != null
+                          ? EdgeInsets.only(left: 16.0, top: 8)
+                          : EdgeInsets.only(left: 16),
                       child: Text(
                         'Joined ' + PostModel.parseDate(user.createdAt),
                         style: TextStyle(fontSize: 18, color: Colors.white),
