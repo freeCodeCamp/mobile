@@ -54,15 +54,17 @@ FutureBuilder userTemplateBuilder(context, future) {
                           heightFactor: 0.5,
                           widthFactor: 1,
                           child: FadeInImage.assetNetwork(
-                              placeholder:
-                                  'assets/images/placeholder-profile-img.png',
-                              image: PostModel.parseProfileAvatUrl(
-                                  user!.profilePicture,
-                                  MediaQuery.of(context)
-                                      .size
-                                      .width
-                                      .toInt()
-                                      .toString())),
+                            placeholder:
+                                'assets/images/placeholder-profile-img.png',
+                            image: PostModel.parseProfileAvatUrl(
+                                user!.profilePicture,
+                                MediaQuery.of(context)
+                                    .size
+                                    .width
+                                    .toInt()
+                                    .toString()),
+                            width: 360,
+                          ),
                         ),
                       ),
                     ),
@@ -111,27 +113,23 @@ FutureBuilder userTemplateBuilder(context, future) {
               ),
               Row(
                 children: [
-                  Column(
-                    children: [
-                      Padding(
-                        padding: const EdgeInsets.only(left: 16.0, top: 8),
-                        child: Text(
-                          'Joined ' + PostModel.parseDate(user.createdAt),
-                          style: TextStyle(fontSize: 18, color: Colors.white),
-                        ),
-                      )
-                    ],
+                  Expanded(
+                    child: Padding(
+                      padding: const EdgeInsets.only(left: 16.0, top: 8),
+                      child: Text(
+                        'Joined ' + PostModel.parseDate(user.createdAt),
+                        style: TextStyle(fontSize: 18, color: Colors.white),
+                      ),
+                    ),
                   ),
-                  Column(
-                    children: [
-                      Padding(
-                        padding: const EdgeInsets.only(left: 16.0, top: 8),
-                        child: Text(
-                          'Seen ' + PostModel.parseDate(user.lastSeen),
-                          style: TextStyle(fontSize: 18, color: Colors.white),
-                        ),
-                      )
-                    ],
+                  Expanded(
+                    child: Padding(
+                      padding: const EdgeInsets.only(left: 16.0, top: 8),
+                      child: Text(
+                        'Seen ' + PostModel.parseDate(user.lastSeen),
+                        style: TextStyle(fontSize: 18, color: Colors.white),
+                      ),
+                    ),
                   )
                 ],
               ),
@@ -177,7 +175,7 @@ class UserTopicTemplate extends StatelessWidget {
           ],
         ),
         FutureBuilder<List<UserTopic>?>(
-          future: User.getUserTopics(user!.username, 10),
+          future: User.getUserTopics(user!.username, 5),
           builder: (context, snapshot) {
             if (snapshot.hasData) {
               var topic = snapshot.data;
@@ -229,9 +227,8 @@ class UserTopicBuilder extends StatelessWidget {
             padding: const EdgeInsets.only(bottom: 16.0),
             child: Container(
               decoration: BoxDecoration(
-                  border: Border(
-                      bottom: BorderSide(color: Colors.white, width: 2),
-                      top: BorderSide(color: Colors.white, width: 2))),
+                  border:
+                      Border(top: BorderSide(color: Colors.white, width: 2))),
               child: Column(
                 children: [
                   Row(children: [
