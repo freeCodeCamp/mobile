@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:freecodecamp/models/forum-post-model.dart';
 import 'package:freecodecamp/models/forum-user-model.dart';
-
+import 'dart:developer' as dev;
 import 'package:freecodecamp/widgets/forum/forum-postview.dart';
 
 class UserTemplate extends StatefulWidget {
@@ -142,7 +142,15 @@ FutureBuilder userTemplateBuilder(context, future) {
                   width: MediaQuery.of(context).size.width,
                   child: UserTopicTemplate(user: user),
                 ),
-              )
+              ),
+              Padding(
+                padding: const EdgeInsets.only(top: 16.0),
+                child: Container(
+                  color: Color(0xFF0a0a23),
+                  width: MediaQuery.of(context).size.width,
+                  child: UserBadgeBuilder(user: user),
+                ),
+              ),
             ],
           );
         } else if (snapshot.hasError) {
@@ -283,6 +291,81 @@ class UserTopicBuilder extends StatelessWidget {
           ),
         );
       },
+    );
+  }
+}
+
+class UserBadgeBuilder extends StatelessWidget {
+  UserBadgeBuilder({
+    Key? key,
+    required this.user,
+  }) : super(key: key);
+  final User? user;
+  late final List<UserBadge> badges;
+
+  @override
+  Widget build(BuildContext context) {
+    var future = User.fetchUserBadges(user!.username);
+
+    return Padding(
+      padding: const EdgeInsets.only(top: 16.0, left: 16),
+      child: Column(
+        children: [
+          Row(
+            children: [
+              Text(
+                'Badges',
+                style: TextStyle(fontSize: 28, color: Colors.white),
+              ),
+            ],
+          ),
+          FutureBuilder<List<UserBadge>>(
+            future: future,
+            builder: (context, snapshot) {
+              if (snapshot.hasData) {
+                var badge = snapshot.data;
+                return ListView.builder(
+                    shrinkWrap: true,
+                    physics: ClampingScrollPhysics(),
+                    itemCount: snapshot.data?.length,
+                    itemBuilder: (context, index) {
+                      return Column(
+                        children: [
+                          Row(
+                            children: [
+                              Text(
+                                badge![index].name,
+                                style: TextStyle(
+                                    color: Colors.white, fontSize: 18),
+                              ),
+                            ],
+                          ),
+                          Row(
+                            children: [
+                              Expanded(
+                                child: Text(
+                                  User.parseBadgeDescription(
+                                      badge[index].description),
+                                  style: TextStyle(
+                                      color: Colors.white, fontSize: 18),
+                                ),
+                              )
+                            ],
+                          )
+                        ],
+                      );
+                    });
+              } else if (snapshot.hasError) {
+                throw Exception(snapshot.error);
+              }
+
+              return Center(
+                child: CircularProgressIndicator(),
+              );
+            },
+          ),
+        ],
+      ),
     );
   }
 }

@@ -1,6 +1,8 @@
 import 'dart:convert';
-
+import 'dart:developer' as dev;
 import 'package:freecodecamp/widgets/forum/forum-connect.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:html/parser.dart';
 
 class User {
   final String username;
@@ -96,6 +98,33 @@ class User {
     }
     throw Exception('could not load user summary: ' + response.body.toString());
   }
+
+  static Future<List<UserBadge>> fetchUserBadges(String username) async {
+    final response = await ForumConnect.connectAndGet('/user-badges/$username');
+    List<dynamic> badgesJson = jsonDecode(response.body)['badges'];
+    List<UserBadge> badges = [];
+    if (response.statusCode == 200) {
+      for (int i = 0; i < badgesJson.length; i++) {
+        badges.add(UserBadge.fromJson(badgesJson[i]));
+      }
+    } else {
+      throw Exception('failed loading badges: ' + response.body.toString());
+    }
+
+    return badges;
+  }
+
+  // static FaIcon discourseIconParser(String icon) {
+  //   List iconParts = icon.split('-');
+  //   dev.log(iconParts[1]);
+  //   return FaIcon(iconParts[1]);
+  // }
+
+  static String parseBadgeDescription(String desc) {
+    final document = parse(desc);
+    final String parsedDesc = parse(document.body!.text).documentElement!.text;
+    return parsedDesc;
+  }
 }
 
 class UserTopic {
@@ -131,6 +160,8 @@ class UserBadge {
   final String name;
   final String description;
   final String slug;
+  final String imageUrl;
+  final String icon;
   final bool allowTitle;
   final bool listable;
   final bool enabled;
@@ -142,6 +173,8 @@ class UserBadge {
     required this.name,
     required this.description,
     required this.slug,
+    required this.imageUrl,
+    required this.icon,
     required this.allowTitle,
     required this.listable,
     required this.enabled,
@@ -155,6 +188,8 @@ class UserBadge {
         name: data['name'],
         description: data['description'],
         slug: data['slug'],
+        imageUrl: data['image_url'],
+        icon: data['icon'],
         allowTitle: data['allow_title'],
         listable: data['listable'],
         enabled: data['enabled'],
