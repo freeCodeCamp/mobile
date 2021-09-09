@@ -186,10 +186,10 @@ class Comment {
       comments.removeAt(0);
     } else if (comments.length == 0) {
       comments.add(PostModel.fromCommentBotJson({
-        "username": 'FreeCodeCamp Bot',
+        "username": 'camperbot',
         "name": 'Cliff',
         "profieImage":
-            'https://pbs.twimg.com/profile_images/1276770212927410176/qTgTIejk_400x400.jpg',
+            'https://sea1.discourse-cdn.com/freecodecamp/user_avatar/forum.freecodecamp.org/camperbot/240/18364_2.png',
         "postHtml":
             '<p> No comments yet a contributor will be here shortly!</p>',
         "postId": 9999999,

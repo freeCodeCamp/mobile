@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_html/flutter_html.dart';
 import 'package:freecodecamp/models/forum-post-model.dart';
 import 'package:freecodecamp/models/forum-user-model.dart';
 import 'dart:developer' as dev;
@@ -90,7 +91,8 @@ FutureBuilder userTemplateBuilder(context, future) {
               Row(children: [
                 Expanded(
                   child: Padding(
-                    padding: EdgeInsets.all(user.bio != null ? 16.0 : 0),
+                    padding: EdgeInsets.only(
+                        top: user.bio != null ? 16 : 0, left: 16),
                     child: Text(
                       user.name,
                       style: TextStyle(color: Colors.white, fontSize: 28),
@@ -101,14 +103,18 @@ FutureBuilder userTemplateBuilder(context, future) {
               Row(
                 children: [
                   Expanded(
-                    child: Padding(
-                        padding: EdgeInsets.all(user.bio != null ? 16 : 0),
-                        child: user.bio != null
-                            ? Text(user.bio!,
-                                style: TextStyle(
-                                    fontSize: 16, color: Colors.white))
-                            : null),
-                  )
+                      child: Padding(
+                          padding: EdgeInsets.all(user.bio != null ? 16 : 0),
+                          child: user.bio != null
+                              ? Html(
+                                  data: user.bio,
+                                  style: {
+                                    "body": Style(
+                                        color: Colors.white,
+                                        fontSize: FontSize.rem(1.2))
+                                  },
+                                )
+                              : null))
                 ],
               ),
               Row(
