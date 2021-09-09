@@ -99,12 +99,14 @@ class User {
     throw Exception('could not load user summary: ' + response.body.toString());
   }
 
-  static Future<List<UserBadge>> fetchUserBadges(String username) async {
+  static Future<List<UserBadge>> fetchUserBadges(
+      String username, int max) async {
     final response = await ForumConnect.connectAndGet('/user-badges/$username');
     List<dynamic> badgesJson = jsonDecode(response.body)['badges'];
     List<UserBadge> badges = [];
     if (response.statusCode == 200) {
       for (int i = 0; i < badgesJson.length; i++) {
+        if (i == max) break;
         badges.add(UserBadge.fromJson(badgesJson[i]));
       }
     } else {

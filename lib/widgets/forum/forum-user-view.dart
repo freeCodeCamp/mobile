@@ -305,7 +305,7 @@ class UserBadgeBuilder extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    var future = User.fetchUserBadges(user!.username);
+    var future = User.fetchUserBadges(user!.username, 5);
 
     return Padding(
       padding: const EdgeInsets.only(top: 16.0, left: 16),
@@ -332,22 +332,36 @@ class UserBadgeBuilder extends StatelessWidget {
                       return Column(
                         children: [
                           Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
                             children: [
-                              Text(
-                                badge![index].name,
-                                style: TextStyle(
-                                    color: Colors.white, fontSize: 18),
+                              Image.network('https://via.placeholder.com/200')
+                            ],
+                          ),
+                          Row(
+                            children: [
+                              Padding(
+                                padding:
+                                    const EdgeInsets.only(top: 16.0, left: 16),
+                                child: Text(
+                                  badge![index].name,
+                                  style: TextStyle(
+                                      color: Colors.white, fontSize: 18),
+                                ),
                               ),
                             ],
                           ),
                           Row(
                             children: [
                               Expanded(
-                                child: Text(
-                                  User.parseBadgeDescription(
-                                      badge[index].description),
-                                  style: TextStyle(
-                                      color: Colors.white, fontSize: 18),
+                                child: Padding(
+                                  padding: const EdgeInsets.only(
+                                      top: 16, left: 16, bottom: 16),
+                                  child: Text(
+                                    User.parseBadgeDescription(
+                                        badge[index].description),
+                                    style: TextStyle(
+                                        color: Colors.white, fontSize: 18),
+                                  ),
                                 ),
                               )
                             ],
