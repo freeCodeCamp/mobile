@@ -4,6 +4,9 @@ import 'package:freecodecamp/widgets/forum/forum-connect.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:html/parser.dart';
 
+// This file has all "needed" user fields with types provided by the Discourse api
+// read the Discourse API documentation for more user fields and type them here if needed
+
 class User {
   final String username;
   final String name;
@@ -91,6 +94,8 @@ class User {
     return topics;
   }
 
+  // A summary fetched from the Discourse API used by the user profile file.
+
   static Future<UserSummary> fetchUserSummary(String username) async {
     final response = await ForumConnect.connectAndGet('/u/$username/summary');
     if (response.statusCode == 200) {
@@ -98,6 +103,8 @@ class User {
     }
     throw Exception('could not load user summary: ' + response.body.toString());
   }
+
+  // A badge of badges fetched from the Discourse api
 
   static Future<List<UserBadge>> fetchUserBadges(
       String username, int max) async {
@@ -122,12 +129,16 @@ class User {
   //   return FaIcon(iconParts[1]);
   // }
 
+  // This parses the badge description so it has no anchor tags.
+
   static String parseBadgeDescription(String desc) {
     final document = parse(desc);
     final String parsedDesc = parse(document.body!.text).documentElement!.text;
     return parsedDesc;
   }
 }
+
+// An user topic is different from a post because it's fetched from a different endpoint.
 
 class UserTopic {
   final int id;

@@ -1,3 +1,4 @@
+// this fetches a list of categories provided by the Discourse API
 class CategoryList {
   static List<dynamic> returnCategories(Map<String, dynamic> data) {
     return data["category_list"]["categories"];

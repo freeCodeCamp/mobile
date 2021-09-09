@@ -29,6 +29,7 @@ class PostList {
   }
 }
 
+// This types and converts the JSON into the instances of the PostModel class.
 class PostModel {
   final String username;
   final String name;
@@ -114,6 +115,8 @@ class PostModel {
     }
   }
 
+  // this parses different urls based on the cdn (Discourse or FCC)
+
   static String parseProfileAvatUrl(
     String? url,
     String size,
@@ -139,6 +142,8 @@ class PostModel {
     }
   }
 
+  // This provides a random border color to the profile pictures
+
   static Color randomBorderColor() {
     final random = new Random();
 
@@ -154,10 +159,12 @@ class PostModel {
     return borderColor[index];
   }
 
+  // This returns a parsed date from ISO to : 20 minutes ago
   static parseDate(String date) {
     return Jiffy(date).fromNow();
   }
 
+  // This returns a parsed url for sharing a post
   static parseShareUrl(BuildContext context, String slug) {
     Share.share('https://forum.freecodecamp.org/t/$slug',
         subject: 'Question from the freecodecamp forum');
@@ -174,6 +181,8 @@ class PostCreator {
   }
 }
 
+// This returns a list of comments, if there are no comments present on an users post
+// there wil be a standard message from CamperBot that a contributor wil be there shortly
 class Comment {
   static List<PostModel> returnCommentList(data) {
     List<PostModel> comments = [];
