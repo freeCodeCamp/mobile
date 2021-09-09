@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_html/flutter_html.dart';
 import 'package:freecodecamp/widgets/drawer.dart';
 import 'package:freecodecamp/widgets/forum/forum-post-feed.dart';
 import 'package:freecodecamp/widgets/forum/forum-search.dart';
 import 'package:hexcolor/hexcolor.dart';
-
+import 'package:url_launcher/url_launcher.dart';
+import 'package:html/dom.dart' as dom;
 import 'forum-category-builder.dart';
 import 'forum-login.dart';
 
@@ -98,7 +100,7 @@ class CategoryTemplate extends StatelessWidget {
               children: [
                 Expanded(
                     child: Padding(
-                  padding: const EdgeInsets.all(8.0),
+                  padding: const EdgeInsets.all(16.0),
                   child: Text(categories?[index]["name"],
                       style: TextStyle(
                           fontSize: 24,
@@ -111,19 +113,28 @@ class CategoryTemplate extends StatelessWidget {
               children: [
                 Expanded(
                     child: Padding(
-                  padding: const EdgeInsets.all(8.0),
-                  child: Text(
-                    categories?[index]["description"],
-                    style: TextStyle(fontSize: 16, color: Colors.white),
-                  ),
-                ))
+                        padding: const EdgeInsets.all(8.0),
+                        child: Html(
+                          data: categories?[index]["description"],
+                          style: {
+                            "body": Style(
+                                color: Colors.white,
+                                fontSize: FontSize.rem(1.2))
+                          },
+                          onLinkTap: (String? url,
+                              RenderContext context,
+                              Map<String, String> attributes,
+                              dom.Element? element) {
+                            launch(url!);
+                          },
+                        )))
               ],
             ),
             Row(
               children: [
                 Expanded(
                     child: Padding(
-                  padding: const EdgeInsets.all(8.0),
+                  padding: const EdgeInsets.all(16.0),
                   child: Text(
                       categories![index]["topics_week"].toString() +
                           ' new topics this week',

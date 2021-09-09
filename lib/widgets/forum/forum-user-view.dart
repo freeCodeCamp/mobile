@@ -2,8 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter_html/flutter_html.dart';
 import 'package:freecodecamp/models/forum-post-model.dart';
 import 'package:freecodecamp/models/forum-user-model.dart';
-import 'dart:developer' as dev;
+import 'package:html/dom.dart' as dom;
 import 'package:freecodecamp/widgets/forum/forum-postview.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class UserTemplate extends StatefulWidget {
   UserTemplate({Key? key, required this.username}) : super(key: key);
@@ -112,6 +113,12 @@ FutureBuilder userTemplateBuilder(context, future) {
                                     "body": Style(
                                         color: Colors.white,
                                         fontSize: FontSize.rem(1.2))
+                                  },
+                                  onLinkTap: (String? url,
+                                      RenderContext context,
+                                      Map<String, String> attributes,
+                                      dom.Element? element) {
+                                    launch(url!);
                                   },
                                 )
                               : null))
