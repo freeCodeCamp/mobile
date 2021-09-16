@@ -151,7 +151,7 @@ class _ArticleAppState extends State<ArticleApp> {
     await dotenv.load(fileName: ".env");
 
     String feedUrl =
-        "https://www.freecodecamp.org/news/ghost/api/v3/content/posts/?key=${dotenv.env['NEWSKEY']}&include=tags,authors&page=" +
+        "https://ghost-youtube-tutorial.freecodecamp.dev/news/ghost/api/v3/content/posts/?key=${dotenv.env['NEWSKEY']}&include=tags,authors&page=" +
             page.toString() +
             "&fields=title,url,feature_image,id";
 

@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:algolia/algolia.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
-import 'package:freecodecamp/widgets/article/article-view.dart';
 import 'dart:developer' as dev;
 
 import 'article-feed.dart';
+import 'article-view.dart';
 
 class ArticleSearch extends StatefulWidget {
   const ArticleSearch({Key? key}) : super(key: key);
@@ -85,31 +85,34 @@ class _ArticleSearchState extends State<ArticleSearch> {
                       itemCount: current.length,
                       itemBuilder: (context, index) {
                         return Container(
-                            height: 75,
-                            decoration: BoxDecoration(
-                                border: Border(
-                                    bottom: BorderSide(
-                                        width: 2, color: Colors.white))),
-                            child: Padding(
-                                padding: const EdgeInsets.all(16.0),
-                                child: new InkWell(
-                                  child: Text(
-                                    truncateStr(current[index].data['title']),
-                                    style: TextStyle(
-                                      fontSize: 18,
-                                      color: Colors.white,
-                                    ),
+                          height: 75,
+                          decoration: BoxDecoration(
+                              border: Border(
+                                  bottom: BorderSide(
+                                      width: 2, color: Colors.white))),
+                          child: Padding(
+                            padding: const EdgeInsets.all(16.0),
+                            child: new InkWell(
+                              child: Text(
+                                truncateStr(current[index].data['title']),
+                                style: TextStyle(
+                                  fontSize: 18,
+                                  color: Colors.white,
+                                ),
+                              ),
+                              onTap: () => {
+                                Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                    builder: (context) => ArticleViewTemplate(
+                                        articleId:
+                                            current[index].data["objectID"]),
                                   ),
-                                  onTap: () => {
-                                    Navigator.push(
-                                        context,
-                                        MaterialPageRoute(
-                                            builder: (context) =>
-                                                ArticleViewTemplate(
-                                                    articleId: current[index]
-                                                        .data["objectID"])))
-                                  },
-                                )));
+                                ),
+                              },
+                            ),
+                          ),
+                        );
                       }),
                 )
               ],
