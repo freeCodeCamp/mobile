@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:freecodecamp/ui/widgets/dumb/article/article-bookmark-feed.dart';
-import 'package:freecodecamp/ui/widgets/dumb/article/article-feed.dart';
-import 'package:freecodecamp/ui/widgets/dumb/article/article-search.dart';
+import 'package:freecodecamp/ui/widgets/dumb/article/article_bookmark_feed.dart';
+import 'package:freecodecamp/ui/views/news/news-feed/news_feed.dart';
+import 'package:freecodecamp/ui/widgets/dumb/article/article_search.dart';
 import 'package:freecodecamp/ui/widgets/dumb/nav_button_widget.dart';
 import 'package:stacked/stacked.dart';
 
@@ -12,10 +12,11 @@ class HomeView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    List<Widget> views = <Widget>[
-      BookmarkViewTemplate(),
-      const ArticleApp(),
-      const ArticleSearch()
+    List<dynamic> views = <dynamic>[
+      null,
+      const NewsFeedView(),
+      null
+      //const ArticleSearch()
     ];
     List<Widget> titles = <Widget>[
       const Text('BOOKMARKED ARTICLES'),
@@ -65,7 +66,7 @@ class HomeView extends StatelessWidget {
                             Icons.article,
                             size: 70,
                           ),
-                          isWebComponent: false,
+                          isWebComponent: true,
                           viewModel: viewModel,
                         ),
                       ),
