@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:freecodecamp/widgets/podcast/episode-view.dart';
+import 'episode_view.dart';
 import 'package:podcast_search/podcast_search.dart';
 import 'package:intl/intl.dart';
 import 'dart:developer';
