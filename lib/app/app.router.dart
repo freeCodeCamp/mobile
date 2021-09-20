@@ -11,6 +11,7 @@ import 'package:stacked/stacked.dart';
 
 import '../ui/views/browser/browser_view.dart';
 import '../ui/views/home/home_view.dart';
+import '../ui/views/news/news-article-post/news_article_post_view.dart';
 import '../ui/views/startup/startup_view.dart';
 import '../ui/views/website/website_view.dart';
 
@@ -19,11 +20,13 @@ class Routes {
   static const String websiteView = '/website-view';
   static const String homeView = '/home-view';
   static const String browserView = '/browser-view';
+  static const String newsArticlePostView = '/news-article-post-view';
   static const all = <String>{
     startupView,
     websiteView,
     homeView,
     browserView,
+    newsArticlePostView,
   };
 }
 
@@ -35,6 +38,7 @@ class StackedRouter extends RouterBase {
     RouteDef(Routes.websiteView, page: WebsiteView),
     RouteDef(Routes.homeView, page: HomeView),
     RouteDef(Routes.browserView, page: BrowserView),
+    RouteDef(Routes.newsArticlePostView, page: NewsArticlePostView),
   ];
   @override
   Map<Type, StackedRouteFactory> get pagesMap => _pagesMap;
@@ -67,6 +71,16 @@ class StackedRouter extends RouterBase {
         settings: data,
       );
     },
+    NewsArticlePostView: (data) {
+      var args = data.getArgs<NewsArticlePostViewArguments>(nullOk: false);
+      return MaterialPageRoute<dynamic>(
+        builder: (context) => NewsArticlePostView(
+          key: args.key,
+          refId: args.refId,
+        ),
+        settings: data,
+      );
+    },
   };
 }
 
@@ -79,4 +93,11 @@ class BrowserViewArguments {
   final Key? key;
   final String url;
   BrowserViewArguments({this.key, required this.url});
+}
+
+/// NewsArticlePostView arguments holder class
+class NewsArticlePostViewArguments {
+  final Key? key;
+  final String refId;
+  NewsArticlePostViewArguments({this.key, required this.refId});
 }

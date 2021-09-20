@@ -5,8 +5,8 @@ import 'package:freecodecamp/ui/views/news/news-feed/news_feed_lazyloading.dart'
 import 'package:freecodecamp/ui/views/news/news-feed/news_feed_model.dart';
 import 'package:stacked/stacked.dart';
 
+import '../news_helpers.dart';
 import 'news_feed_model.dart';
-import 'dart:developer' as dev;
 
 class NewsFeedView extends StatelessWidget {
   const NewsFeedView({Key? key}) : super(key: key);
@@ -31,7 +31,11 @@ class NewsFeedView extends StatelessWidget {
               SchedulerBinding.instance!.addPostFrameCallback(
                   (timeStamp) => model.handleArticleLazyLoading(i));
             },
-            child: thumbnailView(context, model, model.articles, i)));
+            child: InkWell(
+                onTap: () {
+                  model.navigateTo(model.articles[i].id);
+                },
+                child: thumbnailView(context, model, model.articles, i))));
   }
 
   Column thumbnailView(BuildContext context, NewsFeedModel model,
@@ -46,7 +50,7 @@ class NewsFeedView extends StatelessWidget {
               height: 210,
               width: MediaQuery.of(context).size.width,
               child: Image.network(
-                model.getArticleImage(articles![i].featureImage, context),
+                NewsHelper.getArticleImage(articles![i].featureImage, context),
                 fit: BoxFit.fitWidth,
               ),
             ),
@@ -59,7 +63,7 @@ class NewsFeedView extends StatelessWidget {
                   height: 50,
                   decoration: BoxDecoration(
                       border: Border.all(
-                          width: 4, color: model.randomBorderColor())),
+                          width: 4, color: NewsHelper.randomBorderColor())),
                   child: Image.network(
                     articles[i].profileImage,
                     fit: BoxFit.fill,
@@ -81,7 +85,7 @@ class NewsFeedView extends StatelessWidget {
                       child: Padding(
                         padding: const EdgeInsets.all(16.0),
                         child: Text(
-                          model.truncateStr(articles[i].title),
+                          NewsHelper.truncateStr(articles[i].title),
                           style: const TextStyle(
                               color: Colors.white, fontSize: 24),
                         ),
