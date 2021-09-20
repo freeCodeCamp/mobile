@@ -7,14 +7,41 @@ import 'package:flutter/services.dart';
 import 'dart:developer' as dev;
 import 'dart:io';
 
-class NewsBookmarkModel extends BaseViewModel {
-  void initState(article) {
-    articleInDb(article);
-    notifyListeners();
+class BookmarkedArticle {
+  late int bookmarkId;
+  late String articleTitle;
+  late String articleId;
+  late String articleText;
+  late String authorName;
+
+  BookmarkedArticle.fromMap(Map<String, dynamic> map) {
+    bookmarkId = map['bookmark_id'];
+    articleTitle = map['articleTitle'];
+    articleId = map['articleId'];
+    articleText = map['articleText'];
+    authorName = map['authorName'];
   }
 
+  BookmarkedArticle(
+      {required this.bookmarkId,
+      required this.articleTitle,
+      required this.articleId,
+      required this.articleText,
+      required this.authorName});
+}
+
+class NewsBookmarkModel extends BaseViewModel {
   bool _isBookmarked = false;
   bool get bookmarked => _isBookmarked;
+
+  bool _userHasBookmarkedArticles = false;
+  bool get userHasBookmarkedArticles => _userHasBookmarkedArticles;
+
+  late List<BookmarkedArticle> _articles;
+  List<BookmarkedArticle> get bookMarkedArticles => _articles;
+
+  int _count = 0;
+  int get count => _count;
 
   Future<Database> openDbConnection() async {
     WidgetsFlutterBinding.ensureInitialized();
@@ -52,6 +79,45 @@ class NewsBookmarkModel extends BaseViewModel {
     };
   }
 
+  Future<List<Map<String, dynamic>>> getArticles() async {
+    final db = await openDbConnection();
+    return db.query('bookmarks');
+  }
+
+  Future<List<BookmarkedArticle>> getModelsFromMapList() async {
+    List<Map<String, dynamic>> mapList = await getArticles();
+    List<BookmarkedArticle> articleModel = [];
+
+    for (int i = 0; i < mapList.length; i++) {
+      articleModel.add(BookmarkedArticle.fromMap(mapList[i]));
+    }
+    return articleModel;
+  }
+
+  Future<void> bookmarkAndUnbookmark(dynamic article) async {
+    final db = await openDbConnection();
+
+    if (_isBookmarked) {
+      _isBookmarked = false;
+      await db.rawQuery(
+          'DELETE FROM bookmarks WHERE articleId=?', [article!.articleId]);
+      notifyListeners();
+    } else {
+      _isBookmarked = true;
+      insertArticle(article);
+      notifyListeners();
+    }
+  }
+
+  void updateListView() async {
+    dev.log("I got called by you?");
+    _articles = [];
+    _articles = await getModelsFromMapList();
+    _articles = _articles;
+    _count = _articles.length;
+    notifyListeners();
+  }
+
   Future<void> insertArticle(Article? article) async {
     final db = await openDbConnection();
 
@@ -66,7 +132,7 @@ class NewsBookmarkModel extends BaseViewModel {
     }
   }
 
-  Future<void> articleInDb(Article? article) async {
+  Future<void> isArticleBookmarked(dynamic article) async {
     final db = await openDbConnection();
 
     List<Map> isInDatabase = await db.rawQuery(
@@ -74,19 +140,19 @@ class NewsBookmarkModel extends BaseViewModel {
 
     if (isInDatabase.isNotEmpty) {
       _isBookmarked = true;
+      notifyListeners();
     }
   }
 
-  Future<void> bookmarkAndUnbookmark(Article? article) async {
+  Future<void> hasBookmarkedArticles() async {
     final db = await openDbConnection();
 
-    if (_isBookmarked) {
-      _isBookmarked = false;
-      await db.rawQuery(
-          'DELETE FROM bookmarks WHERE articleId=?', [article!.articleId]);
-    } else {
-      _isBookmarked = true;
-      insertArticle(article);
+    List<Map> isInDatabase = await db.rawQuery('SELECT * FROM bookmarks');
+
+    if (isInDatabase.isNotEmpty) {
+      _userHasBookmarkedArticles = true;
+      updateListView();
+      notifyListeners();
     }
   }
 }

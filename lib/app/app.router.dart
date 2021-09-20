@@ -12,6 +12,9 @@ import 'package:stacked/stacked.dart';
 import '../ui/views/browser/browser_view.dart';
 import '../ui/views/home/home_view.dart';
 import '../ui/views/news/news-article-post/news_article_post_view.dart';
+import '../ui/views/news/news-bookmark/news_bookmark_model.dart';
+import '../ui/views/news/news-bookmark/news_bookmark_view.dart';
+import '../ui/views/news/news-feed/news_feed_view.dart';
 import '../ui/views/startup/startup_view.dart';
 import '../ui/views/website/website_view.dart';
 
@@ -21,12 +24,16 @@ class Routes {
   static const String homeView = '/home-view';
   static const String browserView = '/browser-view';
   static const String newsArticlePostView = '/news-article-post-view';
+  static const String newsBookmarkPostView = '/news-bookmark-post-view';
+  static const String newsFeedView = '/news-feed-view';
   static const all = <String>{
     startupView,
     websiteView,
     homeView,
     browserView,
     newsArticlePostView,
+    newsBookmarkPostView,
+    newsFeedView,
   };
 }
 
@@ -39,6 +46,8 @@ class StackedRouter extends RouterBase {
     RouteDef(Routes.homeView, page: HomeView),
     RouteDef(Routes.browserView, page: BrowserView),
     RouteDef(Routes.newsArticlePostView, page: NewsArticlePostView),
+    RouteDef(Routes.newsBookmarkPostView, page: NewsBookmarkPostView),
+    RouteDef(Routes.newsFeedView, page: NewsFeedView),
   ];
   @override
   Map<Type, StackedRouteFactory> get pagesMap => _pagesMap;
@@ -81,6 +90,22 @@ class StackedRouter extends RouterBase {
         settings: data,
       );
     },
+    NewsBookmarkPostView: (data) {
+      var args = data.getArgs<NewsBookmarkPostViewArguments>(nullOk: false);
+      return MaterialPageRoute<dynamic>(
+        builder: (context) => NewsBookmarkPostView(
+          key: args.key,
+          article: args.article,
+        ),
+        settings: data,
+      );
+    },
+    NewsFeedView: (data) {
+      return MaterialPageRoute<dynamic>(
+        builder: (context) => const NewsFeedView(),
+        settings: data,
+      );
+    },
   };
 }
 
@@ -100,4 +125,11 @@ class NewsArticlePostViewArguments {
   final Key? key;
   final String refId;
   NewsArticlePostViewArguments({this.key, required this.refId});
+}
+
+/// NewsBookmarkPostView arguments holder class
+class NewsBookmarkPostViewArguments {
+  final Key? key;
+  final BookmarkedArticle article;
+  NewsBookmarkPostViewArguments({this.key, required this.article});
 }

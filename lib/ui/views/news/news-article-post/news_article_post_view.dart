@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_html/flutter_html.dart';
 import 'package:flutter_html/html_parser.dart';
-import 'package:freecodecamp/ui/views/news/news-bookmark/news_bookmark_widget_view.dart';
+import 'package:freecodecamp/ui/views/news/news-bookmark/news_bookmark_widget.dart';
 import 'package:freecodecamp/ui/views/news/news_helpers.dart';
 import 'package:stacked/stacked.dart';
 import 'package:url_launcher/url_launcher.dart';
@@ -118,7 +118,7 @@ class NewsArticlePostView extends StatelessWidget {
                         Container(
                           color: const Color.fromRGBO(0x2A, 0x2A, 0x40, 1),
                           width: MediaQuery.of(context).size.width,
-                          child: NewsBookmarkView(article: article),
+                          child: NewsBookmarkViewWidget(article: article),
                         )
                       ],
                     ),
