@@ -60,13 +60,9 @@ Column postViewTemplate(PostViewModel model) {
                     ],
                   ),
                   InkWell(
-                    // onTap: () {
-                    //   Navigator.push(
-                    //       context,
-                    //       MaterialPageRoute(
-                    //           builder: (context) =>
-                    //               UserTemplate(username: post.username)));
-                    // },
+                    onTap: () {
+                      model.goToUserProfile(post.username);
+                    },
                     child: Row(children: [
                       Column(
                         children: [
@@ -81,7 +77,7 @@ Column postViewTemplate(PostViewModel model) {
                                     height: 60,
                                     placeholder:
                                         'assets/images/placeholder-profile-img.png',
-                                    image: model.parseProfileAvatUrl(
+                                    image: PostViewModel.parseProfileAvatUrl(
                                         post.profieImage, "60"))),
                           ),
                         ],

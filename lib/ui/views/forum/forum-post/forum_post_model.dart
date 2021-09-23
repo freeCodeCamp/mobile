@@ -2,9 +2,12 @@ import 'dart:convert';
 import 'dart:math';
 import 'dart:ui';
 import 'package:flutter/material.dart';
+import 'package:freecodecamp/app/app.locator.dart';
+import 'package:freecodecamp/app/app.router.dart';
 import 'package:jiffy/jiffy.dart';
 import 'package:share/share.dart';
 import 'package:stacked/stacked.dart';
+import 'package:stacked_services/stacked_services.dart';
 import 'dart:developer' as dev;
 
 import '../forum_connect.dart';
@@ -30,7 +33,7 @@ class PostViewModel extends BaseViewModel {
 
   // this parses different urls based on the cdn (Discourse or FCC)
 
-  String parseProfileAvatUrl(
+  static String parseProfileAvatUrl(
     String? url,
     String size,
   ) {
@@ -81,6 +84,12 @@ class PostViewModel extends BaseViewModel {
   void parseShareUrl(BuildContext context, String slug) {
     Share.share('https://forum.freecodecamp.org/t/$slug',
         subject: 'Question from the freecodecamp forum');
+  }
+
+  final NavigationService _navigationService = locator<NavigationService>();
+  void goToUserProfile(username) {
+    _navigationService.navigateTo(Routes.forumUserView,
+        arguments: ForumUserViewArguments(username: username));
   }
 }
 

@@ -26,13 +26,9 @@ class ForumCommentView extends StatelessWidget {
               return Column(
                 children: [
                   InkWell(
-                    // onTap: () {
-                    //   Navigator.push(
-                    //       context,
-                    //       MaterialPageRoute(
-                    //           builder: (context) =>
-                    //               UserTemplate(username: post.username)));
-                    // },
+                    onTap: () {
+                      model.goToUserProfile(post.username);
+                    },
                     child: Row(
                       children: [
                         Row(children: [
@@ -49,8 +45,9 @@ class ForumCommentView extends StatelessWidget {
                                         height: 60,
                                         placeholder:
                                             'assets/images/placeholder-profile-img.png',
-                                        image: model.parseProfileAvatUrl(
-                                            post.profieImage, "60"))),
+                                        image:
+                                            PostViewModel.parseProfileAvatUrl(
+                                                post.profieImage, "60"))),
                               ),
                             ],
                           ),

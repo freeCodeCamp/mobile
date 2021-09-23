@@ -6,6 +6,7 @@
 
 // ignore_for_file: public_member_api_docs
 
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:stacked/stacked.dart';
 
@@ -14,6 +15,7 @@ import '../ui/views/forum/forum-categories/forum_category_view.dart';
 import '../ui/views/forum/forum-login/forum_login_view.dart';
 import '../ui/views/forum/forum-post-feed/forum_post_feed_view.dart';
 import '../ui/views/forum/forum-post/forum_post_view.dart';
+import '../ui/views/forum/forum-user/forum_user_view.dart';
 import '../ui/views/home/home_view.dart';
 import '../ui/views/news/news-article-post/news_article_post_view.dart';
 import '../ui/views/news/news-bookmark/news_bookmark_model.dart';
@@ -34,6 +36,7 @@ class Routes {
   static const String forumPostFeedView = '/forum-post-feed-view';
   static const String forumPostView = '/forum-post-view';
   static const String forumLoginView = '/forum-login-view';
+  static const String forumUserView = '/forum-user-view';
   static const all = <String>{
     startupView,
     websiteView,
@@ -46,6 +49,7 @@ class Routes {
     forumPostFeedView,
     forumPostView,
     forumLoginView,
+    forumUserView,
   };
 }
 
@@ -64,6 +68,7 @@ class StackedRouter extends RouterBase {
     RouteDef(Routes.forumPostFeedView, page: ForumPostFeedView),
     RouteDef(Routes.forumPostView, page: ForumPostView),
     RouteDef(Routes.forumLoginView, page: ForumLoginView),
+    RouteDef(Routes.forumUserView, page: ForumUserView),
   ];
   @override
   Map<Type, StackedRouteFactory> get pagesMap => _pagesMap;
@@ -159,6 +164,16 @@ class StackedRouter extends RouterBase {
         settings: data,
       );
     },
+    ForumUserView: (data) {
+      var args = data.getArgs<ForumUserViewArguments>(nullOk: false);
+      return MaterialPageRoute<dynamic>(
+        builder: (context) => ForumUserView(
+          key: args.key,
+          username: args.username,
+        ),
+        settings: data,
+      );
+    },
   };
 }
 
@@ -207,4 +222,11 @@ class ForumPostViewArguments {
   final String id;
   final String slug;
   ForumPostViewArguments({this.key, required this.id, required this.slug});
+}
+
+/// ForumUserView arguments holder class
+class ForumUserViewArguments {
+  final Key? key;
+  final String username;
+  ForumUserViewArguments({this.key, required this.username});
 }
