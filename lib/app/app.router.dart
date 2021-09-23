@@ -10,6 +10,7 @@ import 'package:flutter/material.dart';
 import 'package:stacked/stacked.dart';
 
 import '../ui/views/browser/browser_view.dart';
+import '../ui/views/forum/forum-categories/forum_category_view.dart';
 import '../ui/views/home/home_view.dart';
 import '../ui/views/news/news-article-post/news_article_post_view.dart';
 import '../ui/views/news/news-bookmark/news_bookmark_model.dart';
@@ -26,6 +27,7 @@ class Routes {
   static const String newsArticlePostView = '/news-article-post-view';
   static const String newsBookmarkPostView = '/news-bookmark-post-view';
   static const String newsFeedView = '/news-feed-view';
+  static const String forumCategoryView = '/forum-category-view';
   static const all = <String>{
     startupView,
     websiteView,
@@ -34,6 +36,7 @@ class Routes {
     newsArticlePostView,
     newsBookmarkPostView,
     newsFeedView,
+    forumCategoryView,
   };
 }
 
@@ -48,6 +51,7 @@ class StackedRouter extends RouterBase {
     RouteDef(Routes.newsArticlePostView, page: NewsArticlePostView),
     RouteDef(Routes.newsBookmarkPostView, page: NewsBookmarkPostView),
     RouteDef(Routes.newsFeedView, page: NewsFeedView),
+    RouteDef(Routes.forumCategoryView, page: ForumCategoryView),
   ];
   @override
   Map<Type, StackedRouteFactory> get pagesMap => _pagesMap;
@@ -106,6 +110,15 @@ class StackedRouter extends RouterBase {
         settings: data,
       );
     },
+    ForumCategoryView: (data) {
+      var args = data.getArgs<ForumCategoryViewArguments>(
+        orElse: () => ForumCategoryViewArguments(),
+      );
+      return MaterialPageRoute<dynamic>(
+        builder: (context) => ForumCategoryView(key: args.key),
+        settings: data,
+      );
+    },
   };
 }
 
@@ -132,4 +145,10 @@ class NewsBookmarkPostViewArguments {
   final Key? key;
   final BookmarkedArticle article;
   NewsBookmarkPostViewArguments({this.key, required this.article});
+}
+
+/// ForumCategoryView arguments holder class
+class ForumCategoryViewArguments {
+  final Key? key;
+  ForumCategoryViewArguments({this.key});
 }
