@@ -11,6 +11,7 @@ import 'package:stacked/stacked.dart';
 
 import '../ui/views/browser/browser_view.dart';
 import '../ui/views/forum/forum-categories/forum_category_view.dart';
+import '../ui/views/forum/forum-post-feed/forum_post_feed_view.dart';
 import '../ui/views/home/home_view.dart';
 import '../ui/views/news/news-article-post/news_article_post_view.dart';
 import '../ui/views/news/news-bookmark/news_bookmark_model.dart';
@@ -28,6 +29,7 @@ class Routes {
   static const String newsBookmarkPostView = '/news-bookmark-post-view';
   static const String newsFeedView = '/news-feed-view';
   static const String forumCategoryView = '/forum-category-view';
+  static const String forumPostFeedView = '/forum-post-feed-view';
   static const all = <String>{
     startupView,
     websiteView,
@@ -37,6 +39,7 @@ class Routes {
     newsBookmarkPostView,
     newsFeedView,
     forumCategoryView,
+    forumPostFeedView,
   };
 }
 
@@ -52,6 +55,7 @@ class StackedRouter extends RouterBase {
     RouteDef(Routes.newsBookmarkPostView, page: NewsBookmarkPostView),
     RouteDef(Routes.newsFeedView, page: NewsFeedView),
     RouteDef(Routes.forumCategoryView, page: ForumCategoryView),
+    RouteDef(Routes.forumPostFeedView, page: ForumPostFeedView),
   ];
   @override
   Map<Type, StackedRouteFactory> get pagesMap => _pagesMap;
@@ -119,6 +123,17 @@ class StackedRouter extends RouterBase {
         settings: data,
       );
     },
+    ForumPostFeedView: (data) {
+      var args = data.getArgs<ForumPostFeedViewArguments>(nullOk: false);
+      return MaterialPageRoute<dynamic>(
+        builder: (context) => ForumPostFeedView(
+          key: args.key,
+          slug: args.slug,
+          id: args.id,
+        ),
+        settings: data,
+      );
+    },
   };
 }
 
@@ -151,4 +166,12 @@ class NewsBookmarkPostViewArguments {
 class ForumCategoryViewArguments {
   final Key? key;
   ForumCategoryViewArguments({this.key});
+}
+
+/// ForumPostFeedView arguments holder class
+class ForumPostFeedViewArguments {
+  final Key? key;
+  final String slug;
+  final String id;
+  ForumPostFeedViewArguments({this.key, required this.slug, required this.id});
 }
