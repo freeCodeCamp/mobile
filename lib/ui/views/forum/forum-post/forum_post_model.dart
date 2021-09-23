@@ -2,11 +2,9 @@ import 'dart:convert';
 import 'dart:math';
 import 'dart:ui';
 import 'package:flutter/material.dart';
-import 'package:freecodecamp/app/app.locator.dart';
 import 'package:jiffy/jiffy.dart';
 import 'package:share/share.dart';
 import 'package:stacked/stacked.dart';
-import 'package:stacked_services/stacked_services.dart';
 import 'dart:developer' as dev;
 
 import '../forum_connect.dart';
@@ -17,6 +15,7 @@ class PostViewModel extends BaseViewModel {
 
   void initState(slug, id) {
     _future = fetchPost(id, slug);
+    notifyListeners();
   }
 
   Future<PostModel> fetchPost(String id, String slug) async {

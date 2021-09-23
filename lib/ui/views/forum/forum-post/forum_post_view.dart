@@ -4,6 +4,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_html/flutter_html.dart';
 import 'package:flutter_syntax_view/flutter_syntax_view.dart';
+import 'package:freecodecamp/ui/views/forum/forum-comment/forum_comment_view.dart';
 import 'package:stacked/stacked.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:html/dom.dart' as dom;
@@ -29,6 +30,8 @@ class ForumPostView extends StatelessWidget {
 }
 
 Column postViewTemplate(PostViewModel model) {
+  List<PostModel> comments = [];
+
   return Column(
     children: [
       FutureBuilder<PostModel>(
@@ -36,9 +39,8 @@ Column postViewTemplate(PostViewModel model) {
           builder: (context, snapshot) {
             if (snapshot.hasData) {
               var post = snapshot.data;
-              // comments = [];
-              // comments.addAll(Comment.returnCommentList(post!.postComments));
-
+              comments = [];
+              comments.addAll(Comment.returnCommentList(post!.postComments));
               return Column(
                 children: [
                   Row(
@@ -47,7 +49,7 @@ Column postViewTemplate(PostViewModel model) {
                         child: Padding(
                           padding: const EdgeInsets.all(24.0),
                           child: Text(
-                            post!.postName as String,
+                            post.postName as String,
                             style: TextStyle(
                                 color: Colors.white,
                                 fontSize: 24,
@@ -232,7 +234,7 @@ Column postViewTemplate(PostViewModel model) {
                     color: Color(0xFF0a0a23),
                     child: htmlView(snapshot, context),
                   ),
-                  //ForumComment(comments: comments)
+                  ForumCommentView(comments: comments)
                 ],
               );
             }

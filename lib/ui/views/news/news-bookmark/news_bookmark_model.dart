@@ -110,7 +110,6 @@ class NewsBookmarkModel extends BaseViewModel {
   }
 
   void updateListView() async {
-    dev.log("I got called by you?");
     _articles = [];
     _articles = await getModelsFromMapList();
     _articles = _articles;
