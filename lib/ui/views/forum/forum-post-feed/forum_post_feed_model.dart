@@ -1,6 +1,9 @@
 import 'dart:convert';
 
+import 'package:freecodecamp/app/app.locator.dart';
+import 'package:freecodecamp/app/app.router.dart';
 import 'package:stacked/stacked.dart';
+import 'package:stacked_services/stacked_services.dart';
 
 import '../forum_connect.dart';
 
@@ -42,5 +45,12 @@ class ForumPostFeedModel extends BaseViewModel {
     } else {
       PostList.error();
     }
+  }
+
+  final NavigationService _navigationService = locator<NavigationService>();
+  void navigateToPost(slug, id) {
+    id = id.toString();
+    _navigationService.navigateTo(Routes.forumPostView,
+        arguments: ForumPostViewArguments(id: id, slug: slug));
   }
 }

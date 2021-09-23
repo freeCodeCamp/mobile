@@ -28,7 +28,7 @@ class ForumPostFeedView extends StatelessWidget {
                         itemCount: snapshot.data?.length,
                         shrinkWrap: true,
                         itemBuilder: (BuildContext context, int index) {
-                          return postViewTemplate(post!, index);
+                          return postViewTemplate(post!, index, model);
                         });
                   } else {
                     return const Center(child: CircularProgressIndicator());
@@ -39,17 +39,14 @@ class ForumPostFeedView extends StatelessWidget {
             ));
   }
 
-  InkWell postViewTemplate(List<dynamic> post, int index) {
+  InkWell postViewTemplate(
+      List<dynamic> post, int index, ForumPostFeedModel model) {
     return InkWell(
       onTap: () {
-        //   Navigator.push(
-        //       context,
-        //       MaterialPageRoute(
-        //           builder: (context) => ForumPostView(
-        //                 refPostId:
-        //                     post![index]["id"].toString(),
-        //                 refSlug: post[index]["slug"],
-        //               )));
+        model.navigateToPost(
+          post[index]["slug"],
+          post[index]["id"],
+        );
       },
       child: ConstrainedBox(
         constraints: const BoxConstraints(minHeight: 125),
@@ -79,7 +76,7 @@ class ForumPostFeedView extends StatelessWidget {
                       padding: const EdgeInsets.all(8.0),
                       child: Text(
                         "posted " +
-                            PostModel.parseDate(post[index]["created_at"]),
+                            PostViewModel.parseDate(post[index]["created_at"]),
                         style: const TextStyle(
                           color: Colors.white,
                           fontSize: 16,
@@ -92,7 +89,7 @@ class ForumPostFeedView extends StatelessWidget {
                       padding: const EdgeInsets.all(8.0),
                       child: Text(
                         "activity " +
-                            PostModel.parseDate(post[index]["bumped_at"]),
+                            PostViewModel.parseDate(post[index]["bumped_at"]),
                         style: const TextStyle(
                           color: Colors.white,
                           fontSize: 16,
