@@ -204,9 +204,7 @@ class UserTopicTemplate extends StatelessWidget {
               var topic = snapshot.data;
               return Column(
                 children: [
-                  UserTopicBuilder(
-                    topic: topic,
-                  ),
+                  UserTopicBuilder(topic: topic, model: model),
                 ],
               );
             } else if (snapshot.hasError) {
@@ -224,9 +222,11 @@ class UserTopicTemplate extends StatelessWidget {
 }
 
 class UserTopicBuilder extends StatelessWidget {
-  const UserTopicBuilder({Key? key, required this.topic}) : super(key: key);
+  const UserTopicBuilder({Key? key, required this.topic, required this.model})
+      : super(key: key);
 
   final List<UserTopic>? topic;
+  final ForumUserModel model;
   @override
   Widget build(BuildContext context) {
     return ListView.builder(
@@ -235,7 +235,9 @@ class UserTopicBuilder extends StatelessWidget {
       shrinkWrap: true,
       itemBuilder: (context, index) {
         return InkWell(
-          onTap: () {},
+          onTap: () {
+            model.navigateToPost(topic![index].slug, topic![index].id);
+          },
           child: Padding(
             padding: const EdgeInsets.only(bottom: 16.0),
             child: Container(

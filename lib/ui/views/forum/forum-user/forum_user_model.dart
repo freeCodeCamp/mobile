@@ -1,8 +1,11 @@
 import 'dart:convert';
 
+import 'package:freecodecamp/app/app.locator.dart';
+import 'package:freecodecamp/app/app.router.dart';
 import 'package:freecodecamp/ui/views/forum/forum_connect.dart';
 import 'package:html/parser.dart';
 import 'package:stacked/stacked.dart';
+import 'package:stacked_services/stacked_services.dart';
 
 class ForumUserModel extends BaseViewModel {
   late Future<User> _future;
@@ -74,6 +77,13 @@ class ForumUserModel extends BaseViewModel {
     final document = parse(desc);
     final String parsedDesc = parse(document.body!.text).documentElement!.text;
     return parsedDesc;
+  }
+
+  final NavigationService _navigationService = locator<NavigationService>();
+  void navigateToPost(slug, id) {
+    id = id.toString();
+    _navigationService.navigateTo(Routes.forumPostView,
+        arguments: ForumPostViewArguments(id: id, slug: slug));
   }
 }
 
