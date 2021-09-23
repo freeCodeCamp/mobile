@@ -1,5 +1,6 @@
 import 'package:freecodecamp/ui/views/browser/browser_view.dart';
 import 'package:freecodecamp/ui/views/forum/forum-categories/forum_category_view.dart';
+import 'package:freecodecamp/ui/views/forum/forum-login/forum_login_view.dart';
 import 'package:freecodecamp/ui/views/forum/forum-post-feed/forum_post_feed_view.dart';
 import 'package:freecodecamp/ui/views/forum/forum-post/forum_post_view.dart';
 import 'package:freecodecamp/ui/views/home/home_view.dart';
@@ -24,7 +25,8 @@ import 'package:stacked_services/stacked_services.dart';
     MaterialRoute(page: NewsFeedView),
     MaterialRoute(page: ForumCategoryView),
     MaterialRoute(page: ForumPostFeedView),
-    MaterialRoute(page: ForumPostView)
+    MaterialRoute(page: ForumPostView),
+    MaterialRoute(page: ForumLoginView)
   ],
   dependencies: [
     LazySingleton(classType: NavigationService),

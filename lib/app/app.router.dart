@@ -11,6 +11,7 @@ import 'package:stacked/stacked.dart';
 
 import '../ui/views/browser/browser_view.dart';
 import '../ui/views/forum/forum-categories/forum_category_view.dart';
+import '../ui/views/forum/forum-login/forum_login_view.dart';
 import '../ui/views/forum/forum-post-feed/forum_post_feed_view.dart';
 import '../ui/views/forum/forum-post/forum_post_view.dart';
 import '../ui/views/home/home_view.dart';
@@ -32,6 +33,7 @@ class Routes {
   static const String forumCategoryView = '/forum-category-view';
   static const String forumPostFeedView = '/forum-post-feed-view';
   static const String forumPostView = '/forum-post-view';
+  static const String forumLoginView = '/forum-login-view';
   static const all = <String>{
     startupView,
     websiteView,
@@ -43,6 +45,7 @@ class Routes {
     forumCategoryView,
     forumPostFeedView,
     forumPostView,
+    forumLoginView,
   };
 }
 
@@ -60,6 +63,7 @@ class StackedRouter extends RouterBase {
     RouteDef(Routes.forumCategoryView, page: ForumCategoryView),
     RouteDef(Routes.forumPostFeedView, page: ForumPostFeedView),
     RouteDef(Routes.forumPostView, page: ForumPostView),
+    RouteDef(Routes.forumLoginView, page: ForumLoginView),
   ];
   @override
   Map<Type, StackedRouteFactory> get pagesMap => _pagesMap;
@@ -146,6 +150,12 @@ class StackedRouter extends RouterBase {
           id: args.id,
           slug: args.slug,
         ),
+        settings: data,
+      );
+    },
+    ForumLoginView: (data) {
+      return MaterialPageRoute<dynamic>(
+        builder: (context) => const ForumLoginView(),
         settings: data,
       );
     },

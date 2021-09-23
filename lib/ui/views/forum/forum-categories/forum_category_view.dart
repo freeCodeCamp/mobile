@@ -2,6 +2,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:freecodecamp/ui/views/forum/forum-categories/forum_category_builder.dart';
 import 'package:freecodecamp/ui/views/forum/forum-categories/forum_category_view_model.dart';
+import 'package:freecodecamp/ui/views/forum/forum-login/forum_login_view.dart';
 import 'package:stacked/stacked.dart';
 
 // ignore: must_be_immutable
@@ -9,7 +10,7 @@ class ForumCategoryView extends StatelessWidget {
   ForumCategoryView({Key? key}) : super(key: key);
 
   List views = <dynamic>[
-    null,
+    const ForumLoginView(),
     const ForumCategoryBuilder(),
     null,
   ];
