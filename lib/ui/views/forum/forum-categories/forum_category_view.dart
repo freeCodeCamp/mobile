@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:freecodecamp/ui/views/forum/forum-categories/forum_category_builder.dart';
 import 'package:freecodecamp/ui/views/forum/forum-categories/forum_category_view_model.dart';
 import 'package:freecodecamp/ui/views/forum/forum-login/forum_login_view.dart';
+import 'package:freecodecamp/ui/views/forum/forum-search/forum_search_view.dart';
 import 'package:stacked/stacked.dart';
 
 // ignore: must_be_immutable
@@ -12,7 +13,7 @@ class ForumCategoryView extends StatelessWidget {
   List views = <dynamic>[
     const ForumLoginView(),
     const ForumCategoryBuilder(),
-    null,
+    const ForumSearchView(),
   ];
 
   @override

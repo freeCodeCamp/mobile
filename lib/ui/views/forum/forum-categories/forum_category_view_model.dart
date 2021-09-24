@@ -35,6 +35,7 @@ class ForumCategoryViewModel extends BaseViewModel {
 
   void onTapped(tapped) {
     _index = tapped;
+    notifyListeners();
   }
 
   void initState() {
