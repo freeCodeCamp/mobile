@@ -131,6 +131,15 @@ class WebsiteView extends StatelessWidget {
                   viewModel.goToHome();
                 },
               ),
+              ListTile(
+                title: const Text(
+                  'Podcasts',
+                  style: TextStyle(color: Color(0xFF0a0a23)),
+                ),
+                onTap: () {
+                  viewModel.goToPodcasts();
+                },
+              ),
             ],
           ),
         ),
