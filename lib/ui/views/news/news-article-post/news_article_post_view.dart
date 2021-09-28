@@ -6,7 +6,7 @@ import 'package:freecodecamp/ui/views/news/news_helpers.dart';
 import 'package:stacked/stacked.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:html/dom.dart' as dom;
-import 'news_article_post_model.dart';
+import 'news_article_post_viewmodel.dart';
 
 class NewsArticlePostView extends StatelessWidget {
   // ignore: prefer_const_constructors_in_immutables

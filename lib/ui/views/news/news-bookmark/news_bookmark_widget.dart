@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:freecodecamp/ui/views/news/news-article-post/news_article_post_model.dart';
-import 'package:freecodecamp/ui/views/news/news-bookmark/news_bookmark_model.dart';
+import 'package:freecodecamp/ui/views/news/news-article-post/news_article_post_viewmodel.dart';
+import 'package:freecodecamp/ui/views/news/news-bookmark/news_bookmark_viewmodel.dart';
 import 'package:stacked/stacked.dart';
 
 class NewsBookmarkViewWidget extends StatelessWidget {

@@ -2,11 +2,11 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
 import 'package:freecodecamp/ui/views/news/news-feed/news_feed_lazyloading.dart';
-import 'package:freecodecamp/ui/views/news/news-feed/news_feed_model.dart';
+import 'package:freecodecamp/ui/views/news/news-feed/news_feed_viewmodel.dart';
 import 'package:stacked/stacked.dart';
 
 import '../news_helpers.dart';
-import 'news_feed_model.dart';
+import 'news_feed_viewmodel.dart';
 
 class NewsFeedView extends StatelessWidget {
   const NewsFeedView({Key? key}) : super(key: key);

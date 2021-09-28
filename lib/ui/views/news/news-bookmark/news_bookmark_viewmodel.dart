@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:freecodecamp/ui/views/news/news-article-post/news_article_post_model.dart';
+import 'package:freecodecamp/ui/views/news/news-article-post/news_article_post_viewmodel.dart';
 import 'package:stacked/stacked.dart';
 import 'package:sqflite/sqflite.dart';
 import 'package:path/path.dart' as path;
