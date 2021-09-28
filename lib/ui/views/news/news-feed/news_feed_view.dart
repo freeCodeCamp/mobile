@@ -95,30 +95,28 @@ class NewsFeedView extends StatelessWidget {
                   ],
                 ),
                 Row(children: [
-                  Column(
-                    children: [
-                      Padding(
-                        padding: const EdgeInsets.all(16.0),
-                        child: Text(
-                          '#' + articles[i].tagName!,
-                          style: const TextStyle(
-                              color: Colors.white, fontSize: 18),
-                        ),
-                      )
-                    ],
+                  Expanded(
+                    flex: 6,
+                    child: Padding(
+                      padding: const EdgeInsets.all(16.0),
+                      child: Text(
+                        '#' + articles[i].tagName!,
+                        style:
+                            const TextStyle(color: Colors.white, fontSize: 18),
+                      ),
+                    ),
                   ),
-                  Column(
-                    children: [
-                      Padding(
-                        padding: const EdgeInsets.all(16.0),
-                        child: Text(
-                          articles[i].authorName,
-                          textAlign: TextAlign.right,
-                          style: const TextStyle(
-                              color: Colors.white, fontSize: 18),
-                        ),
-                      )
-                    ],
+                  Expanded(
+                    flex: 6,
+                    child: Padding(
+                      padding: const EdgeInsets.all(16.0),
+                      child: Text(
+                        articles[i].authorName,
+                        textAlign: TextAlign.right,
+                        style:
+                            const TextStyle(color: Colors.white, fontSize: 18),
+                      ),
+                    ),
                   )
                 ]),
               ],
