@@ -1,6 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:freecodecamp/ui/views/news/news-bookmark/news_bookmark_model.dart';
+import 'package:freecodecamp/ui/views/news/news-bookmark/news_bookmark_viewmodel.dart';
 import 'package:stacked/stacked.dart';
 import 'dart:developer' as dev;
 import '../news_helpers.dart';

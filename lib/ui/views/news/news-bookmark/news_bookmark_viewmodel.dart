@@ -1,34 +1,12 @@
 import 'package:flutter/material.dart';
-import 'package:freecodecamp/ui/views/news/news-article-post/news_article_post_model.dart';
+import 'package:freecodecamp/models/article_model.dart';
+import 'package:freecodecamp/models/bookmarked_article_model.dart';
 import 'package:stacked/stacked.dart';
 import 'package:sqflite/sqflite.dart';
 import 'package:path/path.dart' as path;
 import 'package:flutter/services.dart';
 import 'dart:developer' as dev;
 import 'dart:io';
-
-class BookmarkedArticle {
-  late int bookmarkId;
-  late String articleTitle;
-  late String articleId;
-  late String articleText;
-  late String authorName;
-
-  BookmarkedArticle.fromMap(Map<String, dynamic> map) {
-    bookmarkId = map['bookmark_id'];
-    articleTitle = map['articleTitle'];
-    articleId = map['articleId'];
-    articleText = map['articleText'];
-    authorName = map['authorName'];
-  }
-
-  BookmarkedArticle(
-      {required this.bookmarkId,
-      required this.articleTitle,
-      required this.articleId,
-      required this.articleText,
-      required this.authorName});
-}
 
 class NewsBookmarkModel extends BaseViewModel {
   bool _isBookmarked = false;
@@ -70,12 +48,12 @@ class NewsBookmarkModel extends BaseViewModel {
     return openDatabase(dbPathArticles, version: 1);
   }
 
-  Map<String, dynamic> articleToMap(article) {
+  Map<String, dynamic> articleToMap(Article article) {
     return {
-      "articleTitle": article!.articleTitle,
-      "articleId": article!.articleId,
-      "articleText": article!.articleText,
-      "authorName": article!.author
+      "articleTitle": article.title,
+      "articleId": article.id,
+      "articleText": article.text,
+      "authorName": article.authorName
     };
   }
 
@@ -99,8 +77,8 @@ class NewsBookmarkModel extends BaseViewModel {
 
     if (_isBookmarked) {
       _isBookmarked = false;
-      await db.rawQuery(
-          'DELETE FROM bookmarks WHERE articleId=?', [article!.articleId]);
+      await db
+          .rawQuery('DELETE FROM bookmarks WHERE articleId=?', [article!.id]);
       notifyListeners();
     } else {
       _isBookmarked = true;
@@ -122,8 +100,8 @@ class NewsBookmarkModel extends BaseViewModel {
 
     // Test if article is already in database
 
-    List<Map> isInDatabase = await db.rawQuery(
-        'SELECT * FROM bookmarks WHERE articleId=?', [article!.articleId]);
+    List<Map> isInDatabase = await db
+        .rawQuery('SELECT * FROM bookmarks WHERE articleId=?', [article!.id]);
 
     if (isInDatabase.isEmpty) {
       await db.insert('bookmarks', articleToMap(article),
@@ -134,8 +112,8 @@ class NewsBookmarkModel extends BaseViewModel {
   Future<void> isArticleBookmarked(dynamic article) async {
     final db = await openDbConnection();
 
-    List<Map> isInDatabase = await db.rawQuery(
-        'SELECT * FROM bookmarks WHERE articleId=?', [article!.articleId]);
+    List<Map> isInDatabase = await db
+        .rawQuery('SELECT * FROM bookmarks WHERE articleId=?', [article!.id]);
 
     if (isInDatabase.isNotEmpty) {
       _isBookmarked = true;
