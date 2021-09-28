@@ -1,6 +1,12 @@
+import 'dart:developer';
+
 import 'package:flutter/material.dart';
 import 'package:freecodecamp/ui/views/podcast/podcast_viewmodel.dart';
+import 'package:podcast_search/podcast_search.dart';
 import 'package:stacked/stacked.dart';
+import 'package:intl/intl.dart';
+
+import 'episode/episode_view.dart';
 
 // ui view only
 
@@ -11,13 +17,111 @@ class PodcastView extends StatelessWidget {
   Widget build(BuildContext context) {
     return ViewModelBuilder<PodcastViewModel>.reactive(
       builder: (context, model, child) => Scaffold(
-        floatingActionButton:
-            FloatingActionButton(onPressed: model.doSomething),
-        body: Center(
-          child: Text(model.title),
+        appBar: AppBar(
+          title: const Text('Podcasts'),
+          backgroundColor: const Color(0xFF0a0a23),
+        ),
+        backgroundColor: const Color(0xFF0a0a23),
+        body: FutureBuilder<List<Episode>>(
+          future: model.fetchPodcastEpisodes(),
+          builder: (context, snapshot) {
+            if (snapshot.connectionState != ConnectionState.done) {
+              return const Center(child: CircularProgressIndicator.adaptive());
+            }
+            if (snapshot.hasError) {
+              return Text("${snapshot.error}");
+            }
+            // log(podcastEpisodes);
+            return ListView.builder(
+              itemCount: snapshot.data!.length,
+              itemBuilder: (BuildContext context, int index) {
+                return PodcastEpisodeTemplate(
+                    episode: snapshot.data![index], i: index);
+              },
+            );
+          },
         ),
       ),
       viewModelBuilder: () => PodcastViewModel(),
+    );
+  }
+}
+
+class PodcastEpisodeTemplate extends StatelessWidget {
+  const PodcastEpisodeTemplate(
+      {Key? key, required this.episode, required this.i})
+      : super(key: key);
+
+  final Episode episode;
+  final int i;
+
+  @override
+  Widget build(BuildContext context) {
+    return InkWell(
+      onTap: () {
+        log("Clicked ${episode.title}");
+        Navigator.push(
+            context,
+            MaterialPageRoute(
+                builder: (context) => EpisodeView(episode: episode)));
+      },
+      child: ConstrainedBox(
+        constraints: const BoxConstraints(minHeight: 50),
+        child: Container(
+          padding: const EdgeInsets.all(16),
+          decoration: const BoxDecoration(
+            border: Border(
+              bottom: BorderSide(
+                width: 1,
+                color: Colors.grey,
+              ),
+            ),
+          ),
+          child: Row(
+            // crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: [
+              Expanded(
+                flex: 1,
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  // mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Text(
+                      episode.title,
+                      maxLines: 2,
+                      overflow: TextOverflow.ellipsis,
+                      style: const TextStyle(
+                        fontSize: 16,
+                        color: Colors.white,
+                      ),
+                    ),
+                    Padding(
+                      padding: const EdgeInsets.only(top: 8),
+                      child: Text(
+                        DateFormat.yMMMd().format(episode.publicationDate!),
+                        style: const TextStyle(
+                          fontSize: 12,
+                          color: Colors.white,
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+              const Flexible(
+                flex: 0,
+                child: Padding(
+                  padding: EdgeInsets.all(8),
+                  child: Icon(
+                    Icons.download,
+                    color: Colors.white,
+                  ),
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
     );
   }
 }
