@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_html/flutter_html.dart';
 import 'package:flutter_html/html_parser.dart';
+import 'package:freecodecamp/models/article_model.dart';
 import 'package:freecodecamp/ui/views/news/news-bookmark/news_bookmark_widget.dart';
 import 'package:freecodecamp/ui/views/news/news_helpers.dart';
 import 'package:stacked/stacked.dart';
@@ -35,7 +36,7 @@ class NewsArticlePostView extends StatelessWidget {
                               minWidth: MediaQuery.of(context).size.width),
                           child: Image.network(
                             NewsHelper.getArticleImage(
-                                article!.articleImage, context),
+                                article!.featureImage, context),
                             fit: BoxFit.fill,
                           ),
                         ),
@@ -45,7 +46,7 @@ class NewsArticlePostView extends StatelessWidget {
                             alignment: Alignment.topRight,
                             child: ElevatedButton.icon(
                               onPressed: () {
-                                launch(article.articleUrl);
+                                launch(article.url as String);
                               },
                               icon: const Icon(Icons.open_in_new_sharp),
                               label: const Text('open in browser'),
@@ -63,7 +64,7 @@ class NewsArticlePostView extends StatelessWidget {
                           width: MediaQuery.of(context).size.width,
                           child: Padding(
                             padding: const EdgeInsets.all(16.0),
-                            child: Text(article.articleTitle,
+                            child: Text(article.title,
                                 style: const TextStyle(
                                     fontSize: 24, color: Colors.white)),
                           ),
@@ -87,7 +88,7 @@ class NewsArticlePostView extends StatelessWidget {
                                                 .randomBorderColor())),
                                     child: Image.network(
                                       NewsHelper.getProfileImage(
-                                          article.authorImage),
+                                          article.profileImage),
                                       width: 50,
                                       height: 50,
                                       fit: BoxFit.fill,
@@ -101,7 +102,7 @@ class NewsArticlePostView extends StatelessWidget {
                                   child: Padding(
                                     padding: const EdgeInsets.only(top: 8),
                                     child: Text(
-                                      'Written by ' + article.author,
+                                      'Written by ' + article.authorName,
                                       style: const TextStyle(
                                           fontSize: 16, color: Colors.white),
                                     ),
@@ -149,7 +150,7 @@ Row htmlView(Article article, BuildContext context) {
             padding: const EdgeInsets.all(8.0),
             child: Html(
                 shrinkWrap: true,
-                data: article.articleText,
+                data: article.text,
                 style: {
                   "body": Style(color: Colors.white),
                   "p": Style(

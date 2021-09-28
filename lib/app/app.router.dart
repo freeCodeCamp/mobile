@@ -9,10 +9,10 @@
 import 'package:flutter/material.dart';
 import 'package:stacked/stacked.dart';
 
+import '../models/bookmarked_article_model.dart';
 import '../ui/views/browser/browser_view.dart';
 import '../ui/views/home/home_view.dart';
 import '../ui/views/news/news-article-post/news_article_post_view.dart';
-import '../ui/views/news/news-bookmark/news_bookmark_viewmodel.dart';
 import '../ui/views/news/news-bookmark/news_bookmark_view.dart';
 import '../ui/views/news/news-feed/news_feed_view.dart';
 import '../ui/views/startup/startup_view.dart';
