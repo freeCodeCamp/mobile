@@ -3,25 +3,11 @@ import 'dart:convert';
 
 import 'package:freecodecamp/app/app.locator.dart';
 import 'package:freecodecamp/app/app.router.dart';
+import 'package:freecodecamp/models/forum_search_model.dart';
 import 'package:stacked/stacked.dart';
 import 'package:stacked_services/stacked_services.dart';
 
 import '../forum_connect.dart';
-
-class SearchModel {
-  final int topicId;
-  final String postUsername;
-  final int postLikeCount;
-  final String title;
-  final String slug;
-
-  SearchModel(
-      {required this.title,
-      required this.postLikeCount,
-      required this.postUsername,
-      required this.topicId,
-      required this.slug});
-}
 
 class ForumSearchModel extends BaseViewModel {
   bool _queryToShort = true;

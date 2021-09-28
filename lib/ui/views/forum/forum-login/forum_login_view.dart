@@ -1,6 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:freecodecamp/ui/views/forum/forum-login/forum_login_model.dart';
+import 'package:freecodecamp/ui/views/forum/forum-login/forum_login_viewmodel.dart';
 import 'package:stacked/stacked.dart';
 
 class ForumLoginView extends StatelessWidget {

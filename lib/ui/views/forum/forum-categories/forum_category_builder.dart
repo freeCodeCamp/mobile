@@ -1,7 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_html/flutter_html.dart';
-import 'package:freecodecamp/ui/views/forum/forum-categories/forum_category_view_model.dart';
+import 'package:freecodecamp/ui/views/forum/forum-categories/forum_category_viewmodel.dart';
 import 'package:hexcolor/hexcolor.dart';
 import 'package:stacked/stacked.dart';
 import 'package:html/dom.dart' as dom;

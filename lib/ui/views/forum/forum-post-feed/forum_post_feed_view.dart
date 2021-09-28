@@ -1,7 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:freecodecamp/ui/views/forum/forum-post-feed/forum_post_feed_model.dart';
-import 'package:freecodecamp/ui/views/forum/forum-post/forum_post_model.dart';
+import 'package:freecodecamp/ui/views/forum/forum-post-feed/forum_post_feed_viewmodel.dart';
+import 'package:freecodecamp/ui/views/forum/forum-post/forum_post_viewmodel.dart';
 import 'package:stacked/stacked.dart';
 
 class ForumPostFeedView extends StatelessWidget {

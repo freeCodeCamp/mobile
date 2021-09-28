@@ -1,8 +1,9 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_html/flutter_html.dart';
-import 'package:freecodecamp/ui/views/forum/forum-post/forum_post_model.dart';
-import 'package:freecodecamp/ui/views/forum/forum-user/forum_user_model.dart';
+import 'package:freecodecamp/ui/views/forum/forum-post/forum_post_viewmodel.dart';
+import 'package:freecodecamp/models/forum_user_model.dart';
+import 'package:freecodecamp/ui/views/forum/forum-user/forum_user_viewmodel.dart';
 import 'package:stacked/stacked.dart';
 import 'package:html/dom.dart' as dom;
 import 'package:url_launcher/url_launcher.dart';

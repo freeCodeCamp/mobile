@@ -4,11 +4,12 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_html/flutter_html.dart';
 import 'package:flutter_syntax_view/flutter_syntax_view.dart';
+import 'package:freecodecamp/models/forum_post_model.dart';
 import 'package:freecodecamp/ui/views/forum/forum-comment/forum_comment_view.dart';
 import 'package:stacked/stacked.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:html/dom.dart' as dom;
-import 'forum_post_model.dart';
+import 'forum_post_viewmodel.dart';
 
 class ForumPostView extends StatelessWidget {
   final String id;
