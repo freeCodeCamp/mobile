@@ -10,6 +10,7 @@ import 'package:stacked_services/stacked_services.dart';
 
 class NewsFeedModel extends BaseViewModel {
   int _pageNumber = 0;
+  int get page => _pageNumber;
   final List<Article> articles = [];
   static const int itemRequestThreshold = 14;
   final _navigationService = locator<NavigationService>();

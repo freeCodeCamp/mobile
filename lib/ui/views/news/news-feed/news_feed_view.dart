@@ -16,9 +16,18 @@ class NewsFeedView extends StatelessWidget {
   Widget build(BuildContext context) {
     return ViewModelBuilder<NewsFeedModel>.reactive(
       viewModelBuilder: () => NewsFeedModel(),
-      onModelReady: (model) => model.initState(),
-      builder: (context, model, child) =>
-          Scaffold(body: articleThumbnailBuilder(model, context)),
+      builder: (context, model, child) => Scaffold(
+          backgroundColor: const Color.fromRGBO(0x2A, 0x2A, 0x40, 1),
+          body: FutureBuilder(
+            future: model.fetchArticles(model.page),
+            builder: (context, snapshot) {
+              if (snapshot.hasData) {
+                return articleThumbnailBuilder(model, context);
+              }
+
+              return const Center(child: CircularProgressIndicator());
+            },
+          )),
     );
   }
 
