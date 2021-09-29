@@ -49,7 +49,7 @@ class NewsFeedModel extends BaseViewModel {
 
     if (request && pageToRequest > _pageNumber) {
       _pageNumber = pageToRequest;
-      await fetchArticles(_pageNumber);
+      await fetchArticles(_pageNumber + 1);
       notifyListeners();
     }
   }
