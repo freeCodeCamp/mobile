@@ -23,6 +23,13 @@ class NewsFeedView extends StatelessWidget {
             builder: (context, snapshot) {
               if (snapshot.hasData) {
                 return articleThumbnailBuilder(model, context);
+              } else if (snapshot.hasError) {
+                return const Center(
+                  child: Text(
+                    'There was an error loading articles',
+                    style: TextStyle(color: Colors.white),
+                  ),
+                );
               }
 
               return const Center(child: CircularProgressIndicator());
