@@ -19,7 +19,7 @@ class NewsFeedView extends StatelessWidget {
       builder: (context, model, child) => Scaffold(
           backgroundColor: const Color.fromRGBO(0x2A, 0x2A, 0x40, 1),
           body: FutureBuilder(
-            future: model.fetchArticles(model.page),
+            future: model.fetchArticles(),
             builder: (context, snapshot) {
               if (snapshot.hasData) {
                 return articleThumbnailBuilder(model, context);
