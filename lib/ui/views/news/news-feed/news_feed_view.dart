@@ -16,9 +16,25 @@ class NewsFeedView extends StatelessWidget {
   Widget build(BuildContext context) {
     return ViewModelBuilder<NewsFeedModel>.reactive(
       viewModelBuilder: () => NewsFeedModel(),
-      onModelReady: (model) => model.initState(),
-      builder: (context, model, child) =>
-          Scaffold(body: articleThumbnailBuilder(model, context)),
+      builder: (context, model, child) => Scaffold(
+          backgroundColor: const Color.fromRGBO(0x2A, 0x2A, 0x40, 1),
+          body: FutureBuilder(
+            future: model.fetchArticles(),
+            builder: (context, snapshot) {
+              if (snapshot.hasData) {
+                return articleThumbnailBuilder(model, context);
+              } else if (snapshot.hasError) {
+                return const Center(
+                  child: Text(
+                    'There was an error loading articles',
+                    style: TextStyle(color: Colors.white),
+                  ),
+                );
+              }
+
+              return const Center(child: CircularProgressIndicator());
+            },
+          )),
     );
   }
 
@@ -95,30 +111,28 @@ class NewsFeedView extends StatelessWidget {
                   ],
                 ),
                 Row(children: [
-                  Column(
-                    children: [
-                      Padding(
-                        padding: const EdgeInsets.all(16.0),
-                        child: Text(
-                          '#' + articles[i].tagName!,
-                          style: const TextStyle(
-                              color: Colors.white, fontSize: 18),
-                        ),
-                      )
-                    ],
+                  Expanded(
+                    flex: 6,
+                    child: Padding(
+                      padding: const EdgeInsets.all(16.0),
+                      child: Text(
+                        '#' + articles[i].tagName!,
+                        style:
+                            const TextStyle(color: Colors.white, fontSize: 18),
+                      ),
+                    ),
                   ),
-                  Column(
-                    children: [
-                      Padding(
-                        padding: const EdgeInsets.all(16.0),
-                        child: Text(
-                          articles[i].authorName,
-                          textAlign: TextAlign.right,
-                          style: const TextStyle(
-                              color: Colors.white, fontSize: 18),
-                        ),
-                      )
-                    ],
+                  Expanded(
+                    flex: 6,
+                    child: Padding(
+                      padding: const EdgeInsets.all(16.0),
+                      child: Text(
+                        articles[i].authorName,
+                        textAlign: TextAlign.right,
+                        style:
+                            const TextStyle(color: Colors.white, fontSize: 18),
+                      ),
+                    ),
                   )
                 ]),
               ],

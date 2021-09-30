@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:freecodecamp/ui/views/news/news-bookmark/news_bookmark_feed_view.dart';
 import 'package:freecodecamp/ui/views/news/news-feed/news_feed_view.dart';
-import 'package:freecodecamp/ui/views/news/news-search/news_search_model.dart';
 import 'package:freecodecamp/ui/views/news/news-search/news_search_viewmodel.dart';
+import 'package:freecodecamp/ui/views/news/news-search/news_search_view.dart';
 import 'package:freecodecamp/ui/widgets/nav_button_widget.dart';
 import 'package:stacked/stacked.dart';
 
