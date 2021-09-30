@@ -10,8 +10,11 @@ import 'package:stacked_services/stacked_services.dart';
 import '../forum_connect.dart';
 
 class ForumSearchModel extends BaseViewModel {
-  bool _queryToShort = true;
+  bool _queryToShort = false;
   bool get queryToShort => _queryToShort;
+
+  bool _hasSearched = false;
+  bool get hasSearched => _hasSearched;
 
   String _searchTerm = '';
   String get searchTerm => _searchTerm;
@@ -19,9 +22,11 @@ class ForumSearchModel extends BaseViewModel {
   void checkQuery(value) {
     if (value.length <= 2) {
       _queryToShort = true;
+      _hasSearched = true;
       notifyListeners();
     } else {
       _queryToShort = false;
+      _hasSearched = true;
       _searchTerm = value;
       notifyListeners();
     }

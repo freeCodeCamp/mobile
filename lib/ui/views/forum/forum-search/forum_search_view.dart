@@ -68,9 +68,11 @@ class ForumSearchView extends StatelessWidget {
                 } else {
                   return Center(
                       child: Text(
-                    model.queryToShort
-                        ? 'The query is to short'
-                        : 'Type something to search',
+                    model.hasSearched
+                        ? model.queryToShort
+                            ? 'Query to short'
+                            : ''
+                        : 'type something to search',
                     style: const TextStyle(color: Colors.white),
                   ));
                 }
