@@ -79,7 +79,7 @@ class HomeView extends StatelessWidget {
                             Icons.forum_outlined,
                             size: 70,
                           ),
-                          isWebComponent: true,
+                          isWebComponent: false,
                           viewModel: viewModel,
                         ),
                       ),
