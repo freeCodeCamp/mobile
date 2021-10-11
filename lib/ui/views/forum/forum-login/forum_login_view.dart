@@ -11,37 +11,46 @@ class ForumLoginView extends StatelessWidget {
   Widget build(BuildContext context) {
     return ViewModelBuilder<ForumLoginModel>.reactive(
         viewModelBuilder: () => ForumLoginModel(),
-        onModelReady: (model) => model.initState(),
+        onModelReady: (model) async => model.initState(),
         builder: (context, model, child) => Scaffold(
             backgroundColor: const Color.fromRGBO(0x2A, 0x2A, 0x40, 1),
             body: Column(children: [
-              Row(mainAxisAlignment: MainAxisAlignment.center, children: const [
-                Padding(
-                  padding: EdgeInsets.only(top: 100),
-                  child: Text(
-                    'Login to your forum account',
-                    style: TextStyle(
-                        color: Colors.white,
-                        fontSize: 24,
-                        fontWeight: FontWeight.bold),
-                  ),
-                )
-              ]),
               Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  SizedBox(
-                      width: MediaQuery.of(context).size.width * 0.8,
-                      child: loginForum(context, model))
+                  model.isLoggedIn
+                      ? loggedIn()
+                      : SizedBox(
+                          width: MediaQuery.of(context).size.width * 0.8,
+                          child: loginForum(context, model))
                 ],
               ),
             ])));
   }
 }
 
+Center loggedIn() {
+  return const Center(
+    child: Text(
+      'Thank you for logging in!',
+      style: TextStyle(color: Colors.white),
+    ),
+  );
+}
+
 Column loginForum(context, ForumLoginModel model) {
   return Column(
     children: [
+      Row(mainAxisAlignment: MainAxisAlignment.center, children: const [
+        Padding(
+          padding: EdgeInsets.only(top: 100),
+          child: Text(
+            'Login to your forum account',
+            style: TextStyle(
+                color: Colors.white, fontSize: 24, fontWeight: FontWeight.bold),
+          ),
+        )
+      ]),
       Row(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [

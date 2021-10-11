@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:stacked/stacked.dart';
 import 'dart:developer' as dev;
 
@@ -25,8 +26,13 @@ class ForumLoginModel extends BaseViewModel {
   late String _errorMessage;
   String get errorMessage => _errorMessage;
 
-  void initState() {
+  bool _isLoggedIn = false;
+  bool get isLoggedIn => _isLoggedIn;
+
+  void initState() async {
     _errorMessage = '';
+    _isLoggedIn = await checkLoggedIn();
+    notifyListeners();
   }
 
   Future<dynamic> getCSRF() async {
@@ -60,6 +66,11 @@ class ForumLoginModel extends BaseViewModel {
     return true;
   }
 
+  Future<bool> checkLoggedIn() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    return prefs.getBool('loggedIn') ?? false;
+  }
+
   Future<dynamic> discourseAuth(csrf, username, password, cookie) async {
     Map<String, String> headers = {
       "X-CSRF-Token": csrf,
@@ -74,6 +85,10 @@ class ForumLoginModel extends BaseViewModel {
 
     if (response.statusCode == 200) {
       if (noAuthError(response.body)) {
+        SharedPreferences prefs = await SharedPreferences.getInstance();
+        prefs.setBool('loggedIn', true);
+        _isLoggedIn = prefs.getBool('loggedIn') as bool;
+        notifyListeners();
       } else {
         _hasPasswordError = false;
         _hasUsernameError = false;
@@ -103,7 +118,6 @@ class ForumLoginModel extends BaseViewModel {
       notifyListeners();
     } else {
       // if there was a previous error remove error
-      dev.log('logged in');
       _hasAuthError = false;
       notifyListeners();
       getCSRF().then(
