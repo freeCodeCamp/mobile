@@ -33,6 +33,8 @@ flutter:
   assets:
     - .env
     - assets/images/
+    - assets/images/placeholder-profile-img.png
+    - assets/images/freecodecamp-banner.png
     - assets/database/cards-jwasham.db
     - assets/database/bookmarked-article.db
   # To add assets to your application, add an assets section, like this:

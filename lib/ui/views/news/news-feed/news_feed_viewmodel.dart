@@ -1,6 +1,4 @@
 import 'dart:convert';
-import 'dart:developer';
-
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:freecodecamp/app/app.locator.dart';
 import 'package:freecodecamp/app/app.router.dart';
@@ -26,12 +24,33 @@ class NewsFeedModel extends BaseViewModel {
         arguments: NewsArticlePostViewArguments(refId: id));
   }
 
+  String truncateTag(String tag) {
+    if (tag.length < 15) {
+      return tag;
+    } else {
+      return tag.toString().substring(0, 15) + '...';
+    }
+  }
+
+  String truncateAuthorName(String name) {
+    List<String> names = name.split(" ");
+
+    if (name.length > 15) {
+      return name.substring(0, 15) + '...';
+    }
+
+    if (names.length > 2) {
+      return names[0] + ' ' + names[1];
+    }
+
+    return name;
+  }
+
   Future<List<Article>> fetchArticles() async {
     await dotenv.load(fileName: ".env");
     String page = '&page=' + _pageNumber.toString();
     String par = "&fields=title,url,feature_image,id&include=tags,authors";
     String url = "${dotenv.env['NEWSURL']}${dotenv.env['NEWSKEY']}$page$par";
-    log(url);
     final response = await http.get(Uri.parse(url));
     if (response.statusCode == 200) {
       var articleJson = json.decode(response.body)['posts'];

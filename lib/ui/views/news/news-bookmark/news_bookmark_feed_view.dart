@@ -2,7 +2,6 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:freecodecamp/ui/views/news/news-bookmark/news_bookmark_viewmodel.dart';
 import 'package:stacked/stacked.dart';
-import 'dart:developer' as dev;
 import '../news_helpers.dart';
 import 'news_bookmark_view.dart';
 
@@ -31,7 +30,6 @@ ListView populateListViewModel(NewsBookmarkModel model) {
   if (model.bookMarkedArticles.isEmpty) {
     model.updateListView();
   }
-  dev.log(model.count.toString());
   return ListView.builder(
       itemCount: model.count,
       itemBuilder: (context, index) {
