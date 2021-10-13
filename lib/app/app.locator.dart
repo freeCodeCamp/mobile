@@ -6,9 +6,12 @@
 
 // ignore_for_file: public_member_api_docs
 
+import 'package:sqflite_migration_service/sqflite_migration_service.dart';
 import 'package:stacked/stacked.dart';
 import 'package:stacked/stacked_annotations.dart';
 import 'package:stacked_services/stacked_services.dart';
+
+import '../service/episodes_service.dart';
 
 final locator = StackedLocator.instance;
 
@@ -21,4 +24,6 @@ void setupLocator({String? environment, EnvironmentFilter? environmentFilter}) {
   locator.registerLazySingleton(() => NavigationService());
   locator.registerLazySingleton(() => DialogService());
   locator.registerLazySingleton(() => SnackbarService());
+  locator.registerLazySingleton(() => DatabaseMigrationService());
+  locator.registerLazySingleton(() => EpisodeDatabaseService());
 }

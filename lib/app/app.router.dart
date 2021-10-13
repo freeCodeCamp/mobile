@@ -11,6 +11,7 @@ import 'package:stacked/stacked.dart';
 
 import '../ui/views/browser/browser_view.dart';
 import '../ui/views/home/home_view.dart';
+import '../ui/views/podcast/podcast_download_view.dart';
 import '../ui/views/podcast/podcast_view.dart';
 import '../ui/views/startup/startup_view.dart';
 import '../ui/views/website/website_view.dart';
@@ -21,12 +22,14 @@ class Routes {
   static const String homeView = '/home-view';
   static const String browserView = '/browser-view';
   static const String podcastView = '/podcast-view';
+  static const String podcastDownloadView = '/podcast-download-view';
   static const all = <String>{
     startupView,
     websiteView,
     homeView,
     browserView,
     podcastView,
+    podcastDownloadView,
   };
 }
 
@@ -39,6 +42,7 @@ class StackedRouter extends RouterBase {
     RouteDef(Routes.homeView, page: HomeView),
     RouteDef(Routes.browserView, page: BrowserView),
     RouteDef(Routes.podcastView, page: PodcastView),
+    RouteDef(Routes.podcastDownloadView, page: PodcastDownloadView),
   ];
   @override
   Map<Type, StackedRouteFactory> get pagesMap => _pagesMap;
@@ -74,6 +78,12 @@ class StackedRouter extends RouterBase {
     PodcastView: (data) {
       return MaterialPageRoute<dynamic>(
         builder: (context) => const PodcastView(),
+        settings: data,
+      );
+    },
+    PodcastDownloadView: (data) {
+      return MaterialPageRoute<dynamic>(
+        builder: (context) => const PodcastDownloadView(),
         settings: data,
       );
     },

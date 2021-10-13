@@ -1,13 +1,26 @@
 import 'dart:developer';
+import 'dart:io';
 
+import 'package:freecodecamp/app/app.locator.dart';
+import 'package:freecodecamp/models/downloaded_episodes.dart';
+import 'package:freecodecamp/service/episodes_service.dart';
 import 'package:just_audio/just_audio.dart';
+import 'package:path_provider/path_provider.dart';
 import 'package:podcast_search/podcast_search.dart';
 import 'package:stacked/stacked.dart';
+import 'package:dio/dio.dart';
 
 class EpisodeViewModel extends BaseViewModel {
+  final _databaseService = locator<EpisodeDatabaseService>();
   final audioPlayer = AudioPlayer();
+  final DownloadedEpisodes episode;
+  late final Directory appDir;
+  late bool downloaded = episode.downloaded;
   bool playing = false;
-  final Episode episode;
+  bool downloading = false;
+  late int progress;
+  // Response response;
+  var dio = Dio();
 
   EpisodeViewModel(this.episode);
 
@@ -17,9 +30,40 @@ class EpisodeViewModel extends BaseViewModel {
     super.dispose();
   }
 
-  void init(String url) {
-    audioPlayer.setUrl(url);
-    audioPlayer.load();
+  Future init(String url) async {
+    await _databaseService.initialise();
+    appDir = await getApplicationDocumentsDirectory();
+    log("DIR: ${appDir.path}");
+    log(episode.toString());
+    downloaded = episode.downloaded;
+    // Check if this one works properly when no net present
+    try {
+      if (episode.downloaded) {
+        await audioPlayer
+            .setFilePath(appDir.path + '/episodes/' + episode.guid + '.mp3');
+        await audioPlayer.load();
+      } else {
+        await audioPlayer.setUrl(url);
+        await audioPlayer.load();
+      }
+    } catch (e) {
+      log("Cannot play audio $e");
+    }
+  }
+
+  // Make this even more better UI and logic wise. Also check for notification update
+  void downloadAudio(String uri) async {
+    downloading = true;
+    notifyListeners();
+    log('DOWNLOADIN...');
+    await dio.download(uri, appDir.path + '/episodes/' + episode.guid + '.mp3',
+        onReceiveProgress: (int recevied, int total) {
+      log('$recevied / $total');
+    }).whenComplete(() {
+      downloading = false;
+      log('Downloaded episode ${episode.title}');
+    });
+    notifyListeners();
   }
 
   void playBtnClick() {
@@ -34,5 +78,25 @@ class EpisodeViewModel extends BaseViewModel {
     notifyListeners();
   }
 
-  void downloadBtnClick() => log("CLICKED DOWNLOAD BUTTON ${episode.title}");
+  void downloadBtnClick() {
+    log("CLICKED DOWNLOAD BUTTON ${episode.title}, status $downloaded");
+    if (!downloaded && !downloading) {
+      log("STARTING DOWNLOAD");
+      downloadAudio(episode.contentUrl!);
+      downloaded = !downloaded;
+      episode.downloaded = downloaded;
+      _databaseService.toggleDownloadEpisode(episode.guid, downloaded);
+      notifyListeners();
+    } else if (downloaded) {
+      log("DELETING DOWNLOAD");
+      File audioFile = File(appDir.path + '/episodes/' + episode.guid + '.mp3');
+      if (audioFile.existsSync()) {
+        audioFile.deleteSync();
+      }
+      downloaded = !downloaded;
+      episode.downloaded = downloaded;
+      _databaseService.toggleDownloadEpisode(episode.guid, downloaded);
+      notifyListeners();
+    }
+  }
 }

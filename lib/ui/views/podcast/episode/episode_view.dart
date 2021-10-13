@@ -1,6 +1,6 @@
-
 import 'package:flutter/material.dart';
 import 'package:flutter_html/flutter_html.dart';
+import 'package:freecodecamp/models/downloaded_episodes.dart';
 import 'package:html/dom.dart' as dom;
 import 'package:intl/intl.dart';
 import 'package:podcast_search/podcast_search.dart';
@@ -10,7 +10,7 @@ import 'package:url_launcher/url_launcher.dart';
 import 'episode_viewmodel.dart';
 
 class EpisodeView extends StatelessWidget {
-  final Episode episode;
+  final DownloadedEpisodes episode;
   const EpisodeView({Key? key, required this.episode}) : super(key: key);
 
   final TextStyle _titleStyle =
@@ -45,15 +45,15 @@ class EpisodeView extends StatelessWidget {
           child: SingleChildScrollView(
             child: Column(
               children: [
-                Image.network(
-                  'https://ssl-static.libsyn.com/p/assets/2/f/f/7/2ff7cc8aa33fe438/freecodecamp-square-logo-large-1400.jpg',
+                Image.asset(
+                  'assets/images/episode-default.jpg',
                   height: 250,
                 ),
                 const SizedBox(
                   height: 20,
                 ),
                 Text(
-                  episode.title,
+                  episode.title!,
                   style: _titleStyle,
                 ),
                 const SizedBox(
@@ -92,13 +92,17 @@ class EpisodeView extends StatelessWidget {
                   width: MediaQuery.of(context).size.width,
                   child: TextButton.icon(
                     onPressed: model.downloadBtnClick,
-                    icon: const Icon(
-                      Icons.download,
+                    icon: Icon(
+                      model.downloaded ? Icons.delete : Icons.download,
                       color: Colors.white,
                     ),
-                    label: const Text(
-                      'Download',
-                      style: TextStyle(color: Colors.white),
+                    label: Text(
+                      model.downloading
+                          ? 'DOWNLOADING'
+                          : model.downloaded
+                              ? 'Remove Download'
+                              : 'Download',
+                      style: const TextStyle(color: Colors.white),
                     ),
                     style: ButtonStyle(
                       backgroundColor: MaterialStateColor.resolveWith(

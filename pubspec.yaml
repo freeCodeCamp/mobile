@@ -28,6 +28,9 @@ dependencies:
   ui_helper: ^1.1.0
   url_launcher: ^6.0.10
   webview_flutter: ^2.0.12
+  sqflite_migration_service: ^2.0.0-nullsafety.1
+  json_serializable: ^4.1.4
+  dio: ^4.0.0
 dev_dependencies:
   build_runner: ^2.1.2
   flutter_test:
@@ -38,6 +41,7 @@ flutter:
   assets:
     - .env
     - assets/images/
+    - assets/sql/
     - assets/database/cards-jwasham.db
     - assets/database/bookmarked-article.db
   # To add assets to your application, add an assets section, like this:

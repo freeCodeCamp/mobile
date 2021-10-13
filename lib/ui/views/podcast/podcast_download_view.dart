@@ -2,7 +2,7 @@ import 'dart:developer';
 
 import 'package:flutter/material.dart';
 import 'package:freecodecamp/models/downloaded_episodes.dart';
-import 'package:freecodecamp/ui/views/podcast/podcast_viewmodel.dart';
+import 'package:freecodecamp/ui/views/podcast/podcast_download_viewmodel.dart';
 import 'package:podcast_search/podcast_search.dart';
 import 'package:stacked/stacked.dart';
 import 'package:intl/intl.dart';
@@ -11,19 +11,18 @@ import 'episode/episode_view.dart';
 
 // ui view only
 
-class PodcastView extends StatelessWidget {
-  const PodcastView({Key? key}) : super(key: key);
+class PodcastDownloadView extends StatelessWidget {
+  const PodcastDownloadView({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
-    return ViewModelBuilder<PodcastViewModel>.reactive(
+    return ViewModelBuilder<PodcastDownloadViewModel>.reactive(
       builder: (context, model, child) => Scaffold(
         appBar: AppBar(
-          title: const Text('Podcasts'),
+          title: const Text('Downloaded Podcasts'),
           backgroundColor: const Color(0xFF0a0a23),
         ),
         backgroundColor: const Color(0xFF0a0a23),
-        // backgroundColor: const Color(0xFFFFFFFF),
         body: FutureBuilder<List<DownloadedEpisodes>>(
           future: model.fetchPodcastEpisodes(),
           builder: (context, snapshot) {
@@ -44,7 +43,7 @@ class PodcastView extends StatelessWidget {
           },
         ),
       ),
-      viewModelBuilder: () => PodcastViewModel(),
+      viewModelBuilder: () => PodcastDownloadViewModel(),
     );
   }
 }
@@ -79,24 +78,43 @@ class PodcastEpisodeTemplate extends StatelessWidget {
               ),
             ),
           ),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
+          child: Row(
+            // crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
-              Text(
-                episode.title!,
-                maxLines: 2,
-                overflow: TextOverflow.ellipsis,
-                style: const TextStyle(
-                  fontSize: 16,
-                  color: Colors.white,
+              Expanded(
+                flex: 1,
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  // mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Text(
+                      episode.title!,
+                      maxLines: 2,
+                      overflow: TextOverflow.ellipsis,
+                      style: const TextStyle(
+                        fontSize: 16,
+                        color: Colors.white,
+                      ),
+                    ),
+                    Padding(
+                      padding: const EdgeInsets.only(top: 8),
+                      child: Text(
+                        DateFormat.yMMMd().format(episode.publicationDate!),
+                        style: const TextStyle(
+                          fontSize: 12,
+                          color: Colors.white,
+                        ),
+                      ),
+                    ),
+                  ],
                 ),
               ),
-              Padding(
-                padding: const EdgeInsets.only(top: 8),
-                child: Text(
-                  DateFormat.yMMMd().format(episode.publicationDate!),
-                  style: const TextStyle(
-                    fontSize: 12,
+              Flexible(
+                flex: 0,
+                child: Padding(
+                  padding: const EdgeInsets.all(8),
+                  child: Icon(
+                    episode.downloaded ? Icons.delete : Icons.download,
                     color: Colors.white,
                   ),
                 ),
