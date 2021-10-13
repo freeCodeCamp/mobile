@@ -4,6 +4,8 @@ import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:http/http.dart' as http;
 import 'dart:developer' as dev;
 
+import 'package:shared_preferences/shared_preferences.dart';
+
 // get, post, put and delete methods based in one file for connecting to the Discourse api
 
 class ForumConnect {
@@ -19,14 +21,16 @@ class ForumConnect {
     return response;
   }
 
-  static Future<dynamic> connectAndPost(String endpoint,
-      Map<String, String> headers, Map<String, String> body) async {
-    await dotenv.load(fileName: ".env");
-    headers['Api-key'] = dotenv.env['DISCOURSE_API'] as String;
-    headers['Api-Username'] = dotenv.env['DISCOURSE_USERNAME'] as String;
+  static Future<dynamic> connectAndPost(
+      String endpoint, Map<String, String> headers) async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
 
-    final response = await http.post(Uri.parse(baseUrl + endpoint),
-        headers: headers, body: jsonEncode(body));
+    await dotenv.load(fileName: ".env");
+    headers['Api-Key'] = dotenv.env['DISCOURSE_API'] as String;
+    headers['Api-Username'] = prefs.getString('username') as String;
+    final response =
+        await http.post(Uri.parse(baseUrl + endpoint), headers: headers);
+    dev.log(response.body);
     return response;
   }
 

@@ -87,6 +87,7 @@ class ForumLoginModel extends BaseViewModel {
       if (noAuthError(response.body)) {
         SharedPreferences prefs = await SharedPreferences.getInstance();
         prefs.setBool('loggedIn', true);
+        prefs.setString('username', username);
         _isLoggedIn = prefs.getBool('loggedIn') as bool;
         notifyListeners();
       } else {
@@ -117,11 +118,16 @@ class ForumLoginModel extends BaseViewModel {
       _errorMessage = "Please fill in a password";
       notifyListeners();
     } else {
-      // if there was a previous error remove error
-      _hasAuthError = false;
       notifyListeners();
       getCSRF().then(
           (keys) => {discourseAuth(keys[0], username, password, keys[1])});
     }
+  }
+
+  Future<void> logout() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    prefs.setBool('loggedIn', false);
+    _isLoggedIn = prefs.getBool('loggedIn') as bool;
+    notifyListeners();
   }
 }

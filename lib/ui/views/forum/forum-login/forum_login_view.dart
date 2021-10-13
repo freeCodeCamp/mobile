@@ -2,6 +2,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/painting.dart';
 import 'package:flutter/rendering.dart';
+import 'package:freecodecamp/ui/views/forum/forum-create-post/forum_create_post_view.dart';
 import 'package:freecodecamp/ui/views/forum/forum-login/forum_login_viewmodel.dart';
 import 'package:stacked/stacked.dart';
 
@@ -13,33 +14,21 @@ class ForumLoginView extends StatelessWidget {
         viewModelBuilder: () => ForumLoginModel(),
         onModelReady: (model) async => model.initState(),
         builder: (context, model, child) => Scaffold(
+            resizeToAvoidBottomInset: false,
             backgroundColor: const Color.fromRGBO(0x2A, 0x2A, 0x40, 1),
-            body: Column(children: [
-              Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  model.isLoggedIn
-                      ? loggedIn()
-                      : SizedBox(
-                          width: MediaQuery.of(context).size.width * 0.8,
-                          child: loginForum(context, model))
-                ],
-              ),
-            ])));
+            body: SingleChildScrollView(
+              child: Column(children: [
+                model.isLoggedIn
+                    ? const ForumCreatePostViewmodel()
+                    : loginForum(context, model)
+              ]),
+            )));
   }
-}
-
-Center loggedIn() {
-  return const Center(
-    child: Text(
-      'Thank you for logging in!',
-      style: TextStyle(color: Colors.white),
-    ),
-  );
 }
 
 Column loginForum(context, ForumLoginModel model) {
   return Column(
+    mainAxisAlignment: MainAxisAlignment.center,
     children: [
       Row(mainAxisAlignment: MainAxisAlignment.center, children: const [
         Padding(
