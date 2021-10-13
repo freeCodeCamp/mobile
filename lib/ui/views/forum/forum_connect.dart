@@ -5,7 +5,6 @@ import 'package:http/http.dart' as http;
 import 'dart:developer' as dev;
 
 import 'package:shared_preferences/shared_preferences.dart';
-
 // get, post, put and delete methods based in one file for connecting to the Discourse api
 
 class ForumConnect {
@@ -21,7 +20,6 @@ class ForumConnect {
     return response;
   }
 
-  static Future<dynamic> connectAndPost(
       String endpoint, Map<String, String> headers) async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
 
