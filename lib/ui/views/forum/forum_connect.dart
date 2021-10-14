@@ -20,6 +20,7 @@ class ForumConnect {
     return response;
   }
 
+  static Future<dynamic> connectAndPost(
       String endpoint, Map<String, String> headers) async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
 

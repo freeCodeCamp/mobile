@@ -72,7 +72,6 @@ class ForumLoginModel extends BaseViewModel {
   }
 
   Future<dynamic> discourseAuth(csrf, username, password, cookie) async {
-  static Future<dynamic> discourseAuth(csrf, username, password, cookie) async {
     Map<String, String> headers = {
       "X-CSRF-Token": csrf,
       "Cookie": cookie,
@@ -129,8 +128,5 @@ class ForumLoginModel extends BaseViewModel {
     prefs.setBool('loggedIn', false);
     _isLoggedIn = prefs.getBool('loggedIn') as bool;
     notifyListeners();
-  static Future<void> login(username, password) async {
-    getCSRF()
-        .then((keys) => {discourseAuth(keys[0], username, password, keys[1])});
   }
 }
