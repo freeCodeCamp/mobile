@@ -19,6 +19,7 @@ class ForumCreatePostModel extends BaseViewModel {
       "Content-Type": 'application/x-www-form-urlencoded'
     };
 
-    ForumConnect.connectAndPost('/posts.json?title=$title&raw=$text', headers);
+    ForumConnect.connectAndPost(
+        '/posts.json?title=$title&raw=$text&category=521', headers);
   }
 }

@@ -1,6 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_html/flutter_html.dart';
+import 'package:freecodecamp/models/forum_category_model.dart';
 import 'package:freecodecamp/ui/views/forum/forum-categories/forum_category_viewmodel.dart';
 import 'package:hexcolor/hexcolor.dart';
 import 'package:stacked/stacked.dart';
@@ -17,18 +18,18 @@ class ForumCategoryBuilder extends StatelessWidget {
         onModelReady: (model) => model.initState(),
         builder: (context, model, child) => Scaffold(
             backgroundColor: const Color.fromRGBO(0x2A, 0x2A, 0x40, 1),
-            body: FutureBuilder<List<dynamic>?>(
+            body: FutureBuilder<List<Category>>(
               future: model.future,
               builder: (context, snapshot) {
                 if (snapshot.hasData) {
                   var categories = snapshot.data;
                   return ListView.builder(
                       itemCount: snapshot.data?.length,
-                      itemBuilder: (BuildContext context, int index) {
+                      itemBuilder: (BuildContext context, int i) {
                         return InkWell(
                           onTap: () {
-                            model.goToPosts(categories?[index]["slug"],
-                                categories?[index]["id"]);
+                            model.goToPosts(
+                                categories![i].slug, categories[i].id);
                           },
                           child: Container(
                             decoration: BoxDecoration(
@@ -36,7 +37,7 @@ class ForumCategoryBuilder extends StatelessWidget {
                                     left: BorderSide(
                                         width: 5,
                                         color: HexColor(
-                                          "#" + categories?[index]["color"],
+                                          "#" + categories![i].color,
                                         )))),
                             child: Column(
                               children: [
@@ -45,7 +46,7 @@ class ForumCategoryBuilder extends StatelessWidget {
                                     Expanded(
                                         child: Padding(
                                       padding: const EdgeInsets.all(16.0),
-                                      child: Text(categories?[index]["name"],
+                                      child: Text(categories[i].name,
                                           style: const TextStyle(
                                               fontSize: 24,
                                               color: Colors.white,
@@ -59,8 +60,7 @@ class ForumCategoryBuilder extends StatelessWidget {
                                         child: Padding(
                                             padding: const EdgeInsets.all(8.0),
                                             child: Html(
-                                              data: categories?[index]
-                                                  ["description"],
+                                              data: categories[i].description,
                                               style: {
                                                 "body": Style(
                                                     color: Colors.white,
@@ -82,8 +82,7 @@ class ForumCategoryBuilder extends StatelessWidget {
                                         child: Padding(
                                       padding: const EdgeInsets.all(16.0),
                                       child: Text(
-                                          categories![index]["topics_week"]
-                                                  .toString() +
+                                          categories[i].topicWeek.toString() +
                                               ' new topics this week',
                                           style: const TextStyle(
                                               fontSize: 14,

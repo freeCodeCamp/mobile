@@ -26,6 +26,7 @@ Column createPostTemplate(ForumCreatePostModel model, context) {
           SizedBox(
               width: MediaQuery.of(context).size.width * 0.60,
               child: TextField(
+                style: const TextStyle(color: Colors.white),
                 controller: model.title,
                 decoration: InputDecoration(
                     enabledBorder: const OutlineInputBorder(
@@ -62,6 +63,7 @@ Column createPostTemplate(ForumCreatePostModel model, context) {
             child: SizedBox(
               width: MediaQuery.of(context).size.width,
               child: TextField(
+                style: const TextStyle(color: Colors.white),
                 controller: model.code,
                 minLines: 10,
                 maxLines: null,
