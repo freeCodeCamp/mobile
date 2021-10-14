@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/painting.dart';
 import 'package:stacked/stacked.dart';
 import 'forum_create_post_viewmodel.dart';
+import 'dart:developer' as dev;
 
 class ForumCreatePostViewmodel extends StatelessWidget {
   const ForumCreatePostViewmodel({Key? key}) : super(key: key);
@@ -23,8 +24,8 @@ Column createPostTemplate(ForumCreatePostModel model, context) {
     children: [
       Row(
         children: [
-          SizedBox(
-              width: MediaQuery.of(context).size.width * 0.60,
+          Expanded(
+              flex: 6,
               child: TextField(
                 style: const TextStyle(color: Colors.white),
                 controller: model.title,
@@ -40,7 +41,43 @@ Column createPostTemplate(ForumCreatePostModel model, context) {
                           fontSize: 16,
                           fontWeight: FontWeight.bold),
                     )),
-              ))
+              )),
+          Expanded(
+              flex: 6,
+              child: FutureBuilder(
+                  future: model.requestCategorieNames(),
+                  builder: (context, snapshot) {
+                    List<String> names = [];
+                    names = snapshot.data as List<String>;
+                    dev.log(names.toString());
+                    return Padding(
+                      padding: const EdgeInsets.only(left: 4.0),
+                      child: DropdownButtonFormField(
+                          style: const TextStyle(color: Colors.white),
+                          dropdownColor: const Color(0xFF0a0a23),
+                          decoration: const InputDecoration(
+                            enabledBorder: OutlineInputBorder(
+                                borderSide:
+                                    BorderSide(color: Colors.white, width: 2)),
+                          ),
+                          value: model.categoryDropDownValue,
+                          onChanged: (String? value) {
+                            model.changeDropDownValue(value);
+                          },
+                          items: snapshot.hasData
+                              ? names.map<DropdownMenuItem<String>>(
+                                  (String value) {
+                                  return DropdownMenuItem<String>(
+                                      value: value, child: Text(value));
+                                }).toList()
+                              : [
+                                  'Category'
+                                ].map<DropdownMenuItem<String>>((String value) {
+                                  return DropdownMenuItem<String>(
+                                      value: value, child: Text(value));
+                                }).toList()),
+                    );
+                  })),
         ],
       ),
       Row(

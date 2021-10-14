@@ -31,14 +31,13 @@ class ForumCategoryViewModel extends BaseViewModel {
         arguments: ForumPostFeedViewArguments(slug: slug, id: id));
   }
 
-  Future<List<Category>> fetchCategories() async {
+  static Future<List<Category>> fetchCategories() async {
     final response = await ForumConnect.connectAndGet('/categories');
 
     List<Category> categories = [];
 
     List categoriesResponse =
         jsonDecode(response.body)['category_list']['categories'];
-    dev.log(response.body);
     if (response.statusCode == 200) {
       for (int i = 0; i < categoriesResponse.length; i++) {
         categories.add(Category.fromJson(categoriesResponse[i]));
