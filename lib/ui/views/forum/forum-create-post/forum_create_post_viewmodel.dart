@@ -1,10 +1,14 @@
+import 'dart:convert';
+
 import 'package:flutter/cupertino.dart';
+import 'package:freecodecamp/app/app.locator.dart';
+import 'package:freecodecamp/app/app.router.dart';
 import 'package:freecodecamp/models/forum_category_model.dart';
 import 'package:freecodecamp/ui/views/forum/forum-categories/forum_category_viewmodel.dart';
 import 'package:freecodecamp/ui/views/forum/forum_connect.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:stacked/stacked.dart';
-import 'dart:developer' as dev;
+import 'package:stacked_services/stacked_services.dart';
 
 class ForumCreatePostModel extends BaseViewModel {
   final _title = TextEditingController();
@@ -19,6 +23,8 @@ class ForumCreatePostModel extends BaseViewModel {
   List<List<String>> categoryNamesWithIds = [];
   String selectedCategoryId = '0';
 
+  final NavigationService _navigationService = locator<NavigationService>();
+
   Future<void> createPost(String title, String text, [int? categoryId]) async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
 
@@ -27,9 +33,15 @@ class ForumCreatePostModel extends BaseViewModel {
       "Content-Type": 'application/x-www-form-urlencoded'
     };
 
-    ForumConnect.connectAndPost(
+    final response = await ForumConnect.connectAndPost(
         '/posts.json?title=$title&raw=$text&category=$selectedCategoryId',
         headers);
+
+    if (response.statusCode == 200) {
+      Map<String, dynamic> post = jsonDecode(response.body);
+
+      goToPosts(post["topic_slug"], post["topic_id"]);
+    }
   }
 
   Future<List<String>> requestCategorieNames() async {
@@ -58,5 +70,11 @@ class ForumCreatePostModel extends BaseViewModel {
         notifyListeners();
       }
     }
+  }
+
+  void goToPosts(slug, id) {
+    id = id.toString();
+    _navigationService.navigateTo(Routes.forumPostView,
+        arguments: ForumPostViewArguments(slug: slug, id: id));
   }
 }

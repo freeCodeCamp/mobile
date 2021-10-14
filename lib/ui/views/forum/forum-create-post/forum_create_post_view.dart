@@ -3,7 +3,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter/painting.dart';
 import 'package:stacked/stacked.dart';
 import 'forum_create_post_viewmodel.dart';
-import 'dart:developer' as dev;
 
 class ForumCreatePostViewmodel extends StatelessWidget {
   const ForumCreatePostViewmodel({Key? key}) : super(key: key);
@@ -25,22 +24,26 @@ Column createPostTemplate(ForumCreatePostModel model, context) {
       Row(
         children: [
           Expanded(
-              flex: 6,
-              child: TextField(
-                style: const TextStyle(color: Colors.white),
-                controller: model.title,
-                decoration: InputDecoration(
-                    enabledBorder: const OutlineInputBorder(
-                        borderSide: BorderSide(color: Colors.white, width: 2)),
-                    border: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(0)),
-                    label: const Text(
-                      'Title',
-                      style: TextStyle(
-                          color: Colors.white,
-                          fontSize: 16,
-                          fontWeight: FontWeight.bold),
-                    )),
+              flex: 5,
+              child: SizedBox(
+                height: 55,
+                child: TextField(
+                  style: const TextStyle(color: Colors.white),
+                  controller: model.title,
+                  decoration: InputDecoration(
+                      enabledBorder: const OutlineInputBorder(
+                          borderSide:
+                              BorderSide(color: Colors.white, width: 2)),
+                      border: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(0)),
+                      label: const Text(
+                        'Title',
+                        style: TextStyle(
+                            color: Colors.white,
+                            fontSize: 16,
+                            fontWeight: FontWeight.bold),
+                      )),
+                ),
               )),
           Expanded(
               flex: 6,
@@ -49,13 +52,13 @@ Column createPostTemplate(ForumCreatePostModel model, context) {
                   builder: (context, snapshot) {
                     List<String> names = [];
                     names = snapshot.data as List<String>;
-                    dev.log(names.toString());
                     return Padding(
                       padding: const EdgeInsets.only(left: 4.0),
                       child: DropdownButtonFormField(
                           style: const TextStyle(color: Colors.white),
                           dropdownColor: const Color(0xFF0a0a23),
                           decoration: const InputDecoration(
+                            isDense: true,
                             enabledBorder: OutlineInputBorder(
                                 borderSide:
                                     BorderSide(color: Colors.white, width: 2)),
