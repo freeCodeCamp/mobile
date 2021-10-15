@@ -229,3 +229,5 @@ class ForumUserViewArguments {
   final Key? key;
   final String username;
   ForumUserViewArguments({this.key, required this.username});
+}
+
