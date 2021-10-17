@@ -46,7 +46,7 @@ class EpisodeView extends StatelessWidget {
             child: Column(
               children: [
                 Image.asset(
-                  'assets/images/episode-default.jpg',
+                  'assets/images/episode_default.jpg',
                   height: 250,
                 ),
                 const SizedBox(

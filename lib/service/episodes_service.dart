@@ -74,7 +74,7 @@ class EpisodeDatabaseService {
             duration: episode.duration,
             downloaded: false,
           ).toJson());
-      log("Downloaded Episode: ${episode.title}");
+      log("Added Episode: ${episode.title}");
     } catch (e) {
       log('Could not insert the episode: $e');
     }
