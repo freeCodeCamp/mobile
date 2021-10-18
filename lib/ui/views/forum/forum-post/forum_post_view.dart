@@ -251,7 +251,6 @@ Row htmlView(AsyncSnapshot<PostModel> post, BuildContext context) {
           child: Padding(
         padding: const EdgeInsets.all(24.0),
         child: Html(
-          shrinkWrap: true,
           data: post.data!.postHtml,
           style: {
             "body": Style(color: Colors.white),
@@ -293,7 +292,7 @@ Row htmlView(AsyncSnapshot<PostModel> post, BuildContext context) {
               var classList = context.tree.elementClasses;
               if (classList.isNotEmpty && classList[0] == 'lang-auto') {
                 return ConstrainedBox(
-                  constraints: BoxConstraints(minHeight: 100, maxHeight: 500),
+                  constraints: BoxConstraints(minHeight: 1, maxHeight: 500),
                   child: SyntaxView(
                     code: context.tree.element?.text as String,
                     syntax: Syntax.JAVASCRIPT,
@@ -301,7 +300,6 @@ Row htmlView(AsyncSnapshot<PostModel> post, BuildContext context) {
                     fontSize: 16.0,
                     withZoom: true,
                     withLinesCount: false,
-                    expanded: true,
                   ),
                 );
               }

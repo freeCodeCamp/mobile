@@ -135,7 +135,7 @@ Column commentHtml(int index, BuildContext context, List<PostModel> posts,
                     if (classList.isNotEmpty && classList[0] == 'lang-auto') {
                       return ConstrainedBox(
                         constraints: const BoxConstraints(
-                          minHeight: 100,
+                          minHeight: 1,
                           maxHeight: 250,
                         ),
                         child: SyntaxView(
@@ -145,7 +145,6 @@ Column commentHtml(int index, BuildContext context, List<PostModel> posts,
                           fontSize: 16.0,
                           withZoom: false,
                           withLinesCount: false,
-                          expanded: true,
                         ),
                       );
                     }
