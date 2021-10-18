@@ -6,9 +6,9 @@ import 'package:freecodecamp/app/app.router.dart';
 import 'package:freecodecamp/models/forum_category_model.dart';
 import 'package:freecodecamp/ui/views/forum/forum-categories/forum_category_viewmodel.dart';
 import 'package:freecodecamp/ui/views/forum/forum_connect.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 import 'package:stacked/stacked.dart';
 import 'package:stacked_services/stacked_services.dart';
+import 'dart:developer' as dev;
 
 class ForumCreatePostModel extends BaseViewModel {
   final _title = TextEditingController();
@@ -20,14 +20,24 @@ class ForumCreatePostModel extends BaseViewModel {
   String _categoryDropdownValue = 'Category';
   String get categoryDropDownValue => _categoryDropdownValue;
 
+  bool _topicHasError = false;
+  bool get topicHasError => _topicHasError;
+
+  String _errorMessage = '';
+  String get errorMessage => _errorMessage;
+
+  bool _categoryHasError = false;
+  bool get categoryHasError => _categoryHasError;
+
+  String _categoryError = '';
+  String get categoryError => _categoryError;
+
   List<List<String>> categoryNamesWithIds = [];
   String selectedCategoryId = '0';
 
   final NavigationService _navigationService = locator<NavigationService>();
 
   Future<void> createPost(String title, String text, [int? categoryId]) async {
-    SharedPreferences prefs = await SharedPreferences.getInstance();
-
     Map<String, String> headers = {
       'X-Requested-With': 'XMLHttpRequest',
       "Content-Type": 'application/x-www-form-urlencoded'
@@ -37,10 +47,23 @@ class ForumCreatePostModel extends BaseViewModel {
         '/posts.json?title=$title&raw=$text&category=$selectedCategoryId',
         headers);
 
+    Map<String, dynamic> topic = json.decode(response.body);
     if (response.statusCode == 200) {
-      Map<String, dynamic> post = jsonDecode(response.body);
+      _categoryHasError = false;
 
-      goToPosts(post["topic_slug"], post["topic_id"]);
+      if (!topic.containsKey("errors")) {
+        goToPosts(topic["topic_slug"], topic["topic_id"]);
+      }
+    } else {
+      if (categoryDropDownValue == 'Category') {
+        _categoryError = 'Please select a category!';
+        _categoryHasError = true;
+        notifyListeners();
+      }
+
+      _topicHasError = true;
+      _errorMessage = topic['errors'][0];
+      notifyListeners();
     }
   }
 
@@ -63,7 +86,9 @@ class ForumCreatePostModel extends BaseViewModel {
     _categoryDropdownValue = value;
     notifyListeners();
 
-    // set category id in parameter to the selected category
+    // this searches the name of the selected category, if the values are equal
+    // the id gets selected e.g. [[390, JavaScript], [202, Python]]
+
     for (int i = 0; i < categoryNamesWithIds.length; i++) {
       if (value == categoryNamesWithIds[i][1]) {
         selectedCategoryId = categoryNamesWithIds[i][0];

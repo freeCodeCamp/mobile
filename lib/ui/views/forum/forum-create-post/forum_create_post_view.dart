@@ -57,9 +57,9 @@ Column createPostTemplate(ForumCreatePostModel model, context) {
                       child: DropdownButtonFormField(
                           style: const TextStyle(color: Colors.white),
                           dropdownColor: const Color(0xFF0a0a23),
-                          decoration: const InputDecoration(
+                          decoration: InputDecoration(
                             isDense: true,
-                            enabledBorder: OutlineInputBorder(
+                            enabledBorder: const OutlineInputBorder(
                                 borderSide:
                                     BorderSide(color: Colors.white, width: 2)),
                           ),
@@ -112,6 +112,13 @@ Column createPostTemplate(ForumCreatePostModel model, context) {
                       borderSide: BorderSide(color: Colors.white, width: 2)),
                   border: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(0)),
+                  errorText: model.categoryHasError
+                      ? model.categoryError
+                      : model.topicHasError
+                          ? model.errorMessage
+                          : null,
+                  errorBorder: const OutlineInputBorder(
+                      borderSide: BorderSide(color: Colors.white, width: 2)),
                 ),
               ),
             ),
