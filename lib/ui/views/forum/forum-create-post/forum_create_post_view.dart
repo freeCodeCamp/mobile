@@ -88,7 +88,7 @@ Column createPostTemplate(ForumCreatePostModel model, context) {
           Padding(
             padding: EdgeInsets.only(top: 16.0),
             child: Text(
-              'Your code',
+              'Your code / message',
               style: TextStyle(
                   fontSize: 16,
                   color: Colors.white,
@@ -147,7 +147,7 @@ Column createPostTemplate(ForumCreatePostModel model, context) {
             ),
           ),
         ],
-      )
+      ),
     ],
   );
 }
