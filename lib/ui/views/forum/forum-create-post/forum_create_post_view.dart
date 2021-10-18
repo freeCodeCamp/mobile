@@ -57,9 +57,9 @@ Column createPostTemplate(ForumCreatePostModel model, context) {
                       child: DropdownButtonFormField(
                           style: const TextStyle(color: Colors.white),
                           dropdownColor: const Color(0xFF0a0a23),
-                          decoration: InputDecoration(
+                          decoration: const InputDecoration(
                             isDense: true,
-                            enabledBorder: const OutlineInputBorder(
+                            enabledBorder: OutlineInputBorder(
                                 borderSide:
                                     BorderSide(color: Colors.white, width: 2)),
                           ),
