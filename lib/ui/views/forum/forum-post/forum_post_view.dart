@@ -6,6 +6,7 @@ import 'package:flutter_html/flutter_html.dart';
 import 'package:flutter_syntax_view/flutter_syntax_view.dart';
 import 'package:freecodecamp/models/forum_post_model.dart';
 import 'package:freecodecamp/ui/views/forum/forum-comment/forum_comment_view.dart';
+import 'package:freecodecamp/ui/views/forum/forum-create-comment/forum_create_comment_view.dart';
 import 'package:stacked/stacked.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:html/dom.dart' as dom;
@@ -231,7 +232,8 @@ Column postViewTemplate(PostViewModel model) {
                     color: Color(0xFF0a0a23),
                     child: htmlView(snapshot, context),
                   ),
-                  ForumCommentView(comments: comments)
+                  ForumCommentView(comments: comments),
+                  model.isLoggedIn ? ForumCreateCommentView() : Container()
                 ],
               );
             }

@@ -7,6 +7,7 @@ import 'package:freecodecamp/app/app.router.dart';
 import 'package:freecodecamp/models/forum_post_model.dart';
 import 'package:jiffy/jiffy.dart';
 import 'package:share/share.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:stacked/stacked.dart';
 import 'package:stacked_services/stacked_services.dart';
 import 'dart:developer' as dev;
@@ -17,9 +18,18 @@ class PostViewModel extends BaseViewModel {
   late Future<PostModel> _future;
   Future<PostModel> get future => _future;
 
-  void initState(slug, id) {
+  bool _isLoggedIn = false;
+  bool get isLoggedIn => _isLoggedIn;
+
+  void initState(slug, id) async {
     _future = fetchPost(id, slug);
+    _isLoggedIn = await checkLoggedIn();
     notifyListeners();
+  }
+
+  Future<bool> checkLoggedIn() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    return prefs.getBool('loggedIn') ?? false;
   }
 
   Future<PostModel> fetchPost(String id, String slug) async {
