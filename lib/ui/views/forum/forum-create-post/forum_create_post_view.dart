@@ -147,7 +147,7 @@ Column createPostTemplate(ForumCreatePostModel model, context) {
             ),
           ),
         ],
-      ),
+      )
     ],
   );
 }
