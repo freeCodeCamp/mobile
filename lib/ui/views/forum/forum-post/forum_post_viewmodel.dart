@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'dart:math';
 import 'dart:ui';
+import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:freecodecamp/app/app.locator.dart';
 import 'package:freecodecamp/app/app.router.dart';
@@ -21,8 +22,14 @@ class PostViewModel extends BaseViewModel {
   bool _isLoggedIn = false;
   bool get isLoggedIn => _isLoggedIn;
 
+  Timer? _timer;
+
   void initState(slug, id) async {
     _future = fetchPost(id, slug);
+    _timer = Timer.periodic(const Duration(seconds: 30), (Timer timer) {
+      _future = fetchPost(id, slug);
+      notifyListeners();
+    });
     _isLoggedIn = await checkLoggedIn();
     notifyListeners();
   }
