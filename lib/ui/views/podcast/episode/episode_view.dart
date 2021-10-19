@@ -3,7 +3,6 @@ import 'package:flutter_html/flutter_html.dart';
 import 'package:freecodecamp/models/downloaded_episodes.dart';
 import 'package:html/dom.dart' as dom;
 import 'package:intl/intl.dart';
-import 'package:podcast_search/podcast_search.dart';
 import 'package:stacked/stacked.dart';
 import 'package:url_launcher/url_launcher.dart';
 
@@ -18,9 +17,6 @@ class EpisodeView extends StatelessWidget {
 
   final TextStyle _subTitleStyle =
       const TextStyle(color: Colors.white, fontSize: 14);
-
-  final TextStyle _textStyle =
-      const TextStyle(color: Colors.white, fontSize: 16);
 
   String _parseDuration(Duration dur) {
     if (dur.inMinutes > 59) {

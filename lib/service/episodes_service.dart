@@ -1,15 +1,11 @@
 import 'dart:async';
-import 'dart:io';
-import 'package:flutter/services.dart';
 import 'package:freecodecamp/app/app.locator.dart';
 import 'package:freecodecamp/models/downloaded_episodes.dart';
-import 'package:path/path.dart';
 import 'package:sqflite/sqflite.dart';
 import 'dart:developer';
-import 'package:podcast_search/podcast_search.dart';
 import 'package:sqflite_migration_service/sqflite_migration_service.dart';
 
-const String EpisodesTablename = 'episodes';
+const String episodesTablename = 'episodes';
 
 class EpisodeDatabaseService {
   final _migrationService = locator<DatabaseMigrationService>();
@@ -27,7 +23,7 @@ class EpisodeDatabaseService {
   }
 
   Future<List<DownloadedEpisodes>> getDownloadedEpisodes() async {
-    List<Map<String, dynamic>> epsResults = await _db.query(EpisodesTablename);
+    List<Map<String, dynamic>> epsResults = await _db.query(episodesTablename);
     log(epsResults
         .map((episode) => DownloadedEpisodes.fromJson(episode))
         .where((episode) => episode.downloaded)
@@ -41,7 +37,7 @@ class EpisodeDatabaseService {
   }
 
   Future<List<DownloadedEpisodes>> getAllEpisodes() async {
-    List<Map<String, dynamic>> epsResults = await _db.query(EpisodesTablename);
+    List<Map<String, dynamic>> epsResults = await _db.query(episodesTablename);
     return epsResults
         .map((episode) => DownloadedEpisodes.fromJson(episode))
         .toList();
@@ -49,7 +45,7 @@ class EpisodeDatabaseService {
 
   Future<DownloadedEpisodes?> getEpisode(String guid) async {
     List<Map<String, dynamic>> epResult = await _db.query(
-      EpisodesTablename,
+      episodesTablename,
       where: 'guid = ?',
       whereArgs: [guid],
     );
@@ -62,7 +58,7 @@ class EpisodeDatabaseService {
   Future addEpisode(dynamic episode) async {
     try {
       await _db.insert(
-          EpisodesTablename,
+          episodesTablename,
           DownloadedEpisodes(
             guid: episode.guid,
             title: episode.title,
@@ -83,7 +79,7 @@ class EpisodeDatabaseService {
   Future toggleDownloadEpisode(String guid, bool downloaded) async {
     try {
       await _db.update(
-        EpisodesTablename,
+        episodesTablename,
         {
           'downloaded': downloaded ? 1 : 0,
         },

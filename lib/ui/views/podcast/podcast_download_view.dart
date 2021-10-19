@@ -3,7 +3,6 @@ import 'dart:developer';
 import 'package:flutter/material.dart';
 import 'package:freecodecamp/models/downloaded_episodes.dart';
 import 'package:freecodecamp/ui/views/podcast/podcast_download_viewmodel.dart';
-import 'package:podcast_search/podcast_search.dart';
 import 'package:stacked/stacked.dart';
 import 'package:intl/intl.dart';
 

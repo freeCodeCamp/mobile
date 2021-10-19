@@ -16,7 +16,6 @@ class PodcastViewModel extends BaseViewModel {
     epsStored = await _databaseService.getAllEpisodes();
     int epsStoredLen = epsStored.length;
     const podcastURL = 'https://freecodecamp.libsyn.com/rss';
-    // final podcastURL = 'https://themattwalshblog.com/category/podcast/feed';
 
     try {
       Podcast podcast = await Podcast.loadFeed(url: podcastURL);

@@ -8,7 +8,6 @@ import 'package:freecodecamp/service/episodes_service.dart';
 import 'package:just_audio/just_audio.dart';
 import 'package:just_audio_background/just_audio_background.dart';
 import 'package:path_provider/path_provider.dart';
-import 'package:podcast_search/podcast_search.dart';
 import 'package:stacked/stacked.dart';
 import 'package:dio/dio.dart';
 

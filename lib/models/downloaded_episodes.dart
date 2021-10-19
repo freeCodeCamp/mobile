@@ -1,11 +1,4 @@
-// import 'package:podcast_search/podcast_search.dart';
-
-// class DownloadedEpisodes extends Episode {
-//   bool? bookmarked;
-
-//   DownloadedEpisodes() : super(guid: this.guid, description: this.description, title: this.title);
-// }
-
+// This class name might be changed in the future
 class DownloadedEpisodes {
   final String guid;
   final String? title;
