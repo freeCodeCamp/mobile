@@ -130,8 +130,8 @@ Column commentHtml(int index, BuildContext context, List<PostModel> posts,
                           .toWidget(context),
                     );
                   },
-                  "code": (context, child) {
-                    var classList = context.tree.elementClasses;
+                  "code": (code, child) {
+                    var classList = code.tree.elementClasses;
                     if (classList.isNotEmpty && classList[0] == 'lang-auto') {
                       return ConstrainedBox(
                         constraints: const BoxConstraints(
@@ -139,7 +139,7 @@ Column commentHtml(int index, BuildContext context, List<PostModel> posts,
                           maxHeight: 250,
                         ),
                         child: SyntaxView(
-                          code: context.tree.element?.text as String,
+                          code: code.tree.element?.text as String,
                           syntax: Syntax.JAVASCRIPT,
                           syntaxTheme: SyntaxTheme.vscodeDark(),
                           fontSize: 16.0,

@@ -268,10 +268,7 @@ Row htmlView(AsyncSnapshot<PostModel> post, BuildContext context) {
               fontSize: FontSize.rem(1.35),
             ),
             "pre": Style(
-                color: Colors.white,
-                width: MediaQuery.of(context).size.width,
-                backgroundColor: Color.fromRGBO(0x2A, 0x2A, 0x40, 1),
-                textOverflow: TextOverflow.clip),
+                color: Colors.white, width: MediaQuery.of(context).size.width),
             "code": Style(backgroundColor: Color.fromRGBO(0x2A, 0x2A, 0x40, 1)),
             "tr": Style(
                 border: Border(bottom: BorderSide(color: Colors.grey)),
@@ -294,17 +291,20 @@ Row htmlView(AsyncSnapshot<PostModel> post, BuildContext context) {
                 child: (context.tree as TableLayoutElement).toWidget(context),
               );
             },
-            "code": (context, child) {
-              var classList = context.tree.elementClasses;
+            "code": (code, child) {
+              var classList = code.tree.elementClasses;
               if (classList.isNotEmpty && classList[0] == 'lang-auto') {
                 return ConstrainedBox(
-                  constraints: BoxConstraints(minHeight: 1, maxHeight: 500),
+                  constraints: BoxConstraints(
+                    minHeight: 1,
+                    maxHeight: 500,
+                  ),
                   child: SyntaxView(
-                    code: context.tree.element?.text as String,
+                    code: code.tree.element?.text as String,
                     syntax: Syntax.JAVASCRIPT,
                     syntaxTheme: SyntaxTheme.vscodeDark(),
                     fontSize: 16.0,
-                    withZoom: true,
+                    withZoom: false,
                     withLinesCount: false,
                   ),
                 );
