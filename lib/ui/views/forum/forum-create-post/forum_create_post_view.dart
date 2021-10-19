@@ -104,6 +104,7 @@ Column createPostTemplate(ForumCreatePostModel model, context) {
               width: MediaQuery.of(context).size.width,
               child: TextField(
                 style: const TextStyle(color: Colors.white),
+
                 controller: model.code,
                 minLines: 10,
                 maxLines: null,
