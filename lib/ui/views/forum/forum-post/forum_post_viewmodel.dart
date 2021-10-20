@@ -23,7 +23,15 @@ class PostViewModel extends BaseViewModel {
   bool _isLoggedIn = false;
   bool get isLoggedIn => _isLoggedIn;
 
+  bool _isEditingPost = false;
+  bool get isEditingPost => _isEditingPost;
+
+  String _editedPostId = '';
+  String get editedPostId => _editedPostId;
+
   Timer? _timer;
+
+  final commentText = TextEditingController();
 
   void initState(slug, id) async {
     _future = fetchPost(id, slug);
@@ -48,6 +56,19 @@ class PostViewModel extends BaseViewModel {
     } else {
       throw Exception(response.body);
     }
+  }
+
+  void editPost(String postId, String commentValue) {
+    _isEditingPost = true;
+    _editedPostId = postId;
+    commentText.text = commentValue;
+    notifyListeners();
+  }
+
+  void updatePost() {
+    _isEditingPost = false;
+    _editedPostId = '';
+    notifyListeners();
   }
 
   // this parses different urls based on the cdn (Discourse or FCC)
