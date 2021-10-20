@@ -20,7 +20,7 @@ class ForumConnect {
 
     final response =
         await http.get(Uri.parse(baseUrl + endpoint), headers: headers);
-    // dev.log(baseUrl + endpoint);
+    dev.log(baseUrl + endpoint);
     //dev.log(response.body.toString());
     return response;
   }

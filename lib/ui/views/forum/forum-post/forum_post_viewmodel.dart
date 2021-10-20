@@ -44,7 +44,8 @@ class PostViewModel extends BaseViewModel {
   }
 
   void disposeTimer() {
-    _timer = null;
+    _timer!.cancel();
+    notifyListeners();
   }
 
   Future<bool> checkLoggedIn() async {
