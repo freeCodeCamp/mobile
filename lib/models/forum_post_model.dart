@@ -38,6 +38,9 @@ class PostModel {
   final bool postCanEdit;
   final bool postCanDelete;
   final bool postCanRecover;
+  final bool isModerator;
+  final bool isAdmin;
+  final bool isStaff;
 
   PostModel(
       {required this.username,
@@ -55,7 +58,10 @@ class PostModel {
       this.postComments,
       required this.postCanEdit,
       required this.postCanDelete,
-      required this.postCanRecover});
+      required this.postCanRecover,
+      required this.isModerator,
+      required this.isAdmin,
+      required this.isStaff});
 
   // this is for endpoint /t/{slug}/{id}.json
   factory PostModel.fromPostJson(Map<String, dynamic> data) {
@@ -75,7 +81,10 @@ class PostModel {
         name: data["post_stream"]["posts"][0]["name"],
         postCanDelete: data["details"]["can_delete"],
         postCanEdit: data["details"]["can_edit"],
-        postCanRecover: data["details"]["can_recover"]);
+        postCanRecover: data["details"]["can_recover"],
+        isAdmin: data["post_stream"]["posts"][0]["admin"],
+        isModerator: data["post_stream"]["posts"][0]["moderator"],
+        isStaff: data["post_stream"]["posts"][0]["staff"]);
   }
 
   // this is for the same endpoint as fromPostJson only it needs to be parsed
@@ -95,7 +104,10 @@ class PostModel {
         name: data["name"],
         postCanDelete: data["can_delete"],
         postCanEdit: data["can_edit"],
-        postCanRecover: data["can_recover"]);
+        postCanRecover: data["can_recover"],
+        isAdmin: data["admin"],
+        isModerator: data["moderator"],
+        isStaff: data["staff"]);
   }
 
   // this is an offline factory that does not parse any data from an endpoint
@@ -113,7 +125,10 @@ class PostModel {
         name: data["name"],
         postCanDelete: data["canDelete"],
         postCanEdit: data["canEdit"],
-        postCanRecover: data["canRecover"]);
+        postCanRecover: data["canRecover"],
+        isAdmin: data["admin"],
+        isModerator: data["moderator"],
+        isStaff: data["staff"]);
   }
 }
 
@@ -155,7 +170,10 @@ class Comment {
         "postReads": 0,
         "postCanEdit": false,
         "postCanDelete": false,
-        "postCanRecover": false
+        "postCanRecover": false,
+        "isAdmin": true,
+        "isModerator": true,
+        "isStaff": true,
       }));
     }
     return comments;
