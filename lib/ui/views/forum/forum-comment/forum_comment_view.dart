@@ -23,7 +23,6 @@ class ForumCommentView extends StatelessWidget {
             itemCount: comments.length,
             itemBuilder: (context, index) {
               var post = comments[index];
-              dev.log('post');
               return Column(
                 children: [
                   InkWell(
@@ -177,7 +176,15 @@ Column commentHtml(int index, BuildContext context, List<PostModel> posts,
               },
               icon: const Icon(Icons.share_outlined),
               color: Colors.white,
-            )
+            ),
+            post.postCanEdit
+                ? IconButton(
+                    onPressed: () {},
+                    icon: const Icon(
+                      Icons.edit_sharp,
+                      color: Colors.white,
+                    ))
+                : Container()
           ],
         ),
       ),

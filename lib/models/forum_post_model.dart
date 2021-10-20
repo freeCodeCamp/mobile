@@ -35,6 +35,9 @@ class PostModel {
   final int postReplyCount;
   final int postReads;
   final int? postLikes;
+  final bool postCanEdit;
+  final bool postCanDelete;
+  final bool postCanRecover;
 
   PostModel(
       {required this.username,
@@ -49,8 +52,12 @@ class PostModel {
       required this.postReplyCount,
       required this.postReads,
       this.postLikes,
-      this.postComments});
+      this.postComments,
+      required this.postCanEdit,
+      required this.postCanDelete,
+      required this.postCanRecover});
 
+  // this is for endpoint /t/{slug}/{id}.json
   factory PostModel.fromPostJson(Map<String, dynamic> data) {
     return PostModel(
         postComments: data["post_stream"]["posts"],
@@ -65,8 +72,14 @@ class PostModel {
         postHtml: data["post_stream"]["posts"][0]['cooked'],
         username: data["post_stream"]["posts"][0]["username"],
         profieImage: data["post_stream"]["posts"][0]["avatar_template"],
-        name: data["post_stream"]["posts"][0]["name"]);
+        name: data["post_stream"]["posts"][0]["name"],
+        postCanDelete: data["details"]["can_delete"],
+        postCanEdit: data["details"]["can_edit"],
+        postCanRecover: data["details"]["can_recover"]);
   }
+
+  // this is for the same endpoint as fromPostJson only it needs to be parsed
+  // differently to be able to "type" these as comments.
 
   factory PostModel.fromCommentJson(Map<String, dynamic> data) {
     return PostModel(
@@ -79,9 +92,13 @@ class PostModel {
         username: data["username"],
         postSlug: data["topic_slug"],
         profieImage: data["avatar_template"],
-        name: data["name"]);
+        name: data["name"],
+        postCanDelete: data["can_delete"],
+        postCanEdit: data["can_edit"],
+        postCanRecover: data["can_recover"]);
   }
 
+  // this is an offline factory that does not parse any data from an endpoint
   factory PostModel.fromCommentBotJson(Map<String, dynamic> data) {
     return PostModel(
         postId: data["postId"].toString(),
@@ -93,7 +110,10 @@ class PostModel {
         username: data["username"],
         postSlug: data["postSlug"],
         profieImage: data["profieImage"],
-        name: data["name"]);
+        name: data["name"],
+        postCanDelete: data["canDelete"],
+        postCanEdit: data["canEdit"],
+        postCanRecover: data["canRecover"]);
   }
 }
 
@@ -132,7 +152,10 @@ class Comment {
         "postCreateDate": data[0]["created_at"],
         "postType": 0,
         "postReplyCount": 0,
-        "postReads": 0
+        "postReads": 0,
+        "postCanEdit": false,
+        "postCanDelete": false,
+        "postCanRecover": false
       }));
     }
     return comments;
