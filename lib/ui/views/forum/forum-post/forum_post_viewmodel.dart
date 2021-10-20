@@ -43,6 +43,10 @@ class PostViewModel extends BaseViewModel {
     notifyListeners();
   }
 
+  void disposeTimer() {
+    _timer = null;
+  }
+
   Future<bool> checkLoggedIn() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     return prefs.getBool('loggedIn') ?? false;
@@ -65,7 +69,22 @@ class PostViewModel extends BaseViewModel {
     notifyListeners();
   }
 
-  void updatePost() {
+  Future<void> updatePost() async {
+    Map<String, dynamic> body = {
+      "post": {"raw": commentText.text}
+    };
+
+    if (_editedPostId.isNotEmpty) {
+      await ForumConnect.connectAndPut('/posts/$_editedPostId', body);
+    }
+
+    _isEditingPost = false;
+    _editedPostId = '';
+
+    notifyListeners();
+  }
+
+  void cancelUpdatePost() {
     _isEditingPost = false;
     _editedPostId = '';
     notifyListeners();
@@ -93,7 +112,6 @@ class PostViewModel extends BaseViewModel {
     } else if (fromDiscourse) {
       return avatarUrl;
     } else {
-      dev.log(baseUrl + avatarUrl);
       return baseUrl + avatarUrl;
     }
   }

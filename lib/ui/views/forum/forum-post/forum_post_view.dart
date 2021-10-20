@@ -24,6 +24,7 @@ class ForumPostView extends StatelessWidget {
     return ViewModelBuilder<PostViewModel>.reactive(
         viewModelBuilder: () => PostViewModel(),
         onModelReady: (model) => model.initState(slug, id),
+        onDispose: (model) => model.disposeTimer(),
         builder: (context, model, child) => Scaffold(
               backgroundColor: Color.fromRGBO(0x2A, 0x2A, 0x40, 1),
               body: SingleChildScrollView(child: postViewTemplate(model, id)),
