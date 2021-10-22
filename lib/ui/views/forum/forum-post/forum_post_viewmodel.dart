@@ -108,8 +108,6 @@ class PostViewModel extends BaseViewModel {
     final response =
         await ForumConnect.connectAnDelete('/posts/$commentId', {});
 
-    Timer? _deleteTimer;
-
     if (response.statusCode == 200) {
       _recentlyDeletedPost = true;
       _recentlyDeletedPostId = commentId;

@@ -27,8 +27,12 @@ class ForumCreateCommentView extends StatelessWidget {
                             controller: model.commentText,
                             minLines: 10,
                             maxLines: null,
-                            decoration: const InputDecoration(
-                                fillColor: Colors.white, filled: true),
+                            decoration: InputDecoration(
+                                errorText: model.commentHasError
+                                    ? model.errorMesssage
+                                    : null,
+                                fillColor: Colors.white,
+                                filled: true),
                           ),
                         ))
                   ],
