@@ -33,6 +33,9 @@ class PostViewModel extends BaseViewModel {
 
   final commentText = TextEditingController();
 
+  String _id = '';
+  String _slug = '';
+
   void initState(slug, id) async {
     _future = fetchPost(id, slug);
     _timer = Timer.periodic(const Duration(seconds: 30), (Timer timer) {
@@ -40,6 +43,8 @@ class PostViewModel extends BaseViewModel {
       notifyListeners();
     });
     _isLoggedIn = await checkLoggedIn();
+    _id = id;
+    _slug = slug;
     notifyListeners();
   }
 
@@ -77,6 +82,7 @@ class PostViewModel extends BaseViewModel {
 
     if (_editedPostId.isNotEmpty) {
       await ForumConnect.connectAndPut('/posts/$_editedPostId', body);
+      fetchPost(_id, _slug);
     }
 
     _isEditingPost = false;
