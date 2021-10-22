@@ -26,15 +26,21 @@ class PostViewModel extends BaseViewModel {
   bool _isEditingPost = false;
   bool get isEditingPost => _isEditingPost;
 
+  bool _recentlyDeletedPost = false;
+  bool get recentlyDeletedPost => _recentlyDeletedPost;
+
+  String _recentlyDeletedPostId = '';
+  String get recentlyDeletedPostId => _recentlyDeletedPostId;
+
   String _editedPostId = '';
   String get editedPostId => _editedPostId;
+
+  String _id = '';
+  String _slug = '';
 
   Timer? _timer;
 
   final commentText = TextEditingController();
-
-  String _id = '';
-  String _slug = '';
 
   void initState(slug, id) async {
     _future = fetchPost(id, slug);
@@ -80,7 +86,7 @@ class PostViewModel extends BaseViewModel {
       "post": {"raw": commentText.text}
     };
 
-    if (_editedPostId.isNotEmpty) {
+    if (commentText.text.isNotEmpty) {
       await ForumConnect.connectAndPut('/posts/$_editedPostId', body);
       fetchPost(_id, _slug);
     }
@@ -97,6 +103,15 @@ class PostViewModel extends BaseViewModel {
     notifyListeners();
   }
 
+  Future<void> deletePost(id) async {
+    final response = await ForumConnect.connectAnDelete('/posts/$id', {});
+
+    if (response.statusCode == 200) {
+      _recentlyDeletedPost = true;
+      _recentlyDeletedPostId = id;
+      notifyListeners();
+    }
+  }
   // this parses different urls based on the cdn (Discourse or FCC)
 
   static String parseProfileAvatUrl(

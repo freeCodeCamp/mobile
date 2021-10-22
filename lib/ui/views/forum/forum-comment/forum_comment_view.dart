@@ -22,19 +22,25 @@ class ForumCommentView extends StatelessWidget {
             itemCount: comments.length,
             itemBuilder: (context, index) {
               var post = comments[index];
-              return Column(
-                children: [
-                  InkWell(
-                    onTap: () {
-                      model.goToUserProfile(post.username);
-                    },
-                    child: commentHeader(model, post),
-                  ),
-                  model.isEditingPost && model.editedPostId == post.postId
-                      ? commentEditor(model)
-                      : commentHtml(index, context, comments, model),
-                  commentFooter(post, model, context),
-                ],
+              return Container(
+                color: model.recentlyDeletedPost &&
+                        model.recentlyDeletedPostId == post.postId
+                    ? Colors.red
+                    : const Color.fromRGBO(0x2A, 0x2A, 0x40, 1),
+                child: Column(
+                  children: [
+                    InkWell(
+                      onTap: () {
+                        model.goToUserProfile(post.username);
+                      },
+                      child: commentHeader(model, post),
+                    ),
+                    model.isEditingPost && model.editedPostId == post.postId
+                        ? commentEditor(model)
+                        : commentHtml(index, context, comments, model),
+                    commentFooter(post, model, context),
+                  ],
+                ),
               );
             }));
   }
@@ -187,6 +193,16 @@ class ForumCommentView extends StatelessWidget {
                     Icons.edit_sharp,
                     color: Colors.white,
                   ))
+              : Container(),
+          post.postCanDelete
+              ? IconButton(
+                  onPressed: () {
+                    model.deletePost(post.postId);
+                  },
+                  icon: const Icon(
+                    Icons.delete_sharp,
+                    color: Colors.white,
+                  ))
               : Container()
         ],
       ),
@@ -224,10 +240,6 @@ Column commentHtml(int index, BuildContext context, List<PostModel> posts,
                   "pre": Style(
                     color: Colors.white,
                     width: MediaQuery.of(context).size.width,
-                    backgroundColor: const Color.fromRGBO(0x2A, 0x2A, 0x40, 1),
-                  ),
-                  "code": Style(
-                    backgroundColor: const Color.fromRGBO(0x2A, 0x2A, 0x40, 1),
                   ),
                   "tr": Style(
                       border:
