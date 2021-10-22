@@ -35,6 +35,9 @@ class PostViewModel extends BaseViewModel {
   String _editedPostId = '';
   String get editedPostId => _editedPostId;
 
+  String _requestedRaw = '';
+  String get requestedRaw => _requestedRaw;
+
   Timer? _timer;
 
   final commentText = TextEditingController();
@@ -74,16 +77,25 @@ class PostViewModel extends BaseViewModel {
     }
   }
 
-  String removeAllHtmlTags(String htmlText) {
-    RegExp exp = RegExp(r"<[^>]*>", multiLine: true, caseSensitive: true);
+  Future<Map<String, dynamic>?> getRawText(String postId) async {
+    final response = await ForumConnect.connectAndGet('/posts/$postId');
 
-    return htmlText.replaceAll(exp, '');
+    if (response.statusCode == 200) {
+      _requestedRaw = json.decode(response.body)['raw'];
+      notifyListeners();
+    }
+
+    return null;
   }
 
-  void editPost(String postId, String commentValue) {
+  void editPost(String postId, String commentValue) async {
     _isEditingPost = true;
     _editedPostId = postId;
-    commentText.text = removeAllHtmlTags(commentValue);
+
+    // to get the raw markdown a seperate request has to be made for some reason
+
+    await getRawText(postId);
+    commentText.text = _requestedRaw;
     notifyListeners();
   }
 
