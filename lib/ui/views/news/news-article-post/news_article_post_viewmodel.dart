@@ -5,8 +5,6 @@ import 'package:freecodecamp/models/article_model.dart';
 import 'package:stacked/stacked.dart';
 import 'package:http/http.dart' as http;
 
-// TODO: make this usable with news_feed_model
-
 class NewsArticlePostViewModel extends BaseViewModel {
   late Future<Article> _articleFuture;
 

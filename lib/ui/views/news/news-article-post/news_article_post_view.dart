@@ -34,8 +34,11 @@ class NewsArticlePostView extends StatelessWidget {
                               minHeight: 100,
                               maxHeight: 250,
                               minWidth: MediaQuery.of(context).size.width),
-                          child: Image.network(
-                            NewsHelper.getArticleImage(
+                          child: FadeInImage.assetNetwork(
+                            height: 250,
+                            placeholder:
+                                'assets/images/freecodecamp-banner.png',
+                            image: NewsHelper.getArticleImage(
                                 article!.featureImage, context),
                             fit: BoxFit.fill,
                           ),
@@ -86,13 +89,16 @@ class NewsArticlePostView extends StatelessWidget {
                                             width: 4,
                                             color: NewsHelper
                                                 .randomBorderColor())),
-                                    child: Image.network(
-                                      NewsHelper.getProfileImage(
-                                          article.profileImage),
-                                      width: 50,
-                                      height: 50,
-                                      fit: BoxFit.fill,
-                                    ),
+                                    child: FadeInImage.assetNetwork(
+                                        height: 50,
+                                        fadeOutDuration:
+                                            const Duration(milliseconds: 500),
+                                        fadeInDuration:
+                                            const Duration(milliseconds: 500),
+                                        fit: BoxFit.fill,
+                                        placeholder:
+                                            'assets/images/placeholder-profile-img.png',
+                                        image: article.profileImage),
                                   ),
                                 ),
                                 Expanded(

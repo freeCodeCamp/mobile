@@ -68,7 +68,7 @@ class NewsFeedView extends StatelessWidget {
               width: MediaQuery.of(context).size.width,
               child: Image.network(
                 NewsHelper.getArticleImage(articles![i].featureImage, context),
-                fit: BoxFit.fitWidth,
+                fit: BoxFit.fill,
               ),
             ),
             Padding(
@@ -76,16 +76,18 @@ class NewsFeedView extends StatelessWidget {
               child: Align(
                 alignment: Alignment.topRight,
                 child: Container(
-                  width: 50,
-                  height: 50,
-                  decoration: BoxDecoration(
-                      border: Border.all(
-                          width: 4, color: NewsHelper.randomBorderColor())),
-                  child: Image.network(
-                    articles[i].profileImage,
-                    fit: BoxFit.fill,
-                  ),
-                ),
+                    width: 50,
+                    height: 50,
+                    decoration: BoxDecoration(
+                        border: Border.all(
+                            width: 4, color: NewsHelper.randomBorderColor())),
+                    child: FadeInImage.assetNetwork(
+                        fadeOutDuration: const Duration(milliseconds: 500),
+                        fadeInDuration: const Duration(milliseconds: 500),
+                        fit: BoxFit.fill,
+                        placeholder:
+                            'assets/images/placeholder-profile-img.png',
+                        image: articles[i].profileImage)),
               ),
             )
           ],
@@ -112,22 +114,22 @@ class NewsFeedView extends StatelessWidget {
                 ),
                 Row(children: [
                   Expanded(
-                    flex: 6,
                     child: Padding(
-                      padding: const EdgeInsets.all(16.0),
+                      padding:
+                          const EdgeInsets.only(top: 16, bottom: 16, left: 16),
                       child: Text(
-                        '#' + articles[i].tagName!,
+                        model.truncateTag('#' + articles[i].tagName!),
                         style:
                             const TextStyle(color: Colors.white, fontSize: 18),
                       ),
                     ),
                   ),
                   Expanded(
-                    flex: 6,
                     child: Padding(
-                      padding: const EdgeInsets.all(16.0),
+                      padding:
+                          const EdgeInsets.only(top: 16, bottom: 16, right: 16),
                       child: Text(
-                        articles[i].authorName,
+                        model.truncateAuthorName(articles[i].authorName),
                         textAlign: TextAlign.right,
                         style:
                             const TextStyle(color: Colors.white, fontSize: 18),
