@@ -182,7 +182,7 @@ class ForumCommentView extends StatelessWidget {
               Padding(
                 padding: const EdgeInsets.all(24.0),
                 child: Text(
-                  'posted ' + PostViewModel.parseDate(post.postCreateDate),
+                  PostViewModel.parseDate(post.postCreateDate),
                   style: const TextStyle(color: Colors.white, fontSize: 18),
                 ),
               ),
