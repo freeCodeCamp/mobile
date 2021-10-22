@@ -24,7 +24,6 @@ Column createPostTemplate(ForumCreatePostModel model, context) {
       Row(
         children: [
           Expanded(
-              flex: 5,
               child: SizedBox(
                 height: 55,
                 child: TextField(
@@ -45,20 +44,22 @@ Column createPostTemplate(ForumCreatePostModel model, context) {
                       )),
                 ),
               )),
+        ],
+      ),
+      Row(
+        children: [
           Expanded(
-              flex: 6,
               child: FutureBuilder(
                   future: model.requestCategorieNames(),
                   builder: (context, snapshot) {
                     List<String> names = [];
                     names = snapshot.data as List<String>;
                     return Padding(
-                      padding: const EdgeInsets.only(left: 4.0),
+                      padding: const EdgeInsets.only(top: 8.0),
                       child: DropdownButtonFormField(
                           style: const TextStyle(color: Colors.white),
                           dropdownColor: const Color(0xFF0a0a23),
                           decoration: const InputDecoration(
-                            isDense: true,
                             enabledBorder: OutlineInputBorder(
                                 borderSide:
                                     BorderSide(color: Colors.white, width: 2)),
@@ -66,7 +67,8 @@ Column createPostTemplate(ForumCreatePostModel model, context) {
                           value: model.categoryDropDownValue,
                           onChanged: (String? value) {
                             model.changeDropDownValue(value);
-                          },
+                          }, 
+                          menuMaxHeight: 300,
                           items: snapshot.hasData
                               ? names.map<DropdownMenuItem<String>>(
                                   (String value) {
@@ -104,7 +106,6 @@ Column createPostTemplate(ForumCreatePostModel model, context) {
               width: MediaQuery.of(context).size.width,
               child: TextField(
                 style: const TextStyle(color: Colors.white),
-
                 controller: model.code,
                 minLines: 10,
                 maxLines: null,
@@ -130,21 +131,24 @@ Column createPostTemplate(ForumCreatePostModel model, context) {
         children: [
           Expanded(
             child: Padding(
-              padding: const EdgeInsets.only(top: 16.0),
-              child: ElevatedButton(
-                  style: ElevatedButton.styleFrom(
-                      primary: const Color.fromRGBO(0x3b, 0x3b, 0x4f, 1),
-                      side: const BorderSide(width: 2, color: Colors.white),
-                      shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(0))),
-                  onPressed: () {
-                    model.createPost(model.title.text, model.code.text);
-                  },
-                  child: const Text(
-                    'CREATE NEW POST',
-                    textAlign: TextAlign.center,
-                    style: TextStyle(color: Colors.white),
-                  )),
+              padding: const EdgeInsets.only(top: 16.0, bottom: 50),
+              child: SizedBox(
+                height: 50,
+                child: ElevatedButton(
+                    style: ElevatedButton.styleFrom(
+                        primary: const Color.fromRGBO(0x3b, 0x3b, 0x4f, 1),
+                        side: const BorderSide(width: 2, color: Colors.white),
+                        shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(0))),
+                    onPressed: () {
+                      model.createPost(model.title.text, model.code.text);
+                    },
+                    child: const Text(
+                      'CREATE NEW POST',
+                      textAlign: TextAlign.center,
+                      style: TextStyle(color: Colors.white),
+                    )),
+              ),
             ),
           ),
         ],

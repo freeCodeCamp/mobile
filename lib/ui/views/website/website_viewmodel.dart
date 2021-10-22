@@ -27,6 +27,14 @@ class WebsiteViewModel extends BaseViewModel {
     _navigationService.navigateTo(Routes.homeView);
   }
 
+  void goToPodcasts() {
+    _navigationService.navigateTo(Routes.podcastView);
+  }
+
+  void goToDownloadPodcasts() {
+    _navigationService.navigateTo(Routes.podcastDownloadView);
+  }
+
   void goBack() {
     _navigationService.back();
   }

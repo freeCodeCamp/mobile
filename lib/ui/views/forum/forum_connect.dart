@@ -15,8 +15,10 @@ class ForumConnect {
     SharedPreferences prefs = await SharedPreferences.getInstance();
 
     Map<String, String>? headers = {'Accept': 'application/json'};
+    
     headers['Api-Key'] = dotenv.env['DISCOURSE_API'] as String;
     headers['Api-Username'] = prefs.getString('username') as String;
+
 
     final response =
         await http.get(Uri.parse(baseUrl + endpoint), headers: headers);
