@@ -1,6 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:freecodecamp/ui/views/forum/forum-create-comment/forum_create_comment_viewmodel.dart';
+import 'package:freecodecamp/ui/widgets/text_function_bar_widget.dart';
 import 'package:stacked/stacked.dart';
 
 // ignore: must_be_immutable
@@ -27,6 +28,9 @@ class ForumCreateCommentView extends StatelessWidget {
                             controller: model.commentText,
                             minLines: 10,
                             maxLines: null,
+                            style: const TextStyle(
+                              fontSize: 18,
+                            ),
                             decoration: InputDecoration(
                                 errorText: model.commentHasError
                                     ? model.errorMesssage
@@ -37,6 +41,7 @@ class ForumCreateCommentView extends StatelessWidget {
                         ))
                   ],
                 ),
+                ForumTextFunctionBar(textController: model.commentText),
                 Row(
                   children: [
                     Expanded(
