@@ -10,8 +10,15 @@ import 'package:url_launcher/url_launcher.dart';
 
 class ForumCommentView extends StatelessWidget {
   late final List<PostModel> comments;
+  late final String postId;
+  late final String postSlug;
   // ignore: prefer_const_constructors_in_immutables
-  ForumCommentView({Key? key, required this.comments}) : super(key: key);
+  ForumCommentView(
+      {Key? key,
+      required this.comments,
+      required this.postId,
+      required this.postSlug})
+      : super(key: key);
   @override
   Widget build(BuildContext context) {
     return ViewModelBuilder<PostViewModel>.reactive(
@@ -125,7 +132,7 @@ class ForumCommentView extends StatelessWidget {
                         shape: RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(0))),
                     onPressed: () {
-                      model.updatePost();
+                      model.updatePost(postId, postSlug);
                     },
                     child: const Text(
                       'UPDATE COMMENT',
@@ -168,42 +175,57 @@ class ForumCommentView extends StatelessWidget {
     return Container(
       decoration: const BoxDecoration(
           border: Border(bottom: BorderSide(width: 2, color: Colors.white))),
-      child: Row(
+      child: Column(
         children: [
-          Padding(
-            padding: const EdgeInsets.all(24.0),
-            child: Text(
-              'posted ' + PostViewModel.parseDate(post.postCreateDate),
-              style: const TextStyle(color: Colors.white, fontSize: 18),
-            ),
+          Row(
+            children: [
+              Padding(
+                padding: const EdgeInsets.all(24.0),
+                child: Text(
+                  'posted ' + PostViewModel.parseDate(post.postCreateDate),
+                  style: const TextStyle(color: Colors.white, fontSize: 18),
+                ),
+              ),
+              IconButton(
+                onPressed: () {
+                  model.parseShareUrl(context, post.postSlug);
+                },
+                icon: const Icon(Icons.share_outlined),
+                color: Colors.white,
+              ),
+              post.postCanEdit && !model.isEditingPost
+                  ? IconButton(
+                      onPressed: () {
+                        model.editPost(post.postId, post.postHtml);
+                      },
+                      icon: const Icon(
+                        Icons.edit_sharp,
+                        color: Colors.white,
+                      ))
+                  : Container(),
+              post.postCanDelete
+                  ? model.recentlyDeletedPost &&
+                          model.recentlyDeletedPostId == post.postId
+                      ? IconButton(
+                          onPressed: () {
+                            model.recoverPost(post.postId);
+                          },
+                          icon: const Icon(
+                            Icons.refresh_sharp,
+                            color: Colors.white,
+                          ))
+                      : IconButton(
+                          onPressed: () {
+                            // first id is the comment id
+                            model.deletePost(post.postId, postId, postSlug);
+                          },
+                          icon: const Icon(
+                            Icons.delete_sharp,
+                            color: Colors.white,
+                          ))
+                  : Container()
+            ],
           ),
-          IconButton(
-            onPressed: () {
-              model.parseShareUrl(context, post.postSlug);
-            },
-            icon: const Icon(Icons.share_outlined),
-            color: Colors.white,
-          ),
-          post.postCanEdit && !model.isEditingPost
-              ? IconButton(
-                  onPressed: () {
-                    model.editPost(post.postId, post.postHtml);
-                  },
-                  icon: const Icon(
-                    Icons.edit_sharp,
-                    color: Colors.white,
-                  ))
-              : Container(),
-          post.postCanDelete
-              ? IconButton(
-                  onPressed: () {
-                    model.deletePost(post.postId);
-                  },
-                  icon: const Icon(
-                    Icons.delete_sharp,
-                    color: Colors.white,
-                  ))
-              : Container()
         ],
       ),
     );

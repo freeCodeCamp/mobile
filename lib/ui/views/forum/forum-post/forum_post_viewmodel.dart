@@ -35,28 +35,29 @@ class PostViewModel extends BaseViewModel {
   String _editedPostId = '';
   String get editedPostId => _editedPostId;
 
-  String _id = '';
-  String _slug = '';
-
   Timer? _timer;
 
   final commentText = TextEditingController();
 
   void initState(slug, id) async {
     _future = fetchPost(id, slug);
-    _timer = Timer.periodic(const Duration(seconds: 30), (Timer timer) {
-      _future = fetchPost(id, slug);
-      notifyListeners();
-    });
     _isLoggedIn = await checkLoggedIn();
-    _id = id;
-    _slug = slug;
+    enableTimer(id, slug);
     notifyListeners();
   }
 
   void disposeTimer() {
     _timer!.cancel();
     notifyListeners();
+  }
+
+  void enableTimer(id, slug) {
+    _timer = Timer.periodic(const Duration(seconds: 30), (Timer timer) {
+      _recentlyDeletedPost = false;
+      _recentlyDeletedPostId = '';
+      _future = fetchPost(id, slug);
+      notifyListeners();
+    });
   }
 
   Future<bool> checkLoggedIn() async {
@@ -66,7 +67,6 @@ class PostViewModel extends BaseViewModel {
 
   Future<PostModel> fetchPost(String id, String slug) async {
     final response = await ForumConnect.connectAndGet('/t/$slug/$id');
-
     if (response.statusCode == 200) {
       return PostModel.fromPostJson(jsonDecode(response.body));
     } else {
@@ -81,14 +81,15 @@ class PostViewModel extends BaseViewModel {
     notifyListeners();
   }
 
-  Future<void> updatePost() async {
+  Future<void> updatePost(postId, postSlug) async {
     Map<String, dynamic> body = {
       "post": {"raw": commentText.text}
     };
 
     if (commentText.text.isNotEmpty) {
       await ForumConnect.connectAndPut('/posts/$_editedPostId', body);
-      fetchPost(_id, _slug);
+      _future = fetchPost(postId, postSlug);
+      notifyListeners();
     }
 
     _isEditingPost = false;
@@ -103,13 +104,31 @@ class PostViewModel extends BaseViewModel {
     notifyListeners();
   }
 
-  Future<void> deletePost(id) async {
-    final response = await ForumConnect.connectAnDelete('/posts/$id', {});
+  Future<void> deletePost(commentId, postId, postSlug) async {
+    final response =
+        await ForumConnect.connectAnDelete('/posts/$commentId', {});
+
+    Timer? _deleteTimer;
 
     if (response.statusCode == 200) {
       _recentlyDeletedPost = true;
-      _recentlyDeletedPostId = id;
+      _recentlyDeletedPostId = commentId;
+
       notifyListeners();
+    } else {
+      throw Exception(response.body);
+    }
+  }
+
+  Future<void> recoverPost(id) async {
+    final response = await ForumConnect.connectAndPut('/posts/$id/recover', {});
+
+    if (response.statusCode == 200) {
+      _recentlyDeletedPost = false;
+      _recentlyDeletedPostId = '';
+      notifyListeners();
+    } else {
+      throw Exception(response.body);
     }
   }
   // this parses different urls based on the cdn (Discourse or FCC)
@@ -144,10 +163,7 @@ class PostViewModel extends BaseViewModel {
     final random = Random();
 
     List borderColor = [
-      const Color.fromRGBO(0x99, 0xC9, 0xFF, 1),
       const Color.fromRGBO(0xAC, 0xD1, 0x57, 1),
-      const Color.fromRGBO(0xFF, 0xFF, 0x00, 1),
-      const Color.fromRGBO(0x80, 0x00, 0x80, 1),
     ];
 
     int index = random.nextInt(borderColor.length);

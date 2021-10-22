@@ -27,12 +27,13 @@ class ForumPostView extends StatelessWidget {
         onDispose: (model) => model.disposeTimer(),
         builder: (context, model, child) => Scaffold(
               backgroundColor: Color.fromRGBO(0x2A, 0x2A, 0x40, 1),
-              body: SingleChildScrollView(child: postViewTemplate(model, id)),
+              body: SingleChildScrollView(
+                  child: postViewTemplate(model, id, slug)),
             ));
   }
 }
 
-Column postViewTemplate(PostViewModel model, id) {
+Column postViewTemplate(PostViewModel model, id, slug) {
   List<PostModel> comments = [];
 
   return Column(
@@ -233,7 +234,11 @@ Column postViewTemplate(PostViewModel model, id) {
                     color: Color(0xFF0a0a23),
                     child: htmlView(snapshot, context),
                   ),
-                  ForumCommentView(comments: comments),
+                  ForumCommentView(
+                    comments: comments,
+                    postId: id,
+                    postSlug: slug,
+                  ),
                   model.isLoggedIn
                       ? ForumCreateCommentView(
                           topicId: id,
