@@ -13,8 +13,10 @@ class ForumConnect {
   static Future<dynamic> connectAndGet(String endpoint) async {
     await dotenv.load(fileName: ".env");
 
-    final response = await http.get(Uri.parse(baseUrl + endpoint),
-        headers: <String, String>{'Accept': 'application/json'});
+    Map<String, String>? headers = {'Accept': 'application/json'};
+
+    final response =
+        await http.get(Uri.parse(baseUrl + endpoint), headers: headers);
     dev.log(baseUrl + endpoint);
     //dev.log(response.body.toString());
     return response;
