@@ -263,7 +263,7 @@ Row htmlView(AsyncSnapshot<PostModel> post, BuildContext context) {
           child: Padding(
         padding: const EdgeInsets.all(24.0),
         child: Html(
-          data: post.data!.postHtml,
+          data: post.data!.postCooked,
           style: {
             "body": Style(color: Colors.white),
             "p": Style(

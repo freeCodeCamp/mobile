@@ -196,7 +196,7 @@ class ForumCommentView extends StatelessWidget {
               post.postCanEdit && !model.isEditingPost
                   ? IconButton(
                       onPressed: () {
-                        model.editPost(post.postId, post.postHtml);
+                        model.editPost(post.postId, post.postCooked);
                       },
                       icon: const Icon(
                         Icons.edit_sharp,
@@ -244,7 +244,7 @@ Column commentHtml(int index, BuildContext context, List<PostModel> posts,
               padding: const EdgeInsets.all(16.0),
               child: Html(
                 shrinkWrap: true,
-                data: post.postHtml,
+                data: post.postCooked,
                 style: {
                   "aside": Style(
                       border: Border.all(width: 2, color: Colors.white),

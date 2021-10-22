@@ -74,10 +74,16 @@ class PostViewModel extends BaseViewModel {
     }
   }
 
+  String removeAllHtmlTags(String htmlText) {
+    RegExp exp = RegExp(r"<[^>]*>", multiLine: true, caseSensitive: true);
+
+    return htmlText.replaceAll(exp, '');
+  }
+
   void editPost(String postId, String commentValue) {
     _isEditingPost = true;
     _editedPostId = postId;
-    commentText.text = commentValue;
+    commentText.text = removeAllHtmlTags(commentValue);
     notifyListeners();
   }
 
