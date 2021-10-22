@@ -208,8 +208,10 @@ Column commentHtml(int index, BuildContext context, List<PostModel> posts,
                 shrinkWrap: true,
                 data: post.postHtml,
                 style: {
-                  "aside":
-                      Style(border: Border.all(width: 2, color: Colors.white)),
+                  "aside": Style(
+                      border: Border.all(width: 2, color: Colors.white),
+                      width: MediaQuery.of(context).size.width,
+                      padding: const EdgeInsets.all(16)),
                   "body": Style(color: Colors.white),
                   "p": Style(
                       fontSize: FontSize.rem(1.35),
