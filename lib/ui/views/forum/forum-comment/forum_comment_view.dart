@@ -251,6 +251,11 @@ Column commentHtml(int index, BuildContext context, List<PostModel> posts,
                       width: MediaQuery.of(context).size.width,
                       padding: const EdgeInsets.all(16)),
                   "body": Style(color: Colors.white),
+                  "blockquote": Style(
+                      backgroundColor:
+                          const Color.fromRGBO(0x65, 0x65, 0x74, 1),
+                      width: MediaQuery.of(context).size.width,
+                      padding: const EdgeInsets.all(8)),
                   "p": Style(
                       fontSize: FontSize.rem(1.35),
                       lineHeight: LineHeight.em(1.2)),
