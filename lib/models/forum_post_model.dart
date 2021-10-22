@@ -123,12 +123,12 @@ class PostModel {
         postSlug: data["postSlug"],
         profieImage: data["profieImage"],
         name: data["name"],
-        postCanDelete: data["canDelete"],
-        postCanEdit: data["canEdit"],
-        postCanRecover: data["canRecover"],
-        isAdmin: data["admin"],
-        isModerator: data["moderator"],
-        isStaff: data["staff"]);
+        postCanDelete: data["postCanDelete"],
+        postCanEdit: data["postCanEdit"],
+        postCanRecover: data["postCanRecover"],
+        isAdmin: data["isAdmin"],
+        isModerator: data["isModerator"],
+        isStaff: data["isStaff"]);
   }
 }
 
