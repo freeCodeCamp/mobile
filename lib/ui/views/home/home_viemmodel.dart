@@ -11,21 +11,4 @@ class HomeViewModel extends BaseViewModel {
     this.index = index;
     notifyListeners();
   }
-
-  void goToBrowser(String url) {
-    _navigationService.navigateTo(
-      Routes.browserView,
-      arguments: BrowserViewArguments(url: url),
-    );
-  }
-
-  void navNonWebComponent(view) {
-    switch (view) {
-      case 'NEWS':
-        _navigationService.navigateTo(Routes.homeView);
-        break;
-      case 'FORUM':
-        _navigationService.navigateTo(Routes.forumCategoryView);
-    }
-  }
 }

@@ -27,9 +27,9 @@ import '../ui/views/startup/startup_view.dart';
 import '../ui/views/website/website_view.dart';
 
 class Routes {
-  static const String startupView = '/';
+  static const String startupView = '/startup-view';
   static const String websiteView = '/website-view';
-  static const String homeView = '/home-view';
+  static const String homeView = '/';
   static const String browserView = '/browser-view';
   static const String podcastView = '/podcast-view';
   static const String podcastDownloadView = '/podcast-download-view';
