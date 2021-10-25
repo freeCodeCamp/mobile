@@ -242,6 +242,7 @@ Column postViewTemplate(PostViewModel model, id, slug) {
                   model.isLoggedIn
                       ? ForumCreateCommentView(
                           topicId: id,
+                          post: post,
                         )
                       : Container()
                 ],

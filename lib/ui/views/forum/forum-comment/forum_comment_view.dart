@@ -4,6 +4,7 @@ import 'package:flutter_html/flutter_html.dart';
 import 'package:flutter_syntax_view/flutter_syntax_view.dart';
 import 'package:freecodecamp/models/forum_post_model.dart';
 import 'package:freecodecamp/ui/views/forum/forum-post/forum_post_viewmodel.dart';
+import 'package:freecodecamp/ui/widgets/text_function_bar_widget.dart';
 import 'package:stacked/stacked.dart';
 import 'package:html/dom.dart' as dom;
 import 'package:url_launcher/url_launcher.dart';
@@ -43,7 +44,7 @@ class ForumCommentView extends StatelessWidget {
                       child: commentHeader(model, post),
                     ),
                     model.isEditingPost && model.editedPostId == post.postId
-                        ? commentEditor(model)
+                        ? commentEditor(model, post)
                         : commentHtml(index, context, comments, model),
                     commentFooter(post, model, context),
                   ],
@@ -100,7 +101,7 @@ class ForumCommentView extends StatelessWidget {
     );
   }
 
-  Column commentEditor(PostViewModel model) {
+  Column commentEditor(PostViewModel model, PostModel post) {
     return Column(
       children: [
         Row(
@@ -108,7 +109,7 @@ class ForumCommentView extends StatelessWidget {
             Expanded(
               child: Padding(
                 padding:
-                    const EdgeInsets.only(top: 24.0, left: 24.0, right: 24.0),
+                    const EdgeInsets.only(top: 24.0, left: 16.0, right: 16.0),
                 child: TextField(
                   controller: model.commentText,
                   minLines: 10,
@@ -120,11 +121,15 @@ class ForumCommentView extends StatelessWidget {
             ),
           ],
         ),
+        ForumTextFunctionBar(
+          textController: model.commentText,
+          post: post,
+        ),
         Row(
           children: [
             Expanded(
               child: Padding(
-                padding: const EdgeInsets.only(left: 24.0, right: 24.0),
+                padding: const EdgeInsets.only(left: 16.0, right: 16.0),
                 child: ElevatedButton(
                     style: ElevatedButton.styleFrom(
                         primary: const Color.fromRGBO(0x3b, 0x3b, 0x4f, 1),
@@ -147,7 +152,7 @@ class ForumCommentView extends StatelessWidget {
           children: [
             Expanded(
               child: Padding(
-                padding: const EdgeInsets.only(left: 24.0, right: 24.0),
+                padding: const EdgeInsets.only(left: 16.0, right: 16.0),
                 child: ElevatedButton(
                     style: ElevatedButton.styleFrom(
                         primary: const Color.fromRGBO(0x3b, 0x3b, 0x4f, 1),

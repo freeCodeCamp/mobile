@@ -12,7 +12,6 @@ import 'package:shared_preferences/shared_preferences.dart';
 
 import 'package:stacked/stacked.dart';
 import 'package:stacked_services/stacked_services.dart';
-import 'dart:developer' as dev;
 
 import '../forum_connect.dart';
 
@@ -147,6 +146,7 @@ class PostViewModel extends BaseViewModel {
       throw Exception(response.body);
     }
   }
+
   // this parses different urls based on the cdn (Discourse or FCC)
 
   static String parseProfileAvatUrl(

@@ -5,7 +5,8 @@ import 'package:freecodecamp/models/forum_post_model.dart';
 import 'dart:developer' as dev;
 
 class ForumTextFunctionBar extends StatelessWidget {
-  ForumTextFunctionBar({Key? key, required this.textController})
+  ForumTextFunctionBar(
+      {Key? key, required this.textController, required this.post})
       : super(key: key);
 
   late final TextEditingController textController;
@@ -58,9 +59,15 @@ class ForumTextFunctionBar extends StatelessWidget {
 
   void linkText(String selectedText) {
     TextSelection textSelection = textController.selection;
-    String newText = textController.text
-        .replaceRange(textSelection.start, textSelection.end, '[txt](link)');
-    textController.text = newText;
+
+    if (selectedText.length < 2) {
+      String newText = textController.text
+          .replaceRange(textSelection.start, textSelection.end, '[text](link)');
+      textController.text = newText;
+    } else {
+      textController.text = textController.text
+          .replaceFirst(selectedText, "[link]($selectedText)");
+    }
   }
 
   @override

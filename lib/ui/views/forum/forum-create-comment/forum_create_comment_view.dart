@@ -1,15 +1,17 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:freecodecamp/models/forum_post_model.dart';
 import 'package:freecodecamp/ui/views/forum/forum-create-comment/forum_create_comment_viewmodel.dart';
 import 'package:freecodecamp/ui/widgets/text_function_bar_widget.dart';
 import 'package:stacked/stacked.dart';
 
 // ignore: must_be_immutable
 class ForumCreateCommentView extends StatelessWidget {
-  ForumCreateCommentView({Key? key, required this.topicId}) : super(key: key);
+  ForumCreateCommentView({Key? key, required this.topicId, required this.post})
+      : super(key: key);
 
   late String topicId;
-
+  late PostModel post;
   @override
   Widget build(BuildContext context) {
     return ViewModelBuilder<ForumCreateCommentViewModel>.reactive(
@@ -46,7 +48,10 @@ class ForumCreateCommentView extends StatelessWidget {
                         ))
                   ],
                 ),
-                ForumTextFunctionBar(textController: model.commentText),
+                ForumTextFunctionBar(
+                  textController: model.commentText,
+                  post: post,
+                ),
                 Row(
                   children: [
                     Expanded(
