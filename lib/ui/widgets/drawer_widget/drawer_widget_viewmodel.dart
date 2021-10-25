@@ -18,8 +18,6 @@ class DrawerWidgtetViewModel extends BaseViewModel {
   }
 
   void navNonWebComponent(view, context) async {
-    SharedPreferences prefs = await SharedPreferences.getInstance();
-
     switch (view) {
       case 'NEWS':
         Navigator.pushReplacement(
