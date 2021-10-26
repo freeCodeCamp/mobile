@@ -1,66 +1,66 @@
 import 'dart:async';
 import 'package:freecodecamp/app/app.locator.dart';
-import 'package:freecodecamp/models/downloaded_episodes.dart';
+import 'package:freecodecamp/models/podcasts/episodes_model.dart';
 import 'package:sqflite/sqflite.dart';
 import 'dart:developer';
 import 'package:sqflite_migration_service/sqflite_migration_service.dart';
 
-const String episodesTablename = 'episodes';
+const String episodesTableName = 'episodes';
 
-class EpisodeDatabaseService {
+class EpisodesDatabaseService {
   final _migrationService = locator<DatabaseMigrationService>();
   late Database _db;
 
   Future initialise() async {
-    _db = await openDatabase('episodes.db', version: 1);
+    _db = await openDatabase('podcasts.db', version: 1);
+    // Uncomment below line to reset migrations
     // _migrationService.resetVersion();
 
     await _migrationService.runMigration(
       _db,
-      migrationFiles: ['1_create_episode_schema.sql'],
+      migrationFiles: ['1_create_schema.sql'],
       verbose: true,
     );
   }
 
-  Future<List<DownloadedEpisodes>> getDownloadedEpisodes() async {
-    List<Map<String, dynamic>> epsResults = await _db.query(episodesTablename);
+  Future<List<Episodes>> getEpisodes() async {
+    List<Map<String, dynamic>> epsResults = await _db.query(episodesTableName);
     log(epsResults
-        .map((episode) => DownloadedEpisodes.fromJson(episode))
+        .map((episode) => Episodes.fromJson(episode))
         .where((episode) => episode.downloaded)
         .toList()
         .length
         .toString());
     return epsResults
-        .map((episode) => DownloadedEpisodes.fromJson(episode))
+        .map((episode) => Episodes.fromJson(episode))
         .where((episode) => episode.downloaded)
         .toList();
   }
 
-  Future<List<DownloadedEpisodes>> getAllEpisodes() async {
-    List<Map<String, dynamic>> epsResults = await _db.query(episodesTablename);
-    return epsResults
-        .map((episode) => DownloadedEpisodes.fromJson(episode))
-        .toList();
+  Future<List<Episodes>> getAllEpisodes() async {
+    List<Map<String, dynamic>> epsResults = await _db.query(episodesTableName);
+    return epsResults.map((episode) => Episodes.fromJson(episode)).toList();
   }
 
-  Future<DownloadedEpisodes?> getEpisode(String guid) async {
+  Future<Episodes?> getEpisode(String guid) async {
     List<Map<String, dynamic>> epResult = await _db.query(
-      episodesTablename,
+      episodesTableName,
       where: 'guid = ?',
       whereArgs: [guid],
     );
     if (epResult.isNotEmpty) {
-      return DownloadedEpisodes.fromJson(epResult.first);
+      return Episodes.fromJson(epResult.first);
     }
     return null;
   }
 
-  Future addEpisode(dynamic episode) async {
+  Future addEpisode(dynamic episode, String podcastId) async {
     try {
       await _db.insert(
-          episodesTablename,
-          DownloadedEpisodes(
+          episodesTableName,
+          Episodes(
             guid: episode.guid,
+            podcastId: podcastId,
             title: episode.title,
             description: episode.description,
             link: episode.link,
@@ -79,7 +79,7 @@ class EpisodeDatabaseService {
   Future toggleDownloadEpisode(String guid, bool downloaded) async {
     try {
       await _db.update(
-        episodesTablename,
+        episodesTableName,
         {
           'downloaded': downloaded ? 1 : 0,
         },

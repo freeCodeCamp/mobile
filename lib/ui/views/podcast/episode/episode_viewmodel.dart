@@ -3,7 +3,7 @@ import 'dart:io';
 
 import 'package:flutter/services.dart';
 import 'package:freecodecamp/app/app.locator.dart';
-import 'package:freecodecamp/models/downloaded_episodes.dart';
+import 'package:freecodecamp/models/podcasts/episodes_model.dart';
 import 'package:freecodecamp/service/episodes_service.dart';
 import 'package:just_audio/just_audio.dart';
 import 'package:just_audio_background/just_audio_background.dart';
@@ -12,9 +12,9 @@ import 'package:stacked/stacked.dart';
 import 'package:dio/dio.dart';
 
 class EpisodeViewModel extends BaseViewModel {
-  final _databaseService = locator<EpisodeDatabaseService>();
+  final _databaseService = locator<EpisodesDatabaseService>();
   final audioPlayer = AudioPlayer();
-  final DownloadedEpisodes episode;
+  final Episodes episode;
   late final Directory appDir;
   late bool downloaded = episode.downloaded;
   bool playing = false;

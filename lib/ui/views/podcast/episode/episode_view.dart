@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_html/flutter_html.dart';
-import 'package:freecodecamp/models/downloaded_episodes.dart';
+import 'package:freecodecamp/models/podcasts/episodes_model.dart';
 import 'package:html/dom.dart' as dom;
 import 'package:intl/intl.dart';
 import 'package:stacked/stacked.dart';
@@ -9,7 +9,7 @@ import 'package:url_launcher/url_launcher.dart';
 import 'episode_viewmodel.dart';
 
 class EpisodeView extends StatelessWidget {
-  final DownloadedEpisodes episode;
+  final Episodes episode;
   const EpisodeView({Key? key, required this.episode}) : super(key: key);
 
   final TextStyle _titleStyle =
