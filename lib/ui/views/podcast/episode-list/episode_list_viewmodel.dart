@@ -1,6 +1,6 @@
 import 'package:freecodecamp/app/app.locator.dart';
 import 'package:freecodecamp/models/podcasts/episodes_model.dart';
-import 'package:freecodecamp/service/episodes_service.dart';
+import 'package:freecodecamp/service/podcasts_service.dart';
 import 'package:stacked/stacked.dart';
 import 'package:podcast_search/podcast_search.dart';
 import 'dart:developer';
@@ -8,7 +8,7 @@ import 'dart:developer';
 // Business logic and view state
 
 class PodcastViewModel extends BaseViewModel {
-  final _databaseService = locator<EpisodesDatabaseService>();
+  final _databaseService = locator<PodcastsDatabaseService>();
   late List<Episodes> epsStored;
 
   Future<List<Episodes>> fetchPodcastEpisodes() async {

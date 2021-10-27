@@ -5,7 +5,8 @@ CREATE TABLE podcasts(
   title TEXT,
   description TEXT,
   image TEXT,
-  copyright TEXT
+  copyright TEXT,
+  numEps INTEGER
 );
 
 CREATE TABLE episodes(

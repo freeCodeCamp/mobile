@@ -2,10 +2,10 @@ import 'dart:developer';
 
 import 'package:flutter/material.dart';
 import 'package:freecodecamp/models/podcasts/episodes_model.dart';
+import 'package:freecodecamp/ui/views/podcast/episode-list/episode_list_viewmodel.dart';
 import 'package:freecodecamp/ui/views/podcast/episode/episode_view.dart';
-import 'package:freecodecamp/ui/views/podcast/podcast_viewmodel.dart';
-import 'package:stacked/stacked.dart';
 import 'package:intl/intl.dart';
+import 'package:stacked/stacked.dart';
 
 // ui view only
 

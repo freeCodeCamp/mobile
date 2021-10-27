@@ -1,18 +1,18 @@
 import 'dart:developer';
 import 'dart:io';
 
+import 'package:dio/dio.dart';
 import 'package:flutter/services.dart';
 import 'package:freecodecamp/app/app.locator.dart';
 import 'package:freecodecamp/models/podcasts/episodes_model.dart';
-import 'package:freecodecamp/service/episodes_service.dart';
+import 'package:freecodecamp/service/podcasts_service.dart';
 import 'package:just_audio/just_audio.dart';
 import 'package:just_audio_background/just_audio_background.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:stacked/stacked.dart';
-import 'package:dio/dio.dart';
 
 class EpisodeViewModel extends BaseViewModel {
-  final _databaseService = locator<EpisodesDatabaseService>();
+  final _databaseService = locator<PodcastsDatabaseService>();
   final audioPlayer = AudioPlayer();
   final Episodes episode;
   late final Directory appDir;

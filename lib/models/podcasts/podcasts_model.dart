@@ -6,6 +6,7 @@ class Podcasts {
   final String? description;
   final String? image;
   final String? copyright;
+  final int? numEps;
 
   Podcasts({
     required this.id,
@@ -15,6 +16,7 @@ class Podcasts {
     this.description,
     this.image,
     this.copyright,
+    this.numEps,
   });
 
   factory Podcasts.fromJson(Map<String, dynamic> json) => Podcasts(
@@ -25,6 +27,7 @@ class Podcasts {
         description: json['description'] as String?,
         image: json['image'] as String?,
         copyright: json['copyright'] as String?,
+        numEps: json['numEps'] as int?
       );
 
   Map<String, dynamic> toJson() => {
@@ -35,6 +38,7 @@ class Podcasts {
         'description': description,
         'image': image,
         'copyright': copyright,
+        'numEps': numEps
       };
 
   @override
@@ -47,6 +51,7 @@ class Podcasts {
       description: ${description!.substring(0, 100)},
       image: $image,
       copyright: $copyright
+      numEps: $numEps
     }""";
   }
 }

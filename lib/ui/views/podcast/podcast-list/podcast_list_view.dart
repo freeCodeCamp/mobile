@@ -4,7 +4,6 @@ import 'package:flutter/material.dart';
 import 'package:freecodecamp/models/podcasts/podcasts_model.dart';
 import 'package:freecodecamp/ui/views/podcast/podcast-list/podcast_list_viewmodel.dart';
 import 'package:stacked/stacked.dart';
-import 'package:intl/intl.dart';
 
 // ui view only
 
@@ -35,19 +34,13 @@ class PodcastListView extends StatelessWidget {
               crossAxisCount: 2,
               // crossAxisSpacing: 10,
               mainAxisSpacing: 10,
+              childAspectRatio: 1,
               children: List.generate(
                 snapshot.data!.length,
                 (index) =>
                     PodcastTemplate(podcast: snapshot.data![index], i: index),
               ),
             );
-            // return ListView.builder(
-            //   itemCount: snapshot.data!.length,
-            //   itemBuilder: (BuildContext context, int index) {
-            //     return PodcastTemplate(
-            //         podcast: snapshot.data![index], i: index);
-            //   },
-            // );
           },
         ),
       ),
@@ -72,40 +65,34 @@ class PodcastTemplate extends StatelessWidget {
         //     MaterialPageRoute(
         //         builder: (context) => EpisodeView(episode: episode)));
       },
-      child: ConstrainedBox(
-        constraints: const BoxConstraints(minHeight: 50),
-        child: Container(
-          // padding: const EdgeInsets.all(16),
-          decoration: const BoxDecoration(
-            border: Border(
-              bottom: BorderSide(
-                width: 1,
-                color: Colors.grey,
-              ),
+      child: Container(
+        padding: const EdgeInsets.all(8),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.center,
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Image.network(
+              podcast.image!,
+              height: 130,
+              alignment: Alignment.center,
             ),
-          ),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.center,
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              Image.network(
-                podcast.image!,
-                height: 125,
-                alignment: Alignment.center,
-              ),
-              Text(
-                podcast.title!,
-                maxLines: 2,
-                overflow: TextOverflow.ellipsis,
-                textAlign: TextAlign.center,
-                style: const TextStyle(
-                  fontSize: 16,
-                  color: Colors.white,
+            Expanded(
+              child: Padding(
+                padding: const EdgeInsets.only(top: 8),
+                child: Text(
+                  podcast.title!,
+                  maxLines: 2,
+                  overflow: TextOverflow.ellipsis,
+                  textAlign: TextAlign.center,
+                  style: const TextStyle(
+                    fontSize: 16,
+                    color: Colors.white,
+                  ),
                 ),
               ),
-            ],
-          ),
+            ),
+          ],
         ),
       ),
     );

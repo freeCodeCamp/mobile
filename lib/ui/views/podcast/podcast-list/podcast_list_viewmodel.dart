@@ -1,14 +1,14 @@
 import 'dart:convert';
+import 'dart:developer';
+import 'dart:io';
 
 import 'package:freecodecamp/app/app.locator.dart';
 import 'package:freecodecamp/models/podcasts/podcasts_model.dart';
 import 'package:freecodecamp/service/podcasts_service.dart';
 import 'package:freecodecamp/ui/views/podcast/podcast_urls.dart';
 import 'package:path_provider/path_provider.dart';
-import 'package:stacked/stacked.dart';
 import 'package:podcast_search/podcast_search.dart';
-import 'dart:developer';
-import 'dart:io';
+import 'package:stacked/stacked.dart';
 import 'package:uuid/uuid.dart';
 
 // Business logic and view state
@@ -47,6 +47,9 @@ class PodcastListViewModel extends BaseViewModel {
           podcastId = podcastIdsList[podcastUrl];
         }
         await _databaseService.addPodcast(podcast, podcastId);
+        for (int i = 0; i < podcast.episodes!.length; i++) {
+          await _databaseService.addEpisode(podcast.episodes![i], podcastId);
+        }
         log("""Podcast added {
           id: $podcastId
           url: ${podcast.url} ${podcast.url == podcastUrl}

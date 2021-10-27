@@ -23,7 +23,6 @@ import '../ui/views/news/news-bookmark/news_bookmark_view.dart';
 import '../ui/views/news/news-feed/news_feed_view.dart';
 import '../ui/views/podcast/podcast-list/podcast_list_view.dart';
 import '../ui/views/podcast/podcast_download_view.dart';
-import '../ui/views/podcast/podcast_view.dart';
 import '../ui/views/startup/startup_view.dart';
 import '../ui/views/website/website_view.dart';
 
@@ -33,7 +32,6 @@ class Routes {
   static const String homeView = '/home-view';
   static const String browserView = '/browser-view';
   static const String podcastListView = '/podcast-list-view';
-  static const String podcastView = '/podcast-view';
   static const String podcastDownloadView = '/podcast-download-view';
   static const String newsArticlePostView = '/news-article-post-view';
   static const String newsBookmarkPostView = '/news-bookmark-post-view';
@@ -49,7 +47,6 @@ class Routes {
     homeView,
     browserView,
     podcastListView,
-    podcastView,
     podcastDownloadView,
     newsArticlePostView,
     newsBookmarkPostView,
@@ -71,7 +68,6 @@ class StackedRouter extends RouterBase {
     RouteDef(Routes.homeView, page: HomeView),
     RouteDef(Routes.browserView, page: BrowserView),
     RouteDef(Routes.podcastListView, page: PodcastListView),
-    RouteDef(Routes.podcastView, page: PodcastView),
     RouteDef(Routes.podcastDownloadView, page: PodcastDownloadView),
     RouteDef(Routes.newsArticlePostView, page: NewsArticlePostView),
     RouteDef(Routes.newsBookmarkPostView, page: NewsBookmarkPostView),
@@ -116,12 +112,6 @@ class StackedRouter extends RouterBase {
     PodcastListView: (data) {
       return MaterialPageRoute<dynamic>(
         builder: (context) => const PodcastListView(),
-        settings: data,
-      );
-    },
-    PodcastView: (data) {
-      return MaterialPageRoute<dynamic>(
-        builder: (context) => const PodcastView(),
         settings: data,
       );
     },
