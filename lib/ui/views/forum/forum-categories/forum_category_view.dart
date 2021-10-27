@@ -49,13 +49,13 @@ class ForumCategoryView extends StatelessWidget {
                       Icons.add,
                       color: Colors.white,
                     ),
-                    label: 'new'),
+                    label: 'New'),
                 const BottomNavigationBarItem(
                     icon: Icon(Icons.article, color: Colors.white),
-                    label: 'categories'),
+                    label: 'Categories'),
                 const BottomNavigationBarItem(
                     icon: Icon(Icons.search_outlined, color: Colors.white),
-                    label: 'search')
+                    label: 'Search')
               ],
               currentIndex: model.index,
               onTap: model.onTapped,
