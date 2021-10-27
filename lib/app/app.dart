@@ -21,9 +21,9 @@ import 'package:sqflite_migration_service/sqflite_migration_service.dart';
 // Run 'flutter pub run build_runner build --delete-conflicting-outputs' after any changes in this file to generate updated files
 @StackedApp(
   routes: [
-    MaterialRoute(page: StartupView, initial: true),
+    MaterialRoute(page: StartupView),
     MaterialRoute(page: WebsiteView),
-    MaterialRoute(page: HomeView),
+    MaterialRoute(page: HomeView, initial: true),
     MaterialRoute(page: BrowserView),
     MaterialRoute(page: PodcastView),
     MaterialRoute(page: PodcastDownloadView),
