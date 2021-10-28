@@ -90,13 +90,14 @@ class ForumUserModel extends BaseViewModel {
 
     switch (badgeType) {
       case 1:
-        color = Colors.amber.shade800;
+        color = Colors.amber.shade400;
         break;
       case 2:
         color = Colors.grey.shade400;
         break;
       case 3:
-        color = Colors.amber.shade400;
+        color = Colors.amber.shade800;
+
         break;
       default:
         color = Colors.grey.shade400;
@@ -104,14 +105,6 @@ class ForumUserModel extends BaseViewModel {
 
     return FaIcon(iconName, size: size, color: color);
   }
-
-  // static FaIcon discourseIconParser(String icon) {
-  //   List iconParts = icon.split('-');
-  //   dev.log(iconParts[1]);
-  //   return FaIcon(iconParts[1]);
-  // }
-
-  // This parses the badge description so it has no anchor tags.
 
   static String parseBadgeDescription(String desc) {
     final document = parse(desc);
