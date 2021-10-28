@@ -10,7 +10,7 @@ class SettingsViewModel extends BaseViewModel {
     _navigationService.navigateTo(Routes.forumSettingsView);
   }
 
-  void gotoPodastSettings() {
+  void goToPodastSettings() {
     _navigationService.navigateTo(Routes.podcastSettingsView);
   }
 }

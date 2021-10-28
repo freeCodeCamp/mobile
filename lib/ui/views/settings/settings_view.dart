@@ -55,7 +55,9 @@ class SettingsView extends StatelessWidget {
                     child: Padding(
                       padding: const EdgeInsets.all(8.0),
                       child: ListTile(
-                        onTap: () {},
+                        onTap: () {
+                          model.goToPodastSettings();
+                        },
                         title: const Text(
                           'PODCAST',
                           style: TextStyle(color: Colors.white),

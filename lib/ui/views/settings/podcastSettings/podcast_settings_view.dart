@@ -10,6 +10,13 @@ class PodcastSettingsView extends StatelessWidget {
   Widget build(BuildContext context) {
     return ViewModelBuilder<PodcastSettingsViewModel>.reactive(
         viewModelBuilder: () => PodcastSettingsViewModel(),
-        builder: (context, model, child) => Scaffold());
+        builder: (context, model, child) => Scaffold(
+              backgroundColor: const Color.fromRGBO(0x2A, 0x2A, 0x40, 1),
+              appBar: AppBar(
+                backgroundColor: const Color(0xFF0a0a23),
+                title: const Text('PODCAST SETTINGS'),
+                centerTitle: true,
+              ),
+            ));
   }
 }
