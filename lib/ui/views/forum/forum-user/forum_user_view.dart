@@ -338,21 +338,17 @@ class UserBadgeBuilder extends StatelessWidget {
                     itemBuilder: (context, index) {
                       return Column(
                         children: [
-                          Row(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: [
-                              Image.network('https://via.placeholder.com/200')
-                            ],
-                          ),
+                          model.parseBages(badge![index].icon, 150,
+                              badge[index].badgeTypeId),
                           Row(
                             children: [
                               Padding(
                                 padding:
                                     const EdgeInsets.only(top: 16.0, left: 16),
                                 child: Text(
-                                  badge![index].name,
+                                  badge[index].name,
                                   style: const TextStyle(
-                                      color: Colors.white, fontSize: 18),
+                                      color: Colors.white, fontSize: 24),
                                 ),
                               ),
                             ],
