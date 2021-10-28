@@ -1,7 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/painting.dart';
-import 'package:freecodecamp/ui/widgets/drawer_widget/post-preview-widget.dart/post_preview_widget_view.dart';
 import 'package:stacked/stacked.dart';
 import 'forum_create_post_viewmodel.dart';
 
@@ -12,7 +11,6 @@ class ForumCreatePostViewmodel extends StatelessWidget {
   Widget build(BuildContext context) {
     return ViewModelBuilder<ForumCreatePostModel>.reactive(
         viewModelBuilder: () => ForumCreatePostModel(),
-        onModelReady: (model) => model.initState(),
         builder: (context, model, chilld) => Padding(
               padding: const EdgeInsets.only(top: 75, left: 16, right: 16),
               child: createPostTemplate(model, context),
@@ -27,31 +25,32 @@ Column createPostTemplate(ForumCreatePostModel model, context) {
         children: [
           Expanded(
               child: SizedBox(
-            height: 55,
-            child: TextField(
-              style: const TextStyle(color: Colors.white),
-              controller: model.title,
-              decoration: InputDecoration(
-                  enabledBorder: const OutlineInputBorder(
-                      borderSide: BorderSide(color: Colors.white, width: 2)),
-                  border: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(0)),
-                  label: const Text(
-                    'Title',
-                    style: TextStyle(
-                        color: Colors.white,
-                        fontSize: 16,
-                        fontWeight: FontWeight.bold),
-                  )),
-            ),
-          )),
+                height: 55,
+                child: TextField(
+                  style: const TextStyle(color: Colors.white),
+                  controller: model.title,
+                  decoration: InputDecoration(
+                      enabledBorder: const OutlineInputBorder(
+                          borderSide:
+                              BorderSide(color: Colors.white, width: 2)),
+                      border: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(0)),
+                      label: const Text(
+                        'Title',
+                        style: TextStyle(
+                            color: Colors.white,
+                            fontSize: 16,
+                            fontWeight: FontWeight.bold),
+                      )),
+                ),
+              )),
         ],
       ),
       Row(
         children: [
           Expanded(
               child: FutureBuilder(
-                  future: model.future,
+                  future: model.requestCategorieNames(),
                   builder: (context, snapshot) {
                     List<String> names = [];
                     names = snapshot.data as List<String>;
@@ -69,6 +68,7 @@ Column createPostTemplate(ForumCreatePostModel model, context) {
                           onChanged: (String? value) {
                             model.changeDropDownValue(value);
                           },
+                          
                           menuMaxHeight: 300,
                           items: snapshot.hasData
                               ? names.map<DropdownMenuItem<String>>(
@@ -110,9 +110,6 @@ Column createPostTemplate(ForumCreatePostModel model, context) {
                 controller: model.code,
                 minLines: 10,
                 maxLines: null,
-                onChanged: (String text) {
-                  model.topicValueChanged();
-                },
                 decoration: InputDecoration(
                   enabledBorder: const OutlineInputBorder(
                       borderSide: BorderSide(color: Colors.white, width: 2)),
@@ -156,8 +153,7 @@ Column createPostTemplate(ForumCreatePostModel model, context) {
             ),
           ),
         ],
-      ),
-      PreviewWidgetView(controller: model.code)
+      )
     ],
   );
 }
