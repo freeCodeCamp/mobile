@@ -163,6 +163,7 @@ class StackedRouter extends RouterBase {
           key: args.key,
           slug: args.slug,
           id: args.id,
+          name: args.name,
         ),
         settings: data,
       );
@@ -233,7 +234,9 @@ class ForumPostFeedViewArguments {
   final Key? key;
   final String slug;
   final String id;
-  ForumPostFeedViewArguments({this.key, required this.slug, required this.id});
+  final String name;
+  ForumPostFeedViewArguments(
+      {this.key, required this.slug, required this.id, required this.name});
 }
 
 /// ForumPostView arguments holder class
