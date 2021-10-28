@@ -8,11 +8,18 @@ import 'package:freecodecamp/ui/views/forum/forum-categories/forum_category_view
 import 'package:freecodecamp/ui/views/forum/forum_connect.dart';
 import 'package:stacked/stacked.dart';
 import 'package:stacked_services/stacked_services.dart';
-import 'dart:developer' as dev;
 
 class ForumCreatePostModel extends BaseViewModel {
   final _title = TextEditingController();
   final _code = TextEditingController();
+
+  late Future _future;
+  Future get future => _future;
+
+  void initState() async {
+    _future = requestCategorieNames();
+    notifyListeners();
+  }
 
   TextEditingController get title => _title;
   TextEditingController get code => _code;
@@ -101,5 +108,9 @@ class ForumCreatePostModel extends BaseViewModel {
     id = id.toString();
     _navigationService.navigateTo(Routes.forumPostView,
         arguments: ForumPostViewArguments(slug: slug, id: id));
+  }
+
+  void topicValueChanged() {
+    notifyListeners();
   }
 }
