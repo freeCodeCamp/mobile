@@ -8,6 +8,7 @@ class ForumSettingsViewModel extends BaseViewModel {
 
   void init() async {
     _isLoggedIn = await checkLoggedIn();
+    notifyListeners();
   }
 
   void forumLogout() async {

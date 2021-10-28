@@ -53,7 +53,7 @@ class ForumSettingsView extends StatelessWidget {
                           style: TextStyle(color: Colors.white),
                         ),
                         subtitle: const Text(
-                          'reset your password',
+                          'reset your password on the forum',
                           style: TextStyle(color: Colors.white),
                         ),
                         onTap: () {
