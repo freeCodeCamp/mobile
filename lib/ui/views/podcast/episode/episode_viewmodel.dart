@@ -10,11 +10,12 @@ import 'package:just_audio/just_audio.dart';
 import 'package:just_audio_background/just_audio_background.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:stacked/stacked.dart';
+import 'package:fk_user_agent/fk_user_agent.dart';
 
 class EpisodeViewModel extends BaseViewModel {
   final _databaseService = locator<PodcastsDatabaseService>();
   final audioPlayer = AudioPlayer();
-  final Episodes episode;
+  Episodes episode;
   final Podcasts podcast;
   late final Directory appDir;
   late bool downloaded = episode.downloaded;
@@ -33,10 +34,13 @@ class EpisodeViewModel extends BaseViewModel {
 
   Future init(String url) async {
     await _databaseService.initialise();
+    episode = await _databaseService.getEpisode(podcast.id, episode.guid);
     appDir = await getApplicationDocumentsDirectory();
     log("DIR: ${appDir.path} ${appDir.uri}");
     log(episode.toString());
     downloaded = episode.downloaded;
+    await FkUserAgent.init();
+    notifyListeners();
     // STRESS-TEST: Check if this one works properly when no net present
     log('Loading audio');
     try {
@@ -79,17 +83,17 @@ class EpisodeViewModel extends BaseViewModel {
   void downloadAudio(String uri) async {
     downloading = true;
     notifyListeners();
-    log('DOWNLOADIN...');
-    await dio.download(uri,
+    log('DOWNLOADING... $uri');
+    log("USER AGENT ${FkUserAgent.userAgent}");
+    var response = await dio.download(uri,
         appDir.path + '/episodes/' + podcast.id + '/' + episode.guid + '.mp3',
         onReceiveProgress: (int recevied, int total) {
       progress = ((recevied / total) * 100).toStringAsFixed(2);
       // log('$recevied / $total : ${((recevied / total) * 100).toStringAsFixed(2)}');
       notifyListeners();
-    }).whenComplete(() {
-      downloading = false;
-      log('Downloaded episode ${episode.title}');
-    });
+    }, options: Options(headers: {'User-Agent': FkUserAgent.userAgent}));
+    downloading = false;
+    log('Downloaded episode ${episode.title}');
     notifyListeners();
   }
 
