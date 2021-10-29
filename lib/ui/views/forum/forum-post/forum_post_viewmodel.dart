@@ -12,7 +12,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 
 import 'package:stacked/stacked.dart';
 import 'package:stacked_services/stacked_services.dart';
-
+import 'dart:developer' as dev;
 import '../forum_connect.dart';
 
 class PostViewModel extends BaseViewModel {
@@ -103,7 +103,18 @@ class PostViewModel extends BaseViewModel {
     notifyListeners();
   }
 
-  Future<void> likePost(postId) async {}
+  Future<void> likePost(postId) async {
+    Map<String, dynamic> body = {"id": postId, "post_action_type_id": 2};
+
+    final response =
+        await ForumConnect.connectAndPost('/post_actions', {}, body);
+
+    if (response.statusCode == 200) {
+      dev.log('success');
+    } else {
+      throw Exception(response.body);
+    }
+  }
 
   Future<void> updatePost(postId, postSlug) async {
     Map<String, dynamic> body = {
@@ -210,6 +221,4 @@ class PostViewModel extends BaseViewModel {
     _navigationService.navigateTo(Routes.forumUserView,
         arguments: ForumUserViewArguments(username: username));
   }
-
-  void setIslikedByUser() {}
 }

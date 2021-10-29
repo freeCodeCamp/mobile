@@ -30,7 +30,6 @@ class ForumCommentView extends StatelessWidget {
             itemCount: comments.length,
             itemBuilder: (context, index) {
               var post = comments[index];
-              model.setIslikedByUser();
               return Container(
                 color: model.recentlyDeletedPost &&
                         model.recentlyDeletedPostId == post.postId
@@ -230,7 +229,7 @@ class ForumCommentView extends StatelessWidget {
                             color: Colors.white,
                           ))
                   : Container(),
-              likeButton(post)
+              likeButton(post, model),
             ],
           ),
         ],
@@ -238,11 +237,15 @@ class ForumCommentView extends StatelessWidget {
     );
   }
 
-  Stack likeButton(PostModel post) {
+  Stack likeButton(PostModel post, PostViewModel model) {
     return Stack(
       children: [
         IconButton(
-          onPressed: !post.postIsUsers ? () {} : null,
+          onPressed: !post.postIsUsers
+              ? () {
+                  model.likePost(post.postId);
+                }
+              : null,
           icon: Icon(
             post.postLikes == 0
                 ? Icons.favorite_border_sharp
