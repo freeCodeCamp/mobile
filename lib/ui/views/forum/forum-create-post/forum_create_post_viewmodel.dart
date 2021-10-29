@@ -8,7 +8,6 @@ import 'package:freecodecamp/ui/views/forum/forum-categories/forum_category_view
 import 'package:freecodecamp/ui/views/forum/forum_connect.dart';
 import 'package:stacked/stacked.dart';
 import 'package:stacked_services/stacked_services.dart';
-import 'dart:developer' as dev;
 
 class ForumCreatePostModel extends BaseViewModel {
   final _title = TextEditingController();
