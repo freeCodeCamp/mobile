@@ -99,16 +99,13 @@ class PodcastsDatabaseService {
     return epsResults.map((episode) => Episodes.fromJson(episode)).toList();
   }
 
-  Future<Episodes?> getEpisode(String podcastId, String guid) async {
+  Future<Episodes> getEpisode(String podcastId, String guid) async {
     List<Map<String, dynamic>> epResult = await _db.query(
       episodesTableName,
       where: 'podcastId = ? AND guid = ?',
       whereArgs: [podcastId, guid],
     );
-    if (epResult.isNotEmpty) {
-      return Episodes.fromJson(epResult.first);
-    }
-    return null;
+    return Episodes.fromJson(epResult.first);
   }
 
   Future addEpisode(Episode episode, String podcastId) async {
@@ -127,7 +124,7 @@ class PodcastsDatabaseService {
             duration: episode.duration,
             downloaded: false,
           ).toJson(),
-          conflictAlgorithm: ConflictAlgorithm.replace);
+          conflictAlgorithm: ConflictAlgorithm.ignore);
       log("Added Episode: ${episode.title}");
     } catch (e) {
       log('Could not insert the episode: $e');
