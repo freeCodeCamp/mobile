@@ -1,4 +1,5 @@
 import 'dart:developer';
+import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:freecodecamp/models/podcasts/podcasts_model.dart';
@@ -73,8 +74,9 @@ class PodcastTemplate extends StatelessWidget {
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           mainAxisSize: MainAxisSize.min,
           children: [
-            Image.network(
-              podcast.image!,
+            Image.file(
+              File(
+                  '/data/user/0/org.freecodecamp/app_flutter/images/podcast/${podcast.id}.jpg'),
               height: 130,
               alignment: Alignment.center,
             ),

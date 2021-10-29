@@ -6,6 +6,7 @@ import 'package:freecodecamp/app/app.locator.dart';
 import 'package:freecodecamp/models/podcasts/podcasts_model.dart';
 import 'package:freecodecamp/service/podcasts_service.dart';
 import 'package:freecodecamp/ui/views/podcast/podcast_urls.dart';
+import 'package:http/http.dart' as http;
 import 'package:path_provider/path_provider.dart';
 import 'package:podcast_search/podcast_search.dart';
 import 'package:stacked/stacked.dart';
@@ -50,6 +51,14 @@ class PodcastListViewModel extends BaseViewModel {
         for (int i = 0; i < podcast.episodes!.length; i++) {
           await _databaseService.addEpisode(podcast.episodes![i], podcastId);
         }
+        log('Downloading podcast image');
+        File podcastImgFile =
+            File('${appDir.path}/images/podcast/$podcastId.jpg');
+        if (!podcastImgFile.existsSync()) {
+          podcastImgFile.createSync(recursive: true);
+        }
+        var response = await http.get(Uri.parse(podcast.image!));
+        podcastImgFile.writeAsBytesSync(response.bodyBytes);
         log("""Podcast added {
           id: $podcastId
           url: ${podcast.url} ${podcast.url == podcastUrl}

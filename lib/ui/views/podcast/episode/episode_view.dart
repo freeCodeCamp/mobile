@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_html/flutter_html.dart';
 import 'package:freecodecamp/models/podcasts/episodes_model.dart';
@@ -44,8 +46,9 @@ class EpisodeView extends StatelessWidget {
           child: SingleChildScrollView(
             child: Column(
               children: [
-                Image.asset(
-                  'assets/images/episode_default.jpg',
+                Image.file(
+                  File(
+                      '/data/user/0/org.freecodecamp/app_flutter/images/podcast/${podcast.id}.jpg'),
                   height: 250,
                 ),
                 const SizedBox(
@@ -97,7 +100,7 @@ class EpisodeView extends StatelessWidget {
                     ),
                     label: Text(
                       model.downloading
-                          ? 'DOWNLOADING'
+                          ? 'DOWNLOADING ${model.progress} %'
                           : model.downloaded
                               ? 'Remove Download'
                               : 'Download',
