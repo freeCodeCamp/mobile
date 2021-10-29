@@ -36,9 +36,6 @@ class ForumCreateCommentView extends StatelessWidget {
                             decoration: InputDecoration(
                                 border: OutlineInputBorder(
                                     borderRadius: BorderRadius.circular(0)),
-                                labelText: model.commentHasError
-                                    ? model.errorMesssage
-                                    : null,
                                 labelStyle: const TextStyle(
                                     color: Colors.red,
                                     fontWeight: FontWeight.bold),
@@ -52,6 +49,12 @@ class ForumCreateCommentView extends StatelessWidget {
                   textController: model.commentText,
                   post: post,
                 ),
+                model.commentHasError
+                    ? Text(
+                        model.errorMesssage,
+                        style: const TextStyle(color: Colors.red, fontSize: 12),
+                      )
+                    : Container(),
                 Row(
                   children: [
                     Expanded(
