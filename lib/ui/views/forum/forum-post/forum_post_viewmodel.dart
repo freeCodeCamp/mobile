@@ -1,15 +1,17 @@
 import 'dart:convert';
 import 'dart:math';
 import 'dart:ui';
+import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:freecodecamp/app/app.locator.dart';
 import 'package:freecodecamp/app/app.router.dart';
 import 'package:freecodecamp/models/forum_post_model.dart';
 import 'package:jiffy/jiffy.dart';
 import 'package:share/share.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+
 import 'package:stacked/stacked.dart';
 import 'package:stacked_services/stacked_services.dart';
-import 'dart:developer' as dev;
 
 import '../forum_connect.dart';
 
@@ -17,16 +19,129 @@ class PostViewModel extends BaseViewModel {
   late Future<PostModel> _future;
   Future<PostModel> get future => _future;
 
-  void initState(slug, id) {
+  bool _isLoggedIn = false;
+  bool get isLoggedIn => _isLoggedIn;
+
+  bool _isEditingPost = false;
+  bool get isEditingPost => _isEditingPost;
+
+  bool _recentlyDeletedPost = false;
+  bool get recentlyDeletedPost => _recentlyDeletedPost;
+
+  String _recentlyDeletedPostId = '';
+  String get recentlyDeletedPostId => _recentlyDeletedPostId;
+
+  String _editedPostId = '';
+  String get editedPostId => _editedPostId;
+
+  String _requestedRaw = '';
+  String get requestedRaw => _requestedRaw;
+
+  Timer? _timer;
+
+  final commentText = TextEditingController();
+
+  void initState(slug, id) async {
     _future = fetchPost(id, slug);
+    _isLoggedIn = await checkLoggedIn();
+    enableTimer(id, slug);
     notifyListeners();
+  }
+
+  void disposeTimer() {
+    _timer!.cancel();
+    notifyListeners();
+  }
+
+  void enableTimer(id, slug) {
+    _timer = Timer.periodic(const Duration(seconds: 30), (Timer timer) {
+      _recentlyDeletedPost = false;
+      _recentlyDeletedPostId = '';
+      _future = fetchPost(id, slug);
+      notifyListeners();
+    });
+  }
+
+  Future<bool> checkLoggedIn() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    return prefs.getBool('loggedIn') ?? false;
   }
 
   Future<PostModel> fetchPost(String id, String slug) async {
     final response = await ForumConnect.connectAndGet('/t/$slug/$id');
-
     if (response.statusCode == 200) {
       return PostModel.fromPostJson(jsonDecode(response.body));
+    } else {
+      throw Exception(response.body);
+    }
+  }
+
+  Future<Map<String, dynamic>?> getRawText(String postId) async {
+    final response = await ForumConnect.connectAndGet('/posts/$postId');
+
+    if (response.statusCode == 200) {
+      _requestedRaw = json.decode(response.body)['raw'];
+      notifyListeners();
+    }
+
+    return null;
+  }
+
+  void editPost(String postId, String commentValue) async {
+    _isEditingPost = true;
+    _editedPostId = postId;
+
+    // to get the raw markdown a seperate request has to be made for some reason
+
+    await getRawText(postId);
+    commentText.text = _requestedRaw;
+    notifyListeners();
+  }
+
+  Future<void> updatePost(postId, postSlug) async {
+    Map<String, dynamic> body = {
+      "post": {"raw": commentText.text}
+    };
+
+    if (commentText.text.isNotEmpty) {
+      await ForumConnect.connectAndPut('/posts/$_editedPostId', body);
+      _future = fetchPost(postId, postSlug);
+      notifyListeners();
+    }
+
+    _isEditingPost = false;
+    _editedPostId = '';
+
+    notifyListeners();
+  }
+
+  void cancelUpdatePost() {
+    _isEditingPost = false;
+    _editedPostId = '';
+    notifyListeners();
+  }
+
+  Future<void> deletePost(commentId, postId, postSlug) async {
+    final response =
+        await ForumConnect.connectAnDelete('/posts/$commentId', {});
+
+    if (response.statusCode == 200) {
+      _recentlyDeletedPost = true;
+      _recentlyDeletedPostId = commentId;
+
+      notifyListeners();
+    } else {
+      throw Exception(response.body);
+    }
+  }
+
+  Future<void> recoverPost(id) async {
+    final response = await ForumConnect.connectAndPut('/posts/$id/recover', {});
+
+    if (response.statusCode == 200) {
+      _recentlyDeletedPost = false;
+      _recentlyDeletedPostId = '';
+      notifyListeners();
     } else {
       throw Exception(response.body);
     }
@@ -54,7 +169,6 @@ class PostViewModel extends BaseViewModel {
     } else if (fromDiscourse) {
       return avatarUrl;
     } else {
-      dev.log(baseUrl + avatarUrl);
       return baseUrl + avatarUrl;
     }
   }
@@ -65,10 +179,7 @@ class PostViewModel extends BaseViewModel {
     final random = Random();
 
     List borderColor = [
-      const Color.fromRGBO(0x99, 0xC9, 0xFF, 1),
       const Color.fromRGBO(0xAC, 0xD1, 0x57, 1),
-      const Color.fromRGBO(0xFF, 0xFF, 0x00, 1),
-      const Color.fromRGBO(0x80, 0x00, 0x80, 1),
     ];
 
     int index = random.nextInt(borderColor.length);

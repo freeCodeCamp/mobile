@@ -10,6 +10,7 @@ import '../forum_connect.dart';
 class ForumCategoryViewModel extends BaseViewModel {
   late Future<List<Category>> _future;
   Future<List<Category>> get future => _future;
+
   final NavigationService _navigationService = locator<NavigationService>();
 
   int _index = 1;

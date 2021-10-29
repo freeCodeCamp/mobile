@@ -12,8 +12,13 @@ class ForumConnect {
 
   static Future<dynamic> connectAndGet(String endpoint) async {
     await dotenv.load(fileName: ".env");
+    SharedPreferences prefs = await SharedPreferences.getInstance();
 
     Map<String, String>? headers = {'Accept': 'application/json'};
+    
+    headers['Api-Key'] = dotenv.env['DISCOURSE_API'] as String;
+    headers['Api-Username'] = prefs.getString('username') as String;
+
 
     final response =
         await http.get(Uri.parse(baseUrl + endpoint), headers: headers);
@@ -31,22 +36,35 @@ class ForumConnect {
     headers['Api-Username'] = prefs.getString('username') as String;
     final response =
         await http.post(Uri.parse(baseUrl + endpoint), headers: headers);
+    //dev.log(response.body);
+    return response;
+  }
+
+  static Future<dynamic> connectAndPut(
+      String endpoint, Map<String, dynamic> body) async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+
+    Map<String, String> headers = {'Content-Type': 'application/json'};
+
+    await dotenv.load(fileName: ".env");
+    headers['Api-Key'] = dotenv.env['DISCOURSE_API'] as String;
+    headers['Api-Username'] = prefs.getString('username') as String;
+
+    final response = await http.put(Uri.parse(baseUrl + endpoint),
+        headers: headers, body: jsonEncode(body));
     dev.log(response.body);
     return response;
   }
 
-  static Future<dynamic> connectAndPut(String endpoint,
-      Map<String, String> headers, Map<String, String> body) async {
-    await dotenv.load(fileName: ".env");
+  static Future<dynamic> connectAnDelete(
+      String endpoint, Map<String, String> body) async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
 
-    final response = await http.put(Uri.parse(baseUrl + endpoint),
-        headers: headers, body: jsonEncode(body));
-    return response;
-  }
+    Map<String, String> headers = {'Content-Type': 'application/json'};
 
-  static Future<dynamic> connectAnDelete(String endpoint,
-      Map<String, String> headers, Map<String, String> body) async {
     await dotenv.load(fileName: ".env");
+    headers['Api-Key'] = dotenv.env['DISCOURSE_API'] as String;
+    headers['Api-Username'] = prefs.getString('username') as String;
 
     final response = await http.delete(Uri.parse(baseUrl + endpoint),
         headers: headers, body: jsonEncode(body));

@@ -6,6 +6,7 @@ import 'package:flutter_html/flutter_html.dart';
 import 'package:flutter_syntax_view/flutter_syntax_view.dart';
 import 'package:freecodecamp/models/forum_post_model.dart';
 import 'package:freecodecamp/ui/views/forum/forum-comment/forum_comment_view.dart';
+import 'package:freecodecamp/ui/views/forum/forum-create-comment/forum_create_comment_view.dart';
 import 'package:stacked/stacked.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:html/dom.dart' as dom;
@@ -23,14 +24,16 @@ class ForumPostView extends StatelessWidget {
     return ViewModelBuilder<PostViewModel>.reactive(
         viewModelBuilder: () => PostViewModel(),
         onModelReady: (model) => model.initState(slug, id),
+        onDispose: (model) => model.disposeTimer(),
         builder: (context, model, child) => Scaffold(
               backgroundColor: Color.fromRGBO(0x2A, 0x2A, 0x40, 1),
-              body: SingleChildScrollView(child: postViewTemplate(model)),
+              body: SingleChildScrollView(
+                  child: postViewTemplate(model, id, slug)),
             ));
   }
 }
 
-Column postViewTemplate(PostViewModel model) {
+Column postViewTemplate(PostViewModel model, id, slug) {
   List<PostModel> comments = [];
 
   return Column(
@@ -231,7 +234,17 @@ Column postViewTemplate(PostViewModel model) {
                     color: Color(0xFF0a0a23),
                     child: htmlView(snapshot, context),
                   ),
-                  ForumCommentView(comments: comments)
+                  ForumCommentView(
+                    comments: comments,
+                    postId: id,
+                    postSlug: slug,
+                  ),
+                  model.isLoggedIn
+                      ? ForumCreateCommentView(
+                          topicId: id,
+                          post: post,
+                        )
+                      : Container()
                 ],
               );
             }
@@ -251,8 +264,7 @@ Row htmlView(AsyncSnapshot<PostModel> post, BuildContext context) {
           child: Padding(
         padding: const EdgeInsets.all(24.0),
         child: Html(
-          shrinkWrap: true,
-          data: post.data!.postHtml,
+          data: post.data!.postCooked,
           style: {
             "body": Style(color: Colors.white),
             "p": Style(
@@ -263,10 +275,7 @@ Row htmlView(AsyncSnapshot<PostModel> post, BuildContext context) {
               fontSize: FontSize.rem(1.35),
             ),
             "pre": Style(
-                color: Colors.white,
-                width: MediaQuery.of(context).size.width,
-                backgroundColor: Color.fromRGBO(0x2A, 0x2A, 0x40, 1),
-                textOverflow: TextOverflow.clip),
+                color: Colors.white, width: MediaQuery.of(context).size.width),
             "code": Style(backgroundColor: Color.fromRGBO(0x2A, 0x2A, 0x40, 1)),
             "tr": Style(
                 border: Border(bottom: BorderSide(color: Colors.grey)),
@@ -289,19 +298,21 @@ Row htmlView(AsyncSnapshot<PostModel> post, BuildContext context) {
                 child: (context.tree as TableLayoutElement).toWidget(context),
               );
             },
-            "code": (context, child) {
-              var classList = context.tree.elementClasses;
+            "code": (code, child) {
+              var classList = code.tree.elementClasses;
               if (classList.isNotEmpty && classList[0] == 'lang-auto') {
                 return ConstrainedBox(
-                  constraints: BoxConstraints(minHeight: 100, maxHeight: 500),
+                  constraints: BoxConstraints(
+                    minHeight: 1,
+                    maxHeight: 500,
+                  ),
                   child: SyntaxView(
-                    code: context.tree.element?.text as String,
+                    code: code.tree.element?.text as String,
                     syntax: Syntax.JAVASCRIPT,
                     syntaxTheme: SyntaxTheme.vscodeDark(),
                     fontSize: 16.0,
-                    withZoom: true,
+                    withZoom: false,
                     withLinesCount: false,
-                    expanded: true,
                   ),
                 );
               }

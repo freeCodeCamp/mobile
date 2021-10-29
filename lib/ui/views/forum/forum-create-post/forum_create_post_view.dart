@@ -67,8 +67,7 @@ Column createPostTemplate(ForumCreatePostModel model, context) {
                           value: model.categoryDropDownValue,
                           onChanged: (String? value) {
                             model.changeDropDownValue(value);
-                          },
-                          
+                          }, 
                           menuMaxHeight: 300,
                           items: snapshot.hasData
                               ? names.map<DropdownMenuItem<String>>(
