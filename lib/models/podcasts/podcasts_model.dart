@@ -43,7 +43,7 @@ class Podcasts {
 
   @override
   String toString() {
-    return """Episodes{
+    return """Podcasts {
       id: $id,
       url: $url,
       link: $link,

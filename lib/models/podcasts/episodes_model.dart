@@ -60,8 +60,16 @@ class Episodes {
 
   @override
   String toString() {
-    return """Episodes{guid: $guid, podcastId: $podcastId, title: $title, description: $description,
-      link: $link, publicationDate: $publicationDate, contentUrl: $contentUrl, imageUrl: $imageUrl,
-      duration: $duration, downloaded: $downloaded}""";
+    return """Episodes {
+      guid: $guid, 
+      podcastId: $podcastId, 
+      title: $title, 
+      description: ${description!.substring(0, 100)},
+      link: $link, publicationDate: $publicationDate, 
+      contentUrl: $contentUrl, 
+      imageUrl: $imageUrl,
+      duration: $duration, 
+      downloaded: $downloaded
+    }""";
   }
 }

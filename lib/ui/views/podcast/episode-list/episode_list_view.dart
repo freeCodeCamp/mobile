@@ -2,6 +2,7 @@ import 'dart:developer';
 
 import 'package:flutter/material.dart';
 import 'package:freecodecamp/models/podcasts/episodes_model.dart';
+import 'package:freecodecamp/models/podcasts/podcasts_model.dart';
 import 'package:freecodecamp/ui/views/podcast/episode-list/episode_list_viewmodel.dart';
 import 'package:freecodecamp/ui/views/podcast/episode/episode_view.dart';
 import 'package:intl/intl.dart';
@@ -9,15 +10,18 @@ import 'package:stacked/stacked.dart';
 
 // ui view only
 
-class PodcastView extends StatelessWidget {
-  const PodcastView({Key? key}) : super(key: key);
+class EpisodeListView extends StatelessWidget {
+  const EpisodeListView({Key? key, required this.podcast}) : super(key: key);
+
+  final Podcasts podcast;
 
   @override
   Widget build(BuildContext context) {
-    return ViewModelBuilder<PodcastViewModel>.reactive(
+    return ViewModelBuilder<EpisodeListViewModel>.reactive(
+      viewModelBuilder: () => EpisodeListViewModel(podcast),
       builder: (context, model, child) => Scaffold(
         appBar: AppBar(
-          title: const Text('Podcasts'),
+          title: Text(podcast.title!),
           backgroundColor: const Color(0xFF0a0a23),
         ),
         backgroundColor: const Color(0xFF0a0a23),
@@ -36,23 +40,23 @@ class PodcastView extends StatelessWidget {
               itemCount: snapshot.data!.length,
               itemBuilder: (BuildContext context, int index) {
                 return PodcastEpisodeTemplate(
-                    episode: snapshot.data![index], i: index);
+                    episode: snapshot.data![index], i: index, podcast: podcast);
               },
             );
           },
         ),
       ),
-      viewModelBuilder: () => PodcastViewModel(),
     );
   }
 }
 
 class PodcastEpisodeTemplate extends StatelessWidget {
   const PodcastEpisodeTemplate(
-      {Key? key, required this.episode, required this.i})
+      {Key? key, required this.episode, required this.i, required this.podcast})
       : super(key: key);
 
   final Episodes episode;
+  final Podcasts podcast;
   final int i;
 
   @override
@@ -63,7 +67,8 @@ class PodcastEpisodeTemplate extends StatelessWidget {
         Navigator.push(
             context,
             MaterialPageRoute(
-                builder: (context) => EpisodeView(episode: episode)));
+                builder: (context) =>
+                    EpisodeView(episode: episode, podcast: podcast)));
       },
       child: ConstrainedBox(
         constraints: const BoxConstraints(minHeight: 50),

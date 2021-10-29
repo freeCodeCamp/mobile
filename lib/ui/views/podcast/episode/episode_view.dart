@@ -1,16 +1,19 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_html/flutter_html.dart';
 import 'package:freecodecamp/models/podcasts/episodes_model.dart';
+import 'package:freecodecamp/models/podcasts/podcasts_model.dart';
+import 'package:freecodecamp/ui/views/podcast/episode/episode_viewmodel.dart';
 import 'package:html/dom.dart' as dom;
 import 'package:intl/intl.dart';
 import 'package:stacked/stacked.dart';
 import 'package:url_launcher/url_launcher.dart';
 
-import 'episode_viewmodel.dart';
-
 class EpisodeView extends StatelessWidget {
+  const EpisodeView({Key? key, required this.episode, required this.podcast})
+      : super(key: key);
+
   final Episodes episode;
-  const EpisodeView({Key? key, required this.episode}) : super(key: key);
+  final Podcasts podcast;
 
   final TextStyle _titleStyle =
       const TextStyle(color: Colors.white, fontSize: 20);
@@ -29,7 +32,7 @@ class EpisodeView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return ViewModelBuilder<EpisodeViewModel>.reactive(
-      viewModelBuilder: () => EpisodeViewModel(episode),
+      viewModelBuilder: () => EpisodeViewModel(episode, podcast),
       onModelReady: (model) => model.init(episode.contentUrl!),
       builder: (context, model, child) => Scaffold(
         appBar: AppBar(

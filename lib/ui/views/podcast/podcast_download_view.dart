@@ -60,10 +60,10 @@ class PodcastEpisodeTemplate extends StatelessWidget {
     return InkWell(
       onTap: () {
         log("Clicked ${episode.title}");
-        Navigator.push(
-            context,
-            MaterialPageRoute(
-                builder: (context) => EpisodeView(episode: episode)));
+        // Navigator.push(
+        //     context,
+        //     MaterialPageRoute(
+        //         builder: (context) => EpisodeView(episode: episode)));
       },
       child: ConstrainedBox(
         constraints: const BoxConstraints(minHeight: 50),

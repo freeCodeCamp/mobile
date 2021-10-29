@@ -5,6 +5,7 @@ import 'package:dio/dio.dart';
 import 'package:flutter/services.dart';
 import 'package:freecodecamp/app/app.locator.dart';
 import 'package:freecodecamp/models/podcasts/episodes_model.dart';
+import 'package:freecodecamp/models/podcasts/podcasts_model.dart';
 import 'package:freecodecamp/service/podcasts_service.dart';
 import 'package:just_audio/just_audio.dart';
 import 'package:just_audio_background/just_audio_background.dart';
@@ -15,6 +16,7 @@ class EpisodeViewModel extends BaseViewModel {
   final _databaseService = locator<PodcastsDatabaseService>();
   final audioPlayer = AudioPlayer();
   final Episodes episode;
+  final Podcasts podcast;
   late final Directory appDir;
   late bool downloaded = episode.downloaded;
   bool playing = false;
@@ -23,7 +25,7 @@ class EpisodeViewModel extends BaseViewModel {
   // Response response;
   var dio = Dio();
 
-  EpisodeViewModel(this.episode);
+  EpisodeViewModel(this.episode, this.podcast);
 
   @override
   void dispose() {
@@ -53,7 +55,7 @@ class EpisodeViewModel extends BaseViewModel {
         await audioPlayer.setAudioSource(
           AudioSource.uri(
             Uri.parse(
-                'file:///data/user/0/org.freecodecamp/app_flutter/episodes/${episode.guid}.mp3'),
+                'file:///data/user/0/org.freecodecamp/app_flutter/episodes/${podcast.id}/${episode.guid}.mp3'),
             tag: MediaItem(
               id: episode.guid,
               title: episode.title!,
@@ -89,7 +91,8 @@ class EpisodeViewModel extends BaseViewModel {
     downloading = true;
     notifyListeners();
     log('DOWNLOADIN...');
-    await dio.download(uri, appDir.path + '/episodes/' + episode.guid + '.mp3',
+    await dio.download(uri,
+        appDir.path + '/episodes/' + podcast.id + '/' + episode.guid + '.mp3',
         onReceiveProgress: (int recevied, int total) {
       log('$recevied / $total : ${((recevied / total) * 100).toStringAsFixed(2)}');
     }).whenComplete(() {
@@ -122,7 +125,12 @@ class EpisodeViewModel extends BaseViewModel {
       notifyListeners();
     } else if (downloaded) {
       log("DELETING DOWNLOAD");
-      File audioFile = File(appDir.path + '/episodes/' + episode.guid + '.mp3');
+      File audioFile = File(appDir.path +
+          '/episodes/' +
+          podcast.id +
+          '/' +
+          episode.guid +
+          '.mp3');
       if (audioFile.existsSync()) {
         audioFile.deleteSync();
       }

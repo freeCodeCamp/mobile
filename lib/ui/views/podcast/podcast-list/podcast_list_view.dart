@@ -2,6 +2,7 @@ import 'dart:developer';
 
 import 'package:flutter/material.dart';
 import 'package:freecodecamp/models/podcasts/podcasts_model.dart';
+import 'package:freecodecamp/ui/views/podcast/episode-list/episode_list_view.dart';
 import 'package:freecodecamp/ui/views/podcast/podcast-list/podcast_list_viewmodel.dart';
 import 'package:stacked/stacked.dart';
 
@@ -60,10 +61,10 @@ class PodcastTemplate extends StatelessWidget {
     return InkWell(
       onTap: () {
         log("Clicked ${podcast.title}");
-        // Navigator.push(
-        //     context,
-        //     MaterialPageRoute(
-        //         builder: (context) => EpisodeView(episode: episode)));
+        Navigator.push(
+            context,
+            MaterialPageRoute(
+                builder: (context) => EpisodeListView(podcast: podcast)));
       },
       child: Container(
         padding: const EdgeInsets.all(8),

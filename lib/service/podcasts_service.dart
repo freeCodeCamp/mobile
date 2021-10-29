@@ -63,7 +63,8 @@ class PodcastsDatabaseService {
             image: podcast.image,
             copyright: podcast.copyright,
             numEps: podcast.episodes?.length,
-          ).toJson());
+          ).toJson(),
+          conflictAlgorithm: ConflictAlgorithm.replace);
       log("Added Podcast: ${podcast.title}");
     } catch (e) {
       log('Could not insert the podcast: $e');
@@ -71,8 +72,12 @@ class PodcastsDatabaseService {
   }
 
   // EPISODE QUERIES
-  Future<List<Episodes>> getDownloadedEpisodes() async {
-    List<Map<String, dynamic>> epsResults = await _db.query(episodesTableName);
+  Future<List<Episodes>> getDownloadedEpisodes(String podcastId) async {
+    List<Map<String, dynamic>> epsResults = await _db.query(
+      episodesTableName,
+      where: 'podcastId = ?',
+      whereArgs: [podcastId],
+    );
     log(epsResults
         .map((episode) => Episodes.fromJson(episode))
         .where((episode) => episode.downloaded)
@@ -85,16 +90,20 @@ class PodcastsDatabaseService {
         .toList();
   }
 
-  Future<List<Episodes>> getAllEpisodes() async {
-    List<Map<String, dynamic>> epsResults = await _db.query(episodesTableName);
+  Future<List<Episodes>> getEpisodes(String podcastId) async {
+    List<Map<String, dynamic>> epsResults = await _db.query(
+      episodesTableName,
+      where: 'podcastId = ?',
+      whereArgs: [podcastId],
+    );
     return epsResults.map((episode) => Episodes.fromJson(episode)).toList();
   }
 
-  Future<Episodes?> getEpisode(String guid) async {
+  Future<Episodes?> getEpisode(String podcastId, String guid) async {
     List<Map<String, dynamic>> epResult = await _db.query(
       episodesTableName,
-      where: 'guid = ?',
-      whereArgs: [guid],
+      where: 'podcastId = ? AND guid = ?',
+      whereArgs: [podcastId, guid],
     );
     if (epResult.isNotEmpty) {
       return Episodes.fromJson(epResult.first);
@@ -117,7 +126,8 @@ class PodcastsDatabaseService {
             imageUrl: episode.imageUrl,
             duration: episode.duration,
             downloaded: false,
-          ).toJson());
+          ).toJson(),
+          conflictAlgorithm: ConflictAlgorithm.replace);
       log("Added Episode: ${episode.title}");
     } catch (e) {
       log('Could not insert the episode: $e');
