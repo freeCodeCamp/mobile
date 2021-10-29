@@ -118,7 +118,7 @@ class PostModel {
         postType: data["postType"],
         postReplyCount: data["postReplyCount"],
         postReads: data["postReads"],
-        postCooked: data['postHtml'],
+        postCooked: data['postCooked'],
         username: data["username"],
         postSlug: data["postSlug"],
         profieImage: data["profieImage"],
