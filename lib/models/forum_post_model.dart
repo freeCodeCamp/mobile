@@ -41,6 +41,8 @@ class PostModel {
   final bool isModerator;
   final bool isAdmin;
   final bool isStaff;
+  final bool postLikedByUser;
+  final bool postIsUsers;
 
   PostModel(
       {required this.username,
@@ -56,6 +58,8 @@ class PostModel {
       required this.postReads,
       this.postLikes,
       this.postComments,
+      this.postLikedByUser = false,
+      required this.postIsUsers,
       required this.postCanEdit,
       required this.postCanDelete,
       required this.postCanRecover,
@@ -84,9 +88,29 @@ class PostModel {
         postCanRecover: data["details"]["can_recover"],
         isAdmin: data["post_stream"]["posts"][0]["admin"],
         isModerator: data["post_stream"]["posts"][0]["moderator"],
-        isStaff: data["post_stream"]["posts"][0]["staff"]);
+        isStaff: data["post_stream"]["posts"][0]["staff"],
+        postIsUsers: data["post_stream"]["posts"][0]["yours"]);
   }
 
+  static bool getIfLikedPost(List<dynamic> data) {
+    for (int i = 0; i < data.length; i++) {
+      if (data[i]["id"] == 2) {
+        if (data[i]["acted"] == true) return true;
+      }
+    }
+    return false;
+  }
+
+  static int getLikesPost(List<dynamic> data) {
+    int? result;
+
+    for (int i = 0; i < data.length; i++) {
+      if (data[i]["id"] == 2) {
+        result = data[i]["count"];
+      }
+    }
+    return result ?? 0;
+  }
   // this is for the same endpoint as fromPostJson only it needs to be parsed
   // differently to be able to "type" these as comments.
 
@@ -107,7 +131,11 @@ class PostModel {
         postCanRecover: data["can_recover"],
         isAdmin: data["admin"],
         isModerator: data["moderator"],
-        isStaff: data["staff"]);
+        isStaff: data["staff"],
+        postIsUsers: data["yours"],
+        postLikedByUser:
+            data["yours"] ? false : getIfLikedPost(data["actions_summary"]),
+        postLikes: getLikesPost(data["actions_summary"]));
   }
 
   // this is an offline factory that does not parse any data from an endpoint
@@ -128,7 +156,8 @@ class PostModel {
         postCanRecover: data["postCanRecover"],
         isAdmin: data["isAdmin"],
         isModerator: data["isModerator"],
-        isStaff: data["isStaff"]);
+        isStaff: data["isStaff"],
+        postIsUsers: data["postIsUsers"]);
   }
 }
 
@@ -174,6 +203,7 @@ class Comment {
         "isAdmin": true,
         "isModerator": true,
         "isStaff": true,
+        "postIsUsers": true
       }));
     }
     return comments;

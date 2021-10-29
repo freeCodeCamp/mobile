@@ -30,6 +30,7 @@ class ForumCommentView extends StatelessWidget {
             itemCount: comments.length,
             itemBuilder: (context, index) {
               var post = comments[index];
+              model.setIslikedByUser();
               return Container(
                 color: model.recentlyDeletedPost &&
                         model.recentlyDeletedPostId == post.postId
@@ -228,11 +229,46 @@ class ForumCommentView extends StatelessWidget {
                             Icons.delete_sharp,
                             color: Colors.white,
                           ))
-                  : Container()
+                  : Container(),
+              likeButton(post)
             ],
           ),
         ],
       ),
+    );
+  }
+
+  Stack likeButton(PostModel post) {
+    return Stack(
+      children: [
+        IconButton(
+          onPressed: !post.postIsUsers ? () {} : null,
+          icon: Icon(
+            post.postLikes == 0
+                ? Icons.favorite_border_sharp
+                : post.postLikedByUser || post.postIsUsers
+                    ? Icons.favorite
+                    : Icons.favorite_border_sharp,
+            color: !post.postLikedByUser
+                ? !post.postIsUsers
+                    ? Colors.white
+                    : Colors.grey
+                : Colors.red,
+          ),
+        ),
+        Padding(
+          padding: const EdgeInsets.only(left: 30, top: 7),
+          child: Align(
+              alignment: Alignment.topRight,
+              child: Text(
+                post.postLikes.toString(),
+                style: TextStyle(
+                  color: Colors.grey.shade200,
+                  fontWeight: FontWeight.bold,
+                ),
+              )),
+        )
+      ],
     );
   }
 }

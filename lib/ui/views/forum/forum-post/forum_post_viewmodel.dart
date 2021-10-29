@@ -28,6 +28,9 @@ class PostViewModel extends BaseViewModel {
   bool _recentlyDeletedPost = false;
   bool get recentlyDeletedPost => _recentlyDeletedPost;
 
+  bool _isLikedByUser = false;
+  bool get isLikedByUser => _isLikedByUser;
+
   String _recentlyDeletedPostId = '';
   String get recentlyDeletedPostId => _recentlyDeletedPostId;
 
@@ -36,6 +39,8 @@ class PostViewModel extends BaseViewModel {
 
   String _requestedRaw = '';
   String get requestedRaw => _requestedRaw;
+
+  List<int> likedPostIds = [];
 
   Timer? _timer;
 
@@ -97,6 +102,8 @@ class PostViewModel extends BaseViewModel {
     commentText.text = _requestedRaw;
     notifyListeners();
   }
+
+  Future<void> likePost(postId) async {}
 
   Future<void> updatePost(postId, postSlug) async {
     Map<String, dynamic> body = {
@@ -203,4 +210,6 @@ class PostViewModel extends BaseViewModel {
     _navigationService.navigateTo(Routes.forumUserView,
         arguments: ForumUserViewArguments(username: username));
   }
+
+  void setIslikedByUser() {}
 }
