@@ -24,6 +24,8 @@ class PostModel {
 
   PostModel(
       {required this.username,
+      required this.name,
+      required this.profieImage,
       this.postCooked,
       required this.postId,
       this.postName,
@@ -120,7 +122,15 @@ class PostModel {
         postViews: data["views"],
         postReplyCount: data["reply_count"],
         postSlug: data["slug"],
-        username: data["last_poster_username"]);
+        username: data["last_poster_username"],
+        profieImage: data["avatar_template"],
+        name: data["name"],
+        postCanDelete: data["can_delete"],
+        postCanEdit: data["can_edit"],
+        postCanRecover: data["can_recover"],
+        isAdmin: data["admin"],
+        isModerator: data["moderator"],
+        isStaff: data["staff"]);
   }
 }
 
