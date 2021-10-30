@@ -1,39 +1,19 @@
-class PostList {
-  static List<dynamic> returnPosts(Map<String, dynamic> data) {
-    return data["topic_list"]["topics"];
-  }
-
-  static List<dynamic> returnCategoryUsers(Map<String, dynamic> data) {
-    return data["users"];
-  }
-
-  static List<dynamic> returnProfilePictures(Map<String, dynamic> data) {
-    return data["details"]["participants"];
-  }
-
-  PostList.error() {
-    throw Exception('Unable to load posts');
-  }
-
-  PostList.errorProfile() {
-    throw Exception('unable to load post profile pictures');
-  }
-}
-
 // This types and converts the JSON into the instances of the PostModel class.
 class PostModel {
   final String username;
-  final String name;
-  final String profieImage;
+  final String? name;
+  final String? profieImage;
   final String postId;
   final String? postName;
   final String postSlug;
   final dynamic postCreateDate;
-  final String postCooked;
+  final String? postLastActivity;
+  final String? postCooked;
   final List? postComments;
-  final int postType;
+  final int? postViews;
+  final int? postType;
   final int postReplyCount;
-  final int postReads;
+  final int? postReads;
   final int? postLikes;
   final bool postCanEdit;
   final bool postCanDelete;
@@ -46,14 +26,16 @@ class PostModel {
       {required this.username,
       required this.name,
       required this.profieImage,
-      required this.postCooked,
+      this.postCooked,
       required this.postId,
       this.postName,
+      this.postLastActivity,
       required this.postSlug,
       required this.postCreateDate,
-      required this.postType,
+      this.postType,
       required this.postReplyCount,
-      required this.postReads,
+      this.postReads,
+      this.postViews,
       this.postLikes,
       this.postComments,
       required this.postCanEdit,
@@ -130,15 +112,25 @@ class PostModel {
         isModerator: data["isModerator"],
         isStaff: data["isStaff"]);
   }
-}
 
-class PostCreator {
-  static bool? isUsersPost(Map<String, bool> data) {
-    return data["yours"];
-  }
-
-  static bool? userCanEdit(Map<String, bool> data) {
-    return data["can_edit"];
+  factory PostModel.fromTopicFeedJson(Map<String, dynamic> data) {
+    return PostModel(
+        postId: data["id"].toString(),
+        postName: data["title"],
+        postLastActivity: data["bumped_at"],
+        postCreateDate: data["created_at"],
+        postViews: data["views"],
+        postReplyCount: data["reply_count"],
+        postSlug: data["slug"],
+        username: data["last_poster_username"],
+        profieImage: data["avatar_template"],
+        name: data["name"],
+        postCanDelete: data["can_delete"],
+        postCanEdit: data["can_edit"],
+        postCanRecover: data["can_recover"],
+        isAdmin: data["admin"],
+        isModerator: data["moderator"],
+        isStaff: data["staff"]);
   }
 }
 
