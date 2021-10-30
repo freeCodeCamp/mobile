@@ -6,7 +6,6 @@ import 'package:freecodecamp/ui/views/forum/forum-post-feed/forum_post_feed_lazy
 import 'package:freecodecamp/ui/views/forum/forum-post-feed/forum_post_feed_viewmodel.dart';
 import 'package:freecodecamp/ui/views/forum/forum-post/forum_post_viewmodel.dart';
 import 'package:stacked/stacked.dart';
-import 'dart:developer' as dev;
 
 class ForumPostFeedView extends StatelessWidget {
   final String slug;
