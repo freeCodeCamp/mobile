@@ -9,7 +9,6 @@ import 'package:html/parser.dart';
 import 'package:stacked/stacked.dart';
 import 'package:stacked_services/stacked_services.dart';
 import 'package:flutter_font_awesome_web_names/flutter_font_awesome.dart';
-import 'dart:developer' as dev;
 
 class ForumUserModel extends BaseViewModel {
   late Future<User> _future;

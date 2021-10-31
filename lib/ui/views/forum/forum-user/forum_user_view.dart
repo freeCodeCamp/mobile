@@ -7,6 +7,7 @@ import 'package:freecodecamp/ui/views/forum/forum-user/forum_user_viewmodel.dart
 import 'package:stacked/stacked.dart';
 import 'package:html/dom.dart' as dom;
 import 'package:url_launcher/url_launcher.dart';
+import 'dart:developer' as dev;
 
 class ForumUserView extends StatelessWidget {
   const ForumUserView({Key? key, required this.username}) : super(key: key);
@@ -113,6 +114,22 @@ FutureBuilder userTemplateBuilder(context, model) {
                                       Map<String, String> attributes,
                                       dom.Element? element) {
                                     launch(url!);
+                                  },
+                                  customRender: {
+                                    "img": (context, child) {
+                                      var emoijClass =
+                                          context.tree.element?.className;
+                                      var src = context.tree.attributes['src'];
+                                      if (emoijClass == 'emoji') {
+                                        return Image.network(
+                                          src.toString(),
+                                          height: 20,
+                                          width: 20,
+                                        );
+                                      } else {
+                                        return child;
+                                      }
+                                    }
                                   },
                                 )
                               : null))
@@ -235,66 +252,23 @@ class UserTopicBuilder extends StatelessWidget {
       physics: const ClampingScrollPhysics(),
       shrinkWrap: true,
       itemBuilder: (context, index) {
-        return InkWell(
-          onTap: () {
-            model.navigateToPost(topic![index].slug, topic![index].id);
-          },
-          child: Padding(
-            padding: const EdgeInsets.only(bottom: 16.0),
-            child: Container(
-              decoration: const BoxDecoration(
-                  border:
-                      Border(top: BorderSide(color: Colors.white, width: 2))),
-              child: Column(
-                children: [
-                  Row(children: [
-                    Expanded(
-                      child: Padding(
-                        padding: const EdgeInsets.all(8.0),
-                        child: Text(topic![index].title,
-                            style: const TextStyle(
-                                color: Colors.white, fontSize: 18)),
-                      ),
-                    )
-                  ]),
-                  Row(
-                    children: [
-                      Padding(
-                        padding: const EdgeInsets.all(8.0),
-                        child: Text(
-                            'posted ' +
-                                PostViewModel.parseDate(
-                                    topic![index].createdAt),
-                            style: const TextStyle(
-                                color: Colors.white, fontSize: 18)),
-                      ),
-                    ],
-                  ),
-                  Row(
-                    children: [
-                      Expanded(
-                        child: Padding(
-                          padding: const EdgeInsets.all(8.0),
-                          child: Text(
-                              'Likes ' + topic![index].likedCount.toString(),
-                              style: const TextStyle(
-                                  color: Colors.white, fontSize: 18)),
-                        ),
-                      ),
-                      Expanded(
-                        child: Padding(
-                          padding: const EdgeInsets.all(8.0),
-                          child: Text(
-                              'Replies ' + topic![index].postCount.toString(),
-                              style: const TextStyle(
-                                  color: Colors.white, fontSize: 18)),
-                        ),
-                      )
-                    ],
-                  )
-                ],
-              ),
+        return Padding(
+          padding: const EdgeInsets.only(left: 16),
+          child: ListTile(
+            title: Text(topic![index].title,
+                style: const TextStyle(color: Colors.white, fontSize: 18)),
+            subtitle: Text(
+              'posted ' + PostViewModel.parseDate(topic![index].createdAt),
+              style: const TextStyle(color: Colors.white),
             ),
+            trailing: const Icon(
+              Icons.arrow_forward_ios_sharp,
+              size: 40,
+              color: Colors.white,
+            ),
+            onTap: () {
+              model.navigateToPost(topic![index].slug, topic![index].id);
+            },
           ),
         );
       },
@@ -337,16 +311,15 @@ class UserBadgeBuilder extends StatelessWidget {
                     itemCount: snapshot.data?.length,
                     itemBuilder: (context, index) {
                       return ListTile(
-                        leading: model.parseBages(
+                        trailing: model.parseBages(
                             badge![index].icon, 50, badge[index].badgeTypeId),
                         title: Text(badge[index].name,
                             style: const TextStyle(
-                                color: Colors.white, fontSize: 24)),
+                                color: Colors.white, fontSize: 18)),
                         subtitle: Text(
                           ForumUserModel.parseBadgeDescription(
                               badge[index].description),
-                          style: const TextStyle(
-                              color: Colors.white, fontSize: 18),
+                          style: const TextStyle(color: Colors.white),
                         ),
                       );
                     });
