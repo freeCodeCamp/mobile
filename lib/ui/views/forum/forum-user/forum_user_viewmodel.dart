@@ -75,8 +75,6 @@ class ForumUserModel extends BaseViewModel {
     List<String> icons = searchFontAwesomeIcons(
         text: iconName, searchFilter: FaSearchFilter.contains, maxResults: 20);
 
-    dev.log(iconName + ' ' + icons.toString());
-
     if (icons.isNotEmpty) {
       for (int i = 0; i < icons.length; i++) {
         if (icons[i].contains(iconName)) {

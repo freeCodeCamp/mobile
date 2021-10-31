@@ -336,40 +336,18 @@ class UserBadgeBuilder extends StatelessWidget {
                     physics: const ClampingScrollPhysics(),
                     itemCount: snapshot.data?.length,
                     itemBuilder: (context, index) {
-                      return Column(
-                        children: [
-                          model.parseBages(badge![index].icon, 150,
-                              badge[index].badgeTypeId),
-                          Row(
-                            children: [
-                              Padding(
-                                padding:
-                                    const EdgeInsets.only(top: 16.0, left: 16),
-                                child: Text(
-                                  badge[index].name,
-                                  style: const TextStyle(
-                                      color: Colors.white, fontSize: 24),
-                                ),
-                              ),
-                            ],
-                          ),
-                          Row(
-                            children: [
-                              Expanded(
-                                child: Padding(
-                                  padding: const EdgeInsets.only(
-                                      top: 16, left: 16, bottom: 16),
-                                  child: Text(
-                                    ForumUserModel.parseBadgeDescription(
-                                        badge[index].description),
-                                    style: const TextStyle(
-                                        color: Colors.white, fontSize: 18),
-                                  ),
-                                ),
-                              )
-                            ],
-                          )
-                        ],
+                      return ListTile(
+                        leading: model.parseBages(
+                            badge![index].icon, 50, badge[index].badgeTypeId),
+                        title: Text(badge[index].name,
+                            style: const TextStyle(
+                                color: Colors.white, fontSize: 24)),
+                        subtitle: Text(
+                          ForumUserModel.parseBadgeDescription(
+                              badge[index].description),
+                          style: const TextStyle(
+                              color: Colors.white, fontSize: 18),
+                        ),
                       );
                     });
               } else if (snapshot.hasError) {
