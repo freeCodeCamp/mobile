@@ -340,10 +340,17 @@ Row htmlView(AsyncSnapshot<PostModel> post, BuildContext context) {
                 return null;
               }
             },
-            "image": (context, child) {
-              var disableEmoijs = context.tree.element!.className;
-              if (disableEmoijs.toString() == 'emoij') {
-                return null;
+            "img": (context, child) {
+              var emoijClass = context.tree.element?.className;
+              var src = context.tree.attributes['src'];
+              if (emoijClass == 'emoji') {
+                return Image.network(
+                  src.toString(),
+                  height: 25,
+                  width: 25,
+                );
+              } else {
+                return child;
               }
             }
           },

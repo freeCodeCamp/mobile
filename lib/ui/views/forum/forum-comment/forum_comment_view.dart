@@ -314,6 +314,17 @@ Column commentHtml(int index, BuildContext context, List<PostModel> posts,
                         ),
                       );
                     }
+                  },
+                  "img": (context, child) {
+                    var emoijClass = context.tree.element?.className;
+                    var src = context.tree.attributes['src'];
+                    if (emoijClass == 'emoji') {
+                      return Image.network(
+                        src.toString(),
+                        height: 25,
+                        width: 25,
+                      );
+                    }
                   }
                 },
                 onLinkTap: (String? url, RenderContext context,

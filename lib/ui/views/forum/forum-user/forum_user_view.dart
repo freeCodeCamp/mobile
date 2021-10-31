@@ -114,6 +114,20 @@ FutureBuilder userTemplateBuilder(context, model) {
                                       dom.Element? element) {
                                     launch(url!);
                                   },
+                                  customRender: {
+                                    "img": (context, child) {
+                                      var emoijClass =
+                                          context.tree.element?.className;
+                                      var src = context.tree.attributes['src'];
+                                      if (emoijClass == 'emoji') {
+                                        return Image.network(
+                                          src.toString(),
+                                          height: 20,
+                                          width: 20,
+                                        );
+                                      }
+                                    }
+                                  },
                                 )
                               : null))
                 ],
