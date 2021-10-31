@@ -4,6 +4,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_html/flutter_html.dart';
 import 'package:flutter_syntax_view/flutter_syntax_view.dart';
+import 'package:flutter_font_awesome_web_names/flutter_font_awesome.dart';
 import 'package:freecodecamp/models/forum_post_model.dart';
 import 'package:freecodecamp/ui/views/forum/forum-comment/forum_comment_view.dart';
 import 'package:freecodecamp/ui/views/forum/forum-create-comment/forum_create_comment_view.dart';
@@ -11,6 +12,7 @@ import 'package:stacked/stacked.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:html/dom.dart' as dom;
 import 'forum_post_viewmodel.dart';
+import 'dart:developer' as dev;
 
 class ForumPostView extends StatelessWidget {
   final String id;
@@ -333,11 +335,25 @@ Row htmlView(AsyncSnapshot<PostModel> post, BuildContext context) {
               }
             },
             "svg": (context, child) {
-              var forbiddenClasses = context.tree.element!.className;
-              if (forbiddenClasses
+              dev.log(context.tree.element.toString());
+
+              var iconParent = context.tree.element!.className;
+              var isFontAwesomeIcon = iconParent
                   .toString()
-                  .contains(RegExp(r'fa ', caseSensitive: false))) {
-                return null;
+                  .contains(RegExp(r'fa ', caseSensitive: false));
+
+              var iconChild =
+                  context.tree.element!.children[0].attributes.values;
+              var iconParsed = iconChild.first.replaceFirst(RegExp(r'#'), '');
+
+              List bannedIcons = ['far-image', 'discourse-expand'];
+
+              if (isFontAwesomeIcon) {
+                if (bannedIcons.contains(iconParsed)) {
+                  return Container();
+                } else {
+                  return FaIcon(iconParsed);
+                }
               }
             },
             "img": (context, child) {
