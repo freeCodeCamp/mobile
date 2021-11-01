@@ -32,7 +32,10 @@ dependencies:
   dio: ^4.0.0
   just_audio_background: ^0.0.1-beta.1
   hexcolor: ^2.0.5
-  flutter_syntax_view: ^4.0.0
+  flutter_syntax_view:
+   git:
+     url: https://github.com/Sembauke/flutter_syntax_view
+     ref: master
   jiffy: ^4.1.0
   share: ^2.0.4
   flutter_svg: ^0.22.0

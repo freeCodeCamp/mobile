@@ -163,7 +163,7 @@ class ForumCommentView extends StatelessWidget {
                       model.cancelUpdatePost();
                     },
                     child: const Text(
-                      'CANCEL ',
+                      'CANCEL',
                       textAlign: TextAlign.center,
                       style: TextStyle(color: Colors.white),
                     )),
@@ -299,19 +299,16 @@ Column commentHtml(int index, BuildContext context, List<PostModel> posts,
                   "code": (code, child) {
                     var classList = code.tree.elementClasses;
                     if (classList.isNotEmpty && classList[0] == 'lang-auto') {
-                      return ConstrainedBox(
-                        constraints: const BoxConstraints(
-                          minHeight: 1,
-                          maxHeight: 250,
-                        ),
-                        child: SyntaxView(
-                          code: code.tree.element?.text as String,
-                          syntax: Syntax.JAVASCRIPT,
-                          syntaxTheme: SyntaxTheme.vscodeDark(),
-                          fontSize: 16.0,
-                          withZoom: false,
-                          withLinesCount: false,
-                        ),
+                      return SyntaxView(
+                        code: code.tree.element?.text as String,
+                        syntax: Syntax.JAVASCRIPT,
+                        syntaxTheme: SyntaxTheme.vscodeDark(),
+                        fontSize: 16.0,
+                        withZoom: false,
+                        withLinesCount: false,
+                        useCustomHeight: true,
+                        minWidth: MediaQuery.of(context).size.width,
+                        minHeight: 1,
                       );
                     }
                   }

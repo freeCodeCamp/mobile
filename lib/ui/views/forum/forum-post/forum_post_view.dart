@@ -67,9 +67,12 @@ Column postViewTemplate(PostViewModel model, id, slug) {
                       ),
                     ],
                   ),
-                  Container(
-                    color: Color(0xFF0a0a23),
-                    child: htmlView(snapshot, context, model),
+                  ConstrainedBox(
+                    constraints: BoxConstraints(minHeight: 300),
+                    child: Container(
+                      color: Color(0xFF0a0a23),
+                      child: htmlView(post, context, model),
+                    ),
                   ),
                   ForumCommentView(
                     comments: comments,
@@ -94,7 +97,7 @@ Column postViewTemplate(PostViewModel model, id, slug) {
   );
 }
 
-Column htmlView(AsyncSnapshot<PostModel> post, BuildContext context, model) {
+Column htmlView(PostModel post, BuildContext context, model) {
   return Column(
     children: [
       postHeader(model, post),
@@ -104,7 +107,7 @@ Column htmlView(AsyncSnapshot<PostModel> post, BuildContext context, model) {
               child: Padding(
             padding: const EdgeInsets.all(24.0),
             child: Html(
-              data: post.data!.postCooked,
+              data: post.postCooked,
               style: {
                 "body": Style(color: Colors.white),
                 "blockquote": Style(
@@ -151,7 +154,6 @@ Column htmlView(AsyncSnapshot<PostModel> post, BuildContext context, model) {
                     return ConstrainedBox(
                       constraints: BoxConstraints(
                         minHeight: 1,
-                        minWidth: MediaQuery.of(context).size.width,
                         maxHeight: 500,
                       ),
                       child: SyntaxView(
@@ -160,7 +162,10 @@ Column htmlView(AsyncSnapshot<PostModel> post, BuildContext context, model) {
                         syntaxTheme: SyntaxTheme.vscodeDark(),
                         fontSize: 16.0,
                         withZoom: false,
-                        withLinesCount: false,
+                        withLinesCount: true,
+                        useCustomHeight: true,
+                        minWidth: MediaQuery.of(context).size.width,
+                        minHeight: 1,
                       ),
                     );
                   }
@@ -208,12 +213,12 @@ Column htmlView(AsyncSnapshot<PostModel> post, BuildContext context, model) {
   );
 }
 
-Row postHeader(model, AsyncSnapshot<PostModel> post) {
+Row postHeader(model, PostModel post) {
   return Row(
     children: [
       InkWell(
         onTap: () {
-          model.goToUserProfile(post.data!.username);
+          model.goToUserProfile(post.username);
         },
         child: Padding(
           padding: const EdgeInsets.only(left: 16.0, top: 24),
@@ -224,7 +229,7 @@ Row postHeader(model, AsyncSnapshot<PostModel> post) {
                     height: 60,
                     placeholder: 'assets/images/placeholder-profile-img.png',
                     image: PostViewModel.parseProfileAvatUrl(
-                        post.data!.profieImage, "60")),
+                        post.profieImage, "60")),
               ],
             ),
             Column(
@@ -232,7 +237,7 @@ Row postHeader(model, AsyncSnapshot<PostModel> post) {
                 Padding(
                   padding: const EdgeInsets.only(left: 16),
                   child: Text(
-                    post.data!.username,
+                    post.username,
                     style: TextStyle(
                         color: Colors.white,
                         fontSize: 24,
@@ -246,7 +251,7 @@ Row postHeader(model, AsyncSnapshot<PostModel> post) {
                 Padding(
                   padding: const EdgeInsets.only(left: 48.0),
                   child: Text(
-                    PostViewModel.parseDateShort(post.data!.postCreateDate),
+                    PostViewModel.parseDateShort(post.postCreateDate),
                     style: TextStyle(
                       color: Color.fromRGBO(0xa9, 0xaa, 0xb2, 1),
                       fontSize: 24,
