@@ -25,6 +25,7 @@ class PostModel {
   final bool isModerator;
   final bool isAdmin;
   final bool isStaff;
+  final bool postHasAnswer;
   final List? postUsers;
   final List? userImages;
 
@@ -50,6 +51,7 @@ class PostModel {
       required this.isModerator,
       required this.isAdmin,
       required this.isStaff,
+      required this.postHasAnswer,
       this.postUsers,
       this.userImages});
 
@@ -74,7 +76,8 @@ class PostModel {
         postCanRecover: data["details"]["can_recover"],
         isAdmin: data["post_stream"]["posts"][0]["admin"],
         isModerator: data["post_stream"]["posts"][0]["moderator"],
-        isStaff: data["post_stream"]["posts"][0]["staff"]);
+        isStaff: data["post_stream"]["posts"][0]["staff"],
+        postHasAnswer: data["post_stream"]["posts"][0]["has_accepted_answer"]);
   }
 
   // this is for the same endpoint as fromPostJson only it needs to be parsed
@@ -97,7 +100,8 @@ class PostModel {
         postCanRecover: data["can_recover"],
         isAdmin: data["admin"],
         isModerator: data["moderator"],
-        isStaff: data["staff"]);
+        isStaff: data["staff"],
+        postHasAnswer: data["has_accepted_answer"] ?? false);
   }
 
   // this is an offline factory that does not parse any data from an endpoint
@@ -118,7 +122,8 @@ class PostModel {
         postCanRecover: data["postCanRecover"],
         isAdmin: data["isAdmin"],
         isModerator: data["isModerator"],
-        isStaff: data["isStaff"]);
+        isStaff: data["isStaff"],
+        postHasAnswer: data["has_accepted_answer"]);
   }
 
   static List parseAvatars(List images, List postUsers) {
@@ -134,7 +139,6 @@ class PostModel {
         }
       }
     }
-    dev.log(userImages.toString());
     return userImages;
   }
 
@@ -156,6 +160,7 @@ class PostModel {
         isAdmin: data["admin"],
         isModerator: data["moderator"],
         isStaff: data["staff"],
+        postHasAnswer: data["has_accepted_answer"],
         userImages: parseAvatars(images, data["posters"]));
   }
 }
@@ -192,6 +197,7 @@ class Comment {
         "isAdmin": true,
         "isModerator": true,
         "isStaff": true,
+        "has_accepted_answer": false
       }));
     }
     return comments;

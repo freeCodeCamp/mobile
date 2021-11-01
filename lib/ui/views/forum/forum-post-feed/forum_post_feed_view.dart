@@ -1,6 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:freecodecamp/models/forum_post_model.dart';
 import 'package:freecodecamp/ui/views/forum/forum-post-feed/forum_post_feed_lazyloading.dart';
 import 'package:freecodecamp/ui/views/forum/forum-post-feed/forum_post_feed_viewmodel.dart';
@@ -31,7 +32,7 @@ class ForumPostFeedView extends StatelessWidget {
                 builder: (context, snapshot) {
                   if (snapshot.hasData) {
                     var post = snapshot.data;
-                    return postFeedBuilder(model, post);
+                    return postFeedBuilder(model, post!);
                   } else {
                     return const Center(child: CircularProgressIndicator());
                   }
@@ -41,7 +42,7 @@ class ForumPostFeedView extends StatelessWidget {
             ));
   }
 
-  ListView postFeedBuilder(ForumPostFeedModel model, List<PostModel>? post) {
+  ListView postFeedBuilder(ForumPostFeedModel model, List<PostModel> post) {
     return ListView.builder(
         itemCount: model.posts.length,
         physics: const ClampingScrollPhysics(),
@@ -51,53 +52,67 @@ class ForumPostFeedView extends StatelessWidget {
               SchedulerBinding.instance!.addPostFrameCallback(
                   (timeStamp) => model.handlePostLazyLoading(index));
             },
-            child: Container(
-              child: Padding(
-                padding: const EdgeInsets.only(bottom: 24.0),
-                child: postViewTemplate(post![index], index, model),
+            child: InkWell(
+              onTap: () {
+                model.navigateToPost(
+                  post[index].postSlug,
+                  post[index].postId,
+                );
+              },
+              child: Container(
+                child: Padding(
+                  padding: const EdgeInsets.only(bottom: 24.0),
+                  child: postViewTemplate(post[index], index, model),
+                ),
+                decoration: const BoxDecoration(
+                    border: Border(
+                        bottom: BorderSide(
+                            width: 2,
+                            color: Color.fromRGBO(0x42, 0x42, 0x55, 1)))),
               ),
-              decoration: const BoxDecoration(
-                  border: Border(
-                      bottom: BorderSide(
-                          width: 2,
-                          color: Color.fromRGBO(0x42, 0x42, 0x55, 1)))),
             )));
   }
 
   ListTile postViewTemplate(
       PostModel post, int index, ForumPostFeedModel model) {
     return ListTile(
-      title: Text(
-        model.truncateTitle(post.postName as String),
-        style: const TextStyle(color: Colors.white, fontSize: 18),
+      title: Row(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          post.postHasAnswer
+              ? const Expanded(
+                  child: FaIcon(
+                  FontAwesomeIcons.checkSquare,
+                  color: Color.fromRGBO(0xa9, 0xaa, 0xb2, 1),
+                  size: 18,
+                ))
+              : Container(),
+          Expanded(
+            flex: 11,
+            child: Text(
+              model.truncateTitle(post.postName as String),
+              style: const TextStyle(color: Colors.white, fontSize: 18),
+            ),
+          ),
+        ],
       ),
-      onTap: () {
-        model.navigateToPost(
-          post.postSlug,
-          post.postId,
-        );
-      },
       leading: FadeInImage.assetNetwork(
           height: 60,
           placeholder: 'assets/images/placeholder-profile-img.png',
           image: post.userImages![0]),
-      trailing: Column(
-        children: [
-          Text(
-            post.postReplyCount.toString(),
-            style: const TextStyle(
-                fontSize: 18,
-                fontWeight: FontWeight.bold,
-                color: Color.fromRGBO(0xa9, 0xaa, 0xb2, 1)),
-          ),
-        ],
+      trailing: Text(
+        post.postReplyCount.toString(),
+        style: const TextStyle(
+            fontSize: 18,
+            fontWeight: FontWeight.bold,
+            color: Color.fromRGBO(0xa9, 0xaa, 0xb2, 1)),
       ),
       subtitle: Row(
         children: [
           Column(
             children: [
               Text(
-                PostViewModel.parseDate(post.postCreateDate),
+                PostViewModel.parseDate(post.postLastActivity as String),
                 style:
                     const TextStyle(color: Color.fromRGBO(0xa9, 0xaa, 0xb2, 1)),
               ),
