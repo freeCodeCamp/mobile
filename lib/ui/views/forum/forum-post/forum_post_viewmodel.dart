@@ -192,6 +192,24 @@ class PostViewModel extends BaseViewModel {
     return Jiffy(date).fromNow();
   }
 
+  static String parseDateShort(String date) {
+    String jiffyDate = Jiffy(date).fromNow();
+
+    List parsedDate = jiffyDate.split(" ");
+
+    if (jiffyDate.contains("minutes")) {
+      return parsedDate[0] + 'm';
+    }
+
+    if (jiffyDate.contains("hour")) return '1h';
+
+    if (jiffyDate.contains("hours")) {
+      return parsedDate[0] + 'h';
+    }
+
+    return jiffyDate;
+  }
+
   // This returns a parsed url for sharing a post
   void parseShareUrl(BuildContext context, String slug) {
     Share.share('https://forum.freecodecamp.org/t/$slug',
