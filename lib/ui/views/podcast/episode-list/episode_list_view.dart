@@ -89,7 +89,29 @@ class EpisodeListView extends StatelessWidget {
                   if (snapshot.hasError) {
                     return Text("${snapshot.error}");
                   }
-                  // log(podcastEpisodes);
+                  // TODO: Read up more on perf issues with shrinkWrap and check
+                  // for diff in perf in below commented code
+                  // return Column(
+                  //   crossAxisAlignment: CrossAxisAlignment.stretch,
+                  //   children: <PodcastEpisodeTemplate>[
+                  //     ...snapshot.data!
+                  //         .asMap()
+                  //         .map(
+                  //           (i, episode) {
+                  //             return MapEntry(
+                  //               i,
+                  //               PodcastEpisodeTemplate(
+                  //                 episode: episode,
+                  //                 i: i,
+                  //                 podcast: podcast,
+                  //               ),
+                  //             );
+                  //           },
+                  //         )
+                  //         .values
+                  //         .toList(),
+                  //   ],
+                  // );
                   return ListView.builder(
                     shrinkWrap: true,
                     physics: const NeverScrollableScrollPhysics(),
