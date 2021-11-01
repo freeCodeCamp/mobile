@@ -6,7 +6,6 @@ import 'package:freecodecamp/ui/views/forum/forum-post-feed/forum_post_feed_lazy
 import 'package:freecodecamp/ui/views/forum/forum-post-feed/forum_post_feed_viewmodel.dart';
 import 'package:freecodecamp/ui/views/forum/forum-post/forum_post_viewmodel.dart';
 import 'package:stacked/stacked.dart';
-import 'dart:developer' as dev;
 
 class ForumPostFeedView extends StatelessWidget {
   final String slug;
@@ -52,23 +51,59 @@ class ForumPostFeedView extends StatelessWidget {
               SchedulerBinding.instance!.addPostFrameCallback(
                   (timeStamp) => model.handlePostLazyLoading(index));
             },
-            child: postViewTemplate(post![index], index, model)));
+            child: Container(
+              child: Padding(
+                padding: const EdgeInsets.only(bottom: 24.0),
+                child: postViewTemplate(post![index], index, model),
+              ),
+              decoration: const BoxDecoration(
+                  border: Border(
+                      bottom: BorderSide(
+                          width: 2,
+                          color: Color.fromRGBO(0x42, 0x42, 0x55, 1)))),
+            )));
   }
 
   ListTile postViewTemplate(
       PostModel post, int index, ForumPostFeedModel model) {
     return ListTile(
       title: Text(
-        post.postName as String,
-        style: const TextStyle(color: Colors.white),
+        model.truncateTitle(post.postName as String),
+        style: const TextStyle(color: Colors.white, fontSize: 18),
       ),
+      onTap: () {
+        model.navigateToPost(
+          post.postSlug,
+          post.postId,
+        );
+      },
       leading: FadeInImage.assetNetwork(
           height: 60,
           placeholder: 'assets/images/placeholder-profile-img.png',
           image: post.userImages![0]),
-      subtitle: Text(
-        PostViewModel.parseDate(post.postCreateDate),
-        style: const TextStyle(color: Colors.white),
+      trailing: Column(
+        children: [
+          Text(
+            post.postReplyCount.toString(),
+            style: const TextStyle(
+                fontSize: 18,
+                fontWeight: FontWeight.bold,
+                color: Color.fromRGBO(0xa9, 0xaa, 0xb2, 1)),
+          ),
+        ],
+      ),
+      subtitle: Row(
+        children: [
+          Column(
+            children: [
+              Text(
+                PostViewModel.parseDate(post.postCreateDate),
+                style:
+                    const TextStyle(color: Color.fromRGBO(0xa9, 0xaa, 0xb2, 1)),
+              ),
+            ],
+          ),
+        ],
       ),
     );
   }

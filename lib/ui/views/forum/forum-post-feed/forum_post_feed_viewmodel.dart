@@ -5,7 +5,6 @@ import 'package:freecodecamp/models/forum_post_model.dart';
 import 'package:stacked/stacked.dart';
 import 'package:stacked_services/stacked_services.dart';
 import '../forum_connect.dart';
-import 'dart:developer' as dev;
 
 class ForumPostFeedModel extends BaseViewModel {
   late Future<PostModel> _future;
@@ -30,6 +29,14 @@ class ForumPostFeedModel extends BaseViewModel {
       return posts;
     } else {
       throw Exception(response.body);
+    }
+  }
+
+  String truncateTitle(String title) {
+    if (title.length < 55) {
+      return title;
+    } else {
+      return title.toString().substring(0, 55) + '...';
     }
   }
 
