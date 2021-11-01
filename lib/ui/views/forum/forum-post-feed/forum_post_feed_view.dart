@@ -6,6 +6,7 @@ import 'package:freecodecamp/ui/views/forum/forum-post-feed/forum_post_feed_lazy
 import 'package:freecodecamp/ui/views/forum/forum-post-feed/forum_post_feed_viewmodel.dart';
 import 'package:freecodecamp/ui/views/forum/forum-post/forum_post_viewmodel.dart';
 import 'package:stacked/stacked.dart';
+import 'dart:developer' as dev;
 
 class ForumPostFeedView extends StatelessWidget {
   final String slug;
@@ -54,94 +55,20 @@ class ForumPostFeedView extends StatelessWidget {
             child: postViewTemplate(post![index], index, model)));
   }
 
-  InkWell postViewTemplate(
+  ListTile postViewTemplate(
       PostModel post, int index, ForumPostFeedModel model) {
-    return InkWell(
-      onTap: () {
-        model.navigateToPost(
-          post.postSlug,
-          post.postId,
-        );
-      },
-      child: ConstrainedBox(
-        constraints: const BoxConstraints(minHeight: 125),
-        child: Container(
-          decoration: const BoxDecoration(
-              border:
-                  Border(bottom: BorderSide(width: 2, color: Colors.white))),
-          child: Column(
-            children: [
-              Row(
-                children: [
-                  Expanded(
-                      child: Padding(
-                    padding: const EdgeInsets.all(8.0),
-                    child: Text(post.postName as String,
-                        style: const TextStyle(
-                            fontSize: 18,
-                            color: Colors.white,
-                            fontWeight: FontWeight.bold)),
-                  ))
-                ],
-              ),
-              Row(
-                children: [
-                  Expanded(
-                    child: Padding(
-                      padding: const EdgeInsets.all(8.0),
-                      child: Text(
-                        "posted " +
-                            PostViewModel.parseDate(post.postCreateDate),
-                        style: const TextStyle(
-                          color: Colors.white,
-                          fontSize: 16,
-                        ),
-                      ),
-                    ),
-                  ),
-                  Expanded(
-                    child: Padding(
-                      padding: const EdgeInsets.all(8.0),
-                      child: Text(
-                        "activity " +
-                            PostViewModel.parseDate(
-                                post.postLastActivity as String),
-                        style: const TextStyle(
-                          color: Colors.white,
-                          fontSize: 16,
-                        ),
-                      ),
-                    ),
-                  ),
-                ],
-              ),
-              Row(
-                children: [
-                  Expanded(
-                    child: Padding(
-                      padding: const EdgeInsets.all(8.0),
-                      child: Text('Views: ' + post.postViews.toString(),
-                          style: const TextStyle(
-                              fontSize: 14,
-                              color: Colors.white,
-                              fontWeight: FontWeight.w300)),
-                    ),
-                  ),
-                  Expanded(
-                    child: Padding(
-                      padding: const EdgeInsets.all(8.0),
-                      child: Text('Replies: ' + post.postReplyCount.toString(),
-                          style: const TextStyle(
-                              fontSize: 14,
-                              color: Colors.white,
-                              fontWeight: FontWeight.w300)),
-                    ),
-                  ),
-                ],
-              )
-            ],
-          ),
-        ),
+    return ListTile(
+      title: Text(
+        post.postName as String,
+        style: const TextStyle(color: Colors.white),
+      ),
+      leading: FadeInImage.assetNetwork(
+          height: 60,
+          placeholder: 'assets/images/placeholder-profile-img.png',
+          image: post.userImages![0]),
+      subtitle: Text(
+        PostViewModel.parseDate(post.postCreateDate),
+        style: const TextStyle(color: Colors.white),
       ),
     );
   }

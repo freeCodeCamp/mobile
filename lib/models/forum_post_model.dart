@@ -1,3 +1,7 @@
+import 'dart:developer' as dev;
+
+import 'package:freecodecamp/ui/views/forum/forum-post/forum_post_viewmodel.dart';
+
 // This types and converts the JSON into the instances of the PostModel class.
 class PostModel {
   final String username;
@@ -21,6 +25,8 @@ class PostModel {
   final bool isModerator;
   final bool isAdmin;
   final bool isStaff;
+  final List? postUsers;
+  final List? userImages;
 
   PostModel(
       {required this.username,
@@ -43,7 +49,9 @@ class PostModel {
       required this.postCanRecover,
       required this.isModerator,
       required this.isAdmin,
-      required this.isStaff});
+      required this.isStaff,
+      this.postUsers,
+      this.userImages});
 
   // this is for endpoint /t/{slug}/{id}.json
   factory PostModel.fromPostJson(Map<String, dynamic> data) {
@@ -113,7 +121,24 @@ class PostModel {
         isStaff: data["isStaff"]);
   }
 
-  factory PostModel.fromTopicFeedJson(Map<String, dynamic> data) {
+  static List parseAvatars(List images, List postUsers) {
+    List userImages = [];
+
+    for (int i = 0; i < postUsers.length; i++) {
+      for (int j = 0; j < images.length; j++) {
+        bool hasUserImage = userImages.contains(images[i]["avatar_template"]);
+
+        if (postUsers[i]["user_id"] == images[j]["id"] && !hasUserImage) {
+          userImages.add(PostViewModel.parseProfileAvatUrl(
+              images[j]["avatar_template"], "60"));
+        }
+      }
+    }
+    dev.log(userImages.toString());
+    return userImages;
+  }
+
+  factory PostModel.fromTopicFeedJson(Map<String, dynamic> data, images) {
     return PostModel(
         postId: data["id"].toString(),
         postName: data["title"],
@@ -130,7 +155,8 @@ class PostModel {
         postCanRecover: data["can_recover"],
         isAdmin: data["admin"],
         isModerator: data["moderator"],
-        isStaff: data["staff"]);
+        isStaff: data["staff"],
+        userImages: parseAvatars(images, data["posters"]));
   }
 }
 

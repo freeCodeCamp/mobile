@@ -5,6 +5,7 @@ import 'package:freecodecamp/models/forum_post_model.dart';
 import 'package:stacked/stacked.dart';
 import 'package:stacked_services/stacked_services.dart';
 import '../forum_connect.dart';
+import 'dart:developer' as dev;
 
 class ForumPostFeedModel extends BaseViewModel {
   late Future<PostModel> _future;
@@ -22,8 +23,9 @@ class ForumPostFeedModel extends BaseViewModel {
 
     if (response.statusCode == 200) {
       var topics = json.decode(response.body)["topic_list"]["topics"];
+      var images = json.decode(response.body)["users"];
       for (int i = 0; i < topics.length; i++) {
-        posts.add(PostModel.fromTopicFeedJson(topics[i]));
+        posts.add(PostModel.fromTopicFeedJson(topics[i], images));
       }
       return posts;
     } else {

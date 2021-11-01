@@ -14,6 +14,7 @@ import 'package:stacked/stacked.dart';
 import 'package:stacked_services/stacked_services.dart';
 
 import '../forum_connect.dart';
+import 'dart:developer' as dev;
 
 class PostViewModel extends BaseViewModel {
   late Future<PostModel> _future;
