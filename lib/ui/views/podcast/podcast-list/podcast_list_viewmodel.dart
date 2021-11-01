@@ -49,7 +49,9 @@ class PodcastListViewModel extends BaseViewModel {
         }
         await _databaseService.addPodcast(podcast, podcastId);
         for (int i = 0; i < podcast.episodes!.length; i++) {
-          await _databaseService.addEpisode(podcast.episodes![i], podcastId);
+          if (podcast.episodes![i].contentUrl != null) {
+            await _databaseService.addEpisode(podcast.episodes![i], podcastId);
+          }
         }
         log('Downloading podcast image');
         File podcastImgFile =
