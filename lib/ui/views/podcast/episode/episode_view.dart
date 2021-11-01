@@ -63,8 +63,9 @@ class EpisodeView extends StatelessWidget {
                 ),
                 Text(
                   DateFormat.yMMMd().format(episode.publicationDate!) +
-                      ' • ' +
-                      _parseDuration(episode.duration!),
+                      (episode.duration! != Duration.zero
+                          ? (' • ' + _parseDuration(episode.duration!))
+                          : ''),
                   style: _subTitleStyle,
                 ),
                 const SizedBox(
