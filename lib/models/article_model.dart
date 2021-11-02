@@ -4,6 +4,7 @@ class Article {
   final String featureImage;
   final String profileImage;
   final String authorName;
+  final String? createdAt;
   final String? tagName;
   final String? url;
   final String? text;
@@ -14,6 +15,7 @@ class Article {
       required this.title,
       required this.profileImage,
       required this.authorName,
+      this.createdAt,
       this.tagName,
       this.url,
       this.text});
@@ -22,6 +24,7 @@ class Article {
 
   factory Article.fromJson(Map<String, dynamic> data) {
     return Article(
+        createdAt: data["published_at"],
         featureImage: data["feature_image"],
         title: data["title"],
         profileImage: data['authors'][0]['profile_image'],

@@ -4,6 +4,7 @@ import 'package:flutter/scheduler.dart';
 import 'package:freecodecamp/models/article_model.dart';
 import 'package:freecodecamp/ui/views/news/news-feed/news_feed_lazyloading.dart';
 import 'package:freecodecamp/ui/views/news/news-feed/news_feed_viewmodel.dart';
+import 'package:jiffy/jiffy.dart';
 import 'package:stacked/stacked.dart';
 
 import '../news_helpers.dart';
@@ -17,7 +18,7 @@ class NewsFeedView extends StatelessWidget {
     return ViewModelBuilder<NewsFeedModel>.reactive(
       viewModelBuilder: () => NewsFeedModel(),
       builder: (context, model, child) => Scaffold(
-          backgroundColor: const Color.fromRGBO(0x2A, 0x2A, 0x40, 1),
+          backgroundColor: const Color(0xFF0a0a23),
           body: FutureBuilder(
             future: model.fetchArticles(),
             builder: (context, snapshot) {
@@ -52,93 +53,98 @@ class NewsFeedView extends StatelessWidget {
                 onTap: () {
                   model.navigateTo(model.articles[i].id);
                 },
-                child: thumbnailView(context, model, model.articles, i))));
+                child: Padding(
+                  padding: const EdgeInsets.only(bottom: 32.0),
+                  child: thumbnailView(context, model, model.articles, i),
+                ))));
   }
 
   Column thumbnailView(BuildContext context, NewsFeedModel model,
       List<Article>? articles, int i) {
     return Column(
       children: [
-        Stack(
-          children: [
-            Container(
-              decoration: BoxDecoration(
-                  border: Border.all(width: 2, color: Colors.white)),
-              height: 210,
-              width: MediaQuery.of(context).size.width,
-              child: Image.network(
-                NewsHelper.getArticleImage(articles![i].featureImage, context),
-                fit: BoxFit.fill,
-              ),
-            ),
-            Padding(
-              padding: const EdgeInsets.all(16.0),
-              child: Align(
-                alignment: Alignment.topRight,
-                child: Container(
-                    width: 50,
-                    height: 50,
-                    decoration: BoxDecoration(
-                        border: Border.all(
-                            width: 4, color: NewsHelper.randomBorderColor())),
-                    child: FadeInImage.assetNetwork(
-                        fadeOutDuration: const Duration(milliseconds: 500),
-                        fadeInDuration: const Duration(milliseconds: 500),
-                        fit: BoxFit.fill,
-                        placeholder:
-                            'assets/images/placeholder-profile-img.png',
-                        image: articles[i].profileImage)),
-              ),
-            )
-          ],
-        ),
         Container(
           color: const Color(0xFF0a0a23),
-          child: ConstrainedBox(
-            constraints: const BoxConstraints(minHeight: 150),
-            child: Column(
-              children: [
-                Row(
-                  children: [
-                    Expanded(
-                      child: Padding(
-                        padding: const EdgeInsets.all(16.0),
-                        child: Text(
-                          NewsHelper.truncateStr(articles[i].title),
-                          style: const TextStyle(
-                              color: Colors.white, fontSize: 24),
-                        ),
-                      ),
-                    )
-                  ],
+          child: Column(
+            children: [
+              Stack(children: [
+                Container(
+                    constraints: BoxConstraints(
+                        minHeight: 250,
+                        maxHeight: 250,
+                        minWidth: MediaQuery.of(context).size.width),
+                    child: const Center(child: CircularProgressIndicator())),
+                Container(
+                  constraints: BoxConstraints(
+                      maxHeight: 250,
+                      minWidth: MediaQuery.of(context).size.width),
+                  child: Image.network(
+                    articles![i].featureImage,
+                    fit: BoxFit.cover,
+                  ),
                 ),
-                Row(children: [
-                  Expanded(
-                    child: Padding(
-                      padding:
-                          const EdgeInsets.only(top: 16, bottom: 16, left: 16),
-                      child: Text(
-                        model.truncateTag('#' + articles[i].tagName!),
-                        style:
-                            const TextStyle(color: Colors.white, fontSize: 18),
-                      ),
+              ]),
+              Row(
+                children: [
+                  Padding(
+                    padding:
+                        const EdgeInsets.only(top: 16, bottom: 8, left: 16),
+                    child: Text(
+                      '#' + articles[i].tagName!.toUpperCase(),
+                      style: const TextStyle(color: Colors.white, fontSize: 18),
                     ),
                   ),
+                ],
+              ),
+              Row(
+                children: [
                   Expanded(
                     child: Padding(
-                      padding:
-                          const EdgeInsets.only(top: 16, bottom: 16, right: 16),
+                      padding: const EdgeInsets.all(16.0),
                       child: Text(
-                        model.truncateAuthorName(articles[i].authorName),
-                        textAlign: TextAlign.right,
+                        articles[i].title,
                         style:
-                            const TextStyle(color: Colors.white, fontSize: 18),
+                            const TextStyle(color: Colors.white, fontSize: 20),
                       ),
                     ),
                   )
-                ]),
-              ],
-            ),
+                ],
+              ),
+              Row(children: [
+                Padding(
+                  padding: const EdgeInsets.all(16.0),
+                  child: Align(
+                    alignment: Alignment.topRight,
+                    child: SizedBox(
+                        width: 45,
+                        height: 45,
+                        child: FadeInImage.assetNetwork(
+                            fadeOutDuration: const Duration(milliseconds: 500),
+                            fadeInDuration: const Duration(milliseconds: 500),
+                            fit: BoxFit.cover,
+                            placeholder:
+                                'assets/images/placeholder-profile-img.png',
+                            image: articles[i].profileImage)),
+                  ),
+                ),
+                Padding(
+                  padding:
+                      const EdgeInsets.only(top: 16, bottom: 16, right: 16),
+                  child: Text(
+                    articles[i].authorName.toUpperCase(),
+                    textAlign: TextAlign.right,
+                    style: const TextStyle(color: Colors.white, fontSize: 18),
+                  ),
+                ),
+                Expanded(
+                    child: Align(
+                  child: Text(
+                    model.parseDate(articles[i].createdAt),
+                    style: const TextStyle(color: Colors.white),
+                  ),
+                ))
+              ]),
+            ],
           ),
         )
       ],
