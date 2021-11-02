@@ -4,10 +4,7 @@ import 'package:flutter/scheduler.dart';
 import 'package:freecodecamp/models/article_model.dart';
 import 'package:freecodecamp/ui/views/news/news-feed/news_feed_lazyloading.dart';
 import 'package:freecodecamp/ui/views/news/news-feed/news_feed_viewmodel.dart';
-import 'package:jiffy/jiffy.dart';
 import 'package:stacked/stacked.dart';
-
-import '../news_helpers.dart';
 import 'news_feed_viewmodel.dart';
 
 class NewsFeedView extends StatelessWidget {
