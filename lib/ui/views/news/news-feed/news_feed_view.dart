@@ -107,40 +107,47 @@ class NewsFeedView extends StatelessWidget {
                   )
                 ],
               ),
-              Row(children: [
-                Padding(
-                  padding: const EdgeInsets.all(16.0),
-                  child: Align(
-                    alignment: Alignment.topRight,
-                    child: SizedBox(
-                        width: 45,
-                        height: 45,
-                        child: FadeInImage.assetNetwork(
-                            fadeOutDuration: const Duration(milliseconds: 500),
-                            fadeInDuration: const Duration(milliseconds: 500),
-                            fit: BoxFit.cover,
-                            placeholder:
-                                'assets/images/placeholder-profile-img.png',
-                            image: articles[i].profileImage)),
-                  ),
-                ),
-                Padding(
-                  padding:
-                      const EdgeInsets.only(top: 16, bottom: 16, right: 16),
-                  child: Text(
-                    articles[i].authorName.toUpperCase(),
-                    textAlign: TextAlign.right,
-                    style: const TextStyle(color: Colors.white, fontSize: 18),
-                  ),
-                ),
-                Expanded(
+              Container(
+                decoration: const BoxDecoration(
+                    border: Border(
+                        bottom: BorderSide(
+                            color: Color.fromRGBO(0x2A, 0x2A, 0x40, 1)))),
+                child: Row(children: [
+                  Padding(
+                    padding: const EdgeInsets.all(16.0),
                     child: Align(
-                  child: Text(
-                    model.parseDate(articles[i].createdAt),
-                    style: const TextStyle(color: Colors.white),
+                      alignment: Alignment.topRight,
+                      child: SizedBox(
+                          width: 45,
+                          height: 45,
+                          child: FadeInImage.assetNetwork(
+                              fadeOutDuration:
+                                  const Duration(milliseconds: 500),
+                              fadeInDuration: const Duration(milliseconds: 500),
+                              fit: BoxFit.cover,
+                              placeholder:
+                                  'assets/images/placeholder-profile-img.png',
+                              image: articles[i].profileImage)),
+                    ),
                   ),
-                ))
-              ]),
+                  Padding(
+                    padding:
+                        const EdgeInsets.only(top: 16, bottom: 16, right: 16),
+                    child: Text(
+                      articles[i].authorName.toUpperCase(),
+                      textAlign: TextAlign.right,
+                      style: const TextStyle(color: Colors.white, fontSize: 18),
+                    ),
+                  ),
+                  Expanded(
+                      child: Align(
+                    child: Text(
+                      model.parseDate(articles[i].createdAt),
+                      style: const TextStyle(color: Colors.white),
+                    ),
+                  ))
+                ]),
+              ),
             ],
           ),
         )
