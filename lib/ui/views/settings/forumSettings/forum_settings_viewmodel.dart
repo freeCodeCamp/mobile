@@ -15,6 +15,9 @@ class ForumSettingsViewModel extends BaseViewModel {
     SharedPreferences prefs = await SharedPreferences.getInstance();
 
     prefs.setBool('loggedIn', false);
+    prefs.remove('username');
+    _isLoggedIn = false;
+    notifyListeners();
   }
 
   void gotoForum() {

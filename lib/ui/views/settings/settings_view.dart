@@ -38,7 +38,7 @@ class SettingsView extends StatelessWidget {
                           style: TextStyle(color: Colors.white),
                         ),
                         subtitle: const Text(
-                          'you can find the forum settings here',
+                          'You can find the forum settings here',
                           style: TextStyle(color: Colors.white, fontSize: 18.0),
                         ),
                         trailing: const Icon(
@@ -63,7 +63,7 @@ class SettingsView extends StatelessWidget {
                           style: TextStyle(color: Colors.white),
                         ),
                         subtitle: const Text(
-                          'you can find the podcast settings here',
+                          'You can find the podcast settings here',
                           style: TextStyle(color: Colors.white, fontSize: 18.0),
                         ),
                         trailing: const Icon(
