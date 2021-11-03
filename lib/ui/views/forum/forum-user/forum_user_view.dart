@@ -117,17 +117,25 @@ FutureBuilder userTemplateBuilder(context, model) {
                                   },
                                   customRender: {
                                     "img": (context, child) {
-                                      var emoijClass =
+                                      
+                                      var classes =
                                           context.tree.element?.className;
-                                      var src = context.tree.attributes['src'];
-                                      if (emoijClass == 'emoji') {
+                                      var classesSplit = classes?.split(" ");
+
+                                      var classIsEmoji = classesSplit!
+                                              .contains('emoji') ||
+                                          classesSplit.contains('emoji-only');
+
+                                      var emojiImage = context
+                                          .tree.attributes['src']
+                                          .toString();
+
+                                      if (classIsEmoji) {
                                         return Image.network(
-                                          src.toString(),
-                                          height: 20,
-                                          width: 20,
+                                          emojiImage,
+                                          height: 25,
+                                          width: 25,
                                         );
-                                      } else {
-                                        return child;
                                       }
                                     }
                                   },
