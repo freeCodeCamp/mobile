@@ -3,7 +3,7 @@ import 'package:freecodecamp/app/app.locator.dart';
 import 'package:freecodecamp/app/app.router.dart';
 import 'package:freecodecamp/ui/views/forum/forum-categories/forum_category_view.dart';
 import 'package:freecodecamp/ui/views/home/home_view.dart';
-import 'package:freecodecamp/ui/views/podcast/podcast_view.dart';
+import 'package:freecodecamp/ui/views/podcast/podcast-list/podcast_list_view.dart';
 import 'package:freecodecamp/ui/views/settings/settings_view.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:stacked/stacked.dart';
@@ -42,7 +42,7 @@ class DrawerWidgtetViewModel extends BaseViewModel {
             PageRouteBuilder(
                 transitionDuration: Duration.zero,
                 pageBuilder: (context, animation1, animation2) =>
-                    const PodcastView()));
+                    const PodcastListView()));
         break;
       case 'SETTINGS':
         Navigator.pushReplacement(

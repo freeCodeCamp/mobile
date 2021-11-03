@@ -13,7 +13,7 @@ class PodcastDownloadViewModel extends BaseViewModel {
 
   Future<List<Episodes>> fetchPodcastEpisodes() async {
     await _databaseService.initialise();
-    epsDownloaded = await _databaseService.getDownloadedEpisodes();
+    // epsDownloaded = await _databaseService.getDownloadedEpisodes();
     log('Number of downloaded episodes: ${epsDownloaded.length}');
     return epsDownloaded;
   }
