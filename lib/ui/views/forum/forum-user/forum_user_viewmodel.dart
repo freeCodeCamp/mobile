@@ -1,5 +1,6 @@
 import 'dart:convert';
 
+import 'package:flutter/material.dart';
 import 'package:freecodecamp/app/app.locator.dart';
 import 'package:freecodecamp/app/app.router.dart';
 import 'package:freecodecamp/models/forum_user_model.dart';
@@ -7,6 +8,7 @@ import 'package:freecodecamp/ui/views/forum/forum_connect.dart';
 import 'package:html/parser.dart';
 import 'package:stacked/stacked.dart';
 import 'package:stacked_services/stacked_services.dart';
+import 'package:flutter_font_awesome_web_names/flutter_font_awesome.dart';
 
 class ForumUserModel extends BaseViewModel {
   late Future<User> _future;
@@ -66,13 +68,40 @@ class ForumUserModel extends BaseViewModel {
     return badges;
   }
 
-  // static FaIcon discourseIconParser(String icon) {
-  //   List iconParts = icon.split('-');
-  //   dev.log(iconParts[1]);
-  //   return FaIcon(iconParts[1]);
-  // }
+  FaIcon parseBages(String iconName, double size, int badgeType) {
+    Color? color;
 
-  // This parses the badge description so it has no anchor tags.
+    List<String> icons = searchFontAwesomeIcons(
+        text: iconName, searchFilter: FaSearchFilter.contains, maxResults: 20);
+
+    if (icons.isNotEmpty) {
+      for (int i = 0; i < icons.length; i++) {
+        if (icons[i].contains(iconName)) {
+          iconName = icons[i];
+          break;
+        }
+      }
+    } else {
+      iconName = 'fas fa-certificate';
+    }
+
+    switch (badgeType) {
+      case 1:
+        color = Colors.amber.shade400;
+        break;
+      case 2:
+        color = Colors.grey.shade400;
+        break;
+      case 3:
+        color = Colors.amber.shade800;
+
+        break;
+      default:
+        color = Colors.grey.shade400;
+    }
+
+    return FaIcon(iconName, size: size, color: color);
+  }
 
   static String parseBadgeDescription(String desc) {
     final document = parse(desc);

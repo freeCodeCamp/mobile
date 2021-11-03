@@ -122,11 +122,4 @@ class ForumLoginModel extends BaseViewModel {
           (keys) => {discourseAuth(keys[0], username, password, keys[1])});
     }
   }
-
-  Future<void> logout() async {
-    SharedPreferences prefs = await SharedPreferences.getInstance();
-    prefs.setBool('loggedIn', false);
-    _isLoggedIn = prefs.getBool('loggedIn') as bool;
-    notifyListeners();
-  }
 }

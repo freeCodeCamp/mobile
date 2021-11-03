@@ -6,7 +6,6 @@
 
 // ignore_for_file: public_member_api_docs
 
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:stacked/stacked.dart';
 
@@ -23,6 +22,8 @@ import '../ui/views/news/news-bookmark/news_bookmark_view.dart';
 import '../ui/views/news/news-feed/news_feed_view.dart';
 import '../ui/views/podcast/podcast_download_view.dart';
 import '../ui/views/podcast/podcast_view.dart';
+import '../ui/views/settings/forumSettings/forum_settings_view.dart';
+import '../ui/views/settings/podcastSettings/podcast_settings_view.dart';
 import '../ui/views/startup/startup_view.dart';
 import '../ui/views/website/website_view.dart';
 
@@ -33,6 +34,7 @@ class Routes {
   static const String browserView = '/browser-view';
   static const String podcastView = '/podcast-view';
   static const String podcastDownloadView = '/podcast-download-view';
+  static const String podcastSettingsView = '/podcast-settings-view';
   static const String newsArticlePostView = '/news-article-post-view';
   static const String newsBookmarkPostView = '/news-bookmark-post-view';
   static const String newsFeedView = '/news-feed-view';
@@ -41,6 +43,7 @@ class Routes {
   static const String forumPostView = '/forum-post-view';
   static const String forumLoginView = '/forum-login-view';
   static const String forumUserView = '/forum-user-view';
+  static const String forumSettingsView = '/forum-settings-view';
   static const all = <String>{
     startupView,
     websiteView,
@@ -48,6 +51,7 @@ class Routes {
     browserView,
     podcastView,
     podcastDownloadView,
+    podcastSettingsView,
     newsArticlePostView,
     newsBookmarkPostView,
     newsFeedView,
@@ -56,6 +60,7 @@ class Routes {
     forumPostView,
     forumLoginView,
     forumUserView,
+    forumSettingsView,
   };
 }
 
@@ -69,6 +74,7 @@ class StackedRouter extends RouterBase {
     RouteDef(Routes.browserView, page: BrowserView),
     RouteDef(Routes.podcastView, page: PodcastView),
     RouteDef(Routes.podcastDownloadView, page: PodcastDownloadView),
+    RouteDef(Routes.podcastSettingsView, page: PodcastSettingsView),
     RouteDef(Routes.newsArticlePostView, page: NewsArticlePostView),
     RouteDef(Routes.newsBookmarkPostView, page: NewsBookmarkPostView),
     RouteDef(Routes.newsFeedView, page: NewsFeedView),
@@ -77,6 +83,7 @@ class StackedRouter extends RouterBase {
     RouteDef(Routes.forumPostView, page: ForumPostView),
     RouteDef(Routes.forumLoginView, page: ForumLoginView),
     RouteDef(Routes.forumUserView, page: ForumUserView),
+    RouteDef(Routes.forumSettingsView, page: ForumSettingsView),
   ];
   @override
   Map<Type, StackedRouteFactory> get pagesMap => _pagesMap;
@@ -118,6 +125,12 @@ class StackedRouter extends RouterBase {
     PodcastDownloadView: (data) {
       return MaterialPageRoute<dynamic>(
         builder: (context) => const PodcastDownloadView(),
+        settings: data,
+      );
+    },
+    PodcastSettingsView: (data) {
+      return MaterialPageRoute<dynamic>(
+        builder: (context) => const PodcastSettingsView(),
         settings: data,
       );
     },
@@ -192,6 +205,12 @@ class StackedRouter extends RouterBase {
           key: args.key,
           username: args.username,
         ),
+        settings: data,
+      );
+    },
+    ForumSettingsView: (data) {
+      return MaterialPageRoute<dynamic>(
+        builder: (context) => const ForumSettingsView(),
         settings: data,
       );
     },
