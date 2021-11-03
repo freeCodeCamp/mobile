@@ -20,8 +20,8 @@ import '../ui/views/home/home_view.dart';
 import '../ui/views/news/news-article-post/news_article_post_view.dart';
 import '../ui/views/news/news-bookmark/news_bookmark_view.dart';
 import '../ui/views/news/news-feed/news_feed_view.dart';
+import '../ui/views/podcast/podcast-list/podcast_list_view.dart';
 import '../ui/views/podcast/podcast_download_view.dart';
-import '../ui/views/podcast/podcast_view.dart';
 import '../ui/views/settings/forumSettings/forum_settings_view.dart';
 import '../ui/views/settings/podcastSettings/podcast_settings_view.dart';
 import '../ui/views/startup/startup_view.dart';
@@ -32,7 +32,7 @@ class Routes {
   static const String websiteView = '/website-view';
   static const String homeView = '/';
   static const String browserView = '/browser-view';
-  static const String podcastView = '/podcast-view';
+  static const String podcastListView = '/podcast-list-view';
   static const String podcastDownloadView = '/podcast-download-view';
   static const String podcastSettingsView = '/podcast-settings-view';
   static const String newsArticlePostView = '/news-article-post-view';
@@ -49,7 +49,7 @@ class Routes {
     websiteView,
     homeView,
     browserView,
-    podcastView,
+    podcastListView,
     podcastDownloadView,
     podcastSettingsView,
     newsArticlePostView,
@@ -72,7 +72,7 @@ class StackedRouter extends RouterBase {
     RouteDef(Routes.websiteView, page: WebsiteView),
     RouteDef(Routes.homeView, page: HomeView),
     RouteDef(Routes.browserView, page: BrowserView),
-    RouteDef(Routes.podcastView, page: PodcastView),
+    RouteDef(Routes.podcastListView, page: PodcastListView),
     RouteDef(Routes.podcastDownloadView, page: PodcastDownloadView),
     RouteDef(Routes.podcastSettingsView, page: PodcastSettingsView),
     RouteDef(Routes.newsArticlePostView, page: NewsArticlePostView),
@@ -116,9 +116,9 @@ class StackedRouter extends RouterBase {
         settings: data,
       );
     },
-    PodcastView: (data) {
+    PodcastListView: (data) {
       return MaterialPageRoute<dynamic>(
-        builder: (context) => const PodcastView(),
+        builder: (context) => const PodcastListView(),
         settings: data,
       );
     },
