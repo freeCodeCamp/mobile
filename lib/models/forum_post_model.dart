@@ -1,3 +1,7 @@
+import 'dart:developer' as dev;
+
+import 'package:freecodecamp/ui/views/forum/forum-post/forum_post_viewmodel.dart';
+
 // This types and converts the JSON into the instances of the PostModel class.
 class PostModel {
   final String username;
@@ -21,6 +25,9 @@ class PostModel {
   final bool isModerator;
   final bool isAdmin;
   final bool isStaff;
+  final bool postHasAnswer;
+  final List? postUsers;
+  final List? userImages;
 
   PostModel(
       {required this.username,
@@ -43,7 +50,10 @@ class PostModel {
       required this.postCanRecover,
       required this.isModerator,
       required this.isAdmin,
-      required this.isStaff});
+      required this.isStaff,
+      required this.postHasAnswer,
+      this.postUsers,
+      this.userImages});
 
   // this is for endpoint /t/{slug}/{id}.json
   factory PostModel.fromPostJson(Map<String, dynamic> data) {
@@ -66,7 +76,8 @@ class PostModel {
         postCanRecover: data["details"]["can_recover"],
         isAdmin: data["post_stream"]["posts"][0]["admin"],
         isModerator: data["post_stream"]["posts"][0]["moderator"],
-        isStaff: data["post_stream"]["posts"][0]["staff"]);
+        isStaff: data["post_stream"]["posts"][0]["staff"],
+        postHasAnswer: data["post_stream"]["posts"][0]["has_accepted_answer"]);
   }
 
   // this is for the same endpoint as fromPostJson only it needs to be parsed
@@ -89,7 +100,8 @@ class PostModel {
         postCanRecover: data["can_recover"],
         isAdmin: data["admin"],
         isModerator: data["moderator"],
-        isStaff: data["staff"]);
+        isStaff: data["staff"],
+        postHasAnswer: data["has_accepted_answer"] ?? false);
   }
 
   // this is an offline factory that does not parse any data from an endpoint
@@ -110,10 +122,27 @@ class PostModel {
         postCanRecover: data["postCanRecover"],
         isAdmin: data["isAdmin"],
         isModerator: data["isModerator"],
-        isStaff: data["isStaff"]);
+        isStaff: data["isStaff"],
+        postHasAnswer: data["has_accepted_answer"]);
   }
 
-  factory PostModel.fromTopicFeedJson(Map<String, dynamic> data) {
+  static List parseAvatars(List images, List postUsers) {
+    List userImages = [];
+
+    for (int i = 0; i < postUsers.length; i++) {
+      for (int j = 0; j < images.length; j++) {
+        bool hasUserImage = userImages.contains(images[i]["avatar_template"]);
+
+        if (postUsers[i]["user_id"] == images[j]["id"] && !hasUserImage) {
+          userImages.add(PostViewModel.parseProfileAvatUrl(
+              images[j]["avatar_template"], "60"));
+        }
+      }
+    }
+    return userImages;
+  }
+
+  factory PostModel.fromTopicFeedJson(Map<String, dynamic> data, images) {
     return PostModel(
         postId: data["id"].toString(),
         postName: data["title"],
@@ -130,7 +159,9 @@ class PostModel {
         postCanRecover: data["can_recover"],
         isAdmin: data["admin"],
         isModerator: data["moderator"],
-        isStaff: data["staff"]);
+        isStaff: data["staff"],
+        postHasAnswer: data["has_accepted_answer"],
+        userImages: parseAvatars(images, data["posters"]));
   }
 }
 
@@ -166,6 +197,7 @@ class Comment {
         "isAdmin": true,
         "isModerator": true,
         "isStaff": true,
+        "has_accepted_answer": false
       }));
     }
     return comments;

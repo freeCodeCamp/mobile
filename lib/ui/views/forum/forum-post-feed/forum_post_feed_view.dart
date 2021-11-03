@@ -1,6 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:freecodecamp/models/forum_post_model.dart';
 import 'package:freecodecamp/ui/views/forum/forum-post-feed/forum_post_feed_lazyloading.dart';
 import 'package:freecodecamp/ui/views/forum/forum-post-feed/forum_post_feed_viewmodel.dart';
@@ -31,7 +32,7 @@ class ForumPostFeedView extends StatelessWidget {
                 builder: (context, snapshot) {
                   if (snapshot.hasData) {
                     var post = snapshot.data;
-                    return postFeedBuilder(model, post);
+                    return postFeedBuilder(model, post!);
                   } else {
                     return const Center(child: CircularProgressIndicator());
                   }
@@ -41,7 +42,7 @@ class ForumPostFeedView extends StatelessWidget {
             ));
   }
 
-  ListView postFeedBuilder(ForumPostFeedModel model, List<PostModel>? post) {
+  ListView postFeedBuilder(ForumPostFeedModel model, List<PostModel> post) {
     return ListView.builder(
         itemCount: model.posts.length,
         physics: const ClampingScrollPhysics(),
@@ -51,97 +52,74 @@ class ForumPostFeedView extends StatelessWidget {
               SchedulerBinding.instance!.addPostFrameCallback(
                   (timeStamp) => model.handlePostLazyLoading(index));
             },
-            child: postViewTemplate(post![index], index, model)));
+            child: InkWell(
+              onTap: () {
+                model.navigateToPost(
+                  post[index].postSlug,
+                  post[index].postId,
+                );
+              },
+              child: Container(
+                child: Padding(
+                  padding: const EdgeInsets.only(bottom: 24.0),
+                  child: postViewTemplate(post[index], index, model),
+                ),
+                decoration: const BoxDecoration(
+                    border: Border(
+                        bottom: BorderSide(
+                            width: 2,
+                            color: Color.fromRGBO(0x42, 0x42, 0x55, 1)))),
+              ),
+            )));
   }
 
-  InkWell postViewTemplate(
+  ListTile postViewTemplate(
       PostModel post, int index, ForumPostFeedModel model) {
-    return InkWell(
-      onTap: () {
-        model.navigateToPost(
-          post.postSlug,
-          post.postId,
-        );
-      },
-      child: ConstrainedBox(
-        constraints: const BoxConstraints(minHeight: 125),
-        child: Container(
-          decoration: const BoxDecoration(
-              border:
-                  Border(bottom: BorderSide(width: 2, color: Colors.white))),
-          child: Column(
+    return ListTile(
+      title: Row(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          post.postHasAnswer
+              ? const Padding(
+                  padding: EdgeInsets.only(right: 8),
+                  child: FaIcon(
+                    FontAwesomeIcons.checkSquare,
+                    color: Color.fromRGBO(0xa9, 0xaa, 0xb2, 1),
+                    size: 18,
+                  ),
+                )
+              : Container(),
+          Expanded(
+            child: Text(
+              model.truncateTitle(post.postName as String),
+              style: const TextStyle(color: Colors.white, fontSize: 18),
+            ),
+          ),
+        ],
+      ),
+      leading: FadeInImage.assetNetwork(
+          height: 60,
+          placeholder: 'assets/images/placeholder-profile-img.png',
+          image: post.userImages![0]),
+      trailing: Text(
+        post.postReplyCount.toString(),
+        style: const TextStyle(
+            fontSize: 18,
+            fontWeight: FontWeight.bold,
+            color: Color.fromRGBO(0xa9, 0xaa, 0xb2, 1)),
+      ),
+      subtitle: Row(
+        children: [
+          Column(
             children: [
-              Row(
-                children: [
-                  Expanded(
-                      child: Padding(
-                    padding: const EdgeInsets.all(8.0),
-                    child: Text(post.postName as String,
-                        style: const TextStyle(
-                            fontSize: 18,
-                            color: Colors.white,
-                            fontWeight: FontWeight.bold)),
-                  ))
-                ],
+              Text(
+                PostViewModel.parseDate(post.postLastActivity as String),
+                style:
+                    const TextStyle(color: Color.fromRGBO(0xa9, 0xaa, 0xb2, 1)),
               ),
-              Row(
-                children: [
-                  Expanded(
-                    child: Padding(
-                      padding: const EdgeInsets.all(8.0),
-                      child: Text(
-                        "posted " +
-                            PostViewModel.parseDate(post.postCreateDate),
-                        style: const TextStyle(
-                          color: Colors.white,
-                          fontSize: 16,
-                        ),
-                      ),
-                    ),
-                  ),
-                  Expanded(
-                    child: Padding(
-                      padding: const EdgeInsets.all(8.0),
-                      child: Text(
-                        "activity " +
-                            PostViewModel.parseDate(
-                                post.postLastActivity as String),
-                        style: const TextStyle(
-                          color: Colors.white,
-                          fontSize: 16,
-                        ),
-                      ),
-                    ),
-                  ),
-                ],
-              ),
-              Row(
-                children: [
-                  Expanded(
-                    child: Padding(
-                      padding: const EdgeInsets.all(8.0),
-                      child: Text('Views: ' + post.postViews.toString(),
-                          style: const TextStyle(
-                              fontSize: 14,
-                              color: Colors.white,
-                              fontWeight: FontWeight.w300)),
-                    ),
-                  ),
-                  Expanded(
-                    child: Padding(
-                      padding: const EdgeInsets.all(8.0),
-                      child: Text('Replies: ' + post.postReplyCount.toString(),
-                          style: const TextStyle(
-                              fontSize: 14,
-                              color: Colors.white,
-                              fontWeight: FontWeight.w300)),
-                    ),
-                  ),
-                ],
-              )
             ],
           ),
-        ),
+        ],
       ),
     );
   }

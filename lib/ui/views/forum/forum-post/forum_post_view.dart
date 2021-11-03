@@ -28,6 +28,10 @@ class ForumPostView extends StatelessWidget {
         onModelReady: (model) => model.initState(slug, id),
         onDispose: (model) => model.disposeTimer(),
         builder: (context, model, child) => Scaffold(
+              appBar: AppBar(
+                backgroundColor: Color(0xFF0a0a23),
+                title: Text('BACK TO FEED'),
+              ),
               backgroundColor: Color.fromRGBO(0x2A, 0x2A, 0x40, 1),
               body: SingleChildScrollView(
                   child: postViewTemplate(model, id, slug)),
