@@ -80,15 +80,16 @@ class ForumPostFeedView extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           post.postHasAnswer
-              ? const Expanded(
+              ? const Padding(
+                  padding: EdgeInsets.only(right: 8),
                   child: FaIcon(
-                  FontAwesomeIcons.checkSquare,
-                  color: Color.fromRGBO(0xa9, 0xaa, 0xb2, 1),
-                  size: 18,
-                ))
+                    FontAwesomeIcons.checkSquare,
+                    color: Color.fromRGBO(0xa9, 0xaa, 0xb2, 1),
+                    size: 18,
+                  ),
+                )
               : Container(),
           Expanded(
-            flex: 11,
             child: Text(
               model.truncateTitle(post.postName as String),
               style: const TextStyle(color: Colors.white, fontSize: 18),
