@@ -112,7 +112,7 @@ class DrawerWidgetView extends StatelessWidget {
                           Icons.settings,
                           size: 70,
                         ),
-                        true,
+                        false,
                         model,
                         context),
                   ),

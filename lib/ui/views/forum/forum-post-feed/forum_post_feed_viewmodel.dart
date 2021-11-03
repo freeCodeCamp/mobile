@@ -22,12 +22,21 @@ class ForumPostFeedModel extends BaseViewModel {
 
     if (response.statusCode == 200) {
       var topics = json.decode(response.body)["topic_list"]["topics"];
+      var images = json.decode(response.body)["users"];
       for (int i = 0; i < topics.length; i++) {
-        posts.add(PostModel.fromTopicFeedJson(topics[i]));
+        posts.add(PostModel.fromTopicFeedJson(topics[i], images));
       }
       return posts;
     } else {
       throw Exception(response.body);
+    }
+  }
+
+  String truncateTitle(String title) {
+    if (title.length < 55) {
+      return title;
+    } else {
+      return title.toString().substring(0, 55) + '...';
     }
   }
 

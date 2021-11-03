@@ -4,8 +4,10 @@ import 'package:freecodecamp/app/app.locator.dart';
 import 'package:freecodecamp/app/app.router.dart';
 import 'package:freecodecamp/models/article_model.dart';
 import 'package:http/http.dart' as http;
+import 'package:jiffy/jiffy.dart';
 import 'package:stacked/stacked.dart';
 import 'package:stacked_services/stacked_services.dart';
+import 'dart:developer' as dev;
 
 class NewsFeedModel extends BaseViewModel {
   int _pageNumber = 1;
@@ -24,32 +26,15 @@ class NewsFeedModel extends BaseViewModel {
         arguments: NewsArticlePostViewArguments(refId: id));
   }
 
-  String truncateTag(String tag) {
-    if (tag.length < 15) {
-      return tag;
-    } else {
-      return tag.toString().substring(0, 15) + '...';
-    }
-  }
-
-  String truncateAuthorName(String name) {
-    List<String> names = name.split(" ");
-
-    if (name.length > 15) {
-      return name.substring(0, 15) + '...';
-    }
-
-    if (names.length > 2) {
-      return names[0] + ' ' + names[1];
-    }
-
-    return name;
+  String parseDate(date) {
+    return Jiffy(date).fromNow().toUpperCase();
   }
 
   Future<List<Article>> fetchArticles() async {
     await dotenv.load(fileName: ".env");
     String page = '&page=' + _pageNumber.toString();
-    String par = "&fields=title,url,feature_image,id&include=tags,authors";
+    String par =
+        "&fields=title,url,feature_image,published_at,id&include=tags,authors";
     String url = "${dotenv.env['NEWSURL']}${dotenv.env['NEWSKEY']}$page$par";
     final response = await http.get(Uri.parse(url));
     if (response.statusCode == 200) {

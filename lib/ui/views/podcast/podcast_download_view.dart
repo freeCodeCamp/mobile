@@ -1,7 +1,7 @@
 import 'dart:developer';
 
 import 'package:flutter/material.dart';
-import 'package:freecodecamp/models/downloaded_episodes.dart';
+import 'package:freecodecamp/models/podcasts/episodes_model.dart';
 import 'package:freecodecamp/ui/views/podcast/podcast_download_viewmodel.dart';
 import 'package:stacked/stacked.dart';
 import 'package:intl/intl.dart';
@@ -22,7 +22,7 @@ class PodcastDownloadView extends StatelessWidget {
           backgroundColor: const Color(0xFF0a0a23),
         ),
         backgroundColor: const Color(0xFF0a0a23),
-        body: FutureBuilder<List<DownloadedEpisodes>>(
+        body: FutureBuilder<List<Episodes>>(
           future: model.fetchPodcastEpisodes(),
           builder: (context, snapshot) {
             if (snapshot.connectionState != ConnectionState.done) {
@@ -52,7 +52,7 @@ class PodcastEpisodeTemplate extends StatelessWidget {
       {Key? key, required this.episode, required this.i})
       : super(key: key);
 
-  final DownloadedEpisodes episode;
+  final Episodes episode;
   final int i;
 
   @override
@@ -60,10 +60,10 @@ class PodcastEpisodeTemplate extends StatelessWidget {
     return InkWell(
       onTap: () {
         log("Clicked ${episode.title}");
-        Navigator.push(
-            context,
-            MaterialPageRoute(
-                builder: (context) => EpisodeView(episode: episode)));
+        // Navigator.push(
+        //     context,
+        //     MaterialPageRoute(
+        //         builder: (context) => EpisodeView(episode: episode)));
       },
       child: ConstrainedBox(
         constraints: const BoxConstraints(minHeight: 50),
