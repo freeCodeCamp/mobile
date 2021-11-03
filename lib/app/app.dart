@@ -11,6 +11,8 @@ import 'package:freecodecamp/ui/views/podcast/podcast_download_view.dart';
 import 'package:freecodecamp/ui/views/news/news-article-post/news_article_post_view.dart';
 import 'package:freecodecamp/ui/views/news/news-bookmark/news_bookmark_view.dart';
 import 'package:freecodecamp/ui/views/news/news-feed/news_feed_view.dart';
+import 'package:freecodecamp/ui/views/settings/forumSettings/forum_settings_view.dart';
+import 'package:freecodecamp/ui/views/settings/podcastSettings/podcast_settings_view.dart';
 
 import '../ui/views/startup/startup_view.dart';
 import '../ui/views/website/website_view.dart';
@@ -21,12 +23,13 @@ import 'package:sqflite_migration_service/sqflite_migration_service.dart';
 // Run 'flutter pub run build_runner build --delete-conflicting-outputs' after any changes in this file to generate updated files
 @StackedApp(
   routes: [
-    MaterialRoute(page: StartupView, initial: true),
+    MaterialRoute(page: StartupView),
     MaterialRoute(page: WebsiteView),
-    MaterialRoute(page: HomeView),
+    MaterialRoute(page: HomeView, initial: true),
     MaterialRoute(page: BrowserView),
     MaterialRoute(page: PodcastListView),
     MaterialRoute(page: PodcastDownloadView),
+    MaterialRoute(page: PodcastSettingsView),
     MaterialRoute(page: NewsArticlePostView),
     MaterialRoute(page: NewsBookmarkPostView),
     MaterialRoute(page: NewsFeedView),
@@ -34,7 +37,8 @@ import 'package:sqflite_migration_service/sqflite_migration_service.dart';
     MaterialRoute(page: ForumPostFeedView),
     MaterialRoute(page: ForumPostView),
     MaterialRoute(page: ForumLoginView),
-    MaterialRoute(page: ForumUserView)
+    MaterialRoute(page: ForumUserView),
+    MaterialRoute(page: ForumSettingsView),
   ],
   dependencies: [
     LazySingleton(classType: NavigationService),

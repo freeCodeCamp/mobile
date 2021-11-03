@@ -4,6 +4,7 @@ import 'package:freecodecamp/ui/views/forum/forum-categories/forum_category_buil
 import 'package:freecodecamp/ui/views/forum/forum-categories/forum_category_viewmodel.dart';
 import 'package:freecodecamp/ui/views/forum/forum-login/forum_login_view.dart';
 import 'package:freecodecamp/ui/views/forum/forum-search/forum_search_view.dart';
+import 'package:freecodecamp/ui/widgets/drawer_widget/drawer_widget_view.dart';
 import 'package:stacked/stacked.dart';
 
 // ignore: must_be_immutable
@@ -16,6 +17,12 @@ class ForumCategoryView extends StatelessWidget {
     const ForumSearchView(),
   ];
 
+  List titles = <Text>[
+    const Text('New topic'),
+    const Text('Categories'),
+    const Text('Search topics')
+  ];
+
   @override
   Widget build(BuildContext context) {
     return ViewModelBuilder<ForumCategoryViewModel>.reactive(
@@ -23,8 +30,12 @@ class ForumCategoryView extends StatelessWidget {
         builder: (context, model, child) => Scaffold(
             appBar: AppBar(
               backgroundColor: const Color(0xFF0a0a23),
-              title: const Text('categories'),
+              title: titles.elementAt(model.index),
               centerTitle: true,
+            ),
+            drawer: SizedBox(
+              width: MediaQuery.of(context).size.width,
+              child: const DrawerWidgetView(),
             ),
             body: views.elementAt(model.index),
             bottomNavigationBar: BottomNavigationBar(
@@ -38,13 +49,13 @@ class ForumCategoryView extends StatelessWidget {
                       Icons.add,
                       color: Colors.white,
                     ),
-                    label: 'new'),
+                    label: 'New'),
                 const BottomNavigationBarItem(
                     icon: Icon(Icons.article, color: Colors.white),
-                    label: 'categories'),
+                    label: 'Categories'),
                 const BottomNavigationBarItem(
                     icon: Icon(Icons.search_outlined, color: Colors.white),
-                    label: 'search')
+                    label: 'Search')
               ],
               currentIndex: model.index,
               onTap: model.onTapped,

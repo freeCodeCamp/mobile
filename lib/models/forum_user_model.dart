@@ -95,6 +95,7 @@ class UserTopic {
 
 class UserBadge {
   final int id;
+  final int badgeTypeId;
   final int grantCount;
   final String name;
   final String description;
@@ -108,6 +109,7 @@ class UserBadge {
 
   UserBadge({
     required this.id,
+    required this.badgeTypeId,
     required this.grantCount,
     required this.name,
     required this.description,
@@ -123,6 +125,7 @@ class UserBadge {
   factory UserBadge.fromJson(Map<String, dynamic> data) {
     return UserBadge(
         id: data['id'],
+        badgeTypeId: data['badge_type_id'],
         grantCount: data['grant_count'],
         name: data['name'],
         description: data['description'],

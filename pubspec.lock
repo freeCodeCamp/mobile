@@ -307,6 +307,15 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "5.0.2"
+  flutter_font_awesome_web_names:
+    dependency: "direct main"
+    description:
+      path: "."
+      ref: master
+      resolved-ref: "8e5b2c517dfab61d65bb17bf6fada52f6993e452"
+      url: "https://github.com/Mythar/flutter_font_awesome_web_names"
+    source: git
+    version: "0.0.4"
   flutter_html:
     dependency: "direct main"
     description:
