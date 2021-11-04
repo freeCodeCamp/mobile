@@ -5,7 +5,6 @@ import 'package:freecodecamp/app/app.router.dart';
 import 'package:freecodecamp/models/forum_category_model.dart';
 import 'package:stacked/stacked.dart';
 import 'package:stacked_services/stacked_services.dart';
-import 'dart:developer' as dev;
 import '../forum_connect.dart';
 
 class ForumCategoryViewModel extends BaseViewModel {
@@ -26,10 +25,10 @@ class ForumCategoryViewModel extends BaseViewModel {
     _future = fetchCategories();
   }
 
-  void goToPosts(slug, id) {
+  void goToPosts(slug, id, name) {
     id = id.toString();
     _navigationService.navigateTo(Routes.forumPostFeedView,
-        arguments: ForumPostFeedViewArguments(slug: slug, id: id));
+        arguments: ForumPostFeedViewArguments(slug: slug, id: id, name: name));
   }
 
   static Future<List<Category>> fetchCategories() async {

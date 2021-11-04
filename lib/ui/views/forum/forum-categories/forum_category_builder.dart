@@ -28,8 +28,8 @@ class ForumCategoryBuilder extends StatelessWidget {
                       itemBuilder: (BuildContext context, int i) {
                         return InkWell(
                           onTap: () {
-                            model.goToPosts(
-                                categories![i].slug, categories[i].id);
+                            model.goToPosts(categories![i].slug,
+                                categories[i].id, categories[i].name);
                           },
                           child: Container(
                             decoration: BoxDecoration(

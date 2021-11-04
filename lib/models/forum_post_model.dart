@@ -1,39 +1,23 @@
-class PostList {
-  static List<dynamic> returnPosts(Map<String, dynamic> data) {
-    return data["topic_list"]["topics"];
-  }
+import 'dart:developer' as dev;
 
-  static List<dynamic> returnCategoryUsers(Map<String, dynamic> data) {
-    return data["users"];
-  }
-
-  static List<dynamic> returnProfilePictures(Map<String, dynamic> data) {
-    return data["details"]["participants"];
-  }
-
-  PostList.error() {
-    throw Exception('Unable to load posts');
-  }
-
-  PostList.errorProfile() {
-    throw Exception('unable to load post profile pictures');
-  }
-}
+import 'package:freecodecamp/ui/views/forum/forum-post/forum_post_viewmodel.dart';
 
 // This types and converts the JSON into the instances of the PostModel class.
 class PostModel {
   final String username;
-  final String name;
-  final String profieImage;
+  final String? name;
+  final String? profieImage;
   final String postId;
   final String? postName;
   final String postSlug;
   final dynamic postCreateDate;
-  final String postCooked;
+  final String? postLastActivity;
+  final String? postCooked;
   final List? postComments;
-  final int postType;
+  final int? postViews;
+  final int? postType;
   final int postReplyCount;
-  final int postReads;
+  final int? postReads;
   final int? postLikes;
   final bool postCanEdit;
   final bool postCanDelete;
@@ -43,19 +27,24 @@ class PostModel {
   final bool isStaff;
   final bool postLikedByUser;
   final bool postIsUsers;
+  final bool postHasAnswer;
+  final List? postUsers;
+  final List? userImages;
 
   PostModel(
       {required this.username,
       required this.name,
       required this.profieImage,
-      required this.postCooked,
+      this.postCooked,
       required this.postId,
       this.postName,
+      this.postLastActivity,
       required this.postSlug,
       required this.postCreateDate,
-      required this.postType,
+      this.postType,
       required this.postReplyCount,
-      required this.postReads,
+      this.postReads,
+      this.postViews,
       this.postLikes,
       this.postComments,
       this.postLikedByUser = false,
@@ -65,7 +54,10 @@ class PostModel {
       required this.postCanRecover,
       required this.isModerator,
       required this.isAdmin,
-      required this.isStaff});
+      required this.isStaff,
+      required this.postHasAnswer,
+      this.postUsers,
+      this.userImages});
 
   // this is for endpoint /t/{slug}/{id}.json
   factory PostModel.fromPostJson(Map<String, dynamic> data) {
@@ -90,6 +82,7 @@ class PostModel {
         isModerator: data["post_stream"]["posts"][0]["moderator"],
         isStaff: data["post_stream"]["posts"][0]["staff"],
         postIsUsers: data["post_stream"]["posts"][0]["yours"]);
+        postHasAnswer: data["post_stream"]["posts"][0]["has_accepted_answer"]);
   }
 
   static bool getIfLikedPost(List<dynamic> data) {
@@ -136,6 +129,7 @@ class PostModel {
         postLikedByUser:
             data["yours"] ? false : getIfLikedPost(data["actions_summary"]),
         postLikes: getLikesPost(data["actions_summary"]));
+        postHasAnswer: data["has_accepted_answer"] ?? false);
   }
 
   // this is an offline factory that does not parse any data from an endpoint
@@ -158,16 +152,45 @@ class PostModel {
         isModerator: data["isModerator"],
         isStaff: data["isStaff"],
         postIsUsers: data["postIsUsers"]);
-  }
-}
-
-class PostCreator {
-  static bool? isUsersPost(Map<String, bool> data) {
-    return data["yours"];
+        postHasAnswer: data["has_accepted_answer"]);
   }
 
-  static bool? userCanEdit(Map<String, bool> data) {
-    return data["can_edit"];
+  static List parseAvatars(List images, List postUsers) {
+    List userImages = [];
+
+    for (int i = 0; i < postUsers.length; i++) {
+      for (int j = 0; j < images.length; j++) {
+        bool hasUserImage = userImages.contains(images[i]["avatar_template"]);
+
+        if (postUsers[i]["user_id"] == images[j]["id"] && !hasUserImage) {
+          userImages.add(PostViewModel.parseProfileAvatUrl(
+              images[j]["avatar_template"], "60"));
+        }
+      }
+    }
+    return userImages;
+  }
+
+  factory PostModel.fromTopicFeedJson(Map<String, dynamic> data, images) {
+    return PostModel(
+        postId: data["id"].toString(),
+        postName: data["title"],
+        postLastActivity: data["bumped_at"],
+        postCreateDate: data["created_at"],
+        postViews: data["views"],
+        postReplyCount: data["reply_count"],
+        postSlug: data["slug"],
+        username: data["last_poster_username"],
+        profieImage: data["avatar_template"],
+        name: data["name"],
+        postCanDelete: data["can_delete"],
+        postCanEdit: data["can_edit"],
+        postCanRecover: data["can_recover"],
+        isAdmin: data["admin"],
+        isModerator: data["moderator"],
+        isStaff: data["staff"],
+        postHasAnswer: data["has_accepted_answer"],
+        userImages: parseAvatars(images, data["posters"]));
   }
 }
 
@@ -204,6 +227,7 @@ class Comment {
         "isModerator": true,
         "isStaff": true,
         "postIsUsers": true
+        "has_accepted_answer": false
       }));
     }
     return comments;

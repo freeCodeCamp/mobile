@@ -11,6 +11,8 @@ import 'package:stacked/stacked.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:html/dom.dart' as dom;
 import 'forum_post_viewmodel.dart';
+import 'package:flutter_font_awesome_web_names/flutter_font_awesome.dart';
+import 'dart:developer' as dev;
 
 class ForumPostView extends StatelessWidget {
   final String id;
@@ -26,6 +28,10 @@ class ForumPostView extends StatelessWidget {
         onModelReady: (model) => model.initState(slug, id),
         onDispose: (model) => model.disposeTimer(),
         builder: (context, model, child) => Scaffold(
+              appBar: AppBar(
+                backgroundColor: Color(0xFF0a0a23),
+                title: Text('BACK TO FEED'),
+              ),
               backgroundColor: Color.fromRGBO(0x2A, 0x2A, 0x40, 1),
               body: SingleChildScrollView(
                   child: postViewTemplate(model, id, slug)),
@@ -333,17 +339,40 @@ Row htmlView(AsyncSnapshot<PostModel> post, BuildContext context) {
               }
             },
             "svg": (context, child) {
-              var forbiddenClasses = context.tree.element!.className;
-              if (forbiddenClasses
+              var iconParent = context.tree.element!.className;
+              var isFontAwesomeIcon = iconParent
                   .toString()
-                  .contains(RegExp(r'fa ', caseSensitive: false))) {
-                return null;
+                  .contains(RegExp(r'fa ', caseSensitive: false));
+
+              var iconChild =
+                  context.tree.element!.children[0].attributes.values;
+              var iconParsed = iconChild.first.replaceFirst(RegExp(r'#'), '');
+
+              List bannedIcons = ['far-image', 'discourse-expand'];
+
+              if (isFontAwesomeIcon) {
+                if (bannedIcons.contains(iconParsed)) {
+                  return Container();
+                } else {
+                  return FaIcon(iconParsed);
+                }
               }
             },
-            "image": (context, child) {
-              var disableEmoijs = context.tree.element!.className;
-              if (disableEmoijs.toString() == 'emoij') {
-                return null;
+            "img": (context, child) {
+              var classes = context.tree.element?.className;
+              var classesSplit = classes?.split(" ");
+
+              var classIsEmoji = classesSplit!.contains('emoji') ||
+                  classesSplit.contains('emoji-only');
+
+              var emojiImage = context.tree.attributes['src'].toString();
+
+              if (classIsEmoji) {
+                return Image.network(
+                  emojiImage,
+                  height: 25,
+                  width: 25,
+                );
               }
             }
           },

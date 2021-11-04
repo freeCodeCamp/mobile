@@ -1,16 +1,21 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_html/flutter_html.dart';
-import 'package:freecodecamp/models/downloaded_episodes.dart';
+import 'package:freecodecamp/models/podcasts/episodes_model.dart';
+import 'package:freecodecamp/models/podcasts/podcasts_model.dart';
+import 'package:freecodecamp/ui/views/podcast/episode/episode_viewmodel.dart';
 import 'package:html/dom.dart' as dom;
 import 'package:intl/intl.dart';
 import 'package:stacked/stacked.dart';
 import 'package:url_launcher/url_launcher.dart';
 
-import 'episode_viewmodel.dart';
-
 class EpisodeView extends StatelessWidget {
-  final DownloadedEpisodes episode;
-  const EpisodeView({Key? key, required this.episode}) : super(key: key);
+  const EpisodeView({Key? key, required this.episode, required this.podcast})
+      : super(key: key);
+
+  final Episodes episode;
+  final Podcasts podcast;
 
   final TextStyle _titleStyle =
       const TextStyle(color: Colors.white, fontSize: 20);
@@ -29,7 +34,7 @@ class EpisodeView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return ViewModelBuilder<EpisodeViewModel>.reactive(
-      viewModelBuilder: () => EpisodeViewModel(episode),
+      viewModelBuilder: () => EpisodeViewModel(episode, podcast),
       onModelReady: (model) => model.init(episode.contentUrl!),
       builder: (context, model, child) => Scaffold(
         appBar: AppBar(
@@ -41,8 +46,9 @@ class EpisodeView extends StatelessWidget {
           child: SingleChildScrollView(
             child: Column(
               children: [
-                Image.asset(
-                  'assets/images/episode_default.jpg',
+                Image.file(
+                  File(
+                      '/data/user/0/org.freecodecamp/app_flutter/images/podcast/${podcast.id}.jpg'),
                   height: 250,
                 ),
                 const SizedBox(
@@ -57,8 +63,9 @@ class EpisodeView extends StatelessWidget {
                 ),
                 Text(
                   DateFormat.yMMMd().format(episode.publicationDate!) +
-                      ' • ' +
-                      _parseDuration(episode.duration!),
+                      (episode.duration! != Duration.zero
+                          ? (' • ' + _parseDuration(episode.duration!))
+                          : ''),
                   style: _subTitleStyle,
                 ),
                 const SizedBox(
@@ -94,7 +101,7 @@ class EpisodeView extends StatelessWidget {
                     ),
                     label: Text(
                       model.downloading
-                          ? 'DOWNLOADING'
+                          ? 'DOWNLOADING ${model.progress} %'
                           : model.downloaded
                               ? 'Remove Download'
                               : 'Download',
