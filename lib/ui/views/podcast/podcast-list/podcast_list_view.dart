@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:freecodecamp/models/podcasts/podcasts_model.dart';
 import 'package:freecodecamp/ui/views/podcast/episode-list/episode_list_view.dart';
 import 'package:freecodecamp/ui/views/podcast/podcast-list/podcast_list_viewmodel.dart';
+import 'package:freecodecamp/ui/widgets/drawer_widget/drawer_widget_view.dart';
 import 'package:stacked/stacked.dart';
 
 // ui view only
@@ -20,6 +21,10 @@ class PodcastListView extends StatelessWidget {
         appBar: AppBar(
           title: const Text('Podcasts List'),
           backgroundColor: const Color(0xFF0a0a23),
+        ),
+        drawer: SizedBox(
+          width: MediaQuery.of(context).size.width,
+          child: const DrawerWidgetView(),
         ),
         backgroundColor: const Color(0xFF0a0a23),
         // backgroundColor: const Color(0xFFFFFFFF),
