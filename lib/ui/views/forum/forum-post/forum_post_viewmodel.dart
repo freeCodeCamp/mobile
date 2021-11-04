@@ -203,9 +203,19 @@ class PostViewModel extends BaseViewModel {
 
     if (jiffyDate.contains("hour")) return '1h';
 
-    if (jiffyDate.contains("hours")) {
-      return parsedDate[0] + 'h';
-    }
+    if (jiffyDate.contains("hours")) return parsedDate[0] + 'h';
+
+    if (jiffyDate.contains('days')) return parsedDate[0] + 'd';
+
+    if (jiffyDate.contains('day')) return '1d';
+
+    if (jiffyDate.contains('months')) return parsedDate[0] + 'm';
+
+    if (jiffyDate.contains('month')) return '1m';
+
+    if (jiffyDate.contains('years')) return parsedDate[0] + 'y';
+
+    if (jiffyDate.contains('year')) return '1y';
 
     return jiffyDate;
   }
