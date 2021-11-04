@@ -1,7 +1,6 @@
-// ignore_for_file: prefer_const_constructors
-
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_font_awesome_web_names/flutter_font_awesome.dart';
 import 'package:flutter_html/flutter_html.dart';
 import 'package:flutter_syntax_view/flutter_syntax_view.dart';
 import 'package:freecodecamp/models/forum_post_model.dart';
@@ -11,7 +10,6 @@ import 'package:stacked/stacked.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:html/dom.dart' as dom;
 import 'forum_post_viewmodel.dart';
-import 'package:flutter_font_awesome_web_names/flutter_font_awesome.dart';
 import 'dart:developer' as dev;
 
 class ForumPostView extends StatelessWidget {
@@ -29,10 +27,10 @@ class ForumPostView extends StatelessWidget {
         onDispose: (model) => model.disposeTimer(),
         builder: (context, model, child) => Scaffold(
               appBar: AppBar(
-                backgroundColor: Color(0xFF0a0a23),
-                title: Text('BACK TO FEED'),
+                backgroundColor: const Color(0xFF0a0a23),
+                title: const Text('Back To Feed'),
               ),
-              backgroundColor: Color.fromRGBO(0x2A, 0x2A, 0x40, 1),
+              backgroundColor: const Color.fromRGBO(0x2A, 0x2A, 0x40, 1),
               body: SingleChildScrollView(
                   child: postViewTemplate(model, id, slug)),
             ));
@@ -60,7 +58,7 @@ Column postViewTemplate(PostViewModel model, id, slug) {
                           padding: const EdgeInsets.all(24.0),
                           child: Text(
                             post.postName as String,
-                            style: TextStyle(
+                            style: const TextStyle(
                                 color: Colors.white,
                                 fontSize: 24,
                                 fontWeight: FontWeight.bold),
@@ -70,9 +68,9 @@ Column postViewTemplate(PostViewModel model, id, slug) {
                     ],
                   ),
                   ConstrainedBox(
-                    constraints: BoxConstraints(minHeight: 300),
+                    constraints: const BoxConstraints(minHeight: 300),
                     child: Container(
-                      color: Color(0xFF0a0a23),
+                      color: const Color(0xFF0a0a23),
                       child: htmlView(post, context, model),
                     ),
                   ),
@@ -91,7 +89,7 @@ Column postViewTemplate(PostViewModel model, id, slug) {
               );
             }
 
-            return Center(
+            return const Center(
               child: CircularProgressIndicator(),
             );
           })
@@ -107,7 +105,7 @@ Column htmlView(PostModel post, BuildContext context, model) {
         children: [
           Expanded(
               child: Padding(
-            padding: const EdgeInsets.all(24.0),
+            padding: const EdgeInsets.all(16.0),
             child: Html(
               data: post.postCooked,
               style: {
@@ -115,29 +113,31 @@ Column htmlView(PostModel post, BuildContext context, model) {
                 "blockquote": Style(
                     backgroundColor: const Color.fromRGBO(0x65, 0x65, 0x74, 1),
                     padding: const EdgeInsets.all(8)),
+                "a": Style(fontSize: FontSize.rem(1)),
                 "p": Style(
-                    fontSize: FontSize.rem(1.35),
+                    fontSize: FontSize.rem(1.2),
                     lineHeight: LineHeight.em(1.2)),
                 "ul": Style(fontSize: FontSize.xLarge),
                 "li": Style(
-                  margin: EdgeInsets.only(top: 8),
+                  margin: const EdgeInsets.only(top: 8),
                   fontSize: FontSize.rem(1.35),
                 ),
                 "pre": Style(
                     color: Colors.white,
                     width: MediaQuery.of(context).size.width),
-                "code":
-                    Style(backgroundColor: Color.fromRGBO(0x2A, 0x2A, 0x40, 1)),
+                "code": Style(
+                    backgroundColor: const Color.fromRGBO(0x2A, 0x2A, 0x40, 1)),
                 "tr": Style(
-                    border: Border(bottom: BorderSide(color: Colors.grey)),
+                    border:
+                        const Border(bottom: BorderSide(color: Colors.grey)),
                     backgroundColor: Colors.white),
                 "th": Style(
-                  padding: EdgeInsets.all(12),
-                  backgroundColor: Color.fromRGBO(0xdf, 0xdf, 0xe2, 1),
+                  padding: const EdgeInsets.all(12),
+                  backgroundColor: const Color.fromRGBO(0xdf, 0xdf, 0xe2, 1),
                   color: Colors.black,
                 ),
                 "td": Style(
-                  padding: EdgeInsets.all(12),
+                  padding: const EdgeInsets.all(12),
                   color: Colors.black,
                   alignment: Alignment.topLeft,
                 ),
@@ -154,7 +154,7 @@ Column htmlView(PostModel post, BuildContext context, model) {
                   var classList = code.tree.elementClasses;
                   if (classList.isNotEmpty && classList[0] == 'lang-auto') {
                     return ConstrainedBox(
-                      constraints: BoxConstraints(
+                      constraints: const BoxConstraints(
                         minHeight: 1,
                         maxHeight: 500,
                       ),
@@ -182,24 +182,58 @@ Column htmlView(PostModel post, BuildContext context, model) {
                       },
                       child: Text(
                         link,
-                        style: TextStyle(
-                            color: Color.fromRGBO(0x00, 0x2e, 0xad, 1)),
+                        style: const TextStyle(
+                            color: Color.fromRGBO(0x22, 0x91, 0xeb, 1)),
                       ),
                     );
                   }
                 },
                 "svg": (context, child) {
-                  var forbiddenClasses = context.tree.element!.className;
-                  if (forbiddenClasses
+                  var iconParent = context.tree.element!.className;
+                  var isFontAwesomeIcon = iconParent
                       .toString()
-                      .contains(RegExp(r'fa ', caseSensitive: false))) {
-                    return null;
+                      .contains(RegExp(r'fa ', caseSensitive: false));
+
+                  var iconChild =
+                      context.tree.element!.children[0].attributes.values;
+                  var iconParsed =
+                      iconChild.first.replaceFirst(RegExp(r'#'), '');
+
+                  List bannedIcons = ['far-image', 'discourse-expand'];
+
+                  if (isFontAwesomeIcon) {
+                    if (bannedIcons.contains(iconParsed)) {
+                      return Container();
+                    } else {
+                      return FaIcon(iconParsed);
+                    }
                   }
                 },
-                "image": (context, child) {
-                  var disableEmoijs = context.tree.element!.className;
-                  if (disableEmoijs.toString() == 'emoij') {
-                    return null;
+                "img": (context, child) {
+                  var classes = context.tree.element?.className;
+                  var classesSplit = classes?.split(" ");
+
+                  var classIsEmoji = classesSplit!.contains('emoji') ||
+                      classesSplit.contains('emoji-only');
+
+                  var emojiImage = context.tree.attributes['src'].toString();
+
+                  if (classIsEmoji) {
+                    return Image.network(
+                      emojiImage,
+                      height: 25,
+                      width: 25,
+                    );
+                  }
+                },
+                "div": (context, child) {
+                  var divClasses = context.tree.element?.className;
+
+                  var classList = divClasses?.split(" ");
+
+                  var classContainsMeta = classList!.contains('meta');
+                  if (classContainsMeta) {
+                    return Container();
                   }
                 }
               },
@@ -240,7 +274,7 @@ Row postHeader(model, PostModel post) {
                   padding: const EdgeInsets.only(left: 16),
                   child: Text(
                     post.username,
-                    style: TextStyle(
+                    style: const TextStyle(
                         color: Colors.white,
                         fontSize: 24,
                         fontWeight: FontWeight.bold),
@@ -254,56 +288,15 @@ Row postHeader(model, PostModel post) {
                   padding: const EdgeInsets.only(left: 48.0),
                   child: Text(
                     PostViewModel.parseDateShort(post.postCreateDate),
-                    style: TextStyle(
+                    style: const TextStyle(
                       color: Color.fromRGBO(0xa9, 0xaa, 0xb2, 1),
                       fontSize: 24,
                     ),
                   ),
-                );
-              }
-            },
-            "svg": (context, child) {
-              var iconParent = context.tree.element!.className;
-              var isFontAwesomeIcon = iconParent
-                  .toString()
-                  .contains(RegExp(r'fa ', caseSensitive: false));
-
-              var iconChild =
-                  context.tree.element!.children[0].attributes.values;
-              var iconParsed = iconChild.first.replaceFirst(RegExp(r'#'), '');
-
-              List bannedIcons = ['far-image', 'discourse-expand'];
-
-              if (isFontAwesomeIcon) {
-                if (bannedIcons.contains(iconParsed)) {
-                  return Container();
-                } else {
-                  return FaIcon(iconParsed);
-                }
-              }
-            },
-            "img": (context, child) {
-              var classes = context.tree.element?.className;
-              var classesSplit = classes?.split(" ");
-
-              var classIsEmoji = classesSplit!.contains('emoji') ||
-                  classesSplit.contains('emoji-only');
-
-              var emojiImage = context.tree.attributes['src'].toString();
-
-              if (classIsEmoji) {
-                return Image.network(
-                  emojiImage,
-                  height: 25,
-                  width: 25,
-                );
-              }
-            }
-          },
-          onLinkTap: (String? url, RenderContext context,
-              Map<String, String> attributes, dom.Element? element) {
-            launch(url!);
-          },
+                )
+              ],
+            )
+          ]),
         ),
       ),
     ],
