@@ -69,9 +69,9 @@ class ForumLoginModel extends BaseViewModel {
 
   Future show2AuthDialog() async {
     DialogResponse? response = await _dialogService.showCustomDialog(
-      variant: DialogType.form,
-      title: 'This is a custom UI with Text as main button',
-      description: 'Sheck out the builder in the dialog_ui_register.dart file',
+      variant: DialogType.authform,
+      title: 'Two-Factor Authentication',
+      description: 'Please enter the authentication code from your app:',
       mainButtonTitle: 'Ok',
     );
   }
