@@ -92,23 +92,16 @@ class NewsArticlePostView extends StatelessWidget {
                               children: [
                                 Padding(
                                   padding: const EdgeInsets.all(16),
-                                  child: Container(
-                                    decoration: BoxDecoration(
-                                        border: Border.all(
-                                            width: 4,
-                                            color: NewsHelper
-                                                .randomBorderColor())),
-                                    child: FadeInImage.assetNetwork(
-                                        height: 50,
-                                        fadeOutDuration:
-                                            const Duration(milliseconds: 500),
-                                        fadeInDuration:
-                                            const Duration(milliseconds: 500),
-                                        fit: BoxFit.fill,
-                                        placeholder:
-                                            'assets/images/placeholder-profile-img.png',
-                                        image: article.profileImage),
-                                  ),
+                                  child: FadeInImage.assetNetwork(
+                                      height: 50,
+                                      fadeOutDuration:
+                                          const Duration(milliseconds: 500),
+                                      fadeInDuration:
+                                          const Duration(milliseconds: 500),
+                                      fit: BoxFit.fill,
+                                      placeholder:
+                                          'assets/images/placeholder-profile-img.png',
+                                      image: article.profileImage),
                                 ),
                                 Expanded(
                                     child: Container(
