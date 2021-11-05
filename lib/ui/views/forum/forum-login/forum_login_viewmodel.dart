@@ -130,6 +130,7 @@ class ForumLoginModel extends BaseViewModel {
         prefs.setString('username', username);
         _isLoggedIn = prefs.getBool('loggedIn') as bool;
         prefs.remove("authCode");
+        notifyListeners();
       } else {
         show2AuthDialog(csrf, username, password, cookie);
       }
