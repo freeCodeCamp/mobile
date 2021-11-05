@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:freecodecamp/app/app.locator.dart';
 import 'package:freecodecamp/enums/dialog_type.dart';
 import 'package:stacked_services/stacked_services.dart';
@@ -9,8 +10,10 @@ void setupDialogUi() {
   final builders = {
     DialogType.basic: (contex, sheetRequest, completer) =>
         _BasicDialog(request: sheetRequest, completer: completer),
-    DialogType.authform: (contex, sheetRequest, completer) =>
-        _AuthFormDialog(request: sheetRequest, completer: completer)
+    DialogType.authform: (contex, sheetRequest, completer) => _AuthFormDialog(
+          request: sheetRequest,
+          onDialogTap: completer,
+        )
   };
 
   dialogService.registerCustomDialogBuilders(builders);
@@ -28,15 +31,15 @@ class _BasicDialog extends StatelessWidget {
   }
 }
 
-class _AuthFormDialog extends StatelessWidget {
+class _AuthFormDialog extends HookWidget {
   final DialogRequest request;
-  final Function(DialogResponse) completer;
-  const _AuthFormDialog(
-      {Key? key, required this.request, required this.completer})
+  final Function(DialogResponse) onDialogTap;
+  _AuthFormDialog({Key? key, required this.request, required this.onDialogTap})
       : super(key: key);
 
   @override
   Widget build(BuildContext context) {
+    final authCodeController = useTextEditingController();
     return Dialog(
         backgroundColor: const Color(0xFF0a0a23),
         child: Column(
@@ -78,6 +81,7 @@ class _AuthFormDialog extends StatelessWidget {
                     child: SizedBox(
                       height: 100,
                       child: TextField(
+                        controller: authCodeController,
                         maxLength: 6,
                         keyboardType: TextInputType.number,
                         style: const TextStyle(color: Colors.white),
@@ -112,7 +116,11 @@ class _AuthFormDialog extends StatelessWidget {
                         side: const BorderSide(width: 2, color: Colors.white),
                         shape: RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(0))),
-                    onPressed: () {},
+                    onPressed: () => {
+                          onDialogTap(DialogResponse(
+                              data: authCodeController.text, confirmed: true)),
+                          onDialogTap(DialogResponse())
+                        },
                     child: const Text(
                       'LOGIN',
                       textAlign: TextAlign.center,
