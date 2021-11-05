@@ -47,12 +47,30 @@ class ForumCommentView extends StatelessWidget {
                     ),
                     model.isEditingPost && model.editedPostId == post.postId
                         ? commentEditor(model, post)
-                        : commentHtml(index, context, comments, model),
-                    commentFooter(post, model, context),
+                        : post.postAction != null
+                            ? commentAction(model, post)
+                            : commentHtml(index, context, comments, model),
+                    Container(
+                      decoration: const BoxDecoration(
+                          border: Border(
+                              bottom:
+                                  BorderSide(width: 2, color: Colors.white))),
+                      child: post.postAction == null
+                          ? commentFooter(post, model, context)
+                          : Container(),
+                    )
                   ],
                 ),
               );
             }));
+  }
+
+  Padding commentAction(PostViewModel model, PostModel post) {
+    return Padding(
+      padding: const EdgeInsets.all(48.0),
+      child: model.postActionParser(
+          post.postAction as String, post.postCreateDate),
+    );
   }
 
   Row commentHeader(PostViewModel model, PostModel post) {
@@ -177,64 +195,60 @@ class ForumCommentView extends StatelessWidget {
     );
   }
 
-  Container commentFooter(
+  Column commentFooter(
       PostModel post, PostViewModel model, BuildContext context) {
-    return Container(
-      decoration: const BoxDecoration(
-          border: Border(bottom: BorderSide(width: 2, color: Colors.white))),
-      child: Column(
-        children: [
-          Row(
-            children: [
-              Padding(
-                padding: const EdgeInsets.all(24.0),
-                child: Text(
-                  PostViewModel.parseDate(post.postCreateDate),
-                  style: const TextStyle(color: Colors.white, fontSize: 18),
-                ),
+    return Column(
+      children: [
+        Row(
+          children: [
+            Padding(
+              padding: const EdgeInsets.all(24.0),
+              child: Text(
+                PostViewModel.parseDate(post.postCreateDate),
+                style: const TextStyle(color: Colors.white, fontSize: 18),
               ),
-              IconButton(
-                onPressed: () {
-                  model.parseShareUrl(context, post.postSlug);
-                },
-                icon: const Icon(Icons.share_outlined),
-                color: Colors.white,
-              ),
-              post.postCanEdit && !model.isEditingPost
-                  ? IconButton(
-                      onPressed: () {
-                        model.editPost(post.postId, post.postCooked!);
-                      },
-                      icon: const Icon(
-                        Icons.edit_sharp,
-                        color: Colors.white,
-                      ))
-                  : Container(),
-              post.postCanDelete
-                  ? model.recentlyDeletedPost &&
-                          model.recentlyDeletedPostId == post.postId
-                      ? IconButton(
-                          onPressed: () {
-                            model.recoverPost(post.postId);
-                          },
-                          icon: const Icon(
-                            Icons.refresh_sharp,
-                            color: Colors.white,
-                          ))
-                      : IconButton(
-                          onPressed: () {
-                            // first id is the comment id
-                            model.deletePost(post.postId, postId, postSlug);
-                          },
-                          icon: const Icon(
-                            Icons.delete_sharp,
-                            color: Colors.white,
-                          ))
-                  : Container()
-            ],
-          ),
-        ],
-      ),
+            ),
+            IconButton(
+              onPressed: () {
+                model.parseShareUrl(context, post.postSlug);
+              },
+              icon: const Icon(Icons.share_outlined),
+              color: Colors.white,
+            ),
+            post.postCanEdit && !model.isEditingPost
+                ? IconButton(
+                    onPressed: () {
+                      model.editPost(post.postId, post.postCooked!);
+                    },
+                    icon: const Icon(
+                      Icons.edit_sharp,
+                      color: Colors.white,
+                    ))
+                : Container(),
+            post.postCanDelete
+                ? model.recentlyDeletedPost &&
+                        model.recentlyDeletedPostId == post.postId
+                    ? IconButton(
+                        onPressed: () {
+                          model.recoverPost(post.postId);
+                        },
+                        icon: const Icon(
+                          Icons.refresh_sharp,
+                          color: Colors.white,
+                        ))
+                    : IconButton(
+                        onPressed: () {
+                          // first id is the comment id
+                          model.deletePost(post.postId, postId, postSlug);
+                        },
+                        icon: const Icon(
+                          Icons.delete_sharp,
+                          color: Colors.white,
+                        ))
+                : Container()
+          ],
+        ),
+      ],
     );
   }
 }

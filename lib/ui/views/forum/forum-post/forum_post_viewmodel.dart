@@ -3,6 +3,7 @@ import 'dart:math';
 import 'dart:ui';
 import 'dart:async';
 import 'package:flutter/material.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:freecodecamp/app/app.locator.dart';
 import 'package:freecodecamp/app/app.router.dart';
 import 'package:freecodecamp/models/forum_post_model.dart';
@@ -202,5 +203,49 @@ class PostViewModel extends BaseViewModel {
   void goToUserProfile(username) {
     _navigationService.navigateTo(Routes.forumUserView,
         arguments: ForumUserViewArguments(username: username));
+  }
+
+  Row returnAction(Icon icon, String message, TextStyle style) {
+    return Row(
+      children: [
+        icon,
+        Padding(
+          padding: const EdgeInsets.only(left: 16.0),
+          child: Text(message, style: style),
+        )
+      ],
+    );
+  }
+
+  Row postActionParser(String action, String date) {
+    Icon? icon;
+    String? message;
+
+    TextStyle style = const TextStyle(color: Colors.white, fontSize: 16);
+
+    date = Jiffy(date).fromNow().toUpperCase();
+
+    switch (action) {
+      case "visible.disabled":
+        message = "UNLISTED " + date;
+        icon = const Icon(
+          FontAwesomeIcons.eyeSlash,
+          color: Colors.white,
+        );
+        return returnAction(icon, message, style);
+      case "split_topic":
+        message = "SPLIT THIS TOPIC " + date;
+        icon = const Icon(FontAwesomeIcons.signOutAlt, color: Colors.white);
+        return returnAction(icon, message, style);
+      case "closed.enabled":
+        message = "CLOSED " + date;
+        icon = const Icon(FontAwesomeIcons.lock, color: Colors.white);
+        return returnAction(icon, message, style);
+      default:
+        message = "UNKNOWN ACTON: " + action;
+        return Row(
+          children: [Text(message, style: style)],
+        );
+    }
   }
 }
