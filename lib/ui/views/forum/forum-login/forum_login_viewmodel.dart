@@ -1,9 +1,15 @@
-import 'dart:convert';
 import 'package:flutter/material.dart';
+import 'package:freecodecamp/app/app.locator.dart';
+import 'package:freecodecamp/enums/dialog_type.dart';
 import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:stacked/stacked.dart';
+import 'package:stacked_services/stacked_services.dart';
+
+import 'setup_dialog_ui.dart';
+
 import 'dart:developer' as dev;
+import 'dart:convert';
 
 class ForumLoginModel extends BaseViewModel {
   static String baseUrl = 'https://forum.freecodecamp.org';
@@ -13,6 +19,8 @@ class ForumLoginModel extends BaseViewModel {
 
   final _passwordController = TextEditingController();
   TextEditingController get passwordController => _passwordController;
+
+  final _dialogService = locator<DialogService>();
 
   bool _hasAuthError = false;
   bool get hasAuthError => _hasAuthError;
@@ -32,6 +40,7 @@ class ForumLoginModel extends BaseViewModel {
   void initState() async {
     _errorMessage = '';
     _isLoggedIn = await checkLoggedIn();
+    setupDialogUi();
     notifyListeners();
   }
 
@@ -58,10 +67,22 @@ class ForumLoginModel extends BaseViewModel {
     return [csrf, cookie];
   }
 
+  Future show2AuthDialog() async {
+    DialogResponse? response = await _dialogService.showCustomDialog(
+      variant: DialogType.form,
+      title: 'This is a custom UI with Text as main button',
+      description: 'Sheck out the builder in the dialog_ui_register.dart file',
+      mainButtonTitle: 'Ok',
+    );
+  }
+
   bool noAuthError(authBody) {
     Map<String, dynamic> body = json.decode(authBody);
     if (body.containsKey("error")) {
-      return false;
+      if (body['reason'] == 'invalid_second_factor_method') {
+        show2AuthDialog();
+        return false;
+      }
     }
     return true;
   }
@@ -91,15 +112,14 @@ class ForumLoginModel extends BaseViewModel {
         _isLoggedIn = prefs.getBool('loggedIn') as bool;
         notifyListeners();
       } else {
+        dev.log(response.body);
         _hasPasswordError = false;
         _hasUsernameError = false;
         _hasAuthError = true;
-        _errorMessage = 'Incorrect username, email or password';
+        _errorMessage = json.decode(response.body)['error'];
         notifyListeners();
       }
       return response.body;
-    } else {
-      dev.log(response.body);
     }
   }
 
