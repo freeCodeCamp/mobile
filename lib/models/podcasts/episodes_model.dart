@@ -1,6 +1,7 @@
 // This class name might be changed in the future
-class DownloadedEpisodes {
+class Episodes {
   final String guid;
+  final String podcastId;
   final String? title;
   final String? description;
   final String? link;
@@ -13,8 +14,9 @@ class DownloadedEpisodes {
   // Usual boolean to int
   bool downloaded;
 
-  DownloadedEpisodes({
+  Episodes({
     required this.guid,
+    required this.podcastId,
     this.title,
     this.description,
     this.link = '',
@@ -25,9 +27,9 @@ class DownloadedEpisodes {
     this.downloaded = false,
   });
 
-  factory DownloadedEpisodes.fromJson(Map<String, dynamic> json) =>
-      DownloadedEpisodes(
+  factory Episodes.fromJson(Map<String, dynamic> json) => Episodes(
         guid: json['guid'] as String,
+        podcastId: json['podcastId'] as String,
         title: json['title'] as String?,
         description: json['description'] as String?,
         link: json['link'] as String?,
@@ -45,6 +47,7 @@ class DownloadedEpisodes {
 
   Map<String, dynamic> toJson() => {
         'guid': guid,
+        'podcastId': podcastId,
         'title': title,
         'description': description,
         'link': link,
@@ -57,8 +60,16 @@ class DownloadedEpisodes {
 
   @override
   String toString() {
-    return """DownloadedEpisodes{guid: $guid, title: $title, description: $description,
-      link: $link, publicationDate: $publicationDate, contentUrl: $contentUrl, imageUrl: $imageUrl,
-      duration: $duration, downloaded: $downloaded}""";
+    return """Episodes {
+      guid: $guid, 
+      podcastId: $podcastId, 
+      title: $title, 
+      description: ${description!.substring(0, 100)},
+      link: $link, publicationDate: $publicationDate, 
+      contentUrl: $contentUrl, 
+      imageUrl: $imageUrl,
+      duration: $duration, 
+      downloaded: $downloaded
+    }""";
   }
 }
