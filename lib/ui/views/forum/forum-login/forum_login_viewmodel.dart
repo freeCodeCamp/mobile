@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:freecodecamp/app/app.locator.dart';
 import 'package:freecodecamp/enums/dialog_type.dart';
-import 'package:freecodecamp/ui/views/forum/forum_connect.dart';
 import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:stacked/stacked.dart';
@@ -41,8 +40,10 @@ class ForumLoginModel extends BaseViewModel {
   void initState() async {
     _errorMessage = '';
     _isLoggedIn = await checkLoggedIn();
-    setupDialogUi();
     notifyListeners();
+    if (!_isLoggedIn) {
+      setupDialogUi();
+    }
   }
 
   Future<dynamic> getCSRF() async {
