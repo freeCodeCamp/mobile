@@ -127,12 +127,16 @@ class ForumLoginModel extends BaseViewModel {
           .post(Uri.parse(baseUrl + '/session$paramters'), headers: headers);
 
       if (response.statusCode == 200) {
-        prefs.setBool('loggedIn', true);
-        prefs.setString('username', username);
-        _isLoggedIn = prefs.getBool('loggedIn') as bool;
-        prefs.remove("authCode");
-        notifyListeners();
+        if (noAuthError(response.body)) {
+          prefs.setBool('loggedIn', true);
+          prefs.setString('username', username);
+          _isLoggedIn = prefs.getBool('loggedIn') as bool;
+          notifyListeners();
+        } else {
+          show2AuthDialog(csrf, username, password, cookie);
+        }
       } else {
+        dev.log(response.body.toString());
         show2AuthDialog(csrf, username, password, cookie);
       }
 
