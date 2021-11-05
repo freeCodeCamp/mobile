@@ -55,7 +55,6 @@ class ForumLoginModel extends BaseViewModel {
 
     if (response.statusCode == 200) {
       dev.log('Got CSRF token!');
-      dev.log(response.headers.toString());
     } else if (response.statusCode == 403) {
       throw Exception('403 error');
     } else {
@@ -78,7 +77,7 @@ class ForumLoginModel extends BaseViewModel {
     if (response!.confirmed && response.data.length == 6) {
       SharedPreferences prefs = await SharedPreferences.getInstance();
       String authCode = response.data;
-      prefs.setString("auhtCode", authCode);
+      prefs.setString("authCode", authCode);
 
       discourseAuth2(csrf, username, password, cookie);
     }
@@ -94,6 +93,7 @@ class ForumLoginModel extends BaseViewModel {
 
   bool hasAuth2Enabled(authBody) {
     Map<String, dynamic> body = json.decode(authBody);
+
     if (body['reason'] == 'invalid_second_factor_method') {
       return true;
     }
@@ -116,14 +116,25 @@ class ForumLoginModel extends BaseViewModel {
     SharedPreferences prefs = await SharedPreferences.getInstance();
 
     if (prefs.getString("authCode") != null) {
-      String creds = '?login=$username&password=$password';
+      String authCode = prefs.get("authCode") as String;
 
-      String paramters = '$creds';
+      String creds = '?login=$username&password=$password';
+      String auth = '&second_factor_token=$authCode&second_factor_method=1';
+      String paramters = '$creds$auth';
 
       final response = await http
           .post(Uri.parse(baseUrl + '/session$paramters'), headers: headers);
 
-      if (response.statusCode == 200) {}
+      if (response.statusCode == 200) {
+        prefs.setBool('loggedIn', true);
+        prefs.setString('username', username);
+        _isLoggedIn = prefs.getBool('loggedIn') as bool;
+        prefs.remove("authCode");
+      } else {
+        show2AuthDialog(csrf, username, password, cookie);
+      }
+
+      prefs.remove("authCode");
     } else {
       show2AuthDialog(csrf, username, password, cookie);
     }
@@ -145,17 +156,15 @@ class ForumLoginModel extends BaseViewModel {
       if (noAuthError(response.body)) {
         SharedPreferences prefs = await SharedPreferences.getInstance();
 
-        if (hasAuth2Enabled(response.body)) {
-          show2AuthDialog(csrf, username, password, cookie);
-        } else {
-          prefs.setBool('loggedIn', true);
-          prefs.setString('username', username);
-          _isLoggedIn = prefs.getBool('loggedIn') as bool;
-        }
+        prefs.setBool('loggedIn', true);
+        prefs.setString('username', username);
+        _isLoggedIn = prefs.getBool('loggedIn') as bool;
 
         notifyListeners();
       } else {
-        dev.log(response.body);
+        if (hasAuth2Enabled(response.body)) {
+          show2AuthDialog(csrf, username, password, cookie);
+        }
         _hasPasswordError = false;
         _hasUsernameError = false;
         _hasAuthError = true;

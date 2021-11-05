@@ -34,7 +34,8 @@ class _BasicDialog extends StatelessWidget {
 class _AuthFormDialog extends HookWidget {
   final DialogRequest request;
   final Function(DialogResponse) onDialogTap;
-  _AuthFormDialog({Key? key, required this.request, required this.onDialogTap})
+  const _AuthFormDialog(
+      {Key? key, required this.request, required this.onDialogTap})
       : super(key: key);
 
   @override
@@ -86,6 +87,8 @@ class _AuthFormDialog extends HookWidget {
                         keyboardType: TextInputType.number,
                         style: const TextStyle(color: Colors.white),
                         decoration: InputDecoration(
+                            helperText: 'Please enter a six digit code',
+                            helperStyle: const TextStyle(color: Colors.white),
                             enabledBorder: const OutlineInputBorder(
                                 borderSide:
                                     BorderSide(color: Colors.white, width: 2)),
