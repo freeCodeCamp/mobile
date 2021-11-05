@@ -84,6 +84,7 @@ class _AuthFormDialog extends HookWidget {
                       child: TextField(
                         controller: authCodeController,
                         maxLength: 6,
+                        autofocus: true,
                         keyboardType: TextInputType.number,
                         style: const TextStyle(color: Colors.white),
                         decoration: InputDecoration(
