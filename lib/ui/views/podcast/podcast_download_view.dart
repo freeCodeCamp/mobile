@@ -17,11 +17,7 @@ class PodcastDownloadView extends StatelessWidget {
   Widget build(BuildContext context) {
     return ViewModelBuilder<PodcastDownloadViewModel>.reactive(
       builder: (context, model, child) => Scaffold(
-        appBar: AppBar(
-          title: const Text('Downloaded Podcasts'),
-          backgroundColor: const Color(0xFF0a0a23),
-        ),
-        backgroundColor: const Color(0xFF0a0a23),
+        backgroundColor: const Color(0xFF2A2A40),
         body: FutureBuilder<List<Episodes>>(
           future: model.fetchPodcastEpisodes(),
           builder: (context, snapshot) {

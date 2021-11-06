@@ -32,7 +32,7 @@ class EpisodeListView extends StatelessWidget {
           title: Text(podcast.title!),
           backgroundColor: const Color(0xFF0a0a23),
         ),
-        backgroundColor: const Color(0xFF0a0a23),
+        backgroundColor: const Color(0xFF2A2A40),
         // backgroundColor: const Color(0xFFFFFFFF),
         body: SingleChildScrollView(
           physics: const ScrollPhysics(),

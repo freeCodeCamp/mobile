@@ -16,9 +16,17 @@ import 'package:uuid/uuid.dart';
 
 class PodcastListViewModel extends BaseViewModel {
   final _databaseService = locator<PodcastsDatabaseService>();
+  // ignore: prefer_const_constructors
   var uuid = Uuid();
   late List<Podcasts> podcasts;
   late Directory appDir;
+  int _index = 0;
+  int get index => _index;
+
+  void setIndex(i) {
+    _index = i;
+    notifyListeners();
+  }
 
   Future<List<Podcasts>> fetchPodcasts() async {
     // Make this faster by checking if podcasts are present in db or not instead

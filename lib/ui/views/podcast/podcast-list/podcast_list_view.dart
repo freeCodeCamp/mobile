@@ -5,10 +5,19 @@ import 'package:flutter/material.dart';
 import 'package:freecodecamp/models/podcasts/podcasts_model.dart';
 import 'package:freecodecamp/ui/views/podcast/episode-list/episode_list_view.dart';
 import 'package:freecodecamp/ui/views/podcast/podcast-list/podcast_list_viewmodel.dart';
+import 'package:freecodecamp/ui/views/podcast/podcast_download_view.dart';
 import 'package:freecodecamp/ui/widgets/drawer_widget/drawer_widget_view.dart';
 import 'package:stacked/stacked.dart';
 
-// ui view only
+List views = [
+  const PodcastListViewBuilder(),
+  const PodcastDownloadView(),
+];
+
+List titles = [
+  const Text('Podcasts'),
+  const Text('Downloaded Podcasts'),
+];
 
 class PodcastListView extends StatelessWidget {
   const PodcastListView({Key? key}) : super(key: key);
@@ -18,16 +27,53 @@ class PodcastListView extends StatelessWidget {
     return ViewModelBuilder<PodcastListViewModel>.reactive(
       viewModelBuilder: () => PodcastListViewModel(),
       builder: (context, model, child) => Scaffold(
-        appBar: AppBar(
-          title: const Text('Podcasts List'),
+          appBar: AppBar(
+            title: titles.elementAt(model.index),
+            backgroundColor: const Color(0xFF0a0a23),
+            centerTitle: true,
+          ),
+          drawer: SizedBox(
+            width: MediaQuery.of(context).size.width,
+            child: const DrawerWidgetView(),
+          ),
           backgroundColor: const Color(0xFF0a0a23),
-        ),
-        drawer: SizedBox(
-          width: MediaQuery.of(context).size.width,
-          child: const DrawerWidgetView(),
-        ),
-        backgroundColor: const Color(0xFF0a0a23),
-        // backgroundColor: const Color(0xFFFFFFFF),
+          bottomNavigationBar: BottomNavigationBar(
+            backgroundColor: const Color(0xFF0a0a23),
+            unselectedItemColor: Colors.white,
+            selectedItemColor: const Color.fromRGBO(0x99, 0xc9, 0xff, 1),
+            currentIndex: model.index,
+            onTap: model.setIndex,
+            items: const [
+              BottomNavigationBarItem(
+                icon: Icon(
+                  Icons.podcasts,
+                  color: Colors.white,
+                ),
+                label: 'Browse',
+              ),
+              BottomNavigationBarItem(
+                icon: Icon(
+                  Icons.download_done,
+                  color: Colors.white,
+                ),
+                label: 'Downloads',
+              ),
+            ],
+          ),
+          body: views.elementAt(model.index)),
+    );
+  }
+}
+
+class PodcastListViewBuilder extends StatelessWidget {
+  const PodcastListViewBuilder({Key? key}) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return ViewModelBuilder<PodcastListViewModel>.reactive(
+      viewModelBuilder: () => PodcastListViewModel(),
+      builder: (context, model, child) => Scaffold(
+        backgroundColor: const Color(0xFF2A2A40),
         body: FutureBuilder<List<Podcasts>>(
           future: model.fetchPodcasts(),
           builder: (context, snapshot) {
