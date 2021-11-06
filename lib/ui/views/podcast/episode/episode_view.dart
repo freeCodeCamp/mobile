@@ -40,7 +40,7 @@ class EpisodeView extends StatelessWidget {
         appBar: AppBar(
           backgroundColor: const Color(0xFF0a0a23),
         ),
-        backgroundColor: const Color(0xFF0a0a23),
+        backgroundColor: const Color(0xFF2A2A40),
         body: Container(
           padding: const EdgeInsets.fromLTRB(16, 0, 16, 0),
           child: SingleChildScrollView(
@@ -85,9 +85,9 @@ class EpisodeView extends StatelessWidget {
                     ),
                     style: ButtonStyle(
                       backgroundColor: MaterialStateColor.resolveWith(
-                          (states) => const Color(0xff3b3b4f)),
+                          (states) => const Color(0xFF0A0A23)),
                       overlayColor: MaterialStateColor.resolveWith(
-                          (states) => const Color(0xff2a2a40)),
+                          (states) => const Color.fromRGBO(255, 255, 255, .3)),
                     ),
                   ),
                 ),
@@ -109,9 +109,9 @@ class EpisodeView extends StatelessWidget {
                     ),
                     style: ButtonStyle(
                       backgroundColor: MaterialStateColor.resolveWith(
-                          (states) => const Color(0xff3b3b4f)),
+                          (states) => const Color(0xFF0A0A23)),
                       overlayColor: MaterialStateColor.resolveWith(
-                          (states) => const Color(0xff2a2a40)),
+                          (states) => const Color.fromRGBO(255, 255, 255, .3)),
                     ),
                   ),
                 ),
