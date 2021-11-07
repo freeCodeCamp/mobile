@@ -42,64 +42,71 @@ class EpisodeListView extends StatelessWidget {
           physics: const ScrollPhysics(),
           child: Column(
             children: [
-              Padding(
-                padding: const EdgeInsets.fromLTRB(16, 8, 16, 16),
+              Container(
+                color: const Color(0xFF0a0a23),
                 child: Column(
                   children: [
-                    Image.file(
-                      File(
-                          '/data/user/0/org.freecodecamp/app_flutter/images/podcast/${podcast.id}.jpg'),
-                      height: 175,
+                    Padding(
+                      padding: const EdgeInsets.fromLTRB(16, 8, 16, 16),
+                      child: Column(
+                        children: [
+                          Image.file(
+                            File(
+                                '/data/user/0/org.freecodecamp/app_flutter/images/podcast/${podcast.id}.jpg'),
+                            height: 175,
+                          ),
+                          const SizedBox(
+                            height: 16,
+                          ),
+                          Text(
+                            podcast.title!,
+                            style: _titleStyle,
+                            textAlign: TextAlign.center,
+                          ),
+                          const SizedBox(
+                            height: 8,
+                          ),
+                          Html(
+                            data: podcast.description!,
+                            onLinkTap: (
+                              String? url,
+                              RenderContext context,
+                              Map<String, String> attributes,
+                              dom.Element? element,
+                            ) {
+                              launch(url!);
+                            },
+                            style: {
+                              'body': Style(
+                                fontSize: const FontSize(16),
+                                color: Colors.white,
+                                margin: EdgeInsets.zero,
+                              )
+                            },
+                          ),
+                        ],
+                      ),
                     ),
-                    const SizedBox(
-                      height: 16,
-                    ),
-                    Text(
-                      podcast.title!,
-                      style: _titleStyle,
-                      textAlign: TextAlign.center,
-                    ),
-                    const SizedBox(
-                      height: 8,
-                    ),
-                    Html(
-                      data: podcast.description!,
-                      onLinkTap: (
-                        String? url,
-                        RenderContext context,
-                        Map<String, String> attributes,
-                        dom.Element? element,
-                      ) {
-                        launch(url!);
-                      },
-                      style: {
-                        'body': Style(
-                          fontSize: const FontSize(16),
+                    Container(
+                      width: MediaQuery.of(context).size.width,
+                      padding: const EdgeInsets.all(16),
+                      decoration: BoxDecoration(
+                        border: Border(
+                          bottom: BorderSide(
+                            color: Colors.grey.shade600,
+                            width: 1,
+                          ),
+                        ),
+                      ),
+                      child: Text(
+                        model.epsLength.toString() + ' episodes',
+                        style: const TextStyle(
                           color: Colors.white,
-                          margin: EdgeInsets.zero,
-                        )
-                      },
+                          fontSize: 18,
+                        ),
+                      ),
                     ),
                   ],
-                ),
-              ),
-              Container(
-                width: MediaQuery.of(context).size.width,
-                padding: const EdgeInsets.all(16),
-                decoration: BoxDecoration(
-                  border: Border(
-                    bottom: BorderSide(
-                      color: Colors.grey.shade600,
-                      width: 1,
-                    ),
-                  ),
-                ),
-                child: Text(
-                  model.epsLength.toString() + ' episodes',
-                  style: const TextStyle(
-                    color: Colors.white,
-                    fontSize: 18,
-                  ),
                 ),
               ),
               FutureBuilder<List<Episodes>?>(
