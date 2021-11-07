@@ -38,7 +38,6 @@ class EpisodeListView extends StatelessWidget {
           backgroundColor: const Color(0xFF0a0a23),
         ),
         backgroundColor: const Color(0xFF2A2A40),
-        // backgroundColor: const Color(0xFFFFFFFF),
         body: SingleChildScrollView(
           physics: const ScrollPhysics(),
           child: Column(
@@ -84,7 +83,26 @@ class EpisodeListView extends StatelessWidget {
                   ],
                 ),
               ),
-              FutureBuilder<List<Episodes>>(
+              Container(
+                width: MediaQuery.of(context).size.width,
+                padding: const EdgeInsets.all(16),
+                decoration: BoxDecoration(
+                  border: Border(
+                    bottom: BorderSide(
+                      color: Colors.grey.shade600,
+                      width: 1,
+                    ),
+                  ),
+                ),
+                child: Text(
+                  model.epsLength.toString() + ' episodes',
+                  style: const TextStyle(
+                    color: Colors.white,
+                    fontSize: 18,
+                  ),
+                ),
+              ),
+              FutureBuilder<List<Episodes>?>(
                 future: model.fetchPodcastEpisodes(isDownloadView),
                 builder: (context, snapshot) {
                   if (snapshot.connectionState != ConnectionState.done) {
@@ -117,7 +135,7 @@ class EpisodeListView extends StatelessWidget {
                   //         .toList(),
                   //   ],
                   // );
-                  return ListView.builder(
+                  return ListView.separated(
                     shrinkWrap: true,
                     physics: const NeverScrollableScrollPhysics(),
                     itemCount: snapshot.data!.length,
@@ -127,6 +145,13 @@ class EpisodeListView extends StatelessWidget {
                         i: index,
                         podcast: podcast,
                         isDownloadView: isDownloadView,
+                      );
+                    },
+                    separatorBuilder: (BuildContext context, int index) {
+                      return Divider(
+                        color: Colors.grey.shade600,
+                        height: 1,
+                        thickness: 1,
                       );
                     },
                   );
@@ -181,14 +206,6 @@ class PodcastEpisodeTemplate extends StatelessWidget {
         constraints: const BoxConstraints(minHeight: 50),
         child: Container(
           padding: const EdgeInsets.all(16),
-          decoration: const BoxDecoration(
-            border: Border(
-              top: BorderSide(
-                width: 1,
-                color: Colors.grey,
-              ),
-            ),
-          ),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [

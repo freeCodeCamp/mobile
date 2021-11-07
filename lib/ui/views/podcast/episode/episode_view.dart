@@ -46,6 +46,9 @@ class EpisodeView extends StatelessWidget {
           child: SingleChildScrollView(
             child: Column(
               children: [
+                const SizedBox(
+                  height: 8
+                ),
                 Image.file(
                   File(
                       '/data/user/0/org.freecodecamp/app_flutter/images/podcast/${podcast.id}.jpg'),
