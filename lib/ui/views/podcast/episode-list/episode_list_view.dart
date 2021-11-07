@@ -13,9 +13,14 @@ import 'package:stacked/stacked.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 class EpisodeListView extends StatelessWidget {
-  const EpisodeListView({Key? key, required this.podcast}) : super(key: key);
+  const EpisodeListView({
+    Key? key,
+    required this.podcast,
+    required this.isDownloadView,
+  }) : super(key: key);
 
   final Podcasts podcast;
+  final bool isDownloadView;
 
   final TextStyle _titleStyle =
       const TextStyle(color: Colors.white, fontSize: 24);
@@ -80,7 +85,7 @@ class EpisodeListView extends StatelessWidget {
                 ),
               ),
               FutureBuilder<List<Episodes>>(
-                future: model.fetchPodcastEpisodes(),
+                future: model.fetchPodcastEpisodes(isDownloadView),
                 builder: (context, snapshot) {
                   if (snapshot.connectionState != ConnectionState.done) {
                     return const Center(
@@ -121,6 +126,7 @@ class EpisodeListView extends StatelessWidget {
                         episode: snapshot.data![index],
                         i: index,
                         podcast: podcast,
+                        isDownloadView: isDownloadView,
                       );
                     },
                   );
@@ -135,13 +141,18 @@ class EpisodeListView extends StatelessWidget {
 }
 
 class PodcastEpisodeTemplate extends StatelessWidget {
-  const PodcastEpisodeTemplate(
-      {Key? key, required this.episode, required this.i, required this.podcast})
-      : super(key: key);
+  const PodcastEpisodeTemplate({
+    Key? key,
+    required this.episode,
+    required this.i,
+    required this.podcast,
+    required this.isDownloadView,
+  }) : super(key: key);
 
   final Episodes episode;
   final Podcasts podcast;
   final int i;
+  final bool isDownloadView;
 
   String _parseDuration(Duration dur) {
     if (dur.inMinutes > 59) {
@@ -157,10 +168,14 @@ class PodcastEpisodeTemplate extends StatelessWidget {
       onTap: () {
         log("Clicked ${episode.title}");
         Navigator.push(
-            context,
-            MaterialPageRoute(
-                builder: (context) =>
-                    EpisodeView(episode: episode, podcast: podcast)));
+          context,
+          MaterialPageRoute(
+            builder: (context) => EpisodeView(
+              episode: episode,
+              podcast: podcast,
+            ),
+          ),
+        );
       },
       child: ConstrainedBox(
         constraints: const BoxConstraints(minHeight: 50),

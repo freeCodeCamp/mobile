@@ -12,9 +12,13 @@ class EpisodeListViewModel extends BaseViewModel {
 
   EpisodeListViewModel(this.podcast);
 
-  Future<List<Episodes>> fetchPodcastEpisodes() async {
+  Future<List<Episodes>> fetchPodcastEpisodes(bool isDownloadView) async {
     await _databaseService.initialise();
-    episodes = await _databaseService.getEpisodes(podcast.id);
+    if (isDownloadView) {
+      episodes = await _databaseService.getDownloadedEpisodes(podcast.id);
+    } else {
+      episodes = await _databaseService.getEpisodes(podcast.id);
+    }
     return episodes;
   }
 }
