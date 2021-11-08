@@ -45,6 +45,7 @@ dependencies:
   html: ^0.15.0
   uuid: ^3.0.5
   fk_user_agent: ^2.0.1
+  readmore: ^2.1.0
 dev_dependencies:
   build_runner: ^2.1.2
   flutter_test:

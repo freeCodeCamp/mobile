@@ -3,6 +3,7 @@ import 'package:freecodecamp/models/podcasts/episodes_model.dart';
 import 'package:freecodecamp/models/podcasts/podcasts_model.dart';
 import 'package:freecodecamp/service/podcasts_service.dart';
 import 'package:stacked/stacked.dart';
+import 'package:html/parser.dart';
 import 'dart:developer';
 
 class EpisodeListViewModel extends BaseViewModel {
@@ -22,11 +23,13 @@ class EpisodeListViewModel extends BaseViewModel {
       episodes = await _databaseService.getEpisodes(podcast.id);
     }
     epsLength = episodes.length;
-    // TODO: notifyListeners rebuilds view leading to above db functions being 
+    // TODO: notifyListeners rebuilds view leading to above db functions being
     // called twice. Check if it can be prevented
     if (temp != epsLength) {
       notifyListeners();
     }
+    // Parse html description
+    // log("PARSED ${parse(podcast.description!).documentElement?.text}");
     return episodes;
   }
 }

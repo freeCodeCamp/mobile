@@ -9,6 +9,7 @@ import 'package:freecodecamp/ui/views/podcast/episode-list/episode_list_viewmode
 import 'package:freecodecamp/ui/views/podcast/episode/episode_view.dart';
 import 'package:html/dom.dart' as dom;
 import 'package:intl/intl.dart';
+import 'package:readmore/readmore.dart';
 import 'package:stacked/stacked.dart';
 import 'package:url_launcher/url_launcher.dart';
 
@@ -66,6 +67,20 @@ class EpisodeListView extends StatelessWidget {
                           const SizedBox(
                             height: 8,
                           ),
+                          // TODO: Works correctly but for links in
+                          // description(check commented line in viewmodel)
+                          // placeholder text comes up
+                          // ReadMoreText(
+                          //   podcast.description!,
+                          //   trimLines: 3,
+                          //   trimMode: TrimMode.Line,
+                          //   trimCollapsedText: 'More ∨',
+                          //   trimExpandedText: 'Less ∧',
+                          //   style: const TextStyle(
+                          //     color: Colors.white,
+                          //     fontSize: 16,
+                          //   ),
+                          // ),
                           Html(
                             data: podcast.description!,
                             onLinkTap: (
