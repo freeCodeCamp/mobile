@@ -54,7 +54,7 @@ class _AuthFormDialog extends HookWidget {
                     request.title as String,
                     style: const TextStyle(
                         color: Colors.white,
-                        fontSize: 24,
+                        fontSize: 16,
                         fontWeight: FontWeight.bold),
                   ),
                 ],
