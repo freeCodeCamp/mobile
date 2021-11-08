@@ -1,3 +1,4 @@
+import 'package:freecodecamp/service/notification_service.dart';
 import 'package:freecodecamp/service/podcasts_service.dart';
 import 'package:freecodecamp/ui/views/browser/browser_view.dart';
 import 'package:freecodecamp/ui/views/forum/forum-categories/forum_category_view.dart';
@@ -43,7 +44,8 @@ import 'package:sqflite_migration_service/sqflite_migration_service.dart';
     LazySingleton(classType: DialogService),
     LazySingleton(classType: SnackbarService),
     LazySingleton(classType: DatabaseMigrationService),
-    LazySingleton(classType: PodcastsDatabaseService)
+    LazySingleton(classType: PodcastsDatabaseService),
+    LazySingleton(classType: NotificationService)
   ],
   logger: StackedLogger(),
 )
