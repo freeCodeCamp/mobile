@@ -47,11 +47,12 @@ class EpisodeView extends StatelessWidget {
             child: Column(
               children: [
                 const SizedBox(
-                  height: 8
+                  height: 8,
                 ),
                 Image.file(
                   File(
-                      '/data/user/0/org.freecodecamp/app_flutter/images/podcast/${podcast.id}.jpg'),
+                    '/data/user/0/org.freecodecamp/app_flutter/images/podcast/${podcast.id}.jpg',
+                  ),
                   height: 250,
                 ),
                 const SizedBox(
@@ -76,6 +77,7 @@ class EpisodeView extends StatelessWidget {
                 ),
                 SizedBox(
                   width: MediaQuery.of(context).size.width,
+                  height: 40,
                   child: TextButton.icon(
                     onPressed: model.playBtnClick,
                     icon: Icon(
@@ -94,14 +96,31 @@ class EpisodeView extends StatelessWidget {
                     ),
                   ),
                 ),
+                const SizedBox(
+                  height: 8,
+                ),
                 SizedBox(
                   width: MediaQuery.of(context).size.width,
+                  height: 40,
                   child: TextButton.icon(
                     onPressed: model.downloadBtnClick,
-                    icon: Icon(
-                      model.downloaded ? Icons.delete : Icons.download,
-                      color: Colors.white,
-                    ),
+                    icon: model.downloading
+                        ? SizedBox(
+                            height: 20,
+                            width: 20,
+                            child: double.parse(model.progress) != 0 ? CircularProgressIndicator(
+                              color: Colors.white,
+                              strokeWidth: 2,
+                              value: double.parse(model.progress) / 100,
+                            ) : const CircularProgressIndicator(
+                              color: Colors.white,
+                              strokeWidth: 2,
+                            ),
+                          )
+                        : Icon(
+                            model.downloaded ? Icons.delete : Icons.download,
+                            color: Colors.white,
+                          ),
                     label: Text(
                       model.downloading
                           ? 'DOWNLOADING ${model.progress} %'

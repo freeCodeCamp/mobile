@@ -88,7 +88,7 @@ class EpisodeViewModel extends BaseViewModel {
     var response = await dio.download(uri,
         appDir.path + '/episodes/' + podcast.id + '/' + episode.guid + '.mp3',
         onReceiveProgress: (int recevied, int total) {
-      progress = ((recevied / total) * 100).toStringAsFixed(2);
+      progress = ((recevied / total) * 100).toStringAsFixed(0);
       // log('$recevied / $total : ${((recevied / total) * 100).toStringAsFixed(2)}');
       notifyListeners();
     }, options: Options(headers: {'User-Agent': FkUserAgent.userAgent}));
@@ -117,7 +117,6 @@ class EpisodeViewModel extends BaseViewModel {
       downloaded = !downloaded;
       episode.downloaded = downloaded;
       _databaseService.toggleDownloadEpisode(episode.guid, downloaded);
-      notifyListeners();
     } else if (downloaded) {
       log("DELETING DOWNLOAD");
       File audioFile = File(appDir.path +
@@ -132,7 +131,8 @@ class EpisodeViewModel extends BaseViewModel {
       downloaded = !downloaded;
       episode.downloaded = downloaded;
       _databaseService.toggleDownloadEpisode(episode.guid, downloaded);
-      notifyListeners();
+      progress = '0';
     }
+    notifyListeners();
   }
 }
