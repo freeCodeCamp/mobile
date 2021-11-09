@@ -38,11 +38,8 @@ class NewsArticlePostView extends StatelessWidget {
                   children: [
                     Stack(
                       children: [
-                        ConstrainedBox(
-                          constraints: BoxConstraints(
-                              minHeight: 100,
-                              maxHeight: 250,
-                              minWidth: MediaQuery.of(context).size.width),
+                        SizedBox(
+                          height: 250,
                           child: FadeInImage.assetNetwork(
                             placeholder:
                                 'assets/images/freecodecamp-banner.png',
@@ -165,12 +162,11 @@ Row htmlView(Article article, BuildContext context) {
                     fontSize: FontSize.rem(1.35),
                   ),
                   "pre": Style(
-                      color: Colors.white,
-                      width: MediaQuery.of(context).size.width,
-                      backgroundColor:
-                          const Color.fromRGBO(0x2A, 0x2A, 0x40, 1),
-                      padding: const EdgeInsets.all(25),
-                      textOverflow: TextOverflow.clip),
+                    color: Colors.white,
+                    width: MediaQuery.of(context).size.width,
+                    backgroundColor: const Color.fromRGBO(0x2A, 0x2A, 0x40, 1),
+                    padding: const EdgeInsets.all(10),
+                  ),
                   "code": Style(
                       backgroundColor:
                           const Color.fromRGBO(0x2A, 0x2A, 0x40, 1)),
@@ -196,6 +192,10 @@ Row htmlView(Article article, BuildContext context) {
                       child: (context.tree as TableLayoutElement)
                           .toWidget(context),
                     );
+                  },
+                  "code": (context, child) {
+                    return SingleChildScrollView(
+                        scrollDirection: Axis.horizontal, child: child);
                   }
                 },
                 onLinkTap: (String? url, RenderContext context,
