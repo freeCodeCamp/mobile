@@ -97,7 +97,7 @@ Column postViewTemplate(PostViewModel model, id, slug) {
   );
 }
 
-Column htmlView(PostModel post, BuildContext context, model) {
+Column htmlView(PostModel post, BuildContext context, PostViewModel model) {
   return Column(
     children: [
       postHeader(model, post),
@@ -249,7 +249,7 @@ Column htmlView(PostModel post, BuildContext context, model) {
   );
 }
 
-Row postHeader(model, PostModel post) {
+Row postHeader(PostViewModel model, PostModel post) {
   return Row(
     children: [
       InkWell(
