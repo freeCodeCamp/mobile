@@ -44,12 +44,10 @@ class NewsArticlePostView extends StatelessWidget {
                               maxHeight: 250,
                               minWidth: MediaQuery.of(context).size.width),
                           child: FadeInImage.assetNetwork(
-                            height: 250,
                             placeholder:
                                 'assets/images/freecodecamp-banner.png',
-                            image: NewsHelper.getArticleImage(
-                                article!.featureImage, context),
-                            fit: BoxFit.fill,
+                            image: article!.featureImage,
+                            fit: BoxFit.cover,
                           ),
                         ),
                         Padding(
@@ -94,11 +92,8 @@ class NewsArticlePostView extends StatelessWidget {
                                   padding: const EdgeInsets.all(16),
                                   child: FadeInImage.assetNetwork(
                                       height: 50,
-                                      fadeOutDuration:
-                                          const Duration(milliseconds: 500),
-                                      fadeInDuration:
-                                          const Duration(milliseconds: 500),
-                                      fit: BoxFit.fill,
+                                      width: 50,
+                                      fit: BoxFit.cover,
                                       placeholder:
                                           'assets/images/placeholder-profile-img.png',
                                       image: article.profileImage),
