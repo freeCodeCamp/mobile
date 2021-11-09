@@ -382,9 +382,11 @@ packages:
   flutter_syntax_view:
     dependency: "direct main"
     description:
-      name: flutter_syntax_view
-      url: "https://pub.dartlang.org"
-    source: hosted
+      path: "."
+      ref: master
+      resolved-ref: "0e728bc174fd5c03087948f13d905c5faa945150"
+      url: "https://github.com/Sembauke/flutter_syntax_view"
+    source: git
     version: "4.0.0"
   flutter_test:
     dependency: "direct dev"
