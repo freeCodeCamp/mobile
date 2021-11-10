@@ -13,6 +13,9 @@ class ForumCategoryViewModel extends BaseViewModel {
 
   final NavigationService _navigationService = locator<NavigationService>();
 
+  String _profileImg = 'assets/images/placeholder-profile-img.png';
+  String get profileImg => _profileImg;
+
   int _index = 1;
   int get index => _index;
 

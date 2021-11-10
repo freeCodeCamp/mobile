@@ -32,6 +32,12 @@ class ForumCategoryView extends StatelessWidget {
               backgroundColor: const Color(0xFF0a0a23),
               title: titles.elementAt(model.index),
               centerTitle: true,
+              actions: [
+                IconButton(
+                    onPressed: () {},
+                    icon: Image.asset(
+                        'assets/images/placeholder-profile-img.png'))
+              ],
             ),
             drawer: SizedBox(
               width: MediaQuery.of(context).size.width,
