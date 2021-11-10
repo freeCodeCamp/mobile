@@ -135,7 +135,7 @@ class PostModel {
         bool hasUserImage = userImages.contains(images[i]["avatar_template"]);
 
         if (postUsers[i]["user_id"] == images[j]["id"] && !hasUserImage) {
-          userImages.add(PostViewModel.parseProfileAvatUrl(
+          userImages.add(PostViewModel.parseProfileAvatarUrl(
               images[j]["avatar_template"], "60"));
         }
       }

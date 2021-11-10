@@ -53,7 +53,7 @@ FutureBuilder userTemplateBuilder(context, model) {
                           child: FadeInImage.assetNetwork(
                             placeholder:
                                 'assets/images/placeholder-profile-img.png',
-                            image: PostViewModel.parseProfileAvatUrl(
+                            image: PostViewModel.parseProfileAvatarUrl(
                                 user!.profilePicture,
                                 MediaQuery.of(context)
                                     .size
@@ -117,7 +117,6 @@ FutureBuilder userTemplateBuilder(context, model) {
                                   },
                                   customRender: {
                                     "img": (context, child) {
-                                      
                                       var classes =
                                           context.tree.element?.className;
                                       var classesSplit = classes?.split(" ");

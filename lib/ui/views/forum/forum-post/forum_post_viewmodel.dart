@@ -150,7 +150,7 @@ class PostViewModel extends BaseViewModel {
 
   // this parses different urls based on the cdn (Discourse or FCC)
 
-  static String parseProfileAvatUrl(
+  static String parseProfileAvatarUrl(
     String? url,
     String size,
   ) {

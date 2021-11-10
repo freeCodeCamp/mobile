@@ -1,5 +1,6 @@
 class User {
   final String username;
+  final String userEmail;
   final String name;
   final String profilePicture;
   final String lastSeen;
@@ -20,6 +21,7 @@ class User {
 
   User({
     required this.username,
+    required this.userEmail,
     required this.name,
     required this.profilePicture,
     required this.lastSeen,
@@ -42,6 +44,7 @@ class User {
   factory User.fromJson(Map<String, dynamic> data) {
     return User(
       username: data['user']['username'],
+      userEmail: data['user']['email'],
       name: data['user']['name'],
       profilePicture: data['user']['avatar_template'],
       lastSeen: data['user']['last_seen_at'],

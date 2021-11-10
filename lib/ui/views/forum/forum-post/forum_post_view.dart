@@ -264,7 +264,7 @@ Row postHeader(PostViewModel model, PostModel post) {
                 FadeInImage.assetNetwork(
                     height: 60,
                     placeholder: 'assets/images/placeholder-profile-img.png',
-                    image: PostViewModel.parseProfileAvatUrl(
+                    image: PostViewModel.parseProfileAvatarUrl(
                         post.profieImage, "60")),
               ],
             ),

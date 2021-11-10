@@ -89,7 +89,7 @@ class ForumCommentView extends StatelessWidget {
                         height: 60,
                         placeholder:
                             'assets/images/placeholder-profile-img.png',
-                        image: PostViewModel.parseProfileAvatUrl(
+                        image: PostViewModel.parseProfileAvatarUrl(
                             post.profieImage, "60"))),
               ),
             ],
