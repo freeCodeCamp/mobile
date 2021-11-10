@@ -34,6 +34,10 @@ class ForumCategoryViewModel extends BaseViewModel {
         arguments: ForumPostFeedViewArguments(slug: slug, id: id, name: name));
   }
 
+  void goToUserProfile() {
+    _navigationService.navigateTo(Routes.forumUserProfileView);
+  }
+
   static Future<List<Category>> fetchCategories() async {
     final response = await ForumConnect.connectAndGet('/categories');
 

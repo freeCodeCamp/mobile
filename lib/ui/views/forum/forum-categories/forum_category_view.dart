@@ -34,7 +34,7 @@ class ForumCategoryView extends StatelessWidget {
               centerTitle: true,
               actions: [
                 IconButton(
-                    onPressed: () {},
+                    onPressed: () => model.goToUserProfile(),
                     icon: Image.asset(
                         'assets/images/placeholder-profile-img.png'))
               ],
