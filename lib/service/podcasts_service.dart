@@ -38,6 +38,14 @@ class PodcastsDatabaseService {
         .toList();
   }
 
+  Future<List<Podcasts>> getDownloadedPodcasts() async {
+    List<Map<String, dynamic>> downloadedPodcastResults = await _db.rawQuery(
+        'SELECT * from podcasts where id in (select podcastId from episodes where downloaded=1 group by podcastId)');
+    return downloadedPodcastResults
+        .map((podcast) => Podcasts.fromJson(podcast))
+        .toList();
+  }
+
   Future<Podcasts?> getPodcast(String podcastId) async {
     List<Map<String, dynamic>> podcastResult = await _db.query(
       podcastsTableName,

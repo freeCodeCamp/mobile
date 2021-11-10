@@ -2,9 +2,11 @@ import 'dart:developer';
 import 'dart:io';
 
 import 'package:dio/dio.dart';
+import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:freecodecamp/app/app.locator.dart';
 import 'package:freecodecamp/models/podcasts/episodes_model.dart';
 import 'package:freecodecamp/models/podcasts/podcasts_model.dart';
+import 'package:freecodecamp/service/notification_service.dart';
 import 'package:freecodecamp/service/podcasts_service.dart';
 import 'package:just_audio/just_audio.dart';
 import 'package:just_audio_background/just_audio_background.dart';
@@ -14,6 +16,7 @@ import 'package:fk_user_agent/fk_user_agent.dart';
 
 class EpisodeViewModel extends BaseViewModel {
   final _databaseService = locator<PodcastsDatabaseService>();
+  final _notificationService = locator<NotificationService>();
   final audioPlayer = AudioPlayer();
   Episodes episode;
   final Podcasts podcast;
@@ -88,11 +91,15 @@ class EpisodeViewModel extends BaseViewModel {
     var response = await dio.download(uri,
         appDir.path + '/episodes/' + podcast.id + '/' + episode.guid + '.mp3',
         onReceiveProgress: (int recevied, int total) {
-      progress = ((recevied / total) * 100).toStringAsFixed(2);
+      progress = ((recevied / total) * 100).toStringAsFixed(0);
       // log('$recevied / $total : ${((recevied / total) * 100).toStringAsFixed(2)}');
       notifyListeners();
     }, options: Options(headers: {'User-Agent': FkUserAgent.userAgent}));
     downloading = false;
+    await _notificationService.showNotification(
+      'Download Complete',
+      episode.title!,
+    );
     log('Downloaded episode ${episode.title}');
     notifyListeners();
   }
@@ -117,7 +124,6 @@ class EpisodeViewModel extends BaseViewModel {
       downloaded = !downloaded;
       episode.downloaded = downloaded;
       _databaseService.toggleDownloadEpisode(episode.guid, downloaded);
-      notifyListeners();
     } else if (downloaded) {
       log("DELETING DOWNLOAD");
       File audioFile = File(appDir.path +
@@ -132,7 +138,8 @@ class EpisodeViewModel extends BaseViewModel {
       downloaded = !downloaded;
       episode.downloaded = downloaded;
       _databaseService.toggleDownloadEpisode(episode.guid, downloaded);
-      notifyListeners();
+      progress = '0';
     }
+    notifyListeners();
   }
 }
