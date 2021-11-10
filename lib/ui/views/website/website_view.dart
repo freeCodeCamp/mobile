@@ -140,15 +140,6 @@ class WebsiteView extends StatelessWidget {
                   viewModel.goToPodcastList();
                 },
               ),
-              ListTile(
-                title: const Text(
-                  'Downloaded Podcasts',
-                  style: TextStyle(color: Color(0xFF0a0a23)),
-                ),
-                onTap: () {
-                  viewModel.goToDownloadPodcasts();
-                },
-              ),
             ],
           ),
         ),

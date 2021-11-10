@@ -37,16 +37,22 @@ class NewsFeedView extends StatelessWidget {
   }
 
   articleThumbnailBuilder(NewsFeedModel model, BuildContext context) {
-    return ListView.builder(
+    return ListView.separated(
         shrinkWrap: true,
         itemCount: model.articles.length,
         physics: const ClampingScrollPhysics(),
+        separatorBuilder: (context, int i) => const Divider(
+              color: Color.fromRGBO(0x2A, 0x2A, 0x40, 1),
+              thickness: 3,
+            ),
         itemBuilder: (BuildContext contex, int i) => NewsFeedLazyLoading(
             articleCreated: () {
               SchedulerBinding.instance!.addPostFrameCallback(
                   (timeStamp) => model.handleArticleLazyLoading(i));
             },
             child: InkWell(
+                splashColor: Colors.transparent,
+                highlightColor: Colors.transparent,
                 onTap: () {
                   model.navigateTo(model.articles[i].id);
                 },
@@ -66,13 +72,18 @@ class NewsFeedView extends StatelessWidget {
             children: [
               Stack(children: [
                 Container(
+                    color: const Color.fromRGBO(0x2A, 0x2A, 0x40, 1),
                     constraints: BoxConstraints(
                         minHeight: 250,
                         maxHeight: 250,
                         minWidth: MediaQuery.of(context).size.width),
-                    child: const Center(child: CircularProgressIndicator())),
+                    child: const Center(
+                        child: CircularProgressIndicator(
+                      color: Colors.white,
+                    ))),
                 Container(
                   constraints: BoxConstraints(
+                      minHeight: 250,
                       maxHeight: 250,
                       minWidth: MediaQuery.of(context).size.width),
                   child: Image.network(
@@ -107,15 +118,16 @@ class NewsFeedView extends StatelessWidget {
                   )
                 ],
               ),
-              Container(
-                decoration: const BoxDecoration(
-                    border: Border(
-                        bottom: BorderSide(
-                            color: Color.fromRGBO(0x2A, 0x2A, 0x40, 1)))),
-                child: Row(children: [
-                  Padding(
-                    padding: const EdgeInsets.all(16.0),
-                    child: Align(
+              Row(children: [
+                Padding(
+                  padding: const EdgeInsets.all(16.0),
+                  child: Stack(children: [
+                    Container(
+                      color: const Color.fromRGBO(0x2A, 0x2A, 0x40, 1),
+                      width: 45,
+                      height: 45,
+                    ),
+                    Align(
                       alignment: Alignment.topRight,
                       child: SizedBox(
                           width: 45,
@@ -129,25 +141,25 @@ class NewsFeedView extends StatelessWidget {
                                   'assets/images/placeholder-profile-img.png',
                               image: articles[i].profileImage)),
                     ),
+                  ]),
+                ),
+                Padding(
+                  padding:
+                      const EdgeInsets.only(top: 16, bottom: 16, right: 16),
+                  child: Text(
+                    articles[i].authorName.toUpperCase(),
+                    textAlign: TextAlign.right,
+                    style: const TextStyle(color: Colors.white, fontSize: 18),
                   ),
-                  Padding(
-                    padding:
-                        const EdgeInsets.only(top: 16, bottom: 16, right: 16),
-                    child: Text(
-                      articles[i].authorName.toUpperCase(),
-                      textAlign: TextAlign.right,
-                      style: const TextStyle(color: Colors.white, fontSize: 18),
-                    ),
+                ),
+                Expanded(
+                    child: Align(
+                  child: Text(
+                    model.parseDate(articles[i].createdAt),
+                    style: const TextStyle(color: Colors.white),
                   ),
-                  Expanded(
-                      child: Align(
-                    child: Text(
-                      model.parseDate(articles[i].createdAt),
-                      style: const TextStyle(color: Colors.white),
-                    ),
-                  ))
-                ]),
-              ),
+                ))
+              ]),
             ],
           ),
         )

@@ -1,5 +1,3 @@
-import 'dart:developer' as dev;
-
 import 'package:freecodecamp/ui/views/forum/forum-post/forum_post_viewmodel.dart';
 
 // This types and converts the JSON into the instances of the PostModel class.

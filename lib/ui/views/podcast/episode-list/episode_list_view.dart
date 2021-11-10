@@ -9,13 +9,19 @@ import 'package:freecodecamp/ui/views/podcast/episode-list/episode_list_viewmode
 import 'package:freecodecamp/ui/views/podcast/episode/episode_view.dart';
 import 'package:html/dom.dart' as dom;
 import 'package:intl/intl.dart';
+import 'package:readmore/readmore.dart';
 import 'package:stacked/stacked.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 class EpisodeListView extends StatelessWidget {
-  const EpisodeListView({Key? key, required this.podcast}) : super(key: key);
+  const EpisodeListView({
+    Key? key,
+    required this.podcast,
+    required this.isDownloadView,
+  }) : super(key: key);
 
   final Podcasts podcast;
+  final bool isDownloadView;
 
   final TextStyle _titleStyle =
       const TextStyle(color: Colors.white, fontSize: 24);
@@ -32,55 +38,94 @@ class EpisodeListView extends StatelessWidget {
           title: Text(podcast.title!),
           backgroundColor: const Color(0xFF0a0a23),
         ),
-        backgroundColor: const Color(0xFF0a0a23),
-        // backgroundColor: const Color(0xFFFFFFFF),
+        backgroundColor: const Color(0xFF2A2A40),
         body: SingleChildScrollView(
           physics: const ScrollPhysics(),
           child: Column(
             children: [
-              Padding(
-                padding: const EdgeInsets.fromLTRB(16, 8, 16, 16),
+              Container(
+                color: const Color(0xFF0a0a23),
                 child: Column(
                   children: [
-                    Image.file(
-                      File(
-                          '/data/user/0/org.freecodecamp/app_flutter/images/podcast/${podcast.id}.jpg'),
-                      height: 175,
+                    Padding(
+                      padding: const EdgeInsets.fromLTRB(16, 8, 16, 16),
+                      child: Column(
+                        children: [
+                          Image.file(
+                            File(
+                                '/data/user/0/org.freecodecamp/app_flutter/images/podcast/${podcast.id}.jpg'),
+                            height: 175,
+                          ),
+                          const SizedBox(
+                            height: 16,
+                          ),
+                          Text(
+                            podcast.title!,
+                            style: _titleStyle,
+                            textAlign: TextAlign.center,
+                          ),
+                          const SizedBox(
+                            height: 8,
+                          ),
+                          // TODO: Works correctly but for links in
+                          // description(check commented line in viewmodel)
+                          // placeholder text comes up
+                          // ReadMoreText(
+                          //   podcast.description!,
+                          //   trimLines: 3,
+                          //   trimMode: TrimMode.Line,
+                          //   trimCollapsedText: 'More ∨',
+                          //   trimExpandedText: 'Less ∧',
+                          //   style: const TextStyle(
+                          //     color: Colors.white,
+                          //     fontSize: 16,
+                          //   ),
+                          // ),
+                          Html(
+                            data: podcast.description!,
+                            onLinkTap: (
+                              String? url,
+                              RenderContext context,
+                              Map<String, String> attributes,
+                              dom.Element? element,
+                            ) {
+                              launch(url!);
+                            },
+                            style: {
+                              'body': Style(
+                                fontSize: const FontSize(16),
+                                color: Colors.white,
+                                margin: EdgeInsets.zero,
+                              )
+                            },
+                          ),
+                        ],
+                      ),
                     ),
-                    const SizedBox(
-                      height: 16,
-                    ),
-                    Text(
-                      podcast.title!,
-                      style: _titleStyle,
-                      textAlign: TextAlign.center,
-                    ),
-                    const SizedBox(
-                      height: 8,
-                    ),
-                    Html(
-                      data: podcast.description!,
-                      onLinkTap: (
-                        String? url,
-                        RenderContext context,
-                        Map<String, String> attributes,
-                        dom.Element? element,
-                      ) {
-                        launch(url!);
-                      },
-                      style: {
-                        'body': Style(
-                          fontSize: const FontSize(16),
+                    Container(
+                      width: MediaQuery.of(context).size.width,
+                      padding: const EdgeInsets.all(16),
+                      decoration: BoxDecoration(
+                        border: Border(
+                          bottom: BorderSide(
+                            color: Colors.grey.shade600,
+                            width: 1,
+                          ),
+                        ),
+                      ),
+                      child: Text(
+                        model.epsLength.toString() + ' episodes',
+                        style: const TextStyle(
                           color: Colors.white,
-                          margin: EdgeInsets.zero,
-                        )
-                      },
+                          fontSize: 18,
+                        ),
+                      ),
                     ),
                   ],
                 ),
               ),
-              FutureBuilder<List<Episodes>>(
-                future: model.fetchPodcastEpisodes(),
+              FutureBuilder<List<Episodes>?>(
+                future: model.fetchPodcastEpisodes(isDownloadView),
                 builder: (context, snapshot) {
                   if (snapshot.connectionState != ConnectionState.done) {
                     return const Center(
@@ -112,7 +157,7 @@ class EpisodeListView extends StatelessWidget {
                   //         .toList(),
                   //   ],
                   // );
-                  return ListView.builder(
+                  return ListView.separated(
                     shrinkWrap: true,
                     physics: const NeverScrollableScrollPhysics(),
                     itemCount: snapshot.data!.length,
@@ -121,6 +166,14 @@ class EpisodeListView extends StatelessWidget {
                         episode: snapshot.data![index],
                         i: index,
                         podcast: podcast,
+                        isDownloadView: isDownloadView,
+                      );
+                    },
+                    separatorBuilder: (BuildContext context, int index) {
+                      return Divider(
+                        color: Colors.grey.shade600,
+                        height: 1,
+                        thickness: 1,
                       );
                     },
                   );
@@ -135,13 +188,18 @@ class EpisodeListView extends StatelessWidget {
 }
 
 class PodcastEpisodeTemplate extends StatelessWidget {
-  const PodcastEpisodeTemplate(
-      {Key? key, required this.episode, required this.i, required this.podcast})
-      : super(key: key);
+  const PodcastEpisodeTemplate({
+    Key? key,
+    required this.episode,
+    required this.i,
+    required this.podcast,
+    required this.isDownloadView,
+  }) : super(key: key);
 
   final Episodes episode;
   final Podcasts podcast;
   final int i;
+  final bool isDownloadView;
 
   String _parseDuration(Duration dur) {
     if (dur.inMinutes > 59) {
@@ -157,23 +215,19 @@ class PodcastEpisodeTemplate extends StatelessWidget {
       onTap: () {
         log("Clicked ${episode.title}");
         Navigator.push(
-            context,
-            MaterialPageRoute(
-                builder: (context) =>
-                    EpisodeView(episode: episode, podcast: podcast)));
+          context,
+          MaterialPageRoute(
+            builder: (context) => EpisodeView(
+              episode: episode,
+              podcast: podcast,
+            ),
+          ),
+        );
       },
       child: ConstrainedBox(
         constraints: const BoxConstraints(minHeight: 50),
         child: Container(
           padding: const EdgeInsets.all(16),
-          decoration: const BoxDecoration(
-            border: Border(
-              top: BorderSide(
-                width: 1,
-                color: Colors.grey,
-              ),
-            ),
-          ),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
