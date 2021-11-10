@@ -136,6 +136,15 @@ class PostViewModel extends BaseViewModel {
     }
   }
 
+  Future<void> deleteTopic(topicId, context) async {
+    final response = await ForumConnect.connectAnDelete('/t/$topicId', {});
+    if (response.statusCode == 200) {
+      Navigator.pop(context);
+    } else {
+      throw Exception(response.body);
+    }
+  }
+
   Future<void> recoverPost(id) async {
     final response = await ForumConnect.connectAndPut('/posts/$id/recover', {});
 
