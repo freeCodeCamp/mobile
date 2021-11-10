@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:freecodecamp/ui/views/forum/forum-categories/forum_category_builder.dart';
 import 'package:freecodecamp/ui/views/forum/forum-categories/forum_category_viewmodel.dart';
 import 'package:freecodecamp/ui/views/forum/forum-login/forum_login_view.dart';
+import 'package:freecodecamp/ui/views/forum/forum-post/forum_post_viewmodel.dart';
 import 'package:freecodecamp/ui/views/forum/forum-search/forum_search_view.dart';
 import 'package:freecodecamp/ui/widgets/drawer_widget/drawer_widget_view.dart';
 import 'package:stacked/stacked.dart';
@@ -27,16 +28,23 @@ class ForumCategoryView extends StatelessWidget {
   Widget build(BuildContext context) {
     return ViewModelBuilder<ForumCategoryViewModel>.reactive(
         viewModelBuilder: () => ForumCategoryViewModel(),
+        onModelReady: (model) => model.initProfileSettings(),
         builder: (context, model, child) => Scaffold(
             appBar: AppBar(
               backgroundColor: const Color(0xFF0a0a23),
               title: titles.elementAt(model.index),
               centerTitle: true,
               actions: [
-                IconButton(
-                    onPressed: () => model.goToUserProfile(),
-                    icon: Image.asset(
-                        'assets/images/placeholder-profile-img.png'))
+                model.isLoggedIn
+                    ? model.userProfileIsLoading
+                        ? Image.asset(
+                            'assets/images/placeholder-profile-img.png')
+                        : IconButton(
+                            onPressed: () => model.goToUserProfile(),
+                            icon: Image.network(
+                                PostViewModel.parseProfileAvatarUrl(
+                                    model.user.profilePicture, "60")))
+                    : Container()
               ],
             ),
             drawer: SizedBox(
