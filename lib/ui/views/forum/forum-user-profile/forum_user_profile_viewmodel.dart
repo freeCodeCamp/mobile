@@ -1,11 +1,14 @@
 import 'dart:convert';
 
 import 'package:flutter/material.dart';
+import 'package:freecodecamp/app/app.locator.dart';
+import 'package:freecodecamp/enums/dialog_type.dart';
 import 'package:freecodecamp/models/forum_user_model.dart';
 import 'package:freecodecamp/ui/views/forum/forum_connect.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:stacked/stacked.dart';
-import 'dart:developer' as dev;
+
+import 'package:stacked_services/stacked_services.dart';
 
 class ForumUserProfileViewModel extends BaseViewModel {
   late User _user;
@@ -15,6 +18,8 @@ class ForumUserProfileViewModel extends BaseViewModel {
 
   final TextEditingController _emailController = TextEditingController();
   TextEditingController get emailController => _emailController;
+
+  final _dialogService = locator<DialogService>();
 
   bool _userLoaded = false;
   bool get userLoaded => _userLoaded;
@@ -31,7 +36,6 @@ class ForumUserProfileViewModel extends BaseViewModel {
     final response = await ForumConnect.connectAndGet('/u/$username');
 
     if (response.statusCode == 200) {
-      dev.log(response.body.toString());
       _userLoaded = true;
       notifyListeners();
       return User.fromJson(jsonDecode(response.body));
@@ -39,5 +43,12 @@ class ForumUserProfileViewModel extends BaseViewModel {
     throw Exception('could not load user data: ' + response.body.toString());
   }
 
-  Future<void> changeEmail() async {}
+  Future showEmailDialog() async {
+    DialogResponse? response = await _dialogService.showCustomDialog(
+      variant: DialogType.inputForm,
+      mainButtonTitle: 'Change Email'
+      description: "We will send an email to that address. Please follow the confirmation instructions."
+      data: DialogType.authform
+    );
+  }
 }

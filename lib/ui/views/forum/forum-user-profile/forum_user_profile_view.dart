@@ -100,7 +100,9 @@ class ForumUserProfileView extends StatelessWidget {
                   side: const BorderSide(width: 2, color: Colors.white),
                   shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(0))),
-              onPressed: () {},
+              onPressed: () {
+                model.showEmailDialog();
+              },
               child: const Text(
                 'change email address',
                 textAlign: TextAlign.center,
