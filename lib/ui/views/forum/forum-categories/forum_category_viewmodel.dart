@@ -33,15 +33,8 @@ class ForumCategoryViewModel extends BaseViewModel {
     notifyListeners();
   }
 
-  void initState() {
+  void initState() async {
     _future = fetchCategories();
-    notifyListeners();
-  }
-
-  void initProfileSettings() async {
-    _isLoggedIn = await checkLoggedIn();
-    _user = await fetchUser();
-    notifyListeners();
   }
 
   void goToPosts(slug, id, name) {
@@ -54,7 +47,7 @@ class ForumCategoryViewModel extends BaseViewModel {
     _navigationService.navigateTo(Routes.forumUserProfileView);
   }
 
-  static Future<List<Category>> fetchCategories() async {
+  Future<List<Category>> fetchCategories() async {
     final response = await ForumConnect.connectAndGet('/categories');
 
     List<Category> categories = [];
@@ -66,6 +59,10 @@ class ForumCategoryViewModel extends BaseViewModel {
         categories.add(Category.fromJson(categoriesResponse[i]));
       }
     }
+
+    _isLoggedIn = await checkLoggedIn();
+    _user = await fetchUser();
+    notifyListeners();
     return categories;
   }
 

@@ -28,7 +28,7 @@ class ForumCategoryView extends StatelessWidget {
   Widget build(BuildContext context) {
     return ViewModelBuilder<ForumCategoryViewModel>.reactive(
         viewModelBuilder: () => ForumCategoryViewModel(),
-        onModelReady: (model) => model.initProfileSettings(),
+        onModelReady: (model) => model.initState(),
         builder: (context, model, child) => Scaffold(
             appBar: AppBar(
               backgroundColor: const Color(0xFF0a0a23),
