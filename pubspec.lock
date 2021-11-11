@@ -323,6 +323,13 @@ packages:
       url: "https://github.com/Mythar/flutter_font_awesome_web_names"
     source: git
     version: "0.0.4"
+  flutter_hooks:
+    dependency: "direct main"
+    description:
+      name: flutter_hooks
+      url: "https://pub.dartlang.org"
+    source: hosted
+    version: "0.18.0"
   flutter_html:
     dependency: "direct main"
     description:
