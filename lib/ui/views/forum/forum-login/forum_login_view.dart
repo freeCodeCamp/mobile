@@ -125,7 +125,7 @@ Column loginForum(context, ForumLoginModel model) {
                 style: TextStyle(color: Colors.white),
               )),
         ),
-      )
+      ),
     ],
   );
 }

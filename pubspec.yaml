@@ -48,6 +48,7 @@ dependencies:
   html: ^0.15.0
   uuid: ^3.0.5
   fk_user_agent: ^2.0.1
+  flutter_hooks: ^0.18.0
   readmore: ^2.1.0
   flutter_local_notifications: ^9.0.3
   image_picker: ^0.8.4+4
