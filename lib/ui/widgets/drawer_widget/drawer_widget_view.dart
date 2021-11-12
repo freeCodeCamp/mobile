@@ -2,7 +2,6 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:freecodecamp/ui/widgets/drawer_widget/drawer_widget_viewmodel.dart';
 import 'package:stacked/stacked.dart';
-import 'dart:developer' as dev;
 
 class DrawerWidgetView extends StatelessWidget {
   const DrawerWidgetView({
@@ -13,6 +12,7 @@ class DrawerWidgetView extends StatelessWidget {
   Widget build(BuildContext context) {
     return ViewModelBuilder<DrawerWidgtetViewModel>.reactive(
       viewModelBuilder: () => DrawerWidgtetViewModel(),
+      onModelReady: (model) => model.init(),
       builder: (context, model, child) => Drawer(
         child: SingleChildScrollView(
           child: Column(
@@ -42,7 +42,7 @@ class DrawerWidgetView extends StatelessWidget {
                   Expanded(
                     child: navButtonWidget(
                         'NEWS',
-                        'https://www.google.com/',
+                        '',
                         const Icon(
                           Icons.article,
                           size: 70,
@@ -51,18 +51,31 @@ class DrawerWidgetView extends StatelessWidget {
                         model,
                         context),
                   ),
-                  Expanded(
-                    child: navButtonWidget(
-                        'FORUM',
-                        '',
-                        const Icon(
-                          Icons.forum_outlined,
-                          size: 70,
-                        ),
-                        false,
-                        model,
-                        context),
-                  ),
+                  model.inDevelopmentMode
+                      ? Expanded(
+                          child: navButtonWidget(
+                              'FORUM',
+                              '',
+                              const Icon(
+                                Icons.forum_outlined,
+                                size: 70,
+                              ),
+                              false,
+                              model,
+                              context),
+                        )
+                      : Expanded(
+                          child: navButtonWidget(
+                              'LEARN',
+                              'https://www.freecodecamp.org/',
+                              const Icon(
+                                Icons.local_fire_department_sharp,
+                                size: 70,
+                              ),
+                              true,
+                              model,
+                              context),
+                        )
                 ],
               ),
               Row(
@@ -130,7 +143,6 @@ InkWell navButtonWidget(String text, url, Icon icon, bool isWebComponent,
     DrawerWidgtetViewModel model, context) {
   return InkWell(
     onTap: () {
-      dev.log(text);
       if (isWebComponent) {
         model.goToBrowser(url);
       } else {
