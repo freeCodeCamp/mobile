@@ -141,26 +141,24 @@ class NewsFeedView extends StatelessWidget {
                         ),
                       ],
                     ),
-                    Flexible(
-                      child: Wrap(spacing: 10, runSpacing: 10, children: [
-                        Column(
-                          children: [
-                            Text(
+                    Expanded(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Padding(
+                            padding: const EdgeInsets.only(bottom: 10),
+                            child: Text(
                               articles[i].authorName.toUpperCase(),
-                              textAlign: TextAlign.right,
+                              // textAlign: TextAlign.left,
                               style: const TextStyle(color: Colors.white),
                             ),
-                          ],
-                        ),
-                        Column(
-                          children: [
-                            Text(
-                              model.parseDate(articles[i].createdAt),
-                              style: const TextStyle(color: Colors.white),
-                            ),
-                          ],
-                        )
-                      ]),
+                          ),
+                          Text(
+                            model.parseDate(articles[i].createdAt),
+                            style: const TextStyle(color: Colors.white),
+                          ),
+                        ],
+                      ),
                     ),
                   ],
                 ),
