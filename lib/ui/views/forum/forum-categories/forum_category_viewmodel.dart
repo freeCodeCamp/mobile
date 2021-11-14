@@ -4,6 +4,7 @@ import 'package:freecodecamp/app/app.locator.dart';
 import 'package:freecodecamp/app/app.router.dart';
 import 'package:freecodecamp/models/forum_category_model.dart';
 import 'package:freecodecamp/models/forum_user_model.dart';
+import 'package:freecodecamp/ui/widgets/setup_dialog_ui.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:stacked/stacked.dart';
 import 'package:stacked_services/stacked_services.dart';
@@ -33,7 +34,7 @@ class ForumCategoryViewModel extends BaseViewModel {
     notifyListeners();
   }
 
-  void initState() async {
+  void initState() {
     _future = fetchCategories();
   }
 
@@ -63,6 +64,8 @@ class ForumCategoryViewModel extends BaseViewModel {
     _isLoggedIn = await checkLoggedIn();
     _user = await fetchUser();
     notifyListeners();
+    setupDialogUi();
+
     return categories;
   }
 

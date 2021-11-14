@@ -27,14 +27,15 @@ class ForumConnect {
   }
 
   static Future<dynamic> connectAndPost(
-      String endpoint, Map<String, String> headers) async {
+      String endpoint, Map<String, String> headers,
+      [Map<String, dynamic>? body]) async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
-
+    Map<String, String> headers = {'Content-Type': 'application/json'};
     await dotenv.load(fileName: ".env");
     headers['Api-Key'] = dotenv.env['DISCOURSE_API'] as String;
     headers['Api-Username'] = prefs.getString('username') as String;
-    final response =
-        await http.post(Uri.parse(baseUrl + endpoint), headers: headers);
+    final response = await http.post(Uri.parse(baseUrl + endpoint),
+        headers: headers, body: jsonEncode(body));
     dev.log(response.body);
     return response;
   }
@@ -51,7 +52,7 @@ class ForumConnect {
 
     final response = await http.put(Uri.parse(baseUrl + endpoint),
         headers: headers, body: jsonEncode(body));
-    dev.log(response.body);
+    dev.log(baseUrl + endpoint);
     return response;
   }
 

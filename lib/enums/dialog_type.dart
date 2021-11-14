@@ -1,1 +1,1 @@
-enum DialogType { basic, authform, inputForm }
+enum DialogType { basic, authform, inputForm, buttonForm }

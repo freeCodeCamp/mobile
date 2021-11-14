@@ -63,7 +63,9 @@ class ForumUserProfileView extends StatelessWidget {
                   side: const BorderSide(width: 2, color: Colors.white),
                   shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(0))),
-              onPressed: () {},
+              onPressed: () {
+                model.changeProfilePicture();
+              },
               child: const Text(
                 'change profile picture',
                 textAlign: TextAlign.center,
@@ -113,7 +115,7 @@ class ForumUserProfileView extends StatelessWidget {
           title: const Text("Name",
               style: TextStyle(color: Colors.white, fontSize: 20)),
           subtitle: Text(
-            model.user.username,
+            model.user.name,
             style: const TextStyle(color: Colors.white),
           ),
           trailing: ElevatedButton(
@@ -122,7 +124,9 @@ class ForumUserProfileView extends StatelessWidget {
                   side: const BorderSide(width: 2, color: Colors.white),
                   shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(0))),
-              onPressed: () {},
+              onPressed: () {
+                model.showNameDialog();
+              },
               child: const Text(
                 'change your name',
                 textAlign: TextAlign.center,

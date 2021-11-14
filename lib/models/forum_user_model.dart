@@ -1,5 +1,6 @@
 class User {
   final String username;
+  final String userId;
   final String userEmail;
   final String name;
   final String profilePicture;
@@ -38,6 +39,7 @@ class User {
     required this.trustLevel,
     required this.badgeCount,
     required this.postCount,
+    required this.userId,
     required this.badges,
   });
 
@@ -62,6 +64,7 @@ class User {
       trustLevel: data['user']['trust_level'],
       badgeCount: data['user']['badge_count'],
       postCount: data['user']['post_count'],
+      userId: data['user']['id'].toString(),
       badges: data['badges'],
     );
   }
