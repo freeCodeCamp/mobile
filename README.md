@@ -33,7 +33,7 @@ To start developing you can press `ctrl/command` + `F5` to get started. Please m
 
 ## Troubleshoot
 
-- My emulator froze, when your emulator freezes you can simply go to the AVD Manager select the device the has been frozen and select `Wipe data`. Note that the device must not be running. If you do not know how to open the AVD manager on `Android Studio` there should be a little icon on the top right king like this: https://prnt.sc/1zovncm 
+- My emulator froze, when your emulator freezes you can simply go to the AVD Manager select the device the has been frozen and select `Wipe data`. Note that the device must not be running. If you do not know how to open the AVD manager on `Android Studio` there should be a little icon on the top right looking like this: https://prnt.sc/1zovncm 
 
  Notes for users Mac with Apple Silicon
 Follow the official guide but make the below 2 changes:
