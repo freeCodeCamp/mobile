@@ -25,15 +25,15 @@ To get started with development on the mobile application you will first need to
 
 The following step will be downloading the [Flutter SDK](https://flutter.dev/docs/get-started/install), please choose your version carefully. Extract the zip file and place the flutter folder in the desired location and follow the installation steps. For people that use `VsCode` we insist on installing [these  plugins](https://flutter.dev/docs/get-started/editor?tab=vscode) for development. 
 
-As Wev developer you might be familiar with HTML and CSS [here](https://flutter.dev/docs/get-started/flutter-for/web-devs) is a great comparison between Flutter and CSS styling.
+As Web developer you might be familiar with HTML and CSS [here](https://flutter.dev/docs/get-started/flutter-for/web-devs) is a great comparison between Flutter and CSS styling.
 
-When installing an emulator from `Android studio` we recommned using the `Pixel 3a XL` and `Nexus one` for smaller screens. If you use `VsCode` we recommend installing the emulators from `Android Studio`.
+When installing an emulator from `Android studio` we recommend using the `Pixel 3a XL` and `Nexus one` for smaller screens. If you use `VsCode` we recommend installing the emulators from `Android Studio`.
 
 To start developing you can press `ctrl/command` + `F5` to get started. Please make sure you have followed all steps including the installation steps on the Flutter website.
 
-## Trouble shoot
+## Troubleshoot
 
-- My emulator froze, when your emulator freezes you can simply go to the AVD Manager select the device the has been frozen and select `Wipe data`. Note that the device must not be running. If you do not know how to open the AVD manager on `Android Studio` there should be a little icon on the top right loocking like this: https://prnt.sc/1zovncm 
+- My emulator froze, when your emulator freezes you can simply go to the AVD Manager select the device the has been frozen and select `Wipe data`. Note that the device must not be running. If you do not know how to open the AVD manager on `Android Studio` there should be a little icon on the top right king like this: https://prnt.sc/1zovncm 
 
  Notes for users Mac with Apple Silicon
 Follow the official guide but make the below 2 changes:
@@ -43,7 +43,7 @@ Link for download - https://developer.android.com/studio/archive
 * If "flutter doctor" gives an error about Java not found, then the fix for it is to copy the folder "/Applications/Android Studio Preview.app/Contents/jre/Contents" to "/Applications/Android Studio Preview.app/Contents/jre/jdk/Contents" .
 Source - https://github.com/flutter/flutter/issues/76215#issuecomment-864407892
 
-If you have any other issue's getting started please contact us on the [freeCodeCamp chat server](https://chat.freecodecamp.org/).
+If you have any other issues getting started please contact us on the [freeCodeCamp chat server](https://chat.freecodecamp.org/).
 
 
 
