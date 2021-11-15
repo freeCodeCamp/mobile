@@ -80,12 +80,25 @@ class EpisodeView extends StatelessWidget {
                   height: 40,
                   child: TextButton.icon(
                     onPressed: model.playBtnClick,
-                    icon: Icon(
-                      model.playing ? Icons.pause : Icons.play_arrow,
-                      color: Colors.white,
-                    ),
+                    icon: model.loading
+                        ? const SizedBox(
+                            height: 20,
+                            width: 20,
+                            child: CircularProgressIndicator(
+                              color: Colors.white,
+                              strokeWidth: 2,
+                            ),
+                          )
+                        : Icon(
+                            model.playing ? Icons.pause : Icons.play_arrow,
+                            color: Colors.white,
+                          ),
                     label: Text(
-                      model.playing ? 'Pause' : 'Play',
+                      model.loading
+                          ? 'Loading...'
+                          : model.playing
+                              ? 'Pause'
+                              : 'Play',
                       style: const TextStyle(color: Colors.white),
                     ),
                     style: ButtonStyle(
@@ -108,14 +121,16 @@ class EpisodeView extends StatelessWidget {
                         ? SizedBox(
                             height: 20,
                             width: 20,
-                            child: double.parse(model.progress) != 0 ? CircularProgressIndicator(
-                              color: Colors.white,
-                              strokeWidth: 2,
-                              value: double.parse(model.progress) / 100,
-                            ) : const CircularProgressIndicator(
-                              color: Colors.white,
-                              strokeWidth: 2,
-                            ),
+                            child: double.parse(model.progress) != 0
+                                ? CircularProgressIndicator(
+                                    color: Colors.white,
+                                    strokeWidth: 2,
+                                    value: double.parse(model.progress) / 100,
+                                  )
+                                : const CircularProgressIndicator(
+                                    color: Colors.white,
+                                    strokeWidth: 2,
+                                  ),
                           )
                         : Icon(
                             model.downloaded ? Icons.delete : Icons.download,
