@@ -18,7 +18,7 @@ We would love to hear your opinion and great ideas you can come up with!
 Our vision for Q1 2022: 
 - forum will be available 
 - early development of learn
-- the forum component will feature multiple great podcasts
+- the podcast component will feature multiple great podcasts
 
 ### Getting started 
 To get started with development on the mobile application you will first need to have one of the following code editors installed: [VsCode](https://code.visualstudio.com/) or [Android Studio](https://developer.android.com/studio). 
