@@ -73,19 +73,15 @@ class NewsFeedView extends StatelessWidget {
               Stack(children: [
                 Container(
                     color: const Color.fromRGBO(0x2A, 0x2A, 0x40, 1),
-                    constraints: BoxConstraints(
-                        minHeight: 250,
-                        maxHeight: 250,
-                        minWidth: MediaQuery.of(context).size.width),
-                    child: const Center(
-                        child: CircularProgressIndicator(
-                      color: Colors.white,
-                    ))),
-                Container(
-                  constraints: BoxConstraints(
-                      minHeight: 250,
-                      maxHeight: 250,
-                      minWidth: MediaQuery.of(context).size.width),
+                    child: const AspectRatio(
+                      aspectRatio: 16 / 9,
+                      child: Center(
+                          child: CircularProgressIndicator(
+                        color: Colors.white,
+                      )),
+                    )),
+                AspectRatio(
+                  aspectRatio: 16 / 9,
                   child: Image.network(
                     articles![i].featureImage,
                     fit: BoxFit.cover,
