@@ -38,8 +38,8 @@ class NewsArticlePostView extends StatelessWidget {
                   children: [
                     Stack(
                       children: [
-                        SizedBox(
-                          height: 250,
+                        AspectRatio(
+                          aspectRatio: 16 / 9,
                           child: FadeInImage.assetNetwork(
                             placeholder:
                                 'assets/images/freecodecamp-banner.png',
