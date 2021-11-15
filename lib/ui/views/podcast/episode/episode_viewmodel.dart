@@ -37,10 +37,7 @@ class EpisodeViewModel extends BaseViewModel {
     downloaded = episode.downloaded;
     notifyListeners();
     await FkUserAgent.init();
-    // appDir = await getApplicationDocumentsDirectory();
-    // log("DIR: ${appDir.path} ${appDir.uri}");
-    // await _audioService.loadEpisode(episode);
-    // loading = false;
+    appDir = await getApplicationDocumentsDirectory();
   }
 
   // Make this even more better UI and logic wise. Also check for notification update
@@ -65,21 +62,20 @@ class EpisodeViewModel extends BaseViewModel {
     notifyListeners();
   }
 
-  void playBtnClick() {
+  Future<void> playBtnClick() async {
     log("CLICKED PLAY BUTTON ${episode.title}");
-    if (!playing) {
-      log('inside play');
-      loading = true;
-      notifyListeners();
-      _audioService.playAudio(episode);
+    if (!loading) {
+      if (!playing) {
+        loading = true;
+        notifyListeners();
+        await _audioService.playAudio(episode);
+        playing = true;
+      } else {
+        await _audioService.pauseAudio();
+        playing = false;
+      }
       loading = false;
-      playing = true;
-    } else {
-      log('inside pause');
-      _audioService.pauseAudio();
-      playing = false;
     }
-    log('FINISHED BTN CLICK');
     notifyListeners();
   }
 

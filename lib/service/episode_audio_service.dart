@@ -8,14 +8,11 @@ class EpisodeAudioService {
   static final EpisodeAudioService _episodeAudioService = EpisodeAudioService._internal();
   final AudioPlayer _audioPlayer = AudioPlayer();
 
-  AudioPlayer get audioPlayer => _audioPlayer;
-
   factory EpisodeAudioService() {
     return _episodeAudioService;
   }
 
   Future<void> loadEpisode(Episodes episode) async {
-    log('LOADING...');
     try {
       if (episode.downloaded) {
         await _audioPlayer.setAudioSource(
@@ -51,29 +48,26 @@ class EpisodeAudioService {
     } catch (e) {
       log('Cannot play audio: $e');
     }
-    log('LOADED EPISODE');
   }
 
   Future<void> playAudio(Episodes episode) async {
-    log("TO PLAY ${episode.toString()}");
     if (_audioPlayer.playerState.processingState == ProcessingState.idle) {
-      log('IDLE PLAYER');
       await loadEpisode(episode);
     }
-    if (_audioPlayer.playerState.playing &&
-        episode.guid != _audioPlayer.audioSource?.sequence[0].tag.id) {
-      log('DIFFEENT EPISODE');
-      // await _audioPlayer.dispose();
+    if (episode.guid != _audioPlayer.audioSource?.sequence[0].tag.id) {
+      log('DIFFERENT EPISODE');
       await _audioPlayer.stop();
       await loadEpisode(episode);
     }
-    await _audioPlayer.play();
-    log('PLAYING...');
-    return;
+    _audioPlayer.play();
   }
 
   Future<void> pauseAudio() async {
-    await _audioPlayer.pause();
+    _audioPlayer.pause();
+  }
+
+  void disposePlayer() {
+    _audioPlayer.dispose();
   }
 
   bool isPlaying(String episodeId) {

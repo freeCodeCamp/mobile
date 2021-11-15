@@ -79,7 +79,9 @@ class EpisodeView extends StatelessWidget {
                   width: MediaQuery.of(context).size.width,
                   height: 40,
                   child: TextButton.icon(
-                    onPressed: model.playBtnClick,
+                    onPressed: () async {
+                      await model.playBtnClick();
+                    },
                     icon: model.loading
                         ? const SizedBox(
                             height: 20,
