@@ -166,21 +166,25 @@ class PodcastTemplate extends StatelessWidget {
         padding: const EdgeInsets.all(8),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.center,
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          mainAxisAlignment: MainAxisAlignment.center,
           mainAxisSize: MainAxisSize.min,
           children: [
-            Image.file(
-              File(
-                '/data/user/0/org.freecodecamp/app_flutter/images/podcast/${podcast.id}.jpg',
-              ),
-              height: 130,
-              alignment: Alignment.center,
-            ),
             Expanded(
+              flex: 2,
+              child: Image.file(
+                File(
+                  '/data/user/0/org.freecodecamp/app_flutter/images/podcast/${podcast.id}.jpg',
+                ),
+                // height: 130,
+                alignment: Alignment.center,
+              ),
+            ),
+            Flexible(
+              flex: 1,
               child: Padding(
                 padding: const EdgeInsets.only(top: 8),
                 child: Text(
-                  podcast.title!,
+                  podcast.title! + "\n",
                   maxLines: 2,
                   overflow: TextOverflow.ellipsis,
                   textAlign: TextAlign.center,
