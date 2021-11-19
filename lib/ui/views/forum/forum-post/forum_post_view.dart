@@ -1,7 +1,6 @@
-// ignore_for_file: prefer_const_constructors
-
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_font_awesome_web_names/flutter_font_awesome.dart';
 import 'package:flutter_html/flutter_html.dart';
 import 'package:flutter_syntax_view/flutter_syntax_view.dart';
 import 'package:freecodecamp/models/forum_post_model.dart';
@@ -11,7 +10,6 @@ import 'package:stacked/stacked.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:html/dom.dart' as dom;
 import 'forum_post_viewmodel.dart';
-import 'package:flutter_font_awesome_web_names/flutter_font_awesome.dart';
 import 'dart:developer' as dev;
 
 class ForumPostView extends StatelessWidget {
@@ -29,10 +27,10 @@ class ForumPostView extends StatelessWidget {
         onDispose: (model) => model.disposeTimer(),
         builder: (context, model, child) => Scaffold(
               appBar: AppBar(
-                backgroundColor: Color(0xFF0a0a23),
-                title: Text('BACK TO FEED'),
+                backgroundColor: const Color(0xFF0a0a23),
+                title: const Text('Back To Feed'),
               ),
-              backgroundColor: Color.fromRGBO(0x2A, 0x2A, 0x40, 1),
+              backgroundColor: const Color.fromRGBO(0x2A, 0x2A, 0x40, 1),
               body: SingleChildScrollView(
                   child: postViewTemplate(model, id, slug)),
             ));
@@ -60,7 +58,7 @@ Column postViewTemplate(PostViewModel model, id, slug) {
                           padding: const EdgeInsets.all(24.0),
                           child: Text(
                             post.postName as String,
-                            style: TextStyle(
+                            style: const TextStyle(
                                 color: Colors.white,
                                 fontSize: 24,
                                 fontWeight: FontWeight.bold),
@@ -69,176 +67,12 @@ Column postViewTemplate(PostViewModel model, id, slug) {
                       ),
                     ],
                   ),
-                  InkWell(
-                    onTap: () {
-                      model.goToUserProfile(post.username);
-                    },
-                    child: Row(children: [
-                      Column(
-                        children: [
-                          Padding(
-                            padding: const EdgeInsets.all(24.0),
-                            child: Container(
-                                decoration: BoxDecoration(
-                                    border: Border.all(
-                                        width: 4,
-                                        color: model.randomBorderColor())),
-                                child: FadeInImage.assetNetwork(
-                                    height: 60,
-                                    placeholder:
-                                        'assets/images/placeholder-profile-img.png',
-                                    image: PostViewModel.parseProfileAvatUrl(
-                                        post.profieImage, "60"))),
-                          ),
-                        ],
-                      ),
-                      Column(
-                        children: [
-                          Text(
-                            post.username,
-                            style: TextStyle(
-                                color: Colors.white,
-                                fontSize: 24,
-                                fontWeight: FontWeight.bold),
-                          )
-                        ],
-                      )
-                    ]),
-                  ),
-                  Padding(
-                    padding:
-                        const EdgeInsets.only(bottom: 16, left: 24, top: 16),
-                    child: Row(
-                      children: [
-                        Text(
-                          "posted " +
-                              PostViewModel.parseDate(post.postCreateDate) +
-                              " by " +
-                              post.username,
-                          style: TextStyle(
-                              color: Colors.white,
-                              fontSize: 16,
-                              fontWeight: FontWeight.bold),
-                        )
-                      ],
+                  ConstrainedBox(
+                    constraints: const BoxConstraints(minHeight: 300),
+                    child: Container(
+                      color: const Color(0xFF0a0a23),
+                      child: htmlView(post, context, model),
                     ),
-                  ),
-                  Column(
-                    children: [
-                      Padding(
-                        padding: const EdgeInsets.only(
-                            bottom: 8, left: 24, right: 8),
-                        child: Row(
-                          children: [
-                            Text(
-                              'SHARE',
-                              style: TextStyle(
-                                  color: Colors.white,
-                                  fontSize: 16,
-                                  fontWeight: FontWeight.bold),
-                            ),
-                            IconButton(
-                              onPressed: () {
-                                model.parseShareUrl(context, post.postSlug);
-                              },
-                              icon: Icon(Icons.share_outlined),
-                              color: Colors.white,
-                            ),
-                            Text(
-                              'LIKE',
-                              style: TextStyle(
-                                  color: Colors.white,
-                                  fontSize: 16,
-                                  fontWeight: FontWeight.bold),
-                            ),
-                          ],
-                        ),
-                      ),
-                    ],
-                  ),
-                  Row(children: [
-                    Padding(
-                      padding: const EdgeInsets.only(
-                          bottom: 8, left: 24, right: 8, top: 8),
-                      child: Column(
-                        children: [
-                          Row(children: const [
-                            Text(
-                              'REPLIES',
-                              style: TextStyle(
-                                  color: Colors.white,
-                                  fontSize: 16,
-                                  fontWeight: FontWeight.bold),
-                            )
-                          ]),
-                          Row(
-                            children: [
-                              Text(
-                                (post.postComments!.length - 1).toString(),
-                                style: TextStyle(
-                                    color: Colors.white,
-                                    fontSize: 16,
-                                    fontWeight: FontWeight.bold),
-                              )
-                            ],
-                          )
-                        ],
-                      ),
-                    ),
-                    Padding(
-                      padding: const EdgeInsets.only(
-                          bottom: 8, left: 24, right: 8, top: 8),
-                      child: Column(children: [
-                        Row(children: const [
-                          Text(
-                            'READS',
-                            style: TextStyle(
-                                color: Colors.white,
-                                fontSize: 16,
-                                fontWeight: FontWeight.bold),
-                          )
-                        ]),
-                        Row(children: [
-                          Text(
-                            post.postReads.toString(),
-                            style: TextStyle(
-                                color: Colors.white,
-                                fontSize: 16,
-                                fontWeight: FontWeight.bold),
-                          )
-                        ])
-                      ]),
-                    ),
-                    Padding(
-                      padding: const EdgeInsets.only(
-                          bottom: 8, left: 24, right: 8, top: 8),
-                      child: Column(
-                        children: [
-                          Row(children: const [
-                            Text(
-                              'LIKES',
-                              style: TextStyle(
-                                  color: Colors.white,
-                                  fontSize: 16,
-                                  fontWeight: FontWeight.bold),
-                            )
-                          ]),
-                          Row(children: [
-                            Text(
-                              post.postLikes.toString(),
-                              style: TextStyle(
-                                  color: Colors.white,
-                                  fontSize: 16,
-                                  fontWeight: FontWeight.bold),
-                            )
-                          ])
-                        ],
-                      ),
-                    ),
-                  ]),
-                  Container(
-                    color: Color(0xFF0a0a23),
-                    child: htmlView(snapshot, context),
                   ),
                   ForumCommentView(
                     comments: comments,
@@ -255,7 +89,7 @@ Column postViewTemplate(PostViewModel model, id, slug) {
               );
             }
 
-            return Center(
+            return const Center(
               child: CircularProgressIndicator(),
             );
           })
@@ -263,125 +97,208 @@ Column postViewTemplate(PostViewModel model, id, slug) {
   );
 }
 
-Row htmlView(AsyncSnapshot<PostModel> post, BuildContext context) {
+Column htmlView(PostModel post, BuildContext context, PostViewModel model) {
+  return Column(
+    children: [
+      postHeader(model, post),
+      Row(
+        children: [
+          Expanded(
+              child: Padding(
+            padding: const EdgeInsets.all(16.0),
+            child: Html(
+              data: post.postCooked,
+              style: {
+                "body": Style(color: Colors.white),
+                "blockquote": Style(
+                    backgroundColor: const Color.fromRGBO(0x65, 0x65, 0x74, 1),
+                    padding: const EdgeInsets.all(8)),
+                "a": Style(fontSize: FontSize.rem(1)),
+                "p": Style(
+                    fontSize: FontSize.rem(1.2),
+                    lineHeight: LineHeight.em(1.2)),
+                "ul": Style(fontSize: FontSize.xLarge),
+                "li": Style(
+                  margin: const EdgeInsets.only(top: 8),
+                  fontSize: FontSize.rem(1.35),
+                ),
+                "pre": Style(
+                    color: Colors.white,
+                    width: MediaQuery.of(context).size.width),
+                "code": Style(
+                    backgroundColor: const Color.fromRGBO(0x2A, 0x2A, 0x40, 1)),
+                "tr": Style(
+                    border:
+                        const Border(bottom: BorderSide(color: Colors.grey)),
+                    backgroundColor: Colors.white),
+                "th": Style(
+                  padding: const EdgeInsets.all(12),
+                  backgroundColor: const Color.fromRGBO(0xdf, 0xdf, 0xe2, 1),
+                  color: Colors.black,
+                ),
+                "td": Style(
+                  padding: const EdgeInsets.all(12),
+                  color: Colors.black,
+                  alignment: Alignment.topLeft,
+                ),
+              },
+              customRender: {
+                "table": (context, child) {
+                  return SingleChildScrollView(
+                    scrollDirection: Axis.horizontal,
+                    child:
+                        (context.tree as TableLayoutElement).toWidget(context),
+                  );
+                },
+                "code": (code, child) {
+                  var classList = code.tree.elementClasses;
+                  if (classList.isNotEmpty && classList[0] == 'lang-auto') {
+                    return ConstrainedBox(
+                      constraints: const BoxConstraints(
+                        minHeight: 1,
+                        maxHeight: 500,
+                      ),
+                      child: SyntaxView(
+                        code: code.tree.element?.text as String,
+                        syntax: Syntax.JAVASCRIPT,
+                        syntaxTheme: SyntaxTheme.vscodeDark(),
+                        fontSize: 16.0,
+                        withZoom: false,
+                        withLinesCount: true,
+                        useCustomHeight: true,
+                        minWidth: MediaQuery.of(context).size.width,
+                        minHeight: 1,
+                      ),
+                    );
+                  }
+                },
+                "aside": (context, child) {
+                  var link =
+                      context.tree.element!.attributes['data-onebox-src'];
+                  if (link!.isNotEmpty) {
+                    return InkWell(
+                      onTap: () {
+                        launch(link);
+                      },
+                      child: Text(
+                        link,
+                        style: const TextStyle(
+                            color: Color.fromRGBO(0x22, 0x91, 0xeb, 1)),
+                      ),
+                    );
+                  }
+                },
+                "svg": (context, child) {
+                  var iconParent = context.tree.element!.className;
+                  var isFontAwesomeIcon = iconParent
+                      .toString()
+                      .contains(RegExp(r'fa ', caseSensitive: false));
+
+                  var iconChild =
+                      context.tree.element!.children[0].attributes.values;
+                  var iconParsed =
+                      iconChild.first.replaceFirst(RegExp(r'#'), '');
+
+                  List bannedIcons = ['far-image', 'discourse-expand'];
+
+                  if (isFontAwesomeIcon) {
+                    if (bannedIcons.contains(iconParsed)) {
+                      return Container();
+                    } else {
+                      return FaIcon(iconParsed);
+                    }
+                  }
+                },
+                "img": (context, child) {
+                  var classes = context.tree.element?.className;
+                  var classesSplit = classes?.split(" ");
+
+                  var classIsEmoji = classesSplit!.contains('emoji') ||
+                      classesSplit.contains('emoji-only');
+
+                  var emojiImage = context.tree.attributes['src'].toString();
+
+                  if (classIsEmoji) {
+                    return Image.network(
+                      emojiImage,
+                      height: 25,
+                      width: 25,
+                    );
+                  }
+                },
+                "div": (context, child) {
+                  var divClasses = context.tree.element?.className;
+
+                  var classList = divClasses?.split(" ");
+
+                  var classContainsMeta = classList!.contains('meta');
+                  if (classContainsMeta) {
+                    return Container();
+                  }
+                }
+              },
+              onLinkTap: (String? url, RenderContext context,
+                  Map<String, String> attributes, dom.Element? element) {
+                launch(url!);
+              },
+            ),
+          ))
+        ],
+      )
+    ],
+  );
+}
+
+Row postHeader(PostViewModel model, PostModel post) {
   return Row(
     children: [
-      Expanded(
-          child: Padding(
-        padding: const EdgeInsets.all(24.0),
-        child: Html(
-          data: post.data!.postCooked,
-          style: {
-            "body": Style(color: Colors.white),
-            "p": Style(
-                fontSize: FontSize.rem(1.35), lineHeight: LineHeight.em(1.2)),
-            "ul": Style(fontSize: FontSize.xLarge),
-            "li": Style(
-              margin: EdgeInsets.only(top: 8),
-              fontSize: FontSize.rem(1.35),
+      InkWell(
+        onTap: () {
+          model.goToUserProfile(post.username);
+        },
+        child: Padding(
+          padding: const EdgeInsets.only(left: 16.0, top: 24),
+          child: Row(crossAxisAlignment: CrossAxisAlignment.start, children: [
+            Column(
+              children: [
+                FadeInImage.assetNetwork(
+                    height: 60,
+                    placeholder: 'assets/images/placeholder-profile-img.png',
+                    image: PostViewModel.parseProfileAvatUrl(
+                        post.profieImage, "60")),
+              ],
             ),
-            "pre": Style(
-                color: Colors.white, width: MediaQuery.of(context).size.width),
-            "code": Style(backgroundColor: Color.fromRGBO(0x2A, 0x2A, 0x40, 1)),
-            "tr": Style(
-                border: Border(bottom: BorderSide(color: Colors.grey)),
-                backgroundColor: Colors.white),
-            "th": Style(
-              padding: EdgeInsets.all(12),
-              backgroundColor: Color.fromRGBO(0xdf, 0xdf, 0xe2, 1),
-              color: Colors.black,
-            ),
-            "td": Style(
-              padding: EdgeInsets.all(12),
-              color: Colors.black,
-              alignment: Alignment.topLeft,
-            ),
-          },
-          customRender: {
-            "table": (context, child) {
-              return SingleChildScrollView(
-                scrollDirection: Axis.horizontal,
-                child: (context.tree as TableLayoutElement).toWidget(context),
-              );
-            },
-            "code": (code, child) {
-              var classList = code.tree.elementClasses;
-              if (classList.isNotEmpty && classList[0] == 'lang-auto') {
-                return ConstrainedBox(
-                  constraints: BoxConstraints(
-                    minHeight: 1,
-                    maxHeight: 500,
-                  ),
-                  child: SyntaxView(
-                    code: code.tree.element?.text as String,
-                    syntax: Syntax.JAVASCRIPT,
-                    syntaxTheme: SyntaxTheme.vscodeDark(),
-                    fontSize: 16.0,
-                    withZoom: false,
-                    withLinesCount: false,
-                  ),
-                );
-              }
-            },
-            "aside": (context, child) {
-              var link = context.tree.element!.attributes['data-onebox-src'];
-              if (link!.isNotEmpty) {
-                return InkWell(
-                  onTap: () {
-                    launch(link);
-                  },
+            Column(
+              children: [
+                Padding(
+                  padding: const EdgeInsets.only(left: 16),
                   child: Text(
-                    link,
-                    style:
-                        TextStyle(color: Color.fromRGBO(0x00, 0x2e, 0xad, 1)),
+                    post.username,
+                    style: const TextStyle(
+                        color: Colors.white,
+                        fontSize: 24,
+                        fontWeight: FontWeight.bold),
                   ),
-                );
-              }
-            },
-            "svg": (context, child) {
-              var iconParent = context.tree.element!.className;
-              var isFontAwesomeIcon = iconParent
-                  .toString()
-                  .contains(RegExp(r'fa ', caseSensitive: false));
-
-              var iconChild =
-                  context.tree.element!.children[0].attributes.values;
-              var iconParsed = iconChild.first.replaceFirst(RegExp(r'#'), '');
-
-              List bannedIcons = ['far-image', 'discourse-expand'];
-
-              if (isFontAwesomeIcon) {
-                if (bannedIcons.contains(iconParsed)) {
-                  return Container();
-                } else {
-                  return FaIcon(iconParsed);
-                }
-              }
-            },
-            "img": (context, child) {
-              var classes = context.tree.element?.className;
-              var classesSplit = classes?.split(" ");
-
-              var classIsEmoji = classesSplit!.contains('emoji') ||
-                  classesSplit.contains('emoji-only');
-
-              var emojiImage = context.tree.attributes['src'].toString();
-
-              if (classIsEmoji) {
-                return Image.network(
-                  emojiImage,
-                  height: 25,
-                  width: 25,
-                );
-              }
-            }
-          },
-          onLinkTap: (String? url, RenderContext context,
-              Map<String, String> attributes, dom.Element? element) {
-            launch(url!);
-          },
+                )
+              ],
+            ),
+            Column(
+              children: [
+                Padding(
+                  padding: const EdgeInsets.only(left: 48.0),
+                  child: Text(
+                    PostViewModel.parseDateShort(post.postCreateDate),
+                    style: const TextStyle(
+                      color: Color.fromRGBO(0xa9, 0xaa, 0xb2, 1),
+                      fontSize: 24,
+                    ),
+                  ),
+                )
+              ],
+            )
+          ]),
         ),
-      ))
+      ),
     ],
   );
 }

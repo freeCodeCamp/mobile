@@ -11,6 +11,8 @@ import 'package:stacked/stacked.dart';
 import 'package:stacked/stacked_annotations.dart';
 import 'package:stacked_services/stacked_services.dart';
 
+import '../service/episode_audio_service.dart';
+import '../service/notification_service.dart';
 import '../service/podcasts_service.dart';
 
 final locator = StackedLocator.instance;
@@ -26,4 +28,6 @@ void setupLocator({String? environment, EnvironmentFilter? environmentFilter}) {
   locator.registerLazySingleton(() => SnackbarService());
   locator.registerLazySingleton(() => DatabaseMigrationService());
   locator.registerLazySingleton(() => PodcastsDatabaseService());
+  locator.registerLazySingleton(() => NotificationService());
+  locator.registerLazySingleton(() => EpisodeAudioService());
 }

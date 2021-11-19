@@ -3,6 +3,7 @@ import 'dart:math';
 import 'dart:ui';
 import 'dart:async';
 import 'package:flutter/material.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:freecodecamp/app/app.locator.dart';
 import 'package:freecodecamp/app/app.router.dart';
 import 'package:freecodecamp/models/forum_post_model.dart';
@@ -210,6 +211,34 @@ class PostViewModel extends BaseViewModel {
     return Jiffy(date).fromNow();
   }
 
+  static String parseDateShort(String date) {
+    String jiffyDate = Jiffy(date).fromNow();
+
+    List parsedDate = jiffyDate.split(" ");
+
+    if (jiffyDate.contains("minutes")) {
+      return parsedDate[0] + 'm';
+    }
+
+    if (jiffyDate.contains("hour")) return '1h';
+
+    if (jiffyDate.contains("hours")) return parsedDate[0] + 'h';
+
+    if (jiffyDate.contains('days')) return parsedDate[0] + 'd';
+
+    if (jiffyDate.contains('day')) return '1d';
+
+    if (jiffyDate.contains('months')) return parsedDate[0] + 'm';
+
+    if (jiffyDate.contains('month')) return '1m';
+
+    if (jiffyDate.contains('years')) return parsedDate[0] + 'y';
+
+    if (jiffyDate.contains('year')) return '1y';
+
+    return jiffyDate;
+  }
+
   // This returns a parsed url for sharing a post
   void parseShareUrl(BuildContext context, String slug) {
     Share.share('https://forum.freecodecamp.org/t/$slug',
@@ -220,5 +249,49 @@ class PostViewModel extends BaseViewModel {
   void goToUserProfile(username) {
     _navigationService.navigateTo(Routes.forumUserView,
         arguments: ForumUserViewArguments(username: username));
+  }
+
+  Row returnAction(Icon icon, String message, TextStyle style) {
+    return Row(
+      children: [
+        icon,
+        Padding(
+          padding: const EdgeInsets.only(left: 16.0),
+          child: Text(message, style: style),
+        )
+      ],
+    );
+  }
+
+  Row postActionParser(String action, String date) {
+    Icon? icon;
+    String? message;
+
+    TextStyle style = const TextStyle(color: Colors.white, fontSize: 16);
+
+    date = Jiffy(date).fromNow().toUpperCase();
+
+    switch (action) {
+      case "visible.disabled":
+        message = "UNLISTED " + date;
+        icon = const Icon(
+          FontAwesomeIcons.eyeSlash,
+          color: Colors.white,
+        );
+        return returnAction(icon, message, style);
+      case "split_topic":
+        message = "SPLIT THIS TOPIC " + date;
+        icon = const Icon(FontAwesomeIcons.signOutAlt, color: Colors.white);
+        return returnAction(icon, message, style);
+      case "closed.enabled":
+        message = "CLOSED " + date;
+        icon = const Icon(FontAwesomeIcons.lock, color: Colors.white);
+        return returnAction(icon, message, style);
+      default:
+        message = "UNKNOWN ACTON: " + action;
+        return Row(
+          children: [Text(message, style: style)],
+        );
+    }
   }
 }

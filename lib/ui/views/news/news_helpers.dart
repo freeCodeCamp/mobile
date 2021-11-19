@@ -11,21 +11,6 @@ class NewsHelper {
     }
   }
 
-  static Color randomBorderColor() {
-    final random = Random();
-
-    List borderColor = [
-      const Color.fromRGBO(0x99, 0xC9, 0xFF, 1),
-      const Color.fromRGBO(0xAC, 0xD1, 0x57, 1),
-      const Color.fromRGBO(0xFF, 0xFF, 0x00, 1),
-      const Color.fromRGBO(0x80, 0x00, 0x80, 1),
-    ];
-
-    int index = random.nextInt(borderColor.length);
-
-    return borderColor[index];
-  }
-
   static String getArticleImage(imgUrl, context) {
     // Split the url
     List arr = imgUrl.toString().split('images');

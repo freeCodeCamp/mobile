@@ -38,18 +38,13 @@ class NewsArticlePostView extends StatelessWidget {
                   children: [
                     Stack(
                       children: [
-                        ConstrainedBox(
-                          constraints: BoxConstraints(
-                              minHeight: 100,
-                              maxHeight: 250,
-                              minWidth: MediaQuery.of(context).size.width),
+                        AspectRatio(
+                          aspectRatio: 16 / 9,
                           child: FadeInImage.assetNetwork(
-                            height: 250,
                             placeholder:
                                 'assets/images/freecodecamp-banner.png',
-                            image: NewsHelper.getArticleImage(
-                                article!.featureImage, context),
-                            fit: BoxFit.fill,
+                            image: article!.featureImage,
+                            fit: BoxFit.cover,
                           ),
                         ),
                         Padding(
@@ -92,23 +87,13 @@ class NewsArticlePostView extends StatelessWidget {
                               children: [
                                 Padding(
                                   padding: const EdgeInsets.all(16),
-                                  child: Container(
-                                    decoration: BoxDecoration(
-                                        border: Border.all(
-                                            width: 4,
-                                            color: NewsHelper
-                                                .randomBorderColor())),
-                                    child: FadeInImage.assetNetwork(
-                                        height: 50,
-                                        fadeOutDuration:
-                                            const Duration(milliseconds: 500),
-                                        fadeInDuration:
-                                            const Duration(milliseconds: 500),
-                                        fit: BoxFit.fill,
-                                        placeholder:
-                                            'assets/images/placeholder-profile-img.png',
-                                        image: article.profileImage),
-                                  ),
+                                  child: FadeInImage.assetNetwork(
+                                      height: 50,
+                                      width: 50,
+                                      fit: BoxFit.cover,
+                                      placeholder:
+                                          'assets/images/placeholder-profile-img.png',
+                                      image: article.profileImage),
                                 ),
                                 Expanded(
                                     child: Container(
@@ -177,12 +162,11 @@ Row htmlView(Article article, BuildContext context) {
                     fontSize: FontSize.rem(1.35),
                   ),
                   "pre": Style(
-                      color: Colors.white,
-                      width: MediaQuery.of(context).size.width,
-                      backgroundColor:
-                          const Color.fromRGBO(0x2A, 0x2A, 0x40, 1),
-                      padding: const EdgeInsets.all(25),
-                      textOverflow: TextOverflow.clip),
+                    color: Colors.white,
+                    width: MediaQuery.of(context).size.width,
+                    backgroundColor: const Color.fromRGBO(0x2A, 0x2A, 0x40, 1),
+                    padding: const EdgeInsets.all(10),
+                  ),
                   "code": Style(
                       backgroundColor:
                           const Color.fromRGBO(0x2A, 0x2A, 0x40, 1)),
@@ -208,6 +192,10 @@ Row htmlView(Article article, BuildContext context) {
                       child: (context.tree as TableLayoutElement)
                           .toWidget(context),
                     );
+                  },
+                  "code": (context, child) {
+                    return SingleChildScrollView(
+                        scrollDirection: Axis.horizontal, child: child);
                   }
                 },
                 onLinkTap: (String? url, RenderContext context,

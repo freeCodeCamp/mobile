@@ -47,12 +47,30 @@ class ForumCommentView extends StatelessWidget {
                     ),
                     model.isEditingPost && model.editedPostId == post.postId
                         ? commentEditor(model, post)
-                        : commentHtml(index, context, comments, model),
-                    commentFooter(post, model, context),
+                        : post.postAction != null
+                            ? commentAction(model, post)
+                            : commentHtml(index, context, comments, model),
+                    Container(
+                      decoration: const BoxDecoration(
+                          border: Border(
+                              bottom:
+                                  BorderSide(width: 2, color: Colors.white))),
+                      child: post.postAction == null
+                          ? commentFooter(post, model, context)
+                          : Container(),
+                    )
                   ],
                 ),
               );
             }));
+  }
+
+  Padding commentAction(PostViewModel model, PostModel post) {
+    return Padding(
+      padding: const EdgeInsets.all(48.0),
+      child: model.postActionParser(
+          post.postAction as String, post.postCreateDate),
+    );
   }
 
   Row commentHeader(PostViewModel model, PostModel post) {
@@ -165,7 +183,7 @@ class ForumCommentView extends StatelessWidget {
                       model.cancelUpdatePost();
                     },
                     child: const Text(
-                      'CANCEL ',
+                      'CANCEL',
                       textAlign: TextAlign.center,
                       style: TextStyle(color: Colors.white),
                     )),
@@ -177,28 +195,17 @@ class ForumCommentView extends StatelessWidget {
     );
   }
 
-  Container commentFooter(
+  Column commentFooter(
       PostModel post, PostViewModel model, BuildContext context) {
-    return Container(
-      decoration: const BoxDecoration(
-          border: Border(bottom: BorderSide(width: 2, color: Colors.white))),
-      child: Column(
-        children: [
-          Row(
-            children: [
-              Padding(
-                padding: const EdgeInsets.all(24.0),
-                child: Text(
-                  PostViewModel.parseDate(post.postCreateDate),
-                  style: const TextStyle(color: Colors.white, fontSize: 18),
-                ),
-              ),
-              IconButton(
-                onPressed: () {
-                  model.parseShareUrl(context, post.postSlug);
-                },
-                icon: const Icon(Icons.share_outlined),
-                color: Colors.white,
+    return Column(
+      children: [
+        Row(
+          children: [
+            Padding(
+              padding: const EdgeInsets.all(24.0),
+              child: Text(
+                PostViewModel.parseDate(post.postCreateDate),
+                style: const TextStyle(color: Colors.white, fontSize: 18),
               ),
               post.postCanEdit && !model.isEditingPost
                   ? IconButton(
@@ -340,19 +347,16 @@ Column commentHtml(int index, BuildContext context, List<PostModel> posts,
                   "code": (code, child) {
                     var classList = code.tree.elementClasses;
                     if (classList.isNotEmpty && classList[0] == 'lang-auto') {
-                      return ConstrainedBox(
-                        constraints: const BoxConstraints(
-                          minHeight: 1,
-                          maxHeight: 250,
-                        ),
-                        child: SyntaxView(
-                          code: code.tree.element?.text as String,
-                          syntax: Syntax.JAVASCRIPT,
-                          syntaxTheme: SyntaxTheme.vscodeDark(),
-                          fontSize: 16.0,
-                          withZoom: false,
-                          withLinesCount: false,
-                        ),
+                      return SyntaxView(
+                        code: code.tree.element?.text as String,
+                        syntax: Syntax.JAVASCRIPT,
+                        syntaxTheme: SyntaxTheme.vscodeDark(),
+                        fontSize: 16.0,
+                        withZoom: false,
+                        withLinesCount: false,
+                        useCustomHeight: true,
+                        minWidth: MediaQuery.of(context).size.width,
+                        minHeight: 1,
                       );
                     }
                   },

@@ -1,5 +1,3 @@
-import 'dart:developer' as dev;
-
 import 'package:freecodecamp/ui/views/forum/forum-post/forum_post_viewmodel.dart';
 
 // This types and converts the JSON into the instances of the PostModel class.
@@ -13,6 +11,7 @@ class PostModel {
   final dynamic postCreateDate;
   final String? postLastActivity;
   final String? postCooked;
+  final String? postAction;
   final List? postComments;
   final int? postViews;
   final int? postType;
@@ -36,6 +35,7 @@ class PostModel {
       required this.name,
       required this.profieImage,
       this.postCooked,
+      this.postAction,
       required this.postId,
       this.postName,
       this.postLastActivity,
@@ -115,6 +115,7 @@ class PostModel {
         postReplyCount: data["reply_count"],
         postReads: data["reads"],
         postCooked: data['cooked'],
+        postAction: data['action_code'],
         username: data["username"],
         postSlug: data["topic_slug"],
         profieImage: data["avatar_template"],
