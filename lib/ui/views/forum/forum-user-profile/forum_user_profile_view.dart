@@ -96,21 +96,22 @@ class ForumUserProfileView extends StatelessWidget {
               )
             ],
           ),
-          trailing: ElevatedButton(
-              style: ElevatedButton.styleFrom(
-                  primary: const Color.fromRGBO(0x3b, 0x3b, 0x4f, 1),
-                  side: const BorderSide(width: 2, color: Colors.white),
-                  shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(0))),
-              onPressed: () {
-                model.showEmailDialog();
-              },
-              child: const Text(
-                'change email address',
-                textAlign: TextAlign.center,
-                style: TextStyle(color: Colors.white),
-              )),
         ),
+        ListTile(
+            trailing: ElevatedButton(
+                style: ElevatedButton.styleFrom(
+                    primary: const Color.fromRGBO(0x3b, 0x3b, 0x4f, 1),
+                    side: const BorderSide(width: 2, color: Colors.white),
+                    shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(0))),
+                onPressed: () {
+                  model.showEmailDialog();
+                },
+                child: const Text(
+                  'change email address',
+                  textAlign: TextAlign.center,
+                  style: TextStyle(color: Colors.white),
+                ))),
         ListTile(
           title: const Text("Name",
               style: TextStyle(color: Colors.white, fontSize: 20)),

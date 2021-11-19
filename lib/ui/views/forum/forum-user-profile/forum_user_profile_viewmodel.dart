@@ -1,9 +1,10 @@
 import 'dart:convert';
 import 'dart:developer' as dev;
 import 'dart:io';
-import 'dart:typed_data';
+import 'package:dio/dio.dart' as dio;
 
 import 'package:flutter/material.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:freecodecamp/app/app.locator.dart';
 import 'package:freecodecamp/enums/dialog_type.dart';
 import 'package:freecodecamp/models/forum_user_model.dart';
@@ -63,8 +64,6 @@ class ForumUserProfileViewModel extends BaseViewModel {
   }
 
   Future<void> changeProfilePicture() async {
-    final ImagePicker _picker = ImagePicker();
-
     DialogResponse? response = await _dialogService.showCustomDialog(
         variant: DialogType.buttonForm,
         title: 'Change profile picture',
@@ -75,38 +74,82 @@ class ForumUserProfileViewModel extends BaseViewModel {
 
     if (response!.confirmed) {
       if (response.data == 'gallery') {
-        final image =
-            await ImagePicker().pickImage(source: ImageSource.gallery);
-        final byteData = image?.readAsBytes();
-        sendNewProfilePicture(byteData);
+        final image = await ImagePicker().pickImage(
+            source: ImageSource.gallery, maxHeight: 300, maxWidth: 300);
+        sendNewProfilePicture(image!.path);
       } else if (response.data == 'camera') {
         final photo = await ImagePicker().pickImage(
-            source: ImageSource.camera, maxWidth: 100, maxHeight: 100);
-        Uint8List byteData = await File(photo!.path).readAsBytes();
-        sendNewProfilePicture(byteData);
+            source: ImageSource.camera, maxWidth: 300, maxHeight: 300);
+        sendNewProfilePicture(photo!.path);
       } else {
         changeProfilePicture();
       }
     }
   }
 
-  Future<void> sendNewProfilePicture(png) async {
-    Map<String, dynamic> body = {
+  // dio has to be used for the image transfer, atleast it makes it easier.
+
+  Future<void> sendNewProfilePicture(String cachePath) async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+
+    await dotenv.load(fileName: ".env");
+
+    dio.Response response;
+
+    var dioInstnace = dio.Dio();
+
+    dioInstnace.options.baseUrl = 'https://forum.freecodecamp.org';
+
+    dio.FormData formData = dio.FormData.fromMap({
       "type": "avatar",
       "user_id": _user.userId,
-      "files[]": png
+      "files[]": await dio.MultipartFile.fromFile(cachePath)
+    });
+
+    try {
+      response = await dioInstnace.post(
+        "/uploads.json",
+        data: formData,
+        options: dio.Options(
+          headers: {
+            "Api-Key": dotenv.env['DISCOURSE_API'],
+            "Api-Username": prefs.getString('username') as String
+          },
+        ),
+        onSendProgress: (int sent, int total) {
+          dev.log('$sent $total');
+        },
+      );
+
+      if (response.statusCode == 200) {
+        var uploadId = response.data["id"];
+        refreshAvatar(uploadId);
+      }
+    } on dio.DioError catch (e) {
+      if (e.response != null) {
+        dev.log(e.response!.data.toString());
+      } else {
+        dev.log(e.message);
+      }
+    }
+  }
+
+  Future<void> refreshAvatar(int uploadId) async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    String apiUsername = prefs.getString('username') as String;
+
+    Map<String, dynamic> body = {
+      "upload_id": uploadId.toString(),
+      "type": "gravatar"
     };
 
-    dev.log('I got  called!!!');
-    dev.log(body.toString());
-
-    final response = await ForumConnect.connectAndPost('/uploads', {}, body);
-
+    final response = await ForumConnect.connectAndPut(
+        '/users/$apiUsername/preferences/avatar/pick', body);
     if (response.statusCode == 200) {
-      dev.log("avatar successfully changed!");
-      dev.log(response.body.toString());
+      initState();
+      dev.log('avatar refreshed');
     } else {
-      dev.log(response.body.toString());
+      dev.log('an error occured');
     }
   }
 
