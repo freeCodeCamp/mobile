@@ -13,6 +13,7 @@ class ForumUserProfileView extends StatelessWidget {
         viewModelBuilder: () => ForumUserProfileViewModel(),
         onModelReady: (model) => model.initState(),
         builder: (context, model, child) => Scaffold(
+            resizeToAvoidBottomInset: false,
             appBar: AppBar(
               backgroundColor: const Color(0xFF0a0a23),
               centerTitle: true,
@@ -55,22 +56,38 @@ class ForumUserProfileView extends StatelessWidget {
               style: TextStyle(color: Colors.white, fontSize: 20)),
         ),
         ListTile(
-          leading: Image.network(PostViewModel.parseProfileAvatarUrl(
-              model.user.profilePicture, "60")),
-          trailing: ElevatedButton(
-              style: ElevatedButton.styleFrom(
-                  primary: const Color.fromRGBO(0x3b, 0x3b, 0x4f, 1),
-                  side: const BorderSide(width: 2, color: Colors.white),
-                  shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(0))),
-              onPressed: () {
-                model.changeProfilePicture();
-              },
-              child: const Text(
-                'change profile picture',
-                textAlign: TextAlign.center,
-                style: TextStyle(color: Colors.white),
-              )),
+          leading: Stack(
+            children: [
+              const SizedBox(
+                width: 60,
+                height: 60,
+                child: Center(
+                  child: CircularProgressIndicator(
+                    color: Colors.white,
+                  ),
+                ),
+              ),
+              Image.network(PostViewModel.parseProfileAvatarUrl(
+                  model.user.profilePicture, "60"))
+            ],
+          ),
+          trailing: Container(
+            constraints: const BoxConstraints(minWidth: 200),
+            child: ElevatedButton(
+                style: ElevatedButton.styleFrom(
+                    primary: const Color.fromRGBO(0x3b, 0x3b, 0x4f, 1),
+                    side: const BorderSide(width: 2, color: Colors.white),
+                    shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(0))),
+                onPressed: () {
+                  model.changeProfilePicture();
+                },
+                child: const Text(
+                  'change profile picture',
+                  textAlign: TextAlign.center,
+                  style: TextStyle(color: Colors.white),
+                )),
+          ),
         ),
         ListTile(
           title: const Text("Email",
@@ -98,20 +115,23 @@ class ForumUserProfileView extends StatelessWidget {
           ),
         ),
         ListTile(
-            trailing: ElevatedButton(
-                style: ElevatedButton.styleFrom(
-                    primary: const Color.fromRGBO(0x3b, 0x3b, 0x4f, 1),
-                    side: const BorderSide(width: 2, color: Colors.white),
-                    shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(0))),
-                onPressed: () {
-                  model.showEmailDialog();
-                },
-                child: const Text(
-                  'change email address',
-                  textAlign: TextAlign.center,
-                  style: TextStyle(color: Colors.white),
-                ))),
+            trailing: Container(
+          constraints: const BoxConstraints(minWidth: 200),
+          child: ElevatedButton(
+              style: ElevatedButton.styleFrom(
+                  primary: const Color.fromRGBO(0x3b, 0x3b, 0x4f, 1),
+                  side: const BorderSide(width: 2, color: Colors.white),
+                  shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(0))),
+              onPressed: () {
+                model.showEmailDialog();
+              },
+              child: const Text(
+                'change email address',
+                textAlign: TextAlign.center,
+                style: TextStyle(color: Colors.white),
+              )),
+        )),
         ListTile(
           title: const Text("Name",
               style: TextStyle(color: Colors.white, fontSize: 20)),
@@ -119,20 +139,23 @@ class ForumUserProfileView extends StatelessWidget {
             model.user.name,
             style: const TextStyle(color: Colors.white),
           ),
-          trailing: ElevatedButton(
-              style: ElevatedButton.styleFrom(
-                  primary: const Color.fromRGBO(0x3b, 0x3b, 0x4f, 1),
-                  side: const BorderSide(width: 2, color: Colors.white),
-                  shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(0))),
-              onPressed: () {
-                model.showNameDialog();
-              },
-              child: const Text(
-                'change your name',
-                textAlign: TextAlign.center,
-                style: TextStyle(color: Colors.white),
-              )),
+          trailing: Container(
+            constraints: const BoxConstraints(minWidth: 200),
+            child: ElevatedButton(
+                style: ElevatedButton.styleFrom(
+                    primary: const Color.fromRGBO(0x3b, 0x3b, 0x4f, 1),
+                    side: const BorderSide(width: 2, color: Colors.white),
+                    shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(0))),
+                onPressed: () {
+                  model.showNameDialog();
+                },
+                child: const Text(
+                  'change your name',
+                  textAlign: TextAlign.center,
+                  style: TextStyle(color: Colors.white),
+                )),
+          ),
         )
       ],
     );
