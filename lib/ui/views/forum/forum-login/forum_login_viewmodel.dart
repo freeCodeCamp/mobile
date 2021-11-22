@@ -45,6 +45,7 @@ class ForumLoginModel extends BaseViewModel {
   void initState() async {
     _errorMessage = '';
     _isLoggedIn = await checkLoggedIn();
+    initBaseUrl();
     notifyListeners();
     if (!_isLoggedIn) {
       setupDialogUi();
