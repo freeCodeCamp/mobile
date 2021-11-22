@@ -150,13 +150,15 @@ class PostViewModel extends BaseViewModel {
 
   // this parses different urls based on the cdn (Discourse or FCC)
 
+  // will be deleted soon!
+
   static String parseProfileAvatUrl(
     String? url,
     String size,
   ) {
     List urlPart = url!.split('{size}');
     String avatarUrl = '';
-    String baseUrl = 'https://mobilefccinstance.com';
+
     bool fromDiscourse = urlPart[0]
         .toString()
         .contains(RegExp(r'discourse-cdn', caseSensitive: false));
@@ -170,7 +172,7 @@ class PostViewModel extends BaseViewModel {
     } else if (fromDiscourse) {
       return avatarUrl;
     } else {
-      return baseUrl + avatarUrl;
+      return 'https://prnt.sc/20iqlh9';
     }
   }
 
