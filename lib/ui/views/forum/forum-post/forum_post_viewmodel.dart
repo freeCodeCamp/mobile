@@ -156,7 +156,7 @@ class PostViewModel extends BaseViewModel {
   ) {
     List urlPart = url!.split('{size}');
     String avatarUrl = '';
-    String baseUrl = 'https://forum.freecodecamp.org';
+    String baseUrl = 'https://mobilefccinstance.com';
     bool fromDiscourse = urlPart[0]
         .toString()
         .contains(RegExp(r'discourse-cdn', caseSensitive: false));

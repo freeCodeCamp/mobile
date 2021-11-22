@@ -51,7 +51,7 @@ class DrawerWidgetView extends StatelessWidget {
                         model,
                         context),
                   ),
-                  model.inDevelopmentMode
+                  model.inDevelopmentMode || model.showForum
                       ? Expanded(
                           child: navButtonWidget(
                               'FORUM',
