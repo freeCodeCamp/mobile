@@ -8,15 +8,12 @@ import 'package:shared_preferences/shared_preferences.dart';
 // get, post, put and delete methods based in one file for connecting to the Discourse api
 
 class ForumConnect {
-  static String baseUrl = '';
-
   static Future<String> getCurrentUrl() async {
     await dotenv.load(fileName: ".env");
 
-    bool clientInDevMode =
-        dotenv.env['DEVELOPMENTMODE']!.toLowerCase() == 'true';
+    String clientInDevMode = dotenv.get('DEVELOPMENTMODE', fallback: 'false');
 
-    return clientInDevMode
+    return clientInDevMode == 'true'
         ? 'https://mobilefccinstance.com'
         : 'https://forum.freecodecamp.org/';
   }
@@ -27,12 +24,22 @@ class ForumConnect {
 
     await dotenv.load(fileName: ".env");
 
-    bool clientInDevMode =
-        dotenv.env['DEVELOPMENTMODE']!.toLowerCase() == 'true';
+    String clientInDevMode = dotenv.get('DEVELOPMENTMODE', fallback: 'false');
 
-    headers['Api-Key'] = dotenv
-        .env[clientInDevMode ? 'DISCOURSE_TEST' : 'DISCOURSE_PROD'] as String;
     headers['Api-Username'] = prefs.getString('username') as String;
+
+    bool noApiKeyProvided = dotenv.env['DISCOURSE_PROD'] == null &&
+        dotenv.env['DISCOURSE_TEST'] == null;
+
+    if (noApiKeyProvided) {
+      throw Exception(
+          'No Discourse api key provided, did you copy the sample.env?');
+    }
+
+    headers['Api-Key'] = dotenv.env[clientInDevMode == 'true'
+        ? 'DISCOURSE_TEST'
+        : 'DISCOURSE_PROD'] as String;
+
     return headers;
   }
 
