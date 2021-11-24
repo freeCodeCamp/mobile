@@ -15,7 +15,7 @@ class ForumConnect {
 
     return clientInDevMode == 'true'
         ? 'https://mobilefccinstance.com'
-        : 'https://forum.freecodecamp.org/';
+        : 'https://forum.freecodecamp.org';
   }
 
   static Future<Map<String, String>> setHeaderValues() async {
@@ -49,6 +49,8 @@ class ForumConnect {
 
     final res = await http.get(Uri.parse(url + endpoint), headers: headers);
 
+    dev.log(url + endpoint);
+
     if (res.statusCode == 200) {
       return res;
     } else {
@@ -62,6 +64,9 @@ class ForumConnect {
     Map<String, String> headers = await setHeaderValues();
 
     final res = await http.post(Uri.parse(url + endpoint), headers: headers);
+
+    dev.log(url + endpoint);
+
     if (res.statusCode == 200) {
       return res;
     } else {
@@ -76,6 +81,9 @@ class ForumConnect {
 
     final res = await http.put(Uri.parse(url + endpoint),
         headers: headers, body: jsonEncode(body));
+
+    dev.log(url + endpoint);
+
     if (res.statusCode == 200) {
       return res;
     } else {
@@ -90,6 +98,9 @@ class ForumConnect {
 
     final res = await http.delete(Uri.parse(url + endpoint),
         headers: headers, body: jsonEncode(body));
+
+    dev.log(url + endpoint);
+
     if (res.statusCode == 200) {
       return res;
     } else {

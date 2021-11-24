@@ -40,12 +40,21 @@ class PostViewModel extends BaseViewModel {
 
   Timer? _timer;
 
+  String _baseUrl = '';
+  String get baseUrl => _baseUrl;
+
   final commentText = TextEditingController();
 
   void initState(slug, id) async {
+    _baseUrl = await ForumConnect.getCurrentUrl();
     _future = fetchPost(id, slug);
     _isLoggedIn = await checkLoggedIn();
     enableTimer(id, slug);
+    notifyListeners();
+  }
+
+  void initBaseUrl() async {
+    _baseUrl = await ForumConnect.getCurrentUrl();
     notifyListeners();
   }
 
@@ -145,34 +154,6 @@ class PostViewModel extends BaseViewModel {
       notifyListeners();
     } else {
       throw Exception(response.body);
-    }
-  }
-
-  // this parses different urls based on the cdn (Discourse or FCC)
-
-  // will be deleted soon!
-
-  static String parseProfileAvatUrl(
-    String? url,
-    String size,
-  ) {
-    List urlPart = url!.split('{size}');
-    String avatarUrl = '';
-
-    bool fromDiscourse = urlPart[0]
-        .toString()
-        .contains(RegExp(r'discourse-cdn', caseSensitive: false));
-
-    if (urlPart.length > 1) {
-      avatarUrl = urlPart[0] + size + urlPart[1];
-    }
-
-    if (urlPart.length == 1) {
-      return urlPart[0];
-    } else if (fromDiscourse) {
-      return avatarUrl;
-    } else {
-      return 'https://prnt.sc/20iqlh9';
     }
   }
 

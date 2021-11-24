@@ -74,11 +74,13 @@ Column postViewTemplate(PostViewModel model, id, slug) {
                       child: htmlView(post, context, model),
                     ),
                   ),
-                  ForumCommentView(
-                    comments: comments,
-                    postId: id,
-                    postSlug: slug,
-                  ),
+                  model.baseUrl != ''
+                      ? ForumCommentView(
+                          comments: comments,
+                          postId: id,
+                          postSlug: slug,
+                          baseUrl: model.baseUrl)
+                      : Container(),
                   model.isLoggedIn
                       ? ForumCreateCommentView(
                           topicId: id,
@@ -264,8 +266,10 @@ Row postHeader(PostViewModel model, PostModel post) {
                 FadeInImage.assetNetwork(
                     height: 60,
                     placeholder: 'assets/images/placeholder-profile-img.png',
-                    image: PostViewModel.parseProfileAvatUrl(
-                        post.profieImage, "60")),
+                    image: PostModel.fromDiscourse(post.profieImage)
+                        ? PostModel.parseProfileAvatar(post.profieImage)
+                        : model.baseUrl +
+                            PostModel.parseProfileAvatar(post.profieImage)),
               ],
             ),
             Column(

@@ -15,10 +15,6 @@ import 'dart:convert';
 class ForumLoginModel extends BaseViewModel {
   late String _baseUrl;
 
-  void initBaseUrl() async {
-    _baseUrl = await ForumConnect.getCurrentUrl();
-  }
-
   final _nameController = TextEditingController();
   TextEditingController get nameController => _nameController;
 
@@ -45,7 +41,7 @@ class ForumLoginModel extends BaseViewModel {
   void initState() async {
     _errorMessage = '';
     _isLoggedIn = await checkLoggedIn();
-    initBaseUrl();
+    _baseUrl = await ForumConnect.getCurrentUrl();
     notifyListeners();
     if (!_isLoggedIn) {
       setupDialogUi();
