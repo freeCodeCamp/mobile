@@ -17,7 +17,14 @@ class DrawerWidgtetViewModel extends BaseViewModel {
       arguments: BrowserViewArguments(url: url),
     );
   }
+  // a temp variable for showing the forum button when dev mode is set to false
+  // this is because the forum has two different urls, one for prod
+  // and one for testing purposes. When the development value is set to false
+  // the normal fcc forum is not accessible
 
+  bool _showForum = false;
+
+  bool get showForum => _showForum;
   bool _inDevelopmentMode = false;
   bool get inDevelopmentMode => _inDevelopmentMode;
   void init() async {

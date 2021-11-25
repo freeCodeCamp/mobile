@@ -1,13 +1,13 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_html/flutter_html.dart';
+import 'package:freecodecamp/models/forum_post_model.dart';
 import 'package:freecodecamp/ui/views/forum/forum-post/forum_post_viewmodel.dart';
 import 'package:freecodecamp/models/forum_user_model.dart';
 import 'package:freecodecamp/ui/views/forum/forum-user/forum_user_viewmodel.dart';
 import 'package:stacked/stacked.dart';
 import 'package:html/dom.dart' as dom;
 import 'package:url_launcher/url_launcher.dart';
-import 'dart:developer' as dev;
 
 class ForumUserView extends StatelessWidget {
   const ForumUserView({Key? key, required this.username}) : super(key: key);
@@ -45,7 +45,7 @@ FutureBuilder userTemplateBuilder(context, model) {
                       minWidth: MediaQuery.of(context).size.width,
                     ),
                     child: FittedBox(
-                      fit: BoxFit.fitWidth,
+                      fit: BoxFit.cover,
                       child: ClipRect(
                         child: Align(
                           heightFactor: 0.5,
@@ -53,13 +53,12 @@ FutureBuilder userTemplateBuilder(context, model) {
                           child: FadeInImage.assetNetwork(
                             placeholder:
                                 'assets/images/placeholder-profile-img.png',
-                            image: PostViewModel.parseProfileAvatUrl(
-                                user!.profilePicture,
-                                MediaQuery.of(context)
-                                    .size
-                                    .width
-                                    .toInt()
-                                    .toString()),
+                            image: PostModel.fromDiscourse(user!.profilePicture)
+                                ? PostModel.parseProfileAvatar(
+                                    user.profilePicture)
+                                : model.baseUrl +
+                                    PostModel.parseProfileAvatar(
+                                        user.profilePicture),
                             width: 360,
                           ),
                         ),
@@ -117,7 +116,6 @@ FutureBuilder userTemplateBuilder(context, model) {
                                   },
                                   customRender: {
                                     "img": (context, child) {
-                                      
                                       var classes =
                                           context.tree.element?.className;
                                       var classesSplit = classes?.split(" ");

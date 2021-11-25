@@ -14,8 +14,13 @@ class ForumUserModel extends BaseViewModel {
   late Future<User> _future;
   Future<User> get future => _future;
 
-  void initState(username) {
+  late String _baseUrl;
+  String get baseUrl => _baseUrl;
+
+  void initState(username) async {
     _future = fetchUser(username);
+    _baseUrl = await ForumConnect.getCurrentUrl();
+    notifyListeners();
   }
 
   Future<User> fetchUser(String username) async {
