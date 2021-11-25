@@ -117,7 +117,7 @@ class DrawerWidgetView extends StatelessWidget {
                           true,
                           model,
                           context)),
-                  Expanded(
+                  model.inDevelopmentMode ? Expanded(
                     child: navButtonWidget(
                         'SETTINGS',
                         'https://www.google.com/',
@@ -128,7 +128,7 @@ class DrawerWidgetView extends StatelessWidget {
                         false,
                         model,
                         context),
-                  ),
+                  ) : Container(),
                 ],
               ),
             ],
