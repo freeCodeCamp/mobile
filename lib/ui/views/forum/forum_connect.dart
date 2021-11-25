@@ -11,7 +11,8 @@ class ForumConnect {
   static Future<String> getCurrentUrl() async {
     await dotenv.load(fileName: ".env");
 
-    String clientInDevMode = dotenv.get('DEVELOPMENTMODE', fallback: 'false');
+    String clientInDevMode =
+        dotenv.get('DEVELOPMENTMODE', fallback: 'false').toLowerCase();
 
     return clientInDevMode == 'true'
         ? 'https://mobilefccinstance.com'
@@ -24,7 +25,8 @@ class ForumConnect {
 
     await dotenv.load(fileName: ".env");
 
-    String clientInDevMode = dotenv.get('DEVELOPMENTMODE', fallback: 'false');
+    String clientInDevMode =
+        dotenv.get('DEVELOPMENTMODE', fallback: 'false').toLowerCase();
 
     headers['Api-Username'] = prefs.getString('username') as String;
 
