@@ -67,7 +67,7 @@ class DrawerWidgetView extends StatelessWidget {
                       : Expanded(
                           child: navButtonWidget(
                               'LEARN',
-                              'https://www.freecodecamp.org/',
+                              'https://www.freecodecamp.org/learn/',
                               const Icon(
                                 Icons.local_fire_department_sharp,
                                 size: 70,
