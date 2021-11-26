@@ -7,6 +7,7 @@ import 'package:freecodecamp/ui/views/forum/forum-post-feed/forum_post_feed_lazy
 import 'package:freecodecamp/ui/views/forum/forum-post-feed/forum_post_feed_viewmodel.dart';
 import 'package:freecodecamp/ui/views/forum/forum-post/forum_post_viewmodel.dart';
 import 'package:stacked/stacked.dart';
+import 'dart:developer' as dev;
 
 class ForumPostFeedView extends StatelessWidget {
   final String slug;
@@ -100,7 +101,10 @@ class ForumPostFeedView extends StatelessWidget {
       leading: FadeInImage.assetNetwork(
           height: 60,
           placeholder: 'assets/images/placeholder-profile-img.png',
-          image: post.userImages![0]),
+          image: PostModel.fromDiscourse(post.userImages![0])
+              ? PostModel.parseProfileAvatar(post.userImages![0])
+              : model.baseUrl +
+                  PostModel.parseProfileAvatar(post.userImages![0])),
       trailing: Text(
         post.postReplyCount.toString(),
         style: const TextStyle(

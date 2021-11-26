@@ -16,7 +16,12 @@ class ForumPostFeedModel extends BaseViewModel {
 
   List<PostModel> posts = [];
 
+  late String _baseUrl;
+  String get baseUrl => _baseUrl;
+
   Future<List<PostModel>> fetchPosts(slug, id) async {
+    _baseUrl = await ForumConnect.getCurrentUrl();
+
     final response = await ForumConnect.connectAndGet(
         '/c/$slug/$id?page=${_pageNumber.toString()}');
 

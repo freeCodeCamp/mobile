@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:freecodecamp/app/app.locator.dart';
 import 'package:freecodecamp/enums/dialog_type.dart';
+import 'package:freecodecamp/ui/views/forum/forum_connect.dart';
 import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:stacked/stacked.dart';
@@ -12,7 +13,7 @@ import 'dart:developer' as dev;
 import 'dart:convert';
 
 class ForumLoginModel extends BaseViewModel {
-  static String baseUrl = 'https://forum.freecodecamp.org';
+  late String _baseUrl;
 
   final _nameController = TextEditingController();
   TextEditingController get nameController => _nameController;
@@ -40,6 +41,7 @@ class ForumLoginModel extends BaseViewModel {
   void initState() async {
     _errorMessage = '';
     _isLoggedIn = await checkLoggedIn();
+    _baseUrl = await ForumConnect.getCurrentUrl();
     notifyListeners();
     if (!_isLoggedIn) {
       setupDialogUi();
@@ -48,9 +50,9 @@ class ForumLoginModel extends BaseViewModel {
 
   Future<dynamic> getCSRF() async {
     final response =
-        await http.get(Uri.parse(baseUrl + '/session/csrf'), headers: {
+        await http.get(Uri.parse(_baseUrl + '/session/csrf'), headers: {
       'X-CSRF-Token': 'undefined',
-      'Referer': baseUrl,
+      'Referer': _baseUrl,
       'X-Requested-With': 'XMLHttpRequest'
     });
 
@@ -124,7 +126,7 @@ class ForumLoginModel extends BaseViewModel {
       String paramters = '$creds$auth';
 
       final response = await http
-          .post(Uri.parse(baseUrl + '/session$paramters'), headers: headers);
+          .post(Uri.parse(_baseUrl + '/session$paramters'), headers: headers);
 
       if (response.statusCode == 200) {
         if (noAuthError(response.body)) {
@@ -155,7 +157,7 @@ class ForumLoginModel extends BaseViewModel {
     };
 
     final response = await http.post(
-        Uri.parse(baseUrl + '/session?login=$username&password=$password'),
+        Uri.parse(_baseUrl + '/session?login=$username&password=$password'),
         headers: headers);
 
     if (response.statusCode == 200) {
