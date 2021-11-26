@@ -9,7 +9,7 @@ import 'package:freecodecamp/ui/views/podcast/episode-list/episode_list_viewmode
 import 'package:freecodecamp/ui/views/podcast/episode/episode_view.dart';
 import 'package:html/dom.dart' as dom;
 import 'package:intl/intl.dart';
-import 'package:readmore/readmore.dart';
+//import 'package:readmore/readmore.dart';
 import 'package:stacked/stacked.dart';
 import 'package:url_launcher/url_launcher.dart';
 

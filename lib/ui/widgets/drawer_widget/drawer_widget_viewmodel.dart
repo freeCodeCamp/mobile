@@ -22,7 +22,7 @@ class DrawerWidgtetViewModel extends BaseViewModel {
   // and one for testing purposes. When the development value is set to false
   // the normal fcc forum is not accessible
 
-  bool _showForum = false;
+  final bool _showForum = false;
 
   bool get showForum => _showForum;
   bool _inDevelopmentMode = false;

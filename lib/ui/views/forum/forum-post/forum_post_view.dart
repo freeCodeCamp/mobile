@@ -10,7 +10,6 @@ import 'package:stacked/stacked.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:html/dom.dart' as dom;
 import 'forum_post_viewmodel.dart';
-import 'dart:developer' as dev;
 
 class ForumPostView extends StatelessWidget {
   final String id;

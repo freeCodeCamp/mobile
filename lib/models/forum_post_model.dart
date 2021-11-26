@@ -1,6 +1,3 @@
-import 'package:freecodecamp/ui/views/forum/forum_connect.dart';
-import 'dart:developer' as dev;
-
 // This types and converts the JSON into the instances of the PostModel class.
 class PostModel {
   final String username;
