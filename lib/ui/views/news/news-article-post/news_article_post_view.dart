@@ -3,7 +3,6 @@ import 'package:flutter_html/flutter_html.dart';
 import 'package:flutter_html/html_parser.dart';
 import 'package:freecodecamp/models/article_model.dart';
 import 'package:freecodecamp/ui/views/news/news-bookmark/news_bookmark_widget.dart';
-import 'package:freecodecamp/ui/views/news/news_helpers.dart';
 import 'package:stacked/stacked.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:html/dom.dart' as dom;
@@ -184,6 +183,7 @@ Row htmlView(Article article, BuildContext context) {
                     color: Colors.black,
                     alignment: Alignment.topLeft,
                   ),
+                  "figure": Style(width: MediaQuery.of(context).size.width)
                 },
                 customRender: {
                   "table": (context, child) {
@@ -196,6 +196,27 @@ Row htmlView(Article article, BuildContext context) {
                   "code": (context, child) {
                     return SingleChildScrollView(
                         scrollDirection: Axis.horizontal, child: child);
+                  },
+                  "figure": (code, child) {
+                    var figureClasses = code.tree.elementClasses;
+                    bool isBookmarkCard =
+                        figureClasses.contains("kg-bookmark-card");
+
+                    if (isBookmarkCard) {
+                      var parent = code.tree.children[0];
+
+                      var bookmarkTilte =
+                          parent.children[0].children[0].element?.text;
+
+                      var bookmarkDescription =
+                          parent.children[0].children[1].element?.text;
+
+                      var bookmarkImage =
+                          parent.children[1].children[0].attributes['src'];
+
+                      return bookmark(
+                          bookmarkTilte, bookmarkDescription, bookmarkImage);
+                    }
                   }
                 },
                 onLinkTap: (String? url, RenderContext context,
@@ -208,5 +229,57 @@ Row htmlView(Article article, BuildContext context) {
                 })),
       )
     ],
+  );
+}
+
+Container bookmark(
+    String? bookmarkTilte, String? bookmarkDescription, String? bookmarkImage) {
+  return Container(
+    color: Colors.white,
+    child: Padding(
+      padding: const EdgeInsets.only(left: 10.0),
+      child: Row(
+        children: [
+          Expanded(
+            child: Column(
+              children: [
+                Row(
+                  children: [
+                    Expanded(
+                      child: Text(
+                        bookmarkTilte.toString(),
+                        style: const TextStyle(
+                            fontWeight: FontWeight.bold, fontSize: 16),
+                      ),
+                    ),
+                  ],
+                ),
+                Row(
+                  children: [
+                    Expanded(
+                      child: Text(
+                        bookmarkDescription.toString().substring(0, 100) +
+                            '...',
+                        style: const TextStyle(),
+                      ),
+                    )
+                  ],
+                )
+              ],
+            ),
+          ),
+          Expanded(
+            child: Column(
+              children: [
+                Image.network(
+                  bookmarkImage.toString(),
+                  fit: BoxFit.cover,
+                )
+              ],
+            ),
+          )
+        ],
+      ),
+    ),
   );
 }
