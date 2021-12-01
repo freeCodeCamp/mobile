@@ -2,6 +2,8 @@ import 'dart:convert';
 import 'dart:math';
 import 'dart:ui';
 import 'dart:async';
+import 'dart:developer' as dev;
+
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:freecodecamp/app/app.locator.dart';
@@ -46,16 +48,11 @@ class PostViewModel extends BaseViewModel {
   final commentText = TextEditingController();
 
   void initState(slug, id) async {
-    _baseUrl = await ForumConnect.getCurrentUrl();
     _future = fetchPost(id, slug);
+    notifyListeners();
+    _baseUrl = await ForumConnect.getCurrentUrl();
     _isLoggedIn = await checkLoggedIn();
     enableTimer(id, slug);
-    notifyListeners();
-  }
-
-  void initBaseUrl() async {
-    _baseUrl = await ForumConnect.getCurrentUrl();
-    notifyListeners();
   }
 
   void disposeTimer() {
@@ -115,6 +112,23 @@ class PostViewModel extends BaseViewModel {
 
     if (commentText.text.isNotEmpty) {
       await ForumConnect.connectAndPut('/posts/$_editedPostId', body);
+      _future = fetchPost(postId, postSlug);
+      notifyListeners();
+    }
+
+    _isEditingPost = false;
+    _editedPostId = '';
+
+    notifyListeners();
+  }
+
+  Future<void> updateTopic(postId, postSlug) async {
+    Map<String, dynamic> body = {
+      "post": {"raw": commentText.text}
+    };
+
+    if (commentText.text.isNotEmpty) {
+      await ForumConnect.connectAndPut('/t/$_editedPostId', body);
       _future = fetchPost(postId, postSlug);
       notifyListeners();
     }

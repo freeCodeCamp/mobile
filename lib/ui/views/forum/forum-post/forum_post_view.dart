@@ -83,23 +83,23 @@ class ForumPostView extends StatelessWidget {
                     Padding(
                       padding: const EdgeInsets.all(16.0),
                       child: topicFooter(model, post, context),
-                  ),
-                  model.baseUrl != ''
-                      ? ForumCommentView(
-                          comments: comments,
-                          postId: id,
-                          postSlug: slug,
-                          baseUrl: model.baseUrl)
-                      : Container(),
-                  model.isLoggedIn
-                      ? ForumCreateCommentView(
-                          topicId: id,
-                          post: post,
-                        )
-                      : Container()
-                ],
-              );
-            }
+                    ),
+                    model.baseUrl != ''
+                        ? ForumCommentView(
+                            comments: comments,
+                            postId: id,
+                            postSlug: slug,
+                            baseUrl: model.baseUrl)
+                        : Container(),
+                    model.isLoggedIn
+                        ? ForumCreateCommentView(
+                            topicId: id,
+                            post: post,
+                          )
+                        : Container()
+                  ],
+                );
+              }
               return const Center(
                 child: CircularProgressIndicator(),
               );
@@ -273,15 +273,6 @@ class ForumPostView extends StatelessWidget {
             child: Row(crossAxisAlignment: CrossAxisAlignment.start, children: [
               Column(
                 children: [
-                  FadeInImage.assetNetwork(
-                      height: 60,
-                      placeholder: 'assets/images/placeholder-profile-img.png',
-                      image: PostViewModel.parseProfileAvatUrl(
-                          post.profieImage, "60")),
-                ],
-              ),
-              Column(
-                children: [
                   Padding(
                     padding: const EdgeInsets.only(left: 16),
                     child: Text(
@@ -351,41 +342,14 @@ class ForumPostView extends StatelessWidget {
                         shape: RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(0))),
                     onPressed: () {
-                      model.updatePost(post.postId, post.postSlug);
+                      model.updateTopic(post.postId, post.postSlug);
                     },
                     child: const Text(
-                      'UPDATE COMMENT',
+                      'UPDATE TOPIC',
                       textAlign: TextAlign.center,
                       style: TextStyle(color: Colors.white),
                     )),
               ),
-          ))
-        ],
-      )
-    ],
-  );
-}
-
-Row postHeader(PostViewModel model, PostModel post) {
-  return Row(
-    children: [
-      InkWell(
-        onTap: () {
-          model.goToUserProfile(post.username);
-        },
-        child: Padding(
-          padding: const EdgeInsets.only(left: 16.0, top: 24),
-          child: Row(crossAxisAlignment: CrossAxisAlignment.start, children: [
-            Column(
-              children: [
-                FadeInImage.assetNetwork(
-                    height: 60,
-                    placeholder: 'assets/images/placeholder-profile-img.png',
-                    image: PostModel.fromDiscourse(post.profieImage)
-                        ? PostModel.parseProfileAvatar(post.profieImage)
-                        : model.baseUrl +
-                            PostModel.parseProfileAvatar(post.profieImage)),
-              ],
             ),
           ],
         ),
@@ -409,7 +373,7 @@ Row postHeader(PostViewModel model, PostModel post) {
                       style: TextStyle(color: Colors.white),
                     )),
               ),
-            ),
+            )
           ],
         )
       ],
