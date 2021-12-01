@@ -342,7 +342,7 @@ class ForumPostView extends StatelessWidget {
                         shape: RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(0))),
                     onPressed: () {
-                      model.updateTopic(post.postId, post.postSlug);
+                      model.updateTopic(id, post.postSlug);
                     },
                     child: const Text(
                       'UPDATE TOPIC',

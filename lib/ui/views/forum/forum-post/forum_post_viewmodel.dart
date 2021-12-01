@@ -128,7 +128,7 @@ class PostViewModel extends BaseViewModel {
     };
 
     if (commentText.text.isNotEmpty) {
-      await ForumConnect.connectAndPut('/t/$_editedPostId', body);
+      await ForumConnect.connectAndPut('/posts/$_editedPostId', body);
       _future = fetchPost(postId, postSlug);
       notifyListeners();
     }
