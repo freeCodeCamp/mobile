@@ -21,7 +21,10 @@ class ForumConnect {
 
   static Future<Map<String, String>> setHeaderValues() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
-    Map<String, String> headers = {'Accept': 'application/json'};
+    Map<String, String> headers = {
+      'Content-Type': 'application/json',
+      'Accept': 'application/json'
+    };
 
     await dotenv.load(fileName: ".env");
 
