@@ -1,6 +1,3 @@
-import 'package:freecodecamp/ui/views/forum/forum_connect.dart';
-import 'dart:developer' as dev;
-
 // This types and converts the JSON into the instances of the PostModel class.
 class PostModel {
   final String username;
@@ -13,7 +10,7 @@ class PostModel {
   final String? postLastActivity;
   final String? postCooked;
   final String? postAction;
-  final List? postComments;
+  final List<PostModel> postComments;
   final int? postViews;
   final int? postType;
   final int postReplyCount;
@@ -45,7 +42,7 @@ class PostModel {
       this.postReads,
       this.postViews,
       this.postLikes,
-      this.postComments,
+      this.postComments = const [],
       required this.postCanEdit,
       required this.postCanDelete,
       required this.postCanRecover,
@@ -59,26 +56,27 @@ class PostModel {
   // this is for endpoint /t/{slug}/{id}.json
   factory PostModel.fromPostJson(Map<String, dynamic> data) {
     return PostModel(
-        postComments: data["post_stream"]["posts"],
-        postId: data["post_stream"]["posts"][0]["id"].toString(),
-        postName: data["title"],
-        postSlug: data["post_stream"]["posts"][0]["topic_slug"],
-        postCreateDate: data["post_stream"]["posts"][0]["created_at"],
-        postType: data["post_stream"]["posts"][0]["post_type"],
-        postReplyCount: data["post_stream"]["posts"][0]["reply_count"],
-        postReads: data["post_stream"]["posts"][0]["reads"],
-        postLikes: data["like_count"],
-        postCooked: data["post_stream"]["posts"][0]['cooked'],
-        username: data["post_stream"]["posts"][0]["username"],
-        profieImage: data["post_stream"]["posts"][0]["avatar_template"],
-        name: data["post_stream"]["posts"][0]["name"],
-        postCanDelete: data["details"]["can_delete"] ?? false,
-        postCanEdit: data["details"]["can_edit"] ?? false,
-        postCanRecover: data["details"]["can_recover"] ?? false,
-        isAdmin: data["post_stream"]["posts"][0]["admin"],
-        isModerator: data["post_stream"]["posts"][0]["moderator"],
-        isStaff: data["post_stream"]["posts"][0]["staff"],
-        postHasAnswer: data["post_stream"]["posts"][0]["has_accepted_answer"]);
+      postComments: Comment.returnCommentList(data["post_stream"]["posts"]),
+      postId: data["post_stream"]["posts"][0]["id"].toString(),
+      postName: data["title"],
+      postSlug: data["post_stream"]["posts"][0]["topic_slug"],
+      postCreateDate: data["post_stream"]["posts"][0]["created_at"],
+      postType: data["post_stream"]["posts"][0]["post_type"],
+      postReplyCount: data["post_stream"]["posts"][0]["reply_count"],
+      postReads: data["post_stream"]["posts"][0]["reads"],
+      postLikes: data["like_count"],
+      postCooked: data["post_stream"]["posts"][0]['cooked'],
+      username: data["post_stream"]["posts"][0]["username"],
+      profieImage: data["post_stream"]["posts"][0]["avatar_template"],
+      name: data["post_stream"]["posts"][0]["name"],
+      postCanDelete: data["details"]["can_delete"] ?? false,
+      postCanEdit: data["details"]["can_edit"] ?? false,
+      postCanRecover: data["details"]["can_recover"] ?? false,
+      isAdmin: data["post_stream"]["posts"][0]["admin"],
+      isModerator: data["post_stream"]["posts"][0]["moderator"],
+      isStaff: data["post_stream"]["posts"][0]["staff"],
+      postHasAnswer: data["post_stream"]["posts"][0]["has_accepted_answer"],
+    );
   }
 
   // this is for the same endpoint as fromPostJson only it needs to be parsed

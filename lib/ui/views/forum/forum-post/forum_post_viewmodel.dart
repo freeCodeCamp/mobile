@@ -22,6 +22,9 @@ class PostViewModel extends BaseViewModel {
   late Future<PostModel> _future;
   Future<PostModel> get future => _future;
 
+  late List<PostModel> _posts;
+  List<PostModel> get posts => _posts;
+
   bool _isLoggedIn = false;
   bool get isLoggedIn => _isLoggedIn;
 

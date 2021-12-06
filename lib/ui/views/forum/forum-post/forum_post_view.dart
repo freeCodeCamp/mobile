@@ -39,8 +39,6 @@ class ForumPostView extends StatelessWidget {
   }
 
   Column postViewTemplate(PostViewModel model, id, slug) {
-    List<PostModel> comments = [];
-
     return Column(
       children: [
         FutureBuilder<PostModel>(
@@ -48,8 +46,6 @@ class ForumPostView extends StatelessWidget {
             builder: (context, snapshot) {
               if (snapshot.hasData) {
                 var post = snapshot.data;
-                comments = [];
-                comments.addAll(Comment.returnCommentList(post!.postComments));
                 return Column(
                   children: [
                     Container(
@@ -60,7 +56,7 @@ class ForumPostView extends StatelessWidget {
                             child: Padding(
                               padding: const EdgeInsets.all(24.0),
                               child: Text(
-                                post.postName as String,
+                                post!.postName as String,
                                 style: const TextStyle(
                                     color: Colors.white,
                                     fontSize: 24,
@@ -86,7 +82,7 @@ class ForumPostView extends StatelessWidget {
                     ),
                     model.baseUrl != ''
                         ? ForumCommentView(
-                            comments: comments,
+                            topic: post,
                             postId: id,
                             postSlug: slug,
                             baseUrl: model.baseUrl)

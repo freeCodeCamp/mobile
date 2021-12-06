@@ -11,14 +11,14 @@ import 'package:html/dom.dart' as dom;
 import 'package:url_launcher/url_launcher.dart';
 
 class ForumCommentView extends StatelessWidget {
-  late final List<PostModel> comments;
+  late final PostModel topic;
   late final String postId;
   late final String postSlug;
   late final String baseUrl;
   // ignore: prefer_const_constructors_in_immutables
   ForumCommentView(
       {Key? key,
-      required this.comments,
+      required this.topic,
       required this.postId,
       required this.postSlug,
       required this.baseUrl})
@@ -31,9 +31,9 @@ class ForumCommentView extends StatelessWidget {
         builder: (context, model, child) => ListView.builder(
             shrinkWrap: true,
             physics: const ClampingScrollPhysics(),
-            itemCount: comments.length,
+            itemCount: topic.postComments.length,
             itemBuilder: (context, index) {
-              var post = comments[index];
+              var post = topic.postComments[index];
               return Container(
                 color: model.recentlyDeletedPost &&
                         model.recentlyDeletedPostId == post.postId
@@ -51,7 +51,8 @@ class ForumCommentView extends StatelessWidget {
                         ? commentEditor(model, post)
                         : post.postAction != null
                             ? commentAction(model, post)
-                            : commentHtml(index, context, comments, model),
+                            : commentHtml(
+                                index, context, topic.postComments, model),
                     Container(
                       decoration: const BoxDecoration(
                           border: Border(
