@@ -1,6 +1,7 @@
 import 'dart:convert';
 
 import 'package:flutter/cupertino.dart';
+import 'package:freecodecamp/models/forum_post_model.dart';
 import 'package:freecodecamp/ui/views/forum/forum_connect.dart';
 import 'package:stacked/stacked.dart';
 import 'dart:developer' as dev;
@@ -16,7 +17,8 @@ class ForumCreateCommentViewModel extends BaseViewModel {
 
   TextEditingController get commentText => _commentText;
 
-  Future<void> createComment(String topicId, String text) async {
+  Future<void> createComment(
+      String topicId, String text, PostModel topic) async {
     Map<String, String> headers = {
       'X-Requested-With': 'XMLHttpRequest',
       "Content-Type": 'application/x-www-form-urlencoded'
@@ -27,6 +29,7 @@ class ForumCreateCommentViewModel extends BaseViewModel {
 
     if (response.statusCode == 200) {
       _commentText.text = '';
+      notifyListeners();
     } else {
       Map<String, dynamic> body = json.decode(response.body);
 

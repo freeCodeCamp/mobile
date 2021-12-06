@@ -28,12 +28,13 @@ class ForumCommentView extends StatelessWidget {
   Widget build(BuildContext context) {
     return ViewModelBuilder<PostViewModel>.reactive(
         viewModelBuilder: () => PostViewModel(),
+        onModelReady: (model) => model.initCommentHandler(topic.postComments),
         builder: (context, model, child) => ListView.builder(
             shrinkWrap: true,
             physics: const ClampingScrollPhysics(),
-            itemCount: topic.postComments.length,
+            itemCount: model.posts.length,
             itemBuilder: (context, index) {
-              var post = topic.postComments[index];
+              var post = model.posts[index];
               return Container(
                 color: model.recentlyDeletedPost &&
                         model.recentlyDeletedPostId == post.postId
@@ -224,7 +225,7 @@ class ForumCommentView extends StatelessWidget {
             post.postCanEdit && !model.isEditingPost
                 ? IconButton(
                     onPressed: () {
-                      model.editPost(post.postId, post.postCooked!);
+                      model.editPost(post.postId, post.postCooked);
                     },
                     icon: const Icon(
                       Icons.edit_sharp,

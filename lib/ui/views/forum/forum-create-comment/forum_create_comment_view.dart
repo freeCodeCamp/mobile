@@ -72,7 +72,7 @@ class ForumCreateCommentView extends StatelessWidget {
                                     borderRadius: BorderRadius.circular(0))),
                             onPressed: () {
                               model.createComment(
-                                  topicId, model.commentText.text);
+                                  topicId, model.commentText.text, post);
                             },
                             child: const Text(
                               'PLACE COMMENT',

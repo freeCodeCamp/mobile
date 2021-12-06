@@ -8,9 +8,9 @@ class PostModel {
   final String postSlug;
   final dynamic postCreateDate;
   final String? postLastActivity;
-  final String? postCooked;
+  String postCooked;
   final String? postAction;
-  final List<PostModel> postComments;
+  List<PostModel> postComments;
   final int? postViews;
   final int? postType;
   final int postReplyCount;
@@ -30,7 +30,7 @@ class PostModel {
       {required this.username,
       required this.name,
       required this.profieImage,
-      this.postCooked,
+      this.postCooked = '',
       this.postAction,
       required this.postId,
       this.postName,
@@ -126,6 +126,32 @@ class PostModel {
         postHasAnswer: data["has_accepted_answer"]);
   }
 
+  factory PostModel.fromTopicFeedJson(Map<String, dynamic> data, images) {
+    return PostModel(
+        postId: data["id"].toString(),
+        postName: data["title"],
+        postLastActivity: data["bumped_at"],
+        postCreateDate: data["created_at"],
+        postViews: data["views"],
+        postReplyCount: data["reply_count"],
+        postSlug: data["slug"],
+        username: data["last_poster_username"],
+        profieImage: data["avatar_template"],
+        name: data["name"],
+        postCanDelete: data["can_delete"],
+        postCanEdit: data["can_edit"],
+        postCanRecover: data["can_recover"],
+        isAdmin: data["admin"],
+        isModerator: data["moderator"],
+        isStaff: data["staff"],
+        postHasAnswer: data["has_accepted_answer"],
+        userImages: parseAvatars(images, data["posters"]));
+  }
+
+  set editedText(String text) {
+    this.postCooked = text;
+  }
+
   static String parseProfileAvatar(String? url) {
     List urlPart = url!.split('{size}');
     String avatarUrl = '';
@@ -161,28 +187,6 @@ class PostModel {
       }
     }
     return userImages;
-  }
-
-  factory PostModel.fromTopicFeedJson(Map<String, dynamic> data, images) {
-    return PostModel(
-        postId: data["id"].toString(),
-        postName: data["title"],
-        postLastActivity: data["bumped_at"],
-        postCreateDate: data["created_at"],
-        postViews: data["views"],
-        postReplyCount: data["reply_count"],
-        postSlug: data["slug"],
-        username: data["last_poster_username"],
-        profieImage: data["avatar_template"],
-        name: data["name"],
-        postCanDelete: data["can_delete"],
-        postCanEdit: data["can_edit"],
-        postCanRecover: data["can_recover"],
-        isAdmin: data["admin"],
-        isModerator: data["moderator"],
-        isStaff: data["staff"],
-        postHasAnswer: data["has_accepted_answer"],
-        userImages: parseAvatars(images, data["posters"]));
   }
 }
 

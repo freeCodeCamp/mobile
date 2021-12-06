@@ -2,7 +2,6 @@ import 'dart:convert';
 import 'dart:math';
 import 'dart:ui';
 import 'dart:async';
-import 'dart:developer' as dev;
 
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
@@ -17,6 +16,7 @@ import 'package:stacked/stacked.dart';
 import 'package:stacked_services/stacked_services.dart';
 
 import '../forum_connect.dart';
+import 'dart:developer' as dev;
 
 class PostViewModel extends BaseViewModel {
   late Future<PostModel> _future;
@@ -56,6 +56,11 @@ class PostViewModel extends BaseViewModel {
     _baseUrl = await ForumConnect.getCurrentUrl();
     _isLoggedIn = await checkLoggedIn();
     enableTimer(id, slug);
+  }
+
+  void initCommentHandler(comments) {
+    _posts = comments;
+    notifyListeners();
   }
 
   void disposeTimer() {
@@ -114,8 +119,19 @@ class PostViewModel extends BaseViewModel {
     };
 
     if (commentText.text.isNotEmpty) {
-      await ForumConnect.connectAndPut('/posts/$_editedPostId', body);
-      _future = fetchPost(postId, postSlug);
+      final res =
+          await ForumConnect.connectAndPut('/posts/$_editedPostId', body);
+
+      PostModel newPostModel =
+          PostModel.fromCommentJson(jsonDecode(res.body)['post']);
+
+      dev.log(res.body.toString());
+
+      int index =
+          _posts.indexWhere((PostModel post) => post.postId == editedPostId);
+
+      _posts[index].editedText = newPostModel.postCooked;
+
       notifyListeners();
     }
 

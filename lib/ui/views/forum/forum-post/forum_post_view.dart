@@ -389,7 +389,7 @@ class ForumPostView extends StatelessWidget {
         post.postCanEdit && !model.isEditingPost
             ? IconButton(
                 onPressed: () {
-                  model.editPost(post.postId, post.postCooked!);
+                  model.editPost(post.postId, post.postCooked);
                 },
                 icon: const Icon(
                   Icons.edit_sharp,
