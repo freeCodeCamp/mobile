@@ -9,19 +9,21 @@ import 'package:freecodecamp/ui/widgets/text_function_bar_widget.dart';
 import 'package:stacked/stacked.dart';
 import 'package:html/dom.dart' as dom;
 import 'package:url_launcher/url_launcher.dart';
-import 'dart:developer' as dev;
 
 class ForumCommentView extends StatelessWidget {
   late final List<PostModel> comments;
   late final String postId;
   late final String postSlug;
+  late final String baseUrl;
   // ignore: prefer_const_constructors_in_immutables
   ForumCommentView(
       {Key? key,
       required this.comments,
       required this.postId,
-      required this.postSlug})
+      required this.postSlug,
+      required this.baseUrl})
       : super(key: key);
+
   @override
   Widget build(BuildContext context) {
     return ViewModelBuilder<PostViewModel>.reactive(
@@ -89,8 +91,11 @@ class ForumCommentView extends StatelessWidget {
                         height: 60,
                         placeholder:
                             'assets/images/placeholder-profile-img.png',
-                        image: PostViewModel.parseProfileAvatarUrl(
-                            post.profieImage, "60"))),
+                        image: PostModel.fromDiscourse(post.profieImage)
+                            ? PostModel.parseProfileAvatar(post.profieImage)
+                            : baseUrl +
+                                PostModel.parseProfileAvatar(
+                                    post.profieImage))),
               ),
             ],
           ),

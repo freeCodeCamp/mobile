@@ -6,10 +6,9 @@ import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:freecodecamp/app/app.locator.dart';
 import 'package:freecodecamp/models/podcasts/episodes_model.dart';
 import 'package:freecodecamp/models/podcasts/podcasts_model.dart';
+import 'package:freecodecamp/service/episode_audio_service.dart';
 import 'package:freecodecamp/service/notification_service.dart';
 import 'package:freecodecamp/service/podcasts_service.dart';
-import 'package:just_audio/just_audio.dart';
-import 'package:just_audio_background/just_audio_background.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:stacked/stacked.dart';
 import 'package:fk_user_agent/fk_user_agent.dart';
@@ -17,69 +16,28 @@ import 'package:fk_user_agent/fk_user_agent.dart';
 class EpisodeViewModel extends BaseViewModel {
   final _databaseService = locator<PodcastsDatabaseService>();
   final _notificationService = locator<NotificationService>();
-  final audioPlayer = AudioPlayer();
+  final _audioService = locator<EpisodeAudioService>();
   Episodes episode;
   final Podcasts podcast;
   late final Directory appDir;
   late bool downloaded = episode.downloaded;
   bool playing = false;
+  bool loading = false;
   bool downloading = false;
   String progress = '0';
   var dio = Dio();
 
   EpisodeViewModel(this.episode, this.podcast);
 
-  @override
-  void dispose() {
-    audioPlayer.dispose();
-    super.dispose();
-  }
-
   Future init(String url) async {
     await _databaseService.initialise();
     episode = await _databaseService.getEpisode(podcast.id, episode.guid);
-    appDir = await getApplicationDocumentsDirectory();
-    log("DIR: ${appDir.path} ${appDir.uri}");
     log(episode.toString());
+    playing = _audioService.isPlaying(episode.guid);
     downloaded = episode.downloaded;
-    await FkUserAgent.init();
     notifyListeners();
-    // STRESS-TEST: Check if this one works properly when no net present
-    log('Loading audio');
-    try {
-      if (episode.downloaded) {
-        await audioPlayer.setAudioSource(
-          AudioSource.uri(
-            Uri.parse(
-                'file:///data/user/0/org.freecodecamp/app_flutter/episodes/${podcast.id}/${episode.guid}.mp3'),
-            tag: MediaItem(
-              id: episode.guid,
-              title: episode.title!,
-              album: 'freeCodeCamp Podcast',
-              artUri: Uri.parse(
-                  'file:///data/user/0/org.freecodecamp/app_flutter/images/podcast/${podcast.id}.jpg'),
-            ),
-          ),
-        );
-      } else {
-        await audioPlayer.setAudioSource(
-          AudioSource.uri(
-            Uri.parse(url),
-            tag: MediaItem(
-              id: episode.guid,
-              title: episode.title!,
-              album: 'freeCodeCamp Podcast',
-              artUri: Uri.parse(
-                  'file:///data/user/0/org.freecodecamp/app_flutter/images/podcast/${podcast.id}.jpg'),
-            ),
-          ),
-        );
-      }
-      await audioPlayer.load();
-    } catch (e) {
-      log("Cannot play audio $e");
-    }
-    log('Episode initialised');
+    await FkUserAgent.init();
+    appDir = await getApplicationDocumentsDirectory();
   }
 
   // Make this even more better UI and logic wise. Also check for notification update
@@ -104,14 +62,19 @@ class EpisodeViewModel extends BaseViewModel {
     notifyListeners();
   }
 
-  void playBtnClick() {
+  Future<void> playBtnClick() async {
     log("CLICKED PLAY BUTTON ${episode.title}");
-    if (!playing) {
-      audioPlayer.play();
-      playing = true;
-    } else {
-      audioPlayer.pause();
-      playing = false;
+    if (!loading) {
+      if (!playing) {
+        loading = true;
+        notifyListeners();
+        await _audioService.playAudio(episode);
+        playing = true;
+      } else {
+        await _audioService.pauseAudio();
+        playing = false;
+      }
+      loading = false;
     }
     notifyListeners();
   }

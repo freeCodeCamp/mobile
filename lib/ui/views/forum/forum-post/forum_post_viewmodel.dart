@@ -2,6 +2,8 @@ import 'dart:convert';
 import 'dart:math';
 import 'dart:ui';
 import 'dart:async';
+import 'dart:developer' as dev;
+
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:freecodecamp/app/app.locator.dart';
@@ -40,13 +42,17 @@ class PostViewModel extends BaseViewModel {
 
   Timer? _timer;
 
+  String _baseUrl = '';
+  String get baseUrl => _baseUrl;
+
   final commentText = TextEditingController();
 
   void initState(slug, id) async {
     _future = fetchPost(id, slug);
+    notifyListeners();
+    _baseUrl = await ForumConnect.getCurrentUrl();
     _isLoggedIn = await checkLoggedIn();
     enableTimer(id, slug);
-    notifyListeners();
   }
 
   void disposeTimer() {
@@ -116,6 +122,23 @@ class PostViewModel extends BaseViewModel {
     notifyListeners();
   }
 
+  Future<void> updateTopic(postId, postSlug) async {
+    Map<String, dynamic> body = {
+      "post": {"raw": commentText.text}
+    };
+
+    if (commentText.text.isNotEmpty) {
+      await ForumConnect.connectAndPut('/posts/$_editedPostId', body);
+      _future = fetchPost(postId, postSlug);
+      notifyListeners();
+    }
+
+    _isEditingPost = false;
+    _editedPostId = '';
+
+    notifyListeners();
+  }
+
   void cancelUpdatePost() {
     _isEditingPost = false;
     _editedPostId = '';
@@ -136,6 +159,15 @@ class PostViewModel extends BaseViewModel {
     }
   }
 
+  Future<void> deleteTopic(topicId, context) async {
+    final response = await ForumConnect.connectAnDelete('/t/$topicId', {});
+    if (response.statusCode == 200) {
+      Navigator.pop(context);
+    } else {
+      throw Exception(response.body);
+    }
+  }
+
   Future<void> recoverPost(id) async {
     final response = await ForumConnect.connectAndPut('/posts/$id/recover', {});
 
@@ -145,32 +177,6 @@ class PostViewModel extends BaseViewModel {
       notifyListeners();
     } else {
       throw Exception(response.body);
-    }
-  }
-
-  // this parses different urls based on the cdn (Discourse or FCC)
-
-  static String parseProfileAvatarUrl(
-    String? url,
-    String size,
-  ) {
-    List urlPart = url!.split('{size}');
-    String avatarUrl = '';
-    String baseUrl = 'https://forum.freecodecamp.org';
-    bool fromDiscourse = urlPart[0]
-        .toString()
-        .contains(RegExp(r'discourse-cdn', caseSensitive: false));
-
-    if (urlPart.length > 1) {
-      avatarUrl = urlPart[0] + size + urlPart[1];
-    }
-
-    if (urlPart.length == 1) {
-      return urlPart[0];
-    } else if (fromDiscourse) {
-      return avatarUrl;
-    } else {
-      return baseUrl + avatarUrl;
     }
   }
 

@@ -1,4 +1,5 @@
-import 'package:freecodecamp/ui/views/forum/forum-post/forum_post_viewmodel.dart';
+import 'package:freecodecamp/ui/views/forum/forum_connect.dart';
+import 'dart:developer' as dev;
 
 // This types and converts the JSON into the instances of the PostModel class.
 class PostModel {
@@ -71,9 +72,9 @@ class PostModel {
         username: data["post_stream"]["posts"][0]["username"],
         profieImage: data["post_stream"]["posts"][0]["avatar_template"],
         name: data["post_stream"]["posts"][0]["name"],
-        postCanDelete: data["details"]["can_delete"],
-        postCanEdit: data["details"]["can_edit"],
-        postCanRecover: data["details"]["can_recover"],
+        postCanDelete: data["details"]["can_delete"] ?? false,
+        postCanEdit: data["details"]["can_edit"] ?? false,
+        postCanRecover: data["details"]["can_recover"] ?? false,
         isAdmin: data["post_stream"]["posts"][0]["admin"],
         isModerator: data["post_stream"]["posts"][0]["moderator"],
         isStaff: data["post_stream"]["posts"][0]["staff"],
@@ -127,6 +128,28 @@ class PostModel {
         postHasAnswer: data["has_accepted_answer"]);
   }
 
+  static String parseProfileAvatar(String? url) {
+    List urlPart = url!.split('{size}');
+    String avatarUrl = '';
+
+    if (urlPart.length > 1) {
+      avatarUrl = urlPart[0] + "60" + urlPart[1];
+    }
+
+    if (urlPart.length == 1) {
+      return urlPart[0];
+    } else {
+      return avatarUrl;
+    }
+  }
+
+  static bool fromDiscourse(url) {
+    bool fromDiscourse =
+        url.toString().contains(RegExp(r'discourse-cdn', caseSensitive: false));
+
+    return fromDiscourse;
+  }
+
   static List parseAvatars(List images, List postUsers) {
     List userImages = [];
 
@@ -135,8 +158,7 @@ class PostModel {
         bool hasUserImage = userImages.contains(images[i]["avatar_template"]);
 
         if (postUsers[i]["user_id"] == images[j]["id"] && !hasUserImage) {
-          userImages.add(PostViewModel.parseProfileAvatarUrl(
-              images[j]["avatar_template"], "60"));
+          userImages.add(parseProfileAvatar(images[j]["avatar_template"]));
         }
       }
     }
