@@ -28,7 +28,7 @@ class ForumCommentView extends StatelessWidget {
   Widget build(BuildContext context) {
     return ViewModelBuilder<PostViewModel>.reactive(
         viewModelBuilder: () => PostViewModel(),
-        onModelReady: (model) => model.initCommentHandler(topic.postComments),
+        onModelReady: (model) => model.initPostHandler(topic.postComments),
         builder: (context, model, child) => ListView.builder(
             shrinkWrap: true,
             physics: const ClampingScrollPhysics(),

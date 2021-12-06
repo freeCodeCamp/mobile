@@ -48,17 +48,29 @@ class PostViewModel extends BaseViewModel {
   String _baseUrl = '';
   String get baseUrl => _baseUrl;
 
-  final commentText = TextEditingController();
+  final _commentText = TextEditingController();
+  TextEditingController get commentText => _commentText;
+
+  final _createPostText = TextEditingController();
+
+  bool _hasError = false;
+  bool get commentHasError => _hasError;
+
+  String _errorMessage = '';
+  String get errorMesssage => _errorMessage;
+
+  TextEditingController get createPostText => _createPostText;
 
   void initState(slug, id) async {
     _future = fetchPost(id, slug);
+
     notifyListeners();
     _baseUrl = await ForumConnect.getCurrentUrl();
     _isLoggedIn = await checkLoggedIn();
     enableTimer(id, slug);
   }
 
-  void initCommentHandler(comments) {
+  void initPostHandler(comments) {
     _posts = comments;
     notifyListeners();
   }
@@ -85,7 +97,10 @@ class PostViewModel extends BaseViewModel {
   Future<PostModel> fetchPost(String id, String slug) async {
     final response = await ForumConnect.connectAndGet('/t/$slug/$id');
     if (response.statusCode == 200) {
-      return PostModel.fromPostJson(jsonDecode(response.body));
+      PostModel post = PostModel.fromPostJson(jsonDecode(response.body));
+      _posts = post.postComments;
+      notifyListeners();
+      return post;
     } else {
       throw Exception(response.body);
     }
@@ -175,6 +190,32 @@ class PostViewModel extends BaseViewModel {
       notifyListeners();
     } else {
       throw Exception(response.body);
+    }
+  }
+
+  Future<void> createComment(
+      String topicId, String text, PostModel topic) async {
+    Map<String, String> headers = {
+      'X-Requested-With': 'XMLHttpRequest',
+      "Content-Type": 'application/x-www-form-urlencoded'
+    };
+
+    final response = await ForumConnect.connectAndPost(
+        '/posts.json?&topic_id=$topicId&raw=$text', headers);
+    Map<String, dynamic> body = json.decode(response.body);
+
+    if (response.statusCode == 200) {
+      _createPostText.text = '';
+      dev.log(response.body.toString());
+      _posts.add(PostModel.fromCommentJson(jsonDecode(response.body)));
+      notifyListeners();
+    } else {
+      if (body.containsKey("errors")) {
+        _hasError = true;
+        _errorMessage = body["errors"][0];
+        notifyListeners();
+      }
+      dev.log(response.body);
     }
   }
 
