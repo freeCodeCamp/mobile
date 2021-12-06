@@ -1,6 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:freecodecamp/ui/views/forum/forum-post/forum_post_viewmodel.dart';
+import 'package:freecodecamp/models/forum_post_model.dart';
 import 'package:freecodecamp/ui/views/forum/forum-user-profile/forum_user_profile_viewmodel.dart';
 import 'package:stacked/stacked.dart';
 
@@ -67,8 +67,9 @@ class ForumUserProfileView extends StatelessWidget {
                   ),
                 ),
               ),
-              Image.network(PostViewModel.parseProfileAvatarUrl(
-                  model.user.profilePicture, "60"))
+              Image.network(PostModel.parseProfileAvatar(
+                model.baseUrl + model.user.profilePicture,
+              ))
             ],
           ),
           trailing: Container(

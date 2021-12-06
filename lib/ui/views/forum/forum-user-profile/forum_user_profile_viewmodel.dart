@@ -18,6 +18,9 @@ class ForumUserProfileViewModel extends BaseViewModel {
   late User _user;
   User get user => _user;
 
+  late String _baseUrl;
+  String get baseUrl => _baseUrl;
+
   late String _username;
 
   final TextEditingController _emailController = TextEditingController();
@@ -33,6 +36,7 @@ class ForumUserProfileViewModel extends BaseViewModel {
     String username = prefs.getString('username') as String;
     _username = username;
     _user = await fetchUser(username);
+    _baseUrl = await ForumConnect.getCurrentUrl();
     notifyListeners();
   }
 

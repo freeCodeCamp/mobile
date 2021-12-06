@@ -1,9 +1,9 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:freecodecamp/models/forum_post_model.dart';
 import 'package:freecodecamp/ui/views/forum/forum-categories/forum_category_builder.dart';
 import 'package:freecodecamp/ui/views/forum/forum-categories/forum_category_viewmodel.dart';
 import 'package:freecodecamp/ui/views/forum/forum-login/forum_login_view.dart';
-import 'package:freecodecamp/ui/views/forum/forum-post/forum_post_viewmodel.dart';
 import 'package:freecodecamp/ui/views/forum/forum-search/forum_search_view.dart';
 import 'package:freecodecamp/ui/widgets/drawer_widget/drawer_widget_view.dart';
 import 'package:stacked/stacked.dart';
@@ -41,9 +41,8 @@ class ForumCategoryView extends StatelessWidget {
                             'assets/images/placeholder-profile-img.png')
                         : IconButton(
                             onPressed: () => model.goToUserProfile(),
-                            icon: Image.network(
-                                PostViewModel.parseProfileAvatarUrl(
-                                    model.user.profilePicture, "60")))
+                            icon: Image.network(PostModel.parseProfileAvatar(
+                                model.baseUrl + model.user.profilePicture)))
                     : Container()
               ],
             ),

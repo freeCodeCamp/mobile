@@ -9,11 +9,13 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:stacked/stacked.dart';
 import 'package:stacked_services/stacked_services.dart';
 import '../forum_connect.dart';
-import 'dart:developer' as dev;
 
 class ForumCategoryViewModel extends BaseViewModel {
   late Future<List<Category>> _future;
   Future<List<Category>> get future => _future;
+
+  late String _baseUrl;
+  String get baseUrl => _baseUrl;
 
   final NavigationService _navigationService = locator<NavigationService>();
 
@@ -34,8 +36,10 @@ class ForumCategoryViewModel extends BaseViewModel {
     notifyListeners();
   }
 
-  void initState() {
+  void initState() async {
     _future = fetchCategories();
+    _baseUrl = await ForumConnect.getCurrentUrl();
+    notifyListeners();
   }
 
   void goToPosts(slug, id, name) {
