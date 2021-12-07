@@ -30,6 +30,8 @@ class ForumPostView extends StatelessWidget {
               ),
               backgroundColor: const Color.fromRGBO(0x2A, 0x2A, 0x40, 1),
               body: RefreshIndicator(
+                backgroundColor: const Color(0xFF0a0a23),
+                color: Colors.white,
                 onRefresh: () => model.initState(id, slug),
                 child: SingleChildScrollView(
                     child: Container(
