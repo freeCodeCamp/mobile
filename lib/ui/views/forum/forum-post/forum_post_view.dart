@@ -4,7 +4,6 @@ import 'package:flutter_font_awesome_web_names/flutter_font_awesome.dart';
 import 'package:flutter_html/flutter_html.dart';
 import 'package:flutter_syntax_view/flutter_syntax_view.dart';
 import 'package:freecodecamp/models/forum_post_model.dart';
-import 'package:freecodecamp/ui/views/forum/forum-comment/forum_comment_view.dart';
 import 'package:freecodecamp/ui/widgets/text_function_bar_widget.dart';
 import 'package:stacked/stacked.dart';
 import 'package:url_launcher/url_launcher.dart';
@@ -83,12 +82,7 @@ class ForumPostView extends StatelessWidget {
                       child: topicFooter(model, post, context),
                     ),
                     model.baseUrl != ''
-                        ? ForumCommentView(
-                            topicId: id,
-                            topic: post,
-                            postId: id,
-                            postSlug: slug,
-                            baseUrl: model.baseUrl)
+                        ? model.postBuilder(slug, id)
                         : Container(),
                     model.isLoggedIn
                         ? createPost(model, context, post)

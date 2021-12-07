@@ -12,33 +12,37 @@ import 'package:url_launcher/url_launcher.dart';
 import 'dart:developer' as dev;
 
 class ForumCommentView extends StatelessWidget {
-  late final PostModel topic;
   late final String topicId;
   late final String postId;
+  late final List<PostModel> topicPosts;
   late final String postSlug;
   late final String baseUrl;
   // ignore: prefer_const_constructors_in_immutables
   ForumCommentView(
       {Key? key,
-      required this.topic,
+      required this.topicPosts,
       required this.topicId,
       required this.postId,
       required this.postSlug,
       required this.baseUrl})
       : super(key: key);
 
+  void initState() {
+    dev.log(topicPosts.toString());
+  }
+
   @override
   Widget build(BuildContext context) {
     return ViewModelBuilder<PostViewModel>.reactive(
         viewModelBuilder: () => PostViewModel(),
-        onModelReady: (model) =>
-            model.initPostHandler(topic.postComments, topicId, topic.postSlug),
+        onModelReady: (model) => initState(),
         builder: (context, model, child) => ListView.builder(
             shrinkWrap: true,
             physics: const ClampingScrollPhysics(),
-            itemCount: model.posts.length,
+            itemCount: topicPosts.length,
             itemBuilder: (context, index) {
-              var post = model.posts[index];
+              var post = topicPosts[index];
+              dev.log(topicPosts.length.toString());
               return Container(
                 color: model.recentlyDeletedPost &&
                         model.recentlyDeletedPostId == post.postId
@@ -56,8 +60,7 @@ class ForumCommentView extends StatelessWidget {
                         ? commentEditor(model, post)
                         : post.postAction != null
                             ? commentAction(model, post)
-                            : commentHtml(
-                                index, context, topic.postComments, model),
+                            : commentHtml(index, context, topicPosts, model),
                     Container(
                       decoration: const BoxDecoration(
                           border: Border(

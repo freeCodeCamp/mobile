@@ -8,6 +8,7 @@ import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:freecodecamp/app/app.locator.dart';
 import 'package:freecodecamp/app/app.router.dart';
 import 'package:freecodecamp/models/forum_post_model.dart';
+import 'package:freecodecamp/ui/views/forum/forum-comment/forum_comment_view.dart';
 import 'package:jiffy/jiffy.dart';
 import 'package:share/share.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -22,7 +23,7 @@ class PostViewModel extends BaseViewModel {
   late Future<PostModel> _future;
   Future<PostModel> get future => _future;
 
-  late List<PostModel> _posts;
+  List<PostModel> _posts = [];
   List<PostModel> get posts => _posts;
 
   bool _isLoggedIn = false;
@@ -65,8 +66,7 @@ class PostViewModel extends BaseViewModel {
     notifyListeners();
   }
 
-  Future<void> initPostHandler(List<PostModel> posts, id, slug) async {
-    initState(id, slug);
+  Future<void> initPostHandler(List<PostModel> posts) async {
     _posts = posts;
     notifyListeners();
   }
@@ -80,6 +80,8 @@ class PostViewModel extends BaseViewModel {
     final response = await ForumConnect.connectAndGet('/t/$slug/$id');
     if (response.statusCode == 200) {
       PostModel post = PostModel.fromPostJson(jsonDecode(response.body));
+      _posts = [];
+      _posts.addAll(post.postComments);
       return post;
     } else {
       throw Exception(response.body);
@@ -132,6 +134,15 @@ class PostViewModel extends BaseViewModel {
     _editedPostId = '';
 
     notifyListeners();
+  }
+
+  Widget postBuilder(String slug, String id) {
+    return ForumCommentView(
+        topicId: id,
+        topicPosts: _posts,
+        postId: id,
+        postSlug: slug,
+        baseUrl: _baseUrl);
   }
 
   Future<void> updateTopic(postId, postSlug) async {
