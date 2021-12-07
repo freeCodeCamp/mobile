@@ -95,7 +95,8 @@ class ForumCommentView extends StatelessWidget {
                 child: Container(
                     decoration: BoxDecoration(
                         border: Border.all(
-                            width: 4, color: model.randomBorderColor())),
+                            width: 4,
+                            color: const Color.fromRGBO(0xAC, 0xD1, 0x57, 1))),
                     child: FadeInImage.assetNetwork(
                         height: 60,
                         placeholder:
@@ -171,7 +172,7 @@ class ForumCommentView extends StatelessWidget {
                         shape: RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(0))),
                     onPressed: () {
-                      model.updatePost(postId, postSlug);
+                      model.updatePost(topicPosts);
                     },
                     child: const Text(
                       'UPDATE COMMENT',

@@ -62,18 +62,8 @@ class PostViewModel extends BaseViewModel {
   Future<void> initState(id, slug) async {
     _future = fetchPost(id, slug);
     _baseUrl = await ForumConnect.getCurrentUrl();
-    _isLoggedIn = await checkLoggedIn();
+    _isLoggedIn = await ForumConnect.checkLoggedIn();
     notifyListeners();
-  }
-
-  Future<void> initPostHandler(List<PostModel> posts) async {
-    _posts = posts;
-    notifyListeners();
-  }
-
-  Future<bool> checkLoggedIn() async {
-    SharedPreferences prefs = await SharedPreferences.getInstance();
-    return prefs.getBool('loggedIn') ?? false;
   }
 
   Future<PostModel> fetchPost(String id, String slug) async {
@@ -110,11 +100,10 @@ class PostViewModel extends BaseViewModel {
     notifyListeners();
   }
 
-  Future<void> updatePost(postId, postSlug) async {
+  Future<void> updatePost(List<PostModel> posts) async {
     Map<String, dynamic> body = {
       "post": {"raw": commentText.text}
     };
-
     if (commentText.text.isNotEmpty) {
       final res =
           await ForumConnect.connectAndPut('/posts/$_editedPostId', body);
@@ -123,10 +112,10 @@ class PostViewModel extends BaseViewModel {
           PostModel.fromCommentJson(jsonDecode(res.body)['post']);
 
       int index =
-          _posts.indexWhere((PostModel post) => post.postId == editedPostId);
+          posts.indexWhere((PostModel post) => post.postId == editedPostId);
 
-      _posts[index].editedText = newPostModel.postCooked;
-
+      posts[index].editedText = newPostModel.postCooked;
+      _posts = posts;
       notifyListeners();
     }
 
@@ -143,23 +132,6 @@ class PostViewModel extends BaseViewModel {
         postId: id,
         postSlug: slug,
         baseUrl: _baseUrl);
-  }
-
-  Future<void> updateTopic(postId, postSlug) async {
-    Map<String, dynamic> body = {
-      "post": {"raw": commentText.text}
-    };
-
-    if (commentText.text.isNotEmpty) {
-      await ForumConnect.connectAndPut('/posts/$_editedPostId', body);
-      _future = fetchPost(postId, postSlug);
-      notifyListeners();
-    }
-
-    _isEditingPost = false;
-    _editedPostId = '';
-
-    notifyListeners();
   }
 
   void cancelUpdatePost() {
@@ -182,8 +154,19 @@ class PostViewModel extends BaseViewModel {
     }
   }
 
-  Future<void> createComment(
-      String topicId, String text, PostModel topic) async {
+  Future<void> recoverPost(id) async {
+    final response = await ForumConnect.connectAndPut('/posts/$id/recover', {});
+
+    if (response.statusCode == 200) {
+      _recentlyDeletedPost = false;
+      _recentlyDeletedPostId = '';
+      notifyListeners();
+    } else {
+      throw Exception(response.body);
+    }
+  }
+
+  Future<void> createPost(String topicId, String text, PostModel topic) async {
     Map<String, String> headers = {
       'X-Requested-With': 'XMLHttpRequest',
       "Content-Type": 'application/x-www-form-urlencoded'
@@ -203,8 +186,24 @@ class PostViewModel extends BaseViewModel {
         _errorMessage = body["errors"][0];
         notifyListeners();
       }
-      dev.log(response.body);
     }
+  }
+
+  Future<void> updateTopic(postId, postSlug) async {
+    Map<String, dynamic> body = {
+      "post": {"raw": commentText.text}
+    };
+
+    if (commentText.text.isNotEmpty) {
+      await ForumConnect.connectAndPut('/posts/$_editedPostId', body);
+      _future = fetchPost(postId, postSlug);
+      notifyListeners();
+    }
+
+    _isEditingPost = false;
+    _editedPostId = '';
+
+    notifyListeners();
   }
 
   Future<void> deleteTopic(topicId, context) async {
@@ -214,32 +213,6 @@ class PostViewModel extends BaseViewModel {
     } else {
       throw Exception(response.body);
     }
-  }
-
-  Future<void> recoverPost(id) async {
-    final response = await ForumConnect.connectAndPut('/posts/$id/recover', {});
-
-    if (response.statusCode == 200) {
-      _recentlyDeletedPost = false;
-      _recentlyDeletedPostId = '';
-      notifyListeners();
-    } else {
-      throw Exception(response.body);
-    }
-  }
-
-  // This provides a random border color to the profile pictures
-
-  Color randomBorderColor() {
-    final random = Random();
-
-    List borderColor = [
-      const Color.fromRGBO(0xAC, 0xD1, 0x57, 1),
-    ];
-
-    int index = random.nextInt(borderColor.length);
-
-    return borderColor[index];
   }
 
   // This returns a parsed date from ISO to : 20 minutes ago
