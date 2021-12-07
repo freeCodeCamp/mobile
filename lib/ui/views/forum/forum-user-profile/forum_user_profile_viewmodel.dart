@@ -57,7 +57,7 @@ class ForumUserProfileViewModel extends BaseViewModel {
         title: 'Change Email',
         mainButtonTitle: 'Change Email',
         description:
-            "We will send an email to that address. Please follow the confirmation instructions.",
+            "We will send an email to your current address. Please follow the confirmation instructions.",
         data: DialogType.authform);
 
     if (response!.confirmed) {
