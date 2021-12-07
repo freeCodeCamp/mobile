@@ -101,7 +101,7 @@ class ForumUserProfileViewModel extends BaseViewModel {
 
     var dioInstnace = dio.Dio();
 
-    dioInstnace.options.baseUrl = 'https://forum.freecodecamp.org';
+    dioInstnace.options.baseUrl = await ForumConnect.getCurrentUrl();
 
     dio.FormData formData = dio.FormData.fromMap({
       "type": "avatar",
@@ -109,15 +109,14 @@ class ForumUserProfileViewModel extends BaseViewModel {
       "files[]": await dio.MultipartFile.fromFile(cachePath)
     });
 
+    Map<String, dynamic> headers = await ForumConnect.setHeaderValues();
+
     try {
       response = await dioInstnace.post(
         "/uploads.json",
         data: formData,
         options: dio.Options(
-          headers: {
-            "Api-Key": dotenv.env['DISCOURSE_API'],
-            "Api-Username": prefs.getString('username') as String
-          },
+          headers: headers,
         ),
         onSendProgress: (int sent, int total) {
           dev.log('$sent $total');
