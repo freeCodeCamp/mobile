@@ -6,6 +6,7 @@ import 'package:freecodecamp/ui/views/forum/forum-categories/forum_category_view
 import 'package:freecodecamp/ui/views/forum/forum-login/forum_login_view.dart';
 import 'package:freecodecamp/ui/views/forum/forum-post-feed/forum_post_feed_view.dart';
 import 'package:freecodecamp/ui/views/forum/forum-post/forum_post_view.dart';
+import 'package:freecodecamp/ui/views/forum/forum-user-profile/forum_user_profile_view.dart';
 import 'package:freecodecamp/ui/views/forum/forum-user/forum_user_view.dart';
 import 'package:freecodecamp/ui/views/home/home_view.dart';
 import 'package:freecodecamp/ui/views/podcast/podcast-list/podcast_list_view.dart';
@@ -39,6 +40,7 @@ import 'package:sqflite_migration_service/sqflite_migration_service.dart';
     MaterialRoute(page: ForumLoginView),
     MaterialRoute(page: ForumUserView),
     MaterialRoute(page: ForumSettingsView),
+    MaterialRoute(page: ForumUserProfileView)
   ],
   dependencies: [
     LazySingleton(classType: NavigationService),

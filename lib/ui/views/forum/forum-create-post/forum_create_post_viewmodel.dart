@@ -66,8 +66,23 @@ class ForumCreatePostModel extends BaseViewModel {
     }
   }
 
+  Future<List<Category>> fetchCategories() async {
+    final response = await ForumConnect.connectAndGet('/categories');
+
+    List<Category> categories = [];
+
+    List categoriesResponse =
+        jsonDecode(response.body)['category_list']['categories'];
+    if (response.statusCode == 200) {
+      for (int i = 0; i < categoriesResponse.length; i++) {
+        categories.add(Category.fromJson(categoriesResponse[i]));
+      }
+    }
+    return categories;
+  }
+
   Future<List<String>> requestCategorieNames() async {
-    List<Category> categories = await ForumCategoryViewModel.fetchCategories();
+    List<Category> categories = await fetchCategories();
 
     List<String> categoryNames = [];
 

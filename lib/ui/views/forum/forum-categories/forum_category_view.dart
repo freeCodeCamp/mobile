@@ -1,5 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:freecodecamp/models/forum_post_model.dart';
 import 'package:freecodecamp/ui/views/forum/forum-categories/forum_category_builder.dart';
 import 'package:freecodecamp/ui/views/forum/forum-categories/forum_category_viewmodel.dart';
 import 'package:freecodecamp/ui/views/forum/forum-login/forum_login_view.dart';
@@ -27,11 +28,23 @@ class ForumCategoryView extends StatelessWidget {
   Widget build(BuildContext context) {
     return ViewModelBuilder<ForumCategoryViewModel>.reactive(
         viewModelBuilder: () => ForumCategoryViewModel(),
+        onModelReady: (model) => model.initState(),
         builder: (context, model, child) => Scaffold(
             appBar: AppBar(
               backgroundColor: const Color(0xFF0a0a23),
               title: titles.elementAt(model.index),
               centerTitle: true,
+              actions: [
+                model.isLoggedIn
+                    ? model.userProfileIsLoading
+                        ? Image.asset(
+                            'assets/images/placeholder-profile-img.png')
+                        : IconButton(
+                            onPressed: () => model.goToUserProfile(),
+                            icon: Image.network(PostModel.parseProfileAvatar(
+                                model.baseUrl + model.user.profilePicture)))
+                    : Container()
+              ],
             ),
             drawer: SizedBox(
               width: MediaQuery.of(context).size.width,
