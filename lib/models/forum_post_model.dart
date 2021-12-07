@@ -149,7 +149,7 @@ class PostModel {
   }
 
   set editedText(String text) {
-    this.postCooked = text;
+    postCooked = text;
   }
 
   static String parseProfileAvatar(String? url) {

@@ -9,9 +9,11 @@ import 'package:freecodecamp/ui/widgets/text_function_bar_widget.dart';
 import 'package:stacked/stacked.dart';
 import 'package:html/dom.dart' as dom;
 import 'package:url_launcher/url_launcher.dart';
+import 'dart:developer' as dev;
 
 class ForumCommentView extends StatelessWidget {
   late final PostModel topic;
+  late final String topicId;
   late final String postId;
   late final String postSlug;
   late final String baseUrl;
@@ -19,6 +21,7 @@ class ForumCommentView extends StatelessWidget {
   ForumCommentView(
       {Key? key,
       required this.topic,
+      required this.topicId,
       required this.postId,
       required this.postSlug,
       required this.baseUrl})
@@ -28,7 +31,8 @@ class ForumCommentView extends StatelessWidget {
   Widget build(BuildContext context) {
     return ViewModelBuilder<PostViewModel>.reactive(
         viewModelBuilder: () => PostViewModel(),
-        onModelReady: (model) => model.initPostHandler(topic.postComments),
+        onModelReady: (model) =>
+            model.initPostHandler(topic.postComments, topicId, topic.postSlug),
         builder: (context, model, child) => ListView.builder(
             shrinkWrap: true,
             physics: const ClampingScrollPhysics(),

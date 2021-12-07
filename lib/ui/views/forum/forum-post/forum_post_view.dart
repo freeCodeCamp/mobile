@@ -23,18 +23,20 @@ class ForumPostView extends StatelessWidget {
   Widget build(BuildContext context) {
     return ViewModelBuilder<PostViewModel>.reactive(
         viewModelBuilder: () => PostViewModel(),
-        onModelReady: (model) => model.initState(slug, id),
-        onDispose: (model) => model.disposeTimer(),
+        onModelReady: (model) => model.initState(id, slug),
         builder: (context, model, child) => Scaffold(
               appBar: AppBar(
                 backgroundColor: const Color(0xFF0a0a23),
                 title: const Text('Back To Feed'),
               ),
               backgroundColor: const Color.fromRGBO(0x2A, 0x2A, 0x40, 1),
-              body: SingleChildScrollView(
-                  child: Container(
-                      color: const Color(0xFF0a0a23),
-                      child: postViewTemplate(model, id, slug))),
+              body: RefreshIndicator(
+                onRefresh: () => model.initState(id, slug),
+                child: SingleChildScrollView(
+                    child: Container(
+                        color: const Color(0xFF0a0a23),
+                        child: postViewTemplate(model, id, slug))),
+              ),
             ));
   }
 
@@ -82,6 +84,7 @@ class ForumPostView extends StatelessWidget {
                     ),
                     model.baseUrl != ''
                         ? ForumCommentView(
+                            topicId: id,
                             topic: post,
                             postId: id,
                             postSlug: slug,
@@ -384,7 +387,7 @@ class ForumPostView extends StatelessWidget {
                 child: Padding(
                   padding: const EdgeInsets.only(top: 16, left: 16, right: 16),
                   child: TextField(
-                    controller: model.commentText,
+                    controller: model.createPostText,
                     minLines: 10,
                     maxLines: null,
                     style: const TextStyle(
@@ -427,7 +430,7 @@ class ForumPostView extends StatelessWidget {
                             borderRadius: BorderRadius.circular(0))),
                     onPressed: () {
                       dev.log(post.postId.toString());
-                      model.createComment(id, model.commentText.text, post);
+                      model.createComment(id, model.createPostText.text, post);
                     },
                     child: const Text(
                       'PLACE COMMENT',

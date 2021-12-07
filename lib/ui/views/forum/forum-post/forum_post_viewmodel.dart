@@ -43,8 +43,6 @@ class PostViewModel extends BaseViewModel {
   String _requestedRaw = '';
   String get requestedRaw => _requestedRaw;
 
-  Timer? _timer;
-
   String _baseUrl = '';
   String get baseUrl => _baseUrl;
 
@@ -52,6 +50,7 @@ class PostViewModel extends BaseViewModel {
   TextEditingController get commentText => _commentText;
 
   final _createPostText = TextEditingController();
+  TextEditingController get createPostText => _createPostText;
 
   bool _hasError = false;
   bool get commentHasError => _hasError;
@@ -59,34 +58,17 @@ class PostViewModel extends BaseViewModel {
   String _errorMessage = '';
   String get errorMesssage => _errorMessage;
 
-  TextEditingController get createPostText => _createPostText;
-
-  void initState(slug, id) async {
+  Future<void> initState(id, slug) async {
     _future = fetchPost(id, slug);
-
-    notifyListeners();
     _baseUrl = await ForumConnect.getCurrentUrl();
     _isLoggedIn = await checkLoggedIn();
-    enableTimer(id, slug);
-  }
-
-  void initPostHandler(comments) {
-    _posts = comments;
     notifyListeners();
   }
 
-  void disposeTimer() {
-    _timer!.cancel();
+  Future<void> initPostHandler(List<PostModel> posts, id, slug) async {
+    initState(id, slug);
+    _posts = posts;
     notifyListeners();
-  }
-
-  void enableTimer(id, slug) {
-    _timer = Timer.periodic(const Duration(seconds: 30), (Timer timer) {
-      _recentlyDeletedPost = false;
-      _recentlyDeletedPostId = '';
-      _future = fetchPost(id, slug);
-      notifyListeners();
-    });
   }
 
   Future<bool> checkLoggedIn() async {
@@ -98,8 +80,6 @@ class PostViewModel extends BaseViewModel {
     final response = await ForumConnect.connectAndGet('/t/$slug/$id');
     if (response.statusCode == 200) {
       PostModel post = PostModel.fromPostJson(jsonDecode(response.body));
-      _posts = post.postComments;
-      notifyListeners();
       return post;
     } else {
       throw Exception(response.body);
@@ -139,8 +119,6 @@ class PostViewModel extends BaseViewModel {
 
       PostModel newPostModel =
           PostModel.fromCommentJson(jsonDecode(res.body)['post']);
-
-      dev.log(res.body.toString());
 
       int index =
           _posts.indexWhere((PostModel post) => post.postId == editedPostId);
@@ -205,9 +183,8 @@ class PostViewModel extends BaseViewModel {
     Map<String, dynamic> body = json.decode(response.body);
 
     if (response.statusCode == 200) {
-      _createPostText.text = '';
-      dev.log(response.body.toString());
       _posts.add(PostModel.fromCommentJson(jsonDecode(response.body)));
+      _createPostText.text = '';
       notifyListeners();
     } else {
       if (body.containsKey("errors")) {
