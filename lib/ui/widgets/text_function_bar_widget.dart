@@ -12,6 +12,11 @@ class ForumTextFunctionBar extends StatelessWidget {
   late final TextEditingController textController;
   late final PostModel post;
 
+  void setCursorposition() {
+    textController.selection = TextSelection.fromPosition(
+        TextPosition(offset: textController.text.length));
+  }
+
   void quoteText(String selectedText) {
     TextSelection textSelection = textController.selection;
 
@@ -21,9 +26,11 @@ class ForumTextFunctionBar extends StatelessWidget {
       String newText = textController.text.replaceRange(
           textSelection.start, textSelection.end, ' > Blockquote ');
       textController.text = newText;
+      setCursorposition();
     } else {
       textController.text =
           textController.text.replaceFirst(selectedText, "> $selectedText");
+      setCursorposition();
     }
   }
 
@@ -36,9 +43,11 @@ class ForumTextFunctionBar extends StatelessWidget {
       String newText = textController.text.replaceRange(
           textSelection.start, textSelection.end, '**strong text**');
       textController.text = newText;
+      setCursorposition();
     } else {
       textController.text =
           textController.text.replaceFirst(selectedText, "**$selectedText**");
+      setCursorposition();
     }
   }
 
@@ -49,11 +58,13 @@ class ForumTextFunctionBar extends StatelessWidget {
 
     if (selectedText.length < 2) {
       String newText = textController.text.replaceRange(textSelection.start,
-          textSelection.end, '\n```\npaste your code here\n```\n');
+          textSelection.end, '\n```\npaste your code here\n```');
       textController.text = newText;
+      setCursorposition();
     } else {
       textController.text = textController.text
-          .replaceFirst(selectedText, "\n```\n$selectedText\n```\n");
+          .replaceFirst(selectedText, "\n```\n$selectedText\n```");
+      setCursorposition();
     }
   }
 
@@ -64,9 +75,11 @@ class ForumTextFunctionBar extends StatelessWidget {
       String newText = textController.text
           .replaceRange(textSelection.start, textSelection.end, '[text](link)');
       textController.text = newText;
+      setCursorposition();
     } else {
       textController.text = textController.text
           .replaceFirst(selectedText, "[link]($selectedText)");
+      setCursorposition();
     }
   }
 
