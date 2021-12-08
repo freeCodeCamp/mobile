@@ -19,6 +19,11 @@ class ForumConnect {
         : 'https://forum.freecodecamp.org';
   }
 
+  static Future<bool> checkLoggedIn() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    return prefs.getBool('loggedIn') ?? false;
+  }
+
   static Future<Map<String, String>> setHeaderValues() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     Map<String, String> headers = {

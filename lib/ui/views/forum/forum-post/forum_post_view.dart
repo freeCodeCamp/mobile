@@ -4,13 +4,12 @@ import 'package:flutter_font_awesome_web_names/flutter_font_awesome.dart';
 import 'package:flutter_html/flutter_html.dart';
 import 'package:flutter_syntax_view/flutter_syntax_view.dart';
 import 'package:freecodecamp/models/forum_post_model.dart';
-import 'package:freecodecamp/ui/views/forum/forum-comment/forum_comment_view.dart';
-import 'package:freecodecamp/ui/views/forum/forum-create-comment/forum_create_comment_view.dart';
 import 'package:freecodecamp/ui/widgets/text_function_bar_widget.dart';
 import 'package:stacked/stacked.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:html/dom.dart' as dom;
 import 'forum_post_viewmodel.dart';
+import 'dart:developer' as dev;
 
 class ForumPostView extends StatelessWidget {
   final String id;
@@ -23,24 +22,26 @@ class ForumPostView extends StatelessWidget {
   Widget build(BuildContext context) {
     return ViewModelBuilder<PostViewModel>.reactive(
         viewModelBuilder: () => PostViewModel(),
-        onModelReady: (model) => model.initState(slug, id),
-        onDispose: (model) => model.disposeTimer(),
+        onModelReady: (model) => model.initState(id, slug),
         builder: (context, model, child) => Scaffold(
               appBar: AppBar(
                 backgroundColor: const Color(0xFF0a0a23),
                 title: const Text('Back To Feed'),
               ),
               backgroundColor: const Color.fromRGBO(0x2A, 0x2A, 0x40, 1),
-              body: SingleChildScrollView(
-                  child: Container(
-                      color: const Color(0xFF0a0a23),
-                      child: postViewTemplate(model, id, slug))),
+              body: RefreshIndicator(
+                backgroundColor: const Color(0xFF0a0a23),
+                color: Colors.white,
+                onRefresh: () => model.initState(id, slug),
+                child: SingleChildScrollView(
+                    child: Container(
+                        color: const Color(0xFF0a0a23),
+                        child: postViewTemplate(model, id, slug))),
+              ),
             ));
   }
 
   Column postViewTemplate(PostViewModel model, id, slug) {
-    List<PostModel> comments = [];
-
     return Column(
       children: [
         FutureBuilder<PostModel>(
@@ -48,8 +49,6 @@ class ForumPostView extends StatelessWidget {
             builder: (context, snapshot) {
               if (snapshot.hasData) {
                 var post = snapshot.data;
-                comments = [];
-                comments.addAll(Comment.returnCommentList(post!.postComments));
                 return Column(
                   children: [
                     Container(
@@ -60,7 +59,7 @@ class ForumPostView extends StatelessWidget {
                             child: Padding(
                               padding: const EdgeInsets.all(24.0),
                               child: Text(
-                                post.postName as String,
+                                post!.postName as String,
                                 style: const TextStyle(
                                     color: Colors.white,
                                     fontSize: 24,
@@ -85,17 +84,10 @@ class ForumPostView extends StatelessWidget {
                       child: topicFooter(model, post, context),
                     ),
                     model.baseUrl != ''
-                        ? ForumCommentView(
-                            comments: comments,
-                            postId: id,
-                            postSlug: slug,
-                            baseUrl: model.baseUrl)
+                        ? model.postBuilder(slug, id)
                         : Container(),
                     model.isLoggedIn
-                        ? ForumCreateCommentView(
-                            topicId: id,
-                            post: post,
-                          )
+                        ? createPost(model, context, post)
                         : Container()
                   ],
                 );
@@ -380,6 +372,75 @@ class ForumPostView extends StatelessWidget {
     );
   }
 
+  Column createPost(PostViewModel model, BuildContext context, PostModel post) {
+    return Column(
+      children: [
+        Row(
+          children: [
+            SizedBox(
+                height: 200,
+                width: MediaQuery.of(context).size.width,
+                child: Padding(
+                  padding: const EdgeInsets.only(top: 16, left: 16, right: 16),
+                  child: TextField(
+                    controller: model.createPostText,
+                    minLines: 10,
+                    maxLines: null,
+                    style: const TextStyle(
+                      fontSize: 18,
+                    ),
+                    decoration: InputDecoration(
+                        border: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(0)),
+                        fillColor: Colors.white,
+                        filled: true),
+                  ),
+                ))
+          ],
+        ),
+        ForumTextFunctionBar(
+          textController: model.commentText,
+          post: post,
+        ),
+        model.commentHasError
+            ? Padding(
+                padding: const EdgeInsets.fromLTRB(0, 8, 0, 8),
+                child: Text(model.errorMesssage,
+                    style: const TextStyle(
+                      color: Colors.red,
+                      fontSize: 14,
+                      fontWeight: FontWeight.bold,
+                    )),
+              )
+            : Container(),
+        Row(
+          children: [
+            Expanded(
+              child: Padding(
+                padding: const EdgeInsets.only(left: 16, right: 16),
+                child: ElevatedButton(
+                    style: ElevatedButton.styleFrom(
+                        primary: const Color.fromRGBO(0x3b, 0x3b, 0x4f, 1),
+                        side: const BorderSide(width: 2, color: Colors.white),
+                        shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(0))),
+                    onPressed: () {
+                      dev.log(post.postId.toString());
+                      model.createPost(id, model.createPostText.text, post);
+                    },
+                    child: const Text(
+                      'PLACE COMMENT',
+                      textAlign: TextAlign.center,
+                      style: TextStyle(color: Colors.white),
+                    )),
+              ),
+            ),
+          ],
+        )
+      ],
+    );
+  }
+
   Row topicFooter(PostViewModel model, PostModel post, BuildContext context) {
     return Row(
       children: [
@@ -393,7 +454,7 @@ class ForumPostView extends StatelessWidget {
         post.postCanEdit && !model.isEditingPost
             ? IconButton(
                 onPressed: () {
-                  model.editPost(post.postId, post.postCooked!);
+                  model.editPost(post.postId, post.postCooked);
                 },
                 icon: const Icon(
                   Icons.edit_sharp,
