@@ -260,7 +260,25 @@ class ForumCommentView extends StatelessWidget {
                           Icons.delete_sharp,
                           color: Colors.white,
                         ))
-                : Container()
+                : Container(),
+            PopupMenuButton(
+                icon: const Icon(
+                  Icons.more_vert,
+                  color: Colors.white,
+                ),
+                itemBuilder: (context) => [
+                      PopupMenuItem(
+                          value: 1,
+                          onTap: () {
+                            model.deletePost(post.postId, postId, postSlug);
+                          },
+                          child: Row(
+                            children: const [
+                              Icon(Icons.delete_sharp),
+                              Text('Delete')
+                            ],
+                          ))
+                    ])
           ],
         ),
       ],
