@@ -30,7 +30,7 @@ dependencies:
   stacked_services: ^0.8.13
   ui_helper: ^1.1.0
   url_launcher: ^6.0.10
-  webview_flutter: ^2.0.12
+  webview_flutter: ^3.0.0
   sqflite_migration_service: ^2.0.0-nullsafety.1
   json_serializable: ^4.1.4
   dio: ^4.0.0
