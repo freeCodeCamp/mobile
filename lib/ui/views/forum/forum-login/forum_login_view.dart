@@ -14,7 +14,7 @@ class ForumLoginView extends StatelessWidget {
         viewModelBuilder: () => ForumLoginModel(),
         onModelReady: (model) async => model.initState(),
         builder: (context, model, child) => Scaffold(
-            resizeToAvoidBottomInset: false,
+            resizeToAvoidBottomInset: true,
             backgroundColor: const Color.fromRGBO(0x2A, 0x2A, 0x40, 1),
             body: SingleChildScrollView(
               child: Column(children: [
