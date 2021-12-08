@@ -39,8 +39,7 @@ class ForumSearchModel extends BaseViewModel {
         arguments: ForumPostViewArguments(id: id, slug: slug));
   }
 
-  // only search post for now
-  Future<List<SearchModel>?> search(String query) async {
+  Future<List<SearchModel>> search(String query) async {
     final response = await ForumConnect.connectAndGet(
         '/search/query?term=$query&in=title&status=public&order=latest');
     List<SearchModel> searchedPosts = [];
@@ -49,7 +48,7 @@ class ForumSearchModel extends BaseViewModel {
     dev.log(posts.toString());
 
     if (query.length <= 2 || posts.isEmpty) {
-      return null;
+      return searchedPosts;
     }
 
     if (response.statusCode == 200) {
