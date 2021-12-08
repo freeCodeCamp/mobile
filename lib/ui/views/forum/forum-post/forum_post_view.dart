@@ -1,7 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:freecodecamp/models/forum_post_model.dart';
-import 'package:freecodecamp/ui/views/forum/forum-html-handler/forum_htm_handler.dart';
+import 'package:freecodecamp/ui/views/forum/forum-html-handler/forum_html_handler.dart';
 import 'package:freecodecamp/ui/widgets/text_function_bar_widget.dart';
 import 'package:stacked/stacked.dart';
 
