@@ -1,3 +1,8 @@
+### Backend API ###
+node_modules/
+package-lock.json
+
+### Flutter ###
 # Miscellaneous
 *.class
 *.log
