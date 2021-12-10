@@ -3,6 +3,7 @@ import Parser from 'rss-parser';
 import Episode from './models/Episode';
 import Podcast from './models/Podcast';
 import { feedUrls } from './podcast-feed-urls.json';
+import { UpdateQuery } from "mongoose";
 
 const router = express.Router();
 const parser = new Parser();
@@ -24,7 +25,7 @@ router.get('/', async (req: Request, res: Response) => {
           imageLink: feed.image?.url || feed.itunes?.image,
           copyright: feed.copyright,
           numOfEps: feed.items.length,
-        },
+        } as UpdateQuery<typeof Podcast>,
         {
           new: true,
           upsert: true,
@@ -51,7 +52,7 @@ router.get('/:podcastId/episodes', async (req: Request, res: Response) => {
       req.params.podcastId,
       {
         numOfEps: feed.items.length,
-      },
+      } as UpdateQuery<typeof Podcast>,
       {
         new: true,
       }
@@ -71,7 +72,7 @@ router.get('/:podcastId/episodes', async (req: Request, res: Response) => {
             Date.parse(episode.isoDate!) || Date.parse(episode.pubDate!),
           audioUrl: episode.enclosure?.url,
           duration: episode.itunes?.duration,
-        },
+        } as UpdateQuery<typeof Episode>,
         {
           new: true,
           upsert: true,

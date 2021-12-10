@@ -1,3 +1,4 @@
+import { UpdateQuery } from "mongoose";
 import Parser from 'rss-parser';
 import { parentPort } from 'worker_threads';
 import dbConnect from '../db-connect';
@@ -23,7 +24,7 @@ const parser = new Parser();
         imageLink: feed.image?.url || feed.itunes?.image,
         copyright: feed.copyright,
         numOfEps: feed.items.length,
-      },
+      } as UpdateQuery<typeof Podcast>,
       {
         new: true,
         upsert: true,
@@ -44,7 +45,7 @@ const parser = new Parser();
             Date.parse(episode.isoDate!) || Date.parse(episode.pubDate!),
           audioUrl: episode.enclosure?.url,
           duration: episode.itunes?.duration,
-        },
+        } as UpdateQuery<typeof Episode>,
         {
           new: true,
           upsert: true,
