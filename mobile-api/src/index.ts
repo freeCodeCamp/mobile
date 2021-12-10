@@ -1,9 +1,9 @@
 require('dotenv').config();
+import Bree from 'bree';
 import express, { Request, Response } from 'express';
+import path from 'path/posix';
 import dbConnect from './db-connect';
 import podcastRoutes from './routes';
-import Bree from 'bree';
-import path from 'path/posix';
 
 const app = express();
 const port = 3000;

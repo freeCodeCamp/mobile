@@ -1,9 +1,9 @@
 import express, { Request, Response } from 'express';
+import { UpdateQuery } from "mongoose";
 import Parser from 'rss-parser';
 import Episode from './models/Episode';
 import Podcast from './models/Podcast';
 import { feedUrls } from './podcast-feed-urls.json';
-import { UpdateQuery } from "mongoose";
 
 const router = express.Router();
 const parser = new Parser();
