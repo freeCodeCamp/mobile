@@ -2,13 +2,13 @@ import 'dart:convert';
 import 'dart:math';
 import 'dart:ui';
 import 'dart:async';
-import 'dart:developer' as dev;
 
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:freecodecamp/app/app.locator.dart';
 import 'package:freecodecamp/app/app.router.dart';
 import 'package:freecodecamp/models/forum_post_model.dart';
+import 'package:freecodecamp/ui/views/forum/forum-comment/forum_comment_view.dart';
 import 'package:jiffy/jiffy.dart';
 import 'package:share/share.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -17,10 +17,14 @@ import 'package:stacked/stacked.dart';
 import 'package:stacked_services/stacked_services.dart';
 
 import '../forum_connect.dart';
+import 'dart:developer' as dev;
 
 class PostViewModel extends BaseViewModel {
   late Future<PostModel> _future;
   Future<PostModel> get future => _future;
+
+  List<PostModel> _posts = [];
+  List<PostModel> get posts => _posts;
 
   bool _isLoggedIn = false;
   bool get isLoggedIn => _isLoggedIn;
@@ -40,44 +44,35 @@ class PostViewModel extends BaseViewModel {
   String _requestedRaw = '';
   String get requestedRaw => _requestedRaw;
 
-  Timer? _timer;
-
   String _baseUrl = '';
   String get baseUrl => _baseUrl;
 
-  final commentText = TextEditingController();
+  final _commentText = TextEditingController();
+  TextEditingController get commentText => _commentText;
 
-  void initState(slug, id) async {
+  final _createPostText = TextEditingController();
+  TextEditingController get createPostText => _createPostText;
+
+  bool _hasError = false;
+  bool get commentHasError => _hasError;
+
+  String _errorMessage = '';
+  String get errorMesssage => _errorMessage;
+
+  Future<void> initState(id, slug) async {
     _future = fetchPost(id, slug);
-    notifyListeners();
     _baseUrl = await ForumConnect.getCurrentUrl();
-    _isLoggedIn = await checkLoggedIn();
-    enableTimer(id, slug);
-  }
-
-  void disposeTimer() {
-    _timer!.cancel();
+    _isLoggedIn = await ForumConnect.checkLoggedIn();
     notifyListeners();
-  }
-
-  void enableTimer(id, slug) {
-    _timer = Timer.periodic(const Duration(seconds: 30), (Timer timer) {
-      _recentlyDeletedPost = false;
-      _recentlyDeletedPostId = '';
-      _future = fetchPost(id, slug);
-      notifyListeners();
-    });
-  }
-
-  Future<bool> checkLoggedIn() async {
-    SharedPreferences prefs = await SharedPreferences.getInstance();
-    return prefs.getBool('loggedIn') ?? false;
   }
 
   Future<PostModel> fetchPost(String id, String slug) async {
     final response = await ForumConnect.connectAndGet('/t/$slug/$id');
     if (response.statusCode == 200) {
-      return PostModel.fromPostJson(jsonDecode(response.body));
+      PostModel post = PostModel.fromPostJson(jsonDecode(response.body));
+      _posts = [];
+      _posts.addAll(post.postComments);
+      return post;
     } else {
       throw Exception(response.body);
     }
@@ -105,14 +100,22 @@ class PostViewModel extends BaseViewModel {
     notifyListeners();
   }
 
-  Future<void> updatePost(postId, postSlug) async {
+  Future<void> updatePost(List<PostModel> posts) async {
     Map<String, dynamic> body = {
       "post": {"raw": commentText.text}
     };
-
     if (commentText.text.isNotEmpty) {
-      await ForumConnect.connectAndPut('/posts/$_editedPostId', body);
-      _future = fetchPost(postId, postSlug);
+      final res =
+          await ForumConnect.connectAndPut('/posts/$_editedPostId', body);
+
+      PostModel newPostModel =
+          PostModel.fromCommentJson(jsonDecode(res.body)['post']);
+
+      int index =
+          posts.indexWhere((PostModel post) => post.postId == editedPostId);
+
+      posts[index].editedText = newPostModel.postCooked;
+      _posts = posts;
       notifyListeners();
     }
 
@@ -122,21 +125,13 @@ class PostViewModel extends BaseViewModel {
     notifyListeners();
   }
 
-  Future<void> updateTopic(postId, postSlug) async {
-    Map<String, dynamic> body = {
-      "post": {"raw": commentText.text}
-    };
-
-    if (commentText.text.isNotEmpty) {
-      await ForumConnect.connectAndPut('/posts/$_editedPostId', body);
-      _future = fetchPost(postId, postSlug);
-      notifyListeners();
-    }
-
-    _isEditingPost = false;
-    _editedPostId = '';
-
-    notifyListeners();
+  Widget postBuilder(String slug, String id) {
+    return ForumCommentView(
+        topicId: id,
+        topicPosts: _posts,
+        postId: id,
+        postSlug: slug,
+        baseUrl: _baseUrl);
   }
 
   void cancelUpdatePost() {
@@ -159,15 +154,6 @@ class PostViewModel extends BaseViewModel {
     }
   }
 
-  Future<void> deleteTopic(topicId, context) async {
-    final response = await ForumConnect.connectAnDelete('/t/$topicId', {});
-    if (response.statusCode == 200) {
-      Navigator.pop(context);
-    } else {
-      throw Exception(response.body);
-    }
-  }
-
   Future<void> recoverPost(id) async {
     final response = await ForumConnect.connectAndPut('/posts/$id/recover', {});
 
@@ -180,18 +166,53 @@ class PostViewModel extends BaseViewModel {
     }
   }
 
-  // This provides a random border color to the profile pictures
+  Future<void> createPost(String topicId, String text, PostModel topic) async {
+    Map<String, String> headers = {
+      'X-Requested-With': 'XMLHttpRequest',
+      "Content-Type": 'application/x-www-form-urlencoded'
+    };
 
-  Color randomBorderColor() {
-    final random = Random();
+    final response = await ForumConnect.connectAndPost(
+        '/posts.json?&topic_id=$topicId&raw=$text', headers);
+    Map<String, dynamic> body = json.decode(response.body);
 
-    List borderColor = [
-      const Color.fromRGBO(0xAC, 0xD1, 0x57, 1),
-    ];
+    if (response.statusCode == 200) {
+      _posts.add(PostModel.fromCommentJson(jsonDecode(response.body)));
+      _createPostText.text = '';
+      notifyListeners();
+    } else {
+      if (body.containsKey("errors")) {
+        _hasError = true;
+        _errorMessage = body["errors"][0];
+        notifyListeners();
+      }
+    }
+  }
 
-    int index = random.nextInt(borderColor.length);
+  Future<void> updateTopic(postId, postSlug) async {
+    Map<String, dynamic> body = {
+      "post": {"raw": commentText.text}
+    };
 
-    return borderColor[index];
+    if (commentText.text.isNotEmpty) {
+      await ForumConnect.connectAndPut('/posts/$_editedPostId', body);
+      _future = fetchPost(postId, postSlug);
+      notifyListeners();
+    }
+
+    _isEditingPost = false;
+    _editedPostId = '';
+
+    notifyListeners();
+  }
+
+  Future<void> deleteTopic(topicId, context) async {
+    final response = await ForumConnect.connectAnDelete('/t/$topicId', {});
+    if (response.statusCode == 200) {
+      Navigator.pop(context);
+    } else {
+      throw Exception(response.body);
+    }
   }
 
   // This returns a parsed date from ISO to : 20 minutes ago

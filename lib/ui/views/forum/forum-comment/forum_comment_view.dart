@@ -9,31 +9,40 @@ import 'package:freecodecamp/ui/widgets/text_function_bar_widget.dart';
 import 'package:stacked/stacked.dart';
 import 'package:html/dom.dart' as dom;
 import 'package:url_launcher/url_launcher.dart';
+import 'dart:developer' as dev;
 
 class ForumCommentView extends StatelessWidget {
-  late final List<PostModel> comments;
+  late final String topicId;
   late final String postId;
+  late final List<PostModel> topicPosts;
   late final String postSlug;
   late final String baseUrl;
   // ignore: prefer_const_constructors_in_immutables
   ForumCommentView(
       {Key? key,
-      required this.comments,
+      required this.topicPosts,
+      required this.topicId,
       required this.postId,
       required this.postSlug,
       required this.baseUrl})
       : super(key: key);
 
+  void initState() {
+    dev.log(topicPosts.toString());
+  }
+
   @override
   Widget build(BuildContext context) {
     return ViewModelBuilder<PostViewModel>.reactive(
         viewModelBuilder: () => PostViewModel(),
+        onModelReady: (model) => initState(),
         builder: (context, model, child) => ListView.builder(
             shrinkWrap: true,
             physics: const ClampingScrollPhysics(),
-            itemCount: comments.length,
+            itemCount: topicPosts.length,
             itemBuilder: (context, index) {
-              var post = comments[index];
+              var post = topicPosts[index];
+              dev.log(topicPosts.length.toString());
               return Container(
                 color: model.recentlyDeletedPost &&
                         model.recentlyDeletedPostId == post.postId
@@ -51,7 +60,7 @@ class ForumCommentView extends StatelessWidget {
                         ? commentEditor(model, post)
                         : post.postAction != null
                             ? commentAction(model, post)
-                            : commentHtml(index, context, comments, model),
+                            : commentHtml(index, context, topicPosts, model),
                     Container(
                       decoration: const BoxDecoration(
                           border: Border(
@@ -86,7 +95,8 @@ class ForumCommentView extends StatelessWidget {
                 child: Container(
                     decoration: BoxDecoration(
                         border: Border.all(
-                            width: 4, color: model.randomBorderColor())),
+                            width: 4,
+                            color: const Color.fromRGBO(0xAC, 0xD1, 0x57, 1))),
                     child: FadeInImage.assetNetwork(
                         height: 60,
                         placeholder:
@@ -162,7 +172,7 @@ class ForumCommentView extends StatelessWidget {
                         shape: RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(0))),
                     onPressed: () {
-                      model.updatePost(postId, postSlug);
+                      model.updatePost(topicPosts);
                     },
                     child: const Text(
                       'UPDATE COMMENT',
@@ -223,7 +233,7 @@ class ForumCommentView extends StatelessWidget {
             post.postCanEdit && !model.isEditingPost
                 ? IconButton(
                     onPressed: () {
-                      model.editPost(post.postId, post.postCooked!);
+                      model.editPost(post.postId, post.postCooked);
                     },
                     icon: const Icon(
                       Icons.edit_sharp,
