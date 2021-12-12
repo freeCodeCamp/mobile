@@ -25,7 +25,6 @@ class NewsFeedView extends StatelessWidget {
                 return const Center(
                   child: Text(
                     'There was an error loading articles',
-                    style: TextStyle(color: Colors.white),
                   ),
                 );
               }
@@ -95,7 +94,7 @@ class NewsFeedView extends StatelessWidget {
                         const EdgeInsets.only(top: 16, bottom: 8, left: 16),
                     child: Text(
                       '#' + articles[i].tagName!.toUpperCase(),
-                      style: const TextStyle(color: Colors.white, fontSize: 18),
+                      style: const TextStyle(fontSize: 18),
                     ),
                   ),
                 ],
@@ -107,8 +106,7 @@ class NewsFeedView extends StatelessWidget {
                       padding: const EdgeInsets.all(16.0),
                       child: Text(
                         articles[i].title,
-                        style:
-                            const TextStyle(color: Colors.white, fontSize: 20),
+                        style: const TextStyle(fontSize: 20),
                       ),
                     ),
                   )
@@ -145,13 +143,10 @@ class NewsFeedView extends StatelessWidget {
                             padding: const EdgeInsets.only(bottom: 10),
                             child: Text(
                               articles[i].authorName.toUpperCase(),
-                              // textAlign: TextAlign.left,
-                              style: const TextStyle(color: Colors.white),
                             ),
                           ),
                           Text(
                             model.parseDate(articles[i].createdAt),
-                            style: const TextStyle(color: Colors.white),
                           ),
                         ],
                       ),

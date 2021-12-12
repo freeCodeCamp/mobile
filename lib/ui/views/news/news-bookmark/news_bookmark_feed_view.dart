@@ -21,7 +21,6 @@ class NewsBookmarkFeedView extends StatelessWidget {
                     child: Text(
                     'Bookmark articles to view them here',
                     textAlign: TextAlign.center,
-                    style: TextStyle(color: Colors.white),
                   ))));
   }
 }

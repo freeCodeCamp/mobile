@@ -26,9 +26,7 @@ class HomeView extends StatelessWidget {
     return ViewModelBuilder<HomeViewModel>.reactive(
       builder: (context, viewModel, child) => Scaffold(
         appBar: AppBar(
-          backgroundColor: const Color(0xFF0a0a23),
           title: titles.elementAt(viewModel.index),
-          centerTitle: true,
         ),
         drawer: SizedBox(
           width: MediaQuery.of(context).size.width,
@@ -36,26 +34,20 @@ class HomeView extends StatelessWidget {
         ),
         body: views.elementAt(viewModel.index),
         bottomNavigationBar: BottomNavigationBar(
-          backgroundColor: const Color(0xFF0a0a23),
-          unselectedItemColor: Colors.white,
-          selectedItemColor: const Color.fromRGBO(0x99, 0xc9, 0xff, 1),
           items: const <BottomNavigationBarItem>[
             BottomNavigationBarItem(
                 icon: Icon(
                   Icons.bookmark_outline_sharp,
-                  color: Colors.white,
                 ),
                 label: 'Bookmarks'),
             BottomNavigationBarItem(
                 icon: Icon(
                   Icons.article_sharp,
-                  color: Colors.white,
                 ),
                 label: 'Articles'),
             BottomNavigationBarItem(
                 icon: Icon(
                   Icons.search_sharp,
-                  color: Colors.white,
                 ),
                 label: 'Search')
           ],
