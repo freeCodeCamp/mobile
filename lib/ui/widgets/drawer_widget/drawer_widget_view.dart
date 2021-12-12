@@ -1,4 +1,3 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:freecodecamp/ui/widgets/drawer_widget/drawer_widget_viewmodel.dart';
 import 'package:stacked/stacked.dart';
@@ -118,18 +117,20 @@ class DrawerWidgetView extends StatelessWidget {
                             true,
                             model,
                             context)),
-                    model.inDevelopmentMode ? Expanded(
-                      child: navButtonWidget(
-                          'SETTINGS',
-                          'https://www.google.com/',
-                          const Icon(
-                            Icons.settings,
-                            size: 70,
-                          ),
-                          false,
-                          model,
-                          context),
-                    ) : Container(),
+                    model.inDevelopmentMode
+                        ? Expanded(
+                            child: navButtonWidget(
+                                'SETTINGS',
+                                'https://www.google.com/',
+                                const Icon(
+                                  Icons.settings,
+                                  size: 70,
+                                ),
+                                false,
+                                model,
+                                context),
+                          )
+                        : Container(),
                   ],
                 ),
               ],

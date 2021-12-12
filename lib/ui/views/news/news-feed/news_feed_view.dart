@@ -43,6 +43,7 @@ class NewsFeedView extends StatelessWidget {
         separatorBuilder: (context, int i) => const Divider(
               color: Color.fromRGBO(0x2A, 0x2A, 0x40, 1),
               thickness: 3,
+              height: 3,
             ),
         itemBuilder: (BuildContext contex, int i) => NewsFeedLazyLoading(
             articleCreated: () {
@@ -106,7 +107,12 @@ class NewsFeedView extends StatelessWidget {
                       padding: const EdgeInsets.all(16.0),
                       child: Text(
                         articles[i].title,
-                        style: const TextStyle(fontSize: 20),
+                        maxLines: 2,
+                        style: const TextStyle(
+                          color: Colors.white,
+                          fontSize: 20,
+                          overflow: TextOverflow.ellipsis,
+                        ),
                       ),
                     ),
                   )
