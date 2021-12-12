@@ -16,8 +16,6 @@ import 'package:freecodecamp/ui/views/news/news-feed/news_feed_view.dart';
 import 'package:freecodecamp/ui/views/settings/forumSettings/forum_settings_view.dart';
 import 'package:freecodecamp/ui/views/settings/podcastSettings/podcast_settings_view.dart';
 
-import '../ui/views/startup/startup_view.dart';
-import '../ui/views/website/website_view.dart';
 import 'package:stacked/stacked_annotations.dart';
 import 'package:stacked_services/stacked_services.dart';
 import 'package:sqflite_migration_service/sqflite_migration_service.dart';
@@ -25,8 +23,6 @@ import 'package:sqflite_migration_service/sqflite_migration_service.dart';
 // Run 'flutter pub run build_runner build --delete-conflicting-outputs' after any changes in this file to generate updated files
 @StackedApp(
   routes: [
-    MaterialRoute(page: StartupView),
-    MaterialRoute(page: WebsiteView),
     MaterialRoute(page: HomeView, initial: true),
     MaterialRoute(page: BrowserView),
     MaterialRoute(page: PodcastListView),

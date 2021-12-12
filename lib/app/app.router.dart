@@ -24,12 +24,8 @@ import '../ui/views/news/news-feed/news_feed_view.dart';
 import '../ui/views/podcast/podcast-list/podcast_list_view.dart';
 import '../ui/views/settings/forumSettings/forum_settings_view.dart';
 import '../ui/views/settings/podcastSettings/podcast_settings_view.dart';
-import '../ui/views/startup/startup_view.dart';
-import '../ui/views/website/website_view.dart';
 
 class Routes {
-  static const String startupView = '/startup-view';
-  static const String websiteView = '/website-view';
   static const String homeView = '/';
   static const String browserView = '/browser-view';
   static const String podcastListView = '/podcast-list-view';
@@ -45,8 +41,6 @@ class Routes {
   static const String forumSettingsView = '/forum-settings-view';
   static const String forumUserProfileView = '/forum-user-profile-view';
   static const all = <String>{
-    startupView,
-    websiteView,
     homeView,
     browserView,
     podcastListView,
@@ -68,8 +62,6 @@ class StackedRouter extends RouterBase {
   @override
   List<RouteDef> get routes => _routes;
   final _routes = <RouteDef>[
-    RouteDef(Routes.startupView, page: StartupView),
-    RouteDef(Routes.websiteView, page: WebsiteView),
     RouteDef(Routes.homeView, page: HomeView),
     RouteDef(Routes.browserView, page: BrowserView),
     RouteDef(Routes.podcastListView, page: PodcastListView),
@@ -88,18 +80,6 @@ class StackedRouter extends RouterBase {
   @override
   Map<Type, StackedRouteFactory> get pagesMap => _pagesMap;
   final _pagesMap = <Type, StackedRouteFactory>{
-    StartupView: (data) {
-      return MaterialPageRoute<dynamic>(
-        builder: (context) => const StartupView(),
-        settings: data,
-      );
-    },
-    WebsiteView: (data) {
-      return MaterialPageRoute<dynamic>(
-        builder: (context) => const WebsiteView(),
-        settings: data,
-      );
-    },
     HomeView: (data) {
       return MaterialPageRoute<dynamic>(
         builder: (context) => const HomeView(),
