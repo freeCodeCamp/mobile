@@ -2,7 +2,6 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:freecodecamp/ui/views/news/news-bookmark/news_bookmark_viewmodel.dart';
 import 'package:stacked/stacked.dart';
-import '../news_helpers.dart';
 import 'news_bookmark_view.dart';
 
 class NewsBookmarkFeedView extends StatelessWidget {
@@ -58,6 +57,32 @@ ListView populateListViewModel(NewsBookmarkModel model) {
                 MaterialPageRoute(
                     builder: (context) =>
                         NewsBookmarkPostView(article: bookmark)));
+          },
+          onLongPress: () {
+            showMenu(
+              context: context,
+              items: <PopupMenuItem>[
+                PopupMenuItem(
+                  child: Row(
+                    children: const <Widget>[
+                      Icon(
+                        Icons.bookmark,
+                        color: Colors.white,
+                      ),
+                      Text(
+                        "Unbookmark",
+                        style: TextStyle(color: Colors.white),
+                      ),
+                    ],
+                  ),
+                  onTap: () {
+                    model.bookmarkAndUnbookmark(bookmark);
+                  },
+                )
+              ],
+              position: RelativeRect.fill,
+              color: const Color(0xFF0a0a23),
+            );
           },
           isThreeLine: true,
           dense: false,
