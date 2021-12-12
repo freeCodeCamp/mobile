@@ -30,63 +30,41 @@ ListView populateListViewModel(NewsBookmarkModel model) {
   if (model.bookMarkedArticles.isEmpty) {
     model.updateListView();
   }
-  return ListView.builder(
+
+  return ListView.separated(
+      separatorBuilder: (context, int i) => const Divider(
+            color: Color.fromRGBO(0x42, 0x42, 0x55, 1),
+            thickness: 2,
+            height: 5,
+          ),
       itemCount: model.count,
       itemBuilder: (context, index) {
-        return ConstrainedBox(
-            constraints: const BoxConstraints(minHeight: 150),
-            child: Container(
-                decoration: const BoxDecoration(
-                    border: Border(
-                        bottom: BorderSide(width: 2, color: Colors.white))),
-                child: InkWell(
-                  onTap: () {
-                    Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                            builder: (context) => NewsBookmarkPostView(
-                                article: model.bookMarkedArticles[index])));
-                  },
-                  child: Column(
-                    children: [
-                      Row(
-                        children: [
-                          Expanded(
-                            flex: 8,
-                            child: Padding(
-                              padding: const EdgeInsets.all(25.0),
-                              child: Text(
-                                NewsHelper.truncateStr(model
-                                    .bookMarkedArticles[index].articleTitle),
-                                style: const TextStyle(
-                                    color: Colors.white, fontSize: 18),
-                              ),
-                            ),
-                          ),
-                          const Expanded(
-                              flex: 2,
-                              child: Icon(
-                                Icons.arrow_forward_ios,
-                                color: Colors.white,
-                              ))
-                        ],
-                      ),
-                      Row(
-                        children: [
-                          Expanded(
-                            child: Padding(
-                              padding: const EdgeInsets.all(25.0),
-                              child: Text(
-                                'Written by: ' +
-                                    model.bookMarkedArticles[index].authorName,
-                                style: const TextStyle(color: Colors.white),
-                              ),
-                            ),
-                          )
-                        ],
-                      )
-                    ],
-                  ),
-                )));
+        var bookmark = model.bookMarkedArticles[index];
+
+        return ListTile(
+          title: Text(
+            bookmark.articleTitle,
+            maxLines: 2,
+            overflow: TextOverflow.ellipsis,
+            style: const TextStyle(color: Colors.white),
+          ),
+          subtitle: Text(
+            'Written by: ' + bookmark.authorName,
+            style: const TextStyle(color: Colors.white, height: 3),
+          ),
+          onTap: () {
+            Navigator.push(
+                context,
+                MaterialPageRoute(
+                    builder: (context) =>
+                        NewsBookmarkPostView(article: bookmark)));
+          },
+          isThreeLine: true,
+          dense: false,
+          trailing: const Icon(
+            Icons.arrow_forward_ios,
+            color: Colors.white,
+          ),
+        );
       });
 }
