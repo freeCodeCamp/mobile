@@ -24,9 +24,7 @@ class ForumPostFeedView extends StatelessWidget {
         viewModelBuilder: () => ForumPostFeedModel(),
         builder: (context, model, child) => Scaffold(
               appBar: AppBar(
-                backgroundColor: const Color(0xFF0a0a23),
                 title: Text(name + ' Category'),
-                centerTitle: true,
               ),
               body: FutureBuilder<List<PostModel>?>(
                 future: model.fetchPosts(slug, id),
@@ -39,7 +37,6 @@ class ForumPostFeedView extends StatelessWidget {
                   }
                 },
               ),
-              backgroundColor: const Color.fromRGBO(0x2A, 0x2A, 0x40, 1),
             ));
   }
 
@@ -93,7 +90,7 @@ class ForumPostFeedView extends StatelessWidget {
           Expanded(
             child: Text(
               model.truncateTitle(post.postName as String),
-              style: const TextStyle(color: Colors.white, fontSize: 18),
+              style: const TextStyle(fontSize: 18),
             ),
           ),
         ],
