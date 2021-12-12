@@ -109,7 +109,6 @@ class NewsFeedView extends StatelessWidget {
                         articles[i].title,
                         maxLines: 2,
                         style: const TextStyle(
-                          color: Colors.white,
                           fontSize: 20,
                           overflow: TextOverflow.ellipsis,
                         ),

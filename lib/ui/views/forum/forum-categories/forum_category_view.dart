@@ -31,7 +31,6 @@ class ForumCategoryView extends StatelessWidget {
         onModelReady: (model) => model.initState(),
         builder: (context, model, child) => Scaffold(
             appBar: AppBar(
-              backgroundColor: const Color(0xFF0a0a23),
               title: titles.elementAt(model.index),
               centerTitle: true,
               actions: [
@@ -52,23 +51,17 @@ class ForumCategoryView extends StatelessWidget {
             ),
             body: views.elementAt(model.index),
             bottomNavigationBar: BottomNavigationBar(
-              backgroundColor: const Color(0xFF0a0a23),
-              unselectedItemColor: Colors.white,
-              selectedItemColor: const Color.fromRGBO(0x99, 0xc9, 0xff, 1),
               // ignore: prefer_const_literals_to_create_immutables
               items: <BottomNavigationBarItem>[
                 const BottomNavigationBarItem(
                     icon: Icon(
                       Icons.add,
-                      color: Colors.white,
                     ),
                     label: 'New'),
                 const BottomNavigationBarItem(
-                    icon: Icon(Icons.article, color: Colors.white),
-                    label: 'Categories'),
+                    icon: Icon(Icons.article), label: 'Categories'),
                 const BottomNavigationBarItem(
-                    icon: Icon(Icons.search_outlined, color: Colors.white),
-                    label: 'Search')
+                    icon: Icon(Icons.search_outlined), label: 'Search')
               ],
               currentIndex: model.index,
               onTap: model.onTapped,
