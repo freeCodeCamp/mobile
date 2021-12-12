@@ -28,55 +28,49 @@ class ForumSearchView extends StatelessWidget {
               backgroundColor: const Color(0xFF0a0a23),
             ),
             backgroundColor: const Color.fromRGBO(0x2A, 0x2A, 0x40, 1),
-            body: StreamBuilder<List<SearchModel>?>(
-              stream: Stream.fromFuture(model.search(model.searchTerm)),
-              builder: (context, snapshot) {
-                if (snapshot.hasData) {
-                  List<SearchModel>? result = snapshot.data;
+            body: model.searchTerm.isNotEmpty
+                ? StreamBuilder<List<SearchModel>>(
+                    stream: Stream.fromFuture(model.search(model.searchTerm)),
+                    builder: (context, snapshot) {
+                      if (snapshot.hasData) {
+                        List<SearchModel> result = snapshot.data ?? [];
 
-                  return Column(
-                    children: [
-                      Expanded(
-                          child: ListView.builder(
-                              itemCount: result?.length,
-                              itemBuilder: (context, index) {
-                                return InkWell(
-                                  onTap: () {
-                                    model.goToPost(result?[index].slug,
-                                        result?[index].topicId);
-                                  },
-                                  child: Container(
-                                    height: 100,
-                                    decoration: const BoxDecoration(
-                                        border: Border(
-                                            bottom: BorderSide(
-                                                width: 2,
-                                                color: Colors.white))),
-                                    child: Padding(
-                                      padding: const EdgeInsets.all(16.0),
-                                      child: Text(
-                                        result?[index].title as String,
-                                        style: const TextStyle(
-                                            color: Colors.white, fontSize: 18),
-                                      ),
-                                    ),
-                                  ),
-                                );
-                              }))
-                    ],
-                  );
-                } else {
-                  return Center(
-                      child: Text(
+                        return searchTile(result, model);
+                      }
+
+                      return Container();
+                    },
+                  )
+                : Center(
+                    child: Text(
                     model.hasSearched
                         ? model.queryToShort
-                            ? 'Query to short'
+                            ? 'Query too short'
                             : ''
-                        : 'type something to search',
+                        : 'Type something to search',
                     style: const TextStyle(color: Colors.white),
-                  ));
-                }
-              },
-            )));
+                  ))));
+  }
+
+  ListView searchTile(List<SearchModel> result, ForumSearchModel model) {
+    return ListView.separated(
+        shrinkWrap: true,
+        itemCount: result.length,
+        separatorBuilder: (context, int i) => const Divider(
+              color: Color.fromRGBO(0x42, 0x42, 0x55, 1),
+              thickness: 1,
+            ),
+        itemBuilder: (context, index) {
+          var searchResult = result[index];
+          return ListTile(
+            onTap: () {
+              model.goToPost(searchResult.slug, searchResult.topicId);
+            },
+            title: Text(
+              searchResult.title,
+              style: const TextStyle(color: Colors.white),
+            ),
+          );
+        });
   }
 }

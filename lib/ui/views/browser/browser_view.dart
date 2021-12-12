@@ -16,20 +16,22 @@ class BrowserView extends StatelessWidget {
       //   title: Text('Browser'),
       // ),
       builder: (context, viewModel, child) => Scaffold(
-        body: WillPopScope(
-          onWillPop: () async {
-            if (await viewModel.controller!.canGoBack()) {
-              await viewModel.controller!.goBack();
-            } else {
-              viewModel.goBack();
-            }
-            return false;
-          },
-          child: WebView(
-            initialUrl: url,
-            userAgent: "random",
-            javascriptMode: JavascriptMode.unrestricted,
-            onWebViewCreated: viewModel.setController,
+        body: SafeArea(
+          child: WillPopScope(
+            onWillPop: () async {
+              if (await viewModel.controller!.canGoBack()) {
+                await viewModel.controller!.goBack();
+              } else {
+                viewModel.goBack();
+              }
+              return false;
+            },
+            child: WebView(
+              initialUrl: url,
+              userAgent: "random",
+              javascriptMode: JavascriptMode.unrestricted,
+              onWebViewCreated: viewModel.setController,
+            ),
           ),
         ),
       ),

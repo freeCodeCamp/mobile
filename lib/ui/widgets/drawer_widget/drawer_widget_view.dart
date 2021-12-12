@@ -13,126 +13,128 @@ class DrawerWidgetView extends StatelessWidget {
       viewModelBuilder: () => DrawerWidgtetViewModel(),
       onModelReady: (model) => model.init(),
       builder: (context, model, child) => Drawer(
-        child: SingleChildScrollView(
-          child: Column(
-            children: [
-              Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Column(
-                    children: const [
-                      Padding(
-                        padding: EdgeInsets.all(25),
-                        child: Text(
-                          'MENU',
-                          style: TextStyle(
-                            fontWeight: FontWeight.bold,
-                            color: Color(0xFF0a0a23),
-                            fontSize: 24,
+        child: SafeArea(
+          child: SingleChildScrollView(
+            child: Column(
+              children: [
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Column(
+                      children: const [
+                        Padding(
+                          padding: EdgeInsets.all(25),
+                          child: Text(
+                            'MENU',
+                            style: TextStyle(
+                              fontWeight: FontWeight.bold,
+                              color: Color(0xFF0a0a23),
+                              fontSize: 24,
+                            ),
                           ),
                         ),
-                      ),
-                    ],
-                  ),
-                ],
-              ),
-              Row(
-                children: [
-                  Expanded(
-                    child: navButtonWidget(
-                        'NEWS',
-                        '',
-                        const Icon(
-                          Icons.article,
-                          size: 70,
-                        ),
-                        false,
-                        model,
-                        context),
-                  ),
-                  model.inDevelopmentMode || model.showForum
-                      ? Expanded(
-                          child: navButtonWidget(
-                              'FORUM',
-                              '',
-                              const Icon(
-                                Icons.forum_outlined,
-                                size: 70,
-                              ),
-                              false,
-                              model,
-                              context),
-                        )
-                      : Expanded(
-                          child: navButtonWidget(
-                              'LEARN',
-                              'https://www.freecodecamp.org/learn/',
-                              const Icon(
-                                Icons.local_fire_department_sharp,
-                                size: 70,
-                              ),
-                              true,
-                              model,
-                              context),
-                        )
-                ],
-              ),
-              Row(
-                children: [
-                  Expanded(
+                      ],
+                    ),
+                  ],
+                ),
+                Row(
+                  children: [
+                    Expanded(
                       child: navButtonWidget(
-                          'PODCAST',
+                          'NEWS',
                           '',
                           const Icon(
-                            Icons.podcasts_outlined,
+                            Icons.article,
                             size: 70,
                           ),
                           false,
                           model,
-                          context)),
-                  Expanded(
-                      child: navButtonWidget(
-                          'RADIO',
-                          'https://coderadio.freecodecamp.org/',
-                          const Icon(
-                            Icons.radio,
-                            size: 70,
-                          ),
-                          true,
-                          model,
-                          context)),
-                ],
-              ),
-              Row(
-                children: [
-                  Expanded(
-                      child: navButtonWidget(
-                          'DONATE',
-                          'https://www.freecodecamp.org/donate/',
-                          const Icon(
-                            Icons.favorite,
-                            size: 70,
-                          ),
-                          true,
-                          model,
-                          context)),
-                  model.inDevelopmentMode
-                      ? Expanded(
-                          child: navButtonWidget(
-                              'SETTINGS',
-                              'https://www.google.com/',
-                              const Icon(
-                                Icons.settings,
-                                size: 70,
-                              ),
-                              false,
-                              model,
-                              context),
-                        )
-                      : Container(),
-                ],
-              ),
-            ],
+                          context),
+                    ),
+                    model.inDevelopmentMode || model.showForum
+                        ? Expanded(
+                            child: navButtonWidget(
+                                'FORUM',
+                                '',
+                                const Icon(
+                                  Icons.forum_outlined,
+                                  size: 70,
+                                ),
+                                false,
+                                model,
+                                context),
+                          )
+                        : Expanded(
+                            child: navButtonWidget(
+                                'LEARN',
+                                'https://www.freecodecamp.org/learn/',
+                                const Icon(
+                                  Icons.local_fire_department_sharp,
+                                  size: 70,
+                                ),
+                                true,
+                                model,
+                                context),
+                          )
+                  ],
+                ),
+                Row(
+                  children: [
+                    Expanded(
+                        child: navButtonWidget(
+                            'PODCAST',
+                            '',
+                            const Icon(
+                              Icons.podcasts_outlined,
+                              size: 70,
+                            ),
+                            false,
+                            model,
+                            context)),
+                    Expanded(
+                        child: navButtonWidget(
+                            'RADIO',
+                            'https://coderadio.freecodecamp.org/',
+                            const Icon(
+                              Icons.radio,
+                              size: 70,
+                            ),
+                            true,
+                            model,
+                            context)),
+                  ],
+                ),
+                Row(
+                  children: [
+                    Expanded(
+                        child: navButtonWidget(
+                            'DONATE',
+                            'https://www.freecodecamp.org/donate/',
+                            const Icon(
+                              Icons.favorite,
+                              size: 70,
+                            ),
+                            true,
+                            model,
+                            context)),
+                    model.inDevelopmentMode
+                        ? Expanded(
+                            child: navButtonWidget(
+                                'SETTINGS',
+                                'https://www.google.com/',
+                                const Icon(
+                                  Icons.settings,
+                                  size: 70,
+                                ),
+                                false,
+                                model,
+                                context),
+                          )
+                        : Container(),
+                  ],
+                ),
+              ],
+            ),
           ),
         ),
       ),
