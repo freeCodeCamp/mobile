@@ -305,7 +305,8 @@ class PostViewModel extends BaseViewModel {
       PostModel post, PostViewModel model, String postId, String postSlug) {
     List<PopupMenuItem> options = [];
 
-    if (post.postCanDelete) {
+    if (post.postCanDelete &&
+        model.recentlyDeletedPostId != post.postId) {
       options.add(PopupMenuItem(
           onTap: () {
             model.deletePost(post.postId, postId, postSlug);
