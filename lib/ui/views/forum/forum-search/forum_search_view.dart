@@ -45,9 +45,9 @@ class ForumSearchView extends StatelessWidget {
                     child: Text(
                     model.hasSearched
                         ? model.queryToShort
-                            ? 'Query to short'
+                            ? 'Query too short'
                             : ''
-                        : 'type something to search',
+                        : 'Type something to search',
                     style: const TextStyle(color: Colors.white),
                   ))));
   }
