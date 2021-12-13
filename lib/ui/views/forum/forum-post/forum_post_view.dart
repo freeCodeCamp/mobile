@@ -85,7 +85,7 @@ class ForumPostView extends StatelessWidget {
                         : Container(),
                     model.isLoggedIn
                         ? createPost(model, context, post)
-                        : Container()
+                        : loginTemplate(context, model)
                   ],
                 );
               }
@@ -93,6 +93,44 @@ class ForumPostView extends StatelessWidget {
                 child: CircularProgressIndicator(),
               );
             })
+      ],
+    );
+  }
+
+  Column loginTemplate(BuildContext context, PostViewModel model) {
+    return Column(
+      children: [
+        Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: const [
+            Text(
+              'LOGIN TO POST A MESSAGE',
+              style: TextStyle(color: Colors.white, fontSize: 16, height: 3),
+            ),
+          ],
+        ),
+        Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            SizedBox(
+              width: MediaQuery.of(context).size.width * 0.5,
+              child: ElevatedButton(
+                  style: ElevatedButton.styleFrom(
+                      primary: const Color.fromRGBO(0x3b, 0x3b, 0x4f, 1),
+                      side: const BorderSide(width: 2, color: Colors.white),
+                      shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(0))),
+                  onPressed: () {
+                    model.goToLoginPage();
+                  },
+                  child: const Text(
+                    'LOGIN',
+                    textAlign: TextAlign.center,
+                    style: TextStyle(color: Colors.white),
+                  )),
+            ),
+          ],
+        ),
       ],
     );
   }

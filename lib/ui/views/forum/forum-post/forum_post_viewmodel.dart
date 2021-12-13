@@ -257,6 +257,10 @@ class PostViewModel extends BaseViewModel {
         arguments: ForumUserViewArguments(username: username));
   }
 
+  void goToLoginPage() {
+    _navigationService.navigateTo(Routes.forumLoginView);
+  }
+
   Row returnAction(Icon icon, String message, TextStyle style) {
     return Row(
       children: [
@@ -305,8 +309,7 @@ class PostViewModel extends BaseViewModel {
       PostModel post, PostViewModel model, String postId, String postSlug) {
     List<PopupMenuItem> options = [];
 
-    if (post.postCanDelete &&
-        model.recentlyDeletedPostId != post.postId) {
+    if (post.postCanDelete && model.recentlyDeletedPostId != post.postId) {
       options.add(PopupMenuItem(
           onTap: () {
             model.deletePost(post.postId, postId, postSlug);
