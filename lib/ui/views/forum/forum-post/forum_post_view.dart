@@ -290,7 +290,7 @@ class ForumPostView extends StatelessWidget {
       children: [
         IconButton(
           onPressed: () {
-            model.parseShareUrl(context, post.postSlug);
+            model.parseShareUrl(post.postSlug, id);
           },
           icon: const Icon(Icons.share_outlined),
           color: Colors.white,

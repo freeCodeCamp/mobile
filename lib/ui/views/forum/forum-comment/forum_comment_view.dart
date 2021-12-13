@@ -57,7 +57,7 @@ class ForumCommentView extends StatelessWidget {
                             ? commentAction(model, post)
                             : htmlView(post, context, model),
                     post.postAction == null
-                        ? commentFooter(post, model, context)
+                        ? commentFooter(post, model, context, index)
                         : Container()
                   ],
                 ),
@@ -200,7 +200,7 @@ class ForumCommentView extends StatelessWidget {
   }
 
   Column commentFooter(
-      PostModel post, PostViewModel model, BuildContext context) {
+      PostModel post, PostViewModel model, BuildContext context, int index) {
     return Column(
       children: [
         Row(
@@ -214,7 +214,7 @@ class ForumCommentView extends StatelessWidget {
             ),
             IconButton(
               onPressed: () {
-                model.parseShareUrl(context, post.postSlug);
+                model.parseShareUrl(post.postSlug, postId, index);
               },
               icon: const Icon(Icons.share_outlined),
               color: Colors.white,
