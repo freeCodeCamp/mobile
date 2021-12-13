@@ -128,7 +128,7 @@ Column loginForum(context, ForumLoginModel model) {
         ),
       ),
       const Text(
-        'trouble loging in?',
+        'trouble logging in?',
         style: TextStyle(color: Colors.white, fontSize: 16, height: 5),
       ),
       InkWell(
