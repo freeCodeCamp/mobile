@@ -20,6 +20,9 @@ void setupDialogUi() {
     DialogType.buttonForm: (BuildContext context, DialogRequest sheetRequest,
             Function(DialogResponse) completer) =>
         _buttonDialog(request: sheetRequest, onDialogTap: completer),
+    DialogType.buttonForm2: (BuildContext context, DialogRequest sheetRequest,
+            Function(DialogResponse) completer) =>
+        _buttonDialog(request: sheetRequest, onDialogTap: completer),
   };
 
   dialogService.registerCustomDialogBuilders(builders);
@@ -94,9 +97,61 @@ class _buttonDialog extends HookWidget {
               ),
             ),
           ),
+        ],
+      ),
+    );
+  }
+}
+
+class _buttonDialog2 extends HookWidget {
+  final DialogRequest request;
+  final Function(DialogResponse) onDialogTap;
+
+  const _buttonDialog2(
+      {Key? key, required this.request, required this.onDialogTap})
+      : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return Dialog(
+      backgroundColor: const Color(0xFF0a0a23),
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Padding(
+            padding: const EdgeInsets.all(32.0),
+            child: Row(
+              children: [
+                Text(
+                  request.title as String,
+                  style: const TextStyle(
+                    color: Colors.white,
+                    fontSize: 20,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+              ],
+            ),
+          ),
+          Padding(
+            padding: const EdgeInsets.only(left: 32, right: 32.0),
+            child: Row(
+              children: [
+                Expanded(
+                  child: Text(
+                    request.description as String,
+                    style: const TextStyle(
+                      color: Colors.white,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ),
           Padding(
             padding:
-                const EdgeInsets.only(left: 32, top: 8, right: 32, bottom: 32),
+                const EdgeInsets.only(left: 32, top: 8, right: 32, bottom: 8),
             child: SizedBox(
               height: 50,
               width: MediaQuery.of(context).size.width,
@@ -107,16 +162,16 @@ class _buttonDialog extends HookWidget {
                     shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(0))),
                 onPressed: () => {
-                  onDialogTap(DialogResponse(data: 'camera', confirmed: true)),
+                  onDialogTap(DialogResponse(data: 'gallery', confirmed: true)),
                 },
                 child: Text(
-                  request.secondaryButtonTitle as String,
+                  request.mainButtonTitle as String,
                   textAlign: TextAlign.center,
                   style: const TextStyle(color: Colors.white),
                 ),
               ),
             ),
-          ),
+          )
         ],
       ),
     );
