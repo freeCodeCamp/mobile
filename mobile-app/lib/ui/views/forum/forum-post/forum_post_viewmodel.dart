@@ -1,6 +1,4 @@
 import 'dart:convert';
-import 'dart:math';
-import 'dart:ui';
 import 'dart:async';
 
 import 'package:flutter/material.dart';
@@ -11,7 +9,6 @@ import 'package:freecodecamp/models/forum_post_model.dart';
 import 'package:freecodecamp/ui/views/forum/forum-comment/forum_comment_view.dart';
 import 'package:jiffy/jiffy.dart';
 import 'package:share/share.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 
 import 'package:stacked/stacked.dart';
 import 'package:stacked_services/stacked_services.dart';
@@ -276,7 +273,7 @@ class PostViewModel extends BaseViewModel {
     Icon? icon;
     String? message;
 
-    TextStyle style = const TextStyle(color: Colors.white, fontSize: 16);
+    TextStyle style = const TextStyle(color: Colors.white, fontSize: 14);
 
     date = Jiffy(date).fromNow().toUpperCase();
 
@@ -302,5 +299,49 @@ class PostViewModel extends BaseViewModel {
           children: [Text(message, style: style)],
         );
     }
+  }
+
+  List<PopupMenuItem> postOptionHandler(
+      PostModel post, PostViewModel model, String postId, String postSlug) {
+    List<PopupMenuItem> options = [];
+
+    if (post.postCanDelete &&
+        model.recentlyDeletedPostId != post.postId) {
+      options.add(PopupMenuItem(
+          onTap: () {
+            model.deletePost(post.postId, postId, postSlug);
+          },
+          child: Row(children: const [
+            Icon(
+              Icons.delete_sharp,
+              color: Colors.white,
+            ),
+            Text(
+              'Delete',
+              style: TextStyle(color: Colors.white),
+            )
+          ])));
+    }
+
+    if (post.postCanEdit && !model.isEditingPost) {
+      options.add(PopupMenuItem(
+          onTap: () {
+            model.editPost(post.postId, post.postCooked);
+          },
+          child: Row(
+            children: const [
+              Icon(
+                Icons.edit_sharp,
+                color: Colors.white,
+              ),
+              Text(
+                'Edit',
+                style: TextStyle(color: Colors.white),
+              )
+            ],
+          )));
+    }
+
+    return options;
   }
 }

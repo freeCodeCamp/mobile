@@ -46,32 +46,25 @@ class NewsSearchView extends StatelessWidget {
                 return Column(
                   children: [
                     Expanded(
-                      child: ListView.builder(
+                      child: ListView.separated(
                           itemCount: current!.length,
-                          itemBuilder: (context, index) {
-                            return Container(
-                              height: 75,
-                              decoration: const BoxDecoration(
-                                  border: Border(
-                                      bottom: BorderSide(
-                                          width: 2, color: Colors.white))),
-                              child: Padding(
-                                padding: const EdgeInsets.all(16.0),
-                                child: InkWell(
-                                  child: Text(
-                                    NewsHelper.truncateStr(
-                                        current[index].data['title']),
-                                    style: const TextStyle(
-                                      fontSize: 18,
-                                      color: Colors.white,
-                                    ),
-                                  ),
-                                  onTap: () => {
-                                    model.navigateToArticle(
-                                        current[index].data["objectID"])
-                                  },
-                                ),
+                          separatorBuilder: (context, int i) => const Divider(
+                                color: Color.fromRGBO(0x42, 0x42, 0x55, 1),
+                                thickness: 2,
+                                height: 5,
                               ),
+                          itemBuilder: (context, index) {
+                            return ListTile(
+                              title: Text(
+                                current[index].data['title'],
+                                maxLines: 2,
+                                overflow: TextOverflow.ellipsis,
+                                style: const TextStyle(color: Colors.white),
+                              ),
+                              onTap: () => {
+                                model.navigateToArticle(
+                                    current[index].data["objectID"])
+                              },
                             );
                           }),
                     )

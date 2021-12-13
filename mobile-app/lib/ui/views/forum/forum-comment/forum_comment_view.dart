@@ -1,14 +1,10 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_font_awesome_web_names/flutter_font_awesome.dart';
-import 'package:flutter_html/flutter_html.dart';
-import 'package:flutter_syntax_view/flutter_syntax_view.dart';
 import 'package:freecodecamp/models/forum_post_model.dart';
+import 'package:freecodecamp/ui/views/forum/forum-html-handler/forum_html_handler.dart';
 import 'package:freecodecamp/ui/views/forum/forum-post/forum_post_viewmodel.dart';
 import 'package:freecodecamp/ui/widgets/text_function_bar_widget.dart';
 import 'package:stacked/stacked.dart';
-import 'package:html/dom.dart' as dom;
-import 'package:url_launcher/url_launcher.dart';
 import 'dart:developer' as dev;
 
 class ForumCommentView extends StatelessWidget {
@@ -36,13 +32,17 @@ class ForumCommentView extends StatelessWidget {
     return ViewModelBuilder<PostViewModel>.reactive(
         viewModelBuilder: () => PostViewModel(),
         onModelReady: (model) => initState(),
-        builder: (context, model, child) => ListView.builder(
+        builder: (context, model, child) => ListView.separated(
+            separatorBuilder: (context, int i) => const Divider(
+                  color: Color.fromRGBO(0x42, 0x42, 0x55, 1),
+                  thickness: 2,
+                  height: 2,
+                ),
             shrinkWrap: true,
             physics: const ClampingScrollPhysics(),
             itemCount: topicPosts.length,
             itemBuilder: (context, index) {
               var post = topicPosts[index];
-              dev.log(topicPosts.length.toString());
               return Container(
                 color: model.recentlyDeletedPost &&
                         model.recentlyDeletedPostId == post.postId
@@ -50,26 +50,15 @@ class ForumCommentView extends StatelessWidget {
                     : const Color.fromRGBO(0x2A, 0x2A, 0x40, 1),
                 child: Column(
                   children: [
-                    InkWell(
-                      onTap: () {
-                        model.goToUserProfile(post.username);
-                      },
-                      child: commentHeader(model, post),
-                    ),
+                    commentHeader(model, post),
                     model.isEditingPost && model.editedPostId == post.postId
                         ? commentEditor(model, post)
                         : post.postAction != null
                             ? commentAction(model, post)
-                            : commentHtml(index, context, topicPosts, model),
-                    Container(
-                      decoration: const BoxDecoration(
-                          border: Border(
-                              bottom:
-                                  BorderSide(width: 2, color: Colors.white))),
-                      child: post.postAction == null
-                          ? commentFooter(post, model, context)
-                          : Container(),
-                    )
+                            : htmlView(post, context, model),
+                    post.postAction == null
+                        ? commentFooter(post, model, context)
+                        : Container()
                   ],
                 ),
               );
@@ -78,7 +67,7 @@ class ForumCommentView extends StatelessWidget {
 
   Padding commentAction(PostViewModel model, PostModel post) {
     return Padding(
-      padding: const EdgeInsets.all(48.0),
+      padding: const EdgeInsets.only(left: 24.0, bottom: 48, top: 24),
       child: model.postActionParser(
           post.postAction as String, post.postCreateDate),
     );
@@ -95,7 +84,7 @@ class ForumCommentView extends StatelessWidget {
                 child: Container(
                     decoration: BoxDecoration(
                         border: Border.all(
-                            width: 4,
+                            width: 2,
                             color: const Color.fromRGBO(0xAC, 0xD1, 0x57, 1))),
                     child: FadeInImage.assetNetwork(
                         height: 60,
@@ -230,167 +219,35 @@ class ForumCommentView extends StatelessWidget {
               icon: const Icon(Icons.share_outlined),
               color: Colors.white,
             ),
-            post.postCanEdit && !model.isEditingPost
+            model.recentlyDeletedPost &&
+                    model.recentlyDeletedPostId == post.postId
                 ? IconButton(
                     onPressed: () {
-                      model.editPost(post.postId, post.postCooked);
+                      model.recoverPost(post.postId);
                     },
                     icon: const Icon(
-                      Icons.edit_sharp,
+                      Icons.refresh_sharp,
                       color: Colors.white,
                     ))
                 : Container(),
-            post.postCanDelete
-                ? model.recentlyDeletedPost &&
-                        model.recentlyDeletedPostId == post.postId
-                    ? IconButton(
-                        onPressed: () {
-                          model.recoverPost(post.postId);
-                        },
-                        icon: const Icon(
-                          Icons.refresh_sharp,
-                          color: Colors.white,
-                        ))
-                    : IconButton(
-                        onPressed: () {
-                          // first id is the comment id
-                          model.deletePost(post.postId, postId, postSlug);
-                        },
-                        icon: const Icon(
-                          Icons.delete_sharp,
-                          color: Colors.white,
-                        ))
-                : Container()
+            Expanded(
+              child: Row(mainAxisAlignment: MainAxisAlignment.end, children: [
+                Padding(
+                  padding: const EdgeInsets.only(right: 16.0),
+                  child: PopupMenuButton(
+                      color: const Color(0xFF0a0a23),
+                      icon: const Icon(
+                        Icons.more_vert,
+                        color: Colors.white,
+                      ),
+                      itemBuilder: (context) => model.postOptionHandler(
+                          post, model, postId, postSlug)),
+                ),
+              ]),
+            )
           ],
         ),
       ],
     );
   }
-}
-
-Column commentHtml(int index, BuildContext context, List<PostModel> posts,
-    PostViewModel model) {
-  var post = posts[index];
-  return Column(
-    children: [
-      Row(
-        children: [
-          Expanded(
-            child: Padding(
-              padding: const EdgeInsets.all(16.0),
-              child: Html(
-                shrinkWrap: true,
-                data: post.postCooked,
-                style: {
-                  "aside": Style(
-                      border: Border.all(width: 2, color: Colors.white),
-                      width: MediaQuery.of(context).size.width,
-                      padding: const EdgeInsets.all(16)),
-                  "body": Style(color: Colors.white),
-                  "blockquote": Style(
-                      backgroundColor:
-                          const Color.fromRGBO(0x65, 0x65, 0x74, 1),
-                      width: MediaQuery.of(context).size.width,
-                      padding: const EdgeInsets.all(8)),
-                  "p": Style(
-                      fontSize: FontSize.rem(1.35),
-                      lineHeight: LineHeight.em(1.2)),
-                  "ul": Style(fontSize: FontSize.xLarge),
-                  "li": Style(
-                    margin: const EdgeInsets.only(top: 8),
-                    fontSize: FontSize.rem(1.35),
-                  ),
-                  "pre": Style(
-                    color: Colors.white,
-                    width: MediaQuery.of(context).size.width,
-                  ),
-                  "tr": Style(
-                      border:
-                          const Border(bottom: BorderSide(color: Colors.grey)),
-                      backgroundColor: Colors.white),
-                  "th": Style(
-                    padding: const EdgeInsets.all(12),
-                    backgroundColor: const Color.fromRGBO(0xdf, 0xdf, 0xe2, 1),
-                    color: Colors.black,
-                  ),
-                  "td": Style(
-                    padding: const EdgeInsets.all(12),
-                    color: Colors.black,
-                    alignment: Alignment.topLeft,
-                  ),
-                },
-                customRender: {
-                  "table": (context, child) {
-                    return SingleChildScrollView(
-                      scrollDirection: Axis.horizontal,
-                      child: (context.tree as TableLayoutElement)
-                          .toWidget(context),
-                    );
-                  },
-                  "code": (code, child) {
-                    var classList = code.tree.elementClasses;
-                    if (classList.isNotEmpty && classList[0] == 'lang-auto') {
-                      return SyntaxView(
-                        code: code.tree.element?.text as String,
-                        syntax: Syntax.JAVASCRIPT,
-                        syntaxTheme: SyntaxTheme.vscodeDark(),
-                        fontSize: 16.0,
-                        withZoom: false,
-                        withLinesCount: false,
-                        useCustomHeight: true,
-                        minWidth: MediaQuery.of(context).size.width,
-                        minHeight: 1,
-                      );
-                    }
-                  },
-                  "svg": (context, child) {
-                    var iconParent = context.tree.element!.className;
-                    var isFontAwesomeIcon = iconParent
-                        .toString()
-                        .contains(RegExp(r'fa ', caseSensitive: false));
-
-                    var iconChild =
-                        context.tree.element!.children[0].attributes.values;
-                    var iconParsed =
-                        iconChild.first.replaceFirst(RegExp(r'#'), '');
-
-                    List bannedIcons = ['far-image', 'discourse-expand'];
-
-                    if (isFontAwesomeIcon) {
-                      if (bannedIcons.contains(iconParsed)) {
-                        return Container();
-                      } else {
-                        return FaIcon(iconParsed);
-                      }
-                    }
-                  },
-                  "img": (context, child) {
-                    var classes = context.tree.element?.className;
-                    var classesSplit = classes?.split(" ");
-
-                    var classIsEmoji = classesSplit!.contains('emoji') ||
-                        classesSplit.contains('emoji-only');
-
-                    var emojiImage = context.tree.attributes['src'].toString();
-
-                    if (classIsEmoji) {
-                      return Image.network(
-                        emojiImage,
-                        height: 25,
-                        width: 25,
-                      );
-                    }
-                  }
-                },
-                onLinkTap: (String? url, RenderContext context,
-                    Map<String, String> attributes, dom.Element? element) {
-                  launch(url!);
-                },
-              ),
-            ),
-          )
-        ],
-      ),
-    ],
-  );
 }
