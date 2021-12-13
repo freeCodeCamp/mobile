@@ -30,10 +30,7 @@ class HomeView extends StatelessWidget {
           title: titles.elementAt(viewModel.index),
           centerTitle: true,
         ),
-        drawer: SizedBox(
-          width: MediaQuery.of(context).size.width,
-          child: const DrawerWidgetView(),
-        ),
+        drawer: const DrawerWidgetView(),
         body: views.elementAt(viewModel.index),
         bottomNavigationBar: BottomNavigationBar(
           backgroundColor: const Color(0xFF0a0a23),
