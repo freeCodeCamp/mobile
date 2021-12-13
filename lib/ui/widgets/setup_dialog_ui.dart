@@ -162,7 +162,7 @@ class _buttonDialog2 extends HookWidget {
                     shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(0))),
                 onPressed: () => {
-                  onDialogTap(DialogResponse(data: 'gallery', confirmed: true)),
+                  onDialogTap(DialogResponse()),
                 },
                 child: Text(
                   request.mainButtonTitle as String,
@@ -171,7 +171,7 @@ class _buttonDialog2 extends HookWidget {
                 ),
               ),
             ),
-          )
+          ),
         ],
       ),
     );
