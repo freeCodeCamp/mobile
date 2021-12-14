@@ -9,33 +9,41 @@ class DrawerWidgetView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    const iconsize = 44.0;
+    const iconsize = 47.0;
     return ViewModelBuilder<DrawerWidgtetViewModel>.reactive(
       viewModelBuilder: () => DrawerWidgtetViewModel(),
       onModelReady: (model) => model.init(),
       builder: (context, model, child) => Drawer(
         child: Container(
           color: const Color(0xFF0a0a23),
-          width: MediaQuery.of(context).size.width * 0.8,
           child: ListView(
             children: [
               DrawerHeader(
+                padding: EdgeInsets.zero,
                 child: Column(
+                  mainAxisAlignment: MainAxisAlignment.start,
+                  crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Image.asset(
-                      'assets/images/app-logo.png',
-                      width: iconsize * 2,
-                      height: iconsize * 2,
+                    Expanded(
+                      child: Image.asset(
+                        'assets/images/freecodecamp-banner.png',
+                      ),
                     ),
-                    const Text(
-                      'Menu',
-                      style: TextStyle(
-                        fontSize: 24,
-                        color: Colors.white,
+                    const Padding(
+                      padding: EdgeInsets.only(left: 28.0),
+                      child: Text(
+                        'Menu',
+                        style: TextStyle(
+                          fontSize: 26,
+                          color: Colors.white,
+                        ),
                       ),
                     ),
                   ],
                 ),
+              ),
+              const SizedBox(
+                height: 16,
               ),
               navButtonWidget(
                   'News',
@@ -47,6 +55,7 @@ class DrawerWidgetView extends StatelessWidget {
                   false,
                   model,
                   context),
+              buildDivider(),
               model.inDevelopmentMode || model.showForum
                   ? navButtonWidget(
                       'Forum',
@@ -68,6 +77,7 @@ class DrawerWidgetView extends StatelessWidget {
                       true,
                       model,
                       context),
+              buildDivider(),
               navButtonWidget(
                   'Podcast',
                   '',
@@ -78,6 +88,7 @@ class DrawerWidgetView extends StatelessWidget {
                   false,
                   model,
                   context),
+              buildDivider(),
               navButtonWidget(
                   'Radio',
                   'https://coderadio.freecodecamp.org/',
@@ -88,6 +99,7 @@ class DrawerWidgetView extends StatelessWidget {
                   true,
                   model,
                   context),
+              buildDivider(),
               navButtonWidget(
                   'Donate',
                   'https://www.freecodecamp.org/donate/',
@@ -98,6 +110,7 @@ class DrawerWidgetView extends StatelessWidget {
                   true,
                   model,
                   context),
+              buildDivider(),
               model.inDevelopmentMode
                   ? navButtonWidget(
                       'Settings',
@@ -118,18 +131,23 @@ class DrawerWidgetView extends StatelessWidget {
   }
 }
 
+Widget buildDivider() {
+  return 
+  Divider(
+    color: Colors.white.withOpacity(0.12),
+    indent: 16,
+    endIndent: 16,
+    thickness: 1,
+  );
+}
+
 Widget navButtonWidget(String text, url, Icon icon, bool isWebComponent,
     DrawerWidgtetViewModel model, context) {
   return Padding(
     padding: const EdgeInsets.all(10.0),
     child: ListTile(
-      onTap: () {
-        if (isWebComponent) {
-          model.goToBrowser(url);
-        } else {
-          model.navNonWebComponent(text, context);
-        }
-      },
+      dense: true,
+     
       leading: Icon(
         icon.icon,
         color: Colors.white,
