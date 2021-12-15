@@ -97,41 +97,41 @@ class ForumPostView extends StatelessWidget {
     );
   }
 
-  Column loginTemplate(BuildContext context, PostViewModel model) {
-    return Column(
-      children: [
-        Row(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: const [
-            Text(
+  Padding loginTemplate(BuildContext context, PostViewModel model) {
+    return Padding(
+      padding: const EdgeInsets.all(16.0),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.center,
+        children: [
+          const Padding(
+            padding: EdgeInsets.all(8.0),
+            child: Text(
               'LOGIN TO POST A MESSAGE',
-              style: TextStyle(color: Colors.white, fontSize: 16, height: 3),
+              style: TextStyle(color: Colors.white, fontSize: 16),
             ),
-          ],
-        ),
-        Row(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            SizedBox(
-              width: MediaQuery.of(context).size.width * 0.5,
-              child: ElevatedButton(
-                  style: ElevatedButton.styleFrom(
-                      primary: const Color.fromRGBO(0x3b, 0x3b, 0x4f, 1),
-                      side: const BorderSide(width: 2, color: Colors.white),
-                      shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(0))),
-                  onPressed: () {
-                    model.goToLoginPage();
-                  },
-                  child: const Text(
-                    'LOGIN',
-                    textAlign: TextAlign.center,
-                    style: TextStyle(color: Colors.white),
-                  )),
+          ),
+          SizedBox(
+            width: MediaQuery.of(context).size.width * 0.5,
+            child: ElevatedButton(
+              style: ElevatedButton.styleFrom(
+                primary: const Color.fromRGBO(0x3b, 0x3b, 0x4f, 1),
+                side: const BorderSide(width: 2, color: Colors.white),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(0),
+                ),
+              ),
+              onPressed: () {
+                model.goToLoginPage();
+              },
+              child: const Text(
+                'LOGIN',
+                textAlign: TextAlign.center,
+                style: TextStyle(color: Colors.white),
+              ),
             ),
-          ],
-        ),
-      ],
+          ),
+        ],
+      ),
     );
   }
 
