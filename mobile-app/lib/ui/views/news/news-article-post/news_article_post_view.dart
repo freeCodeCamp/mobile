@@ -18,12 +18,8 @@ class NewsArticlePostView extends StatelessWidget {
       onModelReady: (model) => model.initState(refId),
       builder: (context, model, child) => Scaffold(
         appBar: AppBar(
-          backgroundColor: const Color(0xFF0a0a23),
           title: const Text(
             'Back To Feed',
-            style: TextStyle(
-              color: Colors.white,
-            ),
           ),
         ),
         backgroundColor: const Color(0xFF0a0a23),
@@ -56,8 +52,6 @@ class NewsArticlePostView extends StatelessWidget {
                               },
                               icon: const Icon(Icons.open_in_new_sharp),
                               label: const Text('open in browser'),
-                              style: ElevatedButton.styleFrom(
-                                  primary: const Color(0xFF0a0a23)),
                             ),
                           ),
                         )
@@ -72,7 +66,8 @@ class NewsArticlePostView extends StatelessWidget {
                             padding: const EdgeInsets.all(16.0),
                             child: Text(article.title,
                                 style: const TextStyle(
-                                    fontSize: 24, color: Colors.white)),
+                                  fontSize: 24,
+                                )),
                           ),
                         )
                       ],
@@ -102,8 +97,7 @@ class NewsArticlePostView extends StatelessWidget {
                                     padding: const EdgeInsets.only(top: 8),
                                     child: Text(
                                       'Written by ' + article.authorName,
-                                      style: const TextStyle(
-                                          fontSize: 16, color: Colors.white),
+                                      style: const TextStyle(fontSize: 16),
                                     ),
                                   ),
                                 ))

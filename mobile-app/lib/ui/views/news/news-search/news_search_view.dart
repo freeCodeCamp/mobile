@@ -2,7 +2,6 @@
 import 'package:flutter/material.dart';
 import 'package:algolia/algolia.dart';
 import 'package:freecodecamp/ui/views/news/news-search/news_search_viewmodel.dart';
-import 'package:freecodecamp/ui/views/news/news_helpers.dart';
 
 import 'package:stacked/stacked.dart';
 
@@ -14,22 +13,16 @@ class NewsSearchView extends StatelessWidget {
         viewModelBuilder: () => NewsSearchModel(),
         builder: (context, model, child) => Scaffold(
             appBar: AppBar(
-              title: TextField(
-                controller: model.searchbarController,
-                decoration: const InputDecoration(
-                    hintText: "SEARCH ARTICLE...",
-                    hintStyle: TextStyle(color: Colors.white),
-                    fillColor: Color.fromRGBO(0x2A, 0x2A, 0x40, 1),
-                    filled: true),
-                style: const TextStyle(color: Colors.white),
-                onChanged: (value) {
-                  model.setSearchTerm(value);
-                },
-              ),
-              centerTitle: true,
-              backgroundColor: const Color(0xFF0a0a23),
-            ),
-            backgroundColor: const Color.fromRGBO(0x2A, 0x2A, 0x40, 1),
+                title: TextField(
+              controller: model.searchbarController,
+              decoration: const InputDecoration(
+                  hintText: "SEARCH ARTICLE...",
+                  fillColor: Color.fromRGBO(0x2A, 0x2A, 0x40, 1),
+                  filled: true),
+              onChanged: (value) {
+                model.setSearchTerm(value);
+              },
+            )),
             body: StreamBuilder<List<AlgoliaObjectSnapshot>>(
               stream: Stream.fromFuture(model.search(model.getSearchTerm)),
               builder: (context, snapshot) {
@@ -59,7 +52,6 @@ class NewsSearchView extends StatelessWidget {
                                 current[index].data['title'],
                                 maxLines: 2,
                                 overflow: TextOverflow.ellipsis,
-                                style: const TextStyle(color: Colors.white),
                               ),
                               onTap: () => {
                                 model.navigateToArticle(

@@ -18,8 +18,6 @@ class NewsBookmarkViewWidget extends StatelessWidget {
                 onPressed: () {
                   model.bookmarkAndUnbookmark(article);
                 },
-                style: TextButton.styleFrom(
-                    backgroundColor: const Color(0xFF0a0a23)),
                 icon: Icon(
                     model.bookmarked
                         ? Icons.bookmark_sharp
@@ -29,7 +27,6 @@ class NewsBookmarkViewWidget extends StatelessWidget {
                   model.bookmarked
                       ? 'Article is bookmarked'
                       : 'Bookmark for offline usage',
-                  style: const TextStyle(fontSize: 20, color: Colors.white),
                 ),
               ),
             ));
