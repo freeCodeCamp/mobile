@@ -8,7 +8,6 @@ import 'package:url_launcher/url_launcher.dart';
 import 'package:html/dom.dart' as dom;
 import 'news_article_post_viewmodel.dart';
 import 'package:youtube_player_iframe/youtube_player_iframe.dart';
-import 'dart:developer' as dev;
 
 class NewsArticlePostView extends StatelessWidget {
   // ignore: prefer_const_constructors_in_immutables
@@ -201,23 +200,28 @@ Row htmlView(Article article, BuildContext context) {
                       scrollDirection: Axis.horizontal, child: child);
                 },
                 "iframe": (code, child) {
-                  dev.log(code.tree.attributes.toString());
                   var videoUrl = code.tree.attributes['src'];
-                  var videoId = videoUrl?.split('/').last.split('?').first;
 
-                  YoutubePlayerController _controller = YoutubePlayerController(
-                    initialVideoId: videoId!,
-                  );
+                  var isVideo = RegExp('youtube', caseSensitive: false);
 
-                  return YoutubePlayerIFrame(
-                    controller: _controller,
-                  );
+                  if (isVideo.hasMatch(videoUrl ?? '')) {
+                    var videoId = videoUrl?.split('/').last.split('?').first;
+
+                    YoutubePlayerController _controller =
+                        YoutubePlayerController(
+                      initialVideoId: videoId!,
+                    );
+
+                    return YoutubePlayerIFrame(
+                      controller: _controller,
+                    );
+                  }
                 },
                 "figure": (code, child) {
                   var figureClasses = code.tree.elementClasses;
                   bool isBookmarkCard =
                       figureClasses.contains("kg-bookmark-card");
-                  dev.log('rebuild');
+
                   if (isBookmarkCard) {
                     var parent = code.tree.children[0];
 
