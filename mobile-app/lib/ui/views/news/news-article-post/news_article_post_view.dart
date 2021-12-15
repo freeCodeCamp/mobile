@@ -12,6 +12,7 @@ class NewsArticlePostView extends StatelessWidget {
   // ignore: prefer_const_constructors_in_immutables
   NewsArticlePostView({Key? key, required this.refId}) : super(key: key);
   late final String refId;
+
   @override
   Widget build(BuildContext context) {
     return ViewModelBuilder<NewsArticlePostViewModel>.reactive(
@@ -34,93 +35,9 @@ class NewsArticlePostView extends StatelessWidget {
               var article = snapshot.data;
               return Column(
                 children: [
-                  Stack(
-                    children: [
-                      AspectRatio(
-                        aspectRatio: 16 / 9,
-                        child: FadeInImage.assetNetwork(
-                          placeholder: 'assets/images/freecodecamp-banner.png',
-                          image: article!.featureImage,
-                          fit: BoxFit.cover,
-                        ),
-                      ),
-                      Padding(
-                        padding: const EdgeInsets.all(16.0),
-                        child: Align(
-                          alignment: Alignment.topRight,
-                          child: ElevatedButton.icon(
-                            onPressed: () {
-                              launch(article.url as String);
-                            },
-                            icon: const Icon(Icons.open_in_new_sharp),
-                            label: const Text('open in browser'),
-                            style: ElevatedButton.styleFrom(
-                                primary: const Color(0xFF0a0a23)),
-                          ),
-                        ),
-                      )
-                    ],
-                  ),
-                  Row(
-                    children: [
-                      Container(
-                        color: const Color.fromRGBO(0x2A, 0x2A, 0x40, 1),
-                        width: MediaQuery.of(context).size.width,
-                        child: Padding(
-                          padding: const EdgeInsets.all(16.0),
-                          child: Text(article.title,
-                              style: const TextStyle(
-                                  fontSize: 24, color: Colors.white)),
-                        ),
-                      )
-                    ],
-                  ),
-                  Row(
-                    children: [
-                      Expanded(
-                        child: Container(
-                          color: const Color.fromRGBO(0x2A, 0x2A, 0x40, 1),
-                          child: Row(
-                            children: [
-                              Padding(
-                                padding: const EdgeInsets.all(16),
-                                child: FadeInImage.assetNetwork(
-                                    height: 50,
-                                    width: 50,
-                                    fit: BoxFit.cover,
-                                    placeholder:
-                                        'assets/images/placeholder-profile-img.png',
-                                    image: article.profileImage),
-                              ),
-                              Expanded(
-                                  child: Container(
-                                color:
-                                    const Color.fromRGBO(0x2A, 0x2A, 0x40, 1),
-                                child: Padding(
-                                  padding: const EdgeInsets.only(top: 8),
-                                  child: Text(
-                                    'Written by ' + article.authorName,
-                                    style: const TextStyle(
-                                        fontSize: 16, color: Colors.white),
-                                  ),
-                                ),
-                              ))
-                            ],
-                          ),
-                        ),
-                      ),
-                    ],
-                  ),
-                  Row(
-                    children: [
-                      Container(
-                        color: const Color.fromRGBO(0x2A, 0x2A, 0x40, 1),
-                        width: MediaQuery.of(context).size.width,
-                        child: NewsBookmarkViewWidget(article: article),
-                      )
-                    ],
-                  ),
-                  Expanded(child: lazyLoadHtml(article.text!, context, model))
+                  Expanded(
+                      child:
+                          lazyLoadHtml(article!.text!, context, model, article))
                 ],
               );
             } else if (snapshot.hasError) {
@@ -138,9 +55,9 @@ class NewsArticlePostView extends StatelessWidget {
   }
 }
 
-ListView lazyLoadHtml(
-    String html, BuildContext context, NewsArticlePostViewModel model) {
-  var htmlToList = model.initLazyLoading(html, context);
+ListView lazyLoadHtml(String html, BuildContext context,
+    NewsArticlePostViewModel model, Article article) {
+  var htmlToList = model.initLazyLoading(html, context, article);
   dev.log(htmlToList.length.toString());
   return ListView.builder(
       shrinkWrap: true,

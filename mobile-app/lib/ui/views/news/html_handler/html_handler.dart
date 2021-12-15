@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_html/flutter_html.dart';
+import 'package:freecodecamp/ui/views/news/news-article-post/news_article_post_header.dart';
 import 'package:freecodecamp/ui/views/news/news-article-post/news_article_post_view.dart';
 import 'package:html/dom.dart' as dom;
 import 'package:flutter_html/html_parser.dart';
@@ -12,10 +13,12 @@ class HtmlHandler {
   final String html;
   final BuildContext context;
 
-  static List<Html> htmlHandler(html, context) {
+  static List<Widget> htmlHandler(html, context, article) {
     var result = HtmlParser.parseHTML(html);
 
-    List<Html> elements = [];
+    List<Widget> elements = [];
+
+    elements.add(NewsArticlePostHeader(article: article));
 
     for (int i = 0; i < result.body!.children.length; i++) {
       elements
