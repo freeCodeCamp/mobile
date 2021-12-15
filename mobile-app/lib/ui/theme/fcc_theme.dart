@@ -16,11 +16,16 @@ class FccTheme {
         style: ElevatedButton.styleFrom(
             primary: const Color(0xFF0a0a23), onPrimary: Colors.white)),
     textButtonTheme: TextButtonThemeData(
-        style: ButtonStyle(
-            backgroundColor: MaterialStateProperty.resolveWith(
-                (states) => const Color(0xFF0a0a23)),
-            foregroundColor:
-                MaterialStateProperty.resolveWith((states) => Colors.white))),
+      style: ButtonStyle(
+        backgroundColor: MaterialStateProperty.resolveWith(
+            (states) => const Color(0xFF0a0a23)),
+        foregroundColor:
+            MaterialStateProperty.resolveWith((states) => Colors.white),
+        overlayColor: MaterialStateProperty.resolveWith(
+          (states) => const Color(0x4DFFFFFF),
+        ),
+      ),
+    ),
     canvasColor: Colors.white,
     colorScheme: const ColorScheme.dark(
         primary: Colors.white,
