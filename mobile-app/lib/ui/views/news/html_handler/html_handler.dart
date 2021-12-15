@@ -5,7 +5,6 @@ import 'package:freecodecamp/ui/views/news/news-article-post/news_article_post_v
 import 'package:html/dom.dart' as dom;
 import 'package:flutter_html/html_parser.dart';
 import 'package:url_launcher/url_launcher.dart';
-import 'dart:developer' as dev;
 
 class HtmlHandler {
   const HtmlHandler({Key? key, required this.html, required this.context});
@@ -24,7 +23,6 @@ class HtmlHandler {
       elements
           .add(htmlWidgetBuilder(result.body!.children[i].outerHtml, context));
     }
-    dev.log(elements.toString());
     return elements;
   }
 
@@ -66,9 +64,6 @@ class HtmlHandler {
               width: MediaQuery.of(context).size.width, margin: EdgeInsets.zero)
         },
         customRender: {
-          "p": (context, child) {
-            dev.log('hello');
-          },
           "table": (context, child) {
             return SingleChildScrollView(
               scrollDirection: Axis.horizontal,

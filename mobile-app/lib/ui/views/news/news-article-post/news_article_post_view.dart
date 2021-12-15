@@ -1,12 +1,9 @@
 import 'package:flutter/material.dart';
 
 import 'package:freecodecamp/models/article_model.dart';
-
-import 'package:freecodecamp/ui/views/news/news-bookmark/news_bookmark_widget.dart';
 import 'package:stacked/stacked.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'news_article_post_viewmodel.dart';
-import 'dart:developer' as dev;
 
 class NewsArticlePostView extends StatelessWidget {
   // ignore: prefer_const_constructors_in_immutables
@@ -58,13 +55,11 @@ class NewsArticlePostView extends StatelessWidget {
 ListView lazyLoadHtml(String html, BuildContext context,
     NewsArticlePostViewModel model, Article article) {
   var htmlToList = model.initLazyLoading(html, context, article);
-  dev.log(htmlToList.length.toString());
   return ListView.builder(
       shrinkWrap: true,
       itemCount: htmlToList.length,
       physics: const ClampingScrollPhysics(),
       itemBuilder: (BuildContext context, int i) {
-        dev.log(i.toString());
         return Row(
           children: [
             Expanded(child: htmlToList[i]),
