@@ -9,8 +9,8 @@ class FccTheme {
     appBarTheme: const AppBarTheme(centerTitle: true, color: Color(0xFF0a0a23)),
     bottomNavigationBarTheme: const BottomNavigationBarThemeData(
       backgroundColor: Color(0xFF0a0a23),
-      unselectedItemColor: Colors.white,
-      selectedItemColor: Color.fromRGBO(0x99, 0xc9, 0xff, 1),
+      unselectedItemColor: Color(0x99FFFFFF),
+      selectedItemColor: Colors.white,
     ),
     elevatedButtonTheme: ElevatedButtonThemeData(
         style: ElevatedButton.styleFrom(
