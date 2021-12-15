@@ -45,6 +45,7 @@ class DrawerWidgetView extends StatelessWidget {
                           '',
                           const Icon(
                             Icons.article,
+                            color: Colors.black,
                             size: 70,
                           ),
                           false,
@@ -58,6 +59,7 @@ class DrawerWidgetView extends StatelessWidget {
                                 '',
                                 const Icon(
                                   Icons.forum_outlined,
+                                  color: Colors.black,
                                   size: 70,
                                 ),
                                 false,
@@ -70,6 +72,7 @@ class DrawerWidgetView extends StatelessWidget {
                                 'https://www.freecodecamp.org/learn/',
                                 const Icon(
                                   Icons.local_fire_department_sharp,
+                                  color: Colors.black,
                                   size: 70,
                                 ),
                                 true,
@@ -86,6 +89,7 @@ class DrawerWidgetView extends StatelessWidget {
                             '',
                             const Icon(
                               Icons.podcasts_outlined,
+                              color: Colors.black,
                               size: 70,
                             ),
                             false,
@@ -97,6 +101,7 @@ class DrawerWidgetView extends StatelessWidget {
                             'https://coderadio.freecodecamp.org/',
                             const Icon(
                               Icons.radio,
+                              color: Colors.black,
                               size: 70,
                             ),
                             true,
@@ -112,6 +117,7 @@ class DrawerWidgetView extends StatelessWidget {
                             'https://www.freecodecamp.org/donate/',
                             const Icon(
                               Icons.favorite,
+                              color: Colors.black,
                               size: 70,
                             ),
                             true,
@@ -124,6 +130,7 @@ class DrawerWidgetView extends StatelessWidget {
                                 'https://www.google.com/',
                                 const Icon(
                                   Icons.settings,
+                                  color: Colors.black,
                                   size: 70,
                                 ),
                                 false,
@@ -181,6 +188,7 @@ InkWell navButtonWidget(String text, url, Icon icon, bool isWebComponent,
                       text,
                       style: const TextStyle(
                         fontSize: 18,
+                        color: Colors.black,
                         fontWeight: FontWeight.w600,
                       ),
                       textAlign: TextAlign.center,

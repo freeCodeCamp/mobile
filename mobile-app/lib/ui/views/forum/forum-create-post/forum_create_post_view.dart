@@ -25,25 +25,21 @@ Column createPostTemplate(ForumCreatePostModel model, context) {
         children: [
           Expanded(
               child: SizedBox(
-                height: 55,
-                child: TextField(
-                  style: const TextStyle(color: Colors.white),
-                  controller: model.title,
-                  decoration: InputDecoration(
-                      enabledBorder: const OutlineInputBorder(
-                          borderSide:
-                              BorderSide(color: Colors.white, width: 2)),
-                      border: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(0)),
-                      label: const Text(
-                        'Title',
-                        style: TextStyle(
-                            color: Colors.white,
-                            fontSize: 16,
-                            fontWeight: FontWeight.bold),
-                      )),
-                ),
-              )),
+            height: 55,
+            child: TextField(
+              style: const TextStyle(color: Colors.white),
+              controller: model.title,
+              decoration: InputDecoration(
+                  enabledBorder: const OutlineInputBorder(
+                      borderSide: BorderSide(color: Colors.white, width: 2)),
+                  border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(0)),
+                  label: const Text(
+                    'Title',
+                    style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                  )),
+            ),
+          )),
         ],
       ),
       Row(
@@ -67,7 +63,7 @@ Column createPostTemplate(ForumCreatePostModel model, context) {
                           value: model.categoryDropDownValue,
                           onChanged: (String? value) {
                             model.changeDropDownValue(value);
-                          }, 
+                          },
                           menuMaxHeight: 300,
                           items: snapshot.hasData
                               ? names.map<DropdownMenuItem<String>>(
@@ -91,10 +87,7 @@ Column createPostTemplate(ForumCreatePostModel model, context) {
             padding: EdgeInsets.only(top: 16.0),
             child: Text(
               'Your code / message',
-              style: TextStyle(
-                  fontSize: 16,
-                  color: Colors.white,
-                  fontWeight: FontWeight.bold),
+              style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
             ),
           )
         ],
@@ -105,7 +98,6 @@ Column createPostTemplate(ForumCreatePostModel model, context) {
             child: SizedBox(
               width: MediaQuery.of(context).size.width,
               child: TextField(
-                style: const TextStyle(color: Colors.white),
                 controller: model.code,
                 minLines: 10,
                 maxLines: null,
@@ -146,7 +138,6 @@ Column createPostTemplate(ForumCreatePostModel model, context) {
                     child: const Text(
                       'CREATE NEW POST',
                       textAlign: TextAlign.center,
-                      style: TextStyle(color: Colors.white),
                     )),
               ),
             ),

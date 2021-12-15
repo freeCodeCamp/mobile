@@ -19,15 +19,11 @@ class ForumSearchView extends StatelessWidget {
                     hintStyle: TextStyle(color: Colors.white),
                     fillColor: Color.fromRGBO(0x2A, 0x2A, 0x40, 1),
                     filled: true),
-                style: const TextStyle(color: Colors.white),
                 onSubmitted: (value) {
                   model.checkQuery(value);
                 },
               ),
-              centerTitle: true,
-              backgroundColor: const Color(0xFF0a0a23),
             ),
-            backgroundColor: const Color.fromRGBO(0x2A, 0x2A, 0x40, 1),
             body: model.searchTerm.isNotEmpty
                 ? StreamBuilder<List<SearchModel>>(
                     stream: Stream.fromFuture(model.search(model.searchTerm)),
@@ -48,7 +44,6 @@ class ForumSearchView extends StatelessWidget {
                             ? 'Query too short'
                             : ''
                         : 'Type something to search',
-                    style: const TextStyle(color: Colors.white),
                   ))));
   }
 
@@ -68,7 +63,6 @@ class ForumSearchView extends StatelessWidget {
             },
             title: Text(
               searchResult.title,
-              style: const TextStyle(color: Colors.white),
             ),
           );
         });

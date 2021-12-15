@@ -20,8 +20,6 @@ class NewsBookmarkPostView extends StatelessWidget {
         builder: (context, model, child) => Scaffold(
             appBar: AppBar(
               title: const Text('BOOKMARKED ARTICLE'),
-              centerTitle: true,
-              backgroundColor: const Color.fromRGBO(0x2A, 0x2A, 0x40, 1),
               actions: [
                 IconButton(
                     iconSize: 40,

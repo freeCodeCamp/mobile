@@ -16,12 +16,8 @@ class NewsArticlePostView extends StatelessWidget {
       onModelReady: (model) => model.initState(refId),
       builder: (context, model, child) => Scaffold(
         appBar: AppBar(
-          backgroundColor: const Color(0xFF0a0a23),
           title: const Text(
             'Back To Feed',
-            style: TextStyle(
-              color: Colors.white,
-            ),
           ),
         ),
         backgroundColor: const Color(0xFF0a0a23),
