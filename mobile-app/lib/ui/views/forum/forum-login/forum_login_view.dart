@@ -35,8 +35,7 @@ Column loginForum(context, ForumLoginModel model) {
           padding: EdgeInsets.only(top: 100),
           child: Text(
             'Login to your forum account',
-            style: TextStyle(
-                color: Colors.white, fontSize: 24, fontWeight: FontWeight.bold),
+            style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
           ),
         )
       ]),
@@ -60,10 +59,8 @@ Column loginForum(context, ForumLoginModel model) {
                         model.hasUsernameError ? model.errorMessage : null,
                     label: const Text(
                       'Name',
-                      style: TextStyle(
-                          color: Colors.white,
-                          fontSize: 16,
-                          fontWeight: FontWeight.bold),
+                      style:
+                          TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
                     )),
               ),
             ),
@@ -94,10 +91,8 @@ Column loginForum(context, ForumLoginModel model) {
                         borderRadius: BorderRadius.circular(0)),
                     label: const Text(
                       'Password',
-                      style: TextStyle(
-                          color: Colors.white,
-                          fontSize: 16,
-                          fontWeight: FontWeight.bold),
+                      style:
+                          TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
                     )),
               ),
             ),
@@ -122,7 +117,6 @@ Column loginForum(context, ForumLoginModel model) {
               child: const Text(
                 'LOGIN',
                 textAlign: TextAlign.center,
-                style: TextStyle(color: Colors.white),
               )),
         ),
       ),

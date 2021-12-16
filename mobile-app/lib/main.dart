@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:freecodecamp/service/notification_service.dart';
+import 'package:freecodecamp/ui/theme/fcc_theme.dart';
 import 'package:just_audio_background/just_audio_background.dart';
 import 'package:stacked_services/stacked_services.dart';
 
@@ -24,6 +25,7 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       title: 'freeCodeCamp',
+      theme: FccTheme.themeDark,
       navigatorKey: StackedService.navigatorKey,
       onGenerateRoute: StackedRouter().onGenerateRoute,
     );

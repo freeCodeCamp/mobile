@@ -19,7 +19,6 @@ class ForumUserProfileView extends StatelessWidget {
               centerTitle: true,
               title: const Text(
                 'Your forum profile',
-                style: TextStyle(color: Colors.white),
               ),
             ),
             backgroundColor: const Color.fromRGBO(0x2A, 0x2A, 0x40, 1),
@@ -37,23 +36,18 @@ class ForumUserProfileView extends StatelessWidget {
         const ListTile(
           title: Text(
             "Account",
-            style: TextStyle(
-                color: Colors.white, fontWeight: FontWeight.bold, fontSize: 24),
+            style: TextStyle(fontWeight: FontWeight.bold, fontSize: 24),
           ),
         ),
         ListTile(
           title: const Text(
             "Username",
-            style: TextStyle(color: Colors.white, fontSize: 20),
+            style: TextStyle(fontSize: 20),
           ),
-          subtitle: Text(
-            'People can mention you as @' + model.user.username,
-            style: const TextStyle(color: Colors.white),
-          ),
+          subtitle: Text('People can mention you as @' + model.user.username),
         ),
         const ListTile(
-          title: Text("Profile Picture",
-              style: TextStyle(color: Colors.white, fontSize: 20)),
+          title: Text("Profile Picture", style: TextStyle(fontSize: 20)),
         ),
         ListTile(
           leading: Stack(
@@ -86,13 +80,11 @@ class ForumUserProfileView extends StatelessWidget {
                 child: const Text(
                   'change profile picture',
                   textAlign: TextAlign.center,
-                  style: TextStyle(color: Colors.white),
                 )),
           ),
         ),
         ListTile(
-          title: const Text("Email",
-              style: TextStyle(color: Colors.white, fontSize: 20)),
+          title: const Text("Email", style: TextStyle(fontSize: 20)),
           isThreeLine: true,
           subtitle: Column(
             children: [
@@ -100,7 +92,6 @@ class ForumUserProfileView extends StatelessWidget {
                 children: [
                   Text(
                     model.user.userEmail,
-                    style: const TextStyle(color: Colors.white),
                   ),
                 ],
               ),
@@ -130,7 +121,6 @@ class ForumUserProfileView extends StatelessWidget {
               child: const Text(
                 'change email address',
                 textAlign: TextAlign.center,
-                style: TextStyle(color: Colors.white),
               )),
         )),
         ListTile(
@@ -138,14 +128,13 @@ class ForumUserProfileView extends StatelessWidget {
               style: TextStyle(color: Colors.white, fontSize: 20)),
           subtitle: Text(
             model.user.name,
-            style: const TextStyle(color: Colors.white),
           ),
           trailing: Container(
             constraints: const BoxConstraints(minWidth: 200),
             child: ElevatedButton(
                 style: ElevatedButton.styleFrom(
                     primary: const Color.fromRGBO(0x3b, 0x3b, 0x4f, 1),
-                    side: const BorderSide(width: 2, color: Colors.white),
+                    side: const BorderSide(width: 2),
                     shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(0))),
                 onPressed: () {
@@ -154,7 +143,6 @@ class ForumUserProfileView extends StatelessWidget {
                 child: const Text(
                   'change your name',
                   textAlign: TextAlign.center,
-                  style: TextStyle(color: Colors.white),
                 )),
           ),
         )

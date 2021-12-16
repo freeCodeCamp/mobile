@@ -17,11 +17,9 @@ class EpisodeView extends StatelessWidget {
   final Episodes episode;
   final Podcasts podcast;
 
-  final TextStyle _titleStyle =
-      const TextStyle(color: Colors.white, fontSize: 20);
+  final TextStyle _titleStyle = const TextStyle(fontSize: 20);
 
-  final TextStyle _subTitleStyle =
-      const TextStyle(color: Colors.white, fontSize: 14);
+  final TextStyle _subTitleStyle = const TextStyle(fontSize: 14);
 
   String _parseDuration(Duration dur) {
     if (dur.inMinutes > 59) {
@@ -37,10 +35,7 @@ class EpisodeView extends StatelessWidget {
       viewModelBuilder: () => EpisodeViewModel(episode, podcast),
       onModelReady: (model) => model.init(episode.contentUrl!),
       builder: (context, model, child) => Scaffold(
-        appBar: AppBar(
-          backgroundColor: const Color(0xFF0a0a23),
-        ),
-        backgroundColor: const Color(0xFF2A2A40),
+        appBar: AppBar(),
         body: Container(
           padding: const EdgeInsets.fromLTRB(16, 0, 16, 0),
           child: SingleChildScrollView(
@@ -93,7 +88,6 @@ class EpisodeView extends StatelessWidget {
                           )
                         : Icon(
                             model.playing ? Icons.pause : Icons.play_arrow,
-                            color: Colors.white,
                           ),
                     label: Text(
                       model.loading
@@ -101,13 +95,6 @@ class EpisodeView extends StatelessWidget {
                           : model.playing
                               ? 'Pause'
                               : 'Play',
-                      style: const TextStyle(color: Colors.white),
-                    ),
-                    style: ButtonStyle(
-                      backgroundColor: MaterialStateColor.resolveWith(
-                          (states) => const Color(0xFF0A0A23)),
-                      overlayColor: MaterialStateColor.resolveWith(
-                          (states) => const Color.fromRGBO(255, 255, 255, .3)),
                     ),
                   ),
                 ),
@@ -136,7 +123,6 @@ class EpisodeView extends StatelessWidget {
                           )
                         : Icon(
                             model.downloaded ? Icons.delete : Icons.download,
-                            color: Colors.white,
                           ),
                     label: Text(
                       model.downloading
@@ -144,13 +130,6 @@ class EpisodeView extends StatelessWidget {
                           : model.downloaded
                               ? 'Remove Download'
                               : 'Download',
-                      style: const TextStyle(color: Colors.white),
-                    ),
-                    style: ButtonStyle(
-                      backgroundColor: MaterialStateColor.resolveWith(
-                          (states) => const Color(0xFF0A0A23)),
-                      overlayColor: MaterialStateColor.resolveWith(
-                          (states) => const Color.fromRGBO(255, 255, 255, .3)),
                     ),
                   ),
                 ),

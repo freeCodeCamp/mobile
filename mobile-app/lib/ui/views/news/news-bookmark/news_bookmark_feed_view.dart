@@ -2,7 +2,6 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:freecodecamp/ui/views/news/news-bookmark/news_bookmark_viewmodel.dart';
 import 'package:stacked/stacked.dart';
-import '../news_helpers.dart';
 import 'news_bookmark_view.dart';
 
 class NewsBookmarkFeedView extends StatelessWidget {
@@ -21,7 +20,6 @@ class NewsBookmarkFeedView extends StatelessWidget {
                     child: Text(
                     'Bookmark articles to view them here',
                     textAlign: TextAlign.center,
-                    style: TextStyle(color: Colors.white),
                   ))));
   }
 }
@@ -56,10 +54,8 @@ ListView populateListViewModel(NewsBookmarkModel model) {
                             child: Padding(
                               padding: const EdgeInsets.all(25.0),
                               child: Text(
-                                NewsHelper.truncateStr(model
-                                    .bookMarkedArticles[index].articleTitle),
-                                style: const TextStyle(
-                                    color: Colors.white, fontSize: 18),
+                                model.bookMarkedArticles[index].articleTitle,
+                                style: const TextStyle(fontSize: 18),
                               ),
                             ),
                           ),
@@ -67,7 +63,6 @@ ListView populateListViewModel(NewsBookmarkModel model) {
                               flex: 2,
                               child: Icon(
                                 Icons.arrow_forward_ios,
-                                color: Colors.white,
                               ))
                         ],
                       ),
@@ -79,7 +74,6 @@ ListView populateListViewModel(NewsBookmarkModel model) {
                               child: Text(
                                 'Written by: ' +
                                     model.bookMarkedArticles[index].authorName,
-                                style: const TextStyle(color: Colors.white),
                               ),
                             ),
                           )
