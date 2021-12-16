@@ -11,11 +11,8 @@ class ForumSettingsView extends StatelessWidget {
         onModelReady: (model) => model.init(),
         viewModelBuilder: () => ForumSettingsViewModel(),
         builder: (context, model, child) => Scaffold(
-              backgroundColor: const Color.fromRGBO(0x2A, 0x2A, 0x40, 1),
               appBar: AppBar(
-                backgroundColor: const Color(0xFF0a0a23),
                 title: const Text('FORUM SETTINGS'),
-                centerTitle: true,
               ),
               body: ListView(
                 children: [
@@ -29,11 +26,9 @@ class ForumSettingsView extends StatelessWidget {
                       child: ListTile(
                         title: const Text(
                           'REGISTER',
-                          style: TextStyle(color: Colors.white),
                         ),
                         subtitle: const Text(
                           'register on the forum',
-                          style: TextStyle(color: Colors.white),
                         ),
                         onTap: () {
                           model.gotoForum();
@@ -50,11 +45,9 @@ class ForumSettingsView extends StatelessWidget {
                       child: ListTile(
                         title: const Text(
                           'RESET PASSWORD',
-                          style: TextStyle(color: Colors.white),
                         ),
                         subtitle: const Text(
                           'reset your password on the forum',
-                          style: TextStyle(color: Colors.white),
                         ),
                         onTap: () {
                           model.gotoForum();
@@ -76,11 +69,9 @@ class ForumSettingsView extends StatelessWidget {
         child: ListTile(
           title: const Text(
             'LOGOUT',
-            style: TextStyle(color: Colors.white),
           ),
           subtitle: const Text(
             'logout from the forum',
-            style: TextStyle(color: Colors.white),
           ),
           onTap: () {
             model.forumLogout();

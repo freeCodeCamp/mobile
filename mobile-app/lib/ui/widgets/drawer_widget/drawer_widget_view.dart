@@ -25,6 +25,7 @@ class DrawerWidgetView extends StatelessWidget {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Expanded(
+
                       child: Image.asset(
                         'assets/images/freecodecamp-banner.png',
                       ),
@@ -38,7 +39,8 @@ class DrawerWidgetView extends StatelessWidget {
                           color: Colors.white,
                         ),
                       ),
-                    ),
+                    )
+
                   ],
                 ),
               ),
@@ -147,6 +149,13 @@ Widget navButtonWidget(String text, url, Icon icon, bool isWebComponent,
     padding: const EdgeInsets.all(10.0),
     child: ListTile(
       dense: true,
+       onTap: () {
+      if (isWebComponent) {
+        model.goToBrowser(url);
+      } else {
+        model.navNonWebComponent(text, context);
+      }
+    },
      
       leading: Icon(
         icon.icon,
@@ -159,6 +168,7 @@ Widget navButtonWidget(String text, url, Icon icon, bool isWebComponent,
             fontWeight: FontWeight.w400,
             color: Colors.white,
             letterSpacing: 0.5),
+
       ),
     ),
   );
