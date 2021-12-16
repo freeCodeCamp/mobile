@@ -4,7 +4,6 @@ import 'package:freecodecamp/models/article_model.dart';
 import 'package:stacked/stacked.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'news_article_post_viewmodel.dart';
-import 'package:youtube_player_iframe/youtube_player_iframe.dart';
 
 class NewsArticlePostView extends StatelessWidget {
   // ignore: prefer_const_constructors_in_immutables
