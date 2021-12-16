@@ -5,6 +5,7 @@ import 'package:freecodecamp/ui/views/news/news-article-post/news_article_post_v
 import 'package:html/dom.dart' as dom;
 import 'package:flutter_html/html_parser.dart';
 import 'package:url_launcher/url_launcher.dart';
+import 'package:youtube_player_iframe/youtube_player_iframe.dart';
 
 class HtmlHandler {
   const HtmlHandler({Key? key, required this.html, required this.context});
@@ -93,6 +94,21 @@ class HtmlHandler {
 
               return bookmark(
                   bookmarkTilte, bookmarkDescription, bookmarkImage, link);
+            }
+          },
+          "iframe": (code, child) {
+            var isVideo = RegExp('youtube', caseSensitive: false);
+            var videoUrl = code.tree.attributes['src'];
+            if (isVideo.hasMatch(videoUrl ?? '')) {
+              var videoId = videoUrl?.split('/').last.split('?').first;
+
+              YoutubePlayerController _controller = YoutubePlayerController(
+                initialVideoId: videoId!,
+              );
+
+              return YoutubePlayerIFrame(
+                controller: _controller,
+              );
             }
           }
         },
