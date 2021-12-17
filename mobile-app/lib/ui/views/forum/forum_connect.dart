@@ -69,11 +69,13 @@ class ForumConnect {
   }
 
   static Future<dynamic> connectAndPost(
-      String endpoint, Map<String, String> headers) async {
+      String endpoint, Map<String, String> headers,
+      [Map<String, String>? body]) async {
     String url = await getCurrentUrl();
     Map<String, String> headers = await setHeaderValues();
 
-    final res = await http.post(Uri.parse(url + endpoint), headers: headers);
+    final res = await http.post(Uri.parse(url + endpoint),
+        headers: headers, body: jsonEncode(body));
 
     dev.log(url + endpoint);
 
