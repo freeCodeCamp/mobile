@@ -115,8 +115,8 @@ class ForumLoginModel extends BaseViewModel {
       variant: DialogType.buttonForm2,
       title: success ?  'Success' : 'Error' ,
       description:
-          success ? "An email was successfully sent" : "We could not find an account linked to that email address or password"
-      mainButtonTitle: 'Ok',
+          success ? "An email will be sent shortly with instructions on how to reset your password." : "We could not find an account linked to that email address or username."
+      mainButtonTitle: 'OK',
       data: DialogType.buttonForm2
     );
   }
