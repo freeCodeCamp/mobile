@@ -46,12 +46,13 @@ class _buttonDialog extends HookWidget {
           Padding(
             padding: const EdgeInsets.all(32.0),
             child: Row(
+              mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 Text(
                   request.title as String,
                   style: const TextStyle(
                     color: Colors.white,
-                    fontSize: 20,
+                    fontSize: 24,
                     fontWeight: FontWeight.bold,
                   ),
                 ),
@@ -67,7 +68,7 @@ class _buttonDialog extends HookWidget {
                     request.description as String,
                     style: const TextStyle(
                       color: Colors.white,
-                      fontWeight: FontWeight.bold,
+                      fontSize: 16,
                     ),
                   ),
                 ),
@@ -76,7 +77,7 @@ class _buttonDialog extends HookWidget {
           ),
           Padding(
             padding:
-                const EdgeInsets.only(left: 32, top: 8, right: 32, bottom: 8),
+                const EdgeInsets.only(left: 32, top: 16, right: 32, bottom: 32),
             child: SizedBox(
               height: 50,
               width: MediaQuery.of(context).size.width,
@@ -92,7 +93,7 @@ class _buttonDialog extends HookWidget {
                 child: Text(
                   request.mainButtonTitle as String,
                   textAlign: TextAlign.center,
-                  style: const TextStyle(color: Colors.white),
+                  style: const TextStyle(color: Colors.white, fontSize: 16),
                 ),
               ),
             ),
