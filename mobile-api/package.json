@@ -16,7 +16,7 @@
     "@types/node": "16.11.14",
     "bree": "7.1.0",
     "dotenv": "10.0.0",
-    "express": "4.17.1",
+    "express": "4.17.2",
     "mongoose": "6.1.2",
     "nodemon": "2.0.15",
     "rss-parser": "3.12.0",
