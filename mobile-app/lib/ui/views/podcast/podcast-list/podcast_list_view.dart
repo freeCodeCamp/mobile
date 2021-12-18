@@ -41,14 +41,12 @@ class PodcastListView extends StatelessWidget {
             BottomNavigationBarItem(
               icon: Icon(
                 Icons.grid_view_rounded,
-                color: Colors.white,
               ),
               label: 'Browse',
             ),
             BottomNavigationBarItem(
               icon: Icon(
                 Icons.arrow_circle_down_sharp,
-                color: Colors.white,
               ),
               label: 'Downloads',
             ),
