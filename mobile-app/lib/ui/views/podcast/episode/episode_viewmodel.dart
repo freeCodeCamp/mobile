@@ -56,7 +56,7 @@ class EpisodeViewModel extends BaseViewModel {
     downloading = false;
     await _notificationService.showNotification(
       'Download Complete',
-      episode.title!,
+      episode.title,
     );
     log('Downloaded episode ${episode.title}');
     notifyListeners();

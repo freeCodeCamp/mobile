@@ -9,7 +9,6 @@ import 'package:http/http.dart' as http;
 import 'package:path_provider/path_provider.dart';
 import 'package:stacked/stacked.dart';
 
-// Business logic and view state
 const baseUrl = "http://10.0.2.2:3000/";
 
 class PodcastListViewModel extends BaseViewModel {

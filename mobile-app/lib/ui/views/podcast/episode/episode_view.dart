@@ -54,7 +54,7 @@ class EpisodeView extends StatelessWidget {
                   height: 20,
                 ),
                 Text(
-                  episode.title!,
+                  episode.title,
                   style: _titleStyle,
                 ),
                 const SizedBox(

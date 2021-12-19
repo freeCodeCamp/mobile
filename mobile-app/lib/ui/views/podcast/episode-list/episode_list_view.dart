@@ -31,6 +31,7 @@ class EpisodeListView extends StatelessWidget {
   Widget build(BuildContext context) {
     return ViewModelBuilder<EpisodeListViewModel>.reactive(
       viewModelBuilder: () => EpisodeListViewModel(podcast),
+      onModelReady: (model) => model.initState(isDownloadView),
       builder: (context, model, child) => Scaffold(
         appBar: AppBar(
           title: Text(podcast.title!),
@@ -47,9 +48,8 @@ class EpisodeListView extends StatelessWidget {
                       padding: const EdgeInsets.fromLTRB(16, 8, 16, 16),
                       child: Column(
                         children: [
-                          Image.file(
-                            File(
-                                '/data/user/0/org.freecodecamp/app_flutter/images/podcast/${podcast.id}.jpg'),
+                          Image.network(
+                            podcast.image!,
                             height: 175,
                           ),
                           const SizedBox(
@@ -119,16 +119,35 @@ class EpisodeListView extends StatelessWidget {
                   ],
                 ),
               ),
-              FutureBuilder<List<Episodes>?>(
-                future: model.fetchPodcastEpisodes(isDownloadView),
+              FutureBuilder<List<Episodes>>(
+                future: model.episodes,
                 builder: (context, snapshot) {
-                  if (snapshot.connectionState != ConnectionState.done) {
-                    return const Center(
-                        child: CircularProgressIndicator.adaptive());
-                  }
-                  if (snapshot.hasError) {
+                  if (snapshot.hasData) {
+                    return ListView.separated(
+                      shrinkWrap: true,
+                      physics: const NeverScrollableScrollPhysics(),
+                      itemCount: snapshot.data!.length,
+                      itemBuilder: (BuildContext context, int index) {
+                        return PodcastEpisodeTemplate(
+                          episode: snapshot.data![index],
+                          i: index,
+                          podcast: podcast,
+                          isDownloadView: isDownloadView,
+                        );
+                      },
+                      separatorBuilder: (BuildContext context, int index) {
+                        return Divider(
+                          color: Colors.grey.shade600,
+                          height: 1,
+                          thickness: 1,
+                        );
+                      },
+                    );
+                  } else if (snapshot.hasError) {
                     return Text("${snapshot.error}");
                   }
+                  return const Center(
+                      child: CircularProgressIndicator.adaptive());
                   // TODO: Read up more on perf issues with shrinkWrap and check
                   // for diff in perf in below commented code
                   // return Column(
@@ -152,26 +171,6 @@ class EpisodeListView extends StatelessWidget {
                   //         .toList(),
                   //   ],
                   // );
-                  return ListView.separated(
-                    shrinkWrap: true,
-                    physics: const NeverScrollableScrollPhysics(),
-                    itemCount: snapshot.data!.length,
-                    itemBuilder: (BuildContext context, int index) {
-                      return PodcastEpisodeTemplate(
-                        episode: snapshot.data![index],
-                        i: index,
-                        podcast: podcast,
-                        isDownloadView: isDownloadView,
-                      );
-                    },
-                    separatorBuilder: (BuildContext context, int index) {
-                      return Divider(
-                        color: Colors.grey.shade600,
-                        height: 1,
-                        thickness: 1,
-                      );
-                    },
-                  );
                 },
               ),
             ],
@@ -227,7 +226,7 @@ class PodcastEpisodeTemplate extends StatelessWidget {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Text(
-                episode.title!,
+                episode.title,
                 maxLines: 2,
                 overflow: TextOverflow.ellipsis,
                 style: const TextStyle(
@@ -238,7 +237,8 @@ class PodcastEpisodeTemplate extends StatelessWidget {
                 padding: const EdgeInsets.only(top: 8),
                 child: Text(
                   DateFormat.yMMMd().format(episode.publicationDate!) +
-                      (episode.duration! != Duration.zero
+                      (episode.duration != null &&
+                              episode.duration != Duration.zero
                           ? (' • ' + _parseDuration(episode.duration!))
                           : ''),
                   style: const TextStyle(

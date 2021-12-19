@@ -1,35 +1,44 @@
+import 'dart:convert';
+import 'dart:developer';
+
 import 'package:freecodecamp/app/app.locator.dart';
 import 'package:freecodecamp/models/podcasts/episodes_model.dart';
 import 'package:freecodecamp/models/podcasts/podcasts_model.dart';
 import 'package:freecodecamp/service/podcasts_service.dart';
-import 'package:stacked/stacked.dart';
 import 'package:html/parser.dart';
-import 'dart:developer';
+import 'package:http/http.dart' as http;
+import 'package:stacked/stacked.dart';
+
+const baseUrl = "http://10.0.2.2:3000/";
 
 class EpisodeListViewModel extends BaseViewModel {
   final _databaseService = locator<PodcastsDatabaseService>();
   final Podcasts podcast;
-  late List<Episodes> episodes;
-  late int epsLength = 0;
+  int epsLength = 0;
+  late Future<List<Episodes>> _episodes;
+  Future<List<Episodes>> get episodes => _episodes;
 
   EpisodeListViewModel(this.podcast);
 
-  Future<List<Episodes>> fetchPodcastEpisodes(bool isDownloadView) async {
-    await _databaseService.initialise();
-    int temp = epsLength;
+  void initState(bool isDownloadView) {
+    _databaseService.initialise();
     if (isDownloadView) {
-      episodes = await _databaseService.getDownloadedEpisodes(podcast.id);
+      _episodes = _databaseService.getDownloadedEpisodes(podcast.id);
     } else {
-      episodes = await _databaseService.getEpisodes(podcast.id);
+      // episodes = await _databaseService.getEpisodes(podcast.id);
+      _episodes = fetchEpisodes(podcast.id);
     }
-    epsLength = episodes.length;
-    // TODO: notifyListeners rebuilds view leading to above db functions being
-    // called twice. Check if it can be prevented
-    if (temp != epsLength) {
-      notifyListeners();
-    }
+    notifyListeners();
     // Parse html description
     // log("PARSED ${parse(podcast.description!).documentElement?.text}");
-    return episodes;
+  }
+
+  Future<List<Episodes>> fetchEpisodes(String podcastId) async {
+    final res = await http
+        .get(Uri.parse(baseUrl + "podcasts/" + podcastId + "/episodes"));
+    final List<dynamic> episodes = json.decode(res.body)["episodes"];
+    epsLength = episodes.length;
+    notifyListeners();
+    return episodes.map((episode) => Episodes.fromJson(episode)).toList();
   }
 }

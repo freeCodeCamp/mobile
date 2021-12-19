@@ -5,7 +5,8 @@ import 'package:just_audio/just_audio.dart';
 import 'package:just_audio_background/just_audio_background.dart';
 
 class EpisodeAudioService {
-  static final EpisodeAudioService _episodeAudioService = EpisodeAudioService._internal();
+  static final EpisodeAudioService _episodeAudioService =
+      EpisodeAudioService._internal();
   final AudioPlayer _audioPlayer = AudioPlayer();
 
   factory EpisodeAudioService() {
@@ -21,7 +22,7 @@ class EpisodeAudioService {
                 'file:///data/user/0/org.freecodecamp/app_flutter/episodes/${episode.podcastId}/${episode.guid}.mp3'),
             tag: MediaItem(
               id: episode.guid,
-              title: episode.title!,
+              title: episode.title,
               album: 'freeCodeCamp Podcast',
               artUri: Uri.parse(
                   'file:///data/user/0/org.freecodecamp/app_flutter/images/podcast/${episode.podcastId}.jpg'),
@@ -35,7 +36,7 @@ class EpisodeAudioService {
             Uri.parse(episode.contentUrl!),
             tag: MediaItem(
               id: episode.guid,
-              title: episode.title!,
+              title: episode.title,
               album: 'freeCodeCamp Podcast',
               artUri: Uri.parse(
                   'file:///data/user/0/org.freecodecamp/app_flutter/images/podcast/${episode.podcastId}.jpg'),
