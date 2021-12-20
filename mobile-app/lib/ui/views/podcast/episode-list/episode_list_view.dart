@@ -207,13 +207,16 @@ class PodcastEpisodeTemplate extends StatelessWidget {
   Widget build(BuildContext context) {
     return InkWell(
       onTap: () {
-        log("Clicked ${episode.title}");
+        log(podcast.toString());
+        log(episode.toString());
+        // log("Clicked ${episode.title}");
         Navigator.push(
           context,
           MaterialPageRoute(
             builder: (context) => EpisodeView(
               episode: episode,
               podcast: podcast,
+              isDownloadView: isDownloadView,
             ),
           ),
         );
