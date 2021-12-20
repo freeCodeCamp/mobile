@@ -23,11 +23,9 @@ class EpisodeListView extends StatelessWidget {
   final Podcasts podcast;
   final bool isDownloadView;
 
-  final TextStyle _titleStyle =
-      const TextStyle(color: Colors.white, fontSize: 24);
+  final TextStyle _titleStyle = const TextStyle(fontSize: 24);
 
-  final TextStyle _subTitleStyle =
-      const TextStyle(color: Colors.white, fontSize: 14);
+  final TextStyle _subTitleStyle = const TextStyle(fontSize: 14);
 
   @override
   Widget build(BuildContext context) {
@@ -36,9 +34,7 @@ class EpisodeListView extends StatelessWidget {
       builder: (context, model, child) => Scaffold(
         appBar: AppBar(
           title: Text(podcast.title!),
-          backgroundColor: const Color(0xFF0a0a23),
         ),
-        backgroundColor: const Color(0xFF2A2A40),
         body: SingleChildScrollView(
           physics: const ScrollPhysics(),
           child: Column(
@@ -116,7 +112,6 @@ class EpisodeListView extends StatelessWidget {
                       child: Text(
                         model.epsLength.toString() + ' episodes',
                         style: const TextStyle(
-                          color: Colors.white,
                           fontSize: 18,
                         ),
                       ),
@@ -237,7 +232,6 @@ class PodcastEpisodeTemplate extends StatelessWidget {
                 overflow: TextOverflow.ellipsis,
                 style: const TextStyle(
                   fontSize: 16,
-                  color: Colors.white,
                 ),
               ),
               Padding(
@@ -249,7 +243,6 @@ class PodcastEpisodeTemplate extends StatelessWidget {
                           : ''),
                   style: const TextStyle(
                     fontSize: 12,
-                    color: Colors.white,
                   ),
                 ),
               ),

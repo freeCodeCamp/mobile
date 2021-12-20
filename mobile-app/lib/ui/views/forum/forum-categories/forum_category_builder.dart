@@ -17,8 +17,7 @@ class ForumCategoryBuilder extends StatelessWidget {
         viewModelBuilder: () => ForumCategoryViewModel(),
         onModelReady: (model) => model.initState(),
         builder: (context, model, child) => Scaffold(
-            backgroundColor: const Color.fromRGBO(0x2A, 0x2A, 0x40, 1),
-            body: FutureBuilder<List<Category>>(
+                body: FutureBuilder<List<Category>>(
               future: model.future,
               builder: (context, snapshot) {
                 if (snapshot.hasData) {
@@ -49,7 +48,6 @@ class ForumCategoryBuilder extends StatelessWidget {
                                       child: Text(categories[i].name,
                                           style: const TextStyle(
                                               fontSize: 24,
-                                              color: Colors.white,
                                               fontWeight: FontWeight.bold)),
                                     )),
                                   ],
@@ -86,7 +84,6 @@ class ForumCategoryBuilder extends StatelessWidget {
                                               ' new topics this week',
                                           style: const TextStyle(
                                               fontSize: 14,
-                                              color: Colors.white,
                                               fontWeight: FontWeight.w300)),
                                     ))
                                   ],

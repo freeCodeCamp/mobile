@@ -1,7 +1,9 @@
 import 'dart:convert';
 
+import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:freecodecamp/models/article_model.dart';
+import 'package:freecodecamp/ui/views/news/html_handler/html_handler.dart';
 import 'package:stacked/stacked.dart';
 import 'package:http/http.dart' as http;
 
@@ -12,6 +14,11 @@ class NewsArticlePostViewModel extends BaseViewModel {
 
   void initState(id) {
     _articleFuture = fetchArticle(id);
+  }
+
+  List<Widget> initLazyLoading(html, context, article) {
+    List<Widget> elements = HtmlHandler.htmlHandler(html, context, article);
+    return elements;
   }
 
   Future<Article> fetchArticle(articleId) async {

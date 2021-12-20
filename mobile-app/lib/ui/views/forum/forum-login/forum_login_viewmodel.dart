@@ -86,6 +86,41 @@ class ForumLoginModel extends BaseViewModel {
     }
   }
 
+  Future showPasswordResetDialog() async {
+    DialogResponse? res = await _dialogService.showCustomDialog(
+        variant: DialogType.inputForm,
+        title: 'Password Reset',
+        description:
+            "Enter your username or email address, and we'll send you a password reset email.",
+        mainButtonTitle: 'Reset password',
+        data: DialogType.inputForm);
+
+    if (res!.confirmed) {
+      String login = res.data;
+
+      Map<String, String> payload = {"login": login};
+
+      final response =
+         await ForumConnect.connectAndPost('/session/forgot_password', {}, payload);
+
+      bool success = jsonDecode(response.body)["user_found"];
+
+      showPasswodResetStateDialog(success);
+
+    }
+  }
+
+  Future showPasswodResetStateDialog(bool success) async {
+    DialogResponse? res = await _dialogService.showCustomDialog(
+      variant: DialogType.buttonForm2,
+      title: success ?  'Success' : 'Error' ,
+      description:
+          success ? "An email will be sent shortly with instructions on how to reset your password." : "We could not find an account linked to that email address or username."
+      mainButtonTitle: 'OK',
+      data: DialogType.buttonForm2
+    );
+  }
+
   bool noAuthError(authBody) {
     Map<String, dynamic> body = json.decode(authBody);
     if (body.containsKey("error")) {

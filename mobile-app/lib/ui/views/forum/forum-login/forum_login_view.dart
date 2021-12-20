@@ -5,6 +5,7 @@ import 'package:flutter/rendering.dart';
 import 'package:freecodecamp/ui/views/forum/forum-create-post/forum_create_post_view.dart';
 import 'package:freecodecamp/ui/views/forum/forum-login/forum_login_viewmodel.dart';
 import 'package:stacked/stacked.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class ForumLoginView extends StatelessWidget {
   const ForumLoginView({Key? key}) : super(key: key);
@@ -35,8 +36,7 @@ Column loginForum(context, ForumLoginModel model) {
           padding: EdgeInsets.only(top: 100),
           child: Text(
             'Login to your forum account',
-            style: TextStyle(
-                color: Colors.white, fontSize: 24, fontWeight: FontWeight.bold),
+            style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
           ),
         )
       ]),
@@ -60,10 +60,8 @@ Column loginForum(context, ForumLoginModel model) {
                         model.hasUsernameError ? model.errorMessage : null,
                     label: const Text(
                       'Name',
-                      style: TextStyle(
-                          color: Colors.white,
-                          fontSize: 16,
-                          fontWeight: FontWeight.bold),
+                      style:
+                          TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
                     )),
               ),
             ),
@@ -94,10 +92,8 @@ Column loginForum(context, ForumLoginModel model) {
                         borderRadius: BorderRadius.circular(0)),
                     label: const Text(
                       'Password',
-                      style: TextStyle(
-                          color: Colors.white,
-                          fontSize: 16,
-                          fontWeight: FontWeight.bold),
+                      style:
+                          TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
                     )),
               ),
             ),
@@ -122,10 +118,32 @@ Column loginForum(context, ForumLoginModel model) {
               child: const Text(
                 'LOGIN',
                 textAlign: TextAlign.center,
-                style: TextStyle(color: Colors.white),
               )),
         ),
       ),
+      const Text(
+        'Trouble logging in?',
+        style: TextStyle(color: Colors.white, fontSize: 16, height: 5),
+      ),
+      InkWell(
+        onTap: () {
+          model.showPasswordResetDialog();
+        },
+        child: const Text(
+          'Reset password',
+          style: TextStyle(
+            color: Color.fromRGBO(0x99, 0xc9, 0xff, 1),
+          ),
+        ),
+      ),
+      InkWell(
+        onTap: () {
+          launch('https://forum.freecodecamp.org/');
+        },
+        child: const Text('Register',
+            style: TextStyle(
+                color: Color.fromRGBO(0x99, 0xc9, 0xff, 1), height: 2.5)),
+      )
     ],
   );
 }

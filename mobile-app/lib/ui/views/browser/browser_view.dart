@@ -12,9 +12,6 @@ class BrowserView extends StatelessWidget {
   Widget build(BuildContext context) {
     return ViewModelBuilder<BrowserViewModel>.reactive(
       onModelReady: (viewModel) => viewModel.init(),
-      // appBar: AppBar(
-      //   title: Text('Browser'),
-      // ),
       builder: (context, viewModel, child) => Scaffold(
         body: SafeArea(
           child: WillPopScope(

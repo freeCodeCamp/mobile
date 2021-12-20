@@ -246,8 +246,11 @@ class PostViewModel extends BaseViewModel {
   }
 
   // This returns a parsed url for sharing a post
-  void parseShareUrl(BuildContext context, String slug) {
-    Share.share('https://forum.freecodecamp.org/t/$slug',
+  void parseShareUrl(String slug, String postId, [int? index]) {
+    var i = index != null ? index + 2 : '';
+
+    Share.share(
+        'https://forum.freecodecamp.org/t/$slug/$postId/${i.toString()}',
         subject: 'Question from the freecodecamp forum');
   }
 

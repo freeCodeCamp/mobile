@@ -22,10 +22,8 @@ class ForumPostView extends StatelessWidget {
         onModelReady: (model) => model.initState(id, slug),
         builder: (context, model, child) => Scaffold(
               appBar: AppBar(
-                backgroundColor: const Color(0xFF0a0a23),
                 title: const Text('Back To Feed'),
               ),
-              backgroundColor: const Color.fromRGBO(0x2A, 0x2A, 0x40, 1),
               body: RefreshIndicator(
                 backgroundColor: const Color(0xFF0a0a23),
                 color: Colors.white,
@@ -58,9 +56,7 @@ class ForumPostView extends StatelessWidget {
                               child: Text(
                                 post!.postName as String,
                                 style: const TextStyle(
-                                    color: Colors.white,
-                                    fontSize: 24,
-                                    fontWeight: FontWeight.bold),
+                                    fontSize: 24, fontWeight: FontWeight.bold),
                               ),
                             ),
                           ),
@@ -152,9 +148,7 @@ class ForumPostView extends StatelessWidget {
                     child: Text(
                       post.username,
                       style: const TextStyle(
-                          color: Colors.white,
-                          fontSize: 24,
-                          fontWeight: FontWeight.bold),
+                          fontSize: 24, fontWeight: FontWeight.bold),
                     ),
                   )
                 ],
@@ -221,7 +215,6 @@ class ForumPostView extends StatelessWidget {
                     child: const Text(
                       'UPDATE TOPIC',
                       textAlign: TextAlign.center,
-                      style: TextStyle(color: Colors.white),
                     )),
               ),
             ),
@@ -313,7 +306,6 @@ class ForumPostView extends StatelessWidget {
                     child: const Text(
                       'PLACE COMMENT',
                       textAlign: TextAlign.center,
-                      style: TextStyle(color: Colors.white),
                     )),
               ),
             ),
@@ -328,10 +320,9 @@ class ForumPostView extends StatelessWidget {
       children: [
         IconButton(
           onPressed: () {
-            model.parseShareUrl(context, post.postSlug);
+            model.parseShareUrl(post.postSlug, id);
           },
           icon: const Icon(Icons.share_outlined),
-          color: Colors.white,
         ),
         post.postCanEdit && !model.isEditingPost
             ? IconButton(
@@ -340,7 +331,6 @@ class ForumPostView extends StatelessWidget {
                 },
                 icon: const Icon(
                   Icons.edit_sharp,
-                  color: Colors.white,
                 ))
             : Container(),
         post.postCanDelete
@@ -350,7 +340,6 @@ class ForumPostView extends StatelessWidget {
                 },
                 icon: const Icon(
                   Icons.delete_sharp,
-                  color: Colors.white,
                 ))
             : Container()
       ],

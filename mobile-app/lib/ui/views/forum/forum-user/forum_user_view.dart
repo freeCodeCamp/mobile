@@ -18,7 +18,6 @@ class ForumUserView extends StatelessWidget {
         onModelReady: (model) => model.initState(username),
         viewModelBuilder: () => ForumUserModel(),
         builder: (context, model, child) => Scaffold(
-              backgroundColor: const Color.fromRGBO(0x2A, 0x2A, 0x40, 1),
               body: SingleChildScrollView(
                 child: Column(
                   children: [userTemplateBuilder(context, model)],
@@ -75,9 +74,9 @@ FutureBuilder userTemplateBuilder(context, model) {
                       child: Text(
                         user.username,
                         style: const TextStyle(
-                            fontWeight: FontWeight.w600,
-                            fontSize: 32,
-                            color: Colors.white),
+                          fontWeight: FontWeight.w600,
+                          fontSize: 32,
+                        ),
                       ),
                     ),
                   )
@@ -90,7 +89,7 @@ FutureBuilder userTemplateBuilder(context, model) {
                         top: user.bio != null ? 16 : 0, left: 16),
                     child: Text(
                       user.name,
-                      style: const TextStyle(color: Colors.white, fontSize: 28),
+                      style: const TextStyle(fontSize: 28),
                     ),
                   ),
                 )
@@ -150,8 +149,7 @@ FutureBuilder userTemplateBuilder(context, model) {
                           : const EdgeInsets.only(left: 16),
                       child: Text(
                         'Joined ' + PostViewModel.parseDate(user.createdAt),
-                        style:
-                            const TextStyle(fontSize: 18, color: Colors.white),
+                        style: const TextStyle(fontSize: 18),
                       ),
                     ),
                   ),
@@ -160,8 +158,7 @@ FutureBuilder userTemplateBuilder(context, model) {
                       padding: const EdgeInsets.only(left: 16.0, top: 8),
                       child: Text(
                         'Seen ' + PostViewModel.parseDate(user.lastSeen),
-                        style:
-                            const TextStyle(fontSize: 18, color: Colors.white),
+                        style: const TextStyle(fontSize: 18),
                       ),
                     ),
                   )
@@ -216,8 +213,7 @@ class UserTopicTemplate extends StatelessWidget {
           children: const [
             Padding(
               padding: EdgeInsets.only(top: 16, left: 16),
-              child: Text('Topics',
-                  style: TextStyle(color: Colors.white, fontSize: 28)),
+              child: Text('Topics', style: TextStyle(fontSize: 28)),
             )
           ],
         ),
@@ -261,16 +257,14 @@ class UserTopicBuilder extends StatelessWidget {
         return Padding(
           padding: const EdgeInsets.only(left: 16),
           child: ListTile(
-            title: Text(topic![index].title,
-                style: const TextStyle(color: Colors.white, fontSize: 18)),
+            title:
+                Text(topic![index].title, style: const TextStyle(fontSize: 18)),
             subtitle: Text(
               'posted ' + PostViewModel.parseDate(topic![index].createdAt),
-              style: const TextStyle(color: Colors.white),
             ),
             trailing: const Icon(
               Icons.arrow_forward_ios_sharp,
               size: 40,
-              color: Colors.white,
             ),
             onTap: () {
               model.navigateToPost(topic![index].slug, topic![index].id);
