@@ -1,0 +1,34 @@
+{
+  "name": "@freecodecamp/mobile",
+  "version": "0.0.1",
+  "description": "The freeCodeCamp mobile app open-source codebase",
+  "license": "BSD-3-Clause",
+  "private": true,
+  "engines": {
+    "node": ">=16",
+    "npm": ">=8"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/freeCodeCamp/mobile.git"
+  },
+  "bugs": {
+    "url": "https://github.com/freeCodeCamp/mobile/issues"
+  },
+  "homepage": "https://github.com/freeCodeCamp/mobile#readme",
+  "author": "freeCodeCamp <team@freecodecamp.org>",
+  "workspaces": [
+    "backend-api"
+  ],
+  "scripts": {
+    "postinstall": "cd mobile-app && flutter pub get",
+    "develop": "npm-run-all flutter:build-runner -p develop:*",
+    "develop:api": "cd mobile-api && npm run dev",
+    "develop:app": "cd mobile-app && flutter run",
+    "flutter:build-runner": "cd mobile-app && flutter pub run build_runner build --delete-conflicting-outputs"
+  },
+  "devDependencies": {
+    "npm-run-all": "4.1.5",
+    "shx": "0.3.3"
+  }
+}
