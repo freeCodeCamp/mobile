@@ -3,6 +3,7 @@ const path = require('path');
 
 const { exec } = require('child_process');
 
+
 function installGhost() {
 
     if(!fs.existsSync(path.join(__dirname, 'news'))){
@@ -48,6 +49,9 @@ function installGhost() {
 }
 
 function runGhost(){
+
+    const open = require('open');
+
     exec('ghost start', {cwd: path.join(__dirname, "/news")},  (error: string , stdout: string, stderr: string) => {
 
         if(error){
@@ -62,6 +66,8 @@ function runGhost(){
 
         console.log(`stdout: ${stdout}`);
     });
+
+    open('http://localhost:2368/ghost/');
 }
 installGhost();
 runGhost();
