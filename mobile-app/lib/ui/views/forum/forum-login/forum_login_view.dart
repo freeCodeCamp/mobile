@@ -16,7 +16,7 @@ class ForumLoginView extends StatelessWidget {
   Widget build(BuildContext context) {
     return ViewModelBuilder<ForumLoginModel>.reactive(
         viewModelBuilder: () => ForumLoginModel(),
-        onModelReady: (model) async => model.initState(),
+        onModelReady: (model) async => model.initState(context, fromCreatePost),
         builder: (context, model, child) => Scaffold(
             resizeToAvoidBottomInset: true,
             backgroundColor: const Color.fromRGBO(0x2A, 0x2A, 0x40, 1),
@@ -24,13 +24,16 @@ class ForumLoginView extends StatelessWidget {
               child: Column(children: [
                 model.isLoggedIn && fromCreatePost
                     ? const ForumCreatePostViewmodel()
-                    : loginForum(context, model)
+                    : loginForum(
+                        context,
+                        model,
+                      )
               ]),
             )));
   }
 }
 
-Column loginForum(context, ForumLoginModel model) {
+Column loginForum(BuildContext context, ForumLoginModel model) {
   return Column(
     mainAxisAlignment: MainAxisAlignment.center,
     children: [

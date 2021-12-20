@@ -38,10 +38,17 @@ class ForumLoginModel extends BaseViewModel {
   bool _isLoggedIn = false;
   bool get isLoggedIn => _isLoggedIn;
 
-  void initState() async {
+  late bool _fromCreatePost;
+
+  late BuildContext _context;
+
+
+  void initState(BuildContext context, bool fromPost) async {
     _errorMessage = '';
     _isLoggedIn = await checkLoggedIn();
     _baseUrl = await ForumConnect.getCurrentUrl();
+    _fromCreatePost = fromPost;
+    _context = context;
     notifyListeners();
     if (!_isLoggedIn) {
       setupDialogUi();
@@ -169,6 +176,9 @@ class ForumLoginModel extends BaseViewModel {
           prefs.setString('username', username);
           _isLoggedIn = prefs.getBool('loggedIn') as bool;
           notifyListeners();
+          if(!_fromCreatePost){
+            Navigator.pop(_context);
+          }
         } else {
           show2AuthDialog(csrf, username, password, cookie);
         }
@@ -204,6 +214,9 @@ class ForumLoginModel extends BaseViewModel {
         _isLoggedIn = prefs.getBool('loggedIn') as bool;
 
         notifyListeners();
+        if(!_fromCreatePost){
+         Navigator.pop(_context);
+        }
       } else {
         if (hasAuth2Enabled(response.body)) {
           show2AuthDialog(csrf, username, password, cookie);
