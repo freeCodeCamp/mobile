@@ -13,7 +13,7 @@ class ForumCategoryView extends StatelessWidget {
   ForumCategoryView({Key? key}) : super(key: key);
 
   List views = <dynamic>[
-    const ForumLoginView(),
+    const ForumLoginView(fromCreatePost: true),
     const ForumCategoryBuilder(),
     const ForumSearchView(),
   ];

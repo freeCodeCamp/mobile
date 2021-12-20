@@ -1,4 +1,3 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/painting.dart';
 import 'package:flutter/rendering.dart';
@@ -8,7 +7,11 @@ import 'package:stacked/stacked.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 class ForumLoginView extends StatelessWidget {
-  const ForumLoginView({Key? key}) : super(key: key);
+  const ForumLoginView({Key? key, this.fromCreatePost = false})
+      : super(key: key);
+
+  final bool fromCreatePost;
+
   @override
   Widget build(BuildContext context) {
     return ViewModelBuilder<ForumLoginModel>.reactive(
@@ -19,7 +22,7 @@ class ForumLoginView extends StatelessWidget {
             backgroundColor: const Color.fromRGBO(0x2A, 0x2A, 0x40, 1),
             body: SingleChildScrollView(
               child: Column(children: [
-                model.isLoggedIn
+                model.isLoggedIn && fromCreatePost
                     ? const ForumCreatePostViewmodel()
                     : loginForum(context, model)
               ]),

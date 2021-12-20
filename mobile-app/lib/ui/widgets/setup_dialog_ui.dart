@@ -393,7 +393,6 @@ class _AuthFormDialog extends HookWidget {
                   onPressed: () => {
                     onDialogTap(DialogResponse(
                         data: authCodeController.text, confirmed: true)),
-                    onDialogTap(DialogResponse())
                   },
                   child: const Text(
                     'LOGIN',
