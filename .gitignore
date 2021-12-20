@@ -1,5 +1,6 @@
 ### Backend API ###
 node_modules/
+news/
 package-lock.json
 
 ### Flutter ###
