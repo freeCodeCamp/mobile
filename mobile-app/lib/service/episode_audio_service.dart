@@ -13,15 +13,15 @@ class EpisodeAudioService {
     return _episodeAudioService;
   }
 
-  Future<void> loadEpisode(Episodes episode) async {
+  Future<void> loadEpisode(Episodes episode, bool isDownloaded) async {
     try {
-      if (episode.downloaded) {
+      if (isDownloaded) {
         await _audioPlayer.setAudioSource(
           AudioSource.uri(
             Uri.parse(
-                'file:///data/user/0/org.freecodecamp/app_flutter/episodes/${episode.podcastId}/${episode.guid}.mp3'),
+                'file:///data/user/0/org.freecodecamp/app_flutter/episodes/${episode.podcastId}/${episode.id}.mp3'),
             tag: MediaItem(
-              id: episode.guid,
+              id: episode.id,
               title: episode.title,
               album: 'freeCodeCamp Podcast',
               artUri: Uri.parse(
@@ -35,7 +35,7 @@ class EpisodeAudioService {
           AudioSource.uri(
             Uri.parse(episode.contentUrl!),
             tag: MediaItem(
-              id: episode.guid,
+              id: episode.id,
               title: episode.title,
               album: 'freeCodeCamp Podcast',
               artUri: Uri.parse(
@@ -51,14 +51,14 @@ class EpisodeAudioService {
     }
   }
 
-  Future<void> playAudio(Episodes episode) async {
+  Future<void> playAudio(Episodes episode, bool isDownloaded) async {
     if (_audioPlayer.playerState.processingState == ProcessingState.idle) {
-      await loadEpisode(episode);
+      await loadEpisode(episode, isDownloaded);
     }
-    if (episode.guid != _audioPlayer.audioSource?.sequence[0].tag.id) {
+    if (episode.id != _audioPlayer.audioSource?.sequence[0].tag.id) {
       log('DIFFERENT EPISODE');
       await _audioPlayer.stop();
-      await loadEpisode(episode);
+      await loadEpisode(episode, isDownloaded);
     }
     _audioPlayer.play();
   }

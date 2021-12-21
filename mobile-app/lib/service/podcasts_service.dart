@@ -23,7 +23,11 @@ class PodcastsDatabaseService {
 
     await _migrationService.runMigration(
       _db,
-      migrationFiles: ['1_create_db_schema.sql'],
+      migrationFiles: [
+        '1_create_db_schema.sql',
+        '2_delete_all_values.sql',
+        '3_reset_episodes_schema.sql',
+      ],
       verbose: true,
     );
     log("FINISHED LOADING MIGRATIONS");
@@ -58,45 +62,45 @@ class PodcastsDatabaseService {
     return null;
   }
 
-  Future addPodcast(Podcast podcast, String podcastId) async {
-    try {
-      await _db.insert(
-          podcastsTableName,
-          Podcasts(
-            id: podcastId,
-            url: podcast.url,
-            link: podcast.link,
-            title: podcast.title,
-            description: podcast.description,
-            image: podcast.image,
-            copyright: podcast.copyright,
-            numEps: podcast.episodes?.length,
-          ).toJson(),
-          conflictAlgorithm: ConflictAlgorithm.replace);
-      log("Added Podcast: ${podcast.title}");
-    } catch (e) {
-      log('Could not insert the podcast: $e');
-    }
-  }
+  // Future addPodcast(Podcast podcast, String podcastId) async {
+  //   try {
+  //     await _db.insert(
+  //         podcastsTableName,
+  //         Podcasts(
+  //           id: podcastId,
+  //           url: podcast.url,
+  //           link: podcast.link,
+  //           title: podcast.title,
+  //           description: podcast.description,
+  //           image: podcast.image,
+  //           copyright: podcast.copyright,
+  //           numEps: podcast.episodes?.length,
+  //         ).toJson(),
+  //         conflictAlgorithm: ConflictAlgorithm.replace);
+  //     log("Added Podcast: ${podcast.title}");
+  //   } catch (e) {
+  //     log('Could not insert the podcast: $e');
+  //   }
+  // }
 
   // EPISODE QUERIES
-  Future<List<Episodes>> getDownloadedEpisodes(String podcastId) async {
-    List<Map<String, dynamic>> epsResults = await _db.query(
-      episodesTableName,
-      where: 'podcastId = ?',
-      whereArgs: [podcastId],
-    );
-    log(epsResults
-        .map((episode) => Episodes.fromJson(episode))
-        .where((episode) => episode.downloaded)
-        .toList()
-        .length
-        .toString());
-    return epsResults
-        .map((episode) => Episodes.fromJson(episode))
-        .where((episode) => episode.downloaded)
-        .toList();
-  }
+  // Future<List<Episodes>> getDownloadedEpisodes(String podcastId) async {
+  //   List<Map<String, dynamic>> epsResults = await _db.query(
+  //     episodesTableName,
+  //     where: 'podcastId = ?',
+  //     whereArgs: [podcastId],
+  //   );
+  //   log(epsResults
+  //       .map((episode) => Episodes.fromJson(episode))
+  //       .where((episode) => episode.downloaded)
+  //       .toList()
+  //       .length
+  //       .toString());
+  //   return epsResults
+  //       .map((episode) => Episodes.fromJson(episode))
+  //       .where((episode) => episode.downloaded)
+  //       .toList();
+  // }
 
   Future<List<Episodes>> getEpisodes(String podcastId) async {
     List<Map<String, dynamic>> epsResults = await _db.query(
@@ -116,26 +120,26 @@ class PodcastsDatabaseService {
     return Episodes.fromJson(epResult.first);
   }
 
-  Future addEpisode(Episode episode, String podcastId) async {
-    try {
-      await _db.insert(
-          episodesTableName,
-          Episodes(
-            guid: episode.guid,
-            podcastId: podcastId,
-            title: episode.title,
-            description: episode.description,
-            publicationDate: episode.publicationDate,
-            contentUrl: episode.contentUrl,
-            duration: episode.duration,
-            downloaded: false,
-          ).toJson(),
-          conflictAlgorithm: ConflictAlgorithm.ignore);
-      log("Added Episode: ${episode.title}");
-    } catch (e) {
-      log('Could not insert the episode: $e');
-    }
-  }
+  // Future addEpisode(Episode episode, String podcastId) async {
+  //   try {
+  //     await _db.insert(
+  //         episodesTableName,
+  //         Episodes(
+  //           guid: episode.guid,
+  //           podcastId: podcastId,
+  //           title: episode.title,
+  //           description: episode.description,
+  //           publicationDate: episode.publicationDate,
+  //           contentUrl: episode.contentUrl,
+  //           duration: episode.duration,
+  //           downloaded: false,
+  //         ).toJson(),
+  //         conflictAlgorithm: ConflictAlgorithm.ignore);
+  //     log("Added Episode: ${episode.title}");
+  //   } catch (e) {
+  //     log('Could not insert the episode: $e');
+  //   }
+  // }
 
   Future toggleDownloadEpisode(String guid, bool downloaded) async {
     try {

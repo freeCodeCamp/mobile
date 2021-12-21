@@ -20,7 +20,8 @@ class EpisodeViewModel extends BaseViewModel {
   Episodes episode;
   final Podcasts podcast;
   late final Directory appDir;
-  late bool downloaded = episode.downloaded;
+  // late bool downloaded = episode.downloaded;
+  late bool downloaded = false;
   bool playing = false;
   bool loading = false;
   bool downloading = false;
@@ -33,8 +34,8 @@ class EpisodeViewModel extends BaseViewModel {
     await _databaseService.initialise();
     // episode = await _databaseService.getEpisode(podcast.id, episode.guid);
     log(episode.toString());
-    playing = _audioService.isPlaying(episode.guid);
-    downloaded = episode.downloaded;
+    playing = _audioService.isPlaying(episode.id);
+    // downloaded = episode.downloaded;
     notifyListeners();
     await FkUserAgent.init();
     appDir = await getApplicationDocumentsDirectory();
@@ -47,7 +48,7 @@ class EpisodeViewModel extends BaseViewModel {
     log('DOWNLOADING... $uri');
     log("USER AGENT ${FkUserAgent.userAgent}");
     var response = await dio.download(uri,
-        appDir.path + '/episodes/' + podcast.id + '/' + episode.guid + '.mp3',
+        appDir.path + '/episodes/' + podcast.id + '/' + episode.id + '.mp3',
         onReceiveProgress: (int recevied, int total) {
       progress = ((recevied / total) * 100).toStringAsFixed(0);
       // log('$recevied / $total : ${((recevied / total) * 100).toStringAsFixed(2)}');
@@ -68,7 +69,7 @@ class EpisodeViewModel extends BaseViewModel {
       if (!playing) {
         loading = true;
         notifyListeners();
-        await _audioService.playAudio(episode);
+        await _audioService.playAudio(episode, downloaded);
         playing = true;
       } else {
         await _audioService.pauseAudio();
@@ -85,22 +86,22 @@ class EpisodeViewModel extends BaseViewModel {
       log("STARTING DOWNLOAD");
       downloadAudio(episode.contentUrl!);
       downloaded = !downloaded;
-      episode.downloaded = downloaded;
-      _databaseService.toggleDownloadEpisode(episode.guid, downloaded);
+      // episode.downloaded = downloaded;
+      _databaseService.toggleDownloadEpisode(episode.id, downloaded);
     } else if (downloaded) {
       log("DELETING DOWNLOAD");
       File audioFile = File(appDir.path +
           '/episodes/' +
           podcast.id +
           '/' +
-          episode.guid +
+          episode.id +
           '.mp3');
       if (audioFile.existsSync()) {
         audioFile.deleteSync();
       }
       downloaded = !downloaded;
-      episode.downloaded = downloaded;
-      _databaseService.toggleDownloadEpisode(episode.guid, downloaded);
+      // episode.downloaded = downloaded;
+      _databaseService.toggleDownloadEpisode(episode.id, downloaded);
       progress = '0';
     }
     notifyListeners();

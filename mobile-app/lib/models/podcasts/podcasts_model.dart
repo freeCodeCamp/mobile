@@ -1,6 +1,6 @@
 class Podcasts {
   final String id;
-  final String? url;
+  final String url;
   final String? link;
   final String? title;
   final String? description;
@@ -10,7 +10,7 @@ class Podcasts {
 
   Podcasts({
     required this.id,
-    this.url,
+    required this.url,
     this.link,
     this.title,
     this.description,
@@ -21,7 +21,7 @@ class Podcasts {
 
   factory Podcasts.fromJson(Map<String, dynamic> json) => Podcasts(
         id: json['_id'] as String,
-        url: json['feedUrl'] as String?,
+        url: json['feedUrl'] as String,
         link: json['podcastLink'] as String?,
         title: json['title'] as String?,
         description: json['description'] as String?,
