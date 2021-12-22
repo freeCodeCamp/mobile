@@ -43,6 +43,8 @@ function installGhost() {
     
             console.log(`stdout: ${stdout}`);
         });
+    } else {
+        runGhost();
     }
 
 
@@ -70,4 +72,4 @@ function runGhost(){
     open('http://localhost:2368/ghost/');
 }
 installGhost();
-runGhost();
+
