@@ -164,18 +164,19 @@ class PodcastTemplate extends StatelessWidget {
           children: [
             Expanded(
               flex: 2,
-              // child: Image.file(
-              //   File(
-              //     '/data/user/0/org.freecodecamp/app_flutter/images/podcast/${podcast.id}.jpg',
-              //   ),
-              //   // height: 130,
-              //   alignment: Alignment.center,
-              // ),
-              child: Image.network(
-                podcast.image!,
-                // height: 130,
-                alignment: Alignment.center,
-              ),
+              child: isDownloadView
+                  ? Image.file(
+                      File(
+                        '/data/user/0/org.freecodecamp/app_flutter/images/podcast/${podcast.id}.jpg',
+                      ),
+                      // height: 130,
+                      alignment: Alignment.center,
+                    )
+                  : Image.network(
+                      podcast.image!,
+                      // height: 130,
+                      alignment: Alignment.center,
+                    ),
             ),
             Flexible(
               flex: 1,

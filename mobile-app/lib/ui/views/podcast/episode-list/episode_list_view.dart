@@ -48,10 +48,17 @@ class EpisodeListView extends StatelessWidget {
                       padding: const EdgeInsets.fromLTRB(16, 8, 16, 16),
                       child: Column(
                         children: [
-                          Image.network(
-                            podcast.image!,
-                            height: 175,
-                          ),
+                          isDownloadView
+                              ? Image.file(
+                                  File(
+                                    '/data/user/0/org.freecodecamp/app_flutter/images/podcast/${podcast.id}.jpg',
+                                  ),
+                                  height: 175,
+                                )
+                              : Image.network(
+                                  podcast.image!,
+                                  height: 175,
+                                ),
                           const SizedBox(
                             height: 16,
                           ),

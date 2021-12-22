@@ -2,16 +2,16 @@ import 'dart:developer';
 import 'dart:io';
 
 import 'package:dio/dio.dart';
-import 'package:flutter_local_notifications/flutter_local_notifications.dart';
+import 'package:fk_user_agent/fk_user_agent.dart';
 import 'package:freecodecamp/app/app.locator.dart';
 import 'package:freecodecamp/models/podcasts/episodes_model.dart';
 import 'package:freecodecamp/models/podcasts/podcasts_model.dart';
 import 'package:freecodecamp/service/episode_audio_service.dart';
 import 'package:freecodecamp/service/notification_service.dart';
 import 'package:freecodecamp/service/podcasts_service.dart';
+import 'package:http/http.dart' as http;
 import 'package:path_provider/path_provider.dart';
 import 'package:stacked/stacked.dart';
-import 'package:fk_user_agent/fk_user_agent.dart';
 
 class EpisodeViewModel extends BaseViewModel {
   final _databaseService = locator<PodcastsDatabaseService>();
@@ -32,13 +32,22 @@ class EpisodeViewModel extends BaseViewModel {
 
   Future init(Episodes episode, bool isDownloadView) async {
     await _databaseService.initialise();
+    await FkUserAgent.init();
     // episode = await _databaseService.getEpisode(podcast.id, episode.guid);
     log(episode.toString());
     playing = _audioService.isPlaying(episode.id);
     // downloaded = episode.downloaded;
     notifyListeners();
-    await FkUserAgent.init();
     appDir = await getApplicationDocumentsDirectory();
+    if (!isDownloadView) {
+      File podcastImgFile =
+          File('${appDir.path}/images/podcast/${episode.podcastId}.jpg');
+      if (!podcastImgFile.existsSync()) {
+        podcastImgFile.createSync(recursive: true);
+        var res = await http.get(Uri.parse(podcast.image!));
+        podcastImgFile.writeAsBytesSync(res.bodyBytes);
+      }
+    }
   }
 
   // Make this even more better UI and logic wise. Also check for notification update
@@ -90,12 +99,8 @@ class EpisodeViewModel extends BaseViewModel {
       _databaseService.toggleDownloadEpisode(episode.id, downloaded);
     } else if (downloaded) {
       log("DELETING DOWNLOAD");
-      File audioFile = File(appDir.path +
-          '/episodes/' +
-          podcast.id +
-          '/' +
-          episode.id +
-          '.mp3');
+      File audioFile = File(
+          appDir.path + '/episodes/' + podcast.id + '/' + episode.id + '.mp3');
       if (audioFile.existsSync()) {
         audioFile.deleteSync();
       }

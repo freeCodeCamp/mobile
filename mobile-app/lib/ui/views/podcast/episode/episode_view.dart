@@ -49,10 +49,17 @@ class EpisodeView extends StatelessWidget {
                 const SizedBox(
                   height: 8,
                 ),
-                Image.network(
-                  podcast.image!,
-                  height: 250,
-                ),
+                isDownloadView
+                    ? Image.file(
+                        File(
+                          '/data/user/0/org.freecodecamp/app_flutter/images/podcast/${podcast.id}.jpg',
+                        ),
+                        height: 250,
+                      )
+                    : Image.network(
+                        podcast.image!,
+                        height: 250,
+                      ),
                 const SizedBox(
                   height: 20,
                 ),
