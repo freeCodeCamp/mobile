@@ -36,7 +36,7 @@ class EpisodeViewModel extends BaseViewModel {
     // episode = await _databaseService.getEpisode(podcast.id, episode.guid);
     log(episode.toString());
     playing = _audioService.isPlaying(episode.id);
-    // downloaded = episode.downloaded;
+    downloaded = await _databaseService.episodeExists(episode);
     notifyListeners();
     appDir = await getApplicationDocumentsDirectory();
     if (!isDownloadView) {
@@ -68,6 +68,8 @@ class EpisodeViewModel extends BaseViewModel {
       'Download Complete',
       episode.title,
     );
+    await _databaseService.addPodcast(podcast);
+    await _databaseService.addEpisode(episode);
     log('Downloaded episode ${episode.title}');
     notifyListeners();
   }
@@ -89,14 +91,18 @@ class EpisodeViewModel extends BaseViewModel {
     notifyListeners();
   }
 
+  void removeEpisode() async {
+    await _databaseService.removeEpisode(episode);
+    await _databaseService.removePodcast(podcast);
+    notifyListeners();
+  }
+
   void downloadBtnClick() {
     log("CLICKED DOWNLOAD BUTTON ${episode.title}, status $downloaded");
     if (!downloaded && !downloading) {
       log("STARTING DOWNLOAD");
       downloadAudio(episode.contentUrl!);
       downloaded = !downloaded;
-      // episode.downloaded = downloaded;
-      _databaseService.toggleDownloadEpisode(episode.id, downloaded);
     } else if (downloaded) {
       log("DELETING DOWNLOAD");
       File audioFile = File(
@@ -105,8 +111,7 @@ class EpisodeViewModel extends BaseViewModel {
         audioFile.deleteSync();
       }
       downloaded = !downloaded;
-      // episode.downloaded = downloaded;
-      _databaseService.toggleDownloadEpisode(episode.id, downloaded);
+      removeEpisode();
       progress = '0';
     }
     notifyListeners();

@@ -4,7 +4,6 @@ import 'dart:developer';
 import 'package:freecodecamp/app/app.locator.dart';
 import 'package:freecodecamp/models/podcasts/episodes_model.dart';
 import 'package:freecodecamp/models/podcasts/podcasts_model.dart';
-import 'package:podcast_search/podcast_search.dart';
 import 'package:sqflite/sqflite.dart';
 import 'package:sqflite_migration_service/sqflite_migration_service.dart';
 
@@ -34,81 +33,69 @@ class PodcastsDatabaseService {
   }
 
   // PODCAST QUERIES
-  Future<List<Podcasts>> getAllPodcasts() async {
+  Future<List<Podcasts>> getPodcasts() async {
     List<Map<String, dynamic>> podcastsResults =
         await _db.query(podcastsTableName);
     return podcastsResults
-        .map((podcast) => Podcasts.fromJson(podcast))
+        .map((podcast) => Podcasts.fromDBJson(podcast))
         .toList();
   }
 
-  Future<List<Podcasts>> getDownloadedPodcasts() async {
-    List<Map<String, dynamic>> downloadedPodcastResults = await _db.rawQuery(
-        'SELECT * from podcasts where id in (select podcastId from episodes where downloaded=1 group by podcastId)');
-    return downloadedPodcastResults
-        .map((podcast) => Podcasts.fromJson(podcast))
-        .toList();
-  }
-
-  Future<Podcasts?> getPodcast(String podcastId) async {
-    List<Map<String, dynamic>> podcastResult = await _db.query(
-      podcastsTableName,
-      where: 'id = ?',
-      whereArgs: [podcastId],
-    );
-    if (podcastResult.isNotEmpty) {
-      return Podcasts.fromJson(podcastResult.first);
-    }
-    return null;
-  }
-
-  // Future addPodcast(Podcast podcast, String podcastId) async {
-  //   try {
-  //     await _db.insert(
-  //         podcastsTableName,
-  //         Podcasts(
-  //           id: podcastId,
-  //           url: podcast.url,
-  //           link: podcast.link,
-  //           title: podcast.title,
-  //           description: podcast.description,
-  //           image: podcast.image,
-  //           copyright: podcast.copyright,
-  //           numEps: podcast.episodes?.length,
-  //         ).toJson(),
-  //         conflictAlgorithm: ConflictAlgorithm.replace);
-  //     log("Added Podcast: ${podcast.title}");
-  //   } catch (e) {
-  //     log('Could not insert the podcast: $e');
-  //   }
-  // }
-
-  // EPISODE QUERIES
-  // Future<List<Episodes>> getDownloadedEpisodes(String podcastId) async {
-  //   List<Map<String, dynamic>> epsResults = await _db.query(
-  //     episodesTableName,
-  //     where: 'podcastId = ?',
+  // Future<Podcasts?> getPodcast(String podcastId) async {
+  //   List<Map<String, dynamic>> podcastResult = await _db.query(
+  //     podcastsTableName,
+  //     where: 'id = ?',
   //     whereArgs: [podcastId],
   //   );
-  //   log(epsResults
-  //       .map((episode) => Episodes.fromJson(episode))
-  //       .where((episode) => episode.downloaded)
-  //       .toList()
-  //       .length
-  //       .toString());
-  //   return epsResults
-  //       .map((episode) => Episodes.fromJson(episode))
-  //       .where((episode) => episode.downloaded)
-  //       .toList();
+  //   if (podcastResult.isNotEmpty) {
+  //     return Podcasts.fromDBJson(podcastResult.first);
+  //   }
+  //   return null;
   // }
 
-  Future<List<Episodes>> getEpisodes(String podcastId) async {
+  Future addPodcast(Podcasts podcast) async {
+    try {
+      await _db.insert(
+        podcastsTableName,
+        podcast.toJson(),
+        conflictAlgorithm: ConflictAlgorithm.replace,
+      );
+      log("Added Podcast: ${podcast.title}");
+    } catch (e) {
+      log('Could not insert the podcast: $e');
+    }
+  }
+
+  Future removePodcast(Podcasts podcast) async {
+    try {
+      final res = await _db.rawQuery(
+        'SELECT COUNT(*) FROM episodes GROUP BY podcastId HAVING podcastId = ?',
+        [podcast.id],
+      );
+      final count = Sqflite.firstIntValue(res);
+      if (count == 0 || count == null) {
+        await _db.delete(
+          podcastsTableName,
+          where: 'id = ?',
+          whereArgs: [podcast.id],
+        );
+        log("Removed Podcast: ${podcast.title}");
+      } else {
+        log("Did not remove podcast: ${podcast.title} because it has $count episodes");
+      }
+    } catch (e) {
+      log('Could not remove the podcast: $e');
+    }
+  }
+
+  // EPISODE QUERIES
+  Future<List<Episodes>> getEpisodes(Podcasts podcast) async {
     List<Map<String, dynamic>> epsResults = await _db.query(
       episodesTableName,
       where: 'podcastId = ?',
-      whereArgs: [podcastId],
+      whereArgs: [podcast.id],
     );
-    return epsResults.map((episode) => Episodes.fromJson(episode)).toList();
+    return epsResults.map((episode) => Episodes.fromDBJson(episode)).toList();
   }
 
   Future<Episodes> getEpisode(String podcastId, String guid) async {
@@ -117,42 +104,41 @@ class PodcastsDatabaseService {
       where: 'podcastId = ? AND guid = ?',
       whereArgs: [podcastId, guid],
     );
-    return Episodes.fromJson(epResult.first);
+    return Episodes.fromDBJson(epResult.first);
   }
 
-  // Future addEpisode(Episode episode, String podcastId) async {
-  //   try {
-  //     await _db.insert(
-  //         episodesTableName,
-  //         Episodes(
-  //           guid: episode.guid,
-  //           podcastId: podcastId,
-  //           title: episode.title,
-  //           description: episode.description,
-  //           publicationDate: episode.publicationDate,
-  //           contentUrl: episode.contentUrl,
-  //           duration: episode.duration,
-  //           downloaded: false,
-  //         ).toJson(),
-  //         conflictAlgorithm: ConflictAlgorithm.ignore);
-  //     log("Added Episode: ${episode.title}");
-  //   } catch (e) {
-  //     log('Could not insert the episode: $e');
-  //   }
-  // }
-
-  Future toggleDownloadEpisode(String guid, bool downloaded) async {
+  Future addEpisode(Episodes episode) async {
     try {
-      await _db.update(
+      await _db.insert(
         episodesTableName,
-        {
-          'downloaded': downloaded ? 1 : 0,
-        },
-        where: 'guid = ?',
-        whereArgs: [guid],
+        episode.toJson(),
+        conflictAlgorithm: ConflictAlgorithm.replace,
       );
+      log("Added Episode: ${episode.title}");
     } catch (e) {
-      log('Could not update the episode: $e');
+      log('Could not insert the episode: $e');
     }
+  }
+
+  Future removeEpisode(Episodes episode) async {
+    try {
+      await _db.delete(
+        episodesTableName,
+        where: 'podcastId = ? AND id = ?',
+        whereArgs: [episode.podcastId, episode.id],
+      );
+      log("Removed Episode: ${episode.title}");
+    } catch (e) {
+      log('Could not remove the episode: $e');
+    }
+  }
+
+  Future<bool> episodeExists(Episodes episode) async {
+    List<Map<String, dynamic>> epResult = await _db.query(
+      episodesTableName,
+      where: 'podcastId = ? AND id = ?',
+      whereArgs: [episode.podcastId, episode.id],
+    );
+    return epResult.isNotEmpty;
   }
 }

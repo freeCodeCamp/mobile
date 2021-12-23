@@ -4,10 +4,8 @@ class Episodes {
   final String podcastId;
   final String title;
   final String? description;
-  // Convert to millisecondsSinceEpoch
   final DateTime? publicationDate;
   final String? contentUrl;
-  // Convert to milliseconds
   final Duration? duration;
 
   Episodes({
@@ -20,7 +18,7 @@ class Episodes {
     this.duration,
   });
 
-  factory Episodes.fromJson(Map<String, dynamic> json) => Episodes(
+  factory Episodes.fromAPIJson(Map<String, dynamic> json) => Episodes(
         id: json['_id'] as String,
         podcastId: json['podcastId'] as String,
         title: json['title'] as String,
@@ -33,13 +31,26 @@ class Episodes {
             json['duration'] == null ? null : parseDuration(json['duration']),
       );
 
+  factory Episodes.fromDBJson(Map<String, dynamic> json) => Episodes(
+        id: json['id'] as String,
+        podcastId: json['podcastId'] as String,
+        title: json['title'] as String,
+        description: json['description'] as String?,
+        publicationDate: json['publicationDate'] == null
+            ? null
+            : DateTime.parse(json['publicationDate']),
+        contentUrl: json['contentUrl'] as String?,
+        duration:
+            json['duration'] == null ? null : parseDuration(json['duration']),
+      );
+
   Map<String, dynamic> toJson() => {
         'id': id,
         'podcastId': podcastId,
         'title': title,
         'description': description,
         'publicationDate': publicationDate?.toIso8601String(),
-        'audioUrl': contentUrl,
+        'contentUrl': contentUrl,
         'duration': duration.toString(),
       };
 
@@ -51,7 +62,7 @@ class Episodes {
       title: $title, 
       description: ${description!.substring(0, 100)},
       publicationDate: $publicationDate, 
-      audioUrl: $contentUrl, 
+      contentUrl: $contentUrl, 
       duration: $duration, 
     }""";
   }

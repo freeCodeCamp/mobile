@@ -23,10 +23,8 @@ class EpisodeListViewModel extends BaseViewModel {
   void initState(bool isDownloadView) {
     _databaseService.initialise();
     if (isDownloadView) {
-      // _episodes = _databaseService.getDownloadedEpisodes(podcast.id);
-      _episodes = fetchEpisodes(podcast.id);
+      _episodes = _databaseService.getEpisodes(podcast);
     } else {
-      // episodes = await _databaseService.getEpisodes(podcast.id);
       _episodes = fetchEpisodes(podcast.id);
     }
     notifyListeners();
@@ -40,6 +38,6 @@ class EpisodeListViewModel extends BaseViewModel {
     final List<dynamic> episodes = json.decode(res.body)["episodes"];
     epsLength = episodes.length;
     notifyListeners();
-    return episodes.map((episode) => Episodes.fromJson(episode)).toList();
+    return episodes.map((episode) => Episodes.fromAPIJson(episode)).toList();
   }
 }

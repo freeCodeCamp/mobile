@@ -26,12 +26,12 @@ class PodcastListViewModel extends BaseViewModel {
   Future<List<Podcasts>> fetchPodcasts(bool isDownloadView) async {
     await _databaseService.initialise();
     if (isDownloadView) {
-      return await _databaseService.getDownloadedPodcasts();
+      return await _databaseService.getPodcasts();
     } else {
       appDir = await getApplicationDocumentsDirectory();
       final res = await http.get(Uri.parse(baseUrl + "podcasts"));
       final List<dynamic> podcasts = json.decode(res.body);
-      return podcasts.map((podcast) => Podcasts.fromJson(podcast)).toList();
+      return podcasts.map((podcast) => Podcasts.fromAPIJson(podcast)).toList();
     }
   }
 }

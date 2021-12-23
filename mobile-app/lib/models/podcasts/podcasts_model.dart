@@ -19,7 +19,7 @@ class Podcasts {
     this.numEps,
   });
 
-  factory Podcasts.fromJson(Map<String, dynamic> json) => Podcasts(
+  factory Podcasts.fromAPIJson(Map<String, dynamic> json) => Podcasts(
         id: json['_id'] as String,
         url: json['feedUrl'] as String,
         link: json['podcastLink'] as String?,
@@ -30,28 +30,39 @@ class Podcasts {
         numEps: json['numOfEps'] as int?
       );
 
+  factory Podcasts.fromDBJson(Map<String, dynamic> json) => Podcasts(
+        id: json['id'] as String,
+        url: json['url'] as String,
+        link: json['link'] as String?,
+        title: json['title'] as String?,
+        description: json['description'] as String?,
+        image: json['image'] as String?,
+        copyright: json['copyright'] as String?,
+        numEps: json['numEps'] as int?
+      );
+
   Map<String, dynamic> toJson() => {
-        '_id': id,
-        'feedUrl': url,
-        'podcastLink': link,
+        'id': id,
+        'url': url,
+        'link': link,
         'title': title,
         'description': description,
-        'imageLink': image,
+        'image': image,
         'copyright': copyright,
-        'numOfEps': numEps
+        'numEps': numEps
       };
 
   @override
   String toString() {
     return """Podcasts {
-      _id: $id,
-      feedUrl: $url,
-      podcastLink: $link,
+      id: $id,
+      url: $url,
+      link: $link,
       title: $title,
       description: ${description!.substring(0, 100)},
-      imageLink: $image,
+      image: $image,
       copyright: $copyright
-      numOfEps: $numEps
+      numEps: $numEps
     }""";
   }
 }
