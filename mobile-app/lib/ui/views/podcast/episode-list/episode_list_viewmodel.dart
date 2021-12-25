@@ -20,10 +20,11 @@ class EpisodeListViewModel extends BaseViewModel {
 
   EpisodeListViewModel(this.podcast);
 
-  void initState(bool isDownloadView) {
+  void initState(bool isDownloadView) async {
     _databaseService.initialise();
     if (isDownloadView) {
       _episodes = _databaseService.getEpisodes(podcast);
+      epsLength = (await episodes).length;
     } else {
       _episodes = fetchEpisodes(podcast.id);
     }
