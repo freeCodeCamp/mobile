@@ -8,6 +8,7 @@ import 'package:freecodecamp/models/podcasts/podcasts_model.dart';
 import 'package:freecodecamp/ui/views/podcast/episode-list/episode_list_viewmodel.dart';
 import 'package:freecodecamp/ui/views/podcast/episode/episode_view.dart';
 import 'package:html/dom.dart' as dom;
+import 'package:infinite_scroll_pagination/infinite_scroll_pagination.dart';
 import 'package:intl/intl.dart';
 import 'package:readmore/readmore.dart';
 import 'package:stacked/stacked.dart';
@@ -126,60 +127,87 @@ class EpisodeListView extends StatelessWidget {
                   ],
                 ),
               ),
-              FutureBuilder<List<Episodes>>(
-                future: model.episodes,
-                builder: (context, snapshot) {
-                  if (snapshot.hasData) {
-                    return ListView.separated(
+              !isDownloadView
+                  ? PagedListView.separated(
+                      pagingController: model.pagingController,
                       shrinkWrap: true,
                       physics: const NeverScrollableScrollPhysics(),
-                      itemCount: snapshot.data!.length,
-                      itemBuilder: (BuildContext context, int index) {
-                        return PodcastEpisodeTemplate(
-                          episode: snapshot.data![index],
+                      builderDelegate: PagedChildBuilderDelegate<Episodes>(
+                        itemBuilder: (
+                          BuildContext context,
+                          Episodes episode,
+                          int index,
+                        ) =>
+                            PodcastEpisodeTemplate(
+                          episode: episode,
                           i: index,
                           podcast: podcast,
                           isDownloadView: isDownloadView,
+                        ),
+                      ),
+                      separatorBuilder: (BuildContext context, int index) =>
+                          Divider(
+                        color: Colors.grey.shade600,
+                        height: 1,
+                        thickness: 1,
+                      ),
+                    )
+                  : FutureBuilder<List<Episodes>>(
+                      future: model.episodes,
+                      builder: (context, snapshot) {
+                        if (snapshot.hasData) {
+                          return ListView.separated(
+                            shrinkWrap: true,
+                            physics: const NeverScrollableScrollPhysics(),
+                            itemCount: snapshot.data!.length,
+                            itemBuilder: (BuildContext context, int index) {
+                              return PodcastEpisodeTemplate(
+                                episode: snapshot.data![index],
+                                i: index,
+                                podcast: podcast,
+                                isDownloadView: isDownloadView,
+                              );
+                            },
+                            separatorBuilder:
+                                (BuildContext context, int index) {
+                              return Divider(
+                                color: Colors.grey.shade600,
+                                height: 1,
+                                thickness: 1,
+                              );
+                            },
+                          );
+                        } else if (snapshot.hasError) {
+                          return Text("${snapshot.error}");
+                        }
+                        return const Center(
+                          child: CircularProgressIndicator.adaptive(),
                         );
+                        // TODO: Read up more on perf issues with shrinkWrap and check
+                        // for diff in perf in below commented code
+                        // return Column(
+                        //   crossAxisAlignment: CrossAxisAlignment.stretch,
+                        //   children: <PodcastEpisodeTemplate>[
+                        //     ...snapshot.data!
+                        //         .asMap()
+                        //         .map(
+                        //           (i, episode) {
+                        //             return MapEntry(
+                        //               i,
+                        //               PodcastEpisodeTemplate(
+                        //                 episode: episode,
+                        //                 i: i,
+                        //                 podcast: podcast,
+                        //               ),
+                        //             );
+                        //           },
+                        //         )
+                        //         .values
+                        //         .toList(),
+                        //   ],
+                        // );
                       },
-                      separatorBuilder: (BuildContext context, int index) {
-                        return Divider(
-                          color: Colors.grey.shade600,
-                          height: 1,
-                          thickness: 1,
-                        );
-                      },
-                    );
-                  } else if (snapshot.hasError) {
-                    return Text("${snapshot.error}");
-                  }
-                  return const Center(
-                      child: CircularProgressIndicator.adaptive());
-                  // TODO: Read up more on perf issues with shrinkWrap and check
-                  // for diff in perf in below commented code
-                  // return Column(
-                  //   crossAxisAlignment: CrossAxisAlignment.stretch,
-                  //   children: <PodcastEpisodeTemplate>[
-                  //     ...snapshot.data!
-                  //         .asMap()
-                  //         .map(
-                  //           (i, episode) {
-                  //             return MapEntry(
-                  //               i,
-                  //               PodcastEpisodeTemplate(
-                  //                 episode: episode,
-                  //                 i: i,
-                  //                 podcast: podcast,
-                  //               ),
-                  //             );
-                  //           },
-                  //         )
-                  //         .values
-                  //         .toList(),
-                  //   ],
-                  // );
-                },
-              ),
+                    ),
             ],
           ),
         ),

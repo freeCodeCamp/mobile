@@ -53,6 +53,7 @@ dependencies:
   flutter_local_notifications: ^9.0.3
   image_picker: ^0.8.4+4
   youtube_player_iframe: ^2.2.2
+  infinite_scroll_pagination: ^3.1.0
 dev_dependencies:
   build_runner: ^2.1.2
   flutter_test:
