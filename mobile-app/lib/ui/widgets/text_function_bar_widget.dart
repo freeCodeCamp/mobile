@@ -32,13 +32,19 @@ class ForumTextFunctionBar extends StatelessWidget {
 
     if (selectedText.trim().isEmpty) {
       String newText = textController.text.replaceRange(
-          textSelection.start, textSelection.end, ' > Blockquote ');
+          textSelection.start, textSelection.end, '\n\n> Blockquote\n\n');
       textController.text = newText;
-      setCursorposition();
+      setCursorposition(
+        position: textSelection.start + 2,
+        length: 12,
+      );
     } else {
-      textController.text =
-          textController.text.replaceFirst(selectedText, "> $selectedText");
-      setCursorposition();
+      textController.text = textController.text
+          .replaceFirst(selectedText, "\n\n> $selectedText\n\n");
+      setCursorposition(
+        position: textSelection.start + 2,
+        length: selectedText.length + 2,
+      );
     }
   }
 
