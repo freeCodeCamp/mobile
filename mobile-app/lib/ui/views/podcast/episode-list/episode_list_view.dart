@@ -37,11 +37,10 @@ class EpisodeListView extends StatelessWidget {
         appBar: AppBar(
           title: Text(podcast.title!),
         ),
-        body: SingleChildScrollView(
-          physics: const ScrollPhysics(),
-          child: Column(
-            children: [
-              Container(
+        body: CustomScrollView(
+          slivers: [
+            SliverToBoxAdapter(
+              child: Container(
                 color: const Color(0xFF0a0a23),
                 child: Column(
                   children: [
@@ -127,32 +126,32 @@ class EpisodeListView extends StatelessWidget {
                   ],
                 ),
               ),
-              !isDownloadView
-                  ? PagedListView.separated(
-                      pagingController: model.pagingController,
-                      shrinkWrap: true,
-                      physics: const NeverScrollableScrollPhysics(),
-                      builderDelegate: PagedChildBuilderDelegate<Episodes>(
-                        itemBuilder: (
-                          BuildContext context,
-                          Episodes episode,
-                          int index,
-                        ) =>
-                            PodcastEpisodeTemplate(
-                          episode: episode,
-                          i: index,
-                          podcast: podcast,
-                          isDownloadView: isDownloadView,
-                        ),
+            ),
+            !isDownloadView
+                ? PagedSliverList.separated(
+                    pagingController: model.pagingController,
+                    builderDelegate: PagedChildBuilderDelegate<Episodes>(
+                      itemBuilder: (
+                        BuildContext context,
+                        Episodes episode,
+                        int index,
+                      ) =>
+                          PodcastEpisodeTemplate(
+                        episode: episode,
+                        i: index,
+                        podcast: podcast,
+                        isDownloadView: isDownloadView,
                       ),
-                      separatorBuilder: (BuildContext context, int index) =>
-                          Divider(
-                        color: Colors.grey.shade600,
-                        height: 1,
-                        thickness: 1,
-                      ),
-                    )
-                  : FutureBuilder<List<Episodes>>(
+                    ),
+                    separatorBuilder: (BuildContext context, int index) =>
+                        Divider(
+                      color: Colors.grey.shade600,
+                      height: 1,
+                      thickness: 1,
+                    ),
+                  )
+                : SliverToBoxAdapter(
+                    child: FutureBuilder<List<Episodes>>(
                       future: model.episodes,
                       builder: (context, snapshot) {
                         if (snapshot.hasData) {
@@ -183,33 +182,10 @@ class EpisodeListView extends StatelessWidget {
                         return const Center(
                           child: CircularProgressIndicator.adaptive(),
                         );
-                        // TODO: Read up more on perf issues with shrinkWrap and check
-                        // for diff in perf in below commented code
-                        // return Column(
-                        //   crossAxisAlignment: CrossAxisAlignment.stretch,
-                        //   children: <PodcastEpisodeTemplate>[
-                        //     ...snapshot.data!
-                        //         .asMap()
-                        //         .map(
-                        //           (i, episode) {
-                        //             return MapEntry(
-                        //               i,
-                        //               PodcastEpisodeTemplate(
-                        //                 episode: episode,
-                        //                 i: i,
-                        //                 podcast: podcast,
-                        //               ),
-                        //             );
-                        //           },
-                        //         )
-                        //         .values
-                        //         .toList(),
-                        //   ],
-                        // );
                       },
                     ),
-            ],
-          ),
+                  ),
+          ],
         ),
       ),
     );
@@ -244,7 +220,6 @@ class PodcastEpisodeTemplate extends StatelessWidget {
       onTap: () {
         log(podcast.toString());
         log(episode.toString());
-        // log("Clicked ${episode.title}");
         Navigator.push(
           context,
           MaterialPageRoute(

@@ -35,7 +35,6 @@ class EpisodeListViewModel extends BaseViewModel {
       _pagingController.addPageRequestListener((pageKey) {
         fetchEpisodes(podcast.id, pageKey);
       });
-      // _episodes = fetchEpisodes(podcast.id);
     }
     notifyListeners();
     // Parse html description
@@ -62,12 +61,10 @@ class EpisodeListViewModel extends BaseViewModel {
       } else {
         _pagingController.appendPage(eps, pageKey + 1);
       }
-      // return episodes.map((episode) => Episodes.fromAPIJson(episode)).toList();
     } catch (e) {
       log(e.toString());
       _pagingController.error = e;
     }
-    // return episodes.map((episode) => Episodes.fromAPIJson(episode)).toList();
   }
 
   @override
