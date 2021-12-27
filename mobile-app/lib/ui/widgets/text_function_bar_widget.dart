@@ -76,13 +76,19 @@ class ForumTextFunctionBar extends StatelessWidget {
 
     if (selectedText.trim().isEmpty) {
       String newText = textController.text.replaceRange(textSelection.start,
-          textSelection.end, '\n```\npaste your code here\n```\n');
+          textSelection.end, '\n```\ntype or paste code here\n```\n');
       textController.text = newText;
-      setCursorposition();
+      setCursorposition(
+        position: textSelection.start + 5,
+        length: 23,
+      );
     } else {
       textController.text = textController.text
-          .replaceFirst(selectedText, "\n```\n$selectedText\n```");
-      setCursorposition();
+          .replaceFirst(selectedText, "\n```\n$selectedText\n```\n");
+      setCursorposition(
+        position: textSelection.start + 5,
+        length: selectedText.length,
+      );
     }
   }
 
