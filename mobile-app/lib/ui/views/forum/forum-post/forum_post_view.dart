@@ -236,7 +236,7 @@ class ForumPostView extends StatelessWidget {
           ],
         ),
         ForumTextFunctionBar(
-          textController: model.commentText,
+          textController: model.createPostText,
           post: post,
         ),
         model.commentHasError
