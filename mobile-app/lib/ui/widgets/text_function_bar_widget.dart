@@ -12,33 +12,54 @@ class ForumTextFunctionBar extends StatelessWidget {
   late final TextEditingController textController;
   late final PostModel post;
 
+  void setCursorposition({int? position, int? length}) {
+    if (position == null || length == null) {
+      textController.selection = TextSelection.fromPosition(
+        TextPosition(offset: textController.text.length),
+      );
+    } else {
+      textController.selection = TextSelection(
+        baseOffset: position,
+        extentOffset: position + length,
+      );
+    }
+  }
+
   void quoteText(String selectedText) {
     TextSelection textSelection = textController.selection;
 
     dev.log(selectedText.length.toString());
 
-    if (selectedText.length < 2) {
+    if (selectedText.trim().isEmpty) {
       String newText = textController.text.replaceRange(
           textSelection.start, textSelection.end, ' > Blockquote ');
       textController.text = newText;
+      setCursorposition();
     } else {
       textController.text =
           textController.text.replaceFirst(selectedText, "> $selectedText");
+      setCursorposition();
     }
   }
 
   void boldText(String selectedText) {
     TextSelection textSelection = textController.selection;
 
-    dev.log(selectedText.length.toString());
-
-    if (selectedText.length < 2) {
+    if (selectedText.trim().isEmpty) {
       String newText = textController.text.replaceRange(
-          textSelection.start, textSelection.end, '**strong text**');
+          textSelection.start, textSelection.start, '**strong text**');
       textController.text = newText;
+      setCursorposition(
+        position: textSelection.start + 2,
+        length: 11,
+      );
     } else {
       textController.text =
           textController.text.replaceFirst(selectedText, "**$selectedText**");
+      setCursorposition(
+        position: textSelection.start + 2,
+        length: selectedText.length,
+      );
     }
   }
 
@@ -47,26 +68,30 @@ class ForumTextFunctionBar extends StatelessWidget {
 
     dev.log(selectedText.length.toString());
 
-    if (selectedText.length < 2) {
+    if (selectedText.trim().isEmpty) {
       String newText = textController.text.replaceRange(textSelection.start,
           textSelection.end, '\n```\npaste your code here\n```\n');
       textController.text = newText;
+      setCursorposition();
     } else {
       textController.text = textController.text
-          .replaceFirst(selectedText, "\n```\n$selectedText\n```\n");
+          .replaceFirst(selectedText, "\n```\n$selectedText\n```");
+      setCursorposition();
     }
   }
 
   void linkText(String selectedText) {
     TextSelection textSelection = textController.selection;
 
-    if (selectedText.length < 2) {
+    if (selectedText.trim().isEmpty) {
       String newText = textController.text
           .replaceRange(textSelection.start, textSelection.end, '[text](link)');
       textController.text = newText;
+      setCursorposition();
     } else {
       textController.text = textController.text
           .replaceFirst(selectedText, "[link]($selectedText)");
+      setCursorposition();
     }
   }
 
