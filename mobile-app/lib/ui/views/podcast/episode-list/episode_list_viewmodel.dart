@@ -16,9 +16,11 @@ class EpisodeListViewModel extends BaseViewModel {
   final _databaseService = locator<PodcastsDatabaseService>();
   final Podcasts podcast;
   int epsLength = 0;
+  Object? _activeCallbackIdentity;
+
   late Future<List<Episodes>> _episodes;
   Future<List<Episodes>> get episodes => _episodes;
-  
+
   final PagingController<int, Episodes> _pagingController = PagingController(
     firstPageKey: 0,
   );
@@ -42,6 +44,8 @@ class EpisodeListViewModel extends BaseViewModel {
   }
 
   void fetchEpisodes(String podcastId, [int pageKey = 0]) async {
+    final callbackIdentity = Object();
+    _activeCallbackIdentity = callbackIdentity;
     try {
       final res = await http.get(
         Uri.parse(baseUrl +
@@ -50,26 +54,30 @@ class EpisodeListViewModel extends BaseViewModel {
             "/episodes?page=" +
             pageKey.toString()),
       );
-      final List<dynamic> episodes = json.decode(res.body)["episodes"];
-      epsLength = json.decode(res.body)["podcast"]["numOfEps"];
-      notifyListeners();
-      final List<Episodes> eps =
-          episodes.map((e) => Episodes.fromAPIJson(e)).toList();
-      final prevCount = _pagingController.itemList?.length ?? 0;
-      if (prevCount + 20 >= epsLength) {
-        _pagingController.appendLastPage(eps);
-      } else {
-        _pagingController.appendPage(eps, pageKey + 1);
+      if (callbackIdentity == _activeCallbackIdentity) {
+        final List<dynamic> episodes = json.decode(res.body)["episodes"];
+        epsLength = json.decode(res.body)["podcast"]["numOfEps"];
+        notifyListeners();
+        final List<Episodes> eps =
+            episodes.map((e) => Episodes.fromAPIJson(e)).toList();
+        final prevCount = _pagingController.itemList?.length ?? 0;
+        if (prevCount + 20 >= epsLength) {
+          _pagingController.appendLastPage(eps);
+        } else {
+          _pagingController.appendPage(eps, pageKey + 1);
+        }
       }
     } catch (e) {
-      log(e.toString());
-      _pagingController.error = e;
+      if (callbackIdentity == _activeCallbackIdentity) {
+        _pagingController.error = e;
+      }
     }
   }
 
   @override
   void dispose() {
     _pagingController.dispose();
+    _activeCallbackIdentity = null;
     super.dispose();
   }
 }
