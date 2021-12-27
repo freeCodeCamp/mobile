@@ -99,11 +99,17 @@ class ForumTextFunctionBar extends StatelessWidget {
       String newText = textController.text
           .replaceRange(textSelection.start, textSelection.end, '[text](link)');
       textController.text = newText;
-      setCursorposition();
+      setCursorposition(
+        position: textSelection.start + 1,
+        length: 4,
+      );
     } else {
       textController.text = textController.text
-          .replaceFirst(selectedText, "[link]($selectedText)");
-      setCursorposition();
+          .replaceFirst(selectedText, "[$selectedText](link)");
+      setCursorposition(
+        position: textSelection.start + selectedText.length + 3,
+        length: 4,
+      );
     }
   }
 
