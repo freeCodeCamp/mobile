@@ -13,15 +13,23 @@ class NewsSearchView extends StatelessWidget {
         viewModelBuilder: () => NewsSearchModel(),
         builder: (context, model, child) => Scaffold(
             appBar: AppBar(
-                title: TextField(
-              controller: model.searchbarController,
-              decoration: const InputDecoration(
-                  hintText: "SEARCH ARTICLE...",
-                  fillColor: Color.fromRGBO(0x2A, 0x2A, 0x40, 1),
-                  filled: true),
-              onChanged: (value) {
-                model.setSearchTerm(value);
-              },
+                title: Padding(
+              padding: const EdgeInsets.only(bottom: 10.0),
+              child: ClipRRect(
+                borderRadius: BorderRadius.all(Radius.circular(5)),
+                child: TextField(
+                  controller: model.searchbarController,
+                  style: const TextStyle(fontSize: 13),
+                  decoration: const InputDecoration(
+                      hintText: "SEARCH ARTICLE...",
+                      fillColor: Color.fromRGBO(0x2A, 0x2A, 0x40, 1),
+                      border: InputBorder.none,
+                      filled: true),
+                  onChanged: (value) {
+                    model.setSearchTerm(value);
+                  },
+                ),
+              ),
             )),
             body: StreamBuilder<List<AlgoliaObjectSnapshot>>(
               stream: Stream.fromFuture(model.search(model.getSearchTerm)),

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:freecodecamp/service/notification_service.dart';
 import 'package:freecodecamp/ui/theme/fcc_theme.dart';
 import 'package:just_audio_background/just_audio_background.dart';
@@ -9,6 +10,9 @@ import 'app/app.router.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
+  SystemChrome.setSystemUIOverlayStyle(const SystemUiOverlayStyle(
+      statusBarColor: Colors.transparent,
+      systemNavigationBarColor: Color(0xFF0a0a23)));
   await JustAudioBackground.init(
     androidNotificationChannelId: 'com.ryanheise.bg_demo.channel.audio',
     androidNotificationChannelName: 'Audio playback',
@@ -24,6 +28,7 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
+      debugShowCheckedModeBanner: false,
       title: 'freeCodeCamp',
       theme: FccTheme.themeDark,
       navigatorKey: StackedService.navigatorKey,

@@ -11,9 +11,9 @@ class HomeView extends StatelessWidget {
   const HomeView({Key? key}) : super(key: key);
 
   static const titles = <Widget>[
-    Text('BOOKMARKED ARTICLES'),
-    Text('NEWSFEED'),
-    Text('SEARCH ARTICLES')
+    Text('Bookmarked Articles', style: TextStyle(fontSize: 15)),
+    Text('Newsfeed', style: TextStyle(fontSize: 15)),
+    Text('Search', style: TextStyle(fontSize: 15))
   ];
 
   static const views = <Widget>[
@@ -28,6 +28,7 @@ class HomeView extends StatelessWidget {
     return ViewModelBuilder<HomeViewModel>.reactive(
       builder: (context, viewModel, child) => Scaffold(
         appBar: AppBar(
+          elevation: 0,
           title: titles.elementAt(viewModel.index),
         ),
         drawer: SizedBox(
@@ -39,6 +40,10 @@ class HomeView extends StatelessWidget {
           children: views,
         ),
         bottomNavigationBar: BottomNavigationBar(
+          selectedLabelStyle:
+              const TextStyle(fontSize: 11, fontWeight: FontWeight.w600),
+          unselectedLabelStyle:
+              const TextStyle(fontSize: 11, fontWeight: FontWeight.w600),
           items: const <BottomNavigationBarItem>[
             BottomNavigationBarItem(
                 icon: Icon(
@@ -47,7 +52,7 @@ class HomeView extends StatelessWidget {
                 label: 'Bookmarks'),
             BottomNavigationBarItem(
                 icon: Icon(
-                  Icons.article_sharp,
+                  Icons.article_outlined,
                 ),
                 label: 'Articles'),
             BottomNavigationBarItem(
