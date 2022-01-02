@@ -18,43 +18,43 @@ class DrawerWidgetView extends StatelessWidget {
           color: const Color(0xFF0a0a23),
           child: ListView(
             children: [
-              DrawerHeader(
-                padding: EdgeInsets.zero,
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.start,
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Expanded(
-                      child: Image.asset(
-                        'assets/images/freecodecamp-banner.png',
+              Column(
+                mainAxisAlignment: MainAxisAlignment.start,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Image.asset(
+                    'assets/images/freecodecamp-banner.png',
+                  ),
+                  const SizedBox(
+                    height: 16,
+                  ),
+                  const Padding(
+                    padding: EdgeInsets.only(left: 28.0),
+                    child: Text(
+                      'Menu',
+                      style: TextStyle(
+                        fontSize: 26,
+                        color: Colors.white,
                       ),
                     ),
-                    const Padding(
-                      padding: EdgeInsets.only(left: 28.0),
-                      child: Text(
-                        'Menu',
-                        style: TextStyle(
-                          fontSize: 26,
-                          color: Colors.white,
-                        ),
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-              const SizedBox(
-                height: 16,
+                  ),
+                  const SizedBox(
+                    height: 16,
+                  ),
+                ],
               ),
               navButtonWidget(
-                  'NEWS',
-                  '',
-                  const Icon(
-                    Icons.article,
-                    size: iconsize,
-                  ),
-                  false,
-                  model,
-                  context),
+                'NEWS',
+                '',
+                const Icon(
+                  Icons.article,
+                  size: iconsize,
+                ),
+                false,
+                model,
+                context,
+              ),
               buildDivider(),
               model.inDevelopmentMode || model.showForum
                   ? navButtonWidget(
@@ -66,7 +66,8 @@ class DrawerWidgetView extends StatelessWidget {
                       ),
                       false,
                       model,
-                      context)
+                      context,
+                    )
                   : navButtonWidget(
                       'LEARN',
                       'https://www.freecodecamp.org/learn/',
@@ -168,4 +169,3 @@ Widget navButtonWidget(String text, url, Icon icon, bool isWebComponent,
     ),
   );
 }
-

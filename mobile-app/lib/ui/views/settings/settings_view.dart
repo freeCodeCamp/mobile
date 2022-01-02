@@ -18,9 +18,7 @@ class SettingsView extends StatelessWidget {
                 title: const Text('SETTINGS'),
                 centerTitle: true,
               ),
-              drawer: SizedBox(
-                  width: MediaQuery.of(context).size.width,
-                  child: const DrawerWidgetView()),
+              drawer: const DrawerWidgetView(),
               body: ListView(
                 children: [
                   Container(

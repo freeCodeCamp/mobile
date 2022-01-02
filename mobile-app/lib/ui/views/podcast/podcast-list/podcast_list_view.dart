@@ -28,18 +28,10 @@ class PodcastListView extends StatelessWidget {
       builder: (context, model, child) => Scaffold(
         appBar: AppBar(
           title: titles.elementAt(model.index),
-          backgroundColor: const Color(0xFF0a0a23),
-          centerTitle: true,
         ),
-        drawer: SizedBox(
-          width: MediaQuery.of(context).size.width,
-          child: const DrawerWidgetView(),
-        ),
+        drawer: const DrawerWidgetView(),
         backgroundColor: const Color(0xFF0a0a23),
         bottomNavigationBar: BottomNavigationBar(
-          backgroundColor: const Color(0xFF0a0a23),
-          unselectedItemColor: Colors.white,
-          selectedItemColor: const Color.fromRGBO(0x99, 0xc9, 0xff, 1),
           currentIndex: model.index,
           onTap: model.setIndex,
           items: const [
