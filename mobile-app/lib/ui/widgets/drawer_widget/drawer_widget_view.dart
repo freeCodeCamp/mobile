@@ -46,7 +46,7 @@ class DrawerWidgetView extends StatelessWidget {
                 height: 16,
               ),
               navButtonWidget(
-                  'News',
+                  'NEWS',
                   '',
                   const Icon(
                     Icons.article,
@@ -58,7 +58,7 @@ class DrawerWidgetView extends StatelessWidget {
               buildDivider(),
               model.inDevelopmentMode || model.showForum
                   ? navButtonWidget(
-                      'Forum',
+                      'FORUM',
                       '',
                       const Icon(
                         Icons.forum_outlined,
@@ -68,7 +68,7 @@ class DrawerWidgetView extends StatelessWidget {
                       model,
                       context)
                   : navButtonWidget(
-                      'Learn',
+                      'LEARN',
                       'https://www.freecodecamp.org/learn/',
                       const Icon(
                         Icons.local_fire_department_sharp,
@@ -79,18 +79,18 @@ class DrawerWidgetView extends StatelessWidget {
                       context),
               buildDivider(),
               navButtonWidget(
-                  'Podcast',
+                  'PODCAST',
                   '',
                   const Icon(
                     Icons.podcasts_outlined,
-                    size: iconsize,
+                    size: 70,
                   ),
                   false,
                   model,
                   context),
               buildDivider(),
               navButtonWidget(
-                  'Radio',
+                  'RADIO',
                   'https://coderadio.freecodecamp.org/',
                   const Icon(
                     Icons.radio,
@@ -101,7 +101,7 @@ class DrawerWidgetView extends StatelessWidget {
                   context),
               buildDivider(),
               navButtonWidget(
-                  'Donate',
+                  'DONATE',
                   'https://www.freecodecamp.org/donate/',
                   const Icon(
                     Icons.favorite,
@@ -113,7 +113,7 @@ class DrawerWidgetView extends StatelessWidget {
               buildDivider(),
               model.inDevelopmentMode
                   ? navButtonWidget(
-                      'Settings',
+                      'SETTINGS',
                       'https://www.google.com/',
                       const Icon(
                         Icons.settings,
@@ -132,8 +132,7 @@ class DrawerWidgetView extends StatelessWidget {
 }
 
 Widget buildDivider() {
-  return 
-  Divider(
+  return Divider(
     color: Colors.white.withOpacity(0.12),
     indent: 16,
     endIndent: 16,
@@ -147,7 +146,13 @@ Widget navButtonWidget(String text, url, Icon icon, bool isWebComponent,
     padding: const EdgeInsets.all(10.0),
     child: ListTile(
       dense: true,
-     
+      onTap: () {
+        if (isWebComponent) {
+          model.goToBrowser(url);
+        } else {
+          model.navNonWebComponent(text, context);
+        }
+      },
       leading: Icon(
         icon.icon,
         color: Colors.white,
@@ -163,3 +168,4 @@ Widget navButtonWidget(String text, url, Icon icon, bool isWebComponent,
     ),
   );
 }
+
