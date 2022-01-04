@@ -84,6 +84,8 @@ class ForumCategoryViewModel extends BaseViewModel {
     String? username;
 
     if (prefs.getString("username") != null) {
+      username = prefs.getString("username");
+
       final response = await ForumConnect.connectAndGet('/u/$username');
 
       if (response.statusCode == 200) {
