@@ -260,6 +260,10 @@ class PostViewModel extends BaseViewModel {
         arguments: ForumUserViewArguments(username: username));
   }
 
+  void goToLoginPage() {
+    _navigationService.navigateTo(Routes.forumLoginView);
+  }
+
   Row returnAction(Icon icon, String message, TextStyle style) {
     return Row(
       children: [
