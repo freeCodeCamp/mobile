@@ -9,139 +9,122 @@ class DrawerWidgetView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    const iconsize = 47.0;
     return ViewModelBuilder<DrawerWidgtetViewModel>.reactive(
       viewModelBuilder: () => DrawerWidgtetViewModel(),
       onModelReady: (model) => model.init(),
       builder: (context, model, child) => Drawer(
-        child: SafeArea(
-          child: SingleChildScrollView(
-            child: Column(
-              children: [
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Column(
-                      children: const [
-                        Padding(
-                          padding: EdgeInsets.all(25),
-                          child: Text(
-                            'MENU',
-                            style: TextStyle(
-                              fontWeight: FontWeight.bold,
-                              color: Color(0xFF0a0a23),
-                              fontSize: 24,
-                            ),
-                          ),
-                        ),
-                      ],
+        child: Container(
+          color: const Color(0xFF0a0a23),
+          child: ListView(
+            children: [
+              Column(
+                mainAxisAlignment: MainAxisAlignment.start,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Image.asset(
+                    'assets/images/freecodecamp-banner.png',
+                  ),
+                  const SizedBox(
+                    height: 16,
+                  ),
+                  const Padding(
+                    padding: EdgeInsets.only(left: 28.0),
+                    child: Text(
+                      'Menu',
+                      style: TextStyle(
+                        fontSize: 26,
+                        color: Colors.white,
+                      ),
                     ),
-                  ],
+                  ),
+                  const SizedBox(
+                    height: 16,
+                  ),
+                ],
+              ),
+              navButtonWidget(
+                'NEWS',
+                '',
+                const Icon(
+                  Icons.article,
+                  size: iconsize,
                 ),
-                Row(
-                  children: [
-                    Expanded(
-                      child: navButtonWidget(
-                          'NEWS',
-                          '',
-                          const Icon(
-                            Icons.article,
-                            color: Colors.black,
-                            size: 70,
-                          ),
-                          false,
-                          model,
-                          context),
-                    ),
-                    model.inDevelopmentMode || model.showForum
-                        ? Expanded(
-                            child: navButtonWidget(
-                                'FORUM',
-                                '',
-                                const Icon(
-                                  Icons.forum_outlined,
-                                  color: Colors.black,
-                                  size: 70,
-                                ),
-                                false,
-                                model,
-                                context),
-                          )
-                        : Expanded(
-                            child: navButtonWidget(
-                                'LEARN',
-                                'https://www.freecodecamp.org/learn/',
-                                const Icon(
-                                  Icons.local_fire_department_sharp,
-                                  color: Colors.black,
-                                  size: 70,
-                                ),
-                                true,
-                                model,
-                                context),
-                          )
-                  ],
-                ),
-                Row(
-                  children: [
-                    Expanded(
-                        child: navButtonWidget(
-                            'PODCAST',
-                            '',
-                            const Icon(
-                              Icons.podcasts_outlined,
-                              color: Colors.black,
-                              size: 70,
-                            ),
-                            false,
-                            model,
-                            context)),
-                    Expanded(
-                        child: navButtonWidget(
-                            'RADIO',
-                            'https://coderadio.freecodecamp.org/',
-                            const Icon(
-                              Icons.radio,
-                              color: Colors.black,
-                              size: 70,
-                            ),
-                            true,
-                            model,
-                            context)),
-                  ],
-                ),
-                Row(
-                  children: [
-                    Expanded(
-                        child: navButtonWidget(
-                            'DONATE',
-                            'https://www.freecodecamp.org/donate/',
-                            const Icon(
-                              Icons.favorite,
-                              color: Colors.black,
-                              size: 70,
-                            ),
-                            true,
-                            model,
-                            context)),
-                    model.inDevelopmentMode
-                        ? Expanded(
-                            child: navButtonWidget(
-                                'SETTINGS',
-                                'https://www.google.com/',
-                                const Icon(
-                                  Icons.settings,
-                                  color: Colors.black,
-                                  size: 70,
-                                ),
-                                false,
-                                model,
-                                context),
-                          )
-                        : Container(),
-                  ],
-                ),
-              ],
-            ),
+                false,
+                model,
+                context,
+              ),
+              buildDivider(),
+              model.inDevelopmentMode || model.showForum
+                  ? navButtonWidget(
+                      'FORUM',
+                      '',
+                      const Icon(
+                        Icons.forum_outlined,
+                        size: iconsize,
+                      ),
+                      false,
+                      model,
+                      context,
+                    )
+                  : navButtonWidget(
+                      'LEARN',
+                      'https://www.freecodecamp.org/learn/',
+                      const Icon(
+                        Icons.local_fire_department_sharp,
+                        size: iconsize,
+                      ),
+                      true,
+                      model,
+                      context),
+              buildDivider(),
+              navButtonWidget(
+                  'PODCAST',
+                  '',
+                  const Icon(
+                    Icons.podcasts_outlined,
+                    size: 70,
+                  ),
+                  false,
+                  model,
+                  context),
+              buildDivider(),
+              navButtonWidget(
+                  'RADIO',
+                  'https://coderadio.freecodecamp.org/',
+                  const Icon(
+                    Icons.radio,
+                    size: iconsize,
+                  ),
+                  true,
+                  model,
+                  context),
+              buildDivider(),
+              navButtonWidget(
+                  'DONATE',
+                  'https://www.freecodecamp.org/donate/',
+                  const Icon(
+                    Icons.favorite,
+                    size: iconsize,
+                  ),
+                  true,
+                  model,
+                  context),
+              buildDivider(),
+              model.inDevelopmentMode
+                  ? navButtonWidget(
+                      'SETTINGS',
+                      'https://www.google.com/',
+                      const Icon(
+                        Icons.settings,
+                        size: iconsize,
+                      ),
+                      false,
+                      model,
+                      context)
+                  : const SizedBox(),
+            ],
           ),
         ),
       ),
@@ -149,56 +132,39 @@ class DrawerWidgetView extends StatelessWidget {
   }
 }
 
-InkWell navButtonWidget(String text, url, Icon icon, bool isWebComponent,
+Widget buildDivider() {
+  return Divider(
+    color: Colors.white.withOpacity(0.12),
+    indent: 16,
+    endIndent: 16,
+    thickness: 1,
+  );
+}
+
+Widget navButtonWidget(String text, url, Icon icon, bool isWebComponent,
     DrawerWidgtetViewModel model, context) {
-  return InkWell(
-    onTap: () {
-      if (isWebComponent) {
-        model.goToBrowser(url);
-      } else {
-        model.navNonWebComponent(text, context);
-      }
-    },
-    child: Padding(
-      padding: const EdgeInsets.all(20.0),
-      child: Container(
-        width: 160,
-        decoration: BoxDecoration(
-          color: const Color.fromRGBO(0xD0, 0xD0, 0xD5, 1),
-          border: Border.all(color: Colors.black, width: 3),
-        ),
-        child: Column(
-          children: [
-            Row(
-              children: [
-                Expanded(
-                  child: Padding(
-                    padding: const EdgeInsets.all(8.0),
-                    child: icon,
-                  ),
-                )
-              ],
-            ),
-            Row(
-              children: [
-                Expanded(
-                  child: Padding(
-                    padding: const EdgeInsets.all(8.0),
-                    child: Text(
-                      text,
-                      style: const TextStyle(
-                        fontSize: 18,
-                        color: Colors.black,
-                        fontWeight: FontWeight.w600,
-                      ),
-                      textAlign: TextAlign.center,
-                    ),
-                  ),
-                ),
-              ],
-            ),
-          ],
-        ),
+  return Padding(
+    padding: const EdgeInsets.all(10.0),
+    child: ListTile(
+      dense: true,
+      onTap: () {
+        if (isWebComponent) {
+          model.goToBrowser(url);
+        } else {
+          model.navNonWebComponent(text, context);
+        }
+      },
+      leading: Icon(
+        icon.icon,
+        color: Colors.white,
+      ),
+      title: Text(
+        text,
+        style: const TextStyle(
+            fontSize: 20,
+            fontWeight: FontWeight.w400,
+            color: Colors.white,
+            letterSpacing: 0.5),
       ),
     ),
   );
