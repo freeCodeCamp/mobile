@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/scheduler.dart';
 
 import 'package:freecodecamp/models/article_model.dart';
+import 'package:freecodecamp/ui/views/news/news-article-post/news_article_progress_bar_handler.dart';
 import 'package:stacked/stacked.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'news_article_post_viewmodel.dart';
@@ -19,6 +21,16 @@ class NewsArticlePostView extends StatelessWidget {
           title: const Text(
             'Back To Feed',
           ),
+          bottom: PreferredSize(
+              preferredSize: const Size.fromHeight(10),
+              child: Row(
+                children: [
+                  Expanded(
+                      child: LinearProgressIndicator(
+                    value: model.articleReadProgress,
+                  ))
+                ],
+              )),
         ),
         backgroundColor: const Color(0xFF0a0a23),
         body: FutureBuilder<Article>(
@@ -48,20 +60,23 @@ class NewsArticlePostView extends StatelessWidget {
   }
 }
 
-ListView lazyLoadHtml(String html, BuildContext context,
+Widget lazyLoadHtml(String html, BuildContext context,
     NewsArticlePostViewModel model, Article article) {
   var htmlToList = model.initLazyLoading(html, context, article);
   return ListView.builder(
       shrinkWrap: true,
       itemCount: htmlToList.length,
       physics: const ClampingScrollPhysics(),
-      itemBuilder: (BuildContext context, int i) {
-        return Row(
-          children: [
-            Expanded(child: htmlToList[i]),
-          ],
-        );
-      });
+      itemBuilder: (BuildContext context, int i) => ProgressBarLoader(
+          exectuteOnProgress: () {
+            SchedulerBinding.instance!.addPostFrameCallback((timeStamp) =>
+                model.setArticleReadProgress(htmlToList.length, i));
+          },
+          child: Row(
+            children: [
+              Expanded(child: htmlToList[i]),
+            ],
+          )));
 }
 
 Container bookmark(String? bookmarkTilte, String? bookmarkDescription,
