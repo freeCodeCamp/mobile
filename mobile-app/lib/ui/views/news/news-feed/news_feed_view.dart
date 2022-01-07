@@ -5,6 +5,7 @@ import 'package:freecodecamp/models/article_model.dart';
 import 'package:freecodecamp/ui/views/news/news-feed/news_feed_lazyloading.dart';
 import 'package:freecodecamp/ui/views/news/news-feed/news_feed_viewmodel.dart';
 import 'package:stacked/stacked.dart';
+import 'package:url_launcher/url_launcher.dart';
 import 'news_feed_viewmodel.dart';
 
 class NewsFeedView extends StatelessWidget {
@@ -22,16 +23,44 @@ class NewsFeedView extends StatelessWidget {
               if (snapshot.hasData) {
                 return articleThumbnailBuilder(model, context);
               } else if (snapshot.hasError) {
-                return const Center(
-                  child: Text(
-                    'There was an error loading articles',
-                  ),
-                );
+                return errorMessage();
               }
-
               return const Center(child: CircularProgressIndicator());
             },
           )),
+    );
+  }
+
+  Column errorMessage() {
+    return Column(
+      mainAxisAlignment: MainAxisAlignment.center,
+      children: [
+        Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: const [
+            Text(
+              'There was an error loading articles ',
+            ),
+          ],
+        ),
+        Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: InkWell(
+                child: const Text(
+                  'read articles online',
+                  style: TextStyle(color: Color.fromRGBO(0x99, 0xc9, 0xff, 1)),
+                ),
+                onTap: () {
+                  launch('https://www.freecodecamp.org/news/');
+                },
+              ),
+            ),
+          ],
+        )
+      ],
     );
   }
 
