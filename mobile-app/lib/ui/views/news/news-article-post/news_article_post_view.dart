@@ -2,10 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
 
 import 'package:freecodecamp/models/article_model.dart';
-import 'package:freecodecamp/ui/views/news/news-article-post/news_article_progress_bar_handler.dart';
 import 'package:stacked/stacked.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'news_article_post_viewmodel.dart';
+import 'dart:developer' as dev;
 
 class NewsArticlePostView extends StatelessWidget {
   // ignore: prefer_const_constructors_in_immutables
@@ -60,23 +60,31 @@ class NewsArticlePostView extends StatelessWidget {
   }
 }
 
-Widget lazyLoadHtml(String html, BuildContext context,
-    NewsArticlePostViewModel model, Article article) {
+lazyLoadHtml(String html, BuildContext context, NewsArticlePostViewModel model,
+    Article article) {
   var htmlToList = model.initLazyLoading(html, context, article);
-  return ListView.builder(
-      shrinkWrap: true,
-      itemCount: htmlToList.length,
-      physics: const ClampingScrollPhysics(),
-      itemBuilder: (BuildContext context, int i) => ProgressBarLoader(
-          exectuteOnProgress: () {
-            SchedulerBinding.instance!.addPostFrameCallback((timeStamp) =>
-                model.setArticleReadProgress(htmlToList.length, i));
-          },
-          child: Row(
+  var index = 0;
+  return NotificationListener(
+    child: ListView.builder(
+        shrinkWrap: true,
+        itemCount: htmlToList.length,
+        physics: const ClampingScrollPhysics(),
+        itemBuilder: (BuildContext context, int i) {
+          index = i;
+          return Row(
             children: [
               Expanded(child: htmlToList[i]),
             ],
-          )));
+          );
+        }),
+    onNotification: (t) {
+      if (t is ScrollEndNotification) {
+        SchedulerBinding.instance!.addPostFrameCallback((timeStamp) =>
+            model.setArticleReadProgress(htmlToList.length, index));
+      }
+      return false;
+    },
+  );
 }
 
 Container bookmark(String? bookmarkTilte, String? bookmarkDescription,
