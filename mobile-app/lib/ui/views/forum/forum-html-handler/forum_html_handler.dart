@@ -83,8 +83,8 @@ Column htmlView(PostModel post, BuildContext context, PostViewModel model) {
                 },
                 "aside": (context, child) {
                   var link =
-                      context.tree.element!.attributes['data-onebox-src'];
-                  if (link!.isNotEmpty) {
+                      context.tree.element?.attributes['data-onebox-src'] ?? "";
+                  if (link.isNotEmpty) {
                     return InkWell(
                       onTap: () {
                         launch(link);

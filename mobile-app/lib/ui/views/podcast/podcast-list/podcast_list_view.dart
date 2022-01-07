@@ -29,10 +29,7 @@ class PodcastListView extends StatelessWidget {
         appBar: AppBar(
           title: titles.elementAt(model.index),
         ),
-        drawer: SizedBox(
-          width: MediaQuery.of(context).size.width,
-          child: const DrawerWidgetView(),
-        ),
+        drawer: const DrawerWidgetView(),
         backgroundColor: const Color(0xFF0a0a23),
         bottomNavigationBar: BottomNavigationBar(
           currentIndex: model.index,
