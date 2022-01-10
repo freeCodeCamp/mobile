@@ -34,32 +34,25 @@ class NewsFeedView extends StatelessWidget {
   Column errorMessage() {
     return Column(
       mainAxisAlignment: MainAxisAlignment.center,
+      crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
-        Row(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: const [
-            Text(
-              'There was an error loading articles ',
-            ),
-          ],
+        const Text(
+          'There was an error loading articles ',
+          textAlign: TextAlign.center,
         ),
-        Row(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Padding(
-              padding: const EdgeInsets.all(8.0),
-              child: InkWell(
-                child: const Text(
-                  'read articles online',
-                  style: TextStyle(color: Color.fromRGBO(0x99, 0xc9, 0xff, 1)),
-                ),
-                onTap: () {
-                  launch('https://www.freecodecamp.org/news/');
-                },
-              ),
+        Padding(
+          padding: const EdgeInsets.all(8.0),
+          child: InkWell(
+            child: const Text(
+              'read articles online',
+              textAlign: TextAlign.center,
+              style: TextStyle(color: Color.fromRGBO(0x99, 0xc9, 0xff, 1)),
             ),
-          ],
-        )
+            onTap: () {
+              launch('https://www.freecodecamp.org/news/');
+            },
+          ),
+        ),
       ],
     );
   }
