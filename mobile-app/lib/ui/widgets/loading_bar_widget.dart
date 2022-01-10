@@ -1,6 +1,4 @@
 import 'package:flutter/material.dart';
-import 'dart:developer' as dev;
-
 import 'package:flutter_hooks/flutter_hooks.dart';
 
 // ignore: must_be_immutable
@@ -21,7 +19,6 @@ class LoadingBarIndiactor extends HookWidget {
 
   @override
   Widget build(BuildContext context) {
-    dev.log('I get rebuild');
     var controller =
         useAnimationController(duration: const Duration(milliseconds: 2000));
     controller.reset();
@@ -63,8 +60,6 @@ class LoadingBar extends AnimatedWidget {
 
   @override
   Widget build(BuildContext context) {
-    dev.log('begin ' + begin.toString());
-    dev.log('progress: ' + progress.toString());
     return Stack(
       children: [
         Container(
