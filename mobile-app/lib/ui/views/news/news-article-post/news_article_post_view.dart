@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
 
 import 'package:freecodecamp/models/article_model.dart';
+import 'package:freecodecamp/ui/widgets/loading_bar_widget.dart';
 import 'package:stacked/stacked.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'news_article_post_viewmodel.dart';
@@ -25,9 +26,12 @@ class NewsArticlePostView extends StatelessWidget {
               child: Row(
                 children: [
                   Expanded(
-                      child: LinearProgressIndicator(
-                    value: model.articleReadProgress,
-                  ))
+                    child: LoadingBarIndiactor(
+                        progressBgColor:
+                            const Color.fromRGBO(0x2A, 0x2A, 0x40, 1),
+                        progressColor: Colors.white,
+                        values: [model.arrLength, model.index]),
+                  ),
                 ],
               )),
         ),
