@@ -11,9 +11,9 @@ class HomeView extends StatelessWidget {
   const HomeView({Key? key}) : super(key: key);
 
   static const titles = <Widget>[
-    Text('Bookmarked Articles', style: TextStyle(fontSize: 15)),
-    Text('Newsfeed', style: TextStyle(fontSize: 15)),
-    Text('Search', style: TextStyle(fontSize: 15))
+    Text('BOOKMARKED ARTICLES', style: TextStyle(fontSize: 15)),
+    Text('NEWSFEED', style: TextStyle(fontSize: 15)),
+    Text('SEARCH', style: TextStyle(fontSize: 15))
   ];
 
   static const views = <Widget>[
