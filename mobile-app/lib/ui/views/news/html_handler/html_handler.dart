@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_html/flutter_html.dart';
+import 'package:flutter_syntax_view/flutter_syntax_view.dart';
 import 'package:freecodecamp/ui/views/news/news-article-post/news_article_post_header.dart';
 import 'package:freecodecamp/ui/views/news/news-article-post/news_article_post_view.dart';
 import 'package:html/dom.dart' as dom;
@@ -43,11 +44,8 @@ class HtmlHandler {
           "pre": Style(
             color: Colors.white,
             width: MediaQuery.of(context).size.width,
-            backgroundColor: const Color.fromRGBO(0x2A, 0x2A, 0x40, 1),
             padding: const EdgeInsets.all(10),
           ),
-          "code":
-              Style(backgroundColor: const Color.fromRGBO(0x2A, 0x2A, 0x40, 1)),
           "tr": Style(
               border: const Border(bottom: BorderSide(color: Colors.grey)),
               backgroundColor: Colors.white),
@@ -71,10 +69,6 @@ class HtmlHandler {
               child: (context.tree as TableLayoutElement).toWidget(context),
             );
           },
-          "code": (context, child) {
-            return SingleChildScrollView(
-                scrollDirection: Axis.horizontal, child: child);
-          },
           "figure": (code, child) {
             var figureClasses = code.tree.elementClasses;
             bool isBookmarkCard = figureClasses.contains("kg-bookmark-card");
@@ -94,6 +88,21 @@ class HtmlHandler {
 
               return bookmark(
                   bookmarkTilte, bookmarkDescription, bookmarkImage, link);
+            }
+          },
+          "code": (code, child) {
+            for (var className in code.tree.elementClasses) {
+              if (className
+                  .contains(RegExp(r'language-', caseSensitive: false))) {
+                return SyntaxView(
+                    syntaxTheme: SyntaxTheme.vscodeDark(),
+                    useCustomHeight: true,
+                    minWidth: MediaQuery.of(context).size.width,
+                    code: code.tree.element!.text,
+                    withZoom: false,
+                    fontSize: 15,
+                    syntax: Syntax.JAVASCRIPT);
+              }
             }
           },
           "iframe": (code, child) {
