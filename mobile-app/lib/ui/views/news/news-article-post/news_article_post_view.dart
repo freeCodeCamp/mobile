@@ -91,7 +91,6 @@ class NewsArticlePostView extends StatelessWidget {
       onNotification: (t) {
         if (t is ScrollEndNotification) {
           SchedulerBinding.instance!.addPostFrameCallback((timeStamp) => {
-                dev.log(htmlToList.length.toString()),
                 if (localIndexCache.length < 2)
                   {localIndexCache.add(index)}
                 else if (model.indexCache[1] > index)

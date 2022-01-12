@@ -6,7 +6,6 @@ import 'package:freecodecamp/models/article_model.dart';
 import 'package:freecodecamp/ui/views/news/html_handler/html_handler.dart';
 import 'package:stacked/stacked.dart';
 import 'package:http/http.dart' as http;
-import 'dart:developer' as dev;
 
 class NewsArticlePostViewModel extends BaseViewModel {
   late Future<Article> _articleFuture;
