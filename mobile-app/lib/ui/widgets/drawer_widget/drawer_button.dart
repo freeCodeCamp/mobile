@@ -22,25 +22,23 @@ class _DrawerButtonState extends State<DrawerButton> {
   Widget build(BuildContext context) {
     return Padding(
       padding: const EdgeInsets.all(10.0),
-      child: GestureDetector(
+      child: ListTile(
+        dense: true,
+        leading: Icon(
+          widget.icon,
+          color: Colors.white,
+        ),
+        title: Text(
+          widget.component,
+          style: const TextStyle(
+              fontSize: 20,
+              fontWeight: FontWeight.w400,
+              color: Colors.white,
+              letterSpacing: 0.5),
+        ),
         onTap: () {
           widget.route();
         },
-        child: ListTile(
-          dense: true,
-          leading: Icon(
-            widget.icon,
-            color: Colors.white,
-          ),
-          title: Text(
-            widget.component,
-            style: const TextStyle(
-                fontSize: 20,
-                fontWeight: FontWeight.w400,
-                color: Colors.white,
-                letterSpacing: 0.5),
-          ),
-        ),
       ),
     );
   }
