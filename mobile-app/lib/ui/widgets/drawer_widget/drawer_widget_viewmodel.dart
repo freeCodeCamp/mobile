@@ -1,12 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:freecodecamp/app/app.locator.dart';
-import 'package:freecodecamp/app/app.router.dart';
 import 'package:freecodecamp/ui/views/forum/forum-categories/forum_category_view.dart';
 import 'package:freecodecamp/ui/views/home/home_view.dart';
 import 'package:freecodecamp/ui/views/podcast/podcast-list/podcast_list_view.dart';
 import 'package:freecodecamp/ui/views/settings/settings_view.dart';
 import 'package:stacked/stacked.dart';
 import 'package:stacked_services/stacked_services.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class DrawerWidgtetViewModel extends BaseViewModel {
   final NavigationService _navigationService = locator<NavigationService>();
