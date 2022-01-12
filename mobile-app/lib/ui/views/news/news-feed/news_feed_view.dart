@@ -88,17 +88,19 @@ class NewsFeedView extends StatelessWidget {
                   ),
                 ),
               ]),
-              Row(
-                children: [
-                  Padding(
-                    padding:
-                        const EdgeInsets.only(top: 16, bottom: 8, left: 16),
-                    child: Text(
-                      '#' + articles[i].tagName!.toUpperCase(),
-                      style: const TextStyle(fontSize: 18),
-                    ),
+              Align(
+                alignment: Alignment.centerLeft,
+                child: Padding(
+                  padding: const EdgeInsets.only(left: 8.0, right: 8),
+                  child: Wrap(
+                    children: [
+                      for (int j = 0;
+                          j < articles[i].tagNames.length && j < 3;
+                          j++)
+                        articles[i].tagNames[j]
+                    ],
                   ),
-                ],
+                ),
               ),
               Row(
                 children: [
