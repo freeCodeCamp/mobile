@@ -6,12 +6,13 @@ import 'package:freecodecamp/ui/widgets/loading_bar_widget.dart';
 import 'package:stacked/stacked.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'news_article_post_viewmodel.dart';
+import 'dart:developer' as dev;
 
 class NewsArticlePostView extends StatelessWidget {
   // ignore: prefer_const_constructors_in_immutables
   NewsArticlePostView({Key? key, required this.refId}) : super(key: key);
   late final String refId;
-
+  List<int> localIndexCache = [];
   @override
   Widget build(BuildContext context) {
     return ViewModelBuilder<NewsArticlePostViewModel>.reactive(
@@ -27,10 +28,17 @@ class NewsArticlePostView extends StatelessWidget {
                 children: [
                   Expanded(
                     child: LoadingBarIndiactor(
-                        progressBgColor:
-                            const Color.fromRGBO(0x2A, 0x2A, 0x40, 1),
-                        progressColor: Colors.white,
-                        values: [model.arrLength, model.index]),
+                      progressBgColor:
+                          const Color.fromRGBO(0x2A, 0x2A, 0x40, 1),
+                      progressColor: Colors.white,
+                      arrayLength: model.arrLength == 0 ? 10 : model.arrLength,
+                      start: model.indexCache.length == 2
+                          ? model.indexCache[0]
+                          : 1,
+                      end: model.indexCache.length == 2
+                          ? model.indexCache[1]
+                          : 2,
+                    ),
                   ),
                 ],
               )),
@@ -61,33 +69,45 @@ class NewsArticlePostView extends StatelessWidget {
       viewModelBuilder: () => NewsArticlePostViewModel(),
     );
   }
-}
 
-lazyLoadHtml(String html, BuildContext context, NewsArticlePostViewModel model,
-    Article article) {
-  var htmlToList = model.initLazyLoading(html, context, article);
-  var index = 0;
-  return NotificationListener(
-    child: ListView.builder(
-        shrinkWrap: true,
-        itemCount: htmlToList.length,
-        physics: const ClampingScrollPhysics(),
-        itemBuilder: (BuildContext context, int i) {
-          index = i;
-          return Row(
-            children: [
-              Expanded(child: htmlToList[i]),
-            ],
-          );
-        }),
-    onNotification: (t) {
-      if (t is ScrollEndNotification) {
-        SchedulerBinding.instance!.addPostFrameCallback((timeStamp) =>
-            model.setArticleReadProgress(htmlToList.length, index));
-      }
-      return false;
-    },
-  );
+  lazyLoadHtml(String html, BuildContext context,
+      NewsArticlePostViewModel model, Article article) {
+    var htmlToList = model.initLazyLoading(html, context, article);
+    var index = 0;
+
+    return NotificationListener(
+      child: ListView.builder(
+          shrinkWrap: true,
+          itemCount: htmlToList.length,
+          physics: const ClampingScrollPhysics(),
+          itemBuilder: (BuildContext context, int i) {
+            index = i;
+            return Row(
+              children: [
+                Expanded(child: htmlToList[i]),
+              ],
+            );
+          }),
+      onNotification: (t) {
+        if (t is ScrollEndNotification) {
+          SchedulerBinding.instance!.addPostFrameCallback((timeStamp) => {
+                dev.log(htmlToList.length.toString()),
+                if (localIndexCache.length < 2)
+                  {localIndexCache.add(index)}
+                else if (model.indexCache[1] > index)
+                  {
+                    localIndexCache[0] = model.indexCache[1],
+                    localIndexCache[1] = index,
+                  }
+                else
+                  {localIndexCache.removeAt(0), localIndexCache.add(index)},
+                model.setArticleReadProgress(htmlToList.length, localIndexCache)
+              });
+        }
+        return false;
+      },
+    );
+  }
 }
 
 Container bookmark(String? bookmarkTilte, String? bookmarkDescription,

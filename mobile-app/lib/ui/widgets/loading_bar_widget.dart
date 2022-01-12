@@ -1,11 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
+import 'dart:developer' as dev;
 
 // ignore: must_be_immutable
 class LoadingBarIndiactor extends HookWidget {
   LoadingBarIndiactor(
       {Key? key,
-      required this.values,
+      required this.arrayLength,
+      this.start = 0,
+      required this.end,
       this.progressColor = Colors.lightBlue,
       this.progressBgColor = Colors.red,
       this.progressHeight = 5.0})
@@ -14,24 +17,31 @@ class LoadingBarIndiactor extends HookWidget {
   final Color progressColor;
   final Color progressBgColor;
   final double progressHeight;
-  final List<int> values;
-  double begin = 0;
+
+  final int arrayLength;
+
+  final int start;
+  final int end;
 
   @override
   Widget build(BuildContext context) {
+    dev.log('begin: ' + start.toString());
+    dev.log('arr' + arrayLength.toString());
+    dev.log('end: ' + end.toString());
+
     var controller =
         useAnimationController(duration: const Duration(milliseconds: 2000));
     controller.reset();
     controller.forward();
-    begin = values[1] != 0 ? ((values[1] - 1) / values[0] * 100).toDouble() : 0;
 
     return LoadingBar(
-        controller: controller,
-        progress: values[1] != 0 ? (values[1] / values[0] * 100).toDouble() : 5,
-        progressBgColor: progressBgColor,
-        progressColor: progressColor,
-        progressHeight: progressHeight,
-        begin: begin);
+      controller: controller,
+      begin: start != 0 ? (start / arrayLength * 100).toDouble() : 1,
+      end: end != 0 ? (end / arrayLength * 100).toDouble() : 5,
+      progressBgColor: progressBgColor,
+      progressColor: progressColor,
+      progressHeight: progressHeight,
+    );
   }
 }
 
@@ -43,17 +53,17 @@ class LoadingBar extends AnimatedWidget {
       this.progressColor = Colors.lightBlue,
       this.progressBgColor = Colors.red,
       required this.begin,
-      required this.progress,
+      required this.end,
       this.progressHeight = 5.0})
       : super(
             key: key,
             listenable:
-                Tween<double>(begin: begin, end: progress).animate(controller));
+                Tween<double>(begin: begin, end: end).animate(controller));
 
   final Color progressColor;
   final Color progressBgColor;
   final double progressHeight;
-  final double progress;
+  final double end;
   final double begin;
 
   Animation<double> get animation => listenable as Animation<double>;

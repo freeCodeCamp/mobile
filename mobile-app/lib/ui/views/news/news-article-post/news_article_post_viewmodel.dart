@@ -17,19 +17,19 @@ class NewsArticlePostViewModel extends BaseViewModel {
     _articleFuture = fetchArticle(id);
   }
 
-  double _articleReadProgress = 0.05;
-  double get articleReadProgress => _articleReadProgress;
-
-  int _index = 0;
-  int get index => _index;
+  List<int> _indexCache = [];
+  List<int> get indexCache => _indexCache;
 
   int _arrLength = 0;
   int get arrLength => _arrLength;
 
-  void setArticleReadProgress(int arrLength, int index) {
-    _index = index;
+  void setArticleReadProgress(int arrLength, List<int> indexCache) {
+    _indexCache = indexCache;
     _arrLength = arrLength;
+    dev.log('gets notified!');
+    dev.log(indexCache.toString());
     notifyListeners();
+    dev.log(_arrLength.toString());
   }
 
   List<Widget> initLazyLoading(html, context, article) {
