@@ -125,18 +125,23 @@ class NewsFeedView extends StatelessWidget {
                       children: [
                         Padding(
                           padding: const EdgeInsets.only(right: 16),
-                          child: SizedBox(
-                              width: 45,
-                              height: 45,
-                              child: FadeInImage.assetNetwork(
-                                  fadeOutDuration:
-                                      const Duration(milliseconds: 500),
-                                  fadeInDuration:
-                                      const Duration(milliseconds: 500),
-                                  fit: BoxFit.cover,
-                                  placeholder:
-                                      'assets/images/placeholder-profile-img.png',
-                                  image: articles[i].profileImage)),
+                          child: InkWell(
+                            onTap: () {
+                              model.navigateToAuthor(articles[i].authorSlug);
+                            },
+                            child: SizedBox(
+                                width: 45,
+                                height: 45,
+                                child: FadeInImage.assetNetwork(
+                                    fadeOutDuration:
+                                        const Duration(milliseconds: 500),
+                                    fadeInDuration:
+                                        const Duration(milliseconds: 500),
+                                    fit: BoxFit.cover,
+                                    placeholder:
+                                        'assets/images/placeholder-profile-img.png',
+                                    image: articles[i].profileImage)),
+                          ),
                         ),
                       ],
                     ),

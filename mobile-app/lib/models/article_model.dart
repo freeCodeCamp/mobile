@@ -4,6 +4,7 @@ class Article {
   final String featureImage;
   final String profileImage;
   final String authorName;
+  final String authorSlug;
   final String? createdAt;
   final String? tagName;
   final String? url;
@@ -15,6 +16,7 @@ class Article {
       required this.title,
       required this.profileImage,
       required this.authorName,
+      required this.authorSlug,
       this.createdAt,
       this.tagName,
       this.url,
@@ -29,6 +31,7 @@ class Article {
         title: data["title"],
         profileImage: data['authors'][0]['profile_image'],
         authorName: data['authors'][0]['name'],
+        authorSlug: data['authors'][0]['slug'],
         tagName:
             data['tags'].length > 0 ? data['tags'][0]['name'] : 'FreeCodeCamp',
         id: data["id"]);
@@ -39,6 +42,7 @@ class Article {
   factory Article.toPostFromJson(Map<String, dynamic> json) {
     return Article(
         authorName: json['posts'][0]['primary_author']['name'],
+        authorSlug: json['posts'][0]['primary_author']['slug'],
         profileImage: json['posts'][0]['primary_author']['profile_image'],
         id: json['posts'][0]['id'],
         title: json['posts'][0]['title'],

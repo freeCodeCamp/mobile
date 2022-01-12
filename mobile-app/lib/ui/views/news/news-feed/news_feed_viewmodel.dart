@@ -26,6 +26,11 @@ class NewsFeedModel extends BaseViewModel {
         arguments: NewsArticlePostViewArguments(refId: id));
   }
 
+  void navigateToAuthor(String authorSlug) {
+    _navigationService.navigateTo(Routes.newsAuthorView,
+        arguments: NewsAuthorViewArguments(authorSlug: authorSlug));
+  }
+
   String parseDate(date) {
     return Jiffy(date).fromNow().toUpperCase();
   }
@@ -35,11 +40,12 @@ class NewsFeedModel extends BaseViewModel {
     String page = '&page=' + _pageNumber.toString();
     String par =
         "&fields=title,url,feature_image,published_at,id&include=tags,authors";
-    String url = "${dotenv.env['NEWSURL']}${dotenv.env['NEWSKEY']}$page$par";
+    String url =
+        "${dotenv.env['NEWSURL']}posts/?key=${dotenv.env['NEWSKEY']}$page$par";
     final response = await http.get(Uri.parse(url));
     if (response.statusCode == 200) {
       var articleJson = json.decode(response.body)['posts'];
-
+      dev.log(url);
       for (int i = 0; i < articleJson?.length; i++) {
         articles.add(Article.fromJson(articleJson[i]));
       }
