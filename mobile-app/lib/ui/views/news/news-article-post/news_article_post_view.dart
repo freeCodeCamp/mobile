@@ -31,7 +31,7 @@ class NewsArticlePostView extends StatelessWidget {
                       progressBgColor:
                           const Color.fromRGBO(0x2A, 0x2A, 0x40, 1),
                       progressColor: Colors.white,
-                      arrayLength: model.arrLength == 0 ? 10 : model.arrLength,
+                      arrayLength: model.arrLength == 0 ? 100 : model.arrLength,
                       start: model.indexCache.length == 2
                           ? model.indexCache[0]
                           : 1,

@@ -26,10 +26,7 @@ class NewsArticlePostViewModel extends BaseViewModel {
   void setArticleReadProgress(int arrLength, List<int> indexCache) {
     _indexCache = indexCache;
     _arrLength = arrLength;
-    dev.log('gets notified!');
-    dev.log(indexCache.toString());
     notifyListeners();
-    dev.log(_arrLength.toString());
   }
 
   List<Widget> initLazyLoading(html, context, article) {

@@ -25,10 +25,6 @@ class LoadingBarIndiactor extends HookWidget {
 
   @override
   Widget build(BuildContext context) {
-    dev.log('begin: ' + start.toString());
-    dev.log('arr' + arrayLength.toString());
-    dev.log('end: ' + end.toString());
-
     var controller =
         useAnimationController(duration: const Duration(milliseconds: 2000));
     controller.reset();
