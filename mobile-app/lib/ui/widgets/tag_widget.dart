@@ -42,7 +42,10 @@ class _TagButtonState extends State<TagButton> {
       child: InkWell(
         onTap: () {
           _navigationService.navigateTo(Routes.newsFeedView,
-              arguments: NewsFeedViewArguments(slug: widget.tagSlug));
+              arguments: NewsFeedViewArguments(
+                  slug: widget.tagSlug,
+                  fromTag: true,
+                  subject: widget.tagName));
         },
         child: Container(
           color: widget.randomColor(),

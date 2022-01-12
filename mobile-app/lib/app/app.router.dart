@@ -136,6 +136,8 @@ class StackedRouter extends RouterBase {
         builder: (context) => NewsFeedView(
           key: args.key,
           slug: args.slug,
+          fromTag: args.fromTag,
+          subject: args.subject,
         ),
         settings: data,
       );
@@ -238,7 +240,10 @@ class NewsBookmarkPostViewArguments {
 class NewsFeedViewArguments {
   final Key? key;
   final String slug;
-  NewsFeedViewArguments({this.key, this.slug = ''});
+  final bool fromTag;
+  final String subject;
+  NewsFeedViewArguments(
+      {this.key, this.slug = '', this.fromTag = false, this.subject = ''});
 }
 
 /// ForumCategoryView arguments holder class

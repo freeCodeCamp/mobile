@@ -8,15 +8,25 @@ import 'package:stacked/stacked.dart';
 import 'news_feed_viewmodel.dart';
 
 class NewsFeedView extends StatelessWidget {
-  const NewsFeedView({Key? key, this.slug = ''}) : super(key: key);
+  const NewsFeedView(
+      {Key? key, this.slug = '', this.fromTag = false, this.subject = ''})
+      : super(key: key);
 
+  final String subject;
   final String slug;
+
+  final bool fromTag;
 
   @override
   Widget build(BuildContext context) {
     return ViewModelBuilder<NewsFeedModel>.reactive(
       viewModelBuilder: () => NewsFeedModel(),
       builder: (context, model, child) => Scaffold(
+          appBar: fromTag
+              ? AppBar(
+                  title: Text('Articles about $subject'),
+                )
+              : null,
           backgroundColor: const Color(0xFF0a0a23),
           body: FutureBuilder(
             future: model.fetchArticles(slug),
