@@ -8,7 +8,9 @@ import 'package:stacked/stacked.dart';
 import 'news_feed_viewmodel.dart';
 
 class NewsFeedView extends StatelessWidget {
-  const NewsFeedView({Key? key}) : super(key: key);
+  const NewsFeedView({Key? key, this.slug = ''}) : super(key: key);
+
+  final String slug;
 
   @override
   Widget build(BuildContext context) {
@@ -17,7 +19,7 @@ class NewsFeedView extends StatelessWidget {
       builder: (context, model, child) => Scaffold(
           backgroundColor: const Color(0xFF0a0a23),
           body: FutureBuilder(
-            future: model.fetchArticles(),
+            future: model.fetchArticles(slug),
             builder: (context, snapshot) {
               if (snapshot.hasData) {
                 return articleThumbnailBuilder(model, context);

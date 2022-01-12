@@ -1,11 +1,19 @@
 import 'dart:math';
 
 import 'package:flutter/material.dart';
+import 'package:freecodecamp/app/app.locator.dart';
+import 'package:freecodecamp/app/app.router.dart';
+import 'package:stacked_services/stacked_services.dart';
 
 class TagButton extends StatefulWidget {
-  const TagButton({Key? key, required this.tagName}) : super(key: key);
+  const TagButton({
+    Key? key,
+    required this.tagName,
+    required this.tagSlug,
+  }) : super(key: key);
 
   final String tagName;
+  final String tagSlug;
 
   Color randomColor() {
     var randomNum = Random();
@@ -25,18 +33,26 @@ class TagButton extends StatefulWidget {
 }
 
 class _TagButtonState extends State<TagButton> {
+  final _navigationService = locator<NavigationService>();
+
   @override
   Widget build(BuildContext context) {
     return Padding(
       padding: const EdgeInsets.all(8),
-      child: Container(
-        color: widget.randomColor(),
-        child: Padding(
-          padding: const EdgeInsets.all(3.0),
-          child: Text(
-            '#' + widget.tagName,
-            style: const TextStyle(
-              fontSize: 18,
+      child: InkWell(
+        onTap: () {
+          _navigationService.navigateTo(Routes.newsFeedView,
+              arguments: NewsFeedViewArguments(slug: widget.tagSlug));
+        },
+        child: Container(
+          color: widget.randomColor(),
+          child: Padding(
+            padding: const EdgeInsets.all(3.0),
+            child: Text(
+              '#' + widget.tagName,
+              style: const TextStyle(
+                fontSize: 18,
+              ),
             ),
           ),
         ),

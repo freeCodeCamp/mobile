@@ -129,8 +129,14 @@ class StackedRouter extends RouterBase {
       );
     },
     NewsFeedView: (data) {
+      var args = data.getArgs<NewsFeedViewArguments>(
+        orElse: () => NewsFeedViewArguments(),
+      );
       return MaterialPageRoute<dynamic>(
-        builder: (context) => const NewsFeedView(),
+        builder: (context) => NewsFeedView(
+          key: args.key,
+          slug: args.slug,
+        ),
         settings: data,
       );
     },
@@ -167,8 +173,14 @@ class StackedRouter extends RouterBase {
       );
     },
     ForumLoginView: (data) {
+      var args = data.getArgs<ForumLoginViewArguments>(
+        orElse: () => ForumLoginViewArguments(),
+      );
       return MaterialPageRoute<dynamic>(
-        builder: (context) => const ForumLoginView(),
+        builder: (context) => ForumLoginView(
+          key: args.key,
+          fromCreatePost: args.fromCreatePost,
+        ),
         settings: data,
       );
     },
@@ -222,6 +234,13 @@ class NewsBookmarkPostViewArguments {
   NewsBookmarkPostViewArguments({this.key, required this.article});
 }
 
+/// NewsFeedView arguments holder class
+class NewsFeedViewArguments {
+  final Key? key;
+  final String slug;
+  NewsFeedViewArguments({this.key, this.slug = ''});
+}
+
 /// ForumCategoryView arguments holder class
 class ForumCategoryViewArguments {
   final Key? key;
@@ -244,6 +263,13 @@ class ForumPostViewArguments {
   final String id;
   final String slug;
   ForumPostViewArguments({this.key, required this.id, required this.slug});
+}
+
+/// ForumLoginView arguments holder class
+class ForumLoginViewArguments {
+  final Key? key;
+  final bool fromCreatePost;
+  ForumLoginViewArguments({this.key, this.fromCreatePost = false});
 }
 
 /// ForumUserView arguments holder class

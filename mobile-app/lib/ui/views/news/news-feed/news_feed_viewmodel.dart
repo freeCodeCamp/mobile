@@ -17,7 +17,7 @@ class NewsFeedModel extends BaseViewModel {
   final _navigationService = locator<NavigationService>();
 
   void initState() async {
-    await fetchArticles();
+    await fetchArticles('');
     notifyListeners();
   }
 
@@ -30,16 +30,19 @@ class NewsFeedModel extends BaseViewModel {
     return Jiffy(date).fromNow().toUpperCase();
   }
 
-  Future<List<Article>> fetchArticles() async {
+  Future<List<Article>> fetchArticles(String slug) async {
     await dotenv.load(fileName: ".env");
+
+    String hasSlug = slug != '' ? '&filter=tag:$slug' : '';
     String page = '&page=' + _pageNumber.toString();
     String par =
-        "&fields=title,url,feature_image,published_at,id&include=tags,authors";
-    String url = "${dotenv.env['NEWSURL']}${dotenv.env['NEWSKEY']}$page$par";
+        "&fields=title,url,feature_image,slug,published_at,id&include=tags,authors";
+    String url =
+        "${dotenv.env['NEWSURL']}${dotenv.env['NEWSKEY']}$page$par$hasSlug";
     final response = await http.get(Uri.parse(url));
     if (response.statusCode == 200) {
       var articleJson = json.decode(response.body)['posts'];
-
+      dev.log(url);
       for (int i = 0; i < articleJson?.length; i++) {
         articles.add(Article.fromJson(articleJson[i]));
       }

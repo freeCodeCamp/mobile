@@ -23,12 +23,15 @@ class Article {
       this.url,
       this.text});
 
-  static List<Widget> returnTags(list) {
+  static List<Widget> returnTags(
+    list,
+  ) {
     List<Widget> tags = [];
 
     for (int i = 0; i < list.length; i++) {
       tags.add(TagButton(
         tagName: list[i]['name'],
+        tagSlug: list[i]['slug'],
         key: UniqueKey(),
       ));
     }
