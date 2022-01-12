@@ -4,12 +4,13 @@ import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:freecodecamp/models/article_model.dart';
 import 'package:http/http.dart' as http;
 import 'package:stacked/stacked.dart';
+import 'dart:developer' as dev;
 
 class NewsAuthorViewModel extends BaseViewModel {
-  late Author _author;
-  Author get author => _author;
+  late Future<Author> _author;
+  Future<Author> get author => _author;
 
-  void fetchAuthor(String authorSlug) async {
+  Future<Author> fetchAuthor(String authorSlug) async {
     // Load the news url and key
 
     await dotenv.load(fileName: ".env");
@@ -23,13 +24,13 @@ class NewsAuthorViewModel extends BaseViewModel {
 
     // Request current author
 
-    String queryUrl = '${url}authors/slug/$authorSlug/?key=$key';
+    String queryUrl = '$url/authors/slug/$authorSlug/?key=$key';
 
     http.Response response = await http.get(Uri.parse(queryUrl));
 
     if (response.statusCode == 200) {
-      _author = Author.toAuthorFromJson(jsonDecode(response.body));
-      notifyListeners();
+      dev.log(queryUrl);
+      return Author.toAuthorFromJson(jsonDecode(response.body)['authors'][0]);
     } else {
       throw Exception(response.body + "\n Author: $authorSlug");
     }
