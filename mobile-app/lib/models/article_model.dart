@@ -47,3 +47,48 @@ class Article {
         featureImage: json['posts'][0]['feature_image']);
   }
 }
+
+class Author {
+  const Author(
+      {required this.slug,
+      required this.id,
+      required this.name,
+      required this.profileImage,
+      this.coverImage = '',
+      required this.bio,
+      required this.website,
+      required this.location,
+      required this.facebook,
+      required this.twitter,
+      this.metaTile = '',
+      this.metaDescription = '',
+      required this.url});
+
+  final String slug;
+  final String id;
+  final String name;
+  final String profileImage;
+  final String? coverImage;
+  final String bio;
+  final String website;
+  final String location;
+  final String facebook;
+  final String twitter;
+  final String? metaTile;
+  final String? metaDescription;
+  final String url;
+
+  factory Author.toAuthorFromJson(Map<String, dynamic> data) {
+    return Author(
+        slug: data['slug'],
+        id: data['id'],
+        name: data['name'],
+        profileImage: data['profile_image'],
+        bio: data['bio'],
+        website: data['website'],
+        location: data['location'],
+        facebook: data['facebook'],
+        twitter: data['twitter'],
+        url: data['url']);
+  }
+}
