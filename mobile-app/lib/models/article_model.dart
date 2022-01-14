@@ -73,9 +73,9 @@ class Author {
   final String name;
   final String profileImage;
   final String? coverImage;
-  final String bio;
+  final String? bio;
   final String website;
-  final String location;
+  final String? location;
   final String facebook;
   final String twitter;
   final String? metaTile;
