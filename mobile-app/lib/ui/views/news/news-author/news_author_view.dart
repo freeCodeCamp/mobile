@@ -48,21 +48,12 @@ class NewsAuthorView extends StatelessWidget {
             ),
             Padding(
               padding: const EdgeInsets.only(top: 48.0),
-              child: Align(
-                alignment: Alignment.center,
-                child: Container(
-                  width: 175,
-                  height: 175,
-                  decoration: BoxDecoration(
-                      border: Border.all(width: 2, color: Colors.white)),
-                  child: Image.network(author!.profileImage),
-                ),
-              ),
+              child: profilePicture(author),
             )
           ],
         ),
         Text(
-          author.name,
+          author!.name,
           textAlign: TextAlign.center,
           style: const TextStyle(
               fontWeight: FontWeight.bold, fontSize: 28, height: 2),
@@ -84,6 +75,22 @@ class NewsAuthorView extends StatelessWidget {
               )
             : Container()
       ],
+    );
+  }
+
+  Align profilePicture(Author? author) {
+    return Align(
+      alignment: Alignment.center,
+      child: Container(
+        width: 175,
+        height: 175,
+        decoration:
+            BoxDecoration(border: Border.all(width: 2, color: Colors.white)),
+        child: Image.network(
+          author!.profileImage,
+          fit: BoxFit.cover,
+        ),
+      ),
     );
   }
 }
