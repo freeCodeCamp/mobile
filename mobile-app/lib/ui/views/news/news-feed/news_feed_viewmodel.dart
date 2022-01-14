@@ -38,7 +38,7 @@ class NewsFeedModel extends BaseViewModel {
     String par =
         "&fields=title,url,feature_image,slug,published_at,id&include=tags,authors";
     String url =
-        "${dotenv.env['NEWSURL']}${dotenv.env['NEWSKEY']}$page$par$hasSlug";
+        "${dotenv.env['NEWSURL']}posts/?key=${dotenv.env['NEWSKEY']}$page$par$hasSlug";
     final response = await http.get(Uri.parse(url));
     if (response.statusCode == 200) {
       var articleJson = json.decode(response.body)['posts'];
@@ -48,6 +48,7 @@ class NewsFeedModel extends BaseViewModel {
       }
       return articles;
     } else {
+      dev.log(url);
       throw Exception(response.body);
     }
   }
