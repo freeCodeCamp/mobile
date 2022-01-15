@@ -38,23 +38,36 @@ class _TagButtonState extends State<TagButton> {
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: const EdgeInsets.all(8),
+      padding: const EdgeInsets.symmetric(
+        horizontal: 4,
+        vertical: 8,
+      ),
       child: InkWell(
         onTap: () {
-          _navigationService.navigateTo(Routes.newsFeedView,
-              arguments: NewsFeedViewArguments(
-                  slug: widget.tagSlug,
-                  fromTag: true,
-                  subject: widget.tagName));
+          _navigationService.navigateTo(
+            Routes.newsFeedView,
+            arguments: NewsFeedViewArguments(
+              slug: widget.tagSlug,
+              fromTag: true,
+              subject: widget.tagName,
+            ),
+          );
         },
         child: Container(
-          color: widget.randomColor(),
+          decoration: ShapeDecoration(
+            color: widget.randomColor(),
+            shape: const StadiumBorder(),
+          ),
           child: Padding(
-            padding: const EdgeInsets.all(3.0),
+            padding: const EdgeInsets.symmetric(
+              vertical: 4,
+              horizontal: 8,
+            ),
             child: Text(
               '#' + widget.tagName,
               style: const TextStyle(
-                fontSize: 18,
+                fontSize: 16,
+                color: Colors.black,
               ),
             ),
           ),
