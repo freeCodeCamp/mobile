@@ -20,7 +20,6 @@ class HomeView extends StatelessWidget {
     NewsBookmarkFeedView(),
     NewsFeedView(),
     NewsSearchView()
-    //const ArticleSearch()
   ];
 
   @override
@@ -30,12 +29,8 @@ class HomeView extends StatelessWidget {
         appBar: AppBar(
           title: titles.elementAt(viewModel.index),
         ),
-
-        drawer:  const DrawerWidgetView(),
-        body: IndexedStack(
-          index: viewModel.index,
-          children: views,
-        ),
+        drawer: const DrawerWidgetView(),
+        body: views.elementAt(viewModel.index),
         bottomNavigationBar: BottomNavigationBar(
           items: const <BottomNavigationBarItem>[
             BottomNavigationBarItem(
