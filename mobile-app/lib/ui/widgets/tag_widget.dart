@@ -38,10 +38,7 @@ class _TagButtonState extends State<TagButton> {
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: const EdgeInsets.symmetric(
-        horizontal: 4,
-        vertical: 8,
-      ),
+      padding: const EdgeInsets.fromLTRB(4, 8, 4, 0),
       child: InkWell(
         onTap: () {
           _navigationService.navigateTo(
