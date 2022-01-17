@@ -5,33 +5,67 @@ import 'package:freecodecamp/models/news/article_model.dart';
 import 'package:freecodecamp/ui/views/news/news-feed/news_feed_lazyloading.dart';
 import 'package:freecodecamp/ui/views/news/news-feed/news_feed_viewmodel.dart';
 import 'package:stacked/stacked.dart';
+import 'package:url_launcher/url_launcher.dart';
 import 'news_feed_viewmodel.dart';
 
 class NewsFeedView extends StatelessWidget {
-  const NewsFeedView({Key? key}) : super(key: key);
+  const NewsFeedView(
+      {Key? key, this.slug = '', this.fromTag = false, this.subject = ''})
+      : super(key: key);
+
+  final String subject;
+  final String slug;
+
+  final bool fromTag;
 
   @override
   Widget build(BuildContext context) {
     return ViewModelBuilder<NewsFeedModel>.reactive(
       viewModelBuilder: () => NewsFeedModel(),
       builder: (context, model, child) => Scaffold(
+          appBar: fromTag
+              ? AppBar(
+                  title: Text('Articles about $subject'),
+                )
+              : null,
           backgroundColor: const Color(0xFF0a0a23),
           body: FutureBuilder(
-            future: model.fetchArticles(),
+            future: model.fetchArticles(slug),
             builder: (context, snapshot) {
               if (snapshot.hasData) {
                 return articleThumbnailBuilder(model, context);
               } else if (snapshot.hasError) {
-                return const Center(
-                  child: Text(
-                    'There was an error loading articles',
-                  ),
-                );
+                return errorMessage();
               }
-
               return const Center(child: CircularProgressIndicator());
             },
           )),
+    );
+  }
+
+  Column errorMessage() {
+    return Column(
+      mainAxisAlignment: MainAxisAlignment.center,
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      children: [
+        const Text(
+          'There was an error loading articles ',
+          textAlign: TextAlign.center,
+        ),
+        Padding(
+          padding: const EdgeInsets.all(8.0),
+          child: InkWell(
+            child: const Text(
+              'read articles online',
+              textAlign: TextAlign.center,
+              style: TextStyle(color: Color.fromRGBO(0x99, 0xc9, 0xff, 1)),
+            ),
+            onTap: () {
+              launch('https://www.freecodecamp.org/news/');
+            },
+          ),
+        ),
+      ],
     );
   }
 
@@ -88,17 +122,19 @@ class NewsFeedView extends StatelessWidget {
                   ),
                 ),
               ]),
-              Row(
-                children: [
-                  Padding(
-                    padding:
-                        const EdgeInsets.only(top: 16, bottom: 8, left: 16),
-                    child: Text(
-                      '#' + articles[i].tagName!.toUpperCase(),
-                      style: const TextStyle(fontSize: 18),
-                    ),
+              Align(
+                alignment: Alignment.centerLeft,
+                child: Padding(
+                  padding: const EdgeInsets.only(left: 8.0, right: 8),
+                  child: Wrap(
+                    children: [
+                      for (int j = 0;
+                          j < articles[i].tagNames.length && j < 3;
+                          j++)
+                        articles[i].tagNames[j]
+                    ],
                   ),
-                ],
+                ),
               ),
               Row(
                 children: [
