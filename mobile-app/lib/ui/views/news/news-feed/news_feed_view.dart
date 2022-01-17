@@ -1,7 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
-import 'package:freecodecamp/models/article_model.dart';
+import 'package:freecodecamp/models/news/article_model.dart';
 import 'package:freecodecamp/ui/views/news/news-feed/news_feed_lazyloading.dart';
 import 'package:freecodecamp/ui/views/news/news-feed/news_feed_viewmodel.dart';
 import 'package:stacked/stacked.dart';

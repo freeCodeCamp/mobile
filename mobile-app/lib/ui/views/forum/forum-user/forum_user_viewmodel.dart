@@ -3,7 +3,7 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:freecodecamp/app/app.locator.dart';
 import 'package:freecodecamp/app/app.router.dart';
-import 'package:freecodecamp/models/forum_user_model.dart';
+import 'package:freecodecamp/models/forum/forum_user_model.dart';
 import 'package:freecodecamp/ui/views/forum/forum_connect.dart';
 import 'package:html/parser.dart';
 import 'package:stacked/stacked.dart';

@@ -1,7 +1,7 @@
 // ignore_for_file: prefer_const_constructors_in_immutables
 
 import 'package:flutter/material.dart';
-import 'package:freecodecamp/models/forum_post_model.dart';
+import 'package:freecodecamp/models/forum/forum_post_model.dart';
 import 'dart:developer' as dev;
 
 class ForumTextFunctionBar extends StatelessWidget {

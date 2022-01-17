@@ -2,12 +2,11 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
-import 'package:freecodecamp/models/forum_post_model.dart';
+import 'package:freecodecamp/models/forum/forum_post_model.dart';
 import 'package:freecodecamp/ui/views/forum/forum-post-feed/forum_post_feed_lazyloading.dart';
 import 'package:freecodecamp/ui/views/forum/forum-post-feed/forum_post_feed_viewmodel.dart';
 import 'package:freecodecamp/ui/views/forum/forum-post/forum_post_viewmodel.dart';
 import 'package:stacked/stacked.dart';
-import 'dart:developer' as dev;
 
 class ForumPostFeedView extends StatelessWidget {
   final String slug;
