@@ -1,7 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
-import 'package:freecodecamp/models/article_model.dart';
+import 'package:freecodecamp/models/news/article_model.dart';
 import 'package:freecodecamp/ui/views/news/news-feed/news_feed_lazyloading.dart';
 import 'package:freecodecamp/ui/views/news/news-feed/news_feed_viewmodel.dart';
 import 'package:stacked/stacked.dart';
@@ -9,16 +9,28 @@ import 'package:url_launcher/url_launcher.dart';
 import 'news_feed_viewmodel.dart';
 
 class NewsFeedView extends StatelessWidget {
-  const NewsFeedView({Key? key}) : super(key: key);
+  const NewsFeedView(
+      {Key? key, this.slug = '', this.fromTag = false, this.subject = ''})
+      : super(key: key);
+
+  final String subject;
+  final String slug;
+
+  final bool fromTag;
 
   @override
   Widget build(BuildContext context) {
     return ViewModelBuilder<NewsFeedModel>.reactive(
       viewModelBuilder: () => NewsFeedModel(),
       builder: (context, model, child) => Scaffold(
+          appBar: fromTag
+              ? AppBar(
+                  title: Text('Articles about $subject'),
+                )
+              : null,
           backgroundColor: const Color(0xFF0a0a23),
           body: FutureBuilder(
-            future: model.fetchArticles(),
+            future: model.fetchArticles(slug),
             builder: (context, snapshot) {
               if (snapshot.hasData) {
                 return articleThumbnailBuilder(model, context);
@@ -110,17 +122,19 @@ class NewsFeedView extends StatelessWidget {
                   ),
                 ),
               ]),
-              Row(
-                children: [
-                  Padding(
-                    padding:
-                        const EdgeInsets.only(top: 16, bottom: 8, left: 16),
-                    child: Text(
-                      '#' + articles[i].tagName!.toUpperCase(),
-                      style: const TextStyle(fontSize: 18),
-                    ),
+              Align(
+                alignment: Alignment.centerLeft,
+                child: Padding(
+                  padding: const EdgeInsets.only(left: 8.0, right: 8),
+                  child: Wrap(
+                    children: [
+                      for (int j = 0;
+                          j < articles[i].tagNames.length && j < 3;
+                          j++)
+                        articles[i].tagNames[j]
+                    ],
                   ),
-                ],
+                ),
               ),
               Row(
                 children: [

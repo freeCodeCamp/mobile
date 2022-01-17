@@ -1,8 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
-
-import 'package:freecodecamp/models/article_model.dart';
 import 'package:freecodecamp/ui/widgets/loading_bar_widget.dart';
+import 'package:freecodecamp/models/news/article_model.dart';
 import 'package:stacked/stacked.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'news_article_post_viewmodel.dart';

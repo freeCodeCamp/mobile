@@ -572,7 +572,7 @@ packages:
       name: jiffy
       url: "https://pub.dartlang.org"
     source: hosted
-    version: "4.1.0"
+    version: "5.0.0"
   js:
     dependency: transitive
     description:

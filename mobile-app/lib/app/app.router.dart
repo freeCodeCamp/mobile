@@ -9,7 +9,7 @@
 import 'package:flutter/material.dart';
 import 'package:stacked/stacked.dart';
 
-import '../models/bookmarked_article_model.dart';
+import '../models/news/bookmarked_article_model.dart';
 import '../ui/views/browser/browser_view.dart';
 import '../ui/views/forum/forum-categories/forum_category_view.dart';
 import '../ui/views/forum/forum-login/forum_login_view.dart';
@@ -129,8 +129,16 @@ class StackedRouter extends RouterBase {
       );
     },
     NewsFeedView: (data) {
+      var args = data.getArgs<NewsFeedViewArguments>(
+        orElse: () => NewsFeedViewArguments(),
+      );
       return MaterialPageRoute<dynamic>(
-        builder: (context) => const NewsFeedView(),
+        builder: (context) => NewsFeedView(
+          key: args.key,
+          slug: args.slug,
+          fromTag: args.fromTag,
+          subject: args.subject,
+        ),
         settings: data,
       );
     },
@@ -167,8 +175,14 @@ class StackedRouter extends RouterBase {
       );
     },
     ForumLoginView: (data) {
+      var args = data.getArgs<ForumLoginViewArguments>(
+        orElse: () => ForumLoginViewArguments(),
+      );
       return MaterialPageRoute<dynamic>(
-        builder: (context) => const ForumLoginView(),
+        builder: (context) => ForumLoginView(
+          key: args.key,
+          fromCreatePost: args.fromCreatePost,
+        ),
         settings: data,
       );
     },
@@ -222,6 +236,16 @@ class NewsBookmarkPostViewArguments {
   NewsBookmarkPostViewArguments({this.key, required this.article});
 }
 
+/// NewsFeedView arguments holder class
+class NewsFeedViewArguments {
+  final Key? key;
+  final String slug;
+  final bool fromTag;
+  final String subject;
+  NewsFeedViewArguments(
+      {this.key, this.slug = '', this.fromTag = false, this.subject = ''});
+}
+
 /// ForumCategoryView arguments holder class
 class ForumCategoryViewArguments {
   final Key? key;
@@ -244,6 +268,13 @@ class ForumPostViewArguments {
   final String id;
   final String slug;
   ForumPostViewArguments({this.key, required this.id, required this.slug});
+}
+
+/// ForumLoginView arguments holder class
+class ForumLoginViewArguments {
+  final Key? key;
+  final bool fromCreatePost;
+  ForumLoginViewArguments({this.key, this.fromCreatePost = false});
 }
 
 /// ForumUserView arguments holder class

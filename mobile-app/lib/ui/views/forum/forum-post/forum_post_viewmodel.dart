@@ -5,7 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:freecodecamp/app/app.locator.dart';
 import 'package:freecodecamp/app/app.router.dart';
-import 'package:freecodecamp/models/forum_post_model.dart';
+import 'package:freecodecamp/models/forum/forum_post_model.dart';
 import 'package:freecodecamp/ui/views/forum/forum-comment/forum_comment_view.dart';
 import 'package:jiffy/jiffy.dart';
 import 'package:share/share.dart';
@@ -14,7 +14,6 @@ import 'package:stacked/stacked.dart';
 import 'package:stacked_services/stacked_services.dart';
 
 import '../forum_connect.dart';
-import 'dart:developer' as dev;
 
 class PostViewModel extends BaseViewModel {
   late Future<PostModel> _future;

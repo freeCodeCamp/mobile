@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:freecodecamp/models/article_model.dart';
-import 'package:freecodecamp/models/bookmarked_article_model.dart';
+import 'package:freecodecamp/models/news/article_model.dart';
+import 'package:freecodecamp/models/news/bookmarked_article_model.dart';
 import 'package:stacked/stacked.dart';
 import 'package:sqflite/sqflite.dart';
 import 'package:path/path.dart' as path;

@@ -1,7 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_html/flutter_html.dart';
-import 'package:freecodecamp/models/bookmarked_article_model.dart';
+import 'package:freecodecamp/models/news/bookmarked_article_model.dart';
 import 'package:freecodecamp/ui/views/news/news-bookmark/news_bookmark_viewmodel.dart';
 import 'package:stacked/stacked.dart';
 
