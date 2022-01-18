@@ -31,8 +31,6 @@ class NewsFeedView extends StatelessWidget {
     );
   }
 
-<<<<<<< HEAD
- 
   Column errorMessage() {
     return Column(
       mainAxisAlignment: MainAxisAlignment.center,
@@ -59,10 +57,7 @@ class NewsFeedView extends StatelessWidget {
     );
   }
 
- ListView articleThumbnailBuilder(NewsFeedModel model, BuildContext context) {
-=======
-  articleThumbnailBuilder(NewsFeedModel model, BuildContext context) {
->>>>>>> parent of bc92617 (fix: dry out newsfeed)
+  ListView articleThumbnailBuilder(NewsFeedModel model, BuildContext context) {
     return ListView.separated(
         shrinkWrap: true,
         itemCount: model.articles.length,
