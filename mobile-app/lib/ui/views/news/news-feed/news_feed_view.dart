@@ -31,6 +31,7 @@ class NewsFeedView extends StatelessWidget {
     );
   }
 
+<<<<<<< HEAD
  
   Column errorMessage() {
     return Column(
@@ -59,6 +60,9 @@ class NewsFeedView extends StatelessWidget {
   }
 
  ListView articleThumbnailBuilder(NewsFeedModel model, BuildContext context) {
+=======
+  articleThumbnailBuilder(NewsFeedModel model, BuildContext context) {
+>>>>>>> parent of bc92617 (fix: dry out newsfeed)
     return ListView.separated(
         shrinkWrap: true,
         itemCount: model.articles.length,
@@ -79,39 +83,43 @@ class NewsFeedView extends StatelessWidget {
                 onTap: () {
                   model.navigateTo(model.articles[i].id);
                 },
-                child: thumbnailView(context, model, model.articles, i))));
+                child: Padding(
+                  padding: const EdgeInsets.only(bottom: 32.0),
+                  child: thumbnailView(context, model, model.articles, i),
+                ))));
   }
 
-  Widget thumbnailView(BuildContext context, NewsFeedModel model,
+  Column thumbnailView(BuildContext context, NewsFeedModel model,
       List<Article>? articles, int i) {
     return Column(
       children: [
-        Stack(children: [
-          Container(
-              color: const Color.fromRGBO(0x2A, 0x2A, 0x40, 1),
-              child: const AspectRatio(
-                aspectRatio: 16 / 9,
-                child: Center(
-                    child: CircularProgressIndicator(
-                  color: Colors.white,
-                )),
-              )),
-          AspectRatio(
-            aspectRatio: 16 / 9,
-            child: Image.network(
-              articles![i].featureImage,
-              fit: BoxFit.cover,
-            ),
-          ),
-        ]),
         Container(
-          padding: const EdgeInsets.all(16),
+          color: const Color(0xFF0a0a23),
           child: Column(
             children: [
+              Stack(children: [
+                Container(
+                    color: const Color.fromRGBO(0x2A, 0x2A, 0x40, 1),
+                    child: const AspectRatio(
+                      aspectRatio: 16 / 9,
+                      child: Center(
+                          child: CircularProgressIndicator(
+                        color: Colors.white,
+                      )),
+                    )),
+                AspectRatio(
+                  aspectRatio: 16 / 9,
+                  child: Image.network(
+                    articles![i].featureImage,
+                    fit: BoxFit.cover,
+                  ),
+                ),
+              ]),
               Row(
                 children: [
                   Padding(
-                    padding: const EdgeInsets.only(bottom: 8),
+                    padding:
+                        const EdgeInsets.only(top: 16, bottom: 8, left: 16),
                     child: Text(
                       '#' + articles[i].tagName!.toUpperCase(),
                       style: const TextStyle(fontSize: 18),
@@ -122,64 +130,70 @@ class NewsFeedView extends StatelessWidget {
               Row(
                 children: [
                   Expanded(
-                    child: Text(
-                      articles[i].title,
-                      maxLines: 2,
-                      style: const TextStyle(
-                        fontSize: 20,
-                        overflow: TextOverflow.ellipsis,
+                    child: Padding(
+                      padding: const EdgeInsets.all(16.0),
+                      child: Text(
+                        articles[i].title,
+                        maxLines: 2,
+                        style: const TextStyle(
+                          fontSize: 20,
+                          overflow: TextOverflow.ellipsis,
+                        ),
                       ),
                     ),
                   )
                 ],
               ),
-              authorCard(model, articles, i),
+              Padding(
+                padding: const EdgeInsets.only(left: 16, right: 16, top: 8),
+                child: Row(
+                  children: [
+                    Column(
+                      children: [
+                        Padding(
+                          padding: const EdgeInsets.only(right: 16),
+                          child: InkWell(
+                            onTap: () {
+                              model.navigateToAuthor(articles[i].authorSlug);
+                            },
+                            child: SizedBox(
+                                width: 45,
+                                height: 45,
+                                child: FadeInImage.assetNetwork(
+                                    fadeOutDuration:
+                                        const Duration(milliseconds: 500),
+                                    fadeInDuration:
+                                        const Duration(milliseconds: 500),
+                                    fit: BoxFit.cover,
+                                    placeholder:
+                                        'assets/images/placeholder-profile-img.png',
+                                    image: articles[i].profileImage)),
+                          ),
+                        ),
+                      ],
+                    ),
+                    Expanded(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Padding(
+                            padding: const EdgeInsets.only(bottom: 10),
+                            child: Text(
+                              articles[i].authorName.toUpperCase(),
+                            ),
+                          ),
+                          Text(
+                            model.parseDate(articles[i].createdAt),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ],
+                ),
+              ),
             ],
           ),
         )
-      ],
-    );
-  }
-
-  Row authorCard(NewsFeedModel model, List<Article> articles, int i) {
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.start,
-      children: [
-        Padding(
-          padding: const EdgeInsets.only(right: 16, top: 16),
-          child: InkWell(
-            onTap: () {
-              model.navigateToAuthor(articles[i].authorSlug);
-            },
-            child: Stack(children: [
-              Container(
-                width: 45,
-                height: 45,
-                color: const Color.fromRGBO(0x2A, 0x2A, 0x40, 1),
-              ),
-              SizedBox(
-                  width: 45,
-                  height: 45,
-                  child: FadeInImage.assetNetwork(
-                      fadeOutDuration: const Duration(milliseconds: 500),
-                      fadeInDuration: const Duration(milliseconds: 500),
-                      fit: BoxFit.cover,
-                      placeholder: 'assets/images/placeholder-profile-img.png',
-                      image: articles[i].profileImage)),
-            ]),
-          ),
-        ),
-        Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text(
-              articles[i].authorName.toUpperCase(),
-            ),
-            Text(
-              model.parseDate(articles[i].createdAt),
-            ),
-          ],
-        ),
       ],
     );
   }
