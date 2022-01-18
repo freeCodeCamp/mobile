@@ -1,3 +1,6 @@
+import 'package:flutter/material.dart';
+import 'package:freecodecamp/ui/widgets/tag_widget.dart';
+
 class Article {
   final String id;
   final String title;
@@ -6,7 +9,7 @@ class Article {
   final String authorName;
   final String authorSlug;
   final String? createdAt;
-  final String? tagName;
+  final List<Widget> tagNames;
   final String? url;
   final String? text;
 
@@ -18,9 +21,24 @@ class Article {
       required this.authorName,
       required this.authorSlug,
       this.createdAt,
-      this.tagName,
+      this.tagNames = const [],
       this.url,
       this.text});
+
+  static List<Widget> returnTags(
+    list,
+  ) {
+    List<Widget> tags = [];
+
+    for (int i = 0; i < list.length; i++) {
+      tags.add(TagButton(
+        tagName: list[i]['name'],
+        tagSlug: list[i]['slug'],
+        key: UniqueKey(),
+      ));
+    }
+    return tags;
+  }
 
   // this factory is for the endpoint where all article thumbnails are received
 
@@ -32,8 +50,7 @@ class Article {
         profileImage: data['authors'][0]['profile_image'],
         authorName: data['authors'][0]['name'],
         authorSlug: data['authors'][0]['slug'],
-        tagName:
-            data['tags'].length > 0 ? data['tags'][0]['name'] : 'FreeCodeCamp',
+        tagNames: returnTags(data['tags']),
         id: data["id"]);
   }
 

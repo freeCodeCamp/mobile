@@ -133,8 +133,16 @@ class StackedRouter extends RouterBase {
       );
     },
     NewsFeedView: (data) {
+      var args = data.getArgs<NewsFeedViewArguments>(
+        orElse: () => NewsFeedViewArguments(),
+      );
       return MaterialPageRoute<dynamic>(
-        builder: (context) => const NewsFeedView(),
+        builder: (context) => NewsFeedView(
+          key: args.key,
+          slug: args.slug,
+          fromTag: args.fromTag,
+          subject: args.subject,
+        ),
         settings: data,
       );
     },
@@ -242,11 +250,22 @@ class NewsBookmarkPostViewArguments {
   NewsBookmarkPostViewArguments({this.key, required this.article});
 }
 
+<<<<<<< HEAD
 /// NewsAuthorView arguments holder class
 class NewsAuthorViewArguments {
   final Key? key;
   final String authorSlug;
   NewsAuthorViewArguments({this.key, required this.authorSlug});
+=======
+/// NewsFeedView arguments holder class
+class NewsFeedViewArguments {
+  final Key? key;
+  final String slug;
+  final bool fromTag;
+  final String subject;
+  NewsFeedViewArguments(
+      {this.key, this.slug = '', this.fromTag = false, this.subject = ''});
+>>>>>>> main
 }
 
 /// ForumCategoryView arguments holder class
