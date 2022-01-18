@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:freecodecamp/models/article_model.dart';
+import 'package:freecodecamp/models/news/article_model.dart';
 import 'package:freecodecamp/ui/views/news/news-author/news_author_viewmodel.dart';
+import 'package:freecodecamp/ui/widgets/article_list_widget.dart';
 import 'package:stacked/stacked.dart';
 
 class NewsAuthorView extends StatelessWidget {
@@ -73,7 +74,17 @@ class NewsAuthorView extends StatelessWidget {
                   style: const TextStyle(fontSize: 16),
                 ),
               )
-            : Container()
+            : Container(),
+        ArticleList(
+          authorName: author.slug,
+          listSize: 5,
+        ),
+        ListTile(
+          title: Text(author.name.split(" ").first + "'s articles"),
+          tileColor: const Color(0xFF0a0a23),
+          trailing: const Icon(Icons.arrow_forward_ios_outlined),
+          onTap: () {},
+        )
       ],
     );
   }
