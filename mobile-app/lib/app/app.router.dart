@@ -250,13 +250,6 @@ class NewsBookmarkPostViewArguments {
   NewsBookmarkPostViewArguments({this.key, required this.article});
 }
 
-<<<<<<< HEAD
-/// NewsAuthorView arguments holder class
-class NewsAuthorViewArguments {
-  final Key? key;
-  final String authorSlug;
-  NewsAuthorViewArguments({this.key, required this.authorSlug});
-=======
 /// NewsFeedView arguments holder class
 class NewsFeedViewArguments {
   final Key? key;
@@ -265,7 +258,13 @@ class NewsFeedViewArguments {
   final String subject;
   NewsFeedViewArguments(
       {this.key, this.slug = '', this.fromTag = false, this.subject = ''});
->>>>>>> main
+}
+
+/// NewsAuthorView arguments holder class
+class NewsAuthorViewArguments {
+  final Key? key;
+  final String authorSlug;
+  NewsAuthorViewArguments({this.key, required this.authorSlug});
 }
 
 /// ForumCategoryView arguments holder class

@@ -46,13 +46,11 @@ class NewsFeedModel extends BaseViewModel {
     final response = await http.get(Uri.parse(url));
     if (response.statusCode == 200) {
       var articleJson = json.decode(response.body)['posts'];
-      dev.log(url);
       for (int i = 0; i < articleJson?.length; i++) {
         articles.add(Article.fromJson(articleJson[i]));
       }
       return articles;
     } else {
-      dev.log(url);
       throw Exception(response.body);
     }
   }
