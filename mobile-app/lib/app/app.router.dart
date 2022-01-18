@@ -9,7 +9,7 @@
 import 'package:flutter/material.dart';
 import 'package:stacked/stacked.dart';
 
-import '../models/bookmarked_article_model.dart';
+import '../models/news/bookmarked_article_model.dart';
 import '../ui/views/browser/browser_view.dart';
 import '../ui/views/forum/forum-categories/forum_category_view.dart';
 import '../ui/views/forum/forum-login/forum_login_view.dart';
