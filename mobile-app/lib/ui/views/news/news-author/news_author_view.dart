@@ -17,17 +17,19 @@ class NewsAuthorView extends StatelessWidget {
               appBar: AppBar(
                 title: const Text("Author profile"),
               ),
-              body: FutureBuilder<Author>(
-                  future: model.fetchAuthor(authorSlug),
-                  builder: (context, snapshot) {
-                    if (snapshot.hasData) {
-                      Author? author = snapshot.data;
+              body: SingleChildScrollView(
+                child: FutureBuilder<Author>(
+                    future: model.fetchAuthor(authorSlug),
+                    builder: (context, snapshot) {
+                      if (snapshot.hasData) {
+                        Author? author = snapshot.data;
 
-                      return view(model, context, author);
-                    }
+                        return view(model, context, author);
+                      }
 
-                    return const Center(child: CircularProgressIndicator());
-                  }),
+                      return const Center(child: CircularProgressIndicator());
+                    }),
+              ),
             ));
   }
 
@@ -77,14 +79,7 @@ class NewsAuthorView extends StatelessWidget {
             : Container(),
         ArticleList(
           authorName: author.slug,
-          listSize: 5,
         ),
-        ListTile(
-          title: Text(author.name.split(" ").first + "'s articles"),
-          tileColor: const Color(0xFF0a0a23),
-          trailing: const Icon(Icons.arrow_forward_ios_outlined),
-          onTap: () {},
-        )
       ],
     );
   }

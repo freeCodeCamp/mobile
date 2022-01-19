@@ -187,7 +187,7 @@ class NewsFeedView extends StatelessWidget {
                     ),
                   ),
                   Text(
-                    model.parseDate(articles[i].createdAt),
+                    NewsFeedModel.parseDate(articles[i].createdAt),
                   ),
                 ],
               ),

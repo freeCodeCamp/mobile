@@ -30,7 +30,7 @@ class NewsFeedModel extends BaseViewModel {
         arguments: NewsAuthorViewArguments(authorSlug: authorSlug));
   }
 
-  String parseDate(date) {
+  static String parseDate(date) {
     return Jiffy(date).fromNow().toUpperCase();
   }
 
