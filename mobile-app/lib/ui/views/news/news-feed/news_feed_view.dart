@@ -10,27 +10,35 @@ import 'news_feed_viewmodel.dart';
 
 class NewsFeedView extends StatelessWidget {
   const NewsFeedView(
-      {Key? key, this.slug = '', this.fromTag = false, this.subject = ''})
+      {Key? key,
+      this.slug = '',
+      this.author = '',
+      this.fromAuthor = false,
+      this.fromTag = false,
+      this.subject = ''})
       : super(key: key);
 
   final String subject;
   final String slug;
+  final String author;
 
   final bool fromTag;
+  final bool fromAuthor;
 
   @override
   Widget build(BuildContext context) {
     return ViewModelBuilder<NewsFeedModel>.reactive(
       viewModelBuilder: () => NewsFeedModel(),
       builder: (context, model, child) => Scaffold(
-          appBar: fromTag
+          appBar: fromTag || fromAuthor
               ? AppBar(
-                  title: Text('Articles about $subject'),
+                  title: Text(
+                      'Articles ${fromAuthor ? 'from' : 'about'}  $author$subject'),
                 )
               : null,
           backgroundColor: const Color(0xFF0a0a23),
           body: FutureBuilder(
-            future: model.fetchArticles(slug),
+            future: model.fetchArticles(slug, author),
             builder: (context, snapshot) {
               if (snapshot.hasData) {
                 return articleThumbnailBuilder(model, context);

@@ -140,6 +140,8 @@ class StackedRouter extends RouterBase {
         builder: (context) => NewsFeedView(
           key: args.key,
           slug: args.slug,
+          author: args.author,
+          fromAuthor: args.fromAuthor,
           fromTag: args.fromTag,
           subject: args.subject,
         ),
@@ -254,10 +256,17 @@ class NewsBookmarkPostViewArguments {
 class NewsFeedViewArguments {
   final Key? key;
   final String slug;
+  final String author;
+  final bool fromAuthor;
   final bool fromTag;
   final String subject;
   NewsFeedViewArguments(
-      {this.key, this.slug = '', this.fromTag = false, this.subject = ''});
+      {this.key,
+      this.slug = '',
+      this.author = '',
+      this.fromAuthor = false,
+      this.fromTag = false,
+      this.subject = ''});
 }
 
 /// NewsAuthorView arguments holder class

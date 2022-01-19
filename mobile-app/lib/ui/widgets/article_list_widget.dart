@@ -43,9 +43,14 @@ class ArticleList extends StatefulWidget {
     }
   }
 
-  void navigateTo(String id) {
+  void navigateToArticle(String id) {
     _navigationService.navigateTo(Routes.newsArticlePostView,
         arguments: NewsArticlePostViewArguments(refId: id));
+  }
+
+  void navigateToFeed(String author) {
+    _navigationService.navigateTo(Routes.newsFeedView,
+        arguments: NewsFeedViewArguments(author: authorName, fromAuthor: true));
   }
 
   @override
@@ -75,7 +80,9 @@ class ArticleListState extends State<ArticleList> {
                         title: const Text("show more articles"),
                         tileColor: const Color(0xFF0a0a23),
                         trailing: const Icon(Icons.arrow_forward_ios_outlined),
-                        onTap: () {},
+                        onTap: () {
+                          widget.navigateToFeed(widget.authorName);
+                        },
                       )
                     : Container()
               ],
@@ -121,7 +128,7 @@ class TileLayout extends StatelessWidget {
                 article.featureImage,
               ),
               onTap: () {
-                widget.navigateTo(article.id);
+                widget.navigateToArticle(article.id);
               },
             );
           }),
