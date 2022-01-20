@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:freecodecamp/app/app.locator.dart';
 import 'package:freecodecamp/ui/views/forum/forum-categories/forum_category_view.dart';
 import 'package:freecodecamp/ui/views/home/home_view.dart';
@@ -11,28 +10,15 @@ import 'package:url_launcher/url_launcher.dart';
 
 class DrawerWidgtetViewModel extends BaseViewModel {
   final NavigationService _navigationService = locator<NavigationService>();
-  void goToBrowser(String url) {
-    launch(url);
-  }
   // a temp variable for showing the forum button when dev mode is set to false
   // this is because the forum has two different urls, one for prod
   // and one for testing purposes. When the development value is set to false
   // the normal fcc forum is not accessible
 
   bool _showForum = false;
-
   bool get showForum => _showForum;
-  bool _inDevelopmentMode = false;
-  bool get inDevelopmentMode => _inDevelopmentMode;
-  void init() async {
-    await dotenv.load(fileName: ".env");
-    bool devMode =
-        dotenv.env["DEVELOPMENTMODE"]!.toLowerCase() == "true" ? true : false;
-    _inDevelopmentMode = devMode;
-    notifyListeners();
-  }
 
-  void navNonWebComponent(view, context) async {
+  void routeComponent(view, context) async {
     switch (view) {
       case 'NEWS':
         Navigator.pushReplacement(
