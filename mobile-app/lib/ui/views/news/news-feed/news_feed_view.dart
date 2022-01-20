@@ -33,7 +33,7 @@ class NewsFeedView extends StatelessWidget {
           appBar: fromTag || fromAuthor
               ? AppBar(
                   title: Text(
-                      'Articles ${fromAuthor ? 'from' : 'about'}  $author$subject'),
+                      'Articles ${fromAuthor ? 'from' : 'about'} $subject'),
                 )
               : null,
           backgroundColor: const Color(0xFF0a0a23),

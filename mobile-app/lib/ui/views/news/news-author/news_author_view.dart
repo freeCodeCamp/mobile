@@ -78,7 +78,8 @@ class NewsAuthorView extends StatelessWidget {
               )
             : Container(),
         ArticleList(
-          authorName: author.slug,
+          authorSlug: author.slug,
+          authorName: author.name,
         ),
       ],
     );

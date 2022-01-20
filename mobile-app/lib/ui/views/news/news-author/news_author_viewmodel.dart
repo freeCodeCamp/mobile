@@ -24,7 +24,7 @@ class NewsAuthorViewModel extends BaseViewModel {
 
     // Request current author
 
-    String queryUrl = '$url/authors/slug/$authorSlug/?key=$key';
+    String queryUrl = '${url}authors/slug/$authorSlug/?key=$key';
 
     http.Response response = await http.get(Uri.parse(queryUrl));
 

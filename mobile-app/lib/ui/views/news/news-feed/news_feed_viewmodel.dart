@@ -38,11 +38,11 @@ class NewsFeedModel extends BaseViewModel {
     await dotenv.load(fileName: ".env");
 
     String hasSlug = slug != '' ? '&filter=tag:$slug' : '';
-    String fromAuhtor = author != '' ? '&filter=author:$author' : '';
+    String fromAuthor = author != '' ? '&filter=author:$author' : '';
     String page = '&page=' + _pageNumber.toString();
     String par =
         "&fields=title,url,feature_image,slug,published_at,id&include=tags,authors";
-    String concact = page + par + hasSlug + fromAuhtor;
+    String concact = page + par + hasSlug + fromAuthor;
 
     String url =
         "${dotenv.env['NEWSURL']}posts/?key=${dotenv.env['NEWSKEY']}$concact";

@@ -15,8 +15,13 @@ import 'package:stacked_services/stacked_services.dart';
 
 class ArticleList extends StatefulWidget {
   // ignore: prefer_const_constructors_in_immutables
-  ArticleList({Key? key, required this.authorName}) : super(key: key);
+  ArticleList({
+    Key? key,
+    required this.authorSlug,
+    required this.authorName,
+  }) : super(key: key);
 
+  final String authorSlug;
   final String authorName;
   final _navigationService = locator<NavigationService>();
   Future<List<Article>> fetchList() async {
@@ -27,7 +32,7 @@ class ArticleList extends StatefulWidget {
     String par =
         "&fields=title,url,feature_image,slug,published_at,id&include=tags,authors";
     String url =
-        "${dotenv.env['NEWSURL']}posts/?key=${dotenv.env['NEWSKEY']}&page=1$par&filter=author:$authorName";
+        "${dotenv.env['NEWSURL']}posts/?key=${dotenv.env['NEWSKEY']}&page=1$par&filter=author:$authorSlug";
 
     final http.Response response = await http.get(Uri.parse(url));
 
@@ -48,9 +53,15 @@ class ArticleList extends StatefulWidget {
         arguments: NewsArticlePostViewArguments(refId: id));
   }
 
-  void navigateToFeed(String author) {
-    _navigationService.navigateTo(Routes.newsFeedView,
-        arguments: NewsFeedViewArguments(author: authorName, fromAuthor: true));
+  void navigateToFeed() {
+    _navigationService.navigateTo(
+      Routes.newsFeedView,
+      arguments: NewsFeedViewArguments(
+        author: authorSlug,
+        fromAuthor: true,
+        subject: authorName,
+      ),
+    );
   }
 
   @override
@@ -77,11 +88,11 @@ class ArticleListState extends State<ArticleList> {
                 ),
                 snapshot.data!.length > 5
                     ? ListTile(
-                        title: const Text("show more articles"),
+                        title: const Text("Show more articles"),
                         tileColor: const Color(0xFF0a0a23),
                         trailing: const Icon(Icons.arrow_forward_ios_outlined),
                         onTap: () {
-                          widget.navigateToFeed(widget.authorName);
+                          widget.navigateToFeed();
                         },
                       )
                     : Container()
