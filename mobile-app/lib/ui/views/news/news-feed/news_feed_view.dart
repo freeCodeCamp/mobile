@@ -10,27 +10,35 @@ import 'news_feed_viewmodel.dart';
 
 class NewsFeedView extends StatelessWidget {
   const NewsFeedView(
-      {Key? key, this.slug = '', this.fromTag = false, this.subject = ''})
+      {Key? key,
+      this.slug = '',
+      this.author = '',
+      this.fromAuthor = false,
+      this.fromTag = false,
+      this.subject = ''})
       : super(key: key);
 
   final String subject;
   final String slug;
+  final String author;
 
   final bool fromTag;
+  final bool fromAuthor;
 
   @override
   Widget build(BuildContext context) {
     return ViewModelBuilder<NewsFeedModel>.reactive(
       viewModelBuilder: () => NewsFeedModel(),
       builder: (context, model, child) => Scaffold(
-          appBar: fromTag
+          appBar: fromTag || fromAuthor
               ? AppBar(
-                  title: Text('Articles about $subject'),
+                  title: Text(
+                      'Articles ${fromAuthor ? 'from' : 'about'} $subject'),
                 )
               : null,
           backgroundColor: const Color(0xFF0a0a23),
           body: FutureBuilder(
-            future: model.fetchArticles(slug),
+            future: model.fetchArticles(slug, author),
             builder: (context, snapshot) {
               if (snapshot.hasData) {
                 return articleThumbnailBuilder(model, context);
@@ -69,7 +77,7 @@ class NewsFeedView extends StatelessWidget {
     );
   }
 
-  articleThumbnailBuilder(NewsFeedModel model, BuildContext context) {
+  ListView articleThumbnailBuilder(NewsFeedModel model, BuildContext context) {
     return ListView.separated(
         shrinkWrap: true,
         itemCount: model.articles.length,
@@ -100,104 +108,100 @@ class NewsFeedView extends StatelessWidget {
       List<Article>? articles, int i) {
     return Column(
       children: [
+        Stack(children: [
+          Container(
+              color: const Color.fromRGBO(0x2A, 0x2A, 0x40, 1),
+              child: const AspectRatio(
+                aspectRatio: 16 / 9,
+                child: Center(
+                    child: CircularProgressIndicator(
+                  color: Colors.white,
+                )),
+              )),
+          AspectRatio(
+            aspectRatio: 16 / 9,
+            child: Image.network(
+              articles![i].featureImage,
+              fit: BoxFit.cover,
+            ),
+          ),
+        ]),
+        Align(
+          alignment: Alignment.centerLeft,
+          child: Padding(
+            padding: const EdgeInsets.only(left: 8.0, right: 8),
+            child: Wrap(
+              children: [
+                for (int j = 0; j < articles[i].tagNames.length && j < 3; j++)
+                  articles[i].tagNames[j]
+              ],
+            ),
+          ),
+        ),
         Container(
-          color: const Color(0xFF0a0a23),
-          child: Column(
-            children: [
-              Stack(children: [
-                Container(
-                    color: const Color.fromRGBO(0x2A, 0x2A, 0x40, 1),
-                    child: const AspectRatio(
-                      aspectRatio: 16 / 9,
-                      child: Center(
-                          child: CircularProgressIndicator(
-                        color: Colors.white,
-                      )),
-                    )),
-                AspectRatio(
-                  aspectRatio: 16 / 9,
-                  child: Image.network(
-                    articles![i].featureImage,
-                    fit: BoxFit.cover,
-                  ),
-                ),
-              ]),
-              Align(
-                alignment: Alignment.centerLeft,
-                child: Padding(
-                  padding: const EdgeInsets.only(left: 8.0, right: 8),
-                  child: Wrap(
-                    children: [
-                      for (int j = 0;
-                          j < articles[i].tagNames.length && j < 3;
-                          j++)
-                        articles[i].tagNames[j]
-                    ],
-                  ),
-                ),
+            padding: const EdgeInsets.only(left: 16, right: 16, top: 8),
+            child: articleHeader(model, articles, i))
+      ],
+    );
+  }
+
+  Widget articleHeader(NewsFeedModel model, List<Article>? articles, int i) {
+    return Column(
+      children: [
+        Row(
+          children: [
+            Expanded(
+              child: Text(
+                articles![i].title,
+                maxLines: 2,
+                style: const TextStyle(
+                    fontSize: 20, overflow: TextOverflow.ellipsis, height: 1.5),
               ),
-              Row(
-                children: [
-                  Expanded(
-                    child: Padding(
-                      padding: const EdgeInsets.all(16.0),
-                      child: Text(
-                        articles[i].title,
-                        maxLines: 2,
-                        style: const TextStyle(
-                          fontSize: 20,
-                          overflow: TextOverflow.ellipsis,
-                        ),
-                      ),
-                    ),
-                  )
-                ],
-              ),
-              Padding(
-                padding: const EdgeInsets.only(left: 16, right: 16, top: 8),
-                child: Row(
+            ),
+          ],
+        ),
+        Row(
+          children: [
+            Padding(
+              padding: const EdgeInsets.only(right: 16, top: 16),
+              child: InkWell(
+                onTap: () {
+                  model.navigateToAuthor(articles[i].authorSlug);
+                },
+                child: Stack(
                   children: [
-                    Column(
-                      children: [
-                        Padding(
-                          padding: const EdgeInsets.only(right: 16),
-                          child: SizedBox(
-                              width: 45,
-                              height: 45,
-                              child: FadeInImage.assetNetwork(
-                                  fadeOutDuration:
-                                      const Duration(milliseconds: 500),
-                                  fadeInDuration:
-                                      const Duration(milliseconds: 500),
-                                  fit: BoxFit.cover,
-                                  placeholder:
-                                      'assets/images/placeholder-profile-img.png',
-                                  image: articles[i].profileImage)),
-                        ),
-                      ],
-                    ),
-                    Expanded(
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Padding(
-                            padding: const EdgeInsets.only(bottom: 10),
-                            child: Text(
-                              articles[i].authorName.toUpperCase(),
-                            ),
-                          ),
-                          Text(
-                            model.parseDate(articles[i].createdAt),
-                          ),
-                        ],
-                      ),
-                    ),
+                    Container(
+                        width: 45,
+                        height: 45,
+                        color: const Color.fromRGBO(0x2A, 0x2A, 0x40, 1)),
+                    Image.network(
+                      articles[i].profileImage,
+                      width: 45,
+                      height: 45,
+                      fit: BoxFit.cover,
+                    )
                   ],
                 ),
               ),
-            ],
-          ),
-        )
+            ),
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Padding(
+                    padding: const EdgeInsets.only(bottom: 10, top: 16),
+                    child: Text(
+                      articles[i].authorName.toUpperCase(),
+                    ),
+                  ),
+                  Text(
+                    NewsFeedModel.parseDate(articles[i].createdAt),
+                  ),
+                ],
+              ),
+            ),
+          ],
+        ),
       ],
     );
   }

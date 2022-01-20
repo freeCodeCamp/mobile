@@ -19,6 +19,7 @@ import '../ui/views/forum/forum-user-profile/forum_user_profile_view.dart';
 import '../ui/views/forum/forum-user/forum_user_view.dart';
 import '../ui/views/home/home_view.dart';
 import '../ui/views/news/news-article-post/news_article_post_view.dart';
+import '../ui/views/news/news-author/news_author_view.dart';
 import '../ui/views/news/news-bookmark/news_bookmark_view.dart';
 import '../ui/views/news/news-feed/news_feed_view.dart';
 import '../ui/views/podcast/podcast-list/podcast_list_view.dart';
@@ -33,6 +34,7 @@ class Routes {
   static const String newsArticlePostView = '/news-article-post-view';
   static const String newsBookmarkPostView = '/news-bookmark-post-view';
   static const String newsFeedView = '/news-feed-view';
+  static const String newsAuthorView = '/news-author-view';
   static const String forumCategoryView = '/forum-category-view';
   static const String forumPostFeedView = '/forum-post-feed-view';
   static const String forumPostView = '/forum-post-view';
@@ -48,6 +50,7 @@ class Routes {
     newsArticlePostView,
     newsBookmarkPostView,
     newsFeedView,
+    newsAuthorView,
     forumCategoryView,
     forumPostFeedView,
     forumPostView,
@@ -69,6 +72,7 @@ class StackedRouter extends RouterBase {
     RouteDef(Routes.newsArticlePostView, page: NewsArticlePostView),
     RouteDef(Routes.newsBookmarkPostView, page: NewsBookmarkPostView),
     RouteDef(Routes.newsFeedView, page: NewsFeedView),
+    RouteDef(Routes.newsAuthorView, page: NewsAuthorView),
     RouteDef(Routes.forumCategoryView, page: ForumCategoryView),
     RouteDef(Routes.forumPostFeedView, page: ForumPostFeedView),
     RouteDef(Routes.forumPostView, page: ForumPostView),
@@ -136,8 +140,20 @@ class StackedRouter extends RouterBase {
         builder: (context) => NewsFeedView(
           key: args.key,
           slug: args.slug,
+          author: args.author,
+          fromAuthor: args.fromAuthor,
           fromTag: args.fromTag,
           subject: args.subject,
+        ),
+        settings: data,
+      );
+    },
+    NewsAuthorView: (data) {
+      var args = data.getArgs<NewsAuthorViewArguments>(nullOk: false);
+      return MaterialPageRoute<dynamic>(
+        builder: (context) => NewsAuthorView(
+          key: args.key,
+          authorSlug: args.authorSlug,
         ),
         settings: data,
       );
@@ -240,10 +256,24 @@ class NewsBookmarkPostViewArguments {
 class NewsFeedViewArguments {
   final Key? key;
   final String slug;
+  final String author;
+  final bool fromAuthor;
   final bool fromTag;
   final String subject;
   NewsFeedViewArguments(
-      {this.key, this.slug = '', this.fromTag = false, this.subject = ''});
+      {this.key,
+      this.slug = '',
+      this.author = '',
+      this.fromAuthor = false,
+      this.fromTag = false,
+      this.subject = ''});
+}
+
+/// NewsAuthorView arguments holder class
+class NewsAuthorViewArguments {
+  final Key? key;
+  final String authorSlug;
+  NewsAuthorViewArguments({this.key, required this.authorSlug});
 }
 
 /// ForumCategoryView arguments holder class
