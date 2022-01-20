@@ -15,7 +15,7 @@ const bree = new Bree({
       name: 'Update Podcasts',
       path: typescript_worker,
       timeout: 0,
-      interval: '5m',
+      interval: '30m',
       worker: {
         workerData: { __filename: './src/jobs/update-podcasts.ts' },
       },
