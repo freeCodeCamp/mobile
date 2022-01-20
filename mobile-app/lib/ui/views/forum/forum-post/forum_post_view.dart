@@ -150,7 +150,12 @@ class ForumPostView extends StatelessWidget {
                   minLines: 10,
                   maxLines: null,
                   decoration: const InputDecoration(
-                      fillColor: Colors.white, filled: true),
+                    fillColor: Colors.white,
+                    filled: true,
+                  ),
+                  style: const TextStyle(
+                    color: Colors.black,
+                  ),
                 ),
               ),
             ),
@@ -225,6 +230,7 @@ class ForumPostView extends StatelessWidget {
                     maxLines: null,
                     style: const TextStyle(
                       fontSize: 18,
+                      color: Colors.black,
                     ),
                     decoration: InputDecoration(
                         border: OutlineInputBorder(
