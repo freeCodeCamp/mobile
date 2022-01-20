@@ -35,5 +35,10 @@ class FccTheme {
     primaryColorDark: const Color(0xFF0a0a23),
     primaryIconTheme:
         ThemeData.dark().primaryIconTheme.copyWith(color: Colors.orange),
+    textSelectionTheme: const TextSelectionThemeData(
+      cursorColor: Color.fromRGBO(66, 133, 244, 1.0),
+      selectionColor: Color(0xff90caf9),
+      selectionHandleColor: Color(0xff64b5f6),
+    ),
   );
 }

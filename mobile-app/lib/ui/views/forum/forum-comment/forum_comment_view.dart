@@ -139,7 +139,12 @@ class ForumCommentView extends StatelessWidget {
                   minLines: 10,
                   maxLines: null,
                   decoration: const InputDecoration(
-                      fillColor: Colors.white, filled: true),
+                    fillColor: Colors.white,
+                    filled: true,
+                  ),
+                  style: const TextStyle(
+                    color: Colors.black,
+                  ),
                 ),
               ),
             ),
