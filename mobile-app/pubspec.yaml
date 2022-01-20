@@ -6,14 +6,14 @@ environment:
   sdk: ">=2.12.0 <3.0.0"
 dependencies:
   flutter_font_awesome_web_names:
-   git:
-     url: https://github.com/Mythar/flutter_font_awesome_web_names
-     ref: master
+    git:
+      url: https://github.com/Mythar/flutter_font_awesome_web_names
+      ref: master
   cupertino_icons: ^1.0.3
   flutter:
     sdk: flutter
   flutter_dotenv: ^5.0.2
-  flutter_html: ^2.1.2
+  flutter_html: ^2.2.1
   flutter_lints: ^1.0.4
   flutter_slidable: ^0.6.0
   flip_card: ^0.5.0
@@ -37,12 +37,12 @@ dependencies:
   just_audio_background: ^0.0.1-beta.1
   hexcolor: ^2.0.5
   flutter_syntax_view:
-   git:
-     url: https://github.com/Sembauke/flutter_syntax_view
-     ref: master
+    git:
+      url: https://github.com/Sembauke/flutter_syntax_view
+      ref: master
   jiffy: ^5.0.0
   share: ^2.0.4
-  flutter_svg: ^0.22.0
+  flutter_svg: ^0.23.0+1
   shared_preferences: ^2.0.7
   font_awesome_flutter: ^9.1.0
   html: ^0.15.0
