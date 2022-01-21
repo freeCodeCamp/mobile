@@ -7,6 +7,9 @@ on:
 jobs:
   flutter_test:
     name: Run flutter test and analyze
+    defaults:
+      run:
+        working-directory: ./mobile-app
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
