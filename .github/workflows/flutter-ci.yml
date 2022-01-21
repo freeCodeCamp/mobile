@@ -6,7 +6,7 @@ on:
 
 jobs:
   flutter_test:
-    name: Run flutter test and analyze
+    name: flutter test
     defaults:
       run:
         working-directory: ./mobile-app
