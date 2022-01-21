@@ -25,7 +25,7 @@ class NewsArticlePostViewModel extends BaseViewModel {
     await dotenv.load(fileName: ".env");
 
     final response = await http.get(Uri.parse(
-        'https://www.freecodecamp.org/news/ghost/api/v3/content/posts/$articleId/?key=${dotenv.env['NEWSKEY']}&include=authors'));
+        '${dotenv.env['NEWSURL']}posts/$articleId/?key=${dotenv.env['NEWSKEY']}&include=authors'));
 
     if (response.statusCode == 200) {
       return Article.toPostFromJson(jsonDecode(response.body));
