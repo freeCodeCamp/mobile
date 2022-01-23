@@ -17,10 +17,10 @@ class CodeRadio {
   factory CodeRadio.fromJson(Map<String, dynamic> data) {
     return CodeRadio(
         id: data['station']['id'],
-        listenUrl: data['station'],
+        listenUrl: data['station']['listen_url'],
         totalListeners: data['listeners']['total'],
-        nowPlaying: data['now_playing']['song'],
-        nextPlaying: data['playing_next']['song']);
+        nowPlaying: Song.fromJson(data['now_playing']['song']),
+        nextPlaying: Song.fromJson(data['playing_next']['song']));
   }
 }
 
@@ -40,7 +40,7 @@ class Song {
 
   factory Song.fromJson(Map<String, dynamic> data) {
     return Song(
-        title: data['text'],
+        title: data['title'],
         artist: data['artist'],
         album: data['album'],
         genre: data['genre'],
