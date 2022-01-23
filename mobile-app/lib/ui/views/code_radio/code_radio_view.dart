@@ -30,11 +30,6 @@ class CodeRadioView extends StatelessWidget {
                   return const Center(child: CircularProgressIndicator());
                 },
               ),
-              bottomNavigationBar: BottomNavigationBar(items: const [
-                BottomNavigationBarItem(
-                    icon: Icon(Icons.play_arrow), label: 'play'),
-                BottomNavigationBarItem(icon: Icon(Icons.pause), label: 'pause')
-              ]),
             ));
   }
 
@@ -68,9 +63,7 @@ class CodeRadioView extends StatelessWidget {
               )
             ],
           ),
-          const LinearProgressIndicator(
-            value: 1,
-          ),
+          // StreamBuilder(builder: ).
           const Expanded(
               child: Align(
                   alignment: Alignment.bottomLeft,
@@ -85,6 +78,26 @@ class CodeRadioView extends StatelessWidget {
                 trailing: Image.network(radio.nextPlaying.artUrl),
               ),
             ),
+          ),
+
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+            children: [
+              IconButton(
+                onPressed: () {
+                  model.pauseUnpauseRadio();
+                },
+                icon: const Icon(Icons.play_arrow),
+                iconSize: 50,
+              ),
+              IconButton(
+                onPressed: () {
+                  model.pauseUnpauseRadio();
+                },
+                icon: const Icon(Icons.pause),
+                iconSize: 50,
+              )
+            ],
           )
         ],
       ),
