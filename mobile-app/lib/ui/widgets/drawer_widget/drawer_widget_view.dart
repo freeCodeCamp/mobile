@@ -67,10 +67,12 @@ class DrawerWidgetView extends StatelessWidget {
                 },
               ),
               buildDivider(),
-              const WebButton(
+              DrawerButton(
                 component: 'RADIO',
-                url: 'https://coderadio.freecodecamp.org/',
                 icon: Icons.radio,
+                route: () {
+                  model.routeComponent('CODERADIO', context);
+                },
               ),
               buildDivider(),
               const WebButton(
