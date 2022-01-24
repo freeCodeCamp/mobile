@@ -4,6 +4,7 @@ import 'package:freecodecamp/models/code-radio/code_radio_model.dart';
 import 'package:freecodecamp/ui/views/code_radio/code_radio_viemodel.dart';
 import 'package:freecodecamp/ui/widgets/drawer_widget/drawer_widget_view.dart';
 import 'package:stacked/stacked.dart';
+import 'dart:developer' as dev;
 
 class CodeRadioView extends StatelessWidget {
   const CodeRadioView({Key? key}) : super(key: key);
@@ -63,7 +64,12 @@ class CodeRadioView extends StatelessWidget {
               )
             ],
           ),
-          // StreamBuilder(builder: ).
+          StreamBuilder(
+              stream: model.player.positionStream,
+              builder: (context, snapshot) {
+                return LinearProgressIndicator(
+                    value: model.player.position.inSeconds / radio.duration);
+              }),
           const Expanded(
               child: Align(
                   alignment: Alignment.bottomLeft,
@@ -79,7 +85,6 @@ class CodeRadioView extends StatelessWidget {
               ),
             ),
           ),
-
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
             children: [

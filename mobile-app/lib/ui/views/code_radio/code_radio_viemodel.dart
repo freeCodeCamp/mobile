@@ -5,13 +5,11 @@ import 'package:freecodecamp/models/code-radio/code_radio_model.dart';
 import 'package:just_audio/just_audio.dart';
 import 'package:stacked/stacked.dart';
 import 'package:http/http.dart' as http;
-import 'dart:developer' as dev;
 
 class CodeRadioViewModel extends BaseViewModel with WidgetsBindingObserver {
   final _player = AudioPlayer();
 
-  int _navIndex = 0;
-  int get navIndex => _navIndex;
+  AudioPlayer get player => _player;
 
   Future<CodeRadio> initRadio() async {
     final http.Response response = await http.get(Uri.parse(
@@ -20,7 +18,7 @@ class CodeRadioViewModel extends BaseViewModel with WidgetsBindingObserver {
     if (response.statusCode == 200) {
       CodeRadio radio = CodeRadio.fromJson(jsonDecode(response.body));
 
-      toggleRadio(radio.listenUrl);
+      toggleRadio(radio);
 
       return radio;
     } else {
@@ -28,19 +26,18 @@ class CodeRadioViewModel extends BaseViewModel with WidgetsBindingObserver {
     }
   }
 
-  pauseUnpauseRadio() {
-    dev.log('getting executed');
-    dev.log(_player.playing.toString());
+  void pauseUnpauseRadio() {
     if (!_player.playing) {
-      _player.play();
+      initRadio();
     } else {
       _player.pause();
     }
   }
 
-  Future<void> toggleRadio(String url) async {
+  Future<void> toggleRadio(CodeRadio radio) async {
     await _player
-        .setAudioSource(AudioSource.uri(Uri.parse(url)), preload: true)
-        .then((value) => _player.play());
+        .setAudioSource(AudioSource.uri(Uri.parse(radio.listenUrl)),
+            preload: true, initialPosition: Duration(seconds: radio.elapsed))
+        .then((value) => {_player.play()});
   }
 }

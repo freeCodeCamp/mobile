@@ -3,6 +3,8 @@ class CodeRadio {
       {required this.id,
       required this.listenUrl,
       required this.totalListeners,
+      required this.duration,
+      required this.elapsed,
       required this.nowPlaying,
       required this.nextPlaying});
 
@@ -10,6 +12,9 @@ class CodeRadio {
   final String listenUrl;
 
   final int totalListeners;
+
+  final int duration;
+  final int elapsed;
 
   final Song nowPlaying;
   final Song nextPlaying;
@@ -19,6 +24,8 @@ class CodeRadio {
         id: data['station']['id'],
         listenUrl: data['station']['listen_url'],
         totalListeners: data['listeners']['total'],
+        elapsed: data['now_playing']['elapsed'],
+        duration: data['now_playing']['duration'],
         nowPlaying: Song.fromJson(data['now_playing']['song']),
         nextPlaying: Song.fromJson(data['playing_next']['song']));
   }
