@@ -40,21 +40,20 @@ class CodeRadioView extends StatelessWidget {
       padding: const EdgeInsets.all(16),
       child: Column(
         children: [
-          Image.network(
-            radio!.nowPlaying.artUrl,
-            width: 400,
-            height: 400,
+          Container(
+            constraints: const BoxConstraints(minHeight: 400, minWidth: 400),
+            color: const Color.fromRGBO(0x2A, 0x2A, 0x40, 1),
+            child: Image.network(
+              radio!.nowPlaying.artUrl,
+              fit: BoxFit.cover,
+            ),
           ),
-          Row(
-            children: [
-              Text(
-                radio.nowPlaying.title,
-                maxLines: 1,
-                overflow: TextOverflow.ellipsis,
-                style: const TextStyle(
-                    fontSize: 32, fontWeight: FontWeight.bold, height: 2),
-              )
-            ],
+          Text(
+            radio.nowPlaying.title,
+            maxLines: 1,
+            overflow: TextOverflow.ellipsis,
+            style: const TextStyle(
+                fontSize: 32, fontWeight: FontWeight.bold, height: 2),
           ),
           Row(
             children: [
@@ -67,8 +66,13 @@ class CodeRadioView extends StatelessWidget {
           StreamBuilder(
               stream: model.player.positionStream,
               builder: (context, snapshot) {
-                return LinearProgressIndicator(
-                    value: model.player.position.inSeconds / radio.duration);
+                dev.log(snapshot.data.toString());
+                return Padding(
+                  padding: const EdgeInsets.only(top: 8.0),
+                  child: LinearProgressIndicator(
+                      value: model.player.position.inSeconds /
+                          (radio.duration == 0 ? 1 : radio.duration)),
+                );
               }),
           const Expanded(
               child: Align(

@@ -36,8 +36,11 @@ class CodeRadioViewModel extends BaseViewModel with WidgetsBindingObserver {
 
   Future<void> toggleRadio(CodeRadio radio) async {
     await _player
-        .setAudioSource(AudioSource.uri(Uri.parse(radio.listenUrl)),
-            preload: true, initialPosition: Duration(seconds: radio.elapsed))
-        .then((value) => {_player.play()});
+        .setUrl(
+          radio.listenUrl,
+          preload: false,
+          initialPosition: Duration(seconds: radio.elapsed),
+        )
+        .then((value) => _player.play());
   }
 }
