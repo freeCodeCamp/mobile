@@ -31,7 +31,7 @@ class CodeRadioViewModel extends BaseViewModel {
     }
   }
 
-  void pauseUnpauseRadio(CodeRadio radio) {
+  void pauseUnpauseRadio() {
     if (!player.playing) {
       getNextSong();
     } else {
