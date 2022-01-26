@@ -1,10 +1,8 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:freecodecamp/models/code-radio/code_radio_model.dart';
 import 'package:freecodecamp/ui/views/code_radio/code_radio_viemodel.dart';
 import 'package:freecodecamp/ui/widgets/drawer_widget/drawer_widget_view.dart';
 import 'package:stacked/stacked.dart';
-import 'dart:developer' as dev;
 
 class CodeRadioView extends StatelessWidget {
   const CodeRadioView({Key? key}) : super(key: key);
@@ -43,7 +41,7 @@ class CodeRadioView extends StatelessWidget {
         children: [
           Container(
             constraints: const BoxConstraints(
-                minHeight: 400, minWidth: 400, maxHeight: 400, maxWidth: 400),
+                minHeight: 350, minWidth: 350, maxHeight: 350, maxWidth: 350),
             color: const Color.fromRGBO(0x2A, 0x2A, 0x40, 1),
             child: Image.network(
               radio!.nowPlaying.artUrl,
@@ -70,7 +68,7 @@ class CodeRadioView extends StatelessWidget {
               builder: (context, snapshot) {
                 model.desyncListener(
                     model.player.position.inSeconds, radio.elapsed);
-                if (model.player.position.inSeconds == radio.duration) {
+                if (model.player.position.inSeconds == radio.duration - 10) {
                   model.getNextSong();
                 }
                 return Padding(
@@ -80,18 +78,21 @@ class CodeRadioView extends StatelessWidget {
                           (radio.duration == 0 ? 1 : radio.duration)),
                 );
               }),
-          const Expanded(
-              child: Align(
-                  alignment: Alignment.bottomLeft,
-                  child: Text('Coming up:', style: TextStyle(fontSize: 24)))),
           Expanded(
             child: Align(
               alignment: Alignment.bottomCenter,
               child: ListTile(
-                title: Text(radio.nextPlaying.title),
-                subtitle: Text(radio.nextPlaying.artist),
+                title: const Text('Next'),
+                subtitle: Row(
+                  children: [
+                    Text(radio.nextPlaying.title +
+                        "\n" +
+                        radio.nextPlaying.album),
+                  ],
+                ),
                 tileColor: const Color.fromRGBO(0x2A, 0x2A, 0x40, 1),
-                trailing: Image.network(radio.nextPlaying.artUrl),
+                isThreeLine: true,
+                leading: Image.network(radio.nextPlaying.artUrl),
               ),
             ),
           ),
