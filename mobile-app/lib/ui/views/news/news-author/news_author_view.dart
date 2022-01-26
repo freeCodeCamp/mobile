@@ -93,10 +93,15 @@ class NewsAuthorView extends StatelessWidget {
         height: 175,
         decoration:
             BoxDecoration(border: Border.all(width: 2, color: Colors.white)),
-        child: Image.network(
-          author!.profileImage,
-          fit: BoxFit.cover,
-        ),
+        child: author?.profileImage == null
+            ? Image.asset(
+                'assets/images/placeholder-profile-img.png',
+                fit: BoxFit.cover,
+              )
+            : Image.network(
+                author!.profileImage,
+                fit: BoxFit.cover,
+              ),
       ),
     );
   }
