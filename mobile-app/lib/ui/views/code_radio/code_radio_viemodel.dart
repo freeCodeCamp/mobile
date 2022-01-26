@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'dart:convert';
+import 'dart:math';
 
 import 'package:flutter/material.dart';
 import 'package:freecodecamp/models/code-radio/code_radio_model.dart';
@@ -16,19 +17,7 @@ class CodeRadioViewModel extends BaseViewModel {
 
   bool recentlyCalledRadio = false;
 
-  Future<void> initBackgroundPlayer(CodeRadio radio) async {
-    AudioSource.uri(
-      Uri.parse(radio.listenUrl),
-      tag: MediaItem(
-        // Specify a unique ID for each media item:
-        id: UniqueKey().toString(),
-        // Metadata to display in the notification:
-        album: radio.nowPlaying.album,
-        title: radio.nowPlaying.title,
-        artUri: Uri.parse(radio.nowPlaying.artUrl),
-      ),
-    );
-  }
+  var randomId = Random();
 
   Future<CodeRadio> initRadio() async {
     final http.Response response = await http.get(Uri.parse(
@@ -39,8 +28,6 @@ class CodeRadioViewModel extends BaseViewModel {
       dev.log('WARNING CODERADIO IS CALLED!');
 
       toggleRadio(radio);
-
-      initBackgroundPlayer(radio);
 
       return radio;
     } else {
@@ -61,7 +48,19 @@ class CodeRadioViewModel extends BaseViewModel {
   }
 
   Future<void> toggleRadio(CodeRadio radio) async {
-    await player.setUrl(radio.listenUrl, preload: true);
+    await player.setAudioSource(
+        AudioSource.uri(
+          Uri.parse(radio.listenUrl),
+          tag: MediaItem(
+            // Specify a unique ID for each media item:
+            id: randomId.nextInt(100).toString(),
+            // Metadata to display in the notification:
+            album: radio.nowPlaying.album,
+            title: radio.nowPlaying.title,
+            artUri: Uri.parse(radio.nowPlaying.artUrl),
+          ),
+        ),
+        preload: true);
 
     player.play();
     player.seek(Duration(seconds: radio.elapsed));

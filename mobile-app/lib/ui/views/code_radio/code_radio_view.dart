@@ -68,7 +68,7 @@ class CodeRadioView extends StatelessWidget {
               builder: (context, snapshot) {
                 model.desyncListener(
                     model.player.position.inSeconds, radio.elapsed);
-                if (model.player.position.inSeconds == radio.duration - 10) {
+                if (model.player.position.inSeconds == radio.duration) {
                   model.getNextSong();
                 }
                 return Padding(
