@@ -37,13 +37,15 @@ class Song {
       required this.artist,
       required this.album,
       required this.genre,
-      required this.artUrl});
+      required this.artUrl,
+      required this.id});
 
   final String title;
   final String artist;
   final String album;
   final String genre;
   final String artUrl;
+  final String id;
 
   factory Song.fromJson(Map<String, dynamic> data) {
     return Song(
@@ -51,6 +53,7 @@ class Song {
         artist: data['artist'],
         album: data['album'],
         genre: data['genre'],
-        artUrl: data['art']);
+        artUrl: data['art'],
+        id: data['id']);
   }
 }

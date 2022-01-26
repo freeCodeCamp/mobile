@@ -1,8 +1,6 @@
 import 'dart:async';
 import 'dart:convert';
-import 'dart:math';
 
-import 'package:flutter/material.dart';
 import 'package:freecodecamp/models/code-radio/code_radio_model.dart';
 import 'package:just_audio/just_audio.dart';
 import 'package:just_audio_background/just_audio_background.dart';
@@ -16,8 +14,6 @@ class CodeRadioViewModel extends BaseViewModel {
   AudioPlayer get player => _player;
 
   bool recentlyCalledRadio = false;
-
-  var randomId = Random();
 
   Future<CodeRadio> initRadio() async {
     final http.Response response = await http.get(Uri.parse(
@@ -48,20 +44,21 @@ class CodeRadioViewModel extends BaseViewModel {
   }
 
   Future<void> toggleRadio(CodeRadio radio) async {
-    await player.setAudioSource(
-        AudioSource.uri(
-          Uri.parse(radio.listenUrl),
-          tag: MediaItem(
-            // Specify a unique ID for each media item:
-            id: randomId.nextInt(100).toString(),
-            // Metadata to display in the notification:
-            album: radio.nowPlaying.album,
-            title: radio.nowPlaying.title,
-            artUri: Uri.parse(radio.nowPlaying.artUrl),
-          ),
-        ),
-        preload: true);
+    if (player.playing) {
+      player.stop();
+    }
 
+    AudioSource audio = AudioSource.uri(
+      Uri.parse(radio.listenUrl),
+      tag: MediaItem(
+        id: radio.nowPlaying.id,
+        album: radio.nowPlaying.album,
+        title: radio.nowPlaying.title,
+        artUri: Uri.parse(radio.nowPlaying.artUrl),
+      ),
+    );
+
+    await player.setAudioSource(audio, preload: true);
     player.play();
     player.seek(Duration(seconds: radio.elapsed));
   }

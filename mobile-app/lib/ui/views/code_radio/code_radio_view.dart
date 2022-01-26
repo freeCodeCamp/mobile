@@ -35,13 +35,18 @@ class CodeRadioView extends StatelessWidget {
 
   Widget template(
       BuildContext ctxt, CodeRadioViewModel model, CodeRadio? radio) {
+    double artSize = MediaQuery.of(ctxt).size.width * 0.75;
+
     return Container(
       padding: const EdgeInsets.all(16),
       child: Column(
         children: [
           Container(
-            constraints: const BoxConstraints(
-                minHeight: 350, minWidth: 350, maxHeight: 350, maxWidth: 350),
+            constraints: BoxConstraints(
+                minHeight: artSize,
+                minWidth: artSize,
+                maxHeight: artSize,
+                maxWidth: artSize),
             color: const Color.fromRGBO(0x2A, 0x2A, 0x40, 1),
             child: Image.network(
               radio!.nowPlaying.artUrl,
@@ -85,9 +90,13 @@ class CodeRadioView extends StatelessWidget {
                 title: const Text('Next'),
                 subtitle: Row(
                   children: [
-                    Text(radio.nextPlaying.title +
-                        "\n" +
-                        radio.nextPlaying.album),
+                    Expanded(
+                      child: Text(
+                        radio.nextPlaying.title +
+                            "\n" +
+                            radio.nextPlaying.album,
+                      ),
+                    ),
                   ],
                 ),
                 tileColor: const Color.fromRGBO(0x2A, 0x2A, 0x40, 1),
