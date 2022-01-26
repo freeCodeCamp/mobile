@@ -13,6 +13,7 @@ class CodeRadioView extends StatelessWidget {
   Widget build(BuildContext context) {
     return ViewModelBuilder<CodeRadioViewModel>.reactive(
         viewModelBuilder: () => CodeRadioViewModel(),
+        onDispose: (model) => model.disposePlayer(),
         builder: (context, model, child) => Scaffold(
               backgroundColor: const Color(0xFF0a0a23),
               appBar: AppBar(
@@ -41,7 +42,8 @@ class CodeRadioView extends StatelessWidget {
       child: Column(
         children: [
           Container(
-            constraints: const BoxConstraints(minHeight: 400, minWidth: 400),
+            constraints: const BoxConstraints(
+                minHeight: 400, minWidth: 400, maxHeight: 400, maxWidth: 400),
             color: const Color.fromRGBO(0x2A, 0x2A, 0x40, 1),
             child: Image.network(
               radio!.nowPlaying.artUrl,
@@ -66,7 +68,15 @@ class CodeRadioView extends StatelessWidget {
           StreamBuilder(
               stream: model.player.positionStream,
               builder: (context, snapshot) {
-                dev.log(snapshot.data.toString());
+                model.desyncListener(
+                    model.player.position.inSeconds, radio.elapsed);
+                dev.log(radio.elapsed.toString());
+                // dev.log(radio.duration.toString() +
+                //     ' ' +
+                //     model.player.position.inSeconds.toString());
+                if (model.player.position.inSeconds == radio.duration) {
+                  model.getNextSong();
+                }
                 return Padding(
                   padding: const EdgeInsets.only(top: 8.0),
                   child: LinearProgressIndicator(
@@ -94,14 +104,14 @@ class CodeRadioView extends StatelessWidget {
             children: [
               IconButton(
                 onPressed: () {
-                  model.pauseUnpauseRadio();
+                  model.pauseUnpauseRadio(radio);
                 },
                 icon: const Icon(Icons.play_arrow),
                 iconSize: 50,
               ),
               IconButton(
                 onPressed: () {
-                  model.pauseUnpauseRadio();
+                  model.pauseUnpauseRadio(radio);
                 },
                 icon: const Icon(Icons.pause),
                 iconSize: 50,
