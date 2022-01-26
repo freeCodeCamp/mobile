@@ -11,7 +11,6 @@ class CodeRadioView extends StatelessWidget {
   Widget build(BuildContext context) {
     return ViewModelBuilder<CodeRadioViewModel>.reactive(
         viewModelBuilder: () => CodeRadioViewModel(),
-        onDispose: (model) => model.disposePlayer(),
         builder: (context, model, child) => Scaffold(
               backgroundColor: const Color(0xFF0a0a23),
               appBar: AppBar(
@@ -80,49 +79,41 @@ class CodeRadioView extends StatelessWidget {
                   padding: const EdgeInsets.only(top: 8.0),
                   child: LinearProgressIndicator(
                       value: model.player.position.inSeconds /
-                          (radio.duration == 0 ? 1 : radio.duration)),
+                          (radio.duration == 0 ? 1 : radio.duration - 10)),
                 );
               }),
-          Expanded(
-            child: Align(
-              alignment: Alignment.bottomCenter,
-              child: ListTile(
-                title: const Text('Next'),
-                subtitle: Row(
-                  children: [
-                    Expanded(
-                      child: Text(
-                        radio.nextPlaying.title +
-                            "\n" +
-                            radio.nextPlaying.album,
-                      ),
+          Padding(
+            padding: const EdgeInsets.only(top: 16),
+            child: ListTile(
+              title: const Text('Next'),
+              subtitle: Row(
+                children: [
+                  Expanded(
+                    child: Text(
+                      radio.nextPlaying.title + "\n" + radio.nextPlaying.album,
                     ),
-                  ],
-                ),
-                tileColor: const Color.fromRGBO(0x2A, 0x2A, 0x40, 1),
-                isThreeLine: true,
-                leading: Image.network(radio.nextPlaying.artUrl),
+                  ),
+                ],
               ),
+              tileColor: const Color.fromRGBO(0x2A, 0x2A, 0x40, 1),
+              isThreeLine: true,
+              leading: Image.network(radio.nextPlaying.artUrl),
             ),
           ),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-            children: [
-              IconButton(
+          Container(
+            width: MediaQuery.of(ctxt).size.width,
+            padding: const EdgeInsets.only(top: 16),
+            child: ElevatedButton.icon(
+                style: ButtonStyle(
+                  backgroundColor: MaterialStateProperty.all<Color>(
+                      const Color.fromRGBO(0x2A, 0x2A, 0x40, 1)),
+                ),
                 onPressed: () {
                   model.pauseUnpauseRadio(radio);
                 },
-                icon: const Icon(Icons.play_arrow),
-                iconSize: 50,
-              ),
-              IconButton(
-                onPressed: () {
-                  model.pauseUnpauseRadio(radio);
-                },
-                icon: const Icon(Icons.pause),
-                iconSize: 50,
-              )
-            ],
+                icon:
+                    Icon(model.player.playing ? Icons.play_arrow : Icons.pause),
+                label: const Text('PAUSE')),
           )
         ],
       ),

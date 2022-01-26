@@ -39,10 +39,6 @@ class CodeRadioViewModel extends BaseViewModel {
     }
   }
 
-  void disposePlayer() {
-    _player.dispose();
-  }
-
   Future<void> toggleRadio(CodeRadio radio) async {
     if (player.playing) {
       player.stop();
