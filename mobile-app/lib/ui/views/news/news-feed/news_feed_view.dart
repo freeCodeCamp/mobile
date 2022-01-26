@@ -174,12 +174,20 @@ class NewsFeedView extends StatelessWidget {
                         width: 45,
                         height: 45,
                         color: const Color.fromRGBO(0x2A, 0x2A, 0x40, 1)),
-                    Image.network(
-                      articles[i].profileImage,
-                      width: 45,
-                      height: 45,
-                      fit: BoxFit.cover,
-                    )
+                    // ignore: unnecessary_null_comparison
+                    articles[i].profileImage == null
+                        ? Image.asset(
+                            'assets/images/placeholder-profile-img.png',
+                            width: 45,
+                            height: 45,
+                            fit: BoxFit.cover,
+                          )
+                        : Image.network(
+                            articles[i].profileImage,
+                            width: 45,
+                            height: 45,
+                            fit: BoxFit.cover,
+                          )
                   ],
                 ),
               ),

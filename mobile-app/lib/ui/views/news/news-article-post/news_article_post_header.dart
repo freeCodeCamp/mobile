@@ -70,13 +70,20 @@ class _NewsArticlePostHeaderState extends State<NewsArticlePostHeader> {
                   children: [
                     Padding(
                       padding: const EdgeInsets.all(16),
-                      child: FadeInImage.assetNetwork(
-                          height: 50,
-                          width: 50,
-                          fit: BoxFit.cover,
-                          placeholder:
+                      // ignore: unnecessary_null_comparison
+                      child: article.profileImage == null
+                          ? Image.asset(
                               'assets/images/placeholder-profile-img.png',
-                          image: article.profileImage),
+                              height: 50,
+                              width: 50,
+                              fit: BoxFit.cover,
+                            )
+                          : Image.network(
+                              article.profileImage,
+                              height: 50,
+                              width: 50,
+                              fit: BoxFit.cover,
+                            ),
                     ),
                     Expanded(
                         child: Container(
