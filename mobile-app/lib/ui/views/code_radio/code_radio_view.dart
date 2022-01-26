@@ -70,10 +70,6 @@ class CodeRadioView extends StatelessWidget {
               builder: (context, snapshot) {
                 model.desyncListener(
                     model.player.position.inSeconds, radio.elapsed);
-                dev.log(radio.elapsed.toString());
-                // dev.log(radio.duration.toString() +
-                //     ' ' +
-                //     model.player.position.inSeconds.toString());
                 if (model.player.position.inSeconds == radio.duration) {
                   model.getNextSong();
                 }

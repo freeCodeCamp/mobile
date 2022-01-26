@@ -28,7 +28,7 @@ class CodeRadioViewModel extends BaseViewModel with WidgetsBindingObserver {
 
   void pauseUnpauseRadio(CodeRadio radio) {
     if (!player.playing) {
-      player.play();
+      getNextSong();
     } else {
       player.pause();
     }
