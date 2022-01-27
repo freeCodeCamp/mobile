@@ -15,6 +15,7 @@ class NewsBookmarkViewWidget extends StatelessWidget {
         builder: (context, model, child) => Padding(
               padding: const EdgeInsets.all(8),
               child: TextButton.icon(
+                key: const Key('bookmark_btn'),
                 onPressed: () {
                   model.bookmarkAndUnbookmark(article);
                 },

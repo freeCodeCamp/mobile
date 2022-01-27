@@ -32,6 +32,7 @@ ListView populateListViewModel(NewsBookmarkModel model) {
       itemCount: model.count,
       itemBuilder: (context, index) {
         return ConstrainedBox(
+            key: Key('bookmark_article_$index'),
             constraints: const BoxConstraints(minHeight: 150),
             child: Container(
                 decoration: const BoxDecoration(

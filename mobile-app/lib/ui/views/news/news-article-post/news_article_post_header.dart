@@ -55,8 +55,11 @@ class _NewsArticlePostHeaderState extends State<NewsArticlePostHeader> {
               width: MediaQuery.of(context).size.width,
               child: Padding(
                 padding: const EdgeInsets.all(16.0),
-                child: Text(article.title,
-                    style: const TextStyle(fontSize: 24, color: Colors.white)),
+                child: Text(
+                  article.title,
+                  style: const TextStyle(fontSize: 24, color: Colors.white),
+                  key: const Key('title'),
+                ),
               ),
             )
           ],
