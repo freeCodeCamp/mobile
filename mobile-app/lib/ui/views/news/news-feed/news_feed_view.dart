@@ -88,6 +88,7 @@ class NewsFeedView extends StatelessWidget {
               height: 3,
             ),
         itemBuilder: (BuildContext contex, int i) => NewsFeedLazyLoading(
+            key: Key(model.articles[i].id),
             articleCreated: () {
               SchedulerBinding.instance!.addPostFrameCallback(
                   (timeStamp) => model.handleArticleLazyLoading(i));

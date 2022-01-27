@@ -1,10 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:freecodecamp/main.dart' as app;
 import 'package:freecodecamp/ui/views/news/news-article-post/news_article_post_header.dart';
 import 'package:freecodecamp/ui/views/news/news-feed/news_feed_lazyloading.dart';
 import 'package:integration_test/integration_test.dart';
-
-import 'package:freecodecamp/main.dart' as app;
+import 'package:path/path.dart' as path;
+import 'package:sqflite/sqflite.dart';
 
 void main() {
   IntegrationTestWidgetsFlutterBinding.ensureInitialized();
@@ -17,6 +18,8 @@ void main() {
 
       // Tap on the first article
       final Finder firstArticle = find.byType(NewsFeedLazyLoading).first;
+      final ValueKey firstArticleKey =
+          tester.firstWidget<NewsFeedLazyLoading>(firstArticle).key! as ValueKey;
       expect(firstArticle, findsOneWidget);
       await tester.tap(firstArticle);
       await tester.pumpAndSettle();
@@ -32,8 +35,6 @@ void main() {
       expect(articleAuthor, findsOneWidget);
       Text title = tester.firstWidget(articleTitle);
       String author = tester.firstWidget<Text>(articleAuthor).data ?? '';
-      tester.printToConsole(title.data ?? '');
-      tester.printToConsole(author.split('Written by ')[1]);
       await tester.tap(bookmarkButton);
       await tester.pumpAndSettle();
 
@@ -59,6 +60,19 @@ void main() {
             .split('Written by: ')[1],
         author.split('Written by ')[1],
       );
+
+      // Check database if record exists
+      final db = await openDatabase(
+          path.join(await getDatabasesPath(), 'bookmarked-article.db'));
+      final List<Map<String, dynamic>> result = await db.query(
+        'bookmarks',
+        where: 'articleId = ?',
+        whereArgs: [firstArticleKey.value],
+      );
+      expect(result.length, 1);
+      expect(result[0]['articleId'], firstArticleKey.value);
+      expect(result[0]['articleTitle'], title.data);
+      expect(result[0]['authorName'], author.split('Written by ')[1]);
     });
   });
 }
