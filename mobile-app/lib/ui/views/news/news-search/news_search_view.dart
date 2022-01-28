@@ -16,7 +16,7 @@ class NewsSearchView extends StatelessWidget {
                 title: TextField(
               controller: model.searchbarController,
               decoration: const InputDecoration(
-                  hintText: "SEARCH ARTICLE...",
+                  hintText: 'SEARCH ARTICLE...',
                   fillColor: Color.fromRGBO(0x2A, 0x2A, 0x40, 1),
                   filled: true),
               onChanged: (value) {
@@ -55,7 +55,7 @@ class NewsSearchView extends StatelessWidget {
                               ),
                               onTap: () => {
                                 model.navigateToArticle(
-                                    current[index].data["objectID"])
+                                    current[index].data['objectID'])
                               },
                             );
                           }),

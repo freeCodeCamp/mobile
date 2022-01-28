@@ -60,7 +60,7 @@ class Episodes {
 
   @override
   String toString() {
-    return """Episodes {
+    return '''Episodes {
       guid: $guid, 
       podcastId: $podcastId, 
       title: $title, 
@@ -70,6 +70,6 @@ class Episodes {
       imageUrl: $imageUrl,
       duration: $duration, 
       downloaded: $downloaded
-    }""";
+    }''';
   }
 }

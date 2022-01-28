@@ -128,7 +128,7 @@ class EpisodeListView extends StatelessWidget {
                         child: CircularProgressIndicator.adaptive());
                   }
                   if (snapshot.hasError) {
-                    return Text("${snapshot.error}");
+                    return Text('${snapshot.error}');
                   }
                   // ignore: todo
                   // TODO: Read up more on perf issues with shrinkWrap and check
@@ -210,7 +210,7 @@ class PodcastEpisodeTemplate extends StatelessWidget {
   Widget build(BuildContext context) {
     return InkWell(
       onTap: () {
-        log("Clicked ${episode.title}");
+        log('Clicked ${episode.title}');
         Navigator.push(
           context,
           MaterialPageRoute(

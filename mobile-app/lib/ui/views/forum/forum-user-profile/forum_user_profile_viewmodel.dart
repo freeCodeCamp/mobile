@@ -58,7 +58,7 @@ class ForumUserProfileViewModel extends BaseViewModel {
         title: 'Change Email',
         mainButtonTitle: 'Change Email',
         description:
-            "We will send an email to your current address. Please follow the confirmation instructions.",
+            'We will send an email to your current address. Please follow the confirmation instructions.',
         data: DialogType.authform);
 
     if (response!.confirmed) {
@@ -94,7 +94,7 @@ class ForumUserProfileViewModel extends BaseViewModel {
   // dio has to be used for the image transfer, atleast it makes it easier.
 
   Future<void> sendNewProfilePicture(String cachePath) async {
-    await dotenv.load(fileName: ".env");
+    await dotenv.load(fileName: '.env');
 
     dio.Response response;
 
@@ -103,16 +103,16 @@ class ForumUserProfileViewModel extends BaseViewModel {
     dioInstnace.options.baseUrl = await ForumConnect.getCurrentUrl();
 
     dio.FormData formData = dio.FormData.fromMap({
-      "type": "avatar",
-      "user_id": _user.userId,
-      "files[]": await dio.MultipartFile.fromFile(cachePath)
+      'type': 'avatar',
+      'user_id': _user.userId,
+      'files[]': await dio.MultipartFile.fromFile(cachePath)
     });
 
     Map<String, dynamic> headers = await ForumConnect.setHeaderValues();
 
     try {
       response = await dioInstnace.post(
-        "/uploads.json",
+        '/uploads.json',
         data: formData,
         options: dio.Options(
           headers: headers,
@@ -123,7 +123,7 @@ class ForumUserProfileViewModel extends BaseViewModel {
       );
 
       if (response.statusCode == 200) {
-        var uploadId = response.data["id"];
+        var uploadId = response.data['id'];
         refreshAvatar(uploadId);
       }
     } on dio.DioError catch (e) {
@@ -140,8 +140,8 @@ class ForumUserProfileViewModel extends BaseViewModel {
     String apiUsername = prefs.getString('username') as String;
 
     Map<String, dynamic> body = {
-      "upload_id": uploadId.toString(),
-      "type": "gravatar"
+      'upload_id': uploadId.toString(),
+      'type': 'gravatar'
     };
 
     final response = await ForumConnect.connectAndPut(
@@ -158,7 +158,7 @@ class ForumUserProfileViewModel extends BaseViewModel {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     String username = prefs.getString('username') as String;
 
-    Map<String, dynamic> body = {"email": email};
+    Map<String, dynamic> body = {'email': email};
 
     final response = await ForumConnect.connectAndPut(
         '/u/$username/preferences/email', body);
@@ -176,7 +176,7 @@ class ForumUserProfileViewModel extends BaseViewModel {
         variant: DialogType.inputForm,
         title: 'Change Name',
         mainButtonTitle: 'Change Name',
-        description: "Your full name (optional)",
+        description: 'Your full name (optional)',
         data: DialogType.authform);
 
     if (response!.confirmed) {
@@ -189,7 +189,7 @@ class ForumUserProfileViewModel extends BaseViewModel {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     String username = prefs.getString('username') as String;
 
-    Map<String, dynamic> body = {"name": name};
+    Map<String, dynamic> body = {'name': name};
 
     final response = await ForumConnect.connectAndPut('/u/$username', body);
 

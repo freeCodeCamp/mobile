@@ -114,7 +114,6 @@ class MultipleLoggerOutput extends LogOutput {
       try {
         logOutput.output(event);
       } catch (e) {
-        // ignore: avoid_print
         print('Log output failed');
       }
     }

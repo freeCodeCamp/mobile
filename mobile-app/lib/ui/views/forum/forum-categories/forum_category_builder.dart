@@ -35,7 +35,7 @@ class ForumCategoryBuilder extends StatelessWidget {
                                     left: BorderSide(
                                         width: 5,
                                         color: HexColor(
-                                          "#" + categories![i].color,
+                                          '#' + categories![i].color,
                                         )))),
                             child: Column(
                               children: [
@@ -59,7 +59,7 @@ class ForumCategoryBuilder extends StatelessWidget {
                                             child: Html(
                                               data: categories[i].description,
                                               style: {
-                                                "body": Style(
+                                                'body': Style(
                                                     color: Colors.white,
                                                     fontSize: FontSize.rem(1.2))
                                               },

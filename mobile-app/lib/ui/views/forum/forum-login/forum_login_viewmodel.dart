@@ -87,7 +87,7 @@ class ForumLoginModel extends BaseViewModel {
     if (response!.confirmed && response.data.length == 6) {
       SharedPreferences prefs = await SharedPreferences.getInstance();
       String authCode = response.data;
-      prefs.setString("authCode", authCode);
+      prefs.setString('authCode', authCode);
 
       discourseAuth2(csrf, username, password, cookie);
     }
@@ -105,12 +105,12 @@ class ForumLoginModel extends BaseViewModel {
     if (res!.confirmed) {
       String login = res.data;
 
-      Map<String, String> payload = {"login": login};
+      Map<String, String> payload = {'login': login};
 
       final response =
          await ForumConnect.connectAndPost('/session/forgot_password', {}, payload);
 
-      bool success = jsonDecode(response.body)["user_found"];
+      bool success = jsonDecode(response.body)['user_found'];
 
       showPasswodResetStateDialog(success);
 
@@ -123,7 +123,7 @@ class ForumLoginModel extends BaseViewModel {
       variant: DialogType.buttonForm2,
       title: success ?  'Success' : 'Error' ,
       description:
-          success ? "An email will be sent shortly with instructions on how to reset your password." : "We could not find an account linked to that email address or username."
+          success ? 'An email will be sent shortly with instructions on how to reset your password.' : 'We could not find an account linked to that email address or username.'
       mainButtonTitle: 'OK',
       data: DialogType.buttonForm2
     );
@@ -131,7 +131,7 @@ class ForumLoginModel extends BaseViewModel {
 
   bool noAuthError(authBody) {
     Map<String, dynamic> body = json.decode(authBody);
-    if (body.containsKey("error")) {
+    if (body.containsKey('error')) {
       return false;
     }
     return true;
@@ -153,16 +153,16 @@ class ForumLoginModel extends BaseViewModel {
 
   Future<void> discourseAuth2(csrf, username, password, cookie) async {
     Map<String, String> headers = {
-      "X-CSRF-Token": csrf,
-      "Cookie": cookie,
+      'X-CSRF-Token': csrf,
+      'Cookie': cookie,
       'X-Requested-With': 'XMLHttpRequest',
       'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8'
     };
 
     SharedPreferences prefs = await SharedPreferences.getInstance();
 
-    if (prefs.getString("authCode") != null) {
-      String authCode = prefs.get("authCode") as String;
+    if (prefs.getString('authCode') != null) {
+      String authCode = prefs.get('authCode') as String;
 
       String creds = '?login=$username&password=$password';
       String auth = '&second_factor_token=$authCode&second_factor_method=1';
@@ -188,7 +188,7 @@ class ForumLoginModel extends BaseViewModel {
         show2AuthDialog(csrf, username, password, cookie);
       }
 
-      prefs.remove("authCode");
+      prefs.remove('authCode');
     } else {
       show2AuthDialog(csrf, username, password, cookie);
     }
@@ -196,8 +196,8 @@ class ForumLoginModel extends BaseViewModel {
 
   Future<dynamic> discourseAuth(csrf, username, password, cookie) async {
     Map<String, String> headers = {
-      "X-CSRF-Token": csrf,
-      "Cookie": cookie,
+      'X-CSRF-Token': csrf,
+      'Cookie': cookie,
       'X-Requested-With': 'XMLHttpRequest',
       'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8'
     };
@@ -237,13 +237,13 @@ class ForumLoginModel extends BaseViewModel {
       _hasPasswordError = false;
       _hasAuthError = false;
       _hasUsernameError = true;
-      _errorMessage = "Please fill in a username";
+      _errorMessage = 'Please fill in a username';
       notifyListeners();
     } else if (password.isEmpty) {
       _hasUsernameError = false;
       _hasAuthError = false;
       _hasPasswordError = true;
-      _errorMessage = "Please fill in a password";
+      _errorMessage = 'Please fill in a password';
       notifyListeners();
     } else {
       notifyListeners();

@@ -14,7 +14,7 @@ class ForumSearchView extends StatelessWidget {
               automaticallyImplyLeading: false,
               title: TextField(
                 decoration: const InputDecoration(
-                    hintText: "SEARCH TOPIC...",
+                    hintText: 'SEARCH TOPIC...',
                     hintStyle: TextStyle(color: Colors.white),
                     fillColor: Color.fromRGBO(0x2A, 0x2A, 0x40, 1),
                     filled: true),
