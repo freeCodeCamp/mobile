@@ -118,6 +118,7 @@ class ForumLoginModel extends BaseViewModel {
   }
 
   Future showPasswodResetStateDialog(bool success) async {
+    // ignore: unused_local_variable
     DialogResponse? res = await _dialogService.showCustomDialog(
       variant: DialogType.buttonForm2,
       title: success ?  'Success' : 'Error' ,

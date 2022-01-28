@@ -21,6 +21,7 @@ class ForumUserProfileViewModel extends BaseViewModel {
   late String _baseUrl;
   String get baseUrl => _baseUrl;
 
+  // ignore: unused_field
   late String _username;
 
   final TextEditingController _emailController = TextEditingController();
@@ -93,8 +94,6 @@ class ForumUserProfileViewModel extends BaseViewModel {
   // dio has to be used for the image transfer, atleast it makes it easier.
 
   Future<void> sendNewProfilePicture(String cachePath) async {
-    SharedPreferences prefs = await SharedPreferences.getInstance();
-
     await dotenv.load(fileName: ".env");
 
     dio.Response response;

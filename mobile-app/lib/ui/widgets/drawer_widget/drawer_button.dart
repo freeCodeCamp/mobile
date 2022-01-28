@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:freecodecamp/ui/widgets/drawer_widget/drawer_widget_viewmodel.dart';
 
 class DrawerButton extends StatefulWidget {
   const DrawerButton({

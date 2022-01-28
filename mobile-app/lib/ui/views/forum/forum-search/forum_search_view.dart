@@ -1,4 +1,3 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:freecodecamp/models/forum/forum_search_model.dart';
 import 'package:freecodecamp/ui/views/forum/forum-search/forum_search_viewmodel.dart';

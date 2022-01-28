@@ -4,7 +4,6 @@ import 'package:flutter_syntax_view/flutter_syntax_view.dart';
 import 'package:freecodecamp/ui/views/news/news-article-post/news_article_post_header.dart';
 import 'package:freecodecamp/ui/views/news/news-article-post/news_article_post_view.dart';
 import 'package:html/dom.dart' as dom;
-import 'package:flutter_html/html_parser.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:youtube_player_iframe/youtube_player_iframe.dart';
 

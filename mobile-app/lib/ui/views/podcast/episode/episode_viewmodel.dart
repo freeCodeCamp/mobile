@@ -2,7 +2,6 @@ import 'dart:developer';
 import 'dart:io';
 
 import 'package:dio/dio.dart';
-import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:freecodecamp/app/app.locator.dart';
 import 'package:freecodecamp/models/podcasts/episodes_model.dart';
 import 'package:freecodecamp/models/podcasts/podcasts_model.dart';
@@ -46,6 +45,7 @@ class EpisodeViewModel extends BaseViewModel {
     notifyListeners();
     log('DOWNLOADING... $uri');
     log("USER AGENT ${FkUserAgent.userAgent}");
+    // ignore: unused_local_variable
     var response = await dio.download(uri,
         appDir.path + '/episodes/' + podcast.id + '/' + episode.guid + '.mp3',
         onReceiveProgress: (int recevied, int total) {
