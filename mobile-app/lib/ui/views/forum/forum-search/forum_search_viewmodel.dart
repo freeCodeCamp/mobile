@@ -57,8 +57,8 @@ class ForumSearchModel extends BaseViewModel {
             title: posts[i]['title'],
             postLikeCount: posts[i]['like_count'],
             postUsername: posts[i]['username'],
-            topicId: posts[i]["id"],
-            slug: posts[i]["slug"]));
+            topicId: posts[i]['id'],
+            slug: posts[i]['slug']));
       }
       dev.log(searchedPosts.toString());
       return searchedPosts;

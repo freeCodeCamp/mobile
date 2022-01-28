@@ -1,4 +1,3 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:freecodecamp/models/forum/forum_post_model.dart';
 import 'package:freecodecamp/ui/views/forum/forum-user-profile/forum_user_profile_viewmodel.dart';
@@ -35,19 +34,19 @@ class ForumUserProfileView extends StatelessWidget {
       children: [
         const ListTile(
           title: Text(
-            "Account",
+            'Account',
             style: TextStyle(fontWeight: FontWeight.bold, fontSize: 24),
           ),
         ),
         ListTile(
           title: const Text(
-            "Username",
+            'Username',
             style: TextStyle(fontSize: 20),
           ),
           subtitle: Text('People can mention you as @' + model.user.username),
         ),
         const ListTile(
-          title: Text("Profile Picture", style: TextStyle(fontSize: 20)),
+          title: Text('Profile Picture', style: TextStyle(fontSize: 20)),
         ),
         ListTile(
           leading: Stack(
@@ -84,7 +83,7 @@ class ForumUserProfileView extends StatelessWidget {
           ),
         ),
         ListTile(
-          title: const Text("Email", style: TextStyle(fontSize: 20)),
+          title: const Text('Email', style: TextStyle(fontSize: 20)),
           isThreeLine: true,
           subtitle: Column(
             children: [
@@ -124,7 +123,7 @@ class ForumUserProfileView extends StatelessWidget {
               )),
         )),
         ListTile(
-          title: const Text("Name",
+          title: const Text('Name',
               style: TextStyle(color: Colors.white, fontSize: 20)),
           subtitle: Text(
             model.user.name,

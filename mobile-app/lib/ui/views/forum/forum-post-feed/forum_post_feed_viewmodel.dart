@@ -26,8 +26,8 @@ class ForumPostFeedModel extends BaseViewModel {
         '/c/$slug/$id?page=${_pageNumber.toString()}');
 
     if (response.statusCode == 200) {
-      var topics = json.decode(response.body)["topic_list"]["topics"];
-      var images = json.decode(response.body)["users"];
+      var topics = json.decode(response.body)['topic_list']['topics'];
+      var images = json.decode(response.body)['users'];
       for (int i = 0; i < topics.length; i++) {
         posts.add(PostModel.fromTopicFeedJson(topics[i], images));
       }

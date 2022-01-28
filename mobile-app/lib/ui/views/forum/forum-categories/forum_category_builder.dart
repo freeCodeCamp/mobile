@@ -1,4 +1,3 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_html/flutter_html.dart';
 import 'package:freecodecamp/models/forum/forum_category_model.dart';
@@ -36,7 +35,7 @@ class ForumCategoryBuilder extends StatelessWidget {
                                     left: BorderSide(
                                         width: 5,
                                         color: HexColor(
-                                          "#" + categories![i].color,
+                                          '#' + categories![i].color,
                                         )))),
                             child: Column(
                               children: [
@@ -60,7 +59,7 @@ class ForumCategoryBuilder extends StatelessWidget {
                                             child: Html(
                                               data: categories[i].description,
                                               style: {
-                                                "body": Style(
+                                                'body': Style(
                                                     color: Colors.white,
                                                     fontSize: FontSize.rem(1.2))
                                               },

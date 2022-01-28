@@ -1,5 +1,4 @@
 import 'dart:convert';
-import 'dart:developer' as dev;
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:freecodecamp/app/app.locator.dart';
 import 'package:freecodecamp/app/app.router.dart';
@@ -36,13 +35,13 @@ class NewsFeedModel extends BaseViewModel {
   }
 
   Future<List<Article>> fetchArticles(String slug, String author) async {
-    await dotenv.load(fileName: ".env");
+    await dotenv.load(fileName: '.env');
 
     String hasSlug = slug != '' ? '&filter=tag:$slug' : '';
     String fromAuthor = author != '' ? '&filter=author:$author' : '';
     String page = '&page=' + _pageNumber.toString();
     String par =
-        "&fields=title,url,feature_image,slug,published_at,id&include=tags,authors";
+        '&fields=title,url,feature_image,slug,published_at,id&include=tags,authors';
     String concact = page + par + hasSlug + fromAuthor;
 
     String url =

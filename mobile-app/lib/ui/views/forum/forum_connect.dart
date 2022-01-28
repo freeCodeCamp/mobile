@@ -9,7 +9,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 
 class ForumConnect {
   static Future<String> getCurrentUrl() async {
-    await dotenv.load(fileName: ".env");
+    await dotenv.load(fileName: '.env');
 
     String clientInDevMode =
         dotenv.get('DEVELOPMENTMODE', fallback: 'false').toLowerCase();
@@ -31,7 +31,7 @@ class ForumConnect {
       'Accept': 'application/json'
     };
 
-    await dotenv.load(fileName: ".env");
+    await dotenv.load(fileName: '.env');
 
     String clientInDevMode =
         dotenv.get('DEVELOPMENTMODE', fallback: 'false').toLowerCase();

@@ -25,7 +25,7 @@ class BrowserView extends StatelessWidget {
             },
             child: WebView(
               initialUrl: url,
-              userAgent: "random",
+              userAgent: 'random',
               javascriptMode: JavascriptMode.unrestricted,
               onWebViewCreated: viewModel.setController,
             ),

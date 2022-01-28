@@ -13,7 +13,7 @@ class NewsAuthorViewModel extends BaseViewModel {
   Future<Author> fetchAuthor(String authorSlug) async {
     // Load the news url and key
 
-    await dotenv.load(fileName: ".env");
+    await dotenv.load(fileName: '.env');
 
     String url = dotenv.get('NEWSURL', fallback: 'failed');
     String key = dotenv.get('NEWSKEY', fallback: 'failed');
@@ -32,7 +32,7 @@ class NewsAuthorViewModel extends BaseViewModel {
       dev.log(queryUrl);
       return Author.toAuthorFromJson(jsonDecode(response.body)['authors'][0]);
     } else {
-      throw Exception(response.body + "\n Author: $authorSlug");
+      throw Exception(response.body + '\n Author: $authorSlug');
     }
   }
 }

@@ -26,7 +26,7 @@ class PodcastsDatabaseService {
       migrationFiles: ['1_create_db_schema.sql'],
       verbose: true,
     );
-    log("FINISHED LOADING MIGRATIONS");
+    log('FINISHED LOADING MIGRATIONS');
   }
 
   // PODCAST QUERIES
@@ -73,7 +73,7 @@ class PodcastsDatabaseService {
             numEps: podcast.episodes?.length,
           ).toJson(),
           conflictAlgorithm: ConflictAlgorithm.replace);
-      log("Added Podcast: ${podcast.title}");
+      log('Added Podcast: ${podcast.title}');
     } catch (e) {
       log('Could not insert the podcast: $e');
     }
@@ -133,7 +133,7 @@ class PodcastsDatabaseService {
             downloaded: false,
           ).toJson(),
           conflictAlgorithm: ConflictAlgorithm.ignore);
-      log("Added Episode: ${episode.title}");
+      log('Added Episode: ${episode.title}');
     } catch (e) {
       log('Could not insert the episode: $e');
     }

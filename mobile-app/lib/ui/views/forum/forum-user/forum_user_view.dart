@@ -1,4 +1,3 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_html/flutter_html.dart';
 import 'package:freecodecamp/models/forum/forum_post_model.dart';
@@ -103,7 +102,7 @@ FutureBuilder userTemplateBuilder(context, model) {
                               ? Html(
                                   data: user.bio,
                                   style: {
-                                    "body": Style(
+                                    'body': Style(
                                         color: Colors.white,
                                         fontSize: FontSize.rem(1.2))
                                   },
@@ -114,10 +113,10 @@ FutureBuilder userTemplateBuilder(context, model) {
                                     launch(url!);
                                   },
                                   customRender: {
-                                    "img": (context, child) {
+                                    'img': (context, child) {
                                       var classes =
                                           context.tree.element?.className;
-                                      var classesSplit = classes?.split(" ");
+                                      var classesSplit = classes?.split(' ');
 
                                       var classIsEmoji = classesSplit!
                                               .contains('emoji') ||

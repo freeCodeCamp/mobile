@@ -56,26 +56,26 @@ class PostModel {
   // this is for endpoint /t/{slug}/{id}.json
   factory PostModel.fromPostJson(Map<String, dynamic> data) {
     return PostModel(
-      postComments: Comment.returnCommentList(data["post_stream"]["posts"]),
-      postId: data["post_stream"]["posts"][0]["id"].toString(),
-      postName: data["title"],
-      postSlug: data["post_stream"]["posts"][0]["topic_slug"],
-      postCreateDate: data["post_stream"]["posts"][0]["created_at"],
-      postType: data["post_stream"]["posts"][0]["post_type"],
-      postReplyCount: data["post_stream"]["posts"][0]["reply_count"],
-      postReads: data["post_stream"]["posts"][0]["reads"],
-      postLikes: data["like_count"],
-      postCooked: data["post_stream"]["posts"][0]['cooked'],
-      username: data["post_stream"]["posts"][0]["username"],
-      profieImage: data["post_stream"]["posts"][0]["avatar_template"],
-      name: data["post_stream"]["posts"][0]["name"],
-      postCanDelete: data["details"]["can_delete"] ?? false,
-      postCanEdit: data["details"]["can_edit"] ?? false,
-      postCanRecover: data["details"]["can_recover"] ?? false,
-      isAdmin: data["post_stream"]["posts"][0]["admin"],
-      isModerator: data["post_stream"]["posts"][0]["moderator"],
-      isStaff: data["post_stream"]["posts"][0]["staff"],
-      postHasAnswer: data["post_stream"]["posts"][0]["has_accepted_answer"],
+      postComments: Comment.returnCommentList(data['post_stream']['posts']),
+      postId: data['post_stream']['posts'][0]['id'].toString(),
+      postName: data['title'],
+      postSlug: data['post_stream']['posts'][0]['topic_slug'],
+      postCreateDate: data['post_stream']['posts'][0]['created_at'],
+      postType: data['post_stream']['posts'][0]['post_type'],
+      postReplyCount: data['post_stream']['posts'][0]['reply_count'],
+      postReads: data['post_stream']['posts'][0]['reads'],
+      postLikes: data['like_count'],
+      postCooked: data['post_stream']['posts'][0]['cooked'],
+      username: data['post_stream']['posts'][0]['username'],
+      profieImage: data['post_stream']['posts'][0]['avatar_template'],
+      name: data['post_stream']['posts'][0]['name'],
+      postCanDelete: data['details']['can_delete'] ?? false,
+      postCanEdit: data['details']['can_edit'] ?? false,
+      postCanRecover: data['details']['can_recover'] ?? false,
+      isAdmin: data['post_stream']['posts'][0]['admin'],
+      isModerator: data['post_stream']['posts'][0]['moderator'],
+      isStaff: data['post_stream']['posts'][0]['staff'],
+      postHasAnswer: data['post_stream']['posts'][0]['has_accepted_answer'],
     );
   }
 
@@ -84,68 +84,68 @@ class PostModel {
 
   factory PostModel.fromCommentJson(Map<String, dynamic> data) {
     return PostModel(
-        postId: data["id"].toString(),
-        postCreateDate: data["created_at"],
-        postType: data["post_type"],
-        postReplyCount: data["reply_count"],
-        postReads: data["reads"],
+        postId: data['id'].toString(),
+        postCreateDate: data['created_at'],
+        postType: data['post_type'],
+        postReplyCount: data['reply_count'],
+        postReads: data['reads'],
         postCooked: data['cooked'],
         postAction: data['action_code'],
-        username: data["username"],
-        postSlug: data["topic_slug"],
-        profieImage: data["avatar_template"],
-        name: data["name"],
-        postCanDelete: data["can_delete"],
-        postCanEdit: data["can_edit"],
-        postCanRecover: data["can_recover"],
-        isAdmin: data["admin"],
-        isModerator: data["moderator"],
-        isStaff: data["staff"],
-        postHasAnswer: data["has_accepted_answer"] ?? false);
+        username: data['username'],
+        postSlug: data['topic_slug'],
+        profieImage: data['avatar_template'],
+        name: data['name'],
+        postCanDelete: data['can_delete'],
+        postCanEdit: data['can_edit'],
+        postCanRecover: data['can_recover'],
+        isAdmin: data['admin'],
+        isModerator: data['moderator'],
+        isStaff: data['staff'],
+        postHasAnswer: data['has_accepted_answer'] ?? false);
   }
 
   // this is an offline factory that does not parse any data from an endpoint
   factory PostModel.fromCommentBotJson(Map<String, dynamic> data) {
     return PostModel(
-        postId: data["postId"].toString(),
-        postCreateDate: data["postCreateDate"],
-        postType: data["postType"],
-        postReplyCount: data["postReplyCount"],
-        postReads: data["postReads"],
+        postId: data['postId'].toString(),
+        postCreateDate: data['postCreateDate'],
+        postType: data['postType'],
+        postReplyCount: data['postReplyCount'],
+        postReads: data['postReads'],
         postCooked: data['postCooked'],
-        username: data["username"],
-        postSlug: data["postSlug"],
-        profieImage: data["profieImage"],
-        name: data["name"],
-        postCanDelete: data["postCanDelete"],
-        postCanEdit: data["postCanEdit"],
-        postCanRecover: data["postCanRecover"],
-        isAdmin: data["isAdmin"],
-        isModerator: data["isModerator"],
-        isStaff: data["isStaff"],
-        postHasAnswer: data["has_accepted_answer"]);
+        username: data['username'],
+        postSlug: data['postSlug'],
+        profieImage: data['profieImage'],
+        name: data['name'],
+        postCanDelete: data['postCanDelete'],
+        postCanEdit: data['postCanEdit'],
+        postCanRecover: data['postCanRecover'],
+        isAdmin: data['isAdmin'],
+        isModerator: data['isModerator'],
+        isStaff: data['isStaff'],
+        postHasAnswer: data['has_accepted_answer']);
   }
 
   factory PostModel.fromTopicFeedJson(Map<String, dynamic> data, images) {
     return PostModel(
-        postId: data["id"].toString(),
-        postName: data["title"],
-        postLastActivity: data["bumped_at"],
-        postCreateDate: data["created_at"],
-        postViews: data["views"],
-        postReplyCount: data["reply_count"],
-        postSlug: data["slug"],
-        username: data["last_poster_username"],
-        profieImage: data["avatar_template"],
-        name: data["name"],
-        postCanDelete: data["can_delete"],
-        postCanEdit: data["can_edit"],
-        postCanRecover: data["can_recover"],
-        isAdmin: data["admin"],
-        isModerator: data["moderator"],
-        isStaff: data["staff"],
-        postHasAnswer: data["has_accepted_answer"],
-        userImages: parseAvatars(images, data["posters"]));
+        postId: data['id'].toString(),
+        postName: data['title'],
+        postLastActivity: data['bumped_at'],
+        postCreateDate: data['created_at'],
+        postViews: data['views'],
+        postReplyCount: data['reply_count'],
+        postSlug: data['slug'],
+        username: data['last_poster_username'],
+        profieImage: data['avatar_template'],
+        name: data['name'],
+        postCanDelete: data['can_delete'],
+        postCanEdit: data['can_edit'],
+        postCanRecover: data['can_recover'],
+        isAdmin: data['admin'],
+        isModerator: data['moderator'],
+        isStaff: data['staff'],
+        postHasAnswer: data['has_accepted_answer'],
+        userImages: parseAvatars(images, data['posters']));
   }
 
   set editedText(String text) {
@@ -157,7 +157,7 @@ class PostModel {
     String avatarUrl = '';
 
     if (urlPart.length > 1) {
-      avatarUrl = urlPart[0] + "60" + urlPart[1];
+      avatarUrl = urlPart[0] + '60' + urlPart[1];
     }
 
     if (urlPart.length == 1) {
@@ -179,10 +179,10 @@ class PostModel {
 
     for (int i = 0; i < postUsers.length; i++) {
       for (int j = 0; j < images.length; j++) {
-        bool hasUserImage = userImages.contains(images[i]["avatar_template"]);
+        bool hasUserImage = userImages.contains(images[i]['avatar_template']);
 
-        if (postUsers[i]["user_id"] == images[j]["id"] && !hasUserImage) {
-          userImages.add(parseProfileAvatar(images[j]["avatar_template"]));
+        if (postUsers[i]['user_id'] == images[j]['id'] && !hasUserImage) {
+          userImages.add(parseProfileAvatar(images[j]['avatar_template']));
         }
       }
     }
@@ -204,25 +204,25 @@ class Comment {
       comments.removeAt(0);
     } else if (comments.isEmpty) {
       comments.add(PostModel.fromCommentBotJson({
-        "username": 'camperbot',
-        "name": 'Cliff',
-        "profieImage":
+        'username': 'camperbot',
+        'name': 'Cliff',
+        'profieImage':
             'https://sea1.discourse-cdn.com/freecodecamp/user_avatar/forum.freecodecamp.org/camperbot/240/18364_2.png',
-        "postCooked":
+        'postCooked':
             '<p> No comments yet a contributor will be here shortly!</p>',
-        "postId": 9999999,
-        "postSlug": '',
-        "postCreateDate": data[0]["created_at"],
-        "postType": 0,
-        "postReplyCount": 0,
-        "postReads": 0,
-        "postCanEdit": false,
-        "postCanDelete": false,
-        "postCanRecover": false,
-        "isAdmin": true,
-        "isModerator": true,
-        "isStaff": true,
-        "has_accepted_answer": false
+        'postId': 9999999,
+        'postSlug': '',
+        'postCreateDate': data[0]['created_at'],
+        'postType': 0,
+        'postReplyCount': 0,
+        'postReads': 0,
+        'postCanEdit': false,
+        'postCanDelete': false,
+        'postCanRecover': false,
+        'isAdmin': true,
+        'isModerator': true,
+        'isStaff': true,
+        'has_accepted_answer': false
       }));
     }
     return comments;
