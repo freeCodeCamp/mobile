@@ -57,9 +57,9 @@ class CodeRadioView extends StatelessWidget {
   Container albumArt(BuildContext ctxt, CodeRadio? radio) {
     return Container(
       constraints: BoxConstraints(
-          minHeight: 400,
+          minHeight: MediaQuery.of(ctxt).size.height * 0.55,
           minWidth: MediaQuery.of(ctxt).size.width,
-          maxHeight: 400,
+          maxHeight: MediaQuery.of(ctxt).size.height * 0.55,
           maxWidth: MediaQuery.of(ctxt).size.width),
       color: const Color.fromRGBO(0x2A, 0x2A, 0x40, 1),
       child: Image.network(
@@ -100,6 +100,8 @@ class CodeRadioView extends StatelessWidget {
           Expanded(
             child: Text(
               radio!.nextPlaying.title + "\n" + radio.nextPlaying.album,
+              maxLines: 2,
+              overflow: TextOverflow.ellipsis,
             ),
           ),
         ],
