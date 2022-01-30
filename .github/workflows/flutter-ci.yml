@@ -21,7 +21,4 @@ jobs:
           channel: "stable"
       - run: cp sample.env .env
       - run: flutter pub get
-      - run: flutter test
-
-
-
+      - run: flutter test integration_test
