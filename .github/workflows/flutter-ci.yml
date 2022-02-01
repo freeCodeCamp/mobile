@@ -21,4 +21,9 @@ jobs:
           channel: "stable"
       - run: cp sample.env .env
       - run: flutter pub get
-      - run: flutter test integration_test
+      - name: run tests in emulator
+        uses: reactivecircus/android-emulator-runner@v2
+        with:
+          api-level: 31
+          target: google_apis
+          script: flutter test integration_test
