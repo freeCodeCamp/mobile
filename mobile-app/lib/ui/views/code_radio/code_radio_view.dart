@@ -59,18 +59,30 @@ class CodeRadioView extends StatelessWidget {
     );
   }
 
-  Container albumArt(BuildContext ctxt, CodeRadio? radio) {
-    return Container(
-      constraints: BoxConstraints(
-          minHeight: MediaQuery.of(ctxt).size.height * 0.45,
-          minWidth: MediaQuery.of(ctxt).size.width,
-          maxHeight: MediaQuery.of(ctxt).size.height * 0.45,
-          maxWidth: MediaQuery.of(ctxt).size.width),
-      color: const Color.fromRGBO(0x2A, 0x2A, 0x40, 1),
-      child: Image.network(
-        radio!.nowPlaying.artUrl,
-        fit: BoxFit.cover,
-      ),
+  Widget albumArt(BuildContext ctxt, CodeRadio? radio) {
+    return Stack(
+      alignment: Alignment.center,
+      children: [
+        Container(
+            constraints: BoxConstraints(
+                minHeight: MediaQuery.of(ctxt).size.height * 0.45,
+                minWidth: MediaQuery.of(ctxt).size.width,
+                maxHeight: MediaQuery.of(ctxt).size.height * 0.45,
+                maxWidth: MediaQuery.of(ctxt).size.width),
+            color: const Color.fromRGBO(0x2A, 0x2A, 0x40, 1),
+            child: Image.network(
+              radio!.nowPlaying.artUrl,
+              fit: BoxFit.cover,
+            )),
+        Text(
+          radio.totalListeners.toString() + '\n' + 'Listining',
+          textAlign: TextAlign.center,
+          style: const TextStyle(
+              color: Color.fromRGBO(1, 1, 1, 0.5),
+              fontSize: 48,
+              fontWeight: FontWeight.w800),
+        )
+      ],
     );
   }
 
