@@ -32,11 +32,10 @@ class CodeRadioView extends StatelessWidget {
               stream: model.channel.stream,
               builder: (context, snapshot) {
                 if (snapshot.hasData) {
-                  dev.log('new stream');
                   CodeRadio radio =
                       CodeRadio.fromJson(jsonDecode(snapshot.data.toString()));
 
-                  if (!model.player.playing) {
+                  if (!model.player.playing && !model.stoppedManually) {
                     model.toggleRadio(radio);
                   }
 
@@ -119,13 +118,19 @@ class CodeRadioView extends StatelessWidget {
   }
 
   Widget playingSong(CodeRadio? radio, CodeRadioViewModel model) {
+    if (model.timer != null) {
+      model.timer!.cancel();
+    }
+
+    model.startProgressBar(radio!.elapsed, radio.duration);
+
     return Container(
       padding: const EdgeInsets.all(8),
       color: const Color.fromRGBO(0x2A, 0x2A, 0x40, 1),
       child: Column(
         children: [
           Text(
-            radio!.nowPlaying.title,
+            radio.nowPlaying.title,
             maxLines: 1,
             overflow: TextOverflow.ellipsis,
             style: const TextStyle(
@@ -142,19 +147,23 @@ class CodeRadioView extends StatelessWidget {
               )
             ],
           ),
-          StreamBuilder(
-              stream: model.player.positionStream,
-              builder: (context, snapshot) {
-                model.desyncListener(
-                    model.player.position.inSeconds, radio.elapsed - 10);
+          Padding(
+            padding: const EdgeInsets.only(top: 8.0),
+            child: StreamBuilder(
+                stream: model.controller.stream,
+                builder: (context, snapshot) {
+                  if (snapshot.hasData) {
+                    return LinearProgressIndicator(
+                        value: (double.parse(snapshot.data.toString()) /
+                            radio.duration));
+                  }
+                  dev.log(snapshot.data.toString());
 
-                return Padding(
-                  padding: const EdgeInsets.only(top: 16.0),
-                  child: LinearProgressIndicator(
-                      value: model.player.position.inSeconds /
-                          (radio.duration == 0 ? 1 : radio.duration - 10)),
-                );
-              }),
+                  return const LinearProgressIndicator(
+                    value: 0,
+                  );
+                }),
+          )
         ],
       ),
     );

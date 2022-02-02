@@ -11,16 +11,42 @@ class CodeRadioViewModel extends BaseViewModel {
 
   AudioPlayer get player => _player;
 
-  bool recentlyCalledRadio = false;
+  bool _stoppedManually = false;
+  bool get stoppedManually => _stoppedManually;
 
   final _channel = WebSocketChannel.connect(Uri.parse(
       'wss://coderadio-admin.freecodecamp.org/api/live/nowplaying/coderadio'));
 
   WebSocketChannel get channel => _channel;
 
+  int _counter = 0;
+  int get counter => _counter;
+
+  final _controller = StreamController<int>();
+  StreamController<int> get controller => _controller;
+
+  Timer? _timer;
+  Timer? get timer => _timer;
+
+  void startProgressBar(int timeElapsed, int duration) {
+    _counter = timeElapsed;
+    _timer = Timer.periodic(const Duration(seconds: 1), (timer) {
+      _counter++;
+      _controller.sink.add(_counter);
+
+      if (_counter == duration) {
+        timer.cancel();
+        _controller.close();
+      }
+    });
+  }
+
   void pauseUnpauseRadio() {
     if (!player.playing) {
+      _stoppedManually = false;
+      player.play();
     } else {
+      _stoppedManually = true;
       player.pause();
     }
   }
@@ -39,13 +65,5 @@ class CodeRadioViewModel extends BaseViewModel {
     await player.setAudioSource(audio, preload: true);
     player.play();
     player.seek(Duration(seconds: radio.elapsed));
-  }
-
-  void desyncListener(int highestSec, int elapsed) {
-    if (highestSec != 0 && highestSec < elapsed) {
-      player.seek(Duration(seconds: elapsed));
-    } else {
-      elapsed = highestSec;
-    }
   }
 }
