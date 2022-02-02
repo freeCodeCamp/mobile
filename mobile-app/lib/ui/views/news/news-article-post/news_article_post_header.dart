@@ -1,4 +1,3 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:freecodecamp/models/news/article_model.dart';
 import 'package:freecodecamp/ui/views/news/news-bookmark/news_bookmark_widget.dart';
@@ -55,8 +54,11 @@ class _NewsArticlePostHeaderState extends State<NewsArticlePostHeader> {
               width: MediaQuery.of(context).size.width,
               child: Padding(
                 padding: const EdgeInsets.all(16.0),
-                child: Text(article.title,
-                    style: const TextStyle(fontSize: 24, color: Colors.white)),
+                child: Text(
+                  article.title,
+                  style: const TextStyle(fontSize: 24, color: Colors.white),
+                  key: const Key('title'),
+                ),
               ),
             )
           ],
@@ -70,13 +72,20 @@ class _NewsArticlePostHeaderState extends State<NewsArticlePostHeader> {
                   children: [
                     Padding(
                       padding: const EdgeInsets.all(16),
-                      child: FadeInImage.assetNetwork(
-                          height: 50,
-                          width: 50,
-                          fit: BoxFit.cover,
-                          placeholder:
+                      // ignore: unnecessary_null_comparison
+                      child: article.profileImage == null
+                          ? Image.asset(
                               'assets/images/placeholder-profile-img.png',
-                          image: article.profileImage),
+                              height: 50,
+                              width: 50,
+                              fit: BoxFit.cover,
+                            )
+                          : Image.network(
+                              article.profileImage,
+                              height: 50,
+                              width: 50,
+                              fit: BoxFit.cover,
+                            ),
                     ),
                     Expanded(
                         child: Container(

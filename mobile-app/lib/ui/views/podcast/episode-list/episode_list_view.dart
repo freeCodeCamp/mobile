@@ -24,6 +24,7 @@ class EpisodeListView extends StatelessWidget {
 
   final TextStyle _titleStyle = const TextStyle(fontSize: 24);
 
+  // ignore: unused_field
   final TextStyle _subTitleStyle = const TextStyle(fontSize: 14);
 
   @override
@@ -62,6 +63,7 @@ class EpisodeListView extends StatelessWidget {
                           const SizedBox(
                             height: 8,
                           ),
+                          // ignore: todo
                           // TODO: Works correctly but for links in
                           // description(check commented line in viewmodel)
                           // placeholder text comes up
@@ -126,8 +128,9 @@ class EpisodeListView extends StatelessWidget {
                         child: CircularProgressIndicator.adaptive());
                   }
                   if (snapshot.hasError) {
-                    return Text("${snapshot.error}");
+                    return Text('${snapshot.error}');
                   }
+                  // ignore: todo
                   // TODO: Read up more on perf issues with shrinkWrap and check
                   // for diff in perf in below commented code
                   // return Column(
@@ -207,7 +210,7 @@ class PodcastEpisodeTemplate extends StatelessWidget {
   Widget build(BuildContext context) {
     return InkWell(
       onTap: () {
-        log("Clicked ${episode.title}");
+        log('Clicked ${episode.title}');
         Navigator.push(
           context,
           MaterialPageRoute(

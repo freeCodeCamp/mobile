@@ -20,14 +20,14 @@ class Category {
 
   factory Category.fromJson(Map<String, dynamic> data) {
     return Category(
-        id: data["id"],
-        name: data["name"],
-        slug: data["slug"],
-        color: data["color"],
-        textColor: data["text_color"],
-        description: data["description"],
-        topicCount: data["topic_count"],
-        topicWeek: data["topics_week"]);
+        id: data['id'],
+        name: data['name'],
+        slug: data['slug'],
+        color: data['color'],
+        textColor: data['text_color'],
+        description: data['description'],
+        topicCount: data['topic_count'],
+        topicWeek: data['topics_week']);
   }
 }
 

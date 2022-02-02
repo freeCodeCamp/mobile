@@ -39,7 +39,7 @@ class PodcastListViewModel extends BaseViewModel {
       appDir = await getApplicationDocumentsDirectory();
       File podcastIdsListFile = File('${appDir.path}/podcastUrls.json');
       if (!podcastIdsListFile.existsSync()) {
-        log("Created json file");
+        log('Created json file');
         podcastIdsListFile.createSync(recursive: true);
       }
       String response = podcastIdsListFile.readAsStringSync();
@@ -62,7 +62,8 @@ class PodcastListViewModel extends BaseViewModel {
           await _databaseService.addPodcast(podcast, podcastId);
           for (int i = 0; i < podcast.episodes!.length; i++) {
             if (podcast.episodes![i].contentUrl != null) {
-              await _databaseService.addEpisode(podcast.episodes![i], podcastId);
+              await _databaseService.addEpisode(
+                  podcast.episodes![i], podcastId);
             }
           }
           log('Downloading podcast image');
@@ -73,7 +74,7 @@ class PodcastListViewModel extends BaseViewModel {
           }
           var response = await http.get(Uri.parse(podcast.image!));
           podcastImgFile.writeAsBytesSync(response.bodyBytes);
-          log("""Podcast added {
+          log('''Podcast added {
             id: $podcastId
             url: ${podcast.url} ${podcast.url == podcastUrl}
             link: ${podcast.link}
@@ -82,9 +83,9 @@ class PodcastListViewModel extends BaseViewModel {
             image: ${podcast.image}
             copyright: ${podcast.copyright}
             episodes length: ${podcast.episodes!.length}
-          }""");
+          }''');
         } catch (e) {
-          log("Network issues $e");
+          log('Network issues $e');
         }
       }
       podcastIdsListFile.writeAsStringSync(json.encode(podcastIdsList));

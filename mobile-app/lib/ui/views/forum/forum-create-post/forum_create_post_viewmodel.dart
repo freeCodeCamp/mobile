@@ -38,7 +38,7 @@ class ForumCreatePostModel extends BaseViewModel {
   Future<void> createPost(String title, String text, [int? categoryId]) async {
     Map<String, String> headers = {
       'X-Requested-With': 'XMLHttpRequest',
-      "Content-Type": 'application/x-www-form-urlencoded'
+      'Content-Type': 'application/x-www-form-urlencoded'
     };
 
     final response = await ForumConnect.connectAndPost(
@@ -49,8 +49,8 @@ class ForumCreatePostModel extends BaseViewModel {
     if (response.statusCode == 200) {
       _categoryHasError = false;
 
-      if (!topic.containsKey("errors")) {
-        goToPosts(topic["topic_slug"], topic["topic_id"]);
+      if (!topic.containsKey('errors')) {
+        goToPosts(topic['topic_slug'], topic['topic_id']);
       }
     } else {
       if (categoryDropDownValue == 'Category') {

@@ -5,7 +5,7 @@ import 'package:webview_flutter/webview_flutter.dart';
 import 'package:freecodecamp/app/app.router.dart';
 
 class BrowserViewModel extends BaseViewModel {
-WebViewController? controller;
+  WebViewController? controller;
   final SnackbarService _snackbarService = locator<SnackbarService>();
   final NavigationService _navigationService = locator<NavigationService>();
 
@@ -23,7 +23,7 @@ WebViewController? controller;
   }
 
   void showSnackbar() {
-    _snackbarService.showSnackbar(message: "No back history item");
+    _snackbarService.showSnackbar(message: 'No back history item');
   }
 
   void goToHome() {

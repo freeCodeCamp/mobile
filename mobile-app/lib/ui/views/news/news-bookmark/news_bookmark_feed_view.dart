@@ -1,4 +1,3 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:freecodecamp/ui/views/news/news-bookmark/news_bookmark_viewmodel.dart';
 import 'package:stacked/stacked.dart';
@@ -32,6 +31,7 @@ ListView populateListViewModel(NewsBookmarkModel model) {
       itemCount: model.count,
       itemBuilder: (context, index) {
         return ConstrainedBox(
+            key: Key('bookmark_article_$index'),
             constraints: const BoxConstraints(minHeight: 150),
             child: Container(
                 decoration: const BoxDecoration(

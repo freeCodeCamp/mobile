@@ -1,4 +1,3 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
 import 'package:freecodecamp/models/news/article_model.dart';
@@ -88,6 +87,7 @@ class NewsFeedView extends StatelessWidget {
               height: 3,
             ),
         itemBuilder: (BuildContext contex, int i) => NewsFeedLazyLoading(
+            key: Key(model.articles[i].id),
             articleCreated: () {
               SchedulerBinding.instance!.addPostFrameCallback(
                   (timeStamp) => model.handleArticleLazyLoading(i));
@@ -108,24 +108,16 @@ class NewsFeedView extends StatelessWidget {
       List<Article>? articles, int i) {
     return Column(
       children: [
-        Stack(children: [
-          Container(
-              color: const Color.fromRGBO(0x2A, 0x2A, 0x40, 1),
-              child: const AspectRatio(
-                aspectRatio: 16 / 9,
-                child: Center(
-                    child: CircularProgressIndicator(
-                  color: Colors.white,
-                )),
-              )),
-          AspectRatio(
+        Container(
+          child: AspectRatio(
             aspectRatio: 16 / 9,
             child: Image.network(
               articles![i].featureImage,
               fit: BoxFit.cover,
             ),
           ),
-        ]),
+          color: const Color.fromRGBO(0x2A, 0x2A, 0x40, 1),
+        ),
         Align(
           alignment: Alignment.centerLeft,
           child: Padding(
@@ -174,12 +166,20 @@ class NewsFeedView extends StatelessWidget {
                         width: 45,
                         height: 45,
                         color: const Color.fromRGBO(0x2A, 0x2A, 0x40, 1)),
-                    Image.network(
-                      articles[i].profileImage,
-                      width: 45,
-                      height: 45,
-                      fit: BoxFit.cover,
-                    )
+                    // ignore: unnecessary_null_comparison
+                    articles[i].profileImage == null
+                        ? Image.asset(
+                            'assets/images/placeholder-profile-img.png',
+                            width: 45,
+                            height: 45,
+                            fit: BoxFit.cover,
+                          )
+                        : Image.network(
+                            articles[i].profileImage,
+                            width: 45,
+                            height: 45,
+                            fit: BoxFit.cover,
+                          )
                   ],
                 ),
               ),

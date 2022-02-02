@@ -15,7 +15,7 @@ class NewsAuthorView extends StatelessWidget {
         viewModelBuilder: () => NewsAuthorViewModel(),
         builder: (context, model, child) => Scaffold(
               appBar: AppBar(
-                title: const Text("Author profile"),
+                title: const Text('Author profile'),
               ),
               body: SingleChildScrollView(
                 child: FutureBuilder<Author>(
@@ -93,10 +93,15 @@ class NewsAuthorView extends StatelessWidget {
         height: 175,
         decoration:
             BoxDecoration(border: Border.all(width: 2, color: Colors.white)),
-        child: Image.network(
-          author!.profileImage,
-          fit: BoxFit.cover,
-        ),
+        child: author?.profileImage == null
+            ? Image.asset(
+                'assets/images/placeholder-profile-img.png',
+                fit: BoxFit.cover,
+              )
+            : Image.network(
+                author!.profileImage,
+                fit: BoxFit.cover,
+              ),
       ),
     );
   }

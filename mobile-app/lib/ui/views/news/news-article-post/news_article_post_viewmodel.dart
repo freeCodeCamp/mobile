@@ -22,7 +22,7 @@ class NewsArticlePostViewModel extends BaseViewModel {
   }
 
   Future<Article> fetchArticle(articleId) async {
-    await dotenv.load(fileName: ".env");
+    await dotenv.load(fileName: '.env');
 
     final response = await http.get(Uri.parse(
         'https://www.freecodecamp.org/news/ghost/api/v3/content/posts/$articleId/?key=${dotenv.env['NEWSKEY']}&include=authors'));
