@@ -36,7 +36,6 @@ class CodeRadioViewModel extends BaseViewModel {
 
       if (_counter == duration) {
         timer.cancel();
-        _controller.close();
       }
     });
   }

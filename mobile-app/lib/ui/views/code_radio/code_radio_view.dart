@@ -75,7 +75,7 @@ class CodeRadioView extends StatelessWidget {
               fit: BoxFit.cover,
             )),
         Text(
-          radio.totalListeners.toString() + '\n' + 'Listining',
+          radio.totalListeners.toString() + '\n' + 'Listening',
           textAlign: TextAlign.center,
           style: const TextStyle(
               color: Color.fromRGBO(1, 1, 1, 0.5),
@@ -116,7 +116,7 @@ class CodeRadioView extends StatelessWidget {
         children: [
           Expanded(
             child: Text(
-              radio!.nextPlaying.title + "\n" + radio.nextPlaying.album,
+              radio!.nextPlaying.title + '\n' + radio.nextPlaying.album,
               maxLines: 2,
               overflow: TextOverflow.ellipsis,
             ),
