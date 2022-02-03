@@ -175,7 +175,7 @@ class CodeRadioView extends StatelessWidget {
                         value: radio.duration != 0
                             ? double.parse(snapshot.data.toString()) /
                                 radio.duration
-                            : 0);
+                            : 1);
                   }
 
                   return const LinearProgressIndicator(

@@ -62,39 +62,22 @@ class CodeRadioViewModel extends BaseViewModel {
 
     if (radio.nowPlaying.id != prefs.getString('lastSongId')) {
       setBackgroundWidget(radio);
+      player.play();
       prefs.setString('lastSongId', radio.nowPlaying.id);
     }
   }
 
   Future<void> toggleRadio(CodeRadio radio) async {
-    await player.setAudioSource(
-        ConcatenatingAudioSource(children: [
-          AudioSource.uri(
-            Uri.parse(radio.listenUrl),
-            tag: MediaItem(
-              id: radio.nowPlaying.id,
-              album: radio.nowPlaying.album,
-              title: radio.nowPlaying.title,
-              artUri: Uri.parse(radio.nowPlaying.artUrl),
-            ),
-          ),
-          AudioSource.uri(
-            Uri.parse(radio.listenUrl),
-            tag: MediaItem(
-              id: radio.nextPlaying.id,
-              album: radio.nextPlaying.album,
-              title: radio.nextPlaying.title,
-              artUri: Uri.parse(radio.nextPlaying.artUrl),
-            ),
-          ),
-        ]),
-        preload: true);
-    notifyListeners();
+    setBackgroundWidget(radio);
     player.play();
     player.seek(Duration(seconds: radio.elapsed));
   }
 
   Future<void> setBackgroundWidget(CodeRadio radio) async {
+    if (player.playing) {
+      player.stop();
+    }
+
     await player.setAudioSource(
         ConcatenatingAudioSource(children: [
           AudioSource.uri(
