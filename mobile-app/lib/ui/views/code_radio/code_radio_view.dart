@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:freecodecamp/models/code-radio/code_radio_model.dart';
 import 'package:freecodecamp/ui/views/code_radio/code_radio_viemodel.dart';
 import 'package:freecodecamp/ui/widgets/drawer_widget/drawer_widget_view.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:stacked/stacked.dart';
 import 'dart:developer' as dev;
 
@@ -31,6 +32,7 @@ class CodeRadioView extends StatelessWidget {
           StreamBuilder(
               stream: model.channel.stream,
               builder: (context, snapshot) {
+                dev.log('REICEVED NEW DATA FROM WEBSOCKET');
                 if (snapshot.hasData) {
                   CodeRadio radio =
                       CodeRadio.fromJson(jsonDecode(snapshot.data.toString()));
@@ -38,6 +40,8 @@ class CodeRadioView extends StatelessWidget {
                   if (!model.player.playing && !model.stoppedManually) {
                     model.toggleRadio(radio);
                   }
+
+                  model.setAndGetLastId(radio);
 
                   return Expanded(
                     child: Column(
@@ -52,7 +56,7 @@ class CodeRadioView extends StatelessWidget {
                   );
                 }
 
-                return const CircularProgressIndicator();
+                return const Center(child: CircularProgressIndicator());
               }),
         ],
       ),
@@ -60,15 +64,17 @@ class CodeRadioView extends StatelessWidget {
   }
 
   Widget albumArt(BuildContext ctxt, CodeRadio? radio) {
+    var album = MediaQuery.of(ctxt).size;
+
     return Stack(
       alignment: Alignment.center,
       children: [
         Container(
             constraints: BoxConstraints(
-                minHeight: MediaQuery.of(ctxt).size.height * 0.45,
-                minWidth: MediaQuery.of(ctxt).size.width,
-                maxHeight: MediaQuery.of(ctxt).size.height * 0.45,
-                maxWidth: MediaQuery.of(ctxt).size.width),
+                minHeight: album.height * 0.45,
+                minWidth: album.width,
+                maxHeight: album.height * 0.45,
+                maxWidth: album.width),
             color: const Color.fromRGBO(0x2A, 0x2A, 0x40, 1),
             child: Image.network(
               radio!.nowPlaying.artUrl,
@@ -166,10 +172,11 @@ class CodeRadioView extends StatelessWidget {
                 builder: (context, snapshot) {
                   if (snapshot.hasData) {
                     return LinearProgressIndicator(
-                        value: (double.parse(snapshot.data.toString()) /
-                            radio.duration));
+                        value: radio.duration != 0
+                            ? double.parse(snapshot.data.toString()) /
+                                radio.duration
+                            : 0);
                   }
-                  dev.log(snapshot.data.toString());
 
                   return const LinearProgressIndicator(
                     value: 0,

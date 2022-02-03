@@ -2,8 +2,9 @@ import 'dart:async';
 import 'package:freecodecamp/models/code-radio/code_radio_model.dart';
 import 'package:just_audio/just_audio.dart';
 import 'package:just_audio_background/just_audio_background.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:stacked/stacked.dart';
-
+import 'dart:developer' as dev;
 import 'package:web_socket_channel/web_socket_channel.dart';
 
 class CodeRadioViewModel extends BaseViewModel {
@@ -50,19 +51,71 @@ class CodeRadioViewModel extends BaseViewModel {
     }
   }
 
-  Future<void> toggleRadio(CodeRadio radio) async {
-    AudioSource audio = AudioSource.uri(
-      Uri.parse(radio.listenUrl),
-      tag: MediaItem(
-        id: radio.nowPlaying.id,
-        album: radio.nowPlaying.album,
-        title: radio.nowPlaying.title,
-        artUri: Uri.parse(radio.nowPlaying.artUrl),
-      ),
-    );
+  Future<void> setAndGetLastId(CodeRadio radio) async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
 
-    await player.setAudioSource(audio, preload: true);
+    dev.log('I WAS CALLED HERE');
+
+    if (prefs.getString('lastSongId') == null) {
+      prefs.setString('lastSongId', radio.nowPlaying.id);
+    }
+
+    if (radio.nowPlaying.id != prefs.getString('lastSongId')) {
+      setBackgroundWidget(radio);
+      prefs.setString('lastSongId', radio.nowPlaying.id);
+    }
+  }
+
+  Future<void> toggleRadio(CodeRadio radio) async {
+    await player.setAudioSource(
+        ConcatenatingAudioSource(children: [
+          AudioSource.uri(
+            Uri.parse(radio.listenUrl),
+            tag: MediaItem(
+              id: radio.nowPlaying.id,
+              album: radio.nowPlaying.album,
+              title: radio.nowPlaying.title,
+              artUri: Uri.parse(radio.nowPlaying.artUrl),
+            ),
+          ),
+          AudioSource.uri(
+            Uri.parse(radio.listenUrl),
+            tag: MediaItem(
+              id: radio.nextPlaying.id,
+              album: radio.nextPlaying.album,
+              title: radio.nextPlaying.title,
+              artUri: Uri.parse(radio.nextPlaying.artUrl),
+            ),
+          ),
+        ]),
+        preload: true);
+    notifyListeners();
     player.play();
     player.seek(Duration(seconds: radio.elapsed));
+  }
+
+  Future<void> setBackgroundWidget(CodeRadio radio) async {
+    await player.setAudioSource(
+        ConcatenatingAudioSource(children: [
+          AudioSource.uri(
+            Uri.parse(radio.listenUrl),
+            tag: MediaItem(
+              id: radio.nowPlaying.id,
+              album: radio.nowPlaying.album,
+              title: radio.nowPlaying.title,
+              artUri: Uri.parse(radio.nowPlaying.artUrl),
+            ),
+          ),
+          AudioSource.uri(
+            Uri.parse(radio.listenUrl),
+            tag: MediaItem(
+              id: radio.nextPlaying.id,
+              album: radio.nextPlaying.album,
+              title: radio.nextPlaying.title,
+              artUri: Uri.parse(radio.nextPlaying.artUrl),
+            ),
+          ),
+        ]),
+        preload: false);
   }
 }
