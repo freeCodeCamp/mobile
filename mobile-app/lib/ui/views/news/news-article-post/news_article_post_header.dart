@@ -3,7 +3,6 @@ import 'package:freecodecamp/models/news/article_model.dart';
 import 'package:freecodecamp/ui/views/news/news-article-post/news_article_post_viewmodel.dart';
 import 'package:freecodecamp/ui/views/news/news-bookmark/news_bookmark_widget.dart';
 import 'package:url_launcher/url_launcher.dart';
-import 'dart:developer' as dev;
 
 class NewsArticlePostHeader extends StatefulWidget {
   const NewsArticlePostHeader({Key? key, required this.article})
