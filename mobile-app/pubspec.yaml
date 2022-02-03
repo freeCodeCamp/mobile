@@ -68,8 +68,8 @@ flutter:
     - .env
     - assets/images/
     - assets/sql/
-    - assets/test_data/news_post.dart
-    - assets/test_data/news_feed.dart
+    - assets/test_data/news_post.json
+    - assets/test_data/news_feed.json
     - assets/database/cards-jwasham.db
     - assets/database/bookmarked-article.db
   # To add assets to your application, add an assets section, like this:
