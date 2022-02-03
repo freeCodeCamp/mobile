@@ -1,19 +1,37 @@
 import 'dart:convert';
-
+import 'package:freecodecamp/app/app.locator.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:freecodecamp/models/news/article_model.dart';
+import 'package:freecodecamp/service/test_service.dart';
 import 'package:freecodecamp/ui/views/news/html_handler/html_handler.dart';
 import 'package:stacked/stacked.dart';
 import 'package:http/http.dart' as http;
+import 'dart:developer' as dev;
 
 class NewsArticlePostViewModel extends BaseViewModel {
   late Future<Article> _articleFuture;
 
-  Future<Article> get articleFuture => _articleFuture;
+  final _testservice = locator<TestService>();
 
-  void initState(id) {
-    _articleFuture = fetchArticle(id);
+  Future<Article>? get articleFuture => _articleFuture;
+
+  Future<Article> readFromFiles() async {
+    String json =
+        await rootBundle.loadString('assets/test_data/news_post.json');
+
+    var decodedJson = jsonDecode(json);
+
+    return Article.toPostFromJson(decodedJson);
+  }
+
+  Future<Article?> initState(id) async {
+    if (await _testservice.developmentMode()) {
+      return readFromFiles();
+    } else {
+      return fetchArticle(id);
+    }
   }
 
   List<Widget> initLazyLoading(html, context, article) {
