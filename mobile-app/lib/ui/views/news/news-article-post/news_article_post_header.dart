@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:freecodecamp/models/news/article_model.dart';
+import 'package:freecodecamp/ui/views/news/news-article-post/news_article_post_viewmodel.dart';
 import 'package:freecodecamp/ui/views/news/news-bookmark/news_bookmark_widget.dart';
 import 'package:url_launcher/url_launcher.dart';
+import 'dart:developer' as dev;
 
 class NewsArticlePostHeader extends StatefulWidget {
   const NewsArticlePostHeader({Key? key, required this.article})
@@ -17,7 +19,6 @@ class _NewsArticlePostHeaderState extends State<NewsArticlePostHeader> {
   @override
   Widget build(BuildContext context) {
     var article = widget.article;
-
     return Column(
       children: [
         Stack(
@@ -47,72 +48,61 @@ class _NewsArticlePostHeaderState extends State<NewsArticlePostHeader> {
             )
           ],
         ),
-        Row(
-          children: [
-            Container(
-              color: const Color.fromRGBO(0x2A, 0x2A, 0x40, 1),
-              width: MediaQuery.of(context).size.width,
-              child: Padding(
-                padding: const EdgeInsets.all(16.0),
-                child: Text(
-                  article.title,
-                  style: const TextStyle(fontSize: 24, color: Colors.white),
-                  key: const Key('title'),
-                ),
+        Container(
+          color: const Color.fromRGBO(0x2A, 0x2A, 0x40, 1),
+          padding: const EdgeInsets.all(16),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                article.title,
+                style: const TextStyle(fontSize: 24),
+                key: const Key('title'),
               ),
-            )
-          ],
-        ),
-        Row(
-          children: [
-            Expanded(
-              child: Container(
-                color: const Color.fromRGBO(0x2A, 0x2A, 0x40, 1),
-                child: Row(
-                  children: [
-                    Padding(
-                      padding: const EdgeInsets.all(16),
-                      // ignore: unnecessary_null_comparison
-                      child: article.profileImage == null
-                          ? Image.asset(
-                              'assets/images/placeholder-profile-img.png',
-                              height: 50,
-                              width: 50,
-                              fit: BoxFit.cover,
-                            )
-                          : Image.network(
-                              article.profileImage,
-                              height: 50,
-                              width: 50,
-                              fit: BoxFit.cover,
-                            ),
-                    ),
-                    Expanded(
-                        child: Container(
-                      color: const Color.fromRGBO(0x2A, 0x2A, 0x40, 1),
-                      child: Padding(
-                        padding: const EdgeInsets.only(top: 8),
-                        child: Text(
-                          'Written by ' + article.authorName,
-                          style: const TextStyle(
-                              fontSize: 16, color: Colors.white),
-                        ),
+              ListTile(
+                // ignore: unnecessary_null_comparison
+                leading: article.profileImage == null
+                    ? Image.asset(
+                        'assets/images/placeholder-profile-img.png',
+                        height: 50,
+                        width: 50,
+                        fit: BoxFit.cover,
+                      )
+                    : Image.network(
+                        article.profileImage,
+                        height: 50,
+                        width: 50,
+                        fit: BoxFit.cover,
                       ),
-                    ))
+                title: Text(
+                  'Written by ' + article.authorName,
+                  style: const TextStyle(
+                    fontSize: 16,
+                  ),
+                ),
+                onTap: () {
+                  NewsArticlePostViewModel.goToAuthorProfile(
+                      article.authorSlug);
+                },
+                contentPadding: const EdgeInsets.only(top: 16, bottom: 8),
+              ),
+              Padding(
+                padding: const EdgeInsets.only(bottom: 8.0),
+                child: Wrap(
+                  alignment: WrapAlignment.start,
+                  children: [
+                    for (int j = 0; j < article.tagNames.length && j < 3; j++)
+                      article.tagNames[j]
                   ],
                 ),
               ),
-            ),
-          ],
-        ),
-        Row(
-          children: [
-            Container(
-              color: const Color.fromRGBO(0x2A, 0x2A, 0x40, 1),
-              width: MediaQuery.of(context).size.width,
-              child: NewsBookmarkViewWidget(article: article),
-            )
-          ],
+              Row(
+                children: [
+                  Expanded(child: NewsBookmarkViewWidget(article: article)),
+                ],
+              ),
+            ],
+          ),
         ),
       ],
     );

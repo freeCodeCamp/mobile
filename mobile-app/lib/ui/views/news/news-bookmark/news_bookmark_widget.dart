@@ -12,23 +12,20 @@ class NewsBookmarkViewWidget extends StatelessWidget {
     return ViewModelBuilder<NewsBookmarkModel>.reactive(
         viewModelBuilder: () => NewsBookmarkModel(),
         onModelReady: (model) => model.isArticleBookmarked(article),
-        builder: (context, model, child) => Padding(
-              padding: const EdgeInsets.all(8),
-              child: TextButton.icon(
-                key: const Key('bookmark_btn'),
-                onPressed: () {
-                  model.bookmarkAndUnbookmark(article);
-                },
-                icon: Icon(
-                    model.bookmarked
-                        ? Icons.bookmark_sharp
-                        : Icons.bookmark_border_sharp,
-                    color: Colors.white),
-                label: Text(
+        builder: (context, model, child) => TextButton.icon(
+              key: const Key('bookmark_btn'),
+              onPressed: () {
+                model.bookmarkAndUnbookmark(article);
+              },
+              icon: Icon(
                   model.bookmarked
-                      ? 'Article is bookmarked'
-                      : 'Bookmark for offline usage',
-                ),
+                      ? Icons.bookmark_sharp
+                      : Icons.bookmark_border_sharp,
+                  color: Colors.white),
+              label: Text(
+                model.bookmarked
+                    ? 'Article is bookmarked'
+                    : 'Bookmark for offline usage',
               ),
             ));
   }
