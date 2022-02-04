@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:freecodecamp/main.dart' as app;
-import 'package:freecodecamp/ui/views/news/news-article-post/news_article_post_header.dart';
+import 'package:freecodecamp/ui/views/news/news-article-post/news_article_header.dart';
 import 'package:freecodecamp/ui/views/news/news-feed/news_feed_lazyloading.dart';
 import 'package:integration_test/integration_test.dart';
 import 'package:path/path.dart' as path;
@@ -18,8 +18,9 @@ void main() {
 
       // Tap on the first article
       final Finder firstArticle = find.byType(NewsFeedLazyLoading).first;
-      final ValueKey firstArticleKey =
-          tester.firstWidget<NewsFeedLazyLoading>(firstArticle).key! as ValueKey;
+      final ValueKey firstArticleKey = tester
+          .firstWidget<NewsFeedLazyLoading>(firstArticle)
+          .key! as ValueKey;
       expect(firstArticle, findsOneWidget);
       await tester.tap(firstArticle);
       await tester.pumpAndSettle();

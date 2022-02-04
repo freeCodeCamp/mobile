@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:freecodecamp/models/news/article_model.dart';
-import 'package:freecodecamp/ui/views/news/news-article-post/news_article_post_viewmodel.dart';
+import 'package:freecodecamp/ui/views/news/news-article-post/news_article_viewmodel.dart';
 import 'package:freecodecamp/ui/views/news/news-bookmark/news_bookmark_widget.dart';
 import 'package:url_launcher/url_launcher.dart';
 
@@ -84,16 +84,6 @@ class _NewsArticlePostHeaderState extends State<NewsArticlePostHeader> {
                       article.authorSlug);
                 },
                 contentPadding: const EdgeInsets.only(top: 16, bottom: 8),
-              ),
-              Padding(
-                padding: const EdgeInsets.only(bottom: 8.0),
-                child: Wrap(
-                  alignment: WrapAlignment.start,
-                  children: [
-                    for (int j = 0; j < article.tagNames.length && j < 3; j++)
-                      article.tagNames[j]
-                  ],
-                ),
               ),
               Row(
                 children: [
