@@ -49,8 +49,8 @@ class ArticleList extends StatefulWidget {
   }
 
   void navigateToArticle(String id) {
-    _navigationService.navigateTo(Routes.newsArticlePostView,
-        arguments: NewsArticlePostViewArguments(refId: id));
+    _navigationService.navigateTo(Routes.newsArticleView,
+        arguments: NewsArticleViewArguments(refId: id));
   }
 
   void navigateToFeed() {
