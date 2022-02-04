@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_html/flutter_html.dart';
 import 'package:flutter_syntax_view/flutter_syntax_view.dart';
-import 'package:freecodecamp/ui/views/news/news-article-post/news_article_header.dart';
-import 'package:freecodecamp/ui/views/news/news-article-post/news_article_view.dart';
+import 'package:freecodecamp/ui/views/news/news-article/news_article_header.dart';
+import 'package:freecodecamp/ui/views/news/news-article/news_article_view.dart';
 import 'package:html/dom.dart' as dom;
 import 'package:url_launcher/url_launcher.dart';
 import 'package:youtube_player_iframe/youtube_player_iframe.dart';
