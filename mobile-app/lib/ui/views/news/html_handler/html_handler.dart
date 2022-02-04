@@ -18,7 +18,7 @@ class HtmlHandler {
 
     List<Widget> elements = [];
 
-    elements.add(NewsArticlePostHeader(article: article));
+    elements.add(NewsArticleHeader(article: article));
 
     for (int i = 0; i < result.body!.children.length; i++) {
       elements

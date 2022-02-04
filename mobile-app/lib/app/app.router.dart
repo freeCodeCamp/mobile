@@ -18,7 +18,7 @@ import '../ui/views/forum/forum-post/forum_post_view.dart';
 import '../ui/views/forum/forum-user-profile/forum_user_profile_view.dart';
 import '../ui/views/forum/forum-user/forum_user_view.dart';
 import '../ui/views/home/home_view.dart';
-import '../ui/views/news/news-article-post/news_article_post_view.dart';
+import '../ui/views/news/news-article-post/news_article_view.dart';
 import '../ui/views/news/news-author/news_author_view.dart';
 import '../ui/views/news/news-bookmark/news_bookmark_view.dart';
 import '../ui/views/news/news-feed/news_feed_view.dart';
@@ -31,7 +31,7 @@ class Routes {
   static const String browserView = '/browser-view';
   static const String podcastListView = '/podcast-list-view';
   static const String podcastSettingsView = '/podcast-settings-view';
-  static const String newsArticlePostView = '/news-article-post-view';
+  static const String newsArticleView = '/news-article-view';
   static const String newsBookmarkPostView = '/news-bookmark-post-view';
   static const String newsFeedView = '/news-feed-view';
   static const String newsAuthorView = '/news-author-view';
@@ -47,7 +47,7 @@ class Routes {
     browserView,
     podcastListView,
     podcastSettingsView,
-    newsArticlePostView,
+    newsArticleView,
     newsBookmarkPostView,
     newsFeedView,
     newsAuthorView,
@@ -69,7 +69,7 @@ class StackedRouter extends RouterBase {
     RouteDef(Routes.browserView, page: BrowserView),
     RouteDef(Routes.podcastListView, page: PodcastListView),
     RouteDef(Routes.podcastSettingsView, page: PodcastSettingsView),
-    RouteDef(Routes.newsArticlePostView, page: NewsArticlePostView),
+    RouteDef(Routes.newsArticleView, page: NewsArticleView),
     RouteDef(Routes.newsBookmarkPostView, page: NewsBookmarkPostView),
     RouteDef(Routes.newsFeedView, page: NewsFeedView),
     RouteDef(Routes.newsAuthorView, page: NewsAuthorView),
@@ -112,10 +112,10 @@ class StackedRouter extends RouterBase {
         settings: data,
       );
     },
-    NewsArticlePostView: (data) {
-      var args = data.getArgs<NewsArticlePostViewArguments>(nullOk: false);
+    NewsArticleView: (data) {
+      var args = data.getArgs<NewsArticleViewArguments>(nullOk: false);
       return MaterialPageRoute<dynamic>(
-        builder: (context) => NewsArticlePostView(
+        builder: (context) => NewsArticleView(
           key: args.key,
           refId: args.refId,
         ),
@@ -238,11 +238,11 @@ class BrowserViewArguments {
   BrowserViewArguments({this.key, required this.url});
 }
 
-/// NewsArticlePostView arguments holder class
-class NewsArticlePostViewArguments {
+/// NewsArticleView arguments holder class
+class NewsArticleViewArguments {
   final Key? key;
   final String refId;
-  NewsArticlePostViewArguments({this.key, required this.refId});
+  NewsArticleViewArguments({this.key, required this.refId});
 }
 
 /// NewsBookmarkPostView arguments holder class

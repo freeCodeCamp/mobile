@@ -10,7 +10,7 @@ import 'package:stacked/stacked.dart';
 import 'package:http/http.dart' as http;
 import 'package:stacked_services/stacked_services.dart';
 
-class NewsArticlePostViewModel extends BaseViewModel {
+class NewsArticleViewModel extends BaseViewModel {
   late Future<Article> _articleFuture;
   static final NavigationService _navigationService =
       locator<NavigationService>();

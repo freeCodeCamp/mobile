@@ -4,17 +4,16 @@ import 'package:freecodecamp/ui/views/news/news-article-post/news_article_viewmo
 import 'package:freecodecamp/ui/views/news/news-bookmark/news_bookmark_widget.dart';
 import 'package:url_launcher/url_launcher.dart';
 
-class NewsArticlePostHeader extends StatefulWidget {
-  const NewsArticlePostHeader({Key? key, required this.article})
-      : super(key: key);
+class NewsArticleHeader extends StatefulWidget {
+  const NewsArticleHeader({Key? key, required this.article}) : super(key: key);
 
   final Article article;
 
   @override
-  State<StatefulWidget> createState() => _NewsArticlePostHeaderState();
+  State<StatefulWidget> createState() => _NewsArticleHeaderState();
 }
 
-class _NewsArticlePostHeaderState extends State<NewsArticlePostHeader> {
+class _NewsArticleHeaderState extends State<NewsArticleHeader> {
   @override
   Widget build(BuildContext context) {
     var article = widget.article;
@@ -80,8 +79,7 @@ class _NewsArticlePostHeaderState extends State<NewsArticlePostHeader> {
                   ),
                 ),
                 onTap: () {
-                  NewsArticlePostViewModel.goToAuthorProfile(
-                      article.authorSlug);
+                  NewsArticleViewModel.goToAuthorProfile(article.authorSlug);
                 },
                 contentPadding: const EdgeInsets.only(top: 16, bottom: 8),
               ),

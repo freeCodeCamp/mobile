@@ -21,8 +21,8 @@ class NewsFeedModel extends BaseViewModel {
   }
 
   void navigateTo(String id) {
-    _navigationService.navigateTo(Routes.newsArticlePostView,
-        arguments: NewsArticlePostViewArguments(refId: id));
+    _navigationService.navigateTo(Routes.newsArticleView,
+        arguments: NewsArticleViewArguments(refId: id));
   }
 
   void navigateToAuthor(String authorSlug) {

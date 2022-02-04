@@ -29,7 +29,7 @@ void main() {
       final Finder bookmarkButton = find.byKey(const Key('bookmark_btn'));
       final Finder articleTitle = find.byKey(const Key('title'));
       final Finder articleAuthor = find.descendant(
-          of: find.byType(NewsArticlePostHeader),
+          of: find.byType(NewsArticleHeader),
           matching: find.textContaining(RegExp(r'^Written by')));
       expect(bookmarkButton, findsOneWidget);
       expect(articleTitle, findsOneWidget);
