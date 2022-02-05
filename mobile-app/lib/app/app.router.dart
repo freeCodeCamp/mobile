@@ -10,7 +10,6 @@ import 'package:flutter/material.dart';
 import 'package:stacked/stacked.dart';
 
 import '../models/news/bookmarked_article_model.dart';
-import '../ui/views/browser/browser_view.dart';
 import '../ui/views/code_radio/code_radio_view.dart';
 import '../ui/views/forum/forum-categories/forum_category_view.dart';
 import '../ui/views/forum/forum-login/forum_login_view.dart';
@@ -29,7 +28,6 @@ import '../ui/views/settings/podcastSettings/podcast_settings_view.dart';
 
 class Routes {
   static const String homeView = '/';
-  static const String browserView = '/browser-view';
   static const String podcastListView = '/podcast-list-view';
   static const String podcastSettingsView = '/podcast-settings-view';
   static const String newsArticlePostView = '/news-article-post-view';
@@ -46,7 +44,6 @@ class Routes {
   static const String codeRadioView = '/code-radio-view';
   static const all = <String>{
     homeView,
-    browserView,
     podcastListView,
     podcastSettingsView,
     newsArticlePostView,
@@ -69,7 +66,6 @@ class StackedRouter extends RouterBase {
   List<RouteDef> get routes => _routes;
   final _routes = <RouteDef>[
     RouteDef(Routes.homeView, page: HomeView),
-    RouteDef(Routes.browserView, page: BrowserView),
     RouteDef(Routes.podcastListView, page: PodcastListView),
     RouteDef(Routes.podcastSettingsView, page: PodcastSettingsView),
     RouteDef(Routes.newsArticlePostView, page: NewsArticlePostView),
@@ -91,16 +87,6 @@ class StackedRouter extends RouterBase {
     HomeView: (data) {
       return MaterialPageRoute<dynamic>(
         builder: (context) => const HomeView(),
-        settings: data,
-      );
-    },
-    BrowserView: (data) {
-      var args = data.getArgs<BrowserViewArguments>(nullOk: false);
-      return MaterialPageRoute<dynamic>(
-        builder: (context) => BrowserView(
-          key: args.key,
-          url: args.url,
-        ),
         settings: data,
       );
     },
@@ -240,13 +226,6 @@ class StackedRouter extends RouterBase {
 /// ************************************************************************
 /// Arguments holder classes
 /// *************************************************************************
-
-/// BrowserView arguments holder class
-class BrowserViewArguments {
-  final Key? key;
-  final String url;
-  BrowserViewArguments({this.key, required this.url});
-}
 
 /// NewsArticlePostView arguments holder class
 class NewsArticlePostViewArguments {
