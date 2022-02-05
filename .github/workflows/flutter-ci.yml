@@ -25,5 +25,5 @@ jobs:
       - name: run tests in emulator
         uses: reactivecircus/android-emulator-runner@v2
         with:
-          api-level: 29
+          api-level: 31
           script: cd mobile-app && flutter test integration_test
