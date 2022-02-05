@@ -57,6 +57,12 @@ class _NewsArticleHeaderState extends State<NewsArticleHeader> {
                 style: const TextStyle(fontSize: 24),
                 key: const Key('title'),
               ),
+              Row(
+                children: [
+                  for (int j = 0; j < article.tagNames.length && j < 3; j++)
+                    article.tagNames[j]
+                ],
+              ),
               ListTile(
                 // ignore: unnecessary_null_comparison
                 leading: article.profileImage == null

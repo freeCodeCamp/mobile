@@ -121,7 +121,7 @@ class NewsFeedView extends StatelessWidget {
         Align(
           alignment: Alignment.centerLeft,
           child: Padding(
-            padding: const EdgeInsets.only(left: 8.0, right: 8),
+            padding: const EdgeInsets.only(left: 12.0, right: 8),
             child: Wrap(
               children: [
                 for (int j = 0; j < articles[i].tagNames.length && j < 3; j++)
