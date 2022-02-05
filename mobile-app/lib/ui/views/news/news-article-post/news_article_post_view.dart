@@ -13,7 +13,6 @@ class NewsArticlePostView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return ViewModelBuilder<NewsArticlePostViewModel>.reactive(
-      onModelReady: (model) => model.initState(refId),
       builder: (context, model, child) => Scaffold(
         appBar: AppBar(
           title: const Text(
@@ -21,8 +20,8 @@ class NewsArticlePostView extends StatelessWidget {
           ),
         ),
         backgroundColor: const Color(0xFF0a0a23),
-        body: FutureBuilder<Article>(
-          future: model.articleFuture,
+        body: FutureBuilder<Article?>(
+          future: model.initState(refId),
           builder: (context, snapshot) {
             if (snapshot.hasData) {
               var article = snapshot.data;

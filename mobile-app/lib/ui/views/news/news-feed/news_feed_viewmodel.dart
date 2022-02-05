@@ -1,12 +1,15 @@
 import 'dart:convert';
+import 'package:flutter/services.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:freecodecamp/app/app.locator.dart';
 import 'package:freecodecamp/app/app.router.dart';
 import 'package:freecodecamp/models/news/article_model.dart';
+import 'package:freecodecamp/service/test_service.dart';
 import 'package:http/http.dart' as http;
 import 'package:jiffy/jiffy.dart';
 import 'package:stacked/stacked.dart';
 import 'package:stacked_services/stacked_services.dart';
+import 'dart:developer' as dev;
 
 class NewsFeedModel extends BaseViewModel {
   int _pageNumber = 1;
@@ -14,10 +17,16 @@ class NewsFeedModel extends BaseViewModel {
   final List<Article> articles = [];
   static const int itemRequestThreshold = 14;
   final _navigationService = locator<NavigationService>();
+  static final _testService = locator<TestService>();
 
-  void initState() async {
-    await fetchArticles('', '');
-    notifyListeners();
+  bool _devMode = false;
+  bool get devmode => _devMode;
+
+  devMode() async {
+    if (await _testService.developmentMode()) {
+      _devMode = true;
+      notifyListeners();
+    }
   }
 
   void navigateTo(String id) {
@@ -34,6 +43,19 @@ class NewsFeedModel extends BaseViewModel {
     return Jiffy(date).fromNow().toUpperCase();
   }
 
+  Future<List<Article>> readFromFiles() async {
+    String json =
+        await rootBundle.loadString('assets/test_data/news_feed.json');
+
+    var decodedJson = jsonDecode(json)['posts'];
+
+    for (int i = 0; i < decodedJson.length; i++) {
+      articles.add(Article.fromJson(decodedJson[i]));
+    }
+
+    return articles;
+  }
+
   Future<List<Article>> fetchArticles(String slug, String author) async {
     await dotenv.load(fileName: '.env');
 
@@ -46,6 +68,8 @@ class NewsFeedModel extends BaseViewModel {
 
     String url =
         "${dotenv.env['NEWSURL']}posts/?key=${dotenv.env['NEWSKEY']}$concact";
+
+    dev.log(url);
     final response = await http.get(Uri.parse(url));
     if (response.statusCode == 200) {
       var articleJson = json.decode(response.body)['posts'];

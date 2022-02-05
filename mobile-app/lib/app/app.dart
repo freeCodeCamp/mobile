@@ -1,4 +1,5 @@
 import 'package:freecodecamp/service/episode_audio_service.dart';
+import 'package:freecodecamp/service/test_service.dart';
 import 'package:freecodecamp/service/notification_service.dart';
 import 'package:freecodecamp/service/podcasts_service.dart';
 import 'package:freecodecamp/ui/views/browser/browser_view.dart';
@@ -25,7 +26,6 @@ import 'package:sqflite_migration_service/sqflite_migration_service.dart';
 @StackedApp(
   routes: [
     MaterialRoute(page: HomeView, initial: true),
-    MaterialRoute(page: BrowserView),
     MaterialRoute(page: PodcastListView),
     MaterialRoute(page: PodcastSettingsView),
     MaterialRoute(page: NewsArticlePostView),
@@ -48,6 +48,7 @@ import 'package:sqflite_migration_service/sqflite_migration_service.dart';
     LazySingleton(classType: PodcastsDatabaseService),
     LazySingleton(classType: NotificationService),
     LazySingleton(classType: EpisodeAudioService),
+    LazySingleton(classType: TestService)
   ],
   logger: StackedLogger(),
 )
