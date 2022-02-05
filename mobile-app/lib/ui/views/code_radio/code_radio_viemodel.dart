@@ -4,7 +4,6 @@ import 'package:just_audio/just_audio.dart';
 import 'package:just_audio_background/just_audio_background.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:stacked/stacked.dart';
-import 'dart:developer' as dev;
 import 'package:web_socket_channel/web_socket_channel.dart';
 
 class CodeRadioViewModel extends BaseViewModel {
@@ -53,8 +52,6 @@ class CodeRadioViewModel extends BaseViewModel {
 
   Future<void> setAndGetLastId(CodeRadio radio) async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
-
-    dev.log('I WAS CALLED HERE');
 
     if (prefs.getString('lastSongId') == null) {
       prefs.setString('lastSongId', radio.nowPlaying.id);
