@@ -19,7 +19,8 @@ jobs:
       - uses: subosito/flutter-action@v1
         with:
           channel: "stable"
-      - run: cp sample.env .env
+      - name: Create .env file
+        run: echo "DEVELOPMENTMODE=true" > .env
       - run: flutter pub get
       - name: run tests in emulator
         uses: reactivecircus/android-emulator-runner@v2
