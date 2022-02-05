@@ -34,7 +34,7 @@ void main() {
       expect(articleTitle, findsOneWidget);
       expect(articleAuthor, findsOneWidget);
       Text title = tester.firstWidget(articleTitle);
-      String author = tester.firstWidget<Text>(articleAuthor).data ?? '';
+      String author = tester.firstWidget<Text>(articleAuthor).data!;
       await tester.tap(bookmarkButton);
       await tester.pumpAndSettle();
 
@@ -52,11 +52,11 @@ void main() {
         matching: find.byType(Text),
       );
       expect(
-        tester.firstWidget<Text>(bookmarkArticleText.first).data ?? '',
+        tester.firstWidget<Text>(bookmarkArticleText.first).data!,
         title.data,
       );
       expect(
-        (tester.firstWidget<Text>(bookmarkArticleText.last).data ?? '')
+        (tester.firstWidget<Text>(bookmarkArticleText.last).data!)
             .split('Written by: ')[1],
         author.split('Written by ')[1],
       );
