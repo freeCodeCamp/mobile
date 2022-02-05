@@ -26,7 +26,6 @@ import 'package:sqflite_migration_service/sqflite_migration_service.dart';
 @StackedApp(
   routes: [
     MaterialRoute(page: HomeView, initial: true),
-    MaterialRoute(page: BrowserView),
     MaterialRoute(page: PodcastListView),
     MaterialRoute(page: PodcastSettingsView),
     MaterialRoute(page: NewsArticlePostView),
