@@ -21,7 +21,9 @@ jobs:
           flutter-version: '2.8.x'
           channel: "stable"
       - name: Create .env file
-        run: echo "DEVELOPMENTMODE=true" and "NEWSURL= https://www.freecodecamp.org/news/ghost/api/v3/content/" > .env
+        run: |
+          echo "DEVELOPMENTMODE=true" > .env
+          echo "NEWSURL=https://www.freecodecamp.org/news/ghost/api/v3/content/" >> .env
       - run: flutter pub get
       - name: run tests in emulator
         uses: reactivecircus/android-emulator-runner@v2
