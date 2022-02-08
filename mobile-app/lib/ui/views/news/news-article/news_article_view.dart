@@ -21,8 +21,8 @@ class NewsArticleView extends StatelessWidget {
           ),
         ),
         backgroundColor: const Color(0xFF0a0a23),
-        body: FutureBuilder<Article>(
-          future: model.articleFuture,
+        body: FutureBuilder<Article?>(
+          future: model.initState(refId),
           builder: (context, snapshot) {
             if (snapshot.hasData) {
               var article = snapshot.data;

@@ -28,6 +28,7 @@ class NewsFeedView extends StatelessWidget {
   Widget build(BuildContext context) {
     return ViewModelBuilder<NewsFeedModel>.reactive(
       viewModelBuilder: () => NewsFeedModel(),
+      onModelReady: (model) async => await model.devMode(),
       builder: (context, model, child) => Scaffold(
           appBar: fromTag || fromAuthor
               ? AppBar(
@@ -37,7 +38,9 @@ class NewsFeedView extends StatelessWidget {
               : null,
           backgroundColor: const Color(0xFF0a0a23),
           body: FutureBuilder(
-            future: model.fetchArticles(slug, author),
+            future: !model.devmode
+                ? model.fetchArticles(slug, author)
+                : model.readFromFiles(),
             builder: (context, snapshot) {
               if (snapshot.hasData) {
                 return articleThumbnailBuilder(model, context);
