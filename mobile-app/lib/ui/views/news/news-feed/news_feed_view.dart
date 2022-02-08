@@ -43,7 +43,13 @@ class NewsFeedView extends StatelessWidget {
                 : model.readFromFiles(),
             builder: (context, snapshot) {
               if (snapshot.hasData) {
-                return articleThumbnailBuilder(model, context);
+                return RefreshIndicator(
+                    backgroundColor: const Color(0xFF0a0a23),
+                    color: Colors.white,
+                    child: articleThumbnailBuilder(model, context),
+                    onRefresh: () {
+                      return model.refresh();
+                    });
               } else if (snapshot.hasError) {
                 return errorMessage();
               }
