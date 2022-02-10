@@ -83,6 +83,8 @@ class NewsFeedModel extends BaseViewModel {
   }
 
   Future<void> refresh() {
+    articles.clear();
+    _pageNumber = 1;
     notifyListeners();
     return Future.delayed(const Duration(seconds: 0));
   }
