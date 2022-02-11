@@ -34,6 +34,7 @@ void main() {
       final Finder articleAuthor = find.descendant(
           of: find.byType(NewsArticleHeader),
           matching: find.textContaining(RegExp(r'^Written by')));
+      await tester.pumpAndSettle();
       expect(bookmarkButton, findsOneWidget);
       expect(articleTitle, findsOneWidget);
       expect(articleAuthor, findsOneWidget);
