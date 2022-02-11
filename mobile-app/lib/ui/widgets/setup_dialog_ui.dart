@@ -165,7 +165,7 @@ class _buttonDialog2 extends HookWidget {
                     shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(0))),
                 onPressed: () => {
-                  onDialogTap(DialogResponse()),
+                  onDialogTap(DialogResponse(data: 'confirmed')),
                 },
                 child: Text(
                   request.mainButtonTitle as String,

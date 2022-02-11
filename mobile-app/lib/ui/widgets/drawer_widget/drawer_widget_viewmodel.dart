@@ -13,7 +13,6 @@ class DrawerWidgtetViewModel extends BaseViewModel {
   // the normal fcc forum is not accessible
   final bool _showForum = false;
   bool get showForum => _showForum;
-
   void routeComponent(view, context) async {
     switch (view) {
       case 'LEARN':
