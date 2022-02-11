@@ -82,6 +82,13 @@ class NewsFeedModel extends BaseViewModel {
     }
   }
 
+  Future<void> refresh() {
+    articles.clear();
+    _pageNumber = 1;
+    notifyListeners();
+    return Future.delayed(const Duration(seconds: 0));
+  }
+
   Future handleArticleLazyLoading(int index) async {
     var itemPosition = index + 1;
     var request = itemPosition % itemRequestThreshold == 0;
