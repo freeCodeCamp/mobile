@@ -4,19 +4,13 @@ import 'package:freecodecamp/ui/views/news/news-article/news_article_viewmodel.d
 import 'package:freecodecamp/ui/views/news/news-bookmark/news_bookmark_widget.dart';
 import 'package:url_launcher/url_launcher.dart';
 
-class NewsArticleHeader extends StatefulWidget {
+class NewsArticleHeader extends StatelessWidget {
   const NewsArticleHeader({Key? key, required this.article}) : super(key: key);
 
   final Article article;
 
   @override
-  State<StatefulWidget> createState() => _NewsArticleHeaderState();
-}
-
-class _NewsArticleHeaderState extends State<NewsArticleHeader> {
-  @override
   Widget build(BuildContext context) {
-    var article = widget.article;
     return Column(
       children: [
         Stack(
@@ -57,7 +51,7 @@ class _NewsArticleHeaderState extends State<NewsArticleHeader> {
                 style: const TextStyle(fontSize: 24),
                 key: const Key('title'),
               ),
-              Row(
+              Wrap(
                 children: [
                   for (int j = 0; j < article.tagNames.length && j < 3; j++)
                     article.tagNames[j]
