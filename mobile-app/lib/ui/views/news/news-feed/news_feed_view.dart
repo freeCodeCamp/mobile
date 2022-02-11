@@ -43,7 +43,13 @@ class NewsFeedView extends StatelessWidget {
                 : model.readFromFiles(),
             builder: (context, snapshot) {
               if (snapshot.hasData) {
-                return articleThumbnailBuilder(model, context);
+                return RefreshIndicator(
+                    backgroundColor: const Color(0xFF0a0a23),
+                    color: Colors.white,
+                    child: articleThumbnailBuilder(model, context),
+                    onRefresh: () {
+                      return model.refresh();
+                    });
               } else if (snapshot.hasError) {
                 return errorMessage();
               }
@@ -124,7 +130,7 @@ class NewsFeedView extends StatelessWidget {
         Align(
           alignment: Alignment.centerLeft,
           child: Padding(
-            padding: const EdgeInsets.only(left: 8.0, right: 8),
+            padding: const EdgeInsets.only(left: 16, right: 16),
             child: Wrap(
               children: [
                 for (int j = 0; j < articles[i].tagNames.length && j < 3; j++)

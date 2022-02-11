@@ -3,7 +3,7 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:freecodecamp/main.dart' as app;
-import 'package:freecodecamp/ui/views/news/news-article-post/news_article_post_header.dart';
+import 'package:freecodecamp/ui/views/news/news-article/news_article_header.dart';
 import 'package:freecodecamp/ui/views/news/news-feed/news_feed_lazyloading.dart';
 import 'package:integration_test/integration_test.dart';
 import 'package:path/path.dart' as path;
@@ -32,7 +32,7 @@ void main() {
       final Finder bookmarkButton = find.byKey(const Key('bookmark_btn'));
       final Finder articleTitle = find.byKey(const Key('title'));
       final Finder articleAuthor = find.descendant(
-          of: find.byType(NewsArticlePostHeader),
+          of: find.byType(NewsArticleHeader),
           matching: find.textContaining(RegExp(r'^Written by')));
       expect(bookmarkButton, findsOneWidget);
       expect(articleTitle, findsOneWidget);
