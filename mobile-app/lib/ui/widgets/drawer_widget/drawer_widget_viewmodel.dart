@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:freecodecamp/ui/views/learn/learn_view.dart';
 import 'package:freecodecamp/ui/views/forum/forum-categories/forum_category_view.dart';
 import 'package:freecodecamp/ui/views/home/home_view.dart';
 import 'package:freecodecamp/ui/views/podcast/podcast-list/podcast_list_view.dart';
@@ -12,9 +13,16 @@ class DrawerWidgtetViewModel extends BaseViewModel {
   // the normal fcc forum is not accessible
   final bool _showForum = false;
   bool get showForum => _showForum;
-
   void routeComponent(view, context) async {
     switch (view) {
+      case 'LEARN':
+        Navigator.pushReplacement(
+            context,
+            PageRouteBuilder(
+                transitionDuration: Duration.zero,
+                pageBuilder: (context, animation1, animation2) =>
+                    const LearnView()));
+        break;
       case 'NEWS':
         Navigator.pushReplacement(
             context,
