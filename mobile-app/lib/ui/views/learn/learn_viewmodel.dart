@@ -31,7 +31,7 @@ class LearnViewModel extends BaseViewModel {
         variant: DialogType.buttonForm2,
         title: 'This section is in alpha',
         description:
-            'This section of the app is not complete, please becareful while we are working on it.',
+            'This section of the app is not complete, and you may experience bugs. You will not lose your progress as long as you\'re signed in',
         mainButtonTitle: 'I understand',
         data: DialogType.buttonForm2);
 
