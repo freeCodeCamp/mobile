@@ -53,11 +53,12 @@ class DrawerWidgetView extends StatelessWidget {
                         model.routeComponent('FORUM', context);
                       },
                     )
-                  : const WebButton(
+                  : DrawerButton(
                       component: 'LEARN',
-                      url: 'https://www.freecodecamp.org/learn/',
                       icon: Icons.local_fire_department_sharp,
-                    ),
+                      route: () {
+                        model.routeComponent('LEARN', context);
+                      }),
               buildDivider(),
               DrawerButton(
                 component: 'PODCAST',
