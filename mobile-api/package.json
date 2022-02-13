@@ -9,8 +9,9 @@
     "npm": ">=8"
   },
   "scripts": {
-    "start": "ts-node src/index.ts",
-    "dev": "nodemon src/index.ts"
+    "build": "tsc",
+    "dev": "nodemon src/index.ts",
+    "start": "node src/index.js"
   },
   "dependencies": {
     "@types/express": "4.17.13",
