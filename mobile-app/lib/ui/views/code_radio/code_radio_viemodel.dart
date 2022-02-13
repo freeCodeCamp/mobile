@@ -1,17 +1,15 @@
 import 'dart:async';
-import 'package:flutter/cupertino.dart';
 import 'package:freecodecamp/models/code-radio/code_radio_model.dart';
+import 'package:freecodecamp/service/code_radio_service.dart';
 import 'package:just_audio/just_audio.dart';
 import 'package:just_audio_background/just_audio_background.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:stacked/stacked.dart';
 import 'package:web_socket_channel/web_socket_channel.dart';
+import 'package:freecodecamp/app/app.locator.dart';
 
-class CodeRadioViewModel extends BaseViewModel with WidgetsBindingObserver {
-  final _player = AudioPlayer();
-
-  AudioPlayer get player => _player;
-
+class CodeRadioViewModel extends BaseViewModel {
+  final audioService = locator<CodeRadioService>();
   bool _stoppedManually = false;
   bool get stoppedManually => _stoppedManually;
 
@@ -41,32 +39,13 @@ class CodeRadioViewModel extends BaseViewModel with WidgetsBindingObserver {
     });
   }
 
-  void initAppStateObserver() {
-    WidgetsBinding.instance!.addObserver(this);
-  }
-
-  void removeAppStateObserver() {
-    WidgetsBinding.instance!.removeObserver(this);
-  }
-
-  @override
-  void didChangeAppLifecycleState(AppLifecycleState state) {
-    super.didChangeAppLifecycleState(state);
-
-    final didTerminateApp = state == AppLifecycleState.detached;
-
-    if (didTerminateApp) {
-      player.dispose();
-    }
-  }
-
   void pauseUnpauseRadio() {
-    if (!player.playing) {
+    if (!audioService.player.playing) {
       _stoppedManually = false;
-      player.play();
+      audioService.player.play();
     } else {
       _stoppedManually = true;
-      player.pause();
+      audioService.player.pause();
     }
   }
 
@@ -79,23 +58,23 @@ class CodeRadioViewModel extends BaseViewModel with WidgetsBindingObserver {
 
     if (radio.nowPlaying.id != prefs.getString('lastSongId')) {
       setBackgroundWidget(radio);
-      player.play();
+      audioService.player.play();
       prefs.setString('lastSongId', radio.nowPlaying.id);
     }
   }
 
   Future<void> toggleRadio(CodeRadio radio) async {
     setBackgroundWidget(radio);
-    player.play();
-    player.seek(Duration(seconds: radio.elapsed));
+    audioService.player.play();
+    audioService.player.seek(Duration(seconds: radio.elapsed));
   }
 
   Future<void> setBackgroundWidget(CodeRadio radio) async {
-    if (player.playing) {
-      player.stop();
+    if (audioService.player.playing) {
+      audioService.player.stop();
     }
 
-    await player.setAudioSource(
+    await audioService.player.setAudioSource(
         ConcatenatingAudioSource(children: [
           AudioSource.uri(
             Uri.parse(radio.listenUrl),

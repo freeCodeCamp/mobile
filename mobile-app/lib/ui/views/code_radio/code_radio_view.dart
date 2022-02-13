@@ -14,9 +14,9 @@ class CodeRadioView extends StatelessWidget {
   Widget build(BuildContext context) {
     return ViewModelBuilder<CodeRadioViewModel>.reactive(
         onModelReady: (model) {
-          model.initAppStateObserver();
+          model.audioService.initAppStateObserver();
         },
-        onDispose: (model) => {model.removeAppStateObserver()},
+        onDispose: (model) => {model.audioService.removeAppStateObserver()},
         viewModelBuilder: () => CodeRadioViewModel(),
         builder: (context, model, child) => Scaffold(
             backgroundColor: const Color(0xFF0a0a23),
@@ -40,7 +40,8 @@ class CodeRadioView extends StatelessWidget {
                   CodeRadio radio =
                       CodeRadio.fromJson(jsonDecode(snapshot.data.toString()));
 
-                  if (!model.player.playing && !model.stoppedManually) {
+                  if (!model.audioService.player.playing &&
+                      !model.stoppedManually) {
                     model.toggleRadio(radio);
                   }
 
@@ -98,7 +99,7 @@ class CodeRadioView extends StatelessWidget {
   StreamBuilder<bool> playPauseButton(
       CodeRadioViewModel model, BuildContext ctxt) {
     return StreamBuilder(
-        stream: model.player.playingStream,
+        stream: model.audioService.player.playingStream,
         builder: (context, snapshot) {
           return Container(
             width: MediaQuery.of(ctxt).size.width,
@@ -111,9 +112,11 @@ class CodeRadioView extends StatelessWidget {
                 onPressed: () {
                   model.pauseUnpauseRadio();
                 },
-                icon: Icon(
-                    !model.player.playing ? Icons.play_arrow : Icons.pause),
-                label: Text(!model.player.playing ? 'PLAY' : 'PAUSE')),
+                icon: Icon(!model.audioService.player.playing
+                    ? Icons.play_arrow
+                    : Icons.pause),
+                label: Text(
+                    !model.audioService.player.playing ? 'PLAY' : 'PAUSE')),
           );
         });
   }
