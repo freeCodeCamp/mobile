@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:freecodecamp/main.dart' as app;
-import 'package:freecodecamp/ui/views/news/news-article-post/news_article_post_header.dart';
+import 'package:freecodecamp/ui/views/news/news-article/news_article_header.dart';
 import 'package:freecodecamp/ui/views/news/news-feed/news_feed_lazyloading.dart';
 import 'package:integration_test/integration_test.dart';
 import 'package:path/path.dart' as path;
@@ -18,8 +18,9 @@ void main() {
 
       // Tap on the first article
       final Finder firstArticle = find.byType(NewsFeedLazyLoading).first;
-      final ValueKey firstArticleKey =
-          tester.firstWidget<NewsFeedLazyLoading>(firstArticle).key! as ValueKey;
+      final ValueKey firstArticleKey = tester
+          .firstWidget<NewsFeedLazyLoading>(firstArticle)
+          .key! as ValueKey;
       expect(firstArticle, findsOneWidget);
       await tester.tap(firstArticle);
       await tester.pumpAndSettle();
@@ -28,13 +29,13 @@ void main() {
       final Finder bookmarkButton = find.byKey(const Key('bookmark_btn'));
       final Finder articleTitle = find.byKey(const Key('title'));
       final Finder articleAuthor = find.descendant(
-          of: find.byType(NewsArticlePostHeader),
+          of: find.byType(NewsArticleHeader),
           matching: find.textContaining(RegExp(r'^Written by')));
       expect(bookmarkButton, findsOneWidget);
       expect(articleTitle, findsOneWidget);
       expect(articleAuthor, findsOneWidget);
       Text title = tester.firstWidget(articleTitle);
-      String author = tester.firstWidget<Text>(articleAuthor).data ?? '';
+      String author = tester.firstWidget<Text>(articleAuthor).data!;
       await tester.tap(bookmarkButton);
       await tester.pumpAndSettle();
 
@@ -52,11 +53,11 @@ void main() {
         matching: find.byType(Text),
       );
       expect(
-        tester.firstWidget<Text>(bookmarkArticleText.first).data ?? '',
+        tester.firstWidget<Text>(bookmarkArticleText.first).data!,
         title.data,
       );
       expect(
-        (tester.firstWidget<Text>(bookmarkArticleText.last).data ?? '')
+        (tester.firstWidget<Text>(bookmarkArticleText.last).data!)
             .split('Written by: ')[1],
         author.split('Written by ')[1],
       );

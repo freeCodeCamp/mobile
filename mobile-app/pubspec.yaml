@@ -47,6 +47,7 @@ dependencies:
   image_picker: ^0.8.4+4
   youtube_player_iframe: ^2.2.2
   web_socket_channel: ^2.1.0
+  webview_flutter: ^2.8.0
 dev_dependencies:
   build_runner: ^2.1.2
   integration_test:
@@ -62,4 +63,6 @@ flutter:
     - .env
     - assets/images/
     - assets/sql/
+    - assets/test_data/news_post.json
+    - assets/test_data/news_feed.json
     - assets/database/bookmarked-article.db
