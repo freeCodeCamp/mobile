@@ -13,6 +13,10 @@ class CodeRadioView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return ViewModelBuilder<CodeRadioViewModel>.reactive(
+        onModelReady: (model) {
+          model.initAppStateObserver();
+        },
+        onDispose: (model) => {model.removeAppStateObserver()},
         viewModelBuilder: () => CodeRadioViewModel(),
         builder: (context, model, child) => Scaffold(
             backgroundColor: const Color(0xFF0a0a23),

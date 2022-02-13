@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'package:flutter/cupertino.dart';
 import 'package:freecodecamp/models/code-radio/code_radio_model.dart';
 import 'package:just_audio/just_audio.dart';
 import 'package:just_audio_background/just_audio_background.dart';
@@ -6,7 +7,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:stacked/stacked.dart';
 import 'package:web_socket_channel/web_socket_channel.dart';
 
-class CodeRadioViewModel extends BaseViewModel {
+class CodeRadioViewModel extends BaseViewModel with WidgetsBindingObserver {
   final _player = AudioPlayer();
 
   AudioPlayer get player => _player;
@@ -38,6 +39,25 @@ class CodeRadioViewModel extends BaseViewModel {
         timer.cancel();
       }
     });
+  }
+
+  void initAppStateObserver() {
+    WidgetsBinding.instance!.addObserver(this);
+  }
+
+  void removeAppStateObserver() {
+    WidgetsBinding.instance!.removeObserver(this);
+  }
+
+  @override
+  void didChangeAppLifecycleState(AppLifecycleState state) {
+    super.didChangeAppLifecycleState(state);
+
+    final didTerminateApp = state == AppLifecycleState.detached;
+
+    if (didTerminateApp) {
+      player.dispose();
+    }
   }
 
   void pauseUnpauseRadio() {
