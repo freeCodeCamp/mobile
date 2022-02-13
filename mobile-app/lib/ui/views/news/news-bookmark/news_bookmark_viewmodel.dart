@@ -25,12 +25,12 @@ class NewsBookmarkModel extends BaseViewModel {
     WidgetsFlutterBinding.ensureInitialized();
 
     String dbPath = await getDatabasesPath();
-    String dbPathArticles = path.join(dbPath, "bookmarked-article.db");
+    String dbPathArticles = path.join(dbPath, 'bookmarked-article.db');
     bool dbExists = await databaseExists(dbPathArticles);
 
     if (!dbExists) {
       // Making new copy from assets
-      dev.log("copying database from assets");
+      dev.log('copying database from assets');
       try {
         await Directory(path.dirname(dbPathArticles)).create(recursive: true);
       } catch (error) {
@@ -38,7 +38,7 @@ class NewsBookmarkModel extends BaseViewModel {
       }
 
       ByteData data = await rootBundle
-          .load(path.join("assets", "database", "bookmarked-article.db"));
+          .load(path.join('assets', 'database', 'bookmarked-article.db'));
       List<int> bytes =
           data.buffer.asUint8List(data.offsetInBytes, data.lengthInBytes);
 
@@ -50,10 +50,10 @@ class NewsBookmarkModel extends BaseViewModel {
 
   Map<String, dynamic> articleToMap(Article article) {
     return {
-      "articleTitle": article.title,
-      "articleId": article.id,
-      "articleText": article.text,
-      "authorName": article.authorName
+      'articleTitle': article.title,
+      'articleId': article.id,
+      'articleText': article.text,
+      'authorName': article.authorName
     };
   }
 

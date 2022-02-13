@@ -40,7 +40,7 @@ class ForumTextFunctionBar extends StatelessWidget {
       );
     } else {
       textController.text = textController.text
-          .replaceFirst(selectedText, "\n\n> $selectedText\n\n");
+          .replaceFirst(selectedText, '\n\n> $selectedText\n\n');
       setCursorposition(
         position: textSelection.start + 2,
         length: selectedText.length + 2,
@@ -61,7 +61,7 @@ class ForumTextFunctionBar extends StatelessWidget {
       );
     } else {
       textController.text =
-          textController.text.replaceFirst(selectedText, "**$selectedText**");
+          textController.text.replaceFirst(selectedText, '**$selectedText**');
       setCursorposition(
         position: textSelection.start + 2,
         length: selectedText.length,
@@ -84,7 +84,7 @@ class ForumTextFunctionBar extends StatelessWidget {
       );
     } else {
       textController.text = textController.text
-          .replaceFirst(selectedText, "\n```\n$selectedText\n```\n");
+          .replaceFirst(selectedText, '\n```\n$selectedText\n```\n');
       setCursorposition(
         position: textSelection.start + 5,
         length: selectedText.length,
@@ -105,7 +105,7 @@ class ForumTextFunctionBar extends StatelessWidget {
       );
     } else {
       textController.text = textController.text
-          .replaceFirst(selectedText, "[$selectedText](link)");
+          .replaceFirst(selectedText, '[$selectedText](link)');
       setCursorposition(
         position: textSelection.start + selectedText.length + 3,
         length: 4,

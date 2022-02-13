@@ -1,4 +1,3 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:freecodecamp/ui/views/settings/forumSettings/forum_settings_viewmodel.dart';
 import 'package:stacked/stacked.dart';

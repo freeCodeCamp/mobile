@@ -13,7 +13,7 @@ class NewsSearchModel extends BaseViewModel {
   final searchbarController = TextEditingController();
   final _navigationService = locator<NavigationService>();
   Future<List<AlgoliaObjectSnapshot>> search(String inputQuery) async {
-    await dotenv.load(fileName: ".env");
+    await dotenv.load(fileName: '.env');
 
     final Algolia algoliaInit = Algolia.init(
       applicationId: dotenv.env['ALGOLIAAPPID'] as String,
@@ -37,7 +37,7 @@ class NewsSearchModel extends BaseViewModel {
   }
 
   void navigateToArticle(id) {
-    _navigationService.navigateTo(Routes.newsArticlePostView,
-        arguments: NewsArticlePostViewArguments(refId: id));
+    _navigationService.navigateTo(Routes.newsArticleView,
+        arguments: NewsArticleViewArguments(refId: id));
   }
 }

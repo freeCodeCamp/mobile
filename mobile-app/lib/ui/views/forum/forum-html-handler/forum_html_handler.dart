@@ -18,48 +18,48 @@ Column htmlView(PostModel post, BuildContext context, PostViewModel model) {
             child: Html(
               data: post.postCooked,
               style: {
-                "body": Style(color: Colors.white),
-                "blockquote": Style(
+                'body': Style(color: Colors.white),
+                'blockquote': Style(
                     backgroundColor: const Color.fromRGBO(0x65, 0x65, 0x74, 1),
                     padding: const EdgeInsets.all(8)),
-                "a": Style(fontSize: FontSize.rem(1)),
-                "p": Style(
+                'a': Style(fontSize: FontSize.rem(1)),
+                'p': Style(
                     fontSize: FontSize.rem(1.2),
                     lineHeight: LineHeight.em(1.2)),
-                "ul": Style(fontSize: FontSize.xLarge),
-                "li": Style(
+                'ul': Style(fontSize: FontSize.xLarge),
+                'li': Style(
                   margin: const EdgeInsets.only(top: 8),
                   fontSize: FontSize.rem(1.35),
                 ),
-                "pre": Style(
+                'pre': Style(
                     color: Colors.white,
                     width: MediaQuery.of(context).size.width),
-                "code": Style(
+                'code': Style(
                     backgroundColor: const Color.fromRGBO(0x2A, 0x2A, 0x40, 1)),
-                "tr": Style(
+                'tr': Style(
                     border:
                         const Border(bottom: BorderSide(color: Colors.grey)),
                     backgroundColor: Colors.white),
-                "th": Style(
+                'th': Style(
                   padding: const EdgeInsets.all(12),
                   backgroundColor: const Color.fromRGBO(0xdf, 0xdf, 0xe2, 1),
                   color: Colors.black,
                 ),
-                "td": Style(
+                'td': Style(
                   padding: const EdgeInsets.all(12),
                   color: Colors.black,
                   alignment: Alignment.topLeft,
                 ),
               },
               customRender: {
-                "table": (context, child) {
+                'table': (context, child) {
                   return SingleChildScrollView(
                     scrollDirection: Axis.horizontal,
                     child:
                         (context.tree as TableLayoutElement).toWidget(context),
                   );
                 },
-                "code": (code, child) {
+                'code': (code, child) {
                   var classList = code.tree.elementClasses;
                   if (classList.isNotEmpty && classList[0] == 'lang-auto') {
                     return ConstrainedBox(
@@ -81,9 +81,9 @@ Column htmlView(PostModel post, BuildContext context, PostViewModel model) {
                     );
                   }
                 },
-                "aside": (context, child) {
+                'aside': (context, child) {
                   var link =
-                      context.tree.element?.attributes['data-onebox-src'] ?? "";
+                      context.tree.element?.attributes['data-onebox-src'] ?? '';
                   if (link.isNotEmpty) {
                     return InkWell(
                       onTap: () {
@@ -97,7 +97,7 @@ Column htmlView(PostModel post, BuildContext context, PostViewModel model) {
                     );
                   }
                 },
-                "svg": (context, child) {
+                'svg': (context, child) {
                   var iconParent = context.tree.element!.className;
                   var isFontAwesomeIcon = iconParent
                       .toString()
@@ -118,9 +118,9 @@ Column htmlView(PostModel post, BuildContext context, PostViewModel model) {
                     }
                   }
                 },
-                "img": (context, child) {
+                'img': (context, child) {
                   var classes = context.tree.element?.className;
-                  var classesSplit = classes?.split(" ");
+                  var classesSplit = classes?.split(' ');
 
                   var classIsEmoji = classesSplit!.contains('emoji') ||
                       classesSplit.contains('emoji-only');
@@ -135,10 +135,10 @@ Column htmlView(PostModel post, BuildContext context, PostViewModel model) {
                     );
                   }
                 },
-                "div": (context, child) {
+                'div': (context, child) {
                   var divClasses = context.tree.element?.className;
 
-                  var classList = divClasses?.split(" ");
+                  var classList = divClasses?.split(' ');
 
                   var classContainsMeta = classList!.contains('meta');
                   if (classContainsMeta) {

@@ -28,6 +28,7 @@ void setupDialogUi() {
   dialogService.registerCustomDialogBuilders(builders);
 }
 
+// ignore: camel_case_types
 class _buttonDialog extends HookWidget {
   final DialogRequest request;
   final Function(DialogResponse) onDialogTap;
@@ -104,6 +105,7 @@ class _buttonDialog extends HookWidget {
   }
 }
 
+// ignore: camel_case_types, unused_element
 class _buttonDialog2 extends HookWidget {
   final DialogRequest request;
   final Function(DialogResponse) onDialogTap;
@@ -163,7 +165,7 @@ class _buttonDialog2 extends HookWidget {
                     shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(0))),
                 onPressed: () => {
-                  onDialogTap(DialogResponse()),
+                  onDialogTap(DialogResponse(data: 'confirmed')),
                 },
                 child: Text(
                   request.mainButtonTitle as String,

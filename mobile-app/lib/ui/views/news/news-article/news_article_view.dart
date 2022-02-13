@@ -3,16 +3,16 @@ import 'package:flutter/material.dart';
 import 'package:freecodecamp/models/news/article_model.dart';
 import 'package:stacked/stacked.dart';
 import 'package:url_launcher/url_launcher.dart';
-import 'news_article_post_viewmodel.dart';
+import 'news_article_viewmodel.dart';
 
-class NewsArticlePostView extends StatelessWidget {
+class NewsArticleView extends StatelessWidget {
   // ignore: prefer_const_constructors_in_immutables
-  NewsArticlePostView({Key? key, required this.refId}) : super(key: key);
+  NewsArticleView({Key? key, required this.refId}) : super(key: key);
   late final String refId;
 
   @override
   Widget build(BuildContext context) {
-    return ViewModelBuilder<NewsArticlePostViewModel>.reactive(
+    return ViewModelBuilder<NewsArticleViewModel>.reactive(
       onModelReady: (model) => model.initState(refId),
       builder: (context, model, child) => Scaffold(
         appBar: AppBar(
@@ -21,8 +21,8 @@ class NewsArticlePostView extends StatelessWidget {
           ),
         ),
         backgroundColor: const Color(0xFF0a0a23),
-        body: FutureBuilder<Article>(
-          future: model.articleFuture,
+        body: FutureBuilder<Article?>(
+          future: model.initState(refId),
           builder: (context, snapshot) {
             if (snapshot.hasData) {
               var article = snapshot.data;
@@ -43,13 +43,13 @@ class NewsArticlePostView extends StatelessWidget {
           },
         ),
       ),
-      viewModelBuilder: () => NewsArticlePostViewModel(),
+      viewModelBuilder: () => NewsArticleViewModel(),
     );
   }
 }
 
 ListView lazyLoadHtml(String html, BuildContext context,
-    NewsArticlePostViewModel model, Article article) {
+    NewsArticleViewModel model, Article article) {
   var htmlToList = model.initLazyLoading(html, context, article);
   return ListView.builder(
       shrinkWrap: true,

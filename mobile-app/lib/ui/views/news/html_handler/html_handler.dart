@@ -1,10 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_html/flutter_html.dart';
 import 'package:flutter_syntax_view/flutter_syntax_view.dart';
-import 'package:freecodecamp/ui/views/news/news-article-post/news_article_post_header.dart';
-import 'package:freecodecamp/ui/views/news/news-article-post/news_article_post_view.dart';
+import 'package:freecodecamp/ui/views/news/news-article/news_article_header.dart';
+import 'package:freecodecamp/ui/views/news/news-article/news_article_view.dart';
 import 'package:html/dom.dart' as dom;
-import 'package:flutter_html/html_parser.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:youtube_player_iframe/youtube_player_iframe.dart';
 
@@ -19,7 +18,7 @@ class HtmlHandler {
 
     List<Widget> elements = [];
 
-    elements.add(NewsArticlePostHeader(article: article));
+    elements.add(NewsArticleHeader(article: article));
 
     for (int i = 0; i < result.body!.children.length; i++) {
       elements
@@ -33,45 +32,45 @@ class HtmlHandler {
         shrinkWrap: true,
         data: child,
         style: {
-          "body": Style(color: Colors.white),
-          "p": Style(
+          'body': Style(color: Colors.white),
+          'p': Style(
               fontSize: FontSize.rem(1.35), lineHeight: LineHeight.em(1.2)),
-          "ul": Style(fontSize: FontSize.xLarge),
-          "li": Style(
+          'ul': Style(fontSize: FontSize.xLarge),
+          'li': Style(
             margin: const EdgeInsets.only(top: 8),
             fontSize: FontSize.rem(1.35),
           ),
-          "pre": Style(
+          'pre': Style(
             color: Colors.white,
             width: MediaQuery.of(context).size.width,
             padding: const EdgeInsets.all(10),
           ),
-          "tr": Style(
+          'tr': Style(
               border: const Border(bottom: BorderSide(color: Colors.grey)),
               backgroundColor: Colors.white),
-          "th": Style(
+          'th': Style(
             padding: const EdgeInsets.all(12),
             backgroundColor: const Color.fromRGBO(0xdf, 0xdf, 0xe2, 1),
             color: Colors.black,
           ),
-          "td": Style(
+          'td': Style(
             padding: const EdgeInsets.all(12),
             color: Colors.black,
             alignment: Alignment.topLeft,
           ),
-          "figure": Style(
+          'figure': Style(
               width: MediaQuery.of(context).size.width, margin: EdgeInsets.zero)
         },
         customRender: {
-          "table": (context, child) {
+          'table': (context, child) {
             return SingleChildScrollView(
               scrollDirection: Axis.horizontal,
               child: (context.tree as TableLayoutElement).toWidget(context),
             );
           },
-          "figure": (code, child) {
+          'figure': (code, child) {
             var figureClasses = code.tree.elementClasses;
-            bool isBookmarkCard = figureClasses.contains("kg-bookmark-card");
+            bool isBookmarkCard = figureClasses.contains('kg-bookmark-card');
 
             if (isBookmarkCard) {
               var parent = code.tree.children[0];
@@ -90,7 +89,7 @@ class HtmlHandler {
                   bookmarkTilte, bookmarkDescription, bookmarkImage, link);
             }
           },
-          "code": (code, child) {
+          'code': (code, child) {
             for (var className in code.tree.elementClasses) {
               if (className
                   .contains(RegExp(r'language-', caseSensitive: false))) {
@@ -105,7 +104,7 @@ class HtmlHandler {
               }
             }
           },
-          "iframe": (code, child) {
+          'iframe': (code, child) {
             var isVideo = RegExp('youtube', caseSensitive: false);
             var videoUrl = code.tree.attributes['src'];
             if (isVideo.hasMatch(videoUrl ?? '')) {

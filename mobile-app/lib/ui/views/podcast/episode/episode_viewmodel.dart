@@ -2,7 +2,6 @@ import 'dart:developer';
 import 'dart:io';
 
 import 'package:dio/dio.dart';
-import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:freecodecamp/app/app.locator.dart';
 import 'package:freecodecamp/models/podcasts/episodes_model.dart';
 import 'package:freecodecamp/models/podcasts/podcasts_model.dart';
@@ -45,7 +44,8 @@ class EpisodeViewModel extends BaseViewModel {
     downloading = true;
     notifyListeners();
     log('DOWNLOADING... $uri');
-    log("USER AGENT ${FkUserAgent.userAgent}");
+    log('USER AGENT ${FkUserAgent.userAgent}');
+    // ignore: unused_local_variable
     var response = await dio.download(uri,
         appDir.path + '/episodes/' + podcast.id + '/' + episode.guid + '.mp3',
         onReceiveProgress: (int recevied, int total) {
@@ -63,7 +63,7 @@ class EpisodeViewModel extends BaseViewModel {
   }
 
   Future<void> playBtnClick() async {
-    log("CLICKED PLAY BUTTON ${episode.title}");
+    log('CLICKED PLAY BUTTON ${episode.title}');
     if (!loading) {
       if (!playing) {
         loading = true;
@@ -80,15 +80,15 @@ class EpisodeViewModel extends BaseViewModel {
   }
 
   void downloadBtnClick() {
-    log("CLICKED DOWNLOAD BUTTON ${episode.title}, status $downloaded");
+    log('CLICKED DOWNLOAD BUTTON ${episode.title}, status $downloaded');
     if (!downloaded && !downloading) {
-      log("STARTING DOWNLOAD");
+      log('STARTING DOWNLOAD');
       downloadAudio(episode.contentUrl!);
       downloaded = !downloaded;
       episode.downloaded = downloaded;
       _databaseService.toggleDownloadEpisode(episode.guid, downloaded);
     } else if (downloaded) {
-      log("DELETING DOWNLOAD");
+      log('DELETING DOWNLOAD');
       File audioFile = File(appDir.path +
           '/episodes/' +
           podcast.id +

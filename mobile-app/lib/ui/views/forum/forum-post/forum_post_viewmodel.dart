@@ -98,7 +98,7 @@ class PostViewModel extends BaseViewModel {
 
   Future<void> updatePost(List<PostModel> posts) async {
     Map<String, dynamic> body = {
-      "post": {"raw": commentText.text}
+      'post': {'raw': commentText.text}
     };
     if (commentText.text.isNotEmpty) {
       final res =
@@ -165,7 +165,7 @@ class PostViewModel extends BaseViewModel {
   Future<void> createPost(String topicId, String text, PostModel topic) async {
     Map<String, String> headers = {
       'X-Requested-With': 'XMLHttpRequest',
-      "Content-Type": 'application/x-www-form-urlencoded'
+      'Content-Type': 'application/x-www-form-urlencoded'
     };
 
     final response = await ForumConnect.connectAndPost(
@@ -177,9 +177,9 @@ class PostViewModel extends BaseViewModel {
       _createPostText.text = '';
       notifyListeners();
     } else {
-      if (body.containsKey("errors")) {
+      if (body.containsKey('errors')) {
         _hasError = true;
-        _errorMessage = body["errors"][0];
+        _errorMessage = body['errors'][0];
         notifyListeners();
       }
     }
@@ -187,7 +187,7 @@ class PostViewModel extends BaseViewModel {
 
   Future<void> updateTopic(postId, postSlug) async {
     Map<String, dynamic> body = {
-      "post": {"raw": commentText.text}
+      'post': {'raw': commentText.text}
     };
 
     if (commentText.text.isNotEmpty) {
@@ -219,15 +219,15 @@ class PostViewModel extends BaseViewModel {
   static String parseDateShort(String date) {
     String jiffyDate = Jiffy(date).fromNow();
 
-    List parsedDate = jiffyDate.split(" ");
+    List parsedDate = jiffyDate.split(' ');
 
-    if (jiffyDate.contains("minutes")) {
+    if (jiffyDate.contains('minutes')) {
       return parsedDate[0] + 'm';
     }
 
-    if (jiffyDate.contains("hour")) return '1h';
+    if (jiffyDate.contains('hour')) return '1h';
 
-    if (jiffyDate.contains("hours")) return parsedDate[0] + 'h';
+    if (jiffyDate.contains('hours')) return parsedDate[0] + 'h';
 
     if (jiffyDate.contains('days')) return parsedDate[0] + 'd';
 
@@ -284,23 +284,23 @@ class PostViewModel extends BaseViewModel {
     date = Jiffy(date).fromNow().toUpperCase();
 
     switch (action) {
-      case "visible.disabled":
-        message = "UNLISTED " + date;
+      case 'visible.disabled':
+        message = 'UNLISTED ' + date;
         icon = const Icon(
           FontAwesomeIcons.eyeSlash,
           color: Colors.white,
         );
         return returnAction(icon, message, style);
-      case "split_topic":
-        message = "SPLIT THIS TOPIC " + date;
+      case 'split_topic':
+        message = 'SPLIT THIS TOPIC ' + date;
         icon = const Icon(FontAwesomeIcons.signOutAlt, color: Colors.white);
         return returnAction(icon, message, style);
-      case "closed.enabled":
-        message = "CLOSED " + date;
+      case 'closed.enabled':
+        message = 'CLOSED ' + date;
         icon = const Icon(FontAwesomeIcons.lock, color: Colors.white);
         return returnAction(icon, message, style);
       default:
-        message = "UNKNOWN ACTON: " + action;
+        message = 'UNKNOWN ACTON: ' + action;
         return Row(
           children: [Text(message, style: style)],
         );

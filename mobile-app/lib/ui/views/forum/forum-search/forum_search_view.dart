@@ -1,4 +1,3 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:freecodecamp/models/forum/forum_search_model.dart';
 import 'package:freecodecamp/ui/views/forum/forum-search/forum_search_viewmodel.dart';
@@ -15,7 +14,7 @@ class ForumSearchView extends StatelessWidget {
               automaticallyImplyLeading: false,
               title: TextField(
                 decoration: const InputDecoration(
-                    hintText: "SEARCH TOPIC...",
+                    hintText: 'SEARCH TOPIC...',
                     hintStyle: TextStyle(color: Colors.white),
                     fillColor: Color.fromRGBO(0x2A, 0x2A, 0x40, 1),
                     filled: true),

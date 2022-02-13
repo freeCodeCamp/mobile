@@ -1,4 +1,3 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
 import 'package:freecodecamp/models/news/article_model.dart';
@@ -29,6 +28,7 @@ class NewsFeedView extends StatelessWidget {
   Widget build(BuildContext context) {
     return ViewModelBuilder<NewsFeedModel>.reactive(
       viewModelBuilder: () => NewsFeedModel(),
+      onModelReady: (model) async => await model.devMode(),
       builder: (context, model, child) => Scaffold(
           appBar: fromTag || fromAuthor
               ? AppBar(
@@ -38,10 +38,18 @@ class NewsFeedView extends StatelessWidget {
               : null,
           backgroundColor: const Color(0xFF0a0a23),
           body: FutureBuilder(
-            future: model.fetchArticles(slug, author),
+            future: !model.devmode
+                ? model.fetchArticles(slug, author)
+                : model.readFromFiles(),
             builder: (context, snapshot) {
               if (snapshot.hasData) {
-                return articleThumbnailBuilder(model, context);
+                return RefreshIndicator(
+                    backgroundColor: const Color(0xFF0a0a23),
+                    color: Colors.white,
+                    child: articleThumbnailBuilder(model, context),
+                    onRefresh: () {
+                      return model.refresh();
+                    });
               } else if (snapshot.hasError) {
                 return errorMessage();
               }
@@ -122,7 +130,7 @@ class NewsFeedView extends StatelessWidget {
         Align(
           alignment: Alignment.centerLeft,
           child: Padding(
-            padding: const EdgeInsets.only(left: 8.0, right: 8),
+            padding: const EdgeInsets.only(left: 16, right: 16),
             child: Wrap(
               children: [
                 for (int j = 0; j < articles[i].tagNames.length && j < 3; j++)

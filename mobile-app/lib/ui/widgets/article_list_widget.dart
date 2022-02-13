@@ -30,7 +30,7 @@ class ArticleList extends StatefulWidget {
     await dotenv.load();
 
     String par =
-        "&fields=title,url,feature_image,slug,published_at,id&include=tags,authors";
+        '&fields=title,url,feature_image,slug,published_at,id&include=tags,authors';
     String url =
         "${dotenv.env['NEWSURL']}posts/?key=${dotenv.env['NEWSKEY']}&page=1$par&filter=author:$authorSlug";
 
@@ -49,8 +49,8 @@ class ArticleList extends StatefulWidget {
   }
 
   void navigateToArticle(String id) {
-    _navigationService.navigateTo(Routes.newsArticlePostView,
-        arguments: NewsArticlePostViewArguments(refId: id));
+    _navigationService.navigateTo(Routes.newsArticleView,
+        arguments: NewsArticleViewArguments(refId: id));
   }
 
   void navigateToFeed() {
@@ -88,7 +88,7 @@ class ArticleListState extends State<ArticleList> {
                 ),
                 snapshot.data!.length > 5
                     ? ListTile(
-                        title: const Text("Show more articles"),
+                        title: const Text('Show more articles'),
                         tileColor: const Color(0xFF0a0a23),
                         trailing: const Icon(Icons.arrow_forward_ios_outlined),
                         onTap: () {

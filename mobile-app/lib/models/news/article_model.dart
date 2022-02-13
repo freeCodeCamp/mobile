@@ -44,14 +44,14 @@ class Article {
 
   factory Article.fromJson(Map<String, dynamic> data) {
     return Article(
-        createdAt: data["published_at"],
-        featureImage: data["feature_image"],
-        title: data["title"],
+        createdAt: data['published_at'],
+        featureImage: data['feature_image'],
+        title: data['title'],
         profileImage: data['authors'][0]['profile_image'],
         authorName: data['authors'][0]['name'],
         authorSlug: data['authors'][0]['slug'],
         tagNames: returnTags(data['tags']),
-        id: data["id"]);
+        id: data['id']);
   }
 
   // this is factory is for the post view
@@ -61,6 +61,7 @@ class Article {
         authorName: json['posts'][0]['primary_author']['name'],
         authorSlug: json['posts'][0]['primary_author']['slug'],
         profileImage: json['posts'][0]['primary_author']['profile_image'],
+        tagNames: returnTags(json['posts'][0]['tags']),
         id: json['posts'][0]['id'],
         title: json['posts'][0]['title'],
         url: json['posts'][0]['url'],
