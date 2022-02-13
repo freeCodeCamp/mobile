@@ -2,7 +2,10 @@ import 'package:freecodecamp/service/episode_audio_service.dart';
 import 'package:freecodecamp/service/test_service.dart';
 import 'package:freecodecamp/service/notification_service.dart';
 import 'package:freecodecamp/service/podcasts_service.dart';
+import 'package:freecodecamp/service/code_radio_service.dart';
+
 import 'package:freecodecamp/ui/views/browser/browser_view.dart';
+import 'package:freecodecamp/ui/views/code_radio/code_radio_view.dart';
 import 'package:freecodecamp/ui/views/forum/forum-categories/forum_category_view.dart';
 import 'package:freecodecamp/ui/views/forum/forum-login/forum_login_view.dart';
 import 'package:freecodecamp/ui/views/forum/forum-post-feed/forum_post_feed_view.dart';
@@ -38,7 +41,8 @@ import 'package:sqflite_migration_service/sqflite_migration_service.dart';
     MaterialRoute(page: ForumLoginView),
     MaterialRoute(page: ForumUserView),
     MaterialRoute(page: ForumSettingsView),
-    MaterialRoute(page: ForumUserProfileView)
+    MaterialRoute(page: ForumUserProfileView),
+    MaterialRoute(page: CodeRadioView)
   ],
   dependencies: [
     LazySingleton(classType: NavigationService),
@@ -48,7 +52,8 @@ import 'package:sqflite_migration_service/sqflite_migration_service.dart';
     LazySingleton(classType: PodcastsDatabaseService),
     LazySingleton(classType: NotificationService),
     LazySingleton(classType: EpisodeAudioService),
-    LazySingleton(classType: TestService)
+    LazySingleton(classType: TestService),
+    LazySingleton(classType: CodeRadioService)
   ],
   logger: StackedLogger(),
 )
