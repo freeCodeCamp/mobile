@@ -47,7 +47,6 @@ dependencies:
   image_picker: ^0.8.4+4
   youtube_player_iframe: ^2.2.2
   web_socket_channel: ^2.1.0
-  audio_service: ^0.18.3
 dev_dependencies:
   build_runner: ^2.1.2
   integration_test:
