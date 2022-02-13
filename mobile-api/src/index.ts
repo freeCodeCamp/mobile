@@ -5,30 +5,21 @@ import path from 'path/posix';
 import dbConnect from './db-connect';
 import podcastRoutes from './routes';
 
+Bree.extend(require('@breejs/ts-worker'));
+
 const app = express();
 const port = 3000;
 const bree = new Bree({
   root: path.join(__dirname, 'jobs'),
-  defaultExtension: 'ts',
+  defaultExtension: process.env.NODE_ENV === 'production' ? 'js' : 'ts',
   jobs: [
     {
-      name: 'Update Podcasts',
-      path: typescript_worker,
+      name: 'update-podcasts',
       timeout: 0,
       interval: '30m',
-      worker: {
-        workerData: { __filename: './src/jobs/update-podcasts.ts' },
-      },
     },
   ],
 });
-
-function typescript_worker() {
-  const path = require('path');
-  require('ts-node').register();
-  const workerData = require('worker_threads').workerData;
-  require(path.resolve(__dirname, workerData.__filename));
-}
 
 app.get('/', async (req: Request, res: Response) => {
   res.json({ msg: 'Hello World!' });
