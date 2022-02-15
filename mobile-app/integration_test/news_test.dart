@@ -8,14 +8,19 @@ import 'package:path/path.dart' as path;
 import 'package:sqflite/sqflite.dart';
 
 void main() {
+  final binding = IntegrationTestWidgetsFlutterBinding();
   IntegrationTestWidgetsFlutterBinding.ensureInitialized();
 
   group('News Component', () {
     testWidgets('should bookmark article', (WidgetTester tester) async {
       // Start app
+      tester.printToConsole('Test starting');
       app.main();
+      await binding.convertFlutterSurfaceToImage();
       await tester.pumpAndSettle();
-      await tester.pump(const Duration(seconds: 5));
+      await binding.takeScreenshot('news-feed');
+      await tester.pumpAndSettle();
+
       // Tap on the first article
       final Finder firstArticle = find.byType(NewsFeedLazyLoading).first;
       final ValueKey firstArticleKey = tester
@@ -24,7 +29,7 @@ void main() {
       expect(firstArticle, findsOneWidget);
       await tester.tap(firstArticle);
       await tester.pumpAndSettle();
-      await tester.pump(const Duration(seconds: 5));
+      await binding.takeScreenshot('news-article');
 
       // Tap on the bookmark button and store article title and author
       final Finder bookmarkButton = find.byKey(const Key('bookmark_btn'));
@@ -32,6 +37,7 @@ void main() {
       final Finder articleAuthor = find.descendant(
           of: find.byType(NewsArticleHeader),
           matching: find.textContaining(RegExp(r'^Written by')));
+      await tester.pumpAndSettle();
       expect(bookmarkButton, findsOneWidget);
       expect(articleTitle, findsOneWidget);
       expect(articleAuthor, findsOneWidget);
