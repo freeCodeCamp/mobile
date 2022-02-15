@@ -63,7 +63,9 @@ jobs:
           target: google_apis
           arch: x86_64
           script: cd mobile-app && flutter drive --driver=test_driver/integration_test.dart --target=integration_test/news_test.dart && ls screenshots/
-      - run: |
+      - name: Check for screenshots
+        if: failure()
+        run: |
           pwd
           ls -al
       - uses: actions/upload-artifact@v2
