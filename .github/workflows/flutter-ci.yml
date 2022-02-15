@@ -67,7 +67,7 @@ jobs:
         if: failure()
         run: |
           pwd
-          ls -al
+          ls -al screenshots
       - uses: actions/upload-artifact@v2
         if: failure()
         with:
