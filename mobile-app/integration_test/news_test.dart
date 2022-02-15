@@ -19,7 +19,6 @@ void main() {
       await binding.convertFlutterSurfaceToImage();
       await tester.pumpAndSettle();
       await binding.takeScreenshot('news-feed');
-      await tester.pumpAndSettle();
 
       // Tap on the first article
       final Finder firstArticle = find.byType(NewsFeedLazyLoading).first;
@@ -38,49 +37,49 @@ void main() {
           of: find.byType(NewsArticleHeader),
           matching: find.textContaining(RegExp(r'^Written by')));
       await tester.pumpAndSettle();
-      // expect(bookmarkButton, findsOneWidget);
-      // expect(articleTitle, findsOneWidget);
-      // expect(articleAuthor, findsOneWidget);
-      // Text title = tester.firstWidget(articleTitle);
-      // String author = tester.firstWidget<Text>(articleAuthor).data!;
-      // await tester.tap(bookmarkButton);
-      // await tester.pumpAndSettle();
+      expect(bookmarkButton, findsOneWidget);
+      expect(articleTitle, findsOneWidget);
+      expect(articleAuthor, findsOneWidget);
+      Text title = tester.firstWidget(articleTitle);
+      String author = tester.firstWidget<Text>(articleAuthor).data!;
+      await tester.tap(bookmarkButton);
+      await tester.pumpAndSettle();
 
-      // // Go to news bookmark view
-      // await tester.tap(find.byTooltip('Back'));
-      // await tester.pumpAndSettle();
-      // await tester.tap(find.byTooltip('Bookmarks'));
-      // await tester.pumpAndSettle();
+      // Go to news bookmark view
+      await tester.tap(find.byTooltip('Back'));
+      await tester.pumpAndSettle();
+      await tester.tap(find.byTooltip('Bookmarks'));
+      await tester.pumpAndSettle();
 
-      // // Check if article is in bookmark view and it has same title and author
-      // final Finder bookmarkArticle =
-      //     find.byKey(const Key('bookmark_article_0'));
-      // final Finder bookmarkArticleText = find.descendant(
-      //   of: bookmarkArticle,
-      //   matching: find.byType(Text),
-      // );
-      // expect(
-      //   tester.firstWidget<Text>(bookmarkArticleText.first).data!,
-      //   title.data,
-      // );
-      // expect(
-      //   (tester.firstWidget<Text>(bookmarkArticleText.last).data!)
-      //       .split('Written by: ')[1],
-      //   author.split('Written by ')[1],
-      // );
+      // Check if article is in bookmark view and it has same title and author
+      final Finder bookmarkArticle =
+          find.byKey(const Key('bookmark_article_0'));
+      final Finder bookmarkArticleText = find.descendant(
+        of: bookmarkArticle,
+        matching: find.byType(Text),
+      );
+      expect(
+        tester.firstWidget<Text>(bookmarkArticleText.first).data!,
+        title.data,
+      );
+      expect(
+        (tester.firstWidget<Text>(bookmarkArticleText.last).data!)
+            .split('Written by: ')[1],
+        author.split('Written by ')[1],
+      );
 
-      // // Check database if record exists
-      // final db = await openDatabase(
-      //     path.join(await getDatabasesPath(), 'bookmarked-article.db'));
-      // final List<Map<String, dynamic>> result = await db.query(
-      //   'bookmarks',
-      //   where: 'articleId = ?',
-      //   whereArgs: [firstArticleKey.value],
-      // );
-      // expect(result.length, 1);
-      // expect(result[0]['articleId'], firstArticleKey.value);
-      // expect(result[0]['articleTitle'], title.data);
-      // expect(result[0]['authorName'], author.split('Written by ')[1]);
+      // Check database if record exists
+      final db = await openDatabase(
+          path.join(await getDatabasesPath(), 'bookmarked-article.db'));
+      final List<Map<String, dynamic>> result = await db.query(
+        'bookmarks',
+        where: 'articleId = ?',
+        whereArgs: [firstArticleKey.value],
+      );
+      expect(result.length, 1);
+      expect(result[0]['articleId'], firstArticleKey.value);
+      expect(result[0]['articleTitle'], title.data);
+      expect(result[0]['authorName'], author.split('Written by ')[1]);
     });
   });
 }
