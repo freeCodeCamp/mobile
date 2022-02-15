@@ -72,5 +72,5 @@ jobs:
         if: failure()
         with:
           name: screenshots
-          path: screenshots/
+          path: mobile-app/screenshots/
           if-no-files-found: error
