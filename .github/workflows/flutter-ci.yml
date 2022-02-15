@@ -62,15 +62,11 @@ jobs:
           emulator-options: -no-snapshot-save -no-window -noaudio -no-boot-anim -camera-back none
           target: google_apis
           arch: x86_64
-          script: cd mobile-app && flutter drive --driver=test_driver/integration_test.dart --target=integration_test/news_test.dart && ls screenshots/
-      - name: Check for screenshots
-        if: failure()
-        run: |
-          pwd
-          ls -al screenshots
+          script: cd mobile-app && flutter drive --driver=test_driver/integration_test.dart --target=integration_test/news_test.dart
       - uses: actions/upload-artifact@v2
-        if: failure()
+        if: always()
         with:
           name: screenshots
           path: mobile-app/screenshots/
           if-no-files-found: error
+          retention-days: 7
