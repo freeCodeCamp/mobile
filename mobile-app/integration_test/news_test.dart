@@ -65,6 +65,8 @@ void main() {
         of: bookmarkArticle,
         matching: find.byType(Text),
       );
+      await tester.pumpAndSettle();
+      await binding.takeScreenshot('news-bookmark-feed');
       expect(
         tester.firstWidget<Text>(bookmarkArticleText.first).data!,
         title.data,
