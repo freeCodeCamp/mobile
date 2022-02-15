@@ -30,7 +30,7 @@ jobs:
           path: |
             ~/.android/avd/*
             ~/.android/adb*
-          key: avd-30
+          key: avd-31
       - name: create AVD and generate snapshot for caching
         if: steps.avd-cache.outputs.cache-hit != 'true'
         uses: reactivecircus/android-emulator-runner@v2
@@ -62,11 +62,4 @@ jobs:
           emulator-options: -no-snapshot-save -no-window -noaudio -no-boot-anim -camera-back none
           target: google_apis
           arch: x86_64
-          script: cd mobile-app && flutter drive --driver=test_driver/integration_test.dart --target=integration_test/news_test.dart
-      - uses: actions/upload-artifact@v2
-        if: always()
-        with:
-          name: screenshots
-          path: mobile-app/screenshots/
-          if-no-files-found: error
-          retention-days: 7
+          script: cd mobile-app && if adb shell pm list packages | grep -q org.freecodecamp; then adb uninstall org.freecodecamp; fi && flutter test integration_test
