@@ -22,11 +22,18 @@ void main() {
 
       // Tap on the first article
       final Finder firstArticle = find.byType(NewsFeedLazyLoading).first;
+      final Finder firstArticleImage = find
+          .descendant(
+            of: firstArticle,
+            matching: find.byType(Image),
+          )
+          .first;
       final ValueKey firstArticleKey = tester
           .firstWidget<NewsFeedLazyLoading>(firstArticle)
           .key! as ValueKey;
       expect(firstArticle, findsOneWidget);
-      await tester.tap(firstArticle);
+      expect(firstArticleImage, findsOneWidget);
+      await tester.tap(firstArticleImage);
       await tester.pumpAndSettle();
       await binding.takeScreenshot('news-article');
 
