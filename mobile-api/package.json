@@ -17,7 +17,7 @@
     "bree": "7.1.5",
     "dotenv": "10.0.0",
     "express": "4.17.2",
-    "mongoose": "6.2.1",
+    "mongoose": "6.2.2",
     "nodemon": "2.0.15",
     "rss-parser": "3.12.0",
     "ts-node": "10.5.0",
