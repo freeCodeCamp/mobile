@@ -5,7 +5,7 @@ class Article {
   final String id;
   final String title;
   final String featureImage;
-  final String profileImage;
+  final String? profileImage;
   final String authorName;
   final String authorSlug;
   final String? createdAt;

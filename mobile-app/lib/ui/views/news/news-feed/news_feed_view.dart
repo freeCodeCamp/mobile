@@ -184,7 +184,7 @@ class NewsFeedView extends StatelessWidget {
                             fit: BoxFit.cover,
                           )
                         : Image.network(
-                            articles[i].profileImage,
+                            articles[i].profileImage as String,
                             width: 45,
                             height: 45,
                             fit: BoxFit.cover,
