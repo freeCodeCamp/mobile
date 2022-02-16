@@ -13,16 +13,24 @@ void main() {
   group('News Component', () {
     testWidgets('should bookmark article', (WidgetTester tester) async {
       // Start app
+      tester.printToConsole('Test starting');
       app.main();
       await tester.pumpAndSettle();
 
       // Tap on the first article
       final Finder firstArticle = find.byType(NewsFeedLazyLoading).first;
+      final Finder firstArticleImage = find
+          .descendant(
+            of: firstArticle,
+            matching: find.byType(Image),
+          )
+          .first;
       final ValueKey firstArticleKey = tester
           .firstWidget<NewsFeedLazyLoading>(firstArticle)
           .key! as ValueKey;
       expect(firstArticle, findsOneWidget);
-      await tester.tap(firstArticle);
+      expect(firstArticleImage, findsOneWidget);
+      await tester.tap(firstArticleImage);
       await tester.pumpAndSettle();
 
       // Tap on the bookmark button and store article title and author
@@ -31,6 +39,7 @@ void main() {
       final Finder articleAuthor = find.descendant(
           of: find.byType(NewsArticleHeader),
           matching: find.textContaining(RegExp(r'^Written by')));
+      await tester.pumpAndSettle();
       expect(bookmarkButton, findsOneWidget);
       expect(articleTitle, findsOneWidget);
       expect(articleAuthor, findsOneWidget);
