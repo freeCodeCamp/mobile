@@ -89,13 +89,13 @@ class Author {
   final String slug;
   final String id;
   final String name;
-  final String profileImage;
+  final String? profileImage;
   final String? coverImage;
   final String? bio;
-  final String website;
+  final String? website;
   final String? location;
-  final String facebook;
-  final String twitter;
+  final String? facebook;
+  final String? twitter;
   final String? metaTile;
   final String? metaDescription;
   final String url;
