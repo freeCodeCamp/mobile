@@ -61,7 +61,6 @@ class _buttonDialog extends HookWidget {
                   request.description as String,
                   style: const TextStyle(
                     height: 1.5,
-                    color: Colors.white,
                     fontSize: 16,
                   ),
                 ),
@@ -81,7 +80,7 @@ class _buttonDialog extends HookWidget {
                     child: Text(
                       request.mainButtonTitle as String,
                       textAlign: TextAlign.center,
-                      style: const TextStyle(color: Colors.white, fontSize: 16),
+                      style: const TextStyle(fontSize: 16),
                     ),
                   ),
                 ),
