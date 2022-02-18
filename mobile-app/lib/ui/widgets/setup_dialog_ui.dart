@@ -44,61 +44,50 @@ class _buttonDialog extends HookWidget {
       child: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
-          Padding(
-            padding: const EdgeInsets.all(32.0),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.center,
+          Container(
+            padding: const EdgeInsets.all(16),
+            child: Wrap(
+              runSpacing: 20,
               children: [
                 Text(
                   request.title as String,
                   style: const TextStyle(
-                    color: Colors.white,
                     fontSize: 24,
+                    height: 1.5,
                     fontWeight: FontWeight.bold,
                   ),
                 ),
-              ],
-            ),
-          ),
-          Padding(
-            padding: const EdgeInsets.only(left: 32, right: 32.0),
-            child: Row(
-              children: [
-                Expanded(
-                  child: Text(
-                    request.description as String,
-                    style: const TextStyle(
-                      color: Colors.white,
-                      fontSize: 16,
+                Text(
+                  request.description as String,
+                  style: const TextStyle(
+                    height: 1.5,
+                    color: Colors.white,
+                    fontSize: 16,
+                  ),
+                ),
+                SizedBox(
+                  height: 50,
+                  width: MediaQuery.of(context).size.width,
+                  child: ElevatedButton(
+                    style: ElevatedButton.styleFrom(
+                        primary: const Color.fromRGBO(0x3b, 0x3b, 0x4f, 1),
+                        side: const BorderSide(width: 2, color: Colors.white),
+                        shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(0))),
+                    onPressed: () => {
+                      onDialogTap(
+                          DialogResponse(data: 'gallery', confirmed: true)),
+                    },
+                    child: Text(
+                      request.mainButtonTitle as String,
+                      textAlign: TextAlign.center,
+                      style: const TextStyle(color: Colors.white, fontSize: 16),
                     ),
                   ),
                 ),
               ],
             ),
-          ),
-          Padding(
-            padding:
-                const EdgeInsets.only(left: 32, top: 16, right: 32, bottom: 32),
-            child: SizedBox(
-              height: 50,
-              width: MediaQuery.of(context).size.width,
-              child: ElevatedButton(
-                style: ElevatedButton.styleFrom(
-                    primary: const Color.fromRGBO(0x3b, 0x3b, 0x4f, 1),
-                    side: const BorderSide(width: 2, color: Colors.white),
-                    shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(0))),
-                onPressed: () => {
-                  onDialogTap(DialogResponse(data: 'gallery', confirmed: true)),
-                },
-                child: Text(
-                  request.mainButtonTitle as String,
-                  textAlign: TextAlign.center,
-                  style: const TextStyle(color: Colors.white, fontSize: 16),
-                ),
-              ),
-            ),
-          ),
+          )
         ],
       ),
     );
@@ -127,6 +116,7 @@ class _buttonDialog2 extends HookWidget {
               children: [
                 Text(
                   request.title as String,
+                  textAlign: TextAlign.start,
                   style: const TextStyle(
                     color: Colors.white,
                     fontSize: 20,
