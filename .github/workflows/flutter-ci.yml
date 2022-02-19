@@ -7,7 +7,7 @@ on:
     branches:
       - main
   schedule:
-    cron: '0 0 * * *'
+    - cron: '0 0 * * *'
 
 jobs:
   flutter_test:
@@ -64,6 +64,9 @@ jobs:
 
       - name: Install packages
         run: flutter pub get
+
+      - name: Analyze code
+        run: flutter analyze
 
       - name: Run tests in emulator
         uses: reactivecircus/android-emulator-runner@v2
