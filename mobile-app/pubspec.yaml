@@ -25,7 +25,7 @@ dependencies:
   stacked_services: ^0.8.13
   url_launcher: ^6.0.10
   sqflite_migration_service: ^2.0.0-nullsafety.1
-  json_serializable: ^4.1.4
+  json_serializable: ^6.0.0
   dio: ^4.0.0
   just_audio_background: ^0.0.1-beta.1
   hexcolor: ^2.0.5
