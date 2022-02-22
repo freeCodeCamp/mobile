@@ -47,35 +47,40 @@ Column createPostTemplate(ForumCreatePostModel model, context) {
                   future: model.requestCategorieNames(),
                   builder: (context, snapshot) {
                     List<String> names = [];
-                    names = snapshot.data as List<String>;
-                    return Padding(
-                      padding: const EdgeInsets.only(top: 8.0),
-                      child: DropdownButtonFormField(
-                          style: const TextStyle(color: Colors.white),
-                          dropdownColor: const Color(0xFF0a0a23),
-                          decoration: const InputDecoration(
-                            enabledBorder: OutlineInputBorder(
-                                borderSide:
-                                    BorderSide(color: Colors.white, width: 2)),
-                          ),
-                          value: model.categoryDropDownValue,
-                          onChanged: (String? value) {
-                            model.changeDropDownValue(value);
-                          },
-                          menuMaxHeight: 300,
-                          items: snapshot.hasData
-                              ? names.map<DropdownMenuItem<String>>(
-                                  (String value) {
-                                  return DropdownMenuItem<String>(
-                                      value: value, child: Text(value));
-                                }).toList()
-                              : [
-                                  'Category'
-                                ].map<DropdownMenuItem<String>>((String value) {
-                                  return DropdownMenuItem<String>(
-                                      value: value, child: Text(value));
-                                }).toList()),
-                    );
+
+                    if (snapshot.hasData) {
+                      names = snapshot.data as List<String>;
+
+                      return Padding(
+                        padding: const EdgeInsets.only(top: 8.0),
+                        child: DropdownButtonFormField(
+                            style: const TextStyle(color: Colors.white),
+                            dropdownColor: const Color(0xFF0a0a23),
+                            decoration: const InputDecoration(
+                              enabledBorder: OutlineInputBorder(
+                                  borderSide: BorderSide(
+                                      color: Colors.white, width: 2)),
+                            ),
+                            value: model.categoryDropDownValue,
+                            onChanged: (String? value) {
+                              model.changeDropDownValue(value);
+                            },
+                            menuMaxHeight: 300,
+                            items: snapshot.hasData
+                                ? names.map<DropdownMenuItem<String>>(
+                                    (String value) {
+                                    return DropdownMenuItem<String>(
+                                        value: value, child: Text(value));
+                                  }).toList()
+                                : ['Category'].map<DropdownMenuItem<String>>(
+                                    (String value) {
+                                    return DropdownMenuItem<String>(
+                                        value: value, child: Text(value));
+                                  }).toList()),
+                      );
+                    }
+
+                    return const CircularProgressIndicator();
                   })),
         ],
       ),
