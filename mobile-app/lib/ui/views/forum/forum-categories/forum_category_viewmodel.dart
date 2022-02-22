@@ -66,7 +66,11 @@ class ForumCategoryViewModel extends BaseViewModel {
     }
 
     _isLoggedIn = await checkLoggedIn();
-    _user = await fetchUser();
+
+    if (_isLoggedIn) {
+      _user = await fetchUser();
+    }
+
     notifyListeners();
     setupDialogUi();
 
