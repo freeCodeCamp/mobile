@@ -16,13 +16,13 @@ class PostModel {
   final int postReplyCount;
   final int? postReads;
   final int? postLikes;
-  final bool postCanEdit;
-  final bool postCanDelete;
-  final bool postCanRecover;
-  final bool isModerator;
-  final bool isAdmin;
-  final bool isStaff;
-  final bool postHasAnswer;
+  final bool? postCanEdit;
+  final bool? postCanDelete;
+  final bool? postCanRecover;
+  final bool? isModerator;
+  final bool? isAdmin;
+  final bool? isStaff;
+  final bool? postHasAnswer;
   final List? postUsers;
   final List? userImages;
 
@@ -43,13 +43,13 @@ class PostModel {
       this.postViews,
       this.postLikes,
       this.postComments = const [],
-      required this.postCanEdit,
-      required this.postCanDelete,
-      required this.postCanRecover,
-      required this.isModerator,
-      required this.isAdmin,
-      required this.isStaff,
-      required this.postHasAnswer,
+      this.postCanEdit,
+      this.postCanDelete,
+      this.postCanRecover,
+      this.isModerator,
+      this.isAdmin,
+      this.isStaff,
+      this.postHasAnswer,
       this.postUsers,
       this.userImages});
 
@@ -75,7 +75,6 @@ class PostModel {
       isAdmin: data['post_stream']['posts'][0]['admin'],
       isModerator: data['post_stream']['posts'][0]['moderator'],
       isStaff: data['post_stream']['posts'][0]['staff'],
-      postHasAnswer: data['post_stream']['posts'][0]['has_accepted_answer'],
     );
   }
 
@@ -138,9 +137,6 @@ class PostModel {
         username: data['last_poster_username'],
         profieImage: data['avatar_template'],
         name: data['name'],
-        postCanDelete: data['can_delete'],
-        postCanEdit: data['can_edit'],
-        postCanRecover: data['can_recover'],
         isAdmin: data['admin'],
         isModerator: data['moderator'],
         isStaff: data['staff'],

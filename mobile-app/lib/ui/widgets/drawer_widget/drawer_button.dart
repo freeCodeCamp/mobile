@@ -20,7 +20,7 @@ class _DrawerButtonState extends State<DrawerButton> {
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: const EdgeInsets.all(10.0),
+      padding: const EdgeInsets.all(8.0),
       child: ListTile(
         dense: true,
         leading: Icon(
@@ -30,7 +30,7 @@ class _DrawerButtonState extends State<DrawerButton> {
         title: Text(
           widget.component,
           style: const TextStyle(
-              fontSize: 20,
+              fontSize: 18,
               fontWeight: FontWeight.w400,
               color: Colors.white,
               letterSpacing: 0.5),

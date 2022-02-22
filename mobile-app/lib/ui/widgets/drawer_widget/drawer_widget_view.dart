@@ -45,20 +45,20 @@ class DrawerWidgetView extends StatelessWidget {
                 },
               ),
               buildDivider(),
-              model.showForum
-                  ? DrawerButton(
-                      component: 'FORUM',
-                      icon: Icons.forum_outlined,
-                      route: () {
-                        model.routeComponent('FORUM', context);
-                      },
-                    )
-                  : DrawerButton(
-                      component: 'LEARN',
-                      icon: Icons.local_fire_department_sharp,
-                      route: () {
-                        model.routeComponent('LEARN', context);
-                      }),
+              DrawerButton(
+                component: 'FORUM',
+                icon: Icons.forum_outlined,
+                route: () {
+                  model.routeComponent('FORUM', context);
+                },
+              ),
+              buildDivider(),
+              DrawerButton(
+                  component: 'LEARN',
+                  icon: Icons.local_fire_department_sharp,
+                  route: () {
+                    model.routeComponent('LEARN', context);
+                  }),
               buildDivider(),
               DrawerButton(
                 component: 'PODCAST',
@@ -81,7 +81,6 @@ class DrawerWidgetView extends StatelessWidget {
                 url: 'https://www.freecodecamp.org/donate/',
                 icon: Icons.favorite,
               ),
-              buildDivider(),
             ],
           ),
         ),

@@ -66,7 +66,7 @@ class ForumCategoryViewModel extends BaseViewModel {
     }
 
     _isLoggedIn = await checkLoggedIn();
-    _user = await fetchUser();
+    // _user = await fetchUser();
     notifyListeners();
     setupDialogUi();
 
@@ -78,23 +78,23 @@ class ForumCategoryViewModel extends BaseViewModel {
     return prefs.getBool('loggedIn') ?? false;
   }
 
-  Future<dynamic> fetchUser() async {
-    SharedPreferences prefs = await SharedPreferences.getInstance();
+  // Future<dynamic> fetchUser() async {
+  //   SharedPreferences prefs = await SharedPreferences.getInstance();
 
-    String? username;
+  //   String? username;
 
-    if (prefs.getString('username') != null) {
-      username = prefs.getString('username');
+  //   if (prefs.getString('username') != null) {
+  //     username = prefs.getString('username');
 
-      final response = await ForumConnect.connectAndGet('/u/$username');
+  //     final response = await ForumConnect.connectAndGet('/u/$username');
 
-      if (response.statusCode == 200) {
-        _userProfileIsLoading = false;
-        notifyListeners();
-        return User.fromJson(jsonDecode(response.body));
-      }
-    } else {
-      return null;
-    }
-  }
+  //     if (response.statusCode == 200) {
+  //       _userProfileIsLoading = false;
+  //       notifyListeners();
+  //       return User.fromJson(jsonDecode(response.body));
+  //     }
+  //   } else {
+  //     return null;
+  //   }
+  // }
 }

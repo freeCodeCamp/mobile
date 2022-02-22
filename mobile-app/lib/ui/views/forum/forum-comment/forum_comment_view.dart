@@ -98,7 +98,7 @@ class ForumCommentView extends StatelessWidget {
             ],
           ),
           Column(children: [
-            post.isAdmin || post.isModerator || post.isStaff
+            post.isAdmin! || post.isModerator! || post.isStaff!
                 ? const Padding(
                     padding: EdgeInsets.only(right: 8.0),
                     child: Icon(

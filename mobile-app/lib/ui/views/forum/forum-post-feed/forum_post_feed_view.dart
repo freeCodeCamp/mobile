@@ -75,7 +75,7 @@ class ForumPostFeedView extends StatelessWidget {
       title: Row(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          post.postHasAnswer
+          post.postHasAnswer!
               ? const Padding(
                   padding: EdgeInsets.only(right: 8),
                   child: FaIcon(

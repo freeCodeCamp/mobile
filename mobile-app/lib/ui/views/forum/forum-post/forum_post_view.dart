@@ -329,7 +329,7 @@ class ForumPostView extends StatelessWidget {
           },
           icon: const Icon(Icons.share_outlined),
         ),
-        post.postCanEdit && !model.isEditingPost
+        post.postCanEdit! && !model.isEditingPost
             ? IconButton(
                 onPressed: () {
                   model.editPost(post.postId, post.postCooked);
@@ -338,7 +338,7 @@ class ForumPostView extends StatelessWidget {
                   Icons.edit_sharp,
                 ))
             : Container(),
-        post.postCanDelete
+        post.postCanDelete!
             ? IconButton(
                 onPressed: () {
                   model.deleteTopic(id, context);

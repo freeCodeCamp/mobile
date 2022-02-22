@@ -36,19 +36,12 @@ class ForumConnect {
     String clientInDevMode =
         dotenv.get('DEVELOPMENTMODE', fallback: 'false').toLowerCase();
 
-    headers['Api-Username'] = prefs.getString('username') as String;
-
-    bool noApiKeyProvided = dotenv.env['DISCOURSE_PROD'] == null &&
-        dotenv.env['DISCOURSE_TEST'] == null;
-
-    if (noApiKeyProvided) {
-      throw Exception(
-          'No Discourse api key provided, did you copy the sample.env?');
+    if (prefs.get('username') != null) {
+      headers['Api-Username'] = dotenv.get('username');
+      headers['Api-Key'] = dotenv.env[clientInDevMode == 'true'
+          ? 'DISCOURSE_TEST'
+          : 'DISCOURSE_PROD'] as String;
     }
-
-    headers['Api-Key'] = dotenv.env[clientInDevMode == 'true'
-        ? 'DISCOURSE_TEST'
-        : 'DISCOURSE_PROD'] as String;
 
     return headers;
   }

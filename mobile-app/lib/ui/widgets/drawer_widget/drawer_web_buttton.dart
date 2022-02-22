@@ -21,7 +21,7 @@ class _WebButtonState extends State<WebButton> {
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: const EdgeInsets.all(10.0),
+      padding: const EdgeInsets.all(8.0),
       child: ListTile(
         dense: true,
         onTap: () {
@@ -34,7 +34,7 @@ class _WebButtonState extends State<WebButton> {
         title: Text(
           widget.component,
           style: const TextStyle(
-              fontSize: 20,
+              fontSize: 18,
               fontWeight: FontWeight.w400,
               color: Colors.white,
               letterSpacing: 0.5),

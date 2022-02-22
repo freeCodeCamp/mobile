@@ -311,7 +311,7 @@ class PostViewModel extends BaseViewModel {
       PostModel post, PostViewModel model, String postId, String postSlug) {
     List<PopupMenuItem> options = [];
 
-    if (post.postCanDelete && model.recentlyDeletedPostId != post.postId) {
+    if (post.postCanDelete! && model.recentlyDeletedPostId != post.postId) {
       options.add(PopupMenuItem(
           onTap: () {
             model.deletePost(post.postId, postId, postSlug);
@@ -328,7 +328,7 @@ class PostViewModel extends BaseViewModel {
           ])));
     }
 
-    if (post.postCanEdit && !model.isEditingPost) {
+    if (post.postCanEdit! && !model.isEditingPost) {
       options.add(PopupMenuItem(
           onTap: () {
             model.editPost(post.postId, post.postCooked);
