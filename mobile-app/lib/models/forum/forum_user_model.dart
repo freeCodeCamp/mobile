@@ -46,19 +46,19 @@ class User {
   factory User.fromJson(Map<String, dynamic> data) {
     return User(
       username: data['user']['username'],
-      userEmail: data['user']['email'],
+      userEmail: data['user']['email'] ?? '',
       name: data['user']['name'],
       profilePicture: data['user']['avatar_template'],
       lastSeen: data['user']['last_seen_at'],
       createdAt: data['user']['created_at'],
       title: data['user']['title'],
       bio: data['user']['bio_excerpt'],
-      dateOfBirth: data['user']['date_of_birth'],
+      dateOfBirth: data['user']['date_of_birth'] ?? '',
       ignored: data['user']['ignored'],
       muted: data['user']['muted'],
       canSendPrivateMessages: data['user']['can_send_private_messages'],
-      canSendPrivateMessageToUser: data['user']
-          ['can_send_private_messages_to_user'],
+      canSendPrivateMessageToUser:
+          data['user']['can_send_private_messages_to_user'] ?? false,
       isModerator: data['user']['moderator'],
       isAdmin: data['user']['admin'],
       trustLevel: data['user']['trust_level'],
