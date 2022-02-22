@@ -46,7 +46,7 @@ class NewsFeedView extends StatelessWidget {
                 return RefreshIndicator(
                     backgroundColor: const Color(0xFF0a0a23),
                     color: Colors.white,
-                    child: articleThumbnailBuilder(model, context),
+                    child: articleThumbnailBuilder(model),
                     onRefresh: () {
                       return model.refresh();
                     });
@@ -85,43 +85,46 @@ class NewsFeedView extends StatelessWidget {
     );
   }
 
-  ListView articleThumbnailBuilder(NewsFeedModel model, BuildContext context) {
+  ListView articleThumbnailBuilder(NewsFeedModel model) {
     return ListView.separated(
-        shrinkWrap: true,
-        itemCount: model.articles.length,
-        physics: const ClampingScrollPhysics(),
-        separatorBuilder: (context, int i) => const Divider(
-              color: Color.fromRGBO(0x2A, 0x2A, 0x40, 1),
-              thickness: 3,
-              height: 3,
-            ),
-        itemBuilder: (BuildContext contex, int i) => NewsFeedLazyLoading(
-            key: Key(model.articles[i].id),
-            articleCreated: () {
-              SchedulerBinding.instance!.addPostFrameCallback(
-                  (timeStamp) => model.handleArticleLazyLoading(i));
-            },
-            child: InkWell(
-                splashColor: Colors.transparent,
-                highlightColor: Colors.transparent,
-                onTap: () {
-                  model.navigateTo(model.articles[i].id);
-                },
-                child: Padding(
-                  padding: const EdgeInsets.only(bottom: 32.0),
-                  child: thumbnailView(context, model, model.articles, i),
-                ))));
+      shrinkWrap: true,
+      itemCount: model.articles.length,
+      physics: const ClampingScrollPhysics(),
+      separatorBuilder: (context, int i) => const Divider(
+        color: Color.fromRGBO(0x2A, 0x2A, 0x40, 1),
+        thickness: 3,
+        height: 3,
+      ),
+      itemBuilder: (BuildContext contex, int i) => NewsFeedLazyLoading(
+        key: Key(model.articles[i].id),
+        articleCreated: () {
+          SchedulerBinding.instance!.addPostFrameCallback(
+              (timeStamp) => model.handleArticleLazyLoading(i));
+        },
+        child: InkWell(
+          splashColor: Colors.transparent,
+          onTap: () {
+            model.navigateTo(model.articles[i].id);
+          },
+          child: Padding(
+            padding: const EdgeInsets.only(bottom: 32.0),
+            child: thumbnailView(model, i),
+          ),
+        ),
+      ),
+    );
   }
 
-  Column thumbnailView(BuildContext context, NewsFeedModel model,
-      List<Article>? articles, int i) {
+  Column thumbnailView(NewsFeedModel model, int i) {
+    Article article = model.articles[i];
+
     return Column(
       children: [
         Container(
           child: AspectRatio(
             aspectRatio: 16 / 9,
             child: Image.network(
-              articles![i].featureImage,
+              article.featureImage,
               fit: BoxFit.cover,
             ),
           ),
@@ -133,27 +136,29 @@ class NewsFeedView extends StatelessWidget {
             padding: const EdgeInsets.only(left: 16, right: 16),
             child: Wrap(
               children: [
-                for (int j = 0; j < articles[i].tagNames.length && j < 3; j++)
-                  articles[i].tagNames[j]
+                for (int j = 0; j < article.tagNames.length && j < 3; j++)
+                  article.tagNames[j]
               ],
             ),
           ),
         ),
         Container(
             padding: const EdgeInsets.only(left: 16, right: 16, top: 8),
-            child: articleHeader(model, articles, i))
+            child: articleHeader(model, i))
       ],
     );
   }
 
-  Widget articleHeader(NewsFeedModel model, List<Article>? articles, int i) {
+  Widget articleHeader(NewsFeedModel model, int i) {
+    Article article = model.articles[i];
+
     return Column(
       children: [
         Row(
           children: [
             Expanded(
               child: Text(
-                articles![i].title,
+                article.title,
                 maxLines: 2,
                 style: const TextStyle(
                     fontSize: 20, overflow: TextOverflow.ellipsis, height: 1.5),
@@ -166,48 +171,40 @@ class NewsFeedView extends StatelessWidget {
             Padding(
               padding: const EdgeInsets.only(right: 16, top: 16),
               child: InkWell(
-                onTap: () {
-                  model.navigateToAuthor(articles[i].authorSlug);
-                },
-                child: Stack(
-                  children: [
-                    Container(
-                        width: 45,
-                        height: 45,
-                        color: const Color.fromRGBO(0x2A, 0x2A, 0x40, 1)),
-                    // ignore: unnecessary_null_comparison
-                    articles[i].profileImage == null
-                        ? Image.asset(
-                            'assets/images/placeholder-profile-img.png',
-                            width: 45,
-                            height: 45,
-                            fit: BoxFit.cover,
-                          )
-                        : Image.network(
-                            articles[i].profileImage as String,
-                            width: 45,
-                            height: 45,
-                            fit: BoxFit.cover,
-                          )
-                  ],
-                ),
-              ),
+                  onTap: () {
+                    model.navigateToAuthor(article.authorSlug);
+                  },
+                  child: Container(
+                      width: 45,
+                      height: 45,
+                      color: const Color.fromRGBO(0x2A, 0x2A, 0x40, 1),
+                      child: article.profileImage == null
+                          ? Image.asset(
+                              'assets/images/placeholder-profile-img.png',
+                              width: 45,
+                              height: 45,
+                              fit: BoxFit.cover,
+                            )
+                          : Image.network(
+                              article.profileImage as String,
+                              width: 45,
+                              height: 45,
+                              fit: BoxFit.cover,
+                            ))),
             ),
-            Expanded(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Padding(
-                    padding: const EdgeInsets.only(bottom: 10, top: 16),
-                    child: Text(
-                      articles[i].authorName.toUpperCase(),
-                    ),
+            Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Padding(
+                  padding: const EdgeInsets.only(bottom: 10, top: 16),
+                  child: Text(
+                    article.authorName.toUpperCase(),
                   ),
-                  Text(
-                    NewsFeedModel.parseDate(articles[i].createdAt),
-                  ),
-                ],
-              ),
+                ),
+                Text(
+                  NewsFeedModel.parseDate(article.createdAt),
+                ),
+              ],
             ),
           ],
         ),
