@@ -37,7 +37,7 @@ class ForumConnect {
         dotenv.get('DEVELOPMENTMODE', fallback: 'false').toLowerCase();
 
     if (prefs.get('username') != null) {
-      headers['Api-Username'] = dotenv.get('username');
+      headers['Api-Username'] = prefs.get('username') as String;
       headers['Api-Key'] = dotenv.env[clientInDevMode == 'true'
           ? 'DISCOURSE_TEST'
           : 'DISCOURSE_PROD'] as String;
