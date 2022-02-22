@@ -87,19 +87,27 @@ class ForumPostFeedView extends StatelessWidget {
               : Container(),
           Expanded(
             child: Text(
-              model.truncateTitle(post.postName as String),
+              post.postName ?? '',
+              overflow: TextOverflow.ellipsis,
+              maxLines: 2,
               style: const TextStyle(fontSize: 18),
             ),
           ),
         ],
       ),
-      leading: FadeInImage.assetNetwork(
-          height: 60,
-          placeholder: 'assets/images/placeholder-profile-img.png',
-          image: PostModel.fromDiscourse(post.userImages![0])
+      leading: Container(
+        color: const Color(0xFF0a0a23),
+        height: 60,
+        width: 60,
+        child: Image.network(
+          PostModel.fromDiscourse(post.userImages![0])
               ? PostModel.parseProfileAvatar(post.userImages![0])
               : model.baseUrl +
-                  PostModel.parseProfileAvatar(post.userImages![0])),
+                  PostModel.parseProfileAvatar(post.userImages![0]),
+          height: 60,
+          fit: BoxFit.cover,
+        ),
+      ),
       trailing: Text(
         post.postReplyCount.toString(),
         style: const TextStyle(

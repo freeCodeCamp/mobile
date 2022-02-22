@@ -37,14 +37,6 @@ class ForumPostFeedModel extends BaseViewModel {
     }
   }
 
-  String truncateTitle(String title) {
-    if (title.length < 55) {
-      return title;
-    } else {
-      return title.toString().substring(0, 55) + '...';
-    }
-  }
-
   final NavigationService _navigationService = locator<NavigationService>();
   void navigateToPost(slug, id) {
     id = id.toString();
