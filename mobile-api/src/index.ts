@@ -1,11 +1,14 @@
-require('dotenv').config();
+import 'dotenv/config';
 import Bree from 'bree';
 import express, { Request, Response } from 'express';
 import path from 'path/posix';
 import dbConnect from './db-connect';
 import podcastRoutes from './routes';
+import bree_ts_worker from '@breejs/ts-worker';
 
-Bree.extend(require('@breejs/ts-worker'));
+if (process.env.NODE_ENV !== 'production') {
+  Bree.extend(bree_ts_worker);
+}
 
 const app = express();
 const port = 3000;

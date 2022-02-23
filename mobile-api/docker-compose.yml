@@ -2,8 +2,6 @@ version: '3'
 services:
   mongodb:
     image: mongo:4.0
-    ports:
-      - '27017:27017'
     restart: always
     volumes:
       - 'mongodb:/data/db'
@@ -14,7 +12,7 @@ services:
     depends_on:
       - mongodb
     environment:
-      - MONGODB_URL=mongodb://mongodb:27017/mobile-api
+      - MONGODB_URL
       - NODE_ENV=production
     ports:
       - '3000:3000'

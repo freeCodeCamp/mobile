@@ -1,12 +1,17 @@
 FROM node:16-alpine AS builder
-WORKDIR /app
+WORKDIR /build
 COPY . .
 RUN npm ci
 RUN npm run build
 
+FROM node:16-alpine AS dependencies
+WORKDIR /build
+COPY package-lock.json package.json ./
+RUN npm ci --production
+
 FROM node:16-alpine
 WORKDIR /api
-COPY --from=builder /app/package.json /app/package-lock.json ./
-COPY --from=builder /app/prod/  ./src/
-RUN npm ci --production
+COPY --from=builder /build/package.json /build/package-lock.json ./
+COPY --from=builder /build/prod/  ./src/
+COPY --from=dependencies /build/node_modules ./node_modules/
 CMD ["npm", "start"]
