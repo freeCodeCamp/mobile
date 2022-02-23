@@ -3,7 +3,6 @@ import 'package:freecodecamp/app/app.locator.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
-import 'package:freecodecamp/app/app.locator.dart';
 import 'package:freecodecamp/app/app.router.dart';
 import 'package:freecodecamp/models/news/article_model.dart';
 import 'package:freecodecamp/service/test_service.dart';

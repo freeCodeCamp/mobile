@@ -99,7 +99,7 @@ class NewsAuthorView extends StatelessWidget {
                 fit: BoxFit.cover,
               )
             : Image.network(
-                author!.profileImage,
+                author!.profileImage as String,
                 fit: BoxFit.cover,
               ),
       ),

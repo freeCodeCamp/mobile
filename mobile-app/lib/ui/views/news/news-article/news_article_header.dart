@@ -67,7 +67,7 @@ class NewsArticleHeader extends StatelessWidget {
                         fit: BoxFit.cover,
                       )
                     : Image.network(
-                        article.profileImage,
+                        article.profileImage as String,
                         height: 50,
                         width: 50,
                         fit: BoxFit.cover,

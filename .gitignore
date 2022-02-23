@@ -1,6 +1,9 @@
 ### Backend API ###
 node_modules/
 
+# Production build
+mobile-api/prod/
+
 ### Flutter ###
 # Miscellaneous
 *.class

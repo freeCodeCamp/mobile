@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:freecodecamp/app/app.locator.dart';
+import 'package:freecodecamp/app/app.router.dart';
 import 'package:freecodecamp/models/news/article_model.dart';
 import 'package:freecodecamp/models/news/bookmarked_article_model.dart';
 import 'package:stacked/stacked.dart';
@@ -7,6 +9,8 @@ import 'package:path/path.dart' as path;
 import 'package:flutter/services.dart';
 import 'dart:developer' as dev;
 import 'dart:io';
+
+import 'package:stacked_services/stacked_services.dart';
 
 class NewsBookmarkModel extends BaseViewModel {
   bool _isBookmarked = false;
@@ -20,6 +24,8 @@ class NewsBookmarkModel extends BaseViewModel {
 
   int _count = 0;
   int get count => _count;
+
+  final NavigationService _navigationService = locator<NavigationService>();
 
   Future<Database> openDbConnection() async {
     WidgetsFlutterBinding.ensureInitialized();
@@ -131,5 +137,10 @@ class NewsBookmarkModel extends BaseViewModel {
       updateListView();
       notifyListeners();
     }
+  }
+
+  void routeToBookmarkedArticle(BookmarkedArticle article) {
+    _navigationService.navigateTo(Routes.newsBookmarkPostView,
+        arguments: NewsBookmarkPostViewArguments(article: article));
   }
 }

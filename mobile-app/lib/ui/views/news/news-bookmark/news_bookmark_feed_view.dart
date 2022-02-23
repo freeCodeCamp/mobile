@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:freecodecamp/ui/views/news/news-bookmark/news_bookmark_viewmodel.dart';
 import 'package:stacked/stacked.dart';
-import 'news_bookmark_view.dart';
 
 class NewsBookmarkFeedView extends StatelessWidget {
   const NewsBookmarkFeedView({Key? key}) : super(key: key);
@@ -27,60 +26,26 @@ ListView populateListViewModel(NewsBookmarkModel model) {
   if (model.bookMarkedArticles.isEmpty) {
     model.updateListView();
   }
-  return ListView.builder(
+  return ListView.separated(
       itemCount: model.count,
+      separatorBuilder: (BuildContext context, int i) => const Divider(
+            color: Colors.white,
+          ),
       itemBuilder: (context, index) {
-        return ConstrainedBox(
+        var article = model.bookMarkedArticles[index];
+
+        return ListTile(
             key: Key('bookmark_article_$index'),
-            constraints: const BoxConstraints(minHeight: 150),
-            child: Container(
-                decoration: const BoxDecoration(
-                    border: Border(
-                        bottom: BorderSide(width: 2, color: Colors.white))),
-                child: InkWell(
-                  onTap: () {
-                    Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                            builder: (context) => NewsBookmarkPostView(
-                                article: model.bookMarkedArticles[index])));
-                  },
-                  child: Column(
-                    children: [
-                      Row(
-                        children: [
-                          Expanded(
-                            flex: 8,
-                            child: Padding(
-                              padding: const EdgeInsets.all(25.0),
-                              child: Text(
-                                model.bookMarkedArticles[index].articleTitle,
-                                style: const TextStyle(fontSize: 18),
-                              ),
-                            ),
-                          ),
-                          const Expanded(
-                              flex: 2,
-                              child: Icon(
-                                Icons.arrow_forward_ios,
-                              ))
-                        ],
-                      ),
-                      Row(
-                        children: [
-                          Expanded(
-                            child: Padding(
-                              padding: const EdgeInsets.all(25.0),
-                              child: Text(
-                                'Written by: ' +
-                                    model.bookMarkedArticles[index].authorName,
-                              ),
-                            ),
-                          )
-                        ],
-                      )
-                    ],
-                  ),
-                )));
+            title: Text(article.articleTitle),
+            trailing: const Icon(Icons.arrow_forward_ios_sharp),
+            subtitle: Padding(
+              padding: const EdgeInsets.only(top: 8.0),
+              child: Text('Written by: ${article.authorName}'),
+            ),
+            onTap: () {
+              model.routeToBookmarkedArticle(article);
+            },
+            contentPadding: const EdgeInsets.all(16),
+            minVerticalPadding: 8);
       });
 }
