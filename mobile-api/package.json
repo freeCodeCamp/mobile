@@ -14,18 +14,18 @@
     "start": "node src/index.js"
   },
   "dependencies": {
-    "@breejs/ts-worker": "^1.1.1",
     "bree": "7.2.0",
     "dotenv": "16.0.0",
     "express": "4.17.3",
     "mongoose": "6.2.3",
-    "rss-parser": "3.12.0",
-    "ts-node": "10.5.0",
-    "typescript": "4.5.5"
+    "rss-parser": "3.12.0"
   },
   "devDependencies": {
+    "@breejs/ts-worker": "^1.1.1",
     "@types/express": "4.17.13",
     "@types/node": "16.11.25",
-    "nodemon": "^2.0.15"
+    "nodemon": "^2.0.15",
+    "ts-node": "10.5.0",
+    "typescript": "4.5.5"
   }
 }

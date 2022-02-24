@@ -4,11 +4,13 @@ import express, { Request, Response } from 'express';
 import path from 'path/posix';
 import dbConnect from './db-connect';
 import podcastRoutes from './routes';
-import bree_ts_worker from '@breejs/ts-worker';
 
-if (process.env.NODE_ENV !== 'production') {
-  Bree.extend(bree_ts_worker);
-}
+(async () => {
+  if (process.env.NODE_ENV !== 'production') {
+    let tsWorker = (await import('@breejs/ts-worker')).default;
+    Bree.extend(tsWorker);
+  }
+})();
 
 const app = express();
 const port = 3000;
