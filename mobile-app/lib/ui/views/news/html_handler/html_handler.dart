@@ -22,13 +22,7 @@ class HtmlHandler {
 
     if (article is Article) {
       elements.add(NewsArticleHeader(article: article));
-    } else {
-      elements.add(Container(
-          color: const Color.fromRGBO(0x2A, 0x2A, 0x40, 1),
-          padding: const EdgeInsets.all(8),
-          child: NewsBookmarkViewWidget(article: article)));
     }
-
     for (int i = 0; i < result.body!.children.length; i++) {
       elements
           .add(htmlWidgetBuilder(result.body!.children[i].outerHtml, context));

@@ -54,13 +54,25 @@ class NewsBookmarkModel extends BaseViewModel {
     return openDatabase(dbPathArticles, version: 1);
   }
 
-  Map<String, dynamic> articleToMap(Article article) {
-    return {
-      'articleTitle': article.title,
-      'articleId': article.id,
-      'articleText': article.text,
-      'authorName': article.authorName
-    };
+  Map<String, dynamic> articleToMap(dynamic article) {
+    if (article is Article) {
+      return {
+        'articleTitle': article.title,
+        'articleId': article.id,
+        'articleText': article.text,
+        'authorName': article.authorName
+      };
+    } else if (article is BookmarkedArticle) {
+      return {
+        'articleTitle': article.articleTitle,
+        'articleId': article.id,
+        'articleText': article.articleText,
+        'authorName': article.authorName
+      };
+    } else {
+      throw Exception(
+          'unable to convert article to map type: ${article.runtimeType}');
+    }
   }
 
   Future<List<Map<String, dynamic>>> getArticles() async {
@@ -101,7 +113,7 @@ class NewsBookmarkModel extends BaseViewModel {
     notifyListeners();
   }
 
-  Future<void> insertArticle(Article? article) async {
+  Future<void> insertArticle(dynamic article) async {
     final db = await openDbConnection();
 
     // Test if article is already in database
