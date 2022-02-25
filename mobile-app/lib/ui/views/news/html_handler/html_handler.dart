@@ -15,7 +15,7 @@ class HtmlHandler {
   final String html;
   final BuildContext context;
 
-  static List<Widget> htmlHandler(html, context, [article]) {
+  static List<Widget> htmlHandler(html, context, article) {
     var result = HtmlParser.parseHTML(html);
 
     List<Widget> elements = [];
