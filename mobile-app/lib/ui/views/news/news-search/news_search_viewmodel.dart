@@ -24,7 +24,7 @@ class NewsSearchModel extends BaseViewModel {
 
     AlgoliaQuery query = algolia.instance
         .index('news')
-        .similarQuery(inputQuery.isEmpty ? 'JavaScript' : inputQuery)
+        .similarQuery(inputQuery.isEmpty ? 'JavaScript' : inputQuery);
 
     AlgoliaQuerySnapshot snap = await query.getObjects();
 
