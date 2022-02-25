@@ -12,7 +12,7 @@ services:
     depends_on:
       - mongodb
     environment:
-      - MONGODB_URL
+      - MONGODB_URL=mongodb://mongodb:27017/mobile-api
       - NODE_ENV=production
     ports:
       - '3000:3000'
