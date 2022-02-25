@@ -4,6 +4,7 @@ import 'package:freecodecamp/ui/views/news/news-article/news_article_viewmodel.d
 import 'package:freecodecamp/ui/views/news/news-bookmark/news_bookmark_viewmodel.dart';
 import 'package:freecodecamp/ui/views/news/news-bookmark/news_bookmark_widget.dart';
 import 'package:stacked/stacked.dart';
+import 'dart:developer' as dev;
 
 class NewsBookmarkPostView extends StatelessWidget {
   final BookmarkedArticle article;
@@ -51,10 +52,11 @@ class NewsBookmarkPostView extends StatelessWidget {
   SliverList lazyLoadHtml(BuildContext context, BookmarkedArticle article) {
     var htmlToList = NewsArticleViewModel.initLazyLoading(
         article.articleText, context, article);
-    return SliverList(delegate: SliverChildBuilderDelegate(((context, index) {
+    return SliverList(
+        delegate: SliverChildBuilderDelegate(((context, index) {
       return Row(
         children: [Expanded(child: htmlToList[index])],
       );
-    })));
+    }), childCount: htmlToList.length));
   }
 }
