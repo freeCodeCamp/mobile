@@ -21,7 +21,7 @@ class NewsArticleView extends StatelessWidget {
           ),
         ),
         backgroundColor: const Color(0xFF0a0a23),
-        body: FutureBuilder<Article?>(
+        body: FutureBuilder<Article>(
           future: model.initState(refId),
           builder: (context, snapshot) {
             if (snapshot.hasData) {
@@ -29,8 +29,7 @@ class NewsArticleView extends StatelessWidget {
               return Column(
                 children: [
                   Expanded(
-                      child:
-                          lazyLoadHtml(article!.text!, context, model, article))
+                      child: lazyLoadHtml(article!.text!, context, article))
                 ],
               );
             } else if (snapshot.hasError) {
@@ -48,9 +47,8 @@ class NewsArticleView extends StatelessWidget {
   }
 }
 
-ListView lazyLoadHtml(String html, BuildContext context,
-    NewsArticleViewModel model, Article article) {
-  var htmlToList = model.initLazyLoading(html, context, article);
+ListView lazyLoadHtml(String html, BuildContext context, Article article) {
+  var htmlToList = NewsArticleViewModel.initLazyLoading(html, context, article);
   return ListView.builder(
       shrinkWrap: true,
       itemCount: htmlToList.length,

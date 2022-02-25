@@ -119,7 +119,7 @@ class NewsBookmarkModel extends BaseViewModel {
     final db = await openDbConnection();
 
     List<Map> isInDatabase = await db
-        .rawQuery('SELECT * FROM bookmarks WHERE articleId=?', [article!.id]);
+        .rawQuery('SELECT * FROM bookmarks WHERE articleId=?', [article.id]);
 
     if (isInDatabase.isNotEmpty) {
       _isBookmarked = true;

@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_html/flutter_html.dart';
 import 'package:flutter_syntax_view/flutter_syntax_view.dart';
+import 'package:freecodecamp/models/news/article_model.dart';
 import 'package:freecodecamp/ui/views/news/news-article/news_article_header.dart';
 import 'package:freecodecamp/ui/views/news/news-article/news_article_view.dart';
+import 'package:freecodecamp/ui/views/news/news-bookmark/news_bookmark_widget.dart';
 import 'package:html/dom.dart' as dom;
 import 'package:url_launcher/url_launcher.dart';
 import 'package:youtube_player_iframe/youtube_player_iframe.dart';
@@ -13,12 +15,19 @@ class HtmlHandler {
   final String html;
   final BuildContext context;
 
-  static List<Widget> htmlHandler(html, context, article) {
+  static List<Widget> htmlHandler(html, context, [article]) {
     var result = HtmlParser.parseHTML(html);
 
     List<Widget> elements = [];
 
-    elements.add(NewsArticleHeader(article: article));
+    if (article is Article) {
+      elements.add(NewsArticleHeader(article: article));
+    } else {
+      elements.add(Container(
+          color: const Color.fromRGBO(0x2A, 0x2A, 0x40, 1),
+          padding: const EdgeInsets.all(8),
+          child: NewsBookmarkViewWidget(article: article)));
+    }
 
     for (int i = 0; i < result.body!.children.length; i++) {
       elements
