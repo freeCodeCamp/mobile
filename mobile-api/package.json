@@ -11,7 +11,7 @@
   "scripts": {
     "build": "tsc",
     "dev": "nodemon src/index.ts",
-    "start": "node src/index.js"
+    "start": "NODE_ENV=production node prod/index.js"
   },
   "dependencies": {
     "bree": "7.2.0",
