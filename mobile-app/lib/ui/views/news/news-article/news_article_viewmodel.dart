@@ -29,7 +29,7 @@ class NewsArticleViewModel extends BaseViewModel {
     return Article.toPostFromJson(decodedJson);
   }
 
-  Future<Article?> initState(id) async {
+  Future<Article> initState(id) async {
     if (await _testservice.developmentMode()) {
       return readFromFiles();
     } else {
@@ -42,7 +42,7 @@ class NewsArticleViewModel extends BaseViewModel {
         arguments: NewsAuthorViewArguments(authorSlug: slug));
   }
 
-  List<Widget> initLazyLoading(html, context, article) {
+  static List<Widget> initLazyLoading(html, context, article) {
     List<Widget> elements = HtmlHandler.htmlHandler(html, context, article);
     return elements;
   }

@@ -1,12 +1,11 @@
 import 'package:flutter/material.dart';
-import 'package:freecodecamp/models/news/article_model.dart';
 import 'package:freecodecamp/ui/views/news/news-bookmark/news_bookmark_viewmodel.dart';
 import 'package:stacked/stacked.dart';
 
 class NewsBookmarkViewWidget extends StatelessWidget {
-  // ignore: prefer_const_constructors_in_immutables
-  NewsBookmarkViewWidget({Key? key, required this.article}) : super(key: key);
-  final Article article;
+  const NewsBookmarkViewWidget({Key? key, required this.article})
+      : super(key: key);
+  final dynamic article;
   @override
   Widget build(BuildContext context) {
     return ViewModelBuilder<NewsBookmarkModel>.reactive(

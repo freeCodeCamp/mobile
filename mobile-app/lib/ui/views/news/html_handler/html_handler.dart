@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_html/flutter_html.dart';
 import 'package:flutter_syntax_view/flutter_syntax_view.dart';
+import 'package:freecodecamp/models/news/article_model.dart';
 import 'package:freecodecamp/ui/views/news/news-article/news_article_header.dart';
 import 'package:freecodecamp/ui/views/news/news-article/news_article_view.dart';
 import 'package:html/dom.dart' as dom;
@@ -18,8 +19,9 @@ class HtmlHandler {
 
     List<Widget> elements = [];
 
-    elements.add(NewsArticleHeader(article: article));
-
+    if (article is Article) {
+      elements.add(NewsArticleHeader(article: article));
+    }
     for (int i = 0; i < result.body!.children.length; i++) {
       elements
           .add(htmlWidgetBuilder(result.body!.children[i].outerHtml, context));
