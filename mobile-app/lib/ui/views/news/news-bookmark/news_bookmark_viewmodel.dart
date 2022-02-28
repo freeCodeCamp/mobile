@@ -105,7 +105,7 @@ class NewsBookmarkModel extends BaseViewModel {
     }
   }
 
-  void updateListView() async {
+  Future<void> updateListView() async {
     _articles = [];
     _articles = await getModelsFromMapList();
     _articles = _articles;

@@ -12,13 +12,20 @@ class NewsBookmarkFeedView extends StatelessWidget {
         onModelReady: (model) async => model.hasBookmarkedArticles(),
         builder: (context, model, child) => Scaffold(
             backgroundColor: const Color.fromRGBO(0x2A, 0x2A, 0x40, 1),
-            body: model.userHasBookmarkedArticles
-                ? populateListViewModel(model)
-                : const Center(
-                    child: Text(
-                    'Bookmark articles to view them here',
-                    textAlign: TextAlign.center,
-                  ))));
+            body: RefreshIndicator(
+              backgroundColor: const Color(0xFF0a0a23),
+              color: Colors.white,
+              onRefresh: () {
+                return model.updateListView();
+              },
+              child: model.userHasBookmarkedArticles
+                  ? populateListViewModel(model)
+                  : const Center(
+                      child: Text(
+                      'Bookmark articles to view them here',
+                      textAlign: TextAlign.center,
+                    )),
+            )));
   }
 }
 
