@@ -57,3 +57,6 @@ app.*.map.json
 .vscode/
 .env*
 .fvm/
+
+# Test screenshots
+mobile-app/screenshots/
