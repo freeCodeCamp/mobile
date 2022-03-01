@@ -5,9 +5,11 @@ import path from 'path/posix';
 import dbConnect from './db-connect';
 import podcastRoutes from './routes';
 
-(async () => {
+void (async () => {
   if (process.env.NODE_ENV !== 'production') {
-    let tsWorker = (await import('@breejs/ts-worker')).default;
+    // TODO: figure out why this upsets the linter - it should be fine.
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-member-access
+    const tsWorker = (await import('@breejs/ts-worker')).default;
     Bree.extend(tsWorker);
   }
 })();
@@ -26,7 +28,7 @@ const bree = new Bree({
   ],
 });
 
-app.get('/', async (req: Request, res: Response) => {
+app.get('/', (req: Request, res: Response) => {
   res.json({ msg: 'Hello World!' });
 });
 
