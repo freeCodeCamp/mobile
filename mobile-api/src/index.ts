@@ -34,9 +34,10 @@ app.get('/', (req: Request, res: Response) => {
 
 app.use('/podcasts', podcastRoutes);
 
-app.listen(port, async () => {
-  await dbConnect();
-  console.log(`API listening on port: ${port}`);
-  console.log('Initialising jobs...');
-  bree.start();
+void dbConnect().then(() => {
+  app.listen(port, () => {
+    console.log(`API listening on port: ${port}`);
+    console.log("Initialising jobs...");
+    bree.start();
+  });
 });
