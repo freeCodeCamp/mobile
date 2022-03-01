@@ -3,6 +3,8 @@ on:
   pull_request:
     branches:
       - main
+    paths:
+      - 'mobile-app/**'
   push:
     branches:
       - main
