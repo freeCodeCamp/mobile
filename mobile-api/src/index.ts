@@ -1,13 +1,13 @@
-import 'dotenv/config';
-import Bree from 'bree';
-import express, { Request, Response } from 'express';
-import path from 'path/posix';
-import dbConnect from './db-connect';
-import podcastRoutes from './routes';
+import "dotenv/config";
+import Bree from "bree";
+import express, { Request, Response } from "express";
+import path from "path/posix";
+import dbConnect from "./db-connect";
+import podcastRoutes from "./routes";
 
 void (async () => {
-  if (process.env.NODE_ENV !== 'production') {
-    const tsWorker = (await import('@breejs/ts-worker')).default;
+  if (process.env.NODE_ENV !== "production") {
+    const tsWorker = (await import("@breejs/ts-worker")).default;
     Bree.extend(tsWorker);
   }
 })();
@@ -15,22 +15,22 @@ void (async () => {
 const app = express();
 const port = 3000;
 const bree = new Bree({
-  root: path.join(__dirname, 'jobs'),
-  defaultExtension: process.env.NODE_ENV === 'production' ? 'js' : 'ts',
+  root: path.join(__dirname, "jobs"),
+  defaultExtension: process.env.NODE_ENV === "production" ? "js" : "ts",
   jobs: [
     {
-      name: 'update-podcasts',
+      name: "update-podcasts",
       timeout: 0,
-      interval: '30m',
+      interval: "30m",
     },
   ],
 });
 
-app.get('/', (req: Request, res: Response) => {
-  res.json({ msg: 'Hello World!' });
+app.get("/", (req: Request, res: Response) => {
+  res.json({ msg: "Hello World!" });
 });
 
-app.use('/podcasts', podcastRoutes);
+app.use("/podcasts", podcastRoutes);
 
 void dbConnect().then(() => {
   app.listen(port, () => {

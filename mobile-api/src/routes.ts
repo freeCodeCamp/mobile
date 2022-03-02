@@ -1,17 +1,17 @@
-import express, { Request, Response } from 'express';
+import express, { Request, Response } from "express";
 import { UpdateQuery } from "mongoose";
-import Parser from 'rss-parser';
-import Episode from './models/Episode';
-import Podcast from './models/Podcast';
-import { feedUrls } from './podcast-feed-urls.json';
+import Parser from "rss-parser";
+import Episode from "./models/Episode";
+import Podcast from "./models/Podcast";
+import { feedUrls } from "./podcast-feed-urls.json";
 
 const router = express.Router();
 const parser = new Parser();
 
-router.get('/', async (req: Request, res: Response) => {
+router.get("/", async (req: Request, res: Response) => {
   const podcasts = await Podcast.find({});
   if (feedUrls.length !== podcasts.length) {
-    console.log('Fetching missing podcasts');
+    console.log("Fetching missing podcasts");
     for (const url of feedUrls) {
       let feed = await parser.parseURL(url);
       console.log(`${feed.title} ${feed.items.length}`);
@@ -34,20 +34,20 @@ router.get('/', async (req: Request, res: Response) => {
     }
     res.json(await Podcast.find({}));
   } else {
-    console.log('No missing podcasts');
+    console.log("No missing podcasts");
     res.json(podcasts);
   }
 });
 
-router.get('/:podcastId/episodes', async (req: Request, res: Response) => {
-  console.log('PARAMS', req.params);
-  console.log('QUERY', req.query);
+router.get("/:podcastId/episodes", async (req: Request, res: Response) => {
+  console.log("PARAMS", req.params);
+  console.log("QUERY", req.query);
   let podcast = await Podcast.findById(req.params.podcastId);
   let feed = await parser.parseURL(podcast.feedUrl);
   // For Debugging
   // console.log(feed.items[Math.floor(Math.random() * feed.items.length)]);
   if (podcast.numOfEps !== feed.items.length) {
-    console.log('Fetching missing episodes');
+    console.log("Fetching missing episodes");
     podcast = await Podcast.findByIdAndUpdate(
       req.params.podcastId,
       {
@@ -80,24 +80,24 @@ router.get('/:podcastId/episodes', async (req: Request, res: Response) => {
       );
     }
   } else {
-    console.log('No missing episodes');
+    console.log("No missing episodes");
   }
   let episodes = await Episode.find({ podcastId: podcast._id })
     .sort({ publicationDate: -1 })
-    .skip(parseInt((req.query?.page as string) || '0') * 20)
+    .skip(parseInt((req.query?.page as string) || "0") * 20)
     .limit(20);
   console.log(episodes.length);
   res.json({ podcast, episodes });
 });
 
 router.get(
-  '/:podcastId/episodes/:episodeId',
+  "/:podcastId/episodes/:episodeId",
   async (req: Request, res: Response) => {
     const episode = await Episode.findOne({
       podcastId: req.params.podcastId,
       _id: req.params.episodeId,
     });
-    console.log('EPISODE', episode.title);
+    console.log("EPISODE", episode.title);
     res.json(episode);
   }
 );
