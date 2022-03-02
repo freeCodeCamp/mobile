@@ -7,8 +7,6 @@ import podcastRoutes from './routes';
 
 void (async () => {
   if (process.env.NODE_ENV !== 'production') {
-    // TODO: figure out why this upsets the linter - it should be fine.
-    // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-member-access
     const tsWorker = (await import('@breejs/ts-worker')).default;
     Bree.extend(tsWorker);
   }
