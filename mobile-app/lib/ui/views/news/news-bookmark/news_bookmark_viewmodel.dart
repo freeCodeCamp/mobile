@@ -105,12 +105,17 @@ class NewsBookmarkModel extends BaseViewModel {
     }
   }
 
-  void updateListView() async {
+  Future<void> updateListView() async {
     _articles = [];
     _articles = await getModelsFromMapList();
     _articles = _articles;
     _count = _articles.length;
     notifyListeners();
+  }
+
+  Future<void> refresh() async {
+    updateListView();
+    hasBookmarkedArticles();
   }
 
   Future<void> insertArticle(dynamic article) async {
@@ -146,7 +151,9 @@ class NewsBookmarkModel extends BaseViewModel {
 
     if (isInDatabase.isNotEmpty) {
       _userHasBookmarkedArticles = true;
-      updateListView();
+      notifyListeners();
+    } else {
+      _userHasBookmarkedArticles = false;
       notifyListeners();
     }
   }
