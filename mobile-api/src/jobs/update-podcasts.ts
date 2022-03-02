@@ -1,19 +1,19 @@
-import { UpdateQuery } from "mongoose";
-import Parser from "rss-parser";
-import { parentPort } from "worker_threads";
-import dbConnect from "../db-connect";
-import Episode from "../models/Episode";
-import Podcast from "../models/Podcast";
-import { feedUrls } from "../podcast-feed-urls.json";
+import { UpdateQuery } from 'mongoose';
+import Parser from 'rss-parser';
+import { parentPort } from 'worker_threads';
+import dbConnect from '../db-connect';
+import Episode from '../models/Episode';
+import Podcast from '../models/Podcast';
+import { feedUrls } from '../podcast-feed-urls.json';
 
-console.log("Job running at", new Date().toISOString());
+console.log('Job running at', new Date().toISOString());
 const parser = new Parser();
 
 (async function () {
   await dbConnect();
   for (const feedUrl of feedUrls) {
     const feed = await parser.parseURL(feedUrl);
-    console.log("UPDATING PODCAST", feed.title);
+    console.log('UPDATING PODCAST', feed.title);
     const podcast = await Podcast.findOneAndUpdate(
       { feedUrl: feedUrl },
       {
@@ -54,10 +54,10 @@ const parser = new Parser();
     }
   }
   if (parentPort) {
-    console.log("Job finished at", new Date().toISOString());
-    parentPort.postMessage("done");
+    console.log('Job finished at', new Date().toISOString());
+    parentPort.postMessage('done');
   } else {
-    console.log("Job finished at", new Date().toISOString());
+    console.log('Job finished at', new Date().toISOString());
     process.exit(0);
   }
 })();

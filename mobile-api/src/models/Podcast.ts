@@ -1,4 +1,4 @@
-import * as mongoose from "mongoose";
+import * as mongoose from 'mongoose';
 
 const Schema = mongoose.Schema;
 
@@ -9,7 +9,7 @@ const Podcast = new Schema({
   },
   description: {
     type: String,
-    default: "",
+    default: '',
   },
   feedUrl: {
     type: String,
@@ -17,7 +17,7 @@ const Podcast = new Schema({
   },
   podcastLink: {
     type: String,
-    default: "",
+    default: '',
   },
   imageLink: {
     type: String,
@@ -25,7 +25,7 @@ const Podcast = new Schema({
   },
   copyright: {
     type: String,
-    default: "",
+    default: '',
   },
   numOfEps: {
     type: Number,
@@ -35,4 +35,4 @@ const Podcast = new Schema({
 });
 
 export default mongoose.models.Podcast ||
-  mongoose.model("Podcast", Podcast, "podcasts");
+  mongoose.model('Podcast', Podcast, 'podcasts');

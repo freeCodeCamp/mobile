@@ -1,4 +1,4 @@
-import * as mongoose from "mongoose";
+import * as mongoose from 'mongoose';
 
 const Schema = mongoose.Schema;
 
@@ -9,7 +9,7 @@ const Episode = new Schema({
   },
   podcastId: {
     type: Schema.Types.ObjectId,
-    ref: "Podcast",
+    ref: 'Podcast',
     required: true,
   },
   title: {
@@ -18,7 +18,7 @@ const Episode = new Schema({
   },
   description: {
     type: String,
-    default: "",
+    default: '',
   },
   publicationDate: {
     type: Date,
@@ -33,4 +33,4 @@ const Episode = new Schema({
 });
 
 export default mongoose.models.Episode ||
-  mongoose.model("Episode", Episode, "episodes");
+  mongoose.model('Episode', Episode, 'episodes');
