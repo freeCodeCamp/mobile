@@ -9,8 +9,10 @@ class NewsBookmarkFeedView extends StatelessWidget {
   Widget build(BuildContext context) {
     return ViewModelBuilder<NewsBookmarkModel>.reactive(
         viewModelBuilder: () => NewsBookmarkModel(),
-        onModelReady: (model) async =>
-            {model.hasBookmarkedArticles(), model.updateListView()},
+        onModelReady: (model) async {
+          model.hasBookmarkedArticles();
+          model.updateListView();
+        },
         builder: (context, model, child) => Scaffold(
             backgroundColor: const Color.fromRGBO(0x2A, 0x2A, 0x40, 1),
             body: RefreshIndicator(
