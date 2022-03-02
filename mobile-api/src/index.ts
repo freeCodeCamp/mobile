@@ -5,9 +5,9 @@ import path from 'path/posix';
 import dbConnect from './db-connect';
 import podcastRoutes from './routes';
 
-(async () => {
+void (async () => {
   if (process.env.NODE_ENV !== 'production') {
-    let tsWorker = (await import('@breejs/ts-worker')).default;
+    const tsWorker = (await import('@breejs/ts-worker')).default;
     Bree.extend(tsWorker);
   }
 })();
@@ -26,15 +26,16 @@ const bree = new Bree({
   ],
 });
 
-app.get('/', async (req: Request, res: Response) => {
+app.get('/', (req: Request, res: Response) => {
   res.json({ msg: 'Hello World!' });
 });
 
 app.use('/podcasts', podcastRoutes);
 
-app.listen(port, async () => {
-  await dbConnect();
-  console.log(`API listening on port: ${port}`);
-  console.log('Initialising jobs...');
-  bree.start();
+void dbConnect().then(() => {
+  app.listen(port, () => {
+    console.log(`API listening on port: ${port}`);
+    console.log("Initialising jobs...");
+    bree.start();
+  });
 });
