@@ -35,7 +35,7 @@ app.use('/podcasts', podcastRoutes);
 void dbConnect().then(() => {
   app.listen(port, () => {
     console.log(`API listening on port: ${port}`);
-    console.log("Initialising jobs...");
+    console.log('Initialising jobs...');
     bree.start();
   });
 });
