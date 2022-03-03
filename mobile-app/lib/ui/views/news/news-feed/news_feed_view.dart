@@ -193,11 +193,17 @@ class NewsFeedView extends StatelessWidget {
                               height: 45,
                               fit: BoxFit.cover,
                             )
-                          : Image.network(
-                              article.profileImage as String,
-                              width: 45,
-                              height: 45,
-                              fit: BoxFit.cover,
+                          : CachedNetworkImage(
+                              imageUrl: article.profileImage as String,
+                              imageBuilder: (context, imageProvider) =>
+                                  Container(
+                                decoration: BoxDecoration(
+                                  image: DecorationImage(
+                                    image: imageProvider,
+                                    fit: BoxFit.cover,
+                                  ),
+                                ),
+                              ),
                             ))),
             ),
             Column(
