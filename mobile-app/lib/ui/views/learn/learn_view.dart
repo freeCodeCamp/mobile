@@ -14,7 +14,9 @@ class LearnView extends StatelessWidget {
         viewModelBuilder: () => LearnViewModel(),
         onModelReady: (model) => model.init(),
         builder: (context, model, child) => Scaffold(
-            appBar: AppBar(),
+            appBar: AppBar(
+              title: const Text('LEARN'),
+            ),
             resizeToAvoidBottomInset: false,
             drawer: const DrawerWidgetView(),
             body: ListView.builder(

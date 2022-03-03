@@ -14,17 +14,54 @@ class SuperBlockView extends StatelessWidget {
     return ViewModelBuilder<LearnViewModel>.reactive(
         viewModelBuilder: () => LearnViewModel(),
         builder: (context, model, child) => Scaffold(
+              appBar: AppBar(),
               body: FutureBuilder<SuperBlock>(
                   future: model.getSuperBlockData(superBlockName),
                   builder: ((context, snapshot) {
                     if (snapshot.hasData) {
                       SuperBlock superBlock = snapshot.data as SuperBlock;
 
-                      return Text(superBlock.superblockName);
+                      return superBlockTemplate(model, superBlock);
                     }
 
-                    return const CircularProgressIndicator();
+                    return const Center(child: CircularProgressIndicator());
                   })),
             ));
+  }
+
+  Widget superBlockTemplate(LearnViewModel model, SuperBlock superBlock) {
+    return Container(
+      color: const Color(0xFF0a0a23),
+      padding: const EdgeInsets.all(16.0),
+      child: ListView.builder(
+        shrinkWrap: true,
+        itemCount: superBlock.blocks.length,
+        physics: const ClampingScrollPhysics(),
+        itemBuilder: (context, i) => Container(
+            padding: const EdgeInsets.only(left: 8),
+            child: blockBuilder(model, superBlock.blocks[i])),
+      ),
+    );
+  }
+
+  Widget blockBuilder(LearnViewModel model, Block block) {
+    return Column(
+      children: [
+        Text(
+          block.blockName,
+          textAlign: TextAlign.left,
+          style: const TextStyle(
+            fontSize: 28,
+            fontWeight: FontWeight.bold,
+          ),
+        ),
+        for (int i = 0; i < block.challenges.length; i++)
+          Row(
+            children: [
+              Expanded(child: Text(block.challenges[i].name)),
+            ],
+          )
+      ],
+    );
   }
 }
