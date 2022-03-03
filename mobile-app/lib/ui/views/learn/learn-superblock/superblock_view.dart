@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:freecodecamp/models/learn/curriculum_model.dart';
 import 'package:freecodecamp/ui/views/learn/learn_viewmodel.dart';
 import 'package:stacked/stacked.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class SuperBlockView extends StatelessWidget {
   const SuperBlockView({Key? key, required this.superBlockName})
@@ -37,9 +38,7 @@ class SuperBlockView extends StatelessWidget {
         shrinkWrap: true,
         itemCount: superBlock.blocks.length,
         physics: const ClampingScrollPhysics(),
-        itemBuilder: (context, i) => Container(
-            padding: const EdgeInsets.only(left: 8),
-            child: blockBuilder(model, superBlock.blocks[i])),
+        itemBuilder: (context, i) => blockBuilder(model, superBlock.blocks[i]),
       ),
     );
   }
@@ -55,10 +54,31 @@ class SuperBlockView extends StatelessWidget {
             fontWeight: FontWeight.bold,
           ),
         ),
-        Stepper(currentStep: 0, physics: const ClampingScrollPhysics(), steps: [
-          for (int i = 0; i < block.challenges.length; i++)
-            Step(title: Text(block.challenges[i].name), content: Container())
-        ])
+        Stepper(
+            controlsBuilder: (context, details) => Row(children: []),
+            margin: const EdgeInsets.all(10),
+            currentStep: 0,
+            physics: const ClampingScrollPhysics(),
+            steps: [
+              for (int i = 0; i < block.challenges.length; i++)
+                Step(
+                    title: Text(
+                      block.challenges[i].name,
+                      style: const TextStyle(fontSize: 16),
+                    ),
+                    content: TextButton(
+                      onPressed: () {
+                        String challenge = block.challenges[i].name
+                            .toLowerCase()
+                            .replaceAll(' ', '-');
+                        String url = 'https://freecodecamp.dev/learn';
+
+                        launch(
+                            '$url/${block.superBlock}/${block.dashedName}/$challenge');
+                      },
+                      child: const Text('CONTINUE THIS CHALLENGE'),
+                    ))
+            ])
       ],
     );
   }
