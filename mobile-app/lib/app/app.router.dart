@@ -19,6 +19,7 @@ import '../ui/views/forum/forum-post/forum_post_view.dart';
 import '../ui/views/forum/forum-user-profile/forum_user_profile_view.dart';
 import '../ui/views/forum/forum-user/forum_user_view.dart';
 import '../ui/views/home/home_view.dart';
+import '../ui/views/learn/learn-superblock/superblock_view.dart';
 import '../ui/views/news/news-article/news_article_view.dart';
 import '../ui/views/news/news-author/news_author_view.dart';
 import '../ui/views/news/news-bookmark/news_bookmark_view.dart';
@@ -43,6 +44,7 @@ class Routes {
   static const String forumSettingsView = '/forum-settings-view';
   static const String forumUserProfileView = '/forum-user-profile-view';
   static const String codeRadioView = '/code-radio-view';
+  static const String superBlockView = '/super-block-view';
   static const all = <String>{
     homeView,
     podcastListView,
@@ -59,6 +61,7 @@ class Routes {
     forumSettingsView,
     forumUserProfileView,
     codeRadioView,
+    superBlockView,
   };
 }
 
@@ -81,6 +84,7 @@ class StackedRouter extends RouterBase {
     RouteDef(Routes.forumSettingsView, page: ForumSettingsView),
     RouteDef(Routes.forumUserProfileView, page: ForumUserProfileView),
     RouteDef(Routes.codeRadioView, page: CodeRadioView),
+    RouteDef(Routes.superBlockView, page: SuperBlockView),
   ];
   @override
   Map<Type, StackedRouteFactory> get pagesMap => _pagesMap;
@@ -221,6 +225,16 @@ class StackedRouter extends RouterBase {
         settings: data,
       );
     },
+    SuperBlockView: (data) {
+      var args = data.getArgs<SuperBlockViewArguments>(nullOk: false);
+      return MaterialPageRoute<dynamic>(
+        builder: (context) => SuperBlockView(
+          key: args.key,
+          superBlockName: args.superBlockName,
+        ),
+        settings: data,
+      );
+    },
   };
 }
 
@@ -302,4 +316,11 @@ class ForumUserViewArguments {
   final Key? key;
   final String username;
   ForumUserViewArguments({this.key, required this.username});
+}
+
+/// SuperBlockView arguments holder class
+class SuperBlockViewArguments {
+  final Key? key;
+  final String superBlockName;
+  SuperBlockViewArguments({this.key, required this.superBlockName});
 }

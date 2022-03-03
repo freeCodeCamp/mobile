@@ -30,7 +30,7 @@ class LearnView extends StatelessWidget {
                 })));
   }
 
-  Row superBlockBuilder(String superBlockName, LearnViewModel viewModel) {
+  Row superBlockBuilder(String superBlockName, LearnViewModel model) {
     return Row(
       children: [
         Expanded(
@@ -41,7 +41,9 @@ class LearnView extends StatelessWidget {
                 primary: const Color.fromRGBO(0x3b, 0x3b, 0x4f, 1),
                 side: const BorderSide(width: 2, color: Colors.white),
               ),
-              onPressed: () {},
+              onPressed: () {
+                model.routeToSuperBlock(superBlockName);
+              },
               child: Align(
                 alignment: Alignment.centerLeft,
                 child: Text(

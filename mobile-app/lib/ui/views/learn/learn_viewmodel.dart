@@ -1,5 +1,6 @@
 import 'dart:convert';
 
+import 'package:freecodecamp/app/app.router.dart';
 import 'package:freecodecamp/enums/dialog_type.dart';
 import 'package:freecodecamp/models/learn/curriculum_model.dart';
 import 'package:freecodecamp/ui/widgets/setup_dialog_ui.dart';
@@ -51,11 +52,6 @@ class LearnViewModel extends BaseViewModel {
     }
   }
 
-  void setController(WebViewController webViewController) {
-    controller = webViewController;
-    notifyListeners();
-  }
-
   Future<void> getSuperBlocks() async {
     dev.log('got called');
     final http.Response res = await http.get(
@@ -76,6 +72,11 @@ class LearnViewModel extends BaseViewModel {
     } else {
       throw Exception();
     }
+  }
+
+  void routeToSuperBlock(String superBlock) {
+    _navigationService.navigateTo(Routes.superBlockView,
+        arguments: SuperBlockViewArguments(superBlockName: superBlock));
   }
 
   void goBack() {
