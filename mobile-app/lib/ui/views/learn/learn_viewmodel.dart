@@ -5,6 +5,8 @@ import 'package:stacked/stacked.dart';
 import 'package:stacked_services/stacked_services.dart';
 import 'package:webview_flutter/webview_flutter.dart';
 import 'package:freecodecamp/app/app.locator.dart';
+import 'package:http/http.dart' as http;
+import 'dart:developer' as dev;
 
 class LearnViewModel extends BaseViewModel {
   WebViewController? controller;
@@ -14,6 +16,7 @@ class LearnViewModel extends BaseViewModel {
   void init() {
     WebView.platform = SurfaceAndroidWebView();
     setupDialogUi();
+    getSuperblocks();
     isFirstTimeUsingLearn();
   }
 
@@ -45,6 +48,15 @@ class LearnViewModel extends BaseViewModel {
   void setController(WebViewController webViewController) {
     controller = webViewController;
     notifyListeners();
+  }
+
+  Future<void> getSuperblocks() async {
+    final http.Response res = await http.get(
+        Uri.parse('https://freecodecamp.dev/mobile/availableSuperblocks.json'));
+
+    if (res.statusCode == 200) {
+      dev.log(res.body.toString());
+    }
   }
 
   void goBack() {
