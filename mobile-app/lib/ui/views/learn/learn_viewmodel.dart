@@ -1,4 +1,7 @@
+import 'dart:convert';
+
 import 'package:freecodecamp/enums/dialog_type.dart';
+import 'package:freecodecamp/models/learn/curriculum_model.dart';
 import 'package:freecodecamp/ui/widgets/setup_dialog_ui.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:stacked/stacked.dart';
@@ -13,10 +16,13 @@ class LearnViewModel extends BaseViewModel {
   final NavigationService _navigationService = locator<NavigationService>();
   final _dialogService = locator<DialogService>();
 
+  List _superBlocks = [];
+  List get superBlocks => _superBlocks;
+
   void init() {
     WebView.platform = SurfaceAndroidWebView();
     setupDialogUi();
-    getSuperblocks();
+    getSuperBlocks();
     isFirstTimeUsingLearn();
   }
 
@@ -50,11 +56,26 @@ class LearnViewModel extends BaseViewModel {
     notifyListeners();
   }
 
-  Future<void> getSuperblocks() async {
+  Future<void> getSuperBlocks() async {
+    dev.log('got called');
     final http.Response res = await http.get(
         Uri.parse('https://freecodecamp.dev/mobile/availableSuperblocks.json'));
 
-    if (res.statusCode == 200) {}
+    if (res.statusCode == 200) {
+      _superBlocks = jsonDecode(res.body)['superblocks'] as List;
+      notifyListeners();
+    }
+  }
+
+  Future<SuperBlock> getSuperBlockData(String superBlockName) async {
+    final http.Response res = await http
+        .get(Uri.parse('https://freecodecamp.dev/mobile/$superBlockName.json'));
+
+    if (res.statusCode == 200) {
+      return SuperBlock.fromJson(jsonDecode(res.body));
+    } else {
+      throw Exception();
+    }
   }
 
   void goBack() {

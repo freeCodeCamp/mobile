@@ -17,7 +17,9 @@ class SuperBlock {
   static List<Block> getBlocks(Map<String, dynamic> data) {
     List<Block> blocks = [];
 
-    blocks.add(Block.fromJson(data));
+    for (int i = 0; i < data.length; i++) {
+      blocks.add(Block.fromJson(data[data.keys.elementAt(i)]['challenges']));
+    }
 
     return blocks;
   }
