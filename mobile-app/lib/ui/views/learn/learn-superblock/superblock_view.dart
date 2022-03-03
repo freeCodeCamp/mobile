@@ -32,9 +32,12 @@ class SuperBlockView extends StatelessWidget {
 
   Widget superBlockTemplate(LearnViewModel model, SuperBlock superBlock) {
     return Container(
-      color: const Color(0xFF0a0a23),
       padding: const EdgeInsets.all(16.0),
-      child: ListView.builder(
+      child: ListView.separated(
+        separatorBuilder: (context, int i) => const Divider(
+          height: 50,
+          color: Color.fromRGBO(0, 0, 0, 0),
+        ),
         shrinkWrap: true,
         itemCount: superBlock.blocks.length,
         physics: const ClampingScrollPhysics(),
@@ -44,43 +47,56 @@ class SuperBlockView extends StatelessWidget {
   }
 
   Widget blockBuilder(LearnViewModel model, Block block) {
-    return Column(
-      children: [
-        Text(
-          block.blockName,
-          textAlign: TextAlign.left,
-          style: const TextStyle(
-            fontSize: 28,
-            fontWeight: FontWeight.bold,
+    return Container(
+      padding: const EdgeInsets.only(top: 32),
+      color: const Color(0xFF0a0a23),
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Text(
+            block.blockName,
+            textAlign: TextAlign.left,
+            style: const TextStyle(
+              fontSize: 28,
+              fontWeight: FontWeight.bold,
+            ),
           ),
-        ),
-        Stepper(
-            onStepTapped: (value) => {model.setCurrentStep = value},
-            controlsBuilder: (context, details) => Row(children: []),
-            margin: const EdgeInsets.all(10),
-            currentStep: model.currentStep,
-            physics: const ClampingScrollPhysics(),
-            steps: [
-              for (int i = 0; i < block.challenges.length; i++)
-                Step(
-                    title: Text(
-                      block.challenges[i].name,
-                      style: const TextStyle(fontSize: 16),
-                    ),
-                    content: TextButton(
-                      onPressed: () {
-                        String challenge = block.challenges[i].name
-                            .toLowerCase()
-                            .replaceAll(' ', '-');
-                        String url = 'https://freecodecamp.dev/learn';
-
-                        launch(
-                            '$url/${block.superBlock}/${block.dashedName}/$challenge');
-                      },
-                      child: const Text('CONTINUE THIS CHALLENGE'),
-                    ))
-            ])
-      ],
+          Container(
+            child: challengeBuilder(model, block),
+          )
+        ],
+      ),
     );
+  }
+
+  Stepper challengeBuilder(LearnViewModel model, Block block) {
+    return Stepper(
+        onStepTapped: (value) => {model.setCurrentStep = value},
+        controlsBuilder: (context, details) => Row(children: []),
+        currentStep: model.currentStep,
+        physics: const ClampingScrollPhysics(),
+        steps: [
+          for (int i = 0; i < block.challenges.length; i++)
+            Step(
+                title: Text(
+                  block.challenges[i].name,
+                  style: const TextStyle(fontSize: 16),
+                ),
+                content: TextButton(
+                  style: TextButton.styleFrom(
+                      backgroundColor:
+                          const Color.fromRGBO(0x2A, 0x2A, 0x40, 1)),
+                  onPressed: () {
+                    String challenge = block.challenges[i].name
+                        .toLowerCase()
+                        .replaceAll(' ', '-');
+                    String url = 'https://freecodecamp.dev/learn';
+
+                    launch(
+                        '$url/${block.superBlock}/${block.dashedName}/$challenge');
+                  },
+                  child: const Text('CONTINUE THIS CHALLENGE'),
+                ))
+        ]);
   }
 }
