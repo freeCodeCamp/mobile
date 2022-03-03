@@ -4,14 +4,24 @@ class SuperBlock {
 
   SuperBlock({required this.superblockName, required this.blocks});
 
-  static String getSuperBlockName(Map<String, dynamic> data) {
-    List superblockNameToList = data.keys.first.split('-');
+  static String getSuperBlockNameFromKey(Map<String, dynamic> data) {
+    List superBlockNameToList = data.keys.first.split('-');
 
-    superblockNameToList.removeAt(0);
+    superBlockNameToList.removeAt(0);
 
-    String superblockName = superblockNameToList.asMap().values.join(' ');
+    String superBlockName = superBlockNameToList.asMap().values.join(' ');
 
-    return superblockName;
+    return superBlockName;
+  }
+
+  static String getSuperBlockName(String name) {
+    List superBlockNameToList = name.split('-');
+
+    superBlockNameToList.removeAt(0);
+
+    String superBlockName = superBlockNameToList.asMap().values.join(' ');
+
+    return superBlockName;
   }
 
   static List<Block> getBlocks(Map<String, dynamic> data) {
@@ -26,7 +36,7 @@ class SuperBlock {
 
   factory SuperBlock.fromJson(Map<String, dynamic> data) {
     return SuperBlock(
-        superblockName: getSuperBlockName(data),
+        superblockName: getSuperBlockNameFromKey(data),
         blocks: getBlocks(data[data.keys.first]['blocks']));
   }
 }

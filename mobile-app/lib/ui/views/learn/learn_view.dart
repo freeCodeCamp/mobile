@@ -22,23 +22,36 @@ class LearnView extends StatelessWidget {
                 itemCount: model.superBlocks.length,
                 itemBuilder: (BuildContext context, int i) {
                   dev.log(i.toString());
-                  return Container(
-                      height: 500,
-                      child: superBlockBuilder(model.superBlocks[i], model));
+                  return Padding(
+                    padding:
+                        const EdgeInsets.only(top: 16.0, left: 8, right: 8),
+                    child: superBlockBuilder(model.superBlocks[i], model),
+                  );
                 })));
   }
 
-  FutureBuilder superBlockBuilder(String superBlockName, LearnViewModel model) {
-    return FutureBuilder<SuperBlock>(
-        future: model.getSuperBlockData(superBlockName),
-        builder: ((context, snapshot) {
-          if (snapshot.hasData) {
-            SuperBlock superBlock = snapshot.data as SuperBlock;
-
-            return Text(superBlock.superblockName);
-          }
-
-          return const CircularProgressIndicator();
-        }));
+  Row superBlockBuilder(String superBlockName, LearnViewModel viewModel) {
+    return Row(
+      children: [
+        Expanded(
+            child: SizedBox(
+          height: 50,
+          child: ElevatedButton(
+              style: ElevatedButton.styleFrom(
+                primary: const Color.fromRGBO(0x3b, 0x3b, 0x4f, 1),
+                side: const BorderSide(width: 2, color: Colors.white),
+              ),
+              onPressed: () {},
+              child: Align(
+                alignment: Alignment.centerLeft,
+                child: Text(
+                  SuperBlock.getSuperBlockName(superBlockName),
+                  textAlign: TextAlign.left,
+                  style: const TextStyle(fontSize: 20),
+                ),
+              )),
+        ))
+      ],
+    );
   }
 }
