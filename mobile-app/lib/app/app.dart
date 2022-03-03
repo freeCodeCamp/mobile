@@ -20,7 +20,7 @@ import 'package:freecodecamp/ui/views/news/news-bookmark/news_bookmark_view.dart
 import 'package:freecodecamp/ui/views/news/news-feed/news_feed_view.dart';
 import 'package:freecodecamp/ui/views/settings/forumSettings/forum_settings_view.dart';
 import 'package:freecodecamp/ui/views/settings/podcastSettings/podcast_settings_view.dart';
-import 'package:freecodecamp/ui/views/learn/learn-superblock/superblock_view.dart';
+import 'package:freecodecamp/ui/views/learn/learn-builders/superblock_builder.dart';
 
 import 'package:stacked/stacked_annotations.dart';
 import 'package:stacked_services/stacked_services.dart';

@@ -19,7 +19,7 @@ import '../ui/views/forum/forum-post/forum_post_view.dart';
 import '../ui/views/forum/forum-user-profile/forum_user_profile_view.dart';
 import '../ui/views/forum/forum-user/forum_user_view.dart';
 import '../ui/views/home/home_view.dart';
-import '../ui/views/learn/learn-superblock/superblock_view.dart';
+import '../ui/views/learn/learn-builders/superblock_builder.dart';
 import '../ui/views/news/news-article/news_article_view.dart';
 import '../ui/views/news/news-author/news_author_view.dart';
 import '../ui/views/news/news-bookmark/news_bookmark_view.dart';

@@ -86,8 +86,4 @@ class LearnViewModel extends BaseViewModel {
     _navigationService.navigateTo(Routes.superBlockView,
         arguments: SuperBlockViewArguments(superBlockName: superBlock));
   }
-
-  void goBack() {
-    _navigationService.back();
-  }
 }
