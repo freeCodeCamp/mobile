@@ -55,9 +55,10 @@ class SuperBlockView extends StatelessWidget {
           ),
         ),
         Stepper(
+            onStepTapped: (value) => {model.setCurrentStep = value},
             controlsBuilder: (context, details) => Row(children: []),
             margin: const EdgeInsets.all(10),
-            currentStep: 0,
+            currentStep: model.currentStep,
             physics: const ClampingScrollPhysics(),
             steps: [
               for (int i = 0; i < block.challenges.length; i++)

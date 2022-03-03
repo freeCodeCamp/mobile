@@ -20,6 +20,14 @@ class LearnViewModel extends BaseViewModel {
   List _superBlocks = [];
   List get superBlocks => _superBlocks;
 
+  int _currentStep = 0;
+  int get currentStep => _currentStep;
+
+  set setCurrentStep(step) {
+    _currentStep = step;
+    notifyListeners();
+  }
+
   void init() {
     WebView.platform = SurfaceAndroidWebView();
     setupDialogUi();
