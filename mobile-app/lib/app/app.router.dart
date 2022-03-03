@@ -8,6 +8,7 @@
 
 import 'package:flutter/material.dart';
 import 'package:stacked/stacked.dart';
+import 'package:stacked/stacked_annotations.dart';
 
 import '../models/news/bookmarked_article_model.dart';
 import '../ui/views/code_radio/code_radio_view.dart';

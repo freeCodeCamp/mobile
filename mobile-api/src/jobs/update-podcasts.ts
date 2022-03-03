@@ -1,4 +1,4 @@
-import { UpdateQuery } from "mongoose";
+import { UpdateQuery } from 'mongoose';
 import Parser from 'rss-parser';
 import { parentPort } from 'worker_threads';
 import dbConnect from '../db-connect';

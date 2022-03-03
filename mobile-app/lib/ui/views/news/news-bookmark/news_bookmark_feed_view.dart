@@ -9,23 +9,30 @@ class NewsBookmarkFeedView extends StatelessWidget {
   Widget build(BuildContext context) {
     return ViewModelBuilder<NewsBookmarkModel>.reactive(
         viewModelBuilder: () => NewsBookmarkModel(),
-        onModelReady: (model) async => model.hasBookmarkedArticles(),
+        onModelReady: (model) async {
+          model.hasBookmarkedArticles();
+          model.updateListView();
+        },
         builder: (context, model, child) => Scaffold(
             backgroundColor: const Color.fromRGBO(0x2A, 0x2A, 0x40, 1),
-            body: model.userHasBookmarkedArticles
-                ? populateListViewModel(model)
-                : const Center(
-                    child: Text(
-                    'Bookmark articles to view them here',
-                    textAlign: TextAlign.center,
-                  ))));
+            body: RefreshIndicator(
+              backgroundColor: const Color(0xFF0a0a23),
+              color: Colors.white,
+              onRefresh: () {
+                return model.refresh();
+              },
+              child: model.userHasBookmarkedArticles
+                  ? populateListViewModel(model)
+                  : const Center(
+                      child: Text(
+                      'Bookmark articles to view them here',
+                      textAlign: TextAlign.center,
+                    )),
+            )));
   }
 }
 
 ListView populateListViewModel(NewsBookmarkModel model) {
-  if (model.bookMarkedArticles.isEmpty) {
-    model.updateListView();
-  }
   return ListView.separated(
       itemCount: model.count,
       separatorBuilder: (BuildContext context, int i) => const Divider(

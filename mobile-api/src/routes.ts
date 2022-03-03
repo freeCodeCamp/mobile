@@ -1,5 +1,5 @@
 import express, { Request, Response } from 'express';
-import { UpdateQuery } from "mongoose";
+import { UpdateQuery } from 'mongoose';
 import Parser from 'rss-parser';
 import Episode from './models/Episode';
 import Podcast from './models/Podcast';

@@ -3,6 +3,8 @@ on:
   pull_request:
     branches:
       - main
+    paths:
+      - 'mobile-app/**'
   push:
     branches:
       - main
@@ -18,7 +20,7 @@ jobs:
     runs-on: macos-latest
     steps:
       - name: Checkout files
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
 
       - name: Setup Java 11
         uses: actions/setup-java@v3
