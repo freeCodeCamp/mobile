@@ -55,12 +55,10 @@ class SuperBlockView extends StatelessWidget {
             fontWeight: FontWeight.bold,
           ),
         ),
-        for (int i = 0; i < block.challenges.length; i++)
-          Row(
-            children: [
-              Expanded(child: Text(block.challenges[i].name)),
-            ],
-          )
+        Stepper(currentStep: 0, physics: const ClampingScrollPhysics(), steps: [
+          for (int i = 0; i < block.challenges.length; i++)
+            Step(title: Text(block.challenges[i].name), content: Container())
+        ])
       ],
     );
   }
