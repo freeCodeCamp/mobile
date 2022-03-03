@@ -54,9 +54,7 @@ class LearnViewModel extends BaseViewModel {
     final http.Response res = await http.get(
         Uri.parse('https://freecodecamp.dev/mobile/availableSuperblocks.json'));
 
-    if (res.statusCode == 200) {
-      dev.log(res.body.toString());
-    }
+    if (res.statusCode == 200) {}
   }
 
   void goBack() {
