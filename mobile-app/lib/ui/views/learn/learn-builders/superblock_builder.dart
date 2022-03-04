@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:freecodecamp/models/learn/curriculum_model.dart';
-import 'package:freecodecamp/ui/views/learn/learn-builders/block_builder.dart';
+import 'package:freecodecamp/ui/views/learn/learn-builders/block-builder/block_builder_view.dart';
 import 'package:freecodecamp/ui/views/learn/learn_viewmodel.dart';
 import 'package:stacked/stacked.dart';
 
@@ -41,8 +41,8 @@ class SuperBlockView extends StatelessWidget {
         shrinkWrap: true,
         itemCount: superBlock.blocks.length,
         physics: const ClampingScrollPhysics(),
-        itemBuilder: (context, i) => BlockBuilder(
-          model: model,
+        itemBuilder: (context, i) => BlockBuilderView(
+          key: ObjectKey(superBlock.blocks[i].dashedName),
           block: superBlock.blocks[i],
         ),
       ),
