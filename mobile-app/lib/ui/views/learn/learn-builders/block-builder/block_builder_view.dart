@@ -21,7 +21,7 @@ class BlockBuilderView extends StatelessWidget {
               mainAxisAlignment: MainAxisAlignment.start,
               children: [
                 Container(
-                  padding: const EdgeInsets.only(top: 16),
+                  padding: const EdgeInsets.only(top: 16, bottom: 8),
                   child: Column(
                     children: [
                       Container(

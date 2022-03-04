@@ -17,14 +17,15 @@ class LearnViewModel extends BaseViewModel {
   final NavigationService _navigationService = locator<NavigationService>();
   final _dialogService = locator<DialogService>();
 
-  List _superBlocks = [];
-  List get superBlocks => _superBlocks;
+  Future? _superBlocks;
+  Future? get superBlocks => _superBlocks;
 
   void init() {
     WebView.platform = SurfaceAndroidWebView();
     setupDialogUi();
-    getSuperBlocks();
     isFirstTimeUsingLearn();
+    _superBlocks = getSuperBlocks();
+    notifyListeners();
   }
 
   void isFirstTimeUsingLearn() async {
@@ -58,8 +59,7 @@ class LearnViewModel extends BaseViewModel {
         Uri.parse('https://freecodecamp.dev/mobile/availableSuperblocks.json'));
 
     if (res.statusCode == 200) {
-      _superBlocks = jsonDecode(res.body)['superblocks'] as List;
-      notifyListeners();
+      return jsonDecode(res.body)['superblocks'];
     }
   }
 

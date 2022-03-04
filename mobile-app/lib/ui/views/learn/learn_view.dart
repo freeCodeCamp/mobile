@@ -14,22 +14,33 @@ class LearnView extends StatelessWidget {
         viewModelBuilder: () => LearnViewModel(),
         onModelReady: (model) => model.init(),
         builder: (context, model, child) => Scaffold(
-            appBar: AppBar(
-              title: const Text('LEARN'),
-            ),
-            resizeToAvoidBottomInset: false,
-            drawer: const DrawerWidgetView(),
-            body: ListView.builder(
-                shrinkWrap: true,
-                itemCount: model.superBlocks.length,
-                itemBuilder: (BuildContext context, int i) {
-                  dev.log(i.toString());
-                  return Padding(
-                    padding:
-                        const EdgeInsets.only(top: 16.0, left: 8, right: 8),
-                    child: superBlockBuilder(model.superBlocks[i], model),
-                  );
-                })));
+              appBar: AppBar(
+                title: const Text('LEARN'),
+              ),
+              resizeToAvoidBottomInset: false,
+              drawer: const DrawerWidgetView(),
+              body: FutureBuilder(
+                future: model.superBlocks,
+                builder: (context, snapshot) {
+                  if (snapshot.hasData) {
+                    var superBlocks = snapshot.data as List;
+                    return ListView.builder(
+                        shrinkWrap: true,
+                        itemCount: superBlocks.length,
+                        itemBuilder: (BuildContext context, int i) {
+                          dev.log(i.toString());
+                          return Padding(
+                            padding: const EdgeInsets.only(
+                                top: 16.0, left: 8, right: 8),
+                            child: superBlockBuilder(superBlocks[i], model),
+                          );
+                        });
+                  } else {
+                    return const Center(child: CircularProgressIndicator());
+                  }
+                },
+              ),
+            ));
   }
 
   Row superBlockBuilder(String superBlockName, LearnViewModel model) {

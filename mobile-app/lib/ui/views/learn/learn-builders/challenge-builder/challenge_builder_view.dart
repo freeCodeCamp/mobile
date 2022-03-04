@@ -31,7 +31,21 @@ class ChallengeBuilderView extends StatelessWidget {
                             block.challenges[i].name,
                             style: const TextStyle(fontSize: 16),
                           ),
-                          content: Container())
+                          content: TextButton(
+                            style: TextButton.styleFrom(
+                                backgroundColor:
+                                    const Color.fromRGBO(0x2A, 0x2A, 0x40, 1)),
+                            onPressed: () {
+                              String challenge = block.challenges[i].name
+                                  .toLowerCase()
+                                  .replaceAll(' ', '-');
+                              String url = 'https://freecodecamp.dev/learn';
+
+                              launch(
+                                  '$url/${block.superBlock}/${block.dashedName}/$challenge');
+                            },
+                            child: const Text('GO TO CHALLENGE'),
+                          ))
                   ]),
             ));
   }
