@@ -25,7 +25,6 @@ class LearnViewModel extends BaseViewModel {
 
   set setCurrentStep(step) {
     _currentStep = step;
-    notifyListeners();
   }
 
   void init() {
