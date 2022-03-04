@@ -22,10 +22,10 @@ class BlockBuilderView extends StatelessWidget {
               children: [
                 Container(
                   padding: const EdgeInsets.only(top: 16),
-                  color: const Color(0xFF0a0a23),
                   child: Column(
                     children: [
-                      Padding(
+                      Container(
+                        color: const Color(0xFF0a0a23),
                         padding: const EdgeInsets.all(24.0),
                         child: Align(
                           alignment: Alignment.centerLeft,
@@ -39,19 +39,24 @@ class BlockBuilderView extends StatelessWidget {
                           ),
                         ),
                       ),
-                      ListTile(
-                        leading: Icon(model.isOpen
-                            ? Icons.arrow_drop_down_sharp
-                            : Icons.arrow_right_sharp),
-                        title: Text(
-                            model.isOpen ? 'collapse course' : 'expand course'),
-                        trailing: Text(
-                          '0/${block.challenges.length}',
-                          style: const TextStyle(fontWeight: FontWeight.bold),
+                      Container(
+                        padding: const EdgeInsets.only(top: 4),
+                        child: ListTile(
+                          tileColor: const Color(0xFF0a0a23),
+                          leading: Icon(model.isOpen
+                              ? Icons.arrow_drop_down_sharp
+                              : Icons.arrow_right_sharp),
+                          title: Text(model.isOpen
+                              ? 'collapse course'
+                              : 'expand course'),
+                          trailing: Text(
+                            '0/${block.challenges.length}',
+                            style: const TextStyle(fontWeight: FontWeight.bold),
+                          ),
+                          onTap: () {
+                            model.setIsOpen = !model.isOpen;
+                          },
                         ),
-                        onTap: () {
-                          model.setIsOpen = !model.isOpen;
-                        },
                       ),
                       Row(
                         children: [
