@@ -27,9 +27,6 @@ const Episode = new Schema({
     type: String,
     required: true,
   },
-  duration: {
-    type: String,
-  },
 });
 
 export default mongoose.models.Episode ||
