@@ -20,6 +20,7 @@ import '../ui/views/forum/forum-user-profile/forum_user_profile_view.dart';
 import '../ui/views/forum/forum-user/forum_user_view.dart';
 import '../ui/views/home/home_view.dart';
 import '../ui/views/learn/learn-builders/superblock_builder.dart';
+import '../ui/views/learn/learn_browser_view.dart';
 import '../ui/views/news/news-article/news_article_view.dart';
 import '../ui/views/news/news-author/news_author_view.dart';
 import '../ui/views/news/news-bookmark/news_bookmark_view.dart';
@@ -45,6 +46,7 @@ class Routes {
   static const String forumUserProfileView = '/forum-user-profile-view';
   static const String codeRadioView = '/code-radio-view';
   static const String superBlockView = '/super-block-view';
+  static const String browserView = '/browser-view';
   static const all = <String>{
     homeView,
     podcastListView,
@@ -62,6 +64,7 @@ class Routes {
     forumUserProfileView,
     codeRadioView,
     superBlockView,
+    browserView,
   };
 }
 
@@ -85,6 +88,7 @@ class StackedRouter extends RouterBase {
     RouteDef(Routes.forumUserProfileView, page: ForumUserProfileView),
     RouteDef(Routes.codeRadioView, page: CodeRadioView),
     RouteDef(Routes.superBlockView, page: SuperBlockView),
+    RouteDef(Routes.browserView, page: BrowserView),
   ];
   @override
   Map<Type, StackedRouteFactory> get pagesMap => _pagesMap;
@@ -233,6 +237,17 @@ class StackedRouter extends RouterBase {
           superBlockName: args.superBlockName,
         ),
         settings: data,
+        maintainState: true,
+      );
+    },
+    BrowserView: (data) {
+      var args = data.getArgs<BrowserViewArguments>(nullOk: false);
+      return MaterialPageRoute<dynamic>(
+        builder: (context) => BrowserView(
+          key: args.key,
+          url: args.url,
+        ),
+        settings: data,
       );
     },
   };
@@ -323,4 +338,11 @@ class SuperBlockViewArguments {
   final Key? key;
   final String superBlockName;
   SuperBlockViewArguments({this.key, required this.superBlockName});
+}
+
+/// BrowserView arguments holder class
+class BrowserViewArguments {
+  final Key? key;
+  final String url;
+  BrowserViewArguments({this.key, required this.url});
 }

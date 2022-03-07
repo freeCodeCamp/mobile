@@ -21,6 +21,7 @@ import 'package:freecodecamp/ui/views/news/news-feed/news_feed_view.dart';
 import 'package:freecodecamp/ui/views/settings/forumSettings/forum_settings_view.dart';
 import 'package:freecodecamp/ui/views/settings/podcastSettings/podcast_settings_view.dart';
 import 'package:freecodecamp/ui/views/learn/learn-builders/superblock_builder.dart';
+import 'package:freecodecamp/ui/views/learn/learn_browser_view.dart';
 
 import 'package:stacked/stacked_annotations.dart';
 import 'package:stacked_services/stacked_services.dart';
@@ -44,7 +45,8 @@ import 'package:sqflite_migration_service/sqflite_migration_service.dart';
     MaterialRoute(page: ForumSettingsView),
     MaterialRoute(page: ForumUserProfileView),
     MaterialRoute(page: CodeRadioView),
-    MaterialRoute(page: SuperBlockView)
+    MaterialRoute(page: SuperBlockView, maintainState: true),
+    MaterialRoute(page: BrowserView)
   ],
   dependencies: [
     LazySingleton(classType: NavigationService),

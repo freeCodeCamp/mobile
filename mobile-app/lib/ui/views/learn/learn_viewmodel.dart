@@ -78,4 +78,25 @@ class LearnViewModel extends BaseViewModel {
     _navigationService.navigateTo(Routes.superBlockView,
         arguments: SuperBlockViewArguments(superBlockName: superBlock));
   }
+
+  void initState(webViewController) {
+    setWebViewController(webViewController);
+    removeNavBar(webViewController);
+  }
+
+  void setWebViewController(WebViewController webViewController) {
+    controller = webViewController;
+    notifyListeners();
+  }
+
+  void removeNavBar(WebViewController? webViewController) {
+    webViewController!.runJavascript(
+        "document.getElementById('universal-nav').style.display = 'none'");
+    webViewController.runJavascript(
+        "document.getElementsByClassName('default-layout')[0].style.marginTop = 0;");
+  }
+
+  void goBack() {
+    _navigationService.back();
+  }
 }

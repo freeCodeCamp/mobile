@@ -41,7 +41,7 @@ class ChallengeBuilderView extends StatelessWidget {
                                   .replaceAll(' ', '-');
                               String url = 'https://freecodecamp.dev/learn';
 
-                              launch(
+                              model.routeToBrowserView(
                                   '$url/${block.superBlock}/${block.dashedName}/$challenge');
                             },
                             child: const Text('GO TO CHALLENGE'),
