@@ -48,7 +48,7 @@ class LearnView extends StatelessWidget {
       children: [
         Expanded(
             child: SizedBox(
-          height: 50,
+          height: 100,
           child: ElevatedButton(
               style: ElevatedButton.styleFrom(
                 primary: const Color.fromRGBO(0x3b, 0x3b, 0x4f, 1),

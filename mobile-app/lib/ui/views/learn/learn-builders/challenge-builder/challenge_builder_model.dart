@@ -1,3 +1,4 @@
+import 'package:flutter/material.dart';
 import 'package:freecodecamp/app/app.locator.dart';
 import 'package:freecodecamp/app/app.router.dart';
 import 'package:stacked/stacked.dart';
@@ -17,5 +18,13 @@ class ChallengeBuilderModel extends BaseViewModel {
   void routeToBrowserView(String url) {
     _navigationService.navigateTo(Routes.browserView,
         arguments: BrowserViewArguments(url: url));
+  }
+
+  Icon hasCompletedChallenge(bool completed) {
+    if (completed) {
+      return const Icon(Icons.check_circle);
+    }
+
+    return const Icon(Icons.circle_outlined);
   }
 }
