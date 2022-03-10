@@ -118,5 +118,3 @@ jobs:
           flutter build appbundle
           cd android
           bundle exec fastlane deploy
-        env:
-          GPLAY_STORE_CONFIG: ${{ secrets.GPLAY_STORE_CONFIG }}
