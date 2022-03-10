@@ -17,7 +17,7 @@
     "start": "NODE_ENV=production node prod/index.js"
   },
   "dependencies": {
-    "bree": "7.2.0",
+    "bree": "8.0.0",
     "dotenv": "16.0.0",
     "express": "4.17.3",
     "mongoose": "6.2.5",
