@@ -101,12 +101,14 @@ jobs:
         working-directory: ./mobile-app/android
         run: |
           echo "$KEYSTORE" | base64 --decode > app/keystore.jks
+          echo "$GPLAY_STORE_CONFIG" | base64 --decode > play-store-credentials.json
           echo "storeFile=keystore.jks" > key.properties
           echo "storePassword=$KEYSTORE_STORE_PASSWORD" >> key.properties
           echo "keyPassword=$KEYSTORE_KEY_PASSWORD" >> key.properties
           echo "keyAlias=$KEYSTORE_KEY_ALIAS" >> key.properties
         env:
           KEYSTORE: ${{ secrets.KEYSTORE }}
+          GPLAY_STORE_CONFIG: ${{ secrets.GPLAY_STORE_CONFIG }}
           KEYSTORE_STORE_PASSWORD: ${{ secrets.KEYSTORE_STORE_PASSWORD }}
           KEYSTORE_KEY_PASSWORD: ${{ secrets.KEYSTORE_KEY_PASSWORD }}
           KEYSTORE_KEY_ALIAS: ${{ secrets.KEYSTORE_KEY_ALIAS }}

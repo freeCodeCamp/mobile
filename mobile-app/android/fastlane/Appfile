@@ -1,1 +1,2 @@
+json_key_file("play-store-credentials.json")
 package_name("org.freecodecamp")
