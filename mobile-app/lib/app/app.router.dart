@@ -6,7 +6,6 @@
 
 // ignore_for_file: public_member_api_docs
 
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:stacked/stacked.dart';
 import 'package:stacked/stacked_annotations.dart';
@@ -228,7 +227,7 @@ class StackedRouter extends RouterBase {
     },
     FccLoginView: (data) {
       return MaterialPageRoute<dynamic>(
-        builder: (context) => FccLoginView(),
+        builder: (context) => const FccLoginView(),
         settings: data,
       );
     },

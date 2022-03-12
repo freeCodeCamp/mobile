@@ -13,6 +13,7 @@ import 'package:stacked_services/stacked_services.dart';
 
 import '../service/code_radio_service.dart';
 import '../service/episode_audio_service.dart';
+import '../service/fcc_service.dart';
 import '../service/notification_service.dart';
 import '../service/podcasts_service.dart';
 import '../service/test_service.dart';
@@ -34,4 +35,5 @@ void setupLocator({String? environment, EnvironmentFilter? environmentFilter}) {
   locator.registerLazySingleton(() => EpisodeAudioService());
   locator.registerLazySingleton(() => TestService());
   locator.registerLazySingleton(() => CodeRadioService());
+  locator.registerLazySingleton(() => FccService());
 }
