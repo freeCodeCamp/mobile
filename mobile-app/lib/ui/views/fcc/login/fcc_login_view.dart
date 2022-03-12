@@ -16,7 +16,9 @@ class FccLoginView extends StatelessWidget {
                     loginHeader(),
                     loginButton('Google'),
                     loginButton('GitHub'),
-                    orWidget()
+                    orWidget(),
+                    inputField(),
+                    cancelButton()
                   ],
                 ),
               ),
@@ -52,7 +54,7 @@ class FccLoginView extends StatelessWidget {
     );
   }
 
-  Widget loginButton(String type) {
+  Widget loginButton(String service) {
     return Container(
       padding: const EdgeInsets.all(16),
       child: Column(
@@ -67,7 +69,7 @@ class FccLoginView extends StatelessWidget {
                   backgroundColor: const Color.fromRGBO(0x3b, 0x3b, 0x4f, 1),
                 ),
                 onPressed: () {},
-                child: Text('Continue with $type')),
+                child: Text('Continue with $service')),
           )
         ],
       ),
@@ -97,6 +99,65 @@ class FccLoginView extends StatelessWidget {
           ],
         )
       ],
+    );
+  }
+
+  Widget inputField() {
+    return Column(
+      children: [
+        Container(
+          padding: const EdgeInsets.only(top: 16, bottom: 16),
+          width: 300,
+          child: TextField(
+            style: const TextStyle(color: Colors.white),
+            decoration: InputDecoration(
+                enabledBorder: const OutlineInputBorder(
+                    borderSide: BorderSide(color: Colors.white, width: 2)),
+                border:
+                    OutlineInputBorder(borderRadius: BorderRadius.circular(0)),
+                label: const Text(
+                  'Email',
+                  style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                )),
+          ),
+        ),
+        Container(
+          decoration:
+              BoxDecoration(border: Border.all(width: 2, color: Colors.white)),
+          width: 300,
+          height: 50,
+          child: ElevatedButton(
+              style: TextButton.styleFrom(
+                backgroundColor: const Color.fromRGBO(0x3b, 0x3b, 0x4f, 1),
+              ),
+              onPressed: () {},
+              child: const Text('Email a sign in code')),
+        )
+      ],
+    );
+  }
+
+  Widget cancelButton() {
+    return Expanded(
+      child: Padding(
+        padding: const EdgeInsets.only(bottom: 64),
+        child: Align(
+          alignment: Alignment.bottomCenter,
+          child: Container(
+            decoration: BoxDecoration(
+                border: Border.all(width: 2, color: Colors.white)),
+            width: 300,
+            height: 50,
+            padding: const EdgeInsets.only(),
+            child: ElevatedButton(
+                style: TextButton.styleFrom(
+                  backgroundColor: const Color.fromRGBO(0x3b, 0x3b, 0x4f, 1),
+                ),
+                onPressed: () {},
+                child: const Text('continue without logging in')),
+          ),
+        ),
+      ),
     );
   }
 }
