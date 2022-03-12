@@ -20,6 +20,7 @@ import 'package:freecodecamp/ui/views/news/news-bookmark/news_bookmark_view.dart
 import 'package:freecodecamp/ui/views/news/news-feed/news_feed_view.dart';
 import 'package:freecodecamp/ui/views/settings/forumSettings/forum_settings_view.dart';
 import 'package:freecodecamp/ui/views/settings/podcastSettings/podcast_settings_view.dart';
+import 'package:freecodecamp/ui/views/fcc/login/fcc_login_view.dart';
 
 import 'package:stacked/stacked_annotations.dart';
 import 'package:stacked_services/stacked_services.dart';
@@ -42,7 +43,8 @@ import 'package:sqflite_migration_service/sqflite_migration_service.dart';
     MaterialRoute(page: ForumUserView),
     MaterialRoute(page: ForumSettingsView),
     MaterialRoute(page: ForumUserProfileView),
-    MaterialRoute(page: CodeRadioView)
+    MaterialRoute(page: CodeRadioView),
+    MaterialRoute(page: FccLoginView)
   ],
   dependencies: [
     LazySingleton(classType: NavigationService),

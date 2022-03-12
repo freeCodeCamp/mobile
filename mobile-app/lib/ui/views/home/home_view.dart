@@ -25,6 +25,7 @@ class HomeView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return ViewModelBuilder<HomeViewModel>.reactive(
+      onModelReady: (model) => model.checkFirstTime(),
       builder: (context, viewModel, child) => Scaffold(
         appBar: AppBar(
           title: titles.elementAt(viewModel.index),

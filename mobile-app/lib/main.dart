@@ -18,13 +18,18 @@ Future<void> main() async {
   await NotificationService().init();
 
   setupLocator();
+
+  // enable audio streaming
+
   final audioService = locator<CodeRadioService>();
   audioService.initAppStateObserver();
+
   runApp(const MyApp());
 }
 
 class MyApp extends StatelessWidget {
   const MyApp({Key? key}) : super(key: key);
+
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
