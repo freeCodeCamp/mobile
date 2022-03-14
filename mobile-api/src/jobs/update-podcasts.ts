@@ -7,7 +7,10 @@ import PodcastModel, { Podcast } from '../models/Podcast';
 import { feedUrls } from '../podcast-feed-urls.json';
 
 console.log('Job running at', new Date().toISOString());
-const parser = new Parser();
+const parser = new Parser<
+  Record<string, unknown>,
+  { itunes?: { duration: string } }
+>();
 
 void (async function () {
   await dbConnect();
@@ -32,7 +35,7 @@ void (async function () {
     );
     for (const episode of feed.items) {
       const dateRaw = episode.isoDate ?? episode.pubDate ?? null;
-      const episodeDate = dateRaw ? Date.parse(dateRaw) : null
+      const episodeDate = dateRaw ? Date.parse(dateRaw) : null;
       await Episode.findOneAndUpdate(
         {
           podcastId: podcast._id,
@@ -45,6 +48,7 @@ void (async function () {
           description: episode.content,
           publicationDate: episodeDate,
           audioUrl: episode.enclosure?.url,
+          duration: episode.itunes?.duration,
         },
         {
           new: true,
