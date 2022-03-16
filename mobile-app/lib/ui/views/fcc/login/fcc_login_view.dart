@@ -7,7 +7,7 @@ class FccLoginView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return ViewModelBuilder.reactive(
+    return ViewModelBuilder<FccLoginModel>.reactive(
         viewModelBuilder: () => FccLoginModel(),
         builder: (context, model, child) => Scaffold(
               body: SafeArea(
@@ -18,7 +18,7 @@ class FccLoginView extends StatelessWidget {
                     loginButton('GitHub'),
                     orWidget(),
                     inputField(),
-                    cancelButton()
+                    cancelButton(model)
                   ],
                 ),
               ),
@@ -137,7 +137,7 @@ class FccLoginView extends StatelessWidget {
     );
   }
 
-  Widget cancelButton() {
+  Widget cancelButton(FccLoginModel model) {
     return Expanded(
       child: Padding(
         padding: const EdgeInsets.only(bottom: 64),
@@ -153,7 +153,9 @@ class FccLoginView extends StatelessWidget {
                 style: TextButton.styleFrom(
                   backgroundColor: const Color.fromRGBO(0x3b, 0x3b, 0x4f, 1),
                 ),
-                onPressed: () {},
+                onPressed: () {
+                  model.cancelLogin();
+                },
                 child: const Text('continue without logging in')),
           ),
         ),
