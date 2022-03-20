@@ -49,6 +49,7 @@ dependencies:
   web_socket_channel: ^2.1.0
   webview_flutter: ^2.8.0
   cached_network_image: ^3.2.0
+  share_plus: ^3.1.0
 dev_dependencies:
   build_runner: ^2.1.2
   integration_test:
