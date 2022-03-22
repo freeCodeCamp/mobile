@@ -82,6 +82,14 @@ class DrawerWidgetView extends StatelessWidget {
                 icon: Icons.favorite,
               ),
               buildDivider(),
+              DrawerButton(
+                component: 'LOGIN',
+                icon: Icons.login,
+                route: () {
+                  model.routeComponent('LOGIN', context);
+                },
+              ),
+              buildDivider(),
             ],
           ),
         ),
