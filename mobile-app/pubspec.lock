@@ -300,6 +300,15 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "3.3.0"
+  flutter_code_editor:
+    dependency: "direct main"
+    description:
+      path: "."
+      ref: main
+      resolved-ref: f076f2f773f0288129afd287c622fd0a9d4fd5a4
+      url: "https://github.com/freeCodeCamp/PhoneIDE"
+    source: git
+    version: "1.0.0+1"
   flutter_dotenv:
     dependency: "direct main"
     description:
@@ -784,6 +793,13 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "4.2.4"
+  property_change_notifier:
+    dependency: transitive
+    description:
+      name: property_change_notifier
+      url: "https://pub.dartlang.org"
+    source: hosted
+    version: "0.3.0"
   provider:
     dependency: transitive
     description:
@@ -826,6 +842,13 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "4.0.0"
+  rich_text_controller:
+    dependency: transitive
+    description:
+      name: rich_text_controller
+      url: "https://pub.dartlang.org"
+    source: hosted
+    version: "1.4.0"
   rxdart:
     dependency: transitive
     description:
@@ -846,7 +869,7 @@ packages:
       name: shared_preferences
       url: "https://pub.dartlang.org"
     source: hosted
-    version: "2.0.12"
+    version: "2.0.13"
   shared_preferences_android:
     dependency: transitive
     description:

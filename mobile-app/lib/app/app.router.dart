@@ -19,6 +19,7 @@ import '../ui/views/forum/forum-post/forum_post_view.dart';
 import '../ui/views/forum/forum-user-profile/forum_user_profile_view.dart';
 import '../ui/views/forum/forum-user/forum_user_view.dart';
 import '../ui/views/home/home_view.dart';
+import '../ui/views/learn/challenge_editor/challenge_view.dart';
 import '../ui/views/learn/learn-builders/superblock_builder.dart';
 import '../ui/views/learn/learn_browser_view.dart';
 import '../ui/views/news/news-article/news_article_view.dart';
@@ -47,6 +48,7 @@ class Routes {
   static const String codeRadioView = '/code-radio-view';
   static const String superBlockView = '/super-block-view';
   static const String browserView = '/browser-view';
+  static const String challengeView = '/challenge-view';
   static const all = <String>{
     homeView,
     podcastListView,
@@ -65,6 +67,7 @@ class Routes {
     codeRadioView,
     superBlockView,
     browserView,
+    challengeView,
   };
 }
 
@@ -89,6 +92,7 @@ class StackedRouter extends RouterBase {
     RouteDef(Routes.codeRadioView, page: CodeRadioView),
     RouteDef(Routes.superBlockView, page: SuperBlockView),
     RouteDef(Routes.browserView, page: BrowserView),
+    RouteDef(Routes.challengeView, page: ChallengeView),
   ];
   @override
   Map<Type, StackedRouteFactory> get pagesMap => _pagesMap;
@@ -250,6 +254,16 @@ class StackedRouter extends RouterBase {
         settings: data,
       );
     },
+    ChallengeView: (data) {
+      var args = data.getArgs<ChallengeViewArguments>(nullOk: false);
+      return MaterialPageRoute<dynamic>(
+        builder: (context) => ChallengeView(
+          key: args.key,
+          url: args.url,
+        ),
+        settings: data,
+      );
+    },
   };
 }
 
@@ -345,4 +359,11 @@ class BrowserViewArguments {
   final Key? key;
   final String url;
   BrowserViewArguments({this.key, required this.url});
+}
+
+/// ChallengeView arguments holder class
+class ChallengeViewArguments {
+  final Key? key;
+  final String url;
+  ChallengeViewArguments({this.key, required this.url});
 }

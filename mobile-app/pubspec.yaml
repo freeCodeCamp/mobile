@@ -33,6 +33,10 @@ dependencies:
     git:
       url: https://github.com/Sembauke/flutter_syntax_view
       ref: master
+  flutter_code_editor:
+    git:
+      url: https://github.com/freeCodeCamp/PhoneIDE
+      ref: main
   jiffy: ^5.0.0
   share: ^2.0.4
   flutter_svg: ^0.23.0+1

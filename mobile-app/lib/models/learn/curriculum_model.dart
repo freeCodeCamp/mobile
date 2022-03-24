@@ -36,8 +36,8 @@ class SuperBlock {
 
 class Block {
   final String blockName;
-  final String dashedName;
-  final String superBlock;
+  final String? dashedName;
+  final String? superBlock;
   final String description;
 
   final List<Challenge> challenges;
@@ -45,8 +45,8 @@ class Block {
   Block(
       {required this.blockName,
       required this.description,
-      required this.dashedName,
-      required this.superBlock,
+      this.dashedName = '',
+      this.superBlock = '',
       required this.challenges});
 
   static List<Challenge> getChallenges(List challengeOrder) {

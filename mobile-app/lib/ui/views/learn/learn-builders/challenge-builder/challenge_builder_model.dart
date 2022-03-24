@@ -16,8 +16,8 @@ class ChallengeBuilderModel extends BaseViewModel {
   }
 
   void routeToBrowserView(String url) {
-    _navigationService.navigateTo(Routes.browserView,
-        arguments: BrowserViewArguments(url: url));
+    _navigationService.navigateTo(Routes.challengeView,
+        arguments: ChallengeViewArguments(url: url));
   }
 
   Icon hasCompletedChallenge(bool completed) {
