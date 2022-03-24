@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:freecodecamp/models/learn/curriculum_model.dart';
 import 'package:freecodecamp/ui/views/learn/learn_viewmodel.dart';
 import 'package:freecodecamp/ui/widgets/drawer_widget/drawer_widget_view.dart';
 import 'package:stacked/stacked.dart';
@@ -26,13 +25,14 @@ class LearnView extends StatelessWidget {
                     var superBlocks = snapshot.data as List;
                     return ListView.builder(
                         shrinkWrap: true,
-                        itemCount: superBlocks.length,
+                        itemCount: superBlocks[0].length,
                         itemBuilder: (BuildContext context, int i) {
                           dev.log(i.toString());
                           return Padding(
                             padding: const EdgeInsets.only(
                                 top: 16.0, left: 8, right: 8),
-                            child: superBlockBuilder(superBlocks[i], model),
+                            child: superBlockBuilder(
+                                superBlocks[0][i], superBlocks[1][i], model),
                           );
                         });
                   } else {
@@ -43,7 +43,8 @@ class LearnView extends StatelessWidget {
             ));
   }
 
-  Row superBlockBuilder(String superBlockName, LearnViewModel model) {
+  Row superBlockBuilder(
+      String superBlockSlug, String superBlockName, LearnViewModel model) {
     return Row(
       children: [
         Expanded(
@@ -55,12 +56,12 @@ class LearnView extends StatelessWidget {
                 side: const BorderSide(width: 2, color: Colors.white),
               ),
               onPressed: () {
-                model.routeToSuperBlock(superBlockName);
+                model.routeToSuperBlock(superBlockSlug);
               },
               child: Align(
                 alignment: Alignment.centerLeft,
                 child: Text(
-                  SuperBlock.getSuperBlockName(superBlockName),
+                  superBlockName,
                   textAlign: TextAlign.left,
                   style: const TextStyle(fontSize: 20),
                 ),

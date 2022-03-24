@@ -14,16 +14,6 @@ class SuperBlock {
     return superBlockName;
   }
 
-  static String getSuperBlockName(String name) {
-    List superBlockNameToList = name.split('-');
-
-    superBlockNameToList.removeAt(0);
-
-    String superBlockName = superBlockNameToList.asMap().values.join(' ');
-
-    return superBlockName;
-  }
-
   static List<Block> getBlocks(Map<String, dynamic> data) {
     List<Block> blocks = [];
 
