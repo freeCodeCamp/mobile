@@ -18,7 +18,10 @@ class SuperBlock {
     List<Block> blocks = [];
 
     for (int i = 0; i < data.length; i++) {
-      blocks.add(Block.fromJson(data[data.keys.elementAt(i)]['challenges']));
+      List description = data[data.keys.elementAt(i)]['desc'];
+
+      blocks.add(Block.fromJson(
+          data[data.keys.elementAt(i)]['challenges'], description.join()));
     }
 
     return blocks;
@@ -35,11 +38,13 @@ class Block {
   final String blockName;
   final String dashedName;
   final String superBlock;
+  final String description;
 
   final List<Challenge> challenges;
 
   Block(
       {required this.blockName,
+      required this.description,
       required this.dashedName,
       required this.superBlock,
       required this.challenges});
@@ -55,9 +60,10 @@ class Block {
     return challenges;
   }
 
-  factory Block.fromJson(Map<String, dynamic> data) {
+  factory Block.fromJson(Map<String, dynamic> data, String description) {
     return Block(
         blockName: data['name'],
+        description: description,
         dashedName: data['dashedName'],
         superBlock: data['superBlock'],
         challenges: getChallenges(data['challengeOrder']));

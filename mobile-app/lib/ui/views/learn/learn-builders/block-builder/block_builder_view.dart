@@ -27,16 +27,25 @@ class BlockBuilderView extends StatelessWidget {
                       Container(
                         color: const Color(0xFF0a0a23),
                         padding: const EdgeInsets.all(24.0),
-                        child: Align(
-                          alignment: Alignment.centerLeft,
-                          child: Text(
-                            block.blockName,
-                            textAlign: TextAlign.left,
-                            style: const TextStyle(
-                              fontSize: 28,
-                              fontWeight: FontWeight.bold,
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              block.blockName,
+                              textAlign: TextAlign.left,
+                              style: const TextStyle(
+                                fontSize: 28,
+                                fontWeight: FontWeight.bold,
+                              ),
                             ),
-                          ),
+                            Padding(
+                              padding: const EdgeInsets.only(top: 8.0),
+                              child: Text(
+                                block.description,
+                                style: const TextStyle(fontSize: 18),
+                              ),
+                            )
+                          ],
                         ),
                       ),
                       Container(
