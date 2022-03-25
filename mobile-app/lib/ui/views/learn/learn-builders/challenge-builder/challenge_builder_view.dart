@@ -28,8 +28,7 @@ class ChallengeBuilderView extends StatelessWidget {
                         String challenge = block.challenges[i].name
                             .toLowerCase()
                             .replaceAll(' ', '-');
-                        String url =
-                            'https://freecodecamp.dev/learn/page-data/';
+                        String url = 'https://freecodecamp.dev/page-data/learn';
 
                         model.routeToBrowserView(
                             '$url/${block.superBlock}/${block.dashedName}/$challenge/page-data.json');

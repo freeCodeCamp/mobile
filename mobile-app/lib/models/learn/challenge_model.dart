@@ -5,21 +5,28 @@ class Challenge {
   final String instructions;
 
   final List<ChallengeTest> tests;
+  final List<ChallengeFile> files;
 
   const Challenge(
       {required this.block,
       required this.title,
       required this.description,
       required this.instructions,
-      required this.tests});
+      required this.tests,
+      required this.files});
 
   factory Challenge.fromJson(Map<String, dynamic> data) {
     return Challenge(
-        block: data['block'],
-        title: data['title'],
-        description: data['description'],
-        instructions: data['instructions'],
-        tests: ChallengeTest.returnChallengeTests(data['fields']['tests']));
+        block: data['data']['challengeNode']['challenge']['block'],
+        title: data['data']['challengeNode']['challenge']['title'],
+        description: data['data']['challengeNode']['challenge']['description'],
+        instructions: data['data']['challengeNode']['challenge']
+            ['instructions'],
+        tests: ChallengeTest.returnChallengeTests(
+          data['data']['challengeNode']['challenge']['fields']['tests'],
+        ),
+        files: ChallengeFile.returnChallengeFiles(data['pageContext']
+            ['projectPreview']['challengeData']['challengeFiles']));
   }
 }
 
@@ -32,7 +39,7 @@ class ChallengeTest {
   static List<ChallengeTest> returnChallengeTests(List tests) {
     List<ChallengeTest> challengeTests = [];
 
-    for (Map<String, String> test in tests) {
+    for (Map<String, dynamic> test in tests) {
       challengeTests.add(ChallengeTest.fromJson(test));
     }
 
@@ -41,5 +48,33 @@ class ChallengeTest {
 
   factory ChallengeTest.fromJson(Map<String, dynamic> data) {
     return ChallengeTest(instruction: data['text'], test: data['testString']);
+  }
+}
+
+class ChallengeFile {
+  final String fileName;
+  final String fileExtension;
+  final String fileContents;
+
+  const ChallengeFile(
+      {required this.fileName,
+      required this.fileExtension,
+      required this.fileContents});
+
+  static List<ChallengeFile> returnChallengeFiles(List inComingFiles) {
+    List<ChallengeFile> files = [];
+
+    for (Map<String, dynamic> file in inComingFiles) {
+      files.add(ChallengeFile.fromJson(file));
+    }
+
+    return files;
+  }
+
+  factory ChallengeFile.fromJson(Map<String, dynamic> data) {
+    return ChallengeFile(
+        fileName: data['name'],
+        fileExtension: data['ext'],
+        fileContents: data['contents']);
   }
 }
