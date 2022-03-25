@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_code_editor/controller/editor_view_controller.dart';
 import 'package:flutter_code_editor/controller/file_controller.dart';
+import 'package:flutter_code_editor/models/editor_options.dart';
+import 'package:flutter_code_editor/models/file_model.dart';
 import 'package:freecodecamp/models/learn/challenge_model.dart';
 import 'package:freecodecamp/ui/views/learn/challenge_editor/challenge_model.dart';
 import 'package:stacked/stacked.dart';
@@ -21,9 +23,16 @@ class ChallengeView extends StatelessWidget {
               builder: (context, snapshot) {
                 Challenge? challenge = snapshot.data as Challenge?;
 
-                FileController.createFile('/', challenge!.files[0].fileName);
                 if (snapshot.hasData) {
-                  return EditorViewController();
+                  return EditorViewController(
+                    options: const EditorOptions(useFileExplorer: false),
+                    file: FileIDE(
+                        fileExplorer: null,
+                        fileName: challenge!.files[0].fileName,
+                        filePath: '',
+                        fileContent: challenge.files[0].fileContents,
+                        parentDirectory: ''),
+                  );
                 }
 
                 return const Center(child: CircularProgressIndicator());
