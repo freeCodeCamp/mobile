@@ -1,6 +1,12 @@
+// ignore_for_file: implementation_imports
+
 import 'package:flutter/material.dart';
 import 'package:flutter_html/flutter_html.dart';
-import 'package:flutter_syntax_view/flutter_syntax_view.dart';
+
+import 'package:flutter_syntax_view_fcc/src/flutter_syntax_view.dart';
+import 'package:flutter_syntax_view_fcc/src/theme/theme.dart';
+import 'package:flutter_syntax_view_fcc/src/syntax/base.dart';
+
 import 'package:freecodecamp/models/news/article_model.dart';
 import 'package:freecodecamp/ui/views/news/news-article/news_article_header.dart';
 import 'package:freecodecamp/ui/views/news/news-article/news_article_view.dart';
@@ -109,10 +115,8 @@ class HtmlHandler {
                   .contains(RegExp(r'language-', caseSensitive: false))) {
                 return SyntaxView(
                     syntaxTheme: SyntaxTheme.vscodeDark(),
-                    useCustomHeight: true,
-                    minWidth: MediaQuery.of(context).size.width,
                     code: code.tree.element!.text,
-                    withZoom: false,
+                    adjutableHeight: true,
                     fontSize: 15,
                     syntax: Syntax.JAVASCRIPT);
               }

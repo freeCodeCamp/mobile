@@ -407,15 +407,15 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "0.23.0+1"
-  flutter_syntax_view:
+  flutter_syntax_view_fcc:
     dependency: "direct main"
     description:
       path: "."
       ref: master
-      resolved-ref: "0e728bc174fd5c03087948f13d905c5faa945150"
-      url: "https://github.com/Sembauke/flutter_syntax_view"
+      resolved-ref: "89049aa11784c9708c35219c99e24b98bf62bca7"
+      url: "https://github.com/Sembauke/flutter_syntax_view_fcc"
     source: git
-    version: "4.0.0"
+    version: "1.0.0+1"
   flutter_test:
     dependency: "direct dev"
     description: flutter
@@ -1324,5 +1324,5 @@ packages:
     source: hosted
     version: "2.2.2"
 sdks:
-  dart: ">=2.15.0 <3.0.0"
+  dart: ">=2.16.1 <3.0.0"
   flutter: ">=2.8.0"
