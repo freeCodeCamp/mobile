@@ -32,8 +32,10 @@ class ChallengeView extends StatelessWidget {
                       const Text('description'),
                     ], customViews: [
                       DescriptionView(
-                          description: challenge!.description,
-                          instructions: challenge.instructions)
+                        description: challenge!.description,
+                        instructions: challenge.instructions,
+                        tests: challenge.tests,
+                      )
                     ]),
                     file: FileIDE(
                         fileExplorer: null,
