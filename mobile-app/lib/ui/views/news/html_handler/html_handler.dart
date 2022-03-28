@@ -29,6 +29,18 @@ class HtmlHandler {
     return elements;
   }
 
+  static List<Widget> smallHtmlHandler(html, context) {
+    var result = HtmlParser.parseHTML(html);
+
+    List<Widget> elements = [];
+
+    for (int i = 0; i < result.body!.children.length; i++) {
+      elements
+          .add(htmlWidgetBuilder(result.body!.children[i].outerHtml, context));
+    }
+    return elements;
+  }
+
   static htmlWidgetBuilder(child, context) {
     return Html(
         shrinkWrap: true,
