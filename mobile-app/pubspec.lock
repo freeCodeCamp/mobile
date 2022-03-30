@@ -305,7 +305,7 @@ packages:
     description:
       path: "."
       ref: main
-      resolved-ref: "82c789d566f691c1d95dc736b502e96e5f8dd6a3"
+      resolved-ref: "7014f03fe41cdcff9810999f96b9d1804f1306f5"
       url: "https://github.com/freeCodeCamp/PhoneIDE"
     source: git
     version: "1.0.0+1"

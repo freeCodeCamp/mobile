@@ -6,6 +6,7 @@ import 'package:freecodecamp/models/learn/challenge_model.dart';
 import 'package:freecodecamp/ui/views/learn/challenge_editor/challenge_model.dart';
 import 'package:freecodecamp/ui/views/learn/challenge_editor/description/description_view.dart';
 import 'package:stacked/stacked.dart';
+import 'dart:developer' as dev;
 
 class ChallengeView extends StatelessWidget {
   const ChallengeView({Key? key, required this.url}) : super(key: key);
@@ -22,17 +23,39 @@ class ChallengeView extends StatelessWidget {
               builder: (context, snapshot) {
                 Challenge? challenge = snapshot.data as Challenge?;
 
+                dev.log(url);
+
                 if (snapshot.hasData) {
-                  return EditorViewController(
+                  EditorViewController controller = EditorViewController(
                     options:
-                        EditorOptions(useFileExplorer: false, customScripts: [
-                      '<script src="https://www.chaijs.com/chai.js"/>',
-                      '<script>   </script>'
+                        EditorOptions(useFileExplorer: false, importScripts: [
+                      '<script src="https://unpkg.com/chai/chai.js"></script>',
+                      '<script src="https://unpkg.com/mocha/mocha.js"></script>',
+                      '<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>'
+                    ], bodyScripts: [
+                      '<div id="mocha"></div>',
+                      '''
+                          <script class="mocha-init">
+                            mocha.setup("bdd");
+                            mocha.growl();
+                            mocha.checkLeaks();
+                          </script>
+                      ''',
+                      '''
+                          <script class="mocha-exec">
+                            const assert = chai.assert;
+
+                            it('should equal', () => {
+                              ${model.challengeTestToJs(challenge!.tests)}
+                            })
+                            mocha.run();
+                          </script>
+                     '''
                     ], customViewNames: [
                       const Text('description'),
                     ], customViews: [
                       DescriptionView(
-                        description: challenge!.description,
+                        description: challenge.description,
                         instructions: challenge.instructions,
                         tests: challenge.tests,
                       )
@@ -44,6 +67,13 @@ class ChallengeView extends StatelessWidget {
                         fileContent: challenge.files[0].fileContents,
                         parentDirectory: ''),
                   );
+
+                  controller.consoleStream.stream.listen((event) {
+                    dev.log(event);
+                    dev.log('from listener :)');
+                  });
+
+                  return controller;
                 }
 
                 return const Center(child: CircularProgressIndicator());

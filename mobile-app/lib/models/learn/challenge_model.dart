@@ -17,24 +17,20 @@ class Challenge {
 
   factory Challenge.fromJson(Map<String, dynamic> data) {
     return Challenge(
-        block: data['data']['challengeNode']['challenge']['block'],
-        title: data['data']['challengeNode']['challenge']['title'],
-        description: data['data']['challengeNode']['challenge']['description'],
-        instructions: data['data']['challengeNode']['challenge']
-            ['instructions'],
-        tests: ChallengeTest.returnChallengeTests(
-          data['data']['challengeNode']['challenge']['fields']['tests'],
-        ),
-        files: ChallengeFile.returnChallengeFiles(data['pageContext']
-            ['projectPreview']['challengeData']['challengeFiles']));
+        block: data['block'],
+        title: data['title'],
+        description: data['description'],
+        instructions: data['instructions'],
+        tests: ChallengeTest.returnChallengeTests(data['fields']['tests']),
+        files: ChallengeFile.returnChallengeFiles(data['challengeFiles']));
   }
 }
 
 class ChallengeTest {
   final String instruction;
-  final String test;
+  final String javaScript;
 
-  const ChallengeTest({required this.instruction, required this.test});
+  const ChallengeTest({required this.instruction, required this.javaScript});
 
   static List<ChallengeTest> returnChallengeTests(List tests) {
     List<ChallengeTest> challengeTests = [];
@@ -47,7 +43,8 @@ class ChallengeTest {
   }
 
   factory ChallengeTest.fromJson(Map<String, dynamic> data) {
-    return ChallengeTest(instruction: data['text'], test: data['testString']);
+    return ChallengeTest(
+        instruction: data['text'], javaScript: data['testString']);
   }
 }
 
