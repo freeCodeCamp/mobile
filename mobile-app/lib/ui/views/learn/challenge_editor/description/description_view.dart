@@ -74,7 +74,10 @@ class DescriptionView extends StatelessWidget {
                     const Divider(
                       thickness: 2,
                     ),
-                    TestViewModel(tests: tests)
+                    TestViewModel(
+                      tests: tests,
+                      code: editorText ?? '',
+                    )
                   ],
                 ),
               ),

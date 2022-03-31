@@ -19,16 +19,6 @@ class ChallengeModel extends BaseViewModel {
     return null;
   }
 
-  String challengeTestToJs(List<ChallengeTest> test) {
-    List<String> js = [];
-
-    for (int i = 0; i < test.length; i++) {
-      js.add(test[i].javaScript);
-    }
-
-    return js.join('');
-  }
-
   void updateText(String newText) {
     _editorText = newText;
     notifyListeners();

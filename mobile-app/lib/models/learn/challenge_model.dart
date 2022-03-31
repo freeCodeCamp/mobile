@@ -1,3 +1,5 @@
+import 'package:freecodecamp/enums/challenge_test_state_type.dart';
+
 class Challenge {
   final String block;
   final String title;
@@ -29,8 +31,12 @@ class Challenge {
 class ChallengeTest {
   final String instruction;
   final String javaScript;
+  ChallengeTestState testState;
 
-  const ChallengeTest({required this.instruction, required this.javaScript});
+  ChallengeTest(
+      {required this.instruction,
+      this.testState = ChallengeTestState.waiting,
+      required this.javaScript});
 
   static List<ChallengeTest> returnChallengeTests(List tests) {
     List<ChallengeTest> challengeTests = [];

@@ -54,7 +54,6 @@ class LearnViewModel extends BaseViewModel {
   }
 
   Future<void> getSuperBlocks() async {
-    dev.log('got called');
     final http.Response res = await http.get(
         Uri.parse('https://freecodecamp.dev/mobile/availableSuperblocks.json'));
 
