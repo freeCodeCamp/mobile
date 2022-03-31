@@ -5,6 +5,9 @@ import 'package:stacked/stacked.dart';
 import 'package:http/http.dart' as http;
 
 class ChallengeModel extends BaseViewModel {
+  String? _editorText;
+  String? get editorText => _editorText;
+
   Future<Challenge?> initChallenge(String url) async {
     http.Response res = await http.get(Uri.parse(url));
 
@@ -20,9 +23,14 @@ class ChallengeModel extends BaseViewModel {
     List<String> js = [];
 
     for (int i = 0; i < test.length; i++) {
-      js.add('${test[i].javaScript.replaceAll(";", "")}');
+      js.add(test[i].javaScript);
     }
 
     return js.join('');
+  }
+
+  void updateText(String newText) {
+    _editorText = newText;
+    notifyListeners();
   }
 }

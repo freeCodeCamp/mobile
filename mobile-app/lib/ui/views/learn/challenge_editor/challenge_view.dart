@@ -27,39 +27,21 @@ class ChallengeView extends StatelessWidget {
 
                 if (snapshot.hasData) {
                   EditorViewController controller = EditorViewController(
-                    options:
-                        EditorOptions(useFileExplorer: false, importScripts: [
-                      '<script src="https://unpkg.com/chai/chai.js"></script>',
-                      '<script src="https://unpkg.com/mocha/mocha.js"></script>',
-                      '<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>'
-                    ], bodyScripts: [
-                      '<div id="mocha"></div>',
-                      '''
-                          <script class="mocha-init">
-                            mocha.setup("bdd");
-                            mocha.growl();
-                            mocha.checkLeaks();
-                          </script>
-                      ''',
-                      '''
-                          <script class="mocha-exec">
-                            const assert = chai.assert;
-
-                            it('should equal', () => {
-                              ${model.challengeTestToJs(challenge!.tests)}
-                            })
-                            mocha.run();
-                          </script>
-                     '''
-                    ], customViewNames: [
-                      const Text('description'),
-                    ], customViews: [
-                      DescriptionView(
-                        description: challenge.description,
-                        instructions: challenge.instructions,
-                        tests: challenge.tests,
-                      )
-                    ]),
+                    options: EditorOptions(
+                        useFileExplorer: false,
+                        importScripts: [],
+                        bodyScripts: [],
+                        customViewNames: [
+                          const Text('description'),
+                        ],
+                        customViews: [
+                          DescriptionView(
+                            description: challenge!.description,
+                            instructions: challenge.instructions,
+                            tests: challenge.tests,
+                            editorText: model.editorText,
+                          )
+                        ]),
                     file: FileIDE(
                         fileExplorer: null,
                         fileName: challenge.files[0].fileName,
@@ -68,9 +50,8 @@ class ChallengeView extends StatelessWidget {
                         parentDirectory: ''),
                   );
 
-                  controller.consoleStream.stream.listen((event) {
-                    dev.log(event);
-                    dev.log('from listener :)');
+                  controller.editorTextStream.stream.listen((event) {
+                    model.updateText(event);
                   });
 
                   return controller;
