@@ -27,6 +27,9 @@ class TestViewModel extends StatelessWidget {
                           style: TextButton.styleFrom(padding: EdgeInsets.zero),
                           onPressed: () {
                             model.setPressedTestButton = true;
+                            model.controller.runJavascript('''
+                                (function(){Flutter.postMessage(window.document.body.outerHTML)})();
+                              ''');
                           },
                           child: const Text('Run tests')),
                     ))
@@ -47,14 +50,9 @@ class TestViewModel extends StatelessWidget {
                           JavascriptChannel(
                             name: 'Flutter',
                             onMessageReceived: (JavascriptMessage message) {
-                              String pageBody = message.message;
                               model.setTestDocument = message.message;
                             },
                           )
-                        },
-                        onPageFinished: (String url) {
-                          model.controller.runJavascript(
-                              '(function(){Flutter.postMessage(window.document.body.outerHTML)})();');
                         },
                       ),
                     ),

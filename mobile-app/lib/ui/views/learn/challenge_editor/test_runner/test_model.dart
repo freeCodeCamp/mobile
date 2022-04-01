@@ -102,28 +102,36 @@ class TestModel extends BaseViewModel {
     }
   }
 
-  Future<List<ChallengeTest>> getFailedTest(List<ChallengeTest> incTest) async {
+  List<ChallengeTest> getFailedTest(List<ChallengeTest> incTest) {
     List<ChallengeTest> testedTest = [];
     dom.Document document = parse(_testDocument);
-    List<dom.Element> nodes =
-        document.getElementsByClassName('test fail')[0].children;
 
-    if (nodes.isEmpty) return testedTest;
+    if (document.getElementsByClassName('test fail').isEmpty) {
+      return testedTest;
+    }
+
+    List testFailInView = document.getElementsByClassName('test fail');
 
     out:
-    for (int i = 0; i < incTest.length; i++) {
-      for (dom.Element node in nodes) {
-        String nodeTrimmed = node.text.replaceAll(' ', '').replaceAll('‣', '');
-        String instTrimmed = incTest[i].instruction.replaceAll(' ', '');
+    for (int i = 0; i < testFailInView.length; i++) {
+      List<dom.Element> nodes =
+          document.getElementsByClassName('test fail')[i].children;
+      for (int j = 0; j < incTest.length; j++) {
+        for (dom.Element node in nodes) {
+          String nodeTrimmed =
+              node.text.replaceAll(' ', '').replaceAll('‣', '');
+          String instTrimmed = incTest[j].instruction.replaceAll(' ', '');
 
-        if (incTest.length == testedTest.length) break out;
+          if (nodeTrimmed == instTrimmed) {
+            incTest[j].testState = ChallengeTestState.failed;
+            testedTest.add(incTest[j]);
+          }
 
-        if (nodeTrimmed == instTrimmed) {
-          incTest[i].testState = ChallengeTestState.failed;
-          testedTest.add(incTest[i]);
+          if (incTest.length == testedTest.length) break out;
         }
       }
     }
+
     return testedTest;
   }
 
@@ -139,29 +147,38 @@ class TestModel extends BaseViewModel {
     return stringArr.join();
   }
 
-  Future<List<ChallengeTest>> getPassedTest(List<ChallengeTest> incTest) async {
+  List<ChallengeTest> getPassedTest(List<ChallengeTest> incTest) {
     List<ChallengeTest> testedTest = [];
     dom.Document document = parse(_testDocument);
-    List<dom.Element> nodes =
-        document.getElementsByClassName('test pass fast')[0].children;
 
-    if (nodes.isEmpty) return testedTest;
+    if (document.getElementsByClassName('test pass fast').isEmpty) {
+      return testedTest;
+    }
+
+    List<dom.Element> testPassInView =
+        document.getElementsByClassName('test pass fast');
 
     out:
-    for (int i = 0; i < incTest.length; i++) {
-      for (dom.Element node in nodes) {
-        List nodeSplit = node.text.split('>');
-        nodeSplit.removeLast();
+    for (int i = 0; i < testPassInView.length; i++) {
+      List<dom.Element> nodes =
+          document.getElementsByClassName('test pass fast')[i].children;
 
-        String nodeTrimmed = nodeSplit.join('>').replaceAll(' ', '') + '>';
+      for (int j = 0; j < incTest.length; j++) {
+        for (dom.Element node in nodes) {
+          List nodeSplit = node.text.split('>');
 
-        String instTrimmed = incTest[i].instruction.replaceAll(' ', '');
+          if (nodeSplit.length > 1) nodeSplit.removeLast();
 
-        if (incTest.length == testedTest.length) break out;
+          String nodeTrimmed = nodeSplit.join('>').replaceAll(' ', '') + '>';
 
-        if (nodeTrimmed == instTrimmed) {
-          incTest[i].testState = ChallengeTestState.passed;
-          testedTest.add(incTest[i]);
+          String instTrimmed = incTest[j].instruction.replaceAll(' ', '');
+
+          if (nodeTrimmed == instTrimmed) {
+            incTest[j].testState = ChallengeTestState.passed;
+            testedTest.add(incTest[j]);
+          }
+
+          if (incTest.length == testedTest.length) break out;
         }
       }
     }
@@ -170,8 +187,8 @@ class TestModel extends BaseViewModel {
 
   Future<List<ChallengeTest>> testRunner(List<ChallengeTest> incTest) async {
     if (_testDocument.isNotEmpty) {
-      List<ChallengeTest> passedTest = await getPassedTest(incTest);
-      List<ChallengeTest> failedTest = await getFailedTest(incTest);
+      List<ChallengeTest> passedTest = getPassedTest(incTest);
+      List<ChallengeTest> failedTest = getFailedTest(incTest);
 
       List<ChallengeTest> allTest = List.from(passedTest)..addAll(failedTest);
 
