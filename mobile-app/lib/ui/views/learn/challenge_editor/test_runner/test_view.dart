@@ -21,13 +21,12 @@ class TestViewModel extends StatelessWidget {
                 Row(
                   children: [
                     Expanded(
-                        child: Container(
-                      decoration: BoxDecoration(
-                          border: Border.all(width: 2, color: Colors.white)),
+                        child: Padding(
+                      padding: const EdgeInsets.all(8.0),
                       child: TextButton(
                           style: TextButton.styleFrom(padding: EdgeInsets.zero),
                           onPressed: () {
-                            model.retrieveTestResults();
+                            model.setPressedTestButton = true;
                           },
                           child: const Text('Run tests')),
                     ))
@@ -69,41 +68,53 @@ class TestViewModel extends StatelessWidget {
   Widget testTile(List<ChallengeTest> tests, TestModel model) {
     return FutureBuilder(
       initialData: tests,
-      future: model.pressedTestButton ? model.retrieveTestResults() : null,
+      future: model.pressedTestButton ? model.testRunner(tests) : null,
       builder: (context, snapshot) {
-        return ListView.builder(
-            physics: const ClampingScrollPhysics(),
-            shrinkWrap: true,
-            itemCount: tests.length,
-            itemBuilder: (context, index) {
-              return ListTile(
-                title: Html(
-                  data: tests[index].instruction,
-                  style: {'body': Style(fontSize: FontSize.large)},
-                ),
-                leading: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: <Widget>[
-                    Container(
-                      decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(50),
-                        color: const Color.fromRGBO(0x42, 0x42, 0x55, 1),
-                      ),
-                      padding: const EdgeInsets.all(16),
-                      child: Icon(
-                        model.getCorrectTestIcon(tests[index].testState),
-                        color: Colors.white,
-                      ),
-                    ),
-                  ],
-                ),
-                minVerticalPadding: 16,
-                tileColor: index % 2 == 0
-                    ? const Color(0xFF0a0a23)
-                    : const Color.fromRGBO(0x2A, 0x2A, 0x40, 1),
-              );
-            });
+        if (snapshot.hasData && model.pressedTestButton) {
+          List<ChallengeTest> challengeTest =
+              snapshot.data as List<ChallengeTest>;
+          Future.delayed(
+              Duration.zero, () => model.setPressedTestButton = false);
+          return tileBuilder(challengeTest, model);
+        }
+
+        return tileBuilder(tests, model);
       },
     );
+  }
+
+  ListView tileBuilder(List<ChallengeTest> tests, TestModel model) {
+    return ListView.builder(
+        physics: const ClampingScrollPhysics(),
+        shrinkWrap: true,
+        itemCount: tests.length,
+        itemBuilder: (context, index) {
+          return ListTile(
+            title: Html(
+              data: tests[index].instruction,
+              style: {'body': Style(fontSize: FontSize.large)},
+            ),
+            leading: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: <Widget>[
+                Container(
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(50),
+                    color: const Color.fromRGBO(0x42, 0x42, 0x55, 1),
+                  ),
+                  padding: const EdgeInsets.all(16),
+                  child: Icon(
+                    model.getCorrectTestIcon(tests[index].testState),
+                    color: Colors.white,
+                  ),
+                ),
+              ],
+            ),
+            minVerticalPadding: 16,
+            tileColor: index % 2 == 0
+                ? const Color(0xFF0a0a23)
+                : const Color.fromRGBO(0x2A, 0x2A, 0x40, 1),
+          );
+        });
   }
 }
