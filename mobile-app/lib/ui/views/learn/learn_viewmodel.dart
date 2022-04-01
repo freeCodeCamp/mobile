@@ -10,7 +10,6 @@ import 'package:stacked_services/stacked_services.dart';
 import 'package:webview_flutter/webview_flutter.dart';
 import 'package:freecodecamp/app/app.locator.dart';
 import 'package:http/http.dart' as http;
-import 'dart:developer' as dev;
 
 class LearnViewModel extends BaseViewModel {
   WebViewController? controller;
