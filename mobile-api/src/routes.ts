@@ -87,7 +87,7 @@ async function getEpisodes(req: Request, res: Response) {
           description: episode.content,
           publicationDate: episodeDate,
           audioUrl: episode.enclosure?.url,
-          duration: (episode.itunes as { duration: string})?.duration,
+          duration: (episode.itunes as { duration: string })?.duration,
         } as UpdateQuery<typeof Episode>,
         {
           new: true,
