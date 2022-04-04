@@ -71,7 +71,10 @@ async function getEpisodes(req: Request, res: Response) {
         new: true,
       }
     );
+    if (!podcast) throw Error('Podcast not found');
     for (const episode of feed.items) {
+      const dateRaw = episode.isoDate ?? episode.pubDate ?? null;
+      const episodeDate = dateRaw ? Date.parse(dateRaw) : null;
       await Episode.findOneAndUpdate(
         {
           podcastId: podcast._id,
@@ -82,10 +85,9 @@ async function getEpisodes(req: Request, res: Response) {
           podcastId: podcast._id,
           title: episode.title,
           description: episode.content,
-          publicationDate:
-            Date.parse(episode.isoDate!) || Date.parse(episode.pubDate!),
+          publicationDate: episodeDate,
           audioUrl: episode.enclosure?.url,
-          duration: episode.itunes?.duration,
+          duration: (episode.itunes as { duration: string})?.duration,
         } as UpdateQuery<typeof Episode>,
         {
           new: true,
@@ -96,7 +98,7 @@ async function getEpisodes(req: Request, res: Response) {
   } else {
     console.log('No missing episodes');
   }
-  let episodes = await Episode.find({ podcastId: podcast._id })
+  const episodes = await Episode.find({ podcastId: podcast._id })
     .sort({ publicationDate: -1 })
     .skip(parseInt((req.query?.page as string) || '0') * 20)
     .limit(20);
