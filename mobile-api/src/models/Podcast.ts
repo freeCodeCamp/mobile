@@ -45,5 +45,5 @@ const PodcastSchema = new Schema<Podcast>({
   },
 });
 
-export default mongoose.models.Podcast ||
+export default (mongoose.models.Podcast as mongoose.Model<Podcast>) ||
   mongoose.model('Podcast', PodcastSchema, 'podcasts');
