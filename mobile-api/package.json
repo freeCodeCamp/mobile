@@ -20,7 +20,7 @@
     "bree": "7.2.0",
     "dotenv": "16.0.0",
     "express": "4.17.3",
-    "mongoose": "6.2.6",
+    "mongoose": "6.2.9",
     "rss-parser": "3.12.0"
   },
   "devDependencies": {
@@ -29,11 +29,11 @@
     "@types/node": "16.11.26",
     "@typescript-eslint/eslint-plugin": "5.15.0",
     "@typescript-eslint/parser": "5.15.0",
-    "eslint": "8.11.0",
+    "eslint": "8.12.0",
     "eslint-config-prettier": "8.5.0",
     "nodemon": "2.0.15",
-    "prettier": "2.6.0",
+    "prettier": "2.6.2",
     "ts-node": "10.7.0",
-    "typescript": "4.5.5"
+    "typescript": "4.6.3"
   }
 }

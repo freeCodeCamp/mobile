@@ -2,7 +2,18 @@ import * as mongoose from 'mongoose';
 
 const Schema = mongoose.Schema;
 
-const Episode = new Schema({
+export interface Episode {
+  _id: mongoose.Types.ObjectId;
+  title: string;
+  description: string;
+  feedUrl: string;
+  podcastLink: string;
+  imageLink: string;
+  copyright: string;
+  numOfEps: number;
+}
+
+const EpisodeSchema = new Schema({
   guid: {
     type: String,
     required: true,
@@ -32,5 +43,5 @@ const Episode = new Schema({
   },
 });
 
-export default mongoose.models.Episode ||
-  mongoose.model('Episode', Episode, 'episodes');
+export default (mongoose.models.Episode as mongoose.Model<Episode>) ||
+  mongoose.model('Episode', EpisodeSchema, 'episodes');
