@@ -30,6 +30,10 @@ app.get('/', (req: Request, res: Response) => {
   res.json({ msg: 'Hello World!' });
 });
 
+app.get('/ping', (req: Request, res: Response) => {
+  res.json({ msg: 'pong' });
+});
+
 app.use('/podcasts', podcastRoutes);
 
 void dbConnect().then(() => {
