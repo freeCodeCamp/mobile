@@ -47,16 +47,23 @@ class DescriptionView extends StatelessWidget {
                             HtmlHandler.smallHtmlHandler(description, context),
                       ))
                     ]),
-                    Container(
-                      padding: const EdgeInsets.only(left: 8),
-                      child: const Text(
-                        'Instructions',
-                        style: TextStyle(fontSize: 24),
-                      ),
-                    ),
-                    const Divider(
-                      thickness: 2,
-                    ),
+                    instructions.isNotEmpty
+                        ? Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Container(
+                                padding: const EdgeInsets.only(left: 8),
+                                child: const Text(
+                                  'Instructions',
+                                  style: TextStyle(fontSize: 24),
+                                ),
+                              ),
+                              const Divider(
+                                thickness: 2,
+                              ),
+                            ],
+                          )
+                        : Container(),
                     Row(children: [
                       Expanded(
                           child: Column(
