@@ -22,7 +22,7 @@ class Challenge {
         block: data['block'],
         title: data['title'],
         description: data['description'],
-        instructions: data['instructions'],
+        instructions: data['instructions'] ?? '',
         tests: ChallengeTest.returnChallengeTests(data['fields']['tests']),
         files: ChallengeFile.returnChallengeFiles(data['challengeFiles']));
   }

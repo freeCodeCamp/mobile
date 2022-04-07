@@ -1,5 +1,6 @@
 import 'dart:convert';
 
+import 'package:flutter_code_editor/models/file_model.dart';
 import 'package:freecodecamp/models/learn/challenge_model.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:stacked/stacked.dart';
@@ -40,6 +41,21 @@ class ChallengeModel extends BaseViewModel {
       prefs.remove(url);
       dev.log('challenge cache got disposed');
     }
+  }
+
+  List<FileIDE> returnFiles(Challenge challenge) {
+    List<FileIDE> files = [];
+
+    for (ChallengeFile file in challenge.files) {
+      files.add(FileIDE(
+          fileName: file.fileName,
+          filePath: '',
+          fileContent: file.fileContents,
+          parentDirectory: '',
+          fileExplorer: null));
+    }
+
+    return files;
   }
 
   void updateText(String newText) {

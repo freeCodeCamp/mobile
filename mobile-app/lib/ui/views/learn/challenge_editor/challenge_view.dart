@@ -27,8 +27,7 @@ class ChallengeView extends StatelessWidget {
                   EditorViewController controller = EditorViewController(
                     options: EditorOptions(
                         useFileExplorer: false,
-                        importScripts: [],
-                        bodyScripts: [],
+                        canCloseFiles: false,
                         customViewNames: [
                           const Text('description'),
                         ],
@@ -40,6 +39,7 @@ class ChallengeView extends StatelessWidget {
                             editorText: model.editorText,
                           )
                         ]),
+                    recentlyOpenedFiles: model.returnFiles(challenge),
                     file: FileIDE(
                         fileExplorer: null,
                         fileName: challenge.files[0].fileName,
@@ -53,6 +53,10 @@ class ChallengeView extends StatelessWidget {
                   });
 
                   return controller;
+                }
+
+                if (snapshot.hasError) {
+                  return Center(child: Text(snapshot.error.toString()));
                 }
 
                 return const Center(child: CircularProgressIndicator());
