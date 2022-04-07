@@ -1,5 +1,6 @@
 import 'dart:convert';
 
+import 'package:flutter_code_editor/controller/editor_view_controller.dart';
 import 'package:flutter_code_editor/models/file_model.dart';
 import 'package:freecodecamp/models/learn/challenge_model.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -41,6 +42,10 @@ class ChallengeModel extends BaseViewModel {
       prefs.remove(url);
       dev.log('challenge cache got disposed');
     }
+
+    EditorViewController controller = EditorViewController();
+
+    controller.removeAllRecentlyOpenedFilesCache('');
   }
 
   List<FileIDE> returnFiles(Challenge challenge) {
