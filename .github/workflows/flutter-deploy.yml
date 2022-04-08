@@ -1,19 +1,14 @@
-name: CI
+name: Deployment
 on:
-  pull_request:
-    branches:
-      - main
-    paths:
-      - 'mobile-app/**'
   push:
     branches:
-      - main
-  schedule:
-    - cron: "0 0 * * *"
+      - prod
+    paths:
+      - "mobile-app/**"
 
 jobs:
-  flutter_test:
-    name: flutter test
+  flutter_deploy:
+    name: Deploy flutter app
     defaults:
       run:
         working-directory: ./mobile-app
@@ -61,8 +56,14 @@ jobs:
 
       - name: Create .env file
         run: |
-          echo "DEVELOPMENTMODE=true" > .env
-          echo "NEWSURL=https://www.freecodecamp.org/news/ghost/api/v3/content/" >> .env
+          echo "NEWSURL=https://www.freecodecamp.org/news/ghost/api/v3/content/" > .env
+          echo "NEWSKEY=$GHOST_NEWSKEY" >> .env
+          echo "ALGOLIAAPPID=$ALGOLIA_APP_ID" >> .env
+          echo "ALGOLIAKEY=$ALGOLIA_KEY" >> .env
+        env:
+          GHOST_NEWSKEY: ${{ secrets.GHOST_NEWSKEY }}
+          ALGOLIA_APP_ID: ${{ secrets.ALGOLIA_APP_ID }}
+          ALGOLIA_KEY: ${{ secrets.ALGOLIA_KEY }}
 
       - name: Install packages
         run: flutter pub get
@@ -82,10 +83,38 @@ jobs:
           script: cd mobile-app && if adb shell pm list packages | grep -q org.freecodecamp; then adb uninstall org.freecodecamp; fi && flutter drive --driver=test_driver/integration_test.dart --target=integration_test/news_test.dart
 
       - name: Upload screenshots
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v2
         if: always()
         with:
           name: screenshots
           path: mobile-app/screenshots/
-          if-no-files-found: error
           retention-days: 7
+
+      - name: Setup Ruby for Fastlane
+        uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: "2.6"
+          bundler-cache: true
+          working-directory: ./mobile-app/android
+
+      - name: Configure keystore
+        working-directory: ./mobile-app/android
+        run: |
+          echo "$KEYSTORE" | base64 --decode > app/keystore.jks
+          echo "$GPLAY_STORE_CONFIG" | base64 --decode > play-store-credentials.json
+          echo "storeFile=keystore.jks" > key.properties
+          echo "storePassword=$KEYSTORE_STORE_PASSWORD" >> key.properties
+          echo "keyPassword=$KEYSTORE_KEY_PASSWORD" >> key.properties
+          echo "keyAlias=$KEYSTORE_KEY_ALIAS" >> key.properties
+        env:
+          KEYSTORE: ${{ secrets.KEYSTORE }}
+          GPLAY_STORE_CONFIG: ${{ secrets.GPLAY_STORE_CONFIG }}
+          KEYSTORE_STORE_PASSWORD: ${{ secrets.KEYSTORE_STORE_PASSWORD }}
+          KEYSTORE_KEY_PASSWORD: ${{ secrets.KEYSTORE_KEY_PASSWORD }}
+          KEYSTORE_KEY_ALIAS: ${{ secrets.KEYSTORE_KEY_ALIAS }}
+
+      - name: Deploy app to internal testing
+        run: |
+          flutter build appbundle
+          cd android
+          bundle exec fastlane deploy

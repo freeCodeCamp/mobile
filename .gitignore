@@ -59,3 +59,7 @@ app.*.map.json
 
 # Test screenshots
 mobile-app/screenshots/
+
+# fastlane
+**/fastlane/report.xml
+play-store-credentials.json

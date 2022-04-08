@@ -1,3 +1,4 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
 import 'package:freecodecamp/models/news/article_model.dart';
@@ -122,12 +123,19 @@ class NewsFeedView extends StatelessWidget {
       children: [
         Container(
           child: AspectRatio(
-            aspectRatio: 16 / 9,
-            child: Image.network(
-              article.featureImage,
-              fit: BoxFit.cover,
-            ),
-          ),
+              aspectRatio: 16 / 9,
+              child: CachedNetworkImage(
+                imageUrl: article.featureImage,
+                errorWidget: (context, url, error) => const Icon(Icons.error),
+                imageBuilder: (context, imageProvider) => Container(
+                  decoration: BoxDecoration(
+                    image: DecorationImage(
+                      image: imageProvider,
+                      fit: BoxFit.cover,
+                    ),
+                  ),
+                ),
+              )),
           color: const Color.fromRGBO(0x2A, 0x2A, 0x40, 1),
         ),
         Align(
@@ -185,11 +193,17 @@ class NewsFeedView extends StatelessWidget {
                               height: 45,
                               fit: BoxFit.cover,
                             )
-                          : Image.network(
-                              article.profileImage as String,
-                              width: 45,
-                              height: 45,
-                              fit: BoxFit.cover,
+                          : CachedNetworkImage(
+                              imageUrl: article.profileImage as String,
+                              imageBuilder: (context, imageProvider) =>
+                                  Container(
+                                decoration: BoxDecoration(
+                                  image: DecorationImage(
+                                    image: imageProvider,
+                                    fit: BoxFit.cover,
+                                  ),
+                                ),
+                              ),
                             ))),
             ),
             Column(

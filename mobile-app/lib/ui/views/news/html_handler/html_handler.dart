@@ -1,5 +1,5 @@
 // ignore_for_file: implementation_imports
-
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_html/flutter_html.dart';
 
@@ -136,6 +136,12 @@ class HtmlHandler {
                 controller: _controller,
               );
             }
+          },
+          'img': (code, child) {
+            var imgUrl = code.tree.attributes['src'] ?? '';
+            return CachedNetworkImage(
+              imageUrl: imgUrl,
+            );
           }
         },
         onLinkTap: (String? url, RenderContext context,
