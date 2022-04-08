@@ -24,6 +24,8 @@ class SuperBlock {
           data[data.keys.elementAt(i)]['challenges'], description.join()));
     }
 
+    blocks.sort(((Block a, Block b) => a.order.compareTo(b.order)));
+
     return blocks;
   }
 
@@ -40,6 +42,7 @@ class Block {
   final String? superBlock;
   final String description;
   final bool isStepBased;
+  final int order;
 
   final List<Challenge> challenges;
 
@@ -49,7 +52,8 @@ class Block {
       required this.isStepBased,
       this.dashedName = '',
       this.superBlock = '',
-      required this.challenges});
+      required this.challenges,
+      required this.order});
 
   static bool checkIfStepBased(String superblock) {
     return superblock == '2022/responsive-web-design';
@@ -72,6 +76,7 @@ class Block {
         description: description,
         dashedName: data['dashedName'],
         superBlock: data['superBlock'],
+        order: data['order'],
         challenges: getChallenges(data['challengeOrder']),
         isStepBased: checkIfStepBased(data['superBlock']));
   }
