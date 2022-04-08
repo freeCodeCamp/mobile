@@ -39,15 +39,21 @@ class Block {
   final String? dashedName;
   final String? superBlock;
   final String description;
+  final bool isStepBased;
 
   final List<Challenge> challenges;
 
   Block(
       {required this.blockName,
       required this.description,
+      required this.isStepBased,
       this.dashedName = '',
       this.superBlock = '',
       required this.challenges});
+
+  static bool checkIfStepBased(String superblock) {
+    return superblock == '2022/responsive-web-design';
+  }
 
   static List<Challenge> getChallenges(List challengeOrder) {
     List<Challenge> challenges = [];
@@ -66,7 +72,8 @@ class Block {
         description: description,
         dashedName: data['dashedName'],
         superBlock: data['superBlock'],
-        challenges: getChallenges(data['challengeOrder']));
+        challenges: getChallenges(data['challengeOrder']),
+        isStepBased: checkIfStepBased(data['superBlock']));
   }
 }
 

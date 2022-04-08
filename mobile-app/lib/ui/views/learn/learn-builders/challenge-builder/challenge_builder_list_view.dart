@@ -3,10 +3,10 @@ import 'package:freecodecamp/models/learn/curriculum_model.dart';
 import 'package:freecodecamp/ui/views/learn/learn-builders/challenge-builder/challenge_builder_model.dart';
 import 'package:stacked/stacked.dart';
 
-class ChallengeBuilderView extends StatelessWidget {
+class ChallengeBuilderListView extends StatelessWidget {
   final Block block;
 
-  const ChallengeBuilderView({
+  const ChallengeBuilderListView({
     Key? key,
     required this.block,
   }) : super(key: key);
