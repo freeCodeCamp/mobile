@@ -5,12 +5,14 @@ import 'package:flutter_syntax_view/flutter_syntax_view.dart';
 import 'package:freecodecamp/models/news/article_model.dart';
 import 'package:freecodecamp/ui/views/news/news-article/news_article_header.dart';
 import 'package:freecodecamp/ui/views/news/news-article/news_article_view.dart';
+import 'package:freecodecamp/ui/views/news/news-image-viewer/news_image_viewer.dart';
 import 'package:html/dom.dart' as dom;
 import 'package:url_launcher/url_launcher.dart';
 import 'package:youtube_player_iframe/youtube_player_iframe.dart';
+import 'dart:developer' as dev;
 
 class HtmlHandler {
-  const HtmlHandler({Key? key, required this.html, required this.context});
+  HtmlHandler({Key? key, required this.html, required this.context});
 
   final String html;
   final BuildContext context;
@@ -30,112 +32,120 @@ class HtmlHandler {
     return elements;
   }
 
+  static void goToImageView(String imgUrl, BuildContext context) {
+    Navigator.push(
+      context,
+      MaterialPageRoute(builder: (context) => NewsImageView(imgUrl: imgUrl)),
+    );
+    dev.log('hgi');
+  }
+
   static htmlWidgetBuilder(child, context) {
     return Html(
-        shrinkWrap: true,
-        data: child,
-        style: {
-          'body': Style(color: Colors.white),
-          'p': Style(
-              fontSize: FontSize.rem(1.35), lineHeight: LineHeight.em(1.2)),
-          'ul': Style(fontSize: FontSize.xLarge),
-          'li': Style(
-            margin: const EdgeInsets.only(top: 8),
-            fontSize: FontSize.rem(1.35),
-          ),
-          'pre': Style(
-            color: Colors.white,
-            width: MediaQuery.of(context).size.width,
-            padding: const EdgeInsets.all(10),
-          ),
-          'tr': Style(
-              border: const Border(bottom: BorderSide(color: Colors.grey)),
-              backgroundColor: Colors.white),
-          'th': Style(
-            padding: const EdgeInsets.all(12),
-            backgroundColor: const Color.fromRGBO(0xdf, 0xdf, 0xe2, 1),
-            color: Colors.black,
-          ),
-          'td': Style(
-            padding: const EdgeInsets.all(12),
-            color: Colors.black,
-            alignment: Alignment.topLeft,
-          ),
-          'figure': Style(
-              width: MediaQuery.of(context).size.width, margin: EdgeInsets.zero)
+      shrinkWrap: true,
+      data: child,
+      style: {
+        'body': Style(color: Colors.white),
+        'p':
+            Style(fontSize: FontSize.rem(1.35), lineHeight: LineHeight.em(1.2)),
+        'ul': Style(fontSize: FontSize.xLarge),
+        'li': Style(
+          margin: const EdgeInsets.only(top: 8),
+          fontSize: FontSize.rem(1.35),
+        ),
+        'pre': Style(
+          color: Colors.white,
+          width: MediaQuery.of(context).size.width,
+          padding: const EdgeInsets.all(10),
+        ),
+        'tr': Style(
+            border: const Border(bottom: BorderSide(color: Colors.grey)),
+            backgroundColor: Colors.white),
+        'th': Style(
+          padding: const EdgeInsets.all(12),
+          backgroundColor: const Color.fromRGBO(0xdf, 0xdf, 0xe2, 1),
+          color: Colors.black,
+        ),
+        'td': Style(
+          padding: const EdgeInsets.all(12),
+          color: Colors.black,
+          alignment: Alignment.topLeft,
+        ),
+        'figure': Style(
+            width: MediaQuery.of(context).size.width, margin: EdgeInsets.zero)
+      },
+      customRender: {
+        'table': (context, child) {
+          return SingleChildScrollView(
+            scrollDirection: Axis.horizontal,
+            child: (context.tree as TableLayoutElement).toWidget(context),
+          );
         },
-        customRender: {
-          'table': (context, child) {
-            return SingleChildScrollView(
-              scrollDirection: Axis.horizontal,
-              child: (context.tree as TableLayoutElement).toWidget(context),
+        'figure': (code, child) {
+          var figureClasses = code.tree.elementClasses;
+          bool isBookmarkCard = figureClasses.contains('kg-bookmark-card');
+
+          if (isBookmarkCard) {
+            var parent = code.tree.children[0];
+
+            var link = parent.attributes['href'];
+
+            var bookmarkTilte = parent.children[0].children[0].element?.text;
+
+            var bookmarkDescription =
+                parent.children[0].children[1].element?.text;
+
+            var bookmarkImage =
+                parent.children[1].children[0].attributes['src'];
+
+            return bookmark(
+                bookmarkTilte, bookmarkDescription, bookmarkImage, link);
+          }
+        },
+        'code': (code, child) {
+          for (var className in code.tree.elementClasses) {
+            if (className
+                .contains(RegExp(r'language-', caseSensitive: false))) {
+              return SyntaxView(
+                  syntaxTheme: SyntaxTheme.vscodeDark(),
+                  useCustomHeight: true,
+                  minWidth: MediaQuery.of(context).size.width,
+                  code: code.tree.element!.text,
+                  withZoom: false,
+                  fontSize: 15,
+                  syntax: Syntax.JAVASCRIPT);
+            }
+          }
+        },
+        'iframe': (code, child) {
+          var isVideo = RegExp('youtube', caseSensitive: false);
+          var videoUrl = code.tree.attributes['src'];
+          if (isVideo.hasMatch(videoUrl ?? '')) {
+            var videoId = videoUrl?.split('/').last.split('?').first;
+
+            YoutubePlayerController _controller = YoutubePlayerController(
+              initialVideoId: videoId!,
             );
-          },
-          'figure': (code, child) {
-            var figureClasses = code.tree.elementClasses;
-            bool isBookmarkCard = figureClasses.contains('kg-bookmark-card');
 
-            if (isBookmarkCard) {
-              var parent = code.tree.children[0];
-
-              var link = parent.attributes['href'];
-
-              var bookmarkTilte = parent.children[0].children[0].element?.text;
-
-              var bookmarkDescription =
-                  parent.children[0].children[1].element?.text;
-
-              var bookmarkImage =
-                  parent.children[1].children[0].attributes['src'];
-
-              return bookmark(
-                  bookmarkTilte, bookmarkDescription, bookmarkImage, link);
-            }
-          },
-          'code': (code, child) {
-            for (var className in code.tree.elementClasses) {
-              if (className
-                  .contains(RegExp(r'language-', caseSensitive: false))) {
-                return SyntaxView(
-                    syntaxTheme: SyntaxTheme.vscodeDark(),
-                    useCustomHeight: true,
-                    minWidth: MediaQuery.of(context).size.width,
-                    code: code.tree.element!.text,
-                    withZoom: false,
-                    fontSize: 15,
-                    syntax: Syntax.JAVASCRIPT);
-              }
-            }
-          },
-          'iframe': (code, child) {
-            var isVideo = RegExp('youtube', caseSensitive: false);
-            var videoUrl = code.tree.attributes['src'];
-            if (isVideo.hasMatch(videoUrl ?? '')) {
-              var videoId = videoUrl?.split('/').last.split('?').first;
-
-              YoutubePlayerController _controller = YoutubePlayerController(
-                initialVideoId: videoId!,
-              );
-
-              return YoutubePlayerIFrame(
-                controller: _controller,
-              );
-            }
-          },
-          'img': (code, child) {
-            var imgUrl = code.tree.attributes['src'] ?? '';
-            return CachedNetworkImage(
-              imageUrl: imgUrl,
+            return YoutubePlayerIFrame(
+              controller: _controller,
             );
           }
         },
-        onLinkTap: (String? url, RenderContext context,
-            Map<String, String> attributes, dom.Element? element) {
-          launch(url!);
-        },
-        onImageTap: (String? url, RenderContext context,
-            Map<String, String> attributes, dom.Element? element) {
-          launch(url!);
-        });
+        'img': (code, child) {
+          var imgUrl = code.tree.attributes['src'] ?? '';
+          return InkWell(
+            onTap: () => goToImageView(imgUrl, context),
+            child: CachedNetworkImage(
+              imageUrl: imgUrl,
+            ),
+          );
+        }
+      },
+      onLinkTap: (String? url, RenderContext context,
+          Map<String, String> attributes, dom.Element? element) {
+        launch(url!);
+      },
+    );
   }
 }
