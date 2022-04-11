@@ -6,6 +6,7 @@ import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:stacked/stacked.dart';
 import 'package:http/http.dart' as http;
+import 'package:dart_jsonwebtoken/dart_jsonwebtoken.dart';
 
 class AuthViewModel extends BaseViewModel {
   bool isAuthBusy = false;
@@ -76,14 +77,28 @@ class AuthViewModel extends BaseViewModel {
     final auth0Domain = dotenv.get('AUTH0_DOMAIN');
     final auth0ClientID = dotenv.get('AUTH0_CLIENT_ID');
     final auth0RedirectURI = dotenv.get('AUTH0_REDIRECT_URI');
+    final jwtSecret = dotenv.get('JWT_SECRET');
+    final jwt = JWT({
+      'returnTo': auth0RedirectURI,
+      'origin': auth0RedirectURI,
+      'pathPrefix': '',
+    }).sign(SecretKey(jwtSecret));
+    log(jwtSecret);
+    log(jwt);
+    log('JWT ${JWT.verify(jwt, SecretKey(jwtSecret)).payload.runtimeType}');
     try {
       final AuthorizationTokenResponse? result =
-          await appAuth.authorizeAndExchangeCode(AuthorizationTokenRequest(
-        auth0ClientID,
-        auth0RedirectURI,
-        issuer: 'https://$auth0Domain',
-        scopes: ['openid', 'profile', 'offline_access'],
-      ));
+          await appAuth.authorizeAndExchangeCode(
+        AuthorizationTokenRequest(
+          auth0ClientID,
+          auth0RedirectURI,
+          issuer: 'https://$auth0Domain',
+          scopes: ['openid', 'profile', 'offline_access', 'email'],
+          // additionalParameters: {
+          //   'state': 'Testing',
+          // },
+        ),
+      );
       final idToken = parseIdToken(result!.idToken!);
       final profile = await getUserDetails(result.accessToken!);
       await secureStorage.write(

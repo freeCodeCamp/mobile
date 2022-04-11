@@ -52,6 +52,7 @@ dependencies:
   webview_cookie_manager: ^2.0.6
   flutter_appauth: ^2.4.1
   flutter_secure_storage: ^5.0.2
+  dart_jsonwebtoken: ^2.4.1
 dev_dependencies:
   build_runner: ^2.1.2
   integration_test:
