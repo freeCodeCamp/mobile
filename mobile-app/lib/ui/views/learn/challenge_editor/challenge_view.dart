@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_code_editor/controller/editor_view_controller.dart';
+import 'package:flutter_code_editor/controller/language_controller/syntax/index.dart';
 import 'package:flutter_code_editor/models/editor_options.dart';
 import 'package:flutter_code_editor/models/file_model.dart';
 import 'package:freecodecamp/models/learn/challenge_model.dart';
@@ -25,6 +26,7 @@ class ChallengeView extends StatelessWidget {
 
                 if (snapshot.hasData) {
                   EditorViewController controller = EditorViewController(
+                    language: Syntax.HTML,
                     options: EditorOptions(
                         useFileExplorer: false,
                         canCloseFiles: false,
