@@ -31,7 +31,9 @@ class TestViewModel extends StatelessWidget {
                                 (function(){Flutter.postMessage(window.document.body.outerHTML)})();
                               ''');
                           },
-                          child: const Text('Run tests')),
+                          child: Text(model.pressedTestButton
+                              ? 'Running Tests...'
+                              : 'Run Test')),
                     ))
                   ],
                 ),

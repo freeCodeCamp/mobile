@@ -57,6 +57,7 @@ class TestModel extends BaseViewModel {
       '''
        <script class="mocha-exec">
           const assert = chai.assert;
+          let code = `$content`;
           
           ${parseTest(tests)}
 
