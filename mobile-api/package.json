@@ -19,7 +19,7 @@
   "dependencies": {
     "bree": "8.0.3",
     "dotenv": "16.0.0",
-    "express": "4.17.3",
+    "express": "4.18.0",
     "mongoose": "6.3.1",
     "rss-parser": "3.12.0"
   },
