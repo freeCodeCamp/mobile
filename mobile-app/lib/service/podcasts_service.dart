@@ -29,7 +29,7 @@ class PodcastsDatabaseService {
       ],
       verbose: true,
     );
-    log("FINISHED LOADING MIGRATIONS");
+    log('FINISHED LOADING MIGRATIONS');
   }
 
   // PODCAST QUERIES

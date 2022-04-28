@@ -3,8 +3,7 @@ import 'dart:convert';
 import 'package:flutter/cupertino.dart';
 import 'package:freecodecamp/app/app.locator.dart';
 import 'package:freecodecamp/app/app.router.dart';
-import 'package:freecodecamp/models/forum_category_model.dart';
-import 'package:freecodecamp/ui/views/forum/forum-categories/forum_category_viewmodel.dart';
+import 'package:freecodecamp/models/forum/forum_category_model.dart';
 import 'package:freecodecamp/ui/views/forum/forum_connect.dart';
 import 'package:stacked/stacked.dart';
 import 'package:stacked_services/stacked_services.dart';
@@ -39,7 +38,7 @@ class ForumCreatePostModel extends BaseViewModel {
   Future<void> createPost(String title, String text, [int? categoryId]) async {
     Map<String, String> headers = {
       'X-Requested-With': 'XMLHttpRequest',
-      "Content-Type": 'application/x-www-form-urlencoded'
+      'Content-Type': 'application/x-www-form-urlencoded'
     };
 
     final response = await ForumConnect.connectAndPost(
@@ -50,8 +49,8 @@ class ForumCreatePostModel extends BaseViewModel {
     if (response.statusCode == 200) {
       _categoryHasError = false;
 
-      if (!topic.containsKey("errors")) {
-        goToPosts(topic["topic_slug"], topic["topic_id"]);
+      if (!topic.containsKey('errors')) {
+        goToPosts(topic['topic_slug'], topic['topic_id']);
       }
     } else {
       if (categoryDropDownValue == 'Category') {

@@ -10,7 +10,6 @@ import 'package:freecodecamp/ui/views/podcast/episode/episode_view.dart';
 import 'package:html/dom.dart' as dom;
 import 'package:infinite_scroll_pagination/infinite_scroll_pagination.dart';
 import 'package:intl/intl.dart';
-import 'package:readmore/readmore.dart';
 import 'package:stacked/stacked.dart';
 import 'package:url_launcher/url_launcher.dart';
 
@@ -26,6 +25,7 @@ class EpisodeListView extends StatelessWidget {
 
   final TextStyle _titleStyle = const TextStyle(fontSize: 24);
 
+  // ignore: unused_field
   final TextStyle _subTitleStyle = const TextStyle(fontSize: 14);
 
   @override

@@ -1,0 +1,10 @@
+version: '3'
+services:
+  api:
+    image: '${ACR_NAME}.azurecr.io/${API_ENVIRONMENT}/mobile-api:${API_VERSION}'
+    environment:
+      - NODE_ENV=production
+      - MONGODB_URL=${MONGODB_URL}
+    ports:
+      - '3000:3000'
+    restart: unless-stopped

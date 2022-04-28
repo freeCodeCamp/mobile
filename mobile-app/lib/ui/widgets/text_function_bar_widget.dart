@@ -1,7 +1,7 @@
 // ignore_for_file: prefer_const_constructors_in_immutables
 
 import 'package:flutter/material.dart';
-import 'package:freecodecamp/models/forum_post_model.dart';
+import 'package:freecodecamp/models/forum/forum_post_model.dart';
 import 'dart:developer' as dev;
 
 class ForumTextFunctionBar extends StatelessWidget {
@@ -12,33 +12,60 @@ class ForumTextFunctionBar extends StatelessWidget {
   late final TextEditingController textController;
   late final PostModel post;
 
+  void setCursorposition({int? position, int? length}) {
+    if (position == null || length == null) {
+      textController.selection = TextSelection.fromPosition(
+        TextPosition(offset: textController.text.length),
+      );
+    } else {
+      textController.selection = TextSelection(
+        baseOffset: position,
+        extentOffset: position + length,
+      );
+    }
+  }
+
   void quoteText(String selectedText) {
     TextSelection textSelection = textController.selection;
 
     dev.log(selectedText.length.toString());
 
-    if (selectedText.length < 2) {
+    if (selectedText.trim().isEmpty) {
       String newText = textController.text.replaceRange(
-          textSelection.start, textSelection.end, ' > Blockquote ');
+          textSelection.start, textSelection.end, '\n\n> Blockquote\n\n');
       textController.text = newText;
+      setCursorposition(
+        position: textSelection.start + 2,
+        length: 12,
+      );
     } else {
-      textController.text =
-          textController.text.replaceFirst(selectedText, "> $selectedText");
+      textController.text = textController.text
+          .replaceFirst(selectedText, '\n\n> $selectedText\n\n');
+      setCursorposition(
+        position: textSelection.start + 2,
+        length: selectedText.length + 2,
+      );
     }
   }
 
   void boldText(String selectedText) {
     TextSelection textSelection = textController.selection;
 
-    dev.log(selectedText.length.toString());
-
-    if (selectedText.length < 2) {
+    if (selectedText.trim().isEmpty) {
       String newText = textController.text.replaceRange(
-          textSelection.start, textSelection.end, '**strong text**');
+          textSelection.start, textSelection.start, '**strong text**');
       textController.text = newText;
+      setCursorposition(
+        position: textSelection.start + 2,
+        length: 11,
+      );
     } else {
       textController.text =
-          textController.text.replaceFirst(selectedText, "**$selectedText**");
+          textController.text.replaceFirst(selectedText, '**$selectedText**');
+      setCursorposition(
+        position: textSelection.start + 2,
+        length: selectedText.length,
+      );
     }
   }
 
@@ -47,26 +74,42 @@ class ForumTextFunctionBar extends StatelessWidget {
 
     dev.log(selectedText.length.toString());
 
-    if (selectedText.length < 2) {
+    if (selectedText.trim().isEmpty) {
       String newText = textController.text.replaceRange(textSelection.start,
-          textSelection.end, '\n```\npaste your code here\n```\n');
+          textSelection.end, '\n```\ntype or paste code here\n```\n');
       textController.text = newText;
+      setCursorposition(
+        position: textSelection.start + 5,
+        length: 23,
+      );
     } else {
       textController.text = textController.text
-          .replaceFirst(selectedText, "\n```\n$selectedText\n```\n");
+          .replaceFirst(selectedText, '\n```\n$selectedText\n```\n');
+      setCursorposition(
+        position: textSelection.start + 5,
+        length: selectedText.length,
+      );
     }
   }
 
   void linkText(String selectedText) {
     TextSelection textSelection = textController.selection;
 
-    if (selectedText.length < 2) {
+    if (selectedText.trim().isEmpty) {
       String newText = textController.text
           .replaceRange(textSelection.start, textSelection.end, '[text](link)');
       textController.text = newText;
+      setCursorposition(
+        position: textSelection.start + 1,
+        length: 4,
+      );
     } else {
       textController.text = textController.text
-          .replaceFirst(selectedText, "[link]($selectedText)");
+          .replaceFirst(selectedText, '[$selectedText](link)');
+      setCursorposition(
+        position: textSelection.start + selectedText.length + 3,
+        length: 4,
+      );
     }
   }
 

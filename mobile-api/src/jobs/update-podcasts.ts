@@ -1,20 +1,22 @@
-import { UpdateQuery } from "mongoose";
 import Parser from 'rss-parser';
 import { parentPort } from 'worker_threads';
 import dbConnect from '../db-connect';
 import Episode from '../models/Episode';
-import Podcast from '../models/Podcast';
+import PodcastModel, { Podcast } from '../models/Podcast';
 import { feedUrls } from '../podcast-feed-urls.json';
 
 console.log('Job running at', new Date().toISOString());
-const parser = new Parser();
+const parser = new Parser<
+  Record<string, unknown>,
+  { itunes?: { duration: string } }
+>();
 
-(async function () {
+void (async function () {
   await dbConnect();
   for (const feedUrl of feedUrls) {
     const feed = await parser.parseURL(feedUrl);
     console.log('UPDATING PODCAST', feed.title);
-    const podcast = await Podcast.findOneAndUpdate(
+    const podcast = await PodcastModel.findOneAndUpdate<Podcast>(
       { feedUrl: feedUrl },
       {
         title: feed.title,
@@ -22,15 +24,17 @@ const parser = new Parser();
         feedUrl: feedUrl,
         podcastLink: feed.link,
         imageLink: feed.image?.url || feed.itunes?.image,
-        copyright: feed.copyright,
+        copyright: feed.copyright as string,
         numOfEps: feed.items.length,
-      } as UpdateQuery<typeof Podcast>,
+      },
       {
         new: true,
         upsert: true,
       }
     );
     for (const episode of feed.items) {
+      const dateRaw = episode.isoDate ?? episode.pubDate ?? null;
+      const episodeDate = dateRaw ? Date.parse(dateRaw) : null;
       await Episode.findOneAndUpdate(
         {
           podcastId: podcast._id,
@@ -41,11 +45,10 @@ const parser = new Parser();
           podcastId: podcast._id,
           title: episode.title,
           description: episode.content,
-          publicationDate:
-            Date.parse(episode.isoDate!) || Date.parse(episode.pubDate!),
+          publicationDate: episodeDate,
           audioUrl: episode.enclosure?.url,
           duration: episode.itunes?.duration,
-        } as UpdateQuery<typeof Episode>,
+        },
         {
           new: true,
           upsert: true,

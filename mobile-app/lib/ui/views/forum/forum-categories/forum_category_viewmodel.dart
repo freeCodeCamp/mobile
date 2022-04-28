@@ -2,8 +2,8 @@ import 'dart:convert';
 
 import 'package:freecodecamp/app/app.locator.dart';
 import 'package:freecodecamp/app/app.router.dart';
-import 'package:freecodecamp/models/forum_category_model.dart';
-import 'package:freecodecamp/models/forum_user_model.dart';
+import 'package:freecodecamp/models/forum/forum_category_model.dart';
+import 'package:freecodecamp/models/forum/forum_user_model.dart';
 import 'package:freecodecamp/ui/widgets/setup_dialog_ui.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:stacked/stacked.dart';
@@ -78,17 +78,23 @@ class ForumCategoryViewModel extends BaseViewModel {
     return prefs.getBool('loggedIn') ?? false;
   }
 
-  Future<User> fetchUser() async {
+  Future<dynamic> fetchUser() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
-    String username = prefs.getString("username") as String;
 
-    final response = await ForumConnect.connectAndGet('/u/$username');
+    String? username;
 
-    if (response.statusCode == 200) {
-      _userProfileIsLoading = false;
-      notifyListeners();
-      return User.fromJson(jsonDecode(response.body));
+    if (prefs.getString('username') != null) {
+      username = prefs.getString('username');
+
+      final response = await ForumConnect.connectAndGet('/u/$username');
+
+      if (response.statusCode == 200) {
+        _userProfileIsLoading = false;
+        notifyListeners();
+        return User.fromJson(jsonDecode(response.body));
+      }
+    } else {
+      return null;
     }
-    throw Exception('could not load user data: ' + response.body.toString());
   }
 }

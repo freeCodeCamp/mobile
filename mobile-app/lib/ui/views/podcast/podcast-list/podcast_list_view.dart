@@ -29,10 +29,7 @@ class PodcastListView extends StatelessWidget {
         appBar: AppBar(
           title: titles.elementAt(model.index),
         ),
-        drawer: SizedBox(
-          width: MediaQuery.of(context).size.width,
-          child: const DrawerWidgetView(),
-        ),
+        drawer: const DrawerWidgetView(),
         backgroundColor: const Color(0xFF0a0a23),
         bottomNavigationBar: BottomNavigationBar(
           currentIndex: model.index,
@@ -79,7 +76,7 @@ class PodcastListViewBuilder extends StatelessWidget {
               return const Center(child: CircularProgressIndicator.adaptive());
             }
             if (snapshot.hasError) {
-              return Text("${snapshot.error}");
+              return Text('${snapshot.error}');
             }
             if (snapshot.data!.isEmpty && isDownloadView) {
               return Center(
@@ -144,7 +141,7 @@ class PodcastTemplate extends StatelessWidget {
   Widget build(BuildContext context) {
     return InkWell(
       onTap: () {
-        log("Clicked ${podcast.title}");
+        log('Clicked ${podcast.title}');
         Navigator.push(
           context,
           MaterialPageRoute(
@@ -183,7 +180,7 @@ class PodcastTemplate extends StatelessWidget {
               child: Padding(
                 padding: const EdgeInsets.only(top: 8),
                 child: Text(
-                  podcast.title! + "\n",
+                  podcast.title! + '\n',
                   maxLines: 2,
                   overflow: TextOverflow.ellipsis,
                   textAlign: TextAlign.center,

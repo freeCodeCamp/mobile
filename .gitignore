@@ -1,6 +1,8 @@
 ### Backend API ###
 node_modules/
-package-lock.json
+
+# Production build
+mobile-api/prod/
 
 ### Flutter ###
 # Miscellaneous
@@ -53,3 +55,11 @@ app.*.map.json
 # VS Code
 .vscode/
 .env*
+.fvm/
+
+# Test screenshots
+mobile-app/screenshots/
+
+# fastlane
+**/fastlane/report.xml
+play-store-credentials.json

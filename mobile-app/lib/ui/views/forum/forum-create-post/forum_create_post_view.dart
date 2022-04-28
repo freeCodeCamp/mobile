@@ -1,6 +1,4 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/painting.dart';
 import 'package:stacked/stacked.dart';
 import 'forum_create_post_viewmodel.dart';
 

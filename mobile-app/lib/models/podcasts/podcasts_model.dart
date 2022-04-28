@@ -54,7 +54,7 @@ class Podcasts {
 
   @override
   String toString() {
-    return """Podcasts {
+    return '''Podcasts {
       id: $id,
       url: $url,
       link: $link,
@@ -63,6 +63,6 @@ class Podcasts {
       image: $image,
       copyright: $copyright
       numEps: $numEps
-    }""";
+    }''';
   }
 }

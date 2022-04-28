@@ -1,9 +1,8 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_html/flutter_html.dart';
-import 'package:freecodecamp/models/forum_post_model.dart';
+import 'package:freecodecamp/models/forum/forum_post_model.dart';
 import 'package:freecodecamp/ui/views/forum/forum-post/forum_post_viewmodel.dart';
-import 'package:freecodecamp/models/forum_user_model.dart';
+import 'package:freecodecamp/models/forum/forum_user_model.dart';
 import 'package:freecodecamp/ui/views/forum/forum-user/forum_user_viewmodel.dart';
 import 'package:stacked/stacked.dart';
 import 'package:html/dom.dart' as dom;
@@ -103,7 +102,7 @@ FutureBuilder userTemplateBuilder(context, model) {
                               ? Html(
                                   data: user.bio,
                                   style: {
-                                    "body": Style(
+                                    'body': Style(
                                         color: Colors.white,
                                         fontSize: FontSize.rem(1.2))
                                   },
@@ -114,10 +113,10 @@ FutureBuilder userTemplateBuilder(context, model) {
                                     launch(url!);
                                   },
                                   customRender: {
-                                    "img": (context, child) {
+                                    'img': (context, child) {
                                       var classes =
                                           context.tree.element?.className;
-                                      var classesSplit = classes?.split(" ");
+                                      var classesSplit = classes?.split(' ');
 
                                       var classIsEmoji = classesSplit!
                                               .contains('emoji') ||

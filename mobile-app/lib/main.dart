@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:freecodecamp/service/code_radio_service.dart';
 import 'package:freecodecamp/service/notification_service.dart';
 import 'package:freecodecamp/ui/theme/fcc_theme.dart';
 import 'package:just_audio_background/just_audio_background.dart';
@@ -15,7 +16,10 @@ Future<void> main() async {
     androidNotificationOngoing: true,
   );
   await NotificationService().init();
+
   setupLocator();
+  final audioService = locator<CodeRadioService>();
+  audioService.initAppStateObserver();
   runApp(const MyApp());
 }
 
@@ -26,6 +30,7 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       title: 'freeCodeCamp',
       theme: FccTheme.themeDark,
+      debugShowCheckedModeBanner: false,
       navigatorKey: StackedService.navigatorKey,
       onGenerateRoute: StackedRouter().onGenerateRoute,
     );

@@ -8,9 +8,10 @@
 
 import 'package:flutter/material.dart';
 import 'package:stacked/stacked.dart';
+import 'package:stacked/stacked_annotations.dart';
 
-import '../models/bookmarked_article_model.dart';
-import '../ui/views/browser/browser_view.dart';
+import '../models/news/bookmarked_article_model.dart';
+import '../ui/views/code_radio/code_radio_view.dart';
 import '../ui/views/forum/forum-categories/forum_category_view.dart';
 import '../ui/views/forum/forum-login/forum_login_view.dart';
 import '../ui/views/forum/forum-post-feed/forum_post_feed_view.dart';
@@ -18,21 +19,24 @@ import '../ui/views/forum/forum-post/forum_post_view.dart';
 import '../ui/views/forum/forum-user-profile/forum_user_profile_view.dart';
 import '../ui/views/forum/forum-user/forum_user_view.dart';
 import '../ui/views/home/home_view.dart';
-import '../ui/views/news/news-article-post/news_article_post_view.dart';
+import '../ui/views/news/news-article/news_article_view.dart';
+import '../ui/views/news/news-author/news_author_view.dart';
 import '../ui/views/news/news-bookmark/news_bookmark_view.dart';
 import '../ui/views/news/news-feed/news_feed_view.dart';
+import '../ui/views/news/news-image-viewer/news_image_viewer.dart';
 import '../ui/views/podcast/podcast-list/podcast_list_view.dart';
 import '../ui/views/settings/forumSettings/forum_settings_view.dart';
 import '../ui/views/settings/podcastSettings/podcast_settings_view.dart';
 
 class Routes {
   static const String homeView = '/';
-  static const String browserView = '/browser-view';
   static const String podcastListView = '/podcast-list-view';
   static const String podcastSettingsView = '/podcast-settings-view';
-  static const String newsArticlePostView = '/news-article-post-view';
+  static const String newsArticleView = '/news-article-view';
   static const String newsBookmarkPostView = '/news-bookmark-post-view';
   static const String newsFeedView = '/news-feed-view';
+  static const String newsAuthorView = '/news-author-view';
+  static const String newsImageView = '/news-image-view';
   static const String forumCategoryView = '/forum-category-view';
   static const String forumPostFeedView = '/forum-post-feed-view';
   static const String forumPostView = '/forum-post-view';
@@ -40,14 +44,16 @@ class Routes {
   static const String forumUserView = '/forum-user-view';
   static const String forumSettingsView = '/forum-settings-view';
   static const String forumUserProfileView = '/forum-user-profile-view';
+  static const String codeRadioView = '/code-radio-view';
   static const all = <String>{
     homeView,
-    browserView,
     podcastListView,
     podcastSettingsView,
-    newsArticlePostView,
+    newsArticleView,
     newsBookmarkPostView,
     newsFeedView,
+    newsAuthorView,
+    newsImageView,
     forumCategoryView,
     forumPostFeedView,
     forumPostView,
@@ -55,6 +61,7 @@ class Routes {
     forumUserView,
     forumSettingsView,
     forumUserProfileView,
+    codeRadioView,
   };
 }
 
@@ -63,12 +70,13 @@ class StackedRouter extends RouterBase {
   List<RouteDef> get routes => _routes;
   final _routes = <RouteDef>[
     RouteDef(Routes.homeView, page: HomeView),
-    RouteDef(Routes.browserView, page: BrowserView),
     RouteDef(Routes.podcastListView, page: PodcastListView),
     RouteDef(Routes.podcastSettingsView, page: PodcastSettingsView),
-    RouteDef(Routes.newsArticlePostView, page: NewsArticlePostView),
+    RouteDef(Routes.newsArticleView, page: NewsArticleView),
     RouteDef(Routes.newsBookmarkPostView, page: NewsBookmarkPostView),
     RouteDef(Routes.newsFeedView, page: NewsFeedView),
+    RouteDef(Routes.newsAuthorView, page: NewsAuthorView),
+    RouteDef(Routes.newsImageView, page: NewsImageView),
     RouteDef(Routes.forumCategoryView, page: ForumCategoryView),
     RouteDef(Routes.forumPostFeedView, page: ForumPostFeedView),
     RouteDef(Routes.forumPostView, page: ForumPostView),
@@ -76,6 +84,7 @@ class StackedRouter extends RouterBase {
     RouteDef(Routes.forumUserView, page: ForumUserView),
     RouteDef(Routes.forumSettingsView, page: ForumSettingsView),
     RouteDef(Routes.forumUserProfileView, page: ForumUserProfileView),
+    RouteDef(Routes.codeRadioView, page: CodeRadioView),
   ];
   @override
   Map<Type, StackedRouteFactory> get pagesMap => _pagesMap;
@@ -83,16 +92,6 @@ class StackedRouter extends RouterBase {
     HomeView: (data) {
       return MaterialPageRoute<dynamic>(
         builder: (context) => const HomeView(),
-        settings: data,
-      );
-    },
-    BrowserView: (data) {
-      var args = data.getArgs<BrowserViewArguments>(nullOk: false);
-      return MaterialPageRoute<dynamic>(
-        builder: (context) => BrowserView(
-          key: args.key,
-          url: args.url,
-        ),
         settings: data,
       );
     },
@@ -108,10 +107,10 @@ class StackedRouter extends RouterBase {
         settings: data,
       );
     },
-    NewsArticlePostView: (data) {
-      var args = data.getArgs<NewsArticlePostViewArguments>(nullOk: false);
+    NewsArticleView: (data) {
+      var args = data.getArgs<NewsArticleViewArguments>(nullOk: false);
       return MaterialPageRoute<dynamic>(
-        builder: (context) => NewsArticlePostView(
+        builder: (context) => NewsArticleView(
           key: args.key,
           refId: args.refId,
         ),
@@ -129,8 +128,38 @@ class StackedRouter extends RouterBase {
       );
     },
     NewsFeedView: (data) {
+      var args = data.getArgs<NewsFeedViewArguments>(
+        orElse: () => NewsFeedViewArguments(),
+      );
       return MaterialPageRoute<dynamic>(
-        builder: (context) => const NewsFeedView(),
+        builder: (context) => NewsFeedView(
+          key: args.key,
+          slug: args.slug,
+          author: args.author,
+          fromAuthor: args.fromAuthor,
+          fromTag: args.fromTag,
+          subject: args.subject,
+        ),
+        settings: data,
+      );
+    },
+    NewsAuthorView: (data) {
+      var args = data.getArgs<NewsAuthorViewArguments>(nullOk: false);
+      return MaterialPageRoute<dynamic>(
+        builder: (context) => NewsAuthorView(
+          key: args.key,
+          authorSlug: args.authorSlug,
+        ),
+        settings: data,
+      );
+    },
+    NewsImageView: (data) {
+      var args = data.getArgs<NewsImageViewArguments>(nullOk: false);
+      return MaterialPageRoute<dynamic>(
+        builder: (context) => NewsImageView(
+          key: args.key,
+          imgUrl: args.imgUrl,
+        ),
         settings: data,
       );
     },
@@ -167,8 +196,14 @@ class StackedRouter extends RouterBase {
       );
     },
     ForumLoginView: (data) {
+      var args = data.getArgs<ForumLoginViewArguments>(
+        orElse: () => ForumLoginViewArguments(),
+      );
       return MaterialPageRoute<dynamic>(
-        builder: (context) => const ForumLoginView(),
+        builder: (context) => ForumLoginView(
+          key: args.key,
+          fromCreatePost: args.fromCreatePost,
+        ),
         settings: data,
       );
     },
@@ -194,6 +229,12 @@ class StackedRouter extends RouterBase {
         settings: data,
       );
     },
+    CodeRadioView: (data) {
+      return MaterialPageRoute<dynamic>(
+        builder: (context) => const CodeRadioView(),
+        settings: data,
+      );
+    },
   };
 }
 
@@ -201,18 +242,11 @@ class StackedRouter extends RouterBase {
 /// Arguments holder classes
 /// *************************************************************************
 
-/// BrowserView arguments holder class
-class BrowserViewArguments {
-  final Key? key;
-  final String url;
-  BrowserViewArguments({this.key, required this.url});
-}
-
-/// NewsArticlePostView arguments holder class
-class NewsArticlePostViewArguments {
+/// NewsArticleView arguments holder class
+class NewsArticleViewArguments {
   final Key? key;
   final String refId;
-  NewsArticlePostViewArguments({this.key, required this.refId});
+  NewsArticleViewArguments({this.key, required this.refId});
 }
 
 /// NewsBookmarkPostView arguments holder class
@@ -220,6 +254,37 @@ class NewsBookmarkPostViewArguments {
   final Key? key;
   final BookmarkedArticle article;
   NewsBookmarkPostViewArguments({this.key, required this.article});
+}
+
+/// NewsFeedView arguments holder class
+class NewsFeedViewArguments {
+  final Key? key;
+  final String slug;
+  final String author;
+  final bool fromAuthor;
+  final bool fromTag;
+  final String subject;
+  NewsFeedViewArguments(
+      {this.key,
+      this.slug = '',
+      this.author = '',
+      this.fromAuthor = false,
+      this.fromTag = false,
+      this.subject = ''});
+}
+
+/// NewsAuthorView arguments holder class
+class NewsAuthorViewArguments {
+  final Key? key;
+  final String authorSlug;
+  NewsAuthorViewArguments({this.key, required this.authorSlug});
+}
+
+/// NewsImageView arguments holder class
+class NewsImageViewArguments {
+  final Key? key;
+  final String imgUrl;
+  NewsImageViewArguments({this.key, required this.imgUrl});
 }
 
 /// ForumCategoryView arguments holder class
@@ -244,6 +309,13 @@ class ForumPostViewArguments {
   final String id;
   final String slug;
   ForumPostViewArguments({this.key, required this.id, required this.slug});
+}
+
+/// ForumLoginView arguments holder class
+class ForumLoginViewArguments {
+  final Key? key;
+  final bool fromCreatePost;
+  ForumLoginViewArguments({this.key, this.fromCreatePost = false});
 }
 
 /// ForumUserView arguments holder class

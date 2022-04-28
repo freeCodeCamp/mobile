@@ -1,6 +1,5 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:freecodecamp/models/forum_post_model.dart';
+import 'package:freecodecamp/models/forum/forum_post_model.dart';
 import 'package:freecodecamp/ui/views/forum/forum-categories/forum_category_builder.dart';
 import 'package:freecodecamp/ui/views/forum/forum-categories/forum_category_viewmodel.dart';
 import 'package:freecodecamp/ui/views/forum/forum-login/forum_login_view.dart';
@@ -13,7 +12,7 @@ class ForumCategoryView extends StatelessWidget {
   ForumCategoryView({Key? key}) : super(key: key);
 
   List views = <dynamic>[
-    const ForumLoginView(),
+    const ForumLoginView(fromCreatePost: true),
     const ForumCategoryBuilder(),
     const ForumSearchView(),
   ];
@@ -45,10 +44,7 @@ class ForumCategoryView extends StatelessWidget {
                     : Container()
               ],
             ),
-            drawer: SizedBox(
-              width: MediaQuery.of(context).size.width,
-              child: const DrawerWidgetView(),
-            ),
+            drawer: const DrawerWidgetView(),
             body: views.elementAt(model.index),
             bottomNavigationBar: BottomNavigationBar(
               // ignore: prefer_const_literals_to_create_immutables

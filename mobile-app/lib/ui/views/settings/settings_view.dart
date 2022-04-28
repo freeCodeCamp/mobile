@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
 import 'package:freecodecamp/ui/views/settings/settings_viewmodel.dart';
 import 'package:freecodecamp/ui/widgets/drawer_widget/drawer_widget_view.dart';
 import 'package:stacked/stacked.dart';
@@ -18,9 +17,7 @@ class SettingsView extends StatelessWidget {
                 title: const Text('SETTINGS'),
                 centerTitle: true,
               ),
-              drawer: SizedBox(
-                  width: MediaQuery.of(context).size.width,
-                  child: const DrawerWidgetView()),
+              drawer: const DrawerWidgetView(),
               body: ListView(
                 children: [
                   Container(

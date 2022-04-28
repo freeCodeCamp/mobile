@@ -1,6 +1,5 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:freecodecamp/models/forum_post_model.dart';
+import 'package:freecodecamp/models/forum/forum_post_model.dart';
 import 'package:freecodecamp/ui/views/forum/forum-html-handler/forum_html_handler.dart';
 import 'package:freecodecamp/ui/views/forum/forum-post/forum_post_viewmodel.dart';
 import 'package:freecodecamp/ui/widgets/text_function_bar_widget.dart';
@@ -139,7 +138,12 @@ class ForumCommentView extends StatelessWidget {
                   minLines: 10,
                   maxLines: null,
                   decoration: const InputDecoration(
-                      fillColor: Colors.white, filled: true),
+                    fillColor: Colors.white,
+                    filled: true,
+                  ),
+                  style: const TextStyle(
+                    color: Colors.black,
+                  ),
                 ),
               ),
             ),

@@ -57,13 +57,13 @@ class Episodes {
   @override
   String toString() {
     return """Episodes {
-      id: $id, 
-      podcastId: $podcastId, 
-      title: $title, 
+      id: $id,
+      podcastId: $podcastId,
+      title: $title,
       description: ${description!.substring(0, 100)},
-      publicationDate: $publicationDate, 
-      contentUrl: $contentUrl, 
-      duration: $duration, 
+      publicationDate: $publicationDate,
+      contentUrl: $contentUrl,
+      duration: $duration,
     }""";
   }
 }

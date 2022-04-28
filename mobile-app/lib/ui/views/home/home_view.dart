@@ -2,9 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:freecodecamp/ui/views/news/news-bookmark/news_bookmark_feed_view.dart';
 import 'package:freecodecamp/ui/views/news/news-feed/news_feed_view.dart';
 import 'package:freecodecamp/ui/views/news/news-search/news_search_view.dart';
-import 'package:freecodecamp/ui/widgets/drawer_widget/drawer_widget_view.dart';
 import 'package:stacked/stacked.dart';
 
+import '../../widgets/drawer_widget/drawer_widget_view.dart';
 import 'home_viemmodel.dart';
 
 class HomeView extends StatelessWidget {
@@ -20,7 +20,6 @@ class HomeView extends StatelessWidget {
     NewsBookmarkFeedView(),
     NewsFeedView(),
     NewsSearchView()
-    //const ArticleSearch()
   ];
 
   @override
@@ -30,14 +29,8 @@ class HomeView extends StatelessWidget {
         appBar: AppBar(
           title: titles.elementAt(viewModel.index),
         ),
-        drawer: SizedBox(
-          width: MediaQuery.of(context).size.width,
-          child: const DrawerWidgetView(),
-        ),
-        body: IndexedStack(
-          index: viewModel.index,
-          children: views,
-        ),
+        drawer: const DrawerWidgetView(),
+        body: views.elementAt(viewModel.index),
         bottomNavigationBar: BottomNavigationBar(
           items: const <BottomNavigationBarItem>[
             BottomNavigationBarItem(

@@ -3,7 +3,7 @@ import 'dart:convert';
 
 import 'package:freecodecamp/app/app.locator.dart';
 import 'package:freecodecamp/app/app.router.dart';
-import 'package:freecodecamp/models/forum_search_model.dart';
+import 'package:freecodecamp/models/forum/forum_search_model.dart';
 import 'package:stacked/stacked.dart';
 import 'package:stacked_services/stacked_services.dart';
 
@@ -57,8 +57,8 @@ class ForumSearchModel extends BaseViewModel {
             title: posts[i]['title'],
             postLikeCount: posts[i]['like_count'],
             postUsername: posts[i]['username'],
-            topicId: posts[i]["id"],
-            slug: posts[i]["slug"]));
+            topicId: posts[i]['id'],
+            slug: posts[i]['slug']));
       }
       dev.log(searchedPosts.toString());
       return searchedPosts;

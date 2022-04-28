@@ -1,33 +1,37 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/painting.dart';
-import 'package:flutter/rendering.dart';
 import 'package:freecodecamp/ui/views/forum/forum-create-post/forum_create_post_view.dart';
 import 'package:freecodecamp/ui/views/forum/forum-login/forum_login_viewmodel.dart';
 import 'package:stacked/stacked.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 class ForumLoginView extends StatelessWidget {
-  const ForumLoginView({Key? key}) : super(key: key);
+  const ForumLoginView({Key? key, this.fromCreatePost = false})
+      : super(key: key);
+
+  final bool fromCreatePost;
+
   @override
   Widget build(BuildContext context) {
     return ViewModelBuilder<ForumLoginModel>.reactive(
         viewModelBuilder: () => ForumLoginModel(),
-        onModelReady: (model) async => model.initState(),
+        onModelReady: (model) async => model.initState(context, fromCreatePost),
         builder: (context, model, child) => Scaffold(
             resizeToAvoidBottomInset: true,
             backgroundColor: const Color.fromRGBO(0x2A, 0x2A, 0x40, 1),
             body: SingleChildScrollView(
               child: Column(children: [
-                model.isLoggedIn
+                model.isLoggedIn && fromCreatePost
                     ? const ForumCreatePostViewmodel()
-                    : loginForum(context, model)
+                    : loginForum(
+                        context,
+                        model,
+                      )
               ]),
             )));
   }
 }
 
-Column loginForum(context, ForumLoginModel model) {
+Column loginForum(BuildContext context, ForumLoginModel model) {
   return Column(
     mainAxisAlignment: MainAxisAlignment.center,
     children: [

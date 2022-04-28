@@ -1,12 +1,16 @@
 import 'package:flutter/material.dart';
-import 'package:freecodecamp/models/article_model.dart';
-import 'package:freecodecamp/models/bookmarked_article_model.dart';
+import 'package:freecodecamp/app/app.locator.dart';
+import 'package:freecodecamp/app/app.router.dart';
+import 'package:freecodecamp/models/news/article_model.dart';
+import 'package:freecodecamp/models/news/bookmarked_article_model.dart';
 import 'package:stacked/stacked.dart';
 import 'package:sqflite/sqflite.dart';
 import 'package:path/path.dart' as path;
 import 'package:flutter/services.dart';
 import 'dart:developer' as dev;
 import 'dart:io';
+
+import 'package:stacked_services/stacked_services.dart';
 
 class NewsBookmarkModel extends BaseViewModel {
   bool _isBookmarked = false;
@@ -21,16 +25,18 @@ class NewsBookmarkModel extends BaseViewModel {
   int _count = 0;
   int get count => _count;
 
+  final NavigationService _navigationService = locator<NavigationService>();
+
   Future<Database> openDbConnection() async {
     WidgetsFlutterBinding.ensureInitialized();
 
     String dbPath = await getDatabasesPath();
-    String dbPathArticles = path.join(dbPath, "bookmarked-article.db");
+    String dbPathArticles = path.join(dbPath, 'bookmarked-article.db');
     bool dbExists = await databaseExists(dbPathArticles);
 
     if (!dbExists) {
       // Making new copy from assets
-      dev.log("copying database from assets");
+      dev.log('copying database from assets');
       try {
         await Directory(path.dirname(dbPathArticles)).create(recursive: true);
       } catch (error) {
@@ -38,7 +44,7 @@ class NewsBookmarkModel extends BaseViewModel {
       }
 
       ByteData data = await rootBundle
-          .load(path.join("assets", "database", "bookmarked-article.db"));
+          .load(path.join('assets', 'database', 'bookmarked-article.db'));
       List<int> bytes =
           data.buffer.asUint8List(data.offsetInBytes, data.lengthInBytes);
 
@@ -48,13 +54,25 @@ class NewsBookmarkModel extends BaseViewModel {
     return openDatabase(dbPathArticles, version: 1);
   }
 
-  Map<String, dynamic> articleToMap(Article article) {
-    return {
-      "articleTitle": article.title,
-      "articleId": article.id,
-      "articleText": article.text,
-      "authorName": article.authorName
-    };
+  Map<String, dynamic> articleToMap(dynamic article) {
+    if (article is Article) {
+      return {
+        'articleTitle': article.title,
+        'articleId': article.id,
+        'articleText': article.text,
+        'authorName': article.authorName
+      };
+    } else if (article is BookmarkedArticle) {
+      return {
+        'articleTitle': article.articleTitle,
+        'articleId': article.id,
+        'articleText': article.articleText,
+        'authorName': article.authorName
+      };
+    } else {
+      throw Exception(
+          'unable to convert article to map type: ${article.runtimeType}');
+    }
   }
 
   Future<List<Map<String, dynamic>>> getArticles() async {
@@ -87,7 +105,7 @@ class NewsBookmarkModel extends BaseViewModel {
     }
   }
 
-  void updateListView() async {
+  Future<void> updateListView() async {
     _articles = [];
     _articles = await getModelsFromMapList();
     _articles = _articles;
@@ -95,7 +113,12 @@ class NewsBookmarkModel extends BaseViewModel {
     notifyListeners();
   }
 
-  Future<void> insertArticle(Article? article) async {
+  Future<void> refresh() async {
+    updateListView();
+    hasBookmarkedArticles();
+  }
+
+  Future<void> insertArticle(dynamic article) async {
     final db = await openDbConnection();
 
     // Test if article is already in database
@@ -113,7 +136,7 @@ class NewsBookmarkModel extends BaseViewModel {
     final db = await openDbConnection();
 
     List<Map> isInDatabase = await db
-        .rawQuery('SELECT * FROM bookmarks WHERE articleId=?', [article!.id]);
+        .rawQuery('SELECT * FROM bookmarks WHERE articleId=?', [article.id]);
 
     if (isInDatabase.isNotEmpty) {
       _isBookmarked = true;
@@ -128,8 +151,15 @@ class NewsBookmarkModel extends BaseViewModel {
 
     if (isInDatabase.isNotEmpty) {
       _userHasBookmarkedArticles = true;
-      updateListView();
+      notifyListeners();
+    } else {
+      _userHasBookmarkedArticles = false;
       notifyListeners();
     }
+  }
+
+  void routeToBookmarkedArticle(BookmarkedArticle article) {
+    _navigationService.navigateTo(Routes.newsBookmarkPostView,
+        arguments: NewsBookmarkPostViewArguments(article: article));
   }
 }
