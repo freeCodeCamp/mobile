@@ -49,7 +49,7 @@ describe('podcast api', () => {
       const podcastId = res[i]._id.toString();
 
       const podcastRequest = await fetch(
-        `${url}/podcasts/${podcastId}/episodes`
+        `${url}/podcasts/${podcastId}/episodes?page=1`
       );
 
       const podcastResult: episodeEndpoint =
