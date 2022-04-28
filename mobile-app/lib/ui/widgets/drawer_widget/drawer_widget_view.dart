@@ -16,72 +16,88 @@ class DrawerWidgetView extends StatelessWidget {
       builder: (context, model, child) => Drawer(
         child: Container(
           color: const Color(0xFF0a0a23),
-          child: ListView(
+          child: Column(
             children: [
-              Image.asset(
-                'assets/images/freecodecamp-banner.png',
-              ),
-              const SizedBox(
-                height: 16,
-              ),
-              const Padding(
-                padding: EdgeInsets.only(left: 28.0),
-                child: Text(
-                  'Menu',
-                  style: TextStyle(
-                    fontSize: 26,
-                    color: Colors.white,
-                  ),
-                ),
-              ),
-              const SizedBox(
-                height: 16,
-              ),
-              DrawerButton(
-                component: 'NEWS',
-                icon: Icons.forum_outlined,
-                route: () {
-                  model.routeComponent('NEWS', context);
-                },
-              ),
-              buildDivider(),
-              model.showForum
-                  ? DrawerButton(
-                      component: 'FORUM',
+              Expanded(
+                child: ListView(
+                  physics: const NeverScrollableScrollPhysics(),
+                  children: [
+                    Image.asset(
+                      'assets/images/freecodecamp-banner.png',
+                    ),
+                    const SizedBox(
+                      height: 16,
+                    ),
+                    const Padding(
+                      padding: EdgeInsets.only(left: 28.0),
+                      child: Text(
+                        'Menu',
+                        style: TextStyle(
+                          fontSize: 26,
+                          color: Colors.white,
+                        ),
+                      ),
+                    ),
+                    const SizedBox(
+                      height: 16,
+                    ),
+                    DrawerButton(
+                      component: 'NEWS',
                       icon: Icons.forum_outlined,
                       route: () {
-                        model.routeComponent('FORUM', context);
+                        model.routeComponent('NEWS', context);
                       },
-                    )
-                  : DrawerButton(
-                      component: 'LEARN',
-                      icon: Icons.local_fire_department_sharp,
+                    ),
+                    buildDivider(),
+                    model.showForum
+                        ? DrawerButton(
+                            component: 'FORUM',
+                            icon: Icons.forum_outlined,
+                            route: () {
+                              model.routeComponent('FORUM', context);
+                            },
+                          )
+                        : DrawerButton(
+                            component: 'LEARN',
+                            icon: Icons.local_fire_department_sharp,
+                            route: () {
+                              model.routeComponent('LEARN', context);
+                            }),
+                    buildDivider(),
+                    DrawerButton(
+                      component: 'PODCAST',
+                      icon: Icons.podcasts_outlined,
                       route: () {
-                        model.routeComponent('LEARN', context);
-                      }),
-              buildDivider(),
-              DrawerButton(
-                component: 'PODCAST',
-                icon: Icons.podcasts_outlined,
-                route: () {
-                  model.routeComponent('PODCAST', context);
-                },
+                        model.routeComponent('PODCAST', context);
+                      },
+                    ),
+                    buildDivider(),
+                    DrawerButton(
+                      component: 'RADIO',
+                      icon: Icons.radio,
+                      route: () {
+                        model.routeComponent('CODERADIO', context);
+                      },
+                    ),
+                    buildDivider(),
+                    const WebButton(
+                      component: 'DONATE',
+                      url: 'https://www.freecodecamp.org/donate/',
+                      icon: Icons.favorite,
+                    ),
+                    buildDivider(),
+                  ],
+                ),
               ),
-              buildDivider(),
-              DrawerButton(
-                component: 'RADIO',
-                icon: Icons.radio,
-                route: () {
-                  model.routeComponent('CODERADIO', context);
-                },
-              ),
-              buildDivider(),
-              const WebButton(
-                component: 'DONATE',
-                url: 'https://www.freecodecamp.org/donate/',
-                icon: Icons.favorite,
-              ),
-              buildDivider(),
+              const Padding(
+                padding: EdgeInsets.only(left: 10.0),
+                child: Text(
+                  'freeCodeCamp is a donor-supported tax-exempt 501(c)(3) nonprofit organization '
+                  '(United States Federal Tax Identification Number: 82-0779546)',
+                  textAlign: TextAlign.center,
+                  style: TextStyle(fontSize: 7.5, color: Colors.white70),
+                ),
+              )
             ],
           ),
         ),
