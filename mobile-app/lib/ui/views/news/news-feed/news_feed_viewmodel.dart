@@ -69,7 +69,6 @@ class NewsFeedModel extends BaseViewModel {
     String url =
         "${dotenv.env['NEWSURL']}posts/?key=${dotenv.env['NEWSKEY']}$concact";
 
-    dev.log(url);
     final response = await http.get(Uri.parse(url));
     if (response.statusCode == 200) {
       var articleJson = json.decode(response.body)['posts'];
