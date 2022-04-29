@@ -90,12 +90,11 @@ class DrawerWidgetView extends StatelessWidget {
                 ),
               ),
               const Padding(
-                padding: EdgeInsets.only(left: 10.0),
+                padding: EdgeInsets.only(left: 10.0, bottom: 10),
                 child: Text(
-                  'freeCodeCamp is a donor-supported tax-exempt 501(c)(3) nonprofit organization '
-                  '(United States Federal Tax Identification Number: 82-0779546)',
+                  'freeCodeCamp is a donor-supported tax-exempt 501(c)(3) nonprofit organization',
                   textAlign: TextAlign.center,
-                  style: TextStyle(fontSize: 7.5, color: Colors.white70),
+                  style: TextStyle(fontSize: 10, color: Colors.white70),
                 ),
               )
             ],
