@@ -45,13 +45,7 @@ class NewsFeedView extends StatelessWidget {
                 : model.readFromFiles(),
             builder: (context, snapshot) {
               if (snapshot.hasData) {
-                return RefreshIndicator(
-                    backgroundColor: const Color(0xFF0a0a23),
-                    color: Colors.white,
-                    child: articleThumbnailBuilder(model),
-                    onRefresh: () {
-                      return model.refresh();
-                    });
+                return recommendationWidgetTemplate();
               } else if (snapshot.hasError) {
                 return errorMessage();
               }
@@ -61,38 +55,8 @@ class NewsFeedView extends StatelessWidget {
     );
   }
 
-  Column recommendationWidgetTemplate() {
-    return Column(
-      children: [
-        Container(
-          decoration: const BoxDecoration(
-              color: Color(0xFF0a0a23),
-              borderRadius: BorderRadius.only(
-                  topRight: Radius.circular(10), topLeft: Radius.circular(25))),
-          height: 50,
-          child: Row(
-            children: const [
-              Expanded(
-                child: Padding(
-                  padding: EdgeInsets.all(8),
-                  child: Text(
-                    'You might also like:',
-                    textScaleFactor: 1.2,
-                    style: TextStyle(
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
-                ),
-              ),
-            ],
-          ),
-        ),
-        Container(
-            padding: const EdgeInsets.only(left: 8),
-            height: 220,
-            child: RecommendationWidget()),
-      ],
-    );
+  Widget recommendationWidgetTemplate() {
+    return RecommendationWidget();
   }
 
   Column errorMessage() {
@@ -104,18 +68,15 @@ class NewsFeedView extends StatelessWidget {
           'There was an error loading articles ',
           textAlign: TextAlign.center,
         ),
-        Padding(
-          padding: const EdgeInsets.all(8.0),
-          child: InkWell(
-            child: const Text(
-              'read articles online',
-              textAlign: TextAlign.center,
-              style: TextStyle(color: Color.fromRGBO(0x99, 0xc9, 0xff, 1)),
-            ),
-            onTap: () {
-              launch('https://www.freecodecamp.org/news/');
-            },
+        InkWell(
+          child: const Text(
+            'read articles online',
+            textAlign: TextAlign.center,
+            style: TextStyle(color: Color.fromRGBO(0x99, 0xc9, 0xff, 1)),
           ),
+          onTap: () {
+            launch('https://www.freecodecamp.org/news/');
+          },
         ),
       ],
     );

@@ -7,7 +7,6 @@ class RecommendationWidget extends StatelessWidget {
   RecommendationWidget({Key? key}) : super(key: key);
 
   final NewsFeedModel model = NewsFeedModel();
-
   @override
   Widget build(BuildContext context) {
     final Future<List<Article>> future = model.recommendationWidgetFuture();
@@ -18,57 +17,90 @@ class RecommendationWidget extends StatelessWidget {
           if (snapshot.hasData) {
             List<Article> articles = snapshot.data as List<Article>;
 
-            return ListView.separated(
-                separatorBuilder: (context, index) {
-                  return Container(
-                      color: const Color(0xFF0a0a23),
-                      child: const VerticalDivider());
-                },
-                shrinkWrap: true,
-                scrollDirection: Axis.horizontal,
-                itemCount: articles.length,
-                itemBuilder: (context, index) {
-                  Article article = articles[index];
-
-                  return InkWell(
-                    onTap: () => model.navigateTo(article.id),
-                    child: Container(
-                      constraints: const BoxConstraints(maxWidth: 200),
-                      color: const Color(0xFF0a0a23),
-                      child: Column(
-                        children: [
-                          Row(
-                            children: [
-                              Container(
-                                color:
-                                    const Color.fromRGBO(0x2A, 0x2A, 0x40, 1),
-                                child: thumbnailImage(article),
-                                height: 150,
-                                width: 200,
-                              )
-                            ],
+            return Column(
+              children: [
+                SizedBox(
+                  height: 50,
+                  child: Row(
+                    children: [
+                      const Expanded(
+                        child: Padding(
+                          padding: EdgeInsets.only(left: 8.0),
+                          child: Text(
+                            'YOU MIGHT LIKE',
+                            style: TextStyle(
+                              height: 1.7,
+                              fontWeight: FontWeight.bold,
+                              fontSize: 20,
+                            ),
                           ),
-                          Row(children: [
-                            Expanded(
-                                child: Padding(
-                              padding: const EdgeInsets.all(8.0),
-                              child: Text(
-                                article.title,
-                                maxLines: 2,
-                                overflow: TextOverflow.ellipsis,
-                                textScaleFactor: 1.2,
-                              ),
-                            ))
-                          ]),
-                        ],
+                        ),
                       ),
-                    ),
-                  );
-                });
+                      Align(
+                          alignment: Alignment.centerRight,
+                          child: articles[0].tagNames[0])
+                    ],
+                  ),
+                ),
+                SizedBox(height: 200, child: templateBuilder(articles)),
+              ],
+            );
           }
 
-          return const CircularProgressIndicator();
+          return const SizedBox(
+              height: 250, child: CircularProgressIndicator());
         });
+  }
+
+  ListView templateBuilder(List<Article> articles) {
+    return ListView.separated(
+        separatorBuilder: (context, index) {
+          return Container(
+              color: const Color(0xFF0a0a23), child: const VerticalDivider());
+        },
+        shrinkWrap: true,
+        scrollDirection: Axis.horizontal,
+        itemCount: articles.length,
+        itemBuilder: (context, index) {
+          Article article = articles[index];
+
+          return recommendatioWidgetTemplate(article);
+        });
+  }
+
+  InkWell recommendatioWidgetTemplate(Article article) {
+    return InkWell(
+      onTap: () => model.navigateTo(article.id),
+      child: Container(
+        constraints: const BoxConstraints(maxWidth: 200),
+        color: const Color(0xFF0a0a23),
+        child: Column(
+          children: [
+            Row(
+              children: [
+                Container(
+                  color: const Color.fromRGBO(0x2A, 0x2A, 0x40, 1),
+                  child: thumbnailImage(article),
+                  width: 200,
+                )
+              ],
+            ),
+            Row(children: [
+              Expanded(
+                  child: Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: Text(
+                  article.title,
+                  maxLines: 2,
+                  overflow: TextOverflow.ellipsis,
+                  textScaleFactor: 1.2,
+                ),
+              ))
+            ]),
+          ],
+        ),
+      ),
+    );
   }
 
   AspectRatio thumbnailImage(Article article) {
