@@ -57,6 +57,7 @@ describe('podcast api', () => {
         (await podcastRequest.json()) as episodeEndpoint;
 
       expect(podcastResult.episodes.length).toBeGreaterThan(0);
+      expect(podcastResult.episodes.length).toBeLessThanOrEqual(20);
 
       localPodcastId = podcastResult.podcast._id.toString();
       localEpisodeId = podcastResult.episodes[0]._id.toString();
