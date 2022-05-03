@@ -114,6 +114,8 @@ class TileLayout extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    double imgSize = MediaQuery.of(context).size.width * 0.25;
+
     return Expanded(
       child: ListView.builder(
           physics: const NeverScrollableScrollPhysics(),
@@ -135,8 +137,13 @@ class TileLayout extends StatelessWidget {
                 NewsFeedModel.parseDate(article.createdAt),
                 style: const TextStyle(height: 2),
               ),
-              trailing: Image.network(
-                article.featureImage,
+              trailing: Container(
+                constraints:
+                    BoxConstraints(minWidth: imgSize, maxWidth: imgSize),
+                child: Image.network(
+                  article.featureImage,
+                  fit: BoxFit.cover,
+                ),
               ),
               onTap: () {
                 widget.navigateToArticle(article.id);
