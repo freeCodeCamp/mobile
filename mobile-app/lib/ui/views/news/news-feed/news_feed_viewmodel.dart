@@ -9,7 +9,6 @@ import 'package:http/http.dart' as http;
 import 'package:jiffy/jiffy.dart';
 import 'package:stacked/stacked.dart';
 import 'package:stacked_services/stacked_services.dart';
-import 'dart:developer' as dev;
 
 class NewsFeedModel extends BaseViewModel {
   int _pageNumber = 1;
