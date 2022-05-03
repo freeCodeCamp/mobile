@@ -23,6 +23,9 @@ class NewsFeedModel extends BaseViewModel {
   bool _devMode = false;
   bool get devmode => _devMode;
 
+  // of 100% the recommendation percetage = 100% - 90% = 10%;
+  int _recommendationPercentage = 90;
+
   devMode() async {
     if (await _testService.developmentMode()) {
       _devMode = true;
@@ -122,6 +125,12 @@ class NewsFeedModel extends BaseViewModel {
       _pageNumber = pageToRequest;
       notifyListeners();
     }
+  }
+
+  shouldRecommend() {
+    Random random = Random();
+    int randomNum = random.nextInt(100);
+    return randomNum > _recommendationPercentage;
   }
 
   Future<List<Article>> recommendationWidgetFuture() async {

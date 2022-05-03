@@ -4,6 +4,7 @@ import 'package:flutter/scheduler.dart';
 import 'package:freecodecamp/models/news/article_model.dart';
 import 'package:freecodecamp/ui/views/news/news-feed/news_feed_lazyloading.dart';
 import 'package:freecodecamp/ui/views/news/news-feed/news_feed_viewmodel.dart';
+import 'package:freecodecamp/ui/widgets/news/recommendation_widget.dart';
 import 'package:stacked/stacked.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'news_feed_viewmodel.dart';
@@ -60,6 +61,40 @@ class NewsFeedView extends StatelessWidget {
     );
   }
 
+  Column recommendationWidgetTemplate() {
+    return Column(
+      children: [
+        Container(
+          decoration: const BoxDecoration(
+              color: Color(0xFF0a0a23),
+              borderRadius: BorderRadius.only(
+                  topRight: Radius.circular(10), topLeft: Radius.circular(25))),
+          height: 50,
+          child: Row(
+            children: const [
+              Expanded(
+                child: Padding(
+                  padding: EdgeInsets.all(8),
+                  child: Text(
+                    'You might also like:',
+                    textScaleFactor: 1.2,
+                    style: TextStyle(
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                ),
+              ),
+            ],
+          ),
+        ),
+        Container(
+            padding: const EdgeInsets.only(left: 8),
+            height: 220,
+            child: RecommendationWidget()),
+      ],
+    );
+  }
+
   Column errorMessage() {
     return Column(
       mainAxisAlignment: MainAxisAlignment.center,
@@ -97,22 +132,23 @@ class NewsFeedView extends StatelessWidget {
         height: 3,
       ),
       itemBuilder: (BuildContext contex, int i) => NewsFeedLazyLoading(
-        key: Key(model.articles[i].id),
-        articleCreated: () {
-          SchedulerBinding.instance!.addPostFrameCallback(
-              (timeStamp) => model.handleArticleLazyLoading(i));
-        },
-        child: InkWell(
-          splashColor: Colors.transparent,
-          onTap: () {
-            model.navigateTo(model.articles[i].id);
+          key: Key(model.articles[i].id),
+          articleCreated: () {
+            SchedulerBinding.instance!.addPostFrameCallback(
+                (timeStamp) => model.handleArticleLazyLoading(i));
           },
-          child: Padding(
-            padding: const EdgeInsets.only(bottom: 32.0),
-            child: thumbnailView(model, i),
-          ),
-        ),
-      ),
+          child: !model.shouldRecommend()
+              ? InkWell(
+                  splashColor: Colors.transparent,
+                  onTap: () {
+                    model.navigateTo(model.articles[i].id);
+                  },
+                  child: Padding(
+                    padding: const EdgeInsets.only(bottom: 32.0),
+                    child: thumbnailView(model, i),
+                  ),
+                )
+              : recommendationWidgetTemplate()),
     );
   }
 
