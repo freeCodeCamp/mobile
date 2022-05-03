@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:freecodecamp/models/news/article_model.dart';
 import 'package:freecodecamp/ui/views/news/news-author/news_author_viewmodel.dart';
-import 'package:freecodecamp/ui/widgets/article_list_widget.dart';
+import 'package:freecodecamp/ui/widgets/news/article_list_widget.dart';
 import 'package:stacked/stacked.dart';
 
 class NewsAuthorView extends StatelessWidget {

@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'dart:math';
 import 'package:flutter/services.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:freecodecamp/app/app.locator.dart';
@@ -7,9 +8,9 @@ import 'package:freecodecamp/models/news/article_model.dart';
 import 'package:freecodecamp/service/test_service.dart';
 import 'package:http/http.dart' as http;
 import 'package:jiffy/jiffy.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:stacked/stacked.dart';
 import 'package:stacked_services/stacked_services.dart';
-import 'dart:developer' as dev;
 
 class NewsFeedModel extends BaseViewModel {
   int _pageNumber = 1;
@@ -56,6 +57,29 @@ class NewsFeedModel extends BaseViewModel {
     return articles;
   }
 
+  Future<void> setRecentlyVisitedSubjects(String subject) async {
+    if (subject.isNotEmpty) {
+      SharedPreferences prefs = await SharedPreferences.getInstance();
+
+      List<String>? subjects = prefs.getStringList('subjects_clicked');
+
+      if (subjects == null) {
+        prefs.setStringList('subjects_clicked', [subject]);
+      }
+
+      if (subjects != null) {
+        if (subjects.contains(subject)) return;
+
+        if (subjects.length == 10) {
+          subjects.removeLast();
+        }
+        subjects.add(subject);
+        subjects.shuffle();
+        prefs.setStringList('subjects_clicked', subjects);
+      }
+    }
+  }
+
   Future<List<Article>> fetchArticles(String slug, String author) async {
     await dotenv.load(fileName: '.env');
 
@@ -68,6 +92,8 @@ class NewsFeedModel extends BaseViewModel {
 
     String url =
         "${dotenv.env['NEWSURL']}posts/?key=${dotenv.env['NEWSKEY']}$concact";
+
+    setRecentlyVisitedSubjects(slug);
 
     final response = await http.get(Uri.parse(url));
     if (response.statusCode == 200) {
@@ -96,5 +122,23 @@ class NewsFeedModel extends BaseViewModel {
       _pageNumber = pageToRequest;
       notifyListeners();
     }
+  }
+
+  Future<List<Article>> recommendationWidgetFuture() async {
+    List<Article> articles = [];
+
+    Random random = Random();
+
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+
+    if (prefs.getStringList('subjects_clicked') != null) {
+      List<String> subjects = prefs.getStringList('subjects_clicked')!;
+
+      int randomNum = random.nextInt(subjects.length - 1);
+
+      articles.addAll(await fetchArticles(subjects[randomNum], ''));
+    }
+
+    return articles;
   }
 }
