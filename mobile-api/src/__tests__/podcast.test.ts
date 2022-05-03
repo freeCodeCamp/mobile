@@ -1,3 +1,4 @@
+import 'dotenv/config';
 import fetch from 'node-fetch';
 import { Podcast } from '../models/Podcast';
 import { Episode } from '../models/Episode';
@@ -70,7 +71,7 @@ describe('podcast api', () => {
       `${url}/podcasts/${localPodcastId}/episodes/${localEpisodeId}`
     );
 
-    const res: Podcast = (await req.json()) as Podcast;
+    const res: Episode = (await req.json()) as Episode;
 
     expect(res.description.length).toBeGreaterThan(0);
   });
