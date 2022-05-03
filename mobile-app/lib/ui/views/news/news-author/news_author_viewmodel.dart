@@ -4,7 +4,6 @@ import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:freecodecamp/models/news/article_model.dart';
 import 'package:http/http.dart' as http;
 import 'package:stacked/stacked.dart';
-import 'dart:developer' as dev;
 
 class NewsAuthorViewModel extends BaseViewModel {
   late Future<Author> _author;

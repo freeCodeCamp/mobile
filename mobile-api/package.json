@@ -14,9 +14,15 @@
     "lint": "npm run lint:prettier && npm run lint:src",
     "lint:src": "eslint --max-warnings 0 .",
     "lint:prettier": "prettier --check .",
-    "start": "NODE_ENV=production node prod/index.js"
+    "start": "NODE_ENV=production node prod/index.js",
+    "test": "jest"
   },
   "dependencies": {
+    "@babel/preset-env": "^7.16.11",
+    "@babel/preset-typescript": "^7.16.7",
+    "@types/jest": "^27.4.1",
+    "node-fetch": "^3.2.3",
+    "ts-jest": "^27.1.4",
     "bree": "8.0.3",
     "dotenv": "16.0.0",
     "express": "4.18.1",
@@ -24,6 +30,7 @@
     "rss-parser": "3.12.0"
   },
   "devDependencies": {
+    "@babel/plugin-transform-typescript": "^7.16.8",
     "@breejs/ts-worker": "1.1.1",
     "@types/express": "4.17.13",
     "@types/node": "16.11.33",
