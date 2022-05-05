@@ -61,7 +61,7 @@ class NewsFeedModel extends BaseViewModel {
     return articles;
   }
 
-  Future<void> setRecentlyVisitedSubjects(String subject) async {
+  static Future<void> setRecentlyVisitedSubjects(String subject) async {
     if (subject.isNotEmpty) {
       SharedPreferences prefs = await SharedPreferences.getInstance();
 

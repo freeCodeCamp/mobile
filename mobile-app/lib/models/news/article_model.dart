@@ -10,6 +10,7 @@ class Article {
   final String authorSlug;
   final String? createdAt;
   final List<Widget> tagNames;
+  final String? mainTagName;
   final String? url;
   final String? text;
 
@@ -22,6 +23,7 @@ class Article {
       required this.authorSlug,
       this.createdAt,
       this.tagNames = const [],
+      this.mainTagName,
       this.url,
       this.text});
 
@@ -62,6 +64,7 @@ class Article {
         authorSlug: json['posts'][0]['primary_author']['slug'],
         profileImage: json['posts'][0]['primary_author']['profile_image'],
         tagNames: returnTags(json['posts'][0]['tags']),
+        mainTagName: json['posts'][0]['tags'][0]['name'],
         id: json['posts'][0]['id'],
         title: json['posts'][0]['title'],
         url: json['posts'][0]['url'],

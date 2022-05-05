@@ -1,7 +1,7 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:freecodecamp/models/news/article_model.dart';
-import 'package:freecodecamp/ui/views/news/news-feed/news_feed_viewmodel.dart';
+import 'package:freecodecamp/ui/views/news/news-feed/news_feed_model.dart';
 
 class RecommendationWidget extends StatelessWidget {
   RecommendationWidget({Key? key}) : super(key: key);

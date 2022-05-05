@@ -3,11 +3,11 @@ import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
 import 'package:freecodecamp/models/news/article_model.dart';
 import 'package:freecodecamp/ui/views/news/news-feed/news_feed_lazyloading.dart';
-import 'package:freecodecamp/ui/views/news/news-feed/news_feed_viewmodel.dart';
+import 'package:freecodecamp/ui/views/news/news-feed/news_feed_model.dart';
 import 'package:freecodecamp/ui/widgets/news/recommendation_widget.dart';
 import 'package:stacked/stacked.dart';
 import 'package:url_launcher/url_launcher.dart';
-import 'news_feed_viewmodel.dart';
+import 'news_feed_model.dart';
 
 class NewsFeedView extends StatelessWidget {
   const NewsFeedView(
@@ -45,7 +45,13 @@ class NewsFeedView extends StatelessWidget {
                 : model.readFromFiles(),
             builder: (context, snapshot) {
               if (snapshot.hasData) {
-                return recommendationWidgetTemplate();
+                return RefreshIndicator(
+                    backgroundColor: const Color(0xFF0a0a23),
+                    color: Colors.white,
+                    child: articleThumbnailBuilder(model),
+                    onRefresh: () {
+                      return model.refresh();
+                    });
               } else if (snapshot.hasError) {
                 return errorMessage();
               }

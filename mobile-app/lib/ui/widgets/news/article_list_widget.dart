@@ -4,7 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:freecodecamp/app/app.locator.dart';
 import 'package:freecodecamp/app/app.router.dart';
 import 'package:freecodecamp/models/news/article_model.dart';
-import 'package:freecodecamp/ui/views/news/news-feed/news_feed_viewmodel.dart';
+import 'package:freecodecamp/ui/views/news/news-feed/news_feed_model.dart';
 
 import 'package:http/http.dart' as http;
 import 'package:flutter_dotenv/flutter_dotenv.dart';
