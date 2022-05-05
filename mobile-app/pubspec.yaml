@@ -53,6 +53,9 @@ dependencies:
   flutter_appauth: ^2.4.1
   flutter_secure_storage: ^5.0.2
   dart_jsonwebtoken: ^2.4.1
+  flutter_inappwebview: ^5.4.3+4
+  flutter_webview_plugin:
+    git: https://github.com/snoopdoggy322/flutter_webview_plugin.git
 dev_dependencies:
   build_runner: ^2.1.2
   integration_test:

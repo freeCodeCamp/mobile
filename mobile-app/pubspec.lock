@@ -385,12 +385,12 @@ packages:
     source: hosted
     version: "2.2.1"
   flutter_inappwebview:
-    dependency: transitive
+    dependency: "direct main"
     description:
       name: flutter_inappwebview
       url: "https://pub.dartlang.org"
     source: hosted
-    version: "5.3.2"
+    version: "5.4.3+4"
   flutter_layout_grid:
     dependency: transitive
     description:
@@ -508,6 +508,15 @@ packages:
     description: flutter
     source: sdk
     version: "0.0.0"
+  flutter_webview_plugin:
+    dependency: "direct main"
+    description:
+      path: "."
+      ref: HEAD
+      resolved-ref: acbc06335c79f8ddaa382aa4b409e5a7271a9109
+      url: "https://github.com/snoopdoggy322/flutter_webview_plugin.git"
+    source: git
+    version: "0.4.0"
   font_awesome_flutter:
     dependency: "direct main"
     description:
