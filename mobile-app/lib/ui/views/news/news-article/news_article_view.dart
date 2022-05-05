@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 
 import 'package:freecodecamp/models/news/article_model.dart';
+import 'package:freecodecamp/ui/views/news/news-bookmark/news_bookmark_widget.dart';
+import 'package:share/share.dart';
 import 'package:stacked/stacked.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'news_article_viewmodel.dart';
@@ -16,9 +18,9 @@ class NewsArticleView extends StatelessWidget {
       onModelReady: (model) => model.initState(refId),
       builder: (context, model, child) => Scaffold(
         appBar: AppBar(
-          title: const Text(
-            'Back To Feed',
-          ),
+          backgroundColor: Colors.transparent,
+          elevation: 0.0,
+          actions: [Expanded(child: Container())],
         ),
         backgroundColor: const Color(0xFF0a0a23),
         body: FutureBuilder<Article>(
@@ -29,7 +31,29 @@ class NewsArticleView extends StatelessWidget {
               return Column(
                 children: [
                   Expanded(
-                      child: lazyLoadHtml(article!.text!, context, article))
+                      child: Stack(children: [
+                    lazyLoadHtml(article!.text!, context, article),
+                    Align(
+                      alignment: Alignment.bottomCenter,
+                      child: Container(
+                        constraints: const BoxConstraints(maxWidth: 300),
+                        child: Row(
+                          children: [
+                            NewsBookmarkViewWidget(article: article),
+                            BottomButton(
+                              label: 'Share',
+                              icon: Icons.share,
+                              onPressed: () {
+                                Share.share(
+                                    '${article.title}\n\n${article.url}');
+                              },
+                              rightSided: true,
+                            )
+                          ],
+                        ),
+                      ),
+                    )
+                  ]))
                 ],
               );
             } else if (snapshot.hasError) {
@@ -43,6 +67,45 @@ class NewsArticleView extends StatelessWidget {
         ),
       ),
       viewModelBuilder: () => NewsArticleViewModel(),
+    );
+  }
+}
+
+class BottomButton extends StatelessWidget {
+  const BottomButton(
+      {Key? key,
+      required this.label,
+      required this.onPressed,
+      required this.icon,
+      required this.rightSided})
+      : super(key: key);
+
+  final Function onPressed;
+  final String label;
+  final bool rightSided;
+  final IconData icon;
+
+  @override
+  Widget build(BuildContext context) {
+    return Expanded(
+      child: ElevatedButton.icon(
+        icon: Icon(
+          icon,
+          color: Colors.white,
+        ),
+        onPressed: () {
+          onPressed();
+        },
+        label: Text(label),
+        style: ElevatedButton.styleFrom(
+            shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.only(
+                    topLeft: Radius.circular(rightSided ? 0 : 10),
+                    topRight: Radius.circular(rightSided ? 10 : 0),
+                    bottomLeft: Radius.circular(rightSided ? 0 : 10),
+                    bottomRight: Radius.circular(rightSided ? 10 : 0))),
+            primary: const Color.fromRGBO(0x2A, 0x2A, 0x40, 1)),
+      ),
     );
   }
 }
