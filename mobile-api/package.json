@@ -20,7 +20,7 @@
   "dependencies": {
     "@babel/preset-env": "7.17.10",
     "@babel/preset-typescript": "^7.16.7",
-    "@types/jest": "^27.4.1",
+    "@types/jest": "27.5.0",
     "node-fetch": "3.2.4",
     "ts-jest": "^27.1.4",
     "bree": "8.0.3",
