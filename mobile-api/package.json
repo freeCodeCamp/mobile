@@ -21,7 +21,7 @@
     "@babel/preset-env": "^7.16.11",
     "@babel/preset-typescript": "^7.16.7",
     "@types/jest": "^27.4.1",
-    "node-fetch": "^3.2.3",
+    "node-fetch": "3.2.4",
     "ts-jest": "^27.1.4",
     "bree": "8.0.3",
     "dotenv": "16.0.0",
