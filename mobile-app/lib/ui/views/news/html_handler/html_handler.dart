@@ -1,7 +1,8 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_html/flutter_html.dart';
-import 'package:flutter_syntax_view/flutter_syntax_view.dart';
+import 'package:flutter_highlight/flutter_highlight.dart';
+import 'package:flutter_highlight/theme_map.dart';
 import 'package:freecodecamp/models/news/article_model.dart';
 import 'package:freecodecamp/ui/views/news/news-article/news_article_header.dart';
 import 'package:freecodecamp/ui/views/news/news-article/news_article_view.dart';
@@ -46,7 +47,7 @@ class HtmlHandler {
     dev.log('hgi');
   }
 
-  static htmlWidgetBuilder(child, context) {
+  static htmlWidgetBuilder(child, BuildContext context) {
     return Html(
       shrinkWrap: true,
       data: child,
@@ -109,17 +110,19 @@ class HtmlHandler {
           }
         },
         'code': (code, child) {
-          for (var className in code.tree.elementClasses) {
+          for (String className in code.tree.elementClasses) {
             if (className
                 .contains(RegExp(r'language-', caseSensitive: false))) {
-              return SyntaxView(
-                  syntaxTheme: SyntaxTheme.vscodeDark(),
-                  useCustomHeight: true,
-                  minWidth: MediaQuery.of(context).size.width,
-                  code: code.tree.element!.text,
-                  withZoom: false,
-                  fontSize: 15,
-                  syntax: Syntax.JAVASCRIPT);
+              return Row(
+                children: [
+                  Expanded(
+                    child: HighlightView(code.tree.element?.text ?? '',
+                        padding: const EdgeInsets.all(16),
+                        language: className.split('-')[1],
+                        theme: themeMap['dracula']!),
+                  ),
+                ],
+              );
             }
           }
         },
