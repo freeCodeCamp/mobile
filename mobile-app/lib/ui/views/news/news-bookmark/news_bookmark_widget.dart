@@ -18,8 +18,8 @@ class NewsBookmarkViewWidget extends StatelessWidget {
               key: const Key('bookmark_btn'),
               label: model.bookmarked ? 'Bookmarked' : 'Bookmark',
               icon: model.bookmarked
-                  ? Icons.bookmark_sharp
-                  : Icons.bookmark_border_sharp,
+                  ? Icons.bookmark_added
+                  : Icons.bookmark_add_outlined,
               onPressed: () {
                 model.bookmarkAndUnbookmark(article);
               },

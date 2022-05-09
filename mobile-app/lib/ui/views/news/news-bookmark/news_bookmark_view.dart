@@ -35,9 +35,18 @@ class NewsBookmarkPostView extends StatelessWidget {
                         children: [
                           Expanded(
                               child: Padding(
-                            padding: const EdgeInsets.all(8.0),
-                            child: NewsBookmarkViewWidget(article: article),
-                          )),
+                                  padding: const EdgeInsets.all(8.0),
+                                  child: ElevatedButton.icon(
+                                      onPressed: () {
+                                        model.bookmarkAndUnbookmark(article);
+                                      },
+                                      icon: model.bookmarked
+                                          ? const Icon(Icons.bookmark_added)
+                                          : const Icon(
+                                              Icons.bookmark_add_outlined),
+                                      label: Text(model.bookmarked
+                                          ? 'Bookmarked'
+                                          : 'Bookmark')))),
                         ],
                       ),
                     ),
