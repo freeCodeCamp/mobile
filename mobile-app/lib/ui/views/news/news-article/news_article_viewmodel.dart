@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:convert';
 import 'package:freecodecamp/app/app.locator.dart';
 import 'package:flutter/material.dart';
@@ -10,6 +11,7 @@ import 'package:freecodecamp/ui/views/news/html_handler/html_handler.dart';
 import 'package:stacked/stacked.dart';
 import 'package:http/http.dart' as http;
 import 'package:stacked_services/stacked_services.dart';
+import 'dart:developer' as dev;
 
 class NewsArticleViewModel extends BaseViewModel {
   late Future<Article> _articleFuture;
@@ -19,6 +21,12 @@ class NewsArticleViewModel extends BaseViewModel {
   final _testservice = locator<TestService>();
 
   Future<Article>? get articleFuture => _articleFuture;
+
+  final ScrollController _scrollController = ScrollController();
+  ScrollController get scrollController => _scrollController;
+
+  final ScrollController _bottomButtonController = ScrollController();
+  ScrollController get bottomButtonController => _bottomButtonController;
 
   Future<Article> readFromFiles() async {
     String json =
@@ -30,6 +38,18 @@ class NewsArticleViewModel extends BaseViewModel {
   }
 
   Future<Article> initState(id) async {
+    _scrollController.addListener(() {
+      if (_scrollController.offset > 425) {
+        _bottomButtonController.animateTo(_scrollController.offset,
+            duration: const Duration(milliseconds: 2500),
+            curve: Curves.easeInOut);
+      } else {
+        _bottomButtonController.animateTo(0,
+            duration: const Duration(milliseconds: 500),
+            curve: Curves.easeInOut);
+      }
+    });
+
     if (await _testservice.developmentMode()) {
       return readFromFiles();
     } else {
@@ -42,7 +62,7 @@ class NewsArticleViewModel extends BaseViewModel {
         arguments: NewsAuthorViewArguments(authorSlug: slug));
   }
 
-  static List<Widget> initLazyLoading(html, context, article) {
+  List<Widget> initLazyLoading(html, context, article) {
     List<Widget> elements = HtmlHandler.htmlHandler(html, context, article);
     return elements;
   }

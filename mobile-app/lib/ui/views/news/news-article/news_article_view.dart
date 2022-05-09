@@ -32,27 +32,8 @@ class NewsArticleView extends StatelessWidget {
                 children: [
                   Expanded(
                       child: Stack(children: [
-                    lazyLoadHtml(article!.text!, context, article),
-                    Align(
-                      alignment: Alignment.bottomCenter,
-                      child: Container(
-                        constraints: const BoxConstraints(maxWidth: 300),
-                        child: Row(
-                          children: [
-                            NewsBookmarkViewWidget(article: article),
-                            BottomButton(
-                              label: 'Share',
-                              icon: Icons.share,
-                              onPressed: () {
-                                Share.share(
-                                    '${article.title}\n\n${article.url}');
-                              },
-                              rightSided: true,
-                            )
-                          ],
-                        ),
-                      ),
-                    )
+                    lazyLoadHtml(article!.text!, context, article, model),
+                    bottomButtons(article, model)
                   ]))
                 ],
               );
@@ -68,6 +49,56 @@ class NewsArticleView extends StatelessWidget {
       ),
       viewModelBuilder: () => NewsArticleViewModel(),
     );
+  }
+
+  Widget bottomButtons(Article article, NewsArticleViewModel model) {
+    return Align(
+      alignment: Alignment.bottomCenter,
+      child: SizedBox(
+        height: 50,
+        width: 300,
+        child: ListView(
+          physics: const NeverScrollableScrollPhysics(),
+          controller: model.bottomButtonController,
+          children: [
+            Row(
+              children: [
+                NewsBookmarkViewWidget(article: article),
+                BottomButton(
+                  label: 'Share',
+                  icon: Icons.share,
+                  onPressed: () {
+                    Share.share('${article.title}\n\n${article.url}');
+                  },
+                  rightSided: true,
+                )
+              ],
+            ),
+            Container(
+              height: 800,
+            )
+          ],
+        ),
+      ),
+    );
+  }
+
+  ListView lazyLoadHtml(String html, BuildContext context, Article article,
+      NewsArticleViewModel model) {
+    var htmlToList = model.initLazyLoading(html, context, article);
+
+    return ListView.builder(
+        shrinkWrap: true,
+        controller: model.scrollController,
+        itemCount: htmlToList.length,
+        physics: const ClampingScrollPhysics(),
+        itemBuilder: (BuildContext context, int i) {
+          return Row(
+            children: [
+              Expanded(child: htmlToList[i]),
+            ],
+          );
+        });
   }
 }
 
@@ -108,21 +139,6 @@ class BottomButton extends StatelessWidget {
       ),
     );
   }
-}
-
-ListView lazyLoadHtml(String html, BuildContext context, Article article) {
-  var htmlToList = NewsArticleViewModel.initLazyLoading(html, context, article);
-  return ListView.builder(
-      shrinkWrap: true,
-      itemCount: htmlToList.length,
-      physics: const ClampingScrollPhysics(),
-      itemBuilder: (BuildContext context, int i) {
-        return Row(
-          children: [
-            Expanded(child: htmlToList[i]),
-          ],
-        );
-      });
 }
 
 Container bookmark(String? bookmarkTilte, String? bookmarkDescription,
