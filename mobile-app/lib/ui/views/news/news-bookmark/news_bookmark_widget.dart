@@ -15,6 +15,7 @@ class NewsBookmarkViewWidget extends StatelessWidget {
         viewModelBuilder: () => NewsBookmarkModel(),
         onModelReady: (model) => model.isArticleBookmarked(article),
         builder: (context, model, child) => BottomButton(
+              key: const Key('bookmark_btn'),
               label: model.bookmarked ? 'Bookmarked' : 'Bookmark',
               icon: model.bookmarked
                   ? Icons.bookmark_sharp
