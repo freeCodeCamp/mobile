@@ -16,29 +16,37 @@ class NewsArticleHeader extends StatelessWidget {
               article.featureImage,
               fit: BoxFit.cover,
             )),
-        Container(
-          color: const Color.fromRGBO(0x2A, 0x2A, 0x40, 1),
-          padding: const EdgeInsets.all(16),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text(
-                article.title,
-                style: const TextStyle(fontSize: 24, height: 1.5),
-                key: const Key('title'),
+        Row(
+          children: [
+            Expanded(
+              child: Container(
+                color: const Color.fromRGBO(0x2A, 0x2A, 0x40, 1),
+                padding: const EdgeInsets.all(16),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      article.title,
+                      style: const TextStyle(fontSize: 24, height: 1.5),
+                      key: const Key('title'),
+                    ),
+                    Text(
+                      'Written by ${article.authorName}',
+                      style: const TextStyle(height: 1.5),
+                    ),
+                    Wrap(
+                      children: [
+                        for (int j = 0;
+                            j < article.tagNames.length && j < 3;
+                            j++)
+                          article.tagNames[j]
+                      ],
+                    ),
+                  ],
+                ),
               ),
-              Text(
-                'Written by ${article.authorName}',
-                style: const TextStyle(height: 1.5),
-              ),
-              Wrap(
-                children: [
-                  for (int j = 0; j < article.tagNames.length && j < 3; j++)
-                    article.tagNames[j]
-                ],
-              ),
-            ],
-          ),
+            ),
+          ],
         ),
       ],
     );
