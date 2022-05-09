@@ -23,7 +23,13 @@ class HtmlHandler {
     List<Widget> elements = [];
 
     if (article is Article) {
-      elements.add(NewsArticleHeader(article: article));
+      elements.add(Stack(children: [
+        NewsArticleHeader(article: article),
+        AppBar(
+          backgroundColor: Colors.transparent,
+          shadowColor: Colors.transparent,
+        )
+      ]));
     }
     for (int i = 0; i < result.body!.children.length; i++) {
       elements

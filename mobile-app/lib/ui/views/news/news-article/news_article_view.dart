@@ -17,11 +17,6 @@ class NewsArticleView extends StatelessWidget {
     return ViewModelBuilder<NewsArticleViewModel>.reactive(
       onModelReady: (model) => model.initState(refId),
       builder: (context, model, child) => Scaffold(
-        appBar: AppBar(
-          backgroundColor: Colors.transparent,
-          elevation: 0.0,
-          actions: [Expanded(child: Container())],
-        ),
         backgroundColor: const Color(0xFF0a0a23),
         body: FutureBuilder<Article>(
           future: model.initState(refId),
@@ -55,7 +50,7 @@ class NewsArticleView extends StatelessWidget {
     return Align(
       alignment: Alignment.bottomCenter,
       child: SizedBox(
-        height: 50,
+        height: 75,
         width: 300,
         child: ListView(
           physics: const NeverScrollableScrollPhysics(),
