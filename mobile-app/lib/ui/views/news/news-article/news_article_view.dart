@@ -67,7 +67,7 @@ class NewsArticleView extends StatelessWidget {
                   height: 35,
                   child: VerticalDivider(
                     color: Colors.white,
-                    width: 1,
+                    width: 0,
                   ),
                 ),
                 BottomButton(
