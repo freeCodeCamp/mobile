@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:freecodecamp/models/news/bookmarked_article_model.dart';
 import 'package:freecodecamp/ui/views/news/news-article/news_article_viewmodel.dart';
 import 'package:freecodecamp/ui/views/news/news-bookmark/news_bookmark_viewmodel.dart';
-import 'package:freecodecamp/ui/views/news/news-bookmark/news_bookmark_widget.dart';
 import 'package:stacked/stacked.dart';
 
 class NewsBookmarkPostView extends StatelessWidget {
@@ -35,9 +34,18 @@ class NewsBookmarkPostView extends StatelessWidget {
                         children: [
                           Expanded(
                               child: Padding(
-                            padding: const EdgeInsets.all(8.0),
-                            child: NewsBookmarkViewWidget(article: article),
-                          )),
+                                  padding: const EdgeInsets.all(8.0),
+                                  child: ElevatedButton.icon(
+                                      onPressed: () {
+                                        model.bookmarkAndUnbookmark(article);
+                                      },
+                                      icon: model.bookmarked
+                                          ? const Icon(Icons.bookmark_added)
+                                          : const Icon(
+                                              Icons.bookmark_add_outlined),
+                                      label: Text(model.bookmarked
+                                          ? 'Bookmarked'
+                                          : 'Bookmark')))),
                         ],
                       ),
                     ),
@@ -49,8 +57,10 @@ class NewsBookmarkPostView extends StatelessWidget {
   }
 
   SliverList lazyLoadHtml(BuildContext context, BookmarkedArticle article) {
-    var htmlToList = NewsArticleViewModel.initLazyLoading(
-        article.articleText, context, article);
+    NewsArticleViewModel model = NewsArticleViewModel();
+    var htmlToList =
+        model.initLazyLoading(article.articleText, context, article);
+
     return SliverList(
         delegate: SliverChildBuilderDelegate(((context, index) {
       return Row(

@@ -349,6 +349,13 @@ packages:
       url: "https://github.com/Mythar/flutter_font_awesome_web_names"
     source: git
     version: "0.0.4"
+  flutter_highlight:
+    dependency: "direct main"
+    description:
+      name: flutter_highlight
+      url: "https://pub.dartlang.org"
+    source: hosted
+    version: "0.7.0"
   flutter_hooks:
     dependency: "direct main"
     description:
@@ -499,6 +506,13 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "2.0.6"
+  highlight:
+    dependency: transitive
+    description:
+      name: highlight
+      url: "https://pub.dartlang.org"
+    source: hosted
+    version: "0.7.0"
   html:
     dependency: "direct main"
     description:
