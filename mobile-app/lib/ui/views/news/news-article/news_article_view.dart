@@ -63,6 +63,13 @@ class NewsArticleView extends StatelessWidget {
                   height: 150,
                 ),
                 NewsBookmarkViewWidget(article: article),
+                const SizedBox(
+                  height: 35,
+                  child: VerticalDivider(
+                    color: Colors.white,
+                    width: 1,
+                  ),
+                ),
                 BottomButton(
                   label: 'Share',
                   icon: Icons.share,
