@@ -8,6 +8,7 @@ import 'package:freecodecamp/app/app.router.dart';
 import 'package:freecodecamp/models/news/article_model.dart';
 import 'package:freecodecamp/service/test_service.dart';
 import 'package:freecodecamp/ui/views/news/html_handler/html_handler.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:stacked/stacked.dart';
 import 'package:http/http.dart' as http;
 import 'package:stacked_services/stacked_services.dart';
@@ -37,16 +38,28 @@ class NewsArticleViewModel extends BaseViewModel {
   }
 
   Future<Article> initState(id) async {
-    _scrollController.addListener(() {
-      if (_scrollController.offset > 425) {
-        _bottomButtonController.animateTo(_scrollController.offset,
-            duration: const Duration(milliseconds: 2500),
+    _scrollController.addListener(() async {
+      SharedPreferences prefs = await SharedPreferences.getInstance();
+
+      if (prefs.getDouble('position') == null) {
+        prefs.setDouble('position', _scrollController.offset);
+      }
+
+      double oldScrollPos = prefs.getDouble('position') as double;
+
+      if (_scrollController.offset <= oldScrollPos) {
+        _bottomButtonController.animateTo(
+            _bottomButtonController.position.maxScrollExtent - 50,
+            duration: const Duration(milliseconds: 1000),
             curve: Curves.easeInOut);
       } else {
         _bottomButtonController.animateTo(0,
-            duration: const Duration(milliseconds: 500),
+            duration: const Duration(milliseconds: 1000),
             curve: Curves.easeInOut);
       }
+      Timer(const Duration(seconds: 2), () {
+        prefs.setDouble('position', _scrollController.offset);
+      });
     });
 
     if (await _testservice.developmentMode()) {
@@ -64,6 +77,12 @@ class NewsArticleViewModel extends BaseViewModel {
   List<Widget> initLazyLoading(html, context, article) {
     List<Widget> elements = HtmlHandler.htmlHandler(html, context, article);
     return elements;
+  }
+
+  Future<void> removeScrollPosition() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+
+    prefs.remove('position');
   }
 
   Future<Article> fetchArticle(articleId) async {

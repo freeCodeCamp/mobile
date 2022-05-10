@@ -10,7 +10,6 @@ import 'package:freecodecamp/ui/views/news/news-image-viewer/news_image_viewer.d
 import 'package:html/dom.dart' as dom;
 import 'package:url_launcher/url_launcher.dart';
 import 'package:youtube_player_iframe/youtube_player_iframe.dart';
-import 'dart:developer' as dev;
 
 class HtmlHandler {
   HtmlHandler({Key? key, required this.html, required this.context});
@@ -44,7 +43,6 @@ class HtmlHandler {
       context,
       MaterialPageRoute(builder: (context) => NewsImageView(imgUrl: imgUrl)),
     );
-    dev.log('hgi');
   }
 
   static htmlWidgetBuilder(child, BuildContext context) {

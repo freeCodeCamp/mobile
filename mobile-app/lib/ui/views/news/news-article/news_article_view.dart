@@ -16,6 +16,7 @@ class NewsArticleView extends StatelessWidget {
   Widget build(BuildContext context) {
     return ViewModelBuilder<NewsArticleViewModel>.reactive(
       onModelReady: (model) => model.initState(refId),
+      onDispose: (model) => model.removeScrollPosition(),
       builder: (context, model, child) => Scaffold(
         backgroundColor: const Color(0xFF0a0a23),
         body: FutureBuilder<Article>(
@@ -58,6 +59,9 @@ class NewsArticleView extends StatelessWidget {
           children: [
             Row(
               children: [
+                Container(
+                  height: 150,
+                ),
                 NewsBookmarkViewWidget(article: article),
                 BottomButton(
                   label: 'Share',
@@ -69,9 +73,6 @@ class NewsArticleView extends StatelessWidget {
                 )
               ],
             ),
-            Container(
-              height: 800,
-            )
           ],
         ),
       ),
