@@ -38,6 +38,17 @@ class NewsArticleViewModel extends BaseViewModel {
   }
 
   Future<Article> initState(id) async {
+    initBottomButtonAnimation();
+    handleBottomButtonAnimation();
+
+    if (await _testservice.developmentMode()) {
+      return readFromFiles();
+    } else {
+      return fetchArticle(id);
+    }
+  }
+
+  Future<void> handleBottomButtonAnimation() async {
     _scrollController.addListener(() async {
       SharedPreferences prefs = await SharedPreferences.getInstance();
 
@@ -61,12 +72,19 @@ class NewsArticleViewModel extends BaseViewModel {
         prefs.setDouble('position', _scrollController.offset);
       });
     });
+  }
 
-    if (await _testservice.developmentMode()) {
-      return readFromFiles();
-    } else {
-      return fetchArticle(id);
-    }
+  Future<void> initBottomButtonAnimation() async {
+    // if the user has not scrolled yet the bottom buttons will not appear
+    // this means we need to animate it manually.
+    Future.delayed(
+        const Duration(seconds: 1),
+        () => {
+              _bottomButtonController.animateTo(
+                  _bottomButtonController.position.maxScrollExtent - 50,
+                  duration: const Duration(milliseconds: 1000),
+                  curve: Curves.easeInOut)
+            });
   }
 
   static void goToAuthorProfile(String slug) {
