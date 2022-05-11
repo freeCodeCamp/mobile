@@ -24,7 +24,8 @@
     "postinstall": "cd mobile-app && flutter pub get",
     "develop": "npm-run-all flutter:build-runner -p develop:*",
     "develop:api": "cd mobile-api && npm run dev",
-    "develop:app": "cd mobile-app && flutter run",
+    "develop:scripts": "cd mobile-app && dart run --enable-asserts  lib/scripts/init_validation_schema.dart",
+    "develop:app": "cd mobile-app && flutter run ",
     "flutter:build-runner": "cd mobile-app && flutter pub run build_runner build --delete-conflicting-outputs"
   },
   "devDependencies": {
