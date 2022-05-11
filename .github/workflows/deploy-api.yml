@@ -17,10 +17,7 @@ jobs:
     steps:
       - name: Checkout source code
         uses: actions/checkout@v2
-      
-      - name: Create new validation schemas
         
-
       - name: Change directory to API
         run: cd mobile-api
       

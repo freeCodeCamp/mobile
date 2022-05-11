@@ -3,7 +3,7 @@ import 'dart:io';
 import 'package:freecodecamp/models/main/user_model.dart';
 
 void main() async {
-  File file = File('./lib/scripts/schema-keys.txt');
+  File file = File('./lib/scripts/schema-keys.json');
 
   Map<String, dynamic> schema = await FccUserModel.returnSchemaKeys();
 
@@ -11,11 +11,5 @@ void main() async {
     await file.create(recursive: true);
   }
 
-  List userModelKeys = [];
-
-  schema.forEach((key, value) {
-    userModelKeys.add(key);
-  });
-
-  file.writeAsString(userModelKeys.toString());
+  file.writeAsString(jsonEncode(schema));
 }
