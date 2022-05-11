@@ -99,6 +99,8 @@ class NewsArticleViewModel extends BaseViewModel {
 
   Future<void> removeScrollPosition() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
+    _scrollController.dispose();
+    _bottomButtonController.dispose();
 
     prefs.remove('position');
   }
