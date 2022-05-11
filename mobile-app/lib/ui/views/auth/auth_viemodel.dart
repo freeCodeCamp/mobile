@@ -1,61 +1,41 @@
 import 'dart:async';
-import 'dart:convert';
-import 'dart:developer';
-
-import 'package:flutter/material.dart';
-import 'package:flutter_appauth/flutter_appauth.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
-import 'package:flutter_webview_plugin/flutter_webview_plugin.dart';
-import 'package:flutter_secure_storage/flutter_secure_storage.dart';
+import 'package:freecodecamp/service/authentication_service.dart';
 import 'package:stacked/stacked.dart';
-import 'package:http/http.dart' as http;
-import 'package:dart_jsonwebtoken/dart_jsonwebtoken.dart';
+import 'package:freecodecamp/app/app.locator.dart';
 
+// import 'dart:developer';
 class AuthViewModel extends BaseViewModel {
   bool isAuthBusy = false;
   bool isLoggedIn = false;
-  String errorMessage = '';
-  late String name;
-  late String picture;
-  final FlutterAppAuth appAuth = FlutterAppAuth();
-  final FlutterSecureStorage secureStorage = const FlutterSecureStorage();
-  final browser = FlutterWebviewPlugin();
+  final _authenticationService = locator<AuthenticationService>();
 
   void initState() async {
     await dotenv.load(fileName: '.env');
+    // await _authenticationService.init();
+    isLoggedIn = _authenticationService.isLoggedIn;
+    notifyListeners();
   }
 
-  Future<void> loginAction(BuildContext context) async {
-    // isAuthBusy = true;
-    // notifyListeners();
-    browser.onUrlChanged.listen((String url) {
-      log('onUrlChanged: $url');
-      if (url ==
-          'https://www.freecodecamp.dev/learn/?messages=success%5B0%5D%3Dflash.signin-success') {
-        log('LOGGED IN');
-        isLoggedIn = true;
-        notifyListeners();
-        browser.getCookies().then((cookies) {
-          log('cookies: $cookies');
-          cookies.forEach((key, value) {
-            log('$key: $value');
-          });
-        });
-        browser.close();
-      }
-    });
-    browser.launch(
-      'https://api.freecodecamp.dev/signin',
-      clearCookies: true,
-      clearCache: true,
-      debuggingEnabled: true,
-      userAgent: 'random',
-    );
+  Future<void> loginAction() async {
+    isAuthBusy = true;
+    notifyListeners();
+    await _authenticationService.login();
+    isAuthBusy = false;
+    isLoggedIn = true;
+    notifyListeners();
   }
 
-  @override
-  void dispose() {
-    browser.dispose();
-    super.dispose();
+  Future<void> logoutAction() async {
+    isAuthBusy = true;
+    notifyListeners();
+    await _authenticationService.logout();
+    isAuthBusy = false;
+    isLoggedIn = false;
+    notifyListeners();
+  }
+
+  Future<void> showKeys() async {
+    await _authenticationService.showKeys();
   }
 }

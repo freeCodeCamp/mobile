@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_webview_plugin/flutter_webview_plugin.dart';
 import 'package:freecodecamp/ui/views/auth/auth_viemodel.dart';
 import 'package:freecodecamp/ui/widgets/drawer_widget/drawer_widget_view.dart';
 import 'package:stacked/stacked.dart';
@@ -22,17 +21,27 @@ class AuthView extends StatelessWidget {
           child: model.isAuthBusy
               ? const CircularProgressIndicator()
               : model.isLoggedIn
-                  ? const Text('Logged in')
+                  ? Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        const Text('Logged In'),
+                        ElevatedButton(
+                          onPressed: model.logoutAction,
+                          child: const Text('Logout'),
+                        ),
+                        ElevatedButton(
+                          onPressed: model.showKeys,
+                          child: const Text('Show Keys'),
+                        ),
+                      ],
+                    )
                   : Column(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
                         ElevatedButton(
-                          onPressed: () {
-                            model.loginAction(context);
-                          },
+                          onPressed: model.loginAction,
                           child: const Text('Login'),
                         ),
-                        Text(model.errorMessage),
                       ],
                     ),
         ),
