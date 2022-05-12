@@ -24,6 +24,7 @@ import '../ui/views/news/news-article/news_article_view.dart';
 import '../ui/views/news/news-author/news_author_view.dart';
 import '../ui/views/news/news-bookmark/news_bookmark_view.dart';
 import '../ui/views/news/news-feed/news_feed_view.dart';
+import '../ui/views/news/news-image-viewer/news_image_viewer.dart';
 import '../ui/views/podcast/podcast-list/podcast_list_view.dart';
 import '../ui/views/settings/forumSettings/forum_settings_view.dart';
 import '../ui/views/settings/podcastSettings/podcast_settings_view.dart';
@@ -36,6 +37,7 @@ class Routes {
   static const String newsBookmarkPostView = '/news-bookmark-post-view';
   static const String newsFeedView = '/news-feed-view';
   static const String newsAuthorView = '/news-author-view';
+  static const String newsImageView = '/news-image-view';
   static const String forumCategoryView = '/forum-category-view';
   static const String forumPostFeedView = '/forum-post-feed-view';
   static const String forumPostView = '/forum-post-view';
@@ -53,6 +55,7 @@ class Routes {
     newsBookmarkPostView,
     newsFeedView,
     newsAuthorView,
+    newsImageView,
     forumCategoryView,
     forumPostFeedView,
     forumPostView,
@@ -76,6 +79,7 @@ class StackedRouter extends RouterBase {
     RouteDef(Routes.newsBookmarkPostView, page: NewsBookmarkPostView),
     RouteDef(Routes.newsFeedView, page: NewsFeedView),
     RouteDef(Routes.newsAuthorView, page: NewsAuthorView),
+    RouteDef(Routes.newsImageView, page: NewsImageView),
     RouteDef(Routes.forumCategoryView, page: ForumCategoryView),
     RouteDef(Routes.forumPostFeedView, page: ForumPostFeedView),
     RouteDef(Routes.forumPostView, page: ForumPostView),
@@ -149,6 +153,16 @@ class StackedRouter extends RouterBase {
         builder: (context) => NewsAuthorView(
           key: args.key,
           authorSlug: args.authorSlug,
+        ),
+        settings: data,
+      );
+    },
+    NewsImageView: (data) {
+      var args = data.getArgs<NewsImageViewArguments>(nullOk: false);
+      return MaterialPageRoute<dynamic>(
+        builder: (context) => NewsImageView(
+          key: args.key,
+          imgUrl: args.imgUrl,
         ),
         settings: data,
       );
@@ -274,6 +288,13 @@ class NewsAuthorViewArguments {
   final Key? key;
   final String authorSlug;
   NewsAuthorViewArguments({this.key, required this.authorSlug});
+}
+
+/// NewsImageView arguments holder class
+class NewsImageViewArguments {
+  final Key? key;
+  final String imgUrl;
+  NewsImageViewArguments({this.key, required this.imgUrl});
 }
 
 /// ForumCategoryView arguments holder class

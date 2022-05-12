@@ -9,7 +9,6 @@ import 'package:http/http.dart' as http;
 import 'package:jiffy/jiffy.dart';
 import 'package:stacked/stacked.dart';
 import 'package:stacked_services/stacked_services.dart';
-import 'dart:developer' as dev;
 
 class NewsFeedModel extends BaseViewModel {
   int _pageNumber = 1;
@@ -69,7 +68,6 @@ class NewsFeedModel extends BaseViewModel {
     String url =
         "${dotenv.env['NEWSURL']}posts/?key=${dotenv.env['NEWSKEY']}$concact";
 
-    dev.log(url);
     final response = await http.get(Uri.parse(url));
     if (response.statusCode == 200) {
       var articleJson = json.decode(response.body)['posts'];

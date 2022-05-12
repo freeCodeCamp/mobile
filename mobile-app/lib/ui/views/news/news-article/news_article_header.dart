@@ -1,8 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:freecodecamp/models/news/article_model.dart';
-import 'package:freecodecamp/ui/views/news/news-article/news_article_viewmodel.dart';
-import 'package:freecodecamp/ui/views/news/news-bookmark/news_bookmark_widget.dart';
-import 'package:url_launcher/url_launcher.dart';
 
 class NewsArticleHeader extends StatelessWidget {
   const NewsArticleHeader({Key? key, required this.article}) : super(key: key);
@@ -13,83 +10,43 @@ class NewsArticleHeader extends StatelessWidget {
   Widget build(BuildContext context) {
     return Column(
       children: [
-        Stack(
+        AspectRatio(
+            aspectRatio: 16 / 9,
+            child: Image.network(
+              article.featureImage,
+              fit: BoxFit.cover,
+            )),
+        Row(
           children: [
-            AspectRatio(
-              aspectRatio: 16 / 9,
-              child: FadeInImage.assetNetwork(
-                placeholder: 'assets/images/freecodecamp-banner.png',
-                image: article.featureImage,
-                fit: BoxFit.cover,
+            Expanded(
+              child: Container(
+                color: const Color.fromRGBO(0x2A, 0x2A, 0x40, 1),
+                padding: const EdgeInsets.all(16),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      article.title,
+                      style: const TextStyle(fontSize: 24, height: 1.5),
+                      key: const Key('title'),
+                    ),
+                    Text(
+                      'Written by ${article.authorName}',
+                      style: const TextStyle(height: 1.5),
+                    ),
+                    Wrap(
+                      children: [
+                        for (int j = 0;
+                            j < article.tagNames.length && j < 3;
+                            j++)
+                          article.tagNames[j]
+                      ],
+                    ),
+                  ],
+                ),
               ),
             ),
-            Padding(
-              padding: const EdgeInsets.all(16.0),
-              child: Align(
-                alignment: Alignment.topRight,
-                child: ElevatedButton.icon(
-                  onPressed: () {
-                    launch(article.url as String);
-                  },
-                  icon: const Icon(Icons.open_in_new_sharp),
-                  label: const Text('open in browser'),
-                  style: ElevatedButton.styleFrom(
-                      primary: const Color(0xFF0a0a23)),
-                ),
-              ),
-            )
           ],
-        ),
-        Container(
-          color: const Color.fromRGBO(0x2A, 0x2A, 0x40, 1),
-          padding: const EdgeInsets.all(16),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text(
-                article.title,
-                style: const TextStyle(fontSize: 24),
-                key: const Key('title'),
-              ),
-              Wrap(
-                children: [
-                  for (int j = 0; j < article.tagNames.length && j < 3; j++)
-                    article.tagNames[j]
-                ],
-              ),
-              ListTile(
-                // ignore: unnecessary_null_comparison
-                leading: article.profileImage == null
-                    ? Image.asset(
-                        'assets/images/placeholder-profile-img.png',
-                        height: 50,
-                        width: 50,
-                        fit: BoxFit.cover,
-                      )
-                    : Image.network(
-                        article.profileImage as String,
-                        height: 50,
-                        width: 50,
-                        fit: BoxFit.cover,
-                      ),
-                title: Text(
-                  'Written by ' + article.authorName,
-                  style: const TextStyle(
-                    fontSize: 16,
-                  ),
-                ),
-                onTap: () {
-                  NewsArticleViewModel.goToAuthorProfile(article.authorSlug);
-                },
-                contentPadding: const EdgeInsets.only(top: 16, bottom: 8),
-              ),
-              Row(
-                children: [
-                  Expanded(child: NewsBookmarkViewWidget(article: article)),
-                ],
-              ),
-            ],
-          ),
         ),
       ],
     );

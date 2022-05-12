@@ -2,7 +2,18 @@ import * as mongoose from 'mongoose';
 
 const Schema = mongoose.Schema;
 
-const Podcast = new Schema({
+export interface Podcast {
+  _id: mongoose.Types.ObjectId;
+  title: string;
+  description: string;
+  feedUrl: string;
+  podcastLink: string;
+  imageLink: string;
+  copyright: string;
+  numOfEps: number;
+}
+
+const PodcastSchema = new Schema<Podcast>({
   title: {
     type: String,
     required: true,
@@ -34,5 +45,5 @@ const Podcast = new Schema({
   },
 });
 
-export default mongoose.models.Podcast ||
-  mongoose.model('Podcast', Podcast, 'podcasts');
+export default (mongoose.models.Podcast as mongoose.Model<Podcast>) ||
+  mongoose.model('Podcast', PodcastSchema, 'podcasts');
