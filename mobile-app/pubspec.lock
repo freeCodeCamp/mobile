@@ -321,20 +321,6 @@ packages:
     description: flutter
     source: sdk
     version: "0.0.0"
-  flutter_appauth:
-    dependency: "direct main"
-    description:
-      name: flutter_appauth
-      url: "https://pub.dartlang.org"
-    source: hosted
-    version: "2.4.1"
-  flutter_appauth_platform_interface:
-    dependency: transitive
-    description:
-      name: flutter_appauth_platform_interface
-      url: "https://pub.dartlang.org"
-    source: hosted
-    version: "4.1.0"
   flutter_blurhash:
     dependency: transitive
     description:
@@ -392,7 +378,7 @@ packages:
     source: hosted
     version: "2.2.1"
   flutter_inappwebview:
-    dependency: "direct main"
+    dependency: transitive
     description:
       name: flutter_inappwebview
       url: "https://pub.dartlang.org"
