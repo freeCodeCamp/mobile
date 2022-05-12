@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:developer';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:freecodecamp/service/authentication_service.dart';
 import 'package:stacked/stacked.dart';
@@ -6,9 +7,11 @@ import 'package:freecodecamp/app/app.locator.dart';
 
 // import 'dart:developer';
 class AuthViewModel extends BaseViewModel {
+  final _authenticationService = locator<AuthenticationService>();
+
   bool isAuthBusy = false;
   bool isLoggedIn = false;
-  final _authenticationService = locator<AuthenticationService>();
+  String? user;
 
   void initState() async {
     await dotenv.load(fileName: '.env');
@@ -37,5 +40,10 @@ class AuthViewModel extends BaseViewModel {
 
   Future<void> showKeys() async {
     await _authenticationService.showKeys();
+  }
+
+  Future<void> fetchUser() async {
+    user = await _authenticationService.fetchUser();
+    notifyListeners();
   }
 }

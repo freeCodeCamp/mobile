@@ -21,19 +21,28 @@ class AuthView extends StatelessWidget {
           child: model.isAuthBusy
               ? const CircularProgressIndicator()
               : model.isLoggedIn
-                  ? Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        const Text('Logged In'),
-                        ElevatedButton(
-                          onPressed: model.logoutAction,
-                          child: const Text('Logout'),
-                        ),
-                        ElevatedButton(
-                          onPressed: model.showKeys,
-                          child: const Text('Show Keys'),
-                        ),
-                      ],
+                  ? SingleChildScrollView(
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          const Text('Logged In'),
+                          ElevatedButton(
+                            onPressed: model.logoutAction,
+                            child: const Text('Logout'),
+                          ),
+                          ElevatedButton(
+                            onPressed: model.showKeys,
+                            child: const Text('Show Keys'),
+                          ),
+                          ElevatedButton(
+                            onPressed: model.fetchUser,
+                            child: const Text('Fetch User'),
+                          ),
+                          model.user != null
+                              ? Text('User: ${model.user}')
+                              : Container(),
+                        ],
+                      ),
                     )
                   : Column(
                       mainAxisAlignment: MainAxisAlignment.center,

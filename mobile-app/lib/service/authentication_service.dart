@@ -1,5 +1,6 @@
 import 'dart:developer';
 
+import 'package:dio/dio.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:flutter_webview_plugin/flutter_webview_plugin.dart';
 
@@ -12,6 +13,7 @@ class AuthenticationService {
   String _csrf = '';
   String _csrfToken = '';
   String _jwtAccessToken = '';
+  Dio dio = Dio();
 
   factory AuthenticationService() {
     return _authenticationService;
@@ -26,6 +28,7 @@ class AuthenticationService {
       _jwtAccessToken = (await secureStorage.read(key: 'jwt_access_token'))!;
       isLoggedIn = true;
     }
+    dio.options.baseUrl = 'https://api.freecodecamp.dev';
   }
 
   Future<void> login() async {
@@ -68,6 +71,19 @@ class AuthenticationService {
     log('_csrf: $_csrf');
     log('_csrfToken: $_csrfToken');
     log('_jwtAccessToken: $_jwtAccessToken');
+  }
+
+  Future<String> fetchUser() async {
+    Response res = await dio.get(
+      '/user/get-session-user',
+      options: Options(
+        headers: {
+          'CSRF-Token': _csrfToken,
+          'Cookie': 'jwt_access_token=$_jwtAccessToken; _csrf=$_csrf',
+        },
+      ),
+    );
+    return res.data.toString();
   }
 
   AuthenticationService._internal();
