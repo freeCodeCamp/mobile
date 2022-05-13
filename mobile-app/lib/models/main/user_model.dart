@@ -95,6 +95,9 @@ class FccUserModel {
       this.emailAuthLinkTTL,
       this.emailVerifyTTL});
 
+  // IMPORTANT : When the user model, changes this Map has to be changed manually to match it.
+  // when the user model changes on Main the same has to be done.
+
   static Future<Map<String, dynamic>> returnSchemaKeys() async {
     return {
       'id': '5bd30e0f1caf6ac3ddddddb5',
