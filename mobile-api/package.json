@@ -16,7 +16,7 @@
     "lint:prettier": "prettier --check .",
     "start": "NODE_ENV=production node prod/index.js",
     "test": "jest",
-    "pre:build:schema": "cd ../mobile-app && dart run --enable-asserts  lib/scripts/init_validation_schema.dart && bash ./lib/scripts/copy_schema.sh"
+    "pre:build:schema": "cd ../mobile-app && dart run --enable-asserts lib/scripts/init_validation_schema.dart && mv ./lib/scripts/schema-keys.json ../mobile-api/src/schema-keys.json"
   },
   "dependencies": {
     "@babel/preset-env": "7.17.10",

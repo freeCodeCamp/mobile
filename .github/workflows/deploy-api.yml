@@ -17,10 +17,10 @@ jobs:
     steps:
       - name: Checkout source code
         uses: actions/checkout@v2
-        
+
       - name: Change directory to API
         run: cd mobile-api
-      
+
       - name: Use Node.js ${{ matrix.node-version }}
         uses: actions/setup-node@v2
         with:
