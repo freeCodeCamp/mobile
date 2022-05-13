@@ -13,7 +13,15 @@ class LearnView extends StatelessWidget {
         viewModelBuilder: () => LearnViewModel(),
         onModelReady: (model) => model.init(),
         builder: (context, model, child) => Scaffold(
-              appBar: AppBar(),
+              appBar: AppBar(
+                title: const Text('Learn'),
+                actions: [
+                  IconButton(
+                    icon: const Icon(Icons.download),
+                    onPressed: () => model.logCookies(),
+                  )
+                ],
+              ),
               drawer: const DrawerWidgetView(),
               body: WillPopScope(
                 onWillPop: () async {

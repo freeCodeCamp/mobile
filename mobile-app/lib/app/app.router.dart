@@ -11,6 +11,7 @@ import 'package:stacked/stacked.dart';
 import 'package:stacked/stacked_annotations.dart';
 
 import '../models/news/bookmarked_article_model.dart';
+import '../ui/views/auth/auth_view.dart';
 import '../ui/views/code_radio/code_radio_view.dart';
 import '../ui/views/forum/forum-categories/forum_category_view.dart';
 import '../ui/views/forum/forum-login/forum_login_view.dart';
@@ -45,6 +46,7 @@ class Routes {
   static const String forumSettingsView = '/forum-settings-view';
   static const String forumUserProfileView = '/forum-user-profile-view';
   static const String codeRadioView = '/code-radio-view';
+  static const String authView = '/auth-view';
   static const all = <String>{
     homeView,
     podcastListView,
@@ -62,6 +64,7 @@ class Routes {
     forumSettingsView,
     forumUserProfileView,
     codeRadioView,
+    authView,
   };
 }
 
@@ -85,6 +88,7 @@ class StackedRouter extends RouterBase {
     RouteDef(Routes.forumSettingsView, page: ForumSettingsView),
     RouteDef(Routes.forumUserProfileView, page: ForumUserProfileView),
     RouteDef(Routes.codeRadioView, page: CodeRadioView),
+    RouteDef(Routes.authView, page: AuthView),
   ];
   @override
   Map<Type, StackedRouteFactory> get pagesMap => _pagesMap;
@@ -232,6 +236,12 @@ class StackedRouter extends RouterBase {
     CodeRadioView: (data) {
       return MaterialPageRoute<dynamic>(
         builder: (context) => const CodeRadioView(),
+        settings: data,
+      );
+    },
+    AuthView: (data) {
+      return MaterialPageRoute<dynamic>(
+        builder: (context) => const AuthView(),
         settings: data,
       );
     },
