@@ -1,21 +1,22 @@
 import 'dart:convert';
 import 'dart:developer';
 
+import 'package:curl_logger_dio_interceptor/curl_logger_dio_interceptor.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:flutter_webview_plugin/flutter_webview_plugin.dart';
 import 'package:freecodecamp/models/main/user_model.dart';
+import 'package:pretty_dio_logger/pretty_dio_logger.dart';
 
 class AuthenticationService {
   static final AuthenticationService _authenticationService =
       AuthenticationService._internal();
   final FlutterSecureStorage secureStorage = const FlutterSecureStorage();
-  final browser = FlutterWebviewPlugin();
   bool isLoggedIn = false;
   String _csrf = '';
   String _csrfToken = '';
   String _jwtAccessToken = '';
-  Dio dio = Dio();
+  final Dio _dio = Dio();
 
   FccUserModel? userModel;
 
@@ -24,6 +25,11 @@ class AuthenticationService {
   }
 
   Future<void> init() async {
+    _dio.options.baseUrl = 'https://api.freecodecamp.dev';
+    // Below two interceptors are for debugging purposes only
+    // They will be put behind a devMode flag later
+    _dio.interceptors.add(PrettyDioLogger(responseBody: false));
+    _dio.interceptors.add(CurlLoggerDioInterceptor());
     if ((await secureStorage.containsKey(key: 'jwt_access_token')) == true &&
         (await secureStorage.containsKey(key: 'csrf_token')) == true &&
         (await secureStorage.containsKey(key: 'csrf')) == true) {
@@ -33,7 +39,6 @@ class AuthenticationService {
       isLoggedIn = true;
       fetchUser();
     }
-    dio.options.baseUrl = 'https://api.freecodecamp.dev';
   }
 
   void setFccUserModel(Map<String, dynamic> data) {
@@ -41,6 +46,7 @@ class AuthenticationService {
   }
 
   Future<void> login() async {
+    final browser = FlutterWebviewPlugin();
     browser.onUrlChanged.listen((String url) async {
       log('onUrlChanged: $url');
       if (url ==
@@ -57,6 +63,7 @@ class AuthenticationService {
         log('LOGGED IN');
         browser.close();
         fetchUser();
+        browser.dispose();
       }
     });
     browser.launch(
@@ -81,7 +88,7 @@ class AuthenticationService {
   }
 
   Future<Map<String, dynamic>> fetchUser() async {
-    Response res = await dio.get(
+    Response res = await _dio.get(
       '/user/get-session-user',
       options: Options(
         headers: {
