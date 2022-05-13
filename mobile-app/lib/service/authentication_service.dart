@@ -24,6 +24,7 @@ class AuthenticationService {
   }
 
   Future<void> init() async {
+    dio.options.baseUrl = 'https://api.freecodecamp.dev';
     if ((await secureStorage.containsKey(key: 'jwt_access_token')) == true &&
         (await secureStorage.containsKey(key: 'csrf_token')) == true &&
         (await secureStorage.containsKey(key: 'csrf')) == true) {
@@ -33,7 +34,6 @@ class AuthenticationService {
       isLoggedIn = true;
       fetchUser();
     }
-    dio.options.baseUrl = 'https://api.freecodecamp.dev';
   }
 
   void setFccUserModel(Map<String, dynamic> data) {
