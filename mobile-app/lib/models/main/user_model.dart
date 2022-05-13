@@ -18,7 +18,7 @@ class FccUserModel {
   final String email;
 
   final bool emailVerified;
-  final bool isBanned;
+  final bool? isBanned;
   final bool isCheater;
   final bool acceptedPrivacyTerms;
   final bool sendQuincyEmail;
@@ -28,7 +28,7 @@ class FccUserModel {
   final String? emailVerifyTTL;
 
   final String username;
-  final String about;
+  final String? about;
   final String name;
   final String picture;
   final String currentChallengeId;
@@ -52,8 +52,8 @@ class FccUserModel {
   final bool isMachineLearningPyCertV7;
   final bool isRelationalDatabaseCertV8;
 
-  final List badges;
-  final List<int> progressTimestamps;
+  final List? badges;
+  final List<int>? progressTimestamps;
 
   final ProfileUI profileUI;
 
@@ -61,7 +61,7 @@ class FccUserModel {
       {required this.id,
       required this.email,
       required this.emailVerified,
-      required this.isBanned,
+      this.isBanned,
       required this.isCheater,
       required this.acceptedPrivacyTerms,
       required this.sendQuincyEmail,
@@ -90,10 +90,46 @@ class FccUserModel {
       required this.isRelationalDatabaseCertV8,
       required this.profileUI,
       required this.isDonating,
-      required this.badges,
-      required this.progressTimestamps,
+      this.badges,
+      this.progressTimestamps,
       this.emailAuthLinkTTL,
       this.emailVerifyTTL});
+
+  factory FccUserModel.fromJson(Map<String, dynamic> data) {
+    //data['user'][data['result']]
+    return FccUserModel(
+        id: data['id'],
+        email: data['email'],
+        emailVerified: data['emailVerified'],
+        isCheater: data['isCheater'],
+        acceptedPrivacyTerms: data['acceptedPrivacyTerms'],
+        sendQuincyEmail: data['sendQuincyEmail'],
+        username: data['username'],
+        about: data['about'],
+        name: data['name'],
+        picture: data['picture'],
+        currentChallengeId: data['currentChallengeId'],
+        isHonest: data['isHonest'],
+        isFrontEndCert: data['isFrontEndCert'],
+        isDataVisCert: data['isDataVisCert'],
+        isBackEndCert: data['isBackEndCert'],
+        isFullStackCert: data['isFullStackCert'],
+        isRespWebDesignCert: data['isFullStackCert'],
+        is2018DataVisCert: data['is2018DataVisCert'],
+        isFrontEndLibsCert: data['isFrontEndLibsCert'],
+        isJsAlgoDataStructCert: data['isJsAlgoDataStructCert'],
+        isApisMicroservicesCert: data['isApisMicroservicesCert'],
+        isInfosecQaCert: data['isInfosecQaCert'],
+        isQaCertV7: data['isQaCertV7'],
+        isInfosecCertV7: data['isInfosecCertV7'],
+        is2018FullStackCert: data['is2018FullStackCert'],
+        isSciCompPyCertV7: data['isSciCompPyCertV7'],
+        isDataAnalysisPyCertV7: data['isDataAnalysisPyCertV7'],
+        isMachineLearningPyCertV7: data['isMachineLearningPyCertV7'],
+        isRelationalDatabaseCertV8: data['isRelationalDatabaseCertV8'],
+        profileUI: ProfileUI.fromJson(data['profileUI']),
+        isDonating: data['isDonating']);
+  }
 
   // IMPORTANT : When the user model, changes this Map has to be changed manually to match it.
   // when the user model changes on Main the same has to be done.
@@ -172,4 +208,18 @@ class ProfileUI {
       required this.showPoints,
       required this.showPortfolio,
       required this.showTimeLine});
+
+  factory ProfileUI.fromJson(Map<String, dynamic> data) {
+    return ProfileUI(
+        isLocked: data['isLocked'],
+        showAbout: data['showAbout'],
+        showCerts: data['showCerts'],
+        showDonation: data['showDonation'],
+        showHeatMap: data['showHeatMap'],
+        showLocation: data['showLocation'],
+        showName: data['showName'],
+        showPoints: data['showPoints'],
+        showPortfolio: data['showPortfolio'],
+        showTimeLine: data['showTimeLine']);
+  }
 }

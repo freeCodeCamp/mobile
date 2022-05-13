@@ -1,3 +1,4 @@
+import 'dart:convert';
 import 'dart:developer';
 
 import 'package:dio/dio.dart';
@@ -83,6 +84,8 @@ class AuthenticationService {
         },
       ),
     );
+
+    log(jsonEncode(res.data));
     return res.data.toString();
   }
 
