@@ -46,7 +46,7 @@ class FccUserModel {
   final bool isInfosecQaCert;
   final bool isQaCertV7;
   final bool isInfosecCertV7;
-  final bool is2018FullStackCert;
+  final bool? is2018FullStackCert;
   final bool isSciCompPyCertV7;
   final bool isDataAnalysisPyCertV7;
   final bool isMachineLearningPyCertV7;
@@ -83,7 +83,7 @@ class FccUserModel {
       required this.isInfosecQaCert,
       required this.isQaCertV7,
       required this.isInfosecCertV7,
-      required this.is2018FullStackCert,
+      this.is2018FullStackCert,
       required this.isSciCompPyCertV7,
       required this.isDataAnalysisPyCertV7,
       required this.isMachineLearningPyCertV7,
@@ -122,7 +122,6 @@ class FccUserModel {
         isInfosecQaCert: data['isInfosecQaCert'],
         isQaCertV7: data['isQaCertV7'],
         isInfosecCertV7: data['isInfosecCertV7'],
-        is2018FullStackCert: data['is2018FullStackCert'],
         isSciCompPyCertV7: data['isSciCompPyCertV7'],
         isDataAnalysisPyCertV7: data['isDataAnalysisPyCertV7'],
         isMachineLearningPyCertV7: data['isMachineLearningPyCertV7'],

@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 class DrawerButton extends StatefulWidget {
   const DrawerButton({
     Key? key,
+    this.textColor = Colors.white,
     required this.component,
     required this.icon,
     required this.route,
@@ -11,7 +12,7 @@ class DrawerButton extends StatefulWidget {
   final String component;
   final IconData icon;
   final Function route;
-
+  final Color? textColor;
   @override
   State<StatefulWidget> createState() => _DrawerButtonState();
 }
@@ -23,16 +24,13 @@ class _DrawerButtonState extends State<DrawerButton> {
       padding: const EdgeInsets.all(10.0),
       child: ListTile(
         dense: true,
-        leading: Icon(
-          widget.icon,
-          color: Colors.white,
-        ),
+        leading: Icon(widget.icon, color: widget.textColor),
         title: Text(
           widget.component,
-          style: const TextStyle(
+          style: TextStyle(
               fontSize: 16,
               fontWeight: FontWeight.w400,
-              color: Colors.white,
+              color: widget.textColor,
               letterSpacing: 0.5),
         ),
         onTap: () {

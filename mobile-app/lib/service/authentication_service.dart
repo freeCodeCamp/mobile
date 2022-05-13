@@ -4,6 +4,7 @@ import 'dart:developer';
 import 'package:dio/dio.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:flutter_webview_plugin/flutter_webview_plugin.dart';
+import 'package:freecodecamp/models/main/user_model.dart';
 
 class AuthenticationService {
   static final AuthenticationService _authenticationService =
@@ -15,6 +16,8 @@ class AuthenticationService {
   String _csrfToken = '';
   String _jwtAccessToken = '';
   Dio dio = Dio();
+
+  FccUserModel? userModel;
 
   factory AuthenticationService() {
     return _authenticationService;
@@ -28,8 +31,13 @@ class AuthenticationService {
       _csrfToken = (await secureStorage.read(key: 'csrf_token'))!;
       _jwtAccessToken = (await secureStorage.read(key: 'jwt_access_token'))!;
       isLoggedIn = true;
+      fetchUser();
     }
     dio.options.baseUrl = 'https://api.freecodecamp.dev';
+  }
+
+  void setFccUserModel(Map<String, dynamic> data) {
+    userModel = FccUserModel.fromJson(data);
   }
 
   Future<void> login() async {
@@ -43,14 +51,12 @@ class AuthenticationService {
         _csrf = cookies['"_csrf']!;
         _csrfToken = cookies[' csrf_token']!;
         _jwtAccessToken = cookies[' jwt_access_token']!;
-        log('_csrf: $_csrf');
-        log('_csrfToken: $_csrfToken');
-        log('_jwtAccessToken: $_jwtAccessToken');
         secureStorage.write(key: 'csrf', value: _csrf);
         secureStorage.write(key: 'csrf_token', value: _csrfToken);
         secureStorage.write(key: 'jwt_access_token', value: _jwtAccessToken);
         log('LOGGED IN');
         browser.close();
+        fetchUser();
       }
     });
     browser.launch(
@@ -74,7 +80,7 @@ class AuthenticationService {
     log('_jwtAccessToken: $_jwtAccessToken');
   }
 
-  Future<String> fetchUser() async {
+  Future<Map<String, dynamic>> fetchUser() async {
     Response res = await dio.get(
       '/user/get-session-user',
       options: Options(
@@ -84,9 +90,11 @@ class AuthenticationService {
         },
       ),
     );
+    log(jsonEncode(res.data['user']).toString());
+    setFccUserModel(res.data['user'][res.data['result']]);
 
-    log(jsonEncode(res.data));
-    return res.data.toString();
+    log(userModel!.email);
+    return res.data['user'][res.data['result']];
   }
 
   AuthenticationService._internal();

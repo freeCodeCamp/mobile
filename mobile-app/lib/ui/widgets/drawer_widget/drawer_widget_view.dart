@@ -29,8 +29,12 @@ class DrawerWidgetView extends StatelessWidget {
                         width: 75,
                         height: 75,
                       ),
-                      title: const Text('Anonymous user'),
-                      subtitle: const Text('login to save your progress'),
+                      title: Text(model.auth.isLoggedIn
+                          ? model.returnUsername()
+                          : 'Anonymous user'),
+                      subtitle: Text(model.auth.isLoggedIn
+                          ? 'Our coolest Camper'
+                          : 'login to save your progress'),
                       isThreeLine: true,
                     ),
                     buildDivider(),
@@ -76,12 +80,15 @@ class DrawerWidgetView extends StatelessWidget {
                     ),
                     buildDivider(),
                     DrawerButton(
-                      component: 'LOGIN',
-                      icon: Icons.login,
-                      route: () {
-                        model.routeComponent('LOGIN', context);
-                      },
-                    )
+                        component: model.auth.isLoggedIn ? 'LOG OUT' : 'LOGIN',
+                        icon:
+                            model.auth.isLoggedIn ? Icons.logout : Icons.login,
+                        textColor: model.auth.isLoggedIn
+                            ? const Color.fromARGB(255, 230, 59, 59)
+                            : null,
+                        route: () {
+                          model.handleAuth(context);
+                        })
                   ],
                 ),
               ),
