@@ -1,3 +1,6 @@
+import 'dart:developer';
+import 'dart:io';
+
 import 'package:freecodecamp/enums/dialog_type.dart';
 import 'package:freecodecamp/ui/widgets/setup_dialog_ui.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -5,16 +8,28 @@ import 'package:stacked/stacked.dart';
 import 'package:stacked_services/stacked_services.dart';
 import 'package:webview_flutter/webview_flutter.dart';
 import 'package:freecodecamp/app/app.locator.dart';
+import 'package:webview_cookie_manager/webview_cookie_manager.dart';
 
 class LearnViewModel extends BaseViewModel {
   WebViewController? controller;
   final NavigationService _navigationService = locator<NavigationService>();
   final _dialogService = locator<DialogService>();
+  final cookieManager = WebviewCookieManager();
 
   void init() {
     WebView.platform = SurfaceAndroidWebView();
     setupDialogUi();
     isFirstTimeUsingLearn();
+  }
+
+  void logCookies() async {
+    List<Cookie> cookies = await cookieManager.getCookies('https://www.freecodecamp.org/');
+    // List<Cookie> cookies = await cookieManager.getCookies('api.freecodecamp.org');
+    log('Cookies');
+    for (final cookie in cookies) {
+      log(cookie.toString());
+      // log(cookie.name + ': ' + cookie.value);
+    }
   }
 
   void isFirstTimeUsingLearn() async {
