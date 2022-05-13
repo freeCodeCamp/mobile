@@ -34,7 +34,7 @@ class _WebButtonState extends State<WebButton> {
         title: Text(
           widget.component,
           style: const TextStyle(
-              fontSize: 20,
+              fontSize: 16,
               fontWeight: FontWeight.w400,
               color: Colors.white,
               letterSpacing: 0.5),

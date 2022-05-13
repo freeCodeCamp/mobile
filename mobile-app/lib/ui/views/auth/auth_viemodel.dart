@@ -42,7 +42,7 @@ class AuthViewModel extends BaseViewModel {
   }
 
   Future<void> fetchUser() async {
-    user = await _authenticationService.fetchUser();
+    user = _authenticationService.fetchUser().toString();
     notifyListeners();
   }
 }

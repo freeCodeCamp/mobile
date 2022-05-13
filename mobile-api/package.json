@@ -9,13 +9,14 @@
     "npm": ">=8"
   },
   "scripts": {
-    "build": "tsc",
+    "build": "tsc && npm run pre:build:schema",
     "dev": "nodemon src/index.ts",
     "lint": "npm run lint:prettier && npm run lint:src",
     "lint:src": "eslint --max-warnings 0 .",
     "lint:prettier": "prettier --check .",
     "start": "NODE_ENV=production node prod/index.js",
-    "test": "jest"
+    "test": "jest",
+    "pre:build:schema": "cd ../mobile-app && dart run --enable-asserts lib/scripts/init_validation_schema.dart && mv ./lib/scripts/schema-keys.json ../mobile-api/src/schema-keys.json"
   },
   "dependencies": {
     "@babel/preset-env": "7.17.10",

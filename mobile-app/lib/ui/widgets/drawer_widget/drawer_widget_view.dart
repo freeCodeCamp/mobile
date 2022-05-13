@@ -15,32 +15,29 @@ class DrawerWidgetView extends StatelessWidget {
       viewModelBuilder: () => DrawerWidgtetViewModel(),
       builder: (context, model, child) => Drawer(
         child: Container(
-          color: const Color(0xFF0a0a23),
+          color: const Color.fromRGBO(0x2A, 0x2A, 0x40, 1),
           child: Column(
             children: [
               Expanded(
                 child: ListView(
                   physics: const NeverScrollableScrollPhysics(),
                   children: [
-                    Image.asset(
-                      'assets/images/freecodecamp-banner.png',
-                    ),
-                    const SizedBox(
-                      height: 16,
-                    ),
-                    const Padding(
-                      padding: EdgeInsets.only(left: 28.0),
-                      child: Text(
-                        'Menu',
-                        style: TextStyle(
-                          fontSize: 26,
-                          color: Colors.white,
-                        ),
+                    ListTile(
+                      contentPadding: const EdgeInsets.all(16),
+                      leading: Image.asset(
+                        'assets/images/placeholder-profile-img.png',
+                        width: 75,
+                        height: 75,
                       ),
+                      title: Text(model.auth.isLoggedIn
+                          ? model.returnUsername()
+                          : 'Anonymous user'),
+                      subtitle: Text(model.auth.isLoggedIn
+                          ? 'Our coolest Camper'
+                          : 'login to save your progress'),
+                      isThreeLine: true,
                     ),
-                    const SizedBox(
-                      height: 16,
-                    ),
+                    buildDivider(),
                     DrawerButton(
                       component: 'NEWS',
                       icon: Icons.forum_outlined,
@@ -48,7 +45,6 @@ class DrawerWidgetView extends StatelessWidget {
                         model.routeComponent('NEWS', context);
                       },
                     ),
-                    buildDivider(),
                     model.showForum
                         ? DrawerButton(
                             component: 'FORUM',
@@ -63,7 +59,6 @@ class DrawerWidgetView extends StatelessWidget {
                             route: () {
                               model.routeComponent('LEARN', context);
                             }),
-                    buildDivider(),
                     DrawerButton(
                       component: 'PODCAST',
                       icon: Icons.podcasts_outlined,
@@ -71,7 +66,6 @@ class DrawerWidgetView extends StatelessWidget {
                         model.routeComponent('PODCAST', context);
                       },
                     ),
-                    buildDivider(),
                     DrawerButton(
                       component: 'RADIO',
                       icon: Icons.radio,
@@ -79,22 +73,22 @@ class DrawerWidgetView extends StatelessWidget {
                         model.routeComponent('CODERADIO', context);
                       },
                     ),
-                    buildDivider(),
                     const WebButton(
                       component: 'DONATE',
                       url: 'https://www.freecodecamp.org/donate/',
                       icon: Icons.favorite,
                     ),
                     buildDivider(),
-                    model.showForum
-                        ? DrawerButton(
-                            component: 'LOGIN',
-                            icon: Icons.login,
-                            route: () {
-                              model.routeComponent('LOGIN', context);
-                            },
-                          )
-                        : Container(),
+                    DrawerButton(
+                        component: model.auth.isLoggedIn ? 'LOG OUT' : 'LOGIN',
+                        icon:
+                            model.auth.isLoggedIn ? Icons.logout : Icons.login,
+                        textColor: model.auth.isLoggedIn
+                            ? const Color.fromARGB(255, 230, 59, 59)
+                            : null,
+                        route: () {
+                          model.handleAuth(context);
+                        })
                   ],
                 ),
               ),
