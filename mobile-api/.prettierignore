@@ -1,2 +1,2 @@
 *.config.js
-./src/schema-keys.json
+src/schema-keys.json
