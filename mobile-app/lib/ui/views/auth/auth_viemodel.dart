@@ -1,5 +1,4 @@
 import 'dart:async';
-import 'dart:developer';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:freecodecamp/service/authentication_service.dart';
 import 'package:stacked/stacked.dart';
