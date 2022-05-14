@@ -1,5 +1,6 @@
 import 'dart:convert';
 
+import 'package:freecodecamp/app/app.locator.dart';
 import 'package:freecodecamp/app/app.router.dart';
 import 'package:freecodecamp/enums/dialog_type.dart';
 import 'package:freecodecamp/models/learn/curriculum_model.dart';
@@ -8,7 +9,6 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:stacked/stacked.dart';
 import 'package:stacked_services/stacked_services.dart';
 import 'package:webview_flutter/webview_flutter.dart';
-import 'package:freecodecamp/app/app.locator.dart';
 import 'package:http/http.dart' as http;
 
 class LearnViewModel extends BaseViewModel {

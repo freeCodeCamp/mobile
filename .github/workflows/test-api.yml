@@ -11,8 +11,8 @@ defaults:
     working-directory: mobile-api
 
 jobs:
-  lint:
-    name: Lint
+  lint-and-test:
+    name: Lint and Test
     runs-on: ubuntu-latest
 
     strategy:
@@ -34,6 +34,9 @@ jobs:
 
       - name: Lint source files
         run: npm run lint
+
+      - name: Run test
+        run: npm test
 
   # test:
   #   name: Test

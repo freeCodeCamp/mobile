@@ -15,73 +15,91 @@ class DrawerWidgetView extends StatelessWidget {
       viewModelBuilder: () => DrawerWidgtetViewModel(),
       builder: (context, model, child) => Drawer(
         child: Container(
-          color: const Color(0xFF0a0a23),
-          child: ListView(
+          color: const Color.fromRGBO(0x2A, 0x2A, 0x40, 1),
+          child: Column(
             children: [
-              Image.asset(
-                'assets/images/freecodecamp-banner.png',
-              ),
-              const SizedBox(
-                height: 16,
-              ),
-              const Padding(
-                padding: EdgeInsets.only(left: 28.0),
-                child: Text(
-                  'Menu',
-                  style: TextStyle(
-                    fontSize: 26,
-                    color: Colors.white,
-                  ),
-                ),
-              ),
-              const SizedBox(
-                height: 16,
-              ),
-              DrawerButton(
-                component: 'NEWS',
-                icon: Icons.forum_outlined,
-                route: () {
-                  model.routeComponent('NEWS', context);
-                },
-              ),
-              buildDivider(),
-              model.showForum
-                  ? DrawerButton(
-                      component: 'FORUM',
+              Expanded(
+                child: ListView(
+                  physics: const NeverScrollableScrollPhysics(),
+                  children: [
+                    ListTile(
+                      contentPadding: const EdgeInsets.all(16),
+                      leading: Image.asset(
+                        'assets/images/placeholder-profile-img.png',
+                        width: 75,
+                        height: 75,
+                      ),
+                      title: Text(model.auth.isLoggedIn
+                          ? model.returnUsername()
+                          : 'Anonymous user'),
+                      subtitle: Text(model.auth.isLoggedIn
+                          ? 'Our coolest Camper'
+                          : 'login to save your progress'),
+                      isThreeLine: true,
+                    ),
+                    buildDivider(),
+                    DrawerButton(
+                      component: 'NEWS',
                       icon: Icons.forum_outlined,
                       route: () {
-                        model.routeComponent('FORUM', context);
+                        model.routeComponent('NEWS', context);
                       },
-                    )
-                  : DrawerButton(
-                      component: 'LEARN',
-                      icon: Icons.local_fire_department_sharp,
+                    ),
+                    model.showForum
+                        ? DrawerButton(
+                            component: 'FORUM',
+                            icon: Icons.forum_outlined,
+                            route: () {
+                              model.routeComponent('FORUM', context);
+                            },
+                          )
+                        : DrawerButton(
+                            component: 'LEARN',
+                            icon: Icons.local_fire_department_sharp,
+                            route: () {
+                              model.routeComponent('LEARN', context);
+                            }),
+                    DrawerButton(
+                      component: 'PODCAST',
+                      icon: Icons.podcasts_outlined,
                       route: () {
-                        model.routeComponent('LEARN', context);
-                      }),
-              buildDivider(),
-              DrawerButton(
-                component: 'PODCAST',
-                icon: Icons.podcasts_outlined,
-                route: () {
-                  model.routeComponent('PODCAST', context);
-                },
+                        model.routeComponent('PODCAST', context);
+                      },
+                    ),
+                    DrawerButton(
+                      component: 'RADIO',
+                      icon: Icons.radio,
+                      route: () {
+                        model.routeComponent('CODERADIO', context);
+                      },
+                    ),
+                    const WebButton(
+                      component: 'DONATE',
+                      url: 'https://www.freecodecamp.org/donate/',
+                      icon: Icons.favorite,
+                    ),
+                    buildDivider(),
+                    DrawerButton(
+                        component: model.auth.isLoggedIn ? 'LOG OUT' : 'LOGIN',
+                        icon:
+                            model.auth.isLoggedIn ? Icons.logout : Icons.login,
+                        textColor: model.auth.isLoggedIn
+                            ? const Color.fromARGB(255, 230, 59, 59)
+                            : null,
+                        route: () {
+                          model.handleAuth(context);
+                        })
+                  ],
+                ),
               ),
-              buildDivider(),
-              DrawerButton(
-                component: 'RADIO',
-                icon: Icons.radio,
-                route: () {
-                  model.routeComponent('CODERADIO', context);
-                },
-              ),
-              buildDivider(),
-              const WebButton(
-                component: 'DONATE',
-                url: 'https://www.freecodecamp.org/donate/',
-                icon: Icons.favorite,
-              ),
-              buildDivider(),
+              const Padding(
+                padding: EdgeInsets.only(left: 10.0, bottom: 10),
+                child: Text(
+                  'freeCodeCamp is a donor-supported tax-exempt 501(c)(3) nonprofit organization',
+                  textAlign: TextAlign.center,
+                  style: TextStyle(fontSize: 10, color: Colors.white70),
+                ),
+              )
             ],
           ),
         ),

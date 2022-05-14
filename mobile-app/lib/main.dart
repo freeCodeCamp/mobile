@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:freecodecamp/service/authentication_service.dart';
 import 'package:freecodecamp/service/code_radio_service.dart';
 import 'package:freecodecamp/service/notification_service.dart';
 import 'package:freecodecamp/ui/theme/fcc_theme.dart';
@@ -15,6 +16,7 @@ Future<void> main() async {
     androidNotificationChannelName: 'Audio playback',
     androidNotificationOngoing: true,
   );
+  await AuthenticationService().init();
   await NotificationService().init();
 
   setupLocator();

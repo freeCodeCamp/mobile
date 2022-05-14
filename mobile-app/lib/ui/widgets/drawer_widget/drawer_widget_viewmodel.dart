@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:freecodecamp/service/authentication_service.dart';
+import 'package:freecodecamp/ui/views/auth/auth_view.dart';
 import 'package:freecodecamp/app/app.locator.dart';
 import 'package:freecodecamp/ui/views/code_radio/code_radio_view.dart';
 //import 'package:freecodecamp/ui/views/learn/learn_view.dart';
@@ -19,7 +21,21 @@ class DrawerWidgtetViewModel extends BaseViewModel {
 
   bool get showForum => _showForum;
 
+  final AuthenticationService auth = locator<AuthenticationService>();
+
   final SnackbarService snack = locator<SnackbarService>();
+
+  String returnUsername() {
+    if (auth.userModel != null) {
+      if (auth.userModel!.name.isNotEmpty) {
+        return auth.userModel!.name;
+      } else {
+        return auth.userModel!.email;
+      }
+    }
+
+    return 'Anonymous user';
+  }
 
   void routeComponent(view, context) async {
     switch (view) {
@@ -75,6 +91,20 @@ class DrawerWidgtetViewModel extends BaseViewModel {
                 pageBuilder: (context, animation1, animatiom2) =>
                     const CodeRadioView()));
         break;
+      case 'LOGIN':
+        Navigator.pushReplacement(
+            context,
+            PageRouteBuilder(
+                transitionDuration: Duration.zero,
+                pageBuilder: (context, animation1, animatiom2) =>
+                    const AuthView()));
+        break;
     }
+  }
+
+  void handleAuth(BuildContext context) {
+    Navigator.pop(context);
+    auth.isLoggedIn ? auth.logout() : auth.login();
+    notifyListeners();
   }
 }

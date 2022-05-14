@@ -15,7 +15,7 @@ class TagButton extends StatefulWidget {
   final String tagName;
   final String tagSlug;
 
-  Color randomColor() {
+  static Color randomColor() {
     var randomNum = Random();
 
     List colors = [
@@ -32,10 +32,12 @@ class TagButton extends StatefulWidget {
   State<TagButton> createState() => _TagButtonState();
 }
 
-class _TagButtonState extends State<TagButton> {
+class _TagButtonState extends State<TagButton>
+    with AutomaticKeepAliveClientMixin {
   final _navigationService = locator<NavigationService>();
-
+  final _tagColor = TagButton.randomColor();
   @override
+  // ignore: must_call_super
   Widget build(BuildContext context) {
     return Padding(
       padding: const EdgeInsets.fromLTRB(0, 8, 8, 0),
@@ -52,7 +54,7 @@ class _TagButtonState extends State<TagButton> {
         },
         child: Container(
           decoration: ShapeDecoration(
-            color: widget.randomColor(),
+            color: _tagColor,
             shape: const StadiumBorder(),
           ),
           child: Padding(
@@ -72,4 +74,7 @@ class _TagButtonState extends State<TagButton> {
       ),
     );
   }
+
+  @override
+  bool get wantKeepAlive => true;
 }
