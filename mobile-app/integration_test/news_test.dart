@@ -36,7 +36,7 @@ void main() {
       await tester.tap(firstArticleImage);
       await tester.pumpAndSettle();
       await binding.takeScreenshot('news-article');
-      await tester.pump(const Duration(milliseconds: 3000));
+
       // Tap on the bookmark button and store article title and author
       final Finder bookmarkButton = find.byKey(const Key('bookmark_btn'));
       final Finder articleTitle = find.byKey(const Key('title'));
