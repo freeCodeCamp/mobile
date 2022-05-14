@@ -69,6 +69,7 @@ class TestModel extends BaseViewModel {
     for (String import in imports) {
       dom.Document importToNode = parse(import);
 
+      // ignore: unused_local_variable
       dom.Node node =
           importToNode.getElementsByTagName('HEAD')[0].children.first;
 

@@ -43,8 +43,7 @@ class DescriptionView extends StatelessWidget {
                     Row(children: [
                       Expanded(
                           child: Column(
-                        children:
-                            HtmlHandler.smallHtmlHandler(description, context),
+                        children: HtmlHandler.htmlHandler(description, context),
                       ))
                     ]),
                     instructions.isNotEmpty
@@ -68,7 +67,7 @@ class DescriptionView extends StatelessWidget {
                       Expanded(
                           child: Column(
                         children:
-                            HtmlHandler.smallHtmlHandler(instructions, context),
+                            HtmlHandler.htmlHandler(instructions, context),
                       ))
                     ]),
                     Container(
