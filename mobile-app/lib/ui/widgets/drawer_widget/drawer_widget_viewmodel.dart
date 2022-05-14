@@ -7,6 +7,7 @@ import 'package:freecodecamp/ui/views/code_radio/code_radio_view.dart';
 import 'package:freecodecamp/ui/views/forum/forum-categories/forum_category_view.dart';
 import 'package:freecodecamp/ui/views/home/home_view.dart';
 import 'package:freecodecamp/ui/views/podcast/podcast-list/podcast_list_view.dart';
+import 'package:freecodecamp/ui/views/profile/profile_view.dart';
 import 'package:freecodecamp/ui/views/settings/settings_view.dart';
 import 'package:stacked/stacked.dart';
 import 'package:stacked_services/stacked_services.dart';
@@ -97,6 +98,16 @@ class DrawerWidgtetViewModel extends BaseViewModel {
                 transitionDuration: Duration.zero,
                 pageBuilder: (context, animation1, animatiom2) =>
                     const AuthView()));
+        break;
+      case 'PROFILE':
+        Navigator.pushReplacement(
+          context,
+          PageRouteBuilder(
+            transitionDuration: Duration.zero,
+            pageBuilder: (context, animation1, animation2) =>
+                const ProfileView(),
+          ),
+        );
         break;
     }
   }
