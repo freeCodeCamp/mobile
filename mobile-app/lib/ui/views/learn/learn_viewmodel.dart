@@ -1,23 +1,31 @@
 import 'dart:async';
 import 'dart:convert';
+import 'dart:io';
+import 'dart:math';
 
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:freecodecamp/app/app.locator.dart';
 import 'package:freecodecamp/app/app.router.dart';
 import 'package:freecodecamp/models/learn/curriculum_model.dart';
+import 'package:freecodecamp/models/learn/motivational_quote_model.dart';
+import 'package:freecodecamp/service/authentication_service.dart';
 import 'package:freecodecamp/ui/widgets/setup_dialog_ui.dart';
 import 'package:stacked/stacked.dart';
 import 'package:stacked_services/stacked_services.dart';
 import 'package:webview_flutter/webview_flutter.dart';
 import 'package:http/http.dart' as http;
+import 'dart:developer' as dev;
 
 class LearnViewModel extends BaseViewModel {
   WebViewController? controller;
   final NavigationService _navigationService = locator<NavigationService>();
-  final _dialogService = locator<DialogService>();
 
-  ScrollController _scrollController = ScrollController();
+  final ScrollController _scrollController = ScrollController();
   ScrollController get scrollController => _scrollController;
+
+  final AuthenticationService _auth = locator<AuthenticationService>();
+  AuthenticationService get auth => _auth;
 
   bool _isHeaderVisible = true;
   bool get isHeaderVisible => _isHeaderVisible;
@@ -30,6 +38,7 @@ class LearnViewModel extends BaseViewModel {
     setupDialogUi();
     initScrollListener(context);
     _superBlocks = getSuperBlocks();
+    retrieveNewQuote();
     notifyListeners();
   }
 
@@ -86,5 +95,24 @@ class LearnViewModel extends BaseViewModel {
 
   void goBack() {
     _navigationService.back();
+  }
+
+  Future<MotivationalQuote> retrieveNewQuote() async {
+    String path = 'assets/learn/motivational-quotes.json';
+    String file = await rootBundle.loadString(path);
+
+    int quoteLength = jsonDecode(file)['motivationalQuotes'].length;
+
+    Random random = Random();
+
+    int randomValue = random.nextInt(quoteLength);
+
+    dynamic json = jsonDecode(file)['motivationalQuotes'][randomValue];
+
+    MotivationalQuote quote = MotivationalQuote.fromJson(json);
+
+    dev.log(quote.quote);
+
+    return quote;
   }
 }

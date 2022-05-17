@@ -12,70 +12,34 @@ class LearnView extends StatelessWidget {
         viewModelBuilder: () => LearnViewModel(),
         onModelReady: (model) => model.init(context),
         builder: (context, model, child) => Scaffold(
-              appBar: !model.isHeaderVisible
-                  ? AppBar(
-                      title: const Text('Courses'),
-                    )
-                  : null,
               extendBodyBehindAppBar: true,
+              appBar: AppBar(
+                shadowColor: Colors.transparent,
+                backgroundColor: Colors.transparent,
+              ),
               resizeToAvoidBottomInset: false,
+              backgroundColor: const Color(0xFF0a0a23),
               drawer: const DrawerWidgetView(),
               body: FutureBuilder(
                 future: model.superBlocks,
                 builder: (context, snapshot) {
                   if (snapshot.hasData) {
                     var superBlocks = snapshot.data as List;
-                    return ListView(
-                      controller: model.scrollController,
-                      physics: const ClampingScrollPhysics(),
-                      children: [
-                        Stack(
-                          children: [
-                            SizedBox(
-                              height: MediaQuery.of(context).size.height * 0.25,
-                              child: Image.asset(
-                                'assets/images/freecodecamp-banner.png',
-                                fit: BoxFit.cover,
-                              ),
-                            ),
-                            AppBar(
-                              shadowColor: Colors.transparent,
-                              backgroundColor: Colors.transparent,
-                            ),
-                            SizedBox(
-                              height: MediaQuery.of(context).size.height * 0.25,
-                              child: const Expanded(
-                                child: Align(
-                                  alignment: Alignment.bottomLeft,
-                                  child: Padding(
-                                    padding: EdgeInsets.all(32.0),
-                                    child: Text(
-                                      'Courses',
-                                      style: TextStyle(
-                                          color: Colors.black,
-                                          fontWeight: FontWeight.bold,
-                                          fontSize: 36),
-                                    ),
-                                  ),
-                                ),
-                              ),
-                            ),
-                          ],
-                        ),
-                        ListView.builder(
-                            physics: const ClampingScrollPhysics(),
-                            shrinkWrap: true,
-                            itemCount: superBlocks[0].length,
-                            itemBuilder: (BuildContext context, int i) {
-                              return Padding(
-                                padding: const EdgeInsets.only(
-                                    top: 16.0, left: 8, right: 8),
-                                child: superBlockBuilder(superBlocks[0][i],
-                                    superBlocks[1][i], model),
-                              );
-                            }),
-                      ],
-                    );
+                    return ListView(shrinkWrap: true, children: [
+                      !model.auth.isLoggedIn ? loginButton(model) : Container(),
+                      ListView.builder(
+                          physics: const ClampingScrollPhysics(),
+                          shrinkWrap: true,
+                          itemCount: superBlocks[0].length,
+                          itemBuilder: (BuildContext context, int i) {
+                            return Padding(
+                              padding: const EdgeInsets.only(
+                                  top: 16.0, left: 8, right: 8),
+                              child: superBlockBuilder(superBlocks[0][i],
+                                  superBlocks[1][i], model, context),
+                            );
+                          }),
+                    ]);
                   } else {
                     return const Center(child: CircularProgressIndicator());
                   }
@@ -84,8 +48,8 @@ class LearnView extends StatelessWidget {
             ));
   }
 
-  Row superBlockBuilder(
-      String superBlockSlug, String superBlockName, LearnViewModel model) {
+  Row superBlockBuilder(String superBlockSlug, String superBlockName,
+      LearnViewModel model, BuildContext context) {
     return Row(
       children: [
         Expanded(
@@ -106,16 +70,47 @@ class LearnView extends StatelessWidget {
               onPressed: () {
                 model.routeToSuperBlock(superBlockSlug);
               },
-              child: Align(
-                alignment: Alignment.centerLeft,
-                child: Text(
-                  superBlockName,
-                  textAlign: TextAlign.left,
-                  style: const TextStyle(fontSize: 20),
-                ),
+              child: Row(
+                children: [
+                  Align(
+                    alignment: Alignment.centerLeft,
+                    child: SizedBox(
+                      width: MediaQuery.of(context).size.width * 0.70,
+                      child: Text(
+                        superBlockName,
+                        textAlign: TextAlign.left,
+                        style: const TextStyle(fontSize: 20),
+                      ),
+                    ),
+                  ),
+                  const Expanded(
+                    child: Align(
+                        alignment: Alignment.centerRight,
+                        child: Icon(Icons.arrow_forward_ios)),
+                  )
+                ],
               )),
         ))
       ],
+    );
+  }
+
+  Widget loginButton(LearnViewModel model) {
+    return Container(
+      padding: const EdgeInsets.only(top: 16, left: 8, right: 8),
+      height: 75,
+      child: Expanded(
+        child: ElevatedButton(
+            style: ElevatedButton.styleFrom(
+                primary: const Color.fromRGBO(0xf1, 0xbe, 0x32, 1)),
+            onPressed: () {
+              model.auth.login();
+            },
+            child: const Text(
+              'Sign in to save your progress ',
+              style: TextStyle(color: Colors.black, fontSize: 20),
+            )),
+      ),
     );
   }
 }
