@@ -10,8 +10,14 @@ class LearnView extends StatelessWidget {
   Widget build(BuildContext context) {
     return ViewModelBuilder<LearnViewModel>.reactive(
         viewModelBuilder: () => LearnViewModel(),
-        onModelReady: (model) => model.init(),
+        onModelReady: (model) => model.init(context),
         builder: (context, model, child) => Scaffold(
+              appBar: !model.isHeaderVisible
+                  ? AppBar(
+                      title: const Text('Courses'),
+                    )
+                  : null,
+              extendBodyBehindAppBar: true,
               resizeToAvoidBottomInset: false,
               drawer: const DrawerWidgetView(),
               body: FutureBuilder(
@@ -19,7 +25,9 @@ class LearnView extends StatelessWidget {
                 builder: (context, snapshot) {
                   if (snapshot.hasData) {
                     var superBlocks = snapshot.data as List;
-                    return Column(
+                    return ListView(
+                      controller: model.scrollController,
+                      physics: const ClampingScrollPhysics(),
                       children: [
                         Stack(
                           children: [
@@ -30,42 +38,42 @@ class LearnView extends StatelessWidget {
                                 fit: BoxFit.cover,
                               ),
                             ),
-                            Padding(
-                                padding: const EdgeInsets.all(8.0),
-                                child: Column(
-                                  children: const [
-                                    Text(
-                                      'Choose your course',
-                                      style: TextStyle(
-                                          fontSize: 26,
-                                          height: 2,
-                                          color: Colors.black),
-                                    ),
-                                    Text(
-                                      'We recommend starting at the beginning',
-                                      style: TextStyle(color: Colors.black),
-                                    ),
-                                  ],
-                                )),
                             AppBar(
                               shadowColor: Colors.transparent,
                               backgroundColor: Colors.transparent,
                             ),
+                            SizedBox(
+                              height: MediaQuery.of(context).size.height * 0.25,
+                              child: const Expanded(
+                                child: Align(
+                                  alignment: Alignment.bottomLeft,
+                                  child: Padding(
+                                    padding: EdgeInsets.all(32.0),
+                                    child: Text(
+                                      'Courses',
+                                      style: TextStyle(
+                                          color: Colors.black,
+                                          fontWeight: FontWeight.bold,
+                                          fontSize: 36),
+                                    ),
+                                  ),
+                                ),
+                              ),
+                            ),
                           ],
                         ),
-                        Expanded(
-                          child: ListView.builder(
-                              shrinkWrap: true,
-                              itemCount: superBlocks[0].length,
-                              itemBuilder: (BuildContext context, int i) {
-                                return Padding(
-                                  padding: const EdgeInsets.only(
-                                      top: 16.0, left: 8, right: 8),
-                                  child: superBlockBuilder(superBlocks[0][i],
-                                      superBlocks[1][i], model),
-                                );
-                              }),
-                        ),
+                        ListView.builder(
+                            physics: const ClampingScrollPhysics(),
+                            shrinkWrap: true,
+                            itemCount: superBlocks[0].length,
+                            itemBuilder: (BuildContext context, int i) {
+                              return Padding(
+                                padding: const EdgeInsets.only(
+                                    top: 16.0, left: 8, right: 8),
+                                child: superBlockBuilder(superBlocks[0][i],
+                                    superBlocks[1][i], model),
+                              );
+                            }),
                       ],
                     );
                   } else {

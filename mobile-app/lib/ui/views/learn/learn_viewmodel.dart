@@ -1,11 +1,11 @@
+import 'dart:async';
 import 'dart:convert';
 
+import 'package:flutter/material.dart';
 import 'package:freecodecamp/app/app.locator.dart';
 import 'package:freecodecamp/app/app.router.dart';
-import 'package:freecodecamp/enums/dialog_type.dart';
 import 'package:freecodecamp/models/learn/curriculum_model.dart';
 import 'package:freecodecamp/ui/widgets/setup_dialog_ui.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 import 'package:stacked/stacked.dart';
 import 'package:stacked_services/stacked_services.dart';
 import 'package:webview_flutter/webview_flutter.dart';
@@ -16,40 +16,42 @@ class LearnViewModel extends BaseViewModel {
   final NavigationService _navigationService = locator<NavigationService>();
   final _dialogService = locator<DialogService>();
 
+  ScrollController _scrollController = ScrollController();
+  ScrollController get scrollController => _scrollController;
+
+  bool _isHeaderVisible = true;
+  bool get isHeaderVisible => _isHeaderVisible;
+
   Future? _superBlocks;
   Future? get superBlocks => _superBlocks;
 
-  void init() {
+  void init(BuildContext context) {
     WebView.platform = SurfaceAndroidWebView();
     setupDialogUi();
-    isFirstTimeUsingLearn();
+    initScrollListener(context);
     _superBlocks = getSuperBlocks();
     notifyListeners();
   }
 
-  void isFirstTimeUsingLearn() async {
-    SharedPreferences prefs = await SharedPreferences.getInstance();
+  void initScrollListener(BuildContext context) {
+    _scrollController.addListener(() {
+      double viewport = _scrollController.position.viewportDimension;
+      double paddingHeaderText = 32;
+      double headerStopsAt = (viewport - paddingHeaderText) * 0.25;
 
-    if (prefs.getBool('isFirstTimeLearner') == null) {
-      await showNewLearnerDialog();
-    }
-  }
+      double topOffset = scrollController.offset;
 
-  Future<void> showNewLearnerDialog() async {
-    // ignore: unused_local_variable
-    DialogResponse? response = await _dialogService.showCustomDialog(
-        variant: DialogType.buttonForm2,
-        title: 'This section is in alpha',
-        description:
-            'This section of the app is not complete, and you may experience bugs. You will not lose your progress as long as you\'re signed in',
-        mainButtonTitle: 'I understand',
-        data: DialogType.buttonForm2);
-
-    if (response!.confirmed) {
-      SharedPreferences prefs = await SharedPreferences.getInstance();
-
-      prefs.setBool('isFirstTimeLearner', false);
-    }
+      if (topOffset > headerStopsAt) {
+        // this prevents the notifylisteners to be called everytime on scroll
+        if (_isHeaderVisible) {
+          _isHeaderVisible = false;
+          notifyListeners();
+        }
+      } else if (!_isHeaderVisible) {
+        _isHeaderVisible = true;
+        notifyListeners();
+      }
+    });
   }
 
   Future<void> getSuperBlocks() async {
@@ -77,21 +79,9 @@ class LearnViewModel extends BaseViewModel {
         arguments: SuperBlockViewArguments(superBlockName: superBlock));
   }
 
-  void initState(webViewController) {
-    setWebViewController(webViewController);
-    removeNavBar(webViewController);
-  }
-
   void setWebViewController(WebViewController webViewController) {
     controller = webViewController;
     notifyListeners();
-  }
-
-  void removeNavBar(WebViewController? webViewController) {
-    webViewController!.runJavascript(
-        "document.getElementById('universal-nav').style.display = 'none'");
-    webViewController.runJavascript(
-        "document.getElementsByClassName('default-layout')[0].style.marginTop = 0;");
   }
 
   void goBack() {
