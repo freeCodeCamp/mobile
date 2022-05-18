@@ -14,10 +14,7 @@ class LearnView extends StatelessWidget {
         onModelReady: (model) => model.init(context),
         builder: (context, model, child) => Scaffold(
               extendBodyBehindAppBar: true,
-              appBar: AppBar(
-                shadowColor: Colors.transparent,
-                backgroundColor: Colors.transparent,
-              ),
+              appBar: AppBar(),
               resizeToAvoidBottomInset: false,
               backgroundColor: const Color(0xFF0a0a23),
               drawer: const DrawerWidgetView(),
@@ -27,6 +24,9 @@ class LearnView extends StatelessWidget {
                   if (snapshot.hasData) {
                     var superBlocks = snapshot.data as List;
                     return ListView(shrinkWrap: true, children: [
+                      model.auth.isLoggedIn
+                          ? welcomeMessage(model)
+                          : Container(),
                       quouteWidget(),
                       !model.auth.isLoggedIn ? loginButton(model) : Container(),
                       ListView.builder(
@@ -145,5 +145,16 @@ class LearnView extends StatelessWidget {
 
           return Container();
         });
+  }
+
+  Widget welcomeMessage(LearnViewModel model) {
+    return Container(
+      padding: const EdgeInsets.all(16),
+      child: Text(
+        'Welcome back ${model.handleName(model)}. ',
+        textAlign: TextAlign.center,
+        style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+      ),
+    );
   }
 }

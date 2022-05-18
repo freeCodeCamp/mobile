@@ -1,6 +1,5 @@
 import 'dart:async';
 import 'dart:convert';
-import 'dart:io';
 import 'dart:math';
 
 import 'package:flutter/material.dart';
@@ -15,7 +14,6 @@ import 'package:stacked/stacked.dart';
 import 'package:stacked_services/stacked_services.dart';
 import 'package:webview_flutter/webview_flutter.dart';
 import 'package:http/http.dart' as http;
-import 'dart:developer' as dev;
 
 class LearnViewModel extends BaseViewModel {
   WebViewController? controller;
@@ -97,6 +95,14 @@ class LearnViewModel extends BaseViewModel {
     _navigationService.back();
   }
 
+  String handleName(LearnViewModel model) {
+    if (model.auth.userModel?.name != null) {
+      return model.auth.userModel?.name as String;
+    } else {
+      return model.auth.userModel?.username as String;
+    }
+  }
+
   Future<MotivationalQuote> retrieveNewQuote() async {
     String path = 'assets/learn/motivational-quotes.json';
     String file = await rootBundle.loadString(path);
@@ -110,8 +116,6 @@ class LearnViewModel extends BaseViewModel {
     dynamic json = jsonDecode(file)['motivationalQuotes'][randomValue];
 
     MotivationalQuote quote = MotivationalQuote.fromJson(json);
-
-    dev.log(quote.quote);
 
     return quote;
   }
