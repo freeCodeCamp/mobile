@@ -13,6 +13,7 @@ class NewsUserModel {}
 
 class ForumUserModel {}
 
+// TODO: Order the properties either by some logic or alphabetically.
 class FccUserModel {
   final String id;
   final String email;
@@ -24,8 +25,8 @@ class FccUserModel {
   final bool sendQuincyEmail;
   final bool isDonating;
 
-  final String? emailAuthLinkTTL;
-  final String? emailVerifyTTL;
+  final String? emailAuthLinkTTL; // Confirm
+  final String? emailVerifyTTL; // Confirm
 
   final String username;
   final String? about;
@@ -34,6 +35,24 @@ class FccUserModel {
   final String currentChallengeId;
   final String? location;
   final DateTime joinDate;
+  final int points; // May be null, confirm
+  final bool sound;
+  final String theme; // Replace with Themes
+  final String githubProfile;
+  final String linkedin;
+  final String twitter;
+  final String website;
+
+  final bool isGithub;
+  final bool isLinkedin;
+  final bool isTwitter;
+  final bool isWebsite;
+
+  final Map<String, int> calendar;
+  final completedChallenges;
+  final List<Portfolio> portfolio;
+  final List<SavedChallenge> savedChallenges;
+  final List yearsTopContributor; // Confirm about type, number or string
 
   final bool isHonest;
   final bool isFrontEndCert;
@@ -53,8 +72,9 @@ class FccUserModel {
   final bool isDataAnalysisPyCertV7;
   final bool isMachineLearningPyCertV7;
   final bool isRelationalDatabaseCertV8;
+  final bool isEmailVerified;
 
-  final List? badges;
+  final List? badges; // Confirm
   final List<int>? progressTimestamps;
 
   final ProfileUI profileUI;
@@ -74,6 +94,7 @@ class FccUserModel {
       required this.currentChallengeId,
       this.location,
       required this.joinDate,
+      required this.points,
       required this.isHonest,
       required this.isFrontEndCert,
       required this.isDataVisCert,
@@ -92,6 +113,7 @@ class FccUserModel {
       required this.isDataAnalysisPyCertV7,
       required this.isMachineLearningPyCertV7,
       required this.isRelationalDatabaseCertV8,
+      required this.isEmailVerified,
       required this.profileUI,
       required this.isDonating,
       this.badges,
@@ -115,6 +137,7 @@ class FccUserModel {
         currentChallengeId: data['currentChallengeId'],
         location: data['location'],
         joinDate: DateTime.parse(data['joinDate']),
+        points: data['points'],
         isHonest: data['isHonest'],
         isFrontEndCert: data['isFrontEndCert'],
         isDataVisCert: data['isDataVisCert'],
@@ -132,6 +155,7 @@ class FccUserModel {
         isDataAnalysisPyCertV7: data['isDataAnalysisPyCertV7'],
         isMachineLearningPyCertV7: data['isMachineLearningPyCertV7'],
         isRelationalDatabaseCertV8: data['isRelationalDatabaseCertV8'],
+        isEmailVerified: data['isEmailVerified'],
         profileUI: ProfileUI.fromJson(data['profileUI']),
         isDonating: data['isDonating']);
   }
@@ -155,6 +179,7 @@ class FccUserModel {
       'currentChallengeId': 'currentChallengeId',
       'location': 'The Cloud',
       'joinDate': '2018-06-10T14:40:07.000Z',
+      'points': 100,
       'isHonest': false,
       'isFrontEndCert': false,
       'isDataVisCert': false,
@@ -173,6 +198,7 @@ class FccUserModel {
       'isDataAnalysisPyCertV7': false,
       'isMachineLearningPyCertV7': false,
       'isRelationalDatabaseCertV8': false,
+      'isEmailVerified': false,
       'profileUI': {
         'isLocked': false,
         'showAbout': false,
@@ -230,3 +256,64 @@ class ProfileUI {
         showTimeLine: data['showTimeLine']);
   }
 }
+
+class Portfolio {
+  final String id;
+  final String? title;
+  final String? url;
+  final String? image;
+  final String? description;
+
+  Portfolio({
+    required this.id,
+    this.title,
+    this.url,
+    this.image,
+    this.description,
+  });
+
+  factory Portfolio.fromJson(Map<String, dynamic> data) {
+    return Portfolio(
+        id: data['id'],
+        title: data['title'],
+        url: data['url'],
+        image: data['image'],
+        description: data['description']);
+  }
+}
+
+class SavedChallenge {
+  final String id;
+  final List<SavedChallengeFile> challengeFiles;
+
+  SavedChallenge({
+    required this.id,
+    required this.challengeFiles,
+  });
+
+  factory SavedChallenge.fromJson(Map<String, dynamic> data) {
+    return SavedChallenge(
+      id: data['id'],
+      challengeFiles: data['challengeFiles'],
+    );
+  }
+}
+
+class SavedChallengeFile {
+  final String fileKey;
+  final Ext ext;
+  final String name;
+  final List<String>? history;
+  final String contents;
+
+  SavedChallengeFile({
+    required this.fileKey,
+    required this.ext,
+    required this.name,
+    required this.history,
+    required this.contents,
+  });
+}
+
+// Parse this properly
+enum Ext { js, html, css, jsx }
