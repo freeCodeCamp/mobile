@@ -37,13 +37,16 @@ class DrawerWidgtetViewModel extends BaseViewModel {
     return 'Anonymous user';
   }
 
+  void snackbar() {
+    snack.showSnackbar(
+      title: 'Coming soon - use the web version',
+      message: '',
+    );
+  }
+
   void routeComponent(view, context) async {
     switch (view) {
       case 'LEARN':
-        snack.showSnackbar(
-          title: 'Coming soon - use the web version',
-          message: '',
-        );
         Navigator.pushReplacement(
             context,
             PageRouteBuilder(

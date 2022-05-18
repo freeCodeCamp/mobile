@@ -86,11 +86,6 @@ class LearnViewModel extends BaseViewModel {
         arguments: SuperBlockViewArguments(superBlockName: superBlock));
   }
 
-  void setWebViewController(WebViewController webViewController) {
-    controller = webViewController;
-    notifyListeners();
-  }
-
   void goBack() {
     _navigationService.back();
   }
