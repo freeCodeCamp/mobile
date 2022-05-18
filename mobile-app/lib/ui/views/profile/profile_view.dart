@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:freecodecamp/ui/views/profile/profile_viemodel.dart';
 import 'package:freecodecamp/ui/widgets/drawer_widget/drawer_widget_view.dart';
 import 'package:stacked/stacked.dart';
+import 'package:intl/intl.dart';
 
 class ProfileView extends StatelessWidget {
   const ProfileView({Key? key}) : super(key: key);
@@ -38,9 +39,17 @@ class ProfileView extends StatelessWidget {
               ),
               Text('@${model.user.username}'),
               Text(model.user.name),
-              // Text(model.user.location),
+              model.user.location != null
+                  ? Text(model.user.location!)
+                  : Container(),
               model.user.about != null ? Text(model.user.about!) : Container(),
-              // Row(children: [Icon(Icons.calendar_month),Text(model.user.joinDate)]),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  const Icon(Icons.calendar_month),
+                  Text('Joined ${DateFormat.yMMMM().format(model.user.joinDate)}'),
+                ],
+              ),
               // TODO: Top Contributor comes here
               // Text('${model.user.points} total points'),
               // TODO: Add heatmap here

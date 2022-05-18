@@ -32,6 +32,8 @@ class FccUserModel {
   final String name;
   final String picture;
   final String currentChallengeId;
+  final String? location;
+  final DateTime joinDate;
 
   final bool isHonest;
   final bool isFrontEndCert;
@@ -70,6 +72,8 @@ class FccUserModel {
       required this.name,
       required this.picture,
       required this.currentChallengeId,
+      this.location,
+      required this.joinDate,
       required this.isHonest,
       required this.isFrontEndCert,
       required this.isDataVisCert,
@@ -109,6 +113,8 @@ class FccUserModel {
         name: data['name'],
         picture: data['picture'],
         currentChallengeId: data['currentChallengeId'],
+        location: data['location'],
+        joinDate: DateTime.parse(data['joinDate']),
         isHonest: data['isHonest'],
         isFrontEndCert: data['isFrontEndCert'],
         isDataVisCert: data['isDataVisCert'],
@@ -147,6 +153,8 @@ class FccUserModel {
       'name': 'name',
       'picture': 'picture',
       'currentChallengeId': 'currentChallengeId',
+      'location': 'The Cloud',
+      'joinDate': '2018-06-10T14:40:07.000Z',
       'isHonest': false,
       'isFrontEndCert': false,
       'isDataVisCert': false,
