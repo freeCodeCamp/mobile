@@ -37,7 +37,7 @@ class FccUserModel {
   final DateTime joinDate;
   final int points; // May be null, confirm
   final bool sound;
-  final String theme; // Replace with Themes
+  final String theme; // Replace with Themes enum
   final String githubProfile;
   final String linkedin;
   final String twitter;
@@ -48,8 +48,8 @@ class FccUserModel {
   final bool isTwitter;
   final bool isWebsite;
 
-  final Map<String, int> calendar;
-  final completedChallenges;
+  final Map<DateTime, int> calendar;
+  final List<CompletedChallenge> completedChallenges;
   final List<Portfolio> portfolio;
   final List<SavedChallenge> savedChallenges;
   final List yearsTopContributor; // Confirm about type, number or string
@@ -79,47 +79,63 @@ class FccUserModel {
 
   final ProfileUI profileUI;
 
-  FccUserModel(
-      {required this.id,
-      required this.email,
-      required this.emailVerified,
-      this.isBanned,
-      required this.isCheater,
-      required this.acceptedPrivacyTerms,
-      required this.sendQuincyEmail,
-      required this.username,
-      required this.about,
-      required this.name,
-      required this.picture,
-      required this.currentChallengeId,
-      this.location,
-      required this.joinDate,
-      required this.points,
-      required this.isHonest,
-      required this.isFrontEndCert,
-      required this.isDataVisCert,
-      required this.isBackEndCert,
-      required this.isFullStackCert,
-      required this.isRespWebDesignCert,
-      required this.is2018DataVisCert,
-      required this.isFrontEndLibsCert,
-      required this.isJsAlgoDataStructCert,
-      required this.isApisMicroservicesCert,
-      required this.isInfosecQaCert,
-      required this.isQaCertV7,
-      required this.isInfosecCertV7,
-      this.is2018FullStackCert,
-      required this.isSciCompPyCertV7,
-      required this.isDataAnalysisPyCertV7,
-      required this.isMachineLearningPyCertV7,
-      required this.isRelationalDatabaseCertV8,
-      required this.isEmailVerified,
-      required this.profileUI,
-      required this.isDonating,
-      this.badges,
-      this.progressTimestamps,
-      this.emailAuthLinkTTL,
-      this.emailVerifyTTL});
+  FccUserModel({
+    required this.id,
+    required this.email,
+    required this.emailVerified,
+    this.isBanned,
+    required this.isCheater,
+    required this.acceptedPrivacyTerms,
+    required this.sendQuincyEmail,
+    required this.username,
+    required this.about,
+    required this.name,
+    required this.picture,
+    required this.currentChallengeId,
+    this.location,
+    required this.joinDate,
+    required this.points,
+    required this.sound,
+    required this.theme,
+    required this.githubProfile,
+    required this.linkedin,
+    required this.twitter,
+    required this.website,
+    required this.isGithub,
+    required this.isLinkedin,
+    required this.isTwitter,
+    required this.isWebsite,
+    required this.calendar,
+    required this.completedChallenges,
+    required this.portfolio,
+    required this.savedChallenges,
+    required this.yearsTopContributor,
+    required this.isHonest,
+    required this.isFrontEndCert,
+    required this.isDataVisCert,
+    required this.isBackEndCert,
+    required this.isFullStackCert,
+    required this.isRespWebDesignCert,
+    required this.is2018DataVisCert,
+    required this.isFrontEndLibsCert,
+    required this.isJsAlgoDataStructCert,
+    required this.isApisMicroservicesCert,
+    required this.isInfosecQaCert,
+    required this.isQaCertV7,
+    required this.isInfosecCertV7,
+    this.is2018FullStackCert,
+    required this.isSciCompPyCertV7,
+    required this.isDataAnalysisPyCertV7,
+    required this.isMachineLearningPyCertV7,
+    required this.isRelationalDatabaseCertV8,
+    required this.isEmailVerified,
+    required this.profileUI,
+    required this.isDonating,
+    this.badges,
+    this.progressTimestamps,
+    this.emailAuthLinkTTL,
+    this.emailVerifyTTL,
+  });
 
   factory FccUserModel.fromJson(Map<String, dynamic> data) {
     //data['user'][data['result']]
@@ -138,6 +154,22 @@ class FccUserModel {
         location: data['location'],
         joinDate: DateTime.parse(data['joinDate']),
         points: data['points'],
+        sound: data['sound'],
+        theme: data['theme'],
+        githubProfile: data['githubProfile'],
+        linkedin: data['linkedin'],
+        twitter: data['twitter'],
+        website: data['website'],
+        isGithub: data['isGithub'],
+        isLinkedin: data['isLinkedin'],
+        isTwitter: data['isTwitter'],
+        isWebsite: data['isWebsite'],
+        // Below 4 should be parsed correctly using below defined classes
+        calendar: data['calendar'],
+        completedChallenges: data['completedChallenges'],
+        portfolio: data['portfolio'],
+        savedChallenges: data['savedChallenges'],
+        yearsTopContributor: data['yearsTopContributor'],
         isHonest: data['isHonest'],
         isFrontEndCert: data['isFrontEndCert'],
         isDataVisCert: data['isDataVisCert'],
@@ -156,6 +188,8 @@ class FccUserModel {
         isMachineLearningPyCertV7: data['isMachineLearningPyCertV7'],
         isRelationalDatabaseCertV8: data['isRelationalDatabaseCertV8'],
         isEmailVerified: data['isEmailVerified'],
+        badges: data['badges'],
+        progressTimestamps: data['progressTimestamps'],
         profileUI: ProfileUI.fromJson(data['profileUI']),
         isDonating: data['isDonating']);
   }
@@ -282,6 +316,52 @@ class Portfolio {
   }
 }
 
+class CompletedChallenge {
+  final String id;
+  final String? solution;
+  final String? githubLink;
+  final int? challengeType;
+  final DateTime completedDate;
+  final List<ChallengeFile>? files;
+
+  CompletedChallenge({
+    required this.id,
+    this.solution,
+    this.githubLink,
+    this.challengeType,
+    required this.completedDate,
+    this.files,
+  });
+
+  factory CompletedChallenge.fromJson(Map<String, dynamic> data) {
+    return CompletedChallenge(
+      id: data['id'],
+      solution: data['solution'],
+      githubLink: data['githubLink'],
+      challengeType: data['challengeType'],
+      completedDate: DateTime.fromMillisecondsSinceEpoch(data['completedDate']),
+      files: data['challengeFiles'],
+    );
+  }
+}
+
+class ChallengeFile {
+  final String key; // Confirm if this is "key" or "fileKey"
+  final Ext ext;
+  final String name;
+  final String contents;
+  // Old submissions have this property. Check if still used, if not remove
+  final String? path;
+
+  ChallengeFile({
+    required this.key,
+    required this.ext,
+    required this.name,
+    required this.contents,
+    this.path,
+  });
+}
+
 class SavedChallenge {
   final String id;
   final List<SavedChallengeFile> challengeFiles;
@@ -315,5 +395,5 @@ class SavedChallengeFile {
   });
 }
 
-// Parse this properly
+// Create function for converting string to enum and vice-versa
 enum Ext { js, html, css, jsx }
