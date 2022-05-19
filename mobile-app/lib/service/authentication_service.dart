@@ -7,7 +7,6 @@ import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:flutter_webview_plugin/flutter_webview_plugin.dart';
 import 'package:freecodecamp/models/main/user_model.dart';
 import 'package:pretty_dio_logger/pretty_dio_logger.dart';
-import 'package:stacked/stacked.dart';
 
 class AuthenticationService {
   static final AuthenticationService _authenticationService =
