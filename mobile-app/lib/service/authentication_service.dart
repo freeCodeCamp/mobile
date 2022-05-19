@@ -7,6 +7,7 @@ import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:flutter_webview_plugin/flutter_webview_plugin.dart';
 import 'package:freecodecamp/models/main/user_model.dart';
 import 'package:pretty_dio_logger/pretty_dio_logger.dart';
+import 'package:stacked/stacked.dart';
 
 class AuthenticationService {
   static final AuthenticationService _authenticationService =
@@ -18,7 +19,7 @@ class AuthenticationService {
   String _jwtAccessToken = '';
   final Dio _dio = Dio();
 
-  FccUserModel? userModel;
+  Future<FccUserModel>? userModel;
 
   factory AuthenticationService() {
     return _authenticationService;
@@ -41,8 +42,8 @@ class AuthenticationService {
     }
   }
 
-  void setFccUserModel(Map<String, dynamic> data) {
-    userModel = FccUserModel.fromJson(data);
+  Future<FccUserModel> fetchUserModel(Map<String, dynamic> data) async {
+    return FccUserModel.fromJson(data);
   }
 
   Future<void> login() async {
@@ -87,7 +88,7 @@ class AuthenticationService {
     log('_jwtAccessToken: $_jwtAccessToken');
   }
 
-  Future<Map<String, dynamic>> fetchUser() async {
+  Future<void> fetchUser() async {
     Response res = await _dio.get(
       '/user/get-session-user',
       options: Options(
@@ -98,9 +99,8 @@ class AuthenticationService {
       ),
     );
     log(jsonEncode(res.data['user']).toString());
-    setFccUserModel(res.data['user'][res.data['result']]);
+    userModel = fetchUserModel(res.data['user'][res.data['result']]);
 
-    log(userModel!.email);
     return res.data['user'][res.data['result']];
   }
 
