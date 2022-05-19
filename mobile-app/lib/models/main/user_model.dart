@@ -25,8 +25,9 @@ class FccUserModel {
   final bool sendQuincyEmail;
   final bool isDonating;
 
-  final String? emailAuthLinkTTL; // Confirm
-  final String? emailVerifyTTL; // Confirm
+  // I'm guessing below two properties are present if user uses "Email a code" for log in
+  final String? emailAuthLinkTTL;
+  final String? emailVerifyTTL;
 
   final String username;
   final String? about;
@@ -37,7 +38,7 @@ class FccUserModel {
   final DateTime joinDate;
   final int points; // May be null, confirm
   final bool sound;
-  final String theme; // Replace with Themes enum
+  final Themes theme;
   final String githubProfile;
   final String linkedin;
   final String twitter;
@@ -52,7 +53,7 @@ class FccUserModel {
   final List<CompletedChallenge> completedChallenges;
   final List<Portfolio> portfolio;
   final List<SavedChallenge> savedChallenges;
-  final List yearsTopContributor; // Confirm about type, number or string
+  final List<String> yearsTopContributor; // If number, parsing it to string
 
   final bool isHonest;
   final bool isFrontEndCert;
@@ -74,7 +75,8 @@ class FccUserModel {
   final bool isRelationalDatabaseCertV8;
   final bool isEmailVerified;
 
-  final List? badges; // Confirm
+  // We can add this in later after confirming it
+  // final List? badges;
   final List<int>? progressTimestamps;
 
   final ProfileUI profileUI;
@@ -131,7 +133,6 @@ class FccUserModel {
     required this.isEmailVerified,
     required this.profileUI,
     required this.isDonating,
-    this.badges,
     this.progressTimestamps,
     this.emailAuthLinkTTL,
     this.emailVerifyTTL,
@@ -140,58 +141,58 @@ class FccUserModel {
   factory FccUserModel.fromJson(Map<String, dynamic> data) {
     //data['user'][data['result']]
     return FccUserModel(
-        id: data['id'],
-        email: data['email'],
-        emailVerified: data['emailVerified'],
-        isCheater: data['isCheater'],
-        acceptedPrivacyTerms: data['acceptedPrivacyTerms'],
-        sendQuincyEmail: data['sendQuincyEmail'],
-        username: data['username'],
-        about: data['about'],
-        name: data['name'],
-        picture: data['picture'],
-        currentChallengeId: data['currentChallengeId'],
-        location: data['location'],
-        joinDate: DateTime.parse(data['joinDate']),
-        points: data['points'],
-        sound: data['sound'],
-        theme: data['theme'],
-        githubProfile: data['githubProfile'],
-        linkedin: data['linkedin'],
-        twitter: data['twitter'],
-        website: data['website'],
-        isGithub: data['isGithub'],
-        isLinkedin: data['isLinkedin'],
-        isTwitter: data['isTwitter'],
-        isWebsite: data['isWebsite'],
-        // Below 4 should be parsed correctly using below defined classes
-        calendar: data['calendar'],
-        completedChallenges: data['completedChallenges'],
-        portfolio: data['portfolio'],
-        savedChallenges: data['savedChallenges'],
-        yearsTopContributor: data['yearsTopContributor'],
-        isHonest: data['isHonest'],
-        isFrontEndCert: data['isFrontEndCert'],
-        isDataVisCert: data['isDataVisCert'],
-        isBackEndCert: data['isBackEndCert'],
-        isFullStackCert: data['isFullStackCert'],
-        isRespWebDesignCert: data['isFullStackCert'],
-        is2018DataVisCert: data['is2018DataVisCert'],
-        isFrontEndLibsCert: data['isFrontEndLibsCert'],
-        isJsAlgoDataStructCert: data['isJsAlgoDataStructCert'],
-        isApisMicroservicesCert: data['isApisMicroservicesCert'],
-        isInfosecQaCert: data['isInfosecQaCert'],
-        isQaCertV7: data['isQaCertV7'],
-        isInfosecCertV7: data['isInfosecCertV7'],
-        isSciCompPyCertV7: data['isSciCompPyCertV7'],
-        isDataAnalysisPyCertV7: data['isDataAnalysisPyCertV7'],
-        isMachineLearningPyCertV7: data['isMachineLearningPyCertV7'],
-        isRelationalDatabaseCertV8: data['isRelationalDatabaseCertV8'],
-        isEmailVerified: data['isEmailVerified'],
-        badges: data['badges'],
-        progressTimestamps: data['progressTimestamps'],
-        profileUI: ProfileUI.fromJson(data['profileUI']),
-        isDonating: data['isDonating']);
+      id: data['id'],
+      email: data['email'],
+      emailVerified: data['emailVerified'],
+      isCheater: data['isCheater'],
+      acceptedPrivacyTerms: data['acceptedPrivacyTerms'],
+      sendQuincyEmail: data['sendQuincyEmail'],
+      username: data['username'],
+      about: data['about'],
+      name: data['name'],
+      picture: data['picture'],
+      currentChallengeId: data['currentChallengeId'],
+      location: data['location'],
+      joinDate: DateTime.parse(data['joinDate']),
+      points: data['points'],
+      sound: data['sound'],
+      theme: data['theme'],
+      githubProfile: data['githubProfile'],
+      linkedin: data['linkedin'],
+      twitter: data['twitter'],
+      website: data['website'],
+      isGithub: data['isGithub'],
+      isLinkedin: data['isLinkedin'],
+      isTwitter: data['isTwitter'],
+      isWebsite: data['isWebsite'],
+      // Below 4 should be parsed correctly using below defined classes
+      calendar: data['calendar'],
+      completedChallenges: data['completedChallenges'],
+      portfolio: data['portfolio'],
+      savedChallenges: data['savedChallenges'],
+      yearsTopContributor: data['yearsTopContributor'],
+      isHonest: data['isHonest'],
+      isFrontEndCert: data['isFrontEndCert'],
+      isDataVisCert: data['isDataVisCert'],
+      isBackEndCert: data['isBackEndCert'],
+      isFullStackCert: data['isFullStackCert'],
+      isRespWebDesignCert: data['isFullStackCert'],
+      is2018DataVisCert: data['is2018DataVisCert'],
+      isFrontEndLibsCert: data['isFrontEndLibsCert'],
+      isJsAlgoDataStructCert: data['isJsAlgoDataStructCert'],
+      isApisMicroservicesCert: data['isApisMicroservicesCert'],
+      isInfosecQaCert: data['isInfosecQaCert'],
+      isQaCertV7: data['isQaCertV7'],
+      isInfosecCertV7: data['isInfosecCertV7'],
+      isSciCompPyCertV7: data['isSciCompPyCertV7'],
+      isDataAnalysisPyCertV7: data['isDataAnalysisPyCertV7'],
+      isMachineLearningPyCertV7: data['isMachineLearningPyCertV7'],
+      isRelationalDatabaseCertV8: data['isRelationalDatabaseCertV8'],
+      isEmailVerified: data['isEmailVerified'],
+      progressTimestamps: data['progressTimestamps'],
+      profileUI: ProfileUI.fromJson(data['profileUI']),
+      isDonating: data['isDonating'],
+    );
   }
 
   // IMPORTANT : When the user model, changes this Map has to be changed manually to match it.
@@ -346,48 +347,45 @@ class CompletedChallenge {
 }
 
 class ChallengeFile {
-  final String key; // Confirm if this is "key" or "fileKey"
+  final String key;
   final Ext ext;
   final String name;
   final String contents;
-  // Old submissions have this property. Check if still used, if not remove
-  final String? path;
 
   ChallengeFile({
     required this.key,
     required this.ext,
     required this.name,
     required this.contents,
-    this.path,
   });
 }
 
 class SavedChallenge {
   final String id;
-  final List<SavedChallengeFile> challengeFiles;
+  final List<SavedChallengeFile> files;
 
   SavedChallenge({
     required this.id,
-    required this.challengeFiles,
+    required this.files,
   });
 
   factory SavedChallenge.fromJson(Map<String, dynamic> data) {
     return SavedChallenge(
       id: data['id'],
-      challengeFiles: data['challengeFiles'],
+      files: data['challengeFiles'],
     );
   }
 }
 
 class SavedChallengeFile {
-  final String fileKey;
+  final String key;
   final Ext ext;
   final String name;
   final List<String>? history;
   final String contents;
 
   SavedChallengeFile({
-    required this.fileKey,
+    required this.key,
     required this.ext,
     required this.name,
     required this.history,
@@ -397,3 +395,6 @@ class SavedChallengeFile {
 
 // Create function for converting string to enum and vice-versa
 enum Ext { js, html, css, jsx }
+
+// default can't be used as a value for an enum so suffixing with Theme
+enum Themes { nightTheme, defaultTheme }
