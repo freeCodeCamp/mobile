@@ -1,3 +1,7 @@
+import 'dart:developer';
+
+import 'package:flutter/foundation.dart';
+
 class UserModel {
   final NewsUserModel newsUserModel;
   final ForumUserModel forumUserModel;
@@ -45,7 +49,7 @@ class FccUserModel {
   final String website;
 
   final bool isGithub;
-  final bool isLinkedin;
+  final bool isLinkedIn;
   final bool isTwitter;
   final bool isWebsite;
 
@@ -104,7 +108,7 @@ class FccUserModel {
     required this.twitter,
     required this.website,
     required this.isGithub,
-    required this.isLinkedin,
+    required this.isLinkedIn,
     required this.isTwitter,
     required this.isWebsite,
     required this.calendar,
@@ -156,21 +160,31 @@ class FccUserModel {
       joinDate: DateTime.parse(data['joinDate']),
       points: data['points'],
       sound: data['sound'],
-      theme: data['theme'],
+      theme: parseThemes(data['theme']),
       githubProfile: data['githubProfile'],
       linkedin: data['linkedin'],
       twitter: data['twitter'],
       website: data['website'],
       isGithub: data['isGithub'],
-      isLinkedin: data['isLinkedin'],
+      isLinkedIn: data['isLinkedIn'],
       isTwitter: data['isTwitter'],
       isWebsite: data['isWebsite'],
-      // Below 4 should be parsed correctly using below defined classes
-      calendar: data['calendar'],
-      completedChallenges: data['completedChallenges'],
-      portfolio: data['portfolio'],
-      savedChallenges: data['savedChallenges'],
-      yearsTopContributor: data['yearsTopContributor'],
+      calendar: parseCalendar(
+          Map.castFrom<dynamic, dynamic, String, int>(data['calendar'])),
+      completedChallenges: (data['completedChallenges'] as List)
+          .map<CompletedChallenge>(
+              (challenge) => CompletedChallenge.fromJson(challenge))
+          .toList(),
+      portfolio: (data['portfolio'] as List)
+          .map<Portfolio>((portfolio) => Portfolio.fromJson(portfolio))
+          .toList(),
+      savedChallenges: (data['savedChallenges'] as List)
+          .map<SavedChallenge>(
+              (challenge) => SavedChallenge.fromJson(challenge))
+          .toList(),
+      yearsTopContributor: (data['yearsTopContributor'] as List)
+          .map<String>((year) => year.toString())
+          .toList(),
       isHonest: data['isHonest'],
       isFrontEndCert: data['isFrontEndCert'],
       isDataVisCert: data['isDataVisCert'],
@@ -323,7 +337,7 @@ class CompletedChallenge {
   final String? githubLink;
   final int? challengeType;
   final DateTime completedDate;
-  final List<ChallengeFile>? files;
+  final List<ChallengeFile> files;
 
   CompletedChallenge({
     required this.id,
@@ -331,7 +345,7 @@ class CompletedChallenge {
     this.githubLink,
     this.challengeType,
     required this.completedDate,
-    this.files,
+    required this.files,
   });
 
   factory CompletedChallenge.fromJson(Map<String, dynamic> data) {
@@ -341,7 +355,9 @@ class CompletedChallenge {
       githubLink: data['githubLink'],
       challengeType: data['challengeType'],
       completedDate: DateTime.fromMillisecondsSinceEpoch(data['completedDate']),
-      files: data['challengeFiles'],
+      files: (data['files'] as List)
+          .map<ChallengeFile>((file) => ChallengeFile.fromJson(file))
+          .toList(),
     );
   }
 }
@@ -358,6 +374,15 @@ class ChallengeFile {
     required this.name,
     required this.contents,
   });
+
+  factory ChallengeFile.fromJson(Map<String, dynamic> data) {
+    return ChallengeFile(
+      key: data['key'],
+      ext: parseExt(data['ext']),
+      name: data['name'],
+      contents: data['contents'],
+    );
+  }
 }
 
 class SavedChallenge {
@@ -372,7 +397,9 @@ class SavedChallenge {
   factory SavedChallenge.fromJson(Map<String, dynamic> data) {
     return SavedChallenge(
       id: data['id'],
-      files: data['challengeFiles'],
+      files: (data['files'] as List)
+          .map<SavedChallengeFile>((file) => SavedChallengeFile.fromJson(file))
+          .toList(),
     );
   }
 }
@@ -381,7 +408,7 @@ class SavedChallengeFile {
   final String key;
   final Ext ext;
   final String name;
-  final List<String>? history;
+  final List<String> history;
   final String contents;
 
   SavedChallengeFile({
@@ -391,10 +418,65 @@ class SavedChallengeFile {
     required this.history,
     required this.contents,
   });
+
+  factory SavedChallengeFile.fromJson(Map<String, dynamic> data) {
+    return SavedChallengeFile(
+      key: data['key'],
+      ext: parseExt(data['ext']),
+      name: data['name'],
+      history: data['history'].cast<String>(),
+      contents: data['contents'],
+    );
+  }
 }
 
-// Create function for converting string to enum and vice-versa
 enum Ext { js, html, css, jsx }
+
+parseExt(String ext) {
+  switch (ext) {
+    case 'js':
+      return Ext.js;
+    case 'html':
+      return Ext.html;
+    case 'css':
+      return Ext.css;
+    case 'jsx':
+      return Ext.jsx;
+    default:
+      return 'html';
+  }
+}
+
+extension ExtValue on Ext {
+  String get value => describeEnum(this);
+}
 
 // default can't be used as a value for an enum so suffixing with Theme
 enum Themes { nightTheme, defaultTheme }
+
+parseThemes(String theme) {
+  switch (theme) {
+    case 'night':
+      return Themes.nightTheme;
+    case 'default':
+      return Themes.defaultTheme;
+    default:
+      return Themes.defaultTheme;
+  }
+}
+
+extension ThemesValue on Themes {
+  String get value => describeEnum(this).replaceFirst('Theme', '');
+}
+
+Map<DateTime, int> parseCalendar(Map<String, int> calendar) {
+  calendar.remove('NaN');
+  return calendar.map(
+    (key, val) {
+      return MapEntry(
+        DateTime.fromMillisecondsSinceEpoch(int.parse(key) * 1000),
+        val,
+      );
+    },
+  );
+}

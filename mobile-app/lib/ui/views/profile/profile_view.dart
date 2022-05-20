@@ -51,7 +51,7 @@ class ProfileView extends StatelessWidget {
                 ],
               ),
               // TODO: Top Contributor comes here
-              // Text('${model.user.points} total points'),
+              Text('${model.user.points} total points'),
               // TODO: Add heatmap here
               // TODO: Certifications here
               // TODO: Timeline here

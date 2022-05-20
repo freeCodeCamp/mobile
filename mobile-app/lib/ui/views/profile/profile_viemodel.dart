@@ -14,7 +14,8 @@ class ProfileViewModel extends BaseViewModel {
 
   void initState() async {
     user = _authenticationService.userModel!;
-    log(user.toString());
     notifyListeners();
+    log('YEARS TOP CONTRIBUTOR ${user.yearsTopContributor.length.toString()}');
+    log('CALENDAR ${user.calendar.length.toString()}');
   }
 }
