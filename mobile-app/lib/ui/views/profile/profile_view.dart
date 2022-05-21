@@ -77,7 +77,7 @@ class ProfileView extends StatelessWidget {
                         ),
                       ),
                       Padding(
-                        padding: const EdgeInsets.symmetric(vertical: 5),
+                        padding: const EdgeInsets.symmetric(vertical: 8),
                         child: Text(
                           '@${user.username}',
                           textAlign: TextAlign.center,
@@ -88,7 +88,7 @@ class ProfileView extends StatelessWidget {
                         ),
                       ),
                       Padding(
-                        padding: const EdgeInsets.symmetric(vertical: 5),
+                        padding: const EdgeInsets.symmetric(vertical: 8),
                         child: Text(
                           user.name,
                           textAlign: TextAlign.center,
@@ -98,7 +98,7 @@ class ProfileView extends StatelessWidget {
                       ),
                       user.location != null
                           ? Padding(
-                              padding: const EdgeInsets.symmetric(vertical: 5),
+                              padding: const EdgeInsets.symmetric(vertical: 8),
                               child: Text(
                                 user.location!,
                                 textAlign: TextAlign.center,
@@ -109,7 +109,7 @@ class ProfileView extends StatelessWidget {
                           : Container(),
                       user.isDonating
                           ? Padding(
-                              padding: const EdgeInsets.symmetric(vertical: 5),
+                              padding: const EdgeInsets.symmetric(vertical: 8),
                               child: Row(
                                 mainAxisAlignment: MainAxisAlignment.center,
                                 children: [
@@ -127,7 +127,7 @@ class ProfileView extends StatelessWidget {
                           : Container(),
                       user.about != null
                           ? Padding(
-                              padding: const EdgeInsets.symmetric(vertical: 5),
+                              padding: const EdgeInsets.symmetric(vertical: 8),
                               child: Text(
                                 user.about!,
                                 textAlign: TextAlign.center,
@@ -137,7 +137,7 @@ class ProfileView extends StatelessWidget {
                             )
                           : Container(),
                       Padding(
-                        padding: const EdgeInsets.symmetric(vertical: 5),
+                        padding: const EdgeInsets.symmetric(vertical: 8),
                         child: Row(
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: [
@@ -154,7 +154,7 @@ class ProfileView extends StatelessWidget {
                       ),
                       // TODO: Top Contributor comes here
                       Padding(
-                        padding: const EdgeInsets.symmetric(vertical: 5),
+                        padding: const EdgeInsets.symmetric(vertical: 8),
                         child: Text(
                           '${user.points} total points',
                           textAlign: TextAlign.center,
