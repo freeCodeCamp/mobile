@@ -11,6 +11,18 @@ import 'package:stacked/stacked.dart';
 class ProfileView extends StatelessWidget {
   const ProfileView({Key? key}) : super(key: key);
 
+  BoxBorder borderPicker(FccUserModel user) {
+    if (user.isDonating && user.yearsTopContributor.isNotEmpty) {
+      return Border.all(width: 5, color: const Color(0xFF9400D3));
+    } else if (user.yearsTopContributor.isNotEmpty) {
+      return Border.all(width: 5, color: const Color(0xFF198EEE));
+    } else if (user.isDonating) {
+      return Border.all(width: 5, color: const Color(0xFFFFBF00));
+    } else {
+      return Border.all(width: 5, color: const Color(0xFFD0D0D5));
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return ViewModelBuilder<ProfileViewModel>.reactive(
@@ -39,19 +51,26 @@ class ProfileView extends StatelessWidget {
                     mainAxisAlignment: MainAxisAlignment.start,
                     crossAxisAlignment: CrossAxisAlignment.stretch,
                     children: [
-                      Padding(
-                        padding: const EdgeInsets.symmetric(vertical: 5),
-                        child: CachedNetworkImage(
-                          imageUrl: user.picture,
-                          height: MediaQuery.of(context).size.width * 0.4,
-                          width: MediaQuery.of(context).size.width * 0.4,
-                          errorWidget: (context, url, error) => Image.asset(
-                              'assets/images/placeholder-profile-img.png'),
-                          imageBuilder: (context, imageProvider) => Container(
-                            decoration: BoxDecoration(
-                              image: DecorationImage(
-                                image: imageProvider,
-                                fit: BoxFit.cover,
+                      Align(
+                        alignment: Alignment.center,
+                        child: Container(
+                          margin: const EdgeInsets.only(bottom: 4),
+                          padding: const EdgeInsets.all(5),
+                          decoration: BoxDecoration(
+                            border: borderPicker(user),
+                          ),
+                          child: CachedNetworkImage(
+                            imageUrl: user.picture,
+                            height: MediaQuery.of(context).size.width * 0.4,
+                            width: MediaQuery.of(context).size.width * 0.4,
+                            errorWidget: (context, url, error) => Image.asset(
+                                'assets/images/placeholder-profile-img.png'),
+                            imageBuilder: (context, imageProvider) => Container(
+                              decoration: BoxDecoration(
+                                image: DecorationImage(
+                                  image: imageProvider,
+                                  fit: BoxFit.cover,
+                                ),
                               ),
                             ),
                           ),
