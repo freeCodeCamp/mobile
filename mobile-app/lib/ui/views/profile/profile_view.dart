@@ -152,7 +152,30 @@ class ProfileView extends StatelessWidget {
                           ],
                         ),
                       ),
-                      // TODO: Top Contributor comes here
+                      user.yearsTopContributor.isNotEmpty
+                          ? Padding(
+                              padding: const EdgeInsets.symmetric(vertical: 8),
+                              child: Row(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: [
+                                  const FaIcon(
+                                    FontAwesomeIcons.award,
+                                    size: 18,
+                                  ),
+                                  const SizedBox(width: 8),
+                                  Flexible(
+                                    child: Text(
+                                      'Top Contributor - ${user.yearsTopContributor.join(', ')}',
+                                      style: GoogleFonts.robotoMono(
+                                        fontSize: 16,
+                                        height: 1.25,
+                                      ),
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            )
+                          : Container(),
                       Padding(
                         padding: const EdgeInsets.symmetric(vertical: 8),
                         child: Text(
