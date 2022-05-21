@@ -23,94 +23,99 @@ class ProfileView extends StatelessWidget {
         drawer: const DrawerWidgetView(),
         body: Container(
           padding: const EdgeInsets.all(4),
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.start,
-            crossAxisAlignment: CrossAxisAlignment.stretch,
-            children: [
-              Padding(
-                padding: const EdgeInsets.symmetric(vertical: 4),
-                child: CachedNetworkImage(
-                  imageUrl: model.user.picture,
-                  height: MediaQuery.of(context).size.width * 0.4,
-                  width: MediaQuery.of(context).size.width * 0.4,
-                  errorWidget: (context, url, error) =>
-                      Image.asset('assets/images/placeholder-profile-img.png'),
-                  imageBuilder: (context, imageProvider) => Container(
-                    decoration: BoxDecoration(
-                      image: DecorationImage(
-                        image: imageProvider,
-                        fit: BoxFit.cover,
+          child: SingleChildScrollView(
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.start,
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: [
+                Padding(
+                  padding: const EdgeInsets.symmetric(vertical: 5),
+                  child: CachedNetworkImage(
+                    imageUrl: model.user.picture,
+                    height: MediaQuery.of(context).size.width * 0.4,
+                    width: MediaQuery.of(context).size.width * 0.4,
+                    errorWidget: (context, url, error) => Image.asset(
+                        'assets/images/placeholder-profile-img.png'),
+                    imageBuilder: (context, imageProvider) => Container(
+                      decoration: BoxDecoration(
+                        image: DecorationImage(
+                          image: imageProvider,
+                          fit: BoxFit.cover,
+                        ),
                       ),
                     ),
                   ),
                 ),
-              ),
-              Padding(
-                padding: const EdgeInsets.symmetric(vertical: 4),
-                child: Text(
-                  '@${model.user.username}',
-                  textAlign: TextAlign.center,
-                  style: GoogleFonts.robotoMono(
-                    fontSize: 21.6,
-                    fontWeight: FontWeight.w700,
+                Padding(
+                  padding: const EdgeInsets.symmetric(vertical: 5),
+                  child: Text(
+                    '@${model.user.username}',
+                    textAlign: TextAlign.center,
+                    style: GoogleFonts.robotoMono(
+                      fontSize: 21.6,
+                      fontWeight: FontWeight.w700,
+                    ),
                   ),
                 ),
-              ),
-              Padding(
-                padding: const EdgeInsets.symmetric(vertical: 4),
-                child: Text(
-                  model.user.name,
-                  textAlign: TextAlign.center,
-                  style: GoogleFonts.robotoMono(fontSize: 16),
+                Padding(
+                  padding: const EdgeInsets.symmetric(vertical: 5),
+                  child: Text(
+                    model.user.name,
+                    textAlign: TextAlign.center,
+                    style: GoogleFonts.robotoMono(fontSize: 16, height: 1.25),
+                  ),
                 ),
-              ),
-              model.user.location != null
-                  ? Padding(
-                      padding: const EdgeInsets.symmetric(vertical: 4),
-                      child: Text(
-                        model.user.location!,
-                        textAlign: TextAlign.center,
-                        style: GoogleFonts.robotoMono(fontSize: 16),
+                model.user.location != null
+                    ? Padding(
+                        padding: const EdgeInsets.symmetric(vertical: 5),
+                        child: Text(
+                          model.user.location!,
+                          textAlign: TextAlign.center,
+                          style: GoogleFonts.robotoMono(
+                              fontSize: 16, height: 1.25),
+                        ),
+                      )
+                    : Container(),
+                model.user.about != null
+                    ? Padding(
+                        padding: const EdgeInsets.symmetric(vertical: 5),
+                        child: Text(
+                          model.user.about!,
+                          textAlign: TextAlign.center,
+                          style: GoogleFonts.robotoMono(
+                              fontSize: 16, height: 1.25),
+                        ),
+                      )
+                    : Container(),
+                Padding(
+                  padding: const EdgeInsets.symmetric(vertical: 5),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      const FaIcon(FontAwesomeIcons.solidCalendar, size: 18),
+                      const SizedBox(width: 8),
+                      Text(
+                        'Joined ${DateFormat.yMMMM().format(model.user.joinDate)}',
+                        style:
+                            GoogleFonts.robotoMono(fontSize: 16, height: 1.25),
                       ),
-                    )
-                  : Container(),
-              model.user.about != null
-                  ? Padding(
-                      padding: const EdgeInsets.symmetric(vertical: 4),
-                      child: Text(
-                        model.user.about!,
-                        textAlign: TextAlign.center,
-                        style: GoogleFonts.robotoMono(fontSize: 16),
-                      ),
-                    )
-                  : Container(),
-              Padding(
-                padding: const EdgeInsets.symmetric(vertical: 4),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    const FaIcon(FontAwesomeIcons.solidCalendar),
-                    const SizedBox(width: 4),
-                    Text(
-                      'Joined ${DateFormat.yMMMM().format(model.user.joinDate)}',
-                      style: GoogleFonts.robotoMono(fontSize: 16),
-                    ),
-                  ],
+                    ],
+                  ),
                 ),
-              ),
-              // TODO: Top Contributor comes here
-              Padding(
-                padding: const EdgeInsets.symmetric(vertical: 4),
-                child: Text(
-                  '${model.user.points} total points',
-                  textAlign: TextAlign.center,
-                  style: GoogleFonts.robotoMono(fontSize: 16),
+                // TODO: Top Contributor comes here
+                Padding(
+                  padding: const EdgeInsets.symmetric(vertical: 5),
+                  child: Text(
+                    '${model.user.points} total points',
+                    textAlign: TextAlign.center,
+                    style: GoogleFonts.robotoMono(fontSize: 16, height: 1.25),
+                  ),
                 ),
-              ),
-              // TODO: Add heatmap here
-              // TODO: Certifications here
-              // TODO: Timeline here
-            ],
+                // TODO: Add heatmap here
+                // TODO: Certifications here
+                // TODO: Timeline here
+              ],
+            ),
           ),
         ),
       ),
