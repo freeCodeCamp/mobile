@@ -37,7 +37,7 @@ class AuthenticationService {
       _csrfToken = (await secureStorage.read(key: 'csrf_token'))!;
       _jwtAccessToken = (await secureStorage.read(key: 'jwt_access_token'))!;
       isLoggedIn = true;
-      fetchUser();
+      await fetchUser();
     }
   }
 
