@@ -3,6 +3,8 @@ import 'package:flutter/material.dart';
 import 'package:freecodecamp/ui/views/profile/profile_viemodel.dart';
 import 'package:freecodecamp/ui/widgets/drawer_widget/drawer_widget_view.dart';
 import 'package:stacked/stacked.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/intl.dart';
 
 class ProfileView extends StatelessWidget {
@@ -19,39 +21,92 @@ class ProfileView extends StatelessWidget {
           title: const Text('PROFILE'),
         ),
         drawer: const DrawerWidgetView(),
-        body: Center(
+        body: Container(
+          padding: const EdgeInsets.all(4),
           child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
+            mainAxisAlignment: MainAxisAlignment.start,
+            crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
-              CachedNetworkImage(
-                imageUrl: model.user.picture,
-                height: MediaQuery.of(context).size.width * 0.5,
-                width: MediaQuery.of(context).size.width * 0.5,
-                errorWidget: (context, url, error) => const Icon(Icons.error),
-                imageBuilder: (context, imageProvider) => Container(
-                  decoration: BoxDecoration(
-                    image: DecorationImage(
-                      image: imageProvider,
-                      fit: BoxFit.cover,
+              Padding(
+                padding: const EdgeInsets.symmetric(vertical: 4),
+                child: CachedNetworkImage(
+                  imageUrl: model.user.picture,
+                  height: MediaQuery.of(context).size.width * 0.4,
+                  width: MediaQuery.of(context).size.width * 0.4,
+                  errorWidget: (context, url, error) =>
+                      Image.asset('assets/images/placeholder-profile-img.png'),
+                  imageBuilder: (context, imageProvider) => Container(
+                    decoration: BoxDecoration(
+                      image: DecorationImage(
+                        image: imageProvider,
+                        fit: BoxFit.cover,
+                      ),
                     ),
                   ),
                 ),
               ),
-              Text('@${model.user.username}'),
-              Text(model.user.name),
+              Padding(
+                padding: const EdgeInsets.symmetric(vertical: 4),
+                child: Text(
+                  '@${model.user.username}',
+                  textAlign: TextAlign.center,
+                  style: GoogleFonts.robotoMono(
+                    fontSize: 21.6,
+                    fontWeight: FontWeight.w700,
+                  ),
+                ),
+              ),
+              Padding(
+                padding: const EdgeInsets.symmetric(vertical: 4),
+                child: Text(
+                  model.user.name,
+                  textAlign: TextAlign.center,
+                  style: GoogleFonts.robotoMono(fontSize: 16),
+                ),
+              ),
               model.user.location != null
-                  ? Text(model.user.location!)
+                  ? Padding(
+                      padding: const EdgeInsets.symmetric(vertical: 4),
+                      child: Text(
+                        model.user.location!,
+                        textAlign: TextAlign.center,
+                        style: GoogleFonts.robotoMono(fontSize: 16),
+                      ),
+                    )
                   : Container(),
-              model.user.about != null ? Text(model.user.about!) : Container(),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  const Icon(Icons.calendar_month),
-                  Text('Joined ${DateFormat.yMMMM().format(model.user.joinDate)}'),
-                ],
+              model.user.about != null
+                  ? Padding(
+                      padding: const EdgeInsets.symmetric(vertical: 4),
+                      child: Text(
+                        model.user.about!,
+                        textAlign: TextAlign.center,
+                        style: GoogleFonts.robotoMono(fontSize: 16),
+                      ),
+                    )
+                  : Container(),
+              Padding(
+                padding: const EdgeInsets.symmetric(vertical: 4),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    const FaIcon(FontAwesomeIcons.solidCalendar),
+                    const SizedBox(width: 4),
+                    Text(
+                      'Joined ${DateFormat.yMMMM().format(model.user.joinDate)}',
+                      style: GoogleFonts.robotoMono(fontSize: 16),
+                    ),
+                  ],
+                ),
               ),
               // TODO: Top Contributor comes here
-              Text('${model.user.points} total points'),
+              Padding(
+                padding: const EdgeInsets.symmetric(vertical: 4),
+                child: Text(
+                  '${model.user.points} total points',
+                  textAlign: TextAlign.center,
+                  style: GoogleFonts.robotoMono(fontSize: 16),
+                ),
+              ),
               // TODO: Add heatmap here
               // TODO: Certifications here
               // TODO: Timeline here
