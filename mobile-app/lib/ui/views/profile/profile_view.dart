@@ -107,6 +107,24 @@ class ProfileView extends StatelessWidget {
                               ),
                             )
                           : Container(),
+                      user.isDonating
+                          ? Padding(
+                              padding: const EdgeInsets.symmetric(vertical: 5),
+                              child: Row(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: [
+                                  const FaIcon(FontAwesomeIcons.solidHeart,
+                                      size: 18),
+                                  const SizedBox(width: 8),
+                                  Text(
+                                    'Supporter',
+                                    style: GoogleFonts.robotoMono(
+                                        fontSize: 16, height: 1.25),
+                                  ),
+                                ],
+                              ),
+                            )
+                          : Container(),
                       user.about != null
                           ? Padding(
                               padding: const EdgeInsets.symmetric(vertical: 5),
