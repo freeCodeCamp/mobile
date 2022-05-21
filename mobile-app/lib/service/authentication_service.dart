@@ -18,7 +18,7 @@ class AuthenticationService {
   String _jwtAccessToken = '';
   final Dio _dio = Dio();
 
-  FccUserModel? userModel;
+  Future<FccUserModel>? userModel;
 
   factory AuthenticationService() {
     return _authenticationService;
@@ -37,12 +37,12 @@ class AuthenticationService {
       _csrfToken = (await secureStorage.read(key: 'csrf_token'))!;
       _jwtAccessToken = (await secureStorage.read(key: 'jwt_access_token'))!;
       isLoggedIn = true;
-      fetchUser();
+      await fetchUser();
     }
   }
 
-  void setFccUserModel(Map<String, dynamic> data) {
-    userModel = FccUserModel.fromJson(data);
+  Future<FccUserModel> fetchUserModel(Map<String, dynamic> data) async {
+    return FccUserModel.fromJson(data);
   }
 
   Future<void> login() async {
@@ -87,7 +87,7 @@ class AuthenticationService {
     log('_jwtAccessToken: $_jwtAccessToken');
   }
 
-  Future<Map<String, dynamic>> fetchUser() async {
+  Future<void> fetchUser() async {
     Response res = await _dio.get(
       '/user/get-session-user',
       options: Options(
@@ -98,9 +98,8 @@ class AuthenticationService {
       ),
     );
     log(jsonEncode(res.data['user']).toString());
-    setFccUserModel(res.data['user'][res.data['result']]);
+    userModel = fetchUserModel(res.data['user'][res.data['result']]);
 
-    log(userModel!.email);
     return res.data['user'][res.data['result']];
   }
 

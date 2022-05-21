@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:freecodecamp/models/main/user_model.dart';
 import 'package:freecodecamp/ui/widgets/drawer_widget/drawer_button.dart';
 import 'package:freecodecamp/ui/widgets/drawer_widget/drawer_web_buttton.dart';
 import 'package:freecodecamp/ui/widgets/drawer_widget/drawer_widget_viewmodel.dart';
@@ -29,9 +30,19 @@ class DrawerWidgetView extends StatelessWidget {
                         width: 75,
                         height: 75,
                       ),
-                      title: Text(model.auth.isLoggedIn
-                          ? model.returnUsername()
-                          : 'Anonymous user'),
+                      title: model.auth.isLoggedIn
+                          ? FutureBuilder(
+                              future: model.auth.userModel,
+                              builder: (context, snapshot) {
+                                if (snapshot.hasData) {
+                                  FccUserModel user =
+                                      snapshot.data as FccUserModel;
+                                  return Text(user.name);
+                                }
+
+                                return const Text('Anonymous user');
+                              })
+                          : const Text('Anonymous user'),
                       subtitle: Text(model.auth.isLoggedIn
                           ? 'Our coolest Camper'
                           : 'login to save your progress'),

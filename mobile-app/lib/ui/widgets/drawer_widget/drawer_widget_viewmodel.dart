@@ -25,18 +25,6 @@ class DrawerWidgtetViewModel extends BaseViewModel {
 
   final SnackbarService snack = locator<SnackbarService>();
 
-  String returnUsername() {
-    if (auth.userModel != null) {
-      if (auth.userModel!.name.isNotEmpty) {
-        return auth.userModel!.name;
-      } else {
-        return auth.userModel!.email;
-      }
-    }
-
-    return 'Anonymous user';
-  }
-
   void routeComponent(view, context) async {
     switch (view) {
       case 'LEARN':
