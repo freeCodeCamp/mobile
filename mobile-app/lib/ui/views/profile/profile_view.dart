@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
@@ -7,6 +9,7 @@ import 'package:freecodecamp/ui/widgets/drawer_widget/drawer_widget_view.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/intl.dart';
 import 'package:stacked/stacked.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class ProfileView extends StatelessWidget {
   const ProfileView({Key? key}) : super(key: key);
@@ -62,30 +65,96 @@ class ProfileView extends StatelessWidget {
                   user.isDataVisCert ||
                   user.isInfosecQaCert;
               final currentCerts = [
-                user.isRespWebDesignCert,
-                user.isJsAlgoDataStructCert,
-                user.isFrontEndLibsCert,
-                user.is2018DataVisCert,
-                user.isApisMicroservicesCert,
-                user.isQaCertV7,
-                user.isInfosecCertV7,
-                user.isSciCompPyCertV7,
-                user.isDataAnalysisPyCertV7,
-                user.isMachineLearningPyCertV7,
-                user.isRelationalDatabaseCertV8,
-                user.isFullStackCert,
+                {
+                  'show': user.isRespWebDesignCert,
+                  'title': 'Responsive Web Design Certification',
+                  'certSlug': 'responsive-web-design',
+                },
+                {
+                  'show': user.isJsAlgoDataStructCert,
+                  'title':
+                      'JavaScript Algorithms and Data Structures Certification',
+                  'certSlug': 'javascript-algorithms-and-data-structures'
+                },
+                {
+                  'show': user.isFrontEndLibsCert,
+                  'title': 'Front End Development Libraries Certification',
+                  'certSlug': 'front-end-development-libraries',
+                },
+                {
+                  'show': user.is2018DataVisCert,
+                  'title': 'Data Visualization Certification',
+                  'certSlug': 'data-visualization',
+                },
+                {
+                  'show': user.isApisMicroservicesCert,
+                  'title': 'Back End Development and APIs Certification',
+                  'certSlug': 'back-end-development-and-apis',
+                },
+                {
+                  'show': user.isQaCertV7,
+                  'title': ' Quality Assurance Certification',
+                  'certSlug': 'quality-assurance-v7',
+                },
+                {
+                  'show': user.isInfosecCertV7,
+                  'title': 'Information Security Certification',
+                  'certSlug': 'information-security-v7',
+                },
+                {
+                  'show': user.isSciCompPyCertV7,
+                  'title': 'Scientific Computing with Python Certification',
+                  'certSlug': 'scientific-computing-with-python-v7',
+                },
+                {
+                  'show': user.isDataAnalysisPyCertV7,
+                  'title': 'Data Analysis with Python Certification',
+                  'certSlug': 'data-analysis-with-python-v7',
+                },
+                {
+                  'show': user.isMachineLearningPyCertV7,
+                  'title': 'Machine Learning with Python Certification',
+                  'certSlug': 'machine-learning-with-python-v7',
+                },
+                {
+                  'show': user.isRelationalDatabaseCertV8,
+                  'title': 'Relational Database Certification',
+                  'certSlug': 'relational-database-v8',
+                }
               ];
               final legacyCerts = [
-                user.isFrontEndCert,
-                user.isBackEndCert,
-                user.isDataVisCert,
-                user.isInfosecQaCert,
-                user.isFullStackCert,
+                {
+                  'show': user.isFrontEndCert,
+                  'title': 'Front End Certification',
+                  'certSlug': 'legacy-front-end'
+                },
+                {
+                  'show': user.isBackEndCert,
+                  'title': 'Back End Certification',
+                  'certSlug': 'legacy-back-end'
+                },
+                {
+                  'show': user.isDataVisCert,
+                  'title': 'Data Visualization Certification',
+                  'certSlug': 'legacy-data-visualization'
+                },
+                {
+                  'show': user.isInfosecQaCert,
+                  'title':
+                      'Information Security and Quality Assurance Certification',
+                  'certSlug': 'information-security-and-quality-assurance'
+                },
+                {
+                  'show': user.isFullStackCert,
+                  'title': 'Full Stack Certification',
+                  'certSlug': 'full-stack'
+                }
               ];
 
               return Container(
                 padding: const EdgeInsets.all(4),
                 child: SingleChildScrollView(
+                  physics: const ScrollPhysics(),
                   child: Column(
                     mainAxisAlignment: MainAxisAlignment.start,
                     crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -121,7 +190,7 @@ class ProfileView extends StatelessWidget {
                           '@${user.username}',
                           textAlign: TextAlign.center,
                           style: GoogleFonts.robotoMono(
-                            fontSize: 21.6,
+                            fontSize: 21.5,
                             fontWeight: FontWeight.w700,
                           ),
                         ),
@@ -225,8 +294,122 @@ class ProfileView extends StatelessWidget {
                         ),
                       ),
                       // TODO: Add heatmap here
-                      // TODO: Certifications here
+                      Divider(
+                        thickness: 2,
+                        // FCC uses below color
+                        // color: Color(0xFF3B3B4F),
+                        color: Colors.grey.shade600,
+                        height: 24,
+                      ),
+                      Padding(
+                        padding: const EdgeInsets.only(top: 8, bottom: 2),
+                        child: Text(
+                          'freeCodeCamp Certifications',
+                          textAlign: TextAlign.center,
+                          style: GoogleFonts.robotoMono(
+                            fontSize: 20,
+                            height: 1.25,
+                            fontWeight: FontWeight.w700,
+                          ),
+                        ),
+                      ),
+                      hasModernCert
+                          ? ListView(
+                              padding: const EdgeInsets.all(4),
+                              physics: const NeverScrollableScrollPhysics(),
+                              shrinkWrap: true,
+                              children: currentCerts
+                                  .map(
+                                    (cert) => (cert['show'] as bool)
+                                        ? SizedBox(
+                                            height: 50,
+                                            child: ListTile(
+                                              title:
+                                                  Text('View ${cert["title"]}'),
+                                              trailing: const Icon(
+                                                Icons.arrow_forward_ios_sharp,
+                                                color: Colors.white,
+                                              ),
+                                              onTap: () => launch(
+                                                '${model.auth.baseURL}/certification/${user.username}/${cert["certSlug"]}',
+                                              ),
+                                            ),
+                                          )
+                                        : Container(),
+                                  )
+                                  .toList(),
+                            )
+                          : Padding(
+                              padding: const EdgeInsets.all(4),
+                              child: Text(
+                                'No certifications have been earned under the current curriculum',
+                                textAlign: TextAlign.center,
+                                style: GoogleFonts.robotoMono(
+                                  fontSize: 16,
+                                  height: 1.25,
+                                ),
+                              ),
+                            ),
+                      hasLegacyCert
+                          ? Column(
+                              children: [
+                                Padding(
+                                  padding:
+                                      const EdgeInsets.only(top: 16, bottom: 2),
+                                  child: Text(
+                                    'Legacy Certifications',
+                                    textAlign: TextAlign.center,
+                                    style: GoogleFonts.robotoMono(
+                                      fontSize: 18,
+                                      height: 1.25,
+                                      fontWeight: FontWeight.w700,
+                                    ),
+                                  ),
+                                ),
+                                ListView(
+                                  padding: const EdgeInsets.all(4),
+                                  physics: const NeverScrollableScrollPhysics(),
+                                  shrinkWrap: true,
+                                  children: legacyCerts
+                                      .map(
+                                        (cert) => (cert['show'] as bool)
+                                            ? SizedBox(
+                                                height: 50,
+                                                child: ListTile(
+                                                  title: Text(
+                                                      'View ${cert["title"]}'),
+                                                  trailing: const Icon(
+                                                    Icons
+                                                        .arrow_forward_ios_sharp,
+                                                    color: Colors.white,
+                                                  ),
+                                                  onTap: () => launch(
+                                                    '${model.auth.baseURL}/certification/${user.username}/${cert["certSlug"]}',
+                                                  ),
+                                                ),
+                                              )
+                                            : Container(),
+                                      )
+                                      .toList(),
+                                ),
+                              ],
+                            )
+                          : Container(),
+                      Divider(
+                        thickness: 2,
+                        // FCC uses below color
+                        // color: Color(0xFF3B3B4F),
+                        color: Colors.grey.shade600,
+                        height: 24,
+                      ),
                       // TODO: Portfolio here
+                      Divider(
+                        thickness: 2,
+                        // FCC uses below color
+                        // color: Color(0xFF3B3B4F),
+                        color: Colors.grey.shade600,
+                        height: 24,
+                      ),
                       // TODO: Timeline here
                     ],
                   ),
