@@ -1,13 +1,13 @@
-import 'dart:developer';
-
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_heatmap_calendar/flutter_heatmap_calendar.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:freecodecamp/models/main/user_model.dart';
 import 'package:freecodecamp/ui/views/profile/profile_viemodel.dart';
 import 'package:freecodecamp/ui/widgets/drawer_widget/drawer_widget_view.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/intl.dart';
+import 'package:jiffy/jiffy.dart';
 import 'package:stacked/stacked.dart';
 import 'package:url_launcher/url_launcher.dart';
 
@@ -293,7 +293,41 @@ class ProfileView extends StatelessWidget {
                               fontSize: 16, height: 1.25),
                         ),
                       ),
-                      // TODO: Add heatmap here
+                      Padding(
+                        padding: const EdgeInsets.symmetric(vertical: 8),
+                        child: HeatMap(
+                          startDate: Jiffy().subtract(months: 6).dateTime,
+                          datasets: user.heatMapCal,
+                          colorsets: const {
+                            0: Color(0xFF2A2A40),
+                            1: Color(0xFF858591),
+                            4: Color(0xFFD0D0D5),
+                            8: Colors.white,
+                          },
+                          defaultColor: const Color(0xFF2A2A40),
+                          scrollable: true,
+                          colorMode: ColorMode.color,
+                          showColorTip: false,
+                          onClick: (value) {
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              SnackBar(
+                                duration: const Duration(seconds: 2),
+                                content: Text(
+                                  Intl.plural(
+                                    user.heatMapCal[value] ?? 0,
+                                    other:
+                                        '${user.heatMapCal[value]} points on ${DateFormat.yMMMd().format(value)}',
+                                    zero:
+                                        '0 points on ${DateFormat.yMMMd().format(value)}',
+                                    one:
+                                        '1 point on ${DateFormat.yMMMd().format(value)}',
+                                  ),
+                                ),
+                              ),
+                            );
+                          },
+                        ),
+                      ),
                       Divider(
                         thickness: 2,
                         // FCC uses below color

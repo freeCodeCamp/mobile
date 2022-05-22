@@ -54,6 +54,8 @@ class FccUserModel {
   final bool isWebsite;
 
   final Map<DateTime, int> calendar;
+  // Below member is used for heatmap, don't send back to server
+  final Map<DateTime, int> heatMapCal;
   final List<CompletedChallenge> completedChallenges;
   final List<Portfolio> portfolio;
   final List<SavedChallenge> savedChallenges;
@@ -112,6 +114,7 @@ class FccUserModel {
     required this.isTwitter,
     required this.isWebsite,
     required this.calendar,
+    required this.heatMapCal,
     required this.completedChallenges,
     required this.portfolio,
     required this.savedChallenges,
@@ -170,6 +173,8 @@ class FccUserModel {
       isTwitter: data['isTwitter'],
       isWebsite: data['isWebsite'],
       calendar: parseCalendar(
+          Map.castFrom<dynamic, dynamic, String, int>(data['calendar'])),
+      heatMapCal: genHeatMapCal(
           Map.castFrom<dynamic, dynamic, String, int>(data['calendar'])),
       completedChallenges: (data['completedChallenges'] as List)
           .map<CompletedChallenge>(
@@ -479,4 +484,20 @@ Map<DateTime, int> parseCalendar(Map<String, int> calendar) {
       );
     },
   );
+}
+
+Map<DateTime, int> genHeatMapCal(Map<String, int> calendar) {
+  Map<DateTime, int> parsedCal = parseCalendar(calendar);
+  Map<DateTime, int> heatMapCal = {};
+
+  parsedCal.forEach((key, val) {
+    DateTime newKey = DateTime(key.year, key.month, key.day);
+    if (heatMapCal.containsKey(newKey)) {
+      heatMapCal[newKey] = heatMapCal[newKey]! + val;
+    } else {
+      heatMapCal[newKey] = val;
+    }
+  });
+
+  return heatMapCal;
 }
