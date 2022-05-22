@@ -205,7 +205,7 @@ class FccUserModel {
       isEmailVerified: data['isEmailVerified'],
       progressTimestamps: data['progressTimestamps'],
       profileUI: ProfileUI.fromJson(data['profileUI']),
-      isDonating: data['isDonating'],
+      isDonating: data['isDonating'] ?? false,
     );
   }
 

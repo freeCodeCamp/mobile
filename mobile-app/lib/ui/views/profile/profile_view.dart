@@ -44,6 +44,45 @@ class ProfileView extends StatelessWidget {
             }
             if (snapshot.hasData) {
               FccUserModel user = snapshot.data!;
+
+              final hasModernCert = user.isRespWebDesignCert ||
+                  user.is2018DataVisCert ||
+                  user.isFrontEndLibsCert ||
+                  user.isJsAlgoDataStructCert ||
+                  user.isApisMicroservicesCert ||
+                  user.isQaCertV7 ||
+                  user.isInfosecCertV7 ||
+                  user.isFullStackCert ||
+                  user.isSciCompPyCertV7 ||
+                  user.isDataAnalysisPyCertV7 ||
+                  user.isMachineLearningPyCertV7 ||
+                  user.isRelationalDatabaseCertV8;
+              final hasLegacyCert = user.isFrontEndCert ||
+                  user.isBackEndCert ||
+                  user.isDataVisCert ||
+                  user.isInfosecQaCert;
+              final currentCerts = [
+                user.isRespWebDesignCert,
+                user.isJsAlgoDataStructCert,
+                user.isFrontEndLibsCert,
+                user.is2018DataVisCert,
+                user.isApisMicroservicesCert,
+                user.isQaCertV7,
+                user.isInfosecCertV7,
+                user.isSciCompPyCertV7,
+                user.isDataAnalysisPyCertV7,
+                user.isMachineLearningPyCertV7,
+                user.isRelationalDatabaseCertV8,
+                user.isFullStackCert,
+              ];
+              final legacyCerts = [
+                user.isFrontEndCert,
+                user.isBackEndCert,
+                user.isDataVisCert,
+                user.isInfosecQaCert,
+                user.isFullStackCert,
+              ];
+
               return Container(
                 padding: const EdgeInsets.all(4),
                 child: SingleChildScrollView(
@@ -187,6 +226,7 @@ class ProfileView extends StatelessWidget {
                       ),
                       // TODO: Add heatmap here
                       // TODO: Certifications here
+                      // TODO: Portfolio here
                       // TODO: Timeline here
                     ],
                   ),
