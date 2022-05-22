@@ -40,6 +40,7 @@ class FccUserModel {
   final String currentChallengeId;
   final String? location;
   final DateTime joinDate;
+  final Streak streak;
   final int points; // May be null, confirm
   final bool sound;
   final Themes theme;
@@ -102,6 +103,7 @@ class FccUserModel {
     required this.currentChallengeId,
     this.location,
     required this.joinDate,
+    required this.streak,
     required this.points,
     required this.sound,
     required this.theme,
@@ -161,6 +163,7 @@ class FccUserModel {
       currentChallengeId: data['currentChallengeId'],
       location: data['location'],
       joinDate: DateTime.parse(data['joinDate']),
+      streak: Streak.fromJson(data['streak']),
       points: data['points'],
       sound: data['sound'],
       theme: parseThemes(data['theme']),
@@ -308,6 +311,17 @@ class ProfileUI {
         showPoints: data['showPoints'],
         showPortfolio: data['showPortfolio'],
         showTimeLine: data['showTimeLine']);
+  }
+}
+
+class Streak {
+  final int longest;
+  final int current;
+
+  Streak({required this.longest, required this.current});
+
+  factory Streak.fromJson(Map<String, dynamic> data) {
+    return Streak(longest: data['longest'] ?? 0, current: data['current'] ?? 0);
   }
 }
 
