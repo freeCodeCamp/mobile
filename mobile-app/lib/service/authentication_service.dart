@@ -3,6 +3,7 @@ import 'dart:developer';
 
 import 'package:curl_logger_dio_interceptor/curl_logger_dio_interceptor.dart';
 import 'package:dio/dio.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:flutter_webview_plugin/flutter_webview_plugin.dart';
 import 'package:freecodecamp/models/main/user_model.dart';
@@ -11,13 +12,15 @@ import 'package:pretty_dio_logger/pretty_dio_logger.dart';
 class AuthenticationService {
   static final AuthenticationService _authenticationService =
       AuthenticationService._internal();
+  late bool isDevMode;
   final FlutterSecureStorage secureStorage = const FlutterSecureStorage();
   bool isLoggedIn = false;
   String _csrf = '';
   String _csrfToken = '';
   String _jwtAccessToken = '';
   final Dio _dio = Dio();
-
+  String baseURL = '';
+  String baseApiURL = '';
   Future<FccUserModel>? userModel;
 
   factory AuthenticationService() {
@@ -25,7 +28,17 @@ class AuthenticationService {
   }
 
   Future<void> init() async {
-    _dio.options.baseUrl = 'https://api.freecodecamp.dev';
+    await dotenv.load();
+    // isDevMode = true;
+    isDevMode =
+        dotenv.get('DEVELOPMENTMODE', fallback: '').toLowerCase() == 'true';
+    baseURL = isDevMode
+        ? 'https://www.freecodecamp.dev'
+        : 'https://www.freecodecamp.org';
+    baseApiURL = isDevMode
+        ? 'https://api.freecodecamp.dev'
+        : 'https://api.freecodecamp.org';
+    _dio.options.baseUrl = baseApiURL;
     // Below two interceptors are for debugging purposes only
     // They will be put behind a devMode flag later
     _dio.interceptors.add(PrettyDioLogger(responseBody: false));
@@ -50,7 +63,7 @@ class AuthenticationService {
     browser.onUrlChanged.listen((String url) async {
       log('onUrlChanged: $url');
       if (url ==
-          'https://www.freecodecamp.dev/learn/?messages=success%5B0%5D%3Dflash.signin-success') {
+          '$baseURL/learn/?messages=success%5B0%5D%3Dflash.signin-success') {
         isLoggedIn = true;
         Map<String, String> cookies = await browser.getCookies();
         // Do not question the weird keys below
@@ -67,7 +80,7 @@ class AuthenticationService {
       }
     });
     browser.launch(
-      'https://api.freecodecamp.dev/signin',
+      '$baseApiURL/signin',
       clearCookies: true,
       debuggingEnabled: true,
       userAgent: 'random',
