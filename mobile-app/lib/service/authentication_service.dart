@@ -52,7 +52,7 @@ class AuthenticationService {
       _csrf = (await secureStorage.read(key: 'csrf'))!;
       _csrfToken = (await secureStorage.read(key: 'csrf_token'))!;
       _jwtAccessToken = (await secureStorage.read(key: 'jwt_access_token'))!;
-
+      isLoggedInStream.sink.add(true);
       await fetchUser();
     }
   }
