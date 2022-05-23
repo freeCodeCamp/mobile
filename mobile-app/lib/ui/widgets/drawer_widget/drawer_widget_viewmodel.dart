@@ -24,6 +24,16 @@ class DrawerWidgtetViewModel extends BaseViewModel {
 
   final SnackbarService snack = locator<SnackbarService>();
 
+  bool _loggedIn = false;
+  bool get loggedIn => _loggedIn;
+
+  void initState() {
+    auth.isLoggedIn.listen((event) {
+      _loggedIn = event;
+      notifyListeners();
+    });
+  }
+
   void routeComponent(view, context) async {
     switch (view) {
       case 'LEARN':
@@ -90,8 +100,7 @@ class DrawerWidgtetViewModel extends BaseViewModel {
   }
 
   void handleAuth(BuildContext context) {
-    Navigator.pop(context);
-    auth.isLoggedIn ? auth.logout() : auth.login();
+    loggedIn ? auth.logout() : auth.login();
     notifyListeners();
   }
 }
