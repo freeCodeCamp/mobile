@@ -48,7 +48,7 @@ import 'package:sqflite_migration_service/sqflite_migration_service.dart';
     MaterialRoute(page: ForumSettingsView),
     MaterialRoute(page: ForumUserProfileView),
     MaterialRoute(page: CodeRadioView),
-    MaterialRoute(page: SuperBlockView, maintainState: true),
+    MaterialRoute(page: SuperBlockView),
     MaterialRoute(page: ChallengeView),
     MaterialRoute(page: AuthView)
   ],

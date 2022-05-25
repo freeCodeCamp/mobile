@@ -28,36 +28,25 @@ class LearnViewModel extends BaseViewModel {
   bool _isHeaderVisible = true;
   bool get isHeaderVisible => _isHeaderVisible;
 
+  bool _isLoggedIn = false;
+  bool get isLoggedIn => _isLoggedIn;
+
   Future? _superBlocks;
   Future? get superBlocks => _superBlocks;
 
   void init(BuildContext context) {
     WebView.platform = SurfaceAndroidWebView();
     setupDialogUi();
-    initScrollListener(context);
     _superBlocks = getSuperBlocks();
     retrieveNewQuote();
     notifyListeners();
+    initLoggedInListener();
   }
 
-  void initScrollListener(BuildContext context) {
-    _scrollController.addListener(() {
-      double viewport = _scrollController.position.viewportDimension;
-      double paddingHeaderText = 32;
-      double headerStopsAt = (viewport - paddingHeaderText) * 0.25;
-
-      double topOffset = scrollController.offset;
-
-      if (topOffset > headerStopsAt) {
-        // this prevents the notifylisteners to be called everytime on scroll
-        if (_isHeaderVisible) {
-          _isHeaderVisible = false;
-          notifyListeners();
-        }
-      } else if (!_isHeaderVisible) {
-        _isHeaderVisible = true;
-        notifyListeners();
-      }
+  void initLoggedInListener() {
+    auth.isLoggedIn.listen((e) {
+      _isLoggedIn = e;
+      notifyListeners();
     });
   }
 
@@ -88,14 +77,6 @@ class LearnViewModel extends BaseViewModel {
 
   void goBack() {
     _navigationService.back();
-  }
-
-  String handleName(LearnViewModel model) {
-    if (model.auth.userModel?.name != null) {
-      return model.auth.userModel?.name as String;
-    } else {
-      return model.auth.userModel?.username as String;
-    }
   }
 
   Future<MotivationalQuote> retrieveNewQuote() async {

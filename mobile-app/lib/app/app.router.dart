@@ -255,7 +255,6 @@ class StackedRouter extends RouterBase {
           superBlockName: args.superBlockName,
         ),
         settings: data,
-        maintainState: true,
       );
     },
     ChallengeView: (data) {

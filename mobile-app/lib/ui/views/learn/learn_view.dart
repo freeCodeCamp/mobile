@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:freecodecamp/models/learn/motivational_quote_model.dart';
+import 'package:freecodecamp/models/main/user_model.dart';
 import 'package:freecodecamp/ui/views/learn/learn_viewmodel.dart';
 import 'package:freecodecamp/ui/widgets/drawer_widget/drawer_widget_view.dart';
 import 'package:stacked/stacked.dart';
@@ -24,11 +25,21 @@ class LearnView extends StatelessWidget {
                   if (snapshot.hasData) {
                     var superBlocks = snapshot.data as List;
                     return ListView(shrinkWrap: true, children: [
-                      model.auth.isLoggedIn
-                          ? welcomeMessage(model)
-                          : Container(),
-                      quouteWidget(),
-                      !model.auth.isLoggedIn ? loginButton(model) : Container(),
+                      StreamBuilder(
+                          stream: model.auth.isLoggedIn,
+                          builder: ((context, snapshot) {
+                            return Column(
+                              children: [
+                                model.isLoggedIn
+                                    ? welcomeMessage(model)
+                                    : Container(),
+                                quouteWidget(),
+                                !model.isLoggedIn
+                                    ? loginButton(model)
+                                    : Container(),
+                              ],
+                            );
+                          })),
                       ListView.builder(
                           physics: const ClampingScrollPhysics(),
                           shrinkWrap: true,
@@ -148,13 +159,24 @@ class LearnView extends StatelessWidget {
   }
 
   Widget welcomeMessage(LearnViewModel model) {
-    return Container(
-      padding: const EdgeInsets.all(16),
-      child: Text(
-        'Welcome back ${model.handleName(model)}. ',
-        textAlign: TextAlign.center,
-        style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
-      ),
-    );
+    return FutureBuilder<FccUserModel>(
+        future: model.auth.userModel,
+        builder: ((context, snapshot) {
+          if (snapshot.hasData) {
+            FccUserModel user = snapshot.data as FccUserModel;
+
+            return Container(
+              padding: const EdgeInsets.all(16),
+              child: Text(
+                'Welcome back ${user.username}. ',
+                textAlign: TextAlign.center,
+                style:
+                    const TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+              ),
+            );
+          }
+
+          return const Center(child: CircularProgressIndicator());
+        }));
   }
 }
