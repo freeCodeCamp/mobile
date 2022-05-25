@@ -1,6 +1,4 @@
-import 'dart:convert';
-import 'dart:developer';
-
+import 'dart:async';
 import 'package:curl_logger_dio_interceptor/curl_logger_dio_interceptor.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
@@ -12,7 +10,7 @@ class AuthenticationService {
   static final AuthenticationService _authenticationService =
       AuthenticationService._internal();
   final FlutterSecureStorage secureStorage = const FlutterSecureStorage();
-  bool isLoggedIn = false;
+
   String _csrf = '';
   String _csrfToken = '';
   String _jwtAccessToken = '';
@@ -20,8 +18,28 @@ class AuthenticationService {
 
   Future<FccUserModel>? userModel;
 
+  static StreamController<bool> isLoggedInStream =
+      StreamController<bool>.broadcast();
+  final Stream<bool> _isLoggedIn = isLoggedInStream.stream;
+
+  Stream<bool> get isLoggedIn => _isLoggedIn;
+
+  final String baseUrl = 'https://www.freecodecamp.dev';
+
   factory AuthenticationService() {
     return _authenticationService;
+  }
+
+  Future<bool> hasRequiredTokens() async {
+    List<String> requiredTokens = ['jwt_access_token', 'csrf_token', 'csrf'];
+
+    for (String requiredToken in requiredTokens) {
+      if (await secureStorage.containsKey(key: requiredToken) == false) {
+        return false;
+      }
+    }
+
+    return true;
   }
 
   Future<void> init() async {
@@ -30,13 +48,11 @@ class AuthenticationService {
     // They will be put behind a devMode flag later
     _dio.interceptors.add(PrettyDioLogger(responseBody: false));
     _dio.interceptors.add(CurlLoggerDioInterceptor());
-    if ((await secureStorage.containsKey(key: 'jwt_access_token')) == true &&
-        (await secureStorage.containsKey(key: 'csrf_token')) == true &&
-        (await secureStorage.containsKey(key: 'csrf')) == true) {
+    if (await hasRequiredTokens()) {
       _csrf = (await secureStorage.read(key: 'csrf'))!;
       _csrfToken = (await secureStorage.read(key: 'csrf_token'))!;
       _jwtAccessToken = (await secureStorage.read(key: 'jwt_access_token'))!;
-      isLoggedIn = true;
+      isLoggedInStream.sink.add(true);
       await fetchUser();
     }
   }
@@ -48,10 +64,9 @@ class AuthenticationService {
   Future<void> login() async {
     final browser = FlutterWebviewPlugin();
     browser.onUrlChanged.listen((String url) async {
-      log('onUrlChanged: $url');
       if (url ==
-          'https://www.freecodecamp.dev/learn/?messages=success%5B0%5D%3Dflash.signin-success') {
-        isLoggedIn = true;
+          '$baseUrl/learn/?messages=success%5B0%5D%3Dflash.signin-success') {
+        isLoggedInStream.sink.add(true);
         Map<String, String> cookies = await browser.getCookies();
         // Do not question the weird keys below
         _csrf = cookies['"_csrf']!;
@@ -60,14 +75,13 @@ class AuthenticationService {
         secureStorage.write(key: 'csrf', value: _csrf);
         secureStorage.write(key: 'csrf_token', value: _csrfToken);
         secureStorage.write(key: 'jwt_access_token', value: _jwtAccessToken);
-        log('LOGGED IN');
         browser.close();
         fetchUser();
         browser.dispose();
       }
     });
     browser.launch(
-      'https://api.freecodecamp.dev/signin',
+      '$baseUrl/signin',
       clearCookies: true,
       debuggingEnabled: true,
       userAgent: 'random',
@@ -75,16 +89,10 @@ class AuthenticationService {
   }
 
   Future<void> logout() async {
-    isLoggedIn = false;
+    isLoggedInStream.sink.add(false);
     await secureStorage.delete(key: 'csrf');
     await secureStorage.delete(key: 'csrf_token');
     await secureStorage.delete(key: 'jwt_access_token');
-  }
-
-  Future<void> showKeys() async {
-    log('_csrf: $_csrf');
-    log('_csrfToken: $_csrfToken');
-    log('_jwtAccessToken: $_jwtAccessToken');
   }
 
   Future<void> fetchUser() async {
@@ -97,10 +105,8 @@ class AuthenticationService {
         },
       ),
     );
-    log(jsonEncode(res.data['user']).toString());
-    userModel = fetchUserModel(res.data['user'][res.data['result']]);
 
-    return res.data['user'][res.data['result']];
+    userModel = fetchUserModel(res.data['user'][res.data['result']]);
   }
 
   AuthenticationService._internal();
