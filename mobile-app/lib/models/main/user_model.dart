@@ -1,6 +1,6 @@
 import 'package:freecodecamp/enums/ext_type.dart';
 import 'package:freecodecamp/enums/theme_type.dart';
-import 'package:freecodecamp/models/main/challenge_model.dart';
+import 'package:freecodecamp/models/learn/challenge_model.dart';
 
 class UserModel {
   final NewsUserModel newsUserModel;
