@@ -15,6 +15,7 @@ class ChallengeBuilderListView extends StatelessWidget {
   Widget build(BuildContext context) {
     return ViewModelBuilder<ChallengeBuilderModel>.reactive(
         viewModelBuilder: () => ChallengeBuilderModel(),
+        onModelReady: (model) => model.init(),
         builder: (context, model, child) => Container(
             color: const Color(0xFF0a0a23),
             child: ListView.builder(
@@ -22,7 +23,8 @@ class ChallengeBuilderListView extends StatelessWidget {
                 itemCount: block.challenges.length,
                 physics: const ClampingScrollPhysics(),
                 itemBuilder: (context, i) => ListTile(
-                      leading: model.hasCompletedChallenge(false),
+                      leading: model.getIcon(
+                          model.completedChallenge(block.challenges[i].id)),
                       title: Text(block.challenges[i].name),
                       onTap: () {
                         String challenge = block.challenges[i].name
