@@ -1,4 +1,5 @@
 import 'package:freecodecamp/enums/challenge_test_state_type.dart';
+import 'package:freecodecamp/enums/ext_type.dart';
 
 class Challenge {
   final String block;
@@ -19,12 +20,17 @@ class Challenge {
 
   factory Challenge.fromJson(Map<String, dynamic> data) {
     return Challenge(
-        block: data['block'],
-        title: data['title'],
-        description: data['description'],
-        instructions: data['instructions'] ?? '',
-        tests: ChallengeTest.returnChallengeTests(data['fields']['tests']),
-        files: ChallengeFile.returnChallengeFiles(data['challengeFiles']));
+      block: data['block'],
+      title: data['title'],
+      description: data['description'],
+      instructions: data['instructions'] ?? '',
+      tests: (data['fields']['tests'] as List)
+          .map<ChallengeTest>((file) => ChallengeTest.fromJson(file))
+          .toList(),
+      files: (data['challengeFiles'] as List)
+          .map<ChallengeFile>((file) => ChallengeFile.fromJson(file))
+          .toList(),
+    );
   }
 }
 
@@ -38,16 +44,6 @@ class ChallengeTest {
       this.testState = ChallengeTestState.waiting,
       required this.javaScript});
 
-  static List<ChallengeTest> returnChallengeTests(List tests) {
-    List<ChallengeTest> challengeTests = [];
-
-    for (Map<String, dynamic> test in tests) {
-      challengeTests.add(ChallengeTest.fromJson(test));
-    }
-
-    return challengeTests;
-  }
-
   factory ChallengeTest.fromJson(Map<String, dynamic> data) {
     return ChallengeTest(
         instruction: data['text'], javaScript: data['testString']);
@@ -55,29 +51,21 @@ class ChallengeTest {
 }
 
 class ChallengeFile {
-  final String fileName;
-  final String fileExtension;
-  final String fileContents;
+  final Ext ext;
+  final String name;
+  final String contents;
 
-  const ChallengeFile(
-      {required this.fileName,
-      required this.fileExtension,
-      required this.fileContents});
-
-  static List<ChallengeFile> returnChallengeFiles(List inComingFiles) {
-    List<ChallengeFile> files = [];
-
-    for (Map<String, dynamic> file in inComingFiles) {
-      files.add(ChallengeFile.fromJson(file));
-    }
-
-    return files;
-  }
+  ChallengeFile({
+    required this.ext,
+    required this.name,
+    required this.contents,
+  });
 
   factory ChallengeFile.fromJson(Map<String, dynamic> data) {
     return ChallengeFile(
-        fileName: data['name'],
-        fileExtension: data['ext'],
-        fileContents: data['contents']);
+      ext: parseExt(data['ext']),
+      name: data['name'],
+      contents: data['contents'],
+    );
   }
 }

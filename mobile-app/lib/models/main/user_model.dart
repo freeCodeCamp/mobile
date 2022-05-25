@@ -1,6 +1,6 @@
-import 'dart:developer';
-
-import 'package:flutter/foundation.dart';
+import 'package:freecodecamp/enums/ext_type.dart';
+import 'package:freecodecamp/enums/theme_type.dart';
+import 'package:freecodecamp/models/main/challenge_model.dart';
 
 class UserModel {
   final NewsUserModel newsUserModel;
@@ -382,29 +382,6 @@ class CompletedChallenge {
   }
 }
 
-class ChallengeFile {
-  final String key;
-  final Ext ext;
-  final String name;
-  final String contents;
-
-  ChallengeFile({
-    required this.key,
-    required this.ext,
-    required this.name,
-    required this.contents,
-  });
-
-  factory ChallengeFile.fromJson(Map<String, dynamic> data) {
-    return ChallengeFile(
-      key: data['key'],
-      ext: parseExt(data['ext']),
-      name: data['name'],
-      contents: data['contents'],
-    );
-  }
-}
-
 class SavedChallenge {
   final String id;
   final List<SavedChallengeFile> files;
@@ -448,45 +425,6 @@ class SavedChallengeFile {
       contents: data['contents'],
     );
   }
-}
-
-enum Ext { js, html, css, jsx }
-
-parseExt(String ext) {
-  switch (ext) {
-    case 'js':
-      return Ext.js;
-    case 'html':
-      return Ext.html;
-    case 'css':
-      return Ext.css;
-    case 'jsx':
-      return Ext.jsx;
-    default:
-      return 'html';
-  }
-}
-
-extension ExtValue on Ext {
-  String get value => describeEnum(this);
-}
-
-// default can't be used as a value for an enum so suffixing with Theme
-enum Themes { nightTheme, defaultTheme }
-
-parseThemes(String theme) {
-  switch (theme) {
-    case 'night':
-      return Themes.nightTheme;
-    case 'default':
-      return Themes.defaultTheme;
-    default:
-      return Themes.defaultTheme;
-  }
-}
-
-extension ThemesValue on Themes {
-  String get value => describeEnum(this).replaceFirst('Theme', '');
 }
 
 Map<DateTime, int> parseCalendar(Map<String, int> calendar) {
