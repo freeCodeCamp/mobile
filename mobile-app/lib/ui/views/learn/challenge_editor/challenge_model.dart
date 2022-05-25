@@ -53,9 +53,9 @@ class ChallengeModel extends BaseViewModel {
 
     for (ChallengeFile file in challenge.files) {
       files.add(FileIDE(
-          fileName: file.fileName,
+          fileName: file.name,
           filePath: '',
-          fileContent: file.fileContents,
+          fileContent: file.contents,
           parentDirectory: '',
           fileExplorer: null));
     }

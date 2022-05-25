@@ -44,9 +44,9 @@ class ChallengeView extends StatelessWidget {
                     recentlyOpenedFiles: model.returnFiles(challenge),
                     file: FileIDE(
                         fileExplorer: null,
-                        fileName: challenge.files[0].fileName,
+                        fileName: challenge.files[0].name,
                         filePath: '',
-                        fileContent: challenge.files[0].fileContents,
+                        fileContent: challenge.files[0].contents,
                         parentDirectory: ''),
                   );
 
