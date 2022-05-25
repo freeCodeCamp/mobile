@@ -14,6 +14,7 @@ class DrawerWidgetView extends StatelessWidget {
   Widget build(BuildContext context) {
     return ViewModelBuilder<DrawerWidgtetViewModel>.reactive(
       viewModelBuilder: () => DrawerWidgtetViewModel(),
+      onModelReady: (model) => model.initState(),
       builder: (context, model, child) => Drawer(
         child: Container(
           color: const Color.fromRGBO(0x2A, 0x2A, 0x40, 1),
@@ -30,7 +31,7 @@ class DrawerWidgetView extends StatelessWidget {
                         width: 75,
                         height: 75,
                       ),
-                      title: model.auth.isLoggedIn
+                      title: model.loggedIn
                           ? FutureBuilder(
                               future: model.auth.userModel,
                               builder: (context, snapshot) {
@@ -43,7 +44,7 @@ class DrawerWidgetView extends StatelessWidget {
                                 return const Text('Anonymous user');
                               })
                           : const Text('Anonymous user'),
-                      subtitle: Text(model.auth.isLoggedIn
+                      subtitle: Text(model.loggedIn
                           ? 'Our coolest Camper'
                           : 'login to save your progress'),
                       isThreeLine: true,
@@ -96,10 +97,9 @@ class DrawerWidgetView extends StatelessWidget {
                     ),
                     buildDivider(),
                     DrawerButton(
-                        component: model.auth.isLoggedIn ? 'LOG OUT' : 'LOGIN',
-                        icon:
-                            model.auth.isLoggedIn ? Icons.logout : Icons.login,
-                        textColor: model.auth.isLoggedIn
+                        component: model.loggedIn ? 'LOG OUT' : 'LOGIN',
+                        icon: model.loggedIn ? Icons.logout : Icons.login,
+                        textColor: model.loggedIn
                             ? const Color.fromARGB(255, 230, 59, 59)
                             : null,
                         route: () {

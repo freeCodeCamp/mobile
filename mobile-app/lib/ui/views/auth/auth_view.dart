@@ -31,10 +31,6 @@ class AuthView extends StatelessWidget {
                             child: const Text('Logout'),
                           ),
                           ElevatedButton(
-                            onPressed: model.showKeys,
-                            child: const Text('Show Keys'),
-                          ),
-                          ElevatedButton(
                             onPressed: model.fetchUser,
                             child: const Text('Fetch User'),
                           ),

@@ -6,7 +6,7 @@ import 'package:freecodecamp/app/app.locator.dart';
 
 // import 'dart:developer';
 class AuthViewModel extends BaseViewModel {
-  final _authenticationService = locator<AuthenticationService>();
+  final AuthenticationService _auth = locator<AuthenticationService>();
 
   bool isAuthBusy = false;
   bool isLoggedIn = false;
@@ -14,15 +14,20 @@ class AuthViewModel extends BaseViewModel {
 
   void initState() async {
     await dotenv.load(fileName: '.env');
-    // await _authenticationService.init();
-    isLoggedIn = _authenticationService.isLoggedIn;
+
+    _auth.isLoggedIn.listen(
+      (loggedIn) {
+        isLoggedIn = loggedIn;
+      },
+    );
+
     notifyListeners();
   }
 
   Future<void> loginAction() async {
     isAuthBusy = true;
     notifyListeners();
-    await _authenticationService.login();
+    await _auth.login();
     isAuthBusy = false;
     isLoggedIn = true;
     notifyListeners();
@@ -31,18 +36,14 @@ class AuthViewModel extends BaseViewModel {
   Future<void> logoutAction() async {
     isAuthBusy = true;
     notifyListeners();
-    await _authenticationService.logout();
+    await _auth.logout();
     isAuthBusy = false;
     isLoggedIn = false;
     notifyListeners();
   }
 
-  Future<void> showKeys() async {
-    await _authenticationService.showKeys();
-  }
-
   Future<void> fetchUser() async {
-    user = _authenticationService.fetchUser().toString();
+    user = _auth.fetchUser().toString();
     notifyListeners();
   }
 }
