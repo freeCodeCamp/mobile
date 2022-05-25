@@ -20,8 +20,8 @@ class AuthenticationService {
 
   static StreamController<bool> isLoggedInStream =
       StreamController<bool>.broadcast();
-  final Stream<bool> _isLoggedIn = isLoggedInStream.stream;
 
+  final Stream<bool> _isLoggedIn = isLoggedInStream.stream;
   Stream<bool> get isLoggedIn => _isLoggedIn;
 
   final String baseUrl = 'https://www.freecodecamp.dev';

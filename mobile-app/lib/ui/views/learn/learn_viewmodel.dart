@@ -19,14 +19,8 @@ class LearnViewModel extends BaseViewModel {
   WebViewController? controller;
   final NavigationService _navigationService = locator<NavigationService>();
 
-  final ScrollController _scrollController = ScrollController();
-  ScrollController get scrollController => _scrollController;
-
   final AuthenticationService _auth = locator<AuthenticationService>();
   AuthenticationService get auth => _auth;
-
-  bool _isHeaderVisible = true;
-  bool get isHeaderVisible => _isHeaderVisible;
 
   bool _isLoggedIn = false;
   bool get isLoggedIn => _isLoggedIn;
@@ -44,6 +38,7 @@ class LearnViewModel extends BaseViewModel {
   }
 
   void initLoggedInListener() {
+    auth.init();
     auth.isLoggedIn.listen((e) {
       _isLoggedIn = e;
       notifyListeners();
