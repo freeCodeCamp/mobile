@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:freecodecamp/models/learn/curriculum_model.dart';
 import 'package:freecodecamp/ui/views/learn/learn-builders/challenge-builder/challenge_builder_model.dart';
 import 'package:stacked/stacked.dart';
-import 'dart:developer' as dev;
 
 class ChallengeBuilderGridView extends StatelessWidget {
   final Block block;
@@ -25,7 +24,6 @@ class ChallengeBuilderGridView extends StatelessWidget {
                     child: GridView.count(
                       crossAxisCount: 5,
                       children: List.generate(block.challenges.length, (index) {
-                        dev.log('hello');
                         return Center(
                             child: InkWell(
                           child: GridTile(child: Text(index.toString())),
