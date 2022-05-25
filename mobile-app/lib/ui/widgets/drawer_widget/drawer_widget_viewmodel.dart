@@ -25,16 +25,15 @@ class DrawerWidgtetViewModel extends BaseViewModel {
 
   final SnackbarService snack = locator<SnackbarService>();
 
-  String returnUsername() {
-    if (auth.userModel != null) {
-      if (auth.userModel!.name.isNotEmpty) {
-        return auth.userModel!.name;
-      } else {
-        return auth.userModel!.email;
-      }
-    }
+  bool _loggedIn = false;
+  bool get loggedIn => _loggedIn;
 
-    return 'Anonymous user';
+  void initState() {
+    auth.init();
+    auth.isLoggedIn.listen((event) {
+      _loggedIn = event;
+      notifyListeners();
+    });
   }
 
   void snackbar() {
@@ -106,8 +105,7 @@ class DrawerWidgtetViewModel extends BaseViewModel {
   }
 
   void handleAuth(BuildContext context) {
-    Navigator.pop(context);
-    auth.isLoggedIn ? auth.logout() : auth.login();
+    loggedIn ? auth.logout() : auth.login();
     notifyListeners();
   }
 }
