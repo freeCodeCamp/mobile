@@ -1,3 +1,10 @@
+import 'package:freecodecamp/enums/theme_type.dart';
+import 'package:freecodecamp/models/learn/completed_challenge_model.dart';
+import 'package:freecodecamp/models/learn/saved_challenge_model.dart';
+import 'package:freecodecamp/models/main/portfolio_model.dart';
+import 'package:freecodecamp/models/main/profile_ui_model.dart';
+import 'package:freecodecamp/models/main/streak_model.dart';
+
 class UserModel {
   final NewsUserModel newsUserModel;
   final ForumUserModel forumUserModel;
@@ -16,22 +23,30 @@ class ForumUserModel {}
 class FccUserModel {
   final String id;
   final String email;
-
-  final bool emailVerified;
-  final bool? isBanned;
-  final bool isCheater;
-  final bool acceptedPrivacyTerms;
-  final bool sendQuincyEmail;
-  final bool isDonating;
-
-  final String? emailAuthLinkTTL;
-  final String? emailVerifyTTL;
-
   final String username;
-  final String? about;
   final String name;
   final String picture;
   final String currentChallengeId;
+
+  final String? githubProfile;
+  final String? linkedin;
+  final String? twitter;
+  final String? website;
+  final String? location;
+  final String? about;
+
+  final bool emailVerified;
+  final bool isEmailVerified;
+  final bool sound;
+  final bool acceptedPrivacyTerms;
+  final bool sendQuincyEmail;
+
+  final bool isCheater;
+  final bool isDonating;
+  final bool isGithub;
+  final bool isLinkedIn;
+  final bool isTwitter;
+  final bool isWebsite;
 
   final bool isHonest;
   final bool isFrontEndCert;
@@ -52,82 +67,152 @@ class FccUserModel {
   final bool isMachineLearningPyCertV7;
   final bool isRelationalDatabaseCertV8;
 
-  final List? badges;
-  final List<int>? progressTimestamps;
+  final bool? isBanned;
 
+  final DateTime joinDate;
+
+  final int points; // May be null, confirm
+
+  final Map<DateTime, int> calendar;
+  // Below member is used for heatmap, don't send back to server
+  final Map<DateTime, int> heatMapCal;
+
+  // We can add this in later after confirming it
+  // final List? badges;
+  final List<CompletedChallenge> completedChallenges;
+  final List<SavedChallenge> savedChallenges;
+  final List<Portfolio> portfolio;
+  final List<String> yearsTopContributor; // If number, parsing it to string
+
+  final Themes theme;
+  final Streak streak;
   final ProfileUI profileUI;
 
-  FccUserModel(
-      {required this.id,
-      required this.email,
-      required this.emailVerified,
-      this.isBanned,
-      required this.isCheater,
-      required this.acceptedPrivacyTerms,
-      required this.sendQuincyEmail,
-      required this.username,
-      required this.about,
-      required this.name,
-      required this.picture,
-      required this.currentChallengeId,
-      required this.isHonest,
-      required this.isFrontEndCert,
-      required this.isDataVisCert,
-      required this.isBackEndCert,
-      required this.isFullStackCert,
-      required this.isRespWebDesignCert,
-      required this.is2018DataVisCert,
-      required this.isFrontEndLibsCert,
-      required this.isJsAlgoDataStructCert,
-      required this.isApisMicroservicesCert,
-      required this.isInfosecQaCert,
-      required this.isQaCertV7,
-      required this.isInfosecCertV7,
-      this.is2018FullStackCert,
-      required this.isSciCompPyCertV7,
-      required this.isDataAnalysisPyCertV7,
-      required this.isMachineLearningPyCertV7,
-      required this.isRelationalDatabaseCertV8,
-      required this.profileUI,
-      required this.isDonating,
-      this.badges,
-      this.progressTimestamps,
-      this.emailAuthLinkTTL,
-      this.emailVerifyTTL});
+  FccUserModel({
+    required this.id,
+    required this.email,
+    required this.username,
+    required this.name,
+    required this.picture,
+    required this.currentChallengeId,
+    this.githubProfile,
+    this.linkedin,
+    this.twitter,
+    this.website,
+    this.location,
+    this.about,
+    required this.emailVerified,
+    required this.isEmailVerified,
+    required this.sound,
+    required this.acceptedPrivacyTerms,
+    required this.sendQuincyEmail,
+    required this.isCheater,
+    required this.isDonating,
+    required this.isGithub,
+    required this.isLinkedIn,
+    required this.isTwitter,
+    required this.isWebsite,
+    required this.isHonest,
+    required this.isFrontEndCert,
+    required this.isDataVisCert,
+    required this.isBackEndCert,
+    required this.isFullStackCert,
+    required this.isRespWebDesignCert,
+    required this.is2018DataVisCert,
+    required this.isFrontEndLibsCert,
+    required this.isJsAlgoDataStructCert,
+    required this.isApisMicroservicesCert,
+    required this.isInfosecQaCert,
+    required this.isQaCertV7,
+    required this.isInfosecCertV7,
+    this.is2018FullStackCert,
+    required this.isSciCompPyCertV7,
+    required this.isDataAnalysisPyCertV7,
+    required this.isMachineLearningPyCertV7,
+    required this.isRelationalDatabaseCertV8,
+    this.isBanned,
+    required this.joinDate,
+    required this.points,
+    required this.calendar,
+    required this.heatMapCal,
+    required this.completedChallenges,
+    required this.savedChallenges,
+    required this.portfolio,
+    required this.yearsTopContributor,
+    required this.theme,
+    required this.streak,
+    required this.profileUI,
+  });
 
   factory FccUserModel.fromJson(Map<String, dynamic> data) {
     //data['user'][data['result']]
     return FccUserModel(
-        id: data['id'],
-        email: data['email'],
-        emailVerified: data['emailVerified'],
-        isCheater: data['isCheater'],
-        acceptedPrivacyTerms: data['acceptedPrivacyTerms'],
-        sendQuincyEmail: data['sendQuincyEmail'],
-        username: data['username'],
-        about: data['about'],
-        name: data['name'],
-        picture: data['picture'],
-        currentChallengeId: data['currentChallengeId'],
-        isHonest: data['isHonest'],
-        isFrontEndCert: data['isFrontEndCert'],
-        isDataVisCert: data['isDataVisCert'],
-        isBackEndCert: data['isBackEndCert'],
-        isFullStackCert: data['isFullStackCert'],
-        isRespWebDesignCert: data['isFullStackCert'],
-        is2018DataVisCert: data['is2018DataVisCert'],
-        isFrontEndLibsCert: data['isFrontEndLibsCert'],
-        isJsAlgoDataStructCert: data['isJsAlgoDataStructCert'],
-        isApisMicroservicesCert: data['isApisMicroservicesCert'],
-        isInfosecQaCert: data['isInfosecQaCert'],
-        isQaCertV7: data['isQaCertV7'],
-        isInfosecCertV7: data['isInfosecCertV7'],
-        isSciCompPyCertV7: data['isSciCompPyCertV7'],
-        isDataAnalysisPyCertV7: data['isDataAnalysisPyCertV7'],
-        isMachineLearningPyCertV7: data['isMachineLearningPyCertV7'],
-        isRelationalDatabaseCertV8: data['isRelationalDatabaseCertV8'],
-        profileUI: ProfileUI.fromJson(data['profileUI']),
-        isDonating: data['isDonating']);
+      id: data['id'],
+      email: data['email'],
+      username: data['username'],
+      name: data['name'],
+      picture: data['picture'],
+      currentChallengeId: data['currentChallengeId'],
+      githubProfile: data['githubProfile'],
+      linkedin: data['linkedin'],
+      twitter: data['twitter'],
+      website: data['website'],
+      location: data['location'],
+      about: data['about'],
+      emailVerified: data['emailVerified'],
+      isEmailVerified: data['isEmailVerified'],
+      sound: data['sound'],
+      acceptedPrivacyTerms: data['acceptedPrivacyTerms'],
+      sendQuincyEmail: data['sendQuincyEmail'],
+      isCheater: data['isCheater'],
+      isDonating: data['isDonating'] ?? false,
+      isGithub: data['isGithub'],
+      isLinkedIn: data['isLinkedIn'],
+      isTwitter: data['isTwitter'],
+      isWebsite: data['isWebsite'],
+      isHonest: data['isHonest'],
+      isFrontEndCert: data['isFrontEndCert'],
+      isDataVisCert: data['isDataVisCert'],
+      isBackEndCert: data['isBackEndCert'],
+      isFullStackCert: data['isFullStackCert'],
+      isRespWebDesignCert: data['isRespWebDesignCert'],
+      is2018DataVisCert: data['is2018DataVisCert'],
+      isFrontEndLibsCert: data['isFrontEndLibsCert'],
+      isJsAlgoDataStructCert: data['isJsAlgoDataStructCert'],
+      isApisMicroservicesCert: data['isApisMicroservicesCert'],
+      isInfosecQaCert: data['isInfosecQaCert'],
+      isQaCertV7: data['isQaCertV7'],
+      isInfosecCertV7: data['isInfosecCertV7'],
+      is2018FullStackCert: data['is2018FullStackCert'],
+      isSciCompPyCertV7: data['isSciCompPyCertV7'],
+      isDataAnalysisPyCertV7: data['isDataAnalysisPyCertV7'],
+      isMachineLearningPyCertV7: data['isMachineLearningPyCertV7'],
+      isRelationalDatabaseCertV8: data['isRelationalDatabaseCertV8'],
+      isBanned: data['isBanned'],
+      joinDate: DateTime.parse(data['joinDate']),
+      points: data['points'],
+      calendar: parseCalendar(
+          Map.castFrom<dynamic, dynamic, String, int>(data['calendar'])),
+      heatMapCal: genHeatMapCal(
+          Map.castFrom<dynamic, dynamic, String, int>(data['calendar'])),
+      completedChallenges: (data['completedChallenges'] as List)
+          .map<CompletedChallenge>(
+              (challenge) => CompletedChallenge.fromJson(challenge))
+          .toList(),
+      savedChallenges: (data['savedChallenges'] as List)
+          .map<SavedChallenge>(
+              (challenge) => SavedChallenge.fromJson(challenge))
+          .toList(),
+      portfolio: (data['portfolio'] as List)
+          .map<Portfolio>((portfolio) => Portfolio.fromJson(portfolio))
+          .toList(),
+      yearsTopContributor: (data['yearsTopContributor'] as List)
+          .map<String>((year) => year.toString())
+          .toList(),
+      theme: parseThemes(data['theme']),
+      streak: Streak.fromJson(data['streak']),
+      profileUI: ProfileUI.fromJson(data['profileUI']),
+    );
   }
 
   // IMPORTANT : When the user model, changes this Map has to be changed manually to match it.
@@ -147,6 +232,9 @@ class FccUserModel {
       'name': 'name',
       'picture': 'picture',
       'currentChallengeId': 'currentChallengeId',
+      'location': 'The Cloud',
+      'joinDate': '2018-06-10T14:40:07.000Z',
+      'points': 100,
       'isHonest': false,
       'isFrontEndCert': false,
       'isDataVisCert': false,
@@ -165,6 +253,7 @@ class FccUserModel {
       'isDataAnalysisPyCertV7': false,
       'isMachineLearningPyCertV7': false,
       'isRelationalDatabaseCertV8': false,
+      'isEmailVerified': false,
       'profileUI': {
         'isLocked': false,
         'showAbout': false,
@@ -184,41 +273,30 @@ class FccUserModel {
   }
 }
 
-class ProfileUI {
-  final bool isLocked;
-  final bool showAbout;
-  final bool showCerts;
-  final bool showDonation;
-  final bool showHeatMap;
-  final bool showLocation;
-  final bool showName;
-  final bool showPoints;
-  final bool showPortfolio;
-  final bool showTimeLine;
+Map<DateTime, int> parseCalendar(Map<String, int> calendar) {
+  calendar.remove('NaN');
+  return calendar.map(
+    (key, val) {
+      return MapEntry(
+        DateTime.fromMillisecondsSinceEpoch(int.parse(key) * 1000),
+        val,
+      );
+    },
+  );
+}
 
-  ProfileUI(
-      {required this.isLocked,
-      required this.showAbout,
-      required this.showCerts,
-      required this.showDonation,
-      required this.showHeatMap,
-      required this.showLocation,
-      required this.showName,
-      required this.showPoints,
-      required this.showPortfolio,
-      required this.showTimeLine});
+Map<DateTime, int> genHeatMapCal(Map<String, int> calendar) {
+  Map<DateTime, int> parsedCal = parseCalendar(calendar);
+  Map<DateTime, int> heatMapCal = {};
 
-  factory ProfileUI.fromJson(Map<String, dynamic> data) {
-    return ProfileUI(
-        isLocked: data['isLocked'],
-        showAbout: data['showAbout'],
-        showCerts: data['showCerts'],
-        showDonation: data['showDonation'],
-        showHeatMap: data['showHeatMap'],
-        showLocation: data['showLocation'],
-        showName: data['showName'],
-        showPoints: data['showPoints'],
-        showPortfolio: data['showPortfolio'],
-        showTimeLine: data['showTimeLine']);
-  }
+  parsedCal.forEach((key, val) {
+    DateTime newKey = DateTime(key.year, key.month, key.day);
+    if (heatMapCal.containsKey(newKey)) {
+      heatMapCal[newKey] = heatMapCal[newKey]! + val;
+    } else {
+      heatMapCal[newKey] = val;
+    }
+  });
+
+  return heatMapCal;
 }
