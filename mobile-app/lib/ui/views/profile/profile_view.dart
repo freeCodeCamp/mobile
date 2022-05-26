@@ -1,7 +1,6 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_heatmap_calendar/flutter_heatmap_calendar.dart';
-import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:freecodecamp/models/main/user_model.dart';
 import 'package:freecodecamp/ui/views/profile/profile_viemodel.dart';
 import 'package:freecodecamp/ui/widgets/drawer_widget/drawer_widget_view.dart';
@@ -156,177 +155,113 @@ class ProfileView extends StatelessWidget {
                 child: SingleChildScrollView(
                   physics: const ScrollPhysics(),
                   child: Column(
-                    mainAxisAlignment: MainAxisAlignment.start,
-                    crossAxisAlignment: CrossAxisAlignment.stretch,
                     children: [
-                      Align(
-                        alignment: Alignment.center,
-                        child: Container(
-                          margin: const EdgeInsets.only(bottom: 4),
-                          padding: const EdgeInsets.all(5),
-                          decoration: BoxDecoration(
-                            border: borderPicker(user),
-                          ),
-                          child: CachedNetworkImage(
-                            imageUrl: user.picture,
-                            height: MediaQuery.of(context).size.width * 0.4,
-                            width: MediaQuery.of(context).size.width * 0.4,
-                            errorWidget: (context, url, error) => Image.asset(
-                                'assets/images/placeholder-profile-img.png'),
-                            imageBuilder: (context, imageProvider) => Container(
-                              decoration: BoxDecoration(
-                                image: DecorationImage(
-                                  image: imageProvider,
-                                  fit: BoxFit.cover,
+                      Row(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Container(
+                            margin: const EdgeInsets.all(16),
+                            padding: const EdgeInsets.all(5),
+                            decoration: BoxDecoration(
+                              border: borderPicker(user),
+                            ),
+                            child: CachedNetworkImage(
+                              imageUrl: user.picture,
+                              height: MediaQuery.of(context).size.width * 0.25,
+                              width: MediaQuery.of(context).size.width * 0.25,
+                              errorWidget: (context, url, error) => Image.asset(
+                                  'assets/images/placeholder-profile-img.png'),
+                              imageBuilder: (context, imageProvider) =>
+                                  Container(
+                                decoration: BoxDecoration(
+                                  image: DecorationImage(
+                                    image: imageProvider,
+                                    fit: BoxFit.cover,
+                                  ),
                                 ),
                               ),
                             ),
                           ),
-                        ),
-                      ),
-                      Padding(
-                        padding: const EdgeInsets.symmetric(vertical: 8),
-                        child: Text(
-                          '@${user.username}',
-                          textAlign: TextAlign.center,
-                          style: GoogleFonts.robotoMono(
-                            fontSize: 21.5,
-                            fontWeight: FontWeight.w700,
-                          ),
-                        ),
-                      ),
-                      Padding(
-                        padding: const EdgeInsets.symmetric(vertical: 8),
-                        child: Text(
-                          user.name,
-                          textAlign: TextAlign.center,
-                          style: GoogleFonts.robotoMono(
-                              fontSize: 16, height: 1.25),
-                        ),
-                      ),
-                      user.location != null
-                          ? Padding(
-                              padding: const EdgeInsets.symmetric(vertical: 8),
-                              child: Text(
-                                user.location!,
-                                textAlign: TextAlign.center,
-                                style: GoogleFonts.robotoMono(
-                                    fontSize: 16, height: 1.25),
+                          Expanded(
+                              child: Container(
+                            margin: const EdgeInsets.all(16),
+                            child: ListTile(
+                              title: Text(
+                                user.username,
+                                style: const TextStyle(fontSize: 32),
                               ),
-                            )
-                          : Container(),
-                      user.isDonating
-                          ? Padding(
-                              padding: const EdgeInsets.symmetric(vertical: 8),
-                              child: Row(
-                                mainAxisAlignment: MainAxisAlignment.center,
-                                children: [
-                                  const FaIcon(FontAwesomeIcons.solidHeart,
-                                      size: 18),
-                                  const SizedBox(width: 8),
-                                  Text(
-                                    'Supporter',
-                                    style: GoogleFonts.robotoMono(
-                                        fontSize: 16, height: 1.25),
-                                  ),
-                                ],
+                              subtitle: Text(
+                                user.name,
+                                style: const TextStyle(fontSize: 16),
                               ),
-                            )
-                          : Container(),
-                      user.about != null
-                          ? Padding(
-                              padding: const EdgeInsets.symmetric(vertical: 8),
-                              child: Text(
-                                user.about!,
-                                textAlign: TextAlign.center,
-                                style: GoogleFonts.robotoMono(
-                                    fontSize: 16, height: 1.25),
-                              ),
-                            )
-                          : Container(),
-                      Padding(
-                        padding: const EdgeInsets.symmetric(vertical: 8),
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            const FaIcon(FontAwesomeIcons.solidCalendar,
-                                size: 18),
-                            const SizedBox(width: 8),
-                            Text(
-                              'Joined ${DateFormat.yMMMM().format(user.joinDate)}',
-                              style: GoogleFonts.robotoMono(
-                                  fontSize: 16, height: 1.25),
                             ),
-                          ],
-                        ),
+                          ))
+                        ],
                       ),
-                      user.yearsTopContributor.isNotEmpty
-                          ? Padding(
-                              padding: const EdgeInsets.symmetric(vertical: 8),
-                              child: Row(
-                                mainAxisAlignment: MainAxisAlignment.center,
-                                children: [
-                                  const FaIcon(
-                                    FontAwesomeIcons.award,
-                                    size: 18,
-                                  ),
-                                  const SizedBox(width: 8),
-                                  Flexible(
-                                    child: Text(
-                                      'Top Contributor - ${user.yearsTopContributor.join(', ')}',
-                                      style: GoogleFonts.robotoMono(
-                                        fontSize: 16,
-                                        height: 1.25,
-                                      ),
-                                    ),
-                                  ),
-                                ],
-                              ),
-                            )
-                          : Container(),
-                      Padding(
-                        padding: const EdgeInsets.symmetric(vertical: 8),
-                        child: Text(
-                          '${user.points} total points',
-                          textAlign: TextAlign.center,
-                          style: GoogleFonts.robotoMono(
-                              fontSize: 16, height: 1.25),
-                        ),
+                      buildDivider(),
+                      ListView(
+                        physics: const NeverScrollableScrollPhysics(),
+                        shrinkWrap: true,
+                        children: [
+                          user.location != null
+                              ? ListTile(
+                                  leading: const Icon(Icons.location_on),
+                                  title: Text(user.location as String))
+                              : Container(),
+                          user.isDonating
+                              ? const ListTile(
+                                  leading: Icon(Icons.favorite),
+                                  title: Text('Supporter'))
+                              : Container(),
+                          user.about != null
+                              ? ListTile(
+                                  leading: const Icon(Icons.chat_bubble),
+                                  title: Text(user.about as String),
+                                )
+                              : Container(),
+                          ListTile(
+                            leading: const Icon(Icons.calendar_month),
+                            title: Text(
+                                'Joined ${DateFormat.yMMMM().format(user.joinDate)}'),
+                          )
+                        ],
                       ),
-                      Padding(
-                        padding: const EdgeInsets.symmetric(vertical: 8),
-                        child: HeatMap(
-                          startDate: Jiffy().subtract(months: 6).dateTime,
-                          datasets: user.heatMapCal,
-                          colorsets: const {
-                            0: Color(0xFF2A2A40),
-                            1: Color(0xFF858591),
-                            4: Color(0xFFD0D0D5),
-                            8: Colors.white,
-                          },
-                          defaultColor: const Color(0xFF2A2A40),
-                          scrollable: true,
-                          colorMode: ColorMode.color,
-                          showColorTip: false,
-                          onClick: (value) {
-                            ScaffoldMessenger.of(context).showSnackBar(
-                              SnackBar(
-                                duration: const Duration(seconds: 2),
-                                content: Text(
-                                  Intl.plural(
-                                    user.heatMapCal[value] ?? 0,
-                                    other:
-                                        '${user.heatMapCal[value]} points on ${DateFormat.yMMMd().format(value)}',
-                                    zero:
-                                        '0 points on ${DateFormat.yMMMd().format(value)}',
-                                    one:
-                                        '1 point on ${DateFormat.yMMMd().format(value)}',
-                                  ),
+                      buildDivider(),
+                      ListTile(
+                        leading: const Icon(Icons.local_fire_department_sharp),
+                        title: Text('Points ${user.points.toString()}'),
+                      ),
+                      HeatMap(
+                        startDate: Jiffy().subtract(months: 3).dateTime,
+                        datasets: user.heatMapCal,
+                        colorsets: const {
+                          0: Color(0xFF2A2A40),
+                          1: Color(0xFF858591),
+                          4: Color(0xFFD0D0D5),
+                          8: Colors.white,
+                        },
+                        defaultColor: const Color(0xFF2A2A40),
+                        scrollable: true,
+                        colorMode: ColorMode.color,
+                        showColorTip: false,
+                        onClick: (value) {
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            SnackBar(
+                              duration: const Duration(seconds: 2),
+                              content: Text(
+                                Intl.plural(
+                                  user.heatMapCal[value] ?? 0,
+                                  other:
+                                      '${user.heatMapCal[value]} points on ${DateFormat.yMMMd().format(value)}',
+                                  zero:
+                                      '0 points on ${DateFormat.yMMMd().format(value)}',
+                                  one:
+                                      '1 point on ${DateFormat.yMMMd().format(value)}',
                                 ),
                               ),
-                            );
-                          },
-                        ),
+                            ),
+                          );
+                        },
                       ),
                       Padding(
                         padding: const EdgeInsets.symmetric(vertical: 4),
@@ -346,13 +281,7 @@ class ProfileView extends StatelessWidget {
                               fontSize: 16, height: 1.25),
                         ),
                       ),
-                      Divider(
-                        thickness: 2,
-                        // FCC uses below color
-                        // color: Color(0xFF3B3B4F),
-                        color: Colors.grey.shade600,
-                        height: 24,
-                      ),
+                      buildDivider(),
                       Padding(
                         padding: const EdgeInsets.only(top: 8, bottom: 2),
                         child: Text(
@@ -447,21 +376,8 @@ class ProfileView extends StatelessWidget {
                               ],
                             )
                           : Container(),
-                      Divider(
-                        thickness: 2,
-                        // FCC uses below color
-                        // color: Color(0xFF3B3B4F),
-                        color: Colors.grey.shade600,
-                        height: 24,
-                      ),
-                      // TODO: Portfolio here
-                      Divider(
-                        thickness: 2,
-                        // FCC uses below color
-                        // color: Color(0xFF3B3B4F),
-                        color: Colors.grey.shade600,
-                        height: 24,
-                      ),
+                      buildDivider(),
+                      buildDivider(),
                       // TODO: Timeline here
                     ],
                   ),

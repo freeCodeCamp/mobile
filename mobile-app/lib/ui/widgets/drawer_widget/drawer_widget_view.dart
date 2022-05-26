@@ -49,7 +49,7 @@ class DrawerWidgetView extends StatelessWidget {
                           : 'login to save your progress'),
                       isThreeLine: true,
                       onTap: () {
-                        if (model.auth.isLoggedIn) {
+                        if (model.loggedIn) {
                           model.routeComponent('PROFILE', context);
                         }
                       },
