@@ -376,9 +376,106 @@ class ProfileView extends StatelessWidget {
                               ],
                             )
                           : Container(),
-                      buildDivider(),
-                      buildDivider(),
-                      // TODO: Timeline here
+                      user.portfolio.isNotEmpty
+                          ? Column(
+                              // mainAxisSize: MainAxisSize.min,
+                              children: [
+                                buildDivider(),
+                                Padding(
+                                  padding: const EdgeInsets.all(8),
+                                  child: Text(
+                                    'Portfolio',
+                                    textAlign: TextAlign.center,
+                                    style: GoogleFonts.robotoMono(
+                                      fontSize: 20,
+                                      height: 1.25,
+                                      fontWeight: FontWeight.w700,
+                                    ),
+                                  ),
+                                ),
+                                ...user.portfolio.map(
+                                  (portfolio) => InkWell(
+                                    onTap: () => launch(portfolio.url!),
+                                    child: Card(
+                                      margin: const EdgeInsets.symmetric(
+                                        horizontal: 12,
+                                        vertical: 6,
+                                      ),
+                                      color: const Color.fromRGBO(
+                                          0x2A, 0x2A, 0x40, 1),
+                                      child: Padding(
+                                        padding: const EdgeInsets.all(8),
+                                        child: Column(
+                                          children: [
+                                            // Apparentlly all properties are present with empty values - CONFIRM
+                                            portfolio.image!.isNotEmpty
+                                                ? Padding(
+                                                    padding:
+                                                        const EdgeInsets.only(
+                                                      bottom: 6,
+                                                    ),
+                                                    child: CachedNetworkImage(
+                                                      imageUrl:
+                                                          portfolio.image ?? '',
+                                                      height: 200,
+                                                      errorWidget: (context,
+                                                              url, error) =>
+                                                          Image.asset(
+                                                              'assets/images/placeholder-profile-img.png'),
+                                                      imageBuilder: (
+                                                        context,
+                                                        imageProvider,
+                                                      ) =>
+                                                          Container(
+                                                        decoration:
+                                                            BoxDecoration(
+                                                          image:
+                                                              DecorationImage(
+                                                            image:
+                                                                imageProvider,
+                                                            fit: BoxFit.contain,
+                                                          ),
+                                                        ),
+                                                      ),
+                                                    ),
+                                                  )
+                                                : Container(),
+                                            Text(
+                                              portfolio.title!,
+                                              textAlign: TextAlign.center,
+                                              style: GoogleFonts.robotoMono(
+                                                fontSize: 18,
+                                                // height: 1.25,
+                                              ),
+                                            ),
+                                            portfolio.description!.isNotEmpty
+                                                ? Padding(
+                                                    padding:
+                                                        const EdgeInsets.only(
+                                                      top: 6,
+                                                    ),
+                                                    child: Text(
+                                                      portfolio.description!,
+                                                      textAlign:
+                                                          TextAlign.center,
+                                                      style: GoogleFonts
+                                                          .robotoMono(
+                                                        fontSize: 14,
+                                                        // height: 1.25,
+                                                        // fontWeight: FontWeight.w700,
+                                                      ),
+                                                    ),
+                                                  )
+                                                : Container(),
+                                          ],
+                                        ),
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                              ],
+                            )
+                          : Container(),
                     ],
                   ),
                 ),
