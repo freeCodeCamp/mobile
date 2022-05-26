@@ -44,7 +44,7 @@ class Block {
   final bool isStepBased;
   final int order;
 
-  final List<Challenge> challenges;
+  final List<ChallengeListTile> challenges;
 
   Block(
       {required this.blockName,
@@ -59,12 +59,12 @@ class Block {
     return superblock == '2022/responsive-web-design';
   }
 
-  static List<Challenge> getChallenges(List challengeOrder) {
-    List<Challenge> challenges = [];
+  static List<ChallengeListTile> getChallenges(List challengeOrder) {
+    List<ChallengeListTile> challenges = [];
 
     for (int i = 0; i < challengeOrder.length; i++) {
-      challenges
-          .add(Challenge(id: challengeOrder[i][0], name: challengeOrder[i][1]));
+      challenges.add(ChallengeListTile(
+          id: challengeOrder[i][0], name: challengeOrder[i][1]));
     }
 
     return challenges;
@@ -82,9 +82,9 @@ class Block {
   }
 }
 
-class Challenge {
+class ChallengeListTile {
   final String id;
   final String name;
 
-  Challenge({required this.id, required this.name});
+  ChallengeListTile({required this.id, required this.name});
 }

@@ -49,42 +49,19 @@ class BlockBuilderView extends StatelessWidget {
                           ],
                         ),
                       ),
-                      Container(
-                        padding: const EdgeInsets.only(top: 4),
-                        child: ListTile(
-                          tileColor: const Color(0xFF0a0a23),
-                          leading: Icon(model.isOpen
-                              ? Icons.arrow_drop_down_sharp
-                              : Icons.arrow_right_sharp),
-                          title: Text(model.isOpen
-                              ? 'collapse course'
-                              : 'expand course'),
-                          trailing: Text(
-                            '0/${block.challenges.length}',
-                            style: const TextStyle(fontWeight: FontWeight.bold),
-                          ),
-                          onTap: () {
-                            model.setIsOpen = !model.isOpen;
-                          },
-                        ),
-                      ),
-                      Row(
-                        children: [
-                          model.isOpen
-                              ? !block.isStepBased
-                                  ? Expanded(
-                                      child: ChallengeBuilderListView(
-                                        block: block,
-                                      ),
-                                    )
-                                  : Expanded(
-                                      child: ChallengeBuilderGridView(
-                                        block: block,
-                                      ),
-                                    )
-                              : Container()
-                        ],
-                      )
+                      !block.isStepBased
+                          ? Padding(
+                              padding: const EdgeInsets.only(top: 8.0),
+                              child: ChallengeBuilderListView(
+                                block: block,
+                              ),
+                            )
+                          : Padding(
+                              padding: const EdgeInsets.only(top: 8.0),
+                              child: ChallengeBuilderGridView(
+                                block: block,
+                              ),
+                            )
                     ],
                   ),
                 ),
