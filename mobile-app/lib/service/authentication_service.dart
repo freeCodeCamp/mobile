@@ -25,7 +25,8 @@ class AuthenticationService {
 
   bool isDevMode = false;
 
-  static StreamController<bool> isLoggedInStream = StreamController<bool>();
+  static StreamController<bool> isLoggedInStream =
+      StreamController<bool>.broadcast();
 
   final Stream<bool> _isLoggedIn = isLoggedInStream.stream;
   Stream<bool> get isLoggedIn => _isLoggedIn;
@@ -81,12 +82,7 @@ class AuthenticationService {
       _dio.interceptors.add(CurlLoggerDioInterceptor());
     }
 
-    if (await hasRequiredTokens()) {
-      await setRequiredTokes();
-
-      await fetchUser();
-      return;
-    }
+    await login();
   }
 
   Future<FccUserModel> parseUserModel(Map<String, dynamic> data) async {
@@ -97,7 +93,7 @@ class AuthenticationService {
     String path = '/learn/?messages=success%5B0%5D%3Dflash.signin-success';
 
     if (await hasRequiredTokens()) {
-      isLoggedInStream.sink.add(true);
+      await setRequiredTokes();
       await fetchUser();
       return;
     }
@@ -143,10 +139,8 @@ class AuthenticationService {
       ),
     );
 
-    if (res.statusCode == 200) {
-      isLoggedInStream.sink.add(true);
-      userModel = parseUserModel(res.data['user'][res.data['result']]);
-    }
+    isLoggedInStream.sink.add(true);
+    userModel = parseUserModel(res.data['user'][res.data['result']]);
   }
 
   AuthenticationService._internal();
