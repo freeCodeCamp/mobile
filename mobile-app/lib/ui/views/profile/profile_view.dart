@@ -183,19 +183,22 @@ class ProfileView extends StatelessWidget {
                             ),
                           ),
                           Expanded(
-                              child: Container(
-                            margin: const EdgeInsets.all(16),
-                            child: ListTile(
-                              title: Text(
-                                user.username,
-                                style: const TextStyle(fontSize: 32),
-                              ),
-                              subtitle: Text(
-                                user.name,
-                                style: const TextStyle(fontSize: 16),
+                            child: Container(
+                              margin: const EdgeInsets.all(16),
+                              child: ListTile(
+                                title: Text(
+                                  '@${user.username}',
+                                  style: GoogleFonts.robotoMono(
+                                      fontSize: 32,
+                                      fontWeight: FontWeight.w700),
+                                ),
+                                subtitle: Text(
+                                  user.name,
+                                  style: GoogleFonts.robotoMono(fontSize: 16),
+                                ),
                               ),
                             ),
-                          ))
+                          )
                         ],
                       ),
                       buildDivider(),
@@ -206,30 +209,44 @@ class ProfileView extends StatelessWidget {
                           user.location != null
                               ? ListTile(
                                   leading: const Icon(Icons.location_on),
-                                  title: Text(user.location as String))
+                                  title: Text(
+                                    user.location as String,
+                                    style: GoogleFonts.robotoMono(),
+                                  ))
                               : Container(),
                           user.isDonating
-                              ? const ListTile(
-                                  leading: Icon(Icons.favorite),
-                                  title: Text('Supporter'))
+                              ? ListTile(
+                                  leading: const Icon(Icons.favorite),
+                                  title: Text(
+                                    'Supporter',
+                                    style: GoogleFonts.robotoMono(),
+                                  ))
                               : Container(),
                           user.about != null
                               ? ListTile(
                                   leading: const Icon(Icons.chat_bubble),
-                                  title: Text(user.about as String),
+                                  title: Text(
+                                    user.about as String,
+                                    style: GoogleFonts.robotoMono(),
+                                  ),
                                 )
                               : Container(),
                           ListTile(
                             leading: const Icon(Icons.calendar_month),
                             title: Text(
-                                'Joined ${DateFormat.yMMMM().format(user.joinDate)}'),
+                              'Joined ${DateFormat.yMMMM().format(user.joinDate)}',
+                              style: GoogleFonts.robotoMono(),
+                            ),
                           )
                         ],
                       ),
                       buildDivider(),
                       ListTile(
                         leading: const Icon(Icons.local_fire_department_sharp),
-                        title: Text('Points ${user.points.toString()}'),
+                        title: Text(
+                          'Points ${user.points.toString()}',
+                          style: GoogleFonts.robotoMono(),
+                        ),
                       ),
                       HeatMap(
                         startDate: Jiffy().subtract(months: 3).dateTime,
