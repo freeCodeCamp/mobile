@@ -299,199 +299,15 @@ class ProfileView extends StatelessWidget {
                         ),
                       ),
                       buildDivider(),
-                      Padding(
-                        padding: const EdgeInsets.only(top: 8, bottom: 2),
-                        child: Text(
-                          'freeCodeCamp Certifications',
-                          textAlign: TextAlign.center,
-                          style: GoogleFonts.robotoMono(
-                            fontSize: 20,
-                            height: 1.25,
-                            fontWeight: FontWeight.w700,
-                          ),
-                        ),
+                      CertificationWidget(
+                        user: user,
+                        hasModernCert: hasModernCert,
+                        hasLegacyCert: hasLegacyCert,
+                        currentCerts: currentCerts,
+                        legacyCerts: legacyCerts,
                       ),
-                      hasModernCert
-                          ? ListView(
-                              padding: const EdgeInsets.all(4),
-                              physics: const NeverScrollableScrollPhysics(),
-                              shrinkWrap: true,
-                              children: currentCerts
-                                  .map(
-                                    (cert) => (cert['show'] as bool)
-                                        ? SizedBox(
-                                            height: 50,
-                                            child: ListTile(
-                                              title:
-                                                  Text('View ${cert["title"]}'),
-                                              trailing: const Icon(
-                                                Icons.arrow_forward_ios_sharp,
-                                                color: Colors.white,
-                                              ),
-                                              onTap: () => launch(
-                                                '${model.auth.baseURL}/certification/${user.username}/${cert["certSlug"]}',
-                                              ),
-                                            ),
-                                          )
-                                        : Container(),
-                                  )
-                                  .toList(),
-                            )
-                          : Padding(
-                              padding: const EdgeInsets.all(4),
-                              child: Text(
-                                'No certifications have been earned under the current curriculum',
-                                textAlign: TextAlign.center,
-                                style: GoogleFonts.robotoMono(
-                                  fontSize: 16,
-                                  height: 1.25,
-                                ),
-                              ),
-                            ),
-                      hasLegacyCert
-                          ? Column(
-                              children: [
-                                Padding(
-                                  padding:
-                                      const EdgeInsets.only(top: 16, bottom: 2),
-                                  child: Text(
-                                    'Legacy Certifications',
-                                    textAlign: TextAlign.center,
-                                    style: GoogleFonts.robotoMono(
-                                      fontSize: 18,
-                                      height: 1.25,
-                                      fontWeight: FontWeight.w700,
-                                    ),
-                                  ),
-                                ),
-                                ListView(
-                                  padding: const EdgeInsets.all(4),
-                                  physics: const NeverScrollableScrollPhysics(),
-                                  shrinkWrap: true,
-                                  children: legacyCerts
-                                      .map(
-                                        (cert) => (cert['show'] as bool)
-                                            ? SizedBox(
-                                                height: 50,
-                                                child: ListTile(
-                                                  title: Text(
-                                                      'View ${cert["title"]}'),
-                                                  trailing: const Icon(
-                                                    Icons
-                                                        .arrow_forward_ios_sharp,
-                                                    color: Colors.white,
-                                                  ),
-                                                  onTap: () => launch(
-                                                    '${model.auth.baseURL}/certification/${user.username}/${cert["certSlug"]}',
-                                                  ),
-                                                ),
-                                              )
-                                            : Container(),
-                                      )
-                                      .toList(),
-                                ),
-                              ],
-                            )
-                          : Container(),
                       user.portfolio.isNotEmpty
-                          ? Column(
-                              // mainAxisSize: MainAxisSize.min,
-                              children: [
-                                buildDivider(),
-                                Padding(
-                                  padding: const EdgeInsets.all(8),
-                                  child: Text(
-                                    'Portfolio',
-                                    textAlign: TextAlign.center,
-                                    style: GoogleFonts.robotoMono(
-                                      fontSize: 20,
-                                      height: 1.25,
-                                      fontWeight: FontWeight.w700,
-                                    ),
-                                  ),
-                                ),
-                                ...user.portfolio.map(
-                                  (portfolio) => InkWell(
-                                    onTap: () => launch(portfolio.url!),
-                                    child: Card(
-                                      margin: const EdgeInsets.symmetric(
-                                        horizontal: 12,
-                                        vertical: 6,
-                                      ),
-                                      color: const Color.fromRGBO(
-                                          0x2A, 0x2A, 0x40, 1),
-                                      child: Padding(
-                                        padding: const EdgeInsets.all(8),
-                                        child: Column(
-                                          children: [
-                                            // Apparentlly all properties are present with empty values - CONFIRM
-                                            portfolio.image!.isNotEmpty
-                                                ? Padding(
-                                                    padding:
-                                                        const EdgeInsets.only(
-                                                      bottom: 6,
-                                                    ),
-                                                    child: CachedNetworkImage(
-                                                      imageUrl:
-                                                          portfolio.image ?? '',
-                                                      height: 200,
-                                                      errorWidget: (context,
-                                                              url, error) =>
-                                                          Image.asset(
-                                                              'assets/images/placeholder-profile-img.png'),
-                                                      imageBuilder: (
-                                                        context,
-                                                        imageProvider,
-                                                      ) =>
-                                                          Container(
-                                                        decoration:
-                                                            BoxDecoration(
-                                                          image:
-                                                              DecorationImage(
-                                                            image:
-                                                                imageProvider,
-                                                            fit: BoxFit.contain,
-                                                          ),
-                                                        ),
-                                                      ),
-                                                    ),
-                                                  )
-                                                : Container(),
-                                            Text(
-                                              portfolio.title!,
-                                              textAlign: TextAlign.center,
-                                              style: GoogleFonts.robotoMono(
-                                                fontSize: 18,
-                                                // height: 1.25,
-                                              ),
-                                            ),
-                                            portfolio.description!.isNotEmpty
-                                                ? Padding(
-                                                    padding:
-                                                        const EdgeInsets.only(
-                                                      top: 6,
-                                                    ),
-                                                    child: Text(
-                                                      portfolio.description!,
-                                                      textAlign:
-                                                          TextAlign.center,
-                                                      style: GoogleFonts
-                                                          .robotoMono(
-                                                        fontSize: 14,
-                                                        // height: 1.25,
-                                                        // fontWeight: FontWeight.w700,
-                                                      ),
-                                                    ),
-                                                  )
-                                                : Container(),
-                                          ],
-                                        ),
-                                      ),
-                                    ),
-                                  ),
-                                ),
-                              ],
-                            )
+                          ? PortfolioWidget(user: user)
                           : Container(),
                     ],
                   ),
@@ -502,6 +318,219 @@ class ProfileView extends StatelessWidget {
             }
           },
         ),
+      ),
+    );
+  }
+}
+
+class CertificationWidget extends StatelessWidget {
+  const CertificationWidget(
+      {Key? key,
+      required this.user,
+      required this.hasModernCert,
+      required this.hasLegacyCert,
+      required this.currentCerts,
+      required this.legacyCerts})
+      : super(key: key);
+
+  final FccUserModel user;
+  final bool hasModernCert;
+  final bool hasLegacyCert;
+  final List currentCerts;
+  final List legacyCerts;
+
+  @override
+  Widget build(BuildContext context) {
+    return ViewModelBuilder<ProfileViewModel>.reactive(
+      viewModelBuilder: () => ProfileViewModel(),
+      builder: (context, model, child) => Column(
+        children: [
+          Padding(
+            padding: const EdgeInsets.only(top: 8, bottom: 2),
+            child: Text(
+              'freeCodeCamp Certifications',
+              textAlign: TextAlign.center,
+              style: GoogleFonts.robotoMono(
+                fontSize: 20,
+                height: 1.25,
+                fontWeight: FontWeight.w700,
+              ),
+            ),
+          ),
+          hasModernCert
+              ? ListView(
+                  padding: const EdgeInsets.all(4),
+                  physics: const NeverScrollableScrollPhysics(),
+                  shrinkWrap: true,
+                  children: currentCerts
+                      .map(
+                        (cert) => (cert['show'] as bool)
+                            ? SizedBox(
+                                height: 50,
+                                child: ListTile(
+                                  title: Text('View ${cert["title"]}'),
+                                  trailing: const Icon(
+                                    Icons.arrow_forward_ios_sharp,
+                                    color: Colors.white,
+                                  ),
+                                  onTap: () => launch(
+                                    '${model.auth.baseURL}/certification/${user.username}/${cert["certSlug"]}',
+                                  ),
+                                ),
+                              )
+                            : Container(),
+                      )
+                      .toList(),
+                )
+              : Padding(
+                  padding: const EdgeInsets.all(4),
+                  child: Text(
+                    'No certifications have been earned under the current curriculum',
+                    textAlign: TextAlign.center,
+                    style: GoogleFonts.robotoMono(
+                      fontSize: 16,
+                      height: 1.25,
+                    ),
+                  ),
+                ),
+          hasLegacyCert
+              ? Column(
+                  children: [
+                    Padding(
+                      padding: const EdgeInsets.only(top: 16, bottom: 2),
+                      child: Text(
+                        'Legacy Certifications',
+                        textAlign: TextAlign.center,
+                        style: GoogleFonts.robotoMono(
+                          fontSize: 18,
+                          height: 1.25,
+                          fontWeight: FontWeight.w700,
+                        ),
+                      ),
+                    ),
+                    ListView(
+                      padding: const EdgeInsets.all(4),
+                      physics: const NeverScrollableScrollPhysics(),
+                      shrinkWrap: true,
+                      children: legacyCerts
+                          .map(
+                            (cert) => (cert['show'] as bool)
+                                ? SizedBox(
+                                    height: 50,
+                                    child: ListTile(
+                                      title: Text('View ${cert["title"]}'),
+                                      trailing: const Icon(
+                                        Icons.arrow_forward_ios_sharp,
+                                        color: Colors.white,
+                                      ),
+                                      onTap: () => launch(
+                                        '${model.auth.baseURL}/certification/${user.username}/${cert["certSlug"]}',
+                                      ),
+                                    ),
+                                  )
+                                : Container(),
+                          )
+                          .toList(),
+                    ),
+                  ],
+                )
+              : Container(),
+        ],
+      ),
+    );
+  }
+}
+
+class PortfolioWidget extends StatelessWidget {
+  const PortfolioWidget({Key? key, required this.user}) : super(key: key);
+
+  final FccUserModel user;
+
+  @override
+  Widget build(BuildContext context) {
+    return ViewModelBuilder<ProfileViewModel>.reactive(
+      viewModelBuilder: () => ProfileViewModel(),
+      builder: (context, model, child) => Column(
+        // mainAxisSize: MainAxisSize.min,
+        children: [
+          buildDivider(),
+          Padding(
+            padding: const EdgeInsets.all(8),
+            child: Text(
+              'Portfolio',
+              textAlign: TextAlign.center,
+              style: GoogleFonts.robotoMono(
+                fontSize: 20,
+                height: 1.25,
+                fontWeight: FontWeight.w700,
+              ),
+            ),
+          ),
+          ...user.portfolio.map(
+            (portfolio) => InkWell(
+              onTap: () => launch(portfolio.url!),
+              child: Card(
+                margin: const EdgeInsets.symmetric(
+                  horizontal: 12,
+                  vertical: 6,
+                ),
+                color: const Color.fromRGBO(0x2A, 0x2A, 0x40, 1),
+                child: Padding(
+                  padding: const EdgeInsets.all(8),
+                  child: Column(
+                    children: [
+                      // Apparentlly all properties are present with empty values - CONFIRM
+                      portfolio.image!.isNotEmpty
+                          ? Padding(
+                              padding: const EdgeInsets.only(
+                                bottom: 6,
+                              ),
+                              child: CachedNetworkImage(
+                                imageUrl: portfolio.image ?? '',
+                                height: 200,
+                                errorWidget: (context, url, error) => Image.asset(
+                                    'assets/images/placeholder-profile-img.png'),
+                                imageBuilder: (context, imageProvider) =>
+                                    Container(
+                                  decoration: BoxDecoration(
+                                    image: DecorationImage(
+                                      image: imageProvider,
+                                      fit: BoxFit.contain,
+                                    ),
+                                  ),
+                                ),
+                              ),
+                            )
+                          : Container(),
+                      Text(
+                        portfolio.title!,
+                        textAlign: TextAlign.center,
+                        style: GoogleFonts.robotoMono(
+                          fontSize: 18,
+                          // height: 1.25,
+                        ),
+                      ),
+                      portfolio.description!.isNotEmpty
+                          ? Padding(
+                              padding: const EdgeInsets.only(top: 6),
+                              child: Text(
+                                portfolio.description!,
+                                textAlign: TextAlign.center,
+                                style: GoogleFonts.robotoMono(
+                                  fontSize: 14,
+                                  // height: 1.25,
+                                  // fontWeight: FontWeight.w700,
+                                ),
+                              ),
+                            )
+                          : Container(),
+                    ],
+                  ),
+                ),
+              ),
+            ),
+          ),
+        ],
       ),
     );
   }
