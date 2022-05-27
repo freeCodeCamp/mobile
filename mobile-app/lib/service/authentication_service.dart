@@ -10,24 +10,25 @@ import 'package:pretty_dio_logger/pretty_dio_logger.dart';
 class AuthenticationService {
   static final AuthenticationService _authenticationService =
       AuthenticationService._internal();
-  late bool isDevMode;
-  final FlutterSecureStorage secureStorage = const FlutterSecureStorage();
+
+  final FlutterSecureStorage store = const FlutterSecureStorage();
+  final Dio _dio = Dio();
+  final browser = FlutterWebviewPlugin();
 
   String _csrf = '';
   String _csrfToken = '';
   String _jwtAccessToken = '';
-  final Dio _dio = Dio();
+
   String baseURL = '';
   String baseApiURL = '';
   Future<FccUserModel>? userModel;
 
-  static StreamController<bool> isLoggedInStream =
-      StreamController<bool>.broadcast();
+  bool isDevMode = false;
+
+  static StreamController<bool> isLoggedInStream = StreamController<bool>();
+
   final Stream<bool> _isLoggedIn = isLoggedInStream.stream;
-
   Stream<bool> get isLoggedIn => _isLoggedIn;
-
-  final String baseUrl = 'https://www.freecodecamp.dev';
 
   factory AuthenticationService() {
     return _authenticationService;
@@ -37,7 +38,7 @@ class AuthenticationService {
     List<String> requiredTokens = ['jwt_access_token', 'csrf_token', 'csrf'];
 
     for (String requiredToken in requiredTokens) {
-      if (await secureStorage.containsKey(key: requiredToken) == false) {
+      if (await store.containsKey(key: requiredToken) == false) {
         return false;
       }
     }
@@ -45,9 +46,21 @@ class AuthenticationService {
     return true;
   }
 
-  Future<void> init() async {
+  Future<void> writeTokensToStorage() async {
+    store.write(key: 'csrf', value: _csrf);
+    store.write(key: 'csrf_token', value: _csrfToken);
+    store.write(key: 'jwt_access_token', value: _jwtAccessToken);
+  }
+
+  Future<void> setRequiredTokes() async {
+    _csrf = await store.read(key: 'csrf') as String;
+    _csrfToken = await store.read(key: 'csrf_token') as String;
+    _jwtAccessToken = await store.read(key: 'jwt_access_token') as String;
+  }
+
+  Future<void> setCurrentClientMode() async {
     await dotenv.load();
-    // isDevMode = true;
+
     isDevMode =
         dotenv.get('DEVELOPMENTMODE', fallback: '').toLowerCase() == 'true';
     baseURL = isDevMode
@@ -56,40 +69,51 @@ class AuthenticationService {
     baseApiURL = isDevMode
         ? 'https://api.freecodecamp.dev'
         : 'https://api.freecodecamp.org';
+  }
+
+  Future<void> init() async {
+    await setCurrentClientMode();
+
     _dio.options.baseUrl = baseApiURL;
-    // Below two interceptors are for debugging purposes only
-    // They will be put behind a devMode flag later
-    _dio.interceptors.add(PrettyDioLogger(responseBody: false));
-    _dio.interceptors.add(CurlLoggerDioInterceptor());
+
+    if (isDevMode) {
+      _dio.interceptors.add(PrettyDioLogger(responseBody: false));
+      _dio.interceptors.add(CurlLoggerDioInterceptor());
+    }
+
     if (await hasRequiredTokens()) {
-      _csrf = (await secureStorage.read(key: 'csrf'))!;
-      _csrfToken = (await secureStorage.read(key: 'csrf_token'))!;
-      _jwtAccessToken = (await secureStorage.read(key: 'jwt_access_token'))!;
-      isLoggedInStream.sink.add(true);
+      await setRequiredTokes();
+
       await fetchUser();
+      return;
     }
   }
 
-  Future<FccUserModel> fetchUserModel(Map<String, dynamic> data) async {
+  Future<FccUserModel> parseUserModel(Map<String, dynamic> data) async {
     return FccUserModel.fromJson(data);
   }
 
   Future<void> login() async {
-    final browser = FlutterWebviewPlugin();
+    String path = '/learn/?messages=success%5B0%5D%3Dflash.signin-success';
+
+    if (await hasRequiredTokens()) {
+      isLoggedInStream.sink.add(true);
+      await fetchUser();
+      return;
+    }
+
     browser.onUrlChanged.listen((String url) async {
-      if (url ==
-          '$baseUrl/learn/?messages=success%5B0%5D%3Dflash.signin-success') {
-        isLoggedInStream.sink.add(true);
+      if (url == '$baseURL$path') {
         Map<String, String> cookies = await browser.getCookies();
-        // Do not question the weird keys below
+
         _csrf = cookies['"_csrf']!;
         _csrfToken = cookies[' csrf_token']!;
         _jwtAccessToken = cookies[' jwt_access_token']!;
-        secureStorage.write(key: 'csrf', value: _csrf);
-        secureStorage.write(key: 'csrf_token', value: _csrfToken);
-        secureStorage.write(key: 'jwt_access_token', value: _jwtAccessToken);
+        await writeTokensToStorage();
+
+        await fetchUser();
+
         browser.close();
-        fetchUser();
         browser.dispose();
       }
     });
@@ -103,9 +127,9 @@ class AuthenticationService {
 
   Future<void> logout() async {
     isLoggedInStream.sink.add(false);
-    await secureStorage.delete(key: 'csrf');
-    await secureStorage.delete(key: 'csrf_token');
-    await secureStorage.delete(key: 'jwt_access_token');
+    await store.delete(key: 'csrf');
+    await store.delete(key: 'csrf_token');
+    await store.delete(key: 'jwt_access_token');
   }
 
   Future<void> fetchUser() async {
@@ -119,7 +143,10 @@ class AuthenticationService {
       ),
     );
 
-    userModel = fetchUserModel(res.data['user'][res.data['result']]);
+    if (res.statusCode == 200) {
+      isLoggedInStream.sink.add(true);
+      userModel = parseUserModel(res.data['user'][res.data['result']]);
+    }
   }
 
   AuthenticationService._internal();
