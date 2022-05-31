@@ -1,5 +1,4 @@
 import express, { Request, Response } from 'express';
-import { UpdateQuery } from 'mongoose';
 import Parser from 'rss-parser';
 import Episode from './models/Episode';
 import Podcast from './models/Podcast';
@@ -53,56 +52,12 @@ router.get('/:podcastId/episodes', (req, res, next) => {
 });
 
 async function getEpisodes(req: Request, res: Response) {
-  console.log('PARAMS', req.params);
-  console.log('QUERY', req.query);
-  let podcast = await Podcast.findById(req.params.podcastId);
+  const podcast = await Podcast.findById(req.params.podcastId);
   if (!podcast) throw Error('Podcast not found');
-  const feed = await parser.parseURL(podcast.feedUrl);
-  // For Debugging
-  // console.log(feed.items[Math.floor(Math.random() * feed.items.length)]);
-  if (podcast.numOfEps !== feed.items.length) {
-    console.log('Fetching missing episodes');
-    podcast = await Podcast.findByIdAndUpdate(
-      req.params.podcastId,
-      {
-        numOfEps: feed.items.length,
-      } as UpdateQuery<typeof Podcast>,
-      {
-        new: true,
-      }
-    );
-    if (!podcast) throw Error('Podcast not found');
-    for (const episode of feed.items) {
-      const dateRaw = episode.isoDate ?? episode.pubDate ?? null;
-      const episodeDate = dateRaw ? Date.parse(dateRaw) : null;
-      await Episode.findOneAndUpdate(
-        {
-          podcastId: podcast._id,
-          guid: episode.guid,
-        },
-        {
-          guid: episode.guid,
-          podcastId: podcast._id,
-          title: episode.title,
-          description: episode.content,
-          publicationDate: episodeDate,
-          audioUrl: episode.enclosure?.url,
-          duration: (episode.itunes as { duration: string })?.duration,
-        } as UpdateQuery<typeof Episode>,
-        {
-          new: true,
-          upsert: true,
-        }
-      );
-    }
-  } else {
-    console.log('No missing episodes');
-  }
   const episodes = await Episode.find({ podcastId: podcast._id })
     .sort({ publicationDate: -1 })
     .skip(parseInt((req.query?.page as string) || '0') * 20)
     .limit(20);
-  console.log(episodes.length);
   res.json({ podcast, episodes });
 }
 
@@ -116,7 +71,6 @@ async function getEpisode(req: Request, res: Response) {
     _id: req.params.episodeId,
   });
   if (!episode) throw Error('Episode not found');
-  console.log('EPISODE', episode.title);
   res.json(episode);
 }
 

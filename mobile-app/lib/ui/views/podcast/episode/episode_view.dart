@@ -11,11 +11,16 @@ import 'package:stacked/stacked.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 class EpisodeView extends StatelessWidget {
-  const EpisodeView({Key? key, required this.episode, required this.podcast})
-      : super(key: key);
+  const EpisodeView({
+    Key? key,
+    required this.episode,
+    required this.podcast,
+    required this.isDownloadView,
+  }) : super(key: key);
 
   final Episodes episode;
   final Podcasts podcast;
+  final bool isDownloadView;
 
   final TextStyle _titleStyle = const TextStyle(fontSize: 20);
 
@@ -33,7 +38,7 @@ class EpisodeView extends StatelessWidget {
   Widget build(BuildContext context) {
     return ViewModelBuilder<EpisodeViewModel>.reactive(
       viewModelBuilder: () => EpisodeViewModel(episode, podcast),
-      onModelReady: (model) => model.init(episode.contentUrl!),
+      onModelReady: (model) => model.init(episode, isDownloadView),
       builder: (context, model, child) => Scaffold(
         appBar: AppBar(),
         body: Container(
@@ -44,17 +49,22 @@ class EpisodeView extends StatelessWidget {
                 const SizedBox(
                   height: 8,
                 ),
-                Image.file(
-                  File(
-                    '/data/user/0/org.freecodecamp/app_flutter/images/podcast/${podcast.id}.jpg',
-                  ),
-                  height: 250,
-                ),
+                isDownloadView
+                    ? Image.file(
+                        File(
+                          '/data/user/0/org.freecodecamp/app_flutter/images/podcast/${podcast.id}.jpg',
+                        ),
+                        height: 250,
+                      )
+                    : Image.network(
+                        podcast.image!,
+                        height: 250,
+                      ),
                 const SizedBox(
                   height: 20,
                 ),
                 Text(
-                  episode.title!,
+                  episode.title,
                   style: _titleStyle,
                 ),
                 const SizedBox(
@@ -62,7 +72,8 @@ class EpisodeView extends StatelessWidget {
                 ),
                 Text(
                   DateFormat.yMMMd().format(episode.publicationDate!) +
-                      (episode.duration! != Duration.zero
+                      (episode.duration != null &&
+                              episode.duration! != Duration.zero
                           ? (' • ' + _parseDuration(episode.duration!))
                           : ''),
                   style: _subTitleStyle,
