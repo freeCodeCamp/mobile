@@ -48,6 +48,11 @@ class DrawerWidgetView extends StatelessWidget {
                           ? 'Our coolest Camper'
                           : 'login to save your progress'),
                       isThreeLine: true,
+                      onTap: () {
+                        if (model.loggedIn) {
+                          model.routeComponent('PROFILE', context);
+                        }
+                      },
                     ),
                     buildDivider(),
                     DrawerButton(

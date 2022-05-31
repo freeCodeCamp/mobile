@@ -28,6 +28,7 @@ import '../ui/views/news/news-bookmark/news_bookmark_view.dart';
 import '../ui/views/news/news-feed/news_feed_view.dart';
 import '../ui/views/news/news-image-viewer/news_image_viewer.dart';
 import '../ui/views/podcast/podcast-list/podcast_list_view.dart';
+import '../ui/views/profile/profile_view.dart';
 import '../ui/views/settings/forumSettings/forum_settings_view.dart';
 import '../ui/views/settings/podcastSettings/podcast_settings_view.dart';
 
@@ -51,6 +52,7 @@ class Routes {
   static const String superBlockView = '/super-block-view';
   static const String challengeView = '/challenge-view';
   static const String authView = '/auth-view';
+  static const String profileView = '/profile-view';
   static const all = <String>{
     homeView,
     podcastListView,
@@ -71,6 +73,7 @@ class Routes {
     superBlockView,
     challengeView,
     authView,
+    profileView,
   };
 }
 
@@ -97,6 +100,7 @@ class StackedRouter extends RouterBase {
     RouteDef(Routes.superBlockView, page: SuperBlockView),
     RouteDef(Routes.challengeView, page: ChallengeView),
     RouteDef(Routes.authView, page: AuthView),
+    RouteDef(Routes.profileView, page: ProfileView),
   ];
   @override
   Map<Type, StackedRouteFactory> get pagesMap => _pagesMap;
@@ -270,6 +274,12 @@ class StackedRouter extends RouterBase {
     AuthView: (data) {
       return MaterialPageRoute<dynamic>(
         builder: (context) => const AuthView(),
+        settings: data,
+      );
+    },
+    ProfileView: (data) {
+      return MaterialPageRoute<dynamic>(
+        builder: (context) => const ProfileView(),
         settings: data,
       );
     },
