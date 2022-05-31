@@ -30,16 +30,6 @@ class DescriptionView extends StatelessWidget {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Container(
-                      padding: const EdgeInsets.only(left: 8),
-                      child: const Text(
-                        'Description',
-                        style: TextStyle(fontSize: 24),
-                      ),
-                    ),
-                    const Divider(
-                      thickness: 2,
-                    ),
                     Row(children: [
                       Expanded(
                           child: Column(
@@ -70,16 +60,6 @@ class DescriptionView extends StatelessWidget {
                             HtmlHandler.htmlHandler(instructions, context),
                       ))
                     ]),
-                    Container(
-                      padding: const EdgeInsets.only(left: 8),
-                      child: const Text(
-                        'Tests',
-                        style: TextStyle(fontSize: 24),
-                      ),
-                    ),
-                    const Divider(
-                      thickness: 2,
-                    ),
                     TestViewModel(
                       tests: tests,
                       code: editorText ?? '',
