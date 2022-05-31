@@ -51,14 +51,14 @@ class EpisodeListViewModel extends BaseViewModel {
     try {
       final res = await http.get(
         Uri.parse(baseUrl +
-            "podcasts/" +
+            'podcasts/' +
             podcastId +
-            "/episodes?page=" +
+            '/episodes?page=' +
             pageKey.toString()),
       );
       if (callbackIdentity == _activeCallbackIdentity) {
-        final List<dynamic> episodes = json.decode(res.body)["episodes"];
-        epsLength = json.decode(res.body)["podcast"]["numOfEps"];
+        final List<dynamic> episodes = json.decode(res.body)['episodes'];
+        epsLength = json.decode(res.body)['podcast']['numOfEps'];
         notifyListeners();
         final List<Episodes> eps =
             episodes.map((e) => Episodes.fromAPIJson(e)).toList();

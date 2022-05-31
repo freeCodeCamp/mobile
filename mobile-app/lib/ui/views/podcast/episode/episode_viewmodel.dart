@@ -105,7 +105,7 @@ class EpisodeViewModel extends BaseViewModel {
       downloadAudio(episode.contentUrl!);
       downloaded = !downloaded;
     } else if (downloaded) {
-      log("DELETING DOWNLOAD");
+      log('DELETING DOWNLOAD');
       File audioFile = File(
           appDir.path + '/episodes/' + podcast.id + '/' + episode.id + '.mp3');
       if (audioFile.existsSync()) {

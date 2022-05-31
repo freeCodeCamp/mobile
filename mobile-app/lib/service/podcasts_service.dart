@@ -60,7 +60,7 @@ class PodcastsDatabaseService {
         podcast.toJson(),
         conflictAlgorithm: ConflictAlgorithm.replace,
       );
-      log("Added Podcast: ${podcast.title}");
+      log('Added Podcast: ${podcast.title}');
     } catch (e) {
       log('Could not insert the podcast: $e');
     }
@@ -79,9 +79,9 @@ class PodcastsDatabaseService {
           where: 'id = ?',
           whereArgs: [podcast.id],
         );
-        log("Removed Podcast: ${podcast.title}");
+        log('Removed Podcast: ${podcast.title}');
       } else {
-        log("Did not remove podcast: ${podcast.title} because it has $count episodes");
+        log('Did not remove podcast: ${podcast.title} because it has $count episodes');
       }
     } catch (e) {
       log('Could not remove the podcast: $e');
@@ -114,7 +114,7 @@ class PodcastsDatabaseService {
         episode.toJson(),
         conflictAlgorithm: ConflictAlgorithm.replace,
       );
-      log("Added Episode: ${episode.title}");
+      log('Added Episode: ${episode.title}');
     } catch (e) {
       log('Could not insert the episode: $e');
     }
@@ -127,7 +127,7 @@ class PodcastsDatabaseService {
         where: 'podcastId = ? AND id = ?',
         whereArgs: [episode.podcastId, episode.id],
       );
-      log("Removed Episode: ${episode.title}");
+      log('Removed Episode: ${episode.title}');
     } catch (e) {
       log('Could not remove the episode: $e');
     }
