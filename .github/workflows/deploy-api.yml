@@ -47,6 +47,7 @@ jobs:
 
       - name: Build & Push Docker Images
         run: |
+          cd mobile-api
           tagname=$(git rev-parse --short HEAD)-$(date +%Y%m%d)-$(date +%H%M)
           docker build . \
           --tag ${{ secrets.ACR_NAME }}.azurecr.io/${{ matrix.site_tlds }}/mobile-api:$tagname \
