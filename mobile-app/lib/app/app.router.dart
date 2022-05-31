@@ -25,6 +25,7 @@ import '../ui/views/news/news-bookmark/news_bookmark_view.dart';
 import '../ui/views/news/news-feed/news_feed_view.dart';
 import '../ui/views/news/news-image-viewer/news_image_viewer.dart';
 import '../ui/views/podcast/podcast-list/podcast_list_view.dart';
+import '../ui/views/profile/profile_view.dart';
 import '../ui/views/settings/forumSettings/forum_settings_view.dart';
 import '../ui/views/settings/podcastSettings/podcast_settings_view.dart';
 
@@ -45,6 +46,7 @@ class Routes {
   static const String forumSettingsView = '/forum-settings-view';
   static const String forumUserProfileView = '/forum-user-profile-view';
   static const String codeRadioView = '/code-radio-view';
+  static const String profileView = '/profile-view';
   static const all = <String>{
     homeView,
     podcastListView,
@@ -62,6 +64,7 @@ class Routes {
     forumSettingsView,
     forumUserProfileView,
     codeRadioView,
+    profileView,
   };
 }
 
@@ -85,6 +88,7 @@ class StackedRouter extends RouterBase {
     RouteDef(Routes.forumSettingsView, page: ForumSettingsView),
     RouteDef(Routes.forumUserProfileView, page: ForumUserProfileView),
     RouteDef(Routes.codeRadioView, page: CodeRadioView),
+    RouteDef(Routes.profileView, page: ProfileView),
   ];
   @override
   Map<Type, StackedRouteFactory> get pagesMap => _pagesMap;
@@ -232,6 +236,12 @@ class StackedRouter extends RouterBase {
     CodeRadioView: (data) {
       return MaterialPageRoute<dynamic>(
         builder: (context) => const CodeRadioView(),
+        settings: data,
+      );
+    },
+    ProfileView: (data) {
+      return MaterialPageRoute<dynamic>(
+        builder: (context) => const ProfileView(),
         settings: data,
       );
     },
