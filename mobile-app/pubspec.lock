@@ -363,6 +363,13 @@ packages:
       url: "https://github.com/Mythar/flutter_font_awesome_web_names"
     source: git
     version: "0.0.4"
+  flutter_heatmap_calendar:
+    dependency: "direct main"
+    description:
+      name: flutter_heatmap_calendar
+      url: "https://pub.dartlang.org"
+    source: hosted
+    version: "1.0.4"
   flutter_highlight:
     dependency: "direct main"
     description:
@@ -557,6 +564,13 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "2.0.2"
+  google_fonts:
+    dependency: "direct main"
+    description:
+      name: google_fonts
+      url: "https://pub.dartlang.org"
+    source: hosted
+    version: "3.0.0"
   graphs:
     dependency: transitive
     description:
@@ -1486,4 +1500,4 @@ packages:
     version: "2.2.2"
 sdks:
   dart: ">=2.15.0 <3.0.0"
-  flutter: ">=2.8.0"
+  flutter: ">=2.10.0-0"
