@@ -56,7 +56,7 @@ class Episodes {
 
   @override
   String toString() {
-    return """Episodes {
+    return '''Episodes {
       id: $id,
       podcastId: $podcastId,
       title: $title,
@@ -64,7 +64,7 @@ class Episodes {
       publicationDate: $publicationDate,
       contentUrl: $contentUrl,
       duration: $duration,
-    }""";
+    }''';
   }
 }
 
