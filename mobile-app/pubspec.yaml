@@ -50,6 +50,7 @@ dependencies:
   flutter_local_notifications: ^9.0.3
   image_picker: ^0.8.4+4
   youtube_player_iframe: ^2.2.2
+  infinite_scroll_pagination: ^3.1.0
   web_socket_channel: ^2.1.0
   webview_flutter: ^2.8.0
   cached_network_image: ^3.2.0
