@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:freecodecamp/models/learn/curriculum_model.dart';
 import 'package:freecodecamp/models/learn/motivational_quote_model.dart';
 import 'package:freecodecamp/models/main/user_model.dart';
 import 'package:freecodecamp/ui/views/learn/learn_viewmodel.dart';
@@ -19,11 +20,11 @@ class LearnView extends StatelessWidget {
               resizeToAvoidBottomInset: false,
               backgroundColor: const Color(0xFF0a0a23),
               drawer: const DrawerWidgetView(),
-              body: FutureBuilder(
+              body: FutureBuilder<List<SuperBlockButton>>(
                 future: model.superBlocks,
                 builder: (context, snapshot) {
                   if (snapshot.hasData) {
-                    var superBlocks = snapshot.data as List;
+                    var superBlocks = snapshot.data as List<SuperBlockButton>;
                     return ListView(shrinkWrap: true, children: [
                       StreamBuilder(
                           stream: model.auth.isLoggedIn,
@@ -43,13 +44,12 @@ class LearnView extends StatelessWidget {
                       ListView.builder(
                           physics: const ClampingScrollPhysics(),
                           shrinkWrap: true,
-                          itemCount: superBlocks[0].length,
+                          itemCount: superBlocks.length,
                           itemBuilder: (BuildContext context, int i) {
                             return Padding(
                               padding: const EdgeInsets.only(
                                   top: 16.0, left: 8, right: 8),
-                              child: superBlockBuilder(superBlocks[0][i],
-                                  superBlocks[1][i], model, context),
+                              child: superBlockBuilder(superBlocks[i], context),
                             );
                           }),
                     ]);
@@ -61,8 +61,9 @@ class LearnView extends StatelessWidget {
             ));
   }
 
-  Row superBlockBuilder(String superBlockSlug, String superBlockName,
-      LearnViewModel model, BuildContext context) {
+  Row superBlockBuilder(SuperBlockButton button, BuildContext context) {
+    LearnViewModel model = LearnViewModel();
+
     return Row(
       children: [
         Expanded(
@@ -70,8 +71,15 @@ class LearnView extends StatelessWidget {
           height: 75,
           child: ElevatedButton(
               style: ElevatedButton.styleFrom(
-                primary: const Color.fromRGBO(0x3b, 0x3b, 0x4f, 1),
-                side: const BorderSide(width: 2, color: Colors.white),
+                primary: button.public
+                    ? const Color.fromRGBO(0x3b, 0x3b, 0x4f, 1)
+                    : const Color.fromARGB(255, 41, 41, 54),
+                side: button.public
+                    ? const BorderSide(width: 2, color: Colors.white)
+                    : const BorderSide(
+                        width: 2,
+                        color: Color.fromRGBO(0x3b, 0x3b, 0x4f, 1),
+                      ),
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(0),
                   side: const BorderSide(
@@ -81,7 +89,9 @@ class LearnView extends StatelessWidget {
                 ),
               ),
               onPressed: () {
-                model.routeToSuperBlock(superBlockSlug);
+                button.public
+                    ? model.routeToSuperBlock(button.path)
+                    : model.disabledButtonSnack();
               },
               child: Row(
                 children: [
@@ -90,7 +100,7 @@ class LearnView extends StatelessWidget {
                     child: SizedBox(
                       width: MediaQuery.of(context).size.width * 0.70,
                       child: Text(
-                        superBlockName,
+                        button.name,
                         textAlign: TextAlign.left,
                         style: const TextStyle(fontSize: 20),
                       ),

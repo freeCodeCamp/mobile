@@ -22,11 +22,14 @@ class LearnViewModel extends BaseViewModel {
   final AuthenticationService _auth = locator<AuthenticationService>();
   AuthenticationService get auth => _auth;
 
+  final SnackbarService _snack = locator<SnackbarService>();
+  SnackbarService get snack => _snack;
+
   bool _isLoggedIn = false;
   bool get isLoggedIn => _isLoggedIn;
 
-  Future? _superBlocks;
-  Future? get superBlocks => _superBlocks;
+  Future<List<SuperBlockButton>>? _superBlocks;
+  Future<List<SuperBlockButton>>? get superBlocks => _superBlocks;
 
   void init(BuildContext context) {
     WebView.platform = SurfaceAndroidWebView();
@@ -45,18 +48,36 @@ class LearnViewModel extends BaseViewModel {
     });
   }
 
-  Future<void> getSuperBlocks() async {
-    final http.Response res = await http.get(
-        Uri.parse('https://freecodecamp.dev/mobile/availableSuperblocks.json'));
+  void disabledButtonSnack() {
+    snack.showSnackbar(title: 'Not available', message: 'use the web version');
+  }
+
+  Future<List<SuperBlockButton>> getSuperBlocks() async {
+    final http.Response res = await http.get(Uri.parse(
+        'https://freecodecamp.dev/curriculum-data/v1.0.0/availableSuperblocks.json'));
+
+    List<SuperBlockButton> buttonData = [];
 
     if (res.statusCode == 200) {
-      return jsonDecode(res.body)['superblocks'];
+      List superBlocks = jsonDecode(res.body)['superblocks'];
+      int index = 0;
+
+      for (String superBlockKey in superBlocks[0].keys) {
+        buttonData.add(SuperBlockButton(
+            path: superBlockKey,
+            name: superBlocks[1][index],
+            public: superBlocks[0][superBlockKey]['public']));
+        index++;
+      }
+
+      return buttonData;
     }
+    return [];
   }
 
   Future<SuperBlock> getSuperBlockData(String superBlockName) async {
-    final http.Response res = await http
-        .get(Uri.parse('https://freecodecamp.dev/mobile/$superBlockName.json'));
+    final http.Response res = await http.get(Uri.parse(
+        'https://freecodecamp.dev/curriculum-data/v1.0.0/$superBlockName.json'));
 
     if (res.statusCode == 200) {
       return SuperBlock.fromJson(jsonDecode(res.body));

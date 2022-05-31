@@ -88,3 +88,12 @@ class ChallengeListTile {
 
   ChallengeListTile({required this.id, required this.name});
 }
+
+class SuperBlockButton {
+  final String path;
+  final String name;
+  final bool public;
+
+  SuperBlockButton(
+      {required this.path, required this.name, required this.public});
+}
