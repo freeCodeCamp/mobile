@@ -9,7 +9,7 @@
     "npm": ">=8"
   },
   "scripts": {
-    "build": "tsc && npm run pre:build:schema",
+    "build": "tsc",
     "dev": "nodemon src/index.ts",
     "lint": "npm run lint:prettier && npm run lint:src",
     "lint:src": "eslint --max-warnings 0 .",
