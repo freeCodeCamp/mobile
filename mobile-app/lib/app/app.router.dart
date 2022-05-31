@@ -50,7 +50,6 @@ class Routes {
   static const String codeRadioView = '/code-radio-view';
   static const String superBlockView = '/super-block-view';
   static const String challengeView = '/challenge-view';
-  static const String authView = '/auth-view';
   static const String profileView = '/profile-view';
   static const all = <String>{
     homeView,
@@ -71,7 +70,6 @@ class Routes {
     codeRadioView,
     superBlockView,
     challengeView,
-    authView,
     profileView,
   };
 }
@@ -98,7 +96,6 @@ class StackedRouter extends RouterBase {
     RouteDef(Routes.codeRadioView, page: CodeRadioView),
     RouteDef(Routes.superBlockView, page: SuperBlockView),
     RouteDef(Routes.challengeView, page: ChallengeView),
-    RouteDef(Routes.authView, page: AuthView),
     RouteDef(Routes.profileView, page: ProfileView),
   ];
   @override
@@ -267,12 +264,6 @@ class StackedRouter extends RouterBase {
           key: args.key,
           url: args.url,
         ),
-        settings: data,
-      );
-    },
-    AuthView: (data) {
-      return MaterialPageRoute<dynamic>(
-        builder: (context) => const AuthView(),
         settings: data,
       );
     },

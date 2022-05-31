@@ -899,7 +899,7 @@ packages:
       name: photo_view
       url: "https://pub.dartlang.org"
     source: hosted
-    version: "0.13.0"
+    version: "0.14.0"
   platform:
     dependency: transitive
     description:
@@ -1529,5 +1529,5 @@ packages:
     source: hosted
     version: "2.2.2"
 sdks:
-  dart: ">=2.15.0 <3.0.0"
+  dart: ">=2.16.1 <3.0.0"
   flutter: ">=2.10.0-0"
