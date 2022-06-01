@@ -5,7 +5,6 @@ import 'package:freecodecamp/ui/views/learn/learn-builders/challenge-builder/cha
 import 'package:freecodecamp/ui/views/learn/learn-builders/challenge-builder/challenge_builder_list_view.dart';
 import 'package:stacked/stacked.dart';
 
-// ignore: must_be_immutable
 class BlockBuilderView extends StatelessWidget {
   const BlockBuilderView({
     Key? key,

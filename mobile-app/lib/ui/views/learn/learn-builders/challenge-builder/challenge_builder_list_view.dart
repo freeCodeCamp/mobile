@@ -28,7 +28,7 @@ class ChallengeBuilderListView extends StatelessWidget {
                       ? Icons.arrow_drop_down_sharp
                       : Icons.arrow_right_sharp),
                   title:
-                      Text(model.isOpen ? 'collapse course' : 'expand course'),
+                      Text(model.isOpen ? 'Collapse course' : 'Expand course'),
                   trailing: Text(
                     '${model.challengesCompleted}/${block.challenges.length}',
                     style: const TextStyle(fontWeight: FontWeight.bold),
