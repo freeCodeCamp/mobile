@@ -50,16 +50,16 @@ class DescriptionView extends StatelessWidget {
                               const Divider(
                                 thickness: 2,
                               ),
+                              Row(children: [
+                                Expanded(
+                                    child: Column(
+                                  children: HtmlHandler.htmlHandler(
+                                      instructions, context),
+                                ))
+                              ]),
                             ],
                           )
                         : Container(),
-                    Row(children: [
-                      Expanded(
-                          child: Column(
-                        children:
-                            HtmlHandler.htmlHandler(instructions, context),
-                      ))
-                    ]),
                     TestViewModel(
                       tests: tests,
                       code: editorText ?? '',
