@@ -54,7 +54,7 @@ class LearnViewModel extends BaseViewModel {
 
   Future<List<SuperBlockButton>> getSuperBlocks() async {
     final http.Response res = await http.get(Uri.parse(
-        'https://freecodecamp.dev/curriculum-data/v1.0.0/availableSuperblocks.json'));
+        'https://freecodecamp.dev/curriculum-data/v1/available-superblocks.json'));
 
     List<SuperBlockButton> buttonData = [];
 
@@ -77,7 +77,7 @@ class LearnViewModel extends BaseViewModel {
 
   Future<SuperBlock> getSuperBlockData(String superBlockName) async {
     final http.Response res = await http.get(Uri.parse(
-        'https://freecodecamp.dev/curriculum-data/v1.0.0/$superBlockName.json'));
+        'https://freecodecamp.dev/curriculum-data/v1/$superBlockName.json'));
 
     if (res.statusCode == 200) {
       return SuperBlock.fromJson(jsonDecode(res.body));
