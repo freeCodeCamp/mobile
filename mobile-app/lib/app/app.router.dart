@@ -19,6 +19,8 @@ import '../ui/views/forum/forum-post/forum_post_view.dart';
 import '../ui/views/forum/forum-user-profile/forum_user_profile_view.dart';
 import '../ui/views/forum/forum-user/forum_user_view.dart';
 import '../ui/views/home/home_view.dart';
+import '../ui/views/learn/challenge_editor/challenge_view.dart';
+import '../ui/views/learn/learn-builders/superblock_builder.dart';
 import '../ui/views/news/news-article/news_article_view.dart';
 import '../ui/views/news/news-author/news_author_view.dart';
 import '../ui/views/news/news-bookmark/news_bookmark_view.dart';
@@ -46,6 +48,8 @@ class Routes {
   static const String forumSettingsView = '/forum-settings-view';
   static const String forumUserProfileView = '/forum-user-profile-view';
   static const String codeRadioView = '/code-radio-view';
+  static const String superBlockView = '/super-block-view';
+  static const String challengeView = '/challenge-view';
   static const String profileView = '/profile-view';
   static const all = <String>{
     homeView,
@@ -64,6 +68,8 @@ class Routes {
     forumSettingsView,
     forumUserProfileView,
     codeRadioView,
+    superBlockView,
+    challengeView,
     profileView,
   };
 }
@@ -88,6 +94,8 @@ class StackedRouter extends RouterBase {
     RouteDef(Routes.forumSettingsView, page: ForumSettingsView),
     RouteDef(Routes.forumUserProfileView, page: ForumUserProfileView),
     RouteDef(Routes.codeRadioView, page: CodeRadioView),
+    RouteDef(Routes.superBlockView, page: SuperBlockView),
+    RouteDef(Routes.challengeView, page: ChallengeView),
     RouteDef(Routes.profileView, page: ProfileView),
   ];
   @override
@@ -239,6 +247,26 @@ class StackedRouter extends RouterBase {
         settings: data,
       );
     },
+    SuperBlockView: (data) {
+      var args = data.getArgs<SuperBlockViewArguments>(nullOk: false);
+      return MaterialPageRoute<dynamic>(
+        builder: (context) => SuperBlockView(
+          key: args.key,
+          superBlockName: args.superBlockName,
+        ),
+        settings: data,
+      );
+    },
+    ChallengeView: (data) {
+      var args = data.getArgs<ChallengeViewArguments>(nullOk: false);
+      return MaterialPageRoute<dynamic>(
+        builder: (context) => ChallengeView(
+          key: args.key,
+          url: args.url,
+        ),
+        settings: data,
+      );
+    },
     ProfileView: (data) {
       return MaterialPageRoute<dynamic>(
         builder: (context) => const ProfileView(),
@@ -333,4 +361,18 @@ class ForumUserViewArguments {
   final Key? key;
   final String username;
   ForumUserViewArguments({this.key, required this.username});
+}
+
+/// SuperBlockView arguments holder class
+class SuperBlockViewArguments {
+  final Key? key;
+  final String superBlockName;
+  SuperBlockViewArguments({this.key, required this.superBlockName});
+}
+
+/// ChallengeView arguments holder class
+class ChallengeViewArguments {
+  final Key? key;
+  final String url;
+  ChallengeViewArguments({this.key, required this.url});
 }

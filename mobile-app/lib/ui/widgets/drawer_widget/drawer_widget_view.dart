@@ -70,12 +70,15 @@ class DrawerWidgetView extends StatelessWidget {
                               model.routeComponent('FORUM', context);
                             },
                           )
-                        : DrawerButton(
-                            component: 'LEARN',
-                            icon: Icons.local_fire_department_sharp,
-                            route: () {
-                              model.routeComponent('LEARN', context);
-                            }),
+                        : Container(),
+                    DrawerButton(
+                        component: 'LEARN',
+                        icon: Icons.local_fire_department_sharp,
+                        route: () {
+                          model.showForum
+                              ? model.routeComponent('LEARN', context)
+                              : model.snackbar();
+                        }),
                     DrawerButton(
                       component: 'PODCAST',
                       icon: Icons.podcasts_outlined,

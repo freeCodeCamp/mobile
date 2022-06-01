@@ -82,7 +82,10 @@ class AuthenticationService {
       _dio.interceptors.add(CurlLoggerDioInterceptor());
     }
 
-    await login();
+    if (await hasRequiredTokens()) {
+      await setRequiredTokes();
+      await fetchUser();
+    }
   }
 
   Future<FccUserModel> parseUserModel(Map<String, dynamic> data) async {
@@ -91,12 +94,6 @@ class AuthenticationService {
 
   Future<void> login() async {
     String path = '/learn/?messages=success%5B0%5D%3Dflash.signin-success';
-
-    if (await hasRequiredTokens()) {
-      await setRequiredTokes();
-      await fetchUser();
-      return;
-    }
 
     browser.onUrlChanged.listen((String url) async {
       if (url == '$baseURL$path') {

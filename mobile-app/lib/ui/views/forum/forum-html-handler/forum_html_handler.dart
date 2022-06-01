@@ -1,11 +1,15 @@
+// ignore_for_file: implementation_imports
+
 import 'package:flutter/material.dart';
 import 'package:flutter_font_awesome_web_names/flutter_font_awesome.dart';
 import 'package:flutter_html/flutter_html.dart';
-import 'package:flutter_syntax_view/flutter_syntax_view.dart';
 import 'package:freecodecamp/models/forum/forum_post_model.dart';
 import 'package:freecodecamp/ui/views/forum/forum-post/forum_post_viewmodel.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:html/dom.dart' as dom;
+import 'package:flutter_syntax_view_fcc/src/flutter_syntax_view.dart';
+import 'package:flutter_syntax_view_fcc/src/theme/theme.dart';
+import 'package:flutter_syntax_view_fcc/src/syntax/base.dart';
 
 Column htmlView(PostModel post, BuildContext context, PostViewModel model) {
   return Column(
@@ -72,9 +76,8 @@ Column htmlView(PostModel post, BuildContext context, PostViewModel model) {
                         syntax: Syntax.JAVASCRIPT,
                         syntaxTheme: SyntaxTheme.vscodeDark(),
                         fontSize: 16.0,
-                        withZoom: false,
                         withLinesCount: true,
-                        useCustomHeight: true,
+                        adjutableHeight: true,
                         minWidth: MediaQuery.of(context).size.width,
                         minHeight: 1,
                       ),
