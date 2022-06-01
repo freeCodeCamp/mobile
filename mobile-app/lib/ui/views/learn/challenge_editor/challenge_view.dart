@@ -22,16 +22,16 @@ class ChallengeView extends StatelessWidget {
                 body: FutureBuilder(
               future: model.initChallenge(url),
               builder: (context, snapshot) {
-                Challenge? challenge = snapshot.data as Challenge?;
-
                 if (snapshot.hasData) {
+                  // TODO: Check if challenge is null
+                  Challenge? challenge = snapshot.data as Challenge?;
                   EditorViewController controller = EditorViewController(
                     language: Syntax.HTML,
                     options: EditorOptions(
                         useFileExplorer: false,
                         canCloseFiles: false,
                         customViewNames: [
-                          const Text('description'),
+                          const Text('Description'),
                         ],
                         customViews: [
                           DescriptionView(
