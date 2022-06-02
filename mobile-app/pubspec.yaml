@@ -74,6 +74,11 @@ dev_dependencies:
     sdk: flutter
   stacked_generator: ^0.6.0
 flutter:
+  fonts:
+    - family: RobotoMono
+      fonts:
+        - assets: assets/fonts/RobotoMono-Regular.ttf
+   
   uses-material-design: true
   assets:
     - .env

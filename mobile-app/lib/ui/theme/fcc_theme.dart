@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 class FccTheme {
   static ThemeData themeDark = ThemeData(
     brightness: Brightness.dark,
-    fontFamily: 'Roboto',
+    fontFamily: 'RobotoMono',
     backgroundColor: const Color(0xFF0a0a23),
     scaffoldBackgroundColor: const Color.fromRGBO(0x2A, 0x2A, 0x40, 1),
     appBarTheme: const AppBarTheme(centerTitle: true, color: Color(0xFF0a0a23)),
