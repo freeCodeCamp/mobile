@@ -336,7 +336,7 @@ class CertificationWidget extends StatelessWidget {
       builder: (context, model, child) => Column(
         children: [
           const Padding(
-            padding: const EdgeInsets.only(top: 8, bottom: 2),
+            padding: EdgeInsets.only(top: 8, bottom: 2),
             child: Text(
               'freeCodeCamp Certifications',
               textAlign: TextAlign.center,
