@@ -22,7 +22,7 @@
     "@babel/preset-env": "7.18.2",
     "@babel/preset-typescript": "7.17.12",
     "@types/jest": "27.5.2",
-    "node-fetch": "3.2.4",
+    "node-fetch": "3.2.5",
     "ts-jest": "27.1.5",
     "bree": "8.0.3",
     "dotenv": "16.0.1",
