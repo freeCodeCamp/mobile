@@ -56,6 +56,7 @@ class HtmlHandler {
             padding: const EdgeInsets.only(left: 4, right: 4)),
         'p': Style(
           fontSize: FontSize.rem(1.35),
+          margin: const EdgeInsets.all(0),
           lineHeight: const LineHeight(1.5),
           color: Colors.white.withOpacity(0.87),
         ),
@@ -83,9 +84,12 @@ class HtmlHandler {
         ),
         'figure': Style(
             width: MediaQuery.of(context).size.width, margin: EdgeInsets.zero),
-        'h2': Style(margin: const EdgeInsets.fromLTRB(2, 12, 2, 8)),
-        'h3': Style(margin: const EdgeInsets.fromLTRB(2, 12, 2, 8)),
-        'h4': Style(margin: const EdgeInsets.fromLTRB(2, 12, 2, 8))
+        'h1': Style(margin: const EdgeInsets.fromLTRB(2, 32, 2, 0)),
+        'h2': Style(margin: const EdgeInsets.fromLTRB(2, 32, 2, 0)),
+        'h3': Style(margin: const EdgeInsets.fromLTRB(2, 32, 2, 0)),
+        'h4': Style(margin: const EdgeInsets.fromLTRB(2, 32, 2, 0)),
+        'h5': Style(margin: const EdgeInsets.fromLTRB(2, 32, 2, 0)),
+        'h6': Style(margin: const EdgeInsets.fromLTRB(2, 32, 2, 0))
       },
       customRender: {
         'table': (context, child) {
