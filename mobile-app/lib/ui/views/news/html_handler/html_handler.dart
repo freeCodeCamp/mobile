@@ -116,6 +116,14 @@ class HtmlHandler {
               );
             }
           }
+
+          bool isInPreTag = code.tree.element!.parent!.localName == 'pre';
+
+          return Container(
+            color: const Color.fromRGBO(0x2A, 0x2A, 0x40, 1),
+            padding: EdgeInsets.all(isInPreTag ? 16 : 0),
+            child: child,
+          );
         },
         'iframe': (code, child) {
           var isVideo = RegExp('youtube', caseSensitive: false);
