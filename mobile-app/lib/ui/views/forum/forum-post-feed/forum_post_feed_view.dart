@@ -45,7 +45,7 @@ class ForumPostFeedView extends StatelessWidget {
         shrinkWrap: true,
         itemBuilder: (BuildContext context, int index) => ForumLazyLoading(
             postCreated: () {
-              SchedulerBinding.instance!.addPostFrameCallback(
+              SchedulerBinding.instance.addPostFrameCallback(
                   (timeStamp) => model.handlePostLazyLoading(index));
             },
             child: InkWell(
