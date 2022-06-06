@@ -17,7 +17,7 @@ class DrawerWidgtetViewModel extends BaseViewModel {
   // this is because the forum has two different urls, one for prod
   // and one for testing purposes. When the development value is set to false
   // the normal fcc forum is not accessible
-  final bool _showForum = false;
+  final bool _showForum = true;
 
   bool get showForum => _showForum;
 

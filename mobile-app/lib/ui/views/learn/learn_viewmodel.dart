@@ -1,9 +1,10 @@
 import 'dart:async';
 import 'dart:convert';
 import 'dart:math';
-
+import 'dart:developer' as dev;
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:freecodecamp/app/app.locator.dart';
 import 'package:freecodecamp/app/app.router.dart';
 import 'package:freecodecamp/models/learn/curriculum_model.dart';
@@ -28,6 +29,9 @@ class LearnViewModel extends BaseViewModel {
   bool _isLoggedIn = false;
   bool get isLoggedIn => _isLoggedIn;
 
+  bool _inDevMode = false;
+  bool get inDevMode => _inDevMode;
+
   Future<List<SuperBlockButton>>? _superBlocks;
   Future<List<SuperBlockButton>>? get superBlocks => _superBlocks;
 
@@ -38,6 +42,7 @@ class LearnViewModel extends BaseViewModel {
     retrieveNewQuote();
     notifyListeners();
     initLoggedInListener();
+    isIndDevMode();
   }
 
   void initLoggedInListener() {
@@ -46,6 +51,15 @@ class LearnViewModel extends BaseViewModel {
       _isLoggedIn = e;
       notifyListeners();
     });
+  }
+
+  void isIndDevMode() async {
+    await dotenv.load();
+
+    String devMode = dotenv.get('DEVELOPMENTMODE').toLowerCase();
+
+    _inDevMode = devMode == 'true' ? true : false;
+    notifyListeners();
   }
 
   void disabledButtonSnack() {
@@ -66,7 +80,9 @@ class LearnViewModel extends BaseViewModel {
         buttonData.add(SuperBlockButton(
             path: superBlockKey,
             name: superBlocks[1][index],
-            public: superBlocks[0][superBlockKey]['public']));
+            public: inDevMode
+                ? inDevMode
+                : superBlocks[0][superBlockKey]['public']));
         index++;
       }
 
