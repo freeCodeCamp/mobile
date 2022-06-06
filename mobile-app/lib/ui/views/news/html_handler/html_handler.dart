@@ -70,6 +70,7 @@ class HtmlHandler {
           color: Colors.white,
           width: MediaQuery.of(context).size.width,
           padding: const EdgeInsets.all(10),
+          fontSize: FontSize.rem(1.25),
         ),
         'tr': Style(
             border: const Border(bottom: BorderSide(color: Colors.grey)),
@@ -109,6 +110,7 @@ class HtmlHandler {
                   Expanded(
                     child: HighlightView(code.tree.element?.text ?? '',
                         padding: const EdgeInsets.all(16),
+                        textStyle: const TextStyle(fontSize: 16),
                         language: className.split('-')[1],
                         theme: themeMap['dracula']!),
                   ),
