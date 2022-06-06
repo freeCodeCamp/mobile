@@ -71,7 +71,7 @@ dev_dependencies:
     sdk: flutter
   flutter_test:
     sdk: flutter
-  stacked_generator: 0.6.0
+  stacked_generator: 0.7.1
 flutter:
   fonts:
     - family: RobotoMono
