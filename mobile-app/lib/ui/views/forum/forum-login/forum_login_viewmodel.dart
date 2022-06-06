@@ -42,7 +42,6 @@ class ForumLoginModel extends BaseViewModel {
 
   late BuildContext _context;
 
-
   void initState(BuildContext context, bool fromPost) async {
     _errorMessage = '';
     _isLoggedIn = await checkLoggedIn();
@@ -107,26 +106,25 @@ class ForumLoginModel extends BaseViewModel {
 
       Map<String, String> payload = {'login': login};
 
-      final response =
-         await ForumConnect.connectAndPost('/session/forgot_password', {}, payload);
+      final response = await ForumConnect.connectAndPost(
+          '/session/forgot_password', {}, payload);
 
       bool success = jsonDecode(response.body)['user_found'];
 
       showPasswodResetStateDialog(success);
-
     }
   }
 
   Future showPasswodResetStateDialog(bool success) async {
     // ignore: unused_local_variable
     DialogResponse? res = await _dialogService.showCustomDialog(
-      variant: DialogType.buttonForm2,
-      title: success ?  'Success' : 'Error' ,
-      description:
-          success ? 'An email will be sent shortly with instructions on how to reset your password.' : 'We could not find an account linked to that email address or username.'
-      mainButtonTitle: 'OK',
-      data: DialogType.buttonForm2
-    );
+        variant: DialogType.buttonForm2,
+        title: success ? 'Success' : 'Error',
+        description: success
+            ? 'An email will be sent shortly with instructions on how to reset your password.'
+            : 'We could not find an account linked to that email address or username.',
+        mainButtonTitle: 'OK',
+        data: DialogType.buttonForm2);
   }
 
   bool noAuthError(authBody) {
@@ -177,7 +175,7 @@ class ForumLoginModel extends BaseViewModel {
           prefs.setString('username', username);
           _isLoggedIn = prefs.getBool('loggedIn') as bool;
           notifyListeners();
-          if(!_fromCreatePost){
+          if (!_fromCreatePost) {
             Navigator.pop(_context);
           }
         } else {
@@ -215,8 +213,8 @@ class ForumLoginModel extends BaseViewModel {
         _isLoggedIn = prefs.getBool('loggedIn') as bool;
 
         notifyListeners();
-        if(!_fromCreatePost){
-         Navigator.pop(_context);
+        if (!_fromCreatePost) {
+          Navigator.pop(_context);
         }
       } else {
         if (hasAuth2Enabled(response.body)) {
