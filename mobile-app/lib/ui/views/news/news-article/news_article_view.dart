@@ -4,7 +4,6 @@ import 'package:freecodecamp/models/news/article_model.dart';
 import 'package:freecodecamp/ui/views/news/news-bookmark/news_bookmark_widget.dart';
 import 'package:share/share.dart';
 import 'package:stacked/stacked.dart';
-import 'package:url_launcher/url_launcher.dart';
 import 'news_article_viewmodel.dart';
 
 class NewsArticleView extends StatelessWidget {
@@ -142,70 +141,4 @@ class BottomButton extends StatelessWidget {
       ),
     );
   }
-}
-
-Container bookmark(String? bookmarkTilte, String? bookmarkDescription,
-    String? bookmarkImage, String? link) {
-  return Container(
-    color: Colors.white,
-    child: GestureDetector(
-      onTap: () {
-        launch(link!);
-      },
-      child: Padding(
-        padding: const EdgeInsets.only(left: 10.0),
-        child: Row(
-          children: [
-            Expanded(
-              child: Column(
-                children: [
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.start,
-                    children: [
-                      Expanded(
-                        child: Text(
-                          bookmarkTilte.toString(),
-                          style: const TextStyle(
-                              fontWeight: FontWeight.bold,
-                              fontSize: 16,
-                              decoration: TextDecoration.underline,
-                              decorationThickness: 2),
-                        ),
-                      ),
-                    ],
-                  ),
-                  Row(
-                    children: [
-                      Expanded(
-                        child: Padding(
-                          padding: const EdgeInsets.only(top: 25.0, left: 5),
-                          child: Text(
-                            bookmarkDescription.toString().substring(0, 125) +
-                                '...',
-                            style: const TextStyle(
-                              fontSize: 16,
-                            ),
-                          ),
-                        ),
-                      )
-                    ],
-                  )
-                ],
-              ),
-            ),
-            Expanded(
-              child: Column(
-                children: [
-                  Image.network(
-                    bookmarkImage.toString(),
-                    fit: BoxFit.cover,
-                  )
-                ],
-              ),
-            )
-          ],
-        ),
-      ),
-    ),
-  );
 }

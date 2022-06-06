@@ -6,7 +6,6 @@ import 'package:flutter_highlight/flutter_highlight.dart';
 import 'package:flutter_highlight/theme_map.dart';
 import 'package:freecodecamp/models/news/article_model.dart';
 import 'package:freecodecamp/ui/views/news/news-article/news_article_header.dart';
-import 'package:freecodecamp/ui/views/news/news-article/news_article_view.dart';
 import 'package:freecodecamp/ui/views/news/news-image-viewer/news_image_viewer.dart';
 import 'package:html/dom.dart' as dom;
 import 'package:url_launcher/url_launcher.dart';
@@ -35,6 +34,9 @@ class HtmlHandler {
     for (int i = 0; i < result.body!.children.length; i++) {
       elements
           .add(htmlWidgetBuilder(result.body!.children[i].outerHtml, context));
+    }
+    if (article is Article) {
+      elements.add(Container(height: 100));
     }
     return elements;
   }
@@ -98,27 +100,6 @@ class HtmlHandler {
             child: (context.tree as TableLayoutElement).toWidget(context),
           );
         },
-        'figure': (code, child) {
-          var figureClasses = code.tree.elementClasses;
-          bool isBookmarkCard = figureClasses.contains('kg-bookmark-card');
-
-          if (isBookmarkCard) {
-            var parent = code.tree.children[0];
-
-            var link = parent.attributes['href'];
-
-            var bookmarkTilte = parent.children[0].children[0].element?.text;
-
-            var bookmarkDescription =
-                parent.children[0].children[1].element?.text;
-
-            var bookmarkImage =
-                parent.children[1].children[0].attributes['src'];
-
-            return bookmark(
-                bookmarkTilte, bookmarkDescription, bookmarkImage, link);
-          }
-        },
         'code': (code, child) {
           for (String className in code.tree.elementClasses) {
             if (className
@@ -153,10 +134,13 @@ class HtmlHandler {
         },
         'img': (code, child) {
           var imgUrl = code.tree.attributes['src'] ?? '';
-          return InkWell(
-            onTap: () => goToImageView(imgUrl, context),
-            child: CachedNetworkImage(
-              imageUrl: imgUrl,
+          return Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: InkWell(
+              onTap: () => goToImageView(imgUrl, context),
+              child: CachedNetworkImage(
+                imageUrl: imgUrl,
+              ),
             ),
           );
         }
