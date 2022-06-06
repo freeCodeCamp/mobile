@@ -17,10 +17,10 @@ class CodeRadioService with WidgetsBindingObserver {
   }
 
   void initAppStateObserver() {
-    WidgetsBinding.instance!.addObserver(this);
+    WidgetsBinding.instance.addObserver(this);
   }
 
   void removeAppStateObserver() {
-    WidgetsBinding.instance!.removeObserver(this);
+    WidgetsBinding.instance.removeObserver(this);
   }
 }
