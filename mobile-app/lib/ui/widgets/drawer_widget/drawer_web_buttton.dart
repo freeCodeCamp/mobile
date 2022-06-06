@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:url_launcher/url_launcher.dart';
+import 'package:url_launcher/url_launcher_string.dart';
 
 class WebButton extends StatefulWidget {
   const WebButton(
@@ -25,7 +25,7 @@ class _WebButtonState extends State<WebButton> {
       child: ListTile(
         dense: true,
         onTap: () {
-          launch(widget.url);
+          launchUrlString(widget.url);
         },
         leading: Icon(
           widget.icon,

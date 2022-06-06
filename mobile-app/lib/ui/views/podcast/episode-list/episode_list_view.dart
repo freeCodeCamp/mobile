@@ -11,7 +11,7 @@ import 'package:html/dom.dart' as dom;
 import 'package:infinite_scroll_pagination/infinite_scroll_pagination.dart';
 import 'package:intl/intl.dart';
 import 'package:stacked/stacked.dart';
-import 'package:url_launcher/url_launcher.dart';
+import 'package:url_launcher/url_launcher_string.dart';
 
 class EpisodeListView extends StatelessWidget {
   const EpisodeListView({
@@ -96,7 +96,7 @@ class EpisodeListView extends StatelessWidget {
                                 Map<String, String> attributes,
                                 dom.Element? element,
                               ) {
-                                launch(url!);
+                                launchUrlString(url!);
                               },
                               style: {
                                 'body': Style(

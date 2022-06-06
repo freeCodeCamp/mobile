@@ -8,7 +8,7 @@ import 'package:freecodecamp/ui/views/podcast/episode/episode_viewmodel.dart';
 import 'package:html/dom.dart' as dom;
 import 'package:intl/intl.dart';
 import 'package:stacked/stacked.dart';
-import 'package:url_launcher/url_launcher.dart';
+import 'package:url_launcher/url_launcher_string.dart';
 
 class EpisodeView extends StatelessWidget {
   const EpisodeView({
@@ -149,7 +149,7 @@ class EpisodeView extends StatelessWidget {
                   shrinkWrap: true,
                   onLinkTap: (String? url, RenderContext context,
                       Map<String, String> attributes, dom.Element? element) {
-                    launch(url!);
+                    launchUrlString(url!);
                   },
                   style: {
                     'body': Style(
