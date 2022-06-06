@@ -27,12 +27,13 @@ class NewsArticleHeader extends StatelessWidget {
                   children: [
                     Text(
                       article.title,
-                      style: const TextStyle(fontSize: 24, height: 1.5),
+                      style: const TextStyle(
+                          fontSize: 24, height: 1.5, fontFamily: 'Lato'),
                       key: const Key('title'),
                     ),
                     Text(
                       'Written by ${article.authorName}',
-                      style: const TextStyle(height: 1.5),
+                      style: const TextStyle(height: 1.5, fontFamily: 'Lato'),
                     ),
                     Wrap(
                       children: [

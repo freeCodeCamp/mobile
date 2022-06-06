@@ -51,9 +51,14 @@ class HtmlHandler {
       shrinkWrap: true,
       data: child,
       style: {
-        'body': Style(color: Colors.white),
-        'p':
-            Style(fontSize: FontSize.rem(1.35), lineHeight: LineHeight.em(1.2)),
+        'body': Style(
+          color: Colors.white,
+          fontFamily: 'Lato',
+        ),
+        'p': Style(
+          fontSize: FontSize.rem(1.35),
+          lineHeight: LineHeight.em(1.2),
+        ),
         'ul': Style(fontSize: FontSize.xLarge),
         'li': Style(
           margin: const EdgeInsets.only(top: 8),

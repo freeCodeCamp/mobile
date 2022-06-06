@@ -4,7 +4,6 @@ import 'package:flutter_heatmap_calendar/flutter_heatmap_calendar.dart';
 import 'package:freecodecamp/models/main/user_model.dart';
 import 'package:freecodecamp/ui/views/profile/profile_viemodel.dart';
 import 'package:freecodecamp/ui/widgets/drawer_widget/drawer_widget_view.dart';
-import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/intl.dart';
 import 'package:jiffy/jiffy.dart';
 import 'package:stacked/stacked.dart';
@@ -186,15 +185,13 @@ class ProfileView extends StatelessWidget {
                             child: Container(
                               margin: const EdgeInsets.all(16),
                               child: ListTile(
-                                title: Text(
-                                  '@${user.username}',
-                                  style: GoogleFonts.robotoMono(
-                                      fontSize: 32,
-                                      fontWeight: FontWeight.w700),
-                                ),
+                                title: Text('@${user.username}',
+                                    style: const TextStyle(
+                                        fontSize: 32,
+                                        fontWeight: FontWeight.w700)),
                                 subtitle: Text(
                                   user.name,
-                                  style: GoogleFonts.robotoMono(fontSize: 16),
+                                  style: const TextStyle(fontSize: 16),
                                 ),
                               ),
                             ),
@@ -211,15 +208,13 @@ class ProfileView extends StatelessWidget {
                                   leading: const Icon(Icons.location_on),
                                   title: Text(
                                     user.location as String,
-                                    style: GoogleFonts.robotoMono(),
                                   ))
                               : Container(),
                           user.isDonating
-                              ? ListTile(
-                                  leading: const Icon(Icons.favorite),
+                              ? const ListTile(
+                                  leading: Icon(Icons.favorite),
                                   title: Text(
                                     'Supporter',
-                                    style: GoogleFonts.robotoMono(),
                                   ))
                               : Container(),
                           user.about != null
@@ -227,7 +222,6 @@ class ProfileView extends StatelessWidget {
                                   leading: const Icon(Icons.chat_bubble),
                                   title: Text(
                                     user.about as String,
-                                    style: GoogleFonts.robotoMono(),
                                   ),
                                 )
                               : Container(),
@@ -235,7 +229,6 @@ class ProfileView extends StatelessWidget {
                             leading: const Icon(Icons.calendar_month),
                             title: Text(
                               'Joined ${DateFormat.yMMMM().format(user.joinDate)}',
-                              style: GoogleFonts.robotoMono(),
                             ),
                           )
                         ],
@@ -245,7 +238,6 @@ class ProfileView extends StatelessWidget {
                         leading: const Icon(Icons.local_fire_department_sharp),
                         title: Text(
                           'Points ${user.points.toString()}',
-                          style: GoogleFonts.robotoMono(),
                         ),
                       ),
                       HeatMap(
@@ -285,8 +277,7 @@ class ProfileView extends StatelessWidget {
                         child: Text(
                           'Longest Streak: ${user.streak.longest}',
                           textAlign: TextAlign.center,
-                          style: GoogleFonts.robotoMono(
-                              fontSize: 16, height: 1.25),
+                          style: const TextStyle(fontSize: 16, height: 1.25),
                         ),
                       ),
                       Padding(
@@ -294,8 +285,7 @@ class ProfileView extends StatelessWidget {
                         child: Text(
                           'Current Streak: ${user.streak.current}',
                           textAlign: TextAlign.center,
-                          style: GoogleFonts.robotoMono(
-                              fontSize: 16, height: 1.25),
+                          style: const TextStyle(fontSize: 16, height: 1.25),
                         ),
                       ),
                       buildDivider(),
@@ -345,12 +335,12 @@ class CertificationWidget extends StatelessWidget {
       viewModelBuilder: () => ProfileViewModel(),
       builder: (context, model, child) => Column(
         children: [
-          Padding(
-            padding: const EdgeInsets.only(top: 8, bottom: 2),
+          const Padding(
+            padding: EdgeInsets.only(top: 8, bottom: 2),
             child: Text(
               'freeCodeCamp Certifications',
               textAlign: TextAlign.center,
-              style: GoogleFonts.robotoMono(
+              style: TextStyle(
                 fontSize: 20,
                 height: 1.25,
                 fontWeight: FontWeight.w700,
@@ -382,12 +372,12 @@ class CertificationWidget extends StatelessWidget {
                       )
                       .toList(),
                 )
-              : Padding(
-                  padding: const EdgeInsets.all(4),
+              : const Padding(
+                  padding: EdgeInsets.all(4),
                   child: Text(
                     'No certifications have been earned under the current curriculum',
                     textAlign: TextAlign.center,
-                    style: GoogleFonts.robotoMono(
+                    style: TextStyle(
                       fontSize: 16,
                       height: 1.25,
                     ),
@@ -396,12 +386,12 @@ class CertificationWidget extends StatelessWidget {
           hasLegacyCert
               ? Column(
                   children: [
-                    Padding(
-                      padding: const EdgeInsets.only(top: 16, bottom: 2),
+                    const Padding(
+                      padding: EdgeInsets.only(top: 16, bottom: 2),
                       child: Text(
                         'Legacy Certifications',
                         textAlign: TextAlign.center,
-                        style: GoogleFonts.robotoMono(
+                        style: TextStyle(
                           fontSize: 18,
                           height: 1.25,
                           fontWeight: FontWeight.w700,
@@ -454,12 +444,12 @@ class PortfolioWidget extends StatelessWidget {
         // mainAxisSize: MainAxisSize.min,
         children: [
           buildDivider(),
-          Padding(
-            padding: const EdgeInsets.all(8),
+          const Padding(
+            padding: EdgeInsets.all(8),
             child: Text(
               'Portfolio',
               textAlign: TextAlign.center,
-              style: GoogleFonts.robotoMono(
+              style: TextStyle(
                 fontSize: 20,
                 height: 1.25,
                 fontWeight: FontWeight.w700,
@@ -505,7 +495,7 @@ class PortfolioWidget extends StatelessWidget {
                       Text(
                         portfolio.title!,
                         textAlign: TextAlign.center,
-                        style: GoogleFonts.robotoMono(
+                        style: const TextStyle(
                           fontSize: 18,
                           // height: 1.25,
                         ),
@@ -516,7 +506,7 @@ class PortfolioWidget extends StatelessWidget {
                               child: Text(
                                 portfolio.description!,
                                 textAlign: TextAlign.center,
-                                style: GoogleFonts.robotoMono(
+                                style: const TextStyle(
                                   fontSize: 14,
                                   // height: 1.25,
                                   // fontWeight: FontWeight.w700,
