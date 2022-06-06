@@ -38,14 +38,12 @@ class PodcastListView extends StatelessWidget {
             BottomNavigationBarItem(
               icon: Icon(
                 Icons.grid_view_rounded,
-                color: Colors.white,
               ),
               label: 'Browse',
             ),
             BottomNavigationBarItem(
               icon: Icon(
                 Icons.arrow_circle_down_sharp,
-                color: Colors.white,
               ),
               label: 'Downloads',
             ),
@@ -163,13 +161,19 @@ class PodcastTemplate extends StatelessWidget {
           children: [
             Expanded(
               flex: 2,
-              child: Image.file(
-                File(
-                  '/data/user/0/org.freecodecamp/app_flutter/images/podcast/${podcast.id}.jpg',
-                ),
-                // height: 130,
-                alignment: Alignment.center,
-              ),
+              child: isDownloadView
+                  ? Image.file(
+                      File(
+                        '/data/user/0/org.freecodecamp/app_flutter/images/podcast/${podcast.id}.jpg',
+                      ),
+                      // height: 130,
+                      alignment: Alignment.center,
+                    )
+                  : Image.network(
+                      podcast.image!,
+                      // height: 130,
+                      alignment: Alignment.center,
+                    ),
             ),
             Flexible(
               flex: 1,

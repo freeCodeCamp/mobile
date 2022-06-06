@@ -1,3 +1,4 @@
+// ignore_for_file: implementation_imports
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_html/flutter_html.dart';
@@ -17,7 +18,7 @@ class HtmlHandler {
   final String html;
   final BuildContext context;
 
-  static List<Widget> htmlHandler(html, context, article) {
+  static List<Widget> htmlHandler(html, context, [article]) {
     var result = HtmlParser.parseHTML(html);
 
     List<Widget> elements = [];

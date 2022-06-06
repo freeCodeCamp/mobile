@@ -1,4 +1,4 @@
-name: Build and deploy API
+name: Build and Deploy API
 
 on:
   workflow_dispatch:
@@ -18,21 +18,22 @@ jobs:
       - name: Checkout source code
         uses: actions/checkout@v2
 
-      - name: Change directory to API
-        run: cd mobile-api
-
       - name: Use Node.js ${{ matrix.node-version }}
         uses: actions/setup-node@v2
         with:
           node-version: ${{ matrix.node-version }}
 
       - name: Install dependencies
-        run: npm ci --no-audit --no-progress --no-optional --no-shrinkwrap
+        run: |
+          cd mobile-api
+          npm ci --no-audit --no-progress --no-optional --no-shrinkwrap
 
       - name: Build site
-        run: npm run build
         env:
           NODE_ENV: production
+        run: |
+          cd mobile-api
+          npm run build
 
       # - name: Set up Docker Buildx
       #   uses: docker/setup-buildx-action@v1
@@ -46,6 +47,7 @@ jobs:
 
       - name: Build & Push Docker Images
         run: |
+          cd mobile-api
           tagname=$(git rev-parse --short HEAD)-$(date +%Y%m%d)-$(date +%H%M)
           docker build . \
           --tag ${{ secrets.ACR_NAME }}.azurecr.io/${{ matrix.site_tlds }}/mobile-api:$tagname \

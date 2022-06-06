@@ -1,12 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:freecodecamp/service/authentication_service.dart';
-import 'package:freecodecamp/ui/views/auth/auth_view.dart';
 import 'package:freecodecamp/app/app.locator.dart';
 import 'package:freecodecamp/ui/views/code_radio/code_radio_view.dart';
 //import 'package:freecodecamp/ui/views/learn/learn_view.dart';
 import 'package:freecodecamp/ui/views/forum/forum-categories/forum_category_view.dart';
 import 'package:freecodecamp/ui/views/home/home_view.dart';
+import 'package:freecodecamp/ui/views/learn/learn_view.dart';
 import 'package:freecodecamp/ui/views/podcast/podcast-list/podcast_list_view.dart';
+import 'package:freecodecamp/ui/views/profile/profile_view.dart';
 import 'package:freecodecamp/ui/views/settings/settings_view.dart';
 import 'package:stacked/stacked.dart';
 import 'package:stacked_services/stacked_services.dart';
@@ -27,7 +28,7 @@ class DrawerWidgtetViewModel extends BaseViewModel {
   bool _loggedIn = false;
   bool get loggedIn => _loggedIn;
 
-  void initState() {
+  void initState() async {
     auth.init();
     auth.isLoggedIn.listen((event) {
       _loggedIn = event;
@@ -35,19 +36,22 @@ class DrawerWidgtetViewModel extends BaseViewModel {
     });
   }
 
+  void snackbar() {
+    snack.showSnackbar(
+      title: 'Coming soon - use the web version',
+      message: '',
+    );
+  }
+
   void routeComponent(view, context) async {
     switch (view) {
       case 'LEARN':
-        snack.showSnackbar(
-          title: 'Coming soon - use the web version',
-          message: '',
-        );
-        // Navigator.pushReplacement(
-        //     context,
-        //     PageRouteBuilder(
-        //         transitionDuration: Duration.zero,
-        //         pageBuilder: (context, animation1, animation2) =>
-        //             const LearnView()));
+        Navigator.pushReplacement(
+            context,
+            PageRouteBuilder(
+                transitionDuration: Duration.zero,
+                pageBuilder: (context, animation1, animation2) =>
+                    const LearnView()));
         break;
       case 'NEWS':
         Navigator.pushReplacement(
@@ -89,13 +93,15 @@ class DrawerWidgtetViewModel extends BaseViewModel {
                 pageBuilder: (context, animation1, animatiom2) =>
                     const CodeRadioView()));
         break;
-      case 'LOGIN':
+      case 'PROFILE':
         Navigator.pushReplacement(
-            context,
-            PageRouteBuilder(
-                transitionDuration: Duration.zero,
-                pageBuilder: (context, animation1, animatiom2) =>
-                    const AuthView()));
+          context,
+          PageRouteBuilder(
+            transitionDuration: Duration.zero,
+            pageBuilder: (context, animation1, animation2) =>
+                const ProfileView(),
+          ),
+        );
         break;
     }
   }

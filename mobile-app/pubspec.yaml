@@ -29,10 +29,14 @@ dependencies:
   dio: ^4.0.0
   just_audio_background: ^0.0.1-beta.1
   hexcolor: ^2.0.5
-  flutter_syntax_view:
+  flutter_syntax_view_fcc:
     git:
-      url: https://github.com/Sembauke/flutter_syntax_view
+      url: https://github.com/Sembauke/flutter_syntax_view_fcc
       ref: master
+  flutter_code_editor:
+    git:
+      url: https://github.com/freeCodeCamp/PhoneIDE
+      ref: main
   jiffy: ^5.0.0
   share: ^2.0.4
   flutter_svg: ^0.23.0+1
@@ -46,6 +50,7 @@ dependencies:
   flutter_local_notifications: ^9.0.3
   image_picker: ^0.8.4+4
   youtube_player_iframe: ^2.2.2
+  infinite_scroll_pagination: ^3.1.0
   web_socket_channel: ^2.1.0
   webview_flutter: ^2.8.0
   cached_network_image: ^3.2.0
@@ -54,11 +59,13 @@ dependencies:
   dart_jsonwebtoken: ^2.4.1
   flutter_webview_plugin:
     git: https://github.com/snoopdoggy322/flutter_webview_plugin.git
-  photo_view: ^0.13.0
+  photo_view: ^0.14.0
   share_plus: ^4.0.0
   flutter_highlight: ^0.7.0
   pretty_dio_logger: ^1.2.0-beta-1
   curl_logger_dio_interceptor: ^0.0.3
+  google_fonts: ^3.0.0
+  flutter_heatmap_calendar: ^1.0.4
 dev_dependencies:
   build_runner: ^2.1.2
   integration_test:
@@ -75,3 +82,4 @@ flutter:
     - assets/test_data/news_post.json
     - assets/test_data/news_feed.json
     - assets/database/bookmarked-article.db
+    - assets/learn/motivational-quotes.json

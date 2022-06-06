@@ -15,11 +15,6 @@ The official freeCodeCamp mobile app will feature almost all our services, news,
 Our mobile developers @Nirajn2311 and @Sembauke will be working hard to accomplish this, but we could use your help in the meantime.
 We would love to hear your opinion and great ideas you can come up with!
 
-Our vision for Q1 2022: 
-- forum will be available 
-- early development of learn
-- the podcast component will feature multiple great podcasts
-
 ### Getting started 
 1. Firstly you will have to install Flutter - https://docs.flutter.dev/get-started/install
 2. Next setup(or install) an IDE to make developing the app a faster experience. - https://docs.flutter.dev/get-started/editor . It is also recommended to install the available IDE extensions for Flutter and Dart.
