@@ -5,7 +5,7 @@ import 'package:freecodecamp/models/news/article_model.dart';
 import 'package:freecodecamp/ui/views/news/news-feed/news_feed_lazyloading.dart';
 import 'package:freecodecamp/ui/views/news/news-feed/news_feed_viewmodel.dart';
 import 'package:stacked/stacked.dart';
-import 'package:url_launcher/url_launcher.dart';
+import 'package:url_launcher/url_launcher_string.dart';
 import 'news_feed_viewmodel.dart';
 
 class NewsFeedView extends StatelessWidget {
@@ -78,7 +78,7 @@ class NewsFeedView extends StatelessWidget {
               style: TextStyle(color: Color.fromRGBO(0x99, 0xc9, 0xff, 1)),
             ),
             onTap: () {
-              launch('https://www.freecodecamp.org/news/');
+              launchUrlString('https://www.freecodecamp.org/news/');
             },
           ),
         ),

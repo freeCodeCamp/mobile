@@ -5,7 +5,7 @@ import 'package:freecodecamp/ui/views/forum/forum-categories/forum_category_view
 import 'package:hexcolor/hexcolor.dart';
 import 'package:stacked/stacked.dart';
 import 'package:html/dom.dart' as dom;
-import 'package:url_launcher/url_launcher.dart';
+import 'package:url_launcher/url_launcher_string.dart';
 
 class ForumCategoryBuilder extends StatelessWidget {
   const ForumCategoryBuilder({Key? key}) : super(key: key);
@@ -68,7 +68,7 @@ class ForumCategoryBuilder extends StatelessWidget {
                                                   Map<String, String>
                                                       attributes,
                                                   dom.Element? element) {
-                                                launch(url!);
+                                                launchUrlString(url!);
                                               },
                                             )))
                                   ],

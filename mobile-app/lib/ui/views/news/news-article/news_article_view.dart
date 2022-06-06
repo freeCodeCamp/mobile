@@ -4,7 +4,7 @@ import 'package:freecodecamp/models/news/article_model.dart';
 import 'package:freecodecamp/ui/views/news/news-bookmark/news_bookmark_widget.dart';
 import 'package:share/share.dart';
 import 'package:stacked/stacked.dart';
-import 'package:url_launcher/url_launcher.dart';
+import 'package:url_launcher/url_launcher_string.dart';
 import 'news_article_viewmodel.dart';
 
 class NewsArticleView extends StatelessWidget {
@@ -150,7 +150,7 @@ Container bookmark(String? bookmarkTilte, String? bookmarkDescription,
     color: Colors.white,
     child: GestureDetector(
       onTap: () {
-        launch(link!);
+        launchUrlString(link!);
       },
       child: Padding(
         padding: const EdgeInsets.only(left: 10.0),

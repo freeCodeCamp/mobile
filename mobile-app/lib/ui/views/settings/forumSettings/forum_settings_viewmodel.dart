@@ -1,6 +1,6 @@
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:stacked/stacked.dart';
-import 'package:url_launcher/url_launcher.dart';
+import 'package:url_launcher/url_launcher_string.dart';
 
 class ForumSettingsViewModel extends BaseViewModel {
   bool _isLoggedIn = false;
@@ -21,7 +21,7 @@ class ForumSettingsViewModel extends BaseViewModel {
   }
 
   void gotoForum() {
-    launch('https://forum.freecodecamp.org/');
+    launchUrlString('https://forum.freecodecamp.org/');
   }
 
   Future<bool> checkLoggedIn() async {

@@ -7,7 +7,7 @@ import 'package:freecodecamp/ui/widgets/drawer_widget/drawer_widget_view.dart';
 import 'package:intl/intl.dart';
 import 'package:jiffy/jiffy.dart';
 import 'package:stacked/stacked.dart';
-import 'package:url_launcher/url_launcher.dart';
+import 'package:url_launcher/url_launcher_string.dart';
 
 class ProfileView extends StatelessWidget {
   const ProfileView({Key? key}) : super(key: key);
@@ -363,7 +363,7 @@ class CertificationWidget extends StatelessWidget {
                                     Icons.arrow_forward_ios_sharp,
                                     color: Colors.white,
                                   ),
-                                  onTap: () => launch(
+                                  onTap: () => launchUrlString(
                                     '${model.auth.baseURL}/certification/${user.username}/${cert["certSlug"]}',
                                   ),
                                 ),
@@ -413,7 +413,7 @@ class CertificationWidget extends StatelessWidget {
                                         Icons.arrow_forward_ios_sharp,
                                         color: Colors.white,
                                       ),
-                                      onTap: () => launch(
+                                      onTap: () => launchUrlString(
                                         '${model.auth.baseURL}/certification/${user.username}/${cert["certSlug"]}',
                                       ),
                                     ),
@@ -458,7 +458,7 @@ class PortfolioWidget extends StatelessWidget {
           ),
           ...user.portfolio.map(
             (portfolio) => InkWell(
-              onTap: () => launch(portfolio.url!),
+              onTap: () => launchUrlString(portfolio.url!),
               child: Card(
                 margin: const EdgeInsets.symmetric(
                   horizontal: 12,

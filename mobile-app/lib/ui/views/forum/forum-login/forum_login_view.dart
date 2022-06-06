@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:freecodecamp/ui/views/forum/forum-create-post/forum_create_post_view.dart';
 import 'package:freecodecamp/ui/views/forum/forum-login/forum_login_viewmodel.dart';
 import 'package:stacked/stacked.dart';
-import 'package:url_launcher/url_launcher.dart';
+import 'package:url_launcher/url_launcher_string.dart';
 
 class ForumLoginView extends StatelessWidget {
   const ForumLoginView({Key? key, this.fromCreatePost = false})
@@ -142,7 +142,7 @@ Column loginForum(BuildContext context, ForumLoginModel model) {
       ),
       InkWell(
         onTap: () {
-          launch('https://forum.freecodecamp.org/');
+          launchUrlString('https://forum.freecodecamp.org/');
         },
         child: const Text('Register',
             style: TextStyle(
