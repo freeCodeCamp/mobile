@@ -52,14 +52,13 @@ class HtmlHandler {
       data: child,
       style: {
         'body': Style(
-          color: Colors.white,
-          fontFamily: 'Lato',
-        ),
+            fontFamily: 'Lato',
+            padding: const EdgeInsets.only(left: 4, right: 4)),
         'p': Style(
           fontSize: FontSize.rem(1.35),
-          lineHeight: LineHeight.em(1.2),
+          lineHeight: const LineHeight(1.5),
+          color: Colors.white.withOpacity(0.87),
         ),
-        'ul': Style(fontSize: FontSize.xLarge),
         'li': Style(
           margin: const EdgeInsets.only(top: 8),
           fontSize: FontSize.rem(1.35),
@@ -83,7 +82,10 @@ class HtmlHandler {
           alignment: Alignment.topLeft,
         ),
         'figure': Style(
-            width: MediaQuery.of(context).size.width, margin: EdgeInsets.zero)
+            width: MediaQuery.of(context).size.width, margin: EdgeInsets.zero),
+        'h2': Style(margin: const EdgeInsets.fromLTRB(2, 12, 2, 8)),
+        'h3': Style(margin: const EdgeInsets.fromLTRB(2, 12, 2, 8)),
+        'h4': Style(margin: const EdgeInsets.fromLTRB(2, 12, 2, 8))
       },
       customRender: {
         'table': (context, child) {
