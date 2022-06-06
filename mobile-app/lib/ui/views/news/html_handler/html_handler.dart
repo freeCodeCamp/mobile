@@ -56,6 +56,7 @@ class HtmlHandler {
         'body': Style(
             fontFamily: 'Lato',
             padding: const EdgeInsets.only(left: 4, right: 4)),
+        'blockquote': Style(fontSize: FontSize.rem(1.25)),
         'p': Style(
           fontSize: FontSize.rem(1.35),
           margin: const EdgeInsets.all(0),
@@ -70,7 +71,6 @@ class HtmlHandler {
           color: Colors.white,
           width: MediaQuery.of(context).size.width,
           padding: const EdgeInsets.all(10),
-          fontSize: FontSize.rem(1.25),
         ),
         'tr': Style(
             border: const Border(bottom: BorderSide(color: Colors.grey)),
@@ -87,10 +87,18 @@ class HtmlHandler {
         ),
         'figure': Style(
             width: MediaQuery.of(context).size.width, margin: EdgeInsets.zero),
-        'h1': Style(margin: const EdgeInsets.fromLTRB(2, 32, 2, 0)),
-        'h2': Style(margin: const EdgeInsets.fromLTRB(2, 32, 2, 0)),
-        'h3': Style(margin: const EdgeInsets.fromLTRB(2, 32, 2, 0)),
-        'h4': Style(margin: const EdgeInsets.fromLTRB(2, 32, 2, 0)),
+        'h1': Style(
+            margin: const EdgeInsets.fromLTRB(2, 32, 2, 0),
+            fontSize: FontSize.rem(2.3)),
+        'h2': Style(
+            margin: const EdgeInsets.fromLTRB(2, 32, 2, 0),
+            fontSize: FontSize.rem(2.3)),
+        'h3': Style(
+            margin: const EdgeInsets.fromLTRB(2, 32, 2, 0),
+            fontSize: FontSize.rem(1.8)),
+        'h4': Style(
+            margin: const EdgeInsets.fromLTRB(2, 32, 2, 0),
+            fontSize: FontSize.rem(1.8)),
         'h5': Style(margin: const EdgeInsets.fromLTRB(2, 32, 2, 0)),
         'h6': Style(margin: const EdgeInsets.fromLTRB(2, 32, 2, 0))
       },
@@ -152,6 +160,17 @@ class HtmlHandler {
                 imageUrl: imgUrl,
               ),
             ),
+          );
+        },
+        'blockquote': (code, child) {
+          return Container(
+            decoration: const BoxDecoration(
+              border: Border(
+                left: BorderSide(
+                    color: Color.fromRGBO(0x99, 0xc9, 0xff, 1), width: 2),
+              ),
+            ),
+            child: child,
           );
         }
       },
