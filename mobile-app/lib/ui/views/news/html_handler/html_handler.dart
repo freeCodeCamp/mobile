@@ -8,7 +8,7 @@ import 'package:freecodecamp/models/news/article_model.dart';
 import 'package:freecodecamp/ui/views/news/news-article/news_article_header.dart';
 import 'package:freecodecamp/ui/views/news/news-image-viewer/news_image_viewer.dart';
 import 'package:html/dom.dart' as dom;
-import 'package:url_launcher/url_launcher.dart';
+import 'package:url_launcher/url_launcher_string.dart';
 import 'package:youtube_player_iframe/youtube_player_iframe.dart';
 
 class HtmlHandler {
@@ -155,7 +155,7 @@ class HtmlHandler {
       },
       onLinkTap: (String? url, RenderContext context,
           Map<String, String> attributes, dom.Element? element) {
-        launch(url!);
+        launchUrlString(url!);
       },
     );
   }

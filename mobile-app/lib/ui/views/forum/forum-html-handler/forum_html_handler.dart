@@ -5,7 +5,7 @@ import 'package:flutter_font_awesome_web_names/flutter_font_awesome.dart';
 import 'package:flutter_html/flutter_html.dart';
 import 'package:freecodecamp/models/forum/forum_post_model.dart';
 import 'package:freecodecamp/ui/views/forum/forum-post/forum_post_viewmodel.dart';
-import 'package:url_launcher/url_launcher.dart';
+import 'package:url_launcher/url_launcher_string.dart';
 import 'package:html/dom.dart' as dom;
 import 'package:flutter_syntax_view_fcc/src/flutter_syntax_view.dart';
 import 'package:flutter_syntax_view_fcc/src/theme/theme.dart';
@@ -90,7 +90,7 @@ Column htmlView(PostModel post, BuildContext context, PostViewModel model) {
                   if (link.isNotEmpty) {
                     return InkWell(
                       onTap: () {
-                        launch(link);
+                        launchUrlString(link);
                       },
                       child: Text(
                         link,
@@ -151,7 +151,7 @@ Column htmlView(PostModel post, BuildContext context, PostViewModel model) {
               },
               onLinkTap: (String? url, RenderContext context,
                   Map<String, String> attributes, dom.Element? element) {
-                launch(url!);
+                launchUrlString(url!);
               },
             ),
           ))

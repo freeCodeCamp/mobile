@@ -6,7 +6,7 @@ import 'package:freecodecamp/models/forum/forum_user_model.dart';
 import 'package:freecodecamp/ui/views/forum/forum-user/forum_user_viewmodel.dart';
 import 'package:stacked/stacked.dart';
 import 'package:html/dom.dart' as dom;
-import 'package:url_launcher/url_launcher.dart';
+import 'package:url_launcher/url_launcher_string.dart';
 
 class ForumUserView extends StatelessWidget {
   const ForumUserView({Key? key, required this.username}) : super(key: key);
@@ -110,7 +110,7 @@ FutureBuilder userTemplateBuilder(context, model) {
                                       RenderContext context,
                                       Map<String, String> attributes,
                                       dom.Element? element) {
-                                    launch(url!);
+                                    launchUrlString(url!);
                                   },
                                   customRender: {
                                     'img': (context, child) {
