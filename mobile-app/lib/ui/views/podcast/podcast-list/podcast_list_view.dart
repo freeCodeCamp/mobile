@@ -14,7 +14,7 @@ List views = [
 ];
 
 List titles = [
-  const Text('Podcasts'),
+  const Text('PODCASTS'),
   const Text('Downloaded Podcasts'),
 ];
 
@@ -187,7 +187,6 @@ class PodcastTemplate extends StatelessWidget {
                             style: const TextStyle(
                               fontSize: 16,
                               height: 1.2,
-                              color: Colors.white,
                             )),
                       ),
                     ),

@@ -1,4 +1,3 @@
-import 'dart:developer';
 import 'dart:io';
 
 import 'package:dio/dio.dart';
@@ -33,8 +32,6 @@ class EpisodeViewModel extends BaseViewModel {
   Future init(Episodes episode, bool isDownloadView) async {
     await _databaseService.initialise();
     await FkUserAgent.init();
-    // episode = await _databaseService.getEpisode(podcast.id, episode.guid);
-    log(episode.toString());
     playing = _audioService.isPlaying(episode.id);
     downloaded = await _databaseService.episodeExists(episode);
     notifyListeners();
@@ -54,8 +51,6 @@ class EpisodeViewModel extends BaseViewModel {
   void downloadAudio(String uri) async {
     downloading = true;
     notifyListeners();
-    log('DOWNLOADING... $uri');
-    log('USER AGENT ${FkUserAgent.userAgent}');
     // ignore: unused_local_variable
     var response = await dio.download(uri,
         appDir.path + '/episodes/' + podcast.id + '/' + episode.id + '.mp3',
@@ -71,12 +66,10 @@ class EpisodeViewModel extends BaseViewModel {
     );
     await _databaseService.addPodcast(podcast);
     await _databaseService.addEpisode(episode);
-    log('Downloaded episode ${episode.title}');
     notifyListeners();
   }
 
   Future<void> playBtnClick() async {
-    log('CLICKED PLAY BUTTON ${episode.title}');
     if (!loading) {
       if (!playing) {
         loading = true;
@@ -99,13 +92,10 @@ class EpisodeViewModel extends BaseViewModel {
   }
 
   void downloadBtnClick() {
-    log('CLICKED DOWNLOAD BUTTON ${episode.title}, status $downloaded');
     if (!downloaded && !downloading) {
-      log('STARTING DOWNLOAD');
       downloadAudio(episode.contentUrl!);
       downloaded = !downloaded;
     } else if (downloaded) {
-      log('DELETING DOWNLOAD');
       File audioFile = File(
           appDir.path + '/episodes/' + podcast.id + '/' + episode.id + '.mp3');
       if (audioFile.existsSync()) {
