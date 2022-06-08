@@ -1,15 +1,16 @@
 // ignore_for_file: implementation_imports
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_html/flutter_html.dart';
 import 'package:flutter_highlight/flutter_highlight.dart';
 import 'package:flutter_highlight/theme_map.dart';
+import 'package:flutter_html/flutter_html.dart';
 import 'package:freecodecamp/models/news/article_model.dart';
 import 'package:freecodecamp/ui/views/news/news-article/news_article_header.dart';
 import 'package:freecodecamp/ui/views/news/news-image-viewer/news_image_viewer.dart';
 import 'package:html/dom.dart' as dom;
 import 'package:url_launcher/url_launcher_string.dart';
 import 'package:youtube_player_iframe/youtube_player_iframe.dart';
+import 'dart:developer' as dev;
 
 class HtmlHandler {
   HtmlHandler({Key? key, required this.html, required this.context});
@@ -46,6 +47,19 @@ class HtmlHandler {
       context,
       MaterialPageRoute(builder: (context) => NewsImageView(imgUrl: imgUrl)),
     );
+  }
+
+  static double textSize(String text, TextStyle style, BuildContext context) {
+    final TextPainter textPainter = TextPainter(
+        text: TextSpan(text: text, style: style),
+        maxLines: 1,
+        textDirection: TextDirection.ltr)
+      ..layout(minWidth: 0, maxWidth: double.infinity);
+
+    RegExp regExp = RegExp('\n');
+    int newLines = regExp.allMatches(text).length;
+
+    return textPainter.size.height * newLines + 10;
   }
 
   static htmlWidgetBuilder(child, BuildContext context) {
@@ -113,21 +127,43 @@ class HtmlHandler {
           for (String className in code.tree.elementClasses) {
             if (className
                 .contains(RegExp(r'language-', caseSensitive: false))) {
-              return Row(
-                children: [
-                  Expanded(
-                    child: HighlightView(code.tree.element?.text ?? '',
-                        padding: const EdgeInsets.all(16),
-                        textStyle: const TextStyle(fontSize: 16),
-                        language: className.split('-')[1],
-                        theme: themeMap['dracula']!),
-                  ),
-                ],
+              return SizedBox(
+                height: textSize(code.tree.element?.text as String,
+                    const TextStyle(), context),
+                child: ListView(
+                    scrollDirection: Axis.horizontal,
+                    shrinkWrap: true,
+                    children: [
+                      HighlightView(code.tree.element?.text ?? '',
+                          padding: const EdgeInsets.all(16),
+                          textStyle: const TextStyle(fontSize: 16),
+                          language: className.split('-')[1],
+                          theme: themeMap['dracula']!),
+                    ]),
               );
             }
           }
 
           bool isInPreTag = code.tree.element!.parent!.localName == 'pre';
+
+          if (code.tree.element!.innerHtml.contains('\n')) {
+            dev.log(code.tree.element?.innerHtml as String);
+
+            return SizedBox(
+              height: textSize(code.tree.element?.innerHtml as String,
+                  const TextStyle(), context),
+              child: ListView(
+                  scrollDirection: Axis.horizontal,
+                  shrinkWrap: true,
+                  children: [
+                    Container(
+                      color: const Color.fromRGBO(0x2A, 0x2A, 0x40, 1),
+                      padding: EdgeInsets.all(isInPreTag ? 16 : 0),
+                      child: child,
+                    ),
+                  ]),
+            );
+          }
 
           return Container(
             color: const Color.fromRGBO(0x2A, 0x2A, 0x40, 1),
