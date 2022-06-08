@@ -152,11 +152,11 @@ class EpisodeView extends StatelessWidget {
                     launchUrlString(url!);
                   },
                   style: {
-                    'body': Style(
-                      fontSize: const FontSize(16),
-                      color: Colors.white,
-                      padding: EdgeInsets.zero,
-                    )
+                    '#': Style(
+                        fontSize: const FontSize(16),
+                        color: Colors.white,
+                        padding: EdgeInsets.zero,
+                        maxLines: 3)
                   },
                 ),
               ],

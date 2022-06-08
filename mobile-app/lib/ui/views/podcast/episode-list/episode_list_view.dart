@@ -6,10 +6,10 @@ import 'package:flutter_html/flutter_html.dart';
 import 'package:freecodecamp/models/podcasts/episodes_model.dart';
 import 'package:freecodecamp/models/podcasts/podcasts_model.dart';
 import 'package:freecodecamp/ui/views/podcast/episode-list/episode_list_viewmodel.dart';
-import 'package:freecodecamp/ui/views/podcast/episode/episode_view.dart';
+import 'package:freecodecamp/ui/widgets/podcast_widgets/podcast_tilte_widget.dart';
 import 'package:html/dom.dart' as dom;
 import 'package:infinite_scroll_pagination/infinite_scroll_pagination.dart';
-import 'package:intl/intl.dart';
+
 import 'package:stacked/stacked.dart';
 import 'package:url_launcher/url_launcher_string.dart';
 
@@ -32,6 +32,7 @@ class EpisodeListView extends StatelessWidget {
       viewModelBuilder: () => EpisodeListViewModel(podcast),
       onModelReady: (model) => model.initState(isDownloadView),
       builder: (context, model, child) => Scaffold(
+        extendBodyBehindAppBar: true,
         appBar: AppBar(
           title: Text(podcast.title!),
         ),
@@ -204,119 +205,5 @@ class EpisodeListView extends StatelessWidget {
         ),
       ],
     );
-  }
-}
-
-class PodcastEpisodeTemplate extends StatelessWidget {
-  const PodcastEpisodeTemplate({
-    Key? key,
-    required this.episode,
-    required this.i,
-    required this.podcast,
-    required this.isDownloadView,
-  }) : super(key: key);
-
-  final Episodes episode;
-  final Podcasts podcast;
-  final int i;
-  final bool isDownloadView;
-
-  String _parseDuration(Duration dur) {
-    if (dur.inMinutes > 59) {
-      return '${episode.duration!.inMinutes ~/ 60} hr ${episode.duration!.inMinutes % 60} min';
-    } else {
-      return '${episode.duration!.inMinutes % 60} min';
-    }
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return InkWell(
-        onTap: () {
-          Navigator.push(
-            context,
-            MaterialPageRoute(
-              builder: (context) => EpisodeView(
-                episode: episode,
-                podcast: podcast,
-                isDownloadView: isDownloadView,
-              ),
-            ),
-          );
-        },
-        child: ListTile(
-            title: Row(
-              children: [
-                Padding(
-                  padding: const EdgeInsets.fromLTRB(0, 8, 8, 8),
-                  child: CachedNetworkImage(
-                    imageUrl: podcast.image!,
-                    height: MediaQuery.of(context).size.height * 0.10,
-                  ),
-                ),
-                Expanded(
-                  child: Text(
-                    episode.title,
-                    style: const TextStyle(
-                        fontFamily: 'Lato', fontWeight: FontWeight.w700),
-                  ),
-                ),
-              ],
-            ),
-            minVerticalPadding: 16,
-            isThreeLine: true,
-            onTap: () {
-              Navigator.push(
-                context,
-                MaterialPageRoute(
-                  builder: (context) => EpisodeView(
-                    episode: episode,
-                    podcast: podcast,
-                    isDownloadView: isDownloadView,
-                  ),
-                ),
-              );
-            },
-            subtitle: Column(
-              children: [
-                Html(
-                  data: podcast.description!,
-                  onLinkTap: (
-                    String? url,
-                    RenderContext context,
-                    Map<String, String> attributes,
-                    dom.Element? element,
-                  ) {
-                    launchUrlString(url!);
-                  },
-                  style: {
-                    '#': Style(
-                        fontSize: const FontSize(16),
-                        color: Colors.white.withOpacity(0.87),
-                        margin: EdgeInsets.zero,
-                        maxLines: 3,
-                        fontFamily: 'Lato')
-                  },
-                ),
-                Row(
-                  children: [
-                    IconButton(
-                      onPressed: () {},
-                      icon: const Icon(Icons.play_circle),
-                      iconSize: 40,
-                    ),
-                    Text(
-                      DateFormat.yMMMd().format(episode.publicationDate!) +
-                          (episode.duration != null &&
-                                  episode.duration != Duration.zero
-                              ? (' • ' + _parseDuration(episode.duration!))
-                              : ''),
-                      style: const TextStyle(
-                          fontSize: 16, height: 2, fontFamily: 'Lato'),
-                    ),
-                  ],
-                ),
-              ],
-            )));
   }
 }
