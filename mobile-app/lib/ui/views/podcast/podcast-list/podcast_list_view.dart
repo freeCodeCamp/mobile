@@ -175,9 +175,9 @@ class PodcastTemplate extends StatelessWidget {
                         decoration: BoxDecoration(
                           boxShadow: [
                             BoxShadow(
-                              color: Colors.black.withOpacity(0.5),
+                              color: Colors.black.withOpacity(0.75),
                               spreadRadius: 1.5,
-                              blurRadius: 5,
+                              blurRadius: 0.1,
                             )
                           ],
                         ),
