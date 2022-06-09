@@ -37,7 +37,7 @@ class PodcastTile extends StatefulWidget {
 
   final Dio dio = Dio();
 
-  late final Directory appDir;
+  Directory? appDir;
 
   final int _episodeLength = 0;
   int get episodeLength => _episodeLength;
@@ -115,7 +115,7 @@ class PodcastTileState extends State<PodcastTile> {
     setAppDir = await getApplicationDocumentsDirectory();
     if (!widget.isFromDownloadView) {
       podcastImgFile = File(
-          '${widget.appDir.path}/images/podcast/${widget.episode.podcastId}.jpg');
+          '${widget.appDir?.path}/images/podcast/${widget.episode.podcastId}.jpg');
       if (!podcastImgFile.existsSync()) {
         podcastImgFile.createSync(recursive: true);
         res = await http.get(Uri.parse(widget.podcast.image!));
@@ -127,7 +127,7 @@ class PodcastTileState extends State<PodcastTile> {
   void downloadAudio(String uri) async {
     setIsDownloading = true;
 
-    String path = widget.appDir.path +
+    String path = widget.appDir!.path +
         '/episodes/' +
         widget.podcast.id +
         '/' +
@@ -171,7 +171,7 @@ class PodcastTileState extends State<PodcastTile> {
       downloadAudio(widget.episode.contentUrl!);
       setIsDownloaded = !widget.downloaded;
     } else if (widget.downloaded) {
-      File audioFile = File(widget.appDir.path +
+      File audioFile = File(widget.appDir!.path +
           '/episodes/' +
           widget.podcast.id +
           '/' +
@@ -211,6 +211,10 @@ class PodcastTileState extends State<PodcastTile> {
             ),
           ],
         ),
+        tileColor: widget.playing ? Colors.red : null,
+        onTap: () {
+          playBtnClick();
+        },
         minVerticalPadding: 16,
         isThreeLine: true,
         subtitle: Column(
@@ -250,26 +254,37 @@ class PodcastTileState extends State<PodcastTile> {
                           : Icons.play_circle_sharp,
                       size: MediaQuery.of(context).size.height * 0.05,
                     )),
-                Padding(
-                  padding: const EdgeInsets.all(8.0),
-                  child: Text(
-                    DateFormat.yMMMd().format(widget.episode.publicationDate!) +
-                        (widget.episode.duration != null &&
-                                widget.episode.duration != Duration.zero
-                            ? (' • ' + _parseDuration(widget.episode.duration!))
-                            : ''),
-                    style: const TextStyle(
-                        fontSize: 16, height: 2, fontFamily: 'Lato'),
-                  ),
-                ),
+                !widget.downloading
+                    ? Padding(
+                        padding: const EdgeInsets.all(8.0),
+                        child: Text(
+                          DateFormat.yMMMd()
+                                  .format(widget.episode.publicationDate!) +
+                              (widget.episode.duration != null &&
+                                      widget.episode.duration != Duration.zero
+                                  ? (' • ' +
+                                      _parseDuration(widget.episode.duration!))
+                                  : ''),
+                          style: const TextStyle(
+                              fontSize: 16, height: 2, fontFamily: 'Lato'),
+                        ),
+                      )
+                    : Padding(
+                        padding: const EdgeInsets.all(8.0),
+                        child: Text(
+                          'Downloading: ${double.parse(widget.progress)}%',
+                          style: const TextStyle(
+                              fontSize: 16, height: 2, fontFamily: 'Lato'),
+                        )),
                 Expanded(
-                  child: IconButton(
-                    onPressed: () {
-                      downloadBtnClick();
-                    },
-                    icon: Icon(widget.downloaded
-                        ? Icons.download_done
-                        : Icons.download_sharp),
+                  child: Container(
+                    alignment: Alignment.centerRight,
+                    child: IconButton(
+                      onPressed: widget.downloading ? () {} : downloadBtnClick,
+                      icon: Icon(widget.downloaded
+                          ? Icons.download_done
+                          : Icons.download_sharp),
+                    ),
                   ),
                 )
               ],
