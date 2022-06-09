@@ -7,21 +7,23 @@ import 'package:freecodecamp/app/app.locator.dart';
 import 'package:freecodecamp/models/podcasts/episodes_model.dart';
 import 'package:freecodecamp/models/podcasts/podcasts_model.dart';
 import 'package:freecodecamp/service/episode_audio_service.dart';
+import 'package:freecodecamp/service/notification_service.dart';
 import 'package:freecodecamp/service/podcasts_service.dart';
 import 'package:intl/intl.dart';
-import 'package:freecodecamp/ui/views/podcast/episode/episode_view.dart';
 import 'package:html/dom.dart' as dom;
 import 'package:url_launcher/url_launcher_string.dart';
+import 'package:http/http.dart' as http;
+
+import 'package:dio/dio.dart';
 
 // ignore: must_be_immutable
 class PodcastTile extends StatefulWidget {
-  PodcastTile(
-      {Key? key,
-      required this.podcast,
-      required this.episode,
-      required this.isFromDownloadView,
-      required this.appDir})
-      : super(key: key);
+  PodcastTile({
+    Key? key,
+    required this.podcast,
+    required this.episode,
+    required this.isFromDownloadView,
+  }) : super(key: key);
 
   final Podcasts podcast;
   final Episodes episode;
@@ -30,6 +32,9 @@ class PodcastTile extends StatefulWidget {
 
   final _audioService = locator<EpisodeAudioService>();
   final _databaseService = locator<PodcastsDatabaseService>();
+  final _notificationService = locator<NotificationService>();
+
+  final Dio dio = Dio();
 
   late final Directory appDir;
 
@@ -56,30 +61,6 @@ class PodcastTile extends StatefulWidget {
 }
 
 class PodcastTileState extends State<PodcastTile> {
-  @override
-  void initState() {
-    super.initState();
-    File podcastImgFile;
-    Future.delayed(
-        const Duration(seconds: 0),
-        () async => {
-              await widget._databaseService.initialise(),
-              await FkUserAgent.init(),
-              setIsPlaying = widget._audioService.isPlaying(widget.episode.id),
-              setIsDownloaded =
-                  await widget._databaseService.episodeExists(widget.episode),
-                      if (!widget.isFromDownloadView) {
-      File podcastImgFile =
-          File('${widget.appDir.path}/images/podcast/${widget.episode.podcastId}.jpg'),
-      if (!podcastImgFile.existsSync()) {
-        podcastImgFile.createSync(recursive: true);
-        var res = await http.get(Uri.parse(podcast.image!));
-        podcastImgFile.writeAsBytesSync(res.bodyBytes);
-      }
-    }
-            });
-  }
-
   set setIsPlaying(bool state) {
     setState(() => {widget._playing = state});
   }
@@ -90,10 +71,118 @@ class PodcastTileState extends State<PodcastTile> {
     });
   }
 
+  set setIsDownloading(bool state) {
+    setState(() {
+      widget._downloading = state;
+    });
+  }
+
   set setAppDir(Directory dir) {
     setState(() {
       widget.appDir = dir;
     });
+  }
+
+  set setProgress(String state) {
+    setState(() {
+      widget._progress = state;
+    });
+  }
+
+  set setIsLoading(bool state) {
+    setState(() {
+      widget._loading = state;
+    });
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    File podcastImgFile;
+    http.Response res;
+
+    Future.delayed(
+        const Duration(seconds: 0),
+        () async => {
+              await widget._databaseService.initialise(),
+              await FkUserAgent.init(),
+              setIsPlaying = widget._audioService.isPlaying(widget.episode.id),
+              setIsDownloaded =
+                  await widget._databaseService.episodeExists(widget.episode),
+              if (!widget.isFromDownloadView)
+                {
+                  podcastImgFile = File(
+                      '${widget.appDir.path}/images/podcast/${widget.episode.podcastId}.jpg'),
+                  if (!podcastImgFile.existsSync())
+                    {
+                      podcastImgFile.createSync(recursive: true),
+                      res = await http.get(Uri.parse(widget.podcast.image!)),
+                      podcastImgFile.writeAsBytesSync(res.bodyBytes),
+                    }
+                }
+            });
+  }
+
+  void downloadAudio(String uri) async {
+    setIsDownloading = true;
+
+    String path = widget.appDir.path +
+        '/episodes/' +
+        widget.podcast.id +
+        '/' +
+        widget.episode.id +
+        '.mp3';
+
+    await widget.dio.download(uri, path,
+        onReceiveProgress: (int recevied, int total) {
+      setProgress = ((recevied / total) * 100).toStringAsFixed(0);
+    }, options: Options(headers: {'User-Agent': FkUserAgent.userAgent}));
+    setIsDownloading = false;
+    await widget._notificationService.showNotification(
+      'Download Complete',
+      widget.episode.title,
+    );
+    await widget._databaseService.addPodcast(widget.podcast);
+    await widget._databaseService.addEpisode(widget.episode);
+  }
+
+  Future<void> playBtnClick() async {
+    if (!widget.loading) {
+      if (!widget.playing) {
+        setIsLoading = true;
+        await widget._audioService.playAudio(widget.episode, widget.downloaded);
+        setIsPlaying = true;
+      } else {
+        await widget._audioService.pauseAudio();
+        setIsPlaying = false;
+      }
+      setIsLoading = false;
+    }
+  }
+
+  void removeEpisode() async {
+    await widget._databaseService.removeEpisode(widget.episode);
+    await widget._databaseService.removePodcast(widget.podcast);
+  }
+
+  void downloadBtnClick() {
+    if (!widget.downloaded && !widget.downloading) {
+      downloadAudio(widget.episode.contentUrl!);
+      setIsDownloaded = !widget.downloaded;
+    } else if (widget.downloaded) {
+      File audioFile = File(widget.appDir.path +
+          '/episodes/' +
+          widget.podcast.id +
+          '/' +
+          widget.episode.id +
+          '.mp3');
+      if (audioFile.existsSync()) {
+        audioFile.deleteSync();
+      }
+      setIsDownloaded = !widget.downloaded;
+      removeEpisode();
+      setProgress = '0';
+    }
   }
 
   String _parseDuration(Duration dur) {
@@ -123,17 +212,6 @@ class PodcastTileState extends State<PodcastTile> {
         ),
         minVerticalPadding: 16,
         isThreeLine: true,
-        onTap: () {
-          Navigator.push(
-            context,
-            MaterialPageRoute(
-              builder: (context) => EpisodeView(
-                  episode: widget.episode,
-                  podcast: widget.podcast,
-                  isDownloadView: false),
-            ),
-          );
-        },
         subtitle: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
@@ -159,17 +237,31 @@ class PodcastTileState extends State<PodcastTile> {
                 },
               ),
             ),
-            Padding(
-              padding: const EdgeInsets.all(8.0),
-              child: Text(
-                DateFormat.yMMMd().format(widget.episode.publicationDate!) +
-                    (widget.episode.duration != null &&
-                            widget.episode.duration != Duration.zero
-                        ? (' • ' + _parseDuration(widget.episode.duration!))
-                        : ''),
-                style: const TextStyle(
-                    fontSize: 16, height: 2, fontFamily: 'Lato'),
-              ),
+            Row(
+              children: [
+                IconButton(
+                    onPressed: () {
+                      playBtnClick();
+                    },
+                    icon: Icon(
+                      widget.playing
+                          ? Icons.pause_circle
+                          : Icons.play_circle_sharp,
+                      size: MediaQuery.of(context).size.height * 0.05,
+                    )),
+                Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: Text(
+                    DateFormat.yMMMd().format(widget.episode.publicationDate!) +
+                        (widget.episode.duration != null &&
+                                widget.episode.duration != Duration.zero
+                            ? (' • ' + _parseDuration(widget.episode.duration!))
+                            : ''),
+                    style: const TextStyle(
+                        fontSize: 16, height: 2, fontFamily: 'Lato'),
+                  ),
+                ),
+              ],
             ),
           ],
         ));

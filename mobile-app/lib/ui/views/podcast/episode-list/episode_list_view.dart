@@ -65,11 +65,10 @@ class EpisodeListView extends StatelessWidget {
                             Episodes episode,
                             int index,
                           ) =>
-                              PodcastEpisodeTemplate(
+                              PodcastTile(
                             episode: episode,
-                            i: index,
                             podcast: podcast,
-                            isDownloadView: isDownloadView,
+                            isFromDownloadView: isDownloadView,
                           ),
                         ),
                         separatorBuilder: (BuildContext context, int index) =>
@@ -89,11 +88,10 @@ class EpisodeListView extends StatelessWidget {
                                 physics: const NeverScrollableScrollPhysics(),
                                 itemCount: snapshot.data!.length,
                                 itemBuilder: (BuildContext context, int index) {
-                                  return PodcastEpisodeTemplate(
+                                  return PodcastTile(
                                     episode: snapshot.data![index],
-                                    i: index,
                                     podcast: podcast,
-                                    isDownloadView: isDownloadView,
+                                    isFromDownloadView: isDownloadView,
                                   );
                                 },
                                 separatorBuilder:
