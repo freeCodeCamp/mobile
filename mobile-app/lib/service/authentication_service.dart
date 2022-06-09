@@ -1,9 +1,11 @@
 import 'dart:async';
+import 'dart:developer';
 import 'package:curl_logger_dio_interceptor/curl_logger_dio_interceptor.dart';
 import 'package:dio/dio.dart';
+import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
-import 'package:flutter_webview_plugin/flutter_webview_plugin.dart';
+import 'package:freecodecamp/ui/widgets/login_webview_widget/login_webview_view.dart';
 import 'package:freecodecamp/models/main/user_model.dart';
 import 'package:pretty_dio_logger/pretty_dio_logger.dart';
 
@@ -13,7 +15,6 @@ class AuthenticationService {
 
   final FlutterSecureStorage store = const FlutterSecureStorage();
   final Dio _dio = Dio();
-  final browser = FlutterWebviewPlugin();
 
   String _csrf = '';
   String _csrfToken = '';
@@ -62,8 +63,9 @@ class AuthenticationService {
   Future<void> setCurrentClientMode() async {
     await dotenv.load();
 
-    isDevMode =
-        dotenv.get('DEVELOPMENTMODE', fallback: '').toLowerCase() == 'true';
+    isDevMode = true;
+    // isDevMode =
+    //     dotenv.get('DEVELOPMENTMODE', fallback: '').toLowerCase() == 'true';
     baseURL = isDevMode
         ? 'https://www.freecodecamp.dev'
         : 'https://www.freecodecamp.org';
@@ -92,30 +94,37 @@ class AuthenticationService {
     return FccUserModel.fromJson(data);
   }
 
-  Future<void> login() async {
-    String path = '/learn/?messages=success%5B0%5D%3Dflash.signin-success';
+  Future<void> login(BuildContext context) async {
+    // String path = '/learn/?messages=success%5B0%5D%3Dflash.signin-success';
 
-    browser.onUrlChanged.listen((String url) async {
-      if (url == '$baseURL$path') {
-        Map<String, String> cookies = await browser.getCookies();
-
-        _csrf = cookies['"_csrf']!;
-        _csrfToken = cookies[' csrf_token']!;
-        _jwtAccessToken = cookies[' jwt_access_token']!;
-        await writeTokensToStorage();
-
-        await fetchUser();
-
-        browser.close();
-        browser.dispose();
-      }
-    });
-    browser.launch(
-      '$baseApiURL/signin',
-      clearCookies: true,
-      debuggingEnabled: true,
-      userAgent: 'random',
+    var navRes = await Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => const LoginWebView(),
+      ),
     );
+    log('AUTH SERVICE NAV RES: $navRes');
+    // browser.onUrlChanged.listen((String url) async {
+    //   if (url == '$baseURL$path') {
+    //     Map<String, String> cookies = await browser.getCookies();
+
+    //     _csrf = cookies['"_csrf']!;
+    //     _csrfToken = cookies[' csrf_token']!;
+    //     _jwtAccessToken = cookies[' jwt_access_token']!;
+    //     await writeTokensToStorage();
+
+    //     await fetchUser();
+
+    //     browser.close();
+    //     browser.dispose();
+    //   }
+    // });
+    // browser.launch(
+    //   '$baseApiURL/signin',
+    //   clearCookies: true,
+    //   debuggingEnabled: true,
+    //   userAgent: 'random',
+    // );
   }
 
   Future<void> logout() async {
