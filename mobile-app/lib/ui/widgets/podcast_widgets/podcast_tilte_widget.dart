@@ -11,6 +11,7 @@ import 'package:freecodecamp/service/notification_service.dart';
 import 'package:freecodecamp/service/podcasts_service.dart';
 import 'package:intl/intl.dart';
 import 'package:html/dom.dart' as dom;
+import 'package:path_provider/path_provider.dart';
 import 'package:url_launcher/url_launcher_string.dart';
 import 'package:http/http.dart' as http;
 
@@ -98,29 +99,29 @@ class PodcastTileState extends State<PodcastTile> {
   @override
   void initState() {
     super.initState();
+
+    Future.delayed(const Duration(seconds: 0), () async => {init()});
+  }
+
+  Future<void> init() async {
     File podcastImgFile;
     http.Response res;
 
-    Future.delayed(
-        const Duration(seconds: 0),
-        () async => {
-              await widget._databaseService.initialise(),
-              await FkUserAgent.init(),
-              setIsPlaying = widget._audioService.isPlaying(widget.episode.id),
-              setIsDownloaded =
-                  await widget._databaseService.episodeExists(widget.episode),
-              if (!widget.isFromDownloadView)
-                {
-                  podcastImgFile = File(
-                      '${widget.appDir.path}/images/podcast/${widget.episode.podcastId}.jpg'),
-                  if (!podcastImgFile.existsSync())
-                    {
-                      podcastImgFile.createSync(recursive: true),
-                      res = await http.get(Uri.parse(widget.podcast.image!)),
-                      podcastImgFile.writeAsBytesSync(res.bodyBytes),
-                    }
-                }
-            });
+    await widget._databaseService.initialise();
+    await FkUserAgent.init();
+    setIsPlaying = widget._audioService.isPlaying(widget.episode.id);
+    setIsDownloaded =
+        await widget._databaseService.episodeExists(widget.episode);
+    setAppDir = await getApplicationDocumentsDirectory();
+    if (!widget.isFromDownloadView) {
+      podcastImgFile = File(
+          '${widget.appDir.path}/images/podcast/${widget.episode.podcastId}.jpg');
+      if (!podcastImgFile.existsSync()) {
+        podcastImgFile.createSync(recursive: true);
+        res = await http.get(Uri.parse(widget.podcast.image!));
+        podcastImgFile.writeAsBytesSync(res.bodyBytes);
+      }
+    }
   }
 
   void downloadAudio(String uri) async {
@@ -261,6 +262,16 @@ class PodcastTileState extends State<PodcastTile> {
                         fontSize: 16, height: 2, fontFamily: 'Lato'),
                   ),
                 ),
+                Expanded(
+                  child: IconButton(
+                    onPressed: () {
+                      downloadBtnClick();
+                    },
+                    icon: Icon(widget.downloaded
+                        ? Icons.download_done
+                        : Icons.download_sharp),
+                  ),
+                )
               ],
             ),
           ],
