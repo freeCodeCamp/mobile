@@ -29,6 +29,7 @@ class EpisodeView extends StatelessWidget {
                     PodcastTile(
                         podcast: podcast,
                         episode: episode,
+                        isFromEpisodeView: true,
                         isFromDownloadView: false),
                     Container(
                       padding: const EdgeInsets.all(8),

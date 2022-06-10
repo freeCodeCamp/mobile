@@ -20,17 +20,19 @@ import 'package:dio/dio.dart';
 
 // ignore: must_be_immutable
 class PodcastTile extends StatefulWidget {
-  PodcastTile({
-    Key? key,
-    required this.podcast,
-    required this.episode,
-    required this.isFromDownloadView,
-  }) : super(key: key);
+  PodcastTile(
+      {Key? key,
+      required this.podcast,
+      required this.episode,
+      required this.isFromDownloadView,
+      this.isFromEpisodeView = false})
+      : super(key: key);
 
   final Podcasts podcast;
   final Episodes episode;
 
   final bool isFromDownloadView;
+  final bool isFromEpisodeView;
 
   final _audioService = locator<EpisodeAudioService>();
   final _databaseService = locator<PodcastsDatabaseService>();
@@ -197,13 +199,15 @@ class PodcastTileState extends State<PodcastTile> {
 
   @override
   Widget build(BuildContext context) {
-    return widget.playing
-        ? Card(
-            margin: const EdgeInsets.all(8),
-            elevation: 10,
-            shadowColor: Colors.black,
-            color: const Color.fromRGBO(0x1b, 0x1b, 0x32, 1),
-            child: podcastTile(context))
+    return !widget.isFromEpisodeView
+        ? widget.playing
+            ? Card(
+                margin: const EdgeInsets.all(8),
+                elevation: 10,
+                shadowColor: Colors.black,
+                color: const Color.fromRGBO(0x1b, 0x1b, 0x32, 1),
+                child: podcastTile(context))
+            : podcastTile(context)
         : podcastTile(context);
   }
 
@@ -224,43 +228,47 @@ class PodcastTileState extends State<PodcastTile> {
           ],
         ),
         onTap: () {
-          Navigator.push(
-            context,
-            MaterialPageRoute(
-              builder: (context) => EpisodeView(
-                episode: widget.episode,
-                podcast: widget.podcast,
-              ),
-            ),
-          );
+          !widget.isFromEpisodeView
+              ? Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => EpisodeView(
+                      episode: widget.episode,
+                      podcast: widget.podcast,
+                    ),
+                  ),
+                )
+              : playBtnClick();
         },
         minVerticalPadding: 16,
         isThreeLine: true,
         subtitle: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Padding(
-              padding: const EdgeInsets.all(8.0),
-              child: Html(
-                data: widget.podcast.description!,
-                onLinkTap: (
-                  String? url,
-                  RenderContext context,
-                  Map<String, String> attributes,
-                  dom.Element? element,
-                ) {
-                  launchUrlString(url!);
-                },
-                style: {
-                  '#': Style(
-                      fontSize: const FontSize(16),
-                      color: Colors.white.withOpacity(0.87),
-                      margin: EdgeInsets.zero,
-                      maxLines: 3,
-                      fontFamily: 'Lato')
-                },
-              ),
-            ),
+            !widget.isFromEpisodeView
+                ? Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: Html(
+                      data: widget.podcast.description!,
+                      onLinkTap: (
+                        String? url,
+                        RenderContext context,
+                        Map<String, String> attributes,
+                        dom.Element? element,
+                      ) {
+                        launchUrlString(url!);
+                      },
+                      style: {
+                        '#': Style(
+                            fontSize: const FontSize(16),
+                            color: Colors.white.withOpacity(0.87),
+                            margin: EdgeInsets.zero,
+                            maxLines: 3,
+                            fontFamily: 'Lato')
+                      },
+                    ),
+                  )
+                : Container(),
             Row(
               children: [
                 IconButton(
