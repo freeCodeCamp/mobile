@@ -32,6 +32,7 @@ class AuthenticationService {
 
   final Stream<bool> _isLoggedIn = isLoggedInStream.stream;
   Stream<bool> get isLoggedIn => _isLoggedIn;
+  static bool staticIsloggedIn = false;
 
   factory AuthenticationService() {
     return _authenticationService;
@@ -139,6 +140,7 @@ class AuthenticationService {
   }
 
   Future<void> logout() async {
+    staticIsloggedIn = false;
     isLoggedInStream.sink.add(false);
     await store.delete(key: 'csrf');
     await store.delete(key: 'csrf_token');
@@ -156,6 +158,7 @@ class AuthenticationService {
       ),
     );
 
+    staticIsloggedIn = true;
     isLoggedInStream.sink.add(true);
     userModel = parseUserModel(res.data['user'][res.data['result']]);
   }

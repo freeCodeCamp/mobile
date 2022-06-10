@@ -29,7 +29,8 @@ class DrawerWidgtetViewModel extends BaseViewModel {
   bool get loggedIn => _loggedIn;
 
   void initState() async {
-    auth.init();
+    _loggedIn = AuthenticationService.staticIsloggedIn;
+    notifyListeners();
     auth.isLoggedIn.listen((event) {
       _loggedIn = event;
       notifyListeners();
