@@ -72,8 +72,7 @@ class EpisodeListView extends StatelessWidget {
                         ),
                         separatorBuilder: (BuildContext context, int index) =>
                             const Divider(
-                          color: Colors.transparent,
-                          height: 0,
+                          height: 1,
                           thickness: 1,
                         ),
                       )
@@ -96,8 +95,7 @@ class EpisodeListView extends StatelessWidget {
                                 separatorBuilder:
                                     (BuildContext context, int index) {
                                   return const Divider(
-                                    color: Colors.transparent,
-                                    height: 0,
+                                    height: 1,
                                     thickness: 1,
                                   );
                                 },
