@@ -196,100 +196,110 @@ class PodcastTileState extends State<PodcastTile> {
 
   @override
   Widget build(BuildContext context) {
-    return ListTile(
-        title: Row(
-          children: [
-            Expanded(
-              child: Padding(
-                padding: const EdgeInsets.all(8.0),
-                child: Text(
-                  widget.episode.title,
-                  style: const TextStyle(
-                      fontFamily: 'Lato', fontWeight: FontWeight.w700),
+    return Card(
+      margin: const EdgeInsets.all(8),
+      color: const Color.fromRGBO(0x1b, 0x1b, 0x32, 1),
+      child: ListTile(
+          title: Row(
+            children: [
+              Expanded(
+                child: Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: Text(
+                    widget.episode.title,
+                    style: const TextStyle(
+                        fontFamily: 'Lato', fontWeight: FontWeight.w700),
+                  ),
                 ),
               ),
-            ),
-          ],
-        ),
-        tileColor: widget.playing ? Colors.red : null,
-        onTap: () {
-          playBtnClick();
-        },
-        minVerticalPadding: 16,
-        isThreeLine: true,
-        subtitle: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Padding(
-              padding: const EdgeInsets.all(8.0),
-              child: Html(
-                data: widget.podcast.description!,
-                onLinkTap: (
-                  String? url,
-                  RenderContext context,
-                  Map<String, String> attributes,
-                  dom.Element? element,
-                ) {
-                  launchUrlString(url!);
-                },
-                style: {
-                  '#': Style(
-                      fontSize: const FontSize(16),
-                      color: Colors.white.withOpacity(0.87),
-                      margin: EdgeInsets.zero,
-                      maxLines: 3,
-                      fontFamily: 'Lato')
-                },
+            ],
+          ),
+          onTap: () {
+            playBtnClick();
+          },
+          minVerticalPadding: 16,
+          isThreeLine: true,
+          subtitle: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: Html(
+                  data: widget.podcast.description!,
+                  onLinkTap: (
+                    String? url,
+                    RenderContext context,
+                    Map<String, String> attributes,
+                    dom.Element? element,
+                  ) {
+                    launchUrlString(url!);
+                  },
+                  style: {
+                    '#': Style(
+                        fontSize: const FontSize(16),
+                        color: Colors.white.withOpacity(0.87),
+                        margin: EdgeInsets.zero,
+                        maxLines: 3,
+                        fontFamily: 'Lato')
+                  },
+                ),
               ),
-            ),
-            Row(
-              children: [
-                IconButton(
-                    onPressed: () {
-                      playBtnClick();
-                    },
-                    icon: Icon(
-                      widget.playing
-                          ? Icons.pause_circle
-                          : Icons.play_circle_sharp,
-                      size: MediaQuery.of(context).size.height * 0.05,
-                    )),
-                !widget.downloading
-                    ? Padding(
-                        padding: const EdgeInsets.all(8.0),
-                        child: Text(
-                          DateFormat.yMMMd()
-                                  .format(widget.episode.publicationDate!) +
-                              (widget.episode.duration != null &&
-                                      widget.episode.duration != Duration.zero
-                                  ? (' • ' +
-                                      _parseDuration(widget.episode.duration!))
-                                  : ''),
-                          style: const TextStyle(
-                              fontSize: 16, height: 2, fontFamily: 'Lato'),
-                        ),
-                      )
-                    : Padding(
-                        padding: const EdgeInsets.all(8.0),
-                        child: Text(
-                          'Downloading: ${double.parse(widget.progress)}%',
-                          style: const TextStyle(
-                              fontSize: 16, height: 2, fontFamily: 'Lato'),
-                        )),
-                Expanded(
-                  child: Container(
-                    alignment: Alignment.centerRight,
-                    child: IconButton(
-                      onPressed: widget.downloading ? () {} : downloadBtnClick,
-                      icon: Icon(widget.downloaded
-                          ? Icons.download_done
-                          : Icons.download_sharp),
+              Row(
+                children: [
+                  IconButton(
+                      onPressed: () {
+                        playBtnClick();
+                      },
+                      icon: Icon(
+                        widget.playing
+                            ? Icons.pause_circle
+                            : Icons.play_circle_sharp,
+                        size: MediaQuery.of(context).size.height * 0.05,
+                      )),
+                  !widget.downloading
+                      ? Padding(
+                          padding: const EdgeInsets.all(8.0),
+                          child: Text(
+                            DateFormat.yMMMd()
+                                    .format(widget.episode.publicationDate!) +
+                                (widget.episode.duration != null &&
+                                        widget.episode.duration != Duration.zero
+                                    ? (' • ' +
+                                        _parseDuration(
+                                            widget.episode.duration!))
+                                    : ''),
+                            style: const TextStyle(
+                                fontSize: 16, height: 2, fontFamily: 'Lato'),
+                          ),
+                        )
+                      : Padding(
+                          padding: const EdgeInsets.all(8.0),
+                          child: Text(
+                            'Downloading: ${widget.progress}%',
+                            style: const TextStyle(
+                                fontSize: 16, height: 2, fontFamily: 'Lato'),
+                          )),
+                  Expanded(
+                    child: Container(
+                      alignment: Alignment.centerRight,
+                      child: IconButton(
+                          onPressed:
+                              widget.downloading ? () {} : downloadBtnClick,
+                          icon: widget.downloading
+                              ? CircularProgressIndicator(
+                                  color: Colors.white,
+                                  strokeWidth: 2,
+                                  value: double.parse(widget.progress) / 100,
+                                )
+                              : Icon(widget.downloaded
+                                  ? Icons.download_done
+                                  : Icons.download)),
                     ),
-                  ),
-                )
-              ],
-            ),
-          ],
-        ));
+                  )
+                ],
+              ),
+            ],
+          )),
+    );
   }
 }

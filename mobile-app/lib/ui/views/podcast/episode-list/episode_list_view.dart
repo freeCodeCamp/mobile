@@ -32,7 +32,6 @@ class EpisodeListView extends StatelessWidget {
       viewModelBuilder: () => EpisodeListViewModel(podcast),
       onModelReady: (model) => model.initState(isDownloadView),
       builder: (context, model, child) => Scaffold(
-        extendBodyBehindAppBar: true,
         appBar: AppBar(
           title: Text(podcast.title!),
         ),
@@ -72,9 +71,9 @@ class EpisodeListView extends StatelessWidget {
                           ),
                         ),
                         separatorBuilder: (BuildContext context, int index) =>
-                            Divider(
-                          color: Colors.grey.shade600,
-                          height: 1,
+                            const Divider(
+                          color: Colors.transparent,
+                          height: 0,
                           thickness: 1,
                         ),
                       )
@@ -96,9 +95,9 @@ class EpisodeListView extends StatelessWidget {
                                 },
                                 separatorBuilder:
                                     (BuildContext context, int index) {
-                                  return Divider(
-                                    color: Colors.grey.shade600,
-                                    height: 1,
+                                  return const Divider(
+                                    color: Colors.transparent,
+                                    height: 0,
                                     thickness: 1,
                                   );
                                 },
