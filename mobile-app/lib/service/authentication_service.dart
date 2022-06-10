@@ -8,6 +8,7 @@ import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:freecodecamp/ui/widgets/login_webview_widget/login_webview_view.dart';
 import 'package:freecodecamp/models/main/user_model.dart';
 import 'package:pretty_dio_logger/pretty_dio_logger.dart';
+import 'package:webview_cookie_manager/webview_cookie_manager.dart';
 
 class AuthenticationService {
   static final AuthenticationService _authenticationService =
@@ -20,8 +21,8 @@ class AuthenticationService {
   String _csrfToken = '';
   String _jwtAccessToken = '';
 
-  String baseURL = '';
-  String baseApiURL = '';
+  static String baseURL = '';
+  static String baseApiURL = '';
   Future<FccUserModel>? userModel;
 
   bool isDevMode = false;
@@ -60,6 +61,32 @@ class AuthenticationService {
     _jwtAccessToken = await store.read(key: 'jwt_access_token') as String;
   }
 
+  Future<bool> extractCookies() async {
+    await WebviewCookieManager().getCookies(baseURL).then(
+      (cookies) {
+        for (var cookie in cookies) {
+          if (cookie.name == '_csrf') {
+            _csrf = cookie.value;
+          }
+          if (cookie.name == 'csrf_token') {
+            _csrfToken = cookie.value;
+          }
+          if (cookie.name == 'jwt_access_token') {
+            _jwtAccessToken = cookie.value;
+          }
+        }
+      },
+    );
+
+    if (_csrf.isNotEmpty &&
+        _csrfToken.isNotEmpty &&
+        _jwtAccessToken.isNotEmpty) {
+      return true;
+    }
+
+    return false;
+  }
+
   Future<void> setCurrentClientMode() async {
     await dotenv.load();
 
@@ -95,36 +122,20 @@ class AuthenticationService {
   }
 
   Future<void> login(BuildContext context) async {
-    // String path = '/learn/?messages=success%5B0%5D%3Dflash.signin-success';
+    bool authRes = await extractCookies();
 
-    var navRes = await Navigator.push(
-      context,
-      MaterialPageRoute(
-        builder: (context) => const LoginWebView(),
-      ),
-    );
-    log('AUTH SERVICE NAV RES: $navRes');
-    // browser.onUrlChanged.listen((String url) async {
-    //   if (url == '$baseURL$path') {
-    //     Map<String, String> cookies = await browser.getCookies();
+    if (!authRes) {
+      var navRes = await Navigator.push(
+        context,
+        MaterialPageRoute(
+          builder: (context) => const LoginWebView(),
+        ),
+      );
+      log('AUTH SERVICE NAV RES: $navRes');
+    }
 
-    //     _csrf = cookies['"_csrf']!;
-    //     _csrfToken = cookies[' csrf_token']!;
-    //     _jwtAccessToken = cookies[' jwt_access_token']!;
-    //     await writeTokensToStorage();
-
-    //     await fetchUser();
-
-    //     browser.close();
-    //     browser.dispose();
-    //   }
-    // });
-    // browser.launch(
-    //   '$baseApiURL/signin',
-    //   clearCookies: true,
-    //   debuggingEnabled: true,
-    //   userAgent: 'random',
-    // );
+    await writeTokensToStorage();
+    await fetchUser();
   }
 
   Future<void> logout() async {
