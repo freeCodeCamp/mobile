@@ -131,15 +131,19 @@ class HtmlHandler {
                 height: textSize(code.tree.element?.text as String,
                     const TextStyle(), context),
                 child: ListView(
-                    scrollDirection: Axis.horizontal,
-                    shrinkWrap: true,
-                    children: [
-                      HighlightView(code.tree.element?.text ?? '',
-                          padding: const EdgeInsets.all(16),
-                          textStyle: const TextStyle(fontSize: 16),
-                          language: className.split('-')[1],
-                          theme: themeMap['dracula']!),
-                    ]),
+                  children: [
+                    SingleChildScrollView(
+                      scrollDirection: Axis.horizontal,
+                      child: HighlightView(
+                        code.tree.element?.text ?? '',
+                        padding: const EdgeInsets.all(16),
+                        textStyle: const TextStyle(fontSize: 16),
+                        language: className.split('-')[1],
+                        theme: themeMap['dracula']!,
+                      ),
+                    ),
+                  ],
+                ),
               );
             }
           }
