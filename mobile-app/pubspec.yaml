@@ -21,7 +21,7 @@ dependencies:
   logger: ^1.1.0
   path_provider: ^2.0.3
   sqflite: ^2.0.0+4
-  stacked: 2.3.0
+  stacked: 2.3.12
   stacked_services: ^0.8.13
   url_launcher: ^6.0.10
   sqflite_migration_service: ^2.0.0-nullsafety.1
