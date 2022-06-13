@@ -1,11 +1,14 @@
 import 'dart:async';
+import 'dart:developer';
 import 'package:curl_logger_dio_interceptor/curl_logger_dio_interceptor.dart';
 import 'package:dio/dio.dart';
+import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
-import 'package:flutter_webview_plugin/flutter_webview_plugin.dart';
+import 'package:freecodecamp/ui/widgets/login_webview_widget/login_webview_view.dart';
 import 'package:freecodecamp/models/main/user_model.dart';
 import 'package:pretty_dio_logger/pretty_dio_logger.dart';
+import 'package:webview_cookie_manager/webview_cookie_manager.dart';
 
 class AuthenticationService {
   static final AuthenticationService _authenticationService =
@@ -13,14 +16,13 @@ class AuthenticationService {
 
   final FlutterSecureStorage store = const FlutterSecureStorage();
   final Dio _dio = Dio();
-  final browser = FlutterWebviewPlugin();
 
   String _csrf = '';
   String _csrfToken = '';
   String _jwtAccessToken = '';
 
-  String baseURL = '';
-  String baseApiURL = '';
+  static String baseURL = '';
+  static String baseApiURL = '';
   Future<FccUserModel>? userModel;
 
   bool isDevMode = false;
@@ -30,6 +32,7 @@ class AuthenticationService {
 
   final Stream<bool> _isLoggedIn = isLoggedInStream.stream;
   Stream<bool> get isLoggedIn => _isLoggedIn;
+  static bool staticIsloggedIn = false;
 
   factory AuthenticationService() {
     return _authenticationService;
@@ -59,11 +62,38 @@ class AuthenticationService {
     _jwtAccessToken = await store.read(key: 'jwt_access_token') as String;
   }
 
+  Future<bool> extractCookies() async {
+    await WebviewCookieManager().getCookies(baseURL).then(
+      (cookies) {
+        for (var cookie in cookies) {
+          if (cookie.name == '_csrf') {
+            _csrf = cookie.value;
+          }
+          if (cookie.name == 'csrf_token') {
+            _csrfToken = cookie.value;
+          }
+          if (cookie.name == 'jwt_access_token') {
+            _jwtAccessToken = cookie.value;
+          }
+        }
+      },
+    );
+
+    if (_csrf.isNotEmpty &&
+        _csrfToken.isNotEmpty &&
+        _jwtAccessToken.isNotEmpty) {
+      return true;
+    }
+
+    return false;
+  }
+
   Future<void> setCurrentClientMode() async {
     await dotenv.load();
 
-    isDevMode =
-        dotenv.get('DEVELOPMENTMODE', fallback: '').toLowerCase() == 'true';
+    isDevMode = true;
+    // isDevMode =
+    //     dotenv.get('DEVELOPMENTMODE', fallback: '').toLowerCase() == 'true';
     baseURL = isDevMode
         ? 'https://www.freecodecamp.dev'
         : 'https://www.freecodecamp.org';
@@ -92,33 +122,25 @@ class AuthenticationService {
     return FccUserModel.fromJson(data);
   }
 
-  Future<void> login() async {
-    String path = '/learn/?messages=success%5B0%5D%3Dflash.signin-success';
+  Future<void> login(BuildContext context) async {
+    bool authRes = await extractCookies();
 
-    browser.onUrlChanged.listen((String url) async {
-      if (url == '$baseURL$path') {
-        Map<String, String> cookies = await browser.getCookies();
+    if (!authRes) {
+      var navRes = await Navigator.push(
+        context,
+        MaterialPageRoute(
+          builder: (context) => const LoginWebView(),
+        ),
+      );
+      log('AUTH SERVICE NAV RES: $navRes');
+    }
 
-        _csrf = cookies['"_csrf']!;
-        _csrfToken = cookies[' csrf_token']!;
-        _jwtAccessToken = cookies[' jwt_access_token']!;
-        await writeTokensToStorage();
-
-        await fetchUser();
-
-        browser.close();
-        browser.dispose();
-      }
-    });
-    browser.launch(
-      '$baseApiURL/signin',
-      clearCookies: true,
-      debuggingEnabled: true,
-      userAgent: 'random',
-    );
+    await writeTokensToStorage();
+    await fetchUser();
   }
 
   Future<void> logout() async {
+    staticIsloggedIn = false;
     isLoggedInStream.sink.add(false);
     await store.delete(key: 'csrf');
     await store.delete(key: 'csrf_token');
@@ -136,6 +158,7 @@ class AuthenticationService {
       ),
     );
 
+    staticIsloggedIn = true;
     isLoggedInStream.sink.add(true);
     userModel = parseUserModel(res.data['user'][res.data['result']]);
   }

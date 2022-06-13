@@ -41,7 +41,8 @@ class LearnViewModel extends BaseViewModel {
   }
 
   void initLoggedInListener() {
-    auth.init();
+    _isLoggedIn = AuthenticationService.staticIsloggedIn;
+    notifyListeners();
     auth.isLoggedIn.listen((e) {
       _isLoggedIn = e;
       notifyListeners();
