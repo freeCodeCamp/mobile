@@ -21,18 +21,37 @@ class EpisodeView extends StatelessWidget {
     return ViewModelBuilder<EpisodeViewModel>.reactive(
         viewModelBuilder: () => EpisodeViewModel(),
         builder: (context, model, child) => Scaffold(
-              appBar: AppBar(title: Text(podcast.title!)),
+              appBar: AppBar(),
               body: ListView(children: [
                 Column(
                   children: [
-                    CachedNetworkImage(imageUrl: podcast.image!),
+                    Row(
+                      children: [
+                        Container(
+                          margin: const EdgeInsets.symmetric(
+                              vertical: 8, horizontal: 8),
+                          child: CachedNetworkImage(imageUrl: podcast.image!),
+                          height: MediaQuery.of(context).size.height * 0.2,
+                          width: MediaQuery.of(context).size.height * 0.2,
+                        ),
+                        Expanded(
+                          child: Text(
+                            episode.title,
+                            maxLines: 3,
+                            overflow: TextOverflow.ellipsis,
+                            style: const TextStyle(
+                                fontWeight: FontWeight.bold, fontSize: 24),
+                          ),
+                        )
+                      ],
+                    ),
                     PodcastTile(
                         podcast: podcast,
                         episode: episode,
                         isFromEpisodeView: true,
                         isFromDownloadView: false),
                     Container(
-                      padding: const EdgeInsets.all(8),
+                      padding: const EdgeInsets.fromLTRB(8, 16, 8, 8),
                       color: const Color(0xFF0a0a23),
                       child: description(model),
                     ),
@@ -67,6 +86,7 @@ class EpisodeView extends StatelessWidget {
                 color: Colors.white.withOpacity(0.87),
                 padding: const EdgeInsets.all(8),
                 margin: EdgeInsets.zero,
+                lineHeight: const LineHeight(1.2),
                 maxLines: model.viewMoreDescription ? null : 8,
                 fontFamily: 'Lato')
           },
