@@ -23,12 +23,13 @@ class NewsArticleView extends StatelessWidget {
           future: model.initState(refId),
           builder: (context, snapshot) {
             if (snapshot.hasData) {
-              var article = snapshot.data;
+              Article article = snapshot.data as Article;
+
               return Column(
                 children: [
                   Expanded(
                       child: Stack(children: [
-                    lazyLoadHtml(article!.text!, context, article, model),
+                    lazyLoadHtml(article, context),
                     bottomButtons(article, model)
                   ]))
                 ],
@@ -86,22 +87,18 @@ class NewsArticleView extends StatelessWidget {
     );
   }
 
-  ListView lazyLoadHtml(String html, BuildContext context, Article article,
-      NewsArticleViewModel model) {
-    var htmlToList = model.initLazyLoading(html, context, article);
+  FutureBuilder lazyLoadHtml(Article article, BuildContext context) {
+    NewsArticleViewModel model = NewsArticleViewModel();
 
-    return ListView.builder(
-        shrinkWrap: true,
-        controller: model.scrollController,
-        itemCount: htmlToList.length,
-        physics: const ClampingScrollPhysics(),
-        itemBuilder: (BuildContext context, int i) {
-          return Row(
-            children: [
-              Expanded(child: htmlToList[i]),
-            ],
-          );
-        });
+    Future elementsFuture = model.initLazyLoading(article, context);
+
+    return FutureBuilder(builder: (context, snaphot) {
+      if (snaphot.hasData) {
+        return Text('has data');
+      }
+
+      return const CircularProgressIndicator();
+    });
   }
 }
 

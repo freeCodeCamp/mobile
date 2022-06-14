@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:freecodecamp/models/news/bookmarked_article_model.dart';
-import 'package:freecodecamp/ui/views/news/news-article/news_article_viewmodel.dart';
 import 'package:freecodecamp/ui/views/news/news-bookmark/news_bookmark_viewmodel.dart';
 import 'package:stacked/stacked.dart';
 
@@ -50,22 +49,22 @@ class NewsBookmarkPostView extends StatelessWidget {
                       ),
                     ),
                   ),
-                  lazyLoadHtml(context, article)
+                  // lazyLoadHtml(context, article)
                 ],
               ),
             )));
   }
 
-  SliverList lazyLoadHtml(BuildContext context, BookmarkedArticle article) {
-    NewsArticleViewModel model = NewsArticleViewModel();
-    var htmlToList =
-        model.initLazyLoading(article.articleText, context, article);
+  // SliverList lazyLoadHtml(BuildContext context, BookmarkedArticle article) {
+  //   NewsArticleViewModel model = NewsArticleViewModel();
+  //   var htmlToList =
+  //       model.initLazyLoading(article.articleText, context, article);
 
-    return SliverList(
-        delegate: SliverChildBuilderDelegate(((context, index) {
-      return Row(
-        children: [Expanded(child: htmlToList[index])],
-      );
-    }), childCount: htmlToList.length));
-  }
+  //   return SliverList(
+  //       delegate: SliverChildBuilderDelegate(((context, index) {
+  //     return Row(
+  //       children: [Expanded(child: htmlToList[index])],
+  //     );
+  //   }), childCount: htmlToList.length));
+  // }
 }

@@ -30,12 +30,12 @@ class DescriptionView extends StatelessWidget {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Row(children: [
-                      Expanded(
-                          child: Column(
-                        children: HtmlHandler.htmlHandler(description, context),
-                      ))
-                    ]),
+                    // Row(children: [
+                    //   Expanded(
+                    //       child: Column(
+                    //     children: HtmlHandler.htmlHandler(description, context),
+                    //   ))
+                    // ]),
                     instructions.isNotEmpty
                         ? Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
@@ -51,11 +51,11 @@ class DescriptionView extends StatelessWidget {
                                 thickness: 2,
                               ),
                               Row(children: [
-                                Expanded(
-                                    child: Column(
-                                  children: HtmlHandler.htmlHandler(
-                                      instructions, context),
-                                ))
+                                // Expanded(
+                                //     child: Column(
+                                //   children: HtmlHandler.htmlHandler(
+                                //       instructions, context),
+                                // ))
                               ]),
                             ],
                           )

@@ -13,152 +13,158 @@ import 'package:url_launcher/url_launcher_string.dart';
 import 'package:youtube_player_iframe/youtube_player_iframe.dart';
 
 class HtmlHandler {
-  HtmlHandler({Key? key, required this.html, required this.context});
+  HtmlHandler(
+      {Key? key,
+      required this.html,
+      required this.context,
+      this.article = const {}});
 
   final String html;
   final BuildContext context;
+  final dynamic article;
+}
 
-  static List<Widget> htmlHandler(html, context, [article]) {
-    var result = HtmlParser.parseHTML(html);
+Future<List<Widget>> htmlHandler(List handle) async {
+  HtmlHandler handler =
+      HtmlHandler(html: handle[0], context: handle[1], article: handle[2]);
 
-    List<Widget> elements = [];
+  var result = HtmlParser.parseHTML(handler.html);
 
-    if (article is Article) {
-      elements.add(Stack(children: [
-        NewsArticleHeader(article: article),
-        AppBar(
-          backgroundColor: Colors.transparent,
-          shadowColor: Colors.transparent,
-        )
-      ]));
-    }
-    for (int i = 0; i < result.body!.children.length; i++) {
-      elements
-          .add(htmlWidgetBuilder(result.body!.children[i].outerHtml, context));
-    }
-    return elements;
+  List<Widget> elements = [];
+
+  if (handler.article is Article) {
+    elements.add(Stack(children: [
+      NewsArticleHeader(article: handler.article),
+      AppBar(
+        backgroundColor: Colors.transparent,
+        shadowColor: Colors.transparent,
+      )
+    ]));
   }
-
-  static void goToImageView(String imgUrl, BuildContext context) {
-    Navigator.push(
-      context,
-      MaterialPageRoute(builder: (context) => NewsImageView(imgUrl: imgUrl)),
-    );
+  for (int i = 0; i < result.body!.children.length; i++) {
+    elements.add(
+        htmlWidgetBuilder(result.body!.children[i].outerHtml, handler.context));
   }
+  return elements;
+}
 
-  static htmlWidgetBuilder(child, BuildContext context) {
-    return Html(
-      shrinkWrap: true,
-      data: child,
-      style: {
-        'body': Style(
-          color: Colors.white,
-          fontFamily: 'Lato',
-        ),
-        'p': Style(
-          fontSize: FontSize.rem(1.35),
-          lineHeight: LineHeight.em(1.2),
-        ),
-        'ul': Style(fontSize: FontSize.xLarge),
-        'li': Style(
-          margin: const EdgeInsets.only(top: 8),
-          fontSize: FontSize.rem(1.35),
-        ),
-        'pre': Style(
-          color: Colors.white,
-          width: MediaQuery.of(context).size.width,
-          padding: const EdgeInsets.all(10),
-        ),
-        'tr': Style(
-            border: const Border(bottom: BorderSide(color: Colors.grey)),
-            backgroundColor: Colors.white),
-        'th': Style(
-          padding: const EdgeInsets.all(12),
-          backgroundColor: const Color.fromRGBO(0xdf, 0xdf, 0xe2, 1),
-          color: Colors.black,
-        ),
-        'td': Style(
-          padding: const EdgeInsets.all(12),
-          color: Colors.black,
-          alignment: Alignment.topLeft,
-        ),
-        'figure': Style(
-            width: MediaQuery.of(context).size.width, margin: EdgeInsets.zero)
+Html htmlWidgetBuilder(child, BuildContext context) {
+  return Html(
+    shrinkWrap: true,
+    data: child,
+    style: {
+      'body': Style(
+        color: Colors.white,
+        fontFamily: 'Lato',
+      ),
+      'p': Style(
+        fontSize: FontSize.rem(1.35),
+        lineHeight: LineHeight.em(1.2),
+      ),
+      'ul': Style(fontSize: FontSize.xLarge),
+      'li': Style(
+        margin: const EdgeInsets.only(top: 8),
+        fontSize: FontSize.rem(1.35),
+      ),
+      'pre': Style(
+        color: Colors.white,
+        width: MediaQuery.of(context).size.width,
+        padding: const EdgeInsets.all(10),
+      ),
+      'tr': Style(
+          border: const Border(bottom: BorderSide(color: Colors.grey)),
+          backgroundColor: Colors.white),
+      'th': Style(
+        padding: const EdgeInsets.all(12),
+        backgroundColor: const Color.fromRGBO(0xdf, 0xdf, 0xe2, 1),
+        color: Colors.black,
+      ),
+      'td': Style(
+        padding: const EdgeInsets.all(12),
+        color: Colors.black,
+        alignment: Alignment.topLeft,
+      ),
+      'figure': Style(
+          width: MediaQuery.of(context).size.width, margin: EdgeInsets.zero)
+    },
+    customRender: {
+      'table': (context, child) {
+        return SingleChildScrollView(
+          scrollDirection: Axis.horizontal,
+          child: (context.tree as TableLayoutElement).toWidget(context),
+        );
       },
-      customRender: {
-        'table': (context, child) {
-          return SingleChildScrollView(
-            scrollDirection: Axis.horizontal,
-            child: (context.tree as TableLayoutElement).toWidget(context),
+      'figure': (code, child) {
+        var figureClasses = code.tree.elementClasses;
+        bool isBookmarkCard = figureClasses.contains('kg-bookmark-card');
+
+        if (isBookmarkCard) {
+          var parent = code.tree.children[0];
+
+          var link = parent.attributes['href'];
+
+          var bookmarkTilte = parent.children[0].children[0].element?.text;
+
+          var bookmarkDescription =
+              parent.children[0].children[1].element?.text;
+
+          var bookmarkImage = parent.children[1].children[0].attributes['src'];
+
+          return bookmark(
+              bookmarkTilte, bookmarkDescription, bookmarkImage, link);
+        }
+      },
+      'code': (code, child) {
+        for (String className in code.tree.elementClasses) {
+          if (className.contains(RegExp(r'language-', caseSensitive: false))) {
+            return Row(
+              children: [
+                Expanded(
+                  child: HighlightView(code.tree.element?.text ?? '',
+                      padding: const EdgeInsets.all(16),
+                      language: className.split('-')[1],
+                      theme: themeMap['dracula']!),
+                ),
+              ],
+            );
+          }
+        }
+      },
+      'iframe': (code, child) {
+        var isVideo = RegExp('youtube', caseSensitive: false);
+        var videoUrl = code.tree.attributes['src'];
+        if (isVideo.hasMatch(videoUrl ?? '')) {
+          var videoId = videoUrl?.split('/').last.split('?').first;
+
+          YoutubePlayerController _controller = YoutubePlayerController(
+            initialVideoId: videoId!,
           );
-        },
-        'figure': (code, child) {
-          var figureClasses = code.tree.elementClasses;
-          bool isBookmarkCard = figureClasses.contains('kg-bookmark-card');
 
-          if (isBookmarkCard) {
-            var parent = code.tree.children[0];
-
-            var link = parent.attributes['href'];
-
-            var bookmarkTilte = parent.children[0].children[0].element?.text;
-
-            var bookmarkDescription =
-                parent.children[0].children[1].element?.text;
-
-            var bookmarkImage =
-                parent.children[1].children[0].attributes['src'];
-
-            return bookmark(
-                bookmarkTilte, bookmarkDescription, bookmarkImage, link);
-          }
-        },
-        'code': (code, child) {
-          for (String className in code.tree.elementClasses) {
-            if (className
-                .contains(RegExp(r'language-', caseSensitive: false))) {
-              return Row(
-                children: [
-                  Expanded(
-                    child: HighlightView(code.tree.element?.text ?? '',
-                        padding: const EdgeInsets.all(16),
-                        language: className.split('-')[1],
-                        theme: themeMap['dracula']!),
-                  ),
-                ],
-              );
-            }
-          }
-        },
-        'iframe': (code, child) {
-          var isVideo = RegExp('youtube', caseSensitive: false);
-          var videoUrl = code.tree.attributes['src'];
-          if (isVideo.hasMatch(videoUrl ?? '')) {
-            var videoId = videoUrl?.split('/').last.split('?').first;
-
-            YoutubePlayerController _controller = YoutubePlayerController(
-              initialVideoId: videoId!,
-            );
-
-            return YoutubePlayerIFrame(
-              controller: _controller,
-            );
-          }
-        },
-        'img': (code, child) {
-          var imgUrl = code.tree.attributes['src'] ?? '';
-          return InkWell(
-            onTap: () => goToImageView(imgUrl, context),
-            child: CachedNetworkImage(
-              imageUrl: imgUrl,
-            ),
+          return YoutubePlayerIFrame(
+            controller: _controller,
           );
         }
       },
-      onLinkTap: (String? url, RenderContext context,
-          Map<String, String> attributes, dom.Element? element) {
-        launchUrlString(url!);
-      },
-    );
-  }
+      'img': (code, child) {
+        var imgUrl = code.tree.attributes['src'] ?? '';
+        return InkWell(
+          onTap: () => goToImageView(imgUrl, context),
+          child: CachedNetworkImage(
+            imageUrl: imgUrl,
+          ),
+        );
+      }
+    },
+    onLinkTap: (String? url, RenderContext context,
+        Map<String, String> attributes, dom.Element? element) {
+      launchUrlString(url!);
+    },
+  );
+}
+
+void goToImageView(String imgUrl, BuildContext context) {
+  Navigator.push(
+    context,
+    MaterialPageRoute(builder: (context) => NewsImageView(imgUrl: imgUrl)),
+  );
 }

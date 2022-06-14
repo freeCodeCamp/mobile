@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'dart:convert';
+import 'package:flutter/foundation.dart';
 import 'package:freecodecamp/app/app.locator.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -92,9 +93,8 @@ class NewsArticleViewModel extends BaseViewModel {
         arguments: NewsAuthorViewArguments(authorSlug: slug));
   }
 
-  List<Widget> initLazyLoading(html, context, article) {
-    List<Widget> elements = HtmlHandler.htmlHandler(html, context, article);
-    return elements;
+  Future<List<Widget>> initLazyLoading(Article article, context) async {
+    return await compute(htmlHandler, [article.text!, context, article]);
   }
 
   Future<void> removeScrollPosition() async {
