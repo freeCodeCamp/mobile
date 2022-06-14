@@ -25,16 +25,17 @@ void main() {
       final Finder firstArticleImage = find
           .descendant(
             of: firstArticle,
-            matching: find.byType(Image),
+            matching: find.byType(AspectRatio),
           )
           .first;
+      await tester.pumpAndSettle(const Duration(seconds: 3));
       final ValueKey firstArticleKey = tester
           .firstWidget<NewsFeedLazyLoading>(firstArticle)
           .key! as ValueKey;
       expect(firstArticle, findsOneWidget);
       expect(firstArticleImage, findsOneWidget);
       await tester.tap(firstArticleImage);
-      await tester.pumpAndSettle();
+      await tester.pumpAndSettle(const Duration(seconds: 3));
       await binding.takeScreenshot('news-article');
 
       // Tap on the bookmark button and store article title and author

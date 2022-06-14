@@ -1,3 +1,4 @@
+import 'package:fk_user_agent/fk_user_agent.dart';
 import 'package:flutter/material.dart';
 import 'package:freecodecamp/service/authentication_service.dart';
 import 'package:freecodecamp/service/code_radio_service.dart';
@@ -18,6 +19,7 @@ Future<void> main() async {
   );
   await AuthenticationService().init();
   await NotificationService().init();
+  await FkUserAgent.init();
 
   setupLocator();
   final audioService = locator<CodeRadioService>();
