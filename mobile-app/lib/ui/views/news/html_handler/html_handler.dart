@@ -10,7 +10,6 @@ import 'package:freecodecamp/ui/views/news/news-image-viewer/news_image_viewer.d
 import 'package:html/dom.dart' as dom;
 import 'package:url_launcher/url_launcher_string.dart';
 import 'package:youtube_player_iframe/youtube_player_iframe.dart';
-import 'dart:developer' as dev;
 
 class HtmlHandler {
   HtmlHandler({Key? key, required this.html, required this.context});
@@ -129,14 +128,15 @@ class HtmlHandler {
                 .contains(RegExp(r'language-', caseSensitive: false))) {
               return SizedBox(
                 height: textSize(code.tree.element?.text as String,
-                    const TextStyle(), context),
+                    const TextStyle(fontFamily: 'Lato', height: 1.45), context),
                 child: ListView(
+                  physics: const ClampingScrollPhysics(),
                   children: [
                     SingleChildScrollView(
                       scrollDirection: Axis.horizontal,
+                      physics: const ClampingScrollPhysics(),
                       child: HighlightView(
                         code.tree.element?.text ?? '',
-                        padding: const EdgeInsets.all(16),
                         textStyle: const TextStyle(fontSize: 16),
                         language: className.split('-')[1],
                         theme: themeMap['dracula']!,
@@ -151,19 +151,26 @@ class HtmlHandler {
           bool isInPreTag = code.tree.element!.parent!.localName == 'pre';
 
           if (code.tree.element!.innerHtml.contains('\n')) {
-            dev.log(code.tree.element?.innerHtml as String);
-
             return SizedBox(
-              height: textSize(code.tree.element?.innerHtml as String,
-                  const TextStyle(), context),
+              height: textSize(
+                  code.tree.element?.innerHtml as String,
+                  const TextStyle(
+                    fontFamily: 'Lato',
+                    height: 1.45,
+                    fontSize: 11,
+                  ),
+                  context),
               child: ListView(
-                  scrollDirection: Axis.horizontal,
+                  physics: const ClampingScrollPhysics(),
                   shrinkWrap: true,
                   children: [
-                    Container(
-                      color: const Color.fromRGBO(0x2A, 0x2A, 0x40, 1),
-                      padding: EdgeInsets.all(isInPreTag ? 16 : 0),
-                      child: child,
+                    SingleChildScrollView(
+                      physics: const ClampingScrollPhysics(),
+                      scrollDirection: Axis.horizontal,
+                      child: Container(
+                        color: const Color.fromRGBO(0x2A, 0x2A, 0x40, 1),
+                        child: child,
+                      ),
                     ),
                   ]),
             );
