@@ -66,6 +66,7 @@ class HtmlHandler {
         'li': Style(
           margin: const EdgeInsets.only(top: 8),
           fontSize: FontSize.rem(1.35),
+          color: Colors.white.withOpacity(0.87),
         ),
         'pre': Style(
           color: Colors.white,
