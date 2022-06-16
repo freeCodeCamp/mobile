@@ -48,19 +48,6 @@ class HtmlHandler {
     );
   }
 
-  static double textSize(String text, TextStyle style, BuildContext context) {
-    final TextPainter textPainter = TextPainter(
-        text: TextSpan(text: text, style: style),
-        maxLines: 1,
-        textDirection: TextDirection.ltr)
-      ..layout(minWidth: 0, maxWidth: double.infinity);
-
-    RegExp regExp = RegExp('\n');
-    int newLines = regExp.allMatches(text).length;
-
-    return textPainter.size.height * newLines + 10;
-  }
-
   static htmlWidgetBuilder(child, BuildContext context) {
     return Html(
       shrinkWrap: true,
@@ -126,24 +113,15 @@ class HtmlHandler {
           for (String className in code.tree.elementClasses) {
             if (className
                 .contains(RegExp(r'language-', caseSensitive: false))) {
-              return SizedBox(
-                height: textSize(code.tree.element?.text as String,
-                    const TextStyle(fontFamily: 'Lato', height: 1.45), context),
-                child: ListView(
-                  physics: const ClampingScrollPhysics(),
-                  children: [
-                    SingleChildScrollView(
-                      scrollDirection: Axis.horizontal,
-                      physics: const ClampingScrollPhysics(),
-                      child: HighlightView(
-                        code.tree.element?.text ?? '',
-                        textStyle: const TextStyle(fontSize: 16),
+              return Row(
+                children: [
+                  Expanded(
+                    child: HighlightView(code.tree.element?.text ?? '',
+                        padding: const EdgeInsets.all(16),
                         language: className.split('-')[1],
-                        theme: themeMap['dracula']!,
-                      ),
-                    ),
-                  ],
-                ),
+                        theme: themeMap['dracula']!),
+                  ),
+                ],
               );
             }
           }
@@ -151,28 +129,15 @@ class HtmlHandler {
           bool isInPreTag = code.tree.element!.parent!.localName == 'pre';
 
           if (code.tree.element!.innerHtml.contains('\n')) {
-            return SizedBox(
-              height: textSize(
-                  code.tree.element?.innerHtml as String,
-                  const TextStyle(
-                    fontFamily: 'Lato',
-                    height: 1.45,
-                    fontSize: 11,
+            return Row(
+              children: [
+                Expanded(
+                  child: Container(
+                    color: const Color.fromRGBO(0x2A, 0x2A, 0x40, 1),
+                    child: child,
                   ),
-                  context),
-              child: ListView(
-                  physics: const ClampingScrollPhysics(),
-                  shrinkWrap: true,
-                  children: [
-                    SingleChildScrollView(
-                      physics: const ClampingScrollPhysics(),
-                      scrollDirection: Axis.horizontal,
-                      child: Container(
-                        color: const Color.fromRGBO(0x2A, 0x2A, 0x40, 1),
-                        child: child,
-                      ),
-                    ),
-                  ]),
+                ),
+              ],
             );
           }
 
