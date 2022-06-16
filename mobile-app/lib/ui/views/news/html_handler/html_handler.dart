@@ -116,10 +116,22 @@ class HtmlHandler {
               return Row(
                 children: [
                   Expanded(
-                    child: HighlightView(code.tree.element?.text ?? '',
-                        padding: const EdgeInsets.all(16),
-                        language: className.split('-')[1],
-                        theme: themeMap['dracula']!),
+                    flex: 1,
+                    child: SingleChildScrollView(
+                      physics: const NeverScrollableScrollPhysics(),
+                      child: SingleChildScrollView(
+                        scrollDirection: Axis.horizontal,
+                        physics: const ClampingScrollPhysics(),
+                        child: ConstrainedBox(
+                          constraints: BoxConstraints(
+                              minWidth: MediaQuery.of(context).size.width - 44),
+                          child: HighlightView(code.tree.element?.text ?? '',
+                              padding: const EdgeInsets.all(16),
+                              language: className.split('-')[1],
+                              theme: themeMap['dracula']!),
+                        ),
+                      ),
+                    ),
                   ),
                 ],
               );
