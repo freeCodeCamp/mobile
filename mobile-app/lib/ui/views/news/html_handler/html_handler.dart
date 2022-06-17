@@ -111,48 +111,52 @@ class HtmlHandler {
           );
         },
         'code': (code, child) {
-          for (String className in code.tree.elementClasses) {
-            if (className
-                .contains(RegExp(r'language-', caseSensitive: false))) {
-              return Row(
-                children: [
-                  Expanded(
-                    flex: 1,
-                    child: SingleChildScrollView(
-                      physics: const NeverScrollableScrollPhysics(),
-                      child: SingleChildScrollView(
-                        scrollDirection: Axis.horizontal,
-                        physics: const ClampingScrollPhysics(),
-                        child: ConstrainedBox(
-                          constraints: BoxConstraints(
-                              minWidth: MediaQuery.of(context).size.width - 44),
-                          child: HighlightView(code.tree.element?.text ?? '',
-                              padding: const EdgeInsets.all(16),
-                              language: className.split('-')[1],
-                              theme: themeMap['dracula']!),
-                        ),
-                      ),
-                    ),
-                  ),
-                ],
-              );
+          String? currentClass;
+
+          bool codeLanguageIsPresent(List classNames) {
+            RegExp regExp = RegExp(r'language-', caseSensitive: false);
+
+            for (String className in classNames) {
+              if (className.contains(regExp)) {
+                currentClass = className;
+
+                return true;
+              }
             }
+
+            return false;
           }
 
-          bool isInPreTag = code.tree.element!.parent!.localName == 'pre';
+          List classes = code.tree.elementClasses;
 
           if (code.tree.element!.innerHtml.contains('\n')) {
             return Row(
               children: [
                 Expanded(
-                  child: Container(
-                    color: const Color.fromRGBO(0x2A, 0x2A, 0x40, 1),
-                    child: child,
+                  flex: 1,
+                  child: SingleChildScrollView(
+                    physics: const NeverScrollableScrollPhysics(),
+                    child: SingleChildScrollView(
+                      scrollDirection: Axis.horizontal,
+                      physics: const ClampingScrollPhysics(),
+                      child: ConstrainedBox(
+                        constraints: BoxConstraints(
+                            minWidth: MediaQuery.of(context).size.width - 44),
+                        child: HighlightView(code.tree.element?.text ?? '',
+                            padding: const EdgeInsets.all(16),
+                            language: codeLanguageIsPresent(classes)
+                                ? currentClass!.split('-')[1]
+                                : 'plaintext',
+                            theme: themeMap['dracula']!),
+                      ),
+                    ),
                   ),
                 ),
               ],
             );
           }
+
+          bool isInPreTag = code.tree.element!.parent!.localName == 'pre';
 
           return Container(
             color: const Color.fromRGBO(0x2A, 0x2A, 0x40, 1),
