@@ -292,18 +292,24 @@ class PodcastTileState extends State<PodcastTile> {
     );
   }
 
-  IconButton downloadbuttonWidget() {
+  Widget downloadbuttonWidget() {
     return IconButton(
         onPressed: widget.downloading ? () {} : downloadBtnClick,
         iconSize: !widget.isFromEpisodeView
             ? MediaQuery.of(context).size.height * 0.0375
             : MediaQuery.of(context).size.height * 0.075,
         icon: widget.downloading
-            ? CircularProgressIndicator(
-                color: Colors.white,
-                strokeWidth: 2,
-                value: double.parse(widget.progress) / 100,
-              )
+            ? Stack(alignment: Alignment.center, children: [
+                Text(
+                  '${widget.progress}%',
+                  style: const TextStyle(fontSize: 16),
+                ),
+                CircularProgressIndicator(
+                  color: Colors.white,
+                  strokeWidth: 2,
+                  value: double.parse(widget.progress) / 100,
+                ),
+              ])
             : Icon(
                 widget.downloaded
                     ? Icons.download_done
