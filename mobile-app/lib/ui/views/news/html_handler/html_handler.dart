@@ -129,7 +129,7 @@ class HtmlHandler {
 
           List classes = code.tree.elementClasses;
 
-          if (code.tree.element!.innerHtml.contains('\n')) {
+          if (code.tree.element!.parent!.localName == 'pre') {
             return Row(
               children: [
                 Expanded(
@@ -156,11 +156,8 @@ class HtmlHandler {
             );
           }
 
-          bool isInPreTag = code.tree.element!.parent!.localName == 'pre';
-
           return Container(
             color: const Color.fromRGBO(0x2A, 0x2A, 0x40, 1),
-            padding: EdgeInsets.all(isInPreTag ? 16 : 0),
             child: child,
           );
         },
