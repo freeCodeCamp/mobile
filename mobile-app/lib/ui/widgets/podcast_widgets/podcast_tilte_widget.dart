@@ -253,11 +253,10 @@ class PodcastTileState extends State<PodcastTile> {
   Column subtitle(BuildContext context) {
     return Column(
       children: [
-        widget.isFromEpisodeView ? footerWidget(context) : Container(),
         !widget.isFromEpisodeView ? descriptionWidget() : Container(),
         widget.isFromEpisodeView
             ? Row(
-                mainAxisAlignment: MainAxisAlignment.center,
+                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                 children: [playbuttonWidget(context), downloadbuttonWidget()],
               )
             : Container(),
@@ -268,8 +267,10 @@ class PodcastTileState extends State<PodcastTile> {
 
   Row footerWidget(BuildContext context) {
     return Row(
+      mainAxisAlignment: !widget.isFromEpisodeView
+          ? MainAxisAlignment.start
+          : MainAxisAlignment.spaceBetween,
       children: [
-        !widget.isFromEpisodeView ? playbuttonWidget(context) : Container(),
         Padding(
           padding: const EdgeInsets.all(8.0),
           child: Text(
@@ -280,7 +281,6 @@ class PodcastTileState extends State<PodcastTile> {
                         ? (' • ' + _parseDuration(widget.episode.duration!))
                         : '')
                 : 'Downloading: ${widget.progress}%',
-            textAlign: !widget.isFromEpisodeView ? null : TextAlign.center,
             style: const TextStyle(fontSize: 16, height: 2, fontFamily: 'Lato'),
           ),
         ),
@@ -299,7 +299,6 @@ class PodcastTileState extends State<PodcastTile> {
   IconButton downloadbuttonWidget() {
     return IconButton(
         onPressed: widget.downloading ? () {} : downloadBtnClick,
-        padding: const EdgeInsets.fromLTRB(64, 16, 0, 4),
         icon: widget.downloading
             ? CircularProgressIndicator(
                 color: Colors.white,
