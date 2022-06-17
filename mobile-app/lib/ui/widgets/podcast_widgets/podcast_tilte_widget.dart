@@ -232,9 +232,9 @@ class PodcastTileState extends State<PodcastTile> {
                 ],
               )
             : Container(),
-        onTap: () {
-          !widget.isFromEpisodeView
-              ? Navigator.push(
+        onTap: !widget.isFromEpisodeView
+            ? () {
+                Navigator.push(
                   context,
                   MaterialPageRoute(
                     builder: (context) => EpisodeView(
@@ -242,9 +242,9 @@ class PodcastTileState extends State<PodcastTile> {
                       podcast: widget.podcast,
                     ),
                   ),
-                )
-              : playBtnClick();
-        },
+                );
+              }
+            : null,
         minVerticalPadding: 16,
         isThreeLine: true,
         subtitle: subtitle(context));
@@ -267,10 +267,8 @@ class PodcastTileState extends State<PodcastTile> {
 
   Row footerWidget(BuildContext context) {
     return Row(
-      mainAxisAlignment: !widget.isFromEpisodeView
-          ? MainAxisAlignment.start
-          : MainAxisAlignment.spaceBetween,
       children: [
+        playbuttonWidget(context),
         Padding(
           padding: const EdgeInsets.all(8.0),
           child: Text(
@@ -284,14 +282,12 @@ class PodcastTileState extends State<PodcastTile> {
             style: const TextStyle(fontSize: 16, height: 2, fontFamily: 'Lato'),
           ),
         ),
-        !widget.isFromEpisodeView
-            ? Expanded(
-                child: Container(
-                  alignment: Alignment.centerRight,
-                  child: downloadbuttonWidget(),
-                ),
-              )
-            : Container(),
+        Expanded(
+          child: Container(
+            alignment: Alignment.centerRight,
+            child: downloadbuttonWidget(),
+          ),
+        )
       ],
     );
   }
@@ -299,6 +295,9 @@ class PodcastTileState extends State<PodcastTile> {
   IconButton downloadbuttonWidget() {
     return IconButton(
         onPressed: widget.downloading ? () {} : downloadBtnClick,
+        iconSize: !widget.isFromEpisodeView
+            ? MediaQuery.of(context).size.height * 0.0375
+            : MediaQuery.of(context).size.height * 0.075,
         icon: widget.downloading
             ? CircularProgressIndicator(
                 color: Colors.white,
@@ -309,9 +308,6 @@ class PodcastTileState extends State<PodcastTile> {
                 widget.downloaded
                     ? Icons.download_done
                     : Icons.arrow_circle_down_outlined,
-                size: !widget.isFromEpisodeView
-                    ? MediaQuery.of(context).size.height * 0.0375
-                    : MediaQuery.of(context).size.height * 0.075,
               ));
   }
 
@@ -320,11 +316,11 @@ class PodcastTileState extends State<PodcastTile> {
         onPressed: () {
           playBtnClick();
         },
+        iconSize: !widget.isFromEpisodeView
+            ? MediaQuery.of(context).size.height * 0.05
+            : MediaQuery.of(context).size.height * 0.075,
         icon: Icon(
           widget.playing ? Icons.pause_circle : Icons.play_circle_sharp,
-          size: !widget.isFromEpisodeView
-              ? MediaQuery.of(context).size.height * 0.05
-              : MediaQuery.of(context).size.height * 0.075,
         ));
   }
 
