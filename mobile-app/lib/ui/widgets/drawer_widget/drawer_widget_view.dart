@@ -106,7 +106,7 @@ class DrawerWidgetView extends StatelessWidget {
                             ? const Color.fromARGB(255, 230, 59, 59)
                             : null,
                         route: () {
-                          model.handleAuth(context);
+                          model.loginSnack();
                         })
                   ],
                 ),
