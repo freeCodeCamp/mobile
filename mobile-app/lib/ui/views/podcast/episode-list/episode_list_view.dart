@@ -48,7 +48,7 @@ class EpisodeListView extends StatelessWidget {
                       Container(
                         color: const Color(0xFF0a0a23),
                         child: Padding(
-                          padding: const EdgeInsets.all(8.0),
+                          padding: const EdgeInsets.all(20.0),
                           child: description(model),
                         ),
                       ),
@@ -181,7 +181,7 @@ class EpisodeListView extends StatelessWidget {
                 decoration: BoxDecoration(
                   boxShadow: [
                     BoxShadow(
-                      color: Colors.black.withOpacity(0.5),
+                      color: Colors.black.withOpacity(0.75),
                       spreadRadius: 1.5,
                       blurRadius: 5,
                     )

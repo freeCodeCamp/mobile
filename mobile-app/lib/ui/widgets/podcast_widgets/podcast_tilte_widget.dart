@@ -252,12 +252,12 @@ class PodcastTileState extends State<PodcastTile> {
 
   Column subtitle(BuildContext context) {
     return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         widget.isFromEpisodeView ? footerWidget(context) : Container(),
         !widget.isFromEpisodeView ? descriptionWidget() : Container(),
         widget.isFromEpisodeView
             ? Row(
+                mainAxisAlignment: MainAxisAlignment.center,
                 children: [playbuttonWidget(context), downloadbuttonWidget()],
               )
             : Container(),
@@ -270,26 +270,20 @@ class PodcastTileState extends State<PodcastTile> {
     return Row(
       children: [
         !widget.isFromEpisodeView ? playbuttonWidget(context) : Container(),
-        !widget.downloading
-            ? Padding(
-                padding: const EdgeInsets.all(8.0),
-                child: Text(
-                  DateFormat.yMMMd().format(widget.episode.publicationDate!) +
-                      (widget.episode.duration != null &&
-                              widget.episode.duration != Duration.zero
-                          ? (' • ' + _parseDuration(widget.episode.duration!))
-                          : ''),
-                  style: const TextStyle(
-                      fontSize: 16, height: 2, fontFamily: 'Lato'),
-                ),
-              )
-            : Padding(
-                padding: const EdgeInsets.all(8.0),
-                child: Text(
-                  'Downloading: ${widget.progress}%',
-                  style: const TextStyle(
-                      fontSize: 16, height: 2, fontFamily: 'Lato'),
-                )),
+        Padding(
+          padding: const EdgeInsets.all(8.0),
+          child: Text(
+            !widget.downloading
+                ? DateFormat.yMMMd().format(widget.episode.publicationDate!) +
+                    (widget.episode.duration != null &&
+                            widget.episode.duration != Duration.zero
+                        ? (' • ' + _parseDuration(widget.episode.duration!))
+                        : '')
+                : 'Downloading: ${widget.progress}%',
+            textAlign: !widget.isFromEpisodeView ? null : TextAlign.center,
+            style: const TextStyle(fontSize: 16, height: 2, fontFamily: 'Lato'),
+          ),
+        ),
         !widget.isFromEpisodeView
             ? Expanded(
                 child: Container(
@@ -318,7 +312,7 @@ class PodcastTileState extends State<PodcastTile> {
                     : Icons.arrow_circle_down_outlined,
                 size: !widget.isFromEpisodeView
                     ? MediaQuery.of(context).size.height * 0.0375
-                    : MediaQuery.of(context).size.height * 0.05,
+                    : MediaQuery.of(context).size.height * 0.075,
               ));
   }
 

@@ -4,6 +4,7 @@ import 'package:flutter_html/flutter_html.dart';
 import 'package:freecodecamp/models/podcasts/episodes_model.dart';
 import 'package:freecodecamp/models/podcasts/podcasts_model.dart';
 import 'package:freecodecamp/ui/views/podcast/episode-view/episode_viewmodel.dart';
+import 'package:freecodecamp/ui/widgets/drawer_widget/drawer_widget_view.dart';
 import 'package:freecodecamp/ui/widgets/podcast_widgets/podcast_tilte_widget.dart';
 import 'package:stacked/stacked.dart';
 import 'package:url_launcher/url_launcher_string.dart';
@@ -24,35 +25,39 @@ class EpisodeView extends StatelessWidget {
               appBar: AppBar(),
               body: ListView(children: [
                 Column(
+                  crossAxisAlignment: CrossAxisAlignment.center,
                   children: [
-                    Row(
-                      children: [
-                        Container(
-                          margin: const EdgeInsets.symmetric(
-                              vertical: 8, horizontal: 8),
-                          child: CachedNetworkImage(imageUrl: podcast.image!),
-                          height: MediaQuery.of(context).size.height * 0.2,
-                          width: MediaQuery.of(context).size.height * 0.2,
-                        ),
-                        Expanded(
-                          child: Text(
-                            episode.title,
-                            maxLines: 3,
-                            overflow: TextOverflow.ellipsis,
-                            style: const TextStyle(
-                                fontWeight: FontWeight.bold, fontSize: 24),
-                          ),
-                        )
-                      ],
+                    Container(
+                      margin: const EdgeInsets.symmetric(
+                          vertical: 8, horizontal: 8),
+                      child: CachedNetworkImage(imageUrl: podcast.image!),
+                      height: MediaQuery.of(context).size.height * 0.40,
+                      width: MediaQuery.of(context).size.height * 0.40,
                     ),
+                    buildDivider(),
+                    Text(
+                      podcast.title!,
+                      textAlign: TextAlign.center,
+                      style: const TextStyle(fontSize: 16),
+                    ),
+                    Container(
+                      padding: const EdgeInsets.all(8),
+                      child: Text(
+                        episode.title,
+                        textAlign: TextAlign.center,
+                        style: const TextStyle(
+                            fontWeight: FontWeight.bold, fontSize: 20),
+                      ),
+                    ),
+                    buildDivider(),
                     PodcastTile(
                         podcast: podcast,
                         episode: episode,
                         isFromEpisodeView: true,
                         isFromDownloadView: false),
+                    buildDivider(),
                     Container(
                       padding: const EdgeInsets.fromLTRB(8, 16, 8, 8),
-                      color: const Color(0xFF0a0a23),
                       child: description(model),
                     ),
                   ],
@@ -63,10 +68,10 @@ class EpisodeView extends StatelessWidget {
 
   Widget description(EpisodeViewModel model) {
     return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         const Text(
           'Episode Description',
+          textAlign: TextAlign.center,
           style:
               TextStyle(fontSize: 24, fontWeight: FontWeight.bold, height: 1.2),
         ),
@@ -82,6 +87,7 @@ class EpisodeView extends StatelessWidget {
           },
           style: {
             '#': Style(
+                textAlign: TextAlign.center,
                 fontSize: const FontSize(18),
                 color: Colors.white.withOpacity(0.87),
                 padding: const EdgeInsets.all(8),
@@ -95,6 +101,7 @@ class EpisodeView extends StatelessWidget {
             onPressed: () {
               model.setViewMoreDescription = !model.viewMoreDescription;
             },
+            style: TextButton.styleFrom(backgroundColor: Colors.transparent),
             child: Text(
               model.viewMoreDescription ? 'Show Less' : 'Show all',
               style: const TextStyle(
