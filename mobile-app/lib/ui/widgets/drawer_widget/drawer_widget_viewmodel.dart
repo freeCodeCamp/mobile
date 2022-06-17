@@ -45,7 +45,7 @@ class DrawerWidgtetViewModel extends BaseViewModel {
   }
 
   void loginSnack() {
-    snack.showCustomSnackBar(
+    snack.showSnackbar(
         message: '', title: 'Login will soon be available!');
   }
 
