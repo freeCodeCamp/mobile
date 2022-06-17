@@ -35,6 +35,7 @@ void main() {
       expect(firstArticle, findsOneWidget);
       expect(firstArticleImage, findsOneWidget);
       await tester.tap(firstArticleImage);
+      await tester.pumpAndSettle();
       await tester.pumpAndSettle(const Duration(seconds: 3));
       await binding.takeScreenshot('news-article');
 

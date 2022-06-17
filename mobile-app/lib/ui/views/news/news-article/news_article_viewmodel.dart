@@ -69,7 +69,9 @@ class NewsArticleViewModel extends BaseViewModel {
             curve: Curves.easeInOut);
       }
       Timer(const Duration(seconds: 2), () {
-        prefs.setDouble('position', _scrollController.offset);
+        if (_scrollController.hasClients) {
+          prefs.setDouble('position', _scrollController.offset);
+        }
       });
     });
   }
@@ -80,10 +82,13 @@ class NewsArticleViewModel extends BaseViewModel {
     Future.delayed(
         const Duration(seconds: 1),
         () => {
-              _bottomButtonController.animateTo(
-                  _bottomButtonController.position.maxScrollExtent - 50,
-                  duration: const Duration(milliseconds: 1000),
-                  curve: Curves.easeInOut)
+              if (_bottomButtonController.hasClients)
+                {
+                  _bottomButtonController.animateTo(
+                      _bottomButtonController.position.maxScrollExtent - 50,
+                      duration: const Duration(milliseconds: 1000),
+                      curve: Curves.easeInOut)
+                }
             });
   }
 
