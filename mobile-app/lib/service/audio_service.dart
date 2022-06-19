@@ -34,6 +34,9 @@ import 'package:audio_service/audio_service.dart';
 class AudioPlayerHandler extends BaseAudioHandler {
   final AudioPlayer _audioPlayer = AudioPlayer();
 
+  // @override
+  // AudioPlayerHandler() {}
+
   // Future<void> play(Episodes episode, bool isDownloaded) async {
   @override
   Future<void> play() async {
@@ -45,11 +48,19 @@ class AudioPlayerHandler extends BaseAudioHandler {
     //   await _audioPlayer.stop();
     //   await loadEpisode(episode, isDownloaded);
     // }
+    playbackState.add(playbackState.value.copyWith(
+      playing: true,
+      controls: [MediaControl.pause],
+    ));
     _audioPlayer.play();
   }
 
   @override
   Future<void> pause() async {
+    playbackState.add(playbackState.value.copyWith(
+      playing: false,
+      controls: [MediaControl.play],
+    ));
     await _audioPlayer.pause();
   }
 
@@ -66,9 +77,14 @@ class AudioPlayerHandler extends BaseAudioHandler {
     bool isDownloaded,
     Podcasts podcast,
   ) async {
+    playbackState.add(playbackState.value.copyWith(
+      controls: [MediaControl.play],
+      processingState: AudioProcessingState.loading,
+    ));
     try {
       if (isDownloaded) {
-        await _audioPlayer.setAudioSource(
+        _audioPlayer
+            .setAudioSource(
           AudioSource.uri(
             Uri.parse(
                 'file:///data/user/0/org.freecodecamp/app_flutter/episodes/${episode.podcastId}/${episode.id}.mp3'),
@@ -80,10 +96,16 @@ class AudioPlayerHandler extends BaseAudioHandler {
                   'file:///data/user/0/org.freecodecamp/app_flutter/images/podcast/${episode.podcastId}.jpg'),
             ),
           ),
-          preload: false,
-        );
+          preload: true,
+        )
+            .then((_) {
+          playbackState.add(playbackState.value.copyWith(
+            processingState: AudioProcessingState.ready,
+          ));
+        });
       } else {
-        await _audioPlayer.setAudioSource(
+        _audioPlayer
+            .setAudioSource(
           AudioSource.uri(
             Uri.parse(episode.contentUrl!),
             tag: MediaItem(
@@ -94,12 +116,22 @@ class AudioPlayerHandler extends BaseAudioHandler {
                   'file:///data/user/0/org.freecodecamp/app_flutter/images/podcast/${episode.podcastId}.jpg'),
             ),
           ),
-          preload: false,
-        );
+          preload: true,
+        )
+            .then((_) {
+          playbackState.add(playbackState.value.copyWith(
+            processingState: AudioProcessingState.ready,
+          ));
+        });
       }
       await _audioPlayer.load();
     } catch (e) {
       log('Cannot play audio: $e');
     }
+  }
+
+  bool isPlaying(String episodeId) {
+    return _audioPlayer.playing &&
+        _audioPlayer.audioSource?.sequence[0].tag.id == episodeId;
   }
 }

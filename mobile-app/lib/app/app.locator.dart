@@ -10,6 +10,7 @@ import 'package:sqflite_migration_service/sqflite_migration_service.dart';
 import 'package:stacked_core/stacked_core.dart';
 import 'package:stacked_services/stacked_services.dart';
 
+import '../service/audio_service.dart';
 import '../service/authentication_service.dart';
 import '../service/code_radio_service.dart';
 import '../service/episode_audio_service.dart';
@@ -36,4 +37,5 @@ Future<void> setupLocator(
   locator.registerLazySingleton(() => TestService());
   locator.registerLazySingleton(() => CodeRadioService());
   locator.registerLazySingleton(() => AuthenticationService());
+  locator.registerLazySingleton(() => AudioPlayerHandler());
 }
