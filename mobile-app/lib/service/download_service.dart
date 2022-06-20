@@ -8,6 +8,7 @@ import 'package:freecodecamp/models/podcasts/episodes_model.dart';
 import 'package:freecodecamp/models/podcasts/podcasts_model.dart';
 import 'package:freecodecamp/service/podcasts_service.dart';
 import 'package:path_provider/path_provider.dart';
+import 'dart:developer' as dev;
 
 class DownloadService {
   final Dio dio = Dio();
@@ -16,6 +17,7 @@ class DownloadService {
 
   static final StreamController<String> _progStream =
       StreamController<String>.broadcast();
+  StreamController get progStream => _progStream;
 
   final Stream<String> _porgress = _progStream.stream;
   Stream<String> get progress => _porgress;
@@ -26,8 +28,12 @@ class DownloadService {
   final Stream<bool> _downloadingStream = _downloading.stream;
   Stream<bool> get downloadingStream => _downloadingStream;
 
-  Podcasts? podcast;
-  Episodes? episode;
+  set setDownloadId(String state) {
+    _downloadId = state;
+  }
+
+  String _downloadId = '';
+  String get downloadId => _downloadId;
 
   factory DownloadService() {
     return _downloadService;
@@ -35,7 +41,7 @@ class DownloadService {
 
   void download(Episodes episode, Podcasts podcast) async {
     Directory app = await getApplicationDocumentsDirectory();
-
+    dev.log(_downloadId);
     _downloading.sink.add(true);
 
     String path =
@@ -46,6 +52,8 @@ class DownloadService {
       _progStream.sink.add(((recevied / total) * 100).toStringAsFixed(0));
     }, options: Options(headers: {'User-Agent': FkUserAgent.userAgent}));
     _downloading.sink.add(false);
+    setDownloadId = '';
+    _progStream.sink.add('');
     await _databaseService.addPodcast(podcast);
     await _databaseService.addEpisode(episode);
   }

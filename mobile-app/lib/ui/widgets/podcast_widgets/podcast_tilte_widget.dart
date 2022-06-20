@@ -2,6 +2,7 @@ import 'dart:io';
 
 import 'package:fk_user_agent/fk_user_agent.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/scheduler.dart';
 import 'package:flutter_html/flutter_html.dart';
 import 'package:freecodecamp/app/app.locator.dart';
 import 'package:freecodecamp/models/podcasts/episodes_model.dart';
@@ -79,14 +80,13 @@ class PodcastTileState extends State<PodcastTile> {
 
   set setIsDownloading(bool state) {
     setState(() {
-      widget._isDownloading = true;
+      widget._isDownloading = state;
     });
   }
 
   @override
   void initState() {
     super.initState();
-    dev.log('setting state');
 
     Future.delayed(const Duration(seconds: 0), () async => {init()});
   }
@@ -99,7 +99,14 @@ class PodcastTileState extends State<PodcastTile> {
 
     widget._downloadService.downloadingStream.listen((event) {
       setIsDownloading = event;
-      dev.log('downloading $event');
+    });
+
+    widget._downloadService.progress.listen((event) {
+      if (widget._downloadService.downloadId == widget.episode.id && mounted) {
+        if (event != '') {
+          setIsDownloading = true;
+        }
+      }
     });
 
     await widget._databaseService.initialise();
@@ -143,7 +150,6 @@ class PodcastTileState extends State<PodcastTile> {
 
     if (!widget.downloaded && !widget.isDownloading) {
       widget._downloadService.download(widget.episode, widget.podcast);
-      setIsDownloaded = !widget.downloaded;
     } else if (widget.downloaded) {
       File audioFile = File(appDir.path +
           '/episodes/' +
@@ -239,19 +245,40 @@ class PodcastTileState extends State<PodcastTile> {
     return Row(
       children: [
         playbuttonWidget(context),
-        Padding(
-          padding: const EdgeInsets.all(8.0),
-          child: Text(
-            !widget.isDownloading
-                ? DateFormat.yMMMd().format(widget.episode.publicationDate!) +
+        widget.isDownloading &&
+                widget._downloadService.downloadId == widget.episode.id
+            ? StreamBuilder<String>(
+                stream: widget._downloadService.progress,
+                builder: (context, snapshot) {
+                  if (snapshot.data == '100') {
+                    SchedulerBinding.instance.addPostFrameCallback((timeStamp) {
+                      setIsDownloaded = true;
+                    });
+                  }
+
+                  if (snapshot.hasData) {
+                    return Text(
+                      'Downloaded ${snapshot.data}%',
+                      style: const TextStyle(
+                          fontSize: 16, height: 2, fontFamily: 'Lato'),
+                    );
+                  }
+
+                  return const CircularProgressIndicator(
+                    color: Colors.white,
+                    strokeWidth: 2,
+                    value: 0,
+                  );
+                })
+            : Text(
+                DateFormat.yMMMd().format(widget.episode.publicationDate!) +
                     (widget.episode.duration != null &&
                             widget.episode.duration != Duration.zero
                         ? (' • ' + _parseDuration(widget.episode.duration!))
-                        : '')
-                : 'Downloading: ${widget._downloadService.progress}%',
-            style: const TextStyle(fontSize: 16, height: 2, fontFamily: 'Lato'),
-          ),
-        ),
+                        : ''),
+                style: const TextStyle(
+                    fontSize: 16, height: 2, fontFamily: 'Lato'),
+              ),
         Expanded(
           child: Container(
             alignment: Alignment.centerRight,
@@ -264,14 +291,26 @@ class PodcastTileState extends State<PodcastTile> {
 
   Widget downloadbuttonWidget() {
     return IconButton(
-        onPressed: widget.isDownloading ? () {} : downloadBtnClick,
+        onPressed: widget.isDownloading
+            ? null
+            : () {
+                widget._downloadService.setDownloadId = widget.episode.id;
+                downloadBtnClick();
+              },
         iconSize: !widget.isFromEpisodeView
             ? MediaQuery.of(context).size.height * 0.0375
             : MediaQuery.of(context).size.height * 0.075,
-        icon: widget.isDownloading
+        icon: widget.isDownloading &&
+                widget._downloadService.downloadId == widget.episode.id
             ? StreamBuilder<String>(
                 stream: widget._downloadService.progress,
                 builder: (context, snapshot) {
+                  if (snapshot.data == '100') {
+                    SchedulerBinding.instance.addPostFrameCallback((timeStamp) {
+                      setIsDownloaded = true;
+                    });
+                  }
+
                   if (snapshot.hasData) {
                     return Stack(alignment: Alignment.center, children: [
                       Text(
