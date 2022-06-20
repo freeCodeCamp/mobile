@@ -1,12 +1,11 @@
 // ignore_for_file: implementation_imports
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_html/flutter_html.dart';
 import 'package:flutter_highlight/flutter_highlight.dart';
 import 'package:flutter_highlight/theme_map.dart';
+import 'package:flutter_html/flutter_html.dart';
 import 'package:freecodecamp/models/news/article_model.dart';
 import 'package:freecodecamp/ui/views/news/news-article/news_article_header.dart';
-import 'package:freecodecamp/ui/views/news/news-article/news_article_view.dart';
 import 'package:freecodecamp/ui/views/news/news-image-viewer/news_image_viewer.dart';
 import 'package:html/dom.dart' as dom;
 import 'package:url_launcher/url_launcher_string.dart';
@@ -36,6 +35,9 @@ class HtmlHandler {
       elements
           .add(htmlWidgetBuilder(result.body!.children[i].outerHtml, context));
     }
+    if (article is Article) {
+      elements.add(Container(height: 100));
+    }
     return elements;
   }
 
@@ -52,17 +54,19 @@ class HtmlHandler {
       data: child,
       style: {
         'body': Style(
-          color: Colors.white,
-          fontFamily: 'Lato',
-        ),
+            fontFamily: 'Lato',
+            padding: const EdgeInsets.only(left: 4, right: 4)),
+        'blockquote': Style(fontSize: FontSize.rem(1.25)),
         'p': Style(
           fontSize: FontSize.rem(1.35),
-          lineHeight: LineHeight.em(1.2),
+          margin: const EdgeInsets.all(0),
+          lineHeight: const LineHeight(1.5),
+          color: Colors.white.withOpacity(0.87),
         ),
-        'ul': Style(fontSize: FontSize.xLarge),
         'li': Style(
           margin: const EdgeInsets.only(top: 8),
           fontSize: FontSize.rem(1.35),
+          color: Colors.white.withOpacity(0.87),
         ),
         'pre': Style(
           color: Colors.white,
@@ -83,7 +87,21 @@ class HtmlHandler {
           alignment: Alignment.topLeft,
         ),
         'figure': Style(
-            width: MediaQuery.of(context).size.width, margin: EdgeInsets.zero)
+            width: MediaQuery.of(context).size.width, margin: EdgeInsets.zero),
+        'h1': Style(
+            margin: const EdgeInsets.fromLTRB(2, 32, 2, 0),
+            fontSize: FontSize.rem(2.3)),
+        'h2': Style(
+            margin: const EdgeInsets.fromLTRB(2, 32, 2, 0),
+            fontSize: FontSize.rem(2.3)),
+        'h3': Style(
+            margin: const EdgeInsets.fromLTRB(2, 32, 2, 0),
+            fontSize: FontSize.rem(1.8)),
+        'h4': Style(
+            margin: const EdgeInsets.fromLTRB(2, 32, 2, 0),
+            fontSize: FontSize.rem(1.8)),
+        'h5': Style(margin: const EdgeInsets.fromLTRB(2, 32, 2, 0)),
+        'h6': Style(margin: const EdgeInsets.fromLTRB(2, 32, 2, 0))
       },
       customRender: {
         'table': (context, child) {
@@ -92,43 +110,56 @@ class HtmlHandler {
             child: (context.tree as TableLayoutElement).toWidget(context),
           );
         },
-        'figure': (code, child) {
-          var figureClasses = code.tree.elementClasses;
-          bool isBookmarkCard = figureClasses.contains('kg-bookmark-card');
-
-          if (isBookmarkCard) {
-            var parent = code.tree.children[0];
-
-            var link = parent.attributes['href'];
-
-            var bookmarkTilte = parent.children[0].children[0].element?.text;
-
-            var bookmarkDescription =
-                parent.children[0].children[1].element?.text;
-
-            var bookmarkImage =
-                parent.children[1].children[0].attributes['src'];
-
-            return bookmark(
-                bookmarkTilte, bookmarkDescription, bookmarkImage, link);
-          }
-        },
         'code': (code, child) {
-          for (String className in code.tree.elementClasses) {
-            if (className
-                .contains(RegExp(r'language-', caseSensitive: false))) {
-              return Row(
-                children: [
-                  Expanded(
-                    child: HighlightView(code.tree.element?.text ?? '',
-                        padding: const EdgeInsets.all(16),
-                        language: className.split('-')[1],
-                        theme: themeMap['dracula']!),
-                  ),
-                ],
-              );
+          String? currentClass;
+
+          bool codeLanguageIsPresent(List classNames) {
+            RegExp regExp = RegExp(r'language-', caseSensitive: false);
+
+            for (String className in classNames) {
+              if (className.contains(regExp)) {
+                currentClass = className;
+
+                return true;
+              }
             }
+
+            return false;
           }
+
+          List classes = code.tree.elementClasses;
+
+          if (code.tree.element!.parent!.localName == 'pre') {
+            return Row(
+              children: [
+                Expanded(
+                  flex: 1,
+                  child: SingleChildScrollView(
+                    physics: const NeverScrollableScrollPhysics(),
+                    child: SingleChildScrollView(
+                      scrollDirection: Axis.horizontal,
+                      physics: const ClampingScrollPhysics(),
+                      child: ConstrainedBox(
+                        constraints: BoxConstraints(
+                            minWidth: MediaQuery.of(context).size.width - 44),
+                        child: HighlightView(code.tree.element?.text ?? '',
+                            padding: const EdgeInsets.all(16),
+                            language: codeLanguageIsPresent(classes)
+                                ? currentClass!.split('-')[1]
+                                : 'plaintext',
+                            theme: themeMap['dracula']!),
+                      ),
+                    ),
+                  ),
+                ),
+              ],
+            );
+          }
+
+          return Container(
+            color: const Color.fromRGBO(0x2A, 0x2A, 0x40, 1),
+            child: child,
+          );
         },
         'iframe': (code, child) {
           var isVideo = RegExp('youtube', caseSensitive: false);
@@ -147,11 +178,25 @@ class HtmlHandler {
         },
         'img': (code, child) {
           var imgUrl = code.tree.attributes['src'] ?? '';
-          return InkWell(
-            onTap: () => goToImageView(imgUrl, context),
-            child: CachedNetworkImage(
-              imageUrl: imgUrl,
+          return Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: InkWell(
+              onTap: () => goToImageView(imgUrl, context),
+              child: CachedNetworkImage(
+                imageUrl: imgUrl,
+              ),
             ),
+          );
+        },
+        'blockquote': (code, child) {
+          return Container(
+            decoration: const BoxDecoration(
+              border: Border(
+                left: BorderSide(
+                    color: Color.fromRGBO(0x99, 0xc9, 0xff, 1), width: 2),
+              ),
+            ),
+            child: child,
           );
         }
       },
