@@ -6,8 +6,9 @@ import 'package:flutter_html/flutter_html.dart';
 import 'package:freecodecamp/app/app.locator.dart';
 import 'package:freecodecamp/models/podcasts/episodes_model.dart';
 import 'package:freecodecamp/models/podcasts/podcasts_model.dart';
+import 'package:freecodecamp/service/download_service.dart';
 import 'package:freecodecamp/service/episode_audio_service.dart';
-import 'package:freecodecamp/service/notification_service.dart';
+import 'dart:developer' as dev;
 import 'package:freecodecamp/service/podcasts_service.dart';
 import 'package:freecodecamp/ui/views/podcast/episode-view/episode_view.dart';
 import 'package:intl/intl.dart';
@@ -36,11 +37,9 @@ class PodcastTile extends StatefulWidget {
 
   final _audioService = locator<EpisodeAudioService>();
   final _databaseService = locator<PodcastsDatabaseService>();
-  final _notificationService = locator<NotificationService>();
+  final _downloadService = locator<DownloadService>();
 
   final Dio dio = Dio();
-
-  Directory? appDir;
 
   final int _episodeLength = 0;
   int get episodeLength => _episodeLength;
@@ -54,11 +53,8 @@ class PodcastTile extends StatefulWidget {
   bool _loading = false;
   bool get loading => _loading;
 
-  bool _downloading = false;
-  bool get downloading => _downloading;
-
-  String _progress = '0';
-  String get progress => _progress;
+  bool _isDownloading = false;
+  bool get isDownloading => _isDownloading;
 
   @override
   State<StatefulWidget> createState() => PodcastTileState();
@@ -75,79 +71,52 @@ class PodcastTileState extends State<PodcastTile> {
     });
   }
 
-  set setIsDownloading(bool state) {
-    setState(() {
-      widget._downloading = state;
-    });
-  }
-
-  set setAppDir(Directory dir) {
-    setState(() {
-      widget.appDir = dir;
-    });
-  }
-
-  set setProgress(String state) {
-    setState(() {
-      widget._progress = state;
-    });
-  }
-
   set setIsLoading(bool state) {
     setState(() {
       widget._loading = state;
     });
   }
 
+  set setIsDownloading(bool state) {
+    setState(() {
+      widget._isDownloading = true;
+    });
+  }
+
   @override
   void initState() {
     super.initState();
+    dev.log('setting state');
 
     Future.delayed(const Duration(seconds: 0), () async => {init()});
   }
 
   Future<void> init() async {
+    Directory appDir = await getApplicationSupportDirectory();
+
     File podcastImgFile;
     http.Response res;
+
+    widget._downloadService.downloadingStream.listen((event) {
+      setIsDownloading = event;
+      dev.log('downloading $event');
+    });
 
     await widget._databaseService.initialise();
     await FkUserAgent.init();
     setIsPlaying = widget._audioService.isPlaying(widget.episode.id);
     setIsDownloaded =
         await widget._databaseService.episodeExists(widget.episode);
-    setAppDir = await getApplicationDocumentsDirectory();
+
     if (!widget.isFromDownloadView) {
-      podcastImgFile = File(
-          '${widget.appDir?.path}/images/podcast/${widget.episode.podcastId}.jpg');
+      podcastImgFile =
+          File('${appDir.path}/images/podcast/${widget.episode.podcastId}.jpg');
       if (!podcastImgFile.existsSync()) {
         podcastImgFile.createSync(recursive: true);
         res = await http.get(Uri.parse(widget.podcast.image!));
         podcastImgFile.writeAsBytesSync(res.bodyBytes);
       }
     }
-  }
-
-  void downloadAudio(String uri) async {
-    setIsDownloading = true;
-
-    String path = widget.appDir!.path +
-        '/episodes/' +
-        widget.podcast.id +
-        '/' +
-        widget.episode.id +
-        '.mp3';
-
-    await widget.dio.download(uri, path,
-        onReceiveProgress: (int recevied, int total) {
-      setProgress = ((recevied / total) * 100).toStringAsFixed(0);
-    }, options: Options(headers: {'User-Agent': FkUserAgent.userAgent}));
-    setIsDownloading = false;
-    await widget._notificationService.showNotification(
-      'Download Complete',
-      widget.episode.title,
-    );
-    await widget._databaseService.addPodcast(widget.podcast);
-    await widget._databaseService.addEpisode(widget.episode);
   }
 
   Future<void> playBtnClick() async {
@@ -169,12 +138,14 @@ class PodcastTileState extends State<PodcastTile> {
     await widget._databaseService.removePodcast(widget.podcast);
   }
 
-  void downloadBtnClick() {
-    if (!widget.downloaded && !widget.downloading) {
-      downloadAudio(widget.episode.contentUrl!);
+  void downloadBtnClick() async {
+    Directory appDir = await getApplicationSupportDirectory();
+
+    if (!widget.downloaded && !widget.isDownloading) {
+      widget._downloadService.download(widget.episode, widget.podcast);
       setIsDownloaded = !widget.downloaded;
     } else if (widget.downloaded) {
-      File audioFile = File(widget.appDir!.path +
+      File audioFile = File(appDir.path +
           '/episodes/' +
           widget.podcast.id +
           '/' +
@@ -185,7 +156,6 @@ class PodcastTileState extends State<PodcastTile> {
       }
       setIsDownloaded = !widget.downloaded;
       removeEpisode();
-      setProgress = '0';
     }
   }
 
@@ -272,13 +242,13 @@ class PodcastTileState extends State<PodcastTile> {
         Padding(
           padding: const EdgeInsets.all(8.0),
           child: Text(
-            !widget.downloading
+            !widget.isDownloading
                 ? DateFormat.yMMMd().format(widget.episode.publicationDate!) +
                     (widget.episode.duration != null &&
                             widget.episode.duration != Duration.zero
                         ? (' • ' + _parseDuration(widget.episode.duration!))
                         : '')
-                : 'Downloading: ${widget.progress}%',
+                : 'Downloading: ${widget._downloadService.progress}%',
             style: const TextStyle(fontSize: 16, height: 2, fontFamily: 'Lato'),
           ),
         ),
@@ -294,22 +264,33 @@ class PodcastTileState extends State<PodcastTile> {
 
   Widget downloadbuttonWidget() {
     return IconButton(
-        onPressed: widget.downloading ? () {} : downloadBtnClick,
+        onPressed: widget.isDownloading ? () {} : downloadBtnClick,
         iconSize: !widget.isFromEpisodeView
             ? MediaQuery.of(context).size.height * 0.0375
             : MediaQuery.of(context).size.height * 0.075,
-        icon: widget.downloading
-            ? Stack(alignment: Alignment.center, children: [
-                Text(
-                  '${widget.progress}%',
-                  style: const TextStyle(fontSize: 16),
-                ),
-                CircularProgressIndicator(
-                  color: Colors.white,
-                  strokeWidth: 2,
-                  value: double.parse(widget.progress) / 100,
-                ),
-              ])
+        icon: widget.isDownloading
+            ? StreamBuilder<String>(
+                stream: widget._downloadService.progress,
+                builder: (context, snapshot) {
+                  if (snapshot.hasData) {
+                    return Stack(alignment: Alignment.center, children: [
+                      Text(
+                        '${snapshot.data}%',
+                        style: const TextStyle(fontSize: 16),
+                      ),
+                      CircularProgressIndicator(
+                          color: Colors.white,
+                          strokeWidth: 2,
+                          value: double.parse(snapshot.data as String) / 100),
+                    ]);
+                  }
+
+                  return const CircularProgressIndicator(
+                    color: Colors.white,
+                    strokeWidth: 2,
+                    value: 0,
+                  );
+                })
             : Icon(
                 widget.downloaded
                     ? Icons.download_done

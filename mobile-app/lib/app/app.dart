@@ -4,6 +4,7 @@ import 'package:freecodecamp/service/notification_service.dart';
 import 'package:freecodecamp/service/podcasts_service.dart';
 import 'package:freecodecamp/service/code_radio_service.dart';
 import 'package:freecodecamp/service/authentication_service.dart';
+import 'package:freecodecamp/service/download_service.dart';
 
 import 'package:freecodecamp/ui/views/code_radio/code_radio_view.dart';
 import 'package:freecodecamp/ui/views/forum/forum-categories/forum_category_view.dart';
@@ -66,6 +67,7 @@ import 'package:sqflite_migration_service/sqflite_migration_service.dart';
     LazySingleton(classType: TestService),
     LazySingleton(classType: CodeRadioService),
     LazySingleton(classType: AuthenticationService),
+    LazySingleton(classType: DownloadService),
   ],
   logger: StackedLogger(),
 )

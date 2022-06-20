@@ -456,6 +456,27 @@ extension NavigatorStateExtension on NavigationService {
     );
   }
 
+  Future<dynamic> navigateToEpisodeView({
+    Key? key,
+    required Episodes episode,
+    required Podcasts podcast,
+    int? routerId,
+    bool preventDuplicates = true,
+    Map<String, String>? parameters,
+    Widget Function(BuildContext, Animation<double>, Animation<double>, Widget)?
+        transition,
+  }) async {
+    return navigateTo(
+      Routes.episodeView,
+      arguments:
+          EpisodeViewArguments(key: key, episode: episode, podcast: podcast),
+      id: routerId,
+      preventDuplicates: preventDuplicates,
+      parameters: parameters,
+      transition: transition,
+    );
+  }
+
   Future<dynamic> navigateToNewsArticleView({
     Key? key,
     required String refId,
