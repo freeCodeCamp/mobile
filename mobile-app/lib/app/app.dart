@@ -65,7 +65,7 @@ import 'package:sqflite_migration_service/sqflite_migration_service.dart';
     LazySingleton(classType: TestService),
     LazySingleton(classType: CodeRadioService),
     LazySingleton(classType: AuthenticationService),
-    LazySingleton(classType: AudioPlayerHandler),
+    LazySingleton(classType: AppAudioService),
   ],
   logger: StackedLogger(),
 )

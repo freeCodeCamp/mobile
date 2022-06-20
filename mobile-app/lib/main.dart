@@ -14,16 +14,8 @@ Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await AuthenticationService().init();
   await NotificationService().init();
+  await AppAudioService().init();
   await FkUserAgent.init();
-  await AudioService.init(
-    builder: () => AudioPlayerHandler(),
-    config: const AudioServiceConfig(
-      androidNotificationChannelId: 'org.freecodecamp.channel.audio',
-      androidNotificationChannelName: 'Audio playback',
-      androidNotificationOngoing: true,
-      androidStopForegroundOnPause: true,
-    ),
-  );
 
   setupLocator();
   runApp(const MyApp());

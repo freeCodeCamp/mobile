@@ -37,5 +37,5 @@ Future<void> setupLocator(
   locator.registerLazySingleton(() => TestService());
   locator.registerLazySingleton(() => CodeRadioService());
   locator.registerLazySingleton(() => AuthenticationService());
-  locator.registerLazySingleton(() => AudioPlayerHandler());
+  locator.registerLazySingleton(() => AppAudioService());
 }

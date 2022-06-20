@@ -7,7 +7,6 @@ import 'package:freecodecamp/app/app.locator.dart';
 import 'package:freecodecamp/models/podcasts/episodes_model.dart';
 import 'package:freecodecamp/models/podcasts/podcasts_model.dart';
 import 'package:freecodecamp/service/audio_service.dart';
-import 'package:freecodecamp/service/episode_audio_service.dart';
 import 'package:freecodecamp/service/notification_service.dart';
 import 'package:freecodecamp/service/podcasts_service.dart';
 import 'package:http/http.dart' as http;
@@ -17,8 +16,7 @@ import 'package:stacked/stacked.dart';
 class EpisodeViewModel extends BaseViewModel {
   final _databaseService = locator<PodcastsDatabaseService>();
   final _notificationService = locator<NotificationService>();
-  final _audioService = locator<EpisodeAudioService>();
-  final _audioPlayerHandler = locator<AudioPlayerHandler>();
+  final _audioPlayerHandler = locator<AppAudioService>().audioHandler;
   Episodes episode;
   final Podcasts podcast;
   late final Directory appDir;
@@ -37,7 +35,6 @@ class EpisodeViewModel extends BaseViewModel {
     await FkUserAgent.init();
     // episode = await _databaseService.getEpisode(podcast.id, episode.guid);
     log(episode.toString());
-    // playing = _audioService.isPlaying(episode.id);
     playing = _audioPlayerHandler.isPlaying(episode.id);
     downloaded = await _databaseService.episodeExists(episode);
     notifyListeners();
