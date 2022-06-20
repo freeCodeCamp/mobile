@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:developer';
 
 import 'package:freecodecamp/models/podcasts/episodes_model.dart';
@@ -8,6 +9,21 @@ class EpisodeAudioService {
   static final EpisodeAudioService _episodeAudioService =
       EpisodeAudioService._internal();
   final AudioPlayer _audioPlayer = AudioPlayer();
+
+  String _episodeId = '';
+  String get episodeId => _episodeId;
+
+  static final StreamController<bool> _isPlayingEpisode =
+      StreamController.broadcast();
+
+  StreamController<bool> get isPlayingEpisode => _isPlayingEpisode;
+
+  final Stream<bool> _isPlayingEpisodeStream = _isPlayingEpisode.stream;
+  Stream<bool> get isPlayingEpisodeStream => _isPlayingEpisodeStream;
+
+  set setEpisodeId(String state) {
+    _episodeId = state;
+  }
 
   factory EpisodeAudioService() {
     return _episodeAudioService;
@@ -56,24 +72,20 @@ class EpisodeAudioService {
       await loadEpisode(episode, isDownloaded);
     }
     if (episode.id != _audioPlayer.audioSource?.sequence[0].tag.id) {
-      log('DIFFERENT EPISODE');
       await _audioPlayer.stop();
       await loadEpisode(episode, isDownloaded);
     }
     _audioPlayer.play();
+    isPlayingEpisode.sink.add(true);
   }
 
   Future<void> pauseAudio() async {
     _audioPlayer.pause();
+    isPlayingEpisode.sink.add(false);
   }
 
   void disposePlayer() {
     _audioPlayer.dispose();
-  }
-
-  bool isPlaying(String episodeId) {
-    return _audioPlayer.playing &&
-        _audioPlayer.audioSource?.sequence[0].tag.id == episodeId;
   }
 
   EpisodeAudioService._internal();

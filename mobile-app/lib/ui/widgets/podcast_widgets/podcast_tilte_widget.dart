@@ -9,7 +9,6 @@ import 'package:freecodecamp/models/podcasts/episodes_model.dart';
 import 'package:freecodecamp/models/podcasts/podcasts_model.dart';
 import 'package:freecodecamp/service/download_service.dart';
 import 'package:freecodecamp/service/episode_audio_service.dart';
-import 'dart:developer' as dev;
 import 'package:freecodecamp/service/podcasts_service.dart';
 import 'package:freecodecamp/ui/views/podcast/episode-view/episode_view.dart';
 import 'package:intl/intl.dart';
@@ -17,6 +16,7 @@ import 'package:html/dom.dart' as dom;
 import 'package:path_provider/path_provider.dart';
 import 'package:url_launcher/url_launcher_string.dart';
 import 'package:http/http.dart' as http;
+import 'dart:developer' as dev;
 
 import 'package:dio/dio.dart';
 
@@ -63,7 +63,9 @@ class PodcastTile extends StatefulWidget {
 
 class PodcastTileState extends State<PodcastTile> {
   set setIsPlaying(bool state) {
-    setState(() => {widget._playing = state});
+    setState(() {
+      widget._playing = state;
+    });
   }
 
   set setIsDownloaded(bool state) {
@@ -109,9 +111,19 @@ class PodcastTileState extends State<PodcastTile> {
       }
     });
 
+    widget._audioService.isPlayingEpisodeStream.listen((event) {
+      if (widget._audioService.episodeId == widget.episode.id && mounted) {
+        setIsPlaying = event;
+      } else if (!event && mounted) {
+        setIsPlaying = false;
+      }
+
+      dev.log(event.toString());
+    });
+
     await widget._databaseService.initialise();
     await FkUserAgent.init();
-    setIsPlaying = widget._audioService.isPlaying(widget.episode.id);
+
     setIsDownloaded =
         await widget._databaseService.episodeExists(widget.episode);
 
@@ -129,12 +141,12 @@ class PodcastTileState extends State<PodcastTile> {
   Future<void> playBtnClick() async {
     if (!widget.loading) {
       if (!widget.playing) {
+        widget._audioService.setEpisodeId = widget.episode.id;
         setIsLoading = true;
         await widget._audioService.playAudio(widget.episode, widget.downloaded);
-        setIsPlaying = true;
       } else {
+        widget._audioService.setEpisodeId = '';
         await widget._audioService.pauseAudio();
-        setIsPlaying = false;
       }
       setIsLoading = false;
     }
