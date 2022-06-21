@@ -63,9 +63,11 @@ class PodcastTile extends StatefulWidget {
 
 class PodcastTileState extends State<PodcastTile> {
   set setIsPlaying(bool state) {
-    setState(() {
-      widget._playing = state;
-    });
+    mounted
+        ? setState(() {
+            widget._playing = state;
+          })
+        : null;
   }
 
   set setIsDownloaded(bool state) {
@@ -93,6 +95,11 @@ class PodcastTileState extends State<PodcastTile> {
     Future.delayed(const Duration(seconds: 0), () async => {init()});
   }
 
+  @override
+  void dispose() {
+    super.dispose();
+  }
+
   Future<void> init() async {
     Directory appDir = await getApplicationSupportDirectory();
 
@@ -114,11 +121,12 @@ class PodcastTileState extends State<PodcastTile> {
     widget._audioService.isPlayingEpisodeStream.listen((event) {
       if (widget._audioService.episodeId == widget.episode.id && mounted) {
         setIsPlaying = event;
-      } else if (!event && mounted) {
+      } else {
         setIsPlaying = false;
       }
 
-      dev.log(event.toString());
+      dev.log(
+          'FOR EPISODE: ${widget.episode.id}, FROM PODCAST TILE: ${event.toString()}, FROM EPISODE VIEW: ${widget.isFromEpisodeView}, setIsPlaying: ${widget._playing}');
     });
 
     await widget._databaseService.initialise();
