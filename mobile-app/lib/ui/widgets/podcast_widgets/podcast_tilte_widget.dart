@@ -63,9 +63,11 @@ class PodcastTile extends StatefulWidget {
 
 class PodcastTileState extends State<PodcastTile> {
   set setIsPlaying(bool state) {
-    setState(() {
-      widget._playing = state;
-    });
+    mounted
+        ? setState(() {
+            widget._playing = state;
+          })
+        : null;
   }
 
   set setIsDownloaded(bool state) {
