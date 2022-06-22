@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:flutter/material.dart';
 import 'package:freecodecamp/app/app.locator.dart';
 import 'package:freecodecamp/service/episode_audio_service.dart';
@@ -26,16 +28,16 @@ class PodcastProgressBar extends StatefulWidget {
 class _PodcastProgressBarState extends State<PodcastProgressBar> {
   void setBarWidthAndAudio(double value, double maxBarWidth) {
     setState(() {
-      widget._barWidth =
-          (widget.progress.inSeconds / widget.duration.inSeconds) * maxBarWidth;
+      double newWidth = (value / maxBarWidth) * maxBarWidth;
 
-      // double percentage = value / maxBarWidth * 100;
+      widget._barWidth = newWidth;
 
-      // double duration = widget.duration.inMilliseconds * percentage;
+      double newDuration = (value / maxBarWidth) * widget.duration.inSeconds;
 
-      // widget._audioService.audioPlayer
-      //     .seek(Duration(seconds: duration.toInt()));
-      // widget._audioService.audioPlayer.play();
+      setProgress = Duration(seconds: newDuration.toInt());
+
+      widget._audioService.audioPlayer
+          .seek(Duration(seconds: newDuration.toInt()));
     });
   }
 
@@ -55,11 +57,11 @@ class _PodcastProgressBarState extends State<PodcastProgressBar> {
   @override
   void initState() {
     super.initState();
-
     widget._audioService.audioPlayer.positionStream.listen((event) {
-      double percentage =
-          event.inMilliseconds / widget.duration.inMilliseconds * 100;
-      widget._barWidth = percentage;
+      double maxBarWidth = MediaQuery.of(context).size.width * 0.8;
+      double newWidth =
+          (event.inSeconds / widget.duration.inSeconds) * maxBarWidth;
+      widget._barWidth = newWidth;
       setProgress = event;
     });
   }
