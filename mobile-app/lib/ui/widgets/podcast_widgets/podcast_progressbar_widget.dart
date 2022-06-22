@@ -100,7 +100,8 @@ class _PodcastProgressBarState extends State<PodcastProgressBar> {
                     ),
                   ),
                 ),
-                Row(
+                Stack(
+                  alignment: Alignment.centerRight,
                   children: [
                     Container(
                       width: widget.barWidth,
@@ -109,12 +110,20 @@ class _PodcastProgressBarState extends State<PodcastProgressBar> {
                         color: Colors.grey[300],
                       ),
                     ),
-                    Container(
-                      height: 20,
-                      width: 20,
-                      decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(100),
-                        color: Colors.grey[300],
+                    GestureDetector(
+                      onTap: () => log('tapped'),
+                      onHorizontalDragUpdate: (details) => setBarWidthAndAudio(
+                        details.localPosition.dx,
+                        getMaxPorgressBarWidth,
+                      ),
+                      child: Container(
+                        alignment: Alignment.centerRight,
+                        height: 20,
+                        width: 20,
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(100),
+                          color: Colors.grey[300],
+                        ),
                       ),
                     )
                   ],
