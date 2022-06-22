@@ -51,7 +51,10 @@ class EpisodeView extends StatelessWidget {
                       ),
                     ),
                     buildDivider(),
-                    PodcastProgressBar(duration: episode.duration!),
+                    PodcastProgressBar(
+                      duration: episode.duration!,
+                      episodeId: episode.id,
+                    ),
                     PodcastTile(
                         podcast: podcast,
                         episode: episode,

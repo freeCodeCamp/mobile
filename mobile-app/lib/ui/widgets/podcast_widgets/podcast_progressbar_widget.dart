@@ -1,5 +1,3 @@
-import 'dart:developer';
-
 import 'package:flutter/material.dart';
 import 'package:freecodecamp/app/app.locator.dart';
 import 'package:freecodecamp/service/episode_audio_service.dart';
@@ -7,10 +5,12 @@ import 'package:freecodecamp/service/episode_audio_service.dart';
 // ignore: must_be_immutable
 class PodcastProgressBar extends StatefulWidget {
   final Duration duration;
+  final String episodeId;
 
   PodcastProgressBar({
     Key? key,
     required this.duration,
+    required this.episodeId,
   }) : super(key: key);
 
   final EpisodeAudioService _audioService = locator<EpisodeAudioService>();
@@ -111,11 +111,16 @@ class _PodcastProgressBarState extends State<PodcastProgressBar> {
                       ),
                     ),
                     GestureDetector(
-                      onTap: () => log('tapped'),
-                      onHorizontalDragUpdate: (details) => setBarWidthAndAudio(
-                        details.localPosition.dx,
-                        getMaxPorgressBarWidth,
-                      ),
+                      onHorizontalDragUpdate: (details) => {
+                        if (details.globalPosition.dx > 0 ||
+                            details.globalPosition.dx <= getMaxPorgressBarWidth)
+                          {
+                            setBarWidthAndAudio(
+                              details.globalPosition.dx,
+                              getMaxPorgressBarWidth,
+                            ),
+                          }
+                      },
                       child: Container(
                         alignment: Alignment.centerRight,
                         height: 20,
@@ -137,12 +142,24 @@ class _PodcastProgressBarState extends State<PodcastProgressBar> {
                   flex: 1,
                   child: Align(
                       alignment: Alignment.centerLeft,
-                      child: Text(printDuration(widget._progress)))),
+                      child: Padding(
+                        padding: const EdgeInsets.all(8.0),
+                        child: Text(
+                          printDuration(widget._progress),
+                          style: const TextStyle(height: 1.2),
+                        ),
+                      ))),
               Expanded(
                   flex: 1,
                   child: Align(
                       alignment: Alignment.centerRight,
-                      child: Text(printDuration(widget.duration)))),
+                      child: Padding(
+                        padding: const EdgeInsets.all(8.0),
+                        child: Text(
+                          printDuration(widget.duration),
+                          style: const TextStyle(height: 1.2),
+                        ),
+                      ))),
             ],
           ),
         ],
