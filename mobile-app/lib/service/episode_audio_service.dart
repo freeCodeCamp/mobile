@@ -9,6 +9,7 @@ class EpisodeAudioService {
   static final EpisodeAudioService _episodeAudioService =
       EpisodeAudioService._internal();
   final AudioPlayer _audioPlayer = AudioPlayer();
+  AudioPlayer get audioPlayer => _audioPlayer;
 
   String _episodeId = '';
   String get episodeId => _episodeId;
@@ -30,6 +31,10 @@ class EpisodeAudioService {
   }
 
   Future<void> loadEpisode(Episodes episode, bool isDownloaded) async {
+    _audioPlayer.positionStream.listen((duration) {
+      log('onDurationChanged: $duration');
+    });
+
     try {
       if (isDownloaded) {
         await _audioPlayer.setAudioSource(
