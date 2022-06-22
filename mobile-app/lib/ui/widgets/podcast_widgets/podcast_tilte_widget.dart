@@ -16,7 +16,6 @@ import 'package:html/dom.dart' as dom;
 import 'package:path_provider/path_provider.dart';
 import 'package:url_launcher/url_launcher_string.dart';
 import 'package:http/http.dart' as http;
-import 'dart:developer' as dev;
 
 import 'package:dio/dio.dart';
 
@@ -124,10 +123,11 @@ class PodcastTileState extends State<PodcastTile> {
       } else {
         setIsPlaying = false;
       }
-
-      dev.log(
-          'FOR EPISODE: ${widget.episode.id}, FROM PODCAST TILE: ${event.toString()}, FROM EPISODE VIEW: ${widget.isFromEpisodeView}, setIsPlaying: ${widget._playing}');
     });
+
+    if (widget._audioService.episodeId == widget.episode.id && mounted) {
+      setIsPlaying = true;
+    }
 
     await widget._databaseService.initialise();
     await FkUserAgent.init();
