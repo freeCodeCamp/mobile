@@ -1,8 +1,7 @@
 import 'dart:io';
 
 dynamic main() {
-  final rootDir = Directory.current;
-  final commitFile = File(rootDir.path + "/.git/COMMIT_EDITMSG");
+  final commitFile = File('../.git/COMMIT_EDITMSG');
   final commitMessage = commitFile.readAsStringSync();
 
   final regExp = RegExp(
