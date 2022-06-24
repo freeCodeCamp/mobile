@@ -78,6 +78,8 @@ class _PodcastProgressBarState extends State<PodcastProgressBar> {
         setProgress = Duration(
             seconds: prefs.getInt('${widget.episodeId}_progress') as int);
         widget._audioService.audioPlayer.seek(widget._progress);
+      } else {
+        setProgress = Duration.zero;
       }
     });
 
