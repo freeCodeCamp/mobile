@@ -85,7 +85,6 @@ class EpisodeAudioService {
       await _audioPlayer.seek(Duration(seconds: progress));
       _audioPlayer.play();
     } else {
-      await _audioPlayer.seek(const Duration(seconds: 0));
       _audioPlayer.play();
     }
 
