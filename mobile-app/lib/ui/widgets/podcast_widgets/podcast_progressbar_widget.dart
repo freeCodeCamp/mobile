@@ -1,6 +1,10 @@
+import 'dart:async';
+import 'dart:developer';
+
 import 'package:flutter/material.dart';
 import 'package:freecodecamp/app/app.locator.dart';
 import 'package:freecodecamp/service/episode_audio_service.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 // ignore: must_be_immutable
 class PodcastProgressBar extends StatefulWidget {
@@ -20,6 +24,8 @@ class PodcastProgressBar extends StatefulWidget {
 
   Duration _progress = Duration.zero;
   Duration get progress => _progress;
+
+  StreamSubscription<Duration>? progressListener;
 
   @override
   _PodcastProgressBarState createState() => _PodcastProgressBarState();
@@ -48,6 +54,14 @@ class _PodcastProgressBarState extends State<PodcastProgressBar> {
     return '${twoDigits(duration.inHours)}:$twoDigitMinutes:$twoDigitSeconds';
   }
 
+  void storeProgressAfterDispose() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+
+    prefs.setInt('${widget.episodeId}_progress', widget.progress.inSeconds);
+
+    log('Storing progress: ${widget.progress.inSeconds}');
+  }
+
   set setProgress(Duration value) {
     setState(() {
       widget._progress = value;
@@ -57,7 +71,18 @@ class _PodcastProgressBarState extends State<PodcastProgressBar> {
   @override
   void initState() {
     super.initState();
-    widget._audioService.audioPlayer.positionStream.listen((event) {
+
+    Future.delayed(Duration.zero, () async {
+      SharedPreferences prefs = await SharedPreferences.getInstance();
+      if (prefs.getInt('${widget.episodeId}_progress') != null) {
+        setProgress = Duration(
+            seconds: prefs.getInt('${widget.episodeId}_progress') as int);
+        widget._audioService.audioPlayer.seek(widget._progress);
+      }
+    });
+
+    widget.progressListener =
+        widget._audioService.audioPlayer.positionStream.listen((event) {
       double maxBarWidth = MediaQuery.of(context).size.width * 0.8;
       double newWidth =
           (event.inSeconds / widget.duration.inSeconds) * maxBarWidth;
@@ -69,6 +94,8 @@ class _PodcastProgressBarState extends State<PodcastProgressBar> {
   @override
   void dispose() {
     super.dispose();
+    widget.progressListener?.cancel();
+    storeProgressAfterDispose();
   }
 
   @override

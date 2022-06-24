@@ -4,6 +4,7 @@ import 'dart:developer';
 import 'package:freecodecamp/models/podcasts/episodes_model.dart';
 import 'package:just_audio/just_audio.dart';
 import 'package:just_audio_background/just_audio_background.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class EpisodeAudioService {
   static final EpisodeAudioService _episodeAudioService =
@@ -31,10 +32,6 @@ class EpisodeAudioService {
   }
 
   Future<void> loadEpisode(Episodes episode, bool isDownloaded) async {
-    _audioPlayer.positionStream.listen((duration) {
-      log('onDurationChanged: $duration');
-    });
-
     try {
       if (isDownloaded) {
         await _audioPlayer.setAudioSource(
@@ -80,7 +77,18 @@ class EpisodeAudioService {
       await _audioPlayer.stop();
       await loadEpisode(episode, isDownloaded);
     }
-    _audioPlayer.play();
+
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    int progress = prefs.getInt('${episode.id}_progress') ?? 0;
+
+    if (progress > 0) {
+      await _audioPlayer.seek(Duration(seconds: progress));
+      _audioPlayer.play();
+    } else {
+      await _audioPlayer.seek(const Duration(seconds: 0));
+      _audioPlayer.play();
+    }
+
     isPlayingEpisode.sink.add(true);
   }
 
