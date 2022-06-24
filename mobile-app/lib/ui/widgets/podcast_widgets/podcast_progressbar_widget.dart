@@ -45,6 +45,8 @@ class _PodcastProgressBarState extends State<PodcastProgressBar> {
       widget._audioService.audioPlayer
           .seek(Duration(seconds: newDuration.toInt()));
     });
+
+    storeProgressAfterDispose();
   }
 
   String printDuration(Duration duration) {
