@@ -11,10 +11,10 @@ import 'package:freecodecamp/service/download_service.dart';
 import 'package:freecodecamp/service/episode_audio_service.dart';
 import 'package:freecodecamp/service/podcasts_service.dart';
 import 'package:freecodecamp/ui/views/podcast/episode-view/episode_view.dart';
-import 'package:freecodecamp/ui/widgets/podcast_widgets/podcast_progressbar_widget.dart';
 import 'package:intl/intl.dart';
 import 'package:html/dom.dart' as dom;
 import 'package:path_provider/path_provider.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:url_launcher/url_launcher_string.dart';
 import 'package:http/http.dart' as http;
 
@@ -123,6 +123,13 @@ class PodcastTileState extends State<PodcastTile> {
         setIsPlaying = event;
       } else {
         setIsPlaying = false;
+      }
+    });
+
+    widget._audioService.audioPlayer.positionStream.listen((event) async {
+      if (widget._playing) {
+        SharedPreferences prefs = await SharedPreferences.getInstance();
+        prefs.setInt('${widget.episode.id}_progress', event.inSeconds);
       }
     });
 
