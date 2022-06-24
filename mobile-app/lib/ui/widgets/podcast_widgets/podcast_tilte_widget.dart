@@ -217,9 +217,6 @@ class PodcastTileState extends State<PodcastTile> {
 
   ListTile podcastTile(BuildContext context) {
     return ListTile(
-        contentPadding: widget.isFromEpisodeView
-            ? const EdgeInsets.fromLTRB(8, 0, 8, 16)
-            : null,
         title: !widget.isFromEpisodeView
             ? Row(
                 children: [
@@ -249,22 +246,22 @@ class PodcastTileState extends State<PodcastTile> {
                 );
               }
             : null,
-        minVerticalPadding: 16,
+        minVerticalPadding: !widget.isFromEpisodeView ? 16 : 0,
         isThreeLine: true,
         subtitle: subtitle(context));
   }
 
-  Column subtitle(BuildContext context) {
+  Widget subtitle(BuildContext context) {
     return Column(
       children: [
-        !widget.isFromEpisodeView ? descriptionWidget() : Container(),
-        widget.isFromEpisodeView
-            ? Row(
-                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                children: [playbuttonWidget(context), downloadbuttonWidget()],
-              )
-            : Container(),
-        !widget.isFromEpisodeView ? footerWidget(context) : Container(),
+        if (!widget.isFromEpisodeView) descriptionWidget(),
+        if (widget.isFromEpisodeView)
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+            children: [playbuttonWidget(context), downloadbuttonWidget()],
+          )
+        else
+          footerWidget(context)
       ],
     );
   }

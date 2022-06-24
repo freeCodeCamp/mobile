@@ -26,20 +26,21 @@ class EpisodeView extends StatelessWidget {
               appBar: AppBar(),
               body: ListView(children: [
                 Column(
-                  crossAxisAlignment: CrossAxisAlignment.center,
                   children: [
                     Container(
+                      decoration: BoxDecoration(boxShadow: [
+                        BoxShadow(
+                          color: Colors.black.withOpacity(0.3),
+                          blurRadius: 10,
+                          spreadRadius: 5,
+                          offset: const Offset(0, 3),
+                        ),
+                      ]),
                       margin: const EdgeInsets.symmetric(
                           vertical: 8, horizontal: 8),
                       child: CachedNetworkImage(imageUrl: podcast.image!),
                       height: MediaQuery.of(context).size.height * 0.40,
                       width: MediaQuery.of(context).size.height * 0.40,
-                    ),
-                    buildDivider(),
-                    Text(
-                      podcast.title!,
-                      textAlign: TextAlign.center,
-                      style: const TextStyle(fontSize: 16),
                     ),
                     Container(
                       padding: const EdgeInsets.all(8),
@@ -50,16 +51,24 @@ class EpisodeView extends StatelessWidget {
                             fontWeight: FontWeight.bold, fontSize: 20),
                       ),
                     ),
-                    buildDivider(),
-                    PodcastProgressBar(
-                      duration: episode.duration!,
-                      episodeId: episode.id,
+                    Text(
+                      podcast.title!,
+                      textAlign: TextAlign.center,
+                      style: const TextStyle(fontSize: 16),
                     ),
+                    buildDivider(),
                     PodcastTile(
                         podcast: podcast,
                         episode: episode,
                         isFromEpisodeView: true,
                         isFromDownloadView: false),
+                    Padding(
+                      padding: const EdgeInsets.all(8.0),
+                      child: PodcastProgressBar(
+                        duration: episode.duration!,
+                        episodeId: episode.id,
+                      ),
+                    ),
                     buildDivider(),
                     Container(
                       padding: const EdgeInsets.fromLTRB(8, 16, 8, 8),
