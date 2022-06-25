@@ -1,5 +1,6 @@
 import 'dart:developer';
 
+import 'package:freecodecamp/models/code-radio/code_radio_model.dart';
 import 'package:freecodecamp/models/podcasts/episodes_model.dart';
 import 'package:freecodecamp/models/podcasts/podcasts_model.dart';
 import 'package:just_audio/just_audio.dart';
@@ -37,7 +38,6 @@ class AudioPlayerHandler extends BaseAudioHandler {
     _notifyAudioHandlerAboutPlaybackEvents();
   }
 
-  // Future<void> play(Episodes episode, bool isDownloaded) async {
   @override
   Future<void> play() async {
     // if (episode.id != _audioPlayer.audioSource?.sequence[0].tag.id) {
@@ -102,9 +102,41 @@ class AudioPlayerHandler extends BaseAudioHandler {
     }
   }
 
-  bool isPlaying(String episodeId) {
-    return _audioPlayer.playing &&
-        _audioPlayer.audioSource?.sequence[0].tag.id == episodeId;
+  Future<void> codeRadioMusic(CodeRadio radio) async {
+    try {
+      MediaItem currentSong = MediaItem(
+        id: radio.nowPlaying.id,
+        title: radio.nowPlaying.title,
+        album: radio.nowPlaying.album,
+        artUri: Uri.parse(radio.nowPlaying.artUrl),
+      );
+      MediaItem nextSong = MediaItem(
+        id: radio.nextPlaying.id,
+        album: radio.nextPlaying.album,
+        title: radio.nextPlaying.title,
+        artUri: Uri.parse(radio.nextPlaying.artUrl),
+      );
+      await _audioPlayer.setAudioSource(ConcatenatingAudioSource(children: [
+        AudioSource.uri(Uri.parse(radio.listenUrl), tag: currentSong),
+        AudioSource.uri(Uri.parse(radio.listenUrl), tag: nextSong)
+      ]));
+      await _audioPlayer.load();
+      queue.add([currentSong, nextSong]);
+      mediaItem.add(currentSong);
+    } catch (e) {
+      log('Cannot play audio: $e');
+    }
+  }
+
+  bool isPlaying(String src, {String? episodeId}) {
+    if (src == 'podcast') {
+      return _audioPlayer.playing &&
+          _audioPlayer.audioSource?.sequence[0].tag.id == episodeId;
+    } else if (src == 'coderadio') {
+      return _audioPlayer.playing;
+    } else {
+      return false;
+    }
   }
 
   void _notifyAudioHandlerAboutPlaybackEvents() {

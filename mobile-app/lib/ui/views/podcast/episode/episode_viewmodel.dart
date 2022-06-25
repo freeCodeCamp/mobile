@@ -35,7 +35,7 @@ class EpisodeViewModel extends BaseViewModel {
     await FkUserAgent.init();
     // episode = await _databaseService.getEpisode(podcast.id, episode.guid);
     log(episode.toString());
-    playing = _audioPlayerHandler.isPlaying(episode.id);
+    playing = _audioPlayerHandler.isPlaying('podcast', episodeId: episode.id);
     downloaded = await _databaseService.episodeExists(episode);
     notifyListeners();
     appDir = await getApplicationDocumentsDirectory();

@@ -13,18 +13,16 @@ class CodeRadioView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return ViewModelBuilder<CodeRadioViewModel>.reactive(
-        onModelReady: (model) {
-          model.audioService.initAppStateObserver();
-        },
-        onDispose: (model) => {model.audioService.removeAppStateObserver()},
-        viewModelBuilder: () => CodeRadioViewModel(),
-        builder: (context, model, child) => Scaffold(
-            backgroundColor: const Color(0xFF0a0a23),
-            appBar: AppBar(
-              title: const Text('CODE RADIO'),
-            ),
-            drawer: const DrawerWidgetView(),
-            body: template(context, model)));
+      viewModelBuilder: () => CodeRadioViewModel(),
+      builder: (context, model, child) => Scaffold(
+        backgroundColor: const Color(0xFF0a0a23),
+        appBar: AppBar(
+          title: const Text('CODE RADIO'),
+        ),
+        drawer: const DrawerWidgetView(),
+        body: template(context, model),
+      ),
+    );
   }
 
   Widget template(BuildContext ctxt, CodeRadioViewModel model) {
@@ -33,35 +31,36 @@ class CodeRadioView extends StatelessWidget {
       child: Column(
         children: [
           StreamBuilder(
-              stream: model.channel.stream,
-              builder: (context, snapshot) {
-                dev.log('REICEVED NEW DATA FROM WEBSOCKET');
-                if (snapshot.hasData) {
-                  CodeRadio radio =
-                      CodeRadio.fromJson(jsonDecode(snapshot.data.toString()));
+            stream: model.channel.stream,
+            builder: (context, snapshot) {
+              dev.log('REICEVED NEW DATA FROM WEBSOCKET');
+              if (snapshot.hasData) {
+                CodeRadio radio =
+                    CodeRadio.fromJson(jsonDecode(snapshot.data.toString()));
 
-                  if (!model.audioService.player.playing &&
-                      !model.stoppedManually) {
-                    model.toggleRadio(radio);
-                  }
-
-                  model.setAndGetLastId(radio);
-
-                  return Expanded(
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                      children: [
-                        albumArt(ctxt, radio),
-                        playingSong(radio, model),
-                        nextSong(radio),
-                        playPauseButton(model, ctxt)
-                      ],
-                    ),
-                  );
+                if (!model.audioService.isPlaying('coderadio') &&
+                    !model.stoppedManually) {
+                  model.toggleRadio(radio);
                 }
 
-                return const Center(child: CircularProgressIndicator());
-              }),
+                model.setAndGetLastId(radio);
+
+                return Expanded(
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                    children: [
+                      albumArt(ctxt, radio),
+                      playingSong(radio, model),
+                      nextSong(radio),
+                      playPauseButton(model, ctxt)
+                    ],
+                  ),
+                );
+              }
+
+              return const Center(child: CircularProgressIndicator());
+            },
+          ),
         ],
       ),
     );
@@ -96,29 +95,30 @@ class CodeRadioView extends StatelessWidget {
     );
   }
 
-  StreamBuilder<bool> playPauseButton(
-      CodeRadioViewModel model, BuildContext ctxt) {
+  StreamBuilder playPauseButton(CodeRadioViewModel model, BuildContext ctxt) {
     return StreamBuilder(
-        stream: model.audioService.player.playingStream,
-        builder: (context, snapshot) {
-          return Container(
-            width: MediaQuery.of(ctxt).size.width,
-            padding: const EdgeInsets.only(top: 16),
-            child: ElevatedButton.icon(
-                style: ButtonStyle(
-                  backgroundColor: MaterialStateProperty.all<Color>(
-                      const Color.fromRGBO(0x2A, 0x2A, 0x40, 1)),
-                ),
-                onPressed: () {
-                  model.pauseUnpauseRadio();
-                },
-                icon: Icon(!model.audioService.player.playing
-                    ? Icons.play_arrow
-                    : Icons.pause),
-                label: Text(
-                    !model.audioService.player.playing ? 'PLAY' : 'PAUSE')),
-          );
-        });
+      stream: model.audioService.queue.stream,
+      builder: (context, snapshot) {
+        return Container(
+          width: MediaQuery.of(ctxt).size.width,
+          padding: const EdgeInsets.only(top: 16),
+          child: ElevatedButton.icon(
+              style: ButtonStyle(
+                backgroundColor: MaterialStateProperty.all<Color>(
+                    const Color.fromRGBO(0x2A, 0x2A, 0x40, 1)),
+              ),
+              onPressed: () {
+                model.pauseUnpauseRadio();
+              },
+              icon: Icon(!model.audioService.isPlaying('coderadio')
+                  ? Icons.play_arrow
+                  : Icons.pause),
+              label: Text(!model.audioService.isPlaying('coderadio')
+                  ? 'PLAY'
+                  : 'PAUSE')),
+        );
+      },
+    );
   }
 
   Widget nextSong(CodeRadio? radio) {
@@ -174,20 +174,21 @@ class CodeRadioView extends StatelessWidget {
           Padding(
             padding: const EdgeInsets.only(top: 8.0),
             child: StreamBuilder(
-                stream: model.controller.stream,
-                builder: (context, snapshot) {
-                  if (snapshot.hasData) {
-                    return LinearProgressIndicator(
-                        value: radio.duration != 0
-                            ? double.parse(snapshot.data.toString()) /
-                                radio.duration
-                            : 1);
-                  }
+              stream: model.controller.stream,
+              builder: (context, snapshot) {
+                if (snapshot.hasData) {
+                  return LinearProgressIndicator(
+                      value: radio.duration != 0
+                          ? double.parse(snapshot.data.toString()) /
+                              radio.duration
+                          : 1);
+                }
 
-                  return const LinearProgressIndicator(
-                    value: 0,
-                  );
-                }),
+                return const LinearProgressIndicator(
+                  value: 0,
+                );
+              },
+            ),
           )
         ],
       ),
