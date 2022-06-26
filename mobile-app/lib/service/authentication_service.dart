@@ -42,7 +42,8 @@ class AuthenticationService {
     List<String> requiredTokens = ['jwt_access_token', 'csrf_token', 'csrf'];
 
     for (String requiredToken in requiredTokens) {
-      if (await store.containsKey(key: requiredToken) == false) {
+      if (await store.containsKey(key: requiredToken) == false ||
+          await store.read(key: requiredToken) == null) {
         return false;
       }
     }

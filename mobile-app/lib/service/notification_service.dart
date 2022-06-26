@@ -1,4 +1,5 @@
 import 'dart:math';
+import 'dart:developer' as dev;
 
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 
@@ -18,8 +19,21 @@ class NotificationService {
     const AndroidInitializationSettings androidInitializationSettings =
         AndroidInitializationSettings('@mipmap/launcher_icon');
 
-    const InitializationSettings initializationSettings =
-        InitializationSettings(android: androidInitializationSettings);
+    final IOSInitializationSettings iosInitializationSettings =
+        IOSInitializationSettings(onDidReceiveLocalNotification: (
+      int id,
+      String? title,
+      String? body,
+      String? payload,
+    ) async {
+      dev.log('onDidReceiveLocalNotification: $id, $title, $body, $payload');
+    });
+
+    final InitializationSettings initializationSettings =
+        InitializationSettings(
+      android: androidInitializationSettings,
+      iOS: iosInitializationSettings,
+    );
 
     await _flutterLocalNotificationsPlugin.initialize(initializationSettings);
   }
@@ -36,8 +50,15 @@ class NotificationService {
       // autoCancel: true,
     );
 
-    const NotificationDetails platformChannelSpecifics =
-        NotificationDetails(android: androidNotificationDetails);
+    const IOSNotificationDetails iosNotificationDetails =
+        IOSNotificationDetails(
+      threadIdentifier: 'fcc-ios-notif-channel',
+    );
+
+    const NotificationDetails platformChannelSpecifics = NotificationDetails(
+      android: androidNotificationDetails,
+      iOS: iosNotificationDetails,
+    );
 
     await _flutterLocalNotificationsPlugin.show(
       random.nextInt(pow(2, 31).toInt() - 1),
