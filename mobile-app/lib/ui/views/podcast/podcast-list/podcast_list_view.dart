@@ -73,7 +73,7 @@ class PodcastListViewBuilder extends StatelessWidget {
           future: model.fetchPodcasts(isDownloadView),
           builder: (context, snapshot) {
             if (snapshot.connectionState != ConnectionState.done) {
-              return const Center(child: CircularProgressIndicator.adaptive());
+              return const Center(child: CircularProgressIndicator());
             }
             if (snapshot.hasError) {
               return Text('${snapshot.error}');

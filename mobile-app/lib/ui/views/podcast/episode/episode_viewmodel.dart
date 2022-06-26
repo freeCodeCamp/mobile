@@ -32,6 +32,7 @@ class EpisodeViewModel extends BaseViewModel {
 
   Future init(Episodes episode, bool isDownloadView) async {
     await _databaseService.initialise();
+    await _audioService.init();
     await FkUserAgent.init();
     // episode = await _databaseService.getEpisode(podcast.id, episode.guid);
     log(episode.toString());
