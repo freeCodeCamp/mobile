@@ -67,6 +67,7 @@ class PodcastListViewBuilder extends StatelessWidget {
   Widget build(BuildContext context) {
     return ViewModelBuilder<PodcastListViewModel>.reactive(
       viewModelBuilder: () => PodcastListViewModel(),
+      onModelReady: (model) async => await model.init(),
       builder: (context, model, child) => Scaffold(
         backgroundColor: const Color(0xFF2A2A40),
         body: FutureBuilder<List<Podcasts>>(
@@ -164,7 +165,7 @@ class PodcastTemplate extends StatelessWidget {
               child: isDownloadView
                   ? Image.file(
                       File(
-                        '/data/user/0/org.freecodecamp/app_flutter/images/podcast/${podcast.id}.jpg',
+                        '${PodcastListViewModel.appDir.path}/images/podcast/${podcast.id}.jpg',
                       ),
                       // height: 130,
                       alignment: Alignment.center,

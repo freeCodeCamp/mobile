@@ -5,6 +5,7 @@ import 'package:flutter_html/flutter_html.dart';
 import 'package:freecodecamp/models/podcasts/episodes_model.dart';
 import 'package:freecodecamp/models/podcasts/podcasts_model.dart';
 import 'package:freecodecamp/ui/views/podcast/episode/episode_viewmodel.dart';
+import 'package:freecodecamp/ui/views/podcast/podcast-list/podcast_list_viewmodel.dart';
 import 'package:html/dom.dart' as dom;
 import 'package:intl/intl.dart';
 import 'package:stacked/stacked.dart';
@@ -52,7 +53,7 @@ class EpisodeView extends StatelessWidget {
                 isDownloadView
                     ? Image.file(
                         File(
-                          '/data/user/0/org.freecodecamp/app_flutter/images/podcast/${podcast.id}.jpg',
+                          '${PodcastListViewModel.appDir.path}/images/podcast/${podcast.id}.jpg',
                         ),
                         height: 250,
                       )

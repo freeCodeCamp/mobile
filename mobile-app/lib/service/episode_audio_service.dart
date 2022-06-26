@@ -11,7 +11,7 @@ class EpisodeAudioService {
       EpisodeAudioService._internal();
   final AudioPlayer _audioPlayer = AudioPlayer();
   final bool isAndroid = Platform.isAndroid;
-  late final Directory appDir;
+  late Directory appDir;
 
   factory EpisodeAudioService() {
     return _episodeAudioService;
