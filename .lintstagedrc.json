@@ -1,0 +1,5 @@
+{
+  "lint-staged": {
+    "*.dart": "flutter format && flutter analyze"
+  }
+}
