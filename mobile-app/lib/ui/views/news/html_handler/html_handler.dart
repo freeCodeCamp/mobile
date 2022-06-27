@@ -1,5 +1,7 @@
 // ignore_for_file: implementation_imports
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:flutter/foundation.dart';
+import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_highlight/flutter_highlight.dart';
 import 'package:flutter_highlight/theme_map.dart';
@@ -9,7 +11,7 @@ import 'package:freecodecamp/ui/views/news/news-article/news_article_header.dart
 import 'package:freecodecamp/ui/views/news/news-image-viewer/news_image_viewer.dart';
 import 'package:html/dom.dart' as dom;
 import 'package:url_launcher/url_launcher_string.dart';
-import 'package:youtube_player_iframe/youtube_player_iframe.dart';
+import 'package:webview_flutter/webview_flutter.dart';
 
 class HtmlHandler {
   HtmlHandler({Key? key, required this.html, required this.context});
@@ -103,14 +105,14 @@ class HtmlHandler {
         'h5': Style(margin: const EdgeInsets.fromLTRB(2, 32, 2, 0)),
         'h6': Style(margin: const EdgeInsets.fromLTRB(2, 32, 2, 0))
       },
-      customRender: {
-        'table': (context, child) {
+      customRenders: {
+        tableMatcher(): CustomRender.widget(widget: (context, child) {
           return SingleChildScrollView(
             scrollDirection: Axis.horizontal,
             child: (context.tree as TableLayoutElement).toWidget(context),
           );
-        },
-        'code': (code, child) {
+        }),
+        codeMatcher(): CustomRender.widget(widget: (code, child) {
           String? currentClass;
 
           bool codeLanguageIsPresent(List classNames) {
@@ -158,25 +160,50 @@ class HtmlHandler {
 
           return Container(
             color: const Color.fromRGBO(0x2A, 0x2A, 0x40, 1),
-            child: child,
+            child: child as Widget,
           );
-        },
-        'iframe': (code, child) {
-          var isVideo = RegExp('youtube', caseSensitive: false);
-          var videoUrl = code.tree.attributes['src'];
-          if (isVideo.hasMatch(videoUrl ?? '')) {
-            var videoId = videoUrl?.split('/').last.split('?').first;
-
-            YoutubePlayerController _controller = YoutubePlayerController(
-              initialVideoId: videoId!,
-            );
-
-            return YoutubePlayerIFrame(
-              controller: _controller,
-            );
-          }
-        },
-        'img': (code, child) {
+        }),
+        iframeYT(): CustomRender.widget(widget: (context, buildChildren) {
+          double? width =
+              double.tryParse(context.tree.attributes['width'] ?? '');
+          double? height =
+              double.tryParse(context.tree.attributes['height'] ?? '');
+          return SizedBox(
+            width: width ?? (height ?? 150) * 2,
+            height: height ?? (width ?? 300) / 2,
+            child: WebView(
+              initialUrl: context.tree.attributes['src']!,
+              javascriptMode: JavascriptMode.unrestricted,
+              navigationDelegate: (NavigationRequest request) async {
+                //no need to load any url besides the embedded youtube url when displaying embedded youtube, so prevent url loading
+                if (!request.url.contains('youtube.com/embed')) {
+                  return NavigationDecision.prevent;
+                } else {
+                  return NavigationDecision.navigate;
+                }
+              },
+            ),
+          );
+        }),
+        iframeOther(): CustomRender.widget(widget: (context, buildChildren) {
+          double? width =
+              double.tryParse(context.tree.attributes['width'] ?? "");
+          double? height =
+              double.tryParse(context.tree.attributes['height'] ?? "");
+          return SizedBox(
+            width: width ?? (height ?? 150) * 2,
+            height: height ?? (width ?? 300) / 2,
+            child: WebView(
+              initialUrl: context.tree.attributes['src'],
+              javascriptMode: JavascriptMode.unrestricted,
+              //on other iframe content scrolling might be necessary, so use VerticalDragGestureRecognizer
+              gestureRecognizers: {
+                Factory(() => VerticalDragGestureRecognizer())
+              },
+            ),
+          );
+        }),
+        imageMatcher(): CustomRender.widget(widget: (code, child) {
           var imgUrl = code.tree.attributes['src'] ?? '';
           return Padding(
             padding: const EdgeInsets.all(8.0),
@@ -187,8 +214,8 @@ class HtmlHandler {
               ),
             ),
           );
-        },
-        'blockquote': (code, child) {
+        }),
+        bockQuoteMatcher(): CustomRender.widget(widget: (code, child) {
           return Container(
             decoration: const BoxDecoration(
               border: Border(
@@ -196,9 +223,9 @@ class HtmlHandler {
                     color: Color.fromRGBO(0x99, 0xc9, 0xff, 1), width: 2),
               ),
             ),
-            child: child,
+            child: child as Widget,
           );
-        }
+        })
       },
       onLinkTap: (String? url, RenderContext context,
           Map<String, String> attributes, dom.Element? element) {
@@ -206,4 +233,28 @@ class HtmlHandler {
       },
     );
   }
+
+  static CustomRenderMatcher bockQuoteMatcher() =>
+      (context) => context.tree.element?.localName == 'blockquote';
+
+  static CustomRenderMatcher codeMatcher() =>
+      (context) => context.tree.element?.localName == 'code';
+
+  static CustomRenderMatcher tableMatcher() =>
+      (context) => context.tree.element?.localName == 'table';
+
+  static CustomRenderMatcher imageMatcher() =>
+      (context) => context.tree.element?.localName == 'img';
+
+  static CustomRenderMatcher iframeYT() => (context) =>
+      context.tree.element?.attributes['src']?.contains('youtube.com/embed') ??
+      false;
+
+  static CustomRenderMatcher iframeOther() =>
+      (context) => !(context.tree.element?.attributes['src']
+              ?.contains('youtube.com/embed') ??
+          context.tree.element?.attributes['src'] == null);
+
+  static CustomRenderMatcher iframeNull() =>
+      (context) => context.tree.element?.attributes['src'] == null;
 }

@@ -12,7 +12,7 @@ dependencies:
   flutter:
     sdk: flutter
   flutter_dotenv: ^5.0.2
-  flutter_html: ^2.2.1
+  flutter_html: ^3.0.0-alpha.5
   flutter_lints: ^1.0.4
   algolia: ^1.0.1
   podcast_search: ^0.5.0

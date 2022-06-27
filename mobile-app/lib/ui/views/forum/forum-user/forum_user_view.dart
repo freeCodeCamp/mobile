@@ -112,7 +112,7 @@ FutureBuilder userTemplateBuilder(context, model) {
                                       dom.Element? element) {
                                     launchUrlString(url!);
                                   },
-                                  customRender: {
+                                  customRenders: {
                                     'img': (context, child) {
                                       var classes =
                                           context.tree.element?.className;
