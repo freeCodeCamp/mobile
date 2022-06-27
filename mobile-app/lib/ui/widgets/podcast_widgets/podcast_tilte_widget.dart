@@ -127,7 +127,8 @@ class PodcastTileState extends State<PodcastTile> {
     });
 
     widget._audioService.audioPlayer.positionStream.listen((event) async {
-      if (widget._playing) {
+      if (widget._playing &&
+          widget._audioService.episodeId == widget.episode.id) {
         SharedPreferences prefs = await SharedPreferences.getInstance();
         prefs.setInt('${widget.episode.id}_progress', event.inSeconds);
       }
