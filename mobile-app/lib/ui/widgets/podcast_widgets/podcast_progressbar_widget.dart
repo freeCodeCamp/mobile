@@ -42,8 +42,10 @@ class _PodcastProgressBarState extends State<PodcastProgressBar> {
 
       setProgress = Duration(seconds: newDuration.toInt());
 
-      widget._audioService.audioPlayer
-          .seek(Duration(seconds: newDuration.toInt()));
+      if (widget._audioService.episodeId == widget.episodeId) {
+        widget._audioService.audioPlayer
+            .seek(Duration(seconds: newDuration.toInt()));
+      }
     });
 
     storeProgressAfterDispose();
@@ -66,6 +68,11 @@ class _PodcastProgressBarState extends State<PodcastProgressBar> {
 
   set setProgress(Duration value) {
     setState(() {
+      double maxBarWidth = MediaQuery.of(context).size.width * 0.8;
+      double newWidth =
+          (value.inSeconds / widget.duration.inSeconds) * maxBarWidth;
+      widget._barWidth = newWidth;
+
       widget._progress = value;
     });
   }
@@ -79,7 +86,9 @@ class _PodcastProgressBarState extends State<PodcastProgressBar> {
       if (prefs.getInt('${widget.episodeId}_progress') != null) {
         setProgress = Duration(
             seconds: prefs.getInt('${widget.episodeId}_progress') as int);
-        widget._audioService.audioPlayer.seek(widget._progress);
+        if (widget.episodeId == widget._audioService.episodeId) {
+          widget._audioService.audioPlayer.seek(widget._progress);
+        }
       } else {
         widget._barWidth = 0.0;
         setProgress = Duration.zero;
@@ -88,11 +97,9 @@ class _PodcastProgressBarState extends State<PodcastProgressBar> {
 
     widget.progressListener =
         widget._audioService.audioPlayer.positionStream.listen((event) {
-      double maxBarWidth = MediaQuery.of(context).size.width * 0.8;
-      double newWidth =
-          (event.inSeconds / widget.duration.inSeconds) * maxBarWidth;
-      widget._barWidth = newWidth;
-      setProgress = event;
+      if (widget._audioService.episodeId == widget.episodeId) {
+        setProgress = event;
+      }
     });
   }
 
@@ -100,7 +107,9 @@ class _PodcastProgressBarState extends State<PodcastProgressBar> {
   void dispose() {
     super.dispose();
     widget.progressListener?.cancel();
-    storeProgressAfterDispose();
+    if (widget._audioService.episodeId == widget.episodeId) {
+      storeProgressAfterDispose();
+    }
   }
 
   @override
