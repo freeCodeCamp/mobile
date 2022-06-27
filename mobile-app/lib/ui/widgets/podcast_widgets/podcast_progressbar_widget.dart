@@ -107,9 +107,8 @@ class _PodcastProgressBarState extends State<PodcastProgressBar> {
   void dispose() {
     super.dispose();
     widget.progressListener?.cancel();
-    if (widget._audioService.episodeId == widget.episodeId) {
-      storeProgressAfterDispose();
-    }
+
+    storeProgressAfterDispose();
   }
 
   @override
