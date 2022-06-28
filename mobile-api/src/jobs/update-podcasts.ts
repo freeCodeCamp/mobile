@@ -9,7 +9,11 @@ console.log('Job running at', new Date().toISOString());
 const parser = new Parser<
   Record<string, unknown>,
   { itunes?: { duration: string } }
->();
+>({
+  headers: {
+    Accept: 'application/rss+xml, text/xml; q=0.1',
+  },
+});
 
 void (async function () {
   await dbConnect();
