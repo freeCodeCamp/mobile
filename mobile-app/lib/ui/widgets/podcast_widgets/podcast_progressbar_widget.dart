@@ -72,6 +72,8 @@ class _PodcastProgressBarState extends State<PodcastProgressBar> {
       double newWidth =
           (value.inSeconds / widget.duration.inSeconds) * maxBarWidth;
 
+      log('value: ${value.inSeconds}, duration: ${widget.duration.inSeconds}, newWidth: $newWidth, maxWidt: $maxBarWidth');
+
       if (newWidth > widget.audioBallSize / 2 &&
           newWidth + widget.audioBallSize / 2 < maxBarWidth) {
         widget._barWidth = newWidth - widget.audioBallSize / 2;
@@ -80,6 +82,9 @@ class _PodcastProgressBarState extends State<PodcastProgressBar> {
       if (value.isNegative || newWidth.isNegative) {
         widget._progress = const Duration(milliseconds: 1);
         widget._audioService.audioPlayer.seek(const Duration(milliseconds: 1));
+      } else if (newWidth > maxBarWidth) {
+        widget._progress = widget.duration;
+        widget._audioService.audioPlayer.seek(widget.duration);
       } else if (value.inSeconds <= widget.duration.inSeconds) {
         widget._progress = value;
       }
