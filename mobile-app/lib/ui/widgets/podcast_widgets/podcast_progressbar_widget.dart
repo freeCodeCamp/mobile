@@ -72,8 +72,6 @@ class _PodcastProgressBarState extends State<PodcastProgressBar> {
       double newWidth =
           (value.inSeconds / widget.duration.inSeconds) * maxBarWidth;
 
-      log('value: ${value.inSeconds}, duration: ${widget.duration.inSeconds}, newWidth: $newWidth, maxWidt: $maxBarWidth');
-
       if (newWidth > widget.audioBallSize / 2 &&
           newWidth + widget.audioBallSize / 2 < maxBarWidth) {
         widget._barWidth = newWidth - widget.audioBallSize / 2;
@@ -136,7 +134,7 @@ class _PodcastProgressBarState extends State<PodcastProgressBar> {
           GestureDetector(
             onTapDown: (details) {
               setBarWidthAndAudio(
-                details.localPosition.dx,
+                details.globalPosition.dx,
                 getMaxPorgressBarWidth,
               );
             },
