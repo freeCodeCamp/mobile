@@ -153,7 +153,8 @@ class HtmlHandler {
 
           return Container(
             color: const Color.fromRGBO(0x2A, 0x2A, 0x40, 1),
-            child: child as Widget,
+            child: Text(code.tree.element!.text,
+                style: TextStyle(fontSize: code.style.fontSize!.size)),
           );
         }),
         iframeYT(): CustomRender.widget(widget: (context, buildChildren) {
@@ -210,21 +211,26 @@ class HtmlHandler {
         }),
         bockQuoteMatcher(): CustomRender.widget(widget: (code, child) {
           return Container(
-            decoration: const BoxDecoration(
-              border: Border(
-                left: BorderSide(
-                    color: Color.fromRGBO(0x99, 0xc9, 0xff, 1), width: 2),
+              decoration: const BoxDecoration(
+                border: Border(
+                  left: BorderSide(
+                      color: Color.fromRGBO(0x99, 0xc9, 0xff, 1), width: 2),
+                ),
               ),
-            ),
-            child: Row(
-              children: [
-                for (var line in child as Iterable<Widget>)
-                  Expanded(
-                    child: line,
-                  ),
-              ],
-            ),
-          );
+              child: Row(
+                children: [
+                  for (var line in code.tree.element!.text.split('\n'))
+                    Expanded(
+                      child: Padding(
+                        padding: const EdgeInsets.all(8.0),
+                        child: Text(line,
+                            style: TextStyle(
+                                fontSize: code.style.fontSize!.size,
+                                fontFamily: 'lato')),
+                      ),
+                    ),
+                ],
+              ));
         })
       },
       onLinkTap: (String? url, RenderContext context,
