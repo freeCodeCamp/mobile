@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_html/flutter_html.dart';
 import 'package:freecodecamp/models/podcasts/episodes_model.dart';
 import 'package:freecodecamp/models/podcasts/podcasts_model.dart';
+import 'package:freecodecamp/ui/views/news/html_handler/html_handler.dart';
 import 'package:freecodecamp/ui/views/podcast/episode-view/episode_viewmodel.dart';
 import 'package:freecodecamp/ui/widgets/drawer_widget/drawer_widget_view.dart';
 import 'package:freecodecamp/ui/widgets/podcast_widgets/podcast_progressbar_widget.dart';
@@ -72,7 +73,7 @@ class EpisodeView extends StatelessWidget {
                     buildDivider(),
                     Container(
                       padding: const EdgeInsets.fromLTRB(8, 16, 8, 8),
-                      child: description(model),
+                      child: description(model, context),
                     ),
                   ],
                 ),
@@ -80,49 +81,10 @@ class EpisodeView extends StatelessWidget {
             ));
   }
 
-  Widget description(EpisodeViewModel model) {
+  Widget description(EpisodeViewModel model, BuildContext context) {
     return Column(
       children: [
-        const Text(
-          'Episode Description',
-          textAlign: TextAlign.center,
-          style:
-              TextStyle(fontSize: 24, fontWeight: FontWeight.bold, height: 1.2),
-        ),
-        Html(
-          data: episode.description,
-          onLinkTap: (
-            String? url,
-            RenderContext context,
-            Map<String, String> attributes,
-            dom.Element? element,
-          ) {
-            launchUrlString(url!);
-          },
-          style: {
-            '#': Style(
-                textAlign: TextAlign.center,
-                fontSize: const FontSize(18),
-                color: Colors.white.withOpacity(0.87),
-                padding: const EdgeInsets.all(8),
-                margin: EdgeInsets.zero,
-                lineHeight: const LineHeight(1.2),
-                maxLines: model.viewMoreDescription ? null : 8,
-                fontFamily: 'Lato')
-          },
-        ),
-        TextButton(
-            onPressed: () {
-              model.setViewMoreDescription = !model.viewMoreDescription;
-            },
-            style: TextButton.styleFrom(backgroundColor: Colors.transparent),
-            child: Text(
-              model.viewMoreDescription ? 'Show Less' : 'Show all',
-              style: const TextStyle(
-                  decoration: TextDecoration.underline,
-                  fontSize: 16,
-                  color: Color.fromRGBO(0x99, 0xc9, 0xff, 1)),
-            )),
+        HtmlHandler.htmlWidgetBuilder(episode.description, context)
       ],
     );
   }
