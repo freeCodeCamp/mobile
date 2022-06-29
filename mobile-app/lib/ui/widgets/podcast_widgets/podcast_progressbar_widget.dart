@@ -67,22 +67,21 @@ class _PodcastProgressBarState extends State<PodcastProgressBar> {
   set setProgress(Duration value) {
     setState(() {
       double maxBarWidth = MediaQuery.of(context).size.width * 0.8;
+
       double newWidth =
           (value.inSeconds / widget.duration.inSeconds) * maxBarWidth;
 
-      if (newWidth <= 0) widget._barWidth = 0;
+      if (newWidth <= 0) widget._barWidth = 1;
 
       if (newWidth > widget.audioBallSize / 2 &&
           newWidth + widget.audioBallSize / 2 < maxBarWidth) {
         widget._barWidth = newWidth - widget.audioBallSize / 2;
       }
 
-      if (value.inSeconds <= widget.duration.inSeconds) {
+      if (value.isNegative) {
+        widget._audioService.audioPlayer.seek(const Duration(milliseconds: 1));
+      } else if (value.inSeconds <= widget.duration.inSeconds) {
         widget._progress = value;
-      }
-
-      if (value.inSeconds < 0) {
-        widget._progress = Duration.zero;
       }
     });
   }
