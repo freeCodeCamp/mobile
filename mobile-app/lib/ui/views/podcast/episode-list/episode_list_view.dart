@@ -37,6 +37,8 @@ class EpisodeListView extends StatelessWidget {
         ),
         body: RefreshIndicator(
           onRefresh: () => Future.sync(() => model.pagingController.refresh()),
+          backgroundColor: const Color(0xFF0a0a23),
+          color: Colors.white,
           child: Align(
             alignment: Alignment.topCenter,
             child: CustomScrollView(
