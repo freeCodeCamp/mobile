@@ -19,6 +19,8 @@ class PodcastProgressBar extends StatefulWidget {
 
   final EpisodeAudioService _audioService = locator<EpisodeAudioService>();
 
+  final double audioBallSize = 20;
+
   double _barWidth = 0.0;
   double get barWidth => _barWidth;
 
@@ -34,10 +36,6 @@ class PodcastProgressBar extends StatefulWidget {
 class _PodcastProgressBarState extends State<PodcastProgressBar> {
   void setBarWidthAndAudio(double value, double maxBarWidth) {
     setState(() {
-      double newWidth = (value / maxBarWidth) * maxBarWidth;
-
-      widget._barWidth = newWidth;
-
       double newDuration = (value / maxBarWidth) * widget.duration.inSeconds;
 
       setProgress = Duration(seconds: newDuration.toInt());
@@ -71,9 +69,21 @@ class _PodcastProgressBarState extends State<PodcastProgressBar> {
       double maxBarWidth = MediaQuery.of(context).size.width * 0.8;
       double newWidth =
           (value.inSeconds / widget.duration.inSeconds) * maxBarWidth;
-      widget._barWidth = newWidth;
 
-      widget._progress = value;
+      if (newWidth <= 0) widget._barWidth = 0;
+
+      if (newWidth > widget.audioBallSize / 2 &&
+          newWidth + widget.audioBallSize / 2 < maxBarWidth) {
+        widget._barWidth = newWidth - widget.audioBallSize / 2;
+      }
+
+      if (value.inSeconds <= widget.duration.inSeconds) {
+        widget._progress = value;
+      }
+
+      if (value.inSeconds < 0) {
+        widget._progress = Duration.zero;
+      }
     });
   }
 
@@ -139,8 +149,7 @@ class _PodcastProgressBarState extends State<PodcastProgressBar> {
                     ),
                   ),
                 ),
-                Stack(
-                  alignment: Alignment.centerRight,
+                Row(
                   children: [
                     Container(
                       width: widget.barWidth,
@@ -151,25 +160,30 @@ class _PodcastProgressBarState extends State<PodcastProgressBar> {
                     ),
                     GestureDetector(
                       onHorizontalDragUpdate: (details) => {
-                        if (details.globalPosition.dx > 0 ||
-                            details.globalPosition.dx <= getMaxPorgressBarWidth)
+                        if (details.globalPosition.dx -
+                                    MediaQuery.of(context).size.width * 0.1 >
+                                0 ||
+                            details.globalPosition.dx -
+                                    MediaQuery.of(context).size.width * 0.1 <=
+                                getMaxPorgressBarWidth)
                           {
                             setBarWidthAndAudio(
-                              details.globalPosition.dx,
+                              details.globalPosition.dx -
+                                  MediaQuery.of(context).size.width * 0.1,
                               getMaxPorgressBarWidth,
                             ),
                           }
                       },
                       child: Container(
                         alignment: Alignment.centerRight,
-                        height: 20,
-                        width: 20,
+                        height: widget.audioBallSize,
+                        width: widget.audioBallSize,
                         decoration: BoxDecoration(
                           borderRadius: BorderRadius.circular(100),
                           color: Colors.grey[300],
                         ),
                       ),
-                    )
+                    ),
                   ],
                 ),
               ],
