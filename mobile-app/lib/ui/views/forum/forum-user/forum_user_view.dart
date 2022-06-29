@@ -112,29 +112,29 @@ FutureBuilder userTemplateBuilder(context, model) {
                                       dom.Element? element) {
                                     launchUrlString(url!);
                                   },
-                                  customRenders: {
-                                    'img': (context, child) {
-                                      var classes =
-                                          context.tree.element?.className;
-                                      var classesSplit = classes?.split(' ');
+                                  // customRenders: {
+                                  //   'img': (context, child) {
+                                  //     var classes =
+                                  //         context.tree.element?.className;
+                                  //     var classesSplit = classes?.split(' ');
 
-                                      var classIsEmoji = classesSplit!
-                                              .contains('emoji') ||
-                                          classesSplit.contains('emoji-only');
+                                  //     var classIsEmoji = classesSplit!
+                                  //             .contains('emoji') ||
+                                  //         classesSplit.contains('emoji-only');
 
-                                      var emojiImage = context
-                                          .tree.attributes['src']
-                                          .toString();
+                                  //     var emojiImage = context
+                                  //         .tree.attributes['src']
+                                  //         .toString();
 
-                                      if (classIsEmoji) {
-                                        return Image.network(
-                                          emojiImage,
-                                          height: 25,
-                                          width: 25,
-                                        );
-                                      }
-                                    }
-                                  },
+                                  //     if (classIsEmoji) {
+                                  //       return Image.network(
+                                  //         emojiImage,
+                                  //         height: 25,
+                                  //         width: 25,
+                                  //       );
+                                  //     }
+                                  //   }
+                                  // },
                                 )
                               : null))
                 ],

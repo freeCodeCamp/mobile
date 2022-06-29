@@ -33,9 +33,8 @@ class HtmlHandler {
         )
       ]));
     }
-    for (int i = 0; i < result.body!.children.length; i++) {
-      elements
-          .add(htmlWidgetBuilder(result.body!.children[i].outerHtml, context));
+    for (int i = 0; i < result.children.length; i++) {
+      elements.add(htmlWidgetBuilder(result.children[i].outerHtml, context));
     }
     if (article is Article) {
       elements.add(Container(height: 100));
@@ -106,12 +105,6 @@ class HtmlHandler {
         'h6': Style(margin: const EdgeInsets.fromLTRB(2, 32, 2, 0))
       },
       customRenders: {
-        tableMatcher(): CustomRender.widget(widget: (context, child) {
-          return SingleChildScrollView(
-            scrollDirection: Axis.horizontal,
-            child: (context.tree as TableLayoutElement).toWidget(context),
-          );
-        }),
         codeMatcher(): CustomRender.widget(widget: (code, child) {
           String? currentClass;
 
@@ -187,9 +180,9 @@ class HtmlHandler {
         }),
         iframeOther(): CustomRender.widget(widget: (context, buildChildren) {
           double? width =
-              double.tryParse(context.tree.attributes['width'] ?? "");
+              double.tryParse(context.tree.attributes['width'] ?? '');
           double? height =
-              double.tryParse(context.tree.attributes['height'] ?? "");
+              double.tryParse(context.tree.attributes['height'] ?? '');
           return SizedBox(
             width: width ?? (height ?? 150) * 2,
             height: height ?? (width ?? 300) / 2,
@@ -223,7 +216,14 @@ class HtmlHandler {
                     color: Color.fromRGBO(0x99, 0xc9, 0xff, 1), width: 2),
               ),
             ),
-            child: child as Widget,
+            child: Row(
+              children: [
+                for (var line in child as Iterable<Widget>)
+                  Expanded(
+                    child: line,
+                  ),
+              ],
+            ),
           );
         })
       },
