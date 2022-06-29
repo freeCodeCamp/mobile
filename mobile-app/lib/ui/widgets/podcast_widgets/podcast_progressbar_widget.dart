@@ -35,6 +35,7 @@ class PodcastProgressBar extends StatefulWidget {
 
 class _PodcastProgressBarState extends State<PodcastProgressBar> {
   void setBarWidthAndAudio(double value, double maxBarWidth) {
+    value = value - MediaQuery.of(context).size.width * 0.1;
     setState(() {
       double newDuration = (value / maxBarWidth) * widget.duration.inSeconds;
 
@@ -71,14 +72,13 @@ class _PodcastProgressBarState extends State<PodcastProgressBar> {
       double newWidth =
           (value.inSeconds / widget.duration.inSeconds) * maxBarWidth;
 
-      if (newWidth <= 0) widget._barWidth = 1;
-
       if (newWidth > widget.audioBallSize / 2 &&
           newWidth + widget.audioBallSize / 2 < maxBarWidth) {
         widget._barWidth = newWidth - widget.audioBallSize / 2;
       }
 
-      if (value.isNegative) {
+      if (value.isNegative || newWidth.isNegative) {
+        widget._progress = const Duration(milliseconds: 1);
         widget._audioService.audioPlayer.seek(const Duration(milliseconds: 1));
       } else if (value.inSeconds <= widget.duration.inSeconds) {
         widget._progress = value;
@@ -159,19 +159,10 @@ class _PodcastProgressBarState extends State<PodcastProgressBar> {
                     ),
                     GestureDetector(
                       onHorizontalDragUpdate: (details) => {
-                        if (details.globalPosition.dx -
-                                    MediaQuery.of(context).size.width * 0.1 >
-                                0 ||
-                            details.globalPosition.dx -
-                                    MediaQuery.of(context).size.width * 0.1 <=
-                                getMaxPorgressBarWidth)
-                          {
-                            setBarWidthAndAudio(
-                              details.globalPosition.dx -
-                                  MediaQuery.of(context).size.width * 0.1,
-                              getMaxPorgressBarWidth,
-                            ),
-                          }
+                        setBarWidthAndAudio(
+                          details.globalPosition.dx,
+                          getMaxPorgressBarWidth,
+                        ),
                       },
                       child: Container(
                         alignment: Alignment.centerRight,
