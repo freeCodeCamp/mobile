@@ -35,9 +35,11 @@ class PodcastProgressBar extends StatefulWidget {
 
 class _PodcastProgressBarState extends State<PodcastProgressBar> {
   void setBarWidthAndAudio(double value, double maxBarWidth) {
+    log('Value: $value, Max: $maxBarWidth');
     value = value - MediaQuery.of(context).size.width * 0.1;
     setState(() {
       double newDuration = (value / maxBarWidth) * widget.duration.inSeconds;
+      log('New duration: $newDuration');
 
       setProgress = Duration(seconds: newDuration.toInt());
 
@@ -60,7 +62,7 @@ class _PodcastProgressBarState extends State<PodcastProgressBar> {
   void storeProgressAfterDispose() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
 
-    prefs.setInt('${widget.episodeId}_progress', widget.progress.inSeconds);
+    prefs.setInt('${widget.episodeId}_progress', 0);
 
     log('Storing progress: ${widget.progress.inSeconds}');
   }
@@ -77,6 +79,7 @@ class _PodcastProgressBarState extends State<PodcastProgressBar> {
       } else if (newWidth < widget.audioBallSize / 2) {
         widget._barWidth = 0;
       }
+      log('value: $value, newWidth: $newWidth, maxBarWidth: $maxBarWidth');
 
       if (value.isNegative || newWidth.isNegative) {
         widget._progress = const Duration(milliseconds: 1);
@@ -142,7 +145,7 @@ class _PodcastProgressBarState extends State<PodcastProgressBar> {
             child: Stack(
               children: [
                 Padding(
-                  padding: const EdgeInsets.all(4.0),
+                  padding: const EdgeInsets.symmetric(vertical: 5.0),
                   child: Container(
                     width: getMaxPorgressBarWidth,
                     height: 10,
@@ -152,29 +155,45 @@ class _PodcastProgressBarState extends State<PodcastProgressBar> {
                     ),
                   ),
                 ),
-                Row(
+                Stack(
                   children: [
-                    Container(
-                      width: widget.barWidth,
-                      height: 10,
-                      decoration: BoxDecoration(
-                        color: Colors.grey[300],
+                    Padding(
+                      padding: const EdgeInsets.symmetric(vertical: 5.0),
+                      child: Container(
+                        width: widget.barWidth,
+                        height: 10,
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(5),
+                          color: Colors.grey[300],
+                        ),
                       ),
                     ),
-                    GestureDetector(
-                      onHorizontalDragUpdate: (details) => {
-                        setBarWidthAndAudio(
-                          details.globalPosition.dx,
-                          getMaxPorgressBarWidth,
-                        ),
-                      },
-                      child: Container(
-                        alignment: Alignment.centerRight,
-                        height: widget.audioBallSize,
-                        width: widget.audioBallSize,
-                        decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(100),
-                          color: Colors.grey[300],
+                    Align(
+                      alignment: FractionalOffset(
+                        (widget.barWidth) /
+                            (getMaxPorgressBarWidth + widget.audioBallSize),
+                        -0.25,
+                      ),
+                      child: GestureDetector(
+                        onHorizontalDragUpdate: (details) => {
+                          setBarWidthAndAudio(
+                            details.globalPosition.dx,
+                            getMaxPorgressBarWidth,
+                          ),
+                        },
+                        child: Container(
+                          alignment: Alignment.center,
+                          // BoxConstraints has a negative minimum width error when dragging to the left end
+                          constraints: BoxConstraints(
+                            maxWidth: widget.audioBallSize,
+                            maxHeight: widget.audioBallSize,
+                            minHeight: widget.audioBallSize,
+                            minWidth: widget.audioBallSize,
+                          ),
+                          decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(100),
+                            color: Colors.grey[300],
+                          ),
                         ),
                       ),
                     ),
