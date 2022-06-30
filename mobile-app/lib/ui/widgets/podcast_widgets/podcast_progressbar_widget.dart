@@ -62,7 +62,7 @@ class _PodcastProgressBarState extends State<PodcastProgressBar> {
   void storeProgressAfterDispose() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
 
-    prefs.setInt('${widget.episodeId}_progress', 0);
+    prefs.setInt('${widget.episodeId}_progress', widget.progress.inSeconds);
 
     log('Storing progress: ${widget.progress.inSeconds}');
   }
