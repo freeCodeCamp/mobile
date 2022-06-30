@@ -11,6 +11,8 @@ import 'package:stacked/stacked.dart';
 import 'package:stacked_services/stacked_services.dart';
 
 import '../models/news/bookmarked_article_model.dart';
+import '../models/podcasts/episodes_model.dart';
+import '../models/podcasts/podcasts_model.dart';
 import '../ui/views/code_radio/code_radio_view.dart';
 import '../ui/views/forum/forum-categories/forum_category_view.dart';
 import '../ui/views/forum/forum-login/forum_login_view.dart';
@@ -26,6 +28,7 @@ import '../ui/views/news/news-author/news_author_view.dart';
 import '../ui/views/news/news-bookmark/news_bookmark_view.dart';
 import '../ui/views/news/news-feed/news_feed_view.dart';
 import '../ui/views/news/news-image-viewer/news_image_viewer.dart';
+import '../ui/views/podcast/episode-view/episode_view.dart';
 import '../ui/views/podcast/podcast-list/podcast_list_view.dart';
 import '../ui/views/profile/profile_view.dart';
 import '../ui/views/settings/forumSettings/forum_settings_view.dart';
@@ -35,6 +38,7 @@ class Routes {
   static const String homeView = '/';
   static const String podcastListView = '/podcast-list-view';
   static const String podcastSettingsView = '/podcast-settings-view';
+  static const String episodeView = '/episode-view';
   static const String newsArticleView = '/news-article-view';
   static const String newsBookmarkPostView = '/news-bookmark-post-view';
   static const String newsFeedView = '/news-feed-view';
@@ -55,6 +59,7 @@ class Routes {
     homeView,
     podcastListView,
     podcastSettingsView,
+    episodeView,
     newsArticleView,
     newsBookmarkPostView,
     newsFeedView,
@@ -81,6 +86,7 @@ class StackedRouter extends RouterBase {
     RouteDef(Routes.homeView, page: HomeView),
     RouteDef(Routes.podcastListView, page: PodcastListView),
     RouteDef(Routes.podcastSettingsView, page: PodcastSettingsView),
+    RouteDef(Routes.episodeView, page: EpisodeView),
     RouteDef(Routes.newsArticleView, page: NewsArticleView),
     RouteDef(Routes.newsBookmarkPostView, page: NewsBookmarkPostView),
     RouteDef(Routes.newsFeedView, page: NewsFeedView),
@@ -116,6 +122,17 @@ class StackedRouter extends RouterBase {
     PodcastSettingsView: (data) {
       return MaterialPageRoute<dynamic>(
         builder: (context) => const PodcastSettingsView(),
+        settings: data,
+      );
+    },
+    EpisodeView: (data) {
+      var args = data.getArgs<EpisodeViewArguments>(nullOk: false);
+      return MaterialPageRoute<dynamic>(
+        builder: (context) => EpisodeView(
+          key: args.key,
+          episode: args.episode,
+          podcast: args.podcast,
+        ),
         settings: data,
       );
     },
@@ -280,6 +297,15 @@ class StackedRouter extends RouterBase {
 /// Arguments holder classes
 /// *************************************************************************
 
+/// EpisodeView arguments holder class
+class EpisodeViewArguments {
+  final Key? key;
+  final Episodes episode;
+  final Podcasts podcast;
+  EpisodeViewArguments(
+      {this.key, required this.episode, required this.podcast});
+}
+
 /// NewsArticleView arguments holder class
 class NewsArticleViewArguments {
   final Key? key;
@@ -423,6 +449,27 @@ extension NavigatorStateExtension on NavigationService {
   }) async {
     return navigateTo(
       Routes.podcastSettingsView,
+      id: routerId,
+      preventDuplicates: preventDuplicates,
+      parameters: parameters,
+      transition: transition,
+    );
+  }
+
+  Future<dynamic> navigateToEpisodeView({
+    Key? key,
+    required Episodes episode,
+    required Podcasts podcast,
+    int? routerId,
+    bool preventDuplicates = true,
+    Map<String, String>? parameters,
+    Widget Function(BuildContext, Animation<double>, Animation<double>, Widget)?
+        transition,
+  }) async {
+    return navigateTo(
+      Routes.episodeView,
+      arguments:
+          EpisodeViewArguments(key: key, episode: episode, podcast: podcast),
       id: routerId,
       preventDuplicates: preventDuplicates,
       parameters: parameters,

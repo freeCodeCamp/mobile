@@ -41,18 +41,6 @@ class PodcastsDatabaseService {
         .toList();
   }
 
-  // Future<Podcasts?> getPodcast(String podcastId) async {
-  //   List<Map<String, dynamic>> podcastResult = await _db.query(
-  //     podcastsTableName,
-  //     where: 'id = ?',
-  //     whereArgs: [podcastId],
-  //   );
-  //   if (podcastResult.isNotEmpty) {
-  //     return Podcasts.fromDBJson(podcastResult.first);
-  //   }
-  //   return null;
-  // }
-
   Future addPodcast(Podcasts podcast) async {
     try {
       await _db.insert(

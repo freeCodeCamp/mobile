@@ -5,7 +5,6 @@ import 'package:freecodecamp/models/podcasts/episodes_model.dart';
 import 'package:freecodecamp/models/podcasts/podcasts_model.dart';
 import 'package:freecodecamp/service/podcasts_service.dart';
 import 'package:freecodecamp/service/test_service.dart';
-// import 'package:html/parser.dart';
 import 'package:http/http.dart' as http;
 import 'package:infinite_scroll_pagination/infinite_scroll_pagination.dart';
 import 'package:stacked/stacked.dart';
@@ -19,6 +18,14 @@ class EpisodeListViewModel extends BaseViewModel {
 
   late Future<List<Episodes>> _episodes;
   Future<List<Episodes>> get episodes => _episodes;
+
+  bool _showMoreDescription = false;
+  bool get showDescription => _showMoreDescription;
+
+  set setShowMoreDescription(bool state) {
+    _showMoreDescription = state;
+    notifyListeners();
+  }
 
   final PagingController<int, Episodes> _pagingController = PagingController(
     firstPageKey: 0,
@@ -38,8 +45,6 @@ class EpisodeListViewModel extends BaseViewModel {
       });
     }
     notifyListeners();
-    // Parse html description
-    // log("PARSED ${parse(podcast.description!).documentElement?.text}");
   }
 
   void fetchEpisodes(String podcastId, [int pageKey = 0]) async {
