@@ -74,7 +74,7 @@ class _PodcastProgressBarState extends State<PodcastProgressBar> {
       double newWidth =
           (value.inSeconds / widget.duration.inSeconds) * maxBarWidth;
       if (newWidth > widget.audioBallSize / 2 &&
-          newWidth + widget.audioBallSize / 2 < maxBarWidth) {
+          newWidth - widget.audioBallSize / 2 < maxBarWidth) {
         widget._barWidth = newWidth - widget.audioBallSize / 2;
       } else if (newWidth < widget.audioBallSize / 2) {
         widget._barWidth = 0;
@@ -171,7 +171,7 @@ class _PodcastProgressBarState extends State<PodcastProgressBar> {
                     Align(
                       alignment: FractionalOffset(
                         (widget.barWidth) /
-                            (getMaxPorgressBarWidth + widget.audioBallSize),
+                            (getMaxPorgressBarWidth - widget.audioBallSize / 2),
                         -0.25,
                       ),
                       child: GestureDetector(
