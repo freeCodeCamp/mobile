@@ -61,14 +61,12 @@ class LearnViewModel extends BaseViewModel {
 
     if (res.statusCode == 200) {
       List superBlocks = jsonDecode(res.body)['superblocks'];
-      int index = 0;
 
-      for (String superBlockKey in superBlocks[0].keys) {
+      for (int i = 0; i < superBlocks.length; i++) {
         buttonData.add(SuperBlockButton(
-            path: superBlockKey,
-            name: superBlocks[1][index],
-            public: superBlocks[0][superBlockKey]['public']));
-        index++;
+            path: superBlocks[i]['dashedName'],
+            name: superBlocks[i]['title'],
+            public: superBlocks[i]['public']));
       }
 
       return buttonData;
