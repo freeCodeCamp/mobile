@@ -21,7 +21,7 @@
   "dependencies": {
     "@babel/preset-env": "7.18.6",
     "@babel/preset-typescript": "7.18.6",
-    "@types/jest": "28.1.3",
+    "@types/jest": "28.1.4",
     "node-fetch": "3.2.6",
     "ts-jest": "28.0.5",
     "bree": "9.1.0",
