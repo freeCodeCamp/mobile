@@ -1,5 +1,4 @@
 import 'dart:async';
-import 'dart:developer';
 
 import 'package:flutter/material.dart';
 import 'package:freecodecamp/app/app.locator.dart';
@@ -19,7 +18,7 @@ class PodcastProgressBar extends StatefulWidget {
 
   final EpisodeAudioService _audioService = locator<EpisodeAudioService>();
 
-  final double audioBallSize = 20;
+  final double ball = 15;
 
   double _barWidth = 0.0;
   double get barWidth => _barWidth;
@@ -61,8 +60,6 @@ class _PodcastProgressBarState extends State<PodcastProgressBar> {
     SharedPreferences prefs = await SharedPreferences.getInstance();
 
     prefs.setInt('${widget.episodeId}_progress', widget.progress.inSeconds);
-
-    log('Storing progress: ${widget.progress.inSeconds}');
   }
 
   set setProgress(Duration value) {
@@ -71,11 +68,12 @@ class _PodcastProgressBarState extends State<PodcastProgressBar> {
 
       double newWidth =
           (value.inSeconds / widget.duration.inSeconds) * maxBarWidth;
-      if (newWidth > widget.audioBallSize / 2 &&
-          newWidth + widget.audioBallSize / 2 < maxBarWidth) {
-        widget._barWidth = newWidth - widget.audioBallSize / 2;
-      } else if (newWidth < widget.audioBallSize / 2) {
-        widget._barWidth = 0;
+
+      bool shouldSetNewWidth = newWidth + widget.ball < maxBarWidth;
+      if (newWidth < widget.ball / 4) {
+        widget._barWidth = widget.ball / 4;
+      } else if (shouldSetNewWidth) {
+        widget._barWidth = newWidth;
       }
 
       if (value.isNegative || newWidth.isNegative) {
@@ -142,10 +140,10 @@ class _PodcastProgressBarState extends State<PodcastProgressBar> {
             child: Stack(
               children: [
                 Padding(
-                  padding: const EdgeInsets.all(4.0),
+                  padding: const EdgeInsets.all(5.0),
                   child: Container(
                     width: getMaxPorgressBarWidth,
-                    height: 10,
+                    height: 5,
                     decoration: BoxDecoration(
                       borderRadius: BorderRadius.circular(5),
                       color: const Color(0xFF0a0a23),
@@ -156,7 +154,7 @@ class _PodcastProgressBarState extends State<PodcastProgressBar> {
                   children: [
                     Container(
                       width: widget.barWidth,
-                      height: 10,
+                      height: 5,
                       decoration: BoxDecoration(
                         color: Colors.grey[300],
                       ),
@@ -170,8 +168,8 @@ class _PodcastProgressBarState extends State<PodcastProgressBar> {
                       },
                       child: Container(
                         alignment: Alignment.centerRight,
-                        height: widget.audioBallSize,
-                        width: widget.audioBallSize,
+                        height: widget.ball,
+                        width: widget.ball,
                         decoration: BoxDecoration(
                           borderRadius: BorderRadius.circular(100),
                           color: Colors.grey[300],
