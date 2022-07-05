@@ -39,4 +39,4 @@ Source - https://github.com/flutter/flutter/issues/76215#issuecomment-864407892
 ![https://image.prntscr.com/image/pKI4uly-SfKEL158uHhyxw.png](https://image.prntscr.com/image/pKI4uly-SfKEL158uHhyxw.png)
 
 
-#### If you have any other issues getting started please contact us on the [freeCodeCamp chat server](https://chat.freecodecamp.org/).
+#### If you have any other issues getting started please contact us on the [freeCodeCamp Discord Server](https://discord.gg/Z7Fm39aNtZ).
