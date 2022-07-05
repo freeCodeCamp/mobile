@@ -1205,7 +1205,7 @@ packages:
       name: stacked_core
       url: "https://pub.dartlang.org"
     source: hosted
-    version: "1.2.0"
+    version: "1.2.3"
   stacked_generator:
     dependency: "direct dev"
     description:
@@ -1219,7 +1219,7 @@ packages:
       name: stacked_services
       url: "https://pub.dartlang.org"
     source: hosted
-    version: "0.8.26"
+    version: "0.9.1"
   stream_channel:
     dependency: transitive
     description:
