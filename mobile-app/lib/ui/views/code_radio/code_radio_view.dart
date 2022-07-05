@@ -1,11 +1,9 @@
 import 'dart:convert';
-
 import 'package:flutter/material.dart';
 import 'package:freecodecamp/models/code-radio/code_radio_model.dart';
 import 'package:freecodecamp/ui/views/code_radio/code_radio_viemodel.dart';
 import 'package:freecodecamp/ui/widgets/drawer_widget/drawer_widget_view.dart';
 import 'package:stacked/stacked.dart';
-import 'dart:developer' as dev;
 
 class CodeRadioView extends StatelessWidget {
   const CodeRadioView({Key? key}) : super(key: key);
@@ -35,7 +33,6 @@ class CodeRadioView extends StatelessWidget {
           StreamBuilder(
               stream: model.channel.stream,
               builder: (context, snapshot) {
-                dev.log('REICEVED NEW DATA FROM WEBSOCKET');
                 if (snapshot.hasData) {
                   CodeRadio radio =
                       CodeRadio.fromJson(jsonDecode(snapshot.data.toString()));
@@ -49,12 +46,28 @@ class CodeRadioView extends StatelessWidget {
 
                   return Expanded(
                     child: Column(
-                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                       children: [
                         albumArt(ctxt, radio),
-                        playingSong(radio, model),
-                        nextSong(radio),
-                        playPauseButton(model, ctxt)
+                        Padding(
+                          padding: const EdgeInsets.only(top: 16),
+                          child: playingSong(radio, model),
+                        ),
+                        Padding(
+                          padding: const EdgeInsets.only(top: 16),
+                          child: nextSong(radio),
+                        ),
+                        Expanded(
+                          child: Column(
+                            mainAxisAlignment: MainAxisAlignment.end,
+                            children: [
+                              Row(
+                                children: [
+                                  Expanded(child: playPauseButton(model, ctxt)),
+                                ],
+                              ),
+                            ],
+                          ),
+                        )
                       ],
                     ),
                   );
@@ -101,23 +114,19 @@ class CodeRadioView extends StatelessWidget {
     return StreamBuilder(
         stream: model.audioService.player.playingStream,
         builder: (context, snapshot) {
-          return Container(
-            width: MediaQuery.of(ctxt).size.width,
-            padding: const EdgeInsets.only(top: 16),
-            child: ElevatedButton.icon(
-                style: ButtonStyle(
-                  backgroundColor: MaterialStateProperty.all<Color>(
-                      const Color.fromRGBO(0x2A, 0x2A, 0x40, 1)),
-                ),
-                onPressed: () {
-                  model.pauseUnpauseRadio();
-                },
-                icon: Icon(!model.audioService.player.playing
-                    ? Icons.play_arrow
-                    : Icons.pause),
-                label: Text(
-                    !model.audioService.player.playing ? 'PLAY' : 'PAUSE')),
-          );
+          return ElevatedButton.icon(
+              style: ButtonStyle(
+                backgroundColor: MaterialStateProperty.all<Color>(
+                    const Color.fromRGBO(0x2A, 0x2A, 0x40, 1)),
+              ),
+              onPressed: () {
+                model.pauseUnpauseRadio();
+              },
+              icon: Icon(!model.audioService.player.playing
+                  ? Icons.play_arrow
+                  : Icons.pause),
+              label:
+                  Text(!model.audioService.player.playing ? 'PLAY' : 'PAUSE'));
         });
   }
 
