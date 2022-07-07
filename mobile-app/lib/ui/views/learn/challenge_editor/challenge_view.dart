@@ -19,88 +19,86 @@ class ChallengeView extends StatelessWidget {
     return ViewModelBuilder<ChallengeModel>.reactive(
         viewModelBuilder: () => ChallengeModel(),
         onDispose: (model) => model.disposeCahce(url),
-        onModelReady: (model) => model.init(url),
-        builder: (context, model, child) => Scaffold(
-            appBar: AppBar(
-              automaticallyImplyLeading: false,
-              actions: [
-                Expanded(
-                    child: DropdownButton(
-                  isExpanded: true,
-                  dropdownColor: const Color(0xFF0a0a23),
-                  underline: Container(),
-                  value: 'One',
-                  items: <String>['One', 'Two', 'Free', 'Four']
-                      .map<DropdownMenuItem<String>>((String value) {
-                    return DropdownMenuItem<String>(
-                      value: value,
-                      child: Padding(
-                        padding: const EdgeInsets.all(8.0),
-                        child: Text(
-                          value,
-                        ),
-                      ),
-                    );
-                  }).toList(),
-                  onChanged: (e) {},
-                )),
-                Expanded(
-                  child: TextButton(
-                    child: const Text('Preview'),
-                    onPressed: () {},
-                  ),
-                )
-              ],
-            ),
-            bottomNavigationBar: Padding(
-              padding: EdgeInsets.only(
-                  bottom: MediaQuery.of(context).viewInsets.bottom),
-              child: BottomToolBar(
-                model: model,
-              ),
-            ),
-            body: FutureBuilder(
+        builder: (context, model, child) => FutureBuilder<Challenge?>(
               future: model.initChallenge(url),
               builder: (context, snapshot) {
                 if (snapshot.hasData) {
-                  Challenge? challenge = snapshot.data as Challenge?;
-                  EditorViewController controller = EditorViewController(
-                    language: Syntax.HTML,
-                    options: const EditorOptions(
-                      useFileExplorer: false,
-                      canCloseFiles: false,
-                      showAppBar: false,
-                      showTabBar: false,
-                    ),
-                    file: FileIDE(
-                        fileExplorer: null,
-                        fileName: challenge!.files[0].name,
-                        filePath: '',
-                        fileContent: challenge.files[0].contents,
-                        parentDirectory: ''),
-                  );
+                  Challenge challenge = snapshot.data!;
 
-                  controller.editorTextStream.stream.listen((event) {
-                    model.updateText(event);
-                  });
-
-                  return controller;
+                  return Scaffold(
+                      appBar: AppBar(
+                        automaticallyImplyLeading: false,
+                        actions: [
+                          Expanded(
+                              child: DropdownButton(
+                            isExpanded: true,
+                            dropdownColor: const Color(0xFF0a0a23),
+                            underline: Container(),
+                            value: challenge.files[0].name +
+                                '.' +
+                                challenge.files[0].ext.name,
+                            items: challenge.files
+                                .map((file) => file.name + '.' + file.ext.name)
+                                .map<DropdownMenuItem<String>>((String value) {
+                              return DropdownMenuItem<String>(
+                                value: value,
+                                child: Padding(
+                                  padding: const EdgeInsets.all(8.0),
+                                  child: Text(
+                                    value,
+                                  ),
+                                ),
+                              );
+                            }).toList(),
+                            onChanged: (e) {},
+                          )),
+                          Expanded(
+                            child: TextButton(
+                              child: const Text('Preview'),
+                              onPressed: () {},
+                            ),
+                          )
+                        ],
+                      ),
+                      bottomNavigationBar: Padding(
+                        padding: EdgeInsets.only(
+                            bottom: MediaQuery.of(context).viewInsets.bottom),
+                        child: BottomToolBar(
+                          model: model,
+                          challenge: challenge,
+                        ),
+                      ),
+                      body: EditorViewController(
+                        language: Syntax.HTML,
+                        options: const EditorOptions(
+                          useFileExplorer: false,
+                          canCloseFiles: false,
+                          showAppBar: false,
+                          showTabBar: false,
+                        ),
+                        file: FileIDE(
+                            fileExplorer: null,
+                            fileName: challenge.files[0].name,
+                            filePath: '',
+                            fileContent: challenge.files[0].contents,
+                            parentDirectory: ''),
+                      ));
                 }
 
-                if (snapshot.hasError) {
-                  return Center(child: Text(snapshot.error.toString()));
-                }
-
-                return const Center(child: CircularProgressIndicator());
+                return const Center(
+                  child: CircularProgressIndicator(),
+                );
               },
-            )));
+            ));
   }
 }
 
 class BottomToolBar extends StatelessWidget {
-  const BottomToolBar({Key? key, required this.model}) : super(key: key);
+  const BottomToolBar({Key? key, required this.model, required this.challenge})
+      : super(key: key);
 
   final ChallengeModel model;
+  final Challenge challenge;
 
   @override
   Widget build(BuildContext context) {
@@ -108,40 +106,30 @@ class BottomToolBar extends StatelessWidget {
       color: const Color(0xFF0a0a23),
       child: Row(
         children: [
-          FutureBuilder(
-            future: model.challenge,
-            builder: (context, snapshot) {
-              if (snapshot.hasData) {
-                Challenge? challenge = snapshot.data as Challenge;
-                return Container(
-                  margin: const EdgeInsets.all(8),
-                  color: const Color.fromRGBO(0x2A, 0x2A, 0x40, 1),
-                  child: IconButton(
-                    icon: const FaIcon(FontAwesomeIcons.info),
-                    onPressed: () => {
-                      showModalBottomSheet(
-                          context: context,
-                          builder: (BuildContext context) {
-                            return Container(
-                              color: const Color(0xFF0a0a23),
-                              height: MediaQuery.of(context).size.height * 0.33,
-                              child: DescriptionView(
-                                description: challenge.description,
-                                instructions: challenge.instructions,
-                                tests: const [],
-                                editorText: model.editorText,
-                              ),
-                            );
-                          })
-                    },
-                    splashColor: Colors.transparent,
-                    highlightColor: Colors.transparent,
-                  ),
-                );
-              }
-
-              return const CircularProgressIndicator();
-            },
+          Container(
+            margin: const EdgeInsets.all(8),
+            color: const Color.fromRGBO(0x2A, 0x2A, 0x40, 1),
+            child: IconButton(
+              icon: const FaIcon(FontAwesomeIcons.info),
+              onPressed: () => {
+                showModalBottomSheet(
+                    context: context,
+                    builder: (BuildContext context) {
+                      return Container(
+                        color: const Color(0xFF0a0a23),
+                        height: MediaQuery.of(context).size.height * 0.33,
+                        child: DescriptionView(
+                          description: challenge.description,
+                          instructions: challenge.instructions,
+                          tests: const [],
+                          editorText: model.editorText,
+                        ),
+                      );
+                    })
+              },
+              splashColor: Colors.transparent,
+              highlightColor: Colors.transparent,
+            ),
           ),
           Expanded(
             child: Row(

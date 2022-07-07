@@ -12,15 +12,6 @@ class ChallengeModel extends BaseViewModel {
   String? _editorText;
   String? get editorText => _editorText;
 
-  Future<Challenge?>? _challenge;
-  Future<Challenge?>? get challenge => _challenge;
-
-  void init(String url) async {
-    _challenge = initChallenge(url);
-
-    notifyListeners();
-  }
-
   Future<Challenge?> initChallenge(String url) async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
 
