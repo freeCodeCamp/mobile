@@ -3,6 +3,8 @@ import 'dart:convert';
 import 'package:flutter_code_editor/controller/editor_view_controller.dart';
 import 'package:flutter_code_editor/models/file_model.dart';
 import 'package:freecodecamp/models/learn/challenge_model.dart';
+import 'package:html/dom.dart';
+import 'package:html/parser.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:webview_flutter/webview_flutter.dart';
 import 'package:stacked/stacked.dart';
@@ -45,6 +47,11 @@ class ChallengeModel extends BaseViewModel {
     notifyListeners();
   }
 
+  set setEditorText(String? value) {
+    _editorText = value;
+    notifyListeners();
+  }
+
   Future<Challenge?> initChallenge(String url) async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
 
@@ -79,6 +86,22 @@ class ChallengeModel extends BaseViewModel {
     EditorViewController controller = EditorViewController();
 
     controller.removeAllRecentlyOpenedFilesCache('');
+  }
+
+  String parsePreviewDocument(String docString) {
+    Document document = parse(docString);
+
+    String viewPort =
+        '<meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" name="viewport"></meta>';
+
+    Document viewPortParsed = parse(viewPort);
+    Node meta = viewPortParsed.getElementsByTagName('META')[0];
+
+    document.getElementsByTagName('HEAD')[0].append(meta);
+
+    dev.log(document.outerHtml);
+
+    return document.outerHtml;
   }
 
   List<FileIDE> returnFiles(Challenge challenge) {

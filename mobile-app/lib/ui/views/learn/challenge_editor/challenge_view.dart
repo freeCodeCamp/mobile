@@ -28,6 +28,21 @@ class ChallengeView extends StatelessWidget {
                 if (snapshot.hasData) {
                   Challenge challenge = snapshot.data!;
 
+                  EditorViewController controller = EditorViewController(
+                    language: Syntax.HTML,
+                    options: const EditorOptions(
+                        useFileExplorer: false,
+                        canCloseFiles: false,
+                        showAppBar: false,
+                        showTabBar: false),
+                    file: FileIDE(
+                        fileExplorer: null,
+                        fileName: challenge.files[0].name,
+                        filePath: '',
+                        fileContent: challenge.files[0].contents,
+                        parentDirectory: ''),
+                  );
+
                   return Scaffold(
                       appBar: MediaQuery.of(context).viewInsets.bottom > 0 ||
                               !model.showDescription
@@ -94,16 +109,23 @@ class ChallengeView extends StatelessWidget {
                                       editorText: model.editorText,
                                     ),
                                   ),
-                                Editor(challenge: challenge),
+                                Editor(
+                                  challenge: challenge,
+                                  model: model,
+                                  controller: controller,
+                                ),
                               ],
                             )
                           : WebView(
                               userAgent: 'random',
                               javascriptMode: JavascriptMode.unrestricted,
-                              onWebViewCreated: (WebViewController controller) {
-                                model.setWebviewController = controller;
-                                controller.loadUrl(Uri.dataFromString(
-                                        'this is fine for now',
+                              onWebViewCreated:
+                                  (WebViewController webcontroller) {
+                                model.setWebviewController = webcontroller;
+                                webcontroller.loadUrl(Uri.dataFromString(
+                                        model.parsePreviewDocument(
+                                            model.editorText ??
+                                                challenge.files[0].contents),
                                         mimeType: 'text/html',
                                         encoding: utf8)
                                     .toString());
@@ -123,27 +145,21 @@ class Editor extends StatelessWidget {
   const Editor({
     Key? key,
     required this.challenge,
+    required this.model,
+    required this.controller,
   }) : super(key: key);
 
   final Challenge challenge;
+  final ChallengeModel model;
+  final EditorViewController controller;
 
   @override
   Widget build(BuildContext context) {
-    return Expanded(
-      child: EditorViewController(
-        language: Syntax.HTML,
-        options: const EditorOptions(
-          showAppBar: false,
-          showTabBar: false,
-        ),
-        file: FileIDE(
-            fileExplorer: null,
-            fileName: challenge.files[0].name,
-            filePath: '',
-            fileContent: challenge.files[0].contents,
-            parentDirectory: ''),
-      ),
-    );
+    controller.editorTextStream.stream.listen((event) {
+      model.setEditorText = event;
+    });
+
+    return Expanded(child: controller);
   }
 }
 
