@@ -27,7 +27,8 @@ class TestViewModel extends StatelessWidget {
                           style: TextButton.styleFrom(padding: EdgeInsets.zero),
                           onPressed: () {
                             model.setPressedTestButton = true;
-                            model.controller.runJavascript('''
+                            model.controller.runJavascript(
+                                '''
                                 (function(){Flutter.postMessage(window.document.body.outerHTML)})();
                               ''');
                           },

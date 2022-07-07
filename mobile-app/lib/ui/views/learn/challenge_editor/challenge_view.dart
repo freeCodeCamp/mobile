@@ -29,7 +29,8 @@ class ChallengeView extends StatelessWidget {
                   Challenge challenge = snapshot.data!;
 
                   return Scaffold(
-                      appBar: !model.hideAppBar
+                      appBar: !model.hideAppBar ||
+                              MediaQuery.of(context).viewInsets.bottom > 0
                           ? AppBar(
                               automaticallyImplyLeading: false,
                               actions: [
@@ -80,7 +81,9 @@ class ChallengeView extends StatelessWidget {
                       body: !model.showPreview
                           ? Column(
                               children: [
-                                if (model.hideDescription)
+                                if (model.hideDescription &&
+                                    MediaQuery.of(context).viewInsets.bottom ==
+                                        0)
                                   Container(
                                     height: MediaQuery.of(context).size.width,
                                     color: const Color(0xFF0a0a23),
@@ -163,8 +166,12 @@ class BottomToolBar extends StatelessWidget {
             child: IconButton(
               icon: const FaIcon(FontAwesomeIcons.info),
               onPressed: () {
-                model.setHideAppBar = !model.hideAppBar;
-                model.setHideDescription = !model.hideDescription;
+                if (MediaQuery.of(context).viewInsets.bottom > 0) {
+                  FocusManager.instance.primaryFocus?.unfocus();
+                } else {
+                  model.setHideAppBar = !model.hideAppBar;
+                  model.setHideDescription = !model.hideDescription;
+                }
               },
               splashColor: Colors.transparent,
               highlightColor: Colors.transparent,
