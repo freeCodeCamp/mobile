@@ -4,6 +4,7 @@ import 'package:flutter_code_editor/controller/editor_view_controller.dart';
 import 'package:flutter_code_editor/models/file_model.dart';
 import 'package:freecodecamp/models/learn/challenge_model.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:webview_flutter/webview_flutter.dart';
 import 'package:stacked/stacked.dart';
 import 'package:http/http.dart' as http;
 import 'dart:developer' as dev;
@@ -11,6 +12,25 @@ import 'dart:developer' as dev;
 class ChallengeModel extends BaseViewModel {
   String? _editorText;
   String? get editorText => _editorText;
+
+  bool _showPreview = false;
+  bool get showPreview => _showPreview;
+
+  final bool _hideAppBar = false;
+  bool get hideAppBar => _hideAppBar;
+
+  WebViewController? _webviewController;
+  WebViewController? get webviewController => _webviewController;
+
+  set setWebviewController(WebViewController value) {
+    _webviewController = value;
+    notifyListeners();
+  }
+
+  set showPreview(bool value) {
+    _showPreview = value;
+    notifyListeners();
+  }
 
   Future<Challenge?> initChallenge(String url) async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
