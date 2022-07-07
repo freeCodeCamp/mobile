@@ -52,8 +52,12 @@ class ChallengeView extends StatelessWidget {
                 )
               ],
             ),
-            bottomNavigationBar: BottomToolBar(
-              model: model,
+            bottomNavigationBar: Padding(
+              padding: EdgeInsets.only(
+                  bottom: MediaQuery.of(context).viewInsets.bottom),
+              child: BottomToolBar(
+                model: model,
+              ),
             ),
             body: FutureBuilder(
               future: model.initChallenge(url),
