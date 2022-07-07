@@ -78,18 +78,21 @@ class ChallengeView extends StatelessWidget {
                         ),
                       ),
                       body: !model.showPreview
-                          ? EditorViewController(
-                              language: Syntax.HTML,
-                              options: const EditorOptions(
-                                showAppBar: false,
-                                showTabBar: false,
-                              ),
-                              file: FileIDE(
-                                  fileExplorer: null,
-                                  fileName: challenge.files[0].name,
-                                  filePath: '',
-                                  fileContent: challenge.files[0].contents,
-                                  parentDirectory: ''),
+                          ? Column(
+                              children: [
+                                if (model.hideDescription)
+                                  Container(
+                                    height: MediaQuery.of(context).size.width,
+                                    color: const Color(0xFF0a0a23),
+                                    child: DescriptionView(
+                                      description: challenge.description,
+                                      instructions: challenge.instructions,
+                                      tests: const [],
+                                      editorText: model.editorText,
+                                    ),
+                                  ),
+                                Editor(challenge: challenge),
+                              ],
                             )
                           : WebView(
                               userAgent: 'random',
@@ -113,6 +116,34 @@ class ChallengeView extends StatelessWidget {
   }
 }
 
+class Editor extends StatelessWidget {
+  const Editor({
+    Key? key,
+    required this.challenge,
+  }) : super(key: key);
+
+  final Challenge challenge;
+
+  @override
+  Widget build(BuildContext context) {
+    return Expanded(
+      child: EditorViewController(
+        language: Syntax.HTML,
+        options: const EditorOptions(
+          showAppBar: false,
+          showTabBar: false,
+        ),
+        file: FileIDE(
+            fileExplorer: null,
+            fileName: challenge.files[0].name,
+            filePath: '',
+            fileContent: challenge.files[0].contents,
+            parentDirectory: ''),
+      ),
+    );
+  }
+}
+
 class BottomToolBar extends StatelessWidget {
   const BottomToolBar({Key? key, required this.model, required this.challenge})
       : super(key: key);
@@ -131,21 +162,9 @@ class BottomToolBar extends StatelessWidget {
             color: const Color.fromRGBO(0x2A, 0x2A, 0x40, 1),
             child: IconButton(
               icon: const FaIcon(FontAwesomeIcons.info),
-              onPressed: () => {
-                showModalBottomSheet(
-                    context: context,
-                    builder: (BuildContext context) {
-                      return Container(
-                        color: const Color(0xFF0a0a23),
-                        height: MediaQuery.of(context).size.height * 0.33,
-                        child: DescriptionView(
-                          description: challenge.description,
-                          instructions: challenge.instructions,
-                          tests: const [],
-                          editorText: model.editorText,
-                        ),
-                      );
-                    })
+              onPressed: () {
+                model.setHideAppBar = !model.hideAppBar;
+                model.setHideDescription = !model.hideDescription;
               },
               splashColor: Colors.transparent,
               highlightColor: Colors.transparent,

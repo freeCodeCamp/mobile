@@ -30,30 +30,33 @@ class DescriptionView extends StatelessWidget {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   if (instructions.isNotEmpty)
-                    Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Container(
-                          padding: const EdgeInsets.fromLTRB(16, 16, 16, 8),
-                          child: const Text(
-                            'Instructions',
-                            style: TextStyle(
-                                fontSize: 24, fontWeight: FontWeight.bold),
-                          ),
-                        ),
-                        Row(children: [
-                          Expanded(
-                            child: Padding(
-                              padding:
-                                  const EdgeInsets.symmetric(horizontal: 16),
-                              child: Column(
-                                children: HtmlHandler.htmlHandler(
-                                    instructions, context),
-                              ),
+                    Padding(
+                      padding: const EdgeInsets.all(8.0),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Container(
+                            padding: const EdgeInsets.fromLTRB(16, 16, 16, 8),
+                            child: const Text(
+                              'Instructions',
+                              style: TextStyle(
+                                  fontSize: 24, fontWeight: FontWeight.bold),
                             ),
-                          )
-                        ]),
-                      ],
+                          ),
+                          Row(children: [
+                            Expanded(
+                              child: Padding(
+                                padding:
+                                    const EdgeInsets.symmetric(horizontal: 16),
+                                child: Column(
+                                  children: HtmlHandler.htmlHandler(
+                                      instructions, context),
+                                ),
+                              ),
+                            )
+                          ]),
+                        ],
+                      ),
                     ),
                 ],
               ),
