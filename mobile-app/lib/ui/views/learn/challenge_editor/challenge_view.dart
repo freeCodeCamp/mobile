@@ -39,7 +39,8 @@ class ChallengeView extends StatelessWidget {
                         fileExplorer: null,
                         fileName: challenge.files[0].name,
                         filePath: '',
-                        fileContent: challenge.files[0].contents,
+                        fileContent:
+                            model.editorText ?? challenge.files[0].contents,
                         parentDirectory: ''),
                   );
 
@@ -156,6 +157,7 @@ class Editor extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     controller.editorTextStream.stream.listen((event) {
+      model.saveEditorTextInCache(event);
       model.setEditorText = event;
     });
 

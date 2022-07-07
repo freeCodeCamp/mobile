@@ -27,6 +27,11 @@ class ChallengeModel extends BaseViewModel {
   WebViewController? _webviewController;
   WebViewController? get webviewController => _webviewController;
 
+  void init() async {
+    _editorText = await getEditorTextFromCache();
+    notifyListeners();
+  }
+
   set setHideAppBar(bool value) {
     _hideAppBar = value;
     notifyListeners();
@@ -50,6 +55,18 @@ class ChallengeModel extends BaseViewModel {
   set setEditorText(String? value) {
     _editorText = value;
     notifyListeners();
+  }
+
+  void saveEditorTextInCache(String value) async {
+    SharedPreferences.getInstance().then((prefs) {
+      prefs.setString('editorText', value);
+    });
+  }
+
+  Future<String> getEditorTextFromCache() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+
+    return prefs.getString('editorText') ?? '';
   }
 
   Future<Challenge?> initChallenge(String url) async {
@@ -81,6 +98,11 @@ class ChallengeModel extends BaseViewModel {
     if (prefs.getString(url) != null) {
       prefs.remove(url);
       dev.log('challenge cache got disposed');
+    }
+
+    if (prefs.getString('editorText') != null) {
+      prefs.remove('editorText');
+      dev.log('editorText cache got disposed');
     }
 
     EditorViewController controller = EditorViewController();
