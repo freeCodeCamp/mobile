@@ -29,8 +29,8 @@ class ChallengeView extends StatelessWidget {
                   Challenge challenge = snapshot.data!;
 
                   return Scaffold(
-                      appBar: !model.hideAppBar ||
-                              MediaQuery.of(context).viewInsets.bottom > 0
+                      appBar: MediaQuery.of(context).viewInsets.bottom > 0 ||
+                              !model.showDescription
                           ? AppBar(
                               automaticallyImplyLeading: false,
                               actions: [
@@ -81,7 +81,7 @@ class ChallengeView extends StatelessWidget {
                       body: !model.showPreview
                           ? Column(
                               children: [
-                                if (model.hideDescription &&
+                                if (model.showDescription &&
                                     MediaQuery.of(context).viewInsets.bottom ==
                                         0)
                                   Container(
@@ -168,9 +168,13 @@ class BottomToolBar extends StatelessWidget {
               onPressed: () {
                 if (MediaQuery.of(context).viewInsets.bottom > 0) {
                   FocusManager.instance.primaryFocus?.unfocus();
+                  if (!model.showDescription) {
+                    model.setShowDescription = true;
+                    model.setHideAppBar = true;
+                  }
                 } else {
                   model.setHideAppBar = !model.hideAppBar;
-                  model.setHideDescription = !model.hideDescription;
+                  model.setShowDescription = !model.showDescription;
                 }
               },
               splashColor: Colors.transparent,

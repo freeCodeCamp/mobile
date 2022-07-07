@@ -19,8 +19,8 @@ class ChallengeModel extends BaseViewModel {
   bool _hideAppBar = false;
   bool get hideAppBar => _hideAppBar;
 
-  bool _hideDescription = false;
-  bool get hideDescription => _hideDescription;
+  bool _showDescription = false;
+  bool get showDescription => _showDescription;
 
   WebViewController? _webviewController;
   WebViewController? get webviewController => _webviewController;
@@ -30,8 +30,8 @@ class ChallengeModel extends BaseViewModel {
     notifyListeners();
   }
 
-  set setHideDescription(bool value) {
-    _hideDescription = value;
+  set setShowDescription(bool value) {
+    _showDescription = value;
     notifyListeners();
   }
 
