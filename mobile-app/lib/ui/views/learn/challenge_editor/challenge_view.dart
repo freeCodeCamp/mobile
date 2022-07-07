@@ -21,6 +21,37 @@ class ChallengeView extends StatelessWidget {
         onDispose: (model) => model.disposeCahce(url),
         onModelReady: (model) => model.init(url),
         builder: (context, model, child) => Scaffold(
+            appBar: AppBar(
+              automaticallyImplyLeading: false,
+              actions: [
+                Expanded(
+                    child: DropdownButton(
+                  isExpanded: true,
+                  dropdownColor: const Color(0xFF0a0a23),
+                  underline: Container(),
+                  value: 'One',
+                  items: <String>['One', 'Two', 'Free', 'Four']
+                      .map<DropdownMenuItem<String>>((String value) {
+                    return DropdownMenuItem<String>(
+                      value: value,
+                      child: Padding(
+                        padding: const EdgeInsets.all(8.0),
+                        child: Text(
+                          value,
+                        ),
+                      ),
+                    );
+                  }).toList(),
+                  onChanged: (e) {},
+                )),
+                Expanded(
+                  child: TextButton(
+                    child: const Text('Preview'),
+                    onPressed: () {},
+                  ),
+                )
+              ],
+            ),
             bottomNavigationBar: BottomToolBar(
               model: model,
             ),
