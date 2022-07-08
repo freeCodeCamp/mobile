@@ -52,10 +52,11 @@ class CodeRadioView extends StatelessWidget {
                           padding: const EdgeInsets.only(top: 16),
                           child: playingSong(radio, model),
                         ),
-                        Padding(
-                          padding: const EdgeInsets.only(top: 16),
-                          child: nextSong(radio),
-                        ),
+                        if (MediaQuery.of(context).size.height > 600)
+                          Padding(
+                            padding: const EdgeInsets.only(top: 16),
+                            child: nextSong(radio),
+                          ),
                         Expanded(
                           child: Column(
                             mainAxisAlignment: MainAxisAlignment.end,
