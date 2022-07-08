@@ -1,10 +1,12 @@
 import 'dart:convert';
+import 'dart:developer';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_code_editor/controller/editor_view_controller.dart';
 import 'package:flutter_code_editor/controller/language_controller/syntax/index.dart';
 import 'package:flutter_code_editor/models/editor_options.dart';
 import 'package:flutter_code_editor/models/file_model.dart';
+import 'package:freecodecamp/enums/panel_type.dart';
 import 'package:freecodecamp/models/learn/challenge_model.dart';
 import 'package:freecodecamp/ui/views/learn/challenge_editor/challenge_model.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
@@ -102,16 +104,10 @@ class ChallengeView extends StatelessWidget {
                                 if (model.showDescription &&
                                     MediaQuery.of(context).viewInsets.bottom ==
                                         0)
-                                  Container(
-                                    height: MediaQuery.of(context).size.width,
-                                    color: const Color(0xFF0a0a23),
-                                    child: DescriptionView(
-                                      description: challenge.description,
-                                      instructions: challenge.instructions,
-                                      tests: const [],
-                                      editorText: model.editorText,
-                                    ),
-                                  ),
+                                  DynamicPanel(
+                                      challenge: challenge,
+                                      model: model,
+                                      panel: PanelType.instruction),
                                 editor(controller, model)
                               ],
                             )
@@ -160,9 +156,16 @@ class ChallengeView extends StatelessWidget {
               javascriptChannels: {
                 JavascriptChannel(
                   name: 'Flutter',
-                  onMessageReceived: (JavascriptMessage message) {
+                  onMessageReceived: (JavascriptMessage message) async {
                     model.setTestDocument = message.message;
-                    model.testRunner(challenge.tests);
+                    List<ChallengeTest> tests =
+                        await model.testRunner(challenge.tests);
+
+                    if (model.returnFirstFailedTest(tests) != null) {
+                      log('failed');
+                    } else {
+                      log('passed');
+                    }
                   },
                 )
               },
@@ -232,5 +235,44 @@ class ChallengeView extends StatelessWidget {
 
   Widget editor(EditorViewController controller, ChallengeModel model) {
     return Expanded(child: controller);
+  }
+}
+
+class DynamicPanel extends StatelessWidget {
+  const DynamicPanel(
+      {Key? key,
+      required this.challenge,
+      required this.model,
+      required this.panel})
+      : super(key: key);
+
+  final Challenge challenge;
+  final ChallengeModel model;
+  final PanelType panel;
+
+  Widget panelHandler(PanelType panel) {
+    switch (panel) {
+      case PanelType.instruction:
+        return DescriptionView(
+          description: challenge.description,
+          instructions: challenge.instructions,
+          tests: const [],
+          editorText: model.editorText,
+        );
+      case PanelType.pass:
+        return const Text('pass');
+      case PanelType.hint:
+        return const Text('hint');
+      default:
+        return const Text('error');
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+        height: MediaQuery.of(context).size.width,
+        color: const Color(0xFF0a0a23),
+        child: panelHandler(panel));
   }
 }

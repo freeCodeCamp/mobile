@@ -341,4 +341,13 @@ class ChallengeModel extends BaseViewModel {
 
     return incTest;
   }
+
+  returnFirstFailedTest(List<ChallengeTest> incTest) {
+    for (ChallengeTest test in incTest) {
+      if (test.testState == ChallengeTestState.failed) {
+        return test;
+      }
+    }
+    return null;
+  }
 }
