@@ -27,10 +27,6 @@ class TestViewModel extends StatelessWidget {
                           style: TextButton.styleFrom(padding: EdgeInsets.zero),
                           onPressed: () {
                             model.setPressedTestButton = true;
-                            model.controller.runJavascript(
-                                '''
-                                (function(){Flutter.postMessage(window.document.body.outerHTML)})();
-                              ''');
                           },
                           child: Text(model.pressedTestButton
                               ? 'Running Tests...'
@@ -46,8 +42,8 @@ class TestViewModel extends StatelessWidget {
                       child: WebView(
                         javascriptMode: JavascriptMode.unrestricted,
                         onWebViewCreated: (WebViewController controller) {
-                          model.setWebviewController = controller;
-                          model.setWebViewContent(code, tests);
+                          // model.setWebviewController = controller;
+                          // model.setWebViewContent(code, tests);
                         },
                         javascriptChannels: {
                           JavascriptChannel(

@@ -9,19 +9,11 @@ import 'package:stacked/stacked.dart';
 import 'package:webview_flutter/webview_flutter.dart';
 
 class TestModel extends BaseViewModel {
-  late WebViewController _controller;
-  WebViewController get controller => _controller;
-
   bool _pressedTestButton = false;
   bool get pressedTestButton => _pressedTestButton;
 
   String _testDocument = '';
   String get testDocument => _testDocument;
-
-  set setWebviewController(WebViewController controller) {
-    _controller = controller;
-    notifyListeners();
-  }
 
   set setPressedTestButton(bool pressed) {
     _pressedTestButton = pressed;
@@ -35,8 +27,15 @@ class TestModel extends BaseViewModel {
 
   // sets the new content written in the editor and intit test framework
 
-  void setWebViewContent(String content, List<ChallengeTest> tests) {
+  void setWebViewContent(String content, List<ChallengeTest> tests,
+      WebViewController webviewController) {
     dom.Document document = parse(content);
+
+    if (content.isEmpty) {
+      dev.log('content is empty');
+    } else {
+      dev.log(content);
+    }
 
     List<String> imports = [
       '<script src="https://unpkg.com/chai/chai.js"></script>',
@@ -86,9 +85,11 @@ class TestModel extends BaseViewModel {
       document.body!.append(bodyNode);
     }
 
-    _controller.loadUrl(Uri.dataFromString(document.outerHtml,
+    webviewController.loadUrl(Uri.dataFromString(document.outerHtml,
             mimeType: 'text/html', encoding: Encoding.getByName('utf-8'))
         .toString());
+
+    dev.log(document.outerHtml);
   }
 
   IconData getCorrectTestIcon(ChallengeTestState testState) {

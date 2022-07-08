@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'package:flutter_code_editor/controller/editor_view_controller.dart';
 import 'package:flutter_code_editor/models/file_model.dart';
 import 'package:freecodecamp/models/learn/challenge_model.dart';
+import 'package:freecodecamp/ui/views/learn/challenge_editor/test_runner/test_model.dart';
 import 'package:html/dom.dart';
 import 'package:html/parser.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -27,8 +28,18 @@ class ChallengeModel extends BaseViewModel {
   WebViewController? _webviewController;
   WebViewController? get webviewController => _webviewController;
 
+  WebViewController? _testController;
+  WebViewController? get testController => _testController;
+
+  TestModel testModel = TestModel();
+
   void init() async {
     _editorText = await getEditorTextFromCache();
+    notifyListeners();
+  }
+
+  set setTestController(WebViewController controller) {
+    _testController = controller;
     notifyListeners();
   }
 
@@ -67,6 +78,15 @@ class ChallengeModel extends BaseViewModel {
     SharedPreferences prefs = await SharedPreferences.getInstance();
 
     return prefs.getString('editorText') ?? '';
+  }
+
+  void testChallenge(List<ChallengeTest> tests) async {
+    if (_testController != null) {
+      testModel.setWebViewContent(await getEditorTextFromCache(), tests,
+          _testController as WebViewController);
+    }
+
+    dev.log(testModel.testRunner(tests).toString());
   }
 
   Future<Challenge?> initChallenge(String url) async {

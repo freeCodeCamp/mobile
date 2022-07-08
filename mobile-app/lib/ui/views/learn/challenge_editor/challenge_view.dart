@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'dart:developer';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_code_editor/controller/editor_view_controller.dart';
@@ -178,6 +179,24 @@ class BottomToolBar extends StatelessWidget {
       color: const Color(0xFF0a0a23),
       child: Row(
         children: [
+          SizedBox(
+            height: 1,
+            width: 1,
+            child: WebView(
+              onWebViewCreated: (WebViewController controller) {
+                model.setTestController = controller;
+              },
+              javascriptChannels: {
+                JavascriptChannel(
+                  name: 'Flutter',
+                  onMessageReceived: (JavascriptMessage message) {
+                    log(message.message);
+                    model.testModel.setTestDocument = message.message;
+                  },
+                )
+              },
+            ),
+          ),
           Container(
             margin: const EdgeInsets.all(8),
             color: const Color.fromRGBO(0x2A, 0x2A, 0x40, 1),
@@ -219,7 +238,12 @@ class BottomToolBar extends StatelessWidget {
                   color: const Color.fromRGBO(0x1D, 0x9B, 0xF0, 1),
                   child: IconButton(
                     icon: const FaIcon(FontAwesomeIcons.check),
-                    onPressed: () => {},
+                    onPressed: () => {
+                      model.testChallenge(challenge.tests),
+                      model.testController?.runJavascript('''
+                                (function(){Flutter.postMessage(window.document.body.outerHTML)})();
+                              ''')
+                    },
                     splashColor: Colors.transparent,
                     highlightColor: Colors.transparent,
                   ),
