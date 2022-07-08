@@ -69,7 +69,7 @@ class ChallengeModel extends BaseViewModel {
     notifyListeners();
   }
 
-  set setEditorText(String? value) {
+  set setEditorText(String value) {
     _editorText = value;
     notifyListeners();
   }
@@ -85,9 +85,8 @@ class ChallengeModel extends BaseViewModel {
   }
 
   void saveEditorTextInCache(String value) async {
-    SharedPreferences.getInstance().then((prefs) {
-      prefs.setString('editorText', value);
-    });
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    prefs.setString('editorText', value);
   }
 
   Future<String> getEditorTextFromCache() async {

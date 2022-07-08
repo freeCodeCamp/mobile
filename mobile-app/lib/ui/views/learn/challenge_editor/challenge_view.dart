@@ -1,5 +1,4 @@
 import 'dart:convert';
-import 'dart:developer';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_code_editor/controller/editor_view_controller.dart';
@@ -45,6 +44,11 @@ class ChallengeView extends StatelessWidget {
                         parentDirectory: ''),
                   );
 
+                  controller.editorTextStream.stream.listen((event) {
+                    model.saveEditorTextInCache(event);
+                    model.setEditorText = event;
+                  });
+
                   return Scaffold(
                       appBar: MediaQuery.of(context).viewInsets.bottom > 0 ||
                               !model.showDescription
@@ -88,13 +92,10 @@ class ChallengeView extends StatelessWidget {
                             )
                           : null,
                       bottomNavigationBar: Padding(
-                        padding: EdgeInsets.only(
-                            bottom: MediaQuery.of(context).viewInsets.bottom),
-                        child: BottomToolBar(
-                          model: model,
-                          challenge: challenge,
-                        ),
-                      ),
+                          padding: EdgeInsets.only(
+                              bottom: MediaQuery.of(context).viewInsets.bottom),
+                          child:
+                              bottomBar(model, challenge, context, controller)),
                       body: !model.showPreview
                           ? Column(
                               children: [
@@ -111,11 +112,7 @@ class ChallengeView extends StatelessWidget {
                                       editorText: model.editorText,
                                     ),
                                   ),
-                                Editor(
-                                  challenge: challenge,
-                                  model: model,
-                                  controller: controller,
-                                ),
+                                editor(controller, model)
                               ],
                             )
                           : WebView(
@@ -141,40 +138,9 @@ class ChallengeView extends StatelessWidget {
               },
             ));
   }
-}
 
-class Editor extends StatelessWidget {
-  const Editor({
-    Key? key,
-    required this.challenge,
-    required this.model,
-    required this.controller,
-  }) : super(key: key);
-
-  final Challenge challenge;
-  final ChallengeModel model;
-  final EditorViewController controller;
-
-  @override
-  Widget build(BuildContext context) {
-    controller.editorTextStream.stream.listen((event) {
-      model.saveEditorTextInCache(event);
-      model.setEditorText = event;
-    });
-
-    return Expanded(child: controller);
-  }
-}
-
-class BottomToolBar extends StatelessWidget {
-  const BottomToolBar({Key? key, required this.model, required this.challenge})
-      : super(key: key);
-
-  final ChallengeModel model;
-  final Challenge challenge;
-
-  @override
-  Widget build(BuildContext context) {
+  Widget bottomBar(ChallengeModel model, Challenge challenge,
+      BuildContext context, EditorViewController controller) {
     return BottomAppBar(
       color: const Color(0xFF0a0a23),
       child: Row(
@@ -183,16 +149,20 @@ class BottomToolBar extends StatelessWidget {
             height: 1,
             width: 1,
             child: WebView(
-              onWebViewCreated: (WebViewController controller) async {
-                model.setTestController = controller;
+              onWebViewCreated: (WebViewController webcontroller) async {
+                model.setTestController = webcontroller;
+                controller.editorTextStream.stream.listen((event) async {
+                  model.setWebViewContent(
+                      event, challenge.tests, model.testController!);
+                });
               },
               javascriptMode: JavascriptMode.unrestricted,
               javascriptChannels: {
                 JavascriptChannel(
                   name: 'Flutter',
                   onMessageReceived: (JavascriptMessage message) {
-                    log('I got pressed');
                     model.setTestDocument = message.message;
+                    model.testRunner(challenge.tests);
                   },
                 )
               },
@@ -236,21 +206,18 @@ class BottomToolBar extends StatelessWidget {
               children: [
                 Container(
                   margin: const EdgeInsets.all(8),
-                  color: const Color.fromRGBO(0x1D, 0x9B, 0xF0, 1),
+                  color: model.pressedTestButton
+                      ? Colors.yellow
+                      : const Color.fromRGBO(0x1D, 0x9B, 0xF0, 1),
                   child: IconButton(
                     icon: const FaIcon(FontAwesomeIcons.check),
-                    onPressed: () async => {
-                      model.setWebViewContent(
-                          (await model.getEditorTextFromCache()).isNotEmpty
-                              ? await model.getEditorTextFromCache()
-                              : challenge.files[0].contents,
-                          challenge.tests,
-                          model.testController!),
-                      model.testController?.runJavascript('''
+                    onPressed: !model.pressedTestButton
+                        ? () async => {
+                              model.testController?.runJavascript('''
                                 (function(){Flutter.postMessage(window.document.body.outerHTML)})();
                               '''),
-                      model.testRunner(challenge.tests)
-                    },
+                            }
+                        : () => {},
                     splashColor: Colors.transparent,
                     highlightColor: Colors.transparent,
                   ),
@@ -261,5 +228,9 @@ class BottomToolBar extends StatelessWidget {
         ],
       ),
     );
+  }
+
+  Widget editor(EditorViewController controller, ChallengeModel model) {
+    return Expanded(child: controller);
   }
 }
