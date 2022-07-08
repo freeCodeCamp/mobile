@@ -183,15 +183,16 @@ class BottomToolBar extends StatelessWidget {
             height: 1,
             width: 1,
             child: WebView(
-              onWebViewCreated: (WebViewController controller) {
+              onWebViewCreated: (WebViewController controller) async {
                 model.setTestController = controller;
               },
+              javascriptMode: JavascriptMode.unrestricted,
               javascriptChannels: {
                 JavascriptChannel(
                   name: 'Flutter',
                   onMessageReceived: (JavascriptMessage message) {
-                    log(message.message);
-                    model.testModel.setTestDocument = message.message;
+                    log('I got pressed');
+                    model.setTestDocument = message.message;
                   },
                 )
               },
@@ -238,11 +239,17 @@ class BottomToolBar extends StatelessWidget {
                   color: const Color.fromRGBO(0x1D, 0x9B, 0xF0, 1),
                   child: IconButton(
                     icon: const FaIcon(FontAwesomeIcons.check),
-                    onPressed: () => {
-                      model.testChallenge(challenge.tests),
+                    onPressed: () async => {
+                      model.setWebViewContent(
+                          (await model.getEditorTextFromCache()).isNotEmpty
+                              ? await model.getEditorTextFromCache()
+                              : challenge.files[0].contents,
+                          challenge.tests,
+                          model.testController!),
                       model.testController?.runJavascript('''
                                 (function(){Flutter.postMessage(window.document.body.outerHTML)})();
-                              ''')
+                              '''),
+                      model.testRunner(challenge.tests)
                     },
                     splashColor: Colors.transparent,
                     highlightColor: Colors.transparent,
