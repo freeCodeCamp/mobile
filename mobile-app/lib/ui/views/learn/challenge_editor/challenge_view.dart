@@ -178,6 +178,7 @@ class ChallengeView extends StatelessWidget {
                       model.setShowPanel = true;
                     } else {
                       model.setPanelType = PanelType.pass;
+                      model.setCompletedChallenge = true;
                       model.setShowPanel = true;
                     }
                   },
@@ -224,11 +225,13 @@ class ChallengeView extends StatelessWidget {
               children: [
                 Container(
                   margin: const EdgeInsets.all(8),
-                  color: model.pressedTestButton
-                      ? Colors.yellow
+                  color: model.completedChallenge
+                      ? const Color.fromRGBO(0x20, 0xD0, 0x32, 1)
                       : const Color.fromRGBO(0x1D, 0x9B, 0xF0, 1),
                   child: IconButton(
-                    icon: const FaIcon(FontAwesomeIcons.check),
+                    icon: model.completedChallenge
+                        ? const FaIcon(FontAwesomeIcons.arrowRight)
+                        : const FaIcon(FontAwesomeIcons.check),
                     onPressed: !model.pressedTestButton
                         ? () async => {
                               FocusManager.instance.primaryFocus?.unfocus(),

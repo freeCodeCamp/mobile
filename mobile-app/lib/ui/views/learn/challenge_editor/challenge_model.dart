@@ -37,6 +37,9 @@ class ChallengeModel extends BaseViewModel {
   bool _showPanel = false;
   bool get showPanel => _showPanel;
 
+  bool _completedChallenge = false;
+  bool get completedChallenge => _completedChallenge;
+
   PanelType _panelType = PanelType.none;
   PanelType get panelType => _panelType;
 
@@ -98,6 +101,11 @@ class ChallengeModel extends BaseViewModel {
 
   set setPanelType(PanelType panelType) {
     _panelType = panelType;
+    notifyListeners();
+  }
+
+  set setCompletedChallenge(bool completed) {
+    _completedChallenge = completed;
     notifyListeners();
   }
 
