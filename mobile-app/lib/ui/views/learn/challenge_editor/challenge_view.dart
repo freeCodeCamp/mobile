@@ -1,5 +1,4 @@
 import 'dart:convert';
-import 'dart:developer';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_code_editor/controller/editor_view_controller.dart';
@@ -12,6 +11,7 @@ import 'package:freecodecamp/ui/views/learn/challenge_editor/challenge_model.dar
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:freecodecamp/ui/views/learn/widgets/description/description_widget_view.dart';
 import 'package:freecodecamp/ui/views/learn/widgets/hint/hint_widget_view.dart';
+import 'package:freecodecamp/ui/views/learn/widgets/pass/pass_widget_view.dart';
 import 'package:webview_flutter/webview_flutter.dart';
 import 'package:stacked/stacked.dart';
 
@@ -177,7 +177,8 @@ class ChallengeView extends StatelessWidget {
                       model.setHint = test.instruction;
                       model.setShowPanel = true;
                     } else {
-                      log('passed');
+                      model.setPanelType = PanelType.pass;
+                      model.setShowPanel = true;
                     }
                   },
                 )
@@ -275,7 +276,9 @@ class DynamicPanel extends StatelessWidget {
           editorText: model.editorText,
         );
       case PanelType.pass:
-        return const Text('pass');
+        return PassWidgetView(
+          challengeModel: model,
+        );
       case PanelType.hint:
         return HintWidgetView(
           hint: model.hint,
