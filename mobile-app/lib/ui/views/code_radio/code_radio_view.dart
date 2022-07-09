@@ -29,63 +29,50 @@ class CodeRadioView extends StatelessWidget {
       child: Column(
         children: [
           StreamBuilder(
-              stream: model.channel.stream,
-              builder: (context, snapshot) {
-                if (snapshot.hasData) {
-                  CodeRadio radio =
-                      CodeRadio.fromJson(jsonDecode(snapshot.data.toString()));
+            stream: model.channel.stream,
+            builder: (context, snapshot) {
+              if (snapshot.hasData) {
+                CodeRadio radio =
+                    CodeRadio.fromJson(jsonDecode(snapshot.data.toString()));
 
-                  if (!model.audioService.player.playing &&
-                      !model.stoppedManually) {
-                    model.toggleRadio(radio);
-                  }
-
-                  model.setAndGetLastId(radio);
-
-                  return Expanded(
-                    child: Column(
-                      children: [
-                        albumArt(ctxt, radio),
-                        Padding(
-                          padding: const EdgeInsets.only(top: 16),
-                          child: playingSong(radio, model),
-                        ),
-                        if (MediaQuery.of(context).size.height > 600)
-                          Padding(
-                            padding: const EdgeInsets.only(top: 16),
-                            child: nextSong(radio),
-                          ),
-                        Expanded(
-                          child: Column(
-                            mainAxisAlignment: MainAxisAlignment.end,
-                            children: [
-                              Row(
-                                children: [
-                                  Expanded(child: playPauseButton(model, ctxt)),
-                                ],
-                              ),
-                            ],
-                          ),
-                        )
-                      ],
-                    ),
-                  );
+                if (!model.audioService.player.playing &&
+                    !model.stoppedManually) {
+                  model.toggleRadio(radio);
                 }
 
                 model.setAndGetLastId(radio);
 
                 return Expanded(
                   child: Column(
-                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                     children: [
                       albumArt(ctxt, radio),
-                      playingSong(radio, model),
-                      nextSong(radio),
-                      playPauseButton(model, ctxt)
+                      Padding(
+                        padding: const EdgeInsets.only(top: 16),
+                        child: playingSong(radio, model),
+                      ),
+                      if (MediaQuery.of(context).size.height > 600)
+                        Padding(
+                          padding: const EdgeInsets.only(top: 16),
+                          child: nextSong(radio),
+                        ),
+                      Expanded(
+                        child: Column(
+                          mainAxisAlignment: MainAxisAlignment.end,
+                          children: [
+                            Row(
+                              children: [
+                                Expanded(child: playPauseButton(model, ctxt)),
+                              ],
+                            ),
+                          ],
+                        ),
+                      )
                     ],
                   ),
                 );
               }
+
+              model.setAndGetLastId(radio);
 
               return const Center(child: CircularProgressIndicator());
             },
