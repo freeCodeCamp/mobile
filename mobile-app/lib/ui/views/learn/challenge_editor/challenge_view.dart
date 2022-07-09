@@ -11,6 +11,7 @@ import 'package:freecodecamp/models/learn/challenge_model.dart';
 import 'package:freecodecamp/ui/views/learn/challenge_editor/challenge_model.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:freecodecamp/ui/views/learn/widgets/description/description_widget_view.dart';
+import 'package:freecodecamp/ui/views/learn/widgets/hint/hint_widget_view.dart';
 import 'package:webview_flutter/webview_flutter.dart';
 import 'package:stacked/stacked.dart';
 
@@ -276,7 +277,10 @@ class DynamicPanel extends StatelessWidget {
       case PanelType.pass:
         return const Text('pass');
       case PanelType.hint:
-        return Text(model.hint);
+        return HintWidgetView(
+          hint: model.hint,
+          challengeModel: model,
+        );
       default:
         return Container();
     }
