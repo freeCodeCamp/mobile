@@ -10,7 +10,7 @@ import 'package:freecodecamp/enums/panel_type.dart';
 import 'package:freecodecamp/models/learn/challenge_model.dart';
 import 'package:freecodecamp/ui/views/learn/challenge_editor/challenge_model.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
-import 'package:freecodecamp/ui/views/learn/challenge_editor/description/description_view.dart';
+import 'package:freecodecamp/ui/views/learn/widgets/description/description_widget_view.dart';
 import 'package:webview_flutter/webview_flutter.dart';
 import 'package:stacked/stacked.dart';
 
