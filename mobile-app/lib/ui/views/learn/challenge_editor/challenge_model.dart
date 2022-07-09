@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_code_editor/controller/editor_view_controller.dart';
 import 'package:flutter_code_editor/models/file_model.dart';
 import 'package:freecodecamp/enums/challenge_test_state_type.dart';
+import 'package:freecodecamp/enums/panel_type.dart';
 import 'package:freecodecamp/models/learn/challenge_model.dart';
 import 'package:html/dom.dart' as dom;
 import 'package:html/parser.dart';
@@ -24,14 +25,20 @@ class ChallengeModel extends BaseViewModel {
   bool _hideAppBar = false;
   bool get hideAppBar => _hideAppBar;
 
-  bool _showDescription = false;
-  bool get showDescription => _showDescription;
-
   bool _pressedTestButton = false;
   bool get pressedTestButton => _pressedTestButton;
 
   String _testDocument = '';
   String get testDocument => _testDocument;
+
+  String _hint = '';
+  String get hint => _hint;
+
+  bool _showPanel = false;
+  bool get showPanel => _showPanel;
+
+  PanelType _panelType = PanelType.none;
+  PanelType get panelType => _panelType;
 
   WebViewController? _webviewController;
   WebViewController? get webviewController => _webviewController;
@@ -54,8 +61,8 @@ class ChallengeModel extends BaseViewModel {
     notifyListeners();
   }
 
-  set setShowDescription(bool value) {
-    _showDescription = value;
+  set setShowPanel(bool value) {
+    _showPanel = value;
     notifyListeners();
   }
 
@@ -81,6 +88,16 @@ class ChallengeModel extends BaseViewModel {
 
   set setTestDocument(String document) {
     _testDocument = document;
+    notifyListeners();
+  }
+
+  set setHint(String hint) {
+    _hint = hint;
+    notifyListeners();
+  }
+
+  set setPanelType(PanelType panelType) {
+    _panelType = panelType;
     notifyListeners();
   }
 
@@ -349,5 +366,18 @@ class ChallengeModel extends BaseViewModel {
       }
     }
     return null;
+  }
+
+  handlePaneVisibility(context) {
+    if (MediaQuery.of(context).viewInsets.bottom > 0) {
+      FocusManager.instance.primaryFocus?.unfocus();
+      if (!_showPanel) {
+        setShowPanel = true;
+        setHideAppBar = true;
+      }
+    } else {
+      setHideAppBar = !hideAppBar;
+      setShowPanel = !showPanel;
+    }
   }
 }

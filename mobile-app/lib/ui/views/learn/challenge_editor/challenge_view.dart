@@ -27,6 +27,12 @@ class ChallengeView extends StatelessWidget {
         builder: (context, model, child) => FutureBuilder<Challenge?>(
               future: model.initChallenge(url),
               builder: (context, snapshot) {
+                if (MediaQuery.of(context).viewInsets.bottom > 0 ||
+                    !model.showPanel) {
+                  model.setHideAppBar = false;
+                } else {
+                  model.setHideAppBar = true;
+                }
                 if (snapshot.hasData) {
                   Challenge challenge = snapshot.data!;
 
@@ -52,36 +58,11 @@ class ChallengeView extends StatelessWidget {
                   });
 
                   return Scaffold(
-                      appBar: MediaQuery.of(context).viewInsets.bottom > 0 ||
-                              !model.showDescription
+                      appBar: !model.hideAppBar
                           ? AppBar(
                               automaticallyImplyLeading: false,
                               actions: [
-                                Expanded(
-                                    child: DropdownButton(
-                                  isExpanded: true,
-                                  dropdownColor: const Color(0xFF0a0a23),
-                                  underline: Container(),
-                                  value: challenge.files[0].name +
-                                      '.' +
-                                      challenge.files[0].ext.name,
-                                  items: challenge.files
-                                      .map((file) =>
-                                          file.name + '.' + file.ext.name)
-                                      .map<DropdownMenuItem<String>>(
-                                          (String value) {
-                                    return DropdownMenuItem<String>(
-                                      value: value,
-                                      child: Padding(
-                                        padding: const EdgeInsets.all(8.0),
-                                        child: Text(
-                                          value,
-                                        ),
-                                      ),
-                                    );
-                                  }).toList(),
-                                  onChanged: (e) {},
-                                )),
+                                customDropdown(challenge),
                                 Expanded(
                                   child: TextButton(
                                     child: const Text('Preview'),
@@ -101,13 +82,16 @@ class ChallengeView extends StatelessWidget {
                       body: !model.showPreview
                           ? Column(
                               children: [
-                                if (model.showDescription &&
-                                    MediaQuery.of(context).viewInsets.bottom ==
-                                        0)
-                                  DynamicPanel(
-                                      challenge: challenge,
-                                      model: model,
-                                      panel: PanelType.instruction),
+                                model.showPanel &&
+                                        MediaQuery.of(context)
+                                                .viewInsets
+                                                .bottom ==
+                                            0
+                                    ? DynamicPanel(
+                                        challenge: challenge,
+                                        model: model,
+                                        panel: model.panelType)
+                                    : Container(),
                                 editor(controller, model)
                               ],
                             )
@@ -133,6 +117,30 @@ class ChallengeView extends StatelessWidget {
                 );
               },
             ));
+  }
+
+  Widget customDropdown(Challenge challenge) {
+    return Expanded(
+        child: Align(
+      alignment: Alignment.center,
+      child: DropdownButton(
+        dropdownColor: const Color(0xFF0a0a23),
+        underline: Container(height: 5, color: Colors.blue),
+        alignment: Alignment.topCenter,
+        value: challenge.files[0].name + '.' + challenge.files[0].ext.name,
+        items: challenge.files
+            .map((file) => file.name + '.' + file.ext.name)
+            .map<DropdownMenuItem<String>>((String value) {
+          return DropdownMenuItem<String>(
+            value: value,
+            child: Text(
+              value,
+            ),
+          );
+        }).toList(),
+        onChanged: (e) {},
+      ),
+    ));
   }
 
   Widget bottomBar(ChallengeModel model, Challenge challenge,
@@ -161,8 +169,12 @@ class ChallengeView extends StatelessWidget {
                     List<ChallengeTest> tests =
                         await model.testRunner(challenge.tests);
 
-                    if (model.returnFirstFailedTest(tests) != null) {
-                      log('failed');
+                    ChallengeTest? test = model.returnFirstFailedTest(tests);
+
+                    if (test != null) {
+                      model.setPanelType = PanelType.hint;
+                      model.setHint = test.instruction;
+                      model.setShowPanel = true;
                     } else {
                       log('passed');
                     }
@@ -177,15 +189,16 @@ class ChallengeView extends StatelessWidget {
             child: IconButton(
               icon: const FaIcon(FontAwesomeIcons.info),
               onPressed: () {
+                model.setPanelType = PanelType.instruction;
                 if (MediaQuery.of(context).viewInsets.bottom > 0) {
                   FocusManager.instance.primaryFocus?.unfocus();
-                  if (!model.showDescription) {
-                    model.setShowDescription = true;
+                  if (!model.showPanel) {
+                    model.setShowPanel = true;
                     model.setHideAppBar = true;
                   }
                 } else {
                   model.setHideAppBar = !model.hideAppBar;
-                  model.setShowDescription = !model.showDescription;
+                  model.setShowPanel = !model.showPanel;
                 }
               },
               splashColor: Colors.transparent,
@@ -216,6 +229,7 @@ class ChallengeView extends StatelessWidget {
                     icon: const FaIcon(FontAwesomeIcons.check),
                     onPressed: !model.pressedTestButton
                         ? () async => {
+                              FocusManager.instance.primaryFocus?.unfocus(),
                               model.testController?.runJavascript('''
                                 (function(){Flutter.postMessage(window.document.body.outerHTML)})();
                               '''),
@@ -262,9 +276,9 @@ class DynamicPanel extends StatelessWidget {
       case PanelType.pass:
         return const Text('pass');
       case PanelType.hint:
-        return const Text('hint');
+        return Text(model.hint);
       default:
-        return const Text('error');
+        return Container();
     }
   }
 

@@ -1,1 +1,1 @@
-enum PanelType { pass, instruction, hint }
+enum PanelType { pass, instruction, hint, none }
