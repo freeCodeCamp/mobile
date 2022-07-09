@@ -2,9 +2,11 @@ include: package:flutter_lints/flutter.yaml
 
 analyzer:
   exclude: [lib/app/**, temp/**]
+  errors:
+    todo: warning
 linter:
   rules:
-    avoid_print: false  
+    avoid_print: false
     prefer_single_quotes: true
 
 # Additional information about this file can be found at
