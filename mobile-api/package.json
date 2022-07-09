@@ -24,7 +24,7 @@
     "@types/jest": "28.1.4",
     "node-fetch": "3.2.6",
     "ts-jest": "28.0.5",
-    "bree": "9.1.0",
+    "bree": "9.1.1",
     "dotenv": "16.0.1",
     "express": "4.18.1",
     "mongoose": "6.4.4",
