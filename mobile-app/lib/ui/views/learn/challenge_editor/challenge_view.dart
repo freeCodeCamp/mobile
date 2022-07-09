@@ -56,6 +56,7 @@ class ChallengeView extends StatelessWidget {
                   controller.editorTextStream.stream.listen((event) {
                     model.saveEditorTextInCache(event);
                     model.setEditorText = event;
+                    model.setCompletedChallenge = false;
                   });
 
                   return Scaffold(
@@ -96,20 +97,37 @@ class ChallengeView extends StatelessWidget {
                                 editor(controller, model)
                               ],
                             )
-                          : WebView(
-                              userAgent: 'random',
-                              javascriptMode: JavascriptMode.unrestricted,
-                              onWebViewCreated:
-                                  (WebViewController webcontroller) {
-                                model.setWebviewController = webcontroller;
-                                webcontroller.loadUrl(Uri.dataFromString(
-                                        model.parsePreviewDocument(
-                                            model.editorText ??
-                                                challenge.files[0].contents),
-                                        mimeType: 'text/html',
-                                        encoding: utf8)
-                                    .toString());
-                              },
+                          : Column(
+                              children: [
+                                model.showPanel &&
+                                        MediaQuery.of(context)
+                                                .viewInsets
+                                                .bottom ==
+                                            0
+                                    ? DynamicPanel(
+                                        challenge: challenge,
+                                        model: model,
+                                        panel: model.panelType)
+                                    : Container(),
+                                Expanded(
+                                  child: WebView(
+                                    userAgent: 'random',
+                                    javascriptMode: JavascriptMode.unrestricted,
+                                    onWebViewCreated:
+                                        (WebViewController webcontroller) {
+                                      model.setWebviewController =
+                                          webcontroller;
+                                      webcontroller.loadUrl(Uri.dataFromString(
+                                              model.parsePreviewDocument(model
+                                                      .editorText ??
+                                                  challenge.files[0].contents),
+                                              mimeType: 'text/html',
+                                              encoding: utf8)
+                                          .toString());
+                                    },
+                                  ),
+                                ),
+                              ],
                             ));
                 }
 
