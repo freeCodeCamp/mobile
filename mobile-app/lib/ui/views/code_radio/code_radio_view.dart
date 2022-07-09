@@ -1,11 +1,9 @@
 import 'dart:convert';
-
 import 'package:flutter/material.dart';
 import 'package:freecodecamp/models/code-radio/code_radio_model.dart';
 import 'package:freecodecamp/ui/views/code_radio/code_radio_viemodel.dart';
 import 'package:freecodecamp/ui/widgets/drawer_widget/drawer_widget_view.dart';
 import 'package:stacked/stacked.dart';
-import 'dart:developer' as dev;
 
 class CodeRadioView extends StatelessWidget {
   const CodeRadioView({Key? key}) : super(key: key);
@@ -31,16 +29,47 @@ class CodeRadioView extends StatelessWidget {
       child: Column(
         children: [
           StreamBuilder(
-            stream: model.channel.stream,
-            builder: (context, snapshot) {
-              dev.log('REICEVED NEW DATA FROM WEBSOCKET');
-              if (snapshot.hasData) {
-                CodeRadio radio =
-                    CodeRadio.fromJson(jsonDecode(snapshot.data.toString()));
+              stream: model.channel.stream,
+              builder: (context, snapshot) {
+                if (snapshot.hasData) {
+                  CodeRadio radio =
+                      CodeRadio.fromJson(jsonDecode(snapshot.data.toString()));
 
-                if (!model.audioService.isPlaying('coderadio') &&
-                    !model.stoppedManually) {
-                  model.toggleRadio(radio);
+                  if (!model.audioService.player.playing &&
+                      !model.stoppedManually) {
+                    model.toggleRadio(radio);
+                  }
+
+                  model.setAndGetLastId(radio);
+
+                  return Expanded(
+                    child: Column(
+                      children: [
+                        albumArt(ctxt, radio),
+                        Padding(
+                          padding: const EdgeInsets.only(top: 16),
+                          child: playingSong(radio, model),
+                        ),
+                        if (MediaQuery.of(context).size.height > 600)
+                          Padding(
+                            padding: const EdgeInsets.only(top: 16),
+                            child: nextSong(radio),
+                          ),
+                        Expanded(
+                          child: Column(
+                            mainAxisAlignment: MainAxisAlignment.end,
+                            children: [
+                              Row(
+                                children: [
+                                  Expanded(child: playPauseButton(model, ctxt)),
+                                ],
+                              ),
+                            ],
+                          ),
+                        )
+                      ],
+                    ),
+                  );
                 }
 
                 model.setAndGetLastId(radio);
@@ -97,12 +126,9 @@ class CodeRadioView extends StatelessWidget {
 
   StreamBuilder playPauseButton(CodeRadioViewModel model, BuildContext ctxt) {
     return StreamBuilder(
-      stream: model.audioService.queue.stream,
-      builder: (context, snapshot) {
-        return Container(
-          width: MediaQuery.of(ctxt).size.width,
-          padding: const EdgeInsets.only(top: 16),
-          child: ElevatedButton.icon(
+        stream: model.audioService.player.playingStream,
+        builder: (context, snapshot) {
+          return ElevatedButton.icon(
               style: ButtonStyle(
                 backgroundColor: MaterialStateProperty.all<Color>(
                     const Color.fromRGBO(0x2A, 0x2A, 0x40, 1)),
@@ -110,15 +136,12 @@ class CodeRadioView extends StatelessWidget {
               onPressed: () {
                 model.pauseUnpauseRadio();
               },
-              icon: Icon(!model.audioService.isPlaying('coderadio')
+              icon: Icon(!model.audioService.player.playing
                   ? Icons.play_arrow
                   : Icons.pause),
-              label: Text(!model.audioService.isPlaying('coderadio')
-                  ? 'PLAY'
-                  : 'PAUSE')),
-        );
-      },
-    );
+              label:
+                  Text(!model.audioService.player.playing ? 'PLAY' : 'PAUSE'));
+        });
   }
 
   Widget nextSong(CodeRadio? radio) {

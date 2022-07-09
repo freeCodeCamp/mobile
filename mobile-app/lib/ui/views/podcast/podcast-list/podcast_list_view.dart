@@ -1,6 +1,6 @@
-import 'dart:developer';
 import 'dart:io';
 
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:freecodecamp/models/podcasts/podcasts_model.dart';
 import 'package:freecodecamp/ui/views/podcast/episode-list/episode_list_view.dart';
@@ -14,7 +14,7 @@ List views = [
 ];
 
 List titles = [
-  const Text('Podcasts'),
+  const Text('PODCASTS'),
   const Text('Downloaded Podcasts'),
 ];
 
@@ -106,7 +106,7 @@ class PodcastListViewBuilder extends StatelessWidget {
               return GridView.count(
                 crossAxisCount: 2,
                 // crossAxisSpacing: 10,
-                mainAxisSpacing: 10,
+
                 childAspectRatio: 1,
                 children: List.generate(
                   snapshot.data!.length,
@@ -140,28 +140,22 @@ class PodcastTemplate extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return InkWell(
-      onTap: () {
-        log('Clicked ${podcast.title}');
-        Navigator.push(
-          context,
-          MaterialPageRoute(
-            builder: (context) => EpisodeListView(
-              podcast: podcast,
-              isDownloadView: isDownloadView,
+        onTap: () {
+          Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (context) => EpisodeListView(
+                podcast: podcast,
+                isDownloadView: isDownloadView,
+              ),
             ),
-          ),
-        );
-      },
-      child: Container(
-        padding: const EdgeInsets.all(8),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.center,
-          mainAxisAlignment: MainAxisAlignment.center,
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            Expanded(
-              flex: 2,
-              child: isDownloadView
+          );
+        },
+        child: Padding(
+          padding: const EdgeInsets.all(4.0),
+          child: Stack(
+            children: [
+              isDownloadView
                   ? Image.file(
                       File(
                         '/data/user/0/org.freecodecamp/app_flutter/images/podcast/${podcast.id}.jpg',
@@ -169,31 +163,38 @@ class PodcastTemplate extends StatelessWidget {
                       // height: 130,
                       alignment: Alignment.center,
                     )
-                  : Image.network(
-                      podcast.image!,
-                      // height: 130,
-                      alignment: Alignment.center,
+                  : CachedNetworkImage(
+                      imageUrl: podcast.image!,
                     ),
-            ),
-            Flexible(
-              flex: 1,
-              child: Padding(
-                padding: const EdgeInsets.only(top: 8),
-                child: Text(
-                  podcast.title! + '\n',
-                  maxLines: 2,
-                  overflow: TextOverflow.ellipsis,
-                  textAlign: TextAlign.center,
-                  style: const TextStyle(
-                    fontSize: 16,
-                    color: Colors.white,
-                  ),
+              Align(
+                alignment: Alignment.bottomCenter,
+                child: Row(
+                  children: [
+                    Expanded(
+                      child: Container(
+                        decoration: BoxDecoration(
+                          boxShadow: [
+                            BoxShadow(
+                              color: Colors.black.withOpacity(0.75),
+                              spreadRadius: 1.5,
+                              blurRadius: 0.1,
+                            )
+                          ],
+                        ),
+                        child: Text(podcast.title! + '\n',
+                            maxLines: 2,
+                            textAlign: TextAlign.center,
+                            style: const TextStyle(
+                              fontSize: 16,
+                              height: 1.2,
+                            )),
+                      ),
+                    ),
+                  ],
                 ),
               ),
-            ),
-          ],
-        ),
-      ),
-    );
+            ],
+          ),
+        ));
   }
 }

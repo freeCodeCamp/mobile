@@ -44,6 +44,10 @@ class DrawerWidgtetViewModel extends BaseViewModel {
     );
   }
 
+  void loginSnack() {
+    snack.showSnackbar(message: '', title: 'Login will soon be available!');
+  }
+
   void routeComponent(view, context) async {
     switch (view) {
       case 'LEARN':

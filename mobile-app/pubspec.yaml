@@ -1,7 +1,7 @@
 name: freecodecamp
 description: freecodecamp.org app.
 publish_to: none
-version: 2.1.6+20106
+version: 2.1.7+20107
 environment:
   sdk: ">=2.12.0 <3.0.0"
 dependencies:
@@ -22,7 +22,7 @@ dependencies:
   path_provider: ^2.0.3
   sqflite: ^2.0.0+4
   stacked: ^2.3.8
-  stacked_services: ^0.8.13
+  stacked_services: ^0.9.0
   url_launcher: ^6.0.10
   sqflite_migration_service: ^2.0.0-nullsafety.1
   json_serializable: ^6.0.0

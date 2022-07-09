@@ -25,9 +25,12 @@
     "develop": "npm-run-all flutter:build-runner -p develop:*",
     "develop:api": "cd mobile-api && npm run dev",
     "develop:app": "cd mobile-app && flutter run",
-    "flutter:build-runner": "cd mobile-app && flutter pub run build_runner build --delete-conflicting-outputs"
+    "flutter:build-runner": "cd mobile-app && flutter pub run build_runner build --delete-conflicting-outputs",
+    "prepare": "husky install"
   },
   "devDependencies": {
+    "husky": "^8.0.1",
+    "lint-staged": "^13.0.3",
     "npm-run-all": "4.1.5",
     "shx": "0.3.4"
   }

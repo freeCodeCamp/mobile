@@ -5,6 +5,7 @@ import 'package:freecodecamp/service/podcasts_service.dart';
 import 'package:freecodecamp/service/code_radio_service.dart';
 import 'package:freecodecamp/service/authentication_service.dart';
 import 'package:freecodecamp/service/audio_service.dart';
+import 'package:freecodecamp/service/download_service.dart';
 
 import 'package:freecodecamp/ui/views/code_radio/code_radio_view.dart';
 import 'package:freecodecamp/ui/views/forum/forum-categories/forum_category_view.dart';
@@ -16,6 +17,7 @@ import 'package:freecodecamp/ui/views/forum/forum-user/forum_user_view.dart';
 import 'package:freecodecamp/ui/views/home/home_view.dart';
 import 'package:freecodecamp/ui/views/news/news-author/news_author_view.dart';
 import 'package:freecodecamp/ui/views/podcast/podcast-list/podcast_list_view.dart';
+import 'package:freecodecamp/ui/views/podcast/episode-view/episode_view.dart';
 import 'package:freecodecamp/ui/views/news/news-article/news_article_view.dart';
 import 'package:freecodecamp/ui/views/news/news-bookmark/news_bookmark_view.dart';
 import 'package:freecodecamp/ui/views/news/news-feed/news_feed_view.dart';
@@ -37,6 +39,7 @@ import 'package:sqflite_migration_service/sqflite_migration_service.dart';
     MaterialRoute(page: HomeView, initial: true),
     MaterialRoute(page: PodcastListView),
     MaterialRoute(page: PodcastSettingsView),
+    MaterialRoute(page: EpisodeView),
     MaterialRoute(page: NewsArticleView),
     MaterialRoute(page: NewsBookmarkPostView),
     MaterialRoute(page: NewsFeedView),
@@ -66,6 +69,7 @@ import 'package:sqflite_migration_service/sqflite_migration_service.dart';
     LazySingleton(classType: CodeRadioService),
     LazySingleton(classType: AuthenticationService),
     LazySingleton(classType: AppAudioService),
+    LazySingleton(classType: DownloadService),
   ],
   logger: StackedLogger(),
 )
