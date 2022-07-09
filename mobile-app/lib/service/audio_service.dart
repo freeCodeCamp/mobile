@@ -33,6 +33,13 @@ class AppAudioService {
 class AudioPlayerHandler extends BaseAudioHandler {
   final AudioPlayer _audioPlayer = AudioPlayer();
 
+  String _episodeId = '';
+  String get episodeId => _episodeId;
+
+  set setEpisodeId(String state) {
+    _episodeId = state;
+  }
+
   @override
   AudioPlayerHandler() {
     _notifyAudioHandlerAboutPlaybackEvents();
@@ -68,6 +75,7 @@ class AudioPlayerHandler extends BaseAudioHandler {
     Podcasts podcast,
   ) async {
     try {
+      // TODO(@Nirajn2311): Close iOS PR and update paths
       MediaItem audioMediaItem = MediaItem(
         id: episode.id,
         title: episode.title,
@@ -121,6 +129,7 @@ class AudioPlayerHandler extends BaseAudioHandler {
         AudioSource.uri(Uri.parse(radio.listenUrl), tag: nextSong)
       ]));
       await _audioPlayer.load();
+      setEpisodeId = '';
       queue.add([currentSong, nextSong]);
       mediaItem.add(currentSong);
     } catch (e) {

@@ -1,4 +1,3 @@
-import 'package:audio_service/audio_service.dart';
 import 'package:fk_user_agent/fk_user_agent.dart';
 import 'package:flutter/material.dart';
 import 'package:freecodecamp/service/audio_service.dart';

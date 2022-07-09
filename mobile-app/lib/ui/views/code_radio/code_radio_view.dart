@@ -35,7 +35,7 @@ class CodeRadioView extends StatelessWidget {
                 CodeRadio radio =
                     CodeRadio.fromJson(jsonDecode(snapshot.data.toString()));
 
-                if (!model.audioService.player.playing &&
+                if (!model.audioService.isPlaying('coderadio') &&
                     !model.stoppedManually) {
                   model.toggleRadio(radio);
                 }
@@ -71,8 +71,6 @@ class CodeRadioView extends StatelessWidget {
                   ),
                 );
               }
-
-              model.setAndGetLastId(radio);
 
               return const Center(child: CircularProgressIndicator());
             },
@@ -113,7 +111,7 @@ class CodeRadioView extends StatelessWidget {
 
   StreamBuilder playPauseButton(CodeRadioViewModel model, BuildContext ctxt) {
     return StreamBuilder(
-        stream: model.audioService.player.playingStream,
+        stream: model.audioService.queue.stream,
         builder: (context, snapshot) {
           return ElevatedButton.icon(
               style: ButtonStyle(
@@ -123,11 +121,11 @@ class CodeRadioView extends StatelessWidget {
               onPressed: () {
                 model.pauseUnpauseRadio();
               },
-              icon: Icon(!model.audioService.player.playing
+              icon: Icon(!model.audioService.isPlaying('coderadio')
                   ? Icons.play_arrow
                   : Icons.pause),
               label:
-                  Text(!model.audioService.player.playing ? 'PLAY' : 'PAUSE'));
+                  Text(!model.audioService.isPlaying('coderadio') ? 'PLAY' : 'PAUSE'));
         });
   }
 
