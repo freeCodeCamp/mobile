@@ -34,11 +34,14 @@ class AudioPlayerHandler extends BaseAudioHandler {
   final AudioPlayer _audioPlayer = AudioPlayer();
 
   String _episodeId = '';
-  String get episodeId => _episodeId;
+  String _audioType = '';
 
+  String get episodeId => _episodeId;
   set setEpisodeId(String state) {
     _episodeId = state;
   }
+
+  String get audioType => _audioType;
 
   @override
   AudioPlayerHandler() {
@@ -108,6 +111,7 @@ class AudioPlayerHandler extends BaseAudioHandler {
         );
       }
       await _audioPlayer.load();
+      _audioType = 'episode';
       queue.add([audioMediaItem]);
       mediaItem.add(audioMediaItem);
     } catch (e) {
@@ -134,6 +138,7 @@ class AudioPlayerHandler extends BaseAudioHandler {
         AudioSource.uri(Uri.parse(radio.listenUrl), tag: nextSong)
       ]));
       await _audioPlayer.load();
+      _audioType = 'coderadio';
       setEpisodeId = '';
       queue.add([currentSong, nextSong]);
       mediaItem.add(currentSong);
@@ -145,9 +150,10 @@ class AudioPlayerHandler extends BaseAudioHandler {
   bool isPlaying(String src, {String? episodeId}) {
     if (src == 'podcast') {
       return _audioPlayer.playing &&
-          _audioPlayer.audioSource?.sequence[0].tag.id == episodeId;
+          _audioPlayer.audioSource?.sequence[0].tag.id == episodeId &&
+          _audioType == 'episode';
     } else if (src == 'coderadio') {
-      return _audioPlayer.playing;
+      return _audioPlayer.playing && _audioType == 'coderadio';
     } else {
       return false;
     }
