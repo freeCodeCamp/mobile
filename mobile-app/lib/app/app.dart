@@ -1,8 +1,6 @@
-import 'package:freecodecamp/service/episode_audio_service.dart';
 import 'package:freecodecamp/service/test_service.dart';
 import 'package:freecodecamp/service/notification_service.dart';
 import 'package:freecodecamp/service/podcasts_service.dart';
-import 'package:freecodecamp/service/code_radio_service.dart';
 import 'package:freecodecamp/service/authentication_service.dart';
 import 'package:freecodecamp/service/audio_service.dart';
 import 'package:freecodecamp/service/download_service.dart';
@@ -64,9 +62,7 @@ import 'package:sqflite_migration_service/sqflite_migration_service.dart';
     LazySingleton(classType: DatabaseMigrationService),
     LazySingleton(classType: PodcastsDatabaseService),
     LazySingleton(classType: NotificationService),
-    LazySingleton(classType: EpisodeAudioService),
     LazySingleton(classType: TestService),
-    LazySingleton(classType: CodeRadioService),
     LazySingleton(classType: AuthenticationService),
     LazySingleton(classType: AppAudioService),
     LazySingleton(classType: DownloadService),

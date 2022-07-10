@@ -12,9 +12,7 @@ import 'package:stacked_services/stacked_services.dart';
 
 import '../service/audio_service.dart';
 import '../service/authentication_service.dart';
-import '../service/code_radio_service.dart';
 import '../service/download_service.dart';
-import '../service/episode_audio_service.dart';
 import '../service/notification_service.dart';
 import '../service/podcasts_service.dart';
 import '../service/test_service.dart';
@@ -34,9 +32,7 @@ Future<void> setupLocator(
   locator.registerLazySingleton(() => DatabaseMigrationService());
   locator.registerLazySingleton(() => PodcastsDatabaseService());
   locator.registerLazySingleton(() => NotificationService());
-  locator.registerLazySingleton(() => EpisodeAudioService());
   locator.registerLazySingleton(() => TestService());
-  locator.registerLazySingleton(() => CodeRadioService());
   locator.registerLazySingleton(() => AuthenticationService());
   locator.registerLazySingleton(() => AppAudioService());
   locator.registerLazySingleton(() => DownloadService());
