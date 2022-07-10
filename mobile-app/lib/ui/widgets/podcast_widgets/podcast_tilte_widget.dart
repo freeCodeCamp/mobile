@@ -286,7 +286,8 @@ class PodcastTileState extends State<PodcastTile> {
     return Row(
       children: [
         widget._audioService.playbackState.value.processingState ==
-                AudioProcessingState.loading
+                    AudioProcessingState.loading &&
+                widget._audioService.episodeId == widget.episode.id
             ? Padding(
                 padding: const EdgeInsets.all(8.0),
                 child: SizedBox(
