@@ -74,6 +74,12 @@ class AudioPlayerHandler extends BaseAudioHandler {
     await _audioPlayer.seek(position);
   }
 
+  @override
+  Future<void> onTaskRemoved() async {
+    await _audioPlayer.stop();
+    return super.onTaskRemoved();
+  }
+
   // @override
   // Future<void> playFromUri() async {}
 
