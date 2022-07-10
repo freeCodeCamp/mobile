@@ -83,9 +83,11 @@ class PodcastTileState extends State<PodcastTile> {
   }
 
   set setIsDownloading(bool state) {
-    setState(() {
-      widget._isDownloading = state;
-    });
+    mounted
+        ? setState(() {
+            widget._isDownloading = state;
+          })
+        : null;
   }
 
   @override
@@ -101,7 +103,7 @@ class PodcastTileState extends State<PodcastTile> {
   }
 
   Future<void> init() async {
-    Directory appDir = await getApplicationSupportDirectory();
+    Directory appDir = await getApplicationDocumentsDirectory();
 
     File podcastImgFile;
     http.Response res;
