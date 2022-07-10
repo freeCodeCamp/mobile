@@ -264,9 +264,11 @@ class PodcastTileState extends State<PodcastTile> {
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
             children: [
-              // TODO: Look at buffering state also
               widget._audioService.playbackState.value.processingState ==
-                      AudioProcessingState.loading
+                          AudioProcessingState.loading ||
+                      widget._audioService.playbackState.value
+                              .processingState ==
+                          AudioProcessingState.buffering
                   ? Padding(
                       padding: const EdgeInsets.all(8.0),
                       child: SizedBox(
@@ -287,8 +289,10 @@ class PodcastTileState extends State<PodcastTile> {
   Row footerWidget(BuildContext context) {
     return Row(
       children: [
-        widget._audioService.playbackState.value.processingState ==
-                    AudioProcessingState.loading &&
+        (widget._audioService.playbackState.value.processingState ==
+                        AudioProcessingState.loading ||
+                    widget._audioService.playbackState.value.processingState ==
+                        AudioProcessingState.buffering) &&
                 widget._audioService.episodeId == widget.episode.id
             ? Padding(
                 padding: const EdgeInsets.all(8.0),
