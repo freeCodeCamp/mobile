@@ -26,6 +26,7 @@ class PodcastsDatabaseService {
         '1_create_db_schema.sql',
         '2_delete_all_values.sql',
         '3_reset_episodes_schema.sql',
+        '4_delete_all_values.sql',
       ],
       verbose: true,
     );
