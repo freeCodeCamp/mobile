@@ -13,7 +13,7 @@ dependencies:
     sdk: flutter
   flutter_dotenv: ^5.0.2
   flutter_html: ^2.2.1
-  flutter_lints: ^1.0.4
+  flutter_lints: ^2.0.0
   algolia: ^1.0.1
   podcast_search: ^0.5.0
   just_audio: ^0.9.7
