@@ -1,4 +1,3 @@
-// ignore_for_file: implementation_imports
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/gestures.dart';
@@ -6,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_highlight/flutter_highlight.dart';
 import 'package:flutter_highlight/theme_map.dart';
 import 'package:flutter_html/flutter_html.dart';
+import 'package:flutter_html_table/flutter_html_table.dart';
 import 'package:freecodecamp/models/news/article_model.dart';
 import 'package:freecodecamp/ui/views/news/news-article/news_article_header.dart';
 import 'package:freecodecamp/ui/views/news/news-image-viewer/news_image_viewer.dart';
@@ -199,14 +199,23 @@ class HtmlHandler {
         }),
         imageMatcher(): CustomRender.widget(widget: (code, child) {
           var imgUrl = code.tree.attributes['src'] ?? '';
+
           return Padding(
-            padding: const EdgeInsets.all(8.0),
-            child: InkWell(
-              onTap: () => goToImageView(imgUrl, context),
-              child: CachedNetworkImage(
-                imageUrl: imgUrl,
-              ),
-            ),
+              padding: const EdgeInsets.all(8.0),
+              child: Row(
+                children: [
+                  CachedNetworkImage(
+                    imageUrl: imgUrl,
+                  ),
+                  Text(imgUrl),
+                ],
+              ));
+        }),
+        tableMatcher(): CustomRender.widget(widget: (context, child) {
+          return SingleChildScrollView(
+            scrollDirection: Axis.horizontal,
+            // this calls the table CustomRender to render a table as normal (it uses a widget so we know widget is not null)
+            child: tableRender.call().widget!.call(context, child),
           );
         }),
         bockQuoteMatcher(): CustomRender.widget(widget: (code, child) {

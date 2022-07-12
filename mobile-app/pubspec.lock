@@ -386,6 +386,13 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "3.0.0-alpha.5"
+  flutter_html_table:
+    dependency: "direct main"
+    description:
+      name: flutter_html_table
+      url: "https://pub.dartlang.org"
+    source: hosted
+    version: "3.0.0-alpha.3"
   flutter_inappwebview:
     dependency: transitive
     description:
@@ -393,6 +400,13 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "5.4.3+7"
+  flutter_layout_grid:
+    dependency: transitive
+    description:
+      name: flutter_layout_grid
+      url: "https://pub.dartlang.org"
+    source: hosted
+    version: "1.0.6"
   flutter_lints:
     dependency: "direct main"
     description:
@@ -956,6 +970,13 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "1.2.0"
+  quiver:
+    dependency: transitive
+    description:
+      name: quiver
+      url: "https://pub.dartlang.org"
+    source: hosted
+    version: "3.1.0"
   readmore:
     dependency: "direct main"
     description:
