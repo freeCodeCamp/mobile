@@ -293,7 +293,8 @@ class PostViewModel extends BaseViewModel {
         return returnAction(icon, message, style);
       case 'split_topic':
         message = 'SPLIT THIS TOPIC ' + date;
-        icon = const Icon(FontAwesomeIcons.signOutAlt, color: Colors.white);
+        icon =
+            const Icon(FontAwesomeIcons.rightFromBracket, color: Colors.white);
         return returnAction(icon, message, style);
       case 'closed.enabled':
         message = 'CLOSED ' + date;
