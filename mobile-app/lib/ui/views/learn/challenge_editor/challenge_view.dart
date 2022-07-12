@@ -175,7 +175,7 @@ class ChallengeView extends StatelessWidget {
               onWebViewCreated: (WebViewController webcontroller) async {
                 model.setTestController = webcontroller;
                 controller.editorTextStream.stream.listen((event) async {
-                  model.setWebViewContent(
+                  model.runner.setWebViewContent(
                       event, challenge.tests, model.testController!);
                 });
               },
@@ -184,9 +184,9 @@ class ChallengeView extends StatelessWidget {
                 JavascriptChannel(
                   name: 'Flutter',
                   onMessageReceived: (JavascriptMessage message) async {
-                    model.setTestDocument = message.message;
+                    model.runner.setTestDocument = message.message;
                     List<ChallengeTest> tests =
-                        await model.testRunner(challenge.tests);
+                        await model.runner.testRunner(challenge.tests);
 
                     ChallengeTest? test = model.returnFirstFailedTest(tests);
 
@@ -250,14 +250,12 @@ class ChallengeView extends StatelessWidget {
                     icon: model.completedChallenge
                         ? const FaIcon(FontAwesomeIcons.arrowRight)
                         : const FaIcon(FontAwesomeIcons.check),
-                    onPressed: !model.pressedTestButton
-                        ? () async => {
-                              FocusManager.instance.primaryFocus?.unfocus(),
-                              model.testController?.runJavascript('''
+                    onPressed: () async => {
+                      FocusManager.instance.primaryFocus?.unfocus(),
+                      model.testController?.runJavascript('''
                                 (function(){Flutter.postMessage(window.document.body.outerHTML)})();
                               '''),
-                            }
-                        : () => {},
+                    },
                     splashColor: Colors.transparent,
                     highlightColor: Colors.transparent,
                   ),

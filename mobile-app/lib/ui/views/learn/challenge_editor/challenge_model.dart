@@ -1,18 +1,17 @@
 import 'dart:convert';
-import 'dart:developer';
 
-import 'package:flutter/material.dart';
 import 'package:flutter_code_editor/controller/editor_view_controller.dart';
-import 'package:flutter_code_editor/models/file_model.dart';
 import 'package:freecodecamp/enums/challenge_test_state_type.dart';
 import 'package:freecodecamp/enums/panel_type.dart';
 import 'package:freecodecamp/models/learn/challenge_model.dart';
-import 'package:html/dom.dart' as dom;
+import 'package:freecodecamp/ui/views/learn/test_runner.dart';
+
 import 'package:html/parser.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:webview_flutter/webview_flutter.dart';
 import 'package:stacked/stacked.dart';
 import 'package:http/http.dart' as http;
+import 'package:html/dom.dart' as dom;
 import 'dart:developer' as dev;
 
 class ChallengeModel extends BaseViewModel {
@@ -24,12 +23,6 @@ class ChallengeModel extends BaseViewModel {
 
   bool _hideAppBar = false;
   bool get hideAppBar => _hideAppBar;
-
-  bool _pressedTestButton = false;
-  bool get pressedTestButton => _pressedTestButton;
-
-  String _testDocument = '';
-  String get testDocument => _testDocument;
 
   String _hint = '';
   String get hint => _hint;
@@ -48,6 +41,8 @@ class ChallengeModel extends BaseViewModel {
 
   WebViewController? _testController;
   WebViewController? get testController => _testController;
+
+  TestRunner runner = TestRunner();
 
   void init() async {
     _editorText = await getEditorTextFromCache();
@@ -84,16 +79,6 @@ class ChallengeModel extends BaseViewModel {
     notifyListeners();
   }
 
-  set setPressedTestButton(bool pressed) {
-    _pressedTestButton = pressed;
-    notifyListeners();
-  }
-
-  set setTestDocument(String document) {
-    _testDocument = document;
-    notifyListeners();
-  }
-
   set setHint(String hint) {
     _hint = hint;
     notifyListeners();
@@ -109,16 +94,48 @@ class ChallengeModel extends BaseViewModel {
     notifyListeners();
   }
 
+  // When the content in the editor is changed, save it to the cache. This prevents
+  // the user from losing their work when switching between panels e.g, the preview.
+  // The cache is disposed when the user switches to a new challenge.
+
   void saveEditorTextInCache(String value) async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     prefs.setString('editorText', value);
   }
+
+  // Get the content of the editor from the cache if it exists. If it doesn't,
+  // return an empty string. This prevents the user from losing their work when
+  // switching between panels e.g, the preview.
 
   Future<String> getEditorTextFromCache() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
 
     return prefs.getString('editorText') ?? '';
   }
+
+  // This removes the cached content of the editor. This is called when the user
+  // switches to a new challenge.
+
+  Future disposeCahce(String url) async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+
+    if (prefs.getString(url) != null) {
+      prefs.remove(url);
+      dev.log('challenge cache got disposed');
+    }
+
+    if (prefs.getString('editorText') != null) {
+      prefs.remove('editorText');
+      dev.log('editorText cache got disposed');
+    }
+
+    EditorViewController controller = EditorViewController();
+
+    controller.removeAllRecentlyOpenedFilesCache('');
+  }
+
+  // This prevents the user from requesting the challenge more than once
+  // when swtiching between preview and the challenge.
 
   Future<Challenge?> initChallenge(String url) async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
@@ -143,23 +160,9 @@ class ChallengeModel extends BaseViewModel {
     return null;
   }
 
-  Future disposeCahce(String url) async {
-    SharedPreferences prefs = await SharedPreferences.getInstance();
-
-    if (prefs.getString(url) != null) {
-      prefs.remove(url);
-      dev.log('challenge cache got disposed');
-    }
-
-    if (prefs.getString('editorText') != null) {
-      prefs.remove('editorText');
-      dev.log('editorText cache got disposed');
-    }
-
-    EditorViewController controller = EditorViewController();
-
-    controller.removeAllRecentlyOpenedFilesCache('');
-  }
+  // This parses the preview document with the correct viewport size. This document
+  // is then displayed in the preview panel. The preview document does not modify
+  // the original challenge document.
 
   String parsePreviewDocument(String docString) {
     dom.Document document = parse(docString);
@@ -177,215 +180,16 @@ class ChallengeModel extends BaseViewModel {
     return document.outerHtml;
   }
 
-  List<FileIDE> returnFiles(Challenge challenge) {
-    List<FileIDE> files = [];
+  // The hint text is the same as the test text. This is used to display the hint.
+  // if the length of the hint is greater than 0, then the hint is displayed. If
+  // the length of the hint is 0, then the challenge is completed.
 
-    for (ChallengeFile file in challenge.files) {
-      files.add(FileIDE(
-          fileName: file.name,
-          filePath: '',
-          fileContent: file.contents,
-          parentDirectory: '',
-          fileExplorer: null));
-    }
-
-    return files;
-  }
-
-  void updateText(String newText) {
-    _editorText = newText;
-    notifyListeners();
-  }
-
-  // sets the new content written in the editor and intit test framework
-
-  void setWebViewContent(String content, List<ChallengeTest> tests,
-      WebViewController webviewController) {
-    dom.Document document = parse(content);
-
-    List<String> imports = [
-      '<script src="https://unpkg.com/chai/chai.js"></script>',
-      '<script src="https://unpkg.com/mocha/mocha.js"></script>',
-      '<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>',
-      '<link rel="stylesheet" href="https://unpkg.com/mocha/mocha.css" />'
-    ];
-
-    List<String> bodyScripts = [
-      '<div id="mocha"></div>',
-      '''
-       <script class="mocha-init">
-          mocha.setup("bdd");
-          mocha.checkLeaks();
-       </script>
-      ''',
-      '''
-       <script class="mocha-exec">
-          const assert = chai.assert;
-          let code = `$content`;
-          
-          ${parseTest(tests)}
-
-          mocha.run();
-       </script>
-      '''
-    ];
-
-    for (String import in imports) {
-      dom.Document importToNode = parse(import);
-
-      // ignore: unused_local_variable
-      dom.Node node =
-          importToNode.getElementsByTagName('HEAD')[0].children.first;
-
-      document.body!.append(importToNode);
-    }
-
-    for (String bodyScript in bodyScripts) {
-      dom.Document scriptToNode = parse(bodyScript);
-
-      dom.Node bodyNode =
-          scriptToNode.getElementsByTagName('BODY').first.children.isNotEmpty
-              ? scriptToNode.getElementsByTagName('BODY').first.children.first
-              : scriptToNode.getElementsByTagName('HEAD').first.children.first;
-      document.body!.append(bodyNode);
-    }
-
-    webviewController.loadUrl(Uri.dataFromString(document.outerHtml,
-            mimeType: 'text/html', encoding: Encoding.getByName('utf-8'))
-        .toString());
-  }
-
-  IconData getCorrectTestIcon(ChallengeTestState testState) {
-    switch (testState) {
-      case ChallengeTestState.waiting:
-        return Icons.science_outlined;
-      case ChallengeTestState.passed:
-        return Icons.check;
-      case ChallengeTestState.failed:
-        return Icons.error;
-      default:
-        return Icons.science_outlined;
-    }
-  }
-
-  List<ChallengeTest> getFailedTest(List<ChallengeTest> incTest) {
-    List<ChallengeTest> testedTest = [];
-    dom.Document document = parse(_testDocument);
-
-    if (document.getElementsByClassName('test fail').isEmpty) {
-      return testedTest;
-    }
-
-    List testFailInView = document.getElementsByClassName('test fail');
-
-    out:
-    for (int i = 0; i < testFailInView.length; i++) {
-      List<dom.Element> nodes =
-          document.getElementsByClassName('test fail')[i].children;
-      for (int j = 0; j < incTest.length; j++) {
-        for (dom.Element node in nodes) {
-          String nodeTrimmed =
-              node.text.replaceAll(' ', '').replaceAll('‣', '');
-          String instTrimmed = incTest[j].instruction.replaceAll(' ', '');
-
-          if (nodeTrimmed == instTrimmed) {
-            incTest[j].testState = ChallengeTestState.failed;
-            testedTest.add(incTest[j]);
-          }
-
-          if (incTest.length == testedTest.length) break out;
-        }
-      }
-    }
-
-    return testedTest;
-  }
-
-  String parseTest(List<ChallengeTest> tests) {
-    List<String> stringArr = [];
-
-    for (ChallengeTest test in tests) {
-      stringArr.add('''it('${test.instruction}', () => {
-        ${test.javaScript}
-      });''');
-    }
-
-    return stringArr.join();
-  }
-
-  List<ChallengeTest> getPassedTest(List<ChallengeTest> incTest) {
-    List<ChallengeTest> testedTest = [];
-    dom.Document document = parse(_testDocument);
-
-    if (document.getElementsByClassName('test pass fast').isEmpty) {
-      return testedTest;
-    }
-
-    List<dom.Element> testPassInView =
-        document.getElementsByClassName('test pass fast');
-
-    out:
-    for (int i = 0; i < testPassInView.length; i++) {
-      List<dom.Element> nodes =
-          document.getElementsByClassName('test pass fast')[i].children;
-
-      for (int j = 0; j < incTest.length; j++) {
-        for (dom.Element node in nodes) {
-          List nodeSplit = node.text.split('>');
-
-          if (nodeSplit.length > 1) nodeSplit.removeLast();
-
-          String nodeTrimmed = nodeSplit.join('>').replaceAll(' ', '') + '>';
-
-          String instTrimmed = incTest[j].instruction.replaceAll(' ', '');
-
-          if (nodeTrimmed == instTrimmed) {
-            incTest[j].testState = ChallengeTestState.passed;
-            testedTest.add(incTest[j]);
-          }
-
-          if (incTest.length == testedTest.length) break out;
-        }
-      }
-    }
-    return testedTest;
-  }
-
-  Future<List<ChallengeTest>> testRunner(List<ChallengeTest> incTest) async {
-    if (_testDocument.isNotEmpty) {
-      List<ChallengeTest> passedTest = getPassedTest(incTest);
-      List<ChallengeTest> failedTest = getFailedTest(incTest);
-
-      List<ChallengeTest> allTest = List.from(passedTest)..addAll(failedTest);
-      log((allTest.map((e) => e.testState)).toString());
-
-      return allTest;
-    } else {
-      dev.log('test document is empty');
-    }
-
-    return incTest;
-  }
-
-  returnFirstFailedTest(List<ChallengeTest> incTest) {
+  ChallengeTest? returnFirstFailedTest(List<ChallengeTest> incTest) {
     for (ChallengeTest test in incTest) {
       if (test.testState == ChallengeTestState.failed) {
         return test;
       }
     }
     return null;
-  }
-
-  handlePaneVisibility(context) {
-    if (MediaQuery.of(context).viewInsets.bottom > 0) {
-      FocusManager.instance.primaryFocus?.unfocus();
-      if (!_showPanel) {
-        setShowPanel = true;
-        setHideAppBar = true;
-      }
-    } else {
-      setHideAppBar = !hideAppBar;
-      setShowPanel = !showPanel;
-    }
   }
 }
