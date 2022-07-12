@@ -79,7 +79,7 @@ class ForumPostFeedView extends StatelessWidget {
               ? const Padding(
                   padding: EdgeInsets.only(right: 8),
                   child: FaIcon(
-                    FontAwesomeIcons.checkSquare,
+                    FontAwesomeIcons.squareCheck,
                     color: Color.fromRGBO(0xa9, 0xaa, 0xb2, 1),
                     size: 18,
                   ),

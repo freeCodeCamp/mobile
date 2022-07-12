@@ -539,7 +539,7 @@ packages:
       name: font_awesome_flutter
       url: "https://pub.dartlang.org"
     source: hosted
-    version: "9.2.0"
+    version: "10.1.0"
   frontend_server_client:
     dependency: transitive
     description:
@@ -1205,7 +1205,7 @@ packages:
       name: stacked_core
       url: "https://pub.dartlang.org"
     source: hosted
-    version: "1.2.0"
+    version: "1.2.3"
   stacked_generator:
     dependency: "direct dev"
     description:
@@ -1219,7 +1219,7 @@ packages:
       name: stacked_services
       url: "https://pub.dartlang.org"
     source: hosted
-    version: "0.8.26"
+    version: "0.9.2"
   stream_channel:
     dependency: transitive
     description:
