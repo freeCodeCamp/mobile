@@ -197,19 +197,35 @@ class HtmlHandler {
             ),
           );
         }),
+        figureMatcher(): CustomRender.widget(widget: (code, child) {
+          if (code.tree.element!.children.isNotEmpty) {
+            if (code.tree.element!.children[0].attributes['src'] != null) {
+              return GestureDetector(
+                onTap: () {
+                  goToImageView(
+                      code.tree.element!.children[0].attributes['src']
+                          as String,
+                      context);
+                },
+                child: Image.network(
+                  code.tree.element!.children[0].attributes['src']!,
+                  fit: BoxFit.cover,
+                ),
+              );
+            }
+          }
+
+          return Container();
+        }),
         imageMatcher(): CustomRender.widget(widget: (code, child) {
           var imgUrl = code.tree.attributes['src'] ?? '';
 
           return Padding(
-              padding: const EdgeInsets.all(8.0),
-              child: Row(
-                children: [
-                  CachedNetworkImage(
-                    imageUrl: imgUrl,
-                  ),
-                  Text(imgUrl),
-                ],
-              ));
+            padding: const EdgeInsets.all(8.0),
+            child: CachedNetworkImage(
+              imageUrl: imgUrl,
+            ),
+          );
         }),
         tableMatcher(): CustomRender.widget(widget: (context, child) {
           return SingleChildScrollView(
@@ -257,6 +273,9 @@ class HtmlHandler {
 
   static CustomRenderMatcher tableMatcher() =>
       (context) => context.tree.element?.localName == 'table';
+
+  static CustomRenderMatcher figureMatcher() =>
+      (context) => context.tree.element?.localName == 'figure';
 
   static CustomRenderMatcher imageMatcher() =>
       (context) => context.tree.element?.localName == 'img';
