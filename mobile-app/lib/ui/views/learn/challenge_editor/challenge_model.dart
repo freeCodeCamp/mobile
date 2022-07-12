@@ -1,6 +1,5 @@
 import 'dart:convert';
 
-import 'package:flutter_code_editor/controller/editor_view_controller.dart';
 import 'package:freecodecamp/enums/challenge_test_state_type.dart';
 import 'package:freecodecamp/enums/panel_type.dart';
 import 'package:freecodecamp/models/learn/challenge_model.dart';
@@ -12,7 +11,6 @@ import 'package:webview_flutter/webview_flutter.dart';
 import 'package:stacked/stacked.dart';
 import 'package:http/http.dart' as http;
 import 'package:html/dom.dart' as dom;
-import 'dart:developer' as dev;
 
 class ChallengeModel extends BaseViewModel {
   String? _editorText;
@@ -121,21 +119,15 @@ class ChallengeModel extends BaseViewModel {
 
     if (prefs.getString(url) != null) {
       prefs.remove(url);
-      dev.log('challenge cache got disposed');
     }
 
     if (prefs.getString('editorText') != null) {
       prefs.remove('editorText');
-      dev.log('editorText cache got disposed');
     }
-
-    EditorViewController controller = EditorViewController();
-
-    controller.removeAllRecentlyOpenedFilesCache('');
   }
 
   // This prevents the user from requesting the challenge more than once
-  // when swtiching between preview and the challenge.
+  // when swichting between preview and the challenge.
 
   Future<Challenge?> initChallenge(String url) async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
@@ -145,8 +137,6 @@ class ChallengeModel extends BaseViewModel {
 
       if (res.statusCode == 200) {
         prefs.setString(url, res.body);
-
-        dev.log('challenge cache got add on: $url');
 
         return Challenge.fromJson(jsonDecode(res.body)['result']['data']
             ['challengeNode']['challenge']);
@@ -167,15 +157,15 @@ class ChallengeModel extends BaseViewModel {
   String parsePreviewDocument(String docString) {
     dom.Document document = parse(docString);
 
-    String viewPort =
-        '<meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" name="viewport"></meta>';
+    String viewPort = '''<meta content="width=device-width,
+         initial-scale=1.0, maximum-scale=1.0,
+         user-scalable=no" name="viewport">
+         </meta>''';
 
     dom.Document viewPortParsed = parse(viewPort);
     dom.Node meta = viewPortParsed.getElementsByTagName('META')[0];
 
     document.getElementsByTagName('HEAD')[0].append(meta);
-
-    dev.log(document.outerHtml);
 
     return document.outerHtml;
   }
