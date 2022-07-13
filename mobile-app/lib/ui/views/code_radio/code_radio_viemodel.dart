@@ -37,13 +37,16 @@ class CodeRadioViewModel extends BaseViewModel {
     });
   }
 
-  void pauseUnpauseRadio() {
+  void pauseUnpauseRadio() async {
     if (!audioService.isPlaying('coderadio')) {
       _stoppedManually = false;
-      audioService.play();
+
+      await audioService.play();
+      notifyListeners();
     } else {
       _stoppedManually = true;
-      audioService.pause();
+      await audioService.pause();
+      notifyListeners();
     }
   }
 
@@ -56,7 +59,9 @@ class CodeRadioViewModel extends BaseViewModel {
 
     if (radio.nowPlaying.id != prefs.getString('lastSongId')) {
       setBackgroundWidget(radio);
-      audioService.play();
+      if (!stoppedManually) {
+        audioService.play();
+      }
       prefs.setString('lastSongId', radio.nowPlaying.id);
     }
   }

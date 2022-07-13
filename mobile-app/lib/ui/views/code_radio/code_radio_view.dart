@@ -121,11 +121,9 @@ class CodeRadioView extends StatelessWidget {
               onPressed: () {
                 model.pauseUnpauseRadio();
               },
-              icon: Icon(!model.audioService.isPlaying('coderadio')
-                  ? Icons.play_arrow
-                  : Icons.pause),
-              label:
-                  Text(!model.audioService.isPlaying('coderadio') ? 'PLAY' : 'PAUSE'));
+              icon:
+                  Icon(model.stoppedManually ? Icons.play_arrow : Icons.pause),
+              label: Text(model.stoppedManually ? 'PLAY' : 'PAUSE'));
         });
   }
 
