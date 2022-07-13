@@ -43,7 +43,7 @@ class ForumUserProfileView extends StatelessWidget {
             'Username',
             style: TextStyle(fontSize: 20),
           ),
-          subtitle: Text('People can mention you as @' + model.user.username),
+          subtitle: Text('People can mention you as @${model.user.username}'),
         ),
         const ListTile(
           title: Text('Profile Picture', style: TextStyle(fontSize: 20)),

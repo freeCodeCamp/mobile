@@ -9,10 +9,10 @@ class ForumLazyLoading extends StatefulWidget {
       : super(key: key);
 
   @override
-  _ForumLazyLoadingState createState() => _ForumLazyLoadingState();
+  ForumLazyLoadingState createState() => ForumLazyLoadingState();
 }
 
-class _ForumLazyLoadingState extends State<ForumLazyLoading> {
+class ForumLazyLoadingState extends State<ForumLazyLoading> {
   @override
   void initState() {
     super.initState();

@@ -36,9 +36,9 @@ class EpisodeView extends StatelessWidget {
                       ]),
                       margin: const EdgeInsets.symmetric(
                           vertical: 8, horizontal: 8),
-                      child: CachedNetworkImage(imageUrl: podcast.image!),
                       height: MediaQuery.of(context).size.height * 0.40,
                       width: MediaQuery.of(context).size.height * 0.40,
+                      child: CachedNetworkImage(imageUrl: podcast.image!),
                     ),
                     Container(
                       padding: const EdgeInsets.all(8),

@@ -60,7 +60,7 @@ class NewsFeedModel extends BaseViewModel {
 
     String hasSlug = slug != '' ? '&filter=tag:$slug' : '';
     String fromAuthor = author != '' ? '&filter=author:$author' : '';
-    String page = '&page=' + _pageNumber.toString();
+    String page = '&page=$_pageNumber';
     String par =
         '&fields=title,url,feature_image,slug,published_at,id&include=tags,authors';
     String concact = page + par + hasSlug + fromAuthor;

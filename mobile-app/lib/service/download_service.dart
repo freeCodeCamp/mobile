@@ -44,8 +44,7 @@ class DownloadService {
     dev.log(_downloadId);
     _downloading.sink.add(true);
 
-    String path =
-        app.path + '/episodes/' + podcast.id + '/' + episode.id + '.mp3';
+    String path = '${app.path}/episodes/${podcast.id}/${episode.id}.mp3';
 
     await dio.download(episode.contentUrl!, path,
         onReceiveProgress: (int recevied, int total) {

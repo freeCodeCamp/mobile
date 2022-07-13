@@ -147,7 +147,7 @@ FutureBuilder userTemplateBuilder(context, model) {
                           ? const EdgeInsets.only(left: 16.0, top: 8)
                           : const EdgeInsets.only(left: 16),
                       child: Text(
-                        'Joined ' + PostViewModel.parseDate(user.createdAt),
+                        'Joined ${PostViewModel.parseDate(user.createdAt)}',
                         style: const TextStyle(fontSize: 18),
                       ),
                     ),
@@ -156,7 +156,7 @@ FutureBuilder userTemplateBuilder(context, model) {
                     child: Padding(
                       padding: const EdgeInsets.only(left: 16.0, top: 8),
                       child: Text(
-                        'Seen ' + PostViewModel.parseDate(user.lastSeen),
+                        'Seen ${PostViewModel.parseDate(user.lastSeen)}',
                         style: const TextStyle(fontSize: 18),
                       ),
                     ),
@@ -185,7 +185,7 @@ FutureBuilder userTemplateBuilder(context, model) {
             ],
           );
         } else if (snapshot.hasError) {
-          throw Exception('Snapshot has error' + snapshot.error.toString());
+          throw Exception('Snapshot has error${snapshot.error}');
         }
 
         return const Center(
@@ -259,7 +259,7 @@ class UserTopicBuilder extends StatelessWidget {
             title:
                 Text(topic![index].title, style: const TextStyle(fontSize: 18)),
             subtitle: Text(
-              'posted ' + PostViewModel.parseDate(topic![index].createdAt),
+              'posted ${PostViewModel.parseDate(topic![index].createdAt)}',
             ),
             trailing: const Icon(
               Icons.arrow_forward_ios_sharp,

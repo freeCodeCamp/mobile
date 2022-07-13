@@ -122,6 +122,7 @@ class NewsFeedView extends StatelessWidget {
     return Column(
       children: [
         Container(
+          color: const Color.fromRGBO(0x2A, 0x2A, 0x40, 1),
           child: AspectRatio(
               aspectRatio: 16 / 9,
               child: CachedNetworkImage(
@@ -136,7 +137,6 @@ class NewsFeedView extends StatelessWidget {
                   ),
                 ),
               )),
-          color: const Color.fromRGBO(0x2A, 0x2A, 0x40, 1),
         ),
         Align(
           alignment: Alignment.centerLeft,
