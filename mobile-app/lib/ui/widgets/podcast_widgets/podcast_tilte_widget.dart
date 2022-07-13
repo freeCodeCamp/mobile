@@ -158,12 +158,23 @@ class PodcastTileState extends State<PodcastTile> {
   }
 
   Future<void> playBtnClick() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    int progress = prefs.getInt('${widget.episode.id}_progress') ?? 0;
     if (!widget.loading) {
       if (!widget.playing) {
         widget._audioService.setEpisodeId = widget.episode.id;
         setIsLoading = true;
-        await widget._audioService
-            .loadEpisode(widget.episode, widget.downloaded, widget.podcast);
+
+        if (progress > 0) {
+          await widget._audioService
+              .loadEpisode(widget.episode, widget.downloaded, widget.podcast);
+
+          widget._audioService.seek(Duration(seconds: progress));
+        } else {
+          await widget._audioService
+              .loadEpisode(widget.episode, widget.downloaded, widget.podcast);
+        }
+
         await widget._audioService.play();
       } else {
         widget._audioService.setEpisodeId = '';
