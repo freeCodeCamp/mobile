@@ -32,7 +32,7 @@ class PodcastListViewModel extends BaseViewModel {
       return await _databaseService.getPodcasts();
     } else {
       appDir = await getApplicationDocumentsDirectory();
-      final res = await http.get(Uri.parse(baseUrl + 'podcasts'));
+      final res = await http.get(Uri.parse('${baseUrl}podcasts'));
       final List<dynamic> podcasts = json.decode(res.body);
       return podcasts.map((podcast) => Podcasts.fromAPIJson(podcast)).toList();
     }

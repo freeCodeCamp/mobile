@@ -49,7 +49,7 @@ class ForumUserProfileViewModel extends BaseViewModel {
       notifyListeners();
       return User.fromJson(jsonDecode(response.body));
     }
-    throw Exception('could not load user data: ' + response.body.toString());
+    throw Exception('could not load user data: ${response.body}');
   }
 
   Future showEmailDialog() async {

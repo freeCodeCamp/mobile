@@ -167,12 +167,12 @@ class HtmlHandler {
           if (isVideo.hasMatch(videoUrl ?? '')) {
             var videoId = videoUrl?.split('/').last.split('?').first;
 
-            YoutubePlayerController _controller = YoutubePlayerController(
+            YoutubePlayerController controller = YoutubePlayerController(
               initialVideoId: videoId!,
             );
 
             return YoutubePlayerIFrame(
-              controller: _controller,
+              controller: controller,
             );
           }
         },

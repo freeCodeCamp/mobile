@@ -41,7 +41,7 @@ class ForumPostFeedModel extends BaseViewModel {
     if (title.length < 55) {
       return title;
     } else {
-      return title.toString().substring(0, 55) + '...';
+      return '${title.toString().substring(0, 55)}...';
     }
   }
 

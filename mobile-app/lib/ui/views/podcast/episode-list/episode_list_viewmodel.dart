@@ -55,11 +55,7 @@ class EpisodeListViewModel extends BaseViewModel {
         : 'https://api.mobile.freecodecamp.dev/';
     try {
       final res = await http.get(
-        Uri.parse(baseUrl +
-            'podcasts/' +
-            podcastId +
-            '/episodes?page=' +
-            pageKey.toString()),
+        Uri.parse('${baseUrl}podcasts/$podcastId/episodes?page=$pageKey'),
       );
       if (callbackIdentity == _activeCallbackIdentity) {
         final List<dynamic> episodes = json.decode(res.body)['episodes'];

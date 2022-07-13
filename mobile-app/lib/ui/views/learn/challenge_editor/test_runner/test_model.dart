@@ -171,7 +171,7 @@ class TestModel extends BaseViewModel {
 
           if (nodeSplit.length > 1) nodeSplit.removeLast();
 
-          String nodeTrimmed = nodeSplit.join('>').replaceAll(' ', '') + '>';
+          String nodeTrimmed = '${nodeSplit.join('>').replaceAll(' ', '')}>';
 
           String instTrimmed = incTest[j].instruction.replaceAll(' ', '');
 

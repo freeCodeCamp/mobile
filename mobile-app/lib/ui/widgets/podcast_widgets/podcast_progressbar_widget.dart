@@ -29,10 +29,10 @@ class PodcastProgressBar extends StatefulWidget {
   StreamSubscription<Duration>? progressListener;
 
   @override
-  _PodcastProgressBarState createState() => _PodcastProgressBarState();
+  PodcastProgressBarState createState() => PodcastProgressBarState();
 }
 
-class _PodcastProgressBarState extends State<PodcastProgressBar> {
+class PodcastProgressBarState extends State<PodcastProgressBar> {
   void setBarWidthAndAudio(double value, double maxBarWidth) {
     value = value - MediaQuery.of(context).size.width * 0.1;
     setState(() {
