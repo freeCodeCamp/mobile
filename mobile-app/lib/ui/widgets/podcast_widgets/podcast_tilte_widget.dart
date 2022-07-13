@@ -1,5 +1,7 @@
 import 'dart:io';
 
+import 'package:audio_service/audio_service.dart';
+import 'package:dio/dio.dart';
 import 'package:fk_user_agent/fk_user_agent.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
@@ -7,19 +9,16 @@ import 'package:flutter_html/flutter_html.dart';
 import 'package:freecodecamp/app/app.locator.dart';
 import 'package:freecodecamp/models/podcasts/episodes_model.dart';
 import 'package:freecodecamp/models/podcasts/podcasts_model.dart';
+import 'package:freecodecamp/service/audio_service.dart';
 import 'package:freecodecamp/service/download_service.dart';
-import 'package:freecodecamp/service/episode_audio_service.dart';
 import 'package:freecodecamp/service/podcasts_service.dart';
 import 'package:freecodecamp/ui/views/podcast/episode-view/episode_view.dart';
-import 'package:intl/intl.dart';
 import 'package:html/dom.dart' as dom;
-import 'package:just_audio/just_audio.dart';
+import 'package:http/http.dart' as http;
+import 'package:intl/intl.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:url_launcher/url_launcher_string.dart';
-import 'package:http/http.dart' as http;
-
-import 'package:dio/dio.dart';
 
 // ignore: must_be_immutable
 class PodcastTile extends StatefulWidget {
@@ -37,7 +36,7 @@ class PodcastTile extends StatefulWidget {
   final bool isFromDownloadView;
   final bool isFromEpisodeView;
 
-  final _audioService = locator<EpisodeAudioService>();
+  final _audioService = locator<AppAudioService>().audioHandler;
   final _databaseService = locator<PodcastsDatabaseService>();
   final _downloadService = locator<DownloadService>();
 
@@ -84,9 +83,11 @@ class PodcastTileState extends State<PodcastTile> {
   }
 
   set setIsDownloading(bool state) {
-    setState(() {
-      widget._isDownloading = state;
-    });
+    mounted
+        ? setState(() {
+            widget._isDownloading = state;
+          })
+        : null;
   }
 
   @override
@@ -102,7 +103,7 @@ class PodcastTileState extends State<PodcastTile> {
   }
 
   Future<void> init() async {
-    Directory appDir = await getApplicationSupportDirectory();
+    Directory appDir = await getApplicationDocumentsDirectory();
 
     File podcastImgFile;
     http.Response res;
@@ -119,15 +120,15 @@ class PodcastTileState extends State<PodcastTile> {
       }
     });
 
-    widget._audioService.isPlayingEpisodeStream.listen((event) {
+    widget._audioService.playbackState.listen((event) {
       if (widget._audioService.episodeId == widget.episode.id && mounted) {
-        setIsPlaying = event;
+        setIsPlaying = event.playing;
       } else {
         setIsPlaying = false;
       }
     });
 
-    widget._audioService.audioPlayer.positionStream.listen((event) async {
+    AudioService.position.listen((event) async {
       if (widget._playing &&
           widget._audioService.episodeId == widget.episode.id) {
         SharedPreferences prefs = await SharedPreferences.getInstance();
@@ -157,14 +158,27 @@ class PodcastTileState extends State<PodcastTile> {
   }
 
   Future<void> playBtnClick() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    int progress = prefs.getInt('${widget.episode.id}_progress') ?? 0;
     if (!widget.loading) {
       if (!widget.playing) {
         widget._audioService.setEpisodeId = widget.episode.id;
         setIsLoading = true;
-        await widget._audioService.playAudio(widget.episode, widget.downloaded);
+
+        if (progress > 0) {
+          await widget._audioService
+              .loadEpisode(widget.episode, widget.downloaded, widget.podcast);
+
+          widget._audioService.seek(Duration(seconds: progress));
+        } else {
+          await widget._audioService
+              .loadEpisode(widget.episode, widget.downloaded, widget.podcast);
+        }
+
+        await widget._audioService.play();
       } else {
         widget._audioService.setEpisodeId = '';
-        await widget._audioService.pauseAudio();
+        await widget._audioService.pause();
       }
       setIsLoading = false;
     }
@@ -261,8 +275,11 @@ class PodcastTileState extends State<PodcastTile> {
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
             children: [
-              widget._audioService.audioPlayer.processingState ==
-                      ProcessingState.loading
+              widget._audioService.playbackState.value.processingState ==
+                          AudioProcessingState.loading ||
+                      widget._audioService.playbackState.value
+                              .processingState ==
+                          AudioProcessingState.buffering
                   ? Padding(
                       padding: const EdgeInsets.all(8.0),
                       child: SizedBox(
@@ -283,8 +300,11 @@ class PodcastTileState extends State<PodcastTile> {
   Row footerWidget(BuildContext context) {
     return Row(
       children: [
-        widget._audioService.audioPlayer.processingState ==
-                ProcessingState.loading
+        (widget._audioService.playbackState.value.processingState ==
+                        AudioProcessingState.loading ||
+                    widget._audioService.playbackState.value.processingState ==
+                        AudioProcessingState.buffering) &&
+                widget._audioService.episodeId == widget.episode.id
             ? Padding(
                 padding: const EdgeInsets.all(8.0),
                 child: SizedBox(
