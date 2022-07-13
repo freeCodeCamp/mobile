@@ -1,41 +1,27 @@
 import 'dart:convert';
-import 'dart:developer' as dev;
+import 'dart:developer';
+
 import 'package:flutter/material.dart';
 import 'package:freecodecamp/enums/challenge_test_state_type.dart';
 import 'package:freecodecamp/models/learn/challenge_model.dart';
-import 'package:html/dom.dart' as dom;
 import 'package:html/parser.dart';
 import 'package:stacked/stacked.dart';
 import 'package:webview_flutter/webview_flutter.dart';
+import 'package:html/dom.dart' as dom;
 
-class TestModel extends BaseViewModel {
-  late WebViewController _controller;
-  WebViewController get controller => _controller;
+// TODO: do not rely on the DOM and use the console instead to see if test are completed
 
-  bool _pressedTestButton = false;
-  bool get pressedTestButton => _pressedTestButton;
-
+class TestRunner extends BaseViewModel {
   String _testDocument = '';
   String get testDocument => _testDocument;
-
-  set setWebviewController(WebViewController controller) {
-    _controller = controller;
-    notifyListeners();
-  }
-
-  set setPressedTestButton(bool pressed) {
-    _pressedTestButton = pressed;
-    notifyListeners();
-  }
 
   set setTestDocument(String document) {
     _testDocument = document;
     notifyListeners();
   }
 
-  // sets the new content written in the editor and intit test framework
-
-  void setWebViewContent(String content, List<ChallengeTest> tests) {
+  void setWebViewContent(String content, List<ChallengeTest> tests,
+      WebViewController webviewController) {
     dom.Document document = parse(content);
 
     List<String> imports = [
@@ -50,7 +36,6 @@ class TestModel extends BaseViewModel {
       '''
        <script class="mocha-init">
           mocha.setup("bdd");
-          mocha.growl();
           mocha.checkLeaks();
        </script>
       ''',
@@ -86,7 +71,7 @@ class TestModel extends BaseViewModel {
       document.body!.append(bodyNode);
     }
 
-    _controller.loadUrl(Uri.dataFromString(document.outerHtml,
+    webviewController.loadUrl(Uri.dataFromString(document.outerHtml,
             mimeType: 'text/html', encoding: Encoding.getByName('utf-8'))
         .toString());
   }
@@ -193,11 +178,13 @@ class TestModel extends BaseViewModel {
       List<ChallengeTest> failedTest = getFailedTest(incTest);
 
       List<ChallengeTest> allTest = List.from(passedTest)..addAll(failedTest);
+      log((allTest.map((e) => e.testState)).toString());
 
       return allTest;
     } else {
-      dev.log('test document is empty');
+      log('test document is empty');
     }
+
     return incTest;
   }
 }

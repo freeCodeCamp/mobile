@@ -5,7 +5,7 @@ import 'package:freecodecamp/ui/views/code_radio/code_radio_view.dart';
 //import 'package:freecodecamp/ui/views/learn/learn_view.dart';
 import 'package:freecodecamp/ui/views/forum/forum-categories/forum_category_view.dart';
 import 'package:freecodecamp/ui/views/home/home_view.dart';
-import 'package:freecodecamp/ui/views/learn/learn_view.dart';
+import 'package:freecodecamp/ui/views/learn/learn/learn_view.dart';
 import 'package:freecodecamp/ui/views/podcast/podcast-list/podcast_list_view.dart';
 import 'package:freecodecamp/ui/views/profile/profile_view.dart';
 import 'package:freecodecamp/ui/views/settings/settings_view.dart';
@@ -17,7 +17,7 @@ class DrawerWidgtetViewModel extends BaseViewModel {
   // this is because the forum has two different urls, one for prod
   // and one for testing purposes. When the development value is set to false
   // the normal fcc forum is not accessible
-  final bool _showForum = false;
+  final bool _showForum = true;
 
   bool get showForum => _showForum;
 

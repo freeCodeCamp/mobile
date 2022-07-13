@@ -57,8 +57,6 @@ dependencies:
   webview_cookie_manager: ^2.0.6
   flutter_secure_storage: ^5.0.2
   dart_jsonwebtoken: ^2.4.1
-  flutter_webview_plugin:
-    git: https://github.com/snoopdoggy322/flutter_webview_plugin.git
   photo_view: ^0.14.0
   share_plus: ^4.0.0
   flutter_highlight: ^0.7.0
