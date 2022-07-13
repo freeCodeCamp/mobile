@@ -146,9 +146,9 @@ class ChallengeView extends StatelessWidget {
         dropdownColor: const Color(0xFF0a0a23),
         underline: Container(height: 5, color: Colors.blue),
         alignment: Alignment.topCenter,
-        value: challenge.files[0].name + '.' + challenge.files[0].ext.name,
+        value: '${challenge.files[0].name}.${challenge.files[0].ext.name}',
         items: challenge.files
-            .map((file) => file.name + '.' + file.ext.name)
+            .map((file) => '${file.name}.${file.ext.name}')
             .map<DropdownMenuItem<String>>((String value) {
           return DropdownMenuItem<String>(
             value: value,
