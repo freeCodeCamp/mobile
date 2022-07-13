@@ -1,8 +1,9 @@
 import 'dart:async';
 
+import 'package:audio_service/audio_service.dart';
 import 'package:flutter/material.dart';
 import 'package:freecodecamp/app/app.locator.dart';
-import 'package:freecodecamp/service/episode_audio_service.dart';
+import 'package:freecodecamp/service/audio_service.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 // ignore: must_be_immutable
@@ -16,7 +17,7 @@ class PodcastProgressBar extends StatefulWidget {
     required this.episodeId,
   }) : super(key: key);
 
-  final EpisodeAudioService _audioService = locator<EpisodeAudioService>();
+  final _audioService = locator<AppAudioService>().audioHandler;
 
   final double ball = 15;
 
@@ -41,8 +42,7 @@ class PodcastProgressBarState extends State<PodcastProgressBar> {
       setProgress = Duration(seconds: newDuration.toInt());
 
       if (widget._audioService.episodeId == widget.episodeId) {
-        widget._audioService.audioPlayer
-            .seek(Duration(seconds: newDuration.toInt()));
+        widget._audioService.seek(Duration(seconds: newDuration.toInt()));
       }
     });
 
@@ -78,10 +78,10 @@ class PodcastProgressBarState extends State<PodcastProgressBar> {
 
       if (value.isNegative || newWidth.isNegative) {
         widget._progress = const Duration(milliseconds: 1);
-        widget._audioService.audioPlayer.seek(const Duration(milliseconds: 1));
+        widget._audioService.seek(const Duration(milliseconds: 1));
       } else if (newWidth > maxBarWidth) {
         widget._progress = widget.duration;
-        widget._audioService.audioPlayer.seek(widget.duration);
+        widget._audioService.seek(widget.duration);
       } else if (value.inSeconds <= widget.duration.inSeconds) {
         widget._progress = value;
       }
@@ -98,7 +98,7 @@ class PodcastProgressBarState extends State<PodcastProgressBar> {
         setProgress = Duration(
             seconds: prefs.getInt('${widget.episodeId}_progress') as int);
         if (widget.episodeId == widget._audioService.episodeId) {
-          widget._audioService.audioPlayer.seek(widget._progress);
+          widget._audioService.seek(widget._progress);
         }
       } else {
         widget._barWidth = 0.0;
@@ -107,7 +107,7 @@ class PodcastProgressBarState extends State<PodcastProgressBar> {
     });
 
     widget.progressListener =
-        widget._audioService.audioPlayer.positionStream.listen((event) {
+        AudioService.position.listen((event) {
       if (widget._audioService.episodeId == widget.episodeId) {
         setProgress = event;
       }

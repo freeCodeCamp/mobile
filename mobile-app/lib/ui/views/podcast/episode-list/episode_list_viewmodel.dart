@@ -51,8 +51,8 @@ class EpisodeListViewModel extends BaseViewModel {
     final callbackIdentity = Object();
     _activeCallbackIdentity = callbackIdentity;
     String baseUrl = (await _testservice.developmentMode())
-        ? 'http://10.0.2.2:3000/'
-        : 'https://api.mobile.freecodecamp.dev/';
+        ? 'https://api.mobile.freecodecamp.dev/'
+        : 'https://api.mobile.freecodecamp.org/';
     try {
       final res = await http.get(
         Uri.parse('${baseUrl}podcasts/$podcastId/episodes?page=$pageKey'),
