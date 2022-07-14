@@ -66,28 +66,38 @@ class ChallengeView extends StatelessWidget {
                               actions: [
                                 Expanded(
                                   child: Container(
-                                      decoration: !model.showPreview
-                                          ? const BoxDecoration(
-                                              border: Border(
-                                                  bottom: BorderSide(
-                                                      color: Colors.blue,
-                                                      width: 4)))
-                                          : null,
-                                      child: customDropdown(challenge)),
+                                      decoration: BoxDecoration(
+                                          border: Border(
+                                              bottom: BorderSide(
+                                                  color: !model.showPreview
+                                                      ? Colors.blue
+                                                      : Colors.transparent,
+                                                  width: 4))),
+                                      child: customDropdown(challenge, model)),
                                 ),
                                 Expanded(
                                   child: Container(
-                                    decoration: model.showPreview
-                                        ? const BoxDecoration(
-                                            border: Border(
-                                                bottom: BorderSide(
-                                                    color: Colors.blue,
-                                                    width: 4)))
-                                        : null,
+                                    decoration: BoxDecoration(
+                                        border: Border(
+                                            bottom: BorderSide(
+                                                color: model.showPreview
+                                                    ? Colors.blue
+                                                    : Colors.transparent,
+                                                width: 4))),
                                     child: TextButton(
-                                      child: const Text('Preview'),
+                                      child: Text(
+                                        'preview',
+                                        style: TextStyle(
+                                            color: model.showPreview
+                                                ? Colors.blue
+                                                : Colors.white,
+                                            fontWeight: model.showPreview
+                                                ? FontWeight.bold
+                                                : null),
+                                      ),
                                       onPressed: () {
-                                        model.setShowPreview = true;
+                                        model.setShowPreview =
+                                            !model.showPreview;
                                       },
                                     ),
                                   ),
@@ -157,7 +167,7 @@ class ChallengeView extends StatelessWidget {
             ));
   }
 
-  Widget customDropdown(Challenge challenge) {
+  Widget customDropdown(Challenge challenge, ChallengeModel model) {
     return Expanded(
         child: Align(
       alignment: Alignment.center,
@@ -166,15 +176,19 @@ class ChallengeView extends StatelessWidget {
         underline: Container(
           height: 0,
         ),
-        alignment: Alignment.topCenter,
+        iconEnabledColor: !model.showPreview ? Colors.blue : Colors.white,
         value: challenge.files[0].name + '.' + challenge.files[0].ext.name,
         items: challenge.files
             .map((file) => file.name + '.' + file.ext.name)
             .map<DropdownMenuItem<String>>((String value) {
           return DropdownMenuItem<String>(
             value: value,
+            alignment: Alignment.centerLeft,
             child: Text(
-              value,
+              'Editors',
+              style: TextStyle(
+                  color: !model.showPreview ? Colors.blue : Colors.white,
+                  fontWeight: !model.showPreview ? FontWeight.bold : null),
             ),
           );
         }).toList(),
@@ -253,7 +267,7 @@ class ChallengeView extends StatelessWidget {
               color: const Color.fromRGBO(0x2A, 0x2A, 0x40, 1),
               child: IconButton(
                 icon: const FaIcon(FontAwesomeIcons.code),
-                onPressed: () => {model.setShowPreview = false},
+                onPressed: () => {model.setShowPreview = !model.showPreview},
                 splashColor: Colors.transparent,
                 highlightColor: Colors.transparent,
               ),
