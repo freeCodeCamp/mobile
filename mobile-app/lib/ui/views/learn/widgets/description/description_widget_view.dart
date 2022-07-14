@@ -1,23 +1,23 @@
 import 'package:flutter/material.dart';
-import 'package:freecodecamp/models/learn/challenge_model.dart';
+import 'package:freecodecamp/ui/views/learn/challenge_editor/challenge_model.dart';
 import 'package:freecodecamp/ui/views/learn/widgets/description/description_widget_model.dart';
 import 'package:freecodecamp/ui/views/news/html_handler/html_handler.dart';
 import 'package:stacked/stacked.dart';
 import 'dart:developer' as dev;
 
 class DescriptionView extends StatelessWidget {
-  const DescriptionView(
-      {Key? key,
-      required this.description,
-      required this.instructions,
-      this.editorText,
-      required this.tests})
-      : super(key: key);
+  const DescriptionView({
+    Key? key,
+    required this.description,
+    required this.instructions,
+    required this.challengeModel,
+    this.editorText,
+  }) : super(key: key);
 
   final String description;
   final String instructions;
-  final List<ChallengeTest> tests;
   final String? editorText;
+  final ChallengeModel challengeModel;
 
   @override
   Widget build(BuildContext context) {
@@ -30,33 +30,42 @@ class DescriptionView extends StatelessWidget {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   if (instructions.isNotEmpty)
-                    Padding(
-                      padding: const EdgeInsets.all(8.0),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Container(
-                            padding: const EdgeInsets.fromLTRB(16, 16, 16, 8),
-                            child: const Text(
+                    Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Row(
+                          children: [
+                            const Text(
                               'Instructions',
                               style: TextStyle(
-                                  fontSize: 24, fontWeight: FontWeight.bold),
+                                fontSize: 28,
+                                fontWeight: FontWeight.bold,
+                                fontFamily: 'Inter',
+                              ),
                             ),
-                          ),
-                          Row(children: [
                             Expanded(
-                              child: Padding(
-                                padding:
-                                    const EdgeInsets.symmetric(horizontal: 16),
-                                child: Column(
-                                  children: HtmlHandler.htmlHandler(
-                                      instructions, context),
+                              child: Container(
+                                alignment: Alignment.centerRight,
+                                child: IconButton(
+                                  onPressed: () {
+                                    challengeModel.setShowPanel = false;
+                                  },
+                                  icon: const Icon(Icons.clear_sharp),
+                                  iconSize: 40,
                                 ),
                               ),
                             )
-                          ]),
-                        ],
-                      ),
+                          ],
+                        ),
+                        Row(children: [
+                          Expanded(
+                            child: Column(
+                              children: HtmlHandler.htmlHandler(
+                                  instructions, context),
+                            ),
+                          )
+                        ]),
+                      ],
                     ),
                 ],
               ),

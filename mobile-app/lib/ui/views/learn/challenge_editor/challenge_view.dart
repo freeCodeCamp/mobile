@@ -69,7 +69,7 @@ class ChallengeView extends StatelessWidget {
                                   child: TextButton(
                                     child: const Text('Preview'),
                                     onPressed: () {
-                                      model.showPreview = true;
+                                      model.setShowPreview = true;
                                     },
                                   ),
                                 )
@@ -232,7 +232,7 @@ class ChallengeView extends StatelessWidget {
               color: const Color.fromRGBO(0x2A, 0x2A, 0x40, 1),
               child: IconButton(
                 icon: const FaIcon(FontAwesomeIcons.code),
-                onPressed: () => {model.showPreview = false},
+                onPressed: () => {model.setShowPreview = false},
                 splashColor: Colors.transparent,
                 highlightColor: Colors.transparent,
               ),
@@ -291,7 +291,7 @@ class DynamicPanel extends StatelessWidget {
         return DescriptionView(
           description: challenge.description,
           instructions: challenge.instructions,
-          tests: const [],
+          challengeModel: model,
           editorText: model.editorText,
         );
       case PanelType.pass:
@@ -311,8 +311,11 @@ class DynamicPanel extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-        height: MediaQuery.of(context).size.width,
+        height: MediaQuery.of(context).size.height * 0.75,
         color: const Color(0xFF0a0a23),
-        child: panelHandler(panel));
+        child: Padding(
+          padding: const EdgeInsets.fromLTRB(16, 24, 16, 16),
+          child: panelHandler(panel),
+        ));
   }
 }

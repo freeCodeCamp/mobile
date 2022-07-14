@@ -24,7 +24,8 @@ class PassWidgetView extends StatelessWidget {
                 child: Text(
                   'Passed',
                   style: TextStyle(
-                      fontSize: 24,
+                      fontSize: 28,
+                      fontFamily: 'Inter',
                       fontWeight: FontWeight.bold,
                       color: Colors.white.withOpacity(0.87)),
                 ),
@@ -53,9 +54,10 @@ class PassWidgetView extends StatelessWidget {
                     child: Text(
                       '"${quote.quote}"',
                       style: TextStyle(
-                          color: Colors.white.withOpacity(0.87),
-                          fontSize: 16,
-                          fontStyle: FontStyle.italic),
+                        color: Colors.white.withOpacity(0.87),
+                        fontSize: 16,
+                        fontFamily: 'Inter',
+                      ),
                     ),
                   );
                 }

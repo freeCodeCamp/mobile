@@ -67,7 +67,7 @@ class ChallengeModel extends BaseViewModel {
     notifyListeners();
   }
 
-  set showPreview(bool value) {
+  set setShowPreview(bool value) {
     _showPreview = value;
     notifyListeners();
   }
