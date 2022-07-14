@@ -64,13 +64,32 @@ class ChallengeView extends StatelessWidget {
                           ? AppBar(
                               automaticallyImplyLeading: false,
                               actions: [
-                                customDropdown(challenge),
                                 Expanded(
-                                  child: TextButton(
-                                    child: const Text('Preview'),
-                                    onPressed: () {
-                                      model.showPreview = true;
-                                    },
+                                  child: Container(
+                                      decoration: !model.showPreview
+                                          ? const BoxDecoration(
+                                              border: Border(
+                                                  bottom: BorderSide(
+                                                      color: Colors.blue,
+                                                      width: 4)))
+                                          : null,
+                                      child: customDropdown(challenge)),
+                                ),
+                                Expanded(
+                                  child: Container(
+                                    decoration: model.showPreview
+                                        ? const BoxDecoration(
+                                            border: Border(
+                                                bottom: BorderSide(
+                                                    color: Colors.blue,
+                                                    width: 4)))
+                                        : null,
+                                    child: TextButton(
+                                      child: const Text('Preview'),
+                                      onPressed: () {
+                                        model.setShowPreview = true;
+                                      },
+                                    ),
                                   ),
                                 )
                               ],
@@ -144,7 +163,9 @@ class ChallengeView extends StatelessWidget {
       alignment: Alignment.center,
       child: DropdownButton(
         dropdownColor: const Color(0xFF0a0a23),
-        underline: Container(height: 5, color: Colors.blue),
+        underline: Container(
+          height: 0,
+        ),
         alignment: Alignment.topCenter,
         value: challenge.files[0].name + '.' + challenge.files[0].ext.name,
         items: challenge.files
@@ -232,7 +253,7 @@ class ChallengeView extends StatelessWidget {
               color: const Color.fromRGBO(0x2A, 0x2A, 0x40, 1),
               child: IconButton(
                 icon: const FaIcon(FontAwesomeIcons.code),
-                onPressed: () => {model.showPreview = false},
+                onPressed: () => {model.setShowPreview = false},
                 splashColor: Colors.transparent,
                 highlightColor: Colors.transparent,
               ),
