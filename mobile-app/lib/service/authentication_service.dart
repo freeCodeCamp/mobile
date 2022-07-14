@@ -1,5 +1,4 @@
 import 'dart:async';
-import 'dart:developer';
 import 'package:curl_logger_dio_interceptor/curl_logger_dio_interceptor.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
@@ -43,7 +42,6 @@ class AuthenticationService {
 
     for (String requiredToken in requiredTokens) {
       if (await store.containsKey(key: requiredToken) == false) {
-        log('message: Missing token: $requiredToken');
         return false;
       }
     }
@@ -114,7 +112,6 @@ class AuthenticationService {
     }
 
     if (await hasRequiredTokens()) {
-      log('message: Tokens found in storage');
       await setRequiredTokes();
       await fetchUser();
     }
@@ -128,15 +125,14 @@ class AuthenticationService {
     bool authRes = await extractCookies();
 
     if (!authRes) {
-      var navRes = await Navigator.push(
+      await Navigator.push(
         context,
         MaterialPageRoute(
           builder: (context) => const LoginWebView(),
         ),
       );
-      log('AUTH SERVICE NAV RES: $navRes');
     }
-    log('AUTH SERVICE AUTH RES: $authRes');
+
     await writeTokensToStorage();
     await fetchUser();
   }
