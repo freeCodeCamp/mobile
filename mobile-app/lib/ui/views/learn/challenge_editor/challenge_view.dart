@@ -177,7 +177,7 @@ class ChallengeView extends StatelessWidget {
           height: 0,
         ),
         iconEnabledColor: !model.showPreview ? Colors.blue : Colors.white,
-        value: challenge.files[0].name + '.' + challenge.files[0].ext.name,
+        value: '${challenge.files[0].name}.${challenge.files[0].ext.name}',
         items: challenge.files
             .map((file) => '${file.name}.${file.ext.name}')
             .map<DropdownMenuItem<String>>((String value) {
