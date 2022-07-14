@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:freecodecamp/models/learn/curriculum_model.dart';
+import 'package:freecodecamp/service/authentication_service.dart';
 import 'package:freecodecamp/ui/views/learn/learn-builders/block-builder/block_builder_view.dart';
 import 'package:freecodecamp/ui/views/learn/learn/learn_viewmodel.dart';
 import 'package:stacked/stacked.dart';
@@ -14,7 +15,9 @@ class SuperBlockView extends StatelessWidget {
   Widget build(BuildContext context) {
     return ViewModelBuilder<LearnViewModel>.reactive(
         viewModelBuilder: () => LearnViewModel(),
-        onModelReady: (model) => model.auth.fetchUser(),
+        onModelReady: (model) => AuthenticationService.staticIsloggedIn
+            ? model.auth.fetchUser()
+            : null,
         builder: (context, model, child) => Scaffold(
               appBar: AppBar(),
               body: FutureBuilder<SuperBlock>(
