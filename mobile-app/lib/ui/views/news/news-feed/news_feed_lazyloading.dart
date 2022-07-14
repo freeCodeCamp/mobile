@@ -9,10 +9,10 @@ class NewsFeedLazyLoading extends StatefulWidget {
       : super(key: key);
 
   @override
-  _NewsFeedLazyLoadingState createState() => _NewsFeedLazyLoadingState();
+  NewsFeedLazyLoadingState createState() => NewsFeedLazyLoadingState();
 }
 
-class _NewsFeedLazyLoadingState extends State<NewsFeedLazyLoading> {
+class NewsFeedLazyLoadingState extends State<NewsFeedLazyLoading> {
   @override
   void initState() {
     super.initState();

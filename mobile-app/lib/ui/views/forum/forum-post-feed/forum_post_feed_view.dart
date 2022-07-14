@@ -22,7 +22,7 @@ class ForumPostFeedView extends StatelessWidget {
         viewModelBuilder: () => ForumPostFeedModel(),
         builder: (context, model, child) => Scaffold(
               appBar: AppBar(
-                title: Text(name + ' Category'),
+                title: Text('$name Category'),
               ),
               body: FutureBuilder<List<PostModel>?>(
                 future: model.fetchPosts(slug, id),
@@ -56,15 +56,15 @@ class ForumPostFeedView extends StatelessWidget {
                 );
               },
               child: Container(
-                child: Padding(
-                  padding: const EdgeInsets.only(bottom: 24.0),
-                  child: postViewTemplate(post[index], index, model),
-                ),
                 decoration: const BoxDecoration(
                     border: Border(
                         bottom: BorderSide(
                             width: 2,
                             color: Color.fromRGBO(0x42, 0x42, 0x55, 1)))),
+                child: Padding(
+                  padding: const EdgeInsets.only(bottom: 24.0),
+                  child: postViewTemplate(post[index], index, model),
+                ),
               ),
             )));
   }

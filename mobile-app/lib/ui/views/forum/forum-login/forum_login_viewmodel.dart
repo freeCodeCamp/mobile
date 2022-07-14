@@ -56,7 +56,7 @@ class ForumLoginModel extends BaseViewModel {
 
   Future<dynamic> getCSRF() async {
     final response =
-        await http.get(Uri.parse(_baseUrl + '/session/csrf'), headers: {
+        await http.get(Uri.parse('$_baseUrl/session/csrf'), headers: {
       'X-CSRF-Token': 'undefined',
       'Referer': _baseUrl,
       'X-Requested-With': 'XMLHttpRequest'
@@ -67,8 +67,7 @@ class ForumLoginModel extends BaseViewModel {
     } else if (response.statusCode == 403) {
       throw Exception('403 error');
     } else {
-      throw Exception(
-          'Error during fetch status code:' + response.statusCode.toString());
+      throw Exception('Error during fetch status code:${response.statusCode}');
     }
     String? csrf = jsonDecode(response.body)['csrf'];
     String headers = jsonEncode(response.headers);
@@ -166,8 +165,8 @@ class ForumLoginModel extends BaseViewModel {
       String auth = '&second_factor_token=$authCode&second_factor_method=1';
       String paramters = '$creds$auth';
 
-      final response = await http
-          .post(Uri.parse(_baseUrl + '/session$paramters'), headers: headers);
+      final response = await http.post(Uri.parse('$_baseUrl/session$paramters'),
+          headers: headers);
 
       if (response.statusCode == 200) {
         if (noAuthError(response.body)) {
@@ -201,7 +200,7 @@ class ForumLoginModel extends BaseViewModel {
     };
 
     final response = await http.post(
-        Uri.parse(_baseUrl + '/session?login=$username&password=$password'),
+        Uri.parse('$_baseUrl/session?login=$username&password=$password'),
         headers: headers);
 
     if (response.statusCode == 200) {

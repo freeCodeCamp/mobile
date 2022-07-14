@@ -8,6 +8,7 @@ linter:
   rules:
     avoid_print: false
     prefer_single_quotes: true
+    use_build_context_synchronously: false
 
 # Additional information about this file can be found at
 # https://dart.dev/guides/language/analysis-options

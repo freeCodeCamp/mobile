@@ -285,23 +285,23 @@ class PostViewModel extends BaseViewModel {
 
     switch (action) {
       case 'visible.disabled':
-        message = 'UNLISTED ' + date;
+        message = 'UNLISTED $date';
         icon = const Icon(
           FontAwesomeIcons.eyeSlash,
           color: Colors.white,
         );
         return returnAction(icon, message, style);
       case 'split_topic':
-        message = 'SPLIT THIS TOPIC ' + date;
+        message = 'SPLIT THIS TOPIC $date';
         icon =
             const Icon(FontAwesomeIcons.rightFromBracket, color: Colors.white);
         return returnAction(icon, message, style);
       case 'closed.enabled':
-        message = 'CLOSED ' + date;
+        message = 'CLOSED $date';
         icon = const Icon(FontAwesomeIcons.lock, color: Colors.white);
         return returnAction(icon, message, style);
       default:
-        message = 'UNKNOWN ACTON: ' + action;
+        message = 'UNKNOWN ACTON: $action';
         return Row(
           children: [Text(message, style: style)],
         );
