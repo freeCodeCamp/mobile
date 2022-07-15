@@ -241,9 +241,17 @@ class ChallengeView extends StatelessWidget {
           ),
           Container(
             margin: const EdgeInsets.all(8),
-            color: const Color.fromRGBO(0x2A, 0x2A, 0x40, 1),
+            color: model.showPanel
+                ? Colors.white
+                : const Color.fromRGBO(0x2A, 0x2A, 0x40, 1),
             child: IconButton(
-              icon: const FaIcon(FontAwesomeIcons.info),
+              icon: FaIcon(
+                FontAwesomeIcons.info,
+                size: 32,
+                color: model.showPanel
+                    ? const Color.fromRGBO(0x2A, 0x2A, 0x40, 1)
+                    : Colors.white,
+              ),
               onPressed: () {
                 model.setPanelType = PanelType.instruction;
                 if (MediaQuery.of(context).viewInsets.bottom > 0) {
