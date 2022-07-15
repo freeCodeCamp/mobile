@@ -43,6 +43,7 @@ class AuthenticationService {
 
     for (String requiredToken in requiredTokens) {
       if (await store.containsKey(key: requiredToken) == false) {
+        log('message: Missing token: $requiredToken');
         return false;
       }
     }
@@ -113,6 +114,7 @@ class AuthenticationService {
     }
 
     if (await hasRequiredTokens()) {
+      log('message: Tokens found in storage');
       await setRequiredTokes();
       await fetchUser();
     }
@@ -134,7 +136,7 @@ class AuthenticationService {
       );
       log('AUTH SERVICE NAV RES: $navRes');
     }
-
+    log('AUTH SERVICE AUTH RES: $authRes');
     await writeTokensToStorage();
     await fetchUser();
   }
@@ -158,9 +160,15 @@ class AuthenticationService {
       ),
     );
 
-    staticIsloggedIn = true;
-    isLoggedInStream.sink.add(true);
-    userModel = parseUserModel(res.data['user'][res.data['result']]);
+    if (res.statusCode == 200) {
+      userModel = parseUserModel(res.data['user'][res.data['result']]);
+      staticIsloggedIn = true;
+      isLoggedInStream.sink.add(true);
+    } else {
+      staticIsloggedIn = false;
+      isLoggedInStream.sink.add(false);
+      logout();
+    }
   }
 
   AuthenticationService._internal();
