@@ -241,28 +241,34 @@ class ChallengeView extends StatelessWidget {
           ),
           Container(
             margin: const EdgeInsets.all(8),
-            color: model.showPanel
+            color: model.showPanel && model.panelType == PanelType.instruction
                 ? Colors.white
                 : const Color.fromRGBO(0x2A, 0x2A, 0x40, 1),
             child: IconButton(
               icon: FaIcon(
                 FontAwesomeIcons.info,
                 size: 32,
-                color: model.showPanel
-                    ? const Color.fromRGBO(0x2A, 0x2A, 0x40, 1)
-                    : Colors.white,
+                color:
+                    model.showPanel && model.panelType == PanelType.instruction
+                        ? const Color.fromRGBO(0x2A, 0x2A, 0x40, 1)
+                        : Colors.white,
               ),
               onPressed: () {
-                model.setPanelType = PanelType.instruction;
-                if (MediaQuery.of(context).viewInsets.bottom > 0) {
-                  FocusManager.instance.primaryFocus?.unfocus();
-                  if (!model.showPanel) {
-                    model.setShowPanel = true;
-                    model.setHideAppBar = true;
-                  }
+                if (model.showPanel &&
+                    model.panelType != PanelType.instruction) {
+                  model.setPanelType = PanelType.instruction;
                 } else {
-                  model.setHideAppBar = !model.hideAppBar;
-                  model.setShowPanel = !model.showPanel;
+                  model.setPanelType = PanelType.instruction;
+                  if (MediaQuery.of(context).viewInsets.bottom > 0) {
+                    FocusManager.instance.primaryFocus?.unfocus();
+                    if (!model.showPanel) {
+                      model.setShowPanel = true;
+                      model.setHideAppBar = true;
+                    }
+                  } else {
+                    model.setHideAppBar = !model.hideAppBar;
+                    model.setShowPanel = !model.showPanel;
+                  }
                 }
               },
               splashColor: Colors.transparent,
