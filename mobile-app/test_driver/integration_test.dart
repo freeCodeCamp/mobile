@@ -1,4 +1,4 @@
-import 'dart:io';
+import 'dart:io' show File;
 import 'package:integration_test/integration_test_driver_extended.dart';
 
 Future<void> main() async {

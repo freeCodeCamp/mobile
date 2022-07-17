@@ -1,4 +1,4 @@
-import 'dart:developer';
+import 'dart:developer' show log;
 
 import 'package:fk_user_agent/fk_user_agent.dart';
 import 'package:flutter/material.dart';

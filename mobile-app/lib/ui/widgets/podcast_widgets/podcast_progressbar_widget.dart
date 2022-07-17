@@ -1,4 +1,4 @@
-import 'dart:async';
+import 'dart:async' show Future, StreamSubscription;
 
 import 'package:audio_service/audio_service.dart';
 import 'package:flutter/material.dart';
