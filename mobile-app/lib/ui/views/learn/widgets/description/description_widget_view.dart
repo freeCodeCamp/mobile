@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart';
+import 'package:flutter/material.dart' show Alignment, BuildContext, Color, Column, Container, CrossAxisAlignment, Expanded, FontWeight, Icon, IconButton, Icons, Key, Row, Scaffold, StatelessWidget, Text, TextStyle, Widget;
 import 'package:freecodecamp/ui/views/learn/challenge_editor/challenge_model.dart';
 import 'package:freecodecamp/ui/views/learn/widgets/description/description_widget_model.dart';
 import 'package:freecodecamp/ui/views/news/html_handler/html_handler.dart';

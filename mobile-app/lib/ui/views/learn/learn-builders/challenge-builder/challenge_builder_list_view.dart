@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart';
+import 'package:flutter/material.dart' show BuildContext, ClampingScrollPhysics, Color, Container, FontWeight, Icon, Icons, Key, ListTile, ListView, StatelessWidget, Text, TextStyle, Widget;
 import 'package:freecodecamp/models/learn/curriculum_model.dart';
 import 'package:freecodecamp/ui/views/learn/learn-builders/challenge-builder/challenge_builder_model.dart';
 import 'package:stacked/stacked.dart';

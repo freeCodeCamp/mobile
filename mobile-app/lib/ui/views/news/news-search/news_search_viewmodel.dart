@@ -1,4 +1,4 @@
-import 'package:algolia/algolia.dart';
+import 'package:algolia/algolia.dart' show Algolia, AlgoliaObjectSnapshot, AlgoliaQuery, AlgoliaQuerySnapshot;
 import 'package:flutter/cupertino.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:freecodecamp/app/app.locator.dart';

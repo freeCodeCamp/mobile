@@ -1,4 +1,4 @@
-import 'dart:async';
+import 'dart:async' show Stream, StreamController;
 import 'dart:io';
 
 import 'package:dio/dio.dart';

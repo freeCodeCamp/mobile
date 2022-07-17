@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart';
+import 'package:flutter/material.dart' show Align, Alignment, AppBar, Border, BoxDecoration, BoxFit, BuildContext, Center, CircularProgressIndicator, Color, Colors, Column, Container, EdgeInsets, FontWeight, FutureBuilder, Image, Key, Padding, Scaffold, SingleChildScrollView, Stack, StatelessWidget, Text, TextAlign, TextStyle, Widget;
 import 'package:freecodecamp/models/news/article_model.dart';
 import 'package:freecodecamp/ui/views/news/news-author/news_author_viewmodel.dart';
 import 'package:freecodecamp/ui/widgets/article_list_widget.dart';

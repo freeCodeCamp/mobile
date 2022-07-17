@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart';
+import 'package:flutter/material.dart' show BorderRadius, BorderSide, BuildContext, Color, Colors, Column, EdgeInsets, ElevatedButton, FontWeight, InkWell, InputDecoration, Key, MainAxisAlignment, MediaQuery, OutlineInputBorder, Padding, RoundedRectangleBorder, Row, Scaffold, SingleChildScrollView, SizedBox, StatelessWidget, Text, TextAlign, TextField, TextStyle, Widget;
 import 'package:freecodecamp/ui/views/forum/forum-create-post/forum_create_post_view.dart';
 import 'package:freecodecamp/ui/views/forum/forum-login/forum_login_viewmodel.dart';
 import 'package:stacked/stacked.dart';

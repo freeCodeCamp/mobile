@@ -1,4 +1,4 @@
-import 'package:freecodecamp/enums/challenge_test_state_type.dart';
+import 'package:freecodecamp/enums/challenge_test_state_type.dart' show ChallengeTestState;
 import 'package:freecodecamp/enums/ext_type.dart';
 
 class Challenge {

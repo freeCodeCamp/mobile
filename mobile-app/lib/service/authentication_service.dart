@@ -1,4 +1,4 @@
-import 'dart:async';
+import 'dart:async' show Future, Stream, StreamController;
 import 'dart:developer';
 import 'package:curl_logger_dio_interceptor/curl_logger_dio_interceptor.dart';
 import 'package:dio/dio.dart';

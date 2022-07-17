@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart';
+import 'package:flutter/material.dart' show BuildContext, Color, Column, Container, CrossAxisAlignment, EdgeInsets, FontWeight, Key, MainAxisAlignment, Padding, StatelessWidget, Text, TextAlign, TextStyle, Widget;
 import 'package:freecodecamp/models/learn/curriculum_model.dart';
 import 'package:freecodecamp/ui/views/learn/learn-builders/block-builder/block_builder_model.dart';
 import 'package:freecodecamp/ui/views/learn/learn-builders/challenge-builder/challenge_builder_grid_view.dart';

@@ -1,4 +1,4 @@
-import 'dart:async';
+import 'dart:async' show Future, Timer;
 import 'dart:convert';
 import 'package:freecodecamp/app/app.locator.dart';
 import 'package:flutter/material.dart';

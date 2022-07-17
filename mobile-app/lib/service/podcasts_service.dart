@@ -1,4 +1,4 @@
-import 'dart:async';
+import 'dart:async' show Future;
 import 'dart:developer';
 
 import 'package:freecodecamp/app/app.locator.dart';

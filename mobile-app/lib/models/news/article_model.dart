@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart';
+import 'package:flutter/material.dart' show UniqueKey, Widget;
 import 'package:freecodecamp/ui/widgets/tag_widget.dart';
 
 class Article {

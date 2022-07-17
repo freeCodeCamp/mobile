@@ -1,4 +1,4 @@
-import 'package:freecodecamp/enums/theme_type.dart';
+import 'package:freecodecamp/enums/theme_type.dart' show Themes, parseThemes;
 import 'package:freecodecamp/models/learn/completed_challenge_model.dart';
 import 'package:freecodecamp/models/learn/saved_challenge_model.dart';
 import 'package:freecodecamp/models/main/portfolio_model.dart';

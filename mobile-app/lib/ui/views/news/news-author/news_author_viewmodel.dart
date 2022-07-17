@@ -1,4 +1,4 @@
-import 'dart:convert';
+import 'dart:convert' show jsonDecode;
 
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:freecodecamp/models/news/article_model.dart';

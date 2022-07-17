@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart';
+import 'package:flutter/material.dart' show AppBar, BuildContext, Center, CircularProgressIndicator, ClampingScrollPhysics, Color, Container, Divider, EdgeInsets, FutureBuilder, Key, ListView, ObjectKey, Scaffold, StatelessWidget, Widget;
 import 'package:freecodecamp/models/learn/curriculum_model.dart';
 import 'package:freecodecamp/service/authentication_service.dart';
 import 'package:freecodecamp/ui/views/learn/learn-builders/block-builder/block_builder_view.dart';

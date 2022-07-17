@@ -1,4 +1,4 @@
-import 'dart:async';
+import 'dart:async' show Future, StreamController, Timer;
 import 'package:freecodecamp/models/code-radio/code_radio_model.dart';
 import 'package:freecodecamp/service/audio_service.dart';
 import 'package:shared_preferences/shared_preferences.dart';

@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart';
+import 'package:flutter/material.dart' show BlendMode, BoxDecoration, BuildContext, Color, Key, NetworkImage, Scaffold, StatelessWidget, Widget;
 import 'package:freecodecamp/ui/views/news/news-image-viewer/news_image_model.dart';
 import 'package:stacked/stacked.dart';
 import 'package:photo_view/photo_view.dart';

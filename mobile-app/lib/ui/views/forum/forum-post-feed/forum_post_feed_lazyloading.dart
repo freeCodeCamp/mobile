@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart';
+import 'package:flutter/material.dart' show BuildContext, Key, State, StatefulWidget, Widget;
 
 class ForumLazyLoading extends StatefulWidget {
   final Function postCreated;

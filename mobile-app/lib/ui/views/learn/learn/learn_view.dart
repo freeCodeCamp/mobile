@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart';
+import 'package:flutter/material.dart' show Align, Alignment, AppBar, BorderRadius, BorderSide, BuildContext, Center, CircularProgressIndicator, ClampingScrollPhysics, Color, Colors, Column, Container, EdgeInsets, ElevatedButton, Expanded, FontStyle, FontWeight, FutureBuilder, Icon, Icons, Key, ListView, MainAxisAlignment, MediaQuery, Padding, RoundedRectangleBorder, Row, Scaffold, SizedBox, StatelessWidget, StreamBuilder, Text, TextAlign, TextStyle, Widget;
 import 'package:freecodecamp/models/learn/curriculum_model.dart';
 import 'package:freecodecamp/models/learn/motivational_quote_model.dart';
 import 'package:freecodecamp/models/main/user_model.dart';

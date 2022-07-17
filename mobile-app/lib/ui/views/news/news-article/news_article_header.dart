@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart';
+import 'package:flutter/material.dart' show AspectRatio, BoxFit, BuildContext, Color, Column, Container, CrossAxisAlignment, EdgeInsets, Expanded, Image, Key, Row, StatelessWidget, Text, TextStyle, Widget, Wrap;
 import 'package:freecodecamp/models/news/article_model.dart';
 
 class NewsArticleHeader extends StatelessWidget {

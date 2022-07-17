@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart';
+import 'package:flutter/material.dart' show AspectRatio, Key, Text, ValueKey;
 import 'package:flutter_test/flutter_test.dart';
 import 'package:freecodecamp/main.dart' as app;
 import 'package:freecodecamp/ui/views/news/news-article/news_article_header.dart';

@@ -1,4 +1,4 @@
-import 'package:freecodecamp/models/learn/challenge_model.dart';
+import 'package:freecodecamp/models/learn/challenge_model.dart' show ChallengeFile;
 
 class CompletedChallenge {
   final String id;

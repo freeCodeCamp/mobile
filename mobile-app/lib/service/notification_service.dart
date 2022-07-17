@@ -1,4 +1,4 @@
-import 'dart:math';
+import 'dart:math' show Random, pow;
 
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 

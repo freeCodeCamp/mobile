@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart';
+import 'package:flutter/material.dart' show AppBar, BuildContext, Center, Color, Colors, Container, Divider, InputDecoration, Key, ListTile, ListView, Scaffold, StatelessWidget, StreamBuilder, Text, TextField, TextStyle, Widget;
 import 'package:freecodecamp/models/forum/forum_search_model.dart';
 import 'package:freecodecamp/ui/views/forum/forum-search/forum_search_viewmodel.dart';
 import 'package:stacked/stacked.dart';
