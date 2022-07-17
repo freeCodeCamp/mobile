@@ -23,52 +23,51 @@ class DescriptionView extends StatelessWidget {
   Widget build(BuildContext context) {
     dev.log(editorText ?? '');
     return ViewModelBuilder<DescriptionModel>.reactive(
-        viewModelBuilder: () => DescriptionModel(),
-        builder: (context, model, child) => Scaffold(
-              backgroundColor: const Color(0xFF0a0a23),
-              body: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  if (instructions.isNotEmpty)
-                    Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Row(
-                          children: [
-                            const Text(
-                              'Instructions',
-                              style: TextStyle(
-                                fontSize: 28,
-                                fontWeight: FontWeight.bold,
-                                fontFamily: 'Inter',
-                              ),
-                            ),
-                            Expanded(
-                              child: Container(
-                                alignment: Alignment.centerRight,
-                                child: IconButton(
-                                  onPressed: () {
-                                    challengeModel.setShowPanel = false;
-                                  },
-                                  icon: const Icon(Icons.clear_sharp),
-                                  iconSize: 40,
-                                ),
-                              ),
-                            )
-                          ],
+      viewModelBuilder: () => DescriptionModel(),
+      builder: (context, model, child) => Scaffold(
+        backgroundColor: const Color(0xFF0a0a23),
+        body: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: instructions.isNotEmpty
+              ? [
+                  Row(
+                    children: [
+                      const Text(
+                        'Instructions',
+                        style: TextStyle(
+                          fontSize: 28,
+                          fontWeight: FontWeight.bold,
+                          fontFamily: 'Inter',
                         ),
-                        Row(children: [
-                          Expanded(
-                            child: Column(
-                              children: HtmlHandler.htmlHandler(
-                                  instructions, context),
-                            ),
-                          )
-                        ]),
-                      ],
-                    ),
-                ],
-              ),
-            ));
+                      ),
+                      Expanded(
+                        child: Container(
+                          alignment: Alignment.centerRight,
+                          child: IconButton(
+                            onPressed: () {
+                              challengeModel.setShowPanel = false;
+                            },
+                            icon: const Icon(Icons.clear_sharp),
+                            iconSize: 40,
+                          ),
+                        ),
+                      )
+                    ],
+                  ),
+                  Row(
+                    children: [
+                      Expanded(
+                        child: Column(
+                          children:
+                              HtmlHandler.htmlHandler(instructions, context),
+                        ),
+                      )
+                    ],
+                  ),
+                ]
+              : [],
+        ),
+      ),
+    );
   }
 }
