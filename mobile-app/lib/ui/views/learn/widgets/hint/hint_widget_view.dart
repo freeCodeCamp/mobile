@@ -23,12 +23,13 @@ class HintWidgetView extends StatelessWidget {
                   children: [
                     Padding(
                       padding: const EdgeInsets.symmetric(
-                          vertical: 32, horizontal: 16),
+                          vertical: 28, horizontal: 16),
                       child: Text(
                         'Hint',
                         style: TextStyle(
-                            fontSize: 24,
+                            fontSize: 28,
                             fontWeight: FontWeight.bold,
+                            fontFamily: 'Inter',
                             color: Colors.white.withOpacity(0.87)),
                       ),
                     ),
