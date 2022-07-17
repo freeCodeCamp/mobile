@@ -29,7 +29,7 @@ class ForumUserModel extends BaseViewModel {
     if (response.statusCode == 200) {
       return User.fromJson(jsonDecode(response.body));
     }
-    throw Exception('could not load user data: ' + response.body.toString());
+    throw Exception('could not load user data: ${response.body}');
   }
 
   Future<List<UserTopic>?> getUserTopics(username, amount) async {
@@ -52,7 +52,7 @@ class ForumUserModel extends BaseViewModel {
     if (response.statusCode == 200) {
       return UserSummary.fromJson(jsonDecode(response.body));
     }
-    throw Exception('could not load user summary: ' + response.body.toString());
+    throw Exception('could not load user summary: ${response.body}');
   }
 
   // A badge of badges fetched from the Discourse api
@@ -67,7 +67,7 @@ class ForumUserModel extends BaseViewModel {
         badges.add(UserBadge.fromJson(badgesJson[i]));
       }
     } else {
-      throw Exception('failed loading badges: ' + response.body.toString());
+      throw Exception('failed loading badges: ${response.body}');
     }
 
     return badges;

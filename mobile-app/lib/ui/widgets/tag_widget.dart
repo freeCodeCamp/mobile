@@ -63,7 +63,7 @@ class _TagButtonState extends State<TagButton>
               horizontal: 8,
             ),
             child: Text(
-              '#' + widget.tagName,
+              '#${widget.tagName}',
               style: const TextStyle(
                 fontSize: 16,
                 color: Colors.black,

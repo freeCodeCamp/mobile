@@ -35,6 +35,7 @@ class LoginWebView extends StatelessWidget {
               if (authRes) {
                 log('LOGGED IN');
                 model.clearCache();
+
                 Navigator.pop(context, 'SUCCESS');
                 return NavigationDecision.prevent;
               } else {

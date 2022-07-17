@@ -195,12 +195,8 @@ class PodcastTileState extends State<PodcastTile> {
     if (!widget.downloaded && !widget.isDownloading) {
       widget._downloadService.download(widget.episode, widget.podcast);
     } else if (widget.downloaded) {
-      File audioFile = File(appDir.path +
-          '/episodes/' +
-          widget.podcast.id +
-          '/' +
-          widget.episode.id +
-          '.mp3');
+      File audioFile = File(
+          '${appDir.path}/episodes/${widget.podcast.id}/${widget.episode.id}.mp3');
       if (audioFile.existsSync()) {
         audioFile.deleteSync();
       }
@@ -342,7 +338,7 @@ class PodcastTileState extends State<PodcastTile> {
                 DateFormat.yMMMd().format(widget.episode.publicationDate!) +
                     (widget.episode.duration != null &&
                             widget.episode.duration != Duration.zero
-                        ? (' • ' + _parseDuration(widget.episode.duration!))
+                        ? (' • ${_parseDuration(widget.episode.duration!)}')
                         : ''),
                 style: const TextStyle(
                     fontSize: 16, height: 2, fontFamily: 'Lato'),

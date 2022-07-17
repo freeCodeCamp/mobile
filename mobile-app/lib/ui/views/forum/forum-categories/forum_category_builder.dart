@@ -35,7 +35,7 @@ class ForumCategoryBuilder extends StatelessWidget {
                                     left: BorderSide(
                                         width: 5,
                                         color: HexColor(
-                                          '#' + categories![i].color,
+                                          '#${categories![i].color}',
                                         )))),
                             child: Column(
                               children: [
@@ -79,8 +79,7 @@ class ForumCategoryBuilder extends StatelessWidget {
                                         child: Padding(
                                       padding: const EdgeInsets.all(16.0),
                                       child: Text(
-                                          categories[i].topicWeek.toString() +
-                                              ' new topics this week',
+                                          '${categories[i].topicWeek} new topics this week',
                                           style: const TextStyle(
                                               fontSize: 14,
                                               fontWeight: FontWeight.w300)),

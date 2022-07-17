@@ -181,7 +181,7 @@ class PodcastTemplate extends StatelessWidget {
                             )
                           ],
                         ),
-                        child: Text(podcast.title! + '\n',
+                        child: Text('${podcast.title!}\n',
                             maxLines: 2,
                             textAlign: TextAlign.center,
                             style: const TextStyle(
