@@ -1,4 +1,4 @@
-const podcastUrls = [
+const List<String> podcastUrls = [
   'https://feed.syntax.fm/rss',
   'https://changelog.com/podcast/feed',
   'https://pinecast.com/feed/ladybug-podcast',

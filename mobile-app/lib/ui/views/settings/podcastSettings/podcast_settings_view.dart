@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart';
+import 'package:flutter/material.dart' show AppBar, BuildContext, Color, Key, Scaffold, StatelessWidget, Text, Widget;
 
 import 'package:freecodecamp/ui/views/settings/podcastSettings/podcast_settings_viewmodel.dart';
 import 'package:stacked/stacked.dart';

@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart';
+import 'package:flutter/material.dart' show AppBar, Border, BorderSide, BoxDecoration, BuildContext, Color, Colors, Container, EdgeInsets, Icon, Icons, Key, ListTile, ListView, Padding, Scaffold, StatelessWidget, Text, TextStyle, Widget;
 import 'package:freecodecamp/ui/views/settings/settings_viewmodel.dart';
 import 'package:freecodecamp/ui/widgets/drawer_widget/drawer_widget_view.dart';
 import 'package:stacked/stacked.dart';

@@ -1,4 +1,4 @@
-import 'package:shared_preferences/shared_preferences.dart';
+import 'package:shared_preferences/shared_preferences.dart' show SharedPreferences;
 import 'package:stacked/stacked.dart';
 import 'package:url_launcher/url_launcher_string.dart';
 

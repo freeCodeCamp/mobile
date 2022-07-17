@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart';
+import 'package:flutter/material.dart' show BuildContext, Colors, EdgeInsets, FontWeight, Icon, IconData, Key, ListTile, Padding, State, StatefulWidget, Text, TextStyle, Widget;
 import 'package:url_launcher/url_launcher_string.dart';
 
 class WebButton extends StatefulWidget {

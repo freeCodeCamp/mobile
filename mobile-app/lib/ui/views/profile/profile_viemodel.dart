@@ -1,4 +1,4 @@
-import 'package:freecodecamp/app/app.locator.dart';
+import 'package:freecodecamp/app/app.locator.dart' show locator;
 import 'package:freecodecamp/service/authentication_service.dart';
 import 'package:stacked/stacked.dart';
 
