@@ -28,4 +28,4 @@ jobs:
         run: sleep 30
 
       - name: Ping container
-        run: curl localhost:3000
+        run: curl localhost:3000/ping
