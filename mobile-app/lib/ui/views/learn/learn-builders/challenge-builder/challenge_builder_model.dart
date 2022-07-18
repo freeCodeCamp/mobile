@@ -25,9 +25,9 @@ class ChallengeBuilderModel extends BaseViewModel {
     notifyListeners();
   }
 
-  void routeToBrowserView(String url) {
+  void routeToBrowserView(String url, Block block) {
     _navigationService.navigateTo(Routes.challengeView,
-        arguments: ChallengeViewArguments(url: url));
+        arguments: ChallengeViewArguments(url: url, block: block));
   }
 
   void init(List<ChallengeListTile> challengeBatch) async {

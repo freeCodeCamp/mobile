@@ -10,6 +10,7 @@ import 'package:flutter/material.dart';
 import 'package:stacked/stacked.dart';
 import 'package:stacked_services/stacked_services.dart';
 
+import '../models/learn/curriculum_model.dart';
 import '../models/news/bookmarked_article_model.dart';
 import '../models/podcasts/episodes_model.dart';
 import '../models/podcasts/podcasts_model.dart';
@@ -280,6 +281,7 @@ class StackedRouter extends RouterBase {
         builder: (context) => ChallengeView(
           key: args.key,
           url: args.url,
+          block: args.block,
         ),
         settings: data,
       );
@@ -400,7 +402,8 @@ class SuperBlockViewArguments {
 class ChallengeViewArguments {
   final Key? key;
   final String url;
-  ChallengeViewArguments({this.key, required this.url});
+  final Block block;
+  ChallengeViewArguments({this.key, required this.url, required this.block});
 }
 
 /// ************************************************************************
@@ -752,6 +755,7 @@ extension NavigatorStateExtension on NavigationService {
   Future<dynamic> navigateToChallengeView({
     Key? key,
     required String url,
+    required Block block,
     int? routerId,
     bool preventDuplicates = true,
     Map<String, String>? parameters,
@@ -760,7 +764,7 @@ extension NavigatorStateExtension on NavigationService {
   }) async {
     return navigateTo(
       Routes.challengeView,
-      arguments: ChallengeViewArguments(key: key, url: url),
+      arguments: ChallengeViewArguments(key: key, url: url, block: block),
       id: routerId,
       preventDuplicates: preventDuplicates,
       parameters: parameters,
