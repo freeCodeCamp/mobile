@@ -24,5 +24,8 @@ jobs:
       - name: Build and start container
         run: docker-compose -f docker-compose.dev.yml up -d
 
+      - name: Sleep for 30 seconds
+        run: sleep 30
+
       - name: Ping container
         run: curl localhost:3000
