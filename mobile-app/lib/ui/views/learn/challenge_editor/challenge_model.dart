@@ -1,16 +1,20 @@
 import 'dart:convert';
 
+import 'package:freecodecamp/app/app.locator.dart';
 import 'package:freecodecamp/enums/challenge_test_state_type.dart';
+import 'package:freecodecamp/enums/dialog_type.dart';
 import 'package:freecodecamp/enums/panel_type.dart';
 import 'package:freecodecamp/models/learn/challenge_model.dart';
 import 'package:freecodecamp/ui/views/learn/test_runner.dart';
-
-import 'package:html/parser.dart';
-import 'package:shared_preferences/shared_preferences.dart';
-import 'package:webview_flutter/webview_flutter.dart';
-import 'package:stacked/stacked.dart';
-import 'package:http/http.dart' as http;
+import 'package:freecodecamp/ui/widgets/setup_dialog_ui.dart';
 import 'package:html/dom.dart' as dom;
+import 'package:html/parser.dart';
+import 'package:http/http.dart' as http;
+import 'package:shared_preferences/shared_preferences.dart';
+import 'package:stacked/stacked.dart';
+import 'package:stacked_services/stacked_services.dart';
+import 'package:url_launcher/url_launcher_string.dart';
+import 'package:webview_flutter/webview_flutter.dart';
 
 class ChallengeModel extends BaseViewModel {
   String? _editorText;
@@ -44,6 +48,8 @@ class ChallengeModel extends BaseViewModel {
   Challenge? get challenge => _challenge;
 
   TestRunner runner = TestRunner();
+
+  final _dialogService = locator<DialogService>();
 
   void init() async {
     _editorText = await getEditorTextFromCache();
@@ -133,6 +139,7 @@ class ChallengeModel extends BaseViewModel {
   // when swichting between preview and the challenge.
 
   Future<Challenge?> initChallenge(String url) async {
+    setupDialogUi();
     SharedPreferences prefs = await SharedPreferences.getInstance();
 
     if (prefs.getString(url) == null) {
@@ -186,5 +193,17 @@ class ChallengeModel extends BaseViewModel {
       }
     }
     return null;
+  }
+
+  Future forumHelpDialog(String url) async {
+    DialogResponse? res = await _dialogService.showCustomDialog(
+        variant: DialogType.buttonForm,
+        title: 'Ask for Help',
+        description:
+            "If you've already tried the Read-Search-Ask method, then you can try asking for help on the freeCodeCamp forum.",
+        mainButtonTitle: 'Create a post');
+    if (res!.confirmed) {
+      launchUrlString(url);
+    }
   }
 }

@@ -1,5 +1,4 @@
 import 'dart:convert';
-import 'dart:developer';
 
 import 'package:device_info_plus/device_info_plus.dart';
 import 'package:flutter/material.dart';
@@ -57,9 +56,9 @@ class HintWidgetView extends StatelessWidget {
             '';
 
     final titleText = '$blockTitle - ${challengeModel.challenge?.title}';
+    // TODO: Need to update device info with only required values
     final String endingText =
         '**Your mobile information:**\n\nUser Agent is: <code>$deviceInfo</code>\n\n**Challenge:** $titleText\n\n**Link to the challenge:**\nhttps://www.freecodecamp.org${challengeModel.challenge?.slug}';
-    log('ENDING TEXT: $endingText');
 
     final String userCode = filesToMarkdown(challengeModel.challenge!.files);
 
@@ -130,7 +129,7 @@ class HintWidgetView extends StatelessWidget {
                       IconButton(
                         onPressed: () async {
                           final forumLink = await genForumLink();
-                          log('FORUM LINK: $forumLink');
+                          challengeModel.forumHelpDialog(forumLink);
                         },
                         icon: const Icon(Icons.question_mark),
                         padding: const EdgeInsets.all(16),
