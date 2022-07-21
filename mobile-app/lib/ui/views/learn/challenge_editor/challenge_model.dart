@@ -40,6 +40,9 @@ class ChallengeModel extends BaseViewModel {
   WebViewController? _testController;
   WebViewController? get testController => _testController;
 
+  Challenge? _challenge;
+  Challenge? get challenge => _challenge;
+
   TestRunner runner = TestRunner();
 
   void init() async {
@@ -137,14 +140,16 @@ class ChallengeModel extends BaseViewModel {
 
       if (res.statusCode == 200) {
         prefs.setString(url, res.body);
-
-        return Challenge.fromJson(jsonDecode(res.body)['result']['data']
+        _challenge = Challenge.fromJson(jsonDecode(res.body)['result']['data']
             ['challengeNode']['challenge']);
+
+        return _challenge;
       }
     } else {
-      return Challenge.fromJson(
+      _challenge = Challenge.fromJson(
           jsonDecode(prefs.getString(url) as String)['result']['data']
               ['challengeNode']['challenge']);
+      return _challenge;
     }
 
     return null;

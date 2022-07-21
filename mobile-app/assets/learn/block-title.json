@@ -1,0 +1,125 @@
+{
+  "responsive-web-design": {
+    "basic-html-and-html5": "Basic HTML and HTML5",
+    "basic-css": "Basic CSS",
+    "applied-visual-design": "Applied Visual Design",
+    "applied-accessibility": "Applied Accessibility",
+    "responsive-web-design-principles": "Responsive Web Design Principles",
+    "css-flexbox": "CSS Flexbox",
+    "css-grid": "CSS Grid",
+    "responsive-web-design-projects": "Responsive Web Design Projects"
+  },
+  "2022/responsive-web-design": {
+    "build-a-tribute-page-project": "Tribute Page",
+    "build-a-personal-portfolio-webpage-project": "Personal Portfolio Webpage",
+    "build-a-product-landing-page-project": "Product Landing Page",
+    "build-a-survey-form-project": "Survey Form",
+    "build-a-technical-documentation-page-project": "Technical Documentation Page",
+    "learn-html-by-building-a-cat-photo-app": "Learn HTML by Building a Cat Photo App",
+    "learn-basic-css-by-building-a-cafe-menu": "Learn Basic CSS by Building a Cafe Menu",
+    "learn-the-css-box-model-by-building-a-rothko-painting": "Learn the CSS Box Model by Building a Rothko Painting",
+    "learn-css-variables-by-building-a-city-skyline": "Learn CSS Variables by Building a City Skyline",
+    "learn-html-forms-by-building-a-registration-form": "Learn HTML Forms by Building a Registration Form",
+    "learn-accessibility-by-building-a-quiz": "Learn Accessibility by Building a Quiz",
+    "learn-intermediate-css-by-building-a-picasso-painting": "Learn Intermediate CSS by Building a Picasso Painting",
+    "learn-responsive-web-design-by-building-a-piano": "Learn Responsive Web Design by Building a Piano",
+    "learn-css-flexbox-by-building-a-photo-gallery": "Learn CSS Flexbox by Building a Photo Gallery",
+    "learn-css-grid-by-building-a-magazine": "Learn CSS Grid by Building a Magazine",
+    "learn-typography-by-building-a-nutrition-label": "Learn Typography by Building a Nutrition Label",
+    "learn-css-transforms-by-building-a-penguin": "Learn CSS Transforms by Building a Penguin",
+    "learn-css-animation-by-building-a-ferris-wheel": "Learn CSS Animation by Building a Ferris Wheel",
+    "learn-more-about-css-pseudo-selectors-by-building-a-balance-sheet": "Learn More About CSS Pseudo Selectors By Building A Balance Sheet",
+    "learn-css-colors-by-building-a-set-of-colored-markers": "Learn CSS Colors by Building a Set of Colored Markers"
+  },
+  "javascript-algorithms-and-data-structures": {
+    "basic-javascript": "Basic JavaScript",
+    "es6": "ES6",
+    "regular-expressions": "Regular Expressions",
+    "debugging": "Debugging",
+    "basic-data-structures": "Basic Data Structures",
+    "basic-algorithm-scripting": "Basic Algorithm Scripting",
+    "object-oriented-programming": "Object Oriented Programming",
+    "functional-programming": "Functional Programming",
+    "intermediate-algorithm-scripting": "Intermediate Algorithm Scripting",
+    "javascript-algorithms-and-data-structures-projects": "JavaScript Algorithms and Data Structures Projects"
+  },
+  "2022/javascript-algorithms-and-data-structures": {
+    "build-a-caesars-cipher-project": "Build a Caesars Cipher Project",
+    "build-a-cash-register-project": "Build a Cash Register Project",
+    "build-a-palindrome-checker-project": "Build a Palindrome Checker Project",
+    "build-a-roman-numeral-converter-project": "Build a Roman Numeral Converter Project",
+    "build-a-telephone-number-validator-project": "Build a Telephone Number Validator Project",
+    "learn-basic-javascript-by-building-a-role-playing-game": "Learn Basic JavaScript by Building a Role Playing Game",
+    "learn-form-validation-by-building-a-calorie-counter": "Learn Form Validation by Building a Calorie Counter",
+    "learn-functional-programming-by-building-a-spreadsheet": "Learn Functional Programming by Building a Spreadsheet"
+  },
+  "front-end-development-libraries": {
+    "bootstrap": "Bootstrap",
+    "jquery": "jQuery",
+    "sass": "SASS",
+    "react": "React",
+    "redux": "Redux",
+    "react-and-redux": "React and Redux",
+    "front-end-development-libraries-projects": "Front End Development Libraries Projects"
+  },
+  "data-visualization": {
+    "data-visualization-with-d3": "Data Visualization with D3",
+    "json-apis-and-ajax": "JSON APIs and AJAX",
+    "data-visualization-projects": "Data Visualization Projects",
+    "d3-dashboard": "D3 Dashboard"
+  },
+  "relational-database": {
+    "build-a-celestial-bodies-database-project": "Celestial Bodies Database",
+    "build-a-number-guessing-game-project": "Number Guessing Game",
+    "build-a-periodic-table-database-project": "Periodic Table Database",
+    "build-a-salon-appointment-scheduler-project": "Salon Appointment Scheduler",
+    "build-a-world-cup-database-project": "World Cup Database",
+    "learn-advanced-bash-by-building-a-kitty-ipsum-translator": "Learn Advanced Bash by Building a Kitty Ipsum Translator",
+    "learn-bash-and-sql-by-building-a-bike-rental-shop": "Learn Bash and SQL by Building a Bike Rental Shop",
+    "learn-bash-by-building-a-boilerplate": "Learn Bash by Building a Boilerplate",
+    "learn-bash-scripting-by-building-five-programs": "Learn Bash Scripting by Building Five Programs",
+    "learn-git-by-building-an-sql-reference-object": "Learn Git by Building an SQL Reference Object",
+    "learn-nano-by-building-a-castle": "Learn Nano by Building a Castle",
+    "learn-relational-databases-by-building-a-mario-database": "Learn Relational Databases by Building a Mario Database",
+    "learn-sql-by-building-a-student-database-part-1": "Learn SQL by Building a Student Database: Part 1",
+    "learn-sql-by-building-a-student-database-part-2": "Learn SQL by Building a Student Database: Part 2"
+  },
+  "back-end-development-and-apis": {
+    "managing-packages-with-npm": "Managing Packages with NPM",
+    "basic-node-and-express": "Basic Node and Express",
+    "mongodb-and-mongoose": "MongoDB and Mongoose",
+    "back-end-development-and-apis-projects": "Back End Development and APIs Projects"
+  },
+  "quality-assurance": {
+    "quality-assurance-and-testing-with-chai": "Quality Assurance and Testing with Chai",
+    "advanced-node-and-express": "Advanced Node and Express",
+    "quality-assurance-projects": "Quality Assurance Projects"
+  },
+  "scientific-computing-with-python": {
+    "python-for-everybody": "Python for Everybody",
+    "scientific-computing-with-python-projects": "Scientific Computing with Python Projects"
+  },
+  "data-analysis-with-python": {
+    "data-analysis-with-python-course": "Data Analysis with Python",
+    "numpy": "Numpy",
+    "data-analysis-with-python-projects": "Data Analysis with Python Projects"
+  },
+  "information-security": {
+    "information-security-with-helmetjs": "Information Security with HelmetJS",
+    "python-for-penetration-testing": "Python for Penetration Testing",
+    "information-security-projects": "Information Security Projects"
+  },
+  "machine-learning-with-python": {
+    "tensorflow": "Tensorflow",
+    "how-neural-networks-work": "How Neural Networks Work",
+    "machine-learning-with-python-projects": "Machine Learning with Python Projects"
+  },
+  "coding-interview-prep": {
+    "algorithms": "Algorithms",
+    "data-structures": "Data Structures",
+    "take-home-projects": "Take Home Projects",
+    "rosetta-code": "Rosetta Code",
+    "project-euler": "Project Euler"
+  },
+  "misc-text": {}
+}
