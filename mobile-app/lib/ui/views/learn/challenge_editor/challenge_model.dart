@@ -202,7 +202,7 @@ class ChallengeModel extends BaseViewModel {
         description:
             "If you've already tried the Read-Search-Ask method, then you can try asking for help on the freeCodeCamp forum.",
         mainButtonTitle: 'Create a post');
-    if (res!.confirmed) {
+    if (res != null && res.confirmed) {
       launchUrlString(url);
     }
   }

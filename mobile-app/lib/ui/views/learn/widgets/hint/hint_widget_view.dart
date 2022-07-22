@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'dart:io';
 
 import 'package:device_info_plus/device_info_plus.dart';
 import 'package:flutter/material.dart';
@@ -38,10 +39,21 @@ class HintWidgetView extends StatelessWidget {
     return markdownStr;
   }
 
-  Future<String> genForumLink() async {
+  Future<String> getDeviceInfo() async {
     final deviceInfoPlugin = DeviceInfoPlugin();
-    final deviceInfo = await deviceInfoPlugin.deviceInfo;
 
+    if (Platform.isAndroid) {
+      final deviceInfo = await deviceInfoPlugin.androidInfo;
+      return '${deviceInfo.model} - Android ${deviceInfo.version.release} - Android SDK ${deviceInfo.version.sdkInt} - Security Patch ${deviceInfo.version.securityPatch} - ${deviceInfo.fingerprint}';
+    } else if (Platform.isIOS) {
+      final deviceInfo = await deviceInfoPlugin.iosInfo;
+      return '${deviceInfo.model} - ${deviceInfo.systemName}${deviceInfo.systemVersion} - ${deviceInfo.identifierForVendor}';
+    } else {
+      return 'Unrecognized device';
+    }
+  }
+
+  Future<String> genForumLink() async {
     String blockTitlePath = 'assets/learn/block-title.json';
     String blockTitleFile = await rootBundle.loadString(blockTitlePath);
     String helpCategoryPath = 'assets/learn/help-category.json';
@@ -55,10 +67,11 @@ class HintWidgetView extends StatelessWidget {
                 [challengeModel.challenge?.block] ??
             '';
 
+    final userDeviceInfo = await getDeviceInfo();
+
     final titleText = '$blockTitle - ${challengeModel.challenge?.title}';
-    // TODO: Need to update device info with only required values
     final String endingText =
-        '**Your mobile information:**\n\nUser Agent is: <code>$deviceInfo</code>\n\n**Challenge:** $titleText\n\n**Link to the challenge:**\nhttps://www.freecodecamp.org${challengeModel.challenge?.slug}';
+        '**Your mobile information:**\n```txt\n$userDeviceInfo\n```\n\n**Challenge:** $titleText\n\n**Link to the challenge:**\nhttps://www.freecodecamp.org${challengeModel.challenge?.slug}';
 
     final String userCode = filesToMarkdown(challengeModel.challenge!.files);
 
