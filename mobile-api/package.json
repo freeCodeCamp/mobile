@@ -19,7 +19,7 @@
     "pre:build:schema": "cd ../mobile-app && dart run --enable-asserts lib/scripts/init_validation_schema.dart && mv ./lib/scripts/schema-keys.json ../mobile-api/src/schema-keys.json"
   },
   "dependencies": {
-    "node-fetch": "3.2.8",
+    "node-fetch": "3.2.9",
     "bree": "9.1.1",
     "dotenv": "16.0.1",
     "express": "4.18.1",
