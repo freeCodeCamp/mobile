@@ -1,6 +1,7 @@
 import 'dart:convert';
 
 import 'package:flutter/material.dart';
+import 'package:flutter/scheduler.dart';
 import 'package:flutter_code_editor/controller/editor_view_controller.dart';
 import 'package:flutter_code_editor/controller/language_controller/syntax/index.dart';
 import 'package:flutter_code_editor/models/editor_options.dart';
@@ -73,7 +74,9 @@ class ChallengeView extends StatelessWidget {
                                                       : Colors.transparent,
                                                   width: 4))),
                                       child: customDropdown(
-                                          challenge, model, context)),
+                                        challenge,
+                                        model,
+                                      )),
                                 ),
                                 Expanded(
                                   child: Container(
@@ -171,14 +174,7 @@ class ChallengeView extends StatelessWidget {
             ));
   }
 
-  Widget customDropdown(
-      Challenge challenge, ChallengeModel model, BuildContext context) {
-    if (MediaQuery.of(context).viewInsets.bottom > 0 || !model.showPanel) {
-      model.setHideAppBar = false;
-    } else {
-      model.setHideAppBar = true;
-    }
-
+  Widget customDropdown(Challenge challenge, ChallengeModel model) {
     return Align(
       alignment: Alignment.center,
       child: DropdownButton(
@@ -209,6 +205,14 @@ class ChallengeView extends StatelessWidget {
 
   Widget bottomBar(ChallengeModel model, Challenge challenge,
       BuildContext context, EditorViewController controller) {
+    SchedulerBinding.instance.addPostFrameCallback((timeStamp) {
+      if (MediaQuery.of(context).viewInsets.bottom > 0 || !model.showPanel) {
+        model.setHideAppBar = false;
+      } else {
+        model.setHideAppBar = true;
+      }
+    });
+
     return BottomAppBar(
       color: const Color(0xFF0a0a23),
       child: Row(
