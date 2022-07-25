@@ -125,18 +125,13 @@ class AuthenticationService {
   }
 
   Future<void> login(BuildContext context) async {
-    bool authRes = await extractCookies();
-
-    if (!authRes) {
-      var navRes = await Navigator.push(
-        context,
-        MaterialPageRoute(
-          builder: (context) => const LoginWebView(),
-        ),
-      );
-      log('AUTH SERVICE NAV RES: $navRes');
-    }
-    log('AUTH SERVICE AUTH RES: $authRes');
+    var navRes = await Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => const LoginWebView(),
+      ),
+    );
+    log('AUTH SERVICE NAV RES: $navRes');
     await writeTokensToStorage();
     await fetchUser();
   }

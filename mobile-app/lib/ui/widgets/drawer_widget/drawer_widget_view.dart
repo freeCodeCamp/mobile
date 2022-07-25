@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:freecodecamp/models/main/user_model.dart';
+import 'package:freecodecamp/service/test_service.dart';
 import 'package:freecodecamp/ui/widgets/drawer_widget/drawer_button.dart';
 import 'package:freecodecamp/ui/widgets/drawer_widget/drawer_web_buttton.dart';
 import 'package:freecodecamp/ui/widgets/drawer_widget/drawer_widget_viewmodel.dart';
@@ -105,8 +106,10 @@ class DrawerWidgetView extends StatelessWidget {
                         textColor: model.loggedIn
                             ? const Color.fromARGB(255, 230, 59, 59)
                             : null,
-                        route: () {
-                          model.loginSnack();
+                        route: () async {
+                          await TestService().developmentMode()
+                              ? model.handleAuth(context)
+                              : model.loginSnack();
                         })
                   ],
                 ),
