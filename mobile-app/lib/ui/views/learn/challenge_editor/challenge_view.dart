@@ -7,6 +7,7 @@ import 'package:flutter_code_editor/models/editor_options.dart';
 import 'package:flutter_code_editor/models/file_model.dart';
 import 'package:freecodecamp/enums/panel_type.dart';
 import 'package:freecodecamp/models/learn/challenge_model.dart';
+import 'package:freecodecamp/models/learn/curriculum_model.dart';
 import 'package:freecodecamp/ui/views/learn/challenge_editor/challenge_model.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:freecodecamp/ui/views/learn/widgets/description/description_widget_view.dart';
@@ -16,9 +17,11 @@ import 'package:webview_flutter/webview_flutter.dart';
 import 'package:stacked/stacked.dart';
 
 class ChallengeView extends StatelessWidget {
-  const ChallengeView({Key? key, required this.url}) : super(key: key);
+  const ChallengeView({Key? key, required this.url, required this.block})
+      : super(key: key);
 
   final String url;
+  final Block block;
 
   @override
   Widget build(BuildContext context) {
@@ -36,6 +39,7 @@ class ChallengeView extends StatelessWidget {
                 }
                 if (snapshot.hasData) {
                   Challenge challenge = snapshot.data!;
+                  int maxChallenges = block.challenges.length;
 
                   EditorViewController controller = EditorViewController(
                     language: Syntax.HTML,
@@ -121,7 +125,9 @@ class ChallengeView extends StatelessWidget {
                                     ? DynamicPanel(
                                         challenge: challenge,
                                         model: model,
-                                        panel: model.panelType)
+                                        panel: model.panelType,
+                                        maxChallenges: maxChallenges,
+                                      )
                                     : Container(),
                                 editor(controller, model)
                               ],
@@ -136,7 +142,9 @@ class ChallengeView extends StatelessWidget {
                                     ? DynamicPanel(
                                         challenge: challenge,
                                         model: model,
-                                        panel: model.panelType)
+                                        panel: model.panelType,
+                                        maxChallenges: maxChallenges,
+                                      )
                                     : Container(),
                                 Expanded(
                                   child: WebView(
@@ -241,28 +249,34 @@ class ChallengeView extends StatelessWidget {
           ),
           Container(
             margin: const EdgeInsets.all(8),
-            color: model.showPanel
+            color: model.showPanel && model.panelType == PanelType.instruction
                 ? Colors.white
                 : const Color.fromRGBO(0x2A, 0x2A, 0x40, 1),
             child: IconButton(
               icon: FaIcon(
                 FontAwesomeIcons.info,
                 size: 32,
-                color: model.showPanel
-                    ? const Color.fromRGBO(0x2A, 0x2A, 0x40, 1)
-                    : Colors.white,
+                color:
+                    model.showPanel && model.panelType == PanelType.instruction
+                        ? const Color.fromRGBO(0x2A, 0x2A, 0x40, 1)
+                        : Colors.white,
               ),
               onPressed: () {
-                model.setPanelType = PanelType.instruction;
-                if (MediaQuery.of(context).viewInsets.bottom > 0) {
-                  FocusManager.instance.primaryFocus?.unfocus();
-                  if (!model.showPanel) {
-                    model.setShowPanel = true;
-                    model.setHideAppBar = true;
-                  }
+                if (model.showPanel &&
+                    model.panelType != PanelType.instruction) {
+                  model.setPanelType = PanelType.instruction;
                 } else {
-                  model.setHideAppBar = !model.hideAppBar;
-                  model.setShowPanel = !model.showPanel;
+                  model.setPanelType = PanelType.instruction;
+                  if (MediaQuery.of(context).viewInsets.bottom > 0) {
+                    FocusManager.instance.primaryFocus?.unfocus();
+                    if (!model.showPanel) {
+                      model.setShowPanel = true;
+                      model.setHideAppBar = true;
+                    }
+                  } else {
+                    model.setHideAppBar = !model.hideAppBar;
+                    model.setShowPanel = !model.showPanel;
+                  }
                 }
               },
               splashColor: Colors.transparent,
@@ -317,16 +331,18 @@ class ChallengeView extends StatelessWidget {
 }
 
 class DynamicPanel extends StatelessWidget {
-  const DynamicPanel(
-      {Key? key,
-      required this.challenge,
-      required this.model,
-      required this.panel})
-      : super(key: key);
+  const DynamicPanel({
+    Key? key,
+    required this.challenge,
+    required this.model,
+    required this.panel,
+    required this.maxChallenges,
+  }) : super(key: key);
 
   final Challenge challenge;
   final ChallengeModel model;
   final PanelType panel;
+  final int maxChallenges;
 
   Widget panelHandler(PanelType panel) {
     switch (panel) {
@@ -336,6 +352,8 @@ class DynamicPanel extends StatelessWidget {
           instructions: challenge.instructions,
           challengeModel: model,
           editorText: model.editorText,
+          maxChallenges: maxChallenges,
+          title: challenge.title,
         );
       case PanelType.pass:
         return PassWidgetView(
@@ -357,7 +375,7 @@ class DynamicPanel extends StatelessWidget {
         height: MediaQuery.of(context).size.height * 0.75,
         color: const Color(0xFF0a0a23),
         child: Padding(
-          padding: const EdgeInsets.fromLTRB(16, 24, 16, 16),
+          padding: const EdgeInsets.fromLTRB(16, 30, 16, 16),
           child: panelHandler(panel),
         ));
   }

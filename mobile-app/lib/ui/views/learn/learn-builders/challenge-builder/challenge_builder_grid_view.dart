@@ -35,7 +35,9 @@ class ChallengeBuilderGridView extends StatelessWidget {
                                 'https://freecodecamp.dev/page-data/learn';
 
                             model.routeToBrowserView(
-                                '$url/${block.superBlock}/${block.dashedName}/$challenge/page-data.json');
+                              '$url/${block.superBlock}/${block.dashedName}/$challenge/page-data.json',
+                              block,
+                            );
                           },
                         ));
                       }),

@@ -19,19 +19,19 @@ class ChallengeModel extends BaseViewModel {
   bool _showPreview = false;
   bool get showPreview => _showPreview;
 
-  bool _hideAppBar = false;
+  bool _hideAppBar = true;
   bool get hideAppBar => _hideAppBar;
 
   String _hint = '';
   String get hint => _hint;
 
-  bool _showPanel = false;
+  bool _showPanel = true;
   bool get showPanel => _showPanel;
 
   bool _completedChallenge = false;
   bool get completedChallenge => _completedChallenge;
 
-  PanelType _panelType = PanelType.none;
+  PanelType _panelType = PanelType.instruction;
   PanelType get panelType => _panelType;
 
   WebViewController? _webviewController;
