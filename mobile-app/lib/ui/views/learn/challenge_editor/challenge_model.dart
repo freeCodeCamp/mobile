@@ -1,5 +1,6 @@
 import 'dart:convert';
 
+import 'package:flutter/cupertino.dart';
 import 'package:freecodecamp/enums/challenge_test_state_type.dart';
 import 'package:freecodecamp/enums/panel_type.dart';
 import 'package:freecodecamp/models/learn/challenge_model.dart';
@@ -123,6 +124,14 @@ class ChallengeModel extends BaseViewModel {
 
     if (prefs.getString('editorText') != null) {
       prefs.remove('editorText');
+    }
+  }
+
+  void setAppBarState(BuildContext context) {
+    if (MediaQuery.of(context).viewInsets.bottom > 0 || !showPanel) {
+      setHideAppBar = false;
+    } else {
+      setHideAppBar = true;
     }
   }
 

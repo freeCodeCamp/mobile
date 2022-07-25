@@ -28,15 +28,10 @@ class ChallengeView extends StatelessWidget {
     return ViewModelBuilder<ChallengeModel>.reactive(
         viewModelBuilder: () => ChallengeModel(),
         onDispose: (model) => model.disposeCahce(url),
+        onModelReady: (model) => model.setAppBarState(context),
         builder: (context, model, child) => FutureBuilder<Challenge?>(
               future: model.initChallenge(url),
               builder: (context, snapshot) {
-                if (MediaQuery.of(context).viewInsets.bottom > 0 ||
-                    !model.showPanel) {
-                  model.setHideAppBar = false;
-                } else {
-                  model.setHideAppBar = true;
-                }
                 if (snapshot.hasData) {
                   Challenge challenge = snapshot.data!;
                   int maxChallenges = block.challenges.length;
@@ -77,7 +72,8 @@ class ChallengeView extends StatelessWidget {
                                                       ? Colors.blue
                                                       : Colors.transparent,
                                                   width: 4))),
-                                      child: customDropdown(challenge, model)),
+                                      child: customDropdown(
+                                          challenge, model, context)),
                                 ),
                                 Expanded(
                                   child: Container(
@@ -175,9 +171,15 @@ class ChallengeView extends StatelessWidget {
             ));
   }
 
-  Widget customDropdown(Challenge challenge, ChallengeModel model) {
-    return Expanded(
-        child: Align(
+  Widget customDropdown(
+      Challenge challenge, ChallengeModel model, BuildContext context) {
+    if (MediaQuery.of(context).viewInsets.bottom > 0 || !model.showPanel) {
+      model.setHideAppBar = false;
+    } else {
+      model.setHideAppBar = true;
+    }
+
+    return Align(
       alignment: Alignment.center,
       child: DropdownButton(
         dropdownColor: const Color(0xFF0a0a23),
@@ -202,7 +204,7 @@ class ChallengeView extends StatelessWidget {
         }).toList(),
         onChanged: (e) {},
       ),
-    ));
+    );
   }
 
   Widget bottomBar(ChallengeModel model, Challenge challenge,
@@ -294,32 +296,6 @@ class ChallengeView extends StatelessWidget {
                 highlightColor: Colors.transparent,
               ),
             ),
-          Expanded(
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.end,
-              children: [
-                Container(
-                  margin: const EdgeInsets.all(8),
-                  color: model.completedChallenge
-                      ? const Color.fromRGBO(0x20, 0xD0, 0x32, 1)
-                      : const Color.fromRGBO(0x1D, 0x9B, 0xF0, 1),
-                  child: IconButton(
-                    icon: model.completedChallenge
-                        ? const FaIcon(FontAwesomeIcons.arrowRight)
-                        : const FaIcon(FontAwesomeIcons.check),
-                    onPressed: () async => {
-                      FocusManager.instance.primaryFocus?.unfocus(),
-                      model.testController?.runJavascript('''
-                                (function(){Flutter.postMessage(window.document.body.outerHTML)})();
-                              '''),
-                    },
-                    splashColor: Colors.transparent,
-                    highlightColor: Colors.transparent,
-                  ),
-                ),
-              ],
-            ),
-          )
         ],
       ),
     );
