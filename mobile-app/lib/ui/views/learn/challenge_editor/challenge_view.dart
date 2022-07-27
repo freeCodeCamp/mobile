@@ -293,6 +293,32 @@ class ChallengeView extends StatelessWidget {
               highlightColor: Colors.transparent,
             ),
           ),
+          Expanded(
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.end,
+              children: [
+                Container(
+                  margin: const EdgeInsets.all(8),
+                  color: model.completedChallenge
+                      ? const Color.fromRGBO(0x20, 0xD0, 0x32, 1)
+                      : const Color.fromRGBO(0x1D, 0x9B, 0xF0, 1),
+                  child: IconButton(
+                    icon: model.completedChallenge
+                        ? const FaIcon(FontAwesomeIcons.arrowRight)
+                        : const FaIcon(FontAwesomeIcons.check),
+                    onPressed: () async => {
+                      FocusManager.instance.primaryFocus?.unfocus(),
+                      model.testController?.runJavascript('''
+                                (function(){Flutter.postMessage(window.document.body.outerHTML)})();
+                              '''),
+                    },
+                    splashColor: Colors.transparent,
+                    highlightColor: Colors.transparent,
+                  ),
+                ),
+              ],
+            ),
+          ),
           if (model.showPreview)
             Container(
               margin: const EdgeInsets.all(8),
