@@ -41,12 +41,7 @@ class ChallengeView extends StatelessWidget {
                   if (model.challenge == null) {
                     model.setChallenge = challenge;
                   }
-
-                  model.setEditorText =
-                      model.returnCurrentSelectedFile(challenge).contents;
-
-                  model.handleCurrentDropdownState(challenge);
-                  log('I get rebuild after change');
+                  log('new state received unfortunately');
                   EditorViewController controller = EditorViewController(
                     language: Syntax.HTML,
                     options: const EditorOptions(
@@ -59,17 +54,21 @@ class ChallengeView extends StatelessWidget {
                         fileName:
                             model.returnCurrentSelectedFile(challenge).name,
                         filePath: '',
-                        fileContent: model.editorText ?? '',
+                        fileContent: '',
                         parentDirectory: ''),
                   );
 
                   controller.editorTextStream.stream.listen((event) {
                     model.saveEditorTextInCache(event, challenge);
-                    log('I got a new event');
-                    log(event);
+
                     model.setEditorText = event;
                     model.setCompletedChallenge = false;
                   });
+
+                  if (model.editorText == null) {
+                    controller.editorTextStream.sink.add(
+                        model.returnCurrentSelectedFile(challenge).contents);
+                  }
 
                   return Scaffold(
                       appBar: !model.hideAppBar
@@ -86,9 +85,7 @@ class ChallengeView extends StatelessWidget {
                                                       : Colors.transparent,
                                                   width: 4))),
                                       child: customDropdown(
-                                        challenge,
-                                        model,
-                                      )),
+                                          challenge, model, controller)),
                                 ),
                                 Expanded(
                                   child: Container(
@@ -186,7 +183,8 @@ class ChallengeView extends StatelessWidget {
             ));
   }
 
-  Widget customDropdown(Challenge challenge, ChallengeModel model) {
+  Widget customDropdown(Challenge challenge, ChallengeModel model,
+      EditorViewController controller) {
     return Align(
       alignment: Alignment.center,
       child: DropdownButton(
@@ -212,7 +210,8 @@ class ChallengeView extends StatelessWidget {
         }).toList(),
         onChanged: (String? fileName) async {
           model.setCurrentSelectedFile = fileName ?? 'index.html';
-          log(model.currentSelectedFile);
+          model.setEditorText =
+              model.returnCurrentSelectedFile(challenge).contents;
         },
       ),
     );
