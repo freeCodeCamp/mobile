@@ -37,6 +37,8 @@ class ChallengeView extends StatelessWidget {
                   Challenge challenge = snapshot.data!;
                   int maxChallenges = block.challenges.length;
 
+                  model.handleCurrentDropdownState(challenge);
+
                   EditorViewController controller = EditorViewController(
                     language: Syntax.HTML,
                     options: const EditorOptions(
@@ -46,10 +48,11 @@ class ChallengeView extends StatelessWidget {
                         showTabBar: false),
                     file: FileIDE(
                         fileExplorer: null,
-                        fileName: challenge.files[0].name,
+                        fileName:
+                            model.returnCurrentSelectedFile(challenge).name,
                         filePath: '',
                         fileContent:
-                            model.editorText ?? challenge.files[0].contents,
+                            model.returnCurrentSelectedFile(challenge).contents,
                         parentDirectory: ''),
                   );
 
@@ -183,7 +186,7 @@ class ChallengeView extends StatelessWidget {
           height: 0,
         ),
         iconEnabledColor: !model.showPreview ? Colors.blue : Colors.white,
-        value: '${challenge.files[0].name}.${challenge.files[0].ext.name}',
+        value: model.currentSelectedFile,
         items: challenge.files
             .map((file) => '${file.name}.${file.ext.name}')
             .map<DropdownMenuItem<String>>((String value) {
@@ -191,14 +194,16 @@ class ChallengeView extends StatelessWidget {
             value: value,
             alignment: Alignment.centerLeft,
             child: Text(
-              'Editors',
+              value,
               style: TextStyle(
                   color: !model.showPreview ? Colors.blue : Colors.white,
                   fontWeight: !model.showPreview ? FontWeight.bold : null),
             ),
           );
         }).toList(),
-        onChanged: (e) {},
+        onChanged: (String? e) {
+          model.setCurrentSelectedFile = e ?? 'Somting wrong';
+        },
       ),
     );
   }

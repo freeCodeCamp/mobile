@@ -23,6 +23,9 @@ class ChallengeModel extends BaseViewModel {
   bool _hideAppBar = true;
   bool get hideAppBar => _hideAppBar;
 
+  String _currentSelectedFile = 'index.html';
+  String get currentSelectedFile => _currentSelectedFile;
+
   String _hint = '';
   String get hint => _hint;
 
@@ -43,8 +46,9 @@ class ChallengeModel extends BaseViewModel {
 
   TestRunner runner = TestRunner();
 
-  void init() async {
-    _editorText = await getEditorTextFromCache();
+  void init(Challenge challenge) async {
+    setCurrentSelectedFile =
+        '${challenge.files[0].name}.${challenge.files[0].ext.name}';
     notifyListeners();
   }
 
@@ -55,6 +59,11 @@ class ChallengeModel extends BaseViewModel {
 
   set setHideAppBar(bool value) {
     _hideAppBar = value;
+    notifyListeners();
+  }
+
+  set setCurrentSelectedFile(String value) {
+    _currentSelectedFile = value;
     notifyListeners();
   }
 
@@ -190,5 +199,25 @@ class ChallengeModel extends BaseViewModel {
       }
     }
     return null;
+  }
+
+  // this function checks if the current default file value "index.html" is present in the available
+  // challenge files. If not set it to the first file in the array.
+  void handleCurrentDropdownState(Challenge challenge) {
+    String firstFile =
+        '${challenge.files[0].name}.${challenge.files[0].ext.name}';
+
+    bool defaultFileIsPresent = challenge.files
+        .map((file) => file.name)
+        .contains(_currentSelectedFile.split('.')[0]);
+
+    if (!defaultFileIsPresent && firstFile != currentSelectedFile) {
+      setCurrentSelectedFile = firstFile;
+    }
+  }
+
+  ChallengeFile returnCurrentSelectedFile(Challenge challenge) {
+    return challenge.files
+        .firstWhere((file) => file.name == _currentSelectedFile.split('.')[0]);
   }
 }
