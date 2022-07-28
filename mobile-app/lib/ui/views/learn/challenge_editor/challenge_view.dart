@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'dart:developer';
 
 import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
@@ -28,7 +29,7 @@ class ChallengeView extends StatelessWidget {
   Widget build(BuildContext context) {
     return ViewModelBuilder<ChallengeModel>.reactive(
         viewModelBuilder: () => ChallengeModel(),
-        onDispose: (model) => model.disposeCahce(url),
+        onDispose: (model) => model.disposeCahce(url, model.challenge),
         onModelReady: (model) => model.setAppBarState(context),
         builder: (context, model, child) => FutureBuilder<Challenge?>(
               future: model.initChallenge(url),
@@ -37,8 +38,15 @@ class ChallengeView extends StatelessWidget {
                   Challenge challenge = snapshot.data!;
                   int maxChallenges = block.challenges.length;
 
-                  model.handleCurrentDropdownState(challenge);
+                  if (model.challenge == null) {
+                    model.setChallenge = challenge;
+                  }
 
+                  model.setEditorText =
+                      model.returnCurrentSelectedFile(challenge).contents;
+
+                  model.handleCurrentDropdownState(challenge);
+                  log('I get rebuild after change');
                   EditorViewController controller = EditorViewController(
                     language: Syntax.HTML,
                     options: const EditorOptions(
@@ -51,13 +59,14 @@ class ChallengeView extends StatelessWidget {
                         fileName:
                             model.returnCurrentSelectedFile(challenge).name,
                         filePath: '',
-                        fileContent:
-                            model.returnCurrentSelectedFile(challenge).contents,
+                        fileContent: model.editorText ?? '',
                         parentDirectory: ''),
                   );
 
                   controller.editorTextStream.stream.listen((event) {
-                    model.saveEditorTextInCache(event);
+                    model.saveEditorTextInCache(event, challenge);
+                    log('I got a new event');
+                    log(event);
                     model.setEditorText = event;
                     model.setCompletedChallenge = false;
                   });
@@ -201,8 +210,9 @@ class ChallengeView extends StatelessWidget {
             ),
           );
         }).toList(),
-        onChanged: (String? e) {
-          model.setCurrentSelectedFile = e ?? 'Somting wrong';
+        onChanged: (String? fileName) async {
+          model.setCurrentSelectedFile = fileName ?? 'index.html';
+          log(model.currentSelectedFile);
         },
       ),
     );
@@ -341,6 +351,8 @@ class ChallengeView extends StatelessWidget {
   }
 
   Widget editor(EditorViewController controller, ChallengeModel model) {
+    log('I am in the editor');
+
     return Expanded(child: controller);
   }
 }

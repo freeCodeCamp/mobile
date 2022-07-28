@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'dart:developer';
 
 import 'package:flutter/cupertino.dart';
 import 'package:freecodecamp/enums/challenge_test_state_type.dart';
@@ -45,6 +46,9 @@ class ChallengeModel extends BaseViewModel {
   WebViewController? get testController => _testController;
 
   TestRunner runner = TestRunner();
+
+  Challenge? _challenge;
+  Challenge? get challenge => _challenge;
 
   void init(Challenge challenge) async {
     setCurrentSelectedFile =
@@ -102,37 +106,53 @@ class ChallengeModel extends BaseViewModel {
     notifyListeners();
   }
 
+  set setChallenge(Challenge challenge) {
+    _challenge = challenge;
+    notifyListeners();
+  }
+
   // When the content in the editor is changed, save it to the cache. This prevents
   // the user from losing their work when switching between panels e.g, the preview.
   // The cache is disposed when the user switches to a new challenge.
 
-  void saveEditorTextInCache(String value) async {
+  void saveEditorTextInCache(String value, Challenge challenge) async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
-    prefs.setString('editorText', value);
+
+    ChallengeFile currentFile = returnCurrentSelectedFile(challenge);
+
+    prefs.setString(currentFile.name, value);
   }
 
   // Get the content of the editor from the cache if it exists. If it doesn't,
   // return an empty string. This prevents the user from losing their work when
   // switching between panels e.g, the preview.
 
-  Future<String> getEditorTextFromCache() async {
+  Future<String?> getEditorTextFromCache(Challenge challenge) async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
 
-    return prefs.getString('editorText') ?? '';
+    ChallengeFile currentFile = returnCurrentSelectedFile(challenge);
+
+    return prefs.getString(currentFile.name);
   }
 
   // This removes the cached content of the editor. This is called when the user
   // switches to a new challenge.
 
-  Future disposeCahce(String url) async {
+  Future disposeCahce(String url, Challenge? challenge) async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
 
     if (prefs.getString(url) != null) {
       prefs.remove(url);
     }
 
-    if (prefs.getString('editorText') != null) {
-      prefs.remove('editorText');
+    if (challenge != null) {
+      for (ChallengeFile file in challenge.files) {
+        if (prefs.getString(file.name) != null) {
+          prefs.remove(file.name);
+        }
+      }
+    } else {
+      log('failed to clean editor cache');
     }
   }
 
@@ -217,7 +237,8 @@ class ChallengeModel extends BaseViewModel {
   }
 
   ChallengeFile returnCurrentSelectedFile(Challenge challenge) {
-    return challenge.files
+    ChallengeFile file = challenge.files
         .firstWhere((file) => file.name == _currentSelectedFile.split('.')[0]);
+    return file;
   }
 }
