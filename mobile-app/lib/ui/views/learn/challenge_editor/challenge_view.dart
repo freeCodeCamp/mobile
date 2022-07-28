@@ -293,6 +293,17 @@ class ChallengeView extends StatelessWidget {
               highlightColor: Colors.transparent,
             ),
           ),
+          if (model.showPreview)
+            Container(
+              margin: const EdgeInsets.all(8),
+              color: const Color.fromRGBO(0x2A, 0x2A, 0x40, 1),
+              child: IconButton(
+                icon: const FaIcon(FontAwesomeIcons.code),
+                onPressed: () => {model.setShowPreview = !model.showPreview},
+                splashColor: Colors.transparent,
+                highlightColor: Colors.transparent,
+              ),
+            ),
           Expanded(
             child: Row(
               mainAxisAlignment: MainAxisAlignment.end,
@@ -319,17 +330,6 @@ class ChallengeView extends StatelessWidget {
               ],
             ),
           ),
-          if (model.showPreview)
-            Container(
-              margin: const EdgeInsets.all(8),
-              color: const Color.fromRGBO(0x2A, 0x2A, 0x40, 1),
-              child: IconButton(
-                icon: const FaIcon(FontAwesomeIcons.code),
-                onPressed: () => {model.setShowPreview = !model.showPreview},
-                splashColor: Colors.transparent,
-                highlightColor: Colors.transparent,
-              ),
-            ),
         ],
       ),
     );
