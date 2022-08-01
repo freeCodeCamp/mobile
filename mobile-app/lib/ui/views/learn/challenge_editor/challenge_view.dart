@@ -1,6 +1,7 @@
 import 'dart:convert';
 
 import 'package:flutter/material.dart';
+import 'package:flutter/scheduler.dart';
 import 'package:flutter_code_editor/controller/editor_view_controller.dart';
 import 'package:flutter_code_editor/controller/language_controller/syntax/index.dart';
 import 'package:flutter_code_editor/models/editor_options.dart';
@@ -28,15 +29,10 @@ class ChallengeView extends StatelessWidget {
     return ViewModelBuilder<ChallengeModel>.reactive(
         viewModelBuilder: () => ChallengeModel(),
         onDispose: (model) => model.disposeCahce(url),
+        onModelReady: (model) => model.setAppBarState(context),
         builder: (context, model, child) => FutureBuilder<Challenge?>(
               future: model.initChallenge(url),
               builder: (context, snapshot) {
-                if (MediaQuery.of(context).viewInsets.bottom > 0 ||
-                    !model.showPanel) {
-                  model.setHideAppBar = false;
-                } else {
-                  model.setHideAppBar = true;
-                }
                 if (snapshot.hasData) {
                   Challenge challenge = snapshot.data!;
                   int maxChallenges = block.challenges.length;
@@ -77,7 +73,10 @@ class ChallengeView extends StatelessWidget {
                                                       ? Colors.blue
                                                       : Colors.transparent,
                                                   width: 4))),
-                                      child: customDropdown(challenge, model)),
+                                      child: customDropdown(
+                                        challenge,
+                                        model,
+                                      )),
                                 ),
                                 Expanded(
                                   child: Container(
@@ -176,8 +175,7 @@ class ChallengeView extends StatelessWidget {
   }
 
   Widget customDropdown(Challenge challenge, ChallengeModel model) {
-    return Expanded(
-        child: Align(
+    return Align(
       alignment: Alignment.center,
       child: DropdownButton(
         dropdownColor: const Color(0xFF0a0a23),
@@ -202,11 +200,23 @@ class ChallengeView extends StatelessWidget {
         }).toList(),
         onChanged: (e) {},
       ),
-    ));
+    );
   }
 
   Widget bottomBar(ChallengeModel model, Challenge challenge,
       BuildContext context, EditorViewController controller) {
+    SchedulerBinding.instance.addPostFrameCallback((timeStamp) {
+      if (MediaQuery.of(context).viewInsets.bottom > 0 || !model.showPanel) {
+        if (model.hideAppBar) {
+          model.setHideAppBar = false;
+        }
+      } else {
+        if (!model.hideAppBar) {
+          model.setHideAppBar = true;
+        }
+      }
+    });
+
     return BottomAppBar(
       color: const Color(0xFF0a0a23),
       child: Row(
@@ -319,7 +329,7 @@ class ChallengeView extends StatelessWidget {
                 ),
               ],
             ),
-          )
+          ),
         ],
       ),
     );
