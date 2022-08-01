@@ -19,11 +19,13 @@ import 'package:webview_flutter/webview_flutter.dart';
 import 'package:stacked/stacked.dart';
 
 class ChallengeView extends StatelessWidget {
-  const ChallengeView({Key? key, required this.url, required this.block})
+  const ChallengeView(
+      {Key? key, required this.url, required this.block, this.challengeName})
       : super(key: key);
 
   final String url;
   final Block block;
+  final String? challengeName;
 
   @override
   Widget build(BuildContext context) {
@@ -32,16 +34,13 @@ class ChallengeView extends StatelessWidget {
         onDispose: (model) => model.disposeCahce(url, model.challenge),
         onModelReady: (model) => model.setAppBarState(context),
         builder: (context, model, child) => FutureBuilder<Challenge?>(
-              future: model.initChallenge(url),
+              future: model.initChallenge(url, challengeName ?? ''),
               builder: (context, snapshot) {
                 if (snapshot.hasData) {
                   Challenge challenge = snapshot.data!;
+
                   int maxChallenges = block.challenges.length;
 
-                  if (model.challenge == null) {
-                    model.setChallenge = challenge;
-                  }
-                  log('new state received unfortunately');
                   EditorViewController controller = EditorViewController(
                     language: Syntax.HTML,
                     options: const EditorOptions(
@@ -51,24 +50,15 @@ class ChallengeView extends StatelessWidget {
                         showTabBar: false),
                     file: FileIDE(
                         fileExplorer: null,
-                        fileName:
-                            model.returnCurrentSelectedFile(challenge).name,
+                        fileName: model
+                            .returnCurrentSelectedFile(challenge, challengeName)
+                            .name,
                         filePath: '',
-                        fileContent: '',
+                        fileContent: model
+                            .returnCurrentSelectedFile(challenge, challengeName)
+                            .contents,
                         parentDirectory: ''),
                   );
-
-                  controller.editorTextStream.stream.listen((event) {
-                    model.saveEditorTextInCache(event, challenge);
-
-                    model.setEditorText = event;
-                    model.setCompletedChallenge = false;
-                  });
-
-                  if (model.editorText == null) {
-                    controller.editorTextStream.sink.add(
-                        model.returnCurrentSelectedFile(challenge).contents);
-                  }
 
                   return Scaffold(
                       appBar: !model.hideAppBar
@@ -85,7 +75,7 @@ class ChallengeView extends StatelessWidget {
                                                       : Colors.transparent,
                                                   width: 4))),
                                       child: customDropdown(
-                                          challenge, model, controller)),
+                                          challenge, model, context)),
                                 ),
                                 Expanded(
                                   child: Container(
@@ -183,8 +173,8 @@ class ChallengeView extends StatelessWidget {
             ));
   }
 
-  Widget customDropdown(Challenge challenge, ChallengeModel model,
-      EditorViewController controller) {
+  Widget customDropdown(
+      Challenge challenge, ChallengeModel model, BuildContext context) {
     return Align(
       alignment: Alignment.center,
       child: DropdownButton(
@@ -193,7 +183,8 @@ class ChallengeView extends StatelessWidget {
           height: 0,
         ),
         iconEnabledColor: !model.showPreview ? Colors.blue : Colors.white,
-        value: model.currentSelectedFile,
+        value: challengeName ??
+            '${challenge.files[0].name}.${challenge.files[0].ext.name}',
         items: challenge.files
             .map((file) => '${file.name}.${file.ext.name}')
             .map<DropdownMenuItem<String>>((String value) {
@@ -210,8 +201,9 @@ class ChallengeView extends StatelessWidget {
         }).toList(),
         onChanged: (String? fileName) async {
           model.setCurrentSelectedFile = fileName ?? 'index.html';
-          model.setEditorText =
-              model.returnCurrentSelectedFile(challenge).contents;
+
+          model.pushNewChallengeView(
+              context, block, url, fileName ?? 'index.html');
         },
       ),
     );
@@ -241,10 +233,10 @@ class ChallengeView extends StatelessWidget {
             child: WebView(
               onWebViewCreated: (WebViewController webcontroller) async {
                 model.setTestController = webcontroller;
-                controller.editorTextStream.stream.listen((event) async {
-                  model.runner.setWebViewContent(
-                      event, challenge.tests, model.testController!);
-                });
+                // controller.editorTextStream.stream.listen((event) async {
+                //   model.runner.setWebViewContent(
+                //       event, challenge.tests, model.testController!);
+                // });
               },
               javascriptMode: JavascriptMode.unrestricted,
               javascriptChannels: {

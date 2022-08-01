@@ -5,6 +5,8 @@ import 'package:flutter/cupertino.dart';
 import 'package:freecodecamp/enums/challenge_test_state_type.dart';
 import 'package:freecodecamp/enums/panel_type.dart';
 import 'package:freecodecamp/models/learn/challenge_model.dart';
+import 'package:freecodecamp/models/learn/curriculum_model.dart';
+import 'package:freecodecamp/ui/views/learn/challenge_editor/challenge_view.dart';
 import 'package:freecodecamp/ui/views/learn/test_runner.dart';
 
 import 'package:html/parser.dart';
@@ -115,25 +117,25 @@ class ChallengeModel extends BaseViewModel {
   // the user from losing their work when switching between panels e.g, the preview.
   // The cache is disposed when the user switches to a new challenge.
 
-  void saveEditorTextInCache(String value, Challenge challenge) async {
-    SharedPreferences prefs = await SharedPreferences.getInstance();
+  // void saveEditorTextInCache(String value, Challenge challenge) async {
+  //   SharedPreferences prefs = await SharedPreferences.getInstance();
 
-    ChallengeFile currentFile = returnCurrentSelectedFile(challenge);
+  //   ChallengeFile currentFile = returnCurrentSelectedFile(challenge);
 
-    prefs.setString(currentFile.name, value);
-  }
+  //   prefs.setString(currentFile.name, value);
+  // }
 
   // Get the content of the editor from the cache if it exists. If it doesn't,
   // return an empty string. This prevents the user from losing their work when
   // switching between panels e.g, the preview.
 
-  Future<String?> getEditorTextFromCache(Challenge challenge) async {
-    SharedPreferences prefs = await SharedPreferences.getInstance();
+  // Future<String?> getEditorTextFromCache(Challenge challenge, String name) async {
+  //   SharedPreferences prefs = await SharedPreferences.getInstance();
 
-    ChallengeFile currentFile = returnCurrentSelectedFile(challenge);
+  //   ChallengeFile currentFile = returnCurrentSelectedFile(challenge, name);
 
-    return prefs.getString(currentFile.name);
-  }
+  //   return prefs.getString(currentFile.name);
+  // }
 
   // This removes the cached content of the editor. This is called when the user
   // switches to a new challenge.
@@ -167,25 +169,22 @@ class ChallengeModel extends BaseViewModel {
   // This prevents the user from requesting the challenge more than once
   // when swichting between preview and the challenge.
 
-  Future<Challenge?> initChallenge(String url) async {
+  Future<Challenge> initChallenge(String url, String name) async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
+    http.Response res = await http.get(Uri.parse(url));
 
-    if (prefs.getString(url) == null) {
-      http.Response res = await http.get(Uri.parse(url));
-
+    if (prefs.getString('$url&$name') == null) {
       if (res.statusCode == 200) {
-        prefs.setString(url, res.body);
+        if (name.isNotEmpty) prefs.setString('$url&$name', res.body);
 
         return Challenge.fromJson(jsonDecode(res.body)['result']['data']
             ['challengeNode']['challenge']);
       }
-    } else {
-      return Challenge.fromJson(
-          jsonDecode(prefs.getString(url) as String)['result']['data']
-              ['challengeNode']['challenge']);
     }
 
-    return null;
+    return Challenge.fromJson(
+        jsonDecode(prefs.getString('$url&$name') as String)['result']['data']
+            ['challengeNode']['challenge']);
   }
 
   // This parses the preview document with the correct viewport size. This document
@@ -236,9 +235,27 @@ class ChallengeModel extends BaseViewModel {
     }
   }
 
-  ChallengeFile returnCurrentSelectedFile(Challenge challenge) {
-    ChallengeFile file = challenge.files
-        .firstWhere((file) => file.name == _currentSelectedFile.split('.')[0]);
-    return file;
+  void pushNewChallengeView(
+      BuildContext context, Block block, String url, String name) {
+    Navigator.pushReplacement(
+        context,
+        PageRouteBuilder(
+            transitionDuration: Duration.zero,
+            pageBuilder: (context, animation1, animatiom2) => ChallengeView(
+                  block: block,
+                  challengeName: name,
+                  url: url,
+                )));
+  }
+
+  ChallengeFile returnCurrentSelectedFile(Challenge challenge, String? name) {
+    if (name != null) {
+      ChallengeFile file =
+          challenge.files.firstWhere((file) => file.name == name.split('.')[0]);
+
+      return file;
+    }
+
+    return challenge.files[0];
   }
 }
