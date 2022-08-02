@@ -6,6 +6,8 @@ import 'package:freecodecamp/enums/challenge_test_state_type.dart';
 import 'package:freecodecamp/enums/dialog_type.dart';
 import 'package:freecodecamp/enums/panel_type.dart';
 import 'package:freecodecamp/models/learn/challenge_model.dart';
+import 'package:freecodecamp/models/learn/curriculum_model.dart';
+import 'package:freecodecamp/ui/views/learn/challenge_editor/challenge_view.dart';
 import 'package:freecodecamp/ui/views/learn/test_runner.dart';
 import 'package:freecodecamp/ui/widgets/setup_dialog_ui.dart';
 import 'package:html/dom.dart' as dom;
@@ -45,17 +47,12 @@ class ChallengeModel extends BaseViewModel {
   WebViewController? _testController;
   WebViewController? get testController => _testController;
 
-  Challenge? _challenge;
-  Challenge? get challenge => _challenge;
-
   TestRunner runner = TestRunner();
 
+  Future<Challenge>? _challenge;
+  Future<Challenge>? get challenge => _challenge;
+  
   final _dialogService = locator<DialogService>();
-
-  void init() async {
-    _editorText = await getEditorTextFromCache();
-    notifyListeners();
-  }
 
   set setTestController(WebViewController controller) {
     _testController = controller;
@@ -102,37 +99,53 @@ class ChallengeModel extends BaseViewModel {
     notifyListeners();
   }
 
+  set setChallenge(Future<Challenge> challenge) {
+    _challenge = challenge;
+    notifyListeners();
+  }
+
+  void init(String url, String? name) async {
+    setupDialogUi();
+
+    Challenge challenge = await initChallenge(url, name ?? '');
+
+    setChallenge = initChallenge(url, name ?? '');
+
+    if (editorText == null) {
+      String text = await getTextFromCache(challenge, name ?? '');
+
+      if (text != '') {
+        setEditorText = text;
+      }
+    }
+  }
+
   // When the content in the editor is changed, save it to the cache. This prevents
   // the user from losing their work when switching between panels e.g, the preview.
   // The cache is disposed when the user switches to a new challenge.
 
-  void saveEditorTextInCache(String value) async {
+  void saveTextInCache(String value, Challenge challenge, String name) async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
-    prefs.setString('editorText', value);
+
+    if (name.isEmpty) {
+      prefs.setString('${challenge.title}.${challenge.files[0].name}', value);
+    } else {
+      prefs.setString('${challenge.title}.${name.split('.')[0]}', value);
+    }
   }
 
   // Get the content of the editor from the cache if it exists. If it doesn't,
   // return an empty string. This prevents the user from losing their work when
   // switching between panels e.g, the preview.
 
-  Future<String> getEditorTextFromCache() async {
+  Future<String> getTextFromCache(Challenge challenge, String name) async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
 
-    return prefs.getString('editorText') ?? '';
-  }
-
-  // This removes the cached content of the editor. This is called when the user
-  // switches to a new challenge.
-
-  Future disposeCahce(String url) async {
-    SharedPreferences prefs = await SharedPreferences.getInstance();
-
-    if (prefs.getString(url) != null) {
-      prefs.remove(url);
-    }
-
-    if (prefs.getString('editorText') != null) {
-      prefs.remove('editorText');
+    if (name.isEmpty) {
+      return prefs.getString('${challenge.title}.${challenge.files[0].name}') ??
+          '';
+    } else {
+      return prefs.getString('${challenge.title}.${name.split('.')[0]}') ?? '';
     }
   }
 
@@ -147,28 +160,30 @@ class ChallengeModel extends BaseViewModel {
   // This prevents the user from requesting the challenge more than once
   // when swichting between preview and the challenge.
 
-  Future<Challenge?> initChallenge(String url) async {
-    setupDialogUi();
+  Future<Challenge> initChallenge(String url, String name) async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
+    http.Response res = await http.get(Uri.parse(url));
 
-    if (prefs.getString(url) == null) {
-      http.Response res = await http.get(Uri.parse(url));
-
-      if (res.statusCode == 200) {
-        prefs.setString(url, res.body);
-        _challenge = Challenge.fromJson(jsonDecode(res.body)['result']['data']
-            ['challengeNode']['challenge']);
-
-        return _challenge;
-      }
-    } else {
-      _challenge = Challenge.fromJson(
-          jsonDecode(prefs.getString(url) as String)['result']['data']
-              ['challengeNode']['challenge']);
-      return _challenge;
+    if (name.isNotEmpty && showPanel && panelType == PanelType.instruction) {
+      setShowPanel = false;
     }
 
-    return null;
+    if (prefs.getString(url) == null) {
+      if (res.statusCode == 200) {
+        Challenge challenge = Challenge.fromJson(jsonDecode(res.body)['result']
+            ['data']['challengeNode']['challenge']);
+
+        prefs.setString(url, res.body);
+
+        return challenge;
+      }
+    }
+
+    Challenge challenge = Challenge.fromJson(
+        jsonDecode(prefs.getString(url) as String)['result']['data']
+            ['challengeNode']['challenge']);
+
+    return challenge;
   }
 
   // This parses the preview document with the correct viewport size. This document
@@ -214,5 +229,29 @@ class ChallengeModel extends BaseViewModel {
     if (res != null && res.confirmed) {
       launchUrlString(url);
     }
+  }
+
+  void pushNewChallengeView(
+      BuildContext context, Block block, String url, String name) {
+    Navigator.pushReplacement(
+        context,
+        PageRouteBuilder(
+            transitionDuration: Duration.zero,
+            pageBuilder: (context, animation1, animatiom2) => ChallengeView(
+                  block: block,
+                  challengeName: name,
+                  url: url,
+                )));
+  }
+
+  ChallengeFile currentFile(Challenge challenge, String? name) {
+    if (name != null) {
+      ChallengeFile file =
+          challenge.files.firstWhere((file) => file.name == name.split('.')[0]);
+
+      return file;
+    }
+
+    return challenge.files[0];
   }
 }

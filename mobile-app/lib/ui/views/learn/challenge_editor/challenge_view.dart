@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'dart:developer';
 
 import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
@@ -18,23 +19,26 @@ import 'package:webview_flutter/webview_flutter.dart';
 import 'package:stacked/stacked.dart';
 
 class ChallengeView extends StatelessWidget {
-  const ChallengeView({Key? key, required this.url, required this.block})
+  const ChallengeView(
+      {Key? key, required this.url, required this.block, this.challengeName})
       : super(key: key);
 
   final String url;
   final Block block;
+  final String? challengeName;
 
   @override
   Widget build(BuildContext context) {
     return ViewModelBuilder<ChallengeModel>.reactive(
         viewModelBuilder: () => ChallengeModel(),
-        onDispose: (model) => model.disposeCahce(url),
-        onModelReady: (model) => model.setAppBarState(context),
+        onModelReady: (model) =>
+            {model.setAppBarState(context), model.init(url, challengeName)},
         builder: (context, model, child) => FutureBuilder<Challenge?>(
-              future: model.initChallenge(url),
+              future: model.challenge,
               builder: (context, snapshot) {
                 if (snapshot.hasData) {
                   Challenge challenge = snapshot.data!;
+
                   int maxChallenges = block.challenges.length;
 
                   EditorViewController controller = EditorViewController(
@@ -46,16 +50,19 @@ class ChallengeView extends StatelessWidget {
                         showTabBar: false),
                     file: FileIDE(
                         fileExplorer: null,
-                        fileName: challenge.files[0].name,
+                        fileName:
+                            model.currentFile(challenge, challengeName).name,
                         filePath: '',
-                        fileContent:
-                            model.editorText ?? challenge.files[0].contents,
+                        fileContent: model.editorText ??
+                            model
+                                .currentFile(challenge, challengeName)
+                                .contents,
                         parentDirectory: ''),
                   );
 
-                  controller.editorTextStream.stream.listen((event) {
-                    model.saveEditorTextInCache(event);
-                    model.setEditorText = event;
+                  controller.editorTextStream.stream.listen((text) {
+                    model.saveTextInCache(text, challenge, challengeName ?? '');
+                    model.setEditorText = text;
                     model.setCompletedChallenge = false;
                   });
 
@@ -74,9 +81,7 @@ class ChallengeView extends StatelessWidget {
                                                       : Colors.transparent,
                                                   width: 4))),
                                       child: customDropdown(
-                                        challenge,
-                                        model,
-                                      )),
+                                          challenge, model, context)),
                                 ),
                                 Expanded(
                                   child: Container(
@@ -167,14 +172,30 @@ class ChallengeView extends StatelessWidget {
                             ));
                 }
 
-                return const Center(
-                  child: CircularProgressIndicator(),
-                );
+                return Scaffold(
+                    appBar: AppBar(
+                      title: const Text('Loading..'),
+                      automaticallyImplyLeading: false,
+                    ),
+                    body: Row(
+                      children: [
+                        Expanded(
+                          child: EditorViewController(
+                            options: const EditorOptions(
+                                useFileExplorer: false,
+                                canCloseFiles: false,
+                                showAppBar: false,
+                                showTabBar: false),
+                          ),
+                        ),
+                      ],
+                    ));
               },
             ));
   }
 
-  Widget customDropdown(Challenge challenge, ChallengeModel model) {
+  Widget customDropdown(
+      Challenge challenge, ChallengeModel model, BuildContext context) {
     return Align(
       alignment: Alignment.center,
       child: DropdownButton(
@@ -183,7 +204,8 @@ class ChallengeView extends StatelessWidget {
           height: 0,
         ),
         iconEnabledColor: !model.showPreview ? Colors.blue : Colors.white,
-        value: '${challenge.files[0].name}.${challenge.files[0].ext.name}',
+        value: challengeName ??
+            '${challenge.files[0].name}.${challenge.files[0].ext.name}',
         items: challenge.files
             .map((file) => '${file.name}.${file.ext.name}')
             .map<DropdownMenuItem<String>>((String value) {
@@ -191,14 +213,17 @@ class ChallengeView extends StatelessWidget {
             value: value,
             alignment: Alignment.centerLeft,
             child: Text(
-              'Editors',
+              value,
               style: TextStyle(
                   color: !model.showPreview ? Colors.blue : Colors.white,
                   fontWeight: !model.showPreview ? FontWeight.bold : null),
             ),
           );
         }).toList(),
-        onChanged: (e) {},
+        onChanged: (String? fileName) async {
+          model.pushNewChallengeView(
+              context, block, url, fileName ?? 'index.html');
+        },
       ),
     );
   }
@@ -227,10 +252,10 @@ class ChallengeView extends StatelessWidget {
             child: WebView(
               onWebViewCreated: (WebViewController webcontroller) async {
                 model.setTestController = webcontroller;
-                controller.editorTextStream.stream.listen((event) async {
-                  model.runner.setWebViewContent(
-                      event, challenge.tests, model.testController!);
-                });
+                // controller.editorTextStream.stream.listen((event) async {
+                //   model.runner.setWebViewContent(
+                //       event, challenge.tests, model.testController!);
+                // });
               },
               javascriptMode: JavascriptMode.unrestricted,
               javascriptChannels: {
@@ -336,6 +361,8 @@ class ChallengeView extends StatelessWidget {
   }
 
   Widget editor(EditorViewController controller, ChallengeModel model) {
+    log('I am in the editor');
+
     return Expanded(child: controller);
   }
 }
