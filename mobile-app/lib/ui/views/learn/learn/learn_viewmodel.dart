@@ -66,7 +66,7 @@ class LearnViewModel extends BaseViewModel {
         buttonData.add(SuperBlockButton(
             path: superBlocks[i]['dashedName'],
             name: superBlocks[i]['title'],
-            public: superBlocks[i]['public']));
+            public: true));
       }
 
       return buttonData;
