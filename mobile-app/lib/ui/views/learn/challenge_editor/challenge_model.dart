@@ -149,6 +149,14 @@ class ChallengeModel extends BaseViewModel {
     }
   }
 
+  void setAppBarState(BuildContext context) {
+    if (MediaQuery.of(context).viewInsets.bottom > 0 || !showPanel) {
+      setHideAppBar = false;
+    } else {
+      setHideAppBar = true;
+    }
+  }
+
   // This prevents the user from requesting the challenge more than once
   // when swichting between preview and the challenge.
 
