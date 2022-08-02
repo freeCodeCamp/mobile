@@ -31,10 +31,10 @@ class ChallengeView extends StatelessWidget {
   Widget build(BuildContext context) {
     return ViewModelBuilder<ChallengeModel>.reactive(
         viewModelBuilder: () => ChallengeModel(),
-        onDispose: (model) => model.disposeCahce(url, model.challenge),
-        onModelReady: (model) => model.setAppBarState(context),
+        onModelReady: (model) =>
+            {model.setAppBarState(context), model.init(url, challengeName)},
         builder: (context, model, child) => FutureBuilder<Challenge?>(
-              future: model.initChallenge(url, challengeName ?? ''),
+              future: model.challenge,
               builder: (context, snapshot) {
                 if (snapshot.hasData) {
                   Challenge challenge = snapshot.data!;
@@ -44,21 +44,28 @@ class ChallengeView extends StatelessWidget {
                   EditorViewController controller = EditorViewController(
                     language: Syntax.HTML,
                     options: const EditorOptions(
+                        minWidth: 2000,
                         useFileExplorer: false,
                         canCloseFiles: false,
                         showAppBar: false,
                         showTabBar: false),
                     file: FileIDE(
                         fileExplorer: null,
-                        fileName: model
-                            .returnCurrentSelectedFile(challenge, challengeName)
-                            .name,
+                        fileName:
+                            model.currentFile(challenge, challengeName).name,
                         filePath: '',
-                        fileContent: model
-                            .returnCurrentSelectedFile(challenge, challengeName)
-                            .contents,
+                        fileContent: model.editorText ??
+                            model
+                                .currentFile(challenge, challengeName)
+                                .contents,
                         parentDirectory: ''),
                   );
+
+                  controller.editorTextStream.stream.listen((text) {
+                    model.saveTextInCache(text, challenge, challengeName ?? '');
+                    model.setEditorText = text;
+                    model.setCompletedChallenge = false;
+                  });
 
                   return Scaffold(
                       appBar: !model.hideAppBar
@@ -166,8 +173,14 @@ class ChallengeView extends StatelessWidget {
                             ));
                 }
 
-                return const Center(
-                  child: CircularProgressIndicator(),
+                return Scaffold(
+                  appBar: AppBar(
+                    title: const Text('Loading..'),
+                    automaticallyImplyLeading: false,
+                  ),
+                  body: const Center(
+                    child: CircularProgressIndicator(),
+                  ),
                 );
               },
             ));
@@ -200,8 +213,6 @@ class ChallengeView extends StatelessWidget {
           );
         }).toList(),
         onChanged: (String? fileName) async {
-          model.setCurrentSelectedFile = fileName ?? 'index.html';
-
           model.pushNewChallengeView(
               context, block, url, fileName ?? 'index.html');
         },
@@ -299,6 +310,17 @@ class ChallengeView extends StatelessWidget {
               highlightColor: Colors.transparent,
             ),
           ),
+          if (model.showPreview)
+            Container(
+              margin: const EdgeInsets.all(8),
+              color: const Color.fromRGBO(0x2A, 0x2A, 0x40, 1),
+              child: IconButton(
+                icon: const FaIcon(FontAwesomeIcons.code),
+                onPressed: () => {model.setShowPreview = !model.showPreview},
+                splashColor: Colors.transparent,
+                highlightColor: Colors.transparent,
+              ),
+            ),
           Expanded(
             child: Row(
               mainAxisAlignment: MainAxisAlignment.end,
@@ -325,17 +347,6 @@ class ChallengeView extends StatelessWidget {
               ],
             ),
           ),
-          if (model.showPreview)
-            Container(
-              margin: const EdgeInsets.all(8),
-              color: const Color.fromRGBO(0x2A, 0x2A, 0x40, 1),
-              child: IconButton(
-                icon: const FaIcon(FontAwesomeIcons.code),
-                onPressed: () => {model.setShowPreview = !model.showPreview},
-                splashColor: Colors.transparent,
-                highlightColor: Colors.transparent,
-              ),
-            ),
         ],
       ),
     );

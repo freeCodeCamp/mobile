@@ -1,5 +1,4 @@
 import 'dart:convert';
-import 'dart:developer';
 
 import 'package:flutter/cupertino.dart';
 import 'package:freecodecamp/enums/challenge_test_state_type.dart';
@@ -26,9 +25,6 @@ class ChallengeModel extends BaseViewModel {
   bool _hideAppBar = true;
   bool get hideAppBar => _hideAppBar;
 
-  String _currentSelectedFile = 'index.html';
-  String get currentSelectedFile => _currentSelectedFile;
-
   String _hint = '';
   String get hint => _hint;
 
@@ -49,14 +45,8 @@ class ChallengeModel extends BaseViewModel {
 
   TestRunner runner = TestRunner();
 
-  Challenge? _challenge;
-  Challenge? get challenge => _challenge;
-
-  void init(Challenge challenge) async {
-    setCurrentSelectedFile =
-        '${challenge.files[0].name}.${challenge.files[0].ext.name}';
-    notifyListeners();
-  }
+  Future<Challenge>? _challenge;
+  Future<Challenge>? get challenge => _challenge;
 
   set setTestController(WebViewController controller) {
     _testController = controller;
@@ -65,11 +55,6 @@ class ChallengeModel extends BaseViewModel {
 
   set setHideAppBar(bool value) {
     _hideAppBar = value;
-    notifyListeners();
-  }
-
-  set setCurrentSelectedFile(String value) {
-    _currentSelectedFile = value;
     notifyListeners();
   }
 
@@ -108,53 +93,51 @@ class ChallengeModel extends BaseViewModel {
     notifyListeners();
   }
 
-  set setChallenge(Challenge challenge) {
+  set setChallenge(Future<Challenge> challenge) {
     _challenge = challenge;
     notifyListeners();
+  }
+
+  void init(String url, String? name) async {
+    Challenge challenge = await initChallenge(url, name ?? '');
+
+    setChallenge = initChallenge(url, name ?? '');
+
+    if (editorText == null) {
+      String text = await getTextFromCache(challenge, name ?? '');
+
+      if (text != '') {
+        setEditorText = text;
+      }
+    }
   }
 
   // When the content in the editor is changed, save it to the cache. This prevents
   // the user from losing their work when switching between panels e.g, the preview.
   // The cache is disposed when the user switches to a new challenge.
 
-  // void saveEditorTextInCache(String value, Challenge challenge) async {
-  //   SharedPreferences prefs = await SharedPreferences.getInstance();
+  void saveTextInCache(String value, Challenge challenge, String name) async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
 
-  //   ChallengeFile currentFile = returnCurrentSelectedFile(challenge);
-
-  //   prefs.setString(currentFile.name, value);
-  // }
+    if (name.isEmpty) {
+      prefs.setString('${challenge.title}.${challenge.files[0].name}', value);
+    } else {
+      prefs.setString('${challenge.title}.${name.split('.')[0]}', value);
+    }
+  }
 
   // Get the content of the editor from the cache if it exists. If it doesn't,
   // return an empty string. This prevents the user from losing their work when
   // switching between panels e.g, the preview.
 
-  // Future<String?> getEditorTextFromCache(Challenge challenge, String name) async {
-  //   SharedPreferences prefs = await SharedPreferences.getInstance();
-
-  //   ChallengeFile currentFile = returnCurrentSelectedFile(challenge, name);
-
-  //   return prefs.getString(currentFile.name);
-  // }
-
-  // This removes the cached content of the editor. This is called when the user
-  // switches to a new challenge.
-
-  Future disposeCahce(String url, Challenge? challenge) async {
+  Future<String> getTextFromCache(Challenge challenge, String name) async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
 
-    if (prefs.getString(url) != null) {
-      prefs.remove(url);
-    }
-
-    if (challenge != null) {
-      for (ChallengeFile file in challenge.files) {
-        if (prefs.getString(file.name) != null) {
-          prefs.remove(file.name);
-        }
-      }
+    if (name.isEmpty) {
+      return prefs.getString('${challenge.title}.${challenge.files[0].name}') ??
+          '';
     } else {
-      log('failed to clean editor cache');
+      return prefs.getString('${challenge.title}.${name.split('.')[0]}') ?? '';
     }
   }
 
@@ -173,18 +156,26 @@ class ChallengeModel extends BaseViewModel {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     http.Response res = await http.get(Uri.parse(url));
 
-    if (prefs.getString('$url&$name') == null) {
-      if (res.statusCode == 200) {
-        if (name.isNotEmpty) prefs.setString('$url&$name', res.body);
+    if (name.isNotEmpty && showPanel && panelType == PanelType.instruction) {
+      setShowPanel = false;
+    }
 
-        return Challenge.fromJson(jsonDecode(res.body)['result']['data']
-            ['challengeNode']['challenge']);
+    if (prefs.getString(url) == null) {
+      if (res.statusCode == 200) {
+        Challenge challenge = Challenge.fromJson(jsonDecode(res.body)['result']
+            ['data']['challengeNode']['challenge']);
+
+        prefs.setString(url, res.body);
+
+        return challenge;
       }
     }
 
-    return Challenge.fromJson(
-        jsonDecode(prefs.getString('$url&$name') as String)['result']['data']
+    Challenge challenge = Challenge.fromJson(
+        jsonDecode(prefs.getString(url) as String)['result']['data']
             ['challengeNode']['challenge']);
+
+    return challenge;
   }
 
   // This parses the preview document with the correct viewport size. This document
@@ -220,21 +211,6 @@ class ChallengeModel extends BaseViewModel {
     return null;
   }
 
-  // this function checks if the current default file value "index.html" is present in the available
-  // challenge files. If not set it to the first file in the array.
-  void handleCurrentDropdownState(Challenge challenge) {
-    String firstFile =
-        '${challenge.files[0].name}.${challenge.files[0].ext.name}';
-
-    bool defaultFileIsPresent = challenge.files
-        .map((file) => file.name)
-        .contains(_currentSelectedFile.split('.')[0]);
-
-    if (!defaultFileIsPresent && firstFile != currentSelectedFile) {
-      setCurrentSelectedFile = firstFile;
-    }
-  }
-
   void pushNewChallengeView(
       BuildContext context, Block block, String url, String name) {
     Navigator.pushReplacement(
@@ -248,7 +224,7 @@ class ChallengeModel extends BaseViewModel {
                 )));
   }
 
-  ChallengeFile returnCurrentSelectedFile(Challenge challenge, String? name) {
+  ChallengeFile currentFile(Challenge challenge, String? name) {
     if (name != null) {
       ChallengeFile file =
           challenge.files.firstWhere((file) => file.name == name.split('.')[0]);
