@@ -44,7 +44,6 @@ class ChallengeView extends StatelessWidget {
                   EditorViewController controller = EditorViewController(
                     language: Syntax.HTML,
                     options: const EditorOptions(
-                        minWidth: 2000,
                         useFileExplorer: false,
                         canCloseFiles: false,
                         showAppBar: false,
@@ -183,7 +182,6 @@ class ChallengeView extends StatelessWidget {
                         Expanded(
                           child: EditorViewController(
                             options: const EditorOptions(
-                                minWidth: 2000,
                                 useFileExplorer: false,
                                 canCloseFiles: false,
                                 showAppBar: false,
