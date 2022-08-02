@@ -1,0 +1,31 @@
+name: Test API Docker Image
+
+on:
+  pull_request:
+    branches: [main]
+
+defaults:
+  run:
+    working-directory: mobile-api
+
+jobs:
+  build-and-test:
+    name: Build and Test Image
+    runs-on: ubuntu-latest
+
+    strategy:
+      matrix:
+        node-version: [16.x]
+
+    steps:
+      - name: Checkout source code
+        uses: actions/checkout@v2
+
+      - name: Build and start container
+        run: docker-compose -f docker-compose.dev.yml up -d
+
+      - name: Sleep for 30 seconds
+        run: sleep 30
+
+      - name: Ping container
+        run: curl localhost:3000/ping

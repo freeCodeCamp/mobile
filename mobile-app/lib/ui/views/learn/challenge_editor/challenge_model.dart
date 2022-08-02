@@ -1,5 +1,6 @@
 import 'dart:convert';
 
+import 'package:flutter/cupertino.dart';
 import 'package:freecodecamp/app/app.locator.dart';
 import 'package:freecodecamp/enums/challenge_test_state_type.dart';
 import 'package:freecodecamp/enums/dialog_type.dart';
@@ -23,19 +24,19 @@ class ChallengeModel extends BaseViewModel {
   bool _showPreview = false;
   bool get showPreview => _showPreview;
 
-  bool _hideAppBar = false;
+  bool _hideAppBar = true;
   bool get hideAppBar => _hideAppBar;
 
   String _hint = '';
   String get hint => _hint;
 
-  bool _showPanel = false;
+  bool _showPanel = true;
   bool get showPanel => _showPanel;
 
   bool _completedChallenge = false;
   bool get completedChallenge => _completedChallenge;
 
-  PanelType _panelType = PanelType.none;
+  PanelType _panelType = PanelType.instruction;
   PanelType get panelType => _panelType;
 
   WebViewController? _webviewController;
@@ -132,6 +133,14 @@ class ChallengeModel extends BaseViewModel {
 
     if (prefs.getString('editorText') != null) {
       prefs.remove('editorText');
+    }
+  }
+
+  void setAppBarState(BuildContext context) {
+    if (MediaQuery.of(context).viewInsets.bottom > 0 || !showPanel) {
+      setHideAppBar = false;
+    } else {
+      setHideAppBar = true;
     }
   }
 

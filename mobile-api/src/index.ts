@@ -26,10 +26,6 @@ const bree = new Bree({
   ],
 });
 
-app.get('/', (req: Request, res: Response) => {
-  res.json({ msg: 'Hello World!' });
-});
-
 app.get('/ping', (req: Request, res: Response) => {
   res.json({ msg: 'pong' });
 });

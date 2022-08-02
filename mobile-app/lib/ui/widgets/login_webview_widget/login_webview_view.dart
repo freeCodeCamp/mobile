@@ -25,8 +25,7 @@ class LoginWebView extends StatelessWidget {
           onWebViewCreated: (controller) async {
             model.webController = controller;
             await controller.clearCache();
-            // If a cookie error happens, we can consider using the below code
-            // await CookieManager().clearCookies();
+            await CookieManager().clearCookies();
           },
           navigationDelegate: (action) async {
             log('NAVIGATION DELEGATE: ${action.url}');
