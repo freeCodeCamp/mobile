@@ -54,26 +54,26 @@ class HintWidgetView extends StatelessWidget {
   }
 
   Future<String> genForumLink() async {
+    Challenge? currChallenge = await challengeModel.challenge;
     String blockTitlePath = 'assets/learn/block-title.json';
     String blockTitleFile = await rootBundle.loadString(blockTitlePath);
     String helpCategoryPath = 'assets/learn/help-category.json';
     String helpCategoryFile = await rootBundle.loadString(helpCategoryPath);
 
     final String helpCategory = Uri.encodeComponent(
-        jsonDecode(helpCategoryFile)[challengeModel.challenge?.block] ??
-            'Help');
+        jsonDecode(helpCategoryFile)[currChallenge?.block] ?? 'Help');
     final String blockTitle =
-        jsonDecode(blockTitleFile)[challengeModel.challenge?.superBlock]
-                [challengeModel.challenge?.block] ??
+        jsonDecode(blockTitleFile)[currChallenge?.superBlock]
+                [currChallenge?.block] ??
             '';
 
     final userDeviceInfo = await getDeviceInfo();
 
-    final titleText = '$blockTitle - ${challengeModel.challenge?.title}';
+    final titleText = '$blockTitle - ${currChallenge?.title}';
     final String endingText =
-        '**Your mobile information:**\n```txt\n$userDeviceInfo\n```\n\n**Challenge:** $titleText\n\n**Link to the challenge:**\nhttps://www.freecodecamp.org${challengeModel.challenge?.slug}';
+        '**Your mobile information:**\n```txt\n$userDeviceInfo\n```\n\n**Challenge:** $titleText\n\n**Link to the challenge:**\nhttps://www.freecodecamp.org${currChallenge?.slug}';
 
-    final String userCode = filesToMarkdown(challengeModel.challenge!.files);
+    final String userCode = filesToMarkdown(currChallenge!.files);
 
     final String textMessage =
         "**Tell us what's happening:**\nDescribe your issue in detail here.\n\n**Your code so far**$userCode\n\n$endingText";
