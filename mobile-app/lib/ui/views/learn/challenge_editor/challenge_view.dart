@@ -174,14 +174,24 @@ class ChallengeView extends StatelessWidget {
                 }
 
                 return Scaffold(
-                  appBar: AppBar(
-                    title: const Text('Loading..'),
-                    automaticallyImplyLeading: false,
-                  ),
-                  body: const Center(
-                    child: CircularProgressIndicator(),
-                  ),
-                );
+                    appBar: AppBar(
+                      title: const Text('Loading..'),
+                      automaticallyImplyLeading: false,
+                    ),
+                    body: Row(
+                      children: [
+                        Expanded(
+                          child: EditorViewController(
+                            options: const EditorOptions(
+                                minWidth: 2000,
+                                useFileExplorer: false,
+                                canCloseFiles: false,
+                                showAppBar: false,
+                                showTabBar: false),
+                          ),
+                        ),
+                      ],
+                    ));
               },
             ));
   }
