@@ -51,7 +51,10 @@ class ChallengeModel extends BaseViewModel {
 
   Future<Challenge>? _challenge;
   Future<Challenge>? get challenge => _challenge;
-  
+
+  Block? _block;
+  Block? get block => _block;
+
   final _dialogService = locator<DialogService>();
 
   set setTestController(WebViewController controller) {
@@ -104,12 +107,16 @@ class ChallengeModel extends BaseViewModel {
     notifyListeners();
   }
 
-  void init(String url, String? name) async {
+  set setBlock(Block block) {
+    _block = block;
+    notifyListeners();
+  }
+
+  void init(String url, String? name, Block block) async {
     setupDialogUi();
 
-    Challenge challenge = await initChallenge(url, name ?? '');
-
     setChallenge = initChallenge(url, name ?? '');
+    Challenge challenge = await _challenge!;
 
     if (editorText == null) {
       String text = await getTextFromCache(challenge, name ?? '');
@@ -118,6 +125,8 @@ class ChallengeModel extends BaseViewModel {
         setEditorText = text;
       }
     }
+
+    setBlock = block;
   }
 
   // When the content in the editor is changed, save it to the cache. This prevents
@@ -253,5 +262,33 @@ class ChallengeModel extends BaseViewModel {
     }
 
     return challenge.files[0];
+  }
+
+  void resetCode(BuildContext context) async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+
+    DialogResponse? res = await _dialogService.showCustomDialog(
+        variant: DialogType.buttonForm,
+        title: 'Reset Code',
+        description: 'Are you sure you want to reset your code?',
+        mainButtonTitle: 'Reset');
+
+    if (res!.confirmed) {
+      Challenge? currChallenge = await challenge;
+      for (ChallengeFile file in currChallenge!.files) {
+        prefs.remove('${currChallenge.title}.${file.name}');
+      }
+      Navigator.pushReplacement(
+        context,
+        PageRouteBuilder(
+          transitionDuration: Duration.zero,
+          pageBuilder: (context, animation1, animatiom2) => ChallengeView(
+            block: block!,
+            url:
+                'https://freecodecamp.dev/page-data${currChallenge.slug}/page-data.json',
+          ),
+        ),
+      );
+    }
   }
 }
