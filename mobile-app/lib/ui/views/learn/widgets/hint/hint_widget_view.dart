@@ -40,6 +40,7 @@ class HintWidgetView extends StatelessWidget {
   }
 
   Future<String> getDeviceInfo() async {
+    // TODO: Update GPlay Privacy data collection policy
     final deviceInfoPlugin = DeviceInfoPlugin();
 
     if (Platform.isAndroid) {
@@ -55,17 +56,12 @@ class HintWidgetView extends StatelessWidget {
 
   Future<String> genForumLink() async {
     Challenge? currChallenge = await challengeModel.challenge;
-    String blockTitlePath = 'assets/learn/block-title.json';
-    String blockTitleFile = await rootBundle.loadString(blockTitlePath);
     String helpCategoryPath = 'assets/learn/help-category.json';
     String helpCategoryFile = await rootBundle.loadString(helpCategoryPath);
 
     final String helpCategory = Uri.encodeComponent(
         jsonDecode(helpCategoryFile)[currChallenge?.block] ?? 'Help');
-    final String blockTitle =
-        jsonDecode(blockTitleFile)[currChallenge?.superBlock]
-                [currChallenge?.block] ??
-            '';
+    final String blockTitle = challengeModel.block!.blockName;
 
     final userDeviceInfo = await getDeviceInfo();
 
