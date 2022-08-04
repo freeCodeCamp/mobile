@@ -66,6 +66,7 @@ dependencies:
   intl: ^0.17.0
   path: ^1.8.1
   audio_service: ^0.18.4
+  device_info_plus: ^4.0.1
 dev_dependencies:
   build_runner: ^2.1.2
   integration_test:
@@ -96,4 +97,4 @@ flutter:
     - assets/test_data/news_post.json
     - assets/test_data/news_feed.json
     - assets/database/bookmarked-article.db
-    - assets/learn/motivational-quotes.json
+    - assets/learn/

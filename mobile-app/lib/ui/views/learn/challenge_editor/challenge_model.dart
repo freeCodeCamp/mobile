@@ -1,19 +1,23 @@
 import 'dart:convert';
 
 import 'package:flutter/cupertino.dart';
+import 'package:freecodecamp/app/app.locator.dart';
 import 'package:freecodecamp/enums/challenge_test_state_type.dart';
+import 'package:freecodecamp/enums/dialog_type.dart';
 import 'package:freecodecamp/enums/panel_type.dart';
 import 'package:freecodecamp/models/learn/challenge_model.dart';
 import 'package:freecodecamp/models/learn/curriculum_model.dart';
 import 'package:freecodecamp/ui/views/learn/challenge_editor/challenge_view.dart';
 import 'package:freecodecamp/ui/views/learn/test_runner.dart';
-
-import 'package:html/parser.dart';
-import 'package:shared_preferences/shared_preferences.dart';
-import 'package:webview_flutter/webview_flutter.dart';
-import 'package:stacked/stacked.dart';
-import 'package:http/http.dart' as http;
+import 'package:freecodecamp/ui/widgets/setup_dialog_ui.dart';
 import 'package:html/dom.dart' as dom;
+import 'package:html/parser.dart';
+import 'package:http/http.dart' as http;
+import 'package:shared_preferences/shared_preferences.dart';
+import 'package:stacked/stacked.dart';
+import 'package:stacked_services/stacked_services.dart';
+import 'package:url_launcher/url_launcher_string.dart';
+import 'package:webview_flutter/webview_flutter.dart';
 
 class ChallengeModel extends BaseViewModel {
   String? _editorText;
@@ -47,6 +51,11 @@ class ChallengeModel extends BaseViewModel {
 
   Future<Challenge>? _challenge;
   Future<Challenge>? get challenge => _challenge;
+
+  Block? _block;
+  Block? get block => _block;
+
+  final _dialogService = locator<DialogService>();
 
   set setTestController(WebViewController controller) {
     _testController = controller;
@@ -98,10 +107,16 @@ class ChallengeModel extends BaseViewModel {
     notifyListeners();
   }
 
-  void init(String url, String? name) async {
-    Challenge challenge = await initChallenge(url, name ?? '');
+  set setBlock(Block block) {
+    _block = block;
+    notifyListeners();
+  }
+
+  void init(String url, String? name, Block block) async {
+    setupDialogUi();
 
     setChallenge = initChallenge(url, name ?? '');
+    Challenge challenge = await _challenge!;
 
     if (editorText == null) {
       String text = await getTextFromCache(challenge, name ?? '');
@@ -110,6 +125,8 @@ class ChallengeModel extends BaseViewModel {
         setEditorText = text;
       }
     }
+
+    setBlock = block;
   }
 
   // When the content in the editor is changed, save it to the cache. This prevents
@@ -211,6 +228,18 @@ class ChallengeModel extends BaseViewModel {
     return null;
   }
 
+  Future forumHelpDialog(String url) async {
+    DialogResponse? res = await _dialogService.showCustomDialog(
+        variant: DialogType.buttonForm,
+        title: 'Ask for Help',
+        description:
+            "If you've already tried the Read-Search-Ask method, then you can try asking for help on the freeCodeCamp forum.",
+        mainButtonTitle: 'Create a post');
+    if (res != null && res.confirmed) {
+      launchUrlString(url);
+    }
+  }
+
   void pushNewChallengeView(
       BuildContext context, Block block, String url, String name) {
     Navigator.pushReplacement(
@@ -233,5 +262,33 @@ class ChallengeModel extends BaseViewModel {
     }
 
     return challenge.files[0];
+  }
+
+  void resetCode(BuildContext context) async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+
+    DialogResponse? res = await _dialogService.showCustomDialog(
+        variant: DialogType.buttonForm,
+        title: 'Reset Code',
+        description: 'Are you sure you want to reset your code?',
+        mainButtonTitle: 'Reset');
+
+    if (res!.confirmed) {
+      Challenge? currChallenge = await challenge;
+      for (ChallengeFile file in currChallenge!.files) {
+        prefs.remove('${currChallenge.title}.${file.name}');
+      }
+      Navigator.pushReplacement(
+        context,
+        PageRouteBuilder(
+          transitionDuration: Duration.zero,
+          pageBuilder: (context, animation1, animatiom2) => ChallengeView(
+            block: block!,
+            url:
+                'https://freecodecamp.dev/page-data${currChallenge.slug}/page-data.json',
+          ),
+        ),
+      );
+    }
   }
 }

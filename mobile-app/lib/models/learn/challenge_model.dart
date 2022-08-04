@@ -6,6 +6,8 @@ class Challenge {
   final String title;
   final String description;
   final String instructions;
+  final String slug;
+  final String superBlock;
 
   final List<ChallengeTest> tests;
   final List<ChallengeFile> files;
@@ -15,6 +17,8 @@ class Challenge {
       required this.title,
       required this.description,
       required this.instructions,
+      required this.slug,
+      required this.superBlock,
       required this.tests,
       required this.files});
 
@@ -24,6 +28,8 @@ class Challenge {
       title: data['title'],
       description: data['description'],
       instructions: data['instructions'] ?? '',
+      slug: data['fields']['slug'],
+      superBlock: data['superBlock'],
       tests: (data['fields']['tests'] as List)
           .map<ChallengeTest>((file) => ChallengeTest.fromJson(file))
           .toList(),

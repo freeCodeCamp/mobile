@@ -32,7 +32,7 @@ class ChallengeView extends StatelessWidget {
     return ViewModelBuilder<ChallengeModel>.reactive(
         viewModelBuilder: () => ChallengeModel(),
         onModelReady: (model) =>
-            {model.setAppBarState(context), model.init(url, challengeName)},
+            {model.setAppBarState(context), model.init(url, challengeName, block)},
         builder: (context, model, child) => FutureBuilder<Challenge?>(
               future: model.challenge,
               builder: (context, snapshot) {
@@ -268,9 +268,9 @@ class ChallengeView extends StatelessWidget {
 
                     ChallengeTest? test = model.returnFirstFailedTest(tests);
 
-                    if (test != null) {
+                    if (test == null) {
                       model.setPanelType = PanelType.hint;
-                      model.setHint = test.instruction;
+                      model.setHint = '<p>Your <code>h1</code> element should have the text <code>Hello World</code>.</p>';
                       model.setShowPanel = true;
                     } else {
                       model.setPanelType = PanelType.pass;
