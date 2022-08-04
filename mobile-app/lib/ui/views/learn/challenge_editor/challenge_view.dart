@@ -196,35 +196,37 @@ class ChallengeView extends StatelessWidget {
 
   Widget customDropdown(
       Challenge challenge, ChallengeModel model, BuildContext context) {
-    return Align(
-      alignment: Alignment.center,
-      child: DropdownButton(
-        dropdownColor: const Color(0xFF0a0a23),
-        underline: Container(
-          height: 0,
-        ),
-        iconEnabledColor: !model.showPreview ? Colors.blue : Colors.white,
-        value: challengeName ??
-            '${challenge.files[0].name}.${challenge.files[0].ext.name}',
-        items: challenge.files
-            .map((file) => '${file.name}.${file.ext.name}')
-            .map<DropdownMenuItem<String>>((String value) {
-          return DropdownMenuItem<String>(
-            value: value,
-            alignment: Alignment.centerLeft,
-            child: Text(
-              value,
-              style: TextStyle(
-                  color: !model.showPreview ? Colors.blue : Colors.white,
-                  fontWeight: !model.showPreview ? FontWeight.bold : null),
-            ),
-          );
-        }).toList(),
-        onChanged: (String? fileName) async {
-          model.pushNewChallengeView(
-              context, block, url, fileName ?? 'index.html');
-        },
+    return DropdownButton(
+      dropdownColor: const Color(0xFF0a0a23),
+      isExpanded: true,
+      underline: Container(
+        height: 0,
       ),
+      iconEnabledColor: !model.showPreview ? Colors.blue : Colors.white,
+      value: challengeName ??
+          '${challenge.files[0].name}.${challenge.files[0].ext.name}',
+      items: challenge.files
+          .map((file) => '${file.name}.${file.ext.name}')
+          .map<DropdownMenuItem<String>>((String value) {
+        return DropdownMenuItem<String>(
+          value: value,
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Text(
+                value,
+                style: TextStyle(
+                    color: !model.showPreview ? Colors.blue : Colors.white,
+                    fontWeight: !model.showPreview ? FontWeight.bold : null),
+              ),
+            ],
+          ),
+        );
+      }).toList(),
+      onChanged: (String? fileName) async {
+        model.pushNewChallengeView(
+            context, block, url, fileName ?? 'index.html');
+      },
     );
   }
 
