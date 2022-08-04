@@ -20,25 +20,16 @@ class BlockBuilderView extends StatelessWidget {
         builder: (context, model, child) => Column(
               mainAxisAlignment: MainAxisAlignment.start,
               children: [
-                Container(
-                  padding: const EdgeInsets.only(top: 16, bottom: 8),
-                  child: Column(
-                    children: [
-                      !block.isStepBased
-                          ? Padding(
-                              padding: const EdgeInsets.only(top: 8.0),
-                              child: ChallengeBuilderListView(
-                                block: block,
-                              ),
-                            )
-                          : Padding(
-                              padding: const EdgeInsets.only(top: 8.0),
-                              child: ChallengeBuilderGridView(
-                                block: block,
-                              ),
-                            )
-                    ],
-                  ),
+                Column(
+                  children: [
+                    !block.isStepBased
+                        ? ChallengeBuilderListView(
+                            block: block,
+                          )
+                        : ChallengeBuilderGridView(
+                            block: block,
+                          )
+                  ],
                 ),
               ],
             ));

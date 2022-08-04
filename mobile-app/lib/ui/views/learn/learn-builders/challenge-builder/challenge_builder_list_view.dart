@@ -50,18 +50,20 @@ class ChallengeBuilderListView extends StatelessWidget {
                 model.isOpen
                     ? Column(
                         children: [
-                          Padding(
-                            padding: const EdgeInsets.all(16.0),
-                            child: Text(
-                              block.description,
-                              style: TextStyle(
-                                  fontSize: 18,
-                                  fontWeight: FontWeight.w600,
-                                  height: 1.2,
-                                  fontFamily: 'Lato',
-                                  color: Colors.white.withOpacity(0.87)),
+                          for (String blockString in block.description)
+                            Padding(
+                              padding: const EdgeInsets.symmetric(
+                                  vertical: 8, horizontal: 16),
+                              child: Text(
+                                blockString,
+                                style: TextStyle(
+                                    fontSize: 18,
+                                    fontWeight: FontWeight.w600,
+                                    height: 1.2,
+                                    fontFamily: 'Lato',
+                                    color: Colors.white.withOpacity(0.87)),
+                              ),
                             ),
-                          ),
                           ListView.builder(
                               shrinkWrap: true,
                               itemCount: block.challenges.length,

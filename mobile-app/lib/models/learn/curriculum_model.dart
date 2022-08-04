@@ -23,7 +23,7 @@ class SuperBlock {
                 key,
                 Block.fromJson(
                   value['challenges'],
-                  value['desc'].join(' '),
+                  value['desc'],
                 ),
               ))
           .values
@@ -37,7 +37,7 @@ class Block {
   final String blockName;
   final String? dashedName;
   final String? superBlock;
-  final String description;
+  final List description;
   final bool isStepBased;
   final int order;
 
@@ -56,7 +56,7 @@ class Block {
     return superblock == '2022/responsive-web-design';
   }
 
-  factory Block.fromJson(Map<String, dynamic> data, String description) {
+  factory Block.fromJson(Map<String, dynamic> data, List description) {
     return Block(
         blockName: data['name'],
         description: description,

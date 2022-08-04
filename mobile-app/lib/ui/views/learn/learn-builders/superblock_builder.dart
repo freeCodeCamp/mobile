@@ -38,16 +38,23 @@ class SuperBlockView extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 8),
       child: ListView.separated(
-        separatorBuilder: (context, int i) => const Divider(
-          height: 50,
-          color: Color.fromRGBO(0, 0, 0, 0),
+        separatorBuilder: (context, int i) => Divider(
+          height: superBlock.blocks[i].challenges.length == 1
+              ? 50
+              : superBlock.blocks[i].isStepBased
+                  ? 3
+                  : 50,
+          color: const Color.fromRGBO(0, 0, 0, 0),
         ),
         shrinkWrap: true,
         itemCount: superBlock.blocks.length,
         physics: const ClampingScrollPhysics(),
-        itemBuilder: (context, i) => BlockBuilderView(
-          key: ObjectKey(superBlock.blocks[i].dashedName),
-          block: superBlock.blocks[i],
+        itemBuilder: (context, i) => Padding(
+          padding: i == 0 ? const EdgeInsets.only(top: 16) : EdgeInsets.zero,
+          child: BlockBuilderView(
+            key: ObjectKey(superBlock.blocks[i].dashedName),
+            block: superBlock.blocks[i],
+          ),
         ),
       ),
     );

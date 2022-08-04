@@ -29,6 +29,7 @@ class ChallengeBuilderGridView extends StatelessWidget {
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
                           IconButton(
+                              iconSize: 35,
                               icon: model.isOpen
                                   ? const Icon(Icons.expand_less)
                                   : const Icon(Icons.expand_more),
@@ -81,19 +82,24 @@ class ChallengeBuilderGridView extends StatelessWidget {
                     color: const Color(0xFF0a0a23),
                     child: Column(
                       children: [
-                        Padding(
-                          padding: const EdgeInsets.all(12.0),
-                          child: Text(
-                            block.description,
-                            style: TextStyle(
-                                fontSize: 18,
-                                fontWeight: FontWeight.w600,
-                                height: 1.2,
-                                fontFamily: 'Lato',
-                                color: Colors.white.withOpacity(0.87)),
+                        for (String blockString in block.description)
+                          Padding(
+                            padding: const EdgeInsets.symmetric(
+                                vertical: 8, horizontal: 16),
+                            child: Text(
+                              blockString,
+                              style: TextStyle(
+                                  fontSize: 18,
+                                  fontWeight: FontWeight.w600,
+                                  height: 1.2,
+                                  fontFamily: 'Lato',
+                                  color: Colors.white.withOpacity(0.87)),
+                            ),
                           ),
-                        ),
                         gridWidget(context, model),
+                        Container(
+                          height: 25,
+                        )
                       ],
                     ),
                   ),
@@ -105,7 +111,7 @@ class ChallengeBuilderGridView extends StatelessWidget {
     return SizedBox(
       height: 300,
       child: GridView.count(
-        padding: const EdgeInsets.all(8),
+        padding: const EdgeInsets.all(16),
         crossAxisCount: (MediaQuery.of(context).size.width / 70 -
                 MediaQuery.of(context).viewPadding.horizontal)
             .round(),
@@ -139,14 +145,12 @@ class ChallengeBuilderGridView extends StatelessWidget {
                             block,
                           );
                         },
-                        child: Ink(
-                          child: Center(
-                              child: Text(
-                            (step + 1).toString(),
-                            style: const TextStyle(
-                                fontWeight: FontWeight.bold, fontSize: 18),
-                          )),
-                        ),
+                        child: Center(
+                            child: Text(
+                          (step + 1).toString(),
+                          style: const TextStyle(
+                              fontWeight: FontWeight.bold, fontSize: 18),
+                        )),
                       ))));
         }),
       ),
