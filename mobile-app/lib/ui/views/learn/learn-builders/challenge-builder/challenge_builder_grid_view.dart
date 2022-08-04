@@ -101,7 +101,20 @@ class ChallengeBuilderGridView extends StatelessWidget {
                   Container(
                     color: const Color(0xFF0a0a23),
                     child: InkWell(
-                      onTap: block.challenges.length == 1 ? () {} : () {},
+                      onTap: block.challenges.length == 1
+                          ? () {
+                              String challenge = block.challenges[0].name
+                                  .toLowerCase()
+                                  .replaceAll(' ', '-');
+                              String url =
+                                  'https://freecodecamp.dev/page-data/learn';
+
+                              model.routeToBrowserView(
+                                '$url/${block.superBlock}/${block.dashedName}/$challenge/page-data.json',
+                                block,
+                              );
+                            }
+                          : () {},
                       child: Column(
                         children: [
                           for (String blockString in block.description)
