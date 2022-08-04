@@ -22,6 +22,16 @@ class ChallengeBuilderListView extends StatelessWidget {
               shrinkWrap: true,
               physics: const ClampingScrollPhysics(),
               children: [
+                Padding(
+                  padding: const EdgeInsets.all(16.0),
+                  child: Text(
+                    block.blockName,
+                    maxLines: 2,
+                    overflow: TextOverflow.ellipsis,
+                    style: const TextStyle(
+                        fontWeight: FontWeight.bold, fontSize: 22),
+                  ),
+                ),
                 ListTile(
                   tileColor: const Color(0xFF0a0a23),
                   leading: Icon(model.isOpen
@@ -38,27 +48,45 @@ class ChallengeBuilderListView extends StatelessWidget {
                   },
                 ),
                 model.isOpen
-                    ? ListView.builder(
-                        shrinkWrap: true,
-                        itemCount: block.challenges.length,
-                        physics: const ClampingScrollPhysics(),
-                        itemBuilder: (context, i) => ListTile(
-                              leading: model.getIcon(model
-                                  .completedChallenge(block.challenges[i].id)),
-                              title: Text(block.challenges[i].name),
-                              onTap: () {
-                                String challenge = block.challenges[i].name
-                                    .toLowerCase()
-                                    .replaceAll(' ', '-');
-                                String url =
-                                    'https://freecodecamp.dev/page-data/learn';
+                    ? Column(
+                        children: [
+                          Padding(
+                            padding: const EdgeInsets.all(16.0),
+                            child: Text(
+                              block.description,
+                              style: TextStyle(
+                                  fontSize: 18,
+                                  fontWeight: FontWeight.w600,
+                                  height: 1.2,
+                                  fontFamily: 'Lato',
+                                  color: Colors.white.withOpacity(0.87)),
+                            ),
+                          ),
+                          ListView.builder(
+                              shrinkWrap: true,
+                              itemCount: block.challenges.length,
+                              physics: const ClampingScrollPhysics(),
+                              itemBuilder: (context, i) => ListTile(
+                                    leading: model.getIcon(
+                                        model.completedChallenge(
+                                            block.challenges[i].id)),
+                                    title: Text(block.challenges[i].name),
+                                    onTap: () {
+                                      String challenge = block
+                                          .challenges[i].name
+                                          .toLowerCase()
+                                          .replaceAll(' ', '-');
+                                      String url =
+                                          'https://freecodecamp.dev/page-data/learn';
 
-                                model.routeToBrowserView(
-                                  '$url/${block.superBlock}/${block.dashedName}/$challenge/page-data.json',
-                                  block,
-                                );
-                              },
-                            ))
+                                      model.routeToBrowserView(
+                                        '$url/${block.superBlock}/${block.dashedName}/$challenge/page-data.json',
+                                        block,
+                                      );
+                                    },
+                                  )),
+                        ],
+                      )
                     : Container()
               ],
             )));
