@@ -20,29 +20,49 @@ class ChallengeBuilderGridView extends StatelessWidget {
               children: [
                 Container(
                   color: const Color(0xFF0a0a23),
-                  child: ListTile(
-                      onTap: () {
-                        model.setIsOpen = !model.isOpen;
-                      },
-                      minVerticalPadding: 24,
-                      trailing: Column(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          IconButton(
-                              iconSize: 35,
-                              icon: model.isOpen
-                                  ? const Icon(Icons.expand_less)
-                                  : const Icon(Icons.expand_more),
-                              onPressed: () => model.setIsOpen = !model.isOpen),
-                        ],
-                      ),
-                      title: Text(
-                        block.blockName,
-                        maxLines: 2,
-                        overflow: TextOverflow.ellipsis,
-                        style: const TextStyle(
-                            fontWeight: FontWeight.bold, fontSize: 22),
-                      )),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      if (block.challenges.length == 1)
+                        Container(
+                          padding: const EdgeInsets.all(8),
+                          margin: const EdgeInsets.only(top: 8, left: 8),
+                          color: const Color.fromRGBO(0x00, 0x2e, 0xad, 1),
+                          child: const Text(
+                            'Certification Porject',
+                            style: TextStyle(
+                                fontWeight: FontWeight.bold,
+                                color: Color.fromRGBO(0x19, 0x8e, 0xee, 1)),
+                          ),
+                        ),
+                      ListTile(
+                          onTap: () {
+                            model.setIsOpen = !model.isOpen;
+                          },
+                          minVerticalPadding: 24,
+                          trailing: block.challenges.length != 1
+                              ? Column(
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  children: [
+                                    IconButton(
+                                        iconSize: 35,
+                                        icon: model.isOpen
+                                            ? const Icon(Icons.expand_less)
+                                            : const Icon(Icons.expand_more),
+                                        onPressed: () =>
+                                            model.setIsOpen = !model.isOpen),
+                                  ],
+                                )
+                              : null,
+                          title: Text(
+                            block.blockName,
+                            maxLines: 2,
+                            overflow: TextOverflow.ellipsis,
+                            style: const TextStyle(
+                                fontWeight: FontWeight.bold, fontSize: 18),
+                          )),
+                    ],
+                  ),
                 ),
                 if ((model.challengesCompleted / block.challenges.length * 100)
                         .round() >
@@ -77,30 +97,34 @@ class ChallengeBuilderGridView extends StatelessWidget {
                           ],
                         )),
                   ),
-                if (model.isOpen)
+                if (model.isOpen || block.challenges.length == 1)
                   Container(
                     color: const Color(0xFF0a0a23),
-                    child: Column(
-                      children: [
-                        for (String blockString in block.description)
-                          Padding(
-                            padding: const EdgeInsets.symmetric(
-                                vertical: 8, horizontal: 16),
-                            child: Text(
-                              blockString,
-                              style: TextStyle(
-                                  fontSize: 18,
-                                  fontWeight: FontWeight.w600,
-                                  height: 1.2,
-                                  fontFamily: 'Lato',
-                                  color: Colors.white.withOpacity(0.87)),
+                    child: InkWell(
+                      onTap: block.challenges.length == 1 ? () {} : () {},
+                      child: Column(
+                        children: [
+                          for (String blockString in block.description)
+                            Padding(
+                              padding: const EdgeInsets.symmetric(
+                                  vertical: 8, horizontal: 16),
+                              child: Text(
+                                blockString,
+                                style: TextStyle(
+                                    fontSize: 18,
+                                    fontWeight: FontWeight.w600,
+                                    height: 1.2,
+                                    fontFamily: 'Lato',
+                                    color: Colors.white.withOpacity(0.87)),
+                              ),
                             ),
-                          ),
-                        gridWidget(context, model),
-                        Container(
-                          height: 25,
-                        )
-                      ],
+                          if (block.challenges.length > 1)
+                            gridWidget(context, model),
+                          Container(
+                            height: 25,
+                          )
+                        ],
+                      ),
                     ),
                   ),
               ],
