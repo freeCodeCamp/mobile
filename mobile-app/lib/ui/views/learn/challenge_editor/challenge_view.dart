@@ -268,9 +268,9 @@ class ChallengeView extends StatelessWidget {
 
                     ChallengeTest? test = model.returnFirstFailedTest(tests);
 
-                    if (test == null) {
+                    if (test != null) {
                       model.setPanelType = PanelType.hint;
-                      model.setHint = '<p>Your <code>h1</code> element should have the text <code>Hello World</code>.</p>';
+                      model.setHint = test.instruction;
                       model.setShowPanel = true;
                     } else {
                       model.setPanelType = PanelType.pass;
