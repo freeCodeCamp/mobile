@@ -6,10 +6,14 @@ import 'package:freecodecamp/ui/views/learn/learn/learn_viewmodel.dart';
 import 'package:stacked/stacked.dart';
 
 class SuperBlockView extends StatelessWidget {
-  const SuperBlockView({Key? key, required this.superBlockName})
+  const SuperBlockView(
+      {Key? key,
+      required this.superBlockDashedName,
+      required this.superblockName})
       : super(key: key);
 
-  final String superBlockName;
+  final String superBlockDashedName;
+  final String superblockName;
 
   @override
   Widget build(BuildContext context) {
@@ -19,9 +23,11 @@ class SuperBlockView extends StatelessWidget {
             ? model.auth.fetchUser()
             : null,
         builder: (context, model, child) => Scaffold(
-              appBar: AppBar(),
+              appBar: AppBar(
+                title: Text(superblockName),
+              ),
               body: FutureBuilder<SuperBlock>(
-                  future: model.getSuperBlockData(superBlockName),
+                  future: model.getSuperBlockData(superBlockDashedName),
                   builder: ((context, snapshot) {
                     if (snapshot.hasData) {
                       SuperBlock superBlock = snapshot.data as SuperBlock;
