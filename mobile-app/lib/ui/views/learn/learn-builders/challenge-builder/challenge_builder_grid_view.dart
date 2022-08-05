@@ -54,12 +54,32 @@ class ChallengeBuilderGridView extends StatelessWidget {
                                   ],
                                 )
                               : null,
-                          title: Text(
-                            block.blockName,
-                            maxLines: 2,
-                            overflow: TextOverflow.ellipsis,
-                            style: const TextStyle(
-                                fontWeight: FontWeight.bold, fontSize: 18),
+                          title: Row(
+                            crossAxisAlignment: CrossAxisAlignment.center,
+                            children: [
+                              if (block.challenges.length != 1)
+                                Padding(
+                                    padding:
+                                        const EdgeInsets.fromLTRB(0, 8, 8, 8),
+                                    child: model.challengesCompleted ==
+                                            block.challenges.length
+                                        ? const Icon(
+                                            Icons.check_circle,
+                                            size: 20,
+                                          )
+                                        : const Icon(Icons.circle_outlined,
+                                            size: 20)),
+                              Expanded(
+                                child: Text(
+                                  block.blockName,
+                                  maxLines: 2,
+                                  overflow: TextOverflow.ellipsis,
+                                  style: const TextStyle(
+                                      fontWeight: FontWeight.bold,
+                                      fontSize: 18),
+                                ),
+                              ),
+                            ],
                           )),
                     ],
                   ),
