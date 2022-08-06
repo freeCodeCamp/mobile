@@ -282,6 +282,8 @@ class StackedRouter extends RouterBase {
           key: args.key,
           url: args.url,
           block: args.block,
+          challengesCompleted: args.challengesCompleted,
+          challengeName: args.challengeName,
         ),
         settings: data,
       );
@@ -403,7 +405,14 @@ class ChallengeViewArguments {
   final Key? key;
   final String url;
   final Block block;
-  ChallengeViewArguments({this.key, required this.url, required this.block});
+  final int challengesCompleted;
+  final String? challengeName;
+  ChallengeViewArguments(
+      {this.key,
+      required this.url,
+      required this.block,
+      required this.challengesCompleted,
+      this.challengeName});
 }
 
 /// ************************************************************************
@@ -756,6 +765,8 @@ extension NavigatorStateExtension on NavigationService {
     Key? key,
     required String url,
     required Block block,
+    required int challengesCompleted,
+    String? challengeName,
     int? routerId,
     bool preventDuplicates = true,
     Map<String, String>? parameters,
@@ -764,7 +775,12 @@ extension NavigatorStateExtension on NavigationService {
   }) async {
     return navigateTo(
       Routes.challengeView,
-      arguments: ChallengeViewArguments(key: key, url: url, block: block),
+      arguments: ChallengeViewArguments(
+          key: key,
+          url: url,
+          block: block,
+          challengesCompleted: challengesCompleted,
+          challengeName: challengeName),
       id: routerId,
       preventDuplicates: preventDuplicates,
       parameters: parameters,

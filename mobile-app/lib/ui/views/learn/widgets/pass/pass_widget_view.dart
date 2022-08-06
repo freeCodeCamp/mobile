@@ -5,15 +5,22 @@ import 'package:freecodecamp/ui/views/learn/widgets/pass/pass_widget_model.dart'
 import 'package:stacked/stacked.dart';
 
 class PassWidgetView extends StatelessWidget {
-  const PassWidgetView({Key? key, required this.challengeModel})
-      : super(key: key);
+  const PassWidgetView({
+    Key? key,
+    required this.challengeModel,
+    required this.challengesCompleted,
+    required this.maxChallenges,
+  }) : super(key: key);
 
   final ChallengeModel challengeModel;
+  final int challengesCompleted;
+  final int maxChallenges;
 
   @override
   Widget build(BuildContext context) {
     return ViewModelBuilder<PassWidgetModel>.reactive(
       viewModelBuilder: () => PassWidgetModel(),
+      onModelReady: (model) => model.init(),
       builder: (context, model, child) => Column(
         children: [
           Row(
@@ -66,13 +73,44 @@ class PassWidgetView extends StatelessWidget {
                   child: CircularProgressIndicator(),
                 );
               }),
-          const Padding(
-            padding: EdgeInsets.all(16.0),
-            child: LinearProgressIndicator(
-              value: 0.35,
-              minHeight: 7,
-              backgroundColor: Color.fromRGBO(0x3B, 0x3B, 0x4F, 1),
-            ),
+          FutureBuilder(
+            future: model.numCompletedChallenges(
+                challengeModel, challengesCompleted),
+            builder: (context, snapshot) {
+              if (snapshot.hasData) {
+                int numCompletedChallenges = snapshot.data as int;
+                return Column(
+                  children: [
+                    Padding(
+                      padding: const EdgeInsets.all(16.0),
+                      child: LinearProgressIndicator(
+                        value: numCompletedChallenges / maxChallenges,
+                        minHeight: 7,
+                        backgroundColor:
+                            const Color.fromRGBO(0x3B, 0x3B, 0x4F, 1),
+                      ),
+                    ),
+                    Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 16),
+                      child: Row(
+                        children: [
+                          Expanded(
+                            child: Text(
+                              '${(numCompletedChallenges * 100) ~/ maxChallenges}% Completed',
+                              textAlign: TextAlign.right,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ],
+                );
+              }
+
+              return const Center(
+                child: CircularProgressIndicator(),
+              );
+            },
           ),
           Expanded(
               child: Align(

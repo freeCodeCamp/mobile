@@ -55,6 +55,9 @@ class ChallengeModel extends BaseViewModel {
   Block? _block;
   Block? get block => _block;
 
+  int _challengesCompleted = 0;
+  int get challengesCompleted => _challengesCompleted;
+
   final _dialogService = locator<DialogService>();
 
   set setTestController(WebViewController controller) {
@@ -112,7 +115,13 @@ class ChallengeModel extends BaseViewModel {
     notifyListeners();
   }
 
-  void init(String url, String? name, Block block) async {
+  set setChallengesCompleted(int value) {
+    _challengesCompleted = value;
+    notifyListeners();
+  }
+
+  void init(
+      String url, String? name, Block block, int challengesCompleted) async {
     setupDialogUi();
 
     setChallenge = initChallenge(url, name ?? '');
@@ -127,6 +136,7 @@ class ChallengeModel extends BaseViewModel {
     }
 
     setBlock = block;
+    setChallengesCompleted = challengesCompleted;
   }
 
   // When the content in the editor is changed, save it to the cache. This prevents
@@ -243,14 +253,17 @@ class ChallengeModel extends BaseViewModel {
   void pushNewChallengeView(
       BuildContext context, Block block, String url, String name) {
     Navigator.pushReplacement(
-        context,
-        PageRouteBuilder(
-            transitionDuration: Duration.zero,
-            pageBuilder: (context, animation1, animatiom2) => ChallengeView(
-                  block: block,
-                  challengeName: name,
-                  url: url,
-                )));
+      context,
+      PageRouteBuilder(
+        transitionDuration: Duration.zero,
+        pageBuilder: (context, animation1, animatiom2) => ChallengeView(
+          block: block,
+          challengeName: name,
+          url: url,
+          challengesCompleted: _challengesCompleted,
+        ),
+      ),
+    );
   }
 
   ChallengeFile currentFile(Challenge challenge, String? name) {
@@ -286,6 +299,7 @@ class ChallengeModel extends BaseViewModel {
             block: block!,
             url:
                 'https://freecodecamp.dev/page-data${currChallenge.slug}/page-data.json',
+            challengesCompleted: _challengesCompleted,
           ),
         ),
       );
