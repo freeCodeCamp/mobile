@@ -1,6 +1,5 @@
 import 'dart:developer';
 
-import 'package:fk_user_agent/fk_user_agent.dart';
 import 'package:flutter/material.dart';
 import 'package:freecodecamp/service/authentication_service.dart';
 import 'package:freecodecamp/ui/widgets/login_webview_widget/login_webview_viewmodel.dart';
@@ -19,7 +18,7 @@ class LoginWebView extends StatelessWidget {
         body: WebView(
           initialUrl: '${AuthenticationService.baseApiURL}/signin',
           debuggingEnabled: true,
-          userAgent: '${FkUserAgent.webViewUserAgent}',
+          userAgent: 'random',
           javascriptMode: JavascriptMode.unrestricted,
           initialCookies: const [],
           onWebViewCreated: (controller) async {

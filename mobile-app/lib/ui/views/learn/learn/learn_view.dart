@@ -90,7 +90,7 @@ class LearnView extends StatelessWidget {
               ),
               onPressed: () {
                 button.public
-                    ? model.routeToSuperBlock(button.path)
+                    ? model.routeToSuperBlock(button.path, button.name)
                     : model.disabledButtonSnack();
               },
               child: Row(

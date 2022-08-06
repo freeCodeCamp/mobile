@@ -85,9 +85,10 @@ class LearnViewModel extends BaseViewModel {
     }
   }
 
-  void routeToSuperBlock(String superBlock) {
+  void routeToSuperBlock(String dashedName, String name) {
     _navigationService.navigateTo(Routes.superBlockView,
-        arguments: SuperBlockViewArguments(superBlockName: superBlock));
+        arguments: SuperBlockViewArguments(
+            superBlockDashedName: dashedName, superblockName: name));
   }
 
   void goBack() {

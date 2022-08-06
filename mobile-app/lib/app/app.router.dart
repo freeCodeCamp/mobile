@@ -270,7 +270,8 @@ class StackedRouter extends RouterBase {
       return MaterialPageRoute<dynamic>(
         builder: (context) => SuperBlockView(
           key: args.key,
-          superBlockName: args.superBlockName,
+          superBlockDashedName: args.superBlockDashedName,
+          superblockName: args.superblockName,
         ),
         settings: data,
       );
@@ -282,6 +283,7 @@ class StackedRouter extends RouterBase {
           key: args.key,
           url: args.url,
           block: args.block,
+          challengeName: args.challengeName,
         ),
         settings: data,
       );
@@ -394,8 +396,12 @@ class ForumUserViewArguments {
 /// SuperBlockView arguments holder class
 class SuperBlockViewArguments {
   final Key? key;
-  final String superBlockName;
-  SuperBlockViewArguments({this.key, required this.superBlockName});
+  final String superBlockDashedName;
+  final String superblockName;
+  SuperBlockViewArguments(
+      {this.key,
+      required this.superBlockDashedName,
+      required this.superblockName});
 }
 
 /// ChallengeView arguments holder class
@@ -403,7 +409,9 @@ class ChallengeViewArguments {
   final Key? key;
   final String url;
   final Block block;
-  ChallengeViewArguments({this.key, required this.url, required this.block});
+  final String? challengeName;
+  ChallengeViewArguments(
+      {this.key, required this.url, required this.block, this.challengeName});
 }
 
 /// ************************************************************************
@@ -734,7 +742,8 @@ extension NavigatorStateExtension on NavigationService {
 
   Future<dynamic> navigateToSuperBlockView({
     Key? key,
-    required String superBlockName,
+    required String superBlockDashedName,
+    required String superblockName,
     int? routerId,
     bool preventDuplicates = true,
     Map<String, String>? parameters,
@@ -743,8 +752,10 @@ extension NavigatorStateExtension on NavigationService {
   }) async {
     return navigateTo(
       Routes.superBlockView,
-      arguments:
-          SuperBlockViewArguments(key: key, superBlockName: superBlockName),
+      arguments: SuperBlockViewArguments(
+          key: key,
+          superBlockDashedName: superBlockDashedName,
+          superblockName: superblockName),
       id: routerId,
       preventDuplicates: preventDuplicates,
       parameters: parameters,
@@ -756,6 +767,7 @@ extension NavigatorStateExtension on NavigationService {
     Key? key,
     required String url,
     required Block block,
+    String? challengeName,
     int? routerId,
     bool preventDuplicates = true,
     Map<String, String>? parameters,
@@ -764,7 +776,8 @@ extension NavigatorStateExtension on NavigationService {
   }) async {
     return navigateTo(
       Routes.challengeView,
-      arguments: ChallengeViewArguments(key: key, url: url, block: block),
+      arguments: ChallengeViewArguments(
+          key: key, url: url, block: block, challengeName: challengeName),
       id: routerId,
       preventDuplicates: preventDuplicates,
       parameters: parameters,
