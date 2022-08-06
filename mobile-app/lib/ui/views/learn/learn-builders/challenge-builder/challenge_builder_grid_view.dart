@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:freecodecamp/models/learn/curriculum_model.dart';
 import 'package:freecodecamp/ui/views/learn/learn-builders/challenge-builder/challenge_builder_model.dart';
+import 'package:freecodecamp/ui/widgets/drawer_widget/drawer_widget_view.dart';
 import 'package:stacked/stacked.dart';
 
 class ChallengeBuilderGridView extends StatelessWidget {
@@ -151,6 +152,7 @@ class ChallengeBuilderGridView extends StatelessWidget {
                                     color: Colors.white.withOpacity(0.87)),
                               ),
                             ),
+                          buildDivider(),
                           if (block.challenges.length > 1)
                             gridWidget(context, model),
                           Container(

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:freecodecamp/models/learn/curriculum_model.dart';
 import 'package:freecodecamp/ui/views/learn/learn-builders/challenge-builder/challenge_builder_model.dart';
+import 'package:freecodecamp/ui/widgets/drawer_widget/drawer_widget_view.dart';
 import 'package:stacked/stacked.dart';
 
 class ChallengeBuilderListView extends StatelessWidget {
@@ -32,6 +33,7 @@ class ChallengeBuilderListView extends StatelessWidget {
                         fontWeight: FontWeight.bold, fontSize: 22),
                   ),
                 ),
+                buildDivider(),
                 ListTile(
                   tileColor: const Color(0xFF0a0a23),
                   leading: Icon(model.isOpen
@@ -64,6 +66,7 @@ class ChallengeBuilderListView extends StatelessWidget {
                                     color: Colors.white.withOpacity(0.87)),
                               ),
                             ),
+                          buildDivider(),
                           ListView.builder(
                               shrinkWrap: true,
                               itemCount: block.challenges.length,
