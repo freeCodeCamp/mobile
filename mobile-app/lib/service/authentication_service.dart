@@ -21,6 +21,10 @@ class AuthenticationService {
   String _csrfToken = '';
   String _jwtAccessToken = '';
 
+  String get csrf => _csrf;
+  String get csrfToken => _csrfToken;
+  String get jwtAccessToken => _jwtAccessToken;
+
   static String baseURL = '';
   static String baseApiURL = '';
   Future<FccUserModel>? userModel;
