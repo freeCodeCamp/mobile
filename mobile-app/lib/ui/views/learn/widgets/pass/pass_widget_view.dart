@@ -124,7 +124,10 @@ class PassWidgetView extends StatelessWidget {
                   padding: const EdgeInsets.all(16),
                 ),
                 IconButton(
-                  onPressed: () {},
+                  onPressed: () {
+                    challengeModel.setShowPreview = true;
+                    challengeModel.setShowPanel = false;
+                  },
                   icon: const Icon(Icons.remove_red_eye_outlined),
                   padding: const EdgeInsets.all(16),
                 )
