@@ -61,7 +61,11 @@ class SuperBlockView extends StatelessWidget {
           itemCount: superBlock.blocks.length,
           physics: const ClampingScrollPhysics(),
           itemBuilder: (context, i) => Padding(
-            padding: i == 0 ? const EdgeInsets.only(top: 16) : EdgeInsets.zero,
+            padding: i == 0
+                ? const EdgeInsets.only(top: 16)
+                : i == superBlock.blocks.length - 1
+                    ? const EdgeInsets.only(bottom: 16)
+                    : EdgeInsets.zero,
             child: BlockBuilderView(
               key: ObjectKey(superBlock.blocks[i].dashedName),
               block: superBlock.blocks[i],
