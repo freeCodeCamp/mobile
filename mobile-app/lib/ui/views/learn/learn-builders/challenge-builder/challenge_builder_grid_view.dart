@@ -152,9 +152,10 @@ class ChallengeBuilderGridView extends StatelessWidget {
                                     color: Colors.white.withOpacity(0.87)),
                               ),
                             ),
-                          buildDivider(),
-                          if (block.challenges.length > 1)
+                          if (block.challenges.length > 1) ...[
+                            buildDivider(),
                             gridWidget(context, model),
+                          ],
                           Container(
                             height: 25,
                           )
