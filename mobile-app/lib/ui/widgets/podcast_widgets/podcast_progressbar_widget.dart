@@ -69,11 +69,11 @@ class PodcastProgressBarState extends State<PodcastProgressBar> {
       double newWidth =
           (value.inSeconds / widget.duration.inSeconds) * maxBarWidth;
 
-      bool shouldSetNewWidth = newWidth + widget.ball < maxBarWidth;
-      if (newWidth < widget.ball / 4) {
-        widget._barWidth = widget.ball / 4;
+      bool shouldSetNewWidth = newWidth*0.95 + widget.ball < maxBarWidth;
+      if (newWidth < widget.ball / 12) {
+        widget._barWidth = widget.ball / 12;
       } else if (shouldSetNewWidth) {
-        widget._barWidth = newWidth;
+        widget._barWidth = newWidth*0.95;
       }
 
       if (value.isNegative || newWidth.isNegative) {

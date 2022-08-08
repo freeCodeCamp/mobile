@@ -6,10 +6,14 @@ import 'package:freecodecamp/ui/views/learn/learn/learn_viewmodel.dart';
 import 'package:stacked/stacked.dart';
 
 class SuperBlockView extends StatelessWidget {
-  const SuperBlockView({Key? key, required this.superBlockName})
+  const SuperBlockView(
+      {Key? key,
+      required this.superBlockDashedName,
+      required this.superblockName})
       : super(key: key);
 
-  final String superBlockName;
+  final String superBlockDashedName;
+  final String superblockName;
 
   @override
   Widget build(BuildContext context) {
@@ -19,9 +23,11 @@ class SuperBlockView extends StatelessWidget {
             ? model.auth.fetchUser()
             : null,
         builder: (context, model, child) => Scaffold(
-              appBar: AppBar(),
+              appBar: AppBar(
+                title: Text(superblockName),
+              ),
               body: FutureBuilder<SuperBlock>(
-                  future: model.getSuperBlockData(superBlockName),
+                  future: model.getSuperBlockData(superBlockDashedName),
                   builder: ((context, snapshot) {
                     if (snapshot.hasData) {
                       SuperBlock superBlock = snapshot.data as SuperBlock;
@@ -37,17 +43,34 @@ class SuperBlockView extends StatelessWidget {
   Widget superBlockTemplate(LearnViewModel model, SuperBlock superBlock) {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 8),
-      child: ListView.separated(
-        separatorBuilder: (context, int i) => const Divider(
-          height: 50,
-          color: Color.fromRGBO(0, 0, 0, 0),
-        ),
-        shrinkWrap: true,
-        itemCount: superBlock.blocks.length,
-        physics: const ClampingScrollPhysics(),
-        itemBuilder: (context, i) => BlockBuilderView(
-          key: ObjectKey(superBlock.blocks[i].dashedName),
-          block: superBlock.blocks[i],
+      child: NotificationListener<OverscrollIndicatorNotification>(
+        onNotification: (notification) {
+          notification.disallowIndicator();
+          return true;
+        },
+        child: ListView.separated(
+          separatorBuilder: (context, int i) => Divider(
+            height: superBlock.blocks[i].challenges.length == 1
+                ? 50
+                : superBlock.blocks[i].isStepBased
+                    ? 3
+                    : 50,
+            color: const Color.fromRGBO(0, 0, 0, 0),
+          ),
+          shrinkWrap: true,
+          itemCount: superBlock.blocks.length,
+          physics: const ClampingScrollPhysics(),
+          itemBuilder: (context, i) => Padding(
+            padding: i == 0
+                ? const EdgeInsets.only(top: 16)
+                : i == superBlock.blocks.length - 1
+                    ? const EdgeInsets.only(bottom: 16)
+                    : EdgeInsets.zero,
+            child: BlockBuilderView(
+              key: ObjectKey(superBlock.blocks[i].dashedName),
+              block: superBlock.blocks[i],
+            ),
+          ),
         ),
       ),
     );

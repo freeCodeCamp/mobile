@@ -270,7 +270,8 @@ class StackedRouter extends RouterBase {
       return MaterialPageRoute<dynamic>(
         builder: (context) => SuperBlockView(
           key: args.key,
-          superBlockName: args.superBlockName,
+          superBlockDashedName: args.superBlockDashedName,
+          superblockName: args.superblockName,
         ),
         settings: data,
       );
@@ -396,8 +397,12 @@ class ForumUserViewArguments {
 /// SuperBlockView arguments holder class
 class SuperBlockViewArguments {
   final Key? key;
-  final String superBlockName;
-  SuperBlockViewArguments({this.key, required this.superBlockName});
+  final String superBlockDashedName;
+  final String superblockName;
+  SuperBlockViewArguments(
+      {this.key,
+      required this.superBlockDashedName,
+      required this.superblockName});
 }
 
 /// ChallengeView arguments holder class
@@ -743,7 +748,8 @@ extension NavigatorStateExtension on NavigationService {
 
   Future<dynamic> navigateToSuperBlockView({
     Key? key,
-    required String superBlockName,
+    required String superBlockDashedName,
+    required String superblockName,
     int? routerId,
     bool preventDuplicates = true,
     Map<String, String>? parameters,
@@ -752,8 +758,10 @@ extension NavigatorStateExtension on NavigationService {
   }) async {
     return navigateTo(
       Routes.superBlockView,
-      arguments:
-          SuperBlockViewArguments(key: key, superBlockName: superBlockName),
+      arguments: SuperBlockViewArguments(
+          key: key,
+          superBlockDashedName: superBlockDashedName,
+          superblockName: superblockName),
       id: routerId,
       preventDuplicates: preventDuplicates,
       parameters: parameters,

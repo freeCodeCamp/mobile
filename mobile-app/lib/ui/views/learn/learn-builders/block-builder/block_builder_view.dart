@@ -20,49 +20,16 @@ class BlockBuilderView extends StatelessWidget {
         builder: (context, model, child) => Column(
               mainAxisAlignment: MainAxisAlignment.start,
               children: [
-                Container(
-                  padding: const EdgeInsets.only(top: 16, bottom: 8),
-                  child: Column(
-                    children: [
-                      Container(
-                        color: const Color(0xFF0a0a23),
-                        padding: const EdgeInsets.all(24.0),
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Text(
-                              block.blockName,
-                              textAlign: TextAlign.left,
-                              style: const TextStyle(
-                                fontSize: 28,
-                                fontWeight: FontWeight.bold,
-                              ),
-                            ),
-                            Padding(
-                              padding: const EdgeInsets.only(top: 8.0),
-                              child: Text(
-                                block.description,
-                                style: const TextStyle(fontSize: 18),
-                              ),
-                            )
-                          ],
-                        ),
-                      ),
-                      !block.isStepBased
-                          ? Padding(
-                              padding: const EdgeInsets.only(top: 8.0),
-                              child: ChallengeBuilderListView(
-                                block: block,
-                              ),
-                            )
-                          : Padding(
-                              padding: const EdgeInsets.only(top: 8.0),
-                              child: ChallengeBuilderGridView(
-                                block: block,
-                              ),
-                            )
-                    ],
-                  ),
+                Column(
+                  children: [
+                    !block.isStepBased
+                        ? ChallengeBuilderListView(
+                            block: block,
+                          )
+                        : ChallengeBuilderGridView(
+                            block: block,
+                          )
+                  ],
                 ),
               ],
             ));
