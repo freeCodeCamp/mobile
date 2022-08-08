@@ -29,6 +29,9 @@ class ChallengeModel extends BaseViewModel {
   bool _hideAppBar = true;
   bool get hideAppBar => _hideAppBar;
 
+  bool _manuallyHiddenAppBar = false;
+  bool get manuallyHiddenAppBar => _manuallyHiddenAppBar;
+
   String _hint = '';
   String get hint => _hint;
 
@@ -67,6 +70,11 @@ class ChallengeModel extends BaseViewModel {
 
   set setHideAppBar(bool value) {
     _hideAppBar = value;
+    notifyListeners();
+  }
+
+  set setManuallyHiddenAppBar(bool value) {
+    _manuallyHiddenAppBar = value;
     notifyListeners();
   }
 
