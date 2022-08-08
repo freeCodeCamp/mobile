@@ -230,12 +230,16 @@ class ChallengeView extends StatelessWidget {
   Widget bottomBar(ChallengeModel model, BuildContext context,
       EditorViewController controller) {
     SchedulerBinding.instance.addPostFrameCallback((timeStamp) {
-      if (MediaQuery.of(context).viewInsets.bottom > 0 || !model.showPanel) {
-        if (model.hideAppBar && !model.manuallyHiddenAppBar) {
+      bool keyboardPresent = MediaQuery.of(context).viewInsets.bottom > 0;
+
+      if (keyboardPresent && !model.showPanel) {
+        if (!model.hideAppBar && model.manuallyHiddenAppBar) {
+          model.setHideAppBar = true;
+        }
+      } else if (!keyboardPresent && !model.showPanel) {
+        if (model.hideAppBar) {
           model.setHideAppBar = false;
         }
-      } else if (!model.hideAppBar) {
-        model.setHideAppBar = true;
       }
     });
 
