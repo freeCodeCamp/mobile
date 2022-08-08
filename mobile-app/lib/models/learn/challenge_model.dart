@@ -2,6 +2,7 @@ import 'package:freecodecamp/enums/challenge_test_state_type.dart';
 import 'package:freecodecamp/enums/ext_type.dart';
 
 class Challenge {
+  final String id;
   final String block;
   final String title;
   final String description;
@@ -13,7 +14,8 @@ class Challenge {
   final List<ChallengeFile> files;
 
   const Challenge(
-      {required this.block,
+      {required this.id,
+      required this.block,
       required this.title,
       required this.description,
       required this.instructions,
@@ -24,6 +26,7 @@ class Challenge {
 
   factory Challenge.fromJson(Map<String, dynamic> data) {
     return Challenge(
+      id: data['id'],
       block: data['block'],
       title: data['title'],
       description: data['description'],

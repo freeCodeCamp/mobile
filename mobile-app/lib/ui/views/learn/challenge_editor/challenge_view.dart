@@ -19,20 +19,28 @@ import 'package:webview_flutter/webview_flutter.dart';
 import 'package:stacked/stacked.dart';
 
 class ChallengeView extends StatelessWidget {
-  const ChallengeView(
-      {Key? key, required this.url, required this.block, this.challengeName})
-      : super(key: key);
+  const ChallengeView({
+    Key? key,
+    required this.url,
+    required this.block,
+    required this.challengesCompleted,
+    this.challengeName,
+  }) : super(key: key);
 
   final String url;
   final Block block;
+  final int challengesCompleted;
+
   final String? challengeName;
 
   @override
   Widget build(BuildContext context) {
     return ViewModelBuilder<ChallengeModel>.reactive(
         viewModelBuilder: () => ChallengeModel(),
-        onModelReady: (model) =>
-            {model.setAppBarState(context), model.init(url, challengeName, block)},
+        onModelReady: (model) => {
+              model.setAppBarState(context),
+              model.init(url, challengeName, block, challengesCompleted)
+            },
         builder: (context, model, child) => FutureBuilder<Challenge?>(
               future: model.challenge,
               builder: (context, snapshot) {
@@ -131,6 +139,8 @@ class ChallengeView extends StatelessWidget {
                                         model: model,
                                         panel: model.panelType,
                                         maxChallenges: maxChallenges,
+                                        challengesCompleted:
+                                            challengesCompleted,
                                       )
                                     : Container(),
                                 editor(controller, model)
@@ -148,6 +158,8 @@ class ChallengeView extends StatelessWidget {
                                         model: model,
                                         panel: model.panelType,
                                         maxChallenges: maxChallenges,
+                                        challengesCompleted:
+                                            challengesCompleted,
                                       )
                                     : Container(),
                                 Expanded(
@@ -270,9 +282,9 @@ class ChallengeView extends StatelessWidget {
 
                     ChallengeTest? test = model.returnFirstFailedTest(tests);
 
-                    if (test == null) {
+                    if (test != null) {
                       model.setPanelType = PanelType.hint;
-                      model.setHint = '<p>Your <code>h1</code> element should have the text <code>Hello World</code>.</p>';
+                      model.setHint = test.instruction;
                       model.setShowPanel = true;
                     } else {
                       model.setPanelType = PanelType.pass;
@@ -376,12 +388,14 @@ class DynamicPanel extends StatelessWidget {
     required this.model,
     required this.panel,
     required this.maxChallenges,
+    required this.challengesCompleted,
   }) : super(key: key);
 
   final Challenge challenge;
   final ChallengeModel model;
   final PanelType panel;
   final int maxChallenges;
+  final int challengesCompleted;
 
   Widget panelHandler(PanelType panel) {
     switch (panel) {
@@ -397,6 +411,8 @@ class DynamicPanel extends StatelessWidget {
       case PanelType.pass:
         return PassWidgetView(
           challengeModel: model,
+          challengesCompleted: challengesCompleted,
+          maxChallenges: maxChallenges,
         );
       case PanelType.hint:
         return HintWidgetView(
