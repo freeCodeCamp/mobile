@@ -250,16 +250,19 @@ class ChallengeView extends StatelessWidget {
     );
   }
 
+
   Widget bottomBar(
       ChallengeModel model, Challenge challenge, BuildContext context) {
     SchedulerBinding.instance.addPostFrameCallback((timeStamp) {
-      if (MediaQuery.of(context).viewInsets.bottom > 0 || !model.showPanel) {
+      bool keyboardPresent = MediaQuery.of(context).viewInsets.bottom > 0;
+
+      if (keyboardPresent && !model.showPanel) {
+        if (!model.hideAppBar && model.manuallyHiddenAppBar) {
+          model.setHideAppBar = true;
+        }
+      } else if (!keyboardPresent && !model.showPanel) {
         if (model.hideAppBar) {
           model.setHideAppBar = false;
-        }
-      } else {
-        if (!model.hideAppBar) {
-          model.setHideAppBar = true;
         }
       }
     });
@@ -285,8 +288,8 @@ class ChallengeView extends StatelessWidget {
                   name: 'Flutter',
                   onMessageReceived: (JavascriptMessage message) async {
                     model.runner.setTestDocument = message.message;
-                    List<ChallengeTest> tests =
-                        await model.runner.testRunner(challenge.tests);
+                    List<ChallengeTest> tests = await model.runner
+                        .testRunner((await model.challenge)!.tests);
 
                     ChallengeTest? test = model.returnFirstFailedTest(tests);
 
@@ -340,6 +343,28 @@ class ChallengeView extends StatelessWidget {
               highlightColor: Colors.transparent,
             ),
           ),
+          if (!model.showPreview &&
+              MediaQuery.of(context).viewInsets.bottom > 0)
+            Container(
+              margin: const EdgeInsets.all(8),
+              color: model.hideAppBar
+                  ? const Color.fromRGBO(0x2A, 0x2A, 0x40, 1)
+                  : Colors.white,
+              child: IconButton(
+                icon: FaIcon(
+                  FontAwesomeIcons.bars,
+                  color: !model.hideAppBar
+                      ? const Color.fromRGBO(0x2A, 0x2A, 0x40, 1)
+                      : Colors.white,
+                ),
+                onPressed: () => {
+                  model.setHideAppBar = !model.hideAppBar,
+                  model.setManuallyHiddenAppBar = !model.manuallyHiddenAppBar
+                },
+                splashColor: Colors.transparent,
+                highlightColor: Colors.transparent,
+              ),
+            ),
           if (model.showPreview)
             Container(
               margin: const EdgeInsets.all(8),

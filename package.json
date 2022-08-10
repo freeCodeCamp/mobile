@@ -21,6 +21,7 @@
     "backend-api"
   ],
   "scripts": {
+    "build:api": "cd mobile-api && npm run build",
     "postinstall": "cd mobile-app && flutter pub get",
     "develop": "npm-run-all flutter:build-runner -p develop:*",
     "develop:api": "cd mobile-api && npm run dev",

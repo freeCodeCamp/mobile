@@ -31,9 +31,7 @@ jobs:
       - name: Build site
         env:
           NODE_ENV: production
-        run: |
-          cd mobile-api
-          npm run build
+        run: npm run build:api
 
       # - name: Set up Docker Buildx
       #   uses: docker/setup-buildx-action@v1
