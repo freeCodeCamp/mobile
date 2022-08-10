@@ -23,6 +23,9 @@ class ChallengeModel extends BaseViewModel {
   String? _editorText;
   String? get editorText => _editorText;
 
+  String? _currentSelectedFile = '';
+  String? get currentSelectedFile => _currentSelectedFile;
+
   bool _showPreview = false;
   bool get showPreview => _showPreview;
 
@@ -59,6 +62,11 @@ class ChallengeModel extends BaseViewModel {
   int get challengesCompleted => _challengesCompleted;
 
   final _dialogService = locator<DialogService>();
+
+  set setCurrentSelectedFile(String value) {
+    _currentSelectedFile = value;
+    notifyListeners();
+  }
 
   set setTestController(WebViewController controller) {
     _testController = controller;
@@ -120,15 +128,15 @@ class ChallengeModel extends BaseViewModel {
     notifyListeners();
   }
 
-  void init(
-      String url, String? name, Block block, int challengesCompleted) async {
+  void init(String url, Block block, int challengesCompleted) async {
     setupDialogUi();
 
-    setChallenge = initChallenge(url, name ?? '');
+    setChallenge = initChallenge(url, currentSelectedFile ?? '');
     Challenge challenge = await _challenge!;
 
     if (editorText == null) {
-      String text = await getTextFromCache(challenge, name ?? '');
+      String text =
+          await getTextFromCache(challenge, currentSelectedFile ?? '');
 
       if (text != '') {
         setEditorText = text;
@@ -182,10 +190,6 @@ class ChallengeModel extends BaseViewModel {
   Future<Challenge> initChallenge(String url, String name) async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     http.Response res = await http.get(Uri.parse(url));
-
-    if (name.isNotEmpty && showPanel && panelType == PanelType.instruction) {
-      setShowPanel = false;
-    }
 
     if (prefs.getString(url) == null) {
       if (res.statusCode == 200) {
@@ -258,7 +262,6 @@ class ChallengeModel extends BaseViewModel {
         transitionDuration: Duration.zero,
         pageBuilder: (context, animation1, animatiom2) => ChallengeView(
           block: block,
-          challengeName: name,
           url: url,
           challengesCompleted: _challengesCompleted,
         ),
@@ -266,10 +269,10 @@ class ChallengeModel extends BaseViewModel {
     );
   }
 
-  ChallengeFile currentFile(Challenge challenge, String? name) {
-    if (name != null) {
-      ChallengeFile file =
-          challenge.files.firstWhere((file) => file.name == name.split('.')[0]);
+  ChallengeFile currentFile(Challenge challenge) {
+    if (currentSelectedFile != null) {
+      ChallengeFile file = challenge.files.firstWhere(
+          (file) => file.name == currentSelectedFile!.split('.')[0]);
 
       return file;
     }

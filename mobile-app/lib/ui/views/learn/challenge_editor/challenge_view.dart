@@ -26,14 +26,11 @@ class ChallengeView extends StatelessWidget {
     required this.url,
     required this.block,
     required this.challengesCompleted,
-    this.challengeName,
   }) : super(key: key);
 
   final String url;
   final Block block;
   final int challengesCompleted;
-
-  final String? challengeName;
 
   @override
   Widget build(BuildContext context) {
@@ -41,7 +38,7 @@ class ChallengeView extends StatelessWidget {
         viewModelBuilder: () => ChallengeModel(),
         onModelReady: (model) => {
               model.setAppBarState(context),
-              model.init(url, challengeName, block, challengesCompleted)
+              model.init(url, block, challengesCompleted)
             },
         builder: (context, model, child) => FutureBuilder<Challenge?>(
               future: model.challenge,
@@ -55,13 +52,10 @@ class ChallengeView extends StatelessWidget {
                     language: Syntax.HTML,
                     openedFile: FileIDE(
                         fileExplorer: null,
-                        fileName:
-                            model.currentFile(challenge, challengeName).name,
+                        fileName: model.currentFile(challenge).name,
                         filePath: '',
                         fileContent: model.editorText ??
-                            model
-                                .currentFile(challenge, challengeName)
-                                .contents,
+                            model.currentFile(challenge).contents,
                         parentDirectory: ''),
                   );
 
@@ -216,7 +210,7 @@ class ChallengeView extends StatelessWidget {
         height: 0,
       ),
       iconEnabledColor: !model.showPreview ? Colors.blue : Colors.white,
-      value: challengeName ??
+      value: model.currentSelectedFile ??
           '${challenge.files[0].name}.${challenge.files[0].ext.name}',
       items: challenge.files
           .map((file) => '${file.name}.${file.ext.name}')
@@ -237,8 +231,8 @@ class ChallengeView extends StatelessWidget {
         );
       }).toList(),
       onChanged: (String? fileName) async {
-        editor.textStream.sink.add(
-            model.currentFile(challenge, fileName ?? 'index.html').contents);
+        editor.textStream.sink
+            .add(model.editorText ?? model.currentFile(challenge).contents);
       },
     );
   }
