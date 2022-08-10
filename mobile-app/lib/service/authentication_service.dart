@@ -145,25 +145,25 @@ class AuthenticationService {
   }
 
   Future<void> fetchUser() async {
-    // Response res = await _dio.get(
-    //   '/user/get-session-user',
-    //   options: Options(
-    //     headers: {
-    //       'CSRF-Token': _csrfToken,
-    //       'Cookie': 'jwt_access_token=$_jwtAccessToken; _csrf=$_csrf',
-    //     },
-    //   ),
-    // );
+    Response res = await _dio.get(
+      '/user/get-session-user',
+      options: Options(
+        headers: {
+          'CSRF-Token': _csrfToken,
+          'Cookie': 'jwt_access_token=$_jwtAccessToken; _csrf=$_csrf',
+        },
+      ),
+    );
 
-    // if (res.statusCode == 200) {
-    //   userModel = parseUserModel(res.data['user'][res.data['result']]);
-    //   staticIsloggedIn = true;
-    //   isLoggedInStream.sink.add(true);
-    // } else {
-    //   staticIsloggedIn = false;
-    //   isLoggedInStream.sink.add(false);
-    //   logout();
-    // }
+    if (res.statusCode == 200) {
+      userModel = parseUserModel(res.data['user'][res.data['result']]);
+      staticIsloggedIn = true;
+      isLoggedInStream.sink.add(true);
+    } else {
+      staticIsloggedIn = false;
+      isLoggedInStream.sink.add(false);
+      logout();
+    }
   }
 
   AuthenticationService._internal();
