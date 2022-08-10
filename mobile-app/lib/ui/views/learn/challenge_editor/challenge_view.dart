@@ -143,6 +143,7 @@ class ChallengeView extends StatelessWidget {
                                         maxChallenges: maxChallenges,
                                         challengesCompleted:
                                             challengesCompleted,
+                                        editor: editor,
                                       )
                                     : Container(),
                                 Expanded(child: editor)
@@ -162,7 +163,7 @@ class ChallengeView extends StatelessWidget {
                                         maxChallenges: maxChallenges,
                                         challengesCompleted:
                                             challengesCompleted,
-                                      )
+                                        editor: editor)
                                     : Container(),
                                 Expanded(
                                   child: WebView(
@@ -241,7 +242,10 @@ class ChallengeView extends StatelessWidget {
       }).toList(),
       onChanged: (String? fileName) async {
         model.setCurrentSelectedFile = fileName ?? 'error_select_first';
-        editor.fileTextStream.sink.add(await model.getTextFromCache(challenge));
+        editor.fileTextStream.sink.add(
+            await model.getTextFromCache(challenge) == ''
+                ? model.currentFile(challenge).contents
+                : await model.getTextFromCache(challenge));
       },
     );
   }
@@ -291,7 +295,7 @@ class ChallengeView extends StatelessWidget {
                       model.setHint = test.instruction;
                       model.setShowPanel = true;
                     } else {
-                      model.setPanelType = PanelType.pass;
+                      model.setPanelType = PanelType.hint;
                       model.setCompletedChallenge = true;
                       model.setShowPanel = true;
                     }
@@ -380,20 +384,23 @@ class ChallengeView extends StatelessWidget {
 }
 
 class DynamicPanel extends StatelessWidget {
-  const DynamicPanel({
-    Key? key,
-    required this.challenge,
-    required this.model,
-    required this.panel,
-    required this.maxChallenges,
-    required this.challengesCompleted,
-  }) : super(key: key);
+  const DynamicPanel(
+      {Key? key,
+      required this.challenge,
+      required this.model,
+      required this.panel,
+      required this.maxChallenges,
+      required this.challengesCompleted,
+      required this.editor})
+      : super(key: key);
 
   final Challenge challenge;
   final ChallengeModel model;
   final PanelType panel;
   final int maxChallenges;
   final int challengesCompleted;
+
+  final Editor editor;
 
   Widget panelHandler(PanelType panel) {
     switch (panel) {
@@ -416,6 +423,7 @@ class DynamicPanel extends StatelessWidget {
         return HintWidgetView(
           hint: model.hint,
           challengeModel: model,
+          editor: editor,
         );
       default:
         return Container();

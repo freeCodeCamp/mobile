@@ -4,6 +4,7 @@ import 'dart:io';
 import 'package:device_info_plus/device_info_plus.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_code_editor/editor/editor.dart';
 import 'package:freecodecamp/enums/ext_type.dart';
 import 'package:freecodecamp/models/learn/challenge_model.dart';
 import 'package:freecodecamp/ui/views/learn/challenge_editor/challenge_model.dart';
@@ -13,11 +14,16 @@ import 'package:stacked/stacked.dart';
 
 class HintWidgetView extends StatelessWidget {
   const HintWidgetView(
-      {Key? key, required this.hint, required this.challengeModel})
+      {Key? key,
+      required this.hint,
+      required this.challengeModel,
+      required this.editor})
       : super(key: key);
 
   final String hint;
   final ChallengeModel challengeModel;
+
+  final Editor editor;
 
   final forumLocation = 'https://forum.freecodecamp.org';
 
@@ -145,7 +151,7 @@ class HintWidgetView extends StatelessWidget {
                       ),
                       IconButton(
                         onPressed: () {
-                          challengeModel.resetCode(context);
+                          challengeModel.resetCode(editor);
                         },
                         icon: const Icon(Icons.restart_alt),
                         padding: const EdgeInsets.all(16),

@@ -1,13 +1,13 @@
 import 'dart:convert';
 
 import 'package:flutter/cupertino.dart';
+import 'package:flutter_code_editor/editor/editor.dart';
 import 'package:freecodecamp/app/app.locator.dart';
 import 'package:freecodecamp/enums/challenge_test_state_type.dart';
 import 'package:freecodecamp/enums/dialog_type.dart';
 import 'package:freecodecamp/enums/panel_type.dart';
 import 'package:freecodecamp/models/learn/challenge_model.dart';
 import 'package:freecodecamp/models/learn/curriculum_model.dart';
-import 'package:freecodecamp/ui/views/learn/challenge_editor/challenge_view.dart';
 import 'package:freecodecamp/ui/views/learn/test_runner.dart';
 import 'package:freecodecamp/ui/widgets/setup_dialog_ui.dart';
 import 'package:html/dom.dart' as dom;
@@ -256,21 +256,6 @@ class ChallengeModel extends BaseViewModel {
     }
   }
 
-  void pushNewChallengeView(
-      BuildContext context, Block block, String url, String name) {
-    Navigator.pushReplacement(
-      context,
-      PageRouteBuilder(
-        transitionDuration: Duration.zero,
-        pageBuilder: (context, animation1, animatiom2) => ChallengeView(
-          block: block,
-          url: url,
-          challengesCompleted: _challengesCompleted,
-        ),
-      ),
-    );
-  }
-
   ChallengeFile currentFile(Challenge challenge) {
     if (currentSelectedFile!.isNotEmpty) {
       ChallengeFile file = challenge.files.firstWhere(
@@ -282,7 +267,7 @@ class ChallengeModel extends BaseViewModel {
     return challenge.files[0];
   }
 
-  void resetCode(BuildContext context) async {
+  void resetCode(Editor editor) async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
 
     DialogResponse? res = await _dialogService.showCustomDialog(
@@ -296,18 +281,10 @@ class ChallengeModel extends BaseViewModel {
       for (ChallengeFile file in currChallenge!.files) {
         prefs.remove('${currChallenge.title}.${file.name}');
       }
-      Navigator.pushReplacement(
-        context,
-        PageRouteBuilder(
-          transitionDuration: Duration.zero,
-          pageBuilder: (context, animation1, animatiom2) => ChallengeView(
-            block: block!,
-            url:
-                'https://freecodecamp.dev/page-data${currChallenge.slug}/page-data.json',
-            challengesCompleted: _challengesCompleted,
-          ),
-        ),
-      );
+      setEditorText = '';
+      setCurrentSelectedFile =
+          '${currChallenge.files[0].name}.${currChallenge.files[0].ext.name}';
+      editor.fileTextStream.add(currentFile(currChallenge).contents);
     }
   }
 }
