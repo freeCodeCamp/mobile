@@ -131,12 +131,11 @@ class ChallengeModel extends BaseViewModel {
   void init(String url, Block block, int challengesCompleted) async {
     setupDialogUi();
 
-    setChallenge = initChallenge(url, currentSelectedFile ?? '');
+    setChallenge = initChallenge(url);
     Challenge challenge = await _challenge!;
 
     if (editorText == null) {
-      String text =
-          await getTextFromCache(challenge, currentSelectedFile ?? '');
+      String text = await getTextFromCache(challenge);
 
       if (text != '') {
         setEditorText = text;
@@ -151,13 +150,14 @@ class ChallengeModel extends BaseViewModel {
   // the user from losing their work when switching between panels e.g, the preview.
   // The cache is disposed when the user switches to a new challenge.
 
-  void saveTextInCache(String value, Challenge challenge, String name) async {
+  void saveTextInCache(String value, Challenge challenge) async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
 
-    if (name.isEmpty) {
+    if (currentSelectedFile!.isEmpty) {
       prefs.setString('${challenge.title}.${challenge.files[0].name}', value);
     } else {
-      prefs.setString('${challenge.title}.${name.split('.')[0]}', value);
+      prefs.setString(
+          '${challenge.title}.${currentSelectedFile!.split('.')[0]}', value);
     }
   }
 
@@ -165,14 +165,16 @@ class ChallengeModel extends BaseViewModel {
   // return an empty string. This prevents the user from losing their work when
   // switching between panels e.g, the preview.
 
-  Future<String> getTextFromCache(Challenge challenge, String name) async {
+  Future<String> getTextFromCache(Challenge challenge) async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
 
-    if (name.isEmpty) {
+    if (currentSelectedFile!.isEmpty) {
       return prefs.getString('${challenge.title}.${challenge.files[0].name}') ??
           '';
     } else {
-      return prefs.getString('${challenge.title}.${name.split('.')[0]}') ?? '';
+      return prefs.getString(
+              '${challenge.title}.${currentSelectedFile!.split('.')[0]}') ??
+          '';
     }
   }
 
@@ -187,7 +189,7 @@ class ChallengeModel extends BaseViewModel {
   // This prevents the user from requesting the challenge more than once
   // when swichting between preview and the challenge.
 
-  Future<Challenge> initChallenge(String url, String name) async {
+  Future<Challenge> initChallenge(String url) async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     http.Response res = await http.get(Uri.parse(url));
 
@@ -270,7 +272,7 @@ class ChallengeModel extends BaseViewModel {
   }
 
   ChallengeFile currentFile(Challenge challenge) {
-    if (currentSelectedFile != null) {
+    if (currentSelectedFile!.isNotEmpty) {
       ChallengeFile file = challenge.files.firstWhere(
           (file) => file.name == currentSelectedFile!.split('.')[0]);
 

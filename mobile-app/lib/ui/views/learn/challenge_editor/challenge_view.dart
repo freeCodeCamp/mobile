@@ -1,6 +1,7 @@
 // ignore_for_file: unused_local_variable
 
 import 'dart:convert';
+import 'dart:developer';
 
 import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
@@ -58,6 +59,13 @@ class ChallengeView extends StatelessWidget {
                             model.currentFile(challenge).contents,
                         parentDirectory: ''),
                   );
+
+                  editor.onTextChange.stream.listen((text) {
+                    log('text changed');
+                    model.saveTextInCache(text, challenge);
+                    model.setEditorText = text;
+                    model.setCompletedChallenge = false;
+                  });
 
                   EditorViewController controller = EditorViewController(
                     language: Syntax.HTML,
@@ -210,8 +218,9 @@ class ChallengeView extends StatelessWidget {
         height: 0,
       ),
       iconEnabledColor: !model.showPreview ? Colors.blue : Colors.white,
-      value: model.currentSelectedFile ??
-          '${challenge.files[0].name}.${challenge.files[0].ext.name}',
+      value: model.currentSelectedFile!.isNotEmpty
+          ? model.currentSelectedFile
+          : '${challenge.files[0].name}.${challenge.files[0].ext.name}',
       items: challenge.files
           .map((file) => '${file.name}.${file.ext.name}')
           .map<DropdownMenuItem<String>>((String value) {
@@ -231,8 +240,8 @@ class ChallengeView extends StatelessWidget {
         );
       }).toList(),
       onChanged: (String? fileName) async {
-        editor.textStream.sink
-            .add(model.editorText ?? model.currentFile(challenge).contents);
+        model.setCurrentSelectedFile = fileName ?? 'error_select_first';
+        editor.fileTextStream.sink.add(await model.getTextFromCache(challenge));
       },
     );
   }
