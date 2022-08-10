@@ -34,9 +34,7 @@ dependencies:
       url: https://github.com/Sembauke/flutter_syntax_view_fcc
       ref: master
   flutter_code_editor:
-    git:
-      url: https://github.com/freeCodeCamp/PhoneIDE
-      ref: main
+    path: ../../PhoneIDE
   jiffy: ^5.0.0
   share: ^2.0.4
   flutter_svg: ^0.23.0+1

@@ -387,11 +387,9 @@ packages:
   flutter_code_editor:
     dependency: "direct main"
     description:
-      path: "."
-      ref: main
-      resolved-ref: d75cb4746bd5fb96096cd1c49e67a8c37de03410
-      url: "https://github.com/freeCodeCamp/PhoneIDE"
-    source: git
+      path: "../../PhoneIDE"
+      relative: true
+    source: path
     version: "1.0.0+1"
   flutter_dotenv:
     dependency: "direct main"

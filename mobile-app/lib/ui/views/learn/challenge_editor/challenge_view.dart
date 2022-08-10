@@ -1,10 +1,12 @@
+// ignore_for_file: unused_local_variable
+
 import 'dart:convert';
-import 'dart:developer';
 
 import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
 import 'package:flutter_code_editor/controller/editor_view_controller.dart';
 import 'package:flutter_code_editor/controller/language_controller/syntax/index.dart';
+import 'package:flutter_code_editor/editor/editor.dart';
 import 'package:flutter_code_editor/models/editor_options.dart';
 import 'package:flutter_code_editor/models/file_model.dart';
 import 'package:freecodecamp/enums/panel_type.dart';
@@ -49,14 +51,9 @@ class ChallengeView extends StatelessWidget {
 
                   int maxChallenges = block.challenges.length;
 
-                  EditorViewController controller = EditorViewController(
+                  Editor editor = Editor(
                     language: Syntax.HTML,
-                    options: const EditorOptions(
-                        useFileExplorer: false,
-                        canCloseFiles: false,
-                        showAppBar: false,
-                        showTabBar: false),
-                    file: FileIDE(
+                    openedFile: FileIDE(
                         fileExplorer: null,
                         fileName:
                             model.currentFile(challenge, challengeName).name,
@@ -68,11 +65,15 @@ class ChallengeView extends StatelessWidget {
                         parentDirectory: ''),
                   );
 
-                  controller.editorTextStream.stream.listen((text) {
-                    model.saveTextInCache(text, challenge, challengeName ?? '');
-                    model.setEditorText = text;
-                    model.setCompletedChallenge = false;
-                  });
+                  EditorViewController controller = EditorViewController(
+                    language: Syntax.HTML,
+                    options: const EditorOptions(
+                        useFileExplorer: false,
+                        canCloseFiles: false,
+                        showAppBar: false,
+                        showTabBar: false),
+                    editor: editor,
+                  );
 
                   return Scaffold(
                       appBar: !model.hideAppBar
@@ -89,7 +90,7 @@ class ChallengeView extends StatelessWidget {
                                                       : Colors.transparent,
                                                   width: 4))),
                                       child: customDropdown(
-                                          challenge, model, context)),
+                                          challenge, model, editor)),
                                 ),
                                 Expanded(
                                   child: Container(
@@ -124,8 +125,7 @@ class ChallengeView extends StatelessWidget {
                       bottomNavigationBar: Padding(
                           padding: EdgeInsets.only(
                               bottom: MediaQuery.of(context).viewInsets.bottom),
-                          child:
-                              bottomBar(model, challenge, context, controller)),
+                          child: bottomBar(model, challenge, context)),
                       body: !model.showPreview
                           ? Column(
                               children: [
@@ -143,7 +143,7 @@ class ChallengeView extends StatelessWidget {
                                             challengesCompleted,
                                       )
                                     : Container(),
-                                editor(controller, model)
+                                Expanded(child: editor)
                               ],
                             )
                           : Column(
@@ -198,6 +198,7 @@ class ChallengeView extends StatelessWidget {
                                 canCloseFiles: false,
                                 showAppBar: false,
                                 showTabBar: false),
+                            editor: Editor(language: Syntax.HTML),
                           ),
                         ),
                       ],
@@ -207,7 +208,7 @@ class ChallengeView extends StatelessWidget {
   }
 
   Widget customDropdown(
-      Challenge challenge, ChallengeModel model, BuildContext context) {
+      Challenge challenge, ChallengeModel model, Editor editor) {
     return DropdownButton(
       dropdownColor: const Color(0xFF0a0a23),
       isExpanded: true,
@@ -236,14 +237,14 @@ class ChallengeView extends StatelessWidget {
         );
       }).toList(),
       onChanged: (String? fileName) async {
-        model.pushNewChallengeView(
-            context, block, url, fileName ?? 'index.html');
+        editor.textStream.sink.add(
+            model.currentFile(challenge, fileName ?? 'index.html').contents);
       },
     );
   }
 
-  Widget bottomBar(ChallengeModel model, Challenge challenge,
-      BuildContext context, EditorViewController controller) {
+  Widget bottomBar(
+      ChallengeModel model, Challenge challenge, BuildContext context) {
     SchedulerBinding.instance.addPostFrameCallback((timeStamp) {
       if (MediaQuery.of(context).viewInsets.bottom > 0 || !model.showPanel) {
         if (model.hideAppBar) {
@@ -338,7 +339,7 @@ class ChallengeView extends StatelessWidget {
               color: const Color.fromRGBO(0x2A, 0x2A, 0x40, 1),
               child: IconButton(
                 icon: const FaIcon(FontAwesomeIcons.code),
-                onPressed: () => {model.setShowPreview = !model.showPreview},
+                onPressed: () => {},
                 splashColor: Colors.transparent,
                 highlightColor: Colors.transparent,
               ),
@@ -372,12 +373,6 @@ class ChallengeView extends StatelessWidget {
         ],
       ),
     );
-  }
-
-  Widget editor(EditorViewController controller, ChallengeModel model) {
-    log('I am in the editor');
-
-    return Expanded(child: controller);
   }
 }
 
