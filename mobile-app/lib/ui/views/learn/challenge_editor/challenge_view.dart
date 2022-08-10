@@ -346,7 +346,7 @@ class ChallengeView extends StatelessWidget {
               color: const Color.fromRGBO(0x2A, 0x2A, 0x40, 1),
               child: IconButton(
                 icon: const FaIcon(FontAwesomeIcons.code),
-                onPressed: () => {},
+                onPressed: () => {model.setShowPreview = !model.showPreview},
                 splashColor: Colors.transparent,
                 highlightColor: Colors.transparent,
               ),
