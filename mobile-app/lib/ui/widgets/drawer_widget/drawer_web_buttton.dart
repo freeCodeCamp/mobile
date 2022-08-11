@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:url_launcher/url_launcher_string.dart';
+import 'package:freecodecamp/ui/views/web_view/web_view_view.dart';
 
 class WebButton extends StatefulWidget {
   const WebButton(
@@ -25,7 +25,12 @@ class _WebButtonState extends State<WebButton> {
       child: ListTile(
         dense: true,
         onTap: () {
-          launchUrlString(widget.url);
+          Navigator.push(
+              context,
+              PageRouteBuilder(
+                  transitionDuration: Duration.zero,
+                  pageBuilder: (context, animation1, animation2) =>
+                      WebViewView(url: widget.url)));
         },
         leading: Icon(
           widget.icon,

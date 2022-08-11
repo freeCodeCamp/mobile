@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
+
 import 'package:freecodecamp/models/main/user_model.dart';
-import 'package:freecodecamp/service/test_service.dart';
+
 import 'package:freecodecamp/ui/widgets/drawer_widget/drawer_button.dart';
 import 'package:freecodecamp/ui/widgets/drawer_widget/drawer_web_buttton.dart';
 import 'package:freecodecamp/ui/widgets/drawer_widget/drawer_widget_viewmodel.dart';
@@ -63,20 +64,11 @@ class DrawerWidgetView extends StatelessWidget {
                         model.routeComponent('NEWS', context);
                       },
                     ),
-                    model.showForum
-                        ? DrawerButton(
-                            component: 'FORUM',
-                            icon: Icons.forum_outlined,
-                            route: () {
-                              model.routeComponent('FORUM', context);
-                            },
-                          )
-                        : Container(),
                     DrawerButton(
                         component: 'LEARN',
                         icon: Icons.local_fire_department_sharp,
                         route: () {
-                          model.showForum
+                          model.devmode
                               ? model.routeComponent('LEARN', context)
                               : model.snackbar();
                         }),
@@ -94,6 +86,12 @@ class DrawerWidgetView extends StatelessWidget {
                         model.routeComponent('CODERADIO', context);
                       },
                     ),
+                    buildDivider(),
+                    const WebButton(
+                      component: 'PRIVACY',
+                      icon: Icons.info_outline,
+                      url: 'https://www.freecodecamp.org/news/privacy-policy/',
+                    ),
                     const WebButton(
                       component: 'DONATE',
                       url: 'https://www.freecodecamp.org/donate/',
@@ -106,8 +104,8 @@ class DrawerWidgetView extends StatelessWidget {
                         textColor: model.loggedIn
                             ? const Color.fromARGB(255, 230, 59, 59)
                             : null,
-                        route: () async {
-                          await TestService().developmentMode()
+                        route: () {
+                          model.devmode
                               ? model.handleAuth(context)
                               : model.loginSnack();
                         })
