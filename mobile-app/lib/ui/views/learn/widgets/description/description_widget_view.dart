@@ -32,65 +32,60 @@ class DescriptionView extends StatelessWidget {
     dev.log(editorText ?? '');
     return ViewModelBuilder<DescriptionModel>.reactive(
       viewModelBuilder: () => DescriptionModel(),
-      builder: (context, model, child) => Scaffold(
-        backgroundColor: const Color(0xFF0a0a23),
-        body: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: instructions.isNotEmpty || description.isNotEmpty
-              ? [
-                  Row(
-                    children: [
-                      Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          const Text(
-                            'Instructions',
-                            style: TextStyle(
-                              fontSize: 28,
-                              fontWeight: FontWeight.bold,
-                              fontFamily: 'Inter',
-                            ),
+      builder: (context, model, child) => Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: instructions.isNotEmpty || description.isNotEmpty
+            ? [
+                Row(
+                  children: [
+                    Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        const Text(
+                          'Instructions',
+                          style: TextStyle(
+                            fontSize: 28,
+                            fontWeight: FontWeight.bold,
+                            fontFamily: 'Inter',
                           ),
-                          isMultiStepChallenge
-                              ? Text(
-                                  'Step ${splitTitle[1]} of $maxChallenges',
-                                  style: const TextStyle(
-                                    fontSize: 14,
-                                    fontFamily: 'Inter',
-                                    color: Colors.white70,
-                                  ),
-                                )
-                              : Container(),
-                        ],
+                        ),
+                        isMultiStepChallenge
+                            ? Text(
+                                'Step ${splitTitle[1]} of $maxChallenges',
+                                style: const TextStyle(
+                                  fontSize: 14,
+                                  fontFamily: 'Inter',
+                                  color: Colors.white70,
+                                ),
+                              )
+                            : Container(),
+                      ],
+                    ),
+                    Expanded(
+                      child: Container(
+                        alignment: Alignment.centerRight,
+                        child: IconButton(
+                          onPressed: () {
+                            challengeModel.setShowPanel = false;
+                          },
+                          icon: const Icon(Icons.clear_sharp),
+                          iconSize: 40,
+                        ),
                       ),
-                      Expanded(
-                        child: Container(
-                          alignment: Alignment.centerRight,
-                          child: IconButton(
-                            onPressed: () {
-                              challengeModel.setShowPanel = false;
-                            },
-                            icon: const Icon(Icons.clear_sharp),
-                            iconSize: 40,
-                          ),
-                        ),
-                      )
-                    ],
+                    )
+                  ],
+                ),
+                Expanded(
+                  child: SingleChildScrollView(
+                    child: Column(
+                      children: instructions.isNotEmpty
+                          ? HtmlHandler.htmlHandler(instructions, context)
+                          : HtmlHandler.htmlHandler(description, context),
+                    ),
                   ),
-                  Row(
-                    children: [
-                      Expanded(
-                        child: Column(
-                          children: instructions.isNotEmpty
-                              ? HtmlHandler.htmlHandler(instructions, context)
-                              : HtmlHandler.htmlHandler(description, context),
-                        ),
-                      )
-                    ],
-                  ),
-                ]
-              : [],
-        ),
+                )
+              ]
+            : [],
       ),
     );
   }
