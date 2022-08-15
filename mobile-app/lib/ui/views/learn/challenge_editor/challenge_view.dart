@@ -242,14 +242,13 @@ class ChallengeView extends StatelessWidget {
       }).toList(),
       onChanged: (String? fileName) async {
         model.setCurrentSelectedFile = fileName ?? 'error_select_first';
+        String currText = await model.getTextFromCache(challenge);
         editor.fileTextStream.sink.add(
-            await model.getTextFromCache(challenge) == ''
-                ? model.currentFile(challenge).contents
-                : await model.getTextFromCache(challenge));
+            currText == '' ? model.currentFile(challenge).contents : currText);
+        model.setEditorText = currText;
       },
     );
   }
-
 
   Widget bottomBar(
       ChallengeModel model, Challenge challenge, BuildContext context) {
