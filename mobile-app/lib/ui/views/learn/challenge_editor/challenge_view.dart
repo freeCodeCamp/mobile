@@ -1,5 +1,3 @@
-// ignore_for_file: unused_local_variable
-
 import 'dart:convert';
 import 'dart:developer';
 
@@ -67,6 +65,7 @@ class ChallengeView extends StatelessWidget {
                     model.setCompletedChallenge = false;
                   });
 
+                  // ignore: unused_local_variable
                   EditorViewController controller = EditorViewController(
                     language: Syntax.HTML,
                     options: const EditorOptions(
