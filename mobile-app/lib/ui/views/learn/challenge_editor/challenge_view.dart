@@ -297,7 +297,7 @@ class ChallengeView extends StatelessWidget {
                       model.setHint = test.instruction;
                       model.setShowPanel = true;
                     } else {
-                      model.setPanelType = PanelType.hint;
+                      model.setPanelType = PanelType.pass;
                       model.setCompletedChallenge = true;
                       model.setShowPanel = true;
                     }
