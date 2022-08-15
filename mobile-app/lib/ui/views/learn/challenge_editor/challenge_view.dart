@@ -246,6 +246,7 @@ class ChallengeView extends StatelessWidget {
         editor.fileTextStream.sink.add(
             currText == '' ? model.currentFile(challenge).contents : currText);
         model.setEditorText = currText;
+        model.setShowPreview = false;
       },
     );
   }
