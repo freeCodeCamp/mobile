@@ -33,7 +33,9 @@ class CustomTabBar extends StatelessWidget {
             editor.fileTextStream.sink.add(currText == ''
                 ? model.currentFile(challenge).contents
                 : currText);
-            model.setEditorText = currText;
+            model.setEditorText = currText == ''
+                ? model.currentFile(challenge).contents
+                : currText;
             model.setShowPreview = false;
           },
           child: Text(
