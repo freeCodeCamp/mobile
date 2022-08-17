@@ -66,13 +66,13 @@ class ChallengeView extends StatelessWidget {
                     bool keyboardPresent =
                         MediaQuery.of(context).viewInsets.bottom > 0;
 
-                    if (keyboardPresent && !model.showPanel) {
-                      if (!model.hideAppBar && model.manuallyHiddenAppBar) {
-                        model.setHideAppBar = true;
-                      }
-                    } else if (!keyboardPresent && !model.showPanel) {
+                    if (!keyboardPresent && !model.showPanel) {
                       if (model.hideAppBar) {
                         model.setHideAppBar = false;
+                      }
+                    } else if (model.showPanel) {
+                      if (!model.hideAppBar) {
+                        model.setHideAppBar = true;
                       }
                     }
                   });
