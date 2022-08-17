@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:freecodecamp/service/authentication_service.dart';
 import 'package:freecodecamp/app/app.locator.dart';
+import 'package:freecodecamp/service/test_service.dart';
 import 'package:freecodecamp/ui/views/code_radio/code_radio_view.dart';
 //import 'package:freecodecamp/ui/views/learn/learn_view.dart';
 import 'package:freecodecamp/ui/views/forum/forum-categories/forum_category_view.dart';
@@ -13,14 +14,6 @@ import 'package:stacked/stacked.dart';
 import 'package:stacked_services/stacked_services.dart';
 
 class DrawerWidgtetViewModel extends BaseViewModel {
-  // a temp variable for showing the forum button when dev mode is set to false
-  // this is because the forum has two different urls, one for prod
-  // and one for testing purposes. When the development value is set to false
-  // the normal fcc forum is not accessible
-  final bool _showForum = false;
-
-  bool get showForum => _showForum;
-
   final AuthenticationService auth = locator<AuthenticationService>();
 
   final SnackbarService snack = locator<SnackbarService>();
@@ -28,13 +21,26 @@ class DrawerWidgtetViewModel extends BaseViewModel {
   bool _loggedIn = false;
   bool get loggedIn => _loggedIn;
 
+  bool _devMode = false;
+  bool get devmode => _devMode;
+
   void initState() async {
     _loggedIn = AuthenticationService.staticIsloggedIn;
+    await devMode();
     notifyListeners();
     auth.isLoggedIn.listen((event) {
       _loggedIn = event;
       notifyListeners();
     });
+  }
+
+  static final _testService = locator<TestService>();
+
+  devMode() async {
+    if (await _testService.developmentMode()) {
+      _devMode = true;
+      notifyListeners();
+    }
   }
 
   void snackbar() {
