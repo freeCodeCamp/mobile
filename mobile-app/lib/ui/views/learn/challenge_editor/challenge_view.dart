@@ -80,53 +80,21 @@ class ChallengeView extends StatelessWidget {
                       appBar: !model.hideAppBar
                           ? AppBar(
                               automaticallyImplyLeading: false,
+                              title: challenge.files.length == 1
+                                  ? const Text('Editor')
+                                  : null,
                               actions: [
-                                Expanded(
-                                  child: Container(
-                                      decoration: BoxDecoration(
-                                          border: Border(
-                                              bottom: BorderSide(
-                                                  color: !model.showPreview
-                                                      ? Colors.blue
-                                                      : Colors.transparent,
-                                                  width: 4))),
-                                      child: customDropdown(
-                                          challenge, model, editor)),
-                                ),
-                                Expanded(
-                                  child: Container(
-                                    decoration: BoxDecoration(
-                                        border: Border(
-                                            bottom: BorderSide(
-                                                color: model.showPreview
-                                                    ? Colors.blue
-                                                    : Colors.transparent,
-                                                width: 4))),
-                                    child: TextButton(
-                                      child: Text(
-                                        'preview',
-                                        style: TextStyle(
-                                            color: model.showPreview
-                                                ? Colors.blue
-                                                : Colors.white,
-                                            fontWeight: model.showPreview
-                                                ? FontWeight.bold
-                                                : null),
-                                      ),
-                                      onPressed: () {
-                                        model.setShowPreview =
-                                            !model.showPreview;
-                                      },
-                                    ),
-                                  ),
-                                )
+                                if (challenge.files.length > 1)
+                                  for (ChallengeFile file in challenge.files)
+                                    customTabBar(file, model, challenge, editor)
                               ],
                             )
                           : null,
                       bottomNavigationBar: Padding(
                           padding: EdgeInsets.only(
                               bottom: MediaQuery.of(context).viewInsets.bottom),
-                          child: bottomBar(model, challenge, context)),
+                          child:
+                              bottomBar(model, challenge, context, controller)),
                       body: !model.showPreview
                           ? Column(
                               children: [
@@ -209,49 +177,40 @@ class ChallengeView extends StatelessWidget {
             ));
   }
 
-  Widget customDropdown(
-      Challenge challenge, ChallengeModel model, Editor editor) {
-    return DropdownButton(
-      dropdownColor: const Color(0xFF0a0a23),
-      isExpanded: true,
-      underline: Container(
-        height: 0,
-      ),
-      iconEnabledColor: !model.showPreview ? Colors.blue : Colors.white,
-      value: model.currentSelectedFile!.isNotEmpty
-          ? model.currentSelectedFile
-          : '${challenge.files[0].name}.${challenge.files[0].ext.name}',
-      items: challenge.files
-          .map((file) => '${file.name}.${file.ext.name}')
-          .map<DropdownMenuItem<String>>((String value) {
-        return DropdownMenuItem<String>(
-          value: value,
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              Text(
-                value,
-                style: TextStyle(
-                    color: !model.showPreview ? Colors.blue : Colors.white,
-                    fontWeight: !model.showPreview ? FontWeight.bold : null),
-              ),
-            ],
-          ),
-        );
-      }).toList(),
-      onChanged: (String? fileName) async {
-        model.setCurrentSelectedFile = fileName ?? 'error_select_first';
-        String currText = await model.getTextFromCache(challenge);
-        editor.fileTextStream.sink.add(
-            currText == '' ? model.currentFile(challenge).contents : currText);
-        model.setEditorText = currText;
-        model.setShowPreview = false;
-      },
-    );
+  Widget customTabBar(ChallengeFile file, ChallengeModel model,
+      Challenge challenge, Editor editor) {
+    return Expanded(
+        child: Container(
+      decoration: BoxDecoration(
+          border: Border(
+              bottom: model.currentFile(challenge).name == file.name
+                  ? const BorderSide(width: 4, color: Colors.blue)
+                  : const BorderSide())),
+      child: ElevatedButton(
+          onPressed: () async {
+            model.setCurrentSelectedFile = '${file.name}.${file.ext.name}';
+            String currText = await model.getTextFromCache(challenge);
+            editor.fileTextStream.sink.add(currText == ''
+                ? model.currentFile(challenge).contents
+                : currText);
+            model.setEditorText = currText;
+            model.setShowPreview = false;
+          },
+          child: Text(
+            '${file.name}.${file.ext.name}',
+            style: TextStyle(
+                color: model.currentFile(challenge).name == file.name
+                    ? Colors.blue
+                    : Colors.white,
+                fontWeight: model.currentFile(challenge).name == file.name
+                    ? FontWeight.bold
+                    : null),
+          )),
+    ));
   }
 
-  Widget bottomBar(
-      ChallengeModel model, Challenge challenge, BuildContext context) {
+  Widget bottomBar(ChallengeModel model, Challenge challenge,
+      BuildContext context, EditorViewController controller) {
     SchedulerBinding.instance.addPostFrameCallback((timeStamp) {
       bool keyboardPresent = MediaQuery.of(context).viewInsets.bottom > 0;
 
@@ -265,7 +224,6 @@ class ChallengeView extends StatelessWidget {
         }
       }
     });
-
     return BottomAppBar(
       color: const Color(0xFF0a0a23),
       child: Row(
@@ -287,8 +245,8 @@ class ChallengeView extends StatelessWidget {
                   name: 'Flutter',
                   onMessageReceived: (JavascriptMessage message) async {
                     model.runner.setTestDocument = message.message;
-                    List<ChallengeTest> tests = await model.runner
-                        .testRunner((await model.challenge)!.tests);
+                    List<ChallengeTest> tests =
+                        await model.runner.testRunner(challenge.tests);
 
                     ChallengeTest? test = model.returnFirstFailedTest(tests);
 
@@ -342,39 +300,21 @@ class ChallengeView extends StatelessWidget {
               highlightColor: Colors.transparent,
             ),
           ),
-          if (!model.showPreview &&
-              MediaQuery.of(context).viewInsets.bottom > 0)
-            Container(
-              margin: const EdgeInsets.all(8),
-              color: model.hideAppBar
-                  ? const Color.fromRGBO(0x2A, 0x2A, 0x40, 1)
-                  : Colors.white,
-              child: IconButton(
-                icon: FaIcon(
-                  FontAwesomeIcons.bars,
-                  color: !model.hideAppBar
+          Container(
+            margin: const EdgeInsets.all(8),
+            color: !model.showPreview
+                ? const Color.fromRGBO(0x2A, 0x2A, 0x40, 1)
+                : Colors.white,
+            child: IconButton(
+              icon: Icon(Icons.remove_red_eye_outlined,
+                  color: model.showPreview
                       ? const Color.fromRGBO(0x2A, 0x2A, 0x40, 1)
-                      : Colors.white,
-                ),
-                onPressed: () => {
-                  model.setHideAppBar = !model.hideAppBar,
-                  model.setManuallyHiddenAppBar = !model.manuallyHiddenAppBar
-                },
-                splashColor: Colors.transparent,
-                highlightColor: Colors.transparent,
-              ),
+                      : Colors.white),
+              onPressed: () => {model.setShowPreview = !model.showPreview},
+              splashColor: Colors.transparent,
+              highlightColor: Colors.transparent,
             ),
-          if (model.showPreview)
-            Container(
-              margin: const EdgeInsets.all(8),
-              color: const Color.fromRGBO(0x2A, 0x2A, 0x40, 1),
-              child: IconButton(
-                icon: const FaIcon(FontAwesomeIcons.code),
-                onPressed: () => {model.setShowPreview = !model.showPreview},
-                splashColor: Colors.transparent,
-                highlightColor: Colors.transparent,
-              ),
-            ),
+          ),
           Expanded(
             child: Row(
               mainAxisAlignment: MainAxisAlignment.end,
