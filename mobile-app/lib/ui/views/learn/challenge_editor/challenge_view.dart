@@ -59,13 +59,11 @@ class ChallengeView extends StatelessWidget {
                   );
 
                   editor.onTextChange.stream.listen((text) {
-                    log('text changed');
                     model.saveTextInCache(text, challenge);
                     model.setEditorText = text;
                     model.setCompletedChallenge = false;
                   });
 
-                  // ignore: unused_local_variable
                   EditorViewController controller = EditorViewController(
                     language: Syntax.HTML,
                     options: const EditorOptions(
@@ -76,6 +74,8 @@ class ChallengeView extends StatelessWidget {
                     editor: editor,
                   );
 
+                  log('new instance of editor');
+                  log(model.currentSelectedFile.toString());
                   return Scaffold(
                       appBar: !model.hideAppBar
                           ? AppBar(
@@ -93,8 +93,8 @@ class ChallengeView extends StatelessWidget {
                       bottomNavigationBar: Padding(
                           padding: EdgeInsets.only(
                               bottom: MediaQuery.of(context).viewInsets.bottom),
-                          child:
-                              bottomBar(model, challenge, context, controller)),
+                          child: bottomBar(
+                              model, challenge, context, controller, editor)),
                       body: !model.showPreview
                           ? Column(
                               children: [
@@ -210,7 +210,7 @@ class ChallengeView extends StatelessWidget {
   }
 
   Widget bottomBar(ChallengeModel model, Challenge challenge,
-      BuildContext context, EditorViewController controller) {
+      BuildContext context, EditorViewController controller, Editor editor) {
     SchedulerBinding.instance.addPostFrameCallback((timeStamp) {
       bool keyboardPresent = MediaQuery.of(context).viewInsets.bottom > 0;
 
@@ -310,7 +310,16 @@ class ChallengeView extends StatelessWidget {
                   color: model.showPreview
                       ? const Color.fromRGBO(0x2A, 0x2A, 0x40, 1)
                       : Colors.white),
-              onPressed: () => {model.setShowPreview = !model.showPreview},
+              onPressed: () async {
+                String currText = await model.getTextFromCache(challenge);
+                editor.fileTextStream.sink.add(currText == ''
+                    ? model.currentFile(challenge).contents
+                    : currText);
+                model.setEditorText = currText == ''
+                    ? model.currentFile(challenge).contents
+                    : currText;
+                model.setShowPreview = !model.showPreview;
+              },
               splashColor: Colors.transparent,
               highlightColor: Colors.transparent,
             ),
