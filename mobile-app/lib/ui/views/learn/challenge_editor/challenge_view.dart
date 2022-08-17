@@ -95,14 +95,47 @@ class ChallengeView extends StatelessWidget {
                                   ? const Text('Editor')
                                   : null,
                               actions: [
-                                if (challenge.files.length > 1)
-                                  for (ChallengeFile file in challenge.files)
-                                    CustomTabBar(
-                                      challenge: challenge,
-                                      file: file,
-                                      editor: editor,
-                                      model: model,
-                                    )
+                                if (model.showPreview)
+                                  Expanded(
+                                      child: Container(
+                                    decoration: model.showPreview
+                                        ? const BoxDecoration(
+                                            border: Border(
+                                                bottom: BorderSide(
+                                                    width: 4,
+                                                    color: Colors.blue)))
+                                        : null,
+                                    child: Container(
+                                      decoration: model.showConsole
+                                          ? const BoxDecoration(
+                                              border: Border(
+                                                  bottom: BorderSide(
+                                                      width: 4,
+                                                      color: Colors.blue)))
+                                          : null,
+                                      child: ElevatedButton(
+                                        child: const Text('Preview'),
+                                        onPressed: () {},
+                                      ),
+                                    ),
+                                  )),
+                                if (model.showPreview)
+                                  Expanded(
+                                      child: ElevatedButton(
+                                    child: const Text('Console'),
+                                    onPressed: () {
+                                      model.consoleSnackbar();
+                                    },
+                                  )),
+                                if (!model.showPreview)
+                                  if (challenge.files.length > 1)
+                                    for (ChallengeFile file in challenge.files)
+                                      CustomTabBar(
+                                        challenge: challenge,
+                                        file: file,
+                                        editor: editor,
+                                        model: model,
+                                      )
                               ],
                             )
                           : null,

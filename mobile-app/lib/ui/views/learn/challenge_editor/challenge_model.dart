@@ -29,6 +29,9 @@ class ChallengeModel extends BaseViewModel {
   bool _showPreview = false;
   bool get showPreview => _showPreview;
 
+  bool _showConsole = false;
+  bool get showConsole => _showConsole;
+
   bool _hideAppBar = true;
   bool get hideAppBar => _hideAppBar;
 
@@ -52,6 +55,7 @@ class ChallengeModel extends BaseViewModel {
 
   TestRunner runner = TestRunner();
 
+  SnackbarService snackbar = locator<SnackbarService>();
   Future<Challenge>? _challenge;
   Future<Challenge>? get challenge => _challenge;
 
@@ -90,6 +94,11 @@ class ChallengeModel extends BaseViewModel {
 
   set setShowPreview(bool value) {
     _showPreview = value;
+    notifyListeners();
+  }
+
+  set setShowConsole(bool value) {
+    _showConsole = value;
     notifyListeners();
   }
 
@@ -159,6 +168,14 @@ class ChallengeModel extends BaseViewModel {
       prefs.setString(
           '${challenge.title}.${currentSelectedFile!.split('.')[0]}', value);
     }
+  }
+
+  // show a message that the console is not yet available
+  void consoleSnackbar() {
+    snackbar.showSnackbar(
+      title: 'Not yet available',
+      message: '',
+    );
   }
 
   // Get the content of the editor from the cache if it exists. If it doesn't,
