@@ -1,13 +1,13 @@
 import 'dart:convert';
 
 import 'package:flutter/cupertino.dart';
+import 'package:flutter_code_editor/editor/editor.dart';
 import 'package:freecodecamp/app/app.locator.dart';
 import 'package:freecodecamp/enums/challenge_test_state_type.dart';
 import 'package:freecodecamp/enums/dialog_type.dart';
 import 'package:freecodecamp/enums/panel_type.dart';
 import 'package:freecodecamp/models/learn/challenge_model.dart';
 import 'package:freecodecamp/models/learn/curriculum_model.dart';
-import 'package:freecodecamp/ui/views/learn/challenge_editor/challenge_view.dart';
 import 'package:freecodecamp/ui/views/learn/test_runner.dart';
 import 'package:freecodecamp/ui/widgets/setup_dialog_ui.dart';
 import 'package:html/dom.dart' as dom;
@@ -22,6 +22,9 @@ import 'package:webview_flutter/webview_flutter.dart';
 class ChallengeModel extends BaseViewModel {
   String? _editorText;
   String? get editorText => _editorText;
+
+  String? _currentSelectedFile = '';
+  String? get currentSelectedFile => _currentSelectedFile;
 
   bool _showPreview = false;
   bool get showPreview => _showPreview;
@@ -62,6 +65,11 @@ class ChallengeModel extends BaseViewModel {
   int get challengesCompleted => _challengesCompleted;
 
   final _dialogService = locator<DialogService>();
+
+  set setCurrentSelectedFile(String value) {
+    _currentSelectedFile = value;
+    notifyListeners();
+  }
 
   set setTestController(WebViewController controller) {
     _testController = controller;
@@ -128,15 +136,14 @@ class ChallengeModel extends BaseViewModel {
     notifyListeners();
   }
 
-  void init(
-      String url, String? name, Block block, int challengesCompleted) async {
+  void init(String url, Block block, int challengesCompleted) async {
     setupDialogUi();
 
-    setChallenge = initChallenge(url, name ?? '');
+    setChallenge = initChallenge(url);
     Challenge challenge = await _challenge!;
 
     if (editorText == null) {
-      String text = await getTextFromCache(challenge, name ?? '');
+      String text = await getTextFromCache(challenge);
 
       if (text != '') {
         setEditorText = text;
@@ -151,13 +158,14 @@ class ChallengeModel extends BaseViewModel {
   // the user from losing their work when switching between panels e.g, the preview.
   // The cache is disposed when the user switches to a new challenge.
 
-  void saveTextInCache(String value, Challenge challenge, String name) async {
+  void saveTextInCache(String value, Challenge challenge) async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
 
-    if (name.isEmpty) {
+    if (currentSelectedFile!.isEmpty) {
       prefs.setString('${challenge.title}.${challenge.files[0].name}', value);
     } else {
-      prefs.setString('${challenge.title}.${name.split('.')[0]}', value);
+      prefs.setString(
+          '${challenge.title}.${currentSelectedFile!.split('.')[0]}', value);
     }
   }
 
@@ -165,14 +173,16 @@ class ChallengeModel extends BaseViewModel {
   // return an empty string. This prevents the user from losing their work when
   // switching between panels e.g, the preview.
 
-  Future<String> getTextFromCache(Challenge challenge, String name) async {
+  Future<String> getTextFromCache(Challenge challenge) async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
 
-    if (name.isEmpty) {
+    if (currentSelectedFile!.isEmpty) {
       return prefs.getString('${challenge.title}.${challenge.files[0].name}') ??
           '';
     } else {
-      return prefs.getString('${challenge.title}.${name.split('.')[0]}') ?? '';
+      return prefs.getString(
+              '${challenge.title}.${currentSelectedFile!.split('.')[0]}') ??
+          '';
     }
   }
 
@@ -187,13 +197,9 @@ class ChallengeModel extends BaseViewModel {
   // This prevents the user from requesting the challenge more than once
   // when swichting between preview and the challenge.
 
-  Future<Challenge> initChallenge(String url, String name) async {
+  Future<Challenge> initChallenge(String url) async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     http.Response res = await http.get(Uri.parse(url));
-
-    if (name.isNotEmpty && showPanel && panelType == PanelType.instruction) {
-      setShowPanel = false;
-    }
 
     if (prefs.getString(url) == null) {
       if (res.statusCode == 200) {
@@ -258,26 +264,10 @@ class ChallengeModel extends BaseViewModel {
     }
   }
 
-  void pushNewChallengeView(
-      BuildContext context, Block block, String url, String name) {
-    Navigator.pushReplacement(
-      context,
-      PageRouteBuilder(
-        transitionDuration: Duration.zero,
-        pageBuilder: (context, animation1, animatiom2) => ChallengeView(
-          block: block,
-          challengeName: name,
-          url: url,
-          challengesCompleted: _challengesCompleted,
-        ),
-      ),
-    );
-  }
-
-  ChallengeFile currentFile(Challenge challenge, String? name) {
-    if (name != null) {
-      ChallengeFile file =
-          challenge.files.firstWhere((file) => file.name == name.split('.')[0]);
+  ChallengeFile currentFile(Challenge challenge) {
+    if (currentSelectedFile!.isNotEmpty) {
+      ChallengeFile file = challenge.files.firstWhere(
+          (file) => file.name == currentSelectedFile!.split('.')[0]);
 
       return file;
     }
@@ -285,7 +275,7 @@ class ChallengeModel extends BaseViewModel {
     return challenge.files[0];
   }
 
-  void resetCode(BuildContext context) async {
+  void resetCode(Editor editor) async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
 
     DialogResponse? res = await _dialogService.showCustomDialog(
@@ -299,18 +289,10 @@ class ChallengeModel extends BaseViewModel {
       for (ChallengeFile file in currChallenge!.files) {
         prefs.remove('${currChallenge.title}.${file.name}');
       }
-      Navigator.pushReplacement(
-        context,
-        PageRouteBuilder(
-          transitionDuration: Duration.zero,
-          pageBuilder: (context, animation1, animatiom2) => ChallengeView(
-            block: block!,
-            url:
-                'https://freecodecamp.dev/page-data${currChallenge.slug}/page-data.json',
-            challengesCompleted: _challengesCompleted,
-          ),
-        ),
-      );
+      setEditorText = '';
+      setCurrentSelectedFile =
+          '${currChallenge.files[0].name}.${currChallenge.files[0].ext.name}';
+      editor.fileTextStream.add(currentFile(currChallenge).contents);
     }
   }
 }

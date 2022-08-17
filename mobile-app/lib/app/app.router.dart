@@ -34,6 +34,7 @@ import '../ui/views/podcast/podcast-list/podcast_list_view.dart';
 import '../ui/views/profile/profile_view.dart';
 import '../ui/views/settings/forumSettings/forum_settings_view.dart';
 import '../ui/views/settings/podcastSettings/podcast_settings_view.dart';
+import '../ui/views/web_view/web_view_view.dart';
 
 class Routes {
   static const String homeView = '/';
@@ -56,6 +57,7 @@ class Routes {
   static const String superBlockView = '/super-block-view';
   static const String challengeView = '/challenge-view';
   static const String profileView = '/profile-view';
+  static const String webViewView = '/web-view-view';
   static const all = <String>{
     homeView,
     podcastListView,
@@ -77,6 +79,7 @@ class Routes {
     superBlockView,
     challengeView,
     profileView,
+    webViewView,
   };
 }
 
@@ -104,6 +107,7 @@ class StackedRouter extends RouterBase {
     RouteDef(Routes.superBlockView, page: SuperBlockView),
     RouteDef(Routes.challengeView, page: ChallengeView),
     RouteDef(Routes.profileView, page: ProfileView),
+    RouteDef(Routes.webViewView, page: WebViewView),
   ];
   @override
   Map<Type, StackedRouteFactory> get pagesMap => _pagesMap;
@@ -284,7 +288,6 @@ class StackedRouter extends RouterBase {
           url: args.url,
           block: args.block,
           challengesCompleted: args.challengesCompleted,
-          challengeName: args.challengeName,
         ),
         settings: data,
       );
@@ -292,6 +295,16 @@ class StackedRouter extends RouterBase {
     ProfileView: (data) {
       return MaterialPageRoute<dynamic>(
         builder: (context) => const ProfileView(),
+        settings: data,
+      );
+    },
+    WebViewView: (data) {
+      var args = data.getArgs<WebViewViewArguments>(nullOk: false);
+      return MaterialPageRoute<dynamic>(
+        builder: (context) => WebViewView(
+          key: args.key,
+          url: args.url,
+        ),
         settings: data,
       );
     },
@@ -411,13 +424,18 @@ class ChallengeViewArguments {
   final String url;
   final Block block;
   final int challengesCompleted;
-  final String? challengeName;
   ChallengeViewArguments(
       {this.key,
       required this.url,
       required this.block,
-      required this.challengesCompleted,
-      this.challengeName});
+      required this.challengesCompleted});
+}
+
+/// WebViewView arguments holder class
+class WebViewViewArguments {
+  final Key? key;
+  final String url;
+  WebViewViewArguments({this.key, required this.url});
 }
 
 /// ************************************************************************
@@ -774,7 +792,6 @@ extension NavigatorStateExtension on NavigationService {
     required String url,
     required Block block,
     required int challengesCompleted,
-    String? challengeName,
     int? routerId,
     bool preventDuplicates = true,
     Map<String, String>? parameters,
@@ -787,8 +804,7 @@ extension NavigatorStateExtension on NavigationService {
           key: key,
           url: url,
           block: block,
-          challengesCompleted: challengesCompleted,
-          challengeName: challengeName),
+          challengesCompleted: challengesCompleted),
       id: routerId,
       preventDuplicates: preventDuplicates,
       parameters: parameters,
@@ -805,6 +821,25 @@ extension NavigatorStateExtension on NavigationService {
   }) async {
     return navigateTo(
       Routes.profileView,
+      id: routerId,
+      preventDuplicates: preventDuplicates,
+      parameters: parameters,
+      transition: transition,
+    );
+  }
+
+  Future<dynamic> navigateToWebViewView({
+    Key? key,
+    required String url,
+    int? routerId,
+    bool preventDuplicates = true,
+    Map<String, String>? parameters,
+    Widget Function(BuildContext, Animation<double>, Animation<double>, Widget)?
+        transition,
+  }) async {
+    return navigateTo(
+      Routes.webViewView,
+      arguments: WebViewViewArguments(key: key, url: url),
       id: routerId,
       preventDuplicates: preventDuplicates,
       parameters: parameters,
