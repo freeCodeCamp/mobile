@@ -5,6 +5,7 @@ import 'package:flutter_code_editor/editor/editor.dart';
 import 'package:freecodecamp/app/app.locator.dart';
 import 'package:freecodecamp/enums/challenge_test_state_type.dart';
 import 'package:freecodecamp/enums/dialog_type.dart';
+import 'package:freecodecamp/enums/ext_type.dart';
 import 'package:freecodecamp/enums/panel_type.dart';
 import 'package:freecodecamp/models/learn/challenge_model.dart';
 import 'package:freecodecamp/models/learn/curriculum_model.dart';
@@ -232,8 +233,34 @@ class ChallengeModel extends BaseViewModel {
   // is then displayed in the preview panel. The preview document does not modify
   // the original challenge document.
 
-  String parsePreviewDocument(String docString) {
-    dom.Document document = parse(docString);
+  Future<String> parsePreviewDocument(String doc) async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+
+    Challenge? currChallenge = await challenge;
+
+    if (currChallenge == null) return parse(doc).outerHtml;
+
+    List<ChallengeFile> cssFiles = currChallenge.files
+        .where((ChallengeFile file) => file.ext == Ext.css)
+        .toList();
+
+    ChallengeFile currentFile = currChallenge.files.firstWhere(
+        (ChallengeFile file) =>
+            file.name == currentSelectedFile!.split('.')[0]);
+
+    if (cssFiles.isNotEmpty && currentFile.ext == Ext.html) {
+      String? text =
+          prefs.getString('${currChallenge.title}.${currentFile.name}');
+
+      if (text != null) {
+        List<ChallengeFile> linkedCssFiles =
+            checkForLinks(parse(text), cssFiles);
+
+        if (linkedCssFiles.isNotEmpty) {}
+      }
+    }
+
+    dom.Document document = parse('');
 
     String viewPort = '''<meta content="width=device-width,
          initial-scale=1.0, maximum-scale=1.0,
@@ -246,6 +273,43 @@ class ChallengeModel extends BaseViewModel {
     document.getElementsByTagName('HEAD')[0].append(meta);
 
     return document.outerHtml;
+  }
+
+  List<ChallengeFile> checkForLinks(
+    dom.Document document,
+    List<ChallengeFile> cssFiles,
+  ) {
+    List<dom.Node> links = document.getElementsByTagName('LINK');
+
+    List<String> linkedFileNames = [];
+    List<ChallengeFile> linkedFiles = [];
+
+    if (links.isNotEmpty) {
+      for (dom.Node node in links) {
+        if (node.attributes['href'] == null) continue;
+
+        if (node.attributes['href']!.contains('/')) {
+          linkedFileNames.add(node.attributes['href']!.split('/').last);
+        } else if (node.attributes['href']!.isNotEmpty) {
+          linkedFileNames.add(node.attributes['href'] as String);
+        }
+      }
+    }
+
+    if (linkedFileNames.isNotEmpty) {
+      for (int i = 0; i < linkedFileNames.length; i++) {
+        List<ChallengeFile> files = cssFiles
+            .where((ChallengeFile file) =>
+                file.name == linkedFileNames[i].split('.')[0])
+            .toList();
+
+        if (files.isNotEmpty) {
+          linkedFiles.add(files[0]);
+        }
+      }
+    }
+
+    return linkedFiles;
   }
 
   // The hint text is the same as the test text. This is used to display the hint.

@@ -1,4 +1,4 @@
-import 'dart:convert';
+// import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
@@ -45,6 +45,9 @@ class ChallengeView extends StatelessWidget {
                   Challenge challenge = snapshot.data!;
 
                   int maxChallenges = block.challenges.length;
+
+                  bool keyBoardIsActive =
+                      MediaQuery.of(context).viewInsets.bottom != 0;
 
                   Editor editor = Editor(
                     language: Syntax.HTML,
@@ -149,11 +152,7 @@ class ChallengeView extends StatelessWidget {
                       body: !model.showPreview
                           ? Column(
                               children: [
-                                model.showPanel &&
-                                        MediaQuery.of(context)
-                                                .viewInsets
-                                                .bottom ==
-                                            0
+                                model.showPanel && !keyBoardIsActive
                                     ? DynamicPanel(
                                         challenge: challenge,
                                         model: model,
@@ -169,11 +168,7 @@ class ChallengeView extends StatelessWidget {
                             )
                           : Column(
                               children: [
-                                model.showPanel &&
-                                        MediaQuery.of(context)
-                                                .viewInsets
-                                                .bottom ==
-                                            0
+                                model.showPanel && !keyBoardIsActive
                                     ? DynamicPanel(
                                         challenge: challenge,
                                         model: model,
@@ -191,13 +186,11 @@ class ChallengeView extends StatelessWidget {
                                         (WebViewController webcontroller) {
                                       model.setWebviewController =
                                           webcontroller;
-                                      webcontroller.loadUrl(Uri.dataFromString(
-                                              model.parsePreviewDocument(model
-                                                      .editorText ??
-                                                  challenge.files[0].contents),
-                                              mimeType: 'text/html',
-                                              encoding: utf8)
-                                          .toString());
+                                      // webcontroller.loadUrl(Uri.dataFromString(
+                                      //         model.parsePreviewDocument(),
+                                      //         mimeType: 'text/html',
+                                      //         encoding: utf8)
+                                      //     .toString());
                                     },
                                   ),
                                 ),
