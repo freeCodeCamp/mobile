@@ -196,6 +196,19 @@ class ChallengeModel extends BaseViewModel {
     }
   }
 
+  Future<String> getExactFileFromCache(
+    Challenge challenge,
+    ChallengeFile file,
+  ) async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    String cache = prefs.getString('${challenge.title}.${file.name}') ?? '';
+
+    List<ChallengeFile> firstHtmlChallenge =
+        challenge.files.where((file) => file.ext == Ext.html).toList();
+
+    return cache.isEmpty ? firstHtmlChallenge[0].contents : cache;
+  }
+
   void setAppBarState(BuildContext context) {
     if (MediaQuery.of(context).viewInsets.bottom > 0 || !showPanel) {
       setHideAppBar = false;
@@ -246,21 +259,16 @@ class ChallengeModel extends BaseViewModel {
         .where((ChallengeFile file) => file.ext == Ext.css)
         .toList();
 
-    // log(cssFiles.length.toString());
+    // TODO: Handle javascript files and multiple html files
 
-    List<ChallengeFile>? handleCurrentFile = currChallenge.files
-        .where((ChallengeFile file) =>
-            file.name == currentSelectedFile!.split('.')[0])
+    List<ChallengeFile> currentFile = currChallenge.files
+        .where((element) => element.ext == Ext.html)
         .toList();
 
-    ChallengeFile currentFile = handleCurrentFile.isEmpty
-        ? currChallenge.files[0]
-        : handleCurrentFile[0];
-
-    if (cssFiles.isNotEmpty && currentFile.ext == Ext.html) {
+    if (cssFiles.isNotEmpty) {
       String text =
-          prefs.getString('${currChallenge.title}.${currentFile.name}') ??
-              currentFile.contents;
+          prefs.getString('${currChallenge.title}.${currentFile[0].name}') ??
+              currentFile[0].contents;
 
       List<String> linkedCssFiles =
           await checkForLinks(parse(text), cssFiles, currChallenge);

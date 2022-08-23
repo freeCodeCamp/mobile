@@ -190,9 +190,10 @@ class ChallengeView extends StatelessWidget {
                                           webcontroller;
                                       webcontroller.loadUrl(Uri.dataFromString(
                                               await model.parsePreviewDocument(
-                                                  model.editorText ??
-                                                      challenge
-                                                          .files[0].contents),
+                                                  await model
+                                                      .getExactFileFromCache(
+                                                          challenge,
+                                                          challenge.files[0])),
                                               mimeType: 'text/html',
                                               encoding: utf8)
                                           .toString());
