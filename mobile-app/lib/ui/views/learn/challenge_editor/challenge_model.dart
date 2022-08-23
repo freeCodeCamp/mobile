@@ -240,27 +240,40 @@ class ChallengeModel extends BaseViewModel {
 
     if (currChallenge == null) return parse(doc).outerHtml;
 
+    dom.Document document = parse(doc);
+
     List<ChallengeFile> cssFiles = currChallenge.files
         .where((ChallengeFile file) => file.ext == Ext.css)
         .toList();
 
-    ChallengeFile currentFile = currChallenge.files.firstWhere(
-        (ChallengeFile file) =>
-            file.name == currentSelectedFile!.split('.')[0]);
+    // log(cssFiles.length.toString());
+
+    List<ChallengeFile>? handleCurrentFile = currChallenge.files
+        .where((ChallengeFile file) =>
+            file.name == currentSelectedFile!.split('.')[0])
+        .toList();
+
+    ChallengeFile currentFile = handleCurrentFile.isEmpty
+        ? currChallenge.files[0]
+        : handleCurrentFile[0];
 
     if (cssFiles.isNotEmpty && currentFile.ext == Ext.html) {
-      String? text =
-          prefs.getString('${currChallenge.title}.${currentFile.name}');
+      String text =
+          prefs.getString('${currChallenge.title}.${currentFile.name}') ??
+              currentFile.contents;
 
-      if (text != null) {
-        List<ChallengeFile> linkedCssFiles =
-            checkForLinks(parse(text), cssFiles);
+      List<String> linkedCssFiles =
+          await checkForLinks(parse(text), cssFiles, currChallenge);
 
-        if (linkedCssFiles.isNotEmpty) {}
+      if (linkedCssFiles.isNotEmpty) {
+        for (int i = 0; i < linkedCssFiles.length; i++) {
+          String style = '''<style> ${linkedCssFiles[i]} </style>''';
+          dom.Document styleParsed = parse(style);
+          dom.Node styleTag = styleParsed.getElementsByTagName('STYLE')[0];
+          document.getElementsByTagName('HEAD')[0].append(styleTag);
+        }
       }
     }
-
-    dom.Document document = parse('');
 
     String viewPort = '''<meta content="width=device-width,
          initial-scale=1.0, maximum-scale=1.0,
@@ -275,14 +288,14 @@ class ChallengeModel extends BaseViewModel {
     return document.outerHtml;
   }
 
-  List<ChallengeFile> checkForLinks(
-    dom.Document document,
-    List<ChallengeFile> cssFiles,
-  ) {
+  Future<List<String>> checkForLinks(dom.Document document,
+      List<ChallengeFile> cssFiles, Challenge currChallenge) async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+
     List<dom.Node> links = document.getElementsByTagName('LINK');
 
     List<String> linkedFileNames = [];
-    List<ChallengeFile> linkedFiles = [];
+    List<String> linkedFilesContent = [];
 
     if (links.isNotEmpty) {
       for (dom.Node node in links) {
@@ -303,13 +316,17 @@ class ChallengeModel extends BaseViewModel {
                 file.name == linkedFileNames[i].split('.')[0])
             .toList();
 
+        String text =
+            prefs.getString('${currChallenge.title}.${files[0].name}') ??
+                files[0].contents;
+
         if (files.isNotEmpty) {
-          linkedFiles.add(files[0]);
+          linkedFilesContent.add(text);
         }
       }
     }
 
-    return linkedFiles;
+    return linkedFilesContent;
   }
 
   // The hint text is the same as the test text. This is used to display the hint.

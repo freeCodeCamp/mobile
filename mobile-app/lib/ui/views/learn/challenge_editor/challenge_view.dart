@@ -1,5 +1,7 @@
 // import 'dart:convert';
 
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
 import 'package:flutter_code_editor/controller/editor_view_controller.dart';
@@ -182,15 +184,18 @@ class ChallengeView extends StatelessWidget {
                                   child: WebView(
                                     userAgent: 'random',
                                     javascriptMode: JavascriptMode.unrestricted,
-                                    onWebViewCreated:
-                                        (WebViewController webcontroller) {
+                                    onWebViewCreated: (WebViewController
+                                        webcontroller) async {
                                       model.setWebviewController =
                                           webcontroller;
-                                      // webcontroller.loadUrl(Uri.dataFromString(
-                                      //         model.parsePreviewDocument(),
-                                      //         mimeType: 'text/html',
-                                      //         encoding: utf8)
-                                      //     .toString());
+                                      webcontroller.loadUrl(Uri.dataFromString(
+                                              await model.parsePreviewDocument(
+                                                  model.editorText ??
+                                                      challenge
+                                                          .files[0].contents),
+                                              mimeType: 'text/html',
+                                              encoding: utf8)
+                                          .toString());
                                     },
                                   ),
                                 ),
