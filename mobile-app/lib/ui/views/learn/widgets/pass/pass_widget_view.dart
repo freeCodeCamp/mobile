@@ -116,17 +116,22 @@ class PassWidgetView extends StatelessWidget {
                 )
               : Container(
                   padding: const EdgeInsets.only(top: 16, left: 8, right: 8),
-                  height: 75,
+                  constraints: const BoxConstraints(minHeight: 75),
                   child: ElevatedButton(
-                      style: ElevatedButton.styleFrom(
-                          primary: const Color.fromRGBO(0xf1, 0xbe, 0x32, 1)),
-                      onPressed: () {
-                        model.auth.login(context);
-                      },
-                      child: const Text(
-                        'Sign in to save your progress ',
-                        style: TextStyle(color: Colors.black, fontSize: 20),
-                      ))),
+                    style: ElevatedButton.styleFrom(
+                      primary: const Color.fromRGBO(0xf1, 0xbe, 0x32, 1),
+                      padding: const EdgeInsets.all(8),
+                    ),
+                    onPressed: () {
+                      model.auth.login(context);
+                    },
+                    child: const Text(
+                      'Sign in to save your progress',
+                      textAlign: TextAlign.center,
+                      style: TextStyle(color: Colors.black, fontSize: 20),
+                    ),
+                  ),
+                ),
           Expanded(
               child: Align(
             alignment: Alignment.bottomCenter,
