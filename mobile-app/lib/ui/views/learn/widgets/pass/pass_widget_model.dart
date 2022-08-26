@@ -12,12 +12,12 @@ import 'package:freecodecamp/ui/views/learn/challenge_editor/challenge_model.dar
 import 'package:stacked/stacked.dart';
 
 class PassWidgetModel extends BaseViewModel {
-  final AuthenticationService _auth = locator<AuthenticationService>();
+  final AuthenticationService auth = locator<AuthenticationService>();
 
   late FccUserModel? _user;
 
   void init() async {
-    _user = await _auth.userModel;
+    _user = await auth.userModel;
     notifyListeners();
   }
 
