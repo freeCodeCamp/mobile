@@ -121,7 +121,7 @@ class LearnView extends StatelessWidget {
   Widget loginButton(LearnViewModel model, BuildContext context) {
     return Container(
       padding: const EdgeInsets.only(top: 16, left: 8, right: 8),
-      height: 75,
+      constraints: const BoxConstraints(minHeight: 75),
       child: ElevatedButton(
           style: ElevatedButton.styleFrom(
               primary: const Color.fromRGBO(0xf1, 0xbe, 0x32, 1)),
@@ -129,7 +129,8 @@ class LearnView extends StatelessWidget {
             model.auth.login(context);
           },
           child: const Text(
-            'Sign in to save your progress ',
+            'Sign in to save your progress',
+            textAlign: TextAlign.center,
             style: TextStyle(color: Colors.black, fontSize: 20),
           )),
     );
