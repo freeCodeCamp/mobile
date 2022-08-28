@@ -3,7 +3,6 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
 import 'package:flutter_code_editor/controller/editor_view_controller.dart';
-import 'package:flutter_code_editor/controller/language_controller/syntax/index.dart';
 import 'package:flutter_code_editor/editor/editor.dart';
 import 'package:flutter_code_editor/models/editor_options.dart';
 import 'package:flutter_code_editor/models/file_model.dart';
@@ -47,7 +46,7 @@ class ChallengeView extends StatelessWidget {
                   int maxChallenges = block.challenges.length;
 
                   Editor editor = Editor(
-                    language: Syntax.HTML,
+                    language: model.currFileType,
                     openedFile: FileIDE(
                         fileExplorer: null,
                         fileName: model.currentFile(challenge).name,
@@ -78,7 +77,7 @@ class ChallengeView extends StatelessWidget {
                   });
                   // ignore: unused_local_variable
                   EditorViewController controller = EditorViewController(
-                    language: Syntax.HTML,
+                    language: model.currFileType ?? ,
                     options: const EditorOptions(
                         useFileExplorer: false,
                         canCloseFiles: false,
@@ -219,7 +218,7 @@ class ChallengeView extends StatelessWidget {
                                 canCloseFiles: false,
                                 showAppBar: false,
                                 showTabBar: false),
-                            editor: Editor(language: Syntax.HTML),
+                            editor: Editor(language: model.currFileType),
                           ),
                         ),
                       ],
