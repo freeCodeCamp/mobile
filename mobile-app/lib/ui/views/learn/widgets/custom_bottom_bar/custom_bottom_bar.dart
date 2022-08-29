@@ -108,11 +108,15 @@ class CustomBottomBar extends StatelessWidget {
                       : Colors.white),
               onPressed: () async {
                 String currText = await model.getTextFromCache(challenge);
-                editor.fileTextStream.sink.add(currText == ''
-                    ? model.currentFile(challenge).contents
-                    : currText);
+                ChallengeFile currFile = model.currentFile(challenge);
+                editor.fileTextStream.sink.add(
+                  FileStreamEvent(
+                    ext: currFile.ext.name.toUpperCase(),
+                    content: currText == '' ? currFile.contents : currText,
+                  ),
+                );
                 model.setEditorText = currText == ''
-                    ? model.currentFile(challenge).contents
+                    ? currFile.contents
                     : currText;
                 model.setShowPreview = !model.showPreview;
               },

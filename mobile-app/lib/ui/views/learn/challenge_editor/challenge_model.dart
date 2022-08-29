@@ -1,8 +1,6 @@
 import 'dart:convert';
-import 'dart:developer';
 
 import 'package:flutter/cupertino.dart';
-import 'package:flutter/foundation.dart';
 import 'package:flutter_code_editor/editor/editor.dart';
 import 'package:flutter_code_editor/enums/syntax.dart';
 import 'package:freecodecamp/app/app.locator.dart';
@@ -288,20 +286,9 @@ class ChallengeModel extends BaseViewModel {
     if (currentSelectedFile!.isNotEmpty) {
       ChallengeFile file = challenge.files.firstWhere(
           (file) => file.name == currentSelectedFile!.split('.')[0]);
-      log(Syntax.values
-          .firstWhere(
-              (element) => describeEnum(element) == file.ext.name.toUpperCase())
-          .name);
-      log('${file.name.toString()} ${file.ext.name}');
-      setCurrFileType = Syntax.values
-          .firstWhere((e) => describeEnum(e) == file.ext.name.toUpperCase());
       return file;
     }
 
-    setCurrFileType = Syntax.values.firstWhere(
-        (e) => describeEnum(e) == challenge.files[0].ext.name.toUpperCase());
-    log(Syntax.values.firstWhere(
-        (e) => describeEnum(e) == challenge.files[0].ext.name.toUpperCase()).toString());
     return challenge.files[0];
   }
 
@@ -322,7 +309,12 @@ class ChallengeModel extends BaseViewModel {
       setEditorText = '';
       setCurrentSelectedFile =
           '${currChallenge.files[0].name}.${currChallenge.files[0].ext.name}';
-      editor.fileTextStream.add(currentFile(currChallenge).contents);
+      editor.fileTextStream.add(
+        FileStreamEvent(
+          ext: currentFile(currChallenge).ext.name.toUpperCase(),
+          content: currentFile(currChallenge).contents,
+        ),
+      );
     }
   }
 }

@@ -44,15 +44,15 @@ class ChallengeView extends StatelessWidget {
                   Challenge challenge = snapshot.data!;
 
                   int maxChallenges = block.challenges.length;
+                  ChallengeFile currFile = model.currentFile(challenge);
 
                   Editor editor = Editor(
-                    language: model.currFileType,
+                    language: currFile.ext.name.toUpperCase(),
                     openedFile: FileIDE(
                         fileExplorer: null,
-                        fileName: model.currentFile(challenge).name,
+                        fileName: currFile.name,
                         filePath: '',
-                        fileContent: model.editorText ??
-                            model.currentFile(challenge).contents,
+                        fileContent: model.editorText ?? currFile.contents,
                         parentDirectory: ''),
                   );
 
@@ -77,7 +77,6 @@ class ChallengeView extends StatelessWidget {
                   });
                   // ignore: unused_local_variable
                   EditorViewController controller = EditorViewController(
-                    language: model.currFileType ?? ,
                     options: const EditorOptions(
                         useFileExplorer: false,
                         canCloseFiles: false,
@@ -218,7 +217,7 @@ class ChallengeView extends StatelessWidget {
                                 canCloseFiles: false,
                                 showAppBar: false,
                                 showTabBar: false),
-                            editor: Editor(language: model.currFileType),
+                            editor: Editor(language: 'HTML'),
                           ),
                         ),
                       ],
