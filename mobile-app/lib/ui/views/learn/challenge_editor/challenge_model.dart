@@ -5,6 +5,7 @@ import 'package:flutter_code_editor/editor/editor.dart';
 import 'package:freecodecamp/app/app.locator.dart';
 import 'package:freecodecamp/enums/challenge_test_state_type.dart';
 import 'package:freecodecamp/enums/dialog_type.dart';
+import 'package:freecodecamp/enums/ext_type.dart';
 import 'package:freecodecamp/enums/panel_type.dart';
 import 'package:freecodecamp/models/learn/challenge_model.dart';
 import 'package:freecodecamp/models/learn/curriculum_model.dart';
@@ -195,6 +196,19 @@ class ChallengeModel extends BaseViewModel {
     }
   }
 
+  Future<String> getExactFileFromCache(
+    Challenge challenge,
+    ChallengeFile file,
+  ) async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    String cache = prefs.getString('${challenge.title}.${file.name}') ?? '';
+
+    List<ChallengeFile> firstHtmlChallenge =
+        challenge.files.where((file) => file.ext == Ext.html).toList();
+
+    return cache.isEmpty ? firstHtmlChallenge[0].contents : cache;
+  }
+
   void setAppBarState(BuildContext context) {
     if (MediaQuery.of(context).viewInsets.bottom > 0 || !showPanel) {
       setHideAppBar = false;
@@ -232,8 +246,42 @@ class ChallengeModel extends BaseViewModel {
   // is then displayed in the preview panel. The preview document does not modify
   // the original challenge document.
 
-  String parsePreviewDocument(String docString) {
-    dom.Document document = parse(docString);
+  Future<String> parsePreviewDocument(String doc) async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+
+    Challenge? currChallenge = await challenge;
+
+    if (currChallenge == null) return parse(doc).outerHtml;
+
+    dom.Document document = parse(doc);
+
+    List<ChallengeFile> cssFiles = currChallenge.files
+        .where((ChallengeFile file) => file.ext == Ext.css)
+        .toList();
+
+    // TODO: Handle javascript files and multiple html files
+
+    List<ChallengeFile> currentFile = currChallenge.files
+        .where((element) => element.ext == Ext.html)
+        .toList();
+
+    if (cssFiles.isNotEmpty) {
+      String text =
+          prefs.getString('${currChallenge.title}.${currentFile[0].name}') ??
+              currentFile[0].contents;
+
+      List<String> linkedCssFiles =
+          await checkForLinks(parse(text), cssFiles, currChallenge);
+
+      if (linkedCssFiles.isNotEmpty) {
+        for (int i = 0; i < linkedCssFiles.length; i++) {
+          String style = '''<style> ${linkedCssFiles[i]} </style>''';
+          dom.Document styleParsed = parse(style);
+          dom.Node styleTag = styleParsed.getElementsByTagName('STYLE')[0];
+          document.getElementsByTagName('HEAD')[0].append(styleTag);
+        }
+      }
+    }
 
     String viewPort = '''<meta content="width=device-width,
          initial-scale=1.0, maximum-scale=1.0,
@@ -246,6 +294,47 @@ class ChallengeModel extends BaseViewModel {
     document.getElementsByTagName('HEAD')[0].append(meta);
 
     return document.outerHtml;
+  }
+
+  Future<List<String>> checkForLinks(dom.Document document,
+      List<ChallengeFile> cssFiles, Challenge currChallenge) async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+
+    List<dom.Node> links = document.getElementsByTagName('LINK');
+
+    List<String> linkedFileNames = [];
+    List<String> linkedFilesContent = [];
+
+    if (links.isNotEmpty) {
+      for (dom.Node node in links) {
+        if (node.attributes['href'] == null) continue;
+
+        if (node.attributes['href']!.contains('/')) {
+          linkedFileNames.add(node.attributes['href']!.split('/').last);
+        } else if (node.attributes['href']!.isNotEmpty) {
+          linkedFileNames.add(node.attributes['href'] as String);
+        }
+      }
+    }
+
+    if (linkedFileNames.isNotEmpty) {
+      for (int i = 0; i < linkedFileNames.length; i++) {
+        List<ChallengeFile> files = cssFiles
+            .where((ChallengeFile file) =>
+                file.name == linkedFileNames[i].split('.')[0])
+            .toList();
+
+        String text =
+            prefs.getString('${currChallenge.title}.${files[0].name}') ??
+                files[0].contents;
+
+        if (files.isNotEmpty) {
+          linkedFilesContent.add(text);
+        }
+      }
+    }
+
+    return linkedFilesContent;
   }
 
   // The hint text is the same as the test text. This is used to display the hint.
