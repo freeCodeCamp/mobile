@@ -97,80 +97,81 @@ class HintWidgetView extends StatelessWidget {
   Widget build(BuildContext context) {
     return ViewModelBuilder<HintWidgetModel>.reactive(
       viewModelBuilder: () => HintWidgetModel(),
-      builder: (context, model, child) => Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Row(
-            children: [
-              Padding(
-                padding:
-                    const EdgeInsets.symmetric(vertical: 24, horizontal: 16),
-                child: Text(
-                  'Hint',
-                  style: TextStyle(
-                    fontSize: 28,
-                    fontWeight: FontWeight.bold,
-                    fontFamily: 'Inter',
-                    color: Colors.white.withOpacity(0.87),
+      builder: (context, model, child) => SafeArea(
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Row(
+              children: [
+                Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 16),
+                  child: Text(
+                    'Hint',
+                    style: TextStyle(
+                      fontSize: 28,
+                      fontWeight: FontWeight.bold,
+                      fontFamily: 'Inter',
+                      color: Colors.white.withOpacity(0.87),
+                    ),
                   ),
                 ),
-              ),
-              Expanded(
-                child: Container(
-                  alignment: Alignment.centerRight,
-                  child: IconButton(
-                    onPressed: () {
-                      challengeModel.setShowPanel = false;
-                    },
-                    icon: const Icon(Icons.clear_sharp),
-                    iconSize: 40,
+                Expanded(
+                  child: Container(
+                    alignment: Alignment.centerRight,
+                    child: IconButton(
+                      onPressed: () {
+                        challengeModel.setShowPanel = false;
+                      },
+                      icon: const Icon(Icons.clear_sharp),
+                      iconSize: 40,
+                    ),
                   ),
+                )
+              ],
+            ),
+            const SizedBox(height: 8),
+            Expanded(
+              child: SingleChildScrollView(
+                child: HtmlHandler.htmlWidgetBuilder(hint, context, 'Inter'),
+              ),
+            ),
+            const SizedBox(height: 8),
+            Expanded(
+              flex: 0,
+              child: Align(
+                alignment: Alignment.bottomCenter,
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.end,
+                  children: [
+                    IconButton(
+                      onPressed: () async {
+                        final forumLink = await genForumLink();
+                        challengeModel.forumHelpDialog(forumLink);
+                      },
+                      icon: const Icon(Icons.question_mark),
+                      padding: const EdgeInsets.all(16),
+                    ),
+                    IconButton(
+                      onPressed: () {
+                        challengeModel.resetCode(editor);
+                      },
+                      icon: const Icon(Icons.restart_alt),
+                      padding: const EdgeInsets.all(16),
+                    ),
+                    IconButton(
+                      onPressed: () {
+                        challengeModel.setShowPreview = true;
+                        challengeModel.setShowPanel = false;
+                      },
+                      icon: const Icon(Icons.remove_red_eye_outlined),
+                      padding: const EdgeInsets.all(16),
+                    )
+                  ],
                 ),
-              )
-            ],
-          ),
-          const SizedBox(height: 8),
-          Expanded(
-            child: SingleChildScrollView(
-              child: HtmlHandler.htmlWidgetBuilder(hint, context),
-            ),
-          ),
-          const SizedBox(height: 8),
-          Expanded(
-            flex: 0,
-            child: Align(
-              alignment: Alignment.bottomCenter,
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.end,
-                children: [
-                  IconButton(
-                    onPressed: () async {
-                      final forumLink = await genForumLink();
-                      challengeModel.forumHelpDialog(forumLink);
-                    },
-                    icon: const Icon(Icons.question_mark),
-                    padding: const EdgeInsets.all(16),
-                  ),
-                  IconButton(
-                    onPressed: () {
-                      challengeModel.resetCode(editor);
-                    },
-                    icon: const Icon(Icons.restart_alt),
-                    padding: const EdgeInsets.all(16),
-                  ),
-                  IconButton(
-                    onPressed: () {
-                      challengeModel.setShowPreview = true;
-                      challengeModel.setShowPanel = false;
-                    },
-                    icon: const Icon(Icons.remove_red_eye_outlined),
-                    padding: const EdgeInsets.all(16),
-                  )
-                ],
               ),
-            ),
-          )
-        ],
+            )
+          ],
+        ),
       ),
     );
   }

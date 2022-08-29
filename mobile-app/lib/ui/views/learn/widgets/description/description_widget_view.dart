@@ -32,60 +32,68 @@ class DescriptionView extends StatelessWidget {
     dev.log(editorText ?? '');
     return ViewModelBuilder<DescriptionModel>.reactive(
       viewModelBuilder: () => DescriptionModel(),
-      builder: (context, model, child) => Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: instructions.isNotEmpty || description.isNotEmpty
-            ? [
-                Row(
-                  children: [
-                    Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        const Text(
-                          'Instructions',
-                          style: TextStyle(
-                            fontSize: 28,
-                            fontWeight: FontWeight.bold,
-                            fontFamily: 'Inter',
-                          ),
-                        ),
-                        isMultiStepChallenge
-                            ? Text(
-                                'Step ${splitTitle[1]} of $maxChallenges',
-                                style: const TextStyle(
-                                  fontSize: 14,
-                                  fontFamily: 'Inter',
-                                  color: Colors.white70,
-                                ),
-                              )
-                            : Container(),
-                      ],
-                    ),
-                    Expanded(
-                      child: Container(
-                        alignment: Alignment.centerRight,
-                        child: IconButton(
-                          onPressed: () {
-                            challengeModel.setShowPanel = false;
-                          },
-                          icon: const Icon(Icons.clear_sharp),
-                          iconSize: 40,
+      builder: (context, model, child) => SafeArea(
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: instructions.isNotEmpty || description.isNotEmpty
+              ? [
+                  Row(
+                    children: [
+                      Padding(
+                        padding: const EdgeInsets.only(left: 12, bottom: 32),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            const Text(
+                              'Instructions',
+                              style: TextStyle(
+                                fontSize: 28,
+                                fontWeight: FontWeight.bold,
+                                fontFamily: 'Inter',
+                              ),
+                            ),
+                            isMultiStepChallenge
+                                ? Text(
+                                    'Step ${splitTitle[1]} of $maxChallenges',
+                                    style: const TextStyle(
+                                      fontSize: 14,
+                                      fontFamily: 'Inter',
+                                      color: Colors.white70,
+                                    ),
+                                  )
+                                : Container(),
+                          ],
                         ),
                       ),
-                    )
-                  ],
-                ),
-                Expanded(
-                  child: SingleChildScrollView(
-                    child: Column(
-                      children: instructions.isNotEmpty
-                          ? HtmlHandler.htmlHandler(instructions, context)
-                          : HtmlHandler.htmlHandler(description, context),
-                    ),
+                      Expanded(
+                        child: Container(
+                          padding: const EdgeInsets.only(bottom: 32),
+                          alignment: Alignment.centerRight,
+                          child: IconButton(
+                            onPressed: () {
+                              challengeModel.setShowPanel = false;
+                            },
+                            icon: const Icon(Icons.clear_sharp),
+                            iconSize: 40,
+                          ),
+                        ),
+                      )
+                    ],
                   ),
-                )
-              ]
-            : [],
+                  Expanded(
+                    child: SingleChildScrollView(
+                      child: Column(
+                        children: instructions.isNotEmpty
+                            ? HtmlHandler.htmlHandler(
+                                instructions, context, null, 'Inter')
+                            : HtmlHandler.htmlHandler(
+                                description, context, null, 'Inter'),
+                      ),
+                    ),
+                  )
+                ]
+              : [],
+        ),
       ),
     );
   }
