@@ -5,7 +5,6 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
 import 'package:flutter_code_editor/controller/editor_view_controller.dart';
-import 'package:flutter_code_editor/controller/language_controller/syntax/index.dart';
 import 'package:flutter_code_editor/editor/editor.dart';
 import 'package:flutter_code_editor/models/editor_options.dart';
 import 'package:flutter_code_editor/models/file_model.dart';
@@ -47,18 +46,18 @@ class ChallengeView extends StatelessWidget {
                   Challenge challenge = snapshot.data!;
 
                   int maxChallenges = block.challenges.length;
+                  ChallengeFile currFile = model.currentFile(challenge);
 
                   bool keyBoardIsActive =
                       MediaQuery.of(context).viewInsets.bottom != 0;
 
                   Editor editor = Editor(
-                    language: Syntax.HTML,
+                    language: currFile.ext.name.toUpperCase(),
                     openedFile: FileIDE(
                         fileExplorer: null,
-                        fileName: model.currentFile(challenge).name,
+                        fileName: currFile.name,
                         filePath: '',
-                        fileContent: model.editorText ??
-                            model.currentFile(challenge).contents,
+                        fileContent: model.editorText ?? currFile.contents,
                         parentDirectory: ''),
                   );
 
@@ -83,7 +82,6 @@ class ChallengeView extends StatelessWidget {
                   });
                   // ignore: unused_local_variable
                   EditorViewController controller = EditorViewController(
-                    language: Syntax.HTML,
                     options: const EditorOptions(
                         useFileExplorer: false,
                         canCloseFiles: false,
@@ -218,7 +216,7 @@ class ChallengeView extends StatelessWidget {
                                 canCloseFiles: false,
                                 showAppBar: false,
                                 showTabBar: false),
-                            editor: Editor(language: Syntax.HTML),
+                            editor: Editor(language: 'HTML'),
                           ),
                         ),
                       ],

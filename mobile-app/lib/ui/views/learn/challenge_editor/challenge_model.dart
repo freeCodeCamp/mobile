@@ -2,6 +2,7 @@ import 'dart:convert';
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter_code_editor/editor/editor.dart';
+import 'package:flutter_code_editor/enums/syntax.dart';
 import 'package:freecodecamp/app/app.locator.dart';
 import 'package:freecodecamp/enums/challenge_test_state_type.dart';
 import 'package:freecodecamp/enums/dialog_type.dart';
@@ -53,6 +54,9 @@ class ChallengeModel extends BaseViewModel {
 
   WebViewController? _testController;
   WebViewController? get testController => _testController;
+
+  Syntax _currFileType = Syntax.HTML;
+  Syntax get currFileType => _currFileType;
 
   TestRunner runner = TestRunner();
 
@@ -135,6 +139,11 @@ class ChallengeModel extends BaseViewModel {
 
   set setChallengesCompleted(int value) {
     _challengesCompleted = value;
+    notifyListeners();
+  }
+
+  set setCurrFileType(Syntax value) {
+    _currFileType = value;
     notifyListeners();
   }
 
@@ -366,7 +375,6 @@ class ChallengeModel extends BaseViewModel {
     if (currentSelectedFile!.isNotEmpty) {
       ChallengeFile file = challenge.files.firstWhere(
           (file) => file.name == currentSelectedFile!.split('.')[0]);
-
       return file;
     }
 
@@ -390,7 +398,12 @@ class ChallengeModel extends BaseViewModel {
       setEditorText = '';
       setCurrentSelectedFile =
           '${currChallenge.files[0].name}.${currChallenge.files[0].ext.name}';
-      editor.fileTextStream.add(currentFile(currChallenge).contents);
+      editor.fileTextStream.add(
+        FileStreamEvent(
+          ext: currentFile(currChallenge).ext.name.toUpperCase(),
+          content: currentFile(currChallenge).contents,
+        ),
+      );
     }
   }
 }
