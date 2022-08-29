@@ -24,9 +24,12 @@ class TestRunner extends BaseViewModel {
       WebViewController webviewController) {
     dom.Document document = parse(content);
 
+    log('setting content');
+
     List<String> imports = [
       '<script src="https://unpkg.com/chai/chai.js"></script>',
       '<script src="https://unpkg.com/mocha/mocha.js"></script>',
+      '''<script src="https://unpkg.com/@freecodecamp/curriculum-helpers@1.0.5/dist/index.js" type="module">''',
       '<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>',
       '<link rel="stylesheet" href="https://unpkg.com/mocha/mocha.css" />'
     ];
@@ -70,7 +73,7 @@ class TestRunner extends BaseViewModel {
               : scriptToNode.getElementsByTagName('HEAD').first.children.first;
       document.body!.append(bodyNode);
     }
-
+    log(document.outerHtml);
     webviewController.loadUrl(Uri.dataFromString(document.outerHtml,
             mimeType: 'text/html', encoding: Encoding.getByName('utf-8'))
         .toString());
@@ -176,6 +179,8 @@ class TestRunner extends BaseViewModel {
     if (_testDocument.isNotEmpty) {
       List<ChallengeTest> passedTest = getPassedTest(incTest);
       List<ChallengeTest> failedTest = getFailedTest(incTest);
+
+      log('running tests');
 
       List<ChallengeTest> allTest = List.from(passedTest)..addAll(failedTest);
       log((allTest.map((e) => e.testState)).toString());
