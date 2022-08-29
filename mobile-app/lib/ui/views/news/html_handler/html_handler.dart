@@ -95,18 +95,22 @@ class HtmlHandler {
             width: MediaQuery.of(context).size.width, margin: EdgeInsets.zero),
         'h1': Style(
             margin: const EdgeInsets.fromLTRB(2, 32, 2, 0),
-            fontSize: FontSize.rem(2.3)),
+            fontSize: FontSize.rem(1.8)),
         'h2': Style(
             margin: const EdgeInsets.fromLTRB(2, 32, 2, 0),
-            fontSize: FontSize.rem(2.3)),
+            fontSize: FontSize.rem(1.6)),
         'h3': Style(
             margin: const EdgeInsets.fromLTRB(2, 32, 2, 0),
-            fontSize: FontSize.rem(1.8)),
+            fontSize: FontSize.rem(1.4)),
         'h4': Style(
             margin: const EdgeInsets.fromLTRB(2, 32, 2, 0),
-            fontSize: FontSize.rem(1.8)),
-        'h5': Style(margin: const EdgeInsets.fromLTRB(2, 32, 2, 0)),
-        'h6': Style(margin: const EdgeInsets.fromLTRB(2, 32, 2, 0))
+            fontSize: FontSize.rem(1.2)),
+        'h5': Style(
+            margin: const EdgeInsets.fromLTRB(2, 32, 2, 0),
+            fontSize: FontSize.rem(1.2)),
+        'h6': Style(
+            margin: const EdgeInsets.fromLTRB(2, 32, 2, 0),
+            fontSize: FontSize.rem(1.2))
       },
       customRender: {
         'table': (context, child) {
