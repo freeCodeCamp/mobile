@@ -33,7 +33,7 @@ class HtmlHandler {
     }
     for (int i = 0; i < result.body!.children.length; i++) {
       elements.add(htmlWidgetBuilder(
-          result.body!.children[i].outerHtml, context, fontFamily));
+          result.body!.children[i].outerHtml, context, fontFamily ?? 'Lato'));
     }
     if (article is Article) {
       elements.add(Container(height: 100));
