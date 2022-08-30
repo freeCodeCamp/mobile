@@ -19,7 +19,7 @@ jobs:
 
     steps:
       - name: Checkout source code
-        uses: actions/checkout@v2
+        uses: actions/checkout@7884fcad6b5d53d10323aee724dc68d8b9096a2e # tag=v2
 
       - name: Build and start container
         run: docker-compose -f docker-compose.dev.yml up -d

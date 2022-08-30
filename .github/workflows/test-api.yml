@@ -21,7 +21,7 @@ jobs:
 
     steps:
       - name: Checkout source code
-        uses: actions/checkout@v2
+        uses: actions/checkout@7884fcad6b5d53d10323aee724dc68d8b9096a2e # tag=v2
 
       - name: Use Node.js ${{ matrix.node-version }}
         uses: actions/setup-node@2fddd8803e2f5c9604345a0b591c3020ee971a93 # tag=v3
