@@ -21,32 +21,56 @@ class LearnService {
   void init() {
     _dio.interceptors.add(PrettyDioLogger(responseBody: false));
     _dio.interceptors.add(CurlLoggerDioInterceptor());
-    _dio.options.baseUrl = AuthenticationService.baseApiURL;
   }
 
-  Future<void> postChallengeCompleted(Challenge challenge) async {
+  Future<void> postChallengeCompleted(
+      Challenge challenge, List challengeFiles) async {
     // NOTE: Assuming for now it's just HTML and JS challenges are being submitted
-    // TODO: Update code after exposing challenge-types file
 
     String challengeId = challenge.id;
     int challengeType = challenge.challengeType;
-    Map payload = {
-      'challengeType': challengeType,
-      'id': challengeId,
-    };
 
-    Response res = await _dio.post(
-      '/modern-challenge-completed',
-      data: payload,
-      options: Options(
-        headers: {
-          'CSRF-Token': _authenticationService.csrfToken,
-          'Cookie':
-              'jwt_access_token=${_authenticationService.jwtAccessToken}; _csrf=${_authenticationService.csrf};',
-        },
-      ),
-    );
-    log(res.toString());
+    Response submitTypesRes = await _dio.get(
+        '${AuthenticationService.baseURL}/curriculum-data/submit-types.json');
+    Map<String, dynamic> submitTypes = submitTypesRes.data;
+
+    switch (submitTypes[challengeType.toString()]) {
+      case 'tests':
+        late Map payload;
+        if (challengeType == 14 ||
+            challenge.block ==
+                'javascript-algorithms-and-data-structures-projects') {
+          payload = {
+            'id': challengeId,
+            'challengeType': challengeType,
+            'files': challengeFiles,
+          };
+        } else {
+          payload = {
+            'id': challengeId,
+            'challengeType': challengeType,
+          };
+        }
+        Response res = await _dio.post(
+          '${AuthenticationService.baseApiURL}/modern-challenge-completed',
+          data: payload,
+          options: Options(
+            headers: {
+              'CSRF-Token': _authenticationService.csrfToken,
+              'Cookie':
+                  'jwt_access_token=${_authenticationService.jwtAccessToken}; _csrf=${_authenticationService.csrf};',
+            },
+          ),
+        );
+        log(res.toString());
+        break;
+      case 'backend':
+        break;
+      case 'project.backEnd':
+        break;
+      case 'project.frontEnd':
+        break;
+    }
   }
 
   LearnService._internal();

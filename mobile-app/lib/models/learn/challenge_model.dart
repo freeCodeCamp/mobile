@@ -66,11 +66,15 @@ class ChallengeFile {
   final Ext ext;
   final String name;
   final String contents;
+  final List<String> history;
+  final String fileKey;
 
   ChallengeFile({
     required this.ext,
     required this.name,
     required this.contents,
+    required this.history,
+    required this.fileKey,
   });
 
   factory ChallengeFile.fromJson(Map<String, dynamic> data) {
@@ -78,6 +82,8 @@ class ChallengeFile {
       ext: parseExt(data['ext']),
       name: data['name'],
       contents: data['contents'],
+      history: ((data['history'] ?? []) as List).cast<String>(),
+      fileKey: data['fileKey'] ?? data['name'] + data['ext'],
     );
   }
 }
