@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'dart:developer';
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter_code_editor/editor/editor.dart';
@@ -232,6 +233,8 @@ class ChallengeModel extends BaseViewModel {
   Future<Challenge> initChallenge(String url) async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     http.Response res = await http.get(Uri.parse(url));
+
+    log(url);
 
     if (prefs.getString(url) == null) {
       if (res.statusCode == 200) {
