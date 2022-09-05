@@ -53,6 +53,8 @@ class _TagButtonState extends State<TagButton>
           );
         },
         child: Container(
+          constraints: BoxConstraints(
+              maxWidth: MediaQuery.of(context).size.width * 0.45),
           decoration: ShapeDecoration(
             color: _tagColor,
             shape: const StadiumBorder(),
@@ -62,11 +64,16 @@ class _TagButtonState extends State<TagButton>
               vertical: 4,
               horizontal: 8,
             ),
-            child: Text(
-              '#${widget.tagName}',
-              style: const TextStyle(
-                fontSize: 16,
-                color: Colors.black,
+            child: Tooltip(
+              message: '#${widget.tagName}',
+              child: Text(
+                '#${widget.tagName}',
+                maxLines: 1,
+                overflow: TextOverflow.ellipsis,
+                style: const TextStyle(
+                  fontSize: 16,
+                  color: Colors.black,
+                ),
               ),
             ),
           ),
