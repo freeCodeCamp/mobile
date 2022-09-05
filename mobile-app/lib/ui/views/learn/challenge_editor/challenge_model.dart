@@ -43,6 +43,9 @@ class ChallengeModel extends BaseViewModel {
   bool _showPanel = true;
   bool get showPanel => _showPanel;
 
+  bool _hasTypedInEditor = false;
+  bool get hasTypedInEditor => _hasTypedInEditor;
+
   bool _completedChallenge = false;
   bool get completedChallenge => _completedChallenge;
 
@@ -99,6 +102,11 @@ class ChallengeModel extends BaseViewModel {
 
   set setShowPreview(bool value) {
     _showPreview = value;
+    notifyListeners();
+  }
+
+  set setHasTypedInEditor(bool value) {
+    _hasTypedInEditor = true;
     notifyListeners();
   }
 

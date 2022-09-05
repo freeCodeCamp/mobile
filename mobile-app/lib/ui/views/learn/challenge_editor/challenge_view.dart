@@ -229,7 +229,7 @@ class ChallengeView extends StatelessWidget {
       Editor editor, BuildContext context) {
     if (model.testController != null) {
       editor.onTextChange.stream.listen((event) {
-        log('event');
+        model.setHasTypedInEditor = true;
         model.runner
             .setWebViewContent(event, challenge.tests, model.testController!);
       });
@@ -347,19 +347,23 @@ class ChallengeView extends StatelessWidget {
               children: [
                 Container(
                   margin: const EdgeInsets.all(8),
-                  color: model.completedChallenge
-                      ? const Color.fromRGBO(0x20, 0xD0, 0x32, 1)
-                      : const Color.fromRGBO(0x1D, 0x9B, 0xF0, 1),
+                  color: !model.hasTypedInEditor
+                      ? const Color.fromARGB(255, 9, 79, 125)
+                      : model.completedChallenge
+                          ? const Color.fromRGBO(0x20, 0xD0, 0x32, 1)
+                          : const Color.fromRGBO(0x1D, 0x9B, 0xF0, 1),
                   child: IconButton(
                     icon: model.completedChallenge
                         ? const FaIcon(FontAwesomeIcons.arrowRight)
                         : const FaIcon(FontAwesomeIcons.check),
-                    onPressed: () async => {
-                      FocusManager.instance.primaryFocus?.unfocus(),
-                      model.testController?.runJavascript('''
+                    onPressed: model.hasTypedInEditor
+                        ? () async => {
+                              FocusManager.instance.primaryFocus?.unfocus(),
+                              model.testController?.runJavascript('''
                                 (function(){Flutter.postMessage(window.document.body.outerHTML)})();
                               '''),
-                    },
+                            }
+                        : null,
                     splashColor: Colors.transparent,
                     highlightColor: Colors.transparent,
                   ),

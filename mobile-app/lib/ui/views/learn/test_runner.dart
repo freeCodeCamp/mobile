@@ -75,6 +75,7 @@ class TestRunner extends BaseViewModel {
     webviewController.loadUrl(Uri.dataFromString(document.outerHtml,
             mimeType: 'text/html', encoding: Encoding.getByName('utf-8'))
         .toString());
+    log(document.outerHtml);
   }
 
   IconData getCorrectTestIcon(ChallengeTestState testState) {
@@ -127,7 +128,7 @@ class TestRunner extends BaseViewModel {
     List<String> stringArr = [];
 
     for (ChallengeTest test in tests) {
-      stringArr.add('''it('${test.instruction}', () => {
+      stringArr.add('''\nit(`${test.instruction}`, () => {
         ${test.javaScript}
       });''');
     }
