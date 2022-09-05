@@ -1,10 +1,11 @@
+// import 'dart:convert';
+
 import 'dart:convert';
 import 'dart:developer';
 
 import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
 import 'package:flutter_code_editor/controller/editor_view_controller.dart';
-import 'package:flutter_code_editor/controller/language_controller/syntax/index.dart';
 import 'package:flutter_code_editor/editor/editor.dart';
 import 'package:flutter_code_editor/models/editor_options.dart';
 import 'package:flutter_code_editor/models/file_model.dart';
@@ -47,15 +48,18 @@ class ChallengeView extends StatelessWidget {
                   Challenge challenge = snapshot.data!;
 
                   int maxChallenges = block.challenges.length;
+                  ChallengeFile currFile = model.currentFile(challenge);
+
+                  bool keyBoardIsActive =
+                      MediaQuery.of(context).viewInsets.bottom != 0;
 
                   Editor editor = Editor(
-                    language: Syntax.HTML,
+                    language: currFile.ext.name.toUpperCase(),
                     openedFile: FileIDE(
                         fileExplorer: null,
-                        fileName: model.currentFile(challenge).name,
+                        fileName: currFile.name,
                         filePath: '',
-                        fileContent: model.editorText ??
-                            model.currentFile(challenge).contents,
+                        fileContent: model.editorText ?? currFile.contents,
                         parentDirectory: ''),
                   );
 
@@ -80,7 +84,6 @@ class ChallengeView extends StatelessWidget {
                   });
                   // ignore: unused_local_variable
                   EditorViewController controller = EditorViewController(
-                    language: Syntax.HTML,
                     options: const EditorOptions(
                         useFileExplorer: false,
                         canCloseFiles: false,
@@ -149,11 +152,7 @@ class ChallengeView extends StatelessWidget {
                       body: !model.showPreview
                           ? Column(
                               children: [
-                                model.showPanel &&
-                                        MediaQuery.of(context)
-                                                .viewInsets
-                                                .bottom ==
-                                            0
+                                model.showPanel && !keyBoardIsActive
                                     ? DynamicPanel(
                                         challenge: challenge,
                                         model: model,
@@ -169,11 +168,7 @@ class ChallengeView extends StatelessWidget {
                             )
                           : Column(
                               children: [
-                                model.showPanel &&
-                                        MediaQuery.of(context)
-                                                .viewInsets
-                                                .bottom ==
-                                            0
+                                model.showPanel && !keyBoardIsActive
                                     ? DynamicPanel(
                                         challenge: challenge,
                                         model: model,
@@ -187,14 +182,16 @@ class ChallengeView extends StatelessWidget {
                                   child: WebView(
                                     userAgent: 'random',
                                     javascriptMode: JavascriptMode.unrestricted,
-                                    onWebViewCreated:
-                                        (WebViewController webcontroller) {
+                                    onWebViewCreated: (WebViewController
+                                        webcontroller) async {
                                       model.setWebviewController =
                                           webcontroller;
                                       webcontroller.loadUrl(Uri.dataFromString(
-                                              model.parsePreviewDocument(model
-                                                      .editorText ??
-                                                  challenge.files[0].contents),
+                                              await model.parsePreviewDocument(
+                                                  await model
+                                                      .getExactFileFromCache(
+                                                          challenge,
+                                                          challenge.files[0])),
                                               mimeType: 'text/html',
                                               encoding: utf8)
                                           .toString());
@@ -219,7 +216,7 @@ class ChallengeView extends StatelessWidget {
                                 canCloseFiles: false,
                                 showAppBar: false,
                                 showTabBar: false),
-                            editor: Editor(language: Syntax.HTML),
+                            editor: Editor(language: 'HTML'),
                           ),
                         ),
                       ],
@@ -329,12 +326,15 @@ class ChallengeView extends StatelessWidget {
                       : Colors.white),
               onPressed: () async {
                 String currText = await model.getTextFromCache(challenge);
-                editor.fileTextStream.sink.add(currText == ''
-                    ? model.currentFile(challenge).contents
-                    : currText);
-                model.setEditorText = currText == ''
-                    ? model.currentFile(challenge).contents
-                    : currText;
+                ChallengeFile currFile = model.currentFile(challenge);
+                editor.fileTextStream.sink.add(
+                  FileStreamEvent(
+                    ext: currFile.ext.name.toUpperCase(),
+                    content: currText == '' ? currFile.contents : currText,
+                  ),
+                );
+                model.setEditorText =
+                    currText == '' ? currFile.contents : currText;
                 model.setShowPreview = !model.showPreview;
               },
               splashColor: Colors.transparent,

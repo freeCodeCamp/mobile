@@ -17,7 +17,7 @@ class HtmlHandler {
   final String html;
   final BuildContext context;
 
-  static List<Widget> htmlHandler(html, context, [article]) {
+  static List<Widget> htmlHandler(html, context, [article, fontFamily]) {
     var result = HtmlParser.parseHTML(html);
 
     List<Widget> elements = [];
@@ -32,8 +32,8 @@ class HtmlHandler {
       ]));
     }
     for (int i = 0; i < result.body!.children.length; i++) {
-      elements
-          .add(htmlWidgetBuilder(result.body!.children[i].outerHtml, context));
+      elements.add(htmlWidgetBuilder(
+          result.body!.children[i].outerHtml, context, fontFamily));
     }
     if (article is Article) {
       elements.add(Container(height: 100));
@@ -48,20 +48,25 @@ class HtmlHandler {
     );
   }
 
-  static htmlWidgetBuilder(child, BuildContext context) {
+  static htmlWidgetBuilder(child, BuildContext context,
+      [String fontFamily = 'Lato']) {
     return Html(
       shrinkWrap: true,
       data: child,
       style: {
         'body': Style(
-            fontFamily: 'Lato',
+            fontFamily: fontFamily,
             padding: const EdgeInsets.only(left: 4, right: 4)),
         'blockquote': Style(fontSize: FontSize.rem(1.25)),
         'p': Style(
-          fontSize: FontSize.rem(1.35),
+          fontWeight:
+              fontFamily == 'Inter' ? FontWeight.w400 : FontWeight.normal,
+          fontSize: FontSize.rem(fontFamily == 'Inter' ? 1.25 : 1.35),
           margin: const EdgeInsets.all(0),
           lineHeight: const LineHeight(1.5),
-          color: Colors.white.withOpacity(0.87),
+          color: fontFamily == 'Inter'
+              ? const Color.fromRGBO(0xDF, 0xDF, 0xE2, 0.87)
+              : Colors.white.withOpacity(0.87),
         ),
         'li': Style(
           margin: const EdgeInsets.only(top: 8),
@@ -90,18 +95,22 @@ class HtmlHandler {
             width: MediaQuery.of(context).size.width, margin: EdgeInsets.zero),
         'h1': Style(
             margin: const EdgeInsets.fromLTRB(2, 32, 2, 0),
-            fontSize: FontSize.rem(2.3)),
+            fontSize: FontSize.rem(1.8)),
         'h2': Style(
             margin: const EdgeInsets.fromLTRB(2, 32, 2, 0),
-            fontSize: FontSize.rem(2.3)),
+            fontSize: FontSize.rem(1.6)),
         'h3': Style(
             margin: const EdgeInsets.fromLTRB(2, 32, 2, 0),
-            fontSize: FontSize.rem(1.8)),
+            fontSize: FontSize.rem(1.4)),
         'h4': Style(
             margin: const EdgeInsets.fromLTRB(2, 32, 2, 0),
-            fontSize: FontSize.rem(1.8)),
-        'h5': Style(margin: const EdgeInsets.fromLTRB(2, 32, 2, 0)),
-        'h6': Style(margin: const EdgeInsets.fromLTRB(2, 32, 2, 0))
+            fontSize: FontSize.rem(1.2)),
+        'h5': Style(
+            margin: const EdgeInsets.fromLTRB(2, 32, 2, 0),
+            fontSize: FontSize.rem(1.2)),
+        'h6': Style(
+            margin: const EdgeInsets.fromLTRB(2, 32, 2, 0),
+            fontSize: FontSize.rem(1.2))
       },
       customRender: {
         'table': (context, child) {
