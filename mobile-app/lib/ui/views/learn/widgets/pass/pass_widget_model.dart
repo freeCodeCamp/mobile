@@ -8,11 +8,14 @@ import 'package:freecodecamp/models/learn/completed_challenge_model.dart';
 import 'package:freecodecamp/models/learn/motivational_quote_model.dart';
 import 'package:freecodecamp/models/main/user_model.dart';
 import 'package:freecodecamp/service/authentication_service.dart';
+import 'package:freecodecamp/service/learn_service.dart';
 import 'package:freecodecamp/ui/views/learn/challenge_editor/challenge_model.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:stacked/stacked.dart';
 
 class PassWidgetModel extends BaseViewModel {
   final AuthenticationService auth = locator<AuthenticationService>();
+  final LearnService _learnService = locator<LearnService>();
 
   late FccUserModel? _user;
 
@@ -57,5 +60,24 @@ class PassWidgetModel extends BaseViewModel {
     MotivationalQuote quote = MotivationalQuote.fromJson(json);
 
     return quote;
+  }
+
+  void passChallenge(ChallengeModel model) async {
+    _learnService.init();
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    Challenge? challenge = await model.challenge;
+    if (challenge != null) {
+      List challengeFiles = challenge.files.map((file) {
+        return {
+          'contents': prefs.getString('${challenge.title}.${file.name}') ??
+              file.contents,
+          'ext': file.ext.name,
+          'history': file.history,
+          'key': file.fileKey,
+          'name': file.name,
+        };
+      }).toList();
+      await _learnService.postChallengeCompleted(challenge, challengeFiles);
+    }
   }
 }
