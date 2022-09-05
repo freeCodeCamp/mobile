@@ -62,6 +62,7 @@ class LearnService {
             },
           ),
         );
+        await _authenticationService.fetchUser();
         log(res.toString());
         break;
       case 'backend':
