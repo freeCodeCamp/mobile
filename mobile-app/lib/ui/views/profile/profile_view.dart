@@ -200,6 +200,11 @@ class ProfileView extends StatelessWidget {
                         ],
                       ),
                       buildDivider(),
+                      TextButton(
+                          child: const Text('settings'),
+                          onPressed: () {
+                            model.gotoSettings();
+                          }),
                       ListView(
                         physics: const NeverScrollableScrollPhysics(),
                         shrinkWrap: true,

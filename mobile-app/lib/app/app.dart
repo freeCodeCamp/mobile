@@ -22,6 +22,7 @@ import 'package:freecodecamp/ui/views/news/news-bookmark/news_bookmark_view.dart
 import 'package:freecodecamp/ui/views/news/news-feed/news_feed_view.dart';
 import 'package:freecodecamp/ui/views/settings/forumSettings/forum_settings_view.dart';
 import 'package:freecodecamp/ui/views/settings/podcastSettings/podcast_settings_view.dart';
+import 'package:freecodecamp/ui/views/learn/settings/settings_view.dart';
 import 'package:freecodecamp/ui/views/learn/learn-builders/superblock_builder.dart';
 import 'package:freecodecamp/ui/views/learn/challenge_editor/challenge_view.dart';
 import 'package:freecodecamp/ui/views/web_view/web_view_view.dart';
@@ -55,7 +56,8 @@ import 'package:sqflite_migration_service/sqflite_migration_service.dart';
     MaterialRoute(page: SuperBlockView),
     MaterialRoute(page: ChallengeView),
     MaterialRoute(page: ProfileView),
-    MaterialRoute(page: WebViewView)
+    MaterialRoute(page: WebViewView),
+    MaterialRoute(page: SettingsView)
   ],
   dependencies: [
     LazySingleton(classType: NavigationService),
