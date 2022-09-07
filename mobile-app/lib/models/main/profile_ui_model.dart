@@ -35,4 +35,19 @@ class ProfileUI {
         showPortfolio: data['showPortfolio'],
         showTimeLine: data['showTimeLine']);
   }
+
+  static Map<String, dynamic> toMap(ProfileUI data) {
+    return {
+      'isLocked': data.isLocked,
+      'showAbout': data.showAbout,
+      'showCerts': data.showCerts,
+      'showDonation': data.showDonation,
+      'showHeatMap': data.showHeatMap,
+      'showLocation': data.showLocation,
+      'showName': data.showName,
+      'showPoints': data.showPoints,
+      'showPortfolio': data.showPortfolio,
+      'showTimeLine': data.showTimeLine,
+    };
+  }
 }
