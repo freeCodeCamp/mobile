@@ -41,6 +41,6 @@ class SettingsModel extends BaseViewModel {
 
   save() {
     log(profile.toString());
-    _learnService.updateMyProfileUI(profile!);
+    _learnService.updateMyProfileUI({'profileUI': profile!});
   }
 }
