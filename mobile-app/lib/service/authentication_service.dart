@@ -149,6 +149,8 @@ class AuthenticationService {
   }
 
   Future<void> fetchUser() async {
+    log('fetching user');
+
     Response res = await _dio.get(
       '/user/get-session-user',
       options: Options(

@@ -11,7 +11,6 @@ import 'package:stacked/stacked.dart';
 import 'package:stacked_services/stacked_services.dart';
 
 import '../models/learn/curriculum_model.dart';
-import '../models/main/user_model.dart';
 import '../models/news/bookmarked_article_model.dart';
 import '../models/podcasts/episodes_model.dart';
 import '../models/podcasts/podcasts_model.dart';
@@ -314,12 +313,8 @@ class StackedRouter extends RouterBase {
       );
     },
     SettingsView: (data) {
-      var args = data.getArgs<SettingsViewArguments>(nullOk: false);
       return MaterialPageRoute<dynamic>(
-        builder: (context) => SettingsView(
-          key: args.key,
-          user: args.user,
-        ),
+        builder: (context) => const SettingsView(),
         settings: data,
       );
     },
@@ -451,13 +446,6 @@ class WebViewViewArguments {
   final Key? key;
   final String url;
   WebViewViewArguments({this.key, required this.url});
-}
-
-/// SettingsView arguments holder class
-class SettingsViewArguments {
-  final Key? key;
-  final FccUserModel user;
-  SettingsViewArguments({this.key, required this.user});
 }
 
 /// ************************************************************************
@@ -870,8 +858,6 @@ extension NavigatorStateExtension on NavigationService {
   }
 
   Future<dynamic> navigateToSettingsView({
-    Key? key,
-    required FccUserModel user,
     int? routerId,
     bool preventDuplicates = true,
     Map<String, String>? parameters,
@@ -880,7 +866,6 @@ extension NavigatorStateExtension on NavigationService {
   }) async {
     return navigateTo(
       Routes.settingsView,
-      arguments: SettingsViewArguments(key: key, user: user),
       id: routerId,
       preventDuplicates: preventDuplicates,
       parameters: parameters,

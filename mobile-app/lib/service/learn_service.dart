@@ -23,6 +23,26 @@ class LearnService {
     _dio.interceptors.add(CurlLoggerDioInterceptor());
   }
 
+  Future<void> updateMyProfileUI(Map<String, dynamic> data) async {
+    Response res = await _dio.put(
+      '${AuthenticationService.baseApiURL}/update-my-profileui',
+      data: data,
+      options: Options(
+        headers: {
+          'CSRF-Token': _authenticationService.csrfToken,
+          'Cookie':
+              'jwt_access_token=${_authenticationService.jwtAccessToken}; _csrf=${_authenticationService.csrf};',
+        },
+      ),
+    );
+
+    if (res.statusCode == 200) {
+      log('it works on the first try surprisingly');
+    } else {
+      log('KEKW');
+    }
+  }
+
   Future<void> postChallengeCompleted(
       Challenge challenge, List challengeFiles) async {
     // NOTE: Assuming for now it's just HTML and JS challenges are being submitted

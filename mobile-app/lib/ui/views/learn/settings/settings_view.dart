@@ -1,18 +1,16 @@
 import 'package:flutter/material.dart';
-import 'package:freecodecamp/models/main/user_model.dart';
+
 import 'package:freecodecamp/ui/views/learn/settings/settings_model.dart';
 import 'package:stacked/stacked.dart';
 
 class SettingsView extends StatelessWidget {
-  const SettingsView({Key? key, required this.user}) : super(key: key);
-
-  final FccUserModel user;
+  const SettingsView({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     return ViewModelBuilder<SettingsModel>.reactive(
         viewModelBuilder: () => SettingsModel(),
-        onModelReady: (model) => model.init(user.profileUI),
+        onModelReady: (model) => model.init(),
         builder: ((context, model, child) {
           return Scaffold(
             appBar: AppBar(
@@ -26,7 +24,7 @@ class SettingsView extends StatelessWidget {
                     child: Column(
                       children: [
                         textfield(context, 'Username'),
-                        button(context),
+                        //button(context),
                         switchButton('isLocked', 'My profile', model),
                         switchButton('showName', 'My name', model),
                         switchButton('showLocation', 'My location', model),
@@ -37,11 +35,12 @@ class SettingsView extends StatelessWidget {
                         switchButton('showPortfolio', 'My portfolio', model),
                         switchButton('showTimeLine', 'My timeline', model),
                         switchButton('showDonation', 'My donations', model),
+                        button(context, model),
                         textfield(context, 'Name'),
                         textfield(context, 'Location'),
                         textfield(context, 'Picture'),
                         textfield(context, 'About', 5),
-                        button(context),
+                        //button(context),
                       ],
                     ),
                   )
@@ -78,14 +77,19 @@ class SettingsView extends StatelessWidget {
     );
   }
 
-  Widget button(BuildContext context) {
+  Widget button(BuildContext context, SettingsModel model) {
     return SizedBox(
         width: MediaQuery.of(context).size.width * 0.725,
-        child: TextButton(onPressed: () {}, child: const Text('Save')));
+        child: TextButton(
+            onPressed: () {
+              model.save();
+            },
+            child: const Text('Save')));
   }
 
   Widget switchButton(String flag, String title, SettingsModel model) {
-    bool isPublic = model.profile![flag];
+    bool isPublic =
+        flag != 'isLocked' ? model.profile![flag] : !model.profile![flag];
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
