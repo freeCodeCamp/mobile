@@ -92,29 +92,54 @@ class SettingsModel extends BaseViewModel {
   }
 
   void searchUsername(String username) {
-    void searchUsername() async {
-      bool isUsernameTaken =
-          await _learnService.checkIfUsernameIsTaken(username);
+    Future<bool> validateUsername() async {
+      RegExp validChars =
+          RegExp(r'^[a-zA-Z0-9\-_+]*$', multiLine: true, unicode: true);
 
-      if (isUsernameTaken) {
-        setHelperText = null;
-        setErrorText = 'username is taken';
-      } else {
-        setErrorText = null;
+      int? intUsername = int.tryParse(username);
+
+      if (username.length <= 2) {
+        setErrorText = 'name is too short';
+        return false;
+      }
+
+      if (!validChars.hasMatch(username)) {
+        setErrorText = 'contains invalid characters';
+        return false;
+      }
+
+      if (intUsername != null) {
+        if (intUsername >= 100 && intUsername <= 599) {
+          setErrorText = '$username is a reserved error code';
+          return false;
+        }
+      }
+
+      if (await _learnService.checkIfUsernameIsTaken(username)) {
+        setErrorText = 'username is already taken';
+        return false;
+      }
+
+      return true;
+    }
+
+    void searchUsername() async {
+      bool usernameIsValid = await validateUsername();
+
+      if (usernameIsValid) {
         setHelperText = 'username is available';
+        setErrorText = null;
       }
     }
 
     if (usernameSearchCoolDown == null) {
       setHelperText = 'searching..';
       setErrorText = null;
-      usernameSearchCoolDown =
-          Timer(const Duration(seconds: 2), searchUsername);
+      searchUsername();
     } else if (!usernameSearchCoolDown!.isActive) {
       setErrorText = null;
       setHelperText = 'searching..';
-      usernameSearchCoolDown =
-          Timer(const Duration(seconds: 2), searchUsername);
+      searchUsername();
     }
   }
 }
