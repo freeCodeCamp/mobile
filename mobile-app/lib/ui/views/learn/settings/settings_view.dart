@@ -221,7 +221,7 @@ class SettingsView extends StatelessWidget {
                   border: Border.all(width: 2, color: Colors.white),
                   color: isPublic
                       ? const Color.fromARGB(255, 230, 230, 230)
-                      : const Color(0x002a2a40)),
+                      : const Color.fromRGBO(0x3b, 0x3b, 0x4f, 1)),
               width: 150,
               height: 40,
               child: Row(
