@@ -14,6 +14,7 @@ class SettingsView extends StatelessWidget {
         onModelReady: (model) => model.init(),
         builder: ((context, model, child) {
           return Scaffold(
+            backgroundColor: const Color.fromRGBO(0x1b, 0x1b, 0x32, 1),
             appBar: AppBar(
               title: const Text('LEARN SETTINGS'),
               centerTitle: true,
@@ -182,7 +183,9 @@ class SettingsView extends StatelessWidget {
             },
             child: Container(
               decoration: BoxDecoration(
-                color: !isPublic ? Colors.white : const Color(0x00858591),
+                color: !isPublic
+                    ? Colors.white
+                    : const Color.fromRGBO(0x3b, 0x3b, 0x4f, 1),
                 border: Border.all(
                     width: 2, color: const Color.fromARGB(255, 230, 230, 230)),
               ),
