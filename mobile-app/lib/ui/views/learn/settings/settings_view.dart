@@ -18,43 +18,55 @@ class SettingsView extends StatelessWidget {
               centerTitle: true,
             ),
             body: SingleChildScrollView(
-              child: Row(
-                children: [
-                  Expanded(
-                    child: Column(
-                      children: [
-                        textfield(context, 'Username'),
-                        //button(context),
-                        switchButton('isLocked', 'My profile', model),
-                        switchButton('showName', 'My name', model),
-                        switchButton('showLocation', 'My location', model),
-                        switchButton('showAbout', 'My about', model),
-                        switchButton('showPoints', 'My points', model),
-                        switchButton('showHeatMap', 'My heatmap', model),
-                        switchButton('showCerts', 'My certifications', model),
-                        switchButton('showPortfolio', 'My portfolio', model),
-                        switchButton('showTimeLine', 'My timeline', model),
-                        switchButton('showDonation', 'My donations', model),
-                        button(context, model),
-                        textfield(context, 'Name'),
-                        textfield(context, 'Location'),
-                        textfield(context, 'Picture'),
-                        textfield(context, 'About', 5),
-                        //button(context),
-                      ],
-                    ),
-                  )
-                ],
-              ),
-            ),
+                child: FutureBuilder(
+              future: model.userFuture,
+              builder: ((context, snapshot) {
+                if (snapshot.hasData) {
+                  return Row(
+                    children: [
+                      Expanded(
+                        child: Column(
+                          children: [
+                            textfield('Username'),
+                            //button(context),
+                            switchButton('isLocked', 'My profile', model),
+                            switchButton('showName', 'My name', model),
+                            switchButton('showLocation', 'My location', model),
+                            switchButton('showAbout', 'My about', model),
+                            switchButton('showPoints', 'My points', model),
+                            switchButton('showHeatMap', 'My heatmap', model),
+                            switchButton(
+                                'showCerts', 'My certifications', model),
+                            switchButton(
+                                'showPortfolio', 'My portfolio', model),
+                            switchButton('showTimeLine', 'My timeline', model),
+                            switchButton('showDonation', 'My donations', model),
+                            button(model),
+                            textfield('Name'),
+                            textfield('Location'),
+                            textfield('Picture'),
+                            textfield('About', 5),
+                            //button(context),
+                          ],
+                        ),
+                      )
+                    ],
+                  );
+                }
+
+                return const Center(
+                  child: CircularProgressIndicator(),
+                );
+              }),
+            )),
           );
         }));
   }
 
-  Container textfield(BuildContext context, String label, [int? maxLines]) {
+  Container textfield(String label, [int? maxLines]) {
     return Container(
       padding: const EdgeInsets.all(16),
-      width: MediaQuery.of(context).size.width * 0.8,
+      width: 340,
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -77,9 +89,9 @@ class SettingsView extends StatelessWidget {
     );
   }
 
-  Widget button(BuildContext context, SettingsModel model) {
+  Widget button(SettingsModel model) {
     return SizedBox(
-        width: MediaQuery.of(context).size.width * 0.725,
+        width: 300,
         child: TextButton(
             onPressed: () {
               model.save();
@@ -91,17 +103,35 @@ class SettingsView extends StatelessWidget {
     bool isPublic =
         flag != 'isLocked' ? model.profile![flag] : !model.profile![flag];
 
+    String? description = model.getDescriptions(flag);
+
     return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Padding(
-          padding: const EdgeInsets.only(bottom: 8, top: 16),
-          child: Text(
-            title,
-            style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
+        Container(
+          width: 300,
+          alignment: Alignment.centerLeft,
+          child: Padding(
+            padding: const EdgeInsets.only(bottom: 8, top: 16),
+            child: Text(
+              title,
+              style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
+            ),
           ),
         ),
-        Row(children: [
+        if (description != null)
+          Padding(
+            padding: const EdgeInsets.only(bottom: 8),
+            child: SizedBox(
+                width: 300,
+                child: Text(
+                  description,
+                  style: const TextStyle(
+                      fontStyle: FontStyle.italic,
+                      fontWeight: FontWeight.bold,
+                      color: Color.fromRGBO(0xd0, 0xd0, 0xd5, 1)),
+                )),
+          ),
+        Row(mainAxisAlignment: MainAxisAlignment.center, children: [
           InkWell(
             onTap: () {
               model.setNewValue(flag, false);
@@ -112,7 +142,7 @@ class SettingsView extends StatelessWidget {
                 border: Border.all(
                     width: 2, color: const Color.fromARGB(255, 230, 230, 230)),
               ),
-              width: 125,
+              width: 150,
               height: 40,
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.center,
@@ -145,7 +175,7 @@ class SettingsView extends StatelessWidget {
                   color: isPublic
                       ? const Color.fromARGB(255, 230, 230, 230)
                       : const Color(0x002a2a40)),
-              width: 125,
+              width: 150,
               height: 40,
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.center,

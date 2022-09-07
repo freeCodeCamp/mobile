@@ -10,19 +10,42 @@ import 'package:stacked/stacked.dart';
 class SettingsModel extends BaseViewModel {
   late Map<String, dynamic>? profile;
 
-  final AuthenticationService _auth = locator<AuthenticationService>();
+  final AuthenticationService auth = locator<AuthenticationService>();
   final LearnService _learnService = locator<LearnService>();
+
+  Future<FccUserModel>? userFuture;
 
   set setProfile(Map<String, dynamic> ui) {
     profile = ui;
     notifyListeners();
   }
 
-  void init() async {
-    await _auth.init();
-    FccUserModel? user = await _auth.userModel;
+  set setUserFuture(Future<FccUserModel> userLoaded) {
+    userFuture = userLoaded;
+    notifyListeners();
+  }
 
-    setProfile = ProfileUI.toMap(user!.profileUI);
+  void init() async {
+    await auth.init();
+
+    setUserFuture = auth.userModel!;
+
+    FccUserModel? user = await userFuture!;
+
+    setProfile = ProfileUI.toMap(user.profileUI);
+  }
+
+  String? getDescriptions(String flag) {
+    switch (flag) {
+      case 'isLocked':
+        return '''Your certifications will be disabled, if set to private.''';
+      case 'showName':
+        return '''Your name will not appear on your certifications, if this is set to private.''';
+      case 'showCerts':
+        return '''Your certifications will be disabled, if set to private.''';
+    }
+
+    return null;
   }
 
   void setNewValue(String flag, bool value) {
