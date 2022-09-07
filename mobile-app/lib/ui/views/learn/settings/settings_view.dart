@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:freecodecamp/models/main/user_model.dart';
 
 import 'package:freecodecamp/ui/views/learn/settings/settings_model.dart';
 import 'package:stacked/stacked.dart';
@@ -18,21 +19,23 @@ class SettingsView extends StatelessWidget {
               centerTitle: true,
             ),
             body: SingleChildScrollView(
-                child: FutureBuilder(
+                child: FutureBuilder<FccUserModel>(
               future: model.userFuture,
               builder: ((context, snapshot) {
                 if (snapshot.hasData) {
+                  FccUserModel user = snapshot.data as FccUserModel;
+
                   return Row(
                     children: [
                       Expanded(
                         child: Column(
                           children: [
-                            textfield('Username'),
+                            textfield('Username', user.username),
                             button(model),
-                            textfield('Name'),
-                            textfield('Location'),
-                            textfield('Picture'),
-                            textfield('About', 5),
+                            textfield('Name', user.name),
+                            textfield('Location', user.location),
+                            textfield('Picture', user.picture),
+                            textfield('About', user.about, 5),
                             button(model),
                             switchButton('isLocked', 'My profile', model),
                             switchButton('showName', 'My name', model),
@@ -63,7 +66,7 @@ class SettingsView extends StatelessWidget {
         }));
   }
 
-  Container textfield(String label, [int? maxLines]) {
+  Container textfield(String label, String? initValue, [int? maxLines]) {
     return Container(
       padding: const EdgeInsets.all(16),
       width: 340,
@@ -77,7 +80,8 @@ class SettingsView extends StatelessWidget {
               style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
             ),
           ),
-          TextField(
+          TextFormField(
+            initialValue: initValue,
             maxLines: maxLines ?? 1,
             decoration: const InputDecoration(
                 border: OutlineInputBorder(),
