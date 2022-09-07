@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:freecodecamp/app/app.locator.dart';
 import 'package:freecodecamp/models/main/profile_ui_model.dart';
 import 'package:freecodecamp/models/main/user_model.dart';
@@ -15,6 +17,11 @@ class SettingsModel extends BaseViewModel {
 
   Future<FccUserModel>? userFuture;
 
+  String? helperText;
+  String? errorText;
+
+  Timer? usernameSearchCoolDown;
+
   set setProfile(Map<String, dynamic> ui) {
     profile = ui;
     notifyListeners();
@@ -22,6 +29,16 @@ class SettingsModel extends BaseViewModel {
 
   set setUserFuture(Future<FccUserModel> userLoaded) {
     userFuture = userLoaded;
+    notifyListeners();
+  }
+
+  set setHelperText(String? text) {
+    helperText = text;
+    notifyListeners();
+  }
+
+  set setErrorText(String? text) {
+    errorText = text;
     notifyListeners();
   }
 
@@ -71,6 +88,33 @@ class SettingsModel extends BaseViewModel {
           title: 'updated settings successfully', message: '');
     } else {
       _snackbarService.showSnackbar(title: 'something went wrong', message: '');
+    }
+  }
+
+  void searchUsername(String username) {
+    void searchUsername() async {
+      bool isUsernameTaken =
+          await _learnService.checkIfUsernameIsTaken(username);
+
+      if (isUsernameTaken) {
+        setHelperText = null;
+        setErrorText = 'username is taken';
+      } else {
+        setErrorText = null;
+        setHelperText = 'username is available';
+      }
+    }
+
+    if (usernameSearchCoolDown == null) {
+      setHelperText = 'searching..';
+      setErrorText = null;
+      usernameSearchCoolDown =
+          Timer(const Duration(seconds: 2), searchUsername);
+    } else if (!usernameSearchCoolDown!.isActive) {
+      setErrorText = null;
+      setHelperText = 'searching..';
+      usernameSearchCoolDown =
+          Timer(const Duration(seconds: 2), searchUsername);
     }
   }
 }

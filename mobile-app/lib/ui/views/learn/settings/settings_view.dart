@@ -30,7 +30,7 @@ class SettingsView extends StatelessWidget {
                       Expanded(
                         child: Column(
                           children: [
-                            textfield('Username', user.username),
+                            textfieldUsername('Username', user.username, model),
                             button(model),
                             textfield('Name', user.name),
                             textfield('Location', user.location),
@@ -90,6 +90,46 @@ class SettingsView extends StatelessWidget {
           ),
         ],
       ),
+    );
+  }
+
+  Widget textfieldUsername(
+      String label, String? initValue, SettingsModel model) {
+    return Column(
+      children: [
+        Container(
+          padding: const EdgeInsets.all(16),
+          width: 340,
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Padding(
+                padding: const EdgeInsets.only(bottom: 8),
+                child: Text(
+                  label,
+                  style: const TextStyle(
+                      fontWeight: FontWeight.bold, fontSize: 16),
+                ),
+              ),
+              TextFormField(
+                initialValue: initValue,
+                onChanged: (String changedName) {
+                  model.searchUsername(changedName);
+                },
+                decoration: InputDecoration(
+                    helperText: model.helperText,
+                    errorText: model.errorText,
+                    helperStyle: model.helperText == 'username is available'
+                        ? const TextStyle(color: Colors.green)
+                        : null,
+                    border: const OutlineInputBorder(),
+                    filled: true,
+                    fillColor: const Color(0xFF0a0a23)),
+              ),
+            ],
+          ),
+        ),
+      ],
     );
   }
 

@@ -43,6 +43,25 @@ class LearnService {
     return false;
   }
 
+  Future<bool> checkIfUsernameIsTaken(String name) async {
+    Response res = await _dio.get(
+      '${AuthenticationService.baseApiURL}/api/users/exists?username=$name',
+      options: Options(
+        headers: {
+          'CSRF-Token': _authenticationService.csrfToken,
+          'Cookie':
+              'jwt_access_token=${_authenticationService.jwtAccessToken}; _csrf=${_authenticationService.csrf};',
+        },
+      ),
+    );
+
+    if (res.statusCode == 200) {
+      return res.data['exists'];
+    }
+
+    return true;
+  }
+
   Future<void> postChallengeCompleted(
       Challenge challenge, List challengeFiles) async {
     // NOTE: Assuming for now it's just HTML and JS challenges are being submitted
