@@ -1,17 +1,17 @@
-import 'dart:developer';
-
 import 'package:freecodecamp/app/app.locator.dart';
 import 'package:freecodecamp/models/main/profile_ui_model.dart';
 import 'package:freecodecamp/models/main/user_model.dart';
 import 'package:freecodecamp/service/authentication_service.dart';
 import 'package:freecodecamp/service/learn_service.dart';
 import 'package:stacked/stacked.dart';
+import 'package:stacked_services/stacked_services.dart';
 
 class SettingsModel extends BaseViewModel {
   late Map<String, dynamic>? profile;
 
   final AuthenticationService auth = locator<AuthenticationService>();
   final LearnService _learnService = locator<LearnService>();
+  final SnackbarService _snackbarService = locator<SnackbarService>();
 
   Future<FccUserModel>? userFuture;
 
@@ -62,8 +62,15 @@ class SettingsModel extends BaseViewModel {
     }
   }
 
-  save() {
-    log(profile.toString());
-    _learnService.updateMyProfileUI({'profileUI': profile!});
+  void save() async {
+    bool updated =
+        await _learnService.updateMyProfileUI({'profileUI': profile!});
+
+    if (updated) {
+      _snackbarService.showSnackbar(
+          title: 'updated settings successfully', message: '');
+    } else {
+      _snackbarService.showSnackbar(title: 'something went wrong', message: '');
+    }
   }
 }

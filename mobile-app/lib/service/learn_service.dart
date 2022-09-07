@@ -23,7 +23,7 @@ class LearnService {
     _dio.interceptors.add(CurlLoggerDioInterceptor());
   }
 
-  Future<void> updateMyProfileUI(Map<String, dynamic> data) async {
+  Future<bool> updateMyProfileUI(Map<String, dynamic> data) async {
     Response res = await _dio.put(
       '${AuthenticationService.baseApiURL}/update-my-profileui',
       data: data,
@@ -37,10 +37,10 @@ class LearnService {
     );
 
     if (res.statusCode == 200) {
-      log('it works on the first try surprisingly');
-    } else {
-      log('KEKW');
+      return true;
     }
+
+    return false;
   }
 
   Future<void> postChallengeCompleted(

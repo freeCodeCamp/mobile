@@ -28,7 +28,12 @@ class SettingsView extends StatelessWidget {
                         child: Column(
                           children: [
                             textfield('Username'),
-                            //button(context),
+                            button(model),
+                            textfield('Name'),
+                            textfield('Location'),
+                            textfield('Picture'),
+                            textfield('About', 5),
+                            button(model),
                             switchButton('isLocked', 'My profile', model),
                             switchButton('showName', 'My name', model),
                             switchButton('showLocation', 'My location', model),
@@ -42,11 +47,6 @@ class SettingsView extends StatelessWidget {
                             switchButton('showTimeLine', 'My timeline', model),
                             switchButton('showDonation', 'My donations', model),
                             button(model),
-                            textfield('Name'),
-                            textfield('Location'),
-                            textfield('Picture'),
-                            textfield('About', 5),
-                            //button(context),
                           ],
                         ),
                       )
