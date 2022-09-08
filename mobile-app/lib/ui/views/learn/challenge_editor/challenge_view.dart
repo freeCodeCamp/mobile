@@ -230,8 +230,7 @@ class ChallengeView extends StatelessWidget {
     if (model.testController != null) {
       editor.onTextChange.stream.listen((event) {
         model.setHasTypedInEditor = true;
-        model.runner
-            .setWebViewContent(event, challenge.tests, model.testController!);
+        model.runner.setWebViewContent(challenge, model.testController!);
       });
     }
 

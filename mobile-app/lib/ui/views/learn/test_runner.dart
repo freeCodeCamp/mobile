@@ -3,8 +3,10 @@ import 'dart:developer';
 
 import 'package:flutter/material.dart';
 import 'package:freecodecamp/enums/challenge_test_state_type.dart';
+import 'package:freecodecamp/enums/ext_type.dart';
 import 'package:freecodecamp/models/learn/challenge_model.dart';
 import 'package:html/parser.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:stacked/stacked.dart';
 import 'package:webview_flutter/webview_flutter.dart';
 import 'package:html/dom.dart' as dom;
@@ -20,14 +22,72 @@ class TestRunner extends BaseViewModel {
     notifyListeners();
   }
 
-  void setWebViewContent(String content, List<ChallengeTest> tests,
-      WebViewController webviewController) {
-    dom.Document document = parse(content);
+  Future<String?> getExactFileFromCache(
+    Challenge challenge,
+    ChallengeFile file,
+  ) async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    String? cache = prefs.getString('${challenge.title}.${file.name}');
+
+    return cache;
+  }
+
+  Future<String> getFirstHTMLfileFromCache(
+    Challenge challenge,
+  ) async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    List<ChallengeFile> firstHtmlChallenge =
+        challenge.files.where((file) => file.ext == Ext.html).toList();
+
+    String fileContent =
+        prefs.getString('${challenge.title}.${firstHtmlChallenge[0].name}') ??
+            firstHtmlChallenge[0].contents;
+
+    return fileContent;
+  }
+
+  Future<String> parseCssDocmentsAsStyleTags(
+    Challenge challenge,
+    String content,
+  ) async {
+    List<ChallengeFile> cssFiles =
+        challenge.files.where((element) => element.ext == Ext.css).toList();
+    List<String> cssFilesWithCache = [];
+    List<String> tags = [];
+
+    if (cssFiles.isNotEmpty) {
+      for (ChallengeFile file in cssFiles) {
+        String? cache = await getExactFileFromCache(challenge, file);
+        String handledFile = cache ?? file.contents;
+
+        cssFilesWithCache.add(handledFile);
+      }
+
+      for (String contents in cssFilesWithCache) {
+        String tag = '<style> $contents </style>';
+        tags.add(tag);
+      }
+
+      for (String tag in tags) {
+        content += tag;
+      }
+
+      return content;
+    }
+
+    return content;
+  }
+
+  void setWebViewContent(
+    Challenge challenge,
+    WebViewController webviewController,
+  ) async {
+    dom.Document document = dom.Document();
+    document = parse('');
 
     List<String> imports = [
       '<script src="https://unpkg.com/chai/chai.js"></script>',
       '<script src="https://unpkg.com/mocha/mocha.js"></script>',
-      //'''<script src="https://unpkg.com/@freecodecamp/curriculum-helpers@1.0.5/dist/index.js" type="module">''',
       '<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>',
       '<link rel="stylesheet" href="https://unpkg.com/mocha/mocha.css" />'
     ];
@@ -41,11 +101,12 @@ class TestRunner extends BaseViewModel {
        </script>
       ''',
       '''
-       <script class="mocha-exec">
+       <script class="mocha-exec" type="module">
+          import * as __helpers from "https://unpkg.com/@freecodecamp/curriculum-helpers@1.1.0/dist/index.js";
           const assert = chai.assert;
-          let code = `$content`;
-          
-          ${parseTest(tests)}
+          let code = `${await parseCssDocmentsAsStyleTags(challenge, await getFirstHTMLfileFromCache(challenge))}`;
+
+          ${parseTest(challenge.tests)}
 
           mocha.run();
        </script>
@@ -55,11 +116,10 @@ class TestRunner extends BaseViewModel {
     for (String import in imports) {
       dom.Document importToNode = parse(import);
 
-      // ignore: unused_local_variable
       dom.Node node =
           importToNode.getElementsByTagName('HEAD')[0].children.first;
 
-      document.body!.append(importToNode);
+      document.getElementsByTagName('HEAD')[0].append(node);
     }
 
     for (String bodyScript in bodyScripts) {
@@ -72,10 +132,11 @@ class TestRunner extends BaseViewModel {
       document.body!.append(bodyNode);
     }
 
+    log(document.outerHtml);
+
     webviewController.loadUrl(Uri.dataFromString(document.outerHtml,
             mimeType: 'text/html', encoding: Encoding.getByName('utf-8'))
         .toString());
-    log(document.outerHtml);
   }
 
   IconData getCorrectTestIcon(ChallengeTestState testState) {
