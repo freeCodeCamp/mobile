@@ -10,8 +10,6 @@ import 'package:pretty_dio_logger/pretty_dio_logger.dart';
 class LearnService {
   static final LearnService _learnService = LearnService._internal();
   final _authenticationService = locator<AuthenticationService>();
-
-  // TODO: make a Dio service instead of initialising it everywhere
   final Dio _dio = Dio();
 
   factory LearnService() {
@@ -57,6 +55,10 @@ class LearnService {
     );
 
     if (res.statusCode == 200) {
+      if (res.data['type'] == 'info') {
+        return false;
+      }
+
       return true;
     } else {
       return false;

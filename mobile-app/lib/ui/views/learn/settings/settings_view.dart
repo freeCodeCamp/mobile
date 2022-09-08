@@ -114,7 +114,7 @@ class SettingsView extends StatelessWidget {
               TextFormField(
                 initialValue: initValue,
                 onChanged: (String changedName) {
-                  model.searchUsername(changedName);
+                  model.searchUsername(changedName, initValue ?? '');
                   model.setUsername = changedName;
                 },
                 decoration: InputDecoration(
@@ -137,6 +137,8 @@ class SettingsView extends StatelessWidget {
                   side: const BorderSide(width: 2, color: Colors.white),
                   padding: const EdgeInsets.all(0),
                   backgroundColor: const Color.fromRGBO(0x3b, 0x3b, 0x4f, 1),
+                  disabledBackgroundColor:
+                      model.errorText != null ? const Color(0xFF0a0a23) : null,
                 ),
                 onPressed: () async {
                   if (model.errorText == null) {

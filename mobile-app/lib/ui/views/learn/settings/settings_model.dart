@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:developer';
 
 import 'package:freecodecamp/app/app.locator.dart';
 import 'package:freecodecamp/models/main/profile_ui_model.dart';
@@ -18,6 +19,8 @@ class SettingsModel extends BaseViewModel {
   Future<FccUserModel>? userFuture;
 
   String? username;
+
+  Timer? requestCooldonwTimer;
 
   String? helperText;
   String? errorText;
@@ -100,12 +103,14 @@ class SettingsModel extends BaseViewModel {
     if (await _learnService.updateUsername(username)) {
       _snackbarService.showSnackbar(
           title: 'username updated successfully', message: '');
+      init();
     } else {
       _snackbarService.showSnackbar(title: 'something went wrong', message: '');
     }
   }
 
-  Future<bool> validateUsername(String username) async {
+  Future<bool> validateUsername(String username, String currName) async {
+    log(username);
     RegExp validChars =
         RegExp(r'^[a-zA-Z0-9\-_+]*$', multiLine: true, unicode: true);
 
@@ -113,6 +118,11 @@ class SettingsModel extends BaseViewModel {
 
     if (username.length <= 2 || username.isEmpty) {
       setErrorText = 'name is too short';
+      return false;
+    }
+
+    if (currName == username) {
+      setErrorText = 'this already is your username';
       return false;
     }
 
@@ -128,26 +138,35 @@ class SettingsModel extends BaseViewModel {
       }
     }
 
-    if (await _learnService.checkIfUsernameIsTaken(username)) {
-      setErrorText = 'username is already taken';
-      return false;
-    }
-
     return true;
   }
 
-  void searchUsername(String username) {
-    void searchUsername() async {
-      bool usernameIsValid = await validateUsername(username);
+  void searchUsername(String username, String currentName) {
+    void search() async {
+      bool usernameIsValid = await validateUsername(username, currentName);
 
       if (usernameIsValid) {
-        setHelperText = 'username is available';
-        setErrorText = null;
+        if (await _learnService.checkIfUsernameIsTaken(username)) {
+          setErrorText = 'username is already taken';
+          return;
+        } else {
+          setHelperText = 'username is available';
+          setErrorText = null;
+        }
       }
+    }
+
+    if (requestCooldonwTimer == null) {
+      log('timer was not set to begin with');
+      requestCooldonwTimer = Timer(const Duration(seconds: 1), search);
+    } else if (!requestCooldonwTimer!.isActive) {
+      requestCooldonwTimer = Timer(const Duration(seconds: 1), search);
+    } else {
+      requestCooldonwTimer!.cancel();
+      requestCooldonwTimer = Timer(const Duration(seconds: 1), search);
     }
 
     setHelperText = 'searching..';
     setErrorText = null;
-    searchUsername();
   }
 }
