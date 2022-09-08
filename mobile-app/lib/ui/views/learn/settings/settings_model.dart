@@ -17,10 +17,10 @@ class SettingsModel extends BaseViewModel {
 
   Future<FccUserModel>? userFuture;
 
+  String? username;
+
   String? helperText;
   String? errorText;
-
-  Timer? usernameSearchCoolDown;
 
   set setProfile(Map<String, dynamic> ui) {
     profile = ui;
@@ -29,6 +29,11 @@ class SettingsModel extends BaseViewModel {
 
   set setUserFuture(Future<FccUserModel> userLoaded) {
     userFuture = userLoaded;
+    notifyListeners();
+  }
+
+  set setUsername(String name) {
+    username = name;
     notifyListeners();
   }
 
@@ -91,40 +96,49 @@ class SettingsModel extends BaseViewModel {
     }
   }
 
-  void searchUsername(String username) {
-    Future<bool> validateUsername() async {
-      RegExp validChars =
-          RegExp(r'^[a-zA-Z0-9\-_+]*$', multiLine: true, unicode: true);
+  void updateUsername(String username) async {
+    if (await _learnService.updateUsername(username)) {
+      _snackbarService.showSnackbar(
+          title: 'username updated successfully', message: '');
+    } else {
+      _snackbarService.showSnackbar(title: 'something went wrong', message: '');
+    }
+  }
 
-      int? intUsername = int.tryParse(username);
+  Future<bool> validateUsername(String username) async {
+    RegExp validChars =
+        RegExp(r'^[a-zA-Z0-9\-_+]*$', multiLine: true, unicode: true);
 
-      if (username.length <= 2) {
-        setErrorText = 'name is too short';
-        return false;
-      }
+    int? intUsername = int.tryParse(username);
 
-      if (!validChars.hasMatch(username)) {
-        setErrorText = 'contains invalid characters';
-        return false;
-      }
-
-      if (intUsername != null) {
-        if (intUsername >= 100 && intUsername <= 599) {
-          setErrorText = '$username is a reserved error code';
-          return false;
-        }
-      }
-
-      if (await _learnService.checkIfUsernameIsTaken(username)) {
-        setErrorText = 'username is already taken';
-        return false;
-      }
-
-      return true;
+    if (username.length <= 2 || username.isEmpty) {
+      setErrorText = 'name is too short';
+      return false;
     }
 
+    if (!validChars.hasMatch(username)) {
+      setErrorText = 'contains invalid characters';
+      return false;
+    }
+
+    if (intUsername != null) {
+      if (intUsername >= 100 && intUsername <= 599) {
+        setErrorText = '$username is a reserved error code';
+        return false;
+      }
+    }
+
+    if (await _learnService.checkIfUsernameIsTaken(username)) {
+      setErrorText = 'username is already taken';
+      return false;
+    }
+
+    return true;
+  }
+
+  void searchUsername(String username) {
     void searchUsername() async {
-      bool usernameIsValid = await validateUsername();
+      bool usernameIsValid = await validateUsername(username);
 
       if (usernameIsValid) {
         setHelperText = 'username is available';
@@ -132,14 +146,8 @@ class SettingsModel extends BaseViewModel {
       }
     }
 
-    if (usernameSearchCoolDown == null) {
-      setHelperText = 'searching..';
-      setErrorText = null;
-      searchUsername();
-    } else if (!usernameSearchCoolDown!.isActive) {
-      setErrorText = null;
-      setHelperText = 'searching..';
-      searchUsername();
-    }
+    setHelperText = 'searching..';
+    setErrorText = null;
+    searchUsername();
   }
 }

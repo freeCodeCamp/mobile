@@ -43,6 +43,26 @@ class LearnService {
     return false;
   }
 
+  Future<bool> updateUsername(String name) async {
+    Response res = await _dio.put(
+      '${AuthenticationService.baseApiURL}/update-my-username',
+      data: {'username': name},
+      options: Options(
+        headers: {
+          'CSRF-Token': _authenticationService.csrfToken,
+          'Cookie':
+              'jwt_access_token=${_authenticationService.jwtAccessToken}; _csrf=${_authenticationService.csrf};',
+        },
+      ),
+    );
+
+    if (res.statusCode == 200) {
+      return true;
+    } else {
+      return false;
+    }
+  }
+
   Future<bool> checkIfUsernameIsTaken(String name) async {
     Response res = await _dio.get(
       '${AuthenticationService.baseApiURL}/api/users/exists?username=$name',

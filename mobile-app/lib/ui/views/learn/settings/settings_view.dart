@@ -32,7 +32,6 @@ class SettingsView extends StatelessWidget {
                         child: Column(
                           children: [
                             textfieldUsername('Username', user.username, model),
-                            button(model),
                             textfield('Name', user.name),
                             textfield('Location', user.location),
                             textfield('Picture', user.picture),
@@ -116,6 +115,7 @@ class SettingsView extends StatelessWidget {
                 initialValue: initValue,
                 onChanged: (String changedName) {
                   model.searchUsername(changedName);
+                  model.setUsername = changedName;
                 },
                 decoration: InputDecoration(
                     helperText: model.helperText,
@@ -130,6 +130,20 @@ class SettingsView extends StatelessWidget {
             ],
           ),
         ),
+        SizedBox(
+            width: 310,
+            child: TextButton(
+                style: TextButton.styleFrom(
+                  side: const BorderSide(width: 2, color: Colors.white),
+                  padding: const EdgeInsets.all(0),
+                  backgroundColor: const Color.fromRGBO(0x3b, 0x3b, 0x4f, 1),
+                ),
+                onPressed: () async {
+                  if (model.errorText == null) {
+                    model.updateUsername(model.username!);
+                  }
+                },
+                child: const Text('Save')))
       ],
     );
   }
