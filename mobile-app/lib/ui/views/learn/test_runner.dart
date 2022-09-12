@@ -1,8 +1,5 @@
 import 'dart:convert';
-import 'dart:developer';
 
-import 'package:flutter/material.dart';
-import 'package:freecodecamp/enums/challenge_test_state_type.dart';
 import 'package:freecodecamp/enums/ext_type.dart';
 import 'package:freecodecamp/models/learn/challenge_model.dart';
 import 'package:html/parser.dart';
@@ -10,8 +7,6 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:stacked/stacked.dart';
 import 'package:webview_flutter/webview_flutter.dart';
 import 'package:html/dom.dart' as dom;
-
-// TODO: do not rely on the DOM and use the console instead to see if test are completed
 
 class TestRunner extends BaseViewModel {
   String _testDocument = '';
@@ -93,23 +88,54 @@ class TestRunner extends BaseViewModel {
     ];
 
     List<String> bodyScripts = [
-      '<div id="mocha"></div>',
       '''
-       <script class="mocha-init">
-          mocha.setup("bdd");
-          mocha.checkLeaks();
-       </script>
-      ''',
-      '''
-       <script class="mocha-exec" type="module">
-          import * as __helpers from "https://unpkg.com/@freecodecamp/curriculum-helpers@1.1.0/dist/index.js";
-          const assert = chai.assert;
-          let code = `${await parseCssDocmentsAsStyleTags(challenge, await getFirstHTMLfileFromCache(challenge))}`;
+  <script type="module">
+    import * as __helpers from "https://unpkg.com/@freecodecamp/curriculum-helpers@1.1.0/dist/index.js";
 
-          ${parseTest(challenge.tests)}
+    const code = `${await parseCssDocmentsAsStyleTags(challenge, await getFirstHTMLfileFromCache(challenge))}`;
+    const doc = new DOMParser().parseFromString(code, 'text/html')
 
-          mocha.run();
-       </script>
+    const assert = chai.assert;
+    const tests = ${parseTest(challenge.tests)};
+    const testText = ${challenge.tests.map((e) => '''`${e.instruction}`''').toList().toString()}; 
+
+
+
+  const completed = [];
+
+  doc.__runTest = async function runtTests(testString) {
+
+    let error = false;
+    for(let i = 0; i < testString.length; i++){ 
+
+      try {
+      const testPromise = new Promise((resolve, reject) => {
+        try {
+          const test = eval(testString[i]);
+          resolve(test);
+        } catch (e) {
+          reject(e);
+        }
+      });
+
+      const test = await testPromise;
+      if (typeof test === "function") {
+        await test(testString[i]);
+      }
+    } catch (e) {
+
+     Print.postMessage(testText[i]);
+    } finally {
+      if(!error){
+        completed.push(true);
+        if(completed.length === testString.length){
+          Print.postMessage('completed');
+        }
+      } 
+    }
+
+    doc.__runTest(tests);
+  </script>
       '''
     ];
 
@@ -132,124 +158,18 @@ class TestRunner extends BaseViewModel {
       document.body!.append(bodyNode);
     }
 
-    log(document.outerHtml);
-
     webviewController.loadUrl(Uri.dataFromString(document.outerHtml,
             mimeType: 'text/html', encoding: Encoding.getByName('utf-8'))
         .toString());
+    //log(document.outerHtml);
   }
 
-  IconData getCorrectTestIcon(ChallengeTestState testState) {
-    switch (testState) {
-      case ChallengeTestState.waiting:
-        return Icons.science_outlined;
-      case ChallengeTestState.passed:
-        return Icons.check;
-      case ChallengeTestState.failed:
-        return Icons.error;
-      default:
-        return Icons.science_outlined;
-    }
-  }
+  List<String> parseTest(List<ChallengeTest> test) {
+    List<String> parsedTest = test
+        .map((e) =>
+            """`${e.javaScript.replaceAll('document', 'doc').replaceAll('\\', '\\\\')}`""")
+        .toList();
 
-  List<ChallengeTest> getFailedTest(List<ChallengeTest> incTest) {
-    List<ChallengeTest> testedTest = [];
-    dom.Document document = parse(_testDocument);
-
-    if (document.getElementsByClassName('test fail').isEmpty) {
-      return testedTest;
-    }
-
-    List testFailInView = document.getElementsByClassName('test fail');
-
-    out:
-    for (int i = 0; i < testFailInView.length; i++) {
-      List<dom.Element> nodes =
-          document.getElementsByClassName('test fail')[i].children;
-      for (int j = 0; j < incTest.length; j++) {
-        for (dom.Element node in nodes) {
-          String nodeTrimmed =
-              node.text.replaceAll(' ', '').replaceAll('‣', '');
-          String instTrimmed = incTest[j].instruction.replaceAll(' ', '');
-
-          if (nodeTrimmed == instTrimmed) {
-            incTest[j].testState = ChallengeTestState.failed;
-            testedTest.add(incTest[j]);
-          }
-
-          if (incTest.length == testedTest.length) break out;
-        }
-      }
-    }
-
-    return testedTest;
-  }
-
-  String parseTest(List<ChallengeTest> tests) {
-    List<String> stringArr = [];
-
-    for (ChallengeTest test in tests) {
-      stringArr.add('''\nit(`${test.instruction}`, () => {
-        ${test.javaScript}
-      });''');
-    }
-
-    return stringArr.join();
-  }
-
-  List<ChallengeTest> getPassedTest(List<ChallengeTest> incTest) {
-    List<ChallengeTest> testedTest = [];
-    dom.Document document = parse(_testDocument);
-
-    if (document.getElementsByClassName('test pass fast').isEmpty) {
-      return testedTest;
-    }
-
-    List<dom.Element> testPassInView =
-        document.getElementsByClassName('test pass fast');
-
-    out:
-    for (int i = 0; i < testPassInView.length; i++) {
-      List<dom.Element> nodes =
-          document.getElementsByClassName('test pass fast')[i].children;
-
-      for (int j = 0; j < incTest.length; j++) {
-        for (dom.Element node in nodes) {
-          List nodeSplit = node.text.split('>');
-
-          if (nodeSplit.length > 1) nodeSplit.removeLast();
-
-          String nodeTrimmed = '${nodeSplit.join('>').replaceAll(' ', '')}>';
-
-          String instTrimmed = incTest[j].instruction.replaceAll(' ', '');
-
-          if (nodeTrimmed == instTrimmed) {
-            incTest[j].testState = ChallengeTestState.passed;
-            testedTest.add(incTest[j]);
-          }
-
-          if (incTest.length == testedTest.length) break out;
-        }
-      }
-    }
-    return testedTest;
-  }
-
-  Future<List<ChallengeTest>> testRunner(List<ChallengeTest> incTest) async {
-    if (_testDocument.isNotEmpty) {
-      List<ChallengeTest> passedTest = getPassedTest(incTest);
-      List<ChallengeTest> failedTest = getFailedTest(incTest);
-
-      log('running tests');
-
-      List<ChallengeTest> allTest = List.from(passedTest)..addAll(failedTest);
-      log((allTest.map((e) => e.testState)).toString());
-
-      return allTest;
-    } else {
-      log('test document is empty');
-    }
-
-    return incTest;
+    return parsedTest;
   }
 }

@@ -255,23 +255,9 @@ class ChallengeView extends StatelessWidget {
               javascriptMode: JavascriptMode.unrestricted,
               javascriptChannels: {
                 JavascriptChannel(
-                  name: 'Flutter',
+                  name: 'Print',
                   onMessageReceived: (JavascriptMessage message) async {
-                    model.runner.setTestDocument = message.message;
-                    List<ChallengeTest> tests =
-                        await model.runner.testRunner(challenge.tests);
-                    log(tests.toString());
-                    ChallengeTest? test = model.returnFirstFailedTest(tests);
-
-                    if (test != null) {
-                      model.setPanelType = PanelType.hint;
-                      model.setHint = test.instruction;
-                      model.setShowPanel = true;
-                    } else {
-                      model.setPanelType = PanelType.pass;
-                      model.setCompletedChallenge = true;
-                      model.setShowPanel = true;
-                    }
+                    log(message.message);
                   },
                 )
               },
