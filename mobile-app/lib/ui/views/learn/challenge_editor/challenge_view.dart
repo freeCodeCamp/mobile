@@ -230,7 +230,6 @@ class ChallengeView extends StatelessWidget {
     if (model.testController != null) {
       editor.onTextChange.stream.listen((event) {
         model.setHasTypedInEditor = true;
-        model.runner.setWebViewContent(challenge, model.testController!);
       });
     }
 
@@ -257,7 +256,15 @@ class ChallengeView extends StatelessWidget {
                 JavascriptChannel(
                   name: 'Print',
                   onMessageReceived: (JavascriptMessage message) async {
-                    log(message.message);
+                    if (message.message == 'completed') {
+                      model.setPanelType = PanelType.pass;
+                      model.setCompletedChallenge = true;
+                      model.setShowPanel = true;
+                    } else {
+                      model.setPanelType = PanelType.hint;
+                      model.setHint = message.message;
+                      model.setShowPanel = true;
+                    }
                   },
                 )
               },
@@ -343,6 +350,8 @@ class ChallengeView extends StatelessWidget {
                         : const FaIcon(FontAwesomeIcons.check),
                     onPressed: model.hasTypedInEditor
                         ? () async => {
+                              model.runner.setWebViewContent(
+                                  challenge, model.testController!),
                               FocusManager.instance.primaryFocus?.unfocus(),
                               model.testController?.runJavascript('''
                                 (function(){Flutter.postMessage(window.document.body.outerHTML)})();

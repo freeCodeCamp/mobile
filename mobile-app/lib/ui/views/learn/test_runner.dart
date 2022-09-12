@@ -99,40 +99,34 @@ class TestRunner extends BaseViewModel {
     const tests = ${parseTest(challenge.tests)};
     const testText = ${challenge.tests.map((e) => '''`${e.instruction}`''').toList().toString()}; 
 
-
-
-  const completed = [];
-
-  doc.__runTest = async function runtTests(testString) {
-
-    let error = false;
-    for(let i = 0; i < testString.length; i++){ 
-
-      try {
-      const testPromise = new Promise((resolve, reject) => {
+    doc.__runTest = async function runtTests(testString) {
+      let error = false;
+      for(let i = 0; i < testString.length; i++){ 
+ 
         try {
-          const test = eval(testString[i]);
-          resolve(test);
-        } catch (e) {
-          reject(e);
+        const testPromise = new Promise((resolve, reject) => {
+          try {
+            const test = eval(testString[i]);
+            resolve(test);
+          } catch (e) {
+            reject(e);
+          }
+        });
+
+        const test = await testPromise;
+        if (typeof test === "function") {
+          await test(testString[i]);
         }
-      });
-
-      const test = await testPromise;
-      if (typeof test === "function") {
-        await test(testString[i]);
-      }
-    } catch (e) {
-
-     Print.postMessage(testText[i]);
-    } finally {
-      if(!error){
-        completed.push(true);
-        if(completed.length === testString.length){
+      } catch (e) {
+       Print.postMessage(testText[i]);
+       break;
+      } finally {
+        if(!error && testString.length -1 == i){
           Print.postMessage('completed');
         }
-      } 
-    }
+      }
+      }
+    };
 
     doc.__runTest(tests);
   </script>
