@@ -11,7 +11,7 @@ class ProfileViewModel extends BaseViewModel {
   final NavigationService navigationService = locator<NavigationService>();
 
   void gotoSettings(FccUserModel user) {
-    navigationService.navigateTo(
+    navigationService.pushNamedAndRemoveUntil(
       Routes.settingsView,
     );
   }
