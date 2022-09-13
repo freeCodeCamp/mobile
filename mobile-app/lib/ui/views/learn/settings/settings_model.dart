@@ -25,8 +25,15 @@ class SettingsModel extends BaseViewModel {
   String? helperText;
   String? errorText;
 
+  Map<String, dynamic>? userInfo;
+
   set setProfile(Map<String, dynamic> ui) {
     profile = ui;
+    notifyListeners();
+  }
+
+  set setUserInfo(Map<String, dynamic> data) {
+    userInfo = data;
     notifyListeners();
   }
 
@@ -58,6 +65,13 @@ class SettingsModel extends BaseViewModel {
     FccUserModel? user = await userFuture!;
 
     setProfile = ProfileUI.toMap(user.profileUI);
+
+    setUserInfo = {
+      'name': user.name,
+      'location': user.location,
+      'picture': user.picture,
+      'about': user.about,
+    };
   }
 
   String? getDescriptions(String flag) {
@@ -87,7 +101,7 @@ class SettingsModel extends BaseViewModel {
     }
   }
 
-  void save() async {
+  save() async {
     bool updated =
         await _learnService.updateMyProfileUI({'profileUI': profile!});
 
@@ -168,5 +182,32 @@ class SettingsModel extends BaseViewModel {
 
     setHelperText = 'searching..';
     setErrorText = null;
+  }
+
+  saveAbout() async {
+    if (userInfo != null) {
+      bool complete = await _learnService.updateMyAbout(userInfo!);
+
+      if (complete) {
+        _snackbarService.showSnackbar(
+            title: 'info updated successfully', message: '');
+      } else {
+        _snackbarService.showSnackbar(
+            title: 'something went wrong', message: '');
+      }
+    }
+  }
+
+  upateMyAbout(String flag, String value) {
+    if (userInfo != null) {
+      Map<String, dynamic> localUserInfo = userInfo!;
+
+      List<String> possibleFlags = ['location', 'about', 'picture', 'name'];
+
+      if (possibleFlags.contains(flag)) {
+        localUserInfo[flag] = value;
+        setUserInfo = localUserInfo;
+      }
+    }
   }
 }

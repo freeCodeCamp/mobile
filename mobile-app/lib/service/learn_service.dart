@@ -21,6 +21,26 @@ class LearnService {
     _dio.interceptors.add(CurlLoggerDioInterceptor());
   }
 
+  Future<bool> updateMyAbout(Map<String, dynamic> data) async {
+    Response res = await _dio.put(
+      '${AuthenticationService.baseApiURL}/update-my-about',
+      data: data,
+      options: Options(
+        headers: {
+          'CSRF-Token': _authenticationService.csrfToken,
+          'Cookie':
+              'jwt_access_token=${_authenticationService.jwtAccessToken}; _csrf=${_authenticationService.csrf};',
+        },
+      ),
+    );
+
+    if (res.statusCode == 200) {
+      return true;
+    }
+
+    return false;
+  }
+
   Future<bool> updateMyProfileUI(Map<String, dynamic> data) async {
     Response res = await _dio.put(
       '${AuthenticationService.baseApiURL}/update-my-profileui',

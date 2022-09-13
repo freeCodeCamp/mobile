@@ -32,11 +32,11 @@ class SettingsView extends StatelessWidget {
                         child: Column(
                           children: [
                             textfieldUsername('Username', user.username, model),
-                            textfield('Name', user.name),
-                            textfield('Location', user.location),
-                            textfield('Picture', user.picture),
-                            textfield('About', user.about, 5),
-                            button(model),
+                            textfield('Name', model, user.name),
+                            textfield('Location', model, user.location),
+                            textfield('Picture', model, user.picture),
+                            textfield('About', model, user.about, 5),
+                            saveAboutButton(model),
                             switchButton('isLocked', 'My profile', model),
                             switchButton('showName', 'My name', model),
                             switchButton('showLocation', 'My location', model),
@@ -49,7 +49,7 @@ class SettingsView extends StatelessWidget {
                                 'showPortfolio', 'My portfolio', model),
                             switchButton('showTimeLine', 'My timeline', model),
                             switchButton('showDonation', 'My donations', model),
-                            button(model),
+                            saveProfileButton(model),
                           ],
                         ),
                       )
@@ -66,7 +66,12 @@ class SettingsView extends StatelessWidget {
         }));
   }
 
-  Container textfield(String label, String? initValue, [int? maxLines]) {
+  Container textfield(
+    String label,
+    SettingsModel model,
+    String? initValue, [
+    int? maxLines,
+  ]) {
     return Container(
       padding: const EdgeInsets.all(16),
       width: 340,
@@ -87,6 +92,9 @@ class SettingsView extends StatelessWidget {
                 border: OutlineInputBorder(),
                 filled: true,
                 fillColor: Color(0xFF0a0a23)),
+            onChanged: (change) {
+              model.upateMyAbout(label.toLowerCase(), change);
+            },
           ),
         ],
       ),
@@ -150,7 +158,17 @@ class SettingsView extends StatelessWidget {
     );
   }
 
-  Widget button(SettingsModel model) {
+  Widget saveAboutButton(SettingsModel model) {
+    return SizedBox(
+        width: 300,
+        child: TextButton(
+            onPressed: () {
+              model.saveAbout();
+            },
+            child: const Text('Save')));
+  }
+
+  Widget saveProfileButton(SettingsModel model) {
     return SizedBox(
         width: 300,
         child: TextButton(
