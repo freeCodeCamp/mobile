@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:freecodecamp/models/main/user_model.dart';
 
 import 'package:freecodecamp/ui/views/learn/settings/settings_model.dart';
-import 'package:freecodecamp/ui/views/profile/profile_view.dart';
 import 'package:stacked/stacked.dart';
 
 class SettingsView extends StatelessWidget {
@@ -20,66 +19,49 @@ class SettingsView extends StatelessWidget {
               title: const Text('LEARN SETTINGS'),
               centerTitle: true,
             ),
-            body: WillPopScope(
-              onWillPop: () {
-                Navigator.pushReplacement(
-                  context,
-                  PageRouteBuilder(
-                    transitionDuration: Duration.zero,
-                    pageBuilder: (context, animation1, animation2) =>
-                        const ProfileView(),
-                  ),
-                );
-                return Future.delayed(const Duration(seconds: 0));
-              },
-              child: SingleChildScrollView(
-                  child: FutureBuilder<FccUserModel>(
-                future: model.userFuture,
-                builder: ((context, snapshot) {
-                  if (snapshot.hasData) {
-                    FccUserModel user = snapshot.data as FccUserModel;
+            body: SingleChildScrollView(
+                child: FutureBuilder<FccUserModel>(
+              future: model.userFuture,
+              builder: ((context, snapshot) {
+                if (snapshot.hasData) {
+                  FccUserModel user = snapshot.data as FccUserModel;
 
-                    return Row(
-                      children: [
-                        Expanded(
-                          child: Column(
-                            children: [
-                              textfieldUsername(
-                                  'Username', user.username, model),
-                              textfield('Name', model, user.name),
-                              textfield('Location', model, user.location),
-                              textfield('Picture', model, user.picture),
-                              textfield('About', model, user.about, 5),
-                              saveAboutButton(model),
-                              switchButton('isLocked', 'My profile', model),
-                              switchButton('showName', 'My name', model),
-                              switchButton(
-                                  'showLocation', 'My location', model),
-                              switchButton('showAbout', 'My about', model),
-                              switchButton('showPoints', 'My points', model),
-                              switchButton('showHeatMap', 'My heatmap', model),
-                              switchButton(
-                                  'showCerts', 'My certifications', model),
-                              switchButton(
-                                  'showPortfolio', 'My portfolio', model),
-                              switchButton(
-                                  'showTimeLine', 'My timeline', model),
-                              switchButton(
-                                  'showDonation', 'My donations', model),
-                              saveProfileButton(model),
-                            ],
-                          ),
-                        )
-                      ],
-                    );
-                  }
-
-                  return const Center(
-                    child: CircularProgressIndicator(),
+                  return Row(
+                    children: [
+                      Expanded(
+                        child: Column(
+                          children: [
+                            textfieldUsername('Username', user.username, model),
+                            textfield('Name', model, user.name),
+                            textfield('Location', model, user.location),
+                            textfield('Picture', model, user.picture),
+                            textfield('About', model, user.about, 5),
+                            saveAboutButton(model),
+                            switchButton('isLocked', 'My profile', model),
+                            switchButton('showName', 'My name', model),
+                            switchButton('showLocation', 'My location', model),
+                            switchButton('showAbout', 'My about', model),
+                            switchButton('showPoints', 'My points', model),
+                            switchButton('showHeatMap', 'My heatmap', model),
+                            switchButton(
+                                'showCerts', 'My certifications', model),
+                            switchButton(
+                                'showPortfolio', 'My portfolio', model),
+                            switchButton('showTimeLine', 'My timeline', model),
+                            switchButton('showDonation', 'My donations', model),
+                            saveProfileButton(model),
+                          ],
+                        ),
+                      )
+                    ],
                   );
-                }),
-              )),
-            ),
+                }
+
+                return const Center(
+                  child: CircularProgressIndicator(),
+                );
+              }),
+            )),
           );
         }));
   }

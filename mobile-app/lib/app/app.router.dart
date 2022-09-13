@@ -33,14 +33,11 @@ import '../ui/views/news/news-image-viewer/news_image_viewer.dart';
 import '../ui/views/podcast/episode-view/episode_view.dart';
 import '../ui/views/podcast/podcast-list/podcast_list_view.dart';
 import '../ui/views/profile/profile_view.dart';
-import '../ui/views/settings/forumSettings/forum_settings_view.dart';
-import '../ui/views/settings/podcastSettings/podcast_settings_view.dart';
 import '../ui/views/web_view/web_view_view.dart';
 
 class Routes {
   static const String homeView = '/';
   static const String podcastListView = '/podcast-list-view';
-  static const String podcastSettingsView = '/podcast-settings-view';
   static const String episodeView = '/episode-view';
   static const String newsArticleView = '/news-article-view';
   static const String newsBookmarkPostView = '/news-bookmark-post-view';
@@ -52,7 +49,6 @@ class Routes {
   static const String forumPostView = '/forum-post-view';
   static const String forumLoginView = '/forum-login-view';
   static const String forumUserView = '/forum-user-view';
-  static const String forumSettingsView = '/forum-settings-view';
   static const String forumUserProfileView = '/forum-user-profile-view';
   static const String codeRadioView = '/code-radio-view';
   static const String superBlockView = '/super-block-view';
@@ -63,7 +59,6 @@ class Routes {
   static const all = <String>{
     homeView,
     podcastListView,
-    podcastSettingsView,
     episodeView,
     newsArticleView,
     newsBookmarkPostView,
@@ -75,7 +70,6 @@ class Routes {
     forumPostView,
     forumLoginView,
     forumUserView,
-    forumSettingsView,
     forumUserProfileView,
     codeRadioView,
     superBlockView,
@@ -92,7 +86,6 @@ class StackedRouter extends RouterBase {
   final _routes = <RouteDef>[
     RouteDef(Routes.homeView, page: HomeView),
     RouteDef(Routes.podcastListView, page: PodcastListView),
-    RouteDef(Routes.podcastSettingsView, page: PodcastSettingsView),
     RouteDef(Routes.episodeView, page: EpisodeView),
     RouteDef(Routes.newsArticleView, page: NewsArticleView),
     RouteDef(Routes.newsBookmarkPostView, page: NewsBookmarkPostView),
@@ -104,7 +97,6 @@ class StackedRouter extends RouterBase {
     RouteDef(Routes.forumPostView, page: ForumPostView),
     RouteDef(Routes.forumLoginView, page: ForumLoginView),
     RouteDef(Routes.forumUserView, page: ForumUserView),
-    RouteDef(Routes.forumSettingsView, page: ForumSettingsView),
     RouteDef(Routes.forumUserProfileView, page: ForumUserProfileView),
     RouteDef(Routes.codeRadioView, page: CodeRadioView),
     RouteDef(Routes.superBlockView, page: SuperBlockView),
@@ -125,12 +117,6 @@ class StackedRouter extends RouterBase {
     PodcastListView: (data) {
       return MaterialPageRoute<dynamic>(
         builder: (context) => const PodcastListView(),
-        settings: data,
-      );
-    },
-    PodcastSettingsView: (data) {
-      return MaterialPageRoute<dynamic>(
-        builder: (context) => const PodcastSettingsView(),
         settings: data,
       );
     },
@@ -252,12 +238,6 @@ class StackedRouter extends RouterBase {
           key: args.key,
           username: args.username,
         ),
-        settings: data,
-      );
-    },
-    ForumSettingsView: (data) {
-      return MaterialPageRoute<dynamic>(
-        builder: (context) => const ForumSettingsView(),
         settings: data,
       );
     },
@@ -485,22 +465,6 @@ extension NavigatorStateExtension on NavigationService {
     );
   }
 
-  Future<dynamic> navigateToPodcastSettingsView({
-    int? routerId,
-    bool preventDuplicates = true,
-    Map<String, String>? parameters,
-    Widget Function(BuildContext, Animation<double>, Animation<double>, Widget)?
-        transition,
-  }) async {
-    return navigateTo(
-      Routes.podcastSettingsView,
-      id: routerId,
-      preventDuplicates: preventDuplicates,
-      parameters: parameters,
-      transition: transition,
-    );
-  }
-
   Future<dynamic> navigateToEpisodeView({
     Key? key,
     required Episodes episode,
@@ -719,22 +683,6 @@ extension NavigatorStateExtension on NavigationService {
     return navigateTo(
       Routes.forumUserView,
       arguments: ForumUserViewArguments(key: key, username: username),
-      id: routerId,
-      preventDuplicates: preventDuplicates,
-      parameters: parameters,
-      transition: transition,
-    );
-  }
-
-  Future<dynamic> navigateToForumSettingsView({
-    int? routerId,
-    bool preventDuplicates = true,
-    Map<String, String>? parameters,
-    Widget Function(BuildContext, Animation<double>, Animation<double>, Widget)?
-        transition,
-  }) async {
-    return navigateTo(
-      Routes.forumSettingsView,
       id: routerId,
       preventDuplicates: preventDuplicates,
       parameters: parameters,

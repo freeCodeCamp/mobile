@@ -3,13 +3,13 @@ import 'package:freecodecamp/service/authentication_service.dart';
 import 'package:freecodecamp/app/app.locator.dart';
 import 'package:freecodecamp/service/test_service.dart';
 import 'package:freecodecamp/ui/views/code_radio/code_radio_view.dart';
-//import 'package:freecodecamp/ui/views/learn/learn_view.dart';
 import 'package:freecodecamp/ui/views/forum/forum-categories/forum_category_view.dart';
 import 'package:freecodecamp/ui/views/home/home_view.dart';
 import 'package:freecodecamp/ui/views/learn/learn/learn_view.dart';
+import 'package:freecodecamp/ui/views/learn/settings/settings_view.dart';
 import 'package:freecodecamp/ui/views/podcast/podcast-list/podcast_list_view.dart';
 import 'package:freecodecamp/ui/views/profile/profile_view.dart';
-import 'package:freecodecamp/ui/views/settings/settings_view.dart';
+
 import 'package:stacked/stacked.dart';
 import 'package:stacked_services/stacked_services.dart';
 
@@ -89,7 +89,7 @@ class DrawerWidgtetViewModel extends BaseViewModel {
                     const PodcastListView()));
         break;
       case 'SETTINGS':
-        Navigator.pushReplacement(
+        Navigator.push(
             context,
             PageRouteBuilder(
                 transitionDuration: Duration.zero,

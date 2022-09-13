@@ -92,11 +92,13 @@ class DrawerWidgetView extends StatelessWidget {
                       icon: Icons.info_outline,
                       url: 'https://www.freecodecamp.org/news/privacy-policy/',
                     ),
-                    const WebButton(
-                      component: 'DONATE',
-                      url: 'https://www.freecodecamp.org/donate/',
-                      icon: Icons.favorite,
-                    ),
+                    if (model.loggedIn)
+                      DrawerButton(
+                          component: 'SETTINGS',
+                          icon: Icons.settings,
+                          route: () {
+                            model.routeComponent('SETTINGS', context);
+                          }),
                     buildDivider(),
                     DrawerButton(
                         component: model.loggedIn ? 'LOG OUT' : 'LOGIN',
