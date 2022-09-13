@@ -1,5 +1,5 @@
 import 'dart:convert';
-
+import 'dart:developer';
 import 'package:freecodecamp/enums/ext_type.dart';
 import 'package:freecodecamp/models/learn/challenge_model.dart';
 import 'package:html/parser.dart';
@@ -27,12 +27,12 @@ class TestRunner extends BaseViewModel {
     return cache;
   }
 
-  Future<String> getFirstHTMLfileFromCache(
-    Challenge challenge,
-  ) async {
+  Future<String> getFirstFileFromCache(Challenge challenge, Ext ext) async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
-    List<ChallengeFile> firstHtmlChallenge =
-        challenge.files.where((file) => file.ext == Ext.html).toList();
+    List<ChallengeFile> firstHtmlChallenge = challenge.files
+        .where(
+            (file) => file.ext == Ext.css ? ext == Ext.html : file.ext == ext)
+        .toList();
 
     String fileContent =
         prefs.getString('${challenge.title}.${firstHtmlChallenge[0].name}') ??
@@ -87,17 +87,61 @@ class TestRunner extends BaseViewModel {
       '<link rel="stylesheet" href="https://unpkg.com/mocha/mocha.css" />'
     ];
 
-    List<String> bodyScripts = [
-      '''
-  <script type="module">
+    for (String import in imports) {
+      dom.Document importToNode = parse(import);
+
+      dom.Node node =
+          importToNode.getElementsByTagName('HEAD')[0].children.first;
+
+      document.getElementsByTagName('HEAD')[0].append(node);
+    }
+
+    dom.Document scriptToNode =
+        parse(await returnScript(challenge.files[0].ext, challenge));
+
+    dom.Node bodyNode =
+        scriptToNode.getElementsByTagName('BODY').first.children.isNotEmpty
+            ? scriptToNode.getElementsByTagName('BODY').first.children.first
+            : scriptToNode.getElementsByTagName('HEAD').first.children.first;
+    document.body!.append(bodyNode);
+
+    webviewController.loadUrl(Uri.dataFromString(document.outerHtml,
+            mimeType: 'text/html', encoding: Encoding.getByName('utf-8'))
+        .toString());
+    log(document.outerHtml);
+  }
+
+  List<String> parseTest(List<ChallengeTest> test) {
+    List<String> parsedTest = test
+        .map((e) =>
+            """`${e.javaScript.replaceAll('document', 'doc').replaceAll('\\', '\\\\')}`""")
+        .toList();
+
+    return parsedTest;
+  }
+
+  String parseJavaScript(ChallengeFile file, String cacheContent) {
+    if (file.ext == Ext.js) {
+      String head = file.head ?? '';
+      String tail = file.tail ?? '';
+
+      return '$head\n$cacheContent\n$tail';
+    } else {
+      return '''Print.postMessage("That is funny, this is an interal error, please report to the dev")''';
+    }
+  }
+
+  Future<String?> returnScript(Ext ext, Challenge challenge) async {
+    if (ext == Ext.html || ext == Ext.css) {
+      return '''  <script type="module">
     import * as __helpers from "https://unpkg.com/@freecodecamp/curriculum-helpers@1.1.0/dist/index.js";
 
-    const code = `${await parseCssDocmentsAsStyleTags(challenge, await getFirstHTMLfileFromCache(challenge))}`;
+    const code = `${await parseCssDocmentsAsStyleTags(challenge, await getFirstFileFromCache(challenge, ext))}`;
     const doc = new DOMParser().parseFromString(code, 'text/html')
 
     const assert = chai.assert;
     const tests = ${parseTest(challenge.tests)};
-    const testText = ${challenge.tests.map((e) => '''`${e.instruction}`''').toList().toString()}; 
+    const testText = ${challenge.tests.map((e) => '''"${e.instruction}"''').toList().toString()}; 
 
     doc.__runTest = async function runtTests(testString) {
       let error = false;
@@ -129,41 +173,41 @@ class TestRunner extends BaseViewModel {
     };
 
     doc.__runTest(tests);
-  </script>
-      '''
-    ];
+  </script>''';
+    } else if (ext == Ext.js) {
+      return '''<script type="module">
+      import * as __helpers from "https://unpkg.com/@freecodecamp/curriculum-helpers@1.1.0/dist/index.js";
 
-    for (String import in imports) {
-      dom.Document importToNode = parse(import);
+      const assert = chai.assert;
 
-      dom.Node node =
-          importToNode.getElementsByTagName('HEAD')[0].children.first;
+      let code = `${parseJavaScript(challenge.files[0], await getFirstFileFromCache(challenge, ext))}`;
 
-      document.getElementsByTagName('HEAD')[0].append(node);
+
+      let tests = ${parseTest(challenge.tests)};
+
+      const testText = ${challenge.tests.map((e) => '''"${e.instruction}"''').toList().toString()}; 
+
+      try {
+        for (let i = 0; i < tests.length; i++) {
+          try {
+            tests[i] = tests[i]
+            console.log(tests[i]);
+            await eval(code +  tests[i]);
+          } catch (e) {
+            Print.postMessage(testText[i]);
+            break;
+          }
+
+          if(i == tests.length - 1){
+            Print.postMessage('completed');
+          }
+
+        }
+      } catch (e) {
+        Print.postMessage(e);
+      }''';
     }
 
-    for (String bodyScript in bodyScripts) {
-      dom.Document scriptToNode = parse(bodyScript);
-
-      dom.Node bodyNode =
-          scriptToNode.getElementsByTagName('BODY').first.children.isNotEmpty
-              ? scriptToNode.getElementsByTagName('BODY').first.children.first
-              : scriptToNode.getElementsByTagName('HEAD').first.children.first;
-      document.body!.append(bodyNode);
-    }
-
-    webviewController.loadUrl(Uri.dataFromString(document.outerHtml,
-            mimeType: 'text/html', encoding: Encoding.getByName('utf-8'))
-        .toString());
-    //log(document.outerHtml);
-  }
-
-  List<String> parseTest(List<ChallengeTest> test) {
-    List<String> parsedTest = test
-        .map((e) =>
-            """`${e.javaScript.replaceAll('document', 'doc').replaceAll('\\', '\\\\')}`""")
-        .toList();
-
-    return parsedTest;
+    return null;
   }
 }

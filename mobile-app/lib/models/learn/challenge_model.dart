@@ -62,11 +62,15 @@ class ChallengeTest {
 class ChallengeFile {
   final Ext ext;
   final String name;
+  final String? head;
+  final String? tail;
   final String contents;
 
   ChallengeFile({
     required this.ext,
     required this.name,
+    this.head,
+    this.tail,
     required this.contents,
   });
 
@@ -74,6 +78,8 @@ class ChallengeFile {
     return ChallengeFile(
       ext: parseExt(data['ext']),
       name: data['name'],
+      head: data['head'],
+      tail: data['tail'],
       contents: data['contents'],
     );
   }
