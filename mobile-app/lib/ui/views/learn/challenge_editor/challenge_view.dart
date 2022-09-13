@@ -1,8 +1,4 @@
-// import 'dart:convert';
-
 import 'dart:convert';
-import 'dart:developer';
-
 import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
 import 'package:flutter_code_editor/controller/editor_view_controller.dart';
@@ -243,13 +239,6 @@ class ChallengeView extends StatelessWidget {
             child: WebView(
               onWebViewCreated: (WebViewController webcontroller) async {
                 model.setTestController = webcontroller;
-                log('webview created');
-                editor.onTextChange.stream.listen((event) async {
-                  log('event');
-                });
-              },
-              onPageFinished: (String e) async {
-                log('page finished');
               },
               javascriptMode: JavascriptMode.unrestricted,
               javascriptChannels: {
