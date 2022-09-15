@@ -7,6 +7,7 @@ import 'package:freecodecamp/models/news/article_model.dart';
 import 'package:freecodecamp/service/test_service.dart';
 import 'package:http/http.dart' as http;
 import 'package:jiffy/jiffy.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:stacked/stacked.dart';
 import 'package:stacked_services/stacked_services.dart';
 
@@ -21,11 +22,35 @@ class NewsFeedModel extends BaseViewModel {
   bool _devMode = false;
   bool get devmode => _devMode;
 
+  bool _liteMode = false;
+  bool get liteMode => _liteMode;
+
+  set setLiteMode(bool lite) {
+    _liteMode = lite;
+    notifyListeners();
+  }
+
   devMode() async {
     if (await _testService.developmentMode()) {
       _devMode = true;
       notifyListeners();
     }
+  }
+
+  void init() async {
+    setLiteMode = await getLiteModeCache();
+  }
+
+  Future<void> setLiteModeCache() async {
+    setLiteMode = !liteMode;
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+
+    prefs.setBool('lite', liteMode);
+  }
+
+  Future<bool> getLiteModeCache() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    return prefs.getBool('lite') ?? false;
   }
 
   void navigateTo(String id) {

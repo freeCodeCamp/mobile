@@ -54,7 +54,7 @@ class _TagButtonState extends State<TagButton>
         },
         child: Container(
           constraints: BoxConstraints(
-              maxWidth: MediaQuery.of(context).size.width * 0.45),
+              maxWidth: MediaQuery.of(context).size.width * 0.30),
           decoration: ShapeDecoration(
             color: _tagColor,
             shape: const StadiumBorder(),

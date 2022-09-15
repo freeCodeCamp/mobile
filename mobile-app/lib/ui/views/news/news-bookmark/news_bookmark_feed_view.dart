@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:freecodecamp/ui/views/news/news-bookmark/news_bookmark_viewmodel.dart';
+import 'package:freecodecamp/ui/widgets/drawer_widget/drawer_widget_view.dart';
 import 'package:stacked/stacked.dart';
 
 class NewsBookmarkFeedView extends StatelessWidget {
@@ -14,6 +15,8 @@ class NewsBookmarkFeedView extends StatelessWidget {
           model.updateListView();
         },
         builder: (context, model, child) => Scaffold(
+            appBar: AppBar(title: const Text('BOOKMARKED ARTICLES')),
+            drawer: const DrawerWidgetView(),
             backgroundColor: const Color.fromRGBO(0x2A, 0x2A, 0x40, 1),
             body: RefreshIndicator(
               backgroundColor: const Color(0xFF0a0a23),

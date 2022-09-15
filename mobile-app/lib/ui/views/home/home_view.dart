@@ -10,12 +10,6 @@ import 'home_viemmodel.dart';
 class HomeView extends StatelessWidget {
   const HomeView({Key? key}) : super(key: key);
 
-  static const titles = <Widget>[
-    Text('BOOKMARKED ARTICLES'),
-    Text('NEWSFEED'),
-    Text('SEARCH ARTICLES')
-  ];
-
   static const views = <Widget>[
     NewsBookmarkFeedView(),
     NewsFeedView(),
@@ -26,9 +20,6 @@ class HomeView extends StatelessWidget {
   Widget build(BuildContext context) {
     return ViewModelBuilder<HomeViewModel>.reactive(
       builder: (context, viewModel, child) => Scaffold(
-        appBar: AppBar(
-          title: titles.elementAt(viewModel.index),
-        ),
         drawer: const DrawerWidgetView(),
         body: views.elementAt(viewModel.index),
         bottomNavigationBar: BottomNavigationBar(
