@@ -35,10 +35,7 @@ class ChallengeView extends StatelessWidget {
   Widget build(BuildContext context) {
     return ViewModelBuilder<ChallengeModel>.reactive(
         viewModelBuilder: () => ChallengeModel(),
-        onModelReady: (model) => {
-              model.setAppBarState(context),
-              model.init(url, block, challengesCompleted)
-            },
+        onModelReady: (model) => {model.init(url, block, challengesCompleted)},
         builder: (context, model, child) => FutureBuilder<Challenge?>(
               future: model.challenge,
               builder: (context, snapshot) {
