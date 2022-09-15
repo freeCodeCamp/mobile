@@ -32,7 +32,7 @@ class NewsFeedView extends StatelessWidget {
       viewModelBuilder: () => NewsFeedModel(),
       onModelReady: (model) async => {await model.devMode(), model.init()},
       builder: (context, model, child) => Scaffold(
-          drawer: const DrawerWidgetView(),
+          drawer: !fromAuthor && !fromTag ? const DrawerWidgetView() : null,
           appBar: AppBar(
             title: fromAuthor || fromTag
                 ? Text('Articles ${fromAuthor ? 'from' : 'about'} $subject')
