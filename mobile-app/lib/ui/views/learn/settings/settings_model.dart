@@ -108,6 +108,7 @@ class SettingsModel extends BaseViewModel {
     if (updated) {
       _snackbarService.showSnackbar(
           title: 'updated settings successfully', message: '');
+      auth.init();
     } else {
       _snackbarService.showSnackbar(title: 'something went wrong', message: '');
     }
@@ -118,6 +119,7 @@ class SettingsModel extends BaseViewModel {
       _snackbarService.showSnackbar(
           title: 'username updated successfully', message: '');
       init();
+      auth.init();
     } else {
       _snackbarService.showSnackbar(title: 'something went wrong', message: '');
     }
@@ -191,6 +193,7 @@ class SettingsModel extends BaseViewModel {
       if (complete) {
         _snackbarService.showSnackbar(
             title: 'info updated successfully', message: '');
+        auth.init();
       } else {
         _snackbarService.showSnackbar(
             title: 'something went wrong', message: '');
