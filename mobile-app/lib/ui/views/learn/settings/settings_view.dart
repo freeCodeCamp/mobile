@@ -145,8 +145,6 @@ class SettingsView extends StatelessWidget {
                   side: const BorderSide(width: 2, color: Colors.white),
                   padding: const EdgeInsets.all(0),
                   backgroundColor: const Color.fromRGBO(0x3b, 0x3b, 0x4f, 1),
-                  disabledBackgroundColor:
-                      model.errorText != null ? const Color(0xFF0a0a23) : null,
                 ),
                 onPressed: () async {
                   if (model.errorText == null) {
@@ -162,6 +160,11 @@ class SettingsView extends StatelessWidget {
     return SizedBox(
         width: 300,
         child: TextButton(
+            style: TextButton.styleFrom(
+              side: const BorderSide(width: 2, color: Colors.white),
+              padding: const EdgeInsets.all(0),
+              backgroundColor: const Color.fromRGBO(0x3b, 0x3b, 0x4f, 1),
+            ),
             onPressed: () {
               model.saveAbout();
             },
@@ -172,6 +175,11 @@ class SettingsView extends StatelessWidget {
     return SizedBox(
         width: 300,
         child: TextButton(
+            style: TextButton.styleFrom(
+              side: const BorderSide(width: 2, color: Colors.white),
+              padding: const EdgeInsets.all(0),
+              backgroundColor: const Color.fromRGBO(0x3b, 0x3b, 0x4f, 1),
+            ),
             onPressed: () {
               model.save();
             },
