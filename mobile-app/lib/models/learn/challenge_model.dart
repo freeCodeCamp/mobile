@@ -65,6 +65,8 @@ class ChallengeTest {
 class ChallengeFile {
   final Ext ext;
   final String name;
+  final String? head;
+  final String? tail;
   final String contents;
   final List<String> history;
   final String fileKey;
@@ -72,6 +74,8 @@ class ChallengeFile {
   ChallengeFile({
     required this.ext,
     required this.name,
+    this.head,
+    this.tail,
     required this.contents,
     required this.history,
     required this.fileKey,
@@ -81,6 +85,8 @@ class ChallengeFile {
     return ChallengeFile(
       ext: parseExt(data['ext']),
       name: data['name'],
+      head: data['head'],
+      tail: data['tail'],
       contents: data['contents'],
       history: ((data['history'] ?? []) as List).cast<String>(),
       fileKey: data['fileKey'] ?? data['name'] + data['ext'],

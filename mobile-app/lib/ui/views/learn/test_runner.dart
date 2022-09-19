@@ -1,15 +1,12 @@
 import 'dart:convert';
 import 'dart:developer';
-
-import 'package:flutter/material.dart';
-import 'package:freecodecamp/enums/challenge_test_state_type.dart';
+import 'package:freecodecamp/enums/ext_type.dart';
 import 'package:freecodecamp/models/learn/challenge_model.dart';
 import 'package:html/parser.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:stacked/stacked.dart';
 import 'package:webview_flutter/webview_flutter.dart';
 import 'package:html/dom.dart' as dom;
-
-// TODO: do not rely on the DOM and use the console instead to see if test are completed
 
 class TestRunner extends BaseViewModel {
   String _testDocument = '';
@@ -20,9 +17,68 @@ class TestRunner extends BaseViewModel {
     notifyListeners();
   }
 
-  void setWebViewContent(String content, List<ChallengeTest> tests,
-      WebViewController webviewController) {
-    dom.Document document = parse(content);
+  Future<String?> getExactFileFromCache(
+    Challenge challenge,
+    ChallengeFile file,
+  ) async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    String? cache = prefs.getString('${challenge.title}.${file.name}');
+
+    return cache;
+  }
+
+  Future<String> getFirstFileFromCache(Challenge challenge, Ext ext) async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    List<ChallengeFile> firstHtmlChallenge = challenge.files
+        .where(
+            (file) => file.ext == Ext.css ? ext == Ext.html : file.ext == ext)
+        .toList();
+
+    String fileContent =
+        prefs.getString('${challenge.title}.${firstHtmlChallenge[0].name}') ??
+            firstHtmlChallenge[0].contents;
+
+    return fileContent;
+  }
+
+  Future<String> parseCssDocmentsAsStyleTags(
+    Challenge challenge,
+    String content,
+  ) async {
+    List<ChallengeFile> cssFiles =
+        challenge.files.where((element) => element.ext == Ext.css).toList();
+    List<String> cssFilesWithCache = [];
+    List<String> tags = [];
+
+    if (cssFiles.isNotEmpty) {
+      for (ChallengeFile file in cssFiles) {
+        String? cache = await getExactFileFromCache(challenge, file);
+        String handledFile = cache ?? file.contents;
+
+        cssFilesWithCache.add(handledFile);
+      }
+
+      for (String contents in cssFilesWithCache) {
+        String tag = '<style> $contents </style>';
+        tags.add(tag);
+      }
+
+      for (String tag in tags) {
+        content += tag;
+      }
+
+      return content;
+    }
+
+    return content;
+  }
+
+  void setWebViewContent(
+    Challenge challenge,
+    WebViewController webviewController,
+  ) async {
+    dom.Document document = dom.Document();
+    document = parse('');
 
     List<String> imports = [
       '<script src="https://unpkg.com/chai/chai.js"></script>',
@@ -31,160 +87,129 @@ class TestRunner extends BaseViewModel {
       '<link rel="stylesheet" href="https://unpkg.com/mocha/mocha.css" />'
     ];
 
-    List<String> bodyScripts = [
-      '<div id="mocha"></div>',
-      '''
-       <script class="mocha-init">
-          mocha.setup("bdd");
-          mocha.checkLeaks();
-       </script>
-      ''',
-      '''
-       <script class="mocha-exec">
-          const assert = chai.assert;
-          let code = `$content`;
-          
-          ${parseTest(tests)}
-
-          mocha.run();
-       </script>
-      '''
-    ];
-
     for (String import in imports) {
       dom.Document importToNode = parse(import);
 
-      // ignore: unused_local_variable
       dom.Node node =
           importToNode.getElementsByTagName('HEAD')[0].children.first;
 
-      document.body!.append(importToNode);
+      document.getElementsByTagName('HEAD')[0].append(node);
     }
 
-    for (String bodyScript in bodyScripts) {
-      dom.Document scriptToNode = parse(bodyScript);
+    dom.Document scriptToNode =
+        parse(await returnScript(challenge.files[0].ext, challenge));
 
-      dom.Node bodyNode =
-          scriptToNode.getElementsByTagName('BODY').first.children.isNotEmpty
-              ? scriptToNode.getElementsByTagName('BODY').first.children.first
-              : scriptToNode.getElementsByTagName('HEAD').first.children.first;
-      document.body!.append(bodyNode);
-    }
+    dom.Node bodyNode =
+        scriptToNode.getElementsByTagName('BODY').first.children.isNotEmpty
+            ? scriptToNode.getElementsByTagName('BODY').first.children.first
+            : scriptToNode.getElementsByTagName('HEAD').first.children.first;
+    document.body!.append(bodyNode);
 
     webviewController.loadUrl(Uri.dataFromString(document.outerHtml,
             mimeType: 'text/html', encoding: Encoding.getByName('utf-8'))
         .toString());
+    log(document.outerHtml);
   }
 
-  IconData getCorrectTestIcon(ChallengeTestState testState) {
-    switch (testState) {
-      case ChallengeTestState.waiting:
-        return Icons.science_outlined;
-      case ChallengeTestState.passed:
-        return Icons.check;
-      case ChallengeTestState.failed:
-        return Icons.error;
-      default:
-        return Icons.science_outlined;
-    }
+  List<String> parseTest(List<ChallengeTest> test) {
+    List<String> parsedTest = test
+        .map((e) =>
+            """`${e.javaScript.replaceAll('document', 'doc').replaceAll('\\', '\\\\').replaceAllMapped(RegExp(r'(\$\(.+?)\)'), (match) {
+              return '${match.group(1)}, doc)';
+            })}`""")
+        .toList();
+
+    return parsedTest;
   }
 
-  List<ChallengeTest> getFailedTest(List<ChallengeTest> incTest) {
-    List<ChallengeTest> testedTest = [];
-    dom.Document document = parse(_testDocument);
+  String parseJavaScript(ChallengeFile file, String cacheContent) {
+    if (file.ext == Ext.js) {
+      String head = file.head ?? '';
+      String tail = file.tail ?? '';
 
-    if (document.getElementsByClassName('test fail').isEmpty) {
-      return testedTest;
-    }
-
-    List testFailInView = document.getElementsByClassName('test fail');
-
-    out:
-    for (int i = 0; i < testFailInView.length; i++) {
-      List<dom.Element> nodes =
-          document.getElementsByClassName('test fail')[i].children;
-      for (int j = 0; j < incTest.length; j++) {
-        for (dom.Element node in nodes) {
-          String nodeTrimmed =
-              node.text.replaceAll(' ', '').replaceAll('‣', '');
-          String instTrimmed = incTest[j].instruction.replaceAll(' ', '');
-
-          if (nodeTrimmed == instTrimmed) {
-            incTest[j].testState = ChallengeTestState.failed;
-            testedTest.add(incTest[j]);
-          }
-
-          if (incTest.length == testedTest.length) break out;
-        }
-      }
-    }
-
-    return testedTest;
-  }
-
-  String parseTest(List<ChallengeTest> tests) {
-    List<String> stringArr = [];
-
-    for (ChallengeTest test in tests) {
-      stringArr.add('''it('${test.instruction}', () => {
-        ${test.javaScript}
-      });''');
-    }
-
-    return stringArr.join();
-  }
-
-  List<ChallengeTest> getPassedTest(List<ChallengeTest> incTest) {
-    List<ChallengeTest> testedTest = [];
-    dom.Document document = parse(_testDocument);
-
-    if (document.getElementsByClassName('test pass fast').isEmpty) {
-      return testedTest;
-    }
-
-    List<dom.Element> testPassInView =
-        document.getElementsByClassName('test pass fast');
-
-    out:
-    for (int i = 0; i < testPassInView.length; i++) {
-      List<dom.Element> nodes =
-          document.getElementsByClassName('test pass fast')[i].children;
-
-      for (int j = 0; j < incTest.length; j++) {
-        for (dom.Element node in nodes) {
-          List nodeSplit = node.text.split('>');
-
-          if (nodeSplit.length > 1) nodeSplit.removeLast();
-
-          String nodeTrimmed = '${nodeSplit.join('>').replaceAll(' ', '')}>';
-
-          String instTrimmed = incTest[j].instruction.replaceAll(' ', '');
-
-          if (nodeTrimmed == instTrimmed) {
-            incTest[j].testState = ChallengeTestState.passed;
-            testedTest.add(incTest[j]);
-          }
-
-          if (incTest.length == testedTest.length) break out;
-        }
-      }
-    }
-    return testedTest;
-  }
-
-  Future<List<ChallengeTest>> testRunner(List<ChallengeTest> incTest) async {
-    if (_testDocument.isNotEmpty) {
-      List<ChallengeTest> passedTest = getPassedTest(incTest);
-      List<ChallengeTest> failedTest = getFailedTest(incTest);
-
-      List<ChallengeTest> allTest = List.from(passedTest)..addAll(failedTest);
-      log((allTest.map((e) => e.testState)).toString());
-
-      return allTest;
+      return '$head\n$cacheContent\n$tail';
     } else {
-      log('test document is empty');
+      return '''Print.postMessage("That is funny, this is an interal error, please report to the dev")''';
+    }
+  }
+
+  Future<String?> returnScript(Ext ext, Challenge challenge) async {
+    if (ext == Ext.html || ext == Ext.css) {
+      return '''  <script type="module">
+    import * as __helpers from "https://unpkg.com/@freecodecamp/curriculum-helpers@1.1.0/dist/index.js";
+
+    const code = `${await parseCssDocmentsAsStyleTags(challenge, await getFirstFileFromCache(challenge, ext))}`;
+    const doc = new DOMParser().parseFromString(code, 'text/html')
+
+    const assert = chai.assert;
+    const tests = ${parseTest(challenge.tests)};
+    const testText = ${challenge.tests.map((e) => '''"${e.instruction}"''').toList().toString()};
+
+    doc.__runTest = async function runtTests(testString) {
+      let error = false;
+      for(let i = 0; i < testString.length; i++){
+
+        try {
+        const testPromise = new Promise((resolve, reject) => {
+          try {
+            const test = eval(testString[i]);
+            resolve(test);
+          } catch (e) {
+            reject(e);
+          }
+        });
+
+        const test = await testPromise;
+        if (typeof test === "function") {
+          await test(testString[i]);
+        }
+      } catch (e) {
+       Print.postMessage(testText[i]);
+       break;
+      } finally {
+        if(!error && testString.length -1 == i){
+          Print.postMessage('completed');
+        }
+      }
+      }
+    };
+
+    doc.__runTest(tests);
+  </script>''';
+    } else if (ext == Ext.js) {
+      return '''<script type="module">
+      import * as __helpers from "https://unpkg.com/@freecodecamp/curriculum-helpers@1.1.0/dist/index.js";
+
+      const assert = chai.assert;
+
+      let code = `${parseJavaScript(challenge.files[0], await getFirstFileFromCache(challenge, ext))}`;
+
+
+      let tests = ${parseTest(challenge.tests)};
+
+      const testText = ${challenge.tests.map((e) => '''"${e.instruction}"''').toList().toString()};
+
+      try {
+        for (let i = 0; i < tests.length; i++) {
+          try {
+            tests[i] = tests[i]
+            console.log(tests[i]);
+            await eval(code +  tests[i]);
+          } catch (e) {
+            Print.postMessage(testText[i]);
+            break;
+          }
+
+          if(i == tests.length - 1){
+            Print.postMessage('completed');
+          }
+
+        }
+      } catch (e) {
+        Print.postMessage(e);
+      }''';
     }
 
-    return incTest;
+    return null;
   }
 }
