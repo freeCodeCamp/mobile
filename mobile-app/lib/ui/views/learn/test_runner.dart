@@ -114,7 +114,9 @@ class TestRunner extends BaseViewModel {
   List<String> parseTest(List<ChallengeTest> test) {
     List<String> parsedTest = test
         .map((e) =>
-            """`${e.javaScript.replaceAll('document', 'doc').replaceAll('\\', '\\\\')}`""")
+            """`${e.javaScript.replaceAll('document', 'doc').replaceAll('\\', '\\\\').replaceAllMapped(RegExp(r'(\$\(.+?)\)'), (match) {
+              return '${match.group(1)}, doc)';
+            })}`""")
         .toList();
 
     return parsedTest;
@@ -141,12 +143,12 @@ class TestRunner extends BaseViewModel {
 
     const assert = chai.assert;
     const tests = ${parseTest(challenge.tests)};
-    const testText = ${challenge.tests.map((e) => '''"${e.instruction}"''').toList().toString()}; 
+    const testText = ${challenge.tests.map((e) => '''"${e.instruction}"''').toList().toString()};
 
     doc.__runTest = async function runtTests(testString) {
       let error = false;
-      for(let i = 0; i < testString.length; i++){ 
- 
+      for(let i = 0; i < testString.length; i++){
+
         try {
         const testPromise = new Promise((resolve, reject) => {
           try {
@@ -185,7 +187,7 @@ class TestRunner extends BaseViewModel {
 
       let tests = ${parseTest(challenge.tests)};
 
-      const testText = ${challenge.tests.map((e) => '''"${e.instruction}"''').toList().toString()}; 
+      const testText = ${challenge.tests.map((e) => '''"${e.instruction}"''').toList().toString()};
 
       try {
         for (let i = 0; i < tests.length; i++) {
