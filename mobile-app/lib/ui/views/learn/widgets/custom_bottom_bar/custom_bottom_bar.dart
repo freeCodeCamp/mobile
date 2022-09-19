@@ -7,16 +7,20 @@ import 'package:freecodecamp/ui/views/learn/challenge_editor/challenge_model.dar
 import 'package:webview_flutter/webview_flutter.dart';
 
 class CustomBottomBar extends StatelessWidget {
-  const CustomBottomBar(
-      {Key? key,
-      required this.model,
-      required this.challenge,
-      required this.editor})
-      : super(key: key);
+  const CustomBottomBar({
+    Key? key,
+    required this.model,
+    required this.challenge,
+    required this.editor,
+    required this.maxChallenges,
+    required this.challengesCompleted,
+  }) : super(key: key);
 
   final ChallengeModel model;
   final Challenge challenge;
   final Editor editor;
+  final int maxChallenges;
+  final int challengesCompleted;
 
   @override
   Widget build(BuildContext context) {
@@ -115,9 +119,8 @@ class CustomBottomBar extends StatelessWidget {
                     content: currText == '' ? currFile.contents : currText,
                   ),
                 );
-                model.setEditorText = currText == ''
-                    ? currFile.contents
-                    : currText;
+                model.setEditorText =
+                    currText == '' ? currFile.contents : currText;
                 model.setShowPreview = !model.showPreview;
               },
               splashColor: Colors.transparent,
@@ -137,11 +140,17 @@ class CustomBottomBar extends StatelessWidget {
                     icon: model.completedChallenge
                         ? const FaIcon(FontAwesomeIcons.arrowRight)
                         : const FaIcon(FontAwesomeIcons.check),
-                    onPressed: () async => {
-                      FocusManager.instance.primaryFocus?.unfocus(),
+                    onPressed: () async {
+                      if (model.showPanel &&
+                          model.panelType == PanelType.pass) {
+                        model.goToNextChallenge(
+                            maxChallenges, challengesCompleted);
+                        return;
+                      }
+                      FocusManager.instance.primaryFocus?.unfocus();
                       model.testController?.runJavascript('''
                                 (function(){Flutter.postMessage(window.document.body.outerHTML)})();
-                              '''),
+                              ''');
                     },
                     splashColor: Colors.transparent,
                     highlightColor: Colors.transparent,

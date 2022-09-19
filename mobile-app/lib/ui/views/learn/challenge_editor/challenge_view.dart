@@ -146,9 +146,12 @@ class ChallengeView extends StatelessWidget {
                           padding: EdgeInsets.only(
                               bottom: MediaQuery.of(context).viewInsets.bottom),
                           child: CustomBottomBar(
-                              model: model,
-                              challenge: challenge,
-                              editor: editor)),
+                            model: model,
+                            challenge: challenge,
+                            editor: editor,
+                            maxChallenges: maxChallenges,
+                            challengesCompleted: challengesCompleted,
+                          )),
                       body: !model.showPreview
                           ? Column(
                               children: [
