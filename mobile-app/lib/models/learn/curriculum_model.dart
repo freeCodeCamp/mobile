@@ -21,10 +21,7 @@ class SuperBlock {
       blocks: (data[data.keys.first]['blocks'] as Map)
           .map((key, value) => MapEntry(
                 key,
-                Block.fromJson(
-                  value['challenges'],
-                  value['desc'],
-                ),
+                Block.fromJson(value['challenges'], value['desc'], key),
               ))
           .values
           .toList()
@@ -56,11 +53,12 @@ class Block {
     return superblock == '2022/responsive-web-design';
   }
 
-  factory Block.fromJson(Map<String, dynamic> data, List description) {
+  factory Block.fromJson(
+      Map<String, dynamic> data, List description, String key) {
     return Block(
         blockName: data['name'],
         description: description,
-        dashedName: data['dashedName'],
+        dashedName: data['dashedName'] ?? key,
         superBlock: data['superBlock'],
         order: data['order'],
         challenges: (data['challengeOrder'] as List)
