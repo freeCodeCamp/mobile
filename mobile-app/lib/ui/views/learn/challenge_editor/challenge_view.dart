@@ -173,16 +173,36 @@ class ChallengeView extends StatelessWidget {
                                 Expanded(child: editor)
                               ],
                             )
-                          : model.showConsole
-                              ? ConsoleView(code: model.editorText ?? '')
-                              : WebPreview(
-                                  keyBoardIsActive: keyBoardIsActive,
-                                  challenge: challenge,
-                                  maxChallenges: maxChallenges,
-                                  challengesCompleted: challengesCompleted,
-                                  editor: editor,
-                                  model: model,
-                                ));
+                          : Column(
+                              children: [
+                                model.showPanel && !keyBoardIsActive
+                                    ? DynamicPanel(
+                                        challenge: challenge,
+                                        model: model,
+                                        panel: model.panelType,
+                                        maxChallenges: maxChallenges,
+                                        challengesCompleted:
+                                            challengesCompleted,
+                                        editor: editor,
+                                      )
+                                    : Container(),
+                                model.showConsole
+                                    ? Expanded(
+                                        child: ConsoleView(
+                                            code: model.editorText ?? ''))
+                                    : Expanded(
+                                        child: WebPreview(
+                                          keyBoardIsActive: keyBoardIsActive,
+                                          challenge: challenge,
+                                          maxChallenges: maxChallenges,
+                                          challengesCompleted:
+                                              challengesCompleted,
+                                          editor: editor,
+                                          model: model,
+                                        ),
+                                      )
+                              ],
+                            ));
                 }
 
                 return Scaffold(
@@ -381,15 +401,6 @@ class WebPreview extends StatelessWidget {
   Widget build(BuildContext context) {
     return Column(
       children: [
-        model.showPanel && !keyBoardIsActive
-            ? DynamicPanel(
-                challenge: challenge,
-                model: model,
-                panel: model.panelType,
-                maxChallenges: maxChallenges,
-                challengesCompleted: challengesCompleted,
-                editor: editor)
-            : Container(),
         Expanded(
           child: WebView(
             userAgent: 'random',
