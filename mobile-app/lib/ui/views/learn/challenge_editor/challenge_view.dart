@@ -11,6 +11,7 @@ import 'package:freecodecamp/enums/panel_type.dart';
 import 'package:freecodecamp/models/learn/challenge_model.dart';
 import 'package:freecodecamp/models/learn/curriculum_model.dart';
 import 'package:freecodecamp/ui/views/learn/challenge_editor/challenge_model.dart';
+import 'package:freecodecamp/ui/views/learn/console/console_view.dart';
 import 'package:freecodecamp/ui/views/learn/widgets/custom_tab_bar/custom_tab_bar.dart';
 
 import 'package:freecodecamp/ui/views/learn/widgets/dynamic_panel/dynamic_panel.dart';
@@ -125,7 +126,7 @@ class ChallengeView extends StatelessWidget {
                                       child: ElevatedButton(
                                     child: const Text('Console'),
                                     onPressed: () {
-                                      model.consoleSnackbar();
+                                      model.setShowConsole = !model.showConsole;
                                     },
                                   )),
                                 if (!model.showPreview)
@@ -151,7 +152,7 @@ class ChallengeView extends StatelessWidget {
                             maxChallenges,
                             challengesCompleted,
                           )),
-                      body: !model.showPreview
+                      body: !model.showPreview && !model.showConsole
                           ? Column(
                               children: [
                                 model.showPanel && !keyBoardIsActive
@@ -168,40 +169,44 @@ class ChallengeView extends StatelessWidget {
                                 Expanded(child: editor)
                               ],
                             )
-                          : Column(
-                              children: [
-                                model.showPanel && !keyBoardIsActive
-                                    ? DynamicPanel(
-                                        challenge: challenge,
-                                        model: model,
-                                        panel: model.panelType,
-                                        maxChallenges: maxChallenges,
-                                        challengesCompleted:
-                                            challengesCompleted,
-                                        editor: editor)
-                                    : Container(),
-                                Expanded(
-                                  child: WebView(
-                                    userAgent: 'random',
-                                    javascriptMode: JavascriptMode.unrestricted,
-                                    onWebViewCreated: (WebViewController
-                                        webcontroller) async {
-                                      model.setWebviewController =
-                                          webcontroller;
-                                      webcontroller.loadUrl(Uri.dataFromString(
-                                              await model.parsePreviewDocument(
-                                                  await model
-                                                      .getExactFileFromCache(
-                                                          challenge,
-                                                          challenge.files[0])),
-                                              mimeType: 'text/html',
-                                              encoding: utf8)
-                                          .toString());
-                                    },
-                                  ),
-                                ),
-                              ],
-                            ));
+                          : model.showConsole
+                              ? ConsoleView(code: model.editorText ?? '')
+                              : Column(
+                                  children: [
+                                    model.showPanel && !keyBoardIsActive
+                                        ? DynamicPanel(
+                                            challenge: challenge,
+                                            model: model,
+                                            panel: model.panelType,
+                                            maxChallenges: maxChallenges,
+                                            challengesCompleted:
+                                                challengesCompleted,
+                                            editor: editor)
+                                        : Container(),
+                                    Expanded(
+                                      child: WebView(
+                                        userAgent: 'random',
+                                        javascriptMode:
+                                            JavascriptMode.unrestricted,
+                                        onWebViewCreated: (WebViewController
+                                            webcontroller) async {
+                                          model.setWebviewController =
+                                              webcontroller;
+                                          webcontroller.loadUrl(Uri.dataFromString(
+                                                  await model.parsePreviewDocument(
+                                                      await model
+                                                          .getExactFileFromCache(
+                                                              challenge,
+                                                              challenge
+                                                                  .files[0])),
+                                                  mimeType: 'text/html',
+                                                  encoding: utf8)
+                                              .toString());
+                                        },
+                                      ),
+                                    ),
+                                  ],
+                                ));
                 }
 
                 return Scaffold(
