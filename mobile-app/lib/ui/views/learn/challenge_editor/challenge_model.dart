@@ -28,6 +28,9 @@ class ChallengeModel extends BaseViewModel {
   String? _currentSelectedFile = '';
   String? get currentSelectedFile => _currentSelectedFile;
 
+  bool _showAppPreviews = false;
+  bool get showAppPreviews => _showAppPreviews;
+
   bool _showPreview = false;
   bool get showPreview => _showPreview;
 
@@ -98,6 +101,11 @@ class ChallengeModel extends BaseViewModel {
 
   set setWebviewController(WebViewController value) {
     _webviewController = value;
+    notifyListeners();
+  }
+
+  set setShowAppPreviews(bool value) {
+    _showAppPreviews = value;
     notifyListeners();
   }
 

@@ -57,7 +57,10 @@ class ConsoleView extends StatelessWidget {
                               shrinkWrap: true,
                               itemCount: model.logList.length,
                               itemBuilder: (context, index) {
-                                return Text(model.logList[index]);
+                                return Text(
+                                  model.logList[index],
+                                  style: const TextStyle(fontSize: 16),
+                                );
                               }),
                         ),
                       ),

@@ -97,7 +97,7 @@ class ChallengeView extends StatelessWidget {
                                   ? const Text('Editor')
                                   : null,
                               actions: [
-                                if (model.showPreview)
+                                if (model.showAppPreviews)
                                   Expanded(
                                       child: Container(
                                     decoration: model.showPreview
@@ -107,29 +107,33 @@ class ChallengeView extends StatelessWidget {
                                                     width: 4,
                                                     color: Colors.blue)))
                                         : null,
-                                    child: Container(
-                                      decoration: model.showConsole
-                                          ? const BoxDecoration(
-                                              border: Border(
-                                                  bottom: BorderSide(
-                                                      width: 4,
-                                                      color: Colors.blue)))
-                                          : null,
-                                      child: ElevatedButton(
-                                        child: const Text('Preview'),
-                                        onPressed: () {},
-                                      ),
+                                    child: ElevatedButton(
+                                      child: const Text('Preview'),
+                                      onPressed: () {
+                                        model.setShowConsole = false;
+                                        model.setShowPreview = true;
+                                      },
                                     ),
                                   )),
-                                if (model.showPreview)
+                                if (model.showAppPreviews)
                                   Expanded(
-                                      child: ElevatedButton(
-                                    child: const Text('Console'),
-                                    onPressed: () {
-                                      model.setShowConsole = !model.showConsole;
-                                    },
+                                      child: Container(
+                                    decoration: model.showConsole
+                                        ? const BoxDecoration(
+                                            border: Border(
+                                                bottom: BorderSide(
+                                                    width: 4,
+                                                    color: Colors.blue)))
+                                        : null,
+                                    child: ElevatedButton(
+                                      child: const Text('Console'),
+                                      onPressed: () {
+                                        model.setShowConsole = true;
+                                        model.setShowPreview = false;
+                                      },
+                                    ),
                                   )),
-                                if (!model.showPreview)
+                                if (!model.showAppPreviews)
                                   if (challenge.files.length > 1)
                                     for (ChallengeFile file in challenge.files)
                                       CustomTabBar(
@@ -152,7 +156,7 @@ class ChallengeView extends StatelessWidget {
                             maxChallenges,
                             challengesCompleted,
                           )),
-                      body: !model.showPreview && !model.showConsole
+                      body: !model.showAppPreviews
                           ? Column(
                               children: [
                                 model.showPanel && !keyBoardIsActive
@@ -171,41 +175,13 @@ class ChallengeView extends StatelessWidget {
                             )
                           : model.showConsole
                               ? ConsoleView(code: model.editorText ?? '')
-                              : Column(
-                                  children: [
-                                    model.showPanel && !keyBoardIsActive
-                                        ? DynamicPanel(
-                                            challenge: challenge,
-                                            model: model,
-                                            panel: model.panelType,
-                                            maxChallenges: maxChallenges,
-                                            challengesCompleted:
-                                                challengesCompleted,
-                                            editor: editor)
-                                        : Container(),
-                                    Expanded(
-                                      child: WebView(
-                                        userAgent: 'random',
-                                        javascriptMode:
-                                            JavascriptMode.unrestricted,
-                                        onWebViewCreated: (WebViewController
-                                            webcontroller) async {
-                                          model.setWebviewController =
-                                              webcontroller;
-                                          webcontroller.loadUrl(Uri.dataFromString(
-                                                  await model.parsePreviewDocument(
-                                                      await model
-                                                          .getExactFileFromCache(
-                                                              challenge,
-                                                              challenge
-                                                                  .files[0])),
-                                                  mimeType: 'text/html',
-                                                  encoding: utf8)
-                                              .toString());
-                                        },
-                                      ),
-                                    ),
-                                  ],
+                              : WebPreview(
+                                  keyBoardIsActive: keyBoardIsActive,
+                                  challenge: challenge,
+                                  maxChallenges: maxChallenges,
+                                  challengesCompleted: challengesCompleted,
+                                  editor: editor,
+                                  model: model,
                                 ));
                 }
 
@@ -314,12 +290,12 @@ class ChallengeView extends StatelessWidget {
           ),
           Container(
             margin: const EdgeInsets.all(8),
-            color: !model.showPreview
+            color: !model.showAppPreviews
                 ? const Color.fromRGBO(0x2A, 0x2A, 0x40, 1)
                 : Colors.white,
             child: IconButton(
               icon: Icon(Icons.remove_red_eye_outlined,
-                  color: model.showPreview
+                  color: model.showAppPreviews
                       ? const Color.fromRGBO(0x2A, 0x2A, 0x40, 1)
                       : Colors.white),
               onPressed: () async {
@@ -333,7 +309,7 @@ class ChallengeView extends StatelessWidget {
                 );
                 model.setEditorText =
                     currText == '' ? currFile.contents : currText;
-                model.setShowPreview = !model.showPreview;
+                model.setShowAppPreviews = !model.showAppPreviews;
               },
               splashColor: Colors.transparent,
               highlightColor: Colors.transparent,
@@ -379,6 +355,58 @@ class ChallengeView extends StatelessWidget {
           ),
         ],
       ),
+    );
+  }
+}
+
+class WebPreview extends StatelessWidget {
+  const WebPreview({
+    Key? key,
+    required this.keyBoardIsActive,
+    required this.challenge,
+    required this.maxChallenges,
+    required this.challengesCompleted,
+    required this.editor,
+    required this.model,
+  }) : super(key: key);
+
+  final bool keyBoardIsActive;
+  final Challenge challenge;
+  final int maxChallenges;
+  final int challengesCompleted;
+  final Editor editor;
+  final ChallengeModel model;
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      children: [
+        model.showPanel && !keyBoardIsActive
+            ? DynamicPanel(
+                challenge: challenge,
+                model: model,
+                panel: model.panelType,
+                maxChallenges: maxChallenges,
+                challengesCompleted: challengesCompleted,
+                editor: editor)
+            : Container(),
+        Expanded(
+          child: WebView(
+            userAgent: 'random',
+            javascriptMode: JavascriptMode.unrestricted,
+            onWebViewCreated: (WebViewController webcontroller) async {
+              model.setWebviewController = webcontroller;
+              webcontroller.loadUrl(Uri.dataFromString(
+                      await model.parsePreviewDocument(
+                          await model.getExactFileFromCache(
+                              challenge, challenge.files[0])),
+                      mimeType: 'text/html',
+                      encoding: utf8)
+                  .toString());
+            },
+          ),
+        ),
+      ],
     );
   }
 }
