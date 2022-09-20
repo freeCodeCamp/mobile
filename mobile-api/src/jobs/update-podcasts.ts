@@ -1,11 +1,17 @@
 import Parser from 'rss-parser';
+
 import { parentPort } from 'worker_threads';
+
 import dbConnect from '../db-connect';
+
 import Episode from '../models/Episode';
+
 import PodcastModel, { Podcast } from '../models/Podcast';
+
 import { feedUrls } from '../podcast-feed-urls.json';
 
 console.log('Job running at', new Date().toISOString());
+
 const parser = new Parser<
   Record<string, unknown>,
   { itunes?: { duration: string } }
@@ -15,7 +21,9 @@ const parser = new Parser<
   },
 });
 
-void (async function () {
+
+
+void (async function (){
   await dbConnect();
   for (const feedUrl of feedUrls) {
     const feed = await parser.parseURL(feedUrl);
@@ -36,6 +44,8 @@ void (async function () {
         upsert: true,
       }
     );
+    
+    
     for (const episode of feed.items) {
       const dateRaw = episode.isoDate ?? episode.pubDate ?? null;
       const episodeDate = dateRaw ? Date.parse(dateRaw) : null;
@@ -60,6 +70,8 @@ void (async function () {
       );
     }
   }
+  
+  
   if (parentPort) {
     console.log('Job finished at', new Date().toISOString());
     parentPort.postMessage('done');
