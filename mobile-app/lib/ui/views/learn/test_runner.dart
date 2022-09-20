@@ -1,5 +1,4 @@
 import 'dart:convert';
-import 'dart:developer';
 import 'package:freecodecamp/enums/ext_type.dart';
 import 'package:freecodecamp/models/learn/challenge_model.dart';
 import 'package:html/parser.dart';
@@ -73,7 +72,7 @@ class TestRunner extends BaseViewModel {
     return content;
   }
 
-  void setWebViewContent(
+  Future<bool> setWebViewContent(
     Challenge challenge,
     WebViewController webviewController,
   ) async {
@@ -108,7 +107,7 @@ class TestRunner extends BaseViewModel {
     webviewController.loadUrl(Uri.dataFromString(document.outerHtml,
             mimeType: 'text/html', encoding: Encoding.getByName('utf-8'))
         .toString());
-    log(document.outerHtml);
+    return true;
   }
 
   List<String> parseTest(List<ChallengeTest> test) {
