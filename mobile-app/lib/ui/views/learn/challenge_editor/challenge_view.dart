@@ -144,7 +144,13 @@ class ChallengeView extends StatelessWidget {
                           padding: EdgeInsets.only(
                               bottom: MediaQuery.of(context).viewInsets.bottom),
                           child: customBottomBar(
-                              model, challenge, editor, context)),
+                            model,
+                            challenge,
+                            editor,
+                            context,
+                            maxChallenges,
+                            challengesCompleted,
+                          )),
                       body: !model.showPreview
                           ? Column(
                               children: [
@@ -221,8 +227,14 @@ class ChallengeView extends StatelessWidget {
             ));
   }
 
-  Widget customBottomBar(ChallengeModel model, Challenge challenge,
-      Editor editor, BuildContext context) {
+  Widget customBottomBar(
+    ChallengeModel model,
+    Challenge challenge,
+    Editor editor,
+    BuildContext context,
+    int maxChallenges,
+    int challengesCompleted,
+  ) {
     if (model.testController != null) {
       editor.onTextChange.stream.listen((event) {
         model.setHasTypedInEditor = true;
@@ -338,14 +350,20 @@ class ChallengeView extends StatelessWidget {
                         ? const FaIcon(FontAwesomeIcons.arrowRight)
                         : const FaIcon(FontAwesomeIcons.check),
                     onPressed: model.hasTypedInEditor
-                        ? () async => {
-                              model.runner.setWebViewContent(
-                                  challenge, model.testController!),
-                              FocusManager.instance.primaryFocus?.unfocus(),
-                              model.testController?.runJavascript('''
-                                (function(){Flutter.postMessage(window.document.body.outerHTML)})();
-                              '''),
+                        ? () async {
+                            if (model.showPanel &&
+                                model.panelType == PanelType.pass) {
+                              model.goToNextChallenge(
+                                  maxChallenges, challengesCompleted);
+                              return;
                             }
+                            model.runner.setWebViewContent(
+                                challenge, model.testController!);
+                            FocusManager.instance.primaryFocus?.unfocus();
+                            model.testController?.runJavascript('''
+                                (function(){Flutter.postMessage(window.document.body.outerHTML)})();
+                              ''');
+                          }
                         : null,
                     splashColor: Colors.transparent,
                     highlightColor: Colors.transparent,
