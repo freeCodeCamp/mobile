@@ -135,7 +135,7 @@ class TestRunner extends BaseViewModel {
 
   Future<String?> returnScript(Ext ext, Challenge challenge) async {
     if (ext == Ext.html || ext == Ext.css) {
-      return '''  <script type="module">
+      return '''<script type="module">
     import * as __helpers from "https://unpkg.com/@freecodecamp/curriculum-helpers@1.1.0/dist/index.js";
 
     const code = `${await parseCssDocmentsAsStyleTags(challenge, await getFirstFileFromCache(challenge, ext))}`;
