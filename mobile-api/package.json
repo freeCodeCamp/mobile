@@ -33,7 +33,7 @@
     "@babel/plugin-transform-typescript": "7.19.0",
     "@breejs/ts-worker": "2.0.0",
     "@types/express": "4.17.14",
-    "@types/node": "16.11.56",
+    "@types/node": "16.11.59",
     "@typescript-eslint/eslint-plugin": "5.37.0",
     "@typescript-eslint/parser": "5.37.0",
     "eslint": "8.23.1",
