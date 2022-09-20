@@ -339,8 +339,8 @@ class ChallengeView extends StatelessWidget {
                         : const FaIcon(FontAwesomeIcons.check),
                     onPressed: model.hasTypedInEditor
                         ? () async => {
-                              model.runner.setWebViewContent(
-                                  challenge, model.testController!),
+                              model.runner.setWebViewContent(challenge,
+                                  webviewController: model.testController!),
                               FocusManager.instance.primaryFocus?.unfocus(),
                               model.testController?.runJavascript('''
                                 (function(){Flutter.postMessage(window.document.body.outerHTML)})();

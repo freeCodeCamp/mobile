@@ -13,6 +13,7 @@ class Challenge {
 
   final List<ChallengeTest> tests;
   final List<ChallengeFile> files;
+  final List<ChallengeFile>? solutions;
 
   const Challenge(
       {required this.id,
@@ -24,23 +25,28 @@ class Challenge {
       required this.superBlock,
       required this.challengeType,
       required this.tests,
-      required this.files});
+      required this.files,
+      this.solutions});
 
-  factory Challenge.fromJson(Map<String, dynamic> data) {
+  factory Challenge.fromJson(Map<String, dynamic> data,
+      {bool testing = false}) {
     return Challenge(
       id: data['id'],
       block: data['block'],
       title: data['title'],
       description: data['description'],
       instructions: data['instructions'] ?? '',
-      slug: data['fields']['slug'],
+      slug: testing ? '' : data['fields']['slug'],
       superBlock: data['superBlock'],
       challengeType: data['challengeType'],
-      tests: (data['fields']['tests'] as List)
+      tests: ((testing ? data['tests'] : data['fields']['tests']) as List)
           .map<ChallengeTest>((file) => ChallengeTest.fromJson(file))
           .toList(),
       files: (data['challengeFiles'] as List)
           .map<ChallengeFile>((file) => ChallengeFile.fromJson(file))
+          .toList(),
+      solutions: (data['solutions'] as List)
+          .map<ChallengeFile>((file) => ChallengeFile.fromJson(file[0]))
           .toList(),
     );
   }

@@ -19,32 +19,58 @@ class TestRunner extends BaseViewModel {
 
   Future<String?> getExactFileFromCache(
     Challenge challenge,
-    ChallengeFile file,
-  ) async {
-    SharedPreferences prefs = await SharedPreferences.getInstance();
-    String? cache = prefs.getString('${challenge.title}.${file.name}');
+    ChallengeFile file, {
+    bool testing = false,
+  }) async {
+    String? cache;
+
+    if (testing) {
+      cache = challenge.files
+          .firstWhere((element) => element.name == file.name)
+          .contents;
+    } else {
+      SharedPreferences prefs = await SharedPreferences.getInstance();
+      cache = prefs.getString('${challenge.title}.${file.name}');
+    }
 
     return cache;
   }
 
-  Future<String> getFirstFileFromCache(Challenge challenge, Ext ext) async {
-    SharedPreferences prefs = await SharedPreferences.getInstance();
-    List<ChallengeFile> firstHtmlChallenge = challenge.files
-        .where(
-            (file) => file.ext == Ext.css ? ext == Ext.html : file.ext == ext)
-        .toList();
+  Future<String> getFirstFileFromCache(
+    Challenge challenge,
+    Ext ext, {
+    bool testing = false,
+  }) async {
+    String fileContent = '';
 
-    String fileContent =
-        prefs.getString('${challenge.title}.${firstHtmlChallenge[0].name}') ??
-            firstHtmlChallenge[0].contents;
+    if (testing) {
+      List<ChallengeFile> firstHtmlChallenge = challenge.files
+          .where((file) => (file.ext == Ext.css || file.ext == Ext.html)
+              ? file.ext == Ext.html
+              : file.ext == ext)
+          .toList();
+      fileContent = firstHtmlChallenge[0].contents;
+    } else {
+      List<ChallengeFile> firstHtmlChallenge = challenge.files
+          .where((file) => (file.ext == Ext.css || file.ext == Ext.html)
+              ? file.ext == Ext.html
+              : file.ext == ext)
+          .toList();
+      SharedPreferences prefs = await SharedPreferences.getInstance();
+
+      fileContent =
+          prefs.getString('${challenge.title}.${firstHtmlChallenge[0].name}') ??
+              firstHtmlChallenge[0].contents;
+    }
 
     return fileContent;
   }
 
   Future<String> parseCssDocmentsAsStyleTags(
     Challenge challenge,
-    String content,
-  ) async {
+    String content, {
+    bool testing = false,
+  }) async {
     List<ChallengeFile> cssFiles =
         challenge.files.where((element) => element.ext == Ext.css).toList();
     List<String> cssFilesWithCache = [];
@@ -52,7 +78,11 @@ class TestRunner extends BaseViewModel {
 
     if (cssFiles.isNotEmpty) {
       for (ChallengeFile file in cssFiles) {
-        String? cache = await getExactFileFromCache(challenge, file);
+        String? cache = await getExactFileFromCache(
+          challenge,
+          file,
+          testing: testing,
+        );
         String handledFile = cache ?? file.contents;
 
         cssFilesWithCache.add(handledFile);
@@ -73,10 +103,11 @@ class TestRunner extends BaseViewModel {
     return content;
   }
 
-  void setWebViewContent(
-    Challenge challenge,
-    WebViewController webviewController,
-  ) async {
+  Future<String> setWebViewContent(
+    Challenge challenge, {
+    WebViewController? webviewController,
+    bool testing = false,
+  }) async {
     dom.Document document = dom.Document();
     document = parse('');
 
@@ -96,8 +127,11 @@ class TestRunner extends BaseViewModel {
       document.getElementsByTagName('HEAD')[0].append(node);
     }
 
-    dom.Document scriptToNode =
-        parse(await returnScript(challenge.files[0].ext, challenge));
+    dom.Document scriptToNode = parse(await returnScript(
+      challenge.files[0].ext,
+      challenge,
+      testing: testing,
+    ));
 
     dom.Node bodyNode =
         scriptToNode.getElementsByTagName('BODY').first.children.isNotEmpty
@@ -105,16 +139,19 @@ class TestRunner extends BaseViewModel {
             : scriptToNode.getElementsByTagName('HEAD').first.children.first;
     document.body!.append(bodyNode);
 
-    webviewController.loadUrl(Uri.dataFromString(document.outerHtml,
-            mimeType: 'text/html', encoding: Encoding.getByName('utf-8'))
-        .toString());
+    if (!testing) {
+      webviewController!.loadUrl(Uri.dataFromString(document.outerHtml,
+              mimeType: 'text/html', encoding: Encoding.getByName('utf-8'))
+          .toString());
+    }
     log(document.outerHtml);
+    return document.outerHtml;
   }
 
   List<String> parseTest(List<ChallengeTest> test) {
     List<String> parsedTest = test
         .map((e) =>
-            """`${e.javaScript.replaceAll('document', 'doc').replaceAll('\\', '\\\\').replaceAllMapped(RegExp(r'(\$\(.+?)\)'), (match) {
+            """`${e.javaScript.replaceAll('document', 'doc').replaceAll('\\', '\\\\').replaceAll('`', '\\`').replaceAllMapped(RegExp(r'(\$\(.+?)\)'), (match) {
               return '${match.group(1)}, doc)';
             })}`""")
         .toList();
@@ -122,23 +159,32 @@ class TestRunner extends BaseViewModel {
     return parsedTest;
   }
 
-  String parseJavaScript(ChallengeFile file, String cacheContent) {
+  String parseJavaScript(
+    ChallengeFile file,
+    String cacheContent, {
+    bool testing = false,
+  }) {
     if (file.ext == Ext.js) {
       String head = file.head ?? '';
       String tail = file.tail ?? '';
 
       return '$head\n$cacheContent\n$tail';
     } else {
-      return '''Print.postMessage("That is funny, this is an interal error, please report to the dev")''';
+      return '''${testing ? 'console.log' : 'Print.postMessage'}("That is funny, this is an interal error, please report to the dev")''';
     }
   }
 
-  Future<String?> returnScript(Ext ext, Challenge challenge) async {
+  Future<String?> returnScript(
+    Ext ext,
+    Challenge challenge, {
+    bool testing = false,
+  }) async {
+    String logFunction = testing ? 'console.log' : 'Print.postMessage';
     if (ext == Ext.html || ext == Ext.css) {
       return '''  <script type="module">
     import * as __helpers from "https://unpkg.com/@freecodecamp/curriculum-helpers@1.1.0/dist/index.js";
 
-    const code = `${await parseCssDocmentsAsStyleTags(challenge, await getFirstFileFromCache(challenge, ext))}`;
+    const code = `${await parseCssDocmentsAsStyleTags(challenge, await getFirstFileFromCache(challenge, ext, testing: testing), testing: testing)}`;
     const doc = new DOMParser().parseFromString(code, 'text/html')
 
     const assert = chai.assert;
@@ -164,11 +210,11 @@ class TestRunner extends BaseViewModel {
           await test(testString[i]);
         }
       } catch (e) {
-       Print.postMessage(testText[i]);
+       $logFunction(testText[i]);
        break;
       } finally {
         if(!error && testString.length -1 == i){
-          Print.postMessage('completed');
+          $logFunction('completed');
         }
       }
       }
@@ -182,7 +228,7 @@ class TestRunner extends BaseViewModel {
 
       const assert = chai.assert;
 
-      let code = `${parseJavaScript(challenge.files[0], await getFirstFileFromCache(challenge, ext))}`;
+      let code = `${parseJavaScript(challenge.files[0], await getFirstFileFromCache(challenge, ext, testing: testing))}`;
 
 
       let tests = ${parseTest(challenge.tests)};
@@ -196,17 +242,17 @@ class TestRunner extends BaseViewModel {
             console.log(tests[i]);
             await eval(code +  tests[i]);
           } catch (e) {
-            Print.postMessage(testText[i]);
+            $logFunction(testText[i]);
             break;
           }
 
           if(i == tests.length - 1){
-            Print.postMessage('completed');
+            $logFunction('completed');
           }
 
         }
       } catch (e) {
-        Print.postMessage(e);
+        $logFunction(e);
       }''';
     }
 
