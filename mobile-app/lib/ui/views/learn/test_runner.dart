@@ -148,11 +148,11 @@ class TestRunner extends BaseViewModel {
     return document.outerHtml;
   }
 
-  List<String> parseTest(List<ChallengeTest> test) {
+  List<String> parseTest(List<ChallengeTest> test, bool getComputedStyleFlag) {
     List<String> parsedTest = test
         .map((e) =>
-            """`${e.javaScript.replaceAll('document', 'doc').replaceAll('\\', '\\\\').replaceAll('`', '\\`').replaceAllMapped(RegExp(r'(\$\(.+?)\)'), (match) {
-              return '${match.group(1)}, doc)';
+            """`${e.javaScript.replaceAll('document', getComputedStyleFlag ? 'document' : 'doc').replaceAll('\\', '\\\\').replaceAll('`', '\\`').replaceAllMapped(RegExp(r'(\$\(.+?)\)'), (match) {
+              return '${match.group(1)}, ${getComputedStyleFlag ? 'document' : 'doc'})';
             })}`""")
         .toList();
 
@@ -180,6 +180,15 @@ class TestRunner extends BaseViewModel {
     bool testing = false,
   }) async {
     String logFunction = testing ? 'console.log' : 'Print.postMessage';
+    bool getComputedStyleFlag = false;
+
+    for (var t in challenge.tests) {
+      if (t.javaScript.contains('window.getComputedStyle')) {
+        getComputedStyleFlag = true;
+        break;
+      }
+    }
+
     if (ext == Ext.html || ext == Ext.css) {
       return '''  <script type="module">
     import * as __helpers from "https://unpkg.com/@freecodecamp/curriculum-helpers@1.1.0/dist/index.js";
@@ -188,8 +197,8 @@ class TestRunner extends BaseViewModel {
     const doc = new DOMParser().parseFromString(code, 'text/html')
 
     const assert = chai.assert;
-    const tests = ${parseTest(challenge.tests)};
-    const testText = ${challenge.tests.map((e) => '''"${e.instruction}"''').toList().toString()};
+    const tests = ${parseTest(challenge.tests, getComputedStyleFlag)};
+    const testText = ${challenge.tests.map((e) => '''"${e.instruction.replaceAll('"', '\\"')}"''').toList().toString()};
 
     doc.__runTest = async function runtTests(testString) {
       let error = false;
@@ -220,6 +229,7 @@ class TestRunner extends BaseViewModel {
       }
     };
 
+    ${getComputedStyleFlag ? "document.querySelector('*').innerHTML = code;" : ''}
     doc.__runTest(tests);
   </script>''';
     } else if (ext == Ext.js) {
@@ -231,7 +241,7 @@ class TestRunner extends BaseViewModel {
       let code = `${parseJavaScript(challenge.files[0], await getFirstFileFromCache(challenge, ext, testing: testing))}`;
 
 
-      let tests = ${parseTest(challenge.tests)};
+      let tests = ${parseTest(challenge.tests, getComputedStyleFlag)};
 
       const testText = ${challenge.tests.map((e) => '''"${e.instruction}"''').toList().toString()};
 
