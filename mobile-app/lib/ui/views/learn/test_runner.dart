@@ -17,7 +17,7 @@ class TestRunner extends BaseViewModel {
     notifyListeners();
   }
 
-  Future<String?> getExactFileFromCache(
+  Future<String> getExactFileFromCache(
     Challenge challenge,
     ChallengeFile file, {
     bool testing = false,
@@ -33,7 +33,7 @@ class TestRunner extends BaseViewModel {
       cache = prefs.getString('${challenge.title}.${file.name}');
     }
 
-    return cache;
+    return cache ?? '';
   }
 
   Future<String> getFirstFileFromCache(
@@ -66,6 +66,31 @@ class TestRunner extends BaseViewModel {
     return fileContent;
   }
 
+  Future<bool> cssFileIsLinked(
+    String document,
+    String cssFileName,
+  ) async {
+    dom.Document doc = parse(document);
+
+    List<dom.Node> links = doc.getElementsByTagName('LINK');
+
+    List<String> linkedFileNames = [];
+
+    if (links.isNotEmpty) {
+      for (dom.Node node in links) {
+        if (node.attributes['href'] == null) continue;
+
+        if (node.attributes['href']!.contains('/')) {
+          linkedFileNames.add(node.attributes['href']!.split('/').last);
+        } else if (node.attributes['href']!.isNotEmpty) {
+          linkedFileNames.add(node.attributes['href'] as String);
+        }
+      }
+    }
+
+    return linkedFileNames.contains(cssFileName);
+  }
+
   Future<String> parseCssDocmentsAsStyleTags(
     Challenge challenge,
     String content, {
@@ -83,7 +108,15 @@ class TestRunner extends BaseViewModel {
           file,
           testing: testing,
         );
-        String handledFile = cache ?? file.contents;
+
+        if (!await cssFileIsLinked(
+          content,
+          '${file.name}.${file.ext.name}',
+        )) {
+          continue;
+        }
+
+        String handledFile = cache;
 
         cssFilesWithCache.add(handledFile);
       }
