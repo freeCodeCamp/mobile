@@ -222,6 +222,9 @@ class TestRunner extends BaseViewModel {
       }
     }
 
+    List<ChallengeFile>? indexFile =
+        challenge.files.where((element) => element.name == 'index').toList();
+
     if (ext == Ext.html || ext == Ext.css) {
       return '''  <script type="module">
     import * as __helpers from "https://unpkg.com/@freecodecamp/curriculum-helpers@1.1.0/dist/index.js";
@@ -232,6 +235,17 @@ class TestRunner extends BaseViewModel {
     const assert = chai.assert;
     const tests = ${parseTest(challenge.tests, getComputedStyleFlag)};
     const testText = ${challenge.tests.map((e) => '''"${e.instruction.replaceAll('"', '\\"')}"''').toList().toString()};
+
+    function getUserInput(returnCase){
+      switch(returnCase){
+        case 'index':
+          return `${indexFile.isNotEmpty ? await getExactFileFromCache(challenge, indexFile[0], testing: testing) : "empty string"}`;
+        case 'editableContents':
+          return `${indexFile.isNotEmpty ? await getExactFileFromCache(challenge, indexFile[0], testing: testing) : "empty string"}`;
+        default:
+          return code;
+      }
+     }
 
     doc.__runTest = async function runtTests(testString) {
       let error = false;
@@ -276,7 +290,17 @@ class TestRunner extends BaseViewModel {
 
       let tests = ${parseTest(challenge.tests, getComputedStyleFlag)};
 
-      const testText = ${challenge.tests.map((e) => '''"${e.instruction}"''').toList().toString()};
+      const testText = ${challenge.tests.map((e) => '''"${e.instruction.replaceAll('"', '\\"')}"''').toList().toString()};
+      function getUserInput(returnCase){
+        switch(returnCase){
+          case 'index':
+            return `${indexFile.isNotEmpty ? await getExactFileFromCache(challenge, indexFile[0], testing: testing) : "empty string"}`;
+          case 'editableContents':
+            return `${indexFile.isNotEmpty ? await getExactFileFromCache(challenge, indexFile[0], testing: testing) : "empty string"}`;
+          default:
+            return code;
+        }
+      }
 
       try {
         for (let i = 0; i < tests.length; i++) {
