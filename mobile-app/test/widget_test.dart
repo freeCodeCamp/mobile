@@ -22,7 +22,7 @@ void main() {
       'javascript-algorithms-and-data-structures',
     ];
 
-    var curriculumFile = File('../../config/curriculum.json');
+    var curriculumFile = File('curriculum.json');
     Map curriculumData = jsonDecode(curriculumFile.readAsStringSync());
 
     for (var currSuperBlock in publicSBs) {
@@ -35,11 +35,16 @@ void main() {
         for (var i = 0; i < challenges.length; i++) {
           var currChallenge = challenges[i];
           if (currChallenge['solutions'].isNotEmpty) {
+            currChallenge['solutions'][0][0]['head'] =
+                currChallenge['challengeFiles'][0]['head'];
+            currChallenge['solutions'][0][0]['tail'] =
+                currChallenge['challengeFiles'][0]['tail'];
             currChallenge['challengeFiles'] = currChallenge['solutions'][0];
           } else {
             currChallenge['challengeFiles'] =
                 challenges[i + 1]['challengeFiles'];
           }
+
           Challenge challenge =
               Challenge.fromJson(currChallenge, testing: true);
           var htmlCode =

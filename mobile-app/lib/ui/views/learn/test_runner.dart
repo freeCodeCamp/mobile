@@ -192,19 +192,22 @@ class TestRunner extends BaseViewModel {
     return parsedTest;
   }
 
-  String parseJavaScript(
+  Future<String> parseJavaScript(
     ChallengeFile file,
-    String cacheContent, {
+    Challenge challenge,
+    Ext ext, {
     bool testing = false,
-  }) {
-    if (file.ext == Ext.js) {
-      String head = file.head ?? '';
-      String tail = file.tail ?? '';
+  }) async {
+    String head = file.head ?? '';
+    String tail = file.tail ?? '';
+    String cacheContent =
+        await getFirstFileFromCache(challenge, ext, testing: testing);
 
-      return '$head\n$cacheContent\n$tail';
-    } else {
-      return '''${testing ? 'console.log' : 'Print.postMessage'}("That is funny, this is an interal error, please report to the dev")''';
-    }
+    String testCache = challenge.files[0].contents;
+
+    String handleReturn = testing ? testCache : cacheContent;
+
+    return '$head\n$handleReturn\n$tail';
   }
 
   Future<String?> returnScript(
@@ -234,7 +237,7 @@ class TestRunner extends BaseViewModel {
 
     const assert = chai.assert;
     const tests = ${parseTest(challenge.tests, getComputedStyleFlag)};
-    const testText = ${challenge.tests.map((e) => '''"${e.instruction.replaceAll('"', '\\"')}"''').toList().toString()};
+    const testText = ${challenge.tests.map((e) => '''"${e.instruction.replaceAll('"', '\\"')}"''')};
 
     function getUserInput(returnCase){
       switch(returnCase){
@@ -285,9 +288,7 @@ class TestRunner extends BaseViewModel {
 
       const assert = chai.assert;
 
-      let code = `${parseJavaScript(challenge.files[0], await getFirstFileFromCache(challenge, ext, testing: testing))}`;
-
-
+      let code = `${await parseJavaScript(challenge.files[0], challenge, ext, testing: testing)}`;
       let tests = ${parseTest(challenge.tests, getComputedStyleFlag)};
 
       const testText = ${challenge.tests.map((e) => '''"${e.instruction.replaceAll('"', '\\"')}"''').toList().toString()};
@@ -305,9 +306,8 @@ class TestRunner extends BaseViewModel {
       try {
         for (let i = 0; i < tests.length; i++) {
           try {
-            tests[i] = tests[i]
-            console.log(tests[i]);
-            await eval(code +  tests[i]);
+            tests[i] = tests[i];
+            await eval(code + '\\n' + tests[i]);
           } catch (e) {
             $logFunction(testText[i]);
             break;
