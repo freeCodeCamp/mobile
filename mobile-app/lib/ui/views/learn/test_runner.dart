@@ -207,7 +207,7 @@ class TestRunner extends BaseViewModel {
 
     String handleReturn = testing ? testCache : cacheContent;
 
-    return '$head\n$handleReturn\n$tail';
+    return '$head\n${handleReturn.replaceAll('\\', '\\\\')}\n$tail';
   }
 
   Future<String?> returnScript(
