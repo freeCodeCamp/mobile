@@ -181,12 +181,10 @@ class TestRunner extends BaseViewModel {
     return document.outerHtml;
   }
 
-  List<String> parseTest(List<ChallengeTest> test, bool getComputedStyleFlag) {
+  List<String> parseTest(List<ChallengeTest> test) {
     List<String> parsedTest = test
         .map((e) =>
-            """`${e.javaScript.replaceAll('document', getComputedStyleFlag ? 'document' : 'doc').replaceAll('\\', '\\\\').replaceAll('`', '\\`').replaceAllMapped(RegExp(r'(\$\(.+?)\)'), (match) {
-              return '${match.group(1)}, ${getComputedStyleFlag ? 'document' : 'doc'})';
-            })}`""")
+            """`${e.javaScript.replaceAll('\\', '\\\\').replaceAll('`', '\\`')}`""")
         .toList();
 
     return parsedTest;
@@ -216,14 +214,6 @@ class TestRunner extends BaseViewModel {
     bool testing = false,
   }) async {
     String logFunction = testing ? 'console.log' : 'Print.postMessage';
-    bool getComputedStyleFlag = false;
-
-    for (var t in challenge.tests) {
-      if (t.javaScript.contains('window.getComputedStyle')) {
-        getComputedStyleFlag = true;
-        break;
-      }
-    }
 
     List<ChallengeFile>? indexFile =
         challenge.files.where((element) => element.name == 'index').toList();
@@ -236,8 +226,8 @@ class TestRunner extends BaseViewModel {
     const doc = new DOMParser().parseFromString(code, 'text/html')
 
     const assert = chai.assert;
-    const tests = ${parseTest(challenge.tests, getComputedStyleFlag)};
-    const testText = ${challenge.tests.map((e) => '''"${e.instruction.replaceAll('"', '\\"')}"''')};
+    const tests = ${parseTest(challenge.tests)};
+    const testText = ${challenge.tests.map((e) => '''"${e.instruction.replaceAll('"', '\\"').replaceAll('\n', ' ')}"''').toList().toString()};
 
     function getUserInput(returnCase){
       switch(returnCase){
@@ -279,7 +269,7 @@ class TestRunner extends BaseViewModel {
       }
     };
 
-    ${getComputedStyleFlag ? "document.querySelector('*').innerHTML = code;" : ''}
+    document.querySelector('*').innerHTML = code;
     doc.__runTest(tests);
   </script>''';
     } else if (ext == Ext.js) {
@@ -289,7 +279,7 @@ class TestRunner extends BaseViewModel {
       const assert = chai.assert;
 
       let code = `${await parseJavaScript(challenge.files[0], challenge, ext, testing: testing)}`;
-      let tests = ${parseTest(challenge.tests, getComputedStyleFlag)};
+      let tests = ${parseTest(challenge.tests)};
 
       const testText = ${challenge.tests.map((e) => '''"${e.instruction.replaceAll('"', '\\"')}"''').toList().toString()};
       function getUserInput(returnCase){
