@@ -17,6 +17,10 @@ class TestRunner extends BaseViewModel {
     notifyListeners();
   }
 
+  // This function returns a specific file content from the cache.
+  // If testing is enabled on the function it will return
+  // the first file with the given file name.
+
   Future<String> getExactFileFromCache(
     Challenge challenge,
     ChallengeFile file, {
@@ -35,6 +39,10 @@ class TestRunner extends BaseViewModel {
 
     return cache ?? '';
   }
+
+  // This funciton returns the first file content with the given extension from the
+  // cache. If testing is enabled it will return the file directly from the challenge.
+  // If a CSS extension is put as a parameter it will return the first HTML file instead.
 
   Future<String> getFirstFileFromCache(
     Challenge challenge,
@@ -66,6 +74,10 @@ class TestRunner extends BaseViewModel {
     return fileContent;
   }
 
+  // This function checks if the given document contains any link elements.
+  // If so check if the css file name corresponds with the names put in the array.
+  // If the file is linked return true.
+
   Future<bool> cssFileIsLinked(
     String document,
     String cssFileName,
@@ -90,6 +102,10 @@ class TestRunner extends BaseViewModel {
 
     return linkedFileNames.contains(cssFileName);
   }
+
+  // This function puts the given css content in the same file as the HTML content.
+  // It will parse the current CSS content into style tags only if it is linked.
+  // If there is nothing to parse it will return the plain content document.
 
   Future<String> parseCssDocmentsAsStyleTags(
     Challenge challenge,
@@ -136,6 +152,9 @@ class TestRunner extends BaseViewModel {
     return content;
   }
 
+  // This function sets the webview content, and parses the document accordingly.
+  // It will create a new empty document.
+
   Future<String> setWebViewContent(
     Challenge challenge, {
     WebViewController? webviewController,
@@ -181,6 +200,10 @@ class TestRunner extends BaseViewModel {
     return document.outerHtml;
   }
 
+  // The parse test function will parse RegEx's and Comments and more for the eval function.
+  // Cause the code is going through runtime twice, the already escaped '\\' need to be escaped
+  // again.
+
   List<String> parseTest(List<ChallengeTest> test) {
     List<String> parsedTest = test
         .map((e) =>
@@ -189,6 +212,13 @@ class TestRunner extends BaseViewModel {
 
     return parsedTest;
   }
+
+  // This funciton adds certain JavaScript code to the content document (for js challenges).
+  // This is to test certain aspects of challenges. The "Head" string is added to the beginning and
+  // the tail is contactenated to the end of the content string. Cause freeCodeCamp only has challenges
+  // that include one javaScript file it wil always return the first files content from a challenge if
+  // testing is enabled. If not testing it will return the first challenge file with the extension of JavaScript.
+  // Cause there are no HTML files present.
 
   Future<String> parseJavaScript(
     ChallengeFile file,
@@ -207,6 +237,10 @@ class TestRunner extends BaseViewModel {
 
     return '$head\n${handleReturn.replaceAll('\\', '\\\\')}\n$tail';
   }
+
+  // This returns the script that needs to be run in the DOM. If the test in the document fail it will
+  // log the failed test to the console. If the test have been completed, it will return "completed" in a
+  // console.log
 
   Future<String?> returnScript(
     Ext ext,
@@ -296,7 +330,6 @@ class TestRunner extends BaseViewModel {
       try {
         for (let i = 0; i < tests.length; i++) {
           try {
-            tests[i] = tests[i];
             await eval(code + '\\n' + tests[i]);
           } catch (e) {
             $logFunction(testText[i]);
