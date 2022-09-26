@@ -1,5 +1,4 @@
 import 'dart:convert';
-import 'dart:developer';
 import 'package:freecodecamp/enums/ext_type.dart';
 import 'package:freecodecamp/models/learn/challenge_model.dart';
 import 'package:html/parser.dart';
@@ -19,7 +18,8 @@ class TestRunner extends BaseViewModel {
 
   // This function returns a specific file content from the cache.
   // If testing is enabled on the function it will return
-  // the first file with the given file name.
+  // the first file with the given file name. (There is no content set from
+  // the actual user as this is imported in the script that tests inside the document)
 
   Future<String> getExactFileFromCache(
     Challenge challenge,
@@ -179,24 +179,33 @@ class TestRunner extends BaseViewModel {
       document.getElementsByTagName('HEAD')[0].append(node);
     }
 
-    dom.Document scriptToNode = parse(await returnScript(
+    String? script = await returnScript(
       challenge.files[0].ext,
       challenge,
       testing: testing,
-    ));
+    );
+
+    if (script == null) {
+      throwError(challenge, 'an empty script was returned');
+    }
+
+    dom.Document scriptToNode = parse(script);
 
     dom.Node bodyNode =
         scriptToNode.getElementsByTagName('BODY').first.children.isNotEmpty
             ? scriptToNode.getElementsByTagName('BODY').first.children.first
             : scriptToNode.getElementsByTagName('HEAD').first.children.first;
+
     document.body!.append(bodyNode);
 
     if (!testing) {
-      webviewController!.loadUrl(Uri.dataFromString(document.outerHtml,
-              mimeType: 'text/html', encoding: Encoding.getByName('utf-8'))
-          .toString());
+      webviewController!.loadUrl(Uri.dataFromString(
+        document.outerHtml,
+        mimeType: 'text/html',
+        encoding: Encoding.getByName('utf-8'),
+      ).toString());
     }
-    log(document.outerHtml);
+
     return document.outerHtml;
   }
 
@@ -219,8 +228,18 @@ class TestRunner extends BaseViewModel {
     Ext ext, {
     bool testing = false,
   }) async {
-    String head = challenge.files[0].head ?? '';
-    String tail = challenge.files[0].tail ?? '';
+    ChallengeFile? file;
+
+    if (ext == Ext.js) {
+      file = challenge.files[0];
+    }
+
+    if (ext == Ext.html || ext == Ext.css) {
+      file = challenge.files.firstWhere((element) => element.ext == Ext.html);
+    }
+
+    String head = file!.head ?? '';
+    String tail = file.tail ?? '';
 
     return '$head\n${content.replaceAll('\\', '\\\\')}\n$tail';
   }
@@ -242,14 +261,7 @@ class TestRunner extends BaseViewModel {
       testing: testing,
     );
 
-    String parseHeadAndTail = await parseHeadAndTailCode(
-      parsedWithStyleTags,
-      challenge,
-      ext,
-      testing: testing,
-    );
-
-    return parseHeadAndTail;
+    return parsedWithStyleTags;
   }
 
   Future<String> javaScritpFlow(
@@ -265,6 +277,14 @@ class TestRunner extends BaseViewModel {
     );
 
     return parseHeadAndTail;
+  }
+
+  void throwError(Challenge challenge, String message) {
+    throw Exception(
+      '''$message, debug info: ${challenge.superBlock}, ${challenge.block}, id: ${challenge.id},
+         slug: ${challenge.slug.isEmpty ? 'empty' : challenge.slug},
+         extension: ${challenge.files.map((e) => e.ext.name).toString()}''',
+    );
   }
 
   // This returns the script that needs to be run in the DOM. If the test in the document fail it will
@@ -284,21 +304,37 @@ class TestRunner extends BaseViewModel {
     String? code;
 
     if (ext == Ext.html || ext == Ext.css) {
-      code = await htmlFlow(challenge, ext, testing: testing);
+      code = await htmlFlow(
+        challenge,
+        ext,
+        testing: testing,
+      );
     } else if (ext == Ext.js) {
-      code = await javaScritpFlow(challenge, ext, testing: testing);
+      code = await javaScritpFlow(
+        challenge,
+        ext,
+        testing: testing,
+      );
     } else {
-      code = 'You tried something that is not implemented';
+      throwError(
+        challenge,
+        'this extension is not supported',
+      );
     }
 
-    if (code.isEmpty) throw Exception('code is empty');
-
     if (ext == Ext.html || ext == Ext.css) {
-      return '''  <script type="module">
+      String? tail = challenge.files[0].tail ?? '';
+
+      return '''<script type="module">
     import * as __helpers from "https://unpkg.com/@freecodecamp/curriculum-helpers@1.1.0/dist/index.js";
 
     const code = `$code`;
-    const doc = new DOMParser().parseFromString(code, 'text/html')
+    const doc = new DOMParser().parseFromString(code, 'text/html');
+  
+    ${tail.isNotEmpty ? """
+    const parseTail  = new DOMParser().parseFromString(`${tail.replaceAll('/', '\\/')}`,'text/html');
+    const tail = parseTail.getElementsByTagName('SCRIPT')[0].innerHTML;
+    """ : ''}
 
     const assert = chai.assert;
     const tests = ${parseTest(challenge.tests)};
@@ -322,7 +358,7 @@ class TestRunner extends BaseViewModel {
         try {
         const testPromise = new Promise((resolve, reject) => {
           try {
-            const test = eval(testString[i]);
+            const test = eval(${tail.isNotEmpty ? 'tail + "\\n" +' : ""} testString[i]);
             resolve(test);
           } catch (e) {
             reject(e);
@@ -386,7 +422,6 @@ class TestRunner extends BaseViewModel {
         $logFunction(e);
       }''';
     }
-
     return null;
   }
 }
