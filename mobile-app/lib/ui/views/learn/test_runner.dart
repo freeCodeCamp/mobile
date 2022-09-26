@@ -18,8 +18,7 @@ class TestRunner extends BaseViewModel {
 
   // This function returns a specific file content from the cache.
   // If testing is enabled on the function it will return
-  // the first file with the given file name. (There is no content set from
-  // the actual user as this is imported in the script that tests inside the document)
+  // the first file with the given file name.
 
   Future<String> getExactFileFromCache(
     Challenge challenge,
@@ -153,7 +152,8 @@ class TestRunner extends BaseViewModel {
   }
 
   // This function sets the webview content, and parses the document accordingly.
-  // It will create a new empty document.
+  // It will create a new empty document. (There is no content set from
+  // the actual user as this is imported in the script that tests inside the document)
 
   Future<String> setWebViewContent(
     Challenge challenge, {
@@ -367,7 +367,7 @@ class TestRunner extends BaseViewModel {
 
         const test = await testPromise;
         if (typeof test === "function") {
-          await test(testString[i]);
+          await test(getUserInput(""));
         }
       } catch (e) {
        $logFunction(testText[i]);
