@@ -222,27 +222,30 @@ class TestRunner extends BaseViewModel {
     return parsedTest;
   }
 
+  // This funciton adds certain JavaScript code to the content document (for js challenges).
+  // This is to test certain aspects of challenges. The "Head" string is added to the beginning and
+  // the tail is contactenated to the end of the content string. Cause freeCodeCamp only has challenges
+  // that include one javaScript file it wil always return the first file.
+  // There is no need to get the exact file from the cache as only the head and tail
+  // of the specific challenge are used.
+
   Future<String> parseHeadAndTailCode(
     String content,
-    Challenge challenge,
-    Ext ext, {
+    Challenge challenge, {
     bool testing = false,
   }) async {
-    ChallengeFile? file;
+    ChallengeFile? file = challenge.files[0];
 
-    if (ext == Ext.js) {
-      file = challenge.files[0];
-    }
-
-    if (ext == Ext.html || ext == Ext.css) {
-      file = challenge.files.firstWhere((element) => element.ext == Ext.html);
-    }
-
-    String head = file!.head ?? '';
+    String head = file.head ?? '';
     String tail = file.tail ?? '';
 
     return '$head\n${content.replaceAll('\\', '\\\\')}\n$tail';
   }
+
+  // This function is used in the returnScript function to correctly parse
+  // HTML challenge (user code) it will firstly get the file from the cache, (it returns the first challenge file if in testing mode)
+  // Otherwise it will return the first instance of that challenge in the cache. Next will be adding the style tags (only if
+  // linked)
 
   Future<String> htmlFlow(
     Challenge challenge,
@@ -264,6 +267,9 @@ class TestRunner extends BaseViewModel {
     return parsedWithStyleTags;
   }
 
+  // This function parses the JavaScript code so that it has a head and tail (code)
+  // It is used in the returnScript function to correctly parse JavaScript.
+
   Future<String> javaScritpFlow(
     Challenge challenge,
     Ext ext, {
@@ -272,12 +278,13 @@ class TestRunner extends BaseViewModel {
     String parseHeadAndTail = await parseHeadAndTailCode(
       challenge.files[0].contents,
       challenge,
-      ext,
       testing: testing,
     );
 
     return parseHeadAndTail;
   }
+
+  // This is a debug function, it can be used to display a custom message in the test runner.
 
   void throwError(Challenge challenge, String message) {
     throw Exception(
