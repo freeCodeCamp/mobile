@@ -284,12 +284,14 @@ class TestRunner extends BaseViewModel {
     String? code;
 
     if (ext == Ext.html || ext == Ext.css) {
-      code = await htmlFlow(challenge, ext);
+      code = await htmlFlow(challenge, ext, testing: testing);
     } else if (ext == Ext.js) {
-      code = await javaScritpFlow(challenge, ext);
+      code = await javaScritpFlow(challenge, ext, testing: testing);
     } else {
       code = 'You tried something that is not implemented';
     }
+
+    if (code.isEmpty) throw Exception('code is empty');
 
     if (ext == Ext.html || ext == Ext.css) {
       return '''  <script type="module">
