@@ -36,7 +36,7 @@
     "@types/node": "16.11.59",
     "@typescript-eslint/eslint-plugin": "5.38.0",
     "@typescript-eslint/parser": "5.38.0",
-    "eslint": "8.23.1",
+    "eslint": "8.24.0",
     "eslint-config-prettier": "8.5.0",
     "nodemon": "2.0.20",
     "prettier": "2.7.1",
