@@ -213,29 +213,58 @@ class TestRunner extends BaseViewModel {
     return parsedTest;
   }
 
-  // This funciton adds certain JavaScript code to the content document (for js challenges).
-  // This is to test certain aspects of challenges. The "Head" string is added to the beginning and
-  // the tail is contactenated to the end of the content string. Cause freeCodeCamp only has challenges
-  // that include one javaScript file it wil always return the first files content from a challenge if
-  // testing is enabled. If not testing it will return the first challenge file with the extension of JavaScript.
-  // Cause there are no HTML files present.
-
-  Future<String> parseJavaScript(
-    ChallengeFile file,
+  Future<String> parseHeadAndTailCode(
+    String content,
     Challenge challenge,
     Ext ext, {
     bool testing = false,
   }) async {
-    String head = file.head ?? '';
-    String tail = file.tail ?? '';
-    String cacheContent =
-        await getFirstFileFromCache(challenge, ext, testing: testing);
+    String head = challenge.files[0].head ?? '';
+    String tail = challenge.files[0].tail ?? '';
 
-    String testCache = challenge.files[0].contents;
+    return '$head\n${content.replaceAll('\\', '\\\\')}\n$tail';
+  }
 
-    String handleReturn = testing ? testCache : cacheContent;
+  Future<String> htmlFlow(
+    Challenge challenge,
+    Ext ext, {
+    bool testing = false,
+  }) async {
+    String firstHTMlfile = await getFirstFileFromCache(
+      challenge,
+      ext,
+      testing: testing,
+    );
 
-    return '$head\n${handleReturn.replaceAll('\\', '\\\\')}\n$tail';
+    String parsedWithStyleTags = await parseCssDocmentsAsStyleTags(
+      challenge,
+      firstHTMlfile,
+      testing: testing,
+    );
+
+    String parseHeadAndTail = await parseHeadAndTailCode(
+      parsedWithStyleTags,
+      challenge,
+      ext,
+      testing: testing,
+    );
+
+    return parseHeadAndTail;
+  }
+
+  Future<String> javaScritpFlow(
+    Challenge challenge,
+    Ext ext, {
+    bool testing = false,
+  }) async {
+    String parseHeadAndTail = await parseHeadAndTailCode(
+      challenge.files[0].contents,
+      challenge,
+      ext,
+      testing: testing,
+    );
+
+    return parseHeadAndTail;
   }
 
   // This returns the script that needs to be run in the DOM. If the test in the document fail it will
@@ -252,11 +281,21 @@ class TestRunner extends BaseViewModel {
     List<ChallengeFile>? indexFile =
         challenge.files.where((element) => element.name == 'index').toList();
 
+    String? code;
+
+    if (ext == Ext.html || ext == Ext.css) {
+      code = await htmlFlow(challenge, ext);
+    } else if (ext == Ext.js) {
+      code = await javaScritpFlow(challenge, ext);
+    } else {
+      code = 'You tried something that is not implemented';
+    }
+
     if (ext == Ext.html || ext == Ext.css) {
       return '''  <script type="module">
     import * as __helpers from "https://unpkg.com/@freecodecamp/curriculum-helpers@1.1.0/dist/index.js";
 
-    const code = `${await parseCssDocmentsAsStyleTags(challenge, await getFirstFileFromCache(challenge, ext, testing: testing), testing: testing)}`;
+    const code = `$code`;
     const doc = new DOMParser().parseFromString(code, 'text/html')
 
     const assert = chai.assert;
@@ -312,7 +351,7 @@ class TestRunner extends BaseViewModel {
 
       const assert = chai.assert;
 
-      let code = `${await parseJavaScript(challenge.files[0], challenge, ext, testing: testing)}`;
+      let code = `$code`;
       let tests = ${parseTest(challenge.tests)};
 
       const testText = ${challenge.tests.map((e) => '''"${e.instruction.replaceAll('"', '\\"')}"''').toList().toString()};
