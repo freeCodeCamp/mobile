@@ -214,14 +214,10 @@ class TestRunner extends BaseViewModel {
   // again.
 
   List<String> parseTest(List<ChallengeTest> test) {
-    const resetConsoleCode = """\nvar i = document.createElement('iframe');
-i.style.display = 'none';
-document.body.appendChild(i);
-window.console = i.contentWindow.console;""";
-    List<String> parsedTest = test.map((e) {
-      bool consoleLogChanged = e.javaScript.contains('console.log =');
-      return """`${e.javaScript.replaceAll('\\', '\\\\').replaceAll('`', '\\`').replaceAll('\$', r'\$')}${consoleLogChanged ? resetConsoleCode : ''}`""";
-    }).toList();
+    List<String> parsedTest = test
+        .map((e) =>
+            """`${e.javaScript.replaceAll('\\', '\\\\').replaceAll('`', '\\`').replaceAll('\$', r'\$')}`""")
+        .toList();
 
     return parsedTest;
   }
@@ -285,7 +281,7 @@ window.console = i.contentWindow.console;""";
       testing: testing,
     );
 
-    return parseHeadAndTail;
+    return parseHeadAndTail.replaceAll(r'\n', r'\\n');
   }
 
   // This is a debug function, it can be used to display a custom message in the test runner.
