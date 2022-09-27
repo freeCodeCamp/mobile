@@ -216,7 +216,7 @@ class TestRunner extends BaseViewModel {
   List<String> parseTest(List<ChallengeTest> test) {
     List<String> parsedTest = test
         .map((e) =>
-            """`${e.javaScript.replaceAll('\\', '\\\\').replaceAll('`', '\\`')}`""")
+            """`${e.javaScript.replaceAll('\\', '\\\\').replaceAll('`', '\\`').replaceAll('\$', r'\$')}`""")
         .toList();
 
     return parsedTest;
@@ -239,7 +239,7 @@ class TestRunner extends BaseViewModel {
     String head = file.head ?? '';
     String tail = file.tail ?? '';
 
-    return '$head\n${content.replaceAll('\\', '\\\\')}\n$tail';
+    return '$head\n${content.replaceAll('\\', '\\\\').replaceAll('`', '\\`').replaceAll('\$', r'\$')}\n$tail';
   }
 
   // This function is used in the returnScript function to correctly parse
@@ -337,7 +337,7 @@ class TestRunner extends BaseViewModel {
 
     const code = `$code`;
     const doc = new DOMParser().parseFromString(code, 'text/html');
-  
+
     ${tail.isNotEmpty ? """
     const parseTail  = new DOMParser().parseFromString(`${tail.replaceAll('/', '\\/')}`,'text/html');
     const tail = parseTail.getElementsByTagName('SCRIPT')[0].innerHTML;
