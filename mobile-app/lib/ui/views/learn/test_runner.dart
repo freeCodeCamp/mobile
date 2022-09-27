@@ -214,10 +214,14 @@ class TestRunner extends BaseViewModel {
   // again.
 
   List<String> parseTest(List<ChallengeTest> test) {
-    List<String> parsedTest = test
-        .map((e) =>
-            """`${e.javaScript.replaceAll('\\', '\\\\').replaceAll('`', '\\`').replaceAll('\$', r'\$')}`""")
-        .toList();
+    const resetConsoleCode = """\nvar i = document.createElement('iframe');
+i.style.display = 'none';
+document.body.appendChild(i);
+window.console = i.contentWindow.console;""";
+    List<String> parsedTest = test.map((e) {
+      bool consoleLogChanged = e.javaScript.contains('console.log =');
+      return """`${e.javaScript.replaceAll('\\', '\\\\').replaceAll('`', '\\`').replaceAll('\$', r'\$')}${consoleLogChanged ? resetConsoleCode : ''}`""";
+    }).toList();
 
     return parsedTest;
   }
