@@ -222,26 +222,6 @@ class TestRunner extends BaseViewModel {
     return parsedTest;
   }
 
-  // This funciton adds certain JavaScript code to the content document (for js challenges).
-  // This is to test certain aspects of challenges. The "Head" string is added to the beginning and
-  // the tail is contactenated to the end of the content string. Cause freeCodeCamp only has challenges
-  // that include one javaScript file it wil always return the first file.
-  // There is no need to get the exact file from the cache as only the head and tail
-  // of the specific challenge are used.
-
-  Future<String> parseHeadAndTailCode(
-    String content,
-    Challenge challenge, {
-    bool testing = false,
-  }) async {
-    ChallengeFile? file = challenge.files[0];
-
-    String head = file.head ?? '';
-    String tail = (file.tail ?? '').replaceAll(r'\n', r'\\n');
-
-    return '$head\n${content.replaceAll('\\', '\\\\').replaceAll('`', '\\`').replaceAll('\$', r'\$')}\n$tail';
-  }
-
   // This function is used in the returnScript function to correctly parse
   // HTML challenge (user code) it will firstly get the file from the cache, (it returns the first challenge file if in testing mode)
   // Otherwise it will return the first instance of that challenge in the cache. Next will be adding the style tags (only if
@@ -270,18 +250,17 @@ class TestRunner extends BaseViewModel {
   // This function parses the JavaScript code so that it has a head and tail (code)
   // It is used in the returnScript function to correctly parse JavaScript.
 
-  Future<String> javaScritpFlow(
+  String javaScritpFlow(
     Challenge challenge,
     Ext ext, {
     bool testing = false,
-  }) async {
-    String parseHeadAndTail = await parseHeadAndTailCode(
-      challenge.files[0].contents,
-      challenge,
-      testing: testing,
-    );
+  }) {
+    var content = challenge.files[0].contents;
 
-    return parseHeadAndTail;
+    return content
+        .replaceAll('\\', '\\\\')
+        .replaceAll('`', '\\`')
+        .replaceAll('\$', r'\$');
   }
 
   // This is a debug function, it can be used to display a custom message in the test runner.
@@ -319,7 +298,7 @@ class TestRunner extends BaseViewModel {
         testing: testing,
       );
     } else if (ext == Ext.js) {
-      code = await javaScritpFlow(
+      code = javaScritpFlow(
         challenge,
         ext,
         testing: testing,
@@ -393,12 +372,17 @@ class TestRunner extends BaseViewModel {
     doc.__runTest(tests);
   </script>''';
     } else if (ext == Ext.js) {
+      String? head = challenge.files[0].head ?? '';
+      String? tail = (challenge.files[0].tail ?? '').replaceAll('\\', '\\\\');
+
       return '''<script type="module">
       import * as __helpers from "https://unpkg.com/@freecodecamp/curriculum-helpers@1.1.0/dist/index.js";
 
       const assert = chai.assert;
 
       let code = `$code`;
+      let head = `$head`;
+      let tail = `$tail`;
       let tests = ${parseTest(challenge.tests)};
 
       const testText = ${challenge.tests.map((e) => '''`${e.instruction.replaceAll('`', '\\`')}`''').toList().toString()};
@@ -416,7 +400,7 @@ class TestRunner extends BaseViewModel {
       try {
         for (let i = 0; i < tests.length; i++) {
           try {
-            await eval(code + '\\n' + tests[i]);
+            await eval(head + '\\n' + code + '\\n' + tail + '\\n' + tests[i]);
           } catch (e) {
             $logFunction(testText[i]);
 
