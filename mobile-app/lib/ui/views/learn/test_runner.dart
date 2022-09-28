@@ -307,6 +307,8 @@ class TestRunner extends BaseViewModel {
 
     List<ChallengeFile>? indexFile =
         challenge.files.where((element) => element.name == 'index').toList();
+    List<ChallengeFile>? scriptFile =
+        challenge.files.where((element) => element.name == 'script').toList();
 
     String? code;
 
@@ -350,9 +352,9 @@ class TestRunner extends BaseViewModel {
     function getUserInput(returnCase){
       switch(returnCase){
         case 'index':
-          return `${indexFile.isNotEmpty ? await getExactFileFromCache(challenge, indexFile[0], testing: testing) : "empty string"}`;
+          return `${indexFile.isNotEmpty ? (await getExactFileFromCache(challenge, indexFile[0], testing: testing)).replaceAll('\\', '\\\\').replaceAll('`', '\\`').replaceAll('\$', r'\$') : "empty string"}`;
         case 'editableContents':
-          return `${indexFile.isNotEmpty ? await getExactFileFromCache(challenge, indexFile[0], testing: testing) : "empty string"}`;
+        return `${indexFile.isNotEmpty ? (await getExactFileFromCache(challenge, indexFile[0], testing: testing)).replaceAll('\\', '\\\\').replaceAll('`', '\\`').replaceAll('\$', r'\$') : "empty string"}`;
         default:
           return code;
       }
@@ -399,13 +401,13 @@ class TestRunner extends BaseViewModel {
       let code = `$code`;
       let tests = ${parseTest(challenge.tests)};
 
-      const testText = ${challenge.tests.map((e) => '''"${e.instruction.replaceAll('"', '\\"')}"''').toList().toString()};
+      const testText = ${challenge.tests.map((e) => '''`${e.instruction.replaceAll('`', '\\`')}`''').toList().toString()};
       function getUserInput(returnCase){
         switch(returnCase){
           case 'index':
-            return `${indexFile.isNotEmpty ? await getExactFileFromCache(challenge, indexFile[0], testing: testing) : "empty string"}`;
+            return `${scriptFile.isNotEmpty ? (await getExactFileFromCache(challenge, scriptFile[0], testing: testing)).replaceAll('\\', '\\\\').replaceAll('`', '\\`').replaceAll('\$', r'\$') : "empty string"}`;
           case 'editableContents':
-            return `${indexFile.isNotEmpty ? await getExactFileFromCache(challenge, indexFile[0], testing: testing) : "empty string"}`;
+            return `${scriptFile.isNotEmpty ? (await getExactFileFromCache(challenge, scriptFile[0], testing: testing)).replaceAll('\\', '\\\\').replaceAll('`', '\\`').replaceAll('\$', r'\$') : "empty string"}`;
           default:
             return code;
         }
@@ -417,6 +419,7 @@ class TestRunner extends BaseViewModel {
             await eval(code + '\\n' + tests[i]);
           } catch (e) {
             $logFunction(testText[i]);
+
             break;
           }
 
