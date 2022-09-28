@@ -237,7 +237,7 @@ class TestRunner extends BaseViewModel {
     ChallengeFile? file = challenge.files[0];
 
     String head = file.head ?? '';
-    String tail = file.tail ?? '';
+    String tail = (file.tail ?? '').replaceAll(r'\n', r'\\n');
 
     return '$head\n${content.replaceAll('\\', '\\\\').replaceAll('`', '\\`').replaceAll('\$', r'\$')}\n$tail';
   }
@@ -281,7 +281,7 @@ class TestRunner extends BaseViewModel {
       testing: testing,
     );
 
-    return parseHeadAndTail.replaceAll(r'\n', r'\\n');
+    return parseHeadAndTail;
   }
 
   // This is a debug function, it can be used to display a custom message in the test runner.
