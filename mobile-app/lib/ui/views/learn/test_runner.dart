@@ -58,7 +58,7 @@ class TestRunner extends BaseViewModel {
           .toList();
       fileContent = firstHtmlChallenge[0].contents;
     } else {
-      List<ChallengeFile> firstHtmlChallenge = challenge.files
+      List<ChallengeFile> firstChallenge = challenge.files
           .where((file) => (file.ext == Ext.css || file.ext == Ext.html)
               ? file.ext == Ext.html
               : file.ext == ext)
@@ -66,8 +66,8 @@ class TestRunner extends BaseViewModel {
       SharedPreferences prefs = await SharedPreferences.getInstance();
 
       fileContent =
-          prefs.getString('${challenge.title}.${firstHtmlChallenge[0].name}') ??
-              firstHtmlChallenge[0].contents;
+          prefs.getString('${challenge.title}.${firstChallenge[0].name}') ??
+              firstChallenge[0].contents;
     }
 
     return fileContent;
@@ -250,12 +250,14 @@ class TestRunner extends BaseViewModel {
   // This function parses the JavaScript code so that it has a head and tail (code)
   // It is used in the returnScript function to correctly parse JavaScript.
 
-  String javaScritpFlow(
+  Future<String> javaScritpFlow(
     Challenge challenge,
     Ext ext, {
     bool testing = false,
-  }) {
-    var content = challenge.files[0].contents;
+  }) async {
+    var content = testing
+        ? challenge.files[0].contents
+        : await getFirstFileFromCache(challenge, Ext.js);
 
     return content
         .replaceAll('\\', '\\\\')
@@ -298,7 +300,7 @@ class TestRunner extends BaseViewModel {
         testing: testing,
       );
     } else if (ext == Ext.js) {
-      code = javaScritpFlow(
+      code = await javaScritpFlow(
         challenge,
         ext,
         testing: testing,
