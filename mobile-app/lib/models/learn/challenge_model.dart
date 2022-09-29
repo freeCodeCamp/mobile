@@ -13,20 +13,19 @@ class Challenge {
 
   final List<ChallengeTest> tests;
   final List<ChallengeFile> files;
-  final List<ChallengeFile>? solutions;
 
-  const Challenge(
-      {required this.id,
-      required this.block,
-      required this.title,
-      required this.description,
-      required this.instructions,
-      required this.slug,
-      required this.superBlock,
-      required this.challengeType,
-      required this.tests,
-      required this.files,
-      this.solutions});
+  const Challenge({
+    required this.id,
+    required this.block,
+    required this.title,
+    required this.description,
+    required this.instructions,
+    required this.slug,
+    required this.superBlock,
+    required this.challengeType,
+    required this.tests,
+    required this.files,
+  });
 
   factory Challenge.fromJson(Map<String, dynamic> data,
       {bool testing = false}) {
@@ -44,9 +43,6 @@ class Challenge {
           .toList(),
       files: (data['challengeFiles'] as List)
           .map<ChallengeFile>((file) => ChallengeFile.fromJson(file))
-          .toList(),
-      solutions: (data['solutions'] as List)
-          .map<ChallengeFile>((file) => ChallengeFile.fromJson(file[0]))
           .toList(),
     );
   }
