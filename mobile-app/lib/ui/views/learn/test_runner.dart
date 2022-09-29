@@ -73,6 +73,29 @@ class TestRunner extends BaseViewModel {
     return fileContent;
   }
 
+  // this function will get the current file which is being edited.
+  // TODO: do not reassign challenge file and solution,
+  // otherwise we can not detect which file is currently being worked on. This is only for the new RWD.
+
+  Future<String> getCurrentEditedFileFromCache(
+    Challenge challenge, {
+    bool testing = false,
+  }) async {
+    List<ChallengeFile>? currentFile = challenge.files
+        .where((file) => file.editableRegionBoundaries.isNotEmpty)
+        .toList();
+
+    if (testing) {
+      return currentFile.isNotEmpty
+          ? currentFile[0].contents
+          : challenge.files[0].contents;
+    }
+
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    return prefs.getString('${challenge.title}.${currentFile[0].name}') ??
+        currentFile[0].contents;
+  }
+
   // This function checks if the given document contains any link elements.
   // If so check if the css file name corresponds with the names put in the array.
   // If the file is linked return true.
@@ -286,8 +309,8 @@ class TestRunner extends BaseViewModel {
   }) async {
     String logFunction = testing ? 'console.log' : 'Print.postMessage';
 
-    List<ChallengeFile>? indexFile =
-        challenge.files.where((element) => element.name == 'index').toList();
+    // List<ChallengeFile>? indexFile =
+    //     challenge.files.where((element) => element.name == 'index').toList();
     List<ChallengeFile>? scriptFile =
         challenge.files.where((element) => element.name == 'script').toList();
 
@@ -333,9 +356,9 @@ class TestRunner extends BaseViewModel {
     function getUserInput(returnCase){
       switch(returnCase){
         case 'index':
-          return `${indexFile.isNotEmpty ? (await getExactFileFromCache(challenge, indexFile[0], testing: testing)).replaceAll('\\', '\\\\').replaceAll('`', '\\`').replaceAll('\$', r'\$') : "empty string"}`;
+          return `${(await getCurrentEditedFileFromCache(challenge, testing: testing)).replaceAll('\\', '\\\\').replaceAll('`', '\\`').replaceAll('\$', r'\$')}`;
         case 'editableContents':
-        return `${indexFile.isNotEmpty ? (await getExactFileFromCache(challenge, indexFile[0], testing: testing)).replaceAll('\\', '\\\\').replaceAll('`', '\\`').replaceAll('\$', r'\$') : "empty string"}`;
+        return `${(await getCurrentEditedFileFromCache(challenge, testing: testing)).replaceAll('\\', '\\\\').replaceAll('`', '\\`').replaceAll('\$', r'\$')}`;
         default:
           return code;
       }
