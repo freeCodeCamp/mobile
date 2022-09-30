@@ -51,7 +51,7 @@ class TestRunner extends BaseViewModel {
     String fileContent = '';
 
     if (testing) {
-      List<ChallengeFile> firstHtmlChallenge = challenge.files
+      List<ChallengeFile> firstHtmlChallenge = challenge.solutions
           .where((file) => (file.ext == Ext.css || file.ext == Ext.html)
               ? file.ext == Ext.html
               : file.ext == ext)
@@ -74,26 +74,25 @@ class TestRunner extends BaseViewModel {
   }
 
   // this function will get the current file which is being edited.
-  // TODO: do not reassign challenge file and solution,
   // otherwise we can not detect which file is currently being worked on. This is only for the new RWD.
 
   Future<String> getCurrentEditedFileFromCache(
     Challenge challenge, {
     bool testing = false,
   }) async {
-    List<ChallengeFile>? currentFile = challenge.files
+    List<ChallengeFile>? fileWithEditableRegion = challenge.files
         .where((file) => file.editableRegionBoundaries.isNotEmpty)
         .toList();
-
     if (testing) {
-      return currentFile.isNotEmpty
-          ? currentFile[0].contents
-          : challenge.files[0].contents;
+      return fileWithEditableRegion.isNotEmpty
+          ? fileWithEditableRegion[0].contents
+          : challenge.solutions[0].contents;
     }
 
     SharedPreferences prefs = await SharedPreferences.getInstance();
-    return prefs.getString('${challenge.title}.${currentFile[0].name}') ??
-        currentFile[0].contents;
+    return prefs.getString(
+            '${challenge.title}.${fileWithEditableRegion[0].name}') ??
+        fileWithEditableRegion[0].contents;
   }
 
   // This function checks if the given document contains any link elements.

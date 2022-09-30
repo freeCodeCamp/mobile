@@ -13,38 +13,41 @@ class Challenge {
 
   final List<ChallengeTest> tests;
   final List<ChallengeFile> files;
+  List<ChallengeFile> solutions;
 
-  const Challenge({
-    required this.id,
-    required this.block,
-    required this.title,
-    required this.description,
-    required this.instructions,
-    required this.slug,
-    required this.superBlock,
-    required this.challengeType,
-    required this.tests,
-    required this.files,
-  });
+  Challenge(
+      {required this.id,
+      required this.block,
+      required this.title,
+      required this.description,
+      required this.instructions,
+      required this.slug,
+      required this.superBlock,
+      required this.challengeType,
+      required this.tests,
+      required this.files,
+      required this.solutions});
 
   factory Challenge.fromJson(Map<String, dynamic> data,
       {bool testing = false}) {
     return Challenge(
-      id: data['id'],
-      block: data['block'],
-      title: data['title'],
-      description: data['description'],
-      instructions: data['instructions'] ?? '',
-      slug: testing ? '' : data['fields']['slug'],
-      superBlock: data['superBlock'],
-      challengeType: data['challengeType'],
-      tests: ((testing ? data['tests'] : data['fields']['tests']) as List)
-          .map<ChallengeTest>((file) => ChallengeTest.fromJson(file))
-          .toList(),
-      files: (data['challengeFiles'] as List)
-          .map<ChallengeFile>((file) => ChallengeFile.fromJson(file))
-          .toList(),
-    );
+        id: data['id'],
+        block: data['block'],
+        title: data['title'],
+        description: data['description'],
+        instructions: data['instructions'] ?? '',
+        slug: testing ? '' : data['fields']['slug'],
+        superBlock: data['superBlock'],
+        challengeType: data['challengeType'],
+        tests: ((testing ? data['tests'] : data['fields']['tests']) as List)
+            .map<ChallengeTest>((file) => ChallengeTest.fromJson(file))
+            .toList(),
+        files: (data['challengeFiles'] as List)
+            .map<ChallengeFile>((file) => ChallengeFile.fromJson(file))
+            .toList(),
+        solutions: ((data['solutions'] as List))
+            .map<ChallengeFile>((file) => ChallengeFile.fromJson(file[0]))
+            .toList());
   }
 }
 
@@ -71,6 +74,7 @@ class ChallengeFile {
   final String? tail;
   final String contents;
   final List<String> history;
+  final List editableRegionBoundaries;
   final String fileKey;
 
   ChallengeFile({
@@ -78,6 +82,7 @@ class ChallengeFile {
     required this.name,
     this.head,
     this.tail,
+    required this.editableRegionBoundaries,
     required this.contents,
     required this.history,
     required this.fileKey,
@@ -90,6 +95,7 @@ class ChallengeFile {
       head: data['head'],
       tail: data['tail'],
       contents: data['contents'],
+      editableRegionBoundaries: data['editableRegionBoundaries'] ?? [],
       history: ((data['history'] ?? []) as List).cast<String>(),
       fileKey: data['fileKey'] ?? data['name'] + data['ext'],
     );

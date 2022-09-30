@@ -34,25 +34,32 @@ void main() {
               a['challengeOrder'].compareTo(b['challengeOrder']) as int);
         for (var i = 0; i < challenges.length; i++) {
           var currChallenge = challenges[i];
-          if (currChallenge['solutions'].isNotEmpty) {
-            currChallenge['solutions'][0][0]['head'] =
-                currChallenge['challengeFiles'][0]['head'];
-            currChallenge['solutions'][0][0]['tail'] =
-                currChallenge['challengeFiles'][0]['tail'];
-            currChallenge['challengeFiles'] = currChallenge['solutions'][0];
-          } else {
-            currChallenge['challengeFiles'] =
-                challenges[i + 1]['challengeFiles'];
+
+          Challenge challenge = Challenge.fromJson(
+            currChallenge,
+            testing: true,
+          );
+
+          if (currChallenge['solutions'].isEmpty) {
+            Challenge nextChallenge = Challenge.fromJson(
+              challenges[i + 1],
+              testing: true,
+            );
+
+            challenge.solutions = nextChallenge.files;
           }
 
-          Challenge challenge =
-              Challenge.fromJson(currChallenge, testing: true);
-          var htmlCode =
-              await runner.setWebViewContent(challenge, testing: true);
+          String code = await runner.setWebViewContent(
+            challenge,
+            testing: true,
+          );
+
           File genTestFile = File(
-              'generated-tests/$currSuperBlock/${challenge.block}/${challenge.id}.html');
+            'generated-tests/$currSuperBlock/${challenge.block}/${challenge.id}.html',
+          );
+
           genTestFile.createSync(recursive: true);
-          genTestFile.writeAsStringSync(htmlCode);
+          genTestFile.writeAsStringSync(code);
         }
       }
     }
