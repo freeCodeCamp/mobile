@@ -41,7 +41,7 @@ jobs:
 
       - name: Ceate AVD and generate snapshot for caching
         if: steps.avd-cache.outputs.cache-hit != 'true'
-        uses: reactivecircus/android-emulator-runner@b390b0e1166697ae57c242a0a33c29ca9f5ae078 # tag=v2
+        uses: reactivecircus/android-emulator-runner@d7b53ddc6e44254e1f4cf4a6ad67345837027a66 # tag=v2
         with:
           api-level: 31
           target: google_apis
@@ -72,7 +72,7 @@ jobs:
         run: flutter analyze
 
       - name: Run tests in emulator
-        uses: reactivecircus/android-emulator-runner@b390b0e1166697ae57c242a0a33c29ca9f5ae078 # tag=v2
+        uses: reactivecircus/android-emulator-runner@d7b53ddc6e44254e1f4cf4a6ad67345837027a66 # tag=v2
         with:
           api-level: 31
           target: google_apis
