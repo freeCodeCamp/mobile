@@ -4,6 +4,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter_code_editor/editor/editor.dart';
 import 'package:flutter_code_editor/enums/syntax.dart';
 import 'package:freecodecamp/app/app.locator.dart';
+import 'package:freecodecamp/app/app.router.dart';
 import 'package:freecodecamp/enums/challenge_test_state_type.dart';
 import 'package:freecodecamp/enums/dialog_type.dart';
 import 'package:freecodecamp/enums/ext_type.dart';
@@ -74,6 +75,7 @@ class ChallengeModel extends BaseViewModel {
   int get challengesCompleted => _challengesCompleted;
 
   final _dialogService = locator<DialogService>();
+  final NavigationService _navigationService = locator<NavigationService>();
 
   set setCurrentSelectedFile(String value) {
     _currentSelectedFile = value;
@@ -412,6 +414,35 @@ class ChallengeModel extends BaseViewModel {
           content: currentFile(currChallenge).contents,
         ),
       );
+    }
+  }
+
+  void goToNextChallenge(
+    int maxChallenges,
+    int challengesCompleted,
+  ) async {
+    Challenge? currChallenge = await challenge;
+    if (currChallenge != null) {
+      var challengeIndex = block!.challenges.indexWhere(
+        (element) => element.id == currChallenge.id,
+      );
+      if (challengeIndex == maxChallenges - 1) {
+        _navigationService.back();
+      } else {
+        String challenge = block!.challenges[challengeIndex + 1].name
+            .toLowerCase()
+            .replaceAll(' ', '-');
+        String url = 'https://freecodecamp.dev/page-data/learn';
+        _navigationService.replaceWith(
+          Routes.challengeView,
+          arguments: ChallengeViewArguments(
+            url:
+                '$url/${block!.superBlock}/${block!.dashedName}/$challenge/page-data.json',
+            block: block!,
+            challengesCompleted: challengesCompleted + 1,
+          ),
+        );
+      }
     }
   }
 }
