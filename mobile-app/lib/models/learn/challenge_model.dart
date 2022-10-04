@@ -13,41 +13,38 @@ class Challenge {
 
   final List<ChallengeTest> tests;
   final List<ChallengeFile> files;
-  List<ChallengeFile> solutions;
 
-  Challenge(
-      {required this.id,
-      required this.block,
-      required this.title,
-      required this.description,
-      required this.instructions,
-      required this.slug,
-      required this.superBlock,
-      required this.challengeType,
-      required this.tests,
-      required this.files,
-      required this.solutions});
+  Challenge({
+    required this.id,
+    required this.block,
+    required this.title,
+    required this.description,
+    required this.instructions,
+    required this.slug,
+    required this.superBlock,
+    required this.challengeType,
+    required this.tests,
+    required this.files,
+  });
 
   factory Challenge.fromJson(Map<String, dynamic> data,
       {bool testing = false}) {
     return Challenge(
-        id: data['id'],
-        block: data['block'],
-        title: data['title'],
-        description: data['description'],
-        instructions: data['instructions'] ?? '',
-        slug: testing ? '' : data['fields']['slug'],
-        superBlock: data['superBlock'],
-        challengeType: data['challengeType'],
-        tests: ((testing ? data['tests'] : data['fields']['tests']) as List)
-            .map<ChallengeTest>((file) => ChallengeTest.fromJson(file))
-            .toList(),
-        files: (data['challengeFiles'] as List)
-            .map<ChallengeFile>((file) => ChallengeFile.fromJson(file))
-            .toList(),
-        solutions: ((data['solutions'] as List))
-            .map<ChallengeFile>((file) => ChallengeFile.fromJson(file[0]))
-            .toList());
+      id: data['id'],
+      block: data['block'],
+      title: data['title'],
+      description: data['description'],
+      instructions: data['instructions'] ?? '',
+      slug: testing ? '' : data['fields']['slug'],
+      superBlock: data['superBlock'],
+      challengeType: data['challengeType'],
+      tests: ((testing ? data['tests'] : data['fields']['tests']) as List)
+          .map<ChallengeTest>((file) => ChallengeTest.fromJson(file))
+          .toList(),
+      files: (data['challengeFiles'] as List)
+          .map<ChallengeFile>((file) => ChallengeFile.fromJson(file))
+          .toList(),
+    );
   }
 }
 

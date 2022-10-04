@@ -51,7 +51,7 @@ class TestRunner extends BaseViewModel {
     String fileContent = '';
 
     if (testing) {
-      List<ChallengeFile> firstHtmlChallenge = challenge.solutions
+      List<ChallengeFile> firstHtmlChallenge = challenge.files
           .where((file) => (file.ext == Ext.css || file.ext == Ext.html)
               ? file.ext == Ext.html
               : file.ext == ext)
@@ -86,7 +86,7 @@ class TestRunner extends BaseViewModel {
     if (testing) {
       return fileWithEditableRegion.isNotEmpty
           ? fileWithEditableRegion[0].contents
-          : challenge.solutions[0].contents;
+          : challenge.files[0].contents;
     }
 
     SharedPreferences prefs = await SharedPreferences.getInstance();
@@ -378,12 +378,9 @@ class TestRunner extends BaseViewModel {
         });
 
         const test = await testPromise;
-        if (typeof test === "function") {
-          await test(getUserInput(""));
-        }
       } catch (e) {
-       $logFunction(testText[i]);
-       break;
+        $logFunction(testText[i]);
+        break;
       } finally {
         if(!error && testString.length -1 == i){
           $logFunction('completed');

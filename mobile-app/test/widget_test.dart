@@ -35,19 +35,33 @@ void main() {
         for (var i = 0; i < challenges.length; i++) {
           var currChallenge = challenges[i];
 
+          // "solutions" is present only for legacy certificates and last step for new cert challenges
+          // New certificates checks against next challenge
+          if (currChallenge['solutions'].isEmpty) {
+            var nextChallenge = challenges[i + 1];
+            for (var challengeFile in nextChallenge['challengeFiles']) {
+              int fileIndex = currChallenge['challengeFiles'].indexWhere(
+                  (element) => element['name'] == challengeFile['name']);
+              if (fileIndex != -1) {
+                currChallenge['challengeFiles'][fileIndex]['contents'] =
+                    challengeFile['contents'];
+              }
+            }
+          } else {
+            for (var challengeFile in currChallenge['solutions'][0]) {
+              int fileIndex = currChallenge['challengeFiles'].indexWhere(
+                  (element) => element['name'] == challengeFile['name']);
+              if (fileIndex != -1) {
+                currChallenge['challengeFiles'][fileIndex]['contents'] =
+                    challengeFile['contents'];
+              }
+            }
+          }
+
           Challenge challenge = Challenge.fromJson(
             currChallenge,
             testing: true,
           );
-
-          if (currChallenge['solutions'].isEmpty) {
-            Challenge nextChallenge = Challenge.fromJson(
-              challenges[i + 1],
-              testing: true,
-            );
-
-            challenge.solutions = nextChallenge.files;
-          }
 
           String code = await runner.setWebViewContent(
             challenge,
