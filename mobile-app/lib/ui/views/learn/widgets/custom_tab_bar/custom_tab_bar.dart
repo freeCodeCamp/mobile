@@ -29,17 +29,20 @@ class CustomTabBar extends StatelessWidget {
       child: ElevatedButton(
           onPressed: () async {
             model.setCurrentSelectedFile = '${file.name}.${file.ext.name}';
-            String currText = await model.getTextFromCache(challenge);
             ChallengeFile currFile = model.currentFile(challenge);
+
+            String currText = await model.fileService.getExactFileFromCache(
+              challenge,
+              currFile,
+            );
+
             editor.fileTextStream.sink.add(
               FileStreamEvent(
                 ext: currFile.ext.name.toUpperCase(),
                 content: currText == '' ? currFile.contents : currText,
               ),
             );
-            model.setEditorText = currText == ''
-                ? currFile.contents
-                : currText;
+            model.setEditorText = currText == '' ? currFile.contents : currText;
             model.setShowPreview = false;
           },
           child: Text(

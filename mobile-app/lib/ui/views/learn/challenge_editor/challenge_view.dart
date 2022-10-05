@@ -318,8 +318,13 @@ class ChallengeView extends StatelessWidget {
                       ? const Color.fromRGBO(0x2A, 0x2A, 0x40, 1)
                       : Colors.white),
               onPressed: () async {
-                String currText = await model.getTextFromCache(challenge);
                 ChallengeFile currFile = model.currentFile(challenge);
+
+                String currText = await model.fileService.getExactFileFromCache(
+                  challenge,
+                  currFile,
+                );
+
                 editor.fileTextStream.sink.add(
                   FileStreamEvent(
                     ext: currFile.ext.name.toUpperCase(),

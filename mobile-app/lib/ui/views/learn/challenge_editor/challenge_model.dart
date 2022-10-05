@@ -164,7 +164,15 @@ class ChallengeModel extends BaseViewModel {
     Challenge challenge = await _challenge!;
 
     if (editorText == null) {
-      String text = await getTextFromCache(challenge);
+      // TODO: implement current challenge not always being the first in the index.
+      // List currentEditedChallenge = challenge.files
+      //     .where((element) => element.editableRegionBoundaries.isNotEmpty)
+      //     .toList();
+
+      String text = await fileService.getExactFileFromCache(
+        challenge,
+        challenge.files[0],
+      );
 
       if (text != '') {
         setEditorText = text;
@@ -196,23 +204,6 @@ class ChallengeModel extends BaseViewModel {
       title: 'Not yet available',
       message: '',
     );
-  }
-
-  // Get the content of the editor from the cache if it exists. If it doesn't,
-  // return an empty string. This prevents the user from losing their work when
-  // switching between panels e.g, the preview.
-
-  Future<String> getTextFromCache(Challenge challenge) async {
-    SharedPreferences prefs = await SharedPreferences.getInstance();
-
-    if (currentSelectedFile!.isEmpty) {
-      return prefs.getString('${challenge.title}.${challenge.files[0].name}') ??
-          '';
-    } else {
-      return prefs.getString(
-              '${challenge.title}.${currentSelectedFile!.split('.')[0]}') ??
-          '';
-    }
   }
 
   void setAppBarState(BuildContext context) {
