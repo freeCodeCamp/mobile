@@ -1,6 +1,4 @@
 import 'dart:convert';
-
-import 'package:flutter/cupertino.dart';
 import 'package:flutter_code_editor/editor/editor.dart';
 import 'package:flutter_code_editor/enums/syntax.dart';
 import 'package:freecodecamp/app/app.locator.dart';
@@ -226,14 +224,6 @@ class ChallengeModel extends BaseViewModel {
         challenge.files.where((file) => file.ext == Ext.html).toList();
 
     return cache.isEmpty ? firstHtmlChallenge[0].contents : cache;
-  }
-
-  void setAppBarState(BuildContext context) {
-    if (MediaQuery.of(context).viewInsets.bottom > 0 || !showPanel) {
-      setHideAppBar = false;
-    } else {
-      setHideAppBar = true;
-    }
   }
 
   // This prevents the user from requesting the challenge more than once
