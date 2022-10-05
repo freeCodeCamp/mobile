@@ -219,7 +219,6 @@ class TestRunner extends BaseViewModel {
             : scriptToNode.getElementsByTagName('HEAD').first.children.first;
 
     document.body!.append(bodyNode);
-
     if (!testing) {
       webviewController!.loadUrl(Uri.dataFromString(
         document.outerHtml,

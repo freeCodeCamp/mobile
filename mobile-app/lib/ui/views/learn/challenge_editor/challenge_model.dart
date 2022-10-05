@@ -42,6 +42,9 @@ class ChallengeModel extends BaseViewModel {
   bool _showPanel = true;
   bool get showPanel => _showPanel;
 
+  bool _runningTests = false;
+  bool get runningTests => _runningTests;
+
   bool _hasTypedInEditor = false;
   bool get hasTypedInEditor => _hasTypedInEditor;
 
@@ -77,6 +80,11 @@ class ChallengeModel extends BaseViewModel {
 
   set setCurrentSelectedFile(String value) {
     _currentSelectedFile = value;
+    notifyListeners();
+  }
+
+  set setIsRunningTests(bool value) {
+    _runningTests = value;
     notifyListeners();
   }
 
