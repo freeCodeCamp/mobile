@@ -358,7 +358,7 @@ class ChallengeView extends StatelessWidget {
                             }
                             model.setIsRunningTests = true;
                             await model.runner.setWebViewContent(
-                                challenge, model.testController!);
+                                challenge, webviewController: model.testController!);
                             model.setIsRunningTests = false;
                             FocusManager.instance.primaryFocus?.unfocus();
                             model.testController?.runJavascript('''

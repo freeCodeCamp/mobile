@@ -173,10 +173,6 @@ class TestRunner extends BaseViewModel {
     return content;
   }
 
-  Future<bool> setWebViewContent(
-    Challenge challenge,
-    WebViewController webviewController,
-  ) async {
   // This function sets the webview content, and parses the document accordingly.
   // It will create a new empty document. (There is no content set from
   // the actual user as this is imported in the script that tests inside the document)
