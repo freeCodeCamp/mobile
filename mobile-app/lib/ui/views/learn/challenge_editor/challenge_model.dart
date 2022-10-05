@@ -26,8 +26,8 @@ class ChallengeModel extends BaseViewModel {
   String? _editorText;
   String? get editorText => _editorText;
 
-  String? _currentSelectedFile = '';
-  String? get currentSelectedFile => _currentSelectedFile;
+  String _currentSelectedFile = '';
+  String get currentSelectedFile => _currentSelectedFile;
 
   bool _showPreview = false;
   bool get showPreview => _showPreview;
@@ -163,15 +163,14 @@ class ChallengeModel extends BaseViewModel {
     setChallenge = initChallenge(url);
     Challenge challenge = await _challenge!;
 
-    if (editorText == null) {
-      // TODO: implement current challenge not always being the first in the index.
-      // List currentEditedChallenge = challenge.files
-      //     .where((element) => element.editableRegionBoundaries.isNotEmpty)
-      //     .toList();
+    List<ChallengeFile> currentEditedChallenge = challenge.files
+        .where((element) => element.editableRegionBoundaries.isNotEmpty)
+        .toList();
 
+    if (editorText == null) {
       String text = await fileService.getExactFileFromCache(
         challenge,
-        challenge.files[0],
+        currentEditedChallenge[0],
       );
 
       if (text != '') {
@@ -181,22 +180,12 @@ class ChallengeModel extends BaseViewModel {
 
     setBlock = block;
     setChallengesCompleted = challengesCompleted;
+    setCurrentSelectedFile = currentEditedChallenge[0].name;
   }
 
   // When the content in the editor is changed, save it to the cache. This prevents
   // the user from losing their work when switching between panels e.g, the preview.
   // The cache is disposed when the user switches to a new challenge.
-
-  void saveTextInCache(String value, Challenge challenge) async {
-    SharedPreferences prefs = await SharedPreferences.getInstance();
-
-    if (currentSelectedFile!.isEmpty) {
-      prefs.setString('${challenge.title}.${challenge.files[0].name}', value);
-    } else {
-      prefs.setString(
-          '${challenge.title}.${currentSelectedFile!.split('.')[0]}', value);
-    }
-  }
 
   // show a message that the console is not yet available
   void consoleSnackbar() {
@@ -266,9 +255,10 @@ class ChallengeModel extends BaseViewModel {
         .toList();
 
     if (cssFiles.isNotEmpty) {
-      String text =
-          prefs.getString('${currChallenge.title}.${currentFile[0].name}') ??
-              currentFile[0].contents;
+      String text = prefs.getString(
+            '${currChallenge.title}.${currentFile[0].name}',
+          ) ??
+          currentFile[0].contents;
 
       document = parse(
         await fileService.parseCssDocmentsAsStyleTags(
@@ -317,9 +307,9 @@ class ChallengeModel extends BaseViewModel {
   }
 
   ChallengeFile currentFile(Challenge challenge) {
-    if (currentSelectedFile!.isNotEmpty) {
-      ChallengeFile file = challenge.files.firstWhere(
-          (file) => file.name == currentSelectedFile!.split('.')[0]);
+    if (currentSelectedFile.isNotEmpty) {
+      ChallengeFile file = challenge.files
+          .firstWhere((file) => file.name == currentSelectedFile);
       return file;
     }
 

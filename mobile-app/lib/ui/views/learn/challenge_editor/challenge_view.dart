@@ -47,8 +47,10 @@ class ChallengeView extends StatelessWidget {
                   int maxChallenges = block.challenges.length;
                   ChallengeFile currFile = model.currentFile(challenge);
 
-                  bool keyBoardIsActive =
-                      MediaQuery.of(context).viewInsets.bottom != 0;
+                  bool keyBoardIsActive = MediaQuery.of(
+                        context,
+                      ).viewInsets.bottom !=
+                      0;
 
                   Editor editor = Editor(
                     language: currFile.ext.name.toUpperCase(),
@@ -61,15 +63,17 @@ class ChallengeView extends StatelessWidget {
                   );
 
                   editor.onTextChange.stream.listen((text) {
-                    model.saveTextInCache(text, challenge);
+                    model.fileService.saveFileInCache(
+                      challenge,
+                      model.currentSelectedFile,
+                      text,
+                    );
                     model.setEditorText = text;
                     model.setCompletedChallenge = false;
                   });
-                  SchedulerBinding.instance.addPostFrameCallback((timeStamp) {
-                    bool keyboardPresent =
-                        MediaQuery.of(context).viewInsets.bottom > 0;
 
-                    if (!keyboardPresent && !model.showPanel) {
+                  SchedulerBinding.instance.addPostFrameCallback((timeStamp) {
+                    if (!keyBoardIsActive && !model.showPanel) {
                       if (model.hideAppBar) {
                         model.setHideAppBar = false;
                       }
@@ -191,9 +195,12 @@ class ChallengeView extends StatelessWidget {
                                           webcontroller;
                                       webcontroller.loadUrl(Uri.dataFromString(
                                               await model.parsePreviewDocument(
-                                                  await model.fileService
-                                                      .getFirstFileFromCache(
-                                                          challenge, Ext.html)),
+                                                await model.fileService
+                                                    .getFirstFileFromCache(
+                                                  challenge,
+                                                  Ext.html,
+                                                ),
+                                              ),
                                               mimeType: 'text/html',
                                               encoding: utf8)
                                           .toString());
@@ -365,9 +372,6 @@ class ChallengeView extends StatelessWidget {
                             model.runner.setWebViewContent(challenge,
                                 webviewController: model.testController!);
                             FocusManager.instance.primaryFocus?.unfocus();
-                            model.testController?.runJavascript('''
-                                (function(){Flutter.postMessage(window.document.body.outerHTML)})();
-                              ''');
                           }
                         : null,
                     splashColor: Colors.transparent,

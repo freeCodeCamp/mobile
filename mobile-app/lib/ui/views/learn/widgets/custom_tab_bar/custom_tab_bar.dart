@@ -28,7 +28,7 @@ class CustomTabBar extends StatelessWidget {
                   : const BorderSide())),
       child: ElevatedButton(
           onPressed: () async {
-            model.setCurrentSelectedFile = '${file.name}.${file.ext.name}';
+            model.setCurrentSelectedFile = file.name;
             ChallengeFile currFile = model.currentFile(challenge);
 
             String currText = await model.fileService.getExactFileFromCache(

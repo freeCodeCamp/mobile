@@ -28,6 +28,16 @@ class LearnFileService {
     return cache ?? file.contents;
   }
 
+  void saveFileInCache(
+    Challenge challenge,
+    String currentSelectedFile,
+    String value,
+  ) async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+
+    prefs.setString('${challenge.title}.$currentSelectedFile', value);
+  }
+
   // This funciton returns the first file content with the given extension from the
   // cache. If testing is enabled it will return the file directly from the challenge.
   // If a CSS extension is put as a parameter it will return the first HTML file instead.
