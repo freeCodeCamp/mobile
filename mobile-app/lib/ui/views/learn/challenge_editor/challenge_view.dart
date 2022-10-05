@@ -6,6 +6,7 @@ import 'package:flutter_code_editor/editor/editor.dart';
 import 'package:flutter_code_editor/models/editor_options.dart';
 import 'package:flutter_code_editor/models/file_model.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:freecodecamp/enums/ext_type.dart';
 import 'package:freecodecamp/enums/panel_type.dart';
 
 import 'package:freecodecamp/models/learn/challenge_model.dart';
@@ -190,10 +191,9 @@ class ChallengeView extends StatelessWidget {
                                           webcontroller;
                                       webcontroller.loadUrl(Uri.dataFromString(
                                               await model.parsePreviewDocument(
-                                                  await model
-                                                      .getExactFileFromCache(
-                                                          challenge,
-                                                          challenge.files[0])),
+                                                  await model.fileService
+                                                      .getFirstFileFromCache(
+                                                          challenge, Ext.html)),
                                               mimeType: 'text/html',
                                               encoding: utf8)
                                           .toString());
@@ -357,8 +357,8 @@ class ChallengeView extends StatelessWidget {
                                   maxChallenges, challengesCompleted);
                               return;
                             }
-                            model.runner.setWebViewContent(
-                                challenge, webviewController: model.testController!);
+                            model.runner.setWebViewContent(challenge,
+                                webviewController: model.testController!);
                             FocusManager.instance.primaryFocus?.unfocus();
                             model.testController?.runJavascript('''
                                 (function(){Flutter.postMessage(window.document.body.outerHTML)})();

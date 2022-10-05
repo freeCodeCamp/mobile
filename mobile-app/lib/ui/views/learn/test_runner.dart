@@ -1,8 +1,9 @@
 import 'dart:convert';
+import 'package:freecodecamp/app/app.locator.dart';
 import 'package:freecodecamp/enums/ext_type.dart';
 import 'package:freecodecamp/models/learn/challenge_model.dart';
+import 'package:freecodecamp/service/learn_file_service.dart';
 import 'package:html/parser.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 import 'package:stacked/stacked.dart';
 import 'package:webview_flutter/webview_flutter.dart';
 import 'package:html/dom.dart' as dom;
@@ -16,162 +17,7 @@ class TestRunner extends BaseViewModel {
     notifyListeners();
   }
 
-  // This function returns a specific file content from the cache.
-  // If testing is enabled on the function it will return
-  // the first file with the given file name.
-
-  Future<String> getExactFileFromCache(
-    Challenge challenge,
-    ChallengeFile file, {
-    bool testing = false,
-  }) async {
-    String? cache;
-
-    if (testing) {
-      cache = challenge.files
-          .firstWhere((element) => element.name == file.name)
-          .contents;
-    } else {
-      SharedPreferences prefs = await SharedPreferences.getInstance();
-      cache = prefs.getString('${challenge.title}.${file.name}');
-    }
-
-    return cache ?? '';
-  }
-
-  // This funciton returns the first file content with the given extension from the
-  // cache. If testing is enabled it will return the file directly from the challenge.
-  // If a CSS extension is put as a parameter it will return the first HTML file instead.
-
-  Future<String> getFirstFileFromCache(
-    Challenge challenge,
-    Ext ext, {
-    bool testing = false,
-  }) async {
-    String fileContent = '';
-
-    if (testing) {
-      List<ChallengeFile> firstHtmlChallenge = challenge.files
-          .where((file) => (file.ext == Ext.css || file.ext == Ext.html)
-              ? file.ext == Ext.html
-              : file.ext == ext)
-          .toList();
-      fileContent = firstHtmlChallenge[0].contents;
-    } else {
-      List<ChallengeFile> firstChallenge = challenge.files
-          .where((file) => (file.ext == Ext.css || file.ext == Ext.html)
-              ? file.ext == Ext.html
-              : file.ext == ext)
-          .toList();
-      SharedPreferences prefs = await SharedPreferences.getInstance();
-
-      fileContent =
-          prefs.getString('${challenge.title}.${firstChallenge[0].name}') ??
-              firstChallenge[0].contents;
-    }
-
-    return fileContent;
-  }
-
-  // this function will get the current file which is being edited.
-  // otherwise we can not detect which file is currently being worked on. This is only for the new RWD.
-
-  Future<String> getCurrentEditedFileFromCache(
-    Challenge challenge, {
-    bool testing = false,
-  }) async {
-    List<ChallengeFile>? fileWithEditableRegion = challenge.files
-        .where((file) => file.editableRegionBoundaries.isNotEmpty)
-        .toList();
-    if (testing) {
-      return fileWithEditableRegion.isNotEmpty
-          ? fileWithEditableRegion[0].contents
-          : challenge.files[0].contents;
-    }
-
-    SharedPreferences prefs = await SharedPreferences.getInstance();
-    return prefs.getString(
-            '${challenge.title}.${fileWithEditableRegion[0].name}') ??
-        fileWithEditableRegion[0].contents;
-  }
-
-  // This function checks if the given document contains any link elements.
-  // If so check if the css file name corresponds with the names put in the array.
-  // If the file is linked return true.
-
-  Future<bool> cssFileIsLinked(
-    String document,
-    String cssFileName,
-  ) async {
-    dom.Document doc = parse(document);
-
-    List<dom.Node> links = doc.getElementsByTagName('LINK');
-
-    List<String> linkedFileNames = [];
-
-    if (links.isNotEmpty) {
-      for (dom.Node node in links) {
-        if (node.attributes['href'] == null) continue;
-
-        if (node.attributes['href']!.contains('/')) {
-          linkedFileNames.add(node.attributes['href']!.split('/').last);
-        } else if (node.attributes['href']!.isNotEmpty) {
-          linkedFileNames.add(node.attributes['href'] as String);
-        }
-      }
-    }
-
-    return linkedFileNames.contains(cssFileName);
-  }
-
-  // This function puts the given css content in the same file as the HTML content.
-  // It will parse the current CSS content into style tags only if it is linked.
-  // If there is nothing to parse it will return the plain content document.
-
-  Future<String> parseCssDocmentsAsStyleTags(
-    Challenge challenge,
-    String content, {
-    bool testing = false,
-  }) async {
-    List<ChallengeFile> cssFiles =
-        challenge.files.where((element) => element.ext == Ext.css).toList();
-    List<String> cssFilesWithCache = [];
-    List<String> tags = [];
-
-    if (cssFiles.isNotEmpty) {
-      for (ChallengeFile file in cssFiles) {
-        String? cache = await getExactFileFromCache(
-          challenge,
-          file,
-          testing: testing,
-        );
-
-        if (!await cssFileIsLinked(
-          content,
-          '${file.name}.${file.ext.name}',
-        )) {
-          continue;
-        }
-
-        String handledFile = cache;
-
-        cssFilesWithCache.add(handledFile);
-      }
-
-      for (String contents in cssFilesWithCache) {
-        String tag = '<style> $contents </style>';
-        tags.add(tag);
-      }
-
-      for (String tag in tags) {
-        content += tag;
-      }
-
-      return content;
-    }
-
-    return content;
-  }
+  final LearnFileService fileService = locator<LearnFileService>();
 
   // This function sets the webview content, and parses the document accordingly.
   // It will create a new empty document. (There is no content set from
@@ -254,13 +100,13 @@ class TestRunner extends BaseViewModel {
     Ext ext, {
     bool testing = false,
   }) async {
-    String firstHTMlfile = await getFirstFileFromCache(
+    String firstHTMlfile = await fileService.getFirstFileFromCache(
       challenge,
       ext,
       testing: testing,
     );
 
-    String parsedWithStyleTags = await parseCssDocmentsAsStyleTags(
+    String parsedWithStyleTags = await fileService.parseCssDocmentsAsStyleTags(
       challenge,
       firstHTMlfile,
       testing: testing,
@@ -279,7 +125,7 @@ class TestRunner extends BaseViewModel {
   }) async {
     var content = testing
         ? challenge.files[0].contents
-        : await getFirstFileFromCache(challenge, Ext.js);
+        : await fileService.getFirstFileFromCache(challenge, Ext.js);
 
     return content
         .replaceAll('\\', '\\\\')
@@ -355,9 +201,9 @@ class TestRunner extends BaseViewModel {
     function getUserInput(returnCase){
       switch(returnCase){
         case 'index':
-          return `${(await getCurrentEditedFileFromCache(challenge, testing: testing)).replaceAll('\\', '\\\\').replaceAll('`', '\\`').replaceAll('\$', r'\$')}`;
+          return `${(await fileService.getCurrentEditedFileFromCache(challenge, testing: testing)).replaceAll('\\', '\\\\').replaceAll('`', '\\`').replaceAll('\$', r'\$')}`;
         case 'editableContents':
-        return `${(await getCurrentEditedFileFromCache(challenge, testing: testing)).replaceAll('\\', '\\\\').replaceAll('`', '\\`').replaceAll('\$', r'\$')}`;
+        return `${(await fileService.getCurrentEditedFileFromCache(challenge, testing: testing)).replaceAll('\\', '\\\\').replaceAll('`', '\\`').replaceAll('\$', r'\$')}`;
         default:
           return code;
       }
@@ -410,9 +256,9 @@ class TestRunner extends BaseViewModel {
       function getUserInput(returnCase){
         switch(returnCase){
           case 'index':
-            return `${scriptFile.isNotEmpty ? (await getExactFileFromCache(challenge, scriptFile[0], testing: testing)).replaceAll('\\', '\\\\').replaceAll('`', '\\`').replaceAll('\$', r'\$') : "empty string"}`;
+            return `${scriptFile.isNotEmpty ? (await fileService.getExactFileFromCache(challenge, scriptFile[0], testing: testing)).replaceAll('\\', '\\\\').replaceAll('`', '\\`').replaceAll('\$', r'\$') : "empty string"}`;
           case 'editableContents':
-            return `${scriptFile.isNotEmpty ? (await getExactFileFromCache(challenge, scriptFile[0], testing: testing)).replaceAll('\\', '\\\\').replaceAll('`', '\\`').replaceAll('\$', r'\$') : "empty string"}`;
+            return `${scriptFile.isNotEmpty ? (await fileService.getExactFileFromCache(challenge, scriptFile[0], testing: testing)).replaceAll('\\', '\\\\').replaceAll('`', '\\`').replaceAll('\$', r'\$') : "empty string"}`;
           default:
             return code;
         }

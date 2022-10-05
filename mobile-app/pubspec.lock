@@ -1231,7 +1231,7 @@ packages:
       name: stacked
       url: "https://pub.dartlang.org"
     source: hosted
-    version: "2.3.10"
+    version: "3.0.0"
   stacked_core:
     dependency: transitive
     description:

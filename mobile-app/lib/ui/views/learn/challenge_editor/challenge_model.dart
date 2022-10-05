@@ -1,5 +1,4 @@
 import 'dart:convert';
-
 import 'package:flutter/cupertino.dart';
 import 'package:flutter_code_editor/editor/editor.dart';
 import 'package:flutter_code_editor/enums/syntax.dart';
@@ -11,6 +10,7 @@ import 'package:freecodecamp/enums/ext_type.dart';
 import 'package:freecodecamp/enums/panel_type.dart';
 import 'package:freecodecamp/models/learn/challenge_model.dart';
 import 'package:freecodecamp/models/learn/curriculum_model.dart';
+import 'package:freecodecamp/service/learn_file_service.dart';
 import 'package:freecodecamp/ui/views/learn/test_runner.dart';
 import 'package:freecodecamp/ui/widgets/setup_dialog_ui.dart';
 import 'package:html/dom.dart' as dom;
@@ -76,7 +76,7 @@ class ChallengeModel extends BaseViewModel {
 
   final _dialogService = locator<DialogService>();
   final NavigationService _navigationService = locator<NavigationService>();
-
+  final LearnFileService fileService = locator<LearnFileService>();
   set setCurrentSelectedFile(String value) {
     _currentSelectedFile = value;
     notifyListeners();
@@ -215,19 +215,6 @@ class ChallengeModel extends BaseViewModel {
     }
   }
 
-  Future<String> getExactFileFromCache(
-    Challenge challenge,
-    ChallengeFile file,
-  ) async {
-    SharedPreferences prefs = await SharedPreferences.getInstance();
-    String cache = prefs.getString('${challenge.title}.${file.name}') ?? '';
-
-    List<ChallengeFile> firstHtmlChallenge =
-        challenge.files.where((file) => file.ext == Ext.html).toList();
-
-    return cache.isEmpty ? firstHtmlChallenge[0].contents : cache;
-  }
-
   void setAppBarState(BuildContext context) {
     if (MediaQuery.of(context).viewInsets.bottom > 0 || !showPanel) {
       setHideAppBar = false;
@@ -245,8 +232,11 @@ class ChallengeModel extends BaseViewModel {
 
     if (prefs.getString(url) == null) {
       if (res.statusCode == 200) {
-        Challenge challenge = Challenge.fromJson(jsonDecode(res.body)['result']
-            ['data']['challengeNode']['challenge']);
+        Challenge challenge = Challenge.fromJson(
+          jsonDecode(
+            res.body,
+          )['result']['data']['challengeNode']['challenge'],
+        );
 
         prefs.setString(url, res.body);
 
@@ -255,8 +245,10 @@ class ChallengeModel extends BaseViewModel {
     }
 
     Challenge challenge = Challenge.fromJson(
-        jsonDecode(prefs.getString(url) as String)['result']['data']
-            ['challengeNode']['challenge']);
+      jsonDecode(
+        prefs.getString(url) as String,
+      )['result']['data']['challengeNode']['challenge'],
+    );
 
     return challenge;
   }
@@ -272,13 +264,11 @@ class ChallengeModel extends BaseViewModel {
 
     if (currChallenge == null) return parse(doc).outerHtml;
 
-    dom.Document document = parse(doc);
-
     List<ChallengeFile> cssFiles = currChallenge.files
         .where((ChallengeFile file) => file.ext == Ext.css)
         .toList();
 
-    // TODO: Handle javascript files and multiple html files
+    dom.Document document = parse(doc);
 
     List<ChallengeFile> currentFile = currChallenge.files
         .where((element) => element.ext == Ext.html)
@@ -289,17 +279,12 @@ class ChallengeModel extends BaseViewModel {
           prefs.getString('${currChallenge.title}.${currentFile[0].name}') ??
               currentFile[0].contents;
 
-      List<String> linkedCssFiles =
-          await checkForLinks(parse(text), cssFiles, currChallenge);
-
-      if (linkedCssFiles.isNotEmpty) {
-        for (int i = 0; i < linkedCssFiles.length; i++) {
-          String style = '''<style> ${linkedCssFiles[i]} </style>''';
-          dom.Document styleParsed = parse(style);
-          dom.Node styleTag = styleParsed.getElementsByTagName('STYLE')[0];
-          document.getElementsByTagName('HEAD')[0].append(styleTag);
-        }
-      }
+      document = parse(
+        await fileService.parseCssDocmentsAsStyleTags(
+          currChallenge,
+          text,
+        ),
+      );
     }
 
     String viewPort = '''<meta content="width=device-width,
@@ -313,47 +298,6 @@ class ChallengeModel extends BaseViewModel {
     document.getElementsByTagName('HEAD')[0].append(meta);
 
     return document.outerHtml;
-  }
-
-  Future<List<String>> checkForLinks(dom.Document document,
-      List<ChallengeFile> cssFiles, Challenge currChallenge) async {
-    SharedPreferences prefs = await SharedPreferences.getInstance();
-
-    List<dom.Node> links = document.getElementsByTagName('LINK');
-
-    List<String> linkedFileNames = [];
-    List<String> linkedFilesContent = [];
-
-    if (links.isNotEmpty) {
-      for (dom.Node node in links) {
-        if (node.attributes['href'] == null) continue;
-
-        if (node.attributes['href']!.contains('/')) {
-          linkedFileNames.add(node.attributes['href']!.split('/').last);
-        } else if (node.attributes['href']!.isNotEmpty) {
-          linkedFileNames.add(node.attributes['href'] as String);
-        }
-      }
-    }
-
-    if (linkedFileNames.isNotEmpty) {
-      for (int i = 0; i < linkedFileNames.length; i++) {
-        List<ChallengeFile> files = cssFiles
-            .where((ChallengeFile file) =>
-                file.name == linkedFileNames[i].split('.')[0])
-            .toList();
-
-        String text =
-            prefs.getString('${currChallenge.title}.${files[0].name}') ??
-                files[0].contents;
-
-        if (files.isNotEmpty) {
-          linkedFilesContent.add(text);
-        }
-      }
-    }
-
-    return linkedFilesContent;
   }
 
   // The hint text is the same as the test text. This is used to display the hint.
