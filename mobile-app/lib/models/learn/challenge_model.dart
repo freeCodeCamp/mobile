@@ -71,7 +71,7 @@ class ChallengeFile {
   final String? tail;
   final String contents;
   final List<String> history;
-  final List editableRegionBoundaries;
+  List editableRegionBoundaries;
   final String fileKey;
 
   ChallengeFile({
