@@ -358,7 +358,7 @@ class ChallengeView extends StatelessWidget {
                               return;
                             }
                             model.runner.setWebViewContent(
-                                challenge, model.testController!);
+                                challenge, webviewController: model.testController!);
                             FocusManager.instance.primaryFocus?.unfocus();
                             model.testController?.runJavascript('''
                                 (function(){Flutter.postMessage(window.document.body.outerHTML)})();

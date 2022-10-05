@@ -1,5 +1,3 @@
-import 'package:flutter/foundation.dart';
-
 enum Ext { js, html, css, jsx }
 
 parseExt(String ext) {
@@ -15,8 +13,4 @@ parseExt(String ext) {
     default:
       return 'html';
   }
-}
-
-extension ExtValue on Ext {
-  String get value => describeEnum(this);
 }
