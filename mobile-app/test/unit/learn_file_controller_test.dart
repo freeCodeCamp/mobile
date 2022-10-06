@@ -62,24 +62,6 @@ void main() {
     });
   });
 
-  group('getCurrentEditedFileFromCache function', () {
-    test('it should get the file with the editable region', () async {
-      String value = await service.getCurrentEditedFileFromCache(challenge);
-
-      expect(value, 'this is the css file content');
-    });
-
-    test('if there is no editable region it should return the first file',
-        () async {
-      Challenge newChallenge = challenge;
-      newChallenge.files[1].editableRegionBoundaries = [];
-
-      String value = await service.getCurrentEditedFileFromCache(newChallenge);
-
-      expect(value, 'this is the html file content');
-    });
-  });
-
   group('cssFileLinked function', () {
     test('it should return false if the file is not linked', () async {
       bool value = await service.cssFileIsLinked(
