@@ -1,4 +1,3 @@
-import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:freecodecamp/enums/ext_type.dart';
 import 'package:freecodecamp/models/learn/challenge_model.dart';
@@ -7,7 +6,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 
 void main() {
   TestWidgetsFlutterBinding.ensureInitialized();
-  WidgetsFlutterBinding.ensureInitialized();
+
   LearnFileService service = LearnFileService();
 
   Challenge challenge = Challenge(
@@ -65,11 +64,13 @@ void main() {
           'this is the html file content',
         );
 
-        String? value = prefs.getString(
-          '${challenge.title}.${challenge.files[0].name}',
-        );
+        Future.delayed(const Duration(seconds: 5), () {});
 
-        expect(value, 'this is the html file content');
+        expect(
+            prefs.getString(
+              '${challenge.title}.${challenge.files[0].name}',
+            ),
+            'this is the html file content');
       },
     );
   });
