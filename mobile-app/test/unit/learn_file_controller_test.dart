@@ -2,6 +2,7 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:freecodecamp/enums/ext_type.dart';
 import 'package:freecodecamp/models/learn/challenge_model.dart';
 import 'package:freecodecamp/service/learn_file_service.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 void main() {
   TestWidgetsFlutterBinding.ensureInitialized();
@@ -36,9 +37,9 @@ void main() {
       ]);
 
   group('getExactFileFromCache function', () {
-    test(
+    testWidgets(
       'with testing it should return the exact file',
-      () async {
+      (tester) async {
         String content = await service.getExactFileFromCache(
           challenge,
           challenge.files[1],
@@ -51,7 +52,8 @@ void main() {
   });
 
   group('getFirstFileFromCache function', () {
-    test('it should give priority for html files over css files', () async {
+    testWidgets('it should give priority for html files over css files',
+        (tester) async {
       String value = await service.getFirstFileFromCache(
         challenge,
         Ext.css,
@@ -62,8 +64,30 @@ void main() {
     });
   });
 
+  group('getCurrentEditedFileFromCache function', () {
+    testWidgets('it should get the file with the editable region',
+        (tester) async {
+      SharedPreferences.setMockInitialValues({});
+      String value = await service.getCurrentEditedFileFromCache(challenge);
+
+      expect(value, 'this is the css file content');
+    });
+
+    testWidgets(
+        'if there is no editable region it should return the first file',
+        (tester) async {
+      Challenge newChallenge = challenge;
+      newChallenge.files[1].editableRegionBoundaries = [];
+
+      String value = await service.getCurrentEditedFileFromCache(newChallenge);
+
+      expect(value, 'this is the html file content');
+    });
+  });
+
   group('cssFileLinked function', () {
-    test('it should return false if the file is not linked', () async {
+    testWidgets('it should return false if the file is not linked',
+        (tester) async {
       bool value = await service.cssFileIsLinked(
         challenge.files[0].contents,
         challenge.files[1].name,
@@ -72,7 +96,7 @@ void main() {
       expect(value, false);
     });
 
-    test('it should return true if the file is linked', () async {
+    testWidgets('it should return true if the file is linked', (tester) async {
       String document = '''
       <html>
         <head>
@@ -90,8 +114,8 @@ void main() {
       expect(value, true);
     });
 
-    test('it should return true if the file in a folder and is linked',
-        () async {
+    testWidgets('it should return true if the file in a folder and is linked',
+        (tester) async {
       String document = '''
       <html>
         <head>
