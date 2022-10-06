@@ -35,7 +35,7 @@ void main() {
             fileKey: 'styles.css')
       ]);
 
-  group('getExactFileFromCache', () {
+  group('getExactFileFromCache function', () {
     test(
       'with testing it should return the exact file',
       () async {
@@ -50,7 +50,7 @@ void main() {
     );
   });
 
-  group('saveFileInCache', () {
+  group('saveFileInCache function', () {
     test(
       'It will save the file in the cache',
       () async {
@@ -71,7 +71,7 @@ void main() {
     );
   });
 
-  group('getFirstFileFromCache', () {
+  group('getFirstFileFromCache function', () {
     test('it should give priority for html files over css files', () async {
       String value = await service.getFirstFileFromCache(
         challenge,
@@ -83,7 +83,7 @@ void main() {
     });
   });
 
-  group('getCurrentEditedFileFromCache', () {
+  group('getCurrentEditedFileFromCache function', () {
     test('it should get the file with the editable region', () async {
       String value = await service.getCurrentEditedFileFromCache(challenge);
 
@@ -101,7 +101,7 @@ void main() {
     });
   });
 
-  group('cssFileLinked', () {
+  group('cssFileLinked function', () {
     test('it should return false if the file is not linked', () async {
       bool value = await service.cssFileIsLinked(
         challenge.files[0].contents,
