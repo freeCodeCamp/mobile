@@ -56,6 +56,7 @@ void main() {
     test(
       'It will save the file in the cache',
       () async {
+        SharedPreferences.setMockInitialValues({});
         SharedPreferences prefs = await SharedPreferences.getInstance();
 
         service.saveFileInCache(
