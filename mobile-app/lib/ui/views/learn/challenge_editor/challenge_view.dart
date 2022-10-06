@@ -34,10 +34,7 @@ class ChallengeView extends StatelessWidget {
   Widget build(BuildContext context) {
     return ViewModelBuilder<ChallengeModel>.reactive(
         viewModelBuilder: () => ChallengeModel(),
-        onModelReady: (model) => {
-              model.setAppBarState(context),
-              model.init(url, block, challengesCompleted)
-            },
+        onModelReady: (model) => {model.init(url, block, challengesCompleted)},
         builder: (context, model, child) => FutureBuilder<Challenge?>(
               future: model.challenge,
               builder: (context, snapshot) {
@@ -358,9 +355,11 @@ class ChallengeView extends StatelessWidget {
                           ? const Color.fromRGBO(0x20, 0xD0, 0x32, 1)
                           : const Color.fromRGBO(0x1D, 0x9B, 0xF0, 1),
                   child: IconButton(
-                    icon: model.completedChallenge
-                        ? const FaIcon(FontAwesomeIcons.arrowRight)
-                        : const FaIcon(FontAwesomeIcons.check),
+                    icon: model.runningTests
+                        ? const CircularProgressIndicator()
+                        : model.completedChallenge
+                            ? const FaIcon(FontAwesomeIcons.arrowRight)
+                            : const FaIcon(FontAwesomeIcons.check),
                     onPressed: model.hasTypedInEditor
                         ? () async {
                             if (model.showPanel &&
@@ -369,8 +368,11 @@ class ChallengeView extends StatelessWidget {
                                   maxChallenges, challengesCompleted);
                               return;
                             }
-                            model.runner.setWebViewContent(challenge,
-                                webviewController: model.testController!);
+
+                            model.setIsRunningTests = true;
+                            await model.runner.setWebViewContent(
+                                challenge, webviewController: model.testController!);
+                            model.setIsRunningTests = false;
                             FocusManager.instance.primaryFocus?.unfocus();
                           }
                         : null,
