@@ -65,13 +65,21 @@ class ChallengeView extends StatelessWidget {
                     bool keyboardPresent =
                         MediaQuery.of(context).viewInsets.bottom > 0;
 
-                    if (!keyboardPresent && !model.showPanel) {
+                    if (keyboardPresent && !model.showPanel) {
                       if (model.hideAppBar) {
                         model.setHideAppBar = false;
                       }
-                    } else if (model.showPanel) {
+                    } else if (keyboardPresent && model.showPanel) {
+                      if (model.hideAppBar) {
+                        model.setHideAppBar = false;
+                      }
+                    } else if (!keyboardPresent && model.showPanel) {
                       if (!model.hideAppBar) {
                         model.setHideAppBar = true;
+                      }
+                    } else {
+                      if (model.hideAppBar) {
+                        model.setHideAppBar = false;
                       }
                     }
                   });
@@ -358,8 +366,8 @@ class ChallengeView extends StatelessWidget {
                               return;
                             }
                             model.setIsRunningTests = true;
-                            await model.runner.setWebViewContent(
-                                challenge, webviewController: model.testController!);
+                            await model.runner.setWebViewContent(challenge,
+                                webviewController: model.testController!);
                             model.setIsRunningTests = false;
                             FocusManager.instance.primaryFocus?.unfocus();
                             model.testController?.runJavascript('''
