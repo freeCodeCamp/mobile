@@ -40,8 +40,7 @@ class FccTheme {
         ThemeData.dark().primaryIconTheme.copyWith(color: Colors.orange),
     textSelectionTheme: const TextSelectionThemeData(
       cursorColor: Color.fromRGBO(66, 133, 244, 1.0),
-      selectionColor: Color(0xff90caf9),
-      selectionHandleColor: Color(0xff64b5f6),
+      selectionHandleColor: Color.fromARGB(255, 255, 255, 255),
     ),
   );
 }
