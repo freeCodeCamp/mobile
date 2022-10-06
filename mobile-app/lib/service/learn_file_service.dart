@@ -82,6 +82,9 @@ class LearnFileService {
     List<ChallengeFile>? fileWithEditableRegion = challenge.files
         .where((file) => file.editableRegionBoundaries.isNotEmpty)
         .toList();
+
+    String? cache;
+
     if (testing) {
       return fileWithEditableRegion.isNotEmpty
           ? fileWithEditableRegion[0].contents
@@ -89,9 +92,21 @@ class LearnFileService {
     }
 
     SharedPreferences prefs = await SharedPreferences.getInstance();
-    return prefs.getString(
-            '${challenge.title}.${fileWithEditableRegion[0].name}') ??
-        fileWithEditableRegion[0].contents;
+
+    if (fileWithEditableRegion.isNotEmpty) {
+      cache = prefs.getString(
+            '${challenge.title}.${fileWithEditableRegion[0].name}',
+          ) ??
+          '';
+
+      if (cache.isNotEmpty) {
+        return cache;
+      } else {
+        return fileWithEditableRegion[0].contents;
+      }
+    } else {
+      return challenge.files[0].contents;
+    }
   }
 
   // This function checks if the given document contains any link elements.

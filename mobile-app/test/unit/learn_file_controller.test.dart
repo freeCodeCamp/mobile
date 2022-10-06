@@ -25,14 +25,14 @@ void main() {
             editableRegionBoundaries: [],
             contents: 'this is the html file content',
             history: [],
-            fileKey: ''),
+            fileKey: 'index.html'),
         ChallengeFile(
             ext: Ext.css,
             name: 'styles',
             editableRegionBoundaries: [1, 5],
             contents: 'this is the css file content',
             history: [],
-            fileKey: '')
+            fileKey: 'styles.css')
       ]);
 
   group('getExactFileFromCache', () {
@@ -84,7 +84,7 @@ void main() {
   });
 
   group('getCurrentEditedFileFromCache', () {
-    test('it should get the file witht the editable region', () async {
+    test('it should get the file with the editable region', () async {
       String value = await service.getCurrentEditedFileFromCache(challenge);
 
       expect(value, 'this is the css file content');
@@ -98,6 +98,54 @@ void main() {
       String value = await service.getCurrentEditedFileFromCache(newChallenge);
 
       expect(value, 'this is the html file content');
+    });
+  });
+
+  group('cssFileLinked', () {
+    test('it should return false if the file is not linked', () async {
+      bool value = await service.cssFileIsLinked(
+        challenge.files[0].contents,
+        challenge.files[1].name,
+      );
+
+      expect(value, false);
+    });
+
+    test('it should return true if the file is linked', () async {
+      String document = '''
+      <html>
+        <head>
+          <title> Document </title>
+          <link href="styles.css">
+        </head>
+      </html>
+      ''';
+
+      bool value = await service.cssFileIsLinked(
+        document,
+        challenge.files[1].fileKey,
+      );
+
+      expect(value, true);
+    });
+
+    test('it should return true if the file in a folder and is linked',
+        () async {
+      String document = '''
+      <html>
+        <head>
+          <title> Document </title>
+          <link href="./src/styles.css">
+        </head>
+      </html>
+      ''';
+
+      bool value = await service.cssFileIsLinked(
+        document,
+        challenge.files[1].fileKey,
+      );
+
+      expect(value, true);
     });
   });
 }
