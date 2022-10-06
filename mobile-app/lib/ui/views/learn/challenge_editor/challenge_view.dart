@@ -318,6 +318,7 @@ class ChallengeView extends StatelessWidget {
                 : Colors.white,
             child: IconButton(
               icon: Icon(Icons.remove_red_eye_outlined,
+                  size: 32,
                   color: model.showPreview
                       ? const Color.fromRGBO(0x2A, 0x2A, 0x40, 1)
                       : Colors.white),
