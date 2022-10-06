@@ -82,16 +82,6 @@ class ChallengeView extends StatelessWidget {
                         model.setHideAppBar = false;
                       }
                     }
-
-                    // if (!keyboardPresent) {
-                    //   if (model.hideAppBar) {
-                    //     model.setHideAppBar = false;
-                    //   }
-                    // } else if (model.showPanel) {
-                    //   if (!model.hideAppBar) {
-                    //     model.setHideAppBar = true;
-                    //   }
-                    // }
                   });
                   // ignore: unused_local_variable
                   EditorViewController controller = EditorViewController(
