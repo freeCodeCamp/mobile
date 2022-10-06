@@ -70,13 +70,21 @@ class ChallengeView extends StatelessWidget {
                   });
 
                   SchedulerBinding.instance.addPostFrameCallback((timeStamp) {
-                    if (!keyBoardIsActive && !model.showPanel) {
+                    if (keyBoardIsActive && !model.showPanel) {
                       if (model.hideAppBar) {
                         model.setHideAppBar = false;
                       }
-                    } else if (model.showPanel) {
+                    } else if (keyBoardIsActive && model.showPanel) {
+                      if (model.hideAppBar) {
+                        model.setHideAppBar = false;
+                      }
+                    } else if (!keyBoardIsActive && model.showPanel) {
                       if (!model.hideAppBar) {
                         model.setHideAppBar = true;
+                      }
+                    } else {
+                      if (model.hideAppBar) {
+                        model.setHideAppBar = false;
                       }
                     }
                   });
@@ -371,8 +379,8 @@ class ChallengeView extends StatelessWidget {
                             }
 
                             model.setIsRunningTests = true;
-                            await model.runner.setWebViewContent(
-                                challenge, webviewController: model.testController!);
+                            await model.runner.setWebViewContent(challenge,
+                                webviewController: model.testController!);
                             model.setIsRunningTests = false;
                             FocusManager.instance.primaryFocus?.unfocus();
                           }
