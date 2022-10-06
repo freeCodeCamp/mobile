@@ -13,8 +13,11 @@ class FccTheme {
       selectedItemColor: Colors.white,
     ),
     elevatedButtonTheme: ElevatedButtonThemeData(
-        style: ElevatedButton.styleFrom(
-            primary: const Color(0xFF0a0a23), onPrimary: Colors.white)),
+      style: ElevatedButton.styleFrom(
+        backgroundColor: const Color(0xFF0a0a23),
+        foregroundColor: Colors.white,
+      ),
+    ),
     textButtonTheme: TextButtonThemeData(
       style: ButtonStyle(
         backgroundColor: MaterialStateProperty.resolveWith(
