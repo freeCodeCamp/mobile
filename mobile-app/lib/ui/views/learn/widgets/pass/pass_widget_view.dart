@@ -121,7 +121,7 @@ class PassWidgetView extends StatelessWidget {
                     constraints: const BoxConstraints(minHeight: 75),
                     child: ElevatedButton(
                       style: ElevatedButton.styleFrom(
-                        primary: const Color.fromRGBO(0xf1, 0xbe, 0x32, 1),
+                        backgroundColor: const Color.fromRGBO(0xf1, 0xbe, 0x32, 1),
                         padding: const EdgeInsets.all(8),
                       ),
                       onPressed: () {

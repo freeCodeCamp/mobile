@@ -71,7 +71,7 @@ class LearnView extends StatelessWidget {
           height: 75,
           child: ElevatedButton(
               style: ElevatedButton.styleFrom(
-                primary: button.public
+                backgroundColor: button.public
                     ? const Color.fromRGBO(0x3b, 0x3b, 0x4f, 1)
                     : const Color.fromARGB(255, 41, 41, 54),
                 side: button.public
@@ -124,7 +124,7 @@ class LearnView extends StatelessWidget {
       constraints: const BoxConstraints(minHeight: 75),
       child: ElevatedButton(
           style: ElevatedButton.styleFrom(
-              primary: const Color.fromRGBO(0xf1, 0xbe, 0x32, 1)),
+              backgroundColor: const Color.fromRGBO(0xf1, 0xbe, 0x32, 1)),
           onPressed: () {
             model.auth.login(context);
           },
