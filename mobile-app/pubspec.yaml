@@ -71,6 +71,7 @@ dependencies:
   path: ^1.8.1
   audio_service: ^0.18.4
   device_info_plus: ^4.0.1
+  auth0_flutter: ^1.0.1
   upgrader: ^4.6.1
   quick_actions: ^1.0.1
 dev_dependencies:

@@ -71,6 +71,20 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "0.1.11"
+  auth0_flutter:
+    dependency: "direct main"
+    description:
+      name: auth0_flutter
+      url: "https://pub.dartlang.org"
+    source: hosted
+    version: "1.0.2"
+  auth0_flutter_platform_interface:
+    dependency: transitive
+    description:
+      name: auth0_flutter_platform_interface
+      url: "https://pub.dartlang.org"
+    source: hosted
+    version: "1.0.1"
   boolean_selector:
     dependency: transitive
     description:
@@ -1338,7 +1352,7 @@ packages:
       name: stacked_generator
       url: "https://pub.dartlang.org"
     source: hosted
-    version: "0.8.0+1"
+    version: "0.8.1"
   stacked_services:
     dependency: "direct main"
     description:
@@ -1443,14 +1457,14 @@ packages:
       name: url_launcher
       url: "https://pub.dartlang.org"
     source: hosted
-    version: "6.1.6"
+    version: "6.1.7"
   url_launcher_android:
     dependency: transitive
     description:
       name: url_launcher_android
       url: "https://pub.dartlang.org"
     source: hosted
-    version: "6.0.21"
+    version: "6.0.22"
   url_launcher_ios:
     dependency: transitive
     description:
@@ -1520,7 +1534,7 @@ packages:
       name: video_player
       url: "https://pub.dartlang.org"
     source: hosted
-    version: "2.4.7"
+    version: "2.4.8"
   video_player_android:
     dependency: transitive
     description:
