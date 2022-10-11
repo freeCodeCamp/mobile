@@ -46,8 +46,20 @@ class ChallengeView extends StatelessWidget {
                   bool keyBoardIsActive =
                       MediaQuery.of(context).viewInsets.bottom != 0;
 
+                  EditorOptions options = EditorOptions(
+                    hasEditableRegion:
+                        currFile.editableRegionBoundaries.isNotEmpty,
+                    useFileExplorer: false,
+                    canCloseFiles: false,
+                    showAppBar: false,
+                    showTabBar: false,
+                  );
+
                   Editor editor = Editor(
                     language: currFile.ext.name.toUpperCase(),
+                    options: options,
+                    regionStart: currFile.editableRegionBoundaries[0],
+                    regionEnd: currFile.editableRegionBoundaries[1],
                     openedFile: FileIDE(
                         fileExplorer: null,
                         fileName: currFile.name,
@@ -77,7 +89,7 @@ class ChallengeView extends StatelessWidget {
                   });
                   // ignore: unused_local_variable
                   EditorViewController controller = EditorViewController(
-                    options: const EditorOptions(
+                    options: EditorOptions(
                         useFileExplorer: false,
                         canCloseFiles: false,
                         showAppBar: false,
@@ -201,6 +213,13 @@ class ChallengeView extends StatelessWidget {
                             ));
                 }
 
+                EditorOptions options = EditorOptions(
+                  useFileExplorer: false,
+                  canCloseFiles: false,
+                  showAppBar: false,
+                  showTabBar: false,
+                );
+
                 return Scaffold(
                     appBar: AppBar(
                       title: const Text('Loading..'),
@@ -210,12 +229,11 @@ class ChallengeView extends StatelessWidget {
                       children: [
                         Expanded(
                           child: EditorViewController(
-                            options: const EditorOptions(
-                                useFileExplorer: false,
-                                canCloseFiles: false,
-                                showAppBar: false,
-                                showTabBar: false),
-                            editor: Editor(language: 'HTML'),
+                            options: options,
+                            editor: Editor(
+                              language: 'HTML',
+                              options: options,
+                            ),
                           ),
                         ),
                       ],
@@ -358,8 +376,8 @@ class ChallengeView extends StatelessWidget {
                               return;
                             }
                             model.setIsRunningTests = true;
-                            await model.runner.setWebViewContent(
-                                challenge, webviewController: model.testController!);
+                            await model.runner.setWebViewContent(challenge,
+                                webviewController: model.testController!);
                             model.setIsRunningTests = false;
                             FocusManager.instance.primaryFocus?.unfocus();
                             model.testController?.runJavascript('''
