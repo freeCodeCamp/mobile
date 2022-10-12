@@ -6,6 +6,7 @@ import 'package:flutter_code_editor/editor/editor.dart';
 import 'package:flutter_code_editor/models/editor_options.dart';
 import 'package:flutter_code_editor/models/file_model.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:freecodecamp/enums/ext_type.dart';
 import 'package:freecodecamp/enums/panel_type.dart';
 
 import 'package:freecodecamp/models/learn/challenge_model.dart';
@@ -43,8 +44,10 @@ class ChallengeView extends StatelessWidget {
                   int maxChallenges = block.challenges.length;
                   ChallengeFile currFile = model.currentFile(challenge);
 
-                  bool keyBoardIsActive =
-                      MediaQuery.of(context).viewInsets.bottom != 0;
+                  bool keyBoardIsActive = MediaQuery.of(
+                        context,
+                      ).viewInsets.bottom !=
+                      0;
 
                   Editor editor = Editor(
                     language: currFile.ext.name.toUpperCase(),
@@ -57,23 +60,25 @@ class ChallengeView extends StatelessWidget {
                   );
 
                   editor.onTextChange.stream.listen((text) {
-                    model.saveTextInCache(text, challenge);
+                    model.fileService.saveFileInCache(
+                      challenge,
+                      model.currentSelectedFile,
+                      text,
+                    );
                     model.setEditorText = text;
                     model.setCompletedChallenge = false;
                   });
-                  SchedulerBinding.instance.addPostFrameCallback((timeStamp) {
-                    bool keyboardPresent =
-                        MediaQuery.of(context).viewInsets.bottom > 0;
 
-                    if (keyboardPresent && !model.showPanel) {
+                  SchedulerBinding.instance.addPostFrameCallback((timeStamp) {
+                    if (keyBoardIsActive && !model.showPanel) {
                       if (model.hideAppBar) {
                         model.setHideAppBar = false;
                       }
-                    } else if (keyboardPresent && model.showPanel) {
+                    } else if (keyBoardIsActive && model.showPanel) {
                       if (model.hideAppBar) {
                         model.setHideAppBar = false;
                       }
-                    } else if (!keyboardPresent && model.showPanel) {
+                    } else if (!keyBoardIsActive && model.showPanel) {
                       if (!model.hideAppBar) {
                         model.setHideAppBar = true;
                       }
@@ -195,10 +200,12 @@ class ChallengeView extends StatelessWidget {
                                           webcontroller;
                                       webcontroller.loadUrl(Uri.dataFromString(
                                               await model.parsePreviewDocument(
-                                                  await model
-                                                      .getExactFileFromCache(
-                                                          challenge,
-                                                          challenge.files[0])),
+                                                await model.fileService
+                                                    .getFirstFileFromCache(
+                                                  challenge,
+                                                  Ext.html,
+                                                ),
+                                              ),
                                               mimeType: 'text/html',
                                               encoding: utf8)
                                           .toString());
@@ -324,8 +331,13 @@ class ChallengeView extends StatelessWidget {
                       ? const Color.fromRGBO(0x2A, 0x2A, 0x40, 1)
                       : Colors.white),
               onPressed: () async {
-                String currText = await model.getTextFromCache(challenge);
                 ChallengeFile currFile = model.currentFile(challenge);
+
+                String currText = await model.fileService.getExactFileFromCache(
+                  challenge,
+                  currFile,
+                );
+
                 editor.fileTextStream.sink.add(
                   FileStreamEvent(
                     ext: currFile.ext.name.toUpperCase(),
@@ -365,14 +377,12 @@ class ChallengeView extends StatelessWidget {
                                   maxChallenges, challengesCompleted);
                               return;
                             }
+
                             model.setIsRunningTests = true;
                             await model.runner.setWebViewContent(challenge,
                                 webviewController: model.testController!);
                             model.setIsRunningTests = false;
                             FocusManager.instance.primaryFocus?.unfocus();
-                            model.testController?.runJavascript('''
-                                (function(){Flutter.postMessage(window.document.body.outerHTML)})();
-                              ''');
                           }
                         : null,
                     splashColor: Colors.transparent,
