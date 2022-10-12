@@ -28,7 +28,7 @@ dependencies:
   json_serializable: ^6.0.0
   dio: ^4.0.0
   just_audio_background: ^0.0.1-beta.1
-  hexcolor: ^2.0.5
+  hexcolor: ^3.0.0
   flutter_syntax_view_fcc:
     git:
       url: https://github.com/Sembauke/flutter_syntax_view_fcc
