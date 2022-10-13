@@ -69,8 +69,8 @@ class PassWidgetModel extends BaseViewModel {
     if (challenge != null) {
       List challengeFiles = challenge.files.map((file) {
         return {
-          'contents': prefs.getString('${challenge.title}.${file.name}') ??
-              file.contents,
+          'contents':
+              prefs.getString('${challenge.id}.${file.name}') ?? file.contents,
           'ext': file.ext.name,
           'history': file.history,
           'key': file.fileKey,
