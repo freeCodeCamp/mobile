@@ -49,9 +49,11 @@ class ChallengeView extends StatelessWidget {
                       ).viewInsets.bottom !=
                       0;
 
+                  bool editableRegion =
+                      currFile.editableRegionBoundaries.isNotEmpty;
+
                   EditorOptions options = EditorOptions(
-                    hasEditableRegion:
-                        currFile.editableRegionBoundaries.isNotEmpty,
+                    hasEditableRegion: editableRegion,
                     useFileExplorer: false,
                     canCloseFiles: false,
                     showAppBar: false,
@@ -59,8 +61,12 @@ class ChallengeView extends StatelessWidget {
                   );
 
                   Editor editor = Editor(
-                    regionStart: currFile.editableRegionBoundaries[0],
-                    regionEnd: currFile.editableRegionBoundaries[1],
+                    regionStart: editableRegion
+                        ? currFile.editableRegionBoundaries[0]
+                        : null,
+                    regionEnd: editableRegion
+                        ? currFile.editableRegionBoundaries[1]
+                        : null,
                     condition: model.completedChallenge,
                     language: currFile.ext.name.toUpperCase(),
                     options: options,
