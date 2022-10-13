@@ -171,9 +171,14 @@ class HtmlHandler {
 
             return HighlightView(
               code.tree.element?.text ?? '',
-              padding: const EdgeInsets.all(2.5),
+              padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 0.2),
               language: 'html',
               theme: themeMap['atom-one-dark']!,
+              textStyle: const TextStyle(
+                fontFamily: 'RobotoMono',
+                fontSize: 16,
+                color: Colors.white,
+              ),
             );
           },
           'iframe': (code, child) {
