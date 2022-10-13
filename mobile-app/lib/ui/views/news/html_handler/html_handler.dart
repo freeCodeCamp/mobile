@@ -160,7 +160,7 @@ class HtmlHandler {
                               language: codeLanguageIsPresent(classes)
                                   ? currentClass!.split('-')[1]
                                   : 'plaintext',
-                              theme: themeMap['dracula']!),
+                              theme: themeMap['atom-one-dark']!),
                         ),
                       ),
                     ),
@@ -173,7 +173,7 @@ class HtmlHandler {
               code.tree.element?.text ?? '',
               padding: const EdgeInsets.all(2.5),
               language: 'html',
-              theme: themeMap['dracula']!,
+              theme: themeMap['atom-one-dark']!,
             );
           },
           'iframe': (code, child) {
