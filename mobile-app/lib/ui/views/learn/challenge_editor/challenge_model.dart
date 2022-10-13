@@ -326,16 +326,27 @@ class ChallengeModel extends BaseViewModel {
 
     if (res!.confirmed) {
       Challenge? currChallenge = await challenge;
+
       for (ChallengeFile file in currChallenge!.files) {
         prefs.remove('${currChallenge.title}.${file.name}');
       }
-      setEditorText = '';
-      setCurrentSelectedFile =
-          '${currChallenge.files[0].name}.${currChallenge.files[0].ext.name}';
-      editor.fileTextStream.add(
-        FileStreamEvent(
-          ext: currentFile(currChallenge).ext.name.toUpperCase(),
-          content: currentFile(currChallenge).contents,
+
+      var challengeIndex = block!.challenges.indexWhere(
+        (element) => element.id == currChallenge.id,
+      );
+
+      String slug = block!.challenges[challengeIndex].name
+          .toLowerCase()
+          .replaceAll(' ', '-');
+
+      String url = 'https://freecodecamp.dev/page-data/learn';
+      _navigationService.replaceWith(
+        Routes.challengeView,
+        arguments: ChallengeViewArguments(
+          url:
+              '$url/${block!.superBlock}/${block!.dashedName}/$slug/page-data.json',
+          block: block!,
+          challengesCompleted: challengesCompleted,
         ),
       );
     }
