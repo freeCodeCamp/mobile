@@ -169,9 +169,11 @@ class HtmlHandler {
               );
             }
 
-            return Container(
-              color: const Color.fromRGBO(0x2A, 0x2A, 0x40, 1),
-              child: child,
+            return HighlightView(
+              code.tree.element?.text ?? '',
+              padding: const EdgeInsets.all(2.5),
+              language: 'html',
+              theme: themeMap['dracula']!,
             );
           },
           'iframe': (code, child) {
