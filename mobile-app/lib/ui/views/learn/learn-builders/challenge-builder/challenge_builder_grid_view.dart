@@ -15,7 +15,10 @@ class ChallengeBuilderGridView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return ViewModelBuilder<ChallengeBuilderModel>.reactive(
-        onModelReady: (model) => model.init(block.challenges),
+        onModelReady: (model) {
+          model.init(block.challenges);
+          model.initBlockState(block.blockName);
+        },
         viewModelBuilder: () => ChallengeBuilderModel(),
         builder: (context, model, child) => Column(
               children: [
@@ -38,7 +41,10 @@ class ChallengeBuilderGridView extends StatelessWidget {
                         ),
                       ListTile(
                           onTap: () {
-                            model.setIsOpen = !model.isOpen;
+                            model.setBlockOpenState(
+                              block.blockName,
+                              model.isOpen,
+                            );
                           },
                           minVerticalPadding: 24,
                           trailing: block.challenges.length != 1
@@ -51,7 +57,10 @@ class ChallengeBuilderGridView extends StatelessWidget {
                                             ? const Icon(Icons.expand_less)
                                             : const Icon(Icons.expand_more),
                                         onPressed: () =>
-                                            model.setIsOpen = !model.isOpen),
+                                            model.setBlockOpenState(
+                                              block.blockName,
+                                              model.isOpen,
+                                            )),
                                   ],
                                 )
                               : null,
