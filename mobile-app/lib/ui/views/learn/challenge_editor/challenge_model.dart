@@ -255,7 +255,7 @@ class ChallengeModel extends BaseViewModel {
 
     if (cssFiles.isNotEmpty) {
       String text = prefs.getString(
-            '${currChallenge.title}.${currentFile[0].name}',
+            '${currChallenge.id}.${currentFile[0].name}',
           ) ??
           currentFile[0].contents;
 
@@ -328,7 +328,7 @@ class ChallengeModel extends BaseViewModel {
       Challenge? currChallenge = await challenge;
 
       for (ChallengeFile file in currChallenge!.files) {
-        prefs.remove('${currChallenge.title}.${file.name}');
+        prefs.remove('${currChallenge.id}.${file.name}');
       }
 
       var challengeIndex = block!.challenges.indexWhere(
