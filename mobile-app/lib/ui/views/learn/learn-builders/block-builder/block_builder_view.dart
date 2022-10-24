@@ -26,9 +26,21 @@ class BlockBuilderView extends StatelessWidget {
                         ? ChallengeBuilderListView(
                             block: block,
                           )
-                        : ChallengeBuilderGridView(
-                            block: block,
-                          )
+                        : FutureBuilder<bool>(
+                            future: model.getBlockOpenState(block),
+                            builder: (context, snapshot) {
+                              if (snapshot.hasData) {
+                                bool isOpen = snapshot.data!;
+
+                                return ChallengeBuilderGridView(
+                                  block: block,
+                                  isOpen: isOpen,
+                                );
+                              }
+
+                              return const CircularProgressIndicator();
+                            },
+                          ),
                   ],
                 ),
               ],

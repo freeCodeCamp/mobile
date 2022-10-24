@@ -6,10 +6,12 @@ import 'package:stacked/stacked.dart';
 
 class ChallengeBuilderGridView extends StatelessWidget {
   final Block block;
+  final bool isOpen;
 
   const ChallengeBuilderGridView({
     Key? key,
     required this.block,
+    required this.isOpen,
   }) : super(key: key);
 
   @override
@@ -17,7 +19,7 @@ class ChallengeBuilderGridView extends StatelessWidget {
     return ViewModelBuilder<ChallengeBuilderModel>.reactive(
         onModelReady: (model) {
           model.init(block.challenges);
-          model.initBlockState(block.blockName);
+          model.setIsOpen = isOpen;
         },
         viewModelBuilder: () => ChallengeBuilderModel(),
         builder: (context, model, child) => Column(
