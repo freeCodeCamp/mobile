@@ -387,11 +387,9 @@ packages:
   flutter_code_editor:
     dependency: "direct main"
     description:
-      path: "."
-      ref: main
-      resolved-ref: "491a785e32d5dbdb23a89e4dbb8aafaab614e03a"
-      url: "https://github.com/freeCodeCamp/PhoneIDE"
-    source: git
+      path: "../../phoneide"
+      relative: true
+    source: path
     version: "1.0.0+1"
   flutter_dotenv:
     dependency: "direct main"
@@ -424,9 +422,9 @@ packages:
   flutter_highlight:
     dependency: "direct main"
     description:
-      name: flutter_highlight
-      url: "https://pub.dartlang.org"
-    source: hosted
+      path: "../../highlight.dart/flutter_highlight"
+      relative: true
+    source: path
     version: "0.7.0"
   flutter_hooks:
     dependency: "direct main"

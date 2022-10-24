@@ -34,9 +34,7 @@ dependencies:
       url: https://github.com/Sembauke/flutter_syntax_view_fcc
       ref: master
   flutter_code_editor:
-    git:
-      url: https://github.com/freeCodeCamp/PhoneIDE
-      ref: main
+    path: ../../phoneide
   jiffy: ^5.0.0
   share: ^2.0.4
   flutter_svg: ^0.23.0+1
@@ -59,7 +57,10 @@ dependencies:
   dart_jsonwebtoken: ^2.4.1
   photo_view: ^0.14.0
   share_plus: ^5.0.0
-  flutter_highlight: ^0.7.0
+  flutter_highlight:
+    git:
+      url: https://github.com/Sembauke/flutter_syntax_view_fcc
+      ref: master
   pretty_dio_logger: ^1.2.0-beta-1
   curl_logger_dio_interceptor: ^0.0.3
   flutter_heatmap_calendar: ^1.0.4
