@@ -2,7 +2,7 @@ import 'dart:developer';
 
 import 'package:flutter/material.dart';
 import 'package:freecodecamp/service/authentication_service.dart';
-import 'package:freecodecamp/ui/widgets/login_webview_widget/login_webview_viewmodel.dart';
+import 'package:freecodecamp/ui/views/login_webview/login_webview_viewmodel.dart';
 import 'package:stacked/stacked.dart';
 import 'package:webview_flutter/webview_flutter.dart';
 

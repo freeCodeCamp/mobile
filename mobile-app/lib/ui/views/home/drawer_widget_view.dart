@@ -2,9 +2,9 @@ import 'package:flutter/material.dart';
 
 import 'package:freecodecamp/models/main/user_model.dart';
 
-import 'package:freecodecamp/ui/widgets/drawer_widget/drawer_button.dart';
-import 'package:freecodecamp/ui/widgets/drawer_widget/drawer_web_buttton.dart';
-import 'package:freecodecamp/ui/widgets/drawer_widget/drawer_widget_viewmodel.dart';
+import 'package:freecodecamp/ui/views/home/widgets/drawer_button.dart';
+import 'package:freecodecamp/ui/views/home/widgets/drawer_web_buttton.dart';
+import 'package:freecodecamp/ui/views/home/drawer_widget_viewmodel.dart';
 import 'package:stacked/stacked.dart';
 
 class DrawerWidgetView extends StatelessWidget {

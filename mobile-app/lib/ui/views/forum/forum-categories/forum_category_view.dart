@@ -4,7 +4,7 @@ import 'package:freecodecamp/ui/views/forum/forum-categories/forum_category_buil
 import 'package:freecodecamp/ui/views/forum/forum-categories/forum_category_viewmodel.dart';
 import 'package:freecodecamp/ui/views/forum/forum-login/forum_login_view.dart';
 import 'package:freecodecamp/ui/views/forum/forum-search/forum_search_view.dart';
-import 'package:freecodecamp/ui/widgets/drawer_widget/drawer_widget_view.dart';
+import 'package:freecodecamp/ui/views/home/drawer_widget_view.dart';
 import 'package:stacked/stacked.dart';
 
 // ignore: must_be_immutable

@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:freecodecamp/ui/views/settings/settings_viewmodel.dart';
-import 'package:freecodecamp/ui/widgets/drawer_widget/drawer_widget_view.dart';
+import 'package:freecodecamp/ui/views/home/drawer_widget_view.dart';
 import 'package:stacked/stacked.dart';
 
 class SettingsView extends StatelessWidget {

@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:freecodecamp/ui/widgets/tag_widget.dart';
+import 'package:freecodecamp/ui/views/news/widgets/tag_widget.dart';
 
 class Article {
   final String id;

@@ -4,9 +4,9 @@ import 'package:freecodecamp/models/podcasts/episodes_model.dart';
 import 'package:freecodecamp/models/podcasts/podcasts_model.dart';
 import 'package:freecodecamp/ui/views/news/html_handler/html_handler.dart';
 import 'package:freecodecamp/ui/views/podcast/episode-view/episode_viewmodel.dart';
-import 'package:freecodecamp/ui/widgets/drawer_widget/drawer_widget_view.dart';
-import 'package:freecodecamp/ui/widgets/podcast_widgets/podcast_progressbar_widget.dart';
-import 'package:freecodecamp/ui/widgets/podcast_widgets/podcast_tilte_widget.dart';
+import 'package:freecodecamp/ui/views/home/drawer_widget_view.dart';
+import 'package:freecodecamp/ui/views/podcast/widgets/podcast_progressbar_widget.dart';
+import 'package:freecodecamp/ui/views/podcast/widgets/podcast_tilte_widget.dart';
 import 'package:stacked/stacked.dart';
 
 class EpisodeView extends StatelessWidget {

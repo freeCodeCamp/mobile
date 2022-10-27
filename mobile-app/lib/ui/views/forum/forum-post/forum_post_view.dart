@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:freecodecamp/models/forum/forum_post_model.dart';
 import 'package:freecodecamp/ui/views/forum/forum-html-handler/forum_html_handler.dart';
-import 'package:freecodecamp/ui/widgets/text_function_bar_widget.dart';
+import 'package:freecodecamp/ui/views/forum/widgets/text_function_bar_widget.dart';
 import 'package:stacked/stacked.dart';
 
 import 'forum_post_viewmodel.dart';
@@ -209,7 +209,8 @@ class ForumPostView extends StatelessWidget {
                 padding: const EdgeInsets.only(left: 16.0, right: 16.0),
                 child: ElevatedButton(
                     style: ElevatedButton.styleFrom(
-                        backgroundColor: const Color.fromRGBO(0x3b, 0x3b, 0x4f, 1),
+                        backgroundColor:
+                            const Color.fromRGBO(0x3b, 0x3b, 0x4f, 1),
                         side: const BorderSide(width: 2, color: Colors.white),
                         shape: RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(0))),
@@ -231,7 +232,8 @@ class ForumPostView extends StatelessWidget {
                 padding: const EdgeInsets.only(left: 16.0, right: 16.0),
                 child: ElevatedButton(
                     style: ElevatedButton.styleFrom(
-                        backgroundColor: const Color.fromRGBO(0x3b, 0x3b, 0x4f, 1),
+                        backgroundColor:
+                            const Color.fromRGBO(0x3b, 0x3b, 0x4f, 1),
                         side: const BorderSide(width: 2, color: Colors.white),
                         shape: RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(0))),
@@ -300,7 +302,8 @@ class ForumPostView extends StatelessWidget {
                 padding: const EdgeInsets.only(left: 16, right: 16),
                 child: ElevatedButton(
                     style: ElevatedButton.styleFrom(
-                        backgroundColor: const Color.fromRGBO(0x3b, 0x3b, 0x4f, 1),
+                        backgroundColor:
+                            const Color.fromRGBO(0x3b, 0x3b, 0x4f, 1),
                         side: const BorderSide(width: 2, color: Colors.white),
                         shape: RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(0))),

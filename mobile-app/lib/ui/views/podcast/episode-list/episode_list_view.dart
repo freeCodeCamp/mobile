@@ -6,7 +6,7 @@ import 'package:flutter_html/flutter_html.dart';
 import 'package:freecodecamp/models/podcasts/episodes_model.dart';
 import 'package:freecodecamp/models/podcasts/podcasts_model.dart';
 import 'package:freecodecamp/ui/views/podcast/episode-list/episode_list_viewmodel.dart';
-import 'package:freecodecamp/ui/widgets/podcast_widgets/podcast_tilte_widget.dart';
+import 'package:freecodecamp/ui/views/podcast/widgets/podcast_tilte_widget.dart';
 import 'package:html/dom.dart' as dom;
 import 'package:infinite_scroll_pagination/infinite_scroll_pagination.dart';
 

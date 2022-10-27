@@ -4,7 +4,7 @@ import 'package:freecodecamp/ui/views/news/news-feed/news_feed_view.dart';
 import 'package:freecodecamp/ui/views/news/news-search/news_search_view.dart';
 import 'package:stacked/stacked.dart';
 
-import '../../widgets/drawer_widget/drawer_widget_view.dart';
+import 'drawer_widget_view.dart';
 import 'home_viemmodel.dart';
 
 class HomeView extends StatelessWidget {

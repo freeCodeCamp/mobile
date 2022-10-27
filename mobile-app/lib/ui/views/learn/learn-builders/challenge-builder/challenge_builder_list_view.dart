@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:freecodecamp/models/learn/curriculum_model.dart';
 import 'package:freecodecamp/ui/views/learn/learn-builders/challenge-builder/challenge_builder_model.dart';
-import 'package:freecodecamp/ui/widgets/drawer_widget/drawer_widget_view.dart';
+import 'package:freecodecamp/ui/views/home/drawer_widget_view.dart';
 import 'package:stacked/stacked.dart';
 
 class ChallengeBuilderListView extends StatelessWidget {

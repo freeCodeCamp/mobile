@@ -5,7 +5,7 @@ import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
-import 'package:freecodecamp/ui/widgets/login_webview_widget/login_webview_view.dart';
+import 'package:freecodecamp/ui/views/login_webview/login_webview_view.dart';
 import 'package:freecodecamp/models/main/user_model.dart';
 import 'package:pretty_dio_logger/pretty_dio_logger.dart';
 import 'package:webview_cookie_manager/webview_cookie_manager.dart';
