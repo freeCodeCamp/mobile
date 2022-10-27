@@ -7,7 +7,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:stacked/stacked.dart';
 import 'package:stacked_services/stacked_services.dart';
 
-import '../../../widgets/setup_dialog_ui.dart';
+import '../../../../setup_dialog_ui.dart';
 
 import 'dart:developer' as dev;
 import 'dart:convert';

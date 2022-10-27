@@ -11,7 +11,7 @@ import 'package:freecodecamp/models/learn/challenge_model.dart';
 import 'package:freecodecamp/models/learn/curriculum_model.dart';
 import 'package:freecodecamp/service/learn_file_service.dart';
 import 'package:freecodecamp/ui/views/learn/test_runner.dart';
-import 'package:freecodecamp/ui/widgets/setup_dialog_ui.dart';
+import 'package:freecodecamp/setup_dialog_ui.dart';
 import 'package:html/dom.dart' as dom;
 import 'package:html/parser.dart';
 import 'package:http/http.dart' as http;

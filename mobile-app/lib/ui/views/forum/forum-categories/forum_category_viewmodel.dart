@@ -4,7 +4,7 @@ import 'package:freecodecamp/app/app.locator.dart';
 import 'package:freecodecamp/app/app.router.dart';
 import 'package:freecodecamp/models/forum/forum_category_model.dart';
 import 'package:freecodecamp/models/forum/forum_user_model.dart';
-import 'package:freecodecamp/ui/widgets/setup_dialog_ui.dart';
+import 'package:freecodecamp/setup_dialog_ui.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:stacked/stacked.dart';
 import 'package:stacked_services/stacked_services.dart';

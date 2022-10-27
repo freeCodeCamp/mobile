@@ -10,7 +10,7 @@ import 'package:freecodecamp/app/app.router.dart';
 import 'package:freecodecamp/models/learn/curriculum_model.dart';
 import 'package:freecodecamp/models/learn/motivational_quote_model.dart';
 import 'package:freecodecamp/service/authentication_service.dart';
-import 'package:freecodecamp/ui/widgets/setup_dialog_ui.dart';
+import 'package:freecodecamp/setup_dialog_ui.dart';
 import 'package:stacked/stacked.dart';
 import 'package:stacked_services/stacked_services.dart';
 import 'package:webview_flutter/webview_flutter.dart';
