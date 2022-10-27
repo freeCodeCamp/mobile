@@ -69,6 +69,7 @@ class SuperBlockView extends StatelessWidget {
             child: BlockBuilderView(
               key: ObjectKey(superBlock.blocks[i].dashedName),
               block: superBlock.blocks[i],
+              
             ),
           ),
         ),
