@@ -22,7 +22,7 @@ class LearnFileService {
           .contents;
     } else {
       SharedPreferences prefs = await SharedPreferences.getInstance();
-      cache = prefs.getString('${challenge.title}.${file.name}');
+      cache = prefs.getString('${challenge.id}.${file.name}');
     }
 
     return cache ?? file.contents;
@@ -35,7 +35,7 @@ class LearnFileService {
   ) async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
 
-    prefs.setString('${challenge.title}.$currentSelectedFile', value);
+    prefs.setString('${challenge.id}.$currentSelectedFile', value);
   }
 
   // This funciton returns the first file content with the given extension from the
@@ -65,7 +65,7 @@ class LearnFileService {
       SharedPreferences prefs = await SharedPreferences.getInstance();
 
       fileContent =
-          prefs.getString('${challenge.title}.${firstChallenge[0].name}') ??
+          prefs.getString('${challenge.id}.${firstChallenge[0].name}') ??
               firstChallenge[0].contents;
     }
 
@@ -95,7 +95,7 @@ class LearnFileService {
 
     if (fileWithEditableRegion.isNotEmpty) {
       cache = prefs.getString(
-            '${challenge.title}.${fileWithEditableRegion[0].name}',
+            '${challenge.id}.${fileWithEditableRegion[0].name}',
           ) ??
           '';
 

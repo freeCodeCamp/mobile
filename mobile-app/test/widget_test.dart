@@ -9,12 +9,14 @@ import 'dart:convert';
 import 'dart:io';
 
 import 'package:flutter_test/flutter_test.dart';
+import 'package:freecodecamp/app/app.locator.dart';
 import 'package:freecodecamp/models/learn/challenge_model.dart';
 import 'package:freecodecamp/ui/views/learn/test_runner.dart';
 
 void main() {
   testWidgets('Testing widgest testing', (tester) async {
     print('Generating test files');
+    await setupLocator();
     TestRunner runner = TestRunner();
     List<String> publicSBs = [
       '2022/responsive-web-design',
