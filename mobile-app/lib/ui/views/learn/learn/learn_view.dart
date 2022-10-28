@@ -4,7 +4,7 @@ import 'package:freecodecamp/models/learn/curriculum_model.dart';
 import 'package:freecodecamp/models/learn/motivational_quote_model.dart';
 import 'package:freecodecamp/models/main/user_model.dart';
 import 'package:freecodecamp/ui/views/learn/learn/learn_model.dart';
-import 'package:freecodecamp/ui/views/learn/widgets/note/note_widget.dart';
+import 'package:freecodecamp/ui/views/learn/widgets/note/custom_alert_widget.dart';
 import 'package:freecodecamp/ui/widgets/drawer_widget/drawer_widget_view.dart';
 import 'package:stacked/stacked.dart';
 
