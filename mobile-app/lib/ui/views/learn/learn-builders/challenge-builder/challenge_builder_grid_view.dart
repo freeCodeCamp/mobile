@@ -6,16 +6,21 @@ import 'package:stacked/stacked.dart';
 
 class ChallengeBuilderGridView extends StatelessWidget {
   final Block block;
+  final bool isOpen;
 
   const ChallengeBuilderGridView({
     Key? key,
     required this.block,
+    required this.isOpen,
   }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     return ViewModelBuilder<ChallengeBuilderModel>.reactive(
-        onModelReady: (model) => model.init(block.challenges),
+        onModelReady: (model) {
+          model.init(block.challenges);
+          model.setIsOpen = isOpen;
+        },
         viewModelBuilder: () => ChallengeBuilderModel(),
         builder: (context, model, child) => Column(
               children: [
@@ -32,13 +37,17 @@ class ChallengeBuilderGridView extends StatelessWidget {
                           child: const Text(
                             'Certification Porject',
                             style: TextStyle(
-                                fontWeight: FontWeight.bold,
-                                color: Color.fromRGBO(0x19, 0x8e, 0xee, 1)),
+                              fontWeight: FontWeight.bold,
+                              color: Color.fromRGBO(0x19, 0x8e, 0xee, 1),
+                            ),
                           ),
                         ),
                       ListTile(
                           onTap: () {
-                            model.setIsOpen = !model.isOpen;
+                            model.setBlockOpenState(
+                              block.blockName,
+                              model.isOpen,
+                            );
                           },
                           minVerticalPadding: 24,
                           trailing: block.challenges.length != 1
@@ -46,12 +55,15 @@ class ChallengeBuilderGridView extends StatelessWidget {
                                   mainAxisAlignment: MainAxisAlignment.center,
                                   children: [
                                     IconButton(
-                                        iconSize: 35,
-                                        icon: model.isOpen
-                                            ? const Icon(Icons.expand_less)
-                                            : const Icon(Icons.expand_more),
-                                        onPressed: () =>
-                                            model.setIsOpen = !model.isOpen),
+                                      iconSize: 35,
+                                      icon: model.isOpen
+                                          ? const Icon(Icons.expand_less)
+                                          : const Icon(Icons.expand_more),
+                                      onPressed: () => model.setBlockOpenState(
+                                        block.blockName,
+                                        model.isOpen,
+                                      ),
+                                    ),
                                   ],
                                 )
                               : null,
@@ -60,24 +72,28 @@ class ChallengeBuilderGridView extends StatelessWidget {
                             children: [
                               if (block.challenges.length != 1)
                                 Padding(
-                                    padding:
-                                        const EdgeInsets.fromLTRB(0, 8, 8, 8),
-                                    child: model.challengesCompleted ==
-                                            block.challenges.length
-                                        ? const Icon(
-                                            Icons.check_circle,
-                                            size: 20,
-                                          )
-                                        : const Icon(Icons.circle_outlined,
-                                            size: 20)),
+                                  padding:
+                                      const EdgeInsets.fromLTRB(0, 8, 8, 8),
+                                  child: model.challengesCompleted ==
+                                          block.challenges.length
+                                      ? const Icon(
+                                          Icons.check_circle,
+                                          size: 20,
+                                        )
+                                      : const Icon(
+                                          Icons.circle_outlined,
+                                          size: 20,
+                                        ),
+                                ),
                               Expanded(
                                 child: Text(
                                   block.blockName,
                                   maxLines: 2,
                                   overflow: TextOverflow.ellipsis,
                                   style: const TextStyle(
-                                      fontWeight: FontWeight.bold,
-                                      fontSize: 18),
+                                    fontWeight: FontWeight.bold,
+                                    fontSize: 18,
+                                  ),
                                 ),
                               ),
                             ],
@@ -91,32 +107,34 @@ class ChallengeBuilderGridView extends StatelessWidget {
                   Container(
                     color: const Color(0xFF0a0a23),
                     child: Container(
-                        margin: const EdgeInsets.only(bottom: 1),
-                        padding: const EdgeInsets.symmetric(
-                            vertical: 8, horizontal: 16),
-                        child: Row(
-                          children: [
-                            Expanded(
-                              child: LinearProgressIndicator(
-                                color:
-                                    const Color.fromRGBO(0x19, 0x8e, 0xee, 1),
-                                backgroundColor:
-                                    const Color.fromRGBO(0x2A, 0x2A, 0x40, 1),
-                                minHeight: 10,
-                                value: model.challengesCompleted /
-                                    block.challenges.length,
+                      margin: const EdgeInsets.only(bottom: 1),
+                      padding: const EdgeInsets.symmetric(
+                          vertical: 8, horizontal: 16),
+                      child: Row(
+                        children: [
+                          Expanded(
+                            child: LinearProgressIndicator(
+                              color: const Color.fromRGBO(0x19, 0x8e, 0xee, 1),
+                              backgroundColor:
+                                  const Color.fromRGBO(0x2A, 0x2A, 0x40, 1),
+                              minHeight: 10,
+                              value: model.challengesCompleted /
+                                  block.challenges.length,
+                            ),
+                          ),
+                          Padding(
+                            padding: const EdgeInsets.all(8.0),
+                            child: Text(
+                              '${(model.challengesCompleted / block.challenges.length * 100).round().toString()}%',
+                              style: const TextStyle(
+                                fontSize: 18,
+                                fontWeight: FontWeight.bold,
                               ),
                             ),
-                            Padding(
-                              padding: const EdgeInsets.all(8.0),
-                              child: Text(
-                                '${(model.challengesCompleted / block.challenges.length * 100).round().toString()}%',
-                                style: const TextStyle(
-                                    fontSize: 18, fontWeight: FontWeight.bold),
-                              ),
-                            )
-                          ],
-                        )),
+                          )
+                        ],
+                      ),
+                    ),
                   ),
                 if (model.isOpen || block.challenges.length == 1)
                   Container(

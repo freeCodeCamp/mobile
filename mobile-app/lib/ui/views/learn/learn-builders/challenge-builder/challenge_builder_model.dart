@@ -5,6 +5,7 @@ import 'package:freecodecamp/models/learn/completed_challenge_model.dart';
 import 'package:freecodecamp/models/learn/curriculum_model.dart';
 import 'package:freecodecamp/models/main/user_model.dart';
 import 'package:freecodecamp/service/authentication_service.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:stacked/stacked.dart';
 import 'package:stacked_services/stacked_services.dart';
 
@@ -22,6 +23,23 @@ class ChallengeBuilderModel extends BaseViewModel {
 
   set setIsOpen(bool widgetIsOpened) {
     _isOpen = widgetIsOpened;
+    notifyListeners();
+  }
+
+  void initBlockState(String blockName) async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+
+    if (!prefs.containsKey(blockName)) {
+      prefs.setBool(blockName, true);
+    }
+
+    setBlockOpenState(blockName, prefs.getBool(blockName) ?? false);
+  }
+
+  void setBlockOpenState(String blockName, bool value) async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    prefs.setBool(blockName, !value);
+    _isOpen = !value;
     notifyListeners();
   }
 
