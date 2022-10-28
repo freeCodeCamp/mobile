@@ -160,7 +160,7 @@ class HtmlHandler {
                               language: codeLanguageIsPresent(classes)
                                   ? currentClass!.split('-')[1]
                                   : 'plaintext',
-                              theme: themeMap['dracula']!),
+                              theme: themeMap['atom-one-dark']!),
                         ),
                       ),
                     ),
@@ -169,9 +169,16 @@ class HtmlHandler {
               );
             }
 
-            return Container(
-              color: const Color.fromRGBO(0x2A, 0x2A, 0x40, 1),
-              child: child,
+            return HighlightView(
+              code.tree.element?.text ?? '',
+              padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 0.2),
+              language: 'html',
+              theme: themeMap['atom-one-dark']!,
+              textStyle: const TextStyle(
+                fontFamily: 'RobotoMono',
+                fontSize: 16,
+                color: Colors.white,
+              ),
             );
           },
           'iframe': (code, child) {

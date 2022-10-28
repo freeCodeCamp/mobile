@@ -382,7 +382,7 @@ packages:
     description:
       path: "."
       ref: main
-      resolved-ref: "479de502d3b384366548b0d2b16098824f262f08"
+      resolved-ref: "14c50fb54d52d5178b882d08e42203619b55cb62"
       url: "https://github.com/freeCodeCamp/PhoneIDE"
     source: git
     version: "1.0.0+1"
@@ -417,9 +417,11 @@ packages:
   flutter_highlight:
     dependency: "direct main"
     description:
-      name: flutter_highlight
-      url: "https://pub.dartlang.org"
-    source: hosted
+      path: flutter_highlight
+      ref: master
+      resolved-ref: b5e7de8bc95f4e8e30534d7b1da5b41979caab01
+      url: "https://github.com/sembauke/highlight.dart"
+    source: git
     version: "0.7.0"
   flutter_hooks:
     dependency: "direct main"
