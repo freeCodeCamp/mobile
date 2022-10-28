@@ -35,10 +35,10 @@ class LearnView extends StatelessWidget {
                             return Column(
                               children: [
                                 quouteWidget(),
-                                if (!model.isLoggedIn)
-                                  loginButton(model, context)
-                                else
-                                  welcomeMessage(model)
+                                // if (!model.isLoggedIn)
+                                //   loginButton(model, context)
+                                // else
+                                //   welcomeMessage(model)
                               ],
                             );
                           })),
