@@ -38,7 +38,7 @@ class LearnView extends StatelessWidget {
                               children: [
                                 const CustomAlert(
                                     text:
-                                        'Currently it is not possible to save your progress, this means challenges you complete will not count towards progress on the freeCodeCamp website.',
+                                        'Warning: Currently it is not possible to save your progress, this means challenges you complete will not count towards progress on the freeCodeCamp website.',
                                     alertType: Alert.danger),
                                 quouteWidget(),
                                 if (!model.isLoggedIn)
