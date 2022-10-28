@@ -67,6 +67,7 @@ dependencies:
   path: ^1.8.1
   audio_service: ^0.18.4
   device_info_plus: ^4.0.1
+  upgrader: ^4.6.1
 dev_dependencies:
   build_runner: ^2.1.2
   integration_test:
