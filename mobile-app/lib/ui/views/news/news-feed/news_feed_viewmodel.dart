@@ -56,6 +56,7 @@ class NewsFeedModel extends BaseViewModel {
   }
 
   Future<List<Article>> fetchArticles(String slug, String author) async {
+    if (await _testService.developmentMode()) return readFromFiles();
     await dotenv.load(fileName: '.env');
 
     String hasSlug = slug != '' ? '&filter=tag:$slug' : '';
