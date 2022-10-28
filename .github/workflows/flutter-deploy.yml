@@ -16,17 +16,17 @@ jobs:
     runs-on: macos-latest
     steps:
       - name: Checkout files
-        uses: actions/checkout@2541b1294d2704b0964813337f33b291d3f8596b # tag=v3
+        uses: actions/checkout@93ea575cb5d8a053eaa0ac8fa3b40d7e05a33cc8 # tag=v3
 
       - name: Setup Java 11
-        uses: actions/setup-java@2c7a4878f5d120bd643426d54ae1209b29cc01a3 # tag=v3
+        uses: actions/setup-java@de1bb2b0c5634f0fc4438d7aa9944e68f9bf86cc # tag=v3
         with:
           distribution: "temurin"
           java-version: "11"
           cache: "gradle"
 
       - name: AVD cache
-        uses: actions/cache@fd5de65bc895cf536527842281bea11763fefd77 # tag=v3
+        uses: actions/cache@1c73980b09e7aea7201f325a7aa3ad00beddcdda # tag=v3
         id: avd-cache
         with:
           path: |
@@ -36,7 +36,7 @@ jobs:
 
       - name: Ceate AVD and generate snapshot for caching
         if: steps.avd-cache.outputs.cache-hit != 'true'
-        uses: reactivecircus/android-emulator-runner@b390b0e1166697ae57c242a0a33c29ca9f5ae078 # tag=v2
+        uses: reactivecircus/android-emulator-runner@50986b1464923454c95e261820bc626f38490ec0 # tag=v2
         with:
           api-level: 31
           target: google_apis
@@ -47,7 +47,7 @@ jobs:
           script: echo "Generated AVD snapshot for caching."
 
       - name: Setup Flutter 3.3.x
-        uses: subosito/flutter-action@9d48f4efd5460d7013af812069d08b23f37aed20 # tag=v2
+        uses: subosito/flutter-action@dbf1fa04f4d2e52c33185153d06cdb5443aa189d # tag=v2
         with:
           flutter-version: "3.3.x"
           channel: "stable"
@@ -73,7 +73,7 @@ jobs:
         run: flutter analyze
 
       - name: Run tests in emulator
-        uses: reactivecircus/android-emulator-runner@b390b0e1166697ae57c242a0a33c29ca9f5ae078 # tag=v2
+        uses: reactivecircus/android-emulator-runner@50986b1464923454c95e261820bc626f38490ec0 # tag=v2
         with:
           api-level: 31
           target: google_apis
