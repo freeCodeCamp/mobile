@@ -160,7 +160,7 @@ class ForumCommentView extends StatelessWidget {
                 padding: const EdgeInsets.only(left: 16.0, right: 16.0),
                 child: ElevatedButton(
                     style: ElevatedButton.styleFrom(
-                        primary: const Color.fromRGBO(0x3b, 0x3b, 0x4f, 1),
+                        backgroundColor: const Color.fromRGBO(0x3b, 0x3b, 0x4f, 1),
                         side: const BorderSide(width: 2, color: Colors.white),
                         shape: RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(0))),
@@ -183,7 +183,7 @@ class ForumCommentView extends StatelessWidget {
                 padding: const EdgeInsets.only(left: 16.0, right: 16.0),
                 child: ElevatedButton(
                     style: ElevatedButton.styleFrom(
-                        primary: const Color.fromRGBO(0x3b, 0x3b, 0x4f, 1),
+                        backgroundColor: const Color.fromRGBO(0x3b, 0x3b, 0x4f, 1),
                         side: const BorderSide(width: 2, color: Colors.white),
                         shape: RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(0))),

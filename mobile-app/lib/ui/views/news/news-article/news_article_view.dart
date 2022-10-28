@@ -137,7 +137,7 @@ class BottomButton extends StatelessWidget {
                     topRight: Radius.circular(rightSided ? 10 : 0),
                     bottomLeft: Radius.circular(rightSided ? 0 : 10),
                     bottomRight: Radius.circular(rightSided ? 10 : 0))),
-            primary: const Color.fromRGBO(0x2A, 0x2A, 0x40, 1)),
+            backgroundColor: const Color.fromRGBO(0x2A, 0x2A, 0x40, 1)),
       ),
     );
   }

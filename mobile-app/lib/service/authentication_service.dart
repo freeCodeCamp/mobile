@@ -120,7 +120,7 @@ class AuthenticationService {
     if (await hasRequiredTokens()) {
       log('message: Tokens found in storage');
       await setRequiredTokes();
-      await fetchUser();
+      // await fetchUser();
     }
   }
 

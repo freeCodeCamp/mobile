@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:freecodecamp/models/learn/curriculum_model.dart';
 import 'package:freecodecamp/models/learn/motivational_quote_model.dart';
 import 'package:freecodecamp/models/main/user_model.dart';
-import 'package:freecodecamp/ui/views/learn/learn/learn_viewmodel.dart';
+import 'package:freecodecamp/ui/views/learn/learn/learn_model.dart';
 import 'package:freecodecamp/ui/widgets/drawer_widget/drawer_widget_view.dart';
 import 'package:stacked/stacked.dart';
 
@@ -16,7 +16,10 @@ class LearnView extends StatelessWidget {
         onModelReady: (model) => model.init(context),
         builder: (context, model, child) => Scaffold(
               extendBodyBehindAppBar: true,
-              appBar: AppBar(),
+              appBar: AppBar(
+                centerTitle: true,
+                title: const Text('LEARN'),
+              ),
               resizeToAvoidBottomInset: false,
               backgroundColor: const Color(0xFF0a0a23),
               drawer: const DrawerWidgetView(),
@@ -24,20 +27,18 @@ class LearnView extends StatelessWidget {
                 future: model.superBlocks,
                 builder: (context, snapshot) {
                   if (snapshot.hasData) {
-                    var superBlocks = snapshot.data as List<SuperBlockButton>;
+                    var superBlocks = snapshot.data!;
                     return ListView(shrinkWrap: true, children: [
                       StreamBuilder(
                           stream: model.auth.isLoggedIn,
                           builder: ((context, snapshot) {
                             return Column(
                               children: [
-                                model.isLoggedIn
-                                    ? welcomeMessage(model)
-                                    : Container(),
                                 quouteWidget(),
-                                !model.isLoggedIn
-                                    ? loginButton(model, context)
-                                    : Container(),
+                                if (!model.isLoggedIn)
+                                  loginButton(model, context)
+                                else
+                                  welcomeMessage(model)
                               ],
                             );
                           })),
@@ -48,10 +49,16 @@ class LearnView extends StatelessWidget {
                           itemBuilder: (BuildContext context, int i) {
                             return Padding(
                               padding: const EdgeInsets.only(
-                                  top: 16.0, left: 8, right: 8),
+                                top: 12,
+                                left: 8,
+                                right: 8,
+                              ),
                               child: superBlockBuilder(superBlocks[i], context),
                             );
                           }),
+                      Container(
+                        height: 50,
+                      )
                     ]);
                   } else {
                     return const Center(child: CircularProgressIndicator());
@@ -71,7 +78,7 @@ class LearnView extends StatelessWidget {
           height: 75,
           child: ElevatedButton(
               style: ElevatedButton.styleFrom(
-                primary: button.public
+                backgroundColor: button.public
                     ? const Color.fromRGBO(0x3b, 0x3b, 0x4f, 1)
                     : const Color.fromARGB(255, 41, 41, 54),
                 side: button.public
@@ -101,6 +108,8 @@ class LearnView extends StatelessWidget {
                       width: MediaQuery.of(context).size.width * 0.70,
                       child: Text(
                         button.name,
+                        overflow: TextOverflow.ellipsis,
+                        maxLines: 2,
                         textAlign: TextAlign.left,
                         style: const TextStyle(fontSize: 20),
                       ),
@@ -124,7 +133,8 @@ class LearnView extends StatelessWidget {
       constraints: const BoxConstraints(minHeight: 75),
       child: ElevatedButton(
           style: ElevatedButton.styleFrom(
-              primary: const Color.fromRGBO(0xf1, 0xbe, 0x32, 1)),
+            backgroundColor: const Color.fromRGBO(0xf1, 0xbe, 0x32, 1),
+          ),
           onPressed: () {
             model.auth.login(context);
           },
@@ -158,7 +168,10 @@ class LearnView extends StatelessWidget {
                   Text(
                     '- ${quote.author}',
                     style: const TextStyle(
-                        fontStyle: FontStyle.italic, fontSize: 16, height: 1.5),
+                      fontStyle: FontStyle.italic,
+                      fontSize: 16,
+                      height: 1.5,
+                    ),
                   )
                 ],
               ),
@@ -181,8 +194,10 @@ class LearnView extends StatelessWidget {
               child: Text(
                 'Welcome back ${user.username}. ',
                 textAlign: TextAlign.center,
-                style:
-                    const TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+                style: const TextStyle(
+                  fontSize: 20,
+                  fontWeight: FontWeight.bold,
+                ),
               ),
             );
           }
