@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:freecodecamp/models/learn/motivational_quote_model.dart';
-import 'package:freecodecamp/service/authentication_service.dart';
 import 'package:freecodecamp/ui/views/learn/challenge_editor/challenge_model.dart';
 import 'package:freecodecamp/ui/views/learn/widgets/pass/pass_widget_model.dart';
 import 'package:stacked/stacked.dart';
