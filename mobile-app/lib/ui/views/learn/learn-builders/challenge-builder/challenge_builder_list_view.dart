@@ -6,17 +6,22 @@ import 'package:stacked/stacked.dart';
 
 class ChallengeBuilderListView extends StatelessWidget {
   final Block block;
+  final bool isOpen;
 
   const ChallengeBuilderListView({
     Key? key,
     required this.block,
+    required this.isOpen,
   }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     return ViewModelBuilder<ChallengeBuilderModel>.reactive(
         viewModelBuilder: () => ChallengeBuilderModel(),
-        onModelReady: (model) => model.init(block.challenges),
+        onModelReady: (model) {
+          model.init(block.challenges);
+          model.setIsOpen = isOpen;
+        },
         builder: (context, model, child) => Container(
             color: const Color(0xFF0a0a23),
             child: ListView(
@@ -46,7 +51,10 @@ class ChallengeBuilderListView extends StatelessWidget {
                     style: const TextStyle(fontWeight: FontWeight.bold),
                   ),
                   onTap: () {
-                    model.setIsOpen = !model.isOpen;
+                    model.setBlockOpenState(
+                      block.blockName,
+                      model.isOpen,
+                    );
                   },
                 ),
                 model.isOpen
