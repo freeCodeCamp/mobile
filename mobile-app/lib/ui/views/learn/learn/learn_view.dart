@@ -41,10 +41,10 @@ class LearnView extends StatelessWidget {
                                         'WARNING: Currently it is not possible to save your progress, this means challenges you complete will not count towards progress on the freeCodeCamp website.',
                                     alertType: Alert.danger),
                                 quouteWidget(),
-                                if (!model.isLoggedIn)
-                                  loginButton(model, context)
-                                else
-                                  welcomeMessage(model)
+                                // if (!model.isLoggedIn)
+                                //   loginButton(model, context)
+                                // else
+                                //   welcomeMessage(model)
                               ],
                             );
                           })),
