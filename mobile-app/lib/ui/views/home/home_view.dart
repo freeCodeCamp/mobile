@@ -3,6 +3,7 @@ import 'package:freecodecamp/ui/views/news/news-bookmark/news_bookmark_feed_view
 import 'package:freecodecamp/ui/views/news/news-feed/news_feed_view.dart';
 import 'package:freecodecamp/ui/views/news/news-search/news_search_view.dart';
 import 'package:stacked/stacked.dart';
+import 'package:upgrader/upgrader.dart';
 
 import '../../widgets/drawer_widget/drawer_widget_view.dart';
 import 'home_viemmodel.dart';
@@ -30,7 +31,13 @@ class HomeView extends StatelessWidget {
           title: titles.elementAt(viewModel.index),
         ),
         drawer: const DrawerWidgetView(),
-        body: views.elementAt(viewModel.index),
+        body: UpgradeAlert(
+            upgrader: Upgrader(
+              dialogStyle: UpgradeDialogStyle.material,
+              showIgnore: false,
+              showLater: false,
+            ),
+            child: views.elementAt(viewModel.index)),
         bottomNavigationBar: BottomNavigationBar(
           items: const <BottomNavigationBarItem>[
             BottomNavigationBarItem(
