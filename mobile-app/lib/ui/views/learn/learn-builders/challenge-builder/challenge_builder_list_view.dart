@@ -88,7 +88,8 @@ class ChallengeBuilderListView extends StatelessWidget {
                                       String challenge = block
                                           .challenges[i].name
                                           .toLowerCase()
-                                          .replaceAll(' ', '-');
+                                          .replaceAll(' ', '-')
+                                          .replaceAll(RegExp(r"[@':]"), '');
                                       String url =
                                           'https://freecodecamp.dev/page-data/learn';
 
