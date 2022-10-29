@@ -300,6 +300,7 @@ class ChallengeView extends StatelessWidget {
                       model.setHint = message.message;
                       model.setShowPanel = true;
                     }
+                    model.setIsRunningTests = false;
                   },
                 )
               },
@@ -403,7 +404,6 @@ class ChallengeView extends StatelessWidget {
                             model.setIsRunningTests = true;
                             await model.runner.setWebViewContent(challenge,
                                 webviewController: model.testController!);
-                            model.setIsRunningTests = false;
                             FocusManager.instance.primaryFocus?.unfocus();
                           }
                         : null,
