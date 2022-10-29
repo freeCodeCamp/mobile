@@ -144,7 +144,8 @@ class ChallengeBuilderGridView extends StatelessWidget {
                           ? () {
                               String challenge = block.challenges[0].name
                                   .toLowerCase()
-                                  .replaceAll(' ', '-');
+                                  .replaceAll(' ', '-')
+                                  .replaceAll(RegExp(r"[@':]"), '');
                               String url =
                                   'https://freecodecamp.dev/page-data/learn';
 
