@@ -39,11 +39,22 @@ class NewsFeedView extends StatelessWidget {
             actions: [
               Column(
                 children: [
-                  Switch(
-                      value: model.liteMode,
-                      onChanged: (e) {
+                  Container(
+                    margin: const EdgeInsets.all(4),
+                    color: model.liteMode
+                        ? Colors.white.withOpacity(0.84)
+                        : Colors.transparent,
+                    child: IconButton(
+                      onPressed: () {
                         model.setLiteModeCache();
-                      }),
+                      },
+                      splashRadius: 0.1,
+                      icon: Icon(
+                        Icons.lte_mobiledata,
+                        color: model.liteMode ? Colors.black : Colors.white,
+                      ),
+                    ),
+                  )
                 ],
               )
             ],
