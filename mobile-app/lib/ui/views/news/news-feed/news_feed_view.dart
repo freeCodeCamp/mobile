@@ -7,7 +7,6 @@ import 'package:freecodecamp/ui/views/news/news-feed/news_feed_viewmodel.dart';
 import 'package:freecodecamp/ui/widgets/drawer_widget/drawer_widget_view.dart';
 import 'package:stacked/stacked.dart';
 import 'package:url_launcher/url_launcher_string.dart';
-import 'news_feed_viewmodel.dart';
 
 class NewsFeedView extends StatelessWidget {
   const NewsFeedView(

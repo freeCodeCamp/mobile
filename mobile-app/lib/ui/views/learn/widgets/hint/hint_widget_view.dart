@@ -2,10 +2,10 @@ import 'dart:convert';
 import 'dart:io';
 
 import 'package:device_info_plus/device_info_plus.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_code_editor/editor/editor.dart';
-import 'package:freecodecamp/enums/ext_type.dart';
 import 'package:freecodecamp/models/learn/challenge_model.dart';
 import 'package:freecodecamp/ui/views/learn/challenge_editor/challenge_model.dart';
 import 'package:freecodecamp/ui/views/learn/widgets/hint/hint_widget_model.dart';
@@ -37,7 +37,7 @@ class HintWidgetView extends StatelessWidget {
       final fileName = moreThanOneFile
           ? '/* file: ${challengeFile.name}.${challengeFile.ext} */\n'
           : '';
-      final fileType = challengeFile.ext.value;
+      final fileType = describeEnum(challengeFile.ext);
       markdownStr +=
           '```$fileType\n$fileName${challengeModel.editorText}\n```\n\n';
     }

@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:freecodecamp/enums/alert_type.dart';
 import 'package:freecodecamp/models/learn/motivational_quote_model.dart';
-import 'package:freecodecamp/service/authentication_service.dart';
 import 'package:freecodecamp/ui/views/learn/challenge_editor/challenge_model.dart';
+import 'package:freecodecamp/ui/views/learn/widgets/custom_alert_widget.dart';
 import 'package:freecodecamp/ui/views/learn/widgets/pass/pass_widget_model.dart';
 import 'package:stacked/stacked.dart';
 
@@ -75,76 +76,81 @@ class PassWidgetView extends StatelessWidget {
                     child: CircularProgressIndicator(),
                   );
                 }),
-            AuthenticationService.staticIsloggedIn
-                ? FutureBuilder(
-                    future: model.numCompletedChallenges(
-                        challengeModel, challengesCompleted),
-                    builder: (context, snapshot) {
-                      if (snapshot.hasData) {
-                        int numCompletedChallenges = snapshot.data as int;
-                        return Column(
-                          children: [
-                            Padding(
-                              padding: const EdgeInsets.all(16.0),
-                              child: LinearProgressIndicator(
-                                value: numCompletedChallenges / maxChallenges,
-                                minHeight: 7,
-                                backgroundColor:
-                                    const Color.fromRGBO(0x3B, 0x3B, 0x4F, 1),
-                              ),
-                            ),
-                            Padding(
-                              padding:
-                                  const EdgeInsets.symmetric(horizontal: 16),
-                              child: Row(
-                                children: [
-                                  Expanded(
-                                    child: Text(
-                                      '${(numCompletedChallenges * 100) ~/ maxChallenges}% Completed',
-                                      textAlign: TextAlign.right,
-                                    ),
-                                  ),
-                                ],
-                              ),
-                            ),
-                          ],
-                        );
-                      }
+            // if(AuthenticationService.staticIsloggedIn)
+            //     FutureBuilder(
+            //         future: model.numCompletedChallenges(
+            //             challengeModel, challengesCompleted),
+            //         builder: (context, snapshot) {
+            //           if (snapshot.hasData) {
+            //             int numCompletedChallenges = snapshot.data as int;
+            //             return Column(
+            //               children: [
+            //                 Padding(
+            //                   padding: const EdgeInsets.all(16.0),
+            //                   child: LinearProgressIndicator(
+            //                     value: numCompletedChallenges / maxChallenges,
+            //                     minHeight: 7,
+            //                     backgroundColor:
+            //                         const Color.fromRGBO(0x3B, 0x3B, 0x4F, 1),
+            //                   ),
+            //                 ),
+            //                 Padding(
+            //                   padding:
+            //                       const EdgeInsets.symmetric(horizontal: 16),
+            //                   child: Row(
+            //                     children: [
+            //                       Expanded(
+            //                         child: Text(
+            //                           '${(numCompletedChallenges * 100) ~/ maxChallenges}% Completed',
+            //                           textAlign: TextAlign.right,
+            //                         ),
+            //                       ),
+            //                     ],
+            //                   ),
+            //                 ),
+            //               ],
+            //             );
+            //           }
 
-                      return const Center(
-                        child: CircularProgressIndicator(),
-                      );
-                    },
-                  )
-                : Container(
-                    padding: const EdgeInsets.only(top: 16, left: 8, right: 8),
-                    constraints: const BoxConstraints(minHeight: 75),
-                    child: ElevatedButton(
-                      style: ElevatedButton.styleFrom(
-                        primary: const Color.fromRGBO(0xf1, 0xbe, 0x32, 1),
-                        padding: const EdgeInsets.all(8),
-                      ),
-                      onPressed: () {
-                        model.auth.login(context);
-                      },
-                      child: const Text(
-                        'Sign in to save your progress',
-                        textAlign: TextAlign.center,
-                        style: TextStyle(color: Colors.black, fontSize: 20),
-                      ),
-                    ),
-                  ),
+            //           return const Center(
+            //             child: CircularProgressIndicator(),
+            //           );
+            //         },
+            //       )
+            //     : Container(
+            //         padding: const EdgeInsets.only(top: 16, left: 8, right: 8),
+            //         constraints: const BoxConstraints(minHeight: 75),
+            //         child: ElevatedButton(
+            //           style: ElevatedButton.styleFrom(
+            //             backgroundColor: const Color.fromRGBO(0xf1, 0xbe, 0x32, 1),
+            //             padding: const EdgeInsets.all(8),
+            //           ),
+            //           onPressed: () {
+            //             model.auth.login(context);
+            //           },
+            //           child: const Text(
+            //             'Sign in to save your progress',
+            //             textAlign: TextAlign.center,
+            //             style: TextStyle(color: Colors.black, fontSize: 20),
+            //           ),
+            //         ),
+            //       ),
+            const CustomAlert(
+              text:
+                  'WARNING: Currently it is not possible to save your progress, this means challenges you complete will not count towards progress on the freeCodeCamp website.',
+              alertType: Alert.danger,
+            ),
             Expanded(
                 child: Align(
               alignment: Alignment.bottomCenter,
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.end,
                 children: [
-                  IconButton(
-                    onPressed: () {},
-                    icon: const Icon(Icons.share_sharp),
-                    padding: const EdgeInsets.all(16),
-                  ),
+                  // IconButton(
+                  //   onPressed: () {},
+                  //   icon: const Icon(Icons.share_sharp),
+                  //   padding: const EdgeInsets.all(16),
+                  // ),
                   IconButton(
                     onPressed: () {
                       challengeModel.setShowPreview = true;
