@@ -1,15 +1,15 @@
 import 'dart:convert';
-
-import 'package:flutter/cupertino.dart';
 import 'package:flutter_code_editor/editor/editor.dart';
 import 'package:flutter_code_editor/enums/syntax.dart';
 import 'package:freecodecamp/app/app.locator.dart';
+import 'package:freecodecamp/app/app.router.dart';
 import 'package:freecodecamp/enums/challenge_test_state_type.dart';
 import 'package:freecodecamp/enums/dialog_type.dart';
 import 'package:freecodecamp/enums/ext_type.dart';
 import 'package:freecodecamp/enums/panel_type.dart';
 import 'package:freecodecamp/models/learn/challenge_model.dart';
 import 'package:freecodecamp/models/learn/curriculum_model.dart';
+import 'package:freecodecamp/service/learn_file_service.dart';
 import 'package:freecodecamp/ui/views/learn/test_runner.dart';
 import 'package:freecodecamp/ui/widgets/setup_dialog_ui.dart';
 import 'package:html/dom.dart' as dom;
@@ -25,8 +25,8 @@ class ChallengeModel extends BaseViewModel {
   String? _editorText;
   String? get editorText => _editorText;
 
-  String? _currentSelectedFile = '';
-  String? get currentSelectedFile => _currentSelectedFile;
+  String _currentSelectedFile = '';
+  String get currentSelectedFile => _currentSelectedFile;
 
   bool _showPreview = false;
   bool get showPreview => _showPreview;
@@ -42,6 +42,12 @@ class ChallengeModel extends BaseViewModel {
 
   bool _showPanel = true;
   bool get showPanel => _showPanel;
+
+  bool _runningTests = false;
+  bool get runningTests => _runningTests;
+
+  bool _hasTypedInEditor = false;
+  bool get hasTypedInEditor => _hasTypedInEditor;
 
   bool _completedChallenge = false;
   bool get completedChallenge => _completedChallenge;
@@ -71,9 +77,15 @@ class ChallengeModel extends BaseViewModel {
   int get challengesCompleted => _challengesCompleted;
 
   final _dialogService = locator<DialogService>();
-
+  final NavigationService _navigationService = locator<NavigationService>();
+  final LearnFileService fileService = locator<LearnFileService>();
   set setCurrentSelectedFile(String value) {
     _currentSelectedFile = value;
+    notifyListeners();
+  }
+
+  set setIsRunningTests(bool value) {
+    _runningTests = value;
     notifyListeners();
   }
 
@@ -99,6 +111,11 @@ class ChallengeModel extends BaseViewModel {
 
   set setShowPreview(bool value) {
     _showPreview = value;
+    notifyListeners();
+  }
+
+  set setHasTypedInEditor(bool value) {
+    _hasTypedInEditor = true;
     notifyListeners();
   }
 
@@ -153,8 +170,15 @@ class ChallengeModel extends BaseViewModel {
     setChallenge = initChallenge(url);
     Challenge challenge = await _challenge!;
 
+    List<ChallengeFile> currentEditedChallenge = challenge.files
+        .where((element) => element.editableRegionBoundaries.isNotEmpty)
+        .toList();
+
     if (editorText == null) {
-      String text = await getTextFromCache(challenge);
+      String text = await fileService.getExactFileFromCache(
+        challenge,
+        currentEditedChallenge[0],
+      );
 
       if (text != '') {
         setEditorText = text;
@@ -163,22 +187,12 @@ class ChallengeModel extends BaseViewModel {
 
     setBlock = block;
     setChallengesCompleted = challengesCompleted;
+    setCurrentSelectedFile = currentEditedChallenge[0].name;
   }
 
   // When the content in the editor is changed, save it to the cache. This prevents
   // the user from losing their work when switching between panels e.g, the preview.
   // The cache is disposed when the user switches to a new challenge.
-
-  void saveTextInCache(String value, Challenge challenge) async {
-    SharedPreferences prefs = await SharedPreferences.getInstance();
-
-    if (currentSelectedFile!.isEmpty) {
-      prefs.setString('${challenge.title}.${challenge.files[0].name}', value);
-    } else {
-      prefs.setString(
-          '${challenge.title}.${currentSelectedFile!.split('.')[0]}', value);
-    }
-  }
 
   // show a message that the console is not yet available
   void consoleSnackbar() {
@@ -186,44 +200,6 @@ class ChallengeModel extends BaseViewModel {
       title: 'Not yet available',
       message: '',
     );
-  }
-
-  // Get the content of the editor from the cache if it exists. If it doesn't,
-  // return an empty string. This prevents the user from losing their work when
-  // switching between panels e.g, the preview.
-
-  Future<String> getTextFromCache(Challenge challenge) async {
-    SharedPreferences prefs = await SharedPreferences.getInstance();
-
-    if (currentSelectedFile!.isEmpty) {
-      return prefs.getString('${challenge.title}.${challenge.files[0].name}') ??
-          '';
-    } else {
-      return prefs.getString(
-              '${challenge.title}.${currentSelectedFile!.split('.')[0]}') ??
-          '';
-    }
-  }
-
-  Future<String> getExactFileFromCache(
-    Challenge challenge,
-    ChallengeFile file,
-  ) async {
-    SharedPreferences prefs = await SharedPreferences.getInstance();
-    String cache = prefs.getString('${challenge.title}.${file.name}') ?? '';
-
-    List<ChallengeFile> firstHtmlChallenge =
-        challenge.files.where((file) => file.ext == Ext.html).toList();
-
-    return cache.isEmpty ? firstHtmlChallenge[0].contents : cache;
-  }
-
-  void setAppBarState(BuildContext context) {
-    if (MediaQuery.of(context).viewInsets.bottom > 0 || !showPanel) {
-      setHideAppBar = false;
-    } else {
-      setHideAppBar = true;
-    }
   }
 
   // This prevents the user from requesting the challenge more than once
@@ -235,8 +211,11 @@ class ChallengeModel extends BaseViewModel {
 
     if (prefs.getString(url) == null) {
       if (res.statusCode == 200) {
-        Challenge challenge = Challenge.fromJson(jsonDecode(res.body)['result']
-            ['data']['challengeNode']['challenge']);
+        Challenge challenge = Challenge.fromJson(
+          jsonDecode(
+            res.body,
+          )['result']['data']['challengeNode']['challenge'],
+        );
 
         prefs.setString(url, res.body);
 
@@ -245,8 +224,10 @@ class ChallengeModel extends BaseViewModel {
     }
 
     Challenge challenge = Challenge.fromJson(
-        jsonDecode(prefs.getString(url) as String)['result']['data']
-            ['challengeNode']['challenge']);
+      jsonDecode(
+        prefs.getString(url) as String,
+      )['result']['data']['challengeNode']['challenge'],
+    );
 
     return challenge;
   }
@@ -262,34 +243,28 @@ class ChallengeModel extends BaseViewModel {
 
     if (currChallenge == null) return parse(doc).outerHtml;
 
-    dom.Document document = parse(doc);
-
     List<ChallengeFile> cssFiles = currChallenge.files
         .where((ChallengeFile file) => file.ext == Ext.css)
         .toList();
 
-    // TODO: Handle javascript files and multiple html files
+    dom.Document document = parse(doc);
 
     List<ChallengeFile> currentFile = currChallenge.files
         .where((element) => element.ext == Ext.html)
         .toList();
 
     if (cssFiles.isNotEmpty) {
-      String text =
-          prefs.getString('${currChallenge.title}.${currentFile[0].name}') ??
-              currentFile[0].contents;
+      String text = prefs.getString(
+            '${currChallenge.id}.${currentFile[0].name}',
+          ) ??
+          currentFile[0].contents;
 
-      List<String> linkedCssFiles =
-          await checkForLinks(parse(text), cssFiles, currChallenge);
-
-      if (linkedCssFiles.isNotEmpty) {
-        for (int i = 0; i < linkedCssFiles.length; i++) {
-          String style = '''<style> ${linkedCssFiles[i]} </style>''';
-          dom.Document styleParsed = parse(style);
-          dom.Node styleTag = styleParsed.getElementsByTagName('STYLE')[0];
-          document.getElementsByTagName('HEAD')[0].append(styleTag);
-        }
-      }
+      document = parse(
+        await fileService.parseCssDocmentsAsStyleTags(
+          currChallenge,
+          text,
+        ),
+      );
     }
 
     String viewPort = '''<meta content="width=device-width,
@@ -303,47 +278,6 @@ class ChallengeModel extends BaseViewModel {
     document.getElementsByTagName('HEAD')[0].append(meta);
 
     return document.outerHtml;
-  }
-
-  Future<List<String>> checkForLinks(dom.Document document,
-      List<ChallengeFile> cssFiles, Challenge currChallenge) async {
-    SharedPreferences prefs = await SharedPreferences.getInstance();
-
-    List<dom.Node> links = document.getElementsByTagName('LINK');
-
-    List<String> linkedFileNames = [];
-    List<String> linkedFilesContent = [];
-
-    if (links.isNotEmpty) {
-      for (dom.Node node in links) {
-        if (node.attributes['href'] == null) continue;
-
-        if (node.attributes['href']!.contains('/')) {
-          linkedFileNames.add(node.attributes['href']!.split('/').last);
-        } else if (node.attributes['href']!.isNotEmpty) {
-          linkedFileNames.add(node.attributes['href'] as String);
-        }
-      }
-    }
-
-    if (linkedFileNames.isNotEmpty) {
-      for (int i = 0; i < linkedFileNames.length; i++) {
-        List<ChallengeFile> files = cssFiles
-            .where((ChallengeFile file) =>
-                file.name == linkedFileNames[i].split('.')[0])
-            .toList();
-
-        String text =
-            prefs.getString('${currChallenge.title}.${files[0].name}') ??
-                files[0].contents;
-
-        if (files.isNotEmpty) {
-          linkedFilesContent.add(text);
-        }
-      }
-    }
-
-    return linkedFilesContent;
   }
 
   // The hint text is the same as the test text. This is used to display the hint.
@@ -372,9 +306,9 @@ class ChallengeModel extends BaseViewModel {
   }
 
   ChallengeFile currentFile(Challenge challenge) {
-    if (currentSelectedFile!.isNotEmpty) {
-      ChallengeFile file = challenge.files.firstWhere(
-          (file) => file.name == currentSelectedFile!.split('.')[0]);
+    if (currentSelectedFile.isNotEmpty) {
+      ChallengeFile file = challenge.files
+          .firstWhere((file) => file.name == currentSelectedFile);
       return file;
     }
 
@@ -392,18 +326,58 @@ class ChallengeModel extends BaseViewModel {
 
     if (res!.confirmed) {
       Challenge? currChallenge = await challenge;
+
       for (ChallengeFile file in currChallenge!.files) {
-        prefs.remove('${currChallenge.title}.${file.name}');
+        prefs.remove('${currChallenge.id}.${file.name}');
       }
-      setEditorText = '';
-      setCurrentSelectedFile =
-          '${currChallenge.files[0].name}.${currChallenge.files[0].ext.name}';
-      editor.fileTextStream.add(
-        FileStreamEvent(
-          ext: currentFile(currChallenge).ext.name.toUpperCase(),
-          content: currentFile(currChallenge).contents,
+
+      var challengeIndex = block!.challenges.indexWhere(
+        (element) => element.id == currChallenge.id,
+      );
+
+      String slug = block!.challenges[challengeIndex].name
+          .toLowerCase()
+          .replaceAll(' ', '-');
+
+      String url = 'https://freecodecamp.dev/page-data/learn';
+      _navigationService.replaceWith(
+        Routes.challengeView,
+        arguments: ChallengeViewArguments(
+          url:
+              '$url/${block!.superBlock}/${block!.dashedName}/$slug/page-data.json',
+          block: block!,
+          challengesCompleted: challengesCompleted,
         ),
       );
+    }
+  }
+
+  void goToNextChallenge(
+    int maxChallenges,
+    int challengesCompleted,
+  ) async {
+    Challenge? currChallenge = await challenge;
+    if (currChallenge != null) {
+      var challengeIndex = block!.challenges.indexWhere(
+        (element) => element.id == currChallenge.id,
+      );
+      if (challengeIndex == maxChallenges - 1) {
+        _navigationService.back();
+      } else {
+        String challenge = block!.challenges[challengeIndex + 1].name
+            .toLowerCase()
+            .replaceAll(' ', '-');
+        String url = 'https://freecodecamp.dev/page-data/learn';
+        _navigationService.replaceWith(
+          Routes.challengeView,
+          arguments: ChallengeViewArguments(
+            url:
+                '$url/${block!.superBlock}/${block!.dashedName}/$challenge/page-data.json',
+            block: block!,
+            challengesCompleted: challengesCompleted + 1,
+          ),
+        );
+      }
     }
   }
 }

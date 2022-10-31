@@ -4,6 +4,7 @@ import 'dart:math';
 
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:freecodecamp/app/app.locator.dart';
 import 'package:freecodecamp/app/app.router.dart';
 import 'package:freecodecamp/models/learn/curriculum_model.dart';
@@ -50,23 +51,38 @@ class LearnViewModel extends BaseViewModel {
   }
 
   void disabledButtonSnack() {
-    snack.showSnackbar(title: 'Not available', message: 'use the web version');
+    snack.showSnackbar(title: 'Not available use the web version', message: '');
   }
 
   Future<List<SuperBlockButton>> getSuperBlocks() async {
-    final http.Response res = await http.get(Uri.parse(
-        'https://freecodecamp.dev/curriculum-data/v1/available-superblocks.json'));
+    await dotenv.load(fileName: '.env');
+    bool devMode = dotenv.get('DEVELOPMENTMODE').toLowerCase() == 'true';
+
+    String baseUrl = 'https://freecodecamp.${devMode ? 'dev' : 'org'}';
+
+    final http.Response res = await http.get(
+      Uri.parse(
+        '$baseUrl/curriculum-data/v1/available-superblocks.json',
+      ),
+    );
 
     List<SuperBlockButton> buttonData = [];
 
     if (res.statusCode == 200) {
       List superBlocks = jsonDecode(res.body)['superblocks'];
 
+      await dotenv.load(fileName: '.env');
+
+      bool showAllSB = dotenv.get('SHOWALLSB').toLowerCase() == 'true';
+
       for (int i = 0; i < superBlocks.length; i++) {
-        buttonData.add(SuperBlockButton(
+        buttonData.add(
+          SuperBlockButton(
             path: superBlocks[i]['dashedName'],
             name: superBlocks[i]['title'],
-            public: true));
+            public: !showAllSB ? superBlocks[i]['public'] : true,
+          ),
+        );
       }
 
       return buttonData;
@@ -75,8 +91,15 @@ class LearnViewModel extends BaseViewModel {
   }
 
   Future<SuperBlock> getSuperBlockData(String superBlockName) async {
-    final http.Response res = await http.get(Uri.parse(
-        'https://freecodecamp.dev/curriculum-data/v1/$superBlockName.json'));
+    await dotenv.load(fileName: '.env');
+    bool devMode = dotenv.get('DEVELOPMENTMODE').toLowerCase() == 'true';
+    String baseUrl = 'https://freecodecamp.${devMode ? 'dev' : 'org'}';
+
+    final http.Response res = await http.get(
+      Uri.parse(
+        '$baseUrl/curriculum-data/v1/$superBlockName.json',
+      ),
+    );
 
     if (res.statusCode == 200) {
       return SuperBlock.fromJson(jsonDecode(res.body));

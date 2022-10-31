@@ -1,18 +1,17 @@
-// import 'dart:convert';
-
 import 'dart:convert';
-
 import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
 import 'package:flutter_code_editor/controller/editor_view_controller.dart';
 import 'package:flutter_code_editor/editor/editor.dart';
 import 'package:flutter_code_editor/models/editor_options.dart';
 import 'package:flutter_code_editor/models/file_model.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:freecodecamp/enums/ext_type.dart';
+import 'package:freecodecamp/enums/panel_type.dart';
 
 import 'package:freecodecamp/models/learn/challenge_model.dart';
 import 'package:freecodecamp/models/learn/curriculum_model.dart';
 import 'package:freecodecamp/ui/views/learn/challenge_editor/challenge_model.dart';
-import 'package:freecodecamp/ui/views/learn/widgets/custom_bottom_bar/custom_bottom_bar.dart';
 import 'package:freecodecamp/ui/views/learn/widgets/custom_tab_bar/custom_tab_bar.dart';
 
 import 'package:freecodecamp/ui/views/learn/widgets/dynamic_panel/dynamic_panel.dart';
@@ -35,10 +34,7 @@ class ChallengeView extends StatelessWidget {
   Widget build(BuildContext context) {
     return ViewModelBuilder<ChallengeModel>.reactive(
         viewModelBuilder: () => ChallengeModel(),
-        onModelReady: (model) => {
-              model.setAppBarState(context),
-              model.init(url, block, challengesCompleted)
-            },
+        onModelReady: (model) => {model.init(url, block, challengesCompleted)},
         builder: (context, model, child) => FutureBuilder<Challenge?>(
               future: model.challenge,
               builder: (context, snapshot) {
@@ -48,11 +44,32 @@ class ChallengeView extends StatelessWidget {
                   int maxChallenges = block.challenges.length;
                   ChallengeFile currFile = model.currentFile(challenge);
 
-                  bool keyBoardIsActive =
-                      MediaQuery.of(context).viewInsets.bottom != 0;
+                  bool keyBoardIsActive = MediaQuery.of(
+                        context,
+                      ).viewInsets.bottom !=
+                      0;
+
+                  bool editableRegion =
+                      currFile.editableRegionBoundaries.isNotEmpty;
+
+                  EditorOptions options = EditorOptions(
+                    hasEditableRegion: editableRegion,
+                    useFileExplorer: false,
+                    canCloseFiles: false,
+                    showAppBar: false,
+                    showTabBar: false,
+                  );
 
                   Editor editor = Editor(
+                    regionStart: editableRegion
+                        ? currFile.editableRegionBoundaries[0]
+                        : null,
+                    regionEnd: editableRegion
+                        ? currFile.editableRegionBoundaries[1]
+                        : null,
+                    condition: model.completedChallenge,
                     language: currFile.ext.name.toUpperCase(),
+                    options: options,
                     openedFile: FileIDE(
                         fileExplorer: null,
                         fileName: currFile.name,
@@ -62,31 +79,37 @@ class ChallengeView extends StatelessWidget {
                   );
 
                   editor.onTextChange.stream.listen((text) {
-                    model.saveTextInCache(text, challenge);
+                    model.fileService.saveFileInCache(
+                      challenge,
+                      model.currentSelectedFile,
+                      text,
+                    );
                     model.setEditorText = text;
                     model.setCompletedChallenge = false;
                   });
-                  SchedulerBinding.instance.addPostFrameCallback((timeStamp) {
-                    bool keyboardPresent =
-                        MediaQuery.of(context).viewInsets.bottom > 0;
 
-                    if (!keyboardPresent && !model.showPanel) {
+                  SchedulerBinding.instance.addPostFrameCallback((timeStamp) {
+                    if (keyBoardIsActive && !model.showPanel) {
                       if (model.hideAppBar) {
                         model.setHideAppBar = false;
                       }
-                    } else if (model.showPanel) {
+                    } else if (keyBoardIsActive && model.showPanel) {
+                      if (model.hideAppBar) {
+                        model.setHideAppBar = false;
+                      }
+                    } else if (!keyBoardIsActive && model.showPanel) {
                       if (!model.hideAppBar) {
                         model.setHideAppBar = true;
+                      }
+                    } else {
+                      if (model.hideAppBar) {
+                        model.setHideAppBar = false;
                       }
                     }
                   });
                   // ignore: unused_local_variable
                   EditorViewController controller = EditorViewController(
-                    options: const EditorOptions(
-                        useFileExplorer: false,
-                        canCloseFiles: false,
-                        showAppBar: false,
-                        showTabBar: false),
+                    options: options,
                     editor: editor,
                   );
 
@@ -145,10 +168,14 @@ class ChallengeView extends StatelessWidget {
                       bottomNavigationBar: Padding(
                           padding: EdgeInsets.only(
                               bottom: MediaQuery.of(context).viewInsets.bottom),
-                          child: CustomBottomBar(
-                              model: model,
-                              challenge: challenge,
-                              editor: editor)),
+                          child: customBottomBar(
+                            model,
+                            challenge,
+                            editor,
+                            context,
+                            maxChallenges,
+                            challengesCompleted,
+                          )),
                       body: !model.showPreview
                           ? Column(
                               children: [
@@ -188,10 +215,12 @@ class ChallengeView extends StatelessWidget {
                                           webcontroller;
                                       webcontroller.loadUrl(Uri.dataFromString(
                                               await model.parsePreviewDocument(
-                                                  await model
-                                                      .getExactFileFromCache(
-                                                          challenge,
-                                                          challenge.files[0])),
+                                                await model.fileService
+                                                    .getFirstFileFromCache(
+                                                  challenge,
+                                                  Ext.html,
+                                                ),
+                                              ),
                                               mimeType: 'text/html',
                                               encoding: utf8)
                                           .toString());
@@ -202,6 +231,13 @@ class ChallengeView extends StatelessWidget {
                             ));
                 }
 
+                EditorOptions options = EditorOptions(
+                    hasEditableRegion: true,
+                    useFileExplorer: false,
+                    canCloseFiles: false,
+                    showAppBar: false,
+                    showTabBar: false);
+
                 return Scaffold(
                     appBar: AppBar(
                       title: const Text('Loading..'),
@@ -211,17 +247,175 @@ class ChallengeView extends StatelessWidget {
                       children: [
                         Expanded(
                           child: EditorViewController(
-                            options: const EditorOptions(
-                                useFileExplorer: false,
-                                canCloseFiles: false,
-                                showAppBar: false,
-                                showTabBar: false),
-                            editor: Editor(language: 'HTML'),
+                            options: options,
+                            editor: Editor(
+                              language: 'HTML',
+                              options: options,
+                              condition: model.completedChallenge,
+                            ),
                           ),
                         ),
                       ],
                     ));
               },
             ));
+  }
+
+  Widget customBottomBar(
+    ChallengeModel model,
+    Challenge challenge,
+    Editor editor,
+    BuildContext context,
+    int maxChallenges,
+    int challengesCompleted,
+  ) {
+    if (model.testController != null) {
+      editor.onTextChange.stream.listen((event) {
+        model.setHasTypedInEditor = true;
+      });
+    }
+
+    return BottomAppBar(
+      color: const Color(0xFF0a0a23),
+      child: Row(
+        children: [
+          SizedBox(
+            height: 1,
+            width: 1,
+            child: WebView(
+              onWebViewCreated: (WebViewController webcontroller) async {
+                model.setTestController = webcontroller;
+              },
+              javascriptMode: JavascriptMode.unrestricted,
+              javascriptChannels: {
+                JavascriptChannel(
+                  name: 'Print',
+                  onMessageReceived: (JavascriptMessage message) async {
+                    if (message.message == 'completed') {
+                      model.setPanelType = PanelType.pass;
+                      model.setCompletedChallenge = true;
+                      model.setShowPanel = true;
+                    } else {
+                      model.setPanelType = PanelType.hint;
+                      model.setHint = message.message;
+                      model.setShowPanel = true;
+                    }
+                    model.setIsRunningTests = false;
+                  },
+                )
+              },
+            ),
+          ),
+          Container(
+            margin: const EdgeInsets.all(8),
+            color: model.showPanel && model.panelType == PanelType.instruction
+                ? Colors.white
+                : const Color.fromRGBO(0x2A, 0x2A, 0x40, 1),
+            child: IconButton(
+              icon: FaIcon(
+                FontAwesomeIcons.info,
+                size: 32,
+                color:
+                    model.showPanel && model.panelType == PanelType.instruction
+                        ? const Color.fromRGBO(0x2A, 0x2A, 0x40, 1)
+                        : Colors.white,
+              ),
+              onPressed: () {
+                if (model.showPanel &&
+                    model.panelType != PanelType.instruction) {
+                  model.setPanelType = PanelType.instruction;
+                } else {
+                  model.setPanelType = PanelType.instruction;
+                  if (MediaQuery.of(context).viewInsets.bottom > 0) {
+                    FocusManager.instance.primaryFocus?.unfocus();
+                    if (!model.showPanel) {
+                      model.setShowPanel = true;
+                      model.setHideAppBar = true;
+                    }
+                  } else {
+                    model.setHideAppBar = !model.hideAppBar;
+                    model.setShowPanel = !model.showPanel;
+                  }
+                }
+              },
+              splashColor: Colors.transparent,
+              highlightColor: Colors.transparent,
+            ),
+          ),
+          Container(
+            margin: const EdgeInsets.all(8),
+            color: !model.showPreview
+                ? const Color.fromRGBO(0x2A, 0x2A, 0x40, 1)
+                : Colors.white,
+            child: IconButton(
+              icon: Icon(Icons.remove_red_eye_outlined,
+                  size: 32,
+                  color: model.showPreview
+                      ? const Color.fromRGBO(0x2A, 0x2A, 0x40, 1)
+                      : Colors.white),
+              onPressed: () async {
+                ChallengeFile currFile = model.currentFile(challenge);
+
+                String currText = await model.fileService.getExactFileFromCache(
+                  challenge,
+                  currFile,
+                );
+
+                editor.fileTextStream.sink.add(
+                  FileStreamEvent(
+                    ext: currFile.ext.name.toUpperCase(),
+                    content: currText == '' ? currFile.contents : currText,
+                  ),
+                );
+                model.setEditorText =
+                    currText == '' ? currFile.contents : currText;
+                model.setShowPreview = !model.showPreview;
+              },
+              splashColor: Colors.transparent,
+              highlightColor: Colors.transparent,
+            ),
+          ),
+          Expanded(
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.end,
+              children: [
+                Container(
+                  margin: const EdgeInsets.all(8),
+                  color: !model.hasTypedInEditor
+                      ? const Color.fromARGB(255, 9, 79, 125)
+                      : model.completedChallenge
+                          ? const Color.fromRGBO(0x20, 0xD0, 0x32, 1)
+                          : const Color.fromRGBO(0x1D, 0x9B, 0xF0, 1),
+                  child: IconButton(
+                    icon: model.runningTests
+                        ? const CircularProgressIndicator()
+                        : model.completedChallenge
+                            ? const FaIcon(FontAwesomeIcons.arrowRight)
+                            : const FaIcon(FontAwesomeIcons.check),
+                    onPressed: model.hasTypedInEditor
+                        ? () async {
+                            if (model.showPanel &&
+                                model.panelType == PanelType.pass) {
+                              model.goToNextChallenge(
+                                  maxChallenges, challengesCompleted);
+                              return;
+                            }
+
+                            model.setIsRunningTests = true;
+                            await model.runner.setWebViewContent(challenge,
+                                webviewController: model.testController!);
+                            FocusManager.instance.primaryFocus?.unfocus();
+                          }
+                        : null,
+                    splashColor: Colors.transparent,
+                    highlightColor: Colors.transparent,
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ],
+      ),
+    );
   }
 }
