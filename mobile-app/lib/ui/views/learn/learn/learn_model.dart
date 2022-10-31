@@ -10,6 +10,7 @@ import 'package:freecodecamp/app/app.router.dart';
 import 'package:freecodecamp/models/learn/curriculum_model.dart';
 import 'package:freecodecamp/models/learn/motivational_quote_model.dart';
 import 'package:freecodecamp/service/authentication_service.dart';
+import 'package:freecodecamp/service/learn_service.dart';
 import 'package:freecodecamp/ui/widgets/setup_dialog_ui.dart';
 import 'package:stacked/stacked.dart';
 import 'package:stacked_services/stacked_services.dart';
@@ -22,6 +23,9 @@ class LearnViewModel extends BaseViewModel {
 
   final AuthenticationService _auth = locator<AuthenticationService>();
   AuthenticationService get auth => _auth;
+
+  final LearnService _learnService = locator<LearnService>();
+  LearnService get learnService => _learnService;
 
   final SnackbarService _snack = locator<SnackbarService>();
   SnackbarService get snack => _snack;
@@ -55,10 +59,7 @@ class LearnViewModel extends BaseViewModel {
   }
 
   Future<List<SuperBlockButton>> getSuperBlocks() async {
-    await dotenv.load(fileName: '.env');
-    bool devMode = dotenv.get('DEVELOPMENTMODE').toLowerCase() == 'true';
-
-    String baseUrl = 'https://freecodecamp.${devMode ? 'dev' : 'org'}';
+    String baseUrl = await _learnService.getBaseUrl();
 
     final http.Response res = await http.get(
       Uri.parse(
@@ -92,9 +93,7 @@ class LearnViewModel extends BaseViewModel {
   }
 
   Future<SuperBlock> getSuperBlockData(String superBlockName) async {
-    await dotenv.load(fileName: '.env');
-    bool devMode = dotenv.get('DEVELOPMENTMODE').toLowerCase() == 'true';
-    String baseUrl = 'https://freecodecamp.${devMode ? 'dev' : 'org'}';
+    String baseUrl = await _learnService.getBaseUrl();
 
     final http.Response res = await http.get(
       Uri.parse(
