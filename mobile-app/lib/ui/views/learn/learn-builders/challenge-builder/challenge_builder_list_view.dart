@@ -1,19 +1,22 @@
 import 'package:flutter/material.dart';
+import 'package:freecodecamp/app/app.locator.dart';
 import 'package:freecodecamp/models/learn/curriculum_model.dart';
+import 'package:freecodecamp/service/learn_service.dart';
 import 'package:freecodecamp/ui/views/learn/learn-builders/challenge-builder/challenge_builder_model.dart';
 import 'package:freecodecamp/ui/widgets/drawer_widget/drawer_widget_view.dart';
 import 'package:stacked/stacked.dart';
 
+// ignore: must_be_immutable
 class ChallengeBuilderListView extends StatelessWidget {
   final Block block;
   final bool isOpen;
 
-  const ChallengeBuilderListView({
+  ChallengeBuilderListView({
     Key? key,
     required this.block,
     required this.isOpen,
   }) : super(key: key);
-
+  LearnService learnService = locator<LearnService>();
   @override
   Widget build(BuildContext context) {
     return ViewModelBuilder<ChallengeBuilderModel>.reactive(
@@ -84,14 +87,14 @@ class ChallengeBuilderListView extends StatelessWidget {
                                         model.completedChallenge(
                                             block.challenges[i].id)),
                                     title: Text(block.challenges[i].name),
-                                    onTap: () {
+                                    onTap: () async {
                                       String challenge = block
                                           .challenges[i].name
                                           .toLowerCase()
                                           .replaceAll(' ', '-')
                                           .replaceAll(RegExp(r"[@':]"), '');
-                                      String url =
-                                          'https://freecodecamp.dev/page-data/learn';
+                                      String url = await learnService
+                                          .getBaseUrl('/page-data/learn');
 
                                       model.routeToBrowserView(
                                         '$url/${block.superBlock}/${block.dashedName}/$challenge/page-data.json',
