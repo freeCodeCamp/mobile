@@ -73,7 +73,8 @@ class LearnViewModel extends BaseViewModel {
 
       await dotenv.load(fileName: '.env');
 
-      bool showAllSB = dotenv.get('SHOWALLSB').toLowerCase() == 'true';
+      bool showAllSB =
+          dotenv.get('SHOWALLSB', fallback: 'false').toLowerCase() == 'true';
 
       for (int i = 0; i < superBlocks.length; i++) {
         buttonData.add(
