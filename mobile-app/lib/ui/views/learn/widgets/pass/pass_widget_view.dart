@@ -137,7 +137,7 @@ class PassWidgetView extends StatelessWidget {
             //       ),
             const CustomAlert(
               text:
-                  'NOTE: Currently it is not possible to save your progress, this means challenges you complete will not count towards progress on the freeCodeCamp website.',
+                  "Note: We're still working on the ability to save your progress. To claim certifications, you'll need to submit your projects through freeCodeCamp's website.",
               alertType: Alert.warning,
             ),
             Expanded(
