@@ -66,7 +66,7 @@ class DrawerWidgetView extends StatelessWidget {
                     ),
                     DrawerButton(
                       component: 'LEARN',
-                      icon: Icons.local_fire_department_sharp,
+                      icon: '',
                       route: () {
                         model.routeComponent('LEARN', context);
                       },
