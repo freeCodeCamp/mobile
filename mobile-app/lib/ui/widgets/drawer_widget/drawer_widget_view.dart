@@ -58,7 +58,7 @@ class DrawerWidgetView extends StatelessWidget {
                     ),
                     buildDivider(),
                     DrawerButton(
-                      component: 'NEWS',
+                      component: 'TUTORIALS',
                       icon: Icons.forum_outlined,
                       route: () {
                         model.routeComponent('NEWS', context);
@@ -72,14 +72,14 @@ class DrawerWidgetView extends StatelessWidget {
                       },
                     ),
                     DrawerButton(
-                      component: 'PODCAST',
+                      component: 'PODCASTS',
                       icon: Icons.podcasts_outlined,
                       route: () {
                         model.routeComponent('PODCAST', context);
                       },
                     ),
                     DrawerButton(
-                      component: 'RADIO',
+                      component: 'CODE RADIO',
                       icon: Icons.radio,
                       route: () {
                         model.routeComponent('CODERADIO', context);
