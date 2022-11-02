@@ -12,9 +12,9 @@ class HomeView extends StatelessWidget {
   const HomeView({Key? key}) : super(key: key);
 
   static const titles = <Widget>[
-    Text('BOOKMARKED ARTICLES'),
-    Text('NEWSFEED'),
-    Text('SEARCH ARTICLES')
+    Text('BOOKMARKED TUTORIALS'),
+    Text('TUTORIAL FEED'),
+    Text('SEARCH TUTORIALS')
   ];
 
   static const views = <Widget>[
@@ -49,7 +49,7 @@ class HomeView extends StatelessWidget {
                 icon: Icon(
                   Icons.article_sharp,
                 ),
-                label: 'Articles'),
+                label: 'Tutorials'),
             BottomNavigationBarItem(
                 icon: Icon(
                   Icons.search_sharp,

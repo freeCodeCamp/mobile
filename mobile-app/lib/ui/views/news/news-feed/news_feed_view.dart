@@ -33,7 +33,7 @@ class NewsFeedView extends StatelessWidget {
           appBar: fromTag || fromAuthor
               ? AppBar(
                   title: Text(
-                      'Articles ${fromAuthor ? 'from' : 'about'} $subject'),
+                      'Tutorials ${fromAuthor ? 'from' : 'about'} $subject'),
                 )
               : null,
           backgroundColor: const Color(0xFF0a0a23),
@@ -65,14 +65,14 @@ class NewsFeedView extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
         const Text(
-          'There was an error loading articles ',
+          'There was an error loading tutorials',
           textAlign: TextAlign.center,
         ),
         Padding(
           padding: const EdgeInsets.all(8.0),
           child: InkWell(
             child: const Text(
-              'read articles online',
+              'read tutorials online',
               textAlign: TextAlign.center,
               style: TextStyle(color: Color.fromRGBO(0x99, 0xc9, 0xff, 1)),
             ),

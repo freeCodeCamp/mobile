@@ -10,7 +10,7 @@ class DrawerButton extends StatefulWidget {
   }) : super(key: key);
 
   final String component;
-  final IconData icon;
+  final dynamic icon;
   final Function route;
   final Color? textColor;
   @override
@@ -24,7 +24,17 @@ class _DrawerButtonState extends State<DrawerButton> {
       padding: const EdgeInsets.all(10.0),
       child: ListTile(
         dense: true,
-        leading: Icon(widget.icon, color: widget.textColor),
+        leading: widget.icon != ''
+            ? Icon(
+                widget.icon,
+                color: widget.textColor,
+              )
+            : Image.asset(
+                'assets/images/logo.png',
+                width: 30,
+                height: 30,
+                color: Colors.white,
+              ),
         title: Text(
           widget.component,
           style: TextStyle(
