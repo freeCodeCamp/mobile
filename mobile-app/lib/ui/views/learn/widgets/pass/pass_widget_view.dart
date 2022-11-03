@@ -137,31 +137,23 @@ class PassWidgetView extends StatelessWidget {
             //       ),
             const CustomAlert(
               text:
-                  'WARNING: Currently it is not possible to save your progress, this means challenges you complete will not count towards progress on the freeCodeCamp website.',
-              alertType: Alert.danger,
+                  "Note: We're still working on the ability to save your progress. To claim certifications, you'll need to submit your projects through freeCodeCamp's website.",
+              alertType: Alert.warning,
             ),
-            Expanded(
-                child: Align(
-              alignment: Alignment.bottomCenter,
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.end,
-                children: [
-                  // IconButton(
-                  //   onPressed: () {},
-                  //   icon: const Icon(Icons.share_sharp),
-                  //   padding: const EdgeInsets.all(16),
-                  // ),
-                  IconButton(
-                    onPressed: () {
-                      challengeModel.setShowPreview = true;
-                      challengeModel.setShowPanel = false;
-                    },
-                    icon: const Icon(Icons.remove_red_eye_outlined),
-                    padding: const EdgeInsets.all(16),
-                  )
-                ],
-              ),
-            ))
+            // Expanded(
+            //     child: Align(
+            //   alignment: Alignment.bottomCenter,
+            //   child: Row(
+            //     mainAxisAlignment: MainAxisAlignment.end,
+            //     children: [
+            //       // IconButton(
+            //       //   onPressed: () {},
+            //       //   icon: const Icon(Icons.share_sharp),
+            //       //   padding: const EdgeInsets.all(16),
+            //       // ),
+            //     ],
+            //   ),
+            // ))
           ],
         ),
       ),

@@ -25,7 +25,7 @@ class NewsBookmarkFeedView extends StatelessWidget {
                   ? populateListViewModel(model)
                   : const Center(
                       child: Text(
-                      'Bookmark articles to view them here',
+                      'Bookmark tutorials to view them here',
                       textAlign: TextAlign.center,
                     )),
             )));

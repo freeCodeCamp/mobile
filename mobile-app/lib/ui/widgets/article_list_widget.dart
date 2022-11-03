@@ -88,7 +88,7 @@ class ArticleListState extends State<ArticleList> {
                 ),
                 snapshot.data!.length > 5
                     ? ListTile(
-                        title: const Text('Show more articles'),
+                        title: const Text('Show more tutorials'),
                         tileColor: const Color(0xFF0a0a23),
                         trailing: const Icon(Icons.arrow_forward_ios_outlined),
                         onTap: () {

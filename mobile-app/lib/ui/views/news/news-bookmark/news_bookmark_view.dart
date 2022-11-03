@@ -22,7 +22,7 @@ class NewsBookmarkPostView extends StatelessWidget {
               child: CustomScrollView(
                 slivers: [
                   const SliverAppBar(
-                    title: Text('BOOKMARKED ARTICLE'),
+                    title: Text('BOOKMARKED TUTORIAL'),
                   ),
                   SliverAppBar(
                     pinned: true,

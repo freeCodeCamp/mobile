@@ -98,11 +98,11 @@ class CodeRadioView extends StatelessWidget {
               fit: BoxFit.cover,
             )),
         Text(
-          '${radio.totalListeners} \n Listening',
+          '${radio.totalListeners} people are listening right now',
           textAlign: TextAlign.center,
           style: const TextStyle(
               color: Color.fromRGBO(1, 1, 1, 0.5),
-              fontSize: 48,
+              fontSize: 36,
               fontWeight: FontWeight.w800),
         )
       ],

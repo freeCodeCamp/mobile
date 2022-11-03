@@ -10,6 +10,7 @@ import 'package:freecodecamp/enums/panel_type.dart';
 import 'package:freecodecamp/models/learn/challenge_model.dart';
 import 'package:freecodecamp/models/learn/curriculum_model.dart';
 import 'package:freecodecamp/service/learn_file_service.dart';
+import 'package:freecodecamp/service/learn_service.dart';
 import 'package:freecodecamp/ui/views/learn/test_runner.dart';
 import 'package:freecodecamp/ui/widgets/setup_dialog_ui.dart';
 import 'package:html/dom.dart' as dom;
@@ -79,6 +80,7 @@ class ChallengeModel extends BaseViewModel {
   final _dialogService = locator<DialogService>();
   final NavigationService _navigationService = locator<NavigationService>();
   final LearnFileService fileService = locator<LearnFileService>();
+  final LearnService learnService = locator<LearnService>();
   set setCurrentSelectedFile(String value) {
     _currentSelectedFile = value;
     notifyListeners();
@@ -338,8 +340,8 @@ class ChallengeModel extends BaseViewModel {
       String slug = block!.challenges[challengeIndex].name
           .toLowerCase()
           .replaceAll(' ', '-');
+      String url = await learnService.getBaseUrl('/page-data/learn');
 
-      String url = 'https://freecodecamp.dev/page-data/learn';
       _navigationService.replaceWith(
         Routes.challengeView,
         arguments: ChallengeViewArguments(
@@ -367,7 +369,7 @@ class ChallengeModel extends BaseViewModel {
         String challenge = block!.challenges[challengeIndex + 1].name
             .toLowerCase()
             .replaceAll(' ', '-');
-        String url = 'https://freecodecamp.dev/page-data/learn';
+        String url = await learnService.getBaseUrl('/page-data/learn');
         _navigationService.replaceWith(
           Routes.challengeView,
           arguments: ChallengeViewArguments(

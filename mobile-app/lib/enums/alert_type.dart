@@ -22,8 +22,8 @@ AlertColor returnColor(Alert alert) {
   switch (alert) {
     case Alert.warning:
       return AlertColor(
-        backgroundColor: const Color.fromRGBO(0xff, 0xf3, 0xcd, 1),
-        textColor: Colors.yellow.shade900,
+        backgroundColor: const Color.fromRGBO(0xd9, 0xed, 0xf7, 1),
+        textColor: Colors.blue.shade900,
       );
     case Alert.danger:
       return AlertColor(

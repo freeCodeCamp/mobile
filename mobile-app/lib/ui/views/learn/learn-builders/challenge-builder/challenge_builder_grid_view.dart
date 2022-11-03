@@ -1,18 +1,23 @@
 import 'package:flutter/material.dart';
+import 'package:freecodecamp/app/app.locator.dart';
 import 'package:freecodecamp/models/learn/curriculum_model.dart';
+import 'package:freecodecamp/service/learn_service.dart';
 import 'package:freecodecamp/ui/views/learn/learn-builders/challenge-builder/challenge_builder_model.dart';
 import 'package:freecodecamp/ui/widgets/drawer_widget/drawer_widget_view.dart';
 import 'package:stacked/stacked.dart';
 
+// ignore: must_be_immutable
 class ChallengeBuilderGridView extends StatelessWidget {
   final Block block;
   final bool isOpen;
 
-  const ChallengeBuilderGridView({
+  ChallengeBuilderGridView({
     Key? key,
     required this.block,
     required this.isOpen,
   }) : super(key: key);
+
+  LearnService learnService = locator<LearnService>();
 
   @override
   Widget build(BuildContext context) {
@@ -141,13 +146,13 @@ class ChallengeBuilderGridView extends StatelessWidget {
                     color: const Color(0xFF0a0a23),
                     child: InkWell(
                       onTap: block.challenges.length == 1
-                          ? () {
+                          ? () async {
                               String challenge = block.challenges[0].name
                                   .toLowerCase()
                                   .replaceAll(' ', '-')
                                   .replaceAll(RegExp(r"[@':]"), '');
-                              String url =
-                                  'https://freecodecamp.dev/page-data/learn';
+                              String url = await learnService
+                                  .getBaseUrl('/page-data/learn');
 
                               model.routeToBrowserView(
                                 '$url/${block.superBlock}/${block.dashedName}/$challenge/page-data.json',
@@ -212,13 +217,13 @@ class ChallengeBuilderGridView extends StatelessWidget {
                       height: 70,
                       width: 70,
                       child: InkWell(
-                        onTap: () {
+                        onTap: () async {
                           String challenge = block.challenges[step].name
                               .toLowerCase()
                               .replaceAll(' ', '-')
                               .replaceAll(RegExp(r"[@':]"), '');
                           String url =
-                              'https://freecodecamp.dev/page-data/learn';
+                              await learnService.getBaseUrl('/page-data/learn');
 
                           model.routeToBrowserView(
                             '$url/${block.superBlock}/${block.dashedName}/$challenge/page-data.json',
