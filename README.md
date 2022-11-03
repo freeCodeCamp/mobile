@@ -10,7 +10,7 @@
 This repository is an adaptation of the freecodecamp.org's interactive curriculum to a flutter based mobile application. The mobile app aims to enable a mobile first, offline first user experience for millions of users worldwide who have limited access to internet or a computer.
 
 ### Roadmap
-The official freeCodeCamp mobile app will features almost all our services, tutorials, podcast, code radio and not to forget learn!
+The official freeCodeCamp mobile app features almost all our services: tutorials, podcast, code radio and not to forget learn!
 
 Our mobile developers @Nirajn2311 and @Sembauke are working on these features, but we can use your help.
 We would love to hear your opinion and great ideas!
