@@ -81,7 +81,9 @@ class ChallengeView extends StatelessWidget {
                   editor.onTextChange.stream.listen((text) {
                     model.fileService.saveFileInCache(
                       challenge,
-                      model.currentSelectedFile,
+                      model.currentSelectedFile != ''
+                          ? model.currentSelectedFile
+                          : challenge.files[0].name,
                       text,
                     );
                     model.setEditorText = text;
