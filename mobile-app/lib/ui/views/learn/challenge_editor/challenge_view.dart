@@ -82,6 +82,7 @@ class ChallengeView extends StatelessWidget {
               );
               model.setEditorText = text;
               model.setCompletedChallenge = false;
+              model.setHasTypedInEditor = true;
             });
 
             SchedulerBinding.instance.addPostFrameCallback((timeStamp) {
@@ -208,18 +209,24 @@ class ChallengeView extends StatelessWidget {
             );
           }
 
-          return Row(
-            children: [
-              Expanded(
-                child: EditorViewController(
-                  options: model.defaultEditorOptions,
-                  editor: Editor(
+          return Scaffold(
+            appBar: AppBar(
+              title: const Text('Loading'),
+              automaticallyImplyLeading: false,
+            ),
+            body: Row(
+              children: [
+                Expanded(
+                  child: EditorViewController(
                     options: model.defaultEditorOptions,
-                    language: 'HTML',
+                    editor: Editor(
+                      options: model.defaultEditorOptions,
+                      language: 'HTML',
+                    ),
                   ),
                 ),
-              ),
-            ],
+              ],
+            ),
           );
         },
       ),
@@ -232,12 +239,6 @@ class ChallengeView extends StatelessWidget {
     Editor editor,
     BuildContext context,
   ) {
-    if (model.testController != null) {
-      editor.onTextChange.stream.listen((event) {
-        model.setHasTypedInEditor = true;
-      });
-    }
-
     return BottomAppBar(
       color: const Color(0xFF0a0a23),
       child: Row(
@@ -365,7 +366,6 @@ class ChallengeView extends StatelessWidget {
                                 model.block!.challenges.length,
                                 challengesCompleted,
                               );
-                              return;
                             }
 
                             model.setIsRunningTests = true;
