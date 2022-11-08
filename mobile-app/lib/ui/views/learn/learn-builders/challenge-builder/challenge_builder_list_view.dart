@@ -31,81 +31,108 @@ class ChallengeBuilderListView extends StatelessWidget {
               shrinkWrap: true,
               physics: const ClampingScrollPhysics(),
               children: [
-                Padding(
-                  padding: const EdgeInsets.all(16.0),
-                  child: Text(
-                    block.blockName,
-                    maxLines: 2,
-                    overflow: TextOverflow.ellipsis,
-                    style: const TextStyle(
-                        fontWeight: FontWeight.bold, fontSize: 22),
-                  ),
-                ),
-                buildDivider(),
-                ListTile(
-                  tileColor: const Color(0xFF0a0a23),
-                  leading: Icon(model.isOpen
-                      ? Icons.arrow_drop_down_sharp
-                      : Icons.arrow_right_sharp),
-                  title:
-                      Text(model.isOpen ? 'Collapse course' : 'Expand course'),
-                  trailing: Text(
-                    '${model.challengesCompleted}/${block.challenges.length}',
-                    style: const TextStyle(fontWeight: FontWeight.bold),
-                  ),
-                  onTap: () {
-                    model.setBlockOpenState(
-                      block.blockName,
-                      model.isOpen,
-                    );
-                  },
-                ),
-                model.isOpen
-                    ? Column(
-                        children: [
-                          for (String blockString in block.description)
-                            Padding(
-                              padding: const EdgeInsets.symmetric(
-                                  vertical: 8, horizontal: 16),
-                              child: Text(
-                                blockString,
-                                style: TextStyle(
-                                    fontSize: 18,
-                                    fontWeight: FontWeight.w600,
-                                    height: 1.2,
-                                    fontFamily: 'Lato',
-                                    color: Colors.white.withOpacity(0.87)),
-                              ),
-                            ),
-                          buildDivider(),
-                          ListView.builder(
-                              shrinkWrap: true,
-                              itemCount: block.challenges.length,
-                              physics: const ClampingScrollPhysics(),
-                              itemBuilder: (context, i) => ListTile(
-                                    leading: model.getIcon(
-                                        model.completedChallenge(
-                                            block.challenges[i].id)),
-                                    title: Text(block.challenges[i].name),
-                                    onTap: () async {
-                                      String challenge = block
-                                          .challenges[i].name
-                                          .toLowerCase()
-                                          .replaceAll(' ', '-')
-                                          .replaceAll(RegExp(r"[@':]"), '');
-                                      String url = await learnService
-                                          .getBaseUrl('/page-data/learn');
-
-                                      model.routeToBrowserView(
-                                        '$url/${block.superBlock}/${block.dashedName}/$challenge/page-data.json',
-                                        block,
-                                      );
-                                    },
-                                  )),
-                        ],
-                      )
-                    : Container()
+                if (block.dashedName != 'es6')
+                  BlockWidget(
+                    block: block,
+                    learnService: learnService,
+                    model: model,
+                  )
               ],
             )));
+  }
+}
+
+class BlockWidget extends StatelessWidget {
+  const BlockWidget(
+      {Key? key,
+      required this.block,
+      required this.learnService,
+      required this.model})
+      : super(key: key);
+
+  final Block block;
+  final LearnService learnService;
+  final ChallengeBuilderModel model;
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      children: [
+        Padding(
+          padding: const EdgeInsets.all(16.0),
+          child: Text(
+            block.blockName,
+            maxLines: 2,
+            overflow: TextOverflow.ellipsis,
+            style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 22),
+          ),
+        ),
+        buildDivider(),
+        ListTile(
+          tileColor: const Color(0xFF0a0a23),
+          leading: Icon(model.isOpen
+              ? Icons.arrow_drop_down_sharp
+              : Icons.arrow_right_sharp),
+          title: Text(model.isOpen ? 'Collapse course' : 'Expand course'),
+          trailing: Text(
+            '${model.challengesCompleted}/${block.challenges.length}',
+            style: const TextStyle(fontWeight: FontWeight.bold),
+          ),
+          onTap: () {
+            model.setBlockOpenState(
+              block.blockName,
+              model.isOpen,
+            );
+          },
+        ),
+        model.isOpen
+            ? Column(
+                children: [
+                  for (String blockString in block.description)
+                    Padding(
+                      padding: const EdgeInsets.symmetric(
+                          vertical: 8, horizontal: 16),
+                      child: Text(
+                        blockString,
+                        style: TextStyle(
+                            fontSize: 18,
+                            fontWeight: FontWeight.w600,
+                            height: 1.2,
+                            fontFamily: 'Lato',
+                            color: Colors.white.withOpacity(0.87)),
+                      ),
+                    ),
+                  buildDivider(),
+                  ListView.builder(
+                      shrinkWrap: true,
+                      itemCount: block.challenges.length,
+                      physics: const ClampingScrollPhysics(),
+                      itemBuilder: (context, i) => ListTile(
+                            leading: model.getIcon(
+                              model.completedChallenge(
+                                block.challenges[i].id,
+                              ),
+                            ),
+                            title: Text(block.challenges[i].name),
+                            onTap: () async {
+                              String challenge = block.challenges[i].name
+                                  .toLowerCase()
+                                  .replaceAll(' ', '-')
+                                  .replaceAll(RegExp(r"[@':]"), '');
+                              String url = await learnService.getBaseUrl(
+                                '/page-data/learn',
+                              );
+
+                              model.routeToBrowserView(
+                                '$url/${block.superBlock}/${block.dashedName}/$challenge/page-data.json',
+                                block,
+                              );
+                            },
+                          )),
+                ],
+              )
+            : Container(),
+      ],
+    );
   }
 }

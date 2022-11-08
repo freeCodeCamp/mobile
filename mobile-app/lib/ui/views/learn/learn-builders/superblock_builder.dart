@@ -54,7 +54,9 @@ class SuperBlockView extends StatelessWidget {
                 ? 50
                 : superBlock.blocks[i].isStepBased
                     ? 3
-                    : 50,
+                    : superBlock.blocks[i].dashedName == 'es6'
+                        ? 0
+                        : 50,
             color: const Color.fromRGBO(0, 0, 0, 0),
           ),
           shrinkWrap: true,
@@ -69,7 +71,6 @@ class SuperBlockView extends StatelessWidget {
             child: BlockBuilderView(
               key: ObjectKey(superBlock.blocks[i].dashedName),
               block: superBlock.blocks[i],
-              
             ),
           ),
         ),
