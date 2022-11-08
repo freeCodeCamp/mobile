@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'package:flutter_code_editor/editor/editor.dart';
 import 'package:flutter_code_editor/enums/syntax.dart';
+import 'package:flutter_code_editor/models/editor_options.dart';
 import 'package:freecodecamp/app/app.locator.dart';
 import 'package:freecodecamp/app/app.router.dart';
 import 'package:freecodecamp/enums/challenge_test_state_type.dart';
@@ -76,6 +77,13 @@ class ChallengeModel extends BaseViewModel {
 
   int _challengesCompleted = 0;
   int get challengesCompleted => _challengesCompleted;
+
+  EditorOptions defaultEditorOptions = EditorOptions(
+    useFileExplorer: false,
+    canCloseFiles: false,
+    showAppBar: false,
+    showTabBar: false,
+  );
 
   final _dialogService = locator<DialogService>();
   final NavigationService _navigationService = locator<NavigationService>();
