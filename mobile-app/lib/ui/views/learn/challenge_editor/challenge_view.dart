@@ -127,17 +127,23 @@ class ChallengeView extends StatelessWidget {
                                     decoration: model.showPreview
                                         ? const BoxDecoration(
                                             border: Border(
-                                                bottom: BorderSide(
-                                                    width: 4,
-                                                    color: Colors.blue)))
+                                              bottom: BorderSide(
+                                                width: 4,
+                                                color: Colors.blue,
+                                              ),
+                                            ),
+                                          )
                                         : null,
                                     child: Container(
                                       decoration: model.showConsole
                                           ? const BoxDecoration(
                                               border: Border(
-                                                  bottom: BorderSide(
-                                                      width: 4,
-                                                      color: Colors.blue)))
+                                                bottom: BorderSide(
+                                                  width: 4,
+                                                  color: Colors.blue,
+                                                ),
+                                              ),
+                                            )
                                           : null,
                                       child: ElevatedButton(
                                         child: const Text('Preview'),
@@ -147,12 +153,13 @@ class ChallengeView extends StatelessWidget {
                                   )),
                                 if (model.showPreview)
                                   Expanded(
-                                      child: ElevatedButton(
-                                    child: const Text('Console'),
-                                    onPressed: () {
-                                      model.consoleSnackbar();
-                                    },
-                                  )),
+                                    child: ElevatedButton(
+                                      child: const Text('Console'),
+                                      onPressed: () {
+                                        model.consoleSnackbar();
+                                      },
+                                    ),
+                                  ),
                                 if (!model.showPreview)
                                   if (challenge.files.length > 1)
                                     for (ChallengeFile file in challenge.files)
@@ -166,45 +173,43 @@ class ChallengeView extends StatelessWidget {
                             )
                           : null,
                       bottomNavigationBar: Padding(
-                          padding: EdgeInsets.only(
-                              bottom: MediaQuery.of(context).viewInsets.bottom),
-                          child: customBottomBar(
-                            model,
-                            challenge,
-                            editor,
-                            context,
-                            maxChallenges,
-                            challengesCompleted,
-                          )),
+                        padding: EdgeInsets.only(
+                          bottom: MediaQuery.of(context).viewInsets.bottom,
+                        ),
+                        child: customBottomBar(
+                          model,
+                          challenge,
+                          editor,
+                          context,
+                          maxChallenges,
+                          challengesCompleted,
+                        ),
+                      ),
                       body: !model.showPreview
                           ? Column(
                               children: [
-                                model.showPanel && !keyBoardIsActive
-                                    ? DynamicPanel(
-                                        challenge: challenge,
-                                        model: model,
-                                        panel: model.panelType,
-                                        maxChallenges: maxChallenges,
-                                        challengesCompleted:
-                                            challengesCompleted,
-                                        editor: editor,
-                                      )
-                                    : Container(),
+                                if (model.showPanel && !keyBoardIsActive)
+                                  DynamicPanel(
+                                    challenge: challenge,
+                                    model: model,
+                                    panel: model.panelType,
+                                    maxChallenges: maxChallenges,
+                                    challengesCompleted: challengesCompleted,
+                                    editor: editor,
+                                  ),
                                 Expanded(child: editor)
                               ],
                             )
                           : Column(
                               children: [
-                                model.showPanel && !keyBoardIsActive
-                                    ? DynamicPanel(
-                                        challenge: challenge,
-                                        model: model,
-                                        panel: model.panelType,
-                                        maxChallenges: maxChallenges,
-                                        challengesCompleted:
-                                            challengesCompleted,
-                                        editor: editor)
-                                    : Container(),
+                                if (model.showPanel && !keyBoardIsActive)
+                                  DynamicPanel(
+                                      challenge: challenge,
+                                      model: model,
+                                      panel: model.panelType,
+                                      maxChallenges: maxChallenges,
+                                      challengesCompleted: challengesCompleted,
+                                      editor: editor),
                                 Expanded(
                                   child: WebView(
                                     userAgent: 'random',
@@ -397,13 +402,17 @@ class ChallengeView extends StatelessWidget {
                             if (model.showPanel &&
                                 model.panelType == PanelType.pass) {
                               model.goToNextChallenge(
-                                  maxChallenges, challengesCompleted);
+                                maxChallenges,
+                                challengesCompleted,
+                              );
                               return;
                             }
 
                             model.setIsRunningTests = true;
-                            await model.runner.setWebViewContent(challenge,
-                                webviewController: model.testController!);
+                            await model.runner.setWebViewContent(
+                              challenge,
+                              webviewController: model.testController!,
+                            );
                             FocusManager.instance.primaryFocus?.unfocus();
                           }
                         : null,
