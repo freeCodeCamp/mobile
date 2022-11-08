@@ -33,204 +33,197 @@ class ChallengeView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return ViewModelBuilder<ChallengeModel>.reactive(
-        viewModelBuilder: () => ChallengeModel(),
-        onModelReady: (model) => {model.init(url, block, challengesCompleted)},
-        builder: (context, model, child) => FutureBuilder<Challenge?>(
-              future: model.challenge,
-              builder: (context, snapshot) {
-                if (snapshot.hasData) {
-                  Challenge challenge = snapshot.data!;
+      viewModelBuilder: () => ChallengeModel(),
+      onModelReady: (model) {
+        model.init(url, block, challengesCompleted);
+      },
+      builder: (context, model, child) => FutureBuilder<Challenge?>(
+        future: model.challenge,
+        builder: (context, snapshot) {
+          if (snapshot.hasData) {
+            Challenge challenge = snapshot.data!;
 
-                  int maxChallenges = block.challenges.length;
-                  ChallengeFile currFile = model.currentFile(challenge);
+            int maxChallenges = block.challenges.length;
+            ChallengeFile currFile = model.currentFile(challenge);
 
-                  bool keyBoardIsActive = MediaQuery.of(
-                        context,
-                      ).viewInsets.bottom !=
-                      0;
+            bool keyboard = MediaQuery.of(context).viewInsets.bottom != 0;
 
-                  bool editableRegion =
-                      currFile.editableRegionBoundaries.isNotEmpty;
-                  EditorOptions options = EditorOptions(
-                    hasEditableRegion: editableRegion,
-                    useFileExplorer: false,
-                    canCloseFiles: false,
-                    showAppBar: false,
-                    showTabBar: false,
-                  );
+            bool editableRegion = currFile.editableRegionBoundaries.isNotEmpty;
+            EditorOptions options = EditorOptions(
+              hasEditableRegion: editableRegion,
+              useFileExplorer: false,
+              canCloseFiles: false,
+              showAppBar: false,
+              showTabBar: false,
+            );
 
-                  Editor editor = Editor(
-                    regionStart: editableRegion
-                        ? currFile.editableRegionBoundaries[0]
-                        : null,
-                    regionEnd: editableRegion
-                        ? currFile.editableRegionBoundaries[1]
-                        : null,
-                    condition: model.completedChallenge,
-                    language: currFile.ext.name.toUpperCase(),
-                    options: options,
-                    openedFile: FileIDE(
-                      fileExplorer: null,
-                      fileName: currFile.name,
-                      filePath: '',
-                      fileContent: model.editorText ?? currFile.contents,
-                      parentDirectory: '',
-                    ),
-                  );
+            Editor editor = Editor(
+              regionStart:
+                  editableRegion ? currFile.editableRegionBoundaries[0] : null,
+              regionEnd:
+                  editableRegion ? currFile.editableRegionBoundaries[1] : null,
+              condition: model.completedChallenge,
+              language: currFile.ext.name.toUpperCase(),
+              options: options,
+              openedFile: FileIDE(
+                fileExplorer: null,
+                fileName: currFile.name,
+                filePath: '',
+                fileContent: model.editorText ?? currFile.contents,
+                parentDirectory: '',
+              ),
+            );
 
-                  editor.onTextChange.stream.listen((text) {
-                    model.fileService.saveFileInCache(
-                      challenge,
-                      model.currentSelectedFile,
-                      text,
-                    );
-                    model.setEditorText = text;
-                    model.setCompletedChallenge = false;
-                  });
+            editor.onTextChange.stream.listen((text) {
+              model.fileService.saveFileInCache(
+                challenge,
+                model.currentSelectedFile,
+                text,
+              );
+              model.setEditorText = text;
+              model.setCompletedChallenge = false;
+            });
 
-                  SchedulerBinding.instance.addPostFrameCallback((timeStamp) {
-                    if (keyBoardIsActive && !model.showPanel) {
-                      if (model.hideAppBar) {
-                        model.setHideAppBar = false;
-                      }
-                    } else if (keyBoardIsActive && model.showPanel) {
-                      if (model.hideAppBar) {
-                        model.setHideAppBar = false;
-                      }
-                    } else if (!keyBoardIsActive && model.showPanel) {
-                      if (!model.hideAppBar) {
-                        model.setHideAppBar = true;
-                      }
-                    } else {
-                      if (model.hideAppBar) {
-                        model.setHideAppBar = false;
-                      }
-                    }
-                  });
-
-                  return Scaffold(
-                    appBar: !model.hideAppBar
-                        ? AppBar(
-                            automaticallyImplyLeading: false,
-                            title: challenge.files.length == 1
-                                ? const Text('Editor')
-                                : null,
-                            actions: [
-                              if (model.showPreview)
-                                Expanded(
-                                    child: Container(
-                                  decoration: model.showPreview
-                                      ? const BoxDecoration(
-                                          border: Border(
-                                            bottom: BorderSide(
-                                              width: 4,
-                                              color: Colors.blue,
-                                            ),
-                                          ),
-                                        )
-                                      : null,
-                                  child: Container(
-                                    decoration: model.showConsole
-                                        ? const BoxDecoration(
-                                            border: Border(
-                                              bottom: BorderSide(
-                                                width: 4,
-                                                color: Colors.blue,
-                                              ),
-                                            ),
-                                          )
-                                        : null,
-                                    child: ElevatedButton(
-                                      child: const Text('Preview'),
-                                      onPressed: () {},
-                                    ),
-                                  ),
-                                )),
-                              if (model.showPreview)
-                                Expanded(
-                                  child: ElevatedButton(
-                                    child: const Text('Console'),
-                                    onPressed: () {
-                                      model.consoleSnackbar();
-                                    },
-                                  ),
-                                ),
-                              if (!model.showPreview &&
-                                  challenge.files.length > 1)
-                                for (ChallengeFile file in challenge.files)
-                                  CustomTabBar(
-                                    challenge: challenge,
-                                    file: file,
-                                    editor: editor,
-                                    model: model,
-                                  )
-                            ],
-                          )
-                        : null,
-                    bottomNavigationBar: Padding(
-                      padding: EdgeInsets.only(
-                        bottom: MediaQuery.of(context).viewInsets.bottom,
-                      ),
-                      child: customBottomBar(
-                        model,
-                        challenge,
-                        editor,
-                        context,
-                        maxChallenges,
-                        challengesCompleted,
-                      ),
-                    ),
-                    body: !model.showPreview
-                        ? Column(
-                            children: [
-                              if (model.showPanel && !keyBoardIsActive)
-                                DynamicPanel(
-                                  challenge: challenge,
-                                  model: model,
-                                  panel: model.panelType,
-                                  maxChallenges: maxChallenges,
-                                  challengesCompleted: challengesCompleted,
-                                  editor: editor,
-                                ),
-                              Expanded(child: editor)
-                            ],
-                          )
-                        : Column(
-                            children: [
-                              if (model.showPanel && !keyBoardIsActive)
-                                DynamicPanel(
-                                  challenge: challenge,
-                                  model: model,
-                                  panel: model.panelType,
-                                  maxChallenges: maxChallenges,
-                                  challengesCompleted: challengesCompleted,
-                                  editor: editor,
-                                ),
-                              ProjectPreview(
-                                challenge: challenge,
-                                model: model,
-                              ),
-                            ],
-                          ),
-                  );
+            SchedulerBinding.instance.addPostFrameCallback((timeStamp) {
+              if (keyboard && !model.showPanel) {
+                if (model.hideAppBar) {
+                  model.setHideAppBar = false;
                 }
+              } else if (keyboard && model.showPanel) {
+                if (model.hideAppBar) {
+                  model.setHideAppBar = false;
+                }
+              } else if (!keyboard && model.showPanel) {
+                if (!model.hideAppBar) {
+                  model.setHideAppBar = true;
+                }
+              } else {
+                if (model.hideAppBar) {
+                  model.setHideAppBar = false;
+                }
+              }
+            });
 
-                return Row(
-                  children: [
-                    Expanded(
-                      child: EditorViewController(
-                        options: model.defaultEditorOptions,
-                        editor: Editor(
-                          options: model.defaultEditorOptions,
-                          language: 'HTML',
-                          condition: model.completedChallenge,
+            return Scaffold(
+              appBar: !model.hideAppBar
+                  ? AppBar(
+                      automaticallyImplyLeading: false,
+                      title: challenge.files.length == 1
+                          ? const Text('Editor')
+                          : null,
+                      actions: [
+                        if (model.showPreview)
+                          Expanded(
+                              child: Container(
+                            decoration: model.showPreview
+                                ? const BoxDecoration(
+                                    border: Border(
+                                      bottom: BorderSide(
+                                        width: 4,
+                                        color: Colors.blue,
+                                      ),
+                                    ),
+                                  )
+                                : null,
+                            child: Container(
+                              decoration: model.showConsole
+                                  ? const BoxDecoration(
+                                      border: Border(
+                                        bottom: BorderSide(
+                                          width: 4,
+                                          color: Colors.blue,
+                                        ),
+                                      ),
+                                    )
+                                  : null,
+                              child: ElevatedButton(
+                                child: const Text('Preview'),
+                                onPressed: () {},
+                              ),
+                            ),
+                          )),
+                        if (model.showPreview)
+                          Expanded(
+                            child: ElevatedButton(
+                              child: const Text('Console'),
+                              onPressed: () {
+                                model.consoleSnackbar();
+                              },
+                            ),
+                          ),
+                        if (!model.showPreview && challenge.files.length > 1)
+                          for (ChallengeFile file in challenge.files)
+                            CustomTabBar(
+                              challenge: challenge,
+                              file: file,
+                              editor: editor,
+                              model: model,
+                            )
+                      ],
+                    )
+                  : null,
+              bottomNavigationBar: Padding(
+                padding: EdgeInsets.only(
+                  bottom: MediaQuery.of(context).viewInsets.bottom,
+                ),
+                child: customBottomBar(
+                  model,
+                  challenge,
+                  editor,
+                  context,
+                ),
+              ),
+              body: !model.showPreview
+                  ? Column(
+                      children: [
+                        if (model.showPanel && !keyboard)
+                          DynamicPanel(
+                            challenge: challenge,
+                            model: model,
+                            panel: model.panelType,
+                            maxChallenges: maxChallenges,
+                            challengesCompleted: challengesCompleted,
+                            editor: editor,
+                          ),
+                        Expanded(child: editor)
+                      ],
+                    )
+                  : Column(
+                      children: [
+                        if (model.showPanel && !keyboard)
+                          DynamicPanel(
+                            challenge: challenge,
+                            model: model,
+                            panel: model.panelType,
+                            maxChallenges: maxChallenges,
+                            challengesCompleted: challengesCompleted,
+                            editor: editor,
+                          ),
+                        ProjectPreview(
+                          challenge: challenge,
+                          model: model,
                         ),
-                      ),
+                      ],
                     ),
-                  ],
-                );
-              },
-            ));
+            );
+          }
+
+          return Row(
+            children: [
+              Expanded(
+                child: EditorViewController(
+                  options: model.defaultEditorOptions,
+                  editor: Editor(
+                    options: model.defaultEditorOptions,
+                    language: 'HTML',
+                  ),
+                ),
+              ),
+            ],
+          );
+        },
+      ),
+    );
   }
 
   Widget customBottomBar(
@@ -238,8 +231,6 @@ class ChallengeView extends StatelessWidget {
     Challenge challenge,
     Editor editor,
     BuildContext context,
-    int maxChallenges,
-    int challengesCompleted,
   ) {
     if (model.testController != null) {
       editor.onTextChange.stream.listen((event) {
@@ -371,7 +362,7 @@ class ChallengeView extends StatelessWidget {
                             if (model.showPanel &&
                                 model.panelType == PanelType.pass) {
                               model.goToNextChallenge(
-                                maxChallenges,
+                                model.block!.challenges.length,
                                 challengesCompleted,
                               );
                               return;
