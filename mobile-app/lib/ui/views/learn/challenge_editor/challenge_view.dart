@@ -105,6 +105,15 @@ class ChallengeView extends StatelessWidget {
               }
             });
 
+            BoxDecoration decoration = const BoxDecoration(
+              border: Border(
+                bottom: BorderSide(
+                  width: 4,
+                  color: Colors.blue,
+                ),
+              ),
+            );
+
             return Scaffold(
               appBar: !model.hideAppBar
                   ? AppBar(
@@ -116,30 +125,12 @@ class ChallengeView extends StatelessWidget {
                         if (model.showPreview)
                           Expanded(
                               child: Container(
-                            decoration: model.showPreview
-                                ? const BoxDecoration(
-                                    border: Border(
-                                      bottom: BorderSide(
-                                        width: 4,
-                                        color: Colors.blue,
-                                      ),
-                                    ),
-                                  )
-                                : null,
+                            decoration: model.showPreview ? decoration : null,
                             child: Container(
-                              decoration: model.showConsole
-                                  ? const BoxDecoration(
-                                      border: Border(
-                                        bottom: BorderSide(
-                                          width: 4,
-                                          color: Colors.blue,
-                                        ),
-                                      ),
-                                    )
-                                  : null,
-                              child: ElevatedButton(
-                                child: const Text('Preview'),
-                                onPressed: () {},
+                              decoration: model.showConsole ? decoration : null,
+                              child: const ElevatedButton(
+                                onPressed: null,
+                                child: Text('Preview'),
                               ),
                             ),
                           )),
@@ -274,14 +265,14 @@ class ChallengeView extends StatelessWidget {
             margin: const EdgeInsets.all(8),
             color: model.showPanel && model.panelType == PanelType.instruction
                 ? Colors.white
-                : const Color.fromRGBO(0x2A, 0x2A, 0x40, 1),
+                : const Color.fromRGBO(0x3B, 0x3B, 0x4F, 1),
             child: IconButton(
               icon: FaIcon(
                 FontAwesomeIcons.info,
                 size: 32,
                 color:
                     model.showPanel && model.panelType == PanelType.instruction
-                        ? const Color.fromRGBO(0x2A, 0x2A, 0x40, 1)
+                        ? const Color.fromRGBO(0x3B, 0x3B, 0x4F, 1)
                         : Colors.white,
               ),
               onPressed: () {
@@ -309,14 +300,14 @@ class ChallengeView extends StatelessWidget {
           Container(
             margin: const EdgeInsets.all(8),
             color: !model.showPreview
-                ? const Color.fromRGBO(0x2A, 0x2A, 0x40, 1)
+                ? const Color.fromRGBO(0x3B, 0x3B, 0x4F, 1)
                 : Colors.white,
             child: IconButton(
               icon: Icon(
                 Icons.remove_red_eye_outlined,
                 size: 32,
                 color: model.showPreview
-                    ? const Color.fromRGBO(0x2A, 0x2A, 0x40, 1)
+                    ? const Color.fromRGBO(0x3B, 0x3B, 0x4F, 1)
                     : Colors.white,
               ),
               onPressed: () async {
