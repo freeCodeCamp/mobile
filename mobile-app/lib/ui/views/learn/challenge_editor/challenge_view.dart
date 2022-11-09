@@ -102,6 +102,7 @@ class ChallengeView extends StatelessWidget {
                 text,
               );
               model.setEditorText = text;
+              model.setHasTypedInEditor = true;
               model.setCompletedChallenge = false;
             });
 
