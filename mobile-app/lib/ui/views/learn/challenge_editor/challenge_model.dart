@@ -313,8 +313,9 @@ class ChallengeModel extends BaseViewModel {
 
   ChallengeFile currentFile(Challenge challenge) {
     if (currentSelectedFile.isNotEmpty) {
-      ChallengeFile file = challenge.files
-          .firstWhere((file) => file.name == currentSelectedFile);
+      ChallengeFile file = challenge.files.firstWhere(
+        (file) => file.name == currentSelectedFile,
+      );
       return file;
     }
 
