@@ -187,7 +187,9 @@ class ChallengeModel extends BaseViewModel {
     if (editorText == null) {
       String text = await fileService.getExactFileFromCache(
         challenge,
-        currentEditedChallenge[0],
+        currentEditedChallenge.isEmpty
+            ? challenge.files.first
+            : currentEditedChallenge.first,
       );
 
       if (text != '') {
@@ -197,7 +199,9 @@ class ChallengeModel extends BaseViewModel {
 
     setBlock = block;
     setChallengesCompleted = challengesCompleted;
-    setCurrentSelectedFile = currentEditedChallenge[0].name;
+    setCurrentSelectedFile = currentEditedChallenge.isEmpty
+        ? challenge.files[0].name
+        : currentEditedChallenge[0].name;
   }
 
   // When the content in the editor is changed, save it to the cache. This prevents
@@ -317,8 +321,9 @@ class ChallengeModel extends BaseViewModel {
 
   ChallengeFile currentFile(Challenge challenge) {
     if (currentSelectedFile.isNotEmpty) {
-      ChallengeFile file = challenge.files
-          .firstWhere((file) => file.name == currentSelectedFile);
+      ChallengeFile file = challenge.files.firstWhere(
+        (file) => file.name == currentSelectedFile,
+      );
       return file;
     }
 

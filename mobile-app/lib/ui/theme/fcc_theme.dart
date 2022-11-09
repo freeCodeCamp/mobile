@@ -21,7 +21,7 @@ class FccTheme {
     textButtonTheme: TextButtonThemeData(
       style: ButtonStyle(
         backgroundColor: MaterialStateProperty.resolveWith(
-            (states) => const Color(0xFF0a0a23)),
+            (states) => const Color.fromRGBO(0x3b, 0x3b, 0x4f, 1)),
         foregroundColor:
             MaterialStateProperty.resolveWith((states) => Colors.white),
         overlayColor: MaterialStateProperty.resolveWith(
@@ -36,8 +36,9 @@ class FccTheme {
         surface: Colors.white),
     errorColor: Colors.red,
     primaryColorDark: const Color(0xFF0a0a23),
-    primaryIconTheme:
-        ThemeData.dark().primaryIconTheme.copyWith(color: Colors.orange),
+    primaryIconTheme: ThemeData.dark().primaryIconTheme.copyWith(
+          color: Colors.orange,
+        ),
     textSelectionTheme: const TextSelectionThemeData(
       cursorColor: Color.fromRGBO(66, 133, 244, 1.0),
       selectionHandleColor: Color.fromARGB(255, 255, 255, 255),
