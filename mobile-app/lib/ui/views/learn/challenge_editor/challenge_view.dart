@@ -128,9 +128,9 @@ class ChallengeView extends StatelessWidget {
                             decoration: model.showPreview ? decoration : null,
                             child: Container(
                               decoration: model.showConsole ? decoration : null,
-                              child: const ElevatedButton(
-                                onPressed: null,
-                                child: Text('Preview'),
+                              child: ElevatedButton(
+                                onPressed: () {},
+                                child: const Text('Preview'),
                               ),
                             ),
                           )),
