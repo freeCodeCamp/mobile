@@ -103,6 +103,7 @@ class ChallengeView extends StatelessWidget {
               );
               model.setEditorText = text;
               model.setHasTypedInEditor = true;
+              model.setCompletedChallenge = false;
             });
 
             BoxDecoration decoration = const BoxDecoration(
