@@ -33,236 +33,196 @@ class ChallengeView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return ViewModelBuilder<ChallengeModel>.reactive(
-        viewModelBuilder: () => ChallengeModel(),
-        onModelReady: (model) => {model.init(url, block, challengesCompleted)},
-        builder: (context, model, child) => FutureBuilder<Challenge?>(
-              future: model.challenge,
-              builder: (context, snapshot) {
-                if (snapshot.hasData) {
-                  Challenge challenge = snapshot.data!;
+      viewModelBuilder: () => ChallengeModel(),
+      onModelReady: (model) {
+        model.init(url, block, challengesCompleted);
+      },
+      builder: (context, model, child) => FutureBuilder<Challenge?>(
+        future: model.challenge,
+        builder: (context, snapshot) {
+          if (snapshot.hasData) {
+            Challenge challenge = snapshot.data!;
 
-                  int maxChallenges = block.challenges.length;
-                  ChallengeFile currFile = model.currentFile(challenge);
+            int maxChallenges = block.challenges.length;
+            ChallengeFile currFile = model.currentFile(challenge);
 
-                  bool keyBoardIsActive = MediaQuery.of(
-                        context,
-                      ).viewInsets.bottom !=
-                      0;
+            bool keyboard = MediaQuery.of(context).viewInsets.bottom != 0;
 
-                  bool editableRegion =
-                      currFile.editableRegionBoundaries.isNotEmpty;
+            bool editableRegion = currFile.editableRegionBoundaries.isNotEmpty;
+            EditorOptions options = EditorOptions(
+              hasEditableRegion: editableRegion,
+              useFileExplorer: false,
+              canCloseFiles: false,
+              showAppBar: false,
+              showTabBar: false,
+            );
 
-                  EditorOptions options = EditorOptions(
-                    hasEditableRegion: editableRegion,
-                    useFileExplorer: false,
-                    canCloseFiles: false,
-                    showAppBar: false,
-                    showTabBar: false,
-                  );
+            Editor editor = Editor(
+              regionStart:
+                  editableRegion ? currFile.editableRegionBoundaries[0] : null,
+              regionEnd:
+                  editableRegion ? currFile.editableRegionBoundaries[1] : null,
+              condition: model.completedChallenge,
+              language: currFile.ext.name.toUpperCase(),
+              options: options,
+              openedFile: FileIDE(
+                fileExplorer: null,
+                fileName: currFile.name,
+                filePath: '',
+                fileContent: model.editorText ?? currFile.contents,
+                parentDirectory: '',
+              ),
+            );
 
-                  Editor editor = Editor(
-                    regionStart: editableRegion
-                        ? currFile.editableRegionBoundaries[0]
-                        : null,
-                    regionEnd: editableRegion
-                        ? currFile.editableRegionBoundaries[1]
-                        : null,
-                    condition: model.completedChallenge,
-                    language: currFile.ext.name.toUpperCase(),
-                    options: options,
-                    openedFile: FileIDE(
-                        fileExplorer: null,
-                        fileName: currFile.name,
-                        filePath: '',
-                        fileContent: model.editorText ?? currFile.contents,
-                        parentDirectory: ''),
-                  );
-
-                  editor.onTextChange.stream.listen((text) {
-                    model.fileService.saveFileInCache(
-                      challenge,
-                      model.currentSelectedFile != ''
-                          ? model.currentSelectedFile
-                          : challenge.files[0].name,
-                      text,
-                    );
-                    model.setEditorText = text;
-                    model.setCompletedChallenge = false;
-                  });
-
-                  SchedulerBinding.instance.addPostFrameCallback((timeStamp) {
-                    if (keyBoardIsActive && !model.showPanel) {
-                      if (model.hideAppBar) {
-                        model.setHideAppBar = false;
-                      }
-                    } else if (keyBoardIsActive && model.showPanel) {
-                      if (model.hideAppBar) {
-                        model.setHideAppBar = false;
-                      }
-                    } else if (!keyBoardIsActive && model.showPanel) {
-                      if (!model.hideAppBar) {
-                        model.setHideAppBar = true;
-                      }
-                    } else {
-                      if (model.hideAppBar) {
-                        model.setHideAppBar = false;
-                      }
-                    }
-                  });
-                  // ignore: unused_local_variable
-                  EditorViewController controller = EditorViewController(
-                    options: options,
-                    editor: editor,
-                  );
-
-                  return Scaffold(
-                      backgroundColor:
-                          const Color.fromRGBO(0x1b, 0x1b, 0x32, 1),
-                      appBar: !model.hideAppBar
-                          ? AppBar(
-                              automaticallyImplyLeading: false,
-                              title: challenge.files.length == 1
-                                  ? const Text('Editor')
-                                  : null,
-                              actions: [
-                                if (model.showPreview)
-                                  Expanded(
-                                      child: Container(
-                                    decoration: model.showPreview
-                                        ? const BoxDecoration(
-                                            border: Border(
-                                                bottom: BorderSide(
-                                                    width: 4,
-                                                    color: Colors.blue)))
-                                        : null,
-                                    child: Container(
-                                      decoration: model.showConsole
-                                          ? const BoxDecoration(
-                                              border: Border(
-                                                  bottom: BorderSide(
-                                                      width: 4,
-                                                      color: Colors.blue)))
-                                          : null,
-                                      child: ElevatedButton(
-                                        child: const Text('Preview'),
-                                        onPressed: () {},
-                                      ),
-                                    ),
-                                  )),
-                                if (model.showPreview)
-                                  Expanded(
-                                      child: ElevatedButton(
-                                    child: const Text('Console'),
-                                    onPressed: () {
-                                      model.consoleSnackbar();
-                                    },
-                                  )),
-                                if (!model.showPreview)
-                                  if (challenge.files.length > 1)
-                                    for (ChallengeFile file in challenge.files)
-                                      CustomTabBar(
-                                        challenge: challenge,
-                                        file: file,
-                                        editor: editor,
-                                        model: model,
-                                      )
-                              ],
-                            )
-                          : null,
-                      bottomNavigationBar: Padding(
-                          padding: EdgeInsets.only(
-                              bottom: MediaQuery.of(context).viewInsets.bottom),
-                          child: customBottomBar(
-                            model,
-                            challenge,
-                            editor,
-                            context,
-                            maxChallenges,
-                            challengesCompleted,
-                          )),
-                      body: !model.showPreview
-                          ? Column(
-                              children: [
-                                model.showPanel && !keyBoardIsActive
-                                    ? DynamicPanel(
-                                        challenge: challenge,
-                                        model: model,
-                                        panel: model.panelType,
-                                        maxChallenges: maxChallenges,
-                                        challengesCompleted:
-                                            challengesCompleted,
-                                        editor: editor,
-                                      )
-                                    : Container(),
-                                Expanded(child: editor)
-                              ],
-                            )
-                          : Column(
-                              children: [
-                                model.showPanel && !keyBoardIsActive
-                                    ? DynamicPanel(
-                                        challenge: challenge,
-                                        model: model,
-                                        panel: model.panelType,
-                                        maxChallenges: maxChallenges,
-                                        challengesCompleted:
-                                            challengesCompleted,
-                                        editor: editor)
-                                    : Container(),
-                                Expanded(
-                                  child: WebView(
-                                    userAgent: 'random',
-                                    javascriptMode: JavascriptMode.unrestricted,
-                                    onWebViewCreated: (WebViewController
-                                        webcontroller) async {
-                                      model.setWebviewController =
-                                          webcontroller;
-                                      webcontroller.loadUrl(Uri.dataFromString(
-                                              await model.parsePreviewDocument(
-                                                await model.fileService
-                                                    .getFirstFileFromCache(
-                                                  challenge,
-                                                  Ext.html,
-                                                ),
-                                              ),
-                                              mimeType: 'text/html',
-                                              encoding: utf8)
-                                          .toString());
-                                    },
-                                  ),
-                                ),
-                              ],
-                            ));
+            SchedulerBinding.instance.addPostFrameCallback((timeStamp) {
+              if (keyboard && !model.showPanel) {
+                if (model.hideAppBar) {
+                  model.setHideAppBar = false;
                 }
+              } else if (keyboard && model.showPanel) {
+                if (model.hideAppBar) {
+                  model.setHideAppBar = false;
+                }
+              } else if (!keyboard && model.showPanel) {
+                if (!model.hideAppBar) {
+                  model.setHideAppBar = true;
+                }
+              } else {
+                if (model.hideAppBar) {
+                  model.setHideAppBar = false;
+                }
+              }
+            });
+            editor.onTextChange.stream.listen((text) {
+              model.fileService.saveFileInCache(
+                challenge,
+                model.currentSelectedFile != ''
+                    ? model.currentSelectedFile
+                    : challenge.files[0].name,
+                text,
+              );
+              model.setEditorText = text;
+              model.setCompletedChallenge = false;
+            });
 
-                EditorOptions options = EditorOptions(
-                    hasEditableRegion: true,
-                    useFileExplorer: false,
-                    canCloseFiles: false,
-                    showAppBar: false,
-                    showTabBar: false);
+            BoxDecoration decoration = const BoxDecoration(
+              border: Border(
+                bottom: BorderSide(
+                  width: 4,
+                  color: Colors.blue,
+                ),
+              ),
+            );
 
-                return Scaffold(
-                    appBar: AppBar(
-                      title: const Text('Loading..'),
+            return Scaffold(
+              backgroundColor: const Color.fromRGBO(0x1b, 0x1b, 0x32, 1),
+              appBar: !model.hideAppBar
+                  ? AppBar(
                       automaticallyImplyLeading: false,
-                    ),
-                    body: Row(
-                      children: [
-                        Expanded(
-                          child: EditorViewController(
-                            options: options,
-                            editor: Editor(
-                              language: 'HTML',
-                              options: options,
-                              condition: model.completedChallenge,
+                      title: challenge.files.length == 1
+                          ? const Text('Editor')
+                          : null,
+                      actions: [
+                        if (model.showPreview)
+                          Expanded(
+                              child: Container(
+                            decoration: model.showPreview ? decoration : null,
+                            child: Container(
+                              decoration: model.showConsole ? decoration : null,
+                              child: ElevatedButton(
+                                onPressed: () {},
+                                child: const Text('Preview'),
+                              ),
+                            ),
+                          )),
+                        if (model.showPreview)
+                          Expanded(
+                            child: ElevatedButton(
+                              child: const Text('Console'),
+                              onPressed: () {
+                                model.consoleSnackbar();
+                              },
                             ),
                           ),
+                        if (!model.showPreview && challenge.files.length > 1)
+                          for (ChallengeFile file in challenge.files)
+                            CustomTabBar(
+                              challenge: challenge,
+                              file: file,
+                              editor: editor,
+                              model: model,
+                            )
+                      ],
+                    )
+                  : null,
+              bottomNavigationBar: Padding(
+                padding: EdgeInsets.only(
+                  bottom: MediaQuery.of(context).viewInsets.bottom,
+                ),
+                child: customBottomBar(
+                  model,
+                  challenge,
+                  editor,
+                  context,
+                ),
+              ),
+              body: !model.showPreview
+                  ? Column(
+                      children: [
+                        if (model.showPanel && !keyboard)
+                          DynamicPanel(
+                            challenge: challenge,
+                            model: model,
+                            panel: model.panelType,
+                            maxChallenges: maxChallenges,
+                            challengesCompleted: challengesCompleted,
+                            editor: editor,
+                          ),
+                        Expanded(child: editor)
+                      ],
+                    )
+                  : Column(
+                      children: [
+                        if (model.showPanel && !keyboard)
+                          DynamicPanel(
+                            challenge: challenge,
+                            model: model,
+                            panel: model.panelType,
+                            maxChallenges: maxChallenges,
+                            challengesCompleted: challengesCompleted,
+                            editor: editor,
+                          ),
+                        ProjectPreview(
+                          challenge: challenge,
+                          model: model,
                         ),
                       ],
-                    ));
-              },
-            ));
+                    ),
+            );
+          }
+
+          return Scaffold(
+            appBar: AppBar(
+              title: const Text('Loading'),
+              automaticallyImplyLeading: false,
+            ),
+            body: Row(
+              children: [
+                Expanded(
+                  child: EditorViewController(
+                    options: model.defaultEditorOptions,
+                    editor: Editor(
+                      options: model.defaultEditorOptions,
+                      language: 'HTML',
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          );
+        },
+      ),
+    );
   }
 
   Widget customBottomBar(
@@ -270,15 +230,7 @@ class ChallengeView extends StatelessWidget {
     Challenge challenge,
     Editor editor,
     BuildContext context,
-    int maxChallenges,
-    int challengesCompleted,
   ) {
-    if (model.testController != null) {
-      editor.onTextChange.stream.listen((event) {
-        model.setHasTypedInEditor = true;
-      });
-    }
-
     return BottomAppBar(
       color: const Color(0xFF0a0a23),
       child: Row(
@@ -314,14 +266,14 @@ class ChallengeView extends StatelessWidget {
             margin: const EdgeInsets.all(8),
             color: model.showPanel && model.panelType == PanelType.instruction
                 ? Colors.white
-                : const Color.fromRGBO(0x2A, 0x2A, 0x40, 1),
+                : const Color.fromRGBO(0x3B, 0x3B, 0x4F, 1),
             child: IconButton(
               icon: FaIcon(
                 FontAwesomeIcons.info,
                 size: 32,
                 color:
                     model.showPanel && model.panelType == PanelType.instruction
-                        ? const Color.fromRGBO(0x2A, 0x2A, 0x40, 1)
+                        ? const Color.fromRGBO(0x3B, 0x3B, 0x4F, 1)
                         : Colors.white,
               ),
               onPressed: () {
@@ -349,14 +301,16 @@ class ChallengeView extends StatelessWidget {
           Container(
             margin: const EdgeInsets.all(8),
             color: !model.showPreview
-                ? const Color.fromRGBO(0x2A, 0x2A, 0x40, 1)
+                ? const Color.fromRGBO(0x3B, 0x3B, 0x4F, 1)
                 : Colors.white,
             child: IconButton(
-              icon: Icon(Icons.remove_red_eye_outlined,
-                  size: 32,
-                  color: model.showPreview
-                      ? const Color.fromRGBO(0x2A, 0x2A, 0x40, 1)
-                      : Colors.white),
+              icon: Icon(
+                Icons.remove_red_eye_outlined,
+                size: 32,
+                color: model.showPreview
+                    ? const Color.fromRGBO(0x3B, 0x3B, 0x4F, 1)
+                    : Colors.white,
+              ),
               onPressed: () async {
                 ChallengeFile currFile = model.currentFile(challenge);
 
@@ -401,13 +355,16 @@ class ChallengeView extends StatelessWidget {
                             if (model.showPanel &&
                                 model.panelType == PanelType.pass) {
                               model.goToNextChallenge(
-                                  maxChallenges, challengesCompleted);
-                              return;
+                                model.block!.challenges.length,
+                                challengesCompleted,
+                              );
                             }
 
                             model.setIsRunningTests = true;
-                            await model.runner.setWebViewContent(challenge,
-                                webviewController: model.testController!);
+                            await model.runner.setWebViewContent(
+                              challenge,
+                              webviewController: model.testController!,
+                            );
                             FocusManager.instance.primaryFocus?.unfocus();
                           }
                         : null,
@@ -419,6 +376,42 @@ class ChallengeView extends StatelessWidget {
             ),
           ),
         ],
+      ),
+    );
+  }
+}
+
+class ProjectPreview extends StatelessWidget {
+  const ProjectPreview({
+    Key? key,
+    required this.challenge,
+    required this.model,
+  }) : super(key: key);
+
+  final Challenge challenge;
+  final ChallengeModel model;
+
+  @override
+  Widget build(BuildContext context) {
+    return Expanded(
+      child: WebView(
+        userAgent: 'random',
+        javascriptMode: JavascriptMode.unrestricted,
+        onWebViewCreated: (WebViewController webcontroller) async {
+          model.setWebviewController = webcontroller;
+          webcontroller.loadUrl(
+            Uri.dataFromString(
+              await model.parsePreviewDocument(
+                await model.fileService.getFirstFileFromCache(
+                  challenge,
+                  Ext.html,
+                ),
+              ),
+              mimeType: 'text/html',
+              encoding: utf8,
+            ).toString(),
+          );
+        },
       ),
     );
   }
