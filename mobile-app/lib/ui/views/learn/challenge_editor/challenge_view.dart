@@ -93,17 +93,17 @@ class ChallengeView extends StatelessWidget {
                 }
               }
             });
-                  editor.onTextChange.stream.listen((text) {
-                    model.fileService.saveFileInCache(
-                      challenge,
-                      model.currentSelectedFile != ''
-                          ? model.currentSelectedFile
-                          : challenge.files[0].name,
-                      text,
-                    );
-                    model.setEditorText = text;
-                    model.setCompletedChallenge = false;
-                  });
+            editor.onTextChange.stream.listen((text) {
+              model.fileService.saveFileInCache(
+                challenge,
+                model.currentSelectedFile != ''
+                    ? model.currentSelectedFile
+                    : challenge.files[0].name,
+                text,
+              );
+              model.setEditorText = text;
+              model.setCompletedChallenge = false;
+            });
 
             BoxDecoration decoration = const BoxDecoration(
               border: Border(
@@ -115,8 +115,7 @@ class ChallengeView extends StatelessWidget {
             );
 
             return Scaffold(
-            backgroundColor:
-                          const Color.fromRGBO(0x1b, 0x1b, 0x32, 1),
+              backgroundColor: const Color.fromRGBO(0x1b, 0x1b, 0x32, 1),
               appBar: !model.hideAppBar
                   ? AppBar(
                       automaticallyImplyLeading: false,
