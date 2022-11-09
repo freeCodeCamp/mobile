@@ -116,6 +116,8 @@ class ChallengeView extends StatelessWidget {
                   );
 
                   return Scaffold(
+                      backgroundColor:
+                          const Color.fromRGBO(0x1b, 0x1b, 0x32, 1),
                       appBar: !model.hideAppBar
                           ? AppBar(
                               automaticallyImplyLeading: false,
