@@ -148,16 +148,16 @@ class EpisodeListView extends StatelessWidget {
           },
         ),
         TextButton(
-            onPressed: () {
-              model.setShowMoreDescription = !model.showDescription;
-            },
-            child: Text(
-              model.showDescription ? 'Show Less' : 'Show More',
-              style: const TextStyle(
-                  decoration: TextDecoration.underline,
-                  fontSize: 16,
-                  color: Color.fromRGBO(0x99, 0xc9, 0xff, 1)),
-            ))
+          onPressed: () {
+            model.setShowMoreDescription = !model.showDescription;
+          },
+          child: Text(
+            model.showDescription ? 'Show Less' : 'Show More',
+            style: const TextStyle(
+              fontSize: 16,
+            ),
+          ),
+        )
       ],
     );
   }
