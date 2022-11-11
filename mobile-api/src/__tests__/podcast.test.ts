@@ -22,11 +22,11 @@ describe('podcast api', () => {
   // })
 
   test('it should be able to ping', async () => {
-    const req = await fetch(url);
+    const req = await fetch(`${url}/ping`);
 
     const res: pingEndpoint = (await req.json()) as pingEndpoint;
 
-    expect(res.msg).toBe('Hello World!');
+    expect(res.msg).toBe('pong');
   });
 
   test('it should have atleast 1 podcast available', async () => {
