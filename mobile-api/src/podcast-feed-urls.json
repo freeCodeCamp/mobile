@@ -3,6 +3,8 @@
     "https://feed.syntax.fm/rss",
     "https://changelog.com/podcast/feed",
     "https://pinecast.com/feed/ladybug-podcast",
-    "https://freecodecamp.libsyn.com/rss"
+    "https://freecodecamp.libsyn.com/rss",
+    "http://feeds.codenewbie.org/cnpodcast.xml",
+    "https://feeds.transistor.fm/scrimba"
   ]
 }
