@@ -69,56 +69,70 @@ class PodcastListViewBuilder extends StatelessWidget {
       viewModelBuilder: () => PodcastListViewModel(),
       builder: (context, model, child) => Scaffold(
         backgroundColor: const Color(0xFF2A2A40),
-        body: FutureBuilder<List<Podcasts>>(
-          future: model.fetchPodcasts(isDownloadView),
-          builder: (context, snapshot) {
-            if (snapshot.connectionState != ConnectionState.done) {
-              return const Center(child: CircularProgressIndicator.adaptive());
-            }
-            if (snapshot.hasError) {
-              return Text('${snapshot.error}');
-            }
-            if (snapshot.data!.isEmpty && isDownloadView) {
-              return Center(
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: const [
-                    Icon(
-                      Icons.arrow_circle_down_sharp,
-                      color: Colors.white,
-                      size: 50,
-                    ),
-                    SizedBox(
-                      height: 4,
-                    ),
-                    Text(
-                      'No downloaded episodes',
-                      style: TextStyle(
-                        color: Colors.white,
-                        fontSize: 16,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                  ],
-                ),
-              );
-            } else {
-              return GridView.count(
-                crossAxisCount: 2,
-                // crossAxisSpacing: 10,
-
-                childAspectRatio: 1,
-                children: List.generate(
-                  snapshot.data!.length,
-                  (index) => PodcastTemplate(
-                    podcast: snapshot.data![index],
-                    i: index,
-                    isDownloadView: isDownloadView,
-                  ),
-                ),
-              );
-            }
+        body: RefreshIndicator(
+          backgroundColor: const Color(0xFF0a0a23),
+          color: Colors.white,
+          onRefresh: () {
+            model.refresh();
+            return Future.delayed(const Duration(seconds: 0));
           },
+          child: FutureBuilder<List<Podcasts>>(
+            future: model.fetchPodcasts(isDownloadView),
+            builder: (context, snapshot) {
+              if (snapshot.connectionState != ConnectionState.done) {
+                return const Center(
+                    child: CircularProgressIndicator.adaptive());
+              }
+              if (snapshot.hasError) {
+                return const Center(
+                  child: Text(
+                    'Unable to load podcasts \n please try again.',
+                    textAlign: TextAlign.center,
+                  ),
+                );
+              }
+              if (snapshot.data!.isEmpty && isDownloadView) {
+                return Center(
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: const [
+                      Icon(
+                        Icons.arrow_circle_down_sharp,
+                        color: Colors.white,
+                        size: 50,
+                      ),
+                      SizedBox(
+                        height: 4,
+                      ),
+                      Text(
+                        'No downloaded episodes',
+                        style: TextStyle(
+                          color: Colors.white,
+                          fontSize: 16,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                    ],
+                  ),
+                );
+              } else {
+                return GridView.count(
+                  crossAxisCount: 2,
+                  // crossAxisSpacing: 10,
+
+                  childAspectRatio: 1,
+                  children: List.generate(
+                    snapshot.data!.length,
+                    (index) => PodcastTemplate(
+                      podcast: snapshot.data![index],
+                      i: index,
+                      isDownloadView: isDownloadView,
+                    ),
+                  ),
+                );
+              }
+            },
+          ),
         ),
       ),
     );

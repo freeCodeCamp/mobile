@@ -23,6 +23,10 @@ class PodcastListViewModel extends BaseViewModel {
     notifyListeners();
   }
 
+  void refresh() {
+    notifyListeners();
+  }
+
   Future<List<Podcasts>> fetchPodcasts(bool isDownloadView) async {
     String baseUrl = (await _testservice.developmentMode())
         ? 'https://api.mobile.freecodecamp.dev/'
