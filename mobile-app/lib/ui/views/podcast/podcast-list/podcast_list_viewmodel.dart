@@ -13,7 +13,7 @@ import 'package:stacked/stacked.dart';
 class PodcastListViewModel extends BaseViewModel {
   final _databaseService = locator<PodcastsDatabaseService>();
   final _testservice = locator<TestService>();
-  late Directory appDir;
+  static late Directory appDir;
   int _index = 0;
 
   int get index => _index;
@@ -21,6 +21,10 @@ class PodcastListViewModel extends BaseViewModel {
   void setIndex(i) {
     _index = i;
     notifyListeners();
+  }
+
+  Future<void> init() async {
+    appDir = await getApplicationDocumentsDirectory();
   }
 
   void refresh() {
@@ -35,7 +39,6 @@ class PodcastListViewModel extends BaseViewModel {
     if (isDownloadView) {
       return await _databaseService.getPodcasts();
     } else {
-      appDir = await getApplicationDocumentsDirectory();
       final res = await http.get(Uri.parse('${baseUrl}podcasts'));
       final List<dynamic> podcasts = json.decode(res.body);
       return podcasts.map((podcast) => Podcasts.fromAPIJson(podcast)).toList();

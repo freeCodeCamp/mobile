@@ -6,10 +6,10 @@ import 'package:flutter_html/flutter_html.dart';
 import 'package:freecodecamp/models/podcasts/episodes_model.dart';
 import 'package:freecodecamp/models/podcasts/podcasts_model.dart';
 import 'package:freecodecamp/ui/views/podcast/episode-list/episode_list_viewmodel.dart';
+import 'package:freecodecamp/ui/views/podcast/podcast-list/podcast_list_viewmodel.dart';
 import 'package:freecodecamp/ui/widgets/podcast_widgets/podcast_tilte_widget.dart';
 import 'package:html/dom.dart' as dom;
 import 'package:infinite_scroll_pagination/infinite_scroll_pagination.dart';
-
 import 'package:stacked/stacked.dart';
 import 'package:url_launcher/url_launcher_string.dart';
 
@@ -106,7 +106,7 @@ class EpisodeListView extends StatelessWidget {
                               return Text('${snapshot.error}');
                             }
                             return const Center(
-                              child: CircularProgressIndicator.adaptive(),
+                              child: CircularProgressIndicator(),
                             );
                           },
                         ),
@@ -169,7 +169,7 @@ class EpisodeListView extends StatelessWidget {
         isDownloadView
             ? Image.file(
                 File(
-                  '/data/user/0/org.freecodecamp/app_flutter/images/podcast/${podcast.id}.jpg',
+                  '${PodcastListViewModel.appDir.path}/images/podcast/${podcast.id}.jpg',
                 ),
               )
             : CachedNetworkImage(
