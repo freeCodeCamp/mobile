@@ -70,7 +70,7 @@ packages:
       name: audio_session
       url: "https://pub.dartlang.org"
     source: hosted
-    version: "0.1.10"
+    version: "0.1.11"
   boolean_selector:
     dependency: transitive
     description:
@@ -443,7 +443,7 @@ packages:
       name: flutter_inappwebview
       url: "https://pub.dartlang.org"
     source: hosted
-    version: "5.7.1"
+    version: "5.7.1+2"
   flutter_layout_grid:
     dependency: transitive
     description:
@@ -752,7 +752,7 @@ packages:
       name: just_audio_background
       url: "https://pub.dartlang.org"
     source: hosted
-    version: "0.0.1-beta.7"
+    version: "0.0.1-beta.8"
   just_audio_platform_interface:
     dependency: transitive
     description:
@@ -927,7 +927,7 @@ packages:
       name: path_provider_android
       url: "https://pub.dartlang.org"
     source: hosted
-    version: "2.0.20"
+    version: "2.0.21"
   path_provider_ios:
     dependency: transitive
     description:
@@ -1053,7 +1053,7 @@ packages:
       name: pub_semver
       url: "https://pub.dartlang.org"
     source: hosted
-    version: "2.1.2"
+    version: "2.1.3"
   pubspec_parse:
     dependency: transitive
     description:
@@ -1088,7 +1088,7 @@ packages:
       name: rxdart
       url: "https://pub.dartlang.org"
     source: hosted
-    version: "0.27.5"
+    version: "0.27.7"
   share:
     dependency: "direct main"
     description:
@@ -1207,7 +1207,7 @@ packages:
       name: shelf_web_socket
       url: "https://pub.dartlang.org"
     source: hosted
-    version: "1.0.2"
+    version: "1.0.3"
   sky_engine:
     dependency: transitive
     description: flutter
@@ -1247,7 +1247,7 @@ packages:
       name: sqflite
       url: "https://pub.dartlang.org"
     source: hosted
-    version: "2.2.0+2"
+    version: "2.2.0+3"
   sqflite_common:
     dependency: transitive
     description:
@@ -1296,7 +1296,7 @@ packages:
       name: stacked_services
       url: "https://pub.dartlang.org"
     source: hosted
-    version: "0.9.5"
+    version: "0.9.8"
   stream_channel:
     dependency: transitive
     description:
@@ -1310,7 +1310,7 @@ packages:
       name: stream_transform
       url: "https://pub.dartlang.org"
     source: hosted
-    version: "2.0.1"
+    version: "2.1.0"
   string_scanner:
     dependency: transitive
     description:
@@ -1401,7 +1401,7 @@ packages:
       name: url_launcher_android
       url: "https://pub.dartlang.org"
     source: hosted
-    version: "6.0.20"
+    version: "6.0.21"
   url_launcher_ios:
     dependency: transitive
     description:
@@ -1450,7 +1450,7 @@ packages:
       name: uuid
       url: "https://pub.dartlang.org"
     source: hosted
-    version: "3.0.6"
+    version: "3.0.7"
   vector_math:
     dependency: transitive
     description:
