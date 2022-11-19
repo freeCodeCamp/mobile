@@ -3,7 +3,7 @@
 	archiveVersion = 1;
 	classes = {
 	};
-	objectVersion = 50;
+	objectVersion = 51;
 	objects = {
 
 /* Begin PBXBuildFile section */
@@ -76,7 +76,6 @@
 				0B7105E7D583BB17800995DD /* Pods-Runner.release.xcconfig */,
 				9C49CF282D31D4A19A973965 /* Pods-Runner.profile.xcconfig */,
 			);
-			name = Pods;
 			path = Pods;
 			sourceTree = "<group>";
 		};
@@ -211,7 +210,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "/bin/sh \"$FLUTTER_ROOT/packages/flutter_tools/bin/xcode_backend.sh\" embed_and_thin";
+			shellScript = "/bin/sh \"$FLUTTER_ROOT/packages/flutter_tools/bin/xcode_backend.sh\" embed_and_thin\n";
 		};
 		80109CBC7CEC701494B8C776 /* [CP] Embed Pods Frameworks */ = {
 			isa = PBXShellScriptBuildPhase;
@@ -360,7 +359,7 @@
 				CURRENT_PROJECT_VERSION = 30001;
 				DEVELOPMENT_TEAM = 6VLLLJ7CJB;
 				ENABLE_BITCODE = NO;
-				INFOPLIST_FILE = Runner/Info.plist;
+				INFOPLIST_FILE = "Runner/Info-$(CONFIGURATION).plist";
 				INFOPLIST_KEY_CFBundleDisplayName = freeCodeCamp;
 				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.education";
 				LD_RUNPATH_SEARCH_PATHS = (
@@ -494,7 +493,7 @@
 				CURRENT_PROJECT_VERSION = 30001;
 				DEVELOPMENT_TEAM = 6VLLLJ7CJB;
 				ENABLE_BITCODE = NO;
-				INFOPLIST_FILE = Runner/Info.plist;
+				INFOPLIST_FILE = "Runner/Info-$(CONFIGURATION).plist";
 				INFOPLIST_KEY_CFBundleDisplayName = freeCodeCamp;
 				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.education";
 				LD_RUNPATH_SEARCH_PATHS = (
@@ -520,7 +519,7 @@
 				CURRENT_PROJECT_VERSION = 30001;
 				DEVELOPMENT_TEAM = 6VLLLJ7CJB;
 				ENABLE_BITCODE = NO;
-				INFOPLIST_FILE = Runner/Info.plist;
+				INFOPLIST_FILE = "Runner/Info-$(CONFIGURATION).plist";
 				INFOPLIST_KEY_CFBundleDisplayName = freeCodeCamp;
 				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.education";
 				LD_RUNPATH_SEARCH_PATHS = (
