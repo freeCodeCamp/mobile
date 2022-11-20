@@ -18,9 +18,10 @@ Future<void> main() async {
   await NotificationService().init();
   await AppAudioService().init();
   await FkUserAgent.init();
-  await QuickActionsService().init();
 
   runApp(const MyApp());
+
+  await QuickActionsService().init();
 }
 
 class MyApp extends StatelessWidget {
