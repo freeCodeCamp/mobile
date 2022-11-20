@@ -19,6 +19,7 @@ import '../service/learn_file_service.dart';
 import '../service/learn_service.dart';
 import '../service/notification_service.dart';
 import '../service/podcasts_service.dart';
+import '../service/quick_actions_service.dart';
 import '../service/test_service.dart';
 
 final locator = StackedLocator.instance;
@@ -42,4 +43,5 @@ Future<void> setupLocator(
   locator.registerLazySingleton(() => DownloadService());
   locator.registerLazySingleton(() => LearnService());
   locator.registerLazySingleton(() => LearnFileService());
+  locator.registerLazySingleton(() => QuickActionsService());
 }

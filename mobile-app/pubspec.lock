@@ -1061,6 +1061,34 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "1.2.1"
+  quick_actions:
+    dependency: "direct main"
+    description:
+      name: quick_actions
+      url: "https://pub.dartlang.org"
+    source: hosted
+    version: "1.0.1"
+  quick_actions_android:
+    dependency: transitive
+    description:
+      name: quick_actions_android
+      url: "https://pub.dartlang.org"
+    source: hosted
+    version: "1.0.0"
+  quick_actions_ios:
+    dependency: transitive
+    description:
+      name: quick_actions_ios
+      url: "https://pub.dartlang.org"
+    source: hosted
+    version: "1.0.2"
+  quick_actions_platform_interface:
+    dependency: transitive
+    description:
+      name: quick_actions_platform_interface
+      url: "https://pub.dartlang.org"
+    source: hosted
+    version: "1.0.3"
   quiver:
     dependency: transitive
     description:
