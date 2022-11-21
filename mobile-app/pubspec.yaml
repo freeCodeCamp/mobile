@@ -80,6 +80,13 @@ dev_dependencies:
   flutter_test:
     sdk: flutter
   stacked_generator: ^0.8.0
+  flutter_launcher_icons: ^0.11.0
+
+flutter_icons:
+  android: "launcher_icon"
+  ios: true
+  image_path: "assets/images/app-logo.png"
+
 flutter:
   fonts:
     - family: RobotoMono
