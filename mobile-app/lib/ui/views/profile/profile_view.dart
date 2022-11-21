@@ -39,7 +39,7 @@ class ProfileView extends StatelessWidget {
           future: model.auth.userModel,
           builder: (context, snapshot) {
             if (snapshot.connectionState != ConnectionState.done) {
-              return const Center(child: CircularProgressIndicator.adaptive());
+              return const Center(child: CircularProgressIndicator());
             }
             if (snapshot.hasError) {
               return Text('${snapshot.error}');

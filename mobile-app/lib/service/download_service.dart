@@ -6,6 +6,7 @@ import 'package:fk_user_agent/fk_user_agent.dart';
 import 'package:freecodecamp/app/app.locator.dart';
 import 'package:freecodecamp/models/podcasts/episodes_model.dart';
 import 'package:freecodecamp/models/podcasts/podcasts_model.dart';
+import 'package:freecodecamp/service/notification_service.dart';
 import 'package:freecodecamp/service/podcasts_service.dart';
 import 'package:path_provider/path_provider.dart';
 import 'dart:developer' as dev;
@@ -14,6 +15,7 @@ class DownloadService {
   final Dio dio = Dio();
   static final DownloadService _downloadService = DownloadService._internal();
   final _databaseService = locator<PodcastsDatabaseService>();
+  final _notificationService = locator<NotificationService>();
 
   static final StreamController<String> _progStream =
       StreamController<String>.broadcast();
@@ -53,6 +55,10 @@ class DownloadService {
     _downloading.sink.add(false);
     setDownloadId = '';
     _progStream.sink.add('');
+    await _notificationService.showNotification(
+      'Download complete',
+      '${podcast.title} - ${episode.title}',
+    );
     await _databaseService.addPodcast(podcast);
     await _databaseService.addEpisode(episode);
   }

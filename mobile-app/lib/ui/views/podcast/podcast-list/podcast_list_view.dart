@@ -25,6 +25,7 @@ class PodcastListView extends StatelessWidget {
   Widget build(BuildContext context) {
     return ViewModelBuilder<PodcastListViewModel>.reactive(
       viewModelBuilder: () => PodcastListViewModel(),
+      onModelReady: (model) async => await model.init(),
       builder: (context, model, child) => Scaffold(
         appBar: AppBar(
           title: titles.elementAt(model.index),
@@ -80,8 +81,7 @@ class PodcastListViewBuilder extends StatelessWidget {
             future: model.fetchPodcasts(isDownloadView),
             builder: (context, snapshot) {
               if (snapshot.connectionState != ConnectionState.done) {
-                return const Center(
-                    child: CircularProgressIndicator.adaptive());
+                return const Center(child: CircularProgressIndicator());
               }
               if (snapshot.hasError) {
                 return const Center(
@@ -172,7 +172,7 @@ class PodcastTemplate extends StatelessWidget {
               isDownloadView
                   ? Image.file(
                       File(
-                        '/data/user/0/org.freecodecamp/app_flutter/images/podcast/${podcast.id}.jpg',
+                        '${PodcastListViewModel.appDir.path}/images/podcast/${podcast.id}.jpg',
                       ),
                       // height: 130,
                       alignment: Alignment.center,

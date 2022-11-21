@@ -1,10 +1,12 @@
 import 'dart:developer';
+import 'dart:io';
 
 import 'package:freecodecamp/models/code-radio/code_radio_model.dart';
 import 'package:freecodecamp/models/podcasts/episodes_model.dart';
 import 'package:freecodecamp/models/podcasts/podcasts_model.dart';
 import 'package:just_audio/just_audio.dart';
 import 'package:audio_service/audio_service.dart';
+import 'package:path_provider/path_provider.dart';
 
 class AppAudioService {
   static final AppAudioService _appAudioService = AppAudioService._internal();
@@ -88,21 +90,21 @@ class AudioPlayerHandler extends BaseAudioHandler {
     bool isDownloaded,
     Podcasts podcast,
   ) async {
+    Directory appDir = await getApplicationDocumentsDirectory();
     try {
-      // TODO(@Nirajn2311): Close iOS PR and update paths
       MediaItem audioMediaItem = MediaItem(
         id: episode.id,
         title: episode.title,
         album: podcast.title,
         duration: episode.duration,
-        artUri: Uri.parse(
-            'file:///data/user/0/org.freecodecamp/app_flutter/images/podcast/${episode.podcastId}.jpg'),
+        artUri:
+            File('${appDir.path}/images/podcast/${episode.podcastId}.jpg').uri,
       );
       if (isDownloaded) {
         await _audioPlayer.setAudioSource(
           AudioSource.uri(
-            Uri.parse(
-                'file:///data/user/0/org.freecodecamp/app_flutter/episodes/${episode.podcastId}/${episode.id}.mp3'),
+            File('${appDir.path}/episodes/${episode.podcastId}/${episode.id}.mp3')
+                .uri,
             tag: audioMediaItem,
           ),
           preload: true,

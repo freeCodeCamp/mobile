@@ -14,11 +14,9 @@ import 'package:freecodecamp/service/learn_service.dart';
 import 'package:freecodecamp/ui/widgets/setup_dialog_ui.dart';
 import 'package:stacked/stacked.dart';
 import 'package:stacked_services/stacked_services.dart';
-import 'package:webview_flutter/webview_flutter.dart';
 import 'package:http/http.dart' as http;
 
 class LearnViewModel extends BaseViewModel {
-  WebViewController? controller;
   final NavigationService _navigationService = locator<NavigationService>();
 
   final AuthenticationService _auth = locator<AuthenticationService>();
@@ -37,7 +35,6 @@ class LearnViewModel extends BaseViewModel {
   Future<List<SuperBlockButton>>? get superBlocks => _superBlocks;
 
   void init(BuildContext context) {
-    WebView.platform = SurfaceAndroidWebView();
     setupDialogUi();
     _superBlocks = getSuperBlocks();
     retrieveNewQuote();
