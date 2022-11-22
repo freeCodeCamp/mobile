@@ -31,23 +31,23 @@ class LearnView extends StatelessWidget {
                   if (snapshot.hasData) {
                     var superBlocks = snapshot.data!;
                     return ListView(shrinkWrap: true, children: [
-                      StreamBuilder(
-                          stream: model.auth.isLoggedIn,
-                          builder: ((context, snapshot) {
-                            return Column(
-                              children: [
-                                const CustomAlert(
-                                    text:
-                                        "Note: We're still working on the ability to save your progress. To claim certifications, you'll need to submit your projects through freeCodeCamp's website.",
-                                    alertType: Alert.warning),
-                                quouteWidget(),
-                                // if (!model.isLoggedIn)
-                                //   loginButton(model, context)
-                                // else
-                                //   welcomeMessage(model)
-                              ],
-                            );
-                          })),
+                      // StreamBuilder(
+                      //     stream: model.auth.isLoggedIn,
+                      //     builder: ((context, snapshot) {
+                      //       return Column(
+                      //         children: [
+                      //           const CustomAlert(
+                      //               text:
+                      //                   "Note: We're still working on the ability to save your progress. To claim certifications, you'll need to submit your projects through freeCodeCamp's website.",
+                      //               alertType: Alert.warning),
+                      //           quouteWidget(),
+                      //           // if (!model.isLoggedIn)
+                      //           //   loginButton(model, context)
+                      //           // else
+                      //           //   welcomeMessage(model)
+                      //         ],
+                      //       );
+                      //     })),
                       ListView.builder(
                           physics: const ClampingScrollPhysics(),
                           shrinkWrap: true,
@@ -142,7 +142,7 @@ class LearnView extends StatelessWidget {
             backgroundColor: const Color.fromRGBO(0xf1, 0xbe, 0x32, 1),
           ),
           onPressed: () {
-            model.auth.login(context);
+            // model.auth.login(context);
           },
           child: const Text(
             'Sign in to save your progress',
@@ -190,25 +190,25 @@ class LearnView extends StatelessWidget {
 
   Widget welcomeMessage(LearnViewModel model) {
     return FutureBuilder<FccUserModel>(
-        future: model.auth.userModel,
+        // future: model.auth.userModel,
         builder: ((context, snapshot) {
-          if (snapshot.hasData) {
-            FccUserModel user = snapshot.data as FccUserModel;
+      if (snapshot.hasData) {
+        FccUserModel user = snapshot.data as FccUserModel;
 
-            return Container(
-              padding: const EdgeInsets.all(16),
-              child: Text(
-                'Welcome back ${user.username}. ',
-                textAlign: TextAlign.center,
-                style: const TextStyle(
-                  fontSize: 20,
-                  fontWeight: FontWeight.bold,
-                ),
-              ),
-            );
-          }
+        return Container(
+          padding: const EdgeInsets.all(16),
+          child: Text(
+            'Welcome back ${user.username}. ',
+            textAlign: TextAlign.center,
+            style: const TextStyle(
+              fontSize: 20,
+              fontWeight: FontWeight.bold,
+            ),
+          ),
+        );
+      }
 
-          return const Center(child: CircularProgressIndicator());
-        }));
+      return const Center(child: CircularProgressIndicator());
+    }));
   }
 }

@@ -19,9 +19,9 @@ class SuperBlockView extends StatelessWidget {
   Widget build(BuildContext context) {
     return ViewModelBuilder<LearnViewModel>.reactive(
         viewModelBuilder: () => LearnViewModel(),
-        onModelReady: (model) => AuthenticationService.staticIsloggedIn
-            ? model.auth.fetchUser()
-            : null,
+        // onModelReady: (model) => AuthenticationService.staticIsloggedIn
+        //     ? model.auth.fetchUser()
+        //     : null,
         builder: (context, model, child) => Scaffold(
               appBar: AppBar(
                 title: Text(superblockName),

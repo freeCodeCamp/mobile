@@ -71,6 +71,20 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "0.1.11"
+  auth0_flutter:
+    dependency: "direct main"
+    description:
+      name: auth0_flutter
+      url: "https://pub.dartlang.org"
+    source: hosted
+    version: "1.0.2"
+  auth0_flutter_platform_interface:
+    dependency: transitive
+    description:
+      name: auth0_flutter_platform_interface
+      url: "https://pub.dartlang.org"
+    source: hosted
+    version: "1.0.1"
   boolean_selector:
     dependency: transitive
     description:

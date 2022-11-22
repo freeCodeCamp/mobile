@@ -31,8 +31,8 @@ class LearnService {
     String challengeId = challenge.id;
     int challengeType = challenge.challengeType;
 
-    Response submitTypesRes = await _dio.get(
-        '${AuthenticationService.baseURL}/curriculum-data/submit-types.json');
+    Response submitTypesRes =
+        await _dio.get('/curriculum-data/submit-types.json');
     Map<String, dynamic> submitTypes = submitTypesRes.data;
 
     switch (submitTypes[challengeType.toString()]) {
@@ -53,17 +53,16 @@ class LearnService {
           };
         }
         Response res = await _dio.post(
-          '${AuthenticationService.baseApiURL}/modern-challenge-completed',
+          '/modern-challenge-completed',
           data: payload,
           options: Options(
             headers: {
-              'CSRF-Token': _authenticationService.csrfToken,
-              'Cookie':
-                  'jwt_access_token=${_authenticationService.jwtAccessToken}; _csrf=${_authenticationService.csrf};',
+              'CSRF-Token': '',
+              'Cookie': 'jwt_access_token=${''}; _csrf=${''};',
             },
           ),
         );
-        await _authenticationService.fetchUser();
+        //await _authenticationService.fetchUser();
         log(res.toString());
         break;
       case 'backend':

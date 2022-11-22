@@ -36,7 +36,7 @@ class ProfileView extends StatelessWidget {
         ),
         drawer: const DrawerWidgetView(),
         body: FutureBuilder<FccUserModel>(
-          future: model.auth.userModel,
+          // future: model.auth.userModel,
           builder: (context, snapshot) {
             if (snapshot.connectionState != ConnectionState.done) {
               return const Center(child: CircularProgressIndicator());
@@ -365,7 +365,7 @@ class CertificationWidget extends StatelessWidget {
                                     color: Colors.white,
                                   ),
                                   onTap: () => launchUrlString(
-                                    '${AuthenticationService.baseURL}/certification/${user.username}/${cert["certSlug"]}',
+                                    '${''}/certification/${user.username}/${cert["certSlug"]}',
                                   ),
                                 ),
                               )
@@ -415,7 +415,7 @@ class CertificationWidget extends StatelessWidget {
                                         color: Colors.white,
                                       ),
                                       onTap: () => launchUrlString(
-                                        '${AuthenticationService.baseURL}/certification/${user.username}/${cert["certSlug"]}',
+                                        '${'AuthenticationService.baseURL'}/certification/${user.username}/${cert["certSlug"]}',
                                       ),
                                     ),
                                   )

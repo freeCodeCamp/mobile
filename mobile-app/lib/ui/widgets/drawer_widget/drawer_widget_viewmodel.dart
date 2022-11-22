@@ -25,13 +25,17 @@ class DrawerWidgtetViewModel extends BaseViewModel {
   bool get devmode => _devMode;
 
   void initState() async {
-    _loggedIn = AuthenticationService.staticIsloggedIn;
+    // _loggedIn = AuthenticationService.staticIsloggedIn;
     await devMode();
     notifyListeners();
-    auth.isLoggedIn.listen((event) {
-      _loggedIn = event;
-      notifyListeners();
-    });
+    // auth.isLoggedIn.listen((event) {
+    //   _loggedIn = event;
+    //   notifyListeners();
+    // });
+  }
+
+  void openSecureWebView() {
+    auth.authenticate();
   }
 
   static final _testService = locator<TestService>();
@@ -117,8 +121,8 @@ class DrawerWidgtetViewModel extends BaseViewModel {
     }
   }
 
-  void handleAuth(BuildContext context) {
-    loggedIn ? auth.logout() : auth.login(context);
-    notifyListeners();
-  }
+  // void handleAuth(BuildContext context) {
+  //   loggedIn ? auth.logout() : auth.login(context);
+  //   notifyListeners();
+  // }
 }

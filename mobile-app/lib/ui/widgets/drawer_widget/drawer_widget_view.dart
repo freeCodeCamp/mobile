@@ -35,16 +35,16 @@ class DrawerWidgetView extends StatelessWidget {
                       ),
                       title: model.loggedIn
                           ? FutureBuilder(
-                              future: model.auth.userModel,
+                              // future: model.auth.userModel,
                               builder: (context, snapshot) {
-                                if (snapshot.hasData) {
-                                  FccUserModel user =
-                                      snapshot.data as FccUserModel;
-                                  return Text(user.name);
-                                }
+                              if (snapshot.hasData) {
+                                FccUserModel user =
+                                    snapshot.data as FccUserModel;
+                                return Text(user.name);
+                              }
 
-                                return const Text('Anonymous user');
-                              })
+                              return const Text('Anonymous user');
+                            })
                           : const Text('Anonymous user'),
                       subtitle: Text(model.loggedIn
                           ? 'Our coolest Camper'
@@ -104,9 +104,7 @@ class DrawerWidgetView extends StatelessWidget {
                             ? const Color.fromARGB(255, 230, 59, 59)
                             : null,
                         route: () {
-                          model.devmode
-                              ? model.handleAuth(context)
-                              : model.loginSnack();
+                          model.openSecureWebView();
                         })
                   ],
                 ),

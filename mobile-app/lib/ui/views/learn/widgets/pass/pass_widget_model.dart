@@ -20,7 +20,7 @@ class PassWidgetModel extends BaseViewModel {
   late FccUserModel? _user;
 
   void init() async {
-    _user = await auth.userModel;
+    //_user = await auth.userModel;
     notifyListeners();
   }
 

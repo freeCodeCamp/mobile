@@ -43,12 +43,12 @@ class LearnViewModel extends BaseViewModel {
   }
 
   void initLoggedInListener() {
-    _isLoggedIn = AuthenticationService.staticIsloggedIn;
+    //_isLoggedIn = AuthenticationService.staticIsloggedIn;
     notifyListeners();
-    auth.isLoggedIn.listen((e) {
-      _isLoggedIn = e;
-      notifyListeners();
-    });
+    // auth.isLoggedIn.listen((e) {
+    //   _isLoggedIn = e;
+    //   notifyListeners();
+    // });
   }
 
   void disabledButtonSnack() {

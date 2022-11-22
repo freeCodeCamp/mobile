@@ -53,7 +53,7 @@ class ChallengeBuilderModel extends BaseViewModel {
   }
 
   void init(List<ChallengeListTile> challengeBatch) async {
-    user = await _auth.userModel;
+    //user = await _auth.userModel;
     setNumberOfCompletedChallenges(challengeBatch);
     notifyListeners();
   }
