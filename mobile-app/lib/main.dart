@@ -10,8 +10,6 @@ import 'package:stacked_services/stacked_services.dart';
 import 'app/app.locator.dart';
 import 'app/app.router.dart';
 
-// Comment to test action
-
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
   setupLocator();
