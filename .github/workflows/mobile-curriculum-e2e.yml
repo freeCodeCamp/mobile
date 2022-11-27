@@ -1,6 +1,7 @@
 name: CI - Mobile curriculum test
 
 on:
+  workflow_dispatch:
   pull_request:
     branches:
       - main
@@ -9,6 +10,8 @@ on:
   push:
     branches:
       - main
+  schedule:
+    - cron: "0 0 * * 0"
 
 jobs:
   mobile-test:
