@@ -19,8 +19,7 @@ jobs:
       - name: Checkout freeCodeCamp main repo
         uses: actions/checkout@v3
         with:
-          repository: Nirajn2311/freeCodeCamp
-          ref: action/update-flutter-verion
+          repository: freeCodeCamp/freeCodeCamp
 
       - name: Checkout mobile repo
         uses: actions/checkout@v3
@@ -67,7 +66,7 @@ jobs:
           wait-on-timeout: 1200
           config: retries=1,screenshotOnRunFailure=false,video=false,baseUrl=http://localhost:3000/mobile/mobile-app/generated-tests/
           browser: chrome
-          spec: cypress/e2e/mobile-learn/test-challenges.js
+          spec: cypress/integration/mobile-learn/test-challenges.js
         env:
           CYPRESS_RECORD_KEY: ${{ secrets.CYPRESS_RECORD_KEY }}
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
