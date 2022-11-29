@@ -40,7 +40,7 @@ class ChallengeBuilderGridView extends StatelessWidget {
                           margin: const EdgeInsets.only(top: 8, left: 8),
                           color: const Color.fromRGBO(0x00, 0x2e, 0xad, 1),
                           child: const Text(
-                            'Certification Porject',
+                            'Certification Project',
                             style: TextStyle(
                               fontWeight: FontWeight.bold,
                               color: Color.fromRGBO(0x19, 0x8e, 0xee, 1),
