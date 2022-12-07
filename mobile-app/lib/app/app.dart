@@ -5,11 +5,9 @@ import 'package:freecodecamp/service/authentication_service.dart';
 import 'package:freecodecamp/service/audio_service.dart';
 import 'package:freecodecamp/service/download_service.dart';
 import 'package:freecodecamp/service/learn_service.dart';
-import 'package:freecodecamp/service/new_auth_service.dart';
 import 'package:freecodecamp/service/learn_file_service.dart';
 import 'package:freecodecamp/service/quick_actions_service.dart';
 
-import 'package:freecodecamp/ui/views/auth/auth_view.dart';
 import 'package:freecodecamp/ui/views/code_radio/code_radio_view.dart';
 import 'package:freecodecamp/ui/views/forum/forum-categories/forum_category_view.dart';
 import 'package:freecodecamp/ui/views/forum/forum-login/forum_login_view.dart';
@@ -61,7 +59,6 @@ import 'package:sqflite_migration_service/sqflite_migration_service.dart';
     MaterialRoute(page: ChallengeView),
     MaterialRoute(page: ProfileView),
     MaterialRoute(page: WebViewView),
-    MaterialRoute(page: AuthView),
     MaterialRoute(page: LearnView)
   ],
   dependencies: [
@@ -76,7 +73,6 @@ import 'package:sqflite_migration_service/sqflite_migration_service.dart';
     LazySingleton(classType: AppAudioService),
     LazySingleton(classType: DownloadService),
     LazySingleton(classType: LearnService),
-    LazySingleton(classType: NewAuthService),
     LazySingleton(classType: LearnFileService),
     LazySingleton(classType: QuickActionsService)
   ],

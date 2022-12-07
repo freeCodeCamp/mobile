@@ -5,13 +5,12 @@
 // **************************************************************************
 
 // ignore_for_file: no_leading_underscores_for_library_prefixes
-import 'package:flutter/material.dart' as _i25;
+import 'package:flutter/material.dart' as _i24;
 import 'package:flutter/material.dart';
-import 'package:freecodecamp/models/learn/curriculum_model.dart' as _i29;
-import 'package:freecodecamp/models/news/bookmarked_article_model.dart' as _i28;
-import 'package:freecodecamp/models/podcasts/episodes_model.dart' as _i26;
-import 'package:freecodecamp/models/podcasts/podcasts_model.dart' as _i27;
-import 'package:freecodecamp/ui/views/auth/auth_view.dart' as _i23;
+import 'package:freecodecamp/models/learn/curriculum_model.dart' as _i28;
+import 'package:freecodecamp/models/news/bookmarked_article_model.dart' as _i27;
+import 'package:freecodecamp/models/podcasts/episodes_model.dart' as _i25;
+import 'package:freecodecamp/models/podcasts/podcasts_model.dart' as _i26;
 import 'package:freecodecamp/ui/views/code_radio/code_radio_view.dart' as _i18;
 import 'package:freecodecamp/ui/views/forum/forum-categories/forum_category_view.dart'
     as _i11;
@@ -30,7 +29,7 @@ import 'package:freecodecamp/ui/views/learn/challenge_editor/challenge_view.dart
     as _i20;
 import 'package:freecodecamp/ui/views/learn/learn-builders/superblock_builder.dart'
     as _i19;
-import 'package:freecodecamp/ui/views/learn/learn/learn_view.dart' as _i24;
+import 'package:freecodecamp/ui/views/learn/learn/learn_view.dart' as _i23;
 import 'package:freecodecamp/ui/views/news/news-article/news_article_view.dart'
     as _i6;
 import 'package:freecodecamp/ui/views/news/news-author/news_author_view.dart'
@@ -52,7 +51,7 @@ import 'package:freecodecamp/ui/views/settings/podcastSettings/podcast_settings_
     as _i4;
 import 'package:freecodecamp/ui/views/web_view/web_view_view.dart' as _i22;
 import 'package:stacked/stacked.dart' as _i1;
-import 'package:stacked_services/stacked_services.dart' as _i30;
+import 'package:stacked_services/stacked_services.dart' as _i29;
 
 class Routes {
   static const homeView = '/';
@@ -97,8 +96,6 @@ class Routes {
 
   static const webViewView = '/web-view-view';
 
-  static const authView = '/auth-view';
-
   static const learnView = '/learn-view';
 
   static const all = <String>{
@@ -123,7 +120,6 @@ class Routes {
     challengeView,
     profileView,
     webViewView,
-    authView,
     learnView,
   };
 }
@@ -215,12 +211,8 @@ class StackedRouter extends _i1.RouterBase {
       page: _i22.WebViewView,
     ),
     _i1.RouteDef(
-      Routes.authView,
-      page: _i23.AuthView,
-    ),
-    _i1.RouteDef(
       Routes.learnView,
-      page: _i24.LearnView,
+      page: _i23.LearnView,
     ),
   ];
 
@@ -393,15 +385,9 @@ class StackedRouter extends _i1.RouterBase {
         settings: data,
       );
     },
-    _i23.AuthView: (data) {
+    _i23.LearnView: (data) {
       return MaterialPageRoute<dynamic>(
-        builder: (context) => const _i23.AuthView(),
-        settings: data,
-      );
-    },
-    _i24.LearnView: (data) {
-      return MaterialPageRoute<dynamic>(
-        builder: (context) => const _i24.LearnView(),
+        builder: (context) => const _i23.LearnView(),
         settings: data,
       );
     },
@@ -420,11 +406,11 @@ class EpisodeViewArguments {
     required this.podcast,
   });
 
-  final _i25.Key? key;
+  final _i24.Key? key;
 
-  final _i26.Episodes episode;
+  final _i25.Episodes episode;
 
-  final _i27.Podcasts podcast;
+  final _i26.Podcasts podcast;
 }
 
 class NewsArticleViewArguments {
@@ -433,7 +419,7 @@ class NewsArticleViewArguments {
     required this.refId,
   });
 
-  final _i25.Key? key;
+  final _i24.Key? key;
 
   final String refId;
 }
@@ -444,9 +430,9 @@ class NewsBookmarkPostViewArguments {
     required this.article,
   });
 
-  final _i25.Key? key;
+  final _i24.Key? key;
 
-  final _i28.BookmarkedArticle article;
+  final _i27.BookmarkedArticle article;
 }
 
 class NewsFeedViewArguments {
@@ -459,7 +445,7 @@ class NewsFeedViewArguments {
     this.subject = '',
   });
 
-  final _i25.Key? key;
+  final _i24.Key? key;
 
   final String slug;
 
@@ -478,7 +464,7 @@ class NewsAuthorViewArguments {
     required this.authorSlug,
   });
 
-  final _i25.Key? key;
+  final _i24.Key? key;
 
   final String authorSlug;
 }
@@ -489,7 +475,7 @@ class NewsImageViewArguments {
     required this.imgUrl,
   });
 
-  final _i25.Key? key;
+  final _i24.Key? key;
 
   final String imgUrl;
 }
@@ -497,7 +483,7 @@ class NewsImageViewArguments {
 class ForumCategoryViewArguments {
   const ForumCategoryViewArguments({this.key});
 
-  final _i25.Key? key;
+  final _i24.Key? key;
 }
 
 class ForumPostFeedViewArguments {
@@ -508,7 +494,7 @@ class ForumPostFeedViewArguments {
     required this.name,
   });
 
-  final _i25.Key? key;
+  final _i24.Key? key;
 
   final String slug;
 
@@ -524,7 +510,7 @@ class ForumPostViewArguments {
     required this.slug,
   });
 
-  final _i25.Key? key;
+  final _i24.Key? key;
 
   final String id;
 
@@ -537,7 +523,7 @@ class ForumLoginViewArguments {
     this.fromCreatePost = false,
   });
 
-  final _i25.Key? key;
+  final _i24.Key? key;
 
   final bool fromCreatePost;
 }
@@ -548,7 +534,7 @@ class ForumUserViewArguments {
     required this.username,
   });
 
-  final _i25.Key? key;
+  final _i24.Key? key;
 
   final String username;
 }
@@ -560,7 +546,7 @@ class SuperBlockViewArguments {
     required this.superblockName,
   });
 
-  final _i25.Key? key;
+  final _i24.Key? key;
 
   final String superBlockDashedName;
 
@@ -575,11 +561,11 @@ class ChallengeViewArguments {
     required this.challengesCompleted,
   });
 
-  final _i25.Key? key;
+  final _i24.Key? key;
 
   final String url;
 
-  final _i29.Block block;
+  final _i28.Block block;
 
   final int challengesCompleted;
 }
@@ -590,12 +576,12 @@ class WebViewViewArguments {
     required this.url,
   });
 
-  final _i25.Key? key;
+  final _i24.Key? key;
 
   final String url;
 }
 
-extension NavigatorStateExtension on _i30.NavigationService {
+extension NavigatorStateExtension on _i29.NavigationService {
   Future<dynamic> navigateToHomeView([
     int? routerId,
     bool preventDuplicates = true,
@@ -639,9 +625,9 @@ extension NavigatorStateExtension on _i30.NavigationService {
   }
 
   Future<dynamic> navigateToEpisodeView({
-    _i25.Key? key,
-    required _i26.Episodes episode,
-    required _i27.Podcasts podcast,
+    _i24.Key? key,
+    required _i25.Episodes episode,
+    required _i26.Podcasts podcast,
     int? routerId,
     bool preventDuplicates = true,
     Map<String, String>? parameters,
@@ -658,7 +644,7 @@ extension NavigatorStateExtension on _i30.NavigationService {
   }
 
   Future<dynamic> navigateToNewsArticleView({
-    _i25.Key? key,
+    _i24.Key? key,
     required String refId,
     int? routerId,
     bool preventDuplicates = true,
@@ -675,8 +661,8 @@ extension NavigatorStateExtension on _i30.NavigationService {
   }
 
   Future<dynamic> navigateToNewsBookmarkPostView({
-    _i25.Key? key,
-    required _i28.BookmarkedArticle article,
+    _i24.Key? key,
+    required _i27.BookmarkedArticle article,
     int? routerId,
     bool preventDuplicates = true,
     Map<String, String>? parameters,
@@ -692,7 +678,7 @@ extension NavigatorStateExtension on _i30.NavigationService {
   }
 
   Future<dynamic> navigateToNewsFeedView({
-    _i25.Key? key,
+    _i24.Key? key,
     String slug = '',
     String author = '',
     bool fromAuthor = false,
@@ -719,7 +705,7 @@ extension NavigatorStateExtension on _i30.NavigationService {
   }
 
   Future<dynamic> navigateToNewsAuthorView({
-    _i25.Key? key,
+    _i24.Key? key,
     required String authorSlug,
     int? routerId,
     bool preventDuplicates = true,
@@ -736,7 +722,7 @@ extension NavigatorStateExtension on _i30.NavigationService {
   }
 
   Future<dynamic> navigateToNewsImageView({
-    _i25.Key? key,
+    _i24.Key? key,
     required String imgUrl,
     int? routerId,
     bool preventDuplicates = true,
@@ -753,7 +739,7 @@ extension NavigatorStateExtension on _i30.NavigationService {
   }
 
   Future<dynamic> navigateToForumCategoryView({
-    _i25.Key? key,
+    _i24.Key? key,
     int? routerId,
     bool preventDuplicates = true,
     Map<String, String>? parameters,
@@ -769,7 +755,7 @@ extension NavigatorStateExtension on _i30.NavigationService {
   }
 
   Future<dynamic> navigateToForumPostFeedView({
-    _i25.Key? key,
+    _i24.Key? key,
     required String slug,
     required String id,
     required String name,
@@ -789,7 +775,7 @@ extension NavigatorStateExtension on _i30.NavigationService {
   }
 
   Future<dynamic> navigateToForumPostView({
-    _i25.Key? key,
+    _i24.Key? key,
     required String id,
     required String slug,
     int? routerId,
@@ -807,7 +793,7 @@ extension NavigatorStateExtension on _i30.NavigationService {
   }
 
   Future<dynamic> navigateToForumLoginView({
-    _i25.Key? key,
+    _i24.Key? key,
     bool fromCreatePost = false,
     int? routerId,
     bool preventDuplicates = true,
@@ -825,7 +811,7 @@ extension NavigatorStateExtension on _i30.NavigationService {
   }
 
   Future<dynamic> navigateToForumUserView({
-    _i25.Key? key,
+    _i24.Key? key,
     required String username,
     int? routerId,
     bool preventDuplicates = true,
@@ -884,7 +870,7 @@ extension NavigatorStateExtension on _i30.NavigationService {
   }
 
   Future<dynamic> navigateToSuperBlockView({
-    _i25.Key? key,
+    _i24.Key? key,
     required String superBlockDashedName,
     required String superblockName,
     int? routerId,
@@ -905,9 +891,9 @@ extension NavigatorStateExtension on _i30.NavigationService {
   }
 
   Future<dynamic> navigateToChallengeView({
-    _i25.Key? key,
+    _i24.Key? key,
     required String url,
-    required _i29.Block block,
+    required _i28.Block block,
     required int challengesCompleted,
     int? routerId,
     bool preventDuplicates = true,
@@ -942,7 +928,7 @@ extension NavigatorStateExtension on _i30.NavigationService {
   }
 
   Future<dynamic> navigateToWebViewView({
-    _i25.Key? key,
+    _i24.Key? key,
     required String url,
     int? routerId,
     bool preventDuplicates = true,
@@ -952,20 +938,6 @@ extension NavigatorStateExtension on _i30.NavigationService {
   }) async {
     return navigateTo<dynamic>(Routes.webViewView,
         arguments: WebViewViewArguments(key: key, url: url),
-        id: routerId,
-        preventDuplicates: preventDuplicates,
-        parameters: parameters,
-        transition: transition);
-  }
-
-  Future<dynamic> navigateToAuthView([
-    int? routerId,
-    bool preventDuplicates = true,
-    Map<String, String>? parameters,
-    Widget Function(BuildContext, Animation<double>, Animation<double>, Widget)?
-        transition,
-  ]) async {
-    return navigateTo<dynamic>(Routes.authView,
         id: routerId,
         preventDuplicates: preventDuplicates,
         parameters: parameters,

@@ -85,13 +85,6 @@ class DrawerWidgetView extends StatelessWidget {
                         model.routeComponent('CODERADIO', context);
                       },
                     ),
-                    DrawerButton(
-                      component: 'NEW LOGIN',
-                      icon: Icons.radio,
-                      route: () {
-                        model.routeComponent('LOGIN', context);
-                      },
-                    ),
                     buildDivider(),
                     const WebButton(
                       component: 'PRIVACY',

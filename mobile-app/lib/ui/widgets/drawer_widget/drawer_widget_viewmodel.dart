@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:freecodecamp/service/authentication_service.dart';
 import 'package:freecodecamp/app/app.locator.dart';
 import 'package:freecodecamp/service/test_service.dart';
-import 'package:freecodecamp/ui/views/auth/auth_view.dart';
 import 'package:freecodecamp/ui/views/code_radio/code_radio_view.dart';
 //import 'package:freecodecamp/ui/views/learn/learn_view.dart';
 import 'package:freecodecamp/ui/views/forum/forum-categories/forum_category_view.dart';
@@ -57,14 +56,6 @@ class DrawerWidgtetViewModel extends BaseViewModel {
 
   void routeComponent(view, context) async {
     switch (view) {
-      case 'LOGIN':
-        Navigator.pushReplacement(
-            context,
-            PageRouteBuilder(
-                transitionDuration: Duration.zero,
-                pageBuilder: (context, animation1, animation2) =>
-                    const AuthView()));
-        break;
       case 'LEARN':
         Navigator.pushReplacement(
             context,
