@@ -54,9 +54,7 @@ dependencies:
   web_socket_channel: ^2.1.0
   webview_flutter: ^2.8.0
   cached_network_image: ^3.2.0
-  webview_cookie_manager: ^2.0.6
   flutter_secure_storage: ^6.0.0
-  dart_jsonwebtoken: ^2.4.1
   photo_view: ^0.14.0
   share_plus: ^5.0.0
   flutter_highlight:
