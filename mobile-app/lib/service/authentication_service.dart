@@ -87,9 +87,9 @@ class AuthenticationService {
   Future<void> setCurrentClientMode() async {
     await dotenv.load();
 
-    isDevMode = true;
-    // isDevMode =
-    //     dotenv.get('DEVELOPMENTMODE', fallback: '').toLowerCase() == 'true';
+    isDevMode =
+        dotenv.get('DEVELOPMENTMODE', fallback: '').toLowerCase() == 'true';
+    isDevMode = true; // TODO: Remove this line before merging
     baseURL = isDevMode
         ? 'https://www.freecodecamp.dev'
         : 'https://www.freecodecamp.org';
@@ -114,7 +114,7 @@ class AuthenticationService {
     if (await hasRequiredTokens()) {
       log('message: Tokens found in storage');
       await setRequiredTokens();
-      // await fetchUser();
+      await fetchUser();
     }
   }
 
@@ -123,7 +123,14 @@ class AuthenticationService {
   }
 
   Future<void> login() async {
-    final creds = await auth0.webAuthentication(scheme: 'fccapp').login();
+    late final Credentials creds;
+    try {
+      creds = await auth0.webAuthentication(scheme: 'fccapp').login();
+    } on WebAuthenticationException catch (e) {
+      // The most likely case is that the user canceled the login
+      log('WebAuthenticationException: $e');
+      return;
+    }
     log('AccessToken: ${creds.accessToken}');
     Response res = await _dio.get(
       '/mobile-login',
