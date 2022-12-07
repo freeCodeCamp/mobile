@@ -142,7 +142,7 @@ class LearnView extends StatelessWidget {
             backgroundColor: const Color.fromRGBO(0xf1, 0xbe, 0x32, 1),
           ),
           onPressed: () {
-            model.auth.login(context);
+            model.auth.login();
           },
           child: const Text(
             'Sign in to save your progress',

@@ -112,7 +112,7 @@ class DrawerWidgetView extends StatelessWidget {
                             : null,
                         route: () {
                           model.devmode
-                              ? model.handleAuth(context)
+                              ? model.handleAuth()
                               : model.loginSnack();
                         })
                   ],

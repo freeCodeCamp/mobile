@@ -1,14 +1,14 @@
 import 'dart:async';
 import 'dart:developer';
+import 'dart:io';
+
+import 'package:auth0_flutter/auth0_flutter.dart';
 import 'package:curl_logger_dio_interceptor/curl_logger_dio_interceptor.dart';
 import 'package:dio/dio.dart';
-import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
-import 'package:freecodecamp/ui/widgets/login_webview_widget/login_webview_view.dart';
 import 'package:freecodecamp/models/main/user_model.dart';
 import 'package:pretty_dio_logger/pretty_dio_logger.dart';
-import 'package:webview_cookie_manager/webview_cookie_manager.dart';
 
 class AuthenticationService {
   static final AuthenticationService _authenticationService =
@@ -16,6 +16,7 @@ class AuthenticationService {
 
   final FlutterSecureStorage store = const FlutterSecureStorage();
   final Dio _dio = Dio();
+  late final Auth0 auth0;
 
   String _csrf = '';
   String _csrfToken = '';
@@ -62,36 +63,25 @@ class AuthenticationService {
     store.write(key: 'jwt_access_token', value: _jwtAccessToken);
   }
 
-  Future<void> setRequiredTokes() async {
+  Future<void> setRequiredTokens() async {
     _csrf = await store.read(key: 'csrf') as String;
     _csrfToken = await store.read(key: 'csrf_token') as String;
     _jwtAccessToken = await store.read(key: 'jwt_access_token') as String;
   }
 
-  Future<bool> extractCookies() async {
-    await WebviewCookieManager().getCookies(baseURL).then(
-      (cookies) {
-        for (var cookie in cookies) {
-          if (cookie.name == '_csrf') {
-            _csrf = cookie.value;
-          }
-          if (cookie.name == 'csrf_token') {
-            _csrfToken = cookie.value;
-          }
-          if (cookie.name == 'jwt_access_token') {
-            _jwtAccessToken = cookie.value;
-          }
-        }
-      },
-    );
-
-    if (_csrf.isNotEmpty &&
-        _csrfToken.isNotEmpty &&
-        _jwtAccessToken.isNotEmpty) {
-      return true;
+  void extractCookies(Response res) {
+    for (var cookie in res.headers['set-cookie']!) {
+      var parsedCookie = Cookie.fromSetCookieValue(cookie);
+      if (parsedCookie.name == '_csrf') {
+        _csrf = parsedCookie.value;
+      }
+      if (parsedCookie.name == 'csrf_token') {
+        _csrfToken = parsedCookie.value;
+      }
+      if (parsedCookie.name == 'jwt_access_token') {
+        _jwtAccessToken = parsedCookie.value;
+      }
     }
-
-    return false;
   }
 
   Future<void> setCurrentClientMode() async {
@@ -109,6 +99,9 @@ class AuthenticationService {
   }
 
   Future<void> init() async {
+    await dotenv.load();
+    auth0 = Auth0(dotenv.get('AUTH0_DOMAIN'), dotenv.get('AUTH0_CLIENT_ID'));
+
     await setCurrentClientMode();
 
     _dio.options.baseUrl = baseApiURL;
@@ -120,7 +113,7 @@ class AuthenticationService {
 
     if (await hasRequiredTokens()) {
       log('message: Tokens found in storage');
-      await setRequiredTokes();
+      await setRequiredTokens();
       // await fetchUser();
     }
   }
@@ -129,16 +122,22 @@ class AuthenticationService {
     return FccUserModel.fromJson(data);
   }
 
-  Future<void> login(BuildContext context) async {
-    var navRes = await Navigator.push(
-      context,
-      MaterialPageRoute(
-        builder: (context) => const LoginWebView(),
+  Future<void> login() async {
+    final creds = await auth0.webAuthentication(scheme: 'fccapp').login();
+    log('AccessToken: ${creds.accessToken}');
+    Response res = await _dio.get(
+      '/mobile-login',
+      options: Options(
+        headers: {
+          'token': creds.accessToken,
+        },
       ),
     );
-    log('AUTH SERVICE NAV RES: $navRes');
+    log('Response: ${res.data}');
+    extractCookies(res);
     await writeTokensToStorage();
     await fetchUser();
+    await auth0.credentialsManager.clearCredentials();
   }
 
   Future<void> logout() async {
