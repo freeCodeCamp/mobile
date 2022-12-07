@@ -1,0 +1,75 @@
+name: CI - Mobile curriculum test
+
+on:
+  workflow_dispatch:
+  pull_request:
+    branches:
+      - main
+    paths:
+      - 'mobile-app/**'
+  push:
+    branches:
+      - main
+  schedule:
+    - cron: "0 0 * * 0"
+
+jobs:
+  mobile-test:
+    name: Test curriculum for mobile app
+    runs-on: ubuntu-20.04
+
+    steps:
+      - name: Checkout freeCodeCamp main repo
+        uses: actions/checkout@v3
+        with:
+          repository: freeCodeCamp/freeCodeCamp
+
+      - name: Checkout mobile repo
+        uses: actions/checkout@v3
+        with:
+          path: mobile
+
+      - name: Use Node.js 16.x
+        uses: actions/setup-node@v3
+        with:
+          node-version: 16.x
+
+      - name: Setup Flutter 3.3.x
+        uses: subosito/flutter-action@v2
+        with:
+          flutter-version: '3.3.x'
+          channel: 'stable'
+          cache: true
+          cache-key: flutter-3.3.x
+          cache-path: ${{ runner.tool_cache }}/flutter
+
+      - name: Set freeCodeCamp Environment Variables
+        run: cp sample.env .env
+
+      - name: Install and Build
+        run: |
+          npm ci
+          npm run create:config
+          npm run build:curriculum
+
+      - name: Generate mobile test files
+        run: |
+          cd mobile/mobile-app
+          echo "DEVELOPMENTMODE=true" > .env
+          echo "NEWSURL=https://www.freecodecamp.org/news/ghost/api/v3/content/" >> .env
+          flutter pub get
+          flutter test test/widget_test.dart
+
+      - name: Cypress run
+        uses: cypress-io/github-action@v4
+        with:
+          record: ${{ env.CYPRESS_RECORD_KEY != 0 }}
+          start: npx serve
+          wait-on: http://localhost:3000
+          wait-on-timeout: 1200
+          config: retries=1,screenshotOnRunFailure=false,video=false,baseUrl=http://localhost:3000/mobile/mobile-app/generated-tests/
+          browser: chrome
+          spec: cypress/integration/mobile-learn/test-challenges.js
+        env:
+          CYPRESS_RECORD_KEY: ${{ secrets.CYPRESS_RECORD_KEY }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
