@@ -1,7 +1,8 @@
 // ignore: file_names
+import 'dart:developer';
+
 import 'package:flutter/material.dart';
 import 'package:algolia/algolia.dart';
-import 'package:flutter/scheduler.dart';
 import 'package:freecodecamp/ui/views/news/news-search/news_search_viewmodel.dart';
 
 import 'package:stacked/stacked.dart';
@@ -22,6 +23,7 @@ class NewsSearchView extends StatelessWidget {
               filled: true),
           onChanged: (value) {
             model.setSearchTerm(value);
+            model.setHitMaxViewed = false;
           },
         )),
         body: StreamBuilder<List<AlgoliaObjectSnapshot>>(
@@ -37,16 +39,12 @@ class NewsSearchView extends StatelessWidget {
 
             List<AlgoliaObjectSnapshot>? current = snapshot.data;
 
-            SchedulerBinding.instance.addPostFrameCallback(
-              (timeStamp) {
-                // model.handleArticleStepAmount(current!.length);
-              },
-            );
+            log(current!.length.toString());
 
             return Column(
               children: [
                 Expanded(
-                    child: current!.isNotEmpty
+                    child: current.isNotEmpty
                         ? ListView.separated(
                             itemCount: model.viewedAmount,
                             controller: model.controller,

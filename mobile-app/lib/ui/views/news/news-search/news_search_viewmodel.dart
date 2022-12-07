@@ -1,3 +1,6 @@
+import 'dart:convert';
+import 'dart:developer';
+
 import 'package:algolia/algolia.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
@@ -9,6 +12,8 @@ import 'package:stacked_services/stacked_services.dart';
 class NewsSearchModel extends BaseViewModel {
   String _searchTerm = '';
   String get getSearchTerm => _searchTerm;
+
+  String hitHash = '';
 
   int _maxArticleAmount = 21;
   int get getMaxArticleAmount => _maxArticleAmount;
@@ -59,12 +64,22 @@ class NewsSearchModel extends BaseViewModel {
     AlgoliaQuery query = algolia.instance
         .index('news')
         .similarQuery(inputQuery.isEmpty ? 'JavaScript' : inputQuery)
-        .setHitsPerPage(_maxArticleAmount);
+        .setHitsPerPage(21);
 
     AlgoliaQuerySnapshot snap = await query.getObjects();
 
     List<AlgoliaObjectSnapshot> results = snap.hits;
 
+    String localHitHash = base64Encode(
+      utf8.encode(
+        snap.hits.toString().substring(0, 10),
+      ),
+    );
+
+    if (localHitHash != hitHash && snap.hits.isNotEmpty) {
+      hitHash = localHitHash;
+      handleArticleStepAmount(snap.hits.length);
+    }
     return results;
   }
 
@@ -78,8 +93,11 @@ class NewsSearchModel extends BaseViewModel {
 
     if (articleAmount <= 7) {
       setViewedAmount = articleAmount;
+      setHitMaxViewed = true;
     } else {
-      setViewedAmount = articleAmount;
+      setViewedAmount = 7;
+      setHitMaxViewed = false;
+      setStepAmount = articleAmount ~/ 3;
     }
   }
 
@@ -87,12 +105,10 @@ class NewsSearchModel extends BaseViewModel {
     // If the max article amount is already viewedAmount return and do nothing.
     // else add 7 and check again.
 
-    if (_maxArticleAmount == viewedAmount) return;
-
-    setViewedAmount = _viewedAmount += _stepAmount;
-
     if (_maxArticleAmount == viewedAmount) {
-      setHitMaxViewed = true;
+      setMaxArticleAmount = true;
+    } else {
+      setViewedAmount = _viewedAmount += _stepAmount;
     }
   }
 
