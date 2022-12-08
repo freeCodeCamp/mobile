@@ -40,6 +40,8 @@ class NewsSearchModel extends BaseViewModel {
   final searchbarController = TextEditingController();
   final _navigationService = locator<NavigationService>();
 
+  // retrieves search results from Algolia.
+
   Future<List<AlgoliaObjectSnapshot>> search(String inputQuery) async {
     await dotenv.load(fileName: '.env');
 
@@ -65,6 +67,9 @@ class NewsSearchModel extends BaseViewModel {
       ),
     );
 
+    // This prevenst the StreamBuilder from going into a loop. It only calls if
+    // the received hash changed and there are results.
+
     if (localHitHash != hitHash && snap.hits.isNotEmpty) {
       hitHash = localHitHash;
       handleArticleNumber(snap.hits.length);
@@ -77,6 +82,10 @@ class NewsSearchModel extends BaseViewModel {
     notifyListeners();
   }
 
+  // This function gets triggered when the input of the user changes in the
+  // search-bar. It checks if the amount of returned results is greater than
+  // seven. If not hide the button to show more articles.
+
   void handleArticleNumber(int articleAmount) {
     setMaxArticleAmount = articleAmount;
 
@@ -88,6 +97,8 @@ class NewsSearchModel extends BaseViewModel {
       setHitMaxViewed = false;
     }
   }
+
+  // extends the amount of articles that are present in the search results.
 
   void extendArticlesViewed(int articleAmount) {
     setMaxArticleAmount = articleAmount;
