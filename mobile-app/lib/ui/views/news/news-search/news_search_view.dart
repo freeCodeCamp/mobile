@@ -23,7 +23,6 @@ class NewsSearchView extends StatelessWidget {
               filled: true),
           onChanged: (value) {
             model.setSearchTerm(value);
-            model.setHitMaxViewed = false;
           },
         )),
         body: StreamBuilder<List<AlgoliaObjectSnapshot>>(
@@ -45,31 +44,35 @@ class NewsSearchView extends StatelessWidget {
               children: [
                 Expanded(
                     child: current.isNotEmpty
-                        ? ListView.separated(
-                            itemCount: model.viewedAmount,
-                            controller: model.controller,
-                            separatorBuilder: (context, int i) => const Divider(
-                              color: Color.fromRGBO(0x42, 0x42, 0x55, 1),
-                              thickness: 2,
-                              height: 5,
+                        ? Scrollbar(
+                            thumbVisibility: true,
+                            trackVisibility: true,
+                            child: ListView.separated(
+                              itemCount: model.viewedAmount,
+                              separatorBuilder: (context, int i) =>
+                                  const Divider(
+                                color: Color.fromRGBO(0x42, 0x42, 0x55, 1),
+                                thickness: 2,
+                                height: 5,
+                              ),
+                              itemBuilder: (context, index) {
+                                return ListTile(
+                                  title: Text(
+                                    current[index].data['title'],
+                                    maxLines: 2,
+                                    overflow: TextOverflow.ellipsis,
+                                    style: TextStyle(
+                                      color: Colors.white.withOpacity(0.87),
+                                    ),
+                                  ),
+                                  onTap: () => {
+                                    model.navigateToArticle(
+                                      current[index].data['objectID'],
+                                    ),
+                                  },
+                                );
+                              },
                             ),
-                            itemBuilder: (context, index) {
-                              return ListTile(
-                                title: Text(
-                                  current[index].data['title'],
-                                  maxLines: 2,
-                                  overflow: TextOverflow.ellipsis,
-                                  style: TextStyle(
-                                    color: Colors.white.withOpacity(0.87),
-                                  ),
-                                ),
-                                onTap: () => {
-                                  model.navigateToArticle(
-                                    current[index].data['objectID'],
-                                  ),
-                                },
-                              );
-                            },
                           )
                         : const Center(
                             child: Text('No Tutorials Found'),
@@ -77,7 +80,7 @@ class NewsSearchView extends StatelessWidget {
                 if (!model.hitMaxViewed)
                   TextButton(
                     onPressed: () {
-                      model.extendArticlesViewed();
+                      model.extendArticlesViewed(current.length);
                     },
                     child: const Text('press for more tutorials'),
                   )

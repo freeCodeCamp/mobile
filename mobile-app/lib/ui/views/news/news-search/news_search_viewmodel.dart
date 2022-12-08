@@ -1,6 +1,5 @@
 import 'dart:convert';
 import 'dart:developer';
-
 import 'package:algolia/algolia.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
@@ -17,8 +16,6 @@ class NewsSearchModel extends BaseViewModel {
 
   int _maxArticleAmount = 21;
   int get getMaxArticleAmount => _maxArticleAmount;
-
-  int _stepAmount = 7;
 
   int _viewedAmount = 7;
   int get viewedAmount => _viewedAmount;
@@ -41,15 +38,8 @@ class NewsSearchModel extends BaseViewModel {
     notifyListeners();
   }
 
-  set setStepAmount(value) {
-    _stepAmount = value;
-    notifyListeners();
-  }
-
   final searchbarController = TextEditingController();
   final _navigationService = locator<NavigationService>();
-
-  ScrollController controller = ScrollController();
 
   Future<List<AlgoliaObjectSnapshot>> search(String inputQuery) async {
     await dotenv.load(fileName: '.env');
@@ -78,7 +68,7 @@ class NewsSearchModel extends BaseViewModel {
 
     if (localHitHash != hitHash && snap.hits.isNotEmpty) {
       hitHash = localHitHash;
-      handleArticleStepAmount(snap.hits.length);
+      handleArticleNumber(snap.hits.length);
     }
     return results;
   }
@@ -88,27 +78,35 @@ class NewsSearchModel extends BaseViewModel {
     notifyListeners();
   }
 
-  void handleArticleStepAmount(int articleAmount) {
-    _maxArticleAmount = articleAmount;
+  void handleArticleNumber(int articleAmount) {
+    setMaxArticleAmount = articleAmount;
 
-    if (articleAmount <= 7) {
+    if (articleAmount < 7) {
       setViewedAmount = articleAmount;
       setHitMaxViewed = true;
     } else {
       setViewedAmount = 7;
       setHitMaxViewed = false;
-      setStepAmount = articleAmount ~/ 3;
     }
   }
 
-  void extendArticlesViewed() {
-    // If the max article amount is already viewedAmount return and do nothing.
-    // else add 7 and check again.
+  void extendArticlesViewed(int articleAmount) {
+    setMaxArticleAmount = articleAmount;
 
     if (_maxArticleAmount == viewedAmount) {
-      setMaxArticleAmount = true;
+      setHitMaxViewed = true;
     } else {
-      setViewedAmount = _viewedAmount += _stepAmount;
+      int calculateStepSize = (articleAmount - _viewedAmount) ~/ 2;
+
+      int handleStepSize = calculateStepSize < 7
+          ? articleAmount - _viewedAmount
+          : calculateStepSize;
+
+      setViewedAmount = _viewedAmount += handleStepSize;
+
+      if (_maxArticleAmount == viewedAmount) {
+        setHitMaxViewed = true;
+      }
     }
   }
 
