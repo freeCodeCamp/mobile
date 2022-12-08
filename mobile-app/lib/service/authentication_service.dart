@@ -153,6 +153,7 @@ class AuthenticationService {
     await store.delete(key: 'csrf');
     await store.delete(key: 'csrf_token');
     await store.delete(key: 'jwt_access_token');
+    userModel = null;
   }
 
   Future<void> fetchUser() async {
