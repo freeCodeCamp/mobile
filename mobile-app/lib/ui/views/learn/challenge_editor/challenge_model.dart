@@ -12,6 +12,7 @@ import 'package:freecodecamp/models/learn/challenge_model.dart';
 import 'package:freecodecamp/models/learn/curriculum_model.dart';
 import 'package:freecodecamp/service/learn_file_service.dart';
 import 'package:freecodecamp/service/learn_service.dart';
+import 'package:freecodecamp/service/authentication_service.dart';
 import 'package:freecodecamp/ui/views/learn/test_runner.dart';
 import 'package:freecodecamp/ui/widgets/setup_dialog_ui.dart';
 import 'package:html/dom.dart' as dom;
@@ -176,6 +177,7 @@ class ChallengeModel extends BaseViewModel {
 
   void init(String url, Block block, int challengesCompleted) async {
     setupDialogUi();
+    learnService.init();
 
     setChallenge = initChallenge(url);
     Challenge challenge = await _challenge!;
@@ -367,12 +369,32 @@ class ChallengeModel extends BaseViewModel {
     }
   }
 
+  void passChallenge(Challenge? challenge) async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    if (challenge != null) {
+      List challengeFiles = challenge.files.map((file) {
+        return {
+          'contents':
+              prefs.getString('${challenge.id}.${file.name}') ?? file.contents,
+          'ext': file.ext.name,
+          'history': file.history,
+          'key': file.fileKey,
+          'name': file.name,
+        };
+      }).toList();
+      await learnService.postChallengeCompleted(challenge, challengeFiles);
+    }
+  }
+
   void goToNextChallenge(
     int maxChallenges,
     int challengesCompleted,
   ) async {
     Challenge? currChallenge = await challenge;
     if (currChallenge != null) {
+      if (AuthenticationService.staticIsloggedIn) {
+        passChallenge(currChallenge);
+      }
       var challengeIndex = block!.challenges.indexWhere(
         (element) => element.id == currChallenge.id,
       );
