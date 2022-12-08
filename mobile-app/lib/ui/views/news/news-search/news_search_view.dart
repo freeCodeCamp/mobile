@@ -1,6 +1,3 @@
-// ignore: file_names
-import 'dart:developer';
-
 import 'package:flutter/material.dart';
 import 'package:algolia/algolia.dart';
 import 'package:freecodecamp/ui/views/news/news-search/news_search_viewmodel.dart';
@@ -38,12 +35,10 @@ class NewsSearchView extends StatelessWidget {
 
             List<AlgoliaObjectSnapshot>? current = snapshot.data;
 
-            log(current!.length.toString());
-
             return Column(
               children: [
                 Expanded(
-                    child: current.isNotEmpty
+                    child: current!.isNotEmpty
                         ? Scrollbar(
                             thumbVisibility: true,
                             trackVisibility: true,
