@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'dart:developer';
 import 'package:algolia/algolia.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
@@ -6,6 +7,20 @@ import 'package:freecodecamp/app/app.locator.dart';
 import 'package:freecodecamp/app/app.router.dart';
 import 'package:stacked/stacked.dart';
 import 'package:stacked_services/stacked_services.dart';
+
+class Tag {
+  const Tag({required this.tag, required this.url});
+
+  final String tag;
+  final String url;
+
+  factory Tag.fromJson(Map<String, dynamic> json) {
+    return Tag(
+      tag: json['tags'][0]['name'],
+      url: json['tags'][0]['url'],
+    );
+  }
+}
 
 class NewsSearchModel extends BaseViewModel {
   String _searchTerm = '';
@@ -21,6 +36,8 @@ class NewsSearchModel extends BaseViewModel {
 
   bool _hitMaxViewed = false;
   bool get hitMaxViewed => _hitMaxViewed;
+
+  Tag? currentTag;
 
   set setViewedAmount(value) {
     _viewedAmount = value;
@@ -40,7 +57,13 @@ class NewsSearchModel extends BaseViewModel {
   final searchbarController = TextEditingController();
   final _navigationService = locator<NavigationService>();
 
-  // retrieves search results from Algolia.
+  // This code is a function for searching for news articles using the Algolia search engine.
+  // It takes a search query as an argument and uses the similarQuery method
+  // provided by the Algolia library to retrieve search results. It then generates
+  // a hash of the first 10 characters of the hits and updates a hitHash variable
+  // if the hash is different from the previous value. It also calls the
+  // handleArticleNumber function with the number of hits as an argument.
+  // Finally, it returns the list of hits as its result.
 
   Future<List<AlgoliaObjectSnapshot>> search(String inputQuery) async {
     await dotenv.load(fileName: '.env');
@@ -61,18 +84,25 @@ class NewsSearchModel extends BaseViewModel {
 
     List<AlgoliaObjectSnapshot> results = snap.hits;
 
+    log(results.toString());
+
     String localHitHash = base64Encode(
       utf8.encode(
         snap.hits.toString().substring(0, 10),
       ),
     );
 
-    // This prevenst the StreamBuilder from going into a loop. It only calls if
-    // the received hash changed and there are results.
-
     if (localHitHash != hitHash && snap.hits.isNotEmpty) {
-      hitHash = localHitHash;
-      handleArticleNumber(snap.hits.length);
+      try {
+        Tag tag = Tag.fromJson(snap.hits.first.data);
+
+        currentTag = tag;
+        hitHash = localHitHash;
+
+        handleArticleNumber(snap.hits.length);
+      } catch (e) {
+        log(e.toString());
+      }
     }
     return results;
   }
@@ -80,6 +110,19 @@ class NewsSearchModel extends BaseViewModel {
   void setSearchTerm(value) {
     _searchTerm = value;
     notifyListeners();
+  }
+
+  void searchSubject() {
+    List splitUrl = currentTag!.url.split('/');
+    log(currentTag!.url);
+    _navigationService.navigateTo(
+      Routes.newsFeedView,
+      arguments: NewsFeedViewArguments(
+        slug: currentTag!.url.split('/')[splitUrl.length - 2],
+        fromTag: true,
+        subject: currentTag!.tag,
+      ),
+    );
   }
 
   // This function gets triggered when the input of the user changes in the
@@ -98,7 +141,11 @@ class NewsSearchModel extends BaseViewModel {
     }
   }
 
-  // extends the amount of articles that are present in the search results.
+  // This code is handling the number of articles that are currently being viewed.
+  // It calculates a step size, which is the number of additional articles to be
+  // added to the current number of viewed articles, and updates the viewedAmount
+  // accordingly. It also sets the setHitMaxViewed flag to indicate whether all
+  // articles are currently being viewed.
 
   void extendArticlesViewed(int articleAmount) {
     setMaxArticleAmount = articleAmount;

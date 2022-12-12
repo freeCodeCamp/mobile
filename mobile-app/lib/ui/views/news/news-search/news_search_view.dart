@@ -12,16 +12,39 @@ class NewsSearchView extends StatelessWidget {
       viewModelBuilder: () => NewsSearchModel(),
       builder: (context, model, child) => Scaffold(
         appBar: AppBar(
-            title: TextField(
-          controller: model.searchbarController,
-          decoration: const InputDecoration(
-              hintText: 'SEARCH TUTORIALS...',
-              fillColor: Color.fromRGBO(0x2A, 0x2A, 0x40, 1),
-              filled: true),
-          onChanged: (value) {
-            model.setSearchTerm(value);
-          },
-        )),
+          title: Container(
+            constraints: BoxConstraints(
+              minWidth: MediaQuery.of(context).size.width,
+            ),
+            child: TextField(
+              controller: model.searchbarController,
+              decoration: const InputDecoration(
+                hintText: 'SEARCH TUTORIALS...',
+                fillColor: Color.fromRGBO(0x2A, 0x2A, 0x40, 1),
+                border: InputBorder.none,
+                filled: true,
+              ),
+              onChanged: (value) {
+                model.setSearchTerm(value);
+              },
+            ),
+          ),
+          actions: [
+            Container(
+              color: const Color.fromRGBO(0x2A, 0x2A, 0x40, 1),
+              margin: const EdgeInsets.fromLTRB(4, 4, 32, 4),
+              child: TextButton.icon(
+                label: const Text('SEARCH'),
+                onPressed: () {
+                  model.searchSubject();
+                },
+                icon: const Icon(
+                  Icons.search_sharp,
+                ),
+              ),
+            )
+          ],
+        ),
         body: StreamBuilder<List<AlgoliaObjectSnapshot>>(
           stream: Stream.fromFuture(model.search(model.getSearchTerm)),
           builder: (context, snapshot) {
@@ -73,11 +96,17 @@ class NewsSearchView extends StatelessWidget {
                             child: Text('No Tutorials Found'),
                           )),
                 if (!model.hitMaxViewed)
-                  TextButton(
+                  ElevatedButton(
                     onPressed: () {
                       model.extendArticlesViewed(current.length);
                     },
-                    child: const Text('press for more tutorials'),
+                    style: ElevatedButton.styleFrom(
+                      minimumSize: Size(
+                        MediaQuery.of(context).size.width - 15,
+                        30,
+                      ),
+                    ),
+                    child: const Text('More Tutorials'),
                   )
               ],
             );
