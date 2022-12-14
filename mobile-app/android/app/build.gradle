@@ -37,7 +37,7 @@ android {
         abi {
             enable true
             reset()
-            include "x86", "x86_64"
+            include 'armeabi', 'mips', 'mips64'
             universalApk false
         }
     }
