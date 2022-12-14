@@ -56,7 +56,7 @@ class Article {
 
   factory Article.fromSearch(Map<String, dynamic> data) {
     return Article(
-        createdAt: data['published_at'],
+        createdAt: data['publishedAt'],
         featureImage: data['featureImage'],
         title: data['title'],
         profileImage: data['author']['profileImage'],

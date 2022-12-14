@@ -71,7 +71,7 @@ class NewsSearchModel extends BaseViewModel {
 
     String localHitHash = base64Encode(
       utf8.encode(
-        snap.hits.toString().substring(0, 10),
+        snap.hits.toString().substring(0, 35),
       ),
     );
 
