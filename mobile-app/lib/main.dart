@@ -1,5 +1,6 @@
 import 'package:fk_user_agent/fk_user_agent.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:freecodecamp/service/audio_service.dart';
 import 'package:freecodecamp/service/authentication_service.dart';
 import 'package:freecodecamp/service/notification_service.dart';
@@ -19,7 +20,13 @@ Future<void> main() async {
   await AppAudioService().init();
   await FkUserAgent.init();
 
-  runApp(const MyApp());
+  SystemChrome.setPreferredOrientations(
+    [DeviceOrientation.portraitUp],
+  ).then(
+    (_) {
+      runApp(const MyApp());
+    },
+  );
 
   await QuickActionsService().init();
 }
