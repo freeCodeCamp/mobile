@@ -29,13 +29,17 @@ class NewsFeedModel extends BaseViewModel {
   }
 
   void navigateTo(String id) {
-    _navigationService.navigateTo(Routes.newsArticleView,
-        arguments: NewsArticleViewArguments(refId: id));
+    _navigationService.navigateTo(
+      Routes.newsArticleView,
+      arguments: NewsArticleViewArguments(refId: id),
+    );
   }
 
   void navigateToAuthor(String authorSlug) {
-    _navigationService.navigateTo(Routes.newsAuthorView,
-        arguments: NewsAuthorViewArguments(authorSlug: authorSlug));
+    _navigationService.navigateTo(
+      Routes.newsAuthorView,
+      arguments: NewsAuthorViewArguments(authorSlug: authorSlug),
+    );
   }
 
   static String parseDate(date) {
@@ -43,8 +47,9 @@ class NewsFeedModel extends BaseViewModel {
   }
 
   Future<List<Article>> readFromFiles() async {
-    String json =
-        await rootBundle.loadString('assets/test_data/news_feed.json');
+    String json = await rootBundle.loadString(
+      'assets/test_data/news_feed.json',
+    );
 
     var decodedJson = jsonDecode(json)['posts'];
 
@@ -78,6 +83,15 @@ class NewsFeedModel extends BaseViewModel {
     } else {
       throw Exception(response.body);
     }
+  }
+
+  Future<List<Article>> returnArticlesFromSearch(
+    List searchArticles,
+  ) async {
+    for (int i = 0; i < searchArticles.length; i++) {
+      articles.add(Article.fromSearch(searchArticles[i]));
+    }
+    return articles;
   }
 
   Future<void> refresh() {

@@ -8,25 +8,12 @@ import 'package:freecodecamp/app/app.router.dart';
 import 'package:stacked/stacked.dart';
 import 'package:stacked_services/stacked_services.dart';
 
-class Tag {
-  const Tag({required this.tag, required this.url});
-
-  final String tag;
-  final String url;
-
-  factory Tag.fromJson(Map<String, dynamic> json) {
-    return Tag(
-      tag: json['tags'][0]['name'],
-      url: json['tags'][0]['url'],
-    );
-  }
-}
-
 class NewsSearchModel extends BaseViewModel {
   String _searchTerm = '';
   String get getSearchTerm => _searchTerm;
 
   String hitHash = '';
+  List currentResult = [];
 
   int _maxArticleAmount = 21;
   int get getMaxArticleAmount => _maxArticleAmount;
@@ -36,8 +23,6 @@ class NewsSearchModel extends BaseViewModel {
 
   bool _hitMaxViewed = false;
   bool get hitMaxViewed => _hitMaxViewed;
-
-  Tag? currentTag;
 
   set setViewedAmount(value) {
     _viewedAmount = value;
@@ -84,8 +69,6 @@ class NewsSearchModel extends BaseViewModel {
 
     List<AlgoliaObjectSnapshot> results = snap.hits;
 
-    log(results.toString());
-
     String localHitHash = base64Encode(
       utf8.encode(
         snap.hits.toString().substring(0, 10),
@@ -93,13 +76,17 @@ class NewsSearchModel extends BaseViewModel {
     );
 
     if (localHitHash != hitHash && snap.hits.isNotEmpty) {
-      try {
-        Tag tag = Tag.fromJson(snap.hits.first.data);
+      List parseResult = [];
 
-        currentTag = tag;
+      try {
+        for (int i = 0; i < snap.hits.length; i++) {
+          parseResult.add(snap.hits[i].data);
+        }
+
         hitHash = localHitHash;
 
-        handleArticleNumber(snap.hits.length);
+        currentResult.clear();
+        currentResult.addAll(parseResult);
       } catch (e) {
         log(e.toString());
       }
@@ -113,14 +100,12 @@ class NewsSearchModel extends BaseViewModel {
   }
 
   void searchSubject() {
-    List splitUrl = currentTag!.url.split('/');
-    log(currentTag!.url);
     _navigationService.navigateTo(
       Routes.newsFeedView,
       arguments: NewsFeedViewArguments(
-        slug: currentTag!.url.split('/')[splitUrl.length - 2],
-        fromTag: true,
-        subject: currentTag!.tag,
+        fromSearch: true,
+        articles: currentResult,
+        subject: _searchTerm,
       ),
     );
   }

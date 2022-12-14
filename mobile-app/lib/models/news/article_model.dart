@@ -33,7 +33,7 @@ class Article {
     for (int i = 0; i < list.length; i++) {
       tags.add(TagButton(
         tagName: list[i]['name'],
-        tagSlug: list[i]['slug'],
+        tagSlug: list[i]['slug'] ?? returnSlug(list[i]['url']),
         key: UniqueKey(),
       ));
     }
@@ -52,6 +52,24 @@ class Article {
         authorSlug: data['authors'][0]['slug'],
         tagNames: returnTags(data['tags']),
         id: data['id']);
+  }
+
+  factory Article.fromSearch(Map<String, dynamic> data) {
+    return Article(
+        createdAt: data['published_at'],
+        featureImage: data['featureImage'],
+        title: data['title'],
+        profileImage: data['author']['profileImage'],
+        authorName: data['author']['name'],
+        authorSlug: returnSlug(data['author']['url']),
+        tagNames: returnTags(data['tags']),
+        id: data['objectID']);
+  }
+
+  static String returnSlug(String url) {
+    List splitUrl = url.split('/');
+
+    return splitUrl[splitUrl.length - 2];
   }
 
   // this is factory is for the post view
