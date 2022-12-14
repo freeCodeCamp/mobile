@@ -26,11 +26,16 @@ class _WebButtonState extends State<WebButton> {
         dense: true,
         onTap: () {
           Navigator.push(
-              context,
-              PageRouteBuilder(
-                  transitionDuration: Duration.zero,
-                  pageBuilder: (context, animation1, animation2) =>
-                      WebViewView(url: widget.url)));
+            context,
+            PageRouteBuilder(
+              transitionDuration: Duration.zero,
+              pageBuilder: (context, animation1, animation2) =>
+                  WebViewView(url: widget.url),
+              settings: RouteSettings(
+                name: 'Web View - ${widget.component}',
+              ),
+            ),
+          );
         },
         leading: Icon(
           widget.icon,

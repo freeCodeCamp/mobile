@@ -58,51 +58,67 @@ class DrawerWidgtetViewModel extends BaseViewModel {
     switch (view) {
       case 'LEARN':
         Navigator.pushReplacement(
-            context,
-            PageRouteBuilder(
-                transitionDuration: Duration.zero,
-                pageBuilder: (context, animation1, animation2) =>
-                    const LearnView()));
+          context,
+          PageRouteBuilder(
+            transitionDuration: Duration.zero,
+            pageBuilder: (context, animation1, animation2) => const LearnView(),
+            settings: const RouteSettings(name: 'Learn View'),
+          ),
+        );
         break;
       case 'NEWS':
         Navigator.pushReplacement(
-            context,
-            PageRouteBuilder(
-                transitionDuration: Duration.zero,
-                pageBuilder: (context, animation1, animation2) =>
-                    const HomeView()));
+          context,
+          PageRouteBuilder(
+            transitionDuration: Duration.zero,
+            pageBuilder: (context, animation1, animation2) => const HomeView(),
+            settings: const RouteSettings(name: 'News View'),
+          ),
+        );
         break;
       case 'FORUM':
         Navigator.pushReplacement(
-            context,
-            PageRouteBuilder(
-                transitionDuration: Duration.zero,
-                pageBuilder: (context, animation1, animation2) =>
-                    ForumCategoryView()));
+          context,
+          PageRouteBuilder(
+            transitionDuration: Duration.zero,
+            pageBuilder: (context, animation1, animation2) =>
+                ForumCategoryView(),
+            settings: const RouteSettings(name: 'Forum View'),
+          ),
+        );
         break;
       case 'PODCAST':
         Navigator.pushReplacement(
-            context,
-            PageRouteBuilder(
-                transitionDuration: Duration.zero,
-                pageBuilder: (context, animation1, animation2) =>
-                    const PodcastListView()));
+          context,
+          PageRouteBuilder(
+            transitionDuration: Duration.zero,
+            pageBuilder: (context, animation1, animation2) =>
+                const PodcastListView(),
+            settings: const RouteSettings(name: 'Podcasts List View'),
+          ),
+        );
         break;
       case 'SETTINGS':
         Navigator.pushReplacement(
-            context,
-            PageRouteBuilder(
-                transitionDuration: Duration.zero,
-                pageBuilder: (context, animation1, animatiom2) =>
-                    const SettingsView()));
+          context,
+          PageRouteBuilder(
+            transitionDuration: Duration.zero,
+            pageBuilder: (context, animation1, animatiom2) =>
+                const SettingsView(),
+            settings: const RouteSettings(name: 'Settings View'),
+          ),
+        );
         break;
       case 'CODERADIO':
         Navigator.pushReplacement(
-            context,
-            PageRouteBuilder(
-                transitionDuration: Duration.zero,
-                pageBuilder: (context, animation1, animatiom2) =>
-                    const CodeRadioView()));
+          context,
+          PageRouteBuilder(
+            transitionDuration: Duration.zero,
+            pageBuilder: (context, animation1, animatiom2) =>
+                const CodeRadioView(),
+            settings: const RouteSettings(name: 'Code Radio View'),
+          ),
+        );
         break;
       case 'PROFILE':
         Navigator.pushReplacement(
@@ -111,6 +127,7 @@ class DrawerWidgtetViewModel extends BaseViewModel {
             transitionDuration: Duration.zero,
             pageBuilder: (context, animation1, animation2) =>
                 const ProfileView(),
+            settings: const RouteSettings(name: 'Profile View'),
           ),
         );
         break;
