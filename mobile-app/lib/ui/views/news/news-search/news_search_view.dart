@@ -106,7 +106,7 @@ class NewsSearchView extends StatelessWidget {
                         30,
                       ),
                     ),
-                    child: const Text('More Tutorials'),
+                    child: const Text('Load More Tutorials'),
                   )
               ],
             );

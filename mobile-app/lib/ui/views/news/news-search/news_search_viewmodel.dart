@@ -105,7 +105,7 @@ class NewsSearchModel extends BaseViewModel {
       arguments: NewsFeedViewArguments(
         fromSearch: true,
         articles: currentResult,
-        subject: _searchTerm,
+        subject: _searchTerm == '' ? 'JavaScript' : _searchTerm,
       ),
     );
   }
