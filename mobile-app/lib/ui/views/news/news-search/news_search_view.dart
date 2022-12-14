@@ -50,6 +50,12 @@ class NewsSearchView extends StatelessWidget {
           builder: (context, snapshot) {
             if (!snapshot.hasData) {
               return const Center(
+                child: Text('No Tutorials Found'),
+              );
+            }
+
+            if (snapshot.connectionState == ConnectionState.waiting) {
+              return const Center(
                 child: CircularProgressIndicator(),
               );
             }

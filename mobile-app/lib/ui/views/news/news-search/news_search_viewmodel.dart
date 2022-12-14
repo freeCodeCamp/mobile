@@ -76,6 +76,7 @@ class NewsSearchModel extends BaseViewModel {
     );
 
     if (localHitHash != hitHash && snap.hits.isNotEmpty) {
+      setViewedAmount = 0;
       handleArticleNumber(snap.hits.length);
 
       List parseResult = [];
