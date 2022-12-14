@@ -33,6 +33,15 @@ if (keystorePropertiesFile.exists()) {
 android {
     compileSdkVersion 33
 
+    splits {
+        abi {
+            enable true
+            reset()
+            include "x86", "x86_64"
+            universalApk false
+        }
+    }
+
     sourceSets {
         main.java.srcDirs += 'src/main/kotlin'
     }
