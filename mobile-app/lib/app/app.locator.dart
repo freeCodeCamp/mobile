@@ -12,6 +12,7 @@ import 'package:stacked_services/src/dialog/dialog_service.dart';
 import 'package:stacked_services/src/navigation/navigation_service.dart';
 import 'package:stacked_services/src/snackbar/snackbar_service.dart';
 
+import '../service/analytics_service.dart';
 import '../service/audio_service.dart';
 import '../service/authentication_service.dart';
 import '../service/download_service.dart';
@@ -44,4 +45,5 @@ Future<void> setupLocator(
   locator.registerLazySingleton(() => LearnService());
   locator.registerLazySingleton(() => LearnFileService());
   locator.registerLazySingleton(() => QuickActionsService());
+  locator.registerLazySingleton(() => AnalyticsService());
 }
