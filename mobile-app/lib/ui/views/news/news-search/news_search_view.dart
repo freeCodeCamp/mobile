@@ -35,11 +35,17 @@ class NewsSearchView extends StatelessWidget {
               margin: const EdgeInsets.fromLTRB(4, 4, 32, 4),
               child: TextButton.icon(
                 label: const Text('SEARCH'),
-                onPressed: () {
-                  model.searchSubject();
-                },
+                onPressed: model.searchbarController.text != ''
+                    ? () {
+                        model.searchSubject();
+                      }
+                    : null,
                 icon: const Icon(
                   Icons.search_sharp,
+                ),
+                style: TextButton.styleFrom(
+                  disabledBackgroundColor:
+                      const Color.fromARGB(255, 35, 35, 48),
                 ),
               ),
             )
