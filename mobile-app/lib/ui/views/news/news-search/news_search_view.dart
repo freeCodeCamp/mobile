@@ -60,7 +60,14 @@ class NewsSearchView extends StatelessWidget {
               );
             }
 
-            if (snapshot.hasError) return Text('Error: ${snapshot.error}');
+            if (snapshot.hasError) {
+              return const Center(
+                child: Text(
+                  'There was an error loading tutorials \n please try again',
+                  textAlign: TextAlign.center,
+                ),
+              );
+            }
 
             List<AlgoliaObjectSnapshot>? current = snapshot.data;
 
