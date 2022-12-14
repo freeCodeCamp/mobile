@@ -54,15 +54,15 @@ class NewsSearchView extends StatelessWidget {
         body: StreamBuilder<List<AlgoliaObjectSnapshot>>(
           stream: Stream.fromFuture(model.search(model.getSearchTerm)),
           builder: (context, snapshot) {
-            if (!snapshot.hasData) {
-              return const Center(
-                child: Text('No Tutorials Found'),
-              );
-            }
-
             if (snapshot.connectionState == ConnectionState.waiting) {
               return const Center(
                 child: CircularProgressIndicator(),
+              );
+            }
+
+            if (!snapshot.hasData) {
+              return const Center(
+                child: Text('No Tutorials Found'),
               );
             }
 
@@ -85,6 +85,7 @@ class NewsSearchView extends StatelessWidget {
                             thumbVisibility: true,
                             trackVisibility: true,
                             child: ListView.separated(
+                              physics: const ClampingScrollPhysics(),
                               itemCount: model.viewedAmount,
                               separatorBuilder: (context, int i) =>
                                   const Divider(
