@@ -67,7 +67,7 @@ dependencies:
   pretty_dio_logger: ^1.2.0-beta-1
   curl_logger_dio_interceptor: ^0.0.3
   flutter_heatmap_calendar: ^1.0.4
-  intl: ^0.17.0
+  intl: ^0.18.0
   path: ^1.8.1
   audio_service: ^0.18.4
   device_info_plus: ^4.0.1
