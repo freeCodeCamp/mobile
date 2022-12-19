@@ -15,40 +15,8 @@ class NewsSearchModel extends BaseViewModel {
   String hitHash = '';
   List currentResult = [];
 
-  int _maxArticleAmount = 21;
-  int get getMaxArticleAmount => _maxArticleAmount;
-
-  int _viewedAmount = 7;
-  int get viewedAmount => _viewedAmount;
-
-  bool _hitMaxViewed = false;
-  bool get hitMaxViewed => _hitMaxViewed;
-
-  set setViewedAmount(value) {
-    _viewedAmount = value;
-    notifyListeners();
-  }
-
-  set setHitMaxViewed(value) {
-    _hitMaxViewed = value;
-    notifyListeners();
-  }
-
-  set setMaxArticleAmount(value) {
-    _maxArticleAmount = value;
-    notifyListeners();
-  }
-
   final searchbarController = TextEditingController();
   final _navigationService = locator<NavigationService>();
-
-  // This code is a function for searching for news articles using the Algolia search engine.
-  // It takes a search query as an argument and uses the similarQuery method
-  // provided by the Algolia library to retrieve search results. It then generates
-  // a hash of the first 10 characters of the hits and updates a hitHash variable
-  // if the hash is different from the previous value. It also calls the
-  // handleArticleNumber function with the number of hits as an argument.
-  // Finally, it returns the list of hits as its result.
 
   Future<List<AlgoliaObjectSnapshot>> search(String inputQuery) async {
     await dotenv.load(fileName: '.env');
@@ -63,7 +31,7 @@ class NewsSearchModel extends BaseViewModel {
     AlgoliaQuery query = algolia.instance
         .index('news')
         .similarQuery(inputQuery.isEmpty ? 'JavaScript' : inputQuery)
-        .setHitsPerPage(21);
+        .setHitsPerPage(7);
 
     AlgoliaQuerySnapshot snap = await query.getObjects();
 
@@ -76,8 +44,9 @@ class NewsSearchModel extends BaseViewModel {
     );
 
     if (localHitHash != hitHash && snap.hits.isNotEmpty) {
-      setViewedAmount = 0;
-      handleArticleNumber(snap.hits.length);
+      // If the hashes are different and the search results are not empty,
+      // parse the data from each AlgoliaObjectSnapshot object
+      // and store it in a list called "parseResult"
 
       List parseResult = [];
 
@@ -86,6 +55,8 @@ class NewsSearchModel extends BaseViewModel {
           parseResult.add(snap.hits[i].data);
         }
 
+        // Update the stored hash and clear the "currentResult" list,
+        // then add the elements of "parseResult" to it
         hitHash = localHitHash;
 
         currentResult.clear();
@@ -111,48 +82,6 @@ class NewsSearchModel extends BaseViewModel {
         subject: _searchTerm == '' ? 'JavaScript' : _searchTerm,
       ),
     );
-  }
-
-  // This function gets triggered when the input of the user changes in the
-  // search-bar. It checks if the amount of returned results is greater than
-  // seven. If not hide the button to show more articles.
-
-  void handleArticleNumber(int articleAmount) {
-    setMaxArticleAmount = articleAmount;
-
-    if (articleAmount < 7) {
-      setViewedAmount = articleAmount;
-      setHitMaxViewed = true;
-    } else {
-      setViewedAmount = 7;
-      setHitMaxViewed = false;
-    }
-  }
-
-  // This code is handling the number of articles that are currently being viewed.
-  // It calculates a step size, which is the number of additional articles to be
-  // added to the current number of viewed articles, and updates the viewedAmount
-  // accordingly. It also sets the setHitMaxViewed flag to indicate whether all
-  // articles are currently being viewed.
-
-  void extendArticlesViewed(int articleAmount) {
-    setMaxArticleAmount = articleAmount;
-
-    if (_maxArticleAmount == viewedAmount) {
-      setHitMaxViewed = true;
-    } else {
-      int calculateStepSize = (articleAmount - _viewedAmount) ~/ 2;
-
-      int handleStepSize = calculateStepSize < 7
-          ? articleAmount - _viewedAmount
-          : calculateStepSize;
-
-      setViewedAmount = _viewedAmount += handleStepSize;
-
-      if (_maxArticleAmount == viewedAmount) {
-        setHitMaxViewed = true;
-      }
-    }
   }
 
   void navigateToArticle(id) {

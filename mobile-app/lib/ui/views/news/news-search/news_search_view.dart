@@ -27,14 +27,16 @@ class NewsSearchView extends StatelessWidget {
               onChanged: (value) {
                 model.setSearchTerm(value);
               },
+              onSubmitted: (value) {
+                model.searchSubject();
+              },
             ),
           ),
           actions: [
             Container(
               color: const Color.fromRGBO(0x2A, 0x2A, 0x40, 1),
               margin: const EdgeInsets.fromLTRB(4, 4, 32, 4),
-              child: TextButton.icon(
-                label: const Text('SEARCH'),
+              child: IconButton(
                 onPressed: model.searchbarController.text != ''
                     ? () {
                         model.searchSubject();
@@ -86,7 +88,7 @@ class NewsSearchView extends StatelessWidget {
                             trackVisibility: true,
                             child: ListView.separated(
                               physics: const ClampingScrollPhysics(),
-                              itemCount: model.viewedAmount,
+                              itemCount: current.length,
                               separatorBuilder: (context, int i) =>
                                   const Divider(
                                 color: Color.fromRGBO(0x42, 0x42, 0x55, 1),
@@ -115,19 +117,6 @@ class NewsSearchView extends StatelessWidget {
                         : const Center(
                             child: Text('No Tutorials Found'),
                           )),
-                if (!model.hitMaxViewed)
-                  ElevatedButton(
-                    onPressed: () {
-                      model.extendArticlesViewed(current.length);
-                    },
-                    style: ElevatedButton.styleFrom(
-                      minimumSize: Size(
-                        MediaQuery.of(context).size.width - 15,
-                        30,
-                      ),
-                    ),
-                    child: const Text('Load More Tutorials'),
-                  )
               ],
             );
           },
