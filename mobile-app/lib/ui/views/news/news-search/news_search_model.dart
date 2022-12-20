@@ -12,11 +12,19 @@ class NewsSearchModel extends BaseViewModel {
   String _searchTerm = '';
   String get getSearchTerm => _searchTerm;
 
+  bool _hasData = true;
+  bool get hasData => _hasData;
+
   String hitHash = '';
   List currentResult = [];
 
   final searchbarController = TextEditingController();
   final _navigationService = locator<NavigationService>();
+
+  set setHasData(value) {
+    _hasData = value;
+    notifyListeners();
+  }
 
   Future<List<AlgoliaObjectSnapshot>> search(String inputQuery) async {
     await dotenv.load(fileName: '.env');
@@ -38,9 +46,7 @@ class NewsSearchModel extends BaseViewModel {
     List<AlgoliaObjectSnapshot> results = snap.hits;
 
     String localHitHash = base64Encode(
-      utf8.encode(
-        snap.hits.toString().substring(0, 35),
-      ),
+      utf8.encode(snap.hits.toString()),
     );
 
     if (localHitHash != hitHash && snap.hits.isNotEmpty) {
@@ -49,6 +55,10 @@ class NewsSearchModel extends BaseViewModel {
       // and store it in a list called "parseResult"
 
       List parseResult = [];
+
+      if (!hasData) {
+        setHasData = true;
+      }
 
       try {
         for (int i = 0; i < snap.hits.length; i++) {
@@ -64,7 +74,13 @@ class NewsSearchModel extends BaseViewModel {
       } catch (e) {
         log(e.toString());
       }
+    } else {
+      currentResult.clear();
+      if (hasData && snap.hits.isEmpty) {
+        setHasData = false;
+      }
     }
+
     return results;
   }
 
