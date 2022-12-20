@@ -75,7 +75,6 @@ class NewsSearchModel extends BaseViewModel {
         log(e.toString());
       }
     } else {
-      currentResult.clear();
       if (hasData && snap.hits.isEmpty) {
         setHasData = false;
       }
