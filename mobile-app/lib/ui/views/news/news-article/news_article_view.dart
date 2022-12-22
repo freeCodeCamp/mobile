@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 
 import 'package:freecodecamp/models/news/article_model.dart';
 import 'package:freecodecamp/ui/views/news/news-bookmark/news_bookmark_widget.dart';
-import 'package:share/share.dart';
+import 'package:share_plus/share_plus.dart';
 import 'package:stacked/stacked.dart';
 import 'news_article_viewmodel.dart';
 
