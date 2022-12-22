@@ -281,6 +281,13 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "0.5.4"
+  dependency_validator:
+    dependency: "direct dev"
+    description:
+      name: dependency_validator
+      url: "https://pub.dartlang.org"
+    source: hosted
+    version: "3.2.2"
   device_info_plus:
     dependency: "direct main"
     description:

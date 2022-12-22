@@ -80,6 +80,7 @@ dev_dependencies:
     sdk: flutter
   stacked_generator: ^0.8.0
   flutter_launcher_icons: ^0.11.0
+  dependency_validator: ^3.2.2
 
 flutter_icons:
   android: "launcher_icon"
