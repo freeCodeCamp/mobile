@@ -51,7 +51,7 @@ dependencies:
   webview_cookie_manager: ^2.0.6
   flutter_secure_storage: ^7.0.1
   photo_view: ^0.14.0
-  share_plus: ^5.0.0
+  share_plus: ^6.3.0
   flutter_highlight:
     git:
       url: https://github.com/sembauke/highlight.dart
