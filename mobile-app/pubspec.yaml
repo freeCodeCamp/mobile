@@ -63,7 +63,7 @@ dependencies:
   intl: ^0.17.0
   path: ^1.8.1
   audio_service: ^0.18.4
-  device_info_plus: ^4.0.1
+  device_info_plus: ^6.0.0
   upgrader: ^4.6.1
   quick_actions: ^1.0.1
 dev_dependencies:
