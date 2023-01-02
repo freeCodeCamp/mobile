@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:freecodecamp/app/app.locator.dart';
 import 'package:freecodecamp/app/app.router.dart';
-import 'package:freecodecamp/models/news/article_model.dart';
-import 'package:freecodecamp/models/news/bookmarked_article_model.dart';
+import 'package:freecodecamp/models/news/tutorial_model.dart';
+import 'package:freecodecamp/models/news/bookmarked_tutorial_model.dart';
 import 'package:stacked/stacked.dart';
 import 'package:sqflite/sqflite.dart';
 import 'package:path/path.dart' as path;
@@ -16,11 +16,11 @@ class NewsBookmarkModel extends BaseViewModel {
   bool _isBookmarked = false;
   bool get bookmarked => _isBookmarked;
 
-  bool _userHasBookmarkedArticles = false;
-  bool get userHasBookmarkedArticles => _userHasBookmarkedArticles;
+  bool _userHasBookmarkedTutorials = false;
+  bool get userHasBookmarkedTutorials => _userHasBookmarkedTutorials;
 
-  late List<BookmarkedArticle> _articles;
-  List<BookmarkedArticle> get bookMarkedArticles => _articles;
+  late List<BookmarkedTutorial> _articles;
+  List<BookmarkedTutorial> get bookMarkedTutorials => _articles;
 
   int _count = 0;
   int get count => _count;
@@ -31,76 +31,76 @@ class NewsBookmarkModel extends BaseViewModel {
     WidgetsFlutterBinding.ensureInitialized();
 
     String dbPath = await getDatabasesPath();
-    String dbPathArticles = path.join(dbPath, 'bookmarked-article.db');
-    bool dbExists = await databaseExists(dbPathArticles);
+    String dbPathTutorials = path.join(dbPath, 'bookmarked-tutorial.db');
+    bool dbExists = await databaseExists(dbPathTutorials);
 
     if (!dbExists) {
       // Making new copy from assets
       dev.log('copying database from assets');
       try {
-        await Directory(path.dirname(dbPathArticles)).create(recursive: true);
+        await Directory(path.dirname(dbPathTutorials)).create(recursive: true);
       } catch (error) {
         dev.log(error.toString());
       }
 
       ByteData data = await rootBundle
-          .load(path.join('assets', 'database', 'bookmarked-article.db'));
+          .load(path.join('assets', 'database', 'bookmarked-tutorial.db'));
       List<int> bytes =
           data.buffer.asUint8List(data.offsetInBytes, data.lengthInBytes);
 
-      await File(dbPathArticles).writeAsBytes(bytes, flush: true);
+      await File(dbPathTutorials).writeAsBytes(bytes, flush: true);
     }
 
-    return openDatabase(dbPathArticles, version: 1);
+    return openDatabase(dbPathTutorials, version: 1);
   }
 
-  Map<String, dynamic> articleToMap(dynamic article) {
-    if (article is Article) {
+  Map<String, dynamic> articleToMap(dynamic tutorial) {
+    if (tutorial is Tutorial) {
       return {
-        'articleTitle': article.title,
-        'articleId': article.id,
-        'articleText': article.text,
-        'authorName': article.authorName
+        'articleTitle': tutorial.title,
+        'articleId': tutorial.id,
+        'articleText': tutorial.text,
+        'authorName': tutorial.authorName
       };
-    } else if (article is BookmarkedArticle) {
+    } else if (tutorial is BookmarkedTutorial) {
       return {
-        'articleTitle': article.articleTitle,
-        'articleId': article.id,
-        'articleText': article.articleText,
-        'authorName': article.authorName
+        'articleTitle': tutorial.articleTitle,
+        'articleId': tutorial.id,
+        'articleText': tutorial.articleText,
+        'authorName': tutorial.authorName
       };
     } else {
       throw Exception(
-          'unable to convert article to map type: ${article.runtimeType}');
+          'unable to convert tutorial to map type: ${tutorial.runtimeType}');
     }
   }
 
-  Future<List<Map<String, dynamic>>> getArticles() async {
+  Future<List<Map<String, dynamic>>> getTutorials() async {
     final db = await openDbConnection();
     return db.query('bookmarks');
   }
 
-  Future<List<BookmarkedArticle>> getModelsFromMapList() async {
-    List<Map<String, dynamic>> mapList = await getArticles();
-    List<BookmarkedArticle> articleModel = [];
+  Future<List<BookmarkedTutorial>> getModelsFromMapList() async {
+    List<Map<String, dynamic>> mapList = await getTutorials();
+    List<BookmarkedTutorial> articleModel = [];
 
     for (int i = 0; i < mapList.length; i++) {
-      articleModel.add(BookmarkedArticle.fromMap(mapList[i]));
+      articleModel.add(BookmarkedTutorial.fromMap(mapList[i]));
     }
     return articleModel;
   }
 
-  Future<void> bookmarkAndUnbookmark(dynamic article) async {
+  Future<void> bookmarkAndUnbookmark(dynamic tutorial) async {
     final db = await openDbConnection();
 
     if (_isBookmarked) {
       _isBookmarked = false;
       await db
-          .rawQuery('DELETE FROM bookmarks WHERE articleId=?', [article!.id]);
+          .rawQuery('DELETE FROM bookmarks WHERE articleId=?', [tutorial!.id]);
       notifyListeners();
     } else {
       _isBookmarked = true;
-      insertArticle(article);
+      insertTutorial(tutorial);
       notifyListeners();
     }
   }
@@ -115,28 +115,28 @@ class NewsBookmarkModel extends BaseViewModel {
 
   Future<void> refresh() async {
     updateListView();
-    hasBookmarkedArticles();
+    hasBookmarkedTutorials();
   }
 
-  Future<void> insertArticle(dynamic article) async {
+  Future<void> insertTutorial(dynamic tutorial) async {
     final db = await openDbConnection();
 
-    // Test if article is already in database
+    // Test if tutorial is already in database
 
     List<Map> isInDatabase = await db
-        .rawQuery('SELECT * FROM bookmarks WHERE articleId=?', [article!.id]);
+        .rawQuery('SELECT * FROM bookmarks WHERE articleId=?', [tutorial!.id]);
 
     if (isInDatabase.isEmpty) {
-      await db.insert('bookmarks', articleToMap(article),
+      await db.insert('bookmarks', articleToMap(tutorial),
           conflictAlgorithm: ConflictAlgorithm.replace);
     }
   }
 
-  Future<void> isArticleBookmarked(dynamic article) async {
+  Future<void> isTutorialBookmarked(dynamic tutorial) async {
     final db = await openDbConnection();
 
     List<Map> isInDatabase = await db
-        .rawQuery('SELECT * FROM bookmarks WHERE articleId=?', [article.id]);
+        .rawQuery('SELECT * FROM bookmarks WHERE articleId=?', [tutorial.id]);
 
     if (isInDatabase.isNotEmpty) {
       _isBookmarked = true;
@@ -144,22 +144,22 @@ class NewsBookmarkModel extends BaseViewModel {
     }
   }
 
-  Future<void> hasBookmarkedArticles() async {
+  Future<void> hasBookmarkedTutorials() async {
     final db = await openDbConnection();
 
     List<Map> isInDatabase = await db.rawQuery('SELECT * FROM bookmarks');
 
     if (isInDatabase.isNotEmpty) {
-      _userHasBookmarkedArticles = true;
+      _userHasBookmarkedTutorials = true;
       notifyListeners();
     } else {
-      _userHasBookmarkedArticles = false;
+      _userHasBookmarkedTutorials = false;
       notifyListeners();
     }
   }
 
-  void routeToBookmarkedArticle(BookmarkedArticle article) {
+  void routeToBookmarkedTutorial(BookmarkedTutorial tutorial) {
     _navigationService.navigateTo(Routes.newsBookmarkPostView,
-        arguments: NewsBookmarkPostViewArguments(article: article));
+        arguments: NewsBookmarkPostViewArguments(tutorial: tutorial));
   }
 }

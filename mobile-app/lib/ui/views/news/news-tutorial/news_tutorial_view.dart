@@ -1,34 +1,34 @@
 import 'package:flutter/material.dart';
 
-import 'package:freecodecamp/models/news/article_model.dart';
+import 'package:freecodecamp/models/news/tutorial_model.dart';
 import 'package:freecodecamp/ui/views/news/news-bookmark/news_bookmark_widget.dart';
 import 'package:share_plus/share_plus.dart';
 import 'package:stacked/stacked.dart';
-import 'news_article_viewmodel.dart';
+import 'news_tutorial_viewmodel.dart';
 
-class NewsArticleView extends StatelessWidget {
+class NewsTutorialView extends StatelessWidget {
   // ignore: prefer_const_constructors_in_immutables
-  NewsArticleView({Key? key, required this.refId}) : super(key: key);
+  NewsTutorialView({Key? key, required this.refId}) : super(key: key);
   late final String refId;
 
   @override
   Widget build(BuildContext context) {
-    return ViewModelBuilder<NewsArticleViewModel>.reactive(
+    return ViewModelBuilder<NewsTutorialViewModel>.reactive(
       onModelReady: (model) => model.initState(refId),
       onDispose: (model) => model.removeScrollPosition(),
       builder: (context, model, child) => Scaffold(
         backgroundColor: const Color(0xFF0a0a23),
-        body: FutureBuilder<Article>(
+        body: FutureBuilder<Tutorial>(
           future: model.initState(refId),
           builder: (context, snapshot) {
             if (snapshot.hasData) {
-              var article = snapshot.data;
+              var tutorial = snapshot.data;
               return Column(
                 children: [
                   Expanded(
                       child: Stack(children: [
-                    lazyLoadHtml(article!.text!, context, article, model),
-                    bottomButtons(article, model)
+                    lazyLoadHtml(tutorial!.text!, context, tutorial, model),
+                    bottomButtons(tutorial, model)
                   ]))
                 ],
               );
@@ -42,11 +42,11 @@ class NewsArticleView extends StatelessWidget {
           },
         ),
       ),
-      viewModelBuilder: () => NewsArticleViewModel(),
+      viewModelBuilder: () => NewsTutorialViewModel(),
     );
   }
 
-  Widget bottomButtons(Article article, NewsArticleViewModel model) {
+  Widget bottomButtons(Tutorial tutorial, NewsTutorialViewModel model) {
     return Align(
       alignment: Alignment.bottomCenter,
       child: SizedBox(
@@ -61,7 +61,7 @@ class NewsArticleView extends StatelessWidget {
                 Container(
                   height: 150,
                 ),
-                NewsBookmarkViewWidget(article: article),
+                NewsBookmarkViewWidget(tutorial: tutorial),
                 const SizedBox(
                   height: 35,
                   child: VerticalDivider(
@@ -73,7 +73,7 @@ class NewsArticleView extends StatelessWidget {
                   label: 'Share',
                   icon: Icons.share,
                   onPressed: () {
-                    Share.share('${article.title}\n\n${article.url}');
+                    Share.share('${tutorial.title}\n\n${tutorial.url}');
                   },
                   rightSided: true,
                 )
@@ -85,9 +85,9 @@ class NewsArticleView extends StatelessWidget {
     );
   }
 
-  ListView lazyLoadHtml(String html, BuildContext context, Article article,
-      NewsArticleViewModel model) {
-    var htmlToList = model.initLazyLoading(html, context, article);
+  ListView lazyLoadHtml(String html, BuildContext context, Tutorial tutorial,
+      NewsTutorialViewModel model) {
+    var htmlToList = model.initLazyLoading(html, context, tutorial);
 
     return ListView.builder(
         shrinkWrap: true,
