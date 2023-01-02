@@ -104,5 +104,5 @@ flutter:
     - assets/sql/
     - assets/test_data/news_post.json
     - assets/test_data/news_feed.json
-    - assets/database/bookmarked-article.db
+    - assets/database/bookmarked-tutorial.db
     - assets/learn/

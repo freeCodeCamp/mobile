@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:freecodecamp/main.dart' as app;
-import 'package:freecodecamp/ui/views/news/news-article/news_article_header.dart';
+import 'package:freecodecamp/ui/views/news/news-tutorial/news_tutorial_header.dart';
 import 'package:freecodecamp/ui/views/news/news-feed/news_feed_lazyloading.dart';
 import 'package:integration_test/integration_test.dart';
 import 'package:path/path.dart' as path;
@@ -12,7 +12,7 @@ void main() {
   IntegrationTestWidgetsFlutterBinding.ensureInitialized();
 
   group('News Component', () {
-    testWidgets('should bookmark article', (WidgetTester tester) async {
+    testWidgets('should bookmark tutorial', (WidgetTester tester) async {
       // Start app
       tester.printToConsole('Test starting');
       await app.main();
@@ -20,30 +20,30 @@ void main() {
       await tester.pumpAndSettle();
       await binding.takeScreenshot('news-feed');
 
-      // Tap on the first article
-      final Finder firstArticle = find.byType(NewsFeedLazyLoading).first;
-      final Finder firstArticleImage = find
+      // Tap on the first tutorial
+      final Finder firstTutorial = find.byType(NewsFeedLazyLoading).first;
+      final Finder firstTutorialImage = find
           .descendant(
-            of: firstArticle,
+            of: firstTutorial,
             matching: find.byType(AspectRatio),
           )
           .first;
       await tester.pumpAndSettle(const Duration(seconds: 3));
-      final ValueKey firstArticleKey = tester
-          .firstWidget<NewsFeedLazyLoading>(firstArticle)
+      final ValueKey firstTutorialKey = tester
+          .firstWidget<NewsFeedLazyLoading>(firstTutorial)
           .key! as ValueKey;
-      expect(firstArticle, findsOneWidget);
-      expect(firstArticleImage, findsOneWidget);
-      await tester.tap(firstArticleImage);
+      expect(firstTutorial, findsOneWidget);
+      expect(firstTutorialImage, findsOneWidget);
+      await tester.tap(firstTutorialImage);
       await tester.pumpAndSettle();
       await tester.pumpAndSettle(const Duration(seconds: 3));
-      await binding.takeScreenshot('news-article');
+      await binding.takeScreenshot('news-tutorial');
 
-      // Tap on the bookmark button and store article title and author
+      // Tap on the bookmark button and store tutorial title and author
       final Finder bookmarkButton = find.byKey(const Key('bookmark_btn'));
       final Finder articleTitle = find.byKey(const Key('title'));
       final Finder articleAuthor = find.descendant(
-          of: find.byType(NewsArticleHeader),
+          of: find.byType(NewsTutorialHeader),
           matching: find.textContaining(RegExp(r'^Written by')));
       await tester.pumpAndSettle();
       expect(bookmarkButton, findsOneWidget);
@@ -61,33 +61,33 @@ void main() {
       await tester.pumpAndSettle();
       await binding.takeScreenshot('news-bookmark-feed');
 
-      // Check if article is in bookmark view and it has same title and author
-      final Finder bookmarkArticle =
+      // Check if tutorial is in bookmark view and it has same title and author
+      final Finder bookmarkTutorial =
           find.byKey(const Key('bookmark_article_0'));
-      final Finder bookmarkArticleText = find.descendant(
-        of: bookmarkArticle,
+      final Finder bookmarkTutorialText = find.descendant(
+        of: bookmarkTutorial,
         matching: find.byType(Text),
       );
       expect(
-        tester.firstWidget<Text>(bookmarkArticleText.first).data!,
+        tester.firstWidget<Text>(bookmarkTutorialText.first).data!,
         title.data,
       );
       expect(
-        (tester.firstWidget<Text>(bookmarkArticleText.last).data!)
+        (tester.firstWidget<Text>(bookmarkTutorialText.last).data!)
             .split('Written by: ')[1],
         author.split('Written by ')[1],
       );
 
       // Check database if record exists
       final db = await openDatabase(
-          path.join(await getDatabasesPath(), 'bookmarked-article.db'));
+          path.join(await getDatabasesPath(), 'bookmarked-tutorial.db'));
       final List<Map<String, dynamic>> result = await db.query(
         'bookmarks',
         where: 'articleId = ?',
-        whereArgs: [firstArticleKey.value],
+        whereArgs: [firstTutorialKey.value],
       );
       expect(result.length, 1);
-      expect(result[0]['articleId'], firstArticleKey.value);
+      expect(result[0]['articleId'], firstTutorialKey.value);
       expect(result[0]['articleTitle'], title.data);
       expect(result[0]['authorName'], author.split('Written by ')[1]);
     });

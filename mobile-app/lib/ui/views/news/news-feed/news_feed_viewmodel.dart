@@ -3,7 +3,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:freecodecamp/app/app.locator.dart';
 import 'package:freecodecamp/app/app.router.dart';
-import 'package:freecodecamp/models/news/article_model.dart';
+import 'package:freecodecamp/models/news/tutorial_model.dart';
 import 'package:freecodecamp/service/test_service.dart';
 import 'package:http/http.dart' as http;
 import 'package:jiffy/jiffy.dart';
@@ -13,7 +13,7 @@ import 'package:stacked_services/stacked_services.dart';
 class NewsFeedModel extends BaseViewModel {
   int _pageNumber = 1;
   int get page => _pageNumber;
-  final List<Article> articles = [];
+  final List<Tutorial> articles = [];
   static const int itemRequestThreshold = 14;
   final _navigationService = locator<NavigationService>();
   static final _testService = locator<TestService>();
@@ -30,8 +30,8 @@ class NewsFeedModel extends BaseViewModel {
 
   void navigateTo(String id) {
     _navigationService.navigateTo(
-      Routes.newsArticleView,
-      arguments: NewsArticleViewArguments(refId: id),
+      Routes.newsTutorialView,
+      arguments: NewsTutorialViewArguments(refId: id),
     );
   }
 
@@ -46,7 +46,7 @@ class NewsFeedModel extends BaseViewModel {
     return Jiffy(date).fromNow().toUpperCase();
   }
 
-  Future<List<Article>> readFromFiles() async {
+  Future<List<Tutorial>> readFromFiles() async {
     String json = await rootBundle.loadString(
       'assets/test_data/news_feed.json',
     );
@@ -54,13 +54,13 @@ class NewsFeedModel extends BaseViewModel {
     var decodedJson = jsonDecode(json)['posts'];
 
     for (int i = 0; i < decodedJson.length; i++) {
-      articles.add(Article.fromJson(decodedJson[i]));
+      articles.add(Tutorial.fromJson(decodedJson[i]));
     }
 
     return articles;
   }
 
-  Future<List<Article>> fetchArticles(String slug, String author) async {
+  Future<List<Tutorial>> fetchTutorials(String slug, String author) async {
     await dotenv.load(fileName: '.env');
 
     String hasSlug = slug != '' ? '&filter=tag:$slug' : '';
@@ -77,7 +77,7 @@ class NewsFeedModel extends BaseViewModel {
     if (response.statusCode == 200) {
       var articleJson = json.decode(response.body)['posts'];
       for (int i = 0; i < articleJson?.length; i++) {
-        articles.add(Article.fromJson(articleJson[i]));
+        articles.add(Tutorial.fromJson(articleJson[i]));
       }
       return articles;
     } else {
@@ -85,11 +85,11 @@ class NewsFeedModel extends BaseViewModel {
     }
   }
 
-  Future<List<Article>> returnArticlesFromSearch(
-    List searchArticles,
+  Future<List<Tutorial>> returnTutorialsFromSearch(
+    List searchTutorials,
   ) async {
-    for (int i = 0; i < searchArticles.length; i++) {
-      articles.add(Article.fromSearch(searchArticles[i]));
+    for (int i = 0; i < searchTutorials.length; i++) {
+      articles.add(Tutorial.fromSearch(searchTutorials[i]));
     }
     return articles;
   }
@@ -101,7 +101,7 @@ class NewsFeedModel extends BaseViewModel {
     return Future.delayed(const Duration(seconds: 0));
   }
 
-  Future handleArticleLazyLoading(int index) async {
+  Future handleTutorialLazyLoading(int index) async {
     var itemPosition = index + 1;
     var request = itemPosition % itemRequestThreshold == 0;
     var pageToRequest = itemPosition ~/ itemRequestThreshold + 1;
