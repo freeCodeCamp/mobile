@@ -40,8 +40,7 @@ import 'package:freecodecamp/ui/views/news/news-feed/news_feed_view.dart'
     as _i8;
 import 'package:freecodecamp/ui/views/news/news-image-viewer/news_image_viewer.dart'
     as _i10;
-import 'package:freecodecamp/ui/views/podcast/episode-view/episode_view.dart'
-    as _i5;
+import 'package:freecodecamp/ui/views/podcast/episode/episode_view.dart' as _i5;
 import 'package:freecodecamp/ui/views/podcast/podcast-list/podcast_list_view.dart'
     as _i3;
 import 'package:freecodecamp/ui/views/profile/profile_view.dart' as _i21;
@@ -270,6 +269,8 @@ class StackedRouter extends _i1.RouterBase {
             author: args.author,
             fromAuthor: args.fromAuthor,
             fromTag: args.fromTag,
+            fromSearch: args.fromSearch,
+            articles: args.articles,
             subject: args.subject),
         settings: data,
       );
@@ -442,6 +443,8 @@ class NewsFeedViewArguments {
     this.author = '',
     this.fromAuthor = false,
     this.fromTag = false,
+    this.fromSearch = false,
+    this.articles = const [],
     this.subject = '',
   });
 
@@ -454,6 +457,10 @@ class NewsFeedViewArguments {
   final bool fromAuthor;
 
   final bool fromTag;
+
+  final bool fromSearch;
+
+  final List<dynamic> articles;
 
   final String subject;
 }
@@ -683,6 +690,8 @@ extension NavigatorStateExtension on _i29.NavigationService {
     String author = '',
     bool fromAuthor = false,
     bool fromTag = false,
+    bool fromSearch = false,
+    List<dynamic> articles = const [],
     String subject = '',
     int? routerId,
     bool preventDuplicates = true,
@@ -697,6 +706,8 @@ extension NavigatorStateExtension on _i29.NavigationService {
             author: author,
             fromAuthor: fromAuthor,
             fromTag: fromTag,
+            fromSearch: fromSearch,
+            articles: articles,
             subject: subject),
         id: routerId,
         preventDuplicates: preventDuplicates,

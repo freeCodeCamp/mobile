@@ -14,6 +14,8 @@ class NewsFeedView extends StatelessWidget {
       this.author = '',
       this.fromAuthor = false,
       this.fromTag = false,
+      this.fromSearch = false,
+      this.articles = const [],
       this.subject = ''})
       : super(key: key);
 
@@ -21,8 +23,11 @@ class NewsFeedView extends StatelessWidget {
   final String slug;
   final String author;
 
+  final List articles;
+
   final bool fromTag;
   final bool fromAuthor;
+  final bool fromSearch;
 
   @override
   Widget build(BuildContext context) {
@@ -30,7 +35,7 @@ class NewsFeedView extends StatelessWidget {
       viewModelBuilder: () => NewsFeedModel(),
       onModelReady: (model) async => await model.devMode(),
       builder: (context, model, child) => Scaffold(
-          appBar: fromTag || fromAuthor
+          appBar: fromTag || fromAuthor || fromSearch
               ? AppBar(
                   title: Text(
                       'Tutorials ${fromAuthor ? 'from' : 'about'} $subject'),
@@ -39,7 +44,9 @@ class NewsFeedView extends StatelessWidget {
           backgroundColor: const Color(0xFF0a0a23),
           body: FutureBuilder(
             future: !model.devmode
-                ? model.fetchArticles(slug, author)
+                ? !fromSearch
+                    ? model.fetchArticles(slug, author)
+                    : model.returnArticlesFromSearch(articles)
                 : model.readFromFiles(),
             builder: (context, snapshot) {
               if (snapshot.hasData) {
@@ -74,7 +81,9 @@ class NewsFeedView extends StatelessWidget {
             child: const Text(
               'read tutorials online',
               textAlign: TextAlign.center,
-              style: TextStyle(color: Color.fromRGBO(0x99, 0xc9, 0xff, 1)),
+              style: TextStyle(
+                color: Color.fromRGBO(0x99, 0xc9, 0xff, 1),
+              ),
             ),
             onTap: () {
               launchUrlString('https://www.freecodecamp.org/news/');
@@ -99,7 +108,8 @@ class NewsFeedView extends StatelessWidget {
         key: Key(model.articles[i].id),
         articleCreated: () {
           SchedulerBinding.instance.addPostFrameCallback(
-              (timeStamp) => model.handleArticleLazyLoading(i));
+            (timeStamp) => model.handleArticleLazyLoading(i),
+          );
         },
         child: InkWell(
           splashColor: Colors.transparent,
