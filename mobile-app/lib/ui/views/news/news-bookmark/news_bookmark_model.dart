@@ -38,15 +38,24 @@ class NewsBookmarkModel extends BaseViewModel {
       // Making new copy from assets
       dev.log('copying database from assets');
       try {
-        await Directory(path.dirname(dbPathTutorials)).create(recursive: true);
+        await Directory(
+          path.dirname(dbPathTutorials),
+        ).create(recursive: true);
       } catch (error) {
         dev.log(error.toString());
       }
 
-      ByteData data = await rootBundle
-          .load(path.join('assets', 'database', 'bookmarked-article.db'));
-      List<int> bytes =
-          data.buffer.asUint8List(data.offsetInBytes, data.lengthInBytes);
+      ByteData data = await rootBundle.load(
+        path.join(
+          'assets',
+          'database',
+          'bookmarked-article.db',
+        ),
+      );
+      List<int> bytes = data.buffer.asUint8List(
+        data.offsetInBytes,
+        data.lengthInBytes,
+      );
 
       await File(dbPathTutorials).writeAsBytes(bytes, flush: true);
     }
@@ -57,21 +66,22 @@ class NewsBookmarkModel extends BaseViewModel {
   Map<String, dynamic> tutorialToMap(dynamic tutorial) {
     if (tutorial is Tutorial) {
       return {
-        'tutorialTitle': tutorial.title,
-        'tutorialId': tutorial.id,
-        'tutorialText': tutorial.text,
+        'articleTitle': tutorial.title,
+        'articleId': tutorial.id,
+        'articleText': tutorial.text,
         'authorName': tutorial.authorName
       };
     } else if (tutorial is BookmarkedTutorial) {
       return {
-        'tutorialTitle': tutorial.tutorialTitle,
-        'tutorialId': tutorial.id,
-        'tutorialText': tutorial.tutorialText,
+        'articleTitle': tutorial.tutorialTitle,
+        'articleId': tutorial.id,
+        'articleText': tutorial.tutorialText,
         'authorName': tutorial.authorName
       };
     } else {
       throw Exception(
-          'unable to convert tutorial to map type: ${tutorial.runtimeType}');
+        'unable to convert tutorial to map type: ${tutorial.runtimeType}',
+      );
     }
   }
 
@@ -85,7 +95,9 @@ class NewsBookmarkModel extends BaseViewModel {
     List<BookmarkedTutorial> tutorialModel = [];
 
     for (int i = 0; i < mapList.length; i++) {
-      tutorialModel.add(BookmarkedTutorial.fromMap(mapList[i]));
+      tutorialModel.add(
+        BookmarkedTutorial.fromMap(mapList[i]),
+      );
     }
     return tutorialModel;
   }
@@ -95,8 +107,10 @@ class NewsBookmarkModel extends BaseViewModel {
 
     if (_isBookmarked) {
       _isBookmarked = false;
-      await db
-          .rawQuery('DELETE FROM bookmarks WHERE tutorialId=?', [tutorial!.id]);
+      await db.rawQuery(
+        'DELETE FROM bookmarks WHERE articleId=?',
+        [tutorial!.id],
+      );
       notifyListeners();
     } else {
       _isBookmarked = true;
@@ -123,20 +137,27 @@ class NewsBookmarkModel extends BaseViewModel {
 
     // Test if tutorial is already in database
 
-    List<Map> isInDatabase = await db
-        .rawQuery('SELECT * FROM bookmarks WHERE tutorialId=?', [tutorial!.id]);
+    List<Map> isInDatabase = await db.rawQuery(
+      'SELECT * FROM bookmarks WHERE articleId=?',
+      [tutorial!.id],
+    );
 
     if (isInDatabase.isEmpty) {
-      await db.insert('bookmarks', tutorialToMap(tutorial),
-          conflictAlgorithm: ConflictAlgorithm.replace);
+      await db.insert(
+        'bookmarks',
+        tutorialToMap(tutorial),
+        conflictAlgorithm: ConflictAlgorithm.replace,
+      );
     }
   }
 
   Future<void> isTutorialBookmarked(dynamic tutorial) async {
     final db = await openDbConnection();
 
-    List<Map> isInDatabase = await db
-        .rawQuery('SELECT * FROM bookmarks WHERE tutorialId=?', [tutorial.id]);
+    List<Map> isInDatabase = await db.rawQuery(
+      'SELECT * FROM bookmarks WHERE articleId=?',
+      [tutorial.id],
+    );
 
     if (isInDatabase.isNotEmpty) {
       _isBookmarked = true;
@@ -159,7 +180,9 @@ class NewsBookmarkModel extends BaseViewModel {
   }
 
   void routeToBookmarkedTutorial(BookmarkedTutorial tutorial) {
-    _navigationService.navigateTo(Routes.newsBookmarkPostView,
-        arguments: NewsBookmarkPostViewArguments(tutorial: tutorial));
+    _navigationService.navigateTo(
+      Routes.newsBookmarkPostView,
+      arguments: NewsBookmarkPostViewArguments(tutorial: tutorial),
+    );
   }
 }

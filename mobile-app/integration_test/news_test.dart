@@ -83,12 +83,12 @@ void main() {
           path.join(await getDatabasesPath(), 'bookmarked-article.db'));
       final List<Map<String, dynamic>> result = await db.query(
         'bookmarks',
-        where: 'tutorialId = ?',
+        where: 'articleId = ?',
         whereArgs: [firstTutorialKey.value],
       );
       expect(result.length, 1);
-      expect(result[0]['tutorialId'], firstTutorialKey.value);
-      expect(result[0]['tutorialTitle'], title.data);
+      expect(result[0]['articleId'], firstTutorialKey.value);
+      expect(result[0]['articleTitle'], title.data);
       expect(result[0]['authorName'], author.split('Written by ')[1]);
     });
   });
