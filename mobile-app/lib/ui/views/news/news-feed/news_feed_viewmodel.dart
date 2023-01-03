@@ -4,7 +4,7 @@ import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:freecodecamp/app/app.locator.dart';
 import 'package:freecodecamp/app/app.router.dart';
 import 'package:freecodecamp/models/news/tutorial_model.dart';
-import 'package:freecodecamp/service/test_service.dart';
+import 'package:freecodecamp/service/developer_service.dart';
 import 'package:http/http.dart' as http;
 import 'package:jiffy/jiffy.dart';
 import 'package:stacked/stacked.dart';
@@ -16,13 +16,13 @@ class NewsFeedModel extends BaseViewModel {
   final List<Tutorial> tutorials = [];
   static const int itemRequestThreshold = 14;
   final _navigationService = locator<NavigationService>();
-  static final _testService = locator<TestService>();
+  static final _developerService = locator<DeveloperService>();
 
   bool _devMode = false;
   bool get devmode => _devMode;
 
   devMode() async {
-    if (await _testService.developmentMode()) {
+    if (await _developerService.developmentMode()) {
       _devMode = true;
       notifyListeners();
     }

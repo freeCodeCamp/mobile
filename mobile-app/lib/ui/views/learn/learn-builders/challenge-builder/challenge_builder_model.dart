@@ -4,7 +4,7 @@ import 'package:freecodecamp/app/app.router.dart';
 import 'package:freecodecamp/models/learn/completed_challenge_model.dart';
 import 'package:freecodecamp/models/learn/curriculum_model.dart';
 import 'package:freecodecamp/models/main/user_model.dart';
-import 'package:freecodecamp/service/authentication_service.dart';
+import 'package:freecodecamp/service/authentication/authentication_service.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:stacked/stacked.dart';
 import 'package:stacked_services/stacked_services.dart';

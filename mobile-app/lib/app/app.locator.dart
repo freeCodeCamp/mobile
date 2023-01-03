@@ -12,15 +12,15 @@ import 'package:stacked_services/src/dialog/dialog_service.dart';
 import 'package:stacked_services/src/navigation/navigation_service.dart';
 import 'package:stacked_services/src/snackbar/snackbar_service.dart';
 
-import '../service/audio_service.dart';
-import '../service/authentication_service.dart';
-import '../service/download_service.dart';
-import '../service/learn_file_service.dart';
-import '../service/learn_service.dart';
-import '../service/notification_service.dart';
-import '../service/podcasts_service.dart';
-import '../service/quick_actions_service.dart';
-import '../service/test_service.dart';
+import '../service/audio/audio_service.dart';
+import '../service/authentication/authentication_service.dart';
+import '../service/developer_service.dart';
+import '../service/learn/learn_file_service.dart';
+import '../service/learn/learn_service.dart';
+import '../service/navigation/quick_actions_service.dart';
+import '../service/podcast/download_service.dart';
+import '../service/podcast/notification_service.dart';
+import '../service/podcast/podcasts_service.dart';
 
 final locator = StackedLocator.instance;
 
@@ -37,7 +37,7 @@ Future<void> setupLocator(
   locator.registerLazySingleton(() => DatabaseMigrationService());
   locator.registerLazySingleton(() => PodcastsDatabaseService());
   locator.registerLazySingleton(() => NotificationService());
-  locator.registerLazySingleton(() => TestService());
+  locator.registerLazySingleton(() => DeveloperService());
   locator.registerLazySingleton(() => AuthenticationService());
   locator.registerLazySingleton(() => AppAudioService());
   locator.registerLazySingleton(() => DownloadService());

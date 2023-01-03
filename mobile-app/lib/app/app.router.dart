@@ -8,7 +8,8 @@
 import 'package:flutter/material.dart' as _i24;
 import 'package:flutter/material.dart';
 import 'package:freecodecamp/models/learn/curriculum_model.dart' as _i28;
-import 'package:freecodecamp/models/news/bookmarked_tutorial_model.dart' as _i27;
+import 'package:freecodecamp/models/news/bookmarked_tutorial_model.dart'
+    as _i27;
 import 'package:freecodecamp/models/podcasts/episodes_model.dart' as _i25;
 import 'package:freecodecamp/models/podcasts/podcasts_model.dart' as _i26;
 import 'package:freecodecamp/ui/views/code_radio/code_radio_view.dart' as _i18;
@@ -30,8 +31,6 @@ import 'package:freecodecamp/ui/views/learn/challenge_editor/challenge_view.dart
 import 'package:freecodecamp/ui/views/learn/learn-builders/superblock_builder.dart'
     as _i19;
 import 'package:freecodecamp/ui/views/learn/learn/learn_view.dart' as _i23;
-import 'package:freecodecamp/ui/views/news/news-tutorial/news_tutorial_view.dart'
-    as _i6;
 import 'package:freecodecamp/ui/views/news/news-author/news_author_view.dart'
     as _i9;
 import 'package:freecodecamp/ui/views/news/news-bookmark/news_bookmark_view.dart'
@@ -40,6 +39,8 @@ import 'package:freecodecamp/ui/views/news/news-feed/news_feed_view.dart'
     as _i8;
 import 'package:freecodecamp/ui/views/news/news-image-viewer/news_image_viewer.dart'
     as _i10;
+import 'package:freecodecamp/ui/views/news/news-tutorial/news_tutorial_view.dart'
+    as _i6;
 import 'package:freecodecamp/ui/views/podcast/episode-view/episode_view.dart'
     as _i5;
 import 'package:freecodecamp/ui/views/podcast/podcast-list/podcast_list_view.dart'

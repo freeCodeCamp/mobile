@@ -2,7 +2,7 @@ import 'dart:convert';
 import 'package:freecodecamp/app/app.locator.dart';
 import 'package:freecodecamp/enums/ext_type.dart';
 import 'package:freecodecamp/models/learn/challenge_model.dart';
-import 'package:freecodecamp/service/learn_file_service.dart';
+import 'package:freecodecamp/service/learn/learn_file_service.dart';
 import 'package:html/parser.dart';
 import 'package:stacked/stacked.dart';
 import 'package:webview_flutter/webview_flutter.dart';
