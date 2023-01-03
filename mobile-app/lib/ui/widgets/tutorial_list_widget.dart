@@ -3,7 +3,7 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:freecodecamp/app/app.locator.dart';
 import 'package:freecodecamp/app/app.router.dart';
-import 'package:freecodecamp/models/news/article_model.dart';
+import 'package:freecodecamp/models/news/tutorial_model.dart';
 import 'package:freecodecamp/ui/views/news/news-feed/news_feed_viewmodel.dart';
 
 import 'package:http/http.dart' as http;
@@ -13,9 +13,9 @@ import 'dart:developer' as dev;
 
 import 'package:stacked_services/stacked_services.dart';
 
-class ArticleList extends StatefulWidget {
+class TutorialList extends StatefulWidget {
   // ignore: prefer_const_constructors_in_immutables
-  ArticleList({
+  TutorialList({
     Key? key,
     required this.authorSlug,
     required this.authorName,
@@ -24,8 +24,8 @@ class ArticleList extends StatefulWidget {
   final String authorSlug;
   final String authorName;
   final _navigationService = locator<NavigationService>();
-  Future<List<Article>> fetchList() async {
-    List<Article> articles = [];
+  Future<List<Tutorial>> fetchList() async {
+    List<Tutorial> tutorials = [];
 
     await dotenv.load();
 
@@ -38,19 +38,19 @@ class ArticleList extends StatefulWidget {
 
     if (response.statusCode == 200) {
       dev.log(url);
-      var articleJson = json.decode(response.body)['posts'];
-      for (int i = 0; i < articleJson?.length; i++) {
-        articles.add(Article.fromJson(articleJson[i]));
+      var tutorialJson = json.decode(response.body)['posts'];
+      for (int i = 0; i < tutorialJson?.length; i++) {
+        tutorials.add(Tutorial.fromJson(tutorialJson[i]));
       }
-      return articles;
+      return tutorials;
     } else {
       throw Exception('Something when wrong when fetching $url');
     }
   }
 
-  void navigateToArticle(String id) {
-    _navigationService.navigateTo(Routes.newsArticleView,
-        arguments: NewsArticleViewArguments(refId: id));
+  void navigateToTutorial(String id) {
+    _navigationService.navigateTo(Routes.newsTutorialView,
+        arguments: NewsTutorialViewArguments(refId: id));
   }
 
   void navigateToFeed() {
@@ -65,13 +65,13 @@ class ArticleList extends StatefulWidget {
   }
 
   @override
-  State<StatefulWidget> createState() => ArticleListState();
+  State<StatefulWidget> createState() => TutorialListState();
 }
 
-class ArticleListState extends State<ArticleList> {
+class TutorialListState extends State<TutorialList> {
   @override
   Widget build(BuildContext context) {
-    return FutureBuilder<List<Article>>(
+    return FutureBuilder<List<Tutorial>>(
         future: widget.fetchList(),
         builder: (context, snapshot) {
           if (snapshot.hasData) {
@@ -109,8 +109,8 @@ class TileLayout extends StatelessWidget {
   const TileLayout({Key? key, required this.widget, required this.snapshot})
       : super(key: key);
 
-  final ArticleList widget;
-  final AsyncSnapshot<List<Article>> snapshot;
+  final TutorialList widget;
+  final AsyncSnapshot<List<Tutorial>> snapshot;
 
   @override
   Widget build(BuildContext context) {
@@ -122,10 +122,10 @@ class TileLayout extends StatelessWidget {
           shrinkWrap: true,
           itemCount: snapshot.data!.length > 5 ? 5 : snapshot.data?.length,
           itemBuilder: (context, index) {
-            Article article = snapshot.data![index];
+            Tutorial tutorial = snapshot.data![index];
             return ListTile(
               title: Text(
-                article.title,
+                tutorial.title,
                 maxLines: 1,
                 overflow: TextOverflow.ellipsis,
               ),
@@ -134,19 +134,19 @@ class TileLayout extends StatelessWidget {
                   const EdgeInsets.symmetric(horizontal: 10, vertical: 10),
               horizontalTitleGap: 10,
               subtitle: Text(
-                NewsFeedModel.parseDate(article.createdAt),
+                NewsFeedModel.parseDate(tutorial.createdAt),
                 style: const TextStyle(height: 2),
               ),
               trailing: Container(
                 constraints:
                     BoxConstraints(minWidth: imgSize, maxWidth: imgSize),
                 child: Image.network(
-                  article.featureImage,
+                  tutorial.featureImage,
                   fit: BoxFit.cover,
                 ),
               ),
               onTap: () {
-                widget.navigateToArticle(article.id);
+                widget.navigateToTutorial(tutorial.id);
               },
             );
           }),

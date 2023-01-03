@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:freecodecamp/ui/views/news/news-bookmark/news_bookmark_viewmodel.dart';
+import 'package:freecodecamp/ui/views/news/news-bookmark/news_bookmark_model.dart';
 import 'package:stacked/stacked.dart';
 
 class NewsBookmarkFeedView extends StatelessWidget {
@@ -10,7 +10,7 @@ class NewsBookmarkFeedView extends StatelessWidget {
     return ViewModelBuilder<NewsBookmarkModel>.reactive(
         viewModelBuilder: () => NewsBookmarkModel(),
         onModelReady: (model) async {
-          model.hasBookmarkedArticles();
+          model.hasBookmarkedTutorials();
           model.updateListView();
         },
         builder: (context, model, child) => Scaffold(
@@ -21,7 +21,7 @@ class NewsBookmarkFeedView extends StatelessWidget {
               onRefresh: () {
                 return model.refresh();
               },
-              child: model.userHasBookmarkedArticles
+              child: model.userHasBookmarkedTutorials
                   ? populateListViewModel(model)
                   : const Center(
                       child: Text(
@@ -39,18 +39,18 @@ ListView populateListViewModel(NewsBookmarkModel model) {
             color: Colors.white,
           ),
       itemBuilder: (context, index) {
-        var article = model.bookMarkedArticles[index];
+        var tutorial = model.bookMarkedTutorials[index];
 
         return ListTile(
-            key: Key('bookmark_article_$index'),
-            title: Text(article.articleTitle),
+            key: Key('bookmark_tutorial_$index'),
+            title: Text(tutorial.tutorialTitle),
             trailing: const Icon(Icons.arrow_forward_ios_sharp),
             subtitle: Padding(
               padding: const EdgeInsets.only(top: 8.0),
-              child: Text('Written by: ${article.authorName}'),
+              child: Text('Written by: ${tutorial.authorName}'),
             ),
             onTap: () {
-              model.routeToBookmarkedArticle(article);
+              model.routeToBookmarkedTutorial(tutorial);
             },
             contentPadding: const EdgeInsets.all(16),
             minVerticalPadding: 8);

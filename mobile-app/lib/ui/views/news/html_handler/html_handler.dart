@@ -4,8 +4,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_highlight/flutter_highlight.dart';
 import 'package:flutter_highlight/theme_map.dart';
 import 'package:flutter_html/flutter_html.dart';
-import 'package:freecodecamp/models/news/article_model.dart';
-import 'package:freecodecamp/ui/views/news/news-article/news_article_header.dart';
+import 'package:freecodecamp/models/news/tutorial_model.dart';
+import 'package:freecodecamp/ui/views/news/news-tutorial/news_tutorial_header.dart';
 import 'package:freecodecamp/ui/views/news/news-image-viewer/news_image_viewer.dart';
 import 'package:html/dom.dart' as dom;
 import 'package:url_launcher/url_launcher_string.dart';
@@ -17,14 +17,14 @@ class HtmlHandler {
   final String html;
   final BuildContext context;
 
-  static List<Widget> htmlHandler(html, context, [article, fontFamily]) {
+  static List<Widget> htmlHandler(html, context, [tutorial, fontFamily]) {
     var result = HtmlParser.parseHTML(html);
 
     List<Widget> elements = [];
 
-    if (article is Article) {
+    if (tutorial is Tutorial) {
       elements.add(Stack(children: [
-        NewsArticleHeader(article: article),
+        NewsTutorialHeader(tutorial: tutorial),
         AppBar(
           backgroundColor: Colors.transparent,
           shadowColor: Colors.transparent,
@@ -35,7 +35,7 @@ class HtmlHandler {
       elements.add(htmlWidgetBuilder(
           result.body!.children[i].outerHtml, context, fontFamily ?? 'Lato'));
     }
-    if (article is Article) {
+    if (tutorial is Tutorial) {
       elements.add(Container(height: 100));
     }
     return elements;
