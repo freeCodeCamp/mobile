@@ -80,7 +80,7 @@ void main() {
 
       // Check database if record exists
       final db = await openDatabase(
-          path.join(await getDatabasesPath(), 'bookmarked-tutorial.db'));
+          path.join(await getDatabasesPath(), 'bookmarked-article.db'));
       final List<Map<String, dynamic>> result = await db.query(
         'bookmarks',
         where: 'tutorialId = ?',

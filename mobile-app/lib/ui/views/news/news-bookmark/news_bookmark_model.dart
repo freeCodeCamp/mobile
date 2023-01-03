@@ -31,7 +31,7 @@ class NewsBookmarkModel extends BaseViewModel {
     WidgetsFlutterBinding.ensureInitialized();
 
     String dbPath = await getDatabasesPath();
-    String dbPathTutorials = path.join(dbPath, 'bookmarked-tutorial.db');
+    String dbPathTutorials = path.join(dbPath, 'bookmarked-article.db');
     bool dbExists = await databaseExists(dbPathTutorials);
 
     if (!dbExists) {
@@ -44,7 +44,7 @@ class NewsBookmarkModel extends BaseViewModel {
       }
 
       ByteData data = await rootBundle
-          .load(path.join('assets', 'database', 'bookmarked-tutorial.db'));
+          .load(path.join('assets', 'database', 'bookmarked-article.db'));
       List<int> bytes =
           data.buffer.asUint8List(data.offsetInBytes, data.lengthInBytes);
 
