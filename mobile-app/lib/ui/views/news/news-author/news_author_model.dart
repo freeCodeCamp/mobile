@@ -28,9 +28,13 @@ class NewsAuthorModel extends BaseViewModel {
     http.Response response = await http.get(Uri.parse(queryUrl));
 
     if (response.statusCode == 200) {
-      return Author.toAuthorFromJson(jsonDecode(response.body)['authors'][0]);
+      return Author.toAuthorFromJson(
+        jsonDecode(response.body)['authors'][0],
+      );
     } else {
-      throw Exception('${response.body}\n Author: $authorSlug');
+      throw Exception(
+        '${response.body}\n Author: $authorSlug',
+      );
     }
   }
 }

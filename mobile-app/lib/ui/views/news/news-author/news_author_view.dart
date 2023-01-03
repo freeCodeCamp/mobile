@@ -5,7 +5,10 @@ import 'package:freecodecamp/ui/widgets/tutorial_list_widget.dart';
 import 'package:stacked/stacked.dart';
 
 class NewsAuthorView extends StatelessWidget {
-  const NewsAuthorView({Key? key, required this.authorSlug}) : super(key: key);
+  const NewsAuthorView({
+    Key? key,
+    required this.authorSlug,
+  }) : super(key: key);
 
   final String authorSlug;
 

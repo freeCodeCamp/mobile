@@ -8,16 +8,16 @@ import 'package:stacked/stacked.dart';
 import 'package:url_launcher/url_launcher_string.dart';
 
 class NewsFeedView extends StatelessWidget {
-  const NewsFeedView(
-      {Key? key,
-      this.slug = '',
-      this.author = '',
-      this.fromAuthor = false,
-      this.fromTag = false,
-      this.fromSearch = false,
-      this.tutorials = const [],
-      this.subject = ''})
-      : super(key: key);
+  const NewsFeedView({
+    Key? key,
+    this.slug = '',
+    this.author = '',
+    this.fromAuthor = false,
+    this.fromTag = false,
+    this.fromSearch = false,
+    this.tutorials = const [],
+    this.subject = '',
+  }) : super(key: key);
 
   final String subject;
   final String slug;

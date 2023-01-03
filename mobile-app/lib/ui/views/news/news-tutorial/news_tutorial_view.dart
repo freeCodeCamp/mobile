@@ -26,10 +26,13 @@ class NewsTutorialView extends StatelessWidget {
               return Column(
                 children: [
                   Expanded(
-                      child: Stack(children: [
-                    lazyLoadHtml(tutorial!.text!, context, tutorial, model),
-                    bottomButtons(tutorial, model)
-                  ]))
+                    child: Stack(
+                      children: [
+                        lazyLoadHtml(tutorial!.text!, context, tutorial, model),
+                        bottomButtons(tutorial, model)
+                      ],
+                    ),
+                  )
                 ],
               );
             } else if (snapshot.hasError) {
@@ -90,28 +93,29 @@ class NewsTutorialView extends StatelessWidget {
     var htmlToList = model.initLazyLoading(html, context, tutorial);
 
     return ListView.builder(
-        shrinkWrap: true,
-        controller: model.scrollController,
-        itemCount: htmlToList.length,
-        physics: const ClampingScrollPhysics(),
-        itemBuilder: (BuildContext context, int i) {
-          return Row(
-            children: [
-              Expanded(child: htmlToList[i]),
-            ],
-          );
-        });
+      shrinkWrap: true,
+      controller: model.scrollController,
+      itemCount: htmlToList.length,
+      physics: const ClampingScrollPhysics(),
+      itemBuilder: (BuildContext context, int i) {
+        return Row(
+          children: [
+            Expanded(child: htmlToList[i]),
+          ],
+        );
+      },
+    );
   }
 }
 
 class BottomButton extends StatelessWidget {
-  const BottomButton(
-      {Key? key,
-      required this.label,
-      required this.onPressed,
-      required this.icon,
-      required this.rightSided})
-      : super(key: key);
+  const BottomButton({
+    Key? key,
+    required this.label,
+    required this.onPressed,
+    required this.icon,
+    required this.rightSided,
+  }) : super(key: key);
 
   final Function onPressed;
   final String label;
@@ -131,13 +135,16 @@ class BottomButton extends StatelessWidget {
         },
         label: Text(label),
         style: ElevatedButton.styleFrom(
-            shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.only(
-                    topLeft: Radius.circular(rightSided ? 0 : 10),
-                    topRight: Radius.circular(rightSided ? 10 : 0),
-                    bottomLeft: Radius.circular(rightSided ? 0 : 10),
-                    bottomRight: Radius.circular(rightSided ? 10 : 0))),
-            backgroundColor: const Color.fromRGBO(0x2A, 0x2A, 0x40, 1)),
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.only(
+              topLeft: Radius.circular(rightSided ? 0 : 10),
+              topRight: Radius.circular(rightSided ? 10 : 0),
+              bottomLeft: Radius.circular(rightSided ? 0 : 10),
+              bottomRight: Radius.circular(rightSided ? 10 : 0),
+            ),
+          ),
+          backgroundColor: const Color.fromRGBO(0x2A, 0x2A, 0x40, 1),
+        ),
       ),
     );
   }

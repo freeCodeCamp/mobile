@@ -1,7 +1,7 @@
 include: package:flutter_lints/flutter.yaml
 
 analyzer:
-  exclude: [lib/app/**, temp/**]
+  # exclude: [lib/app/**, temp/**]
   errors:
     todo: warning
 linter:
