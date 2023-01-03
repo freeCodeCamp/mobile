@@ -93,16 +93,16 @@ class NewsSearchModel extends BaseViewModel {
       Routes.newsFeedView,
       arguments: NewsFeedViewArguments(
         fromSearch: true,
-        articles: currentResult,
+        tutorials: currentResult,
         subject: _searchTerm == '' ? 'JavaScript' : _searchTerm,
       ),
     );
   }
 
-  void navigateToArticle(id) {
+  void navigateToTutorial(id) {
     _navigationService.navigateTo(
-      Routes.newsArticleView,
-      arguments: NewsArticleViewArguments(
+      Routes.newsTutorialView,
+      arguments: NewsTutorialViewArguments(
         refId: id,
       ),
     );
