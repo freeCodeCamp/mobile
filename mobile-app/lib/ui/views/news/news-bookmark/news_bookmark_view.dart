@@ -64,13 +64,20 @@ class NewsBookmarkPostView extends StatelessWidget {
 
   SliverList lazyLoadHtml(BuildContext context, BookmarkedTutorial tutorial) {
     NewsTutorialViewModel model = NewsTutorialViewModel();
-    var htmlToList =
-        model.initLazyLoading(tutorial.tutorialText, context, tutorial);
+    var htmlToList = model.initLazyLoading(
+      tutorial.tutorialText,
+      context,
+      tutorial,
+    );
 
     return SliverList(
       delegate: SliverChildBuilderDelegate(((context, index) {
         return Row(
-          children: [Expanded(child: htmlToList[index])],
+          children: [
+            Expanded(
+              child: htmlToList[index],
+            )
+          ],
         );
       }), childCount: htmlToList.length),
     );

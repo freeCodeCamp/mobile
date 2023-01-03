@@ -47,18 +47,19 @@ ListView populateListViewModel(NewsBookmarkModel model) {
       var tutorial = model.bookMarkedTutorials[index];
 
       return ListTile(
-          key: Key('bookmark_tutorial_$index'),
-          title: Text(tutorial.tutorialTitle),
-          trailing: const Icon(Icons.arrow_forward_ios_sharp),
-          subtitle: Padding(
-            padding: const EdgeInsets.only(top: 8.0),
-            child: Text('Written by: ${tutorial.authorName}'),
-          ),
-          onTap: () {
-            model.routeToBookmarkedTutorial(tutorial);
-          },
-          contentPadding: const EdgeInsets.all(16),
-          minVerticalPadding: 8);
+        key: Key('bookmark_tutorial_$index'),
+        title: Text(tutorial.tutorialTitle),
+        trailing: const Icon(Icons.arrow_forward_ios_sharp),
+        subtitle: Padding(
+          padding: const EdgeInsets.only(top: 8.0),
+          child: Text('Written by: ${tutorial.authorName}'),
+        ),
+        onTap: () {
+          model.routeToBookmarkedTutorial(tutorial);
+        },
+        contentPadding: const EdgeInsets.all(16),
+        minVerticalPadding: 8,
+      );
     },
   );
 }

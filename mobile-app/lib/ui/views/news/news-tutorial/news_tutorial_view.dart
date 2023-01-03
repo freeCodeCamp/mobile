@@ -88,8 +88,12 @@ class NewsTutorialView extends StatelessWidget {
     );
   }
 
-  ListView lazyLoadHtml(String html, BuildContext context, Tutorial tutorial,
-      NewsTutorialViewModel model) {
+  ListView lazyLoadHtml(
+    String html,
+    BuildContext context,
+    Tutorial tutorial,
+    NewsTutorialViewModel model,
+  ) {
     var htmlToList = model.initLazyLoading(html, context, tutorial);
 
     return ListView.builder(

@@ -15,25 +15,27 @@ class NewsAuthorView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return ViewModelBuilder<NewsAuthorModel>.reactive(
-        viewModelBuilder: () => NewsAuthorModel(),
-        builder: (context, model, child) => Scaffold(
-              appBar: AppBar(
-                title: const Text('Author profile'),
-              ),
-              body: SingleChildScrollView(
-                child: FutureBuilder<Author>(
-                    future: model.fetchAuthor(authorSlug),
-                    builder: (context, snapshot) {
-                      if (snapshot.hasData) {
-                        Author? author = snapshot.data;
+      viewModelBuilder: () => NewsAuthorModel(),
+      builder: (context, model, child) => Scaffold(
+        appBar: AppBar(
+          title: const Text('Author profile'),
+        ),
+        body: SingleChildScrollView(
+          child: FutureBuilder<Author>(
+            future: model.fetchAuthor(authorSlug),
+            builder: (context, snapshot) {
+              if (snapshot.hasData) {
+                Author? author = snapshot.data;
 
-                        return view(model, context, author);
-                      }
+                return view(model, context, author);
+              }
 
-                      return const Center(child: CircularProgressIndicator());
-                    }),
-              ),
-            ));
+              return const Center(child: CircularProgressIndicator());
+            },
+          ),
+        ),
+      ),
+    );
   }
 
   Column view(NewsAuthorModel model, BuildContext ctxt, Author? author) {
@@ -62,24 +64,25 @@ class NewsAuthorView extends StatelessWidget {
           author!.name,
           textAlign: TextAlign.center,
           style: const TextStyle(
-              fontWeight: FontWeight.bold, fontSize: 28, height: 2),
+            fontWeight: FontWeight.bold,
+            fontSize: 28,
+            height: 2,
+          ),
         ),
-        author.location != null
-            ? Text(
-                author.location as String,
-                style: const TextStyle(fontSize: 16),
-              )
-            : Container(),
-        author.bio != null
-            ? Padding(
-                padding: const EdgeInsets.all(16.0),
-                child: Text(
-                  author.bio as String,
-                  textAlign: TextAlign.center,
-                  style: const TextStyle(fontSize: 16),
-                ),
-              )
-            : Container(),
+        if (author.bio != null)
+          Text(
+            author.location as String,
+            style: const TextStyle(fontSize: 16),
+          ),
+        if (author.bio != null)
+          Padding(
+            padding: const EdgeInsets.all(16.0),
+            child: Text(
+              author.bio as String,
+              textAlign: TextAlign.center,
+              style: const TextStyle(fontSize: 16),
+            ),
+          ),
         TutorialList(
           authorSlug: author.slug,
           authorName: author.name,
@@ -94,8 +97,12 @@ class NewsAuthorView extends StatelessWidget {
       child: Container(
         width: 175,
         height: 175,
-        decoration:
-            BoxDecoration(border: Border.all(width: 2, color: Colors.white)),
+        decoration: BoxDecoration(
+          border: Border.all(
+            width: 2,
+            color: Colors.white,
+          ),
+        ),
         child: author?.profileImage == null
             ? Image.asset(
                 'assets/images/placeholder-profile-img.png',

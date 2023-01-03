@@ -15,8 +15,9 @@ class NewsImageView extends StatelessWidget {
       builder: (context, model, child) => Scaffold(
         body: PhotoView(
           backgroundDecoration: const BoxDecoration(
-              color: Color.fromRGBO(0x2A, 0x2A, 0x40, 1),
-              backgroundBlendMode: BlendMode.color),
+            color: Color.fromRGBO(0x2A, 0x2A, 0x40, 1),
+            backgroundBlendMode: BlendMode.color,
+          ),
           imageProvider: NetworkImage(imgUrl),
         ),
       ),

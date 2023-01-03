@@ -35,34 +35,37 @@ class NewsFeedView extends StatelessWidget {
       viewModelBuilder: () => NewsFeedModel(),
       onModelReady: (model) async => await model.devMode(),
       builder: (context, model, child) => Scaffold(
-          appBar: fromTag || fromAuthor || fromSearch
-              ? AppBar(
-                  title: Text(
-                      'Tutorials ${fromAuthor ? 'from' : 'about'} $subject'),
-                )
-              : null,
-          backgroundColor: const Color(0xFF0a0a23),
-          body: FutureBuilder(
-            future: !model.devmode
-                ? !fromSearch
-                    ? model.fetchTutorials(slug, author)
-                    : model.returnTutorialsFromSearch(tutorials)
-                : model.readFromFiles(),
-            builder: (context, snapshot) {
-              if (snapshot.hasData) {
-                return RefreshIndicator(
-                    backgroundColor: const Color(0xFF0a0a23),
-                    color: Colors.white,
-                    child: tutorialThumbnailBuilder(model),
-                    onRefresh: () {
-                      return model.refresh();
-                    });
-              } else if (snapshot.hasError) {
-                return errorMessage();
-              }
-              return const Center(child: CircularProgressIndicator());
-            },
-          )),
+        appBar: fromTag || fromAuthor || fromSearch
+            ? AppBar(
+                title: Text(
+                  'Tutorials ${fromAuthor ? 'from' : 'about'} $subject',
+                ),
+              )
+            : null,
+        backgroundColor: const Color(0xFF0a0a23),
+        body: FutureBuilder(
+          future: !model.devmode
+              ? !fromSearch
+                  ? model.fetchTutorials(slug, author)
+                  : model.returnTutorialsFromSearch(tutorials)
+              : model.readFromFiles(),
+          builder: (context, snapshot) {
+            if (snapshot.hasData) {
+              return RefreshIndicator(
+                backgroundColor: const Color(0xFF0a0a23),
+                color: Colors.white,
+                child: tutorialThumbnailBuilder(model),
+                onRefresh: () {
+                  return model.refresh();
+                },
+              );
+            } else if (snapshot.hasError) {
+              return errorMessage();
+            }
+            return const Center(child: CircularProgressIndicator());
+          },
+        ),
+      ),
     );
   }
 
