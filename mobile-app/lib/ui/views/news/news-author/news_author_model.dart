@@ -5,7 +5,7 @@ import 'package:freecodecamp/models/news/tutorial_model.dart';
 import 'package:http/http.dart' as http;
 import 'package:stacked/stacked.dart';
 
-class NewsAuthorViewModel extends BaseViewModel {
+class NewsAuthorModel extends BaseViewModel {
   late Future<Author> _author;
   Future<Author> get author => _author;
 

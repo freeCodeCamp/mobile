@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:freecodecamp/models/news/tutorial_model.dart';
-import 'package:freecodecamp/ui/views/news/news-author/news_author_viewmodel.dart';
+import 'package:freecodecamp/ui/views/news/news-author/news_author_model.dart';
 import 'package:freecodecamp/ui/widgets/tutorial_list_widget.dart';
 import 'package:stacked/stacked.dart';
 
@@ -11,8 +11,8 @@ class NewsAuthorView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return ViewModelBuilder<NewsAuthorViewModel>.reactive(
-        viewModelBuilder: () => NewsAuthorViewModel(),
+    return ViewModelBuilder<NewsAuthorModel>.reactive(
+        viewModelBuilder: () => NewsAuthorModel(),
         builder: (context, model, child) => Scaffold(
               appBar: AppBar(
                 title: const Text('Author profile'),
@@ -33,7 +33,7 @@ class NewsAuthorView extends StatelessWidget {
             ));
   }
 
-  Column view(NewsAuthorViewModel model, BuildContext ctxt, Author? author) {
+  Column view(NewsAuthorModel model, BuildContext ctxt, Author? author) {
     return Column(
       children: [
         Stack(
