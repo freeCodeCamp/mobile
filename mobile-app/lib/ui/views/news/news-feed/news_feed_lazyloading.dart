@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
 
 class NewsFeedLazyLoading extends StatefulWidget {
-  final Function articleCreated;
+  final Function tutorialCreated;
   final Widget child;
 
   const NewsFeedLazyLoading(
-      {Key? key, required this.articleCreated, required this.child})
+      {Key? key, required this.tutorialCreated, required this.child})
       : super(key: key);
 
   @override
@@ -16,7 +16,7 @@ class NewsFeedLazyLoadingState extends State<NewsFeedLazyLoading> {
   @override
   void initState() {
     super.initState();
-    widget.articleCreated();
+    widget.tutorialCreated();
   }
 
   @override

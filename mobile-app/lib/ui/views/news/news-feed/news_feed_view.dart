@@ -1,7 +1,7 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
-import 'package:freecodecamp/models/news/article_model.dart';
+import 'package:freecodecamp/models/news/tutorial_model.dart';
 import 'package:freecodecamp/ui/views/news/news-feed/news_feed_lazyloading.dart';
 import 'package:freecodecamp/ui/views/news/news-feed/news_feed_viewmodel.dart';
 import 'package:stacked/stacked.dart';
@@ -15,7 +15,7 @@ class NewsFeedView extends StatelessWidget {
       this.fromAuthor = false,
       this.fromTag = false,
       this.fromSearch = false,
-      this.articles = const [],
+      this.tutorials = const [],
       this.subject = ''})
       : super(key: key);
 
@@ -23,7 +23,7 @@ class NewsFeedView extends StatelessWidget {
   final String slug;
   final String author;
 
-  final List articles;
+  final List tutorials;
 
   final bool fromTag;
   final bool fromAuthor;
@@ -45,15 +45,15 @@ class NewsFeedView extends StatelessWidget {
           body: FutureBuilder(
             future: !model.devmode
                 ? !fromSearch
-                    ? model.fetchArticles(slug, author)
-                    : model.returnArticlesFromSearch(articles)
+                    ? model.fetchTutorials(slug, author)
+                    : model.returnTutorialsFromSearch(tutorials)
                 : model.readFromFiles(),
             builder: (context, snapshot) {
               if (snapshot.hasData) {
                 return RefreshIndicator(
                     backgroundColor: const Color(0xFF0a0a23),
                     color: Colors.white,
-                    child: articleThumbnailBuilder(model),
+                    child: tutorialThumbnailBuilder(model),
                     onRefresh: () {
                       return model.refresh();
                     });
@@ -94,10 +94,10 @@ class NewsFeedView extends StatelessWidget {
     );
   }
 
-  ListView articleThumbnailBuilder(NewsFeedModel model) {
+  ListView tutorialThumbnailBuilder(NewsFeedModel model) {
     return ListView.separated(
       shrinkWrap: true,
-      itemCount: model.articles.length,
+      itemCount: model.tutorials.length,
       physics: const ClampingScrollPhysics(),
       separatorBuilder: (context, int i) => const Divider(
         color: Color.fromRGBO(0x2A, 0x2A, 0x40, 1),
@@ -105,16 +105,16 @@ class NewsFeedView extends StatelessWidget {
         height: 3,
       ),
       itemBuilder: (BuildContext contex, int i) => NewsFeedLazyLoading(
-        key: Key(model.articles[i].id),
-        articleCreated: () {
+        key: Key(model.tutorials[i].id),
+        tutorialCreated: () {
           SchedulerBinding.instance.addPostFrameCallback(
-            (timeStamp) => model.handleArticleLazyLoading(i),
+            (timeStamp) => model.handleTutorialLazyLoading(i),
           );
         },
         child: InkWell(
           splashColor: Colors.transparent,
           onTap: () {
-            model.navigateTo(model.articles[i].id);
+            model.navigateTo(model.tutorials[i].id);
           },
           child: Padding(
             padding: const EdgeInsets.only(bottom: 32.0),
@@ -126,7 +126,7 @@ class NewsFeedView extends StatelessWidget {
   }
 
   Column thumbnailView(NewsFeedModel model, int i) {
-    Article article = model.articles[i];
+    Tutorial tutorial = model.tutorials[i];
 
     return Column(
       children: [
@@ -135,7 +135,7 @@ class NewsFeedView extends StatelessWidget {
           child: AspectRatio(
               aspectRatio: 16 / 9,
               child: CachedNetworkImage(
-                imageUrl: article.featureImage,
+                imageUrl: tutorial.featureImage,
                 errorWidget: (context, url, error) => const Icon(Icons.error),
                 imageBuilder: (context, imageProvider) => Container(
                   decoration: BoxDecoration(
@@ -153,21 +153,21 @@ class NewsFeedView extends StatelessWidget {
             padding: const EdgeInsets.only(left: 16, right: 16),
             child: Wrap(
               children: [
-                for (int j = 0; j < article.tagNames.length && j < 3; j++)
-                  article.tagNames[j]
+                for (int j = 0; j < tutorial.tagNames.length && j < 3; j++)
+                  tutorial.tagNames[j]
               ],
             ),
           ),
         ),
         Container(
             padding: const EdgeInsets.only(left: 16, right: 16, top: 8),
-            child: articleHeader(model, i))
+            child: tutorialHeader(model, i))
       ],
     );
   }
 
-  Widget articleHeader(NewsFeedModel model, int i) {
-    Article article = model.articles[i];
+  Widget tutorialHeader(NewsFeedModel model, int i) {
+    Tutorial tutorial = model.tutorials[i];
 
     return Column(
       children: [
@@ -175,7 +175,7 @@ class NewsFeedView extends StatelessWidget {
           children: [
             Expanded(
               child: Text(
-                article.title,
+                tutorial.title,
                 maxLines: 2,
                 style: const TextStyle(
                     fontSize: 20, overflow: TextOverflow.ellipsis, height: 1.5),
@@ -189,13 +189,13 @@ class NewsFeedView extends StatelessWidget {
               padding: const EdgeInsets.only(right: 16, top: 16),
               child: InkWell(
                   onTap: () {
-                    model.navigateToAuthor(article.authorSlug);
+                    model.navigateToAuthor(tutorial.authorSlug);
                   },
                   child: Container(
                       width: 45,
                       height: 45,
                       color: const Color.fromRGBO(0x2A, 0x2A, 0x40, 1),
-                      child: article.profileImage == null
+                      child: tutorial.profileImage == null
                           ? Image.asset(
                               'assets/images/placeholder-profile-img.png',
                               width: 45,
@@ -203,7 +203,7 @@ class NewsFeedView extends StatelessWidget {
                               fit: BoxFit.cover,
                             )
                           : CachedNetworkImage(
-                              imageUrl: article.profileImage as String,
+                              imageUrl: tutorial.profileImage as String,
                               imageBuilder: (context, imageProvider) =>
                                   Container(
                                 decoration: BoxDecoration(
@@ -221,11 +221,11 @@ class NewsFeedView extends StatelessWidget {
                 Padding(
                   padding: const EdgeInsets.only(bottom: 10, top: 16),
                   child: Text(
-                    article.authorName.toUpperCase(),
+                    tutorial.authorName.toUpperCase(),
                   ),
                 ),
                 Text(
-                  NewsFeedModel.parseDate(article.createdAt),
+                  NewsFeedModel.parseDate(tutorial.createdAt),
                 ),
               ],
             ),
