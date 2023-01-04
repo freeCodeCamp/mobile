@@ -12,7 +12,7 @@ import 'package:freecodecamp/models/podcasts/podcasts_model.dart';
 import 'package:freecodecamp/service/audio/audio_service.dart';
 import 'package:freecodecamp/service/podcast/download_service.dart';
 import 'package:freecodecamp/service/podcast/podcasts_service.dart';
-import 'package:freecodecamp/ui/views/podcast/episode-view/episode_view.dart';
+import 'package:freecodecamp/ui/views/podcast/episode/episode_view.dart';
 import 'package:html/dom.dart' as dom;
 import 'package:http/http.dart' as http;
 import 'package:intl/intl.dart';

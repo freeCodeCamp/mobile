@@ -20,25 +20,27 @@ class ChallengeBuilderListView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return ViewModelBuilder<ChallengeBuilderModel>.reactive(
-        viewModelBuilder: () => ChallengeBuilderModel(),
-        onModelReady: (model) {
-          model.init(block.challenges);
-          model.setIsOpen = isOpen;
-        },
-        builder: (context, model, child) => Container(
-            color: const Color(0xFF0a0a23),
-            child: ListView(
-              shrinkWrap: true,
-              physics: const ClampingScrollPhysics(),
-              children: [
-                if (block.dashedName != 'es6')
-                  BlockWidget(
-                    block: block,
-                    learnService: learnService,
-                    model: model,
-                  )
-              ],
-            )));
+      viewModelBuilder: () => ChallengeBuilderModel(),
+      onModelReady: (model) {
+        model.init(block.challenges);
+        model.setIsOpen = isOpen;
+      },
+      builder: (context, model, child) => Container(
+        color: const Color(0xFF0a0a23),
+        child: ListView(
+          shrinkWrap: true,
+          physics: const ClampingScrollPhysics(),
+          children: [
+            if (block.dashedName != 'es6')
+              BlockWidget(
+                block: block,
+                learnService: learnService,
+                model: model,
+              )
+          ],
+        ),
+      ),
+    );
   }
 }
 
@@ -95,40 +97,42 @@ class BlockWidget extends StatelessWidget {
                       child: Text(
                         blockString,
                         style: TextStyle(
-                            fontSize: 18,
-                            fontWeight: FontWeight.w600,
-                            height: 1.2,
-                            fontFamily: 'Lato',
-                            color: Colors.white.withOpacity(0.87)),
+                          fontSize: 18,
+                          fontWeight: FontWeight.w600,
+                          height: 1.2,
+                          fontFamily: 'Lato',
+                          color: Colors.white.withOpacity(0.87),
+                        ),
                       ),
                     ),
                   buildDivider(),
                   ListView.builder(
-                      shrinkWrap: true,
-                      itemCount: block.challenges.length,
-                      physics: const ClampingScrollPhysics(),
-                      itemBuilder: (context, i) => ListTile(
-                            leading: model.getIcon(
-                              model.completedChallenge(
-                                block.challenges[i].id,
-                              ),
-                            ),
-                            title: Text(block.challenges[i].name),
-                            onTap: () async {
-                              String challenge = block.challenges[i].name
-                                  .toLowerCase()
-                                  .replaceAll(' ', '-')
-                                  .replaceAll(RegExp(r"[@':]"), '');
-                              String url = await learnService.getBaseUrl(
-                                '/page-data/learn',
-                              );
+                    shrinkWrap: true,
+                    itemCount: block.challenges.length,
+                    physics: const ClampingScrollPhysics(),
+                    itemBuilder: (context, i) => ListTile(
+                      leading: model.getIcon(
+                        model.completedChallenge(
+                          block.challenges[i].id,
+                        ),
+                      ),
+                      title: Text(block.challenges[i].name),
+                      onTap: () async {
+                        String challenge = block.challenges[i].name
+                            .toLowerCase()
+                            .replaceAll(' ', '-')
+                            .replaceAll(RegExp(r"[@':]"), '');
+                        String url = await learnService.getBaseUrl(
+                          '/page-data/learn',
+                        );
 
-                              model.routeToBrowserView(
-                                '$url/${block.superBlock}/${block.dashedName}/$challenge/page-data.json',
-                                block,
-                              );
-                            },
-                          )),
+                        model.routeToBrowserView(
+                          '$url/${block.superBlock}/${block.dashedName}/$challenge/page-data.json',
+                          block,
+                        );
+                      },
+                    ),
+                  ),
                 ],
               )
             : Container(),

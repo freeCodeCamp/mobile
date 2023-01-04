@@ -18,26 +18,28 @@ class SuperBlockView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return ViewModelBuilder<LearnViewModel>.reactive(
-        viewModelBuilder: () => LearnViewModel(),
-        onModelReady: (model) => AuthenticationService.staticIsloggedIn
-            ? model.auth.fetchUser()
-            : null,
-        builder: (context, model, child) => Scaffold(
-              appBar: AppBar(
-                title: Text(superblockName),
-              ),
-              body: FutureBuilder<SuperBlock>(
-                  future: model.getSuperBlockData(superBlockDashedName),
-                  builder: ((context, snapshot) {
-                    if (snapshot.hasData) {
-                      SuperBlock superBlock = snapshot.data as SuperBlock;
+      viewModelBuilder: () => LearnViewModel(),
+      onModelReady: (model) => AuthenticationService.staticIsloggedIn
+          ? model.auth.fetchUser()
+          : null,
+      builder: (context, model, child) => Scaffold(
+        appBar: AppBar(
+          title: Text(superblockName),
+        ),
+        body: FutureBuilder<SuperBlock>(
+          future: model.getSuperBlockData(superBlockDashedName),
+          builder: ((context, snapshot) {
+            if (snapshot.hasData) {
+              SuperBlock superBlock = snapshot.data as SuperBlock;
 
-                      return superBlockTemplate(model, superBlock);
-                    }
+              return superBlockTemplate(model, superBlock);
+            }
 
-                    return const Center(child: CircularProgressIndicator());
-                  })),
-            ));
+            return const Center(child: CircularProgressIndicator());
+          }),
+        ),
+      ),
+    );
   }
 
   Widget superBlockTemplate(LearnViewModel model, SuperBlock superBlock) {

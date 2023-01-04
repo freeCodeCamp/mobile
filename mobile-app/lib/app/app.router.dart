@@ -41,8 +41,7 @@ import 'package:freecodecamp/ui/views/news/news-image-viewer/news_image_viewer.d
     as _i10;
 import 'package:freecodecamp/ui/views/news/news-tutorial/news_tutorial_view.dart'
     as _i6;
-import 'package:freecodecamp/ui/views/podcast/episode-view/episode_view.dart'
-    as _i5;
+import 'package:freecodecamp/ui/views/podcast/episode/episode_view.dart' as _i5;
 import 'package:freecodecamp/ui/views/podcast/podcast-list/podcast_list_view.dart'
     as _i3;
 import 'package:freecodecamp/ui/views/profile/profile_view.dart' as _i21;

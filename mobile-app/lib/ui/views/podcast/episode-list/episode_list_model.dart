@@ -9,7 +9,9 @@ import 'package:http/http.dart' as http;
 import 'package:infinite_scroll_pagination/infinite_scroll_pagination.dart';
 import 'package:stacked/stacked.dart';
 
-class EpisodeListViewModel extends BaseViewModel {
+class EpisodeListModel extends BaseViewModel {
+  EpisodeListModel(this.podcast);
+
   final _databaseService = locator<PodcastsDatabaseService>();
   final _developerService = locator<DeveloperService>();
   final Podcasts podcast;
@@ -31,8 +33,6 @@ class EpisodeListViewModel extends BaseViewModel {
     firstPageKey: 0,
   );
   PagingController<int, Episodes> get pagingController => _pagingController;
-
-  EpisodeListViewModel(this.podcast);
 
   void initState(bool isDownloadView) async {
     _databaseService.initialise();
