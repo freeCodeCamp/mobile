@@ -18,7 +18,7 @@ import 'package:freecodecamp/ui/views/forum/forum-user/forum_user_view.dart';
 import 'package:freecodecamp/ui/views/home/home_view.dart';
 import 'package:freecodecamp/ui/views/news/news-author/news_author_view.dart';
 import 'package:freecodecamp/ui/views/podcast/podcast-list/podcast_list_view.dart';
-import 'package:freecodecamp/ui/views/podcast/episode-view/episode_view.dart';
+import 'package:freecodecamp/ui/views/podcast/episode/episode_view.dart';
 import 'package:freecodecamp/ui/views/news/news-tutorial/news_tutorial_view.dart';
 import 'package:freecodecamp/ui/views/news/news-bookmark/news_bookmark_view.dart';
 import 'package:freecodecamp/ui/views/news/news-feed/news_feed_view.dart';
