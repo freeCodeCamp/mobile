@@ -30,7 +30,7 @@ import 'package:freecodecamp/ui/views/learn/challenge_editor/challenge_view.dart
 import 'package:freecodecamp/ui/views/web_view/web_view_view.dart';
 import 'package:freecodecamp/ui/views/profile/profile_view.dart';
 
-import 'package:freecodecamp/ui/views/news/news-image-viewer/news_image_viewer.dart';
+import 'package:freecodecamp/ui/views/news/news-image-viewer/news_image_view.dart';
 import 'package:stacked/stacked_annotations.dart';
 import 'package:stacked_services/stacked_services.dart';
 import 'package:sqflite_migration_service/sqflite_migration_service.dart';

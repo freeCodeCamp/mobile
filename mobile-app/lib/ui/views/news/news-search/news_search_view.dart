@@ -87,41 +87,41 @@ class NewsSearchView extends StatelessWidget {
             return Column(
               children: [
                 Expanded(
-                    child: current!.isNotEmpty
-                        ? Scrollbar(
-                            thumbVisibility: true,
-                            trackVisibility: true,
-                            child: ListView.separated(
-                              physics: const ClampingScrollPhysics(),
-                              itemCount: current.length,
-                              separatorBuilder: (context, int i) =>
-                                  const Divider(
-                                color: Color.fromRGBO(0x42, 0x42, 0x55, 1),
-                                thickness: 2,
-                                height: 5,
-                              ),
-                              itemBuilder: (context, index) {
-                                return ListTile(
-                                  title: Text(
-                                    current[index].data['title'],
-                                    maxLines: 2,
-                                    overflow: TextOverflow.ellipsis,
-                                    style: TextStyle(
-                                      color: Colors.white.withOpacity(0.87),
-                                    ),
-                                  ),
-                                  onTap: () => {
-                                    model.navigateToTutorial(
-                                      current[index].data['objectID'],
-                                    ),
-                                  },
-                                );
-                              },
+                  child: current!.isNotEmpty
+                      ? Scrollbar(
+                          thumbVisibility: true,
+                          trackVisibility: true,
+                          child: ListView.separated(
+                            physics: const ClampingScrollPhysics(),
+                            itemCount: current.length,
+                            separatorBuilder: (context, int i) => const Divider(
+                              color: Color.fromRGBO(0x42, 0x42, 0x55, 1),
+                              thickness: 2,
+                              height: 5,
                             ),
-                          )
-                        : const Center(
-                            child: Text('No Tutorials Found'),
-                          )),
+                            itemBuilder: (context, index) {
+                              return ListTile(
+                                title: Text(
+                                  current[index].data['title'],
+                                  maxLines: 2,
+                                  overflow: TextOverflow.ellipsis,
+                                  style: TextStyle(
+                                    color: Colors.white.withOpacity(0.87),
+                                  ),
+                                ),
+                                onTap: () => {
+                                  model.navigateToTutorial(
+                                    current[index].data['objectID'],
+                                  ),
+                                },
+                              );
+                            },
+                          ),
+                        )
+                      : const Center(
+                          child: Text('No Tutorials Found'),
+                        ),
+                ),
               ],
             );
           },

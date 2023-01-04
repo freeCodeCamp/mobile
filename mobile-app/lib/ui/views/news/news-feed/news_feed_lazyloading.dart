@@ -4,9 +4,11 @@ class NewsFeedLazyLoading extends StatefulWidget {
   final Function tutorialCreated;
   final Widget child;
 
-  const NewsFeedLazyLoading(
-      {Key? key, required this.tutorialCreated, required this.child})
-      : super(key: key);
+  const NewsFeedLazyLoading({
+    Key? key,
+    required this.tutorialCreated,
+    required this.child,
+  }) : super(key: key);
 
   @override
   NewsFeedLazyLoadingState createState() => NewsFeedLazyLoadingState();

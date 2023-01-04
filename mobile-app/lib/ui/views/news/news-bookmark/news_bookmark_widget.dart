@@ -4,26 +4,29 @@ import 'package:freecodecamp/ui/views/news/news-bookmark/news_bookmark_model.dar
 import 'package:stacked/stacked.dart';
 
 class NewsBookmarkViewWidget extends StatelessWidget {
-  const NewsBookmarkViewWidget({Key? key, required this.tutorial})
-      : super(key: key);
+  const NewsBookmarkViewWidget({
+    Key? key,
+    required this.tutorial,
+  }) : super(key: key);
 
   final dynamic tutorial;
 
   @override
   Widget build(BuildContext context) {
     return ViewModelBuilder<NewsBookmarkModel>.reactive(
-        viewModelBuilder: () => NewsBookmarkModel(),
-        onModelReady: (model) => model.isTutorialBookmarked(tutorial),
-        builder: (context, model, child) => BottomButton(
-              key: const Key('bookmark_btn'),
-              label: model.bookmarked ? 'Bookmarked' : 'Bookmark',
-              icon: model.bookmarked
-                  ? Icons.bookmark_added
-                  : Icons.bookmark_add_outlined,
-              onPressed: () {
-                model.bookmarkAndUnbookmark(tutorial);
-              },
-              rightSided: false,
-            ));
+      viewModelBuilder: () => NewsBookmarkModel(),
+      onModelReady: (model) => model.isTutorialBookmarked(tutorial),
+      builder: (context, model, child) => BottomButton(
+        key: const Key('bookmark_btn'),
+        label: model.bookmarked ? 'Bookmarked' : 'Bookmark',
+        icon: model.bookmarked
+            ? Icons.bookmark_added
+            : Icons.bookmark_add_outlined,
+        onPressed: () {
+          model.bookmarkAndUnbookmark(tutorial);
+        },
+        rightSided: false,
+      ),
+    );
   }
 }

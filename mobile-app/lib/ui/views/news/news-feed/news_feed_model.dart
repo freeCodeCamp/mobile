@@ -98,7 +98,9 @@ class NewsFeedModel extends BaseViewModel {
     tutorials.clear();
     _pageNumber = 1;
     notifyListeners();
-    return Future.delayed(const Duration(seconds: 0));
+    return Future.delayed(
+      const Duration(seconds: 0),
+    );
   }
 
   Future handleTutorialLazyLoading(int index) async {
