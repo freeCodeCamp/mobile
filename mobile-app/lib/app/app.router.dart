@@ -40,8 +40,7 @@ import 'package:freecodecamp/ui/views/news/news-feed/news_feed_view.dart'
     as _i8;
 import 'package:freecodecamp/ui/views/news/news-image-viewer/news_image_viewer.dart'
     as _i10;
-import 'package:freecodecamp/ui/views/podcast/episode-view/episode_view.dart'
-    as _i5;
+import 'package:freecodecamp/ui/views/podcast/episode/episode_view.dart' as _i5;
 import 'package:freecodecamp/ui/views/podcast/podcast-list/podcast_list_view.dart'
     as _i3;
 import 'package:freecodecamp/ui/views/profile/profile_view.dart' as _i21;
