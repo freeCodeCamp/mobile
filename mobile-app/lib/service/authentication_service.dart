@@ -48,7 +48,8 @@ class AuthenticationService {
 
     for (String requiredToken in requiredTokens) {
       if (await store.containsKey(key: requiredToken) == false ||
-          await store.read(key: requiredToken) == null) {
+          await store.read(key: requiredToken) == null ||
+          await store.read(key: requiredToken) == '') {
         log('message: Missing token: $requiredToken');
         return false;
       }
