@@ -16,6 +16,7 @@ import '../service/audio/audio_service.dart';
 import '../service/authentication/authentication_service.dart';
 import '../service/developer_service.dart';
 import '../service/learn/learn_file_service.dart';
+import '../service/learn/learn_offline_service.dart';
 import '../service/learn/learn_service.dart';
 import '../service/navigation/quick_actions_service.dart';
 import '../service/podcast/download_service.dart';
@@ -43,5 +44,6 @@ Future<void> setupLocator(
   locator.registerLazySingleton(() => DownloadService());
   locator.registerLazySingleton(() => LearnService());
   locator.registerLazySingleton(() => LearnFileService());
+  locator.registerLazySingleton(() => LearnOfflineService());
   locator.registerLazySingleton(() => QuickActionsService());
 }

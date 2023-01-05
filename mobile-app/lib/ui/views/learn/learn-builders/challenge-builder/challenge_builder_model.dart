@@ -1,10 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:freecodecamp/app/app.locator.dart';
 import 'package:freecodecamp/app/app.router.dart';
+import 'package:freecodecamp/models/learn/challenge_model.dart';
 import 'package:freecodecamp/models/learn/completed_challenge_model.dart';
 import 'package:freecodecamp/models/learn/curriculum_model.dart';
 import 'package:freecodecamp/models/main/user_model.dart';
 import 'package:freecodecamp/service/authentication/authentication_service.dart';
+import 'package:freecodecamp/service/learn/learn_offline_service.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:stacked/stacked.dart';
 import 'package:stacked_services/stacked_services.dart';
@@ -20,6 +22,8 @@ class ChallengeBuilderModel extends BaseViewModel {
 
   int _challengesCompleted = 0;
   int get challengesCompleted => _challengesCompleted;
+
+  final learnOfflineService = locator<LearnOfflineService>();
 
   set setIsOpen(bool widgetIsOpened) {
     _isOpen = widgetIsOpened;
@@ -43,7 +47,7 @@ class ChallengeBuilderModel extends BaseViewModel {
     notifyListeners();
   }
 
-  void routeToBrowserView(String url, Block block) {
+  void routeToChallengeView(String url, Block block) {
     _navigationService.navigateTo(
       Routes.challengeView,
       arguments: ChallengeViewArguments(
@@ -58,6 +62,10 @@ class ChallengeBuilderModel extends BaseViewModel {
     user = await _auth.userModel;
     setNumberOfCompletedChallenges(challengeBatch);
     notifyListeners();
+  }
+
+  void testChallenge(Challenge challenge) {
+    learnOfflineService.storeDownloadedChallenge(challenge);
   }
 
   void setNumberOfCompletedChallenges(List<ChallengeListTile> challengeBatch) {

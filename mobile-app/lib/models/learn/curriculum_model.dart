@@ -25,7 +25,9 @@ class SuperBlock {
               ))
           .values
           .toList()
-        ..sort((Block a, Block b) => a.order.compareTo(b.order)),
+        ..sort(
+          (Block a, Block b) => a.order.compareTo(b.order),
+        ),
     );
   }
 }
@@ -40,40 +42,60 @@ class Block {
 
   final List<ChallengeListTile> challenges;
 
-  Block(
-      {required this.blockName,
-      required this.description,
-      required this.isStepBased,
-      this.dashedName = '',
-      this.superBlock = '',
-      required this.challenges,
-      required this.order});
+  Block({
+    required this.blockName,
+    required this.description,
+    required this.isStepBased,
+    this.dashedName = '',
+    this.superBlock = '',
+    required this.challenges,
+    required this.order,
+  });
 
   static bool checkIfStepBased(String superblock) {
     return superblock == '2022/responsive-web-design';
   }
 
   factory Block.fromJson(
-      Map<String, dynamic> data, List description, String key) {
+    Map<String, dynamic> data,
+    List description,
+    String key,
+  ) {
     return Block(
-        blockName: data['name'],
-        description: description,
-        dashedName: data['dashedName'] ?? key,
-        superBlock: data['superBlock'],
-        order: data['order'],
-        challenges: (data['challengeOrder'] as List)
-            .map<ChallengeListTile>((dynamic challenge) =>
-                ChallengeListTile(id: challenge[0], name: challenge[1]))
-            .toList(),
-        isStepBased: checkIfStepBased(data['superBlock']));
+      blockName: data['name'],
+      description: description,
+      dashedName: data['dashedName'] ?? key,
+      superBlock: data['superBlock'],
+      order: data['order'],
+      challenges: (data['challengeOrder'] as List)
+          .map<ChallengeListTile>(
+            (dynamic challenge) => ChallengeListTile(
+              id: challenge[0],
+              name: challenge[1],
+              dashedName: challenge[1]
+                  .toLowerCase()
+                  .replaceAll(' ', '-')
+                  .replaceAll(RegExp(r"[@':]"), ''),
+            ),
+          )
+          .toList(),
+      isStepBased: checkIfStepBased(
+        data['superBlock'],
+      ),
+    );
   }
 }
 
 class ChallengeListTile {
   final String id;
   final String name;
+  final String dashedName;
 
-  ChallengeListTile({required this.id, required this.name});
+  ChallengeListTile({
+    required this.id,
+    required this.name,
+    required this.dashedName,
+  });
 }
 
 class SuperBlockButton {
@@ -81,6 +103,9 @@ class SuperBlockButton {
   final String name;
   final bool public;
 
-  SuperBlockButton(
-      {required this.path, required this.name, required this.public});
+  SuperBlockButton({
+    required this.path,
+    required this.name,
+    required this.public,
+  });
 }

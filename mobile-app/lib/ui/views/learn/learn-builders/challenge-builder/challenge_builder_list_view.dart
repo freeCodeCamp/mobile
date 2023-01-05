@@ -87,55 +87,52 @@ class BlockWidget extends StatelessWidget {
             );
           },
         ),
-        model.isOpen
-            ? Column(
-                children: [
-                  for (String blockString in block.description)
-                    Padding(
-                      padding: const EdgeInsets.symmetric(
-                          vertical: 8, horizontal: 16),
-                      child: Text(
-                        blockString,
-                        style: TextStyle(
-                          fontSize: 18,
-                          fontWeight: FontWeight.w600,
-                          height: 1.2,
-                          fontFamily: 'Lato',
-                          color: Colors.white.withOpacity(0.87),
-                        ),
-                      ),
-                    ),
-                  buildDivider(),
-                  ListView.builder(
-                    shrinkWrap: true,
-                    itemCount: block.challenges.length,
-                    physics: const ClampingScrollPhysics(),
-                    itemBuilder: (context, i) => ListTile(
-                      leading: model.getIcon(
-                        model.completedChallenge(
-                          block.challenges[i].id,
-                        ),
-                      ),
-                      title: Text(block.challenges[i].name),
-                      onTap: () async {
-                        String challenge = block.challenges[i].name
-                            .toLowerCase()
-                            .replaceAll(' ', '-')
-                            .replaceAll(RegExp(r"[@':]"), '');
-                        String url = await learnService.getBaseUrl(
-                          '/page-data/learn',
-                        );
-
-                        model.routeToBrowserView(
-                          '$url/${block.superBlock}/${block.dashedName}/$challenge/page-data.json',
-                          block,
-                        );
-                      },
+        if (model.isOpen)
+          Column(
+            children: [
+              for (String blockString in block.description)
+                Padding(
+                  padding:
+                      const EdgeInsets.symmetric(vertical: 8, horizontal: 16),
+                  child: Text(
+                    blockString,
+                    style: TextStyle(
+                      fontSize: 18,
+                      fontWeight: FontWeight.w600,
+                      height: 1.2,
+                      fontFamily: 'Lato',
+                      color: Colors.white.withOpacity(0.87),
                     ),
                   ),
-                ],
-              )
-            : Container(),
+                ),
+              buildDivider(),
+              ListView.builder(
+                shrinkWrap: true,
+                itemCount: block.challenges.length,
+                physics: const ClampingScrollPhysics(),
+                itemBuilder: (context, i) => ListTile(
+                  leading: model.getIcon(
+                    model.completedChallenge(
+                      block.challenges[i].id,
+                    ),
+                  ),
+                  title: Text(block.challenges[i].name),
+                  onTap: () async {
+                    String challenge = block.challenges[i].dashedName;
+
+                    String url = await learnService.getBaseUrl(
+                      '/page-data/learn',
+                    );
+
+                    model.routeToChallengeView(
+                      '$url/${block.superBlock}/${block.dashedName}/$challenge/page-data.json',
+                      block,
+                    );
+                  },
+                ),
+              ),
+            ],
+          )
       ],
     );
   }

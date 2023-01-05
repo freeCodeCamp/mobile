@@ -1,4 +1,5 @@
 import 'package:freecodecamp/service/developer_service.dart';
+import 'package:freecodecamp/service/learn/learn_offline_service.dart';
 import 'package:freecodecamp/service/podcast/notification_service.dart';
 import 'package:freecodecamp/service/podcast/podcasts_service.dart';
 import 'package:freecodecamp/service/podcast/download_service.dart';
@@ -74,6 +75,7 @@ import 'package:sqflite_migration_service/sqflite_migration_service.dart';
     LazySingleton(classType: DownloadService),
     LazySingleton(classType: LearnService),
     LazySingleton(classType: LearnFileService),
+    LazySingleton(classType: LearnOfflineService),
     LazySingleton(classType: QuickActionsService),
   ],
   logger: StackedLogger(),
