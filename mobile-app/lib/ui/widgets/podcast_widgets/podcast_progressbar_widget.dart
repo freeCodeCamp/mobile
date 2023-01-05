@@ -3,7 +3,7 @@ import 'dart:async';
 import 'package:audio_service/audio_service.dart';
 import 'package:flutter/material.dart';
 import 'package:freecodecamp/app/app.locator.dart';
-import 'package:freecodecamp/service/audio_service.dart';
+import 'package:freecodecamp/service/audio/audio_service.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 // ignore: must_be_immutable
@@ -69,11 +69,11 @@ class PodcastProgressBarState extends State<PodcastProgressBar> {
       double newWidth =
           (value.inSeconds / widget.duration.inSeconds) * maxBarWidth;
 
-      bool shouldSetNewWidth = newWidth*0.95 + widget.ball < maxBarWidth;
+      bool shouldSetNewWidth = newWidth * 0.95 + widget.ball < maxBarWidth;
       if (newWidth < widget.ball / 12) {
         widget._barWidth = widget.ball / 12;
       } else if (shouldSetNewWidth) {
-        widget._barWidth = newWidth*0.95;
+        widget._barWidth = newWidth * 0.95;
       }
 
       if (value.isNegative || newWidth.isNegative) {
@@ -106,8 +106,7 @@ class PodcastProgressBarState extends State<PodcastProgressBar> {
       }
     });
 
-    widget.progressListener =
-        AudioService.position.listen((event) {
+    widget.progressListener = AudioService.position.listen((event) {
       if (widget._audioService.episodeId == widget.episodeId) {
         setProgress = event;
       }

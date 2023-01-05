@@ -1,6 +1,6 @@
 import 'dart:async';
 import 'package:freecodecamp/models/code-radio/code_radio_model.dart';
-import 'package:freecodecamp/service/audio_service.dart';
+import 'package:freecodecamp/service/audio/audio_service.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:stacked/stacked.dart';
 import 'package:web_socket_channel/web_socket_channel.dart';

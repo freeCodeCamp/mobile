@@ -6,7 +6,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:freecodecamp/app/app.router.dart';
 import 'package:freecodecamp/models/news/tutorial_model.dart';
-import 'package:freecodecamp/service/test_service.dart';
+import 'package:freecodecamp/service/developer_service.dart';
 import 'package:freecodecamp/ui/views/news/html_handler/html_handler.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:stacked/stacked.dart';
@@ -18,7 +18,7 @@ class NewsTutorialViewModel extends BaseViewModel {
   static final NavigationService _navigationService =
       locator<NavigationService>();
 
-  final _testservice = locator<TestService>();
+  final _developerService = locator<DeveloperService>();
 
   Future<Tutorial>? get tutorialFuture => _tutorialFuture;
 
@@ -42,7 +42,7 @@ class NewsTutorialViewModel extends BaseViewModel {
     initBottomButtonAnimation();
     handleBottomButtonAnimation();
 
-    if (await _testservice.developmentMode()) {
+    if (await _developerService.developmentMode()) {
       return readFromFiles();
     } else {
       return fetchTutorial(id);

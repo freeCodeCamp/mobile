@@ -141,10 +141,14 @@ class AudioPlayerHandler extends BaseAudioHandler {
         title: radio.nextPlaying.title,
         artUri: Uri.parse(radio.nextPlaying.artUrl),
       );
-      await _audioPlayer.setAudioSource(ConcatenatingAudioSource(children: [
-        AudioSource.uri(Uri.parse(radio.listenUrl), tag: currentSong),
-        AudioSource.uri(Uri.parse(radio.listenUrl), tag: nextSong)
-      ]));
+      await _audioPlayer.setAudioSource(
+        ConcatenatingAudioSource(
+          children: [
+            AudioSource.uri(Uri.parse(radio.listenUrl), tag: currentSong),
+            AudioSource.uri(Uri.parse(radio.listenUrl), tag: nextSong)
+          ],
+        ),
+      );
       await _audioPlayer.load();
       _audioType = 'coderadio';
       setEpisodeId = '';
@@ -168,34 +172,38 @@ class AudioPlayerHandler extends BaseAudioHandler {
   }
 
   void _notifyAudioHandlerAboutPlaybackEvents() {
-    _audioPlayer.playbackEventStream.listen((PlaybackEvent event) {
-      final playing = _audioPlayer.playing;
-      playbackState.add(playbackState.value.copyWith(
-        controls: [
-          if (playing) MediaControl.pause else MediaControl.play,
-          MediaControl.stop,
-        ],
-        systemActions: const {
-          MediaAction.seek,
-          MediaAction.seekBackward,
-          MediaAction.seekForward,
-        },
-        androidCompactActionIndices: const [0, 1], // CHECK
-        processingState: const {
-          ProcessingState.idle: AudioProcessingState.idle,
-          ProcessingState.loading: AudioProcessingState.loading,
-          ProcessingState.buffering: AudioProcessingState.buffering,
-          ProcessingState.ready: AudioProcessingState.ready,
-          ProcessingState.completed: AudioProcessingState.completed,
-        }[_audioPlayer.processingState]!,
-        repeatMode: AudioServiceRepeatMode.none,
-        shuffleMode: AudioServiceShuffleMode.none,
-        playing: playing,
-        updatePosition: _audioPlayer.position,
-        bufferedPosition: _audioPlayer.bufferedPosition,
-        speed: _audioPlayer.speed,
-        queueIndex: event.currentIndex,
-      ));
-    });
+    _audioPlayer.playbackEventStream.listen(
+      (PlaybackEvent event) {
+        final playing = _audioPlayer.playing;
+        playbackState.add(
+          playbackState.value.copyWith(
+            controls: [
+              if (playing) MediaControl.pause else MediaControl.play,
+              MediaControl.stop,
+            ],
+            systemActions: const {
+              MediaAction.seek,
+              MediaAction.seekBackward,
+              MediaAction.seekForward,
+            },
+            androidCompactActionIndices: const [0, 1], // CHECK
+            processingState: const {
+              ProcessingState.idle: AudioProcessingState.idle,
+              ProcessingState.loading: AudioProcessingState.loading,
+              ProcessingState.buffering: AudioProcessingState.buffering,
+              ProcessingState.ready: AudioProcessingState.ready,
+              ProcessingState.completed: AudioProcessingState.completed,
+            }[_audioPlayer.processingState]!,
+            repeatMode: AudioServiceRepeatMode.none,
+            shuffleMode: AudioServiceShuffleMode.none,
+            playing: playing,
+            updatePosition: _audioPlayer.position,
+            bufferedPosition: _audioPlayer.bufferedPosition,
+            speed: _audioPlayer.speed,
+            queueIndex: event.currentIndex,
+          ),
+        );
+      },
+    );
   }
 }
