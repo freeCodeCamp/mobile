@@ -1,5 +1,6 @@
 import 'dart:convert';
 
+import 'package:freecodecamp/models/learn/challenge_model.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class ChallengeDownload {
@@ -13,6 +14,13 @@ class ChallengeDownload {
       id: challengeObject['id'],
       date: challengeObject['date'],
     );
+  }
+
+  static toObject(ChallengeDownload challengeDownload) {
+    return {
+      'id': challengeDownload.id,
+      'date': challengeDownload.date,
+    };
   }
 }
 
@@ -41,9 +49,39 @@ class LearnOfflineService {
     return [];
   }
 
-  // Future<bool> storeDownloadedChallenge(Challenge challenge) async {
-  //   SharedPreferences prefs = await SharedPreferences.getInstance();
+  Future<Future<dynamic>> storeDownloadedChallenge(Challenge challenge) async {
+    try {
+      SharedPreferences prefs = await SharedPreferences.getInstance();
+      Map<String, dynamic> challengeObj = Challenge.toJson(challenge);
 
-  //   if(prefs.)
-  // }
+      List<ChallengeDownload?> downloads = await checkStoredChallenges();
+      List<Map<String, dynamic>> downloadObjects = [];
+
+      List<String> downloadIds = [];
+
+      for (int i = 0; i < downloads.length; i++) {
+        if (downloads[i] == null) continue;
+
+        downloadObjects.add(ChallengeDownload.toObject(downloads[i]!));
+
+        downloadIds.add(downloads[i]!.id);
+      }
+
+      if (!downloadIds.contains(challenge.id)) {
+        downloadObjects.add({'id': challenge.id, 'date': DateTime.now()});
+
+        prefs.setStringList(
+          'storedChallenges',
+          downloadObjects.map((e) => e.toString()).toList(),
+        );
+        prefs.setString(challenge.id, challengeObj.toString());
+      }
+
+      return Future<String>.value('download completed');
+    } catch (e) {
+      return Future.error(
+        Exception('unable to download challenge: \n ${e.toString()}'),
+      );
+    }
+  }
 }

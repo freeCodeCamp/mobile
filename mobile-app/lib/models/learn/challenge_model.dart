@@ -27,8 +27,10 @@ class Challenge {
     required this.files,
   });
 
-  factory Challenge.fromJson(Map<String, dynamic> data,
-      {bool testing = false}) {
+  factory Challenge.fromJson(
+    Map<String, dynamic> data, {
+    bool testing = false,
+  }) {
     return Challenge(
       id: data['id'],
       block: data['block'],
@@ -57,6 +59,24 @@ class Challenge {
       'slug': challenge.slug,
       'superBlock': challenge.superBlock,
       'challengeType': challenge.challengeType,
+      'tests': challenge.tests.map(
+        (challengeTest) => {
+          'text': challengeTest.instruction,
+          'testString': challengeTest.javaScript
+        },
+      ),
+      'files': challenge.files.map(
+        (challengeFile) => {
+          'ext': challengeFile.ext,
+          'name': challengeFile.name,
+          'head': challengeFile.head,
+          'tail': challengeFile.tail,
+          'contents': challengeFile.contents,
+          'editableRegionBoundries': challengeFile.editableRegionBoundaries,
+          'history': challengeFile.history,
+          'fileKey': challengeFile.fileKey,
+        },
+      )
     };
   }
 }
