@@ -37,7 +37,7 @@ import 'package:freecodecamp/ui/views/news/news-bookmark/news_bookmark_view.dart
     as _i7;
 import 'package:freecodecamp/ui/views/news/news-feed/news_feed_view.dart'
     as _i8;
-import 'package:freecodecamp/ui/views/news/news-image-viewer/news_image_viewer.dart'
+import 'package:freecodecamp/ui/views/news/news-image-viewer/news_image_view.dart'
     as _i10;
 import 'package:freecodecamp/ui/views/news/news-tutorial/news_tutorial_view.dart'
     as _i6;

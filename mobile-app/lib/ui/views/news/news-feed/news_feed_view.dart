@@ -3,21 +3,21 @@ import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
 import 'package:freecodecamp/models/news/tutorial_model.dart';
 import 'package:freecodecamp/ui/views/news/news-feed/news_feed_lazyloading.dart';
-import 'package:freecodecamp/ui/views/news/news-feed/news_feed_viewmodel.dart';
+import 'package:freecodecamp/ui/views/news/news-feed/news_feed_model.dart';
 import 'package:stacked/stacked.dart';
 import 'package:url_launcher/url_launcher_string.dart';
 
 class NewsFeedView extends StatelessWidget {
-  const NewsFeedView(
-      {Key? key,
-      this.slug = '',
-      this.author = '',
-      this.fromAuthor = false,
-      this.fromTag = false,
-      this.fromSearch = false,
-      this.tutorials = const [],
-      this.subject = ''})
-      : super(key: key);
+  const NewsFeedView({
+    Key? key,
+    this.slug = '',
+    this.author = '',
+    this.fromAuthor = false,
+    this.fromTag = false,
+    this.fromSearch = false,
+    this.tutorials = const [],
+    this.subject = '',
+  }) : super(key: key);
 
   final String subject;
   final String slug;
@@ -35,34 +35,37 @@ class NewsFeedView extends StatelessWidget {
       viewModelBuilder: () => NewsFeedModel(),
       onModelReady: (model) async => await model.devMode(),
       builder: (context, model, child) => Scaffold(
-          appBar: fromTag || fromAuthor || fromSearch
-              ? AppBar(
-                  title: Text(
-                      'Tutorials ${fromAuthor ? 'from' : 'about'} $subject'),
-                )
-              : null,
-          backgroundColor: const Color(0xFF0a0a23),
-          body: FutureBuilder(
-            future: !model.devmode
-                ? !fromSearch
-                    ? model.fetchTutorials(slug, author)
-                    : model.returnTutorialsFromSearch(tutorials)
-                : model.readFromFiles(),
-            builder: (context, snapshot) {
-              if (snapshot.hasData) {
-                return RefreshIndicator(
-                    backgroundColor: const Color(0xFF0a0a23),
-                    color: Colors.white,
-                    child: tutorialThumbnailBuilder(model),
-                    onRefresh: () {
-                      return model.refresh();
-                    });
-              } else if (snapshot.hasError) {
-                return errorMessage();
-              }
-              return const Center(child: CircularProgressIndicator());
-            },
-          )),
+        appBar: fromTag || fromAuthor || fromSearch
+            ? AppBar(
+                title: Text(
+                  'Tutorials ${fromAuthor ? 'from' : 'about'} $subject',
+                ),
+              )
+            : null,
+        backgroundColor: const Color(0xFF0a0a23),
+        body: FutureBuilder(
+          future: !model.devmode
+              ? !fromSearch
+                  ? model.fetchTutorials(slug, author)
+                  : model.returnTutorialsFromSearch(tutorials)
+              : model.readFromFiles(),
+          builder: (context, snapshot) {
+            if (snapshot.hasData) {
+              return RefreshIndicator(
+                backgroundColor: const Color(0xFF0a0a23),
+                color: Colors.white,
+                child: tutorialThumbnailBuilder(model),
+                onRefresh: () {
+                  return model.refresh();
+                },
+              );
+            } else if (snapshot.hasError) {
+              return errorMessage();
+            }
+            return const Center(child: CircularProgressIndicator());
+          },
+        ),
+      ),
     );
   }
 
@@ -133,19 +136,20 @@ class NewsFeedView extends StatelessWidget {
         Container(
           color: const Color.fromRGBO(0x2A, 0x2A, 0x40, 1),
           child: AspectRatio(
-              aspectRatio: 16 / 9,
-              child: CachedNetworkImage(
-                imageUrl: tutorial.featureImage,
-                errorWidget: (context, url, error) => const Icon(Icons.error),
-                imageBuilder: (context, imageProvider) => Container(
-                  decoration: BoxDecoration(
-                    image: DecorationImage(
-                      image: imageProvider,
-                      fit: BoxFit.cover,
-                    ),
+            aspectRatio: 16 / 9,
+            child: CachedNetworkImage(
+              imageUrl: tutorial.featureImage,
+              errorWidget: (context, url, error) => const Icon(Icons.error),
+              imageBuilder: (context, imageProvider) => Container(
+                decoration: BoxDecoration(
+                  image: DecorationImage(
+                    image: imageProvider,
+                    fit: BoxFit.cover,
                   ),
                 ),
-              )),
+              ),
+            ),
+          ),
         ),
         Align(
           alignment: Alignment.centerLeft,
@@ -160,8 +164,9 @@ class NewsFeedView extends StatelessWidget {
           ),
         ),
         Container(
-            padding: const EdgeInsets.only(left: 16, right: 16, top: 8),
-            child: tutorialHeader(model, i))
+          padding: const EdgeInsets.only(left: 16, right: 16, top: 8),
+          child: tutorialHeader(model, i),
+        )
       ],
     );
   }
@@ -178,7 +183,10 @@ class NewsFeedView extends StatelessWidget {
                 tutorial.title,
                 maxLines: 2,
                 style: const TextStyle(
-                    fontSize: 20, overflow: TextOverflow.ellipsis, height: 1.5),
+                  fontSize: 20,
+                  overflow: TextOverflow.ellipsis,
+                  height: 1.5,
+                ),
               ),
             ),
           ],
@@ -188,32 +196,33 @@ class NewsFeedView extends StatelessWidget {
             Padding(
               padding: const EdgeInsets.only(right: 16, top: 16),
               child: InkWell(
-                  onTap: () {
-                    model.navigateToAuthor(tutorial.authorSlug);
-                  },
-                  child: Container(
-                      width: 45,
-                      height: 45,
-                      color: const Color.fromRGBO(0x2A, 0x2A, 0x40, 1),
-                      child: tutorial.profileImage == null
-                          ? Image.asset(
-                              'assets/images/placeholder-profile-img.png',
-                              width: 45,
-                              height: 45,
-                              fit: BoxFit.cover,
-                            )
-                          : CachedNetworkImage(
-                              imageUrl: tutorial.profileImage as String,
-                              imageBuilder: (context, imageProvider) =>
-                                  Container(
-                                decoration: BoxDecoration(
-                                  image: DecorationImage(
-                                    image: imageProvider,
-                                    fit: BoxFit.cover,
-                                  ),
-                                ),
+                onTap: () {
+                  model.navigateToAuthor(tutorial.authorSlug);
+                },
+                child: Container(
+                  width: 45,
+                  height: 45,
+                  color: const Color.fromRGBO(0x2A, 0x2A, 0x40, 1),
+                  child: tutorial.profileImage == null
+                      ? Image.asset(
+                          'assets/images/placeholder-profile-img.png',
+                          width: 45,
+                          height: 45,
+                          fit: BoxFit.cover,
+                        )
+                      : CachedNetworkImage(
+                          imageUrl: tutorial.profileImage as String,
+                          imageBuilder: (context, imageProvider) => Container(
+                            decoration: BoxDecoration(
+                              image: DecorationImage(
+                                image: imageProvider,
+                                fit: BoxFit.cover,
                               ),
-                            ))),
+                            ),
+                          ),
+                        ),
+                ),
+              ),
             ),
             Column(
               crossAxisAlignment: CrossAxisAlignment.start,

@@ -2,7 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:freecodecamp/models/news/tutorial_model.dart';
 
 class NewsTutorialHeader extends StatelessWidget {
-  const NewsTutorialHeader({Key? key, required this.tutorial}) : super(key: key);
+  const NewsTutorialHeader({Key? key, required this.tutorial})
+      : super(key: key);
 
   final Tutorial tutorial;
 
@@ -11,11 +12,12 @@ class NewsTutorialHeader extends StatelessWidget {
     return Column(
       children: [
         AspectRatio(
-            aspectRatio: 16 / 9,
-            child: Image.network(
-              tutorial.featureImage,
-              fit: BoxFit.cover,
-            )),
+          aspectRatio: 16 / 9,
+          child: Image.network(
+            tutorial.featureImage,
+            fit: BoxFit.cover,
+          ),
+        ),
         Row(
           children: [
             Expanded(
