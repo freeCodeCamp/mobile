@@ -46,6 +46,19 @@ class Challenge {
           .toList(),
     );
   }
+
+  static toJson(Challenge challenge) {
+    return {
+      'id': challenge.id,
+      'block': challenge.block,
+      'title': challenge.title,
+      'description': challenge.description,
+      'instructions': challenge.instructions,
+      'slug': challenge.slug,
+      'superBlock': challenge.superBlock,
+      'challengeType': challenge.challengeType,
+    };
+  }
 }
 
 class ChallengeTest {
@@ -53,14 +66,17 @@ class ChallengeTest {
   final String javaScript;
   ChallengeTestState testState;
 
-  ChallengeTest(
-      {required this.instruction,
-      this.testState = ChallengeTestState.waiting,
-      required this.javaScript});
+  ChallengeTest({
+    required this.instruction,
+    this.testState = ChallengeTestState.waiting,
+    required this.javaScript,
+  });
 
   factory ChallengeTest.fromJson(Map<String, dynamic> data) {
     return ChallengeTest(
-        instruction: data['text'], javaScript: data['testString']);
+      instruction: data['text'],
+      javaScript: data['testString'],
+    );
   }
 }
 
