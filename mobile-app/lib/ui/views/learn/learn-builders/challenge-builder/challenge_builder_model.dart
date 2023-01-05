@@ -20,6 +20,9 @@ class ChallengeBuilderModel extends BaseViewModel {
   bool _isOpen = false;
   bool get isOpen => _isOpen;
 
+  bool _isDownloading = false;
+  bool get isDownloading => _isDownloading;
+
   int _challengesCompleted = 0;
   int get challengesCompleted => _challengesCompleted;
 
@@ -27,6 +30,11 @@ class ChallengeBuilderModel extends BaseViewModel {
 
   set setIsOpen(bool widgetIsOpened) {
     _isOpen = widgetIsOpened;
+    notifyListeners();
+  }
+
+  set setIsDownloading(bool value) {
+    _isDownloading = value;
     notifyListeners();
   }
 
@@ -62,6 +70,13 @@ class ChallengeBuilderModel extends BaseViewModel {
     user = await _auth.userModel;
     setNumberOfCompletedChallenges(challengeBatch);
     notifyListeners();
+
+    learnOfflineService.downloadStream.stream.listen((event) {
+      if (event == 100.00) {
+        setIsDownloading = false;
+        learnOfflineService.downloadStream.sink.add(0);
+      }
+    });
   }
 
   void testChallenge(Challenge challenge) {

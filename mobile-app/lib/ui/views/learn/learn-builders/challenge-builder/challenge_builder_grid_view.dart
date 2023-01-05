@@ -157,6 +157,42 @@ class ChallengeBuilderGridView extends StatelessWidget {
                         ),
                       if (!isCertification) ...[
                         buildDivider(),
+                        SizedBox(
+                            width: MediaQuery.of(context).size.width - 40,
+                            child: ElevatedButton(
+                              onPressed: () async {
+                                String url = await learnService.getBaseUrl(
+                                  '/page-data/learn',
+                                );
+                                model.learnOfflineService.getChallengeBatch(
+                                  block.challenges
+                                      .map((e) =>
+                                          '$url/${block.superBlock}/${block.dashedName}/${e.dashedName}/page-data.json')
+                                      .toList(),
+                                );
+                                model.setIsDownloading = true;
+                              },
+                              style: ElevatedButton.styleFrom(
+                                backgroundColor:
+                                    const Color.fromRGBO(0x2A, 0x2A, 0x40, 1),
+                              ),
+                              child: !model.isDownloading
+                                  ? const Text('Download All Challenges')
+                                  : StreamBuilder(
+                                      stream: model.learnOfflineService
+                                          .downloadStream.stream,
+                                      builder: ((context, snapshot) {
+                                        if (snapshot.hasData) {
+                                          return Text(
+                                            'Downloading ${(snapshot.data as double).toStringAsFixed(2)}%',
+                                          );
+                                        }
+
+                                        return const Text(
+                                            'Download All Challenges');
+                                      }),
+                                    ),
+                            )),
                         gridWidget(context, model),
                       ],
                       Container(
@@ -276,12 +312,12 @@ class ChallengeProgressBar extends StatelessWidget {
 }
 
 class OpenCloseIconWidget extends StatelessWidget {
-  const OpenCloseIconWidget(
-      {Key? key,
-      required this.block,
-      required this.model,
-      required this.learnService})
-      : super(key: key);
+  const OpenCloseIconWidget({
+    Key? key,
+    required this.block,
+    required this.model,
+    required this.learnService,
+  }) : super(key: key);
 
   final Block block;
   final ChallengeBuilderModel model;
@@ -301,15 +337,6 @@ class OpenCloseIconWidget extends StatelessWidget {
             model.setBlockOpenState(
               block.blockName,
               model.isOpen,
-            );
-            String url = await learnService.getBaseUrl(
-              '/page-data/learn',
-            );
-            model.learnOfflineService.getChallengeBatch(
-              block.challenges
-                  .map((e) =>
-                      '$url/${block.superBlock}/${block.dashedName}/${e.dashedName}/page-data.json')
-                  .toList(),
             );
           },
         ),
