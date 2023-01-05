@@ -8,7 +8,8 @@
 import 'package:flutter/material.dart' as _i24;
 import 'package:flutter/material.dart';
 import 'package:freecodecamp/models/learn/curriculum_model.dart' as _i28;
-import 'package:freecodecamp/models/news/bookmarked_article_model.dart' as _i27;
+import 'package:freecodecamp/models/news/bookmarked_tutorial_model.dart'
+    as _i27;
 import 'package:freecodecamp/models/podcasts/episodes_model.dart' as _i25;
 import 'package:freecodecamp/models/podcasts/podcasts_model.dart' as _i26;
 import 'package:freecodecamp/ui/views/code_radio/code_radio_view.dart' as _i18;
@@ -30,18 +31,17 @@ import 'package:freecodecamp/ui/views/learn/challenge_editor/challenge_view.dart
 import 'package:freecodecamp/ui/views/learn/learn-builders/superblock_builder.dart'
     as _i19;
 import 'package:freecodecamp/ui/views/learn/learn/learn_view.dart' as _i23;
-import 'package:freecodecamp/ui/views/news/news-article/news_article_view.dart'
-    as _i6;
 import 'package:freecodecamp/ui/views/news/news-author/news_author_view.dart'
     as _i9;
 import 'package:freecodecamp/ui/views/news/news-bookmark/news_bookmark_view.dart'
     as _i7;
 import 'package:freecodecamp/ui/views/news/news-feed/news_feed_view.dart'
     as _i8;
-import 'package:freecodecamp/ui/views/news/news-image-viewer/news_image_viewer.dart'
+import 'package:freecodecamp/ui/views/news/news-image-viewer/news_image_view.dart'
     as _i10;
-import 'package:freecodecamp/ui/views/podcast/episode-view/episode_view.dart'
-    as _i5;
+import 'package:freecodecamp/ui/views/news/news-tutorial/news_tutorial_view.dart'
+    as _i6;
+import 'package:freecodecamp/ui/views/podcast/episode/episode_view.dart' as _i5;
 import 'package:freecodecamp/ui/views/podcast/podcast-list/podcast_list_view.dart'
     as _i3;
 import 'package:freecodecamp/ui/views/profile/profile_view.dart' as _i21;
@@ -62,7 +62,7 @@ class Routes {
 
   static const episodeView = '/episode-view';
 
-  static const newsArticleView = '/news-article-view';
+  static const newsTutorialView = '/news-tutorial-view';
 
   static const newsBookmarkPostView = '/news-bookmark-post-view';
 
@@ -103,7 +103,7 @@ class Routes {
     podcastListView,
     podcastSettingsView,
     episodeView,
-    newsArticleView,
+    newsTutorialView,
     newsBookmarkPostView,
     newsFeedView,
     newsAuthorView,
@@ -143,8 +143,8 @@ class StackedRouter extends _i1.RouterBase {
       page: _i5.EpisodeView,
     ),
     _i1.RouteDef(
-      Routes.newsArticleView,
-      page: _i6.NewsArticleView,
+      Routes.newsTutorialView,
+      page: _i6.NewsTutorialView,
     ),
     _i1.RouteDef(
       Routes.newsBookmarkPostView,
@@ -243,11 +243,11 @@ class StackedRouter extends _i1.RouterBase {
         settings: data,
       );
     },
-    _i6.NewsArticleView: (data) {
-      final args = data.getArgs<NewsArticleViewArguments>(nullOk: false);
+    _i6.NewsTutorialView: (data) {
+      final args = data.getArgs<NewsTutorialViewArguments>(nullOk: false);
       return MaterialPageRoute<dynamic>(
         builder: (context) =>
-            _i6.NewsArticleView(key: args.key, refId: args.refId),
+            _i6.NewsTutorialView(key: args.key, refId: args.refId),
         settings: data,
       );
     },
@@ -255,7 +255,7 @@ class StackedRouter extends _i1.RouterBase {
       final args = data.getArgs<NewsBookmarkPostViewArguments>(nullOk: false);
       return MaterialPageRoute<dynamic>(
         builder: (context) =>
-            _i7.NewsBookmarkPostView(key: args.key, article: args.article),
+            _i7.NewsBookmarkPostView(key: args.key, tutorial: args.tutorial),
         settings: data,
       );
     },
@@ -270,6 +270,8 @@ class StackedRouter extends _i1.RouterBase {
             author: args.author,
             fromAuthor: args.fromAuthor,
             fromTag: args.fromTag,
+            fromSearch: args.fromSearch,
+            tutorials: args.tutorials,
             subject: args.subject),
         settings: data,
       );
@@ -413,8 +415,8 @@ class EpisodeViewArguments {
   final _i26.Podcasts podcast;
 }
 
-class NewsArticleViewArguments {
-  const NewsArticleViewArguments({
+class NewsTutorialViewArguments {
+  const NewsTutorialViewArguments({
     this.key,
     required this.refId,
   });
@@ -427,12 +429,12 @@ class NewsArticleViewArguments {
 class NewsBookmarkPostViewArguments {
   const NewsBookmarkPostViewArguments({
     this.key,
-    required this.article,
+    required this.tutorial,
   });
 
   final _i24.Key? key;
 
-  final _i27.BookmarkedArticle article;
+  final _i27.BookmarkedTutorial tutorial;
 }
 
 class NewsFeedViewArguments {
@@ -442,6 +444,8 @@ class NewsFeedViewArguments {
     this.author = '',
     this.fromAuthor = false,
     this.fromTag = false,
+    this.fromSearch = false,
+    this.tutorials = const [],
     this.subject = '',
   });
 
@@ -454,6 +458,10 @@ class NewsFeedViewArguments {
   final bool fromAuthor;
 
   final bool fromTag;
+
+  final bool fromSearch;
+
+  final List<dynamic> tutorials;
 
   final String subject;
 }
@@ -643,7 +651,7 @@ extension NavigatorStateExtension on _i29.NavigationService {
         transition: transition);
   }
 
-  Future<dynamic> navigateToNewsArticleView({
+  Future<dynamic> navigateToNewsTutorialView({
     _i24.Key? key,
     required String refId,
     int? routerId,
@@ -652,8 +660,8 @@ extension NavigatorStateExtension on _i29.NavigationService {
     Widget Function(BuildContext, Animation<double>, Animation<double>, Widget)?
         transition,
   }) async {
-    return navigateTo<dynamic>(Routes.newsArticleView,
-        arguments: NewsArticleViewArguments(key: key, refId: refId),
+    return navigateTo<dynamic>(Routes.newsTutorialView,
+        arguments: NewsTutorialViewArguments(key: key, refId: refId),
         id: routerId,
         preventDuplicates: preventDuplicates,
         parameters: parameters,
@@ -662,7 +670,7 @@ extension NavigatorStateExtension on _i29.NavigationService {
 
   Future<dynamic> navigateToNewsBookmarkPostView({
     _i24.Key? key,
-    required _i27.BookmarkedArticle article,
+    required _i27.BookmarkedTutorial tutorial,
     int? routerId,
     bool preventDuplicates = true,
     Map<String, String>? parameters,
@@ -670,7 +678,7 @@ extension NavigatorStateExtension on _i29.NavigationService {
         transition,
   }) async {
     return navigateTo<dynamic>(Routes.newsBookmarkPostView,
-        arguments: NewsBookmarkPostViewArguments(key: key, article: article),
+        arguments: NewsBookmarkPostViewArguments(key: key, tutorial: tutorial),
         id: routerId,
         preventDuplicates: preventDuplicates,
         parameters: parameters,
@@ -683,6 +691,8 @@ extension NavigatorStateExtension on _i29.NavigationService {
     String author = '',
     bool fromAuthor = false,
     bool fromTag = false,
+    bool fromSearch = false,
+    List<dynamic> tutorials = const [],
     String subject = '',
     int? routerId,
     bool preventDuplicates = true,
@@ -697,6 +707,8 @@ extension NavigatorStateExtension on _i29.NavigationService {
             author: author,
             fromAuthor: fromAuthor,
             fromTag: fromTag,
+            fromSearch: fromSearch,
+            tutorials: tutorials,
             subject: subject),
         id: routerId,
         preventDuplicates: preventDuplicates,

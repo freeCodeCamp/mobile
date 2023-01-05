@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:freecodecamp/ui/widgets/tag_widget.dart';
 
-class Article {
+class Tutorial {
   final String id;
   final String title;
   final String featureImage;
@@ -13,7 +13,7 @@ class Article {
   final String? url;
   final String? text;
 
-  Article(
+  Tutorial(
       {required this.id,
       required this.featureImage,
       required this.title,
@@ -33,17 +33,17 @@ class Article {
     for (int i = 0; i < list.length; i++) {
       tags.add(TagButton(
         tagName: list[i]['name'],
-        tagSlug: list[i]['slug'],
+        tagSlug: list[i]['slug'] ?? returnSlug(list[i]['url']),
         key: UniqueKey(),
       ));
     }
     return tags;
   }
 
-  // this factory is for the endpoint where all article thumbnails are received
+  // this factory is for the endpoint where all tutorial thumbnails are received
 
-  factory Article.fromJson(Map<String, dynamic> data) {
-    return Article(
+  factory Tutorial.fromJson(Map<String, dynamic> data) {
+    return Tutorial(
         createdAt: data['published_at'],
         featureImage: data['feature_image'],
         title: data['title'],
@@ -54,10 +54,28 @@ class Article {
         id: data['id']);
   }
 
+  factory Tutorial.fromSearch(Map<String, dynamic> data) {
+    return Tutorial(
+        createdAt: data['publishedAt'],
+        featureImage: data['featureImage'],
+        title: data['title'],
+        profileImage: data['author']['profileImage'],
+        authorName: data['author']['name'],
+        authorSlug: returnSlug(data['author']['url']),
+        tagNames: returnTags(data['tags']),
+        id: data['objectID']);
+  }
+
+  static String returnSlug(String url) {
+    List splitUrl = url.split('/');
+
+    return splitUrl[splitUrl.length - 2];
+  }
+
   // this is factory is for the post view
 
-  factory Article.toPostFromJson(Map<String, dynamic> json) {
-    return Article(
+  factory Tutorial.toPostFromJson(Map<String, dynamic> json) {
+    return Tutorial(
         authorName: json['posts'][0]['primary_author']['name'],
         authorSlug: json['posts'][0]['primary_author']['slug'],
         profileImage: json['posts'][0]['primary_author']['profile_image'],

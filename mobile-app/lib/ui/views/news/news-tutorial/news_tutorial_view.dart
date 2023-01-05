@@ -1,35 +1,38 @@
 import 'package:flutter/material.dart';
 
-import 'package:freecodecamp/models/news/article_model.dart';
+import 'package:freecodecamp/models/news/tutorial_model.dart';
 import 'package:freecodecamp/ui/views/news/news-bookmark/news_bookmark_widget.dart';
-import 'package:share/share.dart';
+import 'package:share_plus/share_plus.dart';
 import 'package:stacked/stacked.dart';
-import 'news_article_viewmodel.dart';
+import 'news_tutorial_model.dart';
 
-class NewsArticleView extends StatelessWidget {
+class NewsTutorialView extends StatelessWidget {
   // ignore: prefer_const_constructors_in_immutables
-  NewsArticleView({Key? key, required this.refId}) : super(key: key);
+  NewsTutorialView({Key? key, required this.refId}) : super(key: key);
   late final String refId;
 
   @override
   Widget build(BuildContext context) {
-    return ViewModelBuilder<NewsArticleViewModel>.reactive(
+    return ViewModelBuilder<NewsTutorialViewModel>.reactive(
       onModelReady: (model) => model.initState(refId),
       onDispose: (model) => model.removeScrollPosition(),
       builder: (context, model, child) => Scaffold(
         backgroundColor: const Color(0xFF0a0a23),
-        body: FutureBuilder<Article>(
+        body: FutureBuilder<Tutorial>(
           future: model.initState(refId),
           builder: (context, snapshot) {
             if (snapshot.hasData) {
-              var article = snapshot.data;
+              var tutorial = snapshot.data;
               return Column(
                 children: [
                   Expanded(
-                      child: Stack(children: [
-                    lazyLoadHtml(article!.text!, context, article, model),
-                    bottomButtons(article, model)
-                  ]))
+                    child: Stack(
+                      children: [
+                        lazyLoadHtml(tutorial!.text!, context, tutorial, model),
+                        bottomButtons(tutorial, model)
+                      ],
+                    ),
+                  )
                 ],
               );
             } else if (snapshot.hasError) {
@@ -42,11 +45,11 @@ class NewsArticleView extends StatelessWidget {
           },
         ),
       ),
-      viewModelBuilder: () => NewsArticleViewModel(),
+      viewModelBuilder: () => NewsTutorialViewModel(),
     );
   }
 
-  Widget bottomButtons(Article article, NewsArticleViewModel model) {
+  Widget bottomButtons(Tutorial tutorial, NewsTutorialViewModel model) {
     return Align(
       alignment: Alignment.bottomCenter,
       child: SizedBox(
@@ -61,7 +64,7 @@ class NewsArticleView extends StatelessWidget {
                 Container(
                   height: 150,
                 ),
-                NewsBookmarkViewWidget(article: article),
+                NewsBookmarkViewWidget(tutorial: tutorial),
                 const SizedBox(
                   height: 35,
                   child: VerticalDivider(
@@ -73,7 +76,7 @@ class NewsArticleView extends StatelessWidget {
                   label: 'Share',
                   icon: Icons.share,
                   onPressed: () {
-                    Share.share('${article.title}\n\n${article.url}');
+                    Share.share('${tutorial.title}\n\n${tutorial.url}');
                   },
                   rightSided: true,
                 )
@@ -85,33 +88,38 @@ class NewsArticleView extends StatelessWidget {
     );
   }
 
-  ListView lazyLoadHtml(String html, BuildContext context, Article article,
-      NewsArticleViewModel model) {
-    var htmlToList = model.initLazyLoading(html, context, article);
+  ListView lazyLoadHtml(
+    String html,
+    BuildContext context,
+    Tutorial tutorial,
+    NewsTutorialViewModel model,
+  ) {
+    var htmlToList = model.initLazyLoading(html, context, tutorial);
 
     return ListView.builder(
-        shrinkWrap: true,
-        controller: model.scrollController,
-        itemCount: htmlToList.length,
-        physics: const ClampingScrollPhysics(),
-        itemBuilder: (BuildContext context, int i) {
-          return Row(
-            children: [
-              Expanded(child: htmlToList[i]),
-            ],
-          );
-        });
+      shrinkWrap: true,
+      controller: model.scrollController,
+      itemCount: htmlToList.length,
+      physics: const ClampingScrollPhysics(),
+      itemBuilder: (BuildContext context, int i) {
+        return Row(
+          children: [
+            Expanded(child: htmlToList[i]),
+          ],
+        );
+      },
+    );
   }
 }
 
 class BottomButton extends StatelessWidget {
-  const BottomButton(
-      {Key? key,
-      required this.label,
-      required this.onPressed,
-      required this.icon,
-      required this.rightSided})
-      : super(key: key);
+  const BottomButton({
+    Key? key,
+    required this.label,
+    required this.onPressed,
+    required this.icon,
+    required this.rightSided,
+  }) : super(key: key);
 
   final Function onPressed;
   final String label;
@@ -131,13 +139,16 @@ class BottomButton extends StatelessWidget {
         },
         label: Text(label),
         style: ElevatedButton.styleFrom(
-            shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.only(
-                    topLeft: Radius.circular(rightSided ? 0 : 10),
-                    topRight: Radius.circular(rightSided ? 10 : 0),
-                    bottomLeft: Radius.circular(rightSided ? 0 : 10),
-                    bottomRight: Radius.circular(rightSided ? 10 : 0))),
-            backgroundColor: const Color.fromRGBO(0x2A, 0x2A, 0x40, 1)),
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.only(
+              topLeft: Radius.circular(rightSided ? 0 : 10),
+              topRight: Radius.circular(rightSided ? 10 : 0),
+              bottomLeft: Radius.circular(rightSided ? 0 : 10),
+              bottomRight: Radius.circular(rightSided ? 10 : 0),
+            ),
+          ),
+          backgroundColor: const Color.fromRGBO(0x2A, 0x2A, 0x40, 1),
+        ),
       ),
     );
   }

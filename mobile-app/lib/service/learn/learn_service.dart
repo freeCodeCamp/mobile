@@ -5,7 +5,7 @@ import 'package:dio/dio.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:freecodecamp/app/app.locator.dart';
 import 'package:freecodecamp/models/learn/challenge_model.dart';
-import 'package:freecodecamp/service/authentication_service.dart';
+import 'package:freecodecamp/service/authentication/authentication_service.dart';
 import 'package:pretty_dio_logger/pretty_dio_logger.dart';
 
 class LearnService {

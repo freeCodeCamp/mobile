@@ -12,60 +12,69 @@ class LearnView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return ViewModelBuilder<LearnViewModel>.reactive(
-        viewModelBuilder: () => LearnViewModel(),
-        onModelReady: (model) => model.init(context),
-        builder: (context, model, child) => Scaffold(
-              extendBodyBehindAppBar: true,
-              appBar: AppBar(
-                centerTitle: true,
-                title: const Text('LEARN'),
-              ),
-              resizeToAvoidBottomInset: false,
-              backgroundColor: const Color(0xFF0a0a23),
-              drawer: const DrawerWidgetView(),
-              body: FutureBuilder<List<SuperBlockButton>>(
-                future: model.superBlocks,
-                builder: (context, snapshot) {
-                  if (snapshot.hasData) {
-                    var superBlocks = snapshot.data!;
-                    return ListView(shrinkWrap: true, children: [
-                      StreamBuilder(
-                          stream: model.auth.isLoggedIn,
-                          builder: ((context, snapshot) {
-                            return Column(
-                              children: [
-                                quouteWidget(),
-                                if (!model.isLoggedIn)
-                                  loginButton(model, context)
-                                else
-                                  welcomeMessage(model)
-                              ],
-                            );
-                          })),
-                      ListView.builder(
-                          physics: const ClampingScrollPhysics(),
-                          shrinkWrap: true,
-                          itemCount: superBlocks.length,
-                          itemBuilder: (BuildContext context, int i) {
-                            return Padding(
-                              padding: const EdgeInsets.only(
-                                top: 12,
-                                left: 8,
-                                right: 8,
-                              ),
-                              child: superBlockBuilder(superBlocks[i], context),
-                            );
-                          }),
-                      Container(
-                        height: 50,
-                      )
-                    ]);
-                  } else {
-                    return const Center(child: CircularProgressIndicator());
-                  }
-                },
-              ),
-            ));
+      viewModelBuilder: () => LearnViewModel(),
+      onModelReady: (model) => model.init(context),
+      builder: (context, model, child) => Scaffold(
+        extendBodyBehindAppBar: true,
+        appBar: AppBar(
+          centerTitle: true,
+          title: const Text('LEARN'),
+        ),
+        resizeToAvoidBottomInset: false,
+        backgroundColor: const Color(0xFF0a0a23),
+        drawer: const DrawerWidgetView(),
+        body: FutureBuilder<List<SuperBlockButton>>(
+          future: model.superBlocks,
+          builder: (context, snapshot) {
+            if (snapshot.hasData) {
+              var superBlocks = snapshot.data!;
+              return ListView(
+                shrinkWrap: true,
+                children: [
+                  StreamBuilder(
+                    stream: model.auth.isLoggedIn,
+                    builder: ((context, snapshot) {
+                      return Column(
+                        children: [
+                          quouteWidget(),
+                          if (!model.isLoggedIn)
+                            loginButton(model, context)
+                          else
+                            welcomeMessage(model)
+                        ],
+                      );
+                    }),
+                  ),
+                  ListView.builder(
+                    physics: const ClampingScrollPhysics(),
+                    shrinkWrap: true,
+                    itemCount: superBlocks.length,
+                    itemBuilder: (BuildContext context, int i) {
+                      return Padding(
+                        padding: const EdgeInsets.only(
+                          top: 12,
+                          left: 8,
+                          right: 8,
+                        ),
+                        child: superBlockBuilder(
+                          superBlocks[i],
+                          context,
+                        ),
+                      );
+                    },
+                  ),
+                  Container(
+                    height: 50,
+                  )
+                ],
+              );
+            } else {
+              return const Center(child: CircularProgressIndicator());
+            }
+          },
+        ),
+      ),
+    );
   }
 
   Row superBlockBuilder(SuperBlockButton button, BuildContext context) {
@@ -74,9 +83,9 @@ class LearnView extends StatelessWidget {
     return Row(
       children: [
         Expanded(
-            child: SizedBox(
-          height: 75,
-          child: ElevatedButton(
+          child: SizedBox(
+            height: 75,
+            child: ElevatedButton(
               style: ElevatedButton.styleFrom(
                 backgroundColor: button.public
                     ? const Color.fromRGBO(0x3b, 0x3b, 0x4f, 1)
@@ -117,12 +126,15 @@ class LearnView extends StatelessWidget {
                   ),
                   const Expanded(
                     child: Align(
-                        alignment: Alignment.centerRight,
-                        child: Icon(Icons.arrow_forward_ios)),
+                      alignment: Alignment.centerRight,
+                      child: Icon(Icons.arrow_forward_ios),
+                    ),
                   )
                 ],
-              )),
-        ))
+              ),
+            ),
+          ),
+        )
       ],
     );
   }
@@ -132,17 +144,18 @@ class LearnView extends StatelessWidget {
       padding: const EdgeInsets.only(top: 16, left: 8, right: 8),
       constraints: const BoxConstraints(minHeight: 75),
       child: ElevatedButton(
-          style: ElevatedButton.styleFrom(
-            backgroundColor: const Color.fromRGBO(0xf1, 0xbe, 0x32, 1),
-          ),
-          onPressed: () {
-            model.auth.login();
-          },
-          child: const Text(
-            'Sign in to save your progress',
-            textAlign: TextAlign.center,
-            style: TextStyle(color: Colors.black, fontSize: 20),
-          )),
+        style: ElevatedButton.styleFrom(
+          backgroundColor: const Color.fromRGBO(0xf1, 0xbe, 0x32, 1),
+        ),
+        onPressed: () {
+          model.auth.login();
+        },
+        child: const Text(
+          'Sign in to save your progress',
+          textAlign: TextAlign.center,
+          style: TextStyle(color: Colors.black, fontSize: 20),
+        ),
+      ),
     );
   }
 
@@ -150,59 +163,61 @@ class LearnView extends StatelessWidget {
     LearnViewModel model = LearnViewModel();
 
     return FutureBuilder(
-        future: model.retrieveNewQuote(),
-        builder: (context, snapshot) {
-          if (snapshot.hasData) {
-            MotivationalQuote quote = snapshot.data as MotivationalQuote;
+      future: model.retrieveNewQuote(),
+      builder: (context, snapshot) {
+        if (snapshot.hasData) {
+          MotivationalQuote quote = snapshot.data as MotivationalQuote;
 
-            return Container(
-              padding: const EdgeInsets.all(16),
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Text(
-                    '"${quote.quote}"',
-                    textAlign: TextAlign.center,
-                    style: const TextStyle(fontSize: 20, height: 1.5),
+          return Container(
+            padding: const EdgeInsets.all(16),
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Text(
+                  '"${quote.quote}"',
+                  textAlign: TextAlign.center,
+                  style: const TextStyle(fontSize: 20, height: 1.5),
+                ),
+                Text(
+                  '- ${quote.author}',
+                  style: const TextStyle(
+                    fontStyle: FontStyle.italic,
+                    fontSize: 16,
+                    height: 1.5,
                   ),
-                  Text(
-                    '- ${quote.author}',
-                    style: const TextStyle(
-                      fontStyle: FontStyle.italic,
-                      fontSize: 16,
-                      height: 1.5,
-                    ),
-                  )
-                ],
-              ),
-            );
-          }
+                )
+              ],
+            ),
+          );
+        }
 
-          return Container();
-        });
+        return Container();
+      },
+    );
   }
 
   Widget welcomeMessage(LearnViewModel model) {
     return FutureBuilder<FccUserModel>(
-        future: model.auth.userModel,
-        builder: ((context, snapshot) {
-          if (snapshot.hasData) {
-            FccUserModel user = snapshot.data as FccUserModel;
+      future: model.auth.userModel,
+      builder: ((context, snapshot) {
+        if (snapshot.hasData) {
+          FccUserModel user = snapshot.data as FccUserModel;
 
-            return Container(
-              padding: const EdgeInsets.all(16),
-              child: Text(
-                'Welcome back ${user.username}. ',
-                textAlign: TextAlign.center,
-                style: const TextStyle(
-                  fontSize: 20,
-                  fontWeight: FontWeight.bold,
-                ),
+          return Container(
+            padding: const EdgeInsets.all(16),
+            child: Text(
+              'Welcome back ${user.username}. ',
+              textAlign: TextAlign.center,
+              style: const TextStyle(
+                fontSize: 20,
+                fontWeight: FontWeight.bold,
               ),
-            );
-          }
+            ),
+          );
+        }
 
-          return const Center(child: CircularProgressIndicator());
-        }));
+        return const Center(child: CircularProgressIndicator());
+      }),
+    );
   }
 }

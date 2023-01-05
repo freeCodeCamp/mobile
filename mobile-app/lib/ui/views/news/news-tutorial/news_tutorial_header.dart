@@ -1,21 +1,23 @@
 import 'package:flutter/material.dart';
-import 'package:freecodecamp/models/news/article_model.dart';
+import 'package:freecodecamp/models/news/tutorial_model.dart';
 
-class NewsArticleHeader extends StatelessWidget {
-  const NewsArticleHeader({Key? key, required this.article}) : super(key: key);
+class NewsTutorialHeader extends StatelessWidget {
+  const NewsTutorialHeader({Key? key, required this.tutorial})
+      : super(key: key);
 
-  final Article article;
+  final Tutorial tutorial;
 
   @override
   Widget build(BuildContext context) {
     return Column(
       children: [
         AspectRatio(
-            aspectRatio: 16 / 9,
-            child: Image.network(
-              article.featureImage,
-              fit: BoxFit.cover,
-            )),
+          aspectRatio: 16 / 9,
+          child: Image.network(
+            tutorial.featureImage,
+            fit: BoxFit.cover,
+          ),
+        ),
         Row(
           children: [
             Expanded(
@@ -26,21 +28,21 @@ class NewsArticleHeader extends StatelessWidget {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      article.title,
+                      tutorial.title,
                       style: const TextStyle(
                           fontSize: 24, height: 1.5, fontFamily: 'Lato'),
                       key: const Key('title'),
                     ),
                     Text(
-                      'Written by ${article.authorName}',
+                      'Written by ${tutorial.authorName}',
                       style: const TextStyle(height: 1.5, fontFamily: 'Lato'),
                     ),
                     Wrap(
                       children: [
                         for (int j = 0;
-                            j < article.tagNames.length && j < 3;
+                            j < tutorial.tagNames.length && j < 3;
                             j++)
-                          article.tagNames[j]
+                          tutorial.tagNames[j]
                       ],
                     ),
                   ],

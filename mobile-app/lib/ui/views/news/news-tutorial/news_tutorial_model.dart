@@ -5,22 +5,22 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:freecodecamp/app/app.router.dart';
-import 'package:freecodecamp/models/news/article_model.dart';
-import 'package:freecodecamp/service/test_service.dart';
+import 'package:freecodecamp/models/news/tutorial_model.dart';
+import 'package:freecodecamp/service/developer_service.dart';
 import 'package:freecodecamp/ui/views/news/html_handler/html_handler.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:stacked/stacked.dart';
 import 'package:http/http.dart' as http;
 import 'package:stacked_services/stacked_services.dart';
 
-class NewsArticleViewModel extends BaseViewModel {
-  late Future<Article> _articleFuture;
+class NewsTutorialViewModel extends BaseViewModel {
+  late Future<Tutorial> _tutorialFuture;
   static final NavigationService _navigationService =
       locator<NavigationService>();
 
-  final _testservice = locator<TestService>();
+  final _developerService = locator<DeveloperService>();
 
-  Future<Article>? get articleFuture => _articleFuture;
+  Future<Tutorial>? get tutorialFuture => _tutorialFuture;
 
   final ScrollController _scrollController = ScrollController();
   ScrollController get scrollController => _scrollController;
@@ -28,23 +28,24 @@ class NewsArticleViewModel extends BaseViewModel {
   final ScrollController _bottomButtonController = ScrollController();
   ScrollController get bottomButtonController => _bottomButtonController;
 
-  Future<Article> readFromFiles() async {
-    String json =
-        await rootBundle.loadString('assets/test_data/news_post.json');
+  Future<Tutorial> readFromFiles() async {
+    String json = await rootBundle.loadString(
+      'assets/test_data/news_post.json',
+    );
 
     var decodedJson = jsonDecode(json);
 
-    return Article.toPostFromJson(decodedJson);
+    return Tutorial.toPostFromJson(decodedJson);
   }
 
-  Future<Article> initState(id) async {
+  Future<Tutorial> initState(id) async {
     initBottomButtonAnimation();
     handleBottomButtonAnimation();
 
-    if (await _testservice.developmentMode()) {
+    if (await _developerService.developmentMode()) {
       return readFromFiles();
     } else {
-      return fetchArticle(id);
+      return fetchTutorial(id);
     }
   }
 
@@ -60,13 +61,16 @@ class NewsArticleViewModel extends BaseViewModel {
 
       if (_scrollController.offset <= oldScrollPos) {
         _bottomButtonController.animateTo(
-            _bottomButtonController.position.maxScrollExtent - 50,
-            duration: const Duration(milliseconds: 1000),
-            curve: Curves.easeInOut);
+          _bottomButtonController.position.maxScrollExtent - 50,
+          duration: const Duration(milliseconds: 1000),
+          curve: Curves.easeInOut,
+        );
       } else {
-        _bottomButtonController.animateTo(0,
-            duration: const Duration(milliseconds: 1000),
-            curve: Curves.easeInOut);
+        _bottomButtonController.animateTo(
+          0,
+          duration: const Duration(milliseconds: 1000),
+          curve: Curves.easeInOut,
+        );
       }
       Timer(const Duration(seconds: 2), () {
         if (_scrollController.hasClients) {
@@ -80,25 +84,33 @@ class NewsArticleViewModel extends BaseViewModel {
     // if the user has not scrolled yet the bottom buttons will not appear
     // this means we need to animate it manually.
     Future.delayed(
-        const Duration(seconds: 1),
-        () => {
-              if (_bottomButtonController.hasClients)
-                {
-                  _bottomButtonController.animateTo(
-                      _bottomButtonController.position.maxScrollExtent - 50,
-                      duration: const Duration(milliseconds: 1000),
-                      curve: Curves.easeInOut)
-                }
-            });
+      const Duration(seconds: 1),
+      () => {
+        if (_bottomButtonController.hasClients)
+          {
+            _bottomButtonController.animateTo(
+              _bottomButtonController.position.maxScrollExtent - 50,
+              duration: const Duration(milliseconds: 1000),
+              curve: Curves.easeInOut,
+            )
+          }
+      },
+    );
   }
 
   static void goToAuthorProfile(String slug) {
-    _navigationService.navigateTo(Routes.newsAuthorView,
-        arguments: NewsAuthorViewArguments(authorSlug: slug));
+    _navigationService.navigateTo(
+      Routes.newsAuthorView,
+      arguments: NewsAuthorViewArguments(authorSlug: slug),
+    );
   }
 
-  List<Widget> initLazyLoading(html, context, article) {
-    List<Widget> elements = HtmlHandler.htmlHandler(html, context, article);
+  List<Widget> initLazyLoading(html, context, tutorial) {
+    List<Widget> elements = HtmlHandler.htmlHandler(
+      html,
+      context,
+      tutorial,
+    );
     return elements;
   }
 
@@ -110,13 +122,15 @@ class NewsArticleViewModel extends BaseViewModel {
     prefs.remove('position');
   }
 
-  Future<Article> fetchArticle(articleId) async {
+  Future<Tutorial> fetchTutorial(tutorialId) async {
     await dotenv.load(fileName: '.env');
 
     final response = await http.get(Uri.parse(
-        'https://www.freecodecamp.org/news/ghost/api/v3/content/posts/$articleId/?key=${dotenv.env['NEWSKEY']}&include=tags,authors'));
+        'https://www.freecodecamp.org/news/ghost/api/v3/content/posts/$tutorialId/?key=${dotenv.env['NEWSKEY']}&include=tags,authors'));
     if (response.statusCode == 200) {
-      return Article.toPostFromJson(jsonDecode(response.body));
+      return Tutorial.toPostFromJson(jsonDecode(
+        response.body,
+      ));
     } else {
       throw Exception(response.body);
     }

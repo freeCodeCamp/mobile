@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:freecodecamp/models/learn/motivational_quote_model.dart';
-import 'package:freecodecamp/service/authentication_service.dart';
+import 'package:freecodecamp/service/authentication/authentication_service.dart';
 import 'package:freecodecamp/ui/views/learn/challenge_editor/challenge_model.dart';
 import 'package:freecodecamp/ui/views/learn/widgets/pass/pass_widget_model.dart';
 import 'package:stacked/stacked.dart';
@@ -32,10 +32,11 @@ class PassWidgetView extends StatelessWidget {
                   child: Text(
                     'Passed',
                     style: TextStyle(
-                        fontSize: 28,
-                        fontFamily: 'Inter',
-                        fontWeight: FontWeight.bold,
-                        color: Colors.white.withOpacity(0.87)),
+                      fontSize: 28,
+                      fontFamily: 'Inter',
+                      fontWeight: FontWeight.bold,
+                      color: Colors.white.withOpacity(0.87),
+                    ),
                   ),
                 ),
                 Expanded(
@@ -53,28 +54,28 @@ class PassWidgetView extends StatelessWidget {
               ],
             ),
             FutureBuilder(
-                future: model.retrieveNewQuote(),
-                builder: (context, snapshot) {
-                  if (snapshot.hasData) {
-                    MotivationalQuote quote =
-                        snapshot.data as MotivationalQuote;
-                    return Padding(
-                      padding: const EdgeInsets.all(16),
-                      child: Text(
-                        '"${quote.quote}"',
-                        style: TextStyle(
-                          color: Colors.white.withOpacity(0.87),
-                          fontSize: 16,
-                          fontFamily: 'Inter',
-                        ),
+              future: model.retrieveNewQuote(),
+              builder: (context, snapshot) {
+                if (snapshot.hasData) {
+                  MotivationalQuote quote = snapshot.data as MotivationalQuote;
+                  return Padding(
+                    padding: const EdgeInsets.all(16),
+                    child: Text(
+                      '"${quote.quote}"',
+                      style: TextStyle(
+                        color: Colors.white.withOpacity(0.87),
+                        fontSize: 16,
+                        fontFamily: 'Inter',
                       ),
-                    );
-                  }
-
-                  return const Center(
-                    child: CircularProgressIndicator(),
+                    ),
                   );
-                }),
+                }
+
+                return const Center(
+                  child: CircularProgressIndicator(),
+                );
+              },
+            ),
             AuthenticationService.staticIsloggedIn
                 ? FutureBuilder(
                     future: model.numCompletedChallenges(

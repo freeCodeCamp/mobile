@@ -1,11 +1,11 @@
 import 'dart:convert';
 
 import 'package:flutter_dotenv/flutter_dotenv.dart';
-import 'package:freecodecamp/models/news/article_model.dart';
+import 'package:freecodecamp/models/news/tutorial_model.dart';
 import 'package:http/http.dart' as http;
 import 'package:stacked/stacked.dart';
 
-class NewsAuthorViewModel extends BaseViewModel {
+class NewsAuthorModel extends BaseViewModel {
   late Future<Author> _author;
   Future<Author> get author => _author;
 
@@ -28,9 +28,13 @@ class NewsAuthorViewModel extends BaseViewModel {
     http.Response response = await http.get(Uri.parse(queryUrl));
 
     if (response.statusCode == 200) {
-      return Author.toAuthorFromJson(jsonDecode(response.body)['authors'][0]);
+      return Author.toAuthorFromJson(
+        jsonDecode(response.body)['authors'][0],
+      );
     } else {
-      throw Exception('${response.body}\n Author: $authorSlug');
+      throw Exception(
+        '${response.body}\n Author: $authorSlug',
+      );
     }
   }
 }
