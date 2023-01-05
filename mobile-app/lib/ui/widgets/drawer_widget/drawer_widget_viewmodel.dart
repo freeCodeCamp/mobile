@@ -117,8 +117,8 @@ class DrawerWidgtetViewModel extends BaseViewModel {
     }
   }
 
-  void handleAuth() {
-    loggedIn ? auth.logout() : auth.login();
+  void handleAuth(BuildContext context) {
+    loggedIn ? auth.logout() : auth.login(context);
     notifyListeners();
   }
 }

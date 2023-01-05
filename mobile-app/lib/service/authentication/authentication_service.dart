@@ -5,6 +5,7 @@ import 'dart:io';
 import 'package:auth0_flutter/auth0_flutter.dart';
 import 'package:curl_logger_dio_interceptor/curl_logger_dio_interceptor.dart';
 import 'package:dio/dio.dart';
+import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:freecodecamp/models/main/user_model.dart';
@@ -123,13 +124,33 @@ class AuthenticationService {
     return FccUserModel.fromJson(data);
   }
 
-  Future<void> login() async {
+  Future<void> login(BuildContext context) async {
+    showDialog(
+      context: context,
+      barrierDismissible: false,
+      builder: (context) {
+        return WillPopScope(
+          onWillPop: () async => false,
+          child: const SimpleDialog(
+            title: Text('Signing in...'),
+            contentPadding: EdgeInsets.fromLTRB(0.0, 12.0, 0.0, 24.0),
+            backgroundColor: Color(0xFF2A2A40),
+            children: [
+              Center(
+                child: CircularProgressIndicator(),
+              ),
+            ],
+          ),
+        );
+      },
+    );
     late final Credentials creds;
     try {
       creds = await auth0.webAuthentication(scheme: 'fccapp').login();
     } on WebAuthenticationException catch (e) {
-      // The most likely case is that the user canceled the login
+      // NOTE: The most likely case is that the user canceled the login
       log('WebAuthenticationException: $e');
+      Navigator.pop(context);
       return;
     }
     log('AccessToken: ${creds.accessToken}');
@@ -147,10 +168,12 @@ class AuthenticationService {
       await writeTokensToStorage();
       await fetchUser();
     } catch (e) {
+      // TODO: Either a dialog or snackbar with error details
       log('Error: $e');
     }
 
     await auth0.credentialsManager.clearCredentials();
+    Navigator.pop(context);
   }
 
   Future<void> logout() async {

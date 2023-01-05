@@ -127,7 +127,7 @@ class PassWidgetView extends StatelessWidget {
                         padding: const EdgeInsets.all(8),
                       ),
                       onPressed: () {
-                        model.auth.login();
+                        model.auth.login(context);
                       },
                       child: const Text(
                         'Sign in to save your progress',
