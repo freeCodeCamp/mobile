@@ -132,18 +132,23 @@ class AuthenticationService {
       return;
     }
     log('AccessToken: ${creds.accessToken}');
-    Response res = await _dio.get(
-      '/mobile-login',
-      options: Options(
-        headers: {
-          'token': creds.accessToken,
-        },
-      ),
-    );
-    log('Response: ${res.data}');
-    extractCookies(res);
-    await writeTokensToStorage();
-    await fetchUser();
+
+    try {
+      Response res = await _dio.get(
+        '/mobile-login',
+        options: Options(
+          headers: {
+            'token': creds.accessToken,
+          },
+        ),
+      );
+      extractCookies(res);
+      await writeTokensToStorage();
+      await fetchUser();
+    } catch (e) {
+      log('Error: $e');
+    }
+
     await auth0.credentialsManager.clearCredentials();
   }
 
