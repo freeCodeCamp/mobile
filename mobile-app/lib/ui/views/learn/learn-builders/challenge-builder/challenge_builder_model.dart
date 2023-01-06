@@ -71,12 +71,18 @@ class ChallengeBuilderModel extends BaseViewModel {
     setNumberOfCompletedChallenges(challengeBatch);
     notifyListeners();
 
-    learnOfflineService.downloadStream.stream.listen((event) {
-      if (event == 100.00) {
+    learnOfflineService.downloadSub =
+        learnOfflineService.downloadStream.stream.listen(
+      (event) {
+        if (event == 100.00) {
+          setIsDownloading = false;
+          learnOfflineService.downloadStream.sink.add(0);
+        }
+      },
+      onDone: () {
         setIsDownloading = false;
-        learnOfflineService.downloadStream.sink.add(0);
-      }
-    });
+      },
+    );
   }
 
   void testChallenge(Challenge challenge) {
@@ -116,5 +122,17 @@ class ChallengeBuilderModel extends BaseViewModel {
       return const Icon(Icons.check_circle);
     }
     return const Icon(Icons.circle_outlined);
+  }
+
+  void stopDownload() {
+    try {
+      learnOfflineService.downloadSub!.pause();
+      learnOfflineService.batchSub!.pause();
+      learnOfflineService.timer!.cancel();
+
+      setIsDownloading = false;
+    } catch (e) {
+      throw error('could not exit stream');
+    }
   }
 }

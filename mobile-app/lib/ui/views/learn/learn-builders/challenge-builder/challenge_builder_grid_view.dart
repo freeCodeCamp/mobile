@@ -158,41 +158,33 @@ class ChallengeBuilderGridView extends StatelessWidget {
                       if (!isCertification) ...[
                         buildDivider(),
                         SizedBox(
-                            width: MediaQuery.of(context).size.width - 40,
-                            child: ElevatedButton(
-                              onPressed: () async {
-                                String url = await learnService.getBaseUrl(
-                                  '/page-data/learn',
-                                );
-                                model.learnOfflineService.getChallengeBatch(
-                                  block.challenges
-                                      .map((e) =>
-                                          '$url/${block.superBlock}/${block.dashedName}/${e.dashedName}/page-data.json')
-                                      .toList(),
-                                );
-                                model.setIsDownloading = true;
-                              },
-                              style: ElevatedButton.styleFrom(
-                                backgroundColor:
-                                    const Color.fromRGBO(0x2A, 0x2A, 0x40, 1),
-                              ),
-                              child: !model.isDownloading
-                                  ? const Text('Download All Challenges')
-                                  : StreamBuilder(
-                                      stream: model.learnOfflineService
-                                          .downloadStream.stream,
-                                      builder: ((context, snapshot) {
-                                        if (snapshot.hasData) {
-                                          return Text(
-                                            'Downloading ${(snapshot.data as double).toStringAsFixed(2)}%',
-                                          );
-                                        }
-
-                                        return const Text(
-                                            'Download All Challenges');
-                                      }),
-                                    ),
-                            )),
+                          width: MediaQuery.of(context).size.width - 40,
+                          child: ElevatedButton(
+                            onPressed: !model.isDownloading
+                                ? () async {
+                                    String url = await learnService.getBaseUrl(
+                                      '/page-data/learn',
+                                    );
+                                    model.learnOfflineService.getChallengeBatch(
+                                      block.challenges
+                                          .map((e) =>
+                                              '$url/${block.superBlock}/${block.dashedName}/${e.dashedName}/page-data.json')
+                                          .toList(),
+                                    );
+                                    model.setIsDownloading = true;
+                                  }
+                                : () {
+                                    model.stopDownload();
+                                  },
+                            style: ElevatedButton.styleFrom(
+                              backgroundColor:
+                                  const Color.fromRGBO(0x2A, 0x2A, 0x40, 1),
+                            ),
+                            child: !model.isDownloading
+                                ? const Text('Download All Challenges')
+                                : DownloadWidget(model: model),
+                          ),
+                        ),
                         gridWidget(context, model),
                       ],
                       Container(
@@ -263,6 +255,34 @@ class ChallengeBuilderGridView extends StatelessWidget {
           },
         ),
       ),
+    );
+  }
+}
+
+class DownloadWidget extends StatelessWidget {
+  const DownloadWidget({Key? key, required this.model}) : super(key: key);
+
+  final ChallengeBuilderModel model;
+
+  @override
+  Widget build(BuildContext context) {
+    return StreamBuilder(
+      stream: model.learnOfflineService.downloadStream.stream,
+      builder: ((context, snapshot) {
+        if (snapshot.connectionState == ConnectionState.waiting) {
+          return const Text('Starting Download...');
+        }
+
+        if (snapshot.hasData) {
+          return Text(
+            'Cancel Download ${(snapshot.data as double).toStringAsFixed(2)}%',
+          );
+        }
+
+        return const Text(
+          'Download All Challenges',
+        );
+      }),
     );
   }
 }

@@ -29,6 +29,10 @@ class ChallengeDownload {
 
 class LearnOfflineService {
   StreamController<double> downloadStream = StreamController.broadcast();
+  StreamSubscription? batchSub;
+  StreamSubscription? downloadSub;
+
+  Timer? timer;
 
   Future<List<ChallengeDownload?>> checkStoredChallenges() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
@@ -83,19 +87,18 @@ class LearnOfflineService {
 
   Future<void> getChallengeBatch(List<String> urls) async {
     int index = 0;
+    Duration duration = const Duration(milliseconds: 2000);
 
-    downloadStream.stream.listen((event) {
-      log('percentage completed: $event');
-    });
-
-    Timer.periodic(const Duration(milliseconds: 2000), (timer) async {
+    timer = Timer.periodic(duration, (timer) async {
       await storeDownloadedChallenge(await getChallenge(urls[index]));
 
       index += 1;
 
-      downloadStream.sink.add(
-        index == 0 ? 1 / urls.length * 100 : index / urls.length * 100,
-      );
+      if (!downloadStream.isClosed) {
+        downloadStream.sink.add(
+          index == 0 ? 1 / urls.length * 100 : index / urls.length * 100,
+        );
+      }
 
       log('timer $index');
 
@@ -103,6 +106,12 @@ class LearnOfflineService {
         timer.cancel();
       }
     });
+
+    batchSub = downloadStream.stream.listen(
+      (event) {
+        log('percentage completed: $event');
+      },
+    );
   }
 
   Future<Future<dynamic>> storeDownloadedChallenge(Challenge challenge) async {
