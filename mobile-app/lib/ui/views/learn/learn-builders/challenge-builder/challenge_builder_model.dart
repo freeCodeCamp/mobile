@@ -23,6 +23,9 @@ class ChallengeBuilderModel extends BaseViewModel {
   bool _isDownloading = false;
   bool get isDownloading => _isDownloading;
 
+  final bool _isDownloadingSpecific = false;
+  bool get isDownloadingSpecific => _isDownloadingSpecific;
+
   int _challengesCompleted = 0;
   int get challengesCompleted => _challengesCompleted;
 
@@ -77,6 +80,8 @@ class ChallengeBuilderModel extends BaseViewModel {
         if (event == 100.00) {
           setIsDownloading = false;
           learnOfflineService.downloadStream.sink.add(0);
+        } else {
+          notifyListeners();
         }
       },
       onDone: () {
@@ -134,5 +139,13 @@ class ChallengeBuilderModel extends BaseViewModel {
     } catch (e) {
       throw error('could not exit stream');
     }
+  }
+
+  Future<bool> isChallengeDownloaded(String id) async {
+    List<ChallengeDownload?> downloaded =
+        await learnOfflineService.checkStoredChallenges();
+    List<String> ids = downloaded.map((e) => e!.id).toList();
+
+    return ids.contains(id);
   }
 }

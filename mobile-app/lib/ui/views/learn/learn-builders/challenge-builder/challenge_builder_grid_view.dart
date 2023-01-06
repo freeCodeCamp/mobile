@@ -4,7 +4,7 @@ import 'package:freecodecamp/models/learn/curriculum_model.dart';
 import 'package:freecodecamp/service/learn/learn_service.dart';
 import 'package:freecodecamp/ui/views/learn/learn-builders/challenge-builder/challenge_builder_model.dart';
 import 'package:freecodecamp/ui/widgets/drawer_widget/drawer_widget_view.dart';
-import 'package:shared_preferences/shared_preferences.dart';
+
 import 'package:stacked/stacked.dart';
 
 // ignore: must_be_immutable
@@ -27,9 +27,9 @@ class ChallengeBuilderGridView extends StatelessWidget {
         model.init(block.challenges);
         model.setIsOpen = isOpen;
 
-        SharedPreferences prefs = await SharedPreferences.getInstance();
+        // SharedPreferences prefs = await SharedPreferences.getInstance();
 
-        prefs.clear();
+        // prefs.clear();
       },
       viewModelBuilder: () => ChallengeBuilderModel(),
       builder: (
@@ -157,33 +157,10 @@ class ChallengeBuilderGridView extends StatelessWidget {
                         ),
                       if (!isCertification) ...[
                         buildDivider(),
-                        SizedBox(
-                          width: MediaQuery.of(context).size.width - 40,
-                          child: ElevatedButton(
-                            onPressed: !model.isDownloading
-                                ? () async {
-                                    String url = await learnService.getBaseUrl(
-                                      '/page-data/learn',
-                                    );
-                                    model.learnOfflineService.getChallengeBatch(
-                                      block.challenges
-                                          .map((e) =>
-                                              '$url/${block.superBlock}/${block.dashedName}/${e.dashedName}/page-data.json')
-                                          .toList(),
-                                    );
-                                    model.setIsDownloading = true;
-                                  }
-                                : () {
-                                    model.stopDownload();
-                                  },
-                            style: ElevatedButton.styleFrom(
-                              backgroundColor:
-                                  const Color.fromRGBO(0x2A, 0x2A, 0x40, 1),
-                            ),
-                            child: !model.isDownloading
-                                ? const Text('Download All Challenges')
-                                : DownloadWidget(model: model),
-                          ),
+                        DownloadWidget(
+                          model: model,
+                          learnService: learnService,
+                          block: block,
                         ),
                         gridWidget(context, model),
                       ],
@@ -211,46 +188,25 @@ class ChallengeBuilderGridView extends StatelessWidget {
         children: List.generate(
           block.challenges.length,
           (step) {
-            return Center(
-              child: GridTile(
-                child: Container(
-                  margin: const EdgeInsets.all(2),
-                  decoration: BoxDecoration(
-                    border: Border.all(
-                      color: Colors.white.withOpacity(0.01),
-                      width: 1,
+            return FutureBuilder(
+              future: model.isChallengeDownloaded(block.challenges[step].id),
+              builder: (context, snapshot) {
+                if (snapshot.hasData) {
+                  return Center(
+                    child: ChallengeTile(
+                      block: block,
+                      learnService: learnService,
+                      model: model,
+                      step: step,
+                      isDowloaded: (snapshot.data is bool
+                          ? snapshot.data as bool
+                          : false),
                     ),
-                    color: model.completedChallenge(block.challenges[step].id)
-                        ? const Color.fromRGBO(0x00, 0x2e, 0xad, 1)
-                        : Colors.transparent,
-                  ),
-                  height: 70,
-                  width: 70,
-                  child: InkWell(
-                    onTap: () async {
-                      String challenge = block.challenges[step].dashedName;
+                  );
+                }
 
-                      String url = await learnService.getBaseUrl(
-                        '/page-data/learn',
-                      );
-
-                      model.routeToChallengeView(
-                        '$url/${block.superBlock}/${block.dashedName}/$challenge/page-data.json',
-                        block,
-                      );
-                    },
-                    child: Center(
-                      child: Text(
-                        (step + 1).toString(),
-                        style: const TextStyle(
-                          fontWeight: FontWeight.bold,
-                          fontSize: 18,
-                        ),
-                      ),
-                    ),
-                  ),
-                ),
-              ),
+                return const CircularProgressIndicator();
+              },
             );
           },
         ),
@@ -259,30 +215,145 @@ class ChallengeBuilderGridView extends StatelessWidget {
   }
 }
 
-class DownloadWidget extends StatelessWidget {
-  const DownloadWidget({Key? key, required this.model}) : super(key: key);
+class ChallengeTile extends StatelessWidget {
+  const ChallengeTile({
+    Key? key,
+    required this.block,
+    required this.learnService,
+    required this.model,
+    required this.step,
+    required this.isDowloaded,
+  }) : super(key: key);
 
+  final Block block;
+  final LearnService learnService;
   final ChallengeBuilderModel model;
+  final int step;
+  final bool isDowloaded;
 
   @override
   Widget build(BuildContext context) {
-    return StreamBuilder(
-      stream: model.learnOfflineService.downloadStream.stream,
-      builder: ((context, snapshot) {
-        if (snapshot.connectionState == ConnectionState.waiting) {
-          return const Text('Starting Download...');
-        }
+    return GridTile(
+      child: Container(
+        margin: const EdgeInsets.all(2),
+        decoration: BoxDecoration(
+          border: Border.all(
+            color: Colors.white.withOpacity(0.01),
+            width: 1,
+          ),
+          color: model.completedChallenge(
+            block.challenges[step].id,
+          )
+              ? const Color.fromRGBO(0x00, 0x2e, 0xad, 1)
+              : isDowloaded
+                  ? Colors.green
+                  : Colors.transparent,
+        ),
+        height: 70,
+        width: 70,
+        child: InkWell(
+          onTap: () async {
+            String challenge = block.challenges[step].dashedName;
 
-        if (snapshot.hasData) {
-          return Text(
-            'Cancel Download ${(snapshot.data as double).toStringAsFixed(2)}%',
-          );
-        }
+            String url = await learnService.getBaseUrl(
+              '/page-data/learn',
+            );
 
-        return const Text(
-          'Download All Challenges',
-        );
-      }),
+            model.routeToChallengeView(
+              '$url/${block.superBlock}/${block.dashedName}/$challenge/page-data.json',
+              block,
+            );
+          },
+          child: Center(
+            child: Text(
+              (step + 1).toString(),
+              style: const TextStyle(
+                fontWeight: FontWeight.bold,
+                fontSize: 18,
+              ),
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+class DownloadWidget extends StatelessWidget {
+  const DownloadWidget({
+    Key? key,
+    required this.model,
+    required this.learnService,
+    required this.block,
+  }) : super(key: key);
+
+  final ChallengeBuilderModel model;
+  final LearnService learnService;
+
+  final Block block;
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      children: [
+        Container(
+          width: MediaQuery.of(context).size.width,
+          margin: const EdgeInsets.symmetric(horizontal: 40),
+          child: ElevatedButton(
+            onPressed: !model.isDownloading
+                ? () async {
+                    String url = await learnService.getBaseUrl(
+                      '/page-data/learn',
+                    );
+                    model.learnOfflineService.getChallengeBatch(
+                      block.challenges
+                          .map((e) =>
+                              '$url/${block.superBlock}/${block.dashedName}/${e.dashedName}/page-data.json')
+                          .toList(),
+                    );
+                    model.setIsDownloading = true;
+                  }
+                : null,
+            style: ElevatedButton.styleFrom(
+              backgroundColor: const Color.fromRGBO(0x2A, 0x2A, 0x40, 1),
+            ),
+            child: !model.isDownloading
+                ? const Text('Download All Challenges')
+                : StreamBuilder(
+                    stream: model.learnOfflineService.downloadStream.stream,
+                    builder: ((context, snapshot) {
+                      if (snapshot.connectionState == ConnectionState.waiting) {
+                        return const Text('Starting Download...');
+                      }
+
+                      if (snapshot.hasData) {
+                        return Text(
+                          '${(snapshot.data as double).toStringAsFixed(2)}%',
+                        );
+                      }
+
+                      return const Text(
+                        'Download All Challenges',
+                      );
+                    }),
+                  ),
+          ),
+        ),
+        if (model.isDownloading)
+          Container(
+            width: MediaQuery.of(context).size.width,
+            margin: const EdgeInsets.symmetric(horizontal: 40),
+            child: ElevatedButton(
+              onPressed: () {
+                model.stopDownload();
+              },
+              style: ElevatedButton.styleFrom(
+                backgroundColor: const Color.fromRGBO(0x2A, 0x2A, 0x40, 1),
+              ),
+              child: const Text('Cancel Download'),
+            ),
+          )
+      ],
     );
   }
 }
