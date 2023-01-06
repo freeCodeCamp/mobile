@@ -1,5 +1,6 @@
 import 'package:firebase_core/firebase_core.dart';
 import 'package:fk_user_agent/fk_user_agent.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:freecodecamp/firebase_options.dart';
 import 'package:freecodecamp/service/analytics_service.dart';
@@ -17,7 +18,13 @@ Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
   setupLocator();
 
-  await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
+  var fbApp = await Firebase.initializeApp(
+      options: DefaultFirebaseOptions.currentPlatform);
+  if (kReleaseMode) {
+    await fbApp.setAutomaticDataCollectionEnabled(true);
+  } else {
+    await fbApp.setAutomaticDataCollectionEnabled(false);
+  }
   await AuthenticationService().init();
   await NotificationService().init();
   await AppAudioService().init();
