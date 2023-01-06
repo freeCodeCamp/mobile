@@ -8,12 +8,16 @@ import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
+import 'package:freecodecamp/app/app.locator.dart';
 import 'package:freecodecamp/models/main/user_model.dart';
 import 'package:pretty_dio_logger/pretty_dio_logger.dart';
+import 'package:stacked_services/stacked_services.dart';
 
 class AuthenticationService {
   static final AuthenticationService _authenticationService =
       AuthenticationService._internal();
+
+  SnackbarService snackbar = locator<SnackbarService>();
 
   final FlutterSecureStorage store = const FlutterSecureStorage();
   final Dio _dio = Dio();
@@ -125,6 +129,9 @@ class AuthenticationService {
   }
 
   Future<void> login(BuildContext context) async {
+    late final Credentials creds;
+    Response? res;
+
     showDialog(
       context: context,
       barrierDismissible: false,
@@ -144,19 +151,21 @@ class AuthenticationService {
         );
       },
     );
-    late final Credentials creds;
+
     try {
       creds = await auth0.webAuthentication(scheme: 'fccapp').login();
-    } on WebAuthenticationException catch (e) {
+    } on WebAuthenticationException {
       // NOTE: The most likely case is that the user canceled the login
-      log('WebAuthenticationException: $e');
+      snackbar.showSnackbar(
+        title: 'Login canceled',
+        message: '',
+      );
       Navigator.pop(context);
       return;
     }
-    log('AccessToken: ${creds.accessToken}');
 
     try {
-      Response res = await _dio.get(
+      res = await _dio.get(
         '/mobile-login',
         options: Options(
           headers: {
@@ -167,13 +176,60 @@ class AuthenticationService {
       extractCookies(res);
       await writeTokensToStorage();
       await fetchUser();
-    } catch (e) {
-      // TODO: Either a dialog or snackbar with error details
-      log('Error: $e');
+    } on DioError catch (e) {
+      Navigator.pop(context);
+      if (e.response != null) {
+        showDialog(
+          context: context,
+          barrierDismissible: false,
+          builder: (context) => AlertDialog(
+            backgroundColor: const Color(0xFF2A2A40),
+            title: const Text('Error'),
+            content: Text(
+              e.response!.data['message'],
+            ),
+            actions: [
+              TextButton(
+                style: TextButton.styleFrom(
+                  backgroundColor: const Color(0xFF0a0a23),
+                ),
+                onPressed: () {
+                  Navigator.pop(context);
+                },
+                child: const Text('Close'),
+              ),
+            ],
+          ),
+        );
+      } else {
+        showDialog(
+          context: context,
+          barrierDismissible: false,
+          builder: (context) => AlertDialog(
+            backgroundColor: const Color(0xFF2A2A40),
+            title: const Text('Error'),
+            content: const Text(
+                'Oops! Something went wrong. Please try again in a moment.'),
+            actions: [
+              TextButton(
+                style: TextButton.styleFrom(
+                  backgroundColor: const Color(0xFF0a0a23),
+                ),
+                onPressed: () {
+                  Navigator.pop(context);
+                },
+                child: const Text('Close'),
+              ),
+            ],
+          ),
+        );
+      }
     }
 
     await auth0.credentialsManager.clearCredentials();
-    Navigator.pop(context);
+    if (res != null) {
+      Navigator.pop(context);
+    }
   }
 
   Future<void> logout() async {
