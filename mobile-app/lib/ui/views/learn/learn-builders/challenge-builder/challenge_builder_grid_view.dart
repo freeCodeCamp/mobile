@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:freecodecamp/app/app.locator.dart';
 import 'package:freecodecamp/models/learn/curriculum_model.dart';
-import 'package:freecodecamp/service/learn_service.dart';
+import 'package:freecodecamp/service/learn/learn_service.dart';
 import 'package:freecodecamp/ui/views/learn/learn-builders/challenge-builder/challenge_builder_model.dart';
 import 'package:freecodecamp/ui/widgets/drawer_widget/drawer_widget_view.dart';
 import 'package:stacked/stacked.dart';
@@ -201,42 +201,45 @@ class ChallengeBuilderGridView extends StatelessWidget {
             .round(),
         children: List.generate(block.challenges.length, (step) {
           return Center(
-              child: GridTile(
-                  child: Container(
-                      margin: const EdgeInsets.all(2),
-                      decoration: BoxDecoration(
-                        border: Border.all(
-                          color: Colors.white.withOpacity(0.01),
-                          width: 1,
-                        ),
-                        color:
-                            model.completedChallenge(block.challenges[step].id)
-                                ? const Color.fromRGBO(0x00, 0x2e, 0xad, 1)
-                                : Colors.transparent,
-                      ),
-                      height: 70,
-                      width: 70,
-                      child: InkWell(
-                        onTap: () async {
-                          String challenge = block.challenges[step].name
-                              .toLowerCase()
-                              .replaceAll(' ', '-')
-                              .replaceAll(RegExp(r"[@':]"), '');
-                          String url =
-                              await learnService.getBaseUrl('/page-data/learn');
+            child: GridTile(
+              child: Container(
+                margin: const EdgeInsets.all(2),
+                decoration: BoxDecoration(
+                  border: Border.all(
+                    color: Colors.white.withOpacity(0.01),
+                    width: 1,
+                  ),
+                  color: model.completedChallenge(block.challenges[step].id)
+                      ? const Color.fromRGBO(0x00, 0x2e, 0xad, 1)
+                      : Colors.transparent,
+                ),
+                height: 70,
+                width: 70,
+                child: InkWell(
+                  onTap: () async {
+                    String challenge = block.challenges[step].name
+                        .toLowerCase()
+                        .replaceAll(' ', '-')
+                        .replaceAll(RegExp(r"[@':]"), '');
+                    String url =
+                        await learnService.getBaseUrl('/page-data/learn');
 
-                          model.routeToBrowserView(
-                            '$url/${block.superBlock}/${block.dashedName}/$challenge/page-data.json',
-                            block,
-                          );
-                        },
-                        child: Center(
-                            child: Text(
-                          (step + 1).toString(),
-                          style: const TextStyle(
-                              fontWeight: FontWeight.bold, fontSize: 18),
-                        )),
-                      ))));
+                    model.routeToBrowserView(
+                      '$url/${block.superBlock}/${block.dashedName}/$challenge/page-data.json',
+                      block,
+                    );
+                  },
+                  child: Center(
+                    child: Text(
+                      (step + 1).toString(),
+                      style: const TextStyle(
+                          fontWeight: FontWeight.bold, fontSize: 18),
+                    ),
+                  ),
+                ),
+              ),
+            ),
+          );
         }),
       ),
     );

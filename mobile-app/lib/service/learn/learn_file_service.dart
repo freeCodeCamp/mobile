@@ -64,9 +64,10 @@ class LearnFileService {
           .toList();
       SharedPreferences prefs = await SharedPreferences.getInstance();
 
-      fileContent =
-          prefs.getString('${challenge.id}.${firstChallenge[0].name}') ??
-              firstChallenge[0].contents;
+      fileContent = prefs.getString(
+            '${challenge.id}.${firstChallenge[0].name}',
+          ) ??
+          firstChallenge[0].contents;
     }
 
     return fileContent;
@@ -147,8 +148,11 @@ class LearnFileService {
     String content, {
     bool testing = false,
   }) async {
-    List<ChallengeFile> cssFiles =
-        challenge.files.where((element) => element.ext == Ext.css).toList();
+    List<ChallengeFile> cssFiles = challenge.files
+        .where(
+          (element) => element.ext == Ext.css,
+        )
+        .toList();
     List<String> cssFilesWithCache = [];
     List<String> tags = [];
 

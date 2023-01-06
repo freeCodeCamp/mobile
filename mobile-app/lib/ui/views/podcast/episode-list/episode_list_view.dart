@@ -5,8 +5,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_html/flutter_html.dart';
 import 'package:freecodecamp/models/podcasts/episodes_model.dart';
 import 'package:freecodecamp/models/podcasts/podcasts_model.dart';
-import 'package:freecodecamp/ui/views/podcast/episode-list/episode_list_viewmodel.dart';
-import 'package:freecodecamp/ui/views/podcast/podcast-list/podcast_list_viewmodel.dart';
+import 'package:freecodecamp/ui/views/podcast/episode-list/episode_list_model.dart';
+import 'package:freecodecamp/ui/views/podcast/podcast-list/podcast_list_model.dart';
 import 'package:freecodecamp/ui/widgets/podcast_widgets/podcast_tilte_widget.dart';
 import 'package:html/dom.dart' as dom;
 import 'package:infinite_scroll_pagination/infinite_scroll_pagination.dart';
@@ -28,8 +28,8 @@ class EpisodeListView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return ViewModelBuilder<EpisodeListViewModel>.reactive(
-      viewModelBuilder: () => EpisodeListViewModel(podcast),
+    return ViewModelBuilder<EpisodeListModel>.reactive(
+      viewModelBuilder: () => EpisodeListModel(podcast),
       onModelReady: (model) => model.initState(isDownloadView),
       builder: (context, model, child) => Scaffold(
         appBar: AppBar(
@@ -119,7 +119,7 @@ class EpisodeListView extends StatelessWidget {
     );
   }
 
-  Column description(EpisodeListViewModel model) {
+  Column description(EpisodeListModel model) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -169,7 +169,7 @@ class EpisodeListView extends StatelessWidget {
         isDownloadView
             ? Image.file(
                 File(
-                  '${PodcastListViewModel.appDir.path}/images/podcast/${podcast.id}.jpg',
+                  '${PodcastListModel.appDir.path}/images/podcast/${podcast.id}.jpg',
                 ),
               )
             : CachedNetworkImage(
@@ -189,13 +189,15 @@ class EpisodeListView extends StatelessWidget {
                     )
                   ],
                 ),
-                child: Text('${podcast.title!}\n',
-                    maxLines: 2,
-                    textAlign: TextAlign.center,
-                    style: const TextStyle(
-                      fontSize: 24,
-                      height: 1.2,
-                    )),
+                child: Text(
+                  '${podcast.title!}\n',
+                  maxLines: 2,
+                  textAlign: TextAlign.center,
+                  style: const TextStyle(
+                    fontSize: 24,
+                    height: 1.2,
+                  ),
+                ),
               ),
             ),
           ],

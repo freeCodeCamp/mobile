@@ -94,7 +94,7 @@ class DescriptionView extends StatelessWidget {
                         ),
                       ),
                     ),
-                  )
+                  ),
                 ]
               : [],
         ),

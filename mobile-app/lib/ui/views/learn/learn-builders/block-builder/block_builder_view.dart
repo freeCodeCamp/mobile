@@ -16,46 +16,47 @@ class BlockBuilderView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return ViewModelBuilder<BlockBuilderModel>.reactive(
-        viewModelBuilder: () => BlockBuilderModel(),
-        builder: (context, model, child) => Column(
-              mainAxisAlignment: MainAxisAlignment.start,
-              children: [
-                Column(
-                  children: [
-                    !block.isStepBased
-                        ? FutureBuilder<bool>(
-                            future: model.getBlockOpenState(block),
-                            builder: (context, snapshot) {
-                              if (snapshot.hasData) {
-                                bool isOpen = snapshot.data!;
+      viewModelBuilder: () => BlockBuilderModel(),
+      builder: (context, model, child) => Column(
+        mainAxisAlignment: MainAxisAlignment.start,
+        children: [
+          Column(
+            children: [
+              !block.isStepBased
+                  ? FutureBuilder<bool>(
+                      future: model.getBlockOpenState(block),
+                      builder: (context, snapshot) {
+                        if (snapshot.hasData) {
+                          bool isOpen = snapshot.data!;
 
-                                return ChallengeBuilderListView(
-                                  block: block,
-                                  isOpen: isOpen,
-                                );
-                              }
+                          return ChallengeBuilderListView(
+                            block: block,
+                            isOpen: isOpen,
+                          );
+                        }
 
-                              return const CircularProgressIndicator();
-                            },
-                          )
-                        : FutureBuilder<bool>(
-                            future: model.getBlockOpenState(block),
-                            builder: (context, snapshot) {
-                              if (snapshot.hasData) {
-                                bool isOpen = snapshot.data!;
+                        return const CircularProgressIndicator();
+                      },
+                    )
+                  : FutureBuilder<bool>(
+                      future: model.getBlockOpenState(block),
+                      builder: (context, snapshot) {
+                        if (snapshot.hasData) {
+                          bool isOpen = snapshot.data!;
 
-                                return ChallengeBuilderGridView(
-                                  block: block,
-                                  isOpen: isOpen,
-                                );
-                              }
+                          return ChallengeBuilderGridView(
+                            block: block,
+                            isOpen: isOpen,
+                          );
+                        }
 
-                              return const CircularProgressIndicator();
-                            },
-                          ),
-                  ],
-                ),
-              ],
-            ));
+                        return const CircularProgressIndicator();
+                      },
+                    ),
+            ],
+          ),
+        ],
+      ),
+    );
   }
 }

@@ -4,38 +4,47 @@ import 'package:flutter/material.dart';
 import 'package:flutter_highlight/flutter_highlight.dart';
 import 'package:flutter_highlight/theme_map.dart';
 import 'package:flutter_html/flutter_html.dart';
-import 'package:freecodecamp/models/news/article_model.dart';
-import 'package:freecodecamp/ui/views/news/news-article/news_article_header.dart';
-import 'package:freecodecamp/ui/views/news/news-image-viewer/news_image_viewer.dart';
+import 'package:freecodecamp/models/news/tutorial_model.dart';
+import 'package:freecodecamp/ui/views/news/news-tutorial/news_tutorial_header.dart';
+import 'package:freecodecamp/ui/views/news/news-image-viewer/news_image_view.dart';
 import 'package:html/dom.dart' as dom;
 import 'package:url_launcher/url_launcher_string.dart';
 import 'package:youtube_player_iframe/youtube_player_iframe.dart';
 
 class HtmlHandler {
-  HtmlHandler({Key? key, required this.html, required this.context});
+  const HtmlHandler({Key? key, required this.html, required this.context});
 
   final String html;
   final BuildContext context;
 
-  static List<Widget> htmlHandler(html, context, [article, fontFamily]) {
+  static List<Widget> htmlHandler(html, context, [tutorial, fontFamily]) {
     var result = HtmlParser.parseHTML(html);
 
     List<Widget> elements = [];
 
-    if (article is Article) {
-      elements.add(Stack(children: [
-        NewsArticleHeader(article: article),
-        AppBar(
-          backgroundColor: Colors.transparent,
-          shadowColor: Colors.transparent,
-        )
-      ]));
+    if (tutorial is Tutorial) {
+      elements.add(
+        Stack(
+          children: [
+            NewsTutorialHeader(tutorial: tutorial),
+            AppBar(
+              backgroundColor: Colors.transparent,
+              shadowColor: Colors.transparent,
+            )
+          ],
+        ),
+      );
     }
     for (int i = 0; i < result.body!.children.length; i++) {
-      elements.add(htmlWidgetBuilder(
-          result.body!.children[i].outerHtml, context, fontFamily ?? 'Lato'));
+      elements.add(
+        htmlWidgetBuilder(
+          result.body!.children[i].outerHtml,
+          context,
+          fontFamily ?? 'Lato',
+        ),
+      );
     }
-    if (article is Article) {
+    if (tutorial is Tutorial) {
       elements.add(Container(height: 100));
     }
     return elements;
@@ -44,7 +53,11 @@ class HtmlHandler {
   static void goToImageView(String imgUrl, BuildContext context) {
     Navigator.push(
       context,
-      MaterialPageRoute(builder: (context) => NewsImageView(imgUrl: imgUrl)),
+      MaterialPageRoute(
+        builder: (context) => NewsImageView(
+          imgUrl: imgUrl,
+        ),
+      ),
     );
   }
 
@@ -82,7 +95,9 @@ class HtmlHandler {
             padding: const EdgeInsets.all(10),
           ),
           'tr': Style(
-              border: const Border(bottom: BorderSide(color: Colors.grey)),
+              border: const Border(
+                bottom: BorderSide(color: Colors.grey),
+              ),
               backgroundColor: Colors.white),
           'th': Style(
             padding: const EdgeInsets.all(12),
@@ -95,26 +110,33 @@ class HtmlHandler {
             alignment: Alignment.topLeft,
           ),
           'figure': Style(
-              width: MediaQuery.of(context).size.width,
-              margin: EdgeInsets.zero),
+            width: MediaQuery.of(context).size.width,
+            margin: EdgeInsets.zero,
+          ),
           'h1': Style(
-              margin: const EdgeInsets.fromLTRB(2, 32, 2, 0),
-              fontSize: FontSize.rem(1.8)),
+            margin: const EdgeInsets.fromLTRB(2, 32, 2, 0),
+            fontSize: FontSize.rem(1.8),
+          ),
           'h2': Style(
-              margin: const EdgeInsets.fromLTRB(2, 32, 2, 0),
-              fontSize: FontSize.rem(1.6)),
+            margin: const EdgeInsets.fromLTRB(2, 32, 2, 0),
+            fontSize: FontSize.rem(1.6),
+          ),
           'h3': Style(
-              margin: const EdgeInsets.fromLTRB(2, 32, 2, 0),
-              fontSize: FontSize.rem(1.4)),
+            margin: const EdgeInsets.fromLTRB(2, 32, 2, 0),
+            fontSize: FontSize.rem(1.4),
+          ),
           'h4': Style(
-              margin: const EdgeInsets.fromLTRB(2, 32, 2, 0),
-              fontSize: FontSize.rem(1.2)),
+            margin: const EdgeInsets.fromLTRB(2, 32, 2, 0),
+            fontSize: FontSize.rem(1.2),
+          ),
           'h5': Style(
-              margin: const EdgeInsets.fromLTRB(2, 32, 2, 0),
-              fontSize: FontSize.rem(1.2)),
+            margin: const EdgeInsets.fromLTRB(2, 32, 2, 0),
+            fontSize: FontSize.rem(1.2),
+          ),
           'h6': Style(
-              margin: const EdgeInsets.fromLTRB(2, 32, 2, 0),
-              fontSize: FontSize.rem(1.2))
+            margin: const EdgeInsets.fromLTRB(2, 32, 2, 0),
+            fontSize: FontSize.rem(1.2),
+          )
         },
         customRender: {
           'table': (context, child) {
@@ -154,13 +176,16 @@ class HtmlHandler {
                         physics: const ClampingScrollPhysics(),
                         child: ConstrainedBox(
                           constraints: BoxConstraints(
-                              minWidth: MediaQuery.of(context).size.width - 44),
-                          child: HighlightView(code.tree.element?.text ?? '',
-                              padding: const EdgeInsets.all(16),
-                              language: codeLanguageIsPresent(classes)
-                                  ? currentClass!.split('-')[1]
-                                  : 'plaintext',
-                              theme: themeMap['atom-one-dark']!),
+                            minWidth: MediaQuery.of(context).size.width - 44,
+                          ),
+                          child: HighlightView(
+                            code.tree.element?.text ?? '',
+                            padding: const EdgeInsets.all(16),
+                            language: codeLanguageIsPresent(classes)
+                                ? currentClass!.split('-')[1]
+                                : 'plaintext',
+                            theme: themeMap['atom-one-dark']!,
+                          ),
                         ),
                       ),
                     ),
@@ -171,7 +196,10 @@ class HtmlHandler {
 
             return HighlightView(
               code.tree.element?.text ?? '',
-              padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 0.2),
+              padding: const EdgeInsets.symmetric(
+                horizontal: 4,
+                vertical: 0.2,
+              ),
               language: 'html',
               theme: themeMap['atom-one-dark']!,
               textStyle: const TextStyle(
@@ -213,7 +241,9 @@ class HtmlHandler {
               decoration: const BoxDecoration(
                 border: Border(
                   left: BorderSide(
-                      color: Color.fromRGBO(0x99, 0xc9, 0xff, 1), width: 2),
+                    color: Color.fromRGBO(0x99, 0xc9, 0xff, 1),
+                    width: 2,
+                  ),
                 ),
               ),
               child: child,

@@ -3,15 +3,17 @@ import 'dart:convert';
 import 'package:freecodecamp/app/app.locator.dart';
 import 'package:freecodecamp/models/podcasts/episodes_model.dart';
 import 'package:freecodecamp/models/podcasts/podcasts_model.dart';
-import 'package:freecodecamp/service/podcasts_service.dart';
-import 'package:freecodecamp/service/test_service.dart';
+import 'package:freecodecamp/service/podcast/podcasts_service.dart';
+import 'package:freecodecamp/service/developer_service.dart';
 import 'package:http/http.dart' as http;
 import 'package:infinite_scroll_pagination/infinite_scroll_pagination.dart';
 import 'package:stacked/stacked.dart';
 
-class EpisodeListViewModel extends BaseViewModel {
+class EpisodeListModel extends BaseViewModel {
+  EpisodeListModel(this.podcast);
+
   final _databaseService = locator<PodcastsDatabaseService>();
-  final _testservice = locator<TestService>();
+  final _developerService = locator<DeveloperService>();
   final Podcasts podcast;
   int epsLength = 0;
   Object? _activeCallbackIdentity;
@@ -32,8 +34,6 @@ class EpisodeListViewModel extends BaseViewModel {
   );
   PagingController<int, Episodes> get pagingController => _pagingController;
 
-  EpisodeListViewModel(this.podcast);
-
   void initState(bool isDownloadView) async {
     _databaseService.initialise();
     if (isDownloadView) {
@@ -50,7 +50,7 @@ class EpisodeListViewModel extends BaseViewModel {
   void fetchEpisodes(String podcastId, [int pageKey = 0]) async {
     final callbackIdentity = Object();
     _activeCallbackIdentity = callbackIdentity;
-    String baseUrl = (await _testservice.developmentMode())
+    String baseUrl = (await _developerService.developmentMode())
         ? 'https://api.mobile.freecodecamp.dev/'
         : 'https://api.mobile.freecodecamp.org/';
     try {

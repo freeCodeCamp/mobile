@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:freecodecamp/service/authentication_service.dart';
+import 'package:freecodecamp/service/authentication/authentication_service.dart';
 import 'package:freecodecamp/app/app.locator.dart';
-import 'package:freecodecamp/service/test_service.dart';
+import 'package:freecodecamp/service/developer_service.dart';
 import 'package:freecodecamp/ui/views/code_radio/code_radio_view.dart';
 //import 'package:freecodecamp/ui/views/learn/learn_view.dart';
 import 'package:freecodecamp/ui/views/forum/forum-categories/forum_category_view.dart';
@@ -34,10 +34,10 @@ class DrawerWidgtetViewModel extends BaseViewModel {
     });
   }
 
-  static final _testService = locator<TestService>();
+  static final _developerService = locator<DeveloperService>();
 
   devMode() async {
-    if (await _testService.developmentMode()) {
+    if (await _developerService.developmentMode()) {
       _devMode = true;
       notifyListeners();
     }

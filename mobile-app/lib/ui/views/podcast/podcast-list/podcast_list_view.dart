@@ -4,7 +4,7 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:freecodecamp/models/podcasts/podcasts_model.dart';
 import 'package:freecodecamp/ui/views/podcast/episode-list/episode_list_view.dart';
-import 'package:freecodecamp/ui/views/podcast/podcast-list/podcast_list_viewmodel.dart';
+import 'package:freecodecamp/ui/views/podcast/podcast-list/podcast_list_model.dart';
 import 'package:freecodecamp/ui/widgets/drawer_widget/drawer_widget_view.dart';
 import 'package:stacked/stacked.dart';
 
@@ -23,8 +23,8 @@ class PodcastListView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return ViewModelBuilder<PodcastListViewModel>.reactive(
-      viewModelBuilder: () => PodcastListViewModel(),
+    return ViewModelBuilder<PodcastListModel>.reactive(
+      viewModelBuilder: () => PodcastListModel(),
       onModelReady: (model) async => await model.init(),
       builder: (context, model, child) => Scaffold(
         appBar: AppBar(
@@ -66,8 +66,8 @@ class PodcastListViewBuilder extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return ViewModelBuilder<PodcastListViewModel>.reactive(
-      viewModelBuilder: () => PodcastListViewModel(),
+    return ViewModelBuilder<PodcastListModel>.reactive(
+      viewModelBuilder: () => PodcastListModel(),
       builder: (context, model, child) => Scaffold(
         backgroundColor: const Color(0xFF2A2A40),
         body: RefreshIndicator(
@@ -154,64 +154,65 @@ class PodcastTemplate extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return InkWell(
-        onTap: () {
-          Navigator.push(
-            context,
-            MaterialPageRoute(
-              builder: (context) => EpisodeListView(
-                podcast: podcast,
-                isDownloadView: isDownloadView,
-              ),
-              settings: RouteSettings(
-                name: 'Podcasts Episode List View - ${podcast.title}',
+      onTap: () {
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (context) => EpisodeListView(
+              podcast: podcast,
+              isDownloadView: isDownloadView,
+            ),
+            settings: RouteSettings(
+              name: 'Podcasts Episode List View - ${podcast.title}',
+            ),
+          ),
+        );
+      },
+      child: Padding(
+        padding: const EdgeInsets.all(4.0),
+        child: Stack(
+          children: [
+            isDownloadView
+                ? Image.file(
+                    File(
+                      '${PodcastListModel.appDir.path}/images/podcast/${podcast.id}.jpg',
+                    ),
+                    // height: 130,
+                    alignment: Alignment.center,
+                  )
+                : CachedNetworkImage(
+                    imageUrl: podcast.image!,
+                  ),
+            Align(
+              alignment: Alignment.bottomCenter,
+              child: Row(
+                children: [
+                  Expanded(
+                    child: Container(
+                      decoration: BoxDecoration(
+                        boxShadow: [
+                          BoxShadow(
+                            color: Colors.black.withOpacity(0.75),
+                            spreadRadius: 1.5,
+                            blurRadius: 0.1,
+                          )
+                        ],
+                      ),
+                      child: Text('${podcast.title!}\n',
+                          maxLines: 2,
+                          textAlign: TextAlign.center,
+                          style: const TextStyle(
+                            fontSize: 16,
+                            height: 1.2,
+                          )),
+                    ),
+                  ),
+                ],
               ),
             ),
-          );
-        },
-        child: Padding(
-          padding: const EdgeInsets.all(4.0),
-          child: Stack(
-            children: [
-              isDownloadView
-                  ? Image.file(
-                      File(
-                        '${PodcastListViewModel.appDir.path}/images/podcast/${podcast.id}.jpg',
-                      ),
-                      // height: 130,
-                      alignment: Alignment.center,
-                    )
-                  : CachedNetworkImage(
-                      imageUrl: podcast.image!,
-                    ),
-              Align(
-                alignment: Alignment.bottomCenter,
-                child: Row(
-                  children: [
-                    Expanded(
-                      child: Container(
-                        decoration: BoxDecoration(
-                          boxShadow: [
-                            BoxShadow(
-                              color: Colors.black.withOpacity(0.75),
-                              spreadRadius: 1.5,
-                              blurRadius: 0.1,
-                            )
-                          ],
-                        ),
-                        child: Text('${podcast.title!}\n',
-                            maxLines: 2,
-                            textAlign: TextAlign.center,
-                            style: const TextStyle(
-                              fontSize: 16,
-                              height: 1.2,
-                            )),
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-            ],
-          ),
-        ));
+          ],
+        ),
+      ),
+    );
   }
 }

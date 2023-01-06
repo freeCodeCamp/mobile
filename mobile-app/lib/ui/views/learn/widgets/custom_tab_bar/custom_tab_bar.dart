@@ -20,13 +20,13 @@ class CustomTabBar extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Expanded(
-        child: Container(
-      decoration: BoxDecoration(
-          border: Border(
-              bottom: model.currentFile(challenge).name == file.name
-                  ? const BorderSide(width: 4, color: Colors.blue)
-                  : const BorderSide())),
-      child: ElevatedButton(
+      child: Container(
+        decoration: BoxDecoration(
+            border: Border(
+                bottom: model.currentFile(challenge).name == file.name
+                    ? const BorderSide(width: 4, color: Colors.blue)
+                    : const BorderSide())),
+        child: ElevatedButton(
           onPressed: () async {
             model.setCurrentSelectedFile = file.name;
             ChallengeFile currFile = model.currentFile(challenge);
@@ -54,7 +54,9 @@ class CustomTabBar extends StatelessWidget {
                 fontWeight: model.currentFile(challenge).name == file.name
                     ? FontWeight.bold
                     : null),
-          )),
-    ));
+          ),
+        ),
+      ),
+    );
   }
 }
