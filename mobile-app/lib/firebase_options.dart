@@ -50,20 +50,20 @@ class DefaultFirebaseOptions {
   }
 
   static const FirebaseOptions android = FirebaseOptions(
-    apiKey: 'AIzaSyACkETBO32FVlIKcrJTGzRQFJO1MOBvbRw',
-    appId: '1:830221206523:android:a8e9c91e1219812245415e',
-    messagingSenderId: '830221206523',
-    projectId: 'freecodecamp-mobile',
-    storageBucket: 'freecodecamp-mobile.appspot.com',
+    apiKey: 'AIzaSyCP3yAWau0JJE8BPgsUrbT2K27EJX3z2KE',
+    appId: '1:363152234407:android:6293f9873ae6df8a738882',
+    messagingSenderId: '363152234407',
+    projectId: 'mobile-4ee8a',
+    storageBucket: 'mobile-4ee8a.appspot.com',
   );
 
   static const FirebaseOptions ios = FirebaseOptions(
-    apiKey: 'AIzaSyANPkdFf2N2qK2Fvzh3V-HjV6F7IWONIlA',
-    appId: '1:830221206523:ios:28049f525d73b6e645415e',
-    messagingSenderId: '830221206523',
-    projectId: 'freecodecamp-mobile',
-    storageBucket: 'freecodecamp-mobile.appspot.com',
-    iosClientId: '830221206523-lo2rnfs72886l7kupnsp0rnpltlv1ngc.apps.googleusercontent.com',
+    apiKey: 'AIzaSyCFcTnIuxW7AeskmoNwbrEZX_ZvYz-aAdw',
+    appId: '1:363152234407:ios:de3b7a49ad400921738882',
+    messagingSenderId: '363152234407',
+    projectId: 'mobile-4ee8a',
+    storageBucket: 'mobile-4ee8a.appspot.com',
+    iosClientId: '363152234407-s26svd21nuqr63ksq30ue7qh4tvk2a2v.apps.googleusercontent.com',
     iosBundleId: 'org.freecodecamp',
   );
 }
