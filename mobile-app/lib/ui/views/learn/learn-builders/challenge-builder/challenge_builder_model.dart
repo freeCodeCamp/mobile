@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:freecodecamp/app/app.locator.dart';
 import 'package:freecodecamp/app/app.router.dart';
@@ -129,12 +131,12 @@ class ChallengeBuilderModel extends BaseViewModel {
     return const Icon(Icons.circle_outlined);
   }
 
-  void stopDownload() {
+  void stopDownload(String block) {
     try {
       learnOfflineService.downloadSub!.pause();
       learnOfflineService.batchSub!.pause();
       learnOfflineService.timer!.cancel();
-
+      learnOfflineService.cancelChallengeDownload(block);
       setIsDownloading = false;
     } catch (e) {
       throw error('could not exit stream');

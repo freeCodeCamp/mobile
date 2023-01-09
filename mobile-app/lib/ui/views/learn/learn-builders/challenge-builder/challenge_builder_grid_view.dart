@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:freecodecamp/app/app.locator.dart';
 import 'package:freecodecamp/models/learn/curriculum_model.dart';
@@ -30,6 +32,9 @@ class ChallengeBuilderGridView extends StatelessWidget {
         // SharedPreferences prefs = await SharedPreferences.getInstance();
 
         // prefs.clear();
+      },
+      onDispose: (model) {
+        model.stopDownload(block.dashedName!);
       },
       viewModelBuilder: () => ChallengeBuilderModel(),
       builder: (
@@ -245,7 +250,7 @@ class ChallengeTile extends StatelessWidget {
             block.challenges[step].id,
           )
               ? const Color.fromRGBO(0x00, 0x2e, 0xad, 1)
-              : isDowloaded
+              : isDowloaded && model.isDownloading
                   ? Colors.green
                   : Colors.transparent,
         ),
@@ -326,6 +331,16 @@ class DownloadWidget extends StatelessWidget {
                         return const Text('Starting Download...');
                       }
 
+                      if (snapshot.hasError) {
+                        model.stopDownload(block.dashedName!);
+
+                        Timer(const Duration(seconds: 5), () {
+                          model.setIsDownloading = false;
+                        });
+
+                        return const Text('An Error has Occured');
+                      }
+
                       if (snapshot.hasData) {
                         return Text(
                           '${(snapshot.data as double).toStringAsFixed(2)}%',
@@ -345,7 +360,7 @@ class DownloadWidget extends StatelessWidget {
             margin: const EdgeInsets.symmetric(horizontal: 40),
             child: ElevatedButton(
               onPressed: () {
-                model.stopDownload();
+                model.stopDownload(block.dashedName!);
               },
               style: ElevatedButton.styleFrom(
                 backgroundColor: const Color.fromRGBO(0x2A, 0x2A, 0x40, 1),

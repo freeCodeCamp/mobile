@@ -7,15 +7,21 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:http/http.dart' as http;
 
 class ChallengeDownload {
-  const ChallengeDownload({required this.id, required this.date});
+  const ChallengeDownload({
+    required this.id,
+    required this.date,
+    required this.block,
+  });
 
   final String id;
   final String date;
+  final String block;
 
   factory ChallengeDownload.fromObject(Map<String, dynamic> challengeObject) {
     return ChallengeDownload(
       id: challengeObject['id'],
       date: challengeObject['date'],
+      block: challengeObject['block'],
     );
   }
 
@@ -23,6 +29,7 @@ class ChallengeDownload {
     return {
       'id': challengeDownload.id,
       'date': challengeDownload.date,
+      'block': challengeDownload.block,
     };
   }
 }
@@ -136,6 +143,7 @@ class LearnOfflineService {
         downloadObjects.add({
           'id': challenge.id,
           'date': DateTime.now().toString(),
+          'block': challenge.block
         });
 
         prefs.setStringList(
@@ -149,6 +157,36 @@ class LearnOfflineService {
     } catch (e) {
       return Future<String>.error(
         Exception('unable to store challenge: \n ${e.toString()}'),
+      );
+    }
+  }
+
+  Future<void> cancelChallengeDownload(String block) async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+
+    List<ChallengeDownload?> downloads = await checkStoredChallenges();
+    List<ChallengeDownload?> filteredDownloads = [];
+
+    List<Map<String, dynamic>> challengeObjects = [];
+
+    if (downloads.isNotEmpty) {
+      for (int i = 0; i < downloads.length; i++) {
+        if (downloads[i]!.block != block) {
+          filteredDownloads.add(downloads[i]);
+        }
+      }
+
+      for (int i = 0; i < filteredDownloads.length; i++) {
+        challengeObjects.add(
+          ChallengeDownload.toObject(
+            filteredDownloads[i]!,
+          ),
+        );
+      }
+
+      prefs.setStringList(
+        'storedChallenges',
+        challengeObjects.map((e) => jsonEncode(e)).toList(),
       );
     }
   }
