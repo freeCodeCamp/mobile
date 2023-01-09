@@ -16,7 +16,7 @@ jobs:
     runs-on: macos-latest
     steps:
       - name: Checkout files
-        uses: actions/checkout@755da8c3cf115ac066823e79a1e1788f8940201b # v3
+        uses: actions/checkout@ac593985615ec2ede58e132d2e21d2b1cbd6127c # v3
 
       - name: Setup Java 11
         uses: actions/setup-java@1df8dbefe2a8cbc99770194893dd902763bee34b # v3
@@ -26,7 +26,7 @@ jobs:
           cache: "gradle"
 
       - name: AVD cache
-        uses: actions/cache@4723a57e26efda3a62cbde1812113b730952852d # v3
+        uses: actions/cache@58c146cc91c5b9e778e71775dfe9bf1442ad9a12 # v3
         id: avd-cache
         with:
           path: |
@@ -84,7 +84,7 @@ jobs:
           script: cd mobile-app && if adb shell pm list packages | grep -q org.freecodecamp; then adb uninstall org.freecodecamp; fi && flutter drive --driver=test_driver/integration_test.dart --target=integration_test/news_test.dart
 
       - name: Upload screenshots
-        uses: actions/upload-artifact@83fd05a356d7e2593de66fc9913b3002723633cb # v3
+        uses: actions/upload-artifact@0b7f8abb1508181956e8e162db84b466c27e18ce # v3
         if: always()
         with:
           name: screenshots
