@@ -282,4 +282,36 @@ class LearnOfflineService {
 
     return [];
   }
+
+  //TODO : somehow get name from superblock
+
+  Future<List<SuperBlockButton>> returnCachedSuperblocks() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+
+    List<String>? blocks = prefs.getStringList('storedBlocks');
+
+    List<String> superBlockNames = [];
+
+    List<SuperBlockButton> buttons = [];
+
+    if (blocks != null) {
+      for (int i = 0; i < blocks.length; i++) {
+        Map<String, dynamic> data = jsonDecode(blocks[i]);
+
+        if (!superBlockNames.contains(data['superBlock'])) {
+          superBlockNames.add(data['superBlock']);
+        }
+      }
+    }
+
+    for (int i = 0; i < superBlockNames.length; i++) {
+      buttons.add(SuperBlockButton(
+        path: superBlockNames[i],
+        name: 'Not available',
+        public: true,
+      ));
+    }
+
+    return buttons;
+  }
 }
