@@ -138,6 +138,7 @@ class ChallengeBuilderModel extends BaseViewModel {
       learnOfflineService.batchSub!.pause();
       learnOfflineService.timer!.cancel();
       learnOfflineService.cancelChallengeDownload(block);
+
       setIsDownloading = false;
     } catch (e) {
       throw error('could not exit stream');

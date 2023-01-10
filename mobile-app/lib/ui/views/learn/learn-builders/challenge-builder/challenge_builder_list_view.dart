@@ -21,8 +21,8 @@ class ChallengeBuilderListView extends StatelessWidget {
   Widget build(BuildContext context) {
     return ViewModelBuilder<ChallengeBuilderModel>.reactive(
       viewModelBuilder: () => ChallengeBuilderModel(),
-      onModelReady: (model) {
-        model.init(block.challenges);
+      onModelReady: (model) async {
+        model.init(block.challengeTiles);
         model.setIsOpen = isOpen;
       },
       builder: (context, model, child) => Container(
@@ -92,8 +92,10 @@ class BlockWidget extends StatelessWidget {
             children: [
               for (String blockString in block.description)
                 Padding(
-                  padding:
-                      const EdgeInsets.symmetric(vertical: 8, horizontal: 16),
+                  padding: const EdgeInsets.symmetric(
+                    vertical: 8,
+                    horizontal: 16,
+                  ),
                   child: Text(
                     blockString,
                     style: TextStyle(
@@ -113,12 +115,12 @@ class BlockWidget extends StatelessWidget {
                 itemBuilder: (context, i) => ListTile(
                   leading: model.getIcon(
                     model.completedChallenge(
-                      block.challenges[i].id,
+                      block.challengeTiles[i].id,
                     ),
                   ),
-                  title: Text(block.challenges[i].name),
+                  title: Text(block.challengeTiles[i].name),
                   onTap: () async {
-                    String challenge = block.challenges[i].dashedName;
+                    String challenge = block.challengeTiles[i].dashedName;
 
                     String url = await learnService.getBaseUrl(
                       '/page-data/learn',

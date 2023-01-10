@@ -1,11 +1,10 @@
-import 'dart:async';
-
 import 'package:flutter/material.dart';
 import 'package:freecodecamp/app/app.locator.dart';
 import 'package:freecodecamp/models/learn/curriculum_model.dart';
 import 'package:freecodecamp/service/learn/learn_service.dart';
 import 'package:freecodecamp/ui/views/learn/learn-builders/challenge-builder/challenge_builder_model.dart';
 import 'package:freecodecamp/ui/widgets/drawer_widget/drawer_widget_view.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 import 'package:stacked/stacked.dart';
 
@@ -26,16 +25,16 @@ class ChallengeBuilderGridView extends StatelessWidget {
   Widget build(BuildContext context) {
     return ViewModelBuilder<ChallengeBuilderModel>.reactive(
       onModelReady: (model) async {
-        model.init(block.challenges);
+        model.init(block.challengeTiles);
         model.setIsOpen = isOpen;
 
-        // SharedPreferences prefs = await SharedPreferences.getInstance();
+        SharedPreferences prefs = await SharedPreferences.getInstance();
 
-        // prefs.clear();
+        prefs.clear();
       },
-      onDispose: (model) {
-        model.stopDownload(block.dashedName);
-      },
+      // onDispose: (model) {
+      //   model.stopDownload(block.dashedName);
+      // },
       viewModelBuilder: () => ChallengeBuilderModel(),
       builder: (
         context,
@@ -129,7 +128,7 @@ class ChallengeBuilderGridView extends StatelessWidget {
                 child: InkWell(
                   onTap: isCertification
                       ? () async {
-                          String challenge = block.challenges[0].dashedName;
+                          String challenge = block.challengeTiles[0].dashedName;
 
                           String url = await learnService.getBaseUrl(
                             '/page-data/learn',
@@ -194,7 +193,9 @@ class ChallengeBuilderGridView extends StatelessWidget {
           block.challenges.length,
           (step) {
             return FutureBuilder(
-              future: model.isChallengeDownloaded(block.challenges[step].id),
+              future: model.isChallengeDownloaded(
+                block.challengeTiles[step].id,
+              ),
               builder: (context, snapshot) {
                 if (snapshot.hasData) {
                   return Center(
@@ -247,7 +248,7 @@ class ChallengeTile extends StatelessWidget {
             width: 1,
           ),
           color: model.completedChallenge(
-            block.challenges[step].id,
+            block.challengeTiles[step].id,
           )
               ? const Color.fromRGBO(0x00, 0x2e, 0xad, 1)
               : isDowloaded && model.isDownloading
@@ -312,7 +313,7 @@ class DownloadWidget extends StatelessWidget {
                     );
                     model.learnOfflineService.getChallengeBatch(
                       block,
-                      block.challenges
+                      block.challengeTiles
                           .map((e) =>
                               '$url/${block.superBlock}/${block.dashedName}/${e.dashedName}/page-data.json')
                           .toList(),
@@ -332,15 +333,15 @@ class DownloadWidget extends StatelessWidget {
                         return const Text('Starting Download...');
                       }
 
-                      if (snapshot.hasError) {
-                        model.stopDownload(block.dashedName);
+                      // if (snapshot.hasError) {
+                      //   model.stopDownload(block.dashedName);
 
-                        Timer(const Duration(seconds: 5), () {
-                          model.setIsDownloading = false;
-                        });
+                      //   Timer(const Duration(seconds: 5), () {
+                      //     model.setIsDownloading = false;
+                      //   });
 
-                        return const Text('An Error has Occured');
-                      }
+                      //   return const Text('An Error has Occured');
+                      // }
 
                       if (snapshot.hasData) {
                         return Text(

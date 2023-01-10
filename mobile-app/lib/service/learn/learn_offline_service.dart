@@ -171,6 +171,8 @@ class LearnOfflineService {
 
     List<Map<String, dynamic>> challengeObjects = [];
 
+    await removeCachedBlock(block);
+
     if (downloads.isNotEmpty) {
       for (int i = 0; i < downloads.length; i++) {
         if (downloads[i]!.block != block) {
@@ -209,10 +211,45 @@ class LearnOfflineService {
 
     Map<String, dynamic> blockToJson = Block.toCachedObject(block);
     List<String>? storedBlocks = prefs.getStringList('storedBlocks');
+
     if (storedBlocks == null) {
-      prefs.setStringList('storedBlocks', [blockToJson.toString()]);
+      prefs.setStringList('storedBlocks', [
+        jsonEncode(blockToJson),
+      ]);
     } else {
-      storedBlocks.add(blockToJson.toString());
+      List newInfo = storedBlocks;
+
+      newInfo.add(blockToJson);
+
+      prefs.setStringList('storedBlocks', [
+        jsonEncode(newInfo),
+      ]);
+    }
+  }
+
+  Future<void> removeCachedBlock(String dashedBlockName) async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+
+    List<String>? storedBlocks = prefs.getStringList('storedBlocks');
+
+    try {
+      if (storedBlocks != null) {
+        for (int i = 0; i < storedBlocks.length; i++) {
+          Map<String, dynamic> data = json.decode(storedBlocks[i]);
+
+          Block block = Block.fromJson(
+            data,
+            data['description'],
+            data['dashedName'],
+          );
+
+          if (dashedBlockName == block.dashedName) {
+            storedBlocks.removeAt(i);
+          }
+        }
+      }
+    } catch (e) {
+      throw Exception(e);
     }
   }
 
