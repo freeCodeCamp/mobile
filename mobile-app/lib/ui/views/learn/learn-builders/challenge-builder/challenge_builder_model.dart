@@ -99,8 +99,9 @@ class ChallengeBuilderModel extends BaseViewModel {
   void setNumberOfCompletedChallenges(List<ChallengeListTile> challengeBatch) {
     int count = 0;
     if (user != null) {
-      Iterable<String> completedChallengeIds =
-          user!.completedChallenges.map((e) => e.id);
+      Iterable<String> completedChallengeIds = user!.completedChallenges.map(
+        (e) => e.id,
+      );
 
       for (ChallengeListTile challenge in challengeBatch) {
         if (completedChallengeIds.contains(challenge.id)) {

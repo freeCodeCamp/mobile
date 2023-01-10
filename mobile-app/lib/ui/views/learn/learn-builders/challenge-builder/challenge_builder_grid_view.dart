@@ -311,6 +311,7 @@ class DownloadWidget extends StatelessWidget {
                       '/page-data/learn',
                     );
                     model.learnOfflineService.getChallengeBatch(
+                      block,
                       block.challenges
                           .map((e) =>
                               '$url/${block.superBlock}/${block.dashedName}/${e.dashedName}/page-data.json')

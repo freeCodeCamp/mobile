@@ -4,6 +4,7 @@ import 'dart:developer';
 import 'dart:io';
 
 import 'package:freecodecamp/models/learn/challenge_model.dart';
+import 'package:freecodecamp/models/learn/curriculum_model.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:http/http.dart' as http;
 
@@ -93,9 +94,11 @@ class LearnOfflineService {
     return challenge;
   }
 
-  Future<void> getChallengeBatch(List<String> urls) async {
+  Future<void> getChallengeBatch(Block block, List<String> urls) async {
     int index = 0;
     Duration duration = const Duration(milliseconds: 2000);
+
+    await cacheBlockInfo(block);
 
     timer = Timer.periodic(duration, (timer) async {
       await storeDownloadedChallenge(await getChallenge(urls[index]));
@@ -107,8 +110,6 @@ class LearnOfflineService {
           index == 0 ? 1 / urls.length * 100 : index / urls.length * 100,
         );
       }
-
-      log('timer $index');
 
       if (urls.length == index) {
         timer.cancel();
@@ -201,5 +202,47 @@ class LearnOfflineService {
     } on SocketException catch (_) {
       print('not connected');
     }
+  }
+
+  Future<void> cacheBlockInfo(Block block) async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+
+    Map<String, dynamic> blockToJson = Block.toCachedObject(block);
+    List<String>? storedBlocks = prefs.getStringList('storedBlocks');
+    if (storedBlocks == null) {
+      prefs.setStringList('storedBlocks', [blockToJson.toString()]);
+    } else {
+      storedBlocks.add(blockToJson.toString());
+    }
+  }
+
+  Future<List<Block?>> returnCachedBlockInfo(
+    String superBlockDashedName,
+    String blockDashedName,
+  ) async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    List<String>? blocks = prefs.getStringList('storedBlocks');
+
+    List<Block> convertedBlocks = [];
+
+    if (blocks != null) {
+      for (int i = 0; i < blocks.length; i++) {
+        Map<String, dynamic> data = jsonDecode(blocks[i]);
+
+        Block block = Block.fromJson(
+          data,
+          data['description'],
+          data['dashedName'],
+        );
+
+        if (block.superBlock == superBlockDashedName) {
+          convertedBlocks.add(block);
+        }
+      }
+
+      return convertedBlocks;
+    }
+
+    return [];
   }
 }
