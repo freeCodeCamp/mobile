@@ -34,7 +34,7 @@ class ChallengeBuilderGridView extends StatelessWidget {
         // prefs.clear();
       },
       onDispose: (model) {
-        model.stopDownload(block.dashedName!);
+        model.stopDownload(block.dashedName);
       },
       viewModelBuilder: () => ChallengeBuilderModel(),
       builder: (
@@ -332,7 +332,7 @@ class DownloadWidget extends StatelessWidget {
                       }
 
                       if (snapshot.hasError) {
-                        model.stopDownload(block.dashedName!);
+                        model.stopDownload(block.dashedName);
 
                         Timer(const Duration(seconds: 5), () {
                           model.setIsDownloading = false;
@@ -360,7 +360,7 @@ class DownloadWidget extends StatelessWidget {
             margin: const EdgeInsets.symmetric(horizontal: 40),
             child: ElevatedButton(
               onPressed: () {
-                model.stopDownload(block.dashedName!);
+                model.stopDownload(block.dashedName);
               },
               style: ElevatedButton.styleFrom(
                 backgroundColor: const Color.fromRGBO(0x2A, 0x2A, 0x40, 1),

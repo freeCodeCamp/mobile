@@ -34,8 +34,8 @@ class SuperBlock {
 
 class Block {
   final String name;
-  final String? dashedName;
-  final String? superBlock;
+  final String dashedName;
+  final String superBlock;
   final List description;
   final bool isStepBased;
   final int order;
