@@ -359,7 +359,7 @@ class StackedRouter extends _i1.RouterBase {
         builder: (context) => _i19.SuperBlockView(
             key: args.key,
             superBlockDashedName: args.superBlockDashedName,
-            superblockName: args.superblockName),
+            superBlockName: args.superBlockName),
         settings: data,
       );
     },
@@ -551,14 +551,14 @@ class SuperBlockViewArguments {
   const SuperBlockViewArguments({
     this.key,
     required this.superBlockDashedName,
-    required this.superblockName,
+    required this.superBlockName,
   });
 
   final _i24.Key? key;
 
   final String superBlockDashedName;
 
-  final String superblockName;
+  final String superBlockName;
 }
 
 class ChallengeViewArguments {
@@ -884,7 +884,7 @@ extension NavigatorStateExtension on _i29.NavigationService {
   Future<dynamic> navigateToSuperBlockView({
     _i24.Key? key,
     required String superBlockDashedName,
-    required String superblockName,
+    required String superBlockName,
     int? routerId,
     bool preventDuplicates = true,
     Map<String, String>? parameters,
@@ -895,7 +895,7 @@ extension NavigatorStateExtension on _i29.NavigationService {
         arguments: SuperBlockViewArguments(
             key: key,
             superBlockDashedName: superBlockDashedName,
-            superblockName: superblockName),
+            superBlockName: superBlockName),
         id: routerId,
         preventDuplicates: preventDuplicates,
         parameters: parameters,

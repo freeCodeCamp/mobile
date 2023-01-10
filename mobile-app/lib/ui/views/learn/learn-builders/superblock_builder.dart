@@ -8,14 +8,14 @@ import 'package:freecodecamp/ui/views/learn/learn/learn_model.dart';
 import 'package:stacked/stacked.dart';
 
 class SuperBlockView extends StatelessWidget {
-  SuperBlockView(
-      {Key? key,
-      required this.superBlockDashedName,
-      required this.superblockName})
-      : super(key: key);
+  SuperBlockView({
+    Key? key,
+    required this.superBlockDashedName,
+    required this.superBlockName,
+  }) : super(key: key);
 
   final String superBlockDashedName;
-  final String superblockName;
+  final String superBlockName;
 
   final learnOfflineService = locator<LearnOfflineService>();
 
@@ -28,12 +28,15 @@ class SuperBlockView extends StatelessWidget {
           : null,
       builder: (context, model, child) => Scaffold(
         appBar: AppBar(
-          title: Text(superblockName),
+          title: Text(superBlockName),
         ),
         body: FutureBuilder<SuperBlock>(
-          future: model.getSuperBlockData(superBlockDashedName),
+          future: model.getSuperBlockData(
+            superBlockDashedName,
+            superBlockName,
+          ),
           builder: ((context, snapshot) {
-            if (!snapshot.hasError) {
+            if (snapshot.hasError) {
               return Center(
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.center,

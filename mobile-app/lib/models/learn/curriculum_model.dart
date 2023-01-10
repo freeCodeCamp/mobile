@@ -4,25 +4,23 @@ class SuperBlock {
 
   SuperBlock({required this.superblockName, required this.blocks});
 
-  static String getSuperBlockNameFromKey(Map<String, dynamic> data) {
-    List superBlockNameToList = data.keys.first.split('-');
-
-    // Why is the first word removed??
-    superBlockNameToList.removeAt(0);
-
-    String superBlockName = superBlockNameToList.join(' ');
-
-    return superBlockName;
-  }
-
-  factory SuperBlock.fromJson(Map<String, dynamic> data) {
+  factory SuperBlock.fromJson(
+    Map<String, dynamic> data,
+    String superblockName,
+  ) {
     return SuperBlock(
-      superblockName: getSuperBlockNameFromKey(data),
+      superblockName: superblockName,
       blocks: (data[data.keys.first]['blocks'] as Map)
-          .map((key, value) => MapEntry(
+          .map(
+            (key, value) => MapEntry(
+              key,
+              Block.fromJson(
+                value['challenges'],
+                value['desc'],
                 key,
-                Block.fromJson(value['challenges'], value['desc'], key),
-              ))
+              ),
+            ),
+          )
           .values
           .toList()
         ..sort(
@@ -85,8 +83,16 @@ class Block {
     );
   }
 
-  static Map<String, dynamic> toObject() {
-    return {};
+  static Map<String, dynamic> toCachedObject(Block block) {
+    return {
+      'superBlock': block.superBlock,
+      'name': block.name,
+      'dashedName': block.dashedName,
+      'description': block.description,
+      'order': block.order,
+      'isStepBased': block.isStepBased,
+      'challenges': block.challenges,
+    };
   }
 }
 

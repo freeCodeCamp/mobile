@@ -89,26 +89,33 @@ class LearnViewModel extends BaseViewModel {
     return [];
   }
 
-  Future<SuperBlock> getSuperBlockData(String superBlockName) async {
+  Future<SuperBlock> getSuperBlockData(
+    String superBlockDashedName,
+    String superBlockName,
+  ) async {
     String baseUrl = await _learnService.getBaseUrl();
 
     final http.Response res = await http.get(
       Uri.parse(
-        '$baseUrl/curriculum-data/v1/$superBlockName.json',
+        '$baseUrl/curriculum-data/v1/$superBlockDashedName.json',
       ),
     );
 
     if (res.statusCode == 200) {
-      return SuperBlock.fromJson(jsonDecode(res.body));
+      return SuperBlock.fromJson(jsonDecode(res.body), superBlockName);
     } else {
-      throw Exception();
+      throw Exception(e);
     }
   }
 
   void routeToSuperBlock(String dashedName, String name) {
-    _navigationService.navigateTo(Routes.superBlockView,
-        arguments: SuperBlockViewArguments(
-            superBlockDashedName: dashedName, superblockName: name));
+    _navigationService.navigateTo(
+      Routes.superBlockView,
+      arguments: SuperBlockViewArguments(
+        superBlockDashedName: dashedName,
+        superBlockName: name,
+      ),
+    );
   }
 
   void goBack() {
