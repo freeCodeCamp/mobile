@@ -1,12 +1,14 @@
 import 'package:flutter/material.dart';
+import 'package:freecodecamp/app/app.locator.dart';
 import 'package:freecodecamp/models/learn/curriculum_model.dart';
 import 'package:freecodecamp/service/authentication/authentication_service.dart';
+import 'package:freecodecamp/service/learn/learn_offline_service.dart';
 import 'package:freecodecamp/ui/views/learn/learn-builders/block-builder/block_builder_view.dart';
 import 'package:freecodecamp/ui/views/learn/learn/learn_model.dart';
 import 'package:stacked/stacked.dart';
 
 class SuperBlockView extends StatelessWidget {
-  const SuperBlockView(
+  SuperBlockView(
       {Key? key,
       required this.superBlockDashedName,
       required this.superblockName})
@@ -14,6 +16,8 @@ class SuperBlockView extends StatelessWidget {
 
   final String superBlockDashedName;
   final String superblockName;
+
+  final learnOfflineService = locator<LearnOfflineService>();
 
   @override
   Widget build(BuildContext context) {
@@ -29,6 +33,31 @@ class SuperBlockView extends StatelessWidget {
         body: FutureBuilder<SuperBlock>(
           future: model.getSuperBlockData(superBlockDashedName),
           builder: ((context, snapshot) {
+            if (!snapshot.hasError) {
+              return Center(
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    const Padding(
+                      padding: EdgeInsets.all(8.0),
+                      child: Text(
+                        'Seems like you are offline',
+                        style: TextStyle(
+                          fontSize: 16,
+                        ),
+                      ),
+                    ),
+                    ElevatedButton(
+                      onPressed: () {},
+                      child: const Text(
+                        'Show Downloaded Challenges',
+                      ),
+                    )
+                  ],
+                ),
+              );
+            }
+
             if (snapshot.hasData) {
               SuperBlock superBlock = snapshot.data as SuperBlock;
 

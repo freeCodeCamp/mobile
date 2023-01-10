@@ -72,7 +72,7 @@ class ChallengeBuilderGridView extends StatelessWidget {
                   ListTile(
                     onTap: () {
                       model.setBlockOpenState(
-                        block.blockName,
+                        block.name,
                         model.isOpen,
                       );
                     },
@@ -103,7 +103,7 @@ class ChallengeBuilderGridView extends StatelessWidget {
                           ),
                         Expanded(
                           child: Text(
-                            block.blockName,
+                            block.name,
                             maxLines: 2,
                             overflow: TextOverflow.ellipsis,
                             style: const TextStyle(
@@ -441,7 +441,7 @@ class OpenCloseIconWidget extends StatelessWidget {
               : const Icon(Icons.expand_more),
           onPressed: () async {
             model.setBlockOpenState(
-              block.blockName,
+              block.name,
               model.isOpen,
             );
           },

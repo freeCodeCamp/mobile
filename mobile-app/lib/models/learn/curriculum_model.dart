@@ -33,7 +33,7 @@ class SuperBlock {
 }
 
 class Block {
-  final String blockName;
+  final String name;
   final String? dashedName;
   final String? superBlock;
   final List description;
@@ -43,13 +43,13 @@ class Block {
   final List<ChallengeListTile> challenges;
 
   Block({
-    required this.blockName,
+    required this.superBlock,
+    required this.name,
+    required this.dashedName,
     required this.description,
     required this.isStepBased,
-    this.dashedName = '',
-    this.superBlock = '',
-    required this.challenges,
     required this.order,
+    required this.challenges,
   });
 
   static bool checkIfStepBased(String superblock) {
@@ -62,11 +62,14 @@ class Block {
     String key,
   ) {
     return Block(
-      blockName: data['name'],
-      description: description,
-      dashedName: data['dashedName'] ?? key,
       superBlock: data['superBlock'],
+      name: data['name'],
+      dashedName: key,
+      description: description,
       order: data['order'],
+      isStepBased: checkIfStepBased(
+        data['superBlock'],
+      ),
       challenges: (data['challengeOrder'] as List)
           .map<ChallengeListTile>(
             (dynamic challenge) => ChallengeListTile(
@@ -79,10 +82,11 @@ class Block {
             ),
           )
           .toList(),
-      isStepBased: checkIfStepBased(
-        data['superBlock'],
-      ),
     );
+  }
+
+  static Map<String, dynamic> toObject() {
+    return {};
   }
 }
 

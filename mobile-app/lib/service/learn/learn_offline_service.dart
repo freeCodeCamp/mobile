@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'dart:convert';
 import 'dart:developer';
+import 'dart:io';
 
 import 'package:freecodecamp/models/learn/challenge_model.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -188,6 +189,17 @@ class LearnOfflineService {
         'storedChallenges',
         challengeObjects.map((e) => jsonEncode(e)).toList(),
       );
+    }
+  }
+
+  Future<void> internetConnectionState() async {
+    try {
+      final result = await InternetAddress.lookup('example.com');
+      if (result.isNotEmpty && result[0].rawAddress.isNotEmpty) {
+        print('connected');
+      }
+    } on SocketException catch (_) {
+      print('not connected');
     }
   }
 }

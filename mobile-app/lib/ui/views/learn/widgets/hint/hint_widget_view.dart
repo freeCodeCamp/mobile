@@ -66,8 +66,9 @@ class HintWidgetView extends StatelessWidget {
     String helpCategoryFile = await rootBundle.loadString(helpCategoryPath);
 
     final String helpCategory = Uri.encodeComponent(
-        jsonDecode(helpCategoryFile)[currChallenge?.block] ?? 'Help');
-    final String blockTitle = challengeModel.block!.blockName;
+      jsonDecode(helpCategoryFile)[currChallenge?.block] ?? 'Help',
+    );
+    final String blockTitle = challengeModel.block!.name;
 
     final userDeviceInfo = await getDeviceInfo();
 

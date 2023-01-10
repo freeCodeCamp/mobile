@@ -63,7 +63,7 @@ class BlockWidget extends StatelessWidget {
         Padding(
           padding: const EdgeInsets.all(16.0),
           child: Text(
-            block.blockName,
+            block.name,
             maxLines: 2,
             overflow: TextOverflow.ellipsis,
             style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 22),
@@ -82,7 +82,7 @@ class BlockWidget extends StatelessWidget {
           ),
           onTap: () {
             model.setBlockOpenState(
-              block.blockName,
+              block.name,
               model.isOpen,
             );
           },
