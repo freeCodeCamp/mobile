@@ -241,6 +241,8 @@ class LearnOfflineService {
             data,
             data['description'],
             data['dashedName'],
+            data['superBlock']['dashedName'],
+            data['superBlock']['name'],
           );
 
           if (dashedBlockName == block.dashedName) {
@@ -255,7 +257,6 @@ class LearnOfflineService {
 
   Future<List<Block?>> returnCachedBlockInfo(
     String superBlockDashedName,
-    String blockDashedName,
   ) async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     List<String>? blocks = prefs.getStringList('storedBlocks');
@@ -270,9 +271,11 @@ class LearnOfflineService {
           data,
           data['description'],
           data['dashedName'],
+          data['superBlock']['dashedName'],
+          data['superBlock']['name'],
         );
 
-        if (block.superBlock == superBlockDashedName) {
+        if (block.superBlock.dashedName == superBlockDashedName) {
           convertedBlocks.add(block);
         }
       }
@@ -283,14 +286,12 @@ class LearnOfflineService {
     return [];
   }
 
-  //TODO : somehow get name from superblock
-
   Future<List<SuperBlockButton>> returnCachedSuperblocks() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
 
     List<String>? blocks = prefs.getStringList('storedBlocks');
 
-    List<String> superBlockNames = [];
+    List<List<String>> superBlockNames = [];
 
     List<SuperBlockButton> buttons = [];
 
@@ -298,18 +299,23 @@ class LearnOfflineService {
       for (int i = 0; i < blocks.length; i++) {
         Map<String, dynamic> data = jsonDecode(blocks[i]);
 
-        if (!superBlockNames.contains(data['superBlock'])) {
-          superBlockNames.add(data['superBlock']);
+        if (!superBlockNames.contains(data['superBlock']['dashedName'])) {
+          superBlockNames.add([
+            data['superBlock']['dashedName'],
+            data['superBlock']['name'],
+          ]);
         }
       }
     }
 
     for (int i = 0; i < superBlockNames.length; i++) {
-      buttons.add(SuperBlockButton(
-        path: superBlockNames[i],
-        name: 'Not available',
-        public: true,
-      ));
+      buttons.add(
+        SuperBlockButton(
+          path: superBlockNames[i][0],
+          name: superBlockNames[i][1],
+          public: true,
+        ),
+      );
     }
 
     return buttons;

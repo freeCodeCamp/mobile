@@ -84,27 +84,27 @@ class SuperBlockView extends StatelessWidget {
         },
         child: ListView.separated(
           separatorBuilder: (context, int i) => Divider(
-            height: superBlock.blocks[i].challenges.length == 1
+            height: superBlock.blocks![i].challenges.length == 1
                 ? 50
-                : superBlock.blocks[i].isStepBased
+                : superBlock.blocks![i].isStepBased
                     ? 3
-                    : superBlock.blocks[i].dashedName == 'es6'
+                    : superBlock.blocks![i].dashedName == 'es6'
                         ? 0
                         : 50,
             color: const Color.fromRGBO(0, 0, 0, 0),
           ),
           shrinkWrap: true,
-          itemCount: superBlock.blocks.length,
+          itemCount: superBlock.blocks!.length,
           physics: const ClampingScrollPhysics(),
           itemBuilder: (context, i) => Padding(
             padding: i == 0
                 ? const EdgeInsets.only(top: 16)
-                : i == superBlock.blocks.length - 1
+                : i == superBlock.blocks!.length - 1
                     ? const EdgeInsets.only(bottom: 16)
                     : EdgeInsets.zero,
             child: BlockBuilderView(
-              key: ObjectKey(superBlock.blocks[i].dashedName),
-              block: superBlock.blocks[i],
+              key: ObjectKey(superBlock.blocks![i].dashedName),
+              block: superBlock.blocks![i],
             ),
           ),
         ),

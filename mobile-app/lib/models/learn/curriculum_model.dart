@@ -1,26 +1,35 @@
 class SuperBlock {
-  final String superblockName;
-  final List<Block> blocks;
+  final String dashedName;
+  final String name;
+  final List<Block>? blocks;
 
-  SuperBlock({required this.superblockName, required this.blocks});
+  SuperBlock({
+    required this.dashedName,
+    required this.name,
+    this.blocks,
+  });
 
   factory SuperBlock.fromJson(
     Map<String, dynamic> data,
-    String superblockName,
+    String dashedName,
+    String name,
   ) {
     return SuperBlock(
-      superblockName: superblockName,
+      dashedName: dashedName,
+      name: name,
       blocks: (data[data.keys.first]['blocks'] as Map)
-          .map(
-            (key, value) => MapEntry(
+          .map((key, value) {
+            return MapEntry(
               key,
               Block.fromJson(
                 value['challenges'],
                 value['desc'],
                 key,
+                dashedName,
+                name,
               ),
-            ),
-          )
+            );
+          })
           .values
           .toList()
         ..sort(
@@ -28,12 +37,19 @@ class SuperBlock {
         ),
     );
   }
+
+  static Map<String, dynamic> toMap(SuperBlock superBlock) {
+    return {
+      'dashedName': superBlock.dashedName,
+      'name': superBlock.name,
+    };
+  }
 }
 
 class Block {
   final String name;
   final String dashedName;
-  final String superBlock;
+  final SuperBlock superBlock;
   final List description;
   final bool isStepBased;
   final int order;
@@ -60,6 +76,8 @@ class Block {
     Map<String, dynamic> data,
     List description,
     String key,
+    String superBlockDashedName,
+    String superBlockName,
   ) {
     // set challengeTiles as a custom field as there needs
     // to be a raw version (challenges).
@@ -67,13 +85,16 @@ class Block {
     data['challengeTiles'] = [];
 
     return Block(
-      superBlock: data['superBlock'],
+      superBlock: SuperBlock(
+        dashedName: superBlockDashedName,
+        name: superBlockName,
+      ),
       name: data['name'],
       dashedName: key,
       description: description,
       order: data['order'],
       isStepBased: checkIfStepBased(
-        data['superBlock'],
+        superBlockDashedName,
       ),
       challenges: data['challengeOrder'],
       challengeTiles: (data['challengeOrder'] as List)
@@ -93,7 +114,10 @@ class Block {
 
   static Map<String, dynamic> toCachedObject(Block block) {
     return {
-      'superBlock': block.superBlock,
+      'superBlock': {
+        'dashedName': block.superBlock.dashedName,
+        'name': block.superBlock.name,
+      },
       'name': block.name,
       'dashedName': block.dashedName,
       'description': block.description,

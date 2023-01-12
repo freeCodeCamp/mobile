@@ -102,7 +102,11 @@ class LearnViewModel extends BaseViewModel {
     );
 
     if (res.statusCode == 200) {
-      return SuperBlock.fromJson(jsonDecode(res.body), superBlockName);
+      return SuperBlock.fromJson(
+        jsonDecode(res.body),
+        superBlockDashedName,
+        superBlockName,
+      );
     } else {
       throw Exception(e);
     }

@@ -315,7 +315,7 @@ class DownloadWidget extends StatelessWidget {
                       block,
                       block.challengeTiles
                           .map((e) =>
-                              '$url/${block.superBlock}/${block.dashedName}/${e.dashedName}/page-data.json')
+                              '$url/${block.superBlock.dashedName}/${block.dashedName}/${e.dashedName}/page-data.json')
                           .toList(),
                     );
                     model.setIsDownloading = true;
