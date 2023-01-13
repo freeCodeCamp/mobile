@@ -7,7 +7,7 @@ import 'package:freecodecamp/service/audio/audio_service.dart';
 import 'package:freecodecamp/service/learn/learn_service.dart';
 import 'package:freecodecamp/service/learn/learn_file_service.dart';
 import 'package:freecodecamp/service/navigation/quick_actions_service.dart';
-import 'package:freecodecamp/service/analytics_service.dart';
+import 'package:freecodecamp/service/firebase/analytics_service.dart';
 
 import 'package:freecodecamp/ui/views/code_radio/code_radio_view.dart';
 import 'package:freecodecamp/ui/views/forum/forum-categories/forum_category_view.dart';

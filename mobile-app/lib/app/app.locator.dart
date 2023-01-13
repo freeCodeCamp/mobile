@@ -12,10 +12,10 @@ import 'package:stacked_services/src/dialog/dialog_service.dart';
 import 'package:stacked_services/src/navigation/navigation_service.dart';
 import 'package:stacked_services/src/snackbar/snackbar_service.dart';
 
-import '../service/analytics_service.dart';
 import '../service/audio/audio_service.dart';
 import '../service/authentication/authentication_service.dart';
 import '../service/developer_service.dart';
+import '../service/firebase/analytics_service.dart';
 import '../service/learn/learn_file_service.dart';
 import '../service/learn/learn_service.dart';
 import '../service/navigation/quick_actions_service.dart';

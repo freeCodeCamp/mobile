@@ -3,7 +3,7 @@ import 'package:fk_user_agent/fk_user_agent.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:freecodecamp/firebase_options.dart';
-import 'package:freecodecamp/service/analytics_service.dart';
+import 'package:freecodecamp/service/firebase/analytics_service.dart';
 import 'package:freecodecamp/service/audio/audio_service.dart';
 import 'package:freecodecamp/service/authentication/authentication_service.dart';
 import 'package:freecodecamp/service/podcast/notification_service.dart';
