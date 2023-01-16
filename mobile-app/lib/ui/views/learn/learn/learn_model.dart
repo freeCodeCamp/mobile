@@ -10,6 +10,7 @@ import 'package:freecodecamp/app/app.router.dart';
 import 'package:freecodecamp/models/learn/curriculum_model.dart';
 import 'package:freecodecamp/models/learn/motivational_quote_model.dart';
 import 'package:freecodecamp/service/authentication/authentication_service.dart';
+import 'package:freecodecamp/service/learn/learn_offline_service.dart';
 import 'package:freecodecamp/service/learn/learn_service.dart';
 import 'package:freecodecamp/ui/widgets/setup_dialog_ui.dart';
 import 'package:stacked/stacked.dart';
@@ -28,18 +29,28 @@ class LearnViewModel extends BaseViewModel {
   final SnackbarService _snack = locator<SnackbarService>();
   SnackbarService get snack => _snack;
 
+  final LearnOfflineService _learnOfflineService =
+      locator<LearnOfflineService>();
+  LearnOfflineService get learnOfflineService => _learnOfflineService;
+
   bool _isLoggedIn = false;
   bool get isLoggedIn => _isLoggedIn;
 
-  Future<List<SuperBlockButton>>? _superBlocks;
-  Future<List<SuperBlockButton>>? get superBlocks => _superBlocks;
-
-  void init(BuildContext context) {
+  void init(BuildContext context) async {
     setupDialogUi();
-    _superBlocks = getSuperBlocks();
     retrieveNewQuote();
     notifyListeners();
     initLoggedInListener();
+  }
+
+  Future<List<SuperBlockButton>> getSuperBlocks() async {
+    return await _learnOfflineService.hasInternet()
+        ? requestSuperBlocks()
+        : _learnOfflineService.returnCachedSuperblocks();
+  }
+
+  void refresh() async {
+    notifyListeners();
   }
 
   void initLoggedInListener() {
@@ -55,7 +66,7 @@ class LearnViewModel extends BaseViewModel {
     snack.showSnackbar(title: 'Not available use the web version', message: '');
   }
 
-  Future<List<SuperBlockButton>> getSuperBlocks() async {
+  Future<List<SuperBlockButton>> requestSuperBlocks() async {
     String baseUrl = await _learnService.getBaseUrl();
 
     final http.Response res = await http.get(
@@ -90,34 +101,46 @@ class LearnViewModel extends BaseViewModel {
   }
 
   Future<SuperBlock> getSuperBlockData(
-    String superBlockDashedName,
-    String superBlockName,
+    String dashedName,
+    String name,
+    bool hasInternet,
   ) async {
     String baseUrl = await _learnService.getBaseUrl();
 
+    if (!hasInternet) {
+      return SuperBlock(
+        dashedName: dashedName,
+        name: name,
+        blocks: await _learnOfflineService.returnCachedBlocks(
+          dashedName,
+        ),
+      );
+    }
+
     final http.Response res = await http.get(
       Uri.parse(
-        '$baseUrl/curriculum-data/v1/$superBlockDashedName.json',
+        '$baseUrl/curriculum-data/v1/$dashedName.json',
       ),
     );
 
     if (res.statusCode == 200) {
       return SuperBlock.fromJson(
         jsonDecode(res.body),
-        superBlockDashedName,
-        superBlockName,
+        dashedName,
+        name,
       );
     } else {
       throw Exception(e);
     }
   }
 
-  void routeToSuperBlock(String dashedName, String name) {
+  void routeToSuperBlock(String dashedName, String name) async {
     _navigationService.navigateTo(
       Routes.superBlockView,
       arguments: SuperBlockViewArguments(
         superBlockDashedName: dashedName,
         superBlockName: name,
+        hasInternet: await learnOfflineService.hasInternet(),
       ),
     );
   }

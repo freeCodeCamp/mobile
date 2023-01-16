@@ -25,61 +25,120 @@ class LearnView extends StatelessWidget {
         resizeToAvoidBottomInset: false,
         backgroundColor: const Color(0xFF0a0a23),
         drawer: const DrawerWidgetView(),
-        body: FutureBuilder<List<SuperBlockButton>>(
-          future: model.superBlocks,
-          builder: (context, snapshot) {
-            if (snapshot.hasData) {
-              var superBlocks = snapshot.data!;
-              return ListView(
-                shrinkWrap: true,
-                children: [
-                  StreamBuilder(
-                    stream: model.auth.isLoggedIn,
-                    builder: ((context, snapshot) {
-                      return Column(
-                        children: [
-                          const CustomAlert(
-                              text:
-                                  "Note: We're still working on the ability to save your progress. To claim certifications, you'll need to submit your projects through freeCodeCamp's website.",
-                              alertType: Alert.warning),
-                          quouteWidget(),
-                          // if (!model.isLoggedIn)
-                          //   loginButton(model, context)
-                          // else
-                          //   welcomeMessage(model)
-                        ],
-                      );
-                    }),
-                  ),
-                  ListView.builder(
-                    physics: const ClampingScrollPhysics(),
-                    shrinkWrap: true,
-                    itemCount: superBlocks.length,
-                    itemBuilder: (BuildContext context, int i) {
-                      return Padding(
-                        padding: const EdgeInsets.only(
-                          top: 12,
-                          left: 8,
-                          right: 8,
-                        ),
-                        child: superBlockBuilder(
-                          superBlocks[i],
-                          context,
-                        ),
-                      );
-                    },
-                  ),
-                  Container(
-                    height: 50,
-                  )
-                ],
-              );
-            } else {
-              return const Center(child: CircularProgressIndicator());
-            }
+        body: RefreshIndicator(
+          backgroundColor: const Color(0xFF0a0a23),
+          color: Colors.white,
+          onRefresh: () {
+            model.refresh();
+
+            return Future.delayed(Duration.zero);
           },
+          child: FutureBuilder<List<SuperBlockButton>>(
+            future: model.getSuperBlocks(),
+            builder: (context, snapshot) {
+              if (snapshot.hasData) {
+                if (snapshot.data!.isEmpty) {
+                  return errorMessage(context);
+                }
+
+                List<SuperBlockButton> buttons =
+                    snapshot.data as List<SuperBlockButton>;
+
+                return ListView(
+                  shrinkWrap: true,
+                  children: [
+                    StreamBuilder(
+                      stream: model.auth.isLoggedIn,
+                      builder: ((context, snapshot) {
+                        return Column(
+                          children: [
+                            const CustomAlert(
+                                text:
+                                    "Note: We're still working on the ability to save your progress. To claim certifications, you'll need to submit your projects through freeCodeCamp's website.",
+                                alertType: Alert.warning),
+                            quouteWidget(),
+                            // if (!model.isLoggedIn)
+                            //   loginButton(model, context)
+                            // else
+                            //   welcomeMessage(model)
+                          ],
+                        );
+                      }),
+                    ),
+                    ListView.builder(
+                      physics: const ClampingScrollPhysics(),
+                      shrinkWrap: true,
+                      itemCount: buttons.length,
+                      itemBuilder: (BuildContext context, int i) {
+                        return Padding(
+                          padding: const EdgeInsets.only(
+                            top: 12,
+                            left: 8,
+                            right: 8,
+                          ),
+                          child: superBlockBuilder(
+                            buttons[i],
+                            context,
+                          ),
+                        );
+                      },
+                    ),
+                    Container(
+                      height: 50,
+                    )
+                  ],
+                );
+              }
+
+              if (ConnectionState.waiting == snapshot.connectionState) {
+                return const Center(
+                  child: CircularProgressIndicator(),
+                );
+              }
+
+              return const Center(
+                child: CircularProgressIndicator(),
+              );
+            },
+          ),
         ),
       ),
+    );
+  }
+
+  ListView errorMessage(BuildContext context) {
+    return ListView(
+      children: [
+        Padding(
+          padding: EdgeInsets.symmetric(
+            vertical: MediaQuery.of(context).size.width * 0.5,
+            horizontal: 8,
+          ),
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: const [
+              Text(
+                'You are offline, and have no downloads!',
+                style: TextStyle(
+                  fontWeight: FontWeight.bold,
+                  fontSize: 18,
+                  height: 1.2,
+                ),
+                textAlign: TextAlign.center,
+              ),
+              Text(
+                'Try to download some challenges if you have an unstable connection.',
+                textAlign: TextAlign.center,
+                style: TextStyle(
+                  height: 2.2,
+                  fontSize: 16,
+                ),
+              ),
+            ],
+          ),
+        ),
+      ],
     );
   }
 

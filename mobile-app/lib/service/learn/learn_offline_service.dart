@@ -195,15 +195,19 @@ class LearnOfflineService {
     }
   }
 
-  Future<void> internetConnectionState() async {
+  Future<bool> hasInternet() async {
     try {
-      final result = await InternetAddress.lookup('example.com');
+      final result = await InternetAddress.lookup('google.com');
       if (result.isNotEmpty && result[0].rawAddress.isNotEmpty) {
-        print('connected');
+        return true;
       }
     } on SocketException catch (_) {
       print('not connected');
+
+      return false;
     }
+
+    return false;
   }
 
   Future<void> cacheBlockInfo(Block block) async {
@@ -255,7 +259,7 @@ class LearnOfflineService {
     }
   }
 
-  Future<List<Block?>> returnCachedBlockInfo(
+  Future<List<Block>?> returnCachedBlocks(
     String superBlockDashedName,
   ) async {
     SharedPreferences prefs = await SharedPreferences.getInstance();

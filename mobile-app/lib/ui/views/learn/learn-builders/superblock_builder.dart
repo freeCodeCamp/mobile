@@ -8,14 +8,16 @@ import 'package:freecodecamp/ui/views/learn/learn/learn_model.dart';
 import 'package:stacked/stacked.dart';
 
 class SuperBlockView extends StatelessWidget {
-  SuperBlockView({
-    Key? key,
-    required this.superBlockDashedName,
-    required this.superBlockName,
-  }) : super(key: key);
+  SuperBlockView(
+      {Key? key,
+      required this.superBlockDashedName,
+      required this.superBlockName,
+      required this.hasInternet})
+      : super(key: key);
 
   final String superBlockDashedName;
   final String superBlockName;
+  final bool hasInternet;
 
   final learnOfflineService = locator<LearnOfflineService>();
 
@@ -34,40 +36,27 @@ class SuperBlockView extends StatelessWidget {
           future: model.getSuperBlockData(
             superBlockDashedName,
             superBlockName,
+            hasInternet,
           ),
           builder: ((context, snapshot) {
-            if (snapshot.hasError) {
-              return Center(
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    const Padding(
-                      padding: EdgeInsets.all(8.0),
-                      child: Text(
-                        'Seems like you are offline',
-                        style: TextStyle(
-                          fontSize: 16,
-                        ),
-                      ),
-                    ),
-                    ElevatedButton(
-                      onPressed: () {},
-                      child: const Text(
-                        'Show Downloaded Challenges',
-                      ),
-                    )
-                  ],
-                ),
-              );
-            }
-
             if (snapshot.hasData) {
-              SuperBlock superBlock = snapshot.data as SuperBlock;
+              if (snapshot.data is SuperBlock) {
+                SuperBlock superBlock = snapshot.data as SuperBlock;
 
-              return superBlockTemplate(model, superBlock);
+                if (superBlock.blocks == null || superBlock.blocks!.isEmpty) {
+                  return const Text('You are offline, and no downloads!');
+                }
+                return superBlockTemplate(model, superBlock);
+              }
             }
 
-            return const Center(child: CircularProgressIndicator());
+            if (snapshot.hasError) {
+              return const Text('Something whent wrong, please refresh!');
+            }
+
+            return const Center(
+              child: CircularProgressIndicator(),
+            );
           }),
         ),
       ),

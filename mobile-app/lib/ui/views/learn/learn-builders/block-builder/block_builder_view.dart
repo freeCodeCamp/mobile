@@ -3,7 +3,6 @@ import 'package:freecodecamp/models/learn/curriculum_model.dart';
 import 'package:freecodecamp/ui/views/learn/learn-builders/block-builder/block_builder_model.dart';
 import 'package:freecodecamp/ui/views/learn/learn-builders/challenge-builder/challenge_builder_grid_view.dart';
 import 'package:freecodecamp/ui/views/learn/learn-builders/challenge-builder/challenge_builder_list_view.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 import 'package:stacked/stacked.dart';
 
 class BlockBuilderView extends StatelessWidget {
@@ -17,11 +16,6 @@ class BlockBuilderView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return ViewModelBuilder<BlockBuilderModel>.reactive(
-      onModelReady: (model) async {
-        SharedPreferences prefs = await SharedPreferences.getInstance();
-
-        prefs.clear();
-      },
       viewModelBuilder: () => BlockBuilderModel(),
       builder: (context, model, child) => Column(
         mainAxisAlignment: MainAxisAlignment.start,
