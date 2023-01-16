@@ -4,7 +4,7 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:freecodecamp/models/podcasts/podcasts_model.dart';
 import 'package:freecodecamp/ui/views/podcast/episode-list/episode_list_view.dart';
-import 'package:freecodecamp/ui/views/podcast/podcast-list/podcast_list_view_model.dart';
+import 'package:freecodecamp/ui/views/podcast/podcast-list/podcast_list_viewmodel.dart';
 import 'package:freecodecamp/ui/widgets/drawer_widget/drawer_widget_view.dart';
 import 'package:stacked/stacked.dart';
 

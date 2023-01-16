@@ -1,3 +1,5 @@
+// ignore_for_file: file_names
+
 import 'dart:async';
 import 'package:freecodecamp/models/code-radio/code_radio_model.dart';
 import 'package:freecodecamp/service/audio/audio_service.dart';

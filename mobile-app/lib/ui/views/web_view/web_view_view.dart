@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:freecodecamp/ui/views/web_view/web_view_model.dart';
+import 'package:freecodecamp/ui/views/web_view/web_viewmodel.dart';
 import 'package:stacked/stacked.dart';
 import 'package:webview_flutter/webview_flutter.dart';
 

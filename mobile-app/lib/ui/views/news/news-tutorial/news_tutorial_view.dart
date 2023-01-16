@@ -4,7 +4,7 @@ import 'package:freecodecamp/models/news/tutorial_model.dart';
 import 'package:freecodecamp/ui/views/news/news-bookmark/news_bookmark_widget.dart';
 import 'package:share_plus/share_plus.dart';
 import 'package:stacked/stacked.dart';
-import 'news_tutorial_view_model.dart';
+import 'news_tutorial_viewmodel.dart';
 
 class NewsTutorialHeader extends StatelessWidget {
   const NewsTutorialHeader({Key? key, required this.tutorial})
