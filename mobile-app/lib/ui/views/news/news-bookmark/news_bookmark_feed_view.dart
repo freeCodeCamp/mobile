@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:freecodecamp/ui/views/news/news-bookmark/news_bookmark_model.dart';
+import 'package:freecodecamp/ui/views/news/news-bookmark/news_bookmark_view_model.dart';
 import 'package:stacked/stacked.dart';
 
 class NewsBookmarkFeedView extends StatelessWidget {
@@ -9,8 +9,8 @@ class NewsBookmarkFeedView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return ViewModelBuilder<NewsBookmarkModel>.reactive(
-      viewModelBuilder: () => NewsBookmarkModel(),
+    return ViewModelBuilder<NewsBookmarkViewModel>.reactive(
+      viewModelBuilder: () => NewsBookmarkViewModel(),
       onViewModelReady: (model) async {
         model.hasBookmarkedTutorials();
         model.updateListView();
@@ -37,7 +37,7 @@ class NewsBookmarkFeedView extends StatelessWidget {
   }
 }
 
-ListView populateListViewModel(NewsBookmarkModel model) {
+ListView populateListViewModel(NewsBookmarkViewModel model) {
   return ListView.separated(
     itemCount: model.count,
     separatorBuilder: (BuildContext context, int i) => const Divider(

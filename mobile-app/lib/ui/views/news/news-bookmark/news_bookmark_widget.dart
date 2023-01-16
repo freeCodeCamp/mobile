@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:freecodecamp/ui/views/news/news-tutorial/news_tutorial_view.dart';
-import 'package:freecodecamp/ui/views/news/news-bookmark/news_bookmark_model.dart';
+import 'package:freecodecamp/ui/views/news/news-bookmark/news_bookmark_view_model.dart';
 import 'package:stacked/stacked.dart';
 
 class NewsBookmarkViewWidget extends StatelessWidget {
@@ -13,8 +13,8 @@ class NewsBookmarkViewWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return ViewModelBuilder<NewsBookmarkModel>.reactive(
-      viewModelBuilder: () => NewsBookmarkModel(),
+    return ViewModelBuilder<NewsBookmarkViewModel>.reactive(
+      viewModelBuilder: () => NewsBookmarkViewModel(),
       onViewModelReady: (model) => model.isTutorialBookmarked(tutorial),
       builder: (context, model, child) => BottomButton(
         key: const Key('bookmark_btn'),

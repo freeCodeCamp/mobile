@@ -5,8 +5,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_html/flutter_html.dart';
 import 'package:freecodecamp/models/podcasts/episodes_model.dart';
 import 'package:freecodecamp/models/podcasts/podcasts_model.dart';
-import 'package:freecodecamp/ui/views/podcast/episode-list/episode_list_model.dart';
-import 'package:freecodecamp/ui/views/podcast/podcast-list/podcast_list_model.dart';
+import 'package:freecodecamp/ui/views/podcast/episode-list/episode_list_view_model.dart';
+import 'package:freecodecamp/ui/views/podcast/podcast-list/podcast_list_view_model.dart';
 import 'package:freecodecamp/ui/widgets/podcast_widgets/podcast_tilte_widget.dart';
 import 'package:html/dom.dart' as dom;
 import 'package:infinite_scroll_pagination/infinite_scroll_pagination.dart';
@@ -28,8 +28,8 @@ class EpisodeListView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return ViewModelBuilder<EpisodeListModel>.reactive(
-      viewModelBuilder: () => EpisodeListModel(podcast),
+    return ViewModelBuilder<EpisodeListViewModel>.reactive(
+      viewModelBuilder: () => EpisodeListViewModel(podcast),
       onViewModelReady: (model) => model.initState(isDownloadView),
       builder: (context, model, child) => Scaffold(
         appBar: AppBar(
@@ -119,7 +119,7 @@ class EpisodeListView extends StatelessWidget {
     );
   }
 
-  Column description(EpisodeListModel model) {
+  Column description(EpisodeListViewModel model) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -169,7 +169,7 @@ class EpisodeListView extends StatelessWidget {
         isDownloadView
             ? Image.file(
                 File(
-                  '${PodcastListModel.appDir.path}/images/podcast/${podcast.id}.jpg',
+                  '${PodcastListViewModel.appDir.path}/images/podcast/${podcast.id}.jpg',
                 ),
               )
             : CachedNetworkImage(

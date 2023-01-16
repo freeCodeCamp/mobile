@@ -1,7 +1,7 @@
 import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:freecodecamp/models/code-radio/code_radio_model.dart';
-import 'package:freecodecamp/ui/views/code_radio/code_radio_viemodel.dart';
+import 'package:freecodecamp/ui/views/code_radio/code_radio_view_model.dart';
 import 'package:freecodecamp/ui/widgets/drawer_widget/drawer_widget_view.dart';
 import 'package:stacked/stacked.dart';
 
@@ -32,8 +32,9 @@ class CodeRadioView extends StatelessWidget {
             stream: model.channel.stream,
             builder: (context, snapshot) {
               if (snapshot.hasData) {
-                CodeRadio radio =
-                    CodeRadio.fromJson(jsonDecode(snapshot.data.toString()));
+                CodeRadio radio = CodeRadio.fromJson(jsonDecode(
+                  snapshot.data.toString(),
+                ));
 
                 if (!model.audioService.isPlaying('coderadio') &&
                     !model.stoppedManually) {
@@ -61,7 +62,9 @@ class CodeRadioView extends StatelessWidget {
                           children: [
                             Row(
                               children: [
-                                Expanded(child: playPauseButton(model, ctxt)),
+                                Expanded(
+                                  child: playPauseButton(model, ctxt),
+                                ),
                               ],
                             ),
                           ],
@@ -87,23 +90,25 @@ class CodeRadioView extends StatelessWidget {
       alignment: Alignment.center,
       children: [
         Container(
-            constraints: BoxConstraints(
-                minHeight: album.height * 0.45,
-                minWidth: album.width,
-                maxHeight: album.height * 0.45,
-                maxWidth: album.width),
-            color: const Color.fromRGBO(0x2A, 0x2A, 0x40, 1),
-            child: Image.network(
-              radio!.nowPlaying.artUrl,
-              fit: BoxFit.cover,
-            )),
+          constraints: BoxConstraints(
+              minHeight: album.height * 0.45,
+              minWidth: album.width,
+              maxHeight: album.height * 0.45,
+              maxWidth: album.width),
+          color: const Color.fromRGBO(0x2A, 0x2A, 0x40, 1),
+          child: Image.network(
+            radio!.nowPlaying.artUrl,
+            fit: BoxFit.cover,
+          ),
+        ),
         Text(
           '${radio.totalListeners} people are listening right now',
           textAlign: TextAlign.center,
           style: const TextStyle(
-              color: Color.fromRGBO(1, 1, 1, 0.5),
-              fontSize: 36,
-              fontWeight: FontWeight.w800),
+            color: Color.fromRGBO(1, 1, 1, 0.5),
+            fontSize: 36,
+            fontWeight: FontWeight.w800,
+          ),
         )
       ],
     );
@@ -111,20 +116,21 @@ class CodeRadioView extends StatelessWidget {
 
   StreamBuilder playPauseButton(CodeRadioViewModel model, BuildContext ctxt) {
     return StreamBuilder(
-        stream: model.audioService.queue.stream,
-        builder: (context, snapshot) {
-          return ElevatedButton.icon(
-              style: ButtonStyle(
-                backgroundColor: MaterialStateProperty.all<Color>(
-                    const Color.fromRGBO(0x2A, 0x2A, 0x40, 1)),
-              ),
-              onPressed: () {
-                model.pauseUnpauseRadio();
-              },
-              icon:
-                  Icon(model.stoppedManually ? Icons.play_arrow : Icons.pause),
-              label: Text(model.stoppedManually ? 'PLAY' : 'PAUSE'));
-        });
+      stream: model.audioService.queue.stream,
+      builder: (context, snapshot) {
+        return ElevatedButton.icon(
+          style: ButtonStyle(
+            backgroundColor: MaterialStateProperty.all<Color>(
+                const Color.fromRGBO(0x2A, 0x2A, 0x40, 1)),
+          ),
+          onPressed: () {
+            model.pauseUnpauseRadio();
+          },
+          icon: Icon(model.stoppedManually ? Icons.play_arrow : Icons.pause),
+          label: Text(model.stoppedManually ? 'PLAY' : 'PAUSE'),
+        );
+      },
+    );
   }
 
   Widget nextSong(CodeRadio? radio) {
@@ -184,10 +190,11 @@ class CodeRadioView extends StatelessWidget {
               builder: (context, snapshot) {
                 if (snapshot.hasData) {
                   return LinearProgressIndicator(
-                      value: radio.duration != 0
-                          ? double.parse(snapshot.data.toString()) /
-                              radio.duration
-                          : 1);
+                    value: radio.duration != 0
+                        ? double.parse(snapshot.data.toString()) /
+                            radio.duration
+                        : 1,
+                  );
                 }
 
                 return const LinearProgressIndicator(

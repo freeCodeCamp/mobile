@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:freecodecamp/main.dart' as app;
-import 'package:freecodecamp/ui/views/news/news-tutorial/news_tutorial_header.dart';
-import 'package:freecodecamp/ui/views/news/news-feed/news_feed_lazyloading.dart';
+import 'package:freecodecamp/ui/views/news/news-feed/news_feed_view_model.dart';
+import 'package:freecodecamp/ui/views/news/news-tutorial/news_tutorial_view.dart';
 import 'package:integration_test/integration_test.dart';
 import 'package:path/path.dart' as path;
 import 'package:sqflite/sqflite.dart';

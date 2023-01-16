@@ -12,7 +12,7 @@ import 'dart:io';
 
 import 'package:stacked_services/stacked_services.dart';
 
-class NewsBookmarkModel extends BaseViewModel {
+class NewsBookmarkViewModel extends BaseViewModel {
   bool _isBookmarked = false;
   bool get bookmarked => _isBookmarked;
 

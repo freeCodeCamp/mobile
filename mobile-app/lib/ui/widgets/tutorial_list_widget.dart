@@ -4,7 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:freecodecamp/app/app.locator.dart';
 import 'package:freecodecamp/app/app.router.dart';
 import 'package:freecodecamp/models/news/tutorial_model.dart';
-import 'package:freecodecamp/ui/views/news/news-feed/news_feed_model.dart';
+import 'package:freecodecamp/ui/views/news/news-feed/news_feed_view_model.dart';
 
 import 'package:http/http.dart' as http;
 import 'package:flutter_dotenv/flutter_dotenv.dart';
@@ -134,7 +134,7 @@ class TileLayout extends StatelessWidget {
                   const EdgeInsets.symmetric(horizontal: 10, vertical: 10),
               horizontalTitleGap: 10,
               subtitle: Text(
-                NewsFeedModel.parseDate(tutorial.createdAt),
+                NewsFeedViewModel.parseDate(tutorial.createdAt),
                 style: const TextStyle(height: 2),
               ),
               trailing: Container(
