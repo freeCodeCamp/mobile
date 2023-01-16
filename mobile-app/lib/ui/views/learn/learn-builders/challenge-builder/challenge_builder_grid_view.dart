@@ -22,7 +22,7 @@ class ChallengeBuilderGridView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return ViewModelBuilder<ChallengeBuilderModel>.reactive(
-        onModelReady: (model) {
+        onViewModelReady: (model) {
           model.init(block.challenges);
           model.setIsOpen = isOpen;
         },

@@ -25,7 +25,7 @@ class PodcastListView extends StatelessWidget {
   Widget build(BuildContext context) {
     return ViewModelBuilder<PodcastListModel>.reactive(
       viewModelBuilder: () => PodcastListModel(),
-      onModelReady: (model) async => await model.init(),
+      onViewModelReady: (model) async => await model.init(),
       builder: (context, model, child) => Scaffold(
         appBar: AppBar(
           title: titles.elementAt(model.index),

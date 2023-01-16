@@ -22,7 +22,7 @@ class PassWidgetView extends StatelessWidget {
   Widget build(BuildContext context) {
     return ViewModelBuilder<PassWidgetModel>.reactive(
       viewModelBuilder: () => PassWidgetModel(),
-      onModelReady: (model) => model.init(),
+      onViewModelReady: (model) => model.init(),
       builder: (context, model, child) => SafeArea(
         child: Column(
           children: [

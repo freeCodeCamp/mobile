@@ -7,7 +7,7 @@ class ForumSettingsView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return ViewModelBuilder<ForumSettingsViewModel>.reactive(
-        onModelReady: (model) => model.init(),
+        onViewModelReady: (model) => model.init(),
         viewModelBuilder: () => ForumSettingsViewModel(),
         builder: (context, model, child) => Scaffold(
               appBar: AppBar(

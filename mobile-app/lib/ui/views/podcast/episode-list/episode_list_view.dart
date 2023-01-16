@@ -30,7 +30,7 @@ class EpisodeListView extends StatelessWidget {
   Widget build(BuildContext context) {
     return ViewModelBuilder<EpisodeListModel>.reactive(
       viewModelBuilder: () => EpisodeListModel(podcast),
-      onModelReady: (model) => model.initState(isDownloadView),
+      onViewModelReady: (model) => model.initState(isDownloadView),
       builder: (context, model, child) => Scaffold(
         appBar: AppBar(
           title: Text(podcast.title!),

@@ -14,7 +14,7 @@ class NewsTutorialView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return ViewModelBuilder<NewsTutorialViewModel>.reactive(
-      onModelReady: (model) => model.initState(refId),
+      onViewModelReady: (model) => model.initState(refId),
       onDispose: (model) => model.removeScrollPosition(),
       builder: (context, model, child) => Scaffold(
         backgroundColor: const Color(0xFF0a0a23),

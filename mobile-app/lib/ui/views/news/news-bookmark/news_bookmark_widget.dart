@@ -15,7 +15,7 @@ class NewsBookmarkViewWidget extends StatelessWidget {
   Widget build(BuildContext context) {
     return ViewModelBuilder<NewsBookmarkModel>.reactive(
       viewModelBuilder: () => NewsBookmarkModel(),
-      onModelReady: (model) => model.isTutorialBookmarked(tutorial),
+      onViewModelReady: (model) => model.isTutorialBookmarked(tutorial),
       builder: (context, model, child) => BottomButton(
         key: const Key('bookmark_btn'),
         label: model.bookmarked ? 'Bookmarked' : 'Bookmark',

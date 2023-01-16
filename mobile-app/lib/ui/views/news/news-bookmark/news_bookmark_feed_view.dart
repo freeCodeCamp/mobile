@@ -11,7 +11,7 @@ class NewsBookmarkFeedView extends StatelessWidget {
   Widget build(BuildContext context) {
     return ViewModelBuilder<NewsBookmarkModel>.reactive(
       viewModelBuilder: () => NewsBookmarkModel(),
-      onModelReady: (model) async {
+      onViewModelReady: (model) async {
         model.hasBookmarkedTutorials();
         model.updateListView();
       },
