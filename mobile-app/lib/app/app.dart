@@ -10,7 +10,7 @@ import 'package:freecodecamp/service/navigation/quick_actions_service.dart';
 
 import 'package:freecodecamp/ui/views/code_radio/code_radio_view.dart';
 import 'package:freecodecamp/ui/views/home/home_view.dart';
-import 'package:freecodecamp/ui/views/news/news-author/news_author_view_model.dart';
+import 'package:freecodecamp/ui/views/news/news-author/news_author_view.dart';
 import 'package:freecodecamp/ui/views/podcast/podcast-list/podcast_list_view.dart';
 import 'package:freecodecamp/ui/views/podcast/episode/episode_view.dart';
 import 'package:freecodecamp/ui/views/news/news-tutorial/news_tutorial_view.dart';
@@ -36,7 +36,7 @@ import 'package:sqflite_migration_service/sqflite_migration_service.dart';
     MaterialRoute(page: NewsTutorialView),
     MaterialRoute(page: NewsBookmarkTutorialView),
     MaterialRoute(page: NewsFeedView),
-    MaterialRoute(page: NewsAuthorViewModel),
+    MaterialRoute(page: NewsAuthorView),
     MaterialRoute(page: NewsImageView),
     MaterialRoute(page: CodeRadioView),
     MaterialRoute(page: SuperBlockView),

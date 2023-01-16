@@ -181,8 +181,8 @@ class NewsBookmarkViewModel extends BaseViewModel {
 
   void routeToBookmarkedTutorial(BookmarkedTutorial tutorial) {
     _navigationService.navigateTo(
-      Routes.newsBookmarkPostView,
-      arguments: NewsBookmarkPostViewArguments(
+      Routes.newsBookmarkTutorialView,
+      arguments: NewsBookmarkTutorialViewArguments(
         tutorial: tutorial,
       ),
     );
