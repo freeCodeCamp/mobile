@@ -9,8 +9,8 @@ import 'package:http/http.dart' as http;
 import 'package:infinite_scroll_pagination/infinite_scroll_pagination.dart';
 import 'package:stacked/stacked.dart';
 
-class EpisodeListModel extends BaseViewModel {
-  EpisodeListModel(this.podcast);
+class EpisodeListViewModel extends BaseViewModel {
+  EpisodeListViewModel(this.podcast);
 
   final _databaseService = locator<PodcastsDatabaseService>();
   final _developerService = locator<DeveloperService>();

@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:algolia/algolia.dart';
-import 'package:freecodecamp/ui/views/news/news-search/news_search_model.dart';
+import 'package:freecodecamp/ui/views/news/news-search/news_search_viewmodel.dart';
 
 import 'package:stacked/stacked.dart';
 

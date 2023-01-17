@@ -12,7 +12,7 @@ import 'dart:io';
 
 import 'package:stacked_services/stacked_services.dart';
 
-class NewsBookmarkModel extends BaseViewModel {
+class NewsBookmarkViewModel extends BaseViewModel {
   bool _isBookmarked = false;
   bool get bookmarked => _isBookmarked;
 
@@ -181,8 +181,8 @@ class NewsBookmarkModel extends BaseViewModel {
 
   void routeToBookmarkedTutorial(BookmarkedTutorial tutorial) {
     _navigationService.navigateTo(
-      Routes.newsBookmarkPostView,
-      arguments: NewsBookmarkPostViewArguments(
+      Routes.newsBookmarkTutorialView,
+      arguments: NewsBookmarkTutorialViewArguments(
         tutorial: tutorial,
       ),
     );

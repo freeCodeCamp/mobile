@@ -1,22 +1,22 @@
 import 'package:flutter/material.dart';
 import 'package:freecodecamp/models/news/bookmarked_tutorial_model.dart';
-import 'package:freecodecamp/ui/views/news/news-tutorial/news_tutorial_model.dart';
-import 'package:freecodecamp/ui/views/news/news-bookmark/news_bookmark_model.dart';
+import 'package:freecodecamp/ui/views/news/news-tutorial/news_tutorial_viewmodel.dart';
+import 'package:freecodecamp/ui/views/news/news-bookmark/news_bookmark_viewmodel.dart';
 import 'package:stacked/stacked.dart';
 
-class NewsBookmarkPostView extends StatelessWidget {
+class NewsBookmarkTutorialView extends StatelessWidget {
   final BookmarkedTutorial tutorial;
 
-  const NewsBookmarkPostView({
+  const NewsBookmarkTutorialView({
     Key? key,
     required this.tutorial,
   }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
-    return ViewModelBuilder<NewsBookmarkModel>.reactive(
-      viewModelBuilder: () => NewsBookmarkModel(),
-      onModelReady: (model) => model.isTutorialBookmarked(tutorial),
+    return ViewModelBuilder<NewsBookmarkViewModel>.reactive(
+      viewModelBuilder: () => NewsBookmarkViewModel(),
+      onViewModelReady: (model) => model.isTutorialBookmarked(tutorial),
       onDispose: (model) => model.updateListView(),
       builder: (context, model, child) => Scaffold(
         backgroundColor: const Color(0xFF0a0a23),
