@@ -7,7 +7,7 @@
 
 [freeCodeCamp.org](https://www.freecodecamp.org) is an online learning platform that offers a comprehensive curriculum in web development and machine learning. The curriculum is self-paced and available free of charge. Our platform offers interactive coding challenges to help learners expand their skills.
 
-To provide more flexibility, we have adapted the curriculum to a flutter based mobile application. The mobile app aims to provide an alternative option for users who are not able to access a computer or internet connection. This app may be useful for those who prefer to learn on-the-go or need offline access to the curriculum.
+To provide more flexibility, we have adapted the curriculum to a flutter based mobile application. The mobile app aims to provide an alternative option for users who are not able to access a computer or high-speed internet connection. This app may be useful for those who prefer to learn on-the-go or need offline access to the curriculum.
 
 ### Roadmap
 At freeCodeCamp, we're always working to improve our mobile app for our community of learners. Here's a glimpse of what's to come in the future:
