@@ -8,12 +8,12 @@ import 'package:freecodecamp/ui/views/learn/learn/learn_model.dart';
 import 'package:stacked/stacked.dart';
 
 class SuperBlockView extends StatelessWidget {
-  SuperBlockView(
-      {Key? key,
-      required this.superBlockDashedName,
-      required this.superBlockName,
-      required this.hasInternet})
-      : super(key: key);
+  SuperBlockView({
+    Key? key,
+    required this.superBlockDashedName,
+    required this.superBlockName,
+    required this.hasInternet,
+  }) : super(key: key);
 
   final String superBlockDashedName;
   final String superBlockName;

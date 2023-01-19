@@ -221,13 +221,14 @@ class LearnOfflineService {
         jsonEncode(blockToJson),
       ]);
     } else {
-      List newInfo = storedBlocks;
+      List<String> newInfo = storedBlocks;
 
-      newInfo.add(blockToJson);
+      newInfo.add(jsonEncode(newInfo));
 
-      prefs.setStringList('storedBlocks', [
-        jsonEncode(newInfo),
-      ]);
+      prefs.setStringList(
+        'storedBlocks',
+        newInfo,
+      );
     }
   }
 
@@ -251,7 +252,17 @@ class LearnOfflineService {
 
           if (dashedBlockName == block.dashedName) {
             storedBlocks.removeAt(i);
+
+            if (storedBlocks.isEmpty) {
+              prefs.setStringList('storedBlocks', []);
+            } else {
+              prefs.setStringList('storedBlocks', storedBlocks);
+            }
+
+            break;
           }
+
+          print('stored blocks ${prefs.getStringList("storedBlocks")}');
         }
       }
     } catch (e) {
@@ -259,7 +270,7 @@ class LearnOfflineService {
     }
   }
 
-  Future<List<Block>?> returnCachedBlocks(
+  Future<List<Block>?> getCachedBlocks(
     String superBlockDashedName,
   ) async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
@@ -268,6 +279,8 @@ class LearnOfflineService {
     List<Block> convertedBlocks = [];
 
     if (blocks != null) {
+      if (blocks.isEmpty) return [];
+
       for (int i = 0; i < blocks.length; i++) {
         Map<String, dynamic> data = jsonDecode(blocks[i]);
 
@@ -290,7 +303,7 @@ class LearnOfflineService {
     return [];
   }
 
-  Future<List<SuperBlockButton>> returnCachedSuperblocks() async {
+  Future<List<SuperBlockButton>> getCachedSuperblocks() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
 
     List<String>? blocks = prefs.getStringList('storedBlocks');

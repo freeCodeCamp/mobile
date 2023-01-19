@@ -1,10 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:freecodecamp/app/app.locator.dart';
 import 'package:freecodecamp/models/learn/curriculum_model.dart';
-import 'package:freecodecamp/service/learn/learn_service.dart';
 import 'package:freecodecamp/ui/views/learn/learn-builders/challenge-builder/challenge_builder_model.dart';
 import 'package:freecodecamp/ui/widgets/drawer_widget/drawer_widget_view.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 
 import 'package:stacked/stacked.dart';
 
@@ -13,28 +10,20 @@ class ChallengeBuilderGridView extends StatelessWidget {
   final Block block;
   final bool isOpen;
 
-  ChallengeBuilderGridView({
+  const ChallengeBuilderGridView({
     Key? key,
     required this.block,
     required this.isOpen,
   }) : super(key: key);
 
-  LearnService learnService = locator<LearnService>();
-
   @override
   Widget build(BuildContext context) {
     return ViewModelBuilder<ChallengeBuilderModel>.reactive(
-      onModelReady: (model) async {
+      onViewModelReady: (model) async {
         model.init(block.challengeTiles);
         model.setIsOpen = isOpen;
-
-        SharedPreferences prefs = await SharedPreferences.getInstance();
-
-        prefs.clear();
+        model.setIsDownloaded = await model.isBlockDownloaded(block);
       },
-      // onDispose: (model) {
-      //   model.stopDownload(block.dashedName);
-      // },
       viewModelBuilder: () => ChallengeBuilderModel(),
       builder: (
         context,
@@ -80,7 +69,6 @@ class ChallengeBuilderGridView extends StatelessWidget {
                         ? OpenCloseIconWidget(
                             block: block,
                             model: model,
-                            learnService: learnService,
                           )
                         : null,
                     title: Row(
@@ -130,7 +118,7 @@ class ChallengeBuilderGridView extends StatelessWidget {
                       ? () async {
                           String challenge = block.challengeTiles[0].dashedName;
 
-                          String url = await learnService.getBaseUrl(
+                          String url = await model.learnService.getBaseUrl(
                             '/page-data/learn',
                           );
 
@@ -163,7 +151,6 @@ class ChallengeBuilderGridView extends StatelessWidget {
                         buildDivider(),
                         DownloadWidget(
                           model: model,
-                          learnService: learnService,
                           block: block,
                         ),
                         gridWidget(context, model),
@@ -201,7 +188,6 @@ class ChallengeBuilderGridView extends StatelessWidget {
                   return Center(
                     child: ChallengeTile(
                       block: block,
-                      learnService: learnService,
                       model: model,
                       step: step,
                       isDowloaded: (snapshot.data is bool
@@ -225,14 +211,12 @@ class ChallengeTile extends StatelessWidget {
   const ChallengeTile({
     Key? key,
     required this.block,
-    required this.learnService,
     required this.model,
     required this.step,
     required this.isDowloaded,
   }) : super(key: key);
 
   final Block block;
-  final LearnService learnService;
   final ChallengeBuilderModel model;
   final int step;
   final bool isDowloaded;
@@ -261,7 +245,7 @@ class ChallengeTile extends StatelessWidget {
           onTap: () async {
             String challenge = block.challenges[step].dashedName;
 
-            String url = await learnService.getBaseUrl(
+            String url = await model.learnService.getBaseUrl(
               '/page-data/learn',
             );
 
@@ -289,85 +273,80 @@ class DownloadWidget extends StatelessWidget {
   const DownloadWidget({
     Key? key,
     required this.model,
-    required this.learnService,
     required this.block,
   }) : super(key: key);
 
   final ChallengeBuilderModel model;
-  final LearnService learnService;
-
   final Block block;
 
   @override
   Widget build(BuildContext context) {
     return Column(
       children: [
-        Container(
-          width: MediaQuery.of(context).size.width,
-          margin: const EdgeInsets.symmetric(horizontal: 40),
-          child: ElevatedButton(
-            onPressed: !model.isDownloading
-                ? () async {
-                    String url = await learnService.getBaseUrl(
-                      '/page-data/learn',
-                    );
-                    model.learnOfflineService.getChallengeBatch(
-                      block,
-                      block.challengeTiles
-                          .map((e) =>
-                              '$url/${block.superBlock.dashedName}/${block.dashedName}/${e.dashedName}/page-data.json')
-                          .toList(),
-                    );
-                    model.setIsDownloading = true;
-                  }
-                : null,
-            style: ElevatedButton.styleFrom(
-              backgroundColor: const Color.fromRGBO(0x2A, 0x2A, 0x40, 1),
-            ),
-            child: !model.isDownloading
-                ? const Text('Download All Challenges')
-                : StreamBuilder(
-                    stream: model.learnOfflineService.downloadStream.stream,
-                    builder: ((context, snapshot) {
-                      if (snapshot.connectionState == ConnectionState.waiting) {
-                        return const Text('Starting Download...');
-                      }
-
-                      // if (snapshot.hasError) {
-                      //   model.stopDownload(block.dashedName);
-
-                      //   Timer(const Duration(seconds: 5), () {
-                      //     model.setIsDownloading = false;
-                      //   });
-
-                      //   return const Text('An Error has Occured');
-                      // }
-
-                      if (snapshot.hasData) {
-                        return Text(
-                          '${(snapshot.data as double).toStringAsFixed(2)}%',
-                        );
-                      }
-
-                      return const Text(
-                        'Download All Challenges',
-                      );
-                    }),
-                  ),
-          ),
-        ),
-        if (model.isDownloading)
+        if (!model.isDownloaded)
           Container(
             width: MediaQuery.of(context).size.width,
             margin: const EdgeInsets.symmetric(horizontal: 40),
             child: ElevatedButton(
-              onPressed: () {
-                model.stopDownload(block.dashedName);
+              onPressed: !model.isDownloading
+                  ? () async {
+                      await model.startDownload(block);
+                    }
+                  : () async {
+                      model.stopDownload(block, false);
+                    },
+              style: ElevatedButton.styleFrom(
+                backgroundColor: const Color.fromRGBO(0x2A, 0x2A, 0x40, 1),
+              ),
+              child: !model.isDownloading
+                  ? const Text('Download All Challenges')
+                  : StreamBuilder(
+                      stream: model.learnOfflineService.downloadStream.stream,
+                      builder: ((context, snapshot) {
+                        if (snapshot.connectionState ==
+                            ConnectionState.waiting) {
+                          return const Text('Starting Download...');
+                        }
+
+                        // if (snapshot.hasError) {
+                        //   model.stopDownload(block.dashedName);
+
+                        //   Timer(const Duration(seconds: 5), () {
+                        //     model.setIsDownloading = false;
+                        //   });
+
+                        //   return const Text('An Error has Occured');
+                        // }
+
+                        if (snapshot.hasData) {
+                          return Text(
+                            '${(snapshot.data as double).toStringAsFixed(2)}%',
+                          );
+                        }
+
+                        return const Text(
+                          'Download All Challenges',
+                        );
+                      }),
+                    ),
+            ),
+          ),
+        if (model.isDownloaded || model.isDownloading)
+          Container(
+            width: MediaQuery.of(context).size.width,
+            margin: const EdgeInsets.symmetric(horizontal: 40),
+            child: ElevatedButton(
+              onPressed: () async {
+                model.isDownloading
+                    ? model.stopDownload(block, false)
+                    : model.stopDownload(block, true);
               },
               style: ElevatedButton.styleFrom(
                 backgroundColor: const Color.fromRGBO(0x2A, 0x2A, 0x40, 1),
               ),
-              child: const Text('Cancel Download'),
+              child: model.isDownloading
+                  ? const Text('Cancel Downloading Challenges')
+                  : const Text('Delete Downloaded Challenges'),
             ),
           )
       ],
@@ -424,12 +403,10 @@ class OpenCloseIconWidget extends StatelessWidget {
     Key? key,
     required this.block,
     required this.model,
-    required this.learnService,
   }) : super(key: key);
 
   final Block block;
   final ChallengeBuilderModel model;
-  final LearnService learnService;
 
   @override
   Widget build(BuildContext context) {

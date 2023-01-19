@@ -9,6 +9,7 @@ import 'package:freecodecamp/models/learn/curriculum_model.dart';
 import 'package:freecodecamp/models/main/user_model.dart';
 import 'package:freecodecamp/service/authentication/authentication_service.dart';
 import 'package:freecodecamp/service/learn/learn_offline_service.dart';
+import 'package:freecodecamp/service/learn/learn_service.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:stacked/stacked.dart';
 import 'package:stacked_services/stacked_services.dart';
@@ -25,6 +26,9 @@ class ChallengeBuilderModel extends BaseViewModel {
   bool _isDownloading = false;
   bool get isDownloading => _isDownloading;
 
+  bool _isDownloaded = false;
+  bool get isDownloaded => _isDownloaded;
+
   final bool _isDownloadingSpecific = false;
   bool get isDownloadingSpecific => _isDownloadingSpecific;
 
@@ -33,6 +37,8 @@ class ChallengeBuilderModel extends BaseViewModel {
 
   final learnOfflineService = locator<LearnOfflineService>();
 
+  final learnService = locator<LearnService>();
+
   set setIsOpen(bool widgetIsOpened) {
     _isOpen = widgetIsOpened;
     notifyListeners();
@@ -40,6 +46,11 @@ class ChallengeBuilderModel extends BaseViewModel {
 
   set setIsDownloading(bool value) {
     _isDownloading = value;
+    notifyListeners();
+  }
+
+  set setIsDownloaded(bool value) {
+    _isDownloaded = value;
     notifyListeners();
   }
 
@@ -132,17 +143,58 @@ class ChallengeBuilderModel extends BaseViewModel {
     return const Icon(Icons.circle_outlined);
   }
 
-  void stopDownload(String block) {
+  void stopDownload(Block block, bool isAlreadyDownloaded) async {
     try {
-      learnOfflineService.downloadSub!.pause();
-      learnOfflineService.batchSub!.pause();
-      learnOfflineService.timer!.cancel();
-      learnOfflineService.cancelChallengeDownload(block);
+      if (!isAlreadyDownloaded) {
+        learnOfflineService.downloadSub!.pause();
+        learnOfflineService.batchSub!.pause();
+        learnOfflineService.timer!.cancel();
 
-      setIsDownloading = false;
+        setIsDownloading = false;
+      }
+
+      learnOfflineService.cancelChallengeDownload(block.dashedName).then(
+        (value) async {
+          setIsDownloaded = await isBlockDownloaded(
+            block,
+          );
+        },
+      );
     } catch (e) {
-      throw error('could not exit stream');
+      throw error(e);
     }
+  }
+
+  Future<void> startDownload(Block block) async {
+    String url = await learnService.getBaseUrl(
+      '/page-data/learn',
+    );
+    learnOfflineService.getChallengeBatch(
+      block,
+      block.challengeTiles
+          .map((e) =>
+              '$url/${block.superBlock.dashedName}/${block.dashedName}/${e.dashedName}/page-data.json')
+          .toList(),
+    );
+    setIsDownloading = true;
+  }
+
+  // TODO: only call this function once and set a global variable
+
+  Future<bool> isBlockDownloaded(Block incBlock) async {
+    List<Block>? blocks = await learnOfflineService.getCachedBlocks(
+      incBlock.superBlock.dashedName,
+    );
+
+    if (blocks != null) {
+      for (Block block in blocks) {
+        if (block.dashedName == incBlock.dashedName) {
+          return true;
+        }
+      }
+    }
+
+    return false;
   }
 
   Future<bool> isChallengeDownloaded(String id) async {

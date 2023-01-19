@@ -21,7 +21,7 @@ class ChallengeBuilderListView extends StatelessWidget {
   Widget build(BuildContext context) {
     return ViewModelBuilder<ChallengeBuilderModel>.reactive(
       viewModelBuilder: () => ChallengeBuilderModel(),
-      onModelReady: (model) async {
+      onViewModelReady: (model) async {
         model.init(block.challengeTiles);
         model.setIsOpen = isOpen;
       },

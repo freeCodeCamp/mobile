@@ -46,7 +46,7 @@ class LearnViewModel extends BaseViewModel {
   Future<List<SuperBlockButton>> getSuperBlocks() async {
     return await _learnOfflineService.hasInternet()
         ? requestSuperBlocks()
-        : _learnOfflineService.returnCachedSuperblocks();
+        : _learnOfflineService.getCachedSuperblocks();
   }
 
   void refresh() async {
@@ -111,7 +111,7 @@ class LearnViewModel extends BaseViewModel {
       return SuperBlock(
         dashedName: dashedName,
         name: name,
-        blocks: await _learnOfflineService.returnCachedBlocks(
+        blocks: await _learnOfflineService.getCachedBlocks(
           dashedName,
         ),
       );
