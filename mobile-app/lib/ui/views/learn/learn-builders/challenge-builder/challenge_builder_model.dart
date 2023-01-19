@@ -160,6 +160,8 @@ class ChallengeBuilderModel extends BaseViewModel {
           );
         },
       );
+
+      notifyListeners();
     } catch (e) {
       throw error(e);
     }
@@ -169,14 +171,20 @@ class ChallengeBuilderModel extends BaseViewModel {
     String url = await learnService.getBaseUrl(
       '/page-data/learn',
     );
-    learnOfflineService.getChallengeBatch(
+    learnOfflineService
+        .getChallengeBatch(
       block,
       block.challengeTiles
           .map((e) =>
               '$url/${block.superBlock.dashedName}/${block.dashedName}/${e.dashedName}/page-data.json')
           .toList(),
+    )
+        .then((value) async {
+      setIsDownloaded = true;
+    });
+    setIsDownloading = await isBlockDownloaded(
+      block,
     );
-    setIsDownloading = true;
   }
 
   // TODO: only call this function once and set a global variable

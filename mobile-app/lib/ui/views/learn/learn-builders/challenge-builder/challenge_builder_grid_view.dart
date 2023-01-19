@@ -283,7 +283,7 @@ class DownloadWidget extends StatelessWidget {
   Widget build(BuildContext context) {
     return Column(
       children: [
-        if (!model.isDownloaded)
+        if (!model.isDownloaded || model.isDownloading)
           Container(
             width: MediaQuery.of(context).size.width,
             margin: const EdgeInsets.symmetric(horizontal: 40),

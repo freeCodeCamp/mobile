@@ -220,10 +220,12 @@ class LearnOfflineService {
       prefs.setStringList('storedBlocks', [
         jsonEncode(blockToJson),
       ]);
+
+      log('it is empty');
     } else {
       List<String> newInfo = storedBlocks;
 
-      newInfo.add(jsonEncode(newInfo));
+      newInfo.add(jsonEncode(blockToJson));
 
       prefs.setStringList(
         'storedBlocks',
@@ -256,13 +258,11 @@ class LearnOfflineService {
             if (storedBlocks.isEmpty) {
               prefs.setStringList('storedBlocks', []);
             } else {
-              prefs.setStringList('storedBlocks', storedBlocks);
+              prefs.setStringList('storedBlocks', [...storedBlocks]);
             }
 
             break;
           }
-
-          print('stored blocks ${prefs.getStringList("storedBlocks")}');
         }
       }
     } catch (e) {
