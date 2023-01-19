@@ -10,7 +10,7 @@ import 'package:http/http.dart' as http;
 import 'package:path_provider/path_provider.dart';
 import 'package:stacked/stacked.dart';
 
-class PodcastListModel extends BaseViewModel {
+class PodcastListViewModel extends BaseViewModel {
   final _databaseService = locator<PodcastsDatabaseService>();
   final _developerService = locator<DeveloperService>();
   static late Directory appDir;

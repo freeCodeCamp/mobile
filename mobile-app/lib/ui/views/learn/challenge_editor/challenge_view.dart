@@ -34,7 +34,7 @@ class ChallengeView extends StatelessWidget {
   Widget build(BuildContext context) {
     return ViewModelBuilder<ChallengeModel>.reactive(
       viewModelBuilder: () => ChallengeModel(),
-      onModelReady: (model) {
+      onViewModelReady: (model) {
         model.init(url, block, challengesCompleted);
       },
       builder: (context, model, child) => FutureBuilder<Challenge?>(

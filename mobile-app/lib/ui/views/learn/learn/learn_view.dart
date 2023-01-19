@@ -15,7 +15,7 @@ class LearnView extends StatelessWidget {
   Widget build(BuildContext context) {
     return ViewModelBuilder<LearnViewModel>.reactive(
       viewModelBuilder: () => LearnViewModel(),
-      onModelReady: (model) => model.init(context),
+      onViewModelReady: (model) => model.init(context),
       builder: (context, model, child) => Scaffold(
         extendBodyBehindAppBar: true,
         appBar: AppBar(
