@@ -4,7 +4,7 @@ import 'package:freecodecamp/models/learn/curriculum_model.dart';
 import 'package:freecodecamp/service/authentication/authentication_service.dart';
 import 'package:freecodecamp/service/learn/learn_offline_service.dart';
 import 'package:freecodecamp/ui/views/learn/learn-builders/block-builder/block_builder_view.dart';
-import 'package:freecodecamp/ui/views/learn/learn/learn_model.dart';
+import 'package:freecodecamp/ui/views/learn/learn/learn_viewmodel.dart';
 import 'package:stacked/stacked.dart';
 
 class SuperBlockView extends StatelessWidget {

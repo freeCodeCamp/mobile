@@ -14,7 +14,7 @@ import 'package:freecodecamp/models/podcasts/episodes_model.dart' as _i17;
 import 'package:freecodecamp/models/podcasts/podcasts_model.dart' as _i18;
 import 'package:freecodecamp/ui/views/code_radio/code_radio_view.dart' as _i10;
 import 'package:freecodecamp/ui/views/home/home_view.dart' as _i2;
-import 'package:freecodecamp/ui/views/learn/challenge_editor/challenge_view.dart'
+import 'package:freecodecamp/ui/views/learn/challenge_view/challenge_view.dart'
     as _i12;
 import 'package:freecodecamp/ui/views/learn/learn-builders/superblock_builder.dart'
     as _i11;
