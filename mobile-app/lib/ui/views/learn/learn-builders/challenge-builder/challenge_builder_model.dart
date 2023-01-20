@@ -8,6 +8,7 @@ import 'package:freecodecamp/models/learn/completed_challenge_model.dart';
 import 'package:freecodecamp/models/learn/curriculum_model.dart';
 import 'package:freecodecamp/models/main/user_model.dart';
 import 'package:freecodecamp/service/authentication/authentication_service.dart';
+import 'package:freecodecamp/service/developer_service.dart';
 import 'package:freecodecamp/service/learn/learn_offline_service.dart';
 import 'package:freecodecamp/service/learn/learn_service.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -19,6 +20,9 @@ class ChallengeBuilderModel extends BaseViewModel {
   final AuthenticationService _auth = locator<AuthenticationService>();
 
   FccUserModel? user;
+
+  bool _isDev = false;
+  bool get isDev => _isDev;
 
   bool _isOpen = false;
   bool get isOpen => _isOpen;
@@ -37,6 +41,8 @@ class ChallengeBuilderModel extends BaseViewModel {
 
   final learnOfflineService = locator<LearnOfflineService>();
 
+  final developerService = locator<DeveloperService>();
+
   final learnService = locator<LearnService>();
 
   set setIsOpen(bool widgetIsOpened) {
@@ -51,6 +57,11 @@ class ChallengeBuilderModel extends BaseViewModel {
 
   set setIsDownloaded(bool value) {
     _isDownloaded = value;
+    notifyListeners();
+  }
+
+  set setIsDev(bool value) {
+    _isDev = value;
     notifyListeners();
   }
 

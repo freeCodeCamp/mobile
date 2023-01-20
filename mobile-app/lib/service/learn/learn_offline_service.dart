@@ -43,6 +43,13 @@ class LearnOfflineService {
 
   Timer? timer;
 
+  /*
+   This function will return an instance of every challenge download that has 
+   previously occured when downloading.
+
+   // TODO: check if it is neccessary to request all challenges and not just the block
+  */
+
   Future<List<ChallengeDownload?>> checkStoredChallenges() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
 
@@ -66,6 +73,10 @@ class LearnOfflineService {
 
     return [];
   }
+
+  /*
+  This function will request the given url and return an instance of a challenge.s
+  */
 
   Future<Challenge> getChallenge(String url) async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
@@ -93,6 +104,12 @@ class LearnOfflineService {
 
     return challenge;
   }
+
+  /*
+    This function will download every challenges in a given amount of time in a 
+    certain block. It will request these urls and update the respective stream
+    which is listen to on the front-end.
+  */
 
   Future<void> getChallengeBatch(Block block, List<String> urls) async {
     int index = 0;
@@ -122,6 +139,14 @@ class LearnOfflineService {
       },
     );
   }
+
+  /*
+    This function will store a downloaded challenge, it will return a future.
+    If an error occurs an instance of a Future.error is throw which should stop 
+    the downloading.
+
+    // TODO: check if downloading stops if an error occurs
+  */
 
   Future<Future<dynamic>> storeDownloadedChallenge(Challenge challenge) async {
     try {
@@ -163,6 +188,11 @@ class LearnOfflineService {
     }
   }
 
+  /*
+  This function wil cancel the download of challenges, it will delete challenges
+  that are already downloaded. It will also remove the correlated block. 
+  */
+
   Future<void> cancelChallengeDownload(String block) async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
 
@@ -195,6 +225,11 @@ class LearnOfflineService {
     }
   }
 
+  /*
+    This function checks if the user has internet, it makes a request to a given
+    URL, which will return an error if the request did not go through.
+  */
+
   Future<bool> hasInternet() async {
     try {
       final result = await InternetAddress.lookup('google.com');
@@ -209,6 +244,13 @@ class LearnOfflineService {
 
     return false;
   }
+
+  /*
+    This function will cache the given block.
+
+    // TODO: this should be in a try catch which will throw an instance of
+    // a Future.error to the Future builder.
+  */
 
   Future<void> cacheBlockInfo(Block block) async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
@@ -233,6 +275,12 @@ class LearnOfflineService {
       );
     }
   }
+
+  /* 
+    This function will remove the cached block according to the given dashed name
+    of the block in question. If there is an error removing the block an error
+    will be thrown.
+  */
 
   Future<void> removeCachedBlock(String dashedBlockName) async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
@@ -270,6 +318,12 @@ class LearnOfflineService {
     }
   }
 
+  /*
+  This function retrieves the cached blocks according to their correlated 
+  superblock by giving the superblock's dashed name. If there are no cached 
+  blocks on the gives superblock, it wil return an empty list.
+  */
+
   Future<List<Block>?> getCachedBlocks(
     String superBlockDashedName,
   ) async {
@@ -302,6 +356,13 @@ class LearnOfflineService {
 
     return [];
   }
+
+  /*
+  This function retrieves a list of superblock buttons which are used to build
+  the landing page. It firstly checks if there are any cached blocks, if so 
+  get the superblock names correlated to the block in question. This will start
+  a for loop which will return the superblock buttons in a list.
+  */
 
   Future<List<SuperBlockButton>> getCachedSuperblocks() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
