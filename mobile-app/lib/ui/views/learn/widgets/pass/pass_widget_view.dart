@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:freecodecamp/enums/alert_type.dart';
 import 'package:freecodecamp/models/learn/motivational_quote_model.dart';
-import 'package:freecodecamp/ui/views/learn/challenge_editor/challenge_model.dart';
+import 'package:freecodecamp/ui/views/learn/challenge_view/challenge_viewmodel.dart';
 import 'package:freecodecamp/ui/views/learn/widgets/custom_alert_widget.dart';
 import 'package:freecodecamp/ui/views/learn/widgets/pass/pass_widget_model.dart';
 import 'package:stacked/stacked.dart';

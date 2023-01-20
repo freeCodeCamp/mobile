@@ -5,6 +5,7 @@ import 'package:freecodecamp/service/authentication/authentication_service.dart'
 import 'package:freecodecamp/service/podcast/notification_service.dart';
 import 'package:freecodecamp/service/navigation/quick_actions_service.dart';
 import 'package:freecodecamp/ui/theme/fcc_theme.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:stacked_services/stacked_services.dart';
 
 import 'app/app.locator.dart';
@@ -13,6 +14,9 @@ import 'app/app.router.dart';
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
   setupLocator();
+
+  SharedPreferences prefs = await SharedPreferences.getInstance();
+  prefs.clear();
 
   await AuthenticationService().init();
   await NotificationService().init();

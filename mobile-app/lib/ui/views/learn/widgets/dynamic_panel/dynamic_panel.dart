@@ -2,21 +2,21 @@ import 'package:flutter/material.dart';
 import 'package:flutter_code_editor/editor/editor.dart';
 import 'package:freecodecamp/enums/panel_type.dart';
 import 'package:freecodecamp/models/learn/challenge_model.dart';
-import 'package:freecodecamp/ui/views/learn/challenge_editor/challenge_model.dart';
+import 'package:freecodecamp/ui/views/learn/challenge_view/challenge_viewmodel.dart';
 import 'package:freecodecamp/ui/views/learn/widgets/description/description_widget_view.dart';
 import 'package:freecodecamp/ui/views/learn/widgets/hint/hint_widget_view.dart';
 import 'package:freecodecamp/ui/views/learn/widgets/pass/pass_widget_view.dart';
 
 class DynamicPanel extends StatelessWidget {
-  const DynamicPanel(
-      {Key? key,
-      required this.challenge,
-      required this.model,
-      required this.panel,
-      required this.maxChallenges,
-      required this.challengesCompleted,
-      required this.editor})
-      : super(key: key);
+  const DynamicPanel({
+    Key? key,
+    required this.challenge,
+    required this.model,
+    required this.panel,
+    required this.maxChallenges,
+    required this.challengesCompleted,
+    required this.editor,
+  }) : super(key: key);
 
   final Challenge challenge;
   final ChallengeModel model;

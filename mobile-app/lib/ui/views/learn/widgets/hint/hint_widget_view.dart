@@ -7,7 +7,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_code_editor/editor/editor.dart';
 import 'package:freecodecamp/models/learn/challenge_model.dart';
-import 'package:freecodecamp/ui/views/learn/challenge_editor/challenge_model.dart';
+import 'package:freecodecamp/ui/views/learn/challenge_view/challenge_viewmodel.dart';
 import 'package:freecodecamp/ui/views/learn/widgets/hint/hint_widget_model.dart';
 import 'package:freecodecamp/ui/views/news/html_handler/html_handler.dart';
 import 'package:stacked/stacked.dart';
@@ -66,8 +66,9 @@ class HintWidgetView extends StatelessWidget {
     String helpCategoryFile = await rootBundle.loadString(helpCategoryPath);
 
     final String helpCategory = Uri.encodeComponent(
-        jsonDecode(helpCategoryFile)[currChallenge?.block] ?? 'Help');
-    final String blockTitle = challengeModel.block!.blockName;
+      jsonDecode(helpCategoryFile)[currChallenge?.block] ?? 'Help',
+    );
+    final String blockTitle = challengeModel.block!.name;
 
     final userDeviceInfo = await getDeviceInfo();
 

@@ -9,7 +9,7 @@ import 'package:freecodecamp/models/learn/motivational_quote_model.dart';
 import 'package:freecodecamp/models/main/user_model.dart';
 import 'package:freecodecamp/service/authentication/authentication_service.dart';
 import 'package:freecodecamp/service/learn/learn_service.dart';
-import 'package:freecodecamp/ui/views/learn/challenge_editor/challenge_model.dart';
+import 'package:freecodecamp/ui/views/learn/challenge_view/challenge_viewmodel.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:stacked/stacked.dart';
 

@@ -14,7 +14,7 @@ import 'package:freecodecamp/models/podcasts/episodes_model.dart' as _i17;
 import 'package:freecodecamp/models/podcasts/podcasts_model.dart' as _i18;
 import 'package:freecodecamp/ui/views/code_radio/code_radio_view.dart' as _i10;
 import 'package:freecodecamp/ui/views/home/home_view.dart' as _i2;
-import 'package:freecodecamp/ui/views/learn/challenge_editor/challenge_view.dart'
+import 'package:freecodecamp/ui/views/learn/challenge_view/challenge_view.dart'
     as _i12;
 import 'package:freecodecamp/ui/views/learn/learn-builders/superblock_builder.dart'
     as _i11;
@@ -227,7 +227,8 @@ class StackedRouter extends _i1.RouterBase {
         builder: (context) => _i11.SuperBlockView(
             key: args.key,
             superBlockDashedName: args.superBlockDashedName,
-            superblockName: args.superblockName),
+            superBlockName: args.superBlockName,
+            hasInternet: args.hasInternet),
         settings: data,
       );
     },
@@ -360,14 +361,17 @@ class SuperBlockViewArguments {
   const SuperBlockViewArguments({
     this.key,
     required this.superBlockDashedName,
-    required this.superblockName,
+    required this.superBlockName,
+    required this.hasInternet,
   });
 
   final _i16.Key? key;
 
   final String superBlockDashedName;
 
-  final String superblockName;
+  final String superBlockName;
+
+  final bool hasInternet;
 }
 
 class ChallengeViewArguments {
@@ -563,7 +567,8 @@ extension NavigatorStateExtension on _i21.NavigationService {
   Future<dynamic> navigateToSuperBlockView({
     _i16.Key? key,
     required String superBlockDashedName,
-    required String superblockName,
+    required String superBlockName,
+    required bool hasInternet,
     int? routerId,
     bool preventDuplicates = true,
     Map<String, String>? parameters,
@@ -574,7 +579,8 @@ extension NavigatorStateExtension on _i21.NavigationService {
         arguments: SuperBlockViewArguments(
             key: key,
             superBlockDashedName: superBlockDashedName,
-            superblockName: superblockName),
+            superBlockName: superBlockName,
+            hasInternet: hasInternet),
         id: routerId,
         preventDuplicates: preventDuplicates,
         parameters: parameters,
