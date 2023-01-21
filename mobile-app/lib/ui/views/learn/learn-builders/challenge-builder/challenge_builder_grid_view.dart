@@ -5,7 +5,6 @@ import 'package:freecodecamp/ui/widgets/drawer_widget/drawer_widget_view.dart';
 
 import 'package:stacked/stacked.dart';
 
-// ignore: must_be_immutable
 class ChallengeBuilderGridView extends StatelessWidget {
   final Block block;
   final bool isOpen;
@@ -23,6 +22,7 @@ class ChallengeBuilderGridView extends StatelessWidget {
         model.init(block.challengeTiles);
         model.setIsOpen = isOpen;
         model.setIsDownloaded = await model.isBlockDownloaded(block);
+        model.setIsDev = await model.developerService.developmentMode();
       },
       viewModelBuilder: () => ChallengeBuilderModel(),
       builder: (
@@ -147,13 +147,14 @@ class ChallengeBuilderGridView extends StatelessWidget {
                             ),
                           ),
                         ),
-                      if (!isCertification) ...[
-                        buildDivider(),
+                      if (model.isDev)
                         DownloadWidget(
                           model: model,
                           block: block,
                         ),
-                        gridWidget(context, model),
+                      if (!isCertification) ...[
+                        buildDivider(),
+                        gridWidget(context, model)
                       ],
                       Container(
                         height: 25,
@@ -292,9 +293,7 @@ class DownloadWidget extends StatelessWidget {
                   ? () async {
                       await model.startDownload(block);
                     }
-                  : () async {
-                      model.stopDownload(block, false);
-                    },
+                  : null,
               style: ElevatedButton.styleFrom(
                 backgroundColor: const Color.fromRGBO(0x2A, 0x2A, 0x40, 1),
               ),
