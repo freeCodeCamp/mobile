@@ -33,11 +33,11 @@ class LearnBlockViewModel extends BaseViewModel {
     return 50.0;
   }
 
-  EdgeInsets getPaddingBeginAndEnd(int index, int blocks) {
+  EdgeInsets getPaddingBeginAndEnd(int index, int challenges) {
     if (index == 0) {
       return const EdgeInsets.only(top: 16);
-    } else if (index == blocks - 1) {
-      return const EdgeInsets.only(bottom: 16);
+    } else if (challenges == 1) {
+      return const EdgeInsets.only(bottom: 32);
     } else {
       return const EdgeInsets.all(0);
     }

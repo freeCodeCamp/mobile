@@ -108,7 +108,7 @@ class BlockView extends StatelessWidget {
     );
   }
 
-  SizedBox gridWidget(BuildContext context, BlockViewModel model) {
+  Widget gridWidget(BuildContext context, BlockViewModel model) {
     return SizedBox(
       height: 300,
       child: GridView.count(
@@ -168,7 +168,7 @@ class BlockView extends StatelessWidget {
               );
 
               model.routeToChallengeView(
-                '$url/${block.superBlock}/${block.dashedName}/$challenge/page-data.json',
+                '$url/${block.superBlock.dashedName}/${block.dashedName}/$challenge/page-data.json',
                 block,
               );
             },
@@ -297,14 +297,14 @@ class ChallengeTile extends StatelessWidget {
         width: 70,
         child: InkWell(
           onTap: () async {
-            String challenge = block.challenges[step].dashedName;
+            String challenge = block.challengeTiles[step].dashedName;
 
             String url = await model.learnService.getBaseUrl(
               '/page-data/learn',
             );
 
             model.routeToChallengeView(
-              '$url/${block.superBlock}/${block.dashedName}/$challenge/page-data.json',
+              '$url/${block.superBlock.dashedName}/${block.dashedName}/$challenge/page-data.json',
               block,
             );
           },

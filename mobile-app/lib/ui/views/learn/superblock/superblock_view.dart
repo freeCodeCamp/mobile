@@ -81,7 +81,7 @@ class LearnSuperBlockView extends StatelessWidget {
           itemBuilder: (context, i) => Padding(
             padding: model.getPaddingBeginAndEnd(
               i,
-              (superBlock.blocks ?? []).length,
+              superBlock.blocks![i].challenges.length,
             ),
             child: Column(
               children: [
