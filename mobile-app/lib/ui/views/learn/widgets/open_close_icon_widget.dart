@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:freecodecamp/models/learn/curriculum_model.dart';
-import 'package:freecodecamp/ui/views/learn/learn-builders/challenge-builder/challenge_builder_model.dart';
+import 'package:freecodecamp/ui/views/learn/block/block_model.dart';
 
 class OpenCloseIcon extends StatelessWidget {
   const OpenCloseIcon({
@@ -10,7 +10,7 @@ class OpenCloseIcon extends StatelessWidget {
   }) : super(key: key);
 
   final Block block;
-  final ChallengeBuilderModel model;
+  final BlockViewModel model;
 
   @override
   Widget build(BuildContext context) {

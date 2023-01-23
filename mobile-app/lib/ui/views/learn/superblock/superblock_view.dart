@@ -2,12 +2,11 @@ import 'package:flutter/material.dart';
 import 'package:freecodecamp/models/learn/curriculum_model.dart';
 import 'package:freecodecamp/service/authentication/authentication_service.dart';
 import 'package:freecodecamp/ui/views/learn/block/block_viewmodel.dart';
-import 'package:freecodecamp/ui/views/learn/learn-builders/challenge-builder/challenge_builder_grid_view.dart';
-import 'package:freecodecamp/ui/views/learn/learn-builders/challenge-builder/challenge_builder_list_view.dart';
+import 'package:freecodecamp/ui/views/learn/superblock/superblock_viewmodel.dart';
 import 'package:stacked/stacked.dart';
 
-class LearnBlockView extends StatelessWidget {
-  const LearnBlockView({
+class LearnSuperBlockView extends StatelessWidget {
+  const LearnSuperBlockView({
     Key? key,
     required this.superBlockDashedName,
     required this.superBlockName,
@@ -43,7 +42,7 @@ class LearnBlockView extends StatelessWidget {
                 if (superBlock.blocks == null || superBlock.blocks!.isEmpty) {
                   return const Text('You are offline, and no downloads!');
                 }
-                return superBlockTemplate(model, superBlock);
+                return blockTemplate(model, superBlock);
               }
             }
 
@@ -60,7 +59,7 @@ class LearnBlockView extends StatelessWidget {
     );
   }
 
-  Widget superBlockTemplate(
+  Widget blockTemplate(
     LearnBlockViewModel model,
     SuperBlock superBlock,
   ) {
@@ -86,37 +85,22 @@ class LearnBlockView extends StatelessWidget {
             ),
             child: Column(
               children: [
-                !superBlock.blocks![i].isStepBased
-                    ? FutureBuilder<bool>(
-                        future: model.getBlockOpenState(superBlock.blocks![i]),
-                        builder: (context, snapshot) {
-                          if (snapshot.hasData) {
-                            bool isOpen = snapshot.data!;
+                FutureBuilder<bool>(
+                  future: model.getBlockOpenState(superBlock.blocks![i]),
+                  builder: (context, snapshot) {
+                    if (snapshot.hasData) {
+                      bool isOpen = snapshot.data!;
 
-                            return ChallengeBuilderListView(
-                              block: superBlock.blocks![i],
-                              isOpen: isOpen,
-                            );
-                          }
+                      return BlockView(
+                        block: superBlock.blocks![i],
+                        isOpen: isOpen,
+                        isStepBased: superBlock.blocks![i].isStepBased,
+                      );
+                    }
 
-                          return const CircularProgressIndicator();
-                        },
-                      )
-                    : FutureBuilder<bool>(
-                        future: model.getBlockOpenState(superBlock.blocks![i]),
-                        builder: (context, snapshot) {
-                          if (snapshot.hasData) {
-                            bool isOpen = snapshot.data!;
-
-                            return ChallengeBuilderGridView(
-                              block: superBlock.blocks![i],
-                              isOpen: isOpen,
-                            );
-                          }
-
-                          return const CircularProgressIndicator();
-                        },
-                      ),
+                    return const CircularProgressIndicator();
+                  },
+                )
               ],
             ),
           ),

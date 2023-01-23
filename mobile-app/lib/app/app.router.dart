@@ -14,10 +14,11 @@ import 'package:freecodecamp/models/podcasts/episodes_model.dart' as _i17;
 import 'package:freecodecamp/models/podcasts/podcasts_model.dart' as _i18;
 import 'package:freecodecamp/ui/views/code_radio/code_radio_view.dart' as _i10;
 import 'package:freecodecamp/ui/views/home/home_view.dart' as _i2;
-import 'package:freecodecamp/ui/views/learn/block/block_view.dart' as _i15;
 import 'package:freecodecamp/ui/views/learn/challenge/challenge_view.dart'
     as _i11;
 import 'package:freecodecamp/ui/views/learn/landing/landing_view.dart' as _i14;
+import 'package:freecodecamp/ui/views/learn/superblock/superblock_view.dart'
+    as _i15;
 import 'package:freecodecamp/ui/views/news/news-author/news_author_view.dart'
     as _i8;
 import 'package:freecodecamp/ui/views/news/news-bookmark/news_bookmark_view.dart'
@@ -63,7 +64,7 @@ class Routes {
 
   static const learnLandingView = '/learn-landing-view';
 
-  static const learnBlockView = '/learn-block-view';
+  static const learnSuperBlockView = '/learn-super-block-view';
 
   static const all = <String>{
     homeView,
@@ -79,7 +80,7 @@ class Routes {
     profileView,
     webViewView,
     learnLandingView,
-    learnBlockView,
+    learnSuperBlockView,
   };
 }
 
@@ -138,8 +139,8 @@ class StackedRouter extends _i1.RouterBase {
       page: _i14.LearnLandingView,
     ),
     _i1.RouteDef(
-      Routes.learnBlockView,
-      page: _i15.LearnBlockView,
+      Routes.learnSuperBlockView,
+      page: _i15.LearnSuperBlockView,
     ),
   ];
 
@@ -250,10 +251,10 @@ class StackedRouter extends _i1.RouterBase {
         settings: data,
       );
     },
-    _i15.LearnBlockView: (data) {
-      final args = data.getArgs<LearnBlockViewArguments>(nullOk: false);
+    _i15.LearnSuperBlockView: (data) {
+      final args = data.getArgs<LearnSuperBlockViewArguments>(nullOk: false);
       return MaterialPageRoute<dynamic>(
-        builder: (context) => _i15.LearnBlockView(
+        builder: (context) => _i15.LearnSuperBlockView(
             key: args.key,
             superBlockDashedName: args.superBlockDashedName,
             superBlockName: args.superBlockName,
@@ -384,8 +385,8 @@ class WebViewViewArguments {
   final String url;
 }
 
-class LearnBlockViewArguments {
-  const LearnBlockViewArguments({
+class LearnSuperBlockViewArguments {
+  const LearnSuperBlockViewArguments({
     this.key,
     required this.superBlockDashedName,
     required this.superBlockName,
@@ -631,7 +632,7 @@ extension NavigatorStateExtension on _i21.NavigationService {
         transition: transition);
   }
 
-  Future<dynamic> navigateToLearnBlockView({
+  Future<dynamic> navigateToLearnSuperBlockView({
     _i16.Key? key,
     required String superBlockDashedName,
     required String superBlockName,
@@ -642,8 +643,8 @@ extension NavigatorStateExtension on _i21.NavigationService {
     Widget Function(BuildContext, Animation<double>, Animation<double>, Widget)?
         transition,
   }) async {
-    return navigateTo<dynamic>(Routes.learnBlockView,
-        arguments: LearnBlockViewArguments(
+    return navigateTo<dynamic>(Routes.learnSuperBlockView,
+        arguments: LearnSuperBlockViewArguments(
             key: key,
             superBlockDashedName: superBlockDashedName,
             superBlockName: superBlockName,

@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:freecodecamp/models/learn/curriculum_model.dart';
-import 'package:freecodecamp/ui/views/learn/learn-builders/challenge-builder/challenge_builder_model.dart';
+import 'package:freecodecamp/ui/views/learn/block/block_model.dart';
 
 class DownloadButton extends StatelessWidget {
   const DownloadButton({
@@ -9,7 +9,7 @@ class DownloadButton extends StatelessWidget {
     required this.block,
   }) : super(key: key);
 
-  final ChallengeBuilderModel model;
+  final BlockViewModel model;
   final Block block;
 
   @override

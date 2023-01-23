@@ -15,7 +15,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:stacked/stacked.dart';
 import 'package:stacked_services/stacked_services.dart';
 
-class ChallengeBuilderModel extends BaseViewModel {
+class BlockViewModel extends BaseViewModel {
   final NavigationService _navigationService = locator<NavigationService>();
   final AuthenticationService _auth = locator<AuthenticationService>();
 
@@ -90,6 +90,19 @@ class ChallengeBuilderModel extends BaseViewModel {
         block: block,
         challengesCompleted: _challengesCompleted,
       ),
+    );
+  }
+
+  Future<void> routeToCertification(Block block) async {
+    String challenge = block.challengeTiles[0].dashedName;
+
+    String url = await learnService.getBaseUrl(
+      '/page-data/learn',
+    );
+
+    routeToChallengeView(
+      '$url/${block.superBlock}/${block.dashedName}/$challenge/page-data.json',
+      block,
     );
   }
 
