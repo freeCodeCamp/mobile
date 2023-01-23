@@ -17,7 +17,7 @@ import 'package:stacked/stacked.dart';
 import 'package:stacked_services/stacked_services.dart';
 import 'package:http/http.dart' as http;
 
-class LearnViewModel extends BaseViewModel {
+class LearnLandingViewModel extends BaseViewModel {
   final NavigationService _navigationService = locator<NavigationService>();
 
   final AuthenticationService _auth = locator<AuthenticationService>();
@@ -29,27 +29,39 @@ class LearnViewModel extends BaseViewModel {
   final SnackbarService _snack = locator<SnackbarService>();
   SnackbarService get snack => _snack;
 
-  final LearnOfflineService _learnOfflineService =
-      locator<LearnOfflineService>();
+  final _learnOfflineService = locator<LearnOfflineService>();
   LearnOfflineService get learnOfflineService => _learnOfflineService;
+
+  Future<List<SuperBlockButtonData>>? superBlockButtons;
 
   bool _isLoggedIn = false;
   bool get isLoggedIn => _isLoggedIn;
 
+  String alert =
+      "Note: We're still working on the ability to save your progress. To claim certifications, you'll need to submit your projects through freeCodeCamp's website.";
+
+  set setSuperBlockButtons(value) {
+    superBlockButtons = value;
+    notifyListeners();
+  }
+
   void init(BuildContext context) async {
     setupDialogUi();
     retrieveNewQuote();
-    notifyListeners();
     initLoggedInListener();
+
+    setSuperBlockButtons = getSuperBlocks();
   }
 
-  Future<List<SuperBlockButton>> getSuperBlocks() async {
+  Future<List<SuperBlockButtonData>> getSuperBlocks() async {
     return await _learnOfflineService.hasInternet()
         ? requestSuperBlocks()
         : _learnOfflineService.getCachedSuperblocks();
   }
 
   void refresh() async {
+    setSuperBlockButtons = getSuperBlocks();
+
     notifyListeners();
   }
 
@@ -66,7 +78,7 @@ class LearnViewModel extends BaseViewModel {
     snack.showSnackbar(title: 'Not available use the web version', message: '');
   }
 
-  Future<List<SuperBlockButton>> requestSuperBlocks() async {
+  Future<List<SuperBlockButtonData>> requestSuperBlocks() async {
     String baseUrl = await _learnService.getBaseUrl();
 
     final http.Response res = await http.get(
@@ -75,7 +87,7 @@ class LearnViewModel extends BaseViewModel {
       ),
     );
 
-    List<SuperBlockButton> buttonData = [];
+    List<SuperBlockButtonData> buttonData = [];
 
     if (res.statusCode == 200) {
       List superBlocks = jsonDecode(res.body)['superblocks'];
@@ -87,7 +99,7 @@ class LearnViewModel extends BaseViewModel {
 
       for (int i = 0; i < superBlocks.length; i++) {
         buttonData.add(
-          SuperBlockButton(
+          SuperBlockButtonData(
             path: superBlocks[i]['dashedName'],
             name: superBlocks[i]['title'],
             public: !showAllSB ? superBlocks[i]['public'] : true,
@@ -100,44 +112,10 @@ class LearnViewModel extends BaseViewModel {
     return [];
   }
 
-  Future<SuperBlock> getSuperBlockData(
-    String dashedName,
-    String name,
-    bool hasInternet,
-  ) async {
-    String baseUrl = await _learnService.getBaseUrl();
-
-    if (!hasInternet) {
-      return SuperBlock(
-        dashedName: dashedName,
-        name: name,
-        blocks: await _learnOfflineService.getCachedBlocks(
-          dashedName,
-        ),
-      );
-    }
-
-    final http.Response res = await http.get(
-      Uri.parse(
-        '$baseUrl/curriculum-data/v1/$dashedName.json',
-      ),
-    );
-
-    if (res.statusCode == 200) {
-      return SuperBlock.fromJson(
-        jsonDecode(res.body),
-        dashedName,
-        name,
-      );
-    } else {
-      throw Exception(e);
-    }
-  }
-
   void routeToSuperBlock(String dashedName, String name) async {
     _navigationService.navigateTo(
-      Routes.superBlockView,
-      arguments: SuperBlockViewArguments(
+      Routes.learnBlockView,
+      arguments: LearnBlockViewArguments(
         superBlockDashedName: dashedName,
         superBlockName: name,
         hasInternet: await learnOfflineService.hasInternet(),

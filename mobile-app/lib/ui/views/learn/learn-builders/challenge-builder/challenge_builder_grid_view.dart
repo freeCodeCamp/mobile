@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:freecodecamp/models/learn/curriculum_model.dart';
 import 'package:freecodecamp/ui/views/learn/learn-builders/challenge-builder/challenge_builder_model.dart';
+import 'package:freecodecamp/ui/views/learn/widgets/download_button_widget.dart';
+import 'package:freecodecamp/ui/views/learn/widgets/open_close_icon_widget.dart';
+import 'package:freecodecamp/ui/views/learn/widgets/progressbar_widget.dart';
 import 'package:freecodecamp/ui/widgets/drawer_widget/drawer_widget_view.dart';
 
 import 'package:stacked/stacked.dart';
@@ -66,7 +69,7 @@ class ChallengeBuilderGridView extends StatelessWidget {
                     },
                     minVerticalPadding: 24,
                     trailing: !isCertification
-                        ? OpenCloseIconWidget(
+                        ? OpenCloseIcon(
                             block: block,
                             model: model,
                           )
@@ -148,7 +151,7 @@ class ChallengeBuilderGridView extends StatelessWidget {
                           ),
                         ),
                       if (model.isDev)
-                        DownloadWidget(
+                        DownloadButton(
                           model: model,
                           block: block,
                         ),
@@ -266,165 +269,6 @@ class ChallengeTile extends StatelessWidget {
           ),
         ),
       ),
-    );
-  }
-}
-
-class DownloadWidget extends StatelessWidget {
-  const DownloadWidget({
-    Key? key,
-    required this.model,
-    required this.block,
-  }) : super(key: key);
-
-  final ChallengeBuilderModel model;
-  final Block block;
-
-  @override
-  Widget build(BuildContext context) {
-    return Column(
-      children: [
-        if (!model.isDownloaded || model.isDownloading)
-          Container(
-            width: MediaQuery.of(context).size.width,
-            margin: const EdgeInsets.symmetric(horizontal: 40),
-            child: ElevatedButton(
-              onPressed: !model.isDownloading
-                  ? () async {
-                      await model.startDownload(block);
-                    }
-                  : null,
-              style: ElevatedButton.styleFrom(
-                backgroundColor: const Color.fromRGBO(0x2A, 0x2A, 0x40, 1),
-              ),
-              child: !model.isDownloading
-                  ? const Text('Download All Challenges')
-                  : StreamBuilder(
-                      stream: model.learnOfflineService.downloadStream.stream,
-                      builder: ((context, snapshot) {
-                        if (snapshot.connectionState ==
-                            ConnectionState.waiting) {
-                          return const Text('Starting Download...');
-                        }
-
-                        // if (snapshot.hasError) {
-                        //   model.stopDownload(block.dashedName);
-
-                        //   Timer(const Duration(seconds: 5), () {
-                        //     model.setIsDownloading = false;
-                        //   });
-
-                        //   return const Text('An Error has Occured');
-                        // }
-
-                        if (snapshot.hasData) {
-                          return Text(
-                            '${(snapshot.data as double).toStringAsFixed(2)}%',
-                          );
-                        }
-
-                        return const Text(
-                          'Download All Challenges',
-                        );
-                      }),
-                    ),
-            ),
-          ),
-        if (model.isDownloaded || model.isDownloading)
-          Container(
-            width: MediaQuery.of(context).size.width,
-            margin: const EdgeInsets.symmetric(horizontal: 40),
-            child: ElevatedButton(
-              onPressed: () async {
-                model.isDownloading
-                    ? model.stopDownload(block, false)
-                    : model.stopDownload(block, true);
-              },
-              style: ElevatedButton.styleFrom(
-                backgroundColor: const Color.fromRGBO(0x2A, 0x2A, 0x40, 1),
-              ),
-              child: model.isDownloading
-                  ? const Text('Cancel Downloading Challenges')
-                  : const Text('Delete Downloaded Challenges'),
-            ),
-          )
-      ],
-    );
-  }
-}
-
-class ChallengeProgressBar extends StatelessWidget {
-  const ChallengeProgressBar({
-    Key? key,
-    required this.block,
-    required this.model,
-  }) : super(key: key);
-
-  final Block block;
-  final ChallengeBuilderModel model;
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      color: const Color(0xFF0a0a23),
-      child: Container(
-        margin: const EdgeInsets.only(bottom: 1),
-        padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 16),
-        child: Row(
-          children: [
-            Expanded(
-              child: LinearProgressIndicator(
-                color: const Color.fromRGBO(0x19, 0x8e, 0xee, 1),
-                backgroundColor: const Color.fromRGBO(0x2A, 0x2A, 0x40, 1),
-                minHeight: 10,
-                value: model.challengesCompleted / block.challenges.length,
-              ),
-            ),
-            Padding(
-              padding: const EdgeInsets.all(8.0),
-              child: Text(
-                '${(model.challengesCompleted / block.challenges.length * 100).round().toString()}%',
-                style: const TextStyle(
-                  fontSize: 18,
-                  fontWeight: FontWeight.bold,
-                ),
-              ),
-            )
-          ],
-        ),
-      ),
-    );
-  }
-}
-
-class OpenCloseIconWidget extends StatelessWidget {
-  const OpenCloseIconWidget({
-    Key? key,
-    required this.block,
-    required this.model,
-  }) : super(key: key);
-
-  final Block block;
-  final ChallengeBuilderModel model;
-
-  @override
-  Widget build(BuildContext context) {
-    return Column(
-      mainAxisAlignment: MainAxisAlignment.center,
-      children: [
-        IconButton(
-          iconSize: 35,
-          icon: model.isOpen
-              ? const Icon(Icons.expand_less)
-              : const Icon(Icons.expand_more),
-          onPressed: () async {
-            model.setBlockOpenState(
-              block.name,
-              model.isOpen,
-            );
-          },
-        ),
-      ],
     );
   }
 }

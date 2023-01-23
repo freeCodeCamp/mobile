@@ -7,8 +7,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_code_editor/editor/editor.dart';
 import 'package:freecodecamp/models/learn/challenge_model.dart';
-import 'package:freecodecamp/ui/views/learn/challenge_view/challenge_viewmodel.dart';
-import 'package:freecodecamp/ui/views/learn/widgets/hint/hint_widget_model.dart';
+import 'package:freecodecamp/ui/views/learn/challenge/challenge_viewmodel.dart';
+import 'package:freecodecamp/ui/views/learn/widgets/dynamic_panel/panels/hint/hint_widget_model.dart';
 import 'package:freecodecamp/ui/views/news/html_handler/html_handler.dart';
 import 'package:stacked/stacked.dart';
 
@@ -21,7 +21,7 @@ class HintWidgetView extends StatelessWidget {
       : super(key: key);
 
   final String hint;
-  final ChallengeModel challengeModel;
+  final ChallengeViewModel challengeModel;
 
   final Editor editor;
 

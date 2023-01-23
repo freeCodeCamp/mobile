@@ -364,14 +364,14 @@ class LearnOfflineService {
   a for loop which will return the superblock buttons in a list.
   */
 
-  Future<List<SuperBlockButton>> getCachedSuperblocks() async {
+  Future<List<SuperBlockButtonData>> getCachedSuperblocks() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
 
     List<String>? blocks = prefs.getStringList('storedBlocks');
 
     List<List<String>> superBlockNames = [];
 
-    List<SuperBlockButton> buttons = [];
+    List<SuperBlockButtonData> buttons = [];
 
     if (blocks != null) {
       for (int i = 0; i < blocks.length; i++) {
@@ -388,7 +388,7 @@ class LearnOfflineService {
 
     for (int i = 0; i < superBlockNames.length; i++) {
       buttons.add(
-        SuperBlockButton(
+        SuperBlockButtonData(
           path: superBlockNames[i][0],
           name: superBlockNames[i][1],
           public: true,
