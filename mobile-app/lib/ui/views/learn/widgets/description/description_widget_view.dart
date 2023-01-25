@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:freecodecamp/ui/views/learn/challenge_editor/challenge_model.dart';
+import 'package:freecodecamp/ui/views/learn/challenge_view/challenge_viewmodel.dart';
 import 'package:freecodecamp/ui/views/learn/widgets/description/description_widget_model.dart';
 import 'package:freecodecamp/ui/views/news/html_handler/html_handler.dart';
 import 'package:stacked/stacked.dart';

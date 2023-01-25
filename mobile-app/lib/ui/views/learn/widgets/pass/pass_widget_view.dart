@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:freecodecamp/models/learn/motivational_quote_model.dart';
 import 'package:freecodecamp/service/authentication/authentication_service.dart';
-import 'package:freecodecamp/ui/views/learn/challenge_editor/challenge_model.dart';
+import 'package:freecodecamp/ui/views/learn/challenge_view/challenge_viewmodel.dart';
 import 'package:freecodecamp/ui/views/learn/widgets/pass/pass_widget_model.dart';
 import 'package:stacked/stacked.dart';
 
@@ -21,7 +21,7 @@ class PassWidgetView extends StatelessWidget {
   Widget build(BuildContext context) {
     return ViewModelBuilder<PassWidgetModel>.reactive(
       viewModelBuilder: () => PassWidgetModel(),
-      onModelReady: (model) => model.init(),
+      onViewModelReady: (model) => model.init(),
       builder: (context, model, child) => SafeArea(
         child: Column(
           children: [

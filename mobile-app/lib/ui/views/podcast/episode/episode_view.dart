@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:freecodecamp/models/podcasts/episodes_model.dart';
 import 'package:freecodecamp/models/podcasts/podcasts_model.dart';
 import 'package:freecodecamp/ui/views/news/html_handler/html_handler.dart';
-import 'package:freecodecamp/ui/views/podcast/episode/episode_model.dart';
+import 'package:freecodecamp/ui/views/podcast/episode/episode_viewmodel.dart';
 import 'package:freecodecamp/ui/widgets/drawer_widget/drawer_widget_view.dart';
 import 'package:freecodecamp/ui/widgets/podcast_widgets/podcast_progressbar_widget.dart';
 import 'package:freecodecamp/ui/widgets/podcast_widgets/podcast_tilte_widget.dart';
@@ -21,8 +21,8 @@ class EpisodeView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return ViewModelBuilder<EpisodeModel>.reactive(
-      viewModelBuilder: () => EpisodeModel(),
+    return ViewModelBuilder<EpisodeViewModel>.reactive(
+      viewModelBuilder: () => EpisodeViewModel(),
       builder: (context, model, child) => Scaffold(
         appBar: AppBar(),
         body: ListView(
@@ -90,7 +90,7 @@ class EpisodeView extends StatelessWidget {
     );
   }
 
-  Widget description(EpisodeModel model, BuildContext context) {
+  Widget description(EpisodeViewModel model, BuildContext context) {
     return Column(
       children: [HtmlHandler.htmlWidgetBuilder(episode.description, context)],
     );

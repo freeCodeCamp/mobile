@@ -16,7 +16,7 @@ class DrawerWidgetView extends StatelessWidget {
   Widget build(BuildContext context) {
     return ViewModelBuilder<DrawerWidgtetViewModel>.reactive(
       viewModelBuilder: () => DrawerWidgtetViewModel(),
-      onModelReady: (model) => model.initState(),
+      onViewModelReady: (model) => model.initState(),
       builder: (context, model, child) => Drawer(
         child: Container(
           color: const Color.fromRGBO(0x2A, 0x2A, 0x40, 1),

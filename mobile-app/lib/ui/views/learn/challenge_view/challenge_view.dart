@@ -11,7 +11,7 @@ import 'package:freecodecamp/enums/panel_type.dart';
 
 import 'package:freecodecamp/models/learn/challenge_model.dart';
 import 'package:freecodecamp/models/learn/curriculum_model.dart';
-import 'package:freecodecamp/ui/views/learn/challenge_editor/challenge_model.dart';
+import 'package:freecodecamp/ui/views/learn/challenge_view/challenge_viewmodel.dart';
 import 'package:freecodecamp/ui/views/learn/widgets/custom_tab_bar/custom_tab_bar.dart';
 
 import 'package:freecodecamp/ui/views/learn/widgets/dynamic_panel/dynamic_panel.dart';
@@ -34,7 +34,7 @@ class ChallengeView extends StatelessWidget {
   Widget build(BuildContext context) {
     return ViewModelBuilder<ChallengeModel>.reactive(
       viewModelBuilder: () => ChallengeModel(),
-      onModelReady: (model) {
+      onViewModelReady: (model) {
         model.init(url, block, challengesCompleted);
       },
       builder: (context, model, child) => FutureBuilder<Challenge?>(

@@ -10,6 +10,6 @@ class BlockBuilderModel extends BaseViewModel {
   Future<bool> getBlockOpenState(Block block) async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
 
-    return prefs.getBool(block.blockName) ?? block.order == 0;
+    return prefs.getBool(block.name) ?? block.order == 0;
   }
 }

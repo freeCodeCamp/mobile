@@ -2,8 +2,7 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
 import 'package:freecodecamp/models/news/tutorial_model.dart';
-import 'package:freecodecamp/ui/views/news/news-feed/news_feed_lazyloading.dart';
-import 'package:freecodecamp/ui/views/news/news-feed/news_feed_model.dart';
+import 'package:freecodecamp/ui/views/news/news-feed/news_feed_viewmodel.dart';
 import 'package:stacked/stacked.dart';
 import 'package:url_launcher/url_launcher_string.dart';
 
@@ -31,9 +30,9 @@ class NewsFeedView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return ViewModelBuilder<NewsFeedModel>.reactive(
-      viewModelBuilder: () => NewsFeedModel(),
-      onModelReady: (model) async => await model.devMode(),
+    return ViewModelBuilder<NewsFeedViewModel>.reactive(
+      viewModelBuilder: () => NewsFeedViewModel(),
+      onViewModelReady: (model) async => await model.devMode(),
       builder: (context, model, child) => Scaffold(
         appBar: fromTag || fromAuthor || fromSearch
             ? AppBar(
@@ -97,7 +96,7 @@ class NewsFeedView extends StatelessWidget {
     );
   }
 
-  ListView tutorialThumbnailBuilder(NewsFeedModel model) {
+  ListView tutorialThumbnailBuilder(NewsFeedViewModel model) {
     return ListView.separated(
       shrinkWrap: true,
       itemCount: model.tutorials.length,
@@ -128,7 +127,7 @@ class NewsFeedView extends StatelessWidget {
     );
   }
 
-  Column thumbnailView(NewsFeedModel model, int i) {
+  Column thumbnailView(NewsFeedViewModel model, int i) {
     Tutorial tutorial = model.tutorials[i];
 
     return Column(
@@ -171,7 +170,7 @@ class NewsFeedView extends StatelessWidget {
     );
   }
 
-  Widget tutorialHeader(NewsFeedModel model, int i) {
+  Widget tutorialHeader(NewsFeedViewModel model, int i) {
     Tutorial tutorial = model.tutorials[i];
 
     return Column(
@@ -234,7 +233,7 @@ class NewsFeedView extends StatelessWidget {
                   ),
                 ),
                 Text(
-                  NewsFeedModel.parseDate(tutorial.createdAt),
+                  NewsFeedViewModel.parseDate(tutorial.createdAt),
                 ),
               ],
             ),

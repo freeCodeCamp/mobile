@@ -5,10 +5,6 @@ version: 3.0.1+30001
 environment:
   sdk: ">=2.12.0 <3.0.0"
 dependencies:
-  flutter_font_awesome_web_names:
-    git:
-      url: https://github.com/Mythar/flutter_font_awesome_web_names
-      ref: master
   flutter:
     sdk: flutter
   flutter_dotenv: ^5.0.2
@@ -16,33 +12,24 @@ dependencies:
   algolia: ^1.0.1
   just_audio: ^0.9.7
   http: ^0.13.3
-  logger: ^1.1.0
   path_provider: ^2.0.3
   sqflite: ^2.0.0+4
-  stacked: ^3.0.0
+  stacked: ^3.1.0
   stacked_services: ^0.9.0
   url_launcher: ^6.0.10
   sqflite_migration_service: ^2.0.0-nullsafety.1
-  json_serializable: ^6.0.0
   dio: ^4.0.0
-  hexcolor: ^3.0.0
-  flutter_syntax_view_fcc:
-    git:
-      url: https://github.com/Sembauke/flutter_syntax_view_fcc
-      ref: master
   flutter_code_editor:
     git:
       url: https://github.com/freeCodeCamp/PhoneIDE
       ref: main
   jiffy: ^5.0.0
-  flutter_svg: ^0.23.0+1
   shared_preferences: ^2.0.7
   font_awesome_flutter: ^10.0.0
   html: ^0.15.0
   fk_user_agent: ^2.0.1
   flutter_hooks: ^0.18.0
   flutter_local_notifications: ^9.0.3
-  image_picker: ^0.8.4+4
   youtube_player_iframe: ^2.2.2
   infinite_scroll_pagination: ^3.1.0
   web_socket_channel: ^2.1.0
