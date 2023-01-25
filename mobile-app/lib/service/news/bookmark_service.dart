@@ -77,7 +77,7 @@ class BookmarksDatabaseService {
         .toList();
   }
 
-  Future<bool> isBookmarked(BookmarkedTutorial tutorial) async {
+  Future<bool> isBookmarked(dynamic tutorial) async {
     List<Map<String, dynamic>> bookmarksResults = await _db.query(
       bookmarksTableName,
       where: 'articleId = ?',

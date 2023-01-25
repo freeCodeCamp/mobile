@@ -16,7 +16,10 @@ class NewsBookmarkTutorialView extends StatelessWidget {
   Widget build(BuildContext context) {
     return ViewModelBuilder<NewsBookmarkViewModel>.reactive(
       viewModelBuilder: () => NewsBookmarkViewModel(),
-      onViewModelReady: (model) => model.isTutorialBookmarked(tutorial),
+      onViewModelReady: (model) async {
+        await model.initDB();
+        model.isTutorialBookmarked(tutorial);
+      },
       onDispose: (model) => model.updateListView(),
       builder: (context, model, child) => Scaffold(
         backgroundColor: const Color(0xFF0a0a23),

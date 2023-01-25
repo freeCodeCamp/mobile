@@ -21,6 +21,10 @@ class NewsBookmarkViewModel extends BaseViewModel {
   final _navigationService = locator<NavigationService>();
   final _databaseService = locator<BookmarksDatabaseService>();
 
+  Future<void> initDB() async {
+    await _databaseService.initialise();
+  }
+
   Future<void> bookmarkAndUnbookmark(dynamic tutorial) async {
     if (_isBookmarked) {
       _isBookmarked = false;
@@ -53,8 +57,6 @@ class NewsBookmarkViewModel extends BaseViewModel {
   }
 
   Future<void> isTutorialBookmarked(dynamic tutorial) async {
-    await _databaseService.initialise();
-
     _isBookmarked = await _databaseService.isBookmarked(tutorial);
     notifyListeners();
   }
