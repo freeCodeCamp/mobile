@@ -169,7 +169,7 @@ class AuthenticationService {
         '/mobile-login',
         options: Options(
           headers: {
-            'token': creds.accessToken,
+            'Authorization': 'Bearer ${creds.accessToken}',
           },
         ),
       );
