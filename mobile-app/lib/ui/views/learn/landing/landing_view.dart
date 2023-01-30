@@ -1,10 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:freecodecamp/enums/alert_type.dart';
 import 'package:freecodecamp/models/learn/curriculum_model.dart';
 import 'package:freecodecamp/models/learn/motivational_quote_model.dart';
 import 'package:freecodecamp/models/main/user_model.dart';
 import 'package:freecodecamp/ui/views/learn/landing/landing_viewmodel.dart';
-import 'package:freecodecamp/ui/views/learn/widgets/custom_alert_widget.dart';
 import 'package:freecodecamp/ui/widgets/drawer_widget/drawer_widget_view.dart';
 import 'package:stacked/stacked.dart';
 
@@ -32,10 +30,6 @@ class LearnLandingView extends StatelessWidget {
           child: SingleChildScrollView(
             child: Column(
               children: [
-                CustomAlert(
-                  text: model.alert,
-                  alertType: Alert.warning,
-                ),
                 const QuoteWidget(),
                 FutureBuilder<List<SuperBlockButtonData>>(
                   future: model.superBlockButtons,
