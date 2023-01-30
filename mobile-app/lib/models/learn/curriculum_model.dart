@@ -141,12 +141,12 @@ class ChallengeListTile {
   });
 }
 
-class SuperBlockButton {
+class SuperBlockButtonData {
   final String path;
   final String name;
   final bool public;
 
-  SuperBlockButton({
+  SuperBlockButtonData({
     required this.path,
     required this.name,
     required this.public,

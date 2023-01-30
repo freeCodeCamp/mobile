@@ -41,7 +41,7 @@ class QuickActionsService {
           _navigationService.replaceWith(Routes.homeView);
           break;
         case 'action_learn':
-          _navigationService.replaceWith(Routes.learnView);
+          _navigationService.replaceWith(Routes.learnLandingView);
           break;
         case 'action_code_radio':
           _navigationService.replaceWith(Routes.codeRadioView);

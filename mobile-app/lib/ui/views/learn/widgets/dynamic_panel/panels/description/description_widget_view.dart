@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:freecodecamp/ui/views/learn/challenge_view/challenge_viewmodel.dart';
-import 'package:freecodecamp/ui/views/learn/widgets/description/description_widget_model.dart';
+import 'package:freecodecamp/ui/views/learn/challenge/challenge_viewmodel.dart';
+import 'package:freecodecamp/ui/views/learn/widgets/dynamic_panel/panels/description/description_widget_model.dart';
 import 'package:freecodecamp/ui/views/news/html_handler/html_handler.dart';
 import 'package:stacked/stacked.dart';
 import 'dart:developer' as dev;
@@ -19,7 +19,7 @@ class DescriptionView extends StatelessWidget {
   final String description;
   final String instructions;
   final String? editorText;
-  final ChallengeModel challengeModel;
+  final ChallengeViewModel challengeModel;
   final int maxChallenges;
   final String title;
 
