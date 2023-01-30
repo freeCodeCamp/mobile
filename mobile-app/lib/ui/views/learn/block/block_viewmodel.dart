@@ -101,7 +101,7 @@ class BlockViewModel extends BaseViewModel {
     );
 
     routeToChallengeView(
-      '$url/${block.superBlock}/${block.dashedName}/$challenge/page-data.json',
+      '$url/${block.superBlock.dashedName}/${block.dashedName}/$challenge/page-data.json',
       block,
     );
   }
