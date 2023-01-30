@@ -114,8 +114,8 @@ class LearnLandingViewModel extends BaseViewModel {
 
   void routeToSuperBlock(String dashedName, String name) async {
     _navigationService.navigateTo(
-      Routes.learnSuperBlockView,
-      arguments: LearnSuperBlockViewArguments(
+      Routes.superBlockView,
+      arguments: SuperBlockViewArguments(
         superBlockDashedName: dashedName,
         superBlockName: name,
         hasInternet: await learnOfflineService.hasInternet(),

@@ -11,7 +11,7 @@ import 'package:stacked/stacked.dart';
 
 import 'package:http/http.dart' as http;
 
-class LearnBlockViewModel extends BaseViewModel {
+class SuperBlockViewModel extends BaseViewModel {
   final _learnOfflineService = locator<LearnOfflineService>();
   LearnOfflineService get learnOfflineService => _learnOfflineService;
 

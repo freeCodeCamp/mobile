@@ -64,7 +64,7 @@ class Routes {
 
   static const learnLandingView = '/learn-landing-view';
 
-  static const learnSuperBlockView = '/learn-super-block-view';
+  static const superBlockView = '/super-block-view';
 
   static const all = <String>{
     homeView,
@@ -80,7 +80,7 @@ class Routes {
     profileView,
     webViewView,
     learnLandingView,
-    learnSuperBlockView,
+    superBlockView,
   };
 }
 
@@ -139,8 +139,8 @@ class StackedRouter extends _i1.RouterBase {
       page: _i14.LearnLandingView,
     ),
     _i1.RouteDef(
-      Routes.learnSuperBlockView,
-      page: _i15.LearnSuperBlockView,
+      Routes.superBlockView,
+      page: _i15.SuperBlockView,
     ),
   ];
 
@@ -251,10 +251,10 @@ class StackedRouter extends _i1.RouterBase {
         settings: data,
       );
     },
-    _i15.LearnSuperBlockView: (data) {
-      final args = data.getArgs<LearnSuperBlockViewArguments>(nullOk: false);
+    _i15.SuperBlockView: (data) {
+      final args = data.getArgs<SuperBlockViewArguments>(nullOk: false);
       return MaterialPageRoute<dynamic>(
-        builder: (context) => _i15.LearnSuperBlockView(
+        builder: (context) => _i15.SuperBlockView(
             key: args.key,
             superBlockDashedName: args.superBlockDashedName,
             superBlockName: args.superBlockName,
@@ -385,8 +385,8 @@ class WebViewViewArguments {
   final String url;
 }
 
-class LearnSuperBlockViewArguments {
-  const LearnSuperBlockViewArguments({
+class SuperBlockViewArguments {
+  const SuperBlockViewArguments({
     this.key,
     required this.superBlockDashedName,
     required this.superBlockName,
@@ -632,7 +632,7 @@ extension NavigatorStateExtension on _i21.NavigationService {
         transition: transition);
   }
 
-  Future<dynamic> navigateToLearnSuperBlockView({
+  Future<dynamic> navigateToSuperBlockView({
     _i16.Key? key,
     required String superBlockDashedName,
     required String superBlockName,
@@ -643,8 +643,260 @@ extension NavigatorStateExtension on _i21.NavigationService {
     Widget Function(BuildContext, Animation<double>, Animation<double>, Widget)?
         transition,
   }) async {
-    return navigateTo<dynamic>(Routes.learnSuperBlockView,
-        arguments: LearnSuperBlockViewArguments(
+    return navigateTo<dynamic>(Routes.superBlockView,
+        arguments: SuperBlockViewArguments(
+            key: key,
+            superBlockDashedName: superBlockDashedName,
+            superBlockName: superBlockName,
+            hasInternet: hasInternet),
+        id: routerId,
+        preventDuplicates: preventDuplicates,
+        parameters: parameters,
+        transition: transition);
+  }
+
+  Future<dynamic> replaceWithHomeView([
+    int? routerId,
+    bool preventDuplicates = true,
+    Map<String, String>? parameters,
+    Widget Function(BuildContext, Animation<double>, Animation<double>, Widget)?
+        transition,
+  ]) async {
+    return replaceWith<dynamic>(Routes.homeView,
+        id: routerId,
+        preventDuplicates: preventDuplicates,
+        parameters: parameters,
+        transition: transition);
+  }
+
+  Future<dynamic> replaceWithPodcastListView([
+    int? routerId,
+    bool preventDuplicates = true,
+    Map<String, String>? parameters,
+    Widget Function(BuildContext, Animation<double>, Animation<double>, Widget)?
+        transition,
+  ]) async {
+    return replaceWith<dynamic>(Routes.podcastListView,
+        id: routerId,
+        preventDuplicates: preventDuplicates,
+        parameters: parameters,
+        transition: transition);
+  }
+
+  Future<dynamic> replaceWithEpisodeView({
+    _i16.Key? key,
+    required _i17.Episodes episode,
+    required _i18.Podcasts podcast,
+    int? routerId,
+    bool preventDuplicates = true,
+    Map<String, String>? parameters,
+    Widget Function(BuildContext, Animation<double>, Animation<double>, Widget)?
+        transition,
+  }) async {
+    return replaceWith<dynamic>(Routes.episodeView,
+        arguments:
+            EpisodeViewArguments(key: key, episode: episode, podcast: podcast),
+        id: routerId,
+        preventDuplicates: preventDuplicates,
+        parameters: parameters,
+        transition: transition);
+  }
+
+  Future<dynamic> replaceWithNewsTutorialView({
+    _i16.Key? key,
+    required String refId,
+    int? routerId,
+    bool preventDuplicates = true,
+    Map<String, String>? parameters,
+    Widget Function(BuildContext, Animation<double>, Animation<double>, Widget)?
+        transition,
+  }) async {
+    return replaceWith<dynamic>(Routes.newsTutorialView,
+        arguments: NewsTutorialViewArguments(key: key, refId: refId),
+        id: routerId,
+        preventDuplicates: preventDuplicates,
+        parameters: parameters,
+        transition: transition);
+  }
+
+  Future<dynamic> replaceWithNewsBookmarkTutorialView({
+    _i16.Key? key,
+    required _i19.BookmarkedTutorial tutorial,
+    int? routerId,
+    bool preventDuplicates = true,
+    Map<String, String>? parameters,
+    Widget Function(BuildContext, Animation<double>, Animation<double>, Widget)?
+        transition,
+  }) async {
+    return replaceWith<dynamic>(Routes.newsBookmarkTutorialView,
+        arguments:
+            NewsBookmarkTutorialViewArguments(key: key, tutorial: tutorial),
+        id: routerId,
+        preventDuplicates: preventDuplicates,
+        parameters: parameters,
+        transition: transition);
+  }
+
+  Future<dynamic> replaceWithNewsFeedView({
+    _i16.Key? key,
+    String slug = '',
+    String author = '',
+    bool fromAuthor = false,
+    bool fromTag = false,
+    bool fromSearch = false,
+    List<dynamic> tutorials = const [],
+    String subject = '',
+    int? routerId,
+    bool preventDuplicates = true,
+    Map<String, String>? parameters,
+    Widget Function(BuildContext, Animation<double>, Animation<double>, Widget)?
+        transition,
+  }) async {
+    return replaceWith<dynamic>(Routes.newsFeedView,
+        arguments: NewsFeedViewArguments(
+            key: key,
+            slug: slug,
+            author: author,
+            fromAuthor: fromAuthor,
+            fromTag: fromTag,
+            fromSearch: fromSearch,
+            tutorials: tutorials,
+            subject: subject),
+        id: routerId,
+        preventDuplicates: preventDuplicates,
+        parameters: parameters,
+        transition: transition);
+  }
+
+  Future<dynamic> replaceWithNewsAuthorView({
+    _i16.Key? key,
+    required String authorSlug,
+    int? routerId,
+    bool preventDuplicates = true,
+    Map<String, String>? parameters,
+    Widget Function(BuildContext, Animation<double>, Animation<double>, Widget)?
+        transition,
+  }) async {
+    return replaceWith<dynamic>(Routes.newsAuthorView,
+        arguments: NewsAuthorViewArguments(key: key, authorSlug: authorSlug),
+        id: routerId,
+        preventDuplicates: preventDuplicates,
+        parameters: parameters,
+        transition: transition);
+  }
+
+  Future<dynamic> replaceWithNewsImageView({
+    _i16.Key? key,
+    required String imgUrl,
+    int? routerId,
+    bool preventDuplicates = true,
+    Map<String, String>? parameters,
+    Widget Function(BuildContext, Animation<double>, Animation<double>, Widget)?
+        transition,
+  }) async {
+    return replaceWith<dynamic>(Routes.newsImageView,
+        arguments: NewsImageViewArguments(key: key, imgUrl: imgUrl),
+        id: routerId,
+        preventDuplicates: preventDuplicates,
+        parameters: parameters,
+        transition: transition);
+  }
+
+  Future<dynamic> replaceWithCodeRadioView([
+    int? routerId,
+    bool preventDuplicates = true,
+    Map<String, String>? parameters,
+    Widget Function(BuildContext, Animation<double>, Animation<double>, Widget)?
+        transition,
+  ]) async {
+    return replaceWith<dynamic>(Routes.codeRadioView,
+        id: routerId,
+        preventDuplicates: preventDuplicates,
+        parameters: parameters,
+        transition: transition);
+  }
+
+  Future<dynamic> replaceWithChallengeView({
+    _i16.Key? key,
+    required String url,
+    required _i20.Block block,
+    required int challengesCompleted,
+    int? routerId,
+    bool preventDuplicates = true,
+    Map<String, String>? parameters,
+    Widget Function(BuildContext, Animation<double>, Animation<double>, Widget)?
+        transition,
+  }) async {
+    return replaceWith<dynamic>(Routes.challengeView,
+        arguments: ChallengeViewArguments(
+            key: key,
+            url: url,
+            block: block,
+            challengesCompleted: challengesCompleted),
+        id: routerId,
+        preventDuplicates: preventDuplicates,
+        parameters: parameters,
+        transition: transition);
+  }
+
+  Future<dynamic> replaceWithProfileView([
+    int? routerId,
+    bool preventDuplicates = true,
+    Map<String, String>? parameters,
+    Widget Function(BuildContext, Animation<double>, Animation<double>, Widget)?
+        transition,
+  ]) async {
+    return replaceWith<dynamic>(Routes.profileView,
+        id: routerId,
+        preventDuplicates: preventDuplicates,
+        parameters: parameters,
+        transition: transition);
+  }
+
+  Future<dynamic> replaceWithWebViewView({
+    _i16.Key? key,
+    required String url,
+    int? routerId,
+    bool preventDuplicates = true,
+    Map<String, String>? parameters,
+    Widget Function(BuildContext, Animation<double>, Animation<double>, Widget)?
+        transition,
+  }) async {
+    return replaceWith<dynamic>(Routes.webViewView,
+        arguments: WebViewViewArguments(key: key, url: url),
+        id: routerId,
+        preventDuplicates: preventDuplicates,
+        parameters: parameters,
+        transition: transition);
+  }
+
+  Future<dynamic> replaceWithLearnLandingView([
+    int? routerId,
+    bool preventDuplicates = true,
+    Map<String, String>? parameters,
+    Widget Function(BuildContext, Animation<double>, Animation<double>, Widget)?
+        transition,
+  ]) async {
+    return replaceWith<dynamic>(Routes.learnLandingView,
+        id: routerId,
+        preventDuplicates: preventDuplicates,
+        parameters: parameters,
+        transition: transition);
+  }
+
+  Future<dynamic> replaceWithSuperBlockView({
+    _i16.Key? key,
+    required String superBlockDashedName,
+    required String superBlockName,
+    required bool hasInternet,
+    int? routerId,
+    bool preventDuplicates = true,
+    Map<String, String>? parameters,
+    Widget Function(BuildContext, Animation<double>, Animation<double>, Widget)?
+        transition,
+  }) async {
+    return replaceWith<dynamic>(Routes.superBlockView,
+        arguments: SuperBlockViewArguments(
             key: key,
             superBlockDashedName: superBlockDashedName,
             superBlockName: superBlockName,

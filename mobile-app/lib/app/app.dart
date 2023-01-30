@@ -44,7 +44,7 @@ import 'package:sqflite_migration_service/sqflite_migration_service.dart';
     MaterialRoute(page: ProfileView),
     MaterialRoute(page: WebViewView),
     MaterialRoute(page: LearnLandingView),
-    MaterialRoute(page: LearnSuperBlockView),
+    MaterialRoute(page: SuperBlockView),
   ],
   dependencies: [
     LazySingleton(classType: NavigationService),

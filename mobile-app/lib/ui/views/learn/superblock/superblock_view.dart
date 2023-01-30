@@ -1,12 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:freecodecamp/models/learn/curriculum_model.dart';
 import 'package:freecodecamp/service/authentication/authentication_service.dart';
-import 'package:freecodecamp/ui/views/learn/block/block_viewmodel.dart';
+import 'package:freecodecamp/ui/views/learn/block/block_view.dart';
 import 'package:freecodecamp/ui/views/learn/superblock/superblock_viewmodel.dart';
 import 'package:stacked/stacked.dart';
 
-class LearnSuperBlockView extends StatelessWidget {
-  const LearnSuperBlockView({
+class SuperBlockView extends StatelessWidget {
+  const SuperBlockView({
     Key? key,
     required this.superBlockDashedName,
     required this.superBlockName,
@@ -19,8 +19,8 @@ class LearnSuperBlockView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return ViewModelBuilder<LearnBlockViewModel>.reactive(
-      viewModelBuilder: () => LearnBlockViewModel(),
+    return ViewModelBuilder<SuperBlockViewModel>.reactive(
+      viewModelBuilder: () => SuperBlockViewModel(),
       onViewModelReady: (model) => AuthenticationService.staticIsloggedIn
           ? model.auth.fetchUser()
           : null,
@@ -60,7 +60,7 @@ class LearnSuperBlockView extends StatelessWidget {
   }
 
   Widget blockTemplate(
-    LearnBlockViewModel model,
+    SuperBlockViewModel model,
     SuperBlock superBlock,
   ) {
     return Container(
