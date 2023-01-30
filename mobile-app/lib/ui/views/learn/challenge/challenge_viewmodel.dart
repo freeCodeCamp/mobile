@@ -24,7 +24,7 @@ import 'package:stacked_services/stacked_services.dart';
 import 'package:url_launcher/url_launcher_string.dart';
 import 'package:webview_flutter/webview_flutter.dart';
 
-class ChallengeModel extends BaseViewModel {
+class ChallengeViewModel extends BaseViewModel {
   String? _editorText;
   String? get editorText => _editorText;
 

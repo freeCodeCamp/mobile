@@ -5,7 +5,7 @@ import 'package:freecodecamp/service/developer_service.dart';
 import 'package:freecodecamp/ui/views/code_radio/code_radio_view.dart';
 //import 'package:freecodecamp/ui/views/learn/learn_view.dart';
 import 'package:freecodecamp/ui/views/home/home_view.dart';
-import 'package:freecodecamp/ui/views/learn/learn/learn_view.dart';
+import 'package:freecodecamp/ui/views/learn/landing/landing_view.dart';
 import 'package:freecodecamp/ui/views/podcast/podcast-list/podcast_list_view.dart';
 import 'package:freecodecamp/ui/views/profile/profile_view.dart';
 import 'package:stacked/stacked.dart';
@@ -60,7 +60,7 @@ class DrawerWidgtetViewModel extends BaseViewModel {
             PageRouteBuilder(
                 transitionDuration: Duration.zero,
                 pageBuilder: (context, animation1, animation2) =>
-                    const LearnView()));
+                    const LearnLandingView()));
         break;
       case 'NEWS':
         Navigator.pushReplacement(
