@@ -72,7 +72,10 @@ jobs:
         run: flutter analyze
 
       - name: Run unit tests
-        run: cd test && flutter test unit
+        run: |
+          cd test
+          flutter test unit
+          flutter test services
 
       - name: Run tests in emulator
         uses: reactivecircus/android-emulator-runner@50986b1464923454c95e261820bc626f38490ec0 # tag=v2
