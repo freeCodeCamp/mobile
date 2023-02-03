@@ -11,6 +11,7 @@ import 'package:freecodecamp/enums/panel_type.dart';
 import 'package:freecodecamp/models/learn/challenge_model.dart';
 import 'package:freecodecamp/models/learn/curriculum_model.dart';
 import 'package:freecodecamp/service/learn/learn_file_service.dart';
+import 'package:freecodecamp/service/learn/learn_offline_service.dart';
 import 'package:freecodecamp/service/learn/learn_service.dart';
 import 'package:freecodecamp/ui/views/learn/test_runner.dart';
 import 'package:freecodecamp/ui/widgets/setup_dialog_ui.dart';
@@ -89,6 +90,8 @@ class ChallengeViewModel extends BaseViewModel {
   final NavigationService _navigationService = locator<NavigationService>();
   final LearnFileService fileService = locator<LearnFileService>();
   final LearnService learnService = locator<LearnService>();
+  final _learnOfflineService = locator<LearnOfflineService>();
+
   set setCurrentSelectedFile(String value) {
     _currentSelectedFile = value;
     notifyListeners();
@@ -174,10 +177,15 @@ class ChallengeViewModel extends BaseViewModel {
     notifyListeners();
   }
 
-  void init(String url, Block block, int challengesCompleted) async {
+  void init(
+    String url,
+    Block block,
+    String challengeId,
+    int challengesCompleted,
+  ) async {
     setupDialogUi();
 
-    setChallenge = initChallenge(url);
+    setChallenge = _learnOfflineService.getChallenge(url, challengeId);
     Challenge challenge = await _challenge!;
 
     List<ChallengeFile> currentEditedChallenge = challenge.files
@@ -361,6 +369,7 @@ class ChallengeViewModel extends BaseViewModel {
           url:
               '$url/${block!.superBlock}/${block!.dashedName}/$slug/page-data.json',
           block: block!,
+          challengeId: currChallenge.id,
           challengesCompleted: challengesCompleted,
         ),
       );
@@ -389,6 +398,7 @@ class ChallengeViewModel extends BaseViewModel {
             url:
                 '$url/${block!.superBlock}/${block!.dashedName}/$challenge/page-data.json',
             block: block!,
+            challengeId: block!.challengeTiles[challengeIndex + 1].id,
             challengesCompleted: challengesCompleted + 1,
           ),
         );
