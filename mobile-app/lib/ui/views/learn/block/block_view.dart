@@ -162,6 +162,7 @@ class BlockView extends StatelessWidget {
             title: Text(block.challengeTiles[i].name),
             onTap: () async {
               String challenge = block.challengeTiles[i].dashedName;
+              String challengeId = block.challengeTiles[i].id;
 
               String url = await model.learnService.getBaseUrl(
                 '/page-data/learn',
@@ -170,6 +171,7 @@ class BlockView extends StatelessWidget {
               model.routeToChallengeView(
                 '$url/${block.superBlock.dashedName}/${block.dashedName}/$challenge/page-data.json',
                 block,
+                challengeId,
               );
             },
           ),
@@ -298,6 +300,7 @@ class ChallengeTile extends StatelessWidget {
         child: InkWell(
           onTap: () async {
             String challenge = block.challengeTiles[step].dashedName;
+            String challengeId = block.challengeTiles[step].id;
 
             String url = await model.learnService.getBaseUrl(
               '/page-data/learn',
@@ -306,6 +309,7 @@ class ChallengeTile extends StatelessWidget {
             model.routeToChallengeView(
               '$url/${block.superBlock.dashedName}/${block.dashedName}/$challenge/page-data.json',
               block,
+              challengeId,
             );
           },
           child: Center(

@@ -44,7 +44,7 @@ class LearnOfflineService {
   Timer? timer;
 
   /*
-   This function will return an instance of every challenge download that has 
+   This function will return an instance of every challenge download that has
    previously occured when downloading.
 
    // TODO: check if it is neccessary to request all challenges and not just the block
@@ -78,35 +78,44 @@ class LearnOfflineService {
   This function will request the given url and return an instance of a challenge.s
   */
 
-  Future<Challenge> getChallenge(String url) async {
+  Future<Challenge> getChallenge(String url, [String challengeId = '']) async {
+    Challenge challenge;
     SharedPreferences prefs = await SharedPreferences.getInstance();
-    http.Response res = await http.get(Uri.parse(url));
+    if (await hasInternet()) {
+      http.Response res = await http.get(Uri.parse(url));
 
-    if (prefs.getString(url) == null) {
-      if (res.statusCode == 200) {
-        Challenge challenge = Challenge.fromJson(
-          jsonDecode(
-            res.body,
-          )['result']['data']['challengeNode']['challenge'],
-        );
+      if (prefs.getString(url) == null) {
+        if (res.statusCode == 200) {
+          challenge = Challenge.fromJson(
+            jsonDecode(
+              res.body,
+            )['result']['data']['challengeNode']['challenge'],
+          );
 
-        prefs.setString(url, res.body);
+          prefs.setString(url, res.body);
 
-        return challenge;
+          return challenge;
+        }
+      }
+
+      challenge = Challenge.fromJson(
+        jsonDecode(
+          prefs.getString(url) as String,
+        )['result']['data']['challengeNode']['challenge'],
+      );
+    } else {
+      String? challengeStr = prefs.getString(challengeId);
+      if (challengeStr == null) {
+        throw Exception('No internet connection and no stored challenge');
+      } else {
+        challenge = Challenge.fromJson(jsonDecode(challengeStr));
       }
     }
-
-    Challenge challenge = Challenge.fromJson(
-      jsonDecode(
-        prefs.getString(url) as String,
-      )['result']['data']['challengeNode']['challenge'],
-    );
-
     return challenge;
   }
 
   /*
-    This function will download every challenges in a given amount of time in a 
+    This function will download every challenges in a given amount of time in a
     certain block. It will request these urls and update the respective stream
     which is listen to on the front-end.
   */
@@ -142,7 +151,7 @@ class LearnOfflineService {
 
   /*
     This function will store a downloaded challenge, it will return a future.
-    If an error occurs an instance of a Future.error is throw which should stop 
+    If an error occurs an instance of a Future.error is throw which should stop
     the downloading.
 
     // TODO: check if downloading stops if an error occurs
@@ -177,7 +186,7 @@ class LearnOfflineService {
           'storedChallenges',
           downloadObjects.map((e) => jsonEncode(e)).toList(),
         );
-        prefs.setString(challenge.id, challengeObj.toString());
+        prefs.setString(challenge.id, jsonEncode(challengeObj));
       }
 
       return Future<String>.value('download completed');
@@ -190,7 +199,7 @@ class LearnOfflineService {
 
   /*
   This function wil cancel the download of challenges, it will delete challenges
-  that are already downloaded. It will also remove the correlated block. 
+  that are already downloaded. It will also remove the correlated block.
   */
 
   Future<void> cancelChallengeDownload(String block) async {
@@ -276,7 +285,7 @@ class LearnOfflineService {
     }
   }
 
-  /* 
+  /*
     This function will remove the cached block according to the given dashed name
     of the block in question. If there is an error removing the block an error
     will be thrown.
@@ -319,8 +328,8 @@ class LearnOfflineService {
   }
 
   /*
-  This function retrieves the cached blocks according to their correlated 
-  superblock by giving the superblock's dashed name. If there are no cached 
+  This function retrieves the cached blocks according to their correlated
+  superblock by giving the superblock's dashed name. If there are no cached
   blocks on the gives superblock, it wil return an empty list.
   */
 
@@ -359,7 +368,7 @@ class LearnOfflineService {
 
   /*
   This function retrieves a list of superblock buttons which are used to build
-  the landing page. It firstly checks if there are any cached blocks, if so 
+  the landing page. It firstly checks if there are any cached blocks, if so
   get the superblock names correlated to the block in question. This will start
   a for loop which will return the superblock buttons in a list.
   */

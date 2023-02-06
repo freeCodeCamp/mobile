@@ -82,12 +82,13 @@ class BlockViewModel extends BaseViewModel {
     notifyListeners();
   }
 
-  void routeToChallengeView(String url, Block block) {
+  void routeToChallengeView(String url, Block block, String challengeId) {
     _navigationService.navigateTo(
       Routes.challengeView,
       arguments: ChallengeViewArguments(
         url: url,
         block: block,
+        challengeId: challengeId,
         challengesCompleted: _challengesCompleted,
       ),
     );
@@ -95,6 +96,7 @@ class BlockViewModel extends BaseViewModel {
 
   Future<void> routeToCertification(Block block) async {
     String challenge = block.challengeTiles[0].dashedName;
+    String challengeId = block.challengeTiles[0].id;
 
     String url = await learnService.getBaseUrl(
       '/page-data/learn',
@@ -103,6 +105,7 @@ class BlockViewModel extends BaseViewModel {
     routeToChallengeView(
       '$url/${block.superBlock.dashedName}/${block.dashedName}/$challenge/page-data.json',
       block,
+      challengeId,
     );
   }
 
