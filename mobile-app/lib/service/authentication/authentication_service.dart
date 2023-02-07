@@ -96,7 +96,6 @@ class AuthenticationService {
 
     isDevMode =
         dotenv.get('DEVELOPMENTMODE', fallback: '').toLowerCase() == 'true';
-    isDevMode = true; // TODO: Remove this line before merging
     baseURL = isDevMode
         ? 'https://www.freecodecamp.dev'
         : 'https://www.freecodecamp.org';
