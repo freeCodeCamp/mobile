@@ -228,6 +228,7 @@ class StackedRouter extends _i1.RouterBase {
             key: args.key,
             url: args.url,
             block: args.block,
+            challengeId: args.challengeId,
             challengesCompleted: args.challengesCompleted),
         settings: data,
       );
@@ -362,6 +363,7 @@ class ChallengeViewArguments {
     this.key,
     required this.url,
     required this.block,
+    required this.challengeId,
     required this.challengesCompleted,
   });
 
@@ -370,6 +372,8 @@ class ChallengeViewArguments {
   final String url;
 
   final _i20.Block block;
+
+  final String challengeId;
 
   final int challengesCompleted;
 }
@@ -568,6 +572,7 @@ extension NavigatorStateExtension on _i21.NavigationService {
     _i16.Key? key,
     required String url,
     required _i20.Block block,
+    required String challengeId,
     required int challengesCompleted,
     int? routerId,
     bool preventDuplicates = true,
@@ -580,6 +585,7 @@ extension NavigatorStateExtension on _i21.NavigationService {
             key: key,
             url: url,
             block: block,
+            challengeId: challengeId,
             challengesCompleted: challengesCompleted),
         id: routerId,
         preventDuplicates: preventDuplicates,
@@ -820,6 +826,7 @@ extension NavigatorStateExtension on _i21.NavigationService {
     _i16.Key? key,
     required String url,
     required _i20.Block block,
+    required String challengeId,
     required int challengesCompleted,
     int? routerId,
     bool preventDuplicates = true,
@@ -832,6 +839,7 @@ extension NavigatorStateExtension on _i21.NavigationService {
             key: key,
             url: url,
             block: block,
+            challengeId: challengeId,
             challengesCompleted: challengesCompleted),
         id: routerId,
         preventDuplicates: preventDuplicates,

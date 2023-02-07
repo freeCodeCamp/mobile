@@ -23,11 +23,13 @@ class ChallengeView extends StatelessWidget {
     Key? key,
     required this.url,
     required this.block,
+    required this.challengeId,
     required this.challengesCompleted,
   }) : super(key: key);
 
   final String url;
   final Block block;
+  final String challengeId;
   final int challengesCompleted;
 
   @override
@@ -35,7 +37,7 @@ class ChallengeView extends StatelessWidget {
     return ViewModelBuilder<ChallengeViewModel>.reactive(
       viewModelBuilder: () => ChallengeViewModel(),
       onViewModelReady: (model) {
-        model.init(url, block, challengesCompleted);
+        model.init(url, block, challengeId, challengesCompleted);
       },
       builder: (context, model, child) => FutureBuilder<Challenge?>(
         future: model.challenge,

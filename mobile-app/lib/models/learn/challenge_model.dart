@@ -56,27 +56,33 @@ class Challenge {
       'title': challenge.title,
       'description': challenge.description,
       'instructions': challenge.instructions,
-      'slug': challenge.slug,
       'superBlock': challenge.superBlock,
       'challengeType': challenge.challengeType,
-      'tests': challenge.tests.map(
-        (challengeTest) => {
-          'text': challengeTest.instruction,
-          'testString': challengeTest.javaScript
-        },
-      ),
-      'files': challenge.files.map(
-        (challengeFile) => {
-          'ext': challengeFile.ext,
-          'name': challengeFile.name,
-          'head': challengeFile.head,
-          'tail': challengeFile.tail,
-          'contents': challengeFile.contents,
-          'editableRegionBoundries': challengeFile.editableRegionBoundaries,
-          'history': challengeFile.history,
-          'fileKey': challengeFile.fileKey,
-        },
-      )
+      'fields': {
+        'slug': challenge.slug,
+        'tests': challenge.tests
+            .map(
+              (challengeTest) => {
+                'text': challengeTest.instruction,
+                'testString': challengeTest.javaScript
+              },
+            )
+            .toList(),
+      },
+      'challengeFiles': challenge.files
+          .map(
+            (challengeFile) => {
+              'ext': challengeFile.ext.name,
+              'name': challengeFile.name,
+              'head': challengeFile.head,
+              'tail': challengeFile.tail,
+              'contents': challengeFile.contents,
+              'editableRegionBoundries': challengeFile.editableRegionBoundaries,
+              'history': challengeFile.history,
+              'fileKey': challengeFile.fileKey,
+            },
+          )
+          .toList()
     };
   }
 }
