@@ -10,6 +10,7 @@ import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:freecodecamp/app/app.locator.dart';
 import 'package:freecodecamp/models/main/user_model.dart';
+import 'package:freecodecamp/ui/views/auth/privacy_view.dart';
 import 'package:pretty_dio_logger/pretty_dio_logger.dart';
 import 'package:stacked_services/stacked_services.dart';
 
@@ -224,6 +225,30 @@ class AuthenticationService {
           ),
         );
       }
+    }
+
+    final user = await userModel;
+
+    if (user != null && user.acceptedPrivacyTerms == false) {
+      bool? quincyEmails = await Navigator.push(
+        context,
+        MaterialPageRoute(
+          builder: (context) => const PrivacyView(),
+        ),
+      );
+
+      await _dio.put(
+        '/update-privacy-terms',
+        data: {
+          'quincyEmails': quincyEmails ?? false,
+        },
+        options: Options(
+          headers: {
+            'CSRF-Token': _csrfToken,
+            'Cookie': 'jwt_access_token=$_jwtAccessToken; _csrf=$_csrf',
+          },
+        ),
+      );
     }
 
     await auth0.credentialsManager.clearCredentials();
