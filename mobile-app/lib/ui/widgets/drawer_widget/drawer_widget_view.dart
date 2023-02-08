@@ -40,7 +40,11 @@ class DrawerWidgetView extends StatelessWidget {
                                 if (snapshot.hasData) {
                                   FccUserModel user =
                                       snapshot.data as FccUserModel;
-                                  return Text(user.name);
+                                  return Text(
+                                    user.name.isEmpty
+                                        ? user.username
+                                        : user.name,
+                                  );
                                 }
 
                                 return const Text('Anonymous user');
