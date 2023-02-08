@@ -31,6 +31,17 @@ class LearnLandingView extends StatelessWidget {
             child: Column(
               children: [
                 const QuoteWidget(),
+                StreamBuilder(
+                  stream: model.auth.isLoggedIn,
+                  builder: (context, snapshot) {
+                    if (!model.isLoggedIn) {
+                      return loginButton(model, context);
+                    } else {
+                      return welcomeMessage(model);
+                    }
+                  },
+                ),
+                const SizedBox(height: 16),
                 FutureBuilder<List<SuperBlockButtonData>>(
                   future: model.superBlockButtons,
                   builder: (context, snapshot) {
