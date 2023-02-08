@@ -356,11 +356,11 @@ class ChallengeViewModel extends BaseViewModel {
         prefs.remove('${currChallenge.id}.${file.name}');
       }
 
-      var challengeIndex = block!.challenges.indexWhere(
+      var challengeIndex = block!.challengeTiles.indexWhere(
         (element) => element.id == currChallenge.id,
       );
 
-      String slug = block!.challenges[challengeIndex].name
+      String slug = block!.challengeTiles[challengeIndex].name
           .toLowerCase()
           .replaceAll(' ', '-');
       String url = await learnService.getBaseUrl('/page-data/learn');
@@ -369,7 +369,7 @@ class ChallengeViewModel extends BaseViewModel {
         Routes.challengeView,
         arguments: ChallengeViewArguments(
           url:
-              '$url/${block!.superBlock}/${block!.dashedName}/$slug/page-data.json',
+              '$url/${block!.superBlock.dashedName}/${block!.dashedName}/$slug/page-data.json',
           block: block!,
           challengeId: currChallenge.id,
           challengesCompleted: challengesCompleted,
@@ -404,13 +404,13 @@ class ChallengeViewModel extends BaseViewModel {
       if (AuthenticationService.staticIsloggedIn) {
         passChallenge(currChallenge);
       }
-      var challengeIndex = block!.challenges.indexWhere(
+      var challengeIndex = block!.challengeTiles.indexWhere(
         (element) => element.id == currChallenge.id,
       );
       if (challengeIndex == maxChallenges - 1) {
         _navigationService.back();
       } else {
-        String challenge = block!.challenges[challengeIndex + 1].name
+        String challenge = block!.challengeTiles[challengeIndex + 1].name
             .toLowerCase()
             .replaceAll(' ', '-');
         String url = await learnService.getBaseUrl('/page-data/learn');
@@ -418,7 +418,7 @@ class ChallengeViewModel extends BaseViewModel {
           Routes.challengeView,
           arguments: ChallengeViewArguments(
             url:
-                '$url/${block!.superBlock}/${block!.dashedName}/$challenge/page-data.json',
+                '$url/${block!.superBlock.dashedName}/${block!.dashedName}/$challenge/page-data.json',
             block: block!,
             challengeId: block!.challengeTiles[challengeIndex + 1].id,
             challengesCompleted: challengesCompleted + 1,
