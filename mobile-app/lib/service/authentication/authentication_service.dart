@@ -160,7 +160,10 @@ class AuthenticationService {
         title: 'Login canceled',
         message: '',
       );
+
+      logout();
       Navigator.pop(context);
+
       return;
     }
 
@@ -194,6 +197,7 @@ class AuthenticationService {
                   backgroundColor: const Color(0xFF0a0a23),
                 ),
                 onPressed: () {
+                  logout();
                   Navigator.pop(context);
                 },
                 child: const Text('Close'),
@@ -209,13 +213,15 @@ class AuthenticationService {
             backgroundColor: const Color(0xFF2A2A40),
             title: const Text('Error'),
             content: const Text(
-                'Oops! Something went wrong. Please try again in a moment.'),
+              'Oops! Something went wrong. Please try again in a moment.',
+            ),
             actions: [
               TextButton(
                 style: TextButton.styleFrom(
                   backgroundColor: const Color(0xFF0a0a23),
                 ),
                 onPressed: () {
+                  logout();
                   Navigator.pop(context);
                 },
                 child: const Text('Close'),
