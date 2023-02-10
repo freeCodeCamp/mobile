@@ -1,4 +1,5 @@
 import 'package:freecodecamp/service/developer_service.dart';
+import 'package:freecodecamp/service/news/bookmark_service.dart';
 import 'package:freecodecamp/service/learn/learn_offline_service.dart';
 import 'package:freecodecamp/service/podcast/notification_service.dart';
 import 'package:freecodecamp/service/podcast/podcasts_service.dart';
@@ -11,15 +12,15 @@ import 'package:freecodecamp/service/navigation/quick_actions_service.dart';
 
 import 'package:freecodecamp/ui/views/code_radio/code_radio_view.dart';
 import 'package:freecodecamp/ui/views/home/home_view.dart';
+import 'package:freecodecamp/ui/views/learn/superblock/superblock_view.dart';
 import 'package:freecodecamp/ui/views/news/news-author/news_author_view.dart';
 import 'package:freecodecamp/ui/views/podcast/podcast-list/podcast_list_view.dart';
 import 'package:freecodecamp/ui/views/podcast/episode/episode_view.dart';
 import 'package:freecodecamp/ui/views/news/news-tutorial/news_tutorial_view.dart';
 import 'package:freecodecamp/ui/views/news/news-bookmark/news_bookmark_view.dart';
 import 'package:freecodecamp/ui/views/news/news-feed/news_feed_view.dart';
-import 'package:freecodecamp/ui/views/learn/learn/learn_view.dart';
-import 'package:freecodecamp/ui/views/learn/learn-builders/superblock_builder.dart';
-import 'package:freecodecamp/ui/views/learn/challenge_view/challenge_view.dart';
+import 'package:freecodecamp/ui/views/learn/landing/landing_view.dart';
+import 'package:freecodecamp/ui/views/learn/challenge/challenge_view.dart';
 import 'package:freecodecamp/ui/views/profile/profile_view.dart';
 
 import 'package:freecodecamp/ui/views/news/news-image-viewer/news_image_view.dart';
@@ -39,10 +40,10 @@ import 'package:sqflite_migration_service/sqflite_migration_service.dart';
     MaterialRoute(page: NewsAuthorView),
     MaterialRoute(page: NewsImageView),
     MaterialRoute(page: CodeRadioView),
-    MaterialRoute(page: SuperBlockView),
     MaterialRoute(page: ChallengeView),
     MaterialRoute(page: ProfileView),
-    MaterialRoute(page: LearnView)
+    MaterialRoute(page: LearnLandingView),
+    MaterialRoute(page: SuperBlockView),
   ],
   dependencies: [
     LazySingleton(classType: NavigationService),
@@ -59,6 +60,7 @@ import 'package:sqflite_migration_service/sqflite_migration_service.dart';
     LazySingleton(classType: LearnFileService),
     LazySingleton(classType: LearnOfflineService),
     LazySingleton(classType: QuickActionsService),
+    LazySingleton(classType: BookmarksDatabaseService)
   ],
   logger: StackedLogger(),
 )

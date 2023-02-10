@@ -44,18 +44,21 @@ class HomeView extends StatelessWidget {
                 Icons.bookmark_outline_sharp,
               ),
               label: 'Bookmarks',
+              tooltip: 'Bookmarks',
             ),
             BottomNavigationBarItem(
               icon: Icon(
                 Icons.article_sharp,
               ),
               label: 'Tutorials',
+              tooltip: 'Tutorials',
             ),
             BottomNavigationBarItem(
               icon: Icon(
                 Icons.search_sharp,
               ),
               label: 'Search',
+              tooltip: 'Search',
             )
           ],
           currentIndex: model.index,

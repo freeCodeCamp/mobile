@@ -9,7 +9,7 @@ import 'package:freecodecamp/models/learn/motivational_quote_model.dart';
 import 'package:freecodecamp/models/main/user_model.dart';
 import 'package:freecodecamp/service/authentication/authentication_service.dart';
 import 'package:freecodecamp/service/learn/learn_service.dart';
-import 'package:freecodecamp/ui/views/learn/challenge_view/challenge_viewmodel.dart';
+import 'package:freecodecamp/ui/views/learn/challenge/challenge_viewmodel.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:stacked/stacked.dart';
 
@@ -25,7 +25,7 @@ class PassWidgetModel extends BaseViewModel {
   }
 
   Future<int> numCompletedChallenges(
-    ChallengeModel challengeModel,
+    ChallengeViewModel challengeModel,
     int challengesCompleted,
   ) async {
     if (_user != null) {
@@ -62,7 +62,7 @@ class PassWidgetModel extends BaseViewModel {
     return quote;
   }
 
-  void passChallenge(ChallengeModel model) async {
+  void passChallenge(ChallengeViewModel model) async {
     _learnService.init();
     SharedPreferences prefs = await SharedPreferences.getInstance();
     Challenge? challenge = await model.challenge;

@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_code_editor/editor/editor.dart';
 import 'package:freecodecamp/models/learn/challenge_model.dart';
-import 'package:freecodecamp/ui/views/learn/challenge_view/challenge_viewmodel.dart';
+import 'package:freecodecamp/ui/views/learn/challenge/challenge_viewmodel.dart';
 
 class CustomTabBar extends StatelessWidget {
   const CustomTabBar(
@@ -12,7 +12,7 @@ class CustomTabBar extends StatelessWidget {
       required this.editor})
       : super(key: key);
 
-  final ChallengeModel model;
+  final ChallengeViewModel model;
   final Challenge challenge;
   final ChallengeFile file;
   final Editor editor;

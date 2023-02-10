@@ -11,10 +11,10 @@ import 'package:freecodecamp/enums/panel_type.dart';
 
 import 'package:freecodecamp/models/learn/challenge_model.dart';
 import 'package:freecodecamp/models/learn/curriculum_model.dart';
-import 'package:freecodecamp/ui/views/learn/challenge_view/challenge_viewmodel.dart';
-import 'package:freecodecamp/ui/views/learn/widgets/custom_tab_bar/custom_tab_bar.dart';
+import 'package:freecodecamp/ui/views/learn/challenge/challenge_viewmodel.dart';
+import 'package:freecodecamp/ui/views/learn/widgets/custom_tab_bar_widet.dart';
 
-import 'package:freecodecamp/ui/views/learn/widgets/dynamic_panel/dynamic_panel.dart';
+import 'package:freecodecamp/ui/views/learn/widgets/dynamic_panel/panels/dynamic_panel.dart';
 import 'package:webview_flutter/webview_flutter.dart';
 import 'package:stacked/stacked.dart';
 
@@ -23,19 +23,21 @@ class ChallengeView extends StatelessWidget {
     Key? key,
     required this.url,
     required this.block,
+    required this.challengeId,
     required this.challengesCompleted,
   }) : super(key: key);
 
   final String url;
   final Block block;
+  final String challengeId;
   final int challengesCompleted;
 
   @override
   Widget build(BuildContext context) {
-    return ViewModelBuilder<ChallengeModel>.reactive(
-      viewModelBuilder: () => ChallengeModel(),
+    return ViewModelBuilder<ChallengeViewModel>.reactive(
+      viewModelBuilder: () => ChallengeViewModel(),
       onViewModelReady: (model) {
-        model.init(url, block, challengesCompleted);
+        model.init(url, block, challengeId, challengesCompleted);
       },
       builder: (context, model, child) => FutureBuilder<Challenge?>(
         future: model.challenge,
@@ -227,7 +229,7 @@ class ChallengeView extends StatelessWidget {
   }
 
   Widget customBottomBar(
-    ChallengeModel model,
+    ChallengeViewModel model,
     Challenge challenge,
     Editor editor,
     BuildContext context,
@@ -390,7 +392,7 @@ class ProjectPreview extends StatelessWidget {
   }) : super(key: key);
 
   final Challenge challenge;
-  final ChallengeModel model;
+  final ChallengeViewModel model;
 
   @override
   Widget build(BuildContext context) {
