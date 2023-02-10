@@ -20,7 +20,6 @@ import 'package:freecodecamp/ui/views/news/news-feed/news_feed_view.dart';
 import 'package:freecodecamp/ui/views/learn/learn/learn_view.dart';
 import 'package:freecodecamp/ui/views/learn/learn-builders/superblock_builder.dart';
 import 'package:freecodecamp/ui/views/learn/challenge_view/challenge_view.dart';
-import 'package:freecodecamp/ui/views/web_view/web_view_view.dart';
 import 'package:freecodecamp/ui/views/profile/profile_view.dart';
 
 import 'package:freecodecamp/ui/views/news/news-image-viewer/news_image_view.dart';
@@ -43,7 +42,6 @@ import 'package:sqflite_migration_service/sqflite_migration_service.dart';
     MaterialRoute(page: SuperBlockView),
     MaterialRoute(page: ChallengeView),
     MaterialRoute(page: ProfileView),
-    MaterialRoute(page: WebViewView),
     MaterialRoute(page: LearnView)
   ],
   dependencies: [

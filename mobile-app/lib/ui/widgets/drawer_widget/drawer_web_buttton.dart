@@ -1,23 +1,40 @@
 import 'package:flutter/material.dart';
-import 'package:freecodecamp/ui/views/web_view/web_view_view.dart';
+import 'package:flutter_custom_tabs/flutter_custom_tabs.dart';
 
-class WebButton extends StatefulWidget {
-  const WebButton(
-      {Key? key,
-      required this.url,
-      required this.icon,
-      required this.component})
-      : super(key: key);
+class CustomTabButton extends StatefulWidget {
+  const CustomTabButton({
+    Key? key,
+    required this.url,
+    required this.icon,
+    required this.component,
+  }) : super(key: key);
 
   final String url;
   final String component;
   final IconData icon;
 
+  void startCustomTabs(String url) {
+    launch(
+      url,
+      customTabsOption: const CustomTabsOption(
+        enableDefaultShare: true,
+        enableUrlBarHiding: true,
+        showPageTitle: true,
+        // or user defined animation.
+
+        extraCustomTabs: <String>[
+          'org.mozilla.firefox',
+          'com.microsoft.emmx',
+        ],
+      ),
+    );
+  }
+
   @override
-  State<StatefulWidget> createState() => _WebButtonState();
+  State<StatefulWidget> createState() => _CustomTabButtonState();
 }
 
-class _WebButtonState extends State<WebButton> {
+class _CustomTabButtonState extends State<CustomTabButton> {
   @override
   Widget build(BuildContext context) {
     return Padding(
@@ -25,12 +42,7 @@ class _WebButtonState extends State<WebButton> {
       child: ListTile(
         dense: true,
         onTap: () {
-          Navigator.push(
-              context,
-              PageRouteBuilder(
-                  transitionDuration: Duration.zero,
-                  pageBuilder: (context, animation1, animation2) =>
-                      WebViewView(url: widget.url)));
+          widget.startCustomTabs(widget.url);
         },
         leading: Icon(
           widget.icon,
@@ -39,10 +51,11 @@ class _WebButtonState extends State<WebButton> {
         title: Text(
           widget.component,
           style: const TextStyle(
-              fontSize: 16,
-              fontWeight: FontWeight.w400,
-              color: Colors.white,
-              letterSpacing: 0.5),
+            fontSize: 16,
+            fontWeight: FontWeight.w400,
+            color: Colors.white,
+            letterSpacing: 0.5,
+          ),
         ),
       ),
     );
