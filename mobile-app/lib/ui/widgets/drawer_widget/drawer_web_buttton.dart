@@ -20,9 +20,7 @@ class CustomTabButton extends StatefulWidget {
         enableDefaultShare: true,
         enableUrlBarHiding: true,
         showPageTitle: true,
-        // or user defined animation.
-
-        extraCustomTabs: <String>[
+        extraCustomTabs: [
           'org.mozilla.firefox',
           'com.microsoft.emmx',
         ],
