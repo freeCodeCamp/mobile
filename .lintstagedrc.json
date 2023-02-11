@@ -1,3 +1,4 @@
 {
+  "app.*.dart": [],
   "*": "flutter analyze"
 }
