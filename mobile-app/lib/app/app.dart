@@ -21,7 +21,6 @@ import 'package:freecodecamp/ui/views/news/news-bookmark/news_bookmark_view.dart
 import 'package:freecodecamp/ui/views/news/news-feed/news_feed_view.dart';
 import 'package:freecodecamp/ui/views/learn/landing/landing_view.dart';
 import 'package:freecodecamp/ui/views/learn/challenge/challenge_view.dart';
-import 'package:freecodecamp/ui/views/web_view/web_view_view.dart';
 import 'package:freecodecamp/ui/views/profile/profile_view.dart';
 
 import 'package:freecodecamp/ui/views/news/news-image-viewer/news_image_view.dart';
@@ -43,7 +42,6 @@ import 'package:sqflite_migration_service/sqflite_migration_service.dart';
     MaterialRoute(page: CodeRadioView),
     MaterialRoute(page: ChallengeView),
     MaterialRoute(page: ProfileView),
-    MaterialRoute(page: WebViewView),
     MaterialRoute(page: LearnLandingView),
     MaterialRoute(page: SuperBlockView),
   ],

@@ -86,12 +86,12 @@ class DrawerWidgetView extends StatelessWidget {
                       },
                     ),
                     buildDivider(),
-                    const WebButton(
+                    const CustomTabButton(
                       component: 'PRIVACY',
                       icon: Icons.info_outline,
                       url: 'https://www.freecodecamp.org/news/privacy-policy/',
                     ),
-                    const WebButton(
+                    const CustomTabButton(
                       component: 'DONATE',
                       url: 'https://www.freecodecamp.org/donate/',
                       icon: Icons.favorite,
