@@ -30,17 +30,20 @@ class HtmlHandler {
             AppBar(
               backgroundColor: Colors.transparent,
               shadowColor: Colors.transparent,
-              leading: InkWell(
-                onTap: () {
-                  Navigator.pop(context);
-                },
-                child: Container(
-                  margin: const EdgeInsets.all(8),
-                  decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(50),
-                    color: Colors.black.withOpacity(0.5),
+              leading: Tooltip(
+                message: 'Back',
+                child: InkWell(
+                  onTap: () {
+                    Navigator.pop(context);
+                  },
+                  child: Container(
+                    margin: const EdgeInsets.all(8),
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(50),
+                      color: Colors.black.withOpacity(0.5),
+                    ),
+                    child: const Icon(Icons.arrow_back),
                   ),
-                  child: const Icon(Icons.arrow_back),
                 ),
               ),
             )
