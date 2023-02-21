@@ -29,10 +29,10 @@ class NewsFeedViewModel extends BaseViewModel {
     }
   }
 
-  void navigateTo(String id) {
+  void navigateTo(String id, String title) {
     _navigationService.navigateTo(
       Routes.newsTutorialView,
-      arguments: NewsTutorialViewArguments(refId: id),
+      arguments: NewsTutorialViewArguments(refId: id, title: title),
     );
   }
 

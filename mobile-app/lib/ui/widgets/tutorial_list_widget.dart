@@ -48,9 +48,9 @@ class TutorialList extends StatefulWidget {
     }
   }
 
-  void navigateToTutorial(String id) {
+  void navigateToTutorial(String id, String title) {
     _navigationService.navigateTo(Routes.newsTutorialView,
-        arguments: NewsTutorialViewArguments(refId: id));
+        arguments: NewsTutorialViewArguments(refId: id, title: title));
   }
 
   void navigateToFeed() {
@@ -146,7 +146,7 @@ class TileLayout extends StatelessWidget {
                 ),
               ),
               onTap: () {
-                widget.navigateToTutorial(tutorial.id);
+                widget.navigateToTutorial(tutorial.id, tutorial.title);
               },
             );
           }),

@@ -1,5 +1,6 @@
 import 'package:firebase_analytics/firebase_analytics.dart';
 import 'package:flutter/widgets.dart';
+import 'package:freecodecamp/app/app.router.dart';
 
 class AnalyticsObserver extends RouteObserver {
   AnalyticsObserver({required this.analytics});
@@ -7,13 +8,24 @@ class AnalyticsObserver extends RouteObserver {
   final FirebaseAnalytics analytics;
 
   void _sendScreenView(Route<dynamic> route) {
-    final String screenName = route.settings.name! +
-        (route.settings.arguments != null
-            ? '/${route.settings.arguments}'
-            : '');
+    String screenName = route.settings.name!;
 
     if (route.settings.arguments != null) {
-      print(route.settings.arguments); // Check the output of this line
+      if (route.settings.arguments.runtimeType == SuperBlockViewArguments) {
+        final routeArgs = route.settings.arguments as SuperBlockViewArguments;
+        screenName += '/${routeArgs.superBlockDashedName}';
+      } else if (route.settings.arguments.runtimeType ==
+          NewsTutorialViewArguments) {
+        final routeArgs = route.settings.arguments as NewsTutorialViewArguments;
+        screenName += '/${routeArgs.title}';
+      } else if (route.settings.arguments.runtimeType ==
+          NewsBookmarkTutorialViewArguments) {
+        final routeArgs =
+            route.settings.arguments as NewsBookmarkTutorialViewArguments;
+        screenName += '/${routeArgs.tutorial.tutorialTitle}';
+      } else {
+        screenName += '/${route.settings.arguments}';
+      }
     }
     print('Setting screen to $screenName');
     analytics.setCurrentScreen(
