@@ -20,27 +20,27 @@ jobs:
 
     steps:
       - name: Checkout freeCodeCamp main repo
-        uses: actions/checkout@755da8c3cf115ac066823e79a1e1788f8940201b # v3
+        uses: actions/checkout@ac593985615ec2ede58e132d2e21d2b1cbd6127c # v3
         with:
           repository: freeCodeCamp/freeCodeCamp
 
       - name: Checkout mobile repo
-        uses: actions/checkout@755da8c3cf115ac066823e79a1e1788f8940201b # v3
+        uses: actions/checkout@ac593985615ec2ede58e132d2e21d2b1cbd6127c # v3
         with:
           path: mobile
 
       - name: Use Node.js 16.x
-        uses: actions/setup-node@8c91899e586c5b171469028077307d293428b516 # v3
+        uses: actions/setup-node@64ed1c7eab4cce3362f8c340dee64e5eaeef8f7c # v3
         with:
           node-version: 16.x
 
-      - name: Setup Flutter 3.3.x
+      - name: Setup Flutter 3.7.x
         uses: subosito/flutter-action@dbf1fa04f4d2e52c33185153d06cdb5443aa189d # v2
         with:
-          flutter-version: '3.3.x'
+          flutter-version: '3.7.x'
           channel: 'stable'
           cache: true
-          cache-key: flutter-3.3.x
+          cache-key: flutter-3.7.x
           cache-path: ${{ runner.tool_cache }}/flutter
 
       - name: Set freeCodeCamp Environment Variables

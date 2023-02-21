@@ -30,13 +30,13 @@ Future<void> main() async {
   await AppAudioService().init();
   await FkUserAgent.init();
 
-  runApp(const MyApp());
+  runApp(const FreeCodeCampMobileApp());
 
   await QuickActionsService().init();
 }
 
-class MyApp extends StatelessWidget {
-  const MyApp({Key? key}) : super(key: key);
+class FreeCodeCampMobileApp extends StatelessWidget {
+  const FreeCodeCampMobileApp({Key? key}) : super(key: key);
   @override
   Widget build(BuildContext context) {
     return MaterialApp(

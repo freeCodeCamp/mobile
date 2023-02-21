@@ -16,7 +16,7 @@ class DrawerWidgetView extends StatelessWidget {
   Widget build(BuildContext context) {
     return ViewModelBuilder<DrawerWidgtetViewModel>.reactive(
       viewModelBuilder: () => DrawerWidgtetViewModel(),
-      onModelReady: (model) => model.initState(),
+      onViewModelReady: (model) => model.initState(),
       builder: (context, model, child) => Drawer(
         child: Container(
           color: const Color.fromRGBO(0x2A, 0x2A, 0x40, 1),
@@ -86,12 +86,12 @@ class DrawerWidgetView extends StatelessWidget {
                       },
                     ),
                     buildDivider(),
-                    const WebButton(
+                    const CustomTabButton(
                       component: 'PRIVACY',
                       icon: Icons.info_outline,
                       url: 'https://www.freecodecamp.org/news/privacy-policy/',
                     ),
-                    const WebButton(
+                    const CustomTabButton(
                       component: 'DONATE',
                       url: 'https://www.freecodecamp.org/donate/',
                       icon: Icons.favorite,

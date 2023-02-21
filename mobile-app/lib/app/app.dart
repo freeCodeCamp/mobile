@@ -1,4 +1,6 @@
 import 'package:freecodecamp/service/developer_service.dart';
+import 'package:freecodecamp/service/news/bookmark_service.dart';
+import 'package:freecodecamp/service/learn/learn_offline_service.dart';
 import 'package:freecodecamp/service/podcast/notification_service.dart';
 import 'package:freecodecamp/service/podcast/podcasts_service.dart';
 import 'package:freecodecamp/service/podcast/download_service.dart';
@@ -10,25 +12,16 @@ import 'package:freecodecamp/service/navigation/quick_actions_service.dart';
 import 'package:freecodecamp/service/firebase/analytics_service.dart';
 
 import 'package:freecodecamp/ui/views/code_radio/code_radio_view.dart';
-import 'package:freecodecamp/ui/views/forum/forum-categories/forum_category_view.dart';
-import 'package:freecodecamp/ui/views/forum/forum-login/forum_login_view.dart';
-import 'package:freecodecamp/ui/views/forum/forum-post-feed/forum_post_feed_view.dart';
-import 'package:freecodecamp/ui/views/forum/forum-post/forum_post_view.dart';
-import 'package:freecodecamp/ui/views/forum/forum-user-profile/forum_user_profile_view.dart';
-import 'package:freecodecamp/ui/views/forum/forum-user/forum_user_view.dart';
 import 'package:freecodecamp/ui/views/home/home_view.dart';
+import 'package:freecodecamp/ui/views/learn/superblock/superblock_view.dart';
 import 'package:freecodecamp/ui/views/news/news-author/news_author_view.dart';
 import 'package:freecodecamp/ui/views/podcast/podcast-list/podcast_list_view.dart';
 import 'package:freecodecamp/ui/views/podcast/episode/episode_view.dart';
 import 'package:freecodecamp/ui/views/news/news-tutorial/news_tutorial_view.dart';
 import 'package:freecodecamp/ui/views/news/news-bookmark/news_bookmark_view.dart';
 import 'package:freecodecamp/ui/views/news/news-feed/news_feed_view.dart';
-import 'package:freecodecamp/ui/views/settings/forumSettings/forum_settings_view.dart';
-import 'package:freecodecamp/ui/views/settings/podcastSettings/podcast_settings_view.dart';
-import 'package:freecodecamp/ui/views/learn/learn/learn_view.dart';
-import 'package:freecodecamp/ui/views/learn/learn-builders/superblock_builder.dart';
-import 'package:freecodecamp/ui/views/learn/challenge_editor/challenge_view.dart';
-import 'package:freecodecamp/ui/views/web_view/web_view_view.dart';
+import 'package:freecodecamp/ui/views/learn/landing/landing_view.dart';
+import 'package:freecodecamp/ui/views/learn/challenge/challenge_view.dart';
 import 'package:freecodecamp/ui/views/profile/profile_view.dart';
 
 import 'package:freecodecamp/ui/views/news/news-image-viewer/news_image_view.dart';
@@ -41,26 +34,17 @@ import 'package:sqflite_migration_service/sqflite_migration_service.dart';
   routes: [
     MaterialRoute(page: HomeView, initial: true),
     MaterialRoute(page: PodcastListView),
-    MaterialRoute(page: PodcastSettingsView),
     MaterialRoute(page: EpisodeView),
     MaterialRoute(page: NewsTutorialView),
-    MaterialRoute(page: NewsBookmarkPostView),
+    MaterialRoute(page: NewsBookmarkTutorialView),
     MaterialRoute(page: NewsFeedView),
     MaterialRoute(page: NewsAuthorView),
     MaterialRoute(page: NewsImageView),
-    MaterialRoute(page: ForumCategoryView),
-    MaterialRoute(page: ForumPostFeedView),
-    MaterialRoute(page: ForumPostView),
-    MaterialRoute(page: ForumLoginView),
-    MaterialRoute(page: ForumUserView),
-    MaterialRoute(page: ForumSettingsView),
-    MaterialRoute(page: ForumUserProfileView),
     MaterialRoute(page: CodeRadioView),
-    MaterialRoute(page: SuperBlockView),
     MaterialRoute(page: ChallengeView),
     MaterialRoute(page: ProfileView),
-    MaterialRoute(page: WebViewView),
-    MaterialRoute(page: LearnView)
+    MaterialRoute(page: LearnLandingView),
+    MaterialRoute(page: SuperBlockView),
   ],
   dependencies: [
     LazySingleton(classType: NavigationService),
@@ -75,8 +59,10 @@ import 'package:sqflite_migration_service/sqflite_migration_service.dart';
     LazySingleton(classType: DownloadService),
     LazySingleton(classType: LearnService),
     LazySingleton(classType: LearnFileService),
+    LazySingleton(classType: LearnOfflineService),
     LazySingleton(classType: QuickActionsService),
     LazySingleton(classType: AnalyticsService),
+    LazySingleton(classType: BookmarksDatabaseService)
   ],
   logger: StackedLogger(),
 )

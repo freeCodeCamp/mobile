@@ -1,86 +1,154 @@
 class SuperBlock {
-  final String superblockName;
-  final List<Block> blocks;
+  final String dashedName;
+  final String name;
+  final List<Block>? blocks;
 
-  SuperBlock({required this.superblockName, required this.blocks});
+  SuperBlock({
+    required this.dashedName,
+    required this.name,
+    this.blocks,
+  });
 
-  static String getSuperBlockNameFromKey(Map<String, dynamic> data) {
-    List superBlockNameToList = data.keys.first.split('-');
-
-    // Why is the first word removed??
-    superBlockNameToList.removeAt(0);
-
-    String superBlockName = superBlockNameToList.join(' ');
-
-    return superBlockName;
-  }
-
-  factory SuperBlock.fromJson(Map<String, dynamic> data) {
+  factory SuperBlock.fromJson(
+    Map<String, dynamic> data,
+    String dashedName,
+    String name,
+  ) {
     return SuperBlock(
-      superblockName: getSuperBlockNameFromKey(data),
+      dashedName: dashedName,
+      name: name,
       blocks: (data[data.keys.first]['blocks'] as Map)
-          .map((key, value) => MapEntry(
+          .map((key, value) {
+            return MapEntry(
+              key,
+              Block.fromJson(
+                value['challenges'],
+                value['desc'],
                 key,
-                Block.fromJson(value['challenges'], value['desc'], key),
-              ))
+                dashedName,
+                name,
+              ),
+            );
+          })
           .values
           .toList()
-        ..sort((Block a, Block b) => a.order.compareTo(b.order)),
+        ..sort(
+          (Block a, Block b) => a.order.compareTo(b.order),
+        ),
     );
+  }
+
+  static Map<String, dynamic> toMap(SuperBlock superBlock) {
+    return {
+      'dashedName': superBlock.dashedName,
+      'name': superBlock.name,
+    };
   }
 }
 
 class Block {
-  final String blockName;
-  final String? dashedName;
-  final String? superBlock;
+  final String name;
+  final String dashedName;
+  final SuperBlock superBlock;
   final List description;
   final bool isStepBased;
   final int order;
 
-  final List<ChallengeListTile> challenges;
+  final List challenges;
+  final List<ChallengeListTile> challengeTiles;
 
-  Block(
-      {required this.blockName,
-      required this.description,
-      required this.isStepBased,
-      this.dashedName = '',
-      this.superBlock = '',
-      required this.challenges,
-      required this.order});
+  Block({
+    required this.superBlock,
+    required this.name,
+    required this.dashedName,
+    required this.description,
+    required this.isStepBased,
+    required this.order,
+    required this.challenges,
+    required this.challengeTiles,
+  });
 
   static bool checkIfStepBased(String superblock) {
     return superblock == '2022/responsive-web-design';
   }
 
   factory Block.fromJson(
-      Map<String, dynamic> data, List description, String key) {
+    Map<String, dynamic> data,
+    List description,
+    String key,
+    String superBlockDashedName,
+    String superBlockName,
+  ) {
+    // set challengeTiles as a custom field as there needs
+    // to be a raw version (challenges).
+
+    data['challengeTiles'] = [];
+
     return Block(
-        blockName: data['name'],
-        description: description,
-        dashedName: data['dashedName'] ?? key,
-        superBlock: data['superBlock'],
-        order: data['order'],
-        challenges: (data['challengeOrder'] as List)
-            .map<ChallengeListTile>((dynamic challenge) =>
-                ChallengeListTile(id: challenge[0], name: challenge[1]))
-            .toList(),
-        isStepBased: checkIfStepBased(data['superBlock']));
+      superBlock: SuperBlock(
+        dashedName: superBlockDashedName,
+        name: superBlockName,
+      ),
+      name: data['name'],
+      dashedName: key,
+      description: description,
+      order: data['order'],
+      isStepBased: checkIfStepBased(
+        superBlockDashedName,
+      ),
+      challenges: data['challengeOrder'],
+      challengeTiles: (data['challengeOrder'] as List)
+          .map<ChallengeListTile>(
+            (dynamic challenge) => ChallengeListTile(
+              id: challenge[0],
+              name: challenge[1],
+              dashedName: challenge[1]
+                  .toLowerCase()
+                  .replaceAll(' ', '-')
+                  .replaceAll(RegExp(r"[@':]"), ''),
+            ),
+          )
+          .toList(),
+    );
+  }
+
+  static Map<String, dynamic> toCachedObject(Block block) {
+    return {
+      'superBlock': {
+        'dashedName': block.superBlock.dashedName,
+        'name': block.superBlock.name,
+      },
+      'name': block.name,
+      'dashedName': block.dashedName,
+      'description': block.description,
+      'order': block.order,
+      'isStepBased': block.isStepBased,
+      'challengeOrder': block.challenges,
+      'challengeTiles': block.challenges,
+    };
   }
 }
 
 class ChallengeListTile {
   final String id;
   final String name;
+  final String dashedName;
 
-  ChallengeListTile({required this.id, required this.name});
+  ChallengeListTile({
+    required this.id,
+    required this.name,
+    required this.dashedName,
+  });
 }
 
-class SuperBlockButton {
+class SuperBlockButtonData {
   final String path;
   final String name;
   final bool public;
 
-  SuperBlockButton(
-      {required this.path, required this.name, required this.public});
+  SuperBlockButtonData({
+    required this.path,
+    required this.name,
+    required this.public,
+  });
 }

@@ -1,0 +1,271 @@
+import 'package:flutter/material.dart';
+import 'package:freecodecamp/enums/alert_type.dart';
+import 'package:freecodecamp/models/learn/curriculum_model.dart';
+import 'package:freecodecamp/models/learn/motivational_quote_model.dart';
+import 'package:freecodecamp/models/main/user_model.dart';
+import 'package:freecodecamp/ui/views/learn/landing/landing_viewmodel.dart';
+import 'package:freecodecamp/ui/views/learn/widgets/custom_alert_widget.dart';
+import 'package:freecodecamp/ui/widgets/drawer_widget/drawer_widget_view.dart';
+import 'package:stacked/stacked.dart';
+
+class LearnLandingView extends StatelessWidget {
+  const LearnLandingView({Key? key}) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return ViewModelBuilder<LearnLandingViewModel>.reactive(
+      viewModelBuilder: () => LearnLandingViewModel(),
+      onViewModelReady: (model) => model.init(context),
+      builder: (context, model, child) => Scaffold(
+        appBar: AppBar(
+          title: const Text('LEARN'),
+        ),
+        drawer: const DrawerWidgetView(),
+        body: RefreshIndicator(
+          backgroundColor: const Color(0xFF0a0a23),
+          color: Colors.white,
+          onRefresh: () {
+            model.refresh();
+
+            return Future.delayed(Duration.zero);
+          },
+          child: SingleChildScrollView(
+            child: Column(
+              children: [
+                CustomAlert(
+                  text: model.alert,
+                  alertType: Alert.warning,
+                ),
+                const QuoteWidget(),
+                FutureBuilder<List<SuperBlockButtonData>>(
+                  future: model.superBlockButtons,
+                  builder: (context, snapshot) {
+                    if (snapshot.hasData) {
+                      if (snapshot.data!.isEmpty) {
+                        return errorMessage(context);
+                      }
+
+                      if (snapshot.data is List<SuperBlockButtonData>) {
+                        List<SuperBlockButtonData> buttons = snapshot.data!;
+
+                        return ListView.builder(
+                          physics: const ClampingScrollPhysics(),
+                          shrinkWrap: true,
+                          itemCount: buttons.length,
+                          itemBuilder: (BuildContext context, int i) {
+                            return SuperBlockButton(button: buttons[i]);
+                          },
+                        );
+                      }
+                    }
+
+                    if (ConnectionState.waiting == snapshot.connectionState) {
+                      return const Center(
+                        child: CircularProgressIndicator(),
+                      );
+                    }
+
+                    return const Center(
+                      child: CircularProgressIndicator(),
+                    );
+                  },
+                ),
+              ],
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+
+  Padding errorMessage(BuildContext context) {
+    return Padding(
+      padding: EdgeInsets.symmetric(
+        vertical: MediaQuery.of(context).size.width * 0.5,
+        horizontal: 8,
+      ),
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        crossAxisAlignment: CrossAxisAlignment.center,
+        children: const [
+          Text(
+            'You are offline, and have no downloads!',
+            style: TextStyle(
+              fontWeight: FontWeight.bold,
+              fontSize: 18,
+              height: 1.2,
+            ),
+            textAlign: TextAlign.center,
+          ),
+          Text(
+            'Try to download some challenges if you have an unstable connection.',
+            textAlign: TextAlign.center,
+            style: TextStyle(
+              height: 2.2,
+              fontSize: 16,
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget loginButton(LearnLandingViewModel model, BuildContext context) {
+    return Container(
+      padding: const EdgeInsets.only(top: 16, left: 8, right: 8),
+      constraints: const BoxConstraints(minHeight: 75),
+      child: ElevatedButton(
+        style: ElevatedButton.styleFrom(
+          backgroundColor: const Color.fromRGBO(0xf1, 0xbe, 0x32, 1),
+        ),
+        onPressed: () {
+          model.auth.login(context);
+        },
+        child: const Text(
+          'Sign in to save your progress',
+          textAlign: TextAlign.center,
+          style: TextStyle(color: Colors.black, fontSize: 20),
+        ),
+      ),
+    );
+  }
+
+  Widget welcomeMessage(LearnLandingViewModel model) {
+    return FutureBuilder<FccUserModel>(
+      future: model.auth.userModel,
+      builder: ((context, snapshot) {
+        if (snapshot.hasData) {
+          FccUserModel user = snapshot.data as FccUserModel;
+
+          return Container(
+            padding: const EdgeInsets.all(16),
+            child: Text(
+              'Welcome back ${user.username}. ',
+              textAlign: TextAlign.center,
+              style: const TextStyle(
+                fontSize: 20,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+          );
+        }
+
+        return const Center(child: CircularProgressIndicator());
+      }),
+    );
+  }
+}
+
+class SuperBlockButton extends StatelessWidget {
+  const SuperBlockButton({
+    Key? key,
+    required this.button,
+  }) : super(key: key);
+
+  final SuperBlockButtonData button;
+
+  @override
+  Widget build(BuildContext context) {
+    LearnLandingViewModel model = LearnLandingViewModel();
+
+    return Container(
+      padding: const EdgeInsets.symmetric(
+        vertical: 6,
+        horizontal: 8,
+      ),
+      height: 80,
+      child: ElevatedButton(
+        style: ElevatedButton.styleFrom(
+          backgroundColor: button.public
+              ? const Color.fromRGBO(0x3b, 0x3b, 0x4f, 1)
+              : const Color.fromARGB(255, 41, 41, 54),
+          side: button.public
+              ? const BorderSide(width: 2, color: Colors.white)
+              : const BorderSide(
+                  width: 2,
+                  color: Color.fromRGBO(0x3b, 0x3b, 0x4f, 1),
+                ),
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(0),
+            side: const BorderSide(
+              color: Colors.teal,
+              width: 2.0,
+            ),
+          ),
+        ),
+        onPressed: () {
+          button.public
+              ? model.routeToSuperBlock(button.path, button.name)
+              : model.disabledButtonSnack();
+        },
+        child: Row(
+          children: [
+            Align(
+              alignment: Alignment.centerLeft,
+              child: SizedBox(
+                width: MediaQuery.of(context).size.width * 0.70,
+                child: Text(
+                  button.name,
+                  overflow: TextOverflow.ellipsis,
+                  maxLines: 2,
+                  textAlign: TextAlign.left,
+                  style: const TextStyle(fontSize: 20),
+                ),
+              ),
+            ),
+            const Expanded(
+              child: Align(
+                alignment: Alignment.centerRight,
+                child: Icon(Icons.arrow_forward_ios),
+              ),
+            )
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+class QuoteWidget extends StatelessWidget {
+  const QuoteWidget({
+    Key? key,
+  }) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    LearnLandingViewModel model = LearnLandingViewModel();
+
+    return FutureBuilder(
+      future: model.retrieveNewQuote(),
+      builder: (context, snapshot) {
+        if (snapshot.hasData) {
+          MotivationalQuote quote = snapshot.data as MotivationalQuote;
+
+          return Container(
+            padding: const EdgeInsets.all(16),
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Text(
+                  '"${quote.quote}"',
+                  textAlign: TextAlign.center,
+                  style: const TextStyle(fontSize: 20, height: 1.5),
+                ),
+                Text(
+                  '- ${quote.author}',
+                  style: const TextStyle(
+                    fontStyle: FontStyle.italic,
+                    fontSize: 16,
+                    height: 1.5,
+                  ),
+                )
+              ],
+            ),
+          );
+        }
+
+        return Container();
+      },
+    );
+  }
+}

@@ -4,12 +4,10 @@ import 'package:freecodecamp/app/app.locator.dart';
 import 'package:freecodecamp/service/developer_service.dart';
 import 'package:freecodecamp/ui/views/code_radio/code_radio_view.dart';
 //import 'package:freecodecamp/ui/views/learn/learn_view.dart';
-import 'package:freecodecamp/ui/views/forum/forum-categories/forum_category_view.dart';
 import 'package:freecodecamp/ui/views/home/home_view.dart';
-import 'package:freecodecamp/ui/views/learn/learn/learn_view.dart';
+import 'package:freecodecamp/ui/views/learn/landing/landing_view.dart';
 import 'package:freecodecamp/ui/views/podcast/podcast-list/podcast_list_view.dart';
 import 'package:freecodecamp/ui/views/profile/profile_view.dart';
-import 'package:freecodecamp/ui/views/settings/settings_view.dart';
 import 'package:stacked/stacked.dart';
 import 'package:stacked_services/stacked_services.dart';
 
@@ -61,7 +59,7 @@ class DrawerWidgtetViewModel extends BaseViewModel {
           context,
           PageRouteBuilder(
             transitionDuration: Duration.zero,
-            pageBuilder: (context, animation1, animation2) => const LearnView(),
+            pageBuilder: (context, animation1, animation2) => const LearnLandingView(),
             settings: const RouteSettings(name: 'Learn View'),
           ),
         );
@@ -76,17 +74,6 @@ class DrawerWidgtetViewModel extends BaseViewModel {
           ),
         );
         break;
-      case 'FORUM':
-        Navigator.pushReplacement(
-          context,
-          PageRouteBuilder(
-            transitionDuration: Duration.zero,
-            pageBuilder: (context, animation1, animation2) =>
-                ForumCategoryView(),
-            settings: const RouteSettings(name: 'Forum View'),
-          ),
-        );
-        break;
       case 'PODCAST':
         Navigator.pushReplacement(
           context,
@@ -95,17 +82,6 @@ class DrawerWidgtetViewModel extends BaseViewModel {
             pageBuilder: (context, animation1, animation2) =>
                 const PodcastListView(),
             settings: const RouteSettings(name: 'Podcasts List View'),
-          ),
-        );
-        break;
-      case 'SETTINGS':
-        Navigator.pushReplacement(
-          context,
-          PageRouteBuilder(
-            transitionDuration: Duration.zero,
-            pageBuilder: (context, animation1, animatiom2) =>
-                const SettingsView(),
-            settings: const RouteSettings(name: 'Settings View'),
           ),
         );
         break;
