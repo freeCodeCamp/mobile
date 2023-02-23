@@ -112,6 +112,7 @@ class NewsSearchView extends StatelessWidget {
                                 onTap: () => {
                                   model.navigateToTutorial(
                                     current[index].data['objectID'],
+                                    current[index].data['title']
                                   ),
                                 },
                               );

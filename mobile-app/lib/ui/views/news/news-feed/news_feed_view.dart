@@ -116,7 +116,7 @@ class NewsFeedView extends StatelessWidget {
         child: InkWell(
           splashColor: Colors.transparent,
           onTap: () {
-            model.navigateTo(model.tutorials[i].id);
+            model.navigateTo(model.tutorials[i].id, model.tutorials[i].title);
           },
           child: Padding(
             padding: const EdgeInsets.only(bottom: 32.0),

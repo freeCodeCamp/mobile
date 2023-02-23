@@ -53,6 +53,8 @@ dependencies:
   device_info_plus: ^6.0.0
   upgrader: ^4.6.1
   quick_actions: ^1.0.1
+  firebase_core: ^2.4.0
+  firebase_analytics: ^10.1.0
   flutter_custom_tabs: ^1.0.4
   mockito: ^5.3.2
 dev_dependencies:

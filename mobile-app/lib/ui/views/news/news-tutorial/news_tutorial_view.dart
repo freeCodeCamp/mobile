@@ -63,8 +63,13 @@ class NewsTutorialHeader extends StatelessWidget {
 
 class NewsTutorialView extends StatelessWidget {
   // ignore: prefer_const_constructors_in_immutables
-  NewsTutorialView({Key? key, required this.refId}) : super(key: key);
+  NewsTutorialView({
+    Key? key,
+    required this.refId,
+    required this.title,
+  }) : super(key: key);
   late final String refId;
+  final String? title;
 
   @override
   Widget build(BuildContext context) {

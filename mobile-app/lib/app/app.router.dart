@@ -160,8 +160,8 @@ class StackedRouter extends _i1.RouterBase {
     _i5.NewsTutorialView: (data) {
       final args = data.getArgs<NewsTutorialViewArguments>(nullOk: false);
       return MaterialPageRoute<dynamic>(
-        builder: (context) =>
-            _i5.NewsTutorialView(key: args.key, refId: args.refId),
+        builder: (context) => _i5.NewsTutorialView(
+            key: args.key, refId: args.refId, title: args.title),
         settings: data,
       );
     },
@@ -268,17 +268,30 @@ class EpisodeViewArguments {
   final _i16.Episodes episode;
 
   final _i17.Podcasts podcast;
+
+  @override
+  String toString() {
+    return '{"key": "$key", "episode": "$episode", "podcast": "$podcast"}';
+  }
 }
 
 class NewsTutorialViewArguments {
   const NewsTutorialViewArguments({
     this.key,
     required this.refId,
+    required this.title,
   });
 
   final _i15.Key? key;
 
   final String refId;
+
+  final String? title;
+
+  @override
+  String toString() {
+    return '{"key": "$key", "refId": "$refId", "title": "$title"}';
+  }
 }
 
 class NewsBookmarkTutorialViewArguments {
@@ -290,6 +303,11 @@ class NewsBookmarkTutorialViewArguments {
   final _i15.Key? key;
 
   final _i18.BookmarkedTutorial tutorial;
+
+  @override
+  String toString() {
+    return '{"key": "$key", "tutorial": "$tutorial"}';
+  }
 }
 
 class NewsFeedViewArguments {
@@ -319,6 +337,11 @@ class NewsFeedViewArguments {
   final List<dynamic> tutorials;
 
   final String subject;
+
+  @override
+  String toString() {
+    return '{"key": "$key", "slug": "$slug", "author": "$author", "fromAuthor": "$fromAuthor", "fromTag": "$fromTag", "fromSearch": "$fromSearch", "tutorials": "$tutorials", "subject": "$subject"}';
+  }
 }
 
 class NewsAuthorViewArguments {
@@ -330,6 +353,11 @@ class NewsAuthorViewArguments {
   final _i15.Key? key;
 
   final String authorSlug;
+
+  @override
+  String toString() {
+    return '{"key": "$key", "authorSlug": "$authorSlug"}';
+  }
 }
 
 class NewsImageViewArguments {
@@ -341,6 +369,11 @@ class NewsImageViewArguments {
   final _i15.Key? key;
 
   final String imgUrl;
+
+  @override
+  String toString() {
+    return '{"key": "$key", "imgUrl": "$imgUrl"}';
+  }
 }
 
 class ChallengeViewArguments {
@@ -361,6 +394,11 @@ class ChallengeViewArguments {
   final String challengeId;
 
   final int challengesCompleted;
+
+  @override
+  String toString() {
+    return '{"key": "$key", "url": "$url", "block": "$block", "challengeId": "$challengeId", "challengesCompleted": "$challengesCompleted"}';
+  }
 }
 
 class SuperBlockViewArguments {
@@ -378,6 +416,11 @@ class SuperBlockViewArguments {
   final String superBlockName;
 
   final bool hasInternet;
+
+  @override
+  String toString() {
+    return '{"key": "$key", "superBlockDashedName": "$superBlockDashedName", "superBlockName": "$superBlockName", "hasInternet": "$hasInternet"}';
+  }
 }
 
 extension NavigatorStateExtension on _i20.NavigationService {
@@ -431,6 +474,7 @@ extension NavigatorStateExtension on _i20.NavigationService {
   Future<dynamic> navigateToNewsTutorialView({
     _i15.Key? key,
     required String refId,
+    required String? title,
     int? routerId,
     bool preventDuplicates = true,
     Map<String, String>? parameters,
@@ -438,7 +482,8 @@ extension NavigatorStateExtension on _i20.NavigationService {
         transition,
   }) async {
     return navigateTo<dynamic>(Routes.newsTutorialView,
-        arguments: NewsTutorialViewArguments(key: key, refId: refId),
+        arguments:
+            NewsTutorialViewArguments(key: key, refId: refId, title: title),
         id: routerId,
         preventDuplicates: preventDuplicates,
         parameters: parameters,
@@ -668,6 +713,7 @@ extension NavigatorStateExtension on _i20.NavigationService {
   Future<dynamic> replaceWithNewsTutorialView({
     _i15.Key? key,
     required String refId,
+    required String? title,
     int? routerId,
     bool preventDuplicates = true,
     Map<String, String>? parameters,
@@ -675,7 +721,8 @@ extension NavigatorStateExtension on _i20.NavigationService {
         transition,
   }) async {
     return replaceWith<dynamic>(Routes.newsTutorialView,
-        arguments: NewsTutorialViewArguments(key: key, refId: refId),
+        arguments:
+            NewsTutorialViewArguments(key: key, refId: refId, title: title),
         id: routerId,
         preventDuplicates: preventDuplicates,
         parameters: parameters,
