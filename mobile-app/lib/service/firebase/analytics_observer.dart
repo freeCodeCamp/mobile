@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:firebase_analytics/firebase_analytics.dart';
 import 'package:flutter/widgets.dart';
 import 'package:freecodecamp/app/app.router.dart';
@@ -27,7 +29,7 @@ class AnalyticsObserver extends RouteObserver {
         screenName += '/${route.settings.arguments}';
       }
     }
-    print('Setting screen to $screenName');
+    log('Setting screen to $screenName');
     analytics.setCurrentScreen(
         screenName: screenName, screenClassOverride: screenName);
   }
