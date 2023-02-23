@@ -135,6 +135,9 @@ class AuthenticationService {
     showDialog(
       context: context,
       barrierDismissible: false,
+      routeSettings: const RouteSettings(
+        name: 'Login View',
+      ),
       builder: (context) {
         return WillPopScope(
           onWillPop: () async => false,
@@ -239,6 +242,9 @@ class AuthenticationService {
         context,
         MaterialPageRoute(
           builder: (context) => const PrivacyView(),
+          settings: const RouteSettings(
+            name: 'New User Accept Privacy View',
+          ),
         ),
       );
 
