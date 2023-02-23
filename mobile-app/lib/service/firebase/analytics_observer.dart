@@ -8,7 +8,7 @@ class AnalyticsObserver extends RouteObserver {
   final FirebaseAnalytics analytics;
 
   void _sendScreenView(Route<dynamic> route) {
-    String screenName = route.settings.name!;
+    String screenName = route.settings.name ?? 'could-not-find-view';
 
     if (route.settings.arguments != null) {
       if (route.settings.arguments.runtimeType == SuperBlockViewArguments) {
