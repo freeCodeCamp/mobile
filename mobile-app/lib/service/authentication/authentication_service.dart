@@ -1,21 +1,28 @@
 import 'dart:async';
 import 'dart:developer';
+import 'dart:io';
+
+import 'package:auth0_flutter/auth0_flutter.dart';
 import 'package:curl_logger_dio_interceptor/curl_logger_dio_interceptor.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
-import 'package:freecodecamp/ui/widgets/login_webview_widget/login_webview_view.dart';
+import 'package:freecodecamp/app/app.locator.dart';
 import 'package:freecodecamp/models/main/user_model.dart';
+import 'package:freecodecamp/ui/views/auth/privacy_view.dart';
 import 'package:pretty_dio_logger/pretty_dio_logger.dart';
-import 'package:webview_cookie_manager/webview_cookie_manager.dart';
+import 'package:stacked_services/stacked_services.dart';
 
 class AuthenticationService {
   static final AuthenticationService _authenticationService =
       AuthenticationService._internal();
 
+  SnackbarService snackbar = locator<SnackbarService>();
+
   final FlutterSecureStorage store = const FlutterSecureStorage();
   final Dio _dio = Dio();
+  late final Auth0 auth0;
 
   String _csrf = '';
   String _csrfToken = '';
@@ -47,7 +54,8 @@ class AuthenticationService {
 
     for (String requiredToken in requiredTokens) {
       if (await store.containsKey(key: requiredToken) == false ||
-          await store.read(key: requiredToken) == null) {
+          await store.read(key: requiredToken) == null ||
+          await store.read(key: requiredToken) == '') {
         log('message: Missing token: $requiredToken');
         return false;
       }
@@ -62,44 +70,32 @@ class AuthenticationService {
     store.write(key: 'jwt_access_token', value: _jwtAccessToken);
   }
 
-  Future<void> setRequiredTokes() async {
+  Future<void> setRequiredTokens() async {
     _csrf = await store.read(key: 'csrf') as String;
     _csrfToken = await store.read(key: 'csrf_token') as String;
     _jwtAccessToken = await store.read(key: 'jwt_access_token') as String;
   }
 
-  Future<bool> extractCookies() async {
-    await WebviewCookieManager().getCookies(baseURL).then(
-      (cookies) {
-        for (var cookie in cookies) {
-          if (cookie.name == '_csrf') {
-            _csrf = cookie.value;
-          }
-          if (cookie.name == 'csrf_token') {
-            _csrfToken = cookie.value;
-          }
-          if (cookie.name == 'jwt_access_token') {
-            _jwtAccessToken = cookie.value;
-          }
-        }
-      },
-    );
-
-    if (_csrf.isNotEmpty &&
-        _csrfToken.isNotEmpty &&
-        _jwtAccessToken.isNotEmpty) {
-      return true;
+  void extractCookies(Response res) {
+    for (var cookie in res.headers['set-cookie']!) {
+      var parsedCookie = Cookie.fromSetCookieValue(cookie);
+      if (parsedCookie.name == '_csrf') {
+        _csrf = parsedCookie.value;
+      }
+      if (parsedCookie.name == 'csrf_token') {
+        _csrfToken = parsedCookie.value;
+      }
+      if (parsedCookie.name == 'jwt_access_token') {
+        _jwtAccessToken = parsedCookie.value;
+      }
     }
-
-    return false;
   }
 
   Future<void> setCurrentClientMode() async {
     await dotenv.load();
 
-    isDevMode = true;
-    // isDevMode =
-    //     dotenv.get('DEVELOPMENTMODE', fallback: '').toLowerCase() == 'true';
+    isDevMode =
+        dotenv.get('DEVELOPMENTMODE', fallback: '').toLowerCase() == 'true';
     baseURL = isDevMode
         ? 'https://www.freecodecamp.dev'
         : 'https://www.freecodecamp.org';
@@ -109,6 +105,9 @@ class AuthenticationService {
   }
 
   Future<void> init() async {
+    await dotenv.load();
+    auth0 = Auth0(dotenv.get('AUTH0_DOMAIN'), dotenv.get('AUTH0_CLIENT_ID'));
+
     await setCurrentClientMode();
 
     _dio.options.baseUrl = baseApiURL;
@@ -120,8 +119,8 @@ class AuthenticationService {
 
     if (await hasRequiredTokens()) {
       log('message: Tokens found in storage');
-      await setRequiredTokes();
-      // await fetchUser();
+      await setRequiredTokens();
+      await fetchUser();
     }
   }
 
@@ -130,15 +129,143 @@ class AuthenticationService {
   }
 
   Future<void> login(BuildContext context) async {
-    var navRes = await Navigator.push(
-      context,
-      MaterialPageRoute(
-        builder: (context) => const LoginWebView(),
+    late final Credentials creds;
+    Response? res;
+
+    showDialog(
+      context: context,
+      barrierDismissible: false,
+      routeSettings: const RouteSettings(
+        name: 'Login View',
       ),
+      builder: (context) {
+        return WillPopScope(
+          onWillPop: () async => false,
+          child: const SimpleDialog(
+            title: Text('Signing in...'),
+            contentPadding: EdgeInsets.fromLTRB(0.0, 12.0, 0.0, 24.0),
+            backgroundColor: Color(0xFF2A2A40),
+            children: [
+              Center(
+                child: CircularProgressIndicator(),
+              ),
+            ],
+          ),
+        );
+      },
     );
-    log('AUTH SERVICE NAV RES: $navRes');
-    await writeTokensToStorage();
-    await fetchUser();
+
+    try {
+      creds = await auth0.webAuthentication(scheme: 'fccapp').login();
+    } on WebAuthenticationException {
+      // NOTE: The most likely case is that the user canceled the login
+      snackbar.showSnackbar(
+        title: 'Login canceled',
+        message: '',
+      );
+
+      logout();
+      Navigator.pop(context);
+
+      return;
+    }
+
+    try {
+      res = await _dio.get(
+        '/mobile-login',
+        options: Options(
+          headers: {
+            'Authorization': 'Bearer ${creds.accessToken}',
+          },
+        ),
+      );
+      extractCookies(res);
+      await writeTokensToStorage();
+      await fetchUser();
+    } on DioError catch (e) {
+      Navigator.pop(context);
+      if (e.response != null) {
+        showDialog(
+          context: context,
+          barrierDismissible: false,
+          builder: (context) => AlertDialog(
+            backgroundColor: const Color(0xFF2A2A40),
+            title: const Text('Error'),
+            content: Text(
+              e.response!.data['message'],
+            ),
+            actions: [
+              TextButton(
+                style: TextButton.styleFrom(
+                  backgroundColor: const Color(0xFF0a0a23),
+                ),
+                onPressed: () {
+                  logout();
+                  Navigator.pop(context);
+                },
+                child: const Text('Close'),
+              ),
+            ],
+          ),
+        );
+      } else {
+        showDialog(
+          context: context,
+          barrierDismissible: false,
+          builder: (context) => AlertDialog(
+            backgroundColor: const Color(0xFF2A2A40),
+            title: const Text('Error'),
+            content: const Text(
+              'Oops! Something went wrong. Please try again in a moment.',
+            ),
+            actions: [
+              TextButton(
+                style: TextButton.styleFrom(
+                  backgroundColor: const Color(0xFF0a0a23),
+                ),
+                onPressed: () {
+                  logout();
+                  Navigator.pop(context);
+                },
+                child: const Text('Close'),
+              ),
+            ],
+          ),
+        );
+      }
+    }
+
+    final user = await userModel;
+
+    if (user != null && user.acceptedPrivacyTerms == false) {
+      bool? quincyEmails = await Navigator.push(
+        context,
+        MaterialPageRoute(
+          builder: (context) => const PrivacyView(),
+          settings: const RouteSettings(
+            name: 'New User Accept Privacy View',
+          ),
+        ),
+      );
+
+      await _dio.put(
+        '/update-privacy-terms',
+        data: {
+          'quincyEmails': quincyEmails ?? false,
+        },
+        options: Options(
+          headers: {
+            'CSRF-Token': _csrfToken,
+            'Cookie': 'jwt_access_token=$_jwtAccessToken; _csrf=$_csrf',
+          },
+        ),
+      );
+    }
+
+    await auth0.credentialsManager.clearCredentials();
+    if (res != null) {
+      Navigator.pop(context);
+    }
   }
 
   Future<void> logout() async {
@@ -147,6 +274,7 @@ class AuthenticationService {
     await store.delete(key: 'csrf');
     await store.delete(key: 'csrf_token');
     await store.delete(key: 'jwt_access_token');
+    userModel = null;
   }
 
   Future<void> fetchUser() async {

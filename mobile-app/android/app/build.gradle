@@ -43,13 +43,14 @@ android {
     defaultConfig {
         // TODO: Specify your own unique Application ID (https://developer.android.com/studio/build/application-id.html).
         applicationId "org.freecodecamp"
-        minSdkVersion 20
+        minSdkVersion 21
         targetSdkVersion 31
         versionCode flutterVersionCode.toInteger()
         versionName flutterVersionName
         multiDexEnabled true
         manifestPlaceholders += [
-            'appAuthRedirectScheme': 'org.freecodecamp'
+          auth0Domain: "freecodecamp-dev.auth0.com",
+          auth0Scheme: "fccapp"
         ]
     }
 

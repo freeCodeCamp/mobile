@@ -13,6 +13,7 @@ import 'package:freecodecamp/models/learn/curriculum_model.dart';
 import 'package:freecodecamp/service/learn/learn_file_service.dart';
 import 'package:freecodecamp/service/learn/learn_offline_service.dart';
 import 'package:freecodecamp/service/learn/learn_service.dart';
+import 'package:freecodecamp/service/authentication/authentication_service.dart';
 import 'package:freecodecamp/ui/views/learn/test_runner.dart';
 import 'package:freecodecamp/ui/widgets/setup_dialog_ui.dart';
 import 'package:html/dom.dart' as dom;
@@ -184,6 +185,7 @@ class ChallengeViewModel extends BaseViewModel {
     int challengesCompleted,
   ) async {
     setupDialogUi();
+    learnService.init();
 
     setChallenge = _learnOfflineService.getChallenge(url, challengeId);
     Challenge challenge = await _challenge!;
@@ -354,11 +356,11 @@ class ChallengeViewModel extends BaseViewModel {
         prefs.remove('${currChallenge.id}.${file.name}');
       }
 
-      var challengeIndex = block!.challenges.indexWhere(
+      var challengeIndex = block!.challengeTiles.indexWhere(
         (element) => element.id == currChallenge.id,
       );
 
-      String slug = block!.challenges[challengeIndex].name
+      String slug = block!.challengeTiles[challengeIndex].name
           .toLowerCase()
           .replaceAll(' ', '-');
       String url = await learnService.getBaseUrl('/page-data/learn');
@@ -367,12 +369,29 @@ class ChallengeViewModel extends BaseViewModel {
         Routes.challengeView,
         arguments: ChallengeViewArguments(
           url:
-              '$url/${block!.superBlock}/${block!.dashedName}/$slug/page-data.json',
+              '$url/${block!.superBlock.dashedName}/${block!.dashedName}/$slug/page-data.json',
           block: block!,
           challengeId: currChallenge.id,
           challengesCompleted: challengesCompleted,
         ),
       );
+    }
+  }
+
+  void passChallenge(Challenge? challenge) async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    if (challenge != null) {
+      List challengeFiles = challenge.files.map((file) {
+        return {
+          'contents':
+              prefs.getString('${challenge.id}.${file.name}') ?? file.contents,
+          'ext': file.ext.name,
+          'history': file.history,
+          'key': file.fileKey,
+          'name': file.name,
+        };
+      }).toList();
+      await learnService.postChallengeCompleted(challenge, challengeFiles);
     }
   }
 
@@ -382,13 +401,16 @@ class ChallengeViewModel extends BaseViewModel {
   ) async {
     Challenge? currChallenge = await challenge;
     if (currChallenge != null) {
-      var challengeIndex = block!.challenges.indexWhere(
+      if (AuthenticationService.staticIsloggedIn) {
+        passChallenge(currChallenge);
+      }
+      var challengeIndex = block!.challengeTiles.indexWhere(
         (element) => element.id == currChallenge.id,
       );
       if (challengeIndex == maxChallenges - 1) {
         _navigationService.back();
       } else {
-        String challenge = block!.challenges[challengeIndex + 1].name
+        String challenge = block!.challengeTiles[challengeIndex + 1].name
             .toLowerCase()
             .replaceAll(' ', '-');
         String url = await learnService.getBaseUrl('/page-data/learn');
@@ -396,7 +418,7 @@ class ChallengeViewModel extends BaseViewModel {
           Routes.challengeView,
           arguments: ChallengeViewArguments(
             url:
-                '$url/${block!.superBlock}/${block!.dashedName}/$challenge/page-data.json',
+                '$url/${block!.superBlock.dashedName}/${block!.dashedName}/$challenge/page-data.json',
             block: block!,
             challengeId: block!.challengeTiles[challengeIndex + 1].id,
             challengesCompleted: challengesCompleted + 1,

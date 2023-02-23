@@ -40,7 +40,11 @@ class DrawerWidgetView extends StatelessWidget {
                                 if (snapshot.hasData) {
                                   FccUserModel user =
                                       snapshot.data as FccUserModel;
-                                  return Text(user.name);
+                                  return Text(
+                                    user.name.isEmpty
+                                        ? user.username
+                                        : user.name,
+                                  );
                                 }
 
                                 return const Text('Anonymous user');
@@ -104,9 +108,7 @@ class DrawerWidgetView extends StatelessWidget {
                             ? const Color.fromARGB(255, 230, 59, 59)
                             : null,
                         route: () {
-                          model.devmode
-                              ? model.handleAuth(context)
-                              : model.loginSnack();
+                          model.handleAuth(context);
                         })
                   ],
                 ),

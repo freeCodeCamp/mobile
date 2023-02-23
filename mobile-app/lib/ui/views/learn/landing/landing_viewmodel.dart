@@ -37,9 +37,6 @@ class LearnLandingViewModel extends BaseViewModel {
   bool _isLoggedIn = false;
   bool get isLoggedIn => _isLoggedIn;
 
-  String alert =
-      "Note: We're still working on the ability to save your progress. To claim certifications, you'll need to submit your projects through freeCodeCamp's website.";
-
   set setSuperBlockButtons(value) {
     superBlockButtons = value;
     notifyListeners();
