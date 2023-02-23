@@ -69,7 +69,7 @@ class NewsAuthorView extends StatelessWidget {
             height: 2,
           ),
         ),
-        if (author.bio != null)
+        if (author.location != null)
           Text(
             author.location as String,
             style: const TextStyle(fontSize: 16),

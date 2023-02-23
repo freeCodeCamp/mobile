@@ -1,0 +1,46 @@
+{
+  "project_info": {
+    "project_number": "363152234407",
+    "project_id": "mobile-4ee8a",
+    "storage_bucket": "mobile-4ee8a.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:363152234407:android:6293f9873ae6df8a738882",
+        "android_client_info": {
+          "package_name": "org.freecodecamp"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "363152234407-7si5dsj66c61lohgt73o1fh8kndqchpe.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCP3yAWau0JJE8BPgsUrbT2K27EJX3z2KE"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "363152234407-7si5dsj66c61lohgt73o1fh8kndqchpe.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "363152234407-s26svd21nuqr63ksq30ue7qh4tvk2a2v.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "org.freecodecamp"
+              }
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

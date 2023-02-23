@@ -15,6 +15,7 @@ import 'package:stacked_services/src/snackbar/snackbar_service.dart';
 import '../service/audio/audio_service.dart';
 import '../service/authentication/authentication_service.dart';
 import '../service/developer_service.dart';
+import '../service/firebase/analytics_service.dart';
 import '../service/learn/learn_file_service.dart';
 import '../service/learn/learn_offline_service.dart';
 import '../service/learn/learn_service.dart';
@@ -47,5 +48,6 @@ Future<void> setupLocator(
   locator.registerLazySingleton(() => LearnFileService());
   locator.registerLazySingleton(() => LearnOfflineService());
   locator.registerLazySingleton(() => QuickActionsService());
+  locator.registerLazySingleton(() => AnalyticsService());
   locator.registerLazySingleton(() => BookmarksDatabaseService());
 }

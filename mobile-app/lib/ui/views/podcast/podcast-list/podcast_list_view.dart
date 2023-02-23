@@ -162,6 +162,9 @@ class PodcastTemplate extends StatelessWidget {
               podcast: podcast,
               isDownloadView: isDownloadView,
             ),
+            settings: RouteSettings(
+              name: 'Podcasts Episode List View - ${podcast.title}',
+            ),
           ),
         );
       },
