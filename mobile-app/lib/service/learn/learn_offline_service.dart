@@ -256,32 +256,33 @@ class LearnOfflineService {
 
   /*
     This function will cache the given block.
-
-    // TODO: this should be in a try catch which will throw an instance of
-    // a Future.error to the Future builder.
   */
 
   Future<void> cacheBlockInfo(Block block) async {
-    SharedPreferences prefs = await SharedPreferences.getInstance();
+    try {
+      SharedPreferences prefs = await SharedPreferences.getInstance();
 
-    Map<String, dynamic> blockToJson = Block.toCachedObject(block);
-    List<String>? storedBlocks = prefs.getStringList('storedBlocks');
+      Map<String, dynamic> blockToJson = Block.toCachedObject(block);
+      List<String>? storedBlocks = prefs.getStringList('storedBlocks');
 
-    if (storedBlocks == null) {
-      prefs.setStringList('storedBlocks', [
-        jsonEncode(blockToJson),
-      ]);
+      if (storedBlocks == null) {
+        prefs.setStringList('storedBlocks', [
+          jsonEncode(blockToJson),
+        ]);
 
-      log('it is empty');
-    } else {
-      List<String> newInfo = storedBlocks;
+        log('it is empty');
+      } else {
+        List<String> newInfo = storedBlocks;
 
-      newInfo.add(jsonEncode(blockToJson));
+        newInfo.add(jsonEncode(blockToJson));
 
-      prefs.setStringList(
-        'storedBlocks',
-        newInfo,
-      );
+        prefs.setStringList(
+          'storedBlocks',
+          newInfo,
+        );
+      }
+    } catch (e) {
+      return Future.error('Could not download block info');
     }
   }
 
