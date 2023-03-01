@@ -5,6 +5,7 @@ import 'package:freecodecamp/app/app.locator.dart';
 import 'package:freecodecamp/models/news/bookmarked_tutorial_model.dart';
 import 'package:freecodecamp/models/news/tutorial_model.dart';
 import 'package:freecodecamp/service/news/bookmark_service.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:sqflite/sqflite.dart';
 import 'package:sqflite_common_ffi/sqflite_ffi.dart';
 import 'package:path/path.dart' as path;
@@ -58,6 +59,7 @@ void main() {
     });
 
     test('get all bookmarks', () async {
+      SharedPreferences.setMockInitialValues({});
       final service = locator<BookmarksDatabaseService>();
       await service.initialise();
       final bookmarks = await service.getBookmarks();
@@ -66,6 +68,7 @@ void main() {
     });
 
     test('add bookmark', () async {
+      SharedPreferences.setMockInitialValues({});
       final service = locator<BookmarksDatabaseService>();
       await service.initialise();
       await service.addBookmark(testTutorial);
@@ -86,6 +89,7 @@ void main() {
     });
 
     test('delete bookmark', () async {
+      SharedPreferences.setMockInitialValues({});
       final service = locator<BookmarksDatabaseService>();
       await service.initialise();
       await service.removeBookmark(testBookmarkTutorial);
