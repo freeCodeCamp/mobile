@@ -6,6 +6,7 @@ import 'package:flutter/services.dart';
 import 'package:freecodecamp/models/news/bookmarked_tutorial_model.dart';
 import 'package:freecodecamp/models/news/tutorial_model.dart';
 import 'package:path/path.dart' as path;
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:sqflite/sqflite.dart';
 
 const String bookmarksTableName = 'bookmarks';
@@ -70,11 +71,15 @@ class BookmarksDatabaseService {
   }
 
   Future<List<BookmarkedTutorial>> getBookmarks() async {
-    List<Map<String, dynamic>> bookmarksResults =
-        await _db.query(bookmarksTableName);
-    return bookmarksResults
+    List<Map<String, dynamic>> bookmarksResults = await _db.query(
+      bookmarksTableName,
+    );
+
+    List<BookmarkedTutorial> bookmarks = bookmarksResults
         .map((tutorial) => BookmarkedTutorial.fromMap(tutorial))
         .toList();
+
+    return ascentAndDescentBoomark(bookmarks);
   }
 
   Future<bool> isBookmarked(dynamic tutorial) async {
@@ -88,12 +93,15 @@ class BookmarksDatabaseService {
 
   Future addBookmark(dynamic tutorial) async {
     try {
+      Map<String, dynamic> tutorialMap = tutorialToMap(tutorial);
+
       await _db.insert(
         bookmarksTableName,
-        tutorialToMap(tutorial),
+        tutorialMap,
         conflictAlgorithm: ConflictAlgorithm.replace,
       );
-      log('Added bookmark: ${tutorial.id}');
+
+      setBookmarkDate(BookmarkedTutorial.fromMap(tutorialMap).id);
     } catch (e) {
       log('Could not insert the bookmark: $e');
     }
@@ -106,9 +114,58 @@ class BookmarksDatabaseService {
         where: 'articleId = ?',
         whereArgs: [tutorial.id],
       );
+
+      removeBookmark(tutorial);
       log('Removed bookmark: ${tutorial.id}');
     } catch (e) {
       log('Could not remove the bookmark: $e');
     }
+  }
+
+  Future<List<BookmarkedTutorial>> ascentAndDescentBoomark(
+    List<BookmarkedTutorial> bookmarks,
+  ) async {
+    List<BookmarkedTutorial> bookmarksToSort = [];
+    List<BookmarkedTutorial> sortedBookmarks = [];
+
+    for (BookmarkedTutorial bookmark in bookmarks) {
+      bookmark.bookmarkDate = DateTime.parse(
+        await getBookmarkDate(bookmark.id),
+      );
+    }
+
+    try {
+      bookmarksToSort.sort((bookmarkA, bookmarkB) {
+        return bookmarkA.bookmarkDate.compareTo(bookmarkB.bookmarkDate);
+      });
+
+      sortedBookmarks = bookmarksToSort;
+
+      return sortedBookmarks;
+    } catch (e) {
+      return bookmarksToSort;
+    }
+  }
+
+  void removeBookmarkDate(String id) async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+
+    prefs.remove(id);
+  }
+
+  Future<String> setBookmarkDate(String id) async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+
+    DateTime time = DateTime.now();
+
+    prefs.setString(id, time.toString());
+
+    return prefs.getString(id) ?? '';
+  }
+
+  Future<String> getBookmarkDate(String id) async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+
+    return prefs.getString(id) ?? await setBookmarkDate(id);
   }
 }

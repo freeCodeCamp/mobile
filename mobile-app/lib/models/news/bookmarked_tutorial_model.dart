@@ -1,5 +1,6 @@
 class BookmarkedTutorial {
   late int bookmarkId;
+  late DateTime bookmarkDate;
   late String tutorialTitle;
   late String id;
   late String tutorialText;
