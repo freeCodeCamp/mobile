@@ -188,6 +188,9 @@ class AuthenticationService {
         showDialog(
           context: context,
           barrierDismissible: false,
+          routeSettings: const RouteSettings(
+            name: 'Login View - Error',
+          ),
           builder: (context) => AlertDialog(
             backgroundColor: const Color(0xFF2A2A40),
             title: const Text('Error'),
@@ -212,6 +215,9 @@ class AuthenticationService {
         showDialog(
           context: context,
           barrierDismissible: false,
+          routeSettings: const RouteSettings(
+            name: 'Login View - Error',
+          ),
           builder: (context) => AlertDialog(
             backgroundColor: const Color(0xFF2A2A40),
             title: const Text('Error'),
