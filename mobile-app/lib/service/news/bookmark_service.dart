@@ -72,9 +72,14 @@ class BookmarksDatabaseService {
   Future<List<BookmarkedTutorial>> getBookmarks() async {
     List<Map<String, dynamic>> bookmarksResults =
         await _db.query(bookmarksTableName);
-    return bookmarksResults
-        .map((tutorial) => BookmarkedTutorial.fromMap(tutorial))
+
+    List bookmarks = bookmarksResults
+        .map(
+          (tutorial) => BookmarkedTutorial.fromMap(tutorial),
+        )
         .toList();
+
+    return List.from(bookmarks.reversed);
   }
 
   Future<bool> isBookmarked(dynamic tutorial) async {
