@@ -10,7 +10,6 @@ class NewsBookmarkViewWidget extends StatelessWidget {
   }) : super(key: key);
 
   final dynamic tutorial;
-
   @override
   Widget build(BuildContext context) {
     return ViewModelBuilder<NewsBookmarkViewModel>.reactive(

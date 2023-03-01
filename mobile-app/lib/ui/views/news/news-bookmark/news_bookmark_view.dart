@@ -20,6 +20,7 @@ class NewsBookmarkTutorialView extends StatelessWidget {
         await model.initDB();
         model.isTutorialBookmarked(tutorial);
         model.bumpBookmarkDate(tutorial.id);
+        model.addChangeToSink();
       },
       onDispose: (model) => model.updateListView(),
       builder: (context, model, child) => Scaffold(

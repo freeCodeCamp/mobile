@@ -14,6 +14,7 @@ class NewsBookmarkFeedView extends StatelessWidget {
       onViewModelReady: (model) async {
         await model.initDB();
         model.hasBookmarkedTutorials();
+        model.listenToBookmarkChanges();
         model.updateListView();
       },
       builder: (context, model, child) => Scaffold(

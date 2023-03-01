@@ -14,6 +14,8 @@ const String bookmarksTableName = 'bookmarks';
 class BookmarksDatabaseService {
   late Database _db;
 
+  StreamController changedBookmark = StreamController.broadcast();
+
   Future initialise() async {
     String dbPath = await getDatabasesPath();
     String dbPathTutorials = path.join(dbPath, 'bookmarked-article.db');

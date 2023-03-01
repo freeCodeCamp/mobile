@@ -1,3 +1,5 @@
+import 'dart:math';
+
 import 'package:freecodecamp/app/app.locator.dart';
 import 'package:freecodecamp/app/app.router.dart';
 import 'package:freecodecamp/models/news/bookmarked_tutorial_model.dart';
@@ -27,6 +29,17 @@ class NewsBookmarkViewModel extends BaseViewModel {
 
   void bumpBookmarkDate(String id) {
     _databaseService.setBookmarkDate(id);
+  }
+
+  void listenToBookmarkChanges() {
+    _databaseService.changedBookmark.stream.listen((event) {
+      refresh();
+    });
+  }
+
+  void addChangeToSink() {
+    // Let that sink in
+    _databaseService.changedBookmark.sink.add(Random());
   }
 
   Future<void> bookmarkAndUnbookmark(dynamic tutorial) async {
