@@ -153,7 +153,7 @@ class BookmarksDatabaseService {
   void removeBookmarkDate(String id) async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
 
-    prefs.remove(id);
+    await prefs.remove(id);
   }
 
   Future<String> setBookmarkDate(String id) async {
@@ -161,7 +161,7 @@ class BookmarksDatabaseService {
 
     DateTime time = DateTime.now();
 
-    prefs.setString(id, time.toString());
+    await prefs.setString(id, time.toString());
 
     return prefs.getString(id) ?? '';
   }
