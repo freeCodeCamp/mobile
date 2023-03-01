@@ -5,7 +5,7 @@ import 'package:freecodecamp/app/app.locator.dart';
 import 'package:freecodecamp/models/news/bookmarked_tutorial_model.dart';
 import 'package:freecodecamp/models/news/tutorial_model.dart';
 import 'package:freecodecamp/service/news/bookmark_service.dart';
-// import 'package:shared_preferences/shared_preferences.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:sqflite/sqflite.dart';
 import 'package:sqflite_common_ffi/sqflite_ffi.dart';
 import 'package:path/path.dart' as path;
@@ -41,6 +41,7 @@ void main() {
   sqfliteFfiInit();
   databaseFactory = databaseFactoryFfi;
   group('News Bookmark Service Test -', () {
+    setUpAll(() => SharedPreferences.setMockInitialValues({}));
     setUp(() => registerServices());
     tearDown(() => locator.reset());
     tearDownAll(() async {
