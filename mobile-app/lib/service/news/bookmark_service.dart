@@ -137,7 +137,7 @@ class BookmarksDatabaseService {
 
     try {
       bookmarksToSort.sort((bookmarkA, bookmarkB) {
-        return bookmarkA.bookmarkDate.compareTo(bookmarkB.bookmarkDate);
+        return bookmarkB.bookmarkDate.compareTo(bookmarkA.bookmarkDate);
       });
 
       sortedBookmarks.addAll(bookmarksToSort);
