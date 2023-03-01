@@ -101,13 +101,13 @@ class BookmarksDatabaseService {
         conflictAlgorithm: ConflictAlgorithm.replace,
       );
 
-      setBookmarkDate(BookmarkedTutorial.fromMap(tutorialMap).id);
+      setBookmarkDate(tutorialMap['articleId']);
     } catch (e) {
-      log('Could not insert the bookmark: $e');
+      throw Exception('Could not insert the bookmark: $e');
     }
   }
 
-  Future removeBookmark(BookmarkedTutorial tutorial) async {
+  Future removeBookmark(dynamic tutorial) async {
     try {
       await _db.delete(
         bookmarksTableName,
@@ -115,7 +115,7 @@ class BookmarksDatabaseService {
         whereArgs: [tutorial.id],
       );
 
-      removeBookmark(tutorial);
+      removeBookmarkDate(tutorial.id);
       log('Removed bookmark: ${tutorial.id}');
     } catch (e) {
       log('Could not remove the bookmark: $e');
@@ -132,6 +132,7 @@ class BookmarksDatabaseService {
       bookmark.bookmarkDate = DateTime.parse(
         await getBookmarkDate(bookmark.id),
       );
+      bookmarksToSort.add(bookmark);
     }
 
     try {
@@ -139,7 +140,7 @@ class BookmarksDatabaseService {
         return bookmarkA.bookmarkDate.compareTo(bookmarkB.bookmarkDate);
       });
 
-      sortedBookmarks = bookmarksToSort;
+      sortedBookmarks.addAll(bookmarksToSort);
 
       return sortedBookmarks;
     } catch (e) {

@@ -19,6 +19,7 @@ class NewsBookmarkTutorialView extends StatelessWidget {
       onViewModelReady: (model) async {
         await model.initDB();
         model.isTutorialBookmarked(tutorial);
+        model.bumpBookmarkDate(tutorial.id);
       },
       onDispose: (model) => model.updateListView(),
       builder: (context, model, child) => Scaffold(

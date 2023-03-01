@@ -25,6 +25,10 @@ class NewsBookmarkViewModel extends BaseViewModel {
     await _databaseService.initialise();
   }
 
+  void bumpBookmarkDate(String id) {
+    _databaseService.setBookmarkDate(id);
+  }
+
   Future<void> bookmarkAndUnbookmark(dynamic tutorial) async {
     if (_isBookmarked) {
       _isBookmarked = false;

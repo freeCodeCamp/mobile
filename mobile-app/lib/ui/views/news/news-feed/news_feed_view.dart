@@ -32,7 +32,7 @@ class NewsFeedView extends StatelessWidget {
   Widget build(BuildContext context) {
     return ViewModelBuilder<NewsFeedViewModel>.reactive(
       viewModelBuilder: () => NewsFeedViewModel(),
-      onViewModelReady: (model) async => await model.devMode(),
+      onViewModelReady: (model) async {},
       builder: (context, model, child) => Scaffold(
         appBar: fromTag || fromAuthor || fromSearch
             ? AppBar(
