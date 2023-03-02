@@ -104,7 +104,7 @@ class BookmarksDatabaseService {
     }
   }
 
-  Future removeBookmark(BookmarkedTutorial tutorial) async {
+  Future removeBookmark(dynamic tutorial) async {
     try {
       await _db.delete(
         bookmarksTableName,
