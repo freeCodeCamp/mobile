@@ -69,7 +69,7 @@ jobs:
         uses: cypress-io/github-action@v4
         with:
           record: ${{ env.CYPRESS_RECORD_KEY != 0 }}
-          start: npx serve
+          start: pnpm dlx serve
           wait-on: http://localhost:3000
           wait-on-timeout: 1200
           config: retries=1,screenshotOnRunFailure=false,video=false,baseUrl=http://localhost:3000/mobile/mobile-app/generated-tests/
