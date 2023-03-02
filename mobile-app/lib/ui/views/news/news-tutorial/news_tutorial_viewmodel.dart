@@ -39,7 +39,6 @@ class NewsTutorialViewModel extends BaseViewModel {
   }
 
   Future<Tutorial> initState(id) async {
-    initBottomButtonAnimation();
     handleBottomButtonAnimation();
 
     if (await _developerService.developmentMode()) {
@@ -111,6 +110,7 @@ class NewsTutorialViewModel extends BaseViewModel {
       context,
       tutorial,
     );
+    initBottomButtonAnimation();
     return elements;
   }
 
