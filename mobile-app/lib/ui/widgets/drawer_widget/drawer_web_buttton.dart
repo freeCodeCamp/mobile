@@ -1,3 +1,4 @@
+import 'package:firebase_analytics/firebase_analytics.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_custom_tabs/flutter_custom_tabs.dart';
 
@@ -13,7 +14,22 @@ class CustomTabButton extends StatefulWidget {
   final String component;
   final IconData icon;
 
-  void startCustomTabs(String url) {
+  void startCustomTabs(String url) async {
+    String location;
+    switch (url) {
+      case 'https://www.freecodecamp.org/news/privacy-policy/':
+        location = 'Privacy Policy';
+        break;
+      case 'https://www.freecodecamp.org/donate/':
+        location = 'Donation';
+        break;
+      default:
+        location = url;
+    }
+    await FirebaseAnalytics.instance.logScreenView(
+      screenClass: 'Web View - $location',
+      screenName: 'Web View - $location',
+    );
     launch(
       url,
       customTabsOption: const CustomTabsOption(
