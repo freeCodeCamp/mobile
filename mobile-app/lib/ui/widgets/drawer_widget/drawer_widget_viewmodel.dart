@@ -22,6 +22,9 @@ class DrawerWidgtetViewModel extends BaseViewModel {
   bool _devMode = false;
   bool get devmode => _devMode;
 
+  final ScrollController _scrollController = ScrollController();
+  ScrollController get scrollController => _scrollController;
+
   void initState() async {
     _loggedIn = AuthenticationService.staticIsloggedIn;
     await devMode();
