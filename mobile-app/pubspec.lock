@@ -505,11 +505,9 @@ packages:
   flutter_code_editor:
     dependency: "direct main"
     description:
-      path: "."
-      ref: main
-      resolved-ref: "14c50fb54d52d5178b882d08e42203619b55cb62"
-      url: "https://github.com/freeCodeCamp/PhoneIDE"
-    source: git
+      path: "../../phoneide"
+      relative: true
+    source: path
     version: "1.0.0+1"
   flutter_custom_tabs:
     dependency: "direct main"
