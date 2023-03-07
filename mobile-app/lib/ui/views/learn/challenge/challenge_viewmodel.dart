@@ -368,12 +368,12 @@ class ChallengeViewModel extends BaseViewModel {
       _navigationService.replaceWith(
         Routes.challengeView,
         arguments: ChallengeViewArguments(
-          url:
-              '$url/${block!.superBlock.dashedName}/${block!.dashedName}/$slug/page-data.json',
-          block: block!,
-          challengeId: currChallenge.id,
-          challengesCompleted: challengesCompleted,
-        ),
+            url:
+                '$url/${block!.superBlock.dashedName}/${block!.dashedName}/$slug/page-data.json',
+            block: block!,
+            challengeId: currChallenge.id,
+            challengesCompleted: challengesCompleted,
+            isProject: block!.challenges.length == 1),
       );
     }
   }
@@ -417,12 +417,12 @@ class ChallengeViewModel extends BaseViewModel {
         _navigationService.replaceWith(
           Routes.challengeView,
           arguments: ChallengeViewArguments(
-            url:
-                '$url/${block!.superBlock.dashedName}/${block!.dashedName}/$challenge/page-data.json',
-            block: block!,
-            challengeId: block!.challengeTiles[challengeIndex + 1].id,
-            challengesCompleted: challengesCompleted + 1,
-          ),
+              url:
+                  '$url/${block!.superBlock.dashedName}/${block!.dashedName}/$challenge/page-data.json',
+              block: block!,
+              challengeId: block!.challengeTiles[challengeIndex + 1].id,
+              challengesCompleted: challengesCompleted + 1,
+              isProject: block!.challenges.length == 1),
         );
       }
     }

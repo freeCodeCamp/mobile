@@ -221,7 +221,8 @@ class StackedRouter extends _i1.RouterBase {
             url: args.url,
             block: args.block,
             challengeId: args.challengeId,
-            challengesCompleted: args.challengesCompleted),
+            challengesCompleted: args.challengesCompleted,
+            isProject: args.isProject),
         settings: data,
       );
     },
@@ -383,6 +384,7 @@ class ChallengeViewArguments {
     required this.block,
     required this.challengeId,
     required this.challengesCompleted,
+    required this.isProject,
   });
 
   final _i15.Key? key;
@@ -395,9 +397,11 @@ class ChallengeViewArguments {
 
   final int challengesCompleted;
 
+  final bool isProject;
+
   @override
   String toString() {
-    return '{"key": "$key", "url": "$url", "block": "$block", "challengeId": "$challengeId", "challengesCompleted": "$challengesCompleted"}';
+    return '{"key": "$key", "url": "$url", "block": "$block", "challengeId": "$challengeId", "challengesCompleted": "$challengesCompleted", "isProject": "$isProject"}';
   }
 }
 
@@ -593,6 +597,7 @@ extension NavigatorStateExtension on _i20.NavigationService {
     required _i19.Block block,
     required String challengeId,
     required int challengesCompleted,
+    required bool isProject,
     int? routerId,
     bool preventDuplicates = true,
     Map<String, String>? parameters,
@@ -605,7 +610,8 @@ extension NavigatorStateExtension on _i20.NavigationService {
             url: url,
             block: block,
             challengeId: challengeId,
-            challengesCompleted: challengesCompleted),
+            challengesCompleted: challengesCompleted,
+            isProject: isProject),
         id: routerId,
         preventDuplicates: preventDuplicates,
         parameters: parameters,
@@ -832,6 +838,7 @@ extension NavigatorStateExtension on _i20.NavigationService {
     required _i19.Block block,
     required String challengeId,
     required int challengesCompleted,
+    required bool isProject,
     int? routerId,
     bool preventDuplicates = true,
     Map<String, String>? parameters,
@@ -844,7 +851,8 @@ extension NavigatorStateExtension on _i20.NavigationService {
             url: url,
             block: block,
             challengeId: challengeId,
-            challengesCompleted: challengesCompleted),
+            challengesCompleted: challengesCompleted,
+            isProject: isProject),
         id: routerId,
         preventDuplicates: preventDuplicates,
         parameters: parameters,

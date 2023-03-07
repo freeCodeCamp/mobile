@@ -25,12 +25,14 @@ class ChallengeView extends StatelessWidget {
     required this.block,
     required this.challengeId,
     required this.challengesCompleted,
+    required this.isProject,
   }) : super(key: key);
 
   final String url;
   final Block block;
   final String challengeId;
   final int challengesCompleted;
+  final bool isProject;
 
   @override
   Widget build(BuildContext context) {
@@ -96,13 +98,15 @@ class ChallengeView extends StatelessWidget {
               }
             });
             editor.onTextChange.stream.listen((text) {
-              model.fileService.saveFileInCache(
-                challenge,
-                model.currentSelectedFile != ''
-                    ? model.currentSelectedFile
-                    : challenge.files[0].name,
-                text,
-              );
+              if (isProject) {
+                model.fileService.saveFileInCache(
+                  challenge,
+                  model.currentSelectedFile != ''
+                      ? model.currentSelectedFile
+                      : challenge.files[0].name,
+                  text,
+                );
+              }
               model.setEditorText = text;
               model.setHasTypedInEditor = true;
               model.setCompletedChallenge = false;
