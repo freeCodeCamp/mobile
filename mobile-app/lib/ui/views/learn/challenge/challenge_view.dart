@@ -70,6 +70,7 @@ class ChallengeView extends StatelessWidget {
               language: currFile.ext.name.toUpperCase(),
               options: options,
               openedFile: FileIDE(
+                fileId: challenge.id + currFile.name,
                 fileExplorer: null,
                 fileName: currFile.name,
                 filePath: '',
@@ -98,15 +99,14 @@ class ChallengeView extends StatelessWidget {
               }
             });
             editor.onTextChange.stream.listen((text) {
-              if (isProject) {
-                model.fileService.saveFileInCache(
-                  challenge,
-                  model.currentSelectedFile != ''
-                      ? model.currentSelectedFile
-                      : challenge.files[0].name,
-                  text,
-                );
-              }
+              model.fileService.saveFileInCache(
+                challenge,
+                model.currentSelectedFile != ''
+                    ? model.currentSelectedFile
+                    : challenge.files[0].name,
+                text,
+              );
+
               model.setEditorText = text;
               model.setHasTypedInEditor = true;
               model.setCompletedChallenge = false;
