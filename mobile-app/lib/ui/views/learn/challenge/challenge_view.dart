@@ -52,23 +52,31 @@ class ChallengeView extends StatelessWidget {
 
             bool editableRegion = currFile.editableRegionBoundaries.isNotEmpty;
             EditorOptions options = EditorOptions(
-              hasEditableRegion: editableRegion,
+              hasRegion: editableRegion,
+              region: EditorRegionOptions(
+                start: editableRegion
+                    ? currFile.editableRegionBoundaries[0]
+                    : null,
+                end: editableRegion
+                    ? currFile.editableRegionBoundaries[1]
+                    : null,
+                condition: model.completedChallenge,
+              ),
             );
 
             Editor editor = Editor(
-              regionStart:
-                  editableRegion ? currFile.editableRegionBoundaries[0] : null,
-              regionEnd:
-                  editableRegion ? currFile.editableRegionBoundaries[1] : null,
-              condition: model.completedChallenge,
               language: currFile.ext.name.toUpperCase(),
               options: options,
               openedFile: FileIDE(
-                  id: challenge.id + currFile.name,
-                  ext: currFile.ext.name,
-                  name: currFile.name,
-                  content: model.editorText ?? currFile.contents,
-                  hasRegion: editableRegion),
+                id: challenge.id + currFile.name,
+                ext: currFile.ext.name,
+                name: currFile.name,
+                content: model.editorText ?? currFile.contents,
+                hasRegion: editableRegion,
+                region: EditorRegionOptions(
+                    start: currFile.editableRegionBoundaries[0],
+                    end: currFile.editableRegionBoundaries[1]),
+              ),
             );
 
             SchedulerBinding.instance.addPostFrameCallback((timeStamp) {
@@ -247,13 +255,18 @@ class ChallengeView extends StatelessWidget {
               currFile,
             );
 
-            editor.fileTextStream.sink.add(FileIDE(
-              id: challenge.id + currFile.name,
-              ext: currFile.ext.name.toUpperCase(),
-              name: currFile.name,
-              content: currText == '' ? currFile.contents : currText,
-              hasRegion: currFile.editableRegionBoundaries.isNotEmpty,
-            ));
+            editor.fileTextStream.sink.add(
+              FileIDE(
+                id: challenge.id + currFile.name,
+                ext: currFile.ext.name.toUpperCase(),
+                name: currFile.name,
+                content: currText == '' ? currFile.contents : currText,
+                hasRegion: currFile.editableRegionBoundaries.isNotEmpty,
+                region: EditorRegionOptions(
+                    start: currFile.editableRegionBoundaries[0],
+                    end: currFile.editableRegionBoundaries[1]),
+              ),
+            );
             model.setEditorText = currText == '' ? currFile.contents : currText;
             model.setShowPreview = false;
           },
@@ -372,6 +385,9 @@ class ChallengeView extends StatelessWidget {
                   name: currFile.name,
                   content: currText == '' ? currFile.contents : currText,
                   hasRegion: currFile.editableRegionBoundaries.isNotEmpty,
+                  region: EditorRegionOptions(
+                      start: currFile.editableRegionBoundaries[0],
+                      end: currFile.editableRegionBoundaries[1]),
                 ));
                 model.setEditorText =
                     currText == '' ? currFile.contents : currText;
