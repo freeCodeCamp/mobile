@@ -317,6 +317,11 @@ class ChallengeViewModel extends BaseViewModel {
     return null;
   }
 
+  void refresh() {
+    setChallenge = challenge!;
+    notifyListeners();
+  }
+
   Future forumHelpDialog(String url) async {
     DialogResponse? res = await _dialogService.showCustomDialog(
         variant: DialogType.buttonForm,

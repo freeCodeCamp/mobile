@@ -12,7 +12,6 @@ import 'package:freecodecamp/enums/panel_type.dart';
 import 'package:freecodecamp/models/learn/challenge_model.dart';
 import 'package:freecodecamp/models/learn/curriculum_model.dart';
 import 'package:freecodecamp/ui/views/learn/challenge/challenge_viewmodel.dart';
-import 'package:freecodecamp/ui/views/learn/widgets/custom_tab_bar_widet.dart';
 
 import 'package:freecodecamp/ui/views/learn/widgets/dynamic_panel/panels/dynamic_panel.dart';
 import 'package:webview_flutter/webview_flutter.dart';
@@ -131,16 +130,18 @@ class ChallengeView extends StatelessWidget {
                       actions: [
                         if (model.showPreview)
                           Expanded(
-                              child: Container(
-                            decoration: model.showPreview ? decoration : null,
                             child: Container(
-                              decoration: model.showConsole ? decoration : null,
-                              child: ElevatedButton(
-                                onPressed: () {},
-                                child: const Text('Preview'),
+                              decoration: model.showPreview ? decoration : null,
+                              child: Container(
+                                decoration:
+                                    model.showConsole ? decoration : null,
+                                child: ElevatedButton(
+                                  onPressed: () {},
+                                  child: const Text('Preview'),
+                                ),
                               ),
                             ),
-                          )),
+                          ),
                         if (model.showPreview)
                           Expanded(
                             child: ElevatedButton(
@@ -152,11 +153,11 @@ class ChallengeView extends StatelessWidget {
                           ),
                         if (!model.showPreview && challenge.files.length > 1)
                           for (ChallengeFile file in challenge.files)
-                            CustomTabBar(
-                              challenge: challenge,
-                              file: file,
-                              editor: editor,
-                              model: model,
+                            customTabBar(
+                              model,
+                              challenge,
+                              file,
+                              editor,
                             )
                       ],
                     )
@@ -227,6 +228,57 @@ class ChallengeView extends StatelessWidget {
             ),
           );
         },
+      ),
+    );
+  }
+
+  Widget customTabBar(
+    ChallengeViewModel model,
+    Challenge challenge,
+    ChallengeFile file,
+    Editor editor,
+  ) {
+    return Expanded(
+      child: Container(
+        decoration: BoxDecoration(
+          border: Border(
+            bottom: model.currentFile(challenge).name == file.name
+                ? const BorderSide(width: 4, color: Colors.blue)
+                : const BorderSide(),
+          ),
+        ),
+        child: ElevatedButton(
+          onPressed: () async {
+            model.setCurrentSelectedFile = file.name;
+            ChallengeFile currFile = model.currentFile(challenge);
+
+            String currText = await model.fileService.getExactFileFromCache(
+              challenge,
+              currFile,
+            );
+
+            editor.fileTextStream.sink.add(
+              FileStreamEvent(
+                challengeId: challenge.id + currFile.name,
+                ext: currFile.ext.name.toUpperCase(),
+                content: currText == '' ? currFile.contents : currText,
+                hasEditableRegion: currFile.editableRegionBoundaries.isNotEmpty,
+              ),
+            );
+            model.setEditorText = currText == '' ? currFile.contents : currText;
+            model.setShowPreview = false;
+          },
+          child: Text(
+            '${file.name}.${file.ext.name}',
+            style: TextStyle(
+                color: model.currentFile(challenge).name == file.name
+                    ? Colors.blue
+                    : Colors.white,
+                fontWeight: model.currentFile(challenge).name == file.name
+                    ? FontWeight.bold
+                    : null),
+          ),
+        ),
       ),
     );
   }
@@ -327,13 +379,18 @@ class ChallengeView extends StatelessWidget {
 
                 editor.fileTextStream.sink.add(
                   FileStreamEvent(
+                    challengeId: challenge.id + currFile.name,
                     ext: currFile.ext.name.toUpperCase(),
                     content: currText == '' ? currFile.contents : currText,
+                    hasEditableRegion:
+                        currFile.editableRegionBoundaries.isNotEmpty,
                   ),
                 );
                 model.setEditorText =
                     currText == '' ? currFile.contents : currText;
                 model.setShowPreview = !model.showPreview;
+
+                model.refresh();
               },
               splashColor: Colors.transparent,
               highlightColor: Colors.transparent,
