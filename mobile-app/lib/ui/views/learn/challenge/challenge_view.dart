@@ -74,8 +74,14 @@ class ChallengeView extends StatelessWidget {
                 content: model.editorText ?? currFile.contents,
                 hasRegion: editableRegion,
                 region: EditorRegionOptions(
-                    start: currFile.editableRegionBoundaries[0],
-                    end: currFile.editableRegionBoundaries[1]),
+                  start: editableRegion
+                      ? currFile.editableRegionBoundaries[0]
+                      : null,
+                  end: editableRegion
+                      ? currFile.editableRegionBoundaries[1]
+                      : null,
+                  condition: model.completedChallenge,
+                ),
               ),
             );
 
@@ -255,6 +261,8 @@ class ChallengeView extends StatelessWidget {
               currFile,
             );
 
+            bool hasRegion = currFile.editableRegionBoundaries.isNotEmpty;
+
             editor.fileTextStream.sink.add(
               FileIDE(
                 id: challenge.id + currFile.name,
@@ -263,8 +271,10 @@ class ChallengeView extends StatelessWidget {
                 content: currText == '' ? currFile.contents : currText,
                 hasRegion: currFile.editableRegionBoundaries.isNotEmpty,
                 region: EditorRegionOptions(
-                    start: currFile.editableRegionBoundaries[0],
-                    end: currFile.editableRegionBoundaries[1]),
+                  start:
+                      hasRegion ? currFile.editableRegionBoundaries[0] : null,
+                  end: hasRegion ? currFile.editableRegionBoundaries[1] : null,
+                ),
               ),
             );
             model.setEditorText = currText == '' ? currFile.contents : currText;
