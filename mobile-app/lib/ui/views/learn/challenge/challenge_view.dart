@@ -1,7 +1,6 @@
 import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
-import 'package:flutter_code_editor/controller/editor_view_controller.dart';
 import 'package:flutter_code_editor/editor/editor.dart';
 import 'package:flutter_code_editor/models/editor_options.dart';
 import 'package:flutter_code_editor/models/file_model.dart';
@@ -54,10 +53,6 @@ class ChallengeView extends StatelessWidget {
             bool editableRegion = currFile.editableRegionBoundaries.isNotEmpty;
             EditorOptions options = EditorOptions(
               hasEditableRegion: editableRegion,
-              useFileExplorer: false,
-              canCloseFiles: false,
-              showAppBar: false,
-              showTabBar: false,
             );
 
             Editor editor = Editor(
@@ -69,13 +64,11 @@ class ChallengeView extends StatelessWidget {
               language: currFile.ext.name.toUpperCase(),
               options: options,
               openedFile: FileIDE(
-                fileId: challenge.id + currFile.name,
-                fileExplorer: null,
-                fileName: currFile.name,
-                filePath: '',
-                fileContent: model.editorText ?? currFile.contents,
-                parentDirectory: '',
-              ),
+                  id: challenge.id + currFile.name,
+                  ext: currFile.ext.name,
+                  name: currFile.name,
+                  content: model.editorText ?? currFile.contents,
+                  hasRegion: editableRegion),
             );
 
             SchedulerBinding.instance.addPostFrameCallback((timeStamp) {
@@ -216,12 +209,9 @@ class ChallengeView extends StatelessWidget {
             body: Row(
               children: [
                 Expanded(
-                  child: EditorViewController(
+                  child: Editor(
                     options: model.defaultEditorOptions,
-                    editor: Editor(
-                      options: model.defaultEditorOptions,
-                      language: 'HTML',
-                    ),
+                    language: 'HTML',
                   ),
                 ),
               ],
@@ -257,14 +247,13 @@ class ChallengeView extends StatelessWidget {
               currFile,
             );
 
-            editor.fileTextStream.sink.add(
-              FileStreamEvent(
-                challengeId: challenge.id + currFile.name,
-                ext: currFile.ext.name.toUpperCase(),
-                content: currText == '' ? currFile.contents : currText,
-                hasEditableRegion: currFile.editableRegionBoundaries.isNotEmpty,
-              ),
-            );
+            editor.fileTextStream.sink.add(FileIDE(
+              id: challenge.id + currFile.name,
+              ext: currFile.ext.name.toUpperCase(),
+              name: currFile.name,
+              content: currText == '' ? currFile.contents : currText,
+              hasRegion: currFile.editableRegionBoundaries.isNotEmpty,
+            ));
             model.setEditorText = currText == '' ? currFile.contents : currText;
             model.setShowPreview = false;
           },
@@ -377,15 +366,13 @@ class ChallengeView extends StatelessWidget {
                   currFile,
                 );
 
-                editor.fileTextStream.sink.add(
-                  FileStreamEvent(
-                    challengeId: challenge.id + currFile.name,
-                    ext: currFile.ext.name.toUpperCase(),
-                    content: currText == '' ? currFile.contents : currText,
-                    hasEditableRegion:
-                        currFile.editableRegionBoundaries.isNotEmpty,
-                  ),
-                );
+                editor.fileTextStream.sink.add(FileIDE(
+                  id: challenge.id + currFile.name,
+                  ext: currFile.ext.name.toUpperCase(),
+                  name: currFile.name,
+                  content: currText == '' ? currFile.contents : currText,
+                  hasRegion: currFile.editableRegionBoundaries.isNotEmpty,
+                ));
                 model.setEditorText =
                     currText == '' ? currFile.contents : currText;
                 model.setShowPreview = !model.showPreview;

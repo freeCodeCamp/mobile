@@ -80,12 +80,7 @@ class ChallengeViewModel extends BaseViewModel {
   int _challengesCompleted = 0;
   int get challengesCompleted => _challengesCompleted;
 
-  EditorOptions defaultEditorOptions = EditorOptions(
-    useFileExplorer: false,
-    canCloseFiles: false,
-    showAppBar: false,
-    showTabBar: false,
-  );
+  EditorOptions defaultEditorOptions = EditorOptions();
 
   final _dialogService = locator<DialogService>();
   final NavigationService _navigationService = locator<NavigationService>();
