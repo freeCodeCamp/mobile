@@ -69,6 +69,8 @@ class ChallengeViewModel extends BaseViewModel {
   Syntax _currFileType = Syntax.HTML;
   Syntax get currFileType => _currFileType;
 
+  bool _mounted = false;
+
   TestRunner runner = TestRunner();
 
   SnackbarService snackbar = locator<SnackbarService>();
@@ -215,21 +217,25 @@ class ChallengeViewModel extends BaseViewModel {
     Challenge challenge,
     ChallengeFile currFile,
     bool hasRegion,
-  ) {
-    editor.fileTextStream.sink.add(
-      FileIDE(
-        id: challenge.id + currFile.name,
-        ext: currFile.ext.name,
-        name: currFile.name,
-        content: editorText ?? currFile.contents,
-        hasRegion: hasRegion,
-        region: EditorRegionOptions(
-          start: hasRegion ? currFile.editableRegionBoundaries[0] : null,
-          end: hasRegion ? currFile.editableRegionBoundaries[1] : null,
-          condition: completedChallenge,
+  ) async {
+    if (!_mounted) {
+      await Future.delayed(Duration.zero);
+      editor.fileTextStream.sink.add(
+        FileIDE(
+          id: challenge.id + currFile.name,
+          ext: currFile.ext.name,
+          name: currFile.name,
+          content: editorText ?? currFile.contents,
+          hasRegion: hasRegion,
+          region: EditorRegionOptions(
+            start: hasRegion ? currFile.editableRegionBoundaries[0] : null,
+            end: hasRegion ? currFile.editableRegionBoundaries[1] : null,
+            condition: completedChallenge,
+          ),
         ),
-      ),
-    );
+      );
+      _mounted = true;
+    }
   }
 
   // When the content in the editor is changed, save it to the cache. This prevents
