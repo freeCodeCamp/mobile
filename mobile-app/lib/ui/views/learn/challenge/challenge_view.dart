@@ -375,8 +375,13 @@ class ChallengeView extends StatelessWidget {
                   content: currText == '' ? currFile.contents : currText,
                   hasRegion: currFile.editableRegionBoundaries.isNotEmpty,
                   region: EditorRegionOptions(
-                      start: currFile.editableRegionBoundaries[0],
-                      end: currFile.editableRegionBoundaries[1]),
+                    start: currFile.editableRegionBoundaries.isNotEmpty
+                        ? currFile.editableRegionBoundaries[0]
+                        : null,
+                    end: currFile.editableRegionBoundaries.isNotEmpty
+                        ? currFile.editableRegionBoundaries[1]
+                        : null,
+                  ),
                 ));
                 model.setEditorText =
                     currText == '' ? currFile.contents : currText;
