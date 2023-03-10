@@ -8,14 +8,14 @@ dependencies:
   flutter:
     sdk: flutter
   flutter_dotenv: ^5.0.2
-  flutter_html: ^2.2.1
+  flutter_html: ^3.0.0-alpha.6
   algolia: ^1.0.1
   just_audio: ^0.9.7
   http: ^0.13.3
   path_provider: ^2.0.3
   sqflite: ^2.0.0+4
   stacked: ^3.1.0
-  stacked_services: ^0.9.0
+  stacked_services: ^1.0.0
   url_launcher: ^6.0.10
   sqflite_migration_service: ^2.0.0-nullsafety.1
   dio: ^4.0.0
@@ -23,19 +23,19 @@ dependencies:
     git:
       url: https://github.com/freeCodeCamp/PhoneIDE
       ref: main
-  jiffy: ^5.0.0
+  jiffy: ^6.1.0
   shared_preferences: ^2.0.7
   font_awesome_flutter: ^10.0.0
   html: ^0.15.0
   fk_user_agent: ^2.0.1
   flutter_hooks: ^0.18.0
-  flutter_local_notifications: ^9.0.3
+  flutter_local_notifications: ^13.0.0
   youtube_player_iframe: ^2.2.2
   infinite_scroll_pagination: ^3.1.0
   web_socket_channel: ^2.1.0
   webview_flutter: ^2.8.0
   cached_network_image: ^3.2.0
-  flutter_secure_storage: ^6.0.0
+  flutter_secure_storage: ^8.0.0
   photo_view: ^0.14.0
   share_plus: ^6.3.0
   flutter_highlight:
@@ -46,12 +46,12 @@ dependencies:
   pretty_dio_logger: ^1.2.0-beta-1
   curl_logger_dio_interceptor: ^0.0.3
   flutter_heatmap_calendar: ^1.0.4
-  intl: ^0.17.0
+  intl: ^0.18.0
   path: ^1.8.1
   audio_service: ^0.18.4
-  device_info_plus: ^6.0.0
+  device_info_plus: ^8.1.0
   auth0_flutter: ^1.0.1
-  upgrader: ^4.6.1
+  upgrader: ^6.0.1
   quick_actions: ^1.0.1
   firebase_core: ^2.4.0
   firebase_analytics: ^10.1.0
@@ -63,8 +63,8 @@ dev_dependencies:
     sdk: flutter
   flutter_test:
     sdk: flutter
-  stacked_generator: ^0.9.0
-  flutter_launcher_icons: ^0.11.0
+  stacked_generator: ^1.0.0
+  flutter_launcher_icons: ^0.12.0
   dependency_validator: ^3.2.2
   flutter_lints: ^2.0.0
   sqflite_common_ffi: ^2.2.1+1
