@@ -33,7 +33,6 @@ class DynamicPanel extends StatelessWidget {
           description: challenge.description,
           instructions: challenge.instructions,
           challengeModel: model,
-          editorText: model.editorText,
           maxChallenges: maxChallenges,
           title: challenge.title,
         );
