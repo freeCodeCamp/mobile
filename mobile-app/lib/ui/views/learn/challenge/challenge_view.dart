@@ -67,23 +67,9 @@ class ChallengeView extends StatelessWidget {
             Editor editor = Editor(
               language: currFile.ext.name.toUpperCase(),
               options: options,
-              openedFile: FileIDE(
-                id: challenge.id + currFile.name,
-                ext: currFile.ext.name,
-                name: currFile.name,
-                content: model.editorText ?? currFile.contents,
-                hasRegion: editableRegion,
-                region: EditorRegionOptions(
-                  start: editableRegion
-                      ? currFile.editableRegionBoundaries[0]
-                      : null,
-                  end: editableRegion
-                      ? currFile.editableRegionBoundaries[1]
-                      : null,
-                  condition: model.completedChallenge,
-                ),
-              ),
             );
+
+            model.initiateFile(editor, challenge, currFile, editableRegion);
 
             SchedulerBinding.instance.addPostFrameCallback((timeStamp) {
               if (keyboard && !model.showPanel) {
@@ -216,21 +202,13 @@ class ChallengeView extends StatelessWidget {
           }
 
           return Scaffold(
-            appBar: AppBar(
-              title: const Text('Loading'),
-              automaticallyImplyLeading: false,
-            ),
-            body: Row(
-              children: [
-                Expanded(
-                  child: Editor(
-                    options: model.defaultEditorOptions,
-                    language: 'HTML',
-                  ),
-                ),
-              ],
-            ),
-          );
+              appBar: AppBar(
+                title: const Text('Loading'),
+                automaticallyImplyLeading: false,
+              ),
+              body: const Center(
+                child: CircularProgressIndicator(),
+              ));
         },
       ),
     );
@@ -277,6 +255,7 @@ class ChallengeView extends StatelessWidget {
                 ),
               ),
             );
+
             model.setEditorText = currText == '' ? currFile.contents : currText;
             model.setShowPreview = false;
           },

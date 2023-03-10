@@ -2,6 +2,7 @@ import 'dart:convert';
 import 'package:flutter_code_editor/editor/editor.dart';
 import 'package:flutter_code_editor/enums/syntax.dart';
 import 'package:flutter_code_editor/models/editor_options.dart';
+import 'package:flutter_code_editor/models/file_model.dart';
 import 'package:freecodecamp/app/app.locator.dart';
 import 'package:freecodecamp/app/app.router.dart';
 import 'package:freecodecamp/enums/challenge_test_state_type.dart';
@@ -207,6 +208,28 @@ class ChallengeViewModel extends BaseViewModel {
     setCurrentSelectedFile = currentEditedChallenge.isEmpty
         ? challenge.files[0].name
         : currentEditedChallenge[0].name;
+  }
+
+  void initiateFile(
+    Editor editor,
+    Challenge challenge,
+    ChallengeFile currFile,
+    bool hasRegion,
+  ) {
+    editor.fileTextStream.sink.add(
+      FileIDE(
+        id: challenge.id + currFile.name,
+        ext: currFile.ext.name,
+        name: currFile.name,
+        content: editorText ?? currFile.contents,
+        hasRegion: hasRegion,
+        region: EditorRegionOptions(
+          start: hasRegion ? currFile.editableRegionBoundaries[0] : null,
+          end: hasRegion ? currFile.editableRegionBoundaries[1] : null,
+          condition: completedChallenge,
+        ),
+      ),
+    );
   }
 
   // When the content in the editor is changed, save it to the cache. This prevents
