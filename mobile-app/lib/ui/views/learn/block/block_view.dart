@@ -82,7 +82,7 @@ class BlockView extends StatelessWidget {
                             ),
                           ),
                         ),
-                      if (model.isDev)
+                      if (model.isDev && !isCertification)
                         DownloadButton(
                           model: model,
                           block: block,
@@ -279,19 +279,23 @@ class ChallengeTile extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    bool isCompleted = model.completedChallenge(
+      block.challengeTiles[step].id,
+    );
+
     return GridTile(
       child: Container(
         margin: const EdgeInsets.all(2),
         decoration: BoxDecoration(
           border: Border.all(
-            color: Colors.white.withOpacity(0.01),
-            width: 1,
+            color: isDowloaded && model.isDownloading && isCompleted
+                ? Colors.green
+                : Colors.white.withOpacity(0.01),
+            width: isDowloaded && model.isDownloading && isCompleted ? 5 : 1,
           ),
-          color: model.completedChallenge(
-            block.challengeTiles[step].id,
-          )
+          color: isCompleted
               ? const Color.fromRGBO(0x00, 0x2e, 0xad, 1)
-              : isDowloaded && model.isDownloading
+              : isDowloaded && model.isDownloading && !isCompleted
                   ? Colors.green
                   : Colors.transparent,
         ),

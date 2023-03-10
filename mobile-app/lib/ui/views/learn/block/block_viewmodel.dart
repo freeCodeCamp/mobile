@@ -214,8 +214,6 @@ class BlockViewModel extends BaseViewModel {
     );
   }
 
-  // TODO: only call this function once and set a global variable
-
   Future<bool> isBlockDownloaded(Block incBlock) async {
     List<Block>? blocks = await learnOfflineService.getCachedBlocks(
       incBlock.superBlock.dashedName,
