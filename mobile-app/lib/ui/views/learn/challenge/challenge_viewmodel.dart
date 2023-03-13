@@ -176,6 +176,11 @@ class ChallengeViewModel extends BaseViewModel {
     notifyListeners();
   }
 
+  set setMounted(bool value) {
+    _mounted = value;
+    notifyListeners();
+  }
+
   void init(
     String url,
     Block block,

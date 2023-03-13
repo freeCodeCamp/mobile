@@ -368,6 +368,8 @@ class ChallengeView extends StatelessWidget {
                   currFile,
                 );
 
+                model.setMounted = false;
+
                 editor.fileTextStream.sink.add(FileIDE(
                   id: challenge.id + currFile.name,
                   ext: currFile.ext.name.toUpperCase(),
