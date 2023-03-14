@@ -388,6 +388,7 @@ class ChallengeViewModel extends BaseViewModel {
 
       for (ChallengeFile file in currChallenge!.files) {
         prefs.remove('${currChallenge.id}.${file.name}');
+        prefs.remove('${currChallenge.id}${file.name}');
       }
 
       var challengeIndex = block!.challengeTiles.indexWhere(
@@ -398,12 +399,15 @@ class ChallengeViewModel extends BaseViewModel {
           .toLowerCase()
           .replaceAll(' ', '-');
       String url = await learnService.getBaseUrl('/page-data/learn');
+      String challengeUrl =
+          '$url/${block!.superBlock.dashedName}/${block!.dashedName}/$slug/page-data.json';
+
+      await prefs.remove(challengeUrl);
 
       _navigationService.replaceWith(
         Routes.challengeView,
         arguments: ChallengeViewArguments(
-            url:
-                '$url/${block!.superBlock.dashedName}/${block!.dashedName}/$slug/page-data.json',
+            url: challengeUrl,
             block: block!,
             challengeId: currChallenge.id,
             challengesCompleted: challengesCompleted,
