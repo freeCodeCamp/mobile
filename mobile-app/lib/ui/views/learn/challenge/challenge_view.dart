@@ -288,14 +288,14 @@ class ChallengeView extends StatelessWidget {
             height: 1,
             width: 1,
             child: WebView(
-              onWebViewCreated: (WebViewController webcontroller) async {
+              onWebViewCreated: (WebViewController webcontroller) {
                 model.setTestController = webcontroller;
               },
               javascriptMode: JavascriptMode.unrestricted,
               javascriptChannels: {
                 JavascriptChannel(
                   name: 'Print',
-                  onMessageReceived: (JavascriptMessage message) async {
+                  onMessageReceived: (JavascriptMessage message) {
                     if (message.message == 'completed') {
                       model.setPanelType = PanelType.pass;
                       model.setCompletedChallenge = true;
@@ -422,6 +422,7 @@ class ChallengeView extends StatelessWidget {
                               );
                             }
 
+                            model.setShowPanel = false;
                             model.setIsRunningTests = true;
                             await model.runner.setWebViewContent(
                               challenge,
