@@ -1,7 +1,6 @@
 import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
-import 'package:flutter_code_editor/controller/editor_view_controller.dart';
 import 'package:flutter_code_editor/editor/editor.dart';
 import 'package:flutter_code_editor/models/editor_options.dart';
 import 'package:flutter_code_editor/models/file_model.dart';
@@ -12,7 +11,6 @@ import 'package:freecodecamp/enums/panel_type.dart';
 import 'package:freecodecamp/models/learn/challenge_model.dart';
 import 'package:freecodecamp/models/learn/curriculum_model.dart';
 import 'package:freecodecamp/ui/views/learn/challenge/challenge_viewmodel.dart';
-import 'package:freecodecamp/ui/views/learn/widgets/custom_tab_bar_widet.dart';
 
 import 'package:freecodecamp/ui/views/learn/widgets/dynamic_panel/panels/dynamic_panel.dart';
 import 'package:webview_flutter/webview_flutter.dart';
@@ -25,12 +23,14 @@ class ChallengeView extends StatelessWidget {
     required this.block,
     required this.challengeId,
     required this.challengesCompleted,
+    required this.isProject,
   }) : super(key: key);
 
   final String url;
   final Block block;
   final String challengeId;
   final int challengesCompleted;
+  final bool isProject;
 
   @override
   Widget build(BuildContext context) {
@@ -52,29 +52,24 @@ class ChallengeView extends StatelessWidget {
 
             bool editableRegion = currFile.editableRegionBoundaries.isNotEmpty;
             EditorOptions options = EditorOptions(
-              hasEditableRegion: editableRegion,
-              useFileExplorer: false,
-              canCloseFiles: false,
-              showAppBar: false,
-              showTabBar: false,
+              hasRegion: editableRegion,
+              region: EditorRegionOptions(
+                start: editableRegion
+                    ? currFile.editableRegionBoundaries[0]
+                    : null,
+                end: editableRegion
+                    ? currFile.editableRegionBoundaries[1]
+                    : null,
+                condition: model.completedChallenge,
+              ),
             );
 
             Editor editor = Editor(
-              regionStart:
-                  editableRegion ? currFile.editableRegionBoundaries[0] : null,
-              regionEnd:
-                  editableRegion ? currFile.editableRegionBoundaries[1] : null,
-              condition: model.completedChallenge,
               language: currFile.ext.name.toUpperCase(),
               options: options,
-              openedFile: FileIDE(
-                fileExplorer: null,
-                fileName: currFile.name,
-                filePath: '',
-                fileContent: model.editorText ?? currFile.contents,
-                parentDirectory: '',
-              ),
             );
+
+            model.initiateFile(editor, challenge, currFile, editableRegion);
 
             SchedulerBinding.instance.addPostFrameCallback((timeStamp) {
               if (keyboard && !model.showPanel) {
@@ -103,6 +98,7 @@ class ChallengeView extends StatelessWidget {
                     : challenge.files[0].name,
                 text,
               );
+
               model.setEditorText = text;
               model.setHasTypedInEditor = true;
               model.setCompletedChallenge = false;
@@ -118,7 +114,6 @@ class ChallengeView extends StatelessWidget {
             );
 
             return Scaffold(
-              backgroundColor: const Color.fromRGBO(0x1b, 0x1b, 0x32, 1),
               appBar: !model.hideAppBar
                   ? AppBar(
                       automaticallyImplyLeading: false,
@@ -128,16 +123,18 @@ class ChallengeView extends StatelessWidget {
                       actions: [
                         if (model.showPreview)
                           Expanded(
-                              child: Container(
-                            decoration: model.showPreview ? decoration : null,
                             child: Container(
-                              decoration: model.showConsole ? decoration : null,
-                              child: ElevatedButton(
-                                onPressed: () {},
-                                child: const Text('Preview'),
+                              decoration: model.showPreview ? decoration : null,
+                              child: Container(
+                                decoration:
+                                    model.showConsole ? decoration : null,
+                                child: ElevatedButton(
+                                  onPressed: () {},
+                                  child: const Text('Preview'),
+                                ),
                               ),
                             ),
-                          )),
+                          ),
                         if (model.showPreview)
                           Expanded(
                             child: ElevatedButton(
@@ -149,11 +146,11 @@ class ChallengeView extends StatelessWidget {
                           ),
                         if (!model.showPreview && challenge.files.length > 1)
                           for (ChallengeFile file in challenge.files)
-                            CustomTabBar(
-                              challenge: challenge,
-                              file: file,
-                              editor: editor,
-                              model: model,
+                            customTabBar(
+                              model,
+                              challenge,
+                              file,
+                              editor,
                             )
                       ],
                     )
@@ -205,25 +202,74 @@ class ChallengeView extends StatelessWidget {
           }
 
           return Scaffold(
-            appBar: AppBar(
-              title: const Text('Loading'),
-              automaticallyImplyLeading: false,
-            ),
-            body: Row(
-              children: [
-                Expanded(
-                  child: EditorViewController(
-                    options: model.defaultEditorOptions,
-                    editor: Editor(
-                      options: model.defaultEditorOptions,
-                      language: 'HTML',
-                    ),
-                  ),
-                ),
-              ],
-            ),
-          );
+              appBar: AppBar(
+                title: const Text('Loading'),
+                automaticallyImplyLeading: false,
+              ),
+              body: const Center(
+                child: CircularProgressIndicator(),
+              ));
         },
+      ),
+    );
+  }
+
+  Widget customTabBar(
+    ChallengeViewModel model,
+    Challenge challenge,
+    ChallengeFile file,
+    Editor editor,
+  ) {
+    return Expanded(
+      child: Container(
+        decoration: BoxDecoration(
+          border: Border(
+            bottom: model.currentFile(challenge).name == file.name
+                ? const BorderSide(width: 4, color: Colors.blue)
+                : const BorderSide(),
+          ),
+        ),
+        child: ElevatedButton(
+          onPressed: () async {
+            model.setCurrentSelectedFile = file.name;
+            ChallengeFile currFile = model.currentFile(challenge);
+
+            String currText = await model.fileService.getExactFileFromCache(
+              challenge,
+              currFile,
+            );
+
+            bool hasRegion = currFile.editableRegionBoundaries.isNotEmpty;
+
+            editor.fileTextStream.sink.add(
+              FileIDE(
+                id: challenge.id + currFile.name,
+                ext: currFile.ext.name.toUpperCase(),
+                name: currFile.name,
+                content: currText == '' ? currFile.contents : currText,
+                hasRegion: currFile.editableRegionBoundaries.isNotEmpty,
+                region: EditorRegionOptions(
+                  start:
+                      hasRegion ? currFile.editableRegionBoundaries[0] : null,
+                  end: hasRegion ? currFile.editableRegionBoundaries[1] : null,
+                ),
+              ),
+            );
+
+            model.setEditorText = currText == '' ? currFile.contents : currText;
+            model.setShowPreview = false;
+          },
+          child: Text(
+            '${file.name}.${file.ext.name}',
+            style: TextStyle(
+                color: model.currentFile(challenge).name == file.name
+                    ? Colors.blue
+                    : Colors.white,
+                fontWeight: model.currentFile(challenge).name == file.name
+                    ? FontWeight.bold
+                    : null),
+          ),
+        ),
       ),
     );
   }
@@ -242,14 +288,14 @@ class ChallengeView extends StatelessWidget {
             height: 1,
             width: 1,
             child: WebView(
-              onWebViewCreated: (WebViewController webcontroller) async {
+              onWebViewCreated: (WebViewController webcontroller) {
                 model.setTestController = webcontroller;
               },
               javascriptMode: JavascriptMode.unrestricted,
               javascriptChannels: {
                 JavascriptChannel(
                   name: 'Print',
-                  onMessageReceived: (JavascriptMessage message) async {
+                  onMessageReceived: (JavascriptMessage message) {
                     if (message.message == 'completed') {
                       model.setPanelType = PanelType.pass;
                       model.setCompletedChallenge = true;
@@ -322,15 +368,28 @@ class ChallengeView extends StatelessWidget {
                   currFile,
                 );
 
-                editor.fileTextStream.sink.add(
-                  FileStreamEvent(
-                    ext: currFile.ext.name.toUpperCase(),
-                    content: currText == '' ? currFile.contents : currText,
+                model.setMounted = false;
+
+                editor.fileTextStream.sink.add(FileIDE(
+                  id: challenge.id + currFile.name,
+                  ext: currFile.ext.name.toUpperCase(),
+                  name: currFile.name,
+                  content: currText == '' ? currFile.contents : currText,
+                  hasRegion: currFile.editableRegionBoundaries.isNotEmpty,
+                  region: EditorRegionOptions(
+                    start: currFile.editableRegionBoundaries.isNotEmpty
+                        ? currFile.editableRegionBoundaries[0]
+                        : null,
+                    end: currFile.editableRegionBoundaries.isNotEmpty
+                        ? currFile.editableRegionBoundaries[1]
+                        : null,
                   ),
-                );
+                ));
                 model.setEditorText =
                     currText == '' ? currFile.contents : currText;
                 model.setShowPreview = !model.showPreview;
+
+                model.refresh();
               },
               splashColor: Colors.transparent,
               highlightColor: Colors.transparent,
@@ -363,6 +422,7 @@ class ChallengeView extends StatelessWidget {
                               );
                             }
 
+                            model.setShowPanel = false;
                             model.setIsRunningTests = true;
                             await model.runner.setWebViewContent(
                               challenge,

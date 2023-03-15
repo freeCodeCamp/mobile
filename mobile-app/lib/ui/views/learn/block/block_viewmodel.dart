@@ -90,6 +90,7 @@ class BlockViewModel extends BaseViewModel {
         block: block,
         challengeId: challengeId,
         challengesCompleted: _challengesCompleted,
+        isProject: block.challenges.length == 1,
       ),
     );
   }

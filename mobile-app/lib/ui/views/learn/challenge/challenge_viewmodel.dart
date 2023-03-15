@@ -2,6 +2,7 @@ import 'dart:convert';
 import 'package:flutter_code_editor/editor/editor.dart';
 import 'package:flutter_code_editor/enums/syntax.dart';
 import 'package:flutter_code_editor/models/editor_options.dart';
+import 'package:flutter_code_editor/models/file_model.dart';
 import 'package:freecodecamp/app/app.locator.dart';
 import 'package:freecodecamp/app/app.router.dart';
 import 'package:freecodecamp/enums/challenge_test_state_type.dart';
@@ -68,6 +69,8 @@ class ChallengeViewModel extends BaseViewModel {
   Syntax _currFileType = Syntax.HTML;
   Syntax get currFileType => _currFileType;
 
+  bool _mounted = false;
+
   TestRunner runner = TestRunner();
 
   SnackbarService snackbar = locator<SnackbarService>();
@@ -80,12 +83,7 @@ class ChallengeViewModel extends BaseViewModel {
   int _challengesCompleted = 0;
   int get challengesCompleted => _challengesCompleted;
 
-  EditorOptions defaultEditorOptions = EditorOptions(
-    useFileExplorer: false,
-    canCloseFiles: false,
-    showAppBar: false,
-    showTabBar: false,
-  );
+  EditorOptions defaultEditorOptions = EditorOptions();
 
   final _dialogService = locator<DialogService>();
   final NavigationService _navigationService = locator<NavigationService>();
@@ -178,6 +176,11 @@ class ChallengeViewModel extends BaseViewModel {
     notifyListeners();
   }
 
+  set setMounted(bool value) {
+    _mounted = value;
+    notifyListeners();
+  }
+
   void init(
     String url,
     Block block,
@@ -212,6 +215,32 @@ class ChallengeViewModel extends BaseViewModel {
     setCurrentSelectedFile = currentEditedChallenge.isEmpty
         ? challenge.files[0].name
         : currentEditedChallenge[0].name;
+  }
+
+  void initiateFile(
+    Editor editor,
+    Challenge challenge,
+    ChallengeFile currFile,
+    bool hasRegion,
+  ) async {
+    if (!_mounted) {
+      await Future.delayed(Duration.zero);
+      editor.fileTextStream.sink.add(
+        FileIDE(
+          id: challenge.id + currFile.name,
+          ext: currFile.ext.name,
+          name: currFile.name,
+          content: editorText ?? currFile.contents,
+          hasRegion: hasRegion,
+          region: EditorRegionOptions(
+            start: hasRegion ? currFile.editableRegionBoundaries[0] : null,
+            end: hasRegion ? currFile.editableRegionBoundaries[1] : null,
+            condition: completedChallenge,
+          ),
+        ),
+      );
+      _mounted = true;
+    }
   }
 
   // When the content in the editor is changed, save it to the cache. This prevents
@@ -317,6 +346,11 @@ class ChallengeViewModel extends BaseViewModel {
     return null;
   }
 
+  void refresh() {
+    setChallenge = challenge!;
+    notifyListeners();
+  }
+
   Future forumHelpDialog(String url) async {
     DialogResponse? res = await _dialogService.showCustomDialog(
         variant: DialogType.buttonForm,
@@ -354,6 +388,7 @@ class ChallengeViewModel extends BaseViewModel {
 
       for (ChallengeFile file in currChallenge!.files) {
         prefs.remove('${currChallenge.id}.${file.name}');
+        prefs.remove('${currChallenge.id}${file.name}');
       }
 
       var challengeIndex = block!.challengeTiles.indexWhere(
@@ -364,16 +399,19 @@ class ChallengeViewModel extends BaseViewModel {
           .toLowerCase()
           .replaceAll(' ', '-');
       String url = await learnService.getBaseUrl('/page-data/learn');
+      String challengeUrl =
+          '$url/${block!.superBlock.dashedName}/${block!.dashedName}/$slug/page-data.json';
+
+      await prefs.remove(challengeUrl);
 
       _navigationService.replaceWith(
         Routes.challengeView,
         arguments: ChallengeViewArguments(
-          url:
-              '$url/${block!.superBlock.dashedName}/${block!.dashedName}/$slug/page-data.json',
-          block: block!,
-          challengeId: currChallenge.id,
-          challengesCompleted: challengesCompleted,
-        ),
+            url: challengeUrl,
+            block: block!,
+            challengeId: currChallenge.id,
+            challengesCompleted: challengesCompleted,
+            isProject: block!.challenges.length == 1),
       );
     }
   }
@@ -417,12 +455,12 @@ class ChallengeViewModel extends BaseViewModel {
         _navigationService.replaceWith(
           Routes.challengeView,
           arguments: ChallengeViewArguments(
-            url:
-                '$url/${block!.superBlock.dashedName}/${block!.dashedName}/$challenge/page-data.json',
-            block: block!,
-            challengeId: block!.challengeTiles[challengeIndex + 1].id,
-            challengesCompleted: challengesCompleted + 1,
-          ),
+              url:
+                  '$url/${block!.superBlock.dashedName}/${block!.dashedName}/$challenge/page-data.json',
+              block: block!,
+              challengeId: block!.challengeTiles[challengeIndex + 1].id,
+              challengesCompleted: challengesCompleted + 1,
+              isProject: block!.challenges.length == 1),
         );
       }
     }
