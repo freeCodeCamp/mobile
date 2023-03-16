@@ -1,5 +1,4 @@
 import 'dart:convert';
-import 'dart:developer';
 import 'package:freecodecamp/app/app.locator.dart';
 import 'package:freecodecamp/enums/ext_type.dart';
 import 'package:freecodecamp/models/learn/challenge_model.dart';
@@ -187,7 +186,7 @@ class TestRunner extends BaseViewModel {
     if (ext == Ext.html || ext == Ext.css) {
       String? tail = challenge.files[0].tail ?? '';
 
-      String wut = '''<script type="module">
+      return '''<script type="module">
     import * as __helpers from "https://unpkg.com/@freecodecamp/curriculum-helpers@1.1.0/dist/index.js";
 
     const code = `$code`;
@@ -252,8 +251,6 @@ class TestRunner extends BaseViewModel {
     document.querySelector('*').innerHTML = code;
     doc.__runTest(tests);
   </script>''';
-      log(wut);
-      return wut;
     } else if (ext == Ext.js) {
       String? head = challenge.files[0].head ?? '';
       String? tail = (challenge.files[0].tail ?? '').replaceAll('\\', '\\\\');
