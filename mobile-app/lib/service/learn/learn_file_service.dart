@@ -98,15 +98,14 @@ class LearnFileService {
       cache = prefs.getString(
             '${challenge.id}.${fileWithEditableRegion[0].name}',
           ) ??
-          '';
-
-      if (cache.isNotEmpty) {
-        return cache;
-      } else {
-        return fileWithEditableRegion[0].contents;
+          'nothing';
+      if (cache.replaceAll(' ', '').trim() == '') {
+        return 'nothing';
       }
+
+      return cache;
     } else {
-      return challenge.files[0].contents;
+      return 'nothing';
     }
   }
 

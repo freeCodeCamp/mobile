@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'dart:developer';
 import 'package:freecodecamp/app/app.locator.dart';
 import 'package:freecodecamp/enums/ext_type.dart';
 import 'package:freecodecamp/models/learn/challenge_model.dart';
@@ -158,6 +159,10 @@ class TestRunner extends BaseViewModel {
     List<ChallengeFile>? scriptFile =
         challenge.files.where((element) => element.name == 'script').toList();
 
+    bool hasRegion = challenge.files
+        .map((e) => e.editableRegionBoundaries.isNotEmpty)
+        .isNotEmpty;
+
     String? code;
 
     if (ext == Ext.html || ext == Ext.css) {
@@ -182,7 +187,7 @@ class TestRunner extends BaseViewModel {
     if (ext == Ext.html || ext == Ext.css) {
       String? tail = challenge.files[0].tail ?? '';
 
-      return '''<script type="module">
+      String wut = '''<script type="module">
     import * as __helpers from "https://unpkg.com/@freecodecamp/curriculum-helpers@1.1.0/dist/index.js";
 
     const code = `$code`;
@@ -215,6 +220,16 @@ class TestRunner extends BaseViewModel {
         try {
         const testPromise = new Promise((resolve, reject) => {
           try {
+            if(`${code?.replaceAll(' ', '').trim()}` === ''){
+              error = true;
+            }
+
+            let regionContent = `${(await fileService.getCurrentEditedFileFromCache(challenge, testing: testing)).replaceAll('\\', '\\\\').replaceAll('`', '\\`').replaceAll('\$', r'\$')}`;
+
+            if(regionContent === 'nothing' && true === $hasRegion){
+              error = true;
+            }
+
             const test = eval(${tail.isNotEmpty ? 'tail + "\\n" +' : ""} testString[i]);
             resolve(test);
           } catch (e) {
@@ -237,6 +252,8 @@ class TestRunner extends BaseViewModel {
     document.querySelector('*').innerHTML = code;
     doc.__runTest(tests);
   </script>''';
+      log(wut);
+      return wut;
     } else if (ext == Ext.js) {
       String? head = challenge.files[0].head ?? '';
       String? tail = (challenge.files[0].tail ?? '').replaceAll('\\', '\\\\');
