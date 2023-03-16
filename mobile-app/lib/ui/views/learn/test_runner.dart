@@ -158,10 +158,6 @@ class TestRunner extends BaseViewModel {
     List<ChallengeFile>? scriptFile =
         challenge.files.where((element) => element.name == 'script').toList();
 
-    bool hasRegion = challenge.files
-        .map((e) => e.editableRegionBoundaries.isNotEmpty)
-        .isNotEmpty;
-
     String? code;
 
     if (ext == Ext.html || ext == Ext.css) {
@@ -220,12 +216,6 @@ class TestRunner extends BaseViewModel {
         const testPromise = new Promise((resolve, reject) => {
           try {
             if(`${code?.replaceAll(' ', '').trim()}` === ''){
-              error = true;
-            }
-
-            let regionContent = `${(await fileService.getCurrentEditedFileFromCache(challenge, testing: testing)).replaceAll('\\', '\\\\').replaceAll('`', '\\`').replaceAll('\$', r'\$')}`;
-
-            if(regionContent === 'nothing' && true === $hasRegion){
               error = true;
             }
 
