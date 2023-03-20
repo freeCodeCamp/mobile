@@ -3,7 +3,6 @@ import 'package:freecodecamp/ui/views/learn/challenge/challenge_viewmodel.dart';
 import 'package:freecodecamp/ui/views/learn/widgets/dynamic_panel/panels/description/description_widget_model.dart';
 import 'package:freecodecamp/ui/views/news/html_handler/html_handler.dart';
 import 'package:stacked/stacked.dart';
-import 'dart:developer' as dev;
 
 class DescriptionView extends StatelessWidget {
   const DescriptionView({
@@ -13,12 +12,10 @@ class DescriptionView extends StatelessWidget {
     required this.challengeModel,
     required this.maxChallenges,
     required this.title,
-    this.editorText,
   }) : super(key: key);
 
   final String description;
   final String instructions;
-  final String? editorText;
   final ChallengeViewModel challengeModel;
   final int maxChallenges;
   final String title;
@@ -29,7 +26,6 @@ class DescriptionView extends StatelessWidget {
     bool isMultiStepChallenge = splitTitle.length == 2 &&
         splitTitle[0] == 'Step' &&
         int.tryParse(splitTitle[1]) != null;
-    dev.log(editorText ?? '');
     return ViewModelBuilder<DescriptionModel>.reactive(
       viewModelBuilder: () => DescriptionModel(),
       builder: (context, model, child) => SafeArea(
