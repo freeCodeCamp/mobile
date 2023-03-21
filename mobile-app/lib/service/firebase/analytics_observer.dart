@@ -1,15 +1,17 @@
-import 'dart:developer';
-
 import 'package:firebase_analytics/firebase_analytics.dart';
 import 'package:flutter/widgets.dart';
+import 'package:freecodecamp/app/app.locator.dart';
 import 'package:freecodecamp/app/app.router.dart';
+import 'package:freecodecamp/service/developer_service.dart';
 
 class AnalyticsObserver extends RouteObserver {
   AnalyticsObserver({required this.analytics});
 
   final FirebaseAnalytics analytics;
 
-  void _sendScreenView(Route<dynamic> route) {
+  DeveloperService developerService = locator<DeveloperService>();
+
+  void _sendScreenView(Route<dynamic> route) async {
     String screenName = route.settings.name ?? 'could-not-find-view';
 
     if (route.settings.arguments != null) {
@@ -36,9 +38,13 @@ class AnalyticsObserver extends RouteObserver {
           screenName += '/${route.settings.arguments}';
       }
     }
-    log('Setting screen to $screenName');
-    analytics.setCurrentScreen(
-        screenName: screenName, screenClassOverride: screenName);
+
+    if (!await developerService.developmentMode()) {
+      analytics.setCurrentScreen(
+        screenName: screenName,
+        screenClassOverride: screenName,
+      );
+    }
   }
 
   @override
