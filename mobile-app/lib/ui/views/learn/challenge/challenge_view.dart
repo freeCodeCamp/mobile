@@ -234,7 +234,6 @@ class ChallengeView extends StatelessWidget {
     Editor editor,
   ) {
     return Expanded(
-      flex: 1,
       child: Container(
         decoration: BoxDecoration(
           border: Border(
