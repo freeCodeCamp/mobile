@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'package:flutter/material.dart';
 import 'package:flutter_code_editor/editor/editor.dart';
 import 'package:flutter_code_editor/enums/syntax.dart';
 import 'package:flutter_code_editor/models/editor_options.dart';
@@ -15,6 +16,7 @@ import 'package:freecodecamp/service/learn/learn_file_service.dart';
 import 'package:freecodecamp/service/learn/learn_offline_service.dart';
 import 'package:freecodecamp/service/learn/learn_service.dart';
 import 'package:freecodecamp/service/authentication/authentication_service.dart';
+import 'package:freecodecamp/ui/views/learn/superblock/superblock_view.dart';
 import 'package:freecodecamp/ui/views/learn/test_runner.dart';
 import 'package:freecodecamp/ui/widgets/setup_dialog_ui.dart';
 import 'package:html/dom.dart' as dom;
@@ -414,6 +416,27 @@ class ChallengeViewModel extends BaseViewModel {
             isProject: block!.challenges.length == 1),
       );
     }
+  }
+
+  void updateProgressOnPop(BuildContext context) async {
+    learnOfflineService.hasInternet().then(
+          (value) => Navigator.pushReplacement(
+            context,
+            PageRouteBuilder(
+              transitionDuration: Duration.zero,
+              pageBuilder: (
+                context,
+                animation1,
+                animation2,
+              ) =>
+                  SuperBlockView(
+                superBlockDashedName: block!.superBlock.dashedName,
+                superBlockName: block!.superBlock.name,
+                hasInternet: value,
+              ),
+            ),
+          ),
+        );
   }
 
   void passChallenge(Challenge? challenge) async {
