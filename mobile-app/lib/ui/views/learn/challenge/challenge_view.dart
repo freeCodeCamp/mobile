@@ -11,6 +11,7 @@ import 'package:freecodecamp/enums/panel_type.dart';
 import 'package:freecodecamp/models/learn/challenge_model.dart';
 import 'package:freecodecamp/models/learn/curriculum_model.dart';
 import 'package:freecodecamp/ui/views/learn/challenge/challenge_viewmodel.dart';
+import 'package:freecodecamp/ui/views/learn/superblock/superblock_view.dart';
 
 import 'package:freecodecamp/ui/views/learn/widgets/dynamic_panel/panels/dynamic_panel.dart';
 import 'package:webview_flutter/webview_flutter.dart';
@@ -116,7 +117,27 @@ class ChallengeView extends StatelessWidget {
             return Scaffold(
               appBar: !model.hideAppBar
                   ? AppBar(
-                      automaticallyImplyLeading: false,
+                      leading: IconButton(
+                        icon: const Icon(Icons.arrow_back_ios),
+                        onPressed: () async {
+                          model.learnOfflineService.hasInternet().then(
+                                (value) => Navigator.pushReplacement(
+                                  context,
+                                  PageRouteBuilder(
+                                    transitionDuration: Duration.zero,
+                                    pageBuilder:
+                                        (context, animation1, animation2) =>
+                                            SuperBlockView(
+                                      superBlockDashedName:
+                                          block.superBlock.dashedName,
+                                      superBlockName: block.superBlock.name,
+                                      hasInternet: value,
+                                    ),
+                                  ),
+                                ),
+                              );
+                        },
+                      ),
                       title: challenge.files.length == 1
                           ? const Text('Editor')
                           : null,

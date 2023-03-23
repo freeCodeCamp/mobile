@@ -89,7 +89,7 @@ class ChallengeViewModel extends BaseViewModel {
   final NavigationService _navigationService = locator<NavigationService>();
   final LearnFileService fileService = locator<LearnFileService>();
   final LearnService learnService = locator<LearnService>();
-  final _learnOfflineService = locator<LearnOfflineService>();
+  final learnOfflineService = locator<LearnOfflineService>();
 
   set setCurrentSelectedFile(String value) {
     _currentSelectedFile = value;
@@ -190,7 +190,7 @@ class ChallengeViewModel extends BaseViewModel {
     setupDialogUi();
     learnService.init();
 
-    setChallenge = _learnOfflineService.getChallenge(url, challengeId);
+    setChallenge = learnOfflineService.getChallenge(url, challengeId);
     Challenge challenge = await _challenge!;
 
     List<ChallengeFile> currentEditedChallenge = challenge.files
