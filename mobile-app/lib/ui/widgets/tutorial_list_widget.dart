@@ -8,9 +8,6 @@ import 'package:freecodecamp/ui/views/news/news-feed/news_feed_viewmodel.dart';
 
 import 'package:http/http.dart' as http;
 import 'package:flutter_dotenv/flutter_dotenv.dart';
-
-import 'dart:developer' as dev;
-
 import 'package:stacked_services/stacked_services.dart';
 
 class TutorialList extends StatefulWidget {
@@ -37,7 +34,6 @@ class TutorialList extends StatefulWidget {
     final http.Response response = await http.get(Uri.parse(url));
 
     if (response.statusCode == 200) {
-      dev.log(url);
       var tutorialJson = json.decode(response.body)['posts'];
       for (int i = 0; i < tutorialJson?.length; i++) {
         tutorials.add(Tutorial.fromJson(tutorialJson[i]));
@@ -72,36 +68,39 @@ class TutorialListState extends State<TutorialList> {
   @override
   Widget build(BuildContext context) {
     return FutureBuilder<List<Tutorial>>(
-        future: widget.fetchList(),
-        builder: (context, snapshot) {
-          if (snapshot.hasData) {
-            dev.log(snapshot.data!.length.toString());
-            return Column(
-              children: [
-                Row(
-                  children: [
-                    TileLayout(
-                      widget: widget,
-                      snapshot: snapshot,
-                    ),
-                  ],
+      future: widget.fetchList(),
+      builder: (context, snapshot) {
+        if (snapshot.hasData) {
+          return Column(
+            children: [
+              Row(
+                children: [
+                  TileLayout(
+                    widget: widget,
+                    snapshot: snapshot,
+                  ),
+                ],
+              ),
+              if (snapshot.data!.length > 5)
+                Container(
+                  padding: const EdgeInsets.all(4.0),
+                  margin: const EdgeInsets.only(bottom: 48),
+                  child: ListTile(
+                    title: const Text('Show more tutorials'),
+                    tileColor: const Color(0xFF0a0a23),
+                    trailing: const Icon(Icons.arrow_forward_ios_outlined),
+                    onTap: () {
+                      widget.navigateToFeed();
+                    },
+                  ),
                 ),
-                snapshot.data!.length > 5
-                    ? ListTile(
-                        title: const Text('Show more tutorials'),
-                        tileColor: const Color(0xFF0a0a23),
-                        trailing: const Icon(Icons.arrow_forward_ios_outlined),
-                        onTap: () {
-                          widget.navigateToFeed();
-                        },
-                      )
-                    : Container()
-              ],
-            );
-          } else {
-            return const CircularProgressIndicator();
-          }
-        });
+            ],
+          );
+        } else {
+          return const CircularProgressIndicator();
+        }
+      },
+    );
   }
 }
 
@@ -117,39 +116,47 @@ class TileLayout extends StatelessWidget {
     double imgSize = MediaQuery.of(context).size.width * 0.25;
 
     return Expanded(
-      child: ListView.builder(
-          physics: const NeverScrollableScrollPhysics(),
-          shrinkWrap: true,
-          itemCount: snapshot.data!.length > 5 ? 5 : snapshot.data?.length,
-          itemBuilder: (context, index) {
-            Tutorial tutorial = snapshot.data![index];
-            return ListTile(
-              title: Text(
-                tutorial.title,
-                maxLines: 1,
-                overflow: TextOverflow.ellipsis,
+      child: ListView.separated(
+        physics: const NeverScrollableScrollPhysics(),
+        separatorBuilder: (context, index) => const SizedBox(
+          height: 4,
+        ),
+        shrinkWrap: true,
+        padding: const EdgeInsets.all(4),
+        itemCount: snapshot.data!.length > 5 ? 5 : snapshot.data?.length ?? 1,
+        itemBuilder: (context, index) {
+          Tutorial tutorial = snapshot.data![index];
+          return ListTile(
+            title: Text(
+              tutorial.title,
+              maxLines: 2,
+              overflow: TextOverflow.ellipsis,
+            ),
+            tileColor: const Color(0xFF0a0a23),
+            isThreeLine: true,
+            contentPadding: const EdgeInsets.symmetric(
+              horizontal: 10,
+              vertical: 10,
+            ),
+            subtitle: Text(
+              NewsFeedViewModel.parseDate(tutorial.createdAt),
+            ),
+            trailing: Container(
+              constraints: BoxConstraints(
+                minWidth: imgSize,
+                maxWidth: imgSize,
               ),
-              tileColor: const Color(0xFF0a0a23),
-              contentPadding:
-                  const EdgeInsets.symmetric(horizontal: 10, vertical: 10),
-              horizontalTitleGap: 10,
-              subtitle: Text(
-                NewsFeedViewModel.parseDate(tutorial.createdAt),
-                style: const TextStyle(height: 2),
+              child: Image.network(
+                tutorial.featureImage,
+                fit: BoxFit.cover,
               ),
-              trailing: Container(
-                constraints:
-                    BoxConstraints(minWidth: imgSize, maxWidth: imgSize),
-                child: Image.network(
-                  tutorial.featureImage,
-                  fit: BoxFit.cover,
-                ),
-              ),
-              onTap: () {
-                widget.navigateToTutorial(tutorial.id, tutorial.title);
-              },
-            );
-          }),
+            ),
+            onTap: () {
+              widget.navigateToTutorial(tutorial.id, tutorial.title);
+            },
+          );
+        },
+      ),
     );
   }
 }
