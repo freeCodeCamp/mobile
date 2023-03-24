@@ -8,8 +8,12 @@ on:
       - "mobile-app/**"
 
 jobs:
+  ci-workflow:
+    uses: ./.github/workflows/flutter-ci.yml
+
   flutter_deploy:
     name: Deploy flutter app
+    needs: ci-workflow
     defaults:
       run:
         working-directory: ./mobile-app
@@ -25,27 +29,6 @@ jobs:
           java-version: "11"
           cache: "gradle"
 
-      - name: AVD cache
-        uses: actions/cache@88522ab9f39a2ea568f7027eddc7d8d8bc9d59c8 # v3
-        id: avd-cache
-        with:
-          path: |
-            ~/.android/avd/*
-            ~/.android/adb*
-          key: avd-31
-
-      - name: Ceate AVD and generate snapshot for caching
-        if: steps.avd-cache.outputs.cache-hit != 'true'
-        uses: reactivecircus/android-emulator-runner@d94c3fbe4fe6a29e4a5ba47c12fb47677c73656b # v2
-        with:
-          api-level: 31
-          target: google_apis
-          arch: x86_64
-          force-avd-creation: false
-          emulator-options: -no-window -gpu swiftshader_indirect -noaudio -no-boot-anim -camera-back none
-          disable-animations: false
-          script: echo "Generated AVD snapshot for caching."
-
       - name: Setup Flutter 3.7.x
         uses: subosito/flutter-action@dbf1fa04f4d2e52c33185153d06cdb5443aa189d # tag=v2
         with:
@@ -54,6 +37,13 @@ jobs:
           cache: true
           cache-key: flutter-3.7.x
           cache-path: ${{ runner.tool_cache }}/flutter
+
+      - name: Setup Ruby for Fastlane
+        uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: "3.1"
+          bundler-cache: true
+          working-directory: ./mobile-app/android
 
       - name: Create .env file
         run: |
@@ -72,35 +62,6 @@ jobs:
 
       - name: Install packages
         run: flutter pub get
-
-      - name: Analyze code
-        run: flutter analyze
-
-      - name: Run tests in emulator
-        uses: reactivecircus/android-emulator-runner@d94c3fbe4fe6a29e4a5ba47c12fb47677c73656b # v2
-        with:
-          api-level: 31
-          target: google_apis
-          arch: x86_64
-          force-avd-creation: false
-          emulator-options: -no-snapshot-save -no-window -gpu swiftshader_indirect -noaudio -no-boot-anim -camera-back none
-          disable-animations: true
-          script: cd mobile-app && if adb shell pm list packages | grep -q org.freecodecamp; then adb uninstall org.freecodecamp; fi && flutter drive --driver=test_driver/integration_test.dart --target=integration_test/news_test.dart
-
-      - name: Upload screenshots
-        uses: actions/upload-artifact@0b7f8abb1508181956e8e162db84b466c27e18ce # v3
-        if: always()
-        with:
-          name: screenshots
-          path: mobile-app/screenshots/
-          retention-days: 7
-
-      - name: Setup Ruby for Fastlane
-        uses: ruby/setup-ruby@v1
-        with:
-          ruby-version: "2.6"
-          bundler-cache: true
-          working-directory: ./mobile-app/android
 
       - name: Configure keystore
         working-directory: ./mobile-app/android
