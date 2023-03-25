@@ -113,91 +113,104 @@ class ChallengeView extends StatelessWidget {
               ),
             );
 
-            return Scaffold(
-              appBar: !model.hideAppBar
-                  ? AppBar(
-                      automaticallyImplyLeading: false,
-                      title: challenge.files.length == 1
-                          ? const Text('Editor')
-                          : null,
-                      actions: [
-                        if (model.showPreview)
-                          Expanded(
-                            child: Container(
-                              decoration: model.showPreview ? decoration : null,
+            return WillPopScope(
+              onWillPop: () async {
+                model.updateProgressOnPop(context);
+
+                return Future.value(true);
+              },
+              child: Scaffold(
+                appBar: !model.hideAppBar
+                    ? AppBar(
+                        leading: IconButton(
+                          icon: const Icon(Icons.arrow_back_ios),
+                          onPressed: () async {
+                            model.updateProgressOnPop(context);
+                          },
+                        ),
+                        title: challenge.files.length == 1
+                            ? const Text('Editor')
+                            : null,
+                        actions: [
+                          if (model.showPreview)
+                            Expanded(
                               child: Container(
                                 decoration:
-                                    model.showConsole ? decoration : null,
-                                child: ElevatedButton(
-                                  onPressed: () {},
-                                  child: const Text('Preview'),
+                                    model.showPreview ? decoration : null,
+                                child: Container(
+                                  decoration:
+                                      model.showConsole ? decoration : null,
+                                  child: ElevatedButton(
+                                    onPressed: () {},
+                                    child: const Text('Preview'),
+                                  ),
                                 ),
                               ),
                             ),
-                          ),
-                        if (model.showPreview)
-                          Expanded(
-                            child: ElevatedButton(
-                              child: const Text('Console'),
-                              onPressed: () {
-                                model.consoleSnackbar();
-                              },
+                          if (model.showPreview)
+                            Expanded(
+                              child: ElevatedButton(
+                                child: const Text('Console'),
+                                onPressed: () {
+                                  model.consoleSnackbar();
+                                },
+                              ),
                             ),
+                          if (!model.showPreview && challenge.files.length > 1)
+                            for (ChallengeFile file in challenge.files)
+                              customTabBar(
+                                model,
+                                challenge,
+                                file,
+                                editor,
+                              )
+                        ],
+                      )
+                    : null,
+                bottomNavigationBar: Padding(
+                  padding: EdgeInsets.only(
+                    bottom: MediaQuery.of(context).viewInsets.bottom,
+                  ),
+                  child: customBottomBar(
+                    model,
+                    challenge,
+                    editor,
+                    context,
+                  ),
+                ),
+                body: !model.showPreview
+                    ? Column(
+                        children: [
+                          if (model.showPanel && !keyboard)
+                            DynamicPanel(
+                              challenge: challenge,
+                              model: model,
+                              panel: model.panelType,
+                              maxChallenges: maxChallenges,
+                              challengesCompleted: challengesCompleted,
+                              editor: editor,
+                            ),
+                          Expanded(child: editor)
+                        ],
+                      )
+                    : Column(
+                        children: [
+                          if (model.showPanel && !keyboard)
+                            DynamicPanel(
+                              challenge: challenge,
+                              model: model,
+                              panel: model.panelType,
+                              maxChallenges: maxChallenges,
+                              challengesCompleted: challengesCompleted,
+                              editor: editor,
+                            ),
+                          ProjectPreview(
+                            challenge: challenge,
+                            model: model,
                           ),
-                        if (!model.showPreview && challenge.files.length > 1)
-                          for (ChallengeFile file in challenge.files)
-                            customTabBar(
-                              model,
-                              challenge,
-                              file,
-                              editor,
-                            )
-                      ],
-                    )
-                  : null,
-              bottomNavigationBar: Padding(
-                padding: EdgeInsets.only(
-                  bottom: MediaQuery.of(context).viewInsets.bottom,
-                ),
-                child: customBottomBar(
-                  model,
-                  challenge,
-                  editor,
-                  context,
-                ),
+                        ],
+                      ),
               ),
-              body: !model.showPreview
-                  ? Column(
-                      children: [
-                        if (model.showPanel && !keyboard)
-                          DynamicPanel(
-                            challenge: challenge,
-                            model: model,
-                            panel: model.panelType,
-                            maxChallenges: maxChallenges,
-                            challengesCompleted: challengesCompleted,
-                            editor: editor,
-                          ),
-                        Expanded(child: editor)
-                      ],
-                    )
-                  : Column(
-                      children: [
-                        if (model.showPanel && !keyboard)
-                          DynamicPanel(
-                            challenge: challenge,
-                            model: model,
-                            panel: model.panelType,
-                            maxChallenges: maxChallenges,
-                            challengesCompleted: challengesCompleted,
-                            editor: editor,
-                          ),
-                        ProjectPreview(
-                          challenge: challenge,
-                          model: model,
-                        ),
-                      ],
-                    ),
             );
           }
 
