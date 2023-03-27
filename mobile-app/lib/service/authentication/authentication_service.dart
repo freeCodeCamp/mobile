@@ -13,6 +13,7 @@ import 'package:freecodecamp/models/main/user_model.dart';
 import 'package:freecodecamp/ui/views/auth/privacy_view.dart';
 import 'package:pretty_dio_logger/pretty_dio_logger.dart';
 import 'package:stacked_services/stacked_services.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class AuthenticationService {
   static final AuthenticationService _authenticationService =
@@ -130,6 +131,7 @@ class AuthenticationService {
 
   Future<void> login(BuildContext context) async {
     late final Credentials creds;
+    FccUserModel? user;
     Response? res;
 
     showDialog(
@@ -182,6 +184,8 @@ class AuthenticationService {
       extractCookies(res);
       await writeTokensToStorage();
       await fetchUser();
+
+      user = await userModel;
     } on DioError catch (e) {
       Navigator.pop(context);
       if (e.response != null) {
@@ -239,9 +243,53 @@ class AuthenticationService {
           ),
         );
       }
+    } catch (e, stacktrace) {
+      Navigator.pop(context);
+      String supportEmail = Uri.encodeComponent('mobile@feeecodecamp.org');
+      String subject = Uri.encodeComponent('Error logging in to mobile app');
+      String body = Uri.encodeComponent(
+          'Please email the below error to mobile@freecodecamp.org\n\n${e.toString()}\n${stacktrace.toString()}');
+      showDialog(
+        context: context,
+        barrierDismissible: false,
+        routeSettings: const RouteSettings(
+          name: 'Login View - Error',
+        ),
+        builder: (context) => AlertDialog(
+          backgroundColor: const Color(0xFF2A2A40),
+          title: const Text('Error'),
+          content: SelectableText(
+            'Please email the below error to mobile@freecodecamp.org\n\n${e.toString()}\n${stacktrace.toString()}',
+          ),
+          scrollable: true,
+          actions: [
+            TextButton(
+              style: TextButton.styleFrom(
+                backgroundColor: const Color(0xFF0a0a23),
+              ),
+              onPressed: () async {
+                logout();
+                await launchUrl(Uri.parse(
+                    'mailto:$supportEmail?subject=$subject&body=$body'));
+                Navigator.pop(context);
+              },
+              child: const Text('Email Error'),
+            ),
+            TextButton(
+              style: TextButton.styleFrom(
+                backgroundColor: const Color(0xFF0a0a23),
+              ),
+              onPressed: () {
+                logout();
+                Navigator.pop(context);
+              },
+              child: const Text('Close'),
+            ),
+          ],
+        ),
+      );
+      rethrow;
     }
-
-    final user = await userModel;
 
     if (user != null && user.acceptedPrivacyTerms == false) {
       bool? quincyEmails = await Navigator.push(
