@@ -169,14 +169,6 @@ jobs:
           cache-key: flutter-3.7.x
           cache-path: ${{ runner.tool_cache }}/flutter
 
-      - name: Cache Pods
-        uses: actions/cache@88522ab9f39a2ea568f7027eddc7d8d8bc9d59c8 # v3
-        id: cocoapods-cache
-        with:
-          path: mobile-app/ios/Pods
-          key: ${{ runner.os }}-pods-${{ hashFiles('**/ios/Podfile.lock') }}
-          restore-keys: ${{ runner.os }}-pods-
-
       - name: Create .env file
         run: |
           echo "NEWSURL=https://www.freecodecamp.org/news/ghost/api/v3/content/" > .env
