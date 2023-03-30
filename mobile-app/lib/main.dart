@@ -16,21 +16,23 @@ import 'package:stacked_services/stacked_services.dart';
 import 'app/app.locator.dart';
 import 'app/app.router.dart';
 
-Future<void> main() async {
+Future<void> main({testing = false}) async {
   WidgetsFlutterBinding.ensureInitialized();
   setupLocator();
 
   var fbApp = await Firebase.initializeApp(
       options: DefaultFirebaseOptions.currentPlatform);
-  FlutterError.onError = FirebaseCrashlytics.instance.recordFlutterFatalError;
-  PlatformDispatcher.instance.onError = (error, stack) {
-    FirebaseCrashlytics.instance.recordError(error, stack, fatal: true);
-    return true;
-  };
-  if (kReleaseMode) {
-    await fbApp.setAutomaticDataCollectionEnabled(true);
-  } else {
-    await fbApp.setAutomaticDataCollectionEnabled(false);
+  if (!testing) {
+    FlutterError.onError = FirebaseCrashlytics.instance.recordFlutterFatalError;
+    PlatformDispatcher.instance.onError = (error, stack) {
+      FirebaseCrashlytics.instance.recordError(error, stack, fatal: true);
+      return true;
+    };
+    if (kReleaseMode) {
+      await fbApp.setAutomaticDataCollectionEnabled(true);
+    } else {
+      await fbApp.setAutomaticDataCollectionEnabled(false);
+    }
   }
   await AuthenticationService().init();
   await NotificationService().init();
