@@ -20,9 +20,9 @@ Future<void> main({bool testing = false}) async {
   WidgetsFlutterBinding.ensureInitialized();
   setupLocator();
 
+  var fbApp = await Firebase.initializeApp(
+      options: DefaultFirebaseOptions.currentPlatform);
   if (!testing) {
-    var fbApp = await Firebase.initializeApp(
-        options: DefaultFirebaseOptions.currentPlatform);
     FlutterError.onError = FirebaseCrashlytics.instance.recordFlutterFatalError;
     PlatformDispatcher.instance.onError = (error, stack) {
       FirebaseCrashlytics.instance.recordError(error, stack, fatal: true);
