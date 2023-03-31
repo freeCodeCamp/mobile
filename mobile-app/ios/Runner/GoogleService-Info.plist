@@ -3,9 +3,9 @@
 <plist version="1.0">
 <dict>
 	<key>CLIENT_ID</key>
-	<string>363152234407-s26svd21nuqr63ksq30ue7qh4tvk2a2v.apps.googleusercontent.com</string>
+	<string>363152234407-qb25f7aak3egr8iod13bhsltjgf8viuq.apps.googleusercontent.com</string>
 	<key>REVERSED_CLIENT_ID</key>
-	<string>com.googleusercontent.apps.363152234407-s26svd21nuqr63ksq30ue7qh4tvk2a2v</string>
+	<string>com.googleusercontent.apps.363152234407-qb25f7aak3egr8iod13bhsltjgf8viuq</string>
 	<key>API_KEY</key>
 	<string>AIzaSyCFcTnIuxW7AeskmoNwbrEZX_ZvYz-aAdw</string>
 	<key>GCM_SENDER_ID</key>
@@ -13,7 +13,7 @@
 	<key>PLIST_VERSION</key>
 	<string>1</string>
 	<key>BUNDLE_ID</key>
-	<string>org.freecodecamp</string>
+	<string>org.freecodecamp.ios</string>
 	<key>PROJECT_ID</key>
 	<string>mobile-4ee8a</string>
 	<key>STORAGE_BUCKET</key>
@@ -29,6 +29,6 @@
 	<key>IS_SIGNIN_ENABLED</key>
 	<true></true>
 	<key>GOOGLE_APP_ID</key>
-	<string>1:363152234407:ios:de3b7a49ad400921738882</string>
+	<string>1:363152234407:ios:17273b86fa3ff2e4738882</string>
 </dict>
 </plist>
