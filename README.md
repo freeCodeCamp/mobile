@@ -24,3 +24,14 @@ The freeCodeCamp.org community is possible thanks to thousands of kind volunteer
 > #### [Please follow these steps to contribute](https://contribute.freecodecamp.org/#/how-to-setup-freecodecamp-mobile-app-locally).
 
 #### If you have any other issues getting started please contact us on the [freeCodeCamp Discord Server](https://discord.gg/Z7Fm39aNtZ).
+
+### Download
+
+[<img src="https://play.google.com/intl/en_us/badges/images/generic/en-play-badge.png"
+     alt="Get it on Google Play"
+     height="70">](https://play.google.com/store/apps/details?id=org.freecodecamp)
+[<img src="https://gitlab.com/IzzyOnDroid/repo/-/raw/master/assets/IzzyOnDroid.png"
+     alt="Get it on IzzyOnDroid"
+     height="70">](https://apt.izzysoft.de/fdroid/index/apk/org.freecodecamp)
+
+Or get the lastest APK from the [Releases Section](https://github.com/freeCodeCamp/mobile/releases/latest).
