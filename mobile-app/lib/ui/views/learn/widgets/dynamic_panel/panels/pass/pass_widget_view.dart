@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:freecodecamp/models/learn/motivational_quote_model.dart';
 import 'package:freecodecamp/service/authentication/authentication_service.dart';
 import 'package:freecodecamp/ui/views/learn/challenge/challenge_viewmodel.dart';
@@ -64,7 +65,7 @@ class PassWidgetView extends StatelessWidget {
                       '"${quote.quote}"',
                       style: TextStyle(
                         color: Colors.white.withOpacity(0.87),
-                        fontSize: 16,
+                        fontSize: 20,
                         fontFamily: 'Inter',
                       ),
                     ),
@@ -118,7 +119,10 @@ class PassWidgetView extends StatelessWidget {
                     },
                   )
                 : Container(
-                    padding: const EdgeInsets.only(top: 16, left: 8, right: 8),
+                    margin: const EdgeInsets.symmetric(
+                      vertical: 16,
+                      horizontal: 8,
+                    ),
                     constraints: const BoxConstraints(minHeight: 75),
                     child: ElevatedButton(
                       style: ElevatedButton.styleFrom(
@@ -136,20 +140,68 @@ class PassWidgetView extends StatelessWidget {
                       ),
                     ),
                   ),
-            // Expanded(
-            //     child: Align(
-            //   alignment: Alignment.bottomCenter,
-            //   child: Row(
-            //     mainAxisAlignment: MainAxisAlignment.end,
-            //     children: [
-            //       // IconButton(
-            //       //   onPressed: () {},
-            //       //   icon: const Icon(Icons.share_sharp),
-            //       //   padding: const EdgeInsets.all(16),
-            //       // ),
-            //     ],
-            //   ),
-            // ))
+            PassButton(
+              model: challengeModel,
+              maxChallenges: maxChallenges,
+              completed: challengesCompleted,
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+class PassButton extends StatelessWidget {
+  const PassButton({
+    Key? key,
+    required this.model,
+    required this.maxChallenges,
+    required this.completed,
+  }) : super(key: key);
+
+  final ChallengeViewModel model;
+  final int maxChallenges;
+  final int completed;
+
+  @override
+  Widget build(BuildContext context) {
+    MaterialStateProperty<Color?> myColorProperty =
+        MaterialStateProperty.resolveWith(
+      (states) {
+        if (states.contains(MaterialState.disabled)) {
+          return Colors.grey;
+        }
+        return const Color.fromRGBO(0x20, 0xD0, 0x32, 1);
+      },
+    );
+
+    return Container(
+      margin: const EdgeInsets.symmetric(
+        vertical: 16,
+        horizontal: 8,
+      ),
+      height: 50,
+      width: MediaQuery.of(context).size.width,
+      child: TextButton(
+        onPressed: () {
+          model.goToNextChallenge(maxChallenges, completed);
+        },
+        style: ButtonStyle(
+          backgroundColor: myColorProperty,
+        ),
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Container(
+              margin: const EdgeInsets.only(right: 10),
+              child: const Text(
+                'Next',
+                style: TextStyle(fontSize: 20),
+                textAlign: TextAlign.center,
+              ),
+            ),
+            const FaIcon(FontAwesomeIcons.arrowRight)
           ],
         ),
       ),
