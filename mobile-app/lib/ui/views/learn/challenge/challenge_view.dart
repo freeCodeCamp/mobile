@@ -171,11 +171,16 @@ class ChallengeView extends StatelessWidget {
                   padding: EdgeInsets.only(
                     bottom: MediaQuery.of(context).viewInsets.bottom,
                   ),
-                  child: customBottomBar(
-                    model,
-                    challenge,
-                    editor,
-                    context,
+                  child: Column(
+                    children: [
+                      customBottomBar(
+                        model,
+                        challenge,
+                        editor,
+                        context,
+                      ),
+                      const NewWidget(),
+                    ],
                   ),
                 ),
                 body: !model.showPreview
@@ -450,6 +455,50 @@ class ChallengeView extends StatelessWidget {
                 ),
               ],
             ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class NewWidget extends StatelessWidget {
+  const NewWidget({
+    Key? key,
+  }) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    ButtonStyle btnStyle = ElevatedButton.styleFrom(
+      padding: const EdgeInsets.all(0),
+    );
+
+    return Container(
+      width: MediaQuery.of(context).size.width,
+      constraints: const BoxConstraints(minHeight: 50),
+      color: Colors.orange,
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+        children: [
+          ElevatedButton(
+            onPressed: () {},
+            style: btnStyle,
+            child: const Text('1'),
+          ),
+          ElevatedButton(
+            onPressed: () {},
+            style: btnStyle,
+            child: const Text('2'),
+          ),
+          ElevatedButton(
+            onPressed: () {},
+            style: btnStyle,
+            child: const Text('3'),
+          ),
+          ElevatedButton(
+            onPressed: () {},
+            style: btnStyle,
+            child: const Text('4'),
           ),
         ],
       ),
