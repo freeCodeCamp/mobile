@@ -34,11 +34,30 @@ class LearnLandingView extends StatelessWidget {
                 StreamBuilder(
                   stream: model.auth.isLoggedIn,
                   builder: (context, snapshot) {
-                    if (!model.isLoggedIn) {
-                      return loginButton(model, context);
-                    } else {
-                      return welcomeMessage(model);
-                    }
+                    return Column(
+                      children: [
+                        if (model.isLoggedIn)
+                          Container(
+                              margin: const EdgeInsets.symmetric(
+                                vertical: 4,
+                                horizontal: 8,
+                              ),
+                              padding: const EdgeInsets.symmetric(
+                                vertical: 16,
+                                horizontal: 8,
+                              ),
+                              decoration: BoxDecoration(
+                                color: const Color(0xFF0a0a23),
+                                border: Border.all(),
+                                borderRadius: BorderRadius.circular(15),
+                              ),
+                              constraints: BoxConstraints(
+                                minWidth: MediaQuery.of(context).size.width,
+                              ),
+                              child: welcomeMessage(model)),
+                        if (!model.isLoggedIn) loginButton(model, context)
+                      ],
+                    );
                   },
                 ),
                 const SizedBox(height: 16),
@@ -58,7 +77,9 @@ class LearnLandingView extends StatelessWidget {
                           shrinkWrap: true,
                           itemCount: buttons.length,
                           itemBuilder: (BuildContext context, int i) {
-                            return SuperBlockButton(button: buttons[i]);
+                            return SuperBlockButton(
+                              button: buttons[i],
+                            );
                           },
                         );
                       }
@@ -117,8 +138,10 @@ class LearnLandingView extends StatelessWidget {
 
   Widget loginButton(LearnLandingViewModel model, BuildContext context) {
     return Container(
-      padding: const EdgeInsets.only(top: 16, left: 8, right: 8),
-      constraints: const BoxConstraints(minHeight: 75),
+      constraints: const BoxConstraints(
+        minHeight: 50,
+      ),
+      padding: const EdgeInsets.symmetric(vertical: 16, horizontal: 8),
       child: ElevatedButton(
         style: ElevatedButton.styleFrom(
           backgroundColor: const Color.fromRGBO(0xf1, 0xbe, 0x32, 1),
@@ -145,11 +168,10 @@ class LearnLandingView extends StatelessWidget {
           return Container(
             padding: const EdgeInsets.all(16),
             child: Text(
-              'Welcome back ${user.username}. ',
+              'Welcome back ${user.username}!',
               textAlign: TextAlign.center,
               style: const TextStyle(
                 fontSize: 20,
-                fontWeight: FontWeight.bold,
               ),
             ),
           );
@@ -247,7 +269,16 @@ class QuoteWidget extends StatelessWidget {
           MotivationalQuote quote = snapshot.data as MotivationalQuote;
 
           return Container(
-            padding: const EdgeInsets.all(16),
+            margin: const EdgeInsets.symmetric(vertical: 8, horizontal: 8),
+            padding: const EdgeInsets.all(8),
+            decoration: BoxDecoration(
+              color: const Color(0xFF0a0a23),
+              border: Border.all(width: 1),
+              borderRadius: BorderRadius.circular(15),
+            ),
+            constraints: const BoxConstraints(
+              minHeight: 200,
+            ),
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
