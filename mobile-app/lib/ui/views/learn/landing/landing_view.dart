@@ -34,26 +34,29 @@ class LearnLandingView extends StatelessWidget {
                 StreamBuilder(
                   stream: model.auth.isLoggedIn,
                   builder: (context, snapshot) {
-                    return Container(
-                      margin: const EdgeInsets.symmetric(
-                        vertical: 4,
-                        horizontal: 8,
-                      ),
-                      padding: const EdgeInsets.symmetric(
-                        vertical: 16,
-                        horizontal: 8,
-                      ),
-                      decoration: BoxDecoration(
-                        color: const Color(0xFF0a0a23),
-                        border: Border.all(),
-                        borderRadius: BorderRadius.circular(15),
-                      ),
-                      constraints: BoxConstraints(
-                        minWidth: MediaQuery.of(context).size.width,
-                      ),
-                      child: !model.isLoggedIn
-                          ? loginButton(model, context)
-                          : welcomeMessage(model),
+                    return Column(
+                      children: [
+                        if (model.isLoggedIn)
+                          Container(
+                              margin: const EdgeInsets.symmetric(
+                                vertical: 4,
+                                horizontal: 8,
+                              ),
+                              padding: const EdgeInsets.symmetric(
+                                vertical: 16,
+                                horizontal: 8,
+                              ),
+                              decoration: BoxDecoration(
+                                color: const Color(0xFF0a0a23),
+                                border: Border.all(),
+                                borderRadius: BorderRadius.circular(15),
+                              ),
+                              constraints: BoxConstraints(
+                                minWidth: MediaQuery.of(context).size.width,
+                              ),
+                              child: welcomeMessage(model)),
+                        if (!model.isLoggedIn) loginButton(model, context)
+                      ],
                     );
                   },
                 ),
