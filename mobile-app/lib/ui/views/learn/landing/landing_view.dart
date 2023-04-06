@@ -141,6 +141,7 @@ class LearnLandingView extends StatelessWidget {
       constraints: const BoxConstraints(
         minHeight: 50,
       ),
+      padding: const EdgeInsets.symmetric(vertical: 16, horizontal: 8),
       child: ElevatedButton(
         style: ElevatedButton.styleFrom(
           backgroundColor: const Color.fromRGBO(0xf1, 0xbe, 0x32, 1),
