@@ -31,10 +31,10 @@
               "client_type": 3
             },
             {
-              "client_id": "363152234407-s26svd21nuqr63ksq30ue7qh4tvk2a2v.apps.googleusercontent.com",
+              "client_id": "363152234407-qb25f7aak3egr8iod13bhsltjgf8viuq.apps.googleusercontent.com",
               "client_type": 2,
               "ios_info": {
-                "bundle_id": "org.freecodecamp"
+                "bundle_id": "org.freecodecamp.ios"
               }
             }
           ]
