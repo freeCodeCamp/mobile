@@ -171,16 +171,12 @@ class ChallengeView extends StatelessWidget {
                   padding: EdgeInsets.only(
                     bottom: MediaQuery.of(context).viewInsets.bottom,
                   ),
-                  child: Column(
-                    children: [
-                      customBottomBar(
-                        model,
-                        challenge,
-                        editor,
-                        context,
-                      ),
-                      const NewWidget(),
-                    ],
+                  child: customBottomBar(
+                    model,
+                    challenge,
+                    editor,
+                    keyboard,
+                    context,
                   ),
                 ),
                 body: !model.showPreview
@@ -296,166 +292,180 @@ class ChallengeView extends StatelessWidget {
     ChallengeViewModel model,
     Challenge challenge,
     Editor editor,
+    bool keyboardOpen,
     BuildContext context,
   ) {
     return BottomAppBar(
       color: const Color(0xFF0a0a23),
-      child: Row(
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
         children: [
-          SizedBox(
-            height: 1,
-            width: 1,
-            child: WebView(
-              onWebViewCreated: (WebViewController webcontroller) {
-                model.setTestController = webcontroller;
-              },
-              javascriptMode: JavascriptMode.unrestricted,
-              javascriptChannels: {
-                JavascriptChannel(
-                  name: 'Print',
-                  onMessageReceived: (JavascriptMessage message) {
-                    if (message.message == 'completed') {
-                      model.setPanelType = PanelType.pass;
-                      model.setCompletedChallenge = true;
-                      model.setShowPanel = true;
-                    } else {
-                      model.setPanelType = PanelType.hint;
-                      model.setHint = message.message;
-                      model.setShowPanel = true;
-                    }
-                    model.setIsRunningTests = false;
+          Row(
+            children: [
+              SizedBox(
+                height: 1,
+                width: 1,
+                child: WebView(
+                  onWebViewCreated: (WebViewController webcontroller) {
+                    model.setTestController = webcontroller;
                   },
-                )
-              },
-            ),
-          ),
-          Container(
-            margin: const EdgeInsets.all(8),
-            color: model.showPanel && model.panelType == PanelType.instruction
-                ? Colors.white
-                : const Color.fromRGBO(0x3B, 0x3B, 0x4F, 1),
-            child: IconButton(
-              icon: FaIcon(
-                FontAwesomeIcons.info,
-                size: 32,
+                  javascriptMode: JavascriptMode.unrestricted,
+                  javascriptChannels: {
+                    JavascriptChannel(
+                      name: 'Print',
+                      onMessageReceived: (JavascriptMessage message) {
+                        if (message.message == 'completed') {
+                          model.setPanelType = PanelType.pass;
+                          model.setCompletedChallenge = true;
+                          model.setShowPanel = true;
+                        } else {
+                          model.setPanelType = PanelType.hint;
+                          model.setHint = message.message;
+                          model.setShowPanel = true;
+                        }
+                        model.setIsRunningTests = false;
+                      },
+                    )
+                  },
+                ),
+              ),
+              Container(
+                margin: const EdgeInsets.all(8),
                 color:
                     model.showPanel && model.panelType == PanelType.instruction
+                        ? Colors.white
+                        : const Color.fromRGBO(0x3B, 0x3B, 0x4F, 1),
+                child: IconButton(
+                  icon: FaIcon(
+                    FontAwesomeIcons.info,
+                    size: 32,
+                    color: model.showPanel &&
+                            model.panelType == PanelType.instruction
                         ? const Color.fromRGBO(0x3B, 0x3B, 0x4F, 1)
                         : Colors.white,
-              ),
-              onPressed: () {
-                if (model.showPanel &&
-                    model.panelType != PanelType.instruction) {
-                  model.setPanelType = PanelType.instruction;
-                } else {
-                  model.setPanelType = PanelType.instruction;
-                  if (MediaQuery.of(context).viewInsets.bottom > 0) {
-                    FocusManager.instance.primaryFocus?.unfocus();
-                    if (!model.showPanel) {
-                      model.setShowPanel = true;
-                      model.setHideAppBar = true;
+                  ),
+                  onPressed: () {
+                    if (model.showPanel &&
+                        model.panelType != PanelType.instruction) {
+                      model.setPanelType = PanelType.instruction;
+                    } else {
+                      model.setPanelType = PanelType.instruction;
+                      if (MediaQuery.of(context).viewInsets.bottom > 0) {
+                        FocusManager.instance.primaryFocus?.unfocus();
+                        if (!model.showPanel) {
+                          model.setShowPanel = true;
+                          model.setHideAppBar = true;
+                        }
+                      } else {
+                        model.setHideAppBar = !model.hideAppBar;
+                        model.setShowPanel = !model.showPanel;
+                      }
                     }
-                  } else {
-                    model.setHideAppBar = !model.hideAppBar;
-                    model.setShowPanel = !model.showPanel;
-                  }
-                }
-              },
-              splashColor: Colors.transparent,
-              highlightColor: Colors.transparent,
-            ),
-          ),
-          Container(
-            margin: const EdgeInsets.all(8),
-            color: !model.showPreview
-                ? const Color.fromRGBO(0x3B, 0x3B, 0x4F, 1)
-                : Colors.white,
-            child: IconButton(
-              icon: Icon(
-                Icons.remove_red_eye_outlined,
-                size: 32,
-                color: model.showPreview
+                  },
+                  splashColor: Colors.transparent,
+                  highlightColor: Colors.transparent,
+                ),
+              ),
+              Container(
+                margin: const EdgeInsets.all(8),
+                color: !model.showPreview
                     ? const Color.fromRGBO(0x3B, 0x3B, 0x4F, 1)
                     : Colors.white,
-              ),
-              onPressed: () async {
-                ChallengeFile currFile = model.currentFile(challenge);
-
-                String currText = await model.fileService.getExactFileFromCache(
-                  challenge,
-                  currFile,
-                );
-
-                model.setMounted = false;
-
-                editor.fileTextStream.sink.add(FileIDE(
-                  id: challenge.id + currFile.name,
-                  ext: currFile.ext.name.toUpperCase(),
-                  name: currFile.name,
-                  content: currText == '' ? currFile.contents : currText,
-                  hasRegion: currFile.editableRegionBoundaries.isNotEmpty,
-                  region: EditorRegionOptions(
-                    start: currFile.editableRegionBoundaries.isNotEmpty
-                        ? currFile.editableRegionBoundaries[0]
-                        : null,
-                    end: currFile.editableRegionBoundaries.isNotEmpty
-                        ? currFile.editableRegionBoundaries[1]
-                        : null,
+                child: IconButton(
+                  icon: Icon(
+                    Icons.remove_red_eye_outlined,
+                    size: 32,
+                    color: model.showPreview
+                        ? const Color.fromRGBO(0x3B, 0x3B, 0x4F, 1)
+                        : Colors.white,
                   ),
-                ));
-                model.setEditorText =
-                    currText == '' ? currFile.contents : currText;
-                model.setShowPreview = !model.showPreview;
+                  onPressed: () async {
+                    ChallengeFile currFile = model.currentFile(challenge);
 
-                model.refresh();
-              },
-              splashColor: Colors.transparent,
-              highlightColor: Colors.transparent,
-            ),
-          ),
-          Expanded(
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.end,
-              children: [
-                Container(
-                  margin: const EdgeInsets.all(8),
-                  color: !model.hasTypedInEditor
-                      ? const Color.fromARGB(255, 9, 79, 125)
-                      : model.completedChallenge
-                          ? const Color.fromRGBO(0x20, 0xD0, 0x32, 1)
-                          : const Color.fromRGBO(0x1D, 0x9B, 0xF0, 1),
-                  child: IconButton(
-                    icon: model.runningTests
-                        ? const CircularProgressIndicator()
-                        : model.completedChallenge
-                            ? const FaIcon(FontAwesomeIcons.arrowRight)
-                            : const FaIcon(FontAwesomeIcons.check),
-                    onPressed: model.hasTypedInEditor
-                        ? () async {
-                            if (model.showPanel &&
-                                model.panelType == PanelType.pass) {
-                              model.goToNextChallenge(
-                                model.block!.challenges.length,
-                                challengesCompleted,
-                              );
-                            }
+                    String currText =
+                        await model.fileService.getExactFileFromCache(
+                      challenge,
+                      currFile,
+                    );
 
-                            model.setShowPanel = false;
-                            model.setIsRunningTests = true;
-                            await model.runner.setWebViewContent(
-                              challenge,
-                              webviewController: model.testController!,
-                            );
-                            FocusManager.instance.primaryFocus?.unfocus();
-                          }
-                        : null,
-                    splashColor: Colors.transparent,
-                    highlightColor: Colors.transparent,
-                  ),
+                    model.setMounted = false;
+
+                    editor.fileTextStream.sink.add(FileIDE(
+                      id: challenge.id + currFile.name,
+                      ext: currFile.ext.name.toUpperCase(),
+                      name: currFile.name,
+                      content: currText == '' ? currFile.contents : currText,
+                      hasRegion: currFile.editableRegionBoundaries.isNotEmpty,
+                      region: EditorRegionOptions(
+                        start: currFile.editableRegionBoundaries.isNotEmpty
+                            ? currFile.editableRegionBoundaries[0]
+                            : null,
+                        end: currFile.editableRegionBoundaries.isNotEmpty
+                            ? currFile.editableRegionBoundaries[1]
+                            : null,
+                      ),
+                    ));
+                    model.setEditorText =
+                        currText == '' ? currFile.contents : currText;
+                    model.setShowPreview = !model.showPreview;
+
+                    model.refresh();
+                  },
+                  splashColor: Colors.transparent,
+                  highlightColor: Colors.transparent,
                 ),
+              ),
+              Expanded(
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.end,
+                  children: [
+                    Container(
+                      margin: const EdgeInsets.all(8),
+                      color: !model.hasTypedInEditor
+                          ? const Color.fromARGB(255, 9, 79, 125)
+                          : model.completedChallenge
+                              ? const Color.fromRGBO(0x20, 0xD0, 0x32, 1)
+                              : const Color.fromRGBO(0x1D, 0x9B, 0xF0, 1),
+                      child: IconButton(
+                        icon: model.runningTests
+                            ? const CircularProgressIndicator()
+                            : model.completedChallenge
+                                ? const FaIcon(FontAwesomeIcons.arrowRight)
+                                : const FaIcon(FontAwesomeIcons.check),
+                        onPressed: model.hasTypedInEditor
+                            ? () async {
+                                if (model.showPanel &&
+                                    model.panelType == PanelType.pass) {
+                                  model.goToNextChallenge(
+                                    model.block!.challenges.length,
+                                    challengesCompleted,
+                                  );
+                                }
+
+                                model.setShowPanel = false;
+                                model.setIsRunningTests = true;
+                                await model.runner.setWebViewContent(
+                                  challenge,
+                                  webviewController: model.testController!,
+                                );
+                                FocusManager.instance.primaryFocus?.unfocus();
+                              }
+                            : null,
+                        splashColor: Colors.transparent,
+                        highlightColor: Colors.transparent,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ],
+          ),
+          if (keyboardOpen)
+            Row(
+              children: const [
+                NewWidget(),
               ],
             ),
-          ),
         ],
       ),
     );
@@ -473,32 +483,54 @@ class NewWidget extends StatelessWidget {
       padding: const EdgeInsets.all(0),
     );
 
+    TextStyle txtStyle = const TextStyle(fontSize: 20);
+
     return Container(
       width: MediaQuery.of(context).size.width,
       constraints: const BoxConstraints(minHeight: 50),
-      color: Colors.orange,
+      color: const Color.fromRGBO(0x3b, 0x3b, 0x4f, 1),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceEvenly,
         children: [
           ElevatedButton(
             onPressed: () {},
             style: btnStyle,
-            child: const Text('1'),
+            child: Text(
+              '<',
+              style: txtStyle,
+            ),
           ),
           ElevatedButton(
             onPressed: () {},
             style: btnStyle,
-            child: const Text('2'),
+            child: Text(
+              '>',
+              style: txtStyle,
+            ),
           ),
           ElevatedButton(
             onPressed: () {},
             style: btnStyle,
-            child: const Text('3'),
+            child: Text(
+              '/',
+              style: txtStyle,
+            ),
           ),
           ElevatedButton(
             onPressed: () {},
             style: btnStyle,
-            child: const Text('4'),
+            child: Text(
+              '"',
+              style: txtStyle,
+            ),
+          ),
+          ElevatedButton(
+            onPressed: () {},
+            style: btnStyle,
+            child: Text(
+              '=',
+              style: txtStyle,
+            ),
           ),
         ],
       ),
