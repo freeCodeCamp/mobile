@@ -24,7 +24,7 @@ class FccUserModel {
   final String id;
   final String email;
   final String username;
-  final String? name;
+  final String name;
   final String picture;
   final String currentChallengeId;
 
@@ -150,7 +150,7 @@ class FccUserModel {
       id: data['id'],
       email: data['email'],
       username: data['username'],
-      name: data['name'],
+      name: data['name'] ?? '',
       picture: data['picture'],
       currentChallengeId: data['currentChallengeId'],
       githubProfile: data['githubProfile'],
