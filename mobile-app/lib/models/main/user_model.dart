@@ -150,7 +150,7 @@ class FccUserModel {
       id: data['id'],
       email: data['email'],
       username: data['username'],
-      name: data['name'],
+      name: data['name'] ?? '',
       picture: data['picture'],
       currentChallengeId: data['currentChallengeId'],
       githubProfile: data['githubProfile'],

@@ -1,5 +1,5 @@
 class ProfileUI {
-  final bool isLocked;
+  final bool? isLocked;
   final bool showAbout;
   final bool showCerts;
   final bool? showDonation;
