@@ -72,7 +72,6 @@ jobs:
           wait-on-timeout: 1200
           config: '{"e2e":{"baseUrl":"http://localhost:3000/mobile/mobile-app/generated-tests/","projectId":"ke77ns","retries":4,"chromeWebSecurity":false,"specPattern":"cypress/e2e/mobile-learn/test-challenges.js","screenshotOnRunFailure":false,"video":false}}'
           browser: chrome
-          spec: cypress/e2e/mobile-learn/test-challenges.js
         env:
           CYPRESS_RECORD_KEY: ${{ secrets.CYPRESS_RECORD_KEY }}
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
