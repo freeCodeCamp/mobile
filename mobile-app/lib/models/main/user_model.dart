@@ -24,7 +24,7 @@ class FccUserModel {
   final String id;
   final String email;
   final String username;
-  final String name;
+  final String? name;
   final String picture;
   final String currentChallengeId;
 
