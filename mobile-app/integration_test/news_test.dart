@@ -15,7 +15,7 @@ void main() {
     testWidgets('should bookmark tutorial', (WidgetTester tester) async {
       // Start app
       tester.printToConsole('Test starting');
-      await app.main();
+      await app.main(testing: true);
       await binding.convertFlutterSurfaceToImage();
       await tester.pumpAndSettle();
       await binding.takeScreenshot('news-feed');
