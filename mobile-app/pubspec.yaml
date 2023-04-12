@@ -19,10 +19,8 @@ dependencies:
   url_launcher: ^6.0.10
   sqflite_migration_service: ^2.0.0-nullsafety.1
   dio: ^4.0.0
-  flutter_code_editor:
-    git:
-      url: https://github.com/freeCodeCamp/PhoneIDE
-      ref: main
+  phone_ide:
+    path: ../../PhoneIDE
   jiffy: ^5.0.0
   shared_preferences: ^2.0.7
   font_awesome_flutter: ^10.0.0
@@ -38,11 +36,6 @@ dependencies:
   flutter_secure_storage: ^6.0.0
   photo_view: ^0.14.0
   share_plus: ^6.3.0
-  flutter_highlight:
-    git:
-      url: https://github.com/sembauke/highlight.dart
-      ref: master
-      path: ./flutter_highlight
   pretty_dio_logger: ^1.2.0-beta-1
   curl_logger_dio_interceptor: ^0.0.3
   flutter_heatmap_calendar: ^1.0.4
