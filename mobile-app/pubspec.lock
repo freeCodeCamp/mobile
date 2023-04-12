@@ -564,13 +564,12 @@ packages:
     source: hosted
     version: "1.0.5"
   flutter_highlight:
-    dependency: transitive
+    dependency: "direct main"
     description:
-      path: flutter_highlight
-      ref: master
-      resolved-ref: b5e7de8bc95f4e8e30534d7b1da5b41979caab01
-      url: "https://github.com/sembauke/highlight.dart"
-    source: git
+      name: flutter_highlight
+      sha256: "7b96333867aa07e122e245c033b8ad622e4e3a42a1a2372cbb098a2541d8782c"
+      url: "https://pub.dev"
+    source: hosted
     version: "0.7.0"
   flutter_hooks:
     dependency: "direct main"
