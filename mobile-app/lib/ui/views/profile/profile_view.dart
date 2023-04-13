@@ -242,7 +242,7 @@ class ProfileView extends StatelessWidget {
                         ),
                       ),
                       HeatMap(
-                        startDate: Jiffy().subtract(months: 3).dateTime,
+                        startDate: Jiffy.now().subtract(months: 3).dateTime,
                         datasets: user.heatMapCal,
                         colorsets: const {
                           0: Color(0xFF2A2A40),
