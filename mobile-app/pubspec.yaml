@@ -64,7 +64,7 @@ dev_dependencies:
     sdk: flutter
   flutter_test:
     sdk: flutter
-  stacked_generator: ^0.9.0
+  stacked_generator: ^1.0.0
   flutter_launcher_icons: ^0.11.0
   dependency_validator: ^3.2.2
   flutter_lints: ^2.0.0
