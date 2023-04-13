@@ -1,7 +1,7 @@
 name: freecodecamp
 description: freecodecamp.org app.
 publish_to: none
-version: 3.2.3+30203
+version: 3.3.0+30300
 environment:
   sdk: ">=2.12.0 <3.0.0"
 dependencies:
@@ -20,7 +20,7 @@ dependencies:
   sqflite_migration_service: ^2.0.0-nullsafety.1
   dio: ^4.0.0
   phone_ide: ^1.0.0
-  jiffy: ^5.0.0
+  jiffy: ^6.0.0
   shared_preferences: ^2.0.7
   font_awesome_flutter: ^10.0.0
   html: ^0.15.0
@@ -32,13 +32,13 @@ dependencies:
   web_socket_channel: ^2.1.0
   webview_flutter: ^2.8.0
   cached_network_image: ^3.2.0
-  flutter_secure_storage: ^6.0.0
+  flutter_secure_storage: ^8.0.0
   photo_view: ^0.14.0
   share_plus: ^6.3.0
   pretty_dio_logger: ^1.2.0-beta-1
   curl_logger_dio_interceptor: ^0.0.3
   flutter_heatmap_calendar: ^1.0.4
-  intl: ^0.17.0
+  intl: ^0.18.0
   path: ^1.8.1
   audio_service: ^0.18.4
   device_info_plus: ^6.0.0
