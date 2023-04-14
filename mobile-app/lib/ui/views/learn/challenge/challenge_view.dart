@@ -374,6 +374,10 @@ class ChallengeView extends StatelessWidget {
                     : Colors.white,
               ),
               onPressed: () async {
+                if(challenge.challengeType == 1){
+                  model.previewNotAvailableSnackbar();
+                  return;
+                }
                 ChallengeFile currFile = model.currentFile(challenge);
 
                 String currText = await model.fileService.getExactFileFromCache(
