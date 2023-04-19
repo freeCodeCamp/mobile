@@ -254,11 +254,6 @@ class ChallengeViewModel extends BaseViewModel {
       message: '',
     );
   }
-
-  void previewNotAvailableSnackbar() {
-    snackbar.showSnackbar(
-        message: 'Preview not available for this challenge type.');
-  }
   // This prevents the user from requesting the challenge more than once
   // when swichting between preview and the challenge.
 

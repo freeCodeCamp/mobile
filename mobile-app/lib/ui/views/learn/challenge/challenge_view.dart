@@ -368,8 +368,8 @@ class ChallengeView extends StatelessWidget {
                     : Colors.white,
               ),
               onPressed: () async {
-                if(challenge.challengeType == 1){
-                  model.previewNotAvailableSnackbar();
+                if (challenge.challengeType == 1) {
+                  model.consoleSnackbar();
                   return;
                 }
                 ChallengeFile currFile = model.currentFile(challenge);
