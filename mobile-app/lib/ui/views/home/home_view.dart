@@ -12,7 +12,7 @@ class HomeView extends StatelessWidget {
 
   static const titles = <Widget>[
     Text('BOOKMARKED TUTORIALS'),
-    Text('TUTORIAL FEED'),
+    Text('TUTORIALS'),
     Text('SEARCH TUTORIALS')
   ];
 
