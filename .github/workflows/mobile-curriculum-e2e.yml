@@ -20,19 +20,19 @@ jobs:
 
     steps:
       - name: Checkout freeCodeCamp main repo
-        uses: actions/checkout@24cb9080177205b6e8c946b17badbe402adc938f # v3
+        uses: actions/checkout@8f4b7f84864484a7bf31766abe9204da3cbe65b3 # v3
         with:
           repository: freeCodeCamp/freeCodeCamp
 
       - name: Checkout mobile repo
-        uses: actions/checkout@24cb9080177205b6e8c946b17badbe402adc938f # v3
+        uses: actions/checkout@8f4b7f84864484a7bf31766abe9204da3cbe65b3 # v3
         with:
           path: mobile
 
       - name: Setup pnpm
         uses: pnpm/action-setup@v2
         with:
-          version: 7
+          version: 8
 
       - name: Use Node.js 18.x
         uses: actions/setup-node@64ed1c7eab4cce3362f8c340dee64e5eaeef8f7c # v3
@@ -40,7 +40,7 @@ jobs:
           node-version: 18.x
 
       - name: Setup Flutter 3.7.x
-        uses: subosito/flutter-action@dbf1fa04f4d2e52c33185153d06cdb5443aa189d # v2
+        uses: subosito/flutter-action@48cafc24713cca54bbe03cdc3a423187d413aafa # v2
         with:
           flutter-version: '3.7.x'
           channel: 'stable'
@@ -72,9 +72,8 @@ jobs:
           start: pnpm dlx serve --no-request-logging
           wait-on: http://localhost:3000
           wait-on-timeout: 1200
-          config: retries=1,screenshotOnRunFailure=false,video=false,baseUrl=http://localhost:3000/mobile/mobile-app/generated-tests/
+          config: '{"e2e":{"baseUrl":"http://localhost:3000/mobile/mobile-app/generated-tests/","projectId":"ke77ns","retries":4,"chromeWebSecurity":false,"specPattern":"cypress/e2e/mobile-learn/test-challenges.js","screenshotOnRunFailure":false,"video":false}}'
           browser: chrome
-          spec: cypress/e2e/mobile-learn/test-challenges.js
         env:
           CYPRESS_RECORD_KEY: ${{ secrets.CYPRESS_RECORD_KEY }}
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
