@@ -149,10 +149,13 @@ class LearnLandingView extends StatelessWidget {
         onPressed: () {
           model.auth.login(context);
         },
-        child: const Text(
-          'Sign in to save your progress',
-          textAlign: TextAlign.center,
-          style: TextStyle(color: Colors.black, fontSize: 20),
+        child: const Padding(
+          padding: EdgeInsets.all(8.0),
+          child: Text(
+            'Sign in to save your progress',
+            textAlign: TextAlign.center,
+            style: TextStyle(color: Colors.black, fontSize: 20),
+          ),
         ),
       ),
     );
