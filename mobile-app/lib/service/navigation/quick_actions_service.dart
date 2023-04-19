@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:freecodecamp/app/app.locator.dart';
 import 'package:freecodecamp/app/app.router.dart';
 import 'package:quick_actions/quick_actions.dart';
@@ -25,10 +27,11 @@ class QuickActionsService {
         type: 'action_learn',
         localizedTitle: 'Learn',
       ),
-      const ShortcutItem(
-        type: 'action_code_radio',
-        localizedTitle: 'Code Radio',
-      ),
+      if (!Platform.isIOS)
+        const ShortcutItem(
+          type: 'action_code_radio',
+          localizedTitle: 'Code Radio',
+        ),
       const ShortcutItem(
         type: 'action_podcasts',
         localizedTitle: 'Podcasts',
