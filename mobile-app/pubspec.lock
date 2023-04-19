@@ -518,15 +518,6 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "3.3.0"
-  flutter_code_editor:
-    dependency: "direct main"
-    description:
-      path: "."
-      ref: main
-      resolved-ref: d74370413e0f149226342f2092300e94d41a8779
-      url: "https://github.com/freeCodeCamp/PhoneIDE"
-    source: git
-    version: "1.0.0+1"
   flutter_custom_tabs:
     dependency: "direct main"
     description:
@@ -575,11 +566,10 @@ packages:
   flutter_highlight:
     dependency: "direct main"
     description:
-      path: flutter_highlight
-      ref: master
-      resolved-ref: b5e7de8bc95f4e8e30534d7b1da5b41979caab01
-      url: "https://github.com/sembauke/highlight.dart"
-    source: git
+      name: flutter_highlight
+      sha256: "7b96333867aa07e122e245c033b8ad622e4e3a42a1a2372cbb098a2541d8782c"
+      url: "https://pub.dev"
+    source: hosted
     version: "0.7.0"
   flutter_hooks:
     dependency: "direct main"
@@ -1161,6 +1151,14 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "5.1.0"
+  phone_ide:
+    dependency: "direct main"
+    description:
+      name: phone_ide
+      sha256: "8b9edf9497b19ba4c3aed4af2ac4248d5e0b03ab7de4213430eb7b25bb4f0905"
+      url: "https://pub.dev"
+    source: hosted
+    version: "1.0.2+1"
   photo_view:
     dependency: "direct main"
     description:

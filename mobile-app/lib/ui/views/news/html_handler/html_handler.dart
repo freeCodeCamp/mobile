@@ -1,4 +1,3 @@
-// ignore_for_file: implementation_imports
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_highlight/flutter_highlight.dart';
@@ -210,20 +209,29 @@ class HtmlHandler {
               );
             }
 
-            return HighlightView(
-              code.tree.element?.text ?? '',
-              padding: const EdgeInsets.symmetric(
-                horizontal: 4,
-                vertical: 0.2,
+            return Stack(children: [
+              HighlightView(
+                code.tree.element?.text ?? '',
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 4,
+                  vertical: 0.2,
+                ),
+                language: 'html',
+                theme: themeMap['atom-one-dark']!,
+                textStyle: const TextStyle(
+                  fontFamily: 'RobotoMono',
+                  fontSize: 16,
+                  color: Colors.white,
+                ),
               ),
-              language: 'html',
-              theme: themeMap['atom-one-dark']!,
-              textStyle: const TextStyle(
-                fontFamily: 'RobotoMono',
-                fontSize: 16,
-                color: Colors.white,
-              ),
-            );
+              Text(
+                code.tree.element?.text ?? '',
+                style: TextStyle(
+                  fontSize: 1,
+                  color: Colors.white.withOpacity(0),
+                ),
+              )
+            ]);
           },
           'iframe': (code, child) {
             var isVideo = RegExp('youtube', caseSensitive: false);

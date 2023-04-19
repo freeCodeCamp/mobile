@@ -1,9 +1,7 @@
 import 'dart:convert';
 import 'package:flutter/material.dart';
-import 'package:flutter_code_editor/editor/editor.dart';
-import 'package:flutter_code_editor/enums/syntax.dart';
-import 'package:flutter_code_editor/models/editor_options.dart';
-import 'package:flutter_code_editor/models/file_model.dart';
+import 'package:phone_ide/phone_ide.dart';
+
 import 'package:freecodecamp/app/app.locator.dart';
 import 'package:freecodecamp/app/app.router.dart';
 import 'package:freecodecamp/enums/challenge_test_state_type.dart';
