@@ -1,9 +1,8 @@
 import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
-import 'package:flutter_code_editor/editor/editor.dart';
-import 'package:flutter_code_editor/models/editor_options.dart';
-import 'package:flutter_code_editor/models/file_model.dart';
+import 'package:phone_ide/phone_ide.dart';
+
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:freecodecamp/enums/ext_type.dart';
 import 'package:freecodecamp/enums/panel_type.dart';
@@ -53,15 +52,6 @@ class ChallengeView extends StatelessWidget {
             bool editableRegion = currFile.editableRegionBoundaries.isNotEmpty;
             EditorOptions options = EditorOptions(
               hasRegion: editableRegion,
-              region: EditorRegionOptions(
-                start: editableRegion
-                    ? currFile.editableRegionBoundaries[0]
-                    : null,
-                end: editableRegion
-                    ? currFile.editableRegionBoundaries[1]
-                    : null,
-                condition: model.completedChallenge,
-              ),
             );
 
             Editor editor = Editor(
@@ -130,41 +120,45 @@ class ChallengeView extends StatelessWidget {
                         ),
                         title: challenge.files.length == 1
                             ? const Text('Editor')
-                            : null,
-                        actions: [
-                          if (model.showPreview)
-                            Expanded(
-                              child: Container(
-                                decoration:
-                                    model.showPreview ? decoration : null,
-                                child: Container(
-                                  decoration:
-                                      model.showConsole ? decoration : null,
-                                  child: ElevatedButton(
-                                    onPressed: () {},
-                                    child: const Text('Preview'),
-                                  ),
-                                ),
+                            : Row(
+                                children: [
+                                  if (model.showPreview)
+                                    Expanded(
+                                      child: Container(
+                                        decoration: model.showPreview
+                                            ? decoration
+                                            : null,
+                                        child: Container(
+                                          decoration: model.showConsole
+                                              ? decoration
+                                              : null,
+                                          child: ElevatedButton(
+                                            onPressed: () {},
+                                            child: const Text('Preview'),
+                                          ),
+                                        ),
+                                      ),
+                                    ),
+                                  if (model.showPreview)
+                                    Expanded(
+                                      child: ElevatedButton(
+                                        child: const Text('Console'),
+                                        onPressed: () {
+                                          model.consoleSnackbar();
+                                        },
+                                      ),
+                                    ),
+                                  if (!model.showPreview &&
+                                      challenge.files.length > 1)
+                                    for (ChallengeFile file in challenge.files)
+                                      customTabBar(
+                                        model,
+                                        challenge,
+                                        file,
+                                        editor,
+                                      )
+                                ],
                               ),
-                            ),
-                          if (model.showPreview)
-                            Expanded(
-                              child: ElevatedButton(
-                                child: const Text('Console'),
-                                onPressed: () {
-                                  model.consoleSnackbar();
-                                },
-                              ),
-                            ),
-                          if (!model.showPreview && challenge.files.length > 1)
-                            for (ChallengeFile file in challenge.files)
-                              customTabBar(
-                                model,
-                                challenge,
-                                file,
-                                editor,
-                              )
-                        ],
                       )
                     : null,
                 bottomNavigationBar: Padding(

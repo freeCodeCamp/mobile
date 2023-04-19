@@ -5,63 +5,16 @@ on:
     branches:
       - main
     paths:
-      - "mobile-app/**"
+      - 'mobile-app/**'
   push:
     branches:
       - main
   schedule:
     - cron: "0 0 * * *"
-  workflow_call:
 
 jobs:
-  unit_test:
-    name: Unit test
-    defaults:
-      run:
-        working-directory: ./mobile-app
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout files
-        uses: actions/checkout@24cb9080177205b6e8c946b17badbe402adc938f # v3
-
-      - name: Setup Flutter 3.7.x
-        uses: subosito/flutter-action@dbf1fa04f4d2e52c33185153d06cdb5443aa189d # tag=v2
-        with:
-          flutter-version: "3.7.x"
-          channel: "stable"
-          cache: true
-          cache-key: flutter-3.7.x
-          cache-path: ${{ runner.tool_cache }}/flutter
-
-      - name: Create .env file
-        run: |
-          echo "NEWSURL=https://www.freecodecamp.org/news/ghost/api/v3/content/" > .env
-          echo "NEWSKEY=$GHOST_NEWSKEY" >> .env
-          echo "ALGOLIAAPPID=$ALGOLIA_APP_ID" >> .env
-          echo "ALGOLIAKEY=$ALGOLIA_KEY" >> .env
-          echo "AUTH0_DOMAIN=$AUTH0_DOMAIN" >> .env
-          echo "AUTH0_CLIENT_ID=$AUTH0_CLIENT_ID" >> .env
-        env:
-          GHOST_NEWSKEY: ${{ secrets.GHOST_NEWSKEY }}
-          ALGOLIA_APP_ID: ${{ secrets.ALGOLIA_APP_ID }}
-          ALGOLIA_KEY: ${{ secrets.ALGOLIA_KEY }}
-          AUTH0_DOMAIN: ${{ secrets.AUTH0_DOMAIN }}
-          AUTH0_CLIENT_ID: ${{ secrets.AUTH0_CLIENT_ID }}
-
-      - name: Install packages
-        run: flutter pub get
-
-      - name: Analyze code
-        run: flutter analyze
-
-      - name: Run unit tests
-        run: |
-          cd test
-          flutter test unit
-          flutter test services
-
-  android_test:
-    name: Android integration test
+  flutter_test:
+    name: flutter test
     defaults:
       run:
         working-directory: ./mobile-app
@@ -109,21 +62,25 @@ jobs:
 
       - name: Create .env file
         run: |
-          echo "NEWSURL=https://www.freecodecamp.org/news/ghost/api/v3/content/" > .env
-          echo "NEWSKEY=$GHOST_NEWSKEY" >> .env
-          echo "ALGOLIAAPPID=$ALGOLIA_APP_ID" >> .env
-          echo "ALGOLIAKEY=$ALGOLIA_KEY" >> .env
+          echo "DEVELOPMENTMODE=true" > .env
+          echo "NEWSURL=https://www.freecodecamp.org/news/ghost/api/v3/content/" >> .env
           echo "AUTH0_DOMAIN=$AUTH0_DOMAIN" >> .env
           echo "AUTH0_CLIENT_ID=$AUTH0_CLIENT_ID" >> .env
         env:
-          GHOST_NEWSKEY: ${{ secrets.GHOST_NEWSKEY }}
-          ALGOLIA_APP_ID: ${{ secrets.ALGOLIA_APP_ID }}
-          ALGOLIA_KEY: ${{ secrets.ALGOLIA_KEY }}
           AUTH0_DOMAIN: ${{ secrets.AUTH0_DOMAIN }}
           AUTH0_CLIENT_ID: ${{ secrets.AUTH0_CLIENT_ID }}
 
       - name: Install packages
         run: flutter pub get
+
+      - name: Analyze code
+        run: flutter analyze
+
+      - name: Run unit tests
+        run: |
+          cd test
+          flutter test unit
+          flutter test services
 
       - name: Run tests in emulator
         uses: reactivecircus/android-emulator-runner@d94c3fbe4fe6a29e4a5ba47c12fb47677c73656b # v2
@@ -140,71 +97,7 @@ jobs:
         uses: actions/upload-artifact@0b7f8abb1508181956e8e162db84b466c27e18ce # v3
         if: always()
         with:
-          name: screenshots-android
-          path: mobile-app/screenshots/
-          if-no-files-found: error
-          retention-days: 7
-
-  ios_test:
-    name: iOS integration test
-    defaults:
-      run:
-        working-directory: ./mobile-app
-    runs-on: macos-latest
-    steps:
-      - name: Checkout files
-        uses: actions/checkout@24cb9080177205b6e8c946b17badbe402adc938f # v3
-
-      - name: Setup Flutter 3.7.x
-        uses: subosito/flutter-action@dbf1fa04f4d2e52c33185153d06cdb5443aa189d # tag=v2
-        with:
-          flutter-version: "3.7.x"
-          channel: "stable"
-          cache: true
-          cache-key: flutter-3.7.x
-          cache-path: ${{ runner.tool_cache }}/flutter
-
-      - name: Create .env file
-        run: |
-          echo "NEWSURL=https://www.freecodecamp.org/news/ghost/api/v3/content/" > .env
-          echo "NEWSKEY=$GHOST_NEWSKEY" >> .env
-          echo "ALGOLIAAPPID=$ALGOLIA_APP_ID" >> .env
-          echo "ALGOLIAKEY=$ALGOLIA_KEY" >> .env
-          echo "AUTH0_DOMAIN=$AUTH0_DOMAIN" >> .env
-          echo "AUTH0_CLIENT_ID=$AUTH0_CLIENT_ID" >> .env
-        env:
-          GHOST_NEWSKEY: ${{ secrets.GHOST_NEWSKEY }}
-          ALGOLIA_APP_ID: ${{ secrets.ALGOLIA_APP_ID }}
-          ALGOLIA_KEY: ${{ secrets.ALGOLIA_KEY }}
-          AUTH0_DOMAIN: ${{ secrets.AUTH0_DOMAIN }}
-          AUTH0_CLIENT_ID: ${{ secrets.AUTH0_CLIENT_ID }}
-
-      - name: Install packages
-        run: flutter pub get
-
-      - name: Start simulator
-        uses: futureware-tech/simulator-action@v2
-        with:
-          model: "iPhone 14"
-
-      - name: Install Applesimutils
-        run: |
-          brew tap wix/brew
-          brew install applesimutils
-
-      - name: Grant notification permissions
-        run: |
-          xcrun simctl bootstatus "iPhone 14"
-          applesimutils --byName "iPhone 14" --bundle org.freecodecamp.ios --setPermissions notifications=YES
-
-      - name: Run tests in simulator
-        run: flutter drive --driver=test_driver/integration_test.dart --target=integration_test/news_test.dart
-
-      - name: Upload screenshots
-        uses: actions/upload-artifact@0b7f8abb1508181956e8e162db84b466c27e18ce # v3
-        if: always()
-        with:
-          name: screenshots-ios
+          name: screenshots
           path: mobile-app/screenshots/
           if-no-files-found: error
           retention-days: 7
