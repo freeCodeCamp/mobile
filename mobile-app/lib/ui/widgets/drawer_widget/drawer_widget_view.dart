@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_scroll_shadow/flutter_scroll_shadow.dart';
 
@@ -86,13 +88,14 @@ class DrawerWidgetView extends StatelessWidget {
                           model.routeComponent('PODCAST', context);
                         },
                       ),
-                      DrawerButton(
-                        component: 'CODE RADIO',
-                        icon: Icons.radio,
-                        route: () {
-                          model.routeComponent('CODERADIO', context);
-                        },
-                      ),
+                      if (!Platform.isIOS)
+                        DrawerButton(
+                          component: 'CODE RADIO',
+                          icon: Icons.radio,
+                          route: () {
+                            model.routeComponent('CODERADIO', context);
+                          },
+                        ),
                       buildDivider(),
                       const CustomTabButton(
                         component: 'PRIVACY',
