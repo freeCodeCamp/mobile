@@ -1,10 +1,10 @@
-import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
+import 'package:flutter_inappwebview/flutter_inappwebview.dart';
 import 'package:phone_ide/phone_ide.dart';
 
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
-import 'package:freecodecamp/enums/ext_type.dart';
 import 'package:freecodecamp/enums/panel_type.dart';
 
 import 'package:freecodecamp/models/learn/challenge_model.dart';
@@ -12,7 +12,6 @@ import 'package:freecodecamp/models/learn/curriculum_model.dart';
 import 'package:freecodecamp/ui/views/learn/challenge/challenge_viewmodel.dart';
 
 import 'package:freecodecamp/ui/views/learn/widgets/dynamic_panel/panels/dynamic_panel.dart';
-import 'package:webview_flutter/webview_flutter.dart';
 import 'package:stacked/stacked.dart';
 
 class ChallengeView extends StatelessWidget {
@@ -291,33 +290,33 @@ class ChallengeView extends StatelessWidget {
       color: const Color(0xFF0a0a23),
       child: Row(
         children: [
-          SizedBox(
-            height: 1,
-            width: 1,
-            child: WebView(
-              onWebViewCreated: (WebViewController webcontroller) {
-                model.setTestController = webcontroller;
-              },
-              javascriptMode: JavascriptMode.unrestricted,
-              javascriptChannels: {
-                JavascriptChannel(
-                  name: 'Print',
-                  onMessageReceived: (JavascriptMessage message) {
-                    if (message.message == 'completed') {
-                      model.setPanelType = PanelType.pass;
-                      model.setCompletedChallenge = true;
-                      model.setShowPanel = true;
-                    } else {
-                      model.setPanelType = PanelType.hint;
-                      model.setHint = message.message;
-                      model.setShowPanel = true;
-                    }
-                    model.setIsRunningTests = false;
-                  },
-                )
-              },
-            ),
-          ),
+          // SizedBox(
+          //   height: 1,
+          //   width: 1,
+          //   child: WebView(
+          //     onWebViewCreated: (WebViewController webcontroller) {
+          //       model.setTestController = webcontroller;
+          //     },
+          //     javascriptMode: JavascriptMode.unrestricted,
+          //     javascriptChannels: {
+          //       JavascriptChannel(
+          //         name: 'Print',
+          //         onMessageReceived: (JavascriptMessage message) {
+          //           if (message.message == 'completed') {
+          //             model.setPanelType = PanelType.pass;
+          //             model.setCompletedChallenge = true;
+          //             model.setShowPanel = true;
+          //           } else {
+          //             model.setPanelType = PanelType.hint;
+          //             model.setHint = message.message;
+          //             model.setShowPanel = true;
+          //           }
+          //           model.setIsRunningTests = false;
+          //         },
+          //       )
+          //     },
+          //   ),
+          // ),
           Container(
             margin: const EdgeInsets.all(8),
             color: model.showPanel && model.panelType == PanelType.instruction
@@ -435,10 +434,10 @@ class ChallengeView extends StatelessWidget {
 
                             model.setShowPanel = false;
                             model.setIsRunningTests = true;
-                            await model.runner.setWebViewContent(
-                              challenge,
-                              webviewController: model.testController!,
-                            );
+                            // await model.runner.setWebViewContent(
+                            //   challenge,
+                            //   webviewController: model.testController!,
+                            // );
                             FocusManager.instance.primaryFocus?.unfocus();
                           }
                         : null,
@@ -468,22 +467,34 @@ class ProjectPreview extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Expanded(
-      child: WebView(
-        userAgent: 'random',
-        javascriptMode: JavascriptMode.unrestricted,
-        onWebViewCreated: (WebViewController webcontroller) async {
-          model.setWebviewController = webcontroller;
-          webcontroller.loadUrl(
-            Uri.dataFromString(
-              await model.parsePreviewDocument(
-                await model.fileService.getFirstFileFromCache(
-                  challenge,
-                  Ext.html,
+      child: FutureBuilder(
+        future: model.providePreview(challenge),
+        builder: (context, snapshot) {
+          if (snapshot.hasData) {
+            if (snapshot.data is String) {
+              return InAppWebView(
+                initialData: InAppWebViewInitialData(
+                  data: snapshot.data as String,
+                  mimeType: 'text/html',
                 ),
-              ),
-              mimeType: 'text/html',
-              encoding: utf8,
-            ).toString(),
+                onWebViewCreated: (controller) {
+                  model.setWebviewController = controller;
+                },
+                onConsoleMessage: (controller, consoleMessage) {
+                  print(consoleMessage);
+                },
+              );
+            }
+          }
+
+          if (snapshot.hasError) {
+            const Center(
+              child: Text('something went wrong!'),
+            );
+          }
+
+          return const Center(
+            child: CircularProgressIndicator(),
           );
         },
       ),

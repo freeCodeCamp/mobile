@@ -1,5 +1,6 @@
 import 'dart:convert';
 import 'package:flutter/material.dart';
+import 'package:flutter_inappwebview/flutter_inappwebview.dart';
 import 'package:phone_ide/phone_ide.dart';
 
 import 'package:freecodecamp/app/app.locator.dart';
@@ -24,7 +25,6 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:stacked/stacked.dart';
 import 'package:stacked_services/stacked_services.dart';
 import 'package:url_launcher/url_launcher_string.dart';
-import 'package:webview_flutter/webview_flutter.dart';
 
 class ChallengeViewModel extends BaseViewModel {
   String? _editorText;
@@ -60,11 +60,11 @@ class ChallengeViewModel extends BaseViewModel {
   PanelType _panelType = PanelType.instruction;
   PanelType get panelType => _panelType;
 
-  WebViewController? _webviewController;
-  WebViewController? get webviewController => _webviewController;
+  InAppWebViewController? _webviewController;
+  InAppWebViewController? get webviewController => _webviewController;
 
-  WebViewController? _testController;
-  WebViewController? get testController => _testController;
+  InAppWebViewController? _testController;
+  InAppWebViewController? get testController => _testController;
 
   Syntax _currFileType = Syntax.HTML;
   Syntax get currFileType => _currFileType;
@@ -101,10 +101,10 @@ class ChallengeViewModel extends BaseViewModel {
     notifyListeners();
   }
 
-  set setTestController(WebViewController controller) {
-    _testController = controller;
-    notifyListeners();
-  }
+  // set setTestController(WebViewController controller) {
+  //   _testController = controller;
+  //   notifyListeners();
+  // }
 
   set setHideAppBar(bool value) {
     _hideAppBar = value;
@@ -116,7 +116,7 @@ class ChallengeViewModel extends BaseViewModel {
     notifyListeners();
   }
 
-  set setWebviewController(WebViewController value) {
+  set setWebviewController(InAppWebViewController value) {
     _webviewController = value;
     notifyListeners();
   }
@@ -330,6 +330,17 @@ class ChallengeViewModel extends BaseViewModel {
     document.getElementsByTagName('HEAD')[0].append(meta);
 
     return document.outerHtml;
+  }
+
+  Future providePreview(Challenge challenge) async {
+    String cacheString = await fileService.getFirstFileFromCache(
+      challenge,
+      Ext.html,
+    );
+
+    Future document = parsePreviewDocument(cacheString);
+
+    return document;
   }
 
   // The hint text is the same as the test text. This is used to display the hint.

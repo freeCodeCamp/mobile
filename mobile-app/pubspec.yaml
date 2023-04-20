@@ -51,6 +51,7 @@ dependencies:
   flutter_scroll_shadow: ^1.1.0
   firebase_crashlytics: ^3.0.17
   flutter_highlight: ^0.7.0
+  flutter_inappwebview: ^5.7.2+3
 dev_dependencies:
   build_runner: ^2.1.2
   integration_test:
