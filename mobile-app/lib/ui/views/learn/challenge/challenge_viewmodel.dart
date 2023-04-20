@@ -254,7 +254,6 @@ class ChallengeViewModel extends BaseViewModel {
       message: '',
     );
   }
-
   // This prevents the user from requesting the challenge more than once
   // when swichting between preview and the challenge.
 
@@ -323,7 +322,7 @@ class ChallengeViewModel extends BaseViewModel {
     String viewPort = '''<meta content="width=device-width,
          initial-scale=1.0, maximum-scale=1.0,
          user-scalable=no" name="viewport">
-         </meta>''';
+         <meta>''';
 
     dom.Document viewPortParsed = parse(viewPort);
     dom.Node meta = viewPortParsed.getElementsByTagName('META')[0];
