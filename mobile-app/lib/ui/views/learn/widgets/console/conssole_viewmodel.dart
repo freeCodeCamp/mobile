@@ -8,20 +8,50 @@ class JavaScriptConsole extends StatelessWidget {
 
   final List<ConsoleMessage> messages;
 
+  static String defaultMessage = '''
+  /**
+  * Your test output will go here
+  */
+  ''';
+
   @override
   Widget build(BuildContext context) {
     return ViewModelBuilder<JavaScriptConsoleViewModel>.reactive(
       viewModelBuilder: () => JavaScriptConsoleViewModel(),
       builder: (context, model, child) {
-        return ListView.builder(
-          itemCount: messages.length,
-          itemBuilder: (context, index) {
-            return ListTile(
-              subtitle: Text(messages[index].message),
-            );
-          },
+        return Column(
+          children: [
+            Container(
+              color: Colors.blue,
+              margin: const EdgeInsets.all(8),
+              child: ListView.builder(
+                shrinkWrap: true,
+                itemCount: messages.isEmpty ? 1 : messages.length,
+                itemBuilder: (context, index) {
+                  return consoleMessage(index, model);
+                },
+              ),
+            ),
+          ],
         );
       },
+    );
+  }
+
+  ListTile consoleMessage(int index, JavaScriptConsoleViewModel model) {
+    return ListTile(
+      title: Text(
+        messages.isEmpty ? defaultMessage : messages[index].message,
+        style: TextStyle(
+          color: model.getConsoleTextColor(
+            messages.isEmpty
+                ? ConsoleMessageLevel.LOG
+                : messages[index].messageLevel,
+          ),
+          fontSize: 18,
+        ),
+      ),
+      contentPadding: const EdgeInsets.symmetric(horizontal: 8),
     );
   }
 }

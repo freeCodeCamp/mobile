@@ -36,6 +36,9 @@ class ChallengeViewModel extends BaseViewModel {
   bool _showPreview = false;
   bool get showPreview => _showPreview;
 
+  bool _showProjectPreview = false;
+  bool get showProjectPreview => _showProjectPreview;
+
   bool _showConsole = false;
   bool get showConsole => _showConsole;
 
@@ -129,13 +132,18 @@ class ChallengeViewModel extends BaseViewModel {
     notifyListeners();
   }
 
-  set setHasTypedInEditor(bool value) {
-    _hasTypedInEditor = true;
+  set setShowProjectPreview(bool value) {
+    _showProjectPreview = value;
     notifyListeners();
   }
 
   set setShowConsole(bool value) {
     _showConsole = value;
+    notifyListeners();
+  }
+
+  set setHasTypedInEditor(bool value) {
+    _hasTypedInEditor = true;
     notifyListeners();
   }
 
@@ -251,17 +259,6 @@ class ChallengeViewModel extends BaseViewModel {
     }
   }
 
-  // When the content in the editor is changed, save it to the cache. This prevents
-  // the user from losing their work when switching between panels e.g, the preview.
-  // The cache is disposed when the user switches to a new challenge.
-
-  // show a message that the console is not yet available
-  void consoleSnackbar() {
-    snackbar.showSnackbar(
-      title: 'Not yet available',
-      message: '',
-    );
-  }
   // This prevents the user from requesting the challenge more than once
   // when swichting between preview and the challenge.
 

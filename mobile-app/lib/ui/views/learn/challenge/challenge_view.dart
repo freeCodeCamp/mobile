@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
 import 'package:flutter_inappwebview/flutter_inappwebview.dart';
+import 'package:freecodecamp/ui/views/learn/widgets/console/conssole_viewmodel.dart';
 import 'package:phone_ide/phone_ide.dart';
 
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
@@ -118,27 +119,31 @@ class ChallengeView extends StatelessWidget {
                                   if (model.showPreview)
                                     Expanded(
                                       child: Container(
-                                        decoration: model.showPreview
+                                        decoration: model.showProjectPreview
                                             ? decoration
                                             : null,
-                                        child: Container(
-                                          decoration: model.showConsole
-                                              ? decoration
-                                              : null,
-                                          child: ElevatedButton(
-                                            onPressed: () {},
-                                            child: const Text('Preview'),
-                                          ),
+                                        child: ElevatedButton(
+                                          onPressed: () {
+                                            model.setShowConsole = false;
+                                            model.setShowProjectPreview = true;
+                                          },
+                                          child: const Text('Preview'),
                                         ),
                                       ),
                                     ),
                                   if (model.showPreview)
                                     Expanded(
-                                      child: ElevatedButton(
-                                        child: const Text('Console'),
-                                        onPressed: () {
-                                          model.consoleSnackbar();
-                                        },
+                                      child: Container(
+                                        decoration: model.showConsole
+                                            ? decoration
+                                            : null,
+                                        child: ElevatedButton(
+                                          child: const Text('Console'),
+                                          onPressed: () {
+                                            model.setShowConsole = true;
+                                            model.setShowProjectPreview = false;
+                                          },
+                                        ),
                                       ),
                                     ),
                                   if (!model.showPreview &&
@@ -191,10 +196,11 @@ class ChallengeView extends StatelessWidget {
                               challengesCompleted: challengesCompleted,
                               editor: editor,
                             ),
-                          ProjectPreview(
-                            challenge: challenge,
-                            model: model,
-                          ),
+                          !model.showProjectPreview
+                              ? JavaScriptConsole(
+                                  messages: model.consoleMessage)
+                              : ProjectPreview(
+                                  challenge: challenge, model: model)
                         ],
                       ),
               ),
