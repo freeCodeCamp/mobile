@@ -101,10 +101,10 @@ class ChallengeViewModel extends BaseViewModel {
     notifyListeners();
   }
 
-  // set setTestController(WebViewController controller) {
-  //   _testController = controller;
-  //   notifyListeners();
-  // }
+  set setTestController(InAppWebViewController controller) {
+    _testController = controller;
+    notifyListeners();
+  }
 
   set setHideAppBar(bool value) {
     _hideAppBar = value;

@@ -1,3 +1,4 @@
+import 'dart:developer';
 
 import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
@@ -290,33 +291,29 @@ class ChallengeView extends StatelessWidget {
       color: const Color(0xFF0a0a23),
       child: Row(
         children: [
-          // SizedBox(
-          //   height: 1,
-          //   width: 1,
-          //   child: WebView(
-          //     onWebViewCreated: (WebViewController webcontroller) {
-          //       model.setTestController = webcontroller;
-          //     },
-          //     javascriptMode: JavascriptMode.unrestricted,
-          //     javascriptChannels: {
-          //       JavascriptChannel(
-          //         name: 'Print',
-          //         onMessageReceived: (JavascriptMessage message) {
-          //           if (message.message == 'completed') {
-          //             model.setPanelType = PanelType.pass;
-          //             model.setCompletedChallenge = true;
-          //             model.setShowPanel = true;
-          //           } else {
-          //             model.setPanelType = PanelType.hint;
-          //             model.setHint = message.message;
-          //             model.setShowPanel = true;
-          //           }
-          //           model.setIsRunningTests = false;
-          //         },
-          //       )
-          //     },
-          //   ),
-          // ),
+          SizedBox(
+            width: 1,
+            height: 1,
+            child: InAppWebView(
+              onWebViewCreated: (controller) {
+                model.setTestController = controller;
+              },
+              onConsoleMessage: (controller, message) {
+                log(message.message);
+
+                if (message.message == 'completed') {
+                  model.setPanelType = PanelType.pass;
+                  model.setCompletedChallenge = true;
+                  model.setShowPanel = true;
+                } else {
+                  model.setPanelType = PanelType.hint;
+                  model.setHint = message.message;
+                  model.setShowPanel = true;
+                }
+                model.setIsRunningTests = false;
+              },
+            ),
+          ),
           Container(
             margin: const EdgeInsets.all(8),
             color: model.showPanel && model.panelType == PanelType.instruction
@@ -367,10 +364,6 @@ class ChallengeView extends StatelessWidget {
                     : Colors.white,
               ),
               onPressed: () async {
-                if (challenge.challengeType == 1) {
-                  model.consoleSnackbar();
-                  return;
-                }
                 ChallengeFile currFile = model.currentFile(challenge);
 
                 String currText = await model.fileService.getExactFileFromCache(
@@ -434,10 +427,10 @@ class ChallengeView extends StatelessWidget {
 
                             model.setShowPanel = false;
                             model.setIsRunningTests = true;
-                            // await model.runner.setWebViewContent(
-                            //   challenge,
-                            //   webviewController: model.testController!,
-                            // );
+                            await model.runner.setWebViewContent(
+                              challenge,
+                              controller: model.testController!,
+                            );
                             FocusManager.instance.primaryFocus?.unfocus();
                           }
                         : null,
@@ -481,7 +474,7 @@ class ProjectPreview extends StatelessWidget {
                   model.setWebviewController = controller;
                 },
                 onConsoleMessage: (controller, consoleMessage) {
-                  print(consoleMessage);
+                  log(consoleMessage.message);
                 },
               );
             }

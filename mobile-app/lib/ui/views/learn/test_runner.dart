@@ -1,11 +1,11 @@
 import 'dart:convert';
+import 'package:flutter_inappwebview/flutter_inappwebview.dart';
 import 'package:freecodecamp/app/app.locator.dart';
 import 'package:freecodecamp/enums/ext_type.dart';
 import 'package:freecodecamp/models/learn/challenge_model.dart';
 import 'package:freecodecamp/service/learn/learn_file_service.dart';
 import 'package:html/parser.dart';
 import 'package:stacked/stacked.dart';
-import 'package:webview_flutter/webview_flutter.dart';
 import 'package:html/dom.dart' as dom;
 
 class TestRunner extends BaseViewModel {
@@ -25,7 +25,7 @@ class TestRunner extends BaseViewModel {
 
   Future<String> setWebViewContent(
     Challenge challenge, {
-    WebViewController? webviewController,
+    InAppWebViewController? controller,
     bool testing = false,
   }) async {
     dom.Document document = dom.Document();
@@ -66,11 +66,11 @@ class TestRunner extends BaseViewModel {
 
     document.body!.append(bodyNode);
     if (!testing) {
-      webviewController!.loadUrl(Uri.dataFromString(
-        document.outerHtml,
+      controller!.loadData(
+        data: document.outerHtml,
         mimeType: 'text/html',
-        encoding: Encoding.getByName('utf-8'),
-      ).toString());
+        encoding: Encoding.getByName('utf-8').toString(),
+      );
     }
 
     return document.outerHtml;
@@ -151,8 +151,6 @@ class TestRunner extends BaseViewModel {
     Challenge challenge, {
     bool testing = false,
   }) async {
-    String logFunction = testing ? 'console.log' : 'Print.postMessage';
-
     // List<ChallengeFile>? indexFile =
     //     challenge.files.where((element) => element.name == 'index').toList();
     List<ChallengeFile>? scriptFile =
@@ -224,11 +222,11 @@ class TestRunner extends BaseViewModel {
 
         const test = await testPromise;
       } catch (e) {
-        $logFunction(testText[i]);
+        console.log(testText[i]);
         break;
       } finally {
         if(!error && testString.length -1 == i){
-          $logFunction('completed');
+         console.log('completed');
         }
       }
       }
@@ -268,18 +266,18 @@ class TestRunner extends BaseViewModel {
           try {
             await eval(head + '\\n' + code + '\\n' + tail + '\\n' + tests[i]);
           } catch (e) {
-            $logFunction(testText[i]);
+            console.log(testText[i]);
 
             break;
           }
 
           if(i == tests.length - 1){
-            $logFunction('completed');
+            console.log('completed');
           }
 
         }
       } catch (e) {
-        $logFunction(e);
+        console.log(e);
       }''';
     }
     return null;
