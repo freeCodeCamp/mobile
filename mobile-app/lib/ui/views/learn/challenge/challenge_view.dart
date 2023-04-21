@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
 import 'package:flutter_inappwebview/flutter_inappwebview.dart';
-import 'package:freecodecamp/ui/views/learn/widgets/console/conssole_viewmodel.dart';
+import 'package:freecodecamp/ui/views/learn/widgets/console/console_viewmodel.dart';
 import 'package:phone_ide/phone_ide.dart';
 
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
@@ -391,6 +391,7 @@ class ChallengeView extends StatelessWidget {
                 model.setEditorText =
                     currText == '' ? currFile.contents : currText;
                 model.setShowPreview = !model.showPreview;
+                model.setShowProjectPreview = true;
 
                 model.refresh();
               },

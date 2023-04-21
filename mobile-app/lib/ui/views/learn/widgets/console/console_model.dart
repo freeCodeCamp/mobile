@@ -3,6 +3,8 @@ import 'package:flutter_inappwebview/flutter_inappwebview.dart';
 import 'package:stacked/stacked.dart';
 
 class JavaScriptConsoleViewModel extends BaseViewModel {
+  ScrollController controller = ScrollController();
+
   Color getConsoleTextColor(ConsoleMessageLevel messageLevel) {
     switch (messageLevel.toString()) {
       case 'ConsoleMessageLevel.DEBUG':
@@ -19,4 +21,6 @@ class JavaScriptConsoleViewModel extends BaseViewModel {
         return Colors.white.withOpacity(0.87);
     }
   }
+
+  void scrollToBottom() {}
 }
