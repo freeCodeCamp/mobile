@@ -395,16 +395,6 @@ class ChallengeView extends StatelessWidget {
                     currText == '' ? currFile.contents : currText;
                 model.setShowPreview = !model.showPreview;
 
-                if (!model.showPreview) {
-                  if (model.showConsole) {
-                    model.setShowConsole = false;
-                  }
-                } else {
-                  if (!model.showProjectPreview) {
-                    model.setShowProjectPreview = true;
-                  }
-                }
-
                 model.refresh();
               },
               splashColor: Colors.transparent,
