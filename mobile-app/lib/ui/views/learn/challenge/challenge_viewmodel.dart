@@ -70,7 +70,7 @@ class ChallengeViewModel extends BaseViewModel {
   InAppWebViewController? get testController => _testController;
 
   List<ConsoleMessage> _consoleMessages = [];
-  List<ConsoleMessage> get consoleMessage => _consoleMessages;
+  List<ConsoleMessage> get consoleMessages => _consoleMessages;
 
   Syntax _currFileType = Syntax.HTML;
   Syntax get currFileType => _currFileType;

@@ -20,18 +20,27 @@ class JavaScriptConsole extends StatelessWidget {
     return ViewModelBuilder<JavaScriptConsoleViewModel>.reactive(
       viewModelBuilder: () => JavaScriptConsoleViewModel(),
       builder: (context, model, child) {
-        return SizedBox(
-          height: MediaQuery.of(context).size.height - 144,
-          child: ListView.builder(
-            itemCount: messages.isEmpty ? 1 : messages.length,
-            itemBuilder: (context, index) {
-              List<Widget> htmlWidgets = HtmlHandler.htmlHandler(
-                messages.isEmpty ? defaultMessage : messages[index].message,
-                context,
-              );
+        return Expanded(
+          child: Row(
+            children: [
+              Expanded(
+                child: Scrollbar(
+                  child: ListView.builder(
+                    itemCount: messages.isEmpty ? 1 : messages.length,
+                    itemBuilder: (context, index) {
+                      List<Widget> htmlWidgets = HtmlHandler.htmlHandler(
+                        messages.isEmpty
+                            ? defaultMessage
+                            : messages[index].message,
+                        context,
+                      );
 
-              return consoleMessage(htmlWidgets, model, context);
-            },
+                      return consoleMessage(htmlWidgets, model, context);
+                    },
+                  ),
+                ),
+              ),
+            ],
           ),
         );
       },

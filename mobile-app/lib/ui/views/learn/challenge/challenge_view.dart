@@ -198,9 +198,12 @@ class ChallengeView extends StatelessWidget {
                             ),
                           !model.showProjectPreview
                               ? JavaScriptConsole(
-                                  messages: model.consoleMessage)
+                                  messages: model.consoleMessages,
+                                )
                               : ProjectPreview(
-                                  challenge: challenge, model: model)
+                                  challenge: challenge,
+                                  model: model,
+                                )
                         ],
                       ),
               ),
@@ -299,7 +302,7 @@ class ChallengeView extends StatelessWidget {
                 model.setTestController = controller;
               },
               onConsoleMessage: (controller, message) {
-                model.setConsoleMessages = [...model.consoleMessage, message];
+                model.setConsoleMessages = [...model.consoleMessages, message];
 
                 if (message.message == 'completed') {
                   model.setPanelType = PanelType.pass;
@@ -427,6 +430,7 @@ class ChallengeView extends StatelessWidget {
                             : const FaIcon(FontAwesomeIcons.check),
                     onPressed: model.hasTypedInEditor
                         ? () async {
+                            model.setConsoleMessages = [];
                             if (model.showPanel &&
                                 model.panelType == PanelType.pass) {
                               model.goToNextChallenge(
