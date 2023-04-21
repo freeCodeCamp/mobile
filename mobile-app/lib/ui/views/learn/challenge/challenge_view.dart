@@ -391,7 +391,16 @@ class ChallengeView extends StatelessWidget {
                 model.setEditorText =
                     currText == '' ? currFile.contents : currText;
                 model.setShowPreview = !model.showPreview;
-                model.setShowProjectPreview = true;
+
+                if (!model.showPreview) {
+                  if (model.showConsole) {
+                    model.setShowConsole = false;
+                  }
+                } else {
+                  if (!model.showProjectPreview) {
+                    model.setShowProjectPreview = true;
+                  }
+                }
 
                 model.refresh();
               },
