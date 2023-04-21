@@ -302,7 +302,15 @@ class ChallengeView extends StatelessWidget {
                 model.setTestController = controller;
               },
               onConsoleMessage: (controller, message) {
-                model.setConsoleMessages = [...model.consoleMessages, message];
+                ConsoleMessage newMessage = ConsoleMessage(
+                  message: model.parseUsersConsoleMessages(message.message),
+                  messageLevel: ConsoleMessageLevel.LOG,
+                );
+
+                model.setConsoleMessages = [
+                  ...model.consoleMessages,
+                  newMessage
+                ];
 
                 if (message.message == 'completed') {
                   model.setPanelType = PanelType.pass;

@@ -347,6 +347,14 @@ class ChallengeViewModel extends BaseViewModel {
     return document;
   }
 
+  String parseUsersConsoleMessages(String string) {
+    if (!string.startsWith('testMSG')) {
+      return '<p>$string</p>';
+    }
+
+    return string;
+  }
+
   void refresh() {
     setChallenge = challenge!;
     notifyListeners();
