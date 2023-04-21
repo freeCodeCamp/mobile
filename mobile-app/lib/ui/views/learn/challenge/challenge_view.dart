@@ -1,5 +1,3 @@
-import 'dart:developer';
-
 import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
 import 'package:flutter_inappwebview/flutter_inappwebview.dart';
@@ -299,7 +297,7 @@ class ChallengeView extends StatelessWidget {
                 model.setTestController = controller;
               },
               onConsoleMessage: (controller, message) {
-                log(message.message);
+                model.setConsoleMessages = [...model.consoleMessage, message];
 
                 if (message.message == 'completed') {
                   model.setPanelType = PanelType.pass;
@@ -472,9 +470,6 @@ class ProjectPreview extends StatelessWidget {
                 ),
                 onWebViewCreated: (controller) {
                   model.setWebviewController = controller;
-                },
-                onConsoleMessage: (controller, consoleMessage) {
-                  log(consoleMessage.message);
                 },
               );
             }

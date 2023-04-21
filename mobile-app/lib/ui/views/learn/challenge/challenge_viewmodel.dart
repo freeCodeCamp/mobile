@@ -66,6 +66,9 @@ class ChallengeViewModel extends BaseViewModel {
   InAppWebViewController? _testController;
   InAppWebViewController? get testController => _testController;
 
+  List<ConsoleMessage> _consoleMessages = [];
+  List<ConsoleMessage> get consoleMessage => _consoleMessages;
+
   Syntax _currFileType = Syntax.HTML;
   Syntax get currFileType => _currFileType;
 
@@ -178,6 +181,11 @@ class ChallengeViewModel extends BaseViewModel {
 
   set setMounted(bool value) {
     _mounted = value;
+    notifyListeners();
+  }
+
+  set setConsoleMessages(List<ConsoleMessage> messages) {
+    _consoleMessages = messages;
     notifyListeners();
   }
 
