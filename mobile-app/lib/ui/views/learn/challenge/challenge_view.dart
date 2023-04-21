@@ -110,13 +110,8 @@ class ChallengeView extends StatelessWidget {
               child: Scaffold(
                 appBar: !model.hideAppBar
                     ? AppBar(
-                        leading: IconButton(
-                          icon: const Icon(Icons.arrow_back_ios),
-                          onPressed: () async {
-                            model.updateProgressOnPop(context);
-                          },
-                        ),
-                        title: challenge.files.length == 1
+                        automaticallyImplyLeading: !model.showPreview,
+                        title: challenge.files.length == 1 && !model.showPreview
                             ? const Text('Editor')
                             : Row(
                                 children: [
@@ -207,13 +202,14 @@ class ChallengeView extends StatelessWidget {
           }
 
           return Scaffold(
-              appBar: AppBar(
-                title: const Text('Loading'),
-                automaticallyImplyLeading: false,
-              ),
-              body: const Center(
-                child: CircularProgressIndicator(),
-              ));
+            appBar: AppBar(
+              title: const Text('Loading'),
+              automaticallyImplyLeading: false,
+            ),
+            body: const Center(
+              child: CircularProgressIndicator(),
+            ),
+          );
         },
       ),
     );
