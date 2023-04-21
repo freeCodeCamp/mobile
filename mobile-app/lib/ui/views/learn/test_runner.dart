@@ -65,6 +65,25 @@ class TestRunner extends BaseViewModel {
             : scriptToNode.getElementsByTagName('HEAD').first.children.first;
 
     document.body!.append(bodyNode);
+
+    // Get user's script elements.
+
+    if (challenge.files[0].ext == Ext.html) {
+      String htmlFile = await fileService.getFirstFileFromCache(
+        challenge,
+        Ext.html,
+        testing: testing,
+      );
+
+      dom.Document parseCacheDocument = parse(htmlFile);
+
+      List<dom.Element> scriptElements = parseCacheDocument.querySelectorAll(
+        'SCRIPT',
+      );
+
+      document.body!.append(scriptElements[0]);
+    }
+
     if (!testing) {
       controller!.loadData(
         data: document.outerHtml,
@@ -103,6 +122,10 @@ class TestRunner extends BaseViewModel {
       challenge,
       ext,
       testing: testing,
+    );
+
+    firstHTMlfile = fileService.removeExcessiveScriptsInHTMLdocument(
+      firstHTMlfile,
     );
 
     String parsedWithStyleTags = await fileService.parseCssDocmentsAsStyleTags(
@@ -151,8 +174,6 @@ class TestRunner extends BaseViewModel {
     Challenge challenge, {
     bool testing = false,
   }) async {
-    // List<ChallengeFile>? indexFile =
-    //     challenge.files.where((element) => element.name == 'index').toList();
     List<ChallengeFile>? scriptFile =
         challenge.files.where((element) => element.name == 'script').toList();
 
@@ -178,7 +199,7 @@ class TestRunner extends BaseViewModel {
     }
 
     if (ext == Ext.html || ext == Ext.css) {
-      String? tail = challenge.files[0].tail ?? '';
+      String tail = challenge.files[0].tail ?? '';
 
       return '''<script type="module">
     import * as __helpers from "https://unpkg.com/@freecodecamp/curriculum-helpers@1.1.0/dist/index.js";
@@ -224,7 +245,7 @@ class TestRunner extends BaseViewModel {
       } catch (e) {
         
         for(let j = 0; j < testString.length; j++){
-          console.log(testText[j]);
+          console.log('testMSG: ' + testText[j]);
         }
         
         break;

@@ -310,7 +310,15 @@ class ChallengeView extends StatelessWidget {
                   model.setShowPanel = true;
                 } else {
                   model.setPanelType = PanelType.hint;
-                  model.setHint = message.message;
+                  model.setHint = model.consoleMessages
+                      .firstWhere(
+                        (e) => e.message.startsWith('testMSG: '),
+                        orElse: () => ConsoleMessage(
+                          message: 'something went wrong?',
+                        ),
+                      )
+                      .message
+                      .split('testMSG: ')[1];
                   model.setShowPanel = true;
                 }
                 model.setIsRunningTests = false;
@@ -394,6 +402,10 @@ class ChallengeView extends StatelessWidget {
                 model.setEditorText =
                     currText == '' ? currFile.contents : currText;
                 model.setShowPreview = !model.showPreview;
+
+                if (!model.showProjectPreview && !model.showConsole) {
+                  model.setShowProjectPreview = true;
+                }
 
                 model.refresh();
               },

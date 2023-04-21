@@ -101,7 +101,7 @@ class LearnFileService {
           '';
 
       if (cache.isNotEmpty) {
-        return cache;
+        return removeExcessiveScriptsInHTMLdocument(cache);
       } else {
         return fileWithEditableRegion[0].contents;
       }
@@ -186,5 +186,18 @@ class LearnFileService {
     }
 
     return content;
+  }
+
+  String removeExcessiveScriptsInHTMLdocument(String file) {
+    dom.Document document = parse(file);
+    List<dom.Element> elements = document.querySelectorAll('SCRIPT');
+
+    for (int i = 0; i < elements.length; i++) {
+      elements[i].remove();
+    }
+
+    file = document.outerHtml.toString();
+
+    return file;
   }
 }

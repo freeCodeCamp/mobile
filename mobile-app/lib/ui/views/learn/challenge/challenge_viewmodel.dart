@@ -5,7 +5,6 @@ import 'package:phone_ide/phone_ide.dart';
 
 import 'package:freecodecamp/app/app.locator.dart';
 import 'package:freecodecamp/app/app.router.dart';
-import 'package:freecodecamp/enums/challenge_test_state_type.dart';
 import 'package:freecodecamp/enums/dialog_type.dart';
 import 'package:freecodecamp/enums/ext_type.dart';
 import 'package:freecodecamp/enums/panel_type.dart';
@@ -346,19 +345,6 @@ class ChallengeViewModel extends BaseViewModel {
     Future document = parsePreviewDocument(cacheString);
 
     return document;
-  }
-
-  // The hint text is the same as the test text. This is used to display the hint.
-  // if the length of the hint is greater than 0, then the hint is displayed. If
-  // the length of the hint is 0, then the challenge is completed.
-
-  ChallengeTest? returnFirstFailedTest(List<ChallengeTest> incTest) {
-    for (ChallengeTest test in incTest) {
-      if (test.testState == ChallengeTestState.failed) {
-        return test;
-      }
-    }
-    return null;
   }
 
   void refresh() {
