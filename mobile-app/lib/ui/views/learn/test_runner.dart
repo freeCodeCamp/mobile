@@ -81,7 +81,9 @@ class TestRunner extends BaseViewModel {
         'SCRIPT',
       );
 
-      document.body!.append(scriptElements[0]);
+      for (int i = 0; i < scriptElements.length; i++) {
+        document.body!.append(scriptElements[i]);
+      }
     }
 
     if (!testing) {
