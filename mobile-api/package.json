@@ -24,7 +24,7 @@
     "dotenv": "16.0.3",
     "express": "4.18.2",
     "mongoose": "6.10.5",
-    "rss-parser": "3.12.0"
+    "rss-parser": "3.13.0"
   },
   "devDependencies": {
     "@babel/preset-typescript": "7.21.4",
