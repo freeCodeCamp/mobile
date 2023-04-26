@@ -152,16 +152,6 @@ class TestRunner extends BaseViewModel {
         .replaceAll('\$', r'\$');
   }
 
-  // This is a debug function, it can be used to display a custom message in the test runner.
-
-  void throwError(Challenge challenge, String message) {
-    throw Exception(
-      '''$message, debug info: ${challenge.superBlock}, ${challenge.block}, id: ${challenge.id},
-         slug: ${challenge.slug.isEmpty ? 'empty' : challenge.slug},
-         extension: ${challenge.files.map((e) => e.ext.name).toString()}''',
-    );
-  }
-
   // This returns the script that needs to be run in the DOM. If the test in the document fail it will
   // log the failed test to the console. If the test have been completed, it will return "completed" in a
   // console.log
@@ -187,11 +177,6 @@ class TestRunner extends BaseViewModel {
         challenge,
         ext,
         testing: testing,
-      );
-    } else {
-      throwError(
-        challenge,
-        'this extension is not supported',
       );
     }
 
