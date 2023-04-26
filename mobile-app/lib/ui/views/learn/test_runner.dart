@@ -219,19 +219,18 @@ class TestRunner extends BaseViewModel {
             const test = eval(${tail.isNotEmpty ? 'tail + "\\n" +' : ""} testString[i]);
             resolve(test);
           } catch (e) {
+
             reject(e);
           }
         });
 
         const test = await testPromise;
       } catch (e) {
-        
-        for(let j = 0; j < testString.length; j++){
-          console.log('testMSG: ' + testText[j]);
-        }
-        
-        break;
+        error = true;
+        console.log('testMSG: ' + testText[j]);
+      
       } finally {
+        error = false;
         if(!error && testString.length -1 == i){
          console.log('completed');
         }
