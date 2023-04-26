@@ -227,10 +227,8 @@ class TestRunner extends BaseViewModel {
         const test = await testPromise;
       } catch (e) {
         error = true;
-        console.log('testMSG: ' + testText[j]);
-      
+        console.log('testMSG: ' + testText[i]);
       } finally {
-        error = false;
         if(!error && testString.length -1 == i){
          console.log('completed');
         }
