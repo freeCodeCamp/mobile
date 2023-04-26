@@ -6,7 +6,7 @@ import 'package:freecodecamp/models/learn/challenge_model.dart';
 import 'package:freecodecamp/service/learn/learn_file_service.dart';
 import 'package:html/parser.dart';
 import 'package:stacked/stacked.dart';
-import 'package:html/dom.dart' as dom;
+import 'package:html/dom.dart';
 
 class TestRunner extends BaseViewModel {
   String _testDocument = '';
@@ -28,7 +28,7 @@ class TestRunner extends BaseViewModel {
     InAppWebViewController? controller,
     bool testing = false,
   }) async {
-    dom.Document document = dom.Document();
+    Document document = Document();
     document = parse('');
 
     List<String> imports = [
@@ -39,10 +39,9 @@ class TestRunner extends BaseViewModel {
     ];
 
     for (String import in imports) {
-      dom.Document importToNode = parse(import);
+      Document importToNode = parse(import);
 
-      dom.Node node =
-          importToNode.getElementsByTagName('HEAD')[0].children.first;
+      Node node = importToNode.getElementsByTagName('HEAD')[0].children.first;
 
       document.getElementsByTagName('HEAD')[0].append(node);
     }
@@ -53,13 +52,9 @@ class TestRunner extends BaseViewModel {
       testing: testing,
     );
 
-    if (script == null) {
-      throwError(challenge, 'an empty script was returned');
-    }
+    Document scriptToNode = parse(script);
 
-    dom.Document scriptToNode = parse(script);
-
-    dom.Node bodyNode =
+    Node bodyNode =
         scriptToNode.getElementsByTagName('BODY').first.children.isNotEmpty
             ? scriptToNode.getElementsByTagName('BODY').first.children.first
             : scriptToNode.getElementsByTagName('HEAD').first.children.first;
@@ -75,9 +70,9 @@ class TestRunner extends BaseViewModel {
         testing: testing,
       );
 
-      dom.Document parseCacheDocument = parse(htmlFile);
+      Document parseCacheDocument = parse(htmlFile);
 
-      List<dom.Element> scriptElements = parseCacheDocument.querySelectorAll(
+      List<Element> scriptElements = parseCacheDocument.querySelectorAll(
         'SCRIPT',
       );
 
