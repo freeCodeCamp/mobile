@@ -212,27 +212,23 @@ class TestRunner extends BaseViewModel {
     doc.__runTest = async function runtTests(testString) {
       let error = false;
       for(let i = 0; i < testString.length; i++){
-
         try {
-        const testPromise = new Promise((resolve, reject) => {
-          try {
-            const test = eval(${tail.isNotEmpty ? 'tail + "\\n" +' : ""} testString[i]);
-            resolve(test);
-          } catch (e) {
-
-            reject(e);
-          }
-        });
-
-        const test = await testPromise;
-      } catch (e) {
-        error = true;
-        console.log('testMSG: ' + testText[i]);
-      } finally {
-        if(!error && testString.length -1 == i){
-         console.log('completed');
-        }
+            const testPromise = new Promise((resolve, reject) => {
+              try {
+                const test = eval(${tail.isNotEmpty ? 'tail + "\\n" +' : ""} testString[i]);
+                resolve(test);
+              } catch (e) {
+                reject(e);
+              }
+            });
+            await testPromise;
+        } catch (e) {
+            error = true;
+            console.log('testMSG: ' + testText[i]);
+        } 
       }
+      if(!error){
+        console.log('completed');
       }
     };
 
