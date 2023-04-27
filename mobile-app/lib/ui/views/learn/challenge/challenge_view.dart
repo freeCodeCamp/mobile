@@ -49,10 +49,6 @@ class ChallengeView extends StatelessWidget {
             bool keyboard = MediaQuery.of(context).viewInsets.bottom != 0;
 
             bool editableRegion = currFile.editableRegionBoundaries.isNotEmpty;
-
-            bool onlyJs =
-                challenge.files.every((file) => file.ext.name == 'js');
-
             EditorOptions options = EditorOptions(
               hasRegion: editableRegion,
             );
@@ -120,7 +116,7 @@ class ChallengeView extends StatelessWidget {
                             ? const Text('Editor')
                             : Row(
                                 children: [
-                                  if (model.showPreview && !onlyJs)
+                                  if (model.showPreview)
                                     Expanded(
                                       child: Container(
                                         decoration: model.showProjectPreview
@@ -200,13 +196,13 @@ class ChallengeView extends StatelessWidget {
                               challengesCompleted: challengesCompleted,
                               editor: editor,
                             ),
-                          model.showProjectPreview && !onlyJs
-                              ? ProjectPreview(
+                          !model.showProjectPreview
+                              ? JavaScriptConsole(
+                                  messages: model.consoleMessages,
+                                )
+                              : ProjectPreview(
                                   challenge: challenge,
                                   model: model,
-                                )
-                              : JavaScriptConsole(
-                                  messages: model.consoleMessages,
                                 )
                         ],
                       ),

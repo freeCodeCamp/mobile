@@ -269,6 +269,7 @@ class TestRunner extends BaseViewModel {
       }
 
       try {
+        let error = false;
         for (let i = 0; i < tests.length; i++) {
           try {
 
@@ -278,14 +279,14 @@ class TestRunner extends BaseViewModel {
 
             await eval(head + '\\n' + parseCode + '\\n' + tail + '\\n' + tests[i]);
           } catch (e) {
-            console.log(testText[i]);
+            error = true;
+            console.log('testMSG: ' + testText[i]);
             break;
           }
+        }
 
-          if(i == tests.length - 1){
-            console.log('completed');
-          }
-
+        if (!error) {
+          console.log('completed');
         }
       } catch (e) {
         console.log(e);
