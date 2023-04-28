@@ -8,18 +8,18 @@ class NativeLoginView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    ButtonStyle buttonStyle = ElevatedButton.styleFrom(
-      backgroundColor: const Color.fromRGBO(0x3b, 0x3b, 0x4f, 1),
-    );
+    ButtonStyle buttonStyle =
+        ElevatedButton.styleFrom(backgroundColor: Colors.white);
 
     BoxDecoration outerDecoration = BoxDecoration(
       border: Border.all(
-        width: 2,
-        color: Colors.white,
+        width: 3,
+        color: Colors.black,
       ),
+      borderRadius: BorderRadius.circular(0),
     );
 
-    TextStyle textStyle = const TextStyle(fontSize: 20);
+    TextStyle textStyle = const TextStyle(fontSize: 20, color: Colors.black);
 
     return ViewModelBuilder<NativeLoginViewModel>.reactive(
       viewModelBuilder: () => NativeLoginViewModel(),
@@ -45,9 +45,21 @@ class NativeLoginView extends StatelessWidget {
                       child: ElevatedButton(
                         style: buttonStyle,
                         onPressed: () {},
-                        child: Text(
-                          'Continue with Google',
-                          style: textStyle,
+                        child: Row(
+                          children: [
+                            Padding(
+                              padding: const EdgeInsets.all(8.0),
+                              child: Image.asset(
+                                'assets/images/google-logo.png',
+                                height: 25,
+                                width: 25,
+                              ),
+                            ),
+                            Text(
+                              'Continue with Google',
+                              style: textStyle,
+                            ),
+                          ],
                         ),
                       ),
                     ),
@@ -64,9 +76,21 @@ class NativeLoginView extends StatelessWidget {
                       child: ElevatedButton(
                         style: buttonStyle,
                         onPressed: () {},
-                        child: Text(
-                          'Continue with GitHub',
-                          style: textStyle,
+                        child: Row(
+                          children: [
+                            Padding(
+                              padding: const EdgeInsets.all(8.0),
+                              child: Image.asset(
+                                'assets/images/github-logo.png',
+                                height: 25,
+                                width: 25,
+                              ),
+                            ),
+                            Text(
+                              'Continue with GitHub',
+                              style: textStyle,
+                            ),
+                          ],
                         ),
                       ),
                     ),
@@ -83,9 +107,21 @@ class NativeLoginView extends StatelessWidget {
                       child: ElevatedButton(
                         style: buttonStyle,
                         onPressed: () {},
-                        child: Text(
-                          'Continue with Apple',
-                          style: textStyle,
+                        child: Row(
+                          children: [
+                            Padding(
+                              padding: const EdgeInsets.all(8.0),
+                              child: Image.asset(
+                                'assets/images/apple-logo.png',
+                                height: 25,
+                                width: 25,
+                              ),
+                            ),
+                            Text(
+                              'Continue with Apple',
+                              style: textStyle,
+                            ),
+                          ],
                         ),
                       ),
                     ),
