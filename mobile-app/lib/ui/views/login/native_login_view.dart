@@ -30,10 +30,10 @@ class NativeLoginView extends StatelessWidget {
         ),
         drawer: const DrawerWidgetView(),
         body: Container(
+          margin: const EdgeInsets.only(top: 16),
           padding: const EdgeInsets.all(16),
           child: Column(
             children: [
-              buildDivider(),
               Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
