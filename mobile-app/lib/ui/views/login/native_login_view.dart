@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:freecodecamp/ui/views/login/native_login_viewmodel.dart';
+import 'package:freecodecamp/ui/widgets/drawer_widget/drawer_widget_view.dart';
 import 'package:stacked/stacked.dart';
 
 class NativeLoginView extends StatelessWidget {
@@ -23,13 +24,16 @@ class NativeLoginView extends StatelessWidget {
     return ViewModelBuilder<NativeLoginViewModel>.reactive(
       viewModelBuilder: () => NativeLoginViewModel(),
       builder: (context, model, child) => Scaffold(
+        resizeToAvoidBottomInset: false,
         appBar: AppBar(
           title: const Text('LOGIN'),
         ),
+        drawer: const DrawerWidgetView(),
         body: Container(
           padding: const EdgeInsets.all(16),
           child: Column(
             children: [
+              buildDivider(),
               Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
@@ -86,6 +90,66 @@ class NativeLoginView extends StatelessWidget {
                       ),
                     ),
                   ),
+                ],
+              ),
+              buildDivider(),
+              Container(
+                padding: const EdgeInsets.all(16),
+                child: TextFormField(
+                  decoration: const InputDecoration(
+                    hintText: 'email',
+                    border: OutlineInputBorder(
+                      borderSide: BorderSide(width: 2, color: Colors.white),
+                    ),
+                  ),
+                ),
+              ),
+              Row(
+                children: [
+                  Expanded(
+                    child: Container(
+                      margin: const EdgeInsets.all(16),
+                      decoration: outerDecoration,
+                      height: 50,
+                      child: ElevatedButton(
+                        style: buttonStyle,
+                        onPressed: () {},
+                        child: Text(
+                          'Email a sign in code',
+                          style: textStyle,
+                        ),
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+              buildDivider(),
+              Row(
+                children: [
+                  Expanded(
+                    child: Padding(
+                      padding: const EdgeInsets.all(8.0),
+                      child: Text(
+                        'freeCodeCamp is free and your account is private by default. We use your email address to connect you to your account.',
+                        textAlign: TextAlign.center,
+                        style: TextStyle(color: Colors.white.withOpacity(0.87)),
+                      ),
+                    ),
+                  )
+                ],
+              ),
+              Row(
+                children: [
+                  Expanded(
+                    child: Padding(
+                      padding: const EdgeInsets.all(8.0),
+                      child: Text(
+                        'You must be at least 13 years old to create an account on freeCodeCamp.',
+                        textAlign: TextAlign.center,
+                        style: TextStyle(color: Colors.white.withOpacity(0.87)),
+                      ),
+                    ),
+                  )
                 ],
               )
             ],
