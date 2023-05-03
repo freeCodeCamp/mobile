@@ -233,6 +233,7 @@ class TestRunner extends BaseViewModel {
         } catch (e) {
             error = true;
             console.log('testMSG: ' + testText[i]);
+            break;
         } 
       }
       if(!error){
