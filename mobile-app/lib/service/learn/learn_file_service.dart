@@ -210,17 +210,21 @@ class LearnFileService {
     for (int i = 0; i < linkElements.length; i++) {
       if (linkElements[i].attributes['href'] == null) continue;
 
-      linkElements[i].attributes.remove('href');
+      if (linkElements[i].attributes['href'] == 'styles.css') {
+        linkElements[i].attributes.remove('href');
 
-      linkElements[i].attributes['data-href'] = 'styles.css';
+        linkElements[i].attributes['data-href'] = 'styles.css';
+      }
     }
 
     for (int i = 0; i < scripElements.length; i++) {
       if (scripElements[i].attributes['src'] == null) continue;
 
-      scripElements[i].attributes.remove('src');
+      if (scripElements[i].attributes['src'] == 'script.js') {
+        scripElements[i].attributes.remove('src');
 
-      scripElements[i].attributes['data-src'] = 'script.js';
+        scripElements[i].attributes['data-src'] = 'script.js';
+      }
     }
 
     return document.outerHtml;
