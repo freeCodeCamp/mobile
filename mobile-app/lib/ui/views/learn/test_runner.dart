@@ -126,6 +126,10 @@ class TestRunner extends BaseViewModel {
       firstHTMlfile,
     );
 
+    firstHTMlfile = fileService.changeActiveFileLinks(
+      firstHTMlfile,
+    );
+
     String parsedWithStyleTags = await fileService.parseCssDocmentsAsStyleTags(
       challenge,
       firstHTMlfile,
@@ -146,6 +150,10 @@ class TestRunner extends BaseViewModel {
     var content = testing
         ? challenge.files[0].contents
         : await fileService.getFirstFileFromCache(challenge, Ext.js);
+
+    content = fileService.changeActiveFileLinks(
+      content,
+    );
 
     return content
         .replaceAll('\\', '\\\\')

@@ -200,4 +200,29 @@ class LearnFileService {
 
     return file;
   }
+
+  String changeActiveFileLinks(String file) {
+    dom.Document document = parse(file);
+
+    List<dom.Element> linkElements = document.querySelectorAll('LINK');
+    List<dom.Element> scripElements = document.querySelectorAll('SCRIPT');
+
+    for (int i = 0; i < linkElements.length; i++) {
+      if (linkElements[i].attributes['href'] == null) continue;
+
+      linkElements[i].attributes.remove('href');
+
+      linkElements[i].attributes['data-href'] = 'styles.css';
+    }
+
+    for (int i = 0; i < scripElements.length; i++) {
+      if (scripElements[i].attributes['src'] == null) continue;
+
+      scripElements[i].attributes.remove('src');
+
+      scripElements[i].attributes['data-src'] = 'script.js';
+    }
+
+    return document.outerHtml;
+  }
 }
