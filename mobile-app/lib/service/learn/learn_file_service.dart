@@ -189,8 +189,10 @@ class LearnFileService {
   }
 
   String removeExcessiveScriptsInHTMLdocument(String file) {
-    dom.Document document = parse(file);
+    dom.DocumentFragment document = parseFragment(file);
     List<dom.Element> elements = document.querySelectorAll('SCRIPT');
+
+    if (elements.isEmpty) return file;
 
     for (int i = 0; i < elements.length; i++) {
       elements[i].remove();
@@ -206,6 +208,8 @@ class LearnFileService {
 
     List<dom.Element> linkElements = document.querySelectorAll('LINK');
     List<dom.Element> scripElements = document.querySelectorAll('SCRIPT');
+
+    if (scripElements.isEmpty && linkElements.isEmpty) return file;
 
     for (int i = 0; i < linkElements.length; i++) {
       String? hrefValue = linkElements[i].attributes['href'];
