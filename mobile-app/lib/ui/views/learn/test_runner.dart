@@ -126,16 +126,15 @@ class TestRunner extends BaseViewModel {
       firstHTMlfile,
     );
 
-    firstHTMlfile = fileService.changeActiveFileLinks(
-      firstHTMlfile,
-    );
-
     String parsedWithStyleTags = await fileService.parseCssDocmentsAsStyleTags(
       challenge,
       firstHTMlfile,
       testing: testing,
     );
 
+    firstHTMlfile = fileService.changeActiveFileLinks(
+      firstHTMlfile,
+    );
     return parsedWithStyleTags;
   }
 
