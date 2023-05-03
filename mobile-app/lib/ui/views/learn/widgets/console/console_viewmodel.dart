@@ -1,73 +1,26 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_inappwebview/flutter_inappwebview.dart';
-import 'package:freecodecamp/ui/views/learn/widgets/console/console_model.dart';
-import 'package:freecodecamp/ui/views/news/html_handler/html_handler.dart';
 import 'package:stacked/stacked.dart';
 
-class JavaScriptConsole extends StatelessWidget {
-  const JavaScriptConsole({Key? key, required this.messages}) : super(key: key);
+class JavaScriptConsoleViewModel extends BaseViewModel {
+  ScrollController controller = ScrollController();
 
-  final List<ConsoleMessage> messages;
-
-  static String defaultMessage = '''
-  /**
-  * Your test output will go here
-  */
-  ''';
-
-  @override
-  Widget build(BuildContext context) {
-    return ViewModelBuilder<JavaScriptConsoleViewModel>.reactive(
-      viewModelBuilder: () => JavaScriptConsoleViewModel(),
-      builder: (context, model, child) {
-        return Expanded(
-          child: Row(
-            children: [
-              Expanded(
-                child: Scrollbar(
-                  child: ListView.builder(
-                    itemCount: messages.isEmpty ? 1 : messages.length,
-                    itemBuilder: (context, index) {
-                      List<Widget> htmlWidgets = HtmlHandler.htmlHandler(
-                        messages.isEmpty
-                            ? defaultMessage
-                            : messages[index].message,
-                        context,
-                      );
-
-                      return consoleMessage(htmlWidgets, model, context);
-                    },
-                  ),
-                ),
-              ),
-            ],
-          ),
-        );
-      },
-    );
+  Color getConsoleTextColor(ConsoleMessageLevel messageLevel) {
+    switch (messageLevel.toString()) {
+      case 'ConsoleMessageLevel.DEBUG':
+        return Colors.white.withOpacity(0.87);
+      case 'ConsoleMessageLevel.ERROR':
+        return Colors.red.withOpacity(0.87);
+      case 'ConsoleMessageLevel.LOG':
+        return Colors.white.withOpacity(0.87);
+      case 'ConsoleMessageLevel.TIP':
+        return Colors.blue.withOpacity(0.87);
+      case 'ConsoleMessageLevel.WARNING':
+        return Colors.yellow.withOpacity(0.87);
+      default:
+        return Colors.white.withOpacity(0.87);
+    }
   }
 
-  Widget consoleMessage(
-    List<Widget> htmlWidgets,
-    JavaScriptConsoleViewModel model,
-    BuildContext context,
-  ) {
-    return messages.isEmpty
-        ? Text(
-            defaultMessage,
-            style: TextStyle(
-              color: model.getConsoleTextColor(
-                ConsoleMessageLevel.LOG,
-              ),
-            ),
-          )
-        : Row(
-            children: [
-              for (int i = 0; i < htmlWidgets.length; i++)
-                Expanded(
-                  child: htmlWidgets[i],
-                )
-            ],
-          );
-  }
+  void scrollToBottom() {}
 }
