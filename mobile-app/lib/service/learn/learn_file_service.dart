@@ -189,7 +189,7 @@ class LearnFileService {
   }
 
   String removeExcessiveScriptsInHTMLdocument(String file) {
-    dom.DocumentFragment document = parseFragment(file);
+    dom.Document document = parse(file);
     List<dom.Element> elements = document.querySelectorAll('SCRIPT');
 
     if (elements.isEmpty) return file;
