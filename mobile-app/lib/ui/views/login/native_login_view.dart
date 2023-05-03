@@ -8,8 +8,8 @@ class NativeLoginView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    ButtonStyle buttonStyle =
-        ElevatedButton.styleFrom(backgroundColor: Colors.white);
+    ButtonStyle buttonStyle = ElevatedButton.styleFrom(
+        backgroundColor: Colors.white, disabledBackgroundColor: Colors.grey);
 
     BoxDecoration outerDecoration = BoxDecoration(
       border: Border.all(
@@ -23,6 +23,7 @@ class NativeLoginView extends StatelessWidget {
 
     return ViewModelBuilder<NativeLoginViewModel>.reactive(
       viewModelBuilder: () => NativeLoginViewModel(),
+      onViewModelReady: (viewModel) => viewModel.init(),
       builder: (context, model, child) => Scaffold(
         resizeToAvoidBottomInset: false,
         appBar: AppBar(
@@ -132,6 +133,8 @@ class NativeLoginView extends StatelessWidget {
               Container(
                 padding: const EdgeInsets.all(16),
                 child: TextFormField(
+                  controller: model.controller,
+                  keyboardType: TextInputType.emailAddress,
                   decoration: const InputDecoration(
                     hintText: 'email',
                     border: OutlineInputBorder(
@@ -149,7 +152,7 @@ class NativeLoginView extends StatelessWidget {
                       height: 50,
                       child: ElevatedButton(
                         style: buttonStyle,
-                        onPressed: () {},
+                        onPressed: model.emailFieldIsValid ? () {} : null,
                         child: Text(
                           'Email a sign in code',
                           style: textStyle,
