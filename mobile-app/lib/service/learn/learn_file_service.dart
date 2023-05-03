@@ -208,9 +208,11 @@ class LearnFileService {
     List<dom.Element> scripElements = document.querySelectorAll('SCRIPT');
 
     for (int i = 0; i < linkElements.length; i++) {
-      if (linkElements[i].attributes['href'] == null) continue;
+      String? hrefValue = linkElements[i].attributes['href'];
 
-      if (linkElements[i].attributes['href'] == 'styles.css') {
+      if (hrefValue == null) continue;
+
+      if (hrefValue == 'styles.css' || hrefValue == './styles.css') {
         linkElements[i].attributes.remove('href');
 
         linkElements[i].attributes['data-href'] = 'styles.css';
@@ -218,15 +220,16 @@ class LearnFileService {
     }
 
     for (int i = 0; i < scripElements.length; i++) {
-      if (scripElements[i].attributes['src'] == null) continue;
+      String? srcValue = scripElements[i].attributes['src'];
 
-      if (scripElements[i].attributes['src'] == 'script.js') {
+      if (srcValue == null) continue;
+
+      if (srcValue == 'script.js' || srcValue == './script.js') {
         scripElements[i].attributes.remove('src');
 
         scripElements[i].attributes['data-src'] = 'script.js';
       }
     }
-
     return document.outerHtml;
   }
 }
