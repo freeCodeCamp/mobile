@@ -1,5 +1,4 @@
 import 'dart:convert';
-import 'dart:developer';
 import 'package:flutter_inappwebview/flutter_inappwebview.dart';
 import 'package:freecodecamp/app/app.locator.dart';
 import 'package:freecodecamp/enums/ext_type.dart';
@@ -89,7 +88,6 @@ class TestRunner extends BaseViewModel {
         encoding: Encoding.getByName('utf-8').toString(),
       );
     }
-    log(document.outerHtml);
     return document.outerHtml;
   }
 
@@ -133,9 +131,9 @@ class TestRunner extends BaseViewModel {
     );
 
     firstHTMlfile = fileService.changeActiveFileLinks(
-      firstHTMlfile,
+      parsedWithStyleTags,
     );
-    return parsedWithStyleTags;
+    return firstHTMlfile;
   }
 
   // This function parses the JavaScript code so that it has a head and tail (code)
