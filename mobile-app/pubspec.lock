@@ -588,13 +588,13 @@ packages:
     source: hosted
     version: "2.2.1"
   flutter_inappwebview:
-    dependency: transitive
+    dependency: "direct main"
     description:
       name: flutter_inappwebview
-      sha256: "0e163ac82b18b8eff2d9cf384087d802b1938f63a12f167f31c2a0ebc2bddad5"
+      sha256: f73505c792cf083d5566e1a94002311be497d984b5607f25be36d685cf6361cf
       url: "https://pub.dev"
     source: hosted
-    version: "5.7.1"
+    version: "5.7.2+3"
   flutter_launcher_icons:
     dependency: "direct dev"
     description:
@@ -1821,7 +1821,7 @@ packages:
     source: hosted
     version: "3.0.1"
   webview_flutter:
-    dependency: "direct main"
+    dependency: transitive
     description:
       name: webview_flutter
       sha256: "6886b3ceef1541109df5001054aade5ee3c36b5780302e41701c78357233721c"

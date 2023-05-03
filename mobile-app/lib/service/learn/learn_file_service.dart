@@ -101,7 +101,7 @@ class LearnFileService {
           '';
 
       if (cache.isNotEmpty) {
-        return cache;
+        return removeExcessiveScriptsInHTMLdocument(cache);
       } else {
         return fileWithEditableRegion[0].contents;
       }
@@ -186,5 +186,54 @@ class LearnFileService {
     }
 
     return content;
+  }
+
+  String removeExcessiveScriptsInHTMLdocument(String file) {
+    dom.Document document = parse(file);
+    List<dom.Element> elements = document.querySelectorAll('SCRIPT');
+
+    if (elements.isEmpty) return file;
+
+    for (int i = 0; i < elements.length; i++) {
+      elements[i].remove();
+    }
+
+    file = document.outerHtml.toString();
+
+    return file;
+  }
+
+  String changeActiveFileLinks(String file) {
+    dom.Document document = parse(file);
+
+    List<dom.Element> linkElements = document.querySelectorAll('LINK');
+    List<dom.Element> scripElements = document.querySelectorAll('SCRIPT');
+
+    if (scripElements.isEmpty && linkElements.isEmpty) return file;
+
+    for (int i = 0; i < linkElements.length; i++) {
+      String? hrefValue = linkElements[i].attributes['href'];
+
+      if (hrefValue == null) continue;
+
+      if (hrefValue == 'styles.css' || hrefValue == './styles.css') {
+        linkElements[i].attributes.remove('href');
+
+        linkElements[i].attributes['data-href'] = 'styles.css';
+      }
+    }
+
+    for (int i = 0; i < scripElements.length; i++) {
+      String? srcValue = scripElements[i].attributes['src'];
+
+      if (srcValue == null) continue;
+
+      if (srcValue == 'script.js' || srcValue == './script.js') {
+        scripElements[i].attributes.remove('src');
+
+        scripElements[i].attributes['data-src'] = 'script.js';
+      }
+    }
+    return document.outerHtml;
   }
 }

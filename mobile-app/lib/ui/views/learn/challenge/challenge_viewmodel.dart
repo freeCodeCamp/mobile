@@ -1,10 +1,10 @@
 import 'dart:convert';
 import 'package:flutter/material.dart';
+import 'package:flutter_inappwebview/flutter_inappwebview.dart';
 import 'package:phone_ide/phone_ide.dart';
 
 import 'package:freecodecamp/app/app.locator.dart';
 import 'package:freecodecamp/app/app.router.dart';
-import 'package:freecodecamp/enums/challenge_test_state_type.dart';
 import 'package:freecodecamp/enums/dialog_type.dart';
 import 'package:freecodecamp/enums/ext_type.dart';
 import 'package:freecodecamp/enums/panel_type.dart';
@@ -24,7 +24,6 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:stacked/stacked.dart';
 import 'package:stacked_services/stacked_services.dart';
 import 'package:url_launcher/url_launcher_string.dart';
-import 'package:webview_flutter/webview_flutter.dart';
 
 class ChallengeViewModel extends BaseViewModel {
   String? _editorText;
@@ -35,6 +34,9 @@ class ChallengeViewModel extends BaseViewModel {
 
   bool _showPreview = false;
   bool get showPreview => _showPreview;
+
+  bool _showProjectPreview = false;
+  bool get showProjectPreview => _showProjectPreview;
 
   bool _showConsole = false;
   bool get showConsole => _showConsole;
@@ -60,11 +62,14 @@ class ChallengeViewModel extends BaseViewModel {
   PanelType _panelType = PanelType.instruction;
   PanelType get panelType => _panelType;
 
-  WebViewController? _webviewController;
-  WebViewController? get webviewController => _webviewController;
+  InAppWebViewController? _webviewController;
+  InAppWebViewController? get webviewController => _webviewController;
 
-  WebViewController? _testController;
-  WebViewController? get testController => _testController;
+  InAppWebViewController? _testController;
+  InAppWebViewController? get testController => _testController;
+
+  List<ConsoleMessage> _consoleMessages = [];
+  List<ConsoleMessage> get consoleMessages => _consoleMessages;
 
   Syntax _currFileType = Syntax.HTML;
   Syntax get currFileType => _currFileType;
@@ -101,7 +106,7 @@ class ChallengeViewModel extends BaseViewModel {
     notifyListeners();
   }
 
-  set setTestController(WebViewController controller) {
+  set setTestController(InAppWebViewController controller) {
     _testController = controller;
     notifyListeners();
   }
@@ -116,7 +121,7 @@ class ChallengeViewModel extends BaseViewModel {
     notifyListeners();
   }
 
-  set setWebviewController(WebViewController value) {
+  set setWebviewController(InAppWebViewController value) {
     _webviewController = value;
     notifyListeners();
   }
@@ -126,13 +131,18 @@ class ChallengeViewModel extends BaseViewModel {
     notifyListeners();
   }
 
-  set setHasTypedInEditor(bool value) {
-    _hasTypedInEditor = true;
+  set setShowProjectPreview(bool value) {
+    _showProjectPreview = value;
     notifyListeners();
   }
 
   set setShowConsole(bool value) {
     _showConsole = value;
+    notifyListeners();
+  }
+
+  set setHasTypedInEditor(bool value) {
+    _hasTypedInEditor = true;
     notifyListeners();
   }
 
@@ -178,6 +188,11 @@ class ChallengeViewModel extends BaseViewModel {
 
   set setMounted(bool value) {
     _mounted = value;
+    notifyListeners();
+  }
+
+  set setConsoleMessages(List<ConsoleMessage> messages) {
+    _consoleMessages = messages;
     notifyListeners();
   }
 
@@ -243,17 +258,6 @@ class ChallengeViewModel extends BaseViewModel {
     }
   }
 
-  // When the content in the editor is changed, save it to the cache. This prevents
-  // the user from losing their work when switching between panels e.g, the preview.
-  // The cache is disposed when the user switches to a new challenge.
-
-  // show a message that the console is not yet available
-  void consoleSnackbar() {
-    snackbar.showSnackbar(
-      title: 'Not yet available',
-      message: '',
-    );
-  }
   // This prevents the user from requesting the challenge more than once
   // when swichting between preview and the challenge.
 
@@ -332,17 +336,23 @@ class ChallengeViewModel extends BaseViewModel {
     return document.outerHtml;
   }
 
-  // The hint text is the same as the test text. This is used to display the hint.
-  // if the length of the hint is greater than 0, then the hint is displayed. If
-  // the length of the hint is 0, then the challenge is completed.
+  Future providePreview(Challenge challenge) async {
+    String cacheString = await fileService.getFirstFileFromCache(
+      challenge,
+      Ext.html,
+    );
 
-  ChallengeTest? returnFirstFailedTest(List<ChallengeTest> incTest) {
-    for (ChallengeTest test in incTest) {
-      if (test.testState == ChallengeTestState.failed) {
-        return test;
-      }
+    Future document = parsePreviewDocument(cacheString);
+
+    return document;
+  }
+
+  String parseUsersConsoleMessages(String string) {
+    if (!string.startsWith('testMSG')) {
+      return '<p>$string</p>';
     }
-    return null;
+
+    return string;
   }
 
   void refresh() {

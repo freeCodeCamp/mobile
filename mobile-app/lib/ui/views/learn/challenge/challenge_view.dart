@@ -1,10 +1,10 @@
-import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
+import 'package:flutter_inappwebview/flutter_inappwebview.dart';
+import 'package:freecodecamp/ui/views/learn/widgets/console/console_view.dart';
 import 'package:phone_ide/phone_ide.dart';
 
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
-import 'package:freecodecamp/enums/ext_type.dart';
 import 'package:freecodecamp/enums/panel_type.dart';
 
 import 'package:freecodecamp/models/learn/challenge_model.dart';
@@ -12,7 +12,6 @@ import 'package:freecodecamp/models/learn/curriculum_model.dart';
 import 'package:freecodecamp/ui/views/learn/challenge/challenge_viewmodel.dart';
 
 import 'package:freecodecamp/ui/views/learn/widgets/dynamic_panel/panels/dynamic_panel.dart';
-import 'package:webview_flutter/webview_flutter.dart';
 import 'package:stacked/stacked.dart';
 
 class ChallengeView extends StatelessWidget {
@@ -48,6 +47,9 @@ class ChallengeView extends StatelessWidget {
             ChallengeFile currFile = model.currentFile(challenge);
 
             bool keyboard = MediaQuery.of(context).viewInsets.bottom != 0;
+
+            bool onlyJs =
+                challenge.files.every((file) => file.ext.name == 'js');
 
             bool editableRegion = currFile.editableRegionBoundaries.isNotEmpty;
             EditorOptions options = EditorOptions(
@@ -112,40 +114,39 @@ class ChallengeView extends StatelessWidget {
               child: Scaffold(
                 appBar: !model.hideAppBar
                     ? AppBar(
-                        leading: IconButton(
-                          icon: const Icon(Icons.arrow_back_ios),
-                          onPressed: () async {
-                            model.updateProgressOnPop(context);
-                          },
-                        ),
-                        title: challenge.files.length == 1
+                        automaticallyImplyLeading: !model.showPreview,
+                        title: challenge.files.length == 1 && !model.showPreview
                             ? const Text('Editor')
                             : Row(
                                 children: [
-                                  if (model.showPreview)
+                                  if (model.showPreview && !onlyJs)
                                     Expanded(
                                       child: Container(
-                                        decoration: model.showPreview
+                                        decoration: model.showProjectPreview
                                             ? decoration
                                             : null,
-                                        child: Container(
-                                          decoration: model.showConsole
-                                              ? decoration
-                                              : null,
-                                          child: ElevatedButton(
-                                            onPressed: () {},
-                                            child: const Text('Preview'),
-                                          ),
+                                        child: ElevatedButton(
+                                          onPressed: () {
+                                            model.setShowConsole = false;
+                                            model.setShowProjectPreview = true;
+                                          },
+                                          child: const Text('PREVIEW'),
                                         ),
                                       ),
                                     ),
                                   if (model.showPreview)
                                     Expanded(
-                                      child: ElevatedButton(
-                                        child: const Text('Console'),
-                                        onPressed: () {
-                                          model.consoleSnackbar();
-                                        },
+                                      child: Container(
+                                        decoration: model.showConsole
+                                            ? decoration
+                                            : null,
+                                        child: ElevatedButton(
+                                          child: const Text('CONSOLE'),
+                                          onPressed: () {
+                                            model.setShowConsole = true;
+                                            model.setShowProjectPreview = false;
+                                          },
+                                        ),
                                       ),
                                     ),
                                   if (!model.showPreview &&
@@ -198,10 +199,14 @@ class ChallengeView extends StatelessWidget {
                               challengesCompleted: challengesCompleted,
                               editor: editor,
                             ),
-                          ProjectPreview(
-                            challenge: challenge,
-                            model: model,
-                          ),
+                          model.showProjectPreview && !onlyJs
+                              ? ProjectPreview(
+                                  challenge: challenge,
+                                  model: model,
+                                )
+                              : JavaScriptConsole(
+                                  messages: model.consoleMessages,
+                                )
                         ],
                       ),
               ),
@@ -209,13 +214,14 @@ class ChallengeView extends StatelessWidget {
           }
 
           return Scaffold(
-              appBar: AppBar(
-                title: const Text('Loading'),
-                automaticallyImplyLeading: false,
-              ),
-              body: const Center(
-                child: CircularProgressIndicator(),
-              ));
+            appBar: AppBar(
+              title: const Text('Loading'),
+              automaticallyImplyLeading: false,
+            ),
+            body: const Center(
+              child: CircularProgressIndicator(),
+            ),
+          );
         },
       ),
     );
@@ -292,29 +298,41 @@ class ChallengeView extends StatelessWidget {
       child: Row(
         children: [
           SizedBox(
-            height: 1,
             width: 1,
-            child: WebView(
-              onWebViewCreated: (WebViewController webcontroller) {
-                model.setTestController = webcontroller;
+            height: 1,
+            child: InAppWebView(
+              onWebViewCreated: (controller) {
+                model.setTestController = controller;
               },
-              javascriptMode: JavascriptMode.unrestricted,
-              javascriptChannels: {
-                JavascriptChannel(
-                  name: 'Print',
-                  onMessageReceived: (JavascriptMessage message) {
-                    if (message.message == 'completed') {
-                      model.setPanelType = PanelType.pass;
-                      model.setCompletedChallenge = true;
-                      model.setShowPanel = true;
-                    } else {
-                      model.setPanelType = PanelType.hint;
-                      model.setHint = message.message;
-                      model.setShowPanel = true;
-                    }
-                    model.setIsRunningTests = false;
-                  },
-                )
+              onConsoleMessage: (controller, message) {
+                ConsoleMessage newMessage = ConsoleMessage(
+                  message: model.parseUsersConsoleMessages(message.message),
+                  messageLevel: ConsoleMessageLevel.LOG,
+                );
+
+                model.setConsoleMessages = [
+                  ...model.consoleMessages,
+                  newMessage
+                ];
+
+                if (message.message == 'completed') {
+                  model.setPanelType = PanelType.pass;
+                  model.setCompletedChallenge = true;
+                  model.setShowPanel = true;
+                } else {
+                  model.setPanelType = PanelType.hint;
+                  model.setHint = model.consoleMessages
+                      .firstWhere(
+                        (e) => e.message.startsWith('testMSG: '),
+                        orElse: () => ConsoleMessage(
+                          message: 'something went wrong?',
+                        ),
+                      )
+                      .message
+                      .split('testMSG: ')[1];
+                  model.setShowPanel = true;
+                }
+                model.setIsRunningTests = false;
               },
             ),
           ),
@@ -368,10 +386,6 @@ class ChallengeView extends StatelessWidget {
                     : Colors.white,
               ),
               onPressed: () async {
-                if (challenge.challengeType == 1) {
-                  model.consoleSnackbar();
-                  return;
-                }
                 ChallengeFile currFile = model.currentFile(challenge);
 
                 String currText = await model.fileService.getExactFileFromCache(
@@ -400,6 +414,10 @@ class ChallengeView extends StatelessWidget {
                     currText == '' ? currFile.contents : currText;
                 model.setShowPreview = !model.showPreview;
 
+                if (!model.showProjectPreview && !model.showConsole) {
+                  model.setShowProjectPreview = true;
+                }
+
                 model.refresh();
               },
               splashColor: Colors.transparent,
@@ -425,6 +443,7 @@ class ChallengeView extends StatelessWidget {
                             : const FaIcon(FontAwesomeIcons.check),
                     onPressed: model.hasTypedInEditor
                         ? () async {
+                            model.setConsoleMessages = [];
                             if (model.showPanel &&
                                 model.panelType == PanelType.pass) {
                               model.goToNextChallenge(
@@ -437,7 +456,7 @@ class ChallengeView extends StatelessWidget {
                             model.setIsRunningTests = true;
                             await model.runner.setWebViewContent(
                               challenge,
-                              webviewController: model.testController!,
+                              controller: model.testController!,
                             );
                             FocusManager.instance.primaryFocus?.unfocus();
                           }
@@ -468,22 +487,31 @@ class ProjectPreview extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Expanded(
-      child: WebView(
-        userAgent: 'random',
-        javascriptMode: JavascriptMode.unrestricted,
-        onWebViewCreated: (WebViewController webcontroller) async {
-          model.setWebviewController = webcontroller;
-          webcontroller.loadUrl(
-            Uri.dataFromString(
-              await model.parsePreviewDocument(
-                await model.fileService.getFirstFileFromCache(
-                  challenge,
-                  Ext.html,
+      child: FutureBuilder(
+        future: model.providePreview(challenge),
+        builder: (context, snapshot) {
+          if (snapshot.hasData) {
+            if (snapshot.data is String) {
+              return InAppWebView(
+                initialData: InAppWebViewInitialData(
+                  data: snapshot.data as String,
+                  mimeType: 'text/html',
                 ),
-              ),
-              mimeType: 'text/html',
-              encoding: utf8,
-            ).toString(),
+                onWebViewCreated: (controller) {
+                  model.setWebviewController = controller;
+                },
+              );
+            }
+          }
+
+          if (snapshot.hasError) {
+            const Center(
+              child: Text('something went wrong!'),
+            );
+          }
+
+          return const Center(
+            child: CircularProgressIndicator(),
           );
         },
       ),

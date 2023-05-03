@@ -1,12 +1,12 @@
 import 'dart:convert';
+import 'package:flutter_inappwebview/flutter_inappwebview.dart';
 import 'package:freecodecamp/app/app.locator.dart';
 import 'package:freecodecamp/enums/ext_type.dart';
 import 'package:freecodecamp/models/learn/challenge_model.dart';
 import 'package:freecodecamp/service/learn/learn_file_service.dart';
 import 'package:html/parser.dart';
 import 'package:stacked/stacked.dart';
-import 'package:webview_flutter/webview_flutter.dart';
-import 'package:html/dom.dart' as dom;
+import 'package:html/dom.dart';
 
 class TestRunner extends BaseViewModel {
   String _testDocument = '';
@@ -25,10 +25,10 @@ class TestRunner extends BaseViewModel {
 
   Future<String> setWebViewContent(
     Challenge challenge, {
-    WebViewController? webviewController,
+    InAppWebViewController? controller,
     bool testing = false,
   }) async {
-    dom.Document document = dom.Document();
+    Document document = Document();
     document = parse('');
 
     List<String> imports = [
@@ -39,10 +39,9 @@ class TestRunner extends BaseViewModel {
     ];
 
     for (String import in imports) {
-      dom.Document importToNode = parse(import);
+      Document importToNode = parse(import);
 
-      dom.Node node =
-          importToNode.getElementsByTagName('HEAD')[0].children.first;
+      Node node = importToNode.getElementsByTagName('HEAD')[0].children.first;
 
       document.getElementsByTagName('HEAD')[0].append(node);
     }
@@ -53,26 +52,42 @@ class TestRunner extends BaseViewModel {
       testing: testing,
     );
 
-    if (script == null) {
-      throwError(challenge, 'an empty script was returned');
-    }
+    Document scriptToNode = parse(script);
 
-    dom.Document scriptToNode = parse(script);
-
-    dom.Node bodyNode =
+    Node bodyNode =
         scriptToNode.getElementsByTagName('BODY').first.children.isNotEmpty
             ? scriptToNode.getElementsByTagName('BODY').first.children.first
             : scriptToNode.getElementsByTagName('HEAD').first.children.first;
 
     document.body!.append(bodyNode);
-    if (!testing) {
-      webviewController!.loadUrl(Uri.dataFromString(
-        document.outerHtml,
-        mimeType: 'text/html',
-        encoding: Encoding.getByName('utf-8'),
-      ).toString());
+
+    // Get user's script elements.
+
+    if (challenge.files[0].ext == Ext.html) {
+      String htmlFile = await fileService.getFirstFileFromCache(
+        challenge,
+        Ext.html,
+        testing: testing,
+      );
+
+      Document parseCacheDocument = parse(htmlFile);
+
+      List<Element> scriptElements = parseCacheDocument.querySelectorAll(
+        'SCRIPT',
+      );
+
+      for (int i = 0; i < scriptElements.length; i++) {
+        document.body!.append(scriptElements[i]);
+      }
     }
 
+    if (!testing) {
+      controller!.loadData(
+        data: document.outerHtml,
+        mimeType: 'text/html',
+        encoding: Encoding.getByName('utf-8').toString(),
+      );
+    }
     return document.outerHtml;
   }
 
@@ -105,13 +120,20 @@ class TestRunner extends BaseViewModel {
       testing: testing,
     );
 
+    firstHTMlfile = fileService.removeExcessiveScriptsInHTMLdocument(
+      firstHTMlfile,
+    );
+
     String parsedWithStyleTags = await fileService.parseCssDocmentsAsStyleTags(
       challenge,
       firstHTMlfile,
       testing: testing,
     );
 
-    return parsedWithStyleTags;
+    firstHTMlfile = fileService.changeActiveFileLinks(
+      parsedWithStyleTags,
+    );
+    return firstHTMlfile;
   }
 
   // This function parses the JavaScript code so that it has a head and tail (code)
@@ -126,20 +148,14 @@ class TestRunner extends BaseViewModel {
         ? challenge.files[0].contents
         : await fileService.getFirstFileFromCache(challenge, Ext.js);
 
+    content = fileService.changeActiveFileLinks(
+      content,
+    );
+
     return content
         .replaceAll('\\', '\\\\')
         .replaceAll('`', '\\`')
         .replaceAll('\$', r'\$');
-  }
-
-  // This is a debug function, it can be used to display a custom message in the test runner.
-
-  void throwError(Challenge challenge, String message) {
-    throw Exception(
-      '''$message, debug info: ${challenge.superBlock}, ${challenge.block}, id: ${challenge.id},
-         slug: ${challenge.slug.isEmpty ? 'empty' : challenge.slug},
-         extension: ${challenge.files.map((e) => e.ext.name).toString()}''',
-    );
   }
 
   // This returns the script that needs to be run in the DOM. If the test in the document fail it will
@@ -151,10 +167,6 @@ class TestRunner extends BaseViewModel {
     Challenge challenge, {
     bool testing = false,
   }) async {
-    String logFunction = testing ? 'console.log' : 'Print.postMessage';
-
-    // List<ChallengeFile>? indexFile =
-    //     challenge.files.where((element) => element.name == 'index').toList();
     List<ChallengeFile>? scriptFile =
         challenge.files.where((element) => element.name == 'script').toList();
 
@@ -172,15 +184,10 @@ class TestRunner extends BaseViewModel {
         ext,
         testing: testing,
       );
-    } else {
-      throwError(
-        challenge,
-        'this extension is not supported',
-      );
     }
 
     if (ext == Ext.html || ext == Ext.css) {
-      String? tail = challenge.files[0].tail ?? '';
+      String tail = challenge.files[0].tail ?? '';
 
       return '''<script type="module">
     import * as __helpers from "https://unpkg.com/@freecodecamp/curriculum-helpers@1.1.0/dist/index.js";
@@ -211,26 +218,24 @@ class TestRunner extends BaseViewModel {
     doc.__runTest = async function runtTests(testString) {
       let error = false;
       for(let i = 0; i < testString.length; i++){
-
         try {
-        const testPromise = new Promise((resolve, reject) => {
-          try {
-            const test = eval(${tail.isNotEmpty ? 'tail + "\\n" +' : ""} testString[i]);
-            resolve(test);
-          } catch (e) {
-            reject(e);
-          }
-        });
-
-        const test = await testPromise;
-      } catch (e) {
-        $logFunction(testText[i]);
-        break;
-      } finally {
-        if(!error && testString.length -1 == i){
-          $logFunction('completed');
-        }
+            const testPromise = new Promise((resolve, reject) => {
+              try {
+                const test = eval(${tail.isNotEmpty ? 'tail + "\\n" +' : ""} testString[i]);
+                resolve(test);
+              } catch (e) {
+                reject(e);
+              }
+            });
+            await testPromise;
+        } catch (e) {
+            error = true;
+            console.log('testMSG: ' + testText[i]);
+            break;
+        } 
       }
+      if(!error){
+        console.log('completed');
       }
     };
 
@@ -263,23 +268,34 @@ class TestRunner extends BaseViewModel {
         }
       }
 
+      function removeConsoleLogs(inputString) {
+        const regex = /console\\.log\\s*\\(\\s*.*?\\s*\\)\\s*;?/gs;
+        const outputString = inputString.replaceAll(regex, '');
+        return outputString;
+      }
+
       try {
+        let error = false;
         for (let i = 0; i < tests.length; i++) {
           try {
-            await eval(head + '\\n' + code + '\\n' + tail + '\\n' + tests[i]);
-          } catch (e) {
-            $logFunction(testText[i]);
 
+            const lastIndex = i != tests.length - 1;
+
+            const parseCode = lastIndex ? code : removeConsoleLogs(code);
+
+            await eval(head + '\\n' + parseCode + '\\n' + tail + '\\n' + tests[i]);
+          } catch (e) {
+            error = true;
+            console.log('testMSG: ' + testText[i]);
             break;
           }
+        }
 
-          if(i == tests.length - 1){
-            $logFunction('completed');
-          }
-
+        if (!error) {
+          console.log('completed');
         }
       } catch (e) {
-        $logFunction(e);
+        console.log(e);
       }''';
     }
     return null;
