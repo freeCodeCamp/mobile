@@ -47,6 +47,7 @@ class NativeLoginView extends StatelessWidget {
                         style: buttonStyle,
                         onPressed: () {},
                         child: Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
                           children: [
                             Padding(
                               padding: const EdgeInsets.all(8.0),
@@ -78,6 +79,7 @@ class NativeLoginView extends StatelessWidget {
                         style: buttonStyle,
                         onPressed: () {},
                         child: Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
                           children: [
                             Padding(
                               padding: const EdgeInsets.all(8.0),
@@ -109,6 +111,7 @@ class NativeLoginView extends StatelessWidget {
                         style: buttonStyle,
                         onPressed: () {},
                         child: Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
                           children: [
                             Padding(
                               padding: const EdgeInsets.all(8.0),
