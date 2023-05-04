@@ -1,8 +1,12 @@
 import 'package:flutter/cupertino.dart';
+import 'package:freecodecamp/app/app.locator.dart';
+import 'package:freecodecamp/service/authentication/authentication_service.dart';
 import 'package:stacked/stacked.dart';
 
 class NativeLoginViewModel extends BaseViewModel {
   TextEditingController controller = TextEditingController();
+
+  final AuthenticationService auth = locator<AuthenticationService>();
 
   bool _emailFieldIsValid = false;
   bool get emailFieldIsValid => _emailFieldIsValid;

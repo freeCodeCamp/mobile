@@ -45,7 +45,9 @@ class NativeLoginView extends StatelessWidget {
                       decoration: outerDecoration,
                       child: ElevatedButton(
                         style: buttonStyle,
-                        onPressed: () {},
+                        onPressed: () {
+                          model.auth.login(context, 'google-oauth2');
+                        },
                         child: Row(
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: [
@@ -77,7 +79,9 @@ class NativeLoginView extends StatelessWidget {
                       decoration: outerDecoration,
                       child: ElevatedButton(
                         style: buttonStyle,
-                        onPressed: () {},
+                        onPressed: () {
+                          model.auth.login(context, 'github');
+                        },
                         child: Row(
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: [
@@ -109,7 +113,9 @@ class NativeLoginView extends StatelessWidget {
                       height: 50,
                       child: ElevatedButton(
                         style: buttonStyle,
-                        onPressed: () {},
+                        onPressed: () {
+                          model.auth.login(context, 'apple');
+                        },
                         child: Row(
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: [

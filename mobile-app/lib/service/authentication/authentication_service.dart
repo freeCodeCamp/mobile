@@ -128,7 +128,7 @@ class AuthenticationService {
     return FccUserModel.fromJson(data);
   }
 
-  Future<void> login(BuildContext context) async {
+  Future<void> login(BuildContext context, String connectionType) async {
     late final Credentials creds;
     Response? res;
 
@@ -156,7 +156,9 @@ class AuthenticationService {
     );
 
     try {
-      creds = await auth0.webAuthentication(scheme: 'fccapp').login();
+      creds = await auth0
+          .webAuthentication(scheme: 'fccapp')
+          .login(parameters: {'connection': connectionType});
     } on WebAuthenticationException {
       // NOTE: The most likely case is that the user canceled the login
       snackbar.showSnackbar(
