@@ -9,6 +9,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:freecodecamp/app/app.locator.dart';
+import 'package:freecodecamp/app/app.router.dart';
 import 'package:freecodecamp/models/main/user_model.dart';
 import 'package:freecodecamp/ui/views/auth/privacy_view.dart';
 import 'package:pretty_dio_logger/pretty_dio_logger.dart';
@@ -19,6 +20,7 @@ class AuthenticationService {
       AuthenticationService._internal();
 
   SnackbarService snackbar = locator<SnackbarService>();
+  final NavigationService _navigationService = locator<NavigationService>();
 
   final FlutterSecureStorage store = const FlutterSecureStorage();
   final Dio _dio = Dio();
@@ -305,6 +307,15 @@ class AuthenticationService {
       isLoggedInStream.sink.add(false);
       logout();
     }
+  }
+
+  void routeToLogin([bool fromButton = false]) {
+    _navigationService.navigateTo(
+      Routes.nativeLoginView,
+      arguments: NativeLoginViewArguments(
+        fromButton: fromButton,
+      ),
+    );
   }
 
   AuthenticationService._internal();

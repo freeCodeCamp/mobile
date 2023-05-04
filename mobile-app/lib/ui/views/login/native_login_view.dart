@@ -4,12 +4,16 @@ import 'package:freecodecamp/ui/widgets/drawer_widget/drawer_widget_view.dart';
 import 'package:stacked/stacked.dart';
 
 class NativeLoginView extends StatelessWidget {
-  const NativeLoginView({Key? key}) : super(key: key);
+  const NativeLoginView({Key? key, this.fromButton = false}) : super(key: key);
+
+  final bool fromButton;
 
   @override
   Widget build(BuildContext context) {
     ButtonStyle buttonStyle = ElevatedButton.styleFrom(
-        backgroundColor: Colors.white, disabledBackgroundColor: Colors.grey);
+      backgroundColor: Colors.white,
+      disabledBackgroundColor: Colors.grey,
+    );
 
     BoxDecoration outerDecoration = BoxDecoration(
       border: Border.all(
@@ -29,7 +33,7 @@ class NativeLoginView extends StatelessWidget {
         appBar: AppBar(
           title: const Text('LOGIN'),
         ),
-        drawer: const DrawerWidgetView(),
+        drawer: fromButton ? null : const DrawerWidgetView(),
         body: Container(
           margin: const EdgeInsets.only(top: 16),
           padding: const EdgeInsets.all(16),

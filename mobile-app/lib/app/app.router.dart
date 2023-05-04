@@ -247,8 +247,12 @@ class StackedRouter extends _i1.RouterBase {
       );
     },
     _i14.NativeLoginView: (data) {
+      final args = data.getArgs<NativeLoginViewArguments>(
+        orElse: () => const NativeLoginViewArguments(),
+      );
       return _i16.MaterialPageRoute<dynamic>(
-        builder: (context) => const _i14.NativeLoginView(),
+        builder: (context) =>
+            _i14.NativeLoginView(key: args.key, fromButton: args.fromButton),
         settings: data,
       );
     },
@@ -416,6 +420,22 @@ class ChallengeViewArguments {
   @override
   String toString() {
     return '{"key": "$key", "url": "$url", "block": "$block", "challengeId": "$challengeId", "challengesCompleted": "$challengesCompleted", "isProject": "$isProject"}';
+  }
+}
+
+class NativeLoginViewArguments {
+  const NativeLoginViewArguments({
+    this.key,
+    this.fromButton = false,
+  });
+
+  final _i16.Key? key;
+
+  final bool fromButton;
+
+  @override
+  String toString() {
+    return '{"key": "$key", "fromButton": "$fromButton"}';
   }
 }
 
@@ -660,14 +680,17 @@ extension NavigatorStateExtension on _i21.NavigationService {
         transition: transition);
   }
 
-  Future<dynamic> navigateToNativeLoginView([
+  Future<dynamic> navigateToNativeLoginView({
+    _i16.Key? key,
+    bool fromButton = false,
     int? routerId,
     bool preventDuplicates = true,
     Map<String, String>? parameters,
     Widget Function(BuildContext, Animation<double>, Animation<double>, Widget)?
         transition,
-  ]) async {
+  }) async {
     return navigateTo<dynamic>(Routes.nativeLoginView,
+        arguments: NativeLoginViewArguments(key: key, fromButton: fromButton),
         id: routerId,
         preventDuplicates: preventDuplicates,
         parameters: parameters,
@@ -915,14 +938,17 @@ extension NavigatorStateExtension on _i21.NavigationService {
         transition: transition);
   }
 
-  Future<dynamic> replaceWithNativeLoginView([
+  Future<dynamic> replaceWithNativeLoginView({
+    _i16.Key? key,
+    bool fromButton = false,
     int? routerId,
     bool preventDuplicates = true,
     Map<String, String>? parameters,
     Widget Function(BuildContext, Animation<double>, Animation<double>, Widget)?
         transition,
-  ]) async {
+  }) async {
     return replaceWith<dynamic>(Routes.nativeLoginView,
+        arguments: NativeLoginViewArguments(key: key, fromButton: fromButton),
         id: routerId,
         preventDuplicates: preventDuplicates,
         parameters: parameters,
