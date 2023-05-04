@@ -146,7 +146,8 @@ class NativeLoginView extends StatelessWidget {
               Container(
                 padding: const EdgeInsets.all(16),
                 child: TextFormField(
-                  controller: model.controller,
+                  enabled: !model.showOTPfield,
+                  controller: model.emailController,
                   keyboardType: TextInputType.emailAddress,
                   decoration: const InputDecoration(
                     hintText: 'email',
@@ -156,23 +157,67 @@ class NativeLoginView extends StatelessWidget {
                   ),
                 ),
               ),
-              Row(
-                children: [
-                  Expanded(
-                    child: Container(
-                      margin: const EdgeInsets.all(16),
-                      decoration: outerDecoration,
-                      height: 50,
-                      child: ElevatedButton(
-                        style: buttonStyle,
-                        onPressed: model.emailFieldIsValid ? () {} : null,
-                        child: Text(
-                          'Email a sign in code',
-                          style: textStyle,
+              model.showOTPfield
+                  ? Container(
+                      padding: const EdgeInsets.all(16),
+                      child: TextFormField(
+                        controller: model.otpController,
+                        keyboardType: TextInputType.number,
+                        decoration: const InputDecoration(
+                          hintText: 'Type the signin code we emailed you',
+                          border: OutlineInputBorder(
+                            borderSide:
+                                BorderSide(width: 2, color: Colors.white),
+                          ),
                         ),
                       ),
-                    ),
-                  ),
+                    )
+                  : Container(),
+              Row(
+                children: [
+                  model.showOTPfield
+                      ? Expanded(
+                          child: Container(
+                            margin: const EdgeInsets.all(16),
+                            decoration: outerDecoration,
+                            child: ElevatedButton(
+                              style: buttonStyle.copyWith(
+                                padding: const MaterialStatePropertyAll(
+                                  EdgeInsets.symmetric(vertical: 8),
+                                ),
+                              ),
+                              onPressed: model.otpFieldIsValid
+                                  ? () {
+                                      model.verifyOTP();
+                                    }
+                                  : null,
+                              child: Text(
+                                'Submit and sign in to freeCodeCamp',
+                                style: textStyle,
+                                textAlign: TextAlign.center,
+                              ),
+                            ),
+                          ),
+                        )
+                      : Expanded(
+                          child: Container(
+                            margin: const EdgeInsets.all(16),
+                            decoration: outerDecoration,
+                            height: 50,
+                            child: ElevatedButton(
+                              style: buttonStyle,
+                              onPressed: model.emailFieldIsValid
+                                  ? () {
+                                      model.sendOTPtoEmail();
+                                    }
+                                  : null,
+                              child: Text(
+                                'Email a sign in code',
+                                style: textStyle,
+                              ),
+                            ),
+                          ),
+                        ),
                 ],
               ),
               buildDivider(),
