@@ -2,7 +2,7 @@ import 'package:freecodecamp/enums/ext_type.dart';
 import 'package:freecodecamp/models/learn/challenge_model.dart';
 import 'package:html/parser.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:html/dom.dart' as dom;
+import 'package:html/dom.dart';
 
 class LearnFileService {
   // This function returns a specific file content from the cache.
@@ -118,14 +118,14 @@ class LearnFileService {
     String document,
     String cssFileName,
   ) async {
-    dom.Document doc = parse(document);
+    Document doc = parse(document);
 
-    List<dom.Node> links = doc.getElementsByTagName('LINK');
+    List<Node> links = doc.getElementsByTagName('LINK');
 
     List<String> linkedFileNames = [];
 
     if (links.isNotEmpty) {
-      for (dom.Node node in links) {
+      for (Node node in links) {
         if (node.attributes['href'] == null) continue;
 
         if (node.attributes['href']!.contains('/')) {
