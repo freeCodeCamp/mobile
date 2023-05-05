@@ -11,6 +11,7 @@ class NativeLoginViewModel extends BaseViewModel {
   TextEditingController emailController = TextEditingController();
   TextEditingController otpController = TextEditingController();
   bool showOTPfield = false;
+  bool incorrectOTP = false;
   final Dio _dio = Dio();
 
   final AuthenticationService auth = locator<AuthenticationService>();
@@ -59,6 +60,8 @@ class NativeLoginViewModel extends BaseViewModel {
   }
 
   void sendOTPtoEmail() async {
+    showOTPfield = true;
+    notifyListeners();
     await dotenv.load();
     await _dio.post(
       'https://${dotenv.get('AUTH0_DOMAIN')}/passwordless/start',
@@ -69,26 +72,28 @@ class NativeLoginViewModel extends BaseViewModel {
         'send': 'code',
       },
     );
-    showOTPfield = true;
-    notifyListeners();
   }
 
   void verifyOTP() async {
     await dotenv.load();
     log(emailController.text);
     log(otpController.text);
-    Response res = await _dio.post(
-      'https://${dotenv.get('AUTH0_DOMAIN')}/oauth/token',
-      data: {
-        'client_id': dotenv.get('AUTH0_CLIENT_ID'),
-        'grant_type': 'http://auth0.com/oauth/grant-type/passwordless/otp',
-        'realm': 'email',
-        'username': emailController.text,
-        'otp': otpController.text,
-        'scope': 'openid profile email',
-      },
-    );
-    log(res.data.toString());
+    try {
+      await _dio.post(
+        'https://${dotenv.get('AUTH0_DOMAIN')}/oauth/token',
+        data: {
+          'client_id': dotenv.get('AUTH0_CLIENT_ID'),
+          'grant_type': 'http://auth0.com/oauth/grant-type/passwordless/otp',
+          'realm': 'email',
+          'username': emailController.text,
+          'otp': otpController.text,
+          'scope': 'openid profile email',
+        },
+      );
+      incorrectOTP = false;
+    } on DioError {
+      incorrectOTP = true;
+    }
     notifyListeners();
   }
 }

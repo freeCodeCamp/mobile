@@ -161,11 +161,16 @@ class NativeLoginView extends StatelessWidget {
                   ? Container(
                       padding: const EdgeInsets.all(16),
                       child: TextFormField(
+                        autofocus: model.showOTPfield,
                         controller: model.otpController,
                         keyboardType: TextInputType.number,
-                        decoration: const InputDecoration(
-                          hintText: 'Type the signin code we emailed you',
-                          border: OutlineInputBorder(
+                        decoration: InputDecoration(
+                          hintText: 'Enter sign in code',
+                          errorText: model.incorrectOTP
+                              ? 'The code you entered is not valid. Please check the last OTP you received and try again.'
+                              : null,
+                          errorMaxLines: 5,
+                          border: const OutlineInputBorder(
                             borderSide:
                                 BorderSide(width: 2, color: Colors.white),
                           ),
