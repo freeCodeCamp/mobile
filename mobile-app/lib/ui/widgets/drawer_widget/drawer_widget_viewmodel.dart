@@ -113,7 +113,7 @@ class DrawerWidgtetViewModel extends BaseViewModel {
         );
         break;
       case 'LOGIN':
-        Navigator.pushReplacement(
+        Navigator.push(
           context,
           PageRouteBuilder(
             transitionDuration: Duration.zero,

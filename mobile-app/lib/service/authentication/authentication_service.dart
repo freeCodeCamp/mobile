@@ -302,6 +302,7 @@ class AuthenticationService {
     await auth0.credentialsManager.clearCredentials();
     if (res != null) {
       Navigator.pop(context);
+      Navigator.pop(context);
     }
     return true;
   }
