@@ -189,8 +189,8 @@ class LearnFileService {
   }
 
   String removeExcessiveScriptsInHTMLdocument(String file) {
-    dom.Document document = parse(file);
-    List<dom.Element> elements = document.querySelectorAll('SCRIPT');
+    Document document = parse(file);
+    List<Element> elements = document.querySelectorAll('SCRIPT');
 
     if (elements.isEmpty) return file;
 
@@ -204,10 +204,10 @@ class LearnFileService {
   }
 
   String changeActiveFileLinks(String file) {
-    dom.Document document = parse(file);
+    Document document = parse(file);
 
-    List<dom.Element> linkElements = document.querySelectorAll('LINK');
-    List<dom.Element> scripElements = document.querySelectorAll('SCRIPT');
+    List<Element> linkElements = document.querySelectorAll('LINK');
+    List<Element> scripElements = document.querySelectorAll('SCRIPT');
 
     if (scripElements.isEmpty && linkElements.isEmpty) return file;
 
