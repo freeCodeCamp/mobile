@@ -1,10 +1,12 @@
 import 'dart:convert';
 import 'dart:developer';
+import 'dart:io';
 import 'package:algolia/algolia.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:freecodecamp/app/app.locator.dart';
 import 'package:freecodecamp/app/app.router.dart';
+import 'package:freecodecamp/ui/views/news/news-feed/news_feed_viewmodel.dart';
 import 'package:stacked/stacked.dart';
 import 'package:stacked_services/stacked_services.dart';
 
@@ -44,6 +46,11 @@ class NewsSearchModel extends BaseViewModel {
     AlgoliaQuerySnapshot snap = await query.getObjects();
 
     List<AlgoliaObjectSnapshot> results = snap.hits;
+
+    if (Platform.isIOS) {
+      results
+          .removeWhere((element) => radioArticles.contains(element.objectID));
+    }
 
     String localHitHash = base64Encode(
       utf8.encode(snap.hits.toString()),
