@@ -1,5 +1,3 @@
-import 'dart:developer';
-
 import 'package:dio/dio.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
@@ -74,24 +72,17 @@ class NativeLoginViewModel extends BaseViewModel {
     );
   }
 
-  void verifyOTP() async {
+  void verifyOTP(BuildContext context) async {
     await dotenv.load();
-    log(emailController.text);
-    log(otpController.text);
-    try {
-      await _dio.post(
-        'https://${dotenv.get('AUTH0_DOMAIN')}/oauth/token',
-        data: {
-          'client_id': dotenv.get('AUTH0_CLIENT_ID'),
-          'grant_type': 'http://auth0.com/oauth/grant-type/passwordless/otp',
-          'realm': 'email',
-          'username': emailController.text,
-          'otp': otpController.text,
-          'scope': 'openid profile email',
-        },
-      );
+    bool isSuccess = await auth.login(
+      context,
+      'email',
+      email: emailController.text,
+      otp: otpController.text,
+    );
+    if (isSuccess) {
       incorrectOTP = false;
-    } on DioError {
+    } else {
       incorrectOTP = true;
     }
     notifyListeners();

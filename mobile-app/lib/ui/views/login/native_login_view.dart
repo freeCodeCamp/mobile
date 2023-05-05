@@ -193,7 +193,7 @@ class NativeLoginView extends StatelessWidget {
                               ),
                               onPressed: model.otpFieldIsValid
                                   ? () {
-                                      model.verifyOTP();
+                                      model.verifyOTP(context);
                                     }
                                   : null,
                               child: Text(

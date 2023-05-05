@@ -130,15 +130,21 @@ class AuthenticationService {
     return FccUserModel.fromJson(data);
   }
 
-  Future<void> login(BuildContext context, String connectionType) async {
+  Future<bool> login(
+    BuildContext context,
+    String connectionType, {
+    String? email,
+    String? otp,
+  }) async {
     late final Credentials creds;
+    late final Response emailLoginRes;
     Response? res;
 
     showDialog(
       context: context,
       barrierDismissible: false,
-      routeSettings: const RouteSettings(
-        name: 'Login View',
+      routeSettings: RouteSettings(
+        name: 'Login View - $connectionType',
       ),
       builder: (context) {
         return WillPopScope(
@@ -158,9 +164,23 @@ class AuthenticationService {
     );
 
     try {
-      creds = await auth0
-          .webAuthentication(scheme: 'fccapp')
-          .login(parameters: {'connection': connectionType});
+      if (connectionType == 'email') {
+        emailLoginRes = await _dio.post(
+          'https://${dotenv.get('AUTH0_DOMAIN')}/oauth/token',
+          data: {
+            'client_id': dotenv.get('AUTH0_CLIENT_ID'),
+            'grant_type': 'http://auth0.com/oauth/grant-type/passwordless/otp',
+            'realm': 'email',
+            'username': email,
+            'otp': otp,
+            'scope': 'openid profile email',
+          },
+        );
+      } else {
+        creds = await auth0
+            .webAuthentication(scheme: 'fccapp')
+            .login(parameters: {'connection': connectionType});
+      }
     } on WebAuthenticationException {
       // NOTE: The most likely case is that the user canceled the login
       snackbar.showSnackbar(
@@ -171,15 +191,22 @@ class AuthenticationService {
       logout();
       Navigator.pop(context);
 
-      return;
+      return false;
+    } on DioError {
+      logout();
+      Navigator.pop(context);
+      return false;
     }
 
     try {
+      String accessToken = connectionType == 'email'
+          ? emailLoginRes.data['access_token']
+          : creds.accessToken;
       res = await _dio.get(
         '/mobile-login',
         options: Options(
           headers: {
-            'Authorization': 'Bearer ${creds.accessToken}',
+            'Authorization': 'Bearer $accessToken',
           },
         ),
       );
@@ -276,6 +303,7 @@ class AuthenticationService {
     if (res != null) {
       Navigator.pop(context);
     }
+    return true;
   }
 
   Future<void> logout() async {
