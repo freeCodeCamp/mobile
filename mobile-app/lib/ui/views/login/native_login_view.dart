@@ -29,7 +29,6 @@ class NativeLoginView extends StatelessWidget {
       viewModelBuilder: () => NativeLoginViewModel(),
       onViewModelReady: (viewModel) => viewModel.init(),
       builder: (context, model, child) => Scaffold(
-        resizeToAvoidBottomInset: false,
         appBar: AppBar(
           title: const Text('LOGIN'),
         ),
