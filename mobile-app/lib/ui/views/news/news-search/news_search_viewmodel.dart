@@ -1,5 +1,6 @@
 import 'dart:convert';
 import 'dart:developer';
+import 'dart:io';
 import 'package:algolia/algolia.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
@@ -17,6 +18,16 @@ class NewsSearchModel extends BaseViewModel {
 
   String hitHash = '';
   List currentResult = [];
+
+  List<String> radioArticles = [
+    '622c7bf563ded806bb9e8a20',
+    '5f9ca12d740569d1a4ca4d23',
+    '5f9ca15f740569d1a4ca4e36',
+    '5f9ca198740569d1a4ca4f89',
+    '5f9ca587740569d1a4ca6a0b',
+    '5f9ca99d740569d1a4ca85c3',
+    '5f9cafb9740569d1a4caaf5b'
+  ];
 
   final searchbarController = TextEditingController();
   final _navigationService = locator<NavigationService>();
@@ -44,6 +55,11 @@ class NewsSearchModel extends BaseViewModel {
     AlgoliaQuerySnapshot snap = await query.getObjects();
 
     List<AlgoliaObjectSnapshot> results = snap.hits;
+
+    if (Platform.isIOS) {
+      results
+          .removeWhere((element) => radioArticles.contains(element.objectID));
+    }
 
     String localHitHash = base64Encode(
       utf8.encode(snap.hits.toString()),
