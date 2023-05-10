@@ -71,6 +71,9 @@ class ChallengeViewModel extends BaseViewModel {
   List<ConsoleMessage> _consoleMessages = [];
   List<ConsoleMessage> get consoleMessages => _consoleMessages;
 
+  List<ConsoleMessage> _userConsoleMessages = [];
+  List<ConsoleMessage> get userConsoleMessages => _userConsoleMessages;
+
   Syntax _currFileType = Syntax.HTML;
   Syntax get currFileType => _currFileType;
 
@@ -193,6 +196,11 @@ class ChallengeViewModel extends BaseViewModel {
 
   set setConsoleMessages(List<ConsoleMessage> messages) {
     _consoleMessages = messages;
+    notifyListeners();
+  }
+
+  set setUserConsoleMessages(List<ConsoleMessage> messages) {
+    _userConsoleMessages = messages;
     notifyListeners();
   }
 

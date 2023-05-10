@@ -304,22 +304,64 @@ class ChallengeView extends StatelessWidget {
               onWebViewCreated: (controller) {
                 model.setTestController = controller;
               },
-              onConsoleMessage: (controller, message) {
+              onConsoleMessage: (controller, console) {
                 ConsoleMessage newMessage = ConsoleMessage(
-                  message: model.parseUsersConsoleMessages(message.message),
+                  message: model.parseUsersConsoleMessages(console.message),
                   messageLevel: ConsoleMessageLevel.LOG,
                 );
 
-                model.setConsoleMessages = [
-                  ...model.consoleMessages,
-                  newMessage
-                ];
+                bool isTestRunnerRelated =
+                    !console.message.startsWith('testMSG: ') &&
+                        !console.message.startsWith('index: ');
 
-                if (message.message == 'completed') {
+                String stringIndex = '';
+                int testIndex = 0;
+
+                // Check if the console message is the index of the test
+
+                if (console.message.startsWith('index: ')) {
+                  stringIndex = console.message.split('@')[1];
+                }
+
+                // Check if stringIndex is not empty and parse it to an int.
+
+                if (stringIndex.isNotEmpty) {
+                  testIndex = int.parse(stringIndex);
+                }
+
+                if (!isTestRunnerRelated) {
+                  model.setUserConsoleMessages = [
+                    ...model.userConsoleMessages,
+                    newMessage,
+                  ];
+                }
+
+                if (console.message.startsWith('testMSG: ')) {
+                  model.setConsoleMessages = [
+                    ...model.consoleMessages,
+                    ...model.userConsoleMessages,
+                    newMessage
+                  ];
+                }
+
+                // If the index is the last test in the challenge add the
+                // user console messages to the console messages.
+
+                if (testIndex == challenge.tests.length - 1) {
+                  model.setConsoleMessages = [
+                    ...model.userConsoleMessages,
+                    ...model.consoleMessages,
+                    newMessage,
+                  ];
+                } else {
+                  model.setUserConsoleMessages = [];
+                }
+
+                if (console.message == 'completed') {
                   model.setPanelType = PanelType.pass;
                   model.setCompletedChallenge = true;
                   model.setShowPanel = true;
-                } else {
+                } else if (!console.message.startsWith('index: ')) {
                   model.setPanelType = PanelType.hint;
                   model.setHint = model.consoleMessages
                       .firstWhere(
@@ -444,6 +486,7 @@ class ChallengeView extends StatelessWidget {
                     onPressed: model.hasTypedInEditor
                         ? () async {
                             model.setConsoleMessages = [];
+                            model.setUserConsoleMessages = [];
                             if (model.showPanel &&
                                 model.panelType == PanelType.pass) {
                               model.goToNextChallenge(

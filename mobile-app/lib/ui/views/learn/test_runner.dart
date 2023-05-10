@@ -268,12 +268,6 @@ class TestRunner extends BaseViewModel {
         }
       }
 
-      function removeConsoleLogs(inputString) {
-        const regex = /console\\.log\\s*\\(\\s*.*?\\s*\\)\\s*;?/gs;
-        const outputString = inputString.replaceAll(regex, '');
-        return outputString;
-      }
-
       try {
         let error = false;
         for (let i = 0; i < tests.length; i++) {
@@ -281,12 +275,12 @@ class TestRunner extends BaseViewModel {
 
             const lastIndex = i != tests.length - 1;
 
-            const parseCode = lastIndex ? code : removeConsoleLogs(code);
+            await eval(head + '\\n' + code + '\\n' + tail + '\\n' + tests[i]);
 
-            await eval(head + '\\n' + parseCode + '\\n' + tail + '\\n' + tests[i]);
+            console.log(`index: @\${i}@`);
           } catch (e) {
             error = true;
-            console.log('testMSG: ' + testText[i]);
+            console.log(`testMSG: ` + testText[i]);
             break;
           }
         }
