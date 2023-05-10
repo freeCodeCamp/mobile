@@ -311,11 +311,10 @@ class ChallengeView extends StatelessWidget {
                 );
 
                 bool isTestRunnerRelated =
-                    !console.message.startsWith('testMSG: ') &&
-                        !console.message.startsWith('index: ');
+                    console.message.startsWith('testMSG: ') ||
+                        console.message.startsWith('index: ');
 
                 String stringIndex = '';
-                int testIndex = 0;
 
                 // Check if the console message is the index of the test
 
@@ -326,7 +325,7 @@ class ChallengeView extends StatelessWidget {
                 // Check if stringIndex is not empty and parse it to an int.
 
                 if (stringIndex.isNotEmpty) {
-                  testIndex = int.parse(stringIndex);
+                  model.setLastTestIndex = int.parse(stringIndex);
                 }
 
                 if (!isTestRunnerRelated) {
@@ -347,7 +346,8 @@ class ChallengeView extends StatelessWidget {
                 // If the index is the last test in the challenge add the
                 // user console messages to the console messages.
 
-                if (testIndex == challenge.tests.length - 1) {
+                if (model.lastTestIndex == challenge.tests.length - 1 &&
+                    !isTestRunnerRelated) {
                   model.setConsoleMessages = [
                     ...model.userConsoleMessages,
                     ...model.consoleMessages,

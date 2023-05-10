@@ -277,11 +277,13 @@ class TestRunner extends BaseViewModel {
 
             await eval(head + '\\n' + code + '\\n' + tail + '\\n' + tests[i]);
 
-            console.log(`index: @\${i}@`);
+      
           } catch (e) {
             error = true;
             console.log(`testMSG: ` + testText[i]);
             break;
+          } finally {
+            console.log(`index: @\${i}@`);
           }
         }
 

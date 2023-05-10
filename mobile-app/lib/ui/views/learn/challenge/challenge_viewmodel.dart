@@ -53,6 +53,9 @@ class ChallengeViewModel extends BaseViewModel {
   bool _runningTests = false;
   bool get runningTests => _runningTests;
 
+  int _lastTestIndex = 0;
+  int get lastTestIndex => _lastTestIndex;
+
   bool _hasTypedInEditor = false;
   bool get hasTypedInEditor => _hasTypedInEditor;
 
@@ -106,6 +109,11 @@ class ChallengeViewModel extends BaseViewModel {
 
   set setIsRunningTests(bool value) {
     _runningTests = value;
+    notifyListeners();
+  }
+
+  set setLastTestIndex(int value) {
+    _lastTestIndex = value;
     notifyListeners();
   }
 
