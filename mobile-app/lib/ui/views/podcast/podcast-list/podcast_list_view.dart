@@ -92,10 +92,10 @@ class PodcastListViewBuilder extends StatelessWidget {
                 );
               }
               if (snapshot.data!.isEmpty && isDownloadView) {
-                return Center(
+                return const Center(
                   child: Column(
                     mainAxisAlignment: MainAxisAlignment.center,
-                    children: const [
+                    children: [
                       Icon(
                         Icons.arrow_circle_down_sharp,
                         color: Colors.white,

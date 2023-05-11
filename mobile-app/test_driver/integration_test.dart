@@ -4,7 +4,8 @@ import 'package:integration_test/integration_test_driver_extended.dart';
 Future<void> main() async {
   try {
     await integrationDriver(
-      onScreenshot: (String screenshotName, List<int> screenshotBytes) async {
+      onScreenshot: (String screenshotName, List<int> screenshotBytes,
+          [Map<String, Object?>? _]) async {
         final File image = await File('screenshots/$screenshotName.png')
             .create(recursive: true);
         image.writeAsBytesSync(screenshotBytes);

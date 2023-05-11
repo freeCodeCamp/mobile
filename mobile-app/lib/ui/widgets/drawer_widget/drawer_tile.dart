@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
-class DrawerButton extends StatefulWidget {
-  const DrawerButton({
+class DrawerTile extends StatefulWidget {
+  const DrawerTile({
     Key? key,
     this.textColor = Colors.white,
     required this.component,
@@ -14,10 +14,10 @@ class DrawerButton extends StatefulWidget {
   final Function route;
   final Color? textColor;
   @override
-  State<StatefulWidget> createState() => _DrawerButtonState();
+  State<StatefulWidget> createState() => _DrawerTileState();
 }
 
-class _DrawerButtonState extends State<DrawerButton> {
+class _DrawerTileState extends State<DrawerTile> {
   @override
   Widget build(BuildContext context) {
     return Padding(

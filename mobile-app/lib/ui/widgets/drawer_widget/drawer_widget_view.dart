@@ -5,7 +5,7 @@ import 'package:flutter_scroll_shadow/flutter_scroll_shadow.dart';
 
 import 'package:freecodecamp/models/main/user_model.dart';
 
-import 'package:freecodecamp/ui/widgets/drawer_widget/drawer_button.dart';
+import 'package:freecodecamp/ui/widgets/drawer_widget/drawer_tile.dart';
 import 'package:freecodecamp/ui/widgets/drawer_widget/drawer_web_buttton.dart';
 import 'package:freecodecamp/ui/widgets/drawer_widget/drawer_widget_viewmodel.dart';
 import 'package:stacked/stacked.dart';
@@ -67,21 +67,21 @@ class DrawerWidgetView extends StatelessWidget {
                         },
                       ),
                       buildDivider(),
-                      DrawerButton(
+                      DrawerTile(
                         component: 'TUTORIALS',
                         icon: Icons.forum_outlined,
                         route: () {
                           model.routeComponent('NEWS', context);
                         },
                       ),
-                      DrawerButton(
+                      DrawerTile(
                         component: 'LEARN',
                         icon: '',
                         route: () {
                           model.routeComponent('LEARN', context);
                         },
                       ),
-                      DrawerButton(
+                      DrawerTile(
                         component: 'PODCASTS',
                         icon: Icons.podcasts_outlined,
                         route: () {
@@ -89,7 +89,7 @@ class DrawerWidgetView extends StatelessWidget {
                         },
                       ),
                       if (!Platform.isIOS)
-                        DrawerButton(
+                        DrawerTile(
                           component: 'CODE RADIO',
                           icon: Icons.radio,
                           route: () {
@@ -109,7 +109,7 @@ class DrawerWidgetView extends StatelessWidget {
                         icon: Icons.favorite,
                       ),
                       buildDivider(),
-                      DrawerButton(
+                      DrawerTile(
                           component: model.loggedIn ? 'LOG OUT' : 'LOGIN',
                           icon: model.loggedIn ? Icons.logout : Icons.login,
                           textColor: model.loggedIn

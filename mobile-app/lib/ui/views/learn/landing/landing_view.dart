@@ -110,10 +110,10 @@ class LearnLandingView extends StatelessWidget {
         vertical: MediaQuery.of(context).size.width * 0.5,
         horizontal: 8,
       ),
-      child: Column(
+      child: const Column(
         mainAxisAlignment: MainAxisAlignment.center,
         crossAxisAlignment: CrossAxisAlignment.center,
-        children: const [
+        children: [
           Text(
             'You are offline, and have no downloads!',
             style: TextStyle(

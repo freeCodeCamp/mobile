@@ -3,7 +3,7 @@ description: freecodecamp.org app.
 publish_to: none
 version: 3.3.2+30302
 environment:
-  sdk: ">=2.12.0 <3.0.0"
+  sdk: '>=3.0.0 <4.0.0'
 dependencies:
   flutter:
     sdk: flutter
