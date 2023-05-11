@@ -532,7 +532,7 @@ class ChallengeViewModel extends BaseViewModel {
       }
     }
 
-    if (!testRelated) {
+    if (!testRelated && lastTestIndex == challenge.tests.length - 1) {
       setUserConsoleMessages = [
         ...userConsoleMessages,
         newMessage,
@@ -554,8 +554,6 @@ class ChallengeViewModel extends BaseViewModel {
       setPanelType = PanelType.pass;
       setCompletedChallenge = true;
       setShowPanel = true;
-    } else {
-      setUserConsoleMessages = [];
     }
 
     setIsRunningTests = false;
