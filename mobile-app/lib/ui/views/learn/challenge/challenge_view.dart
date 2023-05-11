@@ -305,76 +305,7 @@ class ChallengeView extends StatelessWidget {
                 model.setTestController = controller;
               },
               onConsoleMessage: (controller, console) {
-                ConsoleMessage newMessage = ConsoleMessage(
-                  message: model.parseUsersConsoleMessages(console.message),
-                  messageLevel: ConsoleMessageLevel.LOG,
-                );
-
-                bool isTestRunnerRelated =
-                    console.message.startsWith('testMSG: ') ||
-                        console.message.startsWith('index: ');
-
-                String stringIndex = '';
-
-                // Check if the console message is the index of the test
-
-                if (console.message.startsWith('index: ')) {
-                  stringIndex = console.message.split('@')[1];
-                }
-
-                // Check if stringIndex is not empty and parse it to an int.
-
-                if (stringIndex.isNotEmpty) {
-                  model.setLastTestIndex = int.parse(stringIndex);
-                }
-
-                if (!isTestRunnerRelated) {
-                  model.setUserConsoleMessages = [
-                    ...model.userConsoleMessages,
-                    newMessage,
-                  ];
-                }
-
-                if (console.message.startsWith('testMSG: ')) {
-                  model.setConsoleMessages = [
-                    ...model.consoleMessages,
-                    ...model.userConsoleMessages,
-                    newMessage
-                  ];
-                }
-
-                // If the index is the last test in the challenge add the
-                // user console messages to the console messages.
-
-                if (model.lastTestIndex == challenge.tests.length - 1 &&
-                    !isTestRunnerRelated) {
-                  model.setConsoleMessages = [
-                    ...model.userConsoleMessages,
-                    ...model.consoleMessages,
-                    newMessage,
-                  ];
-                } else {
-                  model.setUserConsoleMessages = [];
-                }
-
-                if (console.message == 'completed') {
-                  model.setPanelType = PanelType.pass;
-                  model.setCompletedChallenge = true;
-                  model.setShowPanel = true;
-                } else if (!console.message.startsWith('index: ')) {
-                  model.setPanelType = PanelType.hint;
-                  model.setHint = model.consoleMessages
-                      .firstWhere(
-                        (e) => e.message.startsWith('testMSG: '),
-                        orElse: () => ConsoleMessage(
-                          message: 'something went wrong?',
-                        ),
-                      )
-                      .message
-                      .split('testMSG: ')[1];
-                  model.setShowPanel = true;
-                }
-                model.setIsRunningTests = false;
+                model.handleConsoleLogMessagges(console, challenge);
               },
             ),
           ),
@@ -485,6 +416,7 @@ class ChallengeView extends StatelessWidget {
                             : const FaIcon(FontAwesomeIcons.check),
                     onPressed: model.hasTypedInEditor
                         ? () async {
+                            model.setLastTestIndex = 0;
                             model.setConsoleMessages = [];
                             model.setUserConsoleMessages = [];
                             if (model.showPanel &&

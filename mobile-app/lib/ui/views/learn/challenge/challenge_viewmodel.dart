@@ -511,4 +511,53 @@ class ChallengeViewModel extends BaseViewModel {
       }
     }
   }
+
+  void handleConsoleLogMessagges(ConsoleMessage console, Challenge challenge) {
+    ConsoleMessage newMessage = ConsoleMessage(
+      message: parseUsersConsoleMessages(console.message),
+      messageLevel: ConsoleMessageLevel.LOG,
+    );
+
+    String msg = console.message;
+
+    bool testRelated = msg.startsWith('testMSG: ') || msg.startsWith('index: ');
+
+    if (msg.startsWith('index: ')) {
+      int localIndex = int.parse(msg.split('@')[1]);
+
+      if (localIndex >= lastTestIndex) {
+        setLastTestIndex = localIndex;
+      } else {
+        return;
+      }
+    }
+
+    if (!testRelated) {
+      setUserConsoleMessages = [
+        ...userConsoleMessages,
+        newMessage,
+      ];
+    }
+
+    if (msg.startsWith('testMSG: ')) {
+      setPanelType = PanelType.hint;
+      setHint = msg.split('testMSG: ')[1];
+      setShowPanel = true;
+    }
+
+    if (lastTestIndex == challenge.tests.length - 1) {
+      setConsoleMessages = [
+        ...userConsoleMessages,
+        ...consoleMessages,
+      ];
+
+      setPanelType = PanelType.pass;
+      setCompletedChallenge = true;
+      setShowPanel = true;
+    } else {
+      setUserConsoleMessages = [];
+    }
+
+    setIsRunningTests = false;
+  }
 }

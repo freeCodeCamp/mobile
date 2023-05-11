@@ -271,6 +271,7 @@ class TestRunner extends BaseViewModel {
       try {
         let error = false;
         for (let i = 0; i < tests.length; i++) {
+          console.log(`index: @\${i}@`);
           try {
 
             const lastIndex = i != tests.length - 1;
@@ -282,13 +283,7 @@ class TestRunner extends BaseViewModel {
             error = true;
             console.log(`testMSG: ` + testText[i]);
             break;
-          } finally {
-            console.log(`index: @\${i}@`);
-          }
-        }
-
-        if (!error) {
-          console.log('completed');
+          } 
         }
       } catch (e) {
         console.log(e);
