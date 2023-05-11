@@ -14,7 +14,7 @@ dependencies:
   http: ^0.13.3
   path_provider: ^2.0.3
   sqflite: ^2.0.0+4
-  stacked: ^3.1.0
+  stacked: ^3.2.5
   stacked_services: ^1.0.0
   url_launcher: ^6.0.10
   sqflite_migration_service: ^2.0.0-nullsafety.1
