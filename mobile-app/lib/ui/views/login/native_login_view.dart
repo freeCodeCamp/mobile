@@ -108,40 +108,40 @@ class NativeLoginView extends StatelessWidget {
                     ),
                   ],
                 ),
-                Row(
-                  children: [
-                    Expanded(
-                      child: Container(
-                        margin: const EdgeInsets.all(16),
-                        decoration: outerDecoration,
-                        height: 50,
-                        child: ElevatedButton(
-                          style: buttonStyle,
-                          onPressed: () {
-                            model.auth.login(context, 'apple');
-                          },
-                          child: Row(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: [
-                              Padding(
-                                padding: const EdgeInsets.all(8.0),
-                                child: Image.asset(
-                                  'assets/images/apple-logo.png',
-                                  height: 25,
-                                  width: 25,
-                                ),
-                              ),
-                              Text(
-                                'Continue with Apple',
-                                style: textStyle,
-                              ),
-                            ],
-                          ),
-                        ),
-                      ),
-                    ),
-                  ],
-                ),
+                // Row(
+                //   children: [
+                //     Expanded(
+                //       child: Container(
+                //         margin: const EdgeInsets.all(16),
+                //         decoration: outerDecoration,
+                //         height: 50,
+                //         child: ElevatedButton(
+                //           style: buttonStyle,
+                //           onPressed: () {
+                //             model.auth.login(context, 'apple');
+                //           },
+                //           child: Row(
+                //             mainAxisAlignment: MainAxisAlignment.center,
+                //             children: [
+                //               Padding(
+                //                 padding: const EdgeInsets.all(8.0),
+                //                 child: Image.asset(
+                //                   'assets/images/apple-logo.png',
+                //                   height: 25,
+                //                   width: 25,
+                //                 ),
+                //               ),
+                //               Text(
+                //                 'Continue with Apple',
+                //                 style: textStyle,
+                //               ),
+                //             ],
+                //           ),
+                //         ),
+                //       ),
+                //     ),
+                //   ],
+                // ),
                 buildDivider(),
                 Container(
                   padding: const EdgeInsets.all(16),
