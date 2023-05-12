@@ -91,8 +91,11 @@ class EpisodeView extends StatelessWidget {
   }
 
   Widget description(EpisodeViewModel model, BuildContext context) {
+    HTMLParser parser = HTMLParser(context: context);
     return Column(
-      children: [HtmlHandler.htmlWidgetBuilder(episode.description, context)],
+      children: [
+        ...parser.parse(episode.description ?? ''),
+      ],
     );
   }
 }

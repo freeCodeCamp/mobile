@@ -3,69 +3,38 @@ import 'package:flutter/material.dart';
 import 'package:flutter_highlight/flutter_highlight.dart';
 import 'package:flutter_highlight/theme_map.dart';
 import 'package:flutter_html/flutter_html.dart';
-import 'package:freecodecamp/models/news/tutorial_model.dart';
 import 'package:freecodecamp/ui/views/news/news-image-viewer/news_image_view.dart';
-import 'package:freecodecamp/ui/views/news/news-tutorial/news_tutorial_view.dart';
 import 'package:html/dom.dart' as dom;
 import 'package:url_launcher/url_launcher_string.dart';
 import 'package:youtube_player_iframe/youtube_player_iframe.dart';
 
-class HtmlHandler {
-  const HtmlHandler({Key? key, required this.html, required this.context});
+class HTMLParser {
+  const HTMLParser({
+    Key? key,
+    required this.context,
+    this.fontFamily = 'Lato',
+  });
 
-  final String html;
+  final String fontFamily;
   final BuildContext context;
 
-  static List<Widget> htmlHandler(html, context, [tutorial, fontFamily]) {
-    var result = HtmlParser.parseHTML(html);
+  List<Widget> parse(String html) {
+    dom.Document result = HtmlParser.parseHTML(html);
 
     List<Widget> elements = [];
 
-    if (tutorial is Tutorial) {
-      elements.add(
-        Stack(
-          children: [
-            NewsTutorialHeader(tutorial: tutorial),
-            AppBar(
-              backgroundColor: Colors.transparent,
-              shadowColor: Colors.transparent,
-              leading: Tooltip(
-                message: 'Back',
-                child: InkWell(
-                  onTap: () {
-                    Navigator.pop(context);
-                  },
-                  child: Container(
-                    margin: const EdgeInsets.all(8),
-                    decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(50),
-                      color: Colors.black.withOpacity(0.5),
-                    ),
-                    child: const Icon(Icons.arrow_back),
-                  ),
-                ),
-              ),
-            )
-          ],
-        ),
-      );
-    }
     for (int i = 0; i < result.body!.children.length; i++) {
       elements.add(
-        htmlWidgetBuilder(
+        _parseHTMLWidget(
           result.body!.children[i].outerHtml,
-          context,
-          fontFamily ?? 'Lato',
         ),
       );
     }
-    if (tutorial is Tutorial) {
-      elements.add(Container(height: 100));
-    }
+
     return elements;
   }
 
-  static void goToImageView(String imgUrl, BuildContext context) {
+  void goToImageView(String imgUrl, BuildContext context) {
     Navigator.push(
       context,
       MaterialPageRoute(
@@ -76,8 +45,9 @@ class HtmlHandler {
     );
   }
 
-  static htmlWidgetBuilder(child, BuildContext context,
-      [String fontFamily = 'Lato']) {
+  Widget _parseHTMLWidget(
+    child,
+  ) {
     return SelectableRegion(
       selectionControls: materialTextSelectionControls,
       focusNode: FocusNode(),

@@ -28,73 +28,79 @@ class DescriptionView extends StatelessWidget {
         int.tryParse(splitTitle[1]) != null;
     return ViewModelBuilder<DescriptionModel>.reactive(
       viewModelBuilder: () => DescriptionModel(),
-      builder: (context, model, child) => SafeArea(
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: instructions.isNotEmpty || description.isNotEmpty
-              ? [
-                  Row(
-                    children: [
-                      Padding(
-                        padding: const EdgeInsets.only(left: 12, bottom: 32),
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            const Text(
-                              'Instructions',
-                              style: TextStyle(
-                                fontSize: 28,
-                                fontWeight: FontWeight.bold,
-                                fontFamily: 'Inter',
+      builder: (context, model, child) {
+        HTMLParser parser = HTMLParser(context: context, fontFamily: 'Inter');
+
+        return SafeArea(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: instructions.isNotEmpty || description.isNotEmpty
+                ? [
+                    Row(
+                      children: [
+                        Padding(
+                          padding: const EdgeInsets.only(left: 12, bottom: 32),
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              const Text(
+                                'Instructions',
+                                style: TextStyle(
+                                  fontSize: 28,
+                                  fontWeight: FontWeight.bold,
+                                  fontFamily: 'Inter',
+                                ),
                               ),
-                            ),
-                            isMultiStepChallenge
-                                ? Text(
-                                    'Step ${splitTitle[1]} of $maxChallenges',
-                                    style: const TextStyle(
-                                      fontSize: 14,
-                                      fontFamily: 'Inter',
-                                      color: Colors.white70,
-                                    ),
-                                  )
-                                : Container(),
-                          ],
-                        ),
-                      ),
-                      Expanded(
-                        child: Container(
-                          padding: const EdgeInsets.only(bottom: 32),
-                          alignment: Alignment.centerRight,
-                          child: IconButton(
-                            onPressed: () {
-                              challengeModel.setShowPanel = false;
-                            },
-                            icon: const Icon(Icons.clear_sharp),
-                            iconSize: 40,
+                              isMultiStepChallenge
+                                  ? Text(
+                                      'Step ${splitTitle[1]} of $maxChallenges',
+                                      style: const TextStyle(
+                                        fontSize: 14,
+                                        fontFamily: 'Inter',
+                                        color: Colors.white70,
+                                      ),
+                                    )
+                                  : Container(),
+                            ],
                           ),
                         ),
-                      )
-                    ],
-                  ),
-                  Expanded(
-                    child: Scrollbar(
-                      thumbVisibility: true,
-                      trackVisibility: true,
-                      child: SingleChildScrollView(
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: HtmlHandler.htmlHandler(
-                                  description, context, null, 'Inter') +
-                              HtmlHandler.htmlHandler(
-                                  instructions, context, null, 'Inter'),
+                        Expanded(
+                          child: Container(
+                            padding: const EdgeInsets.only(bottom: 32),
+                            alignment: Alignment.centerRight,
+                            child: IconButton(
+                              onPressed: () {
+                                challengeModel.setShowPanel = false;
+                              },
+                              icon: const Icon(Icons.clear_sharp),
+                              iconSize: 40,
+                            ),
+                          ),
+                        )
+                      ],
+                    ),
+                    Expanded(
+                      child: Scrollbar(
+                        thumbVisibility: true,
+                        trackVisibility: true,
+                        child: SingleChildScrollView(
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: parser.parse(
+                                  description,
+                                ) +
+                                parser.parse(
+                                  instructions,
+                                ),
+                          ),
                         ),
                       ),
                     ),
-                  ),
-                ]
-              : [],
-        ),
-      ),
+                  ]
+                : [],
+          ),
+        );
+      },
     );
   }
 }
