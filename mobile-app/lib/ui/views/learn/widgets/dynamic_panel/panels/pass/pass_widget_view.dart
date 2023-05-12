@@ -80,7 +80,7 @@ class PassWidgetView extends StatelessWidget {
             StreamBuilder<bool>(
               stream: AuthenticationService.isLoggedInStream.stream,
               builder: (context, snapshot) {
-                if (AuthenticationService.staticIsloggedIn == true) {
+                if (AuthenticationService.staticIsloggedIn) {
                   return FutureBuilder(
                     future: model.numCompletedChallenges(
                       challengeModel,
@@ -123,7 +123,7 @@ class PassWidgetView extends StatelessWidget {
                       );
                     },
                   );
-                } else if (AuthenticationService.staticIsloggedIn == false) {
+                } else if (!AuthenticationService.staticIsloggedIn) {
                   return Container(
                     margin: const EdgeInsets.symmetric(
                       vertical: 16,
