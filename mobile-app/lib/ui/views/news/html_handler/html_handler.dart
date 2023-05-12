@@ -244,8 +244,12 @@ class HTMLParser {
             );
           }
         },
-        onLinkTap: (String? url, RenderContext context,
-            Map<String, String> attributes, dom.Element? element) {
+        onLinkTap: (
+          String? url,
+          RenderContext context,
+          Map<String, String> attributes,
+          dom.Element? element,
+        ) {
           launchUrlString(url!);
         },
       ),
