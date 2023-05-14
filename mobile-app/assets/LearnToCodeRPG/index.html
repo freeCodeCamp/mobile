@@ -1,0 +1,586 @@
+<!doctype html>
+<html lang="en-us">
+  <!-- Adapted for RenPyWeb from https://github.com/emscripten-core/emscripten/blob/master/src/shell.html -->
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Learn to Code RPG</title>
+    <script>
+      var DEFAULT_GAME_FILENAME = 'game.zip';
+    </script>
+    <style>
+      body {
+        font-family: arial;
+        margin: 0;
+        padding: none;
+      }
+
+      .emscripten { padding-right: 0; margin-left: auto; margin-right: auto; display: block; }
+      div.emscripten { text-align: center; }
+      div.emscripten_border { border: 1px solid black; }
+      /* the canvas *must not* have any border or padding, or mouse coords will be wrong */
+      canvas.emscripten { border: 0px none; background-color: black; width: 100vw; height: 100vh; }
+
+      #emscripten_logo {
+        display: inline-block;
+        margin: 0;
+      }
+
+      .spinner {
+        height: 30px;
+        width: 30px;
+        vertical-align: top;
+        position: absolute;
+
+        -webkit-animation: rotation .8s linear infinite;
+        -moz-animation: rotation .8s linear infinite;
+        -o-animation: rotation .8s linear infinite;
+        animation: rotation 0.8s linear infinite;
+
+        border-left: 5px solid rgb(235, 235, 235);
+        border-right: 5px solid rgb(235, 235, 235);
+        border-bottom: 5px solid rgb(235, 235, 235);
+        border-top: 5px solid rgb(120, 120, 120);
+
+        border-radius: 100%;
+        background-color: rgb(189, 215, 46);
+      }
+
+      @-webkit-keyframes rotation {
+        from {-webkit-transform: rotate(0deg);}
+        to {-webkit-transform: rotate(360deg);}
+      }
+      @-moz-keyframes rotation {
+        from {-moz-transform: rotate(0deg);}
+        to {-moz-transform: rotate(360deg);}
+      }
+      @-o-keyframes rotation {
+        from {-o-transform: rotate(0deg);}
+        to {-o-transform: rotate(360deg);}
+      }
+      @keyframes rotation {
+        from {transform: rotate(0deg);}
+        to {transform: rotate(360deg);}
+      }
+
+      #statusbar_container {
+        position: fixed;
+        top: 0;
+        width: 100%;
+        margin: auto;
+      }
+
+      #statusbar {
+        width: 50%;
+        margin: auto;
+        min-width: 340px;
+        padding: 10px;
+        height: 40px;
+        background-color: rgb(40, 40, 40);
+      }
+
+      #status {
+        vertical-align: top;
+        font-weight: bold;
+        color: rgb(120, 120, 120);
+        width: 100%;
+        padding-bottom: 2px;
+        text-align: left;
+      }
+
+      #progress {
+        height: 20px;
+        width: 100%;
+      }
+
+
+      #ContextContainer {
+        position: absolute;
+        left: 10px;
+        top: 10px;
+        color: white;
+      }
+      #ContextButton {
+        text-decoration: none;
+        color: grey;
+        font-size: xx-large;
+        cursor: pointer;
+        user-select: none;
+        -moz-user-select: none;
+      }
+      #ContextButton:focus {
+        outline: none;
+      }
+      #ContextMenu a {
+        text-decoration: none;
+        color: lightgrey;
+      }
+      #ContextMenu a:hover {
+        text-decoration: nsone;
+        color: grey;
+      }
+      #ContextMenu {
+        background-color: rgb(40,40,40);
+        padding: 5px;
+      }
+    </style>
+  </head>
+  <body>
+
+    <div id="statusbar_container">
+      <div id="statusbar">
+        <div class="spinner" id='spinner'></div>
+        <div style="margin-left: 50px;">
+          <div class="emscripten" id="status">Downloading...</div>
+          <progress value="0" max="100" id="progress" hidden=1></progress>
+        </div>
+      </div>
+    </div>
+
+    <canvas class="emscripten" id="canvas" oncontextmenu="event.preventDefault()" tabindex=-1></canvas>
+
+    <script>
+      // Subtly hint at lack of WebAssembly support (if applicable)
+      if (typeof WebAssembly !== 'object') {
+          var error_message = "Unsupported browser - please upgrade!\n(WebAssembly support needed)";
+          document.body = document.createElement('body');
+          document.body.innerHTML = error_message.replace('\n', '<br />');
+          location.href = 'javascript:alert("' + error_message.replace('\n', '\\n') + '")';
+          throw error_message;
+          window.stop();
+          // R.I.P.
+      }
+
+      // Clear error when running without server
+      if (location.href.startsWith('file://')) {
+          alert("Error: your browser requires the game to be run from a local HTTP server (i.e. double-clicking on index.html won't work).");
+      }
+
+      // Work-around iframe focus
+      // https://github.com/emscripten-core/emscripten/pull/7631
+      document.getElementById('canvas').addEventListener('mouseenter', function(e) { window.focus() });
+      document.getElementById('canvas').addEventListener('click', function(e) { window.focus() });
+    </script>
+
+    <div id="ContextContainer">
+      <a id="ContextButton">&#8801;</a><br />
+      <div id="ContextMenu" style="display: none;">
+        <input id="ID_SavegamesImport" type="file" onchange="onSavegamesImport(this)" accept="application/zip" style=display:none></input>
+        <a href="javascript:document.getElementById('ID_SavegamesImport').click();">Import saves</a><br />
+        <a href="javascript:onSavegamesExport();">Export saves</a><br />
+        <a href="javascript:FSDownload('/log.txt', 'text/plain');">Ren'Py log</a><br />
+        <a href="https://www.renpy.org/" target="_blank">
+          <span style="font-size: smaller">
+            <span style="color: dimgrey">Powered by</span>
+            Ren'Py
+          </span>
+        </a>
+        </span>
+      </div>
+    </div>
+
+    <script type='text/javascript'>
+      /* Copyright (C) 2018, 2019, 2020, 2021  Sylvain Beucler */
+
+      /* Context menu */
+      const menu = document.getElementById('ContextMenu');
+      document.getElementById('ContextButton').addEventListener('click', function (e) {
+        if (menu.style.display == 'none')
+          menu.style.display = 'block';
+        else
+          menu.style.display = 'none';
+        e.preventDefault();
+      });
+
+      menu.addEventListener('click', function (e) {
+        if (e.target.tagName == 'A') {
+          // Close context menu when a menu item is selected
+          menu.style.display = 'none';
+        }
+      });
+
+      function onSavegamesImport(input) {
+        reader = new FileReader();
+        reader.onload = function(e) {
+          FS.writeFile('savegames.zip', new Uint8Array(e.target.result));
+          Module._emSavegamesImport();
+          FS.syncfs(false, function(err) {
+            if (err) {
+              console.trace(); console.log(err, err.message);
+              Module.print("Warning: cannot import savegames: write error: " + err.message + "\n");
+            } else {
+                renpy_exec('renpy.loadsave.location.scan()').then(result => {
+                  Module.print("Saves imported successfully\n");
+                }).catch(error => {
+                  console.error('Cannot rescan saves folder', error);
+                  Module.print("Saves imported - restart game to apply.\n");
+                });
+            }
+          });
+        }
+        reader.readAsArrayBuffer(input.files[0])
+	input.type = ''; input.type = 'file'; // reset field
+      }
+
+      function onSavegamesExport() {
+        ret = Module._emSavegamesExport();
+        if (ret) {
+          FSDownload('savegames.zip', 'application/zip');
+        }
+      }
+
+      function gameExtractAndRun() {
+        start = Date.now();
+        var ret = Module.ccall('PyRun_SimpleString', 'number', ['string'], [
+          "import zipfile\n" +
+          "zip_ref = zipfile.ZipFile('game.zip', 'r')\n" +
+          "zip_ref.extractall('.')\n" +
+          "zip_ref.close()\n"
+        ])
+        if (ret != 0) {
+            Module.setStatus("Error extracting .zip.");
+            return;
+        }
+        FS.unlink('/game.zip')
+        Module.print("Extracted in " + (Date.now()-start)/1000.0 + "s\n");
+
+        if (FS.readdir('/').indexOf('game') < 0) {
+            Module.setStatus("Invalid .zip (no top-level 'game' directory).");
+            return;
+        }
+
+        // presplash
+        presplash = undefined;
+        if (FS.readdir('/').indexOf('web-presplash.png') >= 0) {
+          presplash = FS.readFile('/web-presplash.png');
+        } else if (FS.readdir('/').indexOf('web-presplash.jpg') >= 0) {
+          presplash = FS.readFile('/web-presplash.jpg');
+        } else if (FS.readdir('/').indexOf('web-presplash.webp') >= 0) {
+          presplash = FS.readFile('/web-presplash.webp');
+        } else if (FS.readdir('/').indexOf('web-presplash-default.jpg') >= 0) {
+          presplash = FS.readFile('/web-presplash-default.jpg');
+        }
+
+        div = document.createElement('div');
+        div.id = 'presplash';  // used by presplashEnd()
+        div.style = 'position: absolute; width: 100%; height: 100%';
+        c = document.getElementById('canvas');
+        c.parentElement.prepend(div);
+
+        if (presplash) {
+          obj_url = window.URL.createObjectURL(new Blob([presplash]));
+          img = document.createElement('img');
+          img.src = obj_url;
+          img.style = 'display: block; margin: auto; width: 100%; height: 100%; object-fit: contain';
+          div.appendChild(img)
+        } else {
+          Module.print("Loading game, please wait...\n");
+        }
+
+        // give control back to webui before running main
+        window.setTimeout(function() {
+          Module.ccall('pyapp_runmain', '', [], [], {async: true})
+        }, 200);  // smaller delay doesn't update the DOM, esp. on mobile
+      }
+
+      // hook for Ren'Py
+      function presplashEnd() {
+        document.getElementById('presplash').remove();
+      }
+      function FSDownload(filename, mimetype) {
+        console.log('download', filename);
+        var a = document.createElement('a');
+        a.download = filename.replace(/.*\//, '');
+        try {
+          a.href = window.URL.createObjectURL(new Blob([FS.readFile(filename)],
+                                                       { type: mimetype || '' }));
+        } catch(e) {
+          Module.print("Error opening " + filename + "\n");
+          return;
+        }
+        document.body.appendChild(a);
+        a.click();
+        // delay clean-up to avoid iOS issue:
+        // The operation couldn’t be completed. (WebKitBlobResourse error 1.)
+        setTimeout(function() {
+            window.URL.revokeObjectURL(a.href);
+            document.body.removeChild(a);
+        }, 1000);
+      }
+    </script>
+    <script type='text/javascript'>
+      var statusElement = document.getElementById('status');
+      var progressElement = document.getElementById('progress');
+      var spinnerElement = document.getElementById('spinner');
+
+      var Module = {
+        preRun: [],
+        postRun: [],
+        print: (function() {
+          var element = document.getElementById('status');
+          return function(text) {
+            if (arguments.length > 1) text = Array.prototype.slice.call(arguments).join(' ');
+            console.log(text);
+            // These replacements are necessary if you render to raw HTML
+            text = String(text);
+            text = text.replace(/&/g, "&amp;");
+            text = text.replace(/</g, "&lt;");
+            text = text.replace(/>/g, "&gt;");
+            text = text.replace('\n', '<br />', 'g');
+            element.innerHTML += text;
+
+            statusbar = document.getElementById('statusbar');
+            statusbar.hidden = false;
+            var print_date = new Date();
+            statusbar.date = print_date;
+            window.setTimeout(function() {
+              // Hide status bar after a few seconds - only if setStatus isn't active
+              if (Module.setStatus.last && Module.setStatus.last.text == ''
+                  && statusbar.date == print_date) {
+                element.innerHTML = ''; statusbar.hidden = true;
+              }
+            }, 3000);
+          };
+        })(),
+        printErr: function(text) {
+          if (arguments.length > 1) text = Array.prototype.slice.call(arguments).join(' ');
+          if (0) { // XXX disabled for safety typeof dump == 'function') {
+            dump(text + '\n'); // fast, straight to the real console
+          } else {
+            console.error(text);
+          }
+        },
+        canvas: (function() {
+          var canvas = document.getElementById('canvas');
+
+          // As a default initial behavior, pop up an alert when webgl context is lost. To make your
+          // application robust, you may want to override this behavior before shipping!
+          // See http://www.khronos.org/registry/webgl/specs/latest/1.0/#5.15.2
+          canvas.addEventListener("webglcontextlost", function(e) { alert('WebGL context lost. You will need to reload the page.'); e.preventDefault(); }, false);
+
+          return canvas;
+        })(),
+        setStatus: function(text) {
+          if (!Module.setStatus.last) Module.setStatus.last = { time: Date.now(), text: '' };
+          if (text === Module.setStatus.last.text) return;
+          var m = text.match(/([^(]+)\((\d+(\.\d+)?)\/(\d+)\)/);
+          var now = Date.now();
+          if (m && now - Module.setStatus.last.time < 30) return; // if this is a progress update, skip it if too soon
+          Module.setStatus.last.time = now;
+          Module.setStatus.last.text = text;
+          if (m) {
+            text = m[1];
+            progressElement.value = parseInt(m[2])*100;
+            progressElement.max = parseInt(m[4])*100;
+            progressElement.hidden = false;
+            spinnerElement.hidden = false;
+          } else {
+            progressElement.value = null;
+            progressElement.max = null;
+            progressElement.hidden = true;
+            if (!text) spinnerElement.style.display = 'none';
+          }
+          if (text == '') {
+            statusElement.innerHTML = '';
+            document.getElementById('statusbar').hidden = true;
+          } else {
+            statusElement.innerHTML = text + '<br />';
+            document.getElementById('statusbar').hidden = false;
+          }
+        },
+        totalDependencies: 0,
+        monitorRunDependencies: function(left) {
+          this.totalDependencies = Math.max(this.totalDependencies, left);
+          Module.setStatus(left ? 'Preparing... (' + (this.totalDependencies-left) + '/' + this.totalDependencies + ')' : 'All downloads complete.');
+        }
+      };
+      Module.setStatus('Downloading...');
+      window.onerror = function(event) {
+        // TODO: do not warn on ok events like simulating an infinite loop or exitStatus
+        //Module.setStatus('Exception thrown, see JavaScript console');
+        // Explicitly display meaningful errors such as "uncaught exception: out of memory":
+
+        var appleWarning = "";
+
+        if (/RangeError/.test(event)) {
+            appleWarning = "\n<p>This is a known issue with this beta and recent changes to some web browsers. Reloading this page with developer tools open may help.";
+        }
+
+        Module.setStatus('Error: ' + event.split('\n')[0] + ' (see JavaScript console for details)' + appleWarning);
+        spinnerElement.style.display = 'none';
+        Module.setStatus = function(text) {
+          if (text) Module.printErr('[post-exception status] ' + text);
+        };
+      };
+    </script>
+    <script type='text/javascript' src="pythonhome-data.js"></script>
+    <script type='text/javascript' src="pyapp-data.js"></script>
+
+    <script type='text/javascript'>
+        /* This block contains code for running Python statements
+        * in Ren'Py process from JS.
+        *
+        * Copyright 2022 Teyut <teyut@free.fr>, MIT License.
+        */
+
+        (function() {
+          let cmd_queue = [];
+          let cur_cmd = undefined;
+          let debug = false;
+
+          function dbg_log(...args) {
+            if(debug) console.debug(...args);
+          }
+
+          /** This functions is called by the wrapper script at the end of script execution. */
+          function cmd_callback(result) {
+            dbg_log('cmd_callback', result);
+
+            if(cur_cmd === undefined) {
+              console.error('Unexpected command result', result);
+              return;
+            }
+
+            try {
+              if(result.error !== undefined) {
+                dbg_log('ERROR', result.name, result.error, result.traceback);
+                const e = new Error(result.error);
+                e.name = result.name;
+                e.traceback = result.traceback;
+                cur_cmd.reject(e);
+              } else {
+                dbg_log('SUCCESS', result.data);
+                cur_cmd.resolve(result.data);
+              }
+            } finally {
+              cur_cmd = undefined;
+              send_next_cmd();
+            }
+          }
+
+          /** Prepare and send the next command to be executed if any. */
+          function send_next_cmd() {
+            if(cmd_queue.length == 0) return
+
+            cur_cmd = cmd_queue.shift();
+            dbg_log('send_next_cmd', cur_cmd);
+
+            // Convert script to base64 to prevent having to escape
+            // the script content as a Python string
+            const script_b64 = btoa(cur_cmd.py_script);
+            const wrapper = 'import base64, emscripten, json, traceback;\n'
+                + 'try:'
+                + "result = None;"
+                + "exec(base64.b64decode('" + script_b64 + "').decode('utf-8'));"
+                + "result = json.dumps(dict(data=result));"
+                + "\n"
+                + "except Exception as e:"
+                + "result = json.dumps(dict(error=str(e), name=e.__class__.__name__, traceback=traceback.format_exc()));"
+                + "\n"
+                + "emscripten.run_script('_renpy_cmd_callback(%s)' % (result,));";
+
+            dbg_log(wrapper);
+
+            // Write script to the global variable Ren'Py is monitoring
+            window._renpy_cmd = wrapper;
+          }
+
+          /** Add a command to the queue and execute it if the queue was empty. */
+          function add_cmd(py_script, resolve, reject) {
+            const cmd = {py_script: py_script, resolve: resolve, reject: reject};
+            dbg_log('add_cmd', cmd);
+            cmd_queue.push(cmd);
+
+            if(cur_cmd === undefined) send_next_cmd();
+          }
+
+          /* Global definitions */
+
+          /** Execute Python statements in Ren'Py Python's thread. The statements are executed
+           * using the renpy.python.py_exec() function, and the value of the "result" variable
+           * is passed to the resolve callback. In case of error, an Error instance is passed
+           * to the reject callback, with an extra "traceback" property.
+           * @param py_script The Python script to execute.
+           * @return A promise which resolves with the statements result.
+           */
+          renpy_exec = function(py_script) {
+            return new Promise((resolve, reject) => {
+              add_cmd(py_script, resolve, reject);
+            });
+          };
+
+          /** Helper function to get the value of a Ren'Py variable.
+           * @param name The variable name (e.g., "build.name").
+           * @return A promise which resolves with the variable value.
+           */
+          renpy_get = function(name) {
+            return new Promise((resolve, reject) => {
+              renpy_exec('result = ' + name)
+                  .then(resolve).catch(reject);
+            });
+          };
+
+          /** Helper function to set the value of a Ren'Py variable.
+           * @param name The variable name (e.g., "build.name").
+           * @param value The value to set. It should either be a basic JS type that
+           *              will be converted to JSON, or a Python expression. The raw
+           *              parameter must be set to true for the latter case.
+           * @param raw (optional) If true, value is a valid Python expression.
+           *            Otherwise, it must be a basic JS type.
+           * @return A promise which resolves with true in case of success
+           *         and fails otherwise.
+           */
+          renpy_set = function(name, value, raw) {
+            let script;
+            if(raw) {
+              script = name + " = " + value + "; result = True";
+            } else {
+              // Using base64 as it is unclear if we can use the output
+              // of JSON.stringify() directly as a Python string
+              script = 'import base64, json; '
+                  + name + " = json.loads(base64.b64decode('"
+                  + btoa(JSON.stringify(value))
+                  + "').decode('utf-8')); result = True";
+            }
+            return new Promise((resolve, reject) => {
+              renpy_exec(script)
+                  .then(resolve).catch(reject);
+            });
+          };
+
+          _renpy_cmd_callback = cmd_callback;
+
+        })();
+    </script>
+
+    <script type='text/javascript'>
+      function create_persistent() {
+        // populate savegames
+        try {
+          FS.mkdir('/home/web_user/.renpy');
+          FS.mount(IDBFS, {}, '/home/web_user/.renpy');
+        } catch(e) {
+          console.log(e);
+          Module.print("Could not create ~/.renpy/ : " + e.message + "\n");
+        }
+        FS.syncfs(true, function(err) {
+          if (err) {
+              console.trace(); console.log(err, err.message);
+              // Note: not visible enough, quickly replaced by loading status
+              Module.print("Warning: cannot save games\n");
+          }
+        });
+      }
+      if (Module['calledRun']) {
+        create_persistent();
+      } else {
+        if (!Module['preRun']) Module['preRun'] = [];
+        Module["preRun"].push(create_persistent); // FS is not initialized yet, wait for it
+      }
+    </script>
+    <script async type="text/javascript" src="index.js"></script>
+  </body>
+</html>
+
+

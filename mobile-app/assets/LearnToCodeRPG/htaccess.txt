@@ -1,0 +1,25 @@
+# https://emscripten.org/docs/compiling/WebAssembly.html#web-server-setup
+Options +MultiViews
+RemoveType .gz
+AddEncoding x-gzip .gz
+AddType application/octet-stream .data
+AddType application/wasm .wasm
+
+# CPU-intensive, better pre-gzip
+#AddOutputFilterByType DEFLATE application/wasm
+
+
+# Force browser to check if cache needs to be refreshed or not (304) for XHR
+# (preserve browser cache, but revalidate)
+<IfModule mod_headers.c>
+  Header set Cache-Control "max-age=0"
+</IfModule>
+
+# Disable ETags which don't play nice with mod_gzip and HTTP/1.1
+# (ETags come in handy if you need to rollback to an older version though)
+#<IfModule mod_headers.c>
+#  # Generated ETags
+#  Header unset ETag
+#</IfModule>
+## Static ETags
+#FileETag None

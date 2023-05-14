@@ -88,6 +88,13 @@ class DrawerWidgetView extends StatelessWidget {
                           model.routeComponent('PODCAST', context);
                         },
                       ),
+                      DrawerButton(
+                        component: 'RPG TEST',
+                        icon: Icons.podcasts_outlined,
+                        route: () {
+                          model.routeComponent('RPG', context);
+                        },
+                      ),
                       if (!Platform.isIOS)
                         DrawerButton(
                           component: 'CODE RADIO',

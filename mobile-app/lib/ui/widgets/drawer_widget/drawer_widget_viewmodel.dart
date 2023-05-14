@@ -9,6 +9,7 @@ import 'package:freecodecamp/ui/views/learn/landing/landing_view.dart';
 import 'package:freecodecamp/ui/views/login/native_login_view.dart';
 import 'package:freecodecamp/ui/views/podcast/podcast-list/podcast_list_view.dart';
 import 'package:freecodecamp/ui/views/profile/profile_view.dart';
+import 'package:freecodecamp/ui/views/rpg/rpg_view.dart';
 import 'package:stacked/stacked.dart';
 import 'package:stacked_services/stacked_services.dart';
 
@@ -87,6 +88,17 @@ class DrawerWidgtetViewModel extends BaseViewModel {
             pageBuilder: (context, animation1, animation2) =>
                 const PodcastListView(),
             settings: const RouteSettings(name: 'Podcasts List View'),
+          ),
+        );
+        break;
+      case 'RPG':
+        Navigator.pushReplacement(
+          context,
+          PageRouteBuilder(
+            transitionDuration: Duration.zero,
+            pageBuilder: (context, animation1, animation2) =>
+                const RPGView(),
+            settings: const RouteSettings(name: 'RPG TEST View'),
           ),
         );
         break;

@@ -93,3 +93,23 @@ flutter:
     - assets/test_data/news_feed.json
     - assets/database/bookmarked-article.db
     - assets/learn/
+    - assets/LearnToCodeRPG/
+    - assets/LearnToCodeRPG/game/audio/bgm/
+    - assets/LearnToCodeRPG/game/audio/rhythm_game/
+    - assets/LearnToCodeRPG/game/audio/sfx/
+    - assets/LearnToCodeRPG/game/images/bg/
+    - assets/LearnToCodeRPG/game/images/chara/annika/
+    - assets/LearnToCodeRPG/game/images/chara/layla/
+    - assets/LearnToCodeRPG/game/images/chara/marco/
+    - assets/LearnToCodeRPG/game/images/chara/npc/
+    - assets/LearnToCodeRPG/game/images/chara/player/
+    - assets/LearnToCodeRPG/game/images/others/
+    - assets/LearnToCodeRPG/game/images/others/chicken/
+    - assets/LearnToCodeRPG/game/images/others/coffee/
+    - assets/LearnToCodeRPG/game/images/others/company/
+    - assets/LearnToCodeRPG/game/images/others/cookie/
+    - assets/LearnToCodeRPG/game/images/others/gyoza/
+    - assets/LearnToCodeRPG/game/images/others/mint/
+    - assets/LearnToCodeRPG/game/images/others/pizza/
+    - assets/LearnToCodeRPG/game/images/others/rhythm_minigame/
+    - assets/LearnToCodeRPG/game/images/others/toast/
