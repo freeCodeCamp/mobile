@@ -254,7 +254,8 @@ class PodcastTileState extends State<PodcastTile> {
                       episode: widget.episode,
                       podcast: widget.podcast,
                     ),
-                    settings: const RouteSettings(name: 'Podcasts Episode View'),
+                    settings:
+                        const RouteSettings(name: 'Podcasts Episode View'),
                   ),
                 );
               }
@@ -418,25 +419,25 @@ class PodcastTileState extends State<PodcastTile> {
   Padding descriptionWidget() {
     return Padding(
       padding: const EdgeInsets.all(8.0),
-      child: Html(
-        data: widget.podcast.description!,
-        onLinkTap: (
-          String? url,
-          RenderContext context,
-          Map<String, String> attributes,
-          dom.Element? element,
-        ) {
-          launchUrlString(url!);
-        },
-        style: {
-          '#': Style(
-              fontSize: const FontSize(16),
-              color: Colors.white.withOpacity(0.87),
-              margin: EdgeInsets.zero,
-              maxLines: 3,
-              fontFamily: 'Lato')
-        },
-      ),
+      // child: Html(
+      //   data: widget.podcast.description!,
+      //   onLinkTap: (
+      //     String? url,
+      //     RenderContext context,
+      //     Map<String, String> attributes,
+      //     dom.Element? element,
+      //   ) {
+      //     launchUrlString(url!);
+      //   },
+      //   style: {
+      //     '#': Style(
+      //         fontSize: const FontSize(16),
+      //         color: Colors.white.withOpacity(0.87),
+      //         margin: EdgeInsets.zero,
+      //         maxLines: 3,
+      //         fontFamily: 'Lato')
+      //   },
+      // ),
     );
   }
 }

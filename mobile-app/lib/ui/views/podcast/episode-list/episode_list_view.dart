@@ -128,25 +128,25 @@ class EpisodeListView extends StatelessWidget {
           style:
               TextStyle(fontSize: 24, fontWeight: FontWeight.bold, height: 1.2),
         ),
-        Html(
-          data: podcast.description!,
-          onLinkTap: (
-            String? url,
-            RenderContext context,
-            Map<String, String> attributes,
-            dom.Element? element,
-          ) {
-            launchUrlString(url!);
-          },
-          style: {
-            '#': Style(
-                fontSize: const FontSize(16),
-                color: Colors.white.withOpacity(0.87),
-                margin: EdgeInsets.zero,
-                maxLines: model.showDescription ? null : 3,
-                fontFamily: 'Lato')
-          },
-        ),
+        // Html(
+        //   data: podcast.description!,
+        //   onLinkTap: (
+        //     String? url,
+        //     RenderContext context,
+        //     Map<String, String> attributes,
+        //     dom.Element? element,
+        //   ) {
+        //     launchUrlString(url!);
+        //   },
+        //   style: {
+        //     '#': Style(
+        //         fontSize: const FontSize(16),
+        //         color: Colors.white.withOpacity(0.87),
+        //         margin: EdgeInsets.zero,
+        //         maxLines: model.showDescription ? null : 3,
+        //         fontFamily: 'Lato')
+        //   },
+        // ),
         TextButton(
           onPressed: () {
             model.setShowMoreDescription = !model.showDescription;
