@@ -12,6 +12,7 @@ class RPGView extends StatelessWidget {
     return ViewModelBuilder<RPGViewModel>.reactive(
       viewModelBuilder: () => RPGViewModel(),
       onViewModelReady: (model) => model.init(),
+      onDispose: (model) => model.disposeView(),
       builder: (context, model, child) => Scaffold(
         appBar: AppBar(
           title: const Text('RPG'),
