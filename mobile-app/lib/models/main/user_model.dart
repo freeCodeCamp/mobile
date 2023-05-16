@@ -43,10 +43,6 @@ class FccUserModel {
 
   final bool isCheater;
   final bool isDonating;
-  final bool isGithub;
-  final bool isLinkedIn;
-  final bool isTwitter;
-  final bool isWebsite;
 
   final bool isHonest;
   final bool isFrontEndCert;
@@ -108,10 +104,6 @@ class FccUserModel {
     required this.sendQuincyEmail,
     required this.isCheater,
     required this.isDonating,
-    required this.isGithub,
-    required this.isLinkedIn,
-    required this.isTwitter,
-    required this.isWebsite,
     required this.isHonest,
     required this.isFrontEndCert,
     required this.isDataVisCert,
@@ -166,10 +158,6 @@ class FccUserModel {
       sendQuincyEmail: data['sendQuincyEmail'],
       isCheater: data['isCheater'],
       isDonating: data['isDonating'] ?? false,
-      isGithub: data['isGithub'],
-      isLinkedIn: data['isLinkedIn'],
-      isTwitter: data['isTwitter'],
-      isWebsite: data['isWebsite'],
       isHonest: data['isHonest'],
       isFrontEndCert: data['isFrontEndCert'],
       isDataVisCert: data['isDataVisCert'],
