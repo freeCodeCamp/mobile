@@ -16,9 +16,6 @@ class NativeLoginViewModel extends BaseViewModel {
   final AuthenticationService auth = locator<AuthenticationService>();
   final DeveloperService developerService = locator<DeveloperService>();
 
-  bool _isDeveloper = false;
-  bool get isDeveloper => _isDeveloper;
-
   bool _emailFieldIsValid = false;
   bool get emailFieldIsValid => _emailFieldIsValid;
 
@@ -27,11 +24,6 @@ class NativeLoginViewModel extends BaseViewModel {
 
   set emailFieldIsValid(bool value) {
     _emailFieldIsValid = value;
-    notifyListeners();
-  }
-
-  set setIsDeveloper(bool value) {
-    _isDeveloper = value;
     notifyListeners();
   }
 
@@ -65,8 +57,6 @@ class NativeLoginViewModel extends BaseViewModel {
         otpFieldIsValid = false;
       }
     });
-
-    setIsDeveloper = await developerService.developmentMode();
   }
 
   void sendOTPtoEmail() async {
