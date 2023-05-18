@@ -208,7 +208,7 @@ class NativeLoginView extends StatelessWidget {
                         : Expanded(
                             child: Container(
                               margin: const EdgeInsets.all(16),
-                              height: 50,
+                              constraints: const BoxConstraints(minHeight: 50),
                               child: ElevatedButton(
                                 style: buttonStyle,
                                 onPressed: model.emailFieldIsValid
@@ -216,9 +216,12 @@ class NativeLoginView extends StatelessWidget {
                                         model.sendOTPtoEmail();
                                       }
                                     : null,
-                                child: Text(
-                                  'Email a sign in code',
-                                  style: textStyle,
+                                child: Padding(
+                                  padding: const EdgeInsets.all(8.0),
+                                  child: Text(
+                                    'Email a sign in code',
+                                    style: textStyle,
+                                  ),
                                 ),
                               ),
                             ),
