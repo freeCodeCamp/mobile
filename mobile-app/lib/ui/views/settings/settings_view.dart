@@ -10,6 +10,7 @@ class SettingsView extends StatelessWidget {
   Widget build(BuildContext context) {
     return ViewModelBuilder<SettingsViewModel>.reactive(
       viewModelBuilder: () => SettingsViewModel(),
+      onViewModelReady: (viewModel) => viewModel.init(),
       builder: (context, model, child) => Scaffold(
         appBar: AppBar(
           title: const Text('SETTINGS'),
