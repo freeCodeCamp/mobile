@@ -98,15 +98,16 @@ class DrawerWidgetView extends StatelessWidget {
                         ),
                       buildDivider(),
                       const CustomTabButton(
-                        component: 'PRIVACY',
-                        icon: Icons.info_outline,
-                        url:
-                            'https://www.freecodecamp.org/news/privacy-policy/',
-                      ),
-                      const CustomTabButton(
                         component: 'DONATE',
                         url: 'https://www.freecodecamp.org/donate/',
                         icon: Icons.favorite,
+                      ),
+                      DrawerButton(
+                        component: 'SETTINGS',
+                        icon: Icons.settings,
+                        route: () {
+                          model.routeComponent('SETTINGS', context);
+                        },
                       ),
                       buildDivider(),
                       DrawerButton(
@@ -119,7 +120,7 @@ class DrawerWidgetView extends StatelessWidget {
                             model.loggedIn
                                 ? model.auth.logout()
                                 : model.routeComponent('LOGIN', context);
-                          })
+                          }),
                     ],
                   ),
                 ),
