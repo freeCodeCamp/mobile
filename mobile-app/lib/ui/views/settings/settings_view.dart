@@ -15,6 +15,7 @@ class SettingsView extends StatelessWidget {
         appBar: AppBar(
           title: const Text('SETTINGS'),
         ),
+        drawer: const DrawerWidgetView(),
         body: Column(
           children: [
             ListTile(
