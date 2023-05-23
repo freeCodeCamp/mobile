@@ -98,7 +98,9 @@ class DeleteAccountView extends StatelessWidget {
                   children: [
                     Expanded(
                       child: TextButton(
-                        onPressed: () => model.deleteAccount(),
+                        onPressed: model.processing
+                            ? null
+                            : () => model.deleteAccount(),
                         style: TextButton.styleFrom(
                           backgroundColor: Colors.red.shade100,
                           foregroundColor: Colors.red.shade900,
@@ -106,6 +108,8 @@ class DeleteAccountView extends StatelessWidget {
                             width: 2,
                             color: Colors.red.shade900,
                           ),
+                          disabledBackgroundColor: Colors.red.shade50,
+                          disabledForegroundColor: Colors.red.shade700,
                         ),
                         child: const Text(
                           'I am 100% certain. Delete everything related to this account',

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:freecodecamp/service/authentication/authentication_service.dart';
 import 'package:freecodecamp/ui/views/settings/delete-account/delete_account_view.dart';
 import 'package:freecodecamp/ui/views/settings/settings_viewmodel.dart';
 import 'package:freecodecamp/ui/widgets/drawer_widget/drawer_widget_view.dart';
@@ -19,19 +20,21 @@ class SettingsView extends StatelessWidget {
         drawer: const DrawerWidgetView(),
         body: Column(
           children: [
-            ListTile(
-              leading: const Icon(Icons.delete_forever),
-              title: const Text('Delete my account'),
-              subtitle: const Text('Delete your freeCodeCamp account'),
-              onTap: () => Navigator.push(
-                context,
-                MaterialPageRoute(
-                  builder: (context) => const DeleteAccountView(),
-                  settings: const RouteSettings(name: 'Delete Account View'),
+            if (AuthenticationService.staticIsloggedIn) ...[
+              ListTile(
+                leading: const Icon(Icons.delete_forever),
+                title: const Text('Delete my account'),
+                subtitle: const Text('Delete your freeCodeCamp account'),
+                onTap: () => Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => const DeleteAccountView(),
+                    settings: const RouteSettings(name: 'Delete Account View'),
+                  ),
                 ),
               ),
-            ),
-            buildDivider(),
+              buildDivider(),
+            ],
             ListTile(
               leading: const Icon(Icons.dataset_linked),
               title: const Text('Reset Cache'),
