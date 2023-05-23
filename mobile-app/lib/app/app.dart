@@ -24,6 +24,7 @@ import 'package:freecodecamp/ui/views/news/news-feed/news_feed_view.dart';
 import 'package:freecodecamp/ui/views/learn/landing/landing_view.dart';
 import 'package:freecodecamp/ui/views/learn/challenge/challenge_view.dart';
 import 'package:freecodecamp/ui/views/profile/profile_view.dart';
+import 'package:freecodecamp/ui/views/settings/delete-account/delete_account_view.dart';
 
 import 'package:freecodecamp/ui/views/news/news-image-viewer/news_image_view.dart';
 import 'package:freecodecamp/ui/views/settings/settings_view.dart';
@@ -48,7 +49,8 @@ import 'package:sqflite_migration_service/sqflite_migration_service.dart';
     MaterialRoute(page: LearnLandingView),
     MaterialRoute(page: NativeLoginView),
     MaterialRoute(page: SuperBlockView),
-    MaterialRoute(page: SettingsView)
+    MaterialRoute(page: SettingsView),
+    MaterialRoute(page: DeleteAccountView),
   ],
   dependencies: [
     LazySingleton(classType: NavigationService),
