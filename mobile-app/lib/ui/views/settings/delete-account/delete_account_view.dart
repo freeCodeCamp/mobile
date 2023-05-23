@@ -100,7 +100,7 @@ class DeleteAccountView extends StatelessWidget {
                       child: TextButton(
                         onPressed: model.processing
                             ? null
-                            : () => model.deleteAccount(),
+                            : () => model.deleteAccount(context),
                         style: TextButton.styleFrom(
                           backgroundColor: Colors.red.shade100,
                           foregroundColor: Colors.red.shade900,
