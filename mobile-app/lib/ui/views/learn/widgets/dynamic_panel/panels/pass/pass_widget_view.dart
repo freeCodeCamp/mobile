@@ -55,7 +55,7 @@ class PassWidgetView extends StatelessWidget {
               ],
             ),
             FutureBuilder(
-              future: model.retrieveNewQuote(),
+              future: model.qouteFuture,
               builder: (context, snapshot) {
                 if (snapshot.hasData) {
                   MotivationalQuote quote = snapshot.data as MotivationalQuote;

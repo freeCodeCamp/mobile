@@ -19,8 +19,17 @@ class PassWidgetModel extends BaseViewModel {
 
   late FccUserModel? _user;
 
+  Future? _qouteFuture;
+  Future? get qouteFuture => _qouteFuture;
+
+  set setQouteFuture(Future? value) {
+    _qouteFuture = value;
+    notifyListeners();
+  }
+
   void init() async {
     _user = await auth.userModel;
+    setQouteFuture = retrieveNewQuote();
     notifyListeners();
   }
 
