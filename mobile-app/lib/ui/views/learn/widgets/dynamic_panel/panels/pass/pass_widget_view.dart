@@ -125,25 +125,32 @@ class PassWidgetView extends StatelessWidget {
                   );
                 } else if (!AuthenticationService.staticIsloggedIn) {
                   return Container(
-                    margin: const EdgeInsets.symmetric(
+                    padding: const EdgeInsets.symmetric(
                       vertical: 16,
                       horizontal: 8,
                     ),
-                    constraints: const BoxConstraints(minHeight: 75),
-                    child: ElevatedButton(
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor:
-                            const Color.fromRGBO(0xf1, 0xbe, 0x32, 1),
-                        padding: const EdgeInsets.all(8),
-                      ),
-                      onPressed: () {
-                        model.auth.routeToLogin(true);
-                      },
-                      child: const Text(
-                        'Sign in to save your progress',
-                        textAlign: TextAlign.center,
-                        style: TextStyle(color: Colors.black, fontSize: 20),
-                      ),
+                    child: Row(
+                      children: [
+                        Expanded(
+                          child: ElevatedButton(
+                            style: ElevatedButton.styleFrom(
+                              backgroundColor:
+                                  const Color.fromRGBO(0xf1, 0xbe, 0x32, 1),
+                              padding: const EdgeInsets.all(8),
+                              minimumSize: const Size.fromHeight(50),
+                            ),
+                            onPressed: () {
+                              model.auth.routeToLogin(true);
+                            },
+                            child: const Text(
+                              'Sign in to save your progress',
+                              textAlign: TextAlign.center,
+                              style:
+                                  TextStyle(color: Colors.black, fontSize: 20),
+                            ),
+                          ),
+                        ),
+                      ],
                     ),
                   );
                 }
