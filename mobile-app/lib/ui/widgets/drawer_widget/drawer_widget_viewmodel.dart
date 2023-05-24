@@ -6,6 +6,7 @@ import 'package:freecodecamp/ui/views/code_radio/code_radio_view.dart';
 //import 'package:freecodecamp/ui/views/learn/learn_view.dart';
 import 'package:freecodecamp/ui/views/home/home_view.dart';
 import 'package:freecodecamp/ui/views/learn/landing/landing_view.dart';
+import 'package:freecodecamp/ui/views/login/native_login_view.dart';
 import 'package:freecodecamp/ui/views/podcast/podcast-list/podcast_list_view.dart';
 import 'package:freecodecamp/ui/views/profile/profile_view.dart';
 import 'package:stacked/stacked.dart';
@@ -62,7 +63,8 @@ class DrawerWidgtetViewModel extends BaseViewModel {
           context,
           PageRouteBuilder(
             transitionDuration: Duration.zero,
-            pageBuilder: (context, animation1, animation2) => const LearnLandingView(),
+            pageBuilder: (context, animation1, animation2) =>
+                const LearnLandingView(),
             settings: const RouteSettings(name: 'Learn View'),
           ),
         );
@@ -110,11 +112,16 @@ class DrawerWidgtetViewModel extends BaseViewModel {
           ),
         );
         break;
+      case 'LOGIN':
+        Navigator.push(
+          context,
+          PageRouteBuilder(
+            transitionDuration: Duration.zero,
+            pageBuilder: (context, animation1, animation2) =>
+                const NativeLoginView(),
+            settings: const RouteSettings(name: 'Login View'),
+          ),
+        );
     }
-  }
-
-  void handleAuth(BuildContext context) {
-    loggedIn ? auth.logout() : auth.login(context);
-    notifyListeners();
   }
 }

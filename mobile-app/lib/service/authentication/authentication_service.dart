@@ -9,6 +9,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:freecodecamp/app/app.locator.dart';
+import 'package:freecodecamp/app/app.router.dart';
 import 'package:freecodecamp/models/main/user_model.dart';
 import 'package:freecodecamp/ui/views/auth/privacy_view.dart';
 import 'package:pretty_dio_logger/pretty_dio_logger.dart';
@@ -19,6 +20,7 @@ class AuthenticationService {
       AuthenticationService._internal();
 
   SnackbarService snackbar = locator<SnackbarService>();
+  final NavigationService _navigationService = locator<NavigationService>();
 
   final FlutterSecureStorage store = const FlutterSecureStorage();
   final Dio _dio = Dio();
@@ -128,15 +130,21 @@ class AuthenticationService {
     return FccUserModel.fromJson(data);
   }
 
-  Future<void> login(BuildContext context) async {
+  Future<bool> login(
+    BuildContext context,
+    String connectionType, {
+    String? email,
+    String? otp,
+  }) async {
     late final Credentials creds;
+    late final Response emailLoginRes;
     Response? res;
 
     showDialog(
       context: context,
       barrierDismissible: false,
-      routeSettings: const RouteSettings(
-        name: 'Login View',
+      routeSettings: RouteSettings(
+        name: 'Login View - $connectionType',
       ),
       builder: (context) {
         return WillPopScope(
@@ -156,7 +164,23 @@ class AuthenticationService {
     );
 
     try {
-      creds = await auth0.webAuthentication(scheme: 'fccapp').login();
+      if (connectionType == 'email') {
+        emailLoginRes = await _dio.post(
+          'https://${dotenv.get('AUTH0_DOMAIN')}/oauth/token',
+          data: {
+            'client_id': dotenv.get('AUTH0_CLIENT_ID'),
+            'grant_type': 'http://auth0.com/oauth/grant-type/passwordless/otp',
+            'realm': 'email',
+            'username': email,
+            'otp': otp,
+            'scope': 'openid profile email',
+          },
+        );
+      } else {
+        creds = await auth0
+            .webAuthentication(scheme: 'fccapp')
+            .login(parameters: {'connection': connectionType});
+      }
     } on WebAuthenticationException {
       // NOTE: The most likely case is that the user canceled the login
       snackbar.showSnackbar(
@@ -167,15 +191,22 @@ class AuthenticationService {
       logout();
       Navigator.pop(context);
 
-      return;
+      return false;
+    } on DioError {
+      logout();
+      Navigator.pop(context);
+      return false;
     }
 
     try {
+      String accessToken = connectionType == 'email'
+          ? emailLoginRes.data['access_token']
+          : creds.accessToken;
       res = await _dio.get(
         '/mobile-login',
         options: Options(
           headers: {
-            'Authorization': 'Bearer ${creds.accessToken}',
+            'Authorization': 'Bearer $accessToken',
           },
         ),
       );
@@ -271,7 +302,9 @@ class AuthenticationService {
     await auth0.credentialsManager.clearCredentials();
     if (res != null) {
       Navigator.pop(context);
+      Navigator.pop(context);
     }
+    return true;
   }
 
   Future<void> logout() async {
@@ -303,6 +336,15 @@ class AuthenticationService {
       isLoggedInStream.sink.add(false);
       logout();
     }
+  }
+
+  void routeToLogin([bool fromButton = false]) {
+    _navigationService.navigateTo(
+      Routes.nativeLoginView,
+      arguments: NativeLoginViewArguments(
+        fromButton: fromButton,
+      ),
+    );
   }
 
   AuthenticationService._internal();

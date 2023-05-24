@@ -147,7 +147,7 @@ class LearnLandingView extends StatelessWidget {
           backgroundColor: const Color.fromRGBO(0xf1, 0xbe, 0x32, 1),
         ),
         onPressed: () {
-          model.auth.login(context);
+          model.auth.routeToLogin(true);
         },
         child: const Padding(
           padding: EdgeInsets.all(8.0),

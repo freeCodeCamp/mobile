@@ -2,7 +2,7 @@ import 'package:freecodecamp/enums/ext_type.dart';
 import 'package:freecodecamp/models/learn/challenge_model.dart';
 import 'package:html/parser.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:html/dom.dart' as dom;
+import 'package:html/dom.dart';
 
 class LearnFileService {
   // This function returns a specific file content from the cache.
@@ -118,14 +118,14 @@ class LearnFileService {
     String document,
     String cssFileName,
   ) async {
-    dom.Document doc = parse(document);
+    Document doc = parse(document);
 
-    List<dom.Node> links = doc.getElementsByTagName('LINK');
+    List<Node> links = doc.getElementsByTagName('LINK');
 
     List<String> linkedFileNames = [];
 
     if (links.isNotEmpty) {
-      for (dom.Node node in links) {
+      for (Node node in links) {
         if (node.attributes['href'] == null) continue;
 
         if (node.attributes['href']!.contains('/')) {
@@ -189,8 +189,8 @@ class LearnFileService {
   }
 
   String removeExcessiveScriptsInHTMLdocument(String file) {
-    dom.Document document = parse(file);
-    List<dom.Element> elements = document.querySelectorAll('SCRIPT');
+    Document document = parse(file);
+    List<Element> elements = document.querySelectorAll('SCRIPT');
 
     if (elements.isEmpty) return file;
 
@@ -204,10 +204,10 @@ class LearnFileService {
   }
 
   String changeActiveFileLinks(String file) {
-    dom.Document document = parse(file);
+    Document document = parse(file);
 
-    List<dom.Element> linkElements = document.querySelectorAll('LINK');
-    List<dom.Element> scripElements = document.querySelectorAll('SCRIPT');
+    List<Element> linkElements = document.querySelectorAll('LINK');
+    List<Element> scripElements = document.querySelectorAll('SCRIPT');
 
     if (scripElements.isEmpty && linkElements.isEmpty) return file;
 

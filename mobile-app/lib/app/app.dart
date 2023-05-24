@@ -14,6 +14,7 @@ import 'package:freecodecamp/service/firebase/analytics_service.dart';
 import 'package:freecodecamp/ui/views/code_radio/code_radio_view.dart';
 import 'package:freecodecamp/ui/views/home/home_view.dart';
 import 'package:freecodecamp/ui/views/learn/superblock/superblock_view.dart';
+import 'package:freecodecamp/ui/views/login/native_login_view.dart';
 import 'package:freecodecamp/ui/views/news/news-author/news_author_view.dart';
 import 'package:freecodecamp/ui/views/podcast/podcast-list/podcast_list_view.dart';
 import 'package:freecodecamp/ui/views/podcast/episode/episode_view.dart';
@@ -44,7 +45,8 @@ import 'package:sqflite_migration_service/sqflite_migration_service.dart';
     MaterialRoute(page: ChallengeView),
     MaterialRoute(page: ProfileView),
     MaterialRoute(page: LearnLandingView),
-    MaterialRoute(page: SuperBlockView),
+    MaterialRoute(page: NativeLoginView),
+    MaterialRoute(page: SuperBlockView)
   ],
   dependencies: [
     LazySingleton(classType: NavigationService),
