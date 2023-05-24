@@ -3,7 +3,6 @@ import 'package:freecodecamp/models/learn/completed_challenge_model.dart';
 import 'package:freecodecamp/models/learn/saved_challenge_model.dart';
 import 'package:freecodecamp/models/main/portfolio_model.dart';
 import 'package:freecodecamp/models/main/profile_ui_model.dart';
-import 'package:freecodecamp/models/main/streak_model.dart';
 
 class UserModel {
   final NewsUserModel newsUserModel;
@@ -81,7 +80,6 @@ class FccUserModel {
   final List<String> yearsTopContributor; // If number, parsing it to string
 
   final Themes theme;
-  final Streak streak;
   final ProfileUI profileUI;
 
   FccUserModel({
@@ -132,7 +130,6 @@ class FccUserModel {
     required this.portfolio,
     required this.yearsTopContributor,
     required this.theme,
-    required this.streak,
     required this.profileUI,
   });
 
@@ -198,7 +195,6 @@ class FccUserModel {
           .map<String>((year) => year.toString())
           .toList(),
       theme: parseThemes(data['theme']),
-      streak: Streak.fromJson(data['streak']),
       profileUI: ProfileUI.fromJson(data['profileUI']),
     );
   }

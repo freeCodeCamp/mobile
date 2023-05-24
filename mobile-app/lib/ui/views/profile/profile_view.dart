@@ -273,22 +273,22 @@ class ProfileView extends StatelessWidget {
                           );
                         },
                       ),
-                      Padding(
-                        padding: const EdgeInsets.symmetric(vertical: 4),
-                        child: Text(
-                          'Longest Streak: ${user.streak.longest}',
-                          textAlign: TextAlign.center,
-                          style: const TextStyle(fontSize: 16, height: 1.25),
-                        ),
-                      ),
-                      Padding(
-                        padding: const EdgeInsets.only(top: 4, bottom: 8),
-                        child: Text(
-                          'Current Streak: ${user.streak.current}',
-                          textAlign: TextAlign.center,
-                          style: const TextStyle(fontSize: 16, height: 1.25),
-                        ),
-                      ),
+                      // Padding(
+                      //   padding: const EdgeInsets.symmetric(vertical: 4),
+                      //   child: Text(
+                      //     'Longest Streak: ${user.streak.longest}',
+                      //     textAlign: TextAlign.center,
+                      //     style: const TextStyle(fontSize: 16, height: 1.25),
+                      //   ),
+                      // ),
+                      // Padding(
+                      //   padding: const EdgeInsets.only(top: 4, bottom: 8),
+                      //   child: Text(
+                      //     'Current Streak: ${user.streak.current}',
+                      //     textAlign: TextAlign.center,
+                      //     style: const TextStyle(fontSize: 16, height: 1.25),
+                      //   ),
+                      // ),
                       buildDivider(),
                       CertificationWidget(
                         user: user,
