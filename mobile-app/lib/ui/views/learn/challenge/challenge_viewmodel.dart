@@ -513,12 +513,19 @@ class ChallengeViewModel extends BaseViewModel {
   }
 
   void handleConsoleLogMessagges(ConsoleMessage console, Challenge challenge) {
+    // Create a new console log message that adds html tags to the console message
+
     ConsoleMessage newMessage = ConsoleMessage(
       message: parseUsersConsoleMessages(console.message),
       messageLevel: ConsoleMessageLevel.LOG,
     );
 
     String msg = console.message;
+
+    // We want to know if it is the first test because when the eval function is called
+    // it will run the first test and logs everything to the console. This means that
+    // we don't want to add the console messages more than once. So we ignore anything
+    // that comes after the first test.
 
     bool testRelated = msg.startsWith('testMSG: ') || msg.startsWith('index: ');
 
@@ -533,6 +540,9 @@ class ChallengeViewModel extends BaseViewModel {
       ];
     }
 
+    // When the message starts with testMSG it indactes that the user has done something
+    // that has triggered a test to throw an error. We want to show the error to the user.
+
     if (msg.startsWith('testMSG: ')) {
       setPanelType = PanelType.hint;
       setHint = msg.split('testMSG: ')[1];
@@ -541,7 +551,7 @@ class ChallengeViewModel extends BaseViewModel {
       setConsoleMessages = [newMessage, ...userConsoleMessages];
     }
 
-    if (console.message == 'completed') {
+    if (msg == 'completed') {
       setConsoleMessages = [
         ...userConsoleMessages,
         ...consoleMessages,
