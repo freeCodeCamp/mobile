@@ -9,6 +9,7 @@ import 'package:freecodecamp/ui/views/learn/landing/landing_view.dart';
 import 'package:freecodecamp/ui/views/login/native_login_view.dart';
 import 'package:freecodecamp/ui/views/podcast/podcast-list/podcast_list_view.dart';
 import 'package:freecodecamp/ui/views/profile/profile_view.dart';
+import 'package:freecodecamp/ui/views/settings/settings_view.dart';
 import 'package:stacked/stacked.dart';
 import 'package:stacked_services/stacked_services.dart';
 
@@ -65,7 +66,9 @@ class DrawerWidgtetViewModel extends BaseViewModel {
             transitionDuration: Duration.zero,
             pageBuilder: (context, animation1, animation2) =>
                 const LearnLandingView(),
-            settings: const RouteSettings(name: 'Learn View'),
+            settings: const RouteSettings(
+              name: 'Learn View',
+            ),
           ),
         );
         break;
@@ -75,7 +78,9 @@ class DrawerWidgtetViewModel extends BaseViewModel {
           PageRouteBuilder(
             transitionDuration: Duration.zero,
             pageBuilder: (context, animation1, animation2) => const HomeView(),
-            settings: const RouteSettings(name: 'News View'),
+            settings: const RouteSettings(
+              name: 'News View',
+            ),
           ),
         );
         break;
@@ -86,7 +91,9 @@ class DrawerWidgtetViewModel extends BaseViewModel {
             transitionDuration: Duration.zero,
             pageBuilder: (context, animation1, animation2) =>
                 const PodcastListView(),
-            settings: const RouteSettings(name: 'Podcasts List View'),
+            settings: const RouteSettings(
+              name: 'Podcasts List View',
+            ),
           ),
         );
         break;
@@ -97,7 +104,9 @@ class DrawerWidgtetViewModel extends BaseViewModel {
             transitionDuration: Duration.zero,
             pageBuilder: (context, animation1, animatiom2) =>
                 const CodeRadioView(),
-            settings: const RouteSettings(name: 'Code Radio View'),
+            settings: const RouteSettings(
+              name: 'Code Radio View',
+            ),
           ),
         );
         break;
@@ -108,7 +117,9 @@ class DrawerWidgtetViewModel extends BaseViewModel {
             transitionDuration: Duration.zero,
             pageBuilder: (context, animation1, animation2) =>
                 const ProfileView(),
-            settings: const RouteSettings(name: 'Profile View'),
+            settings: const RouteSettings(
+              name: 'Profile View',
+            ),
           ),
         );
         break;
@@ -119,9 +130,25 @@ class DrawerWidgtetViewModel extends BaseViewModel {
             transitionDuration: Duration.zero,
             pageBuilder: (context, animation1, animation2) =>
                 const NativeLoginView(),
-            settings: const RouteSettings(name: 'Login View'),
+            settings: const RouteSettings(
+              name: 'Login View',
+            ),
           ),
         );
+        break;
+      case 'SETTINGS':
+        Navigator.push(
+          context,
+          PageRouteBuilder(
+            transitionDuration: Duration.zero,
+            pageBuilder: (context, animation1, animation2) =>
+                const SettingsView(),
+            settings: const RouteSettings(
+              name: 'Settings View',
+            ),
+          ),
+        );
+        break;
     }
   }
 }
