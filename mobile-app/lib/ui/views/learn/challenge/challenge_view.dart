@@ -416,7 +416,7 @@ class ChallengeView extends StatelessWidget {
                             : const FaIcon(FontAwesomeIcons.check),
                     onPressed: model.hasTypedInEditor
                         ? () async {
-                            model.setLastTestIndex = 0;
+                            model.setAfterFirstTest = false;
                             model.setConsoleMessages = [];
                             model.setUserConsoleMessages = [];
                             if (model.showPanel &&

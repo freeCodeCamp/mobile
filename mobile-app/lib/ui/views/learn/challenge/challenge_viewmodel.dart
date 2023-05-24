@@ -53,8 +53,8 @@ class ChallengeViewModel extends BaseViewModel {
   bool _runningTests = false;
   bool get runningTests => _runningTests;
 
-  int _lastTestIndex = 0;
-  int get lastTestIndex => _lastTestIndex;
+  bool _afterFirstTest = false;
+  bool get afterFirstTest => _afterFirstTest;
 
   bool _hasTypedInEditor = false;
   bool get hasTypedInEditor => _hasTypedInEditor;
@@ -112,8 +112,8 @@ class ChallengeViewModel extends BaseViewModel {
     notifyListeners();
   }
 
-  set setLastTestIndex(int value) {
-    _lastTestIndex = value;
+  set setAfterFirstTest(bool value) {
+    _afterFirstTest = value;
     notifyListeners();
   }
 
@@ -522,17 +522,11 @@ class ChallengeViewModel extends BaseViewModel {
 
     bool testRelated = msg.startsWith('testMSG: ') || msg.startsWith('index: ');
 
-    if (msg.startsWith('index: ')) {
-      int localIndex = int.parse(msg.split('@')[1]);
-
-      if (localIndex >= lastTestIndex) {
-        setLastTestIndex = localIndex;
-      } else {
-        return;
-      }
+    if (msg.startsWith('first test done')) {
+      setAfterFirstTest = true;
     }
 
-    if (!testRelated && lastTestIndex == challenge.tests.length - 1) {
+    if (!testRelated && !afterFirstTest) {
       setUserConsoleMessages = [
         ...userConsoleMessages,
         newMessage,
@@ -543,9 +537,11 @@ class ChallengeViewModel extends BaseViewModel {
       setPanelType = PanelType.hint;
       setHint = msg.split('testMSG: ')[1];
       setShowPanel = true;
+
+      setConsoleMessages = [newMessage, ...userConsoleMessages];
     }
 
-    if (lastTestIndex == challenge.tests.length - 1) {
+    if (console.message == 'completed') {
       setConsoleMessages = [
         ...userConsoleMessages,
         ...consoleMessages,
