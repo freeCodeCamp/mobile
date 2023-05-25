@@ -54,6 +54,10 @@ class ChallengeView extends StatelessWidget {
             bool editableRegion = currFile.editableRegionBoundaries.isNotEmpty;
             EditorOptions options = EditorOptions(
               hasRegion: editableRegion,
+              editorPadding: editableRegion
+                  ? const EdgeInsets.only(top: 10)
+                  : const EdgeInsets.all(0),
+              wrap: true,
             );
 
             Editor editor = Editor(
@@ -304,35 +308,8 @@ class ChallengeView extends StatelessWidget {
               onWebViewCreated: (controller) {
                 model.setTestController = controller;
               },
-              onConsoleMessage: (controller, message) {
-                ConsoleMessage newMessage = ConsoleMessage(
-                  message: model.parseUsersConsoleMessages(message.message),
-                  messageLevel: ConsoleMessageLevel.LOG,
-                );
-
-                model.setConsoleMessages = [
-                  ...model.consoleMessages,
-                  newMessage
-                ];
-
-                if (message.message == 'completed') {
-                  model.setPanelType = PanelType.pass;
-                  model.setCompletedChallenge = true;
-                  model.setShowPanel = true;
-                } else {
-                  model.setPanelType = PanelType.hint;
-                  model.setHint = model.consoleMessages
-                      .firstWhere(
-                        (e) => e.message.startsWith('testMSG: '),
-                        orElse: () => ConsoleMessage(
-                          message: 'something went wrong?',
-                        ),
-                      )
-                      .message
-                      .split('testMSG: ')[1];
-                  model.setShowPanel = true;
-                }
-                model.setIsRunningTests = false;
+              onConsoleMessage: (controller, console) {
+                model.handleConsoleLogMessagges(console, challenge);
               },
             ),
           ),
@@ -443,7 +420,9 @@ class ChallengeView extends StatelessWidget {
                             : const FaIcon(FontAwesomeIcons.check),
                     onPressed: model.hasTypedInEditor
                         ? () async {
+                            model.setAfterFirstTest = false;
                             model.setConsoleMessages = [];
+                            model.setUserConsoleMessages = [];
                             if (model.showPanel &&
                                 model.panelType == PanelType.pass) {
                               model.goToNextChallenge(
