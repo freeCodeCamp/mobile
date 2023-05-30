@@ -267,36 +267,31 @@ class TestRunner extends BaseViewModel {
             return code;
         }
       }
-
-      function removeConsoleLogs(inputString) {
-        const regex = /console\\.log\\s*\\(\\s*.*?\\s*\\)\\s*;?/gs;
-        const outputString = inputString.replaceAll(regex, '');
-        return outputString;
-      }
-
+      let error = false;
       try {
-        let error = false;
         for (let i = 0; i < tests.length; i++) {
+
           try {
 
             const lastIndex = i != tests.length - 1;
 
-            const parseCode = lastIndex ? code : removeConsoleLogs(code);
-
-            await eval(head + '\\n' + parseCode + '\\n' + tail + '\\n' + tests[i]);
+            await eval(head + '\\n' + code + '\\n' + tail + '\\n' + tests[i]);
+      
           } catch (e) {
             error = true;
-            console.log('testMSG: ' + testText[i]);
+            console.log(`testMSG: ` + testText[i]);
             break;
-          }
-        }
-
-        if (!error) {
-          console.log('completed');
+          } 
+          console.log(`first test done`);
         }
       } catch (e) {
         console.log(e);
-      }''';
+      }
+      
+      if(!error){
+        console.log('completed');
+      }
+      ''';
     }
     return null;
   }
