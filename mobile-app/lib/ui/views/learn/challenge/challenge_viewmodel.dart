@@ -284,9 +284,7 @@ class ChallengeViewModel extends BaseViewModel {
     if (prefs.getString(url) == null) {
       if (res.statusCode == 200) {
         Challenge challenge = Challenge.fromJson(
-          jsonDecode(
-            res.body,
-          )['result']['data']['challengeNode']['challenge'],
+          jsonDecode(res.body),
         );
 
         prefs.setString(url, res.body);
@@ -296,9 +294,7 @@ class ChallengeViewModel extends BaseViewModel {
     }
 
     Challenge challenge = Challenge.fromJson(
-      jsonDecode(
-        prefs.getString(url) as String,
-      )['result']['data']['challengeNode']['challenge'],
+      jsonDecode(prefs.getString(url) as String),
     );
 
     return challenge;
@@ -420,12 +416,10 @@ class ChallengeViewModel extends BaseViewModel {
         (element) => element.id == currChallenge.id,
       );
 
-      String slug = block!.challengeTiles[challengeIndex].name
-          .toLowerCase()
-          .replaceAll(' ', '-');
-      String url = await learnService.getBaseUrl('/page-data/learn');
+      String slug = block!.challengeTiles[challengeIndex].id;
+      String url = LearnService.baseUrl;
       String challengeUrl =
-          '$url/${block!.superBlock.dashedName}/${block!.dashedName}/$slug/page-data.json';
+          '$url/challenges/${block!.superBlock.dashedName}/${block!.dashedName}/$slug.json';
 
       await prefs.remove(challengeUrl);
 
@@ -494,15 +488,13 @@ class ChallengeViewModel extends BaseViewModel {
       if (challengeIndex == maxChallenges - 1) {
         _navigationService.back();
       } else {
-        String challenge = block!.challengeTiles[challengeIndex + 1].name
-            .toLowerCase()
-            .replaceAll(' ', '-');
-        String url = await learnService.getBaseUrl('/page-data/learn');
+        String challenge = block!.challengeTiles[challengeIndex + 1].id;
+        String url = LearnService.baseUrl;
         _navigationService.replaceWith(
           Routes.challengeView,
           arguments: ChallengeViewArguments(
               url:
-                  '$url/${block!.superBlock.dashedName}/${block!.dashedName}/$challenge/page-data.json',
+                  '$url/challenges/${block!.superBlock.dashedName}/${block!.dashedName}/$challenge.json',
               block: block!,
               challengeId: block!.challengeTiles[challengeIndex + 1].id,
               challengesCompleted: challengesCompleted + 1,

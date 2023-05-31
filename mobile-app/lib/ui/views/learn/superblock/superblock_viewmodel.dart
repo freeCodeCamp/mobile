@@ -54,7 +54,7 @@ class SuperBlockViewModel extends BaseViewModel {
     String name,
     bool hasInternet,
   ) async {
-    String baseUrl = await _learnService.getBaseUrl();
+    String baseUrl = LearnService.baseUrl;
 
     if (!hasInternet) {
       return SuperBlock(
@@ -67,9 +67,7 @@ class SuperBlockViewModel extends BaseViewModel {
     }
 
     final http.Response res = await http.get(
-      Uri.parse(
-        '$baseUrl/curriculum-data/v1/$dashedName.json',
-      ),
+      Uri.parse('$baseUrl/$dashedName.json'),
     );
 
     if (res.statusCode == 200) {

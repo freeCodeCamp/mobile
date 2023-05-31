@@ -7,7 +7,7 @@ class Challenge {
   final String title;
   final String description;
   final String instructions;
-  final String slug;
+  final String dashedName;
   final String superBlock;
   final int challengeType;
 
@@ -20,27 +20,24 @@ class Challenge {
     required this.title,
     required this.description,
     required this.instructions,
-    required this.slug,
+    required this.dashedName,
     required this.superBlock,
     required this.challengeType,
     required this.tests,
     required this.files,
   });
 
-  factory Challenge.fromJson(
-    Map<String, dynamic> data, {
-    bool testing = false,
-  }) {
+  factory Challenge.fromJson(Map<String, dynamic> data) {
     return Challenge(
       id: data['id'],
       block: data['block'],
       title: data['title'],
       description: data['description'],
       instructions: data['instructions'] ?? '',
-      slug: testing ? '' : data['fields']['slug'],
+      dashedName: data['dashedName'],
       superBlock: data['superBlock'],
       challengeType: data['challengeType'],
-      tests: ((testing ? data['tests'] : data['fields']['tests']) as List)
+      tests: (data['tests'] as List)
           .map<ChallengeTest>((file) => ChallengeTest.fromJson(file))
           .toList(),
       files: (data['challengeFiles'] as List)
@@ -56,19 +53,17 @@ class Challenge {
       'title': challenge.title,
       'description': challenge.description,
       'instructions': challenge.instructions,
+      'dashedName': challenge.dashedName,
       'superBlock': challenge.superBlock,
       'challengeType': challenge.challengeType,
-      'fields': {
-        'slug': challenge.slug,
-        'tests': challenge.tests
-            .map(
-              (challengeTest) => {
-                'text': challengeTest.instruction,
-                'testString': challengeTest.javaScript
-              },
-            )
-            .toList(),
-      },
+      'tests': challenge.tests
+          .map(
+            (challengeTest) => {
+              'text': challengeTest.instruction,
+              'testString': challengeTest.javaScript
+            },
+          )
+          .toList(),
       'challengeFiles': challenge.files
           .map(
             (challengeFile) => {

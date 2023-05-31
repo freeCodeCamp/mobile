@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:freecodecamp/models/learn/curriculum_model.dart';
+import 'package:freecodecamp/service/learn/learn_service.dart';
 import 'package:freecodecamp/ui/views/learn/block/block_viewmodel.dart';
 import 'package:freecodecamp/ui/views/learn/widgets/download_button_widget.dart';
 import 'package:freecodecamp/ui/views/learn/widgets/open_close_icon_widget.dart';
@@ -161,15 +162,12 @@ class BlockView extends StatelessWidget {
             ),
             title: Text(block.challengeTiles[i].name),
             onTap: () async {
-              String challenge = block.challengeTiles[i].dashedName;
               String challengeId = block.challengeTiles[i].id;
 
-              String url = await model.learnService.getBaseUrl(
-                '/page-data/learn',
-              );
+              String url = LearnService.baseUrl;
 
               model.routeToChallengeView(
-                '$url/${block.superBlock.dashedName}/${block.dashedName}/$challenge/page-data.json',
+                '$url/challenges/${block.superBlock.dashedName}/${block.dashedName}/$challengeId.json',
                 block,
                 challengeId,
               );
@@ -303,15 +301,12 @@ class ChallengeTile extends StatelessWidget {
         width: 70,
         child: InkWell(
           onTap: () async {
-            String challenge = block.challengeTiles[step].dashedName;
             String challengeId = block.challengeTiles[step].id;
 
-            String url = await model.learnService.getBaseUrl(
-              '/page-data/learn',
-            );
+            String url = LearnService.baseUrl;
 
             model.routeToChallengeView(
-              '$url/${block.superBlock.dashedName}/${block.dashedName}/$challenge/page-data.json',
+              '$url/challenges/${block.superBlock.dashedName}/${block.dashedName}/$challengeId.json',
               block,
               challengeId,
             );
