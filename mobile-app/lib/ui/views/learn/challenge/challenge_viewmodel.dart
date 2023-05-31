@@ -224,28 +224,31 @@ class ChallengeViewModel extends BaseViewModel {
     setChallenge = learnOfflineService.getChallenge(url, challengeId);
     Challenge challenge = await _challenge!;
 
-    List<ChallengeFile> currentEditedChallenge = challenge.files
-        .where((element) => element.editableRegionBoundaries.isNotEmpty)
-        .toList();
+    if (challenge.challengeType == 11) {
+    } else {
+      List<ChallengeFile> currentEditedChallenge = challenge.files
+          .where((element) => element.editableRegionBoundaries.isNotEmpty)
+          .toList();
 
-    if (editorText == null) {
-      String text = await fileService.getExactFileFromCache(
-        challenge,
-        currentEditedChallenge.isEmpty
-            ? challenge.files.first
-            : currentEditedChallenge.first,
-      );
+      if (editorText == null) {
+        String text = await fileService.getExactFileFromCache(
+          challenge,
+          currentEditedChallenge.isEmpty
+              ? challenge.files.first
+              : currentEditedChallenge.first,
+        );
 
-      if (text != '') {
-        setEditorText = text;
+        if (text != '') {
+          setEditorText = text;
+        }
       }
+      setCurrentSelectedFile = currentEditedChallenge.isEmpty
+          ? challenge.files[0].name
+          : currentEditedChallenge[0].name;
     }
 
     setBlock = block;
     setChallengesCompleted = challengesCompleted;
-    setCurrentSelectedFile = currentEditedChallenge.isEmpty
-        ? challenge.files[0].name
-        : currentEditedChallenge[0].name;
   }
 
   void initiateFile(
