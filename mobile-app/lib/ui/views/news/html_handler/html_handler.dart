@@ -47,9 +47,7 @@ class HTMLParser {
     );
   }
 
-  Widget _parseHTMLWidget(
-    child,
-  ) {
+  Widget _parseHTMLWidget(child) {
     return SelectableRegion(
       selectionControls: materialTextSelectionControls,
       focusNode: FocusNode(),
@@ -74,7 +72,7 @@ class HTMLParser {
           ),
           'li': Style(
             margin: Margins.only(top: 8),
-            fontSize: FontSize.medium,
+            fontSize: FontSize.larger,
             color: Colors.white.withOpacity(0.87),
           ),
           'pre': Style(
@@ -83,7 +81,7 @@ class HTMLParser {
               MediaQuery.of(context).size.width,
             ),
             padding: HtmlPaddings.all(10),
-            fontSize: FontSize.medium,
+            fontSize: FontSize.larger,
           ),
           'td': Style(
             border: const Border(
@@ -104,26 +102,26 @@ class HTMLParser {
           ),
           'h1': Style(
             margin: Margins.only(left: 2, top: 32, right: 2),
-            fontSize: FontSize.xLarge,
+            fontSize: FontSize.xxLarge,
           ),
           'h2': Style(
             margin: Margins.only(left: 2, top: 32, right: 2),
-            fontSize: FontSize.larger,
+            fontSize: FontSize.xLarge,
           ),
           'h3': Style(
               margin: Margins.only(left: 2, top: 32, right: 2),
-              fontSize: FontSize.large),
+              fontSize: FontSize.xLarge),
           'h4': Style(
             margin: Margins.only(left: 2, top: 32, right: 2),
-            fontSize: FontSize.large,
+            fontSize: FontSize.larger,
           ),
           'h5': Style(
             margin: Margins.only(left: 2, top: 32, right: 2),
-            fontSize: FontSize.medium,
+            fontSize: FontSize.large,
           ),
           'h6': Style(
             margin: Margins.only(left: 2, top: 32, right: 2),
-            fontSize: FontSize.medium,
+            fontSize: FontSize.large,
           )
         },
         onLinkTap: (url, attributes, element) {
@@ -175,14 +173,17 @@ class HTMLParser {
                             constraints: BoxConstraints(
                               minWidth: MediaQuery.of(context).size.width - 44,
                             ),
-                            child: HighlightView(
-                              child.element?.text ?? '',
-                              padding: const EdgeInsets.all(16),
-                              language: codeLanguageIsPresent(classes)
-                                  ? currentClass!.split('-')[1]
-                                  : 'plaintext',
-                              theme: themeMap['atom-one-dark']!,
-                            ),
+                            child: HighlightView(child.element?.text ?? '',
+                                padding: const EdgeInsets.all(16),
+                                language: codeLanguageIsPresent(classes)
+                                    ? currentClass!.split('-')[1]
+                                    : 'plaintext',
+                                theme: themeMap['atom-one-dark']!,
+                                textStyle: const TextStyle(
+                                  fontFamily: 'RobotoMono',
+                                  fontSize: 16,
+                                  color: Colors.white,
+                                )),
                           ),
                         ),
                       ),
