@@ -23,12 +23,13 @@ Future<void> main({bool testing = false}) async {
   var fbApp = await Firebase.initializeApp(
       options: DefaultFirebaseOptions.currentPlatform);
   if (!testing) {
-    FlutterError.onError = FirebaseCrashlytics.instance.recordFlutterFatalError;
-    PlatformDispatcher.instance.onError = (error, stack) {
-      FirebaseCrashlytics.instance.recordError(error, stack, fatal: true);
-      return true;
-    };
     if (kReleaseMode) {
+      FlutterError.onError =
+          FirebaseCrashlytics.instance.recordFlutterFatalError;
+      PlatformDispatcher.instance.onError = (error, stack) {
+        FirebaseCrashlytics.instance.recordError(error, stack, fatal: true);
+        return true;
+      };
       await fbApp.setAutomaticDataCollectionEnabled(true);
     } else {
       await fbApp.setAutomaticDataCollectionEnabled(false);

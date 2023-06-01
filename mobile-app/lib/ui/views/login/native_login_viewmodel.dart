@@ -3,6 +3,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:freecodecamp/app/app.locator.dart';
 import 'package:freecodecamp/service/authentication/authentication_service.dart';
+import 'package:freecodecamp/service/developer_service.dart';
 import 'package:stacked/stacked.dart';
 
 class NativeLoginViewModel extends BaseViewModel {
@@ -13,6 +14,7 @@ class NativeLoginViewModel extends BaseViewModel {
   final Dio _dio = Dio();
 
   final AuthenticationService auth = locator<AuthenticationService>();
+  final DeveloperService developerService = locator<DeveloperService>();
 
   bool _emailFieldIsValid = false;
   bool get emailFieldIsValid => _emailFieldIsValid;
@@ -30,7 +32,7 @@ class NativeLoginViewModel extends BaseViewModel {
     notifyListeners();
   }
 
-  void init() {
+  void init() async {
     bool isEmail(String em) {
       String p =
           r'^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$';

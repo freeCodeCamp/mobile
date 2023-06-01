@@ -74,7 +74,7 @@ class HintWidgetView extends StatelessWidget {
 
     final titleText = '$blockTitle - ${currChallenge?.title}';
     final String endingText =
-        '**Your mobile information:**\n```txt\n$userDeviceInfo\n```\n\n**Challenge:** $titleText\n\n**Link to the challenge:**\nhttps://www.freecodecamp.org${currChallenge?.slug}';
+        '**Your mobile information:**\n```txt\n$userDeviceInfo\n```\n\n**Challenge:** $titleText\n\n**Link to the challenge:**\nhttps://www.freecodecamp.org/learn/${currChallenge?.superBlock}/${currChallenge?.block}/${currChallenge?.dashedName}';
 
     final String userCode = filesToMarkdown(currChallenge!.files);
 
