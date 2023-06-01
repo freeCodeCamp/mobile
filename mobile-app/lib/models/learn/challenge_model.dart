@@ -61,7 +61,7 @@ class Challenge {
       id: data['id'],
       block: data['block'],
       title: data['title'],
-      description: data['description'],
+      description: data['description'] ?? '',
       instructions: data['instructions'] ?? '',
       dashedName: data['dashedName'],
       superBlock: data['superBlock'],
