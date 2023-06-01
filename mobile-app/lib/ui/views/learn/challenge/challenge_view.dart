@@ -1,4 +1,6 @@
-//TODOL Organise imports before merging
+//TODO: Organise imports before merging
+import 'dart:developer';
+
 import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
 import 'package:flutter_inappwebview/flutter_inappwebview.dart';
@@ -67,6 +69,7 @@ class ChallengeView extends StatelessWidget {
                     child: ListView(
                       children: [
                         Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             Center(
                               child: Text(
@@ -97,6 +100,48 @@ class ChallengeView extends StatelessWidget {
                               null,
                               'Inter',
                             ),
+                            const SizedBox(height: 8),
+                            for (var answer
+                                in challenge.question!.answers.asMap().entries)
+                              Container(
+                                margin: const EdgeInsets.symmetric(vertical: 8),
+                                decoration: BoxDecoration(
+                                  borderRadius: BorderRadius.circular(0),
+                                  border: Border.all(
+                                    color: answer.key == model.currentChoice
+                                        ? const Color(0xFFFFFFFF)
+                                        : const Color(0xFFAAAAAA),
+                                    width: answer.key == model.currentChoice
+                                        ? 3
+                                        : 1,
+                                  ),
+                                ),
+                                child: RadioListTile<int>(
+                                  // contentPadding: const EdgeInsets.all(0),
+                                  value: answer.key,
+                                  groupValue: model.currentChoice,
+                                  onChanged: (value) {
+                                    log('$value ${answer.value}');
+                                    model.setCurrentChoice = value ?? -1;
+                                  },
+                                  title: Column(
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
+                                    children: [
+                                      ...HtmlHandler.htmlHandler(
+                                        // NOTE: Might need to make separate handler for challenges
+                                        // Also the current handler breaks the default behavior here
+                                        // by not allowing user to select the tile within the text
+                                        answer.value,
+                                        context,
+                                        null,
+                                        'Inter',
+                                      ),
+                                    ],
+                                  ),
+                                  tileColor: const Color(0xFF0a0a23),
+                                ),
+                              ),
                           ],
                         ),
                       ],

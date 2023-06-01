@@ -80,6 +80,9 @@ class ChallengeViewModel extends BaseViewModel {
   Syntax _currFileType = Syntax.HTML;
   Syntax get currFileType => _currFileType;
 
+  int _currentChoice = -1;
+  int get currentChoice => _currentChoice;
+
   bool _mounted = false;
 
   TestRunner runner = TestRunner();
@@ -209,6 +212,11 @@ class ChallengeViewModel extends BaseViewModel {
 
   set setUserConsoleMessages(List<ConsoleMessage> messages) {
     _userConsoleMessages = messages;
+    notifyListeners();
+  }
+
+  set setCurrentChoice(int choice) {
+    _currentChoice = choice;
     notifyListeners();
   }
 
