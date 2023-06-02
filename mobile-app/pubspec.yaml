@@ -19,7 +19,7 @@ dependencies:
   url_launcher: ^6.0.10
   sqflite_migration_service: ^2.0.0-nullsafety.1
   dio: ^4.0.0
-  phone_ide: ^1.0.3
+  phone_ide: ^1.1.1
   jiffy: ^6.0.0
   shared_preferences: ^2.0.7
   font_awesome_flutter: ^10.0.0
