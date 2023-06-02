@@ -53,6 +53,11 @@ class ChallengeView extends StatelessWidget {
             if (challenge.challengeType == 11) {
               YoutubePlayerController controller = YoutubePlayerController(
                 initialVideoId: challenge.videoId!,
+                params: const YoutubePlayerParams(
+                  showControls: true,
+                  showFullscreenButton: true,
+                  autoPlay: false,
+                ),
               );
               return WillPopScope(
                 onWillPop: () async {
