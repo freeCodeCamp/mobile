@@ -1,6 +1,4 @@
 //TODO: Organise imports before merging
-import 'dart:developer';
-
 import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
 import 'package:flutter_inappwebview/flutter_inappwebview.dart';
@@ -121,27 +119,48 @@ class ChallengeView extends StatelessWidget {
                               ),
                               child: RadioListTile<int>(
                                 // contentPadding: const EdgeInsets.all(0),
+                                tileColor: const Color(0xFF0a0a23),
                                 value: answer.key,
                                 groupValue: model.currentChoice,
                                 onChanged: (value) {
-                                  log('$value ${answer.value}');
+                                  model.setChoiceStatus = null;
                                   model.setCurrentChoice = value ?? -1;
                                 },
-                                title: Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                title: Row(
                                   children: [
-                                    ...HtmlHandler.htmlHandler(
-                                      // NOTE: Might need to make separate handler for challenges
-                                      // Also the current handler breaks the default behavior here
-                                      // by not allowing user to select the tile within the text
-                                      answer.value,
-                                      context,
-                                      null,
-                                      'Inter',
+                                    Expanded(
+                                      child: Column(
+                                        crossAxisAlignment:
+                                            CrossAxisAlignment.start,
+                                        children: [
+                                          ...HtmlHandler.htmlHandler(
+                                            // NOTE: Might need to make separate handler for challenges
+                                            // Also the current handler breaks the default behavior here
+                                            // by not allowing user to select the tile within the text
+                                            answer.value,
+                                            context,
+                                            null,
+                                            'Inter',
+                                          ),
+                                        ],
+                                      ),
                                     ),
+                                    if (model.choiceStatus != null &&
+                                        model.currentChoice == answer.key) ...{
+                                      Expanded(
+                                        flex: 0,
+                                        child: Icon(
+                                          model.choiceStatus!
+                                              ? Icons.check_circle
+                                              : Icons.cancel,
+                                          color: model.choiceStatus!
+                                              ? Colors.green
+                                              : Colors.red,
+                                        ),
+                                      ),
+                                    }
                                   ],
                                 ),
-                                tileColor: const Color(0xFF0a0a23),
                               ),
                             ),
                           // TODO: spacing or divider

@@ -81,8 +81,12 @@ class ChallengeViewModel extends BaseViewModel {
   Syntax _currFileType = Syntax.HTML;
   Syntax get currFileType => _currFileType;
 
+  // Challenge Type 11 - Video
   int _currentChoice = -1;
   int get currentChoice => _currentChoice;
+
+  bool? _choiceStatus;
+  bool? get choiceStatus => _choiceStatus;
 
   bool _mounted = false;
 
@@ -218,6 +222,11 @@ class ChallengeViewModel extends BaseViewModel {
 
   set setCurrentChoice(int choice) {
     _currentChoice = choice;
+    notifyListeners();
+  }
+
+  set setChoiceStatus(bool? status) {
+    _choiceStatus = status;
     notifyListeners();
   }
 
@@ -470,6 +479,7 @@ class ChallengeViewModel extends BaseViewModel {
 
   void passChallenge(Challenge? challenge) async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
+
     if (challenge != null) {
       List challengeFiles = challenge.files.map((file) {
         return {
@@ -572,6 +582,7 @@ class ChallengeViewModel extends BaseViewModel {
   void checkOption() async {
     Challenge? currChallenge = await challenge;
     bool isCorrect = currChallenge!.question!.solution - 1 == currentChoice;
+    setChoiceStatus = isCorrect;
     log('$isCorrect');
   }
 }
