@@ -165,7 +165,9 @@ class ChallengeView extends StatelessWidget {
                                       color: Colors.white,
                                     ),
                                   ),
-                                  onPressed: () => model.checkOption(),
+                                  onPressed: model.currentChoice != -1
+                                      ? () => model.checkOption()
+                                      : null,
                                   child: const Text(
                                     'Check your answer',
                                     style: TextStyle(fontSize: 20),
