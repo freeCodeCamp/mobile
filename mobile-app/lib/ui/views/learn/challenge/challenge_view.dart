@@ -187,9 +187,13 @@ class ChallengeView extends StatelessWidget {
                                   onPressed: model.currentChoice != -1
                                       ? () => model.checkOption()
                                       : null,
-                                  child: const Text(
-                                    'Check your answer',
-                                    style: TextStyle(fontSize: 20),
+                                  child: Text(
+                                    model.choiceStatus != null
+                                        ? model.choiceStatus!
+                                            ? 'Next challenge'
+                                            : 'Try Again'
+                                        : 'Check your answer',
+                                    style: const TextStyle(fontSize: 20),
                                   ),
                                 ),
                               ),
