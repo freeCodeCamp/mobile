@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_highlight/flutter_highlight.dart';
@@ -65,12 +67,17 @@ class HtmlHandler {
     return elements;
   }
 
-  static void goToImageView(String imgUrl, BuildContext context) {
+  static void goToImageView(
+    String imgUrl,
+    BuildContext context,
+    bool isDataUrl,
+  ) {
     Navigator.push(
       context,
       MaterialPageRoute(
         builder: (context) => NewsImageView(
           imgUrl: imgUrl,
+          isDataUrl: isDataUrl,
         ),
       ),
     );
@@ -250,13 +257,18 @@ class HtmlHandler {
           },
           'img': (code, child) {
             var imgUrl = code.tree.attributes['src'] ?? '';
+            bool isDataUrl = Uri.parse(imgUrl).scheme == 'data';
             return Padding(
               padding: const EdgeInsets.all(8.0),
               child: InkWell(
-                onTap: () => goToImageView(imgUrl, context),
-                child: CachedNetworkImage(
-                  imageUrl: imgUrl,
-                ),
+                onTap: () => goToImageView(imgUrl, context, isDataUrl),
+                child: isDataUrl
+                    ? Image.memory(
+                        base64Decode(imgUrl.split(',').last),
+                      )
+                    : CachedNetworkImage(
+                        imageUrl: imgUrl,
+                      ),
               ),
             );
           },
