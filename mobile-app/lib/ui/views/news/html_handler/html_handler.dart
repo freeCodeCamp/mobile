@@ -90,10 +90,6 @@ class HTMLParser {
           ),
           'pre': Style(
             color: Colors.white,
-            width: Width(
-              MediaQuery.of(context).size.width,
-            ),
-            padding: HtmlPaddings.all(10),
             fontSize: FontSize.larger,
           ),
           'td': Style(
