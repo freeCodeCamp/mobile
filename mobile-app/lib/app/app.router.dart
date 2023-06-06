@@ -227,8 +227,8 @@ class StackedRouter extends _i1.RouterBase {
     _i9.NewsImageView: (data) {
       final args = data.getArgs<NewsImageViewArguments>(nullOk: false);
       return _i18.MaterialPageRoute<dynamic>(
-        builder: (context) =>
-            _i9.NewsImageView(key: args.key, imgUrl: args.imgUrl),
+        builder: (context) => _i9.NewsImageView(
+            key: args.key, imgUrl: args.imgUrl, isDataUrl: args.isDataUrl),
         settings: data,
       );
     },
@@ -412,15 +412,18 @@ class NewsImageViewArguments {
   const NewsImageViewArguments({
     this.key,
     required this.imgUrl,
+    required this.isDataUrl,
   });
 
   final _i18.Key? key;
 
   final String imgUrl;
 
+  final bool isDataUrl;
+
   @override
   String toString() {
-    return '{"key": "$key", "imgUrl": "$imgUrl"}';
+    return '{"key": "$key", "imgUrl": "$imgUrl", "isDataUrl": "$isDataUrl"}';
   }
 }
 
@@ -626,6 +629,7 @@ extension NavigatorStateExtension on _i23.NavigationService {
   Future<dynamic> navigateToNewsImageView({
     _i18.Key? key,
     required String imgUrl,
+    required bool isDataUrl,
     int? routerId,
     bool preventDuplicates = true,
     Map<String, String>? parameters,
@@ -633,7 +637,8 @@ extension NavigatorStateExtension on _i23.NavigationService {
         transition,
   }) async {
     return navigateTo<dynamic>(Routes.newsImageView,
-        arguments: NewsImageViewArguments(key: key, imgUrl: imgUrl),
+        arguments: NewsImageViewArguments(
+            key: key, imgUrl: imgUrl, isDataUrl: isDataUrl),
         id: routerId,
         preventDuplicates: preventDuplicates,
         parameters: parameters,
@@ -912,6 +917,7 @@ extension NavigatorStateExtension on _i23.NavigationService {
   Future<dynamic> replaceWithNewsImageView({
     _i18.Key? key,
     required String imgUrl,
+    required bool isDataUrl,
     int? routerId,
     bool preventDuplicates = true,
     Map<String, String>? parameters,
@@ -919,7 +925,8 @@ extension NavigatorStateExtension on _i23.NavigationService {
         transition,
   }) async {
     return replaceWith<dynamic>(Routes.newsImageView,
-        arguments: NewsImageViewArguments(key: key, imgUrl: imgUrl),
+        arguments: NewsImageViewArguments(
+            key: key, imgUrl: imgUrl, isDataUrl: isDataUrl),
         id: routerId,
         preventDuplicates: preventDuplicates,
         parameters: parameters,
