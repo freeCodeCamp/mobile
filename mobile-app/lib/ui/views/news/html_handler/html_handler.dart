@@ -80,6 +80,9 @@ class HTMLParser {
           'em': Style(
             fontSize: FontSize(110, Unit.percent),
           ),
+          'strong': Style(
+            fontSize: FontSize(110, Unit.percent),
+          ),
           'a': Style(
             fontSize: FontSize(110, Unit.percent),
           ),
