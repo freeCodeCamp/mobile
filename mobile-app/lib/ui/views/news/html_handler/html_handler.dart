@@ -106,7 +106,6 @@ class HTMLParser {
             color: Colors.black,
           ),
           'figure': Style(
-            width: Width(MediaQuery.of(context).size.width),
             margin: Margins.zero,
           ),
           'h1': Style(
@@ -238,6 +237,11 @@ class HTMLParser {
 
                 YoutubePlayerController controller = YoutubePlayerController(
                   initialVideoId: videoId!,
+                  params: const YoutubePlayerParams(
+                    showControls: true,
+                    showFullscreenButton: true,
+                    autoPlay: false,
+                  ),
                 );
 
                 return YoutubePlayerIFrame(
