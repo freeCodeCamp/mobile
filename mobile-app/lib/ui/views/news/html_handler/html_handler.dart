@@ -77,6 +77,12 @@ class HTMLParser {
                 ? const Color.fromRGBO(0xDF, 0xDF, 0xE2, 0.87)
                 : Colors.white.withOpacity(0.87),
           ),
+          'em': Style(
+            fontSize: FontSize(110, Unit.percent),
+          ),
+          'a': Style(
+            fontSize: FontSize(110, Unit.percent),
+          ),
           'li': Style(
             margin: Margins.only(top: 8),
             fontSize: FontSize.larger,
