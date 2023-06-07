@@ -101,6 +101,10 @@ class HTMLParser {
             margin: Margins.zero,
             lineHeight: const LineHeight(1.5),
           ),
+          'a': Style(
+            color: Colors.blue,
+            textDecoration: TextDecoration.underline,
+          ),
           'li': Style(
             margin: Margins.only(top: 8),
             lineHeight: const LineHeight(1.5),
@@ -121,6 +125,9 @@ class HTMLParser {
           'figure': Style(
             margin: Margins.zero,
             textAlign: TextAlign.center,
+          ),
+          'figcaption': Style(
+            fontSize: FontSize.medium,
           ),
         },
         onLinkTap: (url, attributes, element) {
@@ -178,9 +185,11 @@ class HTMLParser {
                                     ? currentClass!.split('-')[1]
                                     : 'plaintext',
                                 theme: themeMap['atom-one-dark']!,
-                                textStyle: const TextStyle(
+                                textStyle: TextStyle(
                                   fontFamily: 'RobotoMono',
-                                  fontSize: 16,
+                                  fontSize: double.parse(
+                                    FontSize.large.value.toString(),
+                                  ),
                                   color: Colors.white,
                                 )),
                           ),
