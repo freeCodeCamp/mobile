@@ -206,30 +206,21 @@ class HTMLParser {
                 );
               }
 
-              return Stack(
-                children: [
-                  HighlightView(
-                    child.element?.text ?? '',
-                    padding: const EdgeInsets.symmetric(
-                      horizontal: 4,
-                      vertical: 0.2,
-                    ),
-                    language: 'html',
-                    theme: themeMap['atom-one-dark']!,
-                    textStyle: const TextStyle(
-                      fontFamily: 'RobotoMono',
+              return Container(
+                color: const Color.fromRGBO(0x3b, 0x3b, 0x4f, 1),
+                child: Padding(
+                  padding: const EdgeInsets.symmetric(
+                    vertical: 2,
+                    horizontal: 4,
+                  ),
+                  child: Text(
+                    child.element?.text ?? 'e',
+                    style: TextStyle(
                       fontSize: 16,
-                      color: Colors.white,
+                      color: Colors.white.withOpacity(0.87),
                     ),
                   ),
-                  Text(
-                    child.element?.text ?? '',
-                    style: TextStyle(
-                      fontSize: 1,
-                      color: Colors.white.withOpacity(0),
-                    ),
-                  )
-                ],
+                ),
               );
             },
           ),
