@@ -87,7 +87,7 @@ class HTMLParser {
             fontSize: FontSize.large,
           ),
           '*:not(h1):not(h2):not(h3):not(h4):not(h5):not(h6)': Style(
-            fontSize: FontSize(68, Unit.percent),
+            fontSize: FontSize.xLarge,
             color: Colors.white.withOpacity(0.87),
             fontWeight:
                 fontFamily == 'Inter' ? FontWeight.w400 : FontWeight.normal,
