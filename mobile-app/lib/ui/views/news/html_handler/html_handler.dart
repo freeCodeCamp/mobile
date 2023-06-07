@@ -97,6 +97,9 @@ class HTMLParser {
             fontFamily: fontFamily,
             padding: HtmlPaddings.only(left: 4, right: 4),
           ),
+          'strong': Style(
+            fontWeight: FontWeight.bold,
+          ),
           'p': Style(
             margin: Margins.zero,
             lineHeight: const LineHeight(1.5),
