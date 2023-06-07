@@ -185,7 +185,7 @@ class HTMLParser {
                           physics: const ClampingScrollPhysics(),
                           child: ConstrainedBox(
                             constraints: BoxConstraints(
-                              minWidth: MediaQuery.of(context).size.width - 44,
+                              minWidth: MediaQuery.of(context).size.width - 25,
                             ),
                             child: HighlightView(child.element?.text ?? '',
                                 padding: const EdgeInsets.all(16),
