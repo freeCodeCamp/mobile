@@ -113,18 +113,19 @@ class HTMLParser {
             lineHeight: const LineHeight(1.5),
           ),
           'td': Style(
-            border: const Border(
-              bottom: BorderSide(color: Colors.grey),
-            ),
-            padding: HtmlPaddings.all(12),
-            backgroundColor: Colors.white,
-            color: Colors.black,
-          ),
+              border: const Border(
+                bottom: BorderSide(color: Colors.grey),
+              ),
+              padding: HtmlPaddings.all(12),
+              backgroundColor: Colors.white,
+              color: Colors.black,
+              fontSize: FontSize.medium),
           'th': Style(
             padding: HtmlPaddings.all(12),
             backgroundColor: const Color.fromRGBO(0xdf, 0xdf, 0xe2, 1),
             color: Colors.black,
           ),
+          'th strong': Style(color: Colors.black, fontSize: FontSize.medium),
           'figure': Style(
             margin: Margins.zero,
             textAlign: TextAlign.center,
