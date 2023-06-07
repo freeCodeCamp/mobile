@@ -63,57 +63,6 @@ class HTMLParser {
         shrinkWrap: true,
         data: child,
         style: {
-          'body': Style(
-            fontFamily: fontFamily,
-            padding: HtmlPaddings.only(left: 4, right: 4),
-          ),
-          'blockquote': Style(fontSize: FontSize.medium),
-          'p': Style(
-            fontWeight:
-                fontFamily == 'Inter' ? FontWeight.w400 : FontWeight.normal,
-            fontSize: FontSize.larger,
-            margin: Margins.zero,
-            lineHeight: const LineHeight(1.5),
-            color: fontFamily == 'Inter'
-                ? const Color.fromRGBO(0xDF, 0xDF, 0xE2, 0.87)
-                : Colors.white.withOpacity(0.87),
-          ),
-          'em': Style(
-            fontSize: FontSize(110, Unit.percent),
-          ),
-          'strong': Style(
-            fontSize: FontSize(110, Unit.percent),
-          ),
-          'a': Style(
-            fontSize: FontSize(110, Unit.percent),
-          ),
-          'li': Style(
-            margin: Margins.only(top: 8),
-            fontSize: FontSize.larger,
-            color: Colors.white.withOpacity(0.87),
-            lineHeight: const LineHeight(1.5),
-          ),
-          'pre': Style(
-            color: Colors.white,
-            fontSize: FontSize.larger,
-          ),
-          'td': Style(
-            border: const Border(
-              bottom: BorderSide(color: Colors.grey),
-            ),
-            padding: HtmlPaddings.all(12),
-            backgroundColor: Colors.white,
-            color: Colors.black,
-          ),
-          'th': Style(
-            padding: HtmlPaddings.all(12),
-            backgroundColor: const Color.fromRGBO(0xdf, 0xdf, 0xe2, 1),
-            color: Colors.black,
-          ),
-          'figure': Style(
-            margin: Margins.zero,
-            textAlign: TextAlign.center,
-          ),
           'h1': Style(
             margin: Margins.only(left: 2, top: 32, right: 2),
             fontSize: FontSize.xxLarge,
@@ -136,7 +85,42 @@ class HTMLParser {
           'h6': Style(
             margin: Margins.only(left: 2, top: 32, right: 2),
             fontSize: FontSize.large,
-          )
+          ),
+          '*:not(h1):not(h2):not(h3):not(h4):not(h5):not(h6)': Style(
+            fontSize: FontSize(68, Unit.percent),
+            color: Colors.white.withOpacity(0.87),
+            fontWeight:
+                fontFamily == 'Inter' ? FontWeight.w400 : FontWeight.normal,
+          ),
+          'body': Style(
+            fontFamily: fontFamily,
+            padding: HtmlPaddings.only(left: 4, right: 4),
+          ),
+          'p': Style(
+            margin: Margins.zero,
+            lineHeight: const LineHeight(1.5),
+          ),
+          'li': Style(
+            margin: Margins.only(top: 8),
+            lineHeight: const LineHeight(1.5),
+          ),
+          'td': Style(
+            border: const Border(
+              bottom: BorderSide(color: Colors.grey),
+            ),
+            padding: HtmlPaddings.all(12),
+            backgroundColor: Colors.white,
+            color: Colors.black,
+          ),
+          'th': Style(
+            padding: HtmlPaddings.all(12),
+            backgroundColor: const Color.fromRGBO(0xdf, 0xdf, 0xe2, 1),
+            color: Colors.black,
+          ),
+          'figure': Style(
+            margin: Margins.zero,
+            textAlign: TextAlign.center,
+          ),
         },
         onLinkTap: (url, attributes, element) {
           launchUrlString(url!);
