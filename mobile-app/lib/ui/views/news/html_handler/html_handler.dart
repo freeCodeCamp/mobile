@@ -90,6 +90,7 @@ class HTMLParser {
             margin: Margins.only(top: 8),
             fontSize: FontSize.larger,
             color: Colors.white.withOpacity(0.87),
+            lineHeight: const LineHeight(1.5),
           ),
           'pre': Style(
             color: Colors.white,
