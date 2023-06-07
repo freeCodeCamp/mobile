@@ -111,6 +111,7 @@ class HTMLParser {
           ),
           'figure': Style(
             margin: Margins.zero,
+            textAlign: TextAlign.center,
           ),
           'h1': Style(
             margin: Margins.only(left: 2, top: 32, right: 2),
