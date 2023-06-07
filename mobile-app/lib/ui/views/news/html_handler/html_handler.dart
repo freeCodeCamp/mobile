@@ -72,11 +72,12 @@ class HTMLParser {
             fontSize: FontSize.xLarge,
           ),
           'h3': Style(
-              margin: Margins.only(left: 2, top: 32, right: 2),
-              fontSize: FontSize.xLarge),
+            margin: Margins.only(left: 2, top: 32, right: 2),
+            fontSize: FontSize.xLarge,
+          ),
           'h4': Style(
             margin: Margins.only(left: 2, top: 32, right: 2),
-            fontSize: FontSize.larger,
+            fontSize: FontSize.large,
           ),
           'h5': Style(
             margin: Margins.only(left: 2, top: 32, right: 2),
