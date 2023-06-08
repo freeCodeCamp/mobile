@@ -26,6 +26,8 @@ class JavaScriptConsole extends StatelessWidget {
               Expanded(
                 child: Scrollbar(
                   child: ListView.builder(
+                    padding: const EdgeInsets.all(8),
+                    physics: const ClampingScrollPhysics(),
                     itemCount: messages.isEmpty ? 1 : messages.length,
                     itemBuilder: (context, index) {
                       List<Widget> htmlWidgets = HtmlHandler.htmlHandler(
