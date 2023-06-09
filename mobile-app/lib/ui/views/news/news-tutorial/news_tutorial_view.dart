@@ -89,7 +89,8 @@ class NewsTutorialView extends StatelessWidget {
                     child: Stack(
                       children: [
                         lazyLoadHtml(tutorial!.text!, context, tutorial, model),
-                        bottomButtons(tutorial, model)
+                        bottomButtons(tutorial, model),
+                        if (model.showToTopButton) backToTopButton(model),
                       ],
                     ),
                   )
@@ -106,6 +107,33 @@ class NewsTutorialView extends StatelessWidget {
         ),
       ),
       viewModelBuilder: () => NewsTutorialViewModel(),
+    );
+  }
+
+  Align backToTopButton(NewsTutorialViewModel model) {
+    return Align(
+      alignment: Alignment.centerRight,
+      child: Padding(
+        padding: const EdgeInsets.all(16.0),
+        child: FloatingActionButton(
+          onPressed: () {
+            model.goToTop();
+          },
+          shape: RoundedRectangleBorder(
+            side: const BorderSide(
+              width: 1,
+              color: Colors.white,
+            ),
+            borderRadius: BorderRadius.circular(100),
+          ),
+          backgroundColor: const Color.fromRGBO(0x2A, 0x2A, 0x40, 1),
+          child: const Icon(
+            Icons.keyboard_arrow_up,
+            size: 40,
+            color: Colors.white,
+          ),
+        ),
+      ),
     );
   }
 
