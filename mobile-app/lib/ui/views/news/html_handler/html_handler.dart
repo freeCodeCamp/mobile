@@ -139,15 +139,6 @@ class HTMLParser {
         },
         extensions: [
           const TableHtmlExtension(),
-          TagWrapExtension(
-            tagsToWrap: {'table'},
-            builder: (child) {
-              return SingleChildScrollView(
-                scrollDirection: Axis.horizontal,
-                child: child,
-              );
-            },
-          ),
           TagExtension(
             tagsToExtend: {'code'},
             builder: (child) {
@@ -267,19 +258,33 @@ class HTMLParser {
               );
             },
           ),
-          TagWrapExtension(
-            tagsToWrap: {'blockquote'},
+          TagExtension(
+            tagsToExtend: {'blockquote'},
             builder: (child) {
-              return Container(
-                decoration: const BoxDecoration(
-                  border: Border(
-                    left: BorderSide(
-                      color: Color.fromRGBO(0x99, 0xc9, 0xff, 1),
-                      width: 2,
+              return Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: Container(
+                    decoration: const BoxDecoration(
+                      border: Border(
+                        left: BorderSide(
+                          color: Color.fromRGBO(0x99, 0xc9, 0xff, 1),
+                          width: 2,
+                        ),
+                      ),
                     ),
-                  ),
-                ),
-                child: child,
+                    child: Padding(
+                      padding: const EdgeInsets.all(8.0),
+                      child: Text(
+                        child.innerHtml,
+                        style: TextStyle(
+                          fontSize: double.tryParse(
+                            FontSize.xLarge.value.toString(),
+                          ),
+                          fontFamily: 'Lato',
+                          color: Colors.white.withOpacity(0.87),
+                        ),
+                      ),
+                    )),
               );
             },
           )
