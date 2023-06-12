@@ -15,6 +15,7 @@ class SettingsViewModel extends BaseViewModel {
 
   void resetCache() async {
     DialogResponse? res = await _dialogService.showCustomDialog(
+      barrierDismissible: true,
       variant: DialogType.buttonForm,
       title: 'Clear Cache',
       description:
