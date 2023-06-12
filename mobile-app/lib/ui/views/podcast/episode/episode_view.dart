@@ -70,13 +70,14 @@ class EpisodeView extends StatelessWidget {
                     episode: episode,
                     isFromEpisodeView: true,
                     isFromDownloadView: false),
-                Padding(
-                  padding: const EdgeInsets.all(8.0),
-                  child: PodcastProgressBar(
-                    duration: episode.duration!,
-                    episodeId: episode.id,
+                if (episode.duration != null)
+                  Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: PodcastProgressBar(
+                      duration: episode.duration!,
+                      episodeId: episode.id,
+                    ),
                   ),
-                ),
                 buildDivider(),
                 Container(
                   padding: const EdgeInsets.fromLTRB(8, 16, 8, 8),
