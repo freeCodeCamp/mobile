@@ -33,14 +33,14 @@ dependencies:
   cached_network_image: ^3.2.3
   flutter_secure_storage: ^8.0.0
   photo_view: ^0.14.0
-  share_plus: ^6.3.0
+  share_plus: ^7.0.2
   pretty_dio_logger: ^1.2.0-beta-1
   curl_logger_dio_interceptor: ^1.0.0
   flutter_heatmap_calendar: ^1.0.4
   intl: ^0.18.0
   path: ^1.8.1
   audio_service: ^0.18.4
-  device_info_plus: ^7.0.0
+  device_info_plus: ^9.0.0
   auth0_flutter: ^1.0.1
   upgrader: ^6.5.0
   quick_actions: ^1.0.1
