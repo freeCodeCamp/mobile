@@ -102,7 +102,7 @@ class DrawerWidgetView extends StatelessWidget {
                         url: 'https://www.freecodecamp.org/donate/',
                         icon: Icons.favorite,
                       ),
-                      DrawerButton(
+                      DrawerTile(
                         component: 'SETTINGS',
                         icon: Icons.settings,
                         route: () {
