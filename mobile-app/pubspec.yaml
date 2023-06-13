@@ -42,7 +42,7 @@ dependencies:
   audio_service: ^0.18.4
   device_info_plus: ^9.0.0
   auth0_flutter: ^1.0.1
-  upgrader: ^6.5.0
+  upgrader: ^7.1.0
   quick_actions: ^1.0.1
   firebase_core: ^2.4.0
   firebase_analytics: ^10.1.0
