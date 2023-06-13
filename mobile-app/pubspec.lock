@@ -221,10 +221,10 @@ packages:
     dependency: transitive
     description:
       name: cli_util
-      sha256: b8db3080e59b2503ca9e7922c3df2072cf13992354d5e944074ffa836fba43b7
+      sha256: "66f86e916d285c1a93d3b79587d94bd71984a66aac4ff74e524cfa7877f1395c"
       url: "https://pub.dev"
     source: hosted
-    version: "0.4.0"
+    version: "0.3.5"
   clock:
     dependency: transitive
     description:
@@ -285,10 +285,10 @@ packages:
     dependency: "direct main"
     description:
       name: curl_logger_dio_interceptor
-      sha256: "10f8137ced85d85a7e81843a822e6eba212157ae765abacd6bed028f334ef135"
+      sha256: f20d89187a321d2150e1412bca30ebf4d89130bafc648ce21bd4f1ef4062b214
       url: "https://pub.dev"
     source: hosted
-    version: "0.0.3"
+    version: "1.0.0"
   dart_style:
     dependency: transitive
     description:
@@ -333,10 +333,10 @@ packages:
     dependency: "direct main"
     description:
       name: dio
-      sha256: "7d328c4d898a61efc3cd93655a0955858e29a0aa647f0f9e02d59b3bb275e2e8"
+      sha256: a9d76e72985d7087eb7c5e7903224ae52b337131518d127c554b9405936752b8
       url: "https://pub.dev"
     source: hosted
-    version: "4.0.6"
+    version: "5.2.1+1"
   fake_async:
     dependency: transitive
     description:
@@ -551,10 +551,10 @@ packages:
     dependency: "direct dev"
     description:
       name: flutter_launcher_icons
-      sha256: "526faf84284b86a4cb36d20a5e45147747b7563d921373d4ee0559c54fcdbcea"
+      sha256: ce0e501cfc258907842238e4ca605e74b7fd1cdf04b3b43e86c43f3e40a1592c
       url: "https://pub.dev"
     source: hosted
-    version: "0.13.1"
+    version: "0.11.0"
   flutter_layout_grid:
     dependency: transitive
     description:
@@ -766,10 +766,10 @@ packages:
     dependency: transitive
     description:
       name: image
-      sha256: a72242c9a0ffb65d03de1b7113bc4e189686fc07c7147b8b41811d0dd0e0d9bf
+      sha256: "8e9d133755c3e84c73288363e6343157c383a0c6c56fc51afcc5d4d7180306d6"
       url: "https://pub.dev"
     source: hosted
-    version: "4.0.17"
+    version: "3.3.0"
   infinite_scroll_pagination:
     dependency: "direct main"
     description:
@@ -1083,10 +1083,10 @@ packages:
     dependency: "direct main"
     description:
       name: pretty_dio_logger
-      sha256: "948f7eeb36e7aa0760b51c1a8e3331d4b21e36fabd39efca81f585ed93893544"
+      sha256: "00b80053063935cf9a6190da344c5373b9d0e92da4c944c878ff2fbef0ef6dc2"
       url: "https://pub.dev"
     source: hosted
-    version: "1.2.0-beta-1"
+    version: "1.3.1"
   process:
     dependency: transitive
     description:

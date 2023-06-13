@@ -321,6 +321,19 @@ class EpisodeViewArguments {
   String toString() {
     return '{"key": "$key", "episode": "$episode", "podcast": "$podcast"}';
   }
+
+  @override
+  bool operator ==(covariant EpisodeViewArguments other) {
+    if (identical(this, other)) return true;
+    return other.key == key &&
+        other.episode == episode &&
+        other.podcast == podcast;
+  }
+
+  @override
+  int get hashCode {
+    return key.hashCode ^ episode.hashCode ^ podcast.hashCode;
+  }
 }
 
 class NewsTutorialViewArguments {
@@ -340,6 +353,17 @@ class NewsTutorialViewArguments {
   String toString() {
     return '{"key": "$key", "refId": "$refId", "title": "$title"}';
   }
+
+  @override
+  bool operator ==(covariant NewsTutorialViewArguments other) {
+    if (identical(this, other)) return true;
+    return other.key == key && other.refId == refId && other.title == title;
+  }
+
+  @override
+  int get hashCode {
+    return key.hashCode ^ refId.hashCode ^ title.hashCode;
+  }
 }
 
 class NewsBookmarkTutorialViewArguments {
@@ -355,6 +379,17 @@ class NewsBookmarkTutorialViewArguments {
   @override
   String toString() {
     return '{"key": "$key", "tutorial": "$tutorial"}';
+  }
+
+  @override
+  bool operator ==(covariant NewsBookmarkTutorialViewArguments other) {
+    if (identical(this, other)) return true;
+    return other.key == key && other.tutorial == tutorial;
+  }
+
+  @override
+  int get hashCode {
+    return key.hashCode ^ tutorial.hashCode;
   }
 }
 
@@ -390,6 +425,31 @@ class NewsFeedViewArguments {
   String toString() {
     return '{"key": "$key", "slug": "$slug", "author": "$author", "fromAuthor": "$fromAuthor", "fromTag": "$fromTag", "fromSearch": "$fromSearch", "tutorials": "$tutorials", "subject": "$subject"}';
   }
+
+  @override
+  bool operator ==(covariant NewsFeedViewArguments other) {
+    if (identical(this, other)) return true;
+    return other.key == key &&
+        other.slug == slug &&
+        other.author == author &&
+        other.fromAuthor == fromAuthor &&
+        other.fromTag == fromTag &&
+        other.fromSearch == fromSearch &&
+        other.tutorials == tutorials &&
+        other.subject == subject;
+  }
+
+  @override
+  int get hashCode {
+    return key.hashCode ^
+        slug.hashCode ^
+        author.hashCode ^
+        fromAuthor.hashCode ^
+        fromTag.hashCode ^
+        fromSearch.hashCode ^
+        tutorials.hashCode ^
+        subject.hashCode;
+  }
 }
 
 class NewsAuthorViewArguments {
@@ -405,6 +465,17 @@ class NewsAuthorViewArguments {
   @override
   String toString() {
     return '{"key": "$key", "authorSlug": "$authorSlug"}';
+  }
+
+  @override
+  bool operator ==(covariant NewsAuthorViewArguments other) {
+    if (identical(this, other)) return true;
+    return other.key == key && other.authorSlug == authorSlug;
+  }
+
+  @override
+  int get hashCode {
+    return key.hashCode ^ authorSlug.hashCode;
   }
 }
 
@@ -424,6 +495,19 @@ class NewsImageViewArguments {
   @override
   String toString() {
     return '{"key": "$key", "imgUrl": "$imgUrl", "isDataUrl": "$isDataUrl"}';
+  }
+
+  @override
+  bool operator ==(covariant NewsImageViewArguments other) {
+    if (identical(this, other)) return true;
+    return other.key == key &&
+        other.imgUrl == imgUrl &&
+        other.isDataUrl == isDataUrl;
+  }
+
+  @override
+  int get hashCode {
+    return key.hashCode ^ imgUrl.hashCode ^ isDataUrl.hashCode;
   }
 }
 
@@ -453,6 +537,27 @@ class ChallengeViewArguments {
   String toString() {
     return '{"key": "$key", "url": "$url", "block": "$block", "challengeId": "$challengeId", "challengesCompleted": "$challengesCompleted", "isProject": "$isProject"}';
   }
+
+  @override
+  bool operator ==(covariant ChallengeViewArguments other) {
+    if (identical(this, other)) return true;
+    return other.key == key &&
+        other.url == url &&
+        other.block == block &&
+        other.challengeId == challengeId &&
+        other.challengesCompleted == challengesCompleted &&
+        other.isProject == isProject;
+  }
+
+  @override
+  int get hashCode {
+    return key.hashCode ^
+        url.hashCode ^
+        block.hashCode ^
+        challengeId.hashCode ^
+        challengesCompleted.hashCode ^
+        isProject.hashCode;
+  }
 }
 
 class NativeLoginViewArguments {
@@ -468,6 +573,17 @@ class NativeLoginViewArguments {
   @override
   String toString() {
     return '{"key": "$key", "fromButton": "$fromButton"}';
+  }
+
+  @override
+  bool operator ==(covariant NativeLoginViewArguments other) {
+    if (identical(this, other)) return true;
+    return other.key == key && other.fromButton == fromButton;
+  }
+
+  @override
+  int get hashCode {
+    return key.hashCode ^ fromButton.hashCode;
   }
 }
 
@@ -490,6 +606,23 @@ class SuperBlockViewArguments {
   @override
   String toString() {
     return '{"key": "$key", "superBlockDashedName": "$superBlockDashedName", "superBlockName": "$superBlockName", "hasInternet": "$hasInternet"}';
+  }
+
+  @override
+  bool operator ==(covariant SuperBlockViewArguments other) {
+    if (identical(this, other)) return true;
+    return other.key == key &&
+        other.superBlockDashedName == superBlockDashedName &&
+        other.superBlockName == superBlockName &&
+        other.hasInternet == hasInternet;
+  }
+
+  @override
+  int get hashCode {
+    return key.hashCode ^
+        superBlockDashedName.hashCode ^
+        superBlockName.hashCode ^
+        hasInternet.hashCode;
   }
 }
 
