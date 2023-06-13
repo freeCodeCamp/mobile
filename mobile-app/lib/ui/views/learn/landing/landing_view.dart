@@ -138,27 +138,30 @@ class LearnLandingView extends StatelessWidget {
 
   Widget loginButton(LearnLandingViewModel model, BuildContext context) {
     return Container(
-      constraints: const BoxConstraints(
-        minHeight: 50,
-      ),
-      padding: const EdgeInsets.symmetric(vertical: 16, horizontal: 8),
-      child: ElevatedButton(
-        style: ElevatedButton.styleFrom(
-          backgroundColor: const Color.fromRGBO(0xf1, 0xbe, 0x32, 1),
-        ),
-        onPressed: () {
-          model.auth.routeToLogin(true);
-        },
-        child: const Padding(
-          padding: EdgeInsets.all(8.0),
-          child: Text(
-            'Sign in to save your progress',
-            textAlign: TextAlign.center,
-            style: TextStyle(color: Colors.black, fontSize: 20),
-          ),
-        ),
-      ),
-    );
+        padding: const EdgeInsets.symmetric(vertical: 16, horizontal: 8),
+        child: Row(
+          children: [
+            Expanded(
+              child: ElevatedButton(
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: const Color.fromRGBO(0xf1, 0xbe, 0x32, 1),
+                  minimumSize: const Size.fromHeight(50),
+                ),
+                onPressed: () {
+                  model.auth.routeToLogin(true);
+                },
+                child: const Padding(
+                  padding: EdgeInsets.all(8.0),
+                  child: Text(
+                    'Sign in to save your progress',
+                    textAlign: TextAlign.center,
+                    style: TextStyle(color: Colors.black, fontSize: 20),
+                  ),
+                ),
+              ),
+            ),
+          ],
+        ));
   }
 
   Widget welcomeMessage(LearnLandingViewModel model) {
@@ -282,22 +285,28 @@ class QuoteWidget extends StatelessWidget {
             constraints: const BoxConstraints(
               minHeight: 200,
             ),
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
+            child: Row(
               children: [
-                Text(
-                  '"${quote.quote}"',
-                  textAlign: TextAlign.center,
-                  style: const TextStyle(fontSize: 20, height: 1.5),
-                ),
-                Text(
-                  '- ${quote.author}',
-                  style: const TextStyle(
-                    fontStyle: FontStyle.italic,
-                    fontSize: 16,
-                    height: 1.5,
+                Expanded(
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Text(
+                        '"${quote.quote}"',
+                        textAlign: TextAlign.center,
+                        style: const TextStyle(fontSize: 20, height: 1.5),
+                      ),
+                      Text(
+                        '- ${quote.author}',
+                        style: const TextStyle(
+                          fontStyle: FontStyle.italic,
+                          fontSize: 16,
+                          height: 1.5,
+                        ),
+                      )
+                    ],
                   ),
-                )
+                ),
               ],
             ),
           );

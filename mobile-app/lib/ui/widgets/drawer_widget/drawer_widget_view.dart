@@ -98,15 +98,16 @@ class DrawerWidgetView extends StatelessWidget {
                         ),
                       buildDivider(),
                       const CustomTabButton(
-                        component: 'PRIVACY',
-                        icon: Icons.info_outline,
-                        url:
-                            'https://www.freecodecamp.org/news/privacy-policy/',
-                      ),
-                      const CustomTabButton(
                         component: 'DONATE',
                         url: 'https://www.freecodecamp.org/donate/',
                         icon: Icons.favorite,
+                      ),
+                      DrawerButton(
+                        component: 'SETTINGS',
+                        icon: Icons.settings,
+                        route: () {
+                          model.routeComponent('SETTINGS', context);
+                        },
                       ),
                       buildDivider(),
                       DrawerTile(
@@ -119,13 +120,12 @@ class DrawerWidgetView extends StatelessWidget {
                             model.loggedIn
                                 ? model.auth.logout()
                                 : model.routeComponent('LOGIN', context);
-                          })
+                          }),
                     ],
                   ),
                 ),
               ),
-              const Padding(
-                padding: EdgeInsets.only(left: 10.0, bottom: 10),
+              const SafeArea(
                 child: Text(
                   'freeCodeCamp is a donor-supported tax-exempt 501(c)(3) nonprofit organization',
                   textAlign: TextAlign.center,

@@ -2,7 +2,6 @@ import 'dart:developer';
 
 import 'package:curl_logger_dio_interceptor/curl_logger_dio_interceptor.dart';
 import 'package:dio/dio.dart';
-import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:freecodecamp/app/app.locator.dart';
 import 'package:freecodecamp/models/learn/challenge_model.dart';
 import 'package:freecodecamp/service/authentication/authentication_service.dart';
@@ -14,6 +13,8 @@ class LearnService {
 
   // TODO: make a Dio service instead of initialising it everywhere
   final Dio _dio = Dio();
+
+  static final baseUrl = '${AuthenticationService.baseURL}/curriculum-data/v1';
 
   factory LearnService() {
     return _learnService;
@@ -73,18 +74,6 @@ class LearnService {
       case 'project.frontEnd':
         break;
     }
-  }
-
-  Future<String> getBaseUrl([String? endpoint]) async {
-    await dotenv.load();
-
-    String devmodeValue = dotenv.get('DEVELOPMENTMODE', fallback: 'false');
-
-    bool devmodeEnabled = devmodeValue.toLowerCase() == 'true';
-
-    String domain = devmodeEnabled ? '.dev' : '.org';
-
-    return 'https://freecodecamp$domain${endpoint ?? ''}';
   }
 
   LearnService._internal();

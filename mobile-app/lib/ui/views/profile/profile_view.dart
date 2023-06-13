@@ -10,6 +10,27 @@ import 'package:jiffy/jiffy.dart';
 import 'package:stacked/stacked.dart';
 import 'package:url_launcher/url_launcher_string.dart';
 
+Map<String, int> calculateStreak(FccUserModel user) {
+  int longest = 0;
+  int current = 0;
+
+  user.heatMapCal.forEach((date, value) {
+    if (user.heatMapCal.containsKey(date.subtract(const Duration(days: 1)))) {
+      current++;
+    } else {
+      if (current > longest) {
+        longest = current;
+      }
+      current = 1;
+    }
+  });
+
+  return {
+    'longest': longest,
+    'current': current,
+  };
+}
+
 class ProfileView extends StatelessWidget {
   const ProfileView({Key? key}) : super(key: key);
 
@@ -150,6 +171,8 @@ class ProfileView extends StatelessWidget {
                 }
               ];
 
+              final streak = calculateStreak(user);
+
               return Container(
                 padding: const EdgeInsets.all(4),
                 child: SingleChildScrollView(
@@ -276,7 +299,7 @@ class ProfileView extends StatelessWidget {
                       Padding(
                         padding: const EdgeInsets.symmetric(vertical: 4),
                         child: Text(
-                          'Longest Streak: ${user.streak.longest}',
+                          'Longest Streak: ${streak['longest']}',
                           textAlign: TextAlign.center,
                           style: const TextStyle(fontSize: 16, height: 1.25),
                         ),
@@ -284,7 +307,7 @@ class ProfileView extends StatelessWidget {
                       Padding(
                         padding: const EdgeInsets.only(top: 4, bottom: 8),
                         child: Text(
-                          'Current Streak: ${user.streak.current}',
+                          'Current Streak: ${streak['current']}',
                           textAlign: TextAlign.center,
                           style: const TextStyle(fontSize: 16, height: 1.25),
                         ),

@@ -76,12 +76,10 @@ class LearnLandingViewModel extends BaseViewModel {
   }
 
   Future<List<SuperBlockButtonData>> requestSuperBlocks() async {
-    String baseUrl = await _learnService.getBaseUrl();
+    String baseUrl = LearnService.baseUrl;
 
     final http.Response res = await http.get(
-      Uri.parse(
-        '$baseUrl/curriculum-data/v1/available-superblocks.json',
-      ),
+      Uri.parse('$baseUrl/available-superblocks.json'),
     );
 
     List<SuperBlockButtonData> buttonData = [];

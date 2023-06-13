@@ -53,6 +53,9 @@ class ChallengeViewModel extends BaseViewModel {
   bool _runningTests = false;
   bool get runningTests => _runningTests;
 
+  bool _afterFirstTest = false;
+  bool get afterFirstTest => _afterFirstTest;
+
   bool _hasTypedInEditor = false;
   bool get hasTypedInEditor => _hasTypedInEditor;
 
@@ -70,6 +73,9 @@ class ChallengeViewModel extends BaseViewModel {
 
   List<ConsoleMessage> _consoleMessages = [];
   List<ConsoleMessage> get consoleMessages => _consoleMessages;
+
+  List<ConsoleMessage> _userConsoleMessages = [];
+  List<ConsoleMessage> get userConsoleMessages => _userConsoleMessages;
 
   Syntax _currFileType = Syntax.HTML;
   Syntax get currFileType => _currFileType;
@@ -103,6 +109,11 @@ class ChallengeViewModel extends BaseViewModel {
 
   set setIsRunningTests(bool value) {
     _runningTests = value;
+    notifyListeners();
+  }
+
+  set setAfterFirstTest(bool value) {
+    _afterFirstTest = value;
     notifyListeners();
   }
 
@@ -196,6 +207,11 @@ class ChallengeViewModel extends BaseViewModel {
     notifyListeners();
   }
 
+  set setUserConsoleMessages(List<ConsoleMessage> messages) {
+    _userConsoleMessages = messages;
+    notifyListeners();
+  }
+
   void init(
     String url,
     Block block,
@@ -268,9 +284,7 @@ class ChallengeViewModel extends BaseViewModel {
     if (prefs.getString(url) == null) {
       if (res.statusCode == 200) {
         Challenge challenge = Challenge.fromJson(
-          jsonDecode(
-            res.body,
-          )['result']['data']['challengeNode']['challenge'],
+          jsonDecode(res.body),
         );
 
         prefs.setString(url, res.body);
@@ -280,9 +294,7 @@ class ChallengeViewModel extends BaseViewModel {
     }
 
     Challenge challenge = Challenge.fromJson(
-      jsonDecode(
-        prefs.getString(url) as String,
-      )['result']['data']['challengeNode']['challenge'],
+      jsonDecode(prefs.getString(url) as String),
     );
 
     return challenge;
@@ -404,12 +416,10 @@ class ChallengeViewModel extends BaseViewModel {
         (element) => element.id == currChallenge.id,
       );
 
-      String slug = block!.challengeTiles[challengeIndex].name
-          .toLowerCase()
-          .replaceAll(' ', '-');
-      String url = await learnService.getBaseUrl('/page-data/learn');
+      String slug = block!.challengeTiles[challengeIndex].id;
+      String url = LearnService.baseUrl;
       String challengeUrl =
-          '$url/${block!.superBlock.dashedName}/${block!.dashedName}/$slug/page-data.json';
+          '$url/challenges/${block!.superBlock.dashedName}/${block!.dashedName}/$slug.json';
 
       await prefs.remove(challengeUrl);
 
@@ -478,15 +488,13 @@ class ChallengeViewModel extends BaseViewModel {
       if (challengeIndex == maxChallenges - 1) {
         _navigationService.back();
       } else {
-        String challenge = block!.challengeTiles[challengeIndex + 1].name
-            .toLowerCase()
-            .replaceAll(' ', '-');
-        String url = await learnService.getBaseUrl('/page-data/learn');
+        String challenge = block!.challengeTiles[challengeIndex + 1].id;
+        String url = LearnService.baseUrl;
         _navigationService.replaceWith(
           Routes.challengeView,
           arguments: ChallengeViewArguments(
               url:
-                  '$url/${block!.superBlock.dashedName}/${block!.dashedName}/$challenge/page-data.json',
+                  '$url/challenges/${block!.superBlock.dashedName}/${block!.dashedName}/$challenge.json',
               block: block!,
               challengeId: block!.challengeTiles[challengeIndex + 1].id,
               challengesCompleted: challengesCompleted + 1,
@@ -494,5 +502,58 @@ class ChallengeViewModel extends BaseViewModel {
         );
       }
     }
+  }
+
+  void handleConsoleLogMessagges(ConsoleMessage console, Challenge challenge) {
+    // Create a new console log message that adds html tags to the console message
+
+    ConsoleMessage newMessage = ConsoleMessage(
+      message: parseUsersConsoleMessages(console.message),
+      messageLevel: ConsoleMessageLevel.LOG,
+    );
+
+    String msg = console.message;
+
+    // We want to know if it is the first test because when the eval function is called
+    // it will run the first test and logs everything to the console. This means that
+    // we don't want to add the console messages more than once. So we ignore anything
+    // that comes after the first test.
+
+    bool testRelated = msg.startsWith('testMSG: ') || msg.startsWith('index: ');
+
+    if (msg.startsWith('first test done')) {
+      setAfterFirstTest = true;
+    }
+
+    if (!testRelated && !afterFirstTest) {
+      setUserConsoleMessages = [
+        ...userConsoleMessages,
+        newMessage,
+      ];
+    }
+
+    // When the message starts with testMSG it indactes that the user has done something
+    // that has triggered a test to throw an error. We want to show the error to the user.
+
+    if (msg.startsWith('testMSG: ')) {
+      setPanelType = PanelType.hint;
+      setHint = msg.split('testMSG: ')[1];
+      setShowPanel = true;
+
+      setConsoleMessages = [newMessage, ...userConsoleMessages];
+    }
+
+    if (msg == 'completed') {
+      setConsoleMessages = [
+        ...userConsoleMessages,
+        ...consoleMessages,
+      ];
+
+      setPanelType = PanelType.pass;
+      setCompletedChallenge = true;
+      setShowPanel = true;
+    }
+
+    setIsRunningTests = false;
   }
 }

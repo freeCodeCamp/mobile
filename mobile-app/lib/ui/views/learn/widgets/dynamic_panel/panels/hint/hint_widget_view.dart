@@ -74,7 +74,7 @@ class HintWidgetView extends StatelessWidget {
 
     final titleText = '$blockTitle - ${currChallenge?.title}';
     final String endingText =
-        '**Your mobile information:**\n```txt\n$userDeviceInfo\n```\n\n**Challenge:** $titleText\n\n**Link to the challenge:**\nhttps://www.freecodecamp.org${currChallenge?.slug}';
+        '**Your mobile information:**\n```txt\n$userDeviceInfo\n```\n\n**Challenge:** $titleText\n\n**Link to the challenge:**\nhttps://www.freecodecamp.org/learn/${currChallenge?.superBlock}/${currChallenge?.block}/${currChallenge?.dashedName}';
 
     final String userCode = filesToMarkdown(currChallenge!.files);
 
@@ -96,6 +96,8 @@ class HintWidgetView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    HTMLParser parser = HTMLParser(context: context);
+
     return ViewModelBuilder<HintWidgetModel>.reactive(
       viewModelBuilder: () => HintWidgetModel(),
       builder: (context, model, child) => SafeArea(
@@ -133,7 +135,9 @@ class HintWidgetView extends StatelessWidget {
             const SizedBox(height: 8),
             Expanded(
               child: SingleChildScrollView(
-                child: HtmlHandler.htmlWidgetBuilder(hint, context, 'Inter'),
+                child: Row(
+                  children: [...parser.parse(hint)],
+                ),
               ),
             ),
             const SizedBox(height: 8),

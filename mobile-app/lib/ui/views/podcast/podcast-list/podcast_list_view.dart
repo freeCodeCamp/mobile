@@ -15,7 +15,7 @@ List views = [
 
 List titles = [
   const Text('PODCASTS'),
-  const Text('Downloaded Podcasts'),
+  const Text('DOWNLOADED PODCASTS'),
 ];
 
 class PodcastListView extends StatelessWidget {
@@ -31,7 +31,6 @@ class PodcastListView extends StatelessWidget {
           title: titles.elementAt(model.index),
         ),
         drawer: const DrawerWidgetView(),
-        backgroundColor: const Color(0xFF0a0a23),
         bottomNavigationBar: BottomNavigationBar(
           currentIndex: model.index,
           onTap: model.setIndex,
@@ -118,8 +117,6 @@ class PodcastListViewBuilder extends StatelessWidget {
               } else {
                 return GridView.count(
                   crossAxisCount: 2,
-                  // crossAxisSpacing: 10,
-
                   childAspectRatio: 1,
                   children: List.generate(
                     snapshot.data!.length,
@@ -172,17 +169,19 @@ class PodcastTemplate extends StatelessWidget {
         padding: const EdgeInsets.all(4.0),
         child: Stack(
           children: [
-            isDownloadView
-                ? Image.file(
-                    File(
-                      '${PodcastListViewModel.appDir.path}/images/podcast/${podcast.id}.jpg',
+            Container(
+              color: const Color(0xFF0a0a23),
+              child: isDownloadView
+                  ? Image.file(
+                      File(
+                        '${PodcastListViewModel.appDir.path}/images/podcast/${podcast.id}.jpg',
+                      ),
+                      alignment: Alignment.center,
+                    )
+                  : CachedNetworkImage(
+                      imageUrl: podcast.image!,
                     ),
-                    // height: 130,
-                    alignment: Alignment.center,
-                  )
-                : CachedNetworkImage(
-                    imageUrl: podcast.image!,
-                  ),
+            ),
             Align(
               alignment: Alignment.bottomCenter,
               child: Row(

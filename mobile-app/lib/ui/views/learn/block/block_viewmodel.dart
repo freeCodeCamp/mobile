@@ -96,15 +96,12 @@ class BlockViewModel extends BaseViewModel {
   }
 
   Future<void> routeToCertification(Block block) async {
-    String challenge = block.challengeTiles[0].dashedName;
     String challengeId = block.challengeTiles[0].id;
 
-    String url = await learnService.getBaseUrl(
-      '/page-data/learn',
-    );
+    String url = LearnService.baseUrl;
 
     routeToChallengeView(
-      '$url/${block.superBlock.dashedName}/${block.dashedName}/$challenge/page-data.json',
+      '$url/challenges/${block.superBlock.dashedName}/${block.dashedName}/$challengeId.json',
       block,
       challengeId,
     );
@@ -196,15 +193,13 @@ class BlockViewModel extends BaseViewModel {
   }
 
   Future<void> startDownload(Block block) async {
-    String url = await learnService.getBaseUrl(
-      '/page-data/learn',
-    );
+    String url = LearnService.baseUrl;
     learnOfflineService
         .getChallengeBatch(
       block,
       block.challengeTiles
           .map((e) =>
-              '$url/${block.superBlock.dashedName}/${block.dashedName}/${e.dashedName}/page-data.json')
+              '$url/challenges/${block.superBlock.dashedName}/${block.dashedName}/${e.id}.json')
           .toList(),
     )
         .then((value) async {

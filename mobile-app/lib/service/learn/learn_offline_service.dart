@@ -87,9 +87,7 @@ class LearnOfflineService {
       if (prefs.getString(url) == null) {
         if (res.statusCode == 200) {
           challenge = Challenge.fromJson(
-            jsonDecode(
-              res.body,
-            )['result']['data']['challengeNode']['challenge'],
+            jsonDecode(res.body),
           );
 
           prefs.setString(url, res.body);
@@ -99,9 +97,7 @@ class LearnOfflineService {
       }
 
       challenge = Challenge.fromJson(
-        jsonDecode(
-          prefs.getString(url) as String,
-        )['result']['data']['challengeNode']['challenge'],
+        jsonDecode(prefs.getString(url) as String),
       );
     } else {
       String? challengeStr = prefs.getString(challengeId);

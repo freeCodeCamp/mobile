@@ -8,6 +8,7 @@ import 'package:freecodecamp/app/app.router.dart';
 import 'package:freecodecamp/models/news/tutorial_model.dart';
 import 'package:freecodecamp/service/developer_service.dart';
 import 'package:freecodecamp/ui/views/news/html_handler/html_handler.dart';
+import 'package:freecodecamp/ui/views/news/news-tutorial/news_tutorial_view.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:stacked/stacked.dart';
 import 'package:http/http.dart' as http;
@@ -105,11 +106,46 @@ class NewsTutorialViewModel extends BaseViewModel {
   }
 
   List<Widget> initLazyLoading(html, context, tutorial) {
-    List<Widget> elements = HtmlHandler.htmlHandler(
-      html,
-      context,
-      tutorial,
+    HTMLParser parser = HTMLParser(context: context);
+
+    List<Widget> elements = parser.parse(html);
+
+    // insert before the first element
+    elements.insert(
+      0,
+      Stack(
+        children: [
+          NewsTutorialHeader(tutorial: tutorial),
+          AppBar(
+            backgroundColor: Colors.transparent,
+            shadowColor: Colors.transparent,
+            leading: Tooltip(
+              message: 'Back',
+              child: InkWell(
+                onTap: () {
+                  Navigator.pop(context);
+                },
+                child: Container(
+                  margin: const EdgeInsets.all(8),
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(50),
+                    color: Colors.black.withOpacity(0.5),
+                  ),
+                  child: const Icon(Icons.arrow_back),
+                ),
+              ),
+            ),
+          )
+        ],
+      ),
     );
+
+    // insert after the last element
+
+    elements.add(const SizedBox(
+      height: 100,
+    ));
+
     initBottomButtonAnimation();
     return elements;
   }
@@ -125,8 +161,10 @@ class NewsTutorialViewModel extends BaseViewModel {
   Future<Tutorial> fetchTutorial(tutorialId) async {
     await dotenv.load(fileName: '.env');
 
-    final response = await http.get(Uri.parse(
-        'https://www.freecodecamp.org/news/ghost/api/v3/content/posts/$tutorialId/?key=${dotenv.env['NEWSKEY']}&include=tags,authors'));
+    final response = await http.get(
+      Uri.parse(
+          'https://www.freecodecamp.org/news/ghost/api/v3/content/posts/$tutorialId/?key=${dotenv.env['NEWSKEY']}&include=tags,authors'),
+    );
     if (response.statusCode == 200) {
       return Tutorial.toPostFromJson(jsonDecode(
         response.body,
