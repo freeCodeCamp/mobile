@@ -110,43 +110,45 @@ class NewsTutorialViewModel extends BaseViewModel {
 
     List<Widget> elements = parser.parse(html);
 
-    // insert before the first element
-    elements.insert(
-      0,
-      Stack(
-        children: [
-          NewsTutorialHeader(tutorial: tutorial),
-          AppBar(
-            backgroundColor: Colors.transparent,
-            shadowColor: Colors.transparent,
-            leading: Tooltip(
-              message: 'Back',
-              child: InkWell(
-                onTap: () {
-                  Navigator.pop(context);
-                },
-                child: Container(
-                  margin: const EdgeInsets.all(8),
-                  decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(50),
-                    color: Colors.black.withOpacity(0.5),
+    if (tutorial is Tutorial) {
+      // insert before the first element
+      elements.insert(
+        0,
+        Stack(
+          children: [
+            NewsTutorialHeader(tutorial: tutorial),
+            AppBar(
+              backgroundColor: Colors.transparent,
+              shadowColor: Colors.transparent,
+              leading: Tooltip(
+                message: 'Back',
+                child: InkWell(
+                  onTap: () {
+                    Navigator.pop(context);
+                  },
+                  child: Container(
+                    margin: const EdgeInsets.all(8),
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(50),
+                      color: Colors.black.withOpacity(0.5),
+                    ),
+                    child: const Icon(Icons.arrow_back),
                   ),
-                  child: const Icon(Icons.arrow_back),
                 ),
               ),
-            ),
-          )
-        ],
-      ),
-    );
+            )
+          ],
+        ),
+      );
 
-    // insert after the last element
+      // insert after the last element
+      elements.add(const SizedBox(
+        height: 100,
+      ));
 
-    elements.add(const SizedBox(
-      height: 100,
-    ));
+      initBottomButtonAnimation();
+    }
 
-    initBottomButtonAnimation();
     return elements;
   }
 
