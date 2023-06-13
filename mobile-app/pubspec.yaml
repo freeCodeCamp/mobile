@@ -20,13 +20,13 @@ dependencies:
   sqflite_migration_service: ^2.0.0-nullsafety.1
   dio: ^5.0.0
   phone_ide: ^1.1.1
-  jiffy: ^6.0.0
-  shared_preferences: ^2.0.7
-  font_awesome_flutter: ^10.0.0
-  html: ^0.15.0
+  jiffy: ^6.2.1
+  shared_preferences: ^2.1.2
+  font_awesome_flutter: ^10.4.0
+  html: ^0.15.4
   fk_user_agent: ^2.0.1
-  flutter_hooks: ^0.18.0
-  flutter_local_notifications: ^9.0.3
+  flutter_hooks: ^0.18.6
+  flutter_local_notifications: ^14.1.1
   youtube_player_iframe: ^2.2.2
   infinite_scroll_pagination: ^3.1.0
   web_socket_channel: ^2.1.0

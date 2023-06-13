@@ -18,9 +18,8 @@ class NotificationService {
   Future<void> init() async {
     const AndroidInitializationSettings androidInitializationSettings =
         AndroidInitializationSettings('@mipmap/launcher_icon');
-
-    final IOSInitializationSettings iosInitializationSettings =
-        IOSInitializationSettings(onDidReceiveLocalNotification: (
+    final DarwinInitializationSettings iosInitializationSettings =
+        DarwinInitializationSettings(onDidReceiveLocalNotification: (
       int id,
       String? title,
       String? body,
@@ -47,13 +46,10 @@ class NotificationService {
       channelDescription: 'Channel description',
       priority: Priority.high,
       importance: Importance.max,
-      // autoCancel: true,
     );
 
-    const IOSNotificationDetails iosNotificationDetails =
-        IOSNotificationDetails(
-      threadIdentifier: 'fcc-ios-notif-channel',
-    );
+    const DarwinNotificationDetails iosNotificationDetails =
+        DarwinNotificationDetails(threadIdentifier: 'fcc-ios-notif-channel');
 
     const NotificationDetails platformChannelSpecifics = NotificationDetails(
       android: androidNotificationDetails,
