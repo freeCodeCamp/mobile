@@ -221,16 +221,17 @@ class HTMLParser {
               if (isVideo.hasMatch(videoUrl ?? '')) {
                 var videoId = videoUrl?.split('/').last.split('?').first;
 
-                YoutubePlayerController controller = YoutubePlayerController(
-                  initialVideoId: videoId!,
+                YoutubePlayerController controller =
+                    YoutubePlayerController.fromVideoId(
+                  videoId: videoId!,
+                  autoPlay: false,
                   params: const YoutubePlayerParams(
                     showControls: true,
                     showFullscreenButton: true,
-                    autoPlay: false,
                   ),
                 );
 
-                return YoutubePlayerIFrame(
+                return YoutubePlayer(
                   controller: controller,
                 );
               }
