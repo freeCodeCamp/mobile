@@ -44,6 +44,7 @@ class ChallengeView extends StatelessWidget {
       builder: (context, model, child) => FutureBuilder<Challenge?>(
         future: model.challenge,
         builder: (context, snapshot) {
+          HTMLParser parser = HTMLParser(context: context);
           if (snapshot.hasData) {
             Challenge challenge = snapshot.data!;
             int maxChallenges = block.challenges.length;
@@ -89,18 +90,12 @@ class ChallengeView extends StatelessWidget {
                             controller: controller,
                           ),
                           const SizedBox(height: 12),
-                          ...HtmlHandler.htmlHandler(
+                          ...parser.parse(
                             challenge.description,
-                            context,
-                            null,
-                            'Inter',
                           ),
                           buildDivider(),
-                          ...HtmlHandler.htmlHandler(
+                          ...parser.parse(
                             challenge.question!.text,
-                            context,
-                            null,
-                            'Inter',
                           ),
                           const SizedBox(height: 8),
                           for (var answer
@@ -133,14 +128,11 @@ class ChallengeView extends StatelessWidget {
                                         crossAxisAlignment:
                                             CrossAxisAlignment.start,
                                         children: [
-                                          ...HtmlHandler.htmlHandler(
+                                          ...parser.parse(
                                             // NOTE: Might need to make separate handler for challenges
                                             // Also the current handler breaks the default behavior here
                                             // by not allowing user to select the tile within the text
                                             answer.value,
-                                            context,
-                                            null,
-                                            'Inter',
                                           ),
                                         ],
                                       ),
