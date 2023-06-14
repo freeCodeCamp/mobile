@@ -48,6 +48,9 @@ class ChallengeView extends StatelessWidget {
           if (snapshot.hasData) {
             Challenge challenge = snapshot.data!;
             int maxChallenges = block.challenges.length;
+            int currChallengeNum = block.challengeTiles
+                    .indexWhere((element) => element.id == challenge.id) +
+                1;
 
             if (challenge.challengeType == 11) {
               YoutubePlayerController controller = YoutubePlayerController(
@@ -66,7 +69,7 @@ class ChallengeView extends StatelessWidget {
                 },
                 child: Scaffold(
                   appBar: AppBar(
-                    title: Text(challenge.title),
+                    title: Text('$currChallengeNum of $maxChallenges'),
                   ),
                   body: ListView(
                     padding: const EdgeInsets.all(12),
