@@ -96,6 +96,8 @@ class HintWidgetView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    HTMLParser parser = HTMLParser(context: context);
+
     return ViewModelBuilder<HintWidgetModel>.reactive(
       viewModelBuilder: () => HintWidgetModel(),
       builder: (context, model, child) => SafeArea(
@@ -133,7 +135,9 @@ class HintWidgetView extends StatelessWidget {
             const SizedBox(height: 8),
             Expanded(
               child: SingleChildScrollView(
-                child: HtmlHandler.htmlWidgetBuilder(hint, context, 'Inter'),
+                child: Row(
+                  children: [...parser.parse(hint)],
+                ),
               ),
             ),
             const SizedBox(height: 8),

@@ -8,7 +8,6 @@ import 'package:freecodecamp/models/podcasts/podcasts_model.dart';
 import 'package:freecodecamp/ui/views/podcast/episode-list/episode_list_viewmodel.dart';
 import 'package:freecodecamp/ui/views/podcast/podcast-list/podcast_list_viewmodel.dart';
 import 'package:freecodecamp/ui/widgets/podcast_widgets/podcast_tilte_widget.dart';
-import 'package:html/dom.dart' as dom;
 import 'package:infinite_scroll_pagination/infinite_scroll_pagination.dart';
 import 'package:stacked/stacked.dart';
 import 'package:url_launcher/url_launcher_string.dart';
@@ -130,21 +129,17 @@ class EpisodeListView extends StatelessWidget {
         ),
         Html(
           data: podcast.description!,
-          onLinkTap: (
-            String? url,
-            RenderContext context,
-            Map<String, String> attributes,
-            dom.Element? element,
-          ) {
+          onLinkTap: (url, attributes, element) {
             launchUrlString(url!);
           },
           style: {
             '#': Style(
-                fontSize: const FontSize(16),
-                color: Colors.white.withOpacity(0.87),
-                margin: EdgeInsets.zero,
-                maxLines: model.showDescription ? null : 3,
-                fontFamily: 'Lato')
+              fontSize: FontSize(16),
+              color: Colors.white.withOpacity(0.87),
+              margin: Margins.zero,
+              maxLines: model.showDescription ? null : 3,
+              fontFamily: 'Lato',
+            )
           },
         ),
         TextButton(

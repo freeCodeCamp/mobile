@@ -395,6 +395,7 @@ class ChallengeViewModel extends BaseViewModel {
 
   Future forumHelpDialog(String url) async {
     DialogResponse? res = await _dialogService.showCustomDialog(
+        barrierDismissible: true,
         variant: DialogType.buttonForm,
         title: 'Ask for Help',
         description:
@@ -420,6 +421,7 @@ class ChallengeViewModel extends BaseViewModel {
     SharedPreferences prefs = await SharedPreferences.getInstance();
 
     DialogResponse? res = await _dialogService.showCustomDialog(
+        barrierDismissible: true,
         variant: DialogType.buttonForm,
         title: 'Reset Code',
         description: 'Are you sure you want to reset your code?',

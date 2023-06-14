@@ -20,19 +20,24 @@ class JavaScriptConsole extends StatelessWidget {
     return ViewModelBuilder<JavaScriptConsoleViewModel>.reactive(
       viewModelBuilder: () => JavaScriptConsoleViewModel(),
       builder: (context, model, child) {
+        HTMLParser parser = HTMLParser(
+          context: context,
+        );
+
         return Expanded(
           child: Row(
             children: [
               Expanded(
                 child: Scrollbar(
                   child: ListView.builder(
+                    padding: const EdgeInsets.all(8),
+                    physics: const ClampingScrollPhysics(),
                     itemCount: messages.isEmpty ? 1 : messages.length,
                     itemBuilder: (context, index) {
-                      List<Widget> htmlWidgets = HtmlHandler.htmlHandler(
+                      List<Widget> htmlWidgets = parser.parse(
                         messages.isEmpty
                             ? defaultMessage
                             : messages[index].message,
-                        context,
                       );
 
                       return consoleMessage(htmlWidgets, model, context);
