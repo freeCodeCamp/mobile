@@ -68,11 +68,32 @@ class _buttonDialog extends HookWidget {
                       ),
                     ),
                     onPressed: () => {
-                      onDialogTap(
-                          DialogResponse(data: 'gallery', confirmed: true)),
+                      onDialogTap(DialogResponse(confirmed: true)),
                     },
                     child: Text(
                       request.mainButtonTitle as String,
+                      textAlign: TextAlign.center,
+                      style: const TextStyle(fontSize: 16),
+                    ),
+                  ),
+                ),
+                SizedBox(
+                  height: 50,
+                  width: MediaQuery.of(context).size.width,
+                  child: ElevatedButton(
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor:
+                          const Color.fromRGBO(0x3b, 0x3b, 0x4f, 1),
+                      side: const BorderSide(width: 2, color: Colors.white),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(0),
+                      ),
+                    ),
+                    onPressed: () => {
+                      onDialogTap(DialogResponse(confirmed: false)),
+                    },
+                    child: Text(
+                      request.secondaryButtonTitle ?? 'Cancel',
                       textAlign: TextAlign.center,
                       style: const TextStyle(fontSize: 16),
                     ),
