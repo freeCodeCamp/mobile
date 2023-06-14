@@ -71,132 +71,137 @@ class ChallengeView extends StatelessWidget {
                   appBar: AppBar(
                     title: Text('$currChallengeNum of $maxChallenges'),
                   ),
-                  body: ListView(
-                    padding: const EdgeInsets.all(12),
-                    children: [
-                      Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Center(
-                            child: Text(
-                              challenge.title,
-                              textAlign: TextAlign.center,
-                              style: const TextStyle(
-                                fontSize: 20,
-                                fontWeight: FontWeight.bold,
-                                fontFamily: 'Inter',
-                              ),
-                            ),
-                          ),
-                          const SizedBox(height: 12),
-                          YoutubePlayerIFrame(
-                            controller: controller,
-                          ),
-                          const SizedBox(height: 12),
-                          ...parser.parse(
-                            challenge.description,
-                          ),
-                          buildDivider(),
-                          ...parser.parse(
-                            challenge.question!.text,
-                          ),
-                          const SizedBox(height: 8),
-                          for (var answer
-                              in challenge.question!.answers.asMap().entries)
-                            Container(
-                              margin: const EdgeInsets.symmetric(vertical: 8),
-                              decoration: BoxDecoration(
-                                borderRadius: BorderRadius.circular(0),
-                                border: Border.all(
-                                  color: answer.key == model.currentChoice
-                                      ? const Color(0xFFFFFFFF)
-                                      : const Color(0xFFAAAAAA),
-                                  width:
-                                      answer.key == model.currentChoice ? 3 : 1,
+                  body: SafeArea(
+                    bottom: false,
+                    child: ListView(
+                      padding: const EdgeInsets.all(12),
+                      children: [
+                        Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Center(
+                              child: Text(
+                                challenge.title,
+                                textAlign: TextAlign.center,
+                                style: const TextStyle(
+                                  fontSize: 20,
+                                  fontWeight: FontWeight.bold,
+                                  fontFamily: 'Inter',
                                 ),
                               ),
-                              child: RadioListTile<int>(
-                                // contentPadding: const EdgeInsets.all(0),
-                                tileColor: const Color(0xFF0a0a23),
-                                value: answer.key,
-                                groupValue: model.currentChoice,
-                                onChanged: (value) {
-                                  model.setChoiceStatus = null;
-                                  model.setCurrentChoice = value ?? -1;
-                                },
-                                title: Row(
-                                  children: [
-                                    Expanded(
-                                      child: Column(
-                                        crossAxisAlignment:
-                                            CrossAxisAlignment.start,
-                                        children: [
-                                          ...parser.parse(
-                                            // NOTE: Might need to make separate handler for challenges
-                                            // Also the current handler breaks the default behavior here
-                                            // by not allowing user to select the tile within the text
-                                            answer.value,
-                                          ),
-                                        ],
-                                      ),
-                                    ),
-                                    if (model.choiceStatus != null &&
-                                        model.currentChoice == answer.key) ...{
+                            ),
+                            const SizedBox(height: 12),
+                            YoutubePlayerIFrame(
+                              controller: controller,
+                            ),
+                            const SizedBox(height: 12),
+                            ...parser.parse(
+                              challenge.description,
+                            ),
+                            buildDivider(),
+                            ...parser.parse(
+                              challenge.question!.text,
+                            ),
+                            const SizedBox(height: 8),
+                            for (var answer
+                                in challenge.question!.answers.asMap().entries)
+                              Container(
+                                margin: const EdgeInsets.symmetric(vertical: 8),
+                                decoration: BoxDecoration(
+                                  borderRadius: BorderRadius.circular(0),
+                                  border: Border.all(
+                                    color: answer.key == model.currentChoice
+                                        ? const Color(0xFFFFFFFF)
+                                        : const Color(0xFFAAAAAA),
+                                    width: answer.key == model.currentChoice
+                                        ? 3
+                                        : 1,
+                                  ),
+                                ),
+                                child: RadioListTile<int>(
+                                  // contentPadding: const EdgeInsets.all(0),
+                                  tileColor: const Color(0xFF0a0a23),
+                                  value: answer.key,
+                                  groupValue: model.currentChoice,
+                                  onChanged: (value) {
+                                    model.setChoiceStatus = null;
+                                    model.setCurrentChoice = value ?? -1;
+                                  },
+                                  title: Row(
+                                    children: [
                                       Expanded(
-                                        flex: 0,
-                                        child: Icon(
-                                          model.choiceStatus!
-                                              ? Icons.check_circle
-                                              : Icons.cancel,
-                                          color: model.choiceStatus!
-                                              ? Colors.green
-                                              : Colors.red,
+                                        child: Column(
+                                          crossAxisAlignment:
+                                              CrossAxisAlignment.start,
+                                          children: [
+                                            ...parser.parse(
+                                              // NOTE: Might need to make separate handler for challenges
+                                              // Also the current handler breaks the default behavior here
+                                              // by not allowing user to select the tile within the text
+                                              answer.value,
+                                            ),
+                                          ],
                                         ),
                                       ),
-                                    }
-                                  ],
+                                      if (model.choiceStatus != null &&
+                                          model.currentChoice ==
+                                              answer.key) ...{
+                                        Expanded(
+                                          flex: 0,
+                                          child: Icon(
+                                            model.choiceStatus!
+                                                ? Icons.check_circle
+                                                : Icons.cancel,
+                                            color: model.choiceStatus!
+                                                ? Colors.green
+                                                : Colors.red,
+                                          ),
+                                        ),
+                                      }
+                                    ],
+                                  ),
                                 ),
                               ),
+                            // TODO: spacing or divider
+                            // const SizedBox(height: 20),
+                            buildDivider(),
+                            const SizedBox(height: 8),
+                            Row(
+                              children: [
+                                Expanded(
+                                  child: ElevatedButton(
+                                    style: ElevatedButton.styleFrom(
+                                      minimumSize: const Size(0, 50),
+                                      backgroundColor: const Color.fromRGBO(
+                                        0x3b,
+                                        0x3b,
+                                        0x4f,
+                                        1,
+                                      ),
+                                      side: const BorderSide(
+                                        width: 2,
+                                        color: Colors.white,
+                                      ),
+                                    ),
+                                    onPressed: model.currentChoice != -1
+                                        ? () => model.checkOption()
+                                        : null,
+                                    child: Text(
+                                      model.choiceStatus != null
+                                          ? model.choiceStatus!
+                                              ? 'Next challenge'
+                                              : 'Try Again'
+                                          : 'Check your answer',
+                                      style: const TextStyle(fontSize: 20),
+                                    ),
+                                  ),
+                                ),
+                              ],
                             ),
-                          // TODO: spacing or divider
-                          // const SizedBox(height: 20),
-                          buildDivider(),
-                          const SizedBox(height: 8),
-                          Row(
-                            children: [
-                              Expanded(
-                                child: ElevatedButton(
-                                  style: ElevatedButton.styleFrom(
-                                    minimumSize: const Size(0, 50),
-                                    backgroundColor: const Color.fromRGBO(
-                                      0x3b,
-                                      0x3b,
-                                      0x4f,
-                                      1,
-                                    ),
-                                    side: const BorderSide(
-                                      width: 2,
-                                      color: Colors.white,
-                                    ),
-                                  ),
-                                  onPressed: model.currentChoice != -1
-                                      ? () => model.checkOption()
-                                      : null,
-                                  child: Text(
-                                    model.choiceStatus != null
-                                        ? model.choiceStatus!
-                                            ? 'Next challenge'
-                                            : 'Try Again'
-                                        : 'Check your answer',
-                                    style: const TextStyle(fontSize: 20),
-                                  ),
-                                ),
-                              ),
-                            ],
-                          ),
-                        ],
-                      ),
-                    ],
+                          ],
+                        ),
+                      ],
+                    ),
                   ),
                 ),
               );
