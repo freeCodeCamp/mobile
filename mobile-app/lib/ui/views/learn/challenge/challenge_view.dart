@@ -184,7 +184,14 @@ class ChallengeView extends StatelessWidget {
                                       ),
                                     ),
                                     onPressed: model.currentChoice != -1
-                                        ? () => model.checkOption()
+                                        ? model.choiceStatus != null &&
+                                                model.choiceStatus!
+                                            ? () => model.goToNextChallenge(
+                                                  model
+                                                      .block!.challenges.length,
+                                                  challengesCompleted,
+                                                )
+                                            : () => model.checkOption()
                                         : null,
                                     child: Text(
                                       model.choiceStatus != null
