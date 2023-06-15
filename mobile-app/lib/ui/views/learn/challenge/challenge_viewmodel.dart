@@ -242,7 +242,7 @@ class ChallengeViewModel extends BaseViewModel {
     setChallenge = learnOfflineService.getChallenge(url, challengeId);
     Challenge challenge = await _challenge!;
 
-    if (challenge.challengeType == 11) {
+    if (challenge.challengeType == 11 || challenge.challengeType == 10) {
     } else {
       List<ChallengeFile> currentEditedChallenge = challenge.files
           .where((element) => element.editableRegionBoundaries.isNotEmpty)

@@ -48,7 +48,34 @@ class ChallengeView extends StatelessWidget {
                     .indexWhere((element) => element.id == challenge.id) +
                 1;
 
-            if (challenge.challengeType == 11) {
+            if (challenge.challengeType == 10) {
+              return WillPopScope(
+                onWillPop: () async {
+                  model.updateProgressOnPop(context);
+
+                  return Future.value(true);
+                },
+                child: Scaffold(
+                  appBar: AppBar(
+                    title: Text(challenge.title),
+                  ),
+                  body: SafeArea(
+                    bottom: false,
+                    child: ListView(
+                      padding: const EdgeInsets.all(12),
+                      children: [
+                        ...parser.parse(challenge.description),
+                        buildDivider(),
+                        ...parser.parse(challenge.instructions),
+                        buildDivider(),
+                        const Text('Solution'),
+                        const SizedBox(height: 8),
+                      ],
+                    ),
+                  ),
+                ),
+              );
+            } else if (challenge.challengeType == 11) {
               YoutubePlayerController controller = YoutubePlayerController(
                 initialVideoId: challenge.videoId!,
                 params: const YoutubePlayerParams(
@@ -73,133 +100,125 @@ class ChallengeView extends StatelessWidget {
                     child: ListView(
                       padding: const EdgeInsets.all(12),
                       children: [
-                        Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
+                        Center(
+                          child: Text(
+                            challenge.title,
+                            textAlign: TextAlign.center,
+                            style: const TextStyle(
+                              fontSize: 20,
+                              fontWeight: FontWeight.bold,
+                              fontFamily: 'Inter',
+                            ),
+                          ),
+                        ),
+                        const SizedBox(height: 12),
+                        Padding(
+                          padding: const EdgeInsets.symmetric(
+                            horizontal: 16,
+                          ),
+                          child: YoutubePlayerIFrame(
+                            controller: controller,
+                          ),
+                        ),
+                        const SizedBox(height: 12),
+                        ...parser.parse(
+                          challenge.description,
+                        ),
+                        buildDivider(),
+                        ...parser.parse(
+                          challenge.question!.text,
+                        ),
+                        const SizedBox(height: 8),
+                        for (var answer
+                            in challenge.question!.answers.asMap().entries)
+                          Container(
+                            margin: const EdgeInsets.symmetric(vertical: 8),
+                            decoration: BoxDecoration(
+                              borderRadius: BorderRadius.circular(0),
+                              border: Border.all(
+                                color: answer.key == model.currentChoice
+                                    ? const Color(0xFFFFFFFF)
+                                    : const Color(0xFFAAAAAA),
+                                width:
+                                    answer.key == model.currentChoice ? 3 : 1,
+                              ),
+                            ),
+                            child: RadioListTile<int>(
+                              // contentPadding: const EdgeInsets.all(0),
+                              tileColor: const Color(0xFF0a0a23),
+                              value: answer.key,
+                              groupValue: model.currentChoice,
+                              onChanged: (value) {
+                                model.setChoiceStatus = null;
+                                model.setCurrentChoice = value ?? -1;
+                              },
+                              title: Row(
+                                children: [
+                                  Expanded(
+                                    child: Column(
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.start,
+                                      children: parser.parse(
+                                        answer.value,
+                                        isSelectable: false,
+                                      ),
+                                    ),
+                                  ),
+                                  if (model.choiceStatus != null &&
+                                      model.currentChoice == answer.key) ...{
+                                    Expanded(
+                                      flex: 0,
+                                      child: Icon(
+                                        model.choiceStatus!
+                                            ? Icons.check_circle
+                                            : Icons.cancel,
+                                        color: model.choiceStatus!
+                                            ? Colors.green
+                                            : Colors.red,
+                                      ),
+                                    ),
+                                  }
+                                ],
+                              ),
+                            ),
+                          ),
+                        buildDivider(),
+                        const SizedBox(height: 8),
+                        Row(
                           children: [
-                            Center(
-                              child: Text(
-                                challenge.title,
-                                textAlign: TextAlign.center,
-                                style: const TextStyle(
-                                  fontSize: 20,
-                                  fontWeight: FontWeight.bold,
-                                  fontFamily: 'Inter',
-                                ),
-                              ),
-                            ),
-                            const SizedBox(height: 12),
-                            Padding(
-                              padding: const EdgeInsets.symmetric(
-                                horizontal: 16,
-                              ),
-                              child: YoutubePlayerIFrame(
-                                controller: controller,
-                              ),
-                            ),
-                            const SizedBox(height: 12),
-                            ...parser.parse(
-                              challenge.description,
-                            ),
-                            buildDivider(),
-                            ...parser.parse(
-                              challenge.question!.text,
-                            ),
-                            const SizedBox(height: 8),
-                            for (var answer
-                                in challenge.question!.answers.asMap().entries)
-                              Container(
-                                margin: const EdgeInsets.symmetric(vertical: 8),
-                                decoration: BoxDecoration(
-                                  borderRadius: BorderRadius.circular(0),
-                                  border: Border.all(
-                                    color: answer.key == model.currentChoice
-                                        ? const Color(0xFFFFFFFF)
-                                        : const Color(0xFFAAAAAA),
-                                    width: answer.key == model.currentChoice
-                                        ? 3
-                                        : 1,
+                            Expanded(
+                              child: ElevatedButton(
+                                style: ElevatedButton.styleFrom(
+                                  minimumSize: const Size(0, 50),
+                                  backgroundColor: const Color.fromRGBO(
+                                    0x3b,
+                                    0x3b,
+                                    0x4f,
+                                    1,
+                                  ),
+                                  side: const BorderSide(
+                                    width: 2,
+                                    color: Colors.white,
                                   ),
                                 ),
-                                child: RadioListTile<int>(
-                                  // contentPadding: const EdgeInsets.all(0),
-                                  tileColor: const Color(0xFF0a0a23),
-                                  value: answer.key,
-                                  groupValue: model.currentChoice,
-                                  onChanged: (value) {
-                                    model.setChoiceStatus = null;
-                                    model.setCurrentChoice = value ?? -1;
-                                  },
-                                  title: Row(
-                                    children: [
-                                      Expanded(
-                                        child: Column(
-                                          crossAxisAlignment:
-                                              CrossAxisAlignment.start,
-                                          children: parser.parse(
-                                            answer.value,
-                                            isSelectable: false,
-                                          ),
-                                        ),
-                                      ),
-                                      if (model.choiceStatus != null &&
-                                          model.currentChoice ==
-                                              answer.key) ...{
-                                        Expanded(
-                                          flex: 0,
-                                          child: Icon(
+                                onPressed: model.currentChoice != -1
+                                    ? model.choiceStatus != null &&
                                             model.choiceStatus!
-                                                ? Icons.check_circle
-                                                : Icons.cancel,
-                                            color: model.choiceStatus!
-                                                ? Colors.green
-                                                : Colors.red,
-                                          ),
-                                        ),
-                                      }
-                                    ],
-                                  ),
+                                        ? () => model.goToNextChallenge(
+                                              model.block!.challenges.length,
+                                              challengesCompleted,
+                                            )
+                                        : () => model.checkOption()
+                                    : null,
+                                child: Text(
+                                  model.choiceStatus != null
+                                      ? model.choiceStatus!
+                                          ? 'Next challenge'
+                                          : 'Try Again'
+                                      : 'Check your answer',
+                                  style: const TextStyle(fontSize: 20),
                                 ),
                               ),
-                            buildDivider(),
-                            const SizedBox(height: 8),
-                            Row(
-                              children: [
-                                Expanded(
-                                  child: ElevatedButton(
-                                    style: ElevatedButton.styleFrom(
-                                      minimumSize: const Size(0, 50),
-                                      backgroundColor: const Color.fromRGBO(
-                                        0x3b,
-                                        0x3b,
-                                        0x4f,
-                                        1,
-                                      ),
-                                      side: const BorderSide(
-                                        width: 2,
-                                        color: Colors.white,
-                                      ),
-                                    ),
-                                    onPressed: model.currentChoice != -1
-                                        ? model.choiceStatus != null &&
-                                                model.choiceStatus!
-                                            ? () => model.goToNextChallenge(
-                                                  model
-                                                      .block!.challenges.length,
-                                                  challengesCompleted,
-                                                )
-                                            : () => model.checkOption()
-                                        : null,
-                                    child: Text(
-                                      model.choiceStatus != null
-                                          ? model.choiceStatus!
-                                              ? 'Next challenge'
-                                              : 'Try Again'
-                                          : 'Check your answer',
-                                      style: const TextStyle(fontSize: 20),
-                                    ),
-                                  ),
-                                ),
-                              ],
                             ),
                           ],
                         ),
