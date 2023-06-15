@@ -92,8 +92,13 @@ class ChallengeView extends StatelessWidget {
                               ),
                             ),
                             const SizedBox(height: 12),
-                            YoutubePlayerIFrame(
-                              controller: controller,
+                            Padding(
+                              padding: const EdgeInsets.symmetric(
+                                horizontal: 16,
+                              ),
+                              child: YoutubePlayerIFrame(
+                                controller: controller,
+                              ),
                             ),
                             const SizedBox(height: 12),
                             ...parser.parse(
