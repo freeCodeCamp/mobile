@@ -59,6 +59,7 @@ class ChallengeView extends StatelessWidget {
                   showControls: true,
                   showFullscreenButton: true,
                   autoPlay: false,
+                  strictRelatedVideos: true,
                 ),
               );
               return WillPopScope(
@@ -133,14 +134,10 @@ class ChallengeView extends StatelessWidget {
                                         child: Column(
                                           crossAxisAlignment:
                                               CrossAxisAlignment.start,
-                                          children: [
-                                            ...parser.parse(
-                                              // NOTE: Might need to make separate handler for challenges
-                                              // Also the current handler breaks the default behavior here
-                                              // by not allowing user to select the tile within the text
-                                              answer.value,
-                                            ),
-                                          ],
+                                          children: parser.parse(
+                                            answer.value,
+                                            isSelectable: false,
+                                          ),
                                         ),
                                       ),
                                       if (model.choiceStatus != null &&
@@ -162,8 +159,6 @@ class ChallengeView extends StatelessWidget {
                                   ),
                                 ),
                               ),
-                            // TODO: spacing or divider
-                            // const SizedBox(height: 20),
                             buildDivider(),
                             const SizedBox(height: 8),
                             Row(
