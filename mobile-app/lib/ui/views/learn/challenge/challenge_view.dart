@@ -1,20 +1,16 @@
-//TODO: Organise imports before merging
 import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
 import 'package:flutter_inappwebview/flutter_inappwebview.dart';
-import 'package:freecodecamp/ui/views/learn/widgets/console/console_view.dart';
-import 'package:freecodecamp/ui/views/news/html_handler/html_handler.dart';
-import 'package:freecodecamp/ui/widgets/drawer_widget/drawer_widget_view.dart';
-import 'package:phone_ide/phone_ide.dart';
-
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:freecodecamp/enums/panel_type.dart';
-
 import 'package:freecodecamp/models/learn/challenge_model.dart';
 import 'package:freecodecamp/models/learn/curriculum_model.dart';
 import 'package:freecodecamp/ui/views/learn/challenge/challenge_viewmodel.dart';
-
+import 'package:freecodecamp/ui/views/learn/widgets/console/console_view.dart';
 import 'package:freecodecamp/ui/views/learn/widgets/dynamic_panel/panels/dynamic_panel.dart';
+import 'package:freecodecamp/ui/views/news/html_handler/html_handler.dart';
+import 'package:freecodecamp/ui/widgets/drawer_widget/drawer_widget_view.dart';
+import 'package:phone_ide/phone_ide.dart';
 import 'package:stacked/stacked.dart';
 import 'package:youtube_player_iframe/youtube_player_iframe.dart';
 
