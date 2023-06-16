@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'dart:developer';
 import 'package:flutter_inappwebview/flutter_inappwebview.dart';
 import 'package:freecodecamp/app/app.locator.dart';
 import 'package:freecodecamp/enums/ext_type.dart';
@@ -53,7 +54,7 @@ class TestRunner extends BaseViewModel {
         if (script.endsWith('.css')) {
           imports.add('<link rel="stylesheet" href="$script">');
         } else {
-          imports.add('<script>${prefs.getString(script)}</script>');
+          imports.add('<script src="$script">');
         }
       }
     } else {
@@ -61,7 +62,7 @@ class TestRunner extends BaseViewModel {
         final cachedScript = prefs.getString(script);
         if (cachedScript != null) {
           if (script.endsWith('.css')) {
-            imports.add('<link rel="stylesheet" href="$script">');
+            imports.add('<style>${prefs.getString(script)}</style>');
           } else {
             imports.add('<script>${prefs.getString(script)}</script>');
           }
@@ -119,6 +120,7 @@ class TestRunner extends BaseViewModel {
         encoding: Encoding.getByName('utf-8').toString(),
       );
     }
+    log(document.outerHtml);
     return document.outerHtml;
   }
 
