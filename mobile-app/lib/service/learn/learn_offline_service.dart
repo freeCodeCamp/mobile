@@ -375,7 +375,8 @@ class LearnOfflineService {
 
     List<String>? blocks = prefs.getStringList('storedBlocks');
 
-    List<List<String>> superBlockNames = [];
+    List<List<String>> buttonData = [];
+    List<String> superBlockNames = [];
 
     List<SuperBlockButtonData> buttons = [];
 
@@ -384,7 +385,8 @@ class LearnOfflineService {
         Map<String, dynamic> data = jsonDecode(blocks[i]);
 
         if (!superBlockNames.contains(data['superBlock']['dashedName'])) {
-          superBlockNames.add([
+          superBlockNames.add(data['superBlock']['dashedName']);
+          buttonData.add([
             data['superBlock']['dashedName'],
             data['superBlock']['name'],
           ]);
@@ -392,11 +394,11 @@ class LearnOfflineService {
       }
     }
 
-    for (int i = 0; i < superBlockNames.length; i++) {
+    for (int i = 0; i < buttonData.length; i++) {
       buttons.add(
         SuperBlockButtonData(
-          path: superBlockNames[i][0],
-          name: superBlockNames[i][1],
+          path: buttonData[i][0],
+          name: buttonData[i][1],
           public: true,
         ),
       );
