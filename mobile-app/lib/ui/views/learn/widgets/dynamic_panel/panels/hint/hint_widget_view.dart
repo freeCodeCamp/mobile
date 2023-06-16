@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'dart:developer';
 import 'dart:io';
 
 import 'package:device_info_plus/device_info_plus.dart';
@@ -41,10 +42,10 @@ Future<String> getDeviceInfo() async {
 
   if (Platform.isAndroid) {
     final deviceInfo = await deviceInfoPlugin.androidInfo;
-    return '${deviceInfo.model} - Android ${deviceInfo.version.release} - Android SDK ${deviceInfo.version.sdkInt} - Security Patch ${deviceInfo.version.securityPatch} - ${deviceInfo.fingerprint}';
+    return '${deviceInfo.model} - Android ${deviceInfo.version.release} - Android SDK ${deviceInfo.version.sdkInt} - Security Patch ${deviceInfo.version.securityPatch}';
   } else if (Platform.isIOS) {
     final deviceInfo = await deviceInfoPlugin.iosInfo;
-    return '${deviceInfo.model} - ${deviceInfo.systemName}${deviceInfo.systemVersion} - ${deviceInfo.identifierForVendor}';
+    return '${deviceInfo.model} - ${deviceInfo.systemName}${deviceInfo.systemVersion}';
   } else {
     return 'Unrecognized device';
   }
@@ -154,6 +155,7 @@ class HintWidgetView extends StatelessWidget {
                     IconButton(
                       onPressed: () async {
                         final forumLink = await genForumLink(challengeModel);
+                        log(forumLink);
                         challengeModel.forumHelpDialog(forumLink);
                       },
                       icon: const Icon(Icons.question_mark),
