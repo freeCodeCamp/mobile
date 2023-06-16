@@ -40,16 +40,16 @@ Future<String> getDeviceInfo() async {
   // TODO: Update GPlay Privacy data collection policy
   final deviceInfoPlugin = DeviceInfoPlugin();
 
-  if (Platform.isAndroid) {
-    final deviceInfo = await deviceInfoPlugin.androidInfo;
-    return '${deviceInfo.model} - Android ${deviceInfo.version.release} - Android SDK ${deviceInfo.version.sdkInt} - Security Patch ${deviceInfo.version.securityPatch}';
-  } else if (Platform.isIOS) {
-    final deviceInfo = await deviceInfoPlugin.iosInfo;
-    return '${deviceInfo.model} - ${deviceInfo.systemName}${deviceInfo.systemVersion}';
-  } else {
-    return 'Unrecognized device';
+    if (Platform.isAndroid) {
+      final deviceInfo = await deviceInfoPlugin.androidInfo;
+      return '${deviceInfo.model} - Android ${deviceInfo.version.release} - Android SDK ${deviceInfo.version.sdkInt}';
+    } else if (Platform.isIOS) {
+      final deviceInfo = await deviceInfoPlugin.iosInfo;
+      return '${deviceInfo.model} - ${deviceInfo.systemName}${deviceInfo.systemVersion}';
+    } else {
+      return 'Unrecognized device';
+    }
   }
-}
 
 Future<String> genForumLink(ChallengeViewModel challengeModel) async {
   Challenge? currChallenge = await challengeModel.challenge;

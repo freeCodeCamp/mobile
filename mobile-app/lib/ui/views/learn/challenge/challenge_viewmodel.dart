@@ -24,7 +24,7 @@ import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:stacked/stacked.dart';
 import 'package:stacked_services/stacked_services.dart';
-import 'package:url_launcher/url_launcher_string.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class ChallengeViewModel extends BaseViewModel {
   String? _editorText;
@@ -405,7 +405,7 @@ class ChallengeViewModel extends BaseViewModel {
             "If you've already tried the Read-Search-Ask method, then you can try asking for help on the freeCodeCamp forum.",
         mainButtonTitle: 'Create a post');
     if (res != null && res.confirmed) {
-      launchUrlString(url);
+      launchUrl(Uri.parse(url));
     }
   }
 
