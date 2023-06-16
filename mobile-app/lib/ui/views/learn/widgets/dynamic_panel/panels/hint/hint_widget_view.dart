@@ -139,8 +139,8 @@ class HintWidgetView extends StatelessWidget {
             const SizedBox(height: 8),
             Expanded(
               child: SingleChildScrollView(
-                child: Row(
-                  children: [...parser.parse(hint)],
+                child: Column(
+                  children: parser.parse(hint),
                 ),
               ),
             ),
