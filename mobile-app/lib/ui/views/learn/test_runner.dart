@@ -4,9 +4,12 @@ import 'package:freecodecamp/app/app.locator.dart';
 import 'package:freecodecamp/enums/ext_type.dart';
 import 'package:freecodecamp/models/learn/challenge_model.dart';
 import 'package:freecodecamp/service/learn/learn_file_service.dart';
+import 'package:freecodecamp/service/learn/learn_offline_service.dart';
 import 'package:html/parser.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:stacked/stacked.dart';
 import 'package:html/dom.dart';
+import 'package:http/http.dart' as http;
 
 class TestRunner extends BaseViewModel {
   String _testDocument = '';
@@ -18,6 +21,7 @@ class TestRunner extends BaseViewModel {
   }
 
   final LearnFileService fileService = locator<LearnFileService>();
+  final LearnOfflineService offlineService = locator<LearnOfflineService>();
 
   // This function sets the webview content, and parses the document accordingly.
   // It will create a new empty document. (There is no content set from
@@ -31,12 +35,39 @@ class TestRunner extends BaseViewModel {
     Document document = Document();
     document = parse('');
 
-    List<String> imports = [
-      '<script src="https://unpkg.com/chai/chai.js"></script>',
-      '<script src="https://unpkg.com/mocha/mocha.js"></script>',
-      '<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>',
-      '<link rel="stylesheet" href="https://unpkg.com/mocha/mocha.css" />'
+    List<String> imports = [];
+
+    final scripts = [
+      'https://unpkg.com/chai/chai.js',
+      'https://unpkg.com/mocha/mocha.js',
+      'https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js',
+      'https://unpkg.com/mocha/mocha.css'
     ];
+
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+
+    if (await offlineService.hasInternet()) {
+      await cacheScripts();
+
+      for (final script in scripts) {
+        if (script.endsWith('.css')) {
+          imports.add('<link rel="stylesheet" href="$script">');
+        } else {
+          imports.add('<script>${prefs.getString(script)}</script>');
+        }
+      }
+    } else {
+      for (final script in scripts) {
+        final cachedScript = prefs.getString(script);
+        if (cachedScript != null) {
+          if (script.endsWith('.css')) {
+            imports.add('<link rel="stylesheet" href="$script">');
+          } else {
+            imports.add('<script>${prefs.getString(script)}</script>');
+          }
+        }
+      }
+    }
 
     for (String import in imports) {
       Document importToNode = parse(import);
@@ -89,6 +120,26 @@ class TestRunner extends BaseViewModel {
       );
     }
     return document.outerHtml;
+  }
+
+  Future<void> cacheScripts() async {
+    final prefs = await SharedPreferences.getInstance();
+    final scripts = [
+      'https://unpkg.com/chai/chai.js',
+      'https://unpkg.com/mocha/mocha.js',
+      'https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js',
+      'https://unpkg.com/mocha/mocha.css'
+    ];
+
+    for (final script in scripts) {
+      final cachedScript = prefs.getString(script);
+      if (cachedScript == null) {
+        final response = await http.get(Uri.parse(script));
+        if (response.statusCode == 200) {
+          await prefs.setString(script, response.body);
+        }
+      }
+    }
   }
 
   // The parse test function will parse RegEx's and Comments and more for the eval function.
