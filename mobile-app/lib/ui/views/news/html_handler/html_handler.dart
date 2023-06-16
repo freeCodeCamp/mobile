@@ -9,7 +9,7 @@ import 'package:flutter_html_table/flutter_html_table.dart';
 import 'package:freecodecamp/ui/views/news/news-image-viewer/news_image_view.dart';
 import 'package:html/dom.dart' as dom;
 import 'package:html/parser.dart' as parser;
-import 'package:url_launcher/url_launcher_string.dart';
+import 'package:url_launcher/url_launcher.dart';
 import 'package:youtube_player_iframe/youtube_player_iframe.dart';
 
 class HTMLParser {
@@ -135,7 +135,7 @@ class HTMLParser {
           ),
         },
         onLinkTap: (url, attributes, element) {
-          launchUrlString(url!);
+          launchUrl(Uri.parse(url!));
         },
         extensions: [
           const TableHtmlExtension(),

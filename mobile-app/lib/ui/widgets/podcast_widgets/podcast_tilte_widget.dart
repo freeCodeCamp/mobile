@@ -17,7 +17,7 @@ import 'package:http/http.dart' as http;
 import 'package:intl/intl.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:url_launcher/url_launcher_string.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 // ignore: must_be_immutable
 class PodcastTile extends StatefulWidget {
@@ -253,7 +253,9 @@ class PodcastTileState extends State<PodcastTile> {
                       episode: widget.episode,
                       podcast: widget.podcast,
                     ),
-                    settings: RouteSettings(name: 'Podcasts Episode View - ${widget.episode.title}'),
+                    settings: RouteSettings(
+                        name:
+                            'Podcasts Episode View - ${widget.episode.title}'),
                   ),
                 );
               }
@@ -420,7 +422,7 @@ class PodcastTileState extends State<PodcastTile> {
       child: Html(
         data: widget.podcast.description!,
         onLinkTap: (url, attributes, element) {
-          launchUrlString(url!);
+          launchUrl(Uri.parse(url!));
         },
         style: {
           '#': Style(
