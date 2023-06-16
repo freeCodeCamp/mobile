@@ -88,6 +88,9 @@ class ChallengeViewModel extends BaseViewModel {
   bool? _choiceStatus;
   bool? get choiceStatus => _choiceStatus;
 
+  // Challenge Type 10 - Python Project
+  TextEditingController linkController = TextEditingController();
+
   bool _mounted = false;
 
   TestRunner runner = TestRunner();

@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
 import 'package:flutter_inappwebview/flutter_inappwebview.dart';
@@ -62,14 +64,92 @@ class ChallengeView extends StatelessWidget {
                   body: SafeArea(
                     bottom: false,
                     child: ListView(
-                      padding: const EdgeInsets.all(12),
+                      padding: const EdgeInsets.fromLTRB(12, 12, 12, 48),
                       children: [
                         ...parser.parse(challenge.description),
                         buildDivider(),
                         ...parser.parse(challenge.instructions),
                         buildDivider(),
-                        const Text('Solution'),
                         const SizedBox(height: 8),
+                        const Padding(
+                          padding: EdgeInsets.symmetric(horizontal: 12),
+                          child: Text(
+                            'Solution Link',
+                            style: TextStyle(
+                              fontSize: 24,
+                              fontWeight: FontWeight.bold,
+                              fontFamily: 'Lato',
+                            ),
+                          ),
+                        ),
+                        const SizedBox(height: 8),
+                        Padding(
+                          padding: const EdgeInsets.symmetric(horizontal: 12),
+                          child: TextFormField(
+                            controller: model.linkController,
+                            keyboardType: TextInputType.number,
+                            decoration: const InputDecoration(
+                              hintText:
+                                  'ex: https://replit.com/@camperbot/hello',
+                              // errorText: model.incorrectOTP
+                              //     ? 'The code you entered is not valid. Please check the last OTP you received and try again.'
+                              //     : null,
+                              // errorMaxLines: 5,
+                              border: OutlineInputBorder(
+                                borderSide:
+                                    BorderSide(width: 2, color: Colors.white),
+                              ),
+                            ),
+                          ),
+                        ),
+                        const SizedBox(height: 16),
+                        Padding(
+                          padding: const EdgeInsets.symmetric(horizontal: 12),
+                          child: ElevatedButton(
+                            style: ElevatedButton.styleFrom(
+                              minimumSize: const Size(0, 50),
+                              backgroundColor: const Color.fromRGBO(
+                                0x3b,
+                                0x3b,
+                                0x4f,
+                                1,
+                              ),
+                              side: const BorderSide(
+                                width: 2,
+                                color: Colors.white,
+                              ),
+                            ),
+                            onPressed: () => log('submit link'),
+                            child: const Text(
+                              'Submit',
+                              style: TextStyle(fontSize: 20),
+                            ),
+                          ),
+                        ),
+                        const SizedBox(height: 8),
+                        Padding(
+                          padding: const EdgeInsets.symmetric(horizontal: 12),
+                          child: ElevatedButton(
+                            style: ElevatedButton.styleFrom(
+                              minimumSize: const Size(0, 50),
+                              backgroundColor: const Color.fromRGBO(
+                                0x3b,
+                                0x3b,
+                                0x4f,
+                                1,
+                              ),
+                              side: const BorderSide(
+                                width: 2,
+                                color: Colors.white,
+                              ),
+                            ),
+                            onPressed: () => log('submit link'),
+                            child: const Text(
+                              'Submit',
+                              style: TextStyle(fontSize: 20),
+                            ),
+                          ),
+                        ),
                       ],
                     ),
                   ),
@@ -184,43 +264,37 @@ class ChallengeView extends StatelessWidget {
                           ),
                         buildDivider(),
                         const SizedBox(height: 8),
-                        Row(
-                          children: [
-                            Expanded(
-                              child: ElevatedButton(
-                                style: ElevatedButton.styleFrom(
-                                  minimumSize: const Size(0, 50),
-                                  backgroundColor: const Color.fromRGBO(
-                                    0x3b,
-                                    0x3b,
-                                    0x4f,
-                                    1,
-                                  ),
-                                  side: const BorderSide(
-                                    width: 2,
-                                    color: Colors.white,
-                                  ),
-                                ),
-                                onPressed: model.currentChoice != -1
-                                    ? model.choiceStatus != null &&
-                                            model.choiceStatus!
-                                        ? () => model.goToNextChallenge(
-                                              model.block!.challenges.length,
-                                              challengesCompleted,
-                                            )
-                                        : () => model.checkOption()
-                                    : null,
-                                child: Text(
-                                  model.choiceStatus != null
-                                      ? model.choiceStatus!
-                                          ? 'Next challenge'
-                                          : 'Try Again'
-                                      : 'Check your answer',
-                                  style: const TextStyle(fontSize: 20),
-                                ),
-                              ),
+                        ElevatedButton(
+                          style: ElevatedButton.styleFrom(
+                            minimumSize: const Size(0, 50),
+                            backgroundColor: const Color.fromRGBO(
+                              0x3b,
+                              0x3b,
+                              0x4f,
+                              1,
                             ),
-                          ],
+                            side: const BorderSide(
+                              width: 2,
+                              color: Colors.white,
+                            ),
+                          ),
+                          onPressed: model.currentChoice != -1
+                              ? model.choiceStatus != null &&
+                                      model.choiceStatus!
+                                  ? () => model.goToNextChallenge(
+                                        model.block!.challenges.length,
+                                        challengesCompleted,
+                                      )
+                                  : () => model.checkOption()
+                              : null,
+                          child: Text(
+                            model.choiceStatus != null
+                                ? model.choiceStatus!
+                                    ? 'Next challenge'
+                                    : 'Try Again'
+                                : 'Check your answer',
+                            style: const TextStyle(fontSize: 20),
+                          ),
                         ),
                       ],
                     ),
