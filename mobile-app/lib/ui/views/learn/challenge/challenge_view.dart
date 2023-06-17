@@ -88,7 +88,6 @@ class ChallengeView extends StatelessWidget {
                           padding: const EdgeInsets.symmetric(horizontal: 12),
                           child: TextFormField(
                             controller: model.linkController,
-                            keyboardType: TextInputType.number,
                             decoration: const InputDecoration(
                               hintText:
                                   'ex: https://replit.com/@camperbot/hello',
