@@ -246,6 +246,9 @@ class ChallengeViewModel extends BaseViewModel {
     Challenge challenge = await _challenge!;
 
     if (challenge.challengeType == 11 || challenge.challengeType == 10) {
+      linkController.addListener(() {
+        notifyListeners();
+      });
     } else {
       List<ChallengeFile> currentEditedChallenge = challenge.files
           .where((element) => element.editableRegionBoundaries.isNotEmpty)

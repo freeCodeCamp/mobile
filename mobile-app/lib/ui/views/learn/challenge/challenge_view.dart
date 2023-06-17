@@ -120,7 +120,9 @@ class ChallengeView extends StatelessWidget {
                                 color: Colors.white,
                               ),
                             ),
-                            onPressed: () => log('submit link'),
+                            onPressed: model.linkController.text.isEmpty
+                                ? null
+                                : () => log('submit link'),
                             child: const Text(
                               'Submit',
                               style: TextStyle(fontSize: 20),
