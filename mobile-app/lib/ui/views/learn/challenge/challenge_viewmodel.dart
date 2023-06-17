@@ -91,6 +91,9 @@ class ChallengeViewModel extends BaseViewModel {
   // Challenge Type 10 - Python Project
   TextEditingController linkController = TextEditingController();
 
+  bool? _validLink;
+  bool? get validLink => _validLink;
+
   bool _mounted = false;
 
   TestRunner runner = TestRunner();
@@ -230,6 +233,11 @@ class ChallengeViewModel extends BaseViewModel {
 
   set setChoiceStatus(bool? status) {
     _choiceStatus = status;
+    notifyListeners();
+  }
+
+  set setValidLink(bool? status) {
+    _validLink = status;
     notifyListeners();
   }
 
@@ -499,7 +507,12 @@ class ChallengeViewModel extends BaseViewModel {
           'name': file.name,
         };
       }).toList();
-      await learnService.postChallengeCompleted(challenge, challengeFiles);
+      // TODO: rework this so we only pass required data instead of empty values also
+      await learnService.postChallengeCompleted(
+        challenge,
+        challengeFiles: challengeFiles,
+        solutionLink: linkController.text,
+      );
     }
   }
 
@@ -592,5 +605,9 @@ class ChallengeViewModel extends BaseViewModel {
     bool isCorrect = currChallenge!.question!.solution - 1 == currentChoice;
     setChoiceStatus = isCorrect;
     log('$isCorrect');
+  }
+
+  void checkLink() {
+    setValidLink = true;
   }
 }

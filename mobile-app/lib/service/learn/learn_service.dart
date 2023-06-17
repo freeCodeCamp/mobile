@@ -26,9 +26,10 @@ class LearnService {
   }
 
   Future<void> postChallengeCompleted(
-      Challenge challenge, List challengeFiles) async {
-    // NOTE: Assuming for now it's just HTML and JS challenges are being submitted
-
+    Challenge challenge, {
+    List? challengeFiles,
+    String? solutionLink,
+  }) async {
     String challengeId = challenge.id;
     int challengeType = challenge.challengeType;
 
@@ -70,6 +71,24 @@ class LearnService {
       case 'backend':
         break;
       case 'project.backEnd':
+        Map payload = {
+          'id': challengeId,
+          'challengeType': challengeType,
+          'solution': solutionLink
+        };
+        Response res = await _dio.post(
+          '${AuthenticationService.baseApiURL}/project-completed',
+          data: payload,
+          options: Options(
+            headers: {
+              'CSRF-Token': _authenticationService.csrfToken,
+              'Cookie':
+                  'jwt_access_token=${_authenticationService.jwtAccessToken}; _csrf=${_authenticationService.csrf};',
+            },
+          ),
+        );
+        await _authenticationService.fetchUser();
+        log(res.toString());
         break;
       case 'project.frontEnd':
         break;

@@ -121,7 +121,15 @@ class ChallengeView extends StatelessWidget {
                             ),
                             onPressed: model.linkController.text.isEmpty
                                 ? null
-                                : () => log('submit link'),
+                                : () {
+                                    log('valid link - ${model.validLink}');
+                                    model.validLink != null && model.validLink!
+                                        ? model.goToNextChallenge(
+                                            maxChallenges,
+                                            challengesCompleted,
+                                          )
+                                        : model.checkLink();
+                                  },
                             child: const Text(
                               'Submit',
                               style: TextStyle(fontSize: 20),
