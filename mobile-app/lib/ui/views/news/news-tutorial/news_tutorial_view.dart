@@ -112,9 +112,9 @@ class NewsTutorialView extends StatelessWidget {
 
   Align backToTopButton(NewsTutorialViewModel model) {
     return Align(
-      alignment: Alignment.centerRight,
+      alignment: Alignment.bottomRight,
       child: Padding(
-        padding: const EdgeInsets.all(16.0),
+        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 128),
         child: FloatingActionButton(
           onPressed: () {
             model.goToTop();
