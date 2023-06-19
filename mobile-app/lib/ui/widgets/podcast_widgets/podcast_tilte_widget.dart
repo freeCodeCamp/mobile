@@ -13,12 +13,11 @@ import 'package:freecodecamp/service/audio/audio_service.dart';
 import 'package:freecodecamp/service/podcast/download_service.dart';
 import 'package:freecodecamp/service/podcast/podcasts_service.dart';
 import 'package:freecodecamp/ui/views/podcast/episode/episode_view.dart';
-import 'package:html/dom.dart' as dom;
 import 'package:http/http.dart' as http;
 import 'package:intl/intl.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:url_launcher/url_launcher_string.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 // ignore: must_be_immutable
 class PodcastTile extends StatefulWidget {
@@ -254,7 +253,9 @@ class PodcastTileState extends State<PodcastTile> {
                       episode: widget.episode,
                       podcast: widget.podcast,
                     ),
-                    settings: const RouteSettings(name: 'Podcasts Episode View'),
+                    settings: RouteSettings(
+                        name:
+                            'Podcasts Episode View - ${widget.episode.title}'),
                   ),
                 );
               }
@@ -420,21 +421,17 @@ class PodcastTileState extends State<PodcastTile> {
       padding: const EdgeInsets.all(8.0),
       child: Html(
         data: widget.podcast.description!,
-        onLinkTap: (
-          String? url,
-          RenderContext context,
-          Map<String, String> attributes,
-          dom.Element? element,
-        ) {
-          launchUrlString(url!);
+        onLinkTap: (url, attributes, element) {
+          launchUrl(Uri.parse(url!));
         },
         style: {
           '#': Style(
-              fontSize: const FontSize(16),
-              color: Colors.white.withOpacity(0.87),
-              margin: EdgeInsets.zero,
-              maxLines: 3,
-              fontFamily: 'Lato')
+            fontSize: FontSize(16),
+            color: Colors.white.withOpacity(0.87),
+            margin: Margins.zero,
+            maxLines: 3,
+            fontFamily: 'Lato',
+          )
         },
       ),
     );

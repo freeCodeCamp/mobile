@@ -51,10 +51,10 @@ class HintWidgetView extends StatelessWidget {
 
     if (Platform.isAndroid) {
       final deviceInfo = await deviceInfoPlugin.androidInfo;
-      return '${deviceInfo.model} - Android ${deviceInfo.version.release} - Android SDK ${deviceInfo.version.sdkInt} - Security Patch ${deviceInfo.version.securityPatch} - ${deviceInfo.fingerprint}';
+      return '${deviceInfo.model} - Android ${deviceInfo.version.release} - Android SDK ${deviceInfo.version.sdkInt}';
     } else if (Platform.isIOS) {
       final deviceInfo = await deviceInfoPlugin.iosInfo;
-      return '${deviceInfo.model} - ${deviceInfo.systemName}${deviceInfo.systemVersion} - ${deviceInfo.identifierForVendor}';
+      return '${deviceInfo.model} - ${deviceInfo.systemName}${deviceInfo.systemVersion}';
     } else {
       return 'Unrecognized device';
     }
@@ -96,6 +96,8 @@ class HintWidgetView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    HTMLParser parser = HTMLParser(context: context);
+
     return ViewModelBuilder<HintWidgetModel>.reactive(
       viewModelBuilder: () => HintWidgetModel(),
       builder: (context, model, child) => SafeArea(
@@ -133,7 +135,9 @@ class HintWidgetView extends StatelessWidget {
             const SizedBox(height: 8),
             Expanded(
               child: SingleChildScrollView(
-                child: HtmlHandler.htmlWidgetBuilder(hint, context, 'Inter'),
+                child: Column(
+                  children: parser.parse(hint),
+                ),
               ),
             ),
             const SizedBox(height: 8),

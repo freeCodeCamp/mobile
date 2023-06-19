@@ -8,7 +8,7 @@ import 'package:freecodecamp/ui/widgets/drawer_widget/drawer_widget_view.dart';
 import 'package:intl/intl.dart';
 import 'package:jiffy/jiffy.dart';
 import 'package:stacked/stacked.dart';
-import 'package:url_launcher/url_launcher_string.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 Map<String, int> calculateStreak(FccUserModel user) {
   int longest = 0;
@@ -387,8 +387,10 @@ class CertificationWidget extends StatelessWidget {
                                     Icons.arrow_forward_ios_sharp,
                                     color: Colors.white,
                                   ),
-                                  onTap: () => launchUrlString(
-                                    '${AuthenticationService.baseURL}/certification/${user.username}/${cert["certSlug"]}',
+                                  onTap: () => launchUrl(
+                                    Uri.parse(
+                                      '${AuthenticationService.baseURL}/certification/${user.username}/${cert["certSlug"]}',
+                                    ),
                                   ),
                                 ),
                               )
@@ -437,8 +439,10 @@ class CertificationWidget extends StatelessWidget {
                                         Icons.arrow_forward_ios_sharp,
                                         color: Colors.white,
                                       ),
-                                      onTap: () => launchUrlString(
-                                        '${AuthenticationService.baseURL}/certification/${user.username}/${cert["certSlug"]}',
+                                      onTap: () => launchUrl(
+                                        Uri.parse(
+                                          '${AuthenticationService.baseURL}/certification/${user.username}/${cert["certSlug"]}',
+                                        ),
                                       ),
                                     ),
                                   )
@@ -482,7 +486,7 @@ class PortfolioWidget extends StatelessWidget {
           ),
           ...user.portfolio.map(
             (portfolio) => InkWell(
-              onTap: () => launchUrlString(portfolio.url!),
+              onTap: () => launchUrl(Uri.parse(portfolio.url!)),
               child: Card(
                 margin: const EdgeInsets.symmetric(
                   horizontal: 12,

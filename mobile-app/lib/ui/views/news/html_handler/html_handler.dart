@@ -1,83 +1,61 @@
+import 'dart:convert';
+
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_highlight/flutter_highlight.dart';
 import 'package:flutter_highlight/theme_map.dart';
 import 'package:flutter_html/flutter_html.dart';
-import 'package:freecodecamp/models/news/tutorial_model.dart';
+import 'package:flutter_html_table/flutter_html_table.dart';
 import 'package:freecodecamp/ui/views/news/news-image-viewer/news_image_view.dart';
-import 'package:freecodecamp/ui/views/news/news-tutorial/news_tutorial_view.dart';
 import 'package:html/dom.dart' as dom;
-import 'package:url_launcher/url_launcher_string.dart';
+import 'package:html/parser.dart' as parser;
+import 'package:url_launcher/url_launcher.dart';
 import 'package:youtube_player_iframe/youtube_player_iframe.dart';
 
-class HtmlHandler {
-  const HtmlHandler({Key? key, required this.html, required this.context});
+class HTMLParser {
+  const HTMLParser({
+    Key? key,
+    required this.context,
+    this.fontFamily = 'Lato',
+  });
 
-  final String html;
+  final String fontFamily;
   final BuildContext context;
 
-  static List<Widget> htmlHandler(html, context, [tutorial, fontFamily]) {
-    var result = HtmlParser.parseHTML(html);
+  List<Widget> parse(String html) {
+    dom.Document result = parser.parse(html);
 
     List<Widget> elements = [];
 
-    if (tutorial is Tutorial) {
-      elements.add(
-        Stack(
-          children: [
-            NewsTutorialHeader(tutorial: tutorial),
-            AppBar(
-              backgroundColor: Colors.transparent,
-              shadowColor: Colors.transparent,
-              leading: Tooltip(
-                message: 'Back',
-                child: InkWell(
-                  onTap: () {
-                    Navigator.pop(context);
-                  },
-                  child: Container(
-                    margin: const EdgeInsets.all(8),
-                    decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(50),
-                      color: Colors.black.withOpacity(0.5),
-                    ),
-                    child: const Icon(Icons.arrow_back),
-                  ),
-                ),
-              ),
-            )
-          ],
-        ),
-      );
-    }
     for (int i = 0; i < result.body!.children.length; i++) {
       elements.add(
-        htmlWidgetBuilder(
+        _parseHTMLWidget(
           result.body!.children[i].outerHtml,
-          context,
-          fontFamily ?? 'Lato',
         ),
       );
     }
-    if (tutorial is Tutorial) {
-      elements.add(Container(height: 100));
-    }
+
     return elements;
   }
 
-  static void goToImageView(String imgUrl, BuildContext context) {
+  void goToImageView(
+    String imgUrl,
+    BuildContext context,
+    bool isDataUrl,
+  ) {
     Navigator.push(
       context,
       MaterialPageRoute(
         builder: (context) => NewsImageView(
           imgUrl: imgUrl,
+          isDataUrl: isDataUrl,
         ),
+        settings: const RouteSettings(name: 'News Image View'),
       ),
     );
   }
 
-  static htmlWidgetBuilder(child, BuildContext context,
-      [String fontFamily = 'Lato']) {
+  Widget _parseHTMLWidget(child) {
     return SelectableRegion(
       selectionControls: materialTextSelectionControls,
       focusNode: FocusNode(),
@@ -85,199 +63,232 @@ class HtmlHandler {
         shrinkWrap: true,
         data: child,
         style: {
-          'body': Style(
-              fontFamily: fontFamily,
-              padding: const EdgeInsets.only(left: 4, right: 4)),
-          'blockquote': Style(fontSize: FontSize.rem(1.25)),
-          'p': Style(
+          'h1': Style(
+            margin: Margins.only(left: 2, top: 32, right: 2),
+            fontSize: FontSize.xxLarge,
+          ),
+          'h2': Style(
+            margin: Margins.only(left: 2, top: 32, right: 2),
+            fontSize: FontSize.xLarge,
+          ),
+          'h3': Style(
+            margin: Margins.only(left: 2, top: 32, right: 2),
+            fontSize: FontSize.xLarge,
+          ),
+          'h4': Style(
+            margin: Margins.only(left: 2, top: 32, right: 2),
+            fontSize: FontSize.large,
+          ),
+          'h5': Style(
+            margin: Margins.only(left: 2, top: 32, right: 2),
+            fontSize: FontSize.large,
+          ),
+          'h6': Style(
+            margin: Margins.only(left: 2, top: 32, right: 2),
+            fontSize: FontSize.large,
+          ),
+          '*:not(h1):not(h2):not(h3):not(h4):not(h5):not(h6)': Style(
+            fontSize: FontSize.xLarge,
+            color: Colors.white.withOpacity(0.87),
             fontWeight:
                 fontFamily == 'Inter' ? FontWeight.w400 : FontWeight.normal,
-            fontSize: FontSize.rem(fontFamily == 'Inter' ? 1.25 : 1.35),
-            margin: const EdgeInsets.all(0),
+          ),
+          'body': Style(
+            fontFamily: fontFamily,
+            padding: HtmlPaddings.only(left: 4, right: 4),
+          ),
+          'strong': Style(
+            fontWeight: FontWeight.bold,
+          ),
+          'p': Style(
+            margin: Margins.zero,
             lineHeight: const LineHeight(1.5),
-            color: fontFamily == 'Inter'
-                ? const Color.fromRGBO(0xDF, 0xDF, 0xE2, 0.87)
-                : Colors.white.withOpacity(0.87),
+          ),
+          'a': Style(
+            color: Colors.blue,
+            textDecoration: TextDecoration.underline,
           ),
           'li': Style(
-            margin: const EdgeInsets.only(top: 8),
-            fontSize: FontSize.rem(1.35),
-            color: Colors.white.withOpacity(0.87),
+            margin: Margins.only(top: 8),
+            lineHeight: const LineHeight(1.5),
           ),
-          'pre': Style(
-            color: Colors.white,
-            width: MediaQuery.of(context).size.width,
-            padding: const EdgeInsets.all(10),
-          ),
-          'tr': Style(
+          'td': Style(
               border: const Border(
                 bottom: BorderSide(color: Colors.grey),
               ),
-              backgroundColor: Colors.white),
+              padding: HtmlPaddings.all(12),
+              backgroundColor: Colors.white,
+              color: Colors.black,
+              fontSize: FontSize.medium),
           'th': Style(
-            padding: const EdgeInsets.all(12),
+            padding: HtmlPaddings.all(12),
             backgroundColor: const Color.fromRGBO(0xdf, 0xdf, 0xe2, 1),
             color: Colors.black,
           ),
-          'td': Style(
-            padding: const EdgeInsets.all(12),
-            color: Colors.black,
-            alignment: Alignment.topLeft,
-          ),
+          'th strong': Style(color: Colors.black, fontSize: FontSize.medium),
           'figure': Style(
-            width: MediaQuery.of(context).size.width,
-            margin: EdgeInsets.zero,
+            margin: Margins.zero,
+            textAlign: TextAlign.center,
           ),
-          'h1': Style(
-            margin: const EdgeInsets.fromLTRB(2, 32, 2, 0),
-            fontSize: FontSize.rem(1.8),
+          'figcaption': Style(
+            fontSize: FontSize.medium,
           ),
-          'h2': Style(
-            margin: const EdgeInsets.fromLTRB(2, 32, 2, 0),
-            fontSize: FontSize.rem(1.6),
-          ),
-          'h3': Style(
-            margin: const EdgeInsets.fromLTRB(2, 32, 2, 0),
-            fontSize: FontSize.rem(1.4),
-          ),
-          'h4': Style(
-            margin: const EdgeInsets.fromLTRB(2, 32, 2, 0),
-            fontSize: FontSize.rem(1.2),
-          ),
-          'h5': Style(
-            margin: const EdgeInsets.fromLTRB(2, 32, 2, 0),
-            fontSize: FontSize.rem(1.2),
-          ),
-          'h6': Style(
-            margin: const EdgeInsets.fromLTRB(2, 32, 2, 0),
-            fontSize: FontSize.rem(1.2),
-          )
         },
-        customRender: {
-          'table': (context, child) {
-            return SingleChildScrollView(
-              scrollDirection: Axis.horizontal,
-              child: (context.tree as TableLayoutElement).toWidget(context),
-            );
-          },
-          'code': (code, child) {
-            String? currentClass;
+        onLinkTap: (url, attributes, element) {
+          launchUrl(Uri.parse(url!));
+        },
+        extensions: [
+          const TableHtmlExtension(),
+          TagExtension(
+            tagsToExtend: {'code'},
+            builder: (child) {
+              String? currentClass;
 
-            bool codeLanguageIsPresent(List classNames) {
-              RegExp regExp = RegExp(r'language-', caseSensitive: false);
+              bool codeLanguageIsPresent(List classNames) {
+                RegExp regExp = RegExp(r'language-', caseSensitive: false);
 
-              for (String className in classNames) {
-                if (className.contains(regExp)) {
-                  currentClass = className;
+                for (String className in classNames) {
+                  if (className.contains(regExp)) {
+                    currentClass = className;
 
-                  return true;
+                    return true;
+                  }
                 }
+
+                return false;
               }
 
-              return false;
-            }
+              List classes = child.classes.toList();
 
-            List classes = code.tree.elementClasses;
-
-            if (code.tree.element!.parent!.localName == 'pre') {
-              return Row(
-                children: [
-                  Expanded(
-                    flex: 1,
-                    child: SingleChildScrollView(
-                      physics: const NeverScrollableScrollPhysics(),
+              if (child.element!.parent!.localName == 'pre') {
+                return Row(
+                  children: [
+                    Expanded(
+                      flex: 1,
                       child: SingleChildScrollView(
-                        scrollDirection: Axis.horizontal,
-                        physics: const ClampingScrollPhysics(),
-                        child: ConstrainedBox(
-                          constraints: BoxConstraints(
-                            minWidth: MediaQuery.of(context).size.width - 44,
-                          ),
-                          child: HighlightView(
-                            code.tree.element?.text ?? '',
-                            padding: const EdgeInsets.all(16),
-                            language: codeLanguageIsPresent(classes)
-                                ? currentClass!.split('-')[1]
-                                : 'plaintext',
-                            theme: themeMap['atom-one-dark']!,
+                        physics: const NeverScrollableScrollPhysics(),
+                        child: SingleChildScrollView(
+                          scrollDirection: Axis.horizontal,
+                          physics: const ClampingScrollPhysics(),
+                          child: ConstrainedBox(
+                            constraints: BoxConstraints(
+                              minWidth: MediaQuery.of(context).size.width - 25,
+                            ),
+                            child: HighlightView(child.element?.text ?? '',
+                                padding: const EdgeInsets.all(16),
+                                language: codeLanguageIsPresent(classes)
+                                    ? currentClass!.split('-')[1]
+                                    : 'plaintext',
+                                theme: themeMap['atom-one-dark']!,
+                                textStyle: TextStyle(
+                                  fontFamily: 'RobotoMono',
+                                  fontSize: double.parse(
+                                    FontSize.large.value.toString(),
+                                  ),
+                                  color: Colors.white,
+                                )),
                           ),
                         ),
                       ),
                     ),
+                  ],
+                );
+              }
+
+              return Container(
+                color: const Color.fromRGBO(0x3b, 0x3b, 0x4f, 1),
+                child: Padding(
+                  padding: const EdgeInsets.symmetric(
+                    vertical: 2,
+                    horizontal: 4,
                   ),
-                ],
-              );
-            }
-
-            return Stack(children: [
-              HighlightView(
-                code.tree.element?.text ?? '',
-                padding: const EdgeInsets.symmetric(
-                  horizontal: 4,
-                  vertical: 0.2,
-                ),
-                language: 'html',
-                theme: themeMap['atom-one-dark']!,
-                textStyle: const TextStyle(
-                  fontFamily: 'RobotoMono',
-                  fontSize: 16,
-                  color: Colors.white,
-                ),
-              ),
-              Text(
-                code.tree.element?.text ?? '',
-                style: TextStyle(
-                  fontSize: 1,
-                  color: Colors.white.withOpacity(0),
-                ),
-              )
-            ]);
-          },
-          'iframe': (code, child) {
-            var isVideo = RegExp('youtube', caseSensitive: false);
-            var videoUrl = code.tree.attributes['src'];
-            if (isVideo.hasMatch(videoUrl ?? '')) {
-              var videoId = videoUrl?.split('/').last.split('?').first;
-
-              YoutubePlayerController controller = YoutubePlayerController(
-                initialVideoId: videoId!,
-              );
-
-              return YoutubePlayerIFrame(
-                controller: controller,
-              );
-            }
-          },
-          'img': (code, child) {
-            var imgUrl = code.tree.attributes['src'] ?? '';
-            return Padding(
-              padding: const EdgeInsets.all(8.0),
-              child: InkWell(
-                onTap: () => goToImageView(imgUrl, context),
-                child: CachedNetworkImage(
-                  imageUrl: imgUrl,
-                ),
-              ),
-            );
-          },
-          'blockquote': (code, child) {
-            return Container(
-              decoration: const BoxDecoration(
-                border: Border(
-                  left: BorderSide(
-                    color: Color.fromRGBO(0x99, 0xc9, 0xff, 1),
-                    width: 2,
+                  child: Text(
+                    child.element?.text ?? 'e',
+                    style: TextStyle(
+                      fontSize: 16,
+                      color: Colors.white.withOpacity(0.87),
+                    ),
                   ),
                 ),
-              ),
-              child: child,
-            );
-          }
-        },
-        onLinkTap: (String? url, RenderContext context,
-            Map<String, String> attributes, dom.Element? element) {
-          launchUrlString(url!);
-        },
+              );
+            },
+          ),
+          TagExtension(
+            tagsToExtend: {'iframe'},
+            builder: (child) {
+              var isVideo = RegExp('youtube', caseSensitive: false);
+              var videoUrl = child.attributes['src'];
+              if (isVideo.hasMatch(videoUrl ?? '')) {
+                var videoId = videoUrl?.split('/').last.split('?').first;
+
+                YoutubePlayerController controller = YoutubePlayerController(
+                  initialVideoId: videoId!,
+                  params: const YoutubePlayerParams(
+                    showControls: true,
+                    showFullscreenButton: true,
+                    autoPlay: false,
+                  ),
+                );
+
+                return YoutubePlayerIFrame(
+                  controller: controller,
+                );
+              }
+
+              return Container();
+            },
+          ),
+          TagExtension(
+            tagsToExtend: {'img'},
+            builder: (child) {
+              var imgUrl = child.attributes['src'] ?? '';
+              bool isDataUrl = Uri.parse(imgUrl).scheme == 'data';
+              return Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: InkWell(
+                  onTap: () => goToImageView(imgUrl, context, isDataUrl),
+                  child: isDataUrl
+                      ? Image.memory(
+                          base64Decode(imgUrl.split(',').last),
+                        )
+                      : CachedNetworkImage(
+                          imageUrl: imgUrl,
+                        ),
+                ),
+              );
+            },
+          ),
+          TagExtension(
+            tagsToExtend: {'blockquote'},
+            builder: (child) {
+              return Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: Container(
+                    decoration: const BoxDecoration(
+                      border: Border(
+                        left: BorderSide(
+                          color: Color.fromRGBO(0x99, 0xc9, 0xff, 1),
+                          width: 2,
+                        ),
+                      ),
+                    ),
+                    child: Padding(
+                      padding: const EdgeInsets.all(8.0),
+                      child: Text(
+                        child.innerHtml,
+                        style: TextStyle(
+                          fontSize: double.tryParse(
+                            FontSize.xLarge.value.toString(),
+                          ),
+                          fontFamily: 'Lato',
+                          color: Colors.white.withOpacity(0.87),
+                        ),
+                      ),
+                    )),
+              );
+            },
+          )
+        ],
       ),
     );
   }
