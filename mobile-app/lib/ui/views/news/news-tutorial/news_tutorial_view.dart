@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 
 import 'package:freecodecamp/models/news/tutorial_model.dart';
 import 'package:freecodecamp/ui/views/news/news-bookmark/news_bookmark_widget.dart';
+import 'package:freecodecamp/ui/views/news/widgets/back_to_top_button.dart';
 import 'package:share_plus/share_plus.dart';
 import 'package:stacked/stacked.dart';
 import 'news_tutorial_viewmodel.dart';
@@ -90,7 +91,6 @@ class NewsTutorialView extends StatelessWidget {
                       children: [
                         lazyLoadHtml(tutorial!.text!, context, tutorial, model),
                         bottomButtons(tutorial, model),
-                        if (model.showToTopButton) backToTopButton(model),
                       ],
                     ),
                   )
@@ -105,35 +105,13 @@ class NewsTutorialView extends StatelessWidget {
             );
           },
         ),
+        floatingActionButton: model.showToTopButton
+            ? BackToTopButton(
+                onPressed: () => model.goToTop(),
+              )
+            : null,
       ),
       viewModelBuilder: () => NewsTutorialViewModel(),
-    );
-  }
-
-  Align backToTopButton(NewsTutorialViewModel model) {
-    return Align(
-      alignment: Alignment.bottomRight,
-      child: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 128),
-        child: FloatingActionButton(
-          onPressed: () {
-            model.goToTop();
-          },
-          shape: RoundedRectangleBorder(
-            side: const BorderSide(
-              width: 1,
-              color: Colors.white,
-            ),
-            borderRadius: BorderRadius.circular(100),
-          ),
-          backgroundColor: const Color.fromRGBO(0x2A, 0x2A, 0x40, 1),
-          child: const Icon(
-            Icons.keyboard_arrow_up,
-            size: 40,
-            color: Colors.white,
-          ),
-        ),
-      ),
     );
   }
 

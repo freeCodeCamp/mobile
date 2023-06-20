@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:freecodecamp/models/news/bookmarked_tutorial_model.dart';
 import 'package:freecodecamp/ui/views/news/news-tutorial/news_tutorial_viewmodel.dart';
 import 'package:freecodecamp/ui/views/news/news-bookmark/news_bookmark_viewmodel.dart';
+import 'package:freecodecamp/ui/views/news/widgets/back_to_top_button.dart';
 import 'package:stacked/stacked.dart';
 
 class NewsBookmarkTutorialView extends StatelessWidget {
@@ -19,12 +20,14 @@ class NewsBookmarkTutorialView extends StatelessWidget {
       onViewModelReady: (model) async {
         await model.initDB();
         model.isTutorialBookmarked(tutorial);
+        model.goToTopButtonHandler();
       },
       onDispose: (model) => model.updateListView(),
       builder: (context, model, child) => Scaffold(
         backgroundColor: const Color(0xFF0a0a23),
         body: SafeArea(
           child: CustomScrollView(
+            controller: model.scrollController,
             slivers: [
               const SliverAppBar(
                 title: Text('BOOKMARKED TUTORIAL'),
@@ -61,13 +64,22 @@ class NewsBookmarkTutorialView extends StatelessWidget {
             ],
           ),
         ),
+        floatingActionButton: model.gotoTopButtonVisible
+            ? BackToTopButton(
+                onPressed: () => model.goToTop(),
+              )
+            : null,
+        floatingActionButtonAnimator: null,
       ),
     );
   }
 
-  SliverList lazyLoadHtml(BuildContext context, BookmarkedTutorial tutorial) {
-    NewsTutorialViewModel model = NewsTutorialViewModel();
-    var htmlToList = model.initLazyLoading(
+  SliverList lazyLoadHtml(
+    BuildContext context,
+    BookmarkedTutorial tutorial,
+  ) {
+    NewsTutorialViewModel localModel = NewsTutorialViewModel();
+    var htmlToList = localModel.initLazyLoading(
       tutorial.tutorialText,
       context,
       tutorial,
@@ -79,7 +91,7 @@ class NewsBookmarkTutorialView extends StatelessWidget {
           children: [
             Expanded(
               child: htmlToList[index],
-            )
+            ),
           ],
         );
       }), childCount: htmlToList.length),
