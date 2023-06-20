@@ -88,16 +88,41 @@ class ChallengeView extends StatelessWidget {
                           padding: const EdgeInsets.symmetric(horizontal: 12),
                           child: TextFormField(
                             controller: model.linkController,
-                            decoration: const InputDecoration(
+                            decoration: InputDecoration(
                               hintText:
                                   'ex: https://replit.com/@camperbot/hello',
-                              // errorText: model.incorrectOTP
-                              //     ? 'The code you entered is not valid. Please check the last OTP you received and try again.'
-                              //     : null,
-                              // errorMaxLines: 5,
-                              border: OutlineInputBorder(
+                              errorText:
+                                  model.validLink != null && !model.validLink!
+                                      ? model.linkErrMsg
+                                      : null,
+                              errorMaxLines: 5,
+                              border: const OutlineInputBorder(
+                                borderSide: BorderSide(
+                                  color: Colors.white,
+                                  width: 2,
+                                ),
+                              ),
+                              enabledBorder: OutlineInputBorder(
                                 borderSide:
-                                    BorderSide(width: 2, color: Colors.white),
+                                    model.validLink != null && model.validLink!
+                                        ? const BorderSide(
+                                            color: Colors.green,
+                                          )
+                                        : const BorderSide(
+                                            color: Colors.white,
+                                          ),
+                              ),
+                              focusedBorder: OutlineInputBorder(
+                                borderSide:
+                                    model.validLink != null && model.validLink!
+                                        ? const BorderSide(
+                                            color: Colors.green,
+                                            width: 2,
+                                          )
+                                        : const BorderSide(
+                                            color: Colors.white,
+                                            width: 2,
+                                          ),
                               ),
                             ),
                           ),
@@ -122,13 +147,13 @@ class ChallengeView extends StatelessWidget {
                             onPressed: model.linkController.text.isEmpty
                                 ? null
                                 : () {
-                                    log('valid link - ${model.validLink}');
                                     model.validLink != null && model.validLink!
                                         ? model.goToNextChallenge(
                                             maxChallenges,
                                             challengesCompleted,
                                           )
                                         : model.checkLink();
+                                    log('valid link - ${model.validLink}');
                                   },
                             child: const Text(
                               'Submit',

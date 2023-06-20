@@ -94,6 +94,9 @@ class ChallengeViewModel extends BaseViewModel {
   bool? _validLink;
   bool? get validLink => _validLink;
 
+  String _linkErrMsg = '';
+  String get linkErrMsg => _linkErrMsg;
+
   bool _mounted = false;
 
   TestRunner runner = TestRunner();
@@ -238,6 +241,11 @@ class ChallengeViewModel extends BaseViewModel {
 
   set setValidLink(bool? status) {
     _validLink = status;
+    notifyListeners();
+  }
+
+  set setLinkErrMsg(String msg) {
+    _linkErrMsg = msg;
     notifyListeners();
   }
 
@@ -608,6 +616,16 @@ class ChallengeViewModel extends BaseViewModel {
   }
 
   void checkLink() {
-    setValidLink = true;
+    if (!isUrl(linkController.text)) {
+      setValidLink = false;
+      setLinkErrMsg = 'Please enter a valid link';
+    } else {
+      setValidLink = true;
+    }
+  }
+
+  // TODO: Move validators to different helper file
+  bool isUrl(String url) {
+    return Uri.parse(url).isAbsolute;
   }
 }
