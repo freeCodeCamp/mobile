@@ -23,7 +23,7 @@ import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:stacked/stacked.dart';
 import 'package:stacked_services/stacked_services.dart';
-import 'package:url_launcher/url_launcher_string.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class ChallengeViewModel extends BaseViewModel {
   String? _editorText;
@@ -374,13 +374,14 @@ class ChallengeViewModel extends BaseViewModel {
 
   Future forumHelpDialog(String url) async {
     DialogResponse? res = await _dialogService.showCustomDialog(
+        barrierDismissible: true,
         variant: DialogType.buttonForm,
         title: 'Ask for Help',
         description:
             "If you've already tried the Read-Search-Ask method, then you can try asking for help on the freeCodeCamp forum.",
         mainButtonTitle: 'Create a post');
     if (res != null && res.confirmed) {
-      launchUrlString(url);
+      launchUrl(Uri.parse(url));
     }
   }
 
@@ -399,6 +400,7 @@ class ChallengeViewModel extends BaseViewModel {
     SharedPreferences prefs = await SharedPreferences.getInstance();
 
     DialogResponse? res = await _dialogService.showCustomDialog(
+        barrierDismissible: true,
         variant: DialogType.buttonForm,
         title: 'Reset Code',
         description: 'Are you sure you want to reset your code?',

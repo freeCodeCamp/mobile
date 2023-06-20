@@ -10,7 +10,7 @@ import 'package:freecodecamp/ui/views/podcast/podcast-list/podcast_list_viewmode
 import 'package:freecodecamp/ui/widgets/podcast_widgets/podcast_tilte_widget.dart';
 import 'package:infinite_scroll_pagination/infinite_scroll_pagination.dart';
 import 'package:stacked/stacked.dart';
-import 'package:url_launcher/url_launcher_string.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class EpisodeListView extends StatelessWidget {
   const EpisodeListView({
@@ -130,7 +130,7 @@ class EpisodeListView extends StatelessWidget {
         Html(
           data: podcast.description!,
           onLinkTap: (url, attributes, element) {
-            launchUrlString(url!);
+            launchUrl(Uri.parse(url!));
           },
           style: {
             '#': Style(
