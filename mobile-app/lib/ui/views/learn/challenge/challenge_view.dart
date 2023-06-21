@@ -155,9 +155,11 @@ class ChallengeView extends StatelessWidget {
                                         : model.checkLink();
                                     log('valid link - ${model.validLink}');
                                   },
-                            child: const Text(
-                              'Submit',
-                              style: TextStyle(fontSize: 20),
+                            child: Text(
+                              model.validLink != null && model.validLink!
+                                  ? 'Submit'
+                                  : 'Check Link',
+                              style: const TextStyle(fontSize: 20),
                             ),
                           ),
                         ),
