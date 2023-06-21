@@ -26,6 +26,13 @@ import 'package:stacked/stacked.dart';
 import 'package:stacked_services/stacked_services.dart';
 import 'package:url_launcher/url_launcher.dart';
 
+final fCCRegex = RegExp(
+  r'codepen\.io\/freecodecamp|freecodecamp\.rocks|github\.com\/freecodecamp|\.freecodecamp\.org',
+  caseSensitive: false,
+);
+final localhostRegex = RegExp(r'localhost:');
+final httpRegex = RegExp(r'http(?!s|([^s]+?localhost))');
+
 class ChallengeViewModel extends BaseViewModel {
   String? _editorText;
   String? get editorText => _editorText;
@@ -618,7 +625,20 @@ class ChallengeViewModel extends BaseViewModel {
   void checkLink() {
     if (!isUrl(linkController.text)) {
       setValidLink = false;
-      setLinkErrMsg = 'Please enter a valid link';
+      setLinkErrMsg = 'Please enter a valid link.';
+      return;
+    } else if (fCCRegex.hasMatch(linkController.text)) {
+      setValidLink = false;
+      setLinkErrMsg = 'Remember to submit your own work.';
+      return;
+    } else if (httpRegex.hasMatch(linkController.text)) {
+      setValidLink = false;
+      setLinkErrMsg = 'An unsecure (http) URL cannot be used.';
+      return;
+    } else if (localhostRegex.hasMatch(linkController.text)) {
+      setValidLink = false;
+      setLinkErrMsg = 'Remember to submit a publicly visible app URL.';
+      return;
     } else {
       setValidLink = true;
     }
