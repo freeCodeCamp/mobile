@@ -70,30 +70,6 @@ class DeleteAccountView extends StatelessWidget {
                 const SizedBox(
                   height: 12,
                 ),
-                // Row(
-                //   children: [
-                //     Expanded(
-                //       child: TextButton(
-                //         onPressed: () => Navigator.pop(context),
-                //         style: TextButton.styleFrom(
-                //           backgroundColor: const Color(0xFF0a0a23),
-                //           side: const BorderSide(
-                //             width: 2,
-                //             color: Colors.white,
-                //           ),
-                //         ),
-                //         child: const Text(
-                //           "Nevermind, I don't want to delete my account",
-                //           textAlign: TextAlign.center,
-                //           style: paragraphTextStyle,
-                //         ),
-                //       ),
-                //     ),
-                //   ],
-                // ),
-                // const SizedBox(
-                //   height: 12,
-                // ),
                 Row(
                   children: [
                     Expanded(
