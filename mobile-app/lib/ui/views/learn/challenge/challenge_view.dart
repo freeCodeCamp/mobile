@@ -1,5 +1,3 @@
-import 'dart:developer';
-
 import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
 import 'package:flutter_inappwebview/flutter_inappwebview.dart';
@@ -153,7 +151,6 @@ class ChallengeView extends StatelessWidget {
                                             challengesCompleted,
                                           )
                                         : model.checkLink();
-                                    log('valid link - ${model.validLink}');
                                   },
                             child: Text(
                               model.validLink != null && model.validLink!

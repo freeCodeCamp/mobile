@@ -1,5 +1,4 @@
 import 'dart:convert';
-import 'dart:developer';
 import 'package:flutter/material.dart';
 import 'package:flutter_inappwebview/flutter_inappwebview.dart';
 import 'package:phone_ide/phone_ide.dart';
@@ -619,7 +618,6 @@ class ChallengeViewModel extends BaseViewModel {
     Challenge? currChallenge = await challenge;
     bool isCorrect = currChallenge!.question!.solution - 1 == currentChoice;
     setChoiceStatus = isCorrect;
-    log('$isCorrect');
   }
 
   void checkLink() {
