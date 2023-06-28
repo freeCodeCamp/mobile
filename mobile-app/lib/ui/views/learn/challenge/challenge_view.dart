@@ -234,64 +234,13 @@ class ChallengeView extends StatelessWidget {
                         const SizedBox(height: 8),
                         for (var answer
                             in challenge.question!.answers.asMap().entries)
-                          Container(
-                            margin: const EdgeInsets.symmetric(vertical: 8),
-                            decoration: BoxDecoration(
-                              borderRadius: BorderRadius.circular(0),
-                              border: Border.all(
-                                color: answer.key == model.currentChoice
-                                    ? const Color(0xFFFFFFFF)
-                                    : const Color(0xFFAAAAAA),
-                                width: 2,
-                              ),
-                            ),
-                            child: RadioListTile<int>(
-                              tileColor: const Color(0xFF0a0a23),
-                              value: answer.key,
-                              groupValue: model.currentChoice,
-                              onChanged: (value) {
-                                model.setChoiceStatus = null;
-                                model.setCurrentChoice = value ?? -1;
-                              },
-                              title: Row(
-                                children: [
-                                  Expanded(
-                                    child: Text(
-                                      model.removeHtmlTags(answer.value),
-                                      style: const TextStyle(
-                                        fontSize: 20,
-                                        fontFamily: 'Lato',
-                                      ),
-                                    ),
-                                  ),
-                                  if (model.choiceStatus != null &&
-                                      model.currentChoice == answer.key) ...{
-                                    Expanded(
-                                      flex: 0,
-                                      child: Icon(
-                                        model.choiceStatus!
-                                            ? Icons.check_circle
-                                            : Icons.cancel,
-                                        color: model.choiceStatus!
-                                            ? Colors.green
-                                            : Colors.red,
-                                      ),
-                                    )
-                                  }
-                                ],
-                              ),
-                            ),
-                          ),
+                          questionOption(answer, model),
                         const SizedBox(height: 16),
                         ElevatedButton(
                           style: ElevatedButton.styleFrom(
                             minimumSize: const Size(0, 50),
-                            backgroundColor: const Color.fromRGBO(
-                              0x3b,
-                              0x3b,
-                              0x4f,
-                              1,
-                            ),
+                            backgroundColor:
+                                const Color.fromRGBO(0x3b, 0x3b, 0x4f, 1),
                             side: const BorderSide(
                               width: 2,
                               color: Colors.white,
@@ -507,6 +456,60 @@ class ChallengeView extends StatelessWidget {
             ),
           );
         },
+      ),
+    );
+  }
+
+  Container questionOption(
+    MapEntry<int, String> answer,
+    ChallengeViewModel model,
+  ) {
+    return Container(
+      margin: const EdgeInsets.symmetric(vertical: 8),
+      child: RadioListTile<int>(
+        tileColor: const Color(0xFF0a0a23),
+        value: answer.key,
+        contentPadding: const EdgeInsets.symmetric(
+          horizontal: 8,
+          vertical: 8,
+        ),
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(0),
+          side: BorderSide(
+            color: answer.key == model.currentChoice
+                ? const Color(0xFFFFFFFF)
+                : const Color(0xFFAAAAAA),
+            width: 2,
+          ),
+        ),
+        groupValue: model.currentChoice,
+        onChanged: (value) {
+          model.setChoiceStatus = null;
+          model.setCurrentChoice = value ?? -1;
+        },
+        title: Row(
+          children: [
+            Expanded(
+              child: Text(
+                model.removeHtmlTags(answer.value),
+                style: const TextStyle(
+                  fontSize: 20,
+                  fontFamily: 'Lato',
+                ),
+              ),
+            ),
+            if (model.choiceStatus != null &&
+                model.currentChoice == answer.key) ...{
+              Expanded(
+                flex: 0,
+                child: Icon(
+                  model.choiceStatus! ? Icons.check_circle : Icons.cancel,
+                  color: model.choiceStatus! ? Colors.green : Colors.red,
+                ),
+              )
+            }
+          ],
+        ),
       ),
     );
   }
