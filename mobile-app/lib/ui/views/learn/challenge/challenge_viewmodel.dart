@@ -1,6 +1,6 @@
 import 'dart:convert';
 import 'package:flutter_inappwebview/flutter_inappwebview.dart';
-import 'package:html/dom.dart';
+
 import 'package:phone_ide/phone_ide.dart';
 
 import 'package:freecodecamp/app/app.locator.dart';
@@ -76,13 +76,6 @@ class ChallengeViewModel extends BaseViewModel {
 
   Syntax _currFileType = Syntax.HTML;
   Syntax get currFileType => _currFileType;
-
-  // Challenge Type 11 - Video
-  int _currentChoice = -1;
-  int get currentChoice => _currentChoice;
-
-  bool? _choiceStatus;
-  bool? get choiceStatus => _choiceStatus;
 
   bool _mounted = false;
 
@@ -213,16 +206,6 @@ class ChallengeViewModel extends BaseViewModel {
 
   set setUserConsoleMessages(List<ConsoleMessage> messages) {
     _userConsoleMessages = messages;
-    notifyListeners();
-  }
-
-  set setCurrentChoice(int choice) {
-    _currentChoice = choice;
-    notifyListeners();
-  }
-
-  set setChoiceStatus(bool? status) {
-    _choiceStatus = status;
     notifyListeners();
   }
 
@@ -441,12 +424,6 @@ class ChallengeViewModel extends BaseViewModel {
     }
   }
 
-  String removeHtmlTags(String html) {
-    Document document = parse(html);
-
-    return document.body!.text;
-  }
-
   void handleConsoleLogMessagges(ConsoleMessage console, Challenge challenge) {
     // Create a new console log message that adds html tags to the console message
 
@@ -498,11 +475,5 @@ class ChallengeViewModel extends BaseViewModel {
     }
 
     setIsRunningTests = false;
-  }
-
-  void checkOption() async {
-    Challenge? currChallenge = await challenge;
-    bool isCorrect = currChallenge!.question!.solution - 1 == currentChoice;
-    setChoiceStatus = isCorrect;
   }
 }

@@ -18,6 +18,7 @@ class PythonProjectView extends StatelessWidget {
   final Challenge challenge;
   final Block block;
   final int challengesCompleted;
+
   @override
   Widget build(BuildContext context) {
     HTMLParser parser = HTMLParser(context: context);
