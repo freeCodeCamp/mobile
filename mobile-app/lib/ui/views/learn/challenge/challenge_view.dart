@@ -6,11 +6,12 @@ import 'package:freecodecamp/enums/panel_type.dart';
 import 'package:freecodecamp/models/learn/challenge_model.dart';
 import 'package:freecodecamp/models/learn/curriculum_model.dart';
 import 'package:freecodecamp/ui/views/learn/challenge/challenge_viewmodel.dart';
+import 'package:freecodecamp/ui/views/learn/challenge/templates/python-project/python_project_view.dart';
 import 'package:freecodecamp/ui/views/learn/widgets/console/console_view.dart';
 import 'package:freecodecamp/ui/views/learn/widgets/dynamic_panel/panels/dynamic_panel.dart';
-import 'package:freecodecamp/ui/views/learn/widgets/dynamic_panel/panels/hint/hint_widget_view.dart';
 import 'package:freecodecamp/ui/views/news/html_handler/html_handler.dart';
 import 'package:freecodecamp/ui/widgets/drawer_widget/drawer_widget_view.dart';
+
 import 'package:phone_ide/phone_ide.dart';
 import 'package:stacked/stacked.dart';
 import 'package:youtube_player_iframe/youtube_player_iframe.dart';
@@ -50,148 +51,10 @@ class ChallengeView extends StatelessWidget {
                 1;
 
             if (challenge.challengeType == 10) {
-              return WillPopScope(
-                onWillPop: () async {
-                  model.updateProgressOnPop(context);
-
-                  return Future.value(true);
-                },
-                child: Scaffold(
-                  appBar: AppBar(
-                    title: Text(challenge.title),
-                  ),
-                  body: SafeArea(
-                    bottom: false,
-                    child: ListView(
-                      padding: const EdgeInsets.fromLTRB(12, 12, 12, 48),
-                      children: [
-                        ...parser.parse(challenge.description),
-                        buildDivider(),
-                        ...parser.parse(challenge.instructions),
-                        buildDivider(),
-                        const SizedBox(height: 8),
-                        const Padding(
-                          padding: EdgeInsets.symmetric(horizontal: 12),
-                          child: Text(
-                            'Solution Link',
-                            style: TextStyle(
-                              fontSize: 24,
-                              fontWeight: FontWeight.bold,
-                              fontFamily: 'Lato',
-                            ),
-                          ),
-                        ),
-                        const SizedBox(height: 8),
-                        Padding(
-                          padding: const EdgeInsets.symmetric(horizontal: 12),
-                          child: TextFormField(
-                            controller: model.linkController,
-                            onChanged: (value) => model.setValidLink = null,
-                            decoration: InputDecoration(
-                              hintText:
-                                  'ex: https://replit.com/@camperbot/hello',
-                              errorText:
-                                  model.validLink != null && !model.validLink!
-                                      ? model.linkErrMsg
-                                      : null,
-                              errorMaxLines: 5,
-                              border: const OutlineInputBorder(
-                                borderSide: BorderSide(
-                                  color: Colors.white,
-                                  width: 2,
-                                ),
-                              ),
-                              enabledBorder: OutlineInputBorder(
-                                borderSide:
-                                    model.validLink != null && model.validLink!
-                                        ? const BorderSide(
-                                            color: Colors.green,
-                                          )
-                                        : const BorderSide(
-                                            color: Colors.white,
-                                          ),
-                              ),
-                              focusedBorder: OutlineInputBorder(
-                                borderSide:
-                                    model.validLink != null && model.validLink!
-                                        ? const BorderSide(
-                                            color: Colors.green,
-                                            width: 2,
-                                          )
-                                        : const BorderSide(
-                                            color: Colors.white,
-                                            width: 2,
-                                          ),
-                              ),
-                            ),
-                          ),
-                        ),
-                        const SizedBox(height: 16),
-                        Padding(
-                          padding: const EdgeInsets.symmetric(horizontal: 12),
-                          child: ElevatedButton(
-                            style: ElevatedButton.styleFrom(
-                              minimumSize: const Size(0, 50),
-                              backgroundColor: const Color.fromRGBO(
-                                0x3b,
-                                0x3b,
-                                0x4f,
-                                1,
-                              ),
-                              side: const BorderSide(
-                                width: 2,
-                                color: Colors.white,
-                              ),
-                            ),
-                            onPressed: model.linkController.text.isEmpty
-                                ? null
-                                : () {
-                                    model.validLink != null && model.validLink!
-                                        ? model.goToNextChallenge(
-                                            maxChallenges,
-                                            challengesCompleted,
-                                          )
-                                        : model.checkLink();
-                                  },
-                            child: Text(
-                              model.validLink != null && model.validLink!
-                                  ? 'Submit'
-                                  : 'Check Link',
-                              style: const TextStyle(fontSize: 20),
-                            ),
-                          ),
-                        ),
-                        const SizedBox(height: 8),
-                        Padding(
-                          padding: const EdgeInsets.symmetric(horizontal: 12),
-                          child: ElevatedButton(
-                            style: ElevatedButton.styleFrom(
-                              minimumSize: const Size(0, 50),
-                              backgroundColor: const Color.fromRGBO(
-                                0x3b,
-                                0x3b,
-                                0x4f,
-                                1,
-                              ),
-                              side: const BorderSide(
-                                width: 2,
-                                color: Colors.white,
-                              ),
-                            ),
-                            onPressed: () async {
-                              final forumLink = await genForumLink(model);
-                              model.forumHelpDialog(forumLink);
-                            },
-                            child: const Text(
-                              'Ask for Help',
-                              style: TextStyle(fontSize: 20),
-                            ),
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                ),
+              return PythonProjectView(
+                challenge: challenge,
+                block: block,
+                challengesCompleted: challengesCompleted,
               );
             } else if (challenge.challengeType == 11) {
               YoutubePlayerController controller = YoutubePlayerController(
@@ -205,7 +68,7 @@ class ChallengeView extends StatelessWidget {
               );
               return WillPopScope(
                 onWillPop: () async {
-                  model.updateProgressOnPop(context);
+                  model.learnService.updateProgressOnPop(context, block);
 
                   return Future.value(true);
                 },
@@ -249,10 +112,11 @@ class ChallengeView extends StatelessWidget {
                           onPressed: model.currentChoice != -1
                               ? model.choiceStatus != null &&
                                       model.choiceStatus!
-                                  ? () => model.goToNextChallenge(
-                                        model.block!.challenges.length,
-                                        challengesCompleted,
-                                      )
+                                  ? () => model.learnService.goToNextChallenge(
+                                      model.block!.challenges.length,
+                                      challengesCompleted,
+                                      challenge,
+                                      block)
                                   : () => model.checkOption()
                               : null,
                           child: Text(
@@ -335,7 +199,7 @@ class ChallengeView extends StatelessWidget {
 
               return WillPopScope(
                 onWillPop: () async {
-                  model.updateProgressOnPop(context);
+                  model.learnService.updateProgressOnPop(context, block);
 
                   return Future.value(true);
                 },
@@ -708,9 +572,11 @@ class ChallengeView extends StatelessWidget {
                             model.setUserConsoleMessages = [];
                             if (model.showPanel &&
                                 model.panelType == PanelType.pass) {
-                              model.goToNextChallenge(
+                              model.learnService.goToNextChallenge(
                                 model.block!.challenges.length,
                                 challengesCompleted,
+                                challenge,
+                                block,
                               );
                             }
 

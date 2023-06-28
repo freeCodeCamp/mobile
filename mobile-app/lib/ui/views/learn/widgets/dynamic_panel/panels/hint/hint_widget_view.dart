@@ -7,6 +7,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:freecodecamp/models/learn/challenge_model.dart';
+import 'package:freecodecamp/models/learn/curriculum_model.dart';
 import 'package:freecodecamp/ui/views/learn/challenge/challenge_viewmodel.dart';
 import 'package:freecodecamp/ui/views/learn/widgets/dynamic_panel/panels/hint/hint_widget_model.dart';
 import 'package:freecodecamp/ui/views/news/html_handler/html_handler.dart';
@@ -17,7 +18,7 @@ const forumLocation = 'https://forum.freecodecamp.org';
 
 String filesToMarkdown(
   List<ChallengeFile> challengeFiles,
-  ChallengeViewModel challengeModel,
+  String editorText,
 ) {
   // Currently this function has been done for single files
   // When working on multiple files, it's better if we keep a copy of the challengeFiles list and store user code there.
@@ -29,8 +30,7 @@ String filesToMarkdown(
         ? '/* file: ${challengeFile.name}.${challengeFile.ext} */\n'
         : '';
     final fileType = describeEnum(challengeFile.ext);
-    markdownStr +=
-        '```$fileType\n$fileName${challengeModel.editorText}\n```\n\n';
+    markdownStr += '```$fileType\n$fileName$editorText\n```\n\n';
   }
 
   return markdownStr;
@@ -40,34 +40,38 @@ Future<String> getDeviceInfo() async {
   // TODO: Update GPlay Privacy data collection policy
   final deviceInfoPlugin = DeviceInfoPlugin();
 
-    if (Platform.isAndroid) {
-      final deviceInfo = await deviceInfoPlugin.androidInfo;
-      return '${deviceInfo.model} - Android ${deviceInfo.version.release} - Android SDK ${deviceInfo.version.sdkInt}';
-    } else if (Platform.isIOS) {
-      final deviceInfo = await deviceInfoPlugin.iosInfo;
-      return '${deviceInfo.model} - ${deviceInfo.systemName}${deviceInfo.systemVersion}';
-    } else {
-      return 'Unrecognized device';
-    }
+  if (Platform.isAndroid) {
+    final deviceInfo = await deviceInfoPlugin.androidInfo;
+    return '${deviceInfo.model} - Android ${deviceInfo.version.release} - Android SDK ${deviceInfo.version.sdkInt}';
+  } else if (Platform.isIOS) {
+    final deviceInfo = await deviceInfoPlugin.iosInfo;
+    return '${deviceInfo.model} - ${deviceInfo.systemName}${deviceInfo.systemVersion}';
+  } else {
+    return 'Unrecognized device';
   }
+}
 
-Future<String> genForumLink(ChallengeViewModel challengeModel) async {
-  Challenge? currChallenge = await challengeModel.challenge;
+Future<String> genForumLink(
+  Challenge challenge,
+  Block block, {
+  String editorText = '',
+}) async {
+  Challenge? currChallenge = challenge;
   String helpCategoryPath = 'assets/learn/help-category.json';
   String helpCategoryFile = await rootBundle.loadString(helpCategoryPath);
 
   final String helpCategory = Uri.encodeComponent(
-    jsonDecode(helpCategoryFile)[currChallenge?.block] ?? 'Help',
+    jsonDecode(helpCategoryFile)[currChallenge.block] ?? 'Help',
   );
-  final String blockTitle = challengeModel.block!.name;
+  final String blockTitle = block.name;
 
   final userDeviceInfo = await getDeviceInfo();
 
-  final titleText = '$blockTitle - ${currChallenge?.title}';
+  final titleText = '$blockTitle - ${currChallenge.title}';
   final String endingText =
-      '**Your mobile information:**\n```txt\n$userDeviceInfo\n```\n\n**Challenge:** $titleText\n\n**Link to the challenge:**\nhttps://www.freecodecamp.org/learn/${currChallenge?.superBlock}/${currChallenge?.block}/${currChallenge?.dashedName}';
+      '**Your mobile information:**\n```txt\n$userDeviceInfo\n```\n\n**Challenge:** $titleText\n\n**Link to the challenge:**\nhttps://www.freecodecamp.org/learn/${currChallenge.superBlock}/${currChallenge.block}/${currChallenge.dashedName}';
 
-  final String userCode = filesToMarkdown(currChallenge!.files, challengeModel);
+  final String userCode = filesToMarkdown(currChallenge.files, editorText);
 
   final String textMessage =
       "**Tell us what's happening:**\nDescribe your issue in detail here.\n\n**Your code so far**$userCode\n\n$endingText";
@@ -154,9 +158,12 @@ class HintWidgetView extends StatelessWidget {
                   children: [
                     IconButton(
                       onPressed: () async {
-                        final forumLink = await genForumLink(challengeModel);
+                        final forumLink = await genForumLink(
+                            await challengeModel.challenge as Challenge,
+                            challengeModel.block as Block,
+                            editorText: challengeModel.editorText ?? '');
                         log(forumLink);
-                        challengeModel.forumHelpDialog(forumLink);
+                        challengeModel.learnService.forumHelpDialog(forumLink);
                       },
                       icon: const Icon(Icons.question_mark),
                       padding: const EdgeInsets.all(16),
