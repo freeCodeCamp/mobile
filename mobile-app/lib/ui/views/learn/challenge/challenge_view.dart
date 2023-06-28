@@ -211,38 +211,23 @@ class ChallengeView extends StatelessWidget {
                 },
                 child: Scaffold(
                   appBar: AppBar(
-                    title: Text('$currChallengeNum of $maxChallenges'),
+                    title:
+                        Text('$currChallengeNum of $maxChallenges Questions'),
                   ),
                   body: SafeArea(
                     bottom: false,
                     child: ListView(
                       padding: const EdgeInsets.all(12),
                       children: [
-                        Center(
-                          child: Text(
-                            challenge.title,
-                            textAlign: TextAlign.center,
-                            style: const TextStyle(
-                              fontSize: 20,
-                              fontWeight: FontWeight.bold,
-                              fontFamily: 'Inter',
-                            ),
-                          ),
-                        ),
                         const SizedBox(height: 12),
-                        Padding(
-                          padding: const EdgeInsets.symmetric(
-                            horizontal: 16,
-                          ),
-                          child: YoutubePlayerIFrame(
-                            controller: controller,
-                          ),
+                        YoutubePlayerIFrame(
+                          controller: controller,
                         ),
                         const SizedBox(height: 12),
                         ...parser.parse(
                           challenge.description,
                         ),
-                        buildDivider(),
+                        if (challenge.description.isNotEmpty) buildDivider(),
                         ...parser.parse(
                           challenge.question!.text,
                         ),
@@ -257,12 +242,10 @@ class ChallengeView extends StatelessWidget {
                                 color: answer.key == model.currentChoice
                                     ? const Color(0xFFFFFFFF)
                                     : const Color(0xFFAAAAAA),
-                                width:
-                                    answer.key == model.currentChoice ? 3 : 1,
+                                width: 2,
                               ),
                             ),
                             child: RadioListTile<int>(
-                              // contentPadding: const EdgeInsets.all(0),
                               tileColor: const Color(0xFF0a0a23),
                               value: answer.key,
                               groupValue: model.currentChoice,
@@ -294,14 +277,13 @@ class ChallengeView extends StatelessWidget {
                                             ? Colors.green
                                             : Colors.red,
                                       ),
-                                    ),
+                                    )
                                   }
                                 ],
                               ),
                             ),
                           ),
-                        buildDivider(),
-                        const SizedBox(height: 8),
+                        const SizedBox(height: 16),
                         ElevatedButton(
                           style: ElevatedButton.styleFrom(
                             minimumSize: const Size(0, 50),
@@ -334,6 +316,7 @@ class ChallengeView extends StatelessWidget {
                             style: const TextStyle(fontSize: 20),
                           ),
                         ),
+                        const SizedBox(height: 50),
                       ],
                     ),
                   ),
