@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:flutter_inappwebview/flutter_inappwebview.dart';
+import 'package:html/dom.dart';
 import 'package:phone_ide/phone_ide.dart';
 
 import 'package:freecodecamp/app/app.locator.dart';
@@ -502,6 +503,12 @@ class ChallengeViewModel extends BaseViewModel {
             ),
           ),
         );
+  }
+
+  String removeHtmlTags(String html) {
+    Document document = parse(html);
+
+    return document.body!.text;
   }
 
   void passChallenge(Challenge? challenge) async {

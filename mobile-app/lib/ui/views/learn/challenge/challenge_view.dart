@@ -256,12 +256,11 @@ class ChallengeView extends StatelessWidget {
                               title: Row(
                                 children: [
                                   Expanded(
-                                    child: Column(
-                                      crossAxisAlignment:
-                                          CrossAxisAlignment.start,
-                                      children: parser.parse(
-                                        answer.value,
-                                        isSelectable: false,
+                                    child: Text(
+                                      model.removeHtmlTags(answer.value),
+                                      style: const TextStyle(
+                                        fontSize: 20,
+                                        fontFamily: 'Lato',
                                       ),
                                     ),
                                   ),
