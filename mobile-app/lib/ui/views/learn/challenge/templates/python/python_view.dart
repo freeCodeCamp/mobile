@@ -13,10 +13,12 @@ class PythonView extends StatelessWidget {
     required this.challenge,
     required this.block,
     required this.challengesCompleted,
+    required this.currentChallengeNum,
   }) : super(key: key);
 
   final Challenge challenge;
   final Block block;
+  final int currentChallengeNum;
   final int challengesCompleted;
 
   @override
@@ -45,7 +47,7 @@ class PythonView extends StatelessWidget {
           child: Scaffold(
             appBar: AppBar(
               title: Text(
-                '$challengesCompleted of ${block.challenges.length} Questions',
+                '$currentChallengeNum of ${block.challenges.length} Questions',
               ),
             ),
             body: SafeArea(

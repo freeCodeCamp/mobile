@@ -42,9 +42,9 @@ class ChallengeView extends StatelessWidget {
           if (snapshot.hasData) {
             Challenge challenge = snapshot.data!;
             int maxChallenges = block.challenges.length;
-            // int currChallengeNum = block.challengeTiles
-            //         .indexWhere((element) => element.id == challenge.id) +
-            //     1;
+            int currChallengeNum = block.challengeTiles
+                    .indexWhere((element) => element.id == challenge.id) +
+                1;
 
             if (challenge.challengeType == 10) {
               return PythonProjectView(
@@ -57,6 +57,7 @@ class ChallengeView extends StatelessWidget {
                 challenge: challenge,
                 block: block,
                 challengesCompleted: challengesCompleted,
+                currentChallengeNum: currChallengeNum,
               );
             } else {
               ChallengeFile currFile = model.currentFile(challenge);
