@@ -6,13 +6,14 @@ import 'package:stacked/stacked.dart';
 class PythonProjectViewModel extends BaseViewModel {
   final LearnService learnService = locator<LearnService>();
 
-  // Challenge Type 10 - Python Project
   TextEditingController linkController = TextEditingController();
 
   final fCCRegex = RegExp(
     r'codepen\.io\/freecodecamp|freecodecamp\.rocks|github\.com\/freecodecamp|\.freecodecamp\.org',
     caseSensitive: false,
   );
+  final localhostRegex = RegExp(r'localhost:');
+  final httpRegex = RegExp(r'http(?!s|([^s]+?localhost))');
 
   bool? _validLink;
   bool? get validLink => _validLink;
@@ -29,9 +30,6 @@ class PythonProjectViewModel extends BaseViewModel {
     _linkErrMsg = msg;
     notifyListeners();
   }
-
-  final localhostRegex = RegExp(r'localhost:');
-  final httpRegex = RegExp(r'http(?!s|([^s]+?localhost))');
 
   bool isUrl(String url) {
     return Uri.parse(url).isAbsolute;
