@@ -1,9 +1,7 @@
 import 'package:freecodecamp/app/app.locator.dart';
 import 'package:freecodecamp/models/learn/challenge_model.dart';
 import 'package:freecodecamp/service/learn/learn_service.dart';
-import 'package:html/parser.dart';
 import 'package:stacked/stacked.dart';
-import 'package:html/dom.dart';
 
 class PythonViewModel extends BaseViewModel {
   int _currentChoice = -1;
@@ -22,12 +20,6 @@ class PythonViewModel extends BaseViewModel {
   set setChoiceStatus(bool? status) {
     _choiceStatus = status;
     notifyListeners();
-  }
-
-  String removeHtmlTags(String html) {
-    Document document = parse(html);
-
-    return document.body!.text;
   }
 
   void checkOption(Challenge challenge) async {

@@ -55,9 +55,25 @@ class PythonView extends StatelessWidget {
               child: ListView(
                 padding: const EdgeInsets.all(12),
                 children: [
+                  Center(
+                    child: Text(
+                      challenge.title,
+                      textAlign: TextAlign.center,
+                      style: const TextStyle(
+                        fontSize: 20,
+                        fontWeight: FontWeight.bold,
+                        fontFamily: 'Inter',
+                      ),
+                    ),
+                  ),
                   const SizedBox(height: 12),
-                  YoutubePlayerIFrame(
-                    controller: controller,
+                  Padding(
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 16,
+                    ),
+                    child: YoutubePlayerIFrame(
+                      controller: controller,
+                    ),
                   ),
                   const SizedBox(height: 12),
                   ...parser.parse(
@@ -70,7 +86,7 @@ class PythonView extends StatelessWidget {
                   const SizedBox(height: 8),
                   for (var answer
                       in challenge.question!.answers.asMap().entries)
-                    questionOption(answer, model),
+                    questionOption(answer, model, context),
                   const SizedBox(height: 16),
                   ElevatedButton(
                     style: ElevatedButton.styleFrom(
@@ -85,10 +101,11 @@ class PythonView extends StatelessWidget {
                     onPressed: model.currentChoice != -1
                         ? model.choiceStatus != null && model.choiceStatus!
                             ? () => model.learnService.goToNextChallenge(
-                                block.challenges.length,
-                                challengesCompleted,
-                                challenge,
-                                block)
+                                  block.challenges.length,
+                                  challengesCompleted,
+                                  challenge,
+                                  block,
+                                )
                             : () => model.checkOption(challenge)
                         : null,
                     child: Text(
@@ -113,23 +130,22 @@ class PythonView extends StatelessWidget {
   Container questionOption(
     MapEntry<int, String> answer,
     PythonViewModel model,
+    BuildContext context,
   ) {
+    HTMLParser parser = HTMLParser(context: context);
+
     return Container(
       margin: const EdgeInsets.symmetric(vertical: 8),
       child: RadioListTile<int>(
         tileColor: const Color(0xFF0a0a23),
         value: answer.key,
-        contentPadding: const EdgeInsets.symmetric(
-          horizontal: 8,
-          vertical: 8,
-        ),
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(0),
           side: BorderSide(
             color: answer.key == model.currentChoice
                 ? const Color(0xFFFFFFFF)
                 : const Color(0xFFAAAAAA),
-            width: 2,
+            width: answer.key == model.currentChoice ? 3 : 1,
           ),
         ),
         groupValue: model.currentChoice,
@@ -140,11 +156,11 @@ class PythonView extends StatelessWidget {
         title: Row(
           children: [
             Expanded(
-              child: Text(
-                model.removeHtmlTags(answer.value),
-                style: const TextStyle(
-                  fontSize: 20,
-                  fontFamily: 'Lato',
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: parser.parse(
+                  answer.value,
+                  isSelectable: false,
                 ),
               ),
             ),
