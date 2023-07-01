@@ -137,15 +137,18 @@ class PythonView extends StatelessWidget {
     return Container(
       margin: const EdgeInsets.symmetric(vertical: 8),
       child: RadioListTile<int>(
+        selected: answer.key == model.currentChoice,
         tileColor: const Color(0xFF0a0a23),
+        selectedTileColor: const Color(0xDEFFFFFF),
+        activeColor: const Color(0xFF0a0a23),
         value: answer.key,
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(0),
           side: BorderSide(
             color: answer.key == model.currentChoice
-                ? const Color(0xFFFFFFFF)
+                ? const Color(0xFF0a0a23)
                 : const Color(0xFFAAAAAA),
-            width: answer.key == model.currentChoice ? 3 : 1,
+            width: 2,
           ),
         ),
         groupValue: model.currentChoice,
@@ -161,6 +164,9 @@ class PythonView extends StatelessWidget {
                 children: parser.parse(
                   answer.value,
                   isSelectable: false,
+                  fontColor: answer.key == model.currentChoice
+                      ? const Color(0xFF0a0a23)
+                      : null,
                 ),
               ),
             ),

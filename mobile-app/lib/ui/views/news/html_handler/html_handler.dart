@@ -22,7 +22,11 @@ class HTMLParser {
   final String fontFamily;
   final BuildContext context;
 
-  List<Widget> parse(String html, {bool isSelectable = true}) {
+  List<Widget> parse(
+    String html, {
+    bool isSelectable = true,
+    Color? fontColor,
+  }) {
     dom.Document result = parser.parse(html);
 
     List<Widget> elements = [];
@@ -32,6 +36,7 @@ class HTMLParser {
         _parseHTMLWidget(
           result.body!.children[i].outerHtml,
           isSelectable,
+          fontColor,
         ),
       );
     }
@@ -56,7 +61,11 @@ class HTMLParser {
     );
   }
 
-  Widget _parseHTMLWidget(child, [bool isSelectable = true]) {
+  Widget _parseHTMLWidget(
+    child, [
+    bool isSelectable = true,
+    Color? fontColor,
+  ]) {
     Html htmlWidget = Html(
       shrinkWrap: true,
       data: child,
@@ -87,7 +96,7 @@ class HTMLParser {
         ),
         '*:not(h1):not(h2):not(h3):not(h4):not(h5):not(h6)': Style(
           fontSize: FontSize.xLarge,
-          color: Colors.white.withOpacity(0.87),
+          color: fontColor ?? Colors.white.withOpacity(0.87),
           fontWeight:
               fontFamily == 'Inter' ? FontWeight.w400 : FontWeight.normal,
         ),
