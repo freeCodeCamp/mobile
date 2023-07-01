@@ -176,7 +176,9 @@ class PythonView extends StatelessWidget {
                 flex: 0,
                 child: Icon(
                   model.choiceStatus! ? Icons.check_circle : Icons.cancel,
-                  color: model.choiceStatus! ? Colors.green : Colors.red,
+                  color: model.choiceStatus!
+                      ? Colors.green.shade600
+                      : Colors.red.shade600,
                 ),
               )
             }
