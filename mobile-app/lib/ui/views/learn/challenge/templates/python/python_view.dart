@@ -170,18 +170,18 @@ class PythonView extends StatelessWidget {
                 ),
               ),
             ),
-            if (model.choiceStatus != null &&
-                model.currentChoice == answer.key) ...{
-              Expanded(
-                flex: 0,
-                child: Icon(
-                  model.choiceStatus! ? Icons.check_circle : Icons.cancel,
-                  color: model.choiceStatus!
-                      ? Colors.green.shade600
-                      : Colors.red.shade600,
-                ),
-              )
-            }
+            SizedBox(
+              width: 24,
+              child: model.choiceStatus != null &&
+                      model.currentChoice == answer.key
+                  ? Icon(
+                      model.choiceStatus! ? Icons.check_circle : Icons.cancel,
+                      color: model.choiceStatus!
+                          ? Colors.green.shade600
+                          : Colors.red.shade600,
+                    )
+                  : null,
+            ),
           ],
         ),
       ),
