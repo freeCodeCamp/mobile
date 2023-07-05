@@ -10,7 +10,6 @@ import 'package:freecodecamp/service/audio/audio_service.dart';
 import 'package:freecodecamp/service/authentication/authentication_service.dart';
 import 'package:freecodecamp/service/firebase/analytics_service.dart';
 import 'package:freecodecamp/service/learn/learn_service.dart';
-import 'package:freecodecamp/service/navigation/quick_actions_service.dart';
 import 'package:freecodecamp/service/podcast/notification_service.dart';
 import 'package:freecodecamp/ui/theme/fcc_theme.dart';
 import 'package:stacked_services/stacked_services.dart';
@@ -41,8 +40,6 @@ Future<void> main({bool testing = false}) async {
   LearnService().init();
 
   runApp(const FreeCodeCampMobileApp());
-
-  await QuickActionsService().init();
 }
 
 class FreeCodeCampMobileApp extends StatelessWidget {

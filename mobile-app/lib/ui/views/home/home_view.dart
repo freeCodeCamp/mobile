@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:freecodecamp/service/navigation/quick_actions_service.dart';
 import 'package:freecodecamp/ui/views/home/home_viewmodel.dart';
 import 'package:freecodecamp/ui/views/news/news-bookmark/news_bookmark_feed_view.dart';
 import 'package:freecodecamp/ui/views/news/news-feed/news_feed_view.dart';
@@ -7,9 +8,14 @@ import 'package:freecodecamp/ui/widgets/drawer_widget/drawer_widget_view.dart';
 import 'package:stacked/stacked.dart';
 import 'package:upgrader/upgrader.dart';
 
-class HomeView extends StatelessWidget {
+class HomeView extends StatefulWidget {
   const HomeView({Key? key}) : super(key: key);
 
+  @override
+  HomeViewState createState() => HomeViewState();
+}
+
+class HomeViewState extends State<HomeView> {
   static const titles = <Widget>[
     Text('BOOKMARKED TUTORIALS'),
     Text('TUTORIALS'),
@@ -22,12 +28,27 @@ class HomeView extends StatelessWidget {
     NewsSearchView()
   ];
 
+  int index = 1;
+  int _currentIndex = 1;
+
+  void _onTapped(int index) {
+    setState(() {
+      _currentIndex = index;
+    });
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    QuickActionsService().init();
+  }
+
   @override
   Widget build(BuildContext context) {
     return ViewModelBuilder<HomeViewModel>.reactive(
       builder: (context, model, child) => Scaffold(
         appBar: AppBar(
-          title: titles.elementAt(model.index),
+          title: titles.elementAt(_currentIndex),
         ),
         drawer: const DrawerWidgetView(),
         body: UpgradeAlert(
@@ -36,7 +57,7 @@ class HomeView extends StatelessWidget {
               showIgnore: false,
               showLater: false,
             ),
-            child: views.elementAt(model.index)),
+            child: views.elementAt(_currentIndex)),
         bottomNavigationBar: BottomNavigationBar(
           items: const <BottomNavigationBarItem>[
             BottomNavigationBarItem(
@@ -61,8 +82,8 @@ class HomeView extends StatelessWidget {
               tooltip: 'Search',
             )
           ],
-          currentIndex: model.index,
-          onTap: model.onTapped,
+          currentIndex: _currentIndex,
+          onTap: _onTapped,
         ),
       ),
       viewModelBuilder: () => HomeViewModel(),
