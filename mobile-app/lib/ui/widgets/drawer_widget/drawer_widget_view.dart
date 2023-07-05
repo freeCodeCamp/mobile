@@ -2,9 +2,7 @@ import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_scroll_shadow/flutter_scroll_shadow.dart';
-
 import 'package:freecodecamp/models/main/user_model.dart';
-
 import 'package:freecodecamp/ui/widgets/drawer_widget/drawer_button.dart';
 import 'package:freecodecamp/ui/widgets/drawer_widget/drawer_web_buttton.dart';
 import 'package:freecodecamp/ui/widgets/drawer_widget/drawer_widget_viewmodel.dart';

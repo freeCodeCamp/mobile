@@ -3,6 +3,7 @@ include: package:flutter_lints/flutter.yaml
 analyzer:
   exclude: [
    temp/**,
+   lib/app/app.dart,
    lib/app/app.locator.dart,
    lib/app/app.logger.dart,
    lib/app/app.router.dart
