@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:freecodecamp/models/news/bookmarked_tutorial_model.dart';
-import 'package:freecodecamp/ui/views/news/news-tutorial/news_tutorial_viewmodel.dart';
 import 'package:freecodecamp/ui/views/news/news-bookmark/news_bookmark_viewmodel.dart';
+import 'package:freecodecamp/ui/views/news/news-tutorial/news_tutorial_viewmodel.dart';
 import 'package:freecodecamp/ui/views/news/widgets/back_to_top_button.dart';
 import 'package:stacked/stacked.dart';
 

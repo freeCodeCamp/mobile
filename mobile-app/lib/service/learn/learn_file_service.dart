@@ -1,8 +1,8 @@
 import 'package:freecodecamp/enums/ext_type.dart';
 import 'package:freecodecamp/models/learn/challenge_model.dart';
+import 'package:html/dom.dart';
 import 'package:html/parser.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:html/dom.dart';
 
 class LearnFileService {
   // This function returns a specific file content from the cache.

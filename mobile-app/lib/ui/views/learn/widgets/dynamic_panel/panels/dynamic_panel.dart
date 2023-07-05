@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
-import 'package:phone_ide/phone_ide.dart';
 import 'package:freecodecamp/enums/panel_type.dart';
 import 'package:freecodecamp/models/learn/challenge_model.dart';
 import 'package:freecodecamp/ui/views/learn/challenge/challenge_viewmodel.dart';
 import 'package:freecodecamp/ui/views/learn/widgets/dynamic_panel/panels/description/description_widget_view.dart';
 import 'package:freecodecamp/ui/views/learn/widgets/dynamic_panel/panels/hint/hint_widget_view.dart';
 import 'package:freecodecamp/ui/views/learn/widgets/dynamic_panel/panels/pass/pass_widget_view.dart';
+import 'package:phone_ide/phone_ide.dart';
 
 class DynamicPanel extends StatelessWidget {
   const DynamicPanel({

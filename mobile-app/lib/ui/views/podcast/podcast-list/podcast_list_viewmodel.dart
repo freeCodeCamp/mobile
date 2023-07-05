@@ -1,11 +1,10 @@
 import 'dart:convert';
-
 import 'dart:io';
 
 import 'package:freecodecamp/app/app.locator.dart';
 import 'package:freecodecamp/models/podcasts/podcasts_model.dart';
-import 'package:freecodecamp/service/podcast/podcasts_service.dart';
 import 'package:freecodecamp/service/developer_service.dart';
+import 'package:freecodecamp/service/podcast/podcasts_service.dart';
 import 'package:http/http.dart' as http;
 import 'package:path_provider/path_provider.dart';
 import 'package:stacked/stacked.dart';

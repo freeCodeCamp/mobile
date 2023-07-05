@@ -6,10 +6,9 @@ import 'package:freecodecamp/models/learn/curriculum_model.dart';
 import 'package:freecodecamp/service/authentication/authentication_service.dart';
 import 'package:freecodecamp/service/learn/learn_offline_service.dart';
 import 'package:freecodecamp/service/learn/learn_service.dart';
+import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:stacked/stacked.dart';
-
-import 'package:http/http.dart' as http;
 
 class SuperBlockViewModel extends BaseViewModel {
   final _learnOfflineService = locator<LearnOfflineService>();
