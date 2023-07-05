@@ -215,7 +215,6 @@ class ChallengeViewModel extends BaseViewModel {
     int challengesCompleted,
   ) async {
     setupDialogUi();
-    learnService.init();
 
     setChallenge = learnOfflineService.getChallenge(url, challengeId);
     Challenge challenge = await _challenge!;
