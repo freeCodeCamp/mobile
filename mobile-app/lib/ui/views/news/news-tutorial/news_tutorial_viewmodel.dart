@@ -1,17 +1,18 @@
 import 'dart:async';
 import 'dart:convert';
-import 'package:freecodecamp/app/app.locator.dart';
+
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
+import 'package:freecodecamp/app/app.locator.dart';
 import 'package:freecodecamp/app/app.router.dart';
 import 'package:freecodecamp/models/news/tutorial_model.dart';
 import 'package:freecodecamp/service/developer_service.dart';
 import 'package:freecodecamp/ui/views/news/html_handler/html_handler.dart';
 import 'package:freecodecamp/ui/views/news/news-tutorial/news_tutorial_view.dart';
+import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:stacked/stacked.dart';
-import 'package:http/http.dart' as http;
 import 'package:stacked_services/stacked_services.dart';
 
 class NewsTutorialViewModel extends BaseViewModel {

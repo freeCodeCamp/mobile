@@ -13,9 +13,9 @@ import 'package:freecodecamp/service/authentication/authentication_service.dart'
 import 'package:freecodecamp/service/learn/learn_offline_service.dart';
 import 'package:freecodecamp/service/learn/learn_service.dart';
 import 'package:freecodecamp/ui/widgets/setup_dialog_ui.dart';
+import 'package:http/http.dart' as http;
 import 'package:stacked/stacked.dart';
 import 'package:stacked_services/stacked_services.dart';
-import 'package:http/http.dart' as http;
 
 class LearnLandingViewModel extends BaseViewModel {
   final NavigationService _navigationService = locator<NavigationService>();

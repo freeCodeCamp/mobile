@@ -1,11 +1,11 @@
 import 'dart:developer';
 import 'dart:io';
 
+import 'package:audio_service/audio_service.dart';
 import 'package:freecodecamp/models/code-radio/code_radio_model.dart';
 import 'package:freecodecamp/models/podcasts/episodes_model.dart';
 import 'package:freecodecamp/models/podcasts/podcasts_model.dart';
 import 'package:just_audio/just_audio.dart';
-import 'package:audio_service/audio_service.dart';
 import 'package:path_provider/path_provider.dart';
 
 class AppAudioService {
