@@ -9,6 +9,7 @@ import 'package:freecodecamp/firebase_options.dart';
 import 'package:freecodecamp/service/audio/audio_service.dart';
 import 'package:freecodecamp/service/authentication/authentication_service.dart';
 import 'package:freecodecamp/service/firebase/analytics_service.dart';
+import 'package:freecodecamp/service/learn/learn_service.dart';
 import 'package:freecodecamp/service/navigation/quick_actions_service.dart';
 import 'package:freecodecamp/service/podcast/notification_service.dart';
 import 'package:freecodecamp/ui/theme/fcc_theme.dart';
@@ -37,6 +38,7 @@ Future<void> main({bool testing = false}) async {
   await NotificationService().init();
   await AppAudioService().init();
   await FkUserAgent.init();
+  LearnService().init();
 
   runApp(const FreeCodeCampMobileApp());
 
