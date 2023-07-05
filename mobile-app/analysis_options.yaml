@@ -16,6 +16,7 @@ linter:
     use_build_context_synchronously: false
     always_use_package_imports: true
     avoid_relative_lib_imports: true
+    directives_ordering: true
 
 # Additional information about this file can be found at
 # https://dart.dev/guides/language/analysis-options
