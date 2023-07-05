@@ -1,8 +1,6 @@
 import 'dart:convert';
+
 import 'package:flutter_inappwebview/flutter_inappwebview.dart';
-
-import 'package:phone_ide/phone_ide.dart';
-
 import 'package:freecodecamp/app/app.locator.dart';
 import 'package:freecodecamp/app/app.router.dart';
 import 'package:freecodecamp/enums/dialog_type.dart';
@@ -18,6 +16,7 @@ import 'package:freecodecamp/ui/widgets/setup_dialog_ui.dart';
 import 'package:html/dom.dart' as dom;
 import 'package:html/parser.dart';
 import 'package:http/http.dart' as http;
+import 'package:phone_ide/phone_ide.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:stacked/stacked.dart';
 import 'package:stacked_services/stacked_services.dart';
