@@ -144,6 +144,13 @@ class HTMLParser {
         'figcaption': Style(
           fontSize: FontSize.medium,
         ),
+        'code': Style(
+          backgroundColor: const Color.fromRGBO(0x3b, 0x3b, 0x4f, 1),
+          padding: HtmlPaddings.symmetric(vertical: 2, horizontal: 4),
+          color: Colors.white.withOpacity(0.87),
+          fontSize: FontSize.xLarge,
+          fontFamily: 'Roboto Mono',
+        ),
       },
       onLinkTap: (url, attributes, element) {
         launchUrl(Uri.parse(url!));
@@ -151,8 +158,9 @@ class HTMLParser {
       extensions: [
         const TableHtmlExtension(),
         TagExtension(
-          tagsToExtend: {'code'},
+          tagsToExtend: {'pre'},
           builder: (child) {
+            var codeElement = child.element!.children[0];
             String? currentClass;
 
             bool codeLanguageIsPresent(List classNames) {
@@ -169,60 +177,41 @@ class HTMLParser {
               return false;
             }
 
-            List classes = child.classes.toList();
+            List classes = codeElement.classes.toList();
 
-            if (child.element!.parent!.localName == 'pre') {
-              return Row(
-                children: [
-                  Expanded(
-                    flex: 1,
+            return Row(
+              children: [
+                Expanded(
+                  flex: 1,
+                  child: SingleChildScrollView(
+                    physics: const NeverScrollableScrollPhysics(),
                     child: SingleChildScrollView(
-                      physics: const NeverScrollableScrollPhysics(),
-                      child: SingleChildScrollView(
-                        scrollDirection: Axis.horizontal,
-                        physics: const ClampingScrollPhysics(),
-                        child: ConstrainedBox(
-                          constraints: BoxConstraints(
-                            minWidth: MediaQuery.of(context).size.width - 25,
-                          ),
-                          child: HighlightView(
-                            child.element?.text ?? '',
-                            padding: const EdgeInsets.all(16),
-                            language: codeLanguageIsPresent(classes)
-                                ? currentClass!.split('-')[1]
-                                : 'plaintext',
-                            theme: themeMap['atom-one-dark']!,
-                            textStyle: TextStyle(
-                              fontFamily: 'RobotoMono',
-                              fontSize: double.parse(
-                                FontSize.large.value.toString(),
-                              ),
-                              color: Colors.white,
+                      scrollDirection: Axis.horizontal,
+                      physics: const ClampingScrollPhysics(),
+                      child: ConstrainedBox(
+                        constraints: BoxConstraints(
+                          minWidth: MediaQuery.of(context).size.width - 25,
+                        ),
+                        child: HighlightView(
+                          codeElement.text,
+                          padding: const EdgeInsets.all(16),
+                          language: codeLanguageIsPresent(classes)
+                              ? currentClass!.split('-')[1]
+                              : 'plaintext',
+                          theme: themeMap['atom-one-dark']!,
+                          textStyle: TextStyle(
+                            fontFamily: 'RobotoMono',
+                            fontSize: double.parse(
+                              FontSize.large.value.toString(),
                             ),
+                            color: Colors.white,
                           ),
                         ),
                       ),
                     ),
                   ),
-                ],
-              );
-            }
-
-            return Container(
-              color: const Color.fromRGBO(0x3b, 0x3b, 0x4f, 1),
-              child: Padding(
-                padding: const EdgeInsets.symmetric(
-                  vertical: 2,
-                  horizontal: 4,
                 ),
-                child: Text(
-                  child.element?.text ?? 'e',
-                  style: TextStyle(
-                    fontSize: 16,
-                    color: Colors.white.withOpacity(0.87),
-                  ),
-                ),
-              ),
+              ],
             );
           },
         ),
