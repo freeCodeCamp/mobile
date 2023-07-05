@@ -79,7 +79,6 @@ class LearnService {
             },
           ),
         );
-        await _authenticationService.fetchUser();
         log(res.toString());
         break;
       case 'backend':
@@ -101,12 +100,12 @@ class LearnService {
             },
           ),
         );
-        await _authenticationService.fetchUser();
         log(res.toString());
         break;
       case 'project.frontEnd':
         break;
     }
+    await _authenticationService.fetchUser();
   }
 
   void updateProgressOnPop(BuildContext context, Block block) async {
