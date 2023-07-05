@@ -1,17 +1,16 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
 import 'package:flutter_inappwebview/flutter_inappwebview.dart';
-import 'package:freecodecamp/ui/views/learn/widgets/console/console_view.dart';
-import 'package:phone_ide/phone_ide.dart';
-
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:freecodecamp/enums/panel_type.dart';
-
 import 'package:freecodecamp/models/learn/challenge_model.dart';
 import 'package:freecodecamp/models/learn/curriculum_model.dart';
 import 'package:freecodecamp/ui/views/learn/challenge/challenge_viewmodel.dart';
-
+import 'package:freecodecamp/ui/views/learn/challenge/templates/python-project/python_project_view.dart';
+import 'package:freecodecamp/ui/views/learn/challenge/templates/python/python_view.dart';
+import 'package:freecodecamp/ui/views/learn/widgets/console/console_view.dart';
 import 'package:freecodecamp/ui/views/learn/widgets/dynamic_panel/panels/dynamic_panel.dart';
+import 'package:phone_ide/phone_ide.dart';
 import 'package:stacked/stacked.dart';
 
 class ChallengeView extends StatelessWidget {
@@ -42,175 +41,198 @@ class ChallengeView extends StatelessWidget {
         builder: (context, snapshot) {
           if (snapshot.hasData) {
             Challenge challenge = snapshot.data!;
-
             int maxChallenges = block.challenges.length;
-            ChallengeFile currFile = model.currentFile(challenge);
+            int currChallengeNum = block.challengeTiles
+                    .indexWhere((element) => element.id == challenge.id) +
+                1;
 
-            bool keyboard = MediaQuery.of(context).viewInsets.bottom != 0;
+            if (challenge.challengeType == 10) {
+              return PythonProjectView(
+                challenge: challenge,
+                block: block,
+                challengesCompleted: challengesCompleted,
+              );
+            } else if (challenge.challengeType == 11) {
+              return PythonView(
+                challenge: challenge,
+                block: block,
+                challengesCompleted: challengesCompleted,
+                currentChallengeNum: currChallengeNum,
+              );
+            } else {
+              ChallengeFile currFile = model.currentFile(challenge);
 
-            bool onlyJs =
-                challenge.files.every((file) => file.ext.name == 'js');
+              bool keyboard = MediaQuery.of(context).viewInsets.bottom != 0;
 
-            bool editableRegion = currFile.editableRegionBoundaries.isNotEmpty;
-            EditorOptions options = EditorOptions(
-              hasRegion: editableRegion,
-            );
+              bool onlyJs =
+                  challenge.files.every((file) => file.ext.name == 'js');
 
-            Editor editor = Editor(
-              language: currFile.ext.name.toUpperCase(),
-              options: options,
-            );
-
-            model.initiateFile(editor, challenge, currFile, editableRegion);
-
-            SchedulerBinding.instance.addPostFrameCallback((timeStamp) {
-              if (keyboard && !model.showPanel) {
-                if (model.hideAppBar) {
-                  model.setHideAppBar = false;
-                }
-              } else if (keyboard && model.showPanel) {
-                if (model.hideAppBar) {
-                  model.setHideAppBar = false;
-                }
-              } else if (!keyboard && model.showPanel) {
-                if (!model.hideAppBar) {
-                  model.setHideAppBar = true;
-                }
-              } else {
-                if (model.hideAppBar) {
-                  model.setHideAppBar = false;
-                }
-              }
-            });
-            editor.onTextChange.stream.listen((text) {
-              model.fileService.saveFileInCache(
-                challenge,
-                model.currentSelectedFile != ''
-                    ? model.currentSelectedFile
-                    : challenge.files[0].name,
-                text,
+              bool editableRegion =
+                  currFile.editableRegionBoundaries.isNotEmpty;
+              EditorOptions options = EditorOptions(
+                hasRegion: editableRegion,
               );
 
-              model.setEditorText = text;
-              model.setHasTypedInEditor = true;
-              model.setCompletedChallenge = false;
-            });
+              Editor editor = Editor(
+                language: currFile.ext.name.toUpperCase(),
+                options: options,
+              );
 
-            BoxDecoration decoration = const BoxDecoration(
-              border: Border(
-                bottom: BorderSide(
-                  width: 4,
-                  color: Colors.blue,
+              model.initiateFile(editor, challenge, currFile, editableRegion);
+
+              SchedulerBinding.instance.addPostFrameCallback((timeStamp) {
+                if (keyboard && !model.showPanel) {
+                  if (model.hideAppBar) {
+                    model.setHideAppBar = false;
+                  }
+                } else if (keyboard && model.showPanel) {
+                  if (model.hideAppBar) {
+                    model.setHideAppBar = false;
+                  }
+                } else if (!keyboard && model.showPanel) {
+                  if (!model.hideAppBar) {
+                    model.setHideAppBar = true;
+                  }
+                } else {
+                  if (model.hideAppBar) {
+                    model.setHideAppBar = false;
+                  }
+                }
+              });
+              editor.onTextChange.stream.listen((text) {
+                model.fileService.saveFileInCache(
+                  challenge,
+                  model.currentSelectedFile != ''
+                      ? model.currentSelectedFile
+                      : challenge.files[0].name,
+                  text,
+                );
+
+                model.setEditorText = text;
+                model.setHasTypedInEditor = true;
+                model.setCompletedChallenge = false;
+              });
+
+              BoxDecoration decoration = const BoxDecoration(
+                border: Border(
+                  bottom: BorderSide(
+                    width: 4,
+                    color: Colors.blue,
+                  ),
                 ),
-              ),
-            );
+              );
 
-            return WillPopScope(
-              onWillPop: () async {
-                model.updateProgressOnPop(context);
+              return WillPopScope(
+                onWillPop: () async {
+                  model.learnService.updateProgressOnPop(context, block);
 
-                return Future.value(true);
-              },
-              child: Scaffold(
-                appBar: !model.hideAppBar
-                    ? AppBar(
-                        automaticallyImplyLeading: !model.showPreview,
-                        title: challenge.files.length == 1 && !model.showPreview
-                            ? const Text('Editor')
-                            : Row(
-                                children: [
-                                  if (model.showPreview && !onlyJs)
-                                    Expanded(
-                                      child: Container(
-                                        decoration: model.showProjectPreview
-                                            ? decoration
-                                            : null,
-                                        child: ElevatedButton(
-                                          onPressed: () {
-                                            model.setShowConsole = false;
-                                            model.setShowProjectPreview = true;
-                                          },
-                                          child: const Text('PREVIEW'),
+                  return Future.value(true);
+                },
+                child: Scaffold(
+                  appBar: !model.hideAppBar
+                      ? AppBar(
+                          automaticallyImplyLeading: !model.showPreview,
+                          title: challenge.files.length == 1 &&
+                                  !model.showPreview
+                              ? const Text('Editor')
+                              : Row(
+                                  children: [
+                                    if (model.showPreview && !onlyJs)
+                                      Expanded(
+                                        child: Container(
+                                          decoration: model.showProjectPreview
+                                              ? decoration
+                                              : null,
+                                          child: ElevatedButton(
+                                            onPressed: () {
+                                              model.setShowConsole = false;
+                                              model.setShowProjectPreview =
+                                                  true;
+                                            },
+                                            child: const Text('PREVIEW'),
+                                          ),
                                         ),
                                       ),
-                                    ),
-                                  if (model.showPreview)
-                                    Expanded(
-                                      child: Container(
-                                        decoration: model.showConsole
-                                            ? decoration
-                                            : null,
-                                        child: ElevatedButton(
-                                          child: const Text('CONSOLE'),
-                                          onPressed: () {
-                                            model.setShowConsole = true;
-                                            model.setShowProjectPreview = false;
-                                          },
+                                    if (model.showPreview)
+                                      Expanded(
+                                        child: Container(
+                                          decoration: model.showConsole
+                                              ? decoration
+                                              : null,
+                                          child: ElevatedButton(
+                                            child: const Text('CONSOLE'),
+                                            onPressed: () {
+                                              model.setShowConsole = true;
+                                              model.setShowProjectPreview =
+                                                  false;
+                                            },
+                                          ),
                                         ),
                                       ),
-                                    ),
-                                  if (!model.showPreview &&
-                                      challenge.files.length > 1)
-                                    for (ChallengeFile file in challenge.files)
-                                      customTabBar(
-                                        model,
-                                        challenge,
-                                        file,
-                                        editor,
-                                      )
-                                ],
+                                    if (!model.showPreview &&
+                                        challenge.files.length > 1)
+                                      for (ChallengeFile file
+                                          in challenge.files)
+                                        customTabBar(
+                                          model,
+                                          challenge,
+                                          file,
+                                          editor,
+                                        )
+                                  ],
+                                ),
+                        )
+                      : null,
+                  bottomNavigationBar: Padding(
+                    padding: EdgeInsets.only(
+                      bottom: MediaQuery.of(context).viewInsets.bottom,
+                    ),
+                    child: customBottomBar(
+                      model,
+                      challenge,
+                      editor,
+                      context,
+                    ),
+                  ),
+                  body: !model.showPreview
+                      ? Column(
+                          children: [
+                            if (model.showPanel && !keyboard)
+                              DynamicPanel(
+                                challenge: challenge,
+                                model: model,
+                                panel: model.panelType,
+                                maxChallenges: maxChallenges,
+                                challengesCompleted: challengesCompleted,
+                                editor: editor,
                               ),
-                      )
-                    : null,
-                bottomNavigationBar: Padding(
-                  padding: EdgeInsets.only(
-                    bottom: MediaQuery.of(context).viewInsets.bottom,
-                  ),
-                  child: customBottomBar(
-                    model,
-                    challenge,
-                    editor,
-                    context,
-                  ),
+                            Expanded(child: editor)
+                          ],
+                        )
+                      : Column(
+                          children: [
+                            if (model.showPanel && !keyboard)
+                              DynamicPanel(
+                                challenge: challenge,
+                                model: model,
+                                panel: model.panelType,
+                                maxChallenges: maxChallenges,
+                                challengesCompleted: challengesCompleted,
+                                editor: editor,
+                              ),
+                            model.showProjectPreview && !onlyJs
+                                ? ProjectPreview(
+                                    challenge: challenge,
+                                    model: model,
+                                  )
+                                : JavaScriptConsole(
+                                    messages: model.consoleMessages,
+                                  )
+                          ],
+                        ),
                 ),
-                body: !model.showPreview
-                    ? Column(
-                        children: [
-                          if (model.showPanel && !keyboard)
-                            DynamicPanel(
-                              challenge: challenge,
-                              model: model,
-                              panel: model.panelType,
-                              maxChallenges: maxChallenges,
-                              challengesCompleted: challengesCompleted,
-                              editor: editor,
-                            ),
-                          Expanded(child: editor)
-                        ],
-                      )
-                    : Column(
-                        children: [
-                          if (model.showPanel && !keyboard)
-                            DynamicPanel(
-                              challenge: challenge,
-                              model: model,
-                              panel: model.panelType,
-                              maxChallenges: maxChallenges,
-                              challengesCompleted: challengesCompleted,
-                              editor: editor,
-                            ),
-                          model.showProjectPreview && !onlyJs
-                              ? ProjectPreview(
-                                  challenge: challenge,
-                                  model: model,
-                                )
-                              : JavaScriptConsole(
-                                  messages: model.consoleMessages,
-                                )
-                        ],
-                      ),
-              ),
-            );
+              );
+            }
           }
 
           return Scaffold(
@@ -421,9 +443,11 @@ class ChallengeView extends StatelessWidget {
                             model.setUserConsoleMessages = [];
                             if (model.showPanel &&
                                 model.panelType == PanelType.pass) {
-                              model.goToNextChallenge(
+                              model.learnService.goToNextChallenge(
                                 model.block!.challenges.length,
                                 challengesCompleted,
+                                challenge,
+                                block,
                               );
                             }
 

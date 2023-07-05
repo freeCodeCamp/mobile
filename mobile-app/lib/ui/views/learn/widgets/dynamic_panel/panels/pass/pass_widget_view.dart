@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:freecodecamp/models/learn/challenge_model.dart';
+import 'package:freecodecamp/models/learn/curriculum_model.dart';
 import 'package:freecodecamp/models/learn/motivational_quote_model.dart';
 import 'package:freecodecamp/service/authentication/authentication_service.dart';
 import 'package:freecodecamp/ui/views/learn/challenge/challenge_viewmodel.dart';
@@ -202,8 +204,13 @@ class PassButton extends StatelessWidget {
       height: 50,
       width: MediaQuery.of(context).size.width,
       child: TextButton(
-        onPressed: () {
-          model.goToNextChallenge(maxChallenges, completed);
+        onPressed: () async {
+          model.learnService.goToNextChallenge(
+            maxChallenges,
+            completed,
+            await model.challenge as Challenge,
+            model.block as Block,
+          );
         },
         style: ButtonStyle(
           backgroundColor: myColorProperty,
