@@ -391,7 +391,7 @@ class ChallengeViewModel extends BaseViewModel {
         description: 'Are you sure you want to reset your code?',
         mainButtonTitle: 'Reset');
 
-    if (res!.confirmed) {
+    if (res?.confirmed == true) {
       Challenge? currChallenge = await challenge;
 
       for (ChallengeFile file in currChallenge!.files) {

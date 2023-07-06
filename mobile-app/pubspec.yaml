@@ -1,7 +1,7 @@
 name: freecodecamp
 description: freecodecamp.org app.
 publish_to: none
-version: 3.5.0+30500
+version: 4.0.0+40000
 environment:
   sdk: ">=2.12.0 <3.0.0"
 dependencies:
