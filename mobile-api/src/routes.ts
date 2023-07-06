@@ -37,7 +37,7 @@ async function getPodcasts(req: Request, res: Response) {
         {
           new: true,
           upsert: true,
-        }
+        },
       );
     }
     res.json(await Podcast.find({}));

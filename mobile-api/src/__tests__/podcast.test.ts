@@ -50,7 +50,7 @@ describe('podcast api', () => {
       const podcastId = res[i]._id.toString();
 
       const podcastRequest = await fetch(
-        `${url}/podcasts/${podcastId}/episodes?page=1`
+        `${url}/podcasts/${podcastId}/episodes?page=1`,
       );
 
       const podcastResult: episodeEndpoint =
@@ -69,7 +69,7 @@ describe('podcast api', () => {
     expect(localEpisodeId.length).toBeGreaterThan(0);
 
     const req = await fetch(
-      `${url}/podcasts/${localPodcastId}/episodes/${localEpisodeId}`
+      `${url}/podcasts/${localPodcastId}/episodes/${localEpisodeId}`,
     );
 
     const res: Episode = (await req.json()) as Episode;
