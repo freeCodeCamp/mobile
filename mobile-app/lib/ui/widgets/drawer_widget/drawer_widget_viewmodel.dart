@@ -5,7 +5,7 @@ import 'package:freecodecamp/service/developer_service.dart';
 import 'package:freecodecamp/ui/views/code_radio/code_radio_view.dart';
 import 'package:freecodecamp/ui/views/learn/landing/landing_view.dart';
 import 'package:freecodecamp/ui/views/login/native_login_view.dart';
-import 'package:freecodecamp/ui/views/news/news-view-handler/news_view_handler.dart';
+import 'package:freecodecamp/ui/views/news/news-view-handler/news_view_handler_view.dart';
 import 'package:freecodecamp/ui/views/podcast/podcast-list/podcast_list_view.dart';
 import 'package:freecodecamp/ui/views/profile/profile_view.dart';
 import 'package:freecodecamp/ui/views/settings/settings_view.dart';

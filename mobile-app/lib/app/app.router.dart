@@ -13,7 +13,6 @@ import 'package:freecodecamp/models/news/bookmarked_tutorial_model.dart'
 import 'package:freecodecamp/models/podcasts/episodes_model.dart' as _i19;
 import 'package:freecodecamp/models/podcasts/podcasts_model.dart' as _i20;
 import 'package:freecodecamp/ui/views/code_radio/code_radio_view.dart' as _i10;
-import 'package:freecodecamp/ui/views/home/home_view.dart' as _i2;
 import 'package:freecodecamp/ui/views/learn/challenge/challenge_view.dart'
     as _i11;
 import 'package:freecodecamp/ui/views/learn/landing/landing_view.dart' as _i13;
@@ -30,6 +29,8 @@ import 'package:freecodecamp/ui/views/news/news-image-viewer/news_image_view.dar
     as _i9;
 import 'package:freecodecamp/ui/views/news/news-tutorial/news_tutorial_view.dart'
     as _i5;
+import 'package:freecodecamp/ui/views/news/news-view-handler/news_view_handler_view.dart'
+    as _i2;
 import 'package:freecodecamp/ui/views/podcast/episode/episode_view.dart' as _i4;
 import 'package:freecodecamp/ui/views/podcast/podcast-list/podcast_list_view.dart'
     as _i3;
@@ -41,7 +42,7 @@ import 'package:stacked/stacked.dart' as _i1;
 import 'package:stacked_services/stacked_services.dart' as _i23;
 
 class Routes {
-  static const homeView = '/home-view';
+  static const newsViewHandlerView = '/news-view-handler-view';
 
   static const podcastListView = '/podcast-list-view';
 
@@ -74,7 +75,7 @@ class Routes {
   static const deleteAccountView = '/delete-account-view';
 
   static const all = <String>{
-    homeView,
+    newsViewHandlerView,
     podcastListView,
     episodeView,
     newsTutorialView,
@@ -96,8 +97,8 @@ class Routes {
 class StackedRouter extends _i1.RouterBase {
   final _routes = <_i1.RouteDef>[
     _i1.RouteDef(
-      Routes.homeView,
-      page: _i2.HomeView,
+      Routes.newsViewHandlerView,
+      page: _i2.NewsViewHandlerView,
     ),
     _i1.RouteDef(
       Routes.podcastListView,
@@ -162,9 +163,9 @@ class StackedRouter extends _i1.RouterBase {
   ];
 
   final _pagesMap = <Type, _i1.StackedRouteFactory>{
-    _i2.HomeView: (data) {
+    _i2.NewsViewHandlerView: (data) {
       return _i18.MaterialPageRoute<dynamic>(
-        builder: (context) => const _i2.HomeView(),
+        builder: (context) => const _i2.NewsViewHandlerView(),
         settings: data,
       );
     },
@@ -627,14 +628,14 @@ class SuperBlockViewArguments {
 }
 
 extension NavigatorStateExtension on _i23.NavigationService {
-  Future<dynamic> navigateToHomeView([
+  Future<dynamic> navigateToNewsViewHandlerView([
     int? routerId,
     bool preventDuplicates = true,
     Map<String, String>? parameters,
     Widget Function(BuildContext, Animation<double>, Animation<double>, Widget)?
         transition,
   ]) async {
-    return navigateTo<dynamic>(Routes.homeView,
+    return navigateTo<dynamic>(Routes.newsViewHandlerView,
         id: routerId,
         preventDuplicates: preventDuplicates,
         parameters: parameters,
@@ -915,14 +916,14 @@ extension NavigatorStateExtension on _i23.NavigationService {
         transition: transition);
   }
 
-  Future<dynamic> replaceWithHomeView([
+  Future<dynamic> replaceWithNewsViewHandlerView([
     int? routerId,
     bool preventDuplicates = true,
     Map<String, String>? parameters,
     Widget Function(BuildContext, Animation<double>, Animation<double>, Widget)?
         transition,
   ]) async {
-    return replaceWith<dynamic>(Routes.homeView,
+    return replaceWith<dynamic>(Routes.newsViewHandlerView,
         id: routerId,
         preventDuplicates: preventDuplicates,
         parameters: parameters,

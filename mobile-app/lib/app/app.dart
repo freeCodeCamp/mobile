@@ -12,7 +12,6 @@ import 'package:freecodecamp/service/podcast/notification_service.dart';
 import 'package:freecodecamp/service/podcast/podcasts_service.dart';
 
 import 'package:freecodecamp/ui/views/code_radio/code_radio_view.dart';
-import 'package:freecodecamp/ui/views/home/home_view.dart';
 import 'package:freecodecamp/ui/views/learn/challenge/challenge_view.dart';
 import 'package:freecodecamp/ui/views/learn/landing/landing_view.dart';
 import 'package:freecodecamp/ui/views/learn/superblock/superblock_view.dart';
@@ -22,6 +21,7 @@ import 'package:freecodecamp/ui/views/news/news-bookmark/news_bookmark_view.dart
 import 'package:freecodecamp/ui/views/news/news-feed/news_feed_view.dart';
 import 'package:freecodecamp/ui/views/news/news-image-viewer/news_image_view.dart';
 import 'package:freecodecamp/ui/views/news/news-tutorial/news_tutorial_view.dart';
+import 'package:freecodecamp/ui/views/news/news-view-handler/news_view_handler_view.dart';
 import 'package:freecodecamp/ui/views/podcast/episode/episode_view.dart';
 import 'package:freecodecamp/ui/views/podcast/podcast-list/podcast_list_view.dart';
 import 'package:freecodecamp/ui/views/profile/profile_view.dart';
@@ -35,7 +35,7 @@ import 'package:stacked_services/stacked_services.dart';
 // Run 'flutter pub run build_runner build --delete-conflicting-outputs' after any changes in this file to generate updated files
 @StackedApp(
   routes: [
-    MaterialRoute(page: HomeView),
+    MaterialRoute(page: NewsViewHandlerView),
     MaterialRoute(page: PodcastListView),
     MaterialRoute(page: EpisodeView),
     MaterialRoute(page: NewsTutorialView),

@@ -41,7 +41,7 @@ class QuickActionsService {
     await quickActions.initialize((shortcutType) {
       switch (shortcutType) {
         case 'action_tutorials':
-          _navigationService.replaceWith(Routes.homeView);
+          _navigationService.replaceWith(Routes.newsViewHandlerView);
           break;
         case 'action_learn':
           _navigationService.replaceWith(Routes.learnLandingView);
