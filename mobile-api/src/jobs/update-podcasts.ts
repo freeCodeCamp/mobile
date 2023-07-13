@@ -34,7 +34,7 @@ void (async function () {
       {
         new: true,
         upsert: true,
-      }
+      },
     );
     for (const episode of feed.items) {
       const dateRaw = episode.isoDate ?? episode.pubDate ?? null;
@@ -56,7 +56,7 @@ void (async function () {
         {
           new: true,
           upsert: true,
-        }
+        },
       );
     }
   }
