@@ -1,14 +1,14 @@
 import 'package:flutter/material.dart';
-import 'package:freecodecamp/ui/views/home/home_viewmodel.dart';
 import 'package:freecodecamp/ui/views/news/news-bookmark/news_bookmark_feed_view.dart';
 import 'package:freecodecamp/ui/views/news/news-feed/news_feed_view.dart';
 import 'package:freecodecamp/ui/views/news/news-search/news_search_view.dart';
+import 'package:freecodecamp/ui/views/news/news-view-handler/news_view_handler_viewmodel.dart';
 import 'package:freecodecamp/ui/widgets/drawer_widget/drawer_widget_view.dart';
 import 'package:stacked/stacked.dart';
 import 'package:upgrader/upgrader.dart';
 
-class HomeView extends StatelessWidget {
-  const HomeView({Key? key}) : super(key: key);
+class NewsViewHandlerView extends StatelessWidget {
+  const NewsViewHandlerView({Key? key}) : super(key: key);
 
   static const titles = <Widget>[
     Text('BOOKMARKED TUTORIALS'),
@@ -24,7 +24,7 @@ class HomeView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return ViewModelBuilder<HomeViewModel>.reactive(
+    return ViewModelBuilder<NewsViewHandlerViewModel>.reactive(
       builder: (context, model, child) => Scaffold(
         appBar: AppBar(
           title: titles.elementAt(model.index),
@@ -65,7 +65,7 @@ class HomeView extends StatelessWidget {
           onTap: model.onTapped,
         ),
       ),
-      viewModelBuilder: () => HomeViewModel(),
+      viewModelBuilder: () => NewsViewHandlerViewModel(),
     );
   }
 }

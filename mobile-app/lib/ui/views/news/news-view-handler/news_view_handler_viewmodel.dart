@@ -1,6 +1,6 @@
 import 'package:stacked/stacked.dart';
 
-class HomeViewModel extends BaseViewModel {
+class NewsViewHandlerViewModel extends BaseViewModel {
   int index = 1;
 
   void onTapped(int index) {
