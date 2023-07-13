@@ -41,7 +41,7 @@ import 'package:stacked/stacked.dart' as _i1;
 import 'package:stacked_services/stacked_services.dart' as _i23;
 
 class Routes {
-  static const homeView = '/';
+  static const homeView = '/home-view';
 
   static const podcastListView = '/podcast-list-view';
 
@@ -63,7 +63,7 @@ class Routes {
 
   static const profileView = '/profile-view';
 
-  static const learnLandingView = '/learn-landing-view';
+  static const learnLandingView = '/';
 
   static const nativeLoginView = '/native-login-view';
 
