@@ -5,7 +5,6 @@ import 'package:freecodecamp/ui/views/news/news-search/news_search_view.dart';
 import 'package:freecodecamp/ui/views/news/news-view-handler/news_view_handler_viewmodel.dart';
 import 'package:freecodecamp/ui/widgets/drawer_widget/drawer_widget_view.dart';
 import 'package:stacked/stacked.dart';
-import 'package:upgrader/upgrader.dart';
 
 class NewsViewHandlerView extends StatelessWidget {
   const NewsViewHandlerView({Key? key}) : super(key: key);
@@ -30,13 +29,7 @@ class NewsViewHandlerView extends StatelessWidget {
           title: titles.elementAt(model.index),
         ),
         drawer: const DrawerWidgetView(),
-        body: UpgradeAlert(
-            upgrader: Upgrader(
-              dialogStyle: UpgradeDialogStyle.material,
-              showIgnore: false,
-              showLater: false,
-            ),
-            child: views.elementAt(model.index)),
+        body: views.elementAt(model.index),
         bottomNavigationBar: BottomNavigationBar(
           items: const <BottomNavigationBarItem>[
             BottomNavigationBarItem(
