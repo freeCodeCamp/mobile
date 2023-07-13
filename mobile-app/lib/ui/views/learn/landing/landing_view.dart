@@ -19,7 +19,9 @@ class LearnLandingView extends StatelessWidget {
         appBar: AppBar(
           title: const Text('LEARN'),
         ),
-        drawer: const DrawerWidgetView(),
+        drawer: const DrawerWidgetView(
+          key: Key('drawer'),
+        ),
         body: UpgradeAlert(
           upgrader: Upgrader(
             dialogStyle: UpgradeDialogStyle.material,
