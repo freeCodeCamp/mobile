@@ -20,12 +20,12 @@ class QuickActionsService {
   Future<void> init() async {
     await quickActions.setShortcutItems([
       const ShortcutItem(
-        type: 'action_tutorials',
-        localizedTitle: 'Tutorials',
-      ),
-      const ShortcutItem(
         type: 'action_learn',
         localizedTitle: 'Learn',
+      ),
+      const ShortcutItem(
+        type: 'action_tutorials',
+        localizedTitle: 'Tutorials',
       ),
       if (!Platform.isIOS)
         const ShortcutItem(
