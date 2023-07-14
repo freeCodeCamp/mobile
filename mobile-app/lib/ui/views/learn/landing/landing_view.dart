@@ -5,6 +5,7 @@ import 'package:freecodecamp/models/main/user_model.dart';
 import 'package:freecodecamp/ui/views/learn/landing/landing_viewmodel.dart';
 import 'package:freecodecamp/ui/widgets/drawer_widget/drawer_widget_view.dart';
 import 'package:stacked/stacked.dart';
+import 'package:upgrader/upgrader.dart';
 
 class LearnLandingView extends StatelessWidget {
   const LearnLandingView({Key? key}) : super(key: key);
@@ -18,85 +19,94 @@ class LearnLandingView extends StatelessWidget {
         appBar: AppBar(
           title: const Text('LEARN'),
         ),
-        drawer: const DrawerWidgetView(),
-        body: RefreshIndicator(
-          backgroundColor: const Color(0xFF0a0a23),
-          color: Colors.white,
-          onRefresh: () {
-            model.refresh();
+        drawer: const DrawerWidgetView(
+          key: Key('drawer'),
+        ),
+        body: UpgradeAlert(
+          upgrader: Upgrader(
+            dialogStyle: UpgradeDialogStyle.material,
+            showIgnore: false,
+            showLater: false,
+          ),
+          child: RefreshIndicator(
+            backgroundColor: const Color(0xFF0a0a23),
+            color: Colors.white,
+            onRefresh: () {
+              model.refresh();
 
-            return Future.delayed(Duration.zero);
-          },
-          child: SingleChildScrollView(
-            child: Column(
-              children: [
-                const QuoteWidget(),
-                StreamBuilder(
-                  stream: model.auth.isLoggedIn,
-                  builder: (context, snapshot) {
-                    return Column(
-                      children: [
-                        if (model.isLoggedIn)
-                          Container(
-                              margin: const EdgeInsets.symmetric(
-                                vertical: 4,
-                                horizontal: 8,
-                              ),
-                              padding: const EdgeInsets.symmetric(
-                                vertical: 16,
-                                horizontal: 8,
-                              ),
-                              decoration: BoxDecoration(
-                                color: const Color(0xFF0a0a23),
-                                border: Border.all(),
-                                borderRadius: BorderRadius.circular(15),
-                              ),
-                              constraints: BoxConstraints(
-                                minWidth: MediaQuery.of(context).size.width,
-                              ),
-                              child: welcomeMessage(model)),
-                        if (!model.isLoggedIn) loginButton(model, context)
-                      ],
-                    );
-                  },
-                ),
-                const SizedBox(height: 16),
-                FutureBuilder<List<SuperBlockButtonData>>(
-                  future: model.superBlockButtons,
-                  builder: (context, snapshot) {
-                    if (snapshot.hasData) {
-                      if (snapshot.data!.isEmpty) {
-                        return errorMessage(context);
+              return Future.delayed(Duration.zero);
+            },
+            child: SingleChildScrollView(
+              child: Column(
+                children: [
+                  const QuoteWidget(),
+                  StreamBuilder(
+                    stream: model.auth.isLoggedIn,
+                    builder: (context, snapshot) {
+                      return Column(
+                        children: [
+                          if (model.isLoggedIn)
+                            Container(
+                                margin: const EdgeInsets.symmetric(
+                                  vertical: 4,
+                                  horizontal: 8,
+                                ),
+                                padding: const EdgeInsets.symmetric(
+                                  vertical: 16,
+                                  horizontal: 8,
+                                ),
+                                decoration: BoxDecoration(
+                                  color: const Color(0xFF0a0a23),
+                                  border: Border.all(),
+                                  borderRadius: BorderRadius.circular(15),
+                                ),
+                                constraints: BoxConstraints(
+                                  minWidth: MediaQuery.of(context).size.width,
+                                ),
+                                child: welcomeMessage(model)),
+                          if (!model.isLoggedIn) loginButton(model, context)
+                        ],
+                      );
+                    },
+                  ),
+                  const SizedBox(height: 16),
+                  FutureBuilder<List<SuperBlockButtonData>>(
+                    future: model.superBlockButtons,
+                    builder: (context, snapshot) {
+                      if (snapshot.hasData) {
+                        if (snapshot.data!.isEmpty) {
+                          return errorMessage(context);
+                        }
+
+                        if (snapshot.data is List<SuperBlockButtonData>) {
+                          List<SuperBlockButtonData> buttons = snapshot.data!;
+
+                          return ListView.builder(
+                            physics: const ClampingScrollPhysics(),
+                            shrinkWrap: true,
+                            itemCount: buttons.length,
+                            itemBuilder: (BuildContext context, int i) {
+                              return SuperBlockButton(
+                                button: buttons[i],
+                              );
+                            },
+                          );
+                        }
                       }
 
-                      if (snapshot.data is List<SuperBlockButtonData>) {
-                        List<SuperBlockButtonData> buttons = snapshot.data!;
-
-                        return ListView.builder(
-                          physics: const ClampingScrollPhysics(),
-                          shrinkWrap: true,
-                          itemCount: buttons.length,
-                          itemBuilder: (BuildContext context, int i) {
-                            return SuperBlockButton(
-                              button: buttons[i],
-                            );
-                          },
+                      if (ConnectionState.waiting == snapshot.connectionState) {
+                        return const Center(
+                          child: CircularProgressIndicator(),
                         );
                       }
-                    }
 
-                    if (ConnectionState.waiting == snapshot.connectionState) {
                       return const Center(
                         child: CircularProgressIndicator(),
                       );
-                    }
-
-                    return const Center(
-                      child: CircularProgressIndicator(),
-                    );
-                  },
-                ),
-              ],
+                    },
+                  ),
+                ],
+              ),
             ),
           ),
         ),

@@ -66,18 +66,21 @@ class DrawerWidgetView extends StatelessWidget {
                       ),
                       buildDivider(),
                       DrawerButton(
-                        component: 'TUTORIALS',
-                        icon: Icons.forum_outlined,
-                        route: () {
-                          model.routeComponent('NEWS', context);
-                        },
-                      ),
-                      DrawerButton(
                         component: 'LEARN',
                         icon: '',
                         route: () {
                           model.routeComponent('LEARN', context);
                         },
+                      ),
+                      Container(
+                        key: const Key('news'),
+                        child: DrawerButton(
+                          component: 'TUTORIALS',
+                          icon: Icons.forum_outlined,
+                          route: () {
+                            model.routeComponent('NEWS', context);
+                          },
+                        ),
                       ),
                       DrawerButton(
                         component: 'PODCASTS',
