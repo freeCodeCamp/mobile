@@ -54,7 +54,7 @@ class Block {
   final bool isStepBased;
   final int order;
 
-  final List challenges;
+  final List<ChallengeOrder> challenges;
   final List<ChallengeListTile> challengeTiles;
 
   Block({
@@ -96,13 +96,20 @@ class Block {
       isStepBased: checkIfStepBased(
         superBlockDashedName,
       ),
-      challenges: data['challengeOrder'],
+      challenges: (data['challengeOrder'] as List)
+          .map<ChallengeOrder>(
+            (dynamic challenge) => ChallengeOrder(
+              id: challenge['id'],
+              title: challenge['title'],
+            ),
+          )
+          .toList(),
       challengeTiles: (data['challengeOrder'] as List)
           .map<ChallengeListTile>(
             (dynamic challenge) => ChallengeListTile(
-              id: challenge[0],
-              name: challenge[1],
-              dashedName: challenge[1]
+              id: challenge['id'],
+              name: challenge['title'],
+              dashedName: challenge['title']
                   .toLowerCase()
                   .replaceAll(' ', '-')
                   .replaceAll(RegExp(r"[@':]"), ''),
@@ -150,5 +157,15 @@ class SuperBlockButtonData {
     required this.path,
     required this.name,
     required this.public,
+  });
+}
+
+class ChallengeOrder {
+  final String id;
+  final String title;
+
+  ChallengeOrder({
+    required this.id,
+    required this.title,
   });
 }
