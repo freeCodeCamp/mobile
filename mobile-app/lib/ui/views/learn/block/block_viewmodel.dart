@@ -82,6 +82,11 @@ class BlockViewModel extends BaseViewModel {
     notifyListeners();
   }
 
+  void setLastVisitedChallenge(String url) async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    prefs.setString('lastVisitedChallenge', url);
+  }
+
   void routeToChallengeView(String url, Block block, String challengeId) {
     _navigationService.navigateTo(
       Routes.challengeView,

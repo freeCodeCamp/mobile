@@ -69,7 +69,9 @@ class LearnLandingView extends StatelessWidget {
                       );
                     },
                   ),
-                  const ContinueLearningButton(),
+                  ContinueLearningButton(
+                    model: model,
+                  ),
                   const SizedBox(height: 16),
                   FutureBuilder<List<SuperBlockButtonData>>(
                     future: model.superBlockButtons,
@@ -195,7 +197,10 @@ class LearnLandingView extends StatelessWidget {
 class ContinueLearningButton extends StatelessWidget {
   const ContinueLearningButton({
     Key? key,
+    required this.model,
   }) : super(key: key);
+
+  final LearnLandingViewModel model;
 
   @override
   Widget build(BuildContext context) {
@@ -206,7 +211,9 @@ class ContinueLearningButton extends StatelessWidget {
       ),
       height: 80,
       child: ElevatedButton(
-        onPressed: () {},
+        onPressed: () {
+          model.fastRouteToChallenge();
+        },
         style: ElevatedButton.styleFrom(
           backgroundColor: const Color.fromRGBO(0x3b, 0x3b, 0x4f, 1),
           side: const BorderSide(

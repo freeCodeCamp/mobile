@@ -14,6 +14,7 @@ import 'package:freecodecamp/service/learn/learn_offline_service.dart';
 import 'package:freecodecamp/service/learn/learn_service.dart';
 import 'package:freecodecamp/ui/widgets/setup_dialog_ui.dart';
 import 'package:http/http.dart' as http;
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:stacked/stacked.dart';
 import 'package:stacked_services/stacked_services.dart';
 
@@ -34,11 +35,27 @@ class LearnLandingViewModel extends BaseViewModel {
 
   Future<List<SuperBlockButtonData>>? superBlockButtons;
 
+  String _challengeUrl = '';
+  String get challengeUrl => _challengeUrl;
+
+  bool _hasLastVisitedChallenge = false;
+  bool get hasLastVisitedChallenge => _hasLastVisitedChallenge;
+
   bool _isLoggedIn = false;
   bool get isLoggedIn => _isLoggedIn;
 
   set setSuperBlockButtons(value) {
     superBlockButtons = value;
+    notifyListeners();
+  }
+
+  set setHasLastVisitedChallenge(value) {
+    _hasLastVisitedChallenge = value;
+    notifyListeners();
+  }
+
+  set setChallengeUrl(value) {
+    _challengeUrl = value;
     notifyListeners();
   }
 
@@ -48,7 +65,19 @@ class LearnLandingViewModel extends BaseViewModel {
     initLoggedInListener();
 
     setSuperBlockButtons = getSuperBlocks();
+
+    retrieveLastVisitedChallenge();
   }
+
+  void retrieveLastVisitedChallenge() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    setHasLastVisitedChallenge =
+        prefs.getString('lastVisitedChallenge')?.isNotEmpty ?? false;
+    setChallengeUrl = prefs.getString('lastVisitedChallenge') ?? '';
+    notifyListeners();
+  }
+
+  void fastRouteToChallenge() async {}
 
   Future<List<SuperBlockButtonData>> getSuperBlocks() async {
     return await _learnOfflineService.hasInternet()
