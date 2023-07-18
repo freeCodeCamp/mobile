@@ -1,11 +1,11 @@
 import 'package:firebase_core/firebase_core.dart';
-import 'package:firebase_crashlytics/firebase_crashlytics.dart';
-import 'package:fk_user_agent/fk_user_agent.dart';
+//import 'package:firebase_crashlytics/firebase_crashlytics.dart';
+//import 'package:fk_user_agent/fk_user_agent.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:freecodecamp/app/app.locator.dart';
 import 'package:freecodecamp/app/app.router.dart';
-import 'package:freecodecamp/firebase_options.dart';
+//import 'package:freecodecamp/firebase_options.dart';
 import 'package:freecodecamp/service/audio/audio_service.dart';
 import 'package:freecodecamp/service/authentication/authentication_service.dart';
 import 'package:freecodecamp/service/firebase/analytics_service.dart';
@@ -46,10 +46,10 @@ Future<void> main({bool testing = false}) async {
 }
 
 class FreeCodeCampMobileApp extends StatelessWidget {
-  const FreeCodeCampMobileApp({Key? key}) : super(key: key);
+  const FreeCodeCampMobileApp({Key key}) : super(key: key);
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
+    return const MaterialApp(
       title: 'freeCodeCamp',
       theme: FccTheme.themeDark,
       debugShowCheckedModeBanner: false,
