@@ -125,21 +125,13 @@ class LearnLandingView extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.center,
         children: const [
           Text(
-            'You are offline, and have no downloads!',
+            'You are offline, please try again in a moment.',
             style: TextStyle(
               fontWeight: FontWeight.bold,
               fontSize: 18,
               height: 1.2,
             ),
             textAlign: TextAlign.center,
-          ),
-          Text(
-            'Try to download some challenges if you have an unstable connection.',
-            textAlign: TextAlign.center,
-            style: TextStyle(
-              height: 2.2,
-              fontSize: 16,
-            ),
           ),
         ],
       ),
