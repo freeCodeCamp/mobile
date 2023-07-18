@@ -69,6 +69,7 @@ class LearnLandingView extends StatelessWidget {
                       );
                     },
                   ),
+                  const ContinueLearningButton(),
                   const SizedBox(height: 16),
                   FutureBuilder<List<SuperBlockButtonData>>(
                     future: model.superBlockButtons,
@@ -187,6 +188,59 @@ class LearnLandingView extends StatelessWidget {
 
         return const Center(child: CircularProgressIndicator());
       }),
+    );
+  }
+}
+
+class ContinueLearningButton extends StatelessWidget {
+  const ContinueLearningButton({
+    Key? key,
+  }) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      padding: const EdgeInsets.symmetric(
+        vertical: 6,
+        horizontal: 8,
+      ),
+      height: 80,
+      child: ElevatedButton(
+        onPressed: () {},
+        style: ElevatedButton.styleFrom(
+          backgroundColor: const Color.fromRGBO(0x3b, 0x3b, 0x4f, 1),
+          side: const BorderSide(
+            width: 2,
+            color: Colors.white,
+          ),
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(0),
+          ),
+        ),
+        child: Row(
+          children: [
+            Align(
+              alignment: Alignment.centerLeft,
+              child: SizedBox(
+                width: MediaQuery.of(context).size.width * 0.70,
+                child: const Text(
+                  'Continue where you left off',
+                  overflow: TextOverflow.ellipsis,
+                  maxLines: 2,
+                  textAlign: TextAlign.left,
+                  style: TextStyle(fontSize: 20),
+                ),
+              ),
+            ),
+            const Expanded(
+              child: Align(
+                alignment: Alignment.centerRight,
+                child: Icon(Icons.arrow_forward_ios),
+              ),
+            )
+          ],
+        ),
+      ),
     );
   }
 }
