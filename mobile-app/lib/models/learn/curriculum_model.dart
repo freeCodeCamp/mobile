@@ -99,20 +99,21 @@ class Block {
       challenges: (data['challengeOrder'] as List)
           .map<ChallengeOrder>(
             (dynamic challenge) => ChallengeOrder(
-              id: challenge['id'],
-              title: challenge['title'],
+              id: challenge[0] ?? challenge['id'],
+              title: challenge[1] ?? challenge['title'],
             ),
           )
           .toList(),
       challengeTiles: (data['challengeOrder'] as List)
           .map<ChallengeListTile>(
             (dynamic challenge) => ChallengeListTile(
-              id: challenge['id'],
-              name: challenge['title'],
-              dashedName: challenge['title']
-                  .toLowerCase()
-                  .replaceAll(' ', '-')
-                  .replaceAll(RegExp(r"[@':]"), ''),
+              id: challenge[0] ?? challenge['id'],
+              name: challenge[1] ?? challenge['title'],
+              dashedName: challenge[1] ??
+                  challenge['title']
+                      .toLowerCase()
+                      .replaceAll(' ', '-')
+                      .replaceAll(RegExp(r"[@':]"), ''),
             ),
           )
           .toList(),
