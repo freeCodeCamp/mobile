@@ -69,9 +69,10 @@ class LearnLandingView extends StatelessWidget {
                       );
                     },
                   ),
-                  ContinueLearningButton(
-                    model: model,
-                  ),
+                  if (model.hasLastVisitedChallenge)
+                    ContinueLearningButton(
+                      model: model,
+                    ),
                   const SizedBox(height: 16),
                   FutureBuilder<List<SuperBlockButtonData>>(
                     future: model.superBlockButtons,

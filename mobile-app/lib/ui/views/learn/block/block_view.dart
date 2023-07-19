@@ -308,8 +308,6 @@ class ChallengeTile extends StatelessWidget {
             String fullUrl =
                 '$url/challenges/${block.superBlock.dashedName}/${block.dashedName}/$challengeId.json';
 
-            model.setLastVisitedChallenge(fullUrl);
-
             model.routeToChallengeView(
               fullUrl,
               block,

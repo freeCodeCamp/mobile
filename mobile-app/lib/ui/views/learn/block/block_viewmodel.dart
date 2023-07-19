@@ -82,11 +82,6 @@ class BlockViewModel extends BaseViewModel {
     notifyListeners();
   }
 
-  void setLastVisitedChallenge(String url) async {
-    SharedPreferences prefs = await SharedPreferences.getInstance();
-    prefs.setString('lastVisitedChallenge', url);
-  }
-
   void routeToChallengeView(String url, Block block, String challengeId) {
     _navigationService.navigateTo(
       Routes.challengeView,
@@ -98,6 +93,17 @@ class BlockViewModel extends BaseViewModel {
         isProject: block.challenges.length == 1,
       ),
     );
+
+    setLastVisitedChallenge(url, block);
+  }
+
+  void setLastVisitedChallenge(String url, Block block) async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    prefs.setStringList('lastVisitedChallenge', [
+      url,
+      block.superBlock.dashedName,
+      block.dashedName,
+    ]);
   }
 
   Future<void> routeToCertification(Block block) async {

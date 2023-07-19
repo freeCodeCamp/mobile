@@ -7,6 +7,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:freecodecamp/app/app.locator.dart';
 import 'package:freecodecamp/app/app.router.dart';
+import 'package:freecodecamp/models/learn/challenge_model.dart';
 import 'package:freecodecamp/models/learn/curriculum_model.dart';
 import 'package:freecodecamp/models/learn/motivational_quote_model.dart';
 import 'package:freecodecamp/service/authentication/authentication_service.dart';
@@ -72,12 +73,56 @@ class LearnLandingViewModel extends BaseViewModel {
   void retrieveLastVisitedChallenge() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     setHasLastVisitedChallenge =
-        prefs.getString('lastVisitedChallenge')?.isNotEmpty ?? false;
-    setChallengeUrl = prefs.getString('lastVisitedChallenge') ?? '';
+        prefs.getStringList('lastVisitedChallenge')?.isNotEmpty ?? false;
     notifyListeners();
   }
 
-  void fastRouteToChallenge() async {}
+  void fastRouteToChallenge() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    List<String>? lastVisitedChallenge = prefs.getStringList(
+      'lastVisitedChallenge',
+    );
+
+    // Values
+    // 0: full challenge url
+    // 1: superblock dashed name
+    // 2: block dashed name
+
+    if (lastVisitedChallenge != null) {
+      Challenge challenge = await learnOfflineService.getChallenge(
+        lastVisitedChallenge[0],
+      );
+
+      String baseUrl = LearnService.baseUrl;
+
+      final http.Response res = await http.get(
+        Uri.parse('$baseUrl/${lastVisitedChallenge[1]}.json'),
+      );
+
+      if (res.statusCode == 200) {
+        List<Block> blocks = SuperBlock.fromJson(
+          jsonDecode(res.body),
+          lastVisitedChallenge[1],
+          'not available',
+        ).blocks as List<Block>;
+
+        Block block = blocks.firstWhere(
+          (element) => element.dashedName == lastVisitedChallenge[2],
+        );
+
+        _navigationService.navigateTo(
+          Routes.challengeView,
+          arguments: ChallengeViewArguments(
+            url: lastVisitedChallenge[0],
+            block: block,
+            challengeId: challenge.id,
+            challengesCompleted: 10,
+            isProject: block.challenges.length == 1,
+          ),
+        );
+      }
+    }
+  }
 
   Future<List<SuperBlockButtonData>> getSuperBlocks() async {
     return await _learnOfflineService.hasInternet()
