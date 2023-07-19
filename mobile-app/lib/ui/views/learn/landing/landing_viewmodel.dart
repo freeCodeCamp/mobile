@@ -36,9 +36,6 @@ class LearnLandingViewModel extends BaseViewModel {
 
   Future<List<SuperBlockButtonData>>? superBlockButtons;
 
-  String _challengeUrl = '';
-  String get challengeUrl => _challengeUrl;
-
   bool _hasLastVisitedChallenge = false;
   bool get hasLastVisitedChallenge => _hasLastVisitedChallenge;
 
@@ -52,11 +49,6 @@ class LearnLandingViewModel extends BaseViewModel {
 
   set setHasLastVisitedChallenge(value) {
     _hasLastVisitedChallenge = value;
-    notifyListeners();
-  }
-
-  set setChallengeUrl(value) {
-    _challengeUrl = value;
     notifyListeners();
   }
 
@@ -86,7 +78,8 @@ class LearnLandingViewModel extends BaseViewModel {
     // Values
     // 0: full challenge url
     // 1: superblock dashed name
-    // 2: block dashed name
+    // 2: superblock name
+    // 3: block dashed name
 
     if (lastVisitedChallenge != null) {
       Challenge challenge = await learnOfflineService.getChallenge(
@@ -103,11 +96,11 @@ class LearnLandingViewModel extends BaseViewModel {
         List<Block> blocks = SuperBlock.fromJson(
           jsonDecode(res.body),
           lastVisitedChallenge[1],
-          'not available',
+          lastVisitedChallenge[2],
         ).blocks as List<Block>;
 
         Block block = blocks.firstWhere(
-          (element) => element.dashedName == lastVisitedChallenge[2],
+          (element) => element.dashedName == lastVisitedChallenge[3],
         );
 
         _navigationService.navigateTo(

@@ -102,6 +102,7 @@ class BlockViewModel extends BaseViewModel {
     prefs.setStringList('lastVisitedChallenge', [
       url,
       block.superBlock.dashedName,
+      block.superBlock.name,
       block.dashedName,
     ]);
   }

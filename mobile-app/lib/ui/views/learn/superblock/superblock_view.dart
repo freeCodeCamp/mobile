@@ -3,6 +3,7 @@ import 'package:freecodecamp/models/learn/curriculum_model.dart';
 import 'package:freecodecamp/service/authentication/authentication_service.dart';
 import 'package:freecodecamp/ui/views/learn/block/block_view.dart';
 import 'package:freecodecamp/ui/views/learn/superblock/superblock_viewmodel.dart';
+import 'package:freecodecamp/ui/widgets/drawer_widget/drawer_widget_view.dart';
 import 'package:stacked/stacked.dart';
 
 class SuperBlockView extends StatelessWidget {
@@ -28,6 +29,7 @@ class SuperBlockView extends StatelessWidget {
         appBar: AppBar(
           title: Text(superBlockName),
         ),
+        drawer: const DrawerWidgetView(),
         body: FutureBuilder<SuperBlock>(
           future: model.getSuperBlockData(
             superBlockDashedName,
