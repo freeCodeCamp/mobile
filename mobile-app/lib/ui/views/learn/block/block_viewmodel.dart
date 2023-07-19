@@ -93,18 +93,6 @@ class BlockViewModel extends BaseViewModel {
         isProject: block.challenges.length == 1,
       ),
     );
-
-    setLastVisitedChallenge(url, block);
-  }
-
-  void setLastVisitedChallenge(String url, Block block) async {
-    SharedPreferences prefs = await SharedPreferences.getInstance();
-    prefs.setStringList('lastVisitedChallenge', [
-      url,
-      block.superBlock.dashedName,
-      block.superBlock.name,
-      block.dashedName,
-    ]);
   }
 
   Future<void> routeToCertification(Block block) async {
