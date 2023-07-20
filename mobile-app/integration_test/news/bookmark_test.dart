@@ -26,7 +26,7 @@ void main() {
     await tester.tap(news);
     await tester.pumpAndSettle();
 
-    await binding.takeScreenshot('news-feed');
+    await binding.takeScreenshot('news/news-feed');
 
     // Tap on the first tutorial
     final Finder firstTutorial = find.byType(NewsFeedLazyLoading).first;
@@ -44,7 +44,7 @@ void main() {
     await tester.tap(firstTutorialImage);
     await tester.pumpAndSettle();
     await tester.pumpAndSettle(const Duration(seconds: 3));
-    await binding.takeScreenshot('news-tutorial');
+    await binding.takeScreenshot('news/news-tutorial');
 
     // Tap on the bookmark button and store tutorial title and author
     final Finder bookmarkButton = find.byKey(const Key('bookmark_btn'));
@@ -66,7 +66,7 @@ void main() {
     await tester.pumpAndSettle();
     await tester.tap(find.byTooltip('Bookmarks'));
     await tester.pumpAndSettle();
-    await binding.takeScreenshot('news-bookmark-feed');
+    await binding.takeScreenshot('news/news-bookmark-feed');
 
     // Check if tutorial is in bookmark view and it has same title and author
     final Finder bookmarkTutorial =
