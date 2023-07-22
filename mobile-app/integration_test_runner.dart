@@ -61,7 +61,6 @@ brew install applesimutils
           '--no-pub',
           '--driver=test_driver/integration_test.dart',
           '--target=$testFile',
-          '--device-id=iPhone 14 Pro Max'
         ],
         runInShell: true);
 
