@@ -18,6 +18,8 @@ workflows:
       flutter: 3.7.12
       xcode: latest
       cocoapods: default
+      groups:
+        - Mobile
 
     cache:
       cache_paths:
@@ -49,14 +51,15 @@ workflows:
 
       - name: Boot iOS simulator
         script: |
+          xcrun simctl shutdown all
           xcrun simctl boot "iPhone 14 Pro Max"
           xcrun simctl bootstatus "iPhone 14 Pro Max"
 
       - name: Run integration tests
-        script: dart integration_test_runner.dart
+        script: dart integration_test_runner.dart --ios
 
       - name: Move screenshots to artifacts
-        script: cp -r mobile-app/screenshots $CM_EXPORT_DIR
+        script: cp -r screenshots $CM_EXPORT_DIR
 
       - name: Build iOS app
         script: flutter build ipa --release --no-codesign
@@ -87,6 +90,8 @@ workflows:
       ios_signing:
         distribution_type: app_store
         bundle_identifier: org.freecodecamp.ios
+      groups:
+        - Mobile
 
     cache:
       cache_paths:
@@ -121,14 +126,15 @@ workflows:
 
       - name: Boot iOS simulator
         script: |
+          xcrun simctl shutdown all
           xcrun simctl boot "iPhone 14 Pro Max"
           xcrun simctl bootstatus "iPhone 14 Pro Max"
 
       - name: Run integration tests
-        script: dart integration_test_runner.dart
+        script: dart integration_test_runner.dart --ios
 
       - name: Move screenshots to artifacts
-        script: cp -r mobile-app/screenshots $CM_EXPORT_DIR
+        script: cp -r screenshots $CM_EXPORT_DIR
 
       - name: Set up code signing identities
         script: xcode-project use-profiles

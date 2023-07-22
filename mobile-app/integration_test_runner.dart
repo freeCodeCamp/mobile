@@ -1,6 +1,3 @@
-// applesimutils --byName "iPhone 14 Pro Max" --bundle org.freecodecamp.ios --setPermissions notifications=YES && flutter drive --no-pub --driver=test_driver/integration_test.dart --target=integration_test/news/bookmark_test.dart
-// applesimutils --byName "iPhone 14 Pro Max" --bundle org.freecodecamp.ios --setPermissions notifications=YES && flutter drive --no-pub --driver=test_driver/integration_test.dart --target=integration_test/learn/superblock.dart
-
 import 'dart:io';
 
 void main(List<String> args) {
@@ -55,15 +52,20 @@ brew install applesimutils
       }
     }
 
+    print('Testing: $testFile');
+
     final result = Process.runSync(
         'flutter',
         [
           'drive',
           '--no-pub',
           '--driver=test_driver/integration_test.dart',
-          '--target=$testFile'
+          '--target=$testFile',
+          '--device-id=iPhone 14 Pro Max'
         ],
         runInShell: true);
+
+    print(result.stdout);
 
     if (result.exitCode != 0) {
       print('Test failed: $testFile\n');
