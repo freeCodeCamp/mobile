@@ -89,12 +89,18 @@ class NewsFeedViewModel extends BaseViewModel {
     String url =
         "${dotenv.env['NEWSURL']}posts/?key=${dotenv.env['NEWSKEY']}$concact";
 
+    var stopWatch = Stopwatch();
+
+    stopWatch.start();
     final response = await http.get(
       Uri.parse(url),
       headers: {
         'Cache-Control': 'no-cache',
       },
     ).timeout(const Duration(minutes: 3));
+    stopWatch.stop();
+
+    print(stopWatch.elapsed);
 
     if (response.statusCode == 200) {
       var tutorialJson = json.decode(response.body)['posts'];
