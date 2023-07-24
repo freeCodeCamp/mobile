@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'dart:io';
 
+import 'package:fk_user_agent/fk_user_agent.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
@@ -96,6 +97,7 @@ class NewsFeedViewModel extends BaseViewModel {
       Uri.parse(url),
       headers: {
         'Cache-Control': 'no-cache',
+        'User-Agent': FkUserAgent.userAgent ?? 'Unknown',
       },
     ).timeout(const Duration(minutes: 3));
     stopWatch.stop();
