@@ -339,7 +339,7 @@ class AuthenticationService {
         isLoggedInStream.sink.add(false);
         await logout();
       }
-    } on DioError {
+    } on DioException {
       staticIsloggedIn = false;
       isLoggedInStream.sink.add(false);
       await logout();
