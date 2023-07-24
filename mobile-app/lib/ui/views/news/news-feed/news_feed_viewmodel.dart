@@ -95,7 +95,7 @@ class NewsFeedViewModel extends BaseViewModel {
         'Cache-Control': 'no-cache',
       },
     );
-    print(response.headers);
+
     if (response.statusCode == 200) {
       var tutorialJson = json.decode(response.body)['posts'];
       for (int i = 0; i < tutorialJson?.length; i++) {
