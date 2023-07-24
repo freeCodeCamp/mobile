@@ -94,7 +94,7 @@ class NewsFeedViewModel extends BaseViewModel {
       headers: {
         'Cache-Control': 'no-cache',
       },
-    );
+    ).timeout(const Duration(minutes: 3));
 
     if (response.statusCode == 200) {
       var tutorialJson = json.decode(response.body)['posts'];
