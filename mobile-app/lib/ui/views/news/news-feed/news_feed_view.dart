@@ -59,7 +59,7 @@ class NewsFeedView extends StatelessWidget {
                 },
               );
             } else if (snapshot.hasError) {
-              return errorMessage();
+              return errorMessage(snapshot.error.toString());
             }
             return const Center(child: CircularProgressIndicator());
           },
@@ -68,7 +68,7 @@ class NewsFeedView extends StatelessWidget {
     );
   }
 
-  Column errorMessage() {
+  Column errorMessage([String error = '']) {
     return Column(
       mainAxisAlignment: MainAxisAlignment.center,
       crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -92,6 +92,7 @@ class NewsFeedView extends StatelessWidget {
             },
           ),
         ),
+        Text('Error:\n$error')
       ],
     );
   }

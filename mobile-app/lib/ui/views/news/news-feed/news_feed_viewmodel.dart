@@ -98,6 +98,7 @@ class NewsFeedViewModel extends BaseViewModel {
         }
         tutorials.add(Tutorial.fromJson(tutorialJson[i]));
       }
+      print('Length of tutorials: ${tutorials.length}');
       return tutorials;
     } else {
       throw Exception(response.body);
