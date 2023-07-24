@@ -89,7 +89,13 @@ class NewsFeedViewModel extends BaseViewModel {
     String url =
         "${dotenv.env['NEWSURL']}posts/?key=${dotenv.env['NEWSKEY']}$concact";
 
-    final response = await http.get(Uri.parse(url));
+    final response = await http.get(
+      Uri.parse(url),
+      headers: {
+        'Cache-Control': 'no-cache',
+      },
+    );
+    print(response.headers);
     if (response.statusCode == 200) {
       var tutorialJson = json.decode(response.body)['posts'];
       for (int i = 0; i < tutorialJson?.length; i++) {
@@ -101,6 +107,7 @@ class NewsFeedViewModel extends BaseViewModel {
       print('Length of tutorials: ${tutorials.length}');
       return tutorials;
     } else {
+      print('ERROR: ${response.statusCode}');
       throw Exception(response.body);
     }
   }
