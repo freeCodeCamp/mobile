@@ -5,7 +5,7 @@ on:
     branches:
       - main
     paths:
-      - 'mobile-app/**'
+      - "mobile-app/**"
   push:
     branches:
       - main
@@ -62,11 +62,16 @@ jobs:
 
       - name: Create .env file
         run: |
-          echo "DEVELOPMENTMODE=true" > .env
-          echo "NEWSURL=https://www.freecodecamp.org/news/ghost/api/v3/content/" >> .env
+          echo "NEWSURL=https://www.freecodecamp.org/news/ghost/api/v3/content/" > .env
+          echo "NEWSKEY=$GHOST_NEWSKEY" >> .env
+          echo "ALGOLIAAPPID=$ALGOLIA_APP_ID" >> .env
+          echo "ALGOLIAKEY=$ALGOLIA_KEY" >> .env
           echo "AUTH0_DOMAIN=$AUTH0_DOMAIN" >> .env
           echo "AUTH0_CLIENT_ID=$AUTH0_CLIENT_ID" >> .env
         env:
+          GHOST_NEWSKEY: ${{ secrets.GHOST_NEWSKEY }}
+          ALGOLIA_APP_ID: ${{ secrets.ALGOLIA_APP_ID }}
+          ALGOLIA_KEY: ${{ secrets.ALGOLIA_KEY }}
           AUTH0_DOMAIN: ${{ secrets.AUTH0_DOMAIN }}
           AUTH0_CLIENT_ID: ${{ secrets.AUTH0_CLIENT_ID }}
 
