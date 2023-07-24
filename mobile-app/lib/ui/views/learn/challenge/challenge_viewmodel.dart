@@ -1,8 +1,6 @@
 import 'dart:convert';
-import 'package:flutter/material.dart';
-import 'package:flutter_inappwebview/flutter_inappwebview.dart';
-import 'package:phone_ide/phone_ide.dart';
 
+import 'package:flutter_inappwebview/flutter_inappwebview.dart';
 import 'package:freecodecamp/app/app.locator.dart';
 import 'package:freecodecamp/app/app.router.dart';
 import 'package:freecodecamp/enums/dialog_type.dart';
@@ -13,17 +11,15 @@ import 'package:freecodecamp/models/learn/curriculum_model.dart';
 import 'package:freecodecamp/service/learn/learn_file_service.dart';
 import 'package:freecodecamp/service/learn/learn_offline_service.dart';
 import 'package:freecodecamp/service/learn/learn_service.dart';
-import 'package:freecodecamp/service/authentication/authentication_service.dart';
-import 'package:freecodecamp/ui/views/learn/superblock/superblock_view.dart';
 import 'package:freecodecamp/ui/views/learn/test_runner.dart';
 import 'package:freecodecamp/ui/widgets/setup_dialog_ui.dart';
 import 'package:html/dom.dart' as dom;
 import 'package:html/parser.dart';
 import 'package:http/http.dart' as http;
+import 'package:phone_ide/phone_ide.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:stacked/stacked.dart';
 import 'package:stacked_services/stacked_services.dart';
-import 'package:url_launcher/url_launcher.dart';
 
 class ChallengeViewModel extends BaseViewModel {
   String? _editorText;
@@ -219,33 +215,35 @@ class ChallengeViewModel extends BaseViewModel {
     int challengesCompleted,
   ) async {
     setupDialogUi();
-    learnService.init();
 
     setChallenge = learnOfflineService.getChallenge(url, challengeId);
     Challenge challenge = await _challenge!;
 
-    List<ChallengeFile> currentEditedChallenge = challenge.files
-        .where((element) => element.editableRegionBoundaries.isNotEmpty)
-        .toList();
+    if (challenge.challengeType == 11 || challenge.challengeType == 10) {
+    } else {
+      List<ChallengeFile> currentEditedChallenge = challenge.files
+          .where((element) => element.editableRegionBoundaries.isNotEmpty)
+          .toList();
 
-    if (editorText == null) {
-      String text = await fileService.getExactFileFromCache(
-        challenge,
-        currentEditedChallenge.isEmpty
-            ? challenge.files.first
-            : currentEditedChallenge.first,
-      );
+      if (editorText == null) {
+        String text = await fileService.getExactFileFromCache(
+          challenge,
+          currentEditedChallenge.isEmpty
+              ? challenge.files.first
+              : currentEditedChallenge.first,
+        );
 
-      if (text != '') {
-        setEditorText = text;
+        if (text != '') {
+          setEditorText = text;
+        }
       }
+      setCurrentSelectedFile = currentEditedChallenge.isEmpty
+          ? challenge.files[0].name
+          : currentEditedChallenge[0].name;
     }
 
     setBlock = block;
     setChallengesCompleted = challengesCompleted;
-    setCurrentSelectedFile = currentEditedChallenge.isEmpty
-        ? challenge.files[0].name
-        : currentEditedChallenge[0].name;
   }
 
   void initiateFile(
@@ -372,19 +370,6 @@ class ChallengeViewModel extends BaseViewModel {
     notifyListeners();
   }
 
-  Future forumHelpDialog(String url) async {
-    DialogResponse? res = await _dialogService.showCustomDialog(
-        barrierDismissible: true,
-        variant: DialogType.buttonForm,
-        title: 'Ask for Help',
-        description:
-            "If you've already tried the Read-Search-Ask method, then you can try asking for help on the freeCodeCamp forum.",
-        mainButtonTitle: 'Create a post');
-    if (res != null && res.confirmed) {
-      launchUrl(Uri.parse(url));
-    }
-  }
-
   ChallengeFile currentFile(Challenge challenge) {
     if (currentSelectedFile.isNotEmpty) {
       ChallengeFile file = challenge.files.firstWhere(
@@ -406,7 +391,7 @@ class ChallengeViewModel extends BaseViewModel {
         description: 'Are you sure you want to reset your code?',
         mainButtonTitle: 'Reset');
 
-    if (res!.confirmed) {
+    if (res?.confirmed == true) {
       Challenge? currChallenge = await challenge;
 
       for (ChallengeFile file in currChallenge!.files) {
@@ -434,75 +419,6 @@ class ChallengeViewModel extends BaseViewModel {
             challengesCompleted: challengesCompleted,
             isProject: block!.challenges.length == 1),
       );
-    }
-  }
-
-  void updateProgressOnPop(BuildContext context) async {
-    learnOfflineService.hasInternet().then(
-          (value) => Navigator.pushReplacement(
-            context,
-            PageRouteBuilder(
-              transitionDuration: Duration.zero,
-              pageBuilder: (
-                context,
-                animation1,
-                animation2,
-              ) =>
-                  SuperBlockView(
-                superBlockDashedName: block!.superBlock.dashedName,
-                superBlockName: block!.superBlock.name,
-                hasInternet: value,
-              ),
-            ),
-          ),
-        );
-  }
-
-  void passChallenge(Challenge? challenge) async {
-    SharedPreferences prefs = await SharedPreferences.getInstance();
-    if (challenge != null) {
-      List challengeFiles = challenge.files.map((file) {
-        return {
-          'contents':
-              prefs.getString('${challenge.id}.${file.name}') ?? file.contents,
-          'ext': file.ext.name,
-          'history': file.history,
-          'key': file.fileKey,
-          'name': file.name,
-        };
-      }).toList();
-      await learnService.postChallengeCompleted(challenge, challengeFiles);
-    }
-  }
-
-  void goToNextChallenge(
-    int maxChallenges,
-    int challengesCompleted,
-  ) async {
-    Challenge? currChallenge = await challenge;
-    if (currChallenge != null) {
-      if (AuthenticationService.staticIsloggedIn) {
-        passChallenge(currChallenge);
-      }
-      var challengeIndex = block!.challengeTiles.indexWhere(
-        (element) => element.id == currChallenge.id,
-      );
-      if (challengeIndex == maxChallenges - 1) {
-        _navigationService.back();
-      } else {
-        String challenge = block!.challengeTiles[challengeIndex + 1].id;
-        String url = LearnService.baseUrl;
-        _navigationService.replaceWith(
-          Routes.challengeView,
-          arguments: ChallengeViewArguments(
-              url:
-                  '$url/challenges/${block!.superBlock.dashedName}/${block!.dashedName}/$challenge.json',
-              block: block!,
-              challengeId: block!.challengeTiles[challengeIndex + 1].id,
-              challengesCompleted: challengesCompleted + 1,
-              isProject: block!.challenges.length == 1),
-        );
-      }
     }
   }
 

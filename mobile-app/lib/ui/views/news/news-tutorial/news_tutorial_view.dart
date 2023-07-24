@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
-
 import 'package:freecodecamp/models/news/tutorial_model.dart';
 import 'package:freecodecamp/ui/views/news/news-bookmark/news_bookmark_widget.dart';
+import 'package:freecodecamp/ui/views/news/news-tutorial/news_tutorial_viewmodel.dart';
+import 'package:freecodecamp/ui/views/news/widgets/back_to_top_button.dart';
 import 'package:share_plus/share_plus.dart';
 import 'package:stacked/stacked.dart';
-import 'news_tutorial_viewmodel.dart';
 
 class NewsTutorialHeader extends StatelessWidget {
   const NewsTutorialHeader({Key? key, required this.tutorial})
@@ -89,7 +89,7 @@ class NewsTutorialView extends StatelessWidget {
                     child: Stack(
                       children: [
                         lazyLoadHtml(tutorial!.text!, context, tutorial, model),
-                        bottomButtons(tutorial, model)
+                        bottomButtons(tutorial, model),
                       ],
                     ),
                   )
@@ -104,6 +104,11 @@ class NewsTutorialView extends StatelessWidget {
             );
           },
         ),
+        floatingActionButton: model.showToTopButton
+            ? BackToTopButton(
+                onPressed: () => model.goToTop(),
+              )
+            : null,
       ),
       viewModelBuilder: () => NewsTutorialViewModel(),
     );

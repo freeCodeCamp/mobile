@@ -13,11 +13,20 @@ void main() {
 
   group('News Component', () {
     testWidgets('should bookmark tutorial', (WidgetTester tester) async {
-      // Start app
+      // Start app and navigate to news view
       tester.printToConsole('Test starting');
       await app.main(testing: true);
       await binding.convertFlutterSurfaceToImage();
       await tester.pumpAndSettle();
+
+      final Finder drawer = find.byIcon(Icons.menu);
+      await tester.tap(drawer);
+      await tester.pumpAndSettle();
+
+      final Finder news = find.byKey(const Key('news'));
+      await tester.tap(news);
+      await tester.pumpAndSettle();
+
       await binding.takeScreenshot('news-feed');
 
       // Tap on the first tutorial
@@ -28,10 +37,10 @@ void main() {
             matching: find.byType(AspectRatio),
           )
           .first;
-      await tester.pumpAndSettle(const Duration(seconds: 3));
       final ValueKey firstTutorialKey = tester
           .firstWidget<NewsFeedLazyLoading>(firstTutorial)
           .key! as ValueKey;
+
       expect(firstTutorial, findsOneWidget);
       expect(firstTutorialImage, findsOneWidget);
       await tester.tap(firstTutorialImage);
