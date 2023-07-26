@@ -1,6 +1,7 @@
 name: Deploy Mobile App
 
 on:
+  workflow_dispatch:
   push:
     branches:
       - prod
@@ -75,6 +76,12 @@ jobs:
 
       - name: Analyze code
         run: flutter analyze
+
+      - name: Run unit tests
+        run: |
+          cd test
+          flutter test unit
+          flutter test services
 
       - name: Run tests in emulator
         uses: reactivecircus/android-emulator-runner@d94c3fbe4fe6a29e4a5ba47c12fb47677c73656b # v2
