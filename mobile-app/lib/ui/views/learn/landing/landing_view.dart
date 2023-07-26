@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:freecodecamp/models/learn/curriculum_model.dart';
 import 'package:freecodecamp/models/learn/motivational_quote_model.dart';
 import 'package:freecodecamp/models/main/user_model.dart';
+import 'package:freecodecamp/service/authentication/authentication_service.dart';
 import 'package:freecodecamp/ui/views/learn/landing/landing_viewmodel.dart';
 import 'package:freecodecamp/ui/widgets/drawer_widget/drawer_widget_view.dart';
 import 'package:stacked/stacked.dart';
@@ -69,7 +70,8 @@ class LearnLandingView extends StatelessWidget {
                       );
                     },
                   ),
-                  if (model.hasLastVisitedChallenge)
+                  if (model.hasLastVisitedChallenge &&
+                      AuthenticationService.staticIsloggedIn)
                     ContinueLearningButton(
                       model: model,
                     ),
@@ -216,11 +218,7 @@ class ContinueLearningButton extends StatelessWidget {
           model.fastRouteToChallenge();
         },
         style: ElevatedButton.styleFrom(
-          backgroundColor: const Color.fromRGBO(0x3b, 0x3b, 0x4f, 1),
-          side: const BorderSide(
-            width: 2,
-            color: Colors.white,
-          ),
+          backgroundColor: const Color.fromRGBO(0x19, 0x8E, 0xEE, 1),
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(0),
           ),
@@ -236,14 +234,17 @@ class ContinueLearningButton extends StatelessWidget {
                   overflow: TextOverflow.ellipsis,
                   maxLines: 2,
                   textAlign: TextAlign.left,
-                  style: TextStyle(fontSize: 20),
+                  style: TextStyle(
+                      fontSize: 20,
+                      fontFamily: 'lato',
+                      fontWeight: FontWeight.w700),
                 ),
               ),
             ),
             const Expanded(
               child: Align(
                 alignment: Alignment.centerRight,
-                child: Icon(Icons.arrow_forward_ios),
+                child: Icon(Icons.double_arrow),
               ),
             )
           ],
