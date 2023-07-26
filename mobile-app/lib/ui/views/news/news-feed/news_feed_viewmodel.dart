@@ -116,6 +116,8 @@ class NewsFeedViewModel extends BaseViewModel {
       return tutorials;
     } else {
       print('ERROR: ${response.statusCode}');
+      print(response.headers);
+      print(response.body);
       throw Exception(response.body);
     }
   }
