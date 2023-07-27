@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:freecodecamp/models/learn/curriculum_model.dart';
 import 'package:freecodecamp/models/learn/motivational_quote_model.dart';
 import 'package:freecodecamp/models/main/user_model.dart';
-import 'package:freecodecamp/service/authentication/authentication_service.dart';
 import 'package:freecodecamp/ui/views/learn/landing/landing_viewmodel.dart';
 import 'package:freecodecamp/ui/widgets/drawer_widget/drawer_widget_view.dart';
 import 'package:stacked/stacked.dart';
@@ -53,8 +52,7 @@ class LearnLandingView extends StatelessWidget {
                   ),
                   const QuoteWidget(),
                   if (!model.isLoggedIn) loginButton(model, context),
-                  if (model.hasLastVisitedChallenge &&
-                      AuthenticationService.staticIsloggedIn)
+                  if (model.hasLastVisitedChallenge && model.isLoggedIn)
                     ContinueLearningButton(
                       model: model,
                     ),
