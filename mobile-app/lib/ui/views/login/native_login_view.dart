@@ -225,6 +225,7 @@ class NativeLoginView extends StatelessWidget {
                                 child: Text(
                                   'Email a sign in code',
                                   style: textStyle,
+                                  textAlign: TextAlign.center,
                                 ),
                               ),
                             ),
