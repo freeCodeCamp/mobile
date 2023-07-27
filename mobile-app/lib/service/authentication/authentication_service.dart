@@ -100,10 +100,10 @@ class AuthenticationService {
         dotenv.get('DEVELOPMENTMODE', fallback: '').toLowerCase() == 'true';
     baseURL = isDevMode
         ? 'https://www.freecodecamp.dev'
-        : 'https://www.freecodecamp.dev';
+        : 'https://www.freecodecamp.org';
     baseApiURL = isDevMode
         ? 'https://api.freecodecamp.dev'
-        : 'https://api.freecodecamp.dev';
+        : 'https://api.freecodecamp.org';
   }
 
   Future<void> init() async {
