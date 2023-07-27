@@ -39,36 +39,19 @@ class LearnLandingView extends StatelessWidget {
             child: SingleChildScrollView(
               child: Column(
                 children: [
-                  const QuoteWidget(),
+                  const SizedBox(height: 32),
                   StreamBuilder(
                     stream: model.auth.isLoggedIn,
                     builder: (context, snapshot) {
                       return Column(
                         children: [
-                          if (model.isLoggedIn)
-                            Container(
-                                margin: const EdgeInsets.symmetric(
-                                  vertical: 4,
-                                  horizontal: 8,
-                                ),
-                                padding: const EdgeInsets.symmetric(
-                                  vertical: 16,
-                                  horizontal: 8,
-                                ),
-                                decoration: BoxDecoration(
-                                  color: const Color(0xFF0a0a23),
-                                  border: Border.all(),
-                                  borderRadius: BorderRadius.circular(15),
-                                ),
-                                constraints: BoxConstraints(
-                                  minWidth: MediaQuery.of(context).size.width,
-                                ),
-                                child: welcomeMessage(model)),
-                          if (!model.isLoggedIn) loginButton(model, context)
+                          if (model.isLoggedIn) welcomeMessage(model),
                         ],
                       );
                     },
                   ),
+                  const QuoteWidget(),
+                  if (!model.isLoggedIn) loginButton(model, context),
                   const SizedBox(height: 16),
                   FutureBuilder<List<SuperBlockButtonData>>(
                     future: model.superBlockButtons,
@@ -173,14 +156,12 @@ class LearnLandingView extends StatelessWidget {
         if (snapshot.hasData) {
           FccUserModel user = snapshot.data as FccUserModel;
 
-          return Container(
-            padding: const EdgeInsets.all(16),
-            child: Text(
-              'Welcome back ${user.username.startsWith('fcc') ? 'User' : user.username}!',
-              textAlign: TextAlign.center,
-              style: const TextStyle(
-                fontSize: 20,
-              ),
+          return Text(
+            'Welcome back, ${user.username.startsWith('fcc') ? 'User' : user.username}',
+            textAlign: TextAlign.center,
+            style: const TextStyle(
+              fontWeight: FontWeight.w700,
+              fontSize: 20,
             ),
           );
         }
@@ -277,11 +258,7 @@ class QuoteWidget extends StatelessWidget {
           MotivationalQuote quote = snapshot.data as MotivationalQuote;
 
           return Container(
-            margin: const EdgeInsets.symmetric(vertical: 8, horizontal: 8),
-            padding: const EdgeInsets.all(8),
-            constraints: const BoxConstraints(
-              minHeight: 200,
-            ),
+            padding: const EdgeInsets.all(16),
             child: Row(
               children: [
                 Expanded(
@@ -291,14 +268,18 @@ class QuoteWidget extends StatelessWidget {
                       Text(
                         '"${quote.quote}"',
                         textAlign: TextAlign.center,
-                        style: const TextStyle(fontSize: 20, height: 1.5),
+                        style:
+                            const TextStyle(fontSize: 18, fontFamily: 'Lato'),
                       ),
-                      Text(
-                        '- ${quote.author}',
-                        style: const TextStyle(
-                          fontStyle: FontStyle.italic,
-                          fontSize: 16,
-                          height: 1.5,
+                      Padding(
+                        padding: const EdgeInsets.all(8.0),
+                        child: Text(
+                          '- ${quote.author}',
+                          style: const TextStyle(
+                            fontStyle: FontStyle.italic,
+                            fontFamily: 'Lato',
+                            fontSize: 18,
+                          ),
                         ),
                       )
                     ],
