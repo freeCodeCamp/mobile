@@ -128,15 +128,12 @@ class LearnLandingViewModel extends BaseViewModel {
           hasInternet: true,
         );
 
-        _navigationService.navigateTo(
-          Routes.challengeView,
-          arguments: ChallengeViewArguments(
-            url: lastVisitedChallenge[0],
-            block: block,
-            challengeId: challenge.id,
-            challengesCompleted: completedChallenges,
-            isProject: block.challenges.length == 1,
-          ),
+        _navigationService.navigateToChallengeView(
+          url: lastVisitedChallenge[0],
+          block: block,
+          challengeId: challenge.id,
+          challengesCompleted: completedChallenges,
+          isProject: block.challenges.length == 1,
         );
       }
     }
