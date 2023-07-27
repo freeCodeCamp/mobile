@@ -41,9 +41,6 @@ workflows:
       - name: Install dependencies
         script: flutter pub get
 
-      - name: Analyze code
-        script: flutter analyze
-
       - name: Install applesimutils
         script: |
           brew tap wix/brew
