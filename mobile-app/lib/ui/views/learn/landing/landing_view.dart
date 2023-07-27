@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:freecodecamp/models/learn/curriculum_model.dart';
 import 'package:freecodecamp/models/learn/motivational_quote_model.dart';
 import 'package:freecodecamp/models/main/user_model.dart';
+import 'package:freecodecamp/service/authentication/authentication_service.dart';
 import 'package:freecodecamp/ui/views/learn/landing/landing_viewmodel.dart';
 import 'package:freecodecamp/ui/widgets/drawer_widget/drawer_widget_view.dart';
 import 'package:stacked/stacked.dart';
@@ -52,6 +53,11 @@ class LearnLandingView extends StatelessWidget {
                   ),
                   const QuoteWidget(),
                   if (!model.isLoggedIn) loginButton(model, context),
+                  if (model.hasLastVisitedChallenge &&
+                      AuthenticationService.staticIsloggedIn)
+                    ContinueLearningButton(
+                      model: model,
+                    ),
                   const SizedBox(height: 16),
                   FutureBuilder<List<SuperBlockButtonData>>(
                     future: model.superBlockButtons,
@@ -168,6 +174,64 @@ class LearnLandingView extends StatelessWidget {
 
         return const Center(child: CircularProgressIndicator());
       }),
+    );
+  }
+}
+
+class ContinueLearningButton extends StatelessWidget {
+  const ContinueLearningButton({
+    Key? key,
+    required this.model,
+  }) : super(key: key);
+
+  final LearnLandingViewModel model;
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      padding: const EdgeInsets.symmetric(
+        vertical: 6,
+        horizontal: 8,
+      ),
+      height: 80,
+      child: ElevatedButton(
+        onPressed: () {
+          model.fastRouteToChallenge();
+        },
+        style: ElevatedButton.styleFrom(
+          backgroundColor: const Color.fromRGBO(0x19, 0x8E, 0xEE, 1),
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(0),
+          ),
+        ),
+        child: Row(
+          children: [
+            Align(
+              alignment: Alignment.centerLeft,
+              child: SizedBox(
+                width: MediaQuery.of(context).size.width * 0.70,
+                child: const Text(
+                  'Continue where you left off',
+                  overflow: TextOverflow.ellipsis,
+                  maxLines: 2,
+                  textAlign: TextAlign.left,
+                  style: TextStyle(
+                    fontSize: 20,
+                    fontFamily: 'lato',
+                    fontWeight: FontWeight.w700,
+                  ),
+                ),
+              ),
+            ),
+            const Expanded(
+              child: Align(
+                alignment: Alignment.centerRight,
+                child: Icon(Icons.arrow_forward_ios),
+              ),
+            )
+          ],
+        ),
+      ),
     );
   }
 }

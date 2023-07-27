@@ -305,8 +305,11 @@ class ChallengeTile extends StatelessWidget {
 
             String url = LearnService.baseUrl;
 
+            String fullUrl =
+                '$url/challenges/${block.superBlock.dashedName}/${block.dashedName}/$challengeId.json';
+
             model.routeToChallengeView(
-              '$url/challenges/${block.superBlock.dashedName}/${block.dashedName}/$challengeId.json',
+              fullUrl,
               block,
               challengeId,
             );

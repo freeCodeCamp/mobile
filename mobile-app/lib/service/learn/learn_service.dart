@@ -39,6 +39,16 @@ class LearnService {
     _dio.interceptors.add(CurlLoggerDioInterceptor());
   }
 
+  void setLastVisitedChallenge(String url, Block block) async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    prefs.setStringList('lastVisitedChallenge', [
+      url,
+      block.superBlock.dashedName,
+      block.superBlock.name,
+      block.dashedName,
+    ]);
+  }
+
   Future<void> postChallengeCompleted(
     Challenge challenge, {
     List? challengeFiles,
