@@ -176,7 +176,7 @@ class LearnLandingView extends StatelessWidget {
           return Container(
             padding: const EdgeInsets.all(16),
             child: Text(
-              'Welcome back ${user.username}!',
+              'Welcome back ${user.username.startsWith('fcc') ? 'User' : user.username}!',
               textAlign: TextAlign.center,
               style: const TextStyle(
                 fontSize: 20,
@@ -279,11 +279,6 @@ class QuoteWidget extends StatelessWidget {
           return Container(
             margin: const EdgeInsets.symmetric(vertical: 8, horizontal: 8),
             padding: const EdgeInsets.all(8),
-            decoration: BoxDecoration(
-              color: const Color(0xFF0a0a23),
-              border: Border.all(width: 1),
-              borderRadius: BorderRadius.circular(15),
-            ),
             constraints: const BoxConstraints(
               minHeight: 200,
             ),
