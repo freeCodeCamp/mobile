@@ -48,23 +48,24 @@ class LearnLandingView extends StatelessWidget {
                         children: [
                           if (model.isLoggedIn)
                             Container(
-                                margin: const EdgeInsets.symmetric(
-                                  vertical: 4,
-                                  horizontal: 8,
-                                ),
-                                padding: const EdgeInsets.symmetric(
-                                  vertical: 16,
-                                  horizontal: 8,
-                                ),
-                                decoration: BoxDecoration(
-                                  color: const Color(0xFF0a0a23),
-                                  border: Border.all(),
-                                  borderRadius: BorderRadius.circular(15),
-                                ),
-                                constraints: BoxConstraints(
-                                  minWidth: MediaQuery.of(context).size.width,
-                                ),
-                                child: welcomeMessage(model)),
+                              margin: const EdgeInsets.symmetric(
+                                vertical: 4,
+                                horizontal: 8,
+                              ),
+                              padding: const EdgeInsets.symmetric(
+                                vertical: 16,
+                                horizontal: 8,
+                              ),
+                              decoration: BoxDecoration(
+                                color: const Color(0xFF0a0a23),
+                                border: Border.all(),
+                                borderRadius: BorderRadius.circular(15),
+                              ),
+                              constraints: BoxConstraints(
+                                minWidth: MediaQuery.of(context).size.width,
+                              ),
+                              child: welcomeMessage(model),
+                            ),
                           if (!model.isLoggedIn) loginButton(model, context)
                         ],
                       );
@@ -235,16 +236,17 @@ class ContinueLearningButton extends StatelessWidget {
                   maxLines: 2,
                   textAlign: TextAlign.left,
                   style: TextStyle(
-                      fontSize: 20,
-                      fontFamily: 'lato',
-                      fontWeight: FontWeight.w700),
+                    fontSize: 20,
+                    fontFamily: 'lato',
+                    fontWeight: FontWeight.w700,
+                  ),
                 ),
               ),
             ),
             const Expanded(
               child: Align(
                 alignment: Alignment.centerRight,
-                child: Icon(Icons.double_arrow),
+                child: Icon(Icons.arrow_forward_ios),
               ),
             )
           ],
