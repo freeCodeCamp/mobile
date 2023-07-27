@@ -122,6 +122,12 @@ class LearnLandingViewModel extends BaseViewModel {
           }
         }
 
+        _navigationService.navigateToSuperBlockView(
+          superBlockDashedName: lastVisitedChallenge[1],
+          superBlockName: lastVisitedChallenge[2],
+          hasInternet: true,
+        );
+
         _navigationService.navigateTo(
           Routes.challengeView,
           arguments: ChallengeViewArguments(
