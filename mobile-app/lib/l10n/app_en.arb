@@ -291,6 +291,43 @@
     "@podcast_show_less": {
         "context": "podcasts > podcast"
     },
+    "settings_title": "SETTINGS",
+    "@settings_title": {
+        "context": "settings view"
+    },
+    "settings_reset_cache": "Reset Cache",
+    "@settings_reset_cache": {
+        "context": "settings view"
+    },
+    "settings_reset_cache_message": "Are you sure you want to clear the cache? - this resets all your progress and local data",
+    "@settings_reset_cache_message": {
+        "context": "settings view > *click reset cache*"
+    },
+    "settings_reset_cache_confirm": "Clear",
+    "@settings_reset_cache_confirm": {
+        "context": "settings view > *click reset cache*"
+    },
+    "settings_reset_cache_description": "Clears all local data and progress",
+    "@settings_reset_cache_description": {
+        "context": "settings view"
+    },
+    "settings_privacy_policy": "Privacy Policy",
+    "@settings_privacy_policy": {
+        "context": "settings view"
+    },
+    "settings_delete_account": "Delete Account",
+    "@settings_delete_account": {
+        "context": "settings view"
+    },
+    "settings_delete_account_description": "Delete your freeCodeCamp account",
+    "@settings_delete_account_description": {
+        "context": "settings view"
+    },
+    "settings_privacy_policy_description": "Read our privacy policy",
+    "@settings_privacy_policy_description": {
+        "context": "settings view"
+    },
+
     "error": "Something went wrong!",
     "loading": "Loading",
     "unrecognized_device": "Unrecognized Device",

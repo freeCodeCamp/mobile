@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:freecodecamp/service/authentication/authentication_service.dart';
 import 'package:freecodecamp/ui/views/settings/delete-account/delete_account_view.dart';
 import 'package:freecodecamp/ui/views/settings/settings_viewmodel.dart';
@@ -15,7 +16,9 @@ class SettingsView extends StatelessWidget {
       onViewModelReady: (viewModel) => viewModel.init(),
       builder: (context, model, child) => Scaffold(
         appBar: AppBar(
-          title: const Text('SETTINGS'),
+          title: Text(
+            AppLocalizations.of(context)!.settings_title,
+          ),
         ),
         drawer: const DrawerWidgetView(),
         body: Column(
@@ -23,8 +26,13 @@ class SettingsView extends StatelessWidget {
             if (AuthenticationService.staticIsloggedIn) ...[
               ListTile(
                 leading: const Icon(Icons.delete_forever),
-                title: const Text('Delete my account'),
-                subtitle: const Text('Delete your freeCodeCamp account'),
+                title: Text(
+                  AppLocalizations.of(context)!.settings_delete_account,
+                ),
+                subtitle: Text(
+                  AppLocalizations.of(context)!
+                      .settings_delete_account_description,
+                ),
                 onTap: () => Navigator.push(
                   context,
                   MaterialPageRoute(
@@ -37,15 +45,22 @@ class SettingsView extends StatelessWidget {
             ],
             ListTile(
               leading: const Icon(Icons.dataset_linked),
-              title: const Text('Reset Cache'),
-              subtitle: const Text('Clears all local data and progress'),
-              onTap: () => model.resetCache(),
+              title: Text(AppLocalizations.of(context)!.settings_reset_cache),
+              subtitle: Text(
+                AppLocalizations.of(context)!.settings_reset_cache_description,
+              ),
+              onTap: () => model.resetCache(context),
             ),
             buildDivider(),
             ListTile(
               leading: const Icon(Icons.privacy_tip),
-              title: const Text('Privacy Policy'),
-              subtitle: const Text('Read our privacy policy'),
+              title: Text(
+                AppLocalizations.of(context)!.settings_privacy_policy,
+              ),
+              subtitle: Text(
+                AppLocalizations.of(context)!
+                    .settings_privacy_policy_description,
+              ),
               onTap: () => model.openPrivacyPolicy(),
             ),
             buildDivider(),

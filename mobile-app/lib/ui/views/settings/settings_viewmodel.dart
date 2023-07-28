@@ -1,4 +1,7 @@
+import 'package:flutter/material.dart';
+
 import 'package:flutter_custom_tabs/flutter_custom_tabs.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:freecodecamp/app/app.locator.dart';
 import 'package:freecodecamp/enums/dialog_type.dart';
 import 'package:freecodecamp/ui/widgets/setup_dialog_ui.dart';
@@ -13,14 +16,15 @@ class SettingsViewModel extends BaseViewModel {
     setupDialogUi();
   }
 
-  void resetCache() async {
+  void resetCache(BuildContext context) async {
     DialogResponse? res = await _dialogService.showCustomDialog(
       barrierDismissible: true,
       variant: DialogType.buttonForm,
-      title: 'Clear Cache',
+      title: AppLocalizations.of(context)!.settings_reset_cache,
       description:
-          'Are you sure you want to clear the cache? - this resets all your progress and local data',
-      mainButtonTitle: 'Clear',
+          AppLocalizations.of(context)!.settings_reset_cache_description,
+      mainButtonTitle:
+          AppLocalizations.of(context)!.settings_reset_cache_confirm,
     );
 
     if (res?.confirmed == true) {
