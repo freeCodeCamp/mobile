@@ -291,6 +291,10 @@
     "@podcast_show_less": {
         "context": "podcasts > podcast"
     },
+    "podcast_unable_to_load_podcasts": "Unable to load podcasts \n please try again.",
+    "@podcast_unable_to_load_podcasts": {
+        "context": "podcasts > podcast"
+    },
     "settings_title": "SETTINGS",
     "@settings_title": {
         "context": "settings view"
@@ -334,10 +338,29 @@
     "@settings_privacy_policy_description": {
         "context": "settings view"
     },
-
+    "coderadio_next_song": "Next Song",
+    "@coderadio_next_song": {
+        "context": "coderadio view (only on Android)"
+    },
+    "coderadio_listening": "${listeners} listening right now",
+    "@coderadio_listening": {
+        "description": "The number of people listening to the radio right now",
+        "context": "coderadio view",
+        "placeholders": {
+            "listeners": {
+                "type": "String",
+                "example": "100"
+            }
+        }
+    },
+    "coderadio_play": "Play",
+    "coderadio_pause": "Pause",
     "error": "Something went wrong!",
+    
     "loading": "Loading",
     "unrecognized_device": "Unrecognized Device",
     "help": "Help",
-    "share": "Share"
+    "share": "Share",
+    "close": "Close"
+
 }

@@ -1,6 +1,7 @@
 import 'dart:convert';
 
 import 'package:flutter/material.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:freecodecamp/models/code-radio/code_radio_model.dart';
 import 'package:freecodecamp/ui/views/code_radio/code_radio_viewmodel.dart';
 import 'package:freecodecamp/ui/widgets/drawer_widget/drawer_widget_view.dart';
@@ -55,7 +56,7 @@ class CodeRadioView extends StatelessWidget {
                       if (MediaQuery.of(context).size.height > 600)
                         Padding(
                           padding: const EdgeInsets.only(top: 16),
-                          child: nextSong(radio),
+                          child: nextSong(radio, ctxt),
                         ),
                       Expanded(
                         child: Column(
@@ -103,7 +104,9 @@ class CodeRadioView extends StatelessWidget {
           ),
         ),
         Text(
-          '${radio.totalListeners} people are listening right now',
+          AppLocalizations.of(ctxt)!.coderadio_listening(
+            radio.totalListeners.toString(),
+          ),
           textAlign: TextAlign.center,
           style: const TextStyle(
             color: Color.fromRGBO(1, 1, 1, 0.5),
@@ -128,15 +131,19 @@ class CodeRadioView extends StatelessWidget {
             model.pauseUnpauseRadio();
           },
           icon: Icon(model.stoppedManually ? Icons.play_arrow : Icons.pause),
-          label: Text(model.stoppedManually ? 'PLAY' : 'PAUSE'),
+          label: Text(
+            model.stoppedManually
+                ? AppLocalizations.of(ctxt)!.coderadio_play
+                : AppLocalizations.of(ctxt)!.coderadio_pause,
+          ),
         );
       },
     );
   }
 
-  Widget nextSong(CodeRadio? radio) {
+  Widget nextSong(CodeRadio? radio, BuildContext ctxt) {
     return ListTile(
-      title: const Text('Next'),
+      title: Text(AppLocalizations.of(ctxt)!.coderadio_next_song),
       subtitle: Row(
         children: [
           Expanded(

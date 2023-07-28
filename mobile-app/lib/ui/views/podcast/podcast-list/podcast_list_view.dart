@@ -84,9 +84,10 @@ class PodcastListViewBuilder extends StatelessWidget {
                 return const Center(child: CircularProgressIndicator());
               }
               if (snapshot.hasError) {
-                return const Center(
+                return Center(
                   child: Text(
-                    'Unable to load podcasts \n please try again.',
+                    AppLocalizations.of(context)!
+                        .podcast_unable_to_load_podcasts,
                     textAlign: TextAlign.center,
                   ),
                 );
@@ -95,18 +96,18 @@ class PodcastListViewBuilder extends StatelessWidget {
                 return Center(
                   child: Column(
                     mainAxisAlignment: MainAxisAlignment.center,
-                    children: const [
-                      Icon(
+                    children: [
+                      const Icon(
                         Icons.arrow_circle_down_sharp,
                         color: Colors.white,
                         size: 50,
                       ),
-                      SizedBox(
+                      const SizedBox(
                         height: 4,
                       ),
                       Text(
-                        'No downloaded episodes',
-                        style: TextStyle(
+                        AppLocalizations.of(context)!.podcast_no_downloads,
+                        style: const TextStyle(
                           color: Colors.white,
                           fontSize: 16,
                           fontWeight: FontWeight.bold,
