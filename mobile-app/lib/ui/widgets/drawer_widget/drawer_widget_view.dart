@@ -1,6 +1,7 @@
 import 'dart:io';
 
 import 'package:flutter/material.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:flutter_scroll_shadow/flutter_scroll_shadow.dart';
 import 'package:freecodecamp/models/main/user_model.dart';
 import 'package:freecodecamp/ui/widgets/drawer_widget/drawer_button.dart';
@@ -51,12 +52,20 @@ class DrawerWidgetView extends StatelessWidget {
                                     );
                                   }
 
-                                  return const Text('Anonymous user');
+                                  return Text(
+                                    AppLocalizations.of(context)!
+                                        .anonymous_user,
+                                  );
                                 })
-                            : const Text('Anonymous user'),
-                        subtitle: Text(model.loggedIn
-                            ? 'Our coolest Camper'
-                            : 'login to save your progress'),
+                            : Text(
+                                AppLocalizations.of(context)!.anonymous_user,
+                              ),
+                        subtitle: Text(
+                          model.loggedIn
+                              ? AppLocalizations.of(context)!.coolest_camper
+                              : AppLocalizations.of(context)!
+                                  .login_save_progress,
+                        ),
                         isThreeLine: true,
                         onTap: () {
                           if (model.loggedIn) {
@@ -112,7 +121,9 @@ class DrawerWidgetView extends StatelessWidget {
                       ),
                       buildDivider(),
                       DrawerButton(
-                          component: model.loggedIn ? 'LOG OUT' : 'LOGIN',
+                          component: model.loggedIn
+                              ? AppLocalizations.of(context)!.logout
+                              : AppLocalizations.of(context)!.login,
                           icon: model.loggedIn ? Icons.logout : Icons.login,
                           textColor: model.loggedIn
                               ? const Color.fromARGB(255, 230, 59, 59)
