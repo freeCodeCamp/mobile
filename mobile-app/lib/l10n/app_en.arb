@@ -1,7 +1,33 @@
 {
     "@@locale": "en",
-    "helloWorld": "Hello World!",
-    "@helloWorld": {
-        "description": "The conventional newborn programmer greeting"
-    }
+    "tutorials": "TUTORIALS",
+    "podcasts": "PODCASTS",
+    "donate": "DONATE",
+    "settings": "SETTINGS",
+    "profile": "PROFILE",
+    "logout": "LOG OUT",
+    "login": "LOG IN",
+    "login_title": "LOGIN",
+    "anonymous_user": "Anonymous User",
+    "coolest_camper": "Our coolest Camper",
+    "login_save_progress": "Sign in to save your progress",
+    "login_with_google": "Continue with Google",
+    "login_with_github": "Continue with GitHub",
+    "login_with_apple": "Continue with Apple",
+    "email": "Email",
+    "email_sign_in_code": "Email a sign in code",
+    "email_enter_sign_in_code": "Enter sign in code",
+    "email_submit_code": "Submit and sign in to freeCodeCamp",
+    "email_invalid_code": "The code you entered is not valid. Please check the last OTP you received and try again.",
+    "login_data_message": "freeCodeCamp is free and your account is private by default. We use your email address to connect you to your account.",
+    "login_age_message": "You must be at least 13 years old to create an account on freeCodeCamp.",
+    "download_challenges": "Download All Challenges",
+    "certification_project": "Certification Project",
+    "instructions": "Instructions",
+    "editor": "EDITOR",
+    "preview": "PREVIEW",
+    "console": "CONSOLE",
+    "passed": "Passed",
+    "next": "Next",
+    "hint": "Hint"
 }

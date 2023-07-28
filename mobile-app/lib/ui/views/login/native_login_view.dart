@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:freecodecamp/ui/views/login/native_login_viewmodel.dart';
 import 'package:freecodecamp/ui/widgets/drawer_widget/drawer_widget_view.dart';
 import 'package:stacked/stacked.dart';
@@ -32,7 +33,7 @@ class NativeLoginView extends StatelessWidget {
       onViewModelReady: (viewModel) => viewModel.init(),
       builder: (context, model, child) => Scaffold(
         appBar: AppBar(
-          title: const Text('LOGIN'),
+          title: Text(AppLocalizations.of(context)!.login),
         ),
         drawer: fromButton ? null : const DrawerWidgetView(),
         body: SingleChildScrollView(
@@ -64,7 +65,8 @@ class NativeLoginView extends StatelessWidget {
                                 child: Padding(
                                   padding: const EdgeInsets.all(8.0),
                                   child: Text(
-                                    'Continue with Google',
+                                    AppLocalizations.of(context)!
+                                        .login_with_google,
                                     style: textStyle,
                                   ),
                                 ),
@@ -99,7 +101,8 @@ class NativeLoginView extends StatelessWidget {
                                 child: Padding(
                                   padding: const EdgeInsets.all(8.0),
                                   child: Text(
-                                    'Continue with GitHub',
+                                    AppLocalizations.of(context)!
+                                        .login_with_github,
                                     style: textStyle,
                                   ),
                                 ),
@@ -133,7 +136,8 @@ class NativeLoginView extends StatelessWidget {
                               Padding(
                                 padding: const EdgeInsets.all(8.0),
                                 child: Text(
-                                  'Continue with Apple',
+                                  AppLocalizations.of(context)!
+                                      .login_with_apple,
                                   style: textStyle,
                                 ),
                               ),
@@ -151,9 +155,9 @@ class NativeLoginView extends StatelessWidget {
                     enabled: !model.showOTPfield,
                     controller: model.emailController,
                     keyboardType: TextInputType.emailAddress,
-                    decoration: const InputDecoration(
-                      hintText: 'email',
-                      border: OutlineInputBorder(
+                    decoration: InputDecoration(
+                      hintText: AppLocalizations.of(context)!.email,
+                      border: const OutlineInputBorder(
                         borderSide: BorderSide(width: 2, color: Colors.white),
                       ),
                     ),
@@ -167,9 +171,11 @@ class NativeLoginView extends StatelessWidget {
                           controller: model.otpController,
                           keyboardType: TextInputType.number,
                           decoration: InputDecoration(
-                            hintText: 'Enter sign in code',
+                            hintText: AppLocalizations.of(context)!
+                                .email_sign_in_code,
                             errorText: model.incorrectOTP
-                                ? 'The code you entered is not valid. Please check the last OTP you received and try again.'
+                                ? AppLocalizations.of(context)!
+                                    .email_invalid_code
                                 : null,
                             errorMaxLines: 5,
                             border: const OutlineInputBorder(
@@ -198,7 +204,8 @@ class NativeLoginView extends StatelessWidget {
                                       }
                                     : null,
                                 child: Text(
-                                  'Submit and sign in to freeCodeCamp',
+                                  AppLocalizations.of(context)!
+                                      .email_submit_code,
                                   style: textStyle,
                                   textAlign: TextAlign.center,
                                 ),
@@ -219,7 +226,8 @@ class NativeLoginView extends StatelessWidget {
                                 child: Padding(
                                   padding: const EdgeInsets.all(8.0),
                                   child: Text(
-                                    'Email a sign in code',
+                                    AppLocalizations.of(context)!
+                                        .email_sign_in_code,
                                     style: textStyle,
                                   ),
                                 ),
@@ -235,7 +243,7 @@ class NativeLoginView extends StatelessWidget {
                       child: Padding(
                         padding: const EdgeInsets.all(8.0),
                         child: Text(
-                          'freeCodeCamp is free and your account is private by default. We use your email address to connect you to your account.',
+                          AppLocalizations.of(context)!.login_data_message,
                           textAlign: TextAlign.center,
                           style:
                               TextStyle(color: Colors.white.withOpacity(0.87)),
@@ -250,7 +258,7 @@ class NativeLoginView extends StatelessWidget {
                       child: Padding(
                         padding: const EdgeInsets.all(8.0),
                         child: Text(
-                          'You must be at least 13 years old to create an account on freeCodeCamp.',
+                          AppLocalizations.of(context)!.login_age_message,
                           textAlign: TextAlign.center,
                           style:
                               TextStyle(color: Colors.white.withOpacity(0.87)),
