@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:freecodecamp/models/news/tutorial_model.dart';
 import 'package:freecodecamp/ui/views/news/news-bookmark/news_bookmark_widget.dart';
 import 'package:freecodecamp/ui/views/news/news-tutorial/news_tutorial_viewmodel.dart';
@@ -39,7 +40,9 @@ class NewsTutorialHeader extends StatelessWidget {
                       key: const Key('title'),
                     ),
                     Text(
-                      'Written by ${tutorial.authorName}',
+                      AppLocalizations.of(context)!.tutorial_written_by(
+                        tutorial.authorName,
+                      ),
                       style: const TextStyle(height: 1.5, fontFamily: 'Lato'),
                     ),
                     Wrap(
@@ -89,7 +92,7 @@ class NewsTutorialView extends StatelessWidget {
                     child: Stack(
                       children: [
                         lazyLoadHtml(tutorial!.text!, context, tutorial, model),
-                        bottomButtons(tutorial, model),
+                        bottomButtons(tutorial, model, context),
                       ],
                     ),
                   )
@@ -114,7 +117,11 @@ class NewsTutorialView extends StatelessWidget {
     );
   }
 
-  Widget bottomButtons(Tutorial tutorial, NewsTutorialViewModel model) {
+  Widget bottomButtons(
+    Tutorial tutorial,
+    NewsTutorialViewModel model,
+    BuildContext context,
+  ) {
     return Align(
       alignment: Alignment.bottomCenter,
       child: SizedBox(
@@ -138,7 +145,7 @@ class NewsTutorialView extends StatelessWidget {
                   ),
                 ),
                 BottomButton(
-                  label: 'Share',
+                  label: AppLocalizations.of(context)!.share,
                   icon: Icons.share,
                   onPressed: () {
                     Share.share('${tutorial.title}\n\n${tutorial.url}');

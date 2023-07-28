@@ -166,8 +166,8 @@
             }
         }
     },
-    "written_by": "Written by {author}",
-    "@written_by": {
+    "tutorial_written_by": "Written by {author}",
+    "@tutorial_written_by": {
         "description": "The author of a tutorial",
         "context": "news > tutorial",
         "placeholders": {
@@ -185,8 +185,17 @@
     "@tutorial_read_online": {
         "context": "news view"
     },
+    "tutorial_bookmark": "Bookmark",
+    "@tutorial_bookmark": {
+        "context": "news > tutorial"
+    },
+    "tutorial_bookmarked": "Bookmarked",
+    "@tutorial_bookmarked": {
+        "context": "news > tutorial"
+    },
     "error": "Something went wrong!",
     "loading": "Loading",
     "unrecognized_device": "Unrecognized Device",
-    "help": "Help"
+    "help": "Help",
+    "share": "Share"
 }
