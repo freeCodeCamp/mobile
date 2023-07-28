@@ -1,34 +1,113 @@
 {
     "@@locale": "en",
     "tutorials": "TUTORIALS",
+    "@tutorials": {
+        "context": "in drawer (hamburger menu)"
+    },
     "podcasts": "PODCASTS",
+    "@podcasts": {
+        "context": "in drawer (hamburger menu)"
+    },
     "donate": "DONATE",
+    "@donate": {
+        "context": "in drawer (hamburger menu)"
+    },
     "learn": "LEARN",
+    "@learn": {
+        "context": "in drawer (hamburger menu)"
+    },
     "settings": "SETTINGS",
+    "@settings": {
+        "context": "in drawer (hamburger menu)"
+    },
     "profile": "PROFILE",
+    "@profile": {
+        "context": "in drawer (hamburger menu when logged in)"
+    },
     "logout": "LOG OUT",
+    "@logout": {
+        "context": "in drawer (hamburger menu when logged in)"
+    },
     "login": "LOG IN",
+    "@login": {
+        "context": "in drawer (hamburger menu when logged out)"
+    },
     "login_title": "LOGIN",
+    "@login_title": {
+        "context": "login view"
+    },
     "anonymous_user": "Anonymous User",
+    "@anonymous_user": {
+        "context": "in drawer (hamburger menu when logged out)"
+    },
     "coolest_camper": "Our coolest Camper",
+    "@coolest_camper": {
+        "context": "in drawer (hamburger menu when logged in)"
+    },
     "login_save_progress": "Sign in to save your progress",
+    "@login_save_progress": {
+        "context": "login view"
+    },
     "login_with_google": "Continue with Google",
+    "@login_with_google": {
+        "context": "login view"
+    },
     "login_with_github": "Continue with GitHub",
+    "@login_with_github": {
+        "context": "login view"
+    },
     "login_with_apple": "Continue with Apple",
+    "@login_with_apple": {
+        "context": "login view"
+    },
     "email": "Email",
+    "@email": {
+        "context": "login view"
+    },
     "email_sign_in_code": "Email a sign in code",
+    "@email_sign_in_code": {
+        "context": "login view"
+    },
     "email_enter_sign_in_code": "Enter sign in code",
+    "@email_enter_sign_in_code": {
+        "context": "login view"
+    },
     "email_submit_code": "Submit and sign in to freeCodeCamp",
+    "@email_submit_code": {
+        "context": "login view"
+    },
     "email_invalid_code": "The code you entered is not valid. Please check the last OTP you received and try again.",
+    "@email_invalid_code": {
+        "context": "login view (when failing to login with email)"
+    },
     "login_data_message": "freeCodeCamp is free and your account is private by default. We use your email address to connect you to your account.",
+    "@login_data_message": {
+        "context": "login view"
+    },
     "login_age_message": "You must be at least 13 years old to create an account on freeCodeCamp.",
-    "download_challenges": "Download All Challenges",
+    "@login_age_message": {
+        "context": "login view"
+    },
     "certification_project": "Certification Project",
+    "@certification_project": {
+        "context": "learn > block "
+    },
     "instructions": "Instructions",
+    "@instructions": {
+        "context": "learn > block > challenge"
+    },
     "editor": "Editor",
+    "@editor": {
+        "context": "learn > block > challenge"
+    },
     "preview": "PREVIEW",
+    "@preview": {
+        "context": "learn > block > challenge (eye icon)"
+    },
     "console": "CONSOLE",
-    "loading": "Loading",
+    "@console": {
+        "context": "learn > block > challenge (eye icon)"
+    },
     "step_count": "Step {stepNumber} of {totalSteps}",
     "@step_count": {
         "description": "The step number and total number of steps in a block of challenges",
@@ -68,6 +147,7 @@
         "context": "learn > block > challenge > *fail challenge* > hint panel"
     },
     "error": "Something went wrong!",
-    "unrecognized_device":   "Unrecognized Device",
+    "loading": "Loading",
+    "unrecognized_device": "Unrecognized Device",
     "help": "Help"
 }
