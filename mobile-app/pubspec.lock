@@ -1034,9 +1034,10 @@ packages:
   phone_ide:
     dependency: "direct main"
     description:
-      path: "../../PhoneIDE"
-      relative: true
-    source: path
+      name: phone_ide
+      sha256: "42b994035e10a941b2248599e70ec69d10fb7fd3d9e42b0bf9cbc312f90703c1"
+      url: "https://pub.dev"
+    source: hosted
     version: "1.2.0+1"
   photo_view:
     dependency: "direct main"
