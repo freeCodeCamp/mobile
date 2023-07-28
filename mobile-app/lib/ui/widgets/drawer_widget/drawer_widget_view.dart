@@ -66,23 +66,23 @@ class DrawerWidgetView extends StatelessWidget {
                       ),
                       buildDivider(),
                       DrawerTile(
+                        key: const Key('learn'),
                         component: 'LEARN',
                         icon: '',
                         route: () {
                           model.routeComponent('LEARN', context);
                         },
                       ),
-                      Container(
+                      DrawerTile(
                         key: const Key('news'),
-                        child: DrawerTile(
-                          component: 'TUTORIALS',
-                          icon: Icons.forum_outlined,
-                          route: () {
-                            model.routeComponent('NEWS', context);
-                          },
-                        ),
+                        component: 'TUTORIALS',
+                        icon: Icons.forum_outlined,
+                        route: () {
+                          model.routeComponent('NEWS', context);
+                        },
                       ),
                       DrawerTile(
+                        key: const Key('podcasts'),
                         component: 'PODCASTS',
                         icon: Icons.podcasts_outlined,
                         route: () {
@@ -91,6 +91,7 @@ class DrawerWidgetView extends StatelessWidget {
                       ),
                       if (!Platform.isIOS)
                         DrawerTile(
+                          key: const Key('code-radio'),
                           component: 'CODE RADIO',
                           icon: Icons.radio,
                           route: () {
@@ -99,11 +100,13 @@ class DrawerWidgetView extends StatelessWidget {
                         ),
                       buildDivider(),
                       const CustomTabButton(
+                        key: Key('donate'),
                         component: 'DONATE',
                         url: 'https://www.freecodecamp.org/donate/',
                         icon: Icons.favorite,
                       ),
                       DrawerTile(
+                        key: const Key('settings'),
                         component: 'SETTINGS',
                         icon: Icons.settings,
                         route: () {
@@ -112,6 +115,7 @@ class DrawerWidgetView extends StatelessWidget {
                       ),
                       buildDivider(),
                       DrawerTile(
+                          key: const Key('auth'),
                           component: model.loggedIn ? 'LOG OUT' : 'LOGIN',
                           icon: model.loggedIn ? Icons.logout : Icons.login,
                           textColor: model.loggedIn
