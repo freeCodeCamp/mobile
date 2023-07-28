@@ -213,6 +213,26 @@
     "@tutorial_search_placeholder": {
         "context": "news > search"
     },
+    "tutorial_bookmarks_title": "BOOKMARKED TUTORIALS",
+    "@tutorial_bookmarks_title": {
+        "context": "news > bookmarks"
+    },
+    "tutorial_search_title": "SEARCH TUTORIALS",
+    "@tutorial_search_title": {
+        "context": "news > search"
+    },
+    "tutorial_nav_tutorials": "Tutorials",
+    "@tutorial_nav_tutorials": {
+        "context": "news view"
+    },
+    "tutorial_nav_bookmarks": "Bookmarks",
+    "@tutorial_nav_bookmarks": {
+        "context": "news view"
+    },
+    "tutorial_nav_search": "Search",
+    "@tutorial_nav_search": {
+        "context": "news view"
+    },
     "error": "Something went wrong!",
     "loading": "Loading",
     "unrecognized_device": "Unrecognized Device",
