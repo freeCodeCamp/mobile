@@ -159,6 +159,7 @@ class PythonProjectView extends StatelessWidget {
                           final forumLink = await genForumLink(
                             challenge,
                             block,
+                            context,
                           );
                           model.learnService.forumHelpDialog(forumLink);
                         },

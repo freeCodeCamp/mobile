@@ -193,6 +193,26 @@
     "@tutorial_bookmarked": {
         "context": "news > tutorial"
     },
+    "tutorial_bookmark_title": "BOOKMARKED TUTORIAL",
+    "@tutorial_bookmark_title": {
+        "context": "news > bookmarks > bookmarked tutorial"
+    },
+    "tutorial_no_bookmarks": "Bookmark tutorials to view them here",
+    "@tutorial_no_bookmarks": {
+        "context": "news > bookmarks"
+    },
+    "tutorial_search_no_results": "No Tutorials Found",
+    "@tutorial_search_no_results": {
+        "context": "news > search"
+    },
+    "tutorial_search_error": "There was an error loading tutorials \n please try again",
+    "@tutorial_search_error": {
+        "context": "news > search"
+    },
+    "tutorial_search_placeholder": "SEARCH TUTORIALS...",
+    "@tutorial_search_placeholder": {
+        "context": "news > search"
+    },
     "error": "Something went wrong!",
     "loading": "Loading",
     "unrecognized_device": "Unrecognized Device",

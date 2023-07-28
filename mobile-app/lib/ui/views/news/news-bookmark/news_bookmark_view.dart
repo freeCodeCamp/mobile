@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:freecodecamp/models/news/bookmarked_tutorial_model.dart';
 import 'package:freecodecamp/ui/views/news/news-bookmark/news_bookmark_viewmodel.dart';
 import 'package:freecodecamp/ui/views/news/news-tutorial/news_tutorial_viewmodel.dart';
@@ -29,8 +30,10 @@ class NewsBookmarkTutorialView extends StatelessWidget {
           child: CustomScrollView(
             controller: model.scrollController,
             slivers: [
-              const SliverAppBar(
-                title: Text('BOOKMARKED TUTORIAL'),
+              SliverAppBar(
+                title: Text(
+                  AppLocalizations.of(context)!.tutorial_bookmark_title,
+                ),
               ),
               SliverAppBar(
                 pinned: true,
@@ -51,7 +54,11 @@ class NewsBookmarkTutorialView extends StatelessWidget {
                                 ? const Icon(Icons.bookmark_added)
                                 : const Icon(Icons.bookmark_add_outlined),
                             label: Text(
-                              model.bookmarked ? 'Bookmarked' : 'Bookmark',
+                              model.bookmarked
+                                  ? AppLocalizations.of(context)!
+                                      .tutorial_bookmarked
+                                  : AppLocalizations.of(context)!
+                                      .tutorial_bookmark,
                             ),
                           ),
                         ),

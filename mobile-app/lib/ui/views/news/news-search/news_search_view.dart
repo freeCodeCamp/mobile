@@ -1,5 +1,6 @@
 import 'package:algolia/algolia.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:freecodecamp/ui/views/news/news-search/news_search_viewmodel.dart';
 import 'package:stacked/stacked.dart';
 
@@ -17,9 +18,10 @@ class NewsSearchView extends StatelessWidget {
             ),
             child: TextField(
                 controller: model.searchbarController,
-                decoration: const InputDecoration(
-                  hintText: 'SEARCH TUTORIALS...',
-                  fillColor: Color.fromRGBO(0x2A, 0x2A, 0x40, 1),
+                decoration: InputDecoration(
+                  hintText:
+                      AppLocalizations.of(context)!.tutorial_search_placeholder,
+                  fillColor: const Color.fromRGBO(0x2A, 0x2A, 0x40, 1),
                   border: InputBorder.none,
                   filled: true,
                 ),
@@ -67,8 +69,10 @@ class NewsSearchView extends StatelessWidget {
             }
 
             if (!snapshot.hasData) {
-              return const Center(
-                child: Text('No Tutorials Found'),
+              return Center(
+                child: Text(
+                  AppLocalizations.of(context)!.tutorial_search_no_results,
+                ),
               );
             }
 
@@ -110,16 +114,18 @@ class NewsSearchView extends StatelessWidget {
                                 ),
                                 onTap: () => {
                                   model.navigateToTutorial(
-                                    current[index].data['objectID'],
-                                    current[index].data['title']
-                                  ),
+                                      current[index].data['objectID'],
+                                      current[index].data['title']),
                                 },
                               );
                             },
                           ),
                         )
-                      : const Center(
-                          child: Text('No Tutorials Found'),
+                      : Center(
+                          child: Text(
+                            AppLocalizations.of(context)!
+                                .tutorial_search_no_results,
+                          ),
                         ),
                 ),
               ],
