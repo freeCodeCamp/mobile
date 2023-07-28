@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:freecodecamp/models/learn/curriculum_model.dart';
 import 'package:freecodecamp/ui/views/learn/block/block_viewmodel.dart';
 
@@ -30,13 +31,16 @@ class DownloadButton extends StatelessWidget {
                 backgroundColor: const Color.fromRGBO(0x2A, 0x2A, 0x40, 1),
               ),
               child: !model.isDownloading
-                  ? const Text('Download All Challenges')
+                  ? Text(AppLocalizations.of(context)!.challenge_download)
                   : StreamBuilder(
                       stream: model.learnOfflineService.downloadStream.stream,
                       builder: ((context, snapshot) {
                         if (snapshot.connectionState ==
                             ConnectionState.waiting) {
-                          return const Text('Starting Download...');
+                          return Text(
+                            AppLocalizations.of(context)!
+                                .challenge_download_starting,
+                          );
                         }
 
                         // if (snapshot.hasError) {
@@ -55,8 +59,8 @@ class DownloadButton extends StatelessWidget {
                           );
                         }
 
-                        return const Text(
-                          'Download All Challenges',
+                        return Text(
+                          AppLocalizations.of(context)!.challenge_download,
                         );
                       }),
                     ),
@@ -76,8 +80,12 @@ class DownloadButton extends StatelessWidget {
                 backgroundColor: const Color.fromRGBO(0x2A, 0x2A, 0x40, 1),
               ),
               child: model.isDownloading
-                  ? const Text('Cancel Downloading Challenges')
-                  : const Text('Delete Downloaded Challenges'),
+                  ? Text(
+                      AppLocalizations.of(context)!.challenge_download_cancel,
+                    )
+                  : Text(
+                      AppLocalizations.of(context)!.challenge_download_delete,
+                    ),
             ),
           )
       ],

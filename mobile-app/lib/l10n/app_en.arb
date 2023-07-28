@@ -84,10 +84,16 @@
     "@login_data_message": {
         "context": "login view"
     },
+    "login_load_message": "Signing in...",
+    "login_cancelled": "Login canceled",
     "login_age_message": "You must be at least 13 years old to create an account on freeCodeCamp.",
     "@login_age_message": {
         "context": "login view"
     },
+    "challenge_download": "Download All Challenges",
+    "challenge_download_starting": "Starting Download...",
+    "challenge_download_cancel": "Cancel Downloading Challenges",
+    "challenge_download_delete": "Delete Downloaded Challenges",
     "certification_project": "Certification Project",
     "@certification_project": {
         "context": "learn > block "
@@ -155,6 +161,14 @@
                 "example": "JavaScript"
             }
         }
+    },
+    "tutorial_author_title": "AUTHOR PROFILE",
+    "@tutorial_author_title": {
+        "context": "news > *click author image*"
+    },
+    "tutorial_show_more": "Show more tutorials",
+    "@tutorial_show_more": {
+        "context": "news > *click author image*"
     },
     "tutorials_about": "Tutorials about {subject}",
     "@tutorials_about": {
@@ -257,7 +271,7 @@
     "@podcast_description": {
         "context": "podcasts > podcast"
     },
-    "podcast_duration_hours": "${hours} hrs ${minutes} min",
+    "podcast_duration_hours": "{hours} hrs {minutes} min",
     "@podcast_duration_hours": {
         "description": "The duration of a podcast in hours and minutes",
         "context": "podcasts > podcast",
@@ -272,7 +286,7 @@
             }
         }
     },
-    "podcast_duration_minutes": "${minutes} min",
+    "podcast_duration_minutes": "{minutes} min",
     "@podcast_duration_minutes": {
         "description": "The duration of a podcast in minutes",
         "context": "podcasts > podcast",
@@ -330,6 +344,14 @@
     "delete_account_message_two": "We won't be able to recover any of it for you later, even if you change your mind.",
     "delete_account_message_three": "If there's something we could do better, send us an email instead and we'll do our best:",
     "delete_account_message_four": "I am 100% certain. Delete everything related to this account",
+    "delete_account_are_you_sure": "Are you sure you want to delete your account? - this deletes everything related to your account",
+    "@delete_account_are_you_sure": {
+        "context": "settings view > *click delete account*"
+    },
+    "delete_account_deleting": "Deleting account...",
+    "delete_success": "Account deleted successfully",
+    "delete_failed": "Account deletion failed. Please try again later.",
+
     "settings_delete_account_description": "Delete your freeCodeCamp account",
     "@settings_delete_account_description": {
         "context": "settings view"
@@ -504,15 +526,12 @@
     "quincy_email_part_fifteen": "By the way, each Friday I send an email with 5 links about programming and computer science. I send these to about 4 million people. Would you like me to send this to you, too?",
     "quincy_email_confirm": "Yes Please",
     "quincy_email_no_thanks": "No Thanks",
-
-
     "error": "Something went wrong!",
     "error_two": "Error",
-    
+    "error_three": "Oops! Something went wrong. Please try again in a moment.",
     "loading": "Loading",
     "unrecognized_device": "Unrecognized Device",
     "help": "Help",
     "share": "Share",
     "close": "Close"
-
 }

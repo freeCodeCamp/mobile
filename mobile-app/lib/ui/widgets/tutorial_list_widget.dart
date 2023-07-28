@@ -2,6 +2,7 @@ import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:freecodecamp/app/app.locator.dart';
 import 'package:freecodecamp/app/app.router.dart';
 import 'package:freecodecamp/models/news/tutorial_model.dart';
@@ -85,7 +86,9 @@ class TutorialListState extends State<TutorialList> {
                   padding: const EdgeInsets.all(4.0),
                   margin: const EdgeInsets.only(bottom: 48),
                   child: ListTile(
-                    title: const Text('Show more tutorials'),
+                    title: Text(
+                      AppLocalizations.of(context)!.tutorial_show_more,
+                    ),
                     tileColor: const Color(0xFF0a0a23),
                     trailing: const Icon(Icons.arrow_forward_ios_outlined),
                     onTap: () {

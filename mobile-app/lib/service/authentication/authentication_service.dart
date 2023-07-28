@@ -7,6 +7,7 @@ import 'package:curl_logger_dio_interceptor/curl_logger_dio_interceptor.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:freecodecamp/app/app.locator.dart';
 import 'package:freecodecamp/app/app.router.dart';
@@ -149,11 +150,11 @@ class AuthenticationService {
       builder: (context) {
         return WillPopScope(
           onWillPop: () async => false,
-          child: const SimpleDialog(
-            title: Text('Signing in...'),
-            contentPadding: EdgeInsets.fromLTRB(0.0, 12.0, 0.0, 24.0),
-            backgroundColor: Color(0xFF2A2A40),
-            children: [
+          child: SimpleDialog(
+            title: Text(AppLocalizations.of(context)!.login_load_message),
+            contentPadding: const EdgeInsets.fromLTRB(0.0, 12.0, 0.0, 24.0),
+            backgroundColor: const Color(0xFF2A2A40),
+            children: const [
               Center(
                 child: CircularProgressIndicator(),
               ),
@@ -184,7 +185,7 @@ class AuthenticationService {
     } on WebAuthenticationException {
       // NOTE: The most likely case is that the user canceled the login
       snackbar.showSnackbar(
-        title: 'Login canceled',
+        title: AppLocalizations.of(context)!.login_cancelled,
         message: '',
       );
 
@@ -224,7 +225,7 @@ class AuthenticationService {
           ),
           builder: (context) => AlertDialog(
             backgroundColor: const Color(0xFF2A2A40),
-            title: const Text('Error'),
+            title: Text(AppLocalizations.of(context)!.error_two),
             content: Text(
               e.response!.data['message'],
             ),
@@ -237,7 +238,7 @@ class AuthenticationService {
                   logout();
                   Navigator.pop(context);
                 },
-                child: const Text('Close'),
+                child: Text(AppLocalizations.of(context)!.close),
               ),
             ],
           ),
@@ -251,10 +252,8 @@ class AuthenticationService {
           ),
           builder: (context) => AlertDialog(
             backgroundColor: const Color(0xFF2A2A40),
-            title: const Text('Error'),
-            content: const Text(
-              'Oops! Something went wrong. Please try again in a moment.',
-            ),
+            title: Text(AppLocalizations.of(context)!.error_two),
+            content: Text(AppLocalizations.of(context)!.error_three),
             actions: [
               TextButton(
                 style: TextButton.styleFrom(
@@ -264,7 +263,7 @@ class AuthenticationService {
                   logout();
                   Navigator.pop(context);
                 },
-                child: const Text('Close'),
+                child: Text(AppLocalizations.of(context)!.close),
               ),
             ],
           ),

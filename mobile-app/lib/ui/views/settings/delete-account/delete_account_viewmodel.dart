@@ -2,6 +2,7 @@ import 'dart:developer';
 
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:freecodecamp/app/app.locator.dart';
 import 'package:freecodecamp/enums/dialog_type.dart';
 import 'package:freecodecamp/service/authentication/authentication_service.dart';
@@ -22,10 +23,9 @@ class DeleteAccountViewModel extends BaseViewModel {
     DialogResponse? res = await _dialogService.showCustomDialog(
       barrierDismissible: true,
       variant: DialogType.deleteAccount,
-      title: 'Delete account',
-      description:
-          'Are you sure you want to delete your account? - this deletes everything related to your account',
-      mainButtonTitle: 'Delete account',
+      title: AppLocalizations.of(context)!.settings_delete_account,
+      description: AppLocalizations.of(context)!.delete_account_are_you_sure,
+      mainButtonTitle: AppLocalizations.of(context)!.settings_delete_account,
     );
 
     if (res?.confirmed == true) {
@@ -38,11 +38,13 @@ class DeleteAccountViewModel extends BaseViewModel {
         builder: (context) {
           return WillPopScope(
             onWillPop: () async => false,
-            child: const SimpleDialog(
-              title: Text('Deleting account...'),
-              contentPadding: EdgeInsets.fromLTRB(0.0, 12.0, 0.0, 24.0),
-              backgroundColor: Color(0xFF2A2A40),
-              children: [
+            child: SimpleDialog(
+              title: Text(
+                AppLocalizations.of(context)!.delete_account_deleting,
+              ),
+              contentPadding: const EdgeInsets.fromLTRB(0.0, 12.0, 0.0, 24.0),
+              backgroundColor: const Color(0xFF2A2A40),
+              children: const [
                 Center(
                   child: CircularProgressIndicator(),
                 ),
@@ -70,21 +72,21 @@ class DeleteAccountViewModel extends BaseViewModel {
           await _authenticationService.logout();
           _navigator.clearStackAndShow('/');
           _snackbar.showSnackbar(
-            title: 'Your account has been successfully deleted',
+            title: AppLocalizations.of(context)!.delete_success,
             message: '',
           );
         } else {
           log('Account deletion failed');
           _navigator.back();
           _snackbar.showSnackbar(
-            title: 'Account deletion failed. Please try again later.',
+            title: AppLocalizations.of(context)!.delete_failed,
             message: '',
           );
         }
       } catch (err) {
         _navigator.back();
         _snackbar.showSnackbar(
-          title: 'Account deletion failed. Please try again later.',
+          title: AppLocalizations.of(context)!.delete_failed,
           message: '',
         );
       }
