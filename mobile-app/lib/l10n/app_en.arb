@@ -486,7 +486,28 @@
     "@profile_portfolio": {
         "context": "drawer > profile (signed in)"
     },
+    "quincy_email_signup": "Email Signup",
+    "quincy_email_part_one": "Please slow down and read this.",
+    "quincy_email_part_two": "freeCodeCamp is a proven path to your first software developer job.",
+    "quincy_email_part_three": "More than 40,000 people have gotten developer jobs after completing this — including at big companies like Google and Microsoft.",
+    "quincy_email_part_four": "If you are new to programming, we recommend you start at the beginning and earn these certifications in order.",
+    "quincy_email_part_five": "To earn each certification, build its 5 required projects and get all their tests to pass.",
+    "quincy_email_part_six": "You can add these certifications to your résumé or LinkedIn. But more important than the certifications is the practice you get along the way.",
+    "quincy_email_part_seven": "If you feel overwhelmed, that is normal. Programming is hard.",
+    "quincy_email_part_eight": "Practice is the key. Practice, practice, practice.",
+    "quincy_email_part_nine": "And this curriculum will give you thousands of hours of hands-on programming practice.",
+    "quincy_email_part_ten": "And if you want to learn more math and computer science theory, we also have thousands of hours of video courses on freeCodeCamp\\'s YouTube channel.",
+    "quincy_email_part_eleven": "If you want to get a developer job or freelance clients, programming skills will be just part of the puzzle. You also need to build your personal network and your reputation as a developer.",
+    "quincy_email_part_twelve": "You can do this on LinkedIn and GitHub, and also on the freeCodeCamp forum.",
+    "quincy_email_part_thirteen": "Happy coding!",
+    "quincy_email_part_fourteen": "- Quincy Larson, the teacher who founded freeCodeCamp.org",
+    "quincy_email_part_fifteen": "By the way, each Friday I send an email with 5 links about programming and computer science. I send these to about 4 million people. Would you like me to send this to you, too?",
+    "quincy_email_confirm": "Yes Please",
+    "quincy_email_no_thanks": "No Thanks",
+
+
     "error": "Something went wrong!",
+    "error_two": "Error",
     
     "loading": "Loading",
     "unrecognized_device": "Unrecognized Device",
