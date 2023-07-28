@@ -25,10 +25,12 @@
     "download_challenges": "Download All Challenges",
     "certification_project": "Certification Project",
     "instructions": "Instructions",
-    "editor": "EDITOR",
+    "editor": "Editor",
     "preview": "PREVIEW",
     "console": "CONSOLE",
     "passed": "Passed",
     "next": "Next",
-    "hint": "Hint"
+    "hint": "Hint",
+    "loading": "Loading",
+    "error": "Something went wrong!"
 }
