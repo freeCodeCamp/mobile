@@ -61,7 +61,12 @@ class FreeCodeCampMobileApp extends StatelessWidget {
         GlobalCupertinoLocalizations.delegate,
       ],
       supportedLocales: const [
+        // Enlish
         Locale('en'),
+        // Spanish
+        Locale('es'),
+        // Portuguese
+        Locale('pt'),
       ],
       debugShowCheckedModeBanner: false,
       navigatorKey: StackedService.navigatorKey,
