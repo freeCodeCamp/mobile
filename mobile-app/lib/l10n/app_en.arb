@@ -319,6 +319,13 @@
     "@settings_delete_account": {
         "context": "settings view"
     },
+    "delete_account_message_one": "This will really delete all your data, including all your progress and account information.",
+    "@delete_account_message_one": {
+        "context": "settings view > *click delete account*"
+    },
+    "delete_account_message_two": "We won't be able to recover any of it for you later, even if you change your mind.",
+    "delete_account_message_three": "If there's something we could do better, send us an email instead and we'll do our best:",
+    "delete_account_message_four": "I am 100% certain. Delete everything related to this account",
     "settings_delete_account_description": "Delete your freeCodeCamp account",
     "@settings_delete_account_description": {
         "context": "settings view"

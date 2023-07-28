@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:freecodecamp/ui/views/settings/delete-account/delete_account_viewmodel.dart';
 import 'package:freecodecamp/ui/widgets/drawer_widget/drawer_widget_view.dart';
 import 'package:stacked/stacked.dart';
@@ -19,31 +20,33 @@ class DeleteAccountView extends StatelessWidget {
       viewModelBuilder: () => DeleteAccountViewModel(),
       builder: (context, model, child) => Scaffold(
         appBar: AppBar(
-          title: const Text('Delete My Account'),
+          title: Text(
+            AppLocalizations.of(context)!.settings_delete_account,
+          ),
         ),
         body: SingleChildScrollView(
           child: Padding(
             padding: const EdgeInsets.all(16),
             child: Column(
               children: [
-                const Text(
-                  'This will really delete all your data, including all your progress and account information.',
+                Text(
+                  AppLocalizations.of(context)!.delete_account_message_one,
                   style: paragraphTextStyle,
                   textAlign: TextAlign.center,
                 ),
                 const SizedBox(
                   height: 8,
                 ),
-                const Text(
-                  "We won't be able to recover any of it for you later, even if you change your mind.",
+                Text(
+                  AppLocalizations.of(context)!.delete_account_message_two,
                   style: paragraphTextStyle,
                   textAlign: TextAlign.center,
                 ),
                 const SizedBox(
                   height: 8,
                 ),
-                const Text(
-                  "If there's something we could do better, send us an email instead and we'll do our best:",
+                Text(
+                  AppLocalizations.of(context)!.delete_account_message_three,
                   style: paragraphTextStyle,
                   textAlign: TextAlign.center,
                 ),
@@ -87,8 +90,9 @@ class DeleteAccountView extends StatelessWidget {
                           disabledBackgroundColor: Colors.red.shade50,
                           disabledForegroundColor: Colors.red.shade700,
                         ),
-                        child: const Text(
-                          'I am 100% certain. Delete everything related to this account',
+                        child: Text(
+                          AppLocalizations.of(context)!
+                              .delete_account_message_four,
                           textAlign: TextAlign.center,
                           style: paragraphTextStyle,
                         ),
