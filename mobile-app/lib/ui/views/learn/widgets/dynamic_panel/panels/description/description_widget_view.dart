@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:freecodecamp/ui/views/learn/challenge/challenge_viewmodel.dart';
 import 'package:freecodecamp/ui/views/learn/widgets/dynamic_panel/panels/description/description_widget_model.dart';
 import 'package:freecodecamp/ui/views/news/html_handler/html_handler.dart';
@@ -43,9 +44,9 @@ class DescriptionView extends StatelessWidget {
                           child: Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
-                              const Text(
-                                'Instructions',
-                                style: TextStyle(
+                              Text(
+                                AppLocalizations.of(context)!.instructions,
+                                style: const TextStyle(
                                   fontSize: 28,
                                   fontWeight: FontWeight.bold,
                                   fontFamily: 'Inter',
@@ -53,7 +54,10 @@ class DescriptionView extends StatelessWidget {
                               ),
                               isMultiStepChallenge
                                   ? Text(
-                                      'Step ${splitTitle[1]} of $maxChallenges',
+                                      AppLocalizations.of(context)!.step_count(
+                                        splitTitle[1],
+                                        maxChallenges.toString(),
+                                      ),
                                       style: const TextStyle(
                                         fontSize: 14,
                                         fontFamily: 'Inter',

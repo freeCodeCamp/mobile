@@ -28,9 +28,46 @@
     "editor": "Editor",
     "preview": "PREVIEW",
     "console": "CONSOLE",
-    "passed": "Passed",
-    "next": "Next",
-    "hint": "Hint",
     "loading": "Loading",
-    "error": "Something went wrong!"
+    "step_count": "Step {stepNumber} of {totalSteps}",
+    "@step_count": {
+        "description": "The step number and total number of steps in a block of challenges",
+        "context": "learn > block > challenge > instructions panel",
+        "placeholders": {
+            "stepNumber": {
+                "type": "String",
+                "example": "1"
+            },
+            "totalSteps": {
+                "type": "String",
+                "example": "2"
+            }
+        }
+    },
+    "completed_percent": "{percent}% Completed",
+    "@completed_percent": {
+        "description": "The percentage of challenges completed in a block of challenges",
+        "context": "learn > block > challenge > *complete challenge* > pass panel",
+        "placeholders": {
+            "percent": {
+                "type": "String",
+                "example": "50"
+            }
+        }
+    },
+    "next": "Next",
+    "@next": {
+        "context": "learn > block > challenge > *complete challenge* > pass panel"
+    },
+    "passed": "Passed",
+    "@passed": {
+        "context": "learn > block > challenge > *complete challenge* > pass panel"
+    },
+    "hint": "Hint",
+    "@hint": {
+        "context": "learn > block > challenge > *fail challenge* > hint panel"
+    },
+    "error": "Something went wrong!",
+    "unrecognized_device":   "Unrecognized Device",
+    "help": "Help"
 }
