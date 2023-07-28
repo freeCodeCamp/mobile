@@ -595,6 +595,11 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "5.0.0"
+  flutter_localizations:
+    dependency: "direct main"
+    description: flutter
+    source: sdk
+    version: "0.0.0"
   flutter_scroll_shadow:
     dependency: "direct main"
     description:
@@ -787,10 +792,10 @@ packages:
     dependency: "direct main"
     description:
       name: intl
-      sha256: "3bc132a9dbce73a7e4a21a17d06e1878839ffbf975568bc875c60537824b0c4d"
+      sha256: "910f85bce16fb5c6f614e117efa303e85a1731bb0081edf3604a2ae6e9a3cc91"
       url: "https://pub.dev"
     source: hosted
-    version: "0.18.1"
+    version: "0.17.0"
   io:
     dependency: transitive
     description:
@@ -803,10 +808,10 @@ packages:
     dependency: "direct main"
     description:
       name: jiffy
-      sha256: "9d1ea8fa2955d62d3fd5f83317db4d565350deea13d7884212aa7d0ddb1c9982"
+      sha256: "85172c4fc975a50224521c05bf43abc845288863b19d91bd3c221a96a8785dd3"
       url: "https://pub.dev"
     source: hosted
-    version: "6.1.0"
+    version: "5.0.0"
   js:
     dependency: transitive
     description:

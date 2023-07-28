@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:freecodecamp/models/learn/curriculum_model.dart';
 import 'package:freecodecamp/models/learn/motivational_quote_model.dart';
 import 'package:freecodecamp/models/main/user_model.dart';
@@ -17,7 +18,7 @@ class LearnLandingView extends StatelessWidget {
       onViewModelReady: (model) => model.init(context),
       builder: (context, model, child) => Scaffold(
         appBar: AppBar(
-          title: const Text('LEARN'),
+          title: Text(AppLocalizations.of(context)!.helloWorld),
         ),
         drawer: const DrawerWidgetView(
           key: Key('drawer'),
