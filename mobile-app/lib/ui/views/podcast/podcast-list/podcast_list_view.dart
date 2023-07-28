@@ -2,6 +2,7 @@ import 'dart:io';
 
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:freecodecamp/models/podcasts/podcasts_model.dart';
 import 'package:freecodecamp/ui/views/podcast/episode-list/episode_list_view.dart';
 import 'package:freecodecamp/ui/views/podcast/podcast-list/podcast_list_viewmodel.dart';
@@ -13,16 +14,16 @@ List views = [
   const PodcastListViewBuilder(isDownloadView: true),
 ];
 
-List titles = [
-  const Text('PODCASTS'),
-  const Text('DOWNLOADED PODCASTS'),
-];
-
 class PodcastListView extends StatelessWidget {
   const PodcastListView({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
+    List titles = [
+      AppLocalizations.of(context)!.podcasts_title,
+      AppLocalizations.of(context)!.podcast_download_title,
+    ];
+
     return ViewModelBuilder<PodcastListViewModel>.reactive(
       viewModelBuilder: () => PodcastListViewModel(),
       onViewModelReady: (model) async => await model.init(),
@@ -34,18 +35,18 @@ class PodcastListView extends StatelessWidget {
         bottomNavigationBar: BottomNavigationBar(
           currentIndex: model.index,
           onTap: model.setIndex,
-          items: const [
+          items: [
             BottomNavigationBarItem(
-              icon: Icon(
+              icon: const Icon(
                 Icons.grid_view_rounded,
               ),
-              label: 'Browse',
+              label: AppLocalizations.of(context)!.podcasts_browse,
             ),
             BottomNavigationBarItem(
-              icon: Icon(
+              icon: const Icon(
                 Icons.arrow_circle_down_sharp,
               ),
-              label: 'Downloads',
+              label: AppLocalizations.of(context)!.podcasts_downloads,
             ),
           ],
         ),

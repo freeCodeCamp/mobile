@@ -5,6 +5,7 @@ import 'package:dio/dio.dart';
 import 'package:fk_user_agent/fk_user_agent.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:flutter_html/flutter_html.dart';
 import 'package:freecodecamp/app/app.locator.dart';
 import 'package:freecodecamp/models/podcasts/episodes_model.dart';
@@ -204,11 +205,19 @@ class PodcastTileState extends State<PodcastTile> {
     }
   }
 
-  String _parseDuration(Duration dur) {
+  String _parseDuration(Duration dur, BuildContext context) {
+    String hours = (widget.episode.duration!.inMinutes ~/ 60).toString();
+    String minutes = (widget.episode.duration!.inMinutes).toString();
+
     if (dur.inMinutes > 59) {
-      return '${widget.episode.duration!.inMinutes ~/ 60} hr ${widget.episode.duration!.inMinutes % 60} min';
+      return AppLocalizations.of(context)!.podcast_duration_hours(
+        hours,
+        minutes,
+      );
     } else {
-      return '${widget.episode.duration!.inMinutes % 60} min';
+      return AppLocalizations.of(context)!.podcast_duration_minutes(
+        minutes,
+      );
     }
   }
 
@@ -340,7 +349,10 @@ class PodcastTileState extends State<PodcastTile> {
                 DateFormat.yMMMd().format(widget.episode.publicationDate!) +
                     (widget.episode.duration != null &&
                             widget.episode.duration != Duration.zero
-                        ? (' • ${_parseDuration(widget.episode.duration!)}')
+                        ? (' • ${_parseDuration(
+                            widget.episode.duration!,
+                            context,
+                          )}')
                         : ''),
                 style: const TextStyle(
                     fontSize: 16, height: 2, fontFamily: 'Lato'),

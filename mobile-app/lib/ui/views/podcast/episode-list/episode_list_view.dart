@@ -2,6 +2,7 @@ import 'dart:io';
 
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:flutter_html/flutter_html.dart';
 import 'package:freecodecamp/models/podcasts/episodes_model.dart';
 import 'package:freecodecamp/models/podcasts/podcasts_model.dart';
@@ -50,7 +51,7 @@ class EpisodeListView extends StatelessWidget {
                         color: const Color(0xFF0a0a23),
                         child: Padding(
                           padding: const EdgeInsets.all(20.0),
-                          child: description(model),
+                          child: description(model, context),
                         ),
                       ),
                     ],
@@ -118,14 +119,17 @@ class EpisodeListView extends StatelessWidget {
     );
   }
 
-  Column description(EpisodeListViewModel model) {
+  Column description(EpisodeListViewModel model, BuildContext context) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        const Text(
-          'Description',
-          style:
-              TextStyle(fontSize: 24, fontWeight: FontWeight.bold, height: 1.2),
+        Text(
+          AppLocalizations.of(context)!.podcast_description,
+          style: const TextStyle(
+            fontSize: 24,
+            fontWeight: FontWeight.bold,
+            height: 1.2,
+          ),
         ),
         Html(
           data: podcast.description!,
@@ -147,7 +151,9 @@ class EpisodeListView extends StatelessWidget {
             model.setShowMoreDescription = !model.showDescription;
           },
           child: Text(
-            model.showDescription ? 'Show Less' : 'Show More',
+            model.showDescription
+                ? AppLocalizations.of(context)!.podcast_show_less
+                : AppLocalizations.of(context)!.podcast_show_more,
             style: const TextStyle(
               fontSize: 16,
             ),

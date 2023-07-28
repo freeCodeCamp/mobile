@@ -233,6 +233,64 @@
     "@tutorial_nav_search": {
         "context": "news view"
     },
+    "podcasts_browse": "Browse",
+    "@podcasts_browse": {
+        "context": "podcasts view"
+    },
+    "podcasts_downloads": "Downloads",
+    "@podcasts_downloads": {
+        "context": "podcasts view"
+    },
+    "podcasts_title": "PODCASTS",
+    "@podcasts_title": {
+        "context": "podcasts view"
+    },
+    "podcast_download_title": "DOWNLOADED PODCASTS",
+    "@podcast_download_title": {
+        "context": "podcasts > downloads"
+    },
+    "podcast_no_downloads": "No Downloaded Episodes",
+    "@podcast_no_downloads": {
+        "context": "podcasts > downloads"
+    },
+    "podcast_description": "Description",
+    "@podcast_description": {
+        "context": "podcasts > podcast"
+    },
+    "podcast_duration_hours": "${hours} hrs ${minutes} min",
+    "@podcast_duration_hours": {
+        "description": "The duration of a podcast in hours and minutes",
+        "context": "podcasts > podcast",
+        "placeholders": {
+            "hours": {
+                "type": "String",
+                "example": "1"
+            },
+            "minutes": {
+                "type": "String",
+                "example": "30"
+            }
+        }
+    },
+    "podcast_duration_minutes": "${minutes} min",
+    "@podcast_duration_minutes": {
+        "description": "The duration of a podcast in minutes",
+        "context": "podcasts > podcast",
+        "placeholders": {
+            "minutes": {
+                "type": "String",
+                "example": "30"
+            }
+        }
+    },
+    "podcast_show_more": "Show More",
+    "@podcast_show_more": {
+        "context": "podcasts > podcast"
+    },
+    "podcast_show_less": "Show Less",
+    "@podcast_show_less": {
+        "context": "podcasts > podcast"
+    },
     "error": "Something went wrong!",
     "loading": "Loading",
     "unrecognized_device": "Unrecognized Device",
