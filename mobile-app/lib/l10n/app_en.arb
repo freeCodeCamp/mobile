@@ -342,7 +342,7 @@
     "@coderadio_next_song": {
         "context": "coderadio view (only on Android)"
     },
-    "coderadio_listening": "${listeners} listening right now",
+    "coderadio_listening": "{listeners} listening right now",
     "@coderadio_listening": {
         "description": "The number of people listening to the radio right now",
         "context": "coderadio view",
@@ -355,6 +355,137 @@
     },
     "coderadio_play": "Play",
     "coderadio_pause": "Pause",
+    "profile_view_cert": "View {certification}",
+    "@profile_view_cert": {
+        "description": "View a certification",
+        "context": "drawer > profile (signed in)",
+        "placeholders": {
+            "certification": {
+                "type": "String",
+                "example": "Responsive Web Design"
+            }
+        }
+    },
+    "profile_cert": "{certification} Certification",
+    "@profile_cert": {
+        "description": "A certification",
+        "context": "drawer > profile (signed in)",
+        "placeholders": {
+            "certification": {
+                "type": "String",
+                "example": "Responsive Web Design"
+            }
+        }
+    },
+    "profile_join_date": "Joined {date}",
+    "@profile_join_date": {
+        "description": "The date a user joined freeCodeCamp",
+        "context": "drawer > profile (signed in)",
+        "placeholders": {
+            "date": {
+                "type": "String",
+                "example": "January 1st, 2019"
+            }
+        }
+    },
+    "profile_points": "{points} points",
+    "@profile_points": {
+        "description": "The number of points a user has",
+        "context": "drawer > profile (signed in)",
+        "placeholders": {
+            "points": {
+                "type": "String",
+                "example": "100"
+            }
+        }
+    },
+    "profile_points_on_date": "{user} points on {date}",
+    "@profile_points_on_date": {
+        "description": "The number of points a user had on a specific date",
+        "context": "drawer > profile (signed in)",
+        "placeholders": {
+            "user": {
+                "type": "String",
+                "example": "John Doe"
+            },
+            "date": {
+                "type": "String",
+                "example": "January 1st, 2019"
+            }
+        }
+    },
+    "profile_one_point_on_date": "1 point on {date}",
+    "@profile_one_point_on_date": {
+        "description": "The number of points a user had on a specific date",
+        "context": "drawer > profile (signed in)",
+        "placeholders": {
+            "date": {
+                "type": "String",
+                "example": "January 1st, 2019"
+            }
+        }
+    },
+    "profile_zero_points_on_date": "0 points on {date}",
+    "@profile_zero_points_on_date": {
+        "description": "The number of points a user had on a specific date",
+        "context": "drawer > profile (signed in)",
+        "placeholders": {
+            "date": {
+                "type": "String",
+                "example": "January 1st, 2019"
+            }
+        }
+    },
+    "profile_longest_streak": "Longest Streak: ${streak}",
+    "@profile_longest_streak": {
+        "description": "The longest streak a user has had",
+        "context": "drawer > profile (signed in)",
+        "placeholders": {
+            "streak": {
+                "type": "String",
+                "example": "100"
+            }
+        }
+    },
+    "profile_current_streak": "Current Streak: ${streak}",
+    "@profile_current_streak": {
+        "description": "The current streak a user has",
+        "context": "drawer > profile (signed in)",
+        "placeholders": {
+            "streak": {
+                "type": "String",
+                "example": "100"
+            }
+        }
+    },
+    "profile_supporter": "Supporter",
+    "@profile_supporter": {
+        "context": "drawer > profile (signed in)"
+    },
+    "profile_title": "PROFILE",
+    "@profile_title": {
+        "context": "drawer > profile (signed in)"
+    },
+    "profile_certifications": "freeCodeCamp Certifications",
+    "@profile_certifications": {
+        "context": "drawer > profile (signed in)"
+    },
+    "profile_no_userdata": "No user data found",
+    "@profile_no_userdata": {
+        "context": "drawer > profile (signed in)"
+    },
+    "profile_no_modern_certs": "No certifications have been earned under the current curriculum",
+    "@profile_no_modern_certs": {
+        "context": "drawer > profile (signed in)"
+    },
+    "profile_legacy_certs": "Legacy Certifications",
+    "@profile_legacy_certs": {
+        "context": "drawer > profile (signed in)"
+    },
+    "profile_portfolio": "Portfolio",
+    "@profile_portfolio": {
+        "context": "drawer > profile (signed in)"
+    },
     "error": "Something went wrong!",
     
     "loading": "Loading",
