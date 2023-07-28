@@ -219,6 +219,8 @@ class ChallengeViewModel extends BaseViewModel {
     setChallenge = learnOfflineService.getChallenge(url, challengeId);
     Challenge challenge = await _challenge!;
 
+    learnService.setLastVisitedChallenge(url, block);
+
     if (challenge.challengeType == 11 || challenge.challengeType == 10) {
     } else {
       List<ChallengeFile> currentEditedChallenge = challenge.files

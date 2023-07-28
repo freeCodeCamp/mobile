@@ -75,23 +75,23 @@ class DrawerWidgetView extends StatelessWidget {
                       ),
                       buildDivider(),
                       DrawerButton(
+                        key: const Key('learn'),
                         component: 'LEARN',
                         icon: '',
                         route: () {
                           model.routeComponent('LEARN', context);
                         },
                       ),
-                      Container(
+                      DrawerButton(
                         key: const Key('news'),
-                        child: DrawerButton(
-                          component: 'TUTORIALS',
-                          icon: Icons.forum_outlined,
-                          route: () {
-                            model.routeComponent('NEWS', context);
-                          },
-                        ),
+                        component: 'TUTORIALS',
+                        icon: Icons.forum_outlined,
+                        route: () {
+                          model.routeComponent('NEWS', context);
+                        },
                       ),
                       DrawerButton(
+                        key: const Key('podcasts'),
                         component: 'PODCASTS',
                         icon: Icons.podcasts_outlined,
                         route: () {
@@ -100,6 +100,7 @@ class DrawerWidgetView extends StatelessWidget {
                       ),
                       if (!Platform.isIOS)
                         DrawerButton(
+                          key: const Key('code-radio'),
                           component: 'CODE RADIO',
                           icon: Icons.radio,
                           route: () {
@@ -108,11 +109,13 @@ class DrawerWidgetView extends StatelessWidget {
                         ),
                       buildDivider(),
                       const CustomTabButton(
+                        key: Key('donate'),
                         component: 'DONATE',
                         url: 'https://www.freecodecamp.org/donate/',
                         icon: Icons.favorite,
                       ),
                       DrawerButton(
+                        key: const Key('settings'),
                         component: 'SETTINGS',
                         icon: Icons.settings,
                         route: () {
@@ -121,6 +124,7 @@ class DrawerWidgetView extends StatelessWidget {
                       ),
                       buildDivider(),
                       DrawerButton(
+                          key: const Key('auth'),
                           component: model.loggedIn
                               ? AppLocalizations.of(context)!.logout
                               : AppLocalizations.of(context)!.login,

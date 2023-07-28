@@ -133,12 +133,14 @@ class NativeLoginView extends StatelessWidget {
                                 height: 25,
                                 width: 25,
                               ),
-                              Padding(
-                                padding: const EdgeInsets.all(8.0),
-                                child: Text(
+                              Expanded(
+                                child: Padding(
+                                  padding: const EdgeInsets.all(8.0),
+                                  child: Text(
                                   AppLocalizations.of(context)!
                                       .login_with_apple,
                                   style: textStyle,
+                                  ),
                                 ),
                               ),
                             ],
@@ -188,21 +190,44 @@ class NativeLoginView extends StatelessWidget {
                     : Container(),
                 Row(
                   children: [
-                    model.showOTPfield
-                        ? Expanded(
-                            child: Container(
-                              margin: const EdgeInsets.all(16),
-                              child: ElevatedButton(
-                                style: buttonStyle.copyWith(
-                                  padding: const MaterialStatePropertyAll(
-                                    EdgeInsets.symmetric(vertical: 8),
-                                  ),
-                                ),
-                                onPressed: model.otpFieldIsValid
-                                    ? () {
-                                        model.verifyOTP(context);
-                                      }
-                                    : null,
+                    if (model.showOTPfield)
+                      Expanded(
+                        child: Container(
+                          margin: const EdgeInsets.all(16),
+                          child: ElevatedButton(
+                            style: buttonStyle.copyWith(
+                              padding: const MaterialStatePropertyAll(
+                                EdgeInsets.symmetric(vertical: 8),
+                              ),
+                            ),
+                            onPressed: model.otpFieldIsValid
+                                ? () {
+                                    model.verifyOTP(context);
+                                  }
+                                : null,
+                            child: Text(
+                              'Submit and sign in to freeCodeCamp',
+                              style: textStyle,
+                              textAlign: TextAlign.center,
+                            ),
+                          ),
+                        ),
+                      )
+                    else
+                      Expanded(
+                        child: Container(
+                          margin: const EdgeInsets.all(16),
+                          constraints: const BoxConstraints(minHeight: 50),
+                          child: ElevatedButton(
+                            style: buttonStyle,
+                            onPressed: model.emailFieldIsValid
+                                ? () {
+                                    model.sendOTPtoEmail();
+                                  }
+                                : null,
+                            child: Padding(
+                              padding: const EdgeInsets.all(8.0),
+                              child: Align(
                                 child: Text(
                                   AppLocalizations.of(context)!
                                       .email_submit_code,
@@ -211,29 +236,9 @@ class NativeLoginView extends StatelessWidget {
                                 ),
                               ),
                             ),
-                          )
-                        : Expanded(
-                            child: Container(
-                              margin: const EdgeInsets.all(16),
-                              constraints: const BoxConstraints(minHeight: 50),
-                              child: ElevatedButton(
-                                style: buttonStyle,
-                                onPressed: model.emailFieldIsValid
-                                    ? () {
-                                        model.sendOTPtoEmail();
-                                      }
-                                    : null,
-                                child: Padding(
-                                  padding: const EdgeInsets.all(8.0),
-                                  child: Text(
-                                    AppLocalizations.of(context)!
-                                        .email_sign_in_code,
-                                    style: textStyle,
-                                  ),
-                                ),
-                              ),
-                            ),
                           ),
+                        ),
+                      ),
                   ],
                 ),
                 buildDivider(),
