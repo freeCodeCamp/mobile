@@ -1,6 +1,7 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:freecodecamp/models/news/tutorial_model.dart';
 import 'package:freecodecamp/ui/views/news/news-feed/news_feed_viewmodel.dart';
 import 'package:stacked/stacked.dart';
@@ -36,9 +37,13 @@ class NewsFeedView extends StatelessWidget {
       builder: (context, model, child) => Scaffold(
         appBar: fromTag || fromAuthor || fromSearch
             ? AppBar(
-                title: Text(
-                  'Tutorials ${fromAuthor ? 'from' : 'about'} $subject',
-                ),
+                title: fromAuthor
+                    ? Text(
+                        AppLocalizations.of(context)!.tutorials_from(author),
+                      )
+                    : Text(
+                        AppLocalizations.of(context)!.tutorials_about(subject),
+                      ),
               )
             : null,
         backgroundColor: const Color(0xFF0a0a23),
@@ -59,7 +64,7 @@ class NewsFeedView extends StatelessWidget {
                 },
               );
             } else if (snapshot.hasError) {
-              return errorMessage();
+              return errorMessage(context);
             }
             return const Center(child: CircularProgressIndicator());
           },
@@ -68,22 +73,22 @@ class NewsFeedView extends StatelessWidget {
     );
   }
 
-  Column errorMessage() {
+  Column errorMessage(context) {
     return Column(
       mainAxisAlignment: MainAxisAlignment.center,
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
-        const Text(
-          'There was an error loading tutorials',
+        Text(
+          AppLocalizations.of(context)!.tutorial_load_error,
           textAlign: TextAlign.center,
         ),
         Padding(
           padding: const EdgeInsets.all(8.0),
           child: InkWell(
-            child: const Text(
-              'read tutorials online',
+            child: Text(
+              AppLocalizations.of(context)!.tutorial_read_online,
               textAlign: TextAlign.center,
-              style: TextStyle(
+              style: const TextStyle(
                 color: Color.fromRGBO(0x99, 0xc9, 0xff, 1),
               ),
             ),

@@ -146,6 +146,45 @@
     "@hint": {
         "context": "learn > block > challenge > *fail challenge* > hint panel"
     },
+    "tutorials_from": "Tutorials from {author}",
+    "@tutorials_from": {
+        "context": "news > click author image",
+        "placeholders": {
+            "author": {
+                "type": "String",
+                "example": "JavaScript"
+            }
+        }
+    },
+    "tutorials_about": "Tutorials about {subject}",
+    "@tutorials_about": {
+        "context": "news > click subject (#javascript)",
+        "placeholders": {
+            "subject": {
+                "type": "String",
+                "example": "JavaScript"
+            }
+        }
+    },
+    "written_by": "Written by {author}",
+    "@written_by": {
+        "description": "The author of a tutorial",
+        "context": "news > tutorial",
+        "placeholders": {
+            "author": {
+                "type": "String",
+                "example": "Quincy Larson"
+            }
+        }
+    },
+    "tutorial_load_error": "There was an error loading tutorials",
+    "@tutorial_load_error": {
+        "context": "news view"
+    },
+    "tutorial_read_online": "Read tutorials online",
+    "@tutorial_read_online": {
+        "context": "news view"
+    },
     "error": "Something went wrong!",
     "loading": "Loading",
     "unrecognized_device": "Unrecognized Device",
