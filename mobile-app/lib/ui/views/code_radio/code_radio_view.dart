@@ -104,7 +104,7 @@ class CodeRadioView extends StatelessWidget {
           ),
         ),
         Text(
-          AppLocalizations.of(ctxt)!.coderadio_listening(
+          AppLocalizations.of(ctxt).coderadio_listening(
             radio.totalListeners.toString(),
           ),
           textAlign: TextAlign.center,
@@ -133,8 +133,8 @@ class CodeRadioView extends StatelessWidget {
           icon: Icon(model.stoppedManually ? Icons.play_arrow : Icons.pause),
           label: Text(
             model.stoppedManually
-                ? AppLocalizations.of(ctxt)!.coderadio_play
-                : AppLocalizations.of(ctxt)!.coderadio_pause,
+                ? AppLocalizations.of(ctxt).coderadio_play
+                : AppLocalizations.of(ctxt).coderadio_pause,
           ),
         );
       },
@@ -143,7 +143,7 @@ class CodeRadioView extends StatelessWidget {
 
   Widget nextSong(CodeRadio? radio, BuildContext ctxt) {
     return ListTile(
-      title: Text(AppLocalizations.of(ctxt)!.coderadio_next_song),
+      title: Text(AppLocalizations.of(ctxt).coderadio_next_song),
       subtitle: Row(
         children: [
           Expanded(

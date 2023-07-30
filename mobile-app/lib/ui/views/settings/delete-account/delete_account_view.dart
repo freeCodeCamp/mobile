@@ -21,7 +21,7 @@ class DeleteAccountView extends StatelessWidget {
       builder: (context, model, child) => Scaffold(
         appBar: AppBar(
           title: Text(
-            AppLocalizations.of(context)!.settings_delete_account,
+            AppLocalizations.of(context).settings_delete_account,
           ),
         ),
         body: SingleChildScrollView(
@@ -30,7 +30,7 @@ class DeleteAccountView extends StatelessWidget {
             child: Column(
               children: [
                 Text(
-                  AppLocalizations.of(context)!.delete_account_message_one,
+                  AppLocalizations.of(context).delete_account_message_one,
                   style: paragraphTextStyle,
                   textAlign: TextAlign.center,
                 ),
@@ -38,7 +38,7 @@ class DeleteAccountView extends StatelessWidget {
                   height: 8,
                 ),
                 Text(
-                  AppLocalizations.of(context)!.delete_account_message_two,
+                  AppLocalizations.of(context).delete_account_message_two,
                   style: paragraphTextStyle,
                   textAlign: TextAlign.center,
                 ),
@@ -46,7 +46,7 @@ class DeleteAccountView extends StatelessWidget {
                   height: 8,
                 ),
                 Text(
-                  AppLocalizations.of(context)!.delete_account_message_three,
+                  AppLocalizations.of(context).delete_account_message_three,
                   style: paragraphTextStyle,
                   textAlign: TextAlign.center,
                 ),
@@ -91,8 +91,7 @@ class DeleteAccountView extends StatelessWidget {
                           disabledForegroundColor: Colors.red.shade700,
                         ),
                         child: Text(
-                          AppLocalizations.of(context)!
-                              .delete_account_message_four,
+                          AppLocalizations.of(context).delete_account_message_four,
                           textAlign: TextAlign.center,
                           style: paragraphTextStyle,
                         ),

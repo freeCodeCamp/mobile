@@ -39,10 +39,10 @@ class NewsFeedView extends StatelessWidget {
             ? AppBar(
                 title: fromAuthor
                     ? Text(
-                        AppLocalizations.of(context)!.tutorials_from(author),
+                        AppLocalizations.of(context).tutorials_from(author),
                       )
                     : Text(
-                        AppLocalizations.of(context)!.tutorials_about(subject),
+                        AppLocalizations.of(context).tutorials_about(subject),
                       ),
               )
             : null,
@@ -79,14 +79,14 @@ class NewsFeedView extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
         Text(
-          AppLocalizations.of(context)!.tutorial_load_error,
+          AppLocalizations.of(context).tutorial_load_error,
           textAlign: TextAlign.center,
         ),
         Padding(
           padding: const EdgeInsets.all(8.0),
           child: InkWell(
             child: Text(
-              AppLocalizations.of(context)!.tutorial_read_online,
+              AppLocalizations.of(context).tutorial_read_online,
               textAlign: TextAlign.center,
               style: const TextStyle(
                 color: Color.fromRGBO(0x99, 0xc9, 0xff, 1),

@@ -210,12 +210,12 @@ class PodcastTileState extends State<PodcastTile> {
     String minutes = (widget.episode.duration!.inMinutes).toString();
 
     if (dur.inMinutes > 59) {
-      return AppLocalizations.of(context)!.podcast_duration_hours(
+      return AppLocalizations.of(context).podcast_duration_hours(
         hours,
         minutes,
       );
     } else {
-      return AppLocalizations.of(context)!.podcast_duration_minutes(
+      return AppLocalizations.of(context).podcast_duration_minutes(
         minutes,
       );
     }

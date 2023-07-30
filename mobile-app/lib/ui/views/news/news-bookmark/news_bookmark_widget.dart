@@ -23,8 +23,8 @@ class NewsBookmarkViewWidget extends StatelessWidget {
       builder: (context, model, child) => BottomButton(
         key: const Key('bookmark_btn'),
         label: model.bookmarked
-            ? AppLocalizations.of(context)!.tutorial_bookmarked
-            : AppLocalizations.of(context)!.tutorial_bookmark,
+            ? AppLocalizations.of(context).tutorial_bookmarked
+            : AppLocalizations.of(context).tutorial_bookmark,
         icon: model.bookmarked
             ? Icons.bookmark_added
             : Icons.bookmark_add_outlined,

@@ -23,9 +23,9 @@ class DeleteAccountViewModel extends BaseViewModel {
     DialogResponse? res = await _dialogService.showCustomDialog(
       barrierDismissible: true,
       variant: DialogType.deleteAccount,
-      title: AppLocalizations.of(context)!.settings_delete_account,
-      description: AppLocalizations.of(context)!.delete_account_are_you_sure,
-      mainButtonTitle: AppLocalizations.of(context)!.settings_delete_account,
+      title: AppLocalizations.of(context).settings_delete_account,
+      description: AppLocalizations.of(context).delete_account_are_you_sure,
+      mainButtonTitle: AppLocalizations.of(context).settings_delete_account,
     );
 
     if (res?.confirmed == true) {
@@ -40,7 +40,7 @@ class DeleteAccountViewModel extends BaseViewModel {
             onWillPop: () async => false,
             child: SimpleDialog(
               title: Text(
-                AppLocalizations.of(context)!.delete_account_deleting,
+                AppLocalizations.of(context).delete_account_deleting,
               ),
               contentPadding: const EdgeInsets.fromLTRB(0.0, 12.0, 0.0, 24.0),
               backgroundColor: const Color(0xFF2A2A40),
@@ -72,21 +72,21 @@ class DeleteAccountViewModel extends BaseViewModel {
           await _authenticationService.logout();
           _navigator.clearStackAndShow('/');
           _snackbar.showSnackbar(
-            title: AppLocalizations.of(context)!.delete_success,
+            title: AppLocalizations.of(context).delete_success,
             message: '',
           );
         } else {
           log('Account deletion failed');
           _navigator.back();
           _snackbar.showSnackbar(
-            title: AppLocalizations.of(context)!.delete_failed,
+            title: AppLocalizations.of(context).delete_failed,
             message: '',
           );
         }
       } catch (err) {
         _navigator.back();
         _snackbar.showSnackbar(
-          title: AppLocalizations.of(context)!.delete_failed,
+          title: AppLocalizations.of(context).delete_failed,
           message: '',
         );
       }

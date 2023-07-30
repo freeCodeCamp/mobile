@@ -87,7 +87,7 @@ class TutorialListState extends State<TutorialList> {
                   margin: const EdgeInsets.only(bottom: 48),
                   child: ListTile(
                     title: Text(
-                      AppLocalizations.of(context)!.tutorial_show_more,
+                      AppLocalizations.of(context).tutorial_show_more,
                     ),
                     tileColor: const Color(0xFF0a0a23),
                     trailing: const Icon(Icons.arrow_forward_ios_outlined),

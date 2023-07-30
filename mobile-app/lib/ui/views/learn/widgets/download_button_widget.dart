@@ -31,15 +31,14 @@ class DownloadButton extends StatelessWidget {
                 backgroundColor: const Color.fromRGBO(0x2A, 0x2A, 0x40, 1),
               ),
               child: !model.isDownloading
-                  ? Text(AppLocalizations.of(context)!.challenge_download)
+                  ? Text(AppLocalizations.of(context).challenge_download)
                   : StreamBuilder(
                       stream: model.learnOfflineService.downloadStream.stream,
                       builder: ((context, snapshot) {
                         if (snapshot.connectionState ==
                             ConnectionState.waiting) {
                           return Text(
-                            AppLocalizations.of(context)!
-                                .challenge_download_starting,
+                            AppLocalizations.of(context).challenge_download_starting,
                           );
                         }
 
@@ -60,7 +59,7 @@ class DownloadButton extends StatelessWidget {
                         }
 
                         return Text(
-                          AppLocalizations.of(context)!.challenge_download,
+                          AppLocalizations.of(context).challenge_download,
                         );
                       }),
                     ),
@@ -81,10 +80,10 @@ class DownloadButton extends StatelessWidget {
               ),
               child: model.isDownloading
                   ? Text(
-                      AppLocalizations.of(context)!.challenge_download_cancel,
+                      AppLocalizations.of(context).challenge_download_cancel,
                     )
                   : Text(
-                      AppLocalizations.of(context)!.challenge_download_delete,
+                      AppLocalizations.of(context).challenge_download_delete,
                     ),
             ),
           )

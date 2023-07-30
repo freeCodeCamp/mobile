@@ -19,7 +19,7 @@ class NewsAuthorView extends StatelessWidget {
       viewModelBuilder: () => NewsAuthorViewModel(),
       builder: (context, model, child) => Scaffold(
         appBar: AppBar(
-          title: Text(AppLocalizations.of(context)!.tutorial_author_title),
+          title: Text(AppLocalizations.of(context).tutorial_author_title),
         ),
         body: SingleChildScrollView(
           child: FutureBuilder<Author>(

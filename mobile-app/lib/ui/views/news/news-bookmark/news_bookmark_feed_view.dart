@@ -29,7 +29,7 @@ class NewsBookmarkFeedView extends StatelessWidget {
               ? populateListViewModel(model)
               : Center(
                   child: Text(
-                    AppLocalizations.of(context)!.tutorial_no_bookmarks,
+                    AppLocalizations.of(context).tutorial_no_bookmarks,
                     textAlign: TextAlign.center,
                   ),
                 ),

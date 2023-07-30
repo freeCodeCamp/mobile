@@ -53,18 +53,16 @@ class DrawerWidgetView extends StatelessWidget {
                                   }
 
                                   return Text(
-                                    AppLocalizations.of(context)!
-                                        .anonymous_user,
+                                    AppLocalizations.of(context).anonymous_user,
                                   );
                                 })
                             : Text(
-                                AppLocalizations.of(context)!.anonymous_user,
+                                AppLocalizations.of(context).anonymous_user,
                               ),
                         subtitle: Text(
                           model.loggedIn
-                              ? AppLocalizations.of(context)!.coolest_camper
-                              : AppLocalizations.of(context)!
-                                  .login_save_progress,
+                              ? AppLocalizations.of(context).coolest_camper
+                              : AppLocalizations.of(context).login_save_progress,
                         ),
                         isThreeLine: true,
                         onTap: () {
@@ -126,8 +124,8 @@ class DrawerWidgetView extends StatelessWidget {
                       DrawerButton(
                           key: const Key('auth'),
                           component: model.loggedIn
-                              ? AppLocalizations.of(context)!.logout
-                              : AppLocalizations.of(context)!.login,
+                              ? AppLocalizations.of(context).logout
+                              : AppLocalizations.of(context).login,
                           icon: model.loggedIn ? Icons.logout : Icons.login,
                           textColor: model.loggedIn
                               ? const Color.fromARGB(255, 230, 59, 59)

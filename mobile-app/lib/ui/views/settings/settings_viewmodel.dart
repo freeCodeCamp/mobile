@@ -20,11 +20,11 @@ class SettingsViewModel extends BaseViewModel {
     DialogResponse? res = await _dialogService.showCustomDialog(
       barrierDismissible: true,
       variant: DialogType.buttonForm,
-      title: AppLocalizations.of(context)!.settings_reset_cache,
+      title: AppLocalizations.of(context).settings_reset_cache,
       description:
-          AppLocalizations.of(context)!.settings_reset_cache_description,
+          AppLocalizations.of(context).settings_reset_cache_description,
       mainButtonTitle:
-          AppLocalizations.of(context)!.settings_reset_cache_confirm,
+          AppLocalizations.of(context).settings_reset_cache_confirm,
     );
 
     if (res?.confirmed == true) {

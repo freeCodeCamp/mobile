@@ -45,7 +45,7 @@ class DescriptionView extends StatelessWidget {
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
                               Text(
-                                AppLocalizations.of(context)!.instructions,
+                                AppLocalizations.of(context).instructions,
                                 style: const TextStyle(
                                   fontSize: 28,
                                   fontWeight: FontWeight.bold,
@@ -54,7 +54,7 @@ class DescriptionView extends StatelessWidget {
                               ),
                               isMultiStepChallenge
                                   ? Text(
-                                      AppLocalizations.of(context)!.step_count(
+                                      AppLocalizations.of(context).step_count(
                                         splitTitle[1],
                                         maxChallenges.toString(),
                                       ),

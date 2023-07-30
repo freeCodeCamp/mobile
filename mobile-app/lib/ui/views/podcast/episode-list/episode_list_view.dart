@@ -124,7 +124,7 @@ class EpisodeListView extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(
-          AppLocalizations.of(context)!.podcast_description,
+          AppLocalizations.of(context).podcast_description,
           style: const TextStyle(
             fontSize: 24,
             fontWeight: FontWeight.bold,
@@ -152,8 +152,8 @@ class EpisodeListView extends StatelessWidget {
           },
           child: Text(
             model.showDescription
-                ? AppLocalizations.of(context)!.podcast_show_less
-                : AppLocalizations.of(context)!.podcast_show_more,
+                ? AppLocalizations.of(context).podcast_show_less
+                : AppLocalizations.of(context).podcast_show_more,
             style: const TextStyle(
               fontSize: 16,
             ),

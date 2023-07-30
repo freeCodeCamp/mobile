@@ -13,9 +13,9 @@ class NewsViewHandlerView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     var titles = <Widget>[
-      Text(AppLocalizations.of(context)!.tutorial_bookmarks_title),
-      Text(AppLocalizations.of(context)!.tutorials),
-      Text(AppLocalizations.of(context)!.tutorial_search_title)
+      Text(AppLocalizations.of(context).tutorial_bookmarks_title),
+      Text(AppLocalizations.of(context).tutorials),
+      Text(AppLocalizations.of(context).tutorial_search_title)
     ];
 
     const views = <Widget>[
@@ -37,22 +37,22 @@ class NewsViewHandlerView extends StatelessWidget {
               icon: const Icon(
                 Icons.bookmark_outline_sharp,
               ),
-              label: AppLocalizations.of(context)!.tutorial_nav_bookmarks,
-              tooltip: AppLocalizations.of(context)!.tutorial_nav_bookmarks,
+              label: AppLocalizations.of(context).tutorial_nav_bookmarks,
+              tooltip: AppLocalizations.of(context).tutorial_nav_bookmarks,
             ),
             BottomNavigationBarItem(
               icon: const Icon(
                 Icons.article_sharp,
               ),
-              label: AppLocalizations.of(context)!.tutorial_nav_tutorials,
-              tooltip: AppLocalizations.of(context)!.tutorial_nav_tutorials,
+              label: AppLocalizations.of(context).tutorial_nav_tutorials,
+              tooltip: AppLocalizations.of(context).tutorial_nav_tutorials,
             ),
             BottomNavigationBarItem(
               icon: const Icon(
                 Icons.search_sharp,
               ),
-              label: AppLocalizations.of(context)!.tutorial_nav_search,
-              tooltip: AppLocalizations.of(context)!.tutorial_nav_search,
+              label: AppLocalizations.of(context).tutorial_nav_search,
+              tooltip: AppLocalizations.of(context).tutorial_nav_search,
             )
           ],
           currentIndex: model.index,

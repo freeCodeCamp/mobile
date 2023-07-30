@@ -48,7 +48,7 @@ Future<String> getDeviceInfo(BuildContext context) async {
     final deviceInfo = await deviceInfoPlugin.iosInfo;
     return '${deviceInfo.model} - ${deviceInfo.systemName}${deviceInfo.systemVersion}';
   } else {
-    return AppLocalizations.of(context)!.unrecognized_device;
+    return AppLocalizations.of(context).unrecognized_device;
   }
 }
 
@@ -119,7 +119,7 @@ class HintWidgetView extends StatelessWidget {
                 Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 16),
                   child: Text(
-                    AppLocalizations.of(context)!.hint,
+                    AppLocalizations.of(context).hint,
                     style: TextStyle(
                       fontSize: 28,
                       fontWeight: FontWeight.bold,

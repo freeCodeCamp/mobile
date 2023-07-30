@@ -40,7 +40,7 @@ class NewsTutorialHeader extends StatelessWidget {
                       key: const Key('title'),
                     ),
                     Text(
-                      AppLocalizations.of(context)!.tutorial_written_by(
+                      AppLocalizations.of(context).tutorial_written_by(
                         tutorial.authorName,
                       ),
                       style: const TextStyle(height: 1.5, fontFamily: 'Lato'),
@@ -145,7 +145,7 @@ class NewsTutorialView extends StatelessWidget {
                   ),
                 ),
                 BottomButton(
-                  label: AppLocalizations.of(context)!.share,
+                  label: AppLocalizations.of(context).share,
                   icon: Icons.share,
                   onPressed: () {
                     Share.share('${tutorial.title}\n\n${tutorial.url}');

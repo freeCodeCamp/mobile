@@ -135,7 +135,7 @@ class ChallengeView extends StatelessWidget {
                           automaticallyImplyLeading: !model.showPreview,
                           title: challenge.files.length == 1 &&
                                   !model.showPreview
-                              ? Text(AppLocalizations.of(context)!.editor)
+                              ? Text(AppLocalizations.of(context).editor)
                               : Row(
                                   children: [
                                     if (model.showPreview && !onlyJs)
@@ -151,8 +151,7 @@ class ChallengeView extends StatelessWidget {
                                                   true;
                                             },
                                             child: Text(
-                                              AppLocalizations.of(context)!
-                                                  .preview,
+                                              AppLocalizations.of(context).preview,
                                             ),
                                           ),
                                         ),
@@ -165,8 +164,7 @@ class ChallengeView extends StatelessWidget {
                                               : null,
                                           child: ElevatedButton(
                                             child: Text(
-                                              AppLocalizations.of(context)!
-                                                  .console,
+                                              AppLocalizations.of(context).console,
                                             ),
                                             onPressed: () {
                                               model.setShowConsole = true;
@@ -244,7 +242,7 @@ class ChallengeView extends StatelessWidget {
 
           return Scaffold(
             appBar: AppBar(
-              title: Text(AppLocalizations.of(context)!.loading),
+              title: Text(AppLocalizations.of(context).loading),
               automaticallyImplyLeading: false,
             ),
             body: const Center(
@@ -512,7 +510,7 @@ class ProjectPreview extends StatelessWidget {
 
           if (snapshot.hasError) {
             Center(
-              child: Text(AppLocalizations.of(context)!.error),
+              child: Text(AppLocalizations.of(context).error),
             );
           }
 

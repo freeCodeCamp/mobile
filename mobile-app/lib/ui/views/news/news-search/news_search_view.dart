@@ -20,7 +20,7 @@ class NewsSearchView extends StatelessWidget {
                 controller: model.searchbarController,
                 decoration: InputDecoration(
                   hintText:
-                      AppLocalizations.of(context)!.tutorial_search_placeholder,
+                      AppLocalizations.of(context).tutorial_search_placeholder,
                   fillColor: const Color.fromRGBO(0x2A, 0x2A, 0x40, 1),
                   border: InputBorder.none,
                   filled: true,
@@ -71,7 +71,7 @@ class NewsSearchView extends StatelessWidget {
             if (!snapshot.hasData) {
               return Center(
                 child: Text(
-                  AppLocalizations.of(context)!.tutorial_search_no_results,
+                  AppLocalizations.of(context).tutorial_search_no_results,
                 ),
               );
             }
@@ -123,8 +123,7 @@ class NewsSearchView extends StatelessWidget {
                         )
                       : Center(
                           child: Text(
-                            AppLocalizations.of(context)!
-                                .tutorial_search_no_results,
+                            AppLocalizations.of(context).tutorial_search_no_results,
                           ),
                         ),
                 ),

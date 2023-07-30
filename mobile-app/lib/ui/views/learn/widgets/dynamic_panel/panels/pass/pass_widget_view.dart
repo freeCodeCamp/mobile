@@ -34,7 +34,7 @@ class PassWidgetView extends StatelessWidget {
                 Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 16),
                   child: Text(
-                    AppLocalizations.of(context)!.passed,
+                    AppLocalizations.of(context).passed,
                     style: TextStyle(
                       fontSize: 28,
                       fontFamily: 'Inter',
@@ -110,8 +110,7 @@ class PassWidgetView extends StatelessWidget {
                                 children: [
                                   Expanded(
                                     child: Text(
-                                      AppLocalizations.of(context)!
-                                          .completed_percent(
+                                      AppLocalizations.of(context).completed_percent(
                                         ((completed * 100) ~/ maxChallenges)
                                             .toString(),
                                       ),
@@ -150,7 +149,7 @@ class PassWidgetView extends StatelessWidget {
                               model.auth.routeToLogin(true);
                             },
                             child: Text(
-                              AppLocalizations.of(context)!.login_save_progress,
+                              AppLocalizations.of(context).login_save_progress,
                               textAlign: TextAlign.center,
                               style: const TextStyle(
                                 color: Colors.black,
@@ -228,7 +227,7 @@ class PassButton extends StatelessWidget {
             Container(
               margin: const EdgeInsets.only(right: 10),
               child: Text(
-                AppLocalizations.of(context)!.next,
+                AppLocalizations.of(context).next,
                 style: const TextStyle(fontSize: 20),
                 textAlign: TextAlign.center,
               ),

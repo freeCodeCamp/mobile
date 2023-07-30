@@ -32,7 +32,7 @@ class NewsBookmarkTutorialView extends StatelessWidget {
             slivers: [
               SliverAppBar(
                 title: Text(
-                  AppLocalizations.of(context)!.tutorial_bookmark_title,
+                  AppLocalizations.of(context).tutorial_bookmark_title,
                 ),
               ),
               SliverAppBar(
@@ -55,10 +55,8 @@ class NewsBookmarkTutorialView extends StatelessWidget {
                                 : const Icon(Icons.bookmark_add_outlined),
                             label: Text(
                               model.bookmarked
-                                  ? AppLocalizations.of(context)!
-                                      .tutorial_bookmarked
-                                  : AppLocalizations.of(context)!
-                                      .tutorial_bookmark,
+                                  ? AppLocalizations.of(context).tutorial_bookmarked
+                                  : AppLocalizations.of(context).tutorial_bookmark,
                             ),
                           ),
                         ),

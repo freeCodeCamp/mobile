@@ -44,7 +44,7 @@ class SuperBlockView extends StatelessWidget {
             }
 
             if (snapshot.hasError) {
-              return Text(AppLocalizations.of(context)!.error);
+              return Text(AppLocalizations.of(context).error);
             }
 
             return const Center(

@@ -17,7 +17,7 @@ class SettingsView extends StatelessWidget {
       builder: (context, model, child) => Scaffold(
         appBar: AppBar(
           title: Text(
-            AppLocalizations.of(context)!.settings_title,
+            AppLocalizations.of(context).settings_title,
           ),
         ),
         drawer: const DrawerWidgetView(),
@@ -27,11 +27,10 @@ class SettingsView extends StatelessWidget {
               ListTile(
                 leading: const Icon(Icons.delete_forever),
                 title: Text(
-                  AppLocalizations.of(context)!.settings_delete_account,
+                  AppLocalizations.of(context).settings_delete_account,
                 ),
                 subtitle: Text(
-                  AppLocalizations.of(context)!
-                      .settings_delete_account_description,
+                  AppLocalizations.of(context).settings_delete_account_description,
                 ),
                 onTap: () => Navigator.push(
                   context,
@@ -45,9 +44,9 @@ class SettingsView extends StatelessWidget {
             ],
             ListTile(
               leading: const Icon(Icons.dataset_linked),
-              title: Text(AppLocalizations.of(context)!.settings_reset_cache),
+              title: Text(AppLocalizations.of(context).settings_reset_cache),
               subtitle: Text(
-                AppLocalizations.of(context)!.settings_reset_cache_description,
+                AppLocalizations.of(context).settings_reset_cache_description,
               ),
               onTap: () => model.resetCache(context),
             ),
@@ -55,11 +54,10 @@ class SettingsView extends StatelessWidget {
             ListTile(
               leading: const Icon(Icons.privacy_tip),
               title: Text(
-                AppLocalizations.of(context)!.settings_privacy_policy,
+                AppLocalizations.of(context).settings_privacy_policy,
               ),
               subtitle: Text(
-                AppLocalizations.of(context)!
-                    .settings_privacy_policy_description,
+                AppLocalizations.of(context).settings_privacy_policy_description,
               ),
               onTap: () => model.openPrivacyPolicy(),
             ),

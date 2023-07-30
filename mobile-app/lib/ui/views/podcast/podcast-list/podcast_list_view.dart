@@ -20,8 +20,8 @@ class PodcastListView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     List titles = [
-      AppLocalizations.of(context)!.podcasts_title,
-      AppLocalizations.of(context)!.podcast_download_title,
+      AppLocalizations.of(context).podcasts_title,
+      AppLocalizations.of(context).podcast_download_title,
     ];
 
     return ViewModelBuilder<PodcastListViewModel>.reactive(
@@ -40,13 +40,13 @@ class PodcastListView extends StatelessWidget {
               icon: const Icon(
                 Icons.grid_view_rounded,
               ),
-              label: AppLocalizations.of(context)!.podcasts_browse,
+              label: AppLocalizations.of(context).podcasts_browse,
             ),
             BottomNavigationBarItem(
               icon: const Icon(
                 Icons.arrow_circle_down_sharp,
               ),
-              label: AppLocalizations.of(context)!.podcasts_downloads,
+              label: AppLocalizations.of(context).podcasts_downloads,
             ),
           ],
         ),
@@ -86,8 +86,7 @@ class PodcastListViewBuilder extends StatelessWidget {
               if (snapshot.hasError) {
                 return Center(
                   child: Text(
-                    AppLocalizations.of(context)!
-                        .podcast_unable_to_load_podcasts,
+                    AppLocalizations.of(context).podcast_unable_to_load_podcasts,
                     textAlign: TextAlign.center,
                   ),
                 );
@@ -106,7 +105,7 @@ class PodcastListViewBuilder extends StatelessWidget {
                         height: 4,
                       ),
                       Text(
-                        AppLocalizations.of(context)!.podcast_no_downloads,
+                        AppLocalizations.of(context).podcast_no_downloads,
                         style: const TextStyle(
                           color: Colors.white,
                           fontSize: 16,
