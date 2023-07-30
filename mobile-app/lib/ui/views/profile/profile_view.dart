@@ -1,7 +1,7 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:flutter_heatmap_calendar/flutter_heatmap_calendar.dart';
+import 'package:freecodecamp/extensions/i18n_extension.dart';
 import 'package:freecodecamp/models/main/user_model.dart';
 import 'package:freecodecamp/service/authentication/authentication_service.dart';
 import 'package:freecodecamp/ui/views/profile/profile_viewmodel.dart';
@@ -54,7 +54,7 @@ class ProfileView extends StatelessWidget {
       builder: (context, model, child) => Scaffold(
         backgroundColor: const Color(0xFF0a0a23),
         appBar: AppBar(
-          title: Text(AppLocalizations.of(context)!.profile_title),
+          title: Text(context.t.profile_title),
         ),
         drawer: const DrawerWidgetView(),
         body: FutureBuilder<FccUserModel>(
@@ -239,8 +239,7 @@ class ProfileView extends StatelessWidget {
                               ? ListTile(
                                   leading: const Icon(Icons.favorite),
                                   title: Text(
-                                    AppLocalizations.of(context)!
-                                        .profile_supporter,
+                                    context.t.profile_supporter,
                                   ),
                                 )
                               : Container(),
@@ -255,7 +254,7 @@ class ProfileView extends StatelessWidget {
                           ListTile(
                             leading: const Icon(Icons.calendar_month),
                             title: Text(
-                              AppLocalizations.of(context)!.profile_join_date(
+                              context.t.profile_join_date(
                                 DateFormat.yMMMM().format(user.joinDate),
                               ),
                             ),
@@ -266,7 +265,7 @@ class ProfileView extends StatelessWidget {
                       ListTile(
                         leading: const Icon(Icons.local_fire_department_sharp),
                         title: Text(
-                          AppLocalizations.of(context)!.profile_points(
+                          context.t.profile_points(
                             user.points.toString(),
                           ),
                         ),
@@ -289,8 +288,7 @@ class ProfileView extends StatelessWidget {
                             SnackBar(
                               duration: const Duration(seconds: 2),
                               content: Text(
-                                AppLocalizations.of(context)!
-                                    .profile_points_on_date(
+                                context.t.profile_points_on_date(
                                   (user.heatMapCal[value] ?? 0),
                                   DateFormat.yMMMd().format(value),
                                 ),
@@ -302,7 +300,7 @@ class ProfileView extends StatelessWidget {
                       Padding(
                         padding: const EdgeInsets.symmetric(vertical: 4),
                         child: Text(
-                          AppLocalizations.of(context)!.profile_longest_streak(
+                          context.t.profile_longest_streak(
                             streak['longest'] ?? 0,
                           ),
                           textAlign: TextAlign.center,
@@ -312,7 +310,7 @@ class ProfileView extends StatelessWidget {
                       Padding(
                         padding: const EdgeInsets.only(top: 4, bottom: 8),
                         child: Text(
-                          AppLocalizations.of(context)!.profile_current_streak(
+                          context.t.profile_current_streak(
                             streak['current'] ?? 0,
                           ),
                           textAlign: TextAlign.center,
@@ -337,7 +335,7 @@ class ProfileView extends StatelessWidget {
             } else {
               return Center(
                 child: Text(
-                  AppLocalizations.of(context)!.profile_no_userdata.toString(),
+                  context.t.profile_no_userdata.toString(),
                 ),
               );
             }
@@ -394,8 +392,7 @@ class CertificationWidget extends StatelessWidget {
                                 height: 50,
                                 child: ListTile(
                                   title: Text(
-                                    AppLocalizations.of(context)!
-                                        .profile_view_cert(
+                                    context.t.profile_view_cert(
                                       cert['certTitle'].toString(),
                                     ),
                                   ),
@@ -417,7 +414,7 @@ class CertificationWidget extends StatelessWidget {
               : Padding(
                   padding: const EdgeInsets.all(4),
                   child: Text(
-                    AppLocalizations.of(context)!.profile_no_modern_certs,
+                    context.t.profile_no_modern_certs,
                     textAlign: TextAlign.center,
                     style: const TextStyle(
                       fontSize: 16,
@@ -431,7 +428,7 @@ class CertificationWidget extends StatelessWidget {
                     Padding(
                       padding: const EdgeInsets.only(top: 16, bottom: 2),
                       child: Text(
-                        AppLocalizations.of(context)!.profile_legacy_certs,
+                        context.t.profile_legacy_certs,
                         textAlign: TextAlign.center,
                         style: const TextStyle(
                           fontSize: 18,
@@ -451,8 +448,7 @@ class CertificationWidget extends StatelessWidget {
                                     height: 50,
                                     child: ListTile(
                                       title: Text(
-                                        AppLocalizations.of(context)!
-                                            .profile_view_cert(
+                                        context.t.profile_view_cert(
                                           cert['certTitle'].toString(),
                                         ),
                                       ),
@@ -496,7 +492,7 @@ class PortfolioWidget extends StatelessWidget {
           Padding(
             padding: const EdgeInsets.all(8),
             child: Text(
-              AppLocalizations.of(context)!.profile_portfolio,
+              context.t.profile_portfolio,
               textAlign: TextAlign.center,
               style: const TextStyle(
                 fontSize: 20,
