@@ -421,14 +421,15 @@
             }
         }
     },
-    "profile_points_on_date": "{user} points on {date}",
+    "profile_points_on_date": "{point, plural, =0{0 points on {date}} =1{1 point on {date}} other{{point} points on {date}}}",
     "@profile_points_on_date": {
         "description": "The number of points a user had on a specific date",
         "context": "drawer > profile (signed in)",
         "placeholders": {
-            "user": {
-                "type": "String",
-                "example": "John Doe"
+            "point": {
+                "type": "int",
+                "example": "10",
+                "format": "compact"
             },
             "date": {
                 "type": "String",
@@ -436,46 +437,24 @@
             }
         }
     },
-    "profile_one_point_on_date": "1 point on {date}",
-    "@profile_one_point_on_date": {
-        "description": "The number of points a user had on a specific date",
-        "context": "drawer > profile (signed in)",
-        "placeholders": {
-            "date": {
-                "type": "String",
-                "example": "January 1st, 2019"
-            }
-        }
-    },
-    "profile_zero_points_on_date": "0 points on {date}",
-    "@profile_zero_points_on_date": {
-        "description": "The number of points a user had on a specific date",
-        "context": "drawer > profile (signed in)",
-        "placeholders": {
-            "date": {
-                "type": "String",
-                "example": "January 1st, 2019"
-            }
-        }
-    },
-    "profile_longest_streak": "Longest Streak: ${streak}",
+    "profile_longest_streak": "Longest Streak: {streak}",
     "@profile_longest_streak": {
         "description": "The longest streak a user has had",
         "context": "drawer > profile (signed in)",
         "placeholders": {
             "streak": {
-                "type": "String",
+                "type": "int",
                 "example": "100"
             }
         }
     },
-    "profile_current_streak": "Current Streak: ${streak}",
+    "profile_current_streak": "Current Streak: {streak}",
     "@profile_current_streak": {
         "description": "The current streak a user has",
         "context": "drawer > profile (signed in)",
         "placeholders": {
             "streak": {
-                "type": "String",
+                "type": "int",
                 "example": "100"
             }
         }

@@ -289,21 +289,10 @@ class ProfileView extends StatelessWidget {
                             SnackBar(
                               duration: const Duration(seconds: 2),
                               content: Text(
-                                Intl.plural(
-                                  user.heatMapCal[value] ?? 0,
-                                  other: AppLocalizations.of(context)!
-                                      .profile_points_on_date(
-                                    (user.heatMapCal[value] ?? 0).toString(),
-                                    DateFormat.yMMMd().format(value),
-                                  ),
-                                  zero: AppLocalizations.of(context)!
-                                      .profile_zero_points_on_date(
-                                    DateFormat.yMMMd().format(value),
-                                  ),
-                                  one: AppLocalizations.of(context)!
-                                      .profile_one_point_on_date(
-                                    DateFormat.yMMMd().format(value),
-                                  ),
+                                AppLocalizations.of(context)!
+                                    .profile_points_on_date(
+                                  (user.heatMapCal[value] ?? 0),
+                                  DateFormat.yMMMd().format(value),
                                 ),
                               ),
                             ),
@@ -314,7 +303,7 @@ class ProfileView extends StatelessWidget {
                         padding: const EdgeInsets.symmetric(vertical: 4),
                         child: Text(
                           AppLocalizations.of(context)!.profile_longest_streak(
-                            streak['longest'].toString(),
+                            streak['longest'] ?? 0,
                           ),
                           textAlign: TextAlign.center,
                           style: const TextStyle(fontSize: 16, height: 1.25),
@@ -324,7 +313,7 @@ class ProfileView extends StatelessWidget {
                         padding: const EdgeInsets.only(top: 4, bottom: 8),
                         child: Text(
                           AppLocalizations.of(context)!.profile_current_streak(
-                            streak['current'].toString(),
+                            streak['current'] ?? 0,
                           ),
                           textAlign: TextAlign.center,
                           style: const TextStyle(fontSize: 16, height: 1.25),
