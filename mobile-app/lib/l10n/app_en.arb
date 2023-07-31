@@ -2,93 +2,93 @@
     "@@locale": "en",
     "tutorials": "TUTORIALS",
     "@tutorials": {
-        "context": "in drawer (hamburger menu)"
+        "description": "in drawer (hamburger menu)"
     },
     "podcasts": "PODCASTS",
     "@podcasts": {
-        "context": "in drawer (hamburger menu)"
+        "description": "in drawer (hamburger menu)"
     },
     "donate": "DONATE",
     "@donate": {
-        "context": "in drawer (hamburger menu)"
+        "description": "in drawer (hamburger menu)"
     },
     "learn": "LEARN",
     "@learn": {
-        "context": "in drawer (hamburger menu)"
+        "description": "in drawer (hamburger menu)"
     },
     "settings": "SETTINGS",
     "@settings": {
-        "context": "in drawer (hamburger menu)"
+        "description": "in drawer (hamburger menu)"
     },
     "profile": "PROFILE",
     "@profile": {
-        "context": "in drawer (hamburger menu when logged in)"
+        "description": "in drawer (hamburger menu when logged in)"
     },
     "logout": "LOG OUT",
     "@logout": {
-        "context": "in drawer (hamburger menu when logged in)"
+        "description": "in drawer (hamburger menu when logged in)"
     },
     "login": "LOG IN",
     "@login": {
-        "context": "in drawer (hamburger menu when logged out)"
+        "description": "in drawer (hamburger menu when logged out)"
     },
     "login_title": "LOGIN",
     "@login_title": {
-        "context": "login view"
+        "description": "login view"
     },
     "anonymous_user": "Anonymous User",
     "@anonymous_user": {
-        "context": "in drawer (hamburger menu when logged out)"
+        "description": "in drawer (hamburger menu when logged out)"
     },
     "coolest_camper": "Our coolest Camper",
     "@coolest_camper": {
-        "context": "in drawer (hamburger menu when logged in)"
+        "description": "in drawer (hamburger menu when logged in)"
     },
     "login_save_progress": "Sign in to save your progress",
     "@login_save_progress": {
-        "context": "login view"
+        "description": "login view"
     },
     "login_with_google": "Continue with Google",
     "@login_with_google": {
-        "context": "login view"
+        "description": "login view"
     },
     "login_with_github": "Continue with GitHub",
     "@login_with_github": {
-        "context": "login view"
+        "description": "login view"
     },
     "login_with_apple": "Continue with Apple",
     "@login_with_apple": {
-        "context": "login view"
+        "description": "login view"
     },
     "email": "Email",
     "@email": {
-        "context": "login view"
+        "description": "login view"
     },
     "email_sign_in_code": "Email a sign in code",
     "@email_sign_in_code": {
-        "context": "login view"
+        "description": "login view"
     },
     "email_enter_sign_in_code": "Enter sign in code",
     "@email_enter_sign_in_code": {
-        "context": "login view"
+        "description": "login view"
     },
     "email_submit_code": "Submit and sign in to freeCodeCamp",
     "@email_submit_code": {
-        "context": "login view"
+        "description": "login view"
     },
     "email_invalid_code": "The code you entered is not valid. Please check the last OTP you received and try again.",
     "@email_invalid_code": {
-        "context": "login view (when failing to login with email)"
+        "description": "login view (when failing to login with email)"
     },
     "login_data_message": "freeCodeCamp is free and your account is private by default. We use your email address to connect you to your account.",
     "@login_data_message": {
-        "context": "login view"
+        "description": "login view"
     },
     "login_load_message": "Signing in...",
     "login_cancelled": "Login canceled",
     "login_age_message": "You must be at least 13 years old to create an account on freeCodeCamp.",
     "@login_age_message": {
-        "context": "login view"
+        "description": "login view"
     },
     "challenge_download": "Download All Challenges",
     "challenge_download_starting": "Starting Download...",
@@ -96,28 +96,27 @@
     "challenge_download_delete": "Delete Downloaded Challenges",
     "certification_project": "Certification Project",
     "@certification_project": {
-        "context": "learn > block "
+        "description": "learn > block "
     },
     "instructions": "Instructions",
     "@instructions": {
-        "context": "learn > block > challenge"
+        "description": "learn > block > challenge"
     },
     "editor": "Editor",
     "@editor": {
-        "context": "learn > block > challenge"
+        "description": "learn > block > challenge"
     },
     "preview": "PREVIEW",
     "@preview": {
-        "context": "learn > block > challenge (eye icon)"
+        "description": "learn > block > challenge (eye icon)"
     },
     "console": "CONSOLE",
     "@console": {
-        "context": "learn > block > challenge (eye icon)"
+        "description": "learn > block > challenge (eye icon)"
     },
     "step_count": "Step {stepNumber} of {totalSteps}",
     "@step_count": {
-        "description": "The step number and total number of steps in a block of challenges",
-        "context": "learn > block > challenge > instructions panel",
+        "description": "learn > block > challenge > instructions panel",
         "placeholders": {
             "stepNumber": {
                 "type": "String",
@@ -131,8 +130,7 @@
     },
     "completed_percent": "{percent}% Completed",
     "@completed_percent": {
-        "description": "The percentage of challenges completed in a block of challenges",
-        "context": "learn > block > challenge > *complete challenge* > pass panel",
+        "description": "learn > block > challenge > *complete challenge* > pass panel",
         "placeholders": {
             "percent": {
                 "type": "String",
@@ -142,19 +140,19 @@
     },
     "next": "Next",
     "@next": {
-        "context": "learn > block > challenge > *complete challenge* > pass panel"
+        "description": "learn > block > challenge > *complete challenge* > pass panel"
     },
     "passed": "Passed",
     "@passed": {
-        "context": "learn > block > challenge > *complete challenge* > pass panel"
+        "description": "learn > block > challenge > *complete challenge* > pass panel"
     },
     "hint": "Hint",
     "@hint": {
-        "context": "learn > block > challenge > *fail challenge* > hint panel"
+        "description": "learn > block > challenge > *fail challenge* > hint panel"
     },
     "tutorials_from": "Tutorials from {author}",
     "@tutorials_from": {
-        "context": "news > click author image",
+        "description": "news > click author image",
         "placeholders": {
             "author": {
                 "type": "String",
@@ -164,15 +162,15 @@
     },
     "tutorial_author_title": "AUTHOR PROFILE",
     "@tutorial_author_title": {
-        "context": "news > *click author image*"
+        "description": "news > *click author image*"
     },
     "tutorial_show_more": "Show more tutorials",
     "@tutorial_show_more": {
-        "context": "news > *click author image*"
+        "description": "news > *click author image*"
     },
     "tutorials_about": "Tutorials about {subject}",
     "@tutorials_about": {
-        "context": "news > click subject (#javascript)",
+        "description": "news > click subject (#javascript)",
         "placeholders": {
             "subject": {
                 "type": "String",
@@ -182,8 +180,7 @@
     },
     "tutorial_written_by": "Written by {author}",
     "@tutorial_written_by": {
-        "description": "The author of a tutorial",
-        "context": "news > tutorial",
+        "description": "news > tutorial",
         "placeholders": {
             "author": {
                 "type": "String",
@@ -193,88 +190,87 @@
     },
     "tutorial_load_error": "There was an error loading tutorials",
     "@tutorial_load_error": {
-        "context": "news view"
+        "description": "news view"
     },
     "tutorial_read_online": "Read tutorials online",
     "@tutorial_read_online": {
-        "context": "news view"
+        "description": "news view"
     },
     "tutorial_bookmark": "Bookmark",
     "@tutorial_bookmark": {
-        "context": "news > tutorial"
+        "description": "news > tutorial"
     },
     "tutorial_bookmarked": "Bookmarked",
     "@tutorial_bookmarked": {
-        "context": "news > tutorial"
+        "description": "news > tutorial"
     },
     "tutorial_bookmark_title": "BOOKMARKED TUTORIAL",
     "@tutorial_bookmark_title": {
-        "context": "news > bookmarks > bookmarked tutorial"
+        "description": "news > bookmarks > bookmarked tutorial"
     },
     "tutorial_no_bookmarks": "Bookmark tutorials to view them here",
     "@tutorial_no_bookmarks": {
-        "context": "news > bookmarks"
+        "description": "news > bookmarks"
     },
     "tutorial_search_no_results": "No Tutorials Found",
     "@tutorial_search_no_results": {
-        "context": "news > search"
+        "description": "news > search"
     },
     "tutorial_search_error": "There was an error loading tutorials \n please try again",
     "@tutorial_search_error": {
-        "context": "news > search"
+        "description": "news > search"
     },
     "tutorial_search_placeholder": "SEARCH TUTORIALS...",
     "@tutorial_search_placeholder": {
-        "context": "news > search"
+        "description": "news > search"
     },
     "tutorial_bookmarks_title": "BOOKMARKED TUTORIALS",
     "@tutorial_bookmarks_title": {
-        "context": "news > bookmarks"
+        "description": "news > bookmarks"
     },
     "tutorial_search_title": "SEARCH TUTORIALS",
     "@tutorial_search_title": {
-        "context": "news > search"
+        "description": "news > search"
     },
     "tutorial_nav_tutorials": "Tutorials",
     "@tutorial_nav_tutorials": {
-        "context": "news view"
+        "description": "news view"
     },
     "tutorial_nav_bookmarks": "Bookmarks",
     "@tutorial_nav_bookmarks": {
-        "context": "news view"
+        "description": "news view"
     },
     "tutorial_nav_search": "Search",
     "@tutorial_nav_search": {
-        "context": "news view"
+        "description": "news view"
     },
     "podcasts_browse": "Browse",
     "@podcasts_browse": {
-        "context": "podcasts view"
+        "description": "podcasts view"
     },
     "podcasts_downloads": "Downloads",
     "@podcasts_downloads": {
-        "context": "podcasts view"
+        "description": "podcasts view"
     },
     "podcasts_title": "PODCASTS",
     "@podcasts_title": {
-        "context": "podcasts view"
+        "description": "podcasts view"
     },
     "podcast_download_title": "DOWNLOADED PODCASTS",
     "@podcast_download_title": {
-        "context": "podcasts > downloads"
+        "description": "podcasts > downloads"
     },
     "podcast_no_downloads": "No Downloaded Episodes",
     "@podcast_no_downloads": {
-        "context": "podcasts > downloads"
+        "description": "podcasts > downloads"
     },
     "podcast_description": "Description",
     "@podcast_description": {
-        "context": "podcasts > podcast"
+        "description": "podcasts > podcast"
     },
     "podcast_duration_hours": "{hours} hrs {minutes} min",
     "@podcast_duration_hours": {
-        "description": "The duration of a podcast in hours and minutes",
-        "context": "podcasts > podcast",
+        "description": "podcasts > podcast",
         "placeholders": {
             "hours": {
                 "type": "String",
@@ -288,8 +284,7 @@
     },
     "podcast_duration_minutes": "{minutes} min",
     "@podcast_duration_minutes": {
-        "description": "The duration of a podcast in minutes",
-        "context": "podcasts > podcast",
+        "description": "podcasts > podcast",
         "placeholders": {
             "minutes": {
                 "type": "String",
@@ -299,54 +294,54 @@
     },
     "podcast_show_more": "Show More",
     "@podcast_show_more": {
-        "context": "podcasts > podcast"
+        "description": "podcasts > podcast"
     },
     "podcast_show_less": "Show Less",
     "@podcast_show_less": {
-        "context": "podcasts > podcast"
+        "description": "podcasts > podcast"
     },
     "podcast_unable_to_load_podcasts": "Unable to load podcasts \n please try again.",
     "@podcast_unable_to_load_podcasts": {
-        "context": "podcasts > podcast"
+        "description": "podcasts > podcast"
     },
     "settings_title": "SETTINGS",
     "@settings_title": {
-        "context": "settings view"
+        "description": "settings view"
     },
     "settings_reset_cache": "Reset Cache",
     "@settings_reset_cache": {
-        "context": "settings view"
+        "description": "settings view"
     },
     "settings_reset_cache_message": "Are you sure you want to clear the cache? - this resets all your progress and local data",
     "@settings_reset_cache_message": {
-        "context": "settings view > *click reset cache*"
+        "description": "settings view > *click reset cache*"
     },
     "settings_reset_cache_confirm": "Clear",
     "@settings_reset_cache_confirm": {
-        "context": "settings view > *click reset cache*"
+        "description": "settings view > *click reset cache*"
     },
     "settings_reset_cache_description": "Clears all local data and progress",
     "@settings_reset_cache_description": {
-        "context": "settings view"
+        "description": "settings view"
     },
     "settings_privacy_policy": "Privacy Policy",
     "@settings_privacy_policy": {
-        "context": "settings view"
+        "description": "settings view"
     },
     "settings_delete_account": "Delete Account",
     "@settings_delete_account": {
-        "context": "settings view"
+        "description": "settings view"
     },
     "delete_account_message_one": "This will really delete all your data, including all your progress and account information.",
     "@delete_account_message_one": {
-        "context": "settings view > *click delete account*"
+        "description": "settings view > *click delete account*"
     },
     "delete_account_message_two": "We won't be able to recover any of it for you later, even if you change your mind.",
     "delete_account_message_three": "If there's something we could do better, send us an email instead and we'll do our best:",
     "delete_account_message_four": "I am 100% certain. Delete everything related to this account",
     "delete_account_are_you_sure": "Are you sure you want to delete your account? - this deletes everything related to your account",
     "@delete_account_are_you_sure": {
-        "context": "settings view > *click delete account*"
+        "description": "settings view > *click delete account*"
     },
     "delete_account_deleting": "Deleting account...",
     "delete_success": "Account deleted successfully",
@@ -354,20 +349,19 @@
 
     "settings_delete_account_description": "Delete your freeCodeCamp account",
     "@settings_delete_account_description": {
-        "context": "settings view"
+        "description": "settings view"
     },
     "settings_privacy_policy_description": "Read our privacy policy",
     "@settings_privacy_policy_description": {
-        "context": "settings view"
+        "description": "settings view"
     },
     "coderadio_next_song": "Next Song",
     "@coderadio_next_song": {
-        "context": "coderadio view (only on Android)"
+        "description": "coderadio view (only on Android)"
     },
     "coderadio_listening": "{listeners} listening right now",
     "@coderadio_listening": {
-        "description": "The number of people listening to the radio right now",
-        "context": "coderadio view",
+        "description": "coderadio view",
         "placeholders": {
             "listeners": {
                 "type": "String",
@@ -379,8 +373,7 @@
     "coderadio_pause": "Pause",
     "profile_view_cert": "View {certification}",
     "@profile_view_cert": {
-        "description": "View a certification",
-        "context": "drawer > profile (signed in)",
+        "description": "drawer > profile (signed in)",
         "placeholders": {
             "certification": {
                 "type": "String",
@@ -390,8 +383,7 @@
     },
     "profile_cert": "{certification} Certification",
     "@profile_cert": {
-        "description": "A certification",
-        "context": "drawer > profile (signed in)",
+        "description": "drawer > profile (signed in)",
         "placeholders": {
             "certification": {
                 "type": "String",
@@ -401,8 +393,7 @@
     },
     "profile_join_date": "Joined {date}",
     "@profile_join_date": {
-        "description": "The date a user joined freeCodeCamp",
-        "context": "drawer > profile (signed in)",
+        "description": "drawer > profile (signed in)",
         "placeholders": {
             "date": {
                 "type": "String",
@@ -412,8 +403,7 @@
     },
     "profile_points": "{points} points",
     "@profile_points": {
-        "description": "The number of points a user has",
-        "context": "drawer > profile (signed in)",
+        "description": "drawer > profile (signed in)",
         "placeholders": {
             "points": {
                 "type": "String",
@@ -423,8 +413,7 @@
     },
     "profile_points_on_date": "{point, plural, =0{0 points on {date}} =1{1 point on {date}} other{{point} points on {date}}}",
     "@profile_points_on_date": {
-        "description": "The number of points a user had on a specific date",
-        "context": "drawer > profile (signed in)",
+        "description": "drawer > profile (signed in)",
         "placeholders": {
             "point": {
                 "type": "int",
@@ -439,8 +428,7 @@
     },
     "profile_longest_streak": "Longest Streak: {streak}",
     "@profile_longest_streak": {
-        "description": "The longest streak a user has had",
-        "context": "drawer > profile (signed in)",
+        "description": "drawer > profile (signed in)",
         "placeholders": {
             "streak": {
                 "type": "int",
@@ -450,8 +438,7 @@
     },
     "profile_current_streak": "Current Streak: {streak}",
     "@profile_current_streak": {
-        "description": "The current streak a user has",
-        "context": "drawer > profile (signed in)",
+        "description": "drawer > profile (signed in)",
         "placeholders": {
             "streak": {
                 "type": "int",
@@ -461,31 +448,31 @@
     },
     "profile_supporter": "Supporter",
     "@profile_supporter": {
-        "context": "drawer > profile (signed in)"
+        "description": "drawer > profile (signed in)"
     },
     "profile_title": "PROFILE",
     "@profile_title": {
-        "context": "drawer > profile (signed in)"
+        "description": "drawer > profile (signed in)"
     },
     "profile_certifications": "freeCodeCamp Certifications",
     "@profile_certifications": {
-        "context": "drawer > profile (signed in)"
+        "description": "drawer > profile (signed in)"
     },
     "profile_no_userdata": "No user data found",
     "@profile_no_userdata": {
-        "context": "drawer > profile (signed in)"
+        "description": "drawer > profile (signed in)"
     },
     "profile_no_modern_certs": "No certifications have been earned under the current curriculum",
     "@profile_no_modern_certs": {
-        "context": "drawer > profile (signed in)"
+        "description": "drawer > profile (signed in)"
     },
     "profile_legacy_certs": "Legacy Certifications",
     "@profile_legacy_certs": {
-        "context": "drawer > profile (signed in)"
+        "description": "drawer > profile (signed in)"
     },
     "profile_portfolio": "Portfolio",
     "@profile_portfolio": {
-        "context": "drawer > profile (signed in)"
+        "description": "drawer > profile (signed in)"
     },
     "quincy_email_signup": "Email Signup",
     "quincy_email_part_one": "Please slow down and read this.",

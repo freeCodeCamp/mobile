@@ -1,516 +1,503 @@
 {
-    "@@locale": "pt",
-    "tutorials": "TUTORIALS",
-    "@tutorials": {
-        "context": "in drawer (hamburger menu)"
-    },
-    "podcasts": "PODCASTS",
-    "@podcasts": {
-        "context": "in drawer (hamburger menu)"
-    },
-    "donate": "DONATE",
-    "@donate": {
-        "context": "in drawer (hamburger menu)"
-    },
-    "learn": "LEARN",
-    "@learn": {
-        "context": "in drawer (hamburger menu)"
-    },
-    "settings": "SETTINGS",
-    "@settings": {
-        "context": "in drawer (hamburger menu)"
-    },
-    "profile": "PROFILE",
-    "@profile": {
-        "context": "in drawer (hamburger menu when logged in)"
-    },
-    "logout": "LOG OUT",
-    "@logout": {
-        "context": "in drawer (hamburger menu when logged in)"
-    },
-    "login": "LOG IN",
-    "@login": {
-        "context": "in drawer (hamburger menu when logged out)"
-    },
-    "login_title": "LOGIN",
-    "@login_title": {
-        "context": "login view"
-    },
-    "anonymous_user": "Anonymous User",
-    "@anonymous_user": {
-        "context": "in drawer (hamburger menu when logged out)"
-    },
-    "coolest_camper": "Our coolest Camper",
-    "@coolest_camper": {
-        "context": "in drawer (hamburger menu when logged in)"
-    },
-    "login_save_progress": "Sign in to save your progress",
-    "@login_save_progress": {
-        "context": "login view"
-    },
-    "login_with_google": "Continue with Google",
-    "@login_with_google": {
-        "context": "login view"
-    },
-    "login_with_github": "Continue with GitHub",
-    "@login_with_github": {
-        "context": "login view"
-    },
-    "login_with_apple": "Continue with Apple",
-    "@login_with_apple": {
-        "context": "login view"
-    },
-    "email": "Email",
-    "@email": {
-        "context": "login view"
-    },
-    "email_sign_in_code": "Email a sign in code",
-    "@email_sign_in_code": {
-        "context": "login view"
-    },
-    "email_enter_sign_in_code": "Enter sign in code",
-    "@email_enter_sign_in_code": {
-        "context": "login view"
-    },
-    "email_submit_code": "Submit and sign in to freeCodeCamp",
-    "@email_submit_code": {
-        "context": "login view"
-    },
-    "email_invalid_code": "The code you entered is not valid. Please check the last OTP you received and try again.",
-    "@email_invalid_code": {
-        "context": "login view (when failing to login with email)"
-    },
-    "login_data_message": "freeCodeCamp is free and your account is private by default. We use your email address to connect you to your account.",
-    "@login_data_message": {
-        "context": "login view"
-    },
-    "login_load_message": "Signing in...",
-    "login_cancelled": "Login canceled",
-    "login_age_message": "You must be at least 13 years old to create an account on freeCodeCamp.",
-    "@login_age_message": {
-        "context": "login view"
-    },
-    "challenge_download": "Download All Challenges",
-    "challenge_download_starting": "Starting Download...",
-    "challenge_download_cancel": "Cancel Downloading Challenges",
-    "challenge_download_delete": "Delete Downloaded Challenges",
-    "certification_project": "Certification Project",
-    "@certification_project": {
-        "context": "learn > block "
-    },
-    "instructions": "Instructions",
-    "@instructions": {
-        "context": "learn > block > challenge"
-    },
-    "editor": "Editor",
-    "@editor": {
-        "context": "learn > block > challenge"
-    },
-    "preview": "PREVIEW",
-    "@preview": {
-        "context": "learn > block > challenge (eye icon)"
-    },
-    "console": "CONSOLE",
-    "@console": {
-        "context": "learn > block > challenge (eye icon)"
-    },
-    "step_count": "Step {stepNumber} of {totalSteps}",
-    "@step_count": {
-        "description": "The step number and total number of steps in a block of challenges",
-        "context": "learn > block > challenge > instructions panel",
-        "placeholders": {
-            "stepNumber": {
-                "type": "String",
-                "example": "1"
-            },
-            "totalSteps": {
-                "type": "String",
-                "example": "2"
-            }
-        }
-    },
-    "completed_percent": "{percent}% Completed",
-    "@completed_percent": {
-        "description": "The percentage of challenges completed in a block of challenges",
-        "context": "learn > block > challenge > *complete challenge* > pass panel",
-        "placeholders": {
-            "percent": {
-                "type": "String",
-                "example": "50"
-            }
-        }
-    },
-    "next": "Next",
-    "@next": {
-        "context": "learn > block > challenge > *complete challenge* > pass panel"
-    },
-    "passed": "Passed",
-    "@passed": {
-        "context": "learn > block > challenge > *complete challenge* > pass panel"
-    },
-    "hint": "Hint",
-    "@hint": {
-        "context": "learn > block > challenge > *fail challenge* > hint panel"
-    },
-    "tutorials_from": "Tutorials from {author}",
-    "@tutorials_from": {
-        "context": "news > click author image",
-        "placeholders": {
-            "author": {
-                "type": "String",
-                "example": "JavaScript"
-            }
-        }
-    },
-    "tutorial_author_title": "AUTHOR PROFILE",
-    "@tutorial_author_title": {
-        "context": "news > *click author image*"
-    },
-    "tutorial_show_more": "Show more tutorials",
-    "@tutorial_show_more": {
-        "context": "news > *click author image*"
-    },
-    "tutorials_about": "Tutorials about {subject}",
-    "@tutorials_about": {
-        "context": "news > click subject (#javascript)",
-        "placeholders": {
-            "subject": {
-                "type": "String",
-                "example": "JavaScript"
-            }
-        }
-    },
-    "tutorial_written_by": "Written by {author}",
-    "@tutorial_written_by": {
-        "description": "The author of a tutorial",
-        "context": "news > tutorial",
-        "placeholders": {
-            "author": {
-                "type": "String",
-                "example": "Quincy Larson"
-            }
-        }
-    },
-    "tutorial_load_error": "There was an error loading tutorials",
-    "@tutorial_load_error": {
-        "context": "news view"
-    },
-    "tutorial_read_online": "Read tutorials online",
-    "@tutorial_read_online": {
-        "context": "news view"
-    },
-    "tutorial_bookmark": "Bookmark",
-    "@tutorial_bookmark": {
-        "context": "news > tutorial"
-    },
-    "tutorial_bookmarked": "Bookmarked",
-    "@tutorial_bookmarked": {
-        "context": "news > tutorial"
-    },
-    "tutorial_bookmark_title": "BOOKMARKED TUTORIAL",
-    "@tutorial_bookmark_title": {
-        "context": "news > bookmarks > bookmarked tutorial"
-    },
-    "tutorial_no_bookmarks": "Bookmark tutorials to view them here",
-    "@tutorial_no_bookmarks": {
-        "context": "news > bookmarks"
-    },
-    "tutorial_search_no_results": "No Tutorials Found",
-    "@tutorial_search_no_results": {
-        "context": "news > search"
-    },
-    "tutorial_search_error": "There was an error loading tutorials \n please try again",
-    "@tutorial_search_error": {
-        "context": "news > search"
-    },
-    "tutorial_search_placeholder": "SEARCH TUTORIALS...",
-    "@tutorial_search_placeholder": {
-        "context": "news > search"
-    },
-    "tutorial_bookmarks_title": "BOOKMARKED TUTORIALS",
-    "@tutorial_bookmarks_title": {
-        "context": "news > bookmarks"
-    },
-    "tutorial_search_title": "SEARCH TUTORIALS",
-    "@tutorial_search_title": {
-        "context": "news > search"
-    },
-    "tutorial_nav_tutorials": "Tutorials",
-    "@tutorial_nav_tutorials": {
-        "context": "news view"
-    },
-    "tutorial_nav_bookmarks": "Bookmarks",
-    "@tutorial_nav_bookmarks": {
-        "context": "news view"
-    },
-    "tutorial_nav_search": "Search",
-    "@tutorial_nav_search": {
-        "context": "news view"
-    },
-    "podcasts_browse": "Browse",
-    "@podcasts_browse": {
-        "context": "podcasts view"
-    },
-    "podcasts_downloads": "Downloads",
-    "@podcasts_downloads": {
-        "context": "podcasts view"
-    },
-    "podcasts_title": "PODCASTS",
-    "@podcasts_title": {
-        "context": "podcasts view"
-    },
-    "podcast_download_title": "DOWNLOADED PODCASTS",
-    "@podcast_download_title": {
-        "context": "podcasts > downloads"
-    },
-    "podcast_no_downloads": "No Downloaded Episodes",
-    "@podcast_no_downloads": {
-        "context": "podcasts > downloads"
-    },
-    "podcast_description": "Description",
-    "@podcast_description": {
-        "context": "podcasts > podcast"
-    },
-    "podcast_duration_hours": "{hours} hrs {minutes} min",
-    "@podcast_duration_hours": {
-        "description": "The duration of a podcast in hours and minutes",
-        "context": "podcasts > podcast",
-        "placeholders": {
-            "hours": {
-                "type": "String",
-                "example": "1"
-            },
-            "minutes": {
-                "type": "String",
-                "example": "30"
-            }
-        }
-    },
-    "podcast_duration_minutes": "{minutes} min",
-    "@podcast_duration_minutes": {
-        "description": "The duration of a podcast in minutes",
-        "context": "podcasts > podcast",
-        "placeholders": {
-            "minutes": {
-                "type": "String",
-                "example": "30"
-            }
-        }
-    },
-    "podcast_show_more": "Show More",
-    "@podcast_show_more": {
-        "context": "podcasts > podcast"
-    },
-    "podcast_show_less": "Show Less",
-    "@podcast_show_less": {
-        "context": "podcasts > podcast"
-    },
-    "podcast_unable_to_load_podcasts": "Unable to load podcasts \n please try again.",
-    "@podcast_unable_to_load_podcasts": {
-        "context": "podcasts > podcast"
-    },
-    "settings_title": "SETTINGS",
-    "@settings_title": {
-        "context": "settings view"
-    },
-    "settings_reset_cache": "Reset Cache",
-    "@settings_reset_cache": {
-        "context": "settings view"
-    },
-    "settings_reset_cache_message": "Are you sure you want to clear the cache? - this resets all your progress and local data",
-    "@settings_reset_cache_message": {
-        "context": "settings view > *click reset cache*"
-    },
-    "settings_reset_cache_confirm": "Clear",
-    "@settings_reset_cache_confirm": {
-        "context": "settings view > *click reset cache*"
-    },
-    "settings_reset_cache_description": "Clears all local data and progress",
-    "@settings_reset_cache_description": {
-        "context": "settings view"
-    },
-    "settings_privacy_policy": "Privacy Policy",
-    "@settings_privacy_policy": {
-        "context": "settings view"
-    },
-    "settings_delete_account": "Delete Account",
-    "@settings_delete_account": {
-        "context": "settings view"
-    },
-    "delete_account_message_one": "This will really delete all your data, including all your progress and account information.",
-    "@delete_account_message_one": {
-        "context": "settings view > *click delete account*"
-    },
-    "delete_account_message_two": "We won't be able to recover any of it for you later, even if you change your mind.",
-    "delete_account_message_three": "If there's something we could do better, send us an email instead and we'll do our best:",
-    "delete_account_message_four": "I am 100% certain. Delete everything related to this account",
-    "delete_account_are_you_sure": "Are you sure you want to delete your account? - this deletes everything related to your account",
-    "@delete_account_are_you_sure": {
-        "context": "settings view > *click delete account*"
-    },
-    "delete_account_deleting": "Deleting account...",
-    "delete_success": "Account deleted successfully",
-    "delete_failed": "Account deletion failed. Please try again later.",
+  "@@locale": "pt",
+  "tutorials": "TUTORIALS",
+  "@tutorials": {
+      "description": "in drawer (hamburger menu)"
+  },
+  "podcasts": "PODCASTS",
+  "@podcasts": {
+      "description": "in drawer (hamburger menu)"
+  },
+  "donate": "DONATE",
+  "@donate": {
+      "description": "in drawer (hamburger menu)"
+  },
+  "learn": "LEARN",
+  "@learn": {
+      "description": "in drawer (hamburger menu)"
+  },
+  "settings": "SETTINGS",
+  "@settings": {
+      "description": "in drawer (hamburger menu)"
+  },
+  "profile": "PROFILE",
+  "@profile": {
+      "description": "in drawer (hamburger menu when logged in)"
+  },
+  "logout": "LOG OUT",
+  "@logout": {
+      "description": "in drawer (hamburger menu when logged in)"
+  },
+  "login": "LOG IN",
+  "@login": {
+      "description": "in drawer (hamburger menu when logged out)"
+  },
+  "login_title": "LOGIN",
+  "@login_title": {
+      "description": "login view"
+  },
+  "anonymous_user": "Anonymous User",
+  "@anonymous_user": {
+      "description": "in drawer (hamburger menu when logged out)"
+  },
+  "coolest_camper": "Our coolest Camper",
+  "@coolest_camper": {
+      "description": "in drawer (hamburger menu when logged in)"
+  },
+  "login_save_progress": "Sign in to save your progress",
+  "@login_save_progress": {
+      "description": "login view"
+  },
+  "login_with_google": "Continue with Google",
+  "@login_with_google": {
+      "description": "login view"
+  },
+  "login_with_github": "Continue with GitHub",
+  "@login_with_github": {
+      "description": "login view"
+  },
+  "login_with_apple": "Continue with Apple",
+  "@login_with_apple": {
+      "description": "login view"
+  },
+  "email": "Email",
+  "@email": {
+      "description": "login view"
+  },
+  "email_sign_in_code": "Email a sign in code",
+  "@email_sign_in_code": {
+      "description": "login view"
+  },
+  "email_enter_sign_in_code": "Enter sign in code",
+  "@email_enter_sign_in_code": {
+      "description": "login view"
+  },
+  "email_submit_code": "Submit and sign in to freeCodeCamp",
+  "@email_submit_code": {
+      "description": "login view"
+  },
+  "email_invalid_code": "The code you entered is not valid. Please check the last OTP you received and try again.",
+  "@email_invalid_code": {
+      "description": "login view (when failing to login with email)"
+  },
+  "login_data_message": "freeCodeCamp is free and your account is private by default. We use your email address to connect you to your account.",
+  "@login_data_message": {
+      "description": "login view"
+  },
+  "login_load_message": "Signing in...",
+  "login_cancelled": "Login canceled",
+  "login_age_message": "You must be at least 13 years old to create an account on freeCodeCamp.",
+  "@login_age_message": {
+      "description": "login view"
+  },
+  "challenge_download": "Download All Challenges",
+  "challenge_download_starting": "Starting Download...",
+  "challenge_download_cancel": "Cancel Downloading Challenges",
+  "challenge_download_delete": "Delete Downloaded Challenges",
+  "certification_project": "Certification Project",
+  "@certification_project": {
+      "description": "learn > block "
+  },
+  "instructions": "Instructions",
+  "@instructions": {
+      "description": "learn > block > challenge"
+  },
+  "editor": "Editor",
+  "@editor": {
+      "description": "learn > block > challenge"
+  },
+  "preview": "PREVIEW",
+  "@preview": {
+      "description": "learn > block > challenge (eye icon)"
+  },
+  "console": "CONSOLE",
+  "@console": {
+      "description": "learn > block > challenge (eye icon)"
+  },
+  "step_count": "Step {stepNumber} of {totalSteps}",
+  "@step_count": {
+      "description": "learn > block > challenge > instructions panel",
+      "placeholders": {
+          "stepNumber": {
+              "type": "String",
+              "example": "1"
+          },
+          "totalSteps": {
+              "type": "String",
+              "example": "2"
+          }
+      }
+  },
+  "completed_percent": "{percent}% Completed",
+  "@completed_percent": {
+      "description": "learn > block > challenge > *complete challenge* > pass panel",
+      "placeholders": {
+          "percent": {
+              "type": "String",
+              "example": "50"
+          }
+      }
+  },
+  "next": "Next",
+  "@next": {
+      "description": "learn > block > challenge > *complete challenge* > pass panel"
+  },
+  "passed": "Passed",
+  "@passed": {
+      "description": "learn > block > challenge > *complete challenge* > pass panel"
+  },
+  "hint": "Hint",
+  "@hint": {
+      "description": "learn > block > challenge > *fail challenge* > hint panel"
+  },
+  "tutorials_from": "Tutorials from {author}",
+  "@tutorials_from": {
+      "description": "news > click author image",
+      "placeholders": {
+          "author": {
+              "type": "String",
+              "example": "JavaScript"
+          }
+      }
+  },
+  "tutorial_author_title": "AUTHOR PROFILE",
+  "@tutorial_author_title": {
+      "description": "news > *click author image*"
+  },
+  "tutorial_show_more": "Show more tutorials",
+  "@tutorial_show_more": {
+      "description": "news > *click author image*"
+  },
+  "tutorials_about": "Tutorials about {subject}",
+  "@tutorials_about": {
+      "description": "news > click subject (#javascript)",
+      "placeholders": {
+          "subject": {
+              "type": "String",
+              "example": "JavaScript"
+          }
+      }
+  },
+  "tutorial_written_by": "Written by {author}",
+  "@tutorial_written_by": {
+      "description": "news > tutorial",
+      "placeholders": {
+          "author": {
+              "type": "String",
+              "example": "Quincy Larson"
+          }
+      }
+  },
+  "tutorial_load_error": "There was an error loading tutorials",
+  "@tutorial_load_error": {
+      "description": "news view"
+  },
+  "tutorial_read_online": "Read tutorials online",
+  "@tutorial_read_online": {
+      "description": "news view"
+  },
+  "tutorial_bookmark": "Bookmark",
+  "@tutorial_bookmark": {
+      "description": "news > tutorial"
+  },
+  "tutorial_bookmarked": "Bookmarked",
+  "@tutorial_bookmarked": {
+      "description": "news > tutorial"
+  },
+  "tutorial_bookmark_title": "BOOKMARKED TUTORIAL",
+  "@tutorial_bookmark_title": {
+      "description": "news > bookmarks > bookmarked tutorial"
+  },
+  "tutorial_no_bookmarks": "Bookmark tutorials to view them here",
+  "@tutorial_no_bookmarks": {
+      "description": "news > bookmarks"
+  },
+  "tutorial_search_no_results": "No Tutorials Found",
+  "@tutorial_search_no_results": {
+      "description": "news > search"
+  },
+  "tutorial_search_error": "There was an error loading tutorials \n please try again",
+  "@tutorial_search_error": {
+      "description": "news > search"
+  },
+  "tutorial_search_placeholder": "SEARCH TUTORIALS...",
+  "@tutorial_search_placeholder": {
+      "description": "news > search"
+  },
+  "tutorial_bookmarks_title": "BOOKMARKED TUTORIALS",
+  "@tutorial_bookmarks_title": {
+      "description": "news > bookmarks"
+  },
+  "tutorial_search_title": "SEARCH TUTORIALS",
+  "@tutorial_search_title": {
+      "description": "news > search"
+  },
+  "tutorial_nav_tutorials": "Tutorials",
+  "@tutorial_nav_tutorials": {
+      "description": "news view"
+  },
+  "tutorial_nav_bookmarks": "Bookmarks",
+  "@tutorial_nav_bookmarks": {
+      "description": "news view"
+  },
+  "tutorial_nav_search": "Search",
+  "@tutorial_nav_search": {
+      "description": "news view"
+  },
+  "podcasts_browse": "Browse",
+  "@podcasts_browse": {
+      "description": "podcasts view"
+  },
+  "podcasts_downloads": "Downloads",
+  "@podcasts_downloads": {
+      "description": "podcasts view"
+  },
+  "podcasts_title": "PODCASTS",
+  "@podcasts_title": {
+      "description": "podcasts view"
+  },
+  "podcast_download_title": "DOWNLOADED PODCASTS",
+  "@podcast_download_title": {
+      "description": "podcasts > downloads"
+  },
+  "podcast_no_downloads": "No Downloaded Episodes",
+  "@podcast_no_downloads": {
+      "description": "podcasts > downloads"
+  },
+  "podcast_description": "Description",
+  "@podcast_description": {
+      "description": "podcasts > podcast"
+  },
+  "podcast_duration_hours": "{hours} hrs {minutes} min",
+  "@podcast_duration_hours": {
+      "description": "podcasts > podcast",
+      "placeholders": {
+          "hours": {
+              "type": "String",
+              "example": "1"
+          },
+          "minutes": {
+              "type": "String",
+              "example": "30"
+          }
+      }
+  },
+  "podcast_duration_minutes": "{minutes} min",
+  "@podcast_duration_minutes": {
+      "description": "podcasts > podcast",
+      "placeholders": {
+          "minutes": {
+              "type": "String",
+              "example": "30"
+          }
+      }
+  },
+  "podcast_show_more": "Show More",
+  "@podcast_show_more": {
+      "description": "podcasts > podcast"
+  },
+  "podcast_show_less": "Show Less",
+  "@podcast_show_less": {
+      "description": "podcasts > podcast"
+  },
+  "podcast_unable_to_load_podcasts": "Unable to load podcasts \n please try again.",
+  "@podcast_unable_to_load_podcasts": {
+      "description": "podcasts > podcast"
+  },
+  "settings_title": "SETTINGS",
+  "@settings_title": {
+      "description": "settings view"
+  },
+  "settings_reset_cache": "Reset Cache",
+  "@settings_reset_cache": {
+      "description": "settings view"
+  },
+  "settings_reset_cache_message": "Are you sure you want to clear the cache? - this resets all your progress and local data",
+  "@settings_reset_cache_message": {
+      "description": "settings view > *click reset cache*"
+  },
+  "settings_reset_cache_confirm": "Clear",
+  "@settings_reset_cache_confirm": {
+      "description": "settings view > *click reset cache*"
+  },
+  "settings_reset_cache_description": "Clears all local data and progress",
+  "@settings_reset_cache_description": {
+      "description": "settings view"
+  },
+  "settings_privacy_policy": "Privacy Policy",
+  "@settings_privacy_policy": {
+      "description": "settings view"
+  },
+  "settings_delete_account": "Delete Account",
+  "@settings_delete_account": {
+      "description": "settings view"
+  },
+  "delete_account_message_one": "This will really delete all your data, including all your progress and account information.",
+  "@delete_account_message_one": {
+      "description": "settings view > *click delete account*"
+  },
+  "delete_account_message_two": "We won't be able to recover any of it for you later, even if you change your mind.",
+  "delete_account_message_three": "If there's something we could do better, send us an email instead and we'll do our best:",
+  "delete_account_message_four": "I am 100% certain. Delete everything related to this account",
+  "delete_account_are_you_sure": "Are you sure you want to delete your account? - this deletes everything related to your account",
+  "@delete_account_are_you_sure": {
+      "description": "settings view > *click delete account*"
+  },
+  "delete_account_deleting": "Deleting account...",
+  "delete_success": "Account deleted successfully",
+  "delete_failed": "Account deletion failed. Please try again later.",
 
-    "settings_delete_account_description": "Delete your freeCodeCamp account",
-    "@settings_delete_account_description": {
-        "context": "settings view"
-    },
-    "settings_privacy_policy_description": "Read our privacy policy",
-    "@settings_privacy_policy_description": {
-        "context": "settings view"
-    },
-    "coderadio_next_song": "Next Song",
-    "@coderadio_next_song": {
-        "context": "coderadio view (only on Android)"
-    },
-    "coderadio_listening": "{listeners} listening right now",
-    "@coderadio_listening": {
-        "description": "The number of people listening to the radio right now",
-        "context": "coderadio view",
-        "placeholders": {
-            "listeners": {
-                "type": "String",
-                "example": "100"
-            }
-        }
-    },
-    "coderadio_play": "Play",
-    "coderadio_pause": "Pause",
-    "profile_view_cert": "View {certification}",
-    "@profile_view_cert": {
-        "description": "View a certification",
-        "context": "drawer > profile (signed in)",
-        "placeholders": {
-            "certification": {
-                "type": "String",
-                "example": "Responsive Web Design"
-            }
-        }
-    },
-    "profile_cert": "{certification} Certification",
-    "@profile_cert": {
-        "description": "A certification",
-        "context": "drawer > profile (signed in)",
-        "placeholders": {
-            "certification": {
-                "type": "String",
-                "example": "Responsive Web Design"
-            }
-        }
-    },
-    "profile_join_date": "Joined {date}",
-    "@profile_join_date": {
-        "description": "The date a user joined freeCodeCamp",
-        "context": "drawer > profile (signed in)",
-        "placeholders": {
-            "date": {
-                "type": "String",
-                "example": "January 1st, 2019"
-            }
-        }
-    },
-    "profile_points": "{points} points",
-    "@profile_points": {
-        "description": "The number of points a user has",
-        "context": "drawer > profile (signed in)",
-        "placeholders": {
-            "points": {
-                "type": "String",
-                "example": "100"
-            }
-        }
-    },
-    "profile_points_on_date": "{point, plural, =0{0 points on {date}} =1{1 point on {date}} other{{point} points on {date}}}",
-    "@profile_points_on_date": {
-        "description": "The number of points a user had on a specific date",
-        "context": "drawer > profile (signed in)",
-        "placeholders": {
-            "point": {
-                "type": "int",
-                "example": "10",
-                "format": "compact"
-            },
-            "date": {
-                "type": "String",
-                "example": "January 1st, 2019"
-            }
-        }
-    },
-    "profile_longest_streak": "Longest Streak: {streak}",
-    "@profile_longest_streak": {
-        "description": "The longest streak a user has had",
-        "context": "drawer > profile (signed in)",
-        "placeholders": {
-            "streak": {
-                "type": "int",
-                "example": "100"
-            }
-        }
-    },
-    "profile_current_streak": "Current Streak: {streak}",
-    "@profile_current_streak": {
-        "description": "The current streak a user has",
-        "context": "drawer > profile (signed in)",
-        "placeholders": {
-            "streak": {
-                "type": "int",
-                "example": "100"
-            }
-        }
-    },
-    "profile_supporter": "Supporter",
-    "@profile_supporter": {
-        "context": "drawer > profile (signed in)"
-    },
-    "profile_title": "PROFILE",
-    "@profile_title": {
-        "context": "drawer > profile (signed in)"
-    },
-    "profile_certifications": "freeCodeCamp Certifications",
-    "@profile_certifications": {
-        "context": "drawer > profile (signed in)"
-    },
-    "profile_no_userdata": "No user data found",
-    "@profile_no_userdata": {
-        "context": "drawer > profile (signed in)"
-    },
-    "profile_no_modern_certs": "No certifications have been earned under the current curriculum",
-    "@profile_no_modern_certs": {
-        "context": "drawer > profile (signed in)"
-    },
-    "profile_legacy_certs": "Legacy Certifications",
-    "@profile_legacy_certs": {
-        "context": "drawer > profile (signed in)"
-    },
-    "profile_portfolio": "Portfolio",
-    "@profile_portfolio": {
-        "context": "drawer > profile (signed in)"
-    },
-    "quincy_email_signup": "Email Signup",
-    "quincy_email_part_one": "Please slow down and read this.",
-    "quincy_email_part_two": "freeCodeCamp is a proven path to your first software developer job.",
-    "quincy_email_part_three": "More than 40,000 people have gotten developer jobs after completing this — including at big companies like Google and Microsoft.",
-    "quincy_email_part_four": "If you are new to programming, we recommend you start at the beginning and earn these certifications in order.",
-    "quincy_email_part_five": "To earn each certification, build its 5 required projects and get all their tests to pass.",
-    "quincy_email_part_six": "You can add these certifications to your résumé or LinkedIn. But more important than the certifications is the practice you get along the way.",
-    "quincy_email_part_seven": "If you feel overwhelmed, that is normal. Programming is hard.",
-    "quincy_email_part_eight": "Practice is the key. Practice, practice, practice.",
-    "quincy_email_part_nine": "And this curriculum will give you thousands of hours of hands-on programming practice.",
-    "quincy_email_part_ten": "And if you want to learn more math and computer science theory, we also have thousands of hours of video courses on freeCodeCamp\\'s YouTube channel.",
-    "quincy_email_part_eleven": "If you want to get a developer job or freelance clients, programming skills will be just part of the puzzle. You also need to build your personal network and your reputation as a developer.",
-    "quincy_email_part_twelve": "You can do this on LinkedIn and GitHub, and also on the freeCodeCamp forum.",
-    "quincy_email_part_thirteen": "Happy coding!",
-    "quincy_email_part_fourteen": "- Quincy Larson, the teacher who founded freeCodeCamp.org",
-    "quincy_email_part_fifteen": "By the way, each Friday I send an email with 5 links about programming and computer science. I send these to about 4 million people. Would you like me to send this to you, too?",
-    "quincy_email_confirm": "Yes Please",
-    "quincy_email_no_thanks": "No Thanks",
-    "error": "Something went wrong!",
-    "error_two": "Error",
-    "error_three": "Oops! Something went wrong. Please try again in a moment.",
-    "loading": "Loading",
-    "unrecognized_device": "Unrecognized Device",
-    "help": "Help",
-    "share": "Share",
-    "close": "Close"
+  "settings_delete_account_description": "Delete your freeCodeCamp account",
+  "@settings_delete_account_description": {
+      "description": "settings view"
+  },
+  "settings_privacy_policy_description": "Read our privacy policy",
+  "@settings_privacy_policy_description": {
+      "description": "settings view"
+  },
+  "coderadio_next_song": "Next Song",
+  "@coderadio_next_song": {
+      "description": "coderadio view (only on Android)"
+  },
+  "coderadio_listening": "{listeners} listening right now",
+  "@coderadio_listening": {
+      "description": "coderadio view",
+      "placeholders": {
+          "listeners": {
+              "type": "String",
+              "example": "100"
+          }
+      }
+  },
+  "coderadio_play": "Play",
+  "coderadio_pause": "Pause",
+  "profile_view_cert": "View {certification}",
+  "@profile_view_cert": {
+      "description": "drawer > profile (signed in)",
+      "placeholders": {
+          "certification": {
+              "type": "String",
+              "example": "Responsive Web Design"
+          }
+      }
+  },
+  "profile_cert": "{certification} Certification",
+  "@profile_cert": {
+      "description": "drawer > profile (signed in)",
+      "placeholders": {
+          "certification": {
+              "type": "String",
+              "example": "Responsive Web Design"
+          }
+      }
+  },
+  "profile_join_date": "Joined {date}",
+  "@profile_join_date": {
+      "description": "drawer > profile (signed in)",
+      "placeholders": {
+          "date": {
+              "type": "String",
+              "example": "January 1st, 2019"
+          }
+      }
+  },
+  "profile_points": "{points} points",
+  "@profile_points": {
+      "description": "drawer > profile (signed in)",
+      "placeholders": {
+          "points": {
+              "type": "String",
+              "example": "100"
+          }
+      }
+  },
+  "profile_points_on_date": "{point, plural, =0{0 points on {date}} =1{1 point on {date}} other{{point} points on {date}}}",
+  "@profile_points_on_date": {
+      "description": "drawer > profile (signed in)",
+      "placeholders": {
+          "point": {
+              "type": "int",
+              "example": "10",
+              "format": "compact"
+          },
+          "date": {
+              "type": "String",
+              "example": "January 1st, 2019"
+          }
+      }
+  },
+  "profile_longest_streak": "Longest Streak: {streak}",
+  "@profile_longest_streak": {
+      "description": "drawer > profile (signed in)",
+      "placeholders": {
+          "streak": {
+              "type": "int",
+              "example": "100"
+          }
+      }
+  },
+  "profile_current_streak": "Current Streak: {streak}",
+  "@profile_current_streak": {
+      "description": "drawer > profile (signed in)",
+      "placeholders": {
+          "streak": {
+              "type": "int",
+              "example": "100"
+          }
+      }
+  },
+  "profile_supporter": "Supporter",
+  "@profile_supporter": {
+      "description": "drawer > profile (signed in)"
+  },
+  "profile_title": "PROFILE",
+  "@profile_title": {
+      "description": "drawer > profile (signed in)"
+  },
+  "profile_certifications": "freeCodeCamp Certifications",
+  "@profile_certifications": {
+      "description": "drawer > profile (signed in)"
+  },
+  "profile_no_userdata": "No user data found",
+  "@profile_no_userdata": {
+      "description": "drawer > profile (signed in)"
+  },
+  "profile_no_modern_certs": "No certifications have been earned under the current curriculum",
+  "@profile_no_modern_certs": {
+      "description": "drawer > profile (signed in)"
+  },
+  "profile_legacy_certs": "Legacy Certifications",
+  "@profile_legacy_certs": {
+      "description": "drawer > profile (signed in)"
+  },
+  "profile_portfolio": "Portfolio",
+  "@profile_portfolio": {
+      "description": "drawer > profile (signed in)"
+  },
+  "quincy_email_signup": "Email Signup",
+  "quincy_email_part_one": "Please slow down and read this.",
+  "quincy_email_part_two": "freeCodeCamp is a proven path to your first software developer job.",
+  "quincy_email_part_three": "More than 40,000 people have gotten developer jobs after completing this — including at big companies like Google and Microsoft.",
+  "quincy_email_part_four": "If you are new to programming, we recommend you start at the beginning and earn these certifications in order.",
+  "quincy_email_part_five": "To earn each certification, build its 5 required projects and get all their tests to pass.",
+  "quincy_email_part_six": "You can add these certifications to your résumé or LinkedIn. But more important than the certifications is the practice you get along the way.",
+  "quincy_email_part_seven": "If you feel overwhelmed, that is normal. Programming is hard.",
+  "quincy_email_part_eight": "Practice is the key. Practice, practice, practice.",
+  "quincy_email_part_nine": "And this curriculum will give you thousands of hours of hands-on programming practice.",
+  "quincy_email_part_ten": "And if you want to learn more math and computer science theory, we also have thousands of hours of video courses on freeCodeCamp\\'s YouTube channel.",
+  "quincy_email_part_eleven": "If you want to get a developer job or freelance clients, programming skills will be just part of the puzzle. You also need to build your personal network and your reputation as a developer.",
+  "quincy_email_part_twelve": "You can do this on LinkedIn and GitHub, and also on the freeCodeCamp forum.",
+  "quincy_email_part_thirteen": "Happy coding!",
+  "quincy_email_part_fourteen": "- Quincy Larson, the teacher who founded freeCodeCamp.org",
+  "quincy_email_part_fifteen": "By the way, each Friday I send an email with 5 links about programming and computer science. I send these to about 4 million people. Would you like me to send this to you, too?",
+  "quincy_email_confirm": "Yes Please",
+  "quincy_email_no_thanks": "No Thanks",
+  "error": "Something went wrong!",
+  "error_two": "Error",
+  "error_three": "Oops! Something went wrong. Please try again in a moment.",
+  "loading": "Loading",
+  "unrecognized_device": "Unrecognized Device",
+  "help": "Help",
+  "share": "Share",
+  "close": "Close"
 }
