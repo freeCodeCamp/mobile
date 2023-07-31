@@ -6,7 +6,7 @@ import 'package:device_info_plus/device_info_plus.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import 'package:freecodecamp/extensions/i18n_extension.dart';
 import 'package:freecodecamp/models/learn/challenge_model.dart';
 import 'package:freecodecamp/models/learn/curriculum_model.dart';
 import 'package:freecodecamp/ui/views/learn/challenge/challenge_viewmodel.dart';
@@ -48,7 +48,7 @@ Future<String> getDeviceInfo(BuildContext context) async {
     final deviceInfo = await deviceInfoPlugin.iosInfo;
     return '${deviceInfo.model} - ${deviceInfo.systemName}${deviceInfo.systemVersion}';
   } else {
-    return AppLocalizations.of(context).unrecognized_device;
+    return context.t.unrecognized_device;
   }
 }
 
@@ -119,7 +119,7 @@ class HintWidgetView extends StatelessWidget {
                 Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 16),
                   child: Text(
-                    AppLocalizations.of(context).hint,
+                    context.t.hint,
                     style: TextStyle(
                       fontSize: 28,
                       fontWeight: FontWeight.bold,

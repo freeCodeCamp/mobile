@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import 'package:freecodecamp/extensions/i18n_extension.dart';
 import 'package:freecodecamp/models/news/bookmarked_tutorial_model.dart';
 import 'package:freecodecamp/ui/views/news/news-bookmark/news_bookmark_viewmodel.dart';
 import 'package:freecodecamp/ui/views/news/news-tutorial/news_tutorial_viewmodel.dart';
@@ -32,7 +32,7 @@ class NewsBookmarkTutorialView extends StatelessWidget {
             slivers: [
               SliverAppBar(
                 title: Text(
-                  AppLocalizations.of(context).tutorial_bookmark_title,
+                  context.t.tutorial_bookmark_title,
                 ),
               ),
               SliverAppBar(
@@ -55,8 +55,8 @@ class NewsBookmarkTutorialView extends StatelessWidget {
                                 : const Icon(Icons.bookmark_add_outlined),
                             label: Text(
                               model.bookmarked
-                                  ? AppLocalizations.of(context).tutorial_bookmarked
-                                  : AppLocalizations.of(context).tutorial_bookmark,
+                                  ? context.t.tutorial_bookmarked
+                                  : context.t.tutorial_bookmark,
                             ),
                           ),
                         ),

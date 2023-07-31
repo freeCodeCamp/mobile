@@ -1,8 +1,8 @@
 import 'dart:io';
 
 import 'package:flutter/material.dart';
-import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:flutter_scroll_shadow/flutter_scroll_shadow.dart';
+import 'package:freecodecamp/extensions/i18n_extension.dart';
 import 'package:freecodecamp/models/main/user_model.dart';
 import 'package:freecodecamp/ui/widgets/drawer_widget/drawer_button.dart';
 import 'package:freecodecamp/ui/widgets/drawer_widget/drawer_web_buttton.dart';
@@ -53,16 +53,16 @@ class DrawerWidgetView extends StatelessWidget {
                                   }
 
                                   return Text(
-                                    AppLocalizations.of(context).anonymous_user,
+                                    context.t.anonymous_user,
                                   );
                                 })
                             : Text(
-                                AppLocalizations.of(context).anonymous_user,
+                                context.t.anonymous_user,
                               ),
                         subtitle: Text(
                           model.loggedIn
-                              ? AppLocalizations.of(context).coolest_camper
-                              : AppLocalizations.of(context).login_save_progress,
+                              ? context.t.coolest_camper
+                              : context.t.login_save_progress,
                         ),
                         isThreeLine: true,
                         onTap: () {
@@ -124,8 +124,8 @@ class DrawerWidgetView extends StatelessWidget {
                       DrawerButton(
                           key: const Key('auth'),
                           component: model.loggedIn
-                              ? AppLocalizations.of(context).logout
-                              : AppLocalizations.of(context).login,
+                              ? context.t.logout
+                              : context.t.login,
                           icon: model.loggedIn ? Icons.logout : Icons.login,
                           textColor: model.loggedIn
                               ? const Color.fromARGB(255, 230, 59, 59)

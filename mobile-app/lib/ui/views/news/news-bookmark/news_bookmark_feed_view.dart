@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import 'package:freecodecamp/extensions/i18n_extension.dart';
 import 'package:freecodecamp/ui/views/news/news-bookmark/news_bookmark_viewmodel.dart';
 import 'package:stacked/stacked.dart';
 
@@ -29,7 +29,7 @@ class NewsBookmarkFeedView extends StatelessWidget {
               ? populateListViewModel(model)
               : Center(
                   child: Text(
-                    AppLocalizations.of(context).tutorial_no_bookmarks,
+                    context.t.tutorial_no_bookmarks,
                     textAlign: TextAlign.center,
                   ),
                 ),

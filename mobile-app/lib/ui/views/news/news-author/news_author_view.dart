@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import 'package:freecodecamp/extensions/i18n_extension.dart';
 import 'package:freecodecamp/models/news/tutorial_model.dart';
 import 'package:freecodecamp/ui/views/news/news-author/news_author_viewmodel.dart';
 import 'package:freecodecamp/ui/widgets/tutorial_list_widget.dart';
@@ -19,7 +19,7 @@ class NewsAuthorView extends StatelessWidget {
       viewModelBuilder: () => NewsAuthorViewModel(),
       builder: (context, model, child) => Scaffold(
         appBar: AppBar(
-          title: Text(AppLocalizations.of(context).tutorial_author_title),
+          title: Text(context.t.tutorial_author_title),
         ),
         body: SingleChildScrollView(
           child: FutureBuilder<Author>(

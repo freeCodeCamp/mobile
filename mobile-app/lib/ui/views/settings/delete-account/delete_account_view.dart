@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import 'package:freecodecamp/extensions/i18n_extension.dart';
 import 'package:freecodecamp/ui/views/settings/delete-account/delete_account_viewmodel.dart';
 import 'package:freecodecamp/ui/widgets/drawer_widget/drawer_widget_view.dart';
 import 'package:stacked/stacked.dart';
@@ -21,7 +21,7 @@ class DeleteAccountView extends StatelessWidget {
       builder: (context, model, child) => Scaffold(
         appBar: AppBar(
           title: Text(
-            AppLocalizations.of(context).settings_delete_account,
+            context.t.settings_delete_account,
           ),
         ),
         body: SingleChildScrollView(
@@ -30,7 +30,7 @@ class DeleteAccountView extends StatelessWidget {
             child: Column(
               children: [
                 Text(
-                  AppLocalizations.of(context).delete_account_message_one,
+                  context.t.delete_account_message_one,
                   style: paragraphTextStyle,
                   textAlign: TextAlign.center,
                 ),
@@ -38,7 +38,7 @@ class DeleteAccountView extends StatelessWidget {
                   height: 8,
                 ),
                 Text(
-                  AppLocalizations.of(context).delete_account_message_two,
+                  context.t.delete_account_message_two,
                   style: paragraphTextStyle,
                   textAlign: TextAlign.center,
                 ),
@@ -46,7 +46,7 @@ class DeleteAccountView extends StatelessWidget {
                   height: 8,
                 ),
                 Text(
-                  AppLocalizations.of(context).delete_account_message_three,
+                  context.t.delete_account_message_three,
                   style: paragraphTextStyle,
                   textAlign: TextAlign.center,
                 ),
@@ -91,7 +91,7 @@ class DeleteAccountView extends StatelessWidget {
                           disabledForegroundColor: Colors.red.shade700,
                         ),
                         child: Text(
-                          AppLocalizations.of(context).delete_account_message_four,
+                          context.t.delete_account_message_four,
                           textAlign: TextAlign.center,
                           style: paragraphTextStyle,
                         ),

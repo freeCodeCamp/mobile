@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import 'package:freecodecamp/extensions/i18n_extension.dart';
 import 'package:freecodecamp/ui/widgets/drawer_widget/drawer_widget_view.dart';
 
 class PrivacyView extends StatelessWidget {
@@ -14,7 +14,7 @@ class PrivacyView extends StatelessWidget {
     );
     return Scaffold(
       appBar: AppBar(
-        title: Text(AppLocalizations.of(context).quincy_email_signup),
+        title: Text(context.t.quincy_email_signup),
       ),
       body: SingleChildScrollView(
         child: Padding(
@@ -22,7 +22,7 @@ class PrivacyView extends StatelessWidget {
           child: Column(
             children: [
               Text(
-                AppLocalizations.of(context).quincy_email_part_one,
+                context.t.quincy_email_part_one,
                 textAlign: TextAlign.center,
                 style: const TextStyle(
                   fontSize: 20,
@@ -33,84 +33,84 @@ class PrivacyView extends StatelessWidget {
                 height: 12,
               ),
               Text(
-                AppLocalizations.of(context).quincy_email_part_two,
+                context.t.quincy_email_part_two,
                 style: paragraphTextStyle,
               ),
               const SizedBox(
                 height: 8,
               ),
               Text(
-                AppLocalizations.of(context).quincy_email_part_three,
+                context.t.quincy_email_part_three,
                 style: paragraphTextStyle,
               ),
               const SizedBox(
                 height: 8,
               ),
               Text(
-                AppLocalizations.of(context).quincy_email_part_four,
+                context.t.quincy_email_part_four,
                 style: paragraphTextStyle,
               ),
               const SizedBox(
                 height: 8,
               ),
               Text(
-                AppLocalizations.of(context).quincy_email_part_five,
+                context.t.quincy_email_part_five,
                 style: paragraphTextStyle,
               ),
               const SizedBox(
                 height: 8,
               ),
               Text(
-                AppLocalizations.of(context).quincy_email_part_six,
+                context.t.quincy_email_part_six,
                 style: paragraphTextStyle,
               ),
               const SizedBox(
                 height: 8,
               ),
               Text(
-                AppLocalizations.of(context).quincy_email_part_seven,
+                context.t.quincy_email_part_seven,
                 style: paragraphTextStyle,
               ),
               const SizedBox(
                 height: 8,
               ),
               Text(
-                AppLocalizations.of(context).quincy_email_part_eight,
+                context.t.quincy_email_part_eight,
                 style: paragraphTextStyle,
               ),
               const SizedBox(
                 height: 8,
               ),
               Text(
-                AppLocalizations.of(context).quincy_email_part_nine,
+                context.t.quincy_email_part_nine,
                 style: paragraphTextStyle,
               ),
               const SizedBox(
                 height: 8,
               ),
               Text(
-                AppLocalizations.of(context).quincy_email_part_ten,
+                context.t.quincy_email_part_ten,
                 style: paragraphTextStyle,
               ),
               const SizedBox(
                 height: 8,
               ),
               Text(
-                AppLocalizations.of(context).quincy_email_part_eleven,
+                context.t.quincy_email_part_eleven,
                 style: paragraphTextStyle,
               ),
               const SizedBox(
                 height: 8,
               ),
               Text(
-                AppLocalizations.of(context).quincy_email_part_twelve,
+                context.t.quincy_email_part_twelve,
                 style: paragraphTextStyle,
               ),
               const SizedBox(
                 height: 8,
               ),
               Text(
-                AppLocalizations.of(context).quincy_email_part_thirteen,
+                context.t.quincy_email_part_thirteen,
                 style: const TextStyle(
                   fontSize: 20,
                   fontWeight: FontWeight.bold,
@@ -124,7 +124,7 @@ class PrivacyView extends StatelessWidget {
                 height: 4,
               ),
               Text(
-                AppLocalizations.of(context).quincy_email_part_fourteen,
+                context.t.quincy_email_part_fourteen,
                 textAlign: TextAlign.right,
                 style: const TextStyle(
                   fontSize: 20,
@@ -135,7 +135,7 @@ class PrivacyView extends StatelessWidget {
                 height: 12,
               ),
               Text(
-                AppLocalizations.of(context).quincy_email_part_fifteen,
+                context.t.quincy_email_part_fifteen,
                 style: paragraphTextStyle,
               ),
               const SizedBox(
@@ -150,7 +150,7 @@ class PrivacyView extends StatelessWidget {
                         backgroundColor: const Color(0xFF0a0a23),
                       ),
                       child: Text(
-                        AppLocalizations.of(context).quincy_email_confirm,
+                        context.t.quincy_email_confirm,
                       ),
                     ),
                   ),
@@ -168,7 +168,7 @@ class PrivacyView extends StatelessWidget {
                         backgroundColor: const Color(0xFF0a0a23),
                       ),
                       child: Text(
-                        AppLocalizations.of(context).quincy_email_no_thanks,
+                        context.t.quincy_email_no_thanks,
                       ),
                     ),
                   ),

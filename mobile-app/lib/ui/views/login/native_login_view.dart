@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import 'package:freecodecamp/extensions/i18n_extension.dart';
 import 'package:freecodecamp/ui/views/login/native_login_viewmodel.dart';
 import 'package:freecodecamp/ui/widgets/drawer_widget/drawer_widget_view.dart';
 import 'package:stacked/stacked.dart';
@@ -33,7 +33,7 @@ class NativeLoginView extends StatelessWidget {
       onViewModelReady: (viewModel) => viewModel.init(),
       builder: (context, model, child) => Scaffold(
         appBar: AppBar(
-          title: Text(AppLocalizations.of(context).login),
+          title: Text(context.t.login),
         ),
         drawer: fromButton ? null : const DrawerWidgetView(),
         body: SingleChildScrollView(
@@ -65,7 +65,7 @@ class NativeLoginView extends StatelessWidget {
                                 child: Padding(
                                   padding: const EdgeInsets.all(8.0),
                                   child: Text(
-                                    AppLocalizations.of(context).login_with_google,
+                                    context.t.login_with_google,
                                     style: textStyle,
                                   ),
                                 ),
@@ -100,7 +100,7 @@ class NativeLoginView extends StatelessWidget {
                                 child: Padding(
                                   padding: const EdgeInsets.all(8.0),
                                   child: Text(
-                                    AppLocalizations.of(context).login_with_github,
+                                    context.t.login_with_github,
                                     style: textStyle,
                                   ),
                                 ),
@@ -135,8 +135,8 @@ class NativeLoginView extends StatelessWidget {
                                 child: Padding(
                                   padding: const EdgeInsets.all(8.0),
                                   child: Text(
-                                  AppLocalizations.of(context).login_with_apple,
-                                  style: textStyle,
+                                    context.t.login_with_apple,
+                                    style: textStyle,
                                   ),
                                 ),
                               ),
@@ -155,7 +155,7 @@ class NativeLoginView extends StatelessWidget {
                     controller: model.emailController,
                     keyboardType: TextInputType.emailAddress,
                     decoration: InputDecoration(
-                      hintText: AppLocalizations.of(context).email,
+                      hintText: context.t.email,
                       border: const OutlineInputBorder(
                         borderSide: BorderSide(width: 2, color: Colors.white),
                       ),
@@ -170,9 +170,9 @@ class NativeLoginView extends StatelessWidget {
                           controller: model.otpController,
                           keyboardType: TextInputType.number,
                           decoration: InputDecoration(
-                            hintText: AppLocalizations.of(context).email_sign_in_code,
+                            hintText: context.t.email_sign_in_code,
                             errorText: model.incorrectOTP
-                                ? AppLocalizations.of(context).email_invalid_code
+                                ? context.t.email_invalid_code
                                 : null,
                             errorMaxLines: 5,
                             border: const OutlineInputBorder(
@@ -224,7 +224,7 @@ class NativeLoginView extends StatelessWidget {
                               padding: const EdgeInsets.all(8.0),
                               child: Align(
                                 child: Text(
-                                  AppLocalizations.of(context).email_submit_code,
+                                  context.t.email_submit_code,
                                   style: textStyle,
                                   textAlign: TextAlign.center,
                                 ),
@@ -242,7 +242,7 @@ class NativeLoginView extends StatelessWidget {
                       child: Padding(
                         padding: const EdgeInsets.all(8.0),
                         child: Text(
-                          AppLocalizations.of(context).login_data_message,
+                          context.t.login_data_message,
                           textAlign: TextAlign.center,
                           style:
                               TextStyle(color: Colors.white.withOpacity(0.87)),
@@ -257,7 +257,7 @@ class NativeLoginView extends StatelessWidget {
                       child: Padding(
                         padding: const EdgeInsets.all(8.0),
                         child: Text(
-                          AppLocalizations.of(context).login_age_message,
+                          context.t.login_age_message,
                           textAlign: TextAlign.center,
                           style:
                               TextStyle(color: Colors.white.withOpacity(0.87)),

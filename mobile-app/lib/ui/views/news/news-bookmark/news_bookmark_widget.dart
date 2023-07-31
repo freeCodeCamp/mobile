@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import 'package:freecodecamp/extensions/i18n_extension.dart';
 import 'package:freecodecamp/ui/views/news/news-bookmark/news_bookmark_viewmodel.dart';
 import 'package:freecodecamp/ui/views/news/news-tutorial/news_tutorial_view.dart';
 import 'package:stacked/stacked.dart';
@@ -23,8 +23,8 @@ class NewsBookmarkViewWidget extends StatelessWidget {
       builder: (context, model, child) => BottomButton(
         key: const Key('bookmark_btn'),
         label: model.bookmarked
-            ? AppLocalizations.of(context).tutorial_bookmarked
-            : AppLocalizations.of(context).tutorial_bookmark,
+            ? context.t.tutorial_bookmarked
+            : context.t.tutorial_bookmark,
         icon: model.bookmarked
             ? Icons.bookmark_added
             : Icons.bookmark_add_outlined,

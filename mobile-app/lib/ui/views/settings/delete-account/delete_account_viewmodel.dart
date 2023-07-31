@@ -2,9 +2,9 @@ import 'dart:developer';
 
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:freecodecamp/app/app.locator.dart';
 import 'package:freecodecamp/enums/dialog_type.dart';
+import 'package:freecodecamp/extensions/i18n_extension.dart';
 import 'package:freecodecamp/service/authentication/authentication_service.dart';
 import 'package:stacked/stacked.dart';
 import 'package:stacked_services/stacked_services.dart';
@@ -23,9 +23,9 @@ class DeleteAccountViewModel extends BaseViewModel {
     DialogResponse? res = await _dialogService.showCustomDialog(
       barrierDismissible: true,
       variant: DialogType.deleteAccount,
-      title: AppLocalizations.of(context).settings_delete_account,
-      description: AppLocalizations.of(context).delete_account_are_you_sure,
-      mainButtonTitle: AppLocalizations.of(context).settings_delete_account,
+      title: context.t.settings_delete_account,
+      description: context.t.delete_account_are_you_sure,
+      mainButtonTitle: context.t.settings_delete_account,
     );
 
     if (res?.confirmed == true) {
@@ -40,7 +40,7 @@ class DeleteAccountViewModel extends BaseViewModel {
             onWillPop: () async => false,
             child: SimpleDialog(
               title: Text(
-                AppLocalizations.of(context).delete_account_deleting,
+                context.t.delete_account_deleting,
               ),
               contentPadding: const EdgeInsets.fromLTRB(0.0, 12.0, 0.0, 24.0),
               backgroundColor: const Color(0xFF2A2A40),
@@ -72,21 +72,21 @@ class DeleteAccountViewModel extends BaseViewModel {
           await _authenticationService.logout();
           _navigator.clearStackAndShow('/');
           _snackbar.showSnackbar(
-            title: AppLocalizations.of(context).delete_success,
+            title: context.t.delete_success,
             message: '',
           );
         } else {
           log('Account deletion failed');
           _navigator.back();
           _snackbar.showSnackbar(
-            title: AppLocalizations.of(context).delete_failed,
+            title: context.t.delete_failed,
             message: '',
           );
         }
       } catch (err) {
         _navigator.back();
         _snackbar.showSnackbar(
-          title: AppLocalizations.of(context).delete_failed,
+          title: context.t.delete_failed,
           message: '',
         );
       }

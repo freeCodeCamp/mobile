@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
-import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:flutter_inappwebview/flutter_inappwebview.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:freecodecamp/enums/panel_type.dart';
+import 'package:freecodecamp/extensions/i18n_extension.dart';
 import 'package:freecodecamp/models/learn/challenge_model.dart';
 import 'package:freecodecamp/models/learn/curriculum_model.dart';
 import 'package:freecodecamp/ui/views/learn/challenge/challenge_viewmodel.dart';
@@ -135,7 +135,7 @@ class ChallengeView extends StatelessWidget {
                           automaticallyImplyLeading: !model.showPreview,
                           title: challenge.files.length == 1 &&
                                   !model.showPreview
-                              ? Text(AppLocalizations.of(context).editor)
+                              ? Text(context.t.editor)
                               : Row(
                                   children: [
                                     if (model.showPreview && !onlyJs)
@@ -151,7 +151,7 @@ class ChallengeView extends StatelessWidget {
                                                   true;
                                             },
                                             child: Text(
-                                              AppLocalizations.of(context).preview,
+                                              context.t.preview,
                                             ),
                                           ),
                                         ),
@@ -164,7 +164,7 @@ class ChallengeView extends StatelessWidget {
                                               : null,
                                           child: ElevatedButton(
                                             child: Text(
-                                              AppLocalizations.of(context).console,
+                                              context.t.console,
                                             ),
                                             onPressed: () {
                                               model.setShowConsole = true;
@@ -242,7 +242,7 @@ class ChallengeView extends StatelessWidget {
 
           return Scaffold(
             appBar: AppBar(
-              title: Text(AppLocalizations.of(context).loading),
+              title: Text(context.t.loading),
               automaticallyImplyLeading: false,
             ),
             body: const Center(
@@ -510,7 +510,7 @@ class ProjectPreview extends StatelessWidget {
 
           if (snapshot.hasError) {
             Center(
-              child: Text(AppLocalizations.of(context).error),
+              child: Text(context.t.error),
             );
           }
 

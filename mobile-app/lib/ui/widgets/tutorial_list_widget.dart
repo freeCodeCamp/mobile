@@ -2,9 +2,9 @@ import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
-import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:freecodecamp/app/app.locator.dart';
 import 'package:freecodecamp/app/app.router.dart';
+import 'package:freecodecamp/extensions/i18n_extension.dart';
 import 'package:freecodecamp/models/news/tutorial_model.dart';
 import 'package:freecodecamp/ui/views/news/news-feed/news_feed_viewmodel.dart';
 import 'package:http/http.dart' as http;
@@ -87,7 +87,7 @@ class TutorialListState extends State<TutorialList> {
                   margin: const EdgeInsets.only(bottom: 48),
                   child: ListTile(
                     title: Text(
-                      AppLocalizations.of(context).tutorial_show_more,
+                      context.t.tutorial_show_more,
                     ),
                     tileColor: const Color(0xFF0a0a23),
                     trailing: const Icon(Icons.arrow_forward_ios_outlined),

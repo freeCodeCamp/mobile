@@ -2,8 +2,8 @@ import 'dart:io';
 
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:flutter_html/flutter_html.dart';
+import 'package:freecodecamp/extensions/i18n_extension.dart';
 import 'package:freecodecamp/models/podcasts/episodes_model.dart';
 import 'package:freecodecamp/models/podcasts/podcasts_model.dart';
 import 'package:freecodecamp/ui/views/podcast/episode-list/episode_list_viewmodel.dart';
@@ -124,7 +124,7 @@ class EpisodeListView extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(
-          AppLocalizations.of(context).podcast_description,
+          context.t.podcast_description,
           style: const TextStyle(
             fontSize: 24,
             fontWeight: FontWeight.bold,
@@ -152,8 +152,8 @@ class EpisodeListView extends StatelessWidget {
           },
           child: Text(
             model.showDescription
-                ? AppLocalizations.of(context).podcast_show_less
-                : AppLocalizations.of(context).podcast_show_more,
+                ? context.t.podcast_show_less
+                : context.t.podcast_show_more,
             style: const TextStyle(
               fontSize: 16,
             ),

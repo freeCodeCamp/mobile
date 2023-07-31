@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import 'package:freecodecamp/extensions/i18n_extension.dart';
 import 'package:freecodecamp/models/learn/curriculum_model.dart';
 import 'package:freecodecamp/service/authentication/authentication_service.dart';
 import 'package:freecodecamp/ui/views/learn/block/block_view.dart';
@@ -44,7 +44,7 @@ class SuperBlockView extends StatelessWidget {
             }
 
             if (snapshot.hasError) {
-              return Text(AppLocalizations.of(context).error);
+              return Text(context.t.error);
             }
 
             return const Center(

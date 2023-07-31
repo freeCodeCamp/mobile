@@ -5,9 +5,9 @@ import 'package:dio/dio.dart';
 import 'package:fk_user_agent/fk_user_agent.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
-import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:flutter_html/flutter_html.dart';
 import 'package:freecodecamp/app/app.locator.dart';
+import 'package:freecodecamp/extensions/i18n_extension.dart';
 import 'package:freecodecamp/models/podcasts/episodes_model.dart';
 import 'package:freecodecamp/models/podcasts/podcasts_model.dart';
 import 'package:freecodecamp/service/audio/audio_service.dart';
@@ -210,12 +210,12 @@ class PodcastTileState extends State<PodcastTile> {
     String minutes = (widget.episode.duration!.inMinutes).toString();
 
     if (dur.inMinutes > 59) {
-      return AppLocalizations.of(context).podcast_duration_hours(
+      return context.t.podcast_duration_hours(
         hours,
         minutes,
       );
     } else {
-      return AppLocalizations.of(context).podcast_duration_minutes(
+      return context.t.podcast_duration_minutes(
         minutes,
       );
     }

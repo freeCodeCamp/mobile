@@ -1,7 +1,7 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
-import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import 'package:freecodecamp/extensions/i18n_extension.dart';
 import 'package:freecodecamp/models/news/tutorial_model.dart';
 import 'package:freecodecamp/ui/views/news/news-feed/news_feed_viewmodel.dart';
 import 'package:stacked/stacked.dart';
@@ -39,10 +39,10 @@ class NewsFeedView extends StatelessWidget {
             ? AppBar(
                 title: fromAuthor
                     ? Text(
-                        AppLocalizations.of(context).tutorials_from(author),
+                        context.t.tutorials_from(author),
                       )
                     : Text(
-                        AppLocalizations.of(context).tutorials_about(subject),
+                        context.t.tutorials_about(subject),
                       ),
               )
             : null,
@@ -79,14 +79,14 @@ class NewsFeedView extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
         Text(
-          AppLocalizations.of(context).tutorial_load_error,
+          context.t.tutorial_load_error,
           textAlign: TextAlign.center,
         ),
         Padding(
           padding: const EdgeInsets.all(8.0),
           child: InkWell(
             child: Text(
-              AppLocalizations.of(context).tutorial_read_online,
+              context.t.tutorial_read_online,
               textAlign: TextAlign.center,
               style: const TextStyle(
                 color: Color.fromRGBO(0x99, 0xc9, 0xff, 1),

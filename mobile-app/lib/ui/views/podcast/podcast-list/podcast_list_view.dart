@@ -2,7 +2,7 @@ import 'dart:io';
 
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import 'package:freecodecamp/extensions/i18n_extension.dart';
 import 'package:freecodecamp/models/podcasts/podcasts_model.dart';
 import 'package:freecodecamp/ui/views/podcast/episode-list/episode_list_view.dart';
 import 'package:freecodecamp/ui/views/podcast/podcast-list/podcast_list_viewmodel.dart';
@@ -20,8 +20,8 @@ class PodcastListView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     List titles = [
-      AppLocalizations.of(context).podcasts_title,
-      AppLocalizations.of(context).podcast_download_title,
+      context.t.podcasts_title,
+      context.t.podcast_download_title,
     ];
 
     return ViewModelBuilder<PodcastListViewModel>.reactive(
@@ -40,13 +40,13 @@ class PodcastListView extends StatelessWidget {
               icon: const Icon(
                 Icons.grid_view_rounded,
               ),
-              label: AppLocalizations.of(context).podcasts_browse,
+              label: context.t.podcasts_browse,
             ),
             BottomNavigationBarItem(
               icon: const Icon(
                 Icons.arrow_circle_down_sharp,
               ),
-              label: AppLocalizations.of(context).podcasts_downloads,
+              label: context.t.podcasts_downloads,
             ),
           ],
         ),
@@ -86,7 +86,7 @@ class PodcastListViewBuilder extends StatelessWidget {
               if (snapshot.hasError) {
                 return Center(
                   child: Text(
-                    AppLocalizations.of(context).podcast_unable_to_load_podcasts,
+                    context.t.podcast_unable_to_load_podcasts,
                     textAlign: TextAlign.center,
                   ),
                 );
@@ -105,7 +105,7 @@ class PodcastListViewBuilder extends StatelessWidget {
                         height: 4,
                       ),
                       Text(
-                        AppLocalizations.of(context).podcast_no_downloads,
+                        context.t.podcast_no_downloads,
                         style: const TextStyle(
                           color: Colors.white,
                           fontSize: 16,

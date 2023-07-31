@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import 'package:freecodecamp/extensions/i18n_extension.dart';
 import 'package:freecodecamp/models/learn/curriculum_model.dart';
 
 import 'package:freecodecamp/service/learn/learn_service.dart';
@@ -206,7 +206,7 @@ class BlockHeader extends StatelessWidget {
               margin: const EdgeInsets.only(top: 8, left: 8),
               color: const Color.fromRGBO(0x00, 0x2e, 0xad, 1),
               child: Text(
-                AppLocalizations.of(context).certification_project,
+                context.t.certification_project,
                 style: const TextStyle(
                   fontWeight: FontWeight.bold,
                   color: Color.fromRGBO(0x19, 0x8e, 0xee, 1),

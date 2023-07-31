@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:freecodecamp/extensions/i18n_extension.dart';
 import 'package:freecodecamp/models/learn/challenge_model.dart';
 import 'package:freecodecamp/models/learn/curriculum_model.dart';
 import 'package:freecodecamp/models/learn/motivational_quote_model.dart';
@@ -34,7 +34,7 @@ class PassWidgetView extends StatelessWidget {
                 Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 16),
                   child: Text(
-                    AppLocalizations.of(context).passed,
+                    context.t.passed,
                     style: TextStyle(
                       fontSize: 28,
                       fontFamily: 'Inter',
@@ -110,7 +110,7 @@ class PassWidgetView extends StatelessWidget {
                                 children: [
                                   Expanded(
                                     child: Text(
-                                      AppLocalizations.of(context).completed_percent(
+                                      context.t.completed_percent(
                                         ((completed * 100) ~/ maxChallenges)
                                             .toString(),
                                       ),
@@ -149,7 +149,7 @@ class PassWidgetView extends StatelessWidget {
                               model.auth.routeToLogin(true);
                             },
                             child: Text(
-                              AppLocalizations.of(context).login_save_progress,
+                              context.t.login_save_progress,
                               textAlign: TextAlign.center,
                               style: const TextStyle(
                                 color: Colors.black,
@@ -227,7 +227,7 @@ class PassButton extends StatelessWidget {
             Container(
               margin: const EdgeInsets.only(right: 10),
               child: Text(
-                AppLocalizations.of(context).next,
+                context.t.next,
                 style: const TextStyle(fontSize: 20),
                 textAlign: TextAlign.center,
               ),

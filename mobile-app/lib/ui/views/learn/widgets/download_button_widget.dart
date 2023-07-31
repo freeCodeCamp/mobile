@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import 'package:freecodecamp/extensions/i18n_extension.dart';
 import 'package:freecodecamp/models/learn/curriculum_model.dart';
 import 'package:freecodecamp/ui/views/learn/block/block_viewmodel.dart';
 
@@ -31,14 +31,14 @@ class DownloadButton extends StatelessWidget {
                 backgroundColor: const Color.fromRGBO(0x2A, 0x2A, 0x40, 1),
               ),
               child: !model.isDownloading
-                  ? Text(AppLocalizations.of(context).challenge_download)
+                  ? Text(context.t.challenge_download)
                   : StreamBuilder(
                       stream: model.learnOfflineService.downloadStream.stream,
                       builder: ((context, snapshot) {
                         if (snapshot.connectionState ==
                             ConnectionState.waiting) {
                           return Text(
-                            AppLocalizations.of(context).challenge_download_starting,
+                            context.t.challenge_download_starting,
                           );
                         }
 
@@ -59,7 +59,7 @@ class DownloadButton extends StatelessWidget {
                         }
 
                         return Text(
-                          AppLocalizations.of(context).challenge_download,
+                          context.t.challenge_download,
                         );
                       }),
                     ),
@@ -80,10 +80,10 @@ class DownloadButton extends StatelessWidget {
               ),
               child: model.isDownloading
                   ? Text(
-                      AppLocalizations.of(context).challenge_download_cancel,
+                      context.t.challenge_download_cancel,
                     )
                   : Text(
-                      AppLocalizations.of(context).challenge_download_delete,
+                      context.t.challenge_download_delete,
                     ),
             ),
           )

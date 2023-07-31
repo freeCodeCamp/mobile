@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import 'package:freecodecamp/extensions/i18n_extension.dart';
 import 'package:freecodecamp/ui/views/news/news-bookmark/news_bookmark_feed_view.dart';
 import 'package:freecodecamp/ui/views/news/news-feed/news_feed_view.dart';
 import 'package:freecodecamp/ui/views/news/news-search/news_search_view.dart';
@@ -13,9 +13,9 @@ class NewsViewHandlerView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     var titles = <Widget>[
-      Text(AppLocalizations.of(context).tutorial_bookmarks_title),
-      Text(AppLocalizations.of(context).tutorials),
-      Text(AppLocalizations.of(context).tutorial_search_title)
+      Text(context.t.tutorial_bookmarks_title),
+      Text(context.t.tutorials),
+      Text(context.t.tutorial_search_title)
     ];
 
     const views = <Widget>[
@@ -37,22 +37,22 @@ class NewsViewHandlerView extends StatelessWidget {
               icon: const Icon(
                 Icons.bookmark_outline_sharp,
               ),
-              label: AppLocalizations.of(context).tutorial_nav_bookmarks,
-              tooltip: AppLocalizations.of(context).tutorial_nav_bookmarks,
+              label: context.t.tutorial_nav_bookmarks,
+              tooltip: context.t.tutorial_nav_bookmarks,
             ),
             BottomNavigationBarItem(
               icon: const Icon(
                 Icons.article_sharp,
               ),
-              label: AppLocalizations.of(context).tutorial_nav_tutorials,
-              tooltip: AppLocalizations.of(context).tutorial_nav_tutorials,
+              label: context.t.tutorial_nav_tutorials,
+              tooltip: context.t.tutorial_nav_tutorials,
             ),
             BottomNavigationBarItem(
               icon: const Icon(
                 Icons.search_sharp,
               ),
-              label: AppLocalizations.of(context).tutorial_nav_search,
-              tooltip: AppLocalizations.of(context).tutorial_nav_search,
+              label: context.t.tutorial_nav_search,
+              tooltip: context.t.tutorial_nav_search,
             )
           ],
           currentIndex: model.index,
