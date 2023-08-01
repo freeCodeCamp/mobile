@@ -160,7 +160,9 @@ class HTMLParser {
         TagExtension(
           tagsToExtend: {'pre'},
           builder: (child) {
-            var codeElement = child.element!.children[0];
+            var codeElement = child.element!.children.isNotEmpty
+                ? child.element!.children.first // code element
+                : child.element!; // pre element
             String? currentClass;
 
             bool codeLanguageIsPresent(List classNames) {
