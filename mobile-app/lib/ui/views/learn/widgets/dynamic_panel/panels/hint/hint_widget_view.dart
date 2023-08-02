@@ -173,7 +173,7 @@ class HintWidgetView extends StatelessWidget {
                     ),
                     IconButton(
                       onPressed: () {
-                        challengeModel.resetCode(editor);
+                        challengeModel.resetCode(editor, context);
                       },
                       icon: const Icon(Icons.restart_alt),
                       padding: const EdgeInsets.all(16),

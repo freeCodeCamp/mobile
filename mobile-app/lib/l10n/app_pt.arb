@@ -90,6 +90,16 @@
   "@login_age_message": {
       "description": "login view"
   },
+  "login_welcome_back": "Welcome back, {username}",
+  "@login_welcome_back": {
+      "description": "learn view",
+      "placeholders": {
+          "username": {
+              "type": "String",
+              "example": "Quincy"
+          }
+      }
+  },
   "challenge_download": "Download All Challenges",
   "challenge_download_starting": "Starting Download...",
   "challenge_download_cancel": "Cancel Downloading Challenges",
@@ -142,6 +152,7 @@
   "@next": {
       "description": "learn > block > challenge > *complete challenge* > pass panel"
   },
+  "next_challenge": "Next Challenge",
   "passed": "Passed",
   "@passed": {
       "description": "learn > block > challenge > *complete challenge* > pass panel"
@@ -149,6 +160,49 @@
   "hint": "Hint",
   "@hint": {
       "description": "learn > block > challenge > *fail challenge* > hint panel"
+  },
+  "try_again": "Try Again",
+
+  "questions": "{completed} of {total} Questions",
+  "@questions": {
+      "description": "learn > python cert > challenge",
+      "placeholders": {
+          "completed": {
+              "type": "int",
+              "example": "1"
+          },
+          "total": {
+              "type": "int",
+              "example": "2"
+          }
+      }
+  },
+  "questions_check": "Check your Answer",
+  "solution_link": "Solution Link",
+  "@solution_link": {
+      "description": "learn > python cert > project"
+  },
+  "solution_link_check": "Check Link",
+  "@solution_link_check": {
+      "description": "learn > python cert > project"
+  },
+  "solution_link_submit": "Submit",
+  "ask_for_help": "Ask for Help",
+  "reset_code": "Reset Code",
+  "@reset_code": {
+      "description": "learn > block > challenge > *fail challenge* > hint panel"
+  },
+  "reset": "Reset",
+  "@reset": {
+      "description": "learn > block > challenge > *fail challenge* > hint panel"
+  },
+  "reset_description": "Are you sure you want to reset your code?",
+  "@reset_description": {
+      "description": "learn > block > challenge > *fail challenge* > hint panel"
+  },
+  "continue_left_off": "Continue Where You Left Off",
+  "@continue_left_off": {
+      "description": "ladning view"
   },
   "tutorials_from": "Tutorials from {author}",
   "@tutorials_from": {
