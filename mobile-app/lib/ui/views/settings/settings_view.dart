@@ -62,6 +62,10 @@ class SettingsView extends StatelessWidget {
               onTap: () => model.openPrivacyPolicy(),
             ),
             buildDivider(),
+            TextButton(
+              onPressed: () => model.localeService.changeLocale('es'),
+              child: const Text('test'),
+            ),
           ],
         ),
       ),

@@ -12,6 +12,7 @@ import 'package:freecodecamp/service/audio/audio_service.dart';
 import 'package:freecodecamp/service/authentication/authentication_service.dart';
 import 'package:freecodecamp/service/firebase/analytics_service.dart';
 import 'package:freecodecamp/service/learn/learn_service.dart';
+import 'package:freecodecamp/service/locale_service.dart';
 import 'package:freecodecamp/service/navigation/quick_actions_service.dart';
 import 'package:freecodecamp/service/podcast/notification_service.dart';
 import 'package:freecodecamp/ui/theme/fcc_theme.dart';
@@ -40,6 +41,7 @@ Future<void> main({bool testing = false}) async {
   await NotificationService().init();
   await AppAudioService().init();
   await FkUserAgent.init();
+
   LearnService().init();
 
   runApp(const FreeCodeCampMobileApp());
@@ -49,29 +51,39 @@ Future<void> main({bool testing = false}) async {
 
 class FreeCodeCampMobileApp extends StatelessWidget {
   const FreeCodeCampMobileApp({Key? key}) : super(key: key);
+
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      title: 'freeCodeCamp',
-      theme: FccTheme.themeDark,
-      localizationsDelegates: const [
-        AppLocalizations.delegate,
-        GlobalMaterialLocalizations.delegate,
-        GlobalWidgetsLocalizations.delegate,
-        GlobalCupertinoLocalizations.delegate,
-      ],
-      supportedLocales: const [
-        // Enlish
-        Locale('en'),
-        // Spanish
-        Locale('es'),
-        // Portuguese
-        Locale('pt'),
-      ],
-      debugShowCheckedModeBanner: false,
-      navigatorKey: StackedService.navigatorKey,
-      onGenerateRoute: StackedRouter().onGenerateRoute,
-      navigatorObservers: [locator<AnalyticsService>().getAnalyticsObserver()],
+    return StreamBuilder<Locale>(
+      initialData: locator<LocaleService>().locale,
+      stream: locator<LocaleService>().localeStream,
+      builder: (context, snapshot) {
+        return MaterialApp(
+          title: 'freeCodeCamp',
+          theme: FccTheme.themeDark,
+          localizationsDelegates: const [
+            AppLocalizations.delegate,
+            GlobalMaterialLocalizations.delegate,
+            GlobalWidgetsLocalizations.delegate,
+            GlobalCupertinoLocalizations.delegate,
+          ],
+          supportedLocales: const [
+            // Enlish
+            Locale('en'),
+            // Spanish
+            Locale('es'),
+            // Portuguese
+            Locale('pt'),
+          ],
+          locale: snapshot.data ?? locator<LocaleService>().locale,
+          debugShowCheckedModeBanner: false,
+          navigatorKey: StackedService.navigatorKey,
+          onGenerateRoute: StackedRouter().onGenerateRoute,
+          navigatorObservers: [
+            locator<AnalyticsService>().getAnalyticsObserver()
+          ],
+        );
+      },
     );
   }
 }
