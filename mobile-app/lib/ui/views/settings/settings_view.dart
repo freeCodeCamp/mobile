@@ -65,14 +65,14 @@ class SettingsView extends StatelessWidget {
             // language dropdown selector
             ListTile(
               leading: const Icon(Icons.language),
-              title: const Text('language'),
+              title: Text(context.t.settings_language),
               subtitle: DropdownButton<String>(
                 value: model.localeService.currentLocaleName,
                 dropdownColor: const Color.fromRGBO(0x2A, 0x2A, 0x40, 1),
                 onChanged: (String? newValue) {
                   model.localeService.changeLocale(newValue!);
                 },
-                items: <String>['English', 'Spanish', 'Portuguese']
+                items: <String>[...model.localeService.localeNames]
                     .map<DropdownMenuItem<String>>(
                   (String value) {
                     return DropdownMenuItem<String>(

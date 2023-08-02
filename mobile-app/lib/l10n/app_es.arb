@@ -358,7 +358,7 @@
   "@podcast_unable_to_load_podcasts": {
       "description": "podcasts > podcast"
   },
-  "settings_title": "SPANISH",
+  "settings_title": "SETTINGS",
   "@settings_title": {
       "description": "settings view"
   },
@@ -384,6 +384,10 @@
   },
   "settings_delete_account": "Delete Account",
   "@settings_delete_account": {
+      "description": "settings view"
+  },
+  "settings_language": "Language",
+  "@settings_language": {
       "description": "settings view"
   },
   "delete_account_message_one": "This will really delete all your data, including all your progress and account information.",
