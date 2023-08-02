@@ -34,13 +34,19 @@ class LocaleService {
       localeIndex = localeNames.indexWhere((element) {
         return locale == element;
       });
+
+      currentLocaleName = localeNames[localeIndex];
+    } else {
+      int index = locales.indexWhere((element) {
+        return locale == element.languageCode;
+      });
+
+      currentLocaleName = localeNames[index];
     }
 
     this.locale = Locale.fromSubtags(
       languageCode: isLocaleCode ? locale : locales[localeIndex].languageCode,
     );
-
-    currentLocaleName = localeNames[localeIndex];
 
     SharedPreferences.getInstance().then((prefs) {
       prefs.setString(
