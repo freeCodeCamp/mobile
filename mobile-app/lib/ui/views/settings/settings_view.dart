@@ -62,9 +62,29 @@ class SettingsView extends StatelessWidget {
               onTap: () => model.openPrivacyPolicy(),
             ),
             buildDivider(),
-            TextButton(
-              onPressed: () => model.localeService.changeLocale('es'),
-              child: const Text('test'),
+            // language dropdown selector
+            ListTile(
+              leading: const Icon(Icons.language),
+              title: const Text('language'),
+              subtitle: DropdownButton<String>(
+                value: model.localeService.currentLocaleName,
+                dropdownColor: const Color.fromRGBO(0x2A, 0x2A, 0x40, 1),
+                onChanged: (String? newValue) {
+                  model.localeService.changeLocale(newValue!);
+                },
+                items: <String>['English', 'Spanish', 'Portuguese']
+                    .map<DropdownMenuItem<String>>(
+                  (String value) {
+                    return DropdownMenuItem<String>(
+                      value: value,
+                      child: Text(
+                        value.toUpperCase(),
+                        style: const TextStyle(color: Colors.white),
+                      ),
+                    );
+                  },
+                ).toList(),
+              ),
             ),
           ],
         ),

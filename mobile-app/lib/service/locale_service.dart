@@ -6,18 +6,39 @@ import 'package:shared_preferences/shared_preferences.dart';
 class LocaleService {
   Locale locale = const Locale('en');
 
+  List<Locale> supportedLocales = [
+    // Enlish
+    const Locale('en'),
+    // Spanish
+    const Locale('es'),
+    // Portuguese
+    const Locale('pt'),
+  ];
+
+  List<String> supportedLocaleNames = [
+    'English',
+    'Spanish',
+    'Portuguese',
+  ];
+
+  String currentLocaleName = 'English';
+
   Stream<Locale> get localeStream => _localeController.stream;
   final _localeController = StreamController<Locale>.broadcast();
 
-  getLocalClassInstance({locale = 'en'}) {
-    return Locale.fromSubtags(languageCode: locale);
-  }
-
   void changeLocale(String locale) {
-    this.locale = getLocalClassInstance(locale: locale);
+    int localeIndex = supportedLocaleNames.indexWhere((element) {
+      return locale == element;
+    });
+
+    this.locale = Locale.fromSubtags(
+      languageCode: supportedLocales[localeIndex].languageCode,
+    );
+
+    currentLocaleName = supportedLocaleNames[localeIndex];
 
     SharedPreferences.getInstance().then((prefs) {
-      prefs.setString('locale', locale);
+      prefs.setString('locale', locale[localeIndex]);
     });
 
     _localeController.sink.add(this.locale);
@@ -30,7 +51,5 @@ class LocaleService {
     if (locale != null) {
       changeLocale(locale);
     }
-
-    _localeController.sink.add(this.locale);
   }
 }

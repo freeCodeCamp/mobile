@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_crashlytics/firebase_crashlytics.dart';
 import 'package:fk_user_agent/fk_user_agent.dart';
@@ -44,6 +46,8 @@ Future<void> main({bool testing = false}) async {
 
   LearnService().init();
 
+  locator<LocaleService>().init();
+
   runApp(const FreeCodeCampMobileApp());
 
   await QuickActionsService().init();
@@ -58,6 +62,8 @@ class FreeCodeCampMobileApp extends StatelessWidget {
       initialData: locator<LocaleService>().locale,
       stream: locator<LocaleService>().localeStream,
       builder: (context, snapshot) {
+        log('locale: ${snapshot.data}');
+
         return MaterialApp(
           title: 'freeCodeCamp',
           theme: FccTheme.themeDark,
@@ -67,14 +73,7 @@ class FreeCodeCampMobileApp extends StatelessWidget {
             GlobalWidgetsLocalizations.delegate,
             GlobalCupertinoLocalizations.delegate,
           ],
-          supportedLocales: const [
-            // Enlish
-            Locale('en'),
-            // Spanish
-            Locale('es'),
-            // Portuguese
-            Locale('pt'),
-          ],
+          supportedLocales: locator<LocaleService>().supportedLocales,
           locale: snapshot.data ?? locator<LocaleService>().locale,
           debugShowCheckedModeBanner: false,
           navigatorKey: StackedService.navigatorKey,

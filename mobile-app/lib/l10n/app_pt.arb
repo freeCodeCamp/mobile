@@ -186,6 +186,7 @@
   "@solution_link_check": {
       "description": "learn > python cert > project"
   },
+
   "solution_link_submit": "Submit",
   "ask_for_help": "Ask for Help",
   "reset_code": "Reset Code",
@@ -358,7 +359,7 @@
   "@podcast_unable_to_load_podcasts": {
       "description": "podcasts > podcast"
   },
-  "settings_title": "SETTINGS",
+  "settings_title": "PORTUGUESE",
   "@settings_title": {
       "description": "settings view"
   },
