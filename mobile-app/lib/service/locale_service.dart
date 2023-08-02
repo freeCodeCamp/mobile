@@ -6,7 +6,8 @@ import 'package:shared_preferences/shared_preferences.dart';
 class LocaleService {
   Locale locale = const Locale('en');
 
-  List<Locale> supportedLocales = [
+  // supported locales
+  List<Locale> locales = [
     // Enlish
     const Locale('en'),
     // Spanish
@@ -15,7 +16,7 @@ class LocaleService {
     const Locale('pt'),
   ];
 
-  List<String> supportedLocaleNames = [
+  List<String> localeNames = [
     'English',
     'Spanish',
     'Portuguese',
@@ -26,19 +27,26 @@ class LocaleService {
   Stream<Locale> get localeStream => _localeController.stream;
   final _localeController = StreamController<Locale>.broadcast();
 
-  void changeLocale(String locale) {
-    int localeIndex = supportedLocaleNames.indexWhere((element) {
-      return locale == element;
-    });
+  void changeLocale(String locale, {isLocaleCode = false}) {
+    int localeIndex = 0;
+
+    if (!isLocaleCode) {
+      localeIndex = localeNames.indexWhere((element) {
+        return locale == element;
+      });
+    }
 
     this.locale = Locale.fromSubtags(
-      languageCode: supportedLocales[localeIndex].languageCode,
+      languageCode: isLocaleCode ? locale : locales[localeIndex].languageCode,
     );
 
-    currentLocaleName = supportedLocaleNames[localeIndex];
+    currentLocaleName = localeNames[localeIndex];
 
     SharedPreferences.getInstance().then((prefs) {
-      prefs.setString('locale', locale[localeIndex]);
+      prefs.setString(
+        'locale',
+        isLocaleCode ? locale : locales[localeIndex].languageCode,
+      );
     });
 
     _localeController.sink.add(this.locale);
@@ -49,7 +57,7 @@ class LocaleService {
     String? locale = prefs.getString('locale');
 
     if (locale != null) {
-      changeLocale(locale);
+      changeLocale(locale, isLocaleCode: true);
     }
   }
 }
