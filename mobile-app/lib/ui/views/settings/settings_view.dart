@@ -63,30 +63,31 @@ class SettingsView extends StatelessWidget {
             ),
             buildDivider(),
             // language dropdown selector
-            ListTile(
-              leading: const Icon(Icons.language),
-              title: Text(context.t.settings_language),
-              subtitle: DropdownButton<String>(
-                isExpanded: true,
-                value: model.localeService.currentLocaleName,
-                dropdownColor: const Color(0xFF0a0a23),
-                onChanged: (String? newValue) {
-                  model.localeService.changeLocale(newValue!);
-                },
-                items: <String>[...model.localeService.localeNames]
-                    .map<DropdownMenuItem<String>>(
-                  (String value) {
-                    return DropdownMenuItem<String>(
-                      value: value,
-                      child: Text(
-                        value.toUpperCase(),
-                        style: const TextStyle(color: Colors.white),
-                      ),
-                    );
+            if (model.isDev)
+              ListTile(
+                leading: const Icon(Icons.language),
+                title: Text(context.t.settings_language),
+                subtitle: DropdownButton<String>(
+                  isExpanded: true,
+                  value: model.localeService.currentLocaleName,
+                  dropdownColor: const Color(0xFF0a0a23),
+                  onChanged: (String? newValue) {
+                    model.localeService.changeLocale(newValue!);
                   },
-                ).toList(),
+                  items: <String>[...model.localeService.localeNames]
+                      .map<DropdownMenuItem<String>>(
+                    (String value) {
+                      return DropdownMenuItem<String>(
+                        value: value,
+                        child: Text(
+                          value.toUpperCase(),
+                          style: const TextStyle(color: Colors.white),
+                        ),
+                      );
+                    },
+                  ).toList(),
+                ),
               ),
-            ),
           ],
         ),
       ),

@@ -3,6 +3,7 @@ import 'package:flutter_custom_tabs/flutter_custom_tabs.dart';
 import 'package:freecodecamp/app/app.locator.dart';
 import 'package:freecodecamp/enums/dialog_type.dart';
 import 'package:freecodecamp/extensions/i18n_extension.dart';
+import 'package:freecodecamp/service/developer_service.dart';
 import 'package:freecodecamp/service/locale_service.dart';
 import 'package:freecodecamp/ui/widgets/setup_dialog_ui.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -12,9 +13,14 @@ import 'package:stacked_services/stacked_services.dart';
 class SettingsViewModel extends BaseViewModel {
   final DialogService _dialogService = locator<DialogService>();
   final LocaleService localeService = locator<LocaleService>();
+  final developerService = locator<DeveloperService>();
 
-  void init() {
+  bool isDev = false;
+
+  void init() async {
     setupDialogUi();
+    isDev = await developerService.developmentMode();
+    notifyListeners();
   }
 
   void resetCache(BuildContext context) async {
