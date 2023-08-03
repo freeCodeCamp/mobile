@@ -3,7 +3,7 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter_scroll_shadow/flutter_scroll_shadow.dart';
 import 'package:freecodecamp/models/main/user_model.dart';
-import 'package:freecodecamp/ui/widgets/drawer_widget/drawer_button.dart';
+import 'package:freecodecamp/ui/widgets/drawer_widget/drawer_tile.dart';
 import 'package:freecodecamp/ui/widgets/drawer_widget/drawer_web_buttton.dart';
 import 'package:freecodecamp/ui/widgets/drawer_widget/drawer_widget_viewmodel.dart';
 import 'package:stacked/stacked.dart';
@@ -65,7 +65,7 @@ class DrawerWidgetView extends StatelessWidget {
                         },
                       ),
                       buildDivider(),
-                      DrawerButton(
+                      DrawerTile(
                         key: const Key('learn'),
                         component: 'LEARN',
                         icon: '',
@@ -73,7 +73,7 @@ class DrawerWidgetView extends StatelessWidget {
                           model.routeComponent('LEARN', context);
                         },
                       ),
-                      DrawerButton(
+                      DrawerTile(
                         key: const Key('news'),
                         component: 'TUTORIALS',
                         icon: Icons.forum_outlined,
@@ -81,7 +81,7 @@ class DrawerWidgetView extends StatelessWidget {
                           model.routeComponent('NEWS', context);
                         },
                       ),
-                      DrawerButton(
+                      DrawerTile(
                         key: const Key('podcasts'),
                         component: 'PODCASTS',
                         icon: Icons.podcasts_outlined,
@@ -90,7 +90,7 @@ class DrawerWidgetView extends StatelessWidget {
                         },
                       ),
                       if (!Platform.isIOS)
-                        DrawerButton(
+                        DrawerTile(
                           key: const Key('code-radio'),
                           component: 'CODE RADIO',
                           icon: Icons.radio,
@@ -105,7 +105,7 @@ class DrawerWidgetView extends StatelessWidget {
                         url: 'https://www.freecodecamp.org/donate/',
                         icon: Icons.favorite,
                       ),
-                      DrawerButton(
+                      DrawerTile(
                         key: const Key('settings'),
                         component: 'SETTINGS',
                         icon: Icons.settings,
@@ -114,7 +114,7 @@ class DrawerWidgetView extends StatelessWidget {
                         },
                       ),
                       buildDivider(),
-                      DrawerButton(
+                      DrawerTile(
                           key: const Key('auth'),
                           component: model.loggedIn ? 'LOG OUT' : 'LOGIN',
                           icon: model.loggedIn ? Icons.logout : Icons.login,
