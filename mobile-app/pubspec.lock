@@ -808,10 +808,10 @@ packages:
     dependency: "direct main"
     description:
       name: jiffy
-      sha256: c3c1da3fe0c08bba3c2c455e8a3e724dfe7ea34dbe8069b992cab90ea1fe40b6
+      sha256: cc1d4b75016a9156c29b5d61f0c9176c3e0fb0580cc5a0e0422b5d2cab3fbfff
       url: "https://pub.dev"
     source: hosted
-    version: "5.0.1"
+    version: "6.2.1"
   js:
     dependency: transitive
     description:

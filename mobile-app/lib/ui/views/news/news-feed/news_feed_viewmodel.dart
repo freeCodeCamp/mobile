@@ -56,7 +56,10 @@ class NewsFeedViewModel extends BaseViewModel {
   }
 
   static String parseDate(date) {
-    return Jiffy(date).fromNow().toUpperCase();
+    Jiffy jiffyDate = Jiffy.parseFromDateTime(DateTime.parse(date));
+    String calcTimeSince = Jiffy.parseFromJiffy(jiffyDate).fromNow();
+
+    return calcTimeSince.toUpperCase();
   }
 
   Future<List<Tutorial>> readFromFiles() async {
