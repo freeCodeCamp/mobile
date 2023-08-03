@@ -1,13 +1,14 @@
-import 'dart:convert';
-
+import 'package:dio/dio.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:freecodecamp/models/news/tutorial_model.dart';
-import 'package:http/http.dart' as http;
+import 'package:freecodecamp/service/dio_service.dart';
 import 'package:stacked/stacked.dart';
 
 class NewsAuthorViewModel extends BaseViewModel {
   late Future<Author> _author;
   Future<Author> get author => _author;
+
+  final _dio = DioService.dio;
 
   Future<Author> fetchAuthor(String authorSlug) async {
     // Load the news url and key
@@ -25,15 +26,15 @@ class NewsAuthorViewModel extends BaseViewModel {
 
     String queryUrl = '${url}authors/slug/$authorSlug/?key=$key';
 
-    http.Response response = await http.get(Uri.parse(queryUrl));
+    Response response = await _dio.get(queryUrl);
 
     if (response.statusCode == 200) {
       return Author.toAuthorFromJson(
-        jsonDecode(response.body)['authors'][0],
+        response.data['authors'][0],
       );
     } else {
       throw Exception(
-        '${response.body}\n Author: $authorSlug',
+        '${response.data}\n Author: $authorSlug',
       );
     }
   }

@@ -4,6 +4,7 @@ import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:freecodecamp/app/app.locator.dart';
 import 'package:freecodecamp/service/authentication/authentication_service.dart';
 import 'package:freecodecamp/service/developer_service.dart';
+import 'package:freecodecamp/service/dio_service.dart';
 import 'package:stacked/stacked.dart';
 
 class NativeLoginViewModel extends BaseViewModel {
@@ -11,7 +12,7 @@ class NativeLoginViewModel extends BaseViewModel {
   TextEditingController otpController = TextEditingController();
   bool showOTPfield = false;
   bool incorrectOTP = false;
-  final Dio _dio = Dio();
+  final Dio _dio = DioService.dio;
 
   final AuthenticationService auth = locator<AuthenticationService>();
   final DeveloperService developerService = locator<DeveloperService>();

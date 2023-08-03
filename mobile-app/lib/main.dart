@@ -12,8 +12,8 @@ import 'package:freecodecamp/app/app.router.dart';
 import 'package:freecodecamp/firebase_options.dart';
 import 'package:freecodecamp/service/audio/audio_service.dart';
 import 'package:freecodecamp/service/authentication/authentication_service.dart';
+import 'package:freecodecamp/service/dio_service.dart';
 import 'package:freecodecamp/service/firebase/analytics_service.dart';
-import 'package:freecodecamp/service/learn/learn_service.dart';
 import 'package:freecodecamp/service/locale_service.dart';
 import 'package:freecodecamp/service/navigation/quick_actions_service.dart';
 import 'package:freecodecamp/service/podcast/notification_service.dart';
@@ -24,6 +24,7 @@ Future<void> main({bool testing = false}) async {
   WidgetsFlutterBinding.ensureInitialized();
   setupLocator();
 
+  await DioService().init();
   var fbApp = await Firebase.initializeApp(
       options: DefaultFirebaseOptions.currentPlatform);
   if (!testing) {
@@ -44,7 +45,6 @@ Future<void> main({bool testing = false}) async {
   await AppAudioService().init();
   await FkUserAgent.init();
 
-  LearnService().init();
 
   locator<LocaleService>().init();
 

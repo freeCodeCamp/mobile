@@ -3,9 +3,10 @@ import 'dart:convert';
 import 'dart:developer';
 import 'dart:io';
 
+import 'package:dio/dio.dart';
 import 'package:freecodecamp/models/learn/challenge_model.dart';
 import 'package:freecodecamp/models/learn/curriculum_model.dart';
-import 'package:http/http.dart' as http;
+import 'package:freecodecamp/service/dio_service.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class ChallengeDownload {
@@ -42,6 +43,7 @@ class LearnOfflineService {
   StreamSubscription? downloadSub;
 
   Timer? timer;
+  final _dio = DioService.dio;
 
   /*
    This function will return an instance of every challenge download that has
@@ -82,15 +84,13 @@ class LearnOfflineService {
     Challenge challenge;
     SharedPreferences prefs = await SharedPreferences.getInstance();
     if (await hasInternet()) {
-      http.Response res = await http.get(Uri.parse(url));
+      Response res = await _dio.get(url);
 
       if (prefs.getString(url) == null) {
         if (res.statusCode == 200) {
-          challenge = Challenge.fromJson(
-            jsonDecode(res.body),
-          );
+          challenge = Challenge.fromJson(res.data);
 
-          prefs.setString(url, res.body);
+          prefs.setString(url, jsonEncode(res.data));
 
           return challenge;
         }

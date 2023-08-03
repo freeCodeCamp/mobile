@@ -1,13 +1,12 @@
-import 'dart:convert';
-
+import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:freecodecamp/app/app.locator.dart';
 import 'package:freecodecamp/app/app.router.dart';
 import 'package:freecodecamp/extensions/i18n_extension.dart';
 import 'package:freecodecamp/models/news/tutorial_model.dart';
+import 'package:freecodecamp/service/dio_service.dart';
 import 'package:freecodecamp/ui/views/news/news-feed/news_feed_viewmodel.dart';
-import 'package:http/http.dart' as http;
 import 'package:stacked_services/stacked_services.dart';
 
 class TutorialList extends StatefulWidget {
@@ -21,6 +20,8 @@ class TutorialList extends StatefulWidget {
   final String authorSlug;
   final String authorName;
   final _navigationService = locator<NavigationService>();
+  final _dio = DioService.dio;
+
   Future<List<Tutorial>> fetchList() async {
     List<Tutorial> tutorials = [];
 
@@ -31,10 +32,10 @@ class TutorialList extends StatefulWidget {
     String url =
         "${dotenv.env['NEWSURL']}posts/?key=${dotenv.env['NEWSKEY']}&page=1$par&filter=author:$authorSlug";
 
-    final http.Response response = await http.get(Uri.parse(url));
+    final Response response = await _dio.get(url);
 
     if (response.statusCode == 200) {
-      var tutorialJson = json.decode(response.body)['posts'];
+      var tutorialJson = response.data['posts'];
       for (int i = 0; i < tutorialJson?.length; i++) {
         tutorials.add(Tutorial.fromJson(tutorialJson[i]));
       }
