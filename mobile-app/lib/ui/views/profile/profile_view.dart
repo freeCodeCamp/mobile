@@ -1,6 +1,7 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_heatmap_calendar/flutter_heatmap_calendar.dart';
+import 'package:freecodecamp/extensions/i18n_extension.dart';
 import 'package:freecodecamp/models/main/user_model.dart';
 import 'package:freecodecamp/service/authentication/authentication_service.dart';
 import 'package:freecodecamp/ui/views/profile/profile_viewmodel.dart';
@@ -53,7 +54,7 @@ class ProfileView extends StatelessWidget {
       builder: (context, model, child) => Scaffold(
         backgroundColor: const Color(0xFF0a0a23),
         appBar: AppBar(
-          title: const Text('PROFILE'),
+          title: Text(context.t.profile_title),
         ),
         drawer: const DrawerWidgetView(),
         body: FutureBuilder<FccUserModel>(
@@ -235,11 +236,12 @@ class ProfileView extends StatelessWidget {
                                   ))
                               : Container(),
                           user.isDonating
-                              ? const ListTile(
-                                  leading: Icon(Icons.favorite),
+                              ? ListTile(
+                                  leading: const Icon(Icons.favorite),
                                   title: Text(
-                                    'Supporter',
-                                  ))
+                                    context.t.profile_supporter,
+                                  ),
+                                )
                               : Container(),
                           user.about != null
                               ? ListTile(
@@ -252,7 +254,9 @@ class ProfileView extends StatelessWidget {
                           ListTile(
                             leading: const Icon(Icons.calendar_month),
                             title: Text(
-                              'Joined ${DateFormat.yMMMM().format(user.joinDate)}',
+                              context.t.profile_join_date(
+                                DateFormat.yMMMM().format(user.joinDate),
+                              ),
                             ),
                           )
                         ],
@@ -261,7 +265,9 @@ class ProfileView extends StatelessWidget {
                       ListTile(
                         leading: const Icon(Icons.local_fire_department_sharp),
                         title: Text(
-                          'Points ${user.points.toString()}',
+                          context.t.profile_points(
+                            user.points.toString(),
+                          ),
                         ),
                       ),
                       HeatMap(
@@ -282,14 +288,9 @@ class ProfileView extends StatelessWidget {
                             SnackBar(
                               duration: const Duration(seconds: 2),
                               content: Text(
-                                Intl.plural(
-                                  user.heatMapCal[value] ?? 0,
-                                  other:
-                                      '${user.heatMapCal[value]} points on ${DateFormat.yMMMd().format(value)}',
-                                  zero:
-                                      '0 points on ${DateFormat.yMMMd().format(value)}',
-                                  one:
-                                      '1 point on ${DateFormat.yMMMd().format(value)}',
+                                context.t.profile_points_on_date(
+                                  (user.heatMapCal[value] ?? 0),
+                                  DateFormat.yMMMd().format(value),
                                 ),
                               ),
                             ),
@@ -299,7 +300,9 @@ class ProfileView extends StatelessWidget {
                       Padding(
                         padding: const EdgeInsets.symmetric(vertical: 4),
                         child: Text(
-                          'Longest Streak: ${streak['longest']}',
+                          context.t.profile_longest_streak(
+                            streak['longest'] ?? 0,
+                          ),
                           textAlign: TextAlign.center,
                           style: const TextStyle(fontSize: 16, height: 1.25),
                         ),
@@ -307,7 +310,9 @@ class ProfileView extends StatelessWidget {
                       Padding(
                         padding: const EdgeInsets.only(top: 4, bottom: 8),
                         child: Text(
-                          'Current Streak: ${streak['current']}',
+                          context.t.profile_current_streak(
+                            streak['current'] ?? 0,
+                          ),
                           textAlign: TextAlign.center,
                           style: const TextStyle(fontSize: 16, height: 1.25),
                         ),
@@ -328,7 +333,11 @@ class ProfileView extends StatelessWidget {
                 ),
               );
             } else {
-              return const Center(child: Text('No user data found'));
+              return Center(
+                child: Text(
+                  context.t.profile_no_userdata.toString(),
+                ),
+              );
             }
           },
         ),
@@ -382,7 +391,11 @@ class CertificationWidget extends StatelessWidget {
                             ? SizedBox(
                                 height: 50,
                                 child: ListTile(
-                                  title: Text('View ${cert["title"]}'),
+                                  title: Text(
+                                    context.t.profile_view_cert(
+                                      cert['certTitle'].toString(),
+                                    ),
+                                  ),
                                   trailing: const Icon(
                                     Icons.arrow_forward_ios_sharp,
                                     color: Colors.white,
@@ -398,12 +411,12 @@ class CertificationWidget extends StatelessWidget {
                       )
                       .toList(),
                 )
-              : const Padding(
-                  padding: EdgeInsets.all(4),
+              : Padding(
+                  padding: const EdgeInsets.all(4),
                   child: Text(
-                    'No certifications have been earned under the current curriculum',
+                    context.t.profile_no_modern_certs,
                     textAlign: TextAlign.center,
-                    style: TextStyle(
+                    style: const TextStyle(
                       fontSize: 16,
                       height: 1.25,
                     ),
@@ -412,12 +425,12 @@ class CertificationWidget extends StatelessWidget {
           hasLegacyCert
               ? Column(
                   children: [
-                    const Padding(
-                      padding: EdgeInsets.only(top: 16, bottom: 2),
+                    Padding(
+                      padding: const EdgeInsets.only(top: 16, bottom: 2),
                       child: Text(
-                        'Legacy Certifications',
+                        context.t.profile_legacy_certs,
                         textAlign: TextAlign.center,
-                        style: TextStyle(
+                        style: const TextStyle(
                           fontSize: 18,
                           height: 1.25,
                           fontWeight: FontWeight.w700,
@@ -434,7 +447,11 @@ class CertificationWidget extends StatelessWidget {
                                 ? SizedBox(
                                     height: 50,
                                     child: ListTile(
-                                      title: Text('View ${cert["title"]}'),
+                                      title: Text(
+                                        context.t.profile_view_cert(
+                                          cert['certTitle'].toString(),
+                                        ),
+                                      ),
                                       trailing: const Icon(
                                         Icons.arrow_forward_ios_sharp,
                                         color: Colors.white,
@@ -472,12 +489,12 @@ class PortfolioWidget extends StatelessWidget {
         // mainAxisSize: MainAxisSize.min,
         children: [
           buildDivider(),
-          const Padding(
-            padding: EdgeInsets.all(8),
+          Padding(
+            padding: const EdgeInsets.all(8),
             child: Text(
-              'Portfolio',
+              context.t.profile_portfolio,
               textAlign: TextAlign.center,
-              style: TextStyle(
+              style: const TextStyle(
                 fontSize: 20,
                 height: 1.25,
                 fontWeight: FontWeight.w700,

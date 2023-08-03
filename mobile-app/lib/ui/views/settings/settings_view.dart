@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:freecodecamp/extensions/i18n_extension.dart';
 import 'package:freecodecamp/service/authentication/authentication_service.dart';
 import 'package:freecodecamp/ui/views/settings/delete-account/delete_account_view.dart';
 import 'package:freecodecamp/ui/views/settings/settings_viewmodel.dart';
@@ -15,7 +16,9 @@ class SettingsView extends StatelessWidget {
       onViewModelReady: (viewModel) => viewModel.init(),
       builder: (context, model, child) => Scaffold(
         appBar: AppBar(
-          title: const Text('SETTINGS'),
+          title: Text(
+            context.t.settings_title,
+          ),
         ),
         drawer: const DrawerWidgetView(),
         body: Column(
@@ -23,8 +26,12 @@ class SettingsView extends StatelessWidget {
             if (AuthenticationService.staticIsloggedIn) ...[
               ListTile(
                 leading: const Icon(Icons.delete_forever),
-                title: const Text('Delete my account'),
-                subtitle: const Text('Delete your freeCodeCamp account'),
+                title: Text(
+                  context.t.settings_delete_account,
+                ),
+                subtitle: Text(
+                  context.t.settings_delete_account_description,
+                ),
                 onTap: () => Navigator.push(
                   context,
                   MaterialPageRoute(
@@ -37,18 +44,50 @@ class SettingsView extends StatelessWidget {
             ],
             ListTile(
               leading: const Icon(Icons.dataset_linked),
-              title: const Text('Reset Cache'),
-              subtitle: const Text('Clears all local data and progress'),
-              onTap: () => model.resetCache(),
+              title: Text(context.t.settings_reset_cache),
+              subtitle: Text(
+                context.t.settings_reset_cache_description,
+              ),
+              onTap: () => model.resetCache(context),
             ),
             buildDivider(),
             ListTile(
               leading: const Icon(Icons.privacy_tip),
-              title: const Text('Privacy Policy'),
-              subtitle: const Text('Read our privacy policy'),
+              title: Text(
+                context.t.settings_privacy_policy,
+              ),
+              subtitle: Text(
+                context.t.settings_privacy_policy_description,
+              ),
               onTap: () => model.openPrivacyPolicy(),
             ),
             buildDivider(),
+            // language dropdown selector
+            if (model.isDev)
+              ListTile(
+                leading: const Icon(Icons.language),
+                title: Text(context.t.settings_language),
+                subtitle: DropdownButton<String>(
+                  isExpanded: true,
+                  value: model.localeService.currentLocaleName,
+                  dropdownColor: const Color(0xFF0a0a23),
+                  onChanged: (String? newValue) {
+                    model.localeService.changeLocale(newValue!);
+                  },
+                  items: <String>[...model.localeService.localeNames]
+                      .map<DropdownMenuItem<String>>(
+                    (String value) {
+                      return DropdownMenuItem<String>(
+                        value: value,
+                        child: Text(
+                          value.toUpperCase(),
+                          style: const TextStyle(color: Colors.white),
+                        ),
+                      );
+                    },
+                  ).toList(),
+                ),
+              ),
           ],
         ),
       ),

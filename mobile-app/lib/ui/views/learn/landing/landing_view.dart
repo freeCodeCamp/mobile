@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:freecodecamp/extensions/i18n_extension.dart';
 import 'package:freecodecamp/models/learn/curriculum_model.dart';
 import 'package:freecodecamp/models/learn/motivational_quote_model.dart';
 import 'package:freecodecamp/models/main/user_model.dart';
@@ -107,13 +108,13 @@ class LearnLandingView extends StatelessWidget {
         vertical: MediaQuery.of(context).size.width * 0.5,
         horizontal: 8,
       ),
-      child: const Column(
+      child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         crossAxisAlignment: CrossAxisAlignment.center,
         children: [
           Text(
-            'You are offline, please try again in a moment.',
-            style: TextStyle(
+            context.t.error_three,
+            style: const TextStyle(
               fontWeight: FontWeight.bold,
               fontSize: 18,
               height: 1.2,
@@ -127,30 +128,31 @@ class LearnLandingView extends StatelessWidget {
 
   Widget loginButton(LearnLandingViewModel model, BuildContext context) {
     return Container(
-        padding: const EdgeInsets.symmetric(vertical: 16, horizontal: 8),
-        child: Row(
-          children: [
-            Expanded(
-              child: ElevatedButton(
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: const Color.fromRGBO(0xf1, 0xbe, 0x32, 1),
-                  minimumSize: const Size.fromHeight(50),
-                ),
-                onPressed: () {
-                  model.auth.routeToLogin(true);
-                },
-                child: const Padding(
-                  padding: EdgeInsets.all(8.0),
-                  child: Text(
-                    'Sign in to save your progress',
-                    textAlign: TextAlign.center,
-                    style: TextStyle(color: Colors.black, fontSize: 20),
-                  ),
+      padding: const EdgeInsets.symmetric(vertical: 16, horizontal: 8),
+      child: Row(
+        children: [
+          Expanded(
+            child: ElevatedButton(
+              style: ElevatedButton.styleFrom(
+                backgroundColor: const Color.fromRGBO(0xf1, 0xbe, 0x32, 1),
+                minimumSize: const Size.fromHeight(50),
+              ),
+              onPressed: () {
+                model.auth.routeToLogin(true);
+              },
+              child: Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: Text(
+                  context.t.login_save_progress,
+                  textAlign: TextAlign.center,
+                  style: const TextStyle(color: Colors.black, fontSize: 20),
                 ),
               ),
             ),
-          ],
-        ));
+          ),
+        ],
+      ),
+    );
   }
 
   Widget welcomeMessage(LearnLandingViewModel model) {
@@ -161,7 +163,9 @@ class LearnLandingView extends StatelessWidget {
           FccUserModel user = snapshot.data as FccUserModel;
 
           return Text(
-            'Welcome back, ${user.username.startsWith('fcc') ? 'User' : user.username}',
+            context.t.login_welcome_back(
+              user.username.startsWith('fcc') ? 'User' : user.username,
+            ),
             textAlign: TextAlign.center,
             style: const TextStyle(
               fontWeight: FontWeight.w700,
@@ -208,12 +212,12 @@ class ContinueLearningButton extends StatelessWidget {
               alignment: Alignment.centerLeft,
               child: SizedBox(
                 width: MediaQuery.of(context).size.width * 0.70,
-                child: const Text(
-                  'Continue where you left off',
+                child: Text(
+                  context.t.continue_left_off,
                   overflow: TextOverflow.ellipsis,
                   maxLines: 2,
                   textAlign: TextAlign.left,
-                  style: TextStyle(
+                  style: const TextStyle(
                     fontSize: 20,
                     fontFamily: 'lato',
                     fontWeight: FontWeight.w700,

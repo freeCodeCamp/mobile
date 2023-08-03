@@ -2,6 +2,7 @@ import 'dart:io';
 
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
+import 'package:freecodecamp/extensions/i18n_extension.dart';
 import 'package:freecodecamp/models/podcasts/podcasts_model.dart';
 import 'package:freecodecamp/ui/views/podcast/episode-list/episode_list_view.dart';
 import 'package:freecodecamp/ui/views/podcast/podcast-list/podcast_list_viewmodel.dart';
@@ -13,16 +14,16 @@ List views = [
   const PodcastListViewBuilder(isDownloadView: true),
 ];
 
-List titles = [
-  const Text('PODCASTS'),
-  const Text('DOWNLOADED PODCASTS'),
-];
-
 class PodcastListView extends StatelessWidget {
   const PodcastListView({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
+    List titles = [
+      context.t.podcasts_title,
+      context.t.podcast_download_title,
+    ];
+
     return ViewModelBuilder<PodcastListViewModel>.reactive(
       viewModelBuilder: () => PodcastListViewModel(),
       onViewModelReady: (model) async => await model.init(),
@@ -34,18 +35,18 @@ class PodcastListView extends StatelessWidget {
         bottomNavigationBar: BottomNavigationBar(
           currentIndex: model.index,
           onTap: model.setIndex,
-          items: const [
+          items: [
             BottomNavigationBarItem(
-              icon: Icon(
+              icon: const Icon(
                 Icons.grid_view_rounded,
               ),
-              label: 'Browse',
+              label: context.t.podcasts_browse,
             ),
             BottomNavigationBarItem(
-              icon: Icon(
+              icon: const Icon(
                 Icons.arrow_circle_down_sharp,
               ),
-              label: 'Downloads',
+              label: context.t.podcasts_downloads,
             ),
           ],
         ),
@@ -83,29 +84,29 @@ class PodcastListViewBuilder extends StatelessWidget {
                 return const Center(child: CircularProgressIndicator());
               }
               if (snapshot.hasError) {
-                return const Center(
+                return Center(
                   child: Text(
-                    'Unable to load podcasts \n please try again.',
+                    context.t.podcast_unable_to_load_podcasts,
                     textAlign: TextAlign.center,
                   ),
                 );
               }
               if (snapshot.data!.isEmpty && isDownloadView) {
-                return const Center(
+                return Center(
                   child: Column(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
-                      Icon(
+                      const Icon(
                         Icons.arrow_circle_down_sharp,
                         color: Colors.white,
                         size: 50,
                       ),
-                      SizedBox(
+                      const SizedBox(
                         height: 4,
                       ),
                       Text(
-                        'No downloaded episodes',
-                        style: TextStyle(
+                        context.t.podcast_no_downloads,
+                        style: const TextStyle(
                           color: Colors.white,
                           fontSize: 16,
                           fontWeight: FontWeight.bold,

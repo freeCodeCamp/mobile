@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:freecodecamp/extensions/i18n_extension.dart';
 import 'package:freecodecamp/ui/views/news/news-bookmark/news_bookmark_feed_view.dart';
 import 'package:freecodecamp/ui/views/news/news-feed/news_feed_view.dart';
 import 'package:freecodecamp/ui/views/news/news-search/news_search_view.dart';
@@ -9,20 +10,20 @@ import 'package:stacked/stacked.dart';
 class NewsViewHandlerView extends StatelessWidget {
   const NewsViewHandlerView({Key? key}) : super(key: key);
 
-  static const titles = <Widget>[
-    Text('BOOKMARKED TUTORIALS'),
-    Text('TUTORIALS'),
-    Text('SEARCH TUTORIALS')
-  ];
-
-  static const views = <Widget>[
-    NewsBookmarkFeedView(),
-    NewsFeedView(),
-    NewsSearchView()
-  ];
-
   @override
   Widget build(BuildContext context) {
+    var titles = <Widget>[
+      Text(context.t.tutorial_bookmarks_title),
+      Text(context.t.tutorials),
+      Text(context.t.tutorial_search_title)
+    ];
+
+    const views = <Widget>[
+      NewsBookmarkFeedView(),
+      NewsFeedView(),
+      NewsSearchView()
+    ];
+
     return ViewModelBuilder<NewsViewHandlerViewModel>.reactive(
       builder: (context, model, child) => Scaffold(
         appBar: AppBar(
@@ -31,27 +32,27 @@ class NewsViewHandlerView extends StatelessWidget {
         drawer: const DrawerWidgetView(),
         body: views.elementAt(model.index),
         bottomNavigationBar: BottomNavigationBar(
-          items: const <BottomNavigationBarItem>[
+          items: <BottomNavigationBarItem>[
             BottomNavigationBarItem(
-              icon: Icon(
+              icon: const Icon(
                 Icons.bookmark_outline_sharp,
               ),
-              label: 'Bookmarks',
-              tooltip: 'Bookmarks',
+              label: context.t.tutorial_nav_bookmarks,
+              tooltip: context.t.tutorial_nav_bookmarks,
             ),
             BottomNavigationBarItem(
-              icon: Icon(
+              icon: const Icon(
                 Icons.article_sharp,
               ),
-              label: 'Tutorials',
-              tooltip: 'Tutorials',
+              label: context.t.tutorial_nav_tutorials,
+              tooltip: context.t.tutorial_nav_tutorials,
             ),
             BottomNavigationBarItem(
-              icon: Icon(
+              icon: const Icon(
                 Icons.search_sharp,
               ),
-              label: 'Search',
-              tooltip: 'Search',
+              label: context.t.tutorial_nav_search,
+              tooltip: context.t.tutorial_nav_search,
             )
           ],
           currentIndex: model.index,

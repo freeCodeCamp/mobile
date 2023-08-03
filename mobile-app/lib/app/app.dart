@@ -5,6 +5,7 @@ import 'package:freecodecamp/service/firebase/analytics_service.dart';
 import 'package:freecodecamp/service/learn/learn_file_service.dart';
 import 'package:freecodecamp/service/learn/learn_offline_service.dart';
 import 'package:freecodecamp/service/learn/learn_service.dart';
+import 'package:freecodecamp/service/locale_service.dart';
 import 'package:freecodecamp/service/navigation/quick_actions_service.dart';
 import 'package:freecodecamp/service/news/bookmark_service.dart';
 import 'package:freecodecamp/service/podcast/download_service.dart';
@@ -68,7 +69,8 @@ import 'package:stacked_services/stacked_services.dart';
     LazySingleton(classType: LearnOfflineService),
     LazySingleton(classType: QuickActionsService),
     LazySingleton(classType: AnalyticsService),
-    LazySingleton(classType: BookmarksDatabaseService)
+    LazySingleton(classType: BookmarksDatabaseService),
+    LazySingleton(classType: LocaleService)
   ],
   logger: StackedLogger(),
 )

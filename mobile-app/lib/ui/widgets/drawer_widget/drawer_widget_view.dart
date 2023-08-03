@@ -2,6 +2,7 @@ import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_scroll_shadow/flutter_scroll_shadow.dart';
+import 'package:freecodecamp/extensions/i18n_extension.dart';
 import 'package:freecodecamp/models/main/user_model.dart';
 import 'package:freecodecamp/ui/widgets/drawer_widget/drawer_tile.dart';
 import 'package:freecodecamp/ui/widgets/drawer_widget/drawer_web_buttton.dart';
@@ -51,12 +52,18 @@ class DrawerWidgetView extends StatelessWidget {
                                     );
                                   }
 
-                                  return const Text('Anonymous user');
+                                  return Text(
+                                    context.t.anonymous_user,
+                                  );
                                 })
-                            : const Text('Anonymous user'),
-                        subtitle: Text(model.loggedIn
-                            ? 'Our coolest Camper'
-                            : 'login to save your progress'),
+                            : Text(
+                                context.t.anonymous_user,
+                              ),
+                        subtitle: Text(
+                          model.loggedIn
+                              ? context.t.coolest_camper
+                              : context.t.login_save_progress,
+                        ),
                         isThreeLine: true,
                         onTap: () {
                           if (model.loggedIn) {
@@ -116,7 +123,9 @@ class DrawerWidgetView extends StatelessWidget {
                       buildDivider(),
                       DrawerTile(
                           key: const Key('auth'),
-                          component: model.loggedIn ? 'LOG OUT' : 'LOGIN',
+                          component: model.loggedIn
+                              ? context.t.logout
+                              : context.t.login,
                           icon: model.loggedIn ? Icons.logout : Icons.login,
                           textColor: model.loggedIn
                               ? const Color.fromARGB(255, 230, 59, 59)

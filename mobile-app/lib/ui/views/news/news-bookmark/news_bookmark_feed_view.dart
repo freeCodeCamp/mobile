@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:freecodecamp/extensions/i18n_extension.dart';
 import 'package:freecodecamp/ui/views/news/news-bookmark/news_bookmark_viewmodel.dart';
 import 'package:stacked/stacked.dart';
 
@@ -26,9 +27,9 @@ class NewsBookmarkFeedView extends StatelessWidget {
           },
           child: model.userHasBookmarkedTutorials
               ? populateListViewModel(model)
-              : const Center(
+              : Center(
                   child: Text(
-                    'Bookmark tutorials to view them here',
+                    context.t.tutorial_no_bookmarks,
                     textAlign: TextAlign.center,
                   ),
                 ),

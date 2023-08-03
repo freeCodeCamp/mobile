@@ -6,6 +6,7 @@ import 'package:device_info_plus/device_info_plus.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:freecodecamp/extensions/i18n_extension.dart';
 import 'package:freecodecamp/models/learn/challenge_model.dart';
 import 'package:freecodecamp/models/learn/curriculum_model.dart';
 import 'package:freecodecamp/ui/views/learn/challenge/challenge_viewmodel.dart';
@@ -36,7 +37,7 @@ String filesToMarkdown(
   return markdownStr;
 }
 
-Future<String> getDeviceInfo() async {
+Future<String> getDeviceInfo(BuildContext context) async {
   // TODO: Update GPlay Privacy data collection policy
   final deviceInfoPlugin = DeviceInfoPlugin();
 
@@ -47,13 +48,14 @@ Future<String> getDeviceInfo() async {
     final deviceInfo = await deviceInfoPlugin.iosInfo;
     return '${deviceInfo.model} - ${deviceInfo.systemName}${deviceInfo.systemVersion}';
   } else {
-    return 'Unrecognized device';
+    return context.t.unrecognized_device;
   }
 }
 
 Future<String> genForumLink(
   Challenge challenge,
-  Block block, {
+  Block block,
+  BuildContext context, {
   String editorText = '',
 }) async {
   Challenge? currChallenge = challenge;
@@ -65,7 +67,7 @@ Future<String> genForumLink(
   );
   final String blockTitle = block.name;
 
-  final userDeviceInfo = await getDeviceInfo();
+  final userDeviceInfo = await getDeviceInfo(context);
 
   final titleText = '$blockTitle - ${currChallenge.title}';
   final String endingText =
@@ -117,7 +119,7 @@ class HintWidgetView extends StatelessWidget {
                 Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 16),
                   child: Text(
-                    'Hint',
+                    context.t.hint,
                     style: TextStyle(
                       fontSize: 28,
                       fontWeight: FontWeight.bold,
@@ -161,6 +163,7 @@ class HintWidgetView extends StatelessWidget {
                         final forumLink = await genForumLink(
                             await challengeModel.challenge as Challenge,
                             challengeModel.block as Block,
+                            context,
                             editorText: challengeModel.editorText ?? '');
                         log(forumLink);
                         challengeModel.learnService.forumHelpDialog(forumLink);
@@ -170,7 +173,7 @@ class HintWidgetView extends StatelessWidget {
                     ),
                     IconButton(
                       onPressed: () {
-                        challengeModel.resetCode(editor);
+                        challengeModel.resetCode(editor, context);
                       },
                       icon: const Icon(Icons.restart_alt),
                       padding: const EdgeInsets.all(16),

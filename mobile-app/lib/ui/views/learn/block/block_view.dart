@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:freecodecamp/extensions/i18n_extension.dart';
 import 'package:freecodecamp/models/learn/curriculum_model.dart';
+
 import 'package:freecodecamp/service/learn/learn_service.dart';
 import 'package:freecodecamp/ui/views/learn/block/block_viewmodel.dart';
 import 'package:freecodecamp/ui/views/learn/widgets/download_button_widget.dart';
@@ -203,9 +205,9 @@ class BlockHeader extends StatelessWidget {
               padding: const EdgeInsets.all(8),
               margin: const EdgeInsets.only(top: 8, left: 8),
               color: const Color.fromRGBO(0x00, 0x2e, 0xad, 1),
-              child: const Text(
-                'Certification Project',
-                style: TextStyle(
+              child: Text(
+                context.t.certification_project,
+                style: const TextStyle(
                   fontWeight: FontWeight.bold,
                   color: Color.fromRGBO(0x19, 0x8e, 0xee, 1),
                 ),

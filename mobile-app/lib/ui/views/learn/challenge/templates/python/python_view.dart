@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:freecodecamp/extensions/i18n_extension.dart';
 import 'package:freecodecamp/models/learn/challenge_model.dart';
 import 'package:freecodecamp/models/learn/curriculum_model.dart';
 import 'package:freecodecamp/ui/views/learn/challenge/templates/python/python_viewmodel.dart';
@@ -112,9 +113,9 @@ class PythonView extends StatelessWidget {
                     child: Text(
                       model.choiceStatus != null
                           ? model.choiceStatus!
-                              ? 'Next challenge'
-                              : 'Try Again'
-                          : 'Check your answer',
+                              ? context.t.next_challenge
+                              : context.t.try_again
+                          : context.t.try_again,
                       style: const TextStyle(fontSize: 20),
                     ),
                   ),

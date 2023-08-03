@@ -3,6 +3,7 @@ import 'package:flutter/scheduler.dart';
 import 'package:flutter_inappwebview/flutter_inappwebview.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:freecodecamp/enums/panel_type.dart';
+import 'package:freecodecamp/extensions/i18n_extension.dart';
 import 'package:freecodecamp/models/learn/challenge_model.dart';
 import 'package:freecodecamp/models/learn/curriculum_model.dart';
 import 'package:freecodecamp/ui/views/learn/challenge/challenge_viewmodel.dart';
@@ -134,7 +135,7 @@ class ChallengeView extends StatelessWidget {
                           automaticallyImplyLeading: !model.showPreview,
                           title: challenge.files.length == 1 &&
                                   !model.showPreview
-                              ? const Text('Editor')
+                              ? Text(context.t.editor)
                               : Row(
                                   children: [
                                     if (model.showPreview && !onlyJs)
@@ -149,7 +150,9 @@ class ChallengeView extends StatelessWidget {
                                               model.setShowProjectPreview =
                                                   true;
                                             },
-                                            child: const Text('PREVIEW'),
+                                            child: Text(
+                                              context.t.preview,
+                                            ),
                                           ),
                                         ),
                                       ),
@@ -160,7 +163,9 @@ class ChallengeView extends StatelessWidget {
                                               ? decoration
                                               : null,
                                           child: ElevatedButton(
-                                            child: const Text('CONSOLE'),
+                                            child: Text(
+                                              context.t.console,
+                                            ),
                                             onPressed: () {
                                               model.setShowConsole = true;
                                               model.setShowProjectPreview =
@@ -237,7 +242,7 @@ class ChallengeView extends StatelessWidget {
 
           return Scaffold(
             appBar: AppBar(
-              title: const Text('Loading'),
+              title: Text(context.t.loading),
               automaticallyImplyLeading: false,
             ),
             body: const Center(
@@ -504,8 +509,8 @@ class ProjectPreview extends StatelessWidget {
           }
 
           if (snapshot.hasError) {
-            const Center(
-              child: Text('something went wrong!'),
+            Center(
+              child: Text(context.t.error),
             );
           }
 

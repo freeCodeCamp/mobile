@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:freecodecamp/extensions/i18n_extension.dart';
 import 'package:freecodecamp/models/learn/challenge_model.dart';
 import 'package:freecodecamp/models/learn/curriculum_model.dart';
 import 'package:freecodecamp/models/learn/motivational_quote_model.dart';
@@ -33,7 +34,7 @@ class PassWidgetView extends StatelessWidget {
                 Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 16),
                   child: Text(
-                    'Passed',
+                    context.t.passed,
                     style: TextStyle(
                       fontSize: 28,
                       fontFamily: 'Inter',
@@ -109,7 +110,10 @@ class PassWidgetView extends StatelessWidget {
                                 children: [
                                   Expanded(
                                     child: Text(
-                                      '${(completed * 100) ~/ maxChallenges}% Completed',
+                                      context.t.completed_percent(
+                                        ((completed * 100) ~/ maxChallenges)
+                                            .toString(),
+                                      ),
                                       textAlign: TextAlign.right,
                                     ),
                                   ),
@@ -144,11 +148,13 @@ class PassWidgetView extends StatelessWidget {
                             onPressed: () {
                               model.auth.routeToLogin(true);
                             },
-                            child: const Text(
-                              'Sign in to save your progress',
+                            child: Text(
+                              context.t.login_save_progress,
                               textAlign: TextAlign.center,
-                              style:
-                                  TextStyle(color: Colors.black, fontSize: 20),
+                              style: const TextStyle(
+                                color: Colors.black,
+                                fontSize: 20,
+                              ),
                             ),
                           ),
                         ),
@@ -220,9 +226,9 @@ class PassButton extends StatelessWidget {
           children: [
             Container(
               margin: const EdgeInsets.only(right: 10),
-              child: const Text(
-                'Next',
-                style: TextStyle(fontSize: 20),
+              child: Text(
+                context.t.next,
+                style: const TextStyle(fontSize: 20),
                 textAlign: TextAlign.center,
               ),
             ),

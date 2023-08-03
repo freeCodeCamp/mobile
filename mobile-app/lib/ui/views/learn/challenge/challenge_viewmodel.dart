@@ -1,11 +1,13 @@
 import 'dart:convert';
 
+import 'package:flutter/widgets.dart';
 import 'package:flutter_inappwebview/flutter_inappwebview.dart';
 import 'package:freecodecamp/app/app.locator.dart';
 import 'package:freecodecamp/app/app.router.dart';
 import 'package:freecodecamp/enums/dialog_type.dart';
 import 'package:freecodecamp/enums/ext_type.dart';
 import 'package:freecodecamp/enums/panel_type.dart';
+import 'package:freecodecamp/extensions/i18n_extension.dart';
 import 'package:freecodecamp/models/learn/challenge_model.dart';
 import 'package:freecodecamp/models/learn/curriculum_model.dart';
 import 'package:freecodecamp/service/learn/learn_file_service.dart';
@@ -383,15 +385,16 @@ class ChallengeViewModel extends BaseViewModel {
     return challenge.files[0];
   }
 
-  void resetCode(Editor editor) async {
+  void resetCode(Editor editor, BuildContext context) async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
 
     DialogResponse? res = await _dialogService.showCustomDialog(
-        barrierDismissible: true,
-        variant: DialogType.buttonForm,
-        title: 'Reset Code',
-        description: 'Are you sure you want to reset your code?',
-        mainButtonTitle: 'Reset');
+      barrierDismissible: true,
+      variant: DialogType.buttonForm,
+      title: context.t.reset_code,
+      description: context.t.reset_description,
+      mainButtonTitle: context.t.reset,
+    );
 
     if (res?.confirmed == true) {
       Challenge? currChallenge = await challenge;
@@ -415,11 +418,12 @@ class ChallengeViewModel extends BaseViewModel {
       _navigationService.replaceWith(
         Routes.challengeView,
         arguments: ChallengeViewArguments(
-            url: challengeUrl,
-            block: block!,
-            challengeId: currChallenge.id,
-            challengesCompleted: challengesCompleted,
-            isProject: block!.challenges.length == 1),
+          url: challengeUrl,
+          block: block!,
+          challengeId: currChallenge.id,
+          challengesCompleted: challengesCompleted,
+          isProject: block!.challenges.length == 1,
+        ),
       );
     }
   }
