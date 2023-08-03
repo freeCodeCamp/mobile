@@ -29,12 +29,13 @@ class PythonView extends StatelessWidget {
     return ViewModelBuilder<PythonViewModel>.reactive(
       viewModelBuilder: () => PythonViewModel(),
       builder: (context, model, child) {
-        YoutubePlayerController controller = YoutubePlayerController(
-          initialVideoId: challenge.videoId!,
+        YoutubePlayerController controller =
+            YoutubePlayerController.fromVideoId(
+          videoId: challenge.videoId!,
+          autoPlay: false,
           params: const YoutubePlayerParams(
             showControls: true,
             showFullscreenButton: true,
-            autoPlay: false,
             strictRelatedVideos: true,
           ),
         );
@@ -72,7 +73,7 @@ class PythonView extends StatelessWidget {
                     padding: const EdgeInsets.symmetric(
                       horizontal: 16,
                     ),
-                    child: YoutubePlayerIFrame(
+                    child: YoutubePlayer(
                       controller: controller,
                     ),
                   ),

@@ -193,7 +193,8 @@ class AuthenticationService {
       Navigator.pop(context);
 
       return false;
-    } on DioError {
+    } on DioException catch (e) {
+      log(e.toString());
       logout();
       Navigator.pop(context);
       return false;
@@ -214,7 +215,7 @@ class AuthenticationService {
       extractCookies(res);
       await writeTokensToStorage();
       await fetchUser();
-    } on DioError catch (e) {
+    } on DioException catch (e) {
       Navigator.pop(context);
       if (e.response != null) {
         showDialog(
@@ -337,7 +338,7 @@ class AuthenticationService {
         isLoggedInStream.sink.add(false);
         await logout();
       }
-    } on DioError {
+    } on DioException {
       staticIsloggedIn = false;
       isLoggedInStream.sink.add(false);
       await logout();

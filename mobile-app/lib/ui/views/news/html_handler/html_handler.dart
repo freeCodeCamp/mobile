@@ -160,7 +160,9 @@ class HTMLParser {
         TagExtension(
           tagsToExtend: {'pre'},
           builder: (child) {
-            var codeElement = child.element!.children[0];
+            var codeElement = child.element!.children.isNotEmpty
+                ? child.element!.children.first // code element
+                : child.element!; // pre element
             String? currentClass;
 
             bool codeLanguageIsPresent(List classNames) {
@@ -223,16 +225,17 @@ class HTMLParser {
             if (isVideo.hasMatch(videoUrl ?? '')) {
               var videoId = videoUrl?.split('/').last.split('?').first;
 
-              YoutubePlayerController controller = YoutubePlayerController(
-                initialVideoId: videoId!,
-                params: const YoutubePlayerParams(
-                  showControls: true,
-                  showFullscreenButton: true,
+                YoutubePlayerController controller =
+                    YoutubePlayerController.fromVideoId(
+                  videoId: videoId!,
                   autoPlay: false,
-                ),
-              );
+                  params: const YoutubePlayerParams(
+                    showControls: true,
+                    showFullscreenButton: true,
+                  ),
+                );
 
-              return YoutubePlayerIFrame(
+              return YoutubePlayer(
                 controller: controller,
               );
             }
