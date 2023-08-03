@@ -11,6 +11,7 @@ import 'package:freecodecamp/service/news/bookmark_service.dart';
 import 'package:freecodecamp/service/podcast/download_service.dart';
 import 'package:freecodecamp/service/podcast/notification_service.dart';
 import 'package:freecodecamp/service/podcast/podcasts_service.dart';
+import 'package:freecodecamp/service/dio_service.dart';
 
 import 'package:freecodecamp/ui/views/code_radio/code_radio_view.dart';
 import 'package:freecodecamp/ui/views/learn/challenge/challenge_view.dart';
@@ -70,7 +71,8 @@ import 'package:stacked_services/stacked_services.dart';
     LazySingleton(classType: QuickActionsService),
     LazySingleton(classType: AnalyticsService),
     LazySingleton(classType: BookmarksDatabaseService),
-    LazySingleton(classType: LocaleService)
+    LazySingleton(classType: LocaleService),
+    LazySingleton(classType: DioService),
   ],
   logger: StackedLogger(),
 )

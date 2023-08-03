@@ -15,6 +15,7 @@ import 'package:stacked_shared/stacked_shared.dart';
 import '../service/audio/audio_service.dart';
 import '../service/authentication/authentication_service.dart';
 import '../service/developer_service.dart';
+import '../service/dio_service.dart';
 import '../service/firebase/analytics_service.dart';
 import '../service/learn/learn_file_service.dart';
 import '../service/learn/learn_offline_service.dart';
@@ -54,4 +55,5 @@ Future<void> setupLocator({
   locator.registerLazySingleton(() => AnalyticsService());
   locator.registerLazySingleton(() => BookmarksDatabaseService());
   locator.registerLazySingleton(() => LocaleService());
+  locator.registerLazySingleton(() => DioService());
 }
