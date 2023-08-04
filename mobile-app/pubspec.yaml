@@ -25,7 +25,7 @@ dependencies:
   font_awesome_flutter: ^10.4.0
   html: ^0.15.4
   fk_user_agent: ^2.0.1
-  flutter_hooks: ^0.18.6
+  flutter_hooks: ^0.20.0
   flutter_local_notifications: ^14.1.1
   youtube_player_iframe: ^4.0.4
   infinite_scroll_pagination: ^3.1.0
