@@ -1,4 +1,3 @@
-import 'package:freecodecamp/enums/challenge_test_state_type.dart';
 import 'package:freecodecamp/enums/ext_type.dart';
 
 // NOTE: For reference
@@ -145,11 +144,9 @@ class Question {
 class ChallengeTest {
   final String instruction;
   final String javaScript;
-  ChallengeTestState testState;
 
   ChallengeTest({
     required this.instruction,
-    this.testState = ChallengeTestState.waiting,
     required this.javaScript,
   });
 
