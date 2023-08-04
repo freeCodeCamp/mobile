@@ -1,6 +1,5 @@
 import 'dart:developer';
 
-import 'package:curl_logger_dio_interceptor/curl_logger_dio_interceptor.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:freecodecamp/app/app.locator.dart';
@@ -9,9 +8,9 @@ import 'package:freecodecamp/enums/dialog_type.dart';
 import 'package:freecodecamp/models/learn/challenge_model.dart';
 import 'package:freecodecamp/models/learn/curriculum_model.dart';
 import 'package:freecodecamp/service/authentication/authentication_service.dart';
+import 'package:freecodecamp/service/dio_service.dart';
 import 'package:freecodecamp/service/learn/learn_offline_service.dart';
 import 'package:freecodecamp/ui/views/learn/superblock/superblock_view.dart';
-import 'package:pretty_dio_logger/pretty_dio_logger.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:stacked_services/stacked_services.dart';
 import 'package:url_launcher/url_launcher.dart';
@@ -20,8 +19,7 @@ class LearnService {
   static final LearnService _learnService = LearnService._internal();
   final _authenticationService = locator<AuthenticationService>();
 
-  // TODO: make a Dio service instead of initialising it everywhere
-  final Dio _dio = Dio();
+  final Dio _dio = DioService.dio;
 
   static final baseUrl = '${AuthenticationService.baseURL}/curriculum-data/v1';
 
@@ -32,11 +30,6 @@ class LearnService {
 
   factory LearnService() {
     return _learnService;
-  }
-
-  void init() {
-    _dio.interceptors.add(PrettyDioLogger(responseBody: false));
-    _dio.interceptors.add(CurlLoggerDioInterceptor());
   }
 
   void setLastVisitedChallenge(String url, Block block) async {

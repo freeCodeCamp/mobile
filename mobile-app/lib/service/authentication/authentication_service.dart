@@ -3,7 +3,6 @@ import 'dart:developer';
 import 'dart:io';
 
 import 'package:auth0_flutter/auth0_flutter.dart';
-import 'package:curl_logger_dio_interceptor/curl_logger_dio_interceptor.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
@@ -12,8 +11,8 @@ import 'package:freecodecamp/app/app.locator.dart';
 import 'package:freecodecamp/app/app.router.dart';
 import 'package:freecodecamp/extensions/i18n_extension.dart';
 import 'package:freecodecamp/models/main/user_model.dart';
+import 'package:freecodecamp/service/dio_service.dart';
 import 'package:freecodecamp/ui/views/auth/privacy_view.dart';
-import 'package:pretty_dio_logger/pretty_dio_logger.dart';
 import 'package:stacked_services/stacked_services.dart';
 
 class AuthenticationService {
@@ -24,7 +23,7 @@ class AuthenticationService {
   final NavigationService _navigationService = locator<NavigationService>();
 
   final FlutterSecureStorage store = const FlutterSecureStorage();
-  final Dio _dio = Dio();
+  final Dio _dio = DioService.dio;
   late final Auth0 auth0;
 
   String _csrf = '';
@@ -113,13 +112,6 @@ class AuthenticationService {
 
     await setCurrentClientMode();
 
-    _dio.options.baseUrl = baseApiURL;
-
-    if (isDevMode) {
-      _dio.interceptors.add(PrettyDioLogger(responseBody: false));
-      _dio.interceptors.add(CurlLoggerDioInterceptor());
-    }
-
     if (await hasRequiredTokens()) {
       log('message: Tokens found in storage');
       await setRequiredTokens();
@@ -205,7 +197,7 @@ class AuthenticationService {
           ? emailLoginRes.data['access_token']
           : creds.accessToken;
       res = await _dio.get(
-        '/mobile-login',
+        '$baseApiURL/mobile-login',
         options: Options(
           headers: {
             'Authorization': 'Bearer $accessToken',
@@ -286,7 +278,7 @@ class AuthenticationService {
       );
 
       await _dio.put(
-        '/update-privacy-terms',
+        '$baseApiURL/update-privacy-terms',
         data: {
           'quincyEmails': quincyEmails ?? false,
         },
@@ -320,7 +312,7 @@ class AuthenticationService {
     late final Response res;
     try {
       res = await _dio.get(
-        '/user/get-session-user',
+        '$baseApiURL/user/get-session-user',
         options: Options(
           headers: {
             'CSRF-Token': _csrfToken,

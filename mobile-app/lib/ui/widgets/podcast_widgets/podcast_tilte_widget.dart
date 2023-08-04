@@ -11,10 +11,10 @@ import 'package:freecodecamp/extensions/i18n_extension.dart';
 import 'package:freecodecamp/models/podcasts/episodes_model.dart';
 import 'package:freecodecamp/models/podcasts/podcasts_model.dart';
 import 'package:freecodecamp/service/audio/audio_service.dart';
+import 'package:freecodecamp/service/dio_service.dart';
 import 'package:freecodecamp/service/podcast/download_service.dart';
 import 'package:freecodecamp/service/podcast/podcasts_service.dart';
 import 'package:freecodecamp/ui/views/podcast/episode/episode_view.dart';
-import 'package:http/http.dart' as http;
 import 'package:intl/intl.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -40,7 +40,7 @@ class PodcastTile extends StatefulWidget {
   final _databaseService = locator<PodcastsDatabaseService>();
   final _downloadService = locator<DownloadService>();
 
-  final Dio dio = Dio();
+  final dio = DioService.dio;
 
   final int _episodeLength = 0;
   int get episodeLength => _episodeLength;
@@ -106,7 +106,7 @@ class PodcastTileState extends State<PodcastTile> {
     Directory appDir = await getApplicationDocumentsDirectory();
 
     File podcastImgFile;
-    http.Response res;
+    Response res;
 
     widget._downloadService.downloadingStream.listen((event) {
       setIsDownloading = event;
@@ -151,8 +151,13 @@ class PodcastTileState extends State<PodcastTile> {
           File('${appDir.path}/images/podcast/${widget.episode.podcastId}.jpg');
       if (!podcastImgFile.existsSync()) {
         podcastImgFile.createSync(recursive: true);
-        res = await http.get(Uri.parse(widget.podcast.image!));
-        podcastImgFile.writeAsBytesSync(res.bodyBytes);
+        res = await widget.dio.get(
+          widget.podcast.image!,
+          options: Options(
+            responseType: ResponseType.bytes,
+          ),
+        );
+        podcastImgFile.writeAsBytesSync(res.data);
       }
     }
   }

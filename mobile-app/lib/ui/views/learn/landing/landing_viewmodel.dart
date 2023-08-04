@@ -2,6 +2,7 @@ import 'dart:async';
 import 'dart:convert';
 import 'dart:math';
 
+import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
@@ -12,10 +13,10 @@ import 'package:freecodecamp/models/learn/curriculum_model.dart';
 import 'package:freecodecamp/models/learn/motivational_quote_model.dart';
 import 'package:freecodecamp/models/main/user_model.dart';
 import 'package:freecodecamp/service/authentication/authentication_service.dart';
+import 'package:freecodecamp/service/dio_service.dart';
 import 'package:freecodecamp/service/learn/learn_offline_service.dart';
 import 'package:freecodecamp/service/learn/learn_service.dart';
 import 'package:freecodecamp/ui/widgets/setup_dialog_ui.dart';
-import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:stacked/stacked.dart';
 import 'package:stacked_services/stacked_services.dart';
@@ -36,6 +37,7 @@ class LearnLandingViewModel extends BaseViewModel {
   LearnOfflineService get learnOfflineService => _learnOfflineService;
 
   Future<List<SuperBlockButtonData>>? superBlockButtons;
+  final _dio = DioService.dio;
 
   bool _hasLastVisitedChallenge = false;
   bool get hasLastVisitedChallenge => _hasLastVisitedChallenge;
@@ -93,13 +95,12 @@ class LearnLandingViewModel extends BaseViewModel {
 
       String baseUrl = LearnService.baseUrl;
 
-      final http.Response res = await http.get(
-        Uri.parse('$baseUrl/${lastVisitedChallenge[1]}.json'),
-      );
+      final Response res =
+          await _dio.get('$baseUrl/${lastVisitedChallenge[1]}.json');
 
       if (res.statusCode == 200) {
         List<Block> blocks = SuperBlock.fromJson(
-          jsonDecode(res.body),
+          res.data,
           lastVisitedChallenge[1],
           lastVisitedChallenge[2],
         ).blocks as List<Block>;
@@ -167,14 +168,12 @@ class LearnLandingViewModel extends BaseViewModel {
   Future<List<SuperBlockButtonData>> requestSuperBlocks() async {
     String baseUrl = LearnService.baseUrl;
 
-    final http.Response res = await http.get(
-      Uri.parse('$baseUrl/available-superblocks.json'),
-    );
+    final Response res = await _dio.get('$baseUrl/available-superblocks.json');
 
     List<SuperBlockButtonData> buttonData = [];
 
     if (res.statusCode == 200) {
-      List superBlocks = jsonDecode(res.body)['superblocks'];
+      List superBlocks = res.data['superblocks'];
 
       await dotenv.load(fileName: '.env');
 
