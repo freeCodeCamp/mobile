@@ -4,6 +4,7 @@ import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:freecodecamp/app/app.locator.dart';
 import 'package:freecodecamp/service/authentication/authentication_service.dart';
 import 'package:freecodecamp/service/developer_service.dart';
+import 'package:freecodecamp/service/dio_service.dart';
 import 'package:stacked/stacked.dart';
 
 class NativeLoginViewModel extends BaseViewModel {
@@ -11,13 +12,10 @@ class NativeLoginViewModel extends BaseViewModel {
   TextEditingController otpController = TextEditingController();
   bool showOTPfield = false;
   bool incorrectOTP = false;
-  final Dio _dio = Dio();
+  final Dio _dio = DioService.dio;
 
   final AuthenticationService auth = locator<AuthenticationService>();
   final DeveloperService developerService = locator<DeveloperService>();
-
-  bool _isDeveloper = false;
-  bool get isDeveloper => _isDeveloper;
 
   bool _emailFieldIsValid = false;
   bool get emailFieldIsValid => _emailFieldIsValid;
@@ -27,11 +25,6 @@ class NativeLoginViewModel extends BaseViewModel {
 
   set emailFieldIsValid(bool value) {
     _emailFieldIsValid = value;
-    notifyListeners();
-  }
-
-  set setIsDeveloper(bool value) {
-    _isDeveloper = value;
     notifyListeners();
   }
 
@@ -65,8 +58,6 @@ class NativeLoginViewModel extends BaseViewModel {
         otpFieldIsValid = false;
       }
     });
-
-    setIsDeveloper = await developerService.developmentMode();
   }
 
   void sendOTPtoEmail() async {

@@ -2,6 +2,7 @@ import 'dart:io';
 
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
+import 'package:freecodecamp/extensions/i18n_extension.dart';
 import 'package:freecodecamp/models/podcasts/podcasts_model.dart';
 import 'package:freecodecamp/ui/views/podcast/episode-list/episode_list_view.dart';
 import 'package:freecodecamp/ui/views/podcast/podcast-list/podcast_list_viewmodel.dart';
@@ -13,16 +14,16 @@ List views = [
   const PodcastListViewBuilder(isDownloadView: true),
 ];
 
-List titles = [
-  const Text('PODCASTS'),
-  const Text('Downloaded Podcasts'),
-];
-
 class PodcastListView extends StatelessWidget {
   const PodcastListView({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
+    List titles = [
+      context.t.podcasts_title,
+      context.t.podcast_download_title,
+    ];
+
     return ViewModelBuilder<PodcastListViewModel>.reactive(
       viewModelBuilder: () => PodcastListViewModel(),
       onViewModelReady: (model) async => await model.init(),
@@ -31,22 +32,21 @@ class PodcastListView extends StatelessWidget {
           title: titles.elementAt(model.index),
         ),
         drawer: const DrawerWidgetView(),
-        backgroundColor: const Color(0xFF0a0a23),
         bottomNavigationBar: BottomNavigationBar(
           currentIndex: model.index,
           onTap: model.setIndex,
-          items: const [
+          items: [
             BottomNavigationBarItem(
-              icon: Icon(
+              icon: const Icon(
                 Icons.grid_view_rounded,
               ),
-              label: 'Browse',
+              label: context.t.podcasts_browse,
             ),
             BottomNavigationBarItem(
-              icon: Icon(
+              icon: const Icon(
                 Icons.arrow_circle_down_sharp,
               ),
-              label: 'Downloads',
+              label: context.t.podcasts_downloads,
             ),
           ],
         ),
@@ -84,9 +84,9 @@ class PodcastListViewBuilder extends StatelessWidget {
                 return const Center(child: CircularProgressIndicator());
               }
               if (snapshot.hasError) {
-                return const Center(
+                return Center(
                   child: Text(
-                    'Unable to load podcasts \n please try again.',
+                    context.t.podcast_unable_to_load_podcasts,
                     textAlign: TextAlign.center,
                   ),
                 );
@@ -95,18 +95,18 @@ class PodcastListViewBuilder extends StatelessWidget {
                 return Center(
                   child: Column(
                     mainAxisAlignment: MainAxisAlignment.center,
-                    children: const [
-                      Icon(
+                    children: [
+                      const Icon(
                         Icons.arrow_circle_down_sharp,
                         color: Colors.white,
                         size: 50,
                       ),
-                      SizedBox(
+                      const SizedBox(
                         height: 4,
                       ),
                       Text(
-                        'No downloaded episodes',
-                        style: TextStyle(
+                        context.t.podcast_no_downloads,
+                        style: const TextStyle(
                           color: Colors.white,
                           fontSize: 16,
                           fontWeight: FontWeight.bold,
@@ -118,8 +118,6 @@ class PodcastListViewBuilder extends StatelessWidget {
               } else {
                 return GridView.count(
                   crossAxisCount: 2,
-                  // crossAxisSpacing: 10,
-
                   childAspectRatio: 1,
                   children: List.generate(
                     snapshot.data!.length,
@@ -172,17 +170,19 @@ class PodcastTemplate extends StatelessWidget {
         padding: const EdgeInsets.all(4.0),
         child: Stack(
           children: [
-            isDownloadView
-                ? Image.file(
-                    File(
-                      '${PodcastListViewModel.appDir.path}/images/podcast/${podcast.id}.jpg',
+            Container(
+              color: const Color(0xFF0a0a23),
+              child: isDownloadView
+                  ? Image.file(
+                      File(
+                        '${PodcastListViewModel.appDir.path}/images/podcast/${podcast.id}.jpg',
+                      ),
+                      alignment: Alignment.center,
+                    )
+                  : CachedNetworkImage(
+                      imageUrl: podcast.image!,
                     ),
-                    // height: 130,
-                    alignment: Alignment.center,
-                  )
-                : CachedNetworkImage(
-                    imageUrl: podcast.image!,
-                  ),
+            ),
             Align(
               alignment: Alignment.bottomCenter,
               child: Row(

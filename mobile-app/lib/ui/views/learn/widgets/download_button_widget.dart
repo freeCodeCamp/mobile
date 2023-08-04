@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:freecodecamp/extensions/i18n_extension.dart';
 import 'package:freecodecamp/models/learn/curriculum_model.dart';
 import 'package:freecodecamp/ui/views/learn/block/block_viewmodel.dart';
 
@@ -30,13 +31,15 @@ class DownloadButton extends StatelessWidget {
                 backgroundColor: const Color.fromRGBO(0x2A, 0x2A, 0x40, 1),
               ),
               child: !model.isDownloading
-                  ? const Text('Download All Challenges')
+                  ? Text(context.t.challenge_download)
                   : StreamBuilder(
                       stream: model.learnOfflineService.downloadStream.stream,
                       builder: ((context, snapshot) {
                         if (snapshot.connectionState ==
                             ConnectionState.waiting) {
-                          return const Text('Starting Download...');
+                          return Text(
+                            context.t.challenge_download_starting,
+                          );
                         }
 
                         // if (snapshot.hasError) {
@@ -55,8 +58,8 @@ class DownloadButton extends StatelessWidget {
                           );
                         }
 
-                        return const Text(
-                          'Download All Challenges',
+                        return Text(
+                          context.t.challenge_download,
                         );
                       }),
                     ),
@@ -76,8 +79,12 @@ class DownloadButton extends StatelessWidget {
                 backgroundColor: const Color.fromRGBO(0x2A, 0x2A, 0x40, 1),
               ),
               child: model.isDownloading
-                  ? const Text('Cancel Downloading Challenges')
-                  : const Text('Delete Downloaded Challenges'),
+                  ? Text(
+                      context.t.challenge_download_cancel,
+                    )
+                  : Text(
+                      context.t.challenge_download_delete,
+                    ),
             ),
           )
       ],

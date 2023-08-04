@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:freecodecamp/extensions/i18n_extension.dart';
 import 'package:freecodecamp/models/learn/curriculum_model.dart';
 import 'package:freecodecamp/service/authentication/authentication_service.dart';
 import 'package:freecodecamp/ui/views/learn/block/block_view.dart';
@@ -38,16 +39,12 @@ class SuperBlockView extends StatelessWidget {
             if (snapshot.hasData) {
               if (snapshot.data is SuperBlock) {
                 SuperBlock superBlock = snapshot.data as SuperBlock;
-
-                if (superBlock.blocks == null || superBlock.blocks!.isEmpty) {
-                  return const Text('You are offline, and no downloads!');
-                }
                 return blockTemplate(model, superBlock);
               }
             }
 
             if (snapshot.hasError) {
-              return const Text('Something whent wrong, please refresh!');
+              return Text(context.t.error);
             }
 
             return const Center(

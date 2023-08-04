@@ -5,15 +5,14 @@
 // **************************************************************************
 
 // ignore_for_file: no_leading_underscores_for_library_prefixes
-import 'package:flutter/material.dart' as _i17;
+import 'package:flutter/material.dart' as _i19;
 import 'package:flutter/material.dart';
-import 'package:freecodecamp/models/learn/curriculum_model.dart' as _i21;
+import 'package:freecodecamp/models/learn/curriculum_model.dart' as _i23;
 import 'package:freecodecamp/models/news/bookmarked_tutorial_model.dart'
-    as _i20;
-import 'package:freecodecamp/models/podcasts/episodes_model.dart' as _i18;
-import 'package:freecodecamp/models/podcasts/podcasts_model.dart' as _i19;
+    as _i22;
+import 'package:freecodecamp/models/podcasts/episodes_model.dart' as _i20;
+import 'package:freecodecamp/models/podcasts/podcasts_model.dart' as _i21;
 import 'package:freecodecamp/ui/views/code_radio/code_radio_view.dart' as _i10;
-import 'package:freecodecamp/ui/views/home/home_view.dart' as _i2;
 import 'package:freecodecamp/ui/views/learn/challenge/challenge_view.dart'
     as _i11;
 import 'package:freecodecamp/ui/views/learn/landing/landing_view.dart' as _i13;
@@ -30,16 +29,21 @@ import 'package:freecodecamp/ui/views/news/news-image-viewer/news_image_view.dar
     as _i9;
 import 'package:freecodecamp/ui/views/news/news-tutorial/news_tutorial_view.dart'
     as _i5;
+import 'package:freecodecamp/ui/views/news/news-view-handler/news_view_handler_view.dart'
+    as _i2;
 import 'package:freecodecamp/ui/views/podcast/episode/episode_view.dart' as _i4;
 import 'package:freecodecamp/ui/views/podcast/podcast-list/podcast_list_view.dart'
     as _i3;
 import 'package:freecodecamp/ui/views/profile/profile_view.dart' as _i12;
-import 'package:freecodecamp/ui/views/rpg/rpg_view.dart' as _i16;
+import 'package:freecodecamp/ui/views/rpg/rpg_view.dart' as _i18;
+import 'package:freecodecamp/ui/views/settings/delete-account/delete_account_view.dart'
+    as _i17;
+import 'package:freecodecamp/ui/views/settings/settings_view.dart' as _i16;
 import 'package:stacked/stacked.dart' as _i1;
-import 'package:stacked_services/stacked_services.dart' as _i22;
+import 'package:stacked_services/stacked_services.dart' as _i24;
 
 class Routes {
-  static const homeView = '/';
+  static const newsViewHandlerView = '/news-view-handler-view';
 
   static const podcastListView = '/podcast-list-view';
 
@@ -61,16 +65,20 @@ class Routes {
 
   static const profileView = '/profile-view';
 
-  static const learnLandingView = '/learn-landing-view';
+  static const learnLandingView = '/';
 
   static const nativeLoginView = '/native-login-view';
 
   static const superBlockView = '/super-block-view';
 
+  static const settingsView = '/settings-view';
+
+  static const deleteAccountView = '/delete-account-view';
+
   static const rPGView = '/r-pg-view';
 
   static const all = <String>{
-    homeView,
+    newsViewHandlerView,
     podcastListView,
     episodeView,
     newsTutorialView,
@@ -84,6 +92,8 @@ class Routes {
     learnLandingView,
     nativeLoginView,
     superBlockView,
+    settingsView,
+    deleteAccountView,
     rPGView,
   };
 }
@@ -91,8 +101,8 @@ class Routes {
 class StackedRouter extends _i1.RouterBase {
   final _routes = <_i1.RouteDef>[
     _i1.RouteDef(
-      Routes.homeView,
-      page: _i2.HomeView,
+      Routes.newsViewHandlerView,
+      page: _i2.NewsViewHandlerView,
     ),
     _i1.RouteDef(
       Routes.podcastListView,
@@ -147,27 +157,35 @@ class StackedRouter extends _i1.RouterBase {
       page: _i15.SuperBlockView,
     ),
     _i1.RouteDef(
+      Routes.settingsView,
+      page: _i16.SettingsView,
+    ),
+    _i1.RouteDef(
+      Routes.deleteAccountView,
+      page: _i17.DeleteAccountView,
+    ),
+    _i1.RouteDef(
       Routes.rPGView,
-      page: _i16.RPGView,
+      page: _i18.RPGView,
     ),
   ];
 
   final _pagesMap = <Type, _i1.StackedRouteFactory>{
-    _i2.HomeView: (data) {
-      return _i17.MaterialPageRoute<dynamic>(
-        builder: (context) => const _i2.HomeView(),
+    _i2.NewsViewHandlerView: (data) {
+      return _i19.MaterialPageRoute<dynamic>(
+        builder: (context) => const _i2.NewsViewHandlerView(),
         settings: data,
       );
     },
     _i3.PodcastListView: (data) {
-      return _i17.MaterialPageRoute<dynamic>(
+      return _i19.MaterialPageRoute<dynamic>(
         builder: (context) => const _i3.PodcastListView(),
         settings: data,
       );
     },
     _i4.EpisodeView: (data) {
       final args = data.getArgs<EpisodeViewArguments>(nullOk: false);
-      return _i17.MaterialPageRoute<dynamic>(
+      return _i19.MaterialPageRoute<dynamic>(
         builder: (context) => _i4.EpisodeView(
             key: args.key, episode: args.episode, podcast: args.podcast),
         settings: data,
@@ -175,7 +193,7 @@ class StackedRouter extends _i1.RouterBase {
     },
     _i5.NewsTutorialView: (data) {
       final args = data.getArgs<NewsTutorialViewArguments>(nullOk: false);
-      return _i17.MaterialPageRoute<dynamic>(
+      return _i19.MaterialPageRoute<dynamic>(
         builder: (context) => _i5.NewsTutorialView(
             key: args.key, refId: args.refId, title: args.title),
         settings: data,
@@ -184,7 +202,7 @@ class StackedRouter extends _i1.RouterBase {
     _i6.NewsBookmarkTutorialView: (data) {
       final args =
           data.getArgs<NewsBookmarkTutorialViewArguments>(nullOk: false);
-      return _i17.MaterialPageRoute<dynamic>(
+      return _i19.MaterialPageRoute<dynamic>(
         builder: (context) => _i6.NewsBookmarkTutorialView(
             key: args.key, tutorial: args.tutorial),
         settings: data,
@@ -194,7 +212,7 @@ class StackedRouter extends _i1.RouterBase {
       final args = data.getArgs<NewsFeedViewArguments>(
         orElse: () => const NewsFeedViewArguments(),
       );
-      return _i17.MaterialPageRoute<dynamic>(
+      return _i19.MaterialPageRoute<dynamic>(
         builder: (context) => _i7.NewsFeedView(
             key: args.key,
             slug: args.slug,
@@ -209,7 +227,7 @@ class StackedRouter extends _i1.RouterBase {
     },
     _i8.NewsAuthorView: (data) {
       final args = data.getArgs<NewsAuthorViewArguments>(nullOk: false);
-      return _i17.MaterialPageRoute<dynamic>(
+      return _i19.MaterialPageRoute<dynamic>(
         builder: (context) =>
             _i8.NewsAuthorView(key: args.key, authorSlug: args.authorSlug),
         settings: data,
@@ -217,21 +235,21 @@ class StackedRouter extends _i1.RouterBase {
     },
     _i9.NewsImageView: (data) {
       final args = data.getArgs<NewsImageViewArguments>(nullOk: false);
-      return _i17.MaterialPageRoute<dynamic>(
-        builder: (context) =>
-            _i9.NewsImageView(key: args.key, imgUrl: args.imgUrl),
+      return _i19.MaterialPageRoute<dynamic>(
+        builder: (context) => _i9.NewsImageView(
+            key: args.key, imgUrl: args.imgUrl, isDataUrl: args.isDataUrl),
         settings: data,
       );
     },
     _i10.CodeRadioView: (data) {
-      return _i17.MaterialPageRoute<dynamic>(
+      return _i19.MaterialPageRoute<dynamic>(
         builder: (context) => const _i10.CodeRadioView(),
         settings: data,
       );
     },
     _i11.ChallengeView: (data) {
       final args = data.getArgs<ChallengeViewArguments>(nullOk: false);
-      return _i17.MaterialPageRoute<dynamic>(
+      return _i19.MaterialPageRoute<dynamic>(
         builder: (context) => _i11.ChallengeView(
             key: args.key,
             url: args.url,
@@ -243,13 +261,13 @@ class StackedRouter extends _i1.RouterBase {
       );
     },
     _i12.ProfileView: (data) {
-      return _i17.MaterialPageRoute<dynamic>(
+      return _i19.MaterialPageRoute<dynamic>(
         builder: (context) => const _i12.ProfileView(),
         settings: data,
       );
     },
     _i13.LearnLandingView: (data) {
-      return _i17.MaterialPageRoute<dynamic>(
+      return _i19.MaterialPageRoute<dynamic>(
         builder: (context) => const _i13.LearnLandingView(),
         settings: data,
       );
@@ -258,7 +276,7 @@ class StackedRouter extends _i1.RouterBase {
       final args = data.getArgs<NativeLoginViewArguments>(
         orElse: () => const NativeLoginViewArguments(),
       );
-      return _i17.MaterialPageRoute<dynamic>(
+      return _i19.MaterialPageRoute<dynamic>(
         builder: (context) =>
             _i14.NativeLoginView(key: args.key, fromButton: args.fromButton),
         settings: data,
@@ -266,7 +284,7 @@ class StackedRouter extends _i1.RouterBase {
     },
     _i15.SuperBlockView: (data) {
       final args = data.getArgs<SuperBlockViewArguments>(nullOk: false);
-      return _i17.MaterialPageRoute<dynamic>(
+      return _i19.MaterialPageRoute<dynamic>(
         builder: (context) => _i15.SuperBlockView(
             key: args.key,
             superBlockDashedName: args.superBlockDashedName,
@@ -275,9 +293,21 @@ class StackedRouter extends _i1.RouterBase {
         settings: data,
       );
     },
-    _i16.RPGView: (data) {
-      return _i17.MaterialPageRoute<dynamic>(
-        builder: (context) => const _i16.RPGView(),
+    _i16.SettingsView: (data) {
+      return _i19.MaterialPageRoute<dynamic>(
+        builder: (context) => const _i16.SettingsView(),
+        settings: data,
+      );
+    },
+    _i17.DeleteAccountView: (data) {
+      return _i19.MaterialPageRoute<dynamic>(
+        builder: (context) => const _i17.DeleteAccountView(),
+        settings: data,
+      );
+    },
+    _i18.RPGView: (data) {
+      return _i19.MaterialPageRoute<dynamic>(
+        builder: (context) => const _i18.RPGView(),
         settings: data,
       );
     },
@@ -296,15 +326,28 @@ class EpisodeViewArguments {
     required this.podcast,
   });
 
-  final _i17.Key? key;
+  final _i19.Key? key;
 
-  final _i18.Episodes episode;
+  final _i20.Episodes episode;
 
-  final _i19.Podcasts podcast;
+  final _i21.Podcasts podcast;
 
   @override
   String toString() {
     return '{"key": "$key", "episode": "$episode", "podcast": "$podcast"}';
+  }
+
+  @override
+  bool operator ==(covariant EpisodeViewArguments other) {
+    if (identical(this, other)) return true;
+    return other.key == key &&
+        other.episode == episode &&
+        other.podcast == podcast;
+  }
+
+  @override
+  int get hashCode {
+    return key.hashCode ^ episode.hashCode ^ podcast.hashCode;
   }
 }
 
@@ -315,7 +358,7 @@ class NewsTutorialViewArguments {
     required this.title,
   });
 
-  final _i17.Key? key;
+  final _i19.Key? key;
 
   final String refId;
 
@@ -325,6 +368,17 @@ class NewsTutorialViewArguments {
   String toString() {
     return '{"key": "$key", "refId": "$refId", "title": "$title"}';
   }
+
+  @override
+  bool operator ==(covariant NewsTutorialViewArguments other) {
+    if (identical(this, other)) return true;
+    return other.key == key && other.refId == refId && other.title == title;
+  }
+
+  @override
+  int get hashCode {
+    return key.hashCode ^ refId.hashCode ^ title.hashCode;
+  }
 }
 
 class NewsBookmarkTutorialViewArguments {
@@ -333,13 +387,24 @@ class NewsBookmarkTutorialViewArguments {
     required this.tutorial,
   });
 
-  final _i17.Key? key;
+  final _i19.Key? key;
 
-  final _i20.BookmarkedTutorial tutorial;
+  final _i22.BookmarkedTutorial tutorial;
 
   @override
   String toString() {
     return '{"key": "$key", "tutorial": "$tutorial"}';
+  }
+
+  @override
+  bool operator ==(covariant NewsBookmarkTutorialViewArguments other) {
+    if (identical(this, other)) return true;
+    return other.key == key && other.tutorial == tutorial;
+  }
+
+  @override
+  int get hashCode {
+    return key.hashCode ^ tutorial.hashCode;
   }
 }
 
@@ -355,7 +420,7 @@ class NewsFeedViewArguments {
     this.subject = '',
   });
 
-  final _i17.Key? key;
+  final _i19.Key? key;
 
   final String slug;
 
@@ -375,6 +440,31 @@ class NewsFeedViewArguments {
   String toString() {
     return '{"key": "$key", "slug": "$slug", "author": "$author", "fromAuthor": "$fromAuthor", "fromTag": "$fromTag", "fromSearch": "$fromSearch", "tutorials": "$tutorials", "subject": "$subject"}';
   }
+
+  @override
+  bool operator ==(covariant NewsFeedViewArguments other) {
+    if (identical(this, other)) return true;
+    return other.key == key &&
+        other.slug == slug &&
+        other.author == author &&
+        other.fromAuthor == fromAuthor &&
+        other.fromTag == fromTag &&
+        other.fromSearch == fromSearch &&
+        other.tutorials == tutorials &&
+        other.subject == subject;
+  }
+
+  @override
+  int get hashCode {
+    return key.hashCode ^
+        slug.hashCode ^
+        author.hashCode ^
+        fromAuthor.hashCode ^
+        fromTag.hashCode ^
+        fromSearch.hashCode ^
+        tutorials.hashCode ^
+        subject.hashCode;
+  }
 }
 
 class NewsAuthorViewArguments {
@@ -383,7 +473,7 @@ class NewsAuthorViewArguments {
     required this.authorSlug,
   });
 
-  final _i17.Key? key;
+  final _i19.Key? key;
 
   final String authorSlug;
 
@@ -391,21 +481,48 @@ class NewsAuthorViewArguments {
   String toString() {
     return '{"key": "$key", "authorSlug": "$authorSlug"}';
   }
+
+  @override
+  bool operator ==(covariant NewsAuthorViewArguments other) {
+    if (identical(this, other)) return true;
+    return other.key == key && other.authorSlug == authorSlug;
+  }
+
+  @override
+  int get hashCode {
+    return key.hashCode ^ authorSlug.hashCode;
+  }
 }
 
 class NewsImageViewArguments {
   const NewsImageViewArguments({
     this.key,
     required this.imgUrl,
+    required this.isDataUrl,
   });
 
-  final _i17.Key? key;
+  final _i19.Key? key;
 
   final String imgUrl;
 
+  final bool isDataUrl;
+
   @override
   String toString() {
-    return '{"key": "$key", "imgUrl": "$imgUrl"}';
+    return '{"key": "$key", "imgUrl": "$imgUrl", "isDataUrl": "$isDataUrl"}';
+  }
+
+  @override
+  bool operator ==(covariant NewsImageViewArguments other) {
+    if (identical(this, other)) return true;
+    return other.key == key &&
+        other.imgUrl == imgUrl &&
+        other.isDataUrl == isDataUrl;
+  }
+
+  @override
+  int get hashCode {
+    return key.hashCode ^ imgUrl.hashCode ^ isDataUrl.hashCode;
   }
 }
 
@@ -419,11 +536,11 @@ class ChallengeViewArguments {
     required this.isProject,
   });
 
-  final _i17.Key? key;
+  final _i19.Key? key;
 
   final String url;
 
-  final _i21.Block block;
+  final _i23.Block block;
 
   final String challengeId;
 
@@ -435,6 +552,27 @@ class ChallengeViewArguments {
   String toString() {
     return '{"key": "$key", "url": "$url", "block": "$block", "challengeId": "$challengeId", "challengesCompleted": "$challengesCompleted", "isProject": "$isProject"}';
   }
+
+  @override
+  bool operator ==(covariant ChallengeViewArguments other) {
+    if (identical(this, other)) return true;
+    return other.key == key &&
+        other.url == url &&
+        other.block == block &&
+        other.challengeId == challengeId &&
+        other.challengesCompleted == challengesCompleted &&
+        other.isProject == isProject;
+  }
+
+  @override
+  int get hashCode {
+    return key.hashCode ^
+        url.hashCode ^
+        block.hashCode ^
+        challengeId.hashCode ^
+        challengesCompleted.hashCode ^
+        isProject.hashCode;
+  }
 }
 
 class NativeLoginViewArguments {
@@ -443,13 +581,24 @@ class NativeLoginViewArguments {
     this.fromButton = false,
   });
 
-  final _i17.Key? key;
+  final _i19.Key? key;
 
   final bool fromButton;
 
   @override
   String toString() {
     return '{"key": "$key", "fromButton": "$fromButton"}';
+  }
+
+  @override
+  bool operator ==(covariant NativeLoginViewArguments other) {
+    if (identical(this, other)) return true;
+    return other.key == key && other.fromButton == fromButton;
+  }
+
+  @override
+  int get hashCode {
+    return key.hashCode ^ fromButton.hashCode;
   }
 }
 
@@ -461,7 +610,7 @@ class SuperBlockViewArguments {
     required this.hasInternet,
   });
 
-  final _i17.Key? key;
+  final _i19.Key? key;
 
   final String superBlockDashedName;
 
@@ -473,17 +622,34 @@ class SuperBlockViewArguments {
   String toString() {
     return '{"key": "$key", "superBlockDashedName": "$superBlockDashedName", "superBlockName": "$superBlockName", "hasInternet": "$hasInternet"}';
   }
+
+  @override
+  bool operator ==(covariant SuperBlockViewArguments other) {
+    if (identical(this, other)) return true;
+    return other.key == key &&
+        other.superBlockDashedName == superBlockDashedName &&
+        other.superBlockName == superBlockName &&
+        other.hasInternet == hasInternet;
+  }
+
+  @override
+  int get hashCode {
+    return key.hashCode ^
+        superBlockDashedName.hashCode ^
+        superBlockName.hashCode ^
+        hasInternet.hashCode;
+  }
 }
 
-extension NavigatorStateExtension on _i22.NavigationService {
-  Future<dynamic> navigateToHomeView([
+extension NavigatorStateExtension on _i24.NavigationService {
+  Future<dynamic> navigateToNewsViewHandlerView([
     int? routerId,
     bool preventDuplicates = true,
     Map<String, String>? parameters,
     Widget Function(BuildContext, Animation<double>, Animation<double>, Widget)?
         transition,
   ]) async {
-    return navigateTo<dynamic>(Routes.homeView,
+    return navigateTo<dynamic>(Routes.newsViewHandlerView,
         id: routerId,
         preventDuplicates: preventDuplicates,
         parameters: parameters,
@@ -505,9 +671,9 @@ extension NavigatorStateExtension on _i22.NavigationService {
   }
 
   Future<dynamic> navigateToEpisodeView({
-    _i17.Key? key,
-    required _i18.Episodes episode,
-    required _i19.Podcasts podcast,
+    _i19.Key? key,
+    required _i20.Episodes episode,
+    required _i21.Podcasts podcast,
     int? routerId,
     bool preventDuplicates = true,
     Map<String, String>? parameters,
@@ -524,7 +690,7 @@ extension NavigatorStateExtension on _i22.NavigationService {
   }
 
   Future<dynamic> navigateToNewsTutorialView({
-    _i17.Key? key,
+    _i19.Key? key,
     required String refId,
     required String? title,
     int? routerId,
@@ -543,8 +709,8 @@ extension NavigatorStateExtension on _i22.NavigationService {
   }
 
   Future<dynamic> navigateToNewsBookmarkTutorialView({
-    _i17.Key? key,
-    required _i20.BookmarkedTutorial tutorial,
+    _i19.Key? key,
+    required _i22.BookmarkedTutorial tutorial,
     int? routerId,
     bool preventDuplicates = true,
     Map<String, String>? parameters,
@@ -561,7 +727,7 @@ extension NavigatorStateExtension on _i22.NavigationService {
   }
 
   Future<dynamic> navigateToNewsFeedView({
-    _i17.Key? key,
+    _i19.Key? key,
     String slug = '',
     String author = '',
     bool fromAuthor = false,
@@ -592,7 +758,7 @@ extension NavigatorStateExtension on _i22.NavigationService {
   }
 
   Future<dynamic> navigateToNewsAuthorView({
-    _i17.Key? key,
+    _i19.Key? key,
     required String authorSlug,
     int? routerId,
     bool preventDuplicates = true,
@@ -609,8 +775,9 @@ extension NavigatorStateExtension on _i22.NavigationService {
   }
 
   Future<dynamic> navigateToNewsImageView({
-    _i17.Key? key,
+    _i19.Key? key,
     required String imgUrl,
+    required bool isDataUrl,
     int? routerId,
     bool preventDuplicates = true,
     Map<String, String>? parameters,
@@ -618,7 +785,8 @@ extension NavigatorStateExtension on _i22.NavigationService {
         transition,
   }) async {
     return navigateTo<dynamic>(Routes.newsImageView,
-        arguments: NewsImageViewArguments(key: key, imgUrl: imgUrl),
+        arguments: NewsImageViewArguments(
+            key: key, imgUrl: imgUrl, isDataUrl: isDataUrl),
         id: routerId,
         preventDuplicates: preventDuplicates,
         parameters: parameters,
@@ -640,9 +808,9 @@ extension NavigatorStateExtension on _i22.NavigationService {
   }
 
   Future<dynamic> navigateToChallengeView({
-    _i17.Key? key,
+    _i19.Key? key,
     required String url,
-    required _i21.Block block,
+    required _i23.Block block,
     required String challengeId,
     required int challengesCompleted,
     required bool isProject,
@@ -695,7 +863,7 @@ extension NavigatorStateExtension on _i22.NavigationService {
   }
 
   Future<dynamic> navigateToNativeLoginView({
-    _i17.Key? key,
+    _i19.Key? key,
     bool fromButton = false,
     int? routerId,
     bool preventDuplicates = true,
@@ -712,7 +880,7 @@ extension NavigatorStateExtension on _i22.NavigationService {
   }
 
   Future<dynamic> navigateToSuperBlockView({
-    _i17.Key? key,
+    _i19.Key? key,
     required String superBlockDashedName,
     required String superBlockName,
     required bool hasInternet,
@@ -734,6 +902,34 @@ extension NavigatorStateExtension on _i22.NavigationService {
         transition: transition);
   }
 
+  Future<dynamic> navigateToSettingsView([
+    int? routerId,
+    bool preventDuplicates = true,
+    Map<String, String>? parameters,
+    Widget Function(BuildContext, Animation<double>, Animation<double>, Widget)?
+        transition,
+  ]) async {
+    return navigateTo<dynamic>(Routes.settingsView,
+        id: routerId,
+        preventDuplicates: preventDuplicates,
+        parameters: parameters,
+        transition: transition);
+  }
+
+  Future<dynamic> navigateToDeleteAccountView([
+    int? routerId,
+    bool preventDuplicates = true,
+    Map<String, String>? parameters,
+    Widget Function(BuildContext, Animation<double>, Animation<double>, Widget)?
+        transition,
+  ]) async {
+    return navigateTo<dynamic>(Routes.deleteAccountView,
+        id: routerId,
+        preventDuplicates: preventDuplicates,
+        parameters: parameters,
+        transition: transition);
+  }
+
   Future<dynamic> navigateToRPGView([
     int? routerId,
     bool preventDuplicates = true,
@@ -748,14 +944,14 @@ extension NavigatorStateExtension on _i22.NavigationService {
         transition: transition);
   }
 
-  Future<dynamic> replaceWithHomeView([
+  Future<dynamic> replaceWithNewsViewHandlerView([
     int? routerId,
     bool preventDuplicates = true,
     Map<String, String>? parameters,
     Widget Function(BuildContext, Animation<double>, Animation<double>, Widget)?
         transition,
   ]) async {
-    return replaceWith<dynamic>(Routes.homeView,
+    return replaceWith<dynamic>(Routes.newsViewHandlerView,
         id: routerId,
         preventDuplicates: preventDuplicates,
         parameters: parameters,
@@ -777,9 +973,9 @@ extension NavigatorStateExtension on _i22.NavigationService {
   }
 
   Future<dynamic> replaceWithEpisodeView({
-    _i17.Key? key,
-    required _i18.Episodes episode,
-    required _i19.Podcasts podcast,
+    _i19.Key? key,
+    required _i20.Episodes episode,
+    required _i21.Podcasts podcast,
     int? routerId,
     bool preventDuplicates = true,
     Map<String, String>? parameters,
@@ -796,7 +992,7 @@ extension NavigatorStateExtension on _i22.NavigationService {
   }
 
   Future<dynamic> replaceWithNewsTutorialView({
-    _i17.Key? key,
+    _i19.Key? key,
     required String refId,
     required String? title,
     int? routerId,
@@ -815,8 +1011,8 @@ extension NavigatorStateExtension on _i22.NavigationService {
   }
 
   Future<dynamic> replaceWithNewsBookmarkTutorialView({
-    _i17.Key? key,
-    required _i20.BookmarkedTutorial tutorial,
+    _i19.Key? key,
+    required _i22.BookmarkedTutorial tutorial,
     int? routerId,
     bool preventDuplicates = true,
     Map<String, String>? parameters,
@@ -833,7 +1029,7 @@ extension NavigatorStateExtension on _i22.NavigationService {
   }
 
   Future<dynamic> replaceWithNewsFeedView({
-    _i17.Key? key,
+    _i19.Key? key,
     String slug = '',
     String author = '',
     bool fromAuthor = false,
@@ -864,7 +1060,7 @@ extension NavigatorStateExtension on _i22.NavigationService {
   }
 
   Future<dynamic> replaceWithNewsAuthorView({
-    _i17.Key? key,
+    _i19.Key? key,
     required String authorSlug,
     int? routerId,
     bool preventDuplicates = true,
@@ -881,8 +1077,9 @@ extension NavigatorStateExtension on _i22.NavigationService {
   }
 
   Future<dynamic> replaceWithNewsImageView({
-    _i17.Key? key,
+    _i19.Key? key,
     required String imgUrl,
+    required bool isDataUrl,
     int? routerId,
     bool preventDuplicates = true,
     Map<String, String>? parameters,
@@ -890,7 +1087,8 @@ extension NavigatorStateExtension on _i22.NavigationService {
         transition,
   }) async {
     return replaceWith<dynamic>(Routes.newsImageView,
-        arguments: NewsImageViewArguments(key: key, imgUrl: imgUrl),
+        arguments: NewsImageViewArguments(
+            key: key, imgUrl: imgUrl, isDataUrl: isDataUrl),
         id: routerId,
         preventDuplicates: preventDuplicates,
         parameters: parameters,
@@ -912,9 +1110,9 @@ extension NavigatorStateExtension on _i22.NavigationService {
   }
 
   Future<dynamic> replaceWithChallengeView({
-    _i17.Key? key,
+    _i19.Key? key,
     required String url,
-    required _i21.Block block,
+    required _i23.Block block,
     required String challengeId,
     required int challengesCompleted,
     required bool isProject,
@@ -967,7 +1165,7 @@ extension NavigatorStateExtension on _i22.NavigationService {
   }
 
   Future<dynamic> replaceWithNativeLoginView({
-    _i17.Key? key,
+    _i19.Key? key,
     bool fromButton = false,
     int? routerId,
     bool preventDuplicates = true,
@@ -984,7 +1182,7 @@ extension NavigatorStateExtension on _i22.NavigationService {
   }
 
   Future<dynamic> replaceWithSuperBlockView({
-    _i17.Key? key,
+    _i19.Key? key,
     required String superBlockDashedName,
     required String superBlockName,
     required bool hasInternet,
@@ -1000,6 +1198,34 @@ extension NavigatorStateExtension on _i22.NavigationService {
             superBlockDashedName: superBlockDashedName,
             superBlockName: superBlockName,
             hasInternet: hasInternet),
+        id: routerId,
+        preventDuplicates: preventDuplicates,
+        parameters: parameters,
+        transition: transition);
+  }
+
+  Future<dynamic> replaceWithSettingsView([
+    int? routerId,
+    bool preventDuplicates = true,
+    Map<String, String>? parameters,
+    Widget Function(BuildContext, Animation<double>, Animation<double>, Widget)?
+        transition,
+  ]) async {
+    return replaceWith<dynamic>(Routes.settingsView,
+        id: routerId,
+        preventDuplicates: preventDuplicates,
+        parameters: parameters,
+        transition: transition);
+  }
+
+  Future<dynamic> replaceWithDeleteAccountView([
+    int? routerId,
+    bool preventDuplicates = true,
+    Map<String, String>? parameters,
+    Widget Function(BuildContext, Animation<double>, Animation<double>, Widget)?
+        transition,
+  ]) async {
+    return replaceWith<dynamic>(Routes.deleteAccountView,
         id: routerId,
         preventDuplicates: preventDuplicates,
         parameters: parameters,

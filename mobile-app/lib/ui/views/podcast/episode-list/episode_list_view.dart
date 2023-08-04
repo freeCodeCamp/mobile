@@ -3,15 +3,15 @@ import 'dart:io';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_html/flutter_html.dart';
+import 'package:freecodecamp/extensions/i18n_extension.dart';
 import 'package:freecodecamp/models/podcasts/episodes_model.dart';
 import 'package:freecodecamp/models/podcasts/podcasts_model.dart';
 import 'package:freecodecamp/ui/views/podcast/episode-list/episode_list_viewmodel.dart';
 import 'package:freecodecamp/ui/views/podcast/podcast-list/podcast_list_viewmodel.dart';
 import 'package:freecodecamp/ui/widgets/podcast_widgets/podcast_tilte_widget.dart';
-import 'package:html/dom.dart' as dom;
 import 'package:infinite_scroll_pagination/infinite_scroll_pagination.dart';
 import 'package:stacked/stacked.dart';
-import 'package:url_launcher/url_launcher_string.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class EpisodeListView extends StatelessWidget {
   const EpisodeListView({
@@ -51,7 +51,7 @@ class EpisodeListView extends StatelessWidget {
                         color: const Color(0xFF0a0a23),
                         child: Padding(
                           padding: const EdgeInsets.all(20.0),
-                          child: description(model),
+                          child: description(model, context),
                         ),
                       ),
                     ],
@@ -119,32 +119,31 @@ class EpisodeListView extends StatelessWidget {
     );
   }
 
-  Column description(EpisodeListViewModel model) {
+  Column description(EpisodeListViewModel model, BuildContext context) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        const Text(
-          'Description',
-          style:
-              TextStyle(fontSize: 24, fontWeight: FontWeight.bold, height: 1.2),
+        Text(
+          context.t.podcast_description,
+          style: const TextStyle(
+            fontSize: 24,
+            fontWeight: FontWeight.bold,
+            height: 1.2,
+          ),
         ),
         Html(
           data: podcast.description!,
-          onLinkTap: (
-            String? url,
-            RenderContext context,
-            Map<String, String> attributes,
-            dom.Element? element,
-          ) {
-            launchUrlString(url!);
+          onLinkTap: (url, attributes, element) {
+            launchUrl(Uri.parse(url!));
           },
           style: {
             '#': Style(
-                fontSize: const FontSize(16),
-                color: Colors.white.withOpacity(0.87),
-                margin: EdgeInsets.zero,
-                maxLines: model.showDescription ? null : 3,
-                fontFamily: 'Lato')
+              fontSize: FontSize(16),
+              color: Colors.white.withOpacity(0.87),
+              margin: Margins.zero,
+              maxLines: model.showDescription ? null : 3,
+              fontFamily: 'Lato',
+            )
           },
         ),
         TextButton(
@@ -152,7 +151,9 @@ class EpisodeListView extends StatelessWidget {
             model.setShowMoreDescription = !model.showDescription;
           },
           child: Text(
-            model.showDescription ? 'Show Less' : 'Show More',
+            model.showDescription
+                ? context.t.podcast_show_less
+                : context.t.podcast_show_more,
             style: const TextStyle(
               fontSize: 16,
             ),

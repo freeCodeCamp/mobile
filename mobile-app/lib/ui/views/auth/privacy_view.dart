@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:freecodecamp/extensions/i18n_extension.dart';
 import 'package:freecodecamp/ui/widgets/drawer_widget/drawer_widget_view.dart';
 
 class PrivacyView extends StatelessWidget {
@@ -13,19 +14,17 @@ class PrivacyView extends StatelessWidget {
     );
     return Scaffold(
       appBar: AppBar(
-        title: const Text(
-          'Email Sign Up',
-        ),
+        title: Text(context.t.quincy_email_signup),
       ),
       body: SingleChildScrollView(
         child: Padding(
           padding: const EdgeInsets.all(16),
           child: Column(
             children: [
-              const Text(
-                'Please slow down and read this.',
+              Text(
+                context.t.quincy_email_part_one,
                 textAlign: TextAlign.center,
-                style: TextStyle(
+                style: const TextStyle(
                   fontSize: 20,
                   fontWeight: FontWeight.bold,
                 ),
@@ -33,93 +32,86 @@ class PrivacyView extends StatelessWidget {
               const SizedBox(
                 height: 12,
               ),
-              const Text(
-                'freeCodeCamp is a proven path to your first software developer job.',
+              Text(
+                context.t.quincy_email_part_two,
                 style: paragraphTextStyle,
               ),
               const SizedBox(
                 height: 8,
               ),
-              const Text(
-                'More than 40,000 people have gotten developer jobs after completing this — including at big companies like Google and Microsoft.',
+              Text(
+                context.t.quincy_email_part_three,
                 style: paragraphTextStyle,
               ),
               const SizedBox(
                 height: 8,
               ),
-              const Text(
-                'More than 40,000 people have gotten developer jobs after completing this - including at big companies like Google and Microsoft.',
+              Text(
+                context.t.quincy_email_part_four,
                 style: paragraphTextStyle,
               ),
               const SizedBox(
                 height: 8,
               ),
-              const Text(
-                'If you are new to programming, we recommend you start at the beginning and earn these certifications in order.',
+              Text(
+                context.t.quincy_email_part_five,
                 style: paragraphTextStyle,
               ),
               const SizedBox(
                 height: 8,
               ),
-              const Text(
-                'To earn each certification, build its 5 required projects and get all their tests to pass.',
+              Text(
+                context.t.quincy_email_part_six,
                 style: paragraphTextStyle,
               ),
               const SizedBox(
                 height: 8,
               ),
-              const Text(
-                'You can add these certifications to your résumé or LinkedIn. But more important than the certifications is the practice you get along the way.',
+              Text(
+                context.t.quincy_email_part_seven,
                 style: paragraphTextStyle,
               ),
               const SizedBox(
                 height: 8,
               ),
-              const Text(
-                'If you feel overwhelmed, that is normal. Programming is hard.',
+              Text(
+                context.t.quincy_email_part_eight,
                 style: paragraphTextStyle,
               ),
               const SizedBox(
                 height: 8,
               ),
-              const Text(
-                'Practice is the key. Practice, practice, practice.',
+              Text(
+                context.t.quincy_email_part_nine,
                 style: paragraphTextStyle,
               ),
               const SizedBox(
                 height: 8,
               ),
-              const Text(
-                'And this curriculum will give you thousands of hours of hands-on programming practice.',
+              Text(
+                context.t.quincy_email_part_ten,
                 style: paragraphTextStyle,
               ),
               const SizedBox(
                 height: 8,
               ),
-              const Text(
-                'And if you want to learn more math and computer science theory, we also have thousands of hours of video courses on freeCodeCamp\'s YouTube channel.',
+              Text(
+                context.t.quincy_email_part_eleven,
                 style: paragraphTextStyle,
               ),
               const SizedBox(
                 height: 8,
               ),
-              const Text(
-                'If you want to get a developer job or freelance clients, programming skills will be just part of the puzzle. You also need to build your personal network and your reputation as a developer.',
+              Text(
+                context.t.quincy_email_part_twelve,
                 style: paragraphTextStyle,
               ),
               const SizedBox(
                 height: 8,
               ),
-              const Text(
-                'You can do this on LinkedIn and GitHub, and also on the freeCodeCamp forum.',
-                style: paragraphTextStyle,
-              ),
-              const SizedBox(
-                height: 8,
-              ),
-              const Text(
-                'Happy coding!',
-                style: TextStyle(
+              Text(
+                context.t.quincy_email_part_thirteen,
+                style: const TextStyle(
                   fontSize: 20,
                   fontWeight: FontWeight.bold,
                 ),
@@ -131,20 +123,19 @@ class PrivacyView extends StatelessWidget {
               const SizedBox(
                 height: 4,
               ),
-              const Text(
-                '- Quincy Larson, the teacher who founded freeCodeCamp.org',
+              Text(
+                context.t.quincy_email_part_fourteen,
                 textAlign: TextAlign.right,
-                style: TextStyle(
+                style: const TextStyle(
                   fontSize: 20,
                   fontFamily: 'Lato',
-                  // height: 1.2,
                 ),
               ),
               const SizedBox(
                 height: 12,
               ),
-              const Text(
-                'By the way, each Friday I send an email with 5 links about programming and computer science. I send these to about 4 million people. Would you like me to send this to you, too?',
+              Text(
+                context.t.quincy_email_part_fifteen,
                 style: paragraphTextStyle,
               ),
               const SizedBox(
@@ -158,7 +149,9 @@ class PrivacyView extends StatelessWidget {
                       style: TextButton.styleFrom(
                         backgroundColor: const Color(0xFF0a0a23),
                       ),
-                      child: const Text('Yes please'),
+                      child: Text(
+                        context.t.quincy_email_confirm,
+                      ),
                     ),
                   ),
                 ],
@@ -174,9 +167,8 @@ class PrivacyView extends StatelessWidget {
                       style: TextButton.styleFrom(
                         backgroundColor: const Color(0xFF0a0a23),
                       ),
-                      child: const Text(
-                        'No thanks',
-                        textAlign: TextAlign.center,
+                      child: Text(
+                        context.t.quincy_email_no_thanks,
                       ),
                     ),
                   ),

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:freecodecamp/extensions/i18n_extension.dart';
 import 'package:freecodecamp/ui/views/login/native_login_viewmodel.dart';
 import 'package:freecodecamp/ui/widgets/drawer_widget/drawer_widget_view.dart';
 import 'package:stacked/stacked.dart';
@@ -13,30 +14,31 @@ class NativeLoginView extends StatelessWidget {
     ButtonStyle buttonStyle = ElevatedButton.styleFrom(
       backgroundColor: Colors.white,
       disabledBackgroundColor: Colors.grey,
-    );
-
-    BoxDecoration outerDecoration = BoxDecoration(
-      border: Border.all(
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(0),
+      ),
+      side: const BorderSide(
         width: 3,
         color: Colors.black,
       ),
-      borderRadius: BorderRadius.circular(0),
     );
 
-    TextStyle textStyle = const TextStyle(fontSize: 20, color: Colors.black);
+    TextStyle textStyle = const TextStyle(
+      fontSize: 20,
+      color: Colors.black,
+    );
 
     return ViewModelBuilder<NativeLoginViewModel>.reactive(
       viewModelBuilder: () => NativeLoginViewModel(),
       onViewModelReady: (viewModel) => viewModel.init(),
       builder: (context, model, child) => Scaffold(
         appBar: AppBar(
-          title: const Text('LOGIN'),
+          title: Text(context.t.login),
         ),
         drawer: fromButton ? null : const DrawerWidgetView(),
         body: SingleChildScrollView(
           child: Container(
             margin: const EdgeInsets.only(top: 16),
-            padding: const EdgeInsets.all(16),
             child: Column(
               children: [
                 Row(
@@ -44,28 +46,29 @@ class NativeLoginView extends StatelessWidget {
                   children: [
                     Expanded(
                       child: Container(
-                        height: 50,
+                        constraints: const BoxConstraints(minHeight: 50),
                         margin: const EdgeInsets.all(16),
-                        decoration: outerDecoration,
                         child: ElevatedButton(
                           style: buttonStyle,
                           onPressed: () {
                             model.auth.login(context, 'google-oauth2');
                           },
                           child: Row(
-                            mainAxisAlignment: MainAxisAlignment.center,
+                            mainAxisAlignment: MainAxisAlignment.start,
                             children: [
-                              Padding(
-                                padding: const EdgeInsets.all(8.0),
-                                child: Image.asset(
-                                  'assets/images/google-logo.png',
-                                  height: 25,
-                                  width: 25,
-                                ),
+                              Image.asset(
+                                'assets/images/google-logo.png',
+                                height: 25,
+                                width: 25,
                               ),
-                              Text(
-                                'Continue with Google',
-                                style: textStyle,
+                              Expanded(
+                                child: Padding(
+                                  padding: const EdgeInsets.all(8.0),
+                                  child: Text(
+                                    context.t.login_with_google,
+                                    style: textStyle,
+                                  ),
+                                ),
                               ),
                             ],
                           ),
@@ -78,28 +81,29 @@ class NativeLoginView extends StatelessWidget {
                   children: [
                     Expanded(
                       child: Container(
-                        height: 50,
+                        constraints: const BoxConstraints(minHeight: 50),
                         margin: const EdgeInsets.all(16),
-                        decoration: outerDecoration,
                         child: ElevatedButton(
                           style: buttonStyle,
                           onPressed: () {
                             model.auth.login(context, 'github');
                           },
                           child: Row(
-                            mainAxisAlignment: MainAxisAlignment.center,
+                            mainAxisAlignment: MainAxisAlignment.start,
                             children: [
-                              Padding(
-                                padding: const EdgeInsets.all(8.0),
-                                child: Image.asset(
-                                  'assets/images/github-logo.png',
-                                  height: 25,
-                                  width: 25,
-                                ),
+                              Image.asset(
+                                'assets/images/github-logo.png',
+                                height: 25,
+                                width: 25,
                               ),
-                              Text(
-                                'Continue with GitHub',
-                                style: textStyle,
+                              Expanded(
+                                child: Padding(
+                                  padding: const EdgeInsets.all(8.0),
+                                  child: Text(
+                                    context.t.login_with_github,
+                                    style: textStyle,
+                                  ),
+                                ),
                               ),
                             ],
                           ),
@@ -108,41 +112,41 @@ class NativeLoginView extends StatelessWidget {
                     ),
                   ],
                 ),
-                if (model.isDeveloper)
-                  Row(
-                    children: [
-                      Expanded(
-                        child: Container(
-                          margin: const EdgeInsets.all(16),
-                          decoration: outerDecoration,
-                          height: 50,
-                          child: ElevatedButton(
-                            style: buttonStyle,
-                            onPressed: () {
-                              model.auth.login(context, 'apple');
-                            },
-                            child: Row(
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              children: [
-                                Padding(
+                Row(
+                  children: [
+                    Expanded(
+                      child: Container(
+                        margin: const EdgeInsets.all(16),
+                        constraints: const BoxConstraints(minHeight: 50),
+                        child: ElevatedButton(
+                          style: buttonStyle,
+                          onPressed: () {
+                            model.auth.login(context, 'apple');
+                          },
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.start,
+                            children: [
+                              Image.asset(
+                                'assets/images/apple-logo.png',
+                                height: 25,
+                                width: 25,
+                              ),
+                              Expanded(
+                                child: Padding(
                                   padding: const EdgeInsets.all(8.0),
-                                  child: Image.asset(
-                                    'assets/images/apple-logo.png',
-                                    height: 25,
-                                    width: 25,
+                                  child: Text(
+                                    context.t.login_with_apple,
+                                    style: textStyle,
                                   ),
                                 ),
-                                Text(
-                                  'Continue with Apple',
-                                  style: textStyle,
-                                ),
-                              ],
-                            ),
+                              ),
+                            ],
                           ),
                         ),
                       ),
-                    ],
-                  ),
+                    ),
+                  ],
+                ),
                 buildDivider(),
                 Container(
                   padding: const EdgeInsets.all(16),
@@ -150,9 +154,9 @@ class NativeLoginView extends StatelessWidget {
                     enabled: !model.showOTPfield,
                     controller: model.emailController,
                     keyboardType: TextInputType.emailAddress,
-                    decoration: const InputDecoration(
-                      hintText: 'email',
-                      border: OutlineInputBorder(
+                    decoration: InputDecoration(
+                      hintText: context.t.email,
+                      border: const OutlineInputBorder(
                         borderSide: BorderSide(width: 2, color: Colors.white),
                       ),
                     ),
@@ -166,9 +170,9 @@ class NativeLoginView extends StatelessWidget {
                           controller: model.otpController,
                           keyboardType: TextInputType.number,
                           decoration: InputDecoration(
-                            hintText: 'Enter sign in code',
+                            hintText: context.t.email_sign_in_code,
                             errorText: model.incorrectOTP
-                                ? 'The code you entered is not valid. Please check the last OTP you received and try again.'
+                                ? context.t.email_invalid_code
                                 : null,
                             errorMaxLines: 5,
                             border: const OutlineInputBorder(
@@ -181,49 +185,54 @@ class NativeLoginView extends StatelessWidget {
                     : Container(),
                 Row(
                   children: [
-                    model.showOTPfield
-                        ? Expanded(
-                            child: Container(
-                              margin: const EdgeInsets.all(16),
-                              decoration: outerDecoration,
-                              child: ElevatedButton(
-                                style: buttonStyle.copyWith(
-                                  padding: const MaterialStatePropertyAll(
-                                    EdgeInsets.symmetric(vertical: 8),
-                                  ),
-                                ),
-                                onPressed: model.otpFieldIsValid
-                                    ? () {
-                                        model.verifyOTP(context);
-                                      }
-                                    : null,
+                    if (model.showOTPfield)
+                      Expanded(
+                        child: Container(
+                          margin: const EdgeInsets.all(16),
+                          child: ElevatedButton(
+                            style: buttonStyle.copyWith(
+                              padding: const MaterialStatePropertyAll(
+                                EdgeInsets.symmetric(vertical: 8),
+                              ),
+                            ),
+                            onPressed: model.otpFieldIsValid
+                                ? () {
+                                    model.verifyOTP(context);
+                                  }
+                                : null,
+                            child: Text(
+                              'Submit and sign in to freeCodeCamp',
+                              style: textStyle,
+                              textAlign: TextAlign.center,
+                            ),
+                          ),
+                        ),
+                      )
+                    else
+                      Expanded(
+                        child: Container(
+                          margin: const EdgeInsets.all(16),
+                          constraints: const BoxConstraints(minHeight: 50),
+                          child: ElevatedButton(
+                            style: buttonStyle,
+                            onPressed: model.emailFieldIsValid
+                                ? () {
+                                    model.sendOTPtoEmail();
+                                  }
+                                : null,
+                            child: Padding(
+                              padding: const EdgeInsets.all(8.0),
+                              child: Align(
                                 child: Text(
-                                  'Submit and sign in to freeCodeCamp',
+                                  context.t.email_submit_code,
                                   style: textStyle,
                                   textAlign: TextAlign.center,
                                 ),
                               ),
                             ),
-                          )
-                        : Expanded(
-                            child: Container(
-                              margin: const EdgeInsets.all(16),
-                              decoration: outerDecoration,
-                              height: 50,
-                              child: ElevatedButton(
-                                style: buttonStyle,
-                                onPressed: model.emailFieldIsValid
-                                    ? () {
-                                        model.sendOTPtoEmail();
-                                      }
-                                    : null,
-                                child: Text(
-                                  'Email a sign in code',
-                                  style: textStyle,
-                                ),
-                              ),
-                            ),
                           ),
+                        ),
+                      ),
                   ],
                 ),
                 buildDivider(),
@@ -233,7 +242,7 @@ class NativeLoginView extends StatelessWidget {
                       child: Padding(
                         padding: const EdgeInsets.all(8.0),
                         child: Text(
-                          'freeCodeCamp is free and your account is private by default. We use your email address to connect you to your account.',
+                          context.t.login_data_message,
                           textAlign: TextAlign.center,
                           style:
                               TextStyle(color: Colors.white.withOpacity(0.87)),
@@ -248,7 +257,7 @@ class NativeLoginView extends StatelessWidget {
                       child: Padding(
                         padding: const EdgeInsets.all(8.0),
                         child: Text(
-                          'You must be at least 13 years old to create an account on freeCodeCamp.',
+                          context.t.login_age_message,
                           textAlign: TextAlign.center,
                           style:
                               TextStyle(color: Colors.white.withOpacity(0.87)),

@@ -1,14 +1,14 @@
 class ProfileUI {
   final bool? isLocked;
-  final bool showAbout;
-  final bool showCerts;
+  final bool? showAbout;
+  final bool? showCerts;
   final bool? showDonation;
-  final bool showHeatMap;
-  final bool showLocation;
-  final bool showName;
-  final bool showPoints;
-  final bool showPortfolio;
-  final bool showTimeLine;
+  final bool? showHeatMap;
+  final bool? showLocation;
+  final bool? showName;
+  final bool? showPoints;
+  final bool? showPortfolio;
+  final bool? showTimeLine;
 
   ProfileUI(
       {required this.isLocked,

@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:freecodecamp/extensions/i18n_extension.dart';
 import 'package:freecodecamp/models/learn/curriculum_model.dart';
+
+import 'package:freecodecamp/service/learn/learn_service.dart';
 import 'package:freecodecamp/ui/views/learn/block/block_viewmodel.dart';
 import 'package:freecodecamp/ui/views/learn/widgets/download_button_widget.dart';
 import 'package:freecodecamp/ui/views/learn/widgets/open_close_icon_widget.dart';
@@ -161,15 +164,12 @@ class BlockView extends StatelessWidget {
             ),
             title: Text(block.challengeTiles[i].name),
             onTap: () async {
-              String challenge = block.challengeTiles[i].dashedName;
               String challengeId = block.challengeTiles[i].id;
 
-              String url = await model.learnService.getBaseUrl(
-                '/page-data/learn',
-              );
+              String url = LearnService.baseUrl;
 
               model.routeToChallengeView(
-                '$url/${block.superBlock.dashedName}/${block.dashedName}/$challenge/page-data.json',
+                '$url/challenges/${block.superBlock.dashedName}/${block.dashedName}/$challengeId.json',
                 block,
                 challengeId,
               );
@@ -205,9 +205,9 @@ class BlockHeader extends StatelessWidget {
               padding: const EdgeInsets.all(8),
               margin: const EdgeInsets.only(top: 8, left: 8),
               color: const Color.fromRGBO(0x00, 0x2e, 0xad, 1),
-              child: const Text(
-                'Certification Project',
-                style: TextStyle(
+              child: Text(
+                context.t.certification_project,
+                style: const TextStyle(
                   fontWeight: FontWeight.bold,
                   color: Color.fromRGBO(0x19, 0x8e, 0xee, 1),
                 ),
@@ -303,15 +303,15 @@ class ChallengeTile extends StatelessWidget {
         width: 70,
         child: InkWell(
           onTap: () async {
-            String challenge = block.challengeTiles[step].dashedName;
             String challengeId = block.challengeTiles[step].id;
 
-            String url = await model.learnService.getBaseUrl(
-              '/page-data/learn',
-            );
+            String url = LearnService.baseUrl;
+
+            String fullUrl =
+                '$url/challenges/${block.superBlock.dashedName}/${block.dashedName}/$challengeId.json';
 
             model.routeToChallengeView(
-              '$url/${block.superBlock.dashedName}/${block.dashedName}/$challenge/page-data.json',
+              fullUrl,
               block,
               challengeId,
             );

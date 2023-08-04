@@ -1,15 +1,13 @@
-import 'dart:convert';
-
+import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:freecodecamp/app/app.locator.dart';
 import 'package:freecodecamp/models/learn/curriculum_model.dart';
 import 'package:freecodecamp/service/authentication/authentication_service.dart';
+import 'package:freecodecamp/service/dio_service.dart';
 import 'package:freecodecamp/service/learn/learn_offline_service.dart';
 import 'package:freecodecamp/service/learn/learn_service.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:stacked/stacked.dart';
-
-import 'package:http/http.dart' as http;
 
 class SuperBlockViewModel extends BaseViewModel {
   final _learnOfflineService = locator<LearnOfflineService>();
@@ -20,6 +18,8 @@ class SuperBlockViewModel extends BaseViewModel {
 
   final AuthenticationService _auth = locator<AuthenticationService>();
   AuthenticationService get auth => _auth;
+
+  final _dio = DioService.dio;
 
   double getPaddingBetweenBlocks(Block block) {
     if (block.isStepBased) {
@@ -54,7 +54,7 @@ class SuperBlockViewModel extends BaseViewModel {
     String name,
     bool hasInternet,
   ) async {
-    String baseUrl = await _learnService.getBaseUrl();
+    String baseUrl = LearnService.baseUrl;
 
     if (!hasInternet) {
       return SuperBlock(
@@ -66,20 +66,16 @@ class SuperBlockViewModel extends BaseViewModel {
       );
     }
 
-    final http.Response res = await http.get(
-      Uri.parse(
-        '$baseUrl/curriculum-data/v1/$dashedName.json',
-      ),
-    );
+    final Response res = await _dio.get('$baseUrl/$dashedName.json');
 
     if (res.statusCode == 200) {
       return SuperBlock.fromJson(
-        jsonDecode(res.body),
+        res.data,
         dashedName,
         name,
       );
     } else {
-      throw Exception(res.body);
+      throw Exception(res.data);
     }
   }
 }

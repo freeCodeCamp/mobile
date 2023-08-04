@@ -60,10 +60,7 @@ void main() {
             }
           }
 
-          Challenge challenge = Challenge.fromJson(
-            currChallenge,
-            testing: true,
-          );
+          Challenge challenge = Challenge.fromJson(currChallenge);
 
           String code = await runner.setWebViewContent(
             challenge,

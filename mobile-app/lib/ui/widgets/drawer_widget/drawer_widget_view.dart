@@ -2,10 +2,9 @@ import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_scroll_shadow/flutter_scroll_shadow.dart';
-
+import 'package:freecodecamp/extensions/i18n_extension.dart';
 import 'package:freecodecamp/models/main/user_model.dart';
-
-import 'package:freecodecamp/ui/widgets/drawer_widget/drawer_button.dart';
+import 'package:freecodecamp/ui/widgets/drawer_widget/drawer_tile.dart';
 import 'package:freecodecamp/ui/widgets/drawer_widget/drawer_web_buttton.dart';
 import 'package:freecodecamp/ui/widgets/drawer_widget/drawer_widget_viewmodel.dart';
 import 'package:stacked/stacked.dart';
@@ -53,12 +52,18 @@ class DrawerWidgetView extends StatelessWidget {
                                     );
                                   }
 
-                                  return const Text('Anonymous user');
+                                  return Text(
+                                    context.t.anonymous_user,
+                                  );
                                 })
-                            : const Text('Anonymous user'),
-                        subtitle: Text(model.loggedIn
-                            ? 'Our coolest Camper'
-                            : 'login to save your progress'),
+                            : Text(
+                                context.t.anonymous_user,
+                              ),
+                        subtitle: Text(
+                          model.loggedIn
+                              ? context.t.coolest_camper
+                              : context.t.login_save_progress,
+                        ),
                         isThreeLine: true,
                         onTap: () {
                           if (model.loggedIn) {
@@ -67,21 +72,24 @@ class DrawerWidgetView extends StatelessWidget {
                         },
                       ),
                       buildDivider(),
-                      DrawerButton(
-                        component: 'TUTORIALS',
-                        icon: Icons.forum_outlined,
-                        route: () {
-                          model.routeComponent('NEWS', context);
-                        },
-                      ),
-                      DrawerButton(
+                      DrawerTile(
+                        key: const Key('learn'),
                         component: 'LEARN',
                         icon: '',
                         route: () {
                           model.routeComponent('LEARN', context);
                         },
                       ),
-                      DrawerButton(
+                      DrawerTile(
+                        key: const Key('news'),
+                        component: 'TUTORIALS',
+                        icon: Icons.forum_outlined,
+                        route: () {
+                          model.routeComponent('NEWS', context);
+                        },
+                      ),
+                      DrawerTile(
+                        key: const Key('podcasts'),
                         component: 'PODCASTS',
                         icon: Icons.podcasts_outlined,
                         route: () {
@@ -96,7 +104,8 @@ class DrawerWidgetView extends StatelessWidget {
                         },
                       ),
                       if (!Platform.isIOS)
-                        DrawerButton(
+                        DrawerTile(
+                          key: const Key('code-radio'),
                           component: 'CODE RADIO',
                           icon: Icons.radio,
                           route: () {
@@ -105,19 +114,25 @@ class DrawerWidgetView extends StatelessWidget {
                         ),
                       buildDivider(),
                       const CustomTabButton(
-                        component: 'PRIVACY',
-                        icon: Icons.info_outline,
-                        url:
-                            'https://www.freecodecamp.org/news/privacy-policy/',
-                      ),
-                      const CustomTabButton(
+                        key: Key('donate'),
                         component: 'DONATE',
                         url: 'https://www.freecodecamp.org/donate/',
                         icon: Icons.favorite,
                       ),
+                      DrawerTile(
+                        key: const Key('settings'),
+                        component: 'SETTINGS',
+                        icon: Icons.settings,
+                        route: () {
+                          model.routeComponent('SETTINGS', context);
+                        },
+                      ),
                       buildDivider(),
-                      DrawerButton(
-                          component: model.loggedIn ? 'LOG OUT' : 'LOGIN',
+                      DrawerTile(
+                          key: const Key('auth'),
+                          component: model.loggedIn
+                              ? context.t.logout
+                              : context.t.login,
                           icon: model.loggedIn ? Icons.logout : Icons.login,
                           textColor: model.loggedIn
                               ? const Color.fromARGB(255, 230, 59, 59)
@@ -126,13 +141,12 @@ class DrawerWidgetView extends StatelessWidget {
                             model.loggedIn
                                 ? model.auth.logout()
                                 : model.routeComponent('LOGIN', context);
-                          })
+                          }),
                     ],
                   ),
                 ),
               ),
-              const Padding(
-                padding: EdgeInsets.only(left: 10.0, bottom: 10),
+              const SafeArea(
                 child: Text(
                   'freeCodeCamp is a donor-supported tax-exempt 501(c)(3) nonprofit organization',
                   textAlign: TextAlign.center,

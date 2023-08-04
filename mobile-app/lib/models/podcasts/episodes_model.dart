@@ -69,20 +69,26 @@ class Episodes {
 }
 
 Duration parseDuration(String s) {
-  var hours = 0;
-  var minutes = 0;
-  var seconds = 0;
-  final parts = s.split(':');
+  int hours = 0;
+  int minutes = 0;
+  int seconds = 0;
+  int microsec = 0;
+  List<String> parts = s.split(':');
   if (parts.length > 2) {
     hours = int.tryParse(parts[parts.length - 3]) ?? 0;
   }
   if (parts.length > 1) {
     minutes = int.tryParse(parts[parts.length - 2]) ?? 0;
   }
-  seconds = int.tryParse(parts[parts.length - 1]) ?? 0;
+  List<String> secondsParts = parts[parts.length - 1].split('.');
+  seconds = int.tryParse(secondsParts[0]) ?? 0;
+  if (secondsParts.length > 1) {
+    microsec = int.tryParse(secondsParts[1]) ?? 0;
+  }
   return Duration(
     hours: hours,
     minutes: minutes,
     seconds: seconds,
+    microseconds: microsec,
   );
 }

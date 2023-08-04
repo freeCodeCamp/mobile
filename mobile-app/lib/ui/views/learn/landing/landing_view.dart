@@ -1,10 +1,12 @@
 import 'package:flutter/material.dart';
+import 'package:freecodecamp/extensions/i18n_extension.dart';
 import 'package:freecodecamp/models/learn/curriculum_model.dart';
 import 'package:freecodecamp/models/learn/motivational_quote_model.dart';
 import 'package:freecodecamp/models/main/user_model.dart';
 import 'package:freecodecamp/ui/views/learn/landing/landing_viewmodel.dart';
 import 'package:freecodecamp/ui/widgets/drawer_widget/drawer_widget_view.dart';
 import 'package:stacked/stacked.dart';
+import 'package:upgrader/upgrader.dart';
 
 class LearnLandingView extends StatelessWidget {
   const LearnLandingView({Key? key}) : super(key: key);
@@ -18,85 +20,81 @@ class LearnLandingView extends StatelessWidget {
         appBar: AppBar(
           title: const Text('LEARN'),
         ),
-        drawer: const DrawerWidgetView(),
-        body: RefreshIndicator(
-          backgroundColor: const Color(0xFF0a0a23),
-          color: Colors.white,
-          onRefresh: () {
-            model.refresh();
+        drawer: const DrawerWidgetView(
+          key: Key('drawer'),
+        ),
+        body: UpgradeAlert(
+          upgrader: Upgrader(
+            dialogStyle: UpgradeDialogStyle.material,
+            showIgnore: false,
+            showLater: false,
+          ),
+          child: RefreshIndicator(
+            backgroundColor: const Color(0xFF0a0a23),
+            color: Colors.white,
+            onRefresh: () {
+              model.refresh();
 
-            return Future.delayed(Duration.zero);
-          },
-          child: SingleChildScrollView(
-            child: Column(
-              children: [
-                const QuoteWidget(),
-                StreamBuilder(
-                  stream: model.auth.isLoggedIn,
-                  builder: (context, snapshot) {
-                    return Column(
-                      children: [
-                        if (model.isLoggedIn)
-                          Container(
-                              margin: const EdgeInsets.symmetric(
-                                vertical: 4,
-                                horizontal: 8,
-                              ),
-                              padding: const EdgeInsets.symmetric(
-                                vertical: 16,
-                                horizontal: 8,
-                              ),
-                              decoration: BoxDecoration(
-                                color: const Color(0xFF0a0a23),
-                                border: Border.all(),
-                                borderRadius: BorderRadius.circular(15),
-                              ),
-                              constraints: BoxConstraints(
-                                minWidth: MediaQuery.of(context).size.width,
-                              ),
-                              child: welcomeMessage(model)),
-                        if (!model.isLoggedIn) loginButton(model, context)
-                      ],
-                    );
-                  },
-                ),
-                const SizedBox(height: 16),
-                FutureBuilder<List<SuperBlockButtonData>>(
-                  future: model.superBlockButtons,
-                  builder: (context, snapshot) {
-                    if (snapshot.hasData) {
-                      if (snapshot.data!.isEmpty) {
-                        return errorMessage(context);
+              return Future.delayed(Duration.zero);
+            },
+            child: SingleChildScrollView(
+              child: Column(
+                children: [
+                  const SizedBox(height: 32),
+                  StreamBuilder(
+                    stream: model.auth.isLoggedIn,
+                    builder: (context, snapshot) {
+                      return Column(
+                        children: [
+                          if (model.isLoggedIn) welcomeMessage(model),
+                        ],
+                      );
+                    },
+                  ),
+                  const QuoteWidget(),
+                  if (!model.isLoggedIn) loginButton(model, context),
+                  if (model.hasLastVisitedChallenge && model.isLoggedIn)
+                    ContinueLearningButton(
+                      model: model,
+                    ),
+                  const SizedBox(height: 16),
+                  FutureBuilder<List<SuperBlockButtonData>>(
+                    future: model.superBlockButtons,
+                    builder: (context, snapshot) {
+                      if (snapshot.hasData) {
+                        if (snapshot.data!.isEmpty) {
+                          return errorMessage(context);
+                        }
+
+                        if (snapshot.data is List<SuperBlockButtonData>) {
+                          List<SuperBlockButtonData> buttons = snapshot.data!;
+
+                          return ListView.builder(
+                            physics: const ClampingScrollPhysics(),
+                            shrinkWrap: true,
+                            itemCount: buttons.length,
+                            itemBuilder: (BuildContext context, int i) {
+                              return SuperBlockButton(
+                                button: buttons[i],
+                              );
+                            },
+                          );
+                        }
                       }
 
-                      if (snapshot.data is List<SuperBlockButtonData>) {
-                        List<SuperBlockButtonData> buttons = snapshot.data!;
-
-                        return ListView.builder(
-                          physics: const ClampingScrollPhysics(),
-                          shrinkWrap: true,
-                          itemCount: buttons.length,
-                          itemBuilder: (BuildContext context, int i) {
-                            return SuperBlockButton(
-                              button: buttons[i],
-                            );
-                          },
+                      if (ConnectionState.waiting == snapshot.connectionState) {
+                        return const Center(
+                          child: CircularProgressIndicator(),
                         );
                       }
-                    }
 
-                    if (ConnectionState.waiting == snapshot.connectionState) {
                       return const Center(
                         child: CircularProgressIndicator(),
                       );
-                    }
-
-                    return const Center(
-                      child: CircularProgressIndicator(),
-                    );
-                  },
-                ),
-              ],
+                    },
+                  ),
+                ],
+              ),
             ),
           ),
         ),
@@ -113,23 +111,15 @@ class LearnLandingView extends StatelessWidget {
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         crossAxisAlignment: CrossAxisAlignment.center,
-        children: const [
+        children: [
           Text(
-            'You are offline, and have no downloads!',
-            style: TextStyle(
+            context.t.error_three,
+            style: const TextStyle(
               fontWeight: FontWeight.bold,
               fontSize: 18,
               height: 1.2,
             ),
             textAlign: TextAlign.center,
-          ),
-          Text(
-            'Try to download some challenges if you have an unstable connection.',
-            textAlign: TextAlign.center,
-            style: TextStyle(
-              height: 2.2,
-              fontSize: 16,
-            ),
           ),
         ],
       ),
@@ -138,25 +128,29 @@ class LearnLandingView extends StatelessWidget {
 
   Widget loginButton(LearnLandingViewModel model, BuildContext context) {
     return Container(
-      constraints: const BoxConstraints(
-        minHeight: 50,
-      ),
       padding: const EdgeInsets.symmetric(vertical: 16, horizontal: 8),
-      child: ElevatedButton(
-        style: ElevatedButton.styleFrom(
-          backgroundColor: const Color.fromRGBO(0xf1, 0xbe, 0x32, 1),
-        ),
-        onPressed: () {
-          model.auth.routeToLogin(true);
-        },
-        child: const Padding(
-          padding: EdgeInsets.all(8.0),
-          child: Text(
-            'Sign in to save your progress',
-            textAlign: TextAlign.center,
-            style: TextStyle(color: Colors.black, fontSize: 20),
+      child: Row(
+        children: [
+          Expanded(
+            child: ElevatedButton(
+              style: ElevatedButton.styleFrom(
+                backgroundColor: const Color.fromRGBO(0xf1, 0xbe, 0x32, 1),
+                minimumSize: const Size.fromHeight(50),
+              ),
+              onPressed: () {
+                model.auth.routeToLogin(true);
+              },
+              child: Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: Text(
+                  context.t.login_save_progress,
+                  textAlign: TextAlign.center,
+                  style: const TextStyle(color: Colors.black, fontSize: 20),
+                ),
+              ),
+            ),
           ),
-        ),
+        ],
       ),
     );
   }
@@ -168,20 +162,78 @@ class LearnLandingView extends StatelessWidget {
         if (snapshot.hasData) {
           FccUserModel user = snapshot.data as FccUserModel;
 
-          return Container(
-            padding: const EdgeInsets.all(16),
-            child: Text(
-              'Welcome back ${user.username}!',
-              textAlign: TextAlign.center,
-              style: const TextStyle(
-                fontSize: 20,
-              ),
+          return Text(
+            context.t.login_welcome_back(
+              user.username.startsWith('fcc') ? 'User' : user.username,
+            ),
+            textAlign: TextAlign.center,
+            style: const TextStyle(
+              fontWeight: FontWeight.w700,
+              fontSize: 20,
             ),
           );
         }
 
         return const Center(child: CircularProgressIndicator());
       }),
+    );
+  }
+}
+
+class ContinueLearningButton extends StatelessWidget {
+  const ContinueLearningButton({
+    Key? key,
+    required this.model,
+  }) : super(key: key);
+
+  final LearnLandingViewModel model;
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      padding: const EdgeInsets.symmetric(
+        vertical: 6,
+        horizontal: 8,
+      ),
+      height: 80,
+      child: ElevatedButton(
+        onPressed: () {
+          model.fastRouteToChallenge();
+        },
+        style: ElevatedButton.styleFrom(
+          backgroundColor: const Color.fromRGBO(0x19, 0x8E, 0xEE, 1),
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(0),
+          ),
+        ),
+        child: Row(
+          children: [
+            Align(
+              alignment: Alignment.centerLeft,
+              child: SizedBox(
+                width: MediaQuery.of(context).size.width * 0.70,
+                child: Text(
+                  context.t.continue_left_off,
+                  overflow: TextOverflow.ellipsis,
+                  maxLines: 2,
+                  textAlign: TextAlign.left,
+                  style: const TextStyle(
+                    fontSize: 20,
+                    fontFamily: 'lato',
+                    fontWeight: FontWeight.w700,
+                  ),
+                ),
+              ),
+            ),
+            const Expanded(
+              child: Align(
+                alignment: Alignment.centerRight,
+                child: Icon(Icons.arrow_forward_ios),
+              ),
+            )
+          ],
+        ),
+      ),
     );
   }
 }
@@ -272,32 +324,33 @@ class QuoteWidget extends StatelessWidget {
           MotivationalQuote quote = snapshot.data as MotivationalQuote;
 
           return Container(
-            margin: const EdgeInsets.symmetric(vertical: 8, horizontal: 8),
-            padding: const EdgeInsets.all(8),
-            decoration: BoxDecoration(
-              color: const Color(0xFF0a0a23),
-              border: Border.all(width: 1),
-              borderRadius: BorderRadius.circular(15),
-            ),
-            constraints: const BoxConstraints(
-              minHeight: 200,
-            ),
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
+            padding: const EdgeInsets.all(16),
+            child: Row(
               children: [
-                Text(
-                  '"${quote.quote}"',
-                  textAlign: TextAlign.center,
-                  style: const TextStyle(fontSize: 20, height: 1.5),
-                ),
-                Text(
-                  '- ${quote.author}',
-                  style: const TextStyle(
-                    fontStyle: FontStyle.italic,
-                    fontSize: 16,
-                    height: 1.5,
+                Expanded(
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Text(
+                        '"${quote.quote}"',
+                        textAlign: TextAlign.center,
+                        style:
+                            const TextStyle(fontSize: 18, fontFamily: 'Lato'),
+                      ),
+                      Padding(
+                        padding: const EdgeInsets.all(8.0),
+                        child: Text(
+                          '- ${quote.author}',
+                          style: const TextStyle(
+                            fontStyle: FontStyle.italic,
+                            fontFamily: 'Lato',
+                            fontSize: 18,
+                          ),
+                        ),
+                      )
+                    ],
                   ),
-                )
+                ),
               ],
             ),
           );

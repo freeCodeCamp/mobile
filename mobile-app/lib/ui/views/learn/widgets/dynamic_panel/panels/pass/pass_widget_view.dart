@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:freecodecamp/extensions/i18n_extension.dart';
+import 'package:freecodecamp/models/learn/challenge_model.dart';
+import 'package:freecodecamp/models/learn/curriculum_model.dart';
 import 'package:freecodecamp/models/learn/motivational_quote_model.dart';
 import 'package:freecodecamp/service/authentication/authentication_service.dart';
 import 'package:freecodecamp/ui/views/learn/challenge/challenge_viewmodel.dart';
@@ -31,7 +34,7 @@ class PassWidgetView extends StatelessWidget {
                 Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 16),
                   child: Text(
-                    'Passed',
+                    context.t.passed,
                     style: TextStyle(
                       fontSize: 28,
                       fontFamily: 'Inter',
@@ -107,7 +110,10 @@ class PassWidgetView extends StatelessWidget {
                                 children: [
                                   Expanded(
                                     child: Text(
-                                      '${(completed * 100) ~/ maxChallenges}% Completed',
+                                      context.t.completed_percent(
+                                        ((completed * 100) ~/ maxChallenges)
+                                            .toString(),
+                                      ),
                                       textAlign: TextAlign.right,
                                     ),
                                   ),
@@ -125,25 +131,34 @@ class PassWidgetView extends StatelessWidget {
                   );
                 } else if (!AuthenticationService.staticIsloggedIn) {
                   return Container(
-                    margin: const EdgeInsets.symmetric(
+                    padding: const EdgeInsets.symmetric(
                       vertical: 16,
                       horizontal: 8,
                     ),
-                    constraints: const BoxConstraints(minHeight: 75),
-                    child: ElevatedButton(
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor:
-                            const Color.fromRGBO(0xf1, 0xbe, 0x32, 1),
-                        padding: const EdgeInsets.all(8),
-                      ),
-                      onPressed: () {
-                        model.auth.routeToLogin(true);
-                      },
-                      child: const Text(
-                        'Sign in to save your progress',
-                        textAlign: TextAlign.center,
-                        style: TextStyle(color: Colors.black, fontSize: 20),
-                      ),
+                    child: Row(
+                      children: [
+                        Expanded(
+                          child: ElevatedButton(
+                            style: ElevatedButton.styleFrom(
+                              backgroundColor:
+                                  const Color.fromRGBO(0xf1, 0xbe, 0x32, 1),
+                              padding: const EdgeInsets.all(8),
+                              minimumSize: const Size.fromHeight(50),
+                            ),
+                            onPressed: () {
+                              model.auth.routeToLogin(true);
+                            },
+                            child: Text(
+                              context.t.login_save_progress,
+                              textAlign: TextAlign.center,
+                              style: const TextStyle(
+                                color: Colors.black,
+                                fontSize: 20,
+                              ),
+                            ),
+                          ),
+                        ),
+                      ],
                     ),
                   );
                 }
@@ -195,8 +210,13 @@ class PassButton extends StatelessWidget {
       height: 50,
       width: MediaQuery.of(context).size.width,
       child: TextButton(
-        onPressed: () {
-          model.goToNextChallenge(maxChallenges, completed);
+        onPressed: () async {
+          model.learnService.goToNextChallenge(
+            maxChallenges,
+            completed,
+            await model.challenge as Challenge,
+            model.block as Block,
+          );
         },
         style: ButtonStyle(
           backgroundColor: myColorProperty,
@@ -206,9 +226,9 @@ class PassButton extends StatelessWidget {
           children: [
             Container(
               margin: const EdgeInsets.only(right: 10),
-              child: const Text(
-                'Next',
-                style: TextStyle(fontSize: 20),
+              child: Text(
+                context.t.next,
+                style: const TextStyle(fontSize: 20),
                 textAlign: TextAlign.center,
               ),
             ),

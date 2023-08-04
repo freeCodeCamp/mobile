@@ -1,16 +1,17 @@
 import 'dart:convert';
 import 'dart:io';
+
+import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:freecodecamp/app/app.locator.dart';
 import 'package:freecodecamp/app/app.router.dart';
 import 'package:freecodecamp/models/news/tutorial_model.dart';
 import 'package:freecodecamp/service/developer_service.dart';
-import 'package:http/http.dart' as http;
+import 'package:freecodecamp/service/dio_service.dart';
 import 'package:jiffy/jiffy.dart';
 import 'package:stacked/stacked.dart';
 import 'package:stacked_services/stacked_services.dart';
-import 'package:flutter/material.dart';
 
 List<String> radioArticles = [
   '622c7bf563ded806bb9e8a20',
@@ -29,6 +30,7 @@ class NewsFeedViewModel extends BaseViewModel {
   static const int itemRequestThreshold = 14;
   final _navigationService = locator<NavigationService>();
   static final _developerService = locator<DeveloperService>();
+  final _dio = DioService.dio;
 
   bool _devMode = false;
   bool get devmode => _devMode;
@@ -88,9 +90,9 @@ class NewsFeedViewModel extends BaseViewModel {
     String url =
         "${dotenv.env['NEWSURL']}posts/?key=${dotenv.env['NEWSKEY']}$concact";
 
-    final response = await http.get(Uri.parse(url));
+    final response = await _dio.get(url);
     if (response.statusCode == 200) {
-      var tutorialJson = json.decode(response.body)['posts'];
+      var tutorialJson = response.data['posts'];
       for (int i = 0; i < tutorialJson?.length; i++) {
         if (Platform.isIOS && radioArticles.contains(tutorialJson[i]['id'])) {
           continue;
@@ -99,7 +101,7 @@ class NewsFeedViewModel extends BaseViewModel {
       }
       return tutorials;
     } else {
-      throw Exception(response.body);
+      throw Exception(response.data);
     }
   }
 

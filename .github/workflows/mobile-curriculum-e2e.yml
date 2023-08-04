@@ -6,7 +6,7 @@ on:
     branches:
       - main
     paths:
-      - 'mobile-app/**'
+      - "mobile-app/**"
   push:
     branches:
       - main
@@ -20,12 +20,12 @@ jobs:
 
     steps:
       - name: Checkout freeCodeCamp main repo
-        uses: actions/checkout@8e5e7e5ab8b370d6c329ec480221332ada57f0ab # v3
+        uses: actions/checkout@c85c95e3d7251135ab7dc9ce3241c5835cc595a9 # v3
         with:
           repository: freeCodeCamp/freeCodeCamp
 
       - name: Checkout mobile repo
-        uses: actions/checkout@8e5e7e5ab8b370d6c329ec480221332ada57f0ab # v3
+        uses: actions/checkout@c85c95e3d7251135ab7dc9ce3241c5835cc595a9 # v3
         with:
           path: mobile
 
@@ -35,17 +35,17 @@ jobs:
           version: 8
 
       - name: Use Node.js 18.x
-        uses: actions/setup-node@64ed1c7eab4cce3362f8c340dee64e5eaeef8f7c # v3
+        uses: actions/setup-node@e33196f7422957bea03ed53f6fbb155025ffc7b8 # v3
         with:
           node-version: 18.x
 
-      - name: Setup Flutter 3.7.x
+      - name: Setup Flutter 3.10.x
         uses: subosito/flutter-action@48cafc24713cca54bbe03cdc3a423187d413aafa # v2
         with:
-          flutter-version: '3.7.x'
-          channel: 'stable'
+          flutter-version: "3.10.x"
+          channel: "stable"
           cache: true
-          cache-key: flutter-3.7.x
+          cache-key: flutter-3.10.x
           cache-path: ${{ runner.tool_cache }}/flutter
 
       - name: Set freeCodeCamp Environment Variables

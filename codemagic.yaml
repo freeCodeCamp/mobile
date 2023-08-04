@@ -1,0 +1,155 @@
+workflows:
+  flutter-ios-ci:
+    name: Flutter iOS CI
+    instance_type: mac_mini_m1
+    max_build_duration: 30
+
+    triggering:
+      events:
+        - push
+        - pull_request
+      branch_patterns:
+        - pattern: main
+          include: true
+          source: false
+      cancel_previous_builds: true
+
+    environment:
+      flutter: 3.10.6
+      xcode: latest
+      cocoapods: default
+      groups:
+        - Mobile
+
+    cache:
+      cache_paths:
+        - $FLUTTER_ROOT/.pub-cache
+        - $HOME/Library/Caches/CocoaPods
+
+    working_directory: mobile-app
+
+    scripts:
+      - name: Create .env file
+        script: |
+          echo "NEWSURL=$NEWSURL" > .env
+          echo "NEWSKEY=$NEWSKEY" >> .env
+          echo "ALGOLIAAPPID=$ALGOLIAAPPID" >> .env
+          echo "ALGOLIAKEY=$ALGOLIAKEY" >> .env
+          echo "AUTH0_DOMAIN=$AUTH0_DOMAIN" >> .env
+          echo "AUTH0_CLIENT_ID=$AUTH0_CLIENT_ID" >> .env
+
+      - name: Install dependencies
+        script: flutter pub get
+
+      - name: Analyze code
+        script: flutter analyze
+
+      - name: Install applesimutils
+        script: |
+          brew tap wix/brew
+          brew install applesimutils
+
+      - name: Boot iOS simulator
+        script: |
+          xcrun simctl shutdown all
+          xcrun simctl boot "iPhone 14 Pro Max"
+          xcrun simctl bootstatus "iPhone 14 Pro Max"
+
+      - name: Run integration tests
+        script: dart integration_test_runner.dart --ios
+
+      - name: Move screenshots to artifacts
+        script: cp -r screenshots $CM_EXPORT_DIR
+
+      - name: Build iOS app
+        script: flutter build ipa --release --no-codesign
+
+    publishing:
+      email:
+        recipients:
+          - niraj@freecodecamp.org
+
+
+  flutter-ios-deploy:
+    name: Deploy iOS App
+    instance_type: mac_mini_m1
+    max_build_duration: 30
+
+    triggering:
+      events:
+        - push
+      branch_patterns:
+        - pattern: prod
+          include: true
+      cancel_previous_builds: true
+
+    environment:
+      flutter: 3.10.6
+      xcode: latest
+      cocoapods: default
+      ios_signing:
+        distribution_type: app_store
+        bundle_identifier: org.freecodecamp.ios
+      groups:
+        - Mobile
+
+    cache:
+      cache_paths:
+        - $FLUTTER_ROOT/.pub-cache
+        - $HOME/Library/Caches/CocoaPods
+
+    working_directory: mobile-app
+
+    integrations:
+      app_store_connect: CodeMagic CI
+
+    scripts:
+      - name: Create .env file
+        script: |
+          echo "NEWSURL=$NEWSURL" > .env
+          echo "NEWSKEY=$NEWSKEY" >> .env
+          echo "ALGOLIAAPPID=$ALGOLIAAPPID" >> .env
+          echo "ALGOLIAKEY=$ALGOLIAKEY" >> .env
+          echo "AUTH0_DOMAIN=$AUTH0_DOMAIN" >> .env
+          echo "AUTH0_CLIENT_ID=$AUTH0_CLIENT_ID" >> .env
+
+      - name: Install dependencies
+        script: flutter pub get
+
+      - name: Analyze code
+        script: flutter analyze
+
+      - name: Install applesimutils
+        script: |
+          brew tap wix/brew
+          brew install applesimutils
+
+      - name: Boot iOS simulator
+        script: |
+          xcrun simctl shutdown all
+          xcrun simctl boot "iPhone 14 Pro Max"
+          xcrun simctl bootstatus "iPhone 14 Pro Max"
+
+      - name: Run integration tests
+        script: dart integration_test_runner.dart --ios
+
+      - name: Move screenshots to artifacts
+        script: cp -r screenshots $CM_EXPORT_DIR
+
+      - name: Set up code signing identities
+        script: xcode-project use-profiles
+
+      - name: Build iOS app
+        script: flutter build ipa --release --export-options-plist=/Users/builder/export_options.plist
+
+    artifacts:
+      - build/ios/ipa/*.ipa
+
+    publishing:
+      email:
+        recipients:
+          - niraj@freecodecamp.org
+          - sem@freecodecamp.org
+      app_store_connect:
+        auth: integration
+        submit_to_testflight: true

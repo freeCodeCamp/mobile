@@ -1,3 +1,4 @@
+import 'package:flutter/material.dart';
 import 'package:freecodecamp/app/app.locator.dart';
 import 'package:freecodecamp/app/app.router.dart';
 import 'package:freecodecamp/models/news/bookmarked_tutorial_model.dart';
@@ -8,6 +9,9 @@ import 'package:stacked_services/stacked_services.dart';
 class NewsBookmarkViewModel extends BaseViewModel {
   bool _isBookmarked = false;
   bool get bookmarked => _isBookmarked;
+
+  bool _gotoTopButtonVisible = false;
+  bool get gotoTopButtonVisible => _gotoTopButtonVisible;
 
   bool _userHasBookmarkedTutorials = false;
   bool get userHasBookmarkedTutorials => _userHasBookmarkedTutorials;
@@ -20,6 +24,8 @@ class NewsBookmarkViewModel extends BaseViewModel {
 
   final _navigationService = locator<NavigationService>();
   final _databaseService = locator<BookmarksDatabaseService>();
+
+  ScrollController scrollController = ScrollController();
 
   Future<void> initDB() async {
     await _databaseService.initialise();
@@ -46,6 +52,30 @@ class NewsBookmarkViewModel extends BaseViewModel {
   Future<void> refresh() async {
     await updateListView();
     await hasBookmarkedTutorials();
+  }
+
+  Future goToTop() async {
+    await scrollController.animateTo(
+      0,
+      duration: const Duration(milliseconds: 300),
+      curve: Curves.easeInOut,
+    );
+  }
+
+  Future<void> goToTopButtonHandler() async {
+    scrollController.addListener(() {
+      if (scrollController.offset >= 100) {
+        if (!_gotoTopButtonVisible) {
+          _gotoTopButtonVisible = true;
+          notifyListeners();
+        }
+      } else {
+        if (_gotoTopButtonVisible) {
+          _gotoTopButtonVisible = false;
+          notifyListeners();
+        }
+      }
+    });
   }
 
   Future<void> insertTutorial(dynamic tutorial) async {

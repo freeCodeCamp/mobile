@@ -1,10 +1,11 @@
 import 'package:flutter/material.dart';
-
+import 'package:freecodecamp/extensions/i18n_extension.dart';
 import 'package:freecodecamp/models/news/tutorial_model.dart';
 import 'package:freecodecamp/ui/views/news/news-bookmark/news_bookmark_widget.dart';
+import 'package:freecodecamp/ui/views/news/news-tutorial/news_tutorial_viewmodel.dart';
+import 'package:freecodecamp/ui/views/news/widgets/back_to_top_button.dart';
 import 'package:share_plus/share_plus.dart';
 import 'package:stacked/stacked.dart';
-import 'news_tutorial_viewmodel.dart';
 
 class NewsTutorialHeader extends StatelessWidget {
   const NewsTutorialHeader({Key? key, required this.tutorial})
@@ -39,7 +40,9 @@ class NewsTutorialHeader extends StatelessWidget {
                       key: const Key('title'),
                     ),
                     Text(
-                      'Written by ${tutorial.authorName}',
+                      context.t.tutorial_written_by(
+                        tutorial.authorName,
+                      ),
                       style: const TextStyle(height: 1.5, fontFamily: 'Lato'),
                     ),
                     Wrap(
@@ -89,7 +92,7 @@ class NewsTutorialView extends StatelessWidget {
                     child: Stack(
                       children: [
                         lazyLoadHtml(tutorial!.text!, context, tutorial, model),
-                        bottomButtons(tutorial, model)
+                        bottomButtons(tutorial, model, context),
                       ],
                     ),
                   )
@@ -104,12 +107,21 @@ class NewsTutorialView extends StatelessWidget {
             );
           },
         ),
+        floatingActionButton: model.showToTopButton
+            ? BackToTopButton(
+                onPressed: () => model.goToTop(),
+              )
+            : null,
       ),
       viewModelBuilder: () => NewsTutorialViewModel(),
     );
   }
 
-  Widget bottomButtons(Tutorial tutorial, NewsTutorialViewModel model) {
+  Widget bottomButtons(
+    Tutorial tutorial,
+    NewsTutorialViewModel model,
+    BuildContext context,
+  ) {
     return Align(
       alignment: Alignment.bottomCenter,
       child: SizedBox(
@@ -133,7 +145,7 @@ class NewsTutorialView extends StatelessWidget {
                   ),
                 ),
                 BottomButton(
-                  label: 'Share',
+                  label: context.t.share,
                   icon: Icons.share,
                   onPressed: () {
                     Share.share('${tutorial.title}\n\n${tutorial.url}');

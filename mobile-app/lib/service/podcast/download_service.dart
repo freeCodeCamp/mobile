@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:developer' as dev;
 import 'dart:io';
 
 import 'package:dio/dio.dart';
@@ -6,13 +7,13 @@ import 'package:fk_user_agent/fk_user_agent.dart';
 import 'package:freecodecamp/app/app.locator.dart';
 import 'package:freecodecamp/models/podcasts/episodes_model.dart';
 import 'package:freecodecamp/models/podcasts/podcasts_model.dart';
+import 'package:freecodecamp/service/dio_service.dart';
 import 'package:freecodecamp/service/podcast/notification_service.dart';
 import 'package:freecodecamp/service/podcast/podcasts_service.dart';
 import 'package:path_provider/path_provider.dart';
-import 'dart:developer' as dev;
 
 class DownloadService {
-  final Dio dio = Dio();
+  final Dio dio = DioService.dio;
   static final DownloadService _downloadService = DownloadService._internal();
   final _databaseService = locator<PodcastsDatabaseService>();
   final _notificationService = locator<NotificationService>();

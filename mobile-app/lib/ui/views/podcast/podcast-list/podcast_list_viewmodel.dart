@@ -1,12 +1,10 @@
-import 'dart:convert';
-
 import 'dart:io';
 
 import 'package:freecodecamp/app/app.locator.dart';
 import 'package:freecodecamp/models/podcasts/podcasts_model.dart';
-import 'package:freecodecamp/service/podcast/podcasts_service.dart';
 import 'package:freecodecamp/service/developer_service.dart';
-import 'package:http/http.dart' as http;
+import 'package:freecodecamp/service/dio_service.dart';
+import 'package:freecodecamp/service/podcast/podcasts_service.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:stacked/stacked.dart';
 
@@ -15,6 +13,7 @@ class PodcastListViewModel extends BaseViewModel {
   final _developerService = locator<DeveloperService>();
   static late Directory appDir;
   int _index = 0;
+  final _dio = DioService.dio;
 
   int get index => _index;
 
@@ -39,8 +38,8 @@ class PodcastListViewModel extends BaseViewModel {
     if (isDownloadView) {
       return await _databaseService.getPodcasts();
     } else {
-      final res = await http.get(Uri.parse('${baseUrl}podcasts'));
-      final List<dynamic> podcasts = json.decode(res.body);
+      final res = await _dio.get('${baseUrl}podcasts');
+      final List<dynamic> podcasts = res.data;
       return podcasts.map((podcast) => Podcasts.fromAPIJson(podcast)).toList();
     }
   }

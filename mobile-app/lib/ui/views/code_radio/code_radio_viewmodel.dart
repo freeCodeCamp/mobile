@@ -1,11 +1,11 @@
 import 'dart:async';
 
+import 'package:freecodecamp/app/app.locator.dart';
 import 'package:freecodecamp/models/code-radio/code_radio_model.dart';
 import 'package:freecodecamp/service/audio/audio_service.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:stacked/stacked.dart';
 import 'package:web_socket_channel/web_socket_channel.dart';
-import 'package:freecodecamp/app/app.locator.dart';
 
 class CodeRadioViewModel extends BaseViewModel {
   final audioService = locator<AppAudioService>().audioHandler;
