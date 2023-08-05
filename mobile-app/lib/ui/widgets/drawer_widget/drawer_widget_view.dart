@@ -96,7 +96,7 @@ class DrawerWidgetView extends StatelessWidget {
                           model.routeComponent('PODCAST', context);
                         },
                       ),
-                      DrawerButton(
+                      DrawerTile(
                         component: 'RPG TEST',
                         icon: Icons.podcasts_outlined,
                         route: () {
