@@ -1,12 +1,13 @@
 class CodeRadio {
-  const CodeRadio(
-      {required this.id,
-      required this.listenUrl,
-      required this.totalListeners,
-      required this.duration,
-      required this.elapsed,
-      required this.nowPlaying,
-      required this.nextPlaying});
+  const CodeRadio({
+    required this.id,
+    required this.listenUrl,
+    required this.totalListeners,
+    required this.duration,
+    required this.elapsed,
+    required this.nowPlaying,
+    required this.nextPlaying,
+  });
 
   final int id;
   final String listenUrl;
@@ -36,14 +37,12 @@ class Song {
       {required this.title,
       required this.artist,
       required this.album,
-      required this.genre,
       required this.artUrl,
       required this.id});
 
   final String title;
   final String artist;
   final String album;
-  final String genre;
   final String artUrl;
   final String id;
 
@@ -52,7 +51,6 @@ class Song {
         title: data['title'],
         artist: data['artist'],
         album: data['album'],
-        genre: data['genre'],
         artUrl: data['art'],
         id: data['id']);
   }
