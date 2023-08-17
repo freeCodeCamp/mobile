@@ -8,6 +8,9 @@ import 'package:freecodecamp/service/authentication/authentication_service.dart'
 import 'package:freecodecamp/ui/views/learn/challenge/challenge_viewmodel.dart';
 import 'package:freecodecamp/ui/views/learn/widgets/dynamic_panel/panels/pass/pass_widget_model.dart';
 import 'package:stacked/stacked.dart';
+import 'package:twitter_intent/twitter_intent.dart';
+import 'package:url_launcher/url_launcher.dart';
+import 'package:url_launcher/url_launcher_string.dart';
 
 class PassWidgetView extends StatelessWidget {
   const PassWidgetView({
@@ -171,6 +174,13 @@ class PassWidgetView extends StatelessWidget {
               maxChallenges: maxChallenges,
               completed: challengesCompleted,
             ),
+            ElevatedButton(
+              onPressed: () {
+                // Implement the share logic here
+                _shareToTwitter();
+              },
+              child: const Text('Share'),
+            ),
           ],
         ),
       ),
@@ -237,5 +247,24 @@ class PassButton extends StatelessWidget {
         ),
       ),
     );
+  }
+}
+
+void _shareToTwitter() async {
+  String tweetText = 'Hello, world! This is a pre-filled tweet.';
+  String hashtags = 'example,tweet';
+  String userMentions = 'user1,user2';
+
+  String tweetIntentUrl = 'https://twitter.com/intent/tweet'
+      '?text=${Uri.encodeComponent(tweetText)}'
+      '&hashtags=${Uri.encodeComponent(hashtags)}'
+      '&user_mentions=${Uri.encodeComponent(userMentions)}';
+
+  Uri tweetIntentUri = Uri.parse(tweetIntentUrl);
+
+  if (await canLaunchUrl(tweetIntentUri)) {
+    await launchUrl(tweetIntentUri, mode: LaunchMode.externalApplication);
+  } else {
+    throw 'Could not launch tweet intent';
   }
 }

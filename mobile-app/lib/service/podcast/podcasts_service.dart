@@ -79,11 +79,11 @@ class PodcastsDatabaseService {
 
   // EPISODE QUERIES
   Future<List<Episodes>> getEpisodes(Podcasts podcast) async {
-    List<Map<String, dynamic>> epsResults = await _db.query(
-      episodesTableName,
-      where: 'podcastId = ?',
-      whereArgs: [podcast.id],
-    );
+    List<Map<String, dynamic>> epsResults = await _db.query(episodesTableName,
+        where: 'podcastId = ?',
+        whereArgs: [podcast.id],
+        orderBy: 'publishDate DESC');
+    // print(epsResults);
     return epsResults.map((episode) => Episodes.fromDBJson(episode)).toList();
   }
 
