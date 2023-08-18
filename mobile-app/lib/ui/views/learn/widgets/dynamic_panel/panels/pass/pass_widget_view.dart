@@ -8,9 +8,7 @@ import 'package:freecodecamp/service/authentication/authentication_service.dart'
 import 'package:freecodecamp/ui/views/learn/challenge/challenge_viewmodel.dart';
 import 'package:freecodecamp/ui/views/learn/widgets/dynamic_panel/panels/pass/pass_widget_model.dart';
 import 'package:stacked/stacked.dart';
-import 'package:twitter_intent/twitter_intent.dart';
 import 'package:url_launcher/url_launcher.dart';
-import 'package:url_launcher/url_launcher_string.dart';
 
 class PassWidgetView extends StatelessWidget {
   const PassWidgetView({
