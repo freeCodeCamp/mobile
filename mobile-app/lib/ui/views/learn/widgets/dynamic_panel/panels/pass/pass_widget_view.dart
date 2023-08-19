@@ -7,23 +7,30 @@ import 'package:freecodecamp/models/learn/motivational_quote_model.dart';
 import 'package:freecodecamp/service/authentication/authentication_service.dart';
 import 'package:freecodecamp/ui/views/learn/challenge/challenge_viewmodel.dart';
 import 'package:freecodecamp/ui/views/learn/widgets/dynamic_panel/panels/pass/pass_widget_model.dart';
+import 'package:freecodecamp/ui/views/learn/widgets/share_button_widget.dart';
 import 'package:stacked/stacked.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 class PassWidgetView extends StatelessWidget {
-  const PassWidgetView({
-    Key? key,
-    required this.challengeModel,
-    required this.challengesCompleted,
-    required this.maxChallenges,
-  }) : super(key: key);
+  const PassWidgetView(
+      {Key? key,
+      required this.challengeModel,
+      required this.challengesCompleted,
+      required this.maxChallenges,
+      required this.challenge})
+      : super(key: key);
 
   final ChallengeViewModel challengeModel;
   final int challengesCompleted;
   final int maxChallenges;
+  final Challenge challenge;
 
   @override
   Widget build(BuildContext context) {
+    // Number of the challenge that was completed.
+    // List<String> steps = challenge.title.split(' ');
+    // String id = steps[1];
+
     return ViewModelBuilder<PassWidgetModel>.reactive(
       viewModelBuilder: () => PassWidgetModel(),
       onViewModelReady: (model) => model.init(),
@@ -177,7 +184,10 @@ class PassWidgetView extends StatelessWidget {
                 // Implement the share logic here
                 _shareToTwitter();
               },
-              child: const Text('Share'),
+              child: const Icon(
+                Icons.share,
+                size: 32,
+              ),
             ),
           ],
         ),
@@ -249,9 +259,10 @@ class PassButton extends StatelessWidget {
 }
 
 void _shareToTwitter() async {
-  String tweetText = 'Hello, world! This is a pre-filled tweet.';
-  String hashtags = 'example,tweet';
-  String userMentions = 'user1,user2';
+  String tweetText =
+      '🎉 Challenge Completed! 🏆 Just wrapped up a coding challenge on FreeCodeCamp Mobile. 💻 It was a fantastic learning experience that pushed my coding skills to the next level. Thanks to @freeCodeCamp for the awesome platform! ';
+  String hashtags = 'FreeCodeCamp, CodingJourney';
+  String userMentions = 'freeCodeCamp';
 
   String tweetIntentUrl = 'https://twitter.com/intent/tweet'
       '?text=${Uri.encodeComponent(tweetText)}'

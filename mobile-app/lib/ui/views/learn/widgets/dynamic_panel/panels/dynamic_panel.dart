@@ -41,6 +41,7 @@ class DynamicPanel extends StatelessWidget {
           challengeModel: model,
           challengesCompleted: challengesCompleted,
           maxChallenges: maxChallenges,
+          challenge: challenge,
         );
       case PanelType.hint:
         return HintWidgetView(
