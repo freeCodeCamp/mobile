@@ -20,8 +20,8 @@ class PodcastListView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     List titles = [
-      context.t.podcasts_title,
-      context.t.podcast_download_title,
+      Text(context.t.podcasts_title),
+      Text(context.t.podcast_download_title),
     ];
 
     return ViewModelBuilder<PodcastListViewModel>.reactive(
