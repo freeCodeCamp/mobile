@@ -413,6 +413,10 @@
     "@settings_privacy_policy_description": {
         "description": "settings view"
     },
+    "coderadio_unable_to_load": "Unable to load coderadio \n please try again.",
+    "@coderadio_unable_to_load": {
+        "description": "coderadio view"
+    },
     "coderadio_next_song": "Next Song",
     "@coderadio_next_song": {
         "description": "coderadio view (only on Android)"

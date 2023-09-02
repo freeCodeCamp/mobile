@@ -26,17 +26,21 @@ class CodeRadioView extends StatelessWidget {
   }
 
   Widget template(BuildContext ctxt, CodeRadioViewModel model) {
+    model.channel.sink.add(jsonEncode({
+      'subs': {'station:coderadio': {}}
+    }));
     return Container(
       padding: const EdgeInsets.all(16),
       child: Column(
         children: [
           StreamBuilder(
-            stream: model.channel.stream,
+            stream: model.channel.stream.where(
+                (event) => event != {} && jsonDecode(event).containsKey('pub')),
             builder: (context, snapshot) {
               if (snapshot.hasData) {
-                CodeRadio radio = CodeRadio.fromJson(jsonDecode(
-                  snapshot.data.toString(),
-                ));
+                final data = jsonDecode(snapshot.data.toString());
+
+                CodeRadio radio = CodeRadio.fromJson(data['pub']['data']['np']);
 
                 if (!model.audioService.isPlaying('coderadio') &&
                     !model.stoppedManually) {
@@ -73,6 +77,13 @@ class CodeRadioView extends StatelessWidget {
                         ),
                       )
                     ],
+                  ),
+                );
+              } else if (snapshot.hasError) {
+                return Center(
+                  child: Text(
+                    context.t.coderadio_unable_to_load,
+                    textAlign: TextAlign.center,
                   ),
                 );
               }
