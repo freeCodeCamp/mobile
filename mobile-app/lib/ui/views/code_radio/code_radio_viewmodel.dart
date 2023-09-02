@@ -13,7 +13,7 @@ class CodeRadioViewModel extends BaseViewModel {
   bool get stoppedManually => _stoppedManually;
 
   final _channel = WebSocketChannel.connect(Uri.parse(
-      'wss://coderadio-admin.freecodecamp.org/api/live/nowplaying/coderadio'));
+      'wss://coderadio-admin-v2.freecodecamp.org/api/live/nowplaying/websocket'));
 
   WebSocketChannel get channel => _channel;
 
