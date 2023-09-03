@@ -14,6 +14,7 @@ class CodeRadioView extends StatelessWidget {
   Widget build(BuildContext context) {
     return ViewModelBuilder<CodeRadioViewModel>.reactive(
       viewModelBuilder: () => CodeRadioViewModel(),
+      onViewModelReady: (model) => model.init(),
       builder: (context, model, child) => Scaffold(
         backgroundColor: const Color(0xFF0a0a23),
         appBar: AppBar(
@@ -31,12 +32,13 @@ class CodeRadioView extends StatelessWidget {
       child: Column(
         children: [
           StreamBuilder(
-            stream: model.channel.stream,
+            stream: model.webSocketController.stream.where(
+                (event) => event != {} && jsonDecode(event).containsKey('pub')),
             builder: (context, snapshot) {
               if (snapshot.hasData) {
-                CodeRadio radio = CodeRadio.fromJson(jsonDecode(
-                  snapshot.data.toString(),
-                ));
+                final data = jsonDecode(snapshot.data.toString());
+
+                CodeRadio radio = CodeRadio.fromJson(data['pub']['data']['np']);
 
                 if (!model.audioService.isPlaying('coderadio') &&
                     !model.stoppedManually) {
@@ -73,6 +75,13 @@ class CodeRadioView extends StatelessWidget {
                         ),
                       )
                     ],
+                  ),
+                );
+              } else if (snapshot.hasError) {
+                return Center(
+                  child: Text(
+                    context.t.coderadio_unable_to_load,
+                    textAlign: TextAlign.center,
                   ),
                 );
               }
@@ -120,8 +129,28 @@ class CodeRadioView extends StatelessWidget {
 
   StreamBuilder playPauseButton(CodeRadioViewModel model, BuildContext ctxt) {
     return StreamBuilder(
-      stream: model.audioService.queue.stream,
+      stream: model.audioService.playbackState.stream,
       builder: (context, snapshot) {
+        if (snapshot.hasData) {
+          if(!snapshot.data.playing) {
+            model.stoppedManually = true;
+          }
+          return ElevatedButton.icon(
+            style: ButtonStyle(
+              backgroundColor: MaterialStateProperty.all<Color>(
+                  const Color.fromRGBO(0x2A, 0x2A, 0x40, 1)),
+            ),
+            onPressed: () {
+              model.pauseUnpauseRadio();
+            },
+            icon: Icon(!snapshot.data.playing ? Icons.play_arrow : Icons.pause),
+            label: Text(
+              !snapshot.data.playing
+                  ? ctxt.t.coderadio_play
+                  : ctxt.t.coderadio_pause,
+            ),
+          );
+        }
         return ElevatedButton.icon(
           style: ButtonStyle(
             backgroundColor: MaterialStateProperty.all<Color>(
@@ -194,7 +223,7 @@ class CodeRadioView extends StatelessWidget {
           Padding(
             padding: const EdgeInsets.only(top: 8.0),
             child: StreamBuilder(
-              stream: model.controller.stream,
+              stream: model.audioStateController.stream,
               builder: (context, snapshot) {
                 if (snapshot.hasData) {
                   return LinearProgressIndicator(
