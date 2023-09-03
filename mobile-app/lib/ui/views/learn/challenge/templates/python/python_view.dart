@@ -115,7 +115,7 @@ class PythonView extends StatelessWidget {
                           ? model.choiceStatus!
                               ? context.t.next_challenge
                               : context.t.try_again
-                          : context.t.try_again,
+                          : context.t.questions_check,
                       style: const TextStyle(fontSize: 20),
                     ),
                   ),
