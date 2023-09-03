@@ -14,6 +14,7 @@ class CodeRadioView extends StatelessWidget {
   Widget build(BuildContext context) {
     return ViewModelBuilder<CodeRadioViewModel>.reactive(
       viewModelBuilder: () => CodeRadioViewModel(),
+      onViewModelReady: (model) => model.init(),
       builder: (context, model, child) => Scaffold(
         backgroundColor: const Color(0xFF0a0a23),
         appBar: AppBar(
@@ -26,15 +27,12 @@ class CodeRadioView extends StatelessWidget {
   }
 
   Widget template(BuildContext ctxt, CodeRadioViewModel model) {
-    model.channel.sink.add(jsonEncode({
-      'subs': {'station:coderadio': {}}
-    }));
     return Container(
       padding: const EdgeInsets.all(16),
       child: Column(
         children: [
           StreamBuilder(
-            stream: model.channel.stream.where(
+            stream: model.webSocketController.stream.where(
                 (event) => event != {} && jsonDecode(event).containsKey('pub')),
             builder: (context, snapshot) {
               if (snapshot.hasData) {
@@ -205,7 +203,7 @@ class CodeRadioView extends StatelessWidget {
           Padding(
             padding: const EdgeInsets.only(top: 8.0),
             child: StreamBuilder(
-              stream: model.controller.stream,
+              stream: model.audioStateController.stream,
               builder: (context, snapshot) {
                 if (snapshot.hasData) {
                   return LinearProgressIndicator(

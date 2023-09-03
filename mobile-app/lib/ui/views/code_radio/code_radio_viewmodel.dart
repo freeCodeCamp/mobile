@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:convert';
 
 import 'package:freecodecamp/app/app.locator.dart';
 import 'package:freecodecamp/models/code-radio/code_radio_model.dart';
@@ -12,25 +13,32 @@ class CodeRadioViewModel extends BaseViewModel {
   bool _stoppedManually = false;
   bool get stoppedManually => _stoppedManually;
 
-  final _channel = WebSocketChannel.connect(Uri.parse(
+  final _webSocketChannel = WebSocketChannel.connect(Uri.parse(
       'wss://coderadio-admin-v2.freecodecamp.org/api/live/nowplaying/websocket'));
-
-  WebSocketChannel get channel => _channel;
+  final _webSocketController = StreamController<dynamic>.broadcast();
+  StreamController<dynamic> get webSocketController => _webSocketController;
 
   int _counter = 0;
   int get counter => _counter;
 
-  final _controller = StreamController<int>();
-  StreamController<int> get controller => _controller;
+  final _audioStateController = StreamController<int>();
+  StreamController<int> get audioStateController => _audioStateController;
 
   Timer? _timer;
   Timer? get timer => _timer;
+
+  void init() async {
+    _webSocketChannel.sink.add(jsonEncode({
+      'subs': {'station:coderadio': {}}
+    }));
+    await _webSocketController.addStream(_webSocketChannel.stream);
+  }
 
   void startProgressBar(int timeElapsed, int duration) {
     _counter = timeElapsed;
     _timer = Timer.periodic(const Duration(seconds: 1), (timer) {
       _counter++;
-      _controller.sink.add(_counter);
+      _audioStateController.sink.add(_counter);
 
       if (_counter == duration) {
         timer.cancel();
