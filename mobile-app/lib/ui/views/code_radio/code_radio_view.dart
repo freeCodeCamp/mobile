@@ -129,8 +129,28 @@ class CodeRadioView extends StatelessWidget {
 
   StreamBuilder playPauseButton(CodeRadioViewModel model, BuildContext ctxt) {
     return StreamBuilder(
-      stream: model.audioService.queue.stream,
+      stream: model.audioService.playbackState.stream,
       builder: (context, snapshot) {
+        if (snapshot.hasData) {
+          if(!snapshot.data.playing) {
+            model.stoppedManually = true;
+          }
+          return ElevatedButton.icon(
+            style: ButtonStyle(
+              backgroundColor: MaterialStateProperty.all<Color>(
+                  const Color.fromRGBO(0x2A, 0x2A, 0x40, 1)),
+            ),
+            onPressed: () {
+              model.pauseUnpauseRadio();
+            },
+            icon: Icon(!snapshot.data.playing ? Icons.play_arrow : Icons.pause),
+            label: Text(
+              !snapshot.data.playing
+                  ? ctxt.t.coderadio_play
+                  : ctxt.t.coderadio_pause,
+            ),
+          );
+        }
         return ElevatedButton.icon(
           style: ButtonStyle(
             backgroundColor: MaterialStateProperty.all<Color>(

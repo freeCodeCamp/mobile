@@ -10,8 +10,7 @@ import 'package:web_socket_channel/web_socket_channel.dart';
 
 class CodeRadioViewModel extends BaseViewModel {
   final audioService = locator<AppAudioService>().audioHandler;
-  bool _stoppedManually = false;
-  bool get stoppedManually => _stoppedManually;
+  bool stoppedManually = false;
 
   final _webSocketChannel = WebSocketChannel.connect(Uri.parse(
       'wss://coderadio-admin-v2.freecodecamp.org/api/live/nowplaying/websocket'));
@@ -48,12 +47,12 @@ class CodeRadioViewModel extends BaseViewModel {
 
   void pauseUnpauseRadio() async {
     if (!audioService.isPlaying('coderadio')) {
-      _stoppedManually = false;
+      stoppedManually = false;
 
       await audioService.play();
       notifyListeners();
     } else {
-      _stoppedManually = true;
+      stoppedManually = true;
       await audioService.pause();
       notifyListeners();
     }
