@@ -212,7 +212,7 @@ class PodcastTileState extends State<PodcastTile> {
 
   String _parseDuration(Duration dur, BuildContext context) {
     String hours = (widget.episode.duration!.inMinutes ~/ 60).toString();
-    String minutes = (widget.episode.duration!.inMinutes).toString();
+    String minutes = (widget.episode.duration!.inMinutes % 60).toString();
 
     if (dur.inMinutes > 59) {
       return context.t.podcast_duration_hours(
