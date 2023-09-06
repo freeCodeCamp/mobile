@@ -19,10 +19,12 @@ void main() {
     await setupLocator();
     TestRunner runner = TestRunner();
     List<String> publicSBs = [
+      '2022/responsive-web-design',
+      'responsive-web-design',
       'javascript-algorithms-and-data-structures',
     ];
 
-    var curriculumFile = File('./curriculum.json');
+    var curriculumFile = File('../../config/curriculum.json');
     Map curriculumData = jsonDecode(curriculumFile.readAsStringSync());
 
     for (var currSuperBlock in publicSBs) {
