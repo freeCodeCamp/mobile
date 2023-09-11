@@ -73,7 +73,7 @@ class NewsFeedView extends StatelessWidget {
     );
   }
 
-  Column errorMessage(context) {
+  Column errorMessage(BuildContext context) {
     return Column(
       mainAxisAlignment: MainAxisAlignment.center,
       crossAxisAlignment: CrossAxisAlignment.stretch,
