@@ -153,7 +153,7 @@ class HTMLParser {
         ),
       },
       onLinkTap: (url, attributes, element) {
-        launchUrl(Uri.parse(url!));
+        launchUrl(Uri.parse(url!.trim()));
       },
       extensions: [
         const TableHtmlExtension(),
