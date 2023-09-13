@@ -37,10 +37,14 @@ jobs:
       # - name: Set up Docker Buildx
       #   uses: docker/setup-buildx-action@v1
 
+      - name: Create a tagname
+        id: tagname
+        run: |
+          echo "tagname=$(git rev-parse --short HEAD)-$(date +%Y%m%d)-$(date +%H%M)" >> $GITHUB_ENV
+
       - name: Build & Tag Images
         run: |
           cd mobile-api
-          tagname=$(git rev-parse --short HEAD)-$(date +%Y%m%d)-$(date +%H%M)
           docker build . \
           --tag registry.digitalocean.com/${{ secrets.DOCR_NAME }}/${{ matrix.site_tlds }}/mobile-api:$tagname \
           --tag registry.digitalocean.com/${{ secrets.DOCR_NAME }}/${{ matrix.site_tlds }}/mobile-api:latest \
