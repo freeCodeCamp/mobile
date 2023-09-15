@@ -75,6 +75,7 @@ class PythonView extends StatelessWidget {
                     ),
                     child: YoutubePlayer(
                       controller: controller,
+                      enableFullScreenOnVerticalDrag: false,
                     ),
                   ),
                   const SizedBox(height: 12),

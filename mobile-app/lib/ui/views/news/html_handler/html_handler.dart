@@ -236,6 +236,7 @@ class HTMLParser {
                 );
 
               return YoutubePlayer(
+                enableFullScreenOnVerticalDrag: false,
                 controller: controller,
               );
             }
