@@ -11,7 +11,8 @@ import 'package:stacked/stacked.dart';
 const fccPodcastUrls = [
   'https://freecodecamp.libsyn.com/rss',
   'https://feeds.transistor.fm/freecodecamp-podcast-en-espanol',
-  'https://feeds.transistor.fm/freecodecamp-podcast-in-chinese'
+  'https://feeds.transistor.fm/freecodecamp-podcast-in-chinese',
+  'https://feeds.transistor.fm/freecodecamp-podcast-em-portugues',
 ];
 
 class PodcastListViewModel extends BaseViewModel {
