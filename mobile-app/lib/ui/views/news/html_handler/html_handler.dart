@@ -153,7 +153,7 @@ class HTMLParser {
         ),
       },
       onLinkTap: (url, attributes, element) {
-        launchUrl(Uri.parse(url!));
+        launchUrl(Uri.parse(url!.trim()));
       },
       extensions: [
         const TableHtmlExtension(),
@@ -236,6 +236,7 @@ class HTMLParser {
                 );
 
               return YoutubePlayer(
+                enableFullScreenOnVerticalDrag: false,
                 controller: controller,
               );
             }

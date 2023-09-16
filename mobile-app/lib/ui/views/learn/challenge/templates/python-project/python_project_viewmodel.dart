@@ -32,7 +32,11 @@ class PythonProjectViewModel extends BaseViewModel {
   }
 
   bool isUrl(String url) {
-    return Uri.parse(url).isAbsolute;
+    try {
+      return Uri.parse(url).isAbsolute;
+    } on FormatException {
+      return false;
+    }
   }
 
   void checkLink() {
