@@ -36,7 +36,6 @@ class FccUserModel {
 
   final bool emailVerified;
   final bool isEmailVerified;
-  final bool sound;
   final bool acceptedPrivacyTerms;
   final bool sendQuincyEmail;
 
@@ -97,7 +96,6 @@ class FccUserModel {
     this.about,
     required this.emailVerified,
     required this.isEmailVerified,
-    required this.sound,
     required this.acceptedPrivacyTerms,
     required this.sendQuincyEmail,
     required this.isCheater,
@@ -150,7 +148,6 @@ class FccUserModel {
       about: data['about'],
       emailVerified: data['emailVerified'],
       isEmailVerified: data['isEmailVerified'],
-      sound: data['sound'],
       acceptedPrivacyTerms: data['acceptedPrivacyTerms'],
       sendQuincyEmail: data['sendQuincyEmail'],
       isCheater: data['isCheater'],
