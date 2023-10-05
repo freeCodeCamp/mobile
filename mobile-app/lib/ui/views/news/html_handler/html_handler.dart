@@ -2,6 +2,7 @@ import 'dart:convert';
 
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_highlight/flutter_highlight.dart';
 import 'package:flutter_highlight/theme_map.dart';
 import 'package:flutter_html/flutter_html.dart';
@@ -24,7 +25,6 @@ class HTMLParser {
 
   List<Widget> parse(
     String html, {
-    bool isSelectable = true,
     Color? fontColor,
   }) {
     dom.Document result = parser.parse(html);
@@ -35,7 +35,6 @@ class HTMLParser {
       elements.add(
         _parseHTMLWidget(
           result.body!.children[i].outerHtml,
-          isSelectable,
           fontColor,
         ),
       );
@@ -63,7 +62,6 @@ class HTMLParser {
 
   Widget _parseHTMLWidget(
     child, [
-    bool isSelectable = true,
     Color? fontColor,
   ]) {
     Html htmlWidget = Html(
@@ -145,8 +143,6 @@ class HTMLParser {
           fontSize: FontSize.medium,
         ),
         'code': Style(
-          backgroundColor: const Color.fromRGBO(0x3b, 0x3b, 0x4f, 1),
-          padding: HtmlPaddings.symmetric(vertical: 2, horizontal: 4),
           color: Colors.white.withOpacity(0.87),
           fontSize: FontSize.xLarge,
           fontFamily: 'Roboto Mono',
@@ -157,6 +153,46 @@ class HTMLParser {
       },
       extensions: [
         const TableHtmlExtension(),
+        TagExtension(
+            tagsToExtend: {'code'},
+            builder: (child) {
+              return Container(
+                color: const Color.fromRGBO(0x3b, 0x3b, 0x4f, 1),
+                constraints: const BoxConstraints(
+                  minWidth: 0, // set your desired minimum width here
+                ),
+                child: Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Flexible(
+                      fit: FlexFit.loose,
+                      child: Text(
+                        child.node.text ?? '',
+                        style: TextStyle(
+                          fontSize: double.parse(
+                            FontSize.xLarge.value.toString(),
+                          ),
+                          fontFamily: 'RobotoMono',
+                          color: Colors.white,
+                        ),
+                      ),
+                    ),
+                    if (child.node.text != null && child.node.text!.length > 15)
+                      InkWell(
+                        onTap: () {
+                          Clipboard.setData(
+                            ClipboardData(text: child.node.text ?? ''),
+                          );
+                        },
+                        child: const Padding(
+                          padding: EdgeInsets.symmetric(horizontal: 2),
+                          child: Icon(Icons.copy),
+                        ),
+                      )
+                  ],
+                ),
+              );
+            }),
         TagExtension(
           tagsToExtend: {'pre'},
           builder: (child) {
@@ -225,15 +261,15 @@ class HTMLParser {
             if (isVideo.hasMatch(videoUrl ?? '')) {
               var videoId = videoUrl?.split('/').last.split('?').first;
 
-                YoutubePlayerController controller =
-                    YoutubePlayerController.fromVideoId(
-                  videoId: videoId!,
-                  autoPlay: false,
-                  params: const YoutubePlayerParams(
-                    showControls: true,
-                    showFullscreenButton: true,
-                  ),
-                );
+              YoutubePlayerController controller =
+                  YoutubePlayerController.fromVideoId(
+                videoId: videoId!,
+                autoPlay: false,
+                params: const YoutubePlayerParams(
+                  showControls: true,
+                  showFullscreenButton: true,
+                ),
+              );
 
               return YoutubePlayer(
                 enableFullScreenOnVerticalDrag: false,
@@ -298,14 +334,6 @@ class HTMLParser {
       ],
     );
 
-    if (isSelectable) {
-      return SelectableRegion(
-        selectionControls: materialTextSelectionControls,
-        focusNode: FocusNode(),
-        child: htmlWidget,
-      );
-    } else {
-      return htmlWidget;
-    }
+    return htmlWidget;
   }
 }

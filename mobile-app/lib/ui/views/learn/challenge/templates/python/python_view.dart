@@ -166,7 +166,6 @@ class PythonView extends StatelessWidget {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: parser.parse(
                   answer.value,
-                  isSelectable: false,
                   fontColor: answer.key == model.currentChoice
                       ? const Color(0xFF0a0a23)
                       : null,
