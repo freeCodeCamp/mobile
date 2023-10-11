@@ -26,6 +26,7 @@ class HTMLParser {
   List<Widget> parse(
     String html, {
     Color? fontColor,
+    bool? showCopy,
   }) {
     dom.Document result = parser.parse(html);
 
@@ -36,6 +37,7 @@ class HTMLParser {
         _parseHTMLWidget(
           result.body!.children[i].outerHtml,
           fontColor,
+          showCopy ?? true,
         ),
       );
     }
@@ -63,6 +65,7 @@ class HTMLParser {
   Widget _parseHTMLWidget(
     child, [
     Color? fontColor,
+    bool showCopy = true,
   ]) {
     Html htmlWidget = Html(
       shrinkWrap: true,
@@ -177,7 +180,9 @@ class HTMLParser {
                         ),
                       ),
                     ),
-                    if (child.node.text != null && child.node.text!.length > 15)
+                    if (child.node.text != null &&
+                        child.node.text!.length > 15 &&
+                        showCopy)
                       InkWell(
                         onTap: () {
                           Clipboard.setData(

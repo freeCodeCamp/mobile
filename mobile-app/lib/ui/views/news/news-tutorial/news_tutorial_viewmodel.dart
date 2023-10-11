@@ -142,7 +142,7 @@ class NewsTutorialViewModel extends BaseViewModel {
   List<Widget> initLazyLoading(html, context, tutorial) {
     HTMLParser parser = HTMLParser(context: context);
 
-    List<Widget> elements = parser.parse(html);
+    List<Widget> elements = parser.parse(html, showCopy: false);
 
     if (tutorial is Tutorial) {
       // insert before the first element
