@@ -145,7 +145,7 @@ class HTMLParser {
           fontSize: FontSize.medium,
         ),
         'code': Style(
-          backgroundColor: const Color.fromRGBO(0x3b, 0x3b, 0x4f, 1),
+          backgroundColor: const Color.fromRGBO(0x3b, 0x3b, 0x4f, 0.5),
           padding: HtmlPaddings.symmetric(vertical: 2, horizontal: 4),
           color: Colors.white.withOpacity(0.87),
           fontSize: FontSize.xLarge,
@@ -299,11 +299,7 @@ class HTMLParser {
     );
 
     if (isSelectable) {
-      return SelectableRegion(
-        selectionControls: materialTextSelectionControls,
-        focusNode: FocusNode(),
-        child: htmlWidget,
-      );
+      return SelectionArea(child: htmlWidget);
     } else {
       return htmlWidget;
     }
