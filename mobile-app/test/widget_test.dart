@@ -24,7 +24,7 @@ void main() {
       'javascript-algorithms-and-data-structures',
     ];
 
-    var curriculumFile = File('../../config/curriculum.json');
+    var curriculumFile = File('../../shared/config/curriculum.json');
     Map curriculumData = jsonDecode(curriculumFile.readAsStringSync());
 
     for (var currSuperBlock in publicSBs) {
