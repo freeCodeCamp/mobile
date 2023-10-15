@@ -149,10 +149,15 @@ class TileLayout extends StatelessWidget {
                 minWidth: imgSize,
                 maxWidth: imgSize,
               ),
-              child: Image.network(
-                tutorial.featureImage,
-                fit: BoxFit.cover,
-              ),
+              child: tutorial.featureImage == null
+                  ? Image.asset(
+                      'assets/images/freecodecamp-banner.png',
+                      fit: BoxFit.cover,
+                    )
+                  : Image.network(
+                      tutorial.featureImage!,
+                      fit: BoxFit.cover,
+                    ),
             ),
             onTap: () {
               widget.navigateToTutorial(tutorial.id, tutorial.title);

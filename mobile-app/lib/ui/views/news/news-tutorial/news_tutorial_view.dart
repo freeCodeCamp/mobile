@@ -19,10 +19,15 @@ class NewsTutorialHeader extends StatelessWidget {
       children: [
         AspectRatio(
           aspectRatio: 16 / 9,
-          child: Image.network(
-            tutorial.featureImage,
-            fit: BoxFit.cover,
-          ),
+          child: tutorial.featureImage == null
+              ? Image.asset(
+                  'assets/images/freecodecamp-banner.png',
+                  fit: BoxFit.cover,
+                )
+              : Image.network(
+                  tutorial.featureImage!,
+                  fit: BoxFit.cover,
+                ),
         ),
         Row(
           children: [

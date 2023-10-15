@@ -141,18 +141,24 @@ class NewsFeedView extends StatelessWidget {
           color: const Color.fromRGBO(0x2A, 0x2A, 0x40, 1),
           child: AspectRatio(
             aspectRatio: 16 / 9,
-            child: CachedNetworkImage(
-              imageUrl: tutorial.featureImage,
-              errorWidget: (context, url, error) => const Icon(Icons.error),
-              imageBuilder: (context, imageProvider) => Container(
-                decoration: BoxDecoration(
-                  image: DecorationImage(
-                    image: imageProvider,
+            child: tutorial.featureImage == null
+                ? Image.asset(
+                    'assets/images/freecodecamp-banner.png',
                     fit: BoxFit.cover,
+                  )
+                : CachedNetworkImage(
+                    imageUrl: tutorial.featureImage!,
+                    errorWidget: (context, url, error) =>
+                        const Icon(Icons.error),
+                    imageBuilder: (context, imageProvider) => Container(
+                      decoration: BoxDecoration(
+                        image: DecorationImage(
+                          image: imageProvider,
+                          fit: BoxFit.cover,
+                        ),
+                      ),
+                    ),
                   ),
-                ),
-              ),
-            ),
           ),
         ),
         Align(

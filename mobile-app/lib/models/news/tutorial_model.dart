@@ -4,7 +4,7 @@ import 'package:freecodecamp/ui/widgets/tag_widget.dart';
 class Tutorial {
   final String id;
   final String title;
-  final String featureImage;
+  final String? featureImage;
   final String? profileImage;
   final String authorName;
   final String authorSlug;
