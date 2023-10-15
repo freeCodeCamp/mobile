@@ -69,7 +69,7 @@ jobs:
         uses: cypress-io/github-action@v4
         with:
           record: ${{ env.CYPRESS_RECORD_KEY != 0 }}
-          start: pnpm dlx serve --no-request-logging
+          start: npx serve --no-request-logging
           wait-on: http://localhost:3000
           wait-on-timeout: 1200
           config: '{"e2e":{"baseUrl":"http://localhost:3000/mobile/mobile-app/generated-tests/","projectId":"ke77ns","retries":2,"chromeWebSecurity":false,"specPattern":"cypress/e2e/mobile-learn/test-challenges.js","screenshotOnRunFailure":false,"video":false}}'
