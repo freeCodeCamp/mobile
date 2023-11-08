@@ -123,7 +123,7 @@ class Challenge {
 
 class Question {
   final String text;
-  final List<String> answers;
+  final List<Answer> answers;
   final int solution;
 
   Question({
@@ -135,8 +135,27 @@ class Question {
   factory Question.fromJson(Map<String, dynamic> data) {
     return Question(
       text: data['text'],
-      answers: (data['answers'] as List).cast<String>(),
+      answers: (data['answers'] ?? [])
+          .map<Answer>((answer) => Answer.fromJson(answer))
+          .toList(),
       solution: data['solution'],
+    );
+  }
+}
+
+class Answer {
+  final String answer;
+  String? feedback;
+
+  Answer({
+    required this.answer,
+    this.feedback,
+  });
+
+  factory Answer.fromJson(Map<String, dynamic> data) {
+    return Answer(
+      answer: data['answer'],
+      feedback: data['feedback'],
     );
   }
 }
