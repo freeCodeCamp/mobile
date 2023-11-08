@@ -29,7 +29,7 @@
   },
   "devDependencies": {
     "@babel/preset-typescript": "7.23.0",
-    "@types/jest": "29.5.5",
+    "@types/jest": "29.5.8",
     "@babel/preset-env": "7.22.20",
     "@babel/plugin-transform-typescript": "7.22.15",
     "@breejs/ts-worker": "2.0.0",
