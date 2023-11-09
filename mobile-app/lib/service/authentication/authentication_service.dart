@@ -4,6 +4,7 @@ import 'dart:io';
 
 import 'package:auth0_flutter/auth0_flutter.dart';
 import 'package:dio/dio.dart';
+import 'package:firebase_crashlytics/firebase_crashlytics.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
@@ -207,9 +208,10 @@ class AuthenticationService {
       extractCookies(res);
       await writeTokensToStorage();
       await fetchUser();
-    } on DioException catch (e) {
+    } on DioException catch (err, st) {
+      FirebaseCrashlytics.instance.recordError(err, st);
       Navigator.pop(context);
-      if (e.response != null) {
+      if (err.response != null) {
         showDialog(
           context: context,
           barrierDismissible: false,
@@ -219,8 +221,12 @@ class AuthenticationService {
           builder: (context) => AlertDialog(
             backgroundColor: const Color(0xFF2A2A40),
             title: Text(context.t.error_two),
-            content: Text(
-              e.response!.data['message'],
+            content: SingleChildScrollView(
+              child: SelectionArea(
+                child: Text(
+                  '${err.response!.data}\n$st',
+                ),
+              ),
             ),
             actions: [
               TextButton(
@@ -246,7 +252,13 @@ class AuthenticationService {
           builder: (context) => AlertDialog(
             backgroundColor: const Color(0xFF2A2A40),
             title: Text(context.t.error_two),
-            content: Text(context.t.error_three),
+            content: SingleChildScrollView(
+              child: SelectionArea(
+                child: Text(
+                  'Oops! Something went wrong. Please try again in a moment.\n${st.toString()}',
+                ),
+              ),
+            ),
             actions: [
               TextButton(
                 style: TextButton.styleFrom(
