@@ -14,6 +14,7 @@ import 'package:freecodecamp/models/main/user_model.dart';
 import 'package:freecodecamp/service/dio_service.dart';
 import 'package:freecodecamp/ui/views/auth/privacy_view.dart';
 import 'package:stacked_services/stacked_services.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class AuthenticationService {
   static final AuthenticationService _authenticationService =
@@ -208,9 +209,13 @@ class AuthenticationService {
       await writeTokensToStorage();
       await fetchUser();
     } on DioException catch (err, st) {
+      String supportEmail = Uri.encodeComponent('mobile@feeecodecamp.org');
+      String subject = Uri.encodeComponent('Error logging in to mobile app');
       Navigator.pop(context);
       if (err.response != null) {
-        showDialog(
+        String body = Uri.encodeComponent(
+            'Please email the below error to mobile@freecodecamp.org\n\n${err.response!.data.toString()}\n\n${st.toString()}');
+        await showDialog(
           context: context,
           barrierDismissible: false,
           routeSettings: const RouteSettings(
@@ -222,11 +227,23 @@ class AuthenticationService {
             content: SingleChildScrollView(
               child: SelectionArea(
                 child: Text(
-                  'Please email this error to mobile@freecodecamp.org: \n\n${err.response!.data.toString()}\n\n${st.toString()}',
+                  'Please email the below error to mobile@freecodecamp.org:\n\n${err.response!.data.toString()}\n\n${st.toString()}',
                 ),
               ),
             ),
             actions: [
+              TextButton(
+                style: TextButton.styleFrom(
+                  backgroundColor: const Color(0xFF0a0a23),
+                ),
+                onPressed: () async {
+                  logout();
+                  await launchUrl(Uri.parse(
+                      'mailto:$supportEmail?subject=$subject&body=$body'));
+                  Navigator.pop(context);
+                },
+                child: const Text('Email Error'),
+              ),
               TextButton(
                 style: TextButton.styleFrom(
                   backgroundColor: const Color(0xFF0a0a23),
@@ -241,7 +258,9 @@ class AuthenticationService {
           ),
         );
       } else {
-        showDialog(
+        String body = Uri.encodeComponent(
+            'Please email the below error to mobile@freecodecamp.org\n\n${err.toString()}\n\n${st.toString()}');
+        await showDialog(
           context: context,
           barrierDismissible: false,
           routeSettings: const RouteSettings(
@@ -253,11 +272,23 @@ class AuthenticationService {
             content: SingleChildScrollView(
               child: SelectionArea(
                 child: Text(
-                  'Oops! Something went wrong. Please try again in a moment.\n${st.toString()}',
+                  'Please email the below error to mobile@freecodecamp.org:\n\n${err.toString()}\n\n${st.toString()}',
                 ),
               ),
             ),
             actions: [
+              TextButton(
+                style: TextButton.styleFrom(
+                  backgroundColor: const Color(0xFF0a0a23),
+                ),
+                onPressed: () async {
+                  logout();
+                  await launchUrl(Uri.parse(
+                      'mailto:$supportEmail?subject=$subject&body=$body'));
+                  Navigator.pop(context);
+                },
+                child: const Text('Email Error'),
+              ),
               TextButton(
                 style: TextButton.styleFrom(
                   backgroundColor: const Color(0xFF0a0a23),
@@ -272,6 +303,7 @@ class AuthenticationService {
           ),
         );
       }
+      return false;
     }
 
     final user = await userModel;
@@ -302,6 +334,7 @@ class AuthenticationService {
     }
 
     await auth0.credentialsManager.clearCredentials();
+    // ignore: unnecessary_null_comparison
     if (res != null) {
       Navigator.pop(context);
       Navigator.pop(context);
