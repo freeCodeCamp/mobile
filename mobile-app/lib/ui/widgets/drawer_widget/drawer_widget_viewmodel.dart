@@ -66,7 +66,7 @@ class DrawerWidgtetViewModel extends BaseViewModel {
             pageBuilder: (context, animation1, animation2) =>
                 const LearnLandingView(),
             settings: const RouteSettings(
-              name: 'Learn View',
+              name: '/learn',
             ),
           ),
         );
@@ -79,7 +79,7 @@ class DrawerWidgtetViewModel extends BaseViewModel {
             pageBuilder: (context, animation1, animation2) =>
                 const NewsViewHandlerView(),
             settings: const RouteSettings(
-              name: 'News View',
+              name: '/news',
             ),
           ),
         );
@@ -92,7 +92,7 @@ class DrawerWidgtetViewModel extends BaseViewModel {
             pageBuilder: (context, animation1, animation2) =>
                 const PodcastListView(),
             settings: const RouteSettings(
-              name: 'Podcasts List View',
+              name: '/podcasts-list',
             ),
           ),
         );
@@ -105,7 +105,7 @@ class DrawerWidgtetViewModel extends BaseViewModel {
             pageBuilder: (context, animation1, animatiom2) =>
                 const CodeRadioView(),
             settings: const RouteSettings(
-              name: 'Code Radio View',
+              name: '/code-radio',
             ),
           ),
         );
@@ -118,7 +118,7 @@ class DrawerWidgtetViewModel extends BaseViewModel {
             pageBuilder: (context, animation1, animation2) =>
                 const ProfileView(),
             settings: const RouteSettings(
-              name: 'Profile View',
+              name: '/profile',
             ),
           ),
         );
@@ -131,7 +131,7 @@ class DrawerWidgtetViewModel extends BaseViewModel {
             pageBuilder: (context, animation1, animation2) =>
                 const NativeLoginView(),
             settings: const RouteSettings(
-              name: 'Login View',
+              name: '/login',
             ),
           ),
         );
@@ -144,7 +144,7 @@ class DrawerWidgtetViewModel extends BaseViewModel {
             pageBuilder: (context, animation1, animation2) =>
                 const SettingsView(),
             settings: const RouteSettings(
-              name: 'Settings View',
+              name: '/settings',
             ),
           ),
         );

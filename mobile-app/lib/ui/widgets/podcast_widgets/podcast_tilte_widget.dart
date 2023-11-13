@@ -269,7 +269,7 @@ class PodcastTileState extends State<PodcastTile> {
                     ),
                     settings: RouteSettings(
                         name:
-                            'Podcasts Episode View - ${widget.episode.title}'),
+                            '/podcasts-episode/${widget.episode.title}'),
                   ),
                 );
               }

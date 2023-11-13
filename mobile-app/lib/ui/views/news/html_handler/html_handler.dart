@@ -56,7 +56,7 @@ class HTMLParser {
           imgUrl: imgUrl,
           isDataUrl: isDataUrl,
         ),
-        settings: const RouteSettings(name: 'News Image View'),
+        settings: const RouteSettings(name: '/news-image'),
       ),
     );
   }

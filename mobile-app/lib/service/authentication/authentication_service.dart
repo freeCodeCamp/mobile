@@ -138,7 +138,7 @@ class AuthenticationService {
       context: context,
       barrierDismissible: false,
       routeSettings: RouteSettings(
-        name: 'Login View - $connectionType',
+        name: '/login/$connectionType',
       ),
       builder: (context) {
         return WillPopScope(
@@ -219,7 +219,7 @@ class AuthenticationService {
           context: context,
           barrierDismissible: false,
           routeSettings: const RouteSettings(
-            name: 'Login View - Error',
+            name: '/login/error',
           ),
           builder: (context) => AlertDialog(
             backgroundColor: const Color(0xFF2A2A40),
@@ -264,7 +264,7 @@ class AuthenticationService {
           context: context,
           barrierDismissible: false,
           routeSettings: const RouteSettings(
-            name: 'Login View - Error',
+            name: '/login/error',
           ),
           builder: (context) => AlertDialog(
             backgroundColor: const Color(0xFF2A2A40),
@@ -314,7 +314,7 @@ class AuthenticationService {
         MaterialPageRoute(
           builder: (context) => const PrivacyView(),
           settings: const RouteSettings(
-            name: 'New User Accept Privacy View',
+            name: '/new-user-accept-privacy',
           ),
         ),
       );
