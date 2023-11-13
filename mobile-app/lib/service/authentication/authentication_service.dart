@@ -4,7 +4,6 @@ import 'dart:io';
 
 import 'package:auth0_flutter/auth0_flutter.dart';
 import 'package:dio/dio.dart';
-import 'package:firebase_crashlytics/firebase_crashlytics.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
@@ -209,7 +208,6 @@ class AuthenticationService {
       await writeTokensToStorage();
       await fetchUser();
     } on DioException catch (err, st) {
-      FirebaseCrashlytics.instance.recordError(err, st);
       Navigator.pop(context);
       if (err.response != null) {
         showDialog(
@@ -224,7 +222,7 @@ class AuthenticationService {
             content: SingleChildScrollView(
               child: SelectionArea(
                 child: Text(
-                  '${err.response!.data}\n$st',
+                  'Please email this error to mobile@freecodecamp.org: \n\n${err.response!.data.toString()}\n\n${st.toString()}',
                 ),
               ),
             ),
