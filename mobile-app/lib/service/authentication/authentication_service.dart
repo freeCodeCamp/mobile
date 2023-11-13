@@ -14,6 +14,7 @@ import 'package:freecodecamp/models/main/user_model.dart';
 import 'package:freecodecamp/service/dio_service.dart';
 import 'package:freecodecamp/ui/views/auth/privacy_view.dart';
 import 'package:stacked_services/stacked_services.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class AuthenticationService {
   static final AuthenticationService _authenticationService =
@@ -207,10 +208,14 @@ class AuthenticationService {
       extractCookies(res);
       await writeTokensToStorage();
       await fetchUser();
-    } on DioException catch (e) {
+    } on DioException catch (err, st) {
+      String supportEmail = Uri.encodeComponent('mobile@feeecodecamp.org');
+      String subject = Uri.encodeComponent('Error logging in to mobile app');
       Navigator.pop(context);
-      if (e.response != null) {
-        showDialog(
+      if (err.response != null) {
+        String body = Uri.encodeComponent(
+            'Please email the below error to mobile@freecodecamp.org\n\n${err.response!.data.toString()}\n\n${st.toString()}');
+        await showDialog(
           context: context,
           barrierDismissible: false,
           routeSettings: const RouteSettings(
@@ -219,10 +224,26 @@ class AuthenticationService {
           builder: (context) => AlertDialog(
             backgroundColor: const Color(0xFF2A2A40),
             title: Text(context.t.error_two),
-            content: Text(
-              e.response!.data['message'],
+            content: SingleChildScrollView(
+              child: SelectionArea(
+                child: Text(
+                  'Please email the below error to mobile@freecodecamp.org:\n\n${err.response!.data.toString()}\n\n${st.toString()}',
+                ),
+              ),
             ),
             actions: [
+              TextButton(
+                style: TextButton.styleFrom(
+                  backgroundColor: const Color(0xFF0a0a23),
+                ),
+                onPressed: () async {
+                  logout();
+                  await launchUrl(Uri.parse(
+                      'mailto:$supportEmail?subject=$subject&body=$body'));
+                  Navigator.pop(context);
+                },
+                child: const Text('Email Error'),
+              ),
               TextButton(
                 style: TextButton.styleFrom(
                   backgroundColor: const Color(0xFF0a0a23),
@@ -237,7 +258,9 @@ class AuthenticationService {
           ),
         );
       } else {
-        showDialog(
+        String body = Uri.encodeComponent(
+            'Please email the below error to mobile@freecodecamp.org\n\n${err.toString()}\n\n${st.toString()}');
+        await showDialog(
           context: context,
           barrierDismissible: false,
           routeSettings: const RouteSettings(
@@ -246,8 +269,26 @@ class AuthenticationService {
           builder: (context) => AlertDialog(
             backgroundColor: const Color(0xFF2A2A40),
             title: Text(context.t.error_two),
-            content: Text(context.t.error_three),
+            content: SingleChildScrollView(
+              child: SelectionArea(
+                child: Text(
+                  'Please email the below error to mobile@freecodecamp.org:\n\n${err.toString()}\n\n${st.toString()}',
+                ),
+              ),
+            ),
             actions: [
+              TextButton(
+                style: TextButton.styleFrom(
+                  backgroundColor: const Color(0xFF0a0a23),
+                ),
+                onPressed: () async {
+                  logout();
+                  await launchUrl(Uri.parse(
+                      'mailto:$supportEmail?subject=$subject&body=$body'));
+                  Navigator.pop(context);
+                },
+                child: const Text('Email Error'),
+              ),
               TextButton(
                 style: TextButton.styleFrom(
                   backgroundColor: const Color(0xFF0a0a23),
@@ -262,6 +303,7 @@ class AuthenticationService {
           ),
         );
       }
+      return false;
     }
 
     final user = await userModel;
@@ -292,6 +334,7 @@ class AuthenticationService {
     }
 
     await auth0.credentialsManager.clearCredentials();
+    // ignore: unnecessary_null_comparison
     if (res != null) {
       Navigator.pop(context);
       Navigator.pop(context);
