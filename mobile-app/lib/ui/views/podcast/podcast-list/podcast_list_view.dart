@@ -161,7 +161,7 @@ class PodcastTemplate extends StatelessWidget {
               isDownloadView: isDownloadView,
             ),
             settings: RouteSettings(
-              name: 'Podcasts Episode List View - ${podcast.title}',
+              name: '/podcasts-episode-list/${podcast.title}',
             ),
           ),
         );

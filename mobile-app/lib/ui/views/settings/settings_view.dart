@@ -36,7 +36,7 @@ class SettingsView extends StatelessWidget {
                   context,
                   MaterialPageRoute(
                     builder: (context) => const DeleteAccountView(),
-                    settings: const RouteSettings(name: 'Delete Account View'),
+                    settings: const RouteSettings(name: '/delete-account'),
                   ),
                 ),
               ),

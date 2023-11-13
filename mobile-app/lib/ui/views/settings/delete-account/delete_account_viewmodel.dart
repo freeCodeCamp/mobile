@@ -34,7 +34,7 @@ class DeleteAccountViewModel extends BaseViewModel {
         context: context,
         barrierDismissible: false,
         routeSettings: const RouteSettings(
-          name: 'Delete account processing',
+          name: '/delete-account-dialog',
         ),
         builder: (context) {
           return WillPopScope(
