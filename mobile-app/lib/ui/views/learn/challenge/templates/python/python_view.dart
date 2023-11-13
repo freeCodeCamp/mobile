@@ -87,9 +87,9 @@ class PythonView extends StatelessWidget {
                     challenge.question!.text,
                   ),
                   const SizedBox(height: 8),
-                  for (var answer
+                  for (var answerObj
                       in challenge.question!.answers.asMap().entries)
-                    questionOption(answer, model, context),
+                    questionOption(answerObj, model, context),
                   const SizedBox(height: 16),
                   ElevatedButton(
                     style: ElevatedButton.styleFrom(
@@ -131,7 +131,7 @@ class PythonView extends StatelessWidget {
   }
 
   Container questionOption(
-    MapEntry<int, String> answer,
+    MapEntry<int, Answer> answerObj,
     PythonViewModel model,
     BuildContext context,
   ) {
@@ -140,15 +140,15 @@ class PythonView extends StatelessWidget {
     return Container(
       margin: const EdgeInsets.symmetric(vertical: 8),
       child: RadioListTile<int>(
-        selected: answer.key == model.currentChoice,
+        selected: answerObj.key == model.currentChoice,
         tileColor: const Color(0xFF0a0a23),
         selectedTileColor: const Color(0xDEFFFFFF),
         activeColor: const Color(0xFF0a0a23),
-        value: answer.key,
+        value: answerObj.key,
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(0),
           side: BorderSide(
-            color: answer.key == model.currentChoice
+            color: answerObj.key == model.currentChoice
                 ? const Color(0xFF0a0a23)
                 : const Color(0xFFAAAAAA),
             width: 2,
@@ -165,9 +165,9 @@ class PythonView extends StatelessWidget {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: parser.parse(
-                  answer.value,
+                  answerObj.value.answer,
                   isSelectable: false,
-                  fontColor: answer.key == model.currentChoice
+                  fontColor: answerObj.key == model.currentChoice
                       ? const Color(0xFF0a0a23)
                       : null,
                 ),
@@ -176,7 +176,7 @@ class PythonView extends StatelessWidget {
             SizedBox(
               width: 24,
               child: model.choiceStatus != null &&
-                      model.currentChoice == answer.key
+                      model.currentChoice == answerObj.key
                   ? Icon(
                       model.choiceStatus! ? Icons.check_circle : Icons.cancel,
                       color: model.choiceStatus!
