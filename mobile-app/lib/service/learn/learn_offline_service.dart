@@ -60,7 +60,7 @@ class LearnOfflineService {
     bool hasStoredChallenges = storedChallenges != null;
 
     if (!hasStoredChallenges) {
-      prefs.setStringList('storedChallenges', []);
+      // prefs.setStringList('storedChallenges', []);
     } else {
       List<ChallengeDownload> converted = [];
 
@@ -82,32 +82,41 @@ class LearnOfflineService {
 
   Future<Challenge> getChallenge(String url, [String challengeId = '']) async {
     Challenge challenge;
-    SharedPreferences prefs = await SharedPreferences.getInstance();
-    if (await hasInternet()) {
-      Response res = await _dio.get(url);
 
-      if (prefs.getString(url) == null) {
-        if (res.statusCode == 200) {
-          challenge = Challenge.fromJson(res.data);
-
-          prefs.setString(url, jsonEncode(res.data));
-
-          return challenge;
-        }
-      }
-
-      challenge = Challenge.fromJson(
-        jsonDecode(prefs.getString(url) as String),
-      );
+    Response res = await _dio.get(url);
+    if (res.statusCode == 200) {
+      challenge = Challenge.fromJson(res.data);
+      return challenge;
     } else {
-      String? challengeStr = prefs.getString(challengeId);
-      if (challengeStr == null) {
-        throw Exception('No internet connection and no stored challenge');
-      } else {
-        challenge = Challenge.fromJson(jsonDecode(challengeStr));
-      }
+      throw Exception('Please check your internet connection.');
     }
-    return challenge;
+
+    // SharedPreferences prefs = await SharedPreferences.getInstance();
+    // if (await hasInternet()) {
+    //   Response res = await _dio.get(url);
+
+    //   if (prefs.getString(url) == null) {
+    //     if (res.statusCode == 200) {
+    //       challenge = Challenge.fromJson(res.data);
+
+    //       prefs.setString(url, jsonEncode(res.data));
+
+    //       return challenge;
+    //     }
+    //   }
+
+    //   challenge = Challenge.fromJson(
+    //     jsonDecode(prefs.getString(url) as String),
+    //   );
+    // } else {
+    //   String? challengeStr = prefs.getString(challengeId);
+    //   if (challengeStr == null) {
+    //     throw Exception('No internet connection and no stored challenge');
+    //   } else {
+    //     challenge = Challenge.fromJson(jsonDecode(challengeStr));
+    //   }
+    // }
+    // return challenge;
   }
 
   /*
