@@ -90,6 +90,9 @@ class TestRunner extends BaseViewModel {
         encoding: Encoding.getByName('utf-8').toString(),
       );
     }
+
+    log(document.outerHtml);
+
     return document.outerHtml;
   }
 
@@ -132,13 +135,10 @@ class TestRunner extends BaseViewModel {
       testing: testing,
     );
 
-    // firstHTMlfile = fileService.changeActiveFileLinks(
-    //   parsedWithStyleTags,
-    // );
-
-    log(firstHTMlfile);
-
-    return parsedWithStyleTags;
+    firstHTMlfile = fileService.changeActiveFileLinks(
+      parsedWithStyleTags,
+    );
+    return firstHTMlfile;
   }
 
   // This function parses the JavaScript code so that it has a head and tail (code)
@@ -235,9 +235,9 @@ class TestRunner extends BaseViewModel {
             await testPromise;
         } catch (e) {
             error = true;
-            console.log('testMSG: ' + testText[i]);
+            console.log('testMSG: ' + testText[i] + '\\n' + 'testError: ' + e);
             break;
-        } 
+        }
       }
       if(!error){
         console.log('completed');
@@ -281,18 +281,18 @@ class TestRunner extends BaseViewModel {
             const lastIndex = i != tests.length - 1;
 
             await eval(head + '\\n' + code + '\\n' + tail + '\\n' + tests[i]);
-      
+
           } catch (e) {
             error = true;
             console.log(`testMSG: ` + testText[i]);
             break;
-          } 
+          }
           console.log(`first test done`);
         }
       } catch (e) {
         console.log(e);
       }
-      
+
       if(!error){
         console.log('completed');
       }
