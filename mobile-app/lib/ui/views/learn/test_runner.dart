@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'dart:developer';
 
 import 'package:flutter_inappwebview/flutter_inappwebview.dart';
 import 'package:freecodecamp/app/app.locator.dart';
@@ -131,10 +132,13 @@ class TestRunner extends BaseViewModel {
       testing: testing,
     );
 
-    firstHTMlfile = fileService.changeActiveFileLinks(
-      parsedWithStyleTags,
-    );
-    return firstHTMlfile;
+    // firstHTMlfile = fileService.changeActiveFileLinks(
+    //   parsedWithStyleTags,
+    // );
+
+    log(firstHTMlfile);
+
+    return parsedWithStyleTags;
   }
 
   // This function parses the JavaScript code so that it has a head and tail (code)
