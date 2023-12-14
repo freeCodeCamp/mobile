@@ -191,7 +191,7 @@ class TestRunner extends BaseViewModel {
       String tail = challenge.files[0].tail ?? '';
 
       return '''<script type="module">
-    import * as __helpers from "https://unpkg.com/@freecodecamp/curriculum-helpers@1.1.0/dist/index.js";
+    import * as __helpers from "https://unpkg.com/@freecodecamp/curriculum-helpers@1.2.0/dist/index.js";
 
     const code = `$code`;
     const doc = new DOMParser().parseFromString(code, 'text/html');
@@ -233,7 +233,7 @@ class TestRunner extends BaseViewModel {
             error = true;
             console.log('testMSG: ' + testText[i]);
             break;
-        } 
+        }
       }
       if(!error){
         console.log('completed');
@@ -277,18 +277,18 @@ class TestRunner extends BaseViewModel {
             const lastIndex = i != tests.length - 1;
 
             await eval(head + '\\n' + code + '\\n' + tail + '\\n' + tests[i]);
-      
+
           } catch (e) {
             error = true;
             console.log(`testMSG: ` + testText[i]);
             break;
-          } 
+          }
           console.log(`first test done`);
         }
       } catch (e) {
         console.log(e);
       }
-      
+
       if(!error){
         console.log('completed');
       }
