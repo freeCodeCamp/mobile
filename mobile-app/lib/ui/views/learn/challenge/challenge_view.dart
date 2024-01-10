@@ -7,6 +7,7 @@ import 'package:freecodecamp/extensions/i18n_extension.dart';
 import 'package:freecodecamp/models/learn/challenge_model.dart';
 import 'package:freecodecamp/models/learn/curriculum_model.dart';
 import 'package:freecodecamp/ui/views/learn/challenge/challenge_viewmodel.dart';
+import 'package:freecodecamp/ui/views/learn/challenge/templates/odin/odin_view.dart';
 import 'package:freecodecamp/ui/views/learn/challenge/templates/python-project/python_project_view.dart';
 import 'package:freecodecamp/ui/views/learn/challenge/templates/python/python_view.dart';
 import 'package:freecodecamp/ui/views/learn/widgets/console/console_view.dart';
@@ -55,6 +56,13 @@ class ChallengeView extends StatelessWidget {
               );
             } else if (challenge.challengeType == 11) {
               return PythonView(
+                challenge: challenge,
+                block: block,
+                challengesCompleted: challengesCompleted,
+                currentChallengeNum: currChallengeNum,
+              );
+            } else if (challenge.challengeType == 15) {
+              return OdinView(
                 challenge: challenge,
                 block: block,
                 challengesCompleted: challengesCompleted,
