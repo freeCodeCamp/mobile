@@ -121,7 +121,7 @@ class OdinView extends StatelessWidget {
                         color: Colors.white,
                       ),
                     ),
-                    onPressed: model.currentChoice != -1 ||
+                    onPressed: model.currentChoice != -1 &&
                             model.assignmentStatus.every((element) => element)
                         ? model.choiceStatus != null && model.choiceStatus!
                             ? () => model.learnService.goToNextChallenge(
