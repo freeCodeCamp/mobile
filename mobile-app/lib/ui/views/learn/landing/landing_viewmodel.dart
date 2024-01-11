@@ -163,6 +163,9 @@ class LearnLandingViewModel extends BaseViewModel {
 
   void disabledButtonSnack() {
     snack.showSnackbar(title: 'Not available use the web version', message: '');
+    Future.delayed(const Duration(seconds: 1), () {
+      snack.closeSnackbar();
+    });
   }
 
   Future<List<SuperBlockButtonData>> requestSuperBlocks() async {
