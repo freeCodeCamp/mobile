@@ -163,7 +163,7 @@ class LearnLandingViewModel extends BaseViewModel {
 
   void disabledButtonSnack() {
     snack.showSnackbar(title: 'Not available use the web version', message: '');
-    Future.delayed( const Duration(milliseconds: 2500), () {
+    Future.delayed( Duration(milliseconds: 2500), () {
       snack.closeSnackbar();
     });
   }
