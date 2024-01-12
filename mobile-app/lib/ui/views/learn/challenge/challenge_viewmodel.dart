@@ -76,9 +76,6 @@ class ChallengeViewModel extends BaseViewModel {
   List<ConsoleMessage> _userConsoleMessages = [];
   List<ConsoleMessage> get userConsoleMessages => _userConsoleMessages;
 
-  Syntax _currFileType = Syntax.HTML;
-  Syntax get currFileType => _currFileType;
-
   bool _mounted = false;
 
   TestRunner runner = TestRunner();
@@ -193,11 +190,6 @@ class ChallengeViewModel extends BaseViewModel {
     notifyListeners();
   }
 
-  set setCurrFileType(Syntax value) {
-    _currFileType = value;
-    notifyListeners();
-  }
-
   set setMounted(bool value) {
     _mounted = value;
     notifyListeners();
@@ -282,7 +274,8 @@ class ChallengeViewModel extends BaseViewModel {
   // This prevents the user from requesting the challenge more than once
   // when swichting between preview and the challenge.
 
-  Future<Challenge> initChallenge(String url) async { // NOTE: Function is not used anywhere
+  Future<Challenge> initChallenge(String url) async {
+    // NOTE: Function is not used anywhere
     SharedPreferences prefs = await SharedPreferences.getInstance();
     Response res = await _dio.get(url);
 
