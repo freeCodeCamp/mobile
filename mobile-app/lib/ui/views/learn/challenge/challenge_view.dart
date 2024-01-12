@@ -254,7 +254,6 @@ class ChallengeView extends StatelessWidget {
 
           return Scaffold(
             appBar: AppBar(
-              title: Text(context.t.loading),
               automaticallyImplyLeading: false,
             ),
             body: const Center(
