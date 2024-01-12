@@ -37,7 +37,7 @@ class ChallengeView extends StatelessWidget {
     return ViewModelBuilder<ChallengeViewModel>.reactive(
       viewModelBuilder: () => ChallengeViewModel(),
       onViewModelReady: (model) {
-        model.init(url, block, challengeId, challengesCompleted);
+        model.init(url, block, challengeId, challengesCompleted, selectedFile);
       },
       builder: (context, model, child) => FutureBuilder<Challenge?>(
         future: model.challenge,
@@ -277,13 +277,17 @@ class ChallengeView extends StatelessWidget {
       child: Container(
         decoration: BoxDecoration(
           border: Border(
-            bottom: model.currentFile(challenge).name == file.name
+            bottom: (selectedFile ?? challenge.files[0].name) == file.name
                 ? const BorderSide(width: 4, color: Colors.blue)
                 : const BorderSide(),
           ),
         ),
         child: ElevatedButton(
           onPressed: () {
+            if (selectedFile == file.name) {
+              return;
+            }
+
             Navigator.pushReplacement(
               context,
               PageRouteBuilder(
@@ -305,10 +309,10 @@ class ChallengeView extends StatelessWidget {
           child: Text(
             '${file.name}.${file.ext.name}',
             style: TextStyle(
-              color: model.currentFile(challenge).name == file.name
+              color: (selectedFile ?? challenge.files[0].name) == file.name
                   ? Colors.blue
                   : Colors.white,
-              fontWeight: model.currentFile(challenge).name == file.name
+              fontWeight: (selectedFile ?? challenge.files[0].name) == file.name
                   ? FontWeight.bold
                   : null,
             ),

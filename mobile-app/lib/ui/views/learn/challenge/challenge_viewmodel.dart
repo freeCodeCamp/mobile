@@ -46,7 +46,7 @@ class ChallengeViewModel extends BaseViewModel {
   String _hint = '';
   String get hint => _hint;
 
-  bool _showPanel = true;
+  bool _showPanel = false;
   bool get showPanel => _showPanel;
 
   bool _runningTests = false;
@@ -205,7 +205,12 @@ class ChallengeViewModel extends BaseViewModel {
     Block block,
     String challengeId,
     int challengesCompleted,
+    String? selectedFile,
   ) async {
+    if (selectedFile == null) {
+      setShowPanel = true;
+    }
+
     setupDialogUi();
 
     setChallenge = learnOfflineService.getChallenge(url, challengeId);
@@ -343,7 +348,7 @@ class ChallengeViewModel extends BaseViewModel {
         (file) => file.name == currFile,
       );
       return file;
-    } else if (currentSelectedFile.isNotEmpty) {
+    } else if (currentSelectedFile.isNotEmpty && currFile == null) {
       ChallengeFile file = challenge.files.firstWhere(
         (file) => file.name == currentSelectedFile,
       );
