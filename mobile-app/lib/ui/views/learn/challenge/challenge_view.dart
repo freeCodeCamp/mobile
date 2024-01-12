@@ -22,6 +22,7 @@ class ChallengeView extends StatelessWidget {
     required this.challengeId,
     required this.challengesCompleted,
     required this.isProject,
+    this.selectedFile,
   }) : super(key: key);
 
   final String url;
@@ -29,6 +30,7 @@ class ChallengeView extends StatelessWidget {
   final String challengeId;
   final int challengesCompleted;
   final bool isProject;
+  final String? selectedFile;
 
   @override
   Widget build(BuildContext context) {
@@ -61,25 +63,34 @@ class ChallengeView extends StatelessWidget {
                 currentChallengeNum: currChallengeNum,
               );
             } else {
-              ChallengeFile currFile = model.currentFile(challenge);
+              ChallengeFile currFile = model.currentFile(
+                challenge,
+                selectedFile,
+              );
 
               bool keyboard = MediaQuery.of(context).viewInsets.bottom != 0;
 
               bool onlyJs =
                   challenge.files.every((file) => file.ext.name == 'js');
 
-              bool editableRegion =
-                  currFile.editableRegionBoundaries.isNotEmpty;
+              bool hasRegion = currFile.editableRegionBoundaries.isNotEmpty;
+
               EditorOptions options = EditorOptions(
-                hasRegion: editableRegion,
+                hasRegion: hasRegion,
               );
+
+              int start = hasRegion ? currFile.editableRegionBoundaries[0] : 0;
+              int end = hasRegion ? currFile.editableRegionBoundaries[1] : 0;
 
               Editor editor = Editor(
                 language: currFile.ext.name.toUpperCase(),
                 options: options,
+                content: currFile.contents,
+                regionOptions: EditorRegionOptions(
+                  start: start,
+                  end: end,
+                ),
               );
-
-              model.initiateFile(editor, challenge, currFile, editableRegion);
 
               SchedulerBinding.instance.addPostFrameCallback((timeStamp) {
                 if (keyboard && !model.showPanel) {
@@ -183,6 +194,7 @@ class ChallengeView extends StatelessWidget {
                                           challenge,
                                           file,
                                           editor,
+                                          context,
                                         )
                                   ],
                                 ),
@@ -259,6 +271,7 @@ class ChallengeView extends StatelessWidget {
     Challenge challenge,
     ChallengeFile file,
     Editor editor,
+    BuildContext context,
   ) {
     return Expanded(
       child: Container(
@@ -270,44 +283,35 @@ class ChallengeView extends StatelessWidget {
           ),
         ),
         child: ElevatedButton(
-          onPressed: () async {
-            model.setCurrentSelectedFile = file.name;
-            ChallengeFile currFile = model.currentFile(challenge);
-
-            String currText = await model.fileService.getExactFileFromCache(
-              challenge,
-              currFile,
-            );
-
-            bool hasRegion = currFile.editableRegionBoundaries.isNotEmpty;
-
-            editor.fileTextStream.sink.add(
-              FileIDE(
-                id: challenge.id + currFile.name,
-                ext: currFile.ext.name.toUpperCase(),
-                name: currFile.name,
-                content: currText == '' ? currFile.contents : currText,
-                hasRegion: currFile.editableRegionBoundaries.isNotEmpty,
-                region: EditorRegionOptions(
-                  start:
-                      hasRegion ? currFile.editableRegionBoundaries[0] : null,
-                  end: hasRegion ? currFile.editableRegionBoundaries[1] : null,
+          onPressed: () {
+            Navigator.pushReplacement(
+              context,
+              PageRouteBuilder(
+                transitionDuration: Duration.zero,
+                pageBuilder: (context, animation1, animation2) => ChallengeView(
+                  url: url,
+                  block: block,
+                  challengeId: challenge.id,
+                  challengesCompleted: challengesCompleted,
+                  isProject: isProject,
+                  selectedFile: file.name,
+                ),
+                settings: const RouteSettings(
+                  name: 'ignore',
                 ),
               ),
             );
-
-            model.setEditorText = currText == '' ? currFile.contents : currText;
-            model.setShowPreview = false;
           },
           child: Text(
             '${file.name}.${file.ext.name}',
             style: TextStyle(
-                color: model.currentFile(challenge).name == file.name
-                    ? Colors.blue
-                    : Colors.white,
-                fontWeight: model.currentFile(challenge).name == file.name
-                    ? FontWeight.bold
-                    : null),
+              color: model.currentFile(challenge).name == file.name
+                  ? Colors.blue
+                  : Colors.white,
+              fontWeight: model.currentFile(challenge).name == file.name
+                  ? FontWeight.bold
+                  : null,
+            ),
           ),
         ),
       ),
@@ -393,23 +397,6 @@ class ChallengeView extends StatelessWidget {
                   currFile,
                 );
 
-                model.setMounted = false;
-
-                editor.fileTextStream.sink.add(FileIDE(
-                  id: challenge.id + currFile.name,
-                  ext: currFile.ext.name.toUpperCase(),
-                  name: currFile.name,
-                  content: currText == '' ? currFile.contents : currText,
-                  hasRegion: currFile.editableRegionBoundaries.isNotEmpty,
-                  region: EditorRegionOptions(
-                    start: currFile.editableRegionBoundaries.isNotEmpty
-                        ? currFile.editableRegionBoundaries[0]
-                        : null,
-                    end: currFile.editableRegionBoundaries.isNotEmpty
-                        ? currFile.editableRegionBoundaries[1]
-                        : null,
-                  ),
-                ));
                 model.setEditorText =
                     currText == '' ? currFile.contents : currText;
                 model.setShowPreview = !model.showPreview;
