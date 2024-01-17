@@ -276,7 +276,7 @@ class ChallengeView extends StatelessWidget {
       child: Container(
         decoration: BoxDecoration(
           border: Border(
-            bottom: (selectedFile ?? challenge.files[0].name) == file.name
+            bottom: (selectedFile ?? model.currentSelectedFile) == file.name
                 ? const BorderSide(width: 4, color: Colors.blue)
                 : const BorderSide(),
           ),
@@ -308,12 +308,13 @@ class ChallengeView extends StatelessWidget {
           child: Text(
             '${file.name}.${file.ext.name}',
             style: TextStyle(
-              color: (selectedFile ?? challenge.files[0].name) == file.name
+              color: (selectedFile ?? model.currentSelectedFile) == file.name
                   ? Colors.blue
                   : Colors.white,
-              fontWeight: (selectedFile ?? challenge.files[0].name) == file.name
-                  ? FontWeight.bold
-                  : null,
+              fontWeight:
+                  (selectedFile ?? model.currentSelectedFile) == file.name
+                      ? FontWeight.bold
+                      : null,
             ),
           ),
         ),
