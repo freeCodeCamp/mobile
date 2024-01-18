@@ -1,5 +1,4 @@
 import 'dart:io';
-
 import 'package:audio_service/audio_service.dart';
 import 'package:dio/dio.dart';
 import 'package:fk_user_agent/fk_user_agent.dart';
@@ -437,7 +436,7 @@ class PodcastTileState extends State<PodcastTile> {
     return Padding(
       padding: const EdgeInsets.all(8.0),
       child: Html(
-        data: widget.podcast.description!,
+        data: widget.episode.description!,
         onLinkTap: (url, attributes, element) {
           launchUrl(Uri.parse(url!));
         },
