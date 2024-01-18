@@ -1,5 +1,4 @@
 import 'dart:convert';
-import 'dart:developer';
 
 import 'package:flutter_inappwebview/flutter_inappwebview.dart';
 import 'package:freecodecamp/app/app.locator.dart';
@@ -92,7 +91,7 @@ class TestRunner extends BaseViewModel {
       );
     }
 
-    log(document.outerHtml);
+    //log(document.outerHtml);
 
     return document.outerHtml;
   }
@@ -196,6 +195,10 @@ class TestRunner extends BaseViewModel {
       String tail = challenge.files[0].tail ?? '';
 
       return '''<script>
+
+
+    let __helpers;
+    __helpers = helpers;
 
     const code = `$code`;
     const doc = new DOMParser().parseFromString(code, 'text/html');
