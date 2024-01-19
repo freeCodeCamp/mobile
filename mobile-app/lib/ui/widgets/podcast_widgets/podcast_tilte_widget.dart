@@ -15,6 +15,7 @@ import 'package:freecodecamp/service/dio_service.dart';
 import 'package:freecodecamp/service/podcast/download_service.dart';
 import 'package:freecodecamp/service/podcast/podcasts_service.dart';
 import 'package:freecodecamp/ui/views/podcast/episode/episode_view.dart';
+import 'package:html/parser.dart';
 import 'package:intl/intl.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -268,8 +269,7 @@ class PodcastTileState extends State<PodcastTile> {
                       podcast: widget.podcast,
                     ),
                     settings: RouteSettings(
-                        name:
-                            '/podcasts-episode/${widget.episode.title}'),
+                        name: '/podcasts-episode/${widget.episode.title}'),
                   ),
                 );
               }
@@ -434,23 +434,36 @@ class PodcastTileState extends State<PodcastTile> {
   }
 
   Padding descriptionWidget() {
+    final textContent = parse(widget.episode.description!).body?.text ?? '';
     return Padding(
       padding: const EdgeInsets.all(8.0),
-      child: Html(
-        data: widget.podcast.description!,
-        onLinkTap: (url, attributes, element) {
-          launchUrl(Uri.parse(url!));
-        },
-        style: {
-          '#': Style(
-            fontSize: FontSize(16),
-            color: Colors.white.withOpacity(0.87),
-            margin: Margins.zero,
-            maxLines: 3,
-            fontFamily: 'Lato',
-          )
-        },
+      child: Text(
+        textContent,
+        maxLines: 3,
+        overflow: TextOverflow.ellipsis,
+        style: TextStyle(
+          fontSize: 16,
+          color: Colors.white.withOpacity(0.87),
+          fontFamily: 'Lato',
+        ),
       ),
+      // child: Html(
+      //   data: widget.episode.description!,
+      //   onLinkTap: (url, attributes, element) {
+      //     launchUrl(Uri.parse(url!));
+      //   },
+      //   style: {
+      //     '#': Style(
+      //       fontSize: FontSize(16),
+      //       color: Colors.white.withOpacity(0.87),
+      //       margin: Margins.zero,
+
+      //       fontFamily: 'Lato',
+      //     ),
+
+      //   },
+      //   maxLines:3,
+      // ),
     );
   }
 }
