@@ -5,7 +5,6 @@ import 'package:dio/dio.dart';
 import 'package:fk_user_agent/fk_user_agent.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
-import 'package:flutter_html/flutter_html.dart';
 import 'package:freecodecamp/app/app.locator.dart';
 import 'package:freecodecamp/extensions/i18n_extension.dart';
 import 'package:freecodecamp/models/podcasts/episodes_model.dart';
@@ -19,7 +18,6 @@ import 'package:html/parser.dart';
 import 'package:intl/intl.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:url_launcher/url_launcher.dart';
 
 // ignore: must_be_immutable
 class PodcastTile extends StatefulWidget {
@@ -447,23 +445,6 @@ class PodcastTileState extends State<PodcastTile> {
           fontFamily: 'Lato',
         ),
       ),
-      // child: Html(
-      //   data: widget.episode.description!,
-      //   onLinkTap: (url, attributes, element) {
-      //     launchUrl(Uri.parse(url!));
-      //   },
-      //   style: {
-      //     '#': Style(
-      //       fontSize: FontSize(16),
-      //       color: Colors.white.withOpacity(0.87),
-      //       margin: Margins.zero,
-
-      //       fontFamily: 'Lato',
-      //     ),
-
-      //   },
-      //   maxLines:3,
-      // ),
     );
   }
 }
