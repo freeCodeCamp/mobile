@@ -188,25 +188,27 @@ class PodcastTemplate extends StatelessWidget {
               child: Row(
                 children: [
                   Expanded(
-                    child: Container(
-                      decoration: BoxDecoration(
-                        boxShadow: [
-                          BoxShadow(
-                            color: Colors.black.withOpacity(0.75),
-                            spreadRadius: 1.5,
-                            blurRadius: 0.1,
-                          )
-                        ],
-                      ),
-                      child: Text('${podcast.title!}\n',
-                          maxLines: 2,
-                          textAlign: TextAlign.center,
-                          style: const TextStyle(
-                            fontSize: 16,
-                            height: 1.2,
-                          )),
+                      child: Container(
+                    decoration: BoxDecoration(
+                      boxShadow: [
+                        BoxShadow(
+                          color: Colors.black.withOpacity(0.75),
+                          spreadRadius: 1.5,
+                          blurRadius: 0.1,
+                        )
+                      ],
                     ),
-                  ),
+                    child: Text(
+                      '${podcast.title!}\n',
+                      maxLines: 2,
+                      overflow: TextOverflow.ellipsis,
+                      textAlign: TextAlign.center,
+                      style: const TextStyle(
+                        fontSize: 16,
+                        height: 1.2,
+                      ),
+                    ),
+                  )),
                 ],
               ),
             ),
