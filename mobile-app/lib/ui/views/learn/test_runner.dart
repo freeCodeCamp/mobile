@@ -195,7 +195,7 @@ class TestRunner extends BaseViewModel {
       String tail = challenge.files[0].tail ?? '';
 
       return '''<script type="module">
-    import * as __helpers from "https://unpkg.com/@freecodecamp/curriculum-helpers@2.0.2/dist/index.js";
+    import * as __helpers from "https://www.unpkg.com/@freecodecamp/curriculum-helpers@2.0.3/dist/index.mjs";
 
     const code = `$code`;
     const doc = new DOMParser().parseFromString(code, 'text/html');
