@@ -19,7 +19,8 @@ dependencies:
   url_launcher: ^6.0.10
   sqflite_migration_service: ^2.0.0-nullsafety.1
   dio: ^5.0.0
-  phone_ide: ^1.2.2
+  phone_ide:
+    path: ../../PhoneIDE
   jiffy: ^6.2.1
   shared_preferences: ^2.1.2
   font_awesome_flutter: ^10.4.0

@@ -248,7 +248,8 @@ class StackedRouter extends _i1.RouterBase {
             block: args.block,
             challengeId: args.challengeId,
             challengesCompleted: args.challengesCompleted,
-            isProject: args.isProject),
+            isProject: args.isProject,
+            selectedFile: args.selectedFile),
         settings: data,
       );
     },
@@ -520,6 +521,7 @@ class ChallengeViewArguments {
     required this.challengeId,
     required this.challengesCompleted,
     required this.isProject,
+    this.selectedFile,
   });
 
   final _i18.Key? key;
@@ -534,9 +536,11 @@ class ChallengeViewArguments {
 
   final bool isProject;
 
+  final String? selectedFile;
+
   @override
   String toString() {
-    return '{"key": "$key", "url": "$url", "block": "$block", "challengeId": "$challengeId", "challengesCompleted": "$challengesCompleted", "isProject": "$isProject"}';
+    return '{"key": "$key", "url": "$url", "block": "$block", "challengeId": "$challengeId", "challengesCompleted": "$challengesCompleted", "isProject": "$isProject", "selectedFile": "$selectedFile"}';
   }
 
   @override
@@ -547,7 +551,8 @@ class ChallengeViewArguments {
         other.block == block &&
         other.challengeId == challengeId &&
         other.challengesCompleted == challengesCompleted &&
-        other.isProject == isProject;
+        other.isProject == isProject &&
+        other.selectedFile == selectedFile;
   }
 
   @override
@@ -557,7 +562,8 @@ class ChallengeViewArguments {
         block.hashCode ^
         challengeId.hashCode ^
         challengesCompleted.hashCode ^
-        isProject.hashCode;
+        isProject.hashCode ^
+        selectedFile.hashCode;
   }
 }
 
@@ -800,6 +806,7 @@ extension NavigatorStateExtension on _i23.NavigationService {
     required String challengeId,
     required int challengesCompleted,
     required bool isProject,
+    String? selectedFile,
     int? routerId,
     bool preventDuplicates = true,
     Map<String, String>? parameters,
@@ -813,7 +820,8 @@ extension NavigatorStateExtension on _i23.NavigationService {
             block: block,
             challengeId: challengeId,
             challengesCompleted: challengesCompleted,
-            isProject: isProject),
+            isProject: isProject,
+            selectedFile: selectedFile),
         id: routerId,
         preventDuplicates: preventDuplicates,
         parameters: parameters,
@@ -1088,6 +1096,7 @@ extension NavigatorStateExtension on _i23.NavigationService {
     required String challengeId,
     required int challengesCompleted,
     required bool isProject,
+    String? selectedFile,
     int? routerId,
     bool preventDuplicates = true,
     Map<String, String>? parameters,
@@ -1101,7 +1110,8 @@ extension NavigatorStateExtension on _i23.NavigationService {
             block: block,
             challengeId: challengeId,
             challengesCompleted: challengesCompleted,
-            isProject: isProject),
+            isProject: isProject,
+            selectedFile: selectedFile),
         id: routerId,
         preventDuplicates: preventDuplicates,
         parameters: parameters,

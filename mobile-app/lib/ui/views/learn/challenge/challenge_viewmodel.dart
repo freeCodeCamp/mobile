@@ -46,7 +46,7 @@ class ChallengeViewModel extends BaseViewModel {
   String _hint = '';
   String get hint => _hint;
 
-  bool _showPanel = true;
+  bool _showPanel = false;
   bool get showPanel => _showPanel;
 
   bool _runningTests = false;
@@ -76,11 +76,6 @@ class ChallengeViewModel extends BaseViewModel {
   List<ConsoleMessage> _userConsoleMessages = [];
   List<ConsoleMessage> get userConsoleMessages => _userConsoleMessages;
 
-  Syntax _currFileType = Syntax.HTML;
-  Syntax get currFileType => _currFileType;
-
-  bool _mounted = false;
-
   TestRunner runner = TestRunner();
 
   SnackbarService snackbar = locator<SnackbarService>();
@@ -97,6 +92,8 @@ class ChallengeViewModel extends BaseViewModel {
 
   final _dialogService = locator<DialogService>();
   final NavigationService _navigationService = locator<NavigationService>();
+  NavigationService get navigator => _navigationService;
+
   final LearnFileService fileService = locator<LearnFileService>();
   final LearnService learnService = locator<LearnService>();
   final learnOfflineService = locator<LearnOfflineService>();
@@ -193,16 +190,6 @@ class ChallengeViewModel extends BaseViewModel {
     notifyListeners();
   }
 
-  set setCurrFileType(Syntax value) {
-    _currFileType = value;
-    notifyListeners();
-  }
-
-  set setMounted(bool value) {
-    _mounted = value;
-    notifyListeners();
-  }
-
   set setConsoleMessages(List<ConsoleMessage> messages) {
     _consoleMessages = messages;
     notifyListeners();
@@ -218,7 +205,12 @@ class ChallengeViewModel extends BaseViewModel {
     Block block,
     String challengeId,
     int challengesCompleted,
+    String? selectedFile,
   ) async {
+    if (selectedFile == null) {
+      setShowPanel = true;
+    }
+
     setupDialogUi();
 
     setChallenge = learnOfflineService.getChallenge(url, challengeId);
@@ -253,36 +245,11 @@ class ChallengeViewModel extends BaseViewModel {
     setChallengesCompleted = challengesCompleted;
   }
 
-  void initiateFile(
-    Editor editor,
-    Challenge challenge,
-    ChallengeFile currFile,
-    bool hasRegion,
-  ) async {
-    if (!_mounted) {
-      await Future.delayed(Duration.zero);
-      editor.fileTextStream.sink.add(
-        FileIDE(
-          id: challenge.id + currFile.name,
-          ext: currFile.ext.name,
-          name: currFile.name,
-          content: editorText ?? currFile.contents,
-          hasRegion: hasRegion,
-          region: EditorRegionOptions(
-            start: hasRegion ? currFile.editableRegionBoundaries[0] : null,
-            end: hasRegion ? currFile.editableRegionBoundaries[1] : null,
-            condition: completedChallenge,
-          ),
-        ),
-      );
-      _mounted = true;
-    }
-  }
-
   // This prevents the user from requesting the challenge more than once
   // when swichting between preview and the challenge.
 
-  Future<Challenge> initChallenge(String url) async { // NOTE: Function is not used anywhere
+  Future<Challenge> initChallenge(String url) async {
+    // NOTE: Function is not used anywhere
     SharedPreferences prefs = await SharedPreferences.getInstance();
     Response res = await _dio.get(url);
 
@@ -375,8 +342,13 @@ class ChallengeViewModel extends BaseViewModel {
     notifyListeners();
   }
 
-  ChallengeFile currentFile(Challenge challenge) {
-    if (currentSelectedFile.isNotEmpty) {
+  ChallengeFile currentFile(Challenge challenge, [String? currFile]) {
+    if (currFile != null) {
+      ChallengeFile file = challenge.files.firstWhere(
+        (file) => file.name == currFile,
+      );
+      return file;
+    } else if (currentSelectedFile.isNotEmpty && currFile == null) {
       ChallengeFile file = challenge.files.firstWhere(
         (file) => file.name == currentSelectedFile,
       );

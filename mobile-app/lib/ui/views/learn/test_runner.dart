@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'dart:developer';
 
 import 'package:flutter_inappwebview/flutter_inappwebview.dart';
 import 'package:freecodecamp/app/app.locator.dart';
@@ -36,6 +37,7 @@ class TestRunner extends BaseViewModel {
       '<script src="https://unpkg.com/chai@4.3.10/chai.js"></script>',
       '<script src="https://unpkg.com/mocha/mocha.js"></script>',
       '<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>',
+      '<script src="https://cdn.jsdelivr.net/pyodide/v0.24.1/full/pyodide.js">',
       '<link rel="stylesheet" href="https://unpkg.com/mocha/mocha.css" />'
     ];
 
@@ -89,6 +91,8 @@ class TestRunner extends BaseViewModel {
         encoding: Encoding.getByName('utf-8').toString(),
       );
     }
+
+    log(document.outerHtml);
     return document.outerHtml;
   }
 
@@ -215,6 +219,16 @@ class TestRunner extends BaseViewModel {
           return code;
       }
      }
+
+    async function main() {
+      let pyodide = await loadPyodide();
+      // Pyodide is now ready to use...
+      console.log(pyodide.runPython(`
+        import sys
+        sys.version
+      `));
+    };
+    main();
 
     doc.__runTest = async function runtTests(testString) {
       let error = false;
