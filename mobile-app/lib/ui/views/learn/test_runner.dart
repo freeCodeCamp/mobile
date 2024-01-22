@@ -37,7 +37,6 @@ class TestRunner extends BaseViewModel {
       '<script src="https://unpkg.com/chai@4.3.10/chai.js"></script>',
       '<script src="https://unpkg.com/mocha/mocha.js"></script>',
       '<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>',
-      '<script src="https://www.unpkg.com/@freecodecamp/curriculum-helpers@2.0.2/dist/index.js"></script>',
       '<link rel="stylesheet" href="https://unpkg.com/mocha/mocha.css" />'
     ];
 
@@ -195,7 +194,8 @@ class TestRunner extends BaseViewModel {
     if (ext == Ext.html || ext == Ext.css) {
       String tail = challenge.files[0].tail ?? '';
 
-      return '''<script>
+      return '''<script type="module">
+    import * as __helpers from "https://unpkg.com/@freecodecamp/curriculum-helpers@2.0.2/dist/index.js";
 
     const code = `$code`;
     const doc = new DOMParser().parseFromString(code, 'text/html');
