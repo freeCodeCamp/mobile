@@ -111,7 +111,7 @@ class LearnFileService {
   }
 
   // This function checks if the given document contains any link elements.
-  // If so check if the css file name corresponds with the names put in the array.
+  // If so, check if the css file name corresponds with the names put in the array.
   // If the file is linked return true.
 
   Future<bool> cssFileIsLinked(

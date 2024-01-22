@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'dart:developer';
 
 import 'package:flutter_inappwebview/flutter_inappwebview.dart';
 import 'package:freecodecamp/app/app.locator.dart';
@@ -89,6 +90,9 @@ class TestRunner extends BaseViewModel {
         encoding: Encoding.getByName('utf-8').toString(),
       );
     }
+
+    log(document.outerHtml);
+
     return document.outerHtml;
   }
 
@@ -231,7 +235,7 @@ class TestRunner extends BaseViewModel {
             await testPromise;
         } catch (e) {
             error = true;
-            console.log('testMSG: ' + testText[i]);
+            console.log('testMSG: ' + testText[i] + '\\n' + 'testError: ' + e);
             break;
         }
       }
