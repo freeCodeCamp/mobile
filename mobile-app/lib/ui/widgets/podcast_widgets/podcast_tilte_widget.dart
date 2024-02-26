@@ -5,7 +5,6 @@ import 'package:dio/dio.dart';
 import 'package:fk_user_agent/fk_user_agent.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
-import 'package:flutter_html/flutter_html.dart';
 import 'package:freecodecamp/app/app.locator.dart';
 import 'package:freecodecamp/extensions/i18n_extension.dart';
 import 'package:freecodecamp/models/podcasts/episodes_model.dart';
@@ -15,10 +14,10 @@ import 'package:freecodecamp/service/dio_service.dart';
 import 'package:freecodecamp/service/podcast/download_service.dart';
 import 'package:freecodecamp/service/podcast/podcasts_service.dart';
 import 'package:freecodecamp/ui/views/podcast/episode/episode_view.dart';
+import 'package:html/parser.dart';
 import 'package:intl/intl.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:url_launcher/url_launcher.dart';
 
 // ignore: must_be_immutable
 class PodcastTile extends StatefulWidget {
@@ -268,8 +267,7 @@ class PodcastTileState extends State<PodcastTile> {
                       podcast: widget.podcast,
                     ),
                     settings: RouteSettings(
-                        name:
-                            '/podcasts-episode/${widget.episode.title}'),
+                        name: '/podcasts-episode/${widget.episode.title}'),
                   ),
                 );
               }
@@ -434,22 +432,18 @@ class PodcastTileState extends State<PodcastTile> {
   }
 
   Padding descriptionWidget() {
+    final textContent = parse(widget.episode.description!).body?.text ?? '';
     return Padding(
       padding: const EdgeInsets.all(8.0),
-      child: Html(
-        data: widget.podcast.description!,
-        onLinkTap: (url, attributes, element) {
-          launchUrl(Uri.parse(url!));
-        },
-        style: {
-          '#': Style(
-            fontSize: FontSize(16),
-            color: Colors.white.withOpacity(0.87),
-            margin: Margins.zero,
-            maxLines: 3,
-            fontFamily: 'Lato',
-          )
-        },
+      child: Text(
+        textContent,
+        maxLines: 3,
+        overflow: TextOverflow.ellipsis,
+        style: TextStyle(
+          fontSize: 16,
+          color: Colors.white.withOpacity(0.87),
+          fontFamily: 'Lato',
+        ),
       ),
     );
   }
