@@ -140,6 +140,7 @@ class DrawerWidgetView extends StatelessWidget {
                 ),
               ),
               const SafeArea(
+                minimum: EdgeInsets.only(bottom: 16),
                 child: Text(
                   'freeCodeCamp is a donor-supported tax-exempt 501(c)(3) nonprofit organization',
                   textAlign: TextAlign.center,
