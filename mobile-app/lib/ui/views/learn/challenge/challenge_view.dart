@@ -336,7 +336,7 @@ class ChallengeView extends StatelessWidget {
             ),
           ),
           Container(
-            margin: const EdgeInsets.all(8),
+            margin: const EdgeInsets.symmetric(horizontal: 8),
             color: model.showPanel && model.panelType == PanelType.instruction
                 ? Colors.white
                 : const Color.fromRGBO(0x3B, 0x3B, 0x4F, 1),
@@ -372,7 +372,7 @@ class ChallengeView extends StatelessWidget {
             ),
           ),
           Container(
-            margin: const EdgeInsets.all(8),
+            margin: const EdgeInsets.symmetric(horizontal: 8),
             color: !model.showPreview
                 ? const Color.fromRGBO(0x3B, 0x3B, 0x4F, 1)
                 : Colors.white,
@@ -428,7 +428,7 @@ class ChallengeView extends StatelessWidget {
               mainAxisAlignment: MainAxisAlignment.end,
               children: [
                 Container(
-                  margin: const EdgeInsets.all(8),
+                  margin: const EdgeInsets.symmetric(horizontal: 8),
                   color: !model.hasTypedInEditor
                       ? const Color.fromARGB(255, 9, 79, 125)
                       : model.completedChallenge
