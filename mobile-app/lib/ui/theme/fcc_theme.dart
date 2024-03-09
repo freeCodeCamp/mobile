@@ -32,7 +32,6 @@ class FccTheme {
     colorScheme: const ColorScheme.dark(
       primary: Colors.white,
       secondary: Color.fromRGBO(0xa9, 0xaa, 0xb2, 1),
-      surface: Colors.white,
       background: Color(0xFF0a0a23),
       error: Colors.red,
     ),
