@@ -3,7 +3,6 @@ import 'dart:developer';
 import 'dart:io';
 
 import 'package:device_info_plus/device_info_plus.dart';
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:freecodecamp/extensions/i18n_extension.dart';
@@ -30,7 +29,7 @@ String filesToMarkdown(
     final fileName = moreThanOneFile
         ? '/* file: ${challengeFile.name}.${challengeFile.ext} */\n'
         : '';
-    final fileType = describeEnum(challengeFile.ext);
+    final fileType = challengeFile.ext.name;
     markdownStr += '```$fileType\n$fileName$editorText\n```\n\n';
   }
 
