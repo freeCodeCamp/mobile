@@ -89,6 +89,9 @@ class DeleteAccountView extends StatelessWidget {
                           ),
                           disabledBackgroundColor: Colors.red.shade50,
                           disabledForegroundColor: Colors.red.shade700,
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(0),
+                          ),
                         ),
                         child: Text(
                           context.t.delete_account_message_four,

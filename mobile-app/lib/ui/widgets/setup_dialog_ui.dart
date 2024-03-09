@@ -273,10 +273,12 @@ class _buttonDialog2 extends HookWidget {
               width: MediaQuery.of(context).size.width,
               child: ElevatedButton(
                 style: ElevatedButton.styleFrom(
-                    backgroundColor: const Color.fromRGBO(0x3b, 0x3b, 0x4f, 1),
-                    side: const BorderSide(width: 2, color: Colors.white),
-                    shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(0))),
+                  backgroundColor: const Color.fromRGBO(0x3b, 0x3b, 0x4f, 1),
+                  side: const BorderSide(width: 2, color: Colors.white),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(0),
+                  ),
+                ),
                 onPressed: () => {
                   onDialogTap(DialogResponse(data: 'confirmed')),
                 },

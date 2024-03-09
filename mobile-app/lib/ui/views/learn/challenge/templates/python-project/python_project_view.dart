@@ -116,6 +116,9 @@ class PythonProjectView extends StatelessWidget {
                           width: 2,
                           color: Colors.white,
                         ),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(0),
+                        ),
                       ),
                       onPressed: model.linkController.text.isEmpty
                           ? null
@@ -152,6 +155,9 @@ class PythonProjectView extends StatelessWidget {
                         side: const BorderSide(
                           width: 2,
                           color: Colors.white,
+                        ),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(0),
                         ),
                       ),
                       onPressed: () async {

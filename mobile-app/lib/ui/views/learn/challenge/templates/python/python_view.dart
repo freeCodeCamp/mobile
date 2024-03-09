@@ -99,6 +99,9 @@ class PythonView extends StatelessWidget {
                         width: 2,
                         color: Colors.white,
                       ),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(0),
+                      ),
                     ),
                     onPressed: model.currentChoice != -1
                         ? model.choiceStatus != null && model.choiceStatus!
