@@ -147,6 +147,9 @@ class AuthenticationService {
             title: Text(context.t.login_load_message),
             contentPadding: const EdgeInsets.fromLTRB(0.0, 12.0, 0.0, 24.0),
             backgroundColor: const Color(0xFF2A2A40),
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(0),
+            ),
             children: const [
               Center(
                 child: CircularProgressIndicator(),
@@ -224,6 +227,9 @@ class AuthenticationService {
           builder: (context) => AlertDialog(
             backgroundColor: const Color(0xFF2A2A40),
             title: Text(context.t.error_two),
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(0),
+            ),
             content: SingleChildScrollView(
               child: SelectionArea(
                 child: Text(
@@ -268,6 +274,9 @@ class AuthenticationService {
           ),
           builder: (context) => AlertDialog(
             backgroundColor: const Color(0xFF2A2A40),
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(0),
+            ),
             title: Text(context.t.error_two),
             content: SingleChildScrollView(
               child: SelectionArea(

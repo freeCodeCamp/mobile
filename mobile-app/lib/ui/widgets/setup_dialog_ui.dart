@@ -35,6 +35,9 @@ class _buttonDialog extends HookWidget {
   Widget build(BuildContext context) {
     return Dialog(
       backgroundColor: const Color(0xFF0a0a23),
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(0),
+      ),
       child: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
@@ -124,6 +127,9 @@ class _deleteAccountDialog extends HookWidget {
   Widget build(BuildContext context) {
     return Dialog(
       backgroundColor: const Color(0xFF0a0a23),
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(0),
+      ),
       child: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
@@ -221,6 +227,9 @@ class _buttonDialog2 extends HookWidget {
   Widget build(BuildContext context) {
     return Dialog(
       backgroundColor: const Color(0xFF0a0a23),
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(0),
+      ),
       child: Column(
         mainAxisSize: MainAxisSize.min,
         children: [

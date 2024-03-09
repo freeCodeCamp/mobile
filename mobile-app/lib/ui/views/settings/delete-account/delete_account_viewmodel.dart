@@ -45,6 +45,9 @@ class DeleteAccountViewModel extends BaseViewModel {
               ),
               contentPadding: const EdgeInsets.fromLTRB(0.0, 12.0, 0.0, 24.0),
               backgroundColor: const Color(0xFF2A2A40),
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(0),
+              ),
               children: const [
                 Center(
                   child: CircularProgressIndicator(),
