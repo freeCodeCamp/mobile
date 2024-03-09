@@ -144,6 +144,13 @@ class ChallengeView extends StatelessWidget {
                                               ? decoration
                                               : null,
                                           child: ElevatedButton(
+                                            style: ElevatedButton.styleFrom(
+                                              shape: RoundedRectangleBorder(
+                                                borderRadius:
+                                                    BorderRadius.circular(0),
+                                              ),
+                                              elevation: 0,
+                                            ),
                                             onPressed: () {
                                               model.setShowConsole = false;
                                               model.setShowProjectPreview =
@@ -162,14 +169,21 @@ class ChallengeView extends StatelessWidget {
                                               ? decoration
                                               : null,
                                           child: ElevatedButton(
-                                            child: Text(
-                                              context.t.console,
+                                            style: ElevatedButton.styleFrom(
+                                              shape: RoundedRectangleBorder(
+                                                borderRadius:
+                                                    BorderRadius.circular(0),
+                                              ),
+                                              elevation: 0,
                                             ),
                                             onPressed: () {
                                               model.setShowConsole = true;
                                               model.setShowProjectPreview =
                                                   false;
                                             },
+                                            child: Text(
+                                              context.t.console,
+                                            ),
                                           ),
                                         ),
                                       ),
@@ -269,6 +283,12 @@ class ChallengeView extends StatelessWidget {
           ),
         ),
         child: ElevatedButton(
+          style: ElevatedButton.styleFrom(
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(0),
+            ),
+            elevation: 0,
+          ),
           onPressed: () async {
             model.setCurrentSelectedFile = file.name;
             ChallengeFile currFile = model.currentFile(challenge);
