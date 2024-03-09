@@ -141,8 +141,8 @@ class AuthenticationService {
         name: '/login/$connectionType',
       ),
       builder: (context) {
-        return WillPopScope(
-          onWillPop: () async => false,
+        return PopScope(
+          canPop: false,
           child: SimpleDialog(
             title: Text(context.t.login_load_message),
             contentPadding: const EdgeInsets.fromLTRB(0.0, 12.0, 0.0, 24.0),

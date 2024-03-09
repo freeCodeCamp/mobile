@@ -123,11 +123,10 @@ class ChallengeView extends StatelessWidget {
                 ),
               );
 
-              return WillPopScope(
-                onWillPop: () async {
+              return PopScope(
+                canPop: true,
+                onPopInvoked: (bool didPop) async {
                   model.learnService.updateProgressOnPop(context, block);
-
-                  return Future.value(true);
                 },
                 child: Scaffold(
                   appBar: !model.hideAppBar

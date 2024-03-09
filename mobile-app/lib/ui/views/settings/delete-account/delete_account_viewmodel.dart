@@ -37,8 +37,8 @@ class DeleteAccountViewModel extends BaseViewModel {
           name: '/delete-account-dialog',
         ),
         builder: (context) {
-          return WillPopScope(
-            onWillPop: () async => false,
+          return PopScope(
+            canPop: false,
             child: SimpleDialog(
               title: Text(
                 context.t.delete_account_deleting,
