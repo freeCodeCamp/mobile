@@ -1,6 +1,4 @@
 // default can't be used as a value for an enum so suffixing with Theme
-import 'package:flutter/foundation.dart';
-
 enum Themes { nightTheme, defaultTheme }
 
 parseThemes(String theme) {
@@ -15,5 +13,5 @@ parseThemes(String theme) {
 }
 
 extension ThemesValue on Themes {
-  String get value => describeEnum(this).replaceFirst('Theme', '');
+  String get value => name.replaceFirst('Theme', '');
 }

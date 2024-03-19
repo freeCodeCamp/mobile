@@ -136,6 +136,9 @@ class LearnLandingView extends StatelessWidget {
               style: ElevatedButton.styleFrom(
                 backgroundColor: const Color.fromRGBO(0xf1, 0xbe, 0x32, 1),
                 minimumSize: const Size.fromHeight(50),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(0),
+                ),
               ),
               onPressed: () {
                 model.auth.routeToLogin(true);

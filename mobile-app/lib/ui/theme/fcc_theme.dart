@@ -5,7 +5,11 @@ class FccTheme {
     brightness: Brightness.dark,
     fontFamily: 'RobotoMono',
     scaffoldBackgroundColor: const Color.fromRGBO(0x2A, 0x2A, 0x40, 1),
-    appBarTheme: const AppBarTheme(centerTitle: true, color: Color(0xFF0a0a23)),
+    appBarTheme: const AppBarTheme(
+      centerTitle: true,
+      color: Color(0xFF0a0a23),
+      scrolledUnderElevation: 0,
+    ),
     bottomNavigationBarTheme: const BottomNavigationBarThemeData(
       backgroundColor: Color(0xFF0a0a23),
       unselectedItemColor: Color(0x99FFFFFF),
@@ -32,7 +36,6 @@ class FccTheme {
     colorScheme: const ColorScheme.dark(
       primary: Colors.white,
       secondary: Color.fromRGBO(0xa9, 0xaa, 0xb2, 1),
-      surface: Colors.white,
       background: Color(0xFF0a0a23),
       error: Colors.red,
     ),

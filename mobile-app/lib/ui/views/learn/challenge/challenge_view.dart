@@ -123,11 +123,10 @@ class ChallengeView extends StatelessWidget {
                 ),
               );
 
-              return WillPopScope(
-                onWillPop: () async {
+              return PopScope(
+                canPop: true,
+                onPopInvoked: (bool didPop) async {
                   model.learnService.updateProgressOnPop(context, block);
-
-                  return Future.value(true);
                 },
                 child: Scaffold(
                   appBar: !model.hideAppBar
@@ -145,6 +144,13 @@ class ChallengeView extends StatelessWidget {
                                               ? decoration
                                               : null,
                                           child: ElevatedButton(
+                                            style: ElevatedButton.styleFrom(
+                                              shape: RoundedRectangleBorder(
+                                                borderRadius:
+                                                    BorderRadius.circular(0),
+                                              ),
+                                              elevation: 0,
+                                            ),
                                             onPressed: () {
                                               model.setShowConsole = false;
                                               model.setShowProjectPreview =
@@ -163,14 +169,21 @@ class ChallengeView extends StatelessWidget {
                                               ? decoration
                                               : null,
                                           child: ElevatedButton(
-                                            child: Text(
-                                              context.t.console,
+                                            style: ElevatedButton.styleFrom(
+                                              shape: RoundedRectangleBorder(
+                                                borderRadius:
+                                                    BorderRadius.circular(0),
+                                              ),
+                                              elevation: 0,
                                             ),
                                             onPressed: () {
                                               model.setShowConsole = true;
                                               model.setShowProjectPreview =
                                                   false;
                                             },
+                                            child: Text(
+                                              context.t.console,
+                                            ),
                                           ),
                                         ),
                                       ),
@@ -270,6 +283,12 @@ class ChallengeView extends StatelessWidget {
           ),
         ),
         child: ElevatedButton(
+          style: ElevatedButton.styleFrom(
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(0),
+            ),
+            elevation: 0,
+          ),
           onPressed: () async {
             model.setCurrentSelectedFile = file.name;
             ChallengeFile currFile = model.currentFile(challenge);
@@ -337,7 +356,7 @@ class ChallengeView extends StatelessWidget {
             ),
           ),
           Container(
-            margin: const EdgeInsets.all(8),
+            margin: const EdgeInsets.symmetric(horizontal: 8),
             color: model.showPanel && model.panelType == PanelType.instruction
                 ? Colors.white
                 : const Color.fromRGBO(0x3B, 0x3B, 0x4F, 1),
@@ -373,7 +392,7 @@ class ChallengeView extends StatelessWidget {
             ),
           ),
           Container(
-            margin: const EdgeInsets.all(8),
+            margin: const EdgeInsets.symmetric(horizontal: 8),
             color: !model.showPreview
                 ? const Color.fromRGBO(0x3B, 0x3B, 0x4F, 1)
                 : Colors.white,
@@ -429,7 +448,7 @@ class ChallengeView extends StatelessWidget {
               mainAxisAlignment: MainAxisAlignment.end,
               children: [
                 Container(
-                  margin: const EdgeInsets.all(8),
+                  margin: const EdgeInsets.symmetric(horizontal: 8),
                   color: !model.hasTypedInEditor
                       ? const Color.fromARGB(255, 9, 79, 125)
                       : model.completedChallenge

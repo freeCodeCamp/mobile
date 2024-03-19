@@ -150,6 +150,11 @@ class EpisodeListView extends StatelessWidget {
           onPressed: () {
             model.setShowMoreDescription = !model.showDescription;
           },
+          style: TextButton.styleFrom(
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(0),
+            ),
+          ),
           child: Text(
             model.showDescription
                 ? context.t.podcast_show_less

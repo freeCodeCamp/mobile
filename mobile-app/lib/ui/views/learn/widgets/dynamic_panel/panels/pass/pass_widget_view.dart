@@ -144,6 +144,9 @@ class PassWidgetView extends StatelessWidget {
                                   const Color.fromRGBO(0xf1, 0xbe, 0x32, 1),
                               padding: const EdgeInsets.all(8),
                               minimumSize: const Size.fromHeight(50),
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(0),
+                              ),
                             ),
                             onPressed: () {
                               model.auth.routeToLogin(true);
@@ -192,16 +195,6 @@ class PassButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    MaterialStateProperty<Color?> myColorProperty =
-        MaterialStateProperty.resolveWith(
-      (states) {
-        if (states.contains(MaterialState.disabled)) {
-          return Colors.grey;
-        }
-        return const Color.fromRGBO(0x20, 0xD0, 0x32, 1);
-      },
-    );
-
     return Container(
       margin: const EdgeInsets.symmetric(
         vertical: 16,
@@ -218,8 +211,11 @@ class PassButton extends StatelessWidget {
             model.block as Block,
           );
         },
-        style: ButtonStyle(
-          backgroundColor: myColorProperty,
+        style: TextButton.styleFrom(
+          backgroundColor: const Color.fromRGBO(0x20, 0xD0, 0x32, 1),
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(0),
+          ),
         ),
         child: Row(
           mainAxisAlignment: MainAxisAlignment.center,
