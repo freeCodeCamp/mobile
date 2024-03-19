@@ -41,7 +41,6 @@ Future<String> filesToMarkdown(
 }
 
 Future<String> getDeviceInfo(BuildContext context) async {
-  // TODO: Update GPlay Privacy data collection policy
   final deviceInfoPlugin = DeviceInfoPlugin();
 
   if (Platform.isAndroid) {
