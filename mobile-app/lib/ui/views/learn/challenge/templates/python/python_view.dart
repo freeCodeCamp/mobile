@@ -40,11 +40,10 @@ class PythonView extends StatelessWidget {
           ),
         );
 
-        return WillPopScope(
-          onWillPop: () async {
+        return PopScope(
+          canPop: true,
+          onPopInvoked: (bool didPop) async {
             model.learnService.updateProgressOnPop(context, block);
-
-            return Future.value(true);
           },
           child: Scaffold(
             appBar: AppBar(
@@ -99,6 +98,9 @@ class PythonView extends StatelessWidget {
                       side: const BorderSide(
                         width: 2,
                         color: Colors.white,
+                      ),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(0),
                       ),
                     ),
                     onPressed: model.currentChoice != -1

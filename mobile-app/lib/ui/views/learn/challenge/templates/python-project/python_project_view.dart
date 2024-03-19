@@ -27,11 +27,10 @@ class PythonProjectView extends StatelessWidget {
     return ViewModelBuilder<PythonProjectViewModel>.reactive(
       viewModelBuilder: () => PythonProjectViewModel(),
       builder: (context, model, child) {
-        return WillPopScope(
-          onWillPop: () async {
+        return PopScope(
+          canPop: true,
+          onPopInvoked: (bool didPop) async {
             model.learnService.updateProgressOnPop(context, block);
-
-            return Future.value(true);
           },
           child: Scaffold(
             appBar: AppBar(
@@ -117,6 +116,9 @@ class PythonProjectView extends StatelessWidget {
                           width: 2,
                           color: Colors.white,
                         ),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(0),
+                        ),
                       ),
                       onPressed: model.linkController.text.isEmpty
                           ? null
@@ -153,6 +155,9 @@ class PythonProjectView extends StatelessWidget {
                         side: const BorderSide(
                           width: 2,
                           color: Colors.white,
+                        ),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(0),
                         ),
                       ),
                       onPressed: () async {

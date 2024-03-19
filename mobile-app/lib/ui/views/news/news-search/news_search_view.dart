@@ -12,35 +12,31 @@ class NewsSearchView extends StatelessWidget {
       viewModelBuilder: () => NewsSearchModel(),
       builder: (context, model, child) => Scaffold(
         appBar: AppBar(
-          title: Container(
-            constraints: BoxConstraints(
-              minWidth: MediaQuery.of(context).size.width,
-            ),
-            child: TextField(
-                controller: model.searchbarController,
-                decoration: InputDecoration(
-                  hintText: context.t.tutorial_search_placeholder,
-                  fillColor: const Color.fromRGBO(0x2A, 0x2A, 0x40, 1),
-                  border: InputBorder.none,
-                  filled: true,
-                ),
-                onChanged: (value) {
-                  model.setSearchTerm(value);
+          titleSpacing: 0,
+          title: TextField(
+              controller: model.searchbarController,
+              decoration: InputDecoration(
+                hintText: context.t.tutorial_search_placeholder,
+                fillColor: const Color.fromRGBO(0x2A, 0x2A, 0x40, 1),
+                border: InputBorder.none,
+                filled: true,
+              ),
+              onChanged: (value) {
+                model.setSearchTerm(value);
 
-                  if (model.hasData) {
-                    model.setHasData = false;
-                  }
-                },
-                onSubmitted: model.hasData
-                    ? (value) {
-                        model.searchSubject();
-                      }
-                    : (value) {}),
-          ),
+                if (model.hasData) {
+                  model.setHasData = false;
+                }
+              },
+              onSubmitted: model.hasData
+                  ? (value) {
+                      model.searchSubject();
+                    }
+                  : (value) {}),
           actions: [
             Container(
+              margin: const EdgeInsets.only(left: 8),
               color: const Color.fromRGBO(0x2A, 0x2A, 0x40, 1),
-              margin: const EdgeInsets.fromLTRB(4, 4, 32, 4),
               child: IconButton(
                 onPressed: model.searchbarController.text != '' && model.hasData
                     ? () {
@@ -49,10 +45,6 @@ class NewsSearchView extends StatelessWidget {
                     : null,
                 icon: const Icon(
                   Icons.search_sharp,
-                ),
-                style: TextButton.styleFrom(
-                  disabledBackgroundColor:
-                      const Color.fromARGB(255, 35, 35, 48),
                 ),
               ),
             )

@@ -37,14 +37,17 @@ class DeleteAccountViewModel extends BaseViewModel {
           name: '/delete-account-dialog',
         ),
         builder: (context) {
-          return WillPopScope(
-            onWillPop: () async => false,
+          return PopScope(
+            canPop: false,
             child: SimpleDialog(
               title: Text(
                 context.t.delete_account_deleting,
               ),
               contentPadding: const EdgeInsets.fromLTRB(0.0, 12.0, 0.0, 24.0),
               backgroundColor: const Color(0xFF2A2A40),
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(0),
+              ),
               children: const [
                 Center(
                   child: CircularProgressIndicator(),

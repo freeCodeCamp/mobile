@@ -20,6 +20,9 @@ class DrawerWidgetView extends StatelessWidget {
       viewModelBuilder: () => DrawerWidgtetViewModel(),
       onViewModelReady: (model) => model.initState(),
       builder: (context, model, child) => Drawer(
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(0),
+        ),
         child: Container(
           color: const Color.fromRGBO(0x2A, 0x2A, 0x40, 1),
           child: Column(
@@ -140,6 +143,7 @@ class DrawerWidgetView extends StatelessWidget {
                 ),
               ),
               const SafeArea(
+                minimum: EdgeInsets.only(bottom: 16),
                 child: Text(
                   'freeCodeCamp is a donor-supported tax-exempt 501(c)(3) nonprofit organization',
                   textAlign: TextAlign.center,
