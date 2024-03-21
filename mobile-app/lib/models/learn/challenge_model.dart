@@ -40,6 +40,9 @@ class Challenge {
   // Challenge Type 11 - Video
   Question? question;
 
+  // Challenge Type 15 - Odin
+  final List<String>? assignments;
+
   Challenge({
     required this.id,
     required this.block,
@@ -53,6 +56,7 @@ class Challenge {
     required this.tests,
     required this.files,
     this.question,
+    this.assignments,
   });
 
   factory Challenge.fromJson(Map<String, dynamic> data) {
@@ -74,6 +78,9 @@ class Challenge {
           .toList(),
       question:
           data['question'] != null ? Question.fromJson(data['question']) : null,
+      assignments: data['assignments'] != null
+          ? (data['assignments'] as List).cast<String>()
+          : null,
     );
   }
 

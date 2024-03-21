@@ -226,7 +226,9 @@ class ChallengeViewModel extends BaseViewModel {
 
     learnService.setLastVisitedChallenge(url, block);
 
-    if (challenge.challengeType == 11 || challenge.challengeType == 10) {
+    if (challenge.challengeType == 11 ||
+        challenge.challengeType == 10 ||
+        challenge.challengeType == 15) {
     } else {
       List<ChallengeFile> currentEditedChallenge = challenge.files
           .where((element) => element.editableRegionBoundaries.isNotEmpty)
@@ -282,7 +284,8 @@ class ChallengeViewModel extends BaseViewModel {
   // This prevents the user from requesting the challenge more than once
   // when swichting between preview and the challenge.
 
-  Future<Challenge> initChallenge(String url) async { // NOTE: Function is not used anywhere
+  Future<Challenge> initChallenge(String url) async {
+    // NOTE: Function is not used anywhere
     SharedPreferences prefs = await SharedPreferences.getInstance();
     Response res = await _dio.get(url);
 
