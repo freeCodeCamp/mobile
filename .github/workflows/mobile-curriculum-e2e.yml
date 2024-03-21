@@ -40,7 +40,7 @@ jobs:
           node-version: 18.x
 
       - name: Setup Flutter 3.16.x
-        uses: subosito/flutter-action@2783a3f08e1baf891508463f8c6653c258246225 # v2
+        uses: subosito/flutter-action@1c5eb12d812966ca84680edc38353a0851c8fd56 # v2
         with:
           flutter-version: "3.16.x"
           channel: "stable"
