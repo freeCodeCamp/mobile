@@ -189,22 +189,33 @@ class ProfileView extends StatelessWidget {
                             decoration: BoxDecoration(
                               border: borderPicker(user),
                             ),
-                            child: CachedNetworkImage(
-                              imageUrl: user.picture,
-                              height: MediaQuery.of(context).size.width * 0.25,
-                              width: MediaQuery.of(context).size.width * 0.25,
-                              errorWidget: (context, url, error) => Image.asset(
-                                  'assets/images/placeholder-profile-img.png'),
-                              imageBuilder: (context, imageProvider) =>
-                                  Container(
-                                decoration: BoxDecoration(
-                                  image: DecorationImage(
-                                    image: imageProvider,
-                                    fit: BoxFit.cover,
+                            child: user.picture == ''
+                                ? Image.asset(
+                                    'assets/images/placeholder-profile-img.png',
+                                    height: MediaQuery.of(context).size.width *
+                                        0.25,
+                                    width: MediaQuery.of(context).size.width *
+                                        0.25,
+                                  )
+                                : CachedNetworkImage(
+                                    imageUrl: user.picture,
+                                    height: MediaQuery.of(context).size.width *
+                                        0.25,
+                                    width: MediaQuery.of(context).size.width *
+                                        0.25,
+                                    errorWidget: (context, url, error) =>
+                                        Image.asset(
+                                            'assets/images/placeholder-profile-img.png'),
+                                    imageBuilder: (context, imageProvider) =>
+                                        Container(
+                                      decoration: BoxDecoration(
+                                        image: DecorationImage(
+                                          image: imageProvider,
+                                          fit: BoxFit.cover,
+                                        ),
+                                      ),
+                                    ),
                                   ),
-                                ),
-                              ),
-                            ),
                           ),
                           Expanded(
                             child: Container(
