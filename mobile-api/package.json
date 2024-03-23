@@ -42,7 +42,7 @@
     "nodemon": "2.0.22",
     "prettier": "3.2.5",
     "ts-jest": "29.1.2",
-    "ts-node": "10.9.1",
+    "ts-node": "10.9.2",
     "typescript": "5.2.2"
   }
 }
