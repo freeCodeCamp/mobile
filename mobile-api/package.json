@@ -24,7 +24,7 @@
     "bree": "9.2.2",
     "dotenv": "16.4.5",
     "express": "4.19.1",
-    "mongoose": "6.12.7",
+    "mongoose": "8.2.3",
     "rss-parser": "3.13.0"
   },
   "devDependencies": {
