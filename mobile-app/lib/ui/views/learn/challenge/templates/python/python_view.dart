@@ -42,7 +42,7 @@ class PythonView extends StatelessWidget {
 
         return PopScope(
           canPop: true,
-          onPopInvoked: (bool didPop) async {
+          onPopInvoked: (bool didPop) {
             model.learnService.updateProgressOnPop(context, block);
           },
           child: Scaffold(
