@@ -12,16 +12,17 @@ import 'package:freecodecamp/ui/views/learn/challenge/challenge_viewmodel.dart';
 import 'package:freecodecamp/ui/views/learn/widgets/dynamic_panel/panels/hint/hint_widget_model.dart';
 import 'package:freecodecamp/ui/views/news/html_handler/html_handler.dart';
 import 'package:phone_ide/phone_ide.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:stacked/stacked.dart';
 
 const forumLocation = 'https://forum.freecodecamp.org';
 
-String filesToMarkdown(
-  List<ChallengeFile> challengeFiles,
+Future<String> filesToMarkdown(
+  Challenge challenge,
   String editorText,
-) {
-  // Currently this function has been done for single files
-  // When working on multiple files, it's better if we keep a copy of the challengeFiles list and store user code there.
+) async {
+  SharedPreferences prefs = await SharedPreferences.getInstance();
+  final challengeFiles = challenge.files;
   final bool moreThanOneFile = challengeFiles.length > 1;
   String markdownStr = '\n';
 
@@ -30,14 +31,16 @@ String filesToMarkdown(
         ? '/* file: ${challengeFile.name}.${challengeFile.ext} */\n'
         : '';
     final fileType = challengeFile.ext.name;
-    markdownStr += '```$fileType\n$fileName$editorText\n```\n\n';
+    final fileContent =
+        prefs.getString('${challenge.id}.${challengeFile.name}') ??
+            challengeFile.contents;
+    markdownStr += '```$fileType\n$fileName$fileContent\n```\n\n';
   }
 
   return markdownStr;
 }
 
 Future<String> getDeviceInfo(BuildContext context) async {
-  // TODO: Update GPlay Privacy data collection policy
   final deviceInfoPlugin = DeviceInfoPlugin();
 
   if (Platform.isAndroid) {
@@ -72,7 +75,7 @@ Future<String> genForumLink(
   final String endingText =
       '**Your mobile information:**\n```txt\n$userDeviceInfo\n```\n\n**Challenge:** $titleText\n\n**Link to the challenge:**\nhttps://www.freecodecamp.org/learn/${currChallenge.superBlock}/${currChallenge.block}/${currChallenge.dashedName}';
 
-  final String userCode = filesToMarkdown(currChallenge.files, editorText);
+  final String userCode = await filesToMarkdown(currChallenge, editorText);
 
   final String textMessage =
       "**Tell us what's happening:**\nDescribe your issue in detail here.\n\n**Your code so far**$userCode\n\n$endingText";

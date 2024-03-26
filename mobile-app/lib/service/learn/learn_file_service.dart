@@ -35,7 +35,7 @@ class LearnFileService {
   ) async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
 
-    prefs.setString('${challenge.id}.$currentSelectedFile', value);
+    await prefs.setString('${challenge.id}.$currentSelectedFile', value);
   }
 
   // This funciton returns the first file content with the given extension from the
