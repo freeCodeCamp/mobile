@@ -17,9 +17,6 @@
   },
   "homepage": "https://github.com/freeCodeCamp/mobile#readme",
   "author": "freeCodeCamp <team@freecodecamp.org>",
-  "workspaces": [
-    "backend-api"
-  ],
   "scripts": {
     "build:api": "cd mobile-api && npm run build",
     "postinstall": "cd mobile-app && flutter pub get",
