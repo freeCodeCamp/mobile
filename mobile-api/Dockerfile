@@ -1,15 +1,15 @@
-FROM node:18-alpine AS builder
+FROM node:20-alpine AS builder
 WORKDIR /build
 COPY . .
 RUN npm ci
 RUN npm run build
 
-FROM node:18-alpine AS dependencies
+FROM node:20-alpine AS dependencies
 WORKDIR /build
 COPY package-lock.json package.json ./
 RUN npm ci --production
 
-FROM node:18-alpine
+FROM node:20-alpine
 WORKDIR /api
 COPY --from=builder /build/package.json /build/package-lock.json ./
 COPY --from=builder /build/prod/  ./prod/

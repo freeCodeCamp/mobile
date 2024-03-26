@@ -11,11 +11,7 @@ defaults:
 jobs:
   build-and-test:
     name: Build and Test Image
-    runs-on: ubuntu-latest
-
-    strategy:
-      matrix:
-        node-version: [18.x]
+    runs-on: ubuntu-22.04
 
     steps:
       - name: Checkout source code
