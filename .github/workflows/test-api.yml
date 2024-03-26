@@ -13,11 +13,11 @@ defaults:
 jobs:
   lint-and-test:
     name: Lint and Test
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-22.04
 
     strategy:
       matrix:
-        node-version: [18.x]
+        node-version: [20.x]
 
     steps:
       - name: Checkout source code
