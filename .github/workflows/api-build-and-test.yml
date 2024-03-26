@@ -1,4 +1,4 @@
-name: Node.js CI
+name: Build and Test API
 
 on:
   push:
@@ -11,8 +11,8 @@ defaults:
     working-directory: mobile-api
 
 jobs:
-  lint-and-test:
-    name: Lint and Test
+  build-and-test:
+    name: Build and Test API
     runs-on: ubuntu-latest
 
     strategy:
@@ -35,5 +35,19 @@ jobs:
       - name: Lint source files
         run: npm run lint
 
-      - name: Run test
+      - name: Build and start container
+        run: docker-compose -f docker-compose.dev.yml up -d
+
+      - name: Sleep for 1 minute
+        run: sleep 60
+
+      - name: Ping container
+        run: curl localhost:3000/ping
+
+      - name: Create .env file
+        run: |
+          cp sample.env .env
+          cat .env
+
+      - name: Run tests
         run: npm test
