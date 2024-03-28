@@ -11,7 +11,7 @@ dependencies:
   flutter_html: 3.0.0-beta.2
   algolia: ^1.1.2 # TODO: Replace package with official one
   just_audio: ^0.9.36
-  path_provider: ^2.0.15
+  path_provider: ^2.1.2
   sqflite: ^2.2.8+4
   stacked: ^3.4.0
   stacked_services: ^1.1.0
