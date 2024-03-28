@@ -1341,26 +1341,26 @@ packages:
     dependency: "direct main"
     description:
       name: stacked
-      sha256: "125f96248c6a33fa29a4e622e9b57ee5f222289475292dd1b9fa266cc218a2db"
+      sha256: "32641025f7bedf3acddd068008932c5f4d89bd089f1b091f61c9fe466c66229e"
       url: "https://pub.dev"
     source: hosted
-    version: "3.4.1"
+    version: "3.4.2"
   stacked_generator:
     dependency: "direct dev"
     description:
       name: stacked_generator
-      sha256: "2dfbddffc14dd1c3a5cc2e2c1ee9a7ead1171d37d646d4a8b6eec1ff3fc477b2"
+      sha256: c141baf56cb7168dfde142d3578118c7bf914be9fb62bc8593344e97894ac8f9
       url: "https://pub.dev"
     source: hosted
-    version: "1.5.0"
+    version: "1.5.1"
   stacked_services:
     dependency: "direct main"
     description:
       name: stacked_services
-      sha256: "52a518c63802bcbd6a562034eda4514093cfe22f519418489fe646e42513a11f"
+      sha256: "5cb55065d85c395da3d37ec0e52ace7f6e367c0b8477aace8c8479009e02cb41"
       url: "https://pub.dev"
     source: hosted
-    version: "1.3.0"
+    version: "1.5.0"
   stacked_shared:
     dependency: transitive
     description:

@@ -13,8 +13,8 @@ dependencies:
   just_audio: ^0.9.36
   path_provider: ^2.1.2
   sqflite: ^2.3.2
-  stacked: ^3.4.0
-  stacked_services: ^1.1.0
+  stacked: ^3.4.2
+  stacked_services: ^1.5.0
   url_launcher: ^6.0.10
   # TODO: Replace with sqflite methods as below package isn't actively maintained
   sqflite_migration_service: ^2.0.0-nullsafety.1
@@ -60,7 +60,7 @@ dev_dependencies:
     sdk: flutter
   flutter_test:
     sdk: flutter
-  stacked_generator: ^1.0.0
+  stacked_generator: ^1.5.1 # TODO: upgrade after migrating to FLutter 3.19
   flutter_launcher_icons: ^0.13.1
   dependency_validator: ^3.2.2
   flutter_lints: ^2.0.0
