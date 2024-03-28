@@ -9,8 +9,8 @@ dependencies:
     sdk: flutter
   flutter_dotenv: ^5.1.0
   flutter_html: 3.0.0-beta.2
-  algolia: ^1.1.2
-  just_audio: ^0.9.34
+  algolia: ^1.1.2 # Replace package with official one
+  just_audio: ^0.9.36
   http: ^0.13.3
   path_provider: ^2.0.15
   sqflite: ^2.2.8+4
@@ -39,7 +39,7 @@ dependencies:
   flutter_heatmap_calendar: ^1.0.4
   intl: ^0.18.0
   path: ^1.8.1
-  audio_service: ^0.18.4
+  audio_service: ^0.18.12
   device_info_plus: ^9.0.0
   auth0_flutter: ^1.0.1
   upgrader: ^8.0.0
