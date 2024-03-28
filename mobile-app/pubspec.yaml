@@ -15,7 +15,7 @@ dependencies:
   sqflite: ^2.3.2
   stacked: ^3.4.2
   stacked_services: ^1.5.0
-  url_launcher: ^6.0.10
+  url_launcher: ^6.2.5
   # TODO: Replace with sqflite methods as below package isn't actively maintained
   sqflite_migration_service: ^2.0.0-nullsafety.1
   dio: ^5.0.0
