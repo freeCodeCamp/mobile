@@ -18,7 +18,7 @@ dependencies:
   url_launcher: ^6.2.5
   # TODO: Replace with sqflite methods as below package isn't actively maintained
   sqflite_migration_service: ^2.0.0-nullsafety.1
-  dio: ^5.0.0
+  dio: ^5.4.2+1
   phone_ide: ^1.2.3
   jiffy: ^6.2.1
   shared_preferences: ^2.1.2
