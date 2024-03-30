@@ -20,12 +20,12 @@ dependencies:
   sqflite_migration_service: ^2.0.0-nullsafety.1
   dio: ^5.4.2+1
   phone_ide: ^1.2.3
-  jiffy: ^6.2.1
-  shared_preferences: ^2.1.2
+  jiffy: ^6.2.1 # TODO: upgrade after migrating to FLutter 3.19
+  shared_preferences: ^2.2.2
   font_awesome_flutter: ^10.4.0
   html: ^0.15.4
-  fk_user_agent: ^2.0.1
-  flutter_hooks: ^0.18.6
+  fk_user_agent: ^2.0.1 # TODO: replace with ua_client_hints package
+  flutter_hooks: ^0.20.5
   flutter_local_notifications: ^14.1.1
   youtube_player_iframe: ^4.0.4
   infinite_scroll_pagination: ^3.1.0
@@ -37,7 +37,7 @@ dependencies:
   pretty_dio_logger: ^1.2.0-beta-1
   curl_logger_dio_interceptor: ^1.0.0
   flutter_heatmap_calendar: ^1.0.4
-  intl: ^0.18.0
+  intl: ^0.18.1 # TODO: upgrade after migrating to FLutter 3.19
   path: ^1.8.1
   audio_service: ^0.18.12
   device_info_plus: ^9.0.0
