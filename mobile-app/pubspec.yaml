@@ -29,16 +29,17 @@ dependencies:
   # NOTE: After migrating to flutter 3.19, check for build warnings
   flutter_local_notifications: ^17.0.0
   youtube_player_iframe: ^4.0.4
-  infinite_scroll_pagination: ^3.1.0
-  web_socket_channel: ^2.1.0
-  cached_network_image: ^3.3.0
-  flutter_secure_storage: ^8.0.0
+  infinite_scroll_pagination: ^4.0.0
+  web_socket_channel: ^2.4.0 # TODO: upgrade after migrating to FLutter 3.19
+  cached_network_image: ^3.3.1
+  flutter_secure_storage: ^9.0.0
   photo_view: ^0.14.0
-  share_plus: ^7.0.2
+  share_plus: ^7.2.2 # TODO: upgrade after migrating to FLutter 3.19
   pretty_dio_logger: ^1.2.0-beta-1
+  # NOTE: Do we still want these?
   curl_logger_dio_interceptor: ^1.0.0
   flutter_heatmap_calendar: ^1.0.4
-  intl: ^0.18.1 # TODO: upgrade after migrating to FLutter 3.19
+  intl: ^0.18.1 # TODO: replace with jiffy
   path: ^1.8.1
   audio_service: ^0.18.12
   device_info_plus: ^9.0.0
