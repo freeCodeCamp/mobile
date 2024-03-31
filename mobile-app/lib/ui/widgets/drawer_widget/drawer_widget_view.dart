@@ -29,7 +29,6 @@ class DrawerWidgetView extends StatelessWidget {
             children: [
               Expanded(
                 child: ScrollShadow(
-                  controller: model.scrollController,
                   color: Colors.black,
                   child: ListView(
                     controller: model.scrollController,

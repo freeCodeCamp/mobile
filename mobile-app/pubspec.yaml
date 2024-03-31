@@ -50,10 +50,10 @@ dependencies:
   firebase_core: ^2.4.0
   firebase_analytics: ^10.1.0
   flutter_custom_tabs: ^1.0.4
-  flutter_scroll_shadow: ^1.1.0
+  flutter_scroll_shadow: ^1.2.4
   firebase_crashlytics: ^3.0.17
   flutter_highlight: ^0.7.0
-  flutter_inappwebview: ^5.8.0
+  flutter_inappwebview: ^5.8.0 # TODO: upgrade after migrating to FLutter 3.19
   flutter_html_table: ^3.0.0-beta.2
   flutter_localizations:
     sdk: flutter
