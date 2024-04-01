@@ -35,8 +35,8 @@ dependencies:
   flutter_secure_storage: ^9.0.0
   photo_view: ^0.14.0
   share_plus: ^7.2.2 # TODO: upgrade after migrating to FLutter 3.19
-  pretty_dio_logger: ^1.2.0-beta-1
   # NOTE: Do we still want these?
+  pretty_dio_logger: ^1.2.0-beta-1
   curl_logger_dio_interceptor: ^1.0.0
   flutter_heatmap_calendar: ^1.0.4
   intl: ^0.18.1 # TODO: replace with jiffy
@@ -47,11 +47,11 @@ dependencies:
   auth0_flutter: <=1.4.1
   upgrader: ^10.0.1
   quick_actions: ^1.0.7
-  firebase_core: ^2.4.0
-  firebase_analytics: ^10.1.0
+  firebase_core: ^2.27.0
+  firebase_analytics: ^10.8.9
   flutter_custom_tabs: ^1.0.4
   flutter_scroll_shadow: ^1.2.4
-  firebase_crashlytics: ^3.0.17
+  firebase_crashlytics: ^3.4.18
   flutter_highlight: ^0.7.0
   flutter_inappwebview: ^5.8.0 # TODO: upgrade after migrating to FLutter 3.19
   flutter_html_table: ^3.0.0-beta.2
