@@ -1,6 +1,3 @@
-import 'dart:convert';
-
-import 'package:dio/dio.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_inappwebview/flutter_inappwebview.dart';
 import 'package:freecodecamp/app/app.locator.dart';
@@ -11,7 +8,6 @@ import 'package:freecodecamp/enums/panel_type.dart';
 import 'package:freecodecamp/extensions/i18n_extension.dart';
 import 'package:freecodecamp/models/learn/challenge_model.dart';
 import 'package:freecodecamp/models/learn/curriculum_model.dart';
-import 'package:freecodecamp/service/dio_service.dart';
 import 'package:freecodecamp/service/learn/learn_file_service.dart';
 import 'package:freecodecamp/service/learn/learn_offline_service.dart';
 import 'package:freecodecamp/service/learn/learn_service.dart';
@@ -100,8 +96,6 @@ class ChallengeViewModel extends BaseViewModel {
   final LearnFileService fileService = locator<LearnFileService>();
   final LearnService learnService = locator<LearnService>();
   final learnOfflineService = locator<LearnOfflineService>();
-
-  final _dio = DioService.dio;
 
   set setCurrentSelectedFile(String value) {
     _currentSelectedFile = value;
@@ -279,31 +273,6 @@ class ChallengeViewModel extends BaseViewModel {
       );
       _mounted = true;
     }
-  }
-
-  // This prevents the user from requesting the challenge more than once
-  // when swichting between preview and the challenge.
-
-  Future<Challenge> initChallenge(String url) async {
-    // NOTE: Function is not used anywhere
-    SharedPreferences prefs = await SharedPreferences.getInstance();
-    Response res = await _dio.get(url);
-
-    if (prefs.getString(url) == null) {
-      if (res.statusCode == 200) {
-        Challenge challenge = Challenge.fromJson(res.data);
-
-        prefs.setString(url, res.data);
-
-        return challenge;
-      }
-    }
-
-    Challenge challenge = Challenge.fromJson(
-      jsonDecode(prefs.getString(url) as String),
-    );
-
-    return challenge;
   }
 
   // This parses the preview document with the correct viewport size. This document
