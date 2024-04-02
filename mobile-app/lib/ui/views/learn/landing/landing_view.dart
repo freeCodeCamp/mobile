@@ -33,8 +33,8 @@ class LearnLandingView extends StatelessWidget {
           showIgnore: false,
           showLater: false,
           upgrader: Upgrader(
-            debugLogging: true,
-            debugDisplayAlways: true,
+            // debugLogging: true,
+            // debugDisplayAlways: true,
             // TODO: We have to start using this in the future and not force the user to update the app always
             // minAppVersion: '4.1.8'
           ),
