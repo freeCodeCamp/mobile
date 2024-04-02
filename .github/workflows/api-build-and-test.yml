@@ -45,9 +45,7 @@ jobs:
         run: curl localhost:3000/ping
 
       - name: Create .env file
-        run: |
-          cp sample.env .env
-          cat .env
+        run: cp sample.env .env
 
       - name: Run tests
         run: npm test
