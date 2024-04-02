@@ -38,7 +38,8 @@ class BlockView extends StatelessWidget {
         model,
         child,
       ) {
-        bool isCertification = block.challenges.length == 1;
+        bool isCertification = block.challenges.length == 1 &&
+            block.superBlock.dashedName != 'the-odin-project';
 
         int calculateProgress =
             (model.challengesCompleted / block.challenges.length * 100).round();

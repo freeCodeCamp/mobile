@@ -1,15 +1,16 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_html/flutter_html.dart';
 import 'package:freecodecamp/extensions/i18n_extension.dart';
 import 'package:freecodecamp/models/learn/challenge_model.dart';
 import 'package:freecodecamp/models/learn/curriculum_model.dart';
-import 'package:freecodecamp/ui/views/learn/challenge/templates/python/python_viewmodel.dart';
+import 'package:freecodecamp/ui/views/learn/challenge/templates/odin/odin_viewmodel.dart';
 import 'package:freecodecamp/ui/views/news/html_handler/html_handler.dart';
 import 'package:freecodecamp/ui/widgets/drawer_widget/drawer_widget_view.dart';
 import 'package:stacked/stacked.dart';
 import 'package:youtube_player_iframe/youtube_player_iframe.dart';
 
-class PythonView extends StatelessWidget {
-  const PythonView({
+class OdinView extends StatelessWidget {
+  const OdinView({
     Key? key,
     required this.challenge,
     required this.block,
@@ -26,12 +27,13 @@ class PythonView extends StatelessWidget {
   Widget build(BuildContext context) {
     HTMLParser parser = HTMLParser(context: context);
 
-    return ViewModelBuilder<PythonViewModel>.reactive(
-      viewModelBuilder: () => PythonViewModel(),
+    return ViewModelBuilder<OdinViewModel>.reactive(
+      viewModelBuilder: () => OdinViewModel(),
+      onViewModelReady: (model) => model.initChallenge(challenge),
       builder: (context, model, child) {
         YoutubePlayerController controller =
             YoutubePlayerController.fromVideoId(
-          videoId: challenge.videoId!,
+          videoId: challenge.videoId ?? '',
           autoPlay: false,
           params: const YoutubePlayerParams(
             showControls: true,
@@ -68,19 +70,38 @@ class PythonView extends StatelessWidget {
                     ),
                   ),
                   const SizedBox(height: 12),
-                  Padding(
-                    padding: const EdgeInsets.symmetric(
-                      horizontal: 16,
+                  if (challenge.videoId != null) ...[
+                    Padding(
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 16,
+                      ),
+                      child: YoutubePlayer(
+                        controller: controller,
+                        enableFullScreenOnVerticalDrag: false,
+                      ),
                     ),
-                    child: YoutubePlayer(
-                      controller: controller,
-                      enableFullScreenOnVerticalDrag: false,
-                    ),
-                  ),
-                  const SizedBox(height: 12),
+                    const SizedBox(height: 12),
+                  ],
                   ...parser.parse(
                     challenge.description,
                   ),
+                  if (challenge.assignments != null &&
+                      challenge.assignments!.isNotEmpty) ...[
+                    buildDivider(),
+                    Text(
+                      'Assignments',
+                      textAlign: TextAlign.center,
+                      style: TextStyle(
+                        fontSize: FontSize.xLarge.value,
+                        fontWeight: FontWeight.bold,
+                        fontFamily: 'Inter',
+                      ),
+                    ),
+                    const SizedBox(height: 8),
+                    for (final (i, assignment)
+                        in challenge.assignments!.indexed)
+                      assignmentTile(assignment, i, model, context),
+                  ],
                   if (challenge.description.isNotEmpty) buildDivider(),
                   ...parser.parse(
                     challenge.question!.text,
@@ -99,11 +120,9 @@ class PythonView extends StatelessWidget {
                         width: 2,
                         color: Colors.white,
                       ),
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(0),
-                      ),
                     ),
-                    onPressed: model.currentChoice != -1
+                    onPressed: model.currentChoice != -1 &&
+                            model.assignmentStatus.every((element) => element)
                         ? model.choiceStatus != null && model.choiceStatus!
                             ? () => model.learnService.goToNextChallenge(
                                   block.challenges.length,
@@ -132,9 +151,66 @@ class PythonView extends StatelessWidget {
     );
   }
 
+  Container assignmentTile(
+    String assignment,
+    int ind,
+    OdinViewModel model,
+    BuildContext context,
+  ) {
+    HTMLParser parser = HTMLParser(context: context);
+
+    return Container(
+      margin: const EdgeInsets.symmetric(vertical: 8),
+      child: ListTile(
+        selected: model.assignmentStatus[ind],
+        tileColor: const Color(0xFF0a0a23),
+        selectedTileColor: const Color(0xDEFFFFFF),
+        onTap: () {
+          model.setAssignmentStatus = model.assignmentStatus
+            ..[ind] = !model.assignmentStatus[ind];
+        },
+        leading: Checkbox(
+          focusNode: FocusNode(),
+          value: model.assignmentStatus[ind],
+          onChanged: (value) {
+            model.setAssignmentStatus = model.assignmentStatus
+              ..[ind] = value ?? false;
+          },
+          activeColor: const Color(0xFF0a0a23),
+          checkColor: const Color(0xDEFFFFFF),
+        ),
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(0),
+          side: BorderSide(
+            color: model.assignmentStatus[ind]
+                ? const Color(0xFF0a0a23)
+                : const Color(0xFFAAAAAA),
+            width: 2,
+          ),
+        ),
+        title: Row(
+          children: [
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: parser.parse(
+                  assignment,
+                  isSelectable: false,
+                  fontColor: model.assignmentStatus[ind]
+                      ? const Color(0xFF0a0a23)
+                      : null,
+                ),
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
   Container questionOption(
     MapEntry<int, Answer> answerObj,
-    PythonViewModel model,
+    OdinViewModel model,
     BuildContext context,
   ) {
     HTMLParser parser = HTMLParser(context: context);
