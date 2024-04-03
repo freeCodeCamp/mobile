@@ -21,6 +21,14 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
+      - name: Remove unused software
+        working-directory: /
+        run: |
+          sudo rm -rf /usr/share/dotnet
+          sudo rm -rf /opt/ghc
+          echo "Free space:"
+          df -h /
+
       - name: Checkout files
         uses: actions/checkout@b4ffde65f46336ab88eb53be808477a3936bae11 # v4
 
@@ -44,13 +52,13 @@ jobs:
           path: |
             ~/.android/avd/*
             ~/.android/adb*
-          key: avd-31
+          key: avd-33
 
       - name: Ceate AVD and generate snapshot for caching
         if: steps.avd-cache.outputs.cache-hit != 'true'
         uses: reactivecircus/android-emulator-runner@6b0df4b0efb23bb0ec63d881db79aefbc976e4b2 # v2
         with:
-          api-level: 31
+          api-level: 33
           target: google_apis
           arch: x86_64
           force-avd-creation: false
@@ -97,7 +105,7 @@ jobs:
       - name: Run tests in emulator
         uses: reactivecircus/android-emulator-runner@6b0df4b0efb23bb0ec63d881db79aefbc976e4b2 # v2
         with:
-          api-level: 31
+          api-level: 33
           target: google_apis
           arch: x86_64
           force-avd-creation: false
