@@ -11,18 +11,14 @@ defaults:
 jobs:
   build-and-test:
     name: Build and Test Image
-    runs-on: ubuntu-latest
-
-    strategy:
-      matrix:
-        node-version: [18.x]
+    runs-on: ubuntu-22.04
 
     steps:
       - name: Checkout source code
         uses: actions/checkout@b4ffde65f46336ab88eb53be808477a3936bae11 # v4
 
       - name: Build and start container
-        run: docker-compose -f docker-compose.dev.yml up -d
+        run: docker compose -f docker-compose.dev.yml up -d
 
       - name: Sleep for 30 seconds
         run: sleep 30
