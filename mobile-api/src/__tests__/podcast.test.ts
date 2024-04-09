@@ -2,6 +2,7 @@ import 'dotenv/config';
 import fetch from 'node-fetch';
 import { Podcast } from '../models/Podcast';
 import { Episode } from '../models/Episode';
+
 interface pingEndpoint {
   msg: string;
 }
@@ -12,7 +13,7 @@ interface episodeEndpoint {
 }
 
 describe('podcast api', () => {
-  const url = process.env.DEV_URL ?? 'https://api.mobile.freecodecamp.dev';
+  const url = process.env.DEV_URL;
 
   let localPodcastId = '';
   let localEpisodeId = '';
