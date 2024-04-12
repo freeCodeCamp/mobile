@@ -43,7 +43,7 @@ jobs:
           node-version: ${{ matrix.node-version }}
 
       - name: Setup Flutter 3.16.x
-        uses: subosito/flutter-action@1c5eb12d812966ca84680edc38353a0851c8fd56 # v2
+        uses: subosito/flutter-action@44ac965b96f18d999802d4b807e3256d5a3f9fa1 # v2
         with:
           flutter-version: "3.16.x"
           channel: "stable"
