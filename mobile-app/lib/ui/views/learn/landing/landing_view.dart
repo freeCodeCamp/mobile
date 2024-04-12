@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:freecodecamp/extensions/i18n_extension.dart';
 import 'package:freecodecamp/models/learn/curriculum_model.dart';
@@ -23,11 +25,18 @@ class LearnLandingView extends StatelessWidget {
         drawer: const DrawerWidgetView(
           key: Key('drawer'),
         ),
+        // TODO: Check why upgrade alert is not showing up
         body: UpgradeAlert(
+          dialogStyle: Platform.isIOS
+              ? UpgradeDialogStyle.cupertino
+              : UpgradeDialogStyle.material,
+          showIgnore: false,
+          showLater: false,
           upgrader: Upgrader(
-            dialogStyle: UpgradeDialogStyle.material,
-            showIgnore: false,
-            showLater: false,
+            // debugLogging: true,
+            // debugDisplayAlways: true,
+            // TODO: We have to start using this in the future and not force the user to update the app always
+            // minAppVersion: '4.1.8'
           ),
           child: RefreshIndicator(
             backgroundColor: const Color(0xFF0a0a23),

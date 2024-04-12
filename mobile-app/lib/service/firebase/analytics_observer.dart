@@ -9,7 +9,7 @@ class AnalyticsObserver extends RouteObserver {
 
   final FirebaseAnalytics analytics;
 
-  void _sendScreenView(Route<dynamic> route) {
+  void _sendScreenView(Route<dynamic> route) async {
     String screenName = route.settings.name ?? 'could-not-find-view';
 
     if (route.settings.arguments != null) {
@@ -37,8 +37,10 @@ class AnalyticsObserver extends RouteObserver {
       }
     }
     log('Setting screen to $screenName');
-    analytics.setCurrentScreen(
-        screenName: screenName, screenClassOverride: screenName);
+    await analytics.logScreenView(
+      screenName: screenName,
+      screenClass: screenName,
+    );
   }
 
   @override
