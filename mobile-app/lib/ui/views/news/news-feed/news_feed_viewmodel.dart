@@ -6,22 +6,13 @@ import 'package:flutter/services.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:freecodecamp/app/app.locator.dart';
 import 'package:freecodecamp/app/app.router.dart';
+import 'package:freecodecamp/constants/radio_articles.dart';
 import 'package:freecodecamp/models/news/tutorial_model.dart';
 import 'package:freecodecamp/service/developer_service.dart';
 import 'package:freecodecamp/service/dio_service.dart';
 import 'package:jiffy/jiffy.dart';
 import 'package:stacked/stacked.dart';
 import 'package:stacked_services/stacked_services.dart';
-
-List<String> radioArticles = [
-  '622c7bf563ded806bb9e8a20',
-  '5f9ca12d740569d1a4ca4d23',
-  '5f9ca15f740569d1a4ca4e36',
-  '5f9ca198740569d1a4ca4f89',
-  '5f9ca587740569d1a4ca6a0b',
-  '5f9ca99d740569d1a4ca85c3',
-  '5f9cafb9740569d1a4caaf5b'
-];
 
 class NewsFeedViewModel extends BaseViewModel {
   int _pageNumber = 1;
