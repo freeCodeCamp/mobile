@@ -1,8 +1,6 @@
-import 'dart:convert';
-import 'dart:developer';
 import 'dart:io';
 
-import 'package:algolia/algolia.dart';
+import 'package:algolia_helper_flutter/algolia_helper_flutter.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:freecodecamp/app/app.locator.dart';
@@ -15,84 +13,57 @@ class NewsSearchModel extends BaseViewModel {
   String _searchTerm = '';
   String get getSearchTerm => _searchTerm;
 
-  bool _hasData = true;
+  bool _hasData = false;
   bool get hasData => _hasData;
 
-  String hitHash = '';
+  bool _isLoading = true;
+  bool get isLoading => _isLoading;
+
   List currentResult = [];
 
   final searchbarController = TextEditingController();
   final _navigationService = locator<NavigationService>();
+
+  final algolia = HitsSearcher(
+    applicationID: dotenv.get('ALGOLIAAPPID'),
+    apiKey: dotenv.get('ALGOLIAKEY'),
+    indexName: 'news',
+  );
 
   set setHasData(value) {
     _hasData = value;
     notifyListeners();
   }
 
-  Future<List<AlgoliaObjectSnapshot>> search(String inputQuery) async {
-    await dotenv.load(fileName: '.env');
+  set setIsLoading(value) {
+    _isLoading = value;
+    notifyListeners();
+  }
 
-    final Algolia algoliaInit = Algolia.init(
-      applicationId: dotenv.env['ALGOLIAAPPID'] as String,
-      apiKey: dotenv.env['ALGOLIAKEY'] as String,
-    );
-
-    Algolia algolia = algoliaInit;
-
-    AlgoliaQuery query = algolia.instance
-        .index('news')
-        .similarQuery(inputQuery.isEmpty ? 'JavaScript' : inputQuery)
-        .setHitsPerPage(7);
-
-    AlgoliaQuerySnapshot snap = await query.getObjects();
-
-    List<AlgoliaObjectSnapshot> results = snap.hits;
-
-    if (Platform.isIOS) {
-      results
-          .removeWhere((element) => radioArticles.contains(element.objectID));
-    }
-
-    String localHitHash = base64Encode(
-      utf8.encode(snap.hits.toString()),
-    );
-
-    if (localHitHash != hitHash && snap.hits.isNotEmpty) {
-      // If the hashes are different and the search results are not empty,
-      // parse the data from each AlgoliaObjectSnapshot object
-      // and store it in a list called "parseResult"
-
-      List parseResult = [];
-
-      if (!hasData) {
-        setHasData = true;
+  void init() {
+    algolia.query('JavaScript');
+    algolia.responses.listen((res) {
+      if (Platform.isIOS) {
+        res.hits.removeWhere(
+            (element) => radioArticles.contains(element['objectID']));
       }
+      currentResult = res.hits;
+      _hasData = res.hits.isNotEmpty;
+      _isLoading = false;
+      notifyListeners();
+    });
+  }
 
-      try {
-        for (int i = 0; i < snap.hits.length; i++) {
-          parseResult.add(snap.hits[i].data);
-        }
-
-        // Update the stored hash and clear the "currentResult" list,
-        // then add the elements of "parseResult" to it
-        hitHash = localHitHash;
-
-        currentResult.clear();
-        currentResult.addAll(parseResult);
-      } catch (e) {
-        log(e.toString());
-      }
-    } else {
-      if (hasData && snap.hits.isEmpty) {
-        setHasData = false;
-      }
-    }
-
-    return results;
+  void onDispose() {
+    algolia.dispose();
+    searchbarController.dispose();
   }
 
   void setSearchTerm(value) {
     _searchTerm = value;
+    algolia.query(
+      value.isEmpty ? 'JavaScript' : value,
+    );
     notifyListeners();
   }
 
