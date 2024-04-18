@@ -81,8 +81,6 @@ PODS:
     - GoogleUtilities/Environment (~> 7.10)
     - nanopb (< 2.30911.0, >= 2.30908.0)
     - PromisesSwift (~> 2.1)
-  - fk_user_agent (2.0.0):
-    - Flutter
   - Flutter (1.0.0)
   - flutter_custom_tabs (0.0.1):
     - Flutter
@@ -179,6 +177,8 @@ PODS:
   - sqflite (0.0.3):
     - Flutter
     - FlutterMacOS
+  - ua_client_hints (1.2.2):
+    - Flutter
   - url_launcher_ios (0.0.1):
     - Flutter
   - webview_flutter_wkwebview (0.0.1):
@@ -192,7 +192,6 @@ DEPENDENCIES:
   - firebase_analytics (from `.symlinks/plugins/firebase_analytics/ios`)
   - firebase_core (from `.symlinks/plugins/firebase_core/ios`)
   - firebase_crashlytics (from `.symlinks/plugins/firebase_crashlytics/ios`)
-  - fk_user_agent (from `.symlinks/plugins/fk_user_agent/ios`)
   - Flutter (from `Flutter`)
   - flutter_custom_tabs (from `.symlinks/plugins/flutter_custom_tabs/ios`)
   - flutter_inappwebview (from `.symlinks/plugins/flutter_inappwebview/ios`)
@@ -206,6 +205,7 @@ DEPENDENCIES:
   - share_plus (from `.symlinks/plugins/share_plus/ios`)
   - shared_preferences_foundation (from `.symlinks/plugins/shared_preferences_foundation/darwin`)
   - sqflite (from `.symlinks/plugins/sqflite/darwin`)
+  - ua_client_hints (from `.symlinks/plugins/ua_client_hints/ios`)
   - url_launcher_ios (from `.symlinks/plugins/url_launcher_ios/ios`)
   - webview_flutter_wkwebview (from `.symlinks/plugins/webview_flutter_wkwebview/ios`)
 
@@ -245,8 +245,6 @@ EXTERNAL SOURCES:
     :path: ".symlinks/plugins/firebase_core/ios"
   firebase_crashlytics:
     :path: ".symlinks/plugins/firebase_crashlytics/ios"
-  fk_user_agent:
-    :path: ".symlinks/plugins/fk_user_agent/ios"
   Flutter:
     :path: Flutter
   flutter_custom_tabs:
@@ -273,6 +271,8 @@ EXTERNAL SOURCES:
     :path: ".symlinks/plugins/shared_preferences_foundation/darwin"
   sqflite:
     :path: ".symlinks/plugins/sqflite/darwin"
+  ua_client_hints:
+    :path: ".symlinks/plugins/ua_client_hints/ios"
   url_launcher_ios:
     :path: ".symlinks/plugins/url_launcher_ios/ios"
   webview_flutter_wkwebview:
@@ -295,7 +295,6 @@ SPEC CHECKSUMS:
   FirebaseCrashlytics: e568d68ce89117c80cddb04073ab9018725fbb8c
   FirebaseInstallations: 42d6ead4605d6eafb3b6683674e80e18eb6f2c35
   FirebaseSessions: f06853e30f99fe42aa511014d7ee6c8c319f08a3
-  fk_user_agent: 1f47ec39291e8372b1d692b50084b0d54103c545
   Flutter: e0871f40cf51350855a761d2e70bf5af5b9b5de7
   flutter_custom_tabs: 7a10a08686955cb748e5d26e0ae586d30689bf89
   flutter_inappwebview: 3d32228f1304635e7c028b0d4252937730bbc6cf
@@ -318,6 +317,7 @@ SPEC CHECKSUMS:
   shared_preferences_foundation: 5b919d13b803cadd15ed2dc053125c68730e5126
   SimpleKeychain: 130211269f88f038d7dc5254cf0b1b9ce978c398
   sqflite: 673a0e54cc04b7d6dba8d24fb8095b31c3a99eec
+  ua_client_hints: 7f4e0f5d390685e8f7efd6eb363594f760108926
   url_launcher_ios: 6116280ddcfe98ab8820085d8d76ae7449447586
   webview_flutter_wkwebview: 2e2d318f21a5e036e2c3f26171342e95908bd60a
 

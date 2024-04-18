@@ -2,7 +2,6 @@ import 'dart:io';
 
 import 'package:audio_service/audio_service.dart';
 import 'package:dio/dio.dart';
-import 'package:fk_user_agent/fk_user_agent.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
 import 'package:freecodecamp/app/app.locator.dart';
@@ -140,7 +139,6 @@ class PodcastTileState extends State<PodcastTile> {
     }
 
     await widget._databaseService.initialise();
-    await FkUserAgent.init();
 
     setIsDownloaded =
         await widget._databaseService.episodeExists(widget.episode);

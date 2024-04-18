@@ -3,7 +3,6 @@ import 'dart:developer' as dev;
 import 'dart:io';
 
 import 'package:dio/dio.dart';
-import 'package:fk_user_agent/fk_user_agent.dart';
 import 'package:freecodecamp/app/app.locator.dart';
 import 'package:freecodecamp/models/podcasts/episodes_model.dart';
 import 'package:freecodecamp/models/podcasts/podcasts_model.dart';
@@ -11,6 +10,7 @@ import 'package:freecodecamp/service/dio_service.dart';
 import 'package:freecodecamp/service/podcast/notification_service.dart';
 import 'package:freecodecamp/service/podcast/podcasts_service.dart';
 import 'package:path_provider/path_provider.dart';
+import 'package:ua_client_hints/ua_client_hints.dart';
 
 class DownloadService {
   final Dio dio = DioService.dio;
@@ -52,7 +52,7 @@ class DownloadService {
     await dio.download(episode.contentUrl!, path,
         onReceiveProgress: (int recevied, int total) {
       _progStream.sink.add(((recevied / total) * 100).toStringAsFixed(0));
-    }, options: Options(headers: {'User-Agent': FkUserAgent.userAgent}));
+    }, options: Options(headers: {'User-Agent': await userAgent()}));
     _downloading.sink.add(false);
     setDownloadId = '';
     _progStream.sink.add('');
