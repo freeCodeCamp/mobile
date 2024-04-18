@@ -22,7 +22,6 @@ dependencies:
   phone_ide: ^1.2.3
   jiffy: ^6.2.1 # TODO: upgrade after migrating to FLutter 3.19
   shared_preferences: ^2.2.2
-  font_awesome_flutter: ^10.4.0
   html: ^0.15.4
   fk_user_agent: ^2.0.1 # TODO: replace with ua_client_hints package
   flutter_hooks: ^0.20.5
