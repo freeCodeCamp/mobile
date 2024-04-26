@@ -1,4 +1,5 @@
 import 'dart:developer';
+import 'dart:io';
 
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_crashlytics/firebase_crashlytics.dart';
@@ -19,6 +20,7 @@ import 'package:freecodecamp/service/navigation/quick_actions_service.dart';
 import 'package:freecodecamp/service/podcast/notification_service.dart';
 import 'package:freecodecamp/ui/theme/fcc_theme.dart';
 import 'package:stacked_services/stacked_services.dart';
+import 'package:upgrader/upgrader.dart';
 
 Future<void> main({bool testing = false}) async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -44,7 +46,6 @@ Future<void> main({bool testing = false}) async {
   await NotificationService().init();
   await AppAudioService().init();
   await FkUserAgent.init();
-
 
   locator<LocaleService>().init();
 
@@ -81,6 +82,21 @@ class FreeCodeCampMobileApp extends StatelessWidget {
           navigatorObservers: [
             locator<AnalyticsService>().getAnalyticsObserver()
           ],
+          builder: (context, child) {
+            return UpgradeAlert(
+              navigatorKey: StackedService.navigatorKey,
+              dialogStyle: Platform.isIOS
+                  ? UpgradeDialogStyle.cupertino
+                  : UpgradeDialogStyle.material,
+              showIgnore: false,
+              showLater: false,
+              upgrader: Upgrader(
+                // TODO: Use Firebase Remote Config to get the latest version
+                minAppVersion: '4.1.9',
+              ),
+              child: child,
+            );
+          },
         );
       },
     );
