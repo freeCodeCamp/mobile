@@ -1,12 +1,12 @@
-import 'dart:convert';
-
+import 'package:dio/dio.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:freecodecamp/main.dart' as app;
 import 'package:freecodecamp/service/authentication/authentication_service.dart';
 import 'package:freecodecamp/service/learn/learn_service.dart';
 import 'package:freecodecamp/ui/views/learn/landing/landing_view.dart';
-import 'package:http/http.dart';
 import 'package:integration_test/integration_test.dart';
+
+final dio = Dio();
 
 void main() {
   final binding = IntegrationTestWidgetsFlutterBinding();
@@ -21,10 +21,8 @@ void main() {
     await binding.takeScreenshot('learn/learn-landing');
 
     String baseUrl = LearnService.baseUrl;
-    final Response res = await get(
-      Uri.parse('$baseUrl/available-superblocks.json'),
-    );
-    List superBlocks = jsonDecode(res.body)['superblocks'];
+    final Response res = await dio.get('$baseUrl/available-superblocks.json');
+    List superBlocks = res.data['superblocks'];
     int publicSuperBlocks = 0;
 
     for (int i = 0; i < superBlocks.length; i++) {

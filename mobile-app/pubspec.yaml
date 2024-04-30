@@ -70,7 +70,6 @@ dev_dependencies:
   flutter_lints: ^2.0.0
   sqflite_common_ffi: ^2.3.2+1
   mockito: ^5.3.2
-  http: ^0.13.6 # TODO: upgrade package when algolia is replaced
 
 flutter_icons:
   android: "launcher_icon"
