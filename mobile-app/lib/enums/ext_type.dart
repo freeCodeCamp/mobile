@@ -1,6 +1,6 @@
 enum Ext { js, html, css, jsx }
 
-parseExt(String ext) {
+Ext parseExt(String ext) {
   switch (ext) {
     case 'js':
       return Ext.js;
@@ -11,6 +11,6 @@ parseExt(String ext) {
     case 'jsx':
       return Ext.jsx;
     default:
-      return 'html';
+      return Ext.html;
   }
 }
