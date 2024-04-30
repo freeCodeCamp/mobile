@@ -31,7 +31,7 @@ jobs:
           df -h /
 
       - name: Checkout files
-        uses: actions/checkout@b4ffde65f46336ab88eb53be808477a3936bae11 # v4
+        uses: actions/checkout@0ad4b8fadaa221de15dcec353f45205ec38ea70b # v4
 
       - name: Enable KVM
         run: |
@@ -40,7 +40,7 @@ jobs:
           sudo udevadm trigger --name-match=kvm
 
       - name: Gradle cache
-        uses: gradle/actions/setup-gradle@1168cd3d07c1876a65e1724114de42ccbdfa7b78 # v3
+        uses: gradle/actions/setup-gradle@db19848a5fa7950289d3668fb053140cf3028d43 # v3
         with:
           gradle-version: 7.6.3
 
@@ -119,7 +119,7 @@ jobs:
           script: cd mobile-app && if adb shell pm list packages | grep -q org.freecodecamp; then adb uninstall org.freecodecamp; fi && dart integration_test_runner.dart
 
       - name: Upload screenshots
-        uses: actions/upload-artifact@5d5d22a31266ced268874388b861e4b58bb5c2f3 # v4
+        uses: actions/upload-artifact@65462800fd760344b1a7b4382951275a0abb4808 # v4
         if: always()
         with:
           name: screenshots

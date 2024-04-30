@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
 import 'package:flutter_inappwebview/flutter_inappwebview.dart';
-import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:freecodecamp/enums/panel_type.dart';
 import 'package:freecodecamp/extensions/i18n_extension.dart';
 import 'package:freecodecamp/models/learn/challenge_model.dart';
@@ -369,8 +368,8 @@ class ChallengeView extends StatelessWidget {
                 ? Colors.white
                 : const Color.fromRGBO(0x3B, 0x3B, 0x4F, 1),
             child: IconButton(
-              icon: FaIcon(
-                FontAwesomeIcons.info,
+              icon: Icon(
+                Icons.info_outline_rounded,
                 size: 32,
                 color:
                     model.showPanel && model.panelType == PanelType.instruction
@@ -466,8 +465,8 @@ class ChallengeView extends StatelessWidget {
                     icon: model.runningTests
                         ? const CircularProgressIndicator()
                         : model.completedChallenge
-                            ? const FaIcon(FontAwesomeIcons.arrowRight)
-                            : const FaIcon(FontAwesomeIcons.check),
+                            ? const Icon(Icons.arrow_forward_rounded, size: 30)
+                            : const Icon(Icons.done_rounded, size: 30),
                     onPressed: model.hasTypedInEditor
                         ? () async {
                             model.setAfterFirstTest = false;
