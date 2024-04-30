@@ -1,5 +1,3 @@
-import 'dart:io';
-
 import 'package:flutter/material.dart';
 import 'package:freecodecamp/extensions/i18n_extension.dart';
 import 'package:freecodecamp/models/learn/curriculum_model.dart';
@@ -8,7 +6,6 @@ import 'package:freecodecamp/models/main/user_model.dart';
 import 'package:freecodecamp/ui/views/learn/landing/landing_viewmodel.dart';
 import 'package:freecodecamp/ui/widgets/drawer_widget/drawer_widget_view.dart';
 import 'package:stacked/stacked.dart';
-import 'package:upgrader/upgrader.dart';
 
 class LearnLandingView extends StatelessWidget {
   const LearnLandingView({Key? key}) : super(key: key);
@@ -25,85 +22,71 @@ class LearnLandingView extends StatelessWidget {
         drawer: const DrawerWidgetView(
           key: Key('drawer'),
         ),
-        // TODO: Check why upgrade alert is not showing up
-        body: UpgradeAlert(
-          dialogStyle: Platform.isIOS
-              ? UpgradeDialogStyle.cupertino
-              : UpgradeDialogStyle.material,
-          showIgnore: false,
-          showLater: false,
-          upgrader: Upgrader(
-            // debugLogging: true,
-            // debugDisplayAlways: true,
-            // TODO: We have to start using this in the future and not force the user to update the app always
-            // minAppVersion: '4.1.8'
-          ),
-          child: RefreshIndicator(
-            backgroundColor: const Color(0xFF0a0a23),
-            color: Colors.white,
-            onRefresh: () {
-              model.refresh();
+        body: RefreshIndicator(
+          backgroundColor: const Color(0xFF0a0a23),
+          color: Colors.white,
+          onRefresh: () {
+            model.refresh();
 
-              return Future.delayed(Duration.zero);
-            },
-            child: SingleChildScrollView(
-              child: Column(
-                children: [
-                  const SizedBox(height: 32),
-                  StreamBuilder(
-                    stream: model.auth.isLoggedIn,
-                    builder: (context, snapshot) {
-                      return Column(
-                        children: [
-                          if (model.isLoggedIn) welcomeMessage(model),
-                        ],
-                      );
-                    },
+            return Future.delayed(Duration.zero);
+          },
+          child: SingleChildScrollView(
+            child: Column(
+              children: [
+                const SizedBox(height: 32),
+                StreamBuilder(
+                  stream: model.auth.isLoggedIn,
+                  builder: (context, snapshot) {
+                    return Column(
+                      children: [
+                        if (model.isLoggedIn) welcomeMessage(model),
+                      ],
+                    );
+                  },
+                ),
+                const QuoteWidget(),
+                if (!model.isLoggedIn) loginButton(model, context),
+                if (model.hasLastVisitedChallenge && model.isLoggedIn)
+                  ContinueLearningButton(
+                    model: model,
                   ),
-                  const QuoteWidget(),
-                  if (!model.isLoggedIn) loginButton(model, context),
-                  if (model.hasLastVisitedChallenge && model.isLoggedIn)
-                    ContinueLearningButton(
-                      model: model,
-                    ),
-                  const SizedBox(height: 16),
-                  FutureBuilder<List<SuperBlockButtonData>>(
-                    future: model.superBlockButtons,
-                    builder: (context, snapshot) {
-                      if (snapshot.hasData) {
-                        if (snapshot.data!.isEmpty) {
-                          return errorMessage(context);
-                        }
-
-                        if (snapshot.data is List<SuperBlockButtonData>) {
-                          List<SuperBlockButtonData> buttons = snapshot.data!;
-
-                          return ListView.builder(
-                            physics: const ClampingScrollPhysics(),
-                            shrinkWrap: true,
-                            itemCount: buttons.length,
-                            itemBuilder: (BuildContext context, int i) {
-                              return SuperBlockButton(
-                                button: buttons[i],
-                              );
-                            },
-                          );
-                        }
+                const SizedBox(height: 16),
+                FutureBuilder<List<SuperBlockButtonData>>(
+                  future: model.superBlockButtons,
+                  builder: (context, snapshot) {
+                    if (snapshot.hasData) {
+                      if (snapshot.data!.isEmpty) {
+                        return errorMessage(context);
                       }
 
-                      if (ConnectionState.waiting == snapshot.connectionState) {
-                        return const Center(
-                          child: CircularProgressIndicator(),
+                      if (snapshot.data is List<SuperBlockButtonData>) {
+                        List<SuperBlockButtonData> buttons = snapshot.data!;
+
+                        return ListView.builder(
+                          physics: const ClampingScrollPhysics(),
+                          shrinkWrap: true,
+                          itemCount: buttons.length,
+                          itemBuilder: (BuildContext context, int i) {
+                            return SuperBlockButton(
+                              button: buttons[i],
+                            );
+                          },
                         );
                       }
+                    }
 
+                    if (ConnectionState.waiting == snapshot.connectionState) {
                       return const Center(
                         child: CircularProgressIndicator(),
                       );
-                    },
-                  ),
-                ],
-              ),
+                    }
+
+                    return const Center(
+                      child: CircularProgressIndicator(),
+                    );
+                  },
+                ),
+              ],
             ),
           ),
         ),
