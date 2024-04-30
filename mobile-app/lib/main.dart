@@ -3,7 +3,6 @@ import 'dart:io';
 
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_crashlytics/firebase_crashlytics.dart';
-import 'package:fk_user_agent/fk_user_agent.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
@@ -45,7 +44,6 @@ Future<void> main({bool testing = false}) async {
   await AuthenticationService().init();
   await NotificationService().init();
   await AppAudioService().init();
-  await FkUserAgent.init();
 
   locator<LocaleService>().init();
 

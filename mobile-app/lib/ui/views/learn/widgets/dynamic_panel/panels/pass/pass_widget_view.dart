@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:freecodecamp/extensions/i18n_extension.dart';
 import 'package:freecodecamp/models/learn/challenge_model.dart';
 import 'package:freecodecamp/models/learn/curriculum_model.dart';
@@ -228,7 +227,10 @@ class PassButton extends StatelessWidget {
                 textAlign: TextAlign.center,
               ),
             ),
-            const FaIcon(FontAwesomeIcons.arrowRight)
+            const Icon(
+              Icons.arrow_forward_rounded,
+              size: 30,
+            ),
           ],
         ),
       ),

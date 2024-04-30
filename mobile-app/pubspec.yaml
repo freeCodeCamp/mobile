@@ -9,7 +9,6 @@ dependencies:
     sdk: flutter
   flutter_dotenv: ^5.1.0
   flutter_html: 3.0.0-beta.2
-  algolia: ^1.1.2 # TODO: Replace package with official one
   just_audio: ^0.9.36
   path_provider: ^2.1.2
   sqflite: ^2.3.2
@@ -22,9 +21,7 @@ dependencies:
   phone_ide: ^1.2.3
   jiffy: ^6.2.1 # TODO: upgrade after migrating to FLutter 3.19
   shared_preferences: ^2.2.2
-  font_awesome_flutter: ^10.4.0
   html: ^0.15.4
-  fk_user_agent: ^2.0.1 # TODO: replace with ua_client_hints package
   flutter_hooks: ^0.20.5
   # NOTE: After migrating to flutter 3.19, check for build warnings
   flutter_local_notifications: ^17.0.0
@@ -57,6 +54,8 @@ dependencies:
   flutter_html_table: ^3.0.0-beta.2
   flutter_localizations:
     sdk: flutter
+  ua_client_hints: ^1.2.2
+  algolia_helper_flutter: ^1.0.0
 dev_dependencies:
   build_runner: ^2.1.2
   flutter_driver:
