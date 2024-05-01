@@ -116,7 +116,7 @@ jobs:
           force-avd-creation: false
           emulator-options: -no-snapshot-save -no-window -gpu swiftshader_indirect -noaudio -no-boot-anim -camera-back none
           disable-animations: true
-          script: cd mobile-app && if adb shell pm list packages | grep -q org.freecodecamp; then adb uninstall org.freecodecamp; fi && dart integration_test_runner.dart
+          script: cd mobile-app && if adb shell pm list packages | grep -q org.freecodecamp; then adb uninstall org.freecodecamp; fi && flutter drive --driver=test_driver/integration_test.dart --target=integration_test/learn/learn_landing.dart
 
       - name: Upload screenshots
         uses: actions/upload-artifact@65462800fd760344b1a7b4382951275a0abb4808 # v4
