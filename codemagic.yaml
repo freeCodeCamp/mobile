@@ -58,15 +58,15 @@ workflows:
           xcrun simctl boot "iPhone 15 Pro Max"
           xcrun simctl bootstatus "iPhone 15 Pro Max"
 
+      - name: Build iOS app
+        script: flutter build ipa --release --no-codesign
+
       - name: Run integration tests
         script: dart integration_test_runner.dart --ios
 
       - name: Move screenshots to artifacts
         script: cp -r screenshots $CM_EXPORT_DIR
         ignore_failure: true
-
-      - name: Build iOS app
-        script: flutter build ipa --release --no-codesign
 
     publishing:
       email:

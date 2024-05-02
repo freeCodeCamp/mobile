@@ -107,6 +107,9 @@ jobs:
           flutter test unit
           flutter test services
 
+      - name: Check if app can be built for Android
+        run: flutter build appbundle
+
       - name: Run tests in emulator
         uses: reactivecircus/android-emulator-runner@6b0df4b0efb23bb0ec63d881db79aefbc976e4b2 # v2
         with:
