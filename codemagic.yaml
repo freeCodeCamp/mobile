@@ -47,9 +47,6 @@ workflows:
       - name: Analyze code
         script: flutter analyze
 
-      - name: Set up code signing identities
-        script: xcode-project use-profiles
-
       - name: Install applesimutils
         script: |
           brew tap wix/brew
@@ -61,15 +58,15 @@ workflows:
           xcrun simctl boot "iPhone 15 Pro Max"
           xcrun simctl bootstatus "iPhone 15 Pro Max"
 
-      - name: Build iOS app
-        script: flutter build ipa --release --no-codesign --verbose
-
       - name: Run integration tests
         script: dart integration_test_runner.dart --ios
 
       - name: Move screenshots to artifacts
         script: cp -r screenshots $CM_EXPORT_DIR
         ignore_failure: true
+
+      - name: Build iOS app
+        script: flutter build ipa --release --no-codesign
 
     publishing:
       email:
@@ -128,9 +125,6 @@ workflows:
       - name: Analyze code
         script: flutter analyze
 
-      - name: Set up code signing identities
-        script: xcode-project use-profiles
-
       - name: Install applesimutils
         script: |
           brew tap wix/brew
@@ -148,6 +142,9 @@ workflows:
       - name: Move screenshots to artifacts
         script: cp -r screenshots $CM_EXPORT_DIR
         ignore_failure: true
+
+      - name: Set up code signing identities
+        script: xcode-project use-profiles
 
       - name: Build iOS app
         script: flutter build ipa --release --export-options-plist=/Users/builder/export_options.plist
