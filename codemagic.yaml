@@ -59,7 +59,7 @@ workflows:
           xcrun simctl bootstatus "iPhone 15 Pro Max"
 
       - name: Build iOS app
-        script: flutter build ipa --release --no-codesign
+        script: flutter build ipa --release --no-codesign --verbose
 
       - name: Run integration tests
         script: dart integration_test_runner.dart --ios
