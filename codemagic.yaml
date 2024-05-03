@@ -15,7 +15,7 @@ workflows:
       cancel_previous_builds: true
 
     environment:
-      flutter: 3.16.9
+      flutter: 3.19.6
       xcode: latest
       cocoapods: default
       groups:
@@ -38,6 +38,9 @@ workflows:
           echo "AUTH0_DOMAIN=$AUTH0_DOMAIN" >> .env
           echo "AUTH0_CLIENT_ID=$AUTH0_CLIENT_ID" >> .env
 
+      - name: Setup FlutterFire CLI
+        script: dart pub global activate flutterfire_cli
+
       - name: Install dependencies
         script: flutter pub get
 
@@ -52,14 +55,15 @@ workflows:
       - name: Boot iOS simulator
         script: |
           xcrun simctl shutdown all
-          xcrun simctl boot "iPhone 14 Pro Max"
-          xcrun simctl bootstatus "iPhone 14 Pro Max"
+          xcrun simctl boot "iPhone 15 Pro Max"
+          xcrun simctl bootstatus "iPhone 15 Pro Max"
 
       - name: Run integration tests
         script: dart integration_test_runner.dart --ios
 
       - name: Move screenshots to artifacts
         script: cp -r screenshots $CM_EXPORT_DIR
+        ignore_failure: true
 
       - name: Build iOS app
         script: flutter build ipa --release --no-codesign
@@ -83,7 +87,7 @@ workflows:
       cancel_previous_builds: true
 
     environment:
-      flutter: 3.16.9
+      flutter: 3.19.6
       xcode: latest
       cocoapods: default
       ios_signing:
@@ -112,6 +116,9 @@ workflows:
           echo "AUTH0_DOMAIN=$AUTH0_DOMAIN" >> .env
           echo "AUTH0_CLIENT_ID=$AUTH0_CLIENT_ID" >> .env
 
+      - name: Setup FlutterFire CLI
+        script: dart pub global activate flutterfire_cli
+
       - name: Install dependencies
         script: flutter pub get
 
@@ -134,6 +141,7 @@ workflows:
 
       - name: Move screenshots to artifacts
         script: cp -r screenshots $CM_EXPORT_DIR
+        ignore_failure: true
 
       - name: Set up code signing identities
         script: xcode-project use-profiles

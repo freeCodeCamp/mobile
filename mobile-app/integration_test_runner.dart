@@ -37,7 +37,7 @@ brew install applesimutils
           'applesimutils',
           [
             '--byName',
-            'iPhone 14 Pro Max',
+            'iPhone 15 Pro Max',
             '--bundle',
             'org.freecodecamp.ios',
             '--setPermissions',
