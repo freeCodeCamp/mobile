@@ -29,7 +29,7 @@ dependencies:
   web_socket_channel: ^2.4.5
   cached_network_image: ^3.3.1
   flutter_secure_storage: ^9.0.0
-  photo_view: ^0.14.0
+  photo_view: ^0.15.0
   share_plus: ^7.2.2 # TODO: upgrade after migrating to FLutter 3.19
   # NOTE: Do we still want these?
   pretty_dio_logger: ^1.2.0-beta-1
