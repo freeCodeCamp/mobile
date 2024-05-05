@@ -24,7 +24,7 @@ dependencies:
   html: ^0.15.4
   flutter_hooks: ^0.20.5
   flutter_local_notifications: ^17.1.0
-  youtube_player_iframe: ^4.0.4
+  youtube_player_iframe: ^5.1.2 # 2.3.0 last working with fullscreen
   infinite_scroll_pagination: ^4.0.0
   web_socket_channel: ^2.4.5
   cached_network_image: ^3.3.1
