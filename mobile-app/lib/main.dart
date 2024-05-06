@@ -14,6 +14,7 @@ import 'package:freecodecamp/service/audio/audio_service.dart';
 import 'package:freecodecamp/service/authentication/authentication_service.dart';
 import 'package:freecodecamp/service/dio_service.dart';
 import 'package:freecodecamp/service/firebase/analytics_service.dart';
+import 'package:freecodecamp/service/firebase/remote_config_service.dart';
 import 'package:freecodecamp/service/locale_service.dart';
 import 'package:freecodecamp/service/navigation/quick_actions_service.dart';
 import 'package:freecodecamp/service/podcast/notification_service.dart';
@@ -41,6 +42,7 @@ Future<void> main({bool testing = false}) async {
       await fbApp.setAutomaticDataCollectionEnabled(false);
     }
   }
+  await RemoteConfigService().init();
   await AuthenticationService().init();
   await NotificationService().init();
   await AppAudioService().init();
@@ -62,6 +64,9 @@ class FreeCodeCampMobileApp extends StatelessWidget {
       stream: locator<LocaleService>().localeStream,
       builder: (context, snapshot) {
         log('locale: ${snapshot.data}');
+        log(RemoteConfigService.remoteConfig
+            .getAll()['min_app_version']!
+            .asString());
 
         return MaterialApp(
           title: 'freeCodeCamp',
@@ -89,8 +94,9 @@ class FreeCodeCampMobileApp extends StatelessWidget {
               showIgnore: false,
               showLater: false,
               upgrader: Upgrader(
-                // TODO: Use Firebase Remote Config to get the latest version
-                minAppVersion: '4.1.9',
+                debugLogging: true,
+                minAppVersion: RemoteConfigService.remoteConfig
+                    .getString('min_app_version'),
               ),
               child: child,
             );

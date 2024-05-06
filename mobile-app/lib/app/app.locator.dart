@@ -17,6 +17,7 @@ import '../service/authentication/authentication_service.dart';
 import '../service/developer_service.dart';
 import '../service/dio_service.dart';
 import '../service/firebase/analytics_service.dart';
+import '../service/firebase/remote_config_service.dart';
 import '../service/learn/learn_file_service.dart';
 import '../service/learn/learn_offline_service.dart';
 import '../service/learn/learn_service.dart';
@@ -53,6 +54,7 @@ Future<void> setupLocator({
   locator.registerLazySingleton(() => LearnOfflineService());
   locator.registerLazySingleton(() => QuickActionsService());
   locator.registerLazySingleton(() => AnalyticsService());
+  locator.registerLazySingleton(() => RemoteConfigService());
   locator.registerLazySingleton(() => BookmarksDatabaseService());
   locator.registerLazySingleton(() => LocaleService());
   locator.registerLazySingleton(() => DioService());
