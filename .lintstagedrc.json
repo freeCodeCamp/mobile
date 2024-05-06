@@ -1,4 +1,3 @@
 {
-  "app.*": [],
-  "*": "flutter analyze"
+  "!(app.*)*": "flutter analyze"
 }
