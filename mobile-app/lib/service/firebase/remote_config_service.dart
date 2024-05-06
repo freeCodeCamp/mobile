@@ -1,4 +1,6 @@
 import 'package:firebase_remote_config/firebase_remote_config.dart';
+import 'package:freecodecamp/utils/upgrade_controller.dart';
+import 'package:upgrader/upgrader.dart';
 
 class RemoteConfigService {
   static final RemoteConfigService _instance = RemoteConfigService._internal();
@@ -17,11 +19,22 @@ class RemoteConfigService {
       ),
     );
     await remoteConfig.setDefaults({
-      'min_app_version': '4.1.8',
+      'min_app_version': '4.1.9',
     });
     await remoteConfig.fetchAndActivate();
+
     remoteConfig.onConfigUpdated.listen((event) async {
       await remoteConfig.activate();
+
+      // Update the min app version
+      UpgraderState currUpgradeState = upgraderController.state;
+      upgraderController.updateState(currUpgradeState.copyWith(
+        minAppVersion: Upgrader.parseVersion(
+          remoteConfig.getString('min_app_version'),
+          'minAppVersion',
+          false,
+        ),
+      ));
     });
   }
 

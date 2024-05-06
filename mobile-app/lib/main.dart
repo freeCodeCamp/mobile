@@ -19,6 +19,7 @@ import 'package:freecodecamp/service/locale_service.dart';
 import 'package:freecodecamp/service/navigation/quick_actions_service.dart';
 import 'package:freecodecamp/service/podcast/notification_service.dart';
 import 'package:freecodecamp/ui/theme/fcc_theme.dart';
+import 'package:freecodecamp/utils/upgrade_controller.dart';
 import 'package:stacked_services/stacked_services.dart';
 import 'package:upgrader/upgrader.dart';
 
@@ -64,9 +65,6 @@ class FreeCodeCampMobileApp extends StatelessWidget {
       stream: locator<LocaleService>().localeStream,
       builder: (context, snapshot) {
         log('locale: ${snapshot.data}');
-        log(RemoteConfigService.remoteConfig
-            .getAll()['min_app_version']!
-            .asString());
 
         return MaterialApp(
           title: 'freeCodeCamp',
@@ -93,11 +91,7 @@ class FreeCodeCampMobileApp extends StatelessWidget {
                   : UpgradeDialogStyle.material,
               showIgnore: false,
               showLater: false,
-              upgrader: Upgrader(
-                debugLogging: true,
-                minAppVersion: RemoteConfigService.remoteConfig
-                    .getString('min_app_version'),
-              ),
+              upgrader: upgraderController,
               child: child,
             );
           },
