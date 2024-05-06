@@ -18,6 +18,7 @@ linter:
     always_use_package_imports: true
     avoid_relative_lib_imports: true
     directives_ordering: true
+    sort_pub_dependencies: true
 
 # Additional information about this file can be found at
 # https://dart.dev/guides/language/analysis-options
