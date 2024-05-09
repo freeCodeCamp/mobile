@@ -41,6 +41,7 @@ jobs:
         uses: actions/setup-node@60edb5dd545a775178f52524783378180af0d1f8 # v4
         with:
           node-version: ${{ matrix.node-version }}
+          cache: pnpm
 
       - name: Setup Flutter 3.19.x
         uses: subosito/flutter-action@44ac965b96f18d999802d4b807e3256d5a3f9fa1 # v2
@@ -68,30 +69,18 @@ jobs:
           flutter pub get
           flutter test test/widget_test.dart
 
-        # This is a workaround for the fact that Cypress does not support
-        # running in a sub-directory.
-        #
-        # In our cypress config, we default to the cypress/e2e/default directory.
-        # We need to change this to cypress/e2e/ for the specific tests we are running
-        # in this workflow.
-        #
-      - name: Adjust the Cypress Config
-        run: |
-          sed -i 's#cypress/e2e/default/#cypress/e2e/#g' cypress.config.js
+      - name: Install playwright dependencies
+        run: npx playwright install --with-deps
 
       - name: Install serve
         run: npm install -g serve
 
-      - name: Cypress run
-        uses: cypress-io/github-action@v6
+      - name: Run playwright tests
+        run: npx playwright test --config=playwright-mobile.config.ts
+
+      - uses: actions/upload-artifact@v4
+        if: ${{ !cancelled() }}
         with:
-          record: ${{ env.CYPRESS_RECORD_KEY != 0 }}
-          start: npx serve --no-request-logging
-          wait-on: http://localhost:3000
-          wait-on-timeout: 1200
-          config: retries=1,screenshotOnRunFailure=false,video=false,baseUrl=http://localhost:3000/mobile/mobile-app/generated-tests/
-          browser: chrome
-          spec: cypress/e2e/mobile-learn/test-challenges.js
-        env:
-          CYPRESS_RECORD_KEY: ${{ secrets.CYPRESS_RECORD_KEY }}
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          name: playwright-report-mobile
+          path: playwright/reporter
+          retention-days: 30
