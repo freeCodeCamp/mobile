@@ -19,7 +19,7 @@ class RemoteConfigService {
       ),
     );
     await remoteConfig.setDefaults({
-      'min_app_version': '4.1.9',
+      'min_app_version': '4.2.0',
     });
     await remoteConfig.fetchAndActivate();
 
