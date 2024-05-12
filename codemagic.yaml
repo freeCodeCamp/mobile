@@ -133,8 +133,8 @@ workflows:
       - name: Boot iOS simulator
         script: |
           xcrun simctl shutdown all
-          xcrun simctl boot "iPhone 14 Pro Max"
-          xcrun simctl bootstatus "iPhone 14 Pro Max"
+          xcrun simctl boot "iPhone 15 Pro Max"
+          xcrun simctl bootstatus "iPhone 15 Pro Max"
 
       - name: Run integration tests
         script: dart integration_test_runner.dart --ios
