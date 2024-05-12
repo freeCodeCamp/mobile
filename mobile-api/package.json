@@ -34,7 +34,7 @@
     "@babel/plugin-transform-typescript": "7.24.5",
     "@breejs/ts-worker": "2.0.0",
     "@types/express": "4.17.21",
-    "@types/node": "20.12.8",
+    "@types/node": "20.12.11",
     "@typescript-eslint/eslint-plugin": "7.8.0",
     "@typescript-eslint/parser": "7.8.0",
     "eslint": "8.57.0",
