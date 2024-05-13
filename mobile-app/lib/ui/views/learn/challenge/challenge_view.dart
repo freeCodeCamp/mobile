@@ -116,7 +116,7 @@ class ChallengeView extends StatelessWidget {
                   text,
                 );
 
-                model.setEditorText = text;
+                model.setEditorText = text.replaceAll('”', '"');
                 model.setHasTypedInEditor = true;
                 model.setCompletedChallenge = false;
               });
