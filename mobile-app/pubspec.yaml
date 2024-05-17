@@ -54,7 +54,7 @@ dependencies:
   upgrader: ^10.2.0
   url_launcher: ^6.2.6
   web_socket_channel: ^2.4.5
-  youtube_player_iframe: ^5.1.2
+  youtube_player_iframe: ^5.1.2 # 2.3.0 last working with fullscreen
 dev_dependencies:
   build_runner: ^2.4.9
   dependency_validator: ^3.2.3

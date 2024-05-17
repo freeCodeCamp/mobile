@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:flutter_html/flutter_html.dart';
 import 'package:freecodecamp/extensions/i18n_extension.dart';
 import 'package:freecodecamp/models/learn/challenge_model.dart';
@@ -48,114 +47,102 @@ class OdinView extends StatelessWidget {
           onPopInvoked: (bool didPop) {
             model.learnService.updateProgressOnPop(context, block);
           },
-          child: YoutubePlayerScaffold(
-            controller: controller,
-            enableFullScreenOnVerticalDrag: false,
-            autoFullScreen: false,
-            defaultOrientations: const [
-              DeviceOrientation.portraitUp,
-              DeviceOrientation.landscapeLeft,
-              DeviceOrientation.landscapeRight,
-            ],
-            fullscreenOrientations: const [
-              DeviceOrientation.portraitUp,
-              DeviceOrientation.landscapeLeft,
-              DeviceOrientation.landscapeRight,
-            ],
-            builder: (context, videoPlayer) => Scaffold(
-              appBar: AppBar(
-                title: Text(
-                  '$currentChallengeNum of ${block.challenges.length} Questions',
-                ),
+          child: Scaffold(
+            appBar: AppBar(
+              title: Text(
+                '$currentChallengeNum of ${block.challenges.length} Questions',
               ),
-              body: SafeArea(
-                bottom: false,
-                child: ListView(
-                  padding: const EdgeInsets.all(12),
-                  children: [
-                    Center(
-                      child: Text(
-                        challenge.title,
-                        textAlign: TextAlign.center,
-                        style: const TextStyle(
-                          fontSize: 20,
-                          fontWeight: FontWeight.bold,
-                          fontFamily: 'Inter',
-                        ),
+            ),
+            body: SafeArea(
+              bottom: false,
+              child: ListView(
+                padding: const EdgeInsets.all(12),
+                children: [
+                  Center(
+                    child: Text(
+                      challenge.title,
+                      textAlign: TextAlign.center,
+                      style: const TextStyle(
+                        fontSize: 20,
+                        fontWeight: FontWeight.bold,
+                        fontFamily: 'Inter',
+                      ),
+                    ),
+                  ),
+                  const SizedBox(height: 12),
+                  if (challenge.videoId != null) ...[
+                    Padding(
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 16,
+                      ),
+                      child: YoutubePlayer(
+                        controller: controller,
+                        enableFullScreenOnVerticalDrag: false,
                       ),
                     ),
                     const SizedBox(height: 12),
-                    if (challenge.videoId != null) ...[
-                      Padding(
-                        padding: const EdgeInsets.symmetric(
-                          horizontal: 16,
-                        ),
-                        child: videoPlayer,
+                  ],
+                  ...parser.parse(
+                    challenge.description,
+                  ),
+                  if (challenge.assignments != null &&
+                      challenge.assignments!.isNotEmpty) ...[
+                    buildDivider(),
+                    Text(
+                      'Assignments',
+                      textAlign: TextAlign.center,
+                      style: TextStyle(
+                        fontSize: FontSize.xLarge.value,
+                        fontWeight: FontWeight.bold,
+                        fontFamily: 'Inter',
                       ),
-                      const SizedBox(height: 12),
-                    ],
-                    ...parser.parse(
-                      challenge.description,
-                    ),
-                    if (challenge.assignments != null &&
-                        challenge.assignments!.isNotEmpty) ...[
-                      buildDivider(),
-                      Text(
-                        'Assignments',
-                        textAlign: TextAlign.center,
-                        style: TextStyle(
-                          fontSize: FontSize.xLarge.value,
-                          fontWeight: FontWeight.bold,
-                          fontFamily: 'Inter',
-                        ),
-                      ),
-                      const SizedBox(height: 8),
-                      for (final (i, assignment)
-                          in challenge.assignments!.indexed)
-                        assignmentTile(assignment, i, model, context),
-                    ],
-                    if (challenge.description.isNotEmpty) buildDivider(),
-                    ...parser.parse(
-                      challenge.question!.text,
                     ),
                     const SizedBox(height: 8),
-                    for (var answerObj
-                        in challenge.question!.answers.asMap().entries)
-                      questionOption(answerObj, model, context),
-                    const SizedBox(height: 16),
-                    ElevatedButton(
-                      style: ElevatedButton.styleFrom(
-                        minimumSize: const Size(0, 50),
-                        backgroundColor:
-                            const Color.fromRGBO(0x3b, 0x3b, 0x4f, 1),
-                        side: const BorderSide(
-                          width: 2,
-                          color: Colors.white,
-                        ),
-                      ),
-                      onPressed: model.currentChoice != -1 &&
-                              model.assignmentStatus.every((element) => element)
-                          ? model.choiceStatus != null && model.choiceStatus!
-                              ? () => model.learnService.goToNextChallenge(
-                                    block.challenges.length,
-                                    challengesCompleted,
-                                    challenge,
-                                    block,
-                                  )
-                              : () => model.checkOption(challenge)
-                          : null,
-                      child: Text(
-                        model.choiceStatus != null
-                            ? model.choiceStatus!
-                                ? context.t.next_challenge
-                                : context.t.try_again
-                            : context.t.questions_check,
-                        style: const TextStyle(fontSize: 20),
+                    for (final (i, assignment)
+                        in challenge.assignments!.indexed)
+                      assignmentTile(assignment, i, model, context),
+                  ],
+                  if (challenge.description.isNotEmpty) buildDivider(),
+                  ...parser.parse(
+                    challenge.question!.text,
+                  ),
+                  const SizedBox(height: 8),
+                  for (var answerObj
+                      in challenge.question!.answers.asMap().entries)
+                    questionOption(answerObj, model, context),
+                  const SizedBox(height: 16),
+                  ElevatedButton(
+                    style: ElevatedButton.styleFrom(
+                      minimumSize: const Size(0, 50),
+                      backgroundColor:
+                          const Color.fromRGBO(0x3b, 0x3b, 0x4f, 1),
+                      side: const BorderSide(
+                        width: 2,
+                        color: Colors.white,
                       ),
                     ),
-                    const SizedBox(height: 50),
-                  ],
-                ),
+                    onPressed: model.currentChoice != -1 &&
+                            model.assignmentStatus.every((element) => element)
+                        ? model.choiceStatus != null && model.choiceStatus!
+                            ? () => model.learnService.goToNextChallenge(
+                                  block.challenges.length,
+                                  challengesCompleted,
+                                  challenge,
+                                  block,
+                                )
+                            : () => model.checkOption(challenge)
+                        : null,
+                    child: Text(
+                      model.choiceStatus != null
+                          ? model.choiceStatus!
+                              ? context.t.next_challenge
+                              : context.t.try_again
+                          : context.t.questions_check,
+                      style: const TextStyle(fontSize: 20),
+                    ),
+                  ),
+                  const SizedBox(height: 50),
+                ],
               ),
             ),
           ),
