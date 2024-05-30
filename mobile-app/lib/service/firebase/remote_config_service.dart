@@ -1,4 +1,8 @@
+import 'dart:developer';
+
+import 'package:firebase_crashlytics/firebase_crashlytics.dart';
 import 'package:firebase_remote_config/firebase_remote_config.dart';
+import 'package:flutter/services.dart';
 import 'package:freecodecamp/utils/upgrade_controller.dart';
 import 'package:upgrader/upgrader.dart';
 
@@ -12,30 +16,42 @@ class RemoteConfigService {
   }
 
   Future<void> init() async {
-    await remoteConfig.setConfigSettings(
-      RemoteConfigSettings(
-        fetchTimeout: const Duration(minutes: 10),
-        minimumFetchInterval: const Duration(seconds: 10),
-      ),
-    );
-    await remoteConfig.setDefaults({
-      'min_app_version': '4.2.1',
-    });
-    await remoteConfig.fetchAndActivate();
-
-    remoteConfig.onConfigUpdated.listen((event) async {
-      await remoteConfig.activate();
-
-      // Update the min app version
-      UpgraderState currUpgradeState = upgraderController.state;
-      upgraderController.updateState(currUpgradeState.copyWith(
-        minAppVersion: Upgrader.parseVersion(
-          remoteConfig.getString('min_app_version'),
-          'minAppVersion',
-          false,
+    try {
+      await remoteConfig.setConfigSettings(
+        RemoteConfigSettings(
+          fetchTimeout: const Duration(minutes: 1),
+          minimumFetchInterval: const Duration(hours: 1),
         ),
-      ));
-    });
+      );
+      await remoteConfig.setDefaults({
+        'min_app_version': '4.2.1',
+      });
+
+      await remoteConfig.fetchAndActivate();
+
+      remoteConfig.onConfigUpdated.listen((event) async {
+        await remoteConfig.activate();
+
+        // Update the min app version
+        UpgraderState currUpgradeState = upgraderController.state;
+        upgraderController.updateState(currUpgradeState.copyWith(
+          minAppVersion: Upgrader.parseVersion(
+            remoteConfig.getString('min_app_version'),
+            'minAppVersion',
+            false,
+          ),
+        ));
+      });
+    } on PlatformException catch (exception, stack) {
+      log('Platform exception - $exception');
+      await FirebaseCrashlytics.instance.recordError(
+        exception,
+        stack,
+        reason: 'Remote Config Platform Exception',
+      );
+    } catch (exception) {
+      log('Unable to fetch remote config. Cached or default values will be used $exception');
+    }
   }
 
   RemoteConfigService._internal();
