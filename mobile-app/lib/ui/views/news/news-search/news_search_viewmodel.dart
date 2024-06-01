@@ -1,17 +1,20 @@
 import 'dart:io';
 
 import 'package:algolia_helper_flutter/algolia_helper_flutter.dart';
+import 'package:dio/dio.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:freecodecamp/app/app.locator.dart';
 import 'package:freecodecamp/app/app.router.dart';
 import 'package:freecodecamp/constants/radio_articles.dart';
+import 'package:freecodecamp/service/dio_service.dart';
 import 'package:stacked/stacked.dart';
 import 'package:stacked_services/stacked_services.dart';
 
 class NewsSearchModel extends BaseViewModel {
   String _searchTerm = '';
   String get getSearchTerm => _searchTerm;
+  final _dio = DioService.dio;
 
   bool _hasData = false;
   bool get hasData => _hasData;
@@ -40,14 +43,37 @@ class NewsSearchModel extends BaseViewModel {
     notifyListeners();
   }
 
+  Future<bool> isHashnodeArticle(Hit hit) async {
+    final res = await _dio.get(
+      'https://www.freecodecamp.org/news/ghost/api/v3/content/posts/${hit["objectID"]}/?key=${dotenv.env['NEWSKEY']}',
+      options: Options(
+        validateStatus: (status) {
+          return status == 404 || status == 200;
+        },
+      ),
+    );
+    return res.statusCode == 404;
+  }
+
   void init() {
     algolia.query('JavaScript');
-    algolia.responses.listen((res) {
+    algolia.responses.listen((res) async {
+      currentResult = [];
+
+      // Remove radio articles from search on iOS
       if (Platform.isIOS) {
         res.hits.removeWhere(
             (element) => radioArticles.contains(element['objectID']));
       }
-      currentResult = res.hits;
+
+      // Remove Hashnode articles from search
+      for (final hit in res.hits) {
+        if (!await isHashnodeArticle(hit)) {
+          currentResult.add(hit);
+        }
+      }
+      res.hits.removeWhere((element) => !currentResult.contains(element));
+
       _hasData = res.hits.isNotEmpty;
       _isLoading = false;
       notifyListeners();
