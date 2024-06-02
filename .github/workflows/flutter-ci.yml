@@ -31,7 +31,7 @@ jobs:
           df -h /
 
       - name: Checkout files
-        uses: actions/checkout@0ad4b8fadaa221de15dcec353f45205ec38ea70b # v4
+        uses: actions/checkout@a5ac7e51b41094c92402da3b24376905380afc29 # v4
 
       - name: Enable KVM
         run: |
@@ -61,7 +61,7 @@ jobs:
 
       - name: Ceate AVD and generate snapshot for caching
         if: steps.avd-cache.outputs.cache-hit != 'true'
-        uses: reactivecircus/android-emulator-runner@6b0df4b0efb23bb0ec63d881db79aefbc976e4b2 # v2
+        uses: reactivecircus/android-emulator-runner@77986be26589807b8ebab3fde7bbf5c60dabec32 # v2
         with:
           api-level: 33
           target: google_apis
@@ -108,7 +108,7 @@ jobs:
           flutter test services
 
       - name: Run tests in emulator
-        uses: reactivecircus/android-emulator-runner@6b0df4b0efb23bb0ec63d881db79aefbc976e4b2 # v2
+        uses: reactivecircus/android-emulator-runner@77986be26589807b8ebab3fde7bbf5c60dabec32 # v2
         with:
           api-level: 33
           target: google_apis
