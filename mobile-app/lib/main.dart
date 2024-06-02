@@ -26,10 +26,14 @@ import 'package:upgrader/upgrader.dart';
 Future<void> main({bool testing = false}) async {
   WidgetsFlutterBinding.ensureInitialized();
   setupLocator();
+  locator<LocaleService>().init();
 
   await DioService().init();
+  await AppAudioService().init();
+  await AuthenticationService().init();
   var fbApp = await Firebase.initializeApp(
-      options: DefaultFirebaseOptions.currentPlatform);
+    options: DefaultFirebaseOptions.currentPlatform,
+  );
   if (!testing) {
     if (kReleaseMode) {
       FlutterError.onError =
@@ -44,11 +48,7 @@ Future<void> main({bool testing = false}) async {
     }
   }
   await RemoteConfigService().init();
-  await AuthenticationService().init();
   await NotificationService().init();
-  await AppAudioService().init();
-
-  locator<LocaleService>().init();
 
   runApp(const FreeCodeCampMobileApp());
 
