@@ -221,15 +221,18 @@ class BlockHeader extends StatelessWidget {
                 model.isOpen,
               );
             },
-            leading: model.challengesCompleted == block.challenges.length
-                ? const Icon(
-                    Icons.check_circle,
-                    size: 20,
-                  )
-                : const Icon(
-                    Icons.circle_outlined,
-                    size: 20,
-                  ),
+            minVerticalPadding: 18,
+            leading: !isCertification
+                ? model.challengesCompleted == block.challenges.length
+                    ? const Icon(
+                        Icons.check_circle,
+                        size: 20,
+                      )
+                    : const Icon(
+                        Icons.circle_outlined,
+                        size: 20,
+                      )
+                : null,
             trailing: !isCertification
                 ? OpenCloseIcon(
                     block: block,
