@@ -69,7 +69,12 @@ class Block {
   });
 
   static bool checkIfStepBased(String superblock) {
-    return superblock == '2022/responsive-web-design';
+    List<String> stepBasedSuperBlocks = [
+      '2022/responsive-web-design',
+      'javascript-algorithms-and-data-structures-v8'
+    ];
+
+    return stepBasedSuperBlocks.contains(superblock);
   }
 
   factory Block.fromJson(
