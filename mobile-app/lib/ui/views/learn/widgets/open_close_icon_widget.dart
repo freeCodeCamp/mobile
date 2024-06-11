@@ -14,22 +14,22 @@ class OpenCloseIcon extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Column(
-      mainAxisAlignment: MainAxisAlignment.center,
-      children: [
-        IconButton(
-          iconSize: 35,
-          icon: model.isOpen
-              ? const Icon(Icons.expand_less)
-              : const Icon(Icons.expand_more),
-          onPressed: () async {
-            model.setBlockOpenState(
-              block.name,
-              model.isOpen,
-            );
-          },
-        ),
-      ],
+    return GestureDetector(
+      child: model.isOpen
+          ? const Icon(
+              Icons.expand_less,
+              size: 30,
+            )
+          : const Icon(
+              Icons.expand_more,
+              size: 30,
+            ),
+      onTap: () async {
+        model.setBlockOpenState(
+          block.name,
+          model.isOpen,
+        );
+      },
     );
   }
 }

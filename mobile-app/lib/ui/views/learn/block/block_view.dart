@@ -221,7 +221,15 @@ class BlockHeader extends StatelessWidget {
                 model.isOpen,
               );
             },
-            minVerticalPadding: 24,
+            leading: model.challengesCompleted == block.challenges.length
+                ? const Icon(
+                    Icons.check_circle,
+                    size: 20,
+                  )
+                : const Icon(
+                    Icons.circle_outlined,
+                    size: 20,
+                  ),
             trailing: !isCertification
                 ? OpenCloseIcon(
                     block: block,
@@ -229,25 +237,11 @@ class BlockHeader extends StatelessWidget {
                   )
                 : null,
             title: Row(
-              crossAxisAlignment: CrossAxisAlignment.center,
               children: [
-                if (!isCertification)
-                  Padding(
-                    padding: const EdgeInsets.fromLTRB(0, 8, 8, 8),
-                    child: model.challengesCompleted == block.challenges.length
-                        ? const Icon(
-                            Icons.check_circle,
-                            size: 20,
-                          )
-                        : const Icon(
-                            Icons.circle_outlined,
-                            size: 20,
-                          ),
-                  ),
                 Expanded(
                   child: Text(
                     block.name,
-                    maxLines: 2,
+                    maxLines: model.isOpen ? 5 : 2,
                     overflow: TextOverflow.ellipsis,
                     style: const TextStyle(
                       fontWeight: FontWeight.bold,
