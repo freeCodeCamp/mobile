@@ -7,6 +7,7 @@ import 'package:freecodecamp/ui/views/learn/block/block_viewmodel.dart';
 import 'package:freecodecamp/ui/views/learn/widgets/download_button_widget.dart';
 import 'package:freecodecamp/ui/views/learn/widgets/open_close_icon_widget.dart';
 import 'package:freecodecamp/ui/views/learn/widgets/progressbar_widget.dart';
+import 'package:freecodecamp/ui/views/news/html_handler/html_handler.dart';
 import 'package:freecodecamp/ui/widgets/drawer_widget/drawer_widget_view.dart';
 
 import 'package:stacked/stacked.dart';
@@ -46,6 +47,8 @@ class BlockView extends StatelessWidget {
 
         bool hasProgress = calculateProgress > 0;
 
+        HTMLParser parser = HTMLParser(context: context);
+
         return Column(
           children: [
             BlockHeader(
@@ -75,15 +78,9 @@ class BlockView extends StatelessWidget {
                             vertical: 8,
                             horizontal: 16,
                           ),
-                          child: Text(
-                            blockString,
-                            style: TextStyle(
-                              fontSize: 18,
-                              fontWeight: FontWeight.w600,
-                              height: 1.2,
-                              fontFamily: 'Lato',
-                              color: Colors.white.withOpacity(0.87),
-                            ),
+                          child: Wrap(
+                            children: parser.parse('<p>$blockString</p>',
+                                fontColor: Colors.white),
                           ),
                         ),
                       if (model.isDev && !isCertification)
