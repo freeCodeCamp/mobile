@@ -174,7 +174,7 @@ class LearnFileService {
       }
 
       for (String contents in cssFilesWithCache) {
-        String tag = '<style> $contents </style>';
+        String tag = '<style class="fcc-injected-styles"> $contents </style>';
         tags.add(tag);
       }
 
