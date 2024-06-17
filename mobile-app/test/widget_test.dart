@@ -22,11 +22,13 @@ void main() {
       '2022/responsive-web-design',
       'responsive-web-design',
       'javascript-algorithms-and-data-structures',
+      'the-odin-project',
     ];
 
     var curriculumFile = File('../../shared/config/curriculum.json');
     Map curriculumData = jsonDecode(curriculumFile.readAsStringSync());
 
+    var editorChallengeTypes = <int>{};
     for (var currSuperBlock in publicSBs) {
       print('\nSUPERBLOCK: $currSuperBlock');
       for (var currBlock in curriculumData[currSuperBlock]['blocks'].values) {
@@ -36,6 +38,12 @@ void main() {
               a['challengeOrder'].compareTo(b['challengeOrder']) as int);
         for (var i = 0; i < challenges.length; i++) {
           var currChallenge = challenges[i];
+          editorChallengeTypes.add(currChallenge['challengeType']);
+
+          // Skip non-editor challenges
+          if (![0, 1, 5, 6, 14].contains(currChallenge['challengeType'])) {
+            continue;
+          }
 
           // "solutions" is present only for legacy certificates and last step for new cert challenges
           // New certificates checks against next challenge
@@ -76,6 +84,7 @@ void main() {
         }
       }
     }
+    print('\nEditor challenge types: $editorChallengeTypes');
     print('Done');
   });
 }
