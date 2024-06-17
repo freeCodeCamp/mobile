@@ -121,10 +121,6 @@ class TestRunner extends BaseViewModel {
       testing: testing,
     );
 
-    firstHTMlfile = fileService.removeExcessiveScriptsInHTMLdocument(
-      firstHTMlfile,
-    );
-
     String parsedWithStyleTags = await fileService.parseCssDocmentsAsStyleTags(
       challenge,
       firstHTMlfile,
@@ -134,11 +130,20 @@ class TestRunner extends BaseViewModel {
     firstHTMlfile = fileService.changeActiveFileLinks(
       parsedWithStyleTags,
     );
+
+    if (await fileService.hasJavaScriptFile(challenge)) {
+      firstHTMlfile = await fileService.returnJavaScriptScripts(
+        challenge,
+        firstHTMlfile,
+      );
+    }
+
     return firstHTMlfile;
   }
 
   // This function parses the JavaScript code so that it has a head and tail (code)
   // It is used in the returnScript function to correctly parse JavaScript.
+  // ONLY EXECUTES WHEN JAVASCRIPT ONLY CHALLENGE
 
   Future<String> javaScritpFlow(
     Challenge challenge,
