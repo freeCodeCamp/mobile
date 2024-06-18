@@ -47,42 +47,18 @@ class TestRunner extends BaseViewModel {
       document.getElementsByTagName('HEAD')[0].append(node);
     }
 
-    String? script = await returnScript(
-      challenge.files[0].ext,
-      challenge,
-      testing: testing,
-    );
+    String script = await returnScript(
+          challenge.files[0].ext,
+          challenge,
+          testing: testing,
+        ) ??
+        '';
 
-    Document scriptToNode = parse(script);
+    Document parsedScript = parse(script);
+    Node scriptNode = parsedScript.getElementsByTagName('SCRIPT')[0];
+    document.head!.append(scriptNode);
 
-    Node bodyNode =
-        scriptToNode.getElementsByTagName('BODY').first.children.isNotEmpty
-            ? scriptToNode.getElementsByTagName('BODY').first.children.first
-            : scriptToNode.getElementsByTagName('HEAD').first.children.first;
-
-    document.body!.append(bodyNode);
-
-    // Get user's script elements.
-
-    bool hasHTML = challenge.files.any((file) => file.ext == Ext.html);
-
-    if (hasHTML) {
-      String htmlFile = await fileService.getFirstFileFromCache(
-        challenge,
-        Ext.html,
-        testing: testing,
-      );
-
-      Document parseCacheDocument = parse(htmlFile);
-
-      List<Element> scriptElements = parseCacheDocument.querySelectorAll(
-        'SCRIPT',
-      );
-
-      for (int i = 0; i < scriptElements.length; i++) {
-        document.body!.append(scriptElements[i]);
-      }
-    }
+    log(document.outerHtml);
 
     if (!testing) {
       controller!.loadData(
@@ -91,7 +67,6 @@ class TestRunner extends BaseViewModel {
         encoding: Encoding.getByName('utf-8').toString(),
       );
     }
-
     return document.outerHtml;
   }
 
@@ -125,6 +100,10 @@ class TestRunner extends BaseViewModel {
       testing: testing,
     );
 
+    firstHTMlfile = fileService.removeExcessiveScriptsInHTMLdocument(
+      firstHTMlfile,
+    );
+
     // Concatenate CSS
     List<ChallengeFile> cssFiles =
         challenge.files.where((file) => file.ext == Ext.css).toList();
@@ -149,8 +128,6 @@ class TestRunner extends BaseViewModel {
 
       firstHTMlfile += file;
     }
-
-    log(firstHTMlfile);
 
     return firstHTMlfile;
   }
@@ -187,20 +164,10 @@ class TestRunner extends BaseViewModel {
     Challenge challenge, {
     bool testing = false,
   }) async {
-    List<ChallengeFile>? scriptFile =
-        challenge.files.where((element) => element.name == 'script').toList();
-
     String? code;
 
     if (ext == Ext.html || ext == Ext.css) {
       code = await htmlFlow(
-        challenge,
-        ext,
-        testing: testing,
-      );
-    } else if (ext == Ext.js) {
-      log('THIS IS JAVASCRIPT FLOW');
-      code = await javaScritpFlow(
         challenge,
         ext,
         testing: testing,
@@ -210,7 +177,7 @@ class TestRunner extends BaseViewModel {
     if (ext == Ext.html || ext == Ext.css) {
       String tail = challenge.files[0].tail ?? '';
 
-      return '''<script type="module">
+      return '''<script type="module" id="fcc-script">
     import * as __helpers from "https://www.unpkg.com/@freecodecamp/curriculum-helpers@2.0.3/dist/index.mjs";
 
     const code = `$code`;
@@ -223,7 +190,7 @@ class TestRunner extends BaseViewModel {
 
     const assert = chai.assert;
     const tests = ${parseTest(challenge.tests)};
-    const testText = ${challenge.tests.map((e) => '''"${e.instruction.replaceAll('"', '\\"').replaceAll('\n', ' ')}"''').toList().toString()};
+    const testText = ${challenge.tests.map((e) => '''`${e.instruction.replaceAll('"', '\\"').replaceAll('\n', '')}`''').toList().toString()};
 
     function getUserInput(returnCase){
       switch(returnCase){
@@ -263,57 +230,8 @@ class TestRunner extends BaseViewModel {
     document.querySelector('*').innerHTML = code;
     doc.__runTest(tests);
   </script>''';
-    } else if (ext == Ext.js) {
-      String? head = challenge.files[0].head ?? '';
-      String? tail = (challenge.files[0].tail ?? '').replaceAll('\\', '\\\\');
-
-      return '''<script type="module">
-      import * as __helpers from "https://unpkg.com/@freecodecamp/curriculum-helpers@1.1.0/dist/index.js";
-
-      const assert = chai.assert;
-
-      let code = `$code`;
-      let head = `$head`;
-      let tail = `$tail`;
-      let tests = ${parseTest(challenge.tests)};
-
-      const testText = ${challenge.tests.map((e) => '''`${e.instruction.replaceAll('`', '\\`')}`''').toList().toString()};
-      function getUserInput(returnCase){
-        switch(returnCase){
-          case 'index':
-            return `${scriptFile.isNotEmpty ? (await fileService.getExactFileFromCache(challenge, scriptFile[0], testing: testing)).replaceAll('\\', '\\\\').replaceAll('`', '\\`').replaceAll('\$', r'\$') : "empty string"}`;
-          case 'editableContents':
-            return `${scriptFile.isNotEmpty ? (await fileService.getExactFileFromCache(challenge, scriptFile[0], testing: testing)).replaceAll('\\', '\\\\').replaceAll('`', '\\`').replaceAll('\$', r'\$') : "empty string"}`;
-          default:
-            return code;
-        }
-      }
-      let error = false;
-      try {
-        for (let i = 0; i < tests.length; i++) {
-
-          try {
-
-            const lastIndex = i != tests.length - 1;
-
-            await eval(head + '\\n' + code + '\\n' + tail + '\\n' + tests[i]);
-
-          } catch (e) {
-            error = true;
-            console.log(`testMSG: ` + testText[i]);
-            break;
-          }
-          console.log(`first test done`);
-        }
-      } catch (e) {
-        console.log(e);
-      }
-
-      if(!error){
-        console.log('completed');
-      }
-      ''';
     }
+
     return null;
   }
 }
