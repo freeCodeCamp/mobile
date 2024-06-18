@@ -133,29 +133,27 @@ class LearnService {
   }
 
   void passChallenge(
-    Challenge? challenge,
+    Challenge challenge,
     String? solutionLink,
   ) async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
 
-    if (challenge != null) {
-      List challengeFiles = challenge.files.map((file) {
-        return {
-          'contents':
-              prefs.getString('${challenge.id}.${file.name}') ?? file.contents,
-          'ext': file.ext.name,
-          'history': file.history,
-          'key': file.fileKey,
-          'name': file.name,
-        };
-      }).toList();
+    List challengeFiles = challenge.files.map((file) {
+      return {
+        'contents':
+            prefs.getString('${challenge.id}.${file.name}') ?? file.contents,
+        'ext': file.ext.name,
+        'history': file.history,
+        'key': file.fileKey,
+        'name': file.name,
+      };
+    }).toList();
 
-      await postChallengeCompleted(
-        challenge,
-        challengeFiles: challengeFiles,
-        solutionLink: solutionLink,
-      );
-    }
+    await postChallengeCompleted(
+      challenge,
+      challengeFiles: challengeFiles,
+      solutionLink: solutionLink,
+    );
   }
 
   void goToNextChallenge(

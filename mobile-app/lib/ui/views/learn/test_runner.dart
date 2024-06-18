@@ -128,9 +128,11 @@ class TestRunner extends BaseViewModel {
       testing: testing,
     );
 
-    firstHTMlfile = fileService.changeActiveFileLinks(
-      parsedWithStyleTags,
-    );
+    if (challenge.id != '646c48df8674cf2b91020ecc') {
+      firstHTMlfile = fileService.changeActiveFileLinks(
+        parsedWithStyleTags,
+      );
+    }
 
     return firstHTMlfile;
   }
@@ -209,7 +211,7 @@ class TestRunner extends BaseViewModel {
         case 'index':
           return `${(await fileService.getCurrentEditedFileFromCache(challenge, testing: testing)).replaceAll('\\', '\\\\').replaceAll('`', '\\`').replaceAll('\$', r'\$')}`;
         case 'editableContents':
-        return `${(await fileService.getCurrentEditedFileFromCache(challenge, testing: testing)).replaceAll('\\', '\\\\').replaceAll('`', '\\`').replaceAll('\$', r'\$')}`;
+          return `${(await fileService.getCurrentEditedFileFromCache(challenge, testing: testing)).replaceAll('\\', '\\\\').replaceAll('`', '\\`').replaceAll('\$', r'\$')}`;
         default:
           return code;
       }
