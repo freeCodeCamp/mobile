@@ -23,11 +23,11 @@ class FccTheme {
     ),
     textButtonTheme: TextButtonThemeData(
       style: ButtonStyle(
-        backgroundColor: MaterialStateProperty.resolveWith(
+        backgroundColor: WidgetStateProperty.resolveWith(
             (states) => const Color.fromRGBO(0x3b, 0x3b, 0x4f, 1)),
         foregroundColor:
-            MaterialStateProperty.resolveWith((states) => Colors.white),
-        overlayColor: MaterialStateProperty.resolveWith(
+            WidgetStateProperty.resolveWith((states) => Colors.white),
+        overlayColor: WidgetStateProperty.resolveWith(
           (states) => const Color(0x4DFFFFFF),
         ),
       ),
@@ -36,7 +36,7 @@ class FccTheme {
     colorScheme: const ColorScheme.dark(
       primary: Colors.white,
       secondary: Color.fromRGBO(0xa9, 0xaa, 0xb2, 1),
-      background: Color(0xFF0a0a23),
+      surface: Color(0xFF0a0a23),
       error: Colors.red,
     ),
     primaryColorDark: const Color(0xFF0a0a23),

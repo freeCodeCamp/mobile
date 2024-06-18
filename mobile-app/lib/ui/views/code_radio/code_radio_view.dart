@@ -137,7 +137,7 @@ class CodeRadioView extends StatelessWidget {
           }
           return ElevatedButton.icon(
             style: ButtonStyle(
-              backgroundColor: MaterialStateProperty.all<Color>(
+              backgroundColor: WidgetStateProperty.all<Color>(
                   const Color.fromRGBO(0x2A, 0x2A, 0x40, 1)),
             ),
             onPressed: () {
@@ -153,7 +153,7 @@ class CodeRadioView extends StatelessWidget {
         }
         return ElevatedButton.icon(
           style: ButtonStyle(
-            backgroundColor: MaterialStateProperty.all<Color>(
+            backgroundColor: WidgetStateProperty.all<Color>(
                 const Color.fromRGBO(0x2A, 0x2A, 0x40, 1)),
           ),
           onPressed: () {

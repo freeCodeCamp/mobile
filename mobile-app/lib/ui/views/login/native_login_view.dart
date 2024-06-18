@@ -191,7 +191,7 @@ class NativeLoginView extends StatelessWidget {
                           margin: const EdgeInsets.all(16),
                           child: ElevatedButton(
                             style: buttonStyle.copyWith(
-                              padding: const MaterialStatePropertyAll(
+                              padding: const WidgetStatePropertyAll(
                                 EdgeInsets.symmetric(vertical: 8),
                               ),
                             ),
