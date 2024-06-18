@@ -104,9 +104,8 @@ class LearnFileService {
     // We only inject the script if the file is linked in the HTML.
     if (scripts.isNotEmpty) {
       scripts[0].innerHtml = scriptContent;
+      head[0].children.add(scripts[0]);
     }
-
-    head[0].children.add(scripts[0]);
 
     return document.outerHtml;
   }
