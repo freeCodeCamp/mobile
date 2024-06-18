@@ -70,44 +70,7 @@ class LearnFileService {
           firstChallenge[0].contents;
     }
 
-    return await hasJavaScriptFile(challenge)
-        ? await returnJavaScriptScripts(challenge, fileContent)
-        : fileContent;
-  }
-
-  Future<bool> hasJavaScriptFile(Challenge challenge) async {
-    return challenge.files.any((element) => element.ext == Ext.js);
-  }
-
-  Future<String> returnJavaScriptScripts(
-    Challenge challenge,
-    String userFile,
-  ) async {
-    // Get the script from the cache.
-
-    String scriptContent = '';
-
-    List<ChallengeFile> jsFile =
-        challenge.files.where((file) => file.ext == Ext.js).toList();
-
-    SharedPreferences prefs = await SharedPreferences.getInstance();
-
-    scriptContent = prefs.getString('${challenge.id}.${jsFile[0].name}') ??
-        jsFile[0].contents;
-
-    // Parse the incoming HTML-document to include the script.
-
-    Document document = parse(userFile);
-    List<Element> head = document.getElementsByTagName('HEAD');
-    List<Element> scripts = document.getElementsByTagName('SCRIPT');
-
-    // We only inject the script if the file is linked in the HTML.
-    if (scripts.isNotEmpty) {
-      scripts[0].innerHtml = scriptContent;
-      head[0].children.add(scripts[0]);
-    }
-
-    return document.outerHtml;
+    return fileContent;
   }
 
   // this function will get the current file which is being edited.
@@ -137,19 +100,10 @@ class LearnFileService {
           ) ??
           '';
 
-      bool hasSeparateJavaScriptFile = await hasJavaScriptFile(challenge);
-
       if (cache.isNotEmpty) {
-        return hasSeparateJavaScriptFile
-            ? await returnJavaScriptScripts(challenge, cache)
-            : cache;
+        return removeExcessiveScriptsInHTMLdocument(cache);
       } else {
-        return hasSeparateJavaScriptFile
-            ? await returnJavaScriptScripts(
-                challenge,
-                fileWithEditableRegion[0].contents,
-              )
-            : fileWithEditableRegion[0].contents;
+        return fileWithEditableRegion[0].contents;
       }
     } else {
       return challenge.files[0].contents;
@@ -237,11 +191,15 @@ class LearnFileService {
   String removeExcessiveScriptsInHTMLdocument(String file) {
     Document document = parse(file);
     List<Element> elements = document.querySelectorAll('SCRIPT');
+
     if (elements.isEmpty) return file;
+
     for (int i = 0; i < elements.length; i++) {
       elements[i].remove();
     }
+
     file = document.outerHtml.toString();
+
     return file;
   }
 

@@ -64,7 +64,9 @@ class TestRunner extends BaseViewModel {
 
     // Get user's script elements.
 
-    if (challenge.files[0].ext == Ext.html) {
+    bool hasHTML = challenge.files.any((file) => file.ext == Ext.html);
+
+    if (hasHTML) {
       String htmlFile = await fileService.getFirstFileFromCache(
         challenge,
         Ext.html,
@@ -89,7 +91,7 @@ class TestRunner extends BaseViewModel {
         encoding: Encoding.getByName('utf-8').toString(),
       );
     }
-    log(document.getElementsByTagName('HTML')[0].innerHtml);
+
     return document.outerHtml;
   }
 
@@ -106,10 +108,11 @@ class TestRunner extends BaseViewModel {
     return parsedTest;
   }
 
-  // This function is used in the returnScript function to correctly parse
-  // HTML challenge (user code) it will firstly get the file from the cache, (it returns the first challenge file if in testing mode)
-  // Otherwise it will return the first instance of that challenge in the cache. Next will be adding the style tags (only if
-  // linked)
+  // This Function parses the CODE FROM THE USER into one HTML file. This function
+  // itself has nothing to do with parsing the test-runner document.
+
+  // CODE from the user is concatenated: HTML,CSS,JS and does not get executed;
+  // meaning it is all text; Example: https://pastebin.com/v75dQ1xa
 
   Future<String> htmlFlow(
     Challenge challenge,
@@ -122,17 +125,32 @@ class TestRunner extends BaseViewModel {
       testing: testing,
     );
 
-    String parsedWithStyleTags = await fileService.parseCssDocmentsAsStyleTags(
-      challenge,
-      firstHTMlfile,
-      testing: testing,
-    );
+    // Concatenate CSS
+    List<ChallengeFile> cssFiles =
+        challenge.files.where((file) => file.ext == Ext.css).toList();
 
-    if (challenge.id != '646c48df8674cf2b91020ecc') {
-      firstHTMlfile = fileService.changeActiveFileLinks(
-        parsedWithStyleTags,
+    if (cssFiles.isNotEmpty) {
+      String file = await fileService.getExactFileFromCache(
+        challenge,
+        cssFiles[0],
       );
+
+      firstHTMlfile += file;
     }
+
+    List<ChallengeFile> jsFiles =
+        challenge.files.where((file) => file.ext == Ext.js).toList();
+
+    if (jsFiles.isNotEmpty) {
+      String file = await fileService.getExactFileFromCache(
+        challenge,
+        jsFiles[0],
+      );
+
+      firstHTMlfile += file;
+    }
+
+    log(firstHTMlfile);
 
     return firstHTMlfile;
   }
@@ -181,6 +199,7 @@ class TestRunner extends BaseViewModel {
         testing: testing,
       );
     } else if (ext == Ext.js) {
+      log('THIS IS JAVASCRIPT FLOW');
       code = await javaScritpFlow(
         challenge,
         ext,
