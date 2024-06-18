@@ -1,5 +1,3 @@
-import 'dart:developer';
-
 import 'package:freecodecamp/enums/ext_type.dart';
 import 'package:freecodecamp/models/learn/challenge_model.dart';
 import 'package:html/dom.dart';
@@ -72,7 +70,9 @@ class LearnFileService {
           firstChallenge[0].contents;
     }
 
-    return fileContent;
+    return await hasJavaScriptFile(challenge)
+        ? await returnJavaScriptScripts(challenge, fileContent)
+        : fileContent;
   }
 
   Future<bool> hasJavaScriptFile(Challenge challenge) async {
@@ -107,7 +107,7 @@ class LearnFileService {
     }
 
     head[0].children.add(scripts[0]);
-    log(document.outerHtml);
+
     return document.outerHtml;
   }
 
@@ -138,10 +138,19 @@ class LearnFileService {
           ) ??
           '';
 
+      bool hasSeparateJavaScriptFile = await hasJavaScriptFile(challenge);
+
       if (cache.isNotEmpty) {
-        return removeExcessiveScriptsInHTMLdocument(cache);
+        return hasSeparateJavaScriptFile
+            ? await returnJavaScriptScripts(challenge, cache)
+            : cache;
       } else {
-        return fileWithEditableRegion[0].contents;
+        return hasSeparateJavaScriptFile
+            ? await returnJavaScriptScripts(
+                challenge,
+                fileWithEditableRegion[0].contents,
+              )
+            : fileWithEditableRegion[0].contents;
       }
     } else {
       return challenge.files[0].contents;
