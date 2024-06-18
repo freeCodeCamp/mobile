@@ -6,7 +6,6 @@ import 'package:freecodecamp/models/main/user_model.dart';
 import 'package:freecodecamp/service/authentication/authentication_service.dart';
 import 'package:freecodecamp/ui/views/profile/profile_viewmodel.dart';
 import 'package:freecodecamp/ui/widgets/drawer_widget/drawer_widget_view.dart';
-import 'package:intl/intl.dart';
 import 'package:jiffy/jiffy.dart';
 import 'package:stacked/stacked.dart';
 import 'package:url_launcher/url_launcher.dart';
@@ -266,7 +265,7 @@ class ProfileView extends StatelessWidget {
                             leading: const Icon(Icons.calendar_month),
                             title: Text(
                               context.t.profile_join_date(
-                                DateFormat.yMMMM().format(user.joinDate),
+                                Jiffy.parseFromDateTime(user.joinDate).yMMMM,
                               ),
                             ),
                           )
@@ -301,7 +300,7 @@ class ProfileView extends StatelessWidget {
                               content: Text(
                                 context.t.profile_points_on_date(
                                   (user.heatMapCal[value] ?? 0),
-                                  DateFormat.yMMMd().format(value),
+                                  Jiffy.parseFromDateTime(value).yMMMd,
                                 ),
                               ),
                             ),

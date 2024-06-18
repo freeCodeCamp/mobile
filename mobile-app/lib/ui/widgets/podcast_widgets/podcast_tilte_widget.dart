@@ -14,7 +14,7 @@ import 'package:freecodecamp/service/podcast/download_service.dart';
 import 'package:freecodecamp/service/podcast/podcasts_service.dart';
 import 'package:freecodecamp/ui/views/podcast/episode/episode_view.dart';
 import 'package:html/parser.dart';
-import 'package:intl/intl.dart';
+import 'package:jiffy/jiffy.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -347,7 +347,7 @@ class PodcastTileState extends State<PodcastTile> {
                   );
                 })
             : Text(
-                DateFormat.yMMMd().format(widget.episode.publicationDate!) +
+                Jiffy.parseFromDateTime(widget.episode.publicationDate!).yMMMd +
                     (widget.episode.duration != null &&
                             widget.episode.duration != Duration.zero
                         ? (' • ${_parseDuration(
