@@ -67,6 +67,8 @@ class TestRunner extends BaseViewModel {
         encoding: Encoding.getByName('utf-8').toString(),
       );
     }
+
+    log(document.outerHtml);
     return document.outerHtml;
   }
 
@@ -197,7 +199,7 @@ class TestRunner extends BaseViewModel {
       // We need to create a custom named tag instead of using the default script
       // tag as the Dart html parser breaks when parsing script tags that are inside
       // JavaScript strig variables. E.g. for variable "doc".
-      Element script = document.createElement('custominject');
+      Element script = document.createElement('custom-inject');
       script.innerHtml = js;
       script.attributes.addAll({'data-src': './script.js'});
 
@@ -291,7 +293,7 @@ class TestRunner extends BaseViewModel {
       }
     };
 
-    document.querySelector('*').innerHTML = code;
+    document.querySelector('*').innerHTML = doc.querySelector('*').innerHTML;
     doc.__runTest(tests);
   </script>''';
     }
