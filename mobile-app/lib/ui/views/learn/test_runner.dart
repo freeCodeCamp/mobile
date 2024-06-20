@@ -89,7 +89,7 @@ class TestRunner extends BaseViewModel {
   // CODE from the user is concatenated: HTML,CSS,JS and does not get executed;
   // meaning it is all text; Example: https://pastebin.com/v75dQ1xa
 
-  Future<String> htmlFlow(
+  Future<String> parseCodeVariable(
     Challenge challenge,
     Ext ext, {
     bool testing = false,
@@ -132,27 +132,79 @@ class TestRunner extends BaseViewModel {
     return firstHTMlfile;
   }
 
-  // This function parses the JavaScript code so that it has a head and tail (code)
-  // It is used in the returnScript function to correctly parse JavaScript.
-  // ONLY EXECUTES WHEN JAVASCRIPT ONLY CHALLENGE
+  // parsed frame document (also now as Iframe) this will be the document that
+  // is tested against. Meaning the __runtTest function is assigned to the document
+  // object.
 
-  Future<String> javaScritpFlow(
+  Future<String> parseFrameDocument(
     Challenge challenge,
     Ext ext, {
-    bool testing = false,
+    testing = false,
   }) async {
-    var content = testing
-        ? challenge.files[0].contents
-        : await fileService.getFirstFileFromCache(challenge, Ext.js);
-
-    content = fileService.changeActiveFileLinks(
-      content,
+    String html = await fileService.getFirstFileFromCache(
+      challenge,
+      ext,
+      testing: testing,
     );
 
-    return content
-        .replaceAll('\\', '\\\\')
-        .replaceAll('`', '\\`')
-        .replaceAll('\$', r'\$');
+    Document document = parse(html);
+
+    List<ChallengeFile> cssFiles =
+        challenge.files.where((file) => file.ext == Ext.css).toList();
+    List<ChallengeFile> jsFiles =
+        challenge.files.where((file) => file.ext == Ext.js).toList();
+
+    if (cssFiles.isNotEmpty) {
+      String css = await fileService.getExactFileFromCache(
+        challenge,
+        cssFiles[0],
+      );
+
+      List<Element> styleElements = document.getElementsByTagName('link');
+
+      for (Element element in styleElements) {
+        if (element.attributes.containsKey('href')) {
+          if (element.attributes['href'] == 'styles.css') {
+            element.attributes.removeWhere((key, value) => key == 'href');
+            element.attributes.addAll({'data-href': 'styles.css'});
+          } else if (element.attributes['href'] == './styles.css') {
+            element.attributes.removeWhere((key, value) => key == 'href');
+            element.attributes.addAll({'data-href': './styles.css'});
+          }
+        }
+      }
+
+      Element style = document.createElement('style');
+      style.innerHtml = css;
+      style.id = 'fcc-injected-styles';
+
+      log(style.attributes.entries.toString());
+
+      document.head!.append(style);
+    }
+
+    if (jsFiles.isNotEmpty) {
+      String js = await fileService.getExactFileFromCache(
+        challenge,
+        jsFiles[0],
+      );
+
+      List<Element> scripts = document.getElementsByTagName('script');
+
+      for (Element script in scripts) {
+        script.remove();
+      }
+      // We need to create a custom named tag instead of using the default script
+      // tag as the Dart html parser breaks when parsing script tags that are inside
+      // JavaScript strig variables. E.g. for variable "doc".
+      Element script = document.createElement('custominject');
+      script.innerHtml = js;
+      script.attributes.addAll({'data-src': './script.js'});
+
+      document.body!.append(script);
+    }
+
+    return document.outerHtml.toString();
   }
 
   // This returns the script that needs to be run in the DOM. If the test in the document fail it will
@@ -167,7 +219,7 @@ class TestRunner extends BaseViewModel {
     String? code;
 
     if (ext == Ext.html || ext == Ext.css) {
-      code = await htmlFlow(
+      code = await parseCodeVariable(
         challenge,
         ext,
         testing: testing,
@@ -181,7 +233,7 @@ class TestRunner extends BaseViewModel {
     import * as __helpers from "https://www.unpkg.com/@freecodecamp/curriculum-helpers@2.0.3/dist/index.mjs";
 
     const code = `$code`;
-    const doc = new DOMParser().parseFromString(code, 'text/html');
+    const doc = new DOMParser().parseFromString(`${await parseFrameDocument(challenge, ext)}`, 'text/html');
 
     ${tail.isNotEmpty ? """
     const parseTail  = new DOMParser().parseFromString(`${tail.replaceAll('/', '\\/')}`,'text/html');
@@ -204,6 +256,18 @@ class TestRunner extends BaseViewModel {
      }
 
     doc.__runTest = async function runtTests(testString) {
+      class CustomScriptElement extends HTMLElement {
+        constructor() {
+          super();
+        }
+      }
+      customElements.define("custom-inject", CustomScriptElement);
+      const contentOfCustomElement = doc.querySelector("custom-inject");
+      const scriptElement = doc.createElement("script");
+
+      scriptElement.innerHTML = contentOfCustomElement.innerHTML;
+      contentOfCustomElement.replaceWith(scriptElement);
+
       let error = false;
       for(let i = 0; i < testString.length; i++){
         try {
