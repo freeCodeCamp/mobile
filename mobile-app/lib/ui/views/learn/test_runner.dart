@@ -114,6 +114,7 @@ class TestRunner extends BaseViewModel {
       String file = await fileService.getExactFileFromCache(
         challenge,
         cssFiles[0],
+        testing: testing,
       );
 
       firstHTMlfile += file;
@@ -126,6 +127,7 @@ class TestRunner extends BaseViewModel {
       String file = await fileService.getExactFileFromCache(
         challenge,
         jsFiles[0],
+        testing: testing,
       );
 
       firstHTMlfile += file;
@@ -160,6 +162,7 @@ class TestRunner extends BaseViewModel {
       String css = await fileService.getExactFileFromCache(
         challenge,
         cssFiles[0],
+        testing: testing,
       );
 
       List<Element> styleElements = document.getElementsByTagName('link');
@@ -189,6 +192,7 @@ class TestRunner extends BaseViewModel {
       String js = await fileService.getExactFileFromCache(
         challenge,
         jsFiles[0],
+        testing: testing,
       );
 
       List<Element> scripts = document.getElementsByTagName('script');
@@ -220,22 +224,23 @@ class TestRunner extends BaseViewModel {
   }) async {
     String? code;
 
-    if (ext == Ext.html || ext == Ext.css) {
-      code = await parseCodeVariable(
-        challenge,
-        ext,
-        testing: testing,
-      );
-    }
+    // TODO: Have to update code generation to handle only JS files
+    // if (ext == Ext.html || ext == Ext.css) {
+    code = await parseCodeVariable(
+      challenge,
+      ext,
+      testing: testing,
+    );
+    // }
 
-    if (ext == Ext.html || ext == Ext.css) {
-      String tail = challenge.files[0].tail ?? '';
+    // if (ext == Ext.html || ext == Ext.css) {
+    String tail = challenge.files[0].tail ?? '';
 
-      return '''<script type="module" id="fcc-script">
+    return '''<script type="module" id="fcc-script">
     import * as __helpers from "https://www.unpkg.com/@freecodecamp/curriculum-helpers@2.0.3/dist/index.mjs";
 
     const code = `$code`;
-    const doc = new DOMParser().parseFromString(`${await parseFrameDocument(challenge, ext)}`, 'text/html');
+    const doc = new DOMParser().parseFromString(`${await parseFrameDocument(challenge, ext, testing: testing)}`, 'text/html');
 
     ${tail.isNotEmpty ? """
     const parseTail  = new DOMParser().parseFromString(`${tail.replaceAll('/', '\\/')}`,'text/html');
@@ -296,8 +301,8 @@ class TestRunner extends BaseViewModel {
     document.querySelector('*').innerHTML = doc.querySelector('*').innerHTML;
     doc.__runTest(tests);
   </script>''';
-    }
+    // }
 
-    return null;
+    // return null;
   }
 }
