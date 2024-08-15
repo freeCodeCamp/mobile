@@ -23,6 +23,7 @@ import '../service/learn/learn_offline_service.dart';
 import '../service/learn/learn_service.dart';
 import '../service/locale_service.dart';
 import '../service/navigation/quick_actions_service.dart';
+import '../service/news/api_service.dart';
 import '../service/news/bookmark_service.dart';
 import '../service/podcast/download_service.dart';
 import '../service/podcast/notification_service.dart';
@@ -58,4 +59,5 @@ Future<void> setupLocator({
   locator.registerLazySingleton(() => BookmarksDatabaseService());
   locator.registerLazySingleton(() => LocaleService());
   locator.registerLazySingleton(() => DioService());
+  locator.registerLazySingleton(() => NewsApiServive());
 }

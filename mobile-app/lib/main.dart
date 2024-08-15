@@ -17,6 +17,7 @@ import 'package:freecodecamp/service/firebase/analytics_service.dart';
 import 'package:freecodecamp/service/firebase/remote_config_service.dart';
 import 'package:freecodecamp/service/locale_service.dart';
 import 'package:freecodecamp/service/navigation/quick_actions_service.dart';
+import 'package:freecodecamp/service/news/api_service.dart';
 import 'package:freecodecamp/service/podcast/notification_service.dart';
 import 'package:freecodecamp/ui/theme/fcc_theme.dart';
 import 'package:freecodecamp/utils/upgrade_controller.dart';
@@ -31,6 +32,7 @@ Future<void> main({bool testing = false}) async {
   await DioService().init();
   await AppAudioService().init();
   await AuthenticationService().init();
+  await NewsApiServive().init();
   var fbApp = await Firebase.initializeApp(
     options: DefaultFirebaseOptions.currentPlatform,
   );
