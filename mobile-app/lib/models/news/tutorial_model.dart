@@ -6,6 +6,7 @@ class Tutorial {
   final String title;
   final String? featureImage;
   final String? profileImage;
+  final String? authorId;
   final String authorName;
   final String authorSlug;
   final String? createdAt;
@@ -13,17 +14,19 @@ class Tutorial {
   final String? url;
   final String? text;
 
-  Tutorial(
-      {required this.id,
-      required this.featureImage,
-      required this.title,
-      required this.profileImage,
-      required this.authorName,
-      required this.authorSlug,
-      this.createdAt,
-      this.tagNames = const [],
-      this.url,
-      this.text});
+  Tutorial({
+    required this.id,
+    required this.featureImage,
+    required this.title,
+    required this.profileImage,
+    this.authorId,
+    required this.authorName,
+    required this.authorSlug,
+    this.createdAt,
+    this.tagNames = const [],
+    this.url,
+    this.text,
+  });
 
   static List<Widget> returnTags(
     list,
@@ -33,7 +36,7 @@ class Tutorial {
     for (int i = 0; i < list.length; i++) {
       tags.add(TagButton(
         tagName: list[i]['name'],
-        tagSlug: list[i]['slug'] ?? returnSlug(list[i]['url']),
+        tagSlug: list[i]['slug'] ?? list[i]['id'],
         key: UniqueKey(),
       ));
     }
@@ -42,16 +45,18 @@ class Tutorial {
 
   // this factory is for the endpoint where all tutorial thumbnails are received
 
-  factory Tutorial.fromJson(Map<String, dynamic> data) {
+  factory Tutorial.fromJson(dynamic data) {
     return Tutorial(
-        createdAt: data['published_at'],
-        featureImage: data['feature_image'],
-        title: data['title'],
-        profileImage: data['authors'][0]['profile_image'],
-        authorName: data['authors'][0]['name'],
-        authorSlug: data['authors'][0]['slug'],
-        tagNames: returnTags(data['tags']),
-        id: data['id']);
+      createdAt: data['publishedAt'],
+      featureImage: data['coverImage']['url'],
+      title: data['title'],
+      profileImage: data['author']['profilePicture'],
+      authorId: data['author']['id'],
+      authorName: data['author']['name'],
+      authorSlug: data['author']['username'],
+      tagNames: returnTags(data['tags']),
+      id: data['id'],
+    );
   }
 
   factory Tutorial.fromSearch(Map<String, dynamic> data) {

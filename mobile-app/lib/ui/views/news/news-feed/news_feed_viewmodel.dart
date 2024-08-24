@@ -1,15 +1,15 @@
 import 'dart:convert';
-import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:freecodecamp/app/app.locator.dart';
 import 'package:freecodecamp/app/app.router.dart';
-import 'package:freecodecamp/constants/radio_articles.dart';
+// import 'package:freecodecamp/constants/radio_articles.dart';
 import 'package:freecodecamp/models/news/tutorial_model.dart';
 import 'package:freecodecamp/service/developer_service.dart';
-import 'package:freecodecamp/service/dio_service.dart';
+// import 'package:freecodecamp/service/dio_service.dart';
+import 'package:freecodecamp/service/news/api_service.dart';
 import 'package:jiffy/jiffy.dart';
 import 'package:stacked/stacked.dart';
 import 'package:stacked_services/stacked_services.dart';
@@ -20,8 +20,9 @@ class NewsFeedViewModel extends BaseViewModel {
   final List<Tutorial> tutorials = [];
   static const int itemRequestThreshold = 14;
   final _navigationService = locator<NavigationService>();
+  final _newsApiService = locator<NewsApiServive>();
   static final _developerService = locator<DeveloperService>();
-  final _dio = DioService.dio;
+  // final _dio = DioService.dio;
 
   bool _devMode = false;
   bool get devmode => _devMode;
@@ -68,32 +69,28 @@ class NewsFeedViewModel extends BaseViewModel {
     return tutorials;
   }
 
-  Future<List<Tutorial>> fetchTutorials(String slug, String author) async {
+  Future<List<Tutorial>> fetchTutorials(String tagSlug, String author) async {
     await dotenv.load(fileName: '.env');
+    final data = await _newsApiService.getAllPosts();
 
-    String hasSlug = slug != '' ? '&filter=tag:$slug' : '';
-    String fromAuthor = author != '' ? '&filter=author:$author' : '';
-    String page = '&page=$_pageNumber';
-    String par =
-        '&fields=title,url,feature_image,slug,published_at,id&include=tags,authors';
-    String concact = page + par + hasSlug + fromAuthor;
+    // String hasSlug = tagSlug != '' ? '&filter=tag:$tagSlug' : '';
+    // String fromAuthor = author != '' ? '&filter=author:$author' : '';
+    // String page = '&page=$_pageNumber';
+    // String par =
+    //     '&fields=title,url,feature_image,slug,published_at,id&include=tags,authors';
+    // String concact = page + par + hasSlug + fromAuthor;
 
-    String url =
-        "${dotenv.env['NEWSURL']}posts/?key=${dotenv.env['NEWSKEY']}$concact";
+    // String url =
+    //     "${dotenv.env['NEWSURL']}posts/?key=${dotenv.env['NEWSKEY']}$concact";
 
-    final response = await _dio.get(url);
-    if (response.statusCode == 200) {
-      var tutorialJson = response.data['posts'];
-      for (int i = 0; i < tutorialJson?.length; i++) {
-        if (Platform.isIOS && radioArticles.contains(tutorialJson[i]['id'])) {
-          continue;
-        }
-        tutorials.add(Tutorial.fromJson(tutorialJson[i]));
-      }
-      return tutorials;
-    } else {
-      throw Exception(response.data);
+    final tutorialJson = data.posts;
+    for (int i = 0; i < tutorialJson.length; i++) {
+      // if (Platform.isIOS && radioArticles.contains(tutorialJson[i]['id'])) {
+      //   continue;
+      // }
+      tutorials.add(Tutorial.fromJson(tutorialJson[i]['node']));
     }
+    return tutorials;
   }
 
   Future<List<Tutorial>> returnTutorialsFromSearch(

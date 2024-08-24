@@ -3,6 +3,11 @@ import 'dart:developer';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:graphql/client.dart';
 
+typedef GetAllPostsT
+    = Future<({String endCursor, bool hasNextPage, List posts})>;
+
+const postsPerPage = 20;
+
 const postFieldsFragment = r'''
     fragment PostFields on Post {
       id
@@ -95,14 +100,14 @@ class NewsApiServive {
     host = dotenv.get('HASHNODE_HOST');
   }
 
-  Future<void> getAllPosts() async {
+  GetAllPostsT getAllPosts({String afterCursor = ''}) async {
     final result = await client.query(
       QueryOptions(
         document: gql(getAllPostsQuery),
         variables: {
           'host': host,
-          'first': 2,
-          'after': '',
+          'first': postsPerPage,
+          'after': afterCursor,
         },
       ),
     );
@@ -111,9 +116,22 @@ class NewsApiServive {
       throw Exception(result.exception.toString());
     }
 
-    log(result.data.toString());
+    final List<dynamic> posts = result.data!['publication']['posts']['edges'];
+    final String endCursor =
+        result.data!['publication']['posts']['pageInfo']['endCursor'];
+    final bool hasNextPage =
+        result.data!['publication']['posts']['pageInfo']['hasNextPage'];
 
-    // return result.data;
+    log('Fetched ${posts.length} posts');
+    // log('First post: ${posts.first}');
+    log('End cursor: $endCursor');
+    log('Has next page: $hasNextPage');
+
+    return (
+      posts: posts,
+      endCursor: endCursor,
+      hasNextPage: hasNextPage,
+    );
   }
 
   NewsApiServive._internal();
