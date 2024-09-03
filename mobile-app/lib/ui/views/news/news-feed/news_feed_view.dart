@@ -1,11 +1,12 @@
+import 'dart:developer';
+
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/scheduler.dart';
 import 'package:freecodecamp/extensions/i18n_extension.dart';
 import 'package:freecodecamp/models/news/tutorial_model.dart';
 import 'package:freecodecamp/ui/views/news/news-feed/news_feed_viewmodel.dart';
+import 'package:infinite_scroll_pagination/infinite_scroll_pagination.dart';
 import 'package:stacked/stacked.dart';
-import 'package:url_launcher/url_launcher.dart';
 
 class NewsFeedView extends StatelessWidget {
   const NewsFeedView({
@@ -33,7 +34,7 @@ class NewsFeedView extends StatelessWidget {
   Widget build(BuildContext context) {
     return ViewModelBuilder<NewsFeedViewModel>.reactive(
       viewModelBuilder: () => NewsFeedViewModel(),
-      onViewModelReady: (model) async => await model.devMode(),
+      onViewModelReady: (model) => model.initState(slug, author),
       builder: (context, model, child) => Scaffold(
         appBar: fromTag || fromAuthor || fromSearch
             ? AppBar(
@@ -47,94 +48,92 @@ class NewsFeedView extends StatelessWidget {
               )
             : null,
         backgroundColor: const Color(0xFF0a0a23),
-        body: FutureBuilder(
-          future: !model.devmode
-              ? !fromSearch
-                  ? model.fetchTutorials(slug, author)
-                  : model.returnTutorialsFromSearch(tutorials)
-              : model.readFromFiles(),
-          builder: (context, snapshot) {
-            if (snapshot.hasData) {
-              return RefreshIndicator(
-                backgroundColor: const Color(0xFF0a0a23),
-                color: Colors.white,
-                child: tutorialThumbnailBuilder(model),
-                onRefresh: () {
-                  return model.refresh();
-                },
-              );
-            } else if (snapshot.hasError) {
-              return errorMessage(context);
-            }
-            return const Center(child: CircularProgressIndicator());
-          },
-        ),
-      ),
-    );
-  }
-
-  Column errorMessage(BuildContext context) {
-    return Column(
-      mainAxisAlignment: MainAxisAlignment.center,
-      crossAxisAlignment: CrossAxisAlignment.stretch,
-      children: [
-        Text(
-          context.t.tutorial_load_error,
-          textAlign: TextAlign.center,
-        ),
-        Padding(
-          padding: const EdgeInsets.all(8.0),
-          child: InkWell(
-            child: Text(
-              context.t.tutorial_read_online,
-              textAlign: TextAlign.center,
-              style: const TextStyle(
-                color: Color.fromRGBO(0x99, 0xc9, 0xff, 1),
-              ),
+        // body: FutureBuilder(
+        //   future: !model.devmode
+        //       ? !fromSearch
+        //           ? model.fetchTutorials(slug, author)
+        //           : model.returnTutorialsFromSearch(tutorials)
+        //       : model.readFromFiles(),
+        //   builder: (context, snapshot) {
+        //     if (snapshot.hasData) {
+        //       return RefreshIndicator(
+        //         backgroundColor: const Color(0xFF0a0a23),
+        //         color: Colors.white,
+        //         child: tutorialThumbnailBuilder(model),
+        //         onRefresh: () {
+        //           return model.refresh();
+        //         },
+        //       );
+        //     } else if (snapshot.hasError) {
+        //       return errorMessage(context);
+        //     }
+        //     return const Center(child: CircularProgressIndicator());
+        //   },
+        // ),
+        body: RefreshIndicator(
+          onRefresh: () => Future.sync(() => model.pagingController.refresh()),
+          backgroundColor: const Color(0xFF0a0a23),
+          color: Colors.white,
+          // child: tutorialThumbnailBuilder(model),
+          child: PagedListView.separated(
+            pagingController: model.pagingController,
+            separatorBuilder: (context, int i) => const Divider(
+              color: Color.fromRGBO(0x2A, 0x2A, 0x40, 1),
+              thickness: 3,
+              height: 3,
             ),
-            onTap: () {
-              launchUrl(Uri.parse('https://www.freecodecamp.org/news/'));
-            },
-          ),
-        ),
-      ],
-    );
-  }
-
-  ListView tutorialThumbnailBuilder(NewsFeedViewModel model) {
-    return ListView.separated(
-      shrinkWrap: true,
-      itemCount: model.tutorials.length,
-      physics: const ClampingScrollPhysics(),
-      separatorBuilder: (context, int i) => const Divider(
-        color: Color.fromRGBO(0x2A, 0x2A, 0x40, 1),
-        thickness: 3,
-        height: 3,
-      ),
-      itemBuilder: (BuildContext contex, int i) => NewsFeedLazyLoading(
-        key: Key(model.tutorials[i].id),
-        tutorialCreated: () {
-          SchedulerBinding.instance.addPostFrameCallback(
-            (timeStamp) => model.handleTutorialLazyLoading(i),
-          );
-        },
-        child: InkWell(
-          splashColor: Colors.transparent,
-          onTap: () {
-            model.navigateTo(model.tutorials[i].id, model.tutorials[i].title);
-          },
-          child: Padding(
-            padding: const EdgeInsets.only(bottom: 32.0),
-            child: thumbnailView(model, i),
+            builderDelegate: PagedChildBuilderDelegate<Tutorial>(
+              itemBuilder: (context, tutorial, index) =>
+                  tutorialThumbnailBuilder(tutorial, model),
+            ),
           ),
         ),
       ),
     );
   }
 
-  Column thumbnailView(NewsFeedViewModel model, int i) {
-    Tutorial tutorial = model.tutorials[i];
+  // Column errorMessage(BuildContext context) {
+  //   return Column(
+  //     mainAxisAlignment: MainAxisAlignment.center,
+  //     crossAxisAlignment: CrossAxisAlignment.stretch,
+  //     children: [
+  //       Text(
+  //         context.t.tutorial_load_error,
+  //         textAlign: TextAlign.center,
+  //       ),
+  //       Padding(
+  //         padding: const EdgeInsets.all(8.0),
+  //         child: InkWell(
+  //           child: Text(
+  //             context.t.tutorial_read_online,
+  //             textAlign: TextAlign.center,
+  //             style: const TextStyle(
+  //               color: Color.fromRGBO(0x99, 0xc9, 0xff, 1),
+  //             ),
+  //           ),
+  //           onTap: () {
+  //             launchUrl(Uri.parse('https://www.freecodecamp.org/news/'));
+  //           },
+  //         ),
+  //       ),
+  //     ],
+  //   );
+  // }
 
+  InkWell tutorialThumbnailBuilder(Tutorial tutorial, NewsFeedViewModel model) {
+    return InkWell(
+      splashColor: Colors.transparent,
+      onTap: () {
+        model.navigateTo(tutorial.id, tutorial.title);
+      },
+      child: Padding(
+        padding: const EdgeInsets.only(bottom: 32.0),
+        child: thumbnailView(tutorial, model),
+      ),
+    );
+  }
+
+  Column thumbnailView(Tutorial tutorial, NewsFeedViewModel model) {
     return Column(
       children: [
         Container(
@@ -148,8 +147,10 @@ class NewsFeedView extends StatelessWidget {
                   )
                 : CachedNetworkImage(
                     imageUrl: tutorial.featureImage!,
-                    errorWidget: (context, url, error) =>
-                        const Icon(Icons.error),
+                    errorWidget: (context, url, error) {
+                      log('Error loading image: $url - $tutorial.featureImage $error');
+                      return const Icon(Icons.error);
+                    },
                     imageBuilder: (context, imageProvider) => Container(
                       decoration: BoxDecoration(
                         image: DecorationImage(
@@ -175,15 +176,13 @@ class NewsFeedView extends StatelessWidget {
         ),
         Container(
           padding: const EdgeInsets.only(left: 16, right: 16, top: 8),
-          child: tutorialHeader(model, i),
+          child: tutorialHeader(tutorial, model),
         )
       ],
     );
   }
 
-  Widget tutorialHeader(NewsFeedViewModel model, int i) {
-    Tutorial tutorial = model.tutorials[i];
-
+  Widget tutorialHeader(Tutorial tutorial, NewsFeedViewModel model) {
     return Column(
       children: [
         Row(
