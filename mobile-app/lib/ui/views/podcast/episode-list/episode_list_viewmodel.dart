@@ -47,7 +47,7 @@ class EpisodeListViewModel extends BaseViewModel {
   }
 
   void fetchEpisodes(String podcastId, [int pageKey = 0]) async {
-    final callbackIdentity = Object();
+    final callbackIdentity = Object(); // TODO: What's this doing or used for?
     _activeCallbackIdentity = callbackIdentity;
     String baseUrl = (await _developerService.developmentMode())
         ? 'https://api.mobile.freecodecamp.dev/'

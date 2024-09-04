@@ -38,6 +38,7 @@ class Challenge {
   final List<ChallengeFile> files;
 
   // Challenge Type 11 - Video
+  // TODO: Renamed to questions and its an array of questions
   Question? question;
 
   // Challenge Type 15 - Odin
