@@ -17,9 +17,9 @@ class NewsFeedViewModel extends BaseViewModel {
       PagingController(firstPageKey: '');
   PagingController<String, Tutorial> get pagingController => _pagingController;
 
-  void initState(String tagSlug, String author) {
+  void initState(String tagSlug, String authorId) {
     _pagingController.addPageRequestListener((pageKey) {
-      fetchTutorials(tagSlug, author, pageKey);
+      fetchTutorials(pageKey, tagSlug: tagSlug, authorId: authorId);
     });
   }
 
@@ -37,6 +37,7 @@ class NewsFeedViewModel extends BaseViewModel {
     );
   }
 
+  // TODO: Move to utils post-migration
   static String parseDate(date) {
     Jiffy jiffyDate = Jiffy.parseFromDateTime(DateTime.parse(date));
     String calcTimeSince = Jiffy.parseFromJiffy(jiffyDate).fromNow();
@@ -56,9 +57,26 @@ class NewsFeedViewModel extends BaseViewModel {
   //   return tutorials;
   // }
 
-  void fetchTutorials(String tagSlug, String author, String afterCursor) async {
+  void fetchTutorials(
+    String afterCursor, {
+    String? tagSlug,
+    String? authorId,
+  }) async {
     await dotenv.load(fileName: '.env');
-    final data = await _newsApiService.getAllPosts(afterCursor: afterCursor);
+
+    final List<Tutorial> tutorials = [];
+    late final ApiData data;
+
+    if (tagSlug != null && tagSlug != '') {
+      // data = await _newsApiService.getPostsByTag(tagSlug: tagSlug);
+    } else if (authorId != null && authorId != '') {
+      data = await _newsApiService.getPostsByAuthor(
+        authorId,
+        afterCursor: afterCursor,
+      );
+    } else {
+      data = await _newsApiService.getAllPosts(afterCursor: afterCursor);
+    }
 
     // String hasSlug = tagSlug != '' ? '&filter=tag:$tagSlug' : '';
     // String fromAuthor = author != '' ? '&filter=author:$author' : '';
@@ -75,9 +93,15 @@ class NewsFeedViewModel extends BaseViewModel {
       // if (Platform.isIOS && radioArticles.contains(tutorialJson[i]['id'])) {
       //   continue;
       // }
-      // tutorials.add(Tutorial.fromJson(tutorialJson[i]['node']));
+      tutorials.add(Tutorial.fromJson(tutorialJson[i]['node']));
+    }
+    if (data.hasNextPage) {
       _pagingController.appendPage(
-          [Tutorial.fromJson(tutorialJson[i]['node'])], data.endCursor);
+        tutorials,
+        data.endCursor,
+      );
+    } else {
+      _pagingController.appendLastPage(tutorials);
     }
   }
 

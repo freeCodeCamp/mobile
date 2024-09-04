@@ -3,8 +3,8 @@ import 'dart:developer';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:graphql/client.dart';
 
-typedef GetAllPostsT
-    = Future<({String endCursor, bool hasNextPage, List posts})>;
+typedef ApiData = ({String endCursor, bool hasNextPage, List posts});
+typedef GetAllPostsT = Future<ApiData>;
 
 const postsPerPage = 20;
 
@@ -52,8 +52,8 @@ const postFieldsFragment = r'''
 
 const getAllPostsQuery = postFieldsFragment +
     r'''
-    query GetAllPosts($host: String!, $first: Int!, $after: String) {
-      publication(host: $host) {
+    query GetAllPosts($publicationId: ObjectId!, $first: Int!, $after: String) {
+      publication(id: $publicationId) {
         id
         posts(first: $first, after: $after) {
           edges {
@@ -65,6 +65,44 @@ const getAllPostsQuery = postFieldsFragment +
             endCursor
             hasNextPage
           }
+        }
+      }
+    }
+  ''';
+
+const getAuthorQuery = postFieldsFragment +
+    r'''
+    query GetAuthor($authorSlug: String!) {
+      user(username: $authorSlug) {
+        id
+        username
+        name
+        bio {
+          text
+        }
+        profilePicture
+        socialMediaLinks {
+          website
+          twitter
+          facebook
+        }
+        location
+      }
+    }
+  ''';
+
+const getPostsByAuthorQuery = postFieldsFragment +
+    r'''
+    query GetPostsByAuthorQuery($first: Int!, $after: String, $filter: SearchPostsOfPublicationFilter!) {
+      searchPostsOfPublication(first: $first, after: $after, filter: $filter) {
+        edges {
+          node {
+            ...PostFields
+          }
+        }
+        pageInfo {
+          endCursor
+          hasNextPage
         }
       }
     }
@@ -85,7 +123,7 @@ class NewsApiServive {
 
   HttpLink apiLink = HttpLink('https://gql.hashnode.com');
   late final GraphQLClient client;
-  late final String host;
+  late final String publicationId;
 
   Future<void> init() async {
     // TODO: Initialize dotenv in main once for the entire app
@@ -95,7 +133,7 @@ class NewsApiServive {
       link: apiLink,
       cache: GraphQLCache(),
     );
-    host = dotenv.get('HASHNODE_HOST');
+    publicationId = dotenv.get('HASHNODE_PUBLICATION_ID');
   }
 
   GetAllPostsT getAllPosts({String afterCursor = ''}) async {
@@ -103,7 +141,7 @@ class NewsApiServive {
       QueryOptions(
         document: gql(getAllPostsQuery),
         variables: {
-          'host': host,
+          'publicationId': publicationId,
           'first': postsPerPage,
           'after': afterCursor,
         },
@@ -149,6 +187,61 @@ class NewsApiServive {
     final Map<String, dynamic> post = result.data!['post'];
 
     return post;
+  }
+
+  Future<Map<String, dynamic>> getAuthor(String authorSlug) async {
+    final result = await client.query(
+      QueryOptions(
+        document: gql(getAuthorQuery),
+        variables: {
+          'authorSlug': authorSlug,
+        },
+      ),
+    );
+
+    if (result.hasException) {
+      throw Exception(result.exception.toString());
+    }
+
+    final Map<String, dynamic> author = result.data!['user'];
+
+    return author;
+  }
+
+  GetAllPostsT getPostsByAuthor(String authorId,
+      {String afterCursor = ''}) async {
+    final result = await client.query(
+      QueryOptions(
+        document: gql(getPostsByAuthorQuery),
+        variables: {
+          'first': postsPerPage,
+          'after': afterCursor,
+          'filter': {
+            'publicationId': publicationId,
+            'authorIds': [authorId],
+          },
+        },
+      ),
+    );
+
+    if (result.hasException) {
+      throw Exception(result.exception.toString());
+    }
+
+    final List<dynamic> posts =
+        result.data!['searchPostsOfPublication']['edges'];
+    final String endCursor =
+        result.data!['searchPostsOfPublication']['pageInfo']['endCursor'];
+    final bool hasNextPage =
+        result.data!['searchPostsOfPublication']['pageInfo']['hasNextPage'];
+
+    log('Fetched ${posts.length} posts');
+
+    return (
+      posts: posts,
+      endCursor: endCursor,
+      hasNextPage: hasNextPage,
+    );
   }
 
   NewsApiServive._internal();

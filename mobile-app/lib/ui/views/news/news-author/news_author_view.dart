@@ -87,6 +87,7 @@ class NewsAuthorView extends StatelessWidget {
         TutorialList(
           authorSlug: author.slug,
           authorName: author.name,
+          authorId: author.id,
         ),
       ],
     );

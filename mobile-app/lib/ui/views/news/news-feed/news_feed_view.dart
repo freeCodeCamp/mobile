@@ -11,8 +11,8 @@ import 'package:stacked/stacked.dart';
 class NewsFeedView extends StatelessWidget {
   const NewsFeedView({
     Key? key,
-    this.slug = '',
-    this.author = '',
+    this.tagSlug = '',
+    this.authorId = '',
     this.fromAuthor = false,
     this.fromTag = false,
     this.fromSearch = false,
@@ -21,8 +21,8 @@ class NewsFeedView extends StatelessWidget {
   }) : super(key: key);
 
   final String subject;
-  final String slug;
-  final String author;
+  final String tagSlug;
+  final String authorId;
 
   final List tutorials;
 
@@ -34,13 +34,13 @@ class NewsFeedView extends StatelessWidget {
   Widget build(BuildContext context) {
     return ViewModelBuilder<NewsFeedViewModel>.reactive(
       viewModelBuilder: () => NewsFeedViewModel(),
-      onViewModelReady: (model) => model.initState(slug, author),
+      onViewModelReady: (model) => model.initState(tagSlug, authorId),
       builder: (context, model, child) => Scaffold(
         appBar: fromTag || fromAuthor || fromSearch
             ? AppBar(
                 title: fromAuthor
                     ? Text(
-                        context.t.tutorials_from(author),
+                        context.t.tutorials_from(subject),
                       )
                     : Text(
                         context.t.tutorials_about(subject),

@@ -1,11 +1,10 @@
-import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:freecodecamp/app/app.locator.dart';
 import 'package:freecodecamp/app/app.router.dart';
 import 'package:freecodecamp/extensions/i18n_extension.dart';
 import 'package:freecodecamp/models/news/tutorial_model.dart';
-import 'package:freecodecamp/service/dio_service.dart';
+import 'package:freecodecamp/service/news/api_service.dart';
 import 'package:freecodecamp/ui/views/news/news-feed/news_feed_viewmodel.dart';
 import 'package:stacked_services/stacked_services.dart';
 
@@ -15,34 +14,27 @@ class TutorialList extends StatefulWidget {
     Key? key,
     required this.authorSlug,
     required this.authorName,
+    required this.authorId,
   }) : super(key: key);
 
   final String authorSlug;
   final String authorName;
+  final String authorId;
   final _navigationService = locator<NavigationService>();
-  final _dio = DioService.dio;
+  final _newsApiService = locator<NewsApiServive>();
 
   Future<List<Tutorial>> fetchList() async {
     List<Tutorial> tutorials = [];
 
     await dotenv.load();
 
-    String par =
-        '&fields=title,url,feature_image,slug,published_at,id&include=tags,authors';
-    String url =
-        "${dotenv.env['NEWSURL']}posts/?key=${dotenv.env['NEWSKEY']}&page=1$par&filter=author:$authorSlug";
+    final data = await _newsApiService.getPostsByAuthor(authorId);
+    final postsData = data.posts;
 
-    final Response response = await _dio.get(url);
-
-    if (response.statusCode == 200) {
-      var tutorialJson = response.data['posts'];
-      for (int i = 0; i < tutorialJson?.length; i++) {
-        tutorials.add(Tutorial.fromJson(tutorialJson[i]));
-      }
-      return tutorials;
-    } else {
-      throw Exception('Something when wrong when fetching $url');
+    for (int i = 0; i < postsData.length; i++) {
+      tutorials.add(Tutorial.fromJson(postsData[i]['node']));
     }
+    return tutorials;
   }
 
   void navigateToTutorial(String id, String title) {
@@ -54,8 +46,8 @@ class TutorialList extends StatefulWidget {
     _navigationService.navigateTo(
       Routes.newsFeedView,
       arguments: NewsFeedViewArguments(
-        author: authorSlug,
         fromAuthor: true,
+        authorId: authorId,
         subject: authorName,
       ),
     );
