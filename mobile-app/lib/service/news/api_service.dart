@@ -1,5 +1,3 @@
-import 'dart:developer';
-
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:graphql/client.dart';
 
@@ -178,11 +176,6 @@ class NewsApiServive {
     final bool hasNextPage =
         result.data!['publication']['posts']['pageInfo']['hasNextPage'];
 
-    log('Fetched ${posts.length} posts');
-    // log('First post: ${posts.first}');
-    log('End cursor: $endCursor');
-    log('Has next page: $hasNextPage');
-
     return (
       posts: posts,
       endCursor: endCursor,
@@ -257,8 +250,6 @@ class NewsApiServive {
     final bool hasNextPage =
         result.data!['searchPostsOfPublication']['pageInfo']['hasNextPage'];
 
-    log('Fetched ${posts.length} posts');
-
     return (
       posts: posts,
       endCursor: endCursor,
@@ -293,8 +284,6 @@ class NewsApiServive {
         result.data!['publication']['posts']['pageInfo']['endCursor'];
     final bool hasNextPage =
         result.data!['publication']['posts']['pageInfo']['hasNextPage'];
-
-    log('Fetched ${posts.length} posts');
 
     return (
       posts: posts,
