@@ -65,7 +65,7 @@ jobs:
         run: |
           cd mobile/mobile-app
           echo "DEVELOPMENTMODE=true" > .env
-          echo "NEWSURL=https://www.freecodecamp.org/news/ghost/api/v3/content/" >> .env
+          echo "HASHNODE_PUBLICATION_ID=$HASHNODE_PUBLICATION_ID" > .env
           flutter pub get
           flutter test test/widget_test.dart
 

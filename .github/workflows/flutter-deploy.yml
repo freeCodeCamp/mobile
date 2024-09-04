@@ -77,8 +77,7 @@ jobs:
 
       - name: Create .env file
         run: |
-          echo "NEWSURL=https://www.freecodecamp.org/news/ghost/api/v3/content/" > .env
-          echo "NEWSKEY=$GHOST_NEWSKEY" >> .env
+          echo "HASHNODE_PUBLICATION_ID=$HASHNODE_PUBLICATION_ID" > .env
           echo "ALGOLIAAPPID=$ALGOLIA_APP_ID" >> .env
           echo "ALGOLIAKEY=$ALGOLIA_KEY" >> .env
           echo "AUTH0_DOMAIN=$AUTH0_DOMAIN" >> .env

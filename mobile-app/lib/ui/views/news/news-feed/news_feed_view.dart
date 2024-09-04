@@ -83,8 +83,10 @@ class NewsFeedView extends StatelessWidget {
               height: 3,
             ),
             builderDelegate: PagedChildBuilderDelegate<Tutorial>(
-              itemBuilder: (context, tutorial, index) =>
-                  tutorialThumbnailBuilder(tutorial, model),
+              itemBuilder: (context, tutorial, index) => Container(
+                key: Key('news-tutorial-$index'),
+                child: tutorialThumbnailBuilder(tutorial, model),
+              ),
             ),
           ),
         ),
@@ -122,6 +124,7 @@ class NewsFeedView extends StatelessWidget {
 
   InkWell tutorialThumbnailBuilder(Tutorial tutorial, NewsFeedViewModel model) {
     return InkWell(
+      key: Key(tutorial.id),
       splashColor: Colors.transparent,
       onTap: () {
         model.navigateTo(tutorial.id, tutorial.title);

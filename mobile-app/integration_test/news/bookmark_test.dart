@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:freecodecamp/main.dart' as app;
-import 'package:freecodecamp/ui/views/news/news-feed/news_feed_viewmodel.dart';
 import 'package:freecodecamp/ui/views/news/news-tutorial/news_tutorial_view.dart';
 import 'package:integration_test/integration_test.dart';
 import 'package:path/path.dart' as path;
@@ -29,7 +28,12 @@ void main() {
     await binding.takeScreenshot('news/news-feed');
 
     // Tap on the first tutorial
-    final Finder firstTutorial = find.byType(NewsFeedLazyLoading).first;
+    final Finder firstTutorial = find
+        .descendant(
+          of: find.byKey(const Key('news-tutorial-0')),
+          matching: find.byType(InkWell),
+        )
+        .first;
     final Finder firstTutorialImage = find
         .descendant(
           of: firstTutorial,
@@ -37,7 +41,7 @@ void main() {
         )
         .first;
     final ValueKey firstTutorialKey =
-        tester.firstWidget<NewsFeedLazyLoading>(firstTutorial).key! as ValueKey;
+        tester.firstWidget<InkWell>(firstTutorial).key! as ValueKey;
 
     expect(firstTutorial, findsOneWidget);
     expect(firstTutorialImage, findsOneWidget);
