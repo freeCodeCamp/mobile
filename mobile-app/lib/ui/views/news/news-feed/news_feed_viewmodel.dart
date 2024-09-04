@@ -1,7 +1,9 @@
+import 'dart:io';
+
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:freecodecamp/app/app.locator.dart';
 import 'package:freecodecamp/app/app.router.dart';
-// import 'package:freecodecamp/constants/radio_articles.dart';
+import 'package:freecodecamp/constants/radio_articles.dart';
 import 'package:freecodecamp/models/news/tutorial_model.dart';
 import 'package:freecodecamp/service/news/api_service.dart';
 import 'package:infinite_scroll_pagination/infinite_scroll_pagination.dart';
@@ -83,9 +85,9 @@ class NewsFeedViewModel extends BaseViewModel {
 
     final tutorialJson = data.posts;
     for (int i = 0; i < tutorialJson.length; i++) {
-      // if (Platform.isIOS && radioArticles.contains(tutorialJson[i]['id'])) {
-      //   continue;
-      // }
+      if (Platform.isIOS && radioArticles.contains(tutorialJson[i]['id'])) {
+        continue;
+      }
       tutorials.add(Tutorial.fromJson(tutorialJson[i]['node']));
     }
     if (data.hasNextPage) {

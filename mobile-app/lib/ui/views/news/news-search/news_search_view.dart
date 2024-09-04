@@ -14,47 +14,48 @@ class NewsSearchView extends StatelessWidget {
       onViewModelReady: (model) => model.init(),
       onDispose: (model) => model.onDispose(),
       builder: (context, model, child) {
-        final isSearchable = model.searchbarController.text != '' &&
-            !model.isLoading &&
-            model.hasData;
+        // final isSearchable = model.searchbarController.text != '' &&
+        //     !model.isLoading &&
+        //     model.hasData;
 
         return Scaffold(
           appBar: AppBar(
             titleSpacing: 0,
             title: TextField(
-                controller: model.searchbarController,
-                decoration: InputDecoration(
-                  hintText: context.t.tutorial_search_placeholder,
-                  fillColor: const Color.fromRGBO(0x2A, 0x2A, 0x40, 1),
-                  border: InputBorder.none,
-                  filled: true,
-                ),
-                onChanged: (value) {
-                  model.setSearchTerm(value);
-                  model.setHasData = false;
-                  model.setIsLoading = true;
-                },
-                onSubmitted: isSearchable
-                    ? (value) {
-                        model.searchSubject();
-                      }
-                    : (value) {}),
-            actions: [
-              Container(
-                margin: const EdgeInsets.only(left: 8),
-                color: const Color.fromRGBO(0x2A, 0x2A, 0x40, 1),
-                child: IconButton(
-                  onPressed: isSearchable
-                      ? () {
-                          model.searchSubject();
-                        }
-                      : null,
-                  icon: const Icon(
-                    Icons.search_sharp,
-                  ),
-                ),
-              )
-            ],
+              controller: model.searchbarController,
+              decoration: InputDecoration(
+                hintText: context.t.tutorial_search_placeholder,
+                fillColor: const Color.fromRGBO(0x2A, 0x2A, 0x40, 1),
+                border: InputBorder.none,
+                filled: true,
+              ),
+              onChanged: (value) {
+                model.setSearchTerm(value);
+                model.setHasData = false;
+                model.setIsLoading = true;
+              },
+              // onSubmitted: isSearchable
+              //     ? (value) {
+              //         model.searchSubject();
+              //       }
+              //     : (value) {},
+            ),
+            // actions: [
+            //   Container(
+            //     margin: const EdgeInsets.only(left: 8),
+            //     color: const Color.fromRGBO(0x2A, 0x2A, 0x40, 1),
+            //     child: IconButton(
+            //       onPressed: isSearchable
+            //           ? () {
+            //               model.searchSubject();
+            //             }
+            //           : null,
+            //       icon: const Icon(
+            //         Icons.search_sharp,
+            //       ),
+            //     ),
+            //   )
+            // ],
           ),
           body: StreamBuilder<SearchResponse>(
             stream: model.algolia.responses,

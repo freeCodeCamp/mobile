@@ -1,21 +1,17 @@
-import 'dart:developer';
 import 'dart:io';
 
 import 'package:algolia_helper_flutter/algolia_helper_flutter.dart';
-import 'package:dio/dio.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:freecodecamp/app/app.locator.dart';
 import 'package:freecodecamp/app/app.router.dart';
 import 'package:freecodecamp/constants/radio_articles.dart';
-import 'package:freecodecamp/service/dio_service.dart';
 import 'package:stacked/stacked.dart';
 import 'package:stacked_services/stacked_services.dart';
 
 class NewsSearchModel extends BaseViewModel {
   String _searchTerm = '';
   String get getSearchTerm => _searchTerm;
-  final _dio = DioService.dio;
 
   bool _hasData = false;
   bool get hasData => _hasData;
@@ -44,38 +40,16 @@ class NewsSearchModel extends BaseViewModel {
     notifyListeners();
   }
 
-  Future<bool> isHashnodeArticle(Hit hit) async {
-    final res = await _dio.get(
-      'https://www.freecodecamp.org/news/ghost/api/v3/content/posts/${hit["objectID"]}/?key=${dotenv.env['NEWSKEY']}',
-      options: Options(
-        validateStatus: (status) {
-          return status == 404 || status == 200;
-        },
-      ),
-    );
-    return res.statusCode == 404;
-  }
-
   void init() {
-    algolia.query('Java');
-    algolia.responses.listen((res) async {
-      currentResult = [];
-
+    algolia.query('JavaScript');
+    algolia.responses.listen((res) {
       // Remove radio articles from search on iOS
       if (Platform.isIOS) {
         res.hits.removeWhere(
             (element) => radioArticles.contains(element['objectID']));
       }
 
-      // Remove Hashnode articles from search
-      for (final hit in res.hits) {
-        // if (!await isHashnodeArticle(hit)) {
-          currentResult.add(hit);
-        // }
-      }
-      log(res.hits.first.toString());
-      res.hits.removeWhere((element) => !currentResult.contains(element));
-
+      currentResult = res.hits;
       _hasData = res.hits.isNotEmpty;
       _isLoading = false;
       notifyListeners();
@@ -90,21 +64,22 @@ class NewsSearchModel extends BaseViewModel {
   void setSearchTerm(value) {
     _searchTerm = value;
     algolia.query(
-      value.isEmpty ? 'Java' : value,
+      value.isEmpty ? 'JavaScript' : value,
     );
     notifyListeners();
   }
 
-  void searchSubject() {
-    _navigationService.navigateTo(
-      Routes.newsFeedView,
-      arguments: NewsFeedViewArguments(
-        fromSearch: true,
-        tutorials: currentResult,
-        subject: _searchTerm == '' ? 'Java' : _searchTerm,
-      ),
-    );
-  }
+  // TODO: Add search results feed back post-migration
+  // void searchSubject() {
+  //   _navigationService.navigateTo(
+  //     Routes.newsFeedView,
+  //     arguments: NewsFeedViewArguments(
+  //       fromSearch: true,
+  //       tutorials: currentResult,
+  //       subject: _searchTerm == '' ? 'JavaScript' : _searchTerm,
+  //     ),
+  //   );
+  // }
 
   void navigateToTutorial(String id, String title) {
     _navigationService.navigateTo(
