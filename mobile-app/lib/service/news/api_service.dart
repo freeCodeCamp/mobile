@@ -13,6 +13,7 @@ const postFieldsFragment = r'''
       id
       slug
       title
+      url
       author {
         id
         username
@@ -71,12 +72,9 @@ const getAllPostsQuery = postFieldsFragment +
 
 const getPostQuery = postFieldsFragment +
     r'''
-    query GetPost($host: String!, $slug: String!) {
-      publication(host: $host) {
-        id
-        post(slug: $slug) {
-          ...PostFields
-        }
+    query GetPost($id: ID!) {
+      post(id: $id) {
+        ...PostFields
       }
     }
   ''';
@@ -132,6 +130,25 @@ class NewsApiServive {
       endCursor: endCursor,
       hasNextPage: hasNextPage,
     );
+  }
+
+  Future<Map<String, dynamic>> getPost(String postId) async {
+    final result = await client.query(
+      QueryOptions(
+        document: gql(getPostQuery),
+        variables: {
+          'id': postId,
+        },
+      ),
+    );
+
+    if (result.hasException) {
+      throw Exception(result.exception.toString());
+    }
+
+    final Map<String, dynamic> post = result.data!['post'];
+
+    return post;
   }
 
   NewsApiServive._internal();

@@ -81,15 +81,16 @@ class Tutorial {
 
   factory Tutorial.toPostFromJson(Map<String, dynamic> json) {
     return Tutorial(
-        authorName: json['posts'][0]['primary_author']['name'],
-        authorSlug: json['posts'][0]['primary_author']['slug'],
-        profileImage: json['posts'][0]['primary_author']['profile_image'],
-        tagNames: returnTags(json['posts'][0]['tags']),
-        id: json['posts'][0]['id'],
-        title: json['posts'][0]['title'],
-        url: json['posts'][0]['url'],
-        text: json['posts'][0]['html'],
-        featureImage: json['posts'][0]['feature_image']);
+      authorName: json['author']['name'],
+      authorSlug: json['author']['username'],
+      profileImage: json['author']['profilePicture'],
+      tagNames: returnTags(json['tags']),
+      id: json['id'],
+      title: json['title'],
+      url: json['url'],
+      text: json['content']['html'],
+      featureImage: json['coverImage']['url'],
+    );
   }
 }
 
