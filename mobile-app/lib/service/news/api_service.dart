@@ -108,6 +108,26 @@ const getPostsByAuthorQuery = postFieldsFragment +
     }
   ''';
 
+const getPostsByTagQuery = postFieldsFragment +
+    r'''
+    query GetPostsByTagQuery($publicationId: ObjectId!, $first: Int!, $after: String, $filter: PublicationPostConnectionFilter!) {
+      publication(id: $publicationId) {
+        id
+        posts(first: $first, after: $after, filter: $filter) {
+          edges {
+            node {
+              ...PostFields
+            }
+          }
+          pageInfo {
+            endCursor
+            hasNextPage
+          }
+        }
+      }
+    }
+  ''';
+
 const getPostQuery = postFieldsFragment +
     r'''
     query GetPost($id: ID!) {
@@ -208,8 +228,10 @@ class NewsApiServive {
     return author;
   }
 
-  GetAllPostsT getPostsByAuthor(String authorId,
-      {String afterCursor = ''}) async {
+  GetAllPostsT getPostsByAuthor(
+    String authorId, {
+    String afterCursor = '',
+  }) async {
     final result = await client.query(
       QueryOptions(
         document: gql(getPostsByAuthorQuery),
@@ -234,6 +256,43 @@ class NewsApiServive {
         result.data!['searchPostsOfPublication']['pageInfo']['endCursor'];
     final bool hasNextPage =
         result.data!['searchPostsOfPublication']['pageInfo']['hasNextPage'];
+
+    log('Fetched ${posts.length} posts');
+
+    return (
+      posts: posts,
+      endCursor: endCursor,
+      hasNextPage: hasNextPage,
+    );
+  }
+
+  GetAllPostsT getPostsByTag(
+    String tagSlug, {
+    String afterCursor = '',
+  }) async {
+    final result = await client.query(
+      QueryOptions(
+        document: gql(getPostsByTagQuery),
+        variables: {
+          'publicationId': publicationId,
+          'first': postsPerPage,
+          'after': afterCursor,
+          'filter': {
+            'tagSlugs': [tagSlug],
+          },
+        },
+      ),
+    );
+
+    if (result.hasException) {
+      throw Exception(result.exception.toString());
+    }
+
+    final List<dynamic> posts = result.data!['publication']['posts']['edges'];
+    final String endCursor =
+        result.data!['publication']['posts']['pageInfo']['endCursor'];
+    final bool hasNextPage =
+        result.data!['publication']['posts']['pageInfo']['hasNextPage'];
 
     log('Fetched ${posts.length} posts');
 

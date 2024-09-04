@@ -1,3 +1,4 @@
+import 'dart:developer';
 import 'dart:io';
 
 import 'package:algolia_helper_flutter/algolia_helper_flutter.dart';
@@ -56,7 +57,7 @@ class NewsSearchModel extends BaseViewModel {
   }
 
   void init() {
-    algolia.query('JavaScript');
+    algolia.query('Java');
     algolia.responses.listen((res) async {
       currentResult = [];
 
@@ -68,10 +69,11 @@ class NewsSearchModel extends BaseViewModel {
 
       // Remove Hashnode articles from search
       for (final hit in res.hits) {
-        if (!await isHashnodeArticle(hit)) {
+        // if (!await isHashnodeArticle(hit)) {
           currentResult.add(hit);
-        }
+        // }
       }
+      log(res.hits.first.toString());
       res.hits.removeWhere((element) => !currentResult.contains(element));
 
       _hasData = res.hits.isNotEmpty;
@@ -88,7 +90,7 @@ class NewsSearchModel extends BaseViewModel {
   void setSearchTerm(value) {
     _searchTerm = value;
     algolia.query(
-      value.isEmpty ? 'JavaScript' : value,
+      value.isEmpty ? 'Java' : value,
     );
     notifyListeners();
   }
@@ -99,7 +101,7 @@ class NewsSearchModel extends BaseViewModel {
       arguments: NewsFeedViewArguments(
         fromSearch: true,
         tutorials: currentResult,
-        subject: _searchTerm == '' ? 'JavaScript' : _searchTerm,
+        subject: _searchTerm == '' ? 'Java' : _searchTerm,
       ),
     );
   }

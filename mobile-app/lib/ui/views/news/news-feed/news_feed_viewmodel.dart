@@ -68,7 +68,10 @@ class NewsFeedViewModel extends BaseViewModel {
     late final ApiData data;
 
     if (tagSlug != null && tagSlug != '') {
-      // data = await _newsApiService.getPostsByTag(tagSlug: tagSlug);
+      data = await _newsApiService.getPostsByTag(
+        tagSlug,
+        afterCursor: afterCursor,
+      );
     } else if (authorId != null && authorId != '') {
       data = await _newsApiService.getPostsByAuthor(
         authorId,
@@ -77,16 +80,6 @@ class NewsFeedViewModel extends BaseViewModel {
     } else {
       data = await _newsApiService.getAllPosts(afterCursor: afterCursor);
     }
-
-    // String hasSlug = tagSlug != '' ? '&filter=tag:$tagSlug' : '';
-    // String fromAuthor = author != '' ? '&filter=author:$author' : '';
-    // String page = '&page=$_pageNumber';
-    // String par =
-    //     '&fields=title,url,feature_image,slug,published_at,id&include=tags,authors';
-    // String concact = page + par + hasSlug + fromAuthor;
-
-    // String url =
-    //     "${dotenv.env['NEWSURL']}posts/?key=${dotenv.env['NEWSKEY']}$concact";
 
     final tutorialJson = data.posts;
     for (int i = 0; i < tutorialJson.length; i++) {
