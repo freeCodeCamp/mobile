@@ -266,7 +266,12 @@ class HTMLParser {
         ),
         TagExtension(
           tagsToExtend: {'blockquote'},
-          builder: (child) {
+          builder: (node) {
+            HTMLParser innerParser = HTMLParser(context: context);
+            List<Widget> blockQuoteWidgets = innerParser.parse(
+              node.innerHtml,
+            );
+
             return Padding(
               padding: const EdgeInsets.all(8.0),
               child: Container(
@@ -280,15 +285,8 @@ class HTMLParser {
                 ),
                 child: Padding(
                   padding: const EdgeInsets.all(8.0),
-                  child: Text(
-                    child.innerHtml,
-                    style: TextStyle(
-                      fontSize: double.tryParse(
-                        FontSize.xLarge.value.toString(),
-                      ),
-                      fontFamily: 'Lato',
-                      color: Colors.white.withOpacity(0.87),
-                    ),
+                  child: Column(
+                    children: [...blockQuoteWidgets],
                   ),
                 ),
               ),
