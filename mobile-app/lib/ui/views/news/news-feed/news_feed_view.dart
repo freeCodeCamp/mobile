@@ -224,6 +224,12 @@ class NewsFeedView extends StatelessWidget {
                         )
                       : CachedNetworkImage(
                           imageUrl: tutorial.profileImage as String,
+                          errorWidget: (context, url, error) => Image.asset(
+                            'assets/images/placeholder-profile-img.png',
+                            width: 45,
+                            height: 45,
+                            fit: BoxFit.cover,
+                          ),
                           imageBuilder: (context, imageProvider) => Container(
                             decoration: BoxDecoration(
                               image: DecorationImage(
