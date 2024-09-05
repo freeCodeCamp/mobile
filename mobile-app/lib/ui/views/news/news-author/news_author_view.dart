@@ -1,3 +1,4 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:freecodecamp/extensions/i18n_extension.dart';
 import 'package:freecodecamp/models/news/tutorial_model.dart';
@@ -110,9 +111,14 @@ class NewsAuthorView extends StatelessWidget {
                 'assets/images/placeholder-profile-img.png',
                 fit: BoxFit.cover,
               )
-            : Image.network(
-                author!.profileImage as String,
-                fit: BoxFit.cover,
+            : CachedNetworkImage(
+                imageUrl: author!.profileImage as String,
+                errorWidget: (context, url, error) => Image.asset(
+                  'assets/images/placeholder-profile-img.png',
+                  width: 45,
+                  height: 45,
+                  fit: BoxFit.cover,
+                ),
               ),
       ),
     );
