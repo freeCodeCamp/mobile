@@ -31,8 +31,7 @@ workflows:
     scripts:
       - name: Create .env file
         script: |
-          echo "NEWSURL=$NEWSURL" > .env
-          echo "NEWSKEY=$NEWSKEY" >> .env
+          echo "HASHNODE_PUBLICATION_ID=$HASHNODE_PUBLICATION_ID" > .env
           echo "ALGOLIAAPPID=$ALGOLIAAPPID" >> .env
           echo "ALGOLIAKEY=$ALGOLIAKEY" >> .env
           echo "AUTH0_DOMAIN=$AUTH0_DOMAIN" >> .env
@@ -109,8 +108,7 @@ workflows:
     scripts:
       - name: Create .env file
         script: |
-          echo "NEWSURL=$NEWSURL" > .env
-          echo "NEWSKEY=$NEWSKEY" >> .env
+          echo "HASHNODE_PUBLICATION_ID=$HASHNODE_PUBLICATION_ID" > .env
           echo "ALGOLIAAPPID=$ALGOLIAAPPID" >> .env
           echo "ALGOLIAKEY=$ALGOLIAKEY" >> .env
           echo "AUTH0_DOMAIN=$AUTH0_DOMAIN" >> .env

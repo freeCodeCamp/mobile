@@ -46,7 +46,7 @@ class _TagButtonState extends State<TagButton>
           _navigationService.navigateTo(
             Routes.newsFeedView,
             arguments: NewsFeedViewArguments(
-              slug: widget.tagSlug,
+              tagSlug: widget.tagSlug,
               fromTag: true,
               subject: widget.tagName,
             ),

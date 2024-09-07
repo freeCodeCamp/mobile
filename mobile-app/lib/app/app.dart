@@ -13,6 +13,7 @@ import 'package:freecodecamp/service/podcast/download_service.dart';
 import 'package:freecodecamp/service/podcast/notification_service.dart';
 import 'package:freecodecamp/service/podcast/podcasts_service.dart';
 import 'package:freecodecamp/service/dio_service.dart';
+import 'package:freecodecamp/service/news/api_service.dart';
 
 import 'package:freecodecamp/ui/views/code_radio/code_radio_view.dart';
 import 'package:freecodecamp/ui/views/learn/challenge/challenge_view.dart';
@@ -75,6 +76,7 @@ import 'package:stacked_services/stacked_services.dart';
     LazySingleton(classType: BookmarksDatabaseService),
     LazySingleton(classType: LocaleService),
     LazySingleton(classType: DioService),
+    LazySingleton(classType: NewsApiServive),
   ],
   logger: StackedLogger(),
 )

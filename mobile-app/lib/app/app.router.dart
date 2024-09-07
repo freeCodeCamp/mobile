@@ -207,8 +207,8 @@ class StackedRouter extends _i1.RouterBase {
       return _i18.MaterialPageRoute<dynamic>(
         builder: (context) => _i7.NewsFeedView(
             key: args.key,
-            slug: args.slug,
-            author: args.author,
+            tagSlug: args.tagSlug,
+            authorId: args.authorId,
             fromAuthor: args.fromAuthor,
             fromTag: args.fromTag,
             fromSearch: args.fromSearch,
@@ -398,8 +398,8 @@ class NewsBookmarkTutorialViewArguments {
 class NewsFeedViewArguments {
   const NewsFeedViewArguments({
     this.key,
-    this.slug = '',
-    this.author = '',
+    this.tagSlug = '',
+    this.authorId = '',
     this.fromAuthor = false,
     this.fromTag = false,
     this.fromSearch = false,
@@ -409,9 +409,9 @@ class NewsFeedViewArguments {
 
   final _i18.Key? key;
 
-  final String slug;
+  final String tagSlug;
 
-  final String author;
+  final String authorId;
 
   final bool fromAuthor;
 
@@ -425,15 +425,15 @@ class NewsFeedViewArguments {
 
   @override
   String toString() {
-    return '{"key": "$key", "slug": "$slug", "author": "$author", "fromAuthor": "$fromAuthor", "fromTag": "$fromTag", "fromSearch": "$fromSearch", "tutorials": "$tutorials", "subject": "$subject"}';
+    return '{"key": "$key", "tagSlug": "$tagSlug", "authorId": "$authorId", "fromAuthor": "$fromAuthor", "fromTag": "$fromTag", "fromSearch": "$fromSearch", "tutorials": "$tutorials", "subject": "$subject"}';
   }
 
   @override
   bool operator ==(covariant NewsFeedViewArguments other) {
     if (identical(this, other)) return true;
     return other.key == key &&
-        other.slug == slug &&
-        other.author == author &&
+        other.tagSlug == tagSlug &&
+        other.authorId == authorId &&
         other.fromAuthor == fromAuthor &&
         other.fromTag == fromTag &&
         other.fromSearch == fromSearch &&
@@ -444,8 +444,8 @@ class NewsFeedViewArguments {
   @override
   int get hashCode {
     return key.hashCode ^
-        slug.hashCode ^
-        author.hashCode ^
+        tagSlug.hashCode ^
+        authorId.hashCode ^
         fromAuthor.hashCode ^
         fromTag.hashCode ^
         fromSearch.hashCode ^
@@ -715,8 +715,8 @@ extension NavigatorStateExtension on _i23.NavigationService {
 
   Future<dynamic> navigateToNewsFeedView({
     _i18.Key? key,
-    String slug = '',
-    String author = '',
+    String tagSlug = '',
+    String authorId = '',
     bool fromAuthor = false,
     bool fromTag = false,
     bool fromSearch = false,
@@ -731,8 +731,8 @@ extension NavigatorStateExtension on _i23.NavigationService {
     return navigateTo<dynamic>(Routes.newsFeedView,
         arguments: NewsFeedViewArguments(
             key: key,
-            slug: slug,
-            author: author,
+            tagSlug: tagSlug,
+            authorId: authorId,
             fromAuthor: fromAuthor,
             fromTag: fromTag,
             fromSearch: fromSearch,
@@ -1003,8 +1003,8 @@ extension NavigatorStateExtension on _i23.NavigationService {
 
   Future<dynamic> replaceWithNewsFeedView({
     _i18.Key? key,
-    String slug = '',
-    String author = '',
+    String tagSlug = '',
+    String authorId = '',
     bool fromAuthor = false,
     bool fromTag = false,
     bool fromSearch = false,
@@ -1019,8 +1019,8 @@ extension NavigatorStateExtension on _i23.NavigationService {
     return replaceWith<dynamic>(Routes.newsFeedView,
         arguments: NewsFeedViewArguments(
             key: key,
-            slug: slug,
-            author: author,
+            tagSlug: tagSlug,
+            authorId: authorId,
             fromAuthor: fromAuthor,
             fromTag: fromTag,
             fromSearch: fromSearch,

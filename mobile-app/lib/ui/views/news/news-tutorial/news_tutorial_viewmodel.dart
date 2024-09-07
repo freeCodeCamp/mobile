@@ -5,24 +5,16 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:freecodecamp/app/app.locator.dart';
-import 'package:freecodecamp/app/app.router.dart';
 import 'package:freecodecamp/models/news/tutorial_model.dart';
-import 'package:freecodecamp/service/developer_service.dart';
-import 'package:freecodecamp/service/dio_service.dart';
+import 'package:freecodecamp/service/news/api_service.dart';
 import 'package:freecodecamp/ui/views/news/html_handler/html_handler.dart';
 import 'package:freecodecamp/ui/views/news/news-tutorial/news_tutorial_view.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:stacked/stacked.dart';
-import 'package:stacked_services/stacked_services.dart';
 
 class NewsTutorialViewModel extends BaseViewModel {
   late Future<Tutorial> _tutorialFuture;
-  static final NavigationService _navigationService =
-      locator<NavigationService>();
-
-  final _developerService = locator<DeveloperService>();
-
-  final _dio = DioService.dio;
+  final _newsApiService = locator<NewsApiServive>();
 
   Future<Tutorial>? get tutorialFuture => _tutorialFuture;
 
@@ -54,11 +46,11 @@ class NewsTutorialViewModel extends BaseViewModel {
     handleBottomButtonAnimation();
     handleToTopButton();
 
-    if (await _developerService.developmentMode()) {
-      return readFromFiles();
-    } else {
-      return fetchTutorial(id);
-    }
+    // if (await _developerService.developmentMode()) {
+    //   return readFromFiles();
+    // } else {
+    // }
+    return fetchTutorial(id);
   }
 
   Future<void> handleToTopButton() async {
@@ -132,13 +124,6 @@ class NewsTutorialViewModel extends BaseViewModel {
     );
   }
 
-  static void goToAuthorProfile(String slug) {
-    _navigationService.navigateTo(
-      Routes.newsAuthorView,
-      arguments: NewsAuthorViewArguments(authorSlug: slug),
-    );
-  }
-
   List<Widget> initLazyLoading(html, context, tutorial) {
     HTMLParser parser = HTMLParser(context: context);
 
@@ -197,13 +182,8 @@ class NewsTutorialViewModel extends BaseViewModel {
   Future<Tutorial> fetchTutorial(tutorialId) async {
     await dotenv.load(fileName: '.env');
 
-    final response = await _dio.get(
-      'https://www.freecodecamp.org/news/ghost/api/v3/content/posts/$tutorialId/?key=${dotenv.env['NEWSKEY']}&include=tags,authors',
-    );
-    if (response.statusCode == 200) {
-      return Tutorial.toPostFromJson(response.data);
-    } else {
-      throw Exception(response.data);
-    }
+    dynamic postData = await _newsApiService.getPost(tutorialId);
+
+    return Tutorial.toPostFromJson(postData);
   }
 }

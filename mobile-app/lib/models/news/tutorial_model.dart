@@ -6,6 +6,7 @@ class Tutorial {
   final String title;
   final String? featureImage;
   final String? profileImage;
+  final String authorId;
   final String authorName;
   final String authorSlug;
   final String? createdAt;
@@ -13,17 +14,19 @@ class Tutorial {
   final String? url;
   final String? text;
 
-  Tutorial(
-      {required this.id,
-      required this.featureImage,
-      required this.title,
-      required this.profileImage,
-      required this.authorName,
-      required this.authorSlug,
-      this.createdAt,
-      this.tagNames = const [],
-      this.url,
-      this.text});
+  Tutorial({
+    required this.id,
+    required this.featureImage,
+    required this.title,
+    required this.profileImage,
+    required this.authorId,
+    required this.authorName,
+    required this.authorSlug,
+    this.createdAt,
+    this.tagNames = const [],
+    this.url,
+    this.text,
+  });
 
   static List<Widget> returnTags(
     list,
@@ -33,7 +36,7 @@ class Tutorial {
     for (int i = 0; i < list.length; i++) {
       tags.add(TagButton(
         tagName: list[i]['name'],
-        tagSlug: list[i]['slug'] ?? returnSlug(list[i]['url']),
+        tagSlug: list[i]['slug'] ?? list[i]['id'],
         key: UniqueKey(),
       ));
     }
@@ -42,28 +45,32 @@ class Tutorial {
 
   // this factory is for the endpoint where all tutorial thumbnails are received
 
-  factory Tutorial.fromJson(Map<String, dynamic> data) {
+  factory Tutorial.fromJson(dynamic data) {
     return Tutorial(
-        createdAt: data['published_at'],
-        featureImage: data['feature_image'],
-        title: data['title'],
-        profileImage: data['authors'][0]['profile_image'],
-        authorName: data['authors'][0]['name'],
-        authorSlug: data['authors'][0]['slug'],
-        tagNames: returnTags(data['tags']),
-        id: data['id']);
+      createdAt: data['publishedAt'],
+      featureImage: data['coverImage']['url'],
+      title: data['title'],
+      profileImage: data['author']['profilePicture'],
+      authorId: data['author']['id'],
+      authorName: data['author']['name'],
+      authorSlug: data['author']['username'],
+      tagNames: returnTags(data['tags']),
+      id: data['id'],
+    );
   }
 
   factory Tutorial.fromSearch(Map<String, dynamic> data) {
     return Tutorial(
-        createdAt: data['publishedAt'],
-        featureImage: data['featureImage'],
-        title: data['title'],
-        profileImage: data['author']['profileImage'],
-        authorName: data['author']['name'],
-        authorSlug: returnSlug(data['author']['url']),
-        tagNames: returnTags(data['tags']),
-        id: data['objectID']);
+      createdAt: data['publishedAt'],
+      featureImage: data['featureImage'],
+      title: data['title'],
+      profileImage: data['author']['profileImage'],
+      authorId: data['author']['id'],
+      authorName: data['author']['name'],
+      authorSlug: returnSlug(data['author']['url']),
+      tagNames: returnTags(data['tags']),
+      id: data['objectID'],
+    );
   }
 
   static String returnSlug(String url) {
@@ -76,59 +83,55 @@ class Tutorial {
 
   factory Tutorial.toPostFromJson(Map<String, dynamic> json) {
     return Tutorial(
-        authorName: json['posts'][0]['primary_author']['name'],
-        authorSlug: json['posts'][0]['primary_author']['slug'],
-        profileImage: json['posts'][0]['primary_author']['profile_image'],
-        tagNames: returnTags(json['posts'][0]['tags']),
-        id: json['posts'][0]['id'],
-        title: json['posts'][0]['title'],
-        url: json['posts'][0]['url'],
-        text: json['posts'][0]['html'],
-        featureImage: json['posts'][0]['feature_image']);
+      authorId: json['author']['id'],
+      authorName: json['author']['name'],
+      authorSlug: json['author']['username'],
+      profileImage: json['author']['profilePicture'],
+      tagNames: returnTags(json['tags']),
+      id: json['id'],
+      title: json['title'],
+      url: json['url'],
+      text: json['content']['html'],
+      featureImage: json['coverImage']['url'],
+    );
   }
 }
 
 class Author {
-  const Author(
-      {required this.slug,
-      required this.id,
-      required this.name,
-      required this.profileImage,
-      this.coverImage = '',
-      required this.bio,
-      required this.website,
-      required this.location,
-      required this.facebook,
-      required this.twitter,
-      this.metaTile = '',
-      this.metaDescription = '',
-      required this.url});
+  const Author({
+    required this.slug,
+    required this.id,
+    required this.name,
+    required this.profileImage,
+    required this.bio,
+    required this.website,
+    required this.location,
+    required this.facebook,
+    required this.twitter,
+  });
 
   final String slug;
   final String id;
   final String name;
   final String? profileImage;
-  final String? coverImage;
   final String? bio;
+  // TODO: Below items are not displayed in the UI. To be added
   final String? website;
   final String? location;
   final String? facebook;
   final String? twitter;
-  final String? metaTile;
-  final String? metaDescription;
-  final String url;
 
   factory Author.toAuthorFromJson(Map<String, dynamic> data) {
     return Author(
-        slug: data['slug'],
-        id: data['id'],
-        name: data['name'],
-        profileImage: data['profile_image'],
-        bio: data['bio'],
-        website: data['website'],
-        location: data['location'],
-        facebook: data['facebook'],
-        twitter: data['twitter'],
-        url: data['url']);
+      slug: data['username'],
+      id: data['id'],
+      name: data['name'],
+      profileImage: data['profilePicture'],
+      bio: data['bio']['text'],
+      website: data['socialMediaLinks']['website'],
+      location: data['location'],
+      facebook: data['socialMediaLinks']['facebook'],
+      twitter: data['socialMediaLinks']['twitter'],
+    );
   }
 }

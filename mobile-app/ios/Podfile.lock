@@ -11,6 +11,9 @@ PODS:
     - Flutter
     - JWTDecode (= 3.0.1)
     - SimpleKeychain (= 1.0.1)
+  - connectivity_plus (0.0.1):
+    - Flutter
+    - ReachabilitySwift
   - device_info_plus (0.0.1):
     - Flutter
   - Firebase/Analytics (10.24.0):
@@ -188,6 +191,7 @@ PODS:
     - PromisesObjC (= 2.4.0)
   - quick_actions_ios (0.0.1):
     - Flutter
+  - ReachabilitySwift (5.2.3)
   - share_plus (0.0.1):
     - Flutter
   - shared_preferences_foundation (0.0.1):
@@ -208,6 +212,7 @@ DEPENDENCIES:
   - audio_service (from `.symlinks/plugins/audio_service/ios`)
   - audio_session (from `.symlinks/plugins/audio_session/ios`)
   - auth0_flutter (from `.symlinks/plugins/auth0_flutter/ios`)
+  - connectivity_plus (from `.symlinks/plugins/connectivity_plus/ios`)
   - device_info_plus (from `.symlinks/plugins/device_info_plus/ios`)
   - firebase_analytics (from `.symlinks/plugins/firebase_analytics/ios`)
   - firebase_core (from `.symlinks/plugins/firebase_core/ios`)
@@ -253,6 +258,7 @@ SPEC REPOS:
     - OrderedSet
     - PromisesObjC
     - PromisesSwift
+    - ReachabilitySwift
     - SimpleKeychain
 
 EXTERNAL SOURCES:
@@ -262,6 +268,8 @@ EXTERNAL SOURCES:
     :path: ".symlinks/plugins/audio_session/ios"
   auth0_flutter:
     :path: ".symlinks/plugins/auth0_flutter/ios"
+  connectivity_plus:
+    :path: ".symlinks/plugins/connectivity_plus/ios"
   device_info_plus:
     :path: ".symlinks/plugins/device_info_plus/ios"
   firebase_analytics:
@@ -310,6 +318,7 @@ SPEC CHECKSUMS:
   audio_session: 088d2483ebd1dc43f51d253d4a1c517d9a2e7207
   Auth0: 64da28fdc5cd499aa516dc4bfd0ace8efae2c1da
   auth0_flutter: cc9689234a67336292f576a070da32ab7dffe42a
+  connectivity_plus: bf0076dd84a130856aa636df1c71ccaff908fa1d
   device_info_plus: c6fb39579d0f423935b0c9ce7ee2f44b71b9fce6
   Firebase: 91fefd38712feb9186ea8996af6cbdef41473442
   firebase_analytics: 573fd0677abf22d32e2820865fc5190b6cdbfa1b
@@ -345,6 +354,7 @@ SPEC CHECKSUMS:
   PromisesObjC: f5707f49cb48b9636751c5b2e7d227e43fba9f47
   PromisesSwift: 9d77319bbe72ebf6d872900551f7eeba9bce2851
   quick_actions_ios: d24571db7345d2e48d094db8d077a015a568002d
+  ReachabilitySwift: 7f151ff156cea1481a8411701195ac6a984f4979
   share_plus: c3fef564749587fc939ef86ffb283ceac0baf9f5
   shared_preferences_foundation: b4c3b4cddf1c21f02770737f147a3f5da9d39695
   SimpleKeychain: 130211269f88f038d7dc5254cf0b1b9ce978c398

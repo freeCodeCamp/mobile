@@ -18,6 +18,7 @@ final Tutorial testTutorial = Tutorial(
       'Python Game Development - How to Make a Turtle Racing Game with PyCharm',
   profileImage:
       'https://www.freecodecamp.org/news/content/images/2022/02/profile.jpg',
+  authorId: '',
   authorName: 'Shahan Chowdhury',
   authorSlug: 'shahan',
   text:
