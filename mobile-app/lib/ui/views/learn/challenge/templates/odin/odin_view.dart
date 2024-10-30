@@ -44,7 +44,7 @@ class OdinView extends StatelessWidget {
 
         return PopScope(
           canPop: true,
-          onPopInvoked: (bool didPop) {
+          onPopInvokedWithResult: (bool didPop, dynamic result) {
             model.learnService.updateProgressOnPop(context, block);
           },
           child: Scaffold(
