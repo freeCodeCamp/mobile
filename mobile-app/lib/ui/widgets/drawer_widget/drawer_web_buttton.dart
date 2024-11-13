@@ -30,16 +30,21 @@ class CustomTabButton extends StatefulWidget {
       screenClass: 'Web View - $location',
       screenName: 'Web View - $location',
     );
-    launch(
-      url,
-      customTabsOption: const CustomTabsOption(
-        enableDefaultShare: true,
-        enableUrlBarHiding: true,
-        showPageTitle: true,
-        extraCustomTabs: [
-          'org.mozilla.firefox',
-          'com.microsoft.emmx',
-        ],
+    launchUrl(
+      Uri.parse(url),
+      customTabsOptions: const CustomTabsOptions(
+        shareState: CustomTabsShareState.on,
+        urlBarHidingEnabled: true,
+        showTitle: true,
+        browser: CustomTabsBrowserConfiguration(
+          fallbackCustomTabs: [
+            'org.mozilla.firefox',
+            'com.microsoft.emmx',
+          ],
+        ),
+      ),
+      safariVCOptions: const SafariViewControllerOptions(
+        barCollapsingEnabled: true,
       ),
     );
   }

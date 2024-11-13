@@ -77,11 +77,9 @@ class Challenge {
       files: (data['challengeFiles'] ?? [])
           .map<ChallengeFile>((file) => ChallengeFile.fromJson(file))
           .toList(),
-      question: data['questions'] != null
+      question: (data['questions'] as List).isNotEmpty
           ? Question.fromJson(data['questions'][0])
-          : data['question'] != null
-              ? Question.fromJson(data['question'])
-              : null,
+          : null,
       assignments: data['assignments'] != null
           ? (data['assignments'] as List).cast<String>()
           : null,
