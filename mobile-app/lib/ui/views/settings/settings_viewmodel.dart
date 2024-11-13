@@ -52,6 +52,9 @@ class SettingsViewModel extends BaseViewModel {
           ],
         ),
       ),
+      safariVCOptions: const SafariViewControllerOptions(
+        barCollapsingEnabled: true,
+      ),
     );
   }
 }

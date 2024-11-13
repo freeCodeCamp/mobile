@@ -43,6 +43,9 @@ class CustomTabButton extends StatefulWidget {
           ],
         ),
       ),
+      safariVCOptions: const SafariViewControllerOptions(
+        barCollapsingEnabled: true,
+      ),
     );
   }
 
