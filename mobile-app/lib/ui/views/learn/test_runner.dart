@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'dart:developer';
 import 'package:flutter_inappwebview/flutter_inappwebview.dart';
 import 'package:freecodecamp/app/app.locator.dart';
 import 'package:freecodecamp/enums/ext_type.dart';
@@ -46,40 +47,18 @@ class TestRunner extends BaseViewModel {
       document.getElementsByTagName('HEAD')[0].append(node);
     }
 
-    String? script = await returnScript(
-      challenge.files[0].ext,
-      challenge,
-      testing: testing,
-    );
+    String script = await returnScript(
+          challenge.files[0].ext,
+          challenge,
+          testing: testing,
+        ) ??
+        '';
 
-    Document scriptToNode = parse(script);
+    Document parsedScript = parse(script);
+    Node scriptNode = parsedScript.getElementsByTagName('SCRIPT')[0];
+    document.head!.append(scriptNode);
 
-    Node bodyNode =
-        scriptToNode.getElementsByTagName('BODY').first.children.isNotEmpty
-            ? scriptToNode.getElementsByTagName('BODY').first.children.first
-            : scriptToNode.getElementsByTagName('HEAD').first.children.first;
-
-    document.body!.append(bodyNode);
-
-    // Get user's script elements.
-
-    if (challenge.files[0].ext == Ext.html) {
-      String htmlFile = await fileService.getFirstFileFromCache(
-        challenge,
-        Ext.html,
-        testing: testing,
-      );
-
-      Document parseCacheDocument = parse(htmlFile);
-
-      List<Element> scriptElements = parseCacheDocument.querySelectorAll(
-        'SCRIPT',
-      );
-
-      for (int i = 0; i < scriptElements.length; i++) {
-        document.body!.append(scriptElements[i]);
-      }
-    }
+    log(document.outerHtml);
 
     if (!testing) {
       controller!.loadData(
@@ -89,6 +68,7 @@ class TestRunner extends BaseViewModel {
       );
     }
 
+    log(document.outerHtml);
     return document.outerHtml;
   }
 
@@ -105,12 +85,13 @@ class TestRunner extends BaseViewModel {
     return parsedTest;
   }
 
-  // This function is used in the returnScript function to correctly parse
-  // HTML challenge (user code) it will firstly get the file from the cache, (it returns the first challenge file if in testing mode)
-  // Otherwise it will return the first instance of that challenge in the cache. Next will be adding the style tags (only if
-  // linked)
+  // This Function parses the CODE FROM THE USER into one HTML file. This function
+  // itself has nothing to do with parsing the test-runner document.
 
-  Future<String> htmlFlow(
+  // CODE from the user is concatenated: HTML,CSS,JS and does not get executed;
+  // meaning it is all text; Example: https://pastebin.com/v75dQ1xa
+
+  Future<String> parseCodeVariable(
     Challenge challenge,
     Ext ext, {
     bool testing = false,
@@ -125,41 +106,111 @@ class TestRunner extends BaseViewModel {
       firstHTMlfile,
     );
 
-    String parsedWithStyleTags = await fileService.parseCssDocmentsAsStyleTags(
-      challenge,
-      firstHTMlfile,
-      testing: testing,
-    );
+    // Concatenate CSS
+    List<ChallengeFile> cssFiles =
+        challenge.files.where((file) => file.ext == Ext.css).toList();
 
-    if (challenge.id != '646c48df8674cf2b91020ecc') {
-      firstHTMlfile = fileService.changeActiveFileLinks(
-        parsedWithStyleTags,
+    if (cssFiles.isNotEmpty) {
+      String file = await fileService.getExactFileFromCache(
+        challenge,
+        cssFiles[0],
+        testing: testing,
       );
+
+      firstHTMlfile += file;
+    }
+
+    List<ChallengeFile> jsFiles =
+        challenge.files.where((file) => file.ext == Ext.js).toList();
+
+    if (jsFiles.isNotEmpty) {
+      String file = await fileService.getExactFileFromCache(
+        challenge,
+        jsFiles[0],
+        testing: testing,
+      );
+
+      firstHTMlfile += file;
     }
 
     return firstHTMlfile;
   }
 
-  // This function parses the JavaScript code so that it has a head and tail (code)
-  // It is used in the returnScript function to correctly parse JavaScript.
+  // parsed frame document (also now as Iframe) this will be the document that
+  // is tested against. Meaning the __runtTest function is assigned to the document
+  // object.
 
-  Future<String> javaScritpFlow(
+  Future<String> parseFrameDocument(
     Challenge challenge,
     Ext ext, {
-    bool testing = false,
+    testing = false,
   }) async {
-    var content = testing
-        ? challenge.files[0].contents
-        : await fileService.getFirstFileFromCache(challenge, Ext.js);
-
-    content = fileService.changeActiveFileLinks(
-      content,
+    String html = await fileService.getFirstFileFromCache(
+      challenge,
+      ext,
+      testing: testing,
     );
 
-    return content
-        .replaceAll('\\', '\\\\')
-        .replaceAll('`', '\\`')
-        .replaceAll('\$', r'\$');
+    Document document = parse(html);
+
+    List<ChallengeFile> cssFiles =
+        challenge.files.where((file) => file.ext == Ext.css).toList();
+    List<ChallengeFile> jsFiles =
+        challenge.files.where((file) => file.ext == Ext.js).toList();
+
+    if (cssFiles.isNotEmpty) {
+      String css = await fileService.getExactFileFromCache(
+        challenge,
+        cssFiles[0],
+        testing: testing,
+      );
+
+      List<Element> styleElements = document.getElementsByTagName('link');
+
+      for (Element element in styleElements) {
+        if (element.attributes.containsKey('href')) {
+          if (element.attributes['href'] == 'styles.css') {
+            element.attributes.removeWhere((key, value) => key == 'href');
+            element.attributes.addAll({'data-href': 'styles.css'});
+          } else if (element.attributes['href'] == './styles.css') {
+            element.attributes.removeWhere((key, value) => key == 'href');
+            element.attributes.addAll({'data-href': './styles.css'});
+          }
+        }
+      }
+
+      Element style = document.createElement('style');
+      style.innerHtml = css;
+      style.id = 'fcc-injected-styles';
+
+      log(style.attributes.entries.toString());
+
+      document.head!.append(style);
+    }
+
+    if (jsFiles.isNotEmpty) {
+      String js = await fileService.getExactFileFromCache(
+        challenge,
+        jsFiles[0],
+        testing: testing,
+      );
+
+      List<Element> scripts = document.getElementsByTagName('script');
+
+      for (Element script in scripts) {
+        script.remove();
+      }
+      // We need to create a custom named tag instead of using the default script
+      // tag as the Dart html parser breaks when parsing script tags that are inside
+      // JavaScript strig variables. E.g. for variable "doc".
+      Element script = document.createElement('custom-inject');
+      script.innerHtml = js;
+      script.attributes.addAll({'data-src': './script.js'});
+
+      document.body!.append(script);
+    }
+
+    return document.outerHtml.toString();
   }
 
   // This returns the script that needs to be run in the DOM. If the test in the document fail it will
@@ -171,33 +222,25 @@ class TestRunner extends BaseViewModel {
     Challenge challenge, {
     bool testing = false,
   }) async {
-    List<ChallengeFile>? scriptFile =
-        challenge.files.where((element) => element.name == 'script').toList();
-
     String? code;
 
-    if (ext == Ext.html || ext == Ext.css) {
-      code = await htmlFlow(
-        challenge,
-        ext,
-        testing: testing,
-      );
-    } else if (ext == Ext.js) {
-      code = await javaScritpFlow(
-        challenge,
-        ext,
-        testing: testing,
-      );
-    }
+    // TODO: Have to update code generation to handle only JS files
+    // if (ext == Ext.html || ext == Ext.css) {
+    code = await parseCodeVariable(
+      challenge,
+      ext,
+      testing: testing,
+    );
+    // }
 
-    if (ext == Ext.html || ext == Ext.css) {
-      String tail = challenge.files[0].tail ?? '';
+    // if (ext == Ext.html || ext == Ext.css) {
+    String tail = challenge.files[0].tail ?? '';
 
-      return '''<script type="module">
+    return '''<script type="module" id="fcc-script">
     import * as __helpers from "https://www.unpkg.com/@freecodecamp/curriculum-helpers@2.0.3/dist/index.mjs";
 
     const code = `$code`;
-    const doc = new DOMParser().parseFromString(code, 'text/html');
+    const doc = new DOMParser().parseFromString(`${await parseFrameDocument(challenge, ext, testing: testing)}`, 'text/html');
 
     ${tail.isNotEmpty ? """
     const parseTail  = new DOMParser().parseFromString(`${tail.replaceAll('/', '\\/')}`,'text/html');
@@ -206,7 +249,7 @@ class TestRunner extends BaseViewModel {
 
     const assert = chai.assert;
     const tests = ${parseTest(challenge.tests)};
-    const testText = ${challenge.tests.map((e) => '''"${e.instruction.replaceAll('"', '\\"').replaceAll('\n', ' ')}"''').toList().toString()};
+    const testText = ${challenge.tests.map((e) => '''`${e.instruction.replaceAll('"', '\\"').replaceAll('\n', '')}`''').toList().toString()};
 
     function getUserInput(returnCase){
       switch(returnCase){
@@ -220,6 +263,18 @@ class TestRunner extends BaseViewModel {
      }
 
     doc.__runTest = async function runtTests(testString) {
+      class CustomScriptElement extends HTMLElement {
+        constructor() {
+          super();
+        }
+      }
+      customElements.define("custom-inject", CustomScriptElement);
+      const contentOfCustomElement = doc.querySelector("custom-inject");
+      const scriptElement = doc.createElement("script");
+
+      scriptElement.innerHTML = contentOfCustomElement.innerHTML;
+      contentOfCustomElement.replaceWith(scriptElement);
+
       let error = false;
       for(let i = 0; i < testString.length; i++){
         try {
@@ -243,60 +298,11 @@ class TestRunner extends BaseViewModel {
       }
     };
 
-    document.querySelector('*').innerHTML = code;
+    document.querySelector('*').innerHTML = doc.querySelector('*').innerHTML;
     doc.__runTest(tests);
   </script>''';
-    } else if (ext == Ext.js) {
-      String? head = challenge.files[0].head ?? '';
-      String? tail = (challenge.files[0].tail ?? '').replaceAll('\\', '\\\\');
+    // }
 
-      return '''<script type="module">
-      import * as __helpers from "https://unpkg.com/@freecodecamp/curriculum-helpers@1.1.0/dist/index.js";
-
-      const assert = chai.assert;
-
-      let code = `$code`;
-      let head = `$head`;
-      let tail = `$tail`;
-      let tests = ${parseTest(challenge.tests)};
-
-      const testText = ${challenge.tests.map((e) => '''`${e.instruction.replaceAll('`', '\\`')}`''').toList().toString()};
-      function getUserInput(returnCase){
-        switch(returnCase){
-          case 'index':
-            return `${scriptFile.isNotEmpty ? (await fileService.getExactFileFromCache(challenge, scriptFile[0], testing: testing)).replaceAll('\\', '\\\\').replaceAll('`', '\\`').replaceAll('\$', r'\$') : "empty string"}`;
-          case 'editableContents':
-            return `${scriptFile.isNotEmpty ? (await fileService.getExactFileFromCache(challenge, scriptFile[0], testing: testing)).replaceAll('\\', '\\\\').replaceAll('`', '\\`').replaceAll('\$', r'\$') : "empty string"}`;
-          default:
-            return code;
-        }
-      }
-      let error = false;
-      try {
-        for (let i = 0; i < tests.length; i++) {
-
-          try {
-
-            const lastIndex = i != tests.length - 1;
-
-            await eval(head + '\\n' + code + '\\n' + tail + '\\n' + tests[i]);
-
-          } catch (e) {
-            error = true;
-            console.log(`testMSG: ` + testText[i]);
-            break;
-          }
-          console.log(`first test done`);
-        }
-      } catch (e) {
-        console.log(e);
-      }
-
-      if(!error){
-        console.log('completed');
-      }
-      ''';
-    }
-    return null;
+    // return null;
   }
 }
