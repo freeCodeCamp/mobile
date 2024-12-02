@@ -20,7 +20,6 @@
     "pre:build:schema": "cd ../mobile-app && dart run --enable-asserts lib/scripts/init_validation_schema.dart && mv ./lib/scripts/schema-keys.json ../mobile-api/src/schema-keys.json"
   },
   "dependencies": {
-    "node-fetch": "3.3.2",
     "bree": "9.2.3",
     "dotenv": "16.4.5",
     "express": "4.19.2",
@@ -28,12 +27,12 @@
     "rss-parser": "3.13.0"
   },
   "devDependencies": {
-    "@babel/preset-typescript": "7.24.7",
-    "@types/jest": "29.5.12",
-    "@babel/preset-env": "7.24.7",
     "@babel/plugin-transform-typescript": "7.24.7",
+    "@babel/preset-env": "7.24.7",
+    "@babel/preset-typescript": "7.24.7",
     "@breejs/ts-worker": "2.0.0",
     "@types/express": "4.17.21",
+    "@types/jest": "29.5.12",
     "@types/node": "20.14.2",
     "@typescript-eslint/eslint-plugin": "7.13.0",
     "@typescript-eslint/parser": "7.13.0",

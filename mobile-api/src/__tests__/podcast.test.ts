@@ -1,5 +1,4 @@
 import 'dotenv/config';
-import fetch from 'node-fetch';
 import { Podcast } from '../models/Podcast';
 import { Episode } from '../models/Episode';
 
@@ -30,7 +29,7 @@ describe('podcast api', () => {
     expect(res.msg).toBe('pong');
   });
 
-  test('it should have atleast 1 podcast available', async () => {
+  test('it should have at least 1 podcast available', async () => {
     const req = await fetch(`${url}/podcasts`);
 
     const res: Array<Podcast> = (await req.json()) as Array<Podcast>;
