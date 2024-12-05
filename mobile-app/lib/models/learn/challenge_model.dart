@@ -36,6 +36,7 @@ class Challenge {
 
   final List<ChallengeTest> tests;
   final List<ChallengeFile> files;
+  final FillInTheBlank? fillInTheBlank;
 
   // Challenge Type 11 - Video
   // TODO: Renamed to questions and its an array of questions
@@ -58,6 +59,7 @@ class Challenge {
     required this.files,
     this.question,
     this.assignments,
+    this.fillInTheBlank,
   });
 
   factory Challenge.fromJson(Map<String, dynamic> data) {
@@ -71,6 +73,9 @@ class Challenge {
       superBlock: data['superBlock'],
       videoId: data['videoId'],
       challengeType: data['challengeType'],
+      fillInTheBlank: data['fillInTheBlank'] != null
+          ? FillInTheBlank.fromJson(data['fillInTheBlank'])
+          : null,
       tests: (data['tests'] ?? [])
           .map<ChallengeTest>((file) => ChallengeTest.fromJson(file))
           .toList(),
@@ -145,7 +150,9 @@ class Question {
     return Question(
       text: data['text'],
       answers: (data['answers'] ?? [])
-          .map<Answer>((answer) => Answer.fromJson(answer))
+          .map<Answer>(
+            (answer) => Answer.fromJson(answer),
+          )
           .toList(),
       solution: data['solution'],
     );
@@ -217,6 +224,40 @@ class ChallengeFile {
       editableRegionBoundaries: data['editableRegionBoundaries'] ?? [],
       history: ((data['history'] ?? []) as List).cast<String>(),
       fileKey: data['fileKey'] ?? data['name'] + data['ext'],
+    );
+  }
+}
+
+class FillInTheBlank {
+  const FillInTheBlank({required this.sentence, required this.blanks});
+  final String sentence;
+  final List<Blank> blanks;
+
+  factory FillInTheBlank.fromJson(Map<String, dynamic> data) {
+    return FillInTheBlank(
+      sentence: data['sentence'],
+      blanks: data['blanks']
+          .map<Blank>(
+            (blank) => Blank.fromJson(blank),
+          )
+          .toList(),
+    );
+  }
+}
+
+class Blank {
+  const Blank({
+    required this.answer,
+    required this.feedback,
+  });
+
+  final String answer;
+  final String feedback;
+
+  factory Blank.fromJson(Map<String, dynamic> data) {
+    return Blank(
+      answer: data['answer'],
+      feedback: data['feedback'],
     );
   }
 }

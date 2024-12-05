@@ -292,6 +292,15 @@ class HTMLParser {
               ),
             );
           },
+        ),
+        TagExtension(
+          tagsToExtend: {'input'},
+          builder: (node) {
+            return const SizedBox(
+              width: 50,
+              child: TextField(),
+            );
+          },
         )
       ],
     );
