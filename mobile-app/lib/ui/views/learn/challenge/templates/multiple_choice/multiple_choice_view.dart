@@ -3,14 +3,14 @@ import 'package:flutter_html/flutter_html.dart';
 import 'package:freecodecamp/extensions/i18n_extension.dart';
 import 'package:freecodecamp/models/learn/challenge_model.dart';
 import 'package:freecodecamp/models/learn/curriculum_model.dart';
-import 'package:freecodecamp/ui/views/learn/challenge/templates/odin/odin_viewmodel.dart';
+import 'package:freecodecamp/ui/views/learn/challenge/templates/multiple_choice/multiple_choice_viewmodel.dart';
 import 'package:freecodecamp/ui/views/news/html_handler/html_handler.dart';
 import 'package:freecodecamp/ui/widgets/drawer_widget/drawer_widget_view.dart';
 import 'package:stacked/stacked.dart';
 import 'package:youtube_player_iframe/youtube_player_iframe.dart';
 
-class OdinView extends StatelessWidget {
-  const OdinView({
+class MultipleChoiceView extends StatelessWidget {
+  const MultipleChoiceView({
     Key? key,
     required this.challenge,
     required this.block,
@@ -27,8 +27,8 @@ class OdinView extends StatelessWidget {
   Widget build(BuildContext context) {
     HTMLParser parser = HTMLParser(context: context);
 
-    return ViewModelBuilder<OdinViewModel>.reactive(
-      viewModelBuilder: () => OdinViewModel(),
+    return ViewModelBuilder<MultipleChoiceViewmodel>.reactive(
+      viewModelBuilder: () => MultipleChoiceViewmodel(),
       onViewModelReady: (model) => model.initChallenge(challenge),
       builder: (context, model, child) {
         YoutubePlayerController controller =
@@ -154,7 +154,7 @@ class OdinView extends StatelessWidget {
   Container assignmentTile(
     String assignment,
     int ind,
-    OdinViewModel model,
+    MultipleChoiceViewmodel model,
     BuildContext context,
   ) {
     HTMLParser parser = HTMLParser(context: context);
@@ -210,7 +210,7 @@ class OdinView extends StatelessWidget {
 
   Container questionOption(
     MapEntry<int, Answer> answerObj,
-    OdinViewModel model,
+    MultipleChoiceViewmodel model,
     BuildContext context,
   ) {
     HTMLParser parser = HTMLParser(context: context);
