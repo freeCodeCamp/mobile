@@ -71,7 +71,8 @@ class ChallengeView extends StatelessWidget {
                 challengesCompleted: challengesCompleted,
                 currentChallengeNum: currChallengeNum,
               );
-            } else if (challenge.challengeType == 22) {
+            } else if (challenge.challengeType == 22 ||
+                challenge.challengeType == 21) {
               return EnglishView(
                 challenge: challenge,
                 currentChallengeNum: currChallengeNum,
