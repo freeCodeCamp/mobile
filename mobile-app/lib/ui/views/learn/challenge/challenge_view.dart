@@ -63,7 +63,8 @@ class ChallengeView extends StatelessWidget {
                 challengesCompleted: challengesCompleted,
                 currentChallengeNum: currChallengeNum,
               );
-            } else if (challenge.challengeType == 15) {
+            } else if (challenge.challengeType == 15 ||
+                challenge.challengeType == 19) {
               return OdinView(
                 challenge: challenge,
                 block: block,

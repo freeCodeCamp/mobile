@@ -36,7 +36,10 @@ class Challenge {
 
   final List<ChallengeTest> tests;
   final List<ChallengeFile> files;
+
+  // English Challenges
   final FillInTheBlank? fillInTheBlank;
+  final EnglishAudio? audio;
 
   // Challenge Type 11 - Video
   // TODO: Renamed to questions and its an array of questions
@@ -45,22 +48,22 @@ class Challenge {
   // Challenge Type 15 - Odin
   final List<String>? assignments;
 
-  Challenge({
-    required this.id,
-    required this.block,
-    required this.title,
-    required this.description,
-    required this.instructions,
-    required this.dashedName,
-    required this.superBlock,
-    this.videoId,
-    required this.challengeType,
-    required this.tests,
-    required this.files,
-    this.question,
-    this.assignments,
-    this.fillInTheBlank,
-  });
+  Challenge(
+      {required this.id,
+      required this.block,
+      required this.title,
+      required this.description,
+      required this.instructions,
+      required this.dashedName,
+      required this.superBlock,
+      this.videoId,
+      required this.challengeType,
+      required this.tests,
+      required this.files,
+      this.question,
+      this.assignments,
+      this.fillInTheBlank,
+      this.audio});
 
   factory Challenge.fromJson(Map<String, dynamic> data) {
     return Challenge(
@@ -75,6 +78,9 @@ class Challenge {
       challengeType: data['challengeType'],
       fillInTheBlank: data['fillInTheBlank'] != null
           ? FillInTheBlank.fromJson(data['fillInTheBlank'])
+          : null,
+      audio: data['scene'] != null
+          ? EnglishAudio.fromJson(data['scene']['setup']['audio'])
           : null,
       tests: (data['tests'] ?? [])
           .map<ChallengeTest>((file) => ChallengeTest.fromJson(file))
@@ -258,6 +264,28 @@ class Blank {
     return Blank(
       answer: data['answer'],
       feedback: data['feedback'],
+    );
+  }
+}
+
+class EnglishAudio {
+  const EnglishAudio(
+      {required this.fileName,
+      required this.startTime,
+      required this.startTimeStamp,
+      required this.finishTimeStamp});
+
+  final String fileName;
+  final String startTime;
+  final String startTimeStamp;
+  final String finishTimeStamp;
+
+  factory EnglishAudio.fromJson(Map<String, dynamic> data) {
+    return EnglishAudio(
+      fileName: data['filename'],
+      startTime: data['startTime'].toString(),
+      startTimeStamp: data['startTimestamp'].toString(),
+      finishTimeStamp: data['finishTimestamp'].toString(),
     );
   }
 }

@@ -41,10 +41,74 @@ class EnglishView extends StatelessWidget {
                 children: [
                   ...parser.parse(challenge.description),
                   if (challenge.fillInTheBlank != null)
-                    ...parser.parse(challenge.fillInTheBlank!.sentence
-                        .replaceAll('BLANK', '<input />'))
+                    Container(
+                      color: const Color(0xFF0a0a23),
+                      margin: const EdgeInsets.all(8),
+                      child: Row(
+                        children: [
+                          Expanded(
+                            child: Column(
+                              children: [
+                                ...parser.parse(
+                                  challenge.fillInTheBlank!.sentence.replaceAll(
+                                      'BLANK', '<input value="e" />'),
+                                )
+                              ],
+                            ),
+                          )
+                        ],
+                      ),
+                    )
                   else
-                    Container()
+                    Container(),
+                  if (challenge.audio != null)
+                    Container(
+                      margin: const EdgeInsets.all(8),
+                      child: ElevatedButton(
+                        style: ElevatedButton.styleFrom(
+                          minimumSize: const Size(0, 50),
+                          backgroundColor:
+                              const Color.fromRGBO(0x3b, 0x3b, 0x4f, 1),
+                          shape: const RoundedRectangleBorder(
+                            borderRadius: BorderRadius.zero,
+                            side: BorderSide(
+                              width: 2,
+                              color: Colors.white,
+                            ),
+                          ),
+                        ),
+                        onPressed: () => {
+                          model.setAudio(challenge.audio!.fileName),
+                          model.playOrPauseAudio(),
+                        },
+                        child: Text(
+                          '${model.isPlaying ? 'Pause' : 'Play'} Audio',
+                          style: const TextStyle(fontSize: 20),
+                        ),
+                      ),
+                    ),
+                  Container(
+                    margin: const EdgeInsets.all(8),
+                    child: ElevatedButton(
+                      style: ElevatedButton.styleFrom(
+                        minimumSize: const Size(0, 50),
+                        backgroundColor:
+                            const Color.fromRGBO(0x3b, 0x3b, 0x4f, 1),
+                        shape: const RoundedRectangleBorder(
+                          borderRadius: BorderRadius.zero,
+                          side: BorderSide(
+                            width: 2,
+                            color: Colors.white,
+                          ),
+                        ),
+                      ),
+                      onPressed: () => {},
+                      child: const Text(
+                        'Check Answers',
+                        style: TextStyle(fontSize: 20),
+                      ),
+                    ),
+                  ),
                 ],
               ),
             ),
