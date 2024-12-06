@@ -39,7 +39,19 @@ class EnglishView extends StatelessWidget {
             body: SafeArea(
               child: ListView(
                 children: [
-                  ...parser.parse(challenge.description),
+                  Container(
+                    margin: const EdgeInsets.all(8),
+                    color: const Color(0xFF0a0a23),
+                    child: Row(
+                      children: [
+                        Expanded(
+                          child: Column(
+                            children: [...parser.parse(challenge.description)],
+                          ),
+                        )
+                      ],
+                    ),
+                  ),
                   if (challenge.fillInTheBlank != null)
                     Container(
                       color: const Color(0xFF0a0a23),
