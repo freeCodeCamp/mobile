@@ -9,7 +9,7 @@ import 'package:freecodecamp/models/learn/challenge_model.dart';
 import 'package:freecodecamp/models/learn/curriculum_model.dart';
 import 'package:freecodecamp/ui/views/learn/challenge/challenge_viewmodel.dart';
 import 'package:freecodecamp/ui/views/learn/challenge/templates/english/english_view.dart';
-import 'package:freecodecamp/ui/views/learn/challenge/templates/odin/odin_view.dart';
+import 'package:freecodecamp/ui/views/learn/challenge/templates/multiple_choice/multiple_choice_view.dart';
 import 'package:freecodecamp/ui/views/learn/challenge/templates/python-project/python_project_view.dart';
 import 'package:freecodecamp/ui/views/learn/challenge/templates/python/python_view.dart';
 import 'package:freecodecamp/ui/views/learn/widgets/console/console_view.dart';
@@ -65,7 +65,7 @@ class ChallengeView extends StatelessWidget {
               );
             } else if (challenge.challengeType == 15 ||
                 challenge.challengeType == 19) {
-              return OdinView(
+              return MultipleChoiceView(
                 challenge: challenge,
                 block: block,
                 challengesCompleted: challengesCompleted,
