@@ -292,7 +292,7 @@ class HTMLParser {
               ),
             );
           },
-        )
+        ),
       ],
     );
 

@@ -3,7 +3,7 @@ import 'package:freecodecamp/models/learn/challenge_model.dart';
 import 'package:freecodecamp/service/learn/learn_service.dart';
 import 'package:stacked/stacked.dart';
 
-class OdinViewModel extends BaseViewModel {
+class MultipleChoiceViewmodel extends BaseViewModel {
   int _currentChoice = -1;
   int get currentChoice => _currentChoice;
 

@@ -69,7 +69,12 @@ class Block {
   });
 
   static bool checkIfStepBased(String superblock) {
-    return superblock == '2022/responsive-web-design';
+    List<String> stepbased = [
+      '2022/responsive-web-design',
+      'a2-english-for-developers'
+    ];
+
+    return stepbased.contains(superblock);
   }
 
   factory Block.fromJson(
