@@ -117,13 +117,18 @@ class EnglishView extends StatelessWidget {
                           ),
                         ),
                       ),
-                      onPressed: model.currentBlankValues.length <
-                              challenge.fillInTheBlank!.blanks.length
-                          ? null
+                      onPressed: model.allInputsCorrect
+                          ? () => model.learnService.goToNextChallenge(
+                              block.challenges.length,
+                              currentChallengeNum,
+                              challenge,
+                              block)
                           : () => {model.checkAnswers(challenge)},
-                      child: const Text(
-                        'Check Answers',
-                        style: TextStyle(fontSize: 20),
+                      child: Text(
+                        model.allInputsCorrect
+                            ? 'Go to Next Challenge'
+                            : 'Check Answers',
+                        style: const TextStyle(fontSize: 20),
                       ),
                     ),
                   ),

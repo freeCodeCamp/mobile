@@ -1,6 +1,4 @@
 import 'dart:async';
-import 'dart:developer';
-
 import 'package:flutter/material.dart';
 import 'package:freecodecamp/app/app.locator.dart';
 import 'package:freecodecamp/models/learn/challenge_model.dart';
@@ -28,6 +26,9 @@ class EnglishViewModel extends BaseViewModel {
   Map<String, bool> _inputValuesCorrect = {};
   Map<String, bool> get inputValuesCorrect => _inputValuesCorrect;
 
+  bool _allInputsCorrect = false;
+  bool get allInputsCorrect => _allInputsCorrect;
+
   final StreamController<Map<String, String>> fills =
       StreamController<Map<String, String>>.broadcast();
 
@@ -43,6 +44,11 @@ class EnglishViewModel extends BaseViewModel {
 
   set setInptuValuesCorrect(Map<String, bool> value) {
     _inputValuesCorrect = value;
+    notifyListeners();
+  }
+
+  set setAllInputsCorrect(bool value) {
+    _allInputsCorrect = value;
     notifyListeners();
   }
 
@@ -76,12 +82,15 @@ class EnglishViewModel extends BaseViewModel {
       if (challenge.fillInTheBlank == null) break;
       inputValues[i] = inputValues[i].trim();
 
-      log(inputValues[i]);
       bool value = inputValues[i] == challenge.fillInTheBlank!.blanks[i].answer;
       correctIncorrect['blank_correct_$i'] = value;
     }
 
     setInptuValuesCorrect = correctIncorrect;
+
+    setAllInputsCorrect = correctIncorrect.values.every(
+      (value) => value == true,
+    );
   }
 
   OutlineInputBorder handleInputBorderColor(int inputIndex) {
@@ -116,7 +125,6 @@ class EnglishViewModel extends BaseViewModel {
     List<String> words = challenge.fillInTheBlank!.sentence.split(' ');
 
     int blankIndex = 0;
-    OutlineInputBorder border = handleInputBorderColor(blankIndex);
 
     for (String word in words) {
       if (word.contains('BLANK')) {
@@ -154,11 +162,14 @@ class EnglishViewModel extends BaseViewModel {
                 local[uniqueId] = value;
                 fills.add(local);
               },
+              smartQuotesType: SmartQuotesType.disabled,
+              spellCheckConfiguration: const SpellCheckConfiguration.disabled(),
+              autocorrect: false,
               decoration: InputDecoration(
                 contentPadding: const EdgeInsets.all(3),
-                focusedBorder: border,
+                focusedBorder: handleInputBorderColor(blankIndex),
                 isDense: true,
-                enabledBorder: border,
+                enabledBorder: handleInputBorderColor(blankIndex),
               ),
             ),
           ),
