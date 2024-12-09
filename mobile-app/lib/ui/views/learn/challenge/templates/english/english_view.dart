@@ -64,7 +64,7 @@ class EnglishView extends StatelessWidget {
                               child: Wrap(
                                 children: [
                                   ...model.getFillInBlankWidgets(
-                                    challenge.fillInTheBlank!.sentence,
+                                    challenge,
                                     context,
                                   ),
                                 ],
@@ -117,7 +117,10 @@ class EnglishView extends StatelessWidget {
                           ),
                         ),
                       ),
-                      onPressed: () => {},
+                      onPressed: model.currentBlankValues.length <
+                              challenge.fillInTheBlank!.blanks.length
+                          ? null
+                          : () => {model.checkAnswers(challenge)},
                       child: const Text(
                         'Check Answers',
                         style: TextStyle(fontSize: 20),
