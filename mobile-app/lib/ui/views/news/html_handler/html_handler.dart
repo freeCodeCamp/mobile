@@ -151,6 +151,10 @@ class HTMLParser {
           fontSize: FontSize.xLarge,
           fontFamily: 'Roboto Mono',
         ),
+        'span': Style(
+          wordSpacing: 0,
+          fontSize: FontSize.xLarge,
+        ),
       },
       onLinkTap: (url, attributes, element) {
         launchUrl(Uri.parse(url!.trim()));

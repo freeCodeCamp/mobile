@@ -59,13 +59,16 @@ class EnglishView extends StatelessWidget {
                       child: Row(
                         children: [
                           Expanded(
-                            child: Column(
-                              children: [
-                                ...parser.parse(
-                                  challenge.fillInTheBlank!.sentence.replaceAll(
-                                      'BLANK', '<input value="e" />'),
-                                )
-                              ],
+                            child: Padding(
+                              padding: const EdgeInsets.all(8.0),
+                              child: Wrap(
+                                children: [
+                                  ...model.getFillInBlankWidgets(
+                                    challenge.fillInTheBlank!.sentence,
+                                    context,
+                                  ),
+                                ],
+                              ),
                             ),
                           )
                         ],
