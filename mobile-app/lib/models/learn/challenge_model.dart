@@ -263,7 +263,7 @@ class Blank {
   factory Blank.fromJson(Map<String, dynamic> data) {
     return Blank(
       answer: data['answer'],
-      feedback: data['feedback'],
+      feedback: data['feedback'] ?? '',
     );
   }
 }

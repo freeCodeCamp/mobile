@@ -7,7 +7,6 @@ import 'package:freecodecamp/models/learn/curriculum_model.dart';
 import 'package:freecodecamp/service/learn/learn_offline_service.dart';
 import 'package:freecodecamp/service/learn/learn_service.dart';
 import 'package:freecodecamp/ui/views/learn/superblock/superblock_view.dart';
-import 'package:freecodecamp/ui/views/news/html_handler/html_handler.dart';
 import 'package:just_audio/just_audio.dart';
 import 'package:stacked/stacked.dart';
 
@@ -54,7 +53,6 @@ class EnglishViewModel extends BaseViewModel {
     List<Widget> widgets = [];
     List<String> words = sentence.split(' ');
 
-    HTMLParser htmlParser = HTMLParser(context: context);
     Map<String, String> currentFills = {};
     log('REBUILDING WIDGETS');
 
@@ -65,31 +63,59 @@ class EnglishViewModel extends BaseViewModel {
         String uniqueId = 'blank_$blankIndex';
         currentFills[uniqueId] = '';
 
+        List splitWord = word.split('BLANK');
+
+        if (splitWord.isNotEmpty) {
+          widgets.add(
+            Text(
+              splitWord[0].replaceAll('<p>', ''),
+              style: const TextStyle(fontSize: 20, letterSpacing: 0),
+            ),
+          );
+        }
+
         widgets.add(
-          Wrap(
-            children: [
-              Container(
-                width: 40,
-                margin: const EdgeInsets.only(right: 8),
-                child: TextField(
-                  onChanged: (value) {
-                    currentFills[uniqueId] = value;
-                    fills.add(currentFills);
-                    log(currentFills.toString());
-                  },
-                  decoration: const InputDecoration(
-                    contentPadding: EdgeInsets.zero,
+          Container(
+            margin: EdgeInsets.only(
+              left: uniqueId == 'blank_0' ? 0 : 5,
+              right: 5,
+            ),
+            width: 40,
+            child: TextField(
+              onChanged: (value) {
+                currentFills[uniqueId] = value;
+                fills.add(currentFills);
+              },
+              decoration: const InputDecoration(
+                contentPadding: EdgeInsets.zero,
+                isDense: true,
+                border: OutlineInputBorder(
+                  borderSide: BorderSide(
+                    color: Colors.black,
                   ),
                 ),
-              )
-            ],
+              ),
+            ),
           ),
         );
+
+        if (splitWord.length > 1) {
+          widgets.add(
+            Text(
+              splitWord[1].replaceAll('</p>', ''),
+              style: const TextStyle(fontSize: 20, letterSpacing: 0),
+            ),
+          );
+        }
+
         blankIndex++;
       } else {
-        List<Widget> parsed = htmlParser.parse('<span>$word</span>');
-
-        widgets.addAll(parsed);
+        widgets.add(
+          Text(
+            word.replaceAll(RegExp('<p>|</p>'), ''),
+            style: const TextStyle(fontSize: 20, letterSpacing: 0),
+          ),
+        );
       }
     }
     return widgets;

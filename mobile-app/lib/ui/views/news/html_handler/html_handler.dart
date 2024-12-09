@@ -151,10 +151,6 @@ class HTMLParser {
           fontSize: FontSize.xLarge,
           fontFamily: 'Roboto Mono',
         ),
-        'span': Style(
-          wordSpacing: 0,
-          fontSize: FontSize.xLarge,
-        ),
       },
       onLinkTap: (url, attributes, element) {
         launchUrl(Uri.parse(url!.trim()));
@@ -297,21 +293,6 @@ class HTMLParser {
             );
           },
         ),
-        TagExtension(
-          tagsToExtend: {'input'},
-          builder: (node) {
-            return Container(
-              margin: const EdgeInsets.symmetric(horizontal: 5),
-              width: 50,
-              child: const TextField(
-                decoration: InputDecoration(
-                  contentPadding: EdgeInsets.zero,
-                  isDense: true,
-                ),
-              ),
-            );
-          },
-        )
       ],
     );
 
