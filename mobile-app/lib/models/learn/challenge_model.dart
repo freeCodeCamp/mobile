@@ -37,6 +37,10 @@ class Challenge {
   final List<ChallengeTest> tests;
   final List<ChallengeFile> files;
 
+  // English Challenges
+  final FillInTheBlank? fillInTheBlank;
+  final EnglishAudio? audio;
+
   // Challenge Type 11 - Video
   // TODO: Renamed to questions and its an array of questions
   Question? question;
@@ -44,21 +48,22 @@ class Challenge {
   // Challenge Type 15 - Odin
   final List<String>? assignments;
 
-  Challenge({
-    required this.id,
-    required this.block,
-    required this.title,
-    required this.description,
-    required this.instructions,
-    required this.dashedName,
-    required this.superBlock,
-    this.videoId,
-    required this.challengeType,
-    required this.tests,
-    required this.files,
-    this.question,
-    this.assignments,
-  });
+  Challenge(
+      {required this.id,
+      required this.block,
+      required this.title,
+      required this.description,
+      required this.instructions,
+      required this.dashedName,
+      required this.superBlock,
+      this.videoId,
+      required this.challengeType,
+      required this.tests,
+      required this.files,
+      this.question,
+      this.assignments,
+      this.fillInTheBlank,
+      this.audio});
 
   factory Challenge.fromJson(Map<String, dynamic> data) {
     return Challenge(
@@ -71,6 +76,12 @@ class Challenge {
       superBlock: data['superBlock'],
       videoId: data['videoId'],
       challengeType: data['challengeType'],
+      fillInTheBlank: data['fillInTheBlank'] != null
+          ? FillInTheBlank.fromJson(data['fillInTheBlank'])
+          : null,
+      audio: data['scene'] != null
+          ? EnglishAudio.fromJson(data['scene']['setup']['audio'])
+          : null,
       tests: (data['tests'] ?? [])
           .map<ChallengeTest>((file) => ChallengeTest.fromJson(file))
           .toList(),
@@ -145,7 +156,9 @@ class Question {
     return Question(
       text: data['text'],
       answers: (data['answers'] ?? [])
-          .map<Answer>((answer) => Answer.fromJson(answer))
+          .map<Answer>(
+            (answer) => Answer.fromJson(answer),
+          )
           .toList(),
       solution: data['solution'],
     );
@@ -217,6 +230,62 @@ class ChallengeFile {
       editableRegionBoundaries: data['editableRegionBoundaries'] ?? [],
       history: ((data['history'] ?? []) as List).cast<String>(),
       fileKey: data['fileKey'] ?? data['name'] + data['ext'],
+    );
+  }
+}
+
+class FillInTheBlank {
+  const FillInTheBlank({required this.sentence, required this.blanks});
+  final String sentence;
+  final List<Blank> blanks;
+
+  factory FillInTheBlank.fromJson(Map<String, dynamic> data) {
+    return FillInTheBlank(
+      sentence: data['sentence'],
+      blanks: data['blanks']
+          .map<Blank>(
+            (blank) => Blank.fromJson(blank),
+          )
+          .toList(),
+    );
+  }
+}
+
+class Blank {
+  const Blank({
+    required this.answer,
+    required this.feedback,
+  });
+
+  final String answer;
+  final String feedback;
+
+  factory Blank.fromJson(Map<String, dynamic> data) {
+    return Blank(
+      answer: data['answer'],
+      feedback: data['feedback'] ?? '',
+    );
+  }
+}
+
+class EnglishAudio {
+  const EnglishAudio(
+      {required this.fileName,
+      required this.startTime,
+      required this.startTimeStamp,
+      required this.finishTimeStamp});
+
+  final String fileName;
+  final String startTime;
+  final String startTimeStamp;
+  final String finishTimeStamp;
+
+  factory EnglishAudio.fromJson(Map<String, dynamic> data) {
+    return EnglishAudio(
+      fileName: data['filename'],
+      startTime: data['startTime'].toString(),
+      startTimeStamp: data['startTimestamp'].toString(),
+      finishTimeStamp: data['finishTimestamp'].toString(),
     );
   }
 }

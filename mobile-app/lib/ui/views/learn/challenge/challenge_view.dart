@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
 import 'package:flutter_inappwebview/flutter_inappwebview.dart';
@@ -6,7 +8,8 @@ import 'package:freecodecamp/extensions/i18n_extension.dart';
 import 'package:freecodecamp/models/learn/challenge_model.dart';
 import 'package:freecodecamp/models/learn/curriculum_model.dart';
 import 'package:freecodecamp/ui/views/learn/challenge/challenge_viewmodel.dart';
-import 'package:freecodecamp/ui/views/learn/challenge/templates/odin/odin_view.dart';
+import 'package:freecodecamp/ui/views/learn/challenge/templates/english/english_view.dart';
+import 'package:freecodecamp/ui/views/learn/challenge/templates/multiple_choice/multiple_choice_view.dart';
 import 'package:freecodecamp/ui/views/learn/challenge/templates/python-project/python_project_view.dart';
 import 'package:freecodecamp/ui/views/learn/challenge/templates/python/python_view.dart';
 import 'package:freecodecamp/ui/views/learn/widgets/console/console_view.dart';
@@ -46,7 +49,7 @@ class ChallengeView extends StatelessWidget {
             int currChallengeNum = block.challengeTiles
                     .indexWhere((element) => element.id == challenge.id) +
                 1;
-
+            log(challenge.challengeType.toString());
             if (challenge.challengeType == 10) {
               return PythonProjectView(
                 challenge: challenge,
@@ -60,12 +63,20 @@ class ChallengeView extends StatelessWidget {
                 challengesCompleted: challengesCompleted,
                 currentChallengeNum: currChallengeNum,
               );
-            } else if (challenge.challengeType == 15) {
-              return OdinView(
+            } else if (challenge.challengeType == 15 ||
+                challenge.challengeType == 19) {
+              return MultipleChoiceView(
                 challenge: challenge,
                 block: block,
                 challengesCompleted: challengesCompleted,
                 currentChallengeNum: currChallengeNum,
+              );
+            } else if (challenge.challengeType == 22 ||
+                challenge.challengeType == 21) {
+              return EnglishView(
+                challenge: challenge,
+                currentChallengeNum: currChallengeNum,
+                block: block,
               );
             } else {
               ChallengeFile currFile = model.currentFile(challenge);
