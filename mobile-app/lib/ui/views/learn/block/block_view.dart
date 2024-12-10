@@ -169,7 +169,6 @@ class BlockView extends StatelessWidget {
                         step: int.parse(
                           structure[step][index].title.split('Task')[1],
                         ),
-                        currentDialogueNum: step,
                         isDowloaded: false,
                       ),
                     );
@@ -344,7 +343,6 @@ class ChallengeTile extends StatelessWidget {
     required this.step,
     required this.isDowloaded,
     required this.challengeId,
-    this.currentDialogueNum = 0,
   }) : super(key: key);
 
   final Block block;
@@ -352,7 +350,6 @@ class ChallengeTile extends StatelessWidget {
   final int step;
   final bool isDowloaded;
   final String challengeId;
-  final int currentDialogueNum;
 
   @override
   Widget build(BuildContext context) {
@@ -387,7 +384,6 @@ class ChallengeTile extends StatelessWidget {
               fullUrl,
               block,
               challengeId,
-              currentDialogueNum: step,
             );
           },
           child: Center(

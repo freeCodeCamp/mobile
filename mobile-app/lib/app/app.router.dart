@@ -248,8 +248,7 @@ class StackedRouter extends _i1.RouterBase {
             block: args.block,
             challengeId: args.challengeId,
             challengesCompleted: args.challengesCompleted,
-            isProject: args.isProject,
-            currentDialogueNum: args.currentDialogueNum),
+            isProject: args.isProject),
         settings: data,
       );
     },
@@ -522,7 +521,6 @@ class ChallengeViewArguments {
     required this.challengeId,
     required this.challengesCompleted,
     required this.isProject,
-    this.currentDialogueNum = 0,
   });
 
   final _i18.Key? key;
@@ -537,11 +535,9 @@ class ChallengeViewArguments {
 
   final bool isProject;
 
-  final int currentDialogueNum;
-
   @override
   String toString() {
-    return '{"key": "$key", "url": "$url", "block": "$block", "challengeId": "$challengeId", "challengesCompleted": "$challengesCompleted", "isProject": "$isProject", "currentDialogueNum": "$currentDialogueNum"}';
+    return '{"key": "$key", "url": "$url", "block": "$block", "challengeId": "$challengeId", "challengesCompleted": "$challengesCompleted", "isProject": "$isProject"}';
   }
 
   @override
@@ -552,8 +548,7 @@ class ChallengeViewArguments {
         other.block == block &&
         other.challengeId == challengeId &&
         other.challengesCompleted == challengesCompleted &&
-        other.isProject == isProject &&
-        other.currentDialogueNum == currentDialogueNum;
+        other.isProject == isProject;
   }
 
   @override
@@ -563,8 +558,7 @@ class ChallengeViewArguments {
         block.hashCode ^
         challengeId.hashCode ^
         challengesCompleted.hashCode ^
-        isProject.hashCode ^
-        currentDialogueNum.hashCode;
+        isProject.hashCode;
   }
 }
 
@@ -807,7 +801,6 @@ extension NavigatorStateExtension on _i23.NavigationService {
     required String challengeId,
     required int challengesCompleted,
     required bool isProject,
-    int currentDialogueNum = 0,
     int? routerId,
     bool preventDuplicates = true,
     Map<String, String>? parameters,
@@ -821,8 +814,7 @@ extension NavigatorStateExtension on _i23.NavigationService {
             block: block,
             challengeId: challengeId,
             challengesCompleted: challengesCompleted,
-            isProject: isProject,
-            currentDialogueNum: currentDialogueNum),
+            isProject: isProject),
         id: routerId,
         preventDuplicates: preventDuplicates,
         parameters: parameters,
@@ -1097,7 +1089,6 @@ extension NavigatorStateExtension on _i23.NavigationService {
     required String challengeId,
     required int challengesCompleted,
     required bool isProject,
-    int currentDialogueNum = 0,
     int? routerId,
     bool preventDuplicates = true,
     Map<String, String>? parameters,
@@ -1111,8 +1102,7 @@ extension NavigatorStateExtension on _i23.NavigationService {
             block: block,
             challengeId: challengeId,
             challengesCompleted: challengesCompleted,
-            isProject: isProject,
-            currentDialogueNum: currentDialogueNum),
+            isProject: isProject),
         id: routerId,
         preventDuplicates: preventDuplicates,
         parameters: parameters,

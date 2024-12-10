@@ -25,14 +25,12 @@ class ChallengeView extends StatelessWidget {
     required this.challengeId,
     required this.challengesCompleted,
     required this.isProject,
-    this.currentDialogueNum = 0,
   }) : super(key: key);
 
   final String url;
   final Block block;
   final String challengeId;
   final int challengesCompleted;
-  final int currentDialogueNum;
   final bool isProject;
 
   @override
@@ -78,7 +76,6 @@ class ChallengeView extends StatelessWidget {
               return EnglishView(
                 challenge: challenge,
                 currentChallengeNum: currChallengeNum,
-                currentDialogueNum: 0,
                 block: block,
               );
             } else {

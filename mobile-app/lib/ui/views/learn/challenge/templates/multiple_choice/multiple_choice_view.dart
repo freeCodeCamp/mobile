@@ -54,7 +54,7 @@ class MultipleChoiceView extends StatelessWidget {
           child: Scaffold(
             appBar: AppBar(
               title: Text(
-                '${currentChallengeNum - numberOfDialogueHeaders} of ${block.challenges.length - numberOfDialogueHeaders}',
+                '${challenge.title} of ${block.challenges.length - numberOfDialogueHeaders}',
               ),
             ),
             body: SafeArea(

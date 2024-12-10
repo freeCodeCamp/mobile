@@ -12,13 +12,11 @@ class EnglishView extends StatelessWidget {
     required this.challenge,
     required this.block,
     required this.currentChallengeNum,
-    this.currentDialogueNum = 0,
   }) : super(key: key);
 
   final Challenge challenge;
   final Block block;
   final int currentChallengeNum;
-  final int currentDialogueNum;
 
   @override
   Widget build(BuildContext context) {
@@ -39,7 +37,7 @@ class EnglishView extends StatelessWidget {
           child: Scaffold(
             appBar: AppBar(
               title: Text(
-                '${currentChallengeNum - currentDialogueNum - 1} of ${block.challenges.length - numberOfDialogueHeaders}',
+                '${challenge.title} of ${block.challenges.length - numberOfDialogueHeaders}',
               ),
             ),
             body: SafeArea(
