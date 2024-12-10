@@ -93,7 +93,7 @@ class BlockView extends StatelessWidget {
                         ),
                       if (!isCertification && isStepBased) ...[
                         buildDivider(),
-                        gridWidget(context, model)
+                        dialogueWidget(block.challenges, context, model)
                       ],
                       if (!isStepBased && !isCertification) ...[
                         buildDivider(),
@@ -109,6 +109,77 @@ class BlockView extends StatelessWidget {
           ],
         );
       },
+    );
+  }
+
+  Widget dialogueWidget(
+    List<ChallengeOrder> challenges,
+    BuildContext context,
+    BlockViewModel model,
+  ) {
+    List<List<ChallengeOrder>> structure = [];
+
+    List<ChallengeOrder> dialogueHeaders = [];
+
+    for (int i = 0; i < challenges.length; i++) {
+      if (challenges[i].title.contains('Dialogue')) {
+        structure.add([]);
+      }
+    }
+
+    int dialogueIndex = 0;
+
+    dialogueHeaders.add(challenges[0]);
+
+    for (int i = 1; i < challenges.length; i++) {
+      if (challenges[i].title.contains('Dialogue')) {
+        dialogueHeaders.add(challenges[i]);
+        dialogueIndex++;
+      } else {
+        structure[dialogueIndex].add(challenges[i]);
+      }
+    }
+    return Column(
+      children: [
+        ...List.generate(structure.length, (step) {
+          return Column(
+            children: [
+              Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: Text(
+                  dialogueHeaders[step].title,
+                  style: const TextStyle(fontSize: 18),
+                ),
+              ),
+              GridView.count(
+                physics: const ClampingScrollPhysics(),
+                shrinkWrap: true,
+                padding: const EdgeInsets.all(16),
+                crossAxisCount: (MediaQuery.of(context).size.width / 70 -
+                        MediaQuery.of(context).viewPadding.horizontal)
+                    .round(),
+                children: List.generate(
+                  structure[step].length,
+                  (index) {
+                    return Center(
+                      child: ChallengeTile(
+                        block: block,
+                        model: model,
+                        challengeId: structure[step][index].id,
+                        step: int.parse(
+                          structure[step][index].title.split('Task')[1],
+                        ),
+                        currentDialogueNum: step,
+                        isDowloaded: false,
+                      ),
+                    );
+                  },
+                ),
+              ),
+            ],
+          );
+        })
+      ],
     );
   }
 
@@ -134,6 +205,7 @@ class BlockView extends StatelessWidget {
                       block: block,
                       model: model,
                       step: step,
+                      challengeId: block.challengeTiles[step].id,
                       isDowloaded: (snapshot.data is bool
                           ? snapshot.data as bool
                           : false),
@@ -271,18 +343,20 @@ class ChallengeTile extends StatelessWidget {
     required this.model,
     required this.step,
     required this.isDowloaded,
+    required this.challengeId,
+    this.currentDialogueNum = 0,
   }) : super(key: key);
 
   final Block block;
   final BlockViewModel model;
   final int step;
   final bool isDowloaded;
+  final String challengeId;
+  final int currentDialogueNum;
 
   @override
   Widget build(BuildContext context) {
-    bool isCompleted = model.completedChallenge(
-      block.challengeTiles[step].id,
-    );
+    bool isCompleted = model.completedChallenge(challengeId);
 
     return GridTile(
       child: Container(
@@ -304,8 +378,6 @@ class ChallengeTile extends StatelessWidget {
         width: 70,
         child: InkWell(
           onTap: () async {
-            String challengeId = block.challengeTiles[step].id;
-
             String url = LearnService.baseUrl;
 
             String fullUrl =
@@ -315,11 +387,12 @@ class ChallengeTile extends StatelessWidget {
               fullUrl,
               block,
               challengeId,
+              currentDialogueNum: step,
             );
           },
           child: Center(
             child: Text(
-              (step + 1).toString(),
+              (step).toString(),
               style: const TextStyle(
                 fontWeight: FontWeight.bold,
                 fontSize: 18,

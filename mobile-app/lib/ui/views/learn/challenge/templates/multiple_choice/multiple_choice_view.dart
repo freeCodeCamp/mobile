@@ -42,6 +42,10 @@ class MultipleChoiceView extends StatelessWidget {
           ),
         );
 
+        int numberOfDialogueHeaders = block.challenges
+            .where((challenge) => challenge.title.contains('Dialogue'))
+            .length;
+
         return PopScope(
           canPop: true,
           onPopInvokedWithResult: (bool didPop, dynamic result) {
@@ -50,7 +54,7 @@ class MultipleChoiceView extends StatelessWidget {
           child: Scaffold(
             appBar: AppBar(
               title: Text(
-                '$currentChallengeNum of ${block.challenges.length} Questions',
+                '${currentChallengeNum - numberOfDialogueHeaders} of ${block.challenges.length - numberOfDialogueHeaders}',
               ),
             ),
             body: SafeArea(

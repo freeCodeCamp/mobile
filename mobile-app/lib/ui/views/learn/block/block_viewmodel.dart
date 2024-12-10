@@ -82,16 +82,21 @@ class BlockViewModel extends BaseViewModel {
     notifyListeners();
   }
 
-  void routeToChallengeView(String url, Block block, String challengeId) {
+  void routeToChallengeView(
+    String url,
+    Block block,
+    String challengeId, {
+    int currentDialogueNum = 0,
+  }) {
     _navigationService.navigateTo(
       Routes.challengeView,
       arguments: ChallengeViewArguments(
-        url: url,
-        block: block,
-        challengeId: challengeId,
-        challengesCompleted: _challengesCompleted,
-        isProject: block.challenges.length == 1,
-      ),
+          url: url,
+          block: block,
+          challengeId: challengeId,
+          challengesCompleted: _challengesCompleted,
+          isProject: block.challenges.length == 1,
+          currentDialogueNum: currentDialogueNum),
     );
   }
 

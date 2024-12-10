@@ -12,15 +12,21 @@ class EnglishView extends StatelessWidget {
     required this.challenge,
     required this.block,
     required this.currentChallengeNum,
+    this.currentDialogueNum = 0,
   }) : super(key: key);
 
   final Challenge challenge;
   final Block block;
   final int currentChallengeNum;
+  final int currentDialogueNum;
 
   @override
   Widget build(BuildContext context) {
     HTMLParser parser = HTMLParser(context: context);
+
+    int numberOfDialogueHeaders = block.challenges
+        .where((challenge) => challenge.title.contains('Dialogue'))
+        .length;
 
     return ViewModelBuilder<EnglishViewModel>.reactive(
       viewModelBuilder: () => EnglishViewModel(),
@@ -33,7 +39,7 @@ class EnglishView extends StatelessWidget {
           child: Scaffold(
             appBar: AppBar(
               title: Text(
-                '$currentChallengeNum of ${block.challenges.length} Tasks',
+                '${currentChallengeNum - currentDialogueNum - 1} of ${block.challenges.length - numberOfDialogueHeaders}',
               ),
             ),
             body: SafeArea(
