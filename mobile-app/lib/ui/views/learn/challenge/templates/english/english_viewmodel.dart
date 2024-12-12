@@ -141,8 +141,8 @@ class EnglishViewModel extends BaseViewModel {
 
         widgets.add(
           Container(
-            margin: EdgeInsets.only(
-              left: uniqueId == 'blank_0' ? 0 : 5,
+            margin: const EdgeInsets.only(
+              left: 5,
               right: 5,
             ),
             width: calculateTextWidth(

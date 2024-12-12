@@ -102,7 +102,7 @@ class BlockView extends StatelessWidget {
                           model,
                         )
                       ],
-                      if (!isCertification && isStepBased) ...[
+                      if (!isCertification && isStepBased && !isDialogue) ...[
                         buildDivider(),
                         gridWidget(context, model)
                       ],
