@@ -131,6 +131,42 @@ class EnglishView extends StatelessWidget {
                         ),
                       ],
                     ),
+                  if (model.feedback.isNotEmpty)
+                    Column(
+                      children: [
+                        Padding(
+                          padding: const EdgeInsets.all(8.0),
+                          child: Text(
+                            'Feedback',
+                            style: TextStyle(
+                              fontSize: FontSize.large.value,
+                              fontWeight: FontWeight.bold,
+                              fontFamily: 'Inter',
+                            ),
+                          ),
+                        ),
+                        Container(
+                          color: const Color(0xFF0a0a23),
+                          margin: const EdgeInsets.all(8),
+                          child: Row(
+                            children: [
+                              Expanded(
+                                child: Padding(
+                                  padding: const EdgeInsets.all(16.0),
+                                  child: Column(
+                                    children: [
+                                      ...parser.parse(model.feedback),
+                                    ],
+                                  ),
+                                ),
+                              )
+                            ],
+                          ),
+                        ),
+                      ],
+                    )
+                  else
+                    Container(),
                   if (challenge.fillInTheBlank != null)
                     Column(
                       children: [

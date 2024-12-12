@@ -17,25 +17,20 @@ class EnglishViewModel extends BaseViewModel {
 
   final AudioPlayer player = AudioPlayer();
 
-  bool _isPlaying = false;
-  bool get isPlaying => _isPlaying;
-
   Map<String, String> _currentBlankValues = {};
   Map<String, String> get currentBlankValues => _currentBlankValues;
 
   Map<String, bool> _inputValuesCorrect = {};
   Map<String, bool> get inputValuesCorrect => _inputValuesCorrect;
 
+  String _feedback = '';
+  String get feedback => _feedback;
+
   bool _allInputsCorrect = false;
   bool get allInputsCorrect => _allInputsCorrect;
 
   final StreamController<Map<String, String>> fills =
       StreamController<Map<String, String>>.broadcast();
-
-  set setIsPlaying(bool value) {
-    _isPlaying = value;
-    notifyListeners();
-  }
 
   set setCurrentBlankValues(Map<String, String> value) {
     _currentBlankValues = value;
@@ -49,6 +44,11 @@ class EnglishViewModel extends BaseViewModel {
 
   set setAllInputsCorrect(bool value) {
     _allInputsCorrect = value;
+    notifyListeners();
+  }
+
+  set setFeedback(String value) {
+    _feedback = value;
     notifyListeners();
   }
 
@@ -85,6 +85,17 @@ class EnglishViewModel extends BaseViewModel {
     setAllInputsCorrect = correctIncorrect.values.every(
       (value) => value == true,
     );
+
+    if (!allInputsCorrect) {
+      int firstIncorrectIndex = correctIncorrect.values.toList().indexOf(false);
+
+      if (firstIncorrectIndex != -1) {
+        Blank blank = challenge.fillInTheBlank!.blanks[firstIncorrectIndex];
+        setFeedback = blank.feedback;
+      }
+    } else {
+      setFeedback = '';
+    }
   }
 
   OutlineInputBorder handleInputBorderColor(int inputIndex) {
@@ -192,16 +203,6 @@ class EnglishViewModel extends BaseViewModel {
       }
     }
     return widgets;
-  }
-
-  void playOrPauseAudio() {
-    if (player.playing) {
-      setIsPlaying = false;
-      player.pause();
-    } else {
-      setIsPlaying = true;
-      player.play();
-    }
   }
 
   void updateProgressOnPop(BuildContext context, Block block) async {
