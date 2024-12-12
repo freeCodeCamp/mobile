@@ -156,10 +156,13 @@ class BlockView extends StatelessWidget {
           return Column(
             children: [
               Padding(
-                padding: const EdgeInsets.all(8.0),
+                padding: const EdgeInsets.all(16.0),
                 child: Text(
                   dialogueHeaders[step].title,
-                  style: const TextStyle(fontSize: 18),
+                  style: const TextStyle(
+                    fontSize: 18,
+                    fontWeight: FontWeight.bold,
+                  ),
                 ),
               ),
               GridView.count(
