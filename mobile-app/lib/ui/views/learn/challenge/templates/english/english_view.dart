@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:freecodecamp/models/learn/challenge_model.dart';
 import 'package:freecodecamp/models/learn/curriculum_model.dart';
 import 'package:freecodecamp/ui/views/learn/challenge/templates/english/english_viewmodel.dart';
+import 'package:freecodecamp/ui/views/learn/widgets/audio/audio_player_view.dart';
 import 'package:freecodecamp/ui/views/news/html_handler/html_handler.dart';
 import 'package:stacked/stacked.dart';
 
@@ -82,28 +83,10 @@ class EnglishView extends StatelessWidget {
                     Container(),
                   if (challenge.audio != null)
                     Container(
+                      color: const Color(0xFF0a0a23),
                       margin: const EdgeInsets.all(8),
-                      child: ElevatedButton(
-                        style: ElevatedButton.styleFrom(
-                          minimumSize: const Size(0, 50),
-                          backgroundColor:
-                              const Color.fromRGBO(0x3b, 0x3b, 0x4f, 1),
-                          shape: const RoundedRectangleBorder(
-                            borderRadius: BorderRadius.zero,
-                            side: BorderSide(
-                              width: 2,
-                              color: Colors.white,
-                            ),
-                          ),
-                        ),
-                        onPressed: () => {
-                          model.setAudio(challenge.audio!.fileName),
-                          model.playOrPauseAudio(),
-                        },
-                        child: Text(
-                          '${model.isPlaying ? 'Pause' : 'Play'} Audio',
-                          style: const TextStyle(fontSize: 20),
-                        ),
+                      child: AudioPlayerView(
+                        audio: challenge.audio!,
                       ),
                     ),
                   Container(

@@ -52,12 +52,6 @@ class EnglishViewModel extends BaseViewModel {
     notifyListeners();
   }
 
-  void setAudio(String url) {
-    player.setUrl(
-      'https://cdn.freecodecamp.org/curriculum/english/animation-assets/sounds/$url',
-    );
-  }
-
   void initBlankInputStreamListener() {
     fills.stream.listen((Map<String, String> event) {
       setCurrentBlankValues = event;
