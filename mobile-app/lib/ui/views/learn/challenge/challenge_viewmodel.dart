@@ -221,15 +221,14 @@ class ChallengeViewModel extends BaseViewModel {
   ) async {
     setupDialogUi();
 
+    // these are non editor types
+    List<int> challengeTypes = [10, 11, 15, 19, 21, 22];
+
     setChallenge = learnOfflineService.getChallenge(url, challengeId);
     Challenge challenge = await _challenge!;
 
     learnService.setLastVisitedChallenge(url, block);
-
-    if (challenge.challengeType == 11 ||
-        challenge.challengeType == 10 ||
-        challenge.challengeType == 15) {
-    } else {
+    if (!challengeTypes.contains(challenge.challengeType)) {
       List<ChallengeFile> currentEditedChallenge = challenge.files
           .where((element) => element.editableRegionBoundaries.isNotEmpty)
           .toList();
