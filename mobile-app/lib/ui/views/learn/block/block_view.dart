@@ -41,6 +41,9 @@ class BlockView extends StatelessWidget {
         bool isCertification = block.challenges.length == 1 &&
             block.superBlock.dashedName != 'the-odin-project';
 
+        bool isDialogue =
+            block.superBlock.dashedName == 'a2-english-for-developers';
+
         int calculateProgress =
             (model.challengesCompleted / block.challenges.length * 100).round();
 
@@ -91,9 +94,17 @@ class BlockView extends StatelessWidget {
                           model: model,
                           block: block,
                         ),
+                      if (isDialogue) ...[
+                        buildDivider(),
+                        dialogueWidget(
+                          block.challenges,
+                          context,
+                          model,
+                        )
+                      ],
                       if (!isCertification && isStepBased) ...[
                         buildDivider(),
-                        dialogueWidget(block.challenges, context, model)
+                        gridWidget(context, model)
                       ],
                       if (!isStepBased && !isCertification) ...[
                         buildDivider(),
@@ -203,7 +214,7 @@ class BlockView extends StatelessWidget {
                     child: ChallengeTile(
                       block: block,
                       model: model,
-                      step: step,
+                      step: step + 1,
                       challengeId: block.challengeTiles[step].id,
                       isDowloaded: (snapshot.data is bool
                           ? snapshot.data as bool
