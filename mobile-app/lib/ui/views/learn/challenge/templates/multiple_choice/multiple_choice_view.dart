@@ -4,6 +4,7 @@ import 'package:freecodecamp/extensions/i18n_extension.dart';
 import 'package:freecodecamp/models/learn/challenge_model.dart';
 import 'package:freecodecamp/models/learn/curriculum_model.dart';
 import 'package:freecodecamp/ui/views/learn/challenge/templates/multiple_choice/multiple_choice_viewmodel.dart';
+import 'package:freecodecamp/ui/views/learn/widgets/audio/audio_player_view.dart';
 import 'package:freecodecamp/ui/views/news/html_handler/html_handler.dart';
 import 'package:freecodecamp/ui/widgets/drawer_widget/drawer_widget_view.dart';
 import 'package:stacked/stacked.dart';
@@ -89,6 +90,30 @@ class MultipleChoiceView extends StatelessWidget {
                   ...parser.parse(
                     challenge.description,
                   ),
+                  if (challenge.audio != null)
+                    Column(
+                      children: [
+                        Padding(
+                          padding: const EdgeInsets.all(8.0),
+                          child: Text(
+                            'Listen to the Audio',
+                            style: TextStyle(
+                              fontSize: FontSize.large.value,
+                              fontWeight: FontWeight.bold,
+                              fontFamily: 'Inter',
+                            ),
+                          ),
+                        ),
+                        Container(
+                          color: const Color(0xFF0a0a23),
+                          padding: const EdgeInsets.all(8),
+                          margin: const EdgeInsets.all(8),
+                          child: AudioPlayerView(
+                            audio: challenge.audio!,
+                          ),
+                        ),
+                      ],
+                    ),
                   if (challenge.assignments != null &&
                       challenge.assignments!.isNotEmpty) ...[
                     buildDivider(),

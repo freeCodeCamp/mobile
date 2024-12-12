@@ -1,5 +1,3 @@
-import 'dart:developer';
-
 import 'package:flutter/material.dart';
 import 'package:freecodecamp/models/learn/challenge_model.dart';
 import 'package:freecodecamp/ui/views/learn/widgets/audio/audio_player_viewmodel.dart';
@@ -110,12 +108,10 @@ class InnerAudioWidget extends StatelessWidget {
                   ),
                   IconButton(
                     onPressed: () {
-                      log('playerState: $playerState');
                       if (playerState.playing &&
                           playerState.processingState !=
                               ProcessingState.completed) {
                         model.player.pause();
-                        log('Paused');
                       } else if (playerState.processingState ==
                           ProcessingState.completed) {
                         model.player.seek(
