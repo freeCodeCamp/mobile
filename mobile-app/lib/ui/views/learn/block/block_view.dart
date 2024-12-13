@@ -1,14 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:freecodecamp/extensions/i18n_extension.dart';
 import 'package:freecodecamp/models/learn/curriculum_model.dart';
-
 import 'package:freecodecamp/service/learn/learn_service.dart';
 import 'package:freecodecamp/ui/views/learn/block/block_viewmodel.dart';
+import 'package:freecodecamp/ui/views/learn/utils/learn_globals.dart';
 import 'package:freecodecamp/ui/views/learn/widgets/download_button_widget.dart';
 import 'package:freecodecamp/ui/views/learn/widgets/open_close_icon_widget.dart';
 import 'package:freecodecamp/ui/views/learn/widgets/progressbar_widget.dart';
 import 'package:freecodecamp/ui/widgets/drawer_widget/drawer_widget_view.dart';
-
 import 'package:stacked/stacked.dart';
 
 class BlockView extends StatelessWidget {
@@ -38,8 +37,8 @@ class BlockView extends StatelessWidget {
         model,
         child,
       ) {
-        bool isCertification = block.challenges.length == 1 &&
-            block.superBlock.dashedName != 'the-odin-project';
+        bool isCert = block.challenges.length == 1 &&
+            !hasNoCert.contains(block.superBlock.dashedName);
 
         int calculateProgress =
             (model.challengesCompleted / block.challenges.length * 100).round();
@@ -49,7 +48,7 @@ class BlockView extends StatelessWidget {
         return Column(
           children: [
             BlockHeader(
-              isCertification: isCertification,
+              isCertification: isCert,
               block: block,
               model: model,
             ),
@@ -58,11 +57,11 @@ class BlockView extends StatelessWidget {
                 block: block,
                 model: model,
               ),
-            if (model.isOpen || isCertification)
+            if (model.isOpen || isCert)
               Container(
                 color: const Color(0xFF0a0a23),
                 child: InkWell(
-                  onTap: isCertification
+                  onTap: isCert
                       ? () async {
                           model.routeToCertification(block);
                         }
@@ -86,16 +85,16 @@ class BlockView extends StatelessWidget {
                             ),
                           ),
                         ),
-                      if (model.isDev && !isCertification)
+                      if (model.isDev && !isCert)
                         DownloadButton(
                           model: model,
                           block: block,
                         ),
-                      if (!isCertification && isStepBased) ...[
+                      if (!isCert && isStepBased) ...[
                         buildDivider(),
                         gridWidget(context, model)
                       ],
-                      if (!isStepBased && !isCertification) ...[
+                      if (!isStepBased && !isCert) ...[
                         buildDivider(),
                         listWidget(context, model)
                       ],
