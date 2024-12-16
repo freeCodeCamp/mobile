@@ -1,7 +1,7 @@
+import 'package:audio_service/audio_service.dart';
 import 'package:flutter/material.dart';
 import 'package:freecodecamp/models/learn/challenge_model.dart';
 import 'package:freecodecamp/ui/views/learn/widgets/audio/audio_player_viewmodel.dart';
-import 'package:just_audio/just_audio.dart';
 import 'package:stacked/stacked.dart';
 
 class AudioPlayerView extends StatelessWidget {
@@ -13,20 +13,23 @@ class AudioPlayerView extends StatelessWidget {
   Widget build(BuildContext context) {
     return ViewModelBuilder<AudioPlayerViewmodel>.reactive(
       viewModelBuilder: () => AudioPlayerViewmodel(),
-      onViewModelReady: (model) => model.loadAudio(audio),
-      onDispose: (viewModel) => viewModel.player.dispose(),
+      onViewModelReady: (model) => {
+        model.initPositionListener(),
+        model.audioService.loadEnglishAudio(audio)
+      },
       builder: (context, model, child) => Padding(
         padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 16),
         child: StreamBuilder(
-          stream: model.player.playerStateStream,
+          stream: model.audioService.playbackState,
           builder: (context, snapshot) {
             if (snapshot.hasData) {
-              final playerState = snapshot.data as PlayerState;
+              final playerState = snapshot.data as PlaybackState;
 
-              List<ProcessingState> validStates = [
-                ProcessingState.completed,
-                ProcessingState.ready,
-                ProcessingState.buffering,
+              List<AudioProcessingState> validStates = [
+                AudioProcessingState.completed,
+                AudioProcessingState.idle,
+                AudioProcessingState.loading,
+                AudioProcessingState.ready,
               ];
 
               if (validStates.contains(playerState.processingState)) {
@@ -56,12 +59,13 @@ class InnerAudioWidget extends StatelessWidget {
 
   final AudioPlayerViewmodel model;
   final EnglishAudio audio;
-  final PlayerState playerState;
+  final PlaybackState playerState;
 
   @override
   Widget build(BuildContext context) {
-    return StreamBuilder<Object>(
-      stream: model.player.positionStream,
+    return StreamBuilder(
+      initialData: Duration.zero,
+      stream: model.position.stream,
       builder: (context, snapshot) {
         if (snapshot.data == null) {
           return const CircularProgressIndicator();
@@ -70,32 +74,34 @@ class InnerAudioWidget extends StatelessWidget {
         if (snapshot.hasData) {
           final position = snapshot.data as Duration;
 
-          bool canSeekForward = model.canSeek(
+          bool canSeekForward = model.audioService.canSeek(
             true,
             position.inSeconds,
             audio,
           );
 
-          bool canSeekBackward = model.canSeek(
+          bool canSeekBackward = model.audioService.canSeek(
             false,
             position.inSeconds,
             audio,
           );
 
+          Duration? totalDuration = model.audioService.duration();
+
           return Column(
             children: [
-              LinearProgressIndicator(
-                value: position.inMilliseconds /
-                    model.player.duration!.inMilliseconds,
-                minHeight: 8,
-              ),
+              if (totalDuration != null)
+                LinearProgressIndicator(
+                  value: position.inMilliseconds / totalDuration.inMilliseconds,
+                  minHeight: 8,
+                ),
               Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   IconButton(
                     onPressed: canSeekBackward
                         ? () {
-                            model.player.seek(
+                            model.audioService.seek(
                               model.searchTimeStamp(
                                 false,
                                 position.inSeconds,
@@ -110,32 +116,32 @@ class InnerAudioWidget extends StatelessWidget {
                     onPressed: () {
                       if (playerState.playing &&
                           playerState.processingState !=
-                              ProcessingState.completed) {
-                        model.player.pause();
+                              AudioProcessingState.completed) {
+                        model.audioService.pause();
                       } else if (playerState.processingState ==
-                          ProcessingState.completed) {
-                        model.player.seek(
+                          AudioProcessingState.completed) {
+                        model.audioService.seek(
                           model.searchTimeStamp(
                             false,
                             position.inSeconds,
                             audio,
                           ),
                         );
-                        model.player.play();
+                        model.audioService.play();
                       } else {
-                        model.player.play();
+                        model.audioService.play();
                       }
                     },
                     icon: playerState.playing &&
                             playerState.processingState !=
-                                ProcessingState.completed
+                                AudioProcessingState.completed
                         ? const Icon(Icons.pause)
                         : const Icon(Icons.play_arrow),
                   ),
                   IconButton(
                     onPressed: canSeekForward
                         ? () {
-                            model.player.seek(
+                            model.audioService.seek(
                               model.searchTimeStamp(
                                 true,
                                 position.inSeconds,

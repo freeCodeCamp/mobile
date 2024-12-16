@@ -6,7 +6,6 @@ import 'package:freecodecamp/models/learn/curriculum_model.dart';
 import 'package:freecodecamp/service/learn/learn_offline_service.dart';
 import 'package:freecodecamp/service/learn/learn_service.dart';
 import 'package:freecodecamp/ui/views/learn/superblock/superblock_view.dart';
-import 'package:just_audio/just_audio.dart';
 import 'package:stacked/stacked.dart';
 
 class EnglishViewModel extends BaseViewModel {
@@ -14,8 +13,6 @@ class EnglishViewModel extends BaseViewModel {
       locator<LearnOfflineService>();
 
   final LearnService learnService = locator<LearnService>();
-
-  final AudioPlayer player = AudioPlayer();
 
   Map<String, String> _currentBlankValues = {};
   Map<String, String> get currentBlankValues => _currentBlankValues;

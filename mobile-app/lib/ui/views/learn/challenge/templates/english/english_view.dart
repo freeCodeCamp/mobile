@@ -43,37 +43,6 @@ class EnglishView extends StatelessWidget {
                 '${challenge.title} of ${block.challenges.length - numberOfDialogueHeaders}',
               ),
             ),
-            bottomNavigationBar: SafeArea(
-              child: Container(
-                margin: const EdgeInsets.all(8),
-                child: ElevatedButton(
-                  style: ElevatedButton.styleFrom(
-                    minimumSize: const Size(0, 50),
-                    backgroundColor: const Color.fromRGBO(0x3b, 0x3b, 0x4f, 1),
-                    shape: const RoundedRectangleBorder(
-                      borderRadius: BorderRadius.zero,
-                      side: BorderSide(
-                        width: 2,
-                        color: Colors.white,
-                      ),
-                    ),
-                  ),
-                  onPressed: model.allInputsCorrect
-                      ? () => model.learnService.goToNextChallenge(
-                          block.challenges.length,
-                          currentChallengeNum,
-                          challenge,
-                          block)
-                      : () => {model.checkAnswers(challenge)},
-                  child: Text(
-                    model.allInputsCorrect
-                        ? 'Go to Next Challenge'
-                        : 'Check Answers',
-                    style: const TextStyle(fontSize: 20),
-                  ),
-                ),
-              ),
-            ),
             body: SafeArea(
               child: ListView(
                 children: [
@@ -192,6 +161,43 @@ class EnglishView extends StatelessWidget {
                             )
                           ],
                         ),
+                      ),
+                      Row(
+                        children: [
+                          Expanded(
+                            child: Container(
+                              margin: const EdgeInsets.all(8),
+                              child: ElevatedButton(
+                                style: ElevatedButton.styleFrom(
+                                  minimumSize: const Size(0, 50),
+                                  backgroundColor:
+                                      const Color.fromRGBO(0x3b, 0x3b, 0x4f, 1),
+                                  shape: const RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.zero,
+                                    side: BorderSide(
+                                      width: 2,
+                                      color: Colors.white,
+                                    ),
+                                  ),
+                                ),
+                                onPressed: model.allInputsCorrect
+                                    ? () => model.learnService
+                                        .goToNextChallenge(
+                                            block.challenges.length,
+                                            currentChallengeNum,
+                                            challenge,
+                                            block)
+                                    : () => {model.checkAnswers(challenge)},
+                                child: Text(
+                                  model.allInputsCorrect
+                                      ? 'Go to Next Challenge'
+                                      : 'Check Answers',
+                                  style: const TextStyle(fontSize: 20),
+                                ),
+                              ),
+                            ),
+                          ),
+                        ],
                       ),
                     ],
                   )
