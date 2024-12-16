@@ -125,7 +125,9 @@ class EnglishViewModel extends BaseViewModel {
   }
 
   List<Widget> getFillInBlankWidgets(
-      Challenge challenge, BuildContext context) {
+    Challenge challenge,
+    BuildContext context,
+  ) {
     List<Widget> widgets = [];
     List<String> words = challenge.fillInTheBlank!.sentence.split(' ');
 
@@ -161,7 +163,8 @@ class EnglishViewModel extends BaseViewModel {
                   const TextStyle(fontSize: 20),
                 ) +
                 20,
-            child: TextField(
+            child: TextFormField(
+              initialValue: currentBlankValues[uniqueId],
               onChanged: (value) {
                 Map<String, String> local = currentBlankValues;
                 local[uniqueId] = value;

@@ -112,6 +112,7 @@ class EnglishView extends StatelessWidget {
                       padding: const EdgeInsets.all(8.0),
                       child: Text(
                         'Listen to the Audio',
+                        textAlign: TextAlign.center,
                         style: TextStyle(
                           fontSize: FontSize.large.value,
                           fontWeight: FontWeight.bold,
@@ -151,9 +152,7 @@ class EnglishView extends StatelessWidget {
                                 child: Padding(
                                   padding: const EdgeInsets.all(16.0),
                                   child: Column(
-                                    children: [
-                                      ...parser.parse(model.feedback),
-                                    ],
+                                    children: parser.parse(model.feedback),
                                   ),
                                 ),
                               )
@@ -184,12 +183,10 @@ class EnglishView extends StatelessWidget {
                               child: Padding(
                                 padding: const EdgeInsets.all(16.0),
                                 child: Wrap(
-                                  children: [
-                                    ...model.getFillInBlankWidgets(
-                                      challenge,
-                                      context,
-                                    ),
-                                  ],
+                                  children: model.getFillInBlankWidgets(
+                                    challenge,
+                                    context,
+                                  ),
                                 ),
                               ),
                             )
