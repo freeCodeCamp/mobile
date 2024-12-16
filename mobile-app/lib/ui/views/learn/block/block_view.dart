@@ -131,19 +131,14 @@ class BlockView extends StatelessWidget {
     List<List<ChallengeOrder>> structure = [];
 
     List<ChallengeOrder> dialogueHeaders = [];
-
-    for (int i = 0; i < challenges.length; i++) {
-      if (challenges[i].title.contains('Dialogue')) {
-        structure.add([]);
-      }
-    }
-
     int dialogueIndex = 0;
 
     dialogueHeaders.add(challenges[0]);
+    structure.add([]);
 
     for (int i = 1; i < challenges.length; i++) {
       if (challenges[i].title.contains('Dialogue')) {
+        structure.add([]);
         dialogueHeaders.add(challenges[i]);
         dialogueIndex++;
       } else {
@@ -402,7 +397,7 @@ class ChallengeTile extends StatelessWidget {
           },
           child: Center(
             child: Text(
-              (step).toString(),
+              step.toString(),
               style: const TextStyle(
                 fontWeight: FontWeight.bold,
                 fontSize: 18,

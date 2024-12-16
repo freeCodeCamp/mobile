@@ -90,30 +90,27 @@ class MultipleChoiceView extends StatelessWidget {
                   ...parser.parse(
                     challenge.description,
                   ),
-                  if (challenge.audio != null)
-                    Column(
-                      children: [
-                        Padding(
-                          padding: const EdgeInsets.all(8.0),
-                          child: Text(
-                            'Listen to the Audio',
-                            style: TextStyle(
-                              fontSize: FontSize.large.value,
-                              fontWeight: FontWeight.bold,
-                              fontFamily: 'Inter',
-                            ),
-                          ),
+                  if (challenge.audio != null) ...[
+                    Padding(
+                      padding: const EdgeInsets.all(8.0),
+                      child: Text(
+                        'Listen to the Audio',
+                        style: TextStyle(
+                          fontSize: FontSize.large.value,
+                          fontWeight: FontWeight.bold,
+                          fontFamily: 'Inter',
                         ),
-                        Container(
-                          color: const Color(0xFF0a0a23),
-                          padding: const EdgeInsets.all(8),
-                          margin: const EdgeInsets.all(8),
-                          child: AudioPlayerView(
-                            audio: challenge.audio!,
-                          ),
-                        ),
-                      ],
+                      ),
                     ),
+                    Container(
+                      color: const Color(0xFF0a0a23),
+                      padding: const EdgeInsets.all(8),
+                      margin: const EdgeInsets.all(8),
+                      child: AudioPlayerView(
+                        audio: challenge.audio!,
+                      ),
+                    )
+                  ],
                   if (challenge.assignments != null &&
                       challenge.assignments!.isNotEmpty) ...[
                     buildDivider(),

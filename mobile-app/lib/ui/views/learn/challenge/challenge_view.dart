@@ -1,5 +1,3 @@
-import 'dart:developer';
-
 import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
 import 'package:flutter_inappwebview/flutter_inappwebview.dart';
@@ -49,7 +47,7 @@ class ChallengeView extends StatelessWidget {
             int currChallengeNum = block.challengeTiles
                     .indexWhere((element) => element.id == challenge.id) +
                 1;
-            log(challenge.challengeType.toString());
+
             if (challenge.challengeType == 10) {
               return PythonProjectView(
                 challenge: challenge,

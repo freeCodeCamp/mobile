@@ -97,9 +97,9 @@ class EnglishView extends StatelessWidget {
                           children: [
                             Expanded(
                               child: Column(
-                                children: [
-                                  ...parser.parse(challenge.description)
-                                ],
+                                children: parser.parse(
+                                  challenge.description,
+                                ),
                               ),
                             )
                           ],
@@ -107,30 +107,27 @@ class EnglishView extends StatelessWidget {
                       ),
                     ],
                   ),
-                  if (challenge.audio != null)
-                    Column(
-                      children: [
-                        Padding(
-                          padding: const EdgeInsets.all(8.0),
-                          child: Text(
-                            'Listen to the Audio',
-                            style: TextStyle(
-                              fontSize: FontSize.large.value,
-                              fontWeight: FontWeight.bold,
-                              fontFamily: 'Inter',
-                            ),
-                          ),
+                  if (challenge.audio != null) ...[
+                    Padding(
+                      padding: const EdgeInsets.all(8.0),
+                      child: Text(
+                        'Listen to the Audio',
+                        style: TextStyle(
+                          fontSize: FontSize.large.value,
+                          fontWeight: FontWeight.bold,
+                          fontFamily: 'Inter',
                         ),
-                        Container(
-                          color: const Color(0xFF0a0a23),
-                          padding: const EdgeInsets.all(8),
-                          margin: const EdgeInsets.all(8),
-                          child: AudioPlayerView(
-                            audio: challenge.audio!,
-                          ),
-                        ),
-                      ],
+                      ),
                     ),
+                    Container(
+                      color: const Color(0xFF0a0a23),
+                      padding: const EdgeInsets.all(8),
+                      margin: const EdgeInsets.all(8),
+                      child: AudioPlayerView(
+                        audio: challenge.audio!,
+                      ),
+                    ),
+                  ],
                   if (model.feedback.isNotEmpty)
                     Column(
                       children: [
@@ -164,48 +161,43 @@ class EnglishView extends StatelessWidget {
                           ),
                         ),
                       ],
-                    )
-                  else
-                    Container(),
-                  if (challenge.fillInTheBlank != null)
-                    Column(
-                      children: [
-                        Padding(
-                          padding: const EdgeInsets.all(8.0),
-                          child: Text(
-                            'Fill in the Blanks',
-                            style: TextStyle(
-                              fontSize: FontSize.large.value,
-                              fontWeight: FontWeight.bold,
-                              fontFamily: 'Inter',
-                            ),
+                    ),
+                  Column(
+                    children: [
+                      Padding(
+                        padding: const EdgeInsets.all(8.0),
+                        child: Text(
+                          'Fill in the Blanks',
+                          style: TextStyle(
+                            fontSize: FontSize.large.value,
+                            fontWeight: FontWeight.bold,
+                            fontFamily: 'Inter',
                           ),
                         ),
-                        Container(
-                          color: const Color(0xFF0a0a23),
-                          margin: const EdgeInsets.all(8),
-                          child: Row(
-                            children: [
-                              Expanded(
-                                child: Padding(
-                                  padding: const EdgeInsets.all(16.0),
-                                  child: Wrap(
-                                    children: [
-                                      ...model.getFillInBlankWidgets(
-                                        challenge,
-                                        context,
-                                      ),
-                                    ],
-                                  ),
+                      ),
+                      Container(
+                        color: const Color(0xFF0a0a23),
+                        margin: const EdgeInsets.all(8),
+                        child: Row(
+                          children: [
+                            Expanded(
+                              child: Padding(
+                                padding: const EdgeInsets.all(16.0),
+                                child: Wrap(
+                                  children: [
+                                    ...model.getFillInBlankWidgets(
+                                      challenge,
+                                      context,
+                                    ),
+                                  ],
                                 ),
-                              )
-                            ],
-                          ),
+                              ),
+                            )
+                          ],
                         ),
-                      ],
-                    )
-                  else
-                    Container(),
+                      ),
+                    ],
+                  )
                 ],
               ),
             ),
