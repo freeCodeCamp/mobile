@@ -138,6 +138,7 @@ class EnglishViewModel extends BaseViewModel {
           currentBlankValues.addAll({uniqueId: ''});
         }
 
+        // The blank word is sometimes concatenated with the previous or next word
         List splitWord = word.split('BLANK');
 
         if (splitWord.isNotEmpty) {
@@ -183,7 +184,7 @@ class EnglishViewModel extends BaseViewModel {
         if (splitWord.length > 1) {
           widgets.add(
             Text(
-              splitWord[1].replaceAll('</p>', ''),
+              splitWord[splitWord.length - 1].replaceAll('</p>', ''),
               style: const TextStyle(fontSize: 20, letterSpacing: 0),
             ),
           );

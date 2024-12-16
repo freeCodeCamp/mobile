@@ -47,6 +47,14 @@ class MultipleChoiceView extends StatelessWidget {
             .where((challenge) => challenge.title.contains('Dialogue'))
             .length;
 
+        String handleChallengeTitle() {
+          if (challenge.title.contains('Task')) {
+            return '${challenge.title} of ${block.challenges.length - numberOfDialogueHeaders} Tasks';
+          } else {
+            return 'Question ${challenge.title} of ${block.challenges.length - numberOfDialogueHeaders} Questions';
+          }
+        }
+
         return PopScope(
           canPop: true,
           onPopInvokedWithResult: (bool didPop, dynamic result) {
@@ -55,7 +63,7 @@ class MultipleChoiceView extends StatelessWidget {
           child: Scaffold(
             appBar: AppBar(
               title: Text(
-                '${challenge.title} of ${block.challenges.length - numberOfDialogueHeaders}',
+                handleChallengeTitle(),
               ),
             ),
             body: SafeArea(
