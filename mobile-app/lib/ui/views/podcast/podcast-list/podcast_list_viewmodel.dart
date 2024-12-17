@@ -10,7 +10,8 @@ import 'package:stacked/stacked.dart';
 
 const fccPodcastUrls = [
   'https://freecodecamp.libsyn.com/rss',
-  'https://feeds.transistor.fm/freecodecamp-podcast-en-espanol',
+  // Español
+  'https://anchor.fm/s/ff0092f4/podcast/rss',
   'https://feeds.transistor.fm/freecodecamp-podcast-in-chinese',
   'https://feeds.transistor.fm/freecodecamp-podcast-em-portugues',
 ];
