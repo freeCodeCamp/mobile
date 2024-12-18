@@ -69,6 +69,7 @@ class AudioPlayerHandler extends BaseAudioHandler {
   @override
   Future<void> stop() async {
     await _audioPlayer.stop();
+    _audioType = '';
     return super.stop();
   }
 
@@ -182,6 +183,7 @@ class AudioPlayerHandler extends BaseAudioHandler {
     );
   }
 
+  // TODO: Move to a common constants like file for curriculum stuff
   String returnUrl(String fileName) {
     return 'https://cdn.freecodecamp.org/curriculum/english/animation-assets/sounds/$fileName';
   }
@@ -199,7 +201,7 @@ class AudioPlayerHandler extends BaseAudioHandler {
     }
   }
 
-  void loadEnglishAudio(EnglishAudio audio) {
+  void loadEnglishAudio(EnglishAudio audio) async {
     _audioPlayer.setAudioSource(
       ClippingAudioSource(
         start: parseTimeStamp(audio.startTimeStamp),
@@ -211,6 +213,9 @@ class AudioPlayerHandler extends BaseAudioHandler {
         ),
       ),
     );
+    await _audioPlayer.load();
+    setEpisodeId = '';
+    _audioType = 'english';
   }
 
   void _notifyAudioHandlerAboutPlaybackEvents() {

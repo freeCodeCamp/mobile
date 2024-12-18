@@ -1,4 +1,5 @@
 import 'dart:async';
+
 import 'package:audio_service/audio_service.dart';
 import 'package:freecodecamp/app/app.locator.dart';
 import 'package:freecodecamp/models/learn/challenge_model.dart';
@@ -31,7 +32,16 @@ class AudioPlayerViewmodel extends BaseViewModel {
 
   void initPositionListener() {
     AudioService.position.listen((event) {
+      if (position.isClosed) {
+        return;
+      }
+
       position.add(event);
     });
+  }
+
+  void onDispose() {
+    position.close();
+    audioService.stop();
   }
 }

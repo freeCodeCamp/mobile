@@ -17,6 +17,7 @@ class AudioPlayerView extends StatelessWidget {
         model.initPositionListener(),
         model.audioService.loadEnglishAudio(audio)
       },
+      onDispose: (model) => model.onDispose(),
       builder: (context, model, child) => Padding(
         padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 16),
         child: StreamBuilder(
