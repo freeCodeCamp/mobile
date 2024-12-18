@@ -112,6 +112,7 @@ class MultipleChoiceView extends StatelessWidget {
                     ),
                     Container(
                       color: const Color(0xFF0a0a23),
+                      height: 104,
                       padding: const EdgeInsets.all(8),
                       margin: const EdgeInsets.all(8),
                       child: AudioPlayerView(
