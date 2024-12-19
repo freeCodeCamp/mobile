@@ -3,14 +3,15 @@ import 'package:flutter_html/flutter_html.dart';
 import 'package:freecodecamp/extensions/i18n_extension.dart';
 import 'package:freecodecamp/models/learn/challenge_model.dart';
 import 'package:freecodecamp/models/learn/curriculum_model.dart';
-import 'package:freecodecamp/ui/views/learn/challenge/templates/odin/odin_viewmodel.dart';
+import 'package:freecodecamp/ui/views/learn/challenge/templates/multiple_choice/multiple_choice_viewmodel.dart';
+import 'package:freecodecamp/ui/views/learn/widgets/audio/audio_player_view.dart';
 import 'package:freecodecamp/ui/views/news/html_handler/html_handler.dart';
 import 'package:freecodecamp/ui/widgets/drawer_widget/drawer_widget_view.dart';
 import 'package:stacked/stacked.dart';
 import 'package:youtube_player_iframe/youtube_player_iframe.dart';
 
-class OdinView extends StatelessWidget {
-  const OdinView({
+class MultipleChoiceView extends StatelessWidget {
+  const MultipleChoiceView({
     Key? key,
     required this.challenge,
     required this.block,
@@ -27,8 +28,8 @@ class OdinView extends StatelessWidget {
   Widget build(BuildContext context) {
     HTMLParser parser = HTMLParser(context: context);
 
-    return ViewModelBuilder<OdinViewModel>.reactive(
-      viewModelBuilder: () => OdinViewModel(),
+    return ViewModelBuilder<MultipleChoiceViewmodel>.reactive(
+      viewModelBuilder: () => MultipleChoiceViewmodel(),
       onViewModelReady: (model) => model.initChallenge(challenge),
       builder: (context, model, child) {
         YoutubePlayerController controller =
@@ -42,6 +43,18 @@ class OdinView extends StatelessWidget {
           ),
         );
 
+        int numberOfDialogueHeaders = block.challenges
+            .where((challenge) => challenge.title.contains('Dialogue'))
+            .length;
+
+        String handleChallengeTitle() {
+          if (challenge.title.contains('Task')) {
+            return '${challenge.title} of ${block.challenges.length - numberOfDialogueHeaders} Tasks';
+          } else {
+            return 'Question ${challenge.title} of ${block.challenges.length - numberOfDialogueHeaders} Questions';
+          }
+        }
+
         return PopScope(
           canPop: true,
           onPopInvokedWithResult: (bool didPop, dynamic result) {
@@ -50,7 +63,7 @@ class OdinView extends StatelessWidget {
           child: Scaffold(
             appBar: AppBar(
               title: Text(
-                '$currentChallengeNum of ${block.challenges.length} Questions',
+                handleChallengeTitle(),
               ),
             ),
             body: SafeArea(
@@ -85,6 +98,28 @@ class OdinView extends StatelessWidget {
                   ...parser.parse(
                     challenge.description,
                   ),
+                  if (challenge.audio != null) ...[
+                    Padding(
+                      padding: const EdgeInsets.all(8.0),
+                      child: Text(
+                        'Listen to the Audio',
+                        style: TextStyle(
+                          fontSize: FontSize.large.value,
+                          fontWeight: FontWeight.bold,
+                          fontFamily: 'Inter',
+                        ),
+                      ),
+                    ),
+                    Container(
+                      color: const Color(0xFF0a0a23),
+                      height: 104,
+                      padding: const EdgeInsets.all(8),
+                      margin: const EdgeInsets.all(8),
+                      child: AudioPlayerView(
+                        audio: challenge.audio!,
+                      ),
+                    )
+                  ],
                   if (challenge.assignments != null &&
                       challenge.assignments!.isNotEmpty) ...[
                     buildDivider(),
@@ -154,7 +189,7 @@ class OdinView extends StatelessWidget {
   Container assignmentTile(
     String assignment,
     int ind,
-    OdinViewModel model,
+    MultipleChoiceViewmodel model,
     BuildContext context,
   ) {
     HTMLParser parser = HTMLParser(context: context);
@@ -210,7 +245,7 @@ class OdinView extends StatelessWidget {
 
   Container questionOption(
     MapEntry<int, Answer> answerObj,
-    OdinViewModel model,
+    MultipleChoiceViewmodel model,
     BuildContext context,
   ) {
     HTMLParser parser = HTMLParser(context: context);

@@ -37,6 +37,10 @@ class Challenge {
   final List<ChallengeTest> tests;
   final List<ChallengeFile> files;
 
+  // English Challenges
+  final FillInTheBlank? fillInTheBlank;
+  final EnglishAudio? audio;
+
   // Challenge Type 11 - Video
   // TODO: Renamed to questions and its an array of questions
   Question? question;
@@ -58,6 +62,8 @@ class Challenge {
     required this.files,
     this.question,
     this.assignments,
+    this.fillInTheBlank,
+    this.audio,
   });
 
   factory Challenge.fromJson(Map<String, dynamic> data) {
@@ -71,6 +77,12 @@ class Challenge {
       superBlock: data['superBlock'],
       videoId: data['videoId'],
       challengeType: data['challengeType'],
+      fillInTheBlank: data['fillInTheBlank'] != null
+          ? FillInTheBlank.fromJson(data['fillInTheBlank'])
+          : null,
+      audio: data['scene'] != null
+          ? EnglishAudio.fromJson(data['scene']['setup']['audio'])
+          : null,
       tests: (data['tests'] ?? [])
           .map<ChallengeTest>((file) => ChallengeTest.fromJson(file))
           .toList(),
@@ -145,7 +157,9 @@ class Question {
     return Question(
       text: data['text'],
       answers: (data['answers'] ?? [])
-          .map<Answer>((answer) => Answer.fromJson(answer))
+          .map<Answer>(
+            (answer) => Answer.fromJson(answer),
+          )
           .toList(),
       solution: data['solution'],
     );
@@ -217,6 +231,64 @@ class ChallengeFile {
       editableRegionBoundaries: data['editableRegionBoundaries'] ?? [],
       history: ((data['history'] ?? []) as List).cast<String>(),
       fileKey: data['fileKey'] ?? data['name'] + data['ext'],
+    );
+  }
+}
+
+class FillInTheBlank {
+  final String sentence;
+  final List<Blank> blanks;
+
+  const FillInTheBlank({required this.sentence, required this.blanks});
+
+  factory FillInTheBlank.fromJson(Map<String, dynamic> data) {
+    return FillInTheBlank(
+      sentence: data['sentence'],
+      blanks: data['blanks']
+          .map<Blank>(
+            (blank) => Blank.fromJson(blank),
+          )
+          .toList(),
+    );
+  }
+}
+
+class Blank {
+  final String answer;
+  final String feedback;
+
+  const Blank({
+    required this.answer,
+    required this.feedback,
+  });
+
+  factory Blank.fromJson(Map<String, dynamic> data) {
+    return Blank(
+      answer: data['answer'],
+      feedback: data['feedback'] ?? '',
+    );
+  }
+}
+
+class EnglishAudio {
+  final String fileName;
+  final String startTime;
+  final String startTimeStamp;
+  final String finishTimeStamp;
+
+  const EnglishAudio({
+    required this.fileName,
+    required this.startTime,
+    required this.startTimeStamp,
+    required this.finishTimeStamp,
+  });
+
+  factory EnglishAudio.fromJson(Map<String, dynamic> data) {
+    return EnglishAudio(
+      fileName: data['filename'],
+      startTime: data['startTime'].toString(),
+      startTimeStamp: data['startTimestamp'].toString(),
+      finishTimeStamp: data['finishTimestamp'].toString(),
     );
   }
 }

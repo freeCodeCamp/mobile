@@ -3,6 +3,7 @@ import 'dart:io';
 
 import 'package:audio_service/audio_service.dart';
 import 'package:freecodecamp/models/code-radio/code_radio_model.dart';
+import 'package:freecodecamp/models/learn/challenge_model.dart';
 import 'package:freecodecamp/models/podcasts/episodes_model.dart';
 import 'package:freecodecamp/models/podcasts/podcasts_model.dart';
 import 'package:just_audio/just_audio.dart';
@@ -68,6 +69,7 @@ class AudioPlayerHandler extends BaseAudioHandler {
   @override
   Future<void> stop() async {
     await _audioPlayer.stop();
+    _audioType = '';
     return super.stop();
   }
 
@@ -82,8 +84,9 @@ class AudioPlayerHandler extends BaseAudioHandler {
     return super.onTaskRemoved();
   }
 
-  // @override
-  // Future<void> playFromUri() async {}
+  Duration? duration() {
+    return _audioPlayer.duration;
+  }
 
   Future<void> loadEpisode(
     Episodes episode,
@@ -169,6 +172,50 @@ class AudioPlayerHandler extends BaseAudioHandler {
     } else {
       return false;
     }
+  }
+
+  Duration parseTimeStamp(String timeStamp) {
+    if (timeStamp == '0') {
+      return const Duration(milliseconds: 0);
+    }
+    return Duration(
+      milliseconds: (double.parse(timeStamp) * 1000).round(),
+    );
+  }
+
+  // TODO: Move to a common constants like file for curriculum stuff
+  String returnUrl(String fileName) {
+    return 'https://cdn.freecodecamp.org/curriculum/english/animation-assets/sounds/$fileName';
+  }
+
+  bool canSeek(bool forward, int currentDuration, EnglishAudio audio) {
+    currentDuration =
+        currentDuration + parseTimeStamp(audio.startTimeStamp).inSeconds;
+
+    if (forward) {
+      return currentDuration + 2 <
+          parseTimeStamp(audio.finishTimeStamp).inSeconds;
+    } else {
+      return currentDuration - 2 >
+          parseTimeStamp(audio.startTimeStamp).inSeconds;
+    }
+  }
+
+  void loadEnglishAudio(EnglishAudio audio) async {
+    _audioPlayer.setAudioSource(
+      ClippingAudioSource(
+        start: parseTimeStamp(audio.startTimeStamp),
+        end: parseTimeStamp(audio.finishTimeStamp),
+        child: AudioSource.uri(
+          Uri.parse(
+            returnUrl(audio.fileName),
+          ),
+        ),
+      ),
+    );
+    await _audioPlayer.load();
+    setEpisodeId = '';
+    _audioType = 'english';
   }
 
   void _notifyAudioHandlerAboutPlaybackEvents() {
