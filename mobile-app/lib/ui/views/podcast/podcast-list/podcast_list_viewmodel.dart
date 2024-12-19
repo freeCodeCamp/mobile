@@ -9,11 +9,14 @@ import 'package:path_provider/path_provider.dart';
 import 'package:stacked/stacked.dart';
 
 const fccPodcastUrls = [
+  // English
   'https://freecodecamp.libsyn.com/rss',
-  // Español
+  // Spanish
   'https://anchor.fm/s/ff0092f4/podcast/rss',
-  'https://feeds.transistor.fm/freecodecamp-podcast-in-chinese',
-  'https://feeds.transistor.fm/freecodecamp-podcast-em-portugues',
+  // Chinese
+  'https://anchor.fm/s/ff054de4/podcast/rss',
+  // Portuguese
+  'https://anchor.fm/s/ff026c00/podcast/rss',
 ];
 
 class PodcastListViewModel extends BaseViewModel {
