@@ -33,7 +33,7 @@ class TestRunner extends BaseViewModel {
 
     List<String> imports = [
       '<script src="https://unpkg.com/chai@4.3.10/chai.js"></script>',
-      '<script src="https://unpkg.com/mocha@10.8.2/mocha.js"></script>',
+      '<script src="https://unpkg.com/mocha@10.3.0/mocha.js"></script>',
       '<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>',
       '<link rel="stylesheet" href="https://unpkg.com/mocha/mocha.css" />'
     ];
