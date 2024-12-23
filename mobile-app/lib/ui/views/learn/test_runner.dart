@@ -205,6 +205,7 @@ class TestRunner extends BaseViewModel {
     """ : ''}
 
     const assert = chai.assert;
+    const __checkForBrowserExtensions = false;
     const tests = ${parseTest(challenge.tests)};
     const testText = ${challenge.tests.map((e) => '''"${e.instruction.replaceAll('"', '\\"').replaceAll('\n', ' ')}"''').toList().toString()};
 
@@ -254,7 +255,7 @@ class TestRunner extends BaseViewModel {
       import * as __helpers from "https://unpkg.com/@freecodecamp/curriculum-helpers@1.1.0/dist/index.js";
 
       const assert = chai.assert;
-
+      const __checkForBrowserExtensions = false;
       let code = `$code`;
       let head = `$head`;
       let tail = `$tail`;
