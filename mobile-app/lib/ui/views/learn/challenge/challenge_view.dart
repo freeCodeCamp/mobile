@@ -96,6 +96,7 @@ class ChallengeView extends StatelessWidget {
               );
 
               model.initiateFile(editor, challenge, currFile, editableRegion);
+              model.listenToFocusedController(editor);
 
               SchedulerBinding.instance.addPostFrameCallback((timeStamp) {
                 if (keyboard && !model.showPanel) {
@@ -116,6 +117,7 @@ class ChallengeView extends StatelessWidget {
                   }
                 }
               });
+
               editor.onTextChange.stream.listen((text) {
                 model.fileService.saveFileInCache(
                   challenge,
@@ -359,10 +361,34 @@ class ChallengeView extends StatelessWidget {
 
     return BottomAppBar(
       height: 116,
-      padding: const EdgeInsets.only(top: 8),
+      padding: const EdgeInsets.only(bottom: 8),
       color: const Color(0xFF0a0a23),
       child: Column(
         children: [
+          Container(
+            margin: const EdgeInsets.only(bottom: 8),
+            height: 50,
+            color: const Color(0xFF1b1b32),
+            child: ListView.builder(
+              scrollDirection: Axis.horizontal,
+              itemCount: symbols.length,
+              itemBuilder: (context, index) {
+                return Padding(
+                  padding: const EdgeInsets.symmetric(
+                    vertical: 4,
+                    horizontal: 1,
+                  ),
+                  child: TextButton(
+                    onPressed: () {
+                      model.insertSymbol(symbols[index], editor);
+                    },
+                    style: TextButton.styleFrom(),
+                    child: Text(symbols[index]),
+                  ),
+                );
+              },
+            ),
+          ),
           Row(
             children: [
               SizedBox(
@@ -517,28 +543,6 @@ class ChallengeView extends StatelessWidget {
                 ),
               ),
             ],
-          ),
-          Container(
-            margin: const EdgeInsets.only(top: 8),
-            height: 50,
-            color: const Color(0xFF1b1b32),
-            child: ListView.builder(
-              scrollDirection: Axis.horizontal,
-              itemCount: symbols.length,
-              itemBuilder: (context, index) {
-                return Padding(
-                  padding: const EdgeInsets.symmetric(
-                    vertical: 4,
-                    horizontal: 1,
-                  ),
-                  child: TextButton(
-                    onPressed: () {},
-                    style: TextButton.styleFrom(),
-                    child: Text(symbols[index]),
-                  ),
-                );
-              },
-            ),
           ),
         ],
       ),
