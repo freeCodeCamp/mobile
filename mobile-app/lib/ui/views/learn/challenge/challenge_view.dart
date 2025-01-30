@@ -225,6 +225,7 @@ class ChallengeView extends StatelessWidget {
                     ),
                     child: customBottomBar(
                       model,
+                      keyboard,
                       challenge,
                       editor,
                       context,
@@ -353,20 +354,22 @@ class ChallengeView extends StatelessWidget {
 
   Widget customBottomBar(
     ChallengeViewModel model,
+    bool keyboard,
     Challenge challenge,
     Editor editor,
     BuildContext context,
   ) {
     return BottomAppBar(
-      height: 116,
-      padding: const EdgeInsets.only(bottom: 8),
+      height: keyboard ? 116 : 72,
+      padding: keyboard ? const EdgeInsets.only(bottom: 8) : null,
       color: const Color(0xFF0a0a23),
       child: Column(
         children: [
-          SymbolBar(
-            model: model,
-            editor: editor,
-          ),
+          if (keyboard)
+            SymbolBar(
+              model: model,
+              editor: editor,
+            ),
           Row(
             children: [
               SizedBox(
@@ -546,28 +549,56 @@ class SymbolBar extends StatelessWidget {
       margin: const EdgeInsets.only(bottom: 8),
       height: 50,
       color: const Color(0xFF1b1b32),
-      child: ListView.builder(
-        scrollDirection: Axis.horizontal,
-        itemCount: symbols.length,
-        itemBuilder: (context, index) {
-          return Padding(
-            padding: const EdgeInsets.symmetric(
-              vertical: 4,
-              horizontal: 1,
-            ),
-            child: TextButton(
-              onPressed: () {
-                model.insertSymbol(symbols[index], editor);
-              },
-              style: TextButton.styleFrom(
-                shape: const RoundedRectangleBorder(
-                  borderRadius: BorderRadius.all(Radius.zero),
+      child: Stack(
+        children: [
+          ListView.builder(
+            scrollDirection: Axis.horizontal,
+            itemCount: symbols.length,
+            itemBuilder: (context, index) {
+              return Padding(
+                padding: const EdgeInsets.symmetric(
+                  vertical: 4,
+                  horizontal: 1,
+                ),
+                child: TextButton(
+                  onPressed: () {
+                    model.insertSymbol(symbols[index], editor);
+                  },
+                  style: TextButton.styleFrom(
+                    shape: const RoundedRectangleBorder(
+                      borderRadius: BorderRadius.all(Radius.zero),
+                    ),
+                  ),
+                  child: Text(symbols[index]),
+                ),
+              );
+            },
+          ),
+          Row(
+            children: [
+              Expanded(
+                child: Align(
+                  alignment: Alignment.centerRight,
+                  child: Container(
+                    width: 15,
+                    height: 66,
+                    foregroundDecoration: BoxDecoration(
+                      gradient: LinearGradient(
+                        begin: Alignment.centerLeft,
+                        end: Alignment.centerRight,
+                        colors: [
+                          Colors.white.withOpacity(0.13),
+                          Colors.white.withOpacity(0.23),
+                          Colors.white.withOpacity(0.33),
+                        ],
+                      ),
+                    ),
+                  ),
                 ),
               ),
-              child: Text(symbols[index]),
-            ),
-          );
-        },
+            ],
+          ),
+        ],
       ),
     );
   }
