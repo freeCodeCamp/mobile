@@ -40,47 +40,33 @@ class DescriptionView extends StatelessWidget {
                     Row(
                       children: [
                         Padding(
-                          padding: const EdgeInsets.only(left: 12, bottom: 32),
+                          padding: const EdgeInsets.only(left: 12),
                           child: Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
                               Text(
                                 context.t.instructions,
                                 style: const TextStyle(
-                                  fontSize: 28,
+                                  fontSize: 24,
                                   fontWeight: FontWeight.bold,
                                   fontFamily: 'Inter',
                                 ),
                               ),
-                              isMultiStepChallenge
-                                  ? Text(
-                                      context.t.step_count(
-                                        splitTitle[1],
-                                        maxChallenges.toString(),
-                                      ),
-                                      style: const TextStyle(
-                                        fontSize: 14,
-                                        fontFamily: 'Inter',
-                                        color: Colors.white70,
-                                      ),
-                                    )
-                                  : Container(),
+                              if (isMultiStepChallenge)
+                                Text(
+                                  context.t.step_count(
+                                    splitTitle[1],
+                                    maxChallenges.toString(),
+                                  ),
+                                  style: const TextStyle(
+                                    fontSize: 14,
+                                    fontFamily: 'Inter',
+                                    color: Colors.white70,
+                                  ),
+                                )
                             ],
                           ),
                         ),
-                        Expanded(
-                          child: Container(
-                            padding: const EdgeInsets.only(bottom: 32),
-                            alignment: Alignment.centerRight,
-                            child: IconButton(
-                              onPressed: () {
-                                challengeModel.setShowPanel = false;
-                              },
-                              icon: const Icon(Icons.clear_sharp),
-                              iconSize: 40,
-                            ),
-                          ),
-                        )
                       ],
                     ),
                     Expanded(
