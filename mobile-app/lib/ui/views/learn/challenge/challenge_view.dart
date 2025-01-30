@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/scheduler.dart';
 import 'package:flutter_inappwebview/flutter_inappwebview.dart';
 import 'package:freecodecamp/enums/panel_type.dart';
 import 'package:freecodecamp/extensions/i18n_extension.dart';
@@ -98,25 +97,9 @@ class ChallengeView extends StatelessWidget {
               model.initiateFile(editor, challenge, currFile, editableRegion);
               model.listenToFocusedController(editor);
 
-              SchedulerBinding.instance.addPostFrameCallback((timeStamp) {
-                if (keyboard && !model.showPanel) {
-                  if (model.hideAppBar) {
-                    model.setHideAppBar = false;
-                  }
-                } else if (keyboard && model.showPanel) {
-                  if (model.hideAppBar) {
-                    model.setHideAppBar = false;
-                  }
-                } else if (!keyboard && model.showPanel) {
-                  if (!model.hideAppBar) {
-                    model.setHideAppBar = true;
-                  }
-                } else {
-                  if (model.hideAppBar) {
-                    model.setHideAppBar = false;
-                  }
-                }
-              });
+              if (model.showPanel) {
+                FocusManager.instance.primaryFocus?.unfocus();
+              }
 
               editor.onTextChange.stream.listen((text) {
                 model.fileService.saveFileInCache(
@@ -408,10 +391,8 @@ class ChallengeView extends StatelessWidget {
                         FocusManager.instance.primaryFocus?.unfocus();
                         if (!model.showPanel) {
                           model.setShowPanel = true;
-                          model.setHideAppBar = true;
                         }
                       } else {
-                        model.setHideAppBar = !model.hideAppBar;
                         model.setShowPanel = !model.showPanel;
                       }
                     }
@@ -516,7 +497,6 @@ class ChallengeView extends StatelessWidget {
                                   challenge,
                                   controller: model.testController!,
                                 );
-                                FocusManager.instance.primaryFocus?.unfocus();
                               }
                             : null,
                         splashColor: Colors.transparent,

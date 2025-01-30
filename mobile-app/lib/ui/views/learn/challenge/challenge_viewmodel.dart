@@ -41,9 +41,6 @@ class ChallengeViewModel extends BaseViewModel {
   bool _showConsole = false;
   bool get showConsole => _showConsole;
 
-  bool _hideAppBar = true;
-  bool get hideAppBar => _hideAppBar;
-
   String _hint = '';
   String get hint => _hint;
 
@@ -124,11 +121,6 @@ class ChallengeViewModel extends BaseViewModel {
 
   set setTestController(InAppWebViewController controller) {
     _testController = controller;
-    notifyListeners();
-  }
-
-  set setHideAppBar(bool value) {
-    _hideAppBar = value;
     notifyListeners();
   }
 
@@ -498,7 +490,6 @@ class ChallengeViewModel extends BaseViewModel {
     if (msg.startsWith('testMSG: ')) {
       setPanelType = PanelType.hint;
       setHint = msg.split('testMSG: ')[1];
-      setShowPanel = true;
 
       setConsoleMessages = [newMessage, ...userConsoleMessages];
     }
@@ -511,9 +502,12 @@ class ChallengeViewModel extends BaseViewModel {
 
       setPanelType = PanelType.pass;
       setCompletedChallenge = true;
-      setShowPanel = true;
     }
 
     setIsRunningTests = false;
+
+    if (panelType != PanelType.instruction) {
+      setShowPanel = true;
+    }
   }
 }
