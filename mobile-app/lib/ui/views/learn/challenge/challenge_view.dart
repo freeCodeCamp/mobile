@@ -487,7 +487,11 @@ class ChallengeView extends StatelessWidget {
                               : const Color.fromRGBO(0x1D, 0x9B, 0xF0, 1),
                       child: IconButton(
                         icon: model.runningTests
-                            ? const CircularProgressIndicator()
+                            ? const SizedBox(
+                                width: 20,
+                                height: 20,
+                                child: CircularProgressIndicator(),
+                              )
                             : model.completedChallenge
                                 ? const Icon(Icons.arrow_forward_rounded,
                                     size: 30)
