@@ -147,78 +147,77 @@ class ChallengeView extends StatelessWidget {
                   model.learnService.updateProgressOnPop(context, block);
                 },
                 child: Scaffold(
-                  appBar: !model.hideAppBar
-                      ? AppBar(
-                          automaticallyImplyLeading: !model.showPreview,
-                          title: challenge.files.length == 1 &&
-                                  !model.showPreview
-                              ? Text(context.t.editor)
-                              : Row(
-                                  children: [
-                                    if (model.showPreview && !onlyJs)
-                                      Expanded(
-                                        child: Container(
-                                          decoration: model.showProjectPreview
-                                              ? decoration
-                                              : null,
-                                          child: ElevatedButton(
-                                            style: ElevatedButton.styleFrom(
-                                              shape: RoundedRectangleBorder(
-                                                borderRadius:
-                                                    BorderRadius.circular(0),
-                                              ),
-                                              elevation: 0,
-                                            ),
-                                            onPressed: () {
-                                              model.setShowConsole = false;
-                                              model.setShowProjectPreview =
-                                                  true;
-                                            },
-                                            child: Text(
-                                              context.t.preview,
-                                            ),
+                  appBar: PreferredSize(
+                    preferredSize: Size(
+                      MediaQuery.sizeOf(context).width,
+                      model.showPanel ? 0 : 50,
+                    ),
+                    child: AppBar(
+                      automaticallyImplyLeading: !model.showPreview,
+                      title: challenge.files.length == 1 && !model.showPreview
+                          ? Text(context.t.editor)
+                          : Row(
+                              children: [
+                                if (model.showPreview && !onlyJs)
+                                  Expanded(
+                                    child: Container(
+                                      decoration: model.showProjectPreview
+                                          ? decoration
+                                          : null,
+                                      child: ElevatedButton(
+                                        style: ElevatedButton.styleFrom(
+                                          shape: RoundedRectangleBorder(
+                                            borderRadius:
+                                                BorderRadius.circular(0),
                                           ),
+                                          elevation: 0,
+                                        ),
+                                        onPressed: () {
+                                          model.setShowConsole = false;
+                                          model.setShowProjectPreview = true;
+                                        },
+                                        child: Text(
+                                          context.t.preview,
                                         ),
                                       ),
-                                    if (model.showPreview)
-                                      Expanded(
-                                        child: Container(
-                                          decoration: model.showConsole
-                                              ? decoration
-                                              : null,
-                                          child: ElevatedButton(
-                                            style: ElevatedButton.styleFrom(
-                                              shape: RoundedRectangleBorder(
-                                                borderRadius:
-                                                    BorderRadius.circular(0),
-                                              ),
-                                              elevation: 0,
-                                            ),
-                                            onPressed: () {
-                                              model.setShowConsole = true;
-                                              model.setShowProjectPreview =
-                                                  false;
-                                            },
-                                            child: Text(
-                                              context.t.console,
-                                            ),
+                                    ),
+                                  ),
+                                if (model.showPreview)
+                                  Expanded(
+                                    child: Container(
+                                      decoration:
+                                          model.showConsole ? decoration : null,
+                                      child: ElevatedButton(
+                                        style: ElevatedButton.styleFrom(
+                                          shape: RoundedRectangleBorder(
+                                            borderRadius:
+                                                BorderRadius.circular(0),
                                           ),
+                                          elevation: 0,
+                                        ),
+                                        onPressed: () {
+                                          model.setShowConsole = true;
+                                          model.setShowProjectPreview = false;
+                                        },
+                                        child: Text(
+                                          context.t.console,
                                         ),
                                       ),
-                                    if (!model.showPreview &&
-                                        challenge.files.length > 1)
-                                      for (ChallengeFile file
-                                          in challenge.files)
-                                        customTabBar(
-                                          model,
-                                          challenge,
-                                          file,
-                                          editor,
-                                        )
-                                  ],
-                                ),
-                        )
-                      : null,
+                                    ),
+                                  ),
+                                if (!model.showPreview &&
+                                    challenge.files.length > 1)
+                                  for (ChallengeFile file in challenge.files)
+                                    customTabBar(
+                                      model,
+                                      challenge,
+                                      file,
+                                      editor,
+                                    )
+                              ],
+                            ),
+                    ),
+                  ),
                   bottomNavigationBar: Padding(
                     padding: EdgeInsets.only(
                       bottom: MediaQuery.of(context).viewInsets.bottom,
