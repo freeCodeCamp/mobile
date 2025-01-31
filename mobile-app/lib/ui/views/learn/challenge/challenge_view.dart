@@ -96,6 +96,7 @@ class ChallengeView extends StatelessWidget {
 
               model.initiateFile(editor, challenge, currFile, editableRegion);
               model.listenToFocusedController(editor);
+              model.listenToSymbolBarScrollController();
 
               if (model.showPanel) {
                 FocusManager.instance.primaryFocus?.unfocus();
@@ -524,7 +525,7 @@ class SymbolBar extends StatelessWidget {
   final Editor editor;
   final ChallengeViewModel model;
 
-  static List<String> symbols = ['<', '/', '>', '\\', '\'', '"', '='];
+  static List<String> symbols = ['<', '/', '>', '\\', '\'', '"', '=', '{', '}'];
 
   @override
   Widget build(BuildContext context) {
@@ -536,6 +537,7 @@ class SymbolBar extends StatelessWidget {
         children: [
           ListView.builder(
             scrollDirection: Axis.horizontal,
+            controller: model.symbolBarScrollController,
             itemCount: symbols.length,
             itemBuilder: (context, index) {
               return Padding(
@@ -557,30 +559,31 @@ class SymbolBar extends StatelessWidget {
               );
             },
           ),
-          Row(
-            children: [
-              Expanded(
-                child: Align(
-                  alignment: Alignment.centerRight,
-                  child: Container(
-                    width: 15,
-                    height: 66,
-                    foregroundDecoration: BoxDecoration(
-                      gradient: LinearGradient(
-                        begin: Alignment.centerLeft,
-                        end: Alignment.centerRight,
-                        colors: [
-                          Colors.white.withOpacity(0.13),
-                          Colors.white.withOpacity(0.23),
-                          Colors.white.withOpacity(0.33),
-                        ],
+          if (model.symbolBarIsScrollable)
+            Row(
+              children: [
+                Expanded(
+                  child: Align(
+                    alignment: Alignment.centerRight,
+                    child: Container(
+                      width: 15,
+                      height: 66,
+                      foregroundDecoration: BoxDecoration(
+                        gradient: LinearGradient(
+                          begin: Alignment.centerLeft,
+                          end: Alignment.centerRight,
+                          colors: [
+                            Colors.white.withOpacity(0.13),
+                            Colors.white.withOpacity(0.23),
+                            Colors.white.withOpacity(0.33),
+                          ],
+                        ),
                       ),
                     ),
                   ),
                 ),
-              ),
-            ],
-          ),
+              ],
+            ),
         ],
       ),
     );

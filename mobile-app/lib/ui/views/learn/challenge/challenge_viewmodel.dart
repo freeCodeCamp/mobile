@@ -59,6 +59,11 @@ class ChallengeViewModel extends BaseViewModel {
   bool _completedChallenge = false;
   bool get completedChallenge => _completedChallenge;
 
+  bool _symbolBarIsScrollable = true;
+  bool get symbolBarIsScrollable => _symbolBarIsScrollable;
+
+  ScrollController symbolBarScrollController = ScrollController();
+
   PanelType _panelType = PanelType.instruction;
   PanelType get panelType => _panelType;
 
@@ -214,6 +219,11 @@ class ChallengeViewModel extends BaseViewModel {
     notifyListeners();
   }
 
+  set setSymbolBarIsScrollable(bool value) {
+    _symbolBarIsScrollable = value;
+    notifyListeners();
+  }
+
   void init(
     String url,
     Block block,
@@ -283,6 +293,19 @@ class ChallengeViewModel extends BaseViewModel {
   void listenToFocusedController(Editor editor) {
     editor.textfieldData.stream.listen((textfieldData) {
       setTextFieldData = textfieldData;
+      setShowPanel = false;
+    });
+  }
+
+  void listenToSymbolBarScrollController() {
+    symbolBarScrollController.addListener(() {
+      ScrollPosition sp = symbolBarScrollController.position;
+
+      if (sp.pixels >= sp.maxScrollExtent) {
+        setSymbolBarIsScrollable = false;
+      } else if (!symbolBarIsScrollable) {
+        setSymbolBarIsScrollable = true;
+      }
     });
   }
 
