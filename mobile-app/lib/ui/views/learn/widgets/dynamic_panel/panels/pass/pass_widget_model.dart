@@ -14,6 +14,7 @@ import 'package:stacked/stacked.dart';
 class PassWidgetModel extends BaseViewModel {
   final AuthenticationService auth = locator<AuthenticationService>();
 
+  // TODO: Investigate why this keeps getting thrown as not been initialized - LateInitializationError
   late FccUserModel? _user;
 
   void init() async {
