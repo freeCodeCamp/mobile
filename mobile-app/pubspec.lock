@@ -1730,10 +1730,10 @@ packages:
     dependency: "direct main"
     description:
       name: ua_client_hints
-      sha256: "8401d7bec261f61b3d3b61cd877653ddf840de2d9e07bd164f34588572aa0c8b"
+      sha256: "1b8759a46bfeab355252881df27f2604c01bded86aa2b578869fb1b638b23118"
       url: "https://pub.dev"
     source: hosted
-    version: "1.2.2"
+    version: "1.4.1"
   universal_io:
     dependency: transitive
     description:
