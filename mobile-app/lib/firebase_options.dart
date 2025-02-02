@@ -54,7 +54,7 @@ class DefaultFirebaseOptions {
     appId: '1:363152234407:android:6293f9873ae6df8a738882',
     messagingSenderId: '363152234407',
     projectId: 'mobile-4ee8a',
-    storageBucket: 'mobile-4ee8a.appspot.com',
+    storageBucket: 'mobile-4ee8a.firebasestorage.app',
   );
 
   static const FirebaseOptions ios = FirebaseOptions(
@@ -62,8 +62,9 @@ class DefaultFirebaseOptions {
     appId: '1:363152234407:ios:17273b86fa3ff2e4738882',
     messagingSenderId: '363152234407',
     projectId: 'mobile-4ee8a',
-    storageBucket: 'mobile-4ee8a.appspot.com',
+    storageBucket: 'mobile-4ee8a.firebasestorage.app',
     iosClientId: '363152234407-qb25f7aak3egr8iod13bhsltjgf8viuq.apps.googleusercontent.com',
     iosBundleId: 'org.freecodecamp.ios',
   );
+
 }
