@@ -8,17 +8,17 @@ class JavaScriptConsoleViewModel extends BaseViewModel {
   Color getConsoleTextColor(ConsoleMessageLevel messageLevel) {
     switch (messageLevel.toString()) {
       case 'ConsoleMessageLevel.DEBUG':
-        return Colors.white.withOpacity(0.87);
+        return Colors.white.withValues(alpha: 0.87);
       case 'ConsoleMessageLevel.ERROR':
-        return Colors.red.withOpacity(0.87);
+        return Colors.red.withValues(alpha: 0.87);
       case 'ConsoleMessageLevel.LOG':
-        return Colors.white.withOpacity(0.87);
+        return Colors.white.withValues(alpha: 0.87);
       case 'ConsoleMessageLevel.TIP':
-        return Colors.blue.withOpacity(0.87);
+        return Colors.blue.withValues(alpha: 0.87);
       case 'ConsoleMessageLevel.WARNING':
-        return Colors.yellow.withOpacity(0.87);
+        return Colors.yellow.withValues(alpha: 0.87);
       default:
-        return Colors.white.withOpacity(0.87);
+        return Colors.white.withValues(alpha: 0.87);
     }
   }
 

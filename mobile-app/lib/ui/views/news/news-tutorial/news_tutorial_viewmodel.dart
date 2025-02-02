@@ -149,7 +149,7 @@ class NewsTutorialViewModel extends BaseViewModel {
                     margin: const EdgeInsets.all(8),
                     decoration: BoxDecoration(
                       borderRadius: BorderRadius.circular(50),
-                      color: Colors.black.withOpacity(0.5),
+                      color: Colors.black.withValues(alpha: 0.5),
                     ),
                     child: const Icon(Icons.arrow_back),
                   ),

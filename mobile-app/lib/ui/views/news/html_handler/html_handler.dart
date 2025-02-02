@@ -96,7 +96,7 @@ class HTMLParser {
         ),
         '*:not(h1):not(h2):not(h3):not(h4):not(h5):not(h6)': Style(
           fontSize: FontSize.xLarge,
-          color: fontColor ?? Colors.white.withOpacity(0.87),
+          color: fontColor ?? Colors.white.withValues(alpha: 0.87),
           fontWeight:
               fontFamily == 'Inter' ? FontWeight.w400 : FontWeight.normal,
         ),
@@ -147,7 +147,7 @@ class HTMLParser {
         'code': Style(
           backgroundColor: const Color.fromRGBO(0x3b, 0x3b, 0x4f, 0.5),
           padding: HtmlPaddings.symmetric(vertical: 2, horizontal: 4),
-          color: Colors.white.withOpacity(0.87),
+          color: Colors.white.withValues(alpha: 0.87),
           fontSize: FontSize.xLarge,
           fontFamily: 'Roboto Mono',
         ),

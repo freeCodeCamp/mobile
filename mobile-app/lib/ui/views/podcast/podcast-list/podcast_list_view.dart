@@ -192,7 +192,7 @@ class PodcastTemplate extends StatelessWidget {
                       decoration: BoxDecoration(
                         boxShadow: [
                           BoxShadow(
-                            color: Colors.black.withOpacity(0.75),
+                            color: Colors.black.withValues(alpha: 0.75),
                             spreadRadius: 1.5,
                             blurRadius: 0.1,
                           )

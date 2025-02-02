@@ -139,7 +139,7 @@ class EpisodeListView extends StatelessWidget {
           style: {
             '#': Style(
               fontSize: FontSize(16),
-              color: Colors.white.withOpacity(0.87),
+              color: Colors.white.withValues(alpha: 0.87),
               margin: Margins.zero,
               maxLines: model.showDescription ? null : 3,
               fontFamily: 'Lato',
@@ -189,7 +189,7 @@ class EpisodeListView extends StatelessWidget {
                 decoration: BoxDecoration(
                   boxShadow: [
                     BoxShadow(
-                      color: Colors.black.withOpacity(0.75),
+                      color: Colors.black.withValues(alpha: 0.75),
                       spreadRadius: 1.5,
                       blurRadius: 5,
                     )

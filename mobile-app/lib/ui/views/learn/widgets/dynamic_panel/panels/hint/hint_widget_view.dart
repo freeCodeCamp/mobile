@@ -126,7 +126,7 @@ class HintWidgetView extends StatelessWidget {
                       fontSize: 28,
                       fontWeight: FontWeight.bold,
                       fontFamily: 'Inter',
-                      color: Colors.white.withOpacity(0.87),
+                      color: Colors.white.withValues(alpha: 0.87),
                     ),
                   ),
                 ),
