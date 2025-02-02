@@ -56,10 +56,10 @@ class DynamicPanel extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      height: MediaQuery.of(context).size.height * 0.75,
+      height: MediaQuery.of(context).size.height * 0.45,
       color: const Color(0xFF0a0a23),
       child: Padding(
-        padding: const EdgeInsets.fromLTRB(16, 12, 16, 16),
+        padding: const EdgeInsets.fromLTRB(0, 5, 0, 16),
         child: panelHandler(panel),
       ),
     );
