@@ -244,8 +244,9 @@ class NativeLoginView extends StatelessWidget {
                         child: Text(
                           context.t.login_data_message,
                           textAlign: TextAlign.center,
-                          style:
-                              TextStyle(color: Colors.white.withOpacity(0.87)),
+                          style: TextStyle(
+                            color: Colors.white.withValues(alpha: 0.87),
+                          ),
                         ),
                       ),
                     )
@@ -259,8 +260,9 @@ class NativeLoginView extends StatelessWidget {
                         child: Text(
                           context.t.login_age_message,
                           textAlign: TextAlign.center,
-                          style:
-                              TextStyle(color: Colors.white.withOpacity(0.87)),
+                          style: TextStyle(
+                            color: Colors.white.withValues(alpha: 0.87),
+                          ),
                         ),
                       ),
                     )

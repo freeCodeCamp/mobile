@@ -439,7 +439,7 @@ class PodcastTileState extends State<PodcastTile> {
         overflow: TextOverflow.ellipsis,
         style: TextStyle(
           fontSize: 16,
-          color: Colors.white.withOpacity(0.87),
+          color: Colors.white.withValues(alpha: 0.87),
           fontFamily: 'Lato',
         ),
       ),
