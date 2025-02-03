@@ -39,10 +39,7 @@ class BlockView extends StatelessWidget {
       ) {
         bool isCert = block.challenges.length == 1 &&
             !hasNoCert.contains(block.superBlock.dashedName);
-
-        bool isDialogue =
-            block.superBlock.dashedName == 'a2-english-for-developers';
-
+        bool isDialogue = hasDialogue.contains(block.superBlock.dashedName);
         int calculateProgress =
             (model.challengesCompleted / block.challenges.length * 100).round();
 
