@@ -1,5 +1,4 @@
 import 'dart:convert';
-
 import 'package:dio/dio.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_inappwebview/flutter_inappwebview.dart';
@@ -19,6 +18,8 @@ import 'package:freecodecamp/ui/views/learn/test_runner.dart';
 import 'package:freecodecamp/ui/widgets/setup_dialog_ui.dart';
 import 'package:html/dom.dart' as dom;
 import 'package:html/parser.dart';
+import 'package:phone_ide/controller/custom_text_controller.dart';
+import 'package:phone_ide/models/textfield_data.dart';
 import 'package:phone_ide/phone_ide.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:stacked/stacked.dart';
@@ -40,9 +41,6 @@ class ChallengeViewModel extends BaseViewModel {
   bool _showConsole = false;
   bool get showConsole => _showConsole;
 
-  bool _hideAppBar = true;
-  bool get hideAppBar => _hideAppBar;
-
   String _hint = '';
   String get hint => _hint;
 
@@ -60,6 +58,11 @@ class ChallengeViewModel extends BaseViewModel {
 
   bool _completedChallenge = false;
   bool get completedChallenge => _completedChallenge;
+
+  bool _symbolBarIsScrollable = true;
+  bool get symbolBarIsScrollable => _symbolBarIsScrollable;
+
+  ScrollController symbolBarScrollController = ScrollController();
 
   PanelType _panelType = PanelType.instruction;
   PanelType get panelType => _panelType;
@@ -95,6 +98,9 @@ class ChallengeViewModel extends BaseViewModel {
 
   EditorOptions defaultEditorOptions = EditorOptions();
 
+  TextFieldData? _textFieldData;
+  TextFieldData? get textFieldData => _textFieldData;
+
   final _dialogService = locator<DialogService>();
   final NavigationService _navigationService = locator<NavigationService>();
   final LearnFileService fileService = locator<LearnFileService>();
@@ -120,11 +126,6 @@ class ChallengeViewModel extends BaseViewModel {
 
   set setTestController(InAppWebViewController controller) {
     _testController = controller;
-    notifyListeners();
-  }
-
-  set setHideAppBar(bool value) {
-    _hideAppBar = value;
     notifyListeners();
   }
 
@@ -213,6 +214,16 @@ class ChallengeViewModel extends BaseViewModel {
     notifyListeners();
   }
 
+  set setTextFieldData(TextFieldData textfieldData) {
+    _textFieldData = textfieldData;
+    notifyListeners();
+  }
+
+  set setSymbolBarIsScrollable(bool value) {
+    _symbolBarIsScrollable = value;
+    notifyListeners();
+  }
+
   void init(
     String url,
     Block block,
@@ -277,6 +288,44 @@ class ChallengeViewModel extends BaseViewModel {
       );
       _mounted = true;
     }
+  }
+
+  void listenToFocusedController(Editor editor) {
+    editor.textfieldData.stream.listen((textfieldData) {
+      setTextFieldData = textfieldData;
+      setShowPanel = false;
+    });
+  }
+
+  void listenToSymbolBarScrollController() {
+    symbolBarScrollController.addListener(() {
+      ScrollPosition sp = symbolBarScrollController.position;
+
+      if (sp.pixels >= sp.maxScrollExtent) {
+        setSymbolBarIsScrollable = false;
+      } else if (!symbolBarIsScrollable) {
+        setSymbolBarIsScrollable = true;
+      }
+    });
+  }
+
+  // This function allows the symbols to be insterted into the text controllers
+  void insertSymbol(String symbol, Editor editor) async {
+    final TextEditingControllerIDE focused = textFieldData!.controller;
+    final RegionPosition position = textFieldData!.position;
+    final String text = focused.text;
+    final selection = focused.selection;
+    final newText = text.replaceRange(selection.start, selection.end, symbol);
+    focused.value = TextEditingValue(
+      text: newText,
+      selection: TextSelection.collapsed(
+        offset: selection.start + 1,
+      ),
+    );
+
+    editor.textfieldData.sink.add(
+      TextFieldData(controller: focused, position: position),
+    );
   }
 
   // This prevents the user from requesting the challenge more than once
@@ -464,7 +513,6 @@ class ChallengeViewModel extends BaseViewModel {
     if (msg.startsWith('testMSG: ')) {
       setPanelType = PanelType.hint;
       setHint = msg.split('testMSG: ')[1];
-      setShowPanel = true;
 
       setConsoleMessages = [newMessage, ...userConsoleMessages];
     }
@@ -477,9 +525,12 @@ class ChallengeViewModel extends BaseViewModel {
 
       setPanelType = PanelType.pass;
       setCompletedChallenge = true;
-      setShowPanel = true;
     }
 
     setIsRunningTests = false;
+
+    if (panelType != PanelType.instruction) {
+      setShowPanel = true;
+    }
   }
 }
