@@ -71,7 +71,8 @@ class Block {
   static bool checkIfStepBased(String superblock) {
     List<String> stepbased = [
       '2022/responsive-web-design',
-      'a2-english-for-developers'
+      'a2-english-for-developers',
+      'b1-english-for-developers'
     ];
 
     return stepbased.contains(superblock);
