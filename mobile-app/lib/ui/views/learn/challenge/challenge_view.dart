@@ -573,9 +573,9 @@ class SymbolBar extends StatelessWidget {
                           begin: Alignment.centerLeft,
                           end: Alignment.centerRight,
                           colors: [
-                            Colors.white.withOpacity(0.13),
-                            Colors.white.withOpacity(0.23),
-                            Colors.white.withOpacity(0.33),
+                            Colors.white.withValues(alpha: 0.13),
+                            Colors.white.withValues(alpha: 0.23),
+                            Colors.white.withValues(alpha: 0.33),
                           ],
                         ),
                       ),

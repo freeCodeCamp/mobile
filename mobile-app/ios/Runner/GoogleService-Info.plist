@@ -17,7 +17,7 @@
 	<key>PROJECT_ID</key>
 	<string>mobile-4ee8a</string>
 	<key>STORAGE_BUCKET</key>
-	<string>mobile-4ee8a.appspot.com</string>
+	<string>mobile-4ee8a.firebasestorage.app</string>
 	<key>IS_ADS_ENABLED</key>
 	<false></false>
 	<key>IS_ANALYTICS_ENABLED</key>

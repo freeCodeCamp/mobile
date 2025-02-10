@@ -159,7 +159,7 @@ class DrawerWidgetView extends StatelessWidget {
 
 Widget buildDivider() {
   return Divider(
-    color: Colors.white.withOpacity(0.12),
+    color: Colors.white.withValues(alpha: 0.12),
     indent: 16,
     endIndent: 16,
     thickness: 1,

@@ -81,7 +81,7 @@ class BlockView extends StatelessWidget {
                               fontWeight: FontWeight.w600,
                               height: 1.2,
                               fontFamily: 'Lato',
-                              color: Colors.white.withOpacity(0.87),
+                              color: Colors.white.withValues(alpha: 0.87),
                             ),
                           ),
                         ),
@@ -367,7 +367,7 @@ class ChallengeTile extends StatelessWidget {
           border: Border.all(
             color: isDowloaded && model.isDownloading && isCompleted
                 ? Colors.green
-                : Colors.white.withOpacity(0.01),
+                : Colors.white.withValues(alpha: 0.01),
             width: isDowloaded && model.isDownloading && isCompleted ? 5 : 1,
           ),
           color: isCompleted
