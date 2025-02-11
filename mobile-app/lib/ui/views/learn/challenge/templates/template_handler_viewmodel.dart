@@ -9,8 +9,9 @@ class HandleTemplateModel extends BaseViewModel {
   Future<Challenge>? _challenge;
   Future<Challenge>? get challenge => _challenge;
 
-  final LearnOfflineService offlineService = locator<LearnOfflineService>();
-
+  final LearnOfflineService _learnOfflineService =
+      locator<LearnOfflineService>();
+  final LearnService _learnService = locator<LearnService>();
   set setChallenge(Future<Challenge> challenge) {
     _challenge = challenge;
     notifyListeners();
@@ -19,8 +20,11 @@ class HandleTemplateModel extends BaseViewModel {
   void initiate(Block block, String challengeId) {
     final String base = LearnService.baseUrl;
 
-    setChallenge = offlineService.getChallenge(
-      '$base/challenges/${block.superBlock.dashedName}/${block.dashedName}/$challengeId.json',
-    );
+    String url =
+        '$base/challenges/${block.superBlock.dashedName}/${block.dashedName}/$challengeId.json';
+
+    setChallenge = _learnOfflineService.getChallenge(url);
+
+    _learnService.setLastVisitedChallenge(url, block);
   }
 }
