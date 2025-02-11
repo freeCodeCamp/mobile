@@ -175,6 +175,7 @@ class LearnService {
       _navigationService.replaceWith(
         Routes.handleChallengeTemplateView,
         arguments: HandleChallengeTemplateViewArguments(
+          challengeId: block.challengeTiles[challengeIndex + 1].id,
           block: block,
           challengesCompleted: challengesCompleted + 1,
         ),

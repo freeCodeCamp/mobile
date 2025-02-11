@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:freecodecamp/models/learn/challenge_model.dart';
 import 'package:freecodecamp/models/learn/curriculum_model.dart';
-import 'package:freecodecamp/service/learn/learn_service.dart';
 import 'package:freecodecamp/ui/views/learn/challenge/challenge_view.dart';
 import 'package:freecodecamp/ui/views/learn/challenge/templates/english/english_view.dart';
 import 'package:freecodecamp/ui/views/learn/challenge/templates/multiple_choice/multiple_choice_view.dart';
@@ -14,16 +13,18 @@ class HandleChallengeTemplateView extends StatelessWidget {
   const HandleChallengeTemplateView({
     Key? key,
     required this.block,
+    required this.challengeId,
     required this.challengesCompleted,
   }) : super(key: key);
 
   final Block block;
-
+  final String challengeId;
   final int challengesCompleted;
 
   @override
   Widget build(BuildContext context) {
     return ViewModelBuilder<HandleTemplateModel>.reactive(
+      onViewModelReady: (model) => model.initiate(block, challengeId),
       viewModelBuilder: () => HandleTemplateModel(),
       builder: (context, model, child) => FutureBuilder<Challenge?>(
         future: model.challenge,
@@ -34,7 +35,6 @@ class HandleChallengeTemplateView extends StatelessWidget {
             int challengeType = challenge.challengeType;
             List<ChallengeListTile> tiles = block.challengeTiles;
             int challNum = tiles.indexWhere((el) => el.id == challenge.id) + 1;
-            String url = LearnService.baseUrl;
             switch (challengeType) {
               case 10:
                 return PythonProjectView(
@@ -66,18 +66,21 @@ class HandleChallengeTemplateView extends StatelessWidget {
                 );
               case 0:
                 return ChallengeView(
-                    url:
-                        '$url/challenges/${block.superBlock.dashedName}/${block.dashedName}/${challenge.id}.json',
-                    block: block,
-                    challengeId: challenge.id,
-                    challengesCompleted: challengesCompleted,
-                    isProject: tiles.length > 1);
+                  challenge: challenge,
+                  block: block,
+                  challengesCompleted: challengesCompleted,
+                  isProject: tiles.length > 1,
+                );
               default:
-                return const Text('Unknown Challenge Type');
+                return Text(
+                  'Unknown Challenge, info : ${challenge.challengeType}',
+                );
             }
           }
 
-          return Container();
+          return const Center(
+            child: CircularProgressIndicator(),
+          );
         },
       ),
     );

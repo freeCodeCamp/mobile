@@ -163,7 +163,7 @@ class HintWidgetView extends StatelessWidget {
                     IconButton(
                       onPressed: () async {
                         final forumLink = await genForumLink(
-                            await challengeModel.challenge as Challenge,
+                            challengeModel.challenge as Challenge,
                             challengeModel.block as Block,
                             context,
                             editorText: challengeModel.editorText ?? '');

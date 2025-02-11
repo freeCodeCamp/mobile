@@ -246,6 +246,7 @@ class StackedRouter extends _i1.RouterBase {
         builder: (context) => _i11.HandleChallengeTemplateView(
             key: args.key,
             block: args.block,
+            challengeId: args.challengeId,
             challengesCompleted: args.challengesCompleted),
         settings: data,
       );
@@ -515,6 +516,7 @@ class HandleChallengeTemplateViewArguments {
   const HandleChallengeTemplateViewArguments({
     this.key,
     required this.block,
+    required this.challengeId,
     required this.challengesCompleted,
   });
 
@@ -522,11 +524,13 @@ class HandleChallengeTemplateViewArguments {
 
   final _i22.Block block;
 
+  final String challengeId;
+
   final int challengesCompleted;
 
   @override
   String toString() {
-    return '{"key": "$key", "block": "$block", "challengesCompleted": "$challengesCompleted"}';
+    return '{"key": "$key", "block": "$block", "challengeId": "$challengeId", "challengesCompleted": "$challengesCompleted"}';
   }
 
   @override
@@ -534,12 +538,16 @@ class HandleChallengeTemplateViewArguments {
     if (identical(this, other)) return true;
     return other.key == key &&
         other.block == block &&
+        other.challengeId == challengeId &&
         other.challengesCompleted == challengesCompleted;
   }
 
   @override
   int get hashCode {
-    return key.hashCode ^ block.hashCode ^ challengesCompleted.hashCode;
+    return key.hashCode ^
+        block.hashCode ^
+        challengeId.hashCode ^
+        challengesCompleted.hashCode;
   }
 }
 
@@ -778,6 +786,7 @@ extension NavigatorStateExtension on _i23.NavigationService {
   Future<dynamic> navigateToHandleChallengeTemplateView({
     _i18.Key? key,
     required _i22.Block block,
+    required String challengeId,
     required int challengesCompleted,
     int? routerId,
     bool preventDuplicates = true,
@@ -787,7 +796,10 @@ extension NavigatorStateExtension on _i23.NavigationService {
   }) async {
     return navigateTo<dynamic>(Routes.handleChallengeTemplateView,
         arguments: HandleChallengeTemplateViewArguments(
-            key: key, block: block, challengesCompleted: challengesCompleted),
+            key: key,
+            block: block,
+            challengeId: challengeId,
+            challengesCompleted: challengesCompleted),
         id: routerId,
         preventDuplicates: preventDuplicates,
         parameters: parameters,
@@ -1058,6 +1070,7 @@ extension NavigatorStateExtension on _i23.NavigationService {
   Future<dynamic> replaceWithHandleChallengeTemplateView({
     _i18.Key? key,
     required _i22.Block block,
+    required String challengeId,
     required int challengesCompleted,
     int? routerId,
     bool preventDuplicates = true,
@@ -1067,7 +1080,10 @@ extension NavigatorStateExtension on _i23.NavigationService {
   }) async {
     return replaceWith<dynamic>(Routes.handleChallengeTemplateView,
         arguments: HandleChallengeTemplateViewArguments(
-            key: key, block: block, challengesCompleted: challengesCompleted),
+            key: key,
+            block: block,
+            challengeId: challengeId,
+            challengesCompleted: challengesCompleted),
         id: routerId,
         preventDuplicates: preventDuplicates,
         parameters: parameters,
