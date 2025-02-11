@@ -232,7 +232,7 @@ class ChallengeViewModel extends BaseViewModel {
   ) async {
     setupDialogUi();
 
-    // learnService.setLastVisitedChallenge(url, block);
+    setChallenge = challenge;
 
     List<ChallengeFile> currentEditedChallenge = challenge.files
         .where((element) => element.editableRegionBoundaries.isNotEmpty)
