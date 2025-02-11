@@ -3,7 +3,7 @@ import 'package:dio/dio.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_inappwebview/flutter_inappwebview.dart';
 import 'package:freecodecamp/app/app.locator.dart';
-import 'package:freecodecamp/app/app.router.dart';
+//import 'package:freecodecamp/app/app.router.dart';
 import 'package:freecodecamp/enums/dialog_type.dart';
 import 'package:freecodecamp/enums/ext_type.dart';
 import 'package:freecodecamp/enums/panel_type.dart';
@@ -102,7 +102,7 @@ class ChallengeViewModel extends BaseViewModel {
   TextFieldData? get textFieldData => _textFieldData;
 
   final _dialogService = locator<DialogService>();
-  final NavigationService _navigationService = locator<NavigationService>();
+  //final NavigationService _navigationService = locator<NavigationService>();
   final LearnFileService fileService = locator<LearnFileService>();
   final LearnService learnService = locator<LearnService>();
   final learnOfflineService = locator<LearnOfflineService>();
@@ -466,16 +466,16 @@ class ChallengeViewModel extends BaseViewModel {
 
       await prefs.remove(challengeUrl);
 
-      _navigationService.replaceWith(
-        Routes.challengeView,
-        arguments: ChallengeViewArguments(
-          url: challengeUrl,
-          block: block!,
-          challengeId: currChallenge.id,
-          challengesCompleted: challengesCompleted,
-          isProject: block!.challenges.length == 1,
-        ),
-      );
+      // _navigationService.replaceWith(
+      //   Routes.challengeView,
+      //   arguments: ChallengeViewArguments(
+      //     url: challengeUrl,
+      //     block: block!,
+      //     challengeId: currChallenge.id,
+      //     challengesCompleted: challengesCompleted,
+      //     isProject: block!.challenges.length == 1,
+      //   ),
+      // );
     }
   }
 

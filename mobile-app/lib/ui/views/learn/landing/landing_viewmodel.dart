@@ -8,7 +8,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:freecodecamp/app/app.locator.dart';
 import 'package:freecodecamp/app/app.router.dart';
-import 'package:freecodecamp/models/learn/challenge_model.dart';
+// import 'package:freecodecamp/models/learn/challenge_model.dart';
 import 'package:freecodecamp/models/learn/curriculum_model.dart';
 import 'package:freecodecamp/models/learn/motivational_quote_model.dart';
 import 'package:freecodecamp/models/main/user_model.dart';
@@ -89,9 +89,9 @@ class LearnLandingViewModel extends BaseViewModel {
     // 3: block dashed name
 
     if (lastVisitedChallenge != null) {
-      Challenge challenge = await learnOfflineService.getChallenge(
-        lastVisitedChallenge[0],
-      );
+      // Challenge challenge = await learnOfflineService.getChallenge(
+      //   lastVisitedChallenge[0],
+      // );
 
       String baseUrl = LearnService.baseUrl;
 
@@ -129,12 +129,9 @@ class LearnLandingViewModel extends BaseViewModel {
           hasInternet: true,
         );
 
-        _navigationService.navigateToChallengeView(
-          url: lastVisitedChallenge[0],
+        _navigationService.navigateToHandleChallengeTemplateView(
           block: block,
-          challengeId: challenge.id,
           challengesCompleted: completedChallenges,
-          isProject: block.challenges.length == 1,
         );
       }
     }
@@ -163,7 +160,7 @@ class LearnLandingViewModel extends BaseViewModel {
 
   void disabledButtonSnack() {
     snack.showSnackbar(title: 'Not available use the web version', message: '');
-    Future.delayed( const Duration(milliseconds: 2500), () {
+    Future.delayed(const Duration(milliseconds: 2500), () {
       snack.closeSnackbar();
     });
   }

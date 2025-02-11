@@ -172,17 +172,12 @@ class LearnService {
     if (challengeIndex == maxChallenges - 1) {
       _navigationService.back();
     } else {
-      String challenge = block.challengeTiles[challengeIndex + 1].id;
-      String url = LearnService.baseUrl;
       _navigationService.replaceWith(
-        Routes.challengeView,
-        arguments: ChallengeViewArguments(
-            url:
-                '$url/challenges/${block.superBlock.dashedName}/${block.dashedName}/$challenge.json',
-            block: block,
-            challengeId: block.challengeTiles[challengeIndex + 1].id,
-            challengesCompleted: challengesCompleted + 1,
-            isProject: block.challenges.length == 1),
+        Routes.handleChallengeTemplateView,
+        arguments: HandleChallengeTemplateViewArguments(
+          block: block,
+          challengesCompleted: challengesCompleted + 1,
+        ),
       );
     }
   }
