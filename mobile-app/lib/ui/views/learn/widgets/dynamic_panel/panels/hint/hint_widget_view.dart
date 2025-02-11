@@ -1,5 +1,4 @@
 import 'dart:convert';
-import 'dart:developer';
 import 'dart:io';
 
 import 'package:device_info_plus/device_info_plus.dart';
@@ -167,7 +166,6 @@ class HintWidgetView extends StatelessWidget {
                             challengeModel.block as Block,
                             context,
                             editorText: challengeModel.editorText ?? '');
-                        log(forumLink);
                         challengeModel.learnService.forumHelpDialog(forumLink);
                       },
                       icon: const Icon(Icons.question_mark),
