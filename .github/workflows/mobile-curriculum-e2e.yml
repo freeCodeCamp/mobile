@@ -76,7 +76,7 @@ jobs:
         run: npm install -g serve
 
       - name: Run playwright tests
-        run: npx playwright test --config=playwright-mobile.config.ts
+        run: npx playwright test --config=mobile/e2e/playwright.config.js
 
       - uses: actions/upload-artifact@65462800fd760344b1a7b4382951275a0abb4808 # v4
         if: ${{ !cancelled() }}
