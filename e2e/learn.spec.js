@@ -1,9 +1,10 @@
 import { expect, test } from "@playwright/test";
 
-// These are all in the freeCodeCamp repo
-import currData from "../../freeCodeCamp/shared/config/curriculum.json";
-import { orderedSuperBlockInfo } from "../../freeCodeCamp/tools/scripts/build/build-external-curricula-data";
-import { SuperBlocks } from "../../freeCodeCamp/shared/config/curriculum";
+// These are all in the freeCodeCamp repo. That repo is installed at the root
+// in CI.
+import currData from "../../shared/config/curriculum.json";
+import { orderedSuperBlockInfo } from "../../tools/scripts/build/build-external-curricula-data";
+import { SuperBlocks } from "../../shared/config/curriculum";
 
 // non editor superblocks should be skipped because they are not
 // checked if they are compatible with the mobile app.
