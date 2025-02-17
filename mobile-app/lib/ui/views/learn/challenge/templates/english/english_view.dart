@@ -132,18 +132,18 @@ class EnglishView extends StatelessWidget {
                     ),
                   Column(
                     children: [
-                      Padding(
-                        padding: const EdgeInsets.all(8.0),
-                        child: Text(
-                          'Fill in the Blanks',
-                          style: TextStyle(
-                            fontSize: FontSize.large.value,
-                            fontWeight: FontWeight.bold,
-                            fontFamily: 'Inter',
+                      if (challenge.fillInTheBlank != null) ...[
+                        Padding(
+                          padding: const EdgeInsets.all(8.0),
+                          child: Text(
+                            'Fill in the Blanks',
+                            style: TextStyle(
+                              fontSize: FontSize.large.value,
+                              fontWeight: FontWeight.bold,
+                              fontFamily: 'Inter',
+                            ),
                           ),
                         ),
-                      ),
-                      if (challenge.fillInTheBlank != null)
                         Container(
                           color: const Color(0xFF0a0a23),
                           margin: const EdgeInsets.all(8),
@@ -163,6 +163,7 @@ class EnglishView extends StatelessWidget {
                             ],
                           ),
                         ),
+                      ],
                       Row(
                         children: [
                           Expanded(
@@ -190,7 +191,7 @@ class EnglishView extends StatelessWidget {
                                             block)
                                     : () => {model.checkAnswers(challenge)},
                                 child: Text(
-                                  model.allInputsCorrect
+                                  model.allInputsCorrect || challenge.fillInTheBlank == null
                                       ? 'Go to Next Challenge'
                                       : 'Check Answers',
                                   style: const TextStyle(fontSize: 20),
