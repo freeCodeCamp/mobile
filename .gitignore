@@ -66,3 +66,7 @@ play-store-credentials.json
 
 generated-tests/
 curriculum.json
+
+# e2e tests
+
+/e2e/playwright
