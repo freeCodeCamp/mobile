@@ -84,8 +84,8 @@ class BlockViewModel extends BaseViewModel {
 
   void routeToChallengeView(Block block, String challengeId) {
     _navigationService.navigateTo(
-      Routes.handleChallengeTemplateView,
-      arguments: HandleChallengeTemplateViewArguments(
+      Routes.challengeTemplateView,
+      arguments: ChallengeTemplateViewArguments(
         challengeId: challengeId,
         block: block,
         challengesCompleted: _challengesCompleted,

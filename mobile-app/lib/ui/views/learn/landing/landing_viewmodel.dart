@@ -129,7 +129,7 @@ class LearnLandingViewModel extends BaseViewModel {
           hasInternet: true,
         );
 
-        _navigationService.navigateToHandleChallengeTemplateView(
+        _navigationService.navigateToChallengeTemplateView(
           block: block,
           challengesCompleted: completedChallenges,
           challengeId: challenge.id,

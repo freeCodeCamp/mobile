@@ -13,7 +13,7 @@ import 'package:freecodecamp/models/news/bookmarked_tutorial_model.dart'
 import 'package:freecodecamp/models/podcasts/episodes_model.dart' as _i19;
 import 'package:freecodecamp/models/podcasts/podcasts_model.dart' as _i20;
 import 'package:freecodecamp/ui/views/code_radio/code_radio_view.dart' as _i10;
-import 'package:freecodecamp/ui/views/learn/challenge/templates/template_handler_view.dart'
+import 'package:freecodecamp/ui/views/learn/challenge/templates/template_view.dart'
     as _i11;
 import 'package:freecodecamp/ui/views/learn/landing/landing_view.dart' as _i13;
 import 'package:freecodecamp/ui/views/learn/superblock/superblock_view.dart'
@@ -60,7 +60,7 @@ class Routes {
 
   static const codeRadioView = '/code-radio-view';
 
-  static const handleChallengeTemplateView = '/handle-challenge-template-view';
+  static const challengeTemplateView = '/challenge-template-view';
 
   static const profileView = '/profile-view';
 
@@ -84,7 +84,7 @@ class Routes {
     newsAuthorView,
     newsImageView,
     codeRadioView,
-    handleChallengeTemplateView,
+    challengeTemplateView,
     profileView,
     learnLandingView,
     nativeLoginView,
@@ -133,8 +133,8 @@ class StackedRouter extends _i1.RouterBase {
       page: _i10.CodeRadioView,
     ),
     _i1.RouteDef(
-      Routes.handleChallengeTemplateView,
-      page: _i11.HandleChallengeTemplateView,
+      Routes.challengeTemplateView,
+      page: _i11.ChallengeTemplateView,
     ),
     _i1.RouteDef(
       Routes.profileView,
@@ -239,11 +239,10 @@ class StackedRouter extends _i1.RouterBase {
         settings: data,
       );
     },
-    _i11.HandleChallengeTemplateView: (data) {
-      final args =
-          data.getArgs<HandleChallengeTemplateViewArguments>(nullOk: false);
+    _i11.ChallengeTemplateView: (data) {
+      final args = data.getArgs<ChallengeTemplateViewArguments>(nullOk: false);
       return _i18.MaterialPageRoute<dynamic>(
-        builder: (context) => _i11.HandleChallengeTemplateView(
+        builder: (context) => _i11.ChallengeTemplateView(
             key: args.key,
             block: args.block,
             challengeId: args.challengeId,
@@ -512,8 +511,8 @@ class NewsImageViewArguments {
   }
 }
 
-class HandleChallengeTemplateViewArguments {
-  const HandleChallengeTemplateViewArguments({
+class ChallengeTemplateViewArguments {
+  const ChallengeTemplateViewArguments({
     this.key,
     required this.block,
     required this.challengeId,
@@ -534,7 +533,7 @@ class HandleChallengeTemplateViewArguments {
   }
 
   @override
-  bool operator ==(covariant HandleChallengeTemplateViewArguments other) {
+  bool operator ==(covariant ChallengeTemplateViewArguments other) {
     if (identical(this, other)) return true;
     return other.key == key &&
         other.block == block &&
@@ -783,7 +782,7 @@ extension NavigatorStateExtension on _i23.NavigationService {
         transition: transition);
   }
 
-  Future<dynamic> navigateToHandleChallengeTemplateView({
+  Future<dynamic> navigateToChallengeTemplateView({
     _i18.Key? key,
     required _i22.Block block,
     required String challengeId,
@@ -794,8 +793,8 @@ extension NavigatorStateExtension on _i23.NavigationService {
     Widget Function(BuildContext, Animation<double>, Animation<double>, Widget)?
         transition,
   }) async {
-    return navigateTo<dynamic>(Routes.handleChallengeTemplateView,
-        arguments: HandleChallengeTemplateViewArguments(
+    return navigateTo<dynamic>(Routes.challengeTemplateView,
+        arguments: ChallengeTemplateViewArguments(
             key: key,
             block: block,
             challengeId: challengeId,
@@ -1067,7 +1066,7 @@ extension NavigatorStateExtension on _i23.NavigationService {
         transition: transition);
   }
 
-  Future<dynamic> replaceWithHandleChallengeTemplateView({
+  Future<dynamic> replaceWithChallengeTemplateView({
     _i18.Key? key,
     required _i22.Block block,
     required String challengeId,
@@ -1078,8 +1077,8 @@ extension NavigatorStateExtension on _i23.NavigationService {
     Widget Function(BuildContext, Animation<double>, Animation<double>, Widget)?
         transition,
   }) async {
-    return replaceWith<dynamic>(Routes.handleChallengeTemplateView,
-        arguments: HandleChallengeTemplateViewArguments(
+    return replaceWith<dynamic>(Routes.challengeTemplateView,
+        arguments: ChallengeTemplateViewArguments(
             key: key,
             block: block,
             challengeId: challengeId,

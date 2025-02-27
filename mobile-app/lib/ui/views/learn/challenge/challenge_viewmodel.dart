@@ -461,8 +461,8 @@ class ChallengeViewModel extends BaseViewModel {
       await prefs.remove(challengeUrl);
 
       _navigationService.replaceWith(
-        Routes.handleChallengeTemplateView,
-        arguments: HandleChallengeTemplateViewArguments(
+        Routes.challengeTemplateView,
+        arguments: ChallengeTemplateViewArguments(
           block: block!,
           challengeId: currChallenge.id,
           challengesCompleted: challengesCompleted,

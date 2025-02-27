@@ -5,7 +5,7 @@ import 'package:freecodecamp/service/learn/learn_offline_service.dart';
 import 'package:freecodecamp/service/learn/learn_service.dart';
 import 'package:stacked/stacked.dart';
 
-class HandleTemplateModel extends BaseViewModel {
+class ChallengeTemplateViewModel extends BaseViewModel {
   Future<Challenge>? _challenge;
   Future<Challenge>? get challenge => _challenge;
 

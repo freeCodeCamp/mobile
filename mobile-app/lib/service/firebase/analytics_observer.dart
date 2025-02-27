@@ -28,9 +28,9 @@ class AnalyticsObserver extends RouteObserver {
               route.settings.arguments as NewsBookmarkTutorialViewArguments;
           screenName += '/${routeArgs.tutorial.tutorialTitle}';
           break;
-        case HandleChallengeTemplateViewArguments:
+        case ChallengeTemplateViewArguments:
           final routeArgs =
-              route.settings.arguments as HandleChallengeTemplateViewArguments;
+              route.settings.arguments as ChallengeTemplateViewArguments;
           screenName += '/${routeArgs.challengeId}';
           break;
         default:

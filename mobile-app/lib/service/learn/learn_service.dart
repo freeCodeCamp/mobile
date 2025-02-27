@@ -173,8 +173,8 @@ class LearnService {
       _navigationService.back();
     } else {
       _navigationService.replaceWith(
-        Routes.handleChallengeTemplateView,
-        arguments: HandleChallengeTemplateViewArguments(
+        Routes.challengeTemplateView,
+        arguments: ChallengeTemplateViewArguments(
           challengeId: block.challengeTiles[challengeIndex + 1].id,
           block: block,
           challengesCompleted: challengesCompleted + 1,

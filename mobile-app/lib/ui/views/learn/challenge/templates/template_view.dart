@@ -6,11 +6,11 @@ import 'package:freecodecamp/ui/views/learn/challenge/templates/english/english_
 import 'package:freecodecamp/ui/views/learn/challenge/templates/multiple_choice/multiple_choice_view.dart';
 import 'package:freecodecamp/ui/views/learn/challenge/templates/python-project/python_project_view.dart';
 import 'package:freecodecamp/ui/views/learn/challenge/templates/python/python_view.dart';
-import 'package:freecodecamp/ui/views/learn/challenge/templates/template_handler_viewmodel.dart';
+import 'package:freecodecamp/ui/views/learn/challenge/templates/template_viewmodel.dart';
 import 'package:stacked/stacked.dart';
 
-class HandleChallengeTemplateView extends StatelessWidget {
-  const HandleChallengeTemplateView({
+class ChallengeTemplateView extends StatelessWidget {
+  const ChallengeTemplateView({
     Key? key,
     required this.block,
     required this.challengeId,
@@ -23,9 +23,9 @@ class HandleChallengeTemplateView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return ViewModelBuilder<HandleTemplateModel>.reactive(
+    return ViewModelBuilder<ChallengeTemplateViewModel>.reactive(
       onViewModelReady: (model) => model.initiate(block, challengeId),
-      viewModelBuilder: () => HandleTemplateModel(),
+      viewModelBuilder: () => ChallengeTemplateViewModel(),
       builder: (context, model, child) => FutureBuilder<Challenge?>(
         future: model.challenge,
         builder: (context, snapshot) {
