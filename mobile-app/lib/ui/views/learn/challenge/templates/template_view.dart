@@ -26,62 +26,65 @@ class ChallengeTemplateView extends StatelessWidget {
     return ViewModelBuilder<ChallengeTemplateViewModel>.reactive(
       onViewModelReady: (model) => model.initiate(block, challengeId),
       viewModelBuilder: () => ChallengeTemplateViewModel(),
-      builder: (context, model, child) => FutureBuilder<Challenge?>(
-        future: model.challenge,
-        builder: (context, snapshot) {
-          if (snapshot.hasData) {
-            Challenge challenge = snapshot.data!;
+      builder: (context, model, child) => Scaffold(
+        body: FutureBuilder<Challenge?>(
+          future: model.challenge,
+          builder: (context, snapshot) {
+            if (snapshot.hasData) {
+              Challenge challenge = snapshot.data!;
 
-            int challengeType = challenge.challengeType;
-            List<ChallengeListTile> tiles = block.challengeTiles;
-            int challNum = tiles.indexWhere((el) => el.id == challenge.id) + 1;
-            switch (challengeType) {
-              case 10:
-                return PythonProjectView(
-                  challenge: challenge,
-                  block: block,
-                  challengesCompleted: challengesCompleted,
-                );
-              case 11:
-                return PythonView(
-                  challenge: challenge,
-                  block: block,
-                  challengesCompleted: challengesCompleted,
-                  currentChallengeNum: challNum,
-                );
-              case 15:
-              case 19:
-                return MultipleChoiceView(
-                  challenge: challenge,
-                  block: block,
-                  challengesCompleted: challengesCompleted,
-                  currentChallengeNum: challNum,
-                );
-              case 21:
-              case 22:
-                return EnglishView(
-                  challenge: challenge,
-                  block: block,
-                  currentChallengeNum: challNum,
-                );
-              case 0:
-                return ChallengeView(
-                  challenge: challenge,
-                  block: block,
-                  challengesCompleted: challengesCompleted,
-                  isProject: tiles.length > 1,
-                );
-              default:
-                return Text(
-                  'Unknown Challenge, info : ${challenge.challengeType}',
-                );
+              int challengeType = challenge.challengeType;
+              List<ChallengeListTile> tiles = block.challengeTiles;
+              int challNum =
+                  tiles.indexWhere((el) => el.id == challenge.id) + 1;
+              switch (challengeType) {
+                case 0:
+                  return ChallengeView(
+                    challenge: challenge,
+                    block: block,
+                    challengesCompleted: challengesCompleted,
+                    isProject: tiles.length > 1,
+                  );
+                case 10:
+                  return PythonProjectView(
+                    challenge: challenge,
+                    block: block,
+                    challengesCompleted: challengesCompleted,
+                  );
+                case 11:
+                  return PythonView(
+                    challenge: challenge,
+                    block: block,
+                    challengesCompleted: challengesCompleted,
+                    currentChallengeNum: challNum,
+                  );
+                case 15:
+                case 19:
+                  return MultipleChoiceView(
+                    challenge: challenge,
+                    block: block,
+                    challengesCompleted: challengesCompleted,
+                    currentChallengeNum: challNum,
+                  );
+                case 21:
+                case 22:
+                  return EnglishView(
+                    challenge: challenge,
+                    block: block,
+                    currentChallengeNum: challNum,
+                  );
+                default:
+                  return Text(
+                    'Unknown Challenge, info : ${challenge.challengeType}',
+                  );
+              }
             }
-          }
 
-          return const Center(
-            child: CircularProgressIndicator(),
-          );
-        },
+            return const Center(
+              child: CircularProgressIndicator(),
+            );
+          },
+        ),
       ),
     );
   }
