@@ -31,183 +31,180 @@ class ChallengeView extends StatelessWidget {
       onViewModelReady: (model) {
         model.init(block, challenge, challengesCompleted);
       },
-      builder: (context, model, child) => Builder(
-        builder: (context) {
-          int maxChallenges = block.challenges.length;
-          ChallengeFile currFile = model.currentFile(challenge);
+      builder: (context, model, child) {
+        int maxChallenges = block.challenges.length;
+        ChallengeFile currFile = model.currentFile(challenge);
 
-          bool keyboard = MediaQuery.of(context).viewInsets.bottom != 0;
+        bool keyboard = MediaQuery.of(context).viewInsets.bottom != 0;
 
-          bool onlyJs = challenge.files.every((file) => file.ext.name == 'js');
+        bool onlyJs = challenge.files.every((file) => file.ext.name == 'js');
 
-          bool editableRegion = currFile.editableRegionBoundaries.isNotEmpty;
-          EditorOptions options = EditorOptions(
-            hasRegion: editableRegion,
+        bool editableRegion = currFile.editableRegionBoundaries.isNotEmpty;
+        EditorOptions options = EditorOptions(
+          hasRegion: editableRegion,
+        );
+
+        Editor editor = Editor(
+          language: currFile.ext.name.toUpperCase(),
+          options: options,
+        );
+
+        model.initiateFile(editor, challenge, currFile, editableRegion);
+        model.listenToFocusedController(editor);
+        model.listenToSymbolBarScrollController();
+
+        if (model.showPanel) {
+          FocusManager.instance.primaryFocus?.unfocus();
+        }
+
+        editor.onTextChange.stream.listen((text) {
+          model.fileService.saveFileInCache(
+            challenge,
+            model.currentSelectedFile != ''
+                ? model.currentSelectedFile
+                : challenge.files[0].name,
+            text,
           );
 
-          Editor editor = Editor(
-            language: currFile.ext.name.toUpperCase(),
-            options: options,
-          );
+          model.setEditorText = text;
+          model.setHasTypedInEditor = true;
+          model.setCompletedChallenge = false;
+        });
 
-          model.initiateFile(editor, challenge, currFile, editableRegion);
-          model.listenToFocusedController(editor);
-          model.listenToSymbolBarScrollController();
+        BoxDecoration decoration = const BoxDecoration(
+          border: Border(
+            bottom: BorderSide(
+              width: 4,
+              color: Colors.blue,
+            ),
+          ),
+        );
 
-          if (model.showPanel) {
-            FocusManager.instance.primaryFocus?.unfocus();
-          }
-
-          editor.onTextChange.stream.listen((text) {
-            model.fileService.saveFileInCache(
-              challenge,
-              model.currentSelectedFile != ''
-                  ? model.currentSelectedFile
-                  : challenge.files[0].name,
-              text,
-            );
-
-            model.setEditorText = text;
-            model.setHasTypedInEditor = true;
-            model.setCompletedChallenge = false;
-          });
-
-          BoxDecoration decoration = const BoxDecoration(
-            border: Border(
-              bottom: BorderSide(
-                width: 4,
-                color: Colors.blue,
+        return PopScope(
+          canPop: true,
+          onPopInvokedWithResult: (bool didPop, dynamic result) {
+            model.learnService.updateProgressOnPop(context, block);
+          },
+          child: Scaffold(
+            appBar: PreferredSize(
+              preferredSize: Size(
+                MediaQuery.sizeOf(context).width,
+                model.showPanel ? 0 : 50,
+              ),
+              child: AppBar(
+                automaticallyImplyLeading: !model.showPreview,
+                title: challenge.files.length == 1 && !model.showPreview
+                    ? Text(context.t.editor)
+                    : Row(
+                        children: [
+                          if (model.showPreview && !onlyJs)
+                            Expanded(
+                              child: Container(
+                                decoration: model.showProjectPreview
+                                    ? decoration
+                                    : null,
+                                child: ElevatedButton(
+                                  style: ElevatedButton.styleFrom(
+                                    shape: RoundedRectangleBorder(
+                                      borderRadius: BorderRadius.circular(0),
+                                    ),
+                                    elevation: 0,
+                                  ),
+                                  onPressed: () {
+                                    model.setShowConsole = false;
+                                    model.setShowProjectPreview = true;
+                                  },
+                                  child: Text(
+                                    context.t.preview,
+                                  ),
+                                ),
+                              ),
+                            ),
+                          if (model.showPreview)
+                            Expanded(
+                              child: Container(
+                                decoration:
+                                    model.showConsole ? decoration : null,
+                                child: ElevatedButton(
+                                  style: ElevatedButton.styleFrom(
+                                    shape: RoundedRectangleBorder(
+                                      borderRadius: BorderRadius.circular(0),
+                                    ),
+                                    elevation: 0,
+                                  ),
+                                  onPressed: () {
+                                    model.setShowConsole = true;
+                                    model.setShowProjectPreview = false;
+                                  },
+                                  child: Text(
+                                    context.t.console,
+                                  ),
+                                ),
+                              ),
+                            ),
+                          if (!model.showPreview && challenge.files.length > 1)
+                            for (ChallengeFile file in challenge.files)
+                              customTabBar(
+                                model,
+                                challenge,
+                                file,
+                                editor,
+                              )
+                        ],
+                      ),
               ),
             ),
-          );
-
-          return PopScope(
-            canPop: true,
-            onPopInvokedWithResult: (bool didPop, dynamic result) {
-              model.learnService.updateProgressOnPop(context, block);
-            },
-            child: Scaffold(
-              appBar: PreferredSize(
-                preferredSize: Size(
-                  MediaQuery.sizeOf(context).width,
-                  model.showPanel ? 0 : 50,
-                ),
-                child: AppBar(
-                  automaticallyImplyLeading: !model.showPreview,
-                  title: challenge.files.length == 1 && !model.showPreview
-                      ? Text(context.t.editor)
-                      : Row(
-                          children: [
-                            if (model.showPreview && !onlyJs)
-                              Expanded(
-                                child: Container(
-                                  decoration: model.showProjectPreview
-                                      ? decoration
-                                      : null,
-                                  child: ElevatedButton(
-                                    style: ElevatedButton.styleFrom(
-                                      shape: RoundedRectangleBorder(
-                                        borderRadius: BorderRadius.circular(0),
-                                      ),
-                                      elevation: 0,
-                                    ),
-                                    onPressed: () {
-                                      model.setShowConsole = false;
-                                      model.setShowProjectPreview = true;
-                                    },
-                                    child: Text(
-                                      context.t.preview,
-                                    ),
-                                  ),
-                                ),
-                              ),
-                            if (model.showPreview)
-                              Expanded(
-                                child: Container(
-                                  decoration:
-                                      model.showConsole ? decoration : null,
-                                  child: ElevatedButton(
-                                    style: ElevatedButton.styleFrom(
-                                      shape: RoundedRectangleBorder(
-                                        borderRadius: BorderRadius.circular(0),
-                                      ),
-                                      elevation: 0,
-                                    ),
-                                    onPressed: () {
-                                      model.setShowConsole = true;
-                                      model.setShowProjectPreview = false;
-                                    },
-                                    child: Text(
-                                      context.t.console,
-                                    ),
-                                  ),
-                                ),
-                              ),
-                            if (!model.showPreview &&
-                                challenge.files.length > 1)
-                              for (ChallengeFile file in challenge.files)
-                                customTabBar(
-                                  model,
-                                  challenge,
-                                  file,
-                                  editor,
-                                )
-                          ],
+            bottomNavigationBar: Padding(
+              padding: EdgeInsets.only(
+                bottom: MediaQuery.of(context).viewInsets.bottom,
+              ),
+              child: customBottomBar(
+                model,
+                keyboard,
+                challenge,
+                editor,
+                context,
+              ),
+            ),
+            body: !model.showPreview
+                ? Column(
+                    children: [
+                      if (model.showPanel && !keyboard)
+                        DynamicPanel(
+                          challenge: challenge,
+                          model: model,
+                          panel: model.panelType,
+                          maxChallenges: maxChallenges,
+                          challengesCompleted: challengesCompleted,
+                          editor: editor,
                         ),
-                ),
-              ),
-              bottomNavigationBar: Padding(
-                padding: EdgeInsets.only(
-                  bottom: MediaQuery.of(context).viewInsets.bottom,
-                ),
-                child: customBottomBar(
-                  model,
-                  keyboard,
-                  challenge,
-                  editor,
-                  context,
-                ),
-              ),
-              body: !model.showPreview
-                  ? Column(
-                      children: [
-                        if (model.showPanel && !keyboard)
-                          DynamicPanel(
-                            challenge: challenge,
-                            model: model,
-                            panel: model.panelType,
-                            maxChallenges: maxChallenges,
-                            challengesCompleted: challengesCompleted,
-                            editor: editor,
-                          ),
-                        Expanded(child: editor)
-                      ],
-                    )
-                  : Column(
-                      children: [
-                        if (model.showPanel && !keyboard)
-                          DynamicPanel(
-                            challenge: challenge,
-                            model: model,
-                            panel: model.panelType,
-                            maxChallenges: maxChallenges,
-                            challengesCompleted: challengesCompleted,
-                            editor: editor,
-                          ),
-                        model.showProjectPreview && !onlyJs
-                            ? ProjectPreview(
-                                challenge: challenge,
-                                model: model,
-                              )
-                            : JavaScriptConsole(
-                                messages: model.consoleMessages,
-                              )
-                      ],
-                    ),
-            ),
-          );
-        },
-      ),
+                      Expanded(child: editor)
+                    ],
+                  )
+                : Column(
+                    children: [
+                      if (model.showPanel && !keyboard)
+                        DynamicPanel(
+                          challenge: challenge,
+                          model: model,
+                          panel: model.panelType,
+                          maxChallenges: maxChallenges,
+                          challengesCompleted: challengesCompleted,
+                          editor: editor,
+                        ),
+                      model.showProjectPreview && !onlyJs
+                          ? ProjectPreview(
+                              challenge: challenge,
+                              model: model,
+                            )
+                          : JavaScriptConsole(
+                              messages: model.consoleMessages,
+                            )
+                    ],
+                  ),
+          ),
+        );
+      },
     );
   }
 
