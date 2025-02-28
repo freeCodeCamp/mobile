@@ -54,7 +54,7 @@ import 'package:stacked_services/stacked_services.dart';
     MaterialRoute(page: NativeLoginView),
     MaterialRoute(page: SuperBlockView),
     MaterialRoute(page: SettingsView),
-    MaterialRoute(page: DeleteAccountView)
+    MaterialRoute(page: DeleteAccountView),
   ],
   dependencies: [
     LazySingleton(classType: NavigationService),
