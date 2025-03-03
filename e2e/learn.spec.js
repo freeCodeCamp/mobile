@@ -16,6 +16,7 @@ const nonEditorSB = [
   SuperBlocks.CollegeAlgebraPy,
   SuperBlocks.A2English,
   SuperBlocks.B1English,
+  SuperBlocks.TheOdinProject
 ];
 
 const publicSB = orderedSuperBlockInfo
