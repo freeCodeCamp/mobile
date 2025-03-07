@@ -252,7 +252,7 @@ class TestRunner extends BaseViewModel {
       String? tail = (challenge.files[0].tail ?? '').replaceAll('\\', '\\\\');
 
       return '''<script type="module">
-      import * as __helpers from "https://unpkg.com/@freecodecamp/curriculum-helpers@3.0.9/dist/index.js";
+      import * as __helpers from "https://unpkg.com/@freecodecamp/curriculum-helpers@3.9.0/dist/index.js";
 
       const assert = chai.assert;
       const __checkForBrowserExtensions = false;
