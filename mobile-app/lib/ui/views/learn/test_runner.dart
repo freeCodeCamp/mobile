@@ -194,7 +194,7 @@ class TestRunner extends BaseViewModel {
       String tail = challenge.files[0].tail ?? '';
 
       return '''<script type="module">
-    import * as __helpers from "https://www.unpkg.com/@freecodecamp/curriculum-helpers@2.0.3/dist/index.mjs";
+    import * as __helpers from "https://www.unpkg.com/@freecodecamp/curriculum-helpers@3.9.0/dist/index.mjs";
 
     const code = `$code`;
     const doc = new DOMParser().parseFromString(code, 'text/html');
@@ -252,7 +252,7 @@ class TestRunner extends BaseViewModel {
       String? tail = (challenge.files[0].tail ?? '').replaceAll('\\', '\\\\');
 
       return '''<script type="module">
-      import * as __helpers from "https://unpkg.com/@freecodecamp/curriculum-helpers@1.1.0/dist/index.js";
+      import * as __helpers from "https://unpkg.com/@freecodecamp/curriculum-helpers@3.9.0/dist/index.js";
 
       const assert = chai.assert;
       const __checkForBrowserExtensions = false;
