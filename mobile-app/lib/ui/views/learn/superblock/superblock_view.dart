@@ -29,6 +29,7 @@ class SuperBlockView extends StatelessWidget {
         appBar: AppBar(
           title: Text(superBlockName),
         ),
+        backgroundColor: const Color.fromRGBO(0x0a, 0x0a, 0x23, 1),
         body: FutureBuilder<SuperBlock>(
           future: model.getSuperBlockData(
             superBlockDashedName,

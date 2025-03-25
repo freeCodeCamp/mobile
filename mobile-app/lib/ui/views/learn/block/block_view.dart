@@ -2,11 +2,11 @@ import 'package:flutter/material.dart';
 import 'package:freecodecamp/extensions/i18n_extension.dart';
 import 'package:freecodecamp/models/learn/curriculum_model.dart';
 import 'package:freecodecamp/ui/views/learn/block/block_viewmodel.dart';
-import 'package:freecodecamp/ui/views/learn/utils/learn_globals.dart';
-import 'package:freecodecamp/ui/views/learn/widgets/download_button_widget.dart';
+// import 'package:freecodecamp/ui/views/learn/utils/learn_globals.dart';
+// import 'package:freecodecamp/ui/views/learn/widgets/download_button_widget.dart';
 import 'package:freecodecamp/ui/views/learn/widgets/open_close_icon_widget.dart';
-import 'package:freecodecamp/ui/views/learn/widgets/progressbar_widget.dart';
-import 'package:freecodecamp/ui/widgets/drawer_widget/drawer_widget_view.dart';
+// import 'package:freecodecamp/ui/views/learn/widgets/progressbar_widget.dart';
+// import 'package:freecodecamp/ui/widgets/drawer_widget/drawer_widget_view.dart';
 import 'package:stacked/stacked.dart';
 
 class BlockView extends StatelessWidget {
@@ -36,83 +36,130 @@ class BlockView extends StatelessWidget {
         model,
         child,
       ) {
-        bool isCert = block.challenges.length == 1 &&
-            !hasNoCert.contains(block.superBlock.dashedName);
-        bool isDialogue = hasDialogue.contains(block.superBlock.dashedName);
-        int calculateProgress =
-            (model.challengesCompleted / block.challenges.length * 100).round();
-
-        bool hasProgress = calculateProgress > 0;
-
-        return Column(
-          children: [
-            BlockHeader(
-              isCertification: isCert,
-              block: block,
-              model: model,
-            ),
-            if (hasProgress && isStepBased)
-              ChallengeProgressBar(
-                block: block,
-                model: model,
+        return Padding(
+          padding: const EdgeInsets.only(bottom: 16.0),
+          child: Container(
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(10),
+              border: Border.all(
+                color: const Color.fromRGBO(0x3b, 0x3b, 0x4f, 1),
               ),
-            if (model.isOpen || isCert)
-              Container(
-                color: const Color(0xFF0a0a23),
-                child: InkWell(
-                  onTap: isCert
-                      ? () async {
-                          model.routeToCertification(block);
-                        }
-                      : () {},
-                  child: Column(
-                    children: [
-                      for (String blockString in block.description)
-                        Padding(
-                          padding: const EdgeInsets.symmetric(
-                            vertical: 8,
-                            horizontal: 16,
-                          ),
-                          child: Text(
-                            blockString,
-                            style: TextStyle(
+              color: const Color.fromRGBO(0x1b, 0x1b, 0x32, 1),
+            ),
+            padding: const EdgeInsets.all(8),
+            width: MediaQuery.of(context).size.width,
+            child: Column(
+              children: [
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.start,
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    const Padding(
+                      padding: EdgeInsets.symmetric(
+                        horizontal: 8,
+                      ),
+                      child: Icon(
+                        Icons.heat_pump_rounded,
+                        color: Colors.blue,
+                        size: 40,
+                      ),
+                    ),
+                    Expanded(
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.start,
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            block.name,
+                            style: const TextStyle(
+                              wordSpacing: 0,
+                              letterSpacing: 0,
                               fontSize: 18,
-                              fontWeight: FontWeight.w600,
-                              height: 1.2,
-                              fontFamily: 'Lato',
-                              color: Colors.white.withValues(alpha: 0.87),
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ],
+                ),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.start,
+                  children: [
+                    Padding(
+                      padding: const EdgeInsets.all(8.0),
+                      child: TextButton(
+                        onPressed: () {},
+                        style: TextButton.styleFrom(
+                          backgroundColor:
+                              const Color.fromRGBO(0x1b, 0x1b, 0x32, 1),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(8),
+                            side: const BorderSide(
+                              color: Color.fromRGBO(0x3b, 0x3b, 0x4f, 1),
                             ),
                           ),
                         ),
-                      if (model.isDev && !isCert)
-                        DownloadButton(
-                          model: model,
-                          block: block,
+                        child: Text(
+                          model.isOpen ? 'Hide Steps' : 'Show Steps',
                         ),
-                      if (isDialogue) ...[
-                        buildDivider(),
-                        dialogueWidget(
-                          block.challenges,
-                          context,
-                          model,
-                        )
-                      ],
-                      if (!isCert && isStepBased && !isDialogue) ...[
-                        buildDivider(),
-                        gridWidget(context, model)
-                      ],
-                      if (!isStepBased && !isCert) ...[
-                        buildDivider(),
-                        listWidget(context, model)
-                      ],
-                      Container(
-                        height: 25,
-                      )
-                    ],
-                  ),
+                      ),
+                    ),
+                  ],
                 ),
-              ),
-          ],
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.start,
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Container(
+                      padding:
+                          const EdgeInsets.only(left: 8, top: 8, bottom: 8),
+                      height: 200,
+                      width: MediaQuery.of(context).size.width - 45,
+                      child: GridView.builder(
+                        gridDelegate:
+                            const SliverGridDelegateWithFixedCrossAxisCount(
+                                crossAxisCount: 4,
+                                mainAxisExtent: 35,
+                                mainAxisSpacing: 3,
+                                crossAxisSpacing: 3),
+                        itemCount: block.challenges.length,
+                        itemBuilder: (context, step) {
+                          return ChallengeTile(
+                            block: block,
+                            model: model,
+                            step: step + 1,
+                            challengeId: block.challengeTiles[step].id,
+                            isDowloaded: false,
+                          );
+                        },
+                      ),
+                    ),
+                  ],
+                ),
+                Row(
+                  children: [
+                    Expanded(
+                      child: TextButton(
+                        onPressed: () {},
+                        style: TextButton.styleFrom(
+                          backgroundColor:
+                              const Color.fromRGBO(0x5a, 0x01, 0xa7, 1),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(8),
+                          ),
+                        ),
+                        child: const Text(
+                          'Start',
+                          style: TextStyle(fontWeight: FontWeight.bold),
+                        ),
+                      ),
+                    ),
+                  ],
+                )
+              ],
+            ),
+          ),
         );
       },
     );
@@ -183,45 +230,6 @@ class BlockView extends StatelessWidget {
           );
         })
       ],
-    );
-  }
-
-  Widget gridWidget(BuildContext context, BlockViewModel model) {
-    return SizedBox(
-      height: 300,
-      child: GridView.count(
-        padding: const EdgeInsets.all(16),
-        crossAxisCount: (MediaQuery.of(context).size.width / 70 -
-                MediaQuery.of(context).viewPadding.horizontal)
-            .round(),
-        children: List.generate(
-          block.challenges.length,
-          (step) {
-            return FutureBuilder(
-              future: model.isChallengeDownloaded(
-                block.challengeTiles[step].id,
-              ),
-              builder: (context, snapshot) {
-                if (snapshot.hasData) {
-                  return Center(
-                    child: ChallengeTile(
-                      block: block,
-                      model: model,
-                      step: step + 1,
-                      challengeId: block.challengeTiles[step].id,
-                      isDowloaded: (snapshot.data is bool
-                          ? snapshot.data as bool
-                          : false),
-                    ),
-                  );
-                }
-
-                return const CircularProgressIndicator();
-              },
-            );
-          },
-        ),
-      ),
     );
   }
 
@@ -356,41 +364,26 @@ class ChallengeTile extends StatelessWidget {
   Widget build(BuildContext context) {
     bool isCompleted = model.completedChallenge(challengeId);
 
-    return GridTile(
-      child: Container(
-        margin: const EdgeInsets.all(2),
-        decoration: BoxDecoration(
-          border: Border.all(
-            color: isDowloaded && model.isDownloading && isCompleted
-                ? Colors.green
-                : Colors.white.withValues(alpha: 0.01),
-            width: isDowloaded && model.isDownloading && isCompleted ? 5 : 1,
-          ),
-          color: isCompleted
-              ? const Color.fromRGBO(0x00, 0x2e, 0xad, 1)
-              : isDowloaded && model.isDownloading && !isCompleted
-                  ? Colors.green
-                  : Colors.transparent,
+    return TextButton(
+      onPressed: () {},
+      style: TextButton.styleFrom(
+        backgroundColor: isCompleted
+            ? const Color.fromRGBO(0x00, 0x2e, 0xad, 0.3)
+            : const Color.fromRGBO(0x2a, 0x2a, 0x40, 1),
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(5),
+          side: isCompleted
+              ? const BorderSide(
+                  width: 1,
+                  color: Color.fromRGBO(0xbc, 0xe8, 0xf1, 1),
+                )
+              : const BorderSide(
+                  color: Color.fromRGBO(0x3b, 0x3b, 0x4f, 1),
+                ),
         ),
-        height: 70,
-        width: 70,
-        child: InkWell(
-          onTap: () async {
-            model.routeToChallengeView(
-              block,
-              challengeId,
-            );
-          },
-          child: Center(
-            child: Text(
-              step.toString(),
-              style: const TextStyle(
-                fontWeight: FontWeight.bold,
-                fontSize: 18,
-              ),
-            ),
-          ),
-        ),
+      ),
+      child: Text(
+        step.toString(),
       ),
     );
   }
