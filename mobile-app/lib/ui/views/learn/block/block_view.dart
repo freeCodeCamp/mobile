@@ -51,22 +51,18 @@ class BlockView extends StatelessWidget {
             child: Column(
               children: [
                 Row(
-                  mainAxisAlignment: MainAxisAlignment.start,
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     const Padding(
-                      padding: EdgeInsets.symmetric(
-                        horizontal: 8,
-                      ),
+                      padding: EdgeInsets.all(8),
                       child: Icon(
-                        Icons.heat_pump_rounded,
-                        color: Colors.blue,
+                        Icons.monitor,
+                        color: Color.fromRGBO(0x19, 0x8e, 0xee, 1),
                         size: 40,
                       ),
                     ),
                     Expanded(
                       child: Column(
-                        mainAxisAlignment: MainAxisAlignment.start,
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           Text(
@@ -78,85 +74,100 @@ class BlockView extends StatelessWidget {
                               fontWeight: FontWeight.bold,
                             ),
                           ),
+                          if (block.challenges.length == 1)
+                            Text(block.description.join()),
+                          if (block.challenges.length > 1)
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.start,
+                              children: [
+                                Padding(
+                                  padding: const EdgeInsets.symmetric(
+                                    vertical: 4,
+                                  ),
+                                  child: TextButton(
+                                    onPressed: () {
+                                      model.setIsOpen = !model.isOpen;
+                                    },
+                                    style: TextButton.styleFrom(
+                                      backgroundColor: const Color.fromRGBO(
+                                          0x1b, 0x1b, 0x32, 1),
+                                      shape: RoundedRectangleBorder(
+                                        borderRadius: BorderRadius.circular(5),
+                                        side: const BorderSide(
+                                          color: Color.fromRGBO(
+                                              0x3b, 0x3b, 0x4f, 1),
+                                        ),
+                                      ),
+                                    ),
+                                    child: Text(
+                                      model.isOpen
+                                          ? 'Hide Steps'
+                                          : 'Show Steps',
+                                    ),
+                                  ),
+                                ),
+                              ],
+                            ),
+                          if (model.isOpen)
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.start,
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                SizedBox(
+                                  height: 195,
+                                  width:
+                                      MediaQuery.of(context).size.width - 100,
+                                  child: GridView.builder(
+                                    gridDelegate:
+                                        const SliverGridDelegateWithFixedCrossAxisCount(
+                                            crossAxisCount: 6,
+                                            mainAxisExtent: 35,
+                                            mainAxisSpacing: 3,
+                                            crossAxisSpacing: 3),
+                                    itemCount: block.challenges.length,
+                                    itemBuilder: (context, step) {
+                                      return ChallengeTile(
+                                        block: block,
+                                        model: model,
+                                        step: step + 1,
+                                        challengeId:
+                                            block.challengeTiles[step].id,
+                                        isDowloaded: false,
+                                      );
+                                    },
+                                  ),
+                                ),
+                              ],
+                            ),
                         ],
                       ),
                     ),
                   ],
                 ),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.start,
-                  children: [
-                    Padding(
-                      padding: const EdgeInsets.all(8.0),
-                      child: TextButton(
-                        onPressed: () {},
-                        style: TextButton.styleFrom(
-                          backgroundColor:
-                              const Color.fromRGBO(0x1b, 0x1b, 0x32, 1),
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(8),
-                            side: const BorderSide(
-                              color: Color.fromRGBO(0x3b, 0x3b, 0x4f, 1),
+                if (block.challenges.length == 1)
+                  Row(
+                    children: [
+                      Expanded(
+                        child: Padding(
+                          padding: const EdgeInsets.all(8.0),
+                          child: TextButton(
+                            onPressed: () {},
+                            style: TextButton.styleFrom(
+                              backgroundColor:
+                                  const Color.fromRGBO(0x5a, 0x01, 0xa7, 1),
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(5),
+                              ),
+                            ),
+                            child: const Text(
+                              'Start',
+                              style: TextStyle(fontWeight: FontWeight.bold),
                             ),
                           ),
                         ),
-                        child: Text(
-                          model.isOpen ? 'Hide Steps' : 'Show Steps',
-                        ),
                       ),
-                    ),
-                  ],
-                ),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.start,
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Container(
-                      padding:
-                          const EdgeInsets.only(left: 8, top: 8, bottom: 8),
-                      height: 200,
-                      width: MediaQuery.of(context).size.width - 45,
-                      child: GridView.builder(
-                        gridDelegate:
-                            const SliverGridDelegateWithFixedCrossAxisCount(
-                                crossAxisCount: 4,
-                                mainAxisExtent: 35,
-                                mainAxisSpacing: 3,
-                                crossAxisSpacing: 3),
-                        itemCount: block.challenges.length,
-                        itemBuilder: (context, step) {
-                          return ChallengeTile(
-                            block: block,
-                            model: model,
-                            step: step + 1,
-                            challengeId: block.challengeTiles[step].id,
-                            isDowloaded: false,
-                          );
-                        },
-                      ),
-                    ),
-                  ],
-                ),
-                Row(
-                  children: [
-                    Expanded(
-                      child: TextButton(
-                        onPressed: () {},
-                        style: TextButton.styleFrom(
-                          backgroundColor:
-                              const Color.fromRGBO(0x5a, 0x01, 0xa7, 1),
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(8),
-                          ),
-                        ),
-                        child: const Text(
-                          'Start',
-                          style: TextStyle(fontWeight: FontWeight.bold),
-                        ),
-                      ),
-                    ),
-                  ],
-                )
+                    ],
+                  )
               ],
             ),
           ),
