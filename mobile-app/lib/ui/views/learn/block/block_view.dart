@@ -1,10 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:freecodecamp/extensions/i18n_extension.dart';
 import 'package:freecodecamp/models/learn/curriculum_model.dart';
 import 'package:freecodecamp/ui/views/learn/block/block_viewmodel.dart';
 // import 'package:freecodecamp/ui/views/learn/utils/learn_globals.dart';
 // import 'package:freecodecamp/ui/views/learn/widgets/download_button_widget.dart';
-import 'package:freecodecamp/ui/views/learn/widgets/open_close_icon_widget.dart';
 // import 'package:freecodecamp/ui/views/learn/widgets/progressbar_widget.dart';
 // import 'package:freecodecamp/ui/widgets/drawer_widget/drawer_widget_view.dart';
 import 'package:stacked/stacked.dart';
@@ -36,6 +34,8 @@ class BlockView extends StatelessWidget {
         model,
         child,
       ) {
+        double progress = model.challengesCompleted / block.challenges.length;
+
         return Padding(
           padding: const EdgeInsets.only(bottom: 16.0),
           child: Container(
@@ -74,6 +74,21 @@ class BlockView extends StatelessWidget {
                               fontWeight: FontWeight.bold,
                             ),
                           ),
+                          if (block.challenges.length > 1)
+                            Padding(
+                              padding: const EdgeInsets.only(
+                                  top: 8, bottom: 8, right: 10),
+                              child: LinearProgressIndicator(
+                                minHeight: 10,
+                                value: progress,
+                                valueColor: const AlwaysStoppedAnimation<Color>(
+                                  Color.fromRGBO(0x99, 0xc9, 0xff, 1),
+                                ),
+                                backgroundColor:
+                                    const Color.fromRGBO(0x2a, 0x2a, 0x40, 1),
+                                borderRadius: BorderRadius.circular(5),
+                              ),
+                            ),
                           if (block.challenges.length == 1)
                             Text(block.description.join()),
                           if (block.challenges.length > 1)
@@ -121,7 +136,7 @@ class BlockView extends StatelessWidget {
                                     gridDelegate:
                                         const SliverGridDelegateWithFixedCrossAxisCount(
                                             crossAxisCount: 6,
-                                            mainAxisExtent: 35,
+                                            mainAxisExtent: 50,
                                             mainAxisSpacing: 3,
                                             crossAxisSpacing: 3),
                                     itemCount: block.challenges.length,
@@ -243,116 +258,6 @@ class BlockView extends StatelessWidget {
       ],
     );
   }
-
-  Widget listWidget(BuildContext context, BlockViewModel model) {
-    return Column(
-      children: [
-        ListView.builder(
-          shrinkWrap: true,
-          itemCount: block.challenges.length,
-          physics: const ClampingScrollPhysics(),
-          itemBuilder: (context, i) => ListTile(
-            leading: model.getIcon(
-              model.completedChallenge(
-                block.challengeTiles[i].id,
-              ),
-            ),
-            title: Text(block.challengeTiles[i].name),
-            onTap: () async {
-              String challengeId = block.challengeTiles[i].id;
-
-              model.routeToChallengeView(
-                block,
-                challengeId,
-              );
-            },
-          ),
-        ),
-      ],
-    );
-  }
-}
-
-class BlockHeader extends StatelessWidget {
-  const BlockHeader({
-    Key? key,
-    required this.isCertification,
-    required this.block,
-    required this.model,
-  }) : super(key: key);
-
-  final bool isCertification;
-  final BlockViewModel model;
-  final Block block;
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      color: const Color(0xFF0a0a23),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          if (isCertification)
-            Container(
-              padding: const EdgeInsets.all(8),
-              margin: const EdgeInsets.only(top: 8, left: 8),
-              color: const Color.fromRGBO(0x00, 0x2e, 0xad, 1),
-              child: Text(
-                context.t.certification_project,
-                style: const TextStyle(
-                  fontWeight: FontWeight.bold,
-                  color: Color.fromRGBO(0x19, 0x8e, 0xee, 1),
-                ),
-              ),
-            ),
-          ListTile(
-            onTap: () {
-              model.setBlockOpenState(
-                block.name,
-                model.isOpen,
-              );
-            },
-            minVerticalPadding: 24,
-            trailing: !isCertification
-                ? OpenCloseIcon(
-                    block: block,
-                    model: model,
-                  )
-                : null,
-            title: Row(
-              crossAxisAlignment: CrossAxisAlignment.center,
-              children: [
-                if (!isCertification)
-                  Padding(
-                    padding: const EdgeInsets.fromLTRB(0, 8, 8, 8),
-                    child: model.challengesCompleted == block.challenges.length
-                        ? const Icon(
-                            Icons.check_circle,
-                            size: 20,
-                          )
-                        : const Icon(
-                            Icons.circle_outlined,
-                            size: 20,
-                          ),
-                  ),
-                Expanded(
-                  child: Text(
-                    block.name,
-                    maxLines: 2,
-                    overflow: TextOverflow.ellipsis,
-                    style: const TextStyle(
-                      fontWeight: FontWeight.bold,
-                      fontSize: 18,
-                    ),
-                  ),
-                ),
-              ],
-            ),
-          ),
-        ],
-      ),
-    );
-  }
 }
 
 class ChallengeTile extends StatelessWidget {
@@ -376,7 +281,12 @@ class ChallengeTile extends StatelessWidget {
     bool isCompleted = model.completedChallenge(challengeId);
 
     return TextButton(
-      onPressed: () {},
+      onPressed: () {
+        model.routeToChallengeView(
+          block,
+          challengeId,
+        );
+      },
       style: TextButton.styleFrom(
         backgroundColor: isCompleted
             ? const Color.fromRGBO(0x00, 0x2e, 0xad, 0.3)
