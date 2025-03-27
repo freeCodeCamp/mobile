@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:freecodecamp/extensions/i18n_extension.dart';
 import 'package:freecodecamp/models/learn/curriculum_model.dart';
 import 'package:freecodecamp/service/authentication/authentication_service.dart';
-import 'package:freecodecamp/ui/views/learn/block/block_view.dart';
+import 'package:freecodecamp/ui/views/learn/block/block_template_view.dart';
 import 'package:freecodecamp/ui/views/learn/superblock/superblock_viewmodel.dart';
 import 'package:stacked/stacked.dart';
 
@@ -85,7 +85,7 @@ class SuperBlockView extends StatelessWidget {
               children: [
                 BlockTemplateView(
                   block: superBlock.blocks![i],
-                  isOpen: false,
+                  isOpen: superBlock.blocks!.length <= 5,
                 )
               ],
             ),

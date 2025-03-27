@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:freecodecamp/models/learn/curriculum_model.dart';
-import 'package:freecodecamp/ui/views/learn/block/block_viewmodel.dart';
+import 'package:freecodecamp/ui/views/learn/block/block_template_viewmodel.dart';
 import 'package:freecodecamp/ui/views/learn/block/templates/grid/grid_viewmodel.dart';
 import 'package:stacked/stacked.dart';
 
