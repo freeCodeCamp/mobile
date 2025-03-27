@@ -3,7 +3,6 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:freecodecamp/app/app.locator.dart';
 import 'package:freecodecamp/app/app.router.dart';
-import 'package:freecodecamp/models/learn/challenge_model.dart';
 import 'package:freecodecamp/models/learn/completed_challenge_model.dart';
 import 'package:freecodecamp/models/learn/curriculum_model.dart';
 import 'package:freecodecamp/models/main/user_model.dart';
@@ -27,12 +26,6 @@ class BlockTemplateViewModel extends BaseViewModel {
   bool _isOpen = false;
   bool get isOpen => _isOpen;
 
-  bool _isDownloading = false;
-  bool get isDownloading => _isDownloading;
-
-  bool _isDownloaded = false;
-  bool get isDownloaded => _isDownloaded;
-
   final bool _isDownloadingSpecific = false;
   bool get isDownloadingSpecific => _isDownloadingSpecific;
 
@@ -47,16 +40,6 @@ class BlockTemplateViewModel extends BaseViewModel {
 
   set setIsOpen(bool widgetIsOpened) {
     _isOpen = widgetIsOpened;
-    notifyListeners();
-  }
-
-  set setIsDownloading(bool value) {
-    _isDownloading = value;
-    notifyListeners();
-  }
-
-  set setIsDownloaded(bool value) {
-    _isDownloaded = value;
     notifyListeners();
   }
 
@@ -106,25 +89,6 @@ class BlockTemplateViewModel extends BaseViewModel {
     user = await _auth.userModel;
     setNumberOfCompletedChallenges(challengeBatch);
     notifyListeners();
-
-    learnOfflineService.downloadSub =
-        learnOfflineService.downloadStream.stream.listen(
-      (event) {
-        if (event == 100.00) {
-          setIsDownloading = false;
-          learnOfflineService.downloadStream.sink.add(0);
-        } else {
-          notifyListeners();
-        }
-      },
-      onDone: () {
-        setIsDownloading = false;
-      },
-    );
-  }
-
-  void testChallenge(Challenge challenge) {
-    learnOfflineService.storeDownloadedChallenge(challenge);
   }
 
   void setNumberOfCompletedChallenges(List<ChallengeListTile> challengeBatch) {
@@ -162,70 +126,4 @@ class BlockTemplateViewModel extends BaseViewModel {
     }
     return const Icon(Icons.circle_outlined);
   }
-
-  void stopDownload(Block block, bool isAlreadyDownloaded) async {
-    try {
-      if (!isAlreadyDownloaded) {
-        learnOfflineService.downloadSub!.pause();
-        learnOfflineService.batchSub!.pause();
-        learnOfflineService.timer!.cancel();
-
-        setIsDownloading = false;
-      }
-
-      // learnOfflineService.cancelChallengeDownload(block.dashedName).then(
-      //   (value) async {
-      //     setIsDownloaded = await isBlockDownloaded(
-      //       block,
-      //     );
-      //   },
-      // );
-
-      notifyListeners();
-    } catch (e) {
-      throw error(e);
-    }
-  }
-
-  Future<void> startDownload(Block block) async {
-    String url = LearnService.baseUrl;
-    learnOfflineService
-        .getChallengeBatch(
-      block,
-      block.challengeTiles
-          .map((e) =>
-              '$url/challenges/${block.superBlock.dashedName}/${block.dashedName}/${e.id}.json')
-          .toList(),
-    )
-        .then((value) async {
-      setIsDownloaded = true;
-    });
-    // setIsDownloading = await isBlockDownloaded(
-    //   block,
-    // );
-  }
-
-  // Future<bool> isBlockDownloaded(Block incBlock) async {
-  //   List<Block>? blocks = await learnOfflineService.getCachedBlocks(
-  //     incBlock.superBlock.dashedName,
-  //   );
-
-  //   if (blocks != null) {
-  //     for (Block block in blocks) {
-  //       if (block.dashedName == incBlock.dashedName) {
-  //         return true;
-  //       }
-  //     }
-  //   }
-
-  //   return false;
-  // }
-
-  // Future<bool> isChallengeDownloaded(String id) async {
-  //   List<ChallengeDownload?> downloaded =
-  //       await learnOfflineService.checkStoredChallenges();
-  //   List<String> ids = downloaded.map((e) => e!.id).toList();
-
-  //   return ids.contains(id);
-  // }
 }
