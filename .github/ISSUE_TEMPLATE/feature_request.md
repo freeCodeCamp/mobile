@@ -2,7 +2,7 @@
 name: Feature request
 about: Suggest an idea for the mobile app
 title: ''
-labels: 'type: feature request'
+labels: ['type: feature request', 'status: waiting triage']
 assignees: ''
 
 ---
