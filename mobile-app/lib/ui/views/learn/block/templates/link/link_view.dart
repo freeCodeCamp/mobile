@@ -1,15 +1,54 @@
-import 'package:flutter/widgets.dart';
+import 'package:flutter/material.dart';
+import 'package:freecodecamp/models/learn/curriculum_model.dart';
+import 'package:freecodecamp/ui/views/learn/block/block_viewmodel.dart';
 import 'package:freecodecamp/ui/views/learn/block/templates/link/link_viewmodel.dart';
 import 'package:stacked/stacked.dart';
 
 class BlockLinkView extends StatelessWidget {
-  const BlockLinkView({Key? key}) : super(key: key);
+  const BlockLinkView({
+    Key? key,
+    required this.block,
+    required this.model,
+  }) : super(key: key);
+
+  final Block block;
+  final BlockTemplateViewModel model;
 
   @override
   Widget build(BuildContext context) {
     return ViewModelBuilder.reactive(
       viewModelBuilder: () => BlockLinkViewModel(),
-      builder: (context, model, child) => Container(),
+      builder: (context, childModel, child) {
+        return Expanded(
+          child: Column(
+            children: [
+              Text(block.description.join()),
+              Row(
+                children: [
+                  Expanded(
+                    child: TextButton(
+                      onPressed: () {
+                        model.routeToCertification(block);
+                      },
+                      style: TextButton.styleFrom(
+                        backgroundColor:
+                            const Color.fromRGBO(0x5a, 0x01, 0xa7, 1),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(5),
+                        ),
+                      ),
+                      child: const Text(
+                        'Start',
+                        style: TextStyle(fontWeight: FontWeight.bold),
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ],
+          ),
+        );
+      },
     );
   }
 }

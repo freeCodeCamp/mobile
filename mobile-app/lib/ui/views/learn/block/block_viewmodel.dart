@@ -1,6 +1,4 @@
 import 'dart:async';
-
-import 'package:flutter/material.dart';
 import 'package:freecodecamp/app/app.locator.dart';
 import 'package:freecodecamp/app/app.router.dart';
 import 'package:freecodecamp/models/learn/completed_challenge_model.dart';
@@ -118,12 +116,5 @@ class BlockTemplateViewModel extends BaseViewModel {
     }
 
     return false;
-  }
-
-  Icon getIcon(bool completed) {
-    if (completed) {
-      return const Icon(Icons.check_circle);
-    }
-    return const Icon(Icons.circle_outlined);
   }
 }

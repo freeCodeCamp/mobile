@@ -1,18 +1,19 @@
 import 'package:flutter/material.dart';
 import 'package:freecodecamp/models/learn/curriculum_model.dart';
 import 'package:freecodecamp/ui/views/learn/block/block_viewmodel.dart';
+import 'package:freecodecamp/ui/views/learn/block/templates/grid/grid_view.dart';
+import 'package:freecodecamp/ui/views/learn/block/templates/link/link_view.dart';
+import 'package:freecodecamp/ui/views/learn/block/templates/list/list_view.dart';
 import 'package:stacked/stacked.dart';
 
 class BlockTemplateView extends StatelessWidget {
   final Block block;
   final bool isOpen;
-  final bool isStepBased;
 
   const BlockTemplateView({
     Key? key,
     required this.block,
     required this.isOpen,
-    required this.isStepBased,
   }) : super(key: key);
 
   @override
@@ -28,73 +29,79 @@ class BlockTemplateView extends StatelessWidget {
         model,
         child,
       ) {
-        // double progress = model.challengesCompleted / block.challenges.length;
-
         return Padding(
           padding: const EdgeInsets.only(bottom: 16.0),
           child: Container(
-              decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(10),
-                border: Border.all(
-                  color: const Color.fromRGBO(0x3b, 0x3b, 0x4f, 1),
-                ),
-                color: const Color.fromRGBO(0x1b, 0x1b, 0x32, 1),
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(10),
+              border: Border.all(
+                color: const Color.fromRGBO(0x3b, 0x3b, 0x4f, 1),
               ),
-              padding: const EdgeInsets.all(8),
-              width: MediaQuery.of(context).size.width,
-              child: Container()),
-        );
-      },
-    );
-  }
-}
-
-class ChallengeTile extends StatelessWidget {
-  const ChallengeTile({
-    Key? key,
-    required this.block,
-    required this.model,
-    required this.step,
-    required this.isDowloaded,
-    required this.challengeId,
-  }) : super(key: key);
-
-  final Block block;
-  final BlockTemplateViewModel model;
-  final int step;
-  final bool isDowloaded;
-  final String challengeId;
-
-  @override
-  Widget build(BuildContext context) {
-    bool isCompleted = model.completedChallenge(challengeId);
-
-    return TextButton(
-      onPressed: () {
-        model.routeToChallengeView(
-          block,
-          challengeId,
-        );
-      },
-      style: TextButton.styleFrom(
-        backgroundColor: isCompleted
-            ? const Color.fromRGBO(0x00, 0x2e, 0xad, 0.3)
-            : const Color.fromRGBO(0x2a, 0x2a, 0x40, 1),
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(5),
-          side: isCompleted
-              ? const BorderSide(
-                  width: 1,
-                  color: Color.fromRGBO(0xbc, 0xe8, 0xf1, 1),
-                )
-              : const BorderSide(
-                  color: Color.fromRGBO(0x3b, 0x3b, 0x4f, 1),
+              color: const Color.fromRGBO(0x1b, 0x1b, 0x32, 1),
+            ),
+            padding: const EdgeInsets.all(8),
+            width: MediaQuery.of(context).size.width,
+            child: Row(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                const Column(
+                  children: [
+                    Padding(
+                      padding: EdgeInsets.all(8.0),
+                      child: Column(
+                        children: [
+                          Icon(
+                            Icons.monitor,
+                            color: Color.fromRGBO(0x19, 0x8e, 0xee, 1),
+                          )
+                        ],
+                      ),
+                    ),
+                  ],
                 ),
-        ),
-      ),
-      child: Text(
-        step.toString(),
-      ),
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        block.name,
+                        style: const TextStyle(
+                          wordSpacing: 0,
+                          letterSpacing: 0,
+                          fontSize: 18,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                      Row(
+                        children: [
+                          Builder(
+                            builder: (BuildContext context) {
+                              switch (block.layout) {
+                                case BlockLayout.challengeGrid:
+                                  return BlockGridView(
+                                      block: block, model: model);
+                                case BlockLayout.challengeList:
+                                  return BlockListView(
+                                      block: block, model: model);
+                                case BlockLayout.challengeLink:
+                                  return BlockLinkView(
+                                      block: block, model: model);
+                                default:
+                                  return BlockGridView(
+                                      block: block, model: model);
+                              }
+                            },
+                          ),
+                        ],
+                      ),
+                    ],
+                  ),
+                ),
+              ],
+            ),
+          ),
+        );
+      },
     );
   }
 }
