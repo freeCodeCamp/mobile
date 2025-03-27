@@ -86,7 +86,7 @@ class BlockView extends StatelessWidget {
                                 ),
                                 backgroundColor:
                                     const Color.fromRGBO(0x2a, 0x2a, 0x40, 1),
-                                borderRadius: BorderRadius.circular(5),
+                                borderRadius: BorderRadius.circular(10),
                               ),
                             ),
                           if (block.challenges.length == 1)

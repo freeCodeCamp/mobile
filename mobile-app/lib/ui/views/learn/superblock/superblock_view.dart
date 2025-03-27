@@ -83,21 +83,10 @@ class SuperBlockView extends StatelessWidget {
             ),
             child: Column(
               children: [
-                FutureBuilder<bool>(
-                  future: model.getBlockOpenState(superBlock.blocks![i]),
-                  builder: (context, snapshot) {
-                    if (snapshot.hasData) {
-                      bool isOpen = snapshot.data!;
-
-                      return BlockView(
-                        block: superBlock.blocks![i],
-                        isOpen: isOpen,
-                        isStepBased: superBlock.blocks![i].isStepBased,
-                      );
-                    }
-
-                    return const CircularProgressIndicator();
-                  },
+                BlockView(
+                  block: superBlock.blocks![i],
+                  isOpen: false,
+                  isStepBased: superBlock.blocks![i].isStepBased,
                 )
               ],
             ),
