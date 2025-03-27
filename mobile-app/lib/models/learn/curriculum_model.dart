@@ -46,6 +46,18 @@ class SuperBlock {
   }
 }
 
+enum BlockType { lecture, workshop, lab, review, quiz, exam, legacy }
+
+enum BlockLayout {
+  challengeList,
+  challengeGrid,
+  challengeLink,
+  project,
+  legacyChallengeList,
+  legacyChallengeGrid,
+  legacyChallengeLink
+}
+
 class Block {
   final String name;
   final String dashedName;
