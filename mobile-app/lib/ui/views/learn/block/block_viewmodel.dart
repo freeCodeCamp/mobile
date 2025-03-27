@@ -15,7 +15,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:stacked/stacked.dart';
 import 'package:stacked_services/stacked_services.dart';
 
-class BlockViewModel extends BaseViewModel {
+class BlockTemplateViewModel extends BaseViewModel {
   final NavigationService _navigationService = locator<NavigationService>();
   final AuthenticationService _auth = locator<AuthenticationService>();
 
@@ -173,13 +173,13 @@ class BlockViewModel extends BaseViewModel {
         setIsDownloading = false;
       }
 
-      learnOfflineService.cancelChallengeDownload(block.dashedName).then(
-        (value) async {
-          setIsDownloaded = await isBlockDownloaded(
-            block,
-          );
-        },
-      );
+      // learnOfflineService.cancelChallengeDownload(block.dashedName).then(
+      //   (value) async {
+      //     setIsDownloaded = await isBlockDownloaded(
+      //       block,
+      //     );
+      //   },
+      // );
 
       notifyListeners();
     } catch (e) {
@@ -200,32 +200,32 @@ class BlockViewModel extends BaseViewModel {
         .then((value) async {
       setIsDownloaded = true;
     });
-    setIsDownloading = await isBlockDownloaded(
-      block,
-    );
+    // setIsDownloading = await isBlockDownloaded(
+    //   block,
+    // );
   }
 
-  Future<bool> isBlockDownloaded(Block incBlock) async {
-    List<Block>? blocks = await learnOfflineService.getCachedBlocks(
-      incBlock.superBlock.dashedName,
-    );
+  // Future<bool> isBlockDownloaded(Block incBlock) async {
+  //   List<Block>? blocks = await learnOfflineService.getCachedBlocks(
+  //     incBlock.superBlock.dashedName,
+  //   );
 
-    if (blocks != null) {
-      for (Block block in blocks) {
-        if (block.dashedName == incBlock.dashedName) {
-          return true;
-        }
-      }
-    }
+  //   if (blocks != null) {
+  //     for (Block block in blocks) {
+  //       if (block.dashedName == incBlock.dashedName) {
+  //         return true;
+  //       }
+  //     }
+  //   }
 
-    return false;
-  }
+  //   return false;
+  // }
 
-  Future<bool> isChallengeDownloaded(String id) async {
-    List<ChallengeDownload?> downloaded =
-        await learnOfflineService.checkStoredChallenges();
-    List<String> ids = downloaded.map((e) => e!.id).toList();
+  // Future<bool> isChallengeDownloaded(String id) async {
+  //   List<ChallengeDownload?> downloaded =
+  //       await learnOfflineService.checkStoredChallenges();
+  //   List<String> ids = downloaded.map((e) => e!.id).toList();
 
-    return ids.contains(id);
-  }
+  //   return ids.contains(id);
+  // }
 }

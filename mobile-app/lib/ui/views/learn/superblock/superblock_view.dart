@@ -83,7 +83,7 @@ class SuperBlockView extends StatelessWidget {
             ),
             child: Column(
               children: [
-                BlockView(
+                BlockTemplateView(
                   block: superBlock.blocks![i],
                   isOpen: false,
                   isStepBased: superBlock.blocks![i].isStepBased,
