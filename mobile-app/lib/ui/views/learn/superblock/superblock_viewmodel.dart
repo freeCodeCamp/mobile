@@ -20,18 +20,6 @@ class SuperBlockViewModel extends BaseViewModel {
 
   final _dio = DioService.dio;
 
-  double getPaddingBetweenBlocks(Block block) {
-    if (block.isStepBased) {
-      return 3.0;
-    }
-
-    if (block.dashedName == 'es6') {
-      return 0;
-    }
-
-    return 50.0;
-  }
-
   EdgeInsets getPaddingBeginAndEnd(int index, int challenges) {
     if (index == 0) {
       return const EdgeInsets.only(top: 16);

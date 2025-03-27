@@ -69,8 +69,8 @@ class SuperBlockView extends StatelessWidget {
           return true;
         },
         child: ListView.separated(
-          separatorBuilder: (context, int i) => Divider(
-            height: model.getPaddingBetweenBlocks(superBlock.blocks![i]),
+          separatorBuilder: (context, int i) => const Divider(
+            height: 0,
             color: Colors.transparent,
           ),
           shrinkWrap: true,
