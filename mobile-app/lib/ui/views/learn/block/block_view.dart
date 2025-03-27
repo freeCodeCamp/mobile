@@ -1,10 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:freecodecamp/models/learn/curriculum_model.dart';
 import 'package:freecodecamp/ui/views/learn/block/block_viewmodel.dart';
-// import 'package:freecodecamp/ui/views/learn/utils/learn_globals.dart';
-// import 'package:freecodecamp/ui/views/learn/widgets/download_button_widget.dart';
-// import 'package:freecodecamp/ui/views/learn/widgets/progressbar_widget.dart';
-// import 'package:freecodecamp/ui/widgets/drawer_widget/drawer_widget_view.dart';
 import 'package:stacked/stacked.dart';
 
 class BlockView extends StatelessWidget {
@@ -166,7 +162,9 @@ class BlockView extends StatelessWidget {
                         child: Padding(
                           padding: const EdgeInsets.all(8.0),
                           child: TextButton(
-                            onPressed: () {},
+                            onPressed: () {
+                              model.routeToCertification(block);
+                            },
                             style: TextButton.styleFrom(
                               backgroundColor:
                                   const Color.fromRGBO(0x5a, 0x01, 0xa7, 1),
