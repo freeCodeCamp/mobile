@@ -6,7 +6,6 @@ import 'package:freecodecamp/service/authentication/authentication_service.dart'
 import 'package:freecodecamp/service/dio_service.dart';
 import 'package:freecodecamp/service/learn/learn_offline_service.dart';
 import 'package:freecodecamp/service/learn/learn_service.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 import 'package:stacked/stacked.dart';
 
 class SuperBlockViewModel extends BaseViewModel {
@@ -21,18 +20,6 @@ class SuperBlockViewModel extends BaseViewModel {
 
   final _dio = DioService.dio;
 
-  double getPaddingBetweenBlocks(Block block) {
-    if (block.isStepBased) {
-      return 3.0;
-    }
-
-    if (block.dashedName == 'es6') {
-      return 0;
-    }
-
-    return 50.0;
-  }
-
   EdgeInsets getPaddingBeginAndEnd(int index, int challenges) {
     if (index == 0) {
       return const EdgeInsets.only(top: 16);
@@ -41,12 +28,6 @@ class SuperBlockViewModel extends BaseViewModel {
     } else {
       return const EdgeInsets.all(0);
     }
-  }
-
-  Future<bool> getBlockOpenState(Block block) async {
-    SharedPreferences prefs = await SharedPreferences.getInstance();
-
-    return prefs.getBool(block.name) ?? block.order == 0;
   }
 
   Future<SuperBlock> getSuperBlockData(

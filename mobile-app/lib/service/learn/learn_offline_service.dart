@@ -267,7 +267,7 @@ class LearnOfflineService {
     try {
       SharedPreferences prefs = await SharedPreferences.getInstance();
 
-      Map<String, dynamic> blockToJson = Block.toCachedObject(block);
+      Map<String, dynamic> blockToJson = {};
       List<String>? storedBlocks = prefs.getStringList('storedBlocks');
 
       if (storedBlocks == null) {
