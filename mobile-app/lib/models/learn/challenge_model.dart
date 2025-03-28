@@ -125,7 +125,8 @@ class Challenge {
               'head': challengeFile.head,
               'tail': challengeFile.tail,
               'contents': challengeFile.contents,
-              'editableRegionBoundries': challengeFile.editableRegionBoundaries,
+              'editableRegionBoundaries':
+                  challengeFile.editableRegionBoundaries,
               'history': challengeFile.history,
               'fileKey': challengeFile.fileKey,
             },
