@@ -23,12 +23,12 @@ jobs:
 
     steps:
       - name: Checkout freeCodeCamp main repo
-        uses: actions/checkout@a5ac7e51b41094c92402da3b24376905380afc29 # v4
+        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4
         with:
           repository: freeCodeCamp/freeCodeCamp
 
       - name: Checkout mobile repo
-        uses: actions/checkout@a5ac7e51b41094c92402da3b24376905380afc29 # v4
+        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4
         with:
           path: mobile
 
@@ -38,13 +38,13 @@ jobs:
           version: 9
 
       - name: Use Node.js ${{ matrix.node-version }}
-        uses: actions/setup-node@60edb5dd545a775178f52524783378180af0d1f8 # v4
+        uses: actions/setup-node@cdca7365b2dadb8aad0a33bc7601856ffabcc48e # v4
         with:
           node-version: ${{ matrix.node-version }}
           cache: pnpm
 
       - name: Setup Flutter 3.27.x
-        uses: subosito/flutter-action@44ac965b96f18d999802d4b807e3256d5a3f9fa1 # v2
+        uses: subosito/flutter-action@e938fdf56512cc96ef2f93601a5a40bde3801046 # v2
         with:
           flutter-version: "3.27.x"
           channel: "stable"
@@ -78,7 +78,7 @@ jobs:
       - name: Run playwright tests
         run: npx playwright test --config=mobile/e2e/playwright.config.js
 
-      - uses: actions/upload-artifact@65462800fd760344b1a7b4382951275a0abb4808 # v4
+      - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
         if: ${{ !cancelled() }}
         with:
           name: playwright-report-mobile
