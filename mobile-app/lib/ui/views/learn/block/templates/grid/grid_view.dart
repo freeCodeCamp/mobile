@@ -28,10 +28,11 @@ class BlockGridView extends StatelessWidget {
       builder: (context, childModel, child) => Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          SizedBox(
+          Container(
+            padding: const EdgeInsets.all(8),
             // For some dumb reason the progress indicator does not
             // get a specified width from the column.
-            width: MediaQuery.of(context).size.width * 0.7725,
+            width: MediaQuery.of(context).size.width * 0.9,
             child: LinearProgressIndicator(
               minHeight: 10,
               value: progress,
@@ -45,9 +46,7 @@ class BlockGridView extends StatelessWidget {
           Row(
             children: [
               Padding(
-                padding: const EdgeInsets.symmetric(
-                  vertical: 4,
-                ),
+                padding: const EdgeInsets.all(8),
                 child: TextButton(
                   onPressed: () {
                     model.setIsOpen = !model.isOpen;
@@ -71,16 +70,18 @@ class BlockGridView extends StatelessWidget {
           if (model.isOpen)
             Row(
               children: [
-                SizedBox(
+                Container(
+                  padding: const EdgeInsets.all(8),
                   height: 195,
-                  width: MediaQuery.of(context).size.width - 100,
+                  width: MediaQuery.of(context).size.width - 34,
                   child: GridView.builder(
                     gridDelegate:
                         const SliverGridDelegateWithFixedCrossAxisCount(
-                            crossAxisCount: 6,
-                            mainAxisExtent: 50,
-                            mainAxisSpacing: 3,
-                            crossAxisSpacing: 3),
+                      crossAxisCount: 6,
+                      mainAxisExtent: 60,
+                      mainAxisSpacing: 3,
+                      crossAxisSpacing: 3,
+                    ),
                     itemCount: block.challenges.length,
                     itemBuilder: (context, step) {
                       return ChallengeTile(

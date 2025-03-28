@@ -44,33 +44,28 @@ class BlockTemplateView extends StatelessWidget {
             child: Row(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                const Column(
-                  children: [
-                    Padding(
-                      padding: EdgeInsets.all(8.0),
-                      child: Column(
-                        children: [
-                          Icon(
-                            Icons.monitor,
-                            color: Color.fromRGBO(0x19, 0x8e, 0xee, 1),
-                          )
-                        ],
-                      ),
-                    ),
-                  ],
-                ),
                 Expanded(
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Text(
-                        block.name,
-                        style: const TextStyle(
-                          wordSpacing: 0,
-                          letterSpacing: 0,
-                          fontSize: 18,
-                          fontWeight: FontWeight.bold,
-                        ),
+                      Row(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Expanded(
+                            child: Padding(
+                              padding: const EdgeInsets.all(8.0),
+                              child: Text(
+                                block.name,
+                                style: const TextStyle(
+                                  wordSpacing: 0,
+                                  letterSpacing: 0,
+                                  fontSize: 18,
+                                  fontWeight: FontWeight.bold,
+                                ),
+                              ),
+                            ),
+                          ),
+                        ],
                       ),
                       Row(
                         children: [

@@ -20,32 +20,35 @@ class BlockLinkView extends StatelessWidget {
       viewModelBuilder: () => BlockLinkViewModel(),
       builder: (context, childModel, child) {
         return Expanded(
-          child: Column(
-            children: [
-              Text(block.description.join()),
-              Row(
-                children: [
-                  Expanded(
-                    child: TextButton(
-                      onPressed: () {
-                        model.routeToCertification(block);
-                      },
-                      style: TextButton.styleFrom(
-                        backgroundColor:
-                            const Color.fromRGBO(0x5a, 0x01, 0xa7, 1),
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(5),
+          child: Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: Column(
+              children: [
+                Text(block.description.join()),
+                Row(
+                  children: [
+                    Expanded(
+                      child: TextButton(
+                        onPressed: () {
+                          model.routeToCertification(block);
+                        },
+                        style: TextButton.styleFrom(
+                          backgroundColor:
+                              const Color.fromRGBO(0x5a, 0x01, 0xa7, 1),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(5),
+                          ),
+                        ),
+                        child: const Text(
+                          'Start',
+                          style: TextStyle(fontWeight: FontWeight.bold),
                         ),
                       ),
-                      child: const Text(
-                        'Start',
-                        style: TextStyle(fontWeight: FontWeight.bold),
-                      ),
                     ),
-                  ),
-                ],
-              ),
-            ],
+                  ],
+                ),
+              ],
+            ),
           ),
         );
       },
