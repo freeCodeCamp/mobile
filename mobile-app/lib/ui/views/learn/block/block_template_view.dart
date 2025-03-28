@@ -22,6 +22,7 @@ class BlockTemplateView extends StatelessWidget {
       onViewModelReady: (model) async {
         model.init(block.challengeTiles);
         model.setIsDev = await model.developerService.developmentMode();
+        model.setIsOpen = isOpen;
       },
       viewModelBuilder: () => BlockTemplateViewModel(),
       builder: (

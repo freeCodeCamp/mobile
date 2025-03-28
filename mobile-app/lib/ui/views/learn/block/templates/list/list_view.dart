@@ -24,10 +24,11 @@ class BlockListView extends StatelessWidget {
       builder: (context, childModel, child) => Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          SizedBox(
+          Container(
+            padding: const EdgeInsets.all(8),
             // For some dumb reason the progress indicator does not
             // get a specified width from the column.
-            width: MediaQuery.of(context).size.width * 0.7725,
+            width: MediaQuery.of(context).size.width * 0.9,
             child: LinearProgressIndicator(
               minHeight: 10,
               value: progress,
@@ -41,9 +42,7 @@ class BlockListView extends StatelessWidget {
           Row(
             children: [
               Padding(
-                padding: const EdgeInsets.symmetric(
-                  vertical: 4,
-                ),
+                padding: const EdgeInsets.all(8),
                 child: TextButton(
                   onPressed: () {
                     model.setIsOpen = !model.isOpen;
@@ -67,8 +66,9 @@ class BlockListView extends StatelessWidget {
           if (model.isOpen)
             Row(
               children: [
-                SizedBox(
-                  width: MediaQuery.of(context).size.width * 0.7725,
+                Container(
+                  padding: const EdgeInsets.all(8),
+                  width: MediaQuery.of(context).size.width - 34,
                   child: ListView.builder(
                     shrinkWrap: true,
                     physics: const ClampingScrollPhysics(),

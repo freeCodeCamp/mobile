@@ -85,7 +85,8 @@ class SuperBlockView extends StatelessWidget {
               children: [
                 BlockTemplateView(
                   block: superBlock.blocks![i],
-                  isOpen: superBlock.blocks!.length <= 3,
+                  isOpen: superBlock.blocks!.length <= 3 ||
+                      superBlock.blocks![i].order == 0,
                 )
               ],
             ),
