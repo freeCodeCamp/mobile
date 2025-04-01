@@ -51,6 +51,7 @@ enum BlockType { lecture, workshop, lab, review, quiz, exam, legacy }
 enum BlockLayout {
   challengeList,
   challengeGrid,
+  challengeDialogue,
   challengeLink,
   project,
 }
@@ -97,6 +98,8 @@ class Block {
         case 'challenge-list':
         case 'legacy-challenge-list':
           return BlockLayout.challengeList;
+        case 'dialogue-grid':
+          return BlockLayout.challengeDialogue;
         case 'challenge-grid':
         case 'legacy-challenge-grid':
           return BlockLayout.challengeGrid;

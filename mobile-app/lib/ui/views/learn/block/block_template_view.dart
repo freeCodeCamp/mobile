@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:freecodecamp/models/learn/curriculum_model.dart';
 import 'package:freecodecamp/ui/views/learn/block/block_template_viewmodel.dart';
+import 'package:freecodecamp/ui/views/learn/block/templates/dialogue/dialogue_view.dart';
 import 'package:freecodecamp/ui/views/learn/block/templates/grid/grid_view.dart';
 import 'package:freecodecamp/ui/views/learn/block/templates/link/link_view.dart';
 import 'package:freecodecamp/ui/views/learn/block/templates/list/list_view.dart';
@@ -75,16 +76,29 @@ class BlockTemplateView extends StatelessWidget {
                               switch (block.layout) {
                                 case BlockLayout.challengeGrid:
                                   return BlockGridView(
-                                      block: block, model: model);
+                                    block: block,
+                                    model: model,
+                                  );
+                                case BlockLayout.challengeDialogue:
+                                  return BlockDialogueView(
+                                    block: block,
+                                    model: model,
+                                  );
                                 case BlockLayout.challengeList:
                                   return BlockListView(
-                                      block: block, model: model);
+                                    block: block,
+                                    model: model,
+                                  );
                                 case BlockLayout.challengeLink:
                                   return BlockLinkView(
-                                      block: block, model: model);
+                                    block: block,
+                                    model: model,
+                                  );
                                 default:
                                   return BlockGridView(
-                                      block: block, model: model);
+                                    block: block,
+                                    model: model,
+                                  );
                               }
                             },
                           ),
