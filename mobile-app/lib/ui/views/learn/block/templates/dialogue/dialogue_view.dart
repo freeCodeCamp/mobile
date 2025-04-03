@@ -113,7 +113,7 @@ class BlockDialogueView extends StatelessWidget {
                               model: model,
                               challengeId: structure[dialogueBlock][task].id,
                               step: task + 1,
-                              isDowloaded: false,
+                              isDownloaded: false,
                             );
                           },
                         ),
@@ -136,14 +136,14 @@ class ChallengeTile extends StatelessWidget {
     required this.block,
     required this.model,
     required this.step,
-    required this.isDowloaded,
+    required this.isDownloaded,
     required this.challengeId,
   }) : super(key: key);
 
   final Block block;
   final BlockTemplateViewModel model;
   final int step;
-  final bool isDowloaded;
+  final bool isDownloaded;
   final String challengeId;
 
   @override

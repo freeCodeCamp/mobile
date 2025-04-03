@@ -89,7 +89,7 @@ class BlockGridView extends StatelessWidget {
                         model: model,
                         step: step + 1,
                         challengeId: block.challengeTiles[step].id,
-                        isDowloaded: false,
+                        isDownloaded: false,
                       );
                     },
                   ),
@@ -108,14 +108,14 @@ class ChallengeTile extends StatelessWidget {
     required this.block,
     required this.model,
     required this.step,
-    required this.isDowloaded,
+    required this.isDownloaded,
     required this.challengeId,
   }) : super(key: key);
 
   final Block block;
   final BlockTemplateViewModel model;
   final int step;
-  final bool isDowloaded;
+  final bool isDownloaded;
   final String challengeId;
 
   @override
