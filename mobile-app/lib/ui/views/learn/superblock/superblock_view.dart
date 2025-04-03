@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:freecodecamp/extensions/i18n_extension.dart';
 import 'package:freecodecamp/models/learn/curriculum_model.dart';
 import 'package:freecodecamp/service/authentication/authentication_service.dart';
-import 'package:freecodecamp/ui/views/learn/block/block_view.dart';
+import 'package:freecodecamp/ui/views/learn/block/block_template_view.dart';
 import 'package:freecodecamp/ui/views/learn/superblock/superblock_viewmodel.dart';
 import 'package:stacked/stacked.dart';
 
@@ -29,6 +29,7 @@ class SuperBlockView extends StatelessWidget {
         appBar: AppBar(
           title: Text(superBlockName),
         ),
+        backgroundColor: const Color.fromRGBO(0x0a, 0x0a, 0x23, 1),
         body: FutureBuilder<SuperBlock>(
           future: model.getSuperBlockData(
             superBlockDashedName,
@@ -68,8 +69,8 @@ class SuperBlockView extends StatelessWidget {
           return true;
         },
         child: ListView.separated(
-          separatorBuilder: (context, int i) => Divider(
-            height: model.getPaddingBetweenBlocks(superBlock.blocks![i]),
+          separatorBuilder: (context, int i) => const Divider(
+            height: 0,
             color: Colors.transparent,
           ),
           shrinkWrap: true,
@@ -82,21 +83,10 @@ class SuperBlockView extends StatelessWidget {
             ),
             child: Column(
               children: [
-                FutureBuilder<bool>(
-                  future: model.getBlockOpenState(superBlock.blocks![i]),
-                  builder: (context, snapshot) {
-                    if (snapshot.hasData) {
-                      bool isOpen = snapshot.data!;
-
-                      return BlockView(
-                        block: superBlock.blocks![i],
-                        isOpen: isOpen,
-                        isStepBased: superBlock.blocks![i].isStepBased,
-                      );
-                    }
-
-                    return const CircularProgressIndicator();
-                  },
+                BlockTemplateView(
+                  block: superBlock.blocks![i],
+                  isOpen: superBlock.blocks!.length <= 3 ||
+                      superBlock.blocks![i].order == 0,
                 )
               ],
             ),
