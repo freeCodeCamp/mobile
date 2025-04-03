@@ -35,6 +35,7 @@ dependencies:
   graphql: ^5.1.3
   graphql_flutter: ^5.1.2
   html: ^0.15.4
+  image_picker_for_web: ^3.0.6
   infinite_scroll_pagination: ^4.0.0
   jiffy: ^6.2.1 # TODO: upgrade after migrating to FLutter 3.19
   just_audio: ^0.9.37
@@ -45,6 +46,7 @@ dependencies:
   pretty_dio_logger: ^1.2.0-beta-1 # NOTE: Do we still want this?
   quick_actions: ^1.0.7
   share_plus: ^7.2.2 # TODO: upgrade after migrating to FLutter 3.19
+  share_plus_web: ^3.1.0
   shared_preferences: ^2.2.3
   sqflite: ^2.3.3
   # TODO: Replace with sqflite methods as below package isn't actively maintained
@@ -54,6 +56,8 @@ dependencies:
   ua_client_hints: ^1.4.1
   upgrader: ^10.2.0
   url_launcher: ^6.2.6
+  video_player_web: ^2.3.4
+  wakelock_web: ^0.4.0
   web_socket_channel: ^2.4.0
   youtube_player_iframe: ^5.1.2 # 2.3.0 last working with fullscreen
 dev_dependencies:
