@@ -63,6 +63,7 @@ dev_dependencies:
     sdk: flutter
   flutter_launcher_icons: ^0.13.1
   flutter_lints: ^2.0.3
+  flutter_native_splash: ^2.4.0
   flutter_test:
     sdk: flutter
   integration_test:
