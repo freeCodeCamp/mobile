@@ -8,3 +8,9 @@ flutter_native_splash:
     - "ios/Runner/Info-Debug.plist"
     - "ios/Runner/Info-Release.plist"
     - "ios/Runner/Info-Profile.plist"
+  android_12:
+    color: "#0a0a23"
+    icon_background_color: "#0a0a23"
+    image: assets/images/app-logo.png
+# run this to apply any changes:
+# dart run flutter_native_splash:create --path=./native_splash.yml
