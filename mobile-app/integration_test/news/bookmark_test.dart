@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:freecodecamp/main.dart' as app;
 import 'package:freecodecamp/ui/views/news/news-tutorial/news_tutorial_view.dart';
@@ -6,10 +7,10 @@ import 'package:integration_test/integration_test.dart';
 import 'package:path/path.dart' as path;
 import 'package:sqflite/sqflite.dart';
 
-void main() {
+Future main() async {
   final binding = IntegrationTestWidgetsFlutterBinding();
   IntegrationTestWidgetsFlutterBinding.ensureInitialized();
-
+  await dotenv.load();
   testWidgets('NEWS - should bookmark tutorial', (WidgetTester tester) async {
     // Start app and navigate to news view
     tester.printToConsole('Test starting');
