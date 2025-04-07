@@ -3,7 +3,10 @@ description: freecodecamp.org app.
 publish_to: none
 version: 5.0.1+50001
 environment:
+  # Dart SDK
   sdk: ">=3.0.0 <4.0.0"
+  # Flutter SDK
+  flutter: "3.27.4"
 dependencies:
   algolia_helper_flutter: ^1.0.0
   audio_service: ^0.18.13
