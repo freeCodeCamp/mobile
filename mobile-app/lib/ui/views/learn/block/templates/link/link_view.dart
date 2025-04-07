@@ -24,7 +24,7 @@ class BlockLinkView extends StatelessWidget {
             padding: const EdgeInsets.all(8.0),
             child: Column(
               children: [
-                Text(block.description.join()),
+                Text(block.description.join(' ')),
                 Row(
                   children: [
                     Expanded(

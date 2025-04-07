@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_scroll_shadow/flutter_scroll_shadow.dart';
 import 'package:freecodecamp/models/learn/curriculum_model.dart';
 import 'package:freecodecamp/ui/views/learn/block/block_template_viewmodel.dart';
 import 'package:freecodecamp/ui/views/learn/block/templates/grid/grid_viewmodel.dart';
+import 'package:freecodecamp/ui/views/learn/widgets/challenge_title.dart';
 import 'package:stacked/stacked.dart';
 
 class BlockGridView extends StatelessWidget {
@@ -74,79 +76,30 @@ class BlockGridView extends StatelessWidget {
                   padding: const EdgeInsets.all(8),
                   height: 195,
                   width: MediaQuery.of(context).size.width - 34,
-                  child: GridView.builder(
-                    gridDelegate:
-                        const SliverGridDelegateWithFixedCrossAxisCount(
-                      crossAxisCount: 6,
-                      mainAxisExtent: 60,
-                      mainAxisSpacing: 3,
-                      crossAxisSpacing: 3,
+                  child: ScrollShadow(
+                    child: GridView.builder(
+                      gridDelegate:
+                          const SliverGridDelegateWithFixedCrossAxisCount(
+                        crossAxisCount: 6,
+                        mainAxisSpacing: 3,
+                        crossAxisSpacing: 3,
+                      ),
+                      itemCount: block.challenges.length,
+                      itemBuilder: (context, step) {
+                        return ChallengeTile(
+                          block: block,
+                          model: model,
+                          step: step + 1,
+                          challengeId: block.challengeTiles[step].id,
+                          isDownloaded: false,
+                        );
+                      },
                     ),
-                    itemCount: block.challenges.length,
-                    itemBuilder: (context, step) {
-                      return ChallengeTile(
-                        block: block,
-                        model: model,
-                        step: step + 1,
-                        challengeId: block.challengeTiles[step].id,
-                        isDownloaded: false,
-                      );
-                    },
                   ),
                 ),
               ],
             ),
         ],
-      ),
-    );
-  }
-}
-
-class ChallengeTile extends StatelessWidget {
-  const ChallengeTile({
-    Key? key,
-    required this.block,
-    required this.model,
-    required this.step,
-    required this.isDownloaded,
-    required this.challengeId,
-  }) : super(key: key);
-
-  final Block block;
-  final BlockTemplateViewModel model;
-  final int step;
-  final bool isDownloaded;
-  final String challengeId;
-
-  @override
-  Widget build(BuildContext context) {
-    bool isCompleted = model.completedChallenge(challengeId);
-
-    return TextButton(
-      onPressed: () {
-        model.routeToChallengeView(
-          block,
-          challengeId,
-        );
-      },
-      style: TextButton.styleFrom(
-        backgroundColor: isCompleted
-            ? const Color.fromRGBO(0x00, 0x2e, 0xad, 0.3)
-            : const Color.fromRGBO(0x2a, 0x2a, 0x40, 1),
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(5),
-          side: isCompleted
-              ? const BorderSide(
-                  width: 1,
-                  color: Color.fromRGBO(0xbc, 0xe8, 0xf1, 1),
-                )
-              : const BorderSide(
-                  color: Color.fromRGBO(0x3b, 0x3b, 0x4f, 1),
-                ),
-        ),
-      ),
-      child: Text(
-        step.toString(),
       ),
     );
   }

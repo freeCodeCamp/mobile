@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'package:flutter/material.dart';
 import 'package:freecodecamp/app/app.locator.dart';
 import 'package:freecodecamp/app/app.router.dart';
 import 'package:freecodecamp/models/learn/completed_challenge_model.dart';
@@ -8,6 +9,10 @@ import 'package:freecodecamp/service/authentication/authentication_service.dart'
 import 'package:freecodecamp/service/developer_service.dart';
 import 'package:freecodecamp/service/learn/learn_offline_service.dart';
 import 'package:freecodecamp/service/learn/learn_service.dart';
+import 'package:freecodecamp/ui/views/learn/block/templates/dialogue/dialogue_view.dart';
+import 'package:freecodecamp/ui/views/learn/block/templates/grid/grid_view.dart';
+import 'package:freecodecamp/ui/views/learn/block/templates/link/link_view.dart';
+import 'package:freecodecamp/ui/views/learn/block/templates/list/list_view.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:stacked/stacked.dart';
 import 'package:stacked_services/stacked_services.dart';
@@ -23,9 +28,6 @@ class BlockTemplateViewModel extends BaseViewModel {
 
   bool _isOpen = false;
   bool get isOpen => _isOpen;
-
-  final bool _isDownloadingSpecific = false;
-  bool get isDownloadingSpecific => _isDownloadingSpecific;
 
   int _challengesCompleted = 0;
   int get challengesCompleted => _challengesCompleted;
@@ -116,5 +118,39 @@ class BlockTemplateViewModel extends BaseViewModel {
     }
 
     return false;
+  }
+
+  Widget getLayout(
+    BlockLayout layout,
+    BlockTemplateViewModel model,
+    Block block,
+  ) {
+    switch (layout) {
+      case BlockLayout.challengeGrid:
+        return BlockGridView(
+          block: block,
+          model: model,
+        );
+      case BlockLayout.challengeDialogue:
+        return BlockDialogueView(
+          block: block,
+          model: model,
+        );
+      case BlockLayout.challengeList:
+        return BlockListView(
+          block: block,
+          model: model,
+        );
+      case BlockLayout.challengeLink:
+        return BlockLinkView(
+          block: block,
+          model: model,
+        );
+      default:
+        return BlockGridView(
+          block: block,
+          model: model,
+        );
+    }
   }
 }
