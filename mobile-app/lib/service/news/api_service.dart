@@ -135,9 +135,9 @@ const getPostQuery = postFieldsFragment +
     }
   ''';
 
-class NewsApiServive {
-  static final NewsApiServive _instance = NewsApiServive._internal();
-  factory NewsApiServive() => _instance;
+class NewsApiService {
+  static final NewsApiService _instance = NewsApiService._internal();
+  factory NewsApiService() => _instance;
 
   HttpLink apiLink = HttpLink('https://gql.hashnode.com');
   late final GraphQLClient client;
@@ -292,5 +292,5 @@ class NewsApiServive {
     );
   }
 
-  NewsApiServive._internal();
+  NewsApiService._internal();
 }
