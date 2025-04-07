@@ -403,7 +403,7 @@ class ChallengeView extends StatelessWidget {
                       color: !model.hasTypedInEditor
                           ? const Color.fromARGB(255, 9, 79, 125)
                           : model.completedChallenge
-                              ? const Color.fromRGBO(0x20, 0xD0, 0x32, 1)
+                              ? const Color.fromRGBO(60, 118, 61, 1)
                               : const Color.fromRGBO(0x1D, 0x9B, 0xF0, 1),
                       child: IconButton(
                         icon: model.runningTests
