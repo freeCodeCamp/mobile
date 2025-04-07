@@ -145,12 +145,13 @@ class HTMLParser {
           fontSize: FontSize.medium,
         ),
         'code': Style(
+          fontFamily: 'Hack',
           backgroundColor: const Color.fromRGBO(0x3b, 0x3b, 0x4f, 0.5),
           padding: HtmlPaddings.symmetric(vertical: 2, horizontal: 4),
           color: Colors.white.withValues(alpha: 0.87),
           fontSize: FontSize.xLarge,
-          fontFamily: 'Roboto Mono',
         ),
+        'pre': Style(fontFamily: 'Hack')
       },
       onLinkTap: (url, attributes, element) {
         launchUrl(Uri.parse(url!.trim()));
@@ -202,7 +203,6 @@ class HTMLParser {
                               : 'plaintext',
                           theme: themeMap['atom-one-dark']!,
                           textStyle: TextStyle(
-                            fontFamily: 'RobotoMono',
                             fontSize: double.parse(
                               FontSize.large.value.toString(),
                             ),
