@@ -46,6 +46,17 @@ class SuperBlockViewModel extends BaseViewModel {
     }
   }
 
+  setBlockOpenClosedState(SuperBlock superBlock, int block) {
+    Map<String, bool> local = blockOpenStates;
+    Block curr = superBlock.blocks![block];
+
+    if (local[curr.dashedName] != null) {
+      local[curr.dashedName] = !local[curr.dashedName]!;
+    }
+
+    blockOpenStates = local;
+  }
+
   Future<SuperBlock> getSuperBlockData(
     String dashedName,
     String name,

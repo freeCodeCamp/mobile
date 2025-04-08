@@ -88,44 +88,31 @@ class SuperBlockView extends StatelessWidget {
           notification.disallowIndicator();
           return true;
         },
-        child: CustomScrollView(
-          slivers: [
-            SliverList(
-              delegate: SliverChildBuilderDelegate(
-                (context, block) {
-                  return Padding(
-                    padding: model.getPaddingBeginAndEnd(
-                      block,
-                      superBlock.blocks![block].challenges.length,
-                    ),
-                    child: Column(
-                      children: [
-                        BlockTemplateView(
-                          key: ValueKey(block),
-                          block: superBlock.blocks![block],
-                          isOpen: model.blockOpenStates[
-                                  superBlock.blocks![block].dashedName] ??
-                              false,
-                          isOpenFunction: () {
-                            Map<String, bool> local = model.blockOpenStates;
-                            Block curr = superBlock.blocks![block];
-
-                            if (local[curr.dashedName] != null) {
-                              local[curr.dashedName] = !local[curr.dashedName]!;
-                            }
-
-                            model.blockOpenStates = local;
-                          },
-                        )
-                      ],
-                    ),
-                  );
-                },
-                childCount: superBlock.blocks!.length,
-                addAutomaticKeepAlives: true,
+        child: ListView.builder(
+          itemCount: superBlock.blocks!.length,
+          itemBuilder: (context, block) {
+            return Padding(
+              padding: model.getPaddingBeginAndEnd(
+                block,
+                superBlock.blocks![block].challenges.length,
               ),
-            )
-          ],
+              child: Column(
+                children: [
+                  BlockTemplateView(
+                    key: ValueKey(block),
+                    block: superBlock.blocks![block],
+                    isOpen: model.blockOpenStates[
+                            superBlock.blocks![block].dashedName] ??
+                        false,
+                    isOpenFunction: () => model.setBlockOpenClosedState(
+                      superBlock,
+                      block,
+                    ),
+                  )
+                ],
+              ),
+            );
+          },
         ),
       ),
     );
