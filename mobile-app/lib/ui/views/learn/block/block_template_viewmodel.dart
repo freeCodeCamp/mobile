@@ -13,7 +13,6 @@ import 'package:freecodecamp/ui/views/learn/block/templates/dialogue/dialogue_vi
 import 'package:freecodecamp/ui/views/learn/block/templates/grid/grid_view.dart';
 import 'package:freecodecamp/ui/views/learn/block/templates/link/link_view.dart';
 import 'package:freecodecamp/ui/views/learn/block/templates/list/list_view.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 import 'package:stacked/stacked.dart';
 import 'package:stacked_services/stacked_services.dart';
 
@@ -26,9 +25,6 @@ class BlockTemplateViewModel extends BaseViewModel {
   bool _isDev = false;
   bool get isDev => _isDev;
 
-  bool _isOpen = false;
-  bool get isOpen => _isOpen;
-
   int _challengesCompleted = 0;
   int get challengesCompleted => _challengesCompleted;
 
@@ -38,30 +34,8 @@ class BlockTemplateViewModel extends BaseViewModel {
 
   final learnService = locator<LearnService>();
 
-  set setIsOpen(bool widgetIsOpened) {
-    _isOpen = widgetIsOpened;
-    notifyListeners();
-  }
-
   set setIsDev(bool value) {
     _isDev = value;
-    notifyListeners();
-  }
-
-  void initBlockState(String blockName) async {
-    SharedPreferences prefs = await SharedPreferences.getInstance();
-
-    if (!prefs.containsKey(blockName)) {
-      prefs.setBool(blockName, true);
-    }
-
-    setBlockOpenState(blockName, prefs.getBool(blockName) ?? false);
-  }
-
-  void setBlockOpenState(String blockName, bool value) async {
-    SharedPreferences prefs = await SharedPreferences.getInstance();
-    prefs.setBool(blockName, !value);
-    _isOpen = !value;
     notifyListeners();
   }
 
@@ -124,22 +98,30 @@ class BlockTemplateViewModel extends BaseViewModel {
     BlockLayout layout,
     BlockTemplateViewModel model,
     Block block,
+    bool isOpen,
+    Function isOpenFunction,
   ) {
     switch (layout) {
       case BlockLayout.challengeGrid:
         return BlockGridView(
           block: block,
           model: model,
+          isOpen: isOpen,
+          isOpenFunction: isOpenFunction,
         );
       case BlockLayout.challengeDialogue:
         return BlockDialogueView(
           block: block,
           model: model,
+          isOpen: isOpen,
+          isOpenFunction: isOpenFunction,
         );
       case BlockLayout.challengeList:
         return BlockListView(
           block: block,
           model: model,
+          isOpen: isOpen,
+          isOpenFunction: isOpenFunction,
         );
       case BlockLayout.challengeLink:
         return BlockLinkView(
@@ -150,6 +132,8 @@ class BlockTemplateViewModel extends BaseViewModel {
         return BlockGridView(
           block: block,
           model: model,
+          isOpen: isOpen,
+          isOpenFunction: isOpenFunction,
         );
     }
   }

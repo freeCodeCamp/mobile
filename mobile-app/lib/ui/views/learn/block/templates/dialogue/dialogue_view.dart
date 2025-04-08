@@ -1,5 +1,3 @@
-import 'dart:developer';
-
 import 'package:flutter/material.dart';
 import 'package:flutter_scroll_shadow/flutter_scroll_shadow.dart';
 import 'package:freecodecamp/models/learn/curriculum_model.dart';
@@ -9,14 +7,18 @@ import 'package:freecodecamp/ui/views/learn/widgets/challenge_tile.dart';
 import 'package:stacked/stacked.dart';
 
 class BlockDialogueView extends StatelessWidget {
-  const BlockDialogueView({
-    Key? key,
-    required this.block,
-    required this.model,
-  }) : super(key: key);
+  const BlockDialogueView(
+      {Key? key,
+      required this.block,
+      required this.model,
+      required this.isOpen,
+      required this.isOpenFunction})
+      : super(key: key);
 
   final Block block;
   final BlockTemplateViewModel model;
+  final bool isOpen;
+  final Function isOpenFunction;
 
   @override
   Widget build(BuildContext context) {
@@ -38,12 +40,35 @@ class BlockDialogueView extends StatelessWidget {
       }
     }
 
-    log(structure.toString());
-
     return ViewModelBuilder.reactive(
       viewModelBuilder: () => BlockDialogueViewModel(),
       builder: (context, childModel, child) => Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
+          Row(
+            children: [
+              Padding(
+                padding: const EdgeInsets.all(8),
+                child: TextButton(
+                  onPressed: () {
+                    isOpenFunction();
+                  },
+                  style: TextButton.styleFrom(
+                    backgroundColor: const Color.fromRGBO(0x1b, 0x1b, 0x32, 1),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(5),
+                      side: const BorderSide(
+                        color: Color.fromRGBO(0x3b, 0x3b, 0x4f, 1),
+                      ),
+                    ),
+                  ),
+                  child: Text(
+                    isOpen ? 'Hide Tasks' : 'Show Tasks',
+                  ),
+                ),
+              ),
+            ],
+          ),
           SizedBox(
             width: MediaQuery.of(context).size.width - 34,
             child: ListView.builder(
@@ -56,37 +81,48 @@ class BlockDialogueView extends StatelessWidget {
                     Row(
                       children: [
                         Expanded(
-                          child: InkWell(
-                            onTap: () => model.routeToChallengeView(
-                              block,
-                              dialogueHeaders[dialogueBlock].id,
+                          child: Padding(
+                            padding: EdgeInsets.only(
+                              bottom: isOpen ? 0 : 8,
+                              left: 8,
+                              right: 8,
                             ),
-                            child: Container(
-                              decoration: BoxDecoration(
-                                borderRadius: BorderRadius.circular(5),
-                                color: model.completedChallenge(
-                                  dialogueHeaders[dialogueBlock].id,
-                                )
-                                    ? const Color.fromRGBO(
-                                        0x00, 0x2e, 0xad, 0.3)
-                                    : const Color.fromRGBO(0x2a, 0x2a, 0x40, 1),
-                                border: Border.all(
-                                  color: model.completedChallenge(
-                                          dialogueHeaders[dialogueBlock].id)
-                                      ? const Color.fromRGBO(
-                                          0xbc, 0xe8, 0xf1, 1)
-                                      : const Color.fromRGBO(
-                                          0x3b, 0x3b, 0x4f, 1),
-                                  width: 1,
-                                ),
+                            child: InkWell(
+                              onTap: () => model.routeToChallengeView(
+                                block,
+                                dialogueHeaders[dialogueBlock].id,
                               ),
-                              child: Padding(
-                                padding: const EdgeInsets.all(8.0),
-                                child: Text(
-                                  dialogueHeaders[dialogueBlock].title,
-                                  style: const TextStyle(
-                                    fontSize: 18,
-                                    fontWeight: FontWeight.bold,
+                              child: Container(
+                                constraints: const BoxConstraints(
+                                  minHeight: 75,
+                                ),
+                                decoration: BoxDecoration(
+                                  borderRadius: BorderRadius.circular(5),
+                                  color: model.completedChallenge(
+                                    dialogueHeaders[dialogueBlock].id,
+                                  )
+                                      ? const Color.fromRGBO(
+                                          0x00, 0x2e, 0xad, 0.3)
+                                      : const Color.fromRGBO(
+                                          0x2a, 0x2a, 0x40, 1),
+                                  border: Border.all(
+                                    color: model.completedChallenge(
+                                            dialogueHeaders[dialogueBlock].id)
+                                        ? const Color.fromRGBO(
+                                            0xbc, 0xe8, 0xf1, 1)
+                                        : const Color.fromRGBO(
+                                            0x3b, 0x3b, 0x4f, 1),
+                                    width: 1,
+                                  ),
+                                ),
+                                child: Padding(
+                                  padding: const EdgeInsets.all(8.0),
+                                  child: Text(
+                                    dialogueHeaders[dialogueBlock].title,
+                                    style: const TextStyle(
+                                      fontSize: 18,
+                                      fontWeight: FontWeight.bold,
+                                    ),
                                   ),
                                 ),
                               ),
@@ -95,33 +131,35 @@ class BlockDialogueView extends StatelessWidget {
                         ),
                       ],
                     ),
-                    SizedBox(
-                      width: MediaQuery.of(context).size.width - 34,
-                      height: 200,
-                      child: Padding(
-                        padding: const EdgeInsets.all(8.0),
-                        child: ScrollShadow(
-                          child: GridView.builder(
-                            itemCount: structure[dialogueBlock].length,
-                            gridDelegate:
-                                const SliverGridDelegateWithFixedCrossAxisCount(
-                              crossAxisCount: 6,
-                              mainAxisSpacing: 3,
-                              crossAxisSpacing: 3,
+                    if (isOpen)
+                      SizedBox(
+                        width: MediaQuery.of(context).size.width - 34,
+                        height: 200,
+                        child: Padding(
+                          padding: const EdgeInsets.all(8.0),
+                          child: ScrollShadow(
+                            child: GridView.builder(
+                              itemCount: structure[dialogueBlock].length,
+                              gridDelegate:
+                                  const SliverGridDelegateWithFixedCrossAxisCount(
+                                crossAxisCount: 6,
+                                mainAxisSpacing: 3,
+                                crossAxisSpacing: 3,
+                              ),
+                              itemBuilder: (context, task) {
+                                return ChallengeTile(
+                                  block: block,
+                                  model: model,
+                                  challengeId:
+                                      structure[dialogueBlock][task].id,
+                                  step: task + 1,
+                                  isDownloaded: false,
+                                );
+                              },
                             ),
-                            itemBuilder: (context, task) {
-                              return ChallengeTile(
-                                block: block,
-                                model: model,
-                                challengeId: structure[dialogueBlock][task].id,
-                                step: task + 1,
-                                isDownloaded: false,
-                              );
-                            },
                           ),
                         ),
-                      ),
-                    )
+                      )
                   ],
                 );
               },

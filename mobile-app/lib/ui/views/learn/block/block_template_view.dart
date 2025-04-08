@@ -6,11 +6,13 @@ import 'package:stacked/stacked.dart';
 class BlockTemplateView extends StatelessWidget {
   final Block block;
   final bool isOpen;
+  final Function isOpenFunction;
 
   const BlockTemplateView({
     Key? key,
     required this.block,
     required this.isOpen,
+    required this.isOpenFunction,
   }) : super(key: key);
 
   @override
@@ -19,7 +21,6 @@ class BlockTemplateView extends StatelessWidget {
       onViewModelReady: (model) async {
         model.init(block.challengeTiles);
         model.setIsDev = await model.developerService.developmentMode();
-        model.setIsOpen = isOpen;
       },
       viewModelBuilder: () => BlockTemplateViewModel(),
       builder: (
@@ -67,7 +68,13 @@ class BlockTemplateView extends StatelessWidget {
                       ),
                       Row(
                         children: [
-                          model.getLayout(block.layout, model, block),
+                          model.getLayout(
+                            block.layout,
+                            model,
+                            block,
+                            isOpen,
+                            isOpenFunction,
+                          ),
                         ],
                       ),
                     ],

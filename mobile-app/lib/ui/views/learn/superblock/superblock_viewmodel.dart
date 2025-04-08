@@ -20,6 +20,14 @@ class SuperBlockViewModel extends BaseViewModel {
 
   final _dio = DioService.dio;
 
+  Map<String, bool> _blockOpenStates = {};
+  Map<String, bool> get blockOpenStates => _blockOpenStates;
+
+  set blockOpenStates(Map<String, bool> openStates) {
+    _blockOpenStates = openStates;
+    notifyListeners();
+  }
+
   EdgeInsets getPaddingBeginAndEnd(int index, int challenges) {
     if (index == 0) {
       return const EdgeInsets.only(top: 16);

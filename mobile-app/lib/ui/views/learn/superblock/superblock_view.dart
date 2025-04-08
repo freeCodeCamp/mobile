@@ -40,6 +40,19 @@ class SuperBlockView extends StatelessWidget {
             if (snapshot.hasData) {
               if (snapshot.data is SuperBlock) {
                 SuperBlock superBlock = snapshot.data as SuperBlock;
+
+                WidgetsBinding.instance.addPostFrameCallback((_) {
+                  if (model.blockOpenStates.isEmpty) {
+                    Map<String, bool> openStates = {
+                      if (superBlock.blocks != null)
+                        for (var block in superBlock.blocks!)
+                          block.dashedName: false
+                    };
+
+                    model.blockOpenStates = openStates;
+                  }
+                });
+
                 return blockTemplate(model, superBlock);
               }
             }
@@ -68,27 +81,44 @@ class SuperBlockView extends StatelessWidget {
           notification.disallowIndicator();
           return true;
         },
-        child: ListView.separated(
-          separatorBuilder: (context, int i) => const Divider(
-            height: 0,
-            color: Colors.transparent,
-          ),
-          shrinkWrap: true,
-          itemCount: superBlock.blocks!.length,
-          physics: const ClampingScrollPhysics(),
-          itemBuilder: (context, i) => Padding(
-            padding: model.getPaddingBeginAndEnd(
-              i,
-              superBlock.blocks![i].challenges.length,
-            ),
-            child: Column(
-              children: [
-                BlockTemplateView(
-                    block: superBlock.blocks![i],
-                    isOpen: superBlock.blocks!.length <= 3)
-              ],
-            ),
-          ),
+        child: CustomScrollView(
+          slivers: [
+            SliverList(
+              delegate: SliverChildBuilderDelegate(
+                (context, block) {
+                  return Padding(
+                    padding: model.getPaddingBeginAndEnd(
+                      block,
+                      superBlock.blocks![block].challenges.length,
+                    ),
+                    child: Column(
+                      children: [
+                        BlockTemplateView(
+                          key: ValueKey(block),
+                          block: superBlock.blocks![block],
+                          isOpen: model.blockOpenStates[
+                                  superBlock.blocks![block].dashedName] ??
+                              false,
+                          isOpenFunction: () {
+                            Map<String, bool> local = model.blockOpenStates;
+                            Block curr = superBlock.blocks![block];
+
+                            if (local[curr.dashedName] != null) {
+                              local[curr.dashedName] = !local[curr.dashedName]!;
+                            }
+
+                            model.blockOpenStates = local;
+                          },
+                        )
+                      ],
+                    ),
+                  );
+                },
+                childCount: superBlock.blocks!.length,
+                addAutomaticKeepAlives: true,
+              ),
+            )
+          ],
         ),
       ),
     );

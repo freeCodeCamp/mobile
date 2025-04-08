@@ -7,14 +7,18 @@ import 'package:freecodecamp/ui/views/learn/widgets/challenge_tile.dart';
 import 'package:stacked/stacked.dart';
 
 class BlockGridView extends StatelessWidget {
-  const BlockGridView({
-    Key? key,
-    required this.block,
-    required this.model,
-  }) : super(key: key);
+  const BlockGridView(
+      {Key? key,
+      required this.block,
+      required this.model,
+      required this.isOpen,
+      required this.isOpenFunction})
+      : super(key: key);
 
   final Block block;
   final BlockTemplateViewModel model;
+  final bool isOpen;
+  final Function isOpenFunction;
 
   @override
   Widget build(BuildContext context) {
@@ -51,7 +55,7 @@ class BlockGridView extends StatelessWidget {
                 padding: const EdgeInsets.all(8),
                 child: TextButton(
                   onPressed: () {
-                    model.setIsOpen = !model.isOpen;
+                    isOpenFunction();
                   },
                   style: TextButton.styleFrom(
                     backgroundColor: const Color.fromRGBO(0x1b, 0x1b, 0x32, 1),
@@ -63,13 +67,13 @@ class BlockGridView extends StatelessWidget {
                     ),
                   ),
                   child: Text(
-                    model.isOpen ? 'Hide Steps' : 'Show Steps',
+                    isOpen ? 'Hide Steps' : 'Show Steps',
                   ),
                 ),
               ),
             ],
           ),
-          if (model.isOpen)
+          if (isOpen)
             Row(
               children: [
                 Container(
