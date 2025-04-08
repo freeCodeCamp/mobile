@@ -3,7 +3,7 @@ import 'package:flutter_scroll_shadow/flutter_scroll_shadow.dart';
 import 'package:freecodecamp/models/learn/curriculum_model.dart';
 import 'package:freecodecamp/ui/views/learn/block/block_template_viewmodel.dart';
 import 'package:freecodecamp/ui/views/learn/block/templates/grid/grid_viewmodel.dart';
-import 'package:freecodecamp/ui/views/learn/widgets/challenge_title.dart';
+import 'package:freecodecamp/ui/views/learn/widgets/challenge_tile.dart';
 import 'package:stacked/stacked.dart';
 
 class BlockGridView extends StatelessWidget {
