@@ -22,20 +22,22 @@ class SuperBlockView extends StatelessWidget {
   Widget build(BuildContext context) {
     return ViewModelBuilder<SuperBlockViewModel>.reactive(
       viewModelBuilder: () => SuperBlockViewModel(),
-      onViewModelReady: (model) => AuthenticationService.staticIsloggedIn
-          ? model.auth.fetchUser()
-          : null,
+      onViewModelReady: (model) => {
+        AuthenticationService.staticIsloggedIn ? model.auth.fetchUser() : null,
+        model.setSuperBlockData = model.getSuperBlockData(
+          superBlockDashedName,
+          superBlockName,
+          hasInternet,
+        )
+      },
       builder: (context, model, child) => Scaffold(
         appBar: AppBar(
           title: Text(superBlockName),
         ),
         backgroundColor: const Color.fromRGBO(0x0a, 0x0a, 0x23, 1),
         body: FutureBuilder<SuperBlock>(
-          future: model.getSuperBlockData(
-            superBlockDashedName,
-            superBlockName,
-            hasInternet,
-          ),
+          initialData: null,
+          future: model.superBlockData,
           builder: ((context, snapshot) {
             if (snapshot.hasData) {
               if (snapshot.data is SuperBlock) {
