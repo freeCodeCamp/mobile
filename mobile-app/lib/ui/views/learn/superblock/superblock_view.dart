@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:freecodecamp/extensions/i18n_extension.dart';
 import 'package:freecodecamp/models/learn/curriculum_model.dart';
 import 'package:freecodecamp/service/authentication/authentication_service.dart';
-import 'package:freecodecamp/ui/views/learn/block/block_view.dart';
+import 'package:freecodecamp/ui/views/learn/block/block_template_view.dart';
 import 'package:freecodecamp/ui/views/learn/superblock/superblock_viewmodel.dart';
 import 'package:stacked/stacked.dart';
 
@@ -22,23 +22,44 @@ class SuperBlockView extends StatelessWidget {
   Widget build(BuildContext context) {
     return ViewModelBuilder<SuperBlockViewModel>.reactive(
       viewModelBuilder: () => SuperBlockViewModel(),
-      onViewModelReady: (model) => AuthenticationService.staticIsloggedIn
-          ? model.auth.fetchUser()
-          : null,
+      onViewModelReady: (model) => {
+        AuthenticationService.staticIsloggedIn ? model.auth.fetchUser() : null,
+        model.setSuperBlockData = model.getSuperBlockData(
+          superBlockDashedName,
+          superBlockName,
+          hasInternet,
+        )
+      },
       builder: (context, model, child) => Scaffold(
         appBar: AppBar(
           title: Text(superBlockName),
         ),
+        backgroundColor: const Color.fromRGBO(0x0a, 0x0a, 0x23, 1),
         body: FutureBuilder<SuperBlock>(
-          future: model.getSuperBlockData(
-            superBlockDashedName,
-            superBlockName,
-            hasInternet,
-          ),
+          initialData: null,
+          future: model.superBlockData,
           builder: ((context, snapshot) {
             if (snapshot.hasData) {
               if (snapshot.data is SuperBlock) {
                 SuperBlock superBlock = snapshot.data as SuperBlock;
+
+                WidgetsBinding.instance.addPostFrameCallback((_) {
+                  if (model.blockOpenStates.isEmpty) {
+                    Map<String, bool> openStates = {
+                      if (superBlock.blocks != null)
+                        for (var block in superBlock.blocks!)
+                          block.dashedName: false
+                    };
+
+                    // Set first block open
+                    String firstBlockKey = openStates.entries.toList()[0].key;
+
+                    openStates[firstBlockKey] = true;
+
+                    model.blockOpenStates = openStates;
+                  }
+                });
+
                 return blockTemplate(model, superBlock);
               }
             }
@@ -67,40 +88,31 @@ class SuperBlockView extends StatelessWidget {
           notification.disallowIndicator();
           return true;
         },
-        child: ListView.separated(
-          separatorBuilder: (context, int i) => Divider(
-            height: model.getPaddingBetweenBlocks(superBlock.blocks![i]),
-            color: Colors.transparent,
-          ),
-          shrinkWrap: true,
+        child: ListView.builder(
           itemCount: superBlock.blocks!.length,
-          physics: const ClampingScrollPhysics(),
-          itemBuilder: (context, i) => Padding(
-            padding: model.getPaddingBeginAndEnd(
-              i,
-              superBlock.blocks![i].challenges.length,
-            ),
-            child: Column(
-              children: [
-                FutureBuilder<bool>(
-                  future: model.getBlockOpenState(superBlock.blocks![i]),
-                  builder: (context, snapshot) {
-                    if (snapshot.hasData) {
-                      bool isOpen = snapshot.data!;
-
-                      return BlockView(
-                        block: superBlock.blocks![i],
-                        isOpen: isOpen,
-                        isStepBased: superBlock.blocks![i].isStepBased,
-                      );
-                    }
-
-                    return const CircularProgressIndicator();
-                  },
-                )
-              ],
-            ),
-          ),
+          itemBuilder: (context, block) {
+            return Padding(
+              padding: model.getPaddingBeginAndEnd(
+                block,
+                superBlock.blocks![block].challenges.length,
+              ),
+              child: Column(
+                children: [
+                  BlockTemplateView(
+                    key: ValueKey(block),
+                    block: superBlock.blocks![block],
+                    isOpen: model.blockOpenStates[
+                            superBlock.blocks![block].dashedName] ??
+                        false,
+                    isOpenFunction: () => model.setBlockOpenClosedState(
+                      superBlock,
+                      block,
+                    ),
+                  )
+                ],
+              ),
+            );
+          },
         ),
       ),
     );

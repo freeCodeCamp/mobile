@@ -6,7 +6,6 @@ import 'package:freecodecamp/service/authentication/authentication_service.dart'
 import 'package:freecodecamp/service/dio_service.dart';
 import 'package:freecodecamp/service/learn/learn_offline_service.dart';
 import 'package:freecodecamp/service/learn/learn_service.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 import 'package:stacked/stacked.dart';
 
 class SuperBlockViewModel extends BaseViewModel {
@@ -21,16 +20,20 @@ class SuperBlockViewModel extends BaseViewModel {
 
   final _dio = DioService.dio;
 
-  double getPaddingBetweenBlocks(Block block) {
-    if (block.isStepBased) {
-      return 3.0;
-    }
+  Map<String, bool> _blockOpenStates = {};
+  Map<String, bool> get blockOpenStates => _blockOpenStates;
 
-    if (block.dashedName == 'es6') {
-      return 0;
-    }
+  Future<SuperBlock>? _superBlockData;
+  Future<SuperBlock>? get superBlockData => _superBlockData;
 
-    return 50.0;
+  set blockOpenStates(Map<String, bool> openStates) {
+    _blockOpenStates = openStates;
+    notifyListeners();
+  }
+
+  set setSuperBlockData(Future<SuperBlock>? superBlockData) {
+    _superBlockData = superBlockData;
+    notifyListeners();
   }
 
   EdgeInsets getPaddingBeginAndEnd(int index, int challenges) {
@@ -43,10 +46,15 @@ class SuperBlockViewModel extends BaseViewModel {
     }
   }
 
-  Future<bool> getBlockOpenState(Block block) async {
-    SharedPreferences prefs = await SharedPreferences.getInstance();
+  setBlockOpenClosedState(SuperBlock superBlock, int block) {
+    Map<String, bool> local = blockOpenStates;
+    Block curr = superBlock.blocks![block];
 
-    return prefs.getBool(block.name) ?? block.order == 0;
+    if (local[curr.dashedName] != null) {
+      local[curr.dashedName] = !local[curr.dashedName]!;
+    }
+
+    blockOpenStates = local;
   }
 
   Future<SuperBlock> getSuperBlockData(
