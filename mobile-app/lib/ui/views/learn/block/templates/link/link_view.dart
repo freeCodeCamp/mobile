@@ -34,7 +34,7 @@ class BlockLinkView extends StatelessWidget {
                         },
                         style: TextButton.styleFrom(
                           backgroundColor:
-                              const Color.fromRGBO(0x99, 0xc9, 0xff, 1),
+                              const Color.fromRGBO(0x19, 0x8e, 0xee, 1),
                           shape: RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(5),
                           ),
