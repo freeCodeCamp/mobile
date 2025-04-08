@@ -51,6 +51,11 @@ class SuperBlockView extends StatelessWidget {
                           block.dashedName: false
                     };
 
+                    // Set first block open
+                    String firstBlockKey = openStates.entries.toList()[0].key;
+
+                    openStates[firstBlockKey] = true;
+
                     model.blockOpenStates = openStates;
                   }
                 });
