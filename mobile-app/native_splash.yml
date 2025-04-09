@@ -2,7 +2,7 @@ flutter_native_splash:
   ios: true
   android: true
   web: false
-  image: assets/images/app-logo.png
+  image: assets/icon/icon.png
   color: "#0a0a23"
   info_plist_files:
     - "ios/Runner/Info-Debug.plist"
@@ -11,6 +11,6 @@ flutter_native_splash:
   android_12:
     color: "#0a0a23"
     icon_background_color: "#0a0a23"
-    image: assets/images/app-logo.png
+    image: assets/icon/android-icon.png
 # run this to apply any changes:
 # dart run flutter_native_splash:create --path=./native_splash.yml
