@@ -75,7 +75,7 @@ dev_dependencies:
 flutter_icons:
   android: "launcher_icon"
   ios: true
-  image_path: "assets/images/app-logo.png"
+  image_path: "assets/icon/icon.png"
 
 flutter:
   fonts:
