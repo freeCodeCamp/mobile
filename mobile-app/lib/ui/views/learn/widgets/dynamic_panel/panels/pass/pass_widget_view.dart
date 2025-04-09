@@ -211,7 +211,7 @@ class PassButton extends StatelessWidget {
           );
         },
         style: TextButton.styleFrom(
-          backgroundColor: const Color.fromRGBO(0x20, 0xD0, 0x32, 1),
+          backgroundColor: const Color.fromRGBO(60, 118, 61, 1),
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(0),
           ),

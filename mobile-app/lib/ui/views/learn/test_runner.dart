@@ -175,6 +175,7 @@ class TestRunner extends BaseViewModel {
         challenge.files.where((element) => element.name == 'script').toList();
 
     String? code;
+    String editableContents = (await fileService.getCurrentEditedFileFromCache(challenge, testing: testing)).replaceAll('\\', '\\\\').replaceAll('`', '\\`').replaceAll('\$', r'\$');
 
     if (ext == Ext.html || ext == Ext.css) {
       code = await htmlFlow(
@@ -209,16 +210,7 @@ class TestRunner extends BaseViewModel {
     const tests = ${parseTest(challenge.tests)};
     const testText = ${challenge.tests.map((e) => '''"${e.instruction.replaceAll('"', '\\"').replaceAll('\n', ' ')}"''').toList().toString()};
 
-    function getUserInput(returnCase){
-      switch(returnCase){
-        case 'index':
-          return `${(await fileService.getCurrentEditedFileFromCache(challenge, testing: testing)).replaceAll('\\', '\\\\').replaceAll('`', '\\`').replaceAll('\$', r'\$')}`;
-        case 'editableContents':
-          return `${(await fileService.getCurrentEditedFileFromCache(challenge, testing: testing)).replaceAll('\\', '\\\\').replaceAll('`', '\\`').replaceAll('\$', r'\$')}`;
-        default:
-          return code;
-      }
-     }
+    const editableContents = `$editableContents`;
 
     doc.__runTest = async function runtTests(testString) {
       let error = false;
@@ -250,6 +242,7 @@ class TestRunner extends BaseViewModel {
     } else if (ext == Ext.js) {
       String? head = challenge.files[0].head ?? '';
       String? tail = (challenge.files[0].tail ?? '').replaceAll('\\', '\\\\');
+      String editableContents = scriptFile.isNotEmpty ? (await fileService.getExactFileFromCache(challenge, scriptFile[0], testing: testing)).replaceAll('\\', '\\\\').replaceAll('`', '\\`').replaceAll('\$', r'\$') : 'empty string';
 
       return '''<script type="module">
       import * as __helpers from "https://unpkg.com/@freecodecamp/curriculum-helpers@3.9.0/dist/index.js";
@@ -262,16 +255,8 @@ class TestRunner extends BaseViewModel {
       let tests = ${parseTest(challenge.tests)};
 
       const testText = ${challenge.tests.map((e) => '''`${e.instruction.replaceAll('`', '\\`')}`''').toList().toString()};
-      function getUserInput(returnCase){
-        switch(returnCase){
-          case 'index':
-            return `${scriptFile.isNotEmpty ? (await fileService.getExactFileFromCache(challenge, scriptFile[0], testing: testing)).replaceAll('\\', '\\\\').replaceAll('`', '\\`').replaceAll('\$', r'\$') : "empty string"}`;
-          case 'editableContents':
-            return `${scriptFile.isNotEmpty ? (await fileService.getExactFileFromCache(challenge, scriptFile[0], testing: testing)).replaceAll('\\', '\\\\').replaceAll('`', '\\`').replaceAll('\$', r'\$') : "empty string"}`;
-          default:
-            return code;
-        }
-      }
+      const editableContents = `$editableContents`;
+
       let error = false;
       try {
         for (let i = 0; i < tests.length; i++) {
