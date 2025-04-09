@@ -81,7 +81,7 @@ flutter:
     - family: Lato
       fonts:
         - asset: assets/fonts/Lato-Regular.ttf
-    - family: hack
+    - family: Hack
       fonts:
         - asset: assets/fonts/Hack-Regular.ttf
   uses-material-design: true

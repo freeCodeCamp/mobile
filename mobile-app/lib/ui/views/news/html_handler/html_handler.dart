@@ -203,11 +203,11 @@ class HTMLParser {
                               : 'plaintext',
                           theme: themeMap['atom-one-dark']!,
                           textStyle: TextStyle(
-                            fontSize: double.parse(
-                              FontSize.large.value.toString(),
-                            ),
-                            color: Colors.white,
-                          ),
+                              fontSize: double.parse(
+                                FontSize.large.value.toString(),
+                              ),
+                              color: Colors.white,
+                              fontFamily: 'Hack'),
                         ),
                       ),
                     ),
