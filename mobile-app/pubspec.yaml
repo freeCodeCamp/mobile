@@ -63,6 +63,7 @@ dev_dependencies:
     sdk: flutter
   flutter_launcher_icons: ^0.14.3
   flutter_lints: ^2.0.3
+  flutter_native_splash: ^2.4.0
   flutter_test:
     sdk: flutter
   integration_test:
@@ -70,11 +71,6 @@ dev_dependencies:
   mockito: ^5.4.4
   sqflite_common_ffi: ^2.3.3
   stacked_generator: ^1.6.0
-
-flutter_icons:
-  android: "launcher_icon"
-  ios: true
-  image_path: "assets/images/app-logo.png"
 
 flutter:
   fonts:
