@@ -32,7 +32,7 @@ Future<void> main({bool testing = false}) async {
   await DioService().init();
   await AppAudioService().init();
   await AuthenticationService().init();
-  await NewsApiServive().init();
+  await NewsApiService().init();
   var fbApp = await Firebase.initializeApp(
     options: DefaultFirebaseOptions.currentPlatform,
   );

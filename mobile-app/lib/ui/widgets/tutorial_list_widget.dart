@@ -21,7 +21,7 @@ class TutorialList extends StatefulWidget {
   final String authorName;
   final String authorId;
   final _navigationService = locator<NavigationService>();
-  final _newsApiService = locator<NewsApiServive>();
+  final _newsApiService = locator<NewsApiService>();
 
   Future<List<Tutorial>> fetchList() async {
     List<Tutorial> tutorials = [];
