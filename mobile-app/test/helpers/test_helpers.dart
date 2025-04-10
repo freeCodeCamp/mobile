@@ -14,6 +14,7 @@ import './test_helpers.mocks.dart';
 // @stacked-mock-spec
 ])
 void registerServices() {
+  setupLocator();
   getAndRegisterNavigationService();
   getAndRegisterDialogService();
   getAndRegisterNewsBookmarkService();

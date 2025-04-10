@@ -1,24 +1,19 @@
 import 'package:flutter_test/flutter_test.dart';
-import 'package:freecodecamp/app/app.locator.dart';
 import 'package:freecodecamp/enums/theme_type.dart';
 import 'package:freecodecamp/models/main/profile_ui_model.dart';
 import 'package:freecodecamp/models/main/user_model.dart';
-import 'package:freecodecamp/service/authentication/authentication_service.dart';
 import 'package:freecodecamp/ui/views/profile/profile_view.dart';
 import 'package:mockito/mockito.dart';
 
 import '../helpers/test_helpers.dart';
 
 Future<void> main() async {
-  setupLocator();
-  await AuthenticationService().init();
-
   group('ProfileViewModel', () {
     setUp(() => registerServices());
     tearDown(() => unregisterService());
 
     testWidgets('MyWidget has a title and message', (tester) async {
-      const mockUser = {
+      var mockUser = {
         'id': '5bd30e0f1caf6ac3ddddddb5',
         'email': 'foo@bar.com',
         'emailVerified': true,
@@ -67,68 +62,78 @@ Future<void> main() async {
         },
         'isDonating': false,
         'badges': [],
-        'progressTimestamps': []
+        'progressTimestamps': [],
+        'calendar': {},
+        'completedChallenges': [],
+        'savedChallenges': [],
+        'portfolio': [],
+        'yearsTopContributor': [],
+        'theme': 'night',
       };
 
       final authenticationService = getAndRegisterAuthenticationService();
 
-      when(authenticationService.parseUserModel(mockUser)).thenReturn(
-          Future.value(FccUserModel(
-              id: '5bd30e0f1caf6ac3ddddddb5',
-              email: 'foo@bar.com',
-              username: 'devuser',
-              name: 'Development User',
-              picture: '',
-              currentChallengeId: '',
-              emailVerified: true,
-              isEmailVerified: true,
-              acceptedPrivacyTerms: true,
-              sendQuincyEmail: true,
-              isCheater: false,
-              isDonating: false,
-              isHonest: true,
-              isFrontEndCert: false,
-              isDataVisCert: false,
-              isBackEndCert: false,
-              isFullStackCert: false,
-              isRespWebDesignCert: false,
-              is2018DataVisCert: false,
-              isFrontEndLibsCert: false,
-              isJsAlgoDataStructCert: false,
-              isApisMicroservicesCert: false,
-              isInfosecQaCert: false,
-              isQaCertV7: false,
-              isInfosecCertV7: false,
-              isSciCompPyCertV7: false,
-              isDataAnalysisPyCertV7: false,
-              isMachineLearningPyCertV7: false,
-              isRelationalDatabaseCertV8: false,
-              joinDate: DateTime.parse('2025-01-01 06:00:00Z'),
-              points: 100,
-              calendar: {
-                DateTime.parse('2025-01-02 06:00:00Z'): 1,
-                DateTime.parse('2025-01-03 06:00:00Z'): 1
-              },
-              heatMapCal: {
-                DateTime.parse('2025-01-02 06:00:00Z'): 1,
-                DateTime.parse('2025-01-03 06:00:00Z'): 1
-              },
-              completedChallenges: [],
-              savedChallenges: [],
-              portfolio: [],
-              yearsTopContributor: [],
-              theme: Themes.defaultTheme,
-              profileUI: ProfileUI(
-                  isLocked: false,
-                  showAbout: true,
-                  showCerts: true,
-                  showDonation: true,
-                  showHeatMap: true,
-                  showLocation: true,
-                  showName: true,
-                  showPoints: true,
-                  showPortfolio: true,
-                  showTimeLine: true))));
+      when(authenticationService.parseUserModel(mockUser)).thenAnswer(
+        (_) => Future.value(
+          FccUserModel(
+            id: '5bd30e0f1caf6ac3ddddddb5',
+            email: 'foo@bar.com',
+            username: 'devuser',
+            name: 'Development User',
+            picture: '',
+            currentChallengeId: '',
+            emailVerified: true,
+            isEmailVerified: true,
+            acceptedPrivacyTerms: true,
+            sendQuincyEmail: true,
+            isCheater: false,
+            isDonating: false,
+            isHonest: true,
+            isFrontEndCert: false,
+            isDataVisCert: false,
+            isBackEndCert: false,
+            isFullStackCert: false,
+            isRespWebDesignCert: false,
+            is2018DataVisCert: false,
+            isFrontEndLibsCert: false,
+            isJsAlgoDataStructCert: false,
+            isApisMicroservicesCert: false,
+            isInfosecQaCert: false,
+            isQaCertV7: false,
+            isInfosecCertV7: false,
+            isSciCompPyCertV7: false,
+            isDataAnalysisPyCertV7: false,
+            isMachineLearningPyCertV7: false,
+            isRelationalDatabaseCertV8: false,
+            joinDate: DateTime.parse('2025-01-01 06:00:00Z'),
+            points: 100,
+            calendar: {
+              DateTime.parse('2025-01-02 06:00:00Z'): 1,
+              DateTime.parse('2025-01-03 06:00:00Z'): 1
+            },
+            heatMapCal: {
+              DateTime.parse('2025-01-02 06:00:00Z'): 1,
+              DateTime.parse('2025-01-03 06:00:00Z'): 1
+            },
+            completedChallenges: [],
+            savedChallenges: [],
+            portfolio: [],
+            yearsTopContributor: [],
+            theme: Themes.defaultTheme,
+            profileUI: ProfileUI(
+                isLocked: false,
+                showAbout: true,
+                showCerts: true,
+                showDonation: true,
+                showHeatMap: true,
+                showLocation: true,
+                showName: true,
+                showPoints: true,
+                showPortfolio: true,
+                showTimeLine: true),
+          ),
+        ),
+      );
 
       await tester.pumpWidget(const ProfileView());
       final titleFinder = find.text('freeCodeCamp Certifications');
