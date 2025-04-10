@@ -11,6 +11,13 @@ import './test_helpers.mocks.dart';
 @GenerateMocks([], customMocks: [
   MockSpec<NavigationService>(onMissingStub: OnMissingStub.returnDefault),
   MockSpec<DialogService>(onMissingStub: OnMissingStub.returnDefault),
+  MockSpec<AuthenticationService>(onMissingStub: OnMissingStub.returnDefault),
+  MockSpec<SnackbarService>(onMissingStub: OnMissingStub.returnDefault),
+  MockSpec<BookmarksDatabaseService>(
+    onMissingStub: OnMissingStub.returnDefault,
+  ),
+  MockSpec<DioService>(onMissingStub: OnMissingStub.returnDefault),
+
 // @stacked-mock-spec
 ])
 void registerServices() {
@@ -38,30 +45,30 @@ MockDialogService getAndRegisterDialogService() {
   return service;
 }
 
-BookmarksDatabaseService getAndRegisterNewsBookmarkService() {
+MockBookmarksDatabaseService getAndRegisterNewsBookmarkService() {
   _removeRegistrationIfExists<BookmarksDatabaseService>();
-  final service = BookmarksDatabaseService();
+  final service = MockBookmarksDatabaseService();
   locator.registerSingleton<BookmarksDatabaseService>(service);
   return service;
 }
 
-AuthenticationService getAndRegisterAuthenticationService() {
+MockAuthenticationService getAndRegisterAuthenticationService() {
   _removeRegistrationIfExists<AuthenticationService>();
-  final service = AuthenticationService();
+  final service = MockAuthenticationService();
   locator.registerLazySingleton<AuthenticationService>(() => service);
   return service;
 }
 
-SnackbarService getAndRegisterSnackbarService() {
+MockSnackbarService getAndRegisterSnackbarService() {
   _removeRegistrationIfExists<SnackbarService>();
-  final service = SnackbarService();
+  final service = MockSnackbarService();
   locator.registerLazySingleton<SnackbarService>(() => service);
   return service;
 }
 
-DioService getAndRegisterDioService() {
+MockDioService getAndRegisterDioService() {
   _removeRegistrationIfExists<DioService>();
-  final service = DioService();
+  final service = MockDioService();
   locator.registerLazySingleton<DioService>(() => service);
   return service;
 }
@@ -75,10 +82,10 @@ void _removeRegistrationIfExists<T extends Object>() {
 }
 
 void unregisterService() {
-  locator.unregister<MockDialogService>();
-  locator.unregister<MockNavigationService>();
+  locator.unregister<NavigationService>();
+  locator.unregister<DialogService>();
+  locator.unregister<SnackbarService>();
   locator.unregister<BookmarksDatabaseService>();
   locator.unregister<DioService>();
   locator.unregister<AuthenticationService>();
-  locator.unregister<SnackbarService>();
 }
