@@ -1,13 +1,18 @@
 import 'package:flutter_test/flutter_test.dart';
+import 'package:freecodecamp/app/app.locator.dart';
 import 'package:freecodecamp/enums/theme_type.dart';
 import 'package:freecodecamp/models/main/profile_ui_model.dart';
 import 'package:freecodecamp/models/main/user_model.dart';
+import 'package:freecodecamp/service/authentication/authentication_service.dart';
 import 'package:freecodecamp/ui/views/profile/profile_view.dart';
 import 'package:mockito/mockito.dart';
 
 import '../helpers/test_helpers.dart';
 
-void main() {
+Future<void> main() async {
+  setupLocator();
+  await AuthenticationService().init();
+
   group('ProfileViewModel', () {
     setUp(() => registerServices());
     tearDown(() => unregisterService());

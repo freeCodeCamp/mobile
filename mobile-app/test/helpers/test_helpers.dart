@@ -1,5 +1,6 @@
 import 'package:freecodecamp/app/app.locator.dart';
 import 'package:freecodecamp/service/authentication/authentication_service.dart';
+import 'package:freecodecamp/service/dio_service.dart';
 import 'package:freecodecamp/service/news/bookmark_service.dart';
 import 'package:mockito/annotations.dart';
 import 'package:stacked_services/stacked_services.dart';
@@ -16,6 +17,7 @@ void registerServices() {
   getAndRegisterNavigationService();
   getAndRegisterDialogService();
   getAndRegisterNewsBookmarkService();
+  getAndRegisterDioService();
   getAndRegisterAuthenticationService();
   getAndRegisterSnackbarService();
 // @stacked-mock-register
@@ -55,6 +57,14 @@ SnackbarService getAndRegisterSnackbarService() {
   locator.registerLazySingleton<SnackbarService>(() => service);
   return service;
 }
+
+DioService getAndRegisterDioService() {
+  _removeRegistrationIfExists<DioService>();
+  final service = DioService();
+  locator.registerLazySingleton<DioService>(() => service);
+  return service;
+}
+
 // @stacked-mock-create
 
 void _removeRegistrationIfExists<T extends Object>() {
@@ -67,6 +77,7 @@ void unregisterService() {
   locator.unregister<MockDialogService>();
   locator.unregister<MockNavigationService>();
   locator.unregister<BookmarksDatabaseService>();
+  locator.unregister<DioService>();
   locator.unregister<AuthenticationService>();
   locator.unregister<SnackbarService>();
 }
