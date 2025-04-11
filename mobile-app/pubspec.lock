@@ -78,6 +78,14 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "6.11.0"
+  ansicolor:
+    dependency: transitive
+    description:
+      name: ansicolor
+      sha256: "50e982d500bc863e1d703448afdbf9e5a72eb48840a4f766fa361ffd6877055f"
+      url: "https://pub.dev"
+    source: hosted
+    version: "2.0.3"
   archive:
     dependency: transitive
     description:
@@ -749,6 +757,14 @@ packages:
     description: flutter
     source: sdk
     version: "0.0.0"
+  flutter_native_splash:
+    dependency: "direct dev"
+    description:
+      name: flutter_native_splash
+      sha256: "7062602e0dbd29141fb8eb19220b5871ca650be5197ab9c1f193a28b17537bc7"
+      url: "https://pub.dev"
+    source: hosted
+    version: "2.4.4"
   flutter_scroll_shadow:
     dependency: "direct main"
     description:
@@ -1317,10 +1333,10 @@ packages:
     dependency: "direct main"
     description:
       name: phone_ide
-      sha256: "394b0ecf29f7b94f5a277fed65a673c6c52a0534a1981a7b4a9bc3daa100a255"
+      sha256: d017a48c68b17c42d1e36a44b66b7708e236965340c73995385f386157c77959
       url: "https://pub.dev"
     source: hosted
-    version: "1.4.0+1"
+    version: "1.5.0"
   photo_view:
     dependency: "direct main"
     description:
