@@ -24,8 +24,8 @@ dependencies:
   flutter_heatmap_calendar: ^1.0.4
   flutter_highlight: ^0.7.0
   flutter_hooks: ^0.20.5
-  flutter_html: 3.0.0-beta.2
-  flutter_html_table: ^3.0.0-beta.2
+  flutter_html: ^3.0.0
+  flutter_html_table: ^3.0.0
   flutter_inappwebview: ^6.1.0 # TODO: upgrade after migrating to FLutter 3.19
   flutter_local_notifications: ^17.1.0
   flutter_localizations:
