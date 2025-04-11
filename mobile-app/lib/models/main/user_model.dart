@@ -60,6 +60,8 @@ class FccUserModel {
   final bool isDataAnalysisPyCertV7;
   final bool isMachineLearningPyCertV7;
   final bool isRelationalDatabaseCertV8;
+  final bool isCollegeAlgebraPyCertV8;
+  final bool isFoundationalCSharpCertV8;
 
   final bool? isBanned;
 
@@ -118,6 +120,8 @@ class FccUserModel {
     required this.isDataAnalysisPyCertV7,
     required this.isMachineLearningPyCertV7,
     required this.isRelationalDatabaseCertV8,
+    required this.isCollegeAlgebraPyCertV8,
+    required this.isFoundationalCSharpCertV8,
     this.isBanned,
     required this.joinDate,
     required this.points,
@@ -170,6 +174,8 @@ class FccUserModel {
       isDataAnalysisPyCertV7: data['isDataAnalysisPyCertV7'],
       isMachineLearningPyCertV7: data['isMachineLearningPyCertV7'],
       isRelationalDatabaseCertV8: data['isRelationalDatabaseCertV8'],
+      isCollegeAlgebraPyCertV8: data['isCollegeAlgebraPyCertV8'],
+      isFoundationalCSharpCertV8: data['isFoundationalCSharpCertV8'],
       isBanned: data['isBanned'],
       joinDate: DateTime.parse(data['joinDate']),
       points: data['points'],

@@ -140,6 +140,16 @@ class ProfileView extends StatelessWidget {
                   'show': user.isRelationalDatabaseCertV8,
                   'title': 'Relational Database Certification',
                   'certSlug': 'relational-database-v8',
+                },
+                {
+                  'show': user.isCollegeAlgebraPyCertV8,
+                  'title': 'College Algebra with Python',
+                  'certSlug': 'college-algebra-with-python-v8',
+                },
+                {
+                  'show': user.isFoundationalCSharpCertV8,
+                  'title': 'Foundational C# with Microsoft',
+                  'certSlug': 'foundational-c-sharp-with-microsoft',
                 }
               ];
               final legacyCerts = [
