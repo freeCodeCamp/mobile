@@ -32,6 +32,7 @@ class TestRunner extends BaseViewModel {
     document = parse('');
 
     List<String> imports = [
+      '<script src="http://localhost:8080/index.mjs">console.log("hello")</script>',
       '<script src="https://unpkg.com/chai@4.3.10/chai.js"></script>',
       '<script src="https://unpkg.com/mocha@10.3.0/mocha.js"></script>',
       '<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>',
@@ -83,6 +84,7 @@ class TestRunner extends BaseViewModel {
 
     if (!testing) {
       controller!.loadData(
+        baseUrl: WebUri('http://localhost:8080'),
         data: document.outerHtml,
         mimeType: 'text/html',
         encoding: Encoding.getByName('utf-8').toString(),
@@ -175,7 +177,11 @@ class TestRunner extends BaseViewModel {
         challenge.files.where((element) => element.name == 'script').toList();
 
     String? code;
-    String editableContents = (await fileService.getCurrentEditedFileFromCache(challenge, testing: testing)).replaceAll('\\', '\\\\').replaceAll('`', '\\`').replaceAll('\$', r'\$');
+    String editableContents = (await fileService
+            .getCurrentEditedFileFromCache(challenge, testing: testing))
+        .replaceAll('\\', '\\\\')
+        .replaceAll('`', '\\`')
+        .replaceAll('\$', r'\$');
 
     if (ext == Ext.html || ext == Ext.css) {
       code = await htmlFlow(
@@ -190,12 +196,18 @@ class TestRunner extends BaseViewModel {
         testing: testing,
       );
     }
-
     if (ext == Ext.html || ext == Ext.css) {
       String tail = challenge.files[0].tail ?? '';
 
-      return '''<script type="module">
-    import * as __helpers from "https://www.unpkg.com/@freecodecamp/curriculum-helpers@3.9.0/dist/index.mjs";
+      return '''
+<script type="module">
+
+    // const worker = new Worker('http://localhost:8080/debug.js');
+    // worker.onmessage = function(e) {
+    //   console.log('Message received from worker: ', e.data);
+    // };
+    // worker.postMessage('Hello from main thread');
+    console.log('this sucks');
 
     const code = `$code`;
     const doc = new DOMParser().parseFromString(code, 'text/html');
@@ -214,6 +226,19 @@ class TestRunner extends BaseViewModel {
 
     doc.__runTest = async function runtTests(testString) {
       let error = false;
+      console.log(window.FCCSandbox);
+      const runner = await window.FCCSandbox.createTestRunner({
+						source: "var x = 5;",
+						type: "worker",
+						code: {
+							contents: "",
+						},
+            assetPath: "/",
+					})
+    const result = await runner.runTest("assert.equal(x, 4);")
+    console.log(JSON.stringify(result));
+    console.log('testing', testString);
+
       for(let i = 0; i < testString.length; i++){
         try {
             const testPromise = new Promise((resolve, reject) => {
@@ -242,7 +267,13 @@ class TestRunner extends BaseViewModel {
     } else if (ext == Ext.js) {
       String? head = challenge.files[0].head ?? '';
       String? tail = (challenge.files[0].tail ?? '').replaceAll('\\', '\\\\');
-      String editableContents = scriptFile.isNotEmpty ? (await fileService.getExactFileFromCache(challenge, scriptFile[0], testing: testing)).replaceAll('\\', '\\\\').replaceAll('`', '\\`').replaceAll('\$', r'\$') : 'empty string';
+      String editableContents = scriptFile.isNotEmpty
+          ? (await fileService.getExactFileFromCache(challenge, scriptFile[0],
+                  testing: testing))
+              .replaceAll('\\', '\\\\')
+              .replaceAll('`', '\\`')
+              .replaceAll('\$', r'\$')
+          : 'empty string';
 
       return '''<script type="module">
       import * as __helpers from "https://unpkg.com/@freecodecamp/curriculum-helpers@3.9.0/dist/index.js";

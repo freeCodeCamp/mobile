@@ -24,8 +24,12 @@ import 'package:phone_ide/phone_ide.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:stacked/stacked.dart';
 import 'package:stacked_services/stacked_services.dart';
+import 'package:flutter_inappwebview/flutter_inappwebview.dart';
 
 class ChallengeViewModel extends BaseViewModel {
+  final InAppLocalhostServer _localhostServer =
+      InAppLocalhostServer(documentRoot: 'assets/test_runner');
+
   String? _editorText;
   String? get editorText => _editorText;
 
@@ -230,6 +234,8 @@ class ChallengeViewModel extends BaseViewModel {
     Challenge challenge,
     int challengesCompleted,
   ) async {
+    await _localhostServer.start();
+
     setupDialogUi();
 
     setChallenge = challenge;
