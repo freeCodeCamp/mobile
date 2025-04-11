@@ -79,7 +79,6 @@ class BlockView extends StatelessWidget {
                               fontSize: 18,
                               fontWeight: FontWeight.w600,
                               height: 1.2,
-                              fontFamily: 'Lato',
                               color: Colors.white.withValues(alpha: 0.87),
                             ),
                           ),

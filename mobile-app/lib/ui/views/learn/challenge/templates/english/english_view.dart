@@ -55,7 +55,6 @@ class EnglishView extends StatelessWidget {
                           style: TextStyle(
                             fontSize: FontSize.large.value,
                             fontWeight: FontWeight.bold,
-                            fontFamily: 'Inter',
                           ),
                         ),
                       ),
@@ -85,7 +84,6 @@ class EnglishView extends StatelessWidget {
                         style: TextStyle(
                           fontSize: FontSize.large.value,
                           fontWeight: FontWeight.bold,
-                          fontFamily: 'Inter',
                         ),
                       ),
                     ),
@@ -108,7 +106,6 @@ class EnglishView extends StatelessWidget {
                             style: TextStyle(
                               fontSize: FontSize.large.value,
                               fontWeight: FontWeight.bold,
-                              fontFamily: 'Inter',
                             ),
                           ),
                         ),
@@ -140,7 +137,6 @@ class EnglishView extends StatelessWidget {
                             style: TextStyle(
                               fontSize: FontSize.large.value,
                               fontWeight: FontWeight.bold,
-                              fontFamily: 'Inter',
                             ),
                           ),
                         ),
@@ -191,7 +187,8 @@ class EnglishView extends StatelessWidget {
                                             block)
                                     : () => {model.checkAnswers(challenge)},
                                 child: Text(
-                                  model.allInputsCorrect || challenge.fillInTheBlank == null
+                                  model.allInputsCorrect ||
+                                          challenge.fillInTheBlank == null
                                       ? 'Go to Next Challenge'
                                       : 'Check Answers',
                                   style: const TextStyle(fontSize: 20),

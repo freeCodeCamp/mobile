@@ -142,7 +142,6 @@ class EpisodeListView extends StatelessWidget {
               color: Colors.white.withValues(alpha: 0.87),
               margin: Margins.zero,
               maxLines: model.showDescription ? null : 3,
-              fontFamily: 'Lato',
             )
           },
         ),

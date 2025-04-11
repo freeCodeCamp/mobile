@@ -36,7 +36,6 @@ class PassWidgetView extends StatelessWidget {
                     context.t.passed,
                     style: TextStyle(
                       fontSize: 28,
-                      fontFamily: 'Inter',
                       fontWeight: FontWeight.bold,
                       color: Colors.white.withValues(alpha: 0.87),
                     ),
@@ -68,7 +67,6 @@ class PassWidgetView extends StatelessWidget {
                       style: TextStyle(
                         color: Colors.white.withValues(alpha: 0.87),
                         fontSize: 20,
-                        fontFamily: 'Inter',
                       ),
                     ),
                   );

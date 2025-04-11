@@ -95,7 +95,6 @@ class MultipleChoiceView extends StatelessWidget {
                       style: const TextStyle(
                         fontSize: 20,
                         fontWeight: FontWeight.bold,
-                        fontFamily: 'Inter',
                       ),
                     ),
                   ),
@@ -123,7 +122,6 @@ class MultipleChoiceView extends StatelessWidget {
                         style: TextStyle(
                           fontSize: FontSize.large.value,
                           fontWeight: FontWeight.bold,
-                          fontFamily: 'Inter',
                         ),
                       ),
                     ),
@@ -146,7 +144,6 @@ class MultipleChoiceView extends StatelessWidget {
                       style: TextStyle(
                         fontSize: FontSize.xLarge.value,
                         fontWeight: FontWeight.bold,
-                        fontFamily: 'Inter',
                       ),
                     ),
                     const SizedBox(height: 8),

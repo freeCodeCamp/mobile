@@ -247,8 +247,7 @@ class PodcastTileState extends State<PodcastTile> {
                       padding: const EdgeInsets.all(8.0),
                       child: Text(
                         widget.episode.title,
-                        style: const TextStyle(
-                            fontFamily: 'Lato', fontWeight: FontWeight.w700),
+                        style: const TextStyle(fontWeight: FontWeight.w700),
                       ),
                     ),
                   ),
@@ -336,7 +335,9 @@ class PodcastTileState extends State<PodcastTile> {
                     return Text(
                       'Downloaded ${snapshot.data}%',
                       style: const TextStyle(
-                          fontSize: 16, height: 2, fontFamily: 'Lato'),
+                        fontSize: 16,
+                        height: 2,
+                      ),
                     );
                   }
 
@@ -356,7 +357,9 @@ class PodcastTileState extends State<PodcastTile> {
                           )}')
                         : ''),
                 style: const TextStyle(
-                    fontSize: 16, height: 2, fontFamily: 'Lato'),
+                  fontSize: 16,
+                  height: 2,
+                ),
               ),
         Expanded(
           child: Container(
@@ -440,7 +443,6 @@ class PodcastTileState extends State<PodcastTile> {
         style: TextStyle(
           fontSize: 16,
           color: Colors.white.withValues(alpha: 0.87),
-          fontFamily: 'Lato',
         ),
       ),
     );

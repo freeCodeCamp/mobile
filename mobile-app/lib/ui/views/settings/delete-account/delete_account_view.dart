@@ -12,7 +12,6 @@ class DeleteAccountView extends StatelessWidget {
   Widget build(BuildContext context) {
     const paragraphTextStyle = TextStyle(
       fontSize: 18,
-      fontFamily: 'Lato',
       height: 1.2,
     );
 
