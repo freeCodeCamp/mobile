@@ -157,6 +157,15 @@ class HTMLParser {
         launchUrl(Uri.parse(url!.trim()));
       },
       extensions: [
+        TagWrapExtension(
+          tagsToWrap: {'table'},
+          builder: (child) {
+            return SingleChildScrollView(
+              scrollDirection: Axis.horizontal,
+              child: child,
+            );
+          },
+        ),
         const TableHtmlExtension(),
         TagExtension(
           tagsToExtend: {'pre'},
