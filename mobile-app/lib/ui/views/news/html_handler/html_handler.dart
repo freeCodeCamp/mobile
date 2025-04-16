@@ -112,7 +112,7 @@ class HTMLParser {
           lineHeight: const LineHeight(1.5),
         ),
         'a': Style(
-          color: Colors.blue,
+          color: Colors.white,
           textDecoration: TextDecoration.underline,
         ),
         'li': Style(
