@@ -23,7 +23,7 @@ dependencies:
   flutter_dotenv: ^5.1.0
   flutter_heatmap_calendar: ^1.0.4
   flutter_highlight: ^0.7.0
-  flutter_hooks: ^0.20.5
+  flutter_hooks: ^0.21.0
   flutter_html: ^3.0.0
   flutter_html_table: ^3.0.0
   flutter_inappwebview: ^6.1.0 # TODO: upgrade after migrating to FLutter 3.19
