@@ -1,7 +1,7 @@
 name: freecodecamp
 description: freecodecamp.org app.
 publish_to: none
-version: 5.0.1+50001
+version: 5.0.2+50002
 environment:
   sdk: ">=3.0.0 <4.0.0"
 dependencies:
@@ -24,8 +24,8 @@ dependencies:
   flutter_heatmap_calendar: ^1.0.4
   flutter_highlight: ^0.7.0
   flutter_hooks: ^0.20.5
-  flutter_html: 3.0.0-beta.2
-  flutter_html_table: ^3.0.0-beta.2
+  flutter_html: ^3.0.0
+  flutter_html_table: ^3.0.0
   flutter_inappwebview: ^6.1.0 # TODO: upgrade after migrating to FLutter 3.19
   flutter_local_notifications: ^17.1.0
   flutter_localizations:
@@ -61,8 +61,9 @@ dev_dependencies:
   dependency_validator: ^3.2.3
   flutter_driver:
     sdk: flutter
-  flutter_launcher_icons: ^0.13.1
+  flutter_launcher_icons: ^0.14.3
   flutter_lints: ^2.0.3
+  flutter_native_splash: ^2.4.0
   flutter_test:
     sdk: flutter
   integration_test:
@@ -70,11 +71,6 @@ dev_dependencies:
   mockito: ^5.4.4
   sqflite_common_ffi: ^2.3.3
   stacked_generator: ^1.6.0
-
-flutter_icons:
-  android: "launcher_icon"
-  ios: true
-  image_path: "assets/images/app-logo.png"
 
 flutter:
   fonts:
