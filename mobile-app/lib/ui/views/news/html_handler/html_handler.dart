@@ -176,7 +176,7 @@ class HTMLParser {
             String? currentClass;
 
             bool codeLanguageIsPresent(List classNames) {
-              RegExp regExp = RegExp(r'language-', caseSensitive: false);
+              RegExp regExp = RegExp(r'\blang(uage)?\b');
 
               for (String className in classNames) {
                 if (className.contains(regExp)) {
