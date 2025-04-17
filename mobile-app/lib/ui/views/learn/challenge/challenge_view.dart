@@ -5,6 +5,7 @@ import 'package:freecodecamp/extensions/i18n_extension.dart';
 import 'package:freecodecamp/models/learn/challenge_model.dart';
 import 'package:freecodecamp/models/learn/curriculum_model.dart';
 import 'package:freecodecamp/ui/views/learn/challenge/challenge_viewmodel.dart';
+import 'package:freecodecamp/ui/views/learn/test_runner.dart';
 import 'package:freecodecamp/ui/views/learn/widgets/console/console_view.dart';
 import 'package:freecodecamp/ui/views/learn/widgets/dynamic_panel/panels/dynamic_panel.dart';
 import 'package:phone_ide/phone_ide.dart';
@@ -301,14 +302,15 @@ class ChallengeView extends StatelessWidget {
           Row(
             children: [
               SizedBox(
-                width: 1,
                 height: 1,
-                child: InAppWebView(
-                  onWebViewCreated: (controller) {
-                    model.setTestController = controller;
-                  },
-                  onConsoleMessage: (controller, console) {
-                    model.handleConsoleLogMessagges(console, challenge);
+                width: 1,
+                child: Builder(
+                  builder: (context) {
+                    if (model.testRunner != null) {
+                      return model.testRunner!;
+                    }
+
+                    return Container();
                   },
                 ),
               ),
@@ -439,9 +441,13 @@ class ChallengeView extends StatelessWidget {
 
                                 model.setShowPanel = false;
                                 model.setIsRunningTests = true;
-                                await model.runner.setWebViewContent(
-                                  challenge,
-                                  controller: model.testController!,
+                                model.setTestRunner = TestRunner(
+                                  builder: TestRunnerBuilder(
+                                    source: '',
+                                    code: Code(contents: model.editorText!),
+                                    workerType: WorkerType.frame,
+                                  ),
+                                  challenge: challenge,
                                 );
                               }
                             : null,
