@@ -114,6 +114,7 @@ class HTMLParser {
         'a': Style(
           color: Colors.white,
           textDecoration: TextDecoration.underline,
+          textDecorationColor: Colors.blue,
         ),
         'li': Style(
           margin: Margins.only(top: 8),
@@ -156,6 +157,15 @@ class HTMLParser {
         launchUrl(Uri.parse(url!.trim()));
       },
       extensions: [
+        TagWrapExtension(
+          tagsToWrap: {'table'},
+          builder: (child) {
+            return SingleChildScrollView(
+              scrollDirection: Axis.horizontal,
+              child: child,
+            );
+          },
+        ),
         const TableHtmlExtension(),
         TagExtension(
           tagsToExtend: {'pre'},
