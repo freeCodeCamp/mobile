@@ -114,7 +114,7 @@ class HTMLParser {
         'a': Style(
           color: Colors.white,
           textDecoration: TextDecoration.underline,
-          textDecorationColor: Colors.blue,
+          textDecorationColor: Colors.white,
         ),
         'li': Style(
           margin: Margins.only(top: 8),
