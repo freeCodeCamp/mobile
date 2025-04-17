@@ -71,6 +71,12 @@ class ChallengeView extends StatelessWidget {
           model.setCompletedChallenge = false;
         });
 
+        if (editableRegion) {
+          editor.editableRegion.stream.listen((region) {
+            model.setEditableRegionContent = region;
+          });
+        }
+
         BoxDecoration decoration = const BoxDecoration(
           border: Border(
             bottom: BorderSide(

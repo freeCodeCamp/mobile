@@ -24,7 +24,6 @@ import 'package:phone_ide/phone_ide.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:stacked/stacked.dart';
 import 'package:stacked_services/stacked_services.dart';
-import 'package:flutter_inappwebview/flutter_inappwebview.dart';
 
 class ChallengeViewModel extends BaseViewModel {
   final InAppLocalhostServer _localhostServer =
@@ -90,6 +89,9 @@ class ChallengeViewModel extends BaseViewModel {
 
   TestRunner runner = TestRunner();
 
+  String _editableRegionContent = '';
+  String get editableRegionContent => _editableRegionContent;
+
   SnackbarService snackbar = locator<SnackbarService>();
 
   Challenge? _challenge;
@@ -126,6 +128,11 @@ class ChallengeViewModel extends BaseViewModel {
 
   set setAfterFirstTest(bool value) {
     _afterFirstTest = value;
+    notifyListeners();
+  }
+
+  set setEditableRegionContent(String value) {
+    _editableRegionContent = value;
     notifyListeners();
   }
 
