@@ -8,7 +8,7 @@ dependencies:
   algolia_helper_flutter: ^1.0.0
   audio_service: ^0.18.13
   # NOTE: Versions 1.5.0 and above support iOS 13+ only
-  auth0_flutter: <=1.4.1
+  auth0_flutter: <=1.9.0
   cached_network_image: ^3.3.1
   curl_logger_dio_interceptor: ^1.0.0 # NOTE: Do we still want this?
   device_info_plus: ^9.1.2 # TODO: upgrade after migrating to FLutter 3.19
