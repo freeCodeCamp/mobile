@@ -26,6 +26,9 @@ import 'package:stacked/stacked.dart';
 import 'package:stacked_services/stacked_services.dart';
 
 class ChallengeViewModel extends BaseViewModel {
+  final InAppLocalhostServer _localhostServer =
+      InAppLocalhostServer(documentRoot: 'assets/test_runner');
+
   String? _editorText;
   String? get editorText => _editorText;
 
@@ -84,7 +87,11 @@ class ChallengeViewModel extends BaseViewModel {
 
   bool _mounted = false;
 
-  TestRunner runner = TestRunner();
+  TestRunner? _testRunner;
+  TestRunner? get testRunner => _testRunner;
+
+  String _editableRegionContent = '';
+  String get editableRegionContent => _editableRegionContent;
 
   SnackbarService snackbar = locator<SnackbarService>();
 
@@ -122,6 +129,16 @@ class ChallengeViewModel extends BaseViewModel {
 
   set setAfterFirstTest(bool value) {
     _afterFirstTest = value;
+    notifyListeners();
+  }
+
+  set setTestRunner(TestRunner? value) {
+    _testRunner = value;
+    notifyListeners();
+  }
+
+  set setEditableRegionContent(String value) {
+    _editableRegionContent = value;
     notifyListeners();
   }
 
@@ -230,6 +247,8 @@ class ChallengeViewModel extends BaseViewModel {
     Challenge challenge,
     int challengesCompleted,
   ) async {
+    await _localhostServer.start();
+
     setupDialogUi();
 
     setChallenge = challenge;
@@ -256,6 +275,7 @@ class ChallengeViewModel extends BaseViewModel {
 
     setBlock = block;
     setChallengesCompleted = challengesCompleted;
+    initTestRunner(challenge);
   }
 
   void initiateFile(
@@ -282,6 +302,19 @@ class ChallengeViewModel extends BaseViewModel {
       );
       _mounted = true;
     }
+  }
+
+  void initTestRunner(Challenge challenge) {
+    setTestRunner = TestRunner(
+      builder: const TestRunnerBuilder(
+        source: '',
+        code: Code(
+          contents: '',
+        ),
+        workerType: WorkerType.frame,
+      ),
+      challenge: challenge,
+    );
   }
 
   void listenToFocusedController(Editor editor) {
