@@ -16,10 +16,8 @@ class HTMLParser {
   const HTMLParser({
     Key? key,
     required this.context,
-    this.fontFamily = 'Lato',
   });
 
-  final String fontFamily;
   final BuildContext context;
 
   List<Widget> parse(
@@ -97,11 +95,9 @@ class HTMLParser {
         '*:not(h1):not(h2):not(h3):not(h4):not(h5):not(h6)': Style(
           fontSize: FontSize.xLarge,
           color: fontColor ?? Colors.white.withValues(alpha: 0.87),
-          fontWeight:
-              fontFamily == 'Inter' ? FontWeight.w400 : FontWeight.normal,
         ),
         'body': Style(
-          fontFamily: fontFamily,
+          fontFamily: 'Lato',
           padding: HtmlPaddings.only(left: 4, right: 4),
         ),
         'strong': Style(
