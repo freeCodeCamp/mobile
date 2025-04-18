@@ -43,6 +43,7 @@ jobs:
         with:
           node-version: ${{ matrix.node-version }}
           cache: pnpm
+          cache-dependency-path: freeCodeCamp/pnpm-lock.yaml
 
       - name: Setup Flutter 3.27.x
         uses: subosito/flutter-action@e938fdf56512cc96ef2f93601a5a40bde3801046 # v2
@@ -63,6 +64,10 @@ jobs:
           pnpm install
           pnpm run create:shared
           pnpm run build:curriculum
+
+      - name: Install mobile dependencies
+        working-directory: mobile
+        run: npm ci
 
       - name: Generate mobile test files
         working-directory: mobile/mobile-app
