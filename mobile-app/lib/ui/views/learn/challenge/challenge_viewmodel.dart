@@ -326,6 +326,23 @@ class ChallengeViewModel extends BaseViewModel {
     });
   }
 
+  WorkerType getWorkerType(int challengeType) {
+    switch (challengeType) {
+      case 0:
+      case 14:
+      case 25:
+        return WorkerType.frame;
+      case 1:
+      case 26:
+        return WorkerType.worker;
+      case 20:
+      case 23:
+        return WorkerType.python;
+    }
+
+    return WorkerType.frame;
+  }
+
   // This function allows the symbols to be insterted into the text controllers
   void insertSymbol(String symbol, Editor editor) async {
     final TextEditingControllerIDE focused = textFieldData!.controller;

@@ -82,6 +82,17 @@ class FrameBuilder {
     return firstHTMlfile;
   }
 
+  String getTestRunnerType(WorkerType type) {
+    switch (type) {
+      case WorkerType.python:
+        return 'python';
+      case WorkerType.frame:
+        return 'frame';
+      case WorkerType.worker:
+        return 'worker';
+    }
+  }
+
   Future<InAppWebViewController> buildFrame() async {
     Document document = Document();
     document = parse('');
@@ -124,15 +135,26 @@ class FrameBuilder {
       let error = false;
       const runner = await window.FCCSandbox.createTestRunner({
 						source: `$firstHtmlFile`,
-						type: "frame",
+						type: "${getTestRunnerType(builder.workerType)}",
 						code: {
 							contents: `$firstHtmlFile`,
 						},
-            assetPath: "/",
+            assetPath: "${builder.assetPath}",
 					})
-      const result = await runner.runTest(tests[0])
-      console.log('this is the result:', JSON.stringify(result));
-      console.log('testing', testString);
+
+      const results = [];
+      for(let i = 0; i < tests.length; i++){
+        const result =  await runner.runTest(tests[i]);
+        results.push(result);
+      }
+
+      for(let i = 0; i < results.length; i++){
+        if(Object.keys(results[i]).includes('err')){
+          console.log(`testMSG: \${testText[i]}`);
+          break;
+        }
+      }
+
     };
 
     document.querySelector('*').innerHTML = code;

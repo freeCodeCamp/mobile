@@ -446,7 +446,9 @@ class ChallengeView extends StatelessWidget {
                                   builder: TestRunnerBuilder(
                                     source: '',
                                     code: Code(contents: model.editorText!),
-                                    workerType: WorkerType.frame,
+                                    workerType: model.getWorkerType(
+                                      challenge.challengeType,
+                                    ),
                                   ),
                                   model: model,
                                   challenge: challenge,
