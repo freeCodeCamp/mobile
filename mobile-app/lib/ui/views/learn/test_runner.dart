@@ -153,6 +153,10 @@ class FrameBuilder {
           console.log(`testMSG: \${testText[i]}`);
           break;
         }
+
+        if(i === results.length -1){
+          console.log('completed');
+        }
       }
 
     };
@@ -219,16 +223,31 @@ class _TestRunnerState extends State<TestRunner> {
 
   @override
   Widget build(BuildContext context) {
-    return InAppWebView(
-      onWebViewCreated: (controller) async {
+    if (webViewController != null) {
+      Future.delayed(const Duration(seconds: 0), () async {
         FrameBuilder frame = FrameBuilder(
           challenge: widget.challenge,
-          controller: controller,
+          controller: webViewController!,
           builder: widget.builder,
         );
 
         webViewController = await frame.buildFrame();
+      });
+    }
+
+    return InAppWebView(
+      onWebViewCreated: (controller) async {
+        if (webViewController == null) {
+          FrameBuilder frame = FrameBuilder(
+            challenge: widget.challenge,
+            controller: controller,
+            builder: widget.builder,
+          );
+
+          webViewController = await frame.buildFrame();
+        }
       },
+
       onConsoleMessage: (controller, console) {
         widget.model.handleConsoleLogMessagges(console, widget.challenge);
         log(console.message);

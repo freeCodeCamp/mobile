@@ -39,6 +39,8 @@ class ChallengeTemplateView extends StatelessWidget {
                   tiles.indexWhere((el) => el.id == challenge.id) + 1;
               switch (challengeType) {
                 case 0:
+                case 1:
+                case 20:
                   return ChallengeView(
                     challenge: challenge,
                     block: block,
