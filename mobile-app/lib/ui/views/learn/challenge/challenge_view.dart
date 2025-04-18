@@ -32,6 +32,7 @@ class ChallengeView extends StatelessWidget {
       onViewModelReady: (model) {
         model.init(block, challenge, challengesCompleted);
       },
+      onDispose: (model) => model.shutdownLocalHost(),
       builder: (context, model, child) {
         int maxChallenges = block.challenges.length;
         ChallengeFile currFile = model.currentFile(challenge);
@@ -245,7 +246,6 @@ class ChallengeView extends StatelessWidget {
               challenge,
               currFile,
             );
-
             bool hasRegion = currFile.editableRegionBoundaries.isNotEmpty;
 
             editor.fileTextStream.sink.add(
@@ -441,12 +441,14 @@ class ChallengeView extends StatelessWidget {
 
                                 model.setShowPanel = false;
                                 model.setIsRunningTests = true;
+
                                 model.setTestRunner = TestRunner(
                                   builder: TestRunnerBuilder(
                                     source: '',
                                     code: Code(contents: model.editorText!),
                                     workerType: WorkerType.frame,
                                   ),
+                                  model: model,
                                   challenge: challenge,
                                 );
                               }

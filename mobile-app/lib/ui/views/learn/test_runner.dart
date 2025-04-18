@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:developer';
 
 import 'package:flutter/widgets.dart';
@@ -6,6 +7,7 @@ import 'package:freecodecamp/app/app.locator.dart';
 import 'package:freecodecamp/enums/ext_type.dart';
 import 'package:freecodecamp/models/learn/challenge_model.dart';
 import 'package:freecodecamp/service/learn/learn_file_service.dart';
+import 'package:freecodecamp/ui/views/learn/challenge/challenge_viewmodel.dart';
 import 'package:html/dom.dart';
 import 'package:html/parser.dart';
 
@@ -20,8 +22,8 @@ class Code {
 
 // Compiles the document into a valid HTML and JS/CSS structure
 
-class FrameCompiler {
-  FrameCompiler({
+class FrameBuilder {
+  FrameBuilder({
     required this.controller,
     required this.builder,
     required this.challenge,
@@ -80,11 +82,12 @@ class FrameCompiler {
     return firstHTMlfile;
   }
 
-  InAppWebViewController buildFrame(InAppWebViewController controller) {
+  Future<InAppWebViewController> buildFrame() async {
     Document document = Document();
     document = parse('');
 
     String tail = challenge.files[0].tail!;
+    String firstHtmlFile = await htmlFlow(challenge, Ext.html);
 
     List<String> imports = [
       '<script src="http://localhost:8080/index.mjs">console.log("hello")</script>',
@@ -104,15 +107,7 @@ class FrameCompiler {
 
     String script = '''
     <script type="module">
-
-    // const worker = new Worker('http://localhost:8080/debug.js');
-    // worker.onmessage = function(e) {
-    //   console.log('Message received from worker: ', e.data);
-    // };
-    // worker.postMessage('Hello from main thread');
-    console.log('this sucks');
-
-    const code = `${htmlFlow(challenge, Ext.html)}`;
+    const code = `${builder.code.contents.replaceAll('\\', '\\\\').replaceAll('`', '\\`').replaceAll('\$', r'\$')}`;
     const doc = new DOMParser().parseFromString(code, 'text/html');
 
     ${tail.isNotEmpty ? """
@@ -125,43 +120,19 @@ class FrameCompiler {
     const tests = ${parseTest(challenge.tests)};
     const testText = ${challenge.tests.map((e) => '''"${e.instruction.replaceAll('"', '\\"').replaceAll('\n', ' ')}"''').toList().toString()};
 
-    const editableContents = `${builder.code.editableContents}`;
-
     doc.__runTest = async function runtTests(testString) {
       let error = false;
-      console.log(window.FCCSandbox);
       const runner = await window.FCCSandbox.createTestRunner({
-						source: "var x = 5;",
-						type: "worker",
+						source: `$firstHtmlFile`,
+						type: "frame",
 						code: {
-							contents: "",
+							contents: `$firstHtmlFile`,
 						},
             assetPath: "/",
 					})
-    const result = await runner.runTest("assert.equal(x, 4);")
-    console.log(JSON.stringify(result));
-    console.log('testing', testString);
-
-      for(let i = 0; i < testString.length; i++){
-        try {
-            const testPromise = new Promise((resolve, reject) => {
-              try {
-                const test = eval(${tail.isNotEmpty ? 'tail + "\\n" +' : ""} testString[i]);
-                resolve(test);
-              } catch (e) {
-                reject(e);
-              }
-            });
-            await testPromise;
-        } catch (e) {
-            error = true;
-            console.log('testMSG: ' + testText[i]);
-            break;
-        }
-      }
-      if(!error){
-        console.log('completed');
-      }
+      const result = await runner.runTest(tests[0])
+      console.log('this is the result:', JSON.stringify(result));
+      console.log('testing', testString);
     };
 
     document.querySelector('*').innerHTML = code;
@@ -186,13 +157,7 @@ class FrameCompiler {
       baseUrl: WebUri('http://localhost:8080'),
     );
 
-    log(document.outerHtml);
-
     return controller;
-  }
-
-  InAppWebViewController paintedFrame() {
-    return buildFrame(controller);
   }
 }
 
@@ -216,10 +181,12 @@ class TestRunner extends StatefulWidget {
     Key? key,
     required this.builder,
     required this.challenge,
+    required this.model,
   }) : super(key: key);
 
   final TestRunnerBuilder builder;
   final Challenge challenge;
+  final ChallengeViewModel model;
 
   @override
   State<TestRunner> createState() => _TestRunnerState();
@@ -231,20 +198,26 @@ class _TestRunnerState extends State<TestRunner> {
   @override
   Widget build(BuildContext context) {
     return InAppWebView(
-      onWebViewCreated: (controller) {
-        FrameCompiler frame = FrameCompiler(
+      onWebViewCreated: (controller) async {
+        FrameBuilder frame = FrameBuilder(
           challenge: widget.challenge,
           controller: controller,
           builder: widget.builder,
         );
 
-        webViewController = frame.paintedFrame();
+        webViewController = await frame.buildFrame();
       },
       onConsoleMessage: (controller, console) {
-        //TODO : implement console log stream
-
-        log('LOGGER:${console.message}');
+        widget.model.handleConsoleLogMessagges(console, widget.challenge);
+        log(console.message);
       },
+      // onLoadStop: (controller, url) async {
+      //   var html = await controller.evaluateJavascript(source: """
+      //   document.documentElement.innerHTML;
+      // """);
+
+      //   log("FULL DOCUMENT HTML: $html");
+      // },
     );
   }
 }
