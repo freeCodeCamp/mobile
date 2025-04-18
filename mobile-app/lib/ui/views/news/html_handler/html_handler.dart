@@ -108,9 +108,9 @@ class HTMLParser {
           lineHeight: const LineHeight(1.5),
         ),
         'a': Style(
-          color: Colors.blue,
+          color: Colors.white,
           textDecoration: TextDecoration.underline,
-          textDecorationColor: Colors.blue,
+          textDecorationColor: Colors.white,
         ),
         'li': Style(
           margin: Margins.only(top: 8),
