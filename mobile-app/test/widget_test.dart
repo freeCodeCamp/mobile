@@ -26,7 +26,8 @@ void main() {
       // 'the-odin-project',
     ];
 
-    var curriculumFile = File('../../freeCodeCamp/shared/config/curriculum.json');
+    var curriculumFile =
+        File('../../freeCodeCamp/shared/config/curriculum.json');
     Map curriculumData = jsonDecode(curriculumFile.readAsStringSync());
 
     var editorChallengeTypes = <int>{};
@@ -104,11 +105,11 @@ void main() {
             challenge: challenge,
           );
 
+          var (buildFrame, document) = await frameBuilder.buildFrame();
+
           File genTestFile = File(
             'generated-tests/$currSuperBlock/${challenge.block}/${challenge.id}.html',
           );
-
-          var (buildFrame, document) = await frameBuilder.buildFrame();
 
           genTestFile.createSync(recursive: true);
           genTestFile.writeAsStringSync(document);

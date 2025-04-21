@@ -97,7 +97,11 @@ class FrameBuilder {
     Document document = Document();
     document = parse('');
 
-    String firstHtmlFile = await htmlFlow(challenge, Ext.html);
+    String firstHtmlFile = await htmlFlow(
+      challenge,
+      Ext.html,
+      testing: builder.testing,
+    );
     String script = '''
     <script type="module">
     import 'http://localhost:8080/index.mjs'
