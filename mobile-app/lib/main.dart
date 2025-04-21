@@ -92,7 +92,6 @@ class FreeCodeCampMobileApp extends StatelessWidget {
                   ? UpgradeDialogStyle.cupertino
                   : UpgradeDialogStyle.material,
               showIgnore: false,
-              showLater: false,
               upgrader: upgraderController,
               child: child,
             );
