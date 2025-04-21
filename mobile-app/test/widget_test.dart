@@ -10,7 +10,6 @@ import 'dart:io';
 
 import 'package:flutter_test/flutter_test.dart';
 import 'package:freecodecamp/app/app.locator.dart';
-import 'package:freecodecamp/enums/ext_type.dart';
 import 'package:freecodecamp/models/learn/challenge_model.dart';
 import 'package:freecodecamp/ui/views/learn/test_runner.dart';
 
@@ -72,12 +71,6 @@ void main() {
 
           Challenge challenge = Challenge.fromJson(currChallenge);
 
-          List<ChallengeFile> firstHtmlChallenge = challenge.files
-              .where((file) => (file.ext == Ext.css || file.ext == Ext.html)
-                  ? file.ext == Ext.html
-                  : file.ext == Ext.html)
-              .toList();
-
           WorkerType getWorkerType(int challengeType) {
             switch (challengeType) {
               case 0:
@@ -97,8 +90,9 @@ void main() {
 
           FrameBuilder frameBuilder = FrameBuilder(
             builder: TestRunnerBuilder(
-              source: firstHtmlChallenge[0].contents,
-              code: Code(contents: firstHtmlChallenge[0].contents),
+              // We are not yet using source and code in the test runner
+              source: '',
+              code: const Code(contents: ''),
               workerType: getWorkerType(challenge.challengeType),
               testing: true,
             ),
@@ -108,7 +102,7 @@ void main() {
           var (buildFrame, document) = await frameBuilder.buildFrame();
 
           File genTestFile = File(
-            'generated-tests/$currSuperBlock/${challenge.block}/${challenge.id}.html',
+            '../e2e/public/generated-tests/$currSuperBlock/${challenge.block}/${challenge.id}.html',
           );
 
           genTestFile.createSync(recursive: true);
