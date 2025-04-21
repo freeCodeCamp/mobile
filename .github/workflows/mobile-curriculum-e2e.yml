@@ -26,6 +26,7 @@ jobs:
         uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4
         with:
           repository: freeCodeCamp/freeCodeCamp
+          path: freeCodeCamp
 
       - name: Checkout mobile repo
         uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4
@@ -38,10 +39,11 @@ jobs:
           version: 9
 
       - name: Use Node.js ${{ matrix.node-version }}
-        uses: actions/setup-node@cdca7365b2dadb8aad0a33bc7601856ffabcc48e # v4
+        uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4
         with:
           node-version: ${{ matrix.node-version }}
           cache: pnpm
+          cache-dependency-path: freeCodeCamp/pnpm-lock.yaml
 
       - name: Setup Flutter 3.27.x
         uses: subosito/flutter-action@e938fdf56512cc96ef2f93601a5a40bde3801046 # v2
@@ -53,30 +55,38 @@ jobs:
           cache-path: ${{ runner.tool_cache }}/flutter
 
       - name: Set freeCodeCamp Environment Variables
+        working-directory: freeCodeCamp
         run: cp sample.env .env
 
-      - name: Install and Build
+      - name: Install and Build Curriculum
+        working-directory: freeCodeCamp
         run: |
           pnpm install
           pnpm run create:shared
           pnpm run build:curriculum
 
+      - name: Install mobile dependencies
+        working-directory: mobile
+        run: npm ci
+
       - name: Generate mobile test files
+        working-directory: mobile/mobile-app
         run: |
-          cd mobile/mobile-app
           echo "DEVELOPMENTMODE=true" > .env
           echo "HASHNODE_PUBLICATION_ID=$HASHNODE_PUBLICATION_ID" > .env
           flutter pub get
           flutter test test/widget_test.dart
 
       - name: Install playwright dependencies
+        working-directory: mobile
         run: npx playwright install --with-deps
 
       - name: Install serve
         run: npm install -g serve
 
       - name: Run playwright tests
-        run: npx playwright test --config=mobile/e2e/playwright.config.js
+        working-directory: mobile
+        run: npx playwright test --config=e2e/playwright.config.js
 
       - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
         if: ${{ !cancelled() }}
