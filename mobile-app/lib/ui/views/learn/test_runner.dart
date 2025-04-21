@@ -24,11 +24,11 @@ class Code {
 
 class FrameBuilder {
   FrameBuilder({
-    required this.controller,
+    this.controller,
     required this.builder,
     required this.challenge,
   });
-  final InAppWebViewController controller;
+  final InAppWebViewController? controller;
 
   final TestRunnerBuilder builder;
   final LearnFileService fileService = locator<LearnFileService>();
@@ -93,7 +93,7 @@ class FrameBuilder {
     }
   }
 
-  Future<InAppWebViewController> buildFrame() async {
+  Future<(InAppWebViewController?, String)> buildFrame() async {
     Document document = Document();
     document = parse('');
 
@@ -149,14 +149,16 @@ class FrameBuilder {
 
     document.body!.append(bodyNode);
 
-    controller.loadData(
-      data: document.outerHtml,
-      mimeType: 'text/html',
-      encoding: 'utf-8',
-      baseUrl: WebUri('http://localhost:8080'),
-    );
+    if (!builder.testing && controller != null) {
+      controller!.loadData(
+        data: document.outerHtml,
+        mimeType: 'text/html',
+        encoding: 'utf-8',
+        baseUrl: WebUri('http://localhost:8080'),
+      );
+    }
 
-    return controller;
+    return (controller, document.outerHtml);
   }
 }
 
@@ -203,8 +205,8 @@ class _TestRunnerState extends State<TestRunner> {
           controller: webViewController!,
           builder: widget.builder,
         );
-
-        webViewController = await frame.buildFrame();
+        var (buildFrame, document) = await frame.buildFrame();
+        webViewController = buildFrame;
       });
     }
 
@@ -217,7 +219,8 @@ class _TestRunnerState extends State<TestRunner> {
             builder: widget.builder,
           );
 
-          webViewController = await frame.buildFrame();
+          var (buildFrame, document) = await frame.buildFrame();
+          webViewController = buildFrame;
         }
       },
 
@@ -225,6 +228,7 @@ class _TestRunnerState extends State<TestRunner> {
         widget.model.handleConsoleLogMessagges(console, widget.challenge);
         log(console.message);
       },
+      // DEBUG for when you break stuff:
       // onLoadStop: (controller, url) async {
       //   var html = await controller.evaluateJavascript(source: """
       //   document.documentElement.innerHTML;
