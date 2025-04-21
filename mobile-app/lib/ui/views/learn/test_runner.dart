@@ -97,42 +97,18 @@ class FrameBuilder {
     Document document = Document();
     document = parse('');
 
-    String tail = challenge.files[0].tail!;
     String firstHtmlFile = await htmlFlow(challenge, Ext.html);
-
-    List<String> imports = [
-      '<script src="http://localhost:8080/index.mjs">console.log("hello")</script>',
-      '<script src="https://unpkg.com/chai@4.3.10/chai.js"></script>',
-      '<script src="https://unpkg.com/mocha@10.3.0/mocha.js"></script>',
-      '<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>',
-      '<link rel="stylesheet" href="https://unpkg.com/mocha/mocha.css" />'
-    ];
-
-    for (String import in imports) {
-      Document importToNode = parse(import);
-
-      Node node = importToNode.getElementsByTagName('HEAD')[0].children.first;
-
-      document.getElementsByTagName('HEAD')[0].append(node);
-    }
-
     String script = '''
     <script type="module">
+    import 'http://localhost:8080/index.mjs'
     const code = `${builder.code.contents.replaceAll('\\', '\\\\').replaceAll('`', '\\`').replaceAll('\$', r'\$')}`;
     const doc = new DOMParser().parseFromString(code, 'text/html');
 
-    ${tail.isNotEmpty ? """
-    const parseTail  = new DOMParser().parseFromString(`${tail.replaceAll('/', '\\/')}`,'text/html');
-    const tail = parseTail.getElementsByTagName('SCRIPT')[0].innerHTML;
-    """ : ''}
-
-    const assert = chai.assert;
-    const __checkForBrowserExtensions = false;
     const tests = ${parseTest(challenge.tests)};
     const testText = ${challenge.tests.map((e) => '''"${e.instruction.replaceAll('"', '\\"').replaceAll('\n', ' ')}"''').toList().toString()};
 
     doc.__runTest = async function runtTests(testString) {
-      let error = false;
+
       const runner = await window.FCCSandbox.createTestRunner({
 						source: `$firstHtmlFile`,
 						type: "${getTestRunnerType(builder.workerType)}",
@@ -158,7 +134,6 @@ class FrameBuilder {
           console.log('completed');
         }
       }
-
     };
 
     document.querySelector('*').innerHTML = code;
@@ -173,8 +148,6 @@ class FrameBuilder {
             : scriptToNode.getElementsByTagName('HEAD').first.children.first;
 
     document.body!.append(bodyNode);
-
-    // TODO: find everything I f'ed up, also add back testing the test runner
 
     controller.loadData(
       data: document.outerHtml,
