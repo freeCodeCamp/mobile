@@ -12,7 +12,6 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:freecodecamp/app/app.locator.dart';
 import 'package:freecodecamp/enums/ext_type.dart';
 import 'package:freecodecamp/models/learn/challenge_model.dart';
-import 'package:freecodecamp/ui/views/learn/challenge/challenge_viewmodel.dart';
 import 'package:freecodecamp/ui/views/learn/test_runner.dart';
 
 void main() {
@@ -78,13 +77,28 @@ void main() {
                   : file.ext == Ext.html)
               .toList();
 
-          ChallengeViewModel model = ChallengeViewModel();
+          WorkerType getWorkerType(int challengeType) {
+            switch (challengeType) {
+              case 0:
+              case 14:
+              case 25:
+                return WorkerType.frame;
+              case 1:
+              case 26:
+                return WorkerType.worker;
+              case 20:
+              case 23:
+                return WorkerType.python;
+            }
+
+            return WorkerType.frame;
+          }
 
           FrameBuilder frameBuilder = FrameBuilder(
             builder: TestRunnerBuilder(
               source: firstHtmlChallenge[0].contents,
               code: Code(contents: firstHtmlChallenge[0].contents),
-              workerType: model.getWorkerType(challenge.challengeType),
+              workerType: getWorkerType(challenge.challengeType),
               testing: true,
             ),
             challenge: challenge,
