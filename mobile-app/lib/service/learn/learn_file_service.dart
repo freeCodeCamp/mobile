@@ -164,15 +164,7 @@ class LearnFileService {
           testing: testing,
         );
 
-        // Sometimes files are not linked yet but have the editable region, This
-        // means that the user is working on it. In this case we need to add the
-        // content to the HTML document regardless of it being linked or not.
-        bool hasRegion = file.editableRegionBoundaries.isNotEmpty;
-        bool linked = !await cssFileIsLinked(
-          content,
-          '${file.name}.${file.ext.name}',
-        );
-        if (linked && !hasRegion) {
+        if (!await cssFileIsLinked(content, '${file.name}.${file.ext.name}')) {
           continue;
         }
 
@@ -184,6 +176,10 @@ class LearnFileService {
       for (String contents in cssFilesWithCache) {
         String tag = '<style class="fcc-injected-styles"> $contents </style>';
         tags.add(tag);
+      }
+
+      for (String tag in tags) {
+        content += tag;
       }
 
       return content;
