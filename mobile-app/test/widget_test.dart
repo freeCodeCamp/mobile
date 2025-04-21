@@ -20,7 +20,7 @@ void main() {
 
     List<String> publicSBs = [
       '2022/responsive-web-design',
-      // 'responsive-web-design',
+      'responsive-web-design',
       // 'javascript-algorithms-and-data-structures',
       // 'the-odin-project',
     ];
