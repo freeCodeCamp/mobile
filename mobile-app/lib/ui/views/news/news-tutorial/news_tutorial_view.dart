@@ -41,14 +41,18 @@ class NewsTutorialHeader extends StatelessWidget {
                     Text(
                       tutorial.title,
                       style: const TextStyle(
-                          fontSize: 24, height: 1.5, fontFamily: 'Lato'),
+                        fontSize: 24,
+                        height: 1.5,
+                      ),
                       key: const Key('title'),
                     ),
                     Text(
                       context.t.tutorial_written_by(
                         tutorial.authorName,
                       ),
-                      style: const TextStyle(height: 1.5, fontFamily: 'Lato'),
+                      style: const TextStyle(
+                        height: 1.5,
+                      ),
                     ),
                     Wrap(
                       children: [

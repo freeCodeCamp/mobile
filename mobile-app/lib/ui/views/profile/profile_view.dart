@@ -413,7 +413,7 @@ class CertificationWidget extends StatelessWidget {
                                 child: ListTile(
                                   title: Text(
                                     context.t.profile_view_cert(
-                                      cert['certTitle'].toString(),
+                                      cert['title'].toString(),
                                     ),
                                   ),
                                   trailing: const Icon(
@@ -469,7 +469,7 @@ class CertificationWidget extends StatelessWidget {
                                     child: ListTile(
                                       title: Text(
                                         context.t.profile_view_cert(
-                                          cert['certTitle'].toString(),
+                                          cert['title'].toString(),
                                         ),
                                       ),
                                       trailing: const Icon(

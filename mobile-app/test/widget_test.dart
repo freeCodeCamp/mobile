@@ -25,7 +25,7 @@ void main() {
       'the-odin-project',
     ];
 
-    var curriculumFile = File('../../shared/config/curriculum.json');
+    var curriculumFile = File('../../freeCodeCamp/shared/config/curriculum.json');
     Map curriculumData = jsonDecode(curriculumFile.readAsStringSync());
 
     var editorChallengeTypes = <int>{};
