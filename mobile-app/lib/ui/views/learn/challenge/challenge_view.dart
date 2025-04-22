@@ -50,7 +50,7 @@ class ChallengeView extends StatelessWidget {
           options: options,
         );
 
-        model.initiateFile(editor, challenge, currFile, editableRegion);
+        model.initFile(editor, challenge, currFile, editableRegion);
         model.listenToFocusedController(editor);
         model.listenToSymbolBarScrollController();
 
@@ -61,9 +61,7 @@ class ChallengeView extends StatelessWidget {
         editor.onTextChange.stream.listen((text) {
           model.fileService.saveFileInCache(
             challenge,
-            model.currentSelectedFile != ''
-                ? model.currentSelectedFile
-                : challenge.files[0].name,
+            model.currentSelectedFile,
             text,
           );
 

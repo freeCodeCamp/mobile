@@ -233,32 +233,11 @@ class ChallengeViewModel extends BaseViewModel {
     setupDialogUi();
 
     setChallenge = challenge;
-
-    List<ChallengeFile> currentEditedChallenge = challenge.files
-        .where((element) => element.editableRegionBoundaries.isNotEmpty)
-        .toList();
-
-    if (editorText == null) {
-      String text = await fileService.getExactFileFromCache(
-        challenge,
-        currentEditedChallenge.isEmpty
-            ? challenge.files.first
-            : currentEditedChallenge.first,
-      );
-
-      if (text != '') {
-        setEditorText = text;
-      }
-    }
-    setCurrentSelectedFile = currentEditedChallenge.isEmpty
-        ? challenge.files[0].name
-        : currentEditedChallenge[0].name;
-
     setBlock = block;
     setChallengesCompleted = challengesCompleted;
   }
 
-  void initiateFile(
+  void initFile(
     Editor editor,
     Challenge challenge,
     ChallengeFile currFile,
@@ -266,12 +245,16 @@ class ChallengeViewModel extends BaseViewModel {
   ) async {
     if (!_mounted) {
       await Future.delayed(Duration.zero);
+      String cachedFileContents =
+          await fileService.getCurrentEditedFileFromCache(
+        challenge,
+      );
       editor.fileTextStream.sink.add(
         FileIDE(
           id: challenge.id + currFile.name,
           ext: currFile.ext.name,
           name: currFile.name,
-          content: editorText ?? currFile.contents,
+          content: cachedFileContents,
           hasRegion: hasRegion,
           region: EditorRegionOptions(
             start: hasRegion ? currFile.editableRegionBoundaries[0] : null,
@@ -281,6 +264,13 @@ class ChallengeViewModel extends BaseViewModel {
         ),
       );
       _mounted = true;
+
+      if (currFile.name != currentSelectedFile) {
+        setCurrentSelectedFile = currFile.name;
+        setEditorText = await fileService.getCurrentEditedFileFromCache(
+          challenge,
+        );
+      }
     }
   }
 
