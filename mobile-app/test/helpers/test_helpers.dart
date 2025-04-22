@@ -1,6 +1,4 @@
 import 'package:freecodecamp/app/app.locator.dart';
-import 'package:freecodecamp/enums/theme_type.dart';
-import 'package:freecodecamp/models/main/profile_ui_model.dart';
 import 'package:freecodecamp/models/main/user_model.dart';
 import 'package:freecodecamp/service/authentication/authentication_service.dart';
 import 'package:freecodecamp/service/dio_service.dart';
