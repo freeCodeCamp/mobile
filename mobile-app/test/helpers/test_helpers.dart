@@ -117,70 +117,20 @@ MockBookmarksDatabaseService getAndRegisterNewsBookmarkService() {
   return service;
 }
 
-MockAuthenticationService getAndRegisterAuthenticationService() {
+MockAuthenticationService getAndRegisterAuthenticationService(
+    {FccUserModel? user}) {
   _removeRegistrationIfExists<AuthenticationService>();
   final service = MockAuthenticationService();
 
   when(service.userModel).thenAnswer(
-    (_) => Future.value(
-      FccUserModel(
-        id: '5bd30e0f1caf6ac3ddddddb5',
-        email: 'foo@bar.com',
-        username: 'devuser',
-        name: 'Development User',
-        picture: '',
-        currentChallengeId: '',
-        emailVerified: true,
-        isEmailVerified: true,
-        acceptedPrivacyTerms: true,
-        sendQuincyEmail: true,
-        isCheater: false,
-        isDonating: false,
-        isHonest: true,
-        isFrontEndCert: false,
-        isDataVisCert: false,
-        isBackEndCert: false,
-        isFullStackCert: false,
-        isRespWebDesignCert: false,
-        is2018DataVisCert: false,
-        isFrontEndLibsCert: false,
-        isJsAlgoDataStructCert: false,
-        isApisMicroservicesCert: false,
-        isInfosecQaCert: false,
-        isQaCertV7: false,
-        isInfosecCertV7: false,
-        isSciCompPyCertV7: false,
-        isDataAnalysisPyCertV7: false,
-        isMachineLearningPyCertV7: false,
-        isRelationalDatabaseCertV8: false,
-        joinDate: DateTime.parse('2025-01-01 06:00:00Z'),
-        points: 100,
-        calendar: {
-          DateTime.parse('2025-01-02 06:00:00Z'): 1,
-          DateTime.parse('2025-01-03 06:00:00Z'): 1
-        },
-        heatMapCal: {
-          DateTime.parse('2025-01-02 06:00:00Z'): 1,
-          DateTime.parse('2025-01-03 06:00:00Z'): 1
-        },
-        completedChallenges: [],
-        savedChallenges: [],
-        portfolio: [],
-        yearsTopContributor: [],
-        theme: Themes.defaultTheme,
-        profileUI: ProfileUI(
-            isLocked: false,
-            showAbout: true,
-            showCerts: true,
-            showDonation: true,
-            showHeatMap: true,
-            showLocation: true,
-            showName: true,
-            showPoints: true,
-            showPortfolio: true,
-            showTimeLine: true),
-      ),
-    ),
+    (_) {
+      if (user != null) {
+        return Future.value(user);
+      }
+      return Future.value(
+        FccUserModel.fromJson(mockUser),
+      );
+    },
   );
 
   locator.registerLazySingleton<AuthenticationService>(() => service);
