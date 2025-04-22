@@ -214,7 +214,6 @@ class ContinueLearningButton extends StatelessWidget {
                   textAlign: TextAlign.left,
                   style: const TextStyle(
                     fontSize: 20,
-                    fontFamily: 'lato',
                     fontWeight: FontWeight.w700,
                   ),
                 ),
@@ -329,8 +328,9 @@ class QuoteWidget extends StatelessWidget {
                       Text(
                         '"${quote.quote}"',
                         textAlign: TextAlign.center,
-                        style:
-                            const TextStyle(fontSize: 18, fontFamily: 'Lato'),
+                        style: const TextStyle(
+                          fontSize: 18,
+                        ),
                       ),
                       Padding(
                         padding: const EdgeInsets.all(8.0),
@@ -338,7 +338,6 @@ class QuoteWidget extends StatelessWidget {
                           '- ${quote.author}',
                           style: const TextStyle(
                             fontStyle: FontStyle.italic,
-                            fontFamily: 'Lato',
                             fontSize: 18,
                           ),
                         ),

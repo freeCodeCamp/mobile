@@ -16,10 +16,8 @@ class HTMLParser {
   const HTMLParser({
     Key? key,
     required this.context,
-    this.fontFamily = 'Lato',
   });
 
-  final String fontFamily;
   final BuildContext context;
 
   List<Widget> parse(
@@ -97,11 +95,9 @@ class HTMLParser {
         '*:not(h1):not(h2):not(h3):not(h4):not(h5):not(h6)': Style(
           fontSize: FontSize.xLarge,
           color: fontColor ?? Colors.white.withValues(alpha: 0.87),
-          fontWeight:
-              fontFamily == 'Inter' ? FontWeight.w400 : FontWeight.normal,
         ),
         'body': Style(
-          fontFamily: fontFamily,
+          fontFamily: 'Lato',
           padding: HtmlPaddings.only(left: 4, right: 4),
         ),
         'strong': Style(
@@ -112,8 +108,9 @@ class HTMLParser {
           lineHeight: const LineHeight(1.5),
         ),
         'a': Style(
-          color: Colors.blue,
+          color: Colors.white,
           textDecoration: TextDecoration.underline,
+          textDecorationColor: Colors.white,
         ),
         'li': Style(
           margin: Margins.only(top: 8),
@@ -145,17 +142,27 @@ class HTMLParser {
           fontSize: FontSize.medium,
         ),
         'code': Style(
+          fontFamily: 'Hack',
           backgroundColor: const Color.fromRGBO(0x3b, 0x3b, 0x4f, 0.5),
           padding: HtmlPaddings.symmetric(vertical: 2, horizontal: 4),
           color: Colors.white.withValues(alpha: 0.87),
           fontSize: FontSize.xLarge,
-          fontFamily: 'Roboto Mono',
         ),
+        'pre': Style(fontFamily: 'Hack')
       },
       onLinkTap: (url, attributes, element) {
         launchUrl(Uri.parse(url!.trim()));
       },
       extensions: [
+        TagWrapExtension(
+          tagsToWrap: {'table'},
+          builder: (child) {
+            return SingleChildScrollView(
+              scrollDirection: Axis.horizontal,
+              child: child,
+            );
+          },
+        ),
         const TableHtmlExtension(),
         TagExtension(
           tagsToExtend: {'pre'},
@@ -202,12 +209,11 @@ class HTMLParser {
                               : 'plaintext',
                           theme: themeMap['atom-one-dark']!,
                           textStyle: TextStyle(
-                            fontFamily: 'RobotoMono',
-                            fontSize: double.parse(
-                              FontSize.large.value.toString(),
-                            ),
-                            color: Colors.white,
-                          ),
+                              fontSize: double.parse(
+                                FontSize.large.value.toString(),
+                              ),
+                              color: Colors.white,
+                              fontFamily: 'Hack'),
                         ),
                       ),
                     ),
