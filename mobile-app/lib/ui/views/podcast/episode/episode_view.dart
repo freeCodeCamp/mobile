@@ -4,8 +4,7 @@ import 'package:freecodecamp/models/podcasts/episodes_model.dart';
 import 'package:freecodecamp/models/podcasts/podcasts_model.dart';
 import 'package:freecodecamp/ui/views/news/html_handler/html_handler.dart';
 import 'package:freecodecamp/ui/views/podcast/episode/episode_viewmodel.dart';
-import 'package:freecodecamp/ui/widgets/drawer_widget/drawer_widget_view.dart';
-import 'package:freecodecamp/ui/widgets/podcast_widgets/podcast_progressbar_widget.dart';
+
 import 'package:freecodecamp/ui/widgets/podcast_widgets/podcast_title_widget.dart';
 import 'package:stacked/stacked.dart';
 
@@ -23,6 +22,9 @@ class EpisodeView extends StatelessWidget {
   Widget build(BuildContext context) {
     return ViewModelBuilder<EpisodeViewModel>.reactive(
       viewModelBuilder: () => EpisodeViewModel(),
+      onViewModelReady: (model) {
+        model.init(episode);
+      },
       builder: (context, model, child) => Scaffold(
         appBar: AppBar(),
         body: ListView(
@@ -64,21 +66,25 @@ class EpisodeView extends StatelessWidget {
                   textAlign: TextAlign.center,
                   style: const TextStyle(fontSize: 16),
                 ),
-                buildDivider(),
+                Slider(
+                  onChangeStart: (_) {
+                    model.pauseAudio();
+                  },
+                  onChanged: (value) {
+                    model.setSliderValue = value;
+                  },
+                  onChangeEnd: (value) {
+                    model.setAudioProgress(value, episode);
+                    model.audioService.play();
+                  },
+                  value: model.sliderValue,
+                ),
                 PodcastTile(
-                    podcast: podcast,
-                    episode: episode,
-                    isFromEpisodeView: true,
-                    isFromDownloadView: false),
-                if (episode.duration != null)
-                  Padding(
-                    padding: const EdgeInsets.all(8.0),
-                    child: PodcastProgressBar(
-                      duration: episode.duration!,
-                      episodeId: episode.id,
-                    ),
-                  ),
-                buildDivider(),
+                  podcast: podcast,
+                  episode: episode,
+                  isFromEpisodeView: true,
+                  isFromDownloadView: false,
+                ),
                 Container(
                   padding: const EdgeInsets.fromLTRB(8, 16, 8, 8),
                   child: description(model, context),

@@ -295,7 +295,7 @@ class PodcastTileState extends State<PodcastTile> {
                           child: const CircularProgressIndicator()),
                     )
                   : playbuttonWidget(context),
-              downloadbuttonWidget()
+              // downloadbuttonWidget()
             ],
           )
         else
@@ -373,63 +373,65 @@ class PodcastTileState extends State<PodcastTile> {
 
   Widget downloadbuttonWidget() {
     return IconButton(
-        onPressed: widget.isDownloading
-            ? null
-            : () {
-                widget._downloadService.setDownloadId = widget.episode.id;
-                downloadBtnClick();
-              },
-        iconSize: !widget.isFromEpisodeView
-            ? MediaQuery.of(context).size.height * 0.0375
-            : MediaQuery.of(context).size.height * 0.075,
-        icon: widget.isDownloading &&
-                widget._downloadService.downloadId == widget.episode.id
-            ? StreamBuilder<String>(
-                stream: widget._downloadService.progress,
-                builder: (context, snapshot) {
-                  if (snapshot.data == '100') {
-                    SchedulerBinding.instance.addPostFrameCallback((timeStamp) {
-                      setIsDownloaded = true;
-                    });
-                  }
+      onPressed: widget.isDownloading
+          ? null
+          : () {
+              widget._downloadService.setDownloadId = widget.episode.id;
+              downloadBtnClick();
+            },
+      iconSize: !widget.isFromEpisodeView
+          ? MediaQuery.of(context).size.height * 0.0375
+          : MediaQuery.of(context).size.height * 0.075,
+      icon: widget.isDownloading &&
+              widget._downloadService.downloadId == widget.episode.id
+          ? StreamBuilder<String>(
+              stream: widget._downloadService.progress,
+              builder: (context, snapshot) {
+                if (snapshot.data == '100') {
+                  SchedulerBinding.instance.addPostFrameCallback((timeStamp) {
+                    setIsDownloaded = true;
+                  });
+                }
 
-                  if (snapshot.hasData) {
-                    return Stack(alignment: Alignment.center, children: [
-                      Text(
-                        '${snapshot.data}%',
-                        style: const TextStyle(fontSize: 16),
-                      ),
-                      CircularProgressIndicator(
-                          color: Colors.white,
-                          strokeWidth: 2,
-                          value: double.parse(snapshot.data as String) / 100),
-                    ]);
-                  }
+                if (snapshot.hasData) {
+                  return Stack(alignment: Alignment.center, children: [
+                    Text(
+                      '${snapshot.data}%',
+                      style: const TextStyle(fontSize: 16),
+                    ),
+                    CircularProgressIndicator(
+                        color: Colors.white,
+                        strokeWidth: 2,
+                        value: double.parse(snapshot.data as String) / 100),
+                  ]);
+                }
 
-                  return const CircularProgressIndicator(
-                    color: Colors.white,
-                    strokeWidth: 2,
-                    value: 0,
-                  );
-                })
-            : Icon(
-                widget.downloaded
-                    ? Icons.download_done
-                    : Icons.arrow_circle_down_outlined,
-              ));
+                return const CircularProgressIndicator(
+                  color: Colors.white,
+                  strokeWidth: 2,
+                  value: 0,
+                );
+              })
+          : Icon(
+              widget.downloaded
+                  ? Icons.download_done
+                  : Icons.arrow_circle_down_outlined,
+            ),
+    );
   }
 
   IconButton playbuttonWidget(BuildContext context) {
     return IconButton(
-        onPressed: () {
-          playBtnClick();
-        },
-        iconSize: !widget.isFromEpisodeView
-            ? MediaQuery.of(context).size.height * 0.05
-            : MediaQuery.of(context).size.height * 0.075,
-        icon: Icon(
-          widget.playing ? Icons.pause_circle : Icons.play_circle_sharp,
-        ));
+      onPressed: () {
+        playBtnClick();
+      },
+      iconSize: !widget.isFromEpisodeView
+          ? MediaQuery.of(context).size.height * 0.05
+          : MediaQuery.of(context).size.height * 0.075,
+      icon: Icon(
+        widget.playing ? Icons.pause : Icons.play_arrow,
+      ),
+    );
   }
 
   Padding descriptionWidget() {
