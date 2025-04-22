@@ -446,7 +446,11 @@ class ChallengeView extends StatelessWidget {
                                 model.setTestRunner = TestRunner(
                                   builder: TestRunnerBuilder(
                                     source: '',
-                                    code: Code(contents: model.editorText!),
+                                    code: Code(
+                                      contents: model.editorText!,
+                                      editableContents:
+                                          model.editableRegionContent,
+                                    ),
                                     workerType: model.getWorkerType(
                                       challenge.challengeType,
                                     ),

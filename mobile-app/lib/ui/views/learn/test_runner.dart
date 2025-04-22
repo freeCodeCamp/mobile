@@ -104,9 +104,8 @@ class FrameBuilder {
     );
     String script = '''
     <script type="module">
-    import 'http://localhost:8080/index.mjs'
-    const code = `${builder.code.contents.replaceAll('\\', '\\\\').replaceAll('`', '\\`').replaceAll('\$', r'\$')}`;
-    const doc = new DOMParser().parseFromString(code, 'text/html');
+    import 'http://localhost:8080/index.mjs';
+    const doc = new DOMParser().parseFromString('', 'text/html');
 
     const tests = ${parseTest(challenge.tests)};
     const testText = ${challenge.tests.map((e) => '''"${e.instruction.replaceAll('"', '\\"').replaceAll('\n', ' ')}"''').toList().toString()};
@@ -114,33 +113,29 @@ class FrameBuilder {
     doc.__runTest = async function runtTests(testString) {
 
       const runner = await window.FCCSandbox.createTestRunner({
-						source: `$firstHtmlFile`,
-						type: "${getTestRunnerType(builder.workerType)}",
-						code: {
-							contents: `$firstHtmlFile`,
-						},
-            assetPath: "${builder.assetPath}",
-					})
+        source: `$firstHtmlFile`,
+        type: "${getTestRunnerType(builder.workerType)}",
+        code: {
+          contents: `$firstHtmlFile`,
+          editableContents: `${builder.code.editableContents ?? ''}`,
+        },
+        assetPath: "${builder.assetPath}",
+      })
 
-      const results = [];
       for(let i = 0; i < tests.length; i++){
         const result =  await runner.runTest(tests[i]);
-        results.push(result);
-      }
 
-      for(let i = 0; i < results.length; i++){
-        if(Object.keys(results[i]).includes('err')){
+        if(result.err){
           console.log(`testMSG: \${testText[i]}`);
           break;
         }
 
-        if(i === results.length -1){
+        if(i === tests.length -1){
           console.log('completed');
         }
       }
     };
 
-    document.querySelector('*').innerHTML = code;
     doc.__runTest(tests);
   </script>''';
 
