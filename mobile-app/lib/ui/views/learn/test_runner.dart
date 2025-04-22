@@ -116,10 +116,24 @@ class FrameBuilder {
     const tail = parseTail.getElementsByTagName('SCRIPT')[0].innerHTML;
     """ : ''}
 
+    //By default, browsers give <script> elements the style display: none, but it's possible that a user may add some CSS
+    // that overrides this. So we need to add a style tag to hide the header.
+
+
+    const invisibleStyle = `<style class="fcc-hide-header">
+      head *,
+      title,
+      meta,
+      link,
+      script {
+        display: none !important;
+      }
+    </style>`;
+
     doc.__runTest = async function runtTests(testString) {
 
       const runner = await window.FCCSandbox.createTestRunner({
-        source: `$firstHtmlFile`,
+        source: `\${invisibleStyle} \\n $firstHtmlFile`,
         type: "${getTestRunnerType(builder.workerType)}",
         code: {
           contents: `$firstHtmlFile`,
