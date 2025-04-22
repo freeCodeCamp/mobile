@@ -479,12 +479,12 @@ class MockDialogService extends _i1.Mock implements _i2.DialogService {
     String? title,
     String? description,
     String? cancelTitle,
-    _i6.Color? cancelTitleColor,
+    _i9.Color? cancelTitleColor,
     String? buttonTitle = 'Ok',
-    _i6.Color? buttonTitleColor,
+    _i9.Color? buttonTitleColor,
     bool? barrierDismissible = false,
-    _i4.RouteSettings? routeSettings,
-    _i4.GlobalKey<_i4.NavigatorState>? navigatorKey,
+    _i7.RouteSettings? routeSettings,
+    _i7.GlobalKey<_i7.NavigatorState>? navigatorKey,
     _i2.DialogPlatform? dialogPlatform,
   }) =>
       (super.noSuchMethod(
@@ -527,9 +527,9 @@ class MockDialogService extends _i1.Mock implements _i2.DialogService {
     bool? barrierDismissible = false,
     String? barrierLabel = '',
     bool? useSafeArea = true,
-    _i4.RouteSettings? routeSettings,
-    _i4.GlobalKey<_i4.NavigatorState>? navigatorKey,
-    _i4.RouteTransitionsBuilder? transitionBuilder,
+    _i7.RouteSettings? routeSettings,
+    _i7.GlobalKey<_i7.NavigatorState>? navigatorKey,
+    _i7.RouteTransitionsBuilder? transitionBuilder,
     dynamic customData,
     R? data,
   }) =>
@@ -570,11 +570,11 @@ class MockDialogService extends _i1.Mock implements _i2.DialogService {
     String? title,
     String? description,
     String? cancelTitle = 'Cancel',
-    _i6.Color? cancelTitleColor,
+    _i9.Color? cancelTitleColor,
     String? confirmationTitle = 'Ok',
-    _i6.Color? confirmationTitleColor,
+    _i9.Color? confirmationTitleColor,
     bool? barrierDismissible = false,
-    _i4.RouteSettings? routeSettings,
+    _i7.RouteSettings? routeSettings,
     _i2.DialogPlatform? dialogPlatform,
   }) =>
       (super.noSuchMethod(
@@ -939,7 +939,7 @@ class MockSnackbarService extends _i1.Mock implements _i2.SnackbarService {
 
   @override
   void showSnackbar({
-    String? title = r'',
+    String? title = '',
     required String? message,
     dynamic Function(dynamic)? onTap,
     Duration? duration,
