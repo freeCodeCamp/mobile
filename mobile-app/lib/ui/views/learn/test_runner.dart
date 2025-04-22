@@ -102,6 +102,7 @@ class FrameBuilder {
       Ext.html,
       testing: builder.testing,
     );
+    String tail = challenge.files[0].tail ?? '';
     String script = '''
     <script type="module">
     import 'http://localhost:8080/index.mjs';
@@ -109,6 +110,11 @@ class FrameBuilder {
 
     const tests = ${parseTest(challenge.tests)};
     const testText = ${challenge.tests.map((e) => '''"${e.instruction.replaceAll('"', '\\"').replaceAll('\n', ' ')}"''').toList().toString()};
+
+    ${tail.isNotEmpty ? """
+    const parseTail  = new DOMParser().parseFromString(`${tail.replaceAll('/', '\\/')}`,'text/html');
+    const tail = parseTail.getElementsByTagName('SCRIPT')[0].innerHTML;
+    """ : ''}
 
     doc.__runTest = async function runtTests(testString) {
 
@@ -123,7 +129,7 @@ class FrameBuilder {
       })
 
       for(let i = 0; i < tests.length; i++){
-        const result =  await runner.runTest(tests[i]);
+        const result =  await runner.runTest(${tail.isNotEmpty ? 'tail + "\\n" +' : ""} tests[i]);
 
         if(result.err){
           console.log(`testMSG: \${testText[i]}`);

@@ -88,11 +88,30 @@ void main() {
             return WorkerType.frame;
           }
 
+          String getLines(String contents, [List? range]) {
+            if (range == null || range.isEmpty) {
+              return challenge.files[0].contents;
+            }
+
+            final lines = contents.split('\n');
+            final editableLines = (range[1] <= range[0])
+                ? []
+                : lines.sublist(range[0], range[1] - 1);
+
+            return editableLines.join('\n');
+          }
+
           FrameBuilder frameBuilder = FrameBuilder(
             builder: TestRunnerBuilder(
               // We are not yet using source and code in the test runner
               source: '',
-              code: const Code(contents: ''),
+              code: Code(
+                contents: '',
+                editableContents: getLines(
+                  challenge.files[0].contents,
+                  challenge.files[0].editableRegionBoundaries,
+                ),
+              ),
               workerType: getWorkerType(challenge.challengeType),
               testing: true,
             ),
