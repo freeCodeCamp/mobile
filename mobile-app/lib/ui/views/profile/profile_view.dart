@@ -381,7 +381,6 @@ class CertificationWidget extends StatelessWidget {
           const Padding(
             padding: EdgeInsets.only(top: 8, bottom: 2),
             child: Text(
-              key: ValueKey('certification_title'),
               'freeCodeCamp Certifications',
               textAlign: TextAlign.center,
               style: TextStyle(

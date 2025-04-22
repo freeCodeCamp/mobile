@@ -7,6 +7,7 @@ import 'package:freecodecamp/ui/theme/fcc_theme.dart';
 import 'package:freecodecamp/ui/views/profile/profile_view.dart';
 import 'package:stacked_services/stacked_services.dart';
 
+import '../__fixtures__/user.dart';
 import '../helpers/test_helpers.dart';
 
 Future<void> main() async {
@@ -14,7 +15,10 @@ Future<void> main() async {
     setUp(() => registerServices());
     tearDown(() => unregisterService());
 
-    testWidgets('MyWidget has a title and message', (tester) async {
+    testWidgets('ProfileView widget has correct content', (tester) async {
+      getAndRegisterAuthenticationService(
+          user: {...mockUser, 'username': 'MobileTeam'});
+
       await tester.pumpWidget(
         MaterialApp(
           localizationsDelegates: const [
@@ -34,12 +38,12 @@ Future<void> main() async {
         ),
       );
 
-      final titleFinder = find.byKey(
-        const ValueKey('certification_title'),
-      );
+      final titleFinder = find.text('freeCodeCamp Certifications');
+      final usernameFinder = find.text('@MobileTeam');
       await tester.pump();
 
       expect(titleFinder, findsOneWidget);
+      expect(usernameFinder, findsOneWidget);
     });
   });
 }
