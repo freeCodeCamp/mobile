@@ -427,6 +427,14 @@ class ChallengeViewModel extends BaseViewModel {
       return file;
     }
 
+    List<ChallengeFile>? fileWithEditableRegion = challenge.files
+        .where((file) => file.editableRegionBoundaries.isNotEmpty)
+        .toList();
+
+    if (fileWithEditableRegion.isNotEmpty) {
+      return fileWithEditableRegion[0];
+    }
+
     return challenge.files[0];
   }
 
