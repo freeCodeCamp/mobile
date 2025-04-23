@@ -17,7 +17,7 @@ Future<void> main() async {
 
     testWidgets('ProfileView widget has correct content', (tester) async {
       getAndRegisterAuthenticationService(
-          user: {...mockUser, 'username': 'MobileTeam'});
+          user: {...mockUser, 'username': 'MobileTeam'}, isLoggedIn: true);
 
       await tester.pumpWidget(
         MaterialApp(
