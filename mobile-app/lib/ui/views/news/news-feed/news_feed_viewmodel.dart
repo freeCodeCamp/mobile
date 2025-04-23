@@ -13,7 +13,7 @@ import 'package:stacked_services/stacked_services.dart';
 
 class NewsFeedViewModel extends BaseViewModel {
   final _navigationService = locator<NavigationService>();
-  final _newsApiService = locator<NewsApiServive>();
+  final _newsApiService = locator<NewsApiService>();
 
   final PagingController<String, Tutorial> _pagingController =
       PagingController(firstPageKey: '');

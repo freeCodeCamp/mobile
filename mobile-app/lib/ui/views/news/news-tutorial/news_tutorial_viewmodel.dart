@@ -14,7 +14,7 @@ import 'package:stacked/stacked.dart';
 
 class NewsTutorialViewModel extends BaseViewModel {
   late Future<Tutorial> _tutorialFuture;
-  final _newsApiService = locator<NewsApiServive>();
+  final _newsApiService = locator<NewsApiService>();
 
   Future<Tutorial>? get tutorialFuture => _tutorialFuture;
 

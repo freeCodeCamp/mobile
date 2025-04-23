@@ -30,7 +30,7 @@ class DescriptionView extends StatelessWidget {
     return ViewModelBuilder<DescriptionModel>.reactive(
       viewModelBuilder: () => DescriptionModel(),
       builder: (context, model, child) {
-        HTMLParser parser = HTMLParser(context: context, fontFamily: 'Inter');
+        HTMLParser parser = HTMLParser(context: context);
 
         return SafeArea(
           child: Column(
@@ -49,7 +49,6 @@ class DescriptionView extends StatelessWidget {
                                 style: const TextStyle(
                                   fontSize: 24,
                                   fontWeight: FontWeight.bold,
-                                  fontFamily: 'Inter',
                                 ),
                               ),
                               if (isMultiStepChallenge)
@@ -60,7 +59,6 @@ class DescriptionView extends StatelessWidget {
                                   ),
                                   style: const TextStyle(
                                     fontSize: 14,
-                                    fontFamily: 'Inter',
                                     color: Colors.white70,
                                   ),
                                 )
@@ -79,9 +77,7 @@ class DescriptionView extends StatelessWidget {
                             children: parser.parse(
                                   description,
                                 ) +
-                                parser.parse(
-                                  instructions,
-                                ),
+                                parser.parse(instructions),
                           ),
                         ),
                       ),

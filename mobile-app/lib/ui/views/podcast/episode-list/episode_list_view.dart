@@ -8,7 +8,7 @@ import 'package:freecodecamp/models/podcasts/episodes_model.dart';
 import 'package:freecodecamp/models/podcasts/podcasts_model.dart';
 import 'package:freecodecamp/ui/views/podcast/episode-list/episode_list_viewmodel.dart';
 import 'package:freecodecamp/ui/views/podcast/podcast-list/podcast_list_viewmodel.dart';
-import 'package:freecodecamp/ui/widgets/podcast_widgets/podcast_tilte_widget.dart';
+import 'package:freecodecamp/ui/widgets/podcast_widgets/podcast_title_widget.dart';
 import 'package:infinite_scroll_pagination/infinite_scroll_pagination.dart';
 import 'package:stacked/stacked.dart';
 import 'package:url_launcher/url_launcher.dart';
@@ -142,7 +142,6 @@ class EpisodeListView extends StatelessWidget {
               color: Colors.white.withValues(alpha: 0.87),
               margin: Margins.zero,
               maxLines: model.showDescription ? null : 3,
-              fontFamily: 'Lato',
             )
           },
         ),

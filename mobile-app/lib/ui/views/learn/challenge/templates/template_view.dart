@@ -39,6 +39,7 @@ class ChallengeTemplateView extends StatelessWidget {
                   tiles.indexWhere((el) => el.id == challenge.id) + 1;
               switch (challengeType) {
                 case 0:
+                case 14:
                   return ChallengeView(
                     challenge: challenge,
                     block: block,
@@ -74,8 +75,10 @@ class ChallengeTemplateView extends StatelessWidget {
                     currentChallengeNum: challNum,
                   );
                 default:
-                  return Text(
-                    'Unknown Challenge, info : ${challenge.challengeType}',
+                  return Center(
+                    child: Text(
+                      'Unknown Challenge, info : ${challenge.challengeType}',
+                    ),
                   );
               }
             }

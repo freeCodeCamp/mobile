@@ -76,7 +76,7 @@ import 'package:stacked_services/stacked_services.dart';
     LazySingleton(classType: BookmarksDatabaseService),
     LazySingleton(classType: LocaleService),
     LazySingleton(classType: DioService),
-    LazySingleton(classType: NewsApiServive),
+    LazySingleton(classType: NewsApiService),
   ],
   logger: StackedLogger(),
 )

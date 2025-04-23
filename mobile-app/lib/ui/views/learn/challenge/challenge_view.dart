@@ -43,6 +43,7 @@ class ChallengeView extends StatelessWidget {
         bool editableRegion = currFile.editableRegionBoundaries.isNotEmpty;
         EditorOptions options = EditorOptions(
           hasRegion: editableRegion,
+          fontFamily: 'Hack',
         );
 
         Editor editor = Editor(

@@ -9,7 +9,6 @@ class PrivacyView extends StatelessWidget {
   Widget build(BuildContext context) {
     const paragraphTextStyle = TextStyle(
       fontSize: 18,
-      fontFamily: 'Lato',
       height: 1.2,
     );
     return Scaffold(
@@ -128,7 +127,6 @@ class PrivacyView extends StatelessWidget {
                 textAlign: TextAlign.right,
                 style: const TextStyle(
                   fontSize: 20,
-                  fontFamily: 'Lato',
                 ),
               ),
               const SizedBox(
