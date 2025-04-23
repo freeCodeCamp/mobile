@@ -56,18 +56,20 @@ MockBookmarksDatabaseService getAndRegisterNewsBookmarkService() {
 }
 
 MockAuthenticationService getAndRegisterAuthenticationService(
-    {Map<String, Object>? user}) {
+    {Map<String, Object>? user, bool isLoggedIn = false}) {
   _removeRegistrationIfExists<AuthenticationService>();
   final service = MockAuthenticationService();
 
-  when(service.userModel).thenAnswer(
-    (_) {
-      if (user != null) {
-        return Future.value(FccUserModel.fromJson(user));
-      }
-      return Future.value(FccUserModel.fromJson(mockUser));
-    },
-  );
+  if (isLoggedIn) {
+    when(service.userModel).thenAnswer(
+      (_) {
+        if (user != null) {
+          return Future.value(FccUserModel.fromJson(user));
+        }
+        return Future.value(FccUserModel.fromJson(mockUser));
+      },
+    );
+  }
 
   locator.registerLazySingleton<AuthenticationService>(() => service);
   return service;
