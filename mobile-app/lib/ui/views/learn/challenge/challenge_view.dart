@@ -12,12 +12,12 @@ import 'package:stacked/stacked.dart';
 
 class ChallengeView extends StatelessWidget {
   const ChallengeView({
-    Key? key,
+    super.key,
     required this.block,
     required this.challenge,
     required this.challengesCompleted,
     required this.isProject,
-  }) : super(key: key);
+  });
 
   final Challenge challenge;
   final Block block;
@@ -532,10 +532,10 @@ class SymbolBar extends StatelessWidget {
 
 class ProjectPreview extends StatelessWidget {
   const ProjectPreview({
-    Key? key,
+    super.key,
     required this.challenge,
     required this.model,
-  }) : super(key: key);
+  });
 
   final Challenge challenge;
   final ChallengeViewModel model;

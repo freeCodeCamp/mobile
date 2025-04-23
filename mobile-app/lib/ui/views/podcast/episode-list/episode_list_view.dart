@@ -15,10 +15,10 @@ import 'package:url_launcher/url_launcher.dart';
 
 class EpisodeListView extends StatelessWidget {
   const EpisodeListView({
-    Key? key,
+    super.key,
     required this.podcast,
     required this.isDownloadView,
-  }) : super(key: key);
+  });
 
   final Podcasts podcast;
   final bool isDownloadView;

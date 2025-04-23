@@ -12,10 +12,10 @@ class PodcastProgressBar extends StatefulWidget {
   final String episodeId;
 
   PodcastProgressBar({
-    Key? key,
+    super.key,
     required this.duration,
     required this.episodeId,
-  }) : super(key: key);
+  });
 
   final _audioService = locator<AppAudioService>().audioHandler;
 

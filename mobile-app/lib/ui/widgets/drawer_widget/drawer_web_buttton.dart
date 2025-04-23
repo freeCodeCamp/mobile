@@ -4,11 +4,11 @@ import 'package:flutter_custom_tabs/flutter_custom_tabs.dart';
 
 class CustomTabButton extends StatefulWidget {
   const CustomTabButton({
-    Key? key,
+    super.key,
     required this.url,
     required this.icon,
     required this.component,
-  }) : super(key: key);
+  });
 
   final String url;
   final String component;

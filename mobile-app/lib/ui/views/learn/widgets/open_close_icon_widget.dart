@@ -4,10 +4,10 @@ import 'package:freecodecamp/ui/views/learn/block/block_viewmodel.dart';
 
 class OpenCloseIcon extends StatelessWidget {
   const OpenCloseIcon({
-    Key? key,
+    super.key,
     required this.block,
     required this.model,
-  }) : super(key: key);
+  });
 
   final Block block;
   final BlockViewModel model;

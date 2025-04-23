@@ -10,7 +10,7 @@ import 'package:stacked/stacked.dart';
 
 class NewsFeedView extends StatelessWidget {
   const NewsFeedView({
-    Key? key,
+    super.key,
     this.tagSlug = '',
     this.authorId = '',
     this.fromAuthor = false,
@@ -18,7 +18,7 @@ class NewsFeedView extends StatelessWidget {
     this.fromSearch = false,
     this.tutorials = const [],
     this.subject = '',
-  }) : super(key: key);
+  });
 
   final String subject;
   final String tagSlug;

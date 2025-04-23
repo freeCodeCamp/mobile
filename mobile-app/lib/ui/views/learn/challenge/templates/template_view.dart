@@ -11,11 +11,11 @@ import 'package:stacked/stacked.dart';
 
 class ChallengeTemplateView extends StatelessWidget {
   const ChallengeTemplateView({
-    Key? key,
+    super.key,
     required this.block,
     required this.challengeId,
     required this.challengesCompleted,
-  }) : super(key: key);
+  });
 
   final Block block;
   final String challengeId;
