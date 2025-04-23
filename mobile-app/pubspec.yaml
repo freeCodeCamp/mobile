@@ -28,11 +28,11 @@ dependencies:
   flutter_local_notifications: ^19.1.0
   flutter_localizations:
     sdk: flutter
-  flutter_scroll_shadow: ^1.2.4
-  flutter_secure_storage: ^9.0.0
+  flutter_scroll_shadow: ^1.2.6
+  flutter_secure_storage: ^9.2.4
   graphql: ^5.2.0
-  html: ^0.15.4
-  infinite_scroll_pagination: ^4.0.0
+  html: ^0.15.5+1
+  infinite_scroll_pagination: ^5.0.0
   jiffy: ^6.2.1 # TODO: upgrade after migrating to FLutter 3.19
   just_audio: ^0.10.0
   path: ^1.8.3 # TODO: upgrade after migrating to FLutter 3.19

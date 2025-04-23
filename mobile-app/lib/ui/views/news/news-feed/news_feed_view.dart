@@ -75,17 +75,21 @@ class NewsFeedView extends StatelessWidget {
           backgroundColor: const Color(0xFF0a0a23),
           color: Colors.white,
           // child: tutorialThumbnailBuilder(model),
-          child: PagedListView.separated(
-            pagingController: model.pagingController,
-            separatorBuilder: (context, int i) => const Divider(
-              color: Color.fromRGBO(0x2A, 0x2A, 0x40, 1),
-              thickness: 3,
-              height: 3,
-            ),
-            builderDelegate: PagedChildBuilderDelegate<Tutorial>(
-              itemBuilder: (context, tutorial, index) => Container(
-                key: Key('news-tutorial-$index'),
-                child: tutorialThumbnailBuilder(tutorial, model),
+          child: PagingListener(
+            controller: model.pagingController,
+            builder: (context, state, fetchNextPage) => PagedListView.separated(
+              state: state,
+              fetchNextPage: fetchNextPage,
+              separatorBuilder: (context, int i) => const Divider(
+                color: Color.fromRGBO(0x2A, 0x2A, 0x40, 1),
+                thickness: 3,
+                height: 3,
+              ),
+              builderDelegate: PagedChildBuilderDelegate<Tutorial>(
+                itemBuilder: (context, tutorial, index) => Container(
+                  key: Key('news-tutorial-$index'),
+                  child: tutorialThumbnailBuilder(tutorial, model),
+                ),
               ),
             ),
           ),
