@@ -33,17 +33,17 @@ dependencies:
   graphql: ^5.2.0
   html: ^0.15.5+1
   infinite_scroll_pagination: ^5.0.0
-  jiffy: ^6.3.2 # TODO: upgrade after migrating to FLutter 3.29
+  jiffy: ^6.3.2
   just_audio: ^0.10.0
-  path: ^1.9.0 # TODO: upgrade after migrating to FLutter 3.29
+  path: ^1.9.1
   path_provider: ^2.1.5
   phone_ide: ^1.5.1
   photo_view: ^0.15.0
   pretty_dio_logger: ^1.4.0
   quick_actions: ^1.1.0
-  share_plus: ^10.1.4 # TODO: upgrade after migrating to FLutter 3.29
+  share_plus: ^10.1.4
   shared_preferences: ^2.5.3 # TODO: update deprecated code
-  sqflite: ^2.4.1 # TODO: upgrade after migrating to FLutter 3.19
+  sqflite: ^2.4.2
   # TODO: Replace with sqflite methods as below package isn't actively maintained
   sqflite_migration_service: ^2.0.0-nullsafety.1
   stacked: ^3.4.3 # NOTE: 3.4.4+ is blocked by sqflite_migration_service
@@ -60,13 +60,13 @@ dev_dependencies:
     sdk: flutter
   flutter_launcher_icons: ^0.14.3
   flutter_lints: ^5.0.0
-  flutter_native_splash: ^2.4.0 # TODO: upgrade after migrating to Flutter 3.29
+  flutter_native_splash: ^2.4.6
   flutter_test:
     sdk: flutter
   integration_test:
     sdk: flutter
-  mockito: ^5.4.4 # TODO: upgrade after migrating to Flutter 3.29
-  sqflite_common_ffi: ^2.3.3 # TODO: upgrade after migrating to Flutter 3.29
+  mockito: ^5.4.5 # NOTE: 5.4.6+ is blocked by stacked_generator
+  sqflite_common_ffi: ^2.3.5
   stacked_generator: ^1.6.1
 
 flutter:
