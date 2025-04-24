@@ -13,7 +13,27 @@ import 'package:freecodecamp/app/app.locator.dart';
 import 'package:freecodecamp/models/learn/challenge_model.dart';
 import 'package:freecodecamp/ui/views/learn/test_runner.dart';
 
-void main() {
+Future<void> copyDirectory(Directory source, Directory destination) async {
+  await for (var entity in source.list(recursive: false)) {
+    if (entity is File) {
+      entity.copySync('${destination.path}/${entity.uri.pathSegments.last}');
+    } else if (entity is Directory) {
+      var newDirectory =
+          Directory('${destination.path}/${entity.uri.pathSegments.last}');
+      await copyDirectory(entity, newDirectory);
+    }
+  }
+}
+
+void main() async {
+  var assets = Directory('./assets/test_runner');
+  var public = Directory('../e2e/public');
+  if (await public.exists()) {
+    await public.delete(recursive: true);
+  }
+  await public.create(recursive: true);
+  await copyDirectory(assets, public);
+
   testWidgets('Testing widgest testing', (tester) async {
     print('Generating test files');
     await setupLocator();
