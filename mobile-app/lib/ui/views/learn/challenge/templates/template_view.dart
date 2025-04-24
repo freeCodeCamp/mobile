@@ -27,6 +27,7 @@ class ChallengeTemplateView extends StatelessWidget {
       onViewModelReady: (model) => model.initiate(block, challengeId),
       viewModelBuilder: () => ChallengeTemplateViewModel(),
       builder: (context, model, child) => Scaffold(
+        resizeToAvoidBottomInset: false,
         body: FutureBuilder<Challenge?>(
           future: model.challenge,
           builder: (context, snapshot) {

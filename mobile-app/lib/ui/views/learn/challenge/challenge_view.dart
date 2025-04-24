@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_inappwebview/flutter_inappwebview.dart';
+import 'package:flutter_scroll_shadow/flutter_scroll_shadow.dart';
 import 'package:freecodecamp/enums/panel_type.dart';
 import 'package:freecodecamp/extensions/i18n_extension.dart';
 import 'package:freecodecamp/models/learn/challenge_model.dart';
@@ -473,58 +474,33 @@ class SymbolBar extends StatelessWidget {
       margin: const EdgeInsets.only(bottom: 8),
       height: 50,
       color: const Color(0xFF1b1b32),
-      child: Stack(
-        children: [
-          ListView.builder(
-            scrollDirection: Axis.horizontal,
-            controller: model.symbolBarScrollController,
-            itemCount: symbols.length,
-            itemBuilder: (context, index) {
-              return Padding(
-                padding: const EdgeInsets.symmetric(
-                  vertical: 4,
-                  horizontal: 1,
-                ),
-                child: TextButton(
-                  onPressed: () {
-                    model.insertSymbol(symbols[index], editor);
-                  },
-                  style: TextButton.styleFrom(
-                    shape: const RoundedRectangleBorder(
-                      borderRadius: BorderRadius.all(Radius.zero),
-                    ),
-                  ),
-                  child: Text(symbols[index]),
-                ),
-              );
-            },
-          ),
-          if (model.symbolBarIsScrollable)
-            Row(
-              children: [
-                Expanded(
-                  child: Align(
-                    alignment: Alignment.centerRight,
-                    child: Container(
-                      width: 15,
-                      height: 66,
-                      foregroundDecoration: BoxDecoration(
-                        gradient: LinearGradient(
-                          begin: Alignment.centerLeft,
-                          end: Alignment.centerRight,
-                          colors: [
-                            Colors.white.withValues(alpha: 0.13),
-                            Colors.white.withValues(alpha: 0.23),
-                            Colors.white.withValues(alpha: 0.33),
-                          ],
-                        ),
-                      ),
-                    ),
+      child: ScrollShadow(
+        size: 12,
+        child: ListView.builder(
+          scrollDirection: Axis.horizontal,
+          controller: model.symbolBarScrollController,
+          padding: const EdgeInsets.symmetric(horizontal: 8),
+          itemCount: symbols.length,
+          itemBuilder: (context, index) {
+            return Padding(
+              padding: const EdgeInsets.symmetric(
+                vertical: 4,
+                horizontal: 1,
+              ),
+              child: TextButton(
+                onPressed: () {
+                  model.insertSymbol(symbols[index], editor);
+                },
+                style: TextButton.styleFrom(
+                  shape: const RoundedRectangleBorder(
+                    borderRadius: BorderRadius.all(Radius.zero),
                   ),
                 ),
-              ],
-            ),
-        ],
+                child: Text(symbols[index]),
+              ),
+            );
+          },
+        ),
       ),
     );
   }
