@@ -25,7 +25,7 @@ class LearnFileService {
       cache = prefs.getString('${challenge.id}.${file.name}');
     }
 
-    return cache ?? '';
+    return cache ?? file.contents;
   }
 
   void saveFileInCache(

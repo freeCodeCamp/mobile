@@ -245,8 +245,9 @@ class ChallengeViewModel extends BaseViewModel {
   ) async {
     if (!_mounted) {
       await Future.delayed(Duration.zero);
-      String fileContents = await fileService.getCurrentEditedFileFromCache(
+      String fileContents = await fileService.getExactFileFromCache(
         challenge,
+        currFile,
       );
       editor.fileTextStream.sink.add(
         FileIDE(
