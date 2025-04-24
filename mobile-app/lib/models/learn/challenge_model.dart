@@ -23,6 +23,21 @@ enum ChallengeType {
   exam // 17
 }
 
+enum HelpCategory {
+  htmlCss('HTML-CSS'),
+  javascript('JavaScript'),
+  python('Python'),
+  backend('Backend Development'),
+  csharp('C-Sharp'),
+  english('English'),
+  odin('Odin'),
+  euler('Euler'),
+  rosetta('Rosetta');
+
+  final String value;
+  const HelpCategory(this.value);
+}
+
 class Challenge {
   final String id;
   final String block;
@@ -33,6 +48,7 @@ class Challenge {
   final String superBlock;
   final String? videoId;
   final int challengeType;
+  final HelpCategory helpCategory;
 
   final List<ChallengeTest> tests;
   final List<ChallengeFile> files;
@@ -60,6 +76,7 @@ class Challenge {
     required this.challengeType,
     required this.tests,
     required this.files,
+    required this.helpCategory,
     this.question,
     this.assignments,
     this.fillInTheBlank,
@@ -77,6 +94,7 @@ class Challenge {
       superBlock: data['superBlock'],
       videoId: data['videoId'],
       challengeType: data['challengeType'],
+      helpCategory: data['helpCategory'],
       fillInTheBlank: data['fillInTheBlank'] != null
           ? FillInTheBlank.fromJson(data['fillInTheBlank'])
           : null,
@@ -109,6 +127,7 @@ class Challenge {
       'superBlock': challenge.superBlock,
       'videoId': challenge.videoId,
       'challengeType': challenge.challengeType,
+      'helpCategory': challenge.helpCategory,
       'tests': challenge.tests
           .map(
             (challengeTest) => {

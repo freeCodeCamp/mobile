@@ -1,4 +1,3 @@
-import 'dart:convert';
 import 'dart:io';
 
 import 'package:device_info_plus/device_info_plus.dart';
@@ -60,12 +59,8 @@ Future<String> genForumLink(
   String editorText = '',
 }) async {
   Challenge? currChallenge = challenge;
-  String helpCategoryPath = 'assets/learn/help-category.json';
-  String helpCategoryFile = await rootBundle.loadString(helpCategoryPath);
 
-  final String helpCategory = Uri.encodeComponent(
-    jsonDecode(helpCategoryFile)[currChallenge.block] ?? 'Help',
-  );
+  final HelpCategory helpCategory = challenge.helpCategory;
   final String blockTitle = block.name;
 
   final userDeviceInfo = await getDeviceInfo(context);
