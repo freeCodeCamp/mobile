@@ -11,12 +11,9 @@ import 'package:dio/dio.dart' as _i11;
 import 'package:flutter/material.dart' as _i7;
 import 'package:flutter_secure_storage/flutter_secure_storage.dart' as _i3;
 import 'package:freecodecamp/models/main/user_model.dart' as _i5;
-import 'package:freecodecamp/models/news/bookmarked_tutorial_model.dart'
-    as _i13;
 import 'package:freecodecamp/service/authentication/authentication_service.dart'
     as _i10;
-import 'package:freecodecamp/service/dio_service.dart' as _i14;
-import 'package:freecodecamp/service/news/bookmark_service.dart' as _i12;
+import 'package:freecodecamp/service/dio_service.dart' as _i12;
 import 'package:mockito/mockito.dart' as _i1;
 import 'package:mockito/src/dummies.dart' as _i6;
 import 'package:stacked_services/stacked_services.dart' as _i2;
@@ -1006,80 +1003,10 @@ class MockSnackbarService extends _i1.Mock implements _i2.SnackbarService {
       ) as _i8.Future<void>);
 }
 
-/// A class which mocks [BookmarksDatabaseService].
-///
-/// See the documentation for Mockito's code generation for more information.
-class MockBookmarksDatabaseService extends _i1.Mock
-    implements _i12.BookmarksDatabaseService {
-  @override
-  _i8.Future<dynamic> initialise() => (super.noSuchMethod(
-        Invocation.method(
-          #initialise,
-          [],
-        ),
-        returnValue: _i8.Future<dynamic>.value(),
-        returnValueForMissingStub: _i8.Future<dynamic>.value(),
-      ) as _i8.Future<dynamic>);
-
-  @override
-  Map<String, dynamic> tutorialToMap(dynamic tutorial) => (super.noSuchMethod(
-        Invocation.method(
-          #tutorialToMap,
-          [tutorial],
-        ),
-        returnValue: <String, dynamic>{},
-        returnValueForMissingStub: <String, dynamic>{},
-      ) as Map<String, dynamic>);
-
-  @override
-  _i8.Future<List<_i13.BookmarkedTutorial>> getBookmarks() =>
-      (super.noSuchMethod(
-        Invocation.method(
-          #getBookmarks,
-          [],
-        ),
-        returnValue: _i8.Future<List<_i13.BookmarkedTutorial>>.value(
-            <_i13.BookmarkedTutorial>[]),
-        returnValueForMissingStub:
-            _i8.Future<List<_i13.BookmarkedTutorial>>.value(
-                <_i13.BookmarkedTutorial>[]),
-      ) as _i8.Future<List<_i13.BookmarkedTutorial>>);
-
-  @override
-  _i8.Future<bool> isBookmarked(dynamic tutorial) => (super.noSuchMethod(
-        Invocation.method(
-          #isBookmarked,
-          [tutorial],
-        ),
-        returnValue: _i8.Future<bool>.value(false),
-        returnValueForMissingStub: _i8.Future<bool>.value(false),
-      ) as _i8.Future<bool>);
-
-  @override
-  _i8.Future<dynamic> addBookmark(dynamic tutorial) => (super.noSuchMethod(
-        Invocation.method(
-          #addBookmark,
-          [tutorial],
-        ),
-        returnValue: _i8.Future<dynamic>.value(),
-        returnValueForMissingStub: _i8.Future<dynamic>.value(),
-      ) as _i8.Future<dynamic>);
-
-  @override
-  _i8.Future<dynamic> removeBookmark(dynamic tutorial) => (super.noSuchMethod(
-        Invocation.method(
-          #removeBookmark,
-          [tutorial],
-        ),
-        returnValue: _i8.Future<dynamic>.value(),
-        returnValueForMissingStub: _i8.Future<dynamic>.value(),
-      ) as _i8.Future<dynamic>);
-}
-
 /// A class which mocks [DioService].
 ///
 /// See the documentation for Mockito's code generation for more information.
-class MockDioService extends _i1.Mock implements _i14.DioService {
+class MockDioService extends _i1.Mock implements _i12.DioService {
   @override
   _i8.Future<void> init() => (super.noSuchMethod(
         Invocation.method(

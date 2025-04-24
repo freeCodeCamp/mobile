@@ -16,9 +16,6 @@ import './test_helpers.mocks.dart';
   MockSpec<DialogService>(onMissingStub: OnMissingStub.returnDefault),
   MockSpec<AuthenticationService>(onMissingStub: OnMissingStub.returnDefault),
   MockSpec<SnackbarService>(onMissingStub: OnMissingStub.returnDefault),
-  MockSpec<BookmarksDatabaseService>(
-    onMissingStub: OnMissingStub.returnDefault,
-  ),
   MockSpec<DioService>(onMissingStub: OnMissingStub.returnDefault),
 
 // @stacked-mock-spec
@@ -48,15 +45,17 @@ MockDialogService getAndRegisterDialogService() {
   return service;
 }
 
-MockBookmarksDatabaseService getAndRegisterNewsBookmarkService() {
+BookmarksDatabaseService getAndRegisterNewsBookmarkService() {
   _removeRegistrationIfExists<BookmarksDatabaseService>();
-  final service = MockBookmarksDatabaseService();
+  final service = BookmarksDatabaseService();
   locator.registerSingleton<BookmarksDatabaseService>(service);
   return service;
 }
 
-MockAuthenticationService getAndRegisterAuthenticationService(
-    {Map<String, Object>? user, bool isLoggedIn = false}) {
+MockAuthenticationService getAndRegisterAuthenticationService({
+  Map<String, Object>? user,
+  bool isLoggedIn = false,
+}) {
   _removeRegistrationIfExists<AuthenticationService>();
   final service = MockAuthenticationService();
 
