@@ -245,8 +245,7 @@ class ChallengeViewModel extends BaseViewModel {
   ) async {
     if (!_mounted) {
       await Future.delayed(Duration.zero);
-      String cachedFileContents =
-          await fileService.getCurrentEditedFileFromCache(
+      String fileContents = await fileService.getCurrentEditedFileFromCache(
         challenge,
       );
       editor.fileTextStream.sink.add(
@@ -254,7 +253,7 @@ class ChallengeViewModel extends BaseViewModel {
           id: challenge.id + currFile.name,
           ext: currFile.ext.name,
           name: currFile.name,
-          content: cachedFileContents,
+          content: fileContents,
           hasRegion: hasRegion,
           region: EditorRegionOptions(
             start: hasRegion ? currFile.editableRegionBoundaries[0] : null,
@@ -267,9 +266,7 @@ class ChallengeViewModel extends BaseViewModel {
 
       if (currFile.name != currentSelectedFile) {
         setCurrentSelectedFile = currFile.name;
-        setEditorText = await fileService.getCurrentEditedFileFromCache(
-          challenge,
-        );
+        setEditorText = fileContents;
       }
     }
   }
