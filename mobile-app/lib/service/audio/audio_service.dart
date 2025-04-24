@@ -97,6 +97,11 @@ class AudioPlayerHandler extends BaseAudioHandler {
   }
 
   @override
+  Future<void> setSpeed(double speed) async {
+    await _audioPlayer.setSpeed(speed);
+  }
+
+  @override
   Future<void> onTaskRemoved() async {
     await _audioPlayer.stop();
     return super.onTaskRemoved();

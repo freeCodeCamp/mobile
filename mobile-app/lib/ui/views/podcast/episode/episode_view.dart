@@ -22,7 +22,9 @@ class EpisodeView extends StatelessWidget {
       viewModelBuilder: () => EpisodeViewModel(),
       onViewModelReady: (model) {
         model.loadEpisode(episode, podcast);
+        model.hasDownloadedEpisode(episode);
         model.initProgressListener(episode);
+        model.initDownloadListener();
         model.initPlaybackListener();
       },
       builder: (context, model, child) => Scaffold(
@@ -82,6 +84,32 @@ class EpisodeView extends StatelessWidget {
                 Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
+                    DropdownButtonHideUnderline(
+                      child: DropdownButton(
+                        value: model.playBackSpeed,
+                        dropdownColor: const Color(0xFF2A2A40),
+                        icon: const SizedBox.shrink(),
+                        items: model.speedOptions
+                            .map(
+                              (speed) => DropdownMenuItem(
+                                onTap: () => model.handlePlayBackSpeed(speed),
+                                value: speed,
+                                child: Text(
+                                  '${speed}x',
+                                  style: const TextStyle(
+                                    color: Colors.white,
+                                  ),
+                                ),
+                              ),
+                            )
+                            .toList(),
+                        style: const TextStyle(
+                          color: Colors.white,
+                        ),
+                        onChanged: (_) {},
+                      ),
+                    ),
+                    const SizedBox(width: 8),
                     IconButton(
                       iconSize: 45,
                       icon: const Icon(Icons.replay_10_rounded),
@@ -106,6 +134,58 @@ class EpisodeView extends StatelessWidget {
                       onPressed: () {
                         model.foward(episode);
                       },
+                    ),
+                    IconButton(
+                      iconSize: 30,
+                      onPressed: model.isDownloading
+                          ? null
+                          : () {
+                              if (!model.isDownloaded) {
+                                model.setIsDownloading = true;
+                              }
+
+                              model.downloadService.setDownloadId = episode.id;
+                              model.downloadBtnClick(episode, podcast);
+                            },
+                      icon: model.isDownloading &&
+                              model.downloadService.downloadId == episode.id
+                          ? StreamBuilder<String>(
+                              stream: model.downloadService.progress,
+                              builder: (context, snapshot) {
+                                double? val = double.tryParse(
+                                  snapshot.data ?? '0',
+                                );
+
+                                if (snapshot.hasData) {
+                                  return Stack(
+                                    alignment: Alignment.center,
+                                    children: [
+                                      Text(
+                                        '${snapshot.data}%',
+                                        style: const TextStyle(fontSize: 16),
+                                      ),
+                                      CircularProgressIndicator(
+                                        color: Colors.white,
+                                        strokeWidth: 2,
+                                        value: snapshot.hasData && val != null
+                                            ? val / 100
+                                            : 0,
+                                      )
+                                    ],
+                                  );
+                                }
+
+                                return const CircularProgressIndicator(
+                                  color: Colors.white,
+                                  strokeWidth: 2,
+                                  value: 0,
+                                );
+                              })
+                          : Icon(
+                              model.isDownloaded
+                                  ? Icons.download_done
+                                  : Icons.arrow_circle_down_outlined,
+                            ),
                     )
                   ],
                 ),
