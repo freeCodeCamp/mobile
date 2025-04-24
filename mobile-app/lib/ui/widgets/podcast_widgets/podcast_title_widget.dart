@@ -295,7 +295,7 @@ class PodcastTileState extends State<PodcastTile> {
                           child: const CircularProgressIndicator()),
                     )
                   : playbuttonWidget(context),
-              // downloadbuttonWidget()
+              downloadbuttonWidget()
             ],
           )
         else

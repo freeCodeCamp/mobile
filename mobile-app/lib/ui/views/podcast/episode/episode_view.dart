@@ -4,8 +4,6 @@ import 'package:freecodecamp/models/podcasts/episodes_model.dart';
 import 'package:freecodecamp/models/podcasts/podcasts_model.dart';
 import 'package:freecodecamp/ui/views/news/html_handler/html_handler.dart';
 import 'package:freecodecamp/ui/views/podcast/episode/episode_viewmodel.dart';
-
-import 'package:freecodecamp/ui/widgets/podcast_widgets/podcast_title_widget.dart';
 import 'package:stacked/stacked.dart';
 
 class EpisodeView extends StatelessWidget {
@@ -23,7 +21,9 @@ class EpisodeView extends StatelessWidget {
     return ViewModelBuilder<EpisodeViewModel>.reactive(
       viewModelBuilder: () => EpisodeViewModel(),
       onViewModelReady: (model) {
-        model.init(episode);
+        model.loadEpisode(episode, podcast);
+        model.initProgressListener(episode);
+        model.initPlaybackListener();
       },
       builder: (context, model, child) => Scaffold(
         appBar: AppBar(),
@@ -68,7 +68,7 @@ class EpisodeView extends StatelessWidget {
                 ),
                 Slider(
                   onChangeStart: (_) {
-                    model.pauseAudio();
+                    model.audioService.pause();
                   },
                   onChanged: (value) {
                     model.setSliderValue = value;
@@ -79,11 +79,35 @@ class EpisodeView extends StatelessWidget {
                   },
                   value: model.sliderValue,
                 ),
-                PodcastTile(
-                  podcast: podcast,
-                  episode: episode,
-                  isFromEpisodeView: true,
-                  isFromDownloadView: false,
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    IconButton(
+                      iconSize: 45,
+                      icon: const Icon(Icons.replay_10_rounded),
+                      onPressed: () {
+                        model.rewind(episode);
+                      },
+                    ),
+                    IconButton(
+                      iconSize: 80,
+                      onPressed: () {
+                        model.playOrPause(episode);
+                      },
+                      icon: model.isPlaying
+                          ? const Icon(Icons.pause)
+                          : const Icon(Icons.play_arrow_rounded),
+                    ),
+                    IconButton(
+                      iconSize: 45,
+                      icon: const Icon(
+                        Icons.forward_30_rounded,
+                      ),
+                      onPressed: () {
+                        model.foward(episode);
+                      },
+                    )
+                  ],
                 ),
                 Container(
                   padding: const EdgeInsets.fromLTRB(8, 16, 8, 8),

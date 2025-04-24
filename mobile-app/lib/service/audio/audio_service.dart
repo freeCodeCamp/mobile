@@ -74,6 +74,24 @@ class AudioPlayerHandler extends BaseAudioHandler {
   }
 
   @override
+  Future<int> fastForward() async {
+    await _audioPlayer.seek(
+      Duration(seconds: _audioPlayer.position.inSeconds + 30),
+    );
+
+    return _audioPlayer.position.inSeconds;
+  }
+
+  @override
+  Future<int> rewind() async {
+    await _audioPlayer.seek(
+      Duration(seconds: _audioPlayer.position.inSeconds - 10),
+    );
+
+    return _audioPlayer.position.inSeconds;
+  }
+
+  @override
   Future<void> seek(Duration position) async {
     await _audioPlayer.seek(position);
   }
