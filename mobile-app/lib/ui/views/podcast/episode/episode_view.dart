@@ -74,12 +74,33 @@ class EpisodeView extends StatelessWidget {
                   },
                   onChanged: (value) {
                     model.setSliderValue = value;
+                    model.handleTimeVortex(
+                      episode.duration!.inSeconds,
+                      (episode.duration!.inSeconds * value).toInt(),
+                    );
                   },
                   onChangeEnd: (value) {
                     model.setAudioProgress(value, episode);
                     model.audioService.play();
                   },
                   value: model.sliderValue,
+                ),
+                Padding(
+                  padding:
+                      const EdgeInsets.symmetric(vertical: 0, horizontal: 20),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Text(
+                        model.timeElapsed,
+                        style: const TextStyle(fontSize: 16),
+                      ),
+                      Text(
+                        '-${model.timeLeft}',
+                        style: const TextStyle(fontSize: 16),
+                      ),
+                    ],
+                  ),
                 ),
                 Row(
                   mainAxisAlignment: MainAxisAlignment.center,

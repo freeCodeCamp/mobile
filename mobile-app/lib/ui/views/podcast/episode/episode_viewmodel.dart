@@ -1,5 +1,4 @@
 import 'dart:async';
-
 import 'dart:io';
 
 import 'package:audio_service/audio_service.dart';
@@ -29,6 +28,12 @@ class EpisodeViewModel extends BaseViewModel {
   double _playBackSpeed = 1.0;
   double get playBackSpeed => _playBackSpeed;
 
+  String _timeElapsed = '--:--';
+  String get timeElapsed => _timeElapsed;
+
+  String _timeLeft = '--:--';
+  String get timeLeft => _timeLeft;
+
   bool _isDownloading = false;
   bool get isDownloading => _isDownloading;
 
@@ -39,6 +44,16 @@ class EpisodeViewModel extends BaseViewModel {
 
   set setSliderValue(double value) {
     _sliderValue = value;
+    notifyListeners();
+  }
+
+  set setTimeElapsed(String value) {
+    _timeElapsed = value;
+    notifyListeners();
+  }
+
+  set setTimeLeft(String value) {
+    _timeLeft = value;
     notifyListeners();
   }
 
@@ -70,10 +85,37 @@ class EpisodeViewModel extends BaseViewModel {
   void initProgressListener(Episodes episode) {
     setProgressListener = AudioService.position.listen(
       (event) {
-        setSliderValue =
-            event.inSeconds.toDouble() / episode.duration!.inSeconds.toDouble();
+        int duration = episode.duration!.inSeconds;
+        double sliderValue = event.inSeconds / duration;
+        setSliderValue = sliderValue;
+        handleTimeVortex(duration, event.inSeconds);
       },
     );
+  }
+
+  void handleTimeVortex(int duration, int inSeconds) {
+    setTimeElapsed = timeDisplay(inSeconds);
+    setTimeLeft = timeDisplay(duration - inSeconds - 1);
+  }
+
+  String timeDisplay(int totalSeconds) {
+    int totalMinutes = totalSeconds ~/ 60;
+    int totalHours = totalMinutes ~/ 60;
+
+    int totalMinDisplay = totalMinutes % 60;
+    int totalSecDisplay = totalSeconds % 60;
+
+    String addZero(int val) {
+      String v = val.toString();
+
+      return v.length == 1 ? '0$v' : v;
+    }
+
+    String display = totalHours > 0 ? '$totalHours:' : '';
+    display +=
+        totalHours > 0 ? '${addZero(totalMinDisplay)}:' : '$totalMinDisplay:';
+    display += addZero(totalSecDisplay);
+    return display;
   }
 
   void removeEpisode(Episodes episode, Podcasts podcast) async {
