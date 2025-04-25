@@ -60,7 +60,7 @@ Future<String> genForumLink(
 }) async {
   Challenge? currChallenge = challenge;
 
-  final HelpCategory helpCategory = challenge.helpCategory;
+  final String helpCategory = challenge.helpCategory;
   final String blockTitle = block.name;
 
   final userDeviceInfo = await getDeviceInfo(context);

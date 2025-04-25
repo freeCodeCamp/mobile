@@ -23,21 +23,6 @@ enum ChallengeType {
   exam // 17
 }
 
-enum HelpCategory {
-  htmlCss('HTML-CSS'),
-  javascript('JavaScript'),
-  python('Python'),
-  backend('Backend Development'),
-  csharp('C-Sharp'),
-  english('English'),
-  odin('Odin'),
-  euler('Euler'),
-  rosetta('Rosetta');
-
-  final String value;
-  const HelpCategory(this.value);
-}
-
 class Challenge {
   final String id;
   final String block;
@@ -48,7 +33,7 @@ class Challenge {
   final String superBlock;
   final String? videoId;
   final int challengeType;
-  final HelpCategory helpCategory;
+  final String helpCategory;
 
   final List<ChallengeTest> tests;
   final List<ChallengeFile> files;
