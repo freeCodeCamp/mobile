@@ -180,6 +180,10 @@ class EpisodeViewModel extends BaseViewModel {
     setSliderValue = value.toDouble();
   }
 
+  void disposeProgressListener() {
+    progressListener!.cancel();
+  }
+
   void foward(Episodes episode) async {
     int newPos = await audioService.fastForward();
 

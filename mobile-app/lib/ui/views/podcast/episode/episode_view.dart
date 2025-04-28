@@ -27,6 +27,9 @@ class EpisodeView extends StatelessWidget {
         model.initDownloadListener();
         model.initPlaybackListener();
       },
+      onDispose: (model) {
+        model.disposeProgressListener();
+      },
       builder: (context, model, child) => Scaffold(
         appBar: AppBar(),
         body: ListView(

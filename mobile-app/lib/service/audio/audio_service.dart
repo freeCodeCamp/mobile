@@ -8,6 +8,7 @@ import 'package:freecodecamp/models/podcasts/episodes_model.dart';
 import 'package:freecodecamp/models/podcasts/podcasts_model.dart';
 import 'package:just_audio/just_audio.dart';
 import 'package:path_provider/path_provider.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class AppAudioService {
   static final AppAudioService _appAudioService = AppAudioService._internal();
@@ -145,9 +146,26 @@ class AudioPlayerHandler extends BaseAudioHandler {
         );
       }
       await _audioPlayer.load();
+
+      SharedPreferences prefs = await SharedPreferences.getInstance();
+      int? possibleValue = prefs.getInt('${episode.id}_progress');
+      if (possibleValue != null) {
+        _audioPlayer.seek(Duration(seconds: possibleValue));
+      }
+
       _audioType = 'episode';
       queue.add([audioMediaItem]);
       mediaItem.add(audioMediaItem);
+
+      _audioPlayer.positionStream.listen((pos) async {
+        // position stream has an initial value of zero before seeking
+        // to the position that is stored in the cache. Which means
+        // "seconds" needs to be bigger than zero.
+        if (pos.inSeconds > 1) {
+          SharedPreferences prefs = await SharedPreferences.getInstance();
+          prefs.setInt('${episode.id}_progress', pos.inSeconds);
+        }
+      });
     } catch (e) {
       log('Cannot play audio: $e');
     }
