@@ -16,7 +16,6 @@ import 'package:freecodecamp/ui/views/podcast/episode/episode_view.dart';
 import 'package:html/parser.dart';
 import 'package:jiffy/jiffy.dart';
 import 'package:path_provider/path_provider.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 
 // ignore: must_be_immutable
 class PodcastTile extends StatefulWidget {
@@ -93,11 +92,6 @@ class PodcastTileState extends State<PodcastTile> {
     Future.delayed(const Duration(seconds: 0), () async => {init()});
   }
 
-  @override
-  void dispose() {
-    super.dispose();
-  }
-
   Future<void> init() async {
     Directory appDir = await getApplicationDocumentsDirectory();
 
@@ -121,14 +115,6 @@ class PodcastTileState extends State<PodcastTile> {
         setIsPlaying = event.playing;
       } else {
         setIsPlaying = false;
-      }
-    });
-
-    AudioService.position.listen((event) async {
-      if (widget._playing &&
-          widget._audioService.episodeId == widget.episode.id) {
-        SharedPreferences prefs = await SharedPreferences.getInstance();
-        prefs.setInt('${widget.episode.id}_progress', event.inSeconds);
       }
     });
 
@@ -158,22 +144,16 @@ class PodcastTileState extends State<PodcastTile> {
   }
 
   Future<void> playBtnClick() async {
-    SharedPreferences prefs = await SharedPreferences.getInstance();
-    int progress = prefs.getInt('${widget.episode.id}_progress') ?? 0;
     if (!widget.loading) {
       if (!widget.playing) {
         widget._audioService.setEpisodeId = widget.episode.id;
         setIsLoading = true;
 
-        if (progress > 0) {
-          await widget._audioService
-              .loadEpisode(widget.episode, widget.downloaded, widget.podcast);
-
-          widget._audioService.seek(Duration(seconds: progress));
-        } else {
-          await widget._audioService
-              .loadEpisode(widget.episode, widget.downloaded, widget.podcast);
-        }
+        await widget._audioService.loadEpisode(
+          widget.episode,
+          widget.downloaded,
+          widget.podcast,
+        );
 
         await widget._audioService.play();
       } else {
@@ -236,41 +216,41 @@ class PodcastTileState extends State<PodcastTile> {
 
   ListTile podcastTile(BuildContext context) {
     return ListTile(
-        title: Row(
-          children: [
-            Expanded(
-              child: Padding(
-                padding: const EdgeInsets.all(8.0),
-                child: Text(
-                  widget.episode.title,
-                  style: const TextStyle(fontWeight: FontWeight.w700),
-                ),
+      title: Row(
+        children: [
+          Expanded(
+            child: Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: Text(
+                widget.episode.title,
+                style: const TextStyle(fontWeight: FontWeight.w700),
               ),
             ),
-          ],
-        ),
-        onTap: () {
-          Navigator.push(
-            context,
-            MaterialPageRoute(
-              builder: (context) => EpisodeView(
-                episode: widget.episode,
-                podcast: widget.podcast,
-              ),
-              settings: RouteSettings(
-                name: '/podcasts-episode/${widget.episode.title}',
-              ),
+          ),
+        ],
+      ),
+      onTap: () {
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (context) => EpisodeView(
+              episode: widget.episode,
+              podcast: widget.podcast,
             ),
-          );
-        },
-        minVerticalPadding: 16,
-        isThreeLine: true,
-        subtitle: subtitle(context));
-  }
-
-  Widget subtitle(BuildContext context) {
-    return Column(
-      children: [descriptionWidget(), footerWidget(context)],
+            settings: RouteSettings(
+              name: '/podcasts-episode/${widget.episode.title}',
+            ),
+          ),
+        );
+      },
+      minVerticalPadding: 16,
+      isThreeLine: true,
+      subtitle: Column(
+        children: [
+          descriptionWidget(),
+          footerWidget(context),
+        ],
+      ),
     );
   }
 
