@@ -215,7 +215,7 @@ class EpisodeViewModel extends BaseViewModel {
 
   void loadEpisode(Episodes episode, Podcasts podcast) async {
     bool downloaded = await _databaseService.episodeExists(episode);
-
+    audioService.setEpisodeId = episode.id;
     audioService.loadEpisode(episode, downloaded, podcast);
   }
 }
