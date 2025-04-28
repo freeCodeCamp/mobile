@@ -20,19 +20,17 @@ import 'package:shared_preferences/shared_preferences.dart';
 
 // ignore: must_be_immutable
 class PodcastTile extends StatefulWidget {
-  PodcastTile(
-      {Key? key,
-      required this.podcast,
-      required this.episode,
-      required this.isFromDownloadView,
-      this.isFromEpisodeView = false})
-      : super(key: key);
+  PodcastTile({
+    Key? key,
+    required this.podcast,
+    required this.episode,
+    required this.isFromDownloadView,
+  }) : super(key: key);
 
   final Podcasts podcast;
   final Episodes episode;
 
   final bool isFromDownloadView;
-  final bool isFromEpisodeView;
 
   final _audioService = locator<AppAudioService>().audioHandler;
   final _databaseService = locator<PodcastsDatabaseService>();
@@ -225,82 +223,54 @@ class PodcastTileState extends State<PodcastTile> {
 
   @override
   Widget build(BuildContext context) {
-    return !widget.isFromEpisodeView
-        ? widget.playing
-            ? Card(
-                margin: const EdgeInsets.all(8),
-                elevation: 10,
-                shadowColor: Colors.black,
-                color: const Color.fromRGBO(0x1b, 0x1b, 0x32, 1),
-                child: podcastTile(context))
-            : podcastTile(context)
+    return widget.playing
+        ? Card(
+            margin: const EdgeInsets.all(8),
+            elevation: 10,
+            shadowColor: Colors.black,
+            color: const Color.fromRGBO(0x1b, 0x1b, 0x32, 1),
+            child: podcastTile(context),
+          )
         : podcastTile(context);
   }
 
   ListTile podcastTile(BuildContext context) {
     return ListTile(
-        title: !widget.isFromEpisodeView
-            ? Row(
-                children: [
-                  Expanded(
-                    child: Padding(
-                      padding: const EdgeInsets.all(8.0),
-                      child: Text(
-                        widget.episode.title,
-                        style: const TextStyle(fontWeight: FontWeight.w700),
-                      ),
-                    ),
-                  ),
-                ],
-              )
-            : Container(),
-        onTap: !widget.isFromEpisodeView
-            ? () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (context) => EpisodeView(
-                      episode: widget.episode,
-                      podcast: widget.podcast,
-                    ),
-                    settings: RouteSettings(
-                        name: '/podcasts-episode/${widget.episode.title}'),
-                  ),
-                );
-              }
-            : null,
-        minVerticalPadding: !widget.isFromEpisodeView ? 16 : 0,
+        title: Row(
+          children: [
+            Expanded(
+              child: Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: Text(
+                  widget.episode.title,
+                  style: const TextStyle(fontWeight: FontWeight.w700),
+                ),
+              ),
+            ),
+          ],
+        ),
+        onTap: () {
+          Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (context) => EpisodeView(
+                episode: widget.episode,
+                podcast: widget.podcast,
+              ),
+              settings: RouteSettings(
+                name: '/podcasts-episode/${widget.episode.title}',
+              ),
+            ),
+          );
+        },
+        minVerticalPadding: 16,
         isThreeLine: true,
         subtitle: subtitle(context));
   }
 
   Widget subtitle(BuildContext context) {
     return Column(
-      children: [
-        if (!widget.isFromEpisodeView) descriptionWidget(),
-        if (widget.isFromEpisodeView)
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-            children: [
-              widget._audioService.playbackState.value.processingState ==
-                          AudioProcessingState.loading ||
-                      widget._audioService.playbackState.value
-                              .processingState ==
-                          AudioProcessingState.buffering
-                  ? Padding(
-                      padding: const EdgeInsets.all(8.0),
-                      child: SizedBox(
-                          height: MediaQuery.of(context).size.height * 0.075,
-                          width: MediaQuery.of(context).size.height * 0.075,
-                          child: const CircularProgressIndicator()),
-                    )
-                  : playbuttonWidget(context),
-              downloadbuttonWidget()
-            ],
-          )
-        else
-          footerWidget(context)
-      ],
+      children: [descriptionWidget(), footerWidget(context)],
     );
   }
 
@@ -379,9 +349,7 @@ class PodcastTileState extends State<PodcastTile> {
               widget._downloadService.setDownloadId = widget.episode.id;
               downloadBtnClick();
             },
-      iconSize: !widget.isFromEpisodeView
-          ? MediaQuery.of(context).size.height * 0.0375
-          : MediaQuery.of(context).size.height * 0.075,
+      iconSize: MediaQuery.of(context).size.height * 0.0375,
       icon: widget.isDownloading &&
               widget._downloadService.downloadId == widget.episode.id
           ? StreamBuilder<String>(
@@ -425,9 +393,7 @@ class PodcastTileState extends State<PodcastTile> {
       onPressed: () {
         playBtnClick();
       },
-      iconSize: !widget.isFromEpisodeView
-          ? MediaQuery.of(context).size.height * 0.05
-          : MediaQuery.of(context).size.height * 0.075,
+      iconSize: MediaQuery.of(context).size.height * 0.05,
       icon: Icon(
         widget.playing ? Icons.pause : Icons.play_arrow,
       ),
