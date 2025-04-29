@@ -33,6 +33,7 @@ class Challenge {
   final String superBlock;
   final String? videoId;
   final int challengeType;
+  final String helpCategory;
 
   final List<ChallengeTest> tests;
   final List<ChallengeFile> files;
@@ -60,6 +61,7 @@ class Challenge {
     required this.challengeType,
     required this.tests,
     required this.files,
+    required this.helpCategory,
     this.question,
     this.assignments,
     this.fillInTheBlank,
@@ -77,6 +79,7 @@ class Challenge {
       superBlock: data['superBlock'],
       videoId: data['videoId'],
       challengeType: data['challengeType'],
+      helpCategory: data['helpCategory'],
       fillInTheBlank: data['fillInTheBlank'] != null
           ? FillInTheBlank.fromJson(data['fillInTheBlank'])
           : null,
@@ -109,6 +112,7 @@ class Challenge {
       'superBlock': challenge.superBlock,
       'videoId': challenge.videoId,
       'challengeType': challenge.challengeType,
+      'helpCategory': challenge.helpCategory,
       'tests': challenge.tests
           .map(
             (challengeTest) => {
