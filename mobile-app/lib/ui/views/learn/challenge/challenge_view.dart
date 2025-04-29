@@ -154,7 +154,14 @@ class ChallengeView extends StatelessWidget {
                       ),
               ),
             ),
-            bottomNavigationBar: Padding(
+            bottomNavigationBar: Container(
+              decoration: const BoxDecoration(
+                border: Border(
+                  top: BorderSide(
+                    color: Colors.white70,
+                  ),
+                ),
+              ),
               padding: EdgeInsets.only(
                 bottom: MediaQuery.of(context).viewInsets.bottom,
               ),
@@ -284,7 +291,7 @@ class ChallengeView extends StatelessWidget {
     return BottomAppBar(
       height: keyboard ? 116 : 72,
       padding: keyboard ? const EdgeInsets.only(bottom: 8) : null,
-      color: const Color(0xFF0a0a23),
+      color: const Color(0x990a0a23),
       child: Column(
         children: [
           if (keyboard)
