@@ -23,6 +23,28 @@ enum ChallengeType {
   exam // 17
 }
 
+enum HelpCategory {
+  javascript('JavaScript'),
+  htmlCss('HTML-CSS'),
+  python('Python'),
+  backend('Backend Development'),
+  cSharp('C-Sharp'),
+  english('English'),
+  odin('Odin'),
+  euler('Euler'),
+  rosetta('Rosetta');
+
+  static HelpCategory fromValue(String value) {
+    return HelpCategory.values.firstWhere(
+      (category) => category.value == value,
+      orElse: () => throw ArgumentError('Invalid help category value: $value'),
+    );
+  }
+
+  final String value;
+  const HelpCategory(this.value);
+}
+
 class Challenge {
   final String id;
   final String block;
@@ -33,7 +55,7 @@ class Challenge {
   final String superBlock;
   final String? videoId;
   final int challengeType;
-  final String helpCategory;
+  final HelpCategory helpCategory;
 
   final List<ChallengeTest> tests;
   final List<ChallengeFile> files;
@@ -79,7 +101,7 @@ class Challenge {
       superBlock: data['superBlock'],
       videoId: data['videoId'],
       challengeType: data['challengeType'],
-      helpCategory: data['helpCategory'],
+      helpCategory: HelpCategory.fromValue(data['helpCategory']),
       fillInTheBlank: data['fillInTheBlank'] != null
           ? FillInTheBlank.fromJson(data['fillInTheBlank'])
           : null,
@@ -112,7 +134,7 @@ class Challenge {
       'superBlock': challenge.superBlock,
       'videoId': challenge.videoId,
       'challengeType': challenge.challengeType,
-      'helpCategory': challenge.helpCategory,
+      'helpCategory': challenge.helpCategory.value,
       'tests': challenge.tests
           .map(
             (challengeTest) => {
