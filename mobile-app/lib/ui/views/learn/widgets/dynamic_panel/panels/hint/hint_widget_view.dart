@@ -2,7 +2,6 @@ import 'dart:io';
 
 import 'package:device_info_plus/device_info_plus.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:freecodecamp/extensions/i18n_extension.dart';
 import 'package:freecodecamp/models/learn/challenge_model.dart';
 import 'package:freecodecamp/models/learn/curriculum_model.dart';
@@ -60,7 +59,7 @@ Future<String> genForumLink(
 }) async {
   Challenge? currChallenge = challenge;
 
-  final String helpCategory = challenge.helpCategory;
+  final HelpCategory helpCategory = challenge.helpCategory;
   final String blockTitle = block.name;
 
   final userDeviceInfo = await getDeviceInfo(context);
@@ -80,7 +79,7 @@ Future<String> genForumLink(
   String altStudentCode = Uri.encodeComponent(altTextMessage);
 
   final String baseURL =
-      '$forumLocation/new-topic?category=$helpCategory&title=$titleText&body=';
+      '$forumLocation/new-topic?category=${helpCategory.value}&title=$titleText&body=';
   final String defaultURL = '$baseURL$studentCode';
   final String altURL = '$baseURL$altStudentCode';
 
