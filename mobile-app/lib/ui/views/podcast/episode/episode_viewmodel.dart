@@ -213,6 +213,10 @@ class EpisodeViewModel extends BaseViewModel {
     audioService.setSpeed(speed);
   }
 
+  void initPlayBackSpeed() {
+    setPlayBackSpeed = audioService.getSpeed();
+  }
+
   void loadEpisode(Episodes episode, Podcasts podcast) async {
     bool downloaded = await _databaseService.episodeExists(episode);
 

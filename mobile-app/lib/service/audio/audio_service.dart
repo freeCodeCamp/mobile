@@ -112,6 +112,10 @@ class AudioPlayerHandler extends BaseAudioHandler {
     return _audioPlayer.duration;
   }
 
+  double getSpeed() {
+    return _audioPlayer.speed;
+  }
+
   Future<void> loadEpisode(
     Episodes episode,
     bool isDownloaded,

@@ -26,6 +26,7 @@ class EpisodeView extends StatelessWidget {
         model.initProgressListener(episode);
         model.initDownloadListener();
         model.initPlaybackListener();
+        model.initPlayBackSpeed();
       },
       onDispose: (model) {
         model.disposeProgressListener();
