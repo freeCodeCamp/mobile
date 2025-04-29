@@ -155,10 +155,10 @@ class ChallengeView extends StatelessWidget {
               ),
             ),
             bottomNavigationBar: Container(
-              decoration: BoxDecoration(
+              decoration: const BoxDecoration(
                 border: Border(
                   top: BorderSide(
-                    color: Colors.grey.shade800,
+                    color: Colors.white70,
                   ),
                 ),
               ),
