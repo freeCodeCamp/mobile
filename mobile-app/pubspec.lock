@@ -1301,10 +1301,10 @@ packages:
     dependency: "direct main"
     description:
       name: phone_ide
-      sha256: d017a48c68b17c42d1e36a44b66b7708e236965340c73995385f386157c77959
+      sha256: "6c9b69acd1ac46318c0a3a660abce936cf979d41a485109f2baf2697b42cea7e"
       url: "https://pub.dev"
     source: hosted
-    version: "1.5.0"
+    version: "1.5.1"
   photo_view:
     dependency: "direct main"
     description:
