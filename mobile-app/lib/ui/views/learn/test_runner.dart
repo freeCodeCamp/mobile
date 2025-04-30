@@ -159,14 +159,7 @@ class FrameBuilder {
     doc.__runTest(tests);
   </script>''';
 
-    Document scriptToNode = parse(script);
-
-    Node bodyNode =
-        scriptToNode.getElementsByTagName('BODY').first.children.isNotEmpty
-            ? scriptToNode.getElementsByTagName('BODY').first.children.first
-            : scriptToNode.getElementsByTagName('HEAD').first.children.first;
-
-    document.body!.append(bodyNode);
+    document.body!.append(parse(script));
 
     if (!builder.testing && controller != null) {
       controller!.loadData(
