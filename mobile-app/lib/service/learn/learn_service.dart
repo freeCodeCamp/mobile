@@ -21,7 +21,7 @@ class LearnService {
 
   final Dio _dio = DioService.dio;
 
-  static final baseUrl = '${AuthenticationService.baseURL}/curriculum-data/v1';
+  static final baseUrl = '${AuthenticationService.baseURL}/curriculum-data/v2';
 
   final LearnOfflineService learnOfflineService =
       locator<LearnOfflineService>();
