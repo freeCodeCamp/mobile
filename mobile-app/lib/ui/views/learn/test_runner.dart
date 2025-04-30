@@ -105,7 +105,7 @@ class FrameBuilder {
     String tail = challenge.files[0].tail ?? '';
     String script = '''
     <script type="module">
-    import 'http://localhost:8080/index.mjs';
+    import 'http://localhost:8080/index.js';
     const doc = new DOMParser().parseFromString('', 'text/html');
 
     const tests = ${parseTest(challenge.tests)};
