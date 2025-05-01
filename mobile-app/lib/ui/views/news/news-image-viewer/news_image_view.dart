@@ -7,10 +7,10 @@ import 'package:stacked/stacked.dart';
 
 class NewsImageView extends StatelessWidget {
   const NewsImageView({
-    Key? key,
+    super.key,
     required this.imgUrl,
     required this.isDataUrl,
-  }) : super(key: key);
+  });
 
   final String imgUrl;
   final bool isDataUrl;

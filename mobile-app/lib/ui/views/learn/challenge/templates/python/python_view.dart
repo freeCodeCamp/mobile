@@ -10,12 +10,12 @@ import 'package:youtube_player_iframe/youtube_player_iframe.dart';
 
 class PythonView extends StatelessWidget {
   const PythonView({
-    Key? key,
+    super.key,
     required this.challenge,
     required this.block,
     required this.challengesCompleted,
     required this.currentChallengeNum,
-  }) : super(key: key);
+  });
 
   final Challenge challenge;
   final Block block;

@@ -1,4 +1,3 @@
-import 'dart:developer' as dev;
 import 'dart:io';
 import 'dart:math';
 
@@ -19,17 +18,10 @@ class NotificationService {
   Future<void> init() async {
     const AndroidInitializationSettings androidInitializationSettings =
         AndroidInitializationSettings('@mipmap/launcher_icon');
-    final DarwinInitializationSettings iosInitializationSettings =
-        DarwinInitializationSettings(onDidReceiveLocalNotification: (
-      int id,
-      String? title,
-      String? body,
-      String? payload,
-    ) async {
-      dev.log('onDidReceiveLocalNotification: $id, $title, $body, $payload');
-    });
+    const DarwinInitializationSettings iosInitializationSettings =
+        DarwinInitializationSettings();
 
-    final InitializationSettings initializationSettings =
+    const InitializationSettings initializationSettings =
         InitializationSettings(
       android: androidInitializationSettings,
       iOS: iosInitializationSettings,

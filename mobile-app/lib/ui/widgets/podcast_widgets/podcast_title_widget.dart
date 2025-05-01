@@ -21,12 +21,11 @@ import 'package:shared_preferences/shared_preferences.dart';
 // ignore: must_be_immutable
 class PodcastTile extends StatefulWidget {
   PodcastTile(
-      {Key? key,
+      {super.key,
       required this.podcast,
       required this.episode,
       required this.isFromDownloadView,
-      this.isFromEpisodeView = false})
-      : super(key: key);
+      this.isFromEpisodeView = false});
 
   final Podcasts podcast;
   final Episodes episode;

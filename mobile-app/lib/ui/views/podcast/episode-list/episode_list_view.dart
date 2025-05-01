@@ -15,10 +15,10 @@ import 'package:url_launcher/url_launcher.dart';
 
 class EpisodeListView extends StatelessWidget {
   const EpisodeListView({
-    Key? key,
+    super.key,
     required this.podcast,
     required this.isDownloadView,
-  }) : super(key: key);
+  });
 
   final Podcasts podcast;
   final bool isDownloadView;
@@ -58,24 +58,29 @@ class EpisodeListView extends StatelessWidget {
                   ),
                 ),
                 !isDownloadView
-                    ? PagedSliverList.separated(
-                        pagingController: model.pagingController,
-                        builderDelegate: PagedChildBuilderDelegate<Episodes>(
-                          itemBuilder: (
-                            BuildContext context,
-                            Episodes episode,
-                            int index,
-                          ) =>
-                              PodcastTile(
-                            episode: episode,
-                            podcast: podcast,
-                            isFromDownloadView: isDownloadView,
+                    ? PagingListener(
+                        controller: model.pagingController,
+                        builder: (context, state, fetchNextPage) =>
+                            PagedSliverList.separated(
+                          state: state,
+                          fetchNextPage: fetchNextPage,
+                          builderDelegate: PagedChildBuilderDelegate<Episodes>(
+                            itemBuilder: (
+                              BuildContext context,
+                              Episodes episode,
+                              int index,
+                            ) =>
+                                PodcastTile(
+                              episode: episode,
+                              podcast: podcast,
+                              isFromDownloadView: isDownloadView,
+                            ),
                           ),
-                        ),
-                        separatorBuilder: (BuildContext context, int index) =>
-                            const Divider(
-                          height: 1,
-                          thickness: 1,
+                          separatorBuilder: (BuildContext context, int index) =>
+                              const Divider(
+                            height: 1,
+                            thickness: 1,
+                          ),
                         ),
                       )
                     : SliverToBoxAdapter(

@@ -7,13 +7,13 @@ import 'package:stacked/stacked.dart';
 
 class DescriptionView extends StatelessWidget {
   const DescriptionView({
-    Key? key,
+    super.key,
     required this.description,
     required this.instructions,
     required this.challengeModel,
     required this.maxChallenges,
     required this.title,
-  }) : super(key: key);
+  });
 
   final String description;
   final String instructions;

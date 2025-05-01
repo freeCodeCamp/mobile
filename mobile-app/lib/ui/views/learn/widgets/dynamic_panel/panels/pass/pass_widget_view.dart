@@ -10,11 +10,11 @@ import 'package:stacked/stacked.dart';
 
 class PassWidgetView extends StatelessWidget {
   const PassWidgetView({
-    Key? key,
+    super.key,
     required this.challengeModel,
     required this.challengesCompleted,
     required this.maxChallenges,
-  }) : super(key: key);
+  });
 
   final ChallengeViewModel challengeModel;
   final int challengesCompleted;
@@ -193,11 +193,11 @@ class PassWidgetView extends StatelessWidget {
 
 class PassButton extends StatelessWidget {
   const PassButton({
-    Key? key,
+    super.key,
     required this.model,
     required this.maxChallenges,
     required this.completed,
-  }) : super(key: key);
+  });
 
   final ChallengeViewModel model;
   final int maxChallenges;

@@ -88,11 +88,10 @@ Future<String> genForumLink(
 
 class HintWidgetView extends StatelessWidget {
   const HintWidgetView(
-      {Key? key,
+      {super.key,
       required this.hint,
       required this.challengeModel,
-      required this.editor})
-      : super(key: key);
+      required this.editor});
 
   final String hint;
   final ChallengeViewModel challengeModel;

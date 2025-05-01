@@ -5,7 +5,7 @@ import 'package:freecodecamp/ui/widgets/drawer_widget/drawer_widget_view.dart';
 import 'package:stacked/stacked.dart';
 
 class NativeLoginView extends StatelessWidget {
-  const NativeLoginView({Key? key, this.fromButton = false}) : super(key: key);
+  const NativeLoginView({super.key, this.fromButton = false});
 
   final bool fromButton;
 
