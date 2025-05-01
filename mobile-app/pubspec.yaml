@@ -34,7 +34,7 @@ dependencies:
   html: ^0.15.5+1
   infinite_scroll_pagination: ^5.0.0
   jiffy: ^6.3.2 # TODO: upgrade after migrating to FLutter 3.29
-  just_audio: ^0.10.0
+  just_audio: ^0.10.1
   path: ^1.9.0 # TODO: upgrade after migrating to FLutter 3.29
   path_provider: ^2.1.5
   phone_ide: ^1.5.1

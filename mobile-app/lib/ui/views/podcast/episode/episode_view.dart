@@ -112,7 +112,7 @@ class EpisodeView extends StatelessWidget {
                     DropdownButtonHideUnderline(
                       child: DropdownButton(
                         value: model.playBackSpeed,
-                        dropdownColor: const Color(0xFF2A2A40),
+                        dropdownColor: const Color(0xFF0a0a23),
                         icon: const SizedBox.shrink(),
                         items: model.speedOptions
                             .map(
@@ -128,9 +128,6 @@ class EpisodeView extends StatelessWidget {
                               ),
                             )
                             .toList(),
-                        style: const TextStyle(
-                          color: Colors.white,
-                        ),
                         onChanged: (_) {},
                       ),
                     ),

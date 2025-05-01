@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:developer';
 import 'dart:io';
 
@@ -39,6 +40,8 @@ class AudioPlayerHandler extends BaseAudioHandler {
 
   String _episodeId = '';
   String _audioType = '';
+
+  StreamSubscription? cacheSub;
 
   String get episodeId => _episodeId;
   set setEpisodeId(String state) {
@@ -161,7 +164,11 @@ class AudioPlayerHandler extends BaseAudioHandler {
       queue.add([audioMediaItem]);
       mediaItem.add(audioMediaItem);
 
-      _audioPlayer.positionStream.listen((pos) async {
+      if (cacheSub != null) {
+        cacheSub!.cancel();
+      }
+
+      cacheSub = _audioPlayer.positionStream.listen((pos) async {
         // position stream has an initial value of zero before seeking
         // to the position that is stored in the cache. Which means
         // "seconds" needs to be bigger than zero.
