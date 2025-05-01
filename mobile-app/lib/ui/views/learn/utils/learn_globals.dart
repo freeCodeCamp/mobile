@@ -1,4 +1,4 @@
-library global_learn;
+library;
 
 // Changing values in this file will require a hot restart to take effect
 

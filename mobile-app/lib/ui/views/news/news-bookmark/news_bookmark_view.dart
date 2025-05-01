@@ -10,9 +10,9 @@ class NewsBookmarkTutorialView extends StatelessWidget {
   final BookmarkedTutorial tutorial;
 
   const NewsBookmarkTutorialView({
-    Key? key,
+    super.key,
     required this.tutorial,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {

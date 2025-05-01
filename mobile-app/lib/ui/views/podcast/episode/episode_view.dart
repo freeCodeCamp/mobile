@@ -8,10 +8,10 @@ import 'package:stacked/stacked.dart';
 
 class EpisodeView extends StatelessWidget {
   const EpisodeView({
-    Key? key,
+    super.key,
     required this.episode,
     required this.podcast,
-  }) : super(key: key);
+  });
 
   final Episodes episode;
   final Podcasts podcast;

@@ -5,7 +5,7 @@ import 'package:freecodecamp/ui/views/news/html_handler/html_handler.dart';
 import 'package:stacked/stacked.dart';
 
 class JavaScriptConsole extends StatelessWidget {
-  const JavaScriptConsole({Key? key, required this.messages}) : super(key: key);
+  const JavaScriptConsole({super.key, required this.messages});
 
   final List<ConsoleMessage> messages;
 

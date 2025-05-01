@@ -18,6 +18,7 @@ void main() {
       dashedName: 'hello-world',
       superBlock: '2022/responsive-web-design',
       challengeType: 1,
+      helpCategory: HelpCategory.htmlCss,
       tests: [],
       files: [
         ChallengeFile(

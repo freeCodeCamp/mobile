@@ -10,11 +10,11 @@ import 'package:stacked/stacked.dart';
 
 class EnglishView extends StatelessWidget {
   const EnglishView({
-    Key? key,
+    super.key,
     required this.challenge,
     required this.block,
     required this.currentChallengeNum,
-  }) : super(key: key);
+  });
 
   final Challenge challenge;
   final Block block;

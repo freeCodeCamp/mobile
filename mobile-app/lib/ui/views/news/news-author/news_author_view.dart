@@ -8,9 +8,9 @@ import 'package:stacked/stacked.dart';
 
 class NewsAuthorView extends StatelessWidget {
   const NewsAuthorView({
-    Key? key,
+    super.key,
     required this.authorSlug,
-  }) : super(key: key);
+  });
 
   final String authorSlug;
 

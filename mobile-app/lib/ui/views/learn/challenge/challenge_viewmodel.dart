@@ -233,32 +233,11 @@ class ChallengeViewModel extends BaseViewModel {
     setupDialogUi();
 
     setChallenge = challenge;
-
-    List<ChallengeFile> currentEditedChallenge = challenge.files
-        .where((element) => element.editableRegionBoundaries.isNotEmpty)
-        .toList();
-
-    if (editorText == null) {
-      String text = await fileService.getExactFileFromCache(
-        challenge,
-        currentEditedChallenge.isEmpty
-            ? challenge.files.first
-            : currentEditedChallenge.first,
-      );
-
-      if (text != '') {
-        setEditorText = text;
-      }
-    }
-    setCurrentSelectedFile = currentEditedChallenge.isEmpty
-        ? challenge.files[0].name
-        : currentEditedChallenge[0].name;
-
     setBlock = block;
     setChallengesCompleted = challengesCompleted;
   }
 
-  void initiateFile(
+  void initFile(
     Editor editor,
     Challenge challenge,
     ChallengeFile currFile,
@@ -266,12 +245,16 @@ class ChallengeViewModel extends BaseViewModel {
   ) async {
     if (!_mounted) {
       await Future.delayed(Duration.zero);
+      String fileContents = await fileService.getExactFileFromCache(
+        challenge,
+        currFile,
+      );
       editor.fileTextStream.sink.add(
         FileIDE(
           id: challenge.id + currFile.name,
           ext: currFile.ext.name,
           name: currFile.name,
-          content: editorText ?? currFile.contents,
+          content: fileContents,
           hasRegion: hasRegion,
           region: EditorRegionOptions(
             start: hasRegion ? currFile.editableRegionBoundaries[0] : null,
@@ -281,6 +264,11 @@ class ChallengeViewModel extends BaseViewModel {
         ),
       );
       _mounted = true;
+
+      if (currFile.name != currentSelectedFile) {
+        setCurrentSelectedFile = currFile.name;
+        setEditorText = fileContents;
+      }
     }
   }
 
@@ -425,6 +413,14 @@ class ChallengeViewModel extends BaseViewModel {
         (file) => file.name == currentSelectedFile,
       );
       return file;
+    }
+
+    List<ChallengeFile>? fileWithEditableRegion = challenge.files
+        .where((file) => file.editableRegionBoundaries.isNotEmpty)
+        .toList();
+
+    if (fileWithEditableRegion.isNotEmpty) {
+      return fileWithEditableRegion[0];
     }
 
     return challenge.files[0];

@@ -189,14 +189,10 @@ class AudioPlayerHandler extends BaseAudioHandler {
         title: radio.nextPlaying.title,
         artUri: Uri.parse(radio.nextPlaying.artUrl),
       );
-      await _audioPlayer.setAudioSource(
-        ConcatenatingAudioSource(
-          children: [
-            AudioSource.uri(Uri.parse(radio.listenUrl), tag: currentSong),
-            AudioSource.uri(Uri.parse(radio.listenUrl), tag: nextSong)
-          ],
-        ),
-      );
+      await _audioPlayer.setAudioSources([
+        AudioSource.uri(Uri.parse(radio.listenUrl), tag: currentSong),
+        AudioSource.uri(Uri.parse(radio.listenUrl), tag: nextSong)
+      ]);
       await _audioPlayer.load();
       _audioType = 'coderadio';
       setEpisodeId = '';

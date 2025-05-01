@@ -20,11 +20,11 @@ import 'package:path_provider/path_provider.dart';
 // ignore: must_be_immutable
 class PodcastTile extends StatefulWidget {
   PodcastTile({
-    Key? key,
+    super.key,
     required this.podcast,
     required this.episode,
     required this.isFromDownloadView,
-  }) : super(key: key);
+  });
 
   final Podcasts podcast;
   final Episodes episode;

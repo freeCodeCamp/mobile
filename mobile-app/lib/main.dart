@@ -58,7 +58,7 @@ Future<void> main({bool testing = false}) async {
 }
 
 class FreeCodeCampMobileApp extends StatelessWidget {
-  const FreeCodeCampMobileApp({Key? key}) : super(key: key);
+  const FreeCodeCampMobileApp({super.key});
 
   @override
   Widget build(BuildContext context) {

@@ -6,9 +6,9 @@ import 'package:stacked/stacked.dart';
 
 class NewsBookmarkViewWidget extends StatelessWidget {
   const NewsBookmarkViewWidget({
-    Key? key,
+    super.key,
     required this.tutorial,
-  }) : super(key: key);
+  });
 
   final dynamic tutorial;
 
