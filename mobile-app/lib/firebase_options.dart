@@ -63,7 +63,6 @@ class DefaultFirebaseOptions {
     messagingSenderId: '363152234407',
     projectId: 'mobile-4ee8a',
     storageBucket: 'mobile-4ee8a.firebasestorage.app',
-    iosClientId: '363152234407-qb25f7aak3egr8iod13bhsltjgf8viuq.apps.googleusercontent.com',
     iosBundleId: 'org.freecodecamp.ios',
   );
 
