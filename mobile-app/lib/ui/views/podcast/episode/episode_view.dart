@@ -154,7 +154,7 @@ class EpisodeView extends StatelessWidget {
                         Icons.forward_30_rounded,
                       ),
                       onPressed: () {
-                        model.foward(episode);
+                        model.forward(episode);
                       },
                     ),
                     IconButton(

@@ -99,23 +99,17 @@ class EpisodeViewModel extends BaseViewModel {
   }
 
   String timeDisplay(int totalSeconds) {
-    int totalMinutes = totalSeconds ~/ 60;
-    int totalHours = totalMinutes ~/ 60;
+    int hours = totalSeconds ~/ 3600;
+    int minutes = (totalSeconds % 3600) ~/ 60;
+    int seconds = totalSeconds % 60;
 
-    int totalMinDisplay = totalMinutes % 60;
-    int totalSecDisplay = totalSeconds % 60;
+    String twoDigits(int n) => n.toString().padLeft(2, '0');
 
-    String addZero(int val) {
-      String v = val.toString();
-
-      return v.length == 1 ? '0$v' : v;
+    if (hours > 0) {
+      return '$hours:${twoDigits(minutes)}:${twoDigits(seconds)}';
+    } else {
+      return '$minutes:${twoDigits(seconds)}';
     }
-
-    String display = totalHours > 0 ? '$totalHours:' : '';
-    display +=
-        totalHours > 0 ? '${addZero(totalMinDisplay)}:' : '$totalMinDisplay:';
-    display += addZero(totalSecDisplay);
-    return display;
   }
 
   void removeEpisode(Episodes episode, Podcasts podcast) async {
@@ -184,7 +178,7 @@ class EpisodeViewModel extends BaseViewModel {
     progressListener!.cancel();
   }
 
-  void foward(Episodes episode) async {
+  void forward(Episodes episode) async {
     int newPos = await audioService.fastForward();
 
     double value = newPos / episode.duration!.inSeconds;
