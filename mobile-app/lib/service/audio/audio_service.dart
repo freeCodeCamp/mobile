@@ -158,6 +158,8 @@ class AudioPlayerHandler extends BaseAudioHandler {
       int? possibleValue = prefs.getInt('${episode.id}_progress');
       if (possibleValue != null) {
         _audioPlayer.seek(Duration(seconds: possibleValue));
+      } else {
+        _audioPlayer.seek(Duration(seconds: 0));
       }
 
       _audioType = 'episode';
