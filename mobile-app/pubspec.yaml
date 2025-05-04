@@ -52,7 +52,7 @@ dependencies:
   upgrader: 11.3.1
   url_launcher: 6.3.1
   web_socket_channel: 3.0.3
-  youtube_player_iframe: 5.1.2
+  youtube_player_iframe: 5.2.1
 dev_dependencies:
   build_runner: 2.4.15
   dependency_validator: 3.2.3
