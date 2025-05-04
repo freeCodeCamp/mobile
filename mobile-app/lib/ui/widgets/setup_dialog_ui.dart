@@ -28,8 +28,7 @@ class _buttonDialog extends HookWidget {
   final Function(DialogResponse) onDialogTap;
 
   const _buttonDialog(
-      {Key? key, required this.request, required this.onDialogTap})
-      : super(key: key);
+      {required this.request, required this.onDialogTap});
 
   @override
   Widget build(BuildContext context) {
@@ -120,8 +119,7 @@ class _deleteAccountDialog extends HookWidget {
   final Function(DialogResponse) onDialogTap;
 
   const _deleteAccountDialog(
-      {Key? key, required this.request, required this.onDialogTap})
-      : super(key: key);
+      {required this.request, required this.onDialogTap});
 
   @override
   Widget build(BuildContext context) {
@@ -220,8 +218,7 @@ class _buttonDialog2 extends HookWidget {
   final Function(DialogResponse) onDialogTap;
 
   const _buttonDialog2(
-      {Key? key, required this.request, required this.onDialogTap})
-      : super(key: key);
+      {required this.request, required this.onDialogTap});
 
   @override
   Widget build(BuildContext context) {
@@ -299,8 +296,7 @@ class _buttonDialog2 extends HookWidget {
 class _BasicDialog extends StatelessWidget {
   final DialogRequest request;
   final Function(DialogResponse) completer;
-  const _BasicDialog({Key? key, required this.request, required this.completer})
-      : super(key: key);
+  const _BasicDialog({required this.request, required this.completer});
 
   @override
   Widget build(BuildContext context) {

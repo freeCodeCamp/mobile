@@ -14,7 +14,6 @@ class EpisodeListViewModel extends BaseViewModel {
   final _developerService = locator<DeveloperService>();
   final Podcasts podcast;
   int epsLength = 0;
-  Object? _activeCallbackIdentity;
   final _dio = DioService.dio;
 
   late Future<List<Episodes>> _episodes;
@@ -28,9 +27,7 @@ class EpisodeListViewModel extends BaseViewModel {
     notifyListeners();
   }
 
-  final PagingController<int, Episodes> _pagingController = PagingController(
-    firstPageKey: 0,
-  );
+  late final PagingController<int, Episodes> _pagingController;
   PagingController<int, Episodes> get pagingController => _pagingController;
 
   void initState(bool isDownloadView) async {
@@ -39,47 +36,39 @@ class EpisodeListViewModel extends BaseViewModel {
       _episodes = _databaseService.getEpisodes(podcast);
       epsLength = (await episodes).length;
     } else {
-      _pagingController.addPageRequestListener((pageKey) {
-        fetchEpisodes(podcast.id, pageKey);
-      });
+      _pagingController = PagingController(
+        getNextPageKey: (state) => (state.keys?.last ?? -1) + 1,
+        fetchPage: (pageKey) => fetchEpisodes(podcast.id, pageKey),
+      );
     }
     notifyListeners();
   }
 
-  void fetchEpisodes(String podcastId, [int pageKey = 0]) async {
-    final callbackIdentity = Object(); // TODO: What's this doing or used for?
-    _activeCallbackIdentity = callbackIdentity;
+  Future<List<Episodes>> fetchEpisodes(String podcastId,
+      [int pageKey = 0]) async {
     String baseUrl = (await _developerService.developmentMode())
         ? 'https://api.mobile.freecodecamp.dev/'
         : 'https://api.mobile.freecodecamp.org/';
-    try {
-      final res = await _dio.get(
-        '${baseUrl}podcasts/$podcastId/episodes?page=$pageKey',
+    final res = await _dio.get(
+      '${baseUrl}podcasts/$podcastId/episodes?page=$pageKey',
+    );
+    final List<dynamic> episodes = res.data['episodes'];
+    epsLength = res.data['podcast']['numOfEps'];
+    notifyListeners();
+    final List<Episodes> eps =
+        episodes.map((e) => Episodes.fromAPIJson(e)).toList();
+    final prevCount = _pagingController.items?.length ?? 0;
+    if (prevCount + 20 >= epsLength) {
+      _pagingController.value = _pagingController.value.copyWith(
+        hasNextPage: false,
       );
-      if (callbackIdentity == _activeCallbackIdentity) {
-        final List<dynamic> episodes = res.data['episodes'];
-        epsLength = res.data['podcast']['numOfEps'];
-        notifyListeners();
-        final List<Episodes> eps =
-            episodes.map((e) => Episodes.fromAPIJson(e)).toList();
-        final prevCount = _pagingController.itemList?.length ?? 0;
-        if (prevCount + 20 >= epsLength) {
-          _pagingController.appendLastPage(eps);
-        } else {
-          _pagingController.appendPage(eps, pageKey + 1);
-        }
-      }
-    } catch (e) {
-      if (callbackIdentity == _activeCallbackIdentity) {
-        _pagingController.error = e;
-      }
     }
+    return eps;
   }
 
   @override
   void dispose() {
     _pagingController.dispose();
-    _activeCallbackIdentity = null;
     super.dispose();
   }
 }

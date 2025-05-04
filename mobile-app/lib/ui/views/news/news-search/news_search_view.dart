@@ -5,7 +5,7 @@ import 'package:freecodecamp/ui/views/news/news-search/news_search_viewmodel.dar
 import 'package:stacked/stacked.dart';
 
 class NewsSearchView extends StatelessWidget {
-  const NewsSearchView({Key? key}) : super(key: key);
+  const NewsSearchView({super.key});
 
   @override
   Widget build(BuildContext context) {

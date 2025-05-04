@@ -14,12 +14,12 @@ import 'package:stacked/stacked.dart';
 
 class ChallengeView extends StatelessWidget {
   const ChallengeView({
-    Key? key,
+    super.key,
     required this.block,
     required this.challenge,
     required this.challengesCompleted,
     required this.isProject,
-  }) : super(key: key);
+  });
 
   final Challenge challenge;
   final Block block;
@@ -162,7 +162,14 @@ class ChallengeView extends StatelessWidget {
                       ),
               ),
             ),
-            bottomNavigationBar: Padding(
+            bottomNavigationBar: Container(
+              decoration: const BoxDecoration(
+                border: Border(
+                  top: BorderSide(
+                    color: Colors.white70,
+                  ),
+                ),
+              ),
               padding: EdgeInsets.only(
                 bottom: MediaQuery.of(context).viewInsets.bottom,
               ),
@@ -291,7 +298,7 @@ class ChallengeView extends StatelessWidget {
     return BottomAppBar(
       height: keyboard ? 116 : 72,
       padding: keyboard ? const EdgeInsets.only(bottom: 8) : null,
-      color: const Color(0xFF0a0a23),
+      color: const Color(0x990a0a23),
       child: Column(
         children: [
           if (keyboard)
@@ -526,10 +533,10 @@ class SymbolBar extends StatelessWidget {
 
 class ProjectPreview extends StatelessWidget {
   const ProjectPreview({
-    Key? key,
+    super.key,
     required this.challenge,
     required this.model,
-  }) : super(key: key);
+  });
 
   final Challenge challenge;
   final ChallengeViewModel model;

@@ -15,11 +15,11 @@ class BlockView extends StatelessWidget {
   final bool isStepBased;
 
   const BlockView({
-    Key? key,
+    super.key,
     required this.block,
     required this.isOpen,
     required this.isStepBased,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -255,11 +255,11 @@ class BlockView extends StatelessWidget {
 
 class BlockHeader extends StatelessWidget {
   const BlockHeader({
-    Key? key,
+    super.key,
     required this.isCertification,
     required this.block,
     required this.model,
-  }) : super(key: key);
+  });
 
   final bool isCertification;
   final BlockViewModel model;
@@ -337,13 +337,13 @@ class BlockHeader extends StatelessWidget {
 
 class ChallengeTile extends StatelessWidget {
   const ChallengeTile({
-    Key? key,
+    super.key,
     required this.block,
     required this.model,
     required this.step,
     required this.isDowloaded,
     required this.challengeId,
-  }) : super(key: key);
+  });
 
   final Block block;
   final BlockViewModel model;

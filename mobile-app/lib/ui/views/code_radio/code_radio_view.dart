@@ -8,7 +8,7 @@ import 'package:freecodecamp/ui/widgets/drawer_widget/drawer_widget_view.dart';
 import 'package:stacked/stacked.dart';
 
 class CodeRadioView extends StatelessWidget {
-  const CodeRadioView({Key? key}) : super(key: key);
+  const CodeRadioView({super.key});
 
   @override
   Widget build(BuildContext context) {

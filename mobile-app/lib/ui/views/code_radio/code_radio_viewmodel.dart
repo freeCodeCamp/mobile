@@ -30,6 +30,7 @@ class CodeRadioViewModel extends BaseViewModel {
     _webSocketChannel.sink.add(jsonEncode({
       'subs': {'station:coderadio': {}}
     }));
+    await _webSocketChannel.ready;
     await _webSocketController.addStream(_webSocketChannel.stream);
   }
 

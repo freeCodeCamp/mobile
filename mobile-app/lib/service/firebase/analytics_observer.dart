@@ -14,21 +14,21 @@ class AnalyticsObserver extends RouteObserver {
 
     if (route.settings.arguments != null) {
       switch (route.settings.arguments.runtimeType) {
-        case SuperBlockViewArguments:
+        case SuperBlockViewArguments _:
           final routeArgs = route.settings.arguments as SuperBlockViewArguments;
           screenName += '/${routeArgs.superBlockDashedName}';
           break;
-        case NewsTutorialViewArguments:
+        case NewsTutorialViewArguments _:
           final routeArgs =
               route.settings.arguments as NewsTutorialViewArguments;
           screenName += '/${routeArgs.title}';
           break;
-        case NewsBookmarkTutorialViewArguments:
+        case NewsBookmarkTutorialViewArguments _:
           final routeArgs =
               route.settings.arguments as NewsBookmarkTutorialViewArguments;
           screenName += '/${routeArgs.tutorial.tutorialTitle}';
           break;
-        case ChallengeTemplateViewArguments:
+        case ChallengeTemplateViewArguments _:
           final routeArgs =
               route.settings.arguments as ChallengeTemplateViewArguments;
           screenName += '/${routeArgs.challengeId}';
