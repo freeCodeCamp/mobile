@@ -1,17 +1,25 @@
+import 'package:flutter/material.dart';
 import 'package:freecodecamp/app/app.locator.dart';
 import 'package:freecodecamp/models/learn/challenge_model.dart';
 import 'package:freecodecamp/service/learn/learn_service.dart';
+import 'package:freecodecamp/ui/views/news/html_handler/html_handler.dart';
 import 'package:stacked/stacked.dart';
 
 class MultipleChoiceViewmodel extends BaseViewModel {
   int _currentChoice = -1;
   int get currentChoice => _currentChoice;
 
+  int _lastAnswer = -1;
+  int get lastAnswer => _lastAnswer;
+
   bool? _choiceStatus;
   bool? get choiceStatus => _choiceStatus;
 
   String _errMessage = '';
   String get errMessage => _errMessage;
+
+  List<Widget> _feedback = [];
+  List<Widget> get feedback => _feedback;
 
   List<bool> _assignmentStatus = [];
   List<bool> get assignmentStatus => _assignmentStatus;
@@ -20,6 +28,16 @@ class MultipleChoiceViewmodel extends BaseViewModel {
 
   set setCurrentChoice(int choice) {
     _currentChoice = choice;
+    notifyListeners();
+  }
+
+  set setLastAnswer(int answer) {
+    _lastAnswer = answer;
+    notifyListeners();
+  }
+
+  set setFeedback(List<Widget> feedback) {
+    _feedback = feedback;
     notifyListeners();
   }
 
@@ -39,12 +57,26 @@ class MultipleChoiceViewmodel extends BaseViewModel {
   }
 
   void initChallenge(Challenge challenge) {
-    setAssignmentStatus =
-        List.filled(challenge.assignments?.length ?? 0, false);
+    setAssignmentStatus = List.filled(
+      challenge.assignments?.length ?? 0,
+      false,
+    );
   }
 
   void checkOption(Challenge challenge) async {
     bool isCorrect = challenge.question!.solution - 1 == currentChoice;
     setChoiceStatus = isCorrect;
+    setLastAnswer = currentChoice;
+  }
+
+  void getFeedback(Challenge challenge, BuildContext context) {
+    HTMLParser parser = HTMLParser(context: context);
+    Answer answer = challenge.question!.answers[currentChoice];
+    bool isCorrect = challenge.question!.solution - 1 == currentChoice;
+
+    setFeedback = parser.parse(
+      answer.feedback ?? (isCorrect ? '<p>Correct!</p>' : ''),
+      fontColor: isCorrect ? Colors.green : Colors.red,
+    );
   }
 }

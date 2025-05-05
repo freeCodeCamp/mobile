@@ -179,7 +179,10 @@ class MultipleChoiceView extends StatelessWidget {
                                   challenge,
                                   block,
                                 )
-                            : () => model.checkOption(challenge)
+                            : () {
+                                model.checkOption(challenge);
+                                model.getFeedback(challenge, context);
+                              }
                         : null,
                     child: Text(
                       model.choiceStatus != null
@@ -267,6 +270,7 @@ class MultipleChoiceView extends StatelessWidget {
     return Container(
       margin: const EdgeInsets.symmetric(vertical: 8),
       child: RadioListTile<int>(
+        key: ValueKey(model.lastAnswer),
         selected: answerObj.key == model.currentChoice,
         tileColor: const Color(0xFF0a0a23),
         selectedTileColor: const Color(0xDEFFFFFF),
@@ -314,6 +318,11 @@ class MultipleChoiceView extends StatelessWidget {
             ),
           ],
         ),
+        subtitle: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [if (answerObj.key == model.lastAnswer) ...model.feedback],
+        ),
+        isThreeLine: true,
       ),
     );
   }
