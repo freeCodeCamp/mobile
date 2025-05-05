@@ -159,6 +159,24 @@ class MultipleChoiceView extends StatelessWidget {
                   for (var answerObj
                       in challenge.question!.answers.asMap().entries)
                     questionOption(answerObj, model, context),
+                  const SizedBox(height: 8),
+                  if (challenge.explanation != null) ...[
+                    ExpansionTile(
+                      title: Text(
+                        'Explanation',
+                        style: TextStyle(
+                          fontSize: FontSize.large.value,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                      children: [
+                        const SizedBox(height: 8),
+                        ...parser.parse(challenge.explanation!),
+                        const SizedBox(height: 8),
+                      ],
+                    ),
+                  ],
+                  buildDivider(),
                   const SizedBox(height: 16),
                   ElevatedButton(
                     style: ElevatedButton.styleFrom(
