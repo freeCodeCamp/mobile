@@ -1,39 +1,86 @@
+const chapterBasedSuperBlocks = ['full-stack-developer'];
+
 class SuperBlock {
   final String dashedName;
   final String name;
   final List<Block>? blocks;
+  final List<Chapter>? chapters;
 
-  SuperBlock({
-    required this.dashedName,
-    required this.name,
-    this.blocks,
-  });
+  SuperBlock(
+      {required this.dashedName,
+      required this.name,
+      this.blocks,
+      this.chapters});
 
   factory SuperBlock.fromJson(
     Map<String, dynamic> data,
     String dashedName,
     String name,
   ) {
+    if (chapterBasedSuperBlocks.contains(dashedName)) {
+      return SuperBlock(
+        dashedName: dashedName,
+        name: name,
+        chapters: (data[data.keys.first]['chapters']).map((key, value) {
+          return Chapter(
+            dashedName: key,
+            comingSoon: value['comingSoon'] ?? false,
+            chapterType: value['chapterType'],
+            modules: (value['modules']).map((key, value) {
+              return Module(
+                  dashedName: key,
+                  comingSoon: value['comingSoon'] ?? false,
+                  moduleType: value['moduleType'],
+                  blocks: (value['blocks']).map((key, value) {
+                    return Block.fromJson(
+                      value['meta'],
+                      value['intro'],
+                      value['meta']['dashedName'],
+                      dashedName,
+                      name,
+                    );
+                  }).toList());
+            }).toList(),
+          );
+        }).toList(),
+      );
+    }
+
+    // final parsedBlocks = (data[data.keys.first]['blocks']).map((block) {
+    //   return Block.fromJson(
+    //     block['meta'],
+    //     block['intro'],
+    //     block['meta']['dashedName'],
+    //     dashedName,
+    //     name,
+    //   );
+    // }).toList()
+    //   ..sort(
+    //     (Block a, Block b) => (a.order == null && b.order == null)
+    //         ? 0
+    //         : a.order!.compareTo(b.order!),
+    //   );
+
+    // print('--- parsed blocks: $parsedBlocks');
+
     return SuperBlock(
       dashedName: dashedName,
       name: name,
-      blocks: (data[data.keys.first]['blocks'] as Map)
-          .map((key, value) {
-            return MapEntry(
-              key,
-              Block.fromJson(
-                value['challenges'],
-                value['desc'],
-                key,
-                dashedName,
-                name,
-              ),
-            );
-          })
-          .values
-          .toList()
+      blocks: (data[data.keys.first]['blocks']).map((block) {
+        return Block.fromJson(
+          block['meta'],
+          block['intro'],
+          block['meta']['dashedName'],
+          dashedName,
+          name,
+        );
+      }).toList()
         ..sort(
-          (Block a, Block b) => a.order.compareTo(b.order),
+          // `order` is always available in block-based super blocks.
+          // The null check is only to adhere to the null safety standard.
+          (Block a, Block b) => (a.order == null && b.order == null)
+              ? 0
+              : a.order!.compareTo(b.order!),
         ),
     );
   }
@@ -52,7 +99,8 @@ class Block {
   final SuperBlock superBlock;
   final List description;
   final bool isStepBased;
-  final int order;
+  // Blocks in chapter-based super blocks don't have `order`.
+  final int? order;
 
   final List<ChallengeOrder> challenges;
   final List<ChallengeListTile> challengeTiles;
@@ -81,7 +129,7 @@ class Block {
   factory Block.fromJson(
     Map<String, dynamic> data,
     List description,
-    String key,
+    String dashedName,
     String superBlockDashedName,
     String superBlockName,
   ) {
@@ -96,7 +144,7 @@ class Block {
         name: superBlockName,
       ),
       name: data['name'],
-      dashedName: key,
+      dashedName: dashedName,
       description: description,
       order: data['order'],
       isStepBased: checkIfStepBased(
@@ -174,5 +222,33 @@ class ChallengeOrder {
   ChallengeOrder({
     required this.id,
     required this.title,
+  });
+}
+
+class Chapter {
+  final String dashedName;
+  final bool? comingSoon;
+  final String? chapterType;
+  final List<Module>? modules;
+
+  Chapter({
+    required this.dashedName,
+    this.comingSoon,
+    this.chapterType,
+    this.modules,
+  });
+}
+
+class Module {
+  final String dashedName;
+  final bool? comingSoon;
+  final String? moduleType;
+  final List<Block>? blocks;
+
+  Module({
+    required this.dashedName,
+    this.comingSoon,
+    this.moduleType,
+    this.blocks,
   });
 }
