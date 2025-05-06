@@ -66,19 +66,20 @@ class SuperBlock {
     return SuperBlock(
       dashedName: dashedName,
       name: name,
-      blocks: (data[data.keys.first]['blocks']).map((block) {
-        return Block.fromJson(
-          block['meta'],
-          block['intro'],
-          block['meta']['dashedName'],
-          dashedName,
-          name,
-        );
-      }).toList()
+      blocks: (data[data.keys.first]['blocks'])
+          .map((block) {
+            return Block.fromJson(
+              block['meta'],
+              block['intro'],
+              block['meta']['dashedName'],
+              dashedName,
+              name,
+            );
+          })
+          .toList()
+          .cast<Block>()
         ..sort(
-          // `order` is always available in block-based super blocks.
-          // The null check is only to adhere to the null safety standard.
-          (Block a, Block b) => (a.order == null && b.order == null)
+          (Block a, Block b) => a.order == null && b.order == null
               ? 0
               : a.order!.compareTo(b.order!),
         ),
