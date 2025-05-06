@@ -2,6 +2,7 @@ import 'package:freecodecamp/app/app.locator.dart';
 import 'package:freecodecamp/models/main/user_model.dart';
 import 'package:freecodecamp/service/authentication/authentication_service.dart';
 import 'package:freecodecamp/service/dio_service.dart';
+import 'package:freecodecamp/service/learn/learn_service.dart';
 import 'package:freecodecamp/service/news/bookmark_service.dart';
 import 'package:mockito/annotations.dart';
 import 'package:mockito/mockito.dart';
@@ -17,6 +18,7 @@ import './test_helpers.mocks.dart';
   MockSpec<AuthenticationService>(onMissingStub: OnMissingStub.returnDefault),
   MockSpec<SnackbarService>(onMissingStub: OnMissingStub.returnDefault),
   MockSpec<DioService>(onMissingStub: OnMissingStub.returnDefault),
+  MockSpec<LearnService>(onMissingStub: OnMissingStub.returnDefault),
 
 // @stacked-mock-spec
 ])
@@ -88,6 +90,13 @@ MockDioService getAndRegisterDioService() {
   return service;
 }
 
+MockLearnService getAndRegisterLearnMockLearnService() {
+  _removeRegistrationIfExists<LearnService>();
+  final service = MockLearnService();
+  locator.registerLazySingleton<LearnService>(() => service);
+  return service;
+}
+
 // @stacked-mock-create
 
 void _removeRegistrationIfExists<T extends Object>() {
@@ -103,4 +112,5 @@ void unregisterService() {
   locator.unregister<BookmarksDatabaseService>();
   locator.unregister<DioService>();
   locator.unregister<AuthenticationService>();
+  locator.unregister<LearnService>();
 }
