@@ -6,6 +6,7 @@ import 'package:flutter_highlight/flutter_highlight.dart';
 import 'package:flutter_highlight/theme_map.dart';
 import 'package:flutter_html/flutter_html.dart';
 import 'package:flutter_html_table/flutter_html_table.dart';
+import 'package:freecodecamp/ui/theme/fcc_theme.dart';
 import 'package:freecodecamp/ui/views/news/news-image-viewer/news_image_view.dart';
 import 'package:html/dom.dart' as dom;
 import 'package:html/parser.dart' as parser;
@@ -103,10 +104,6 @@ class HTMLParser {
         'strong': Style(
           fontWeight: FontWeight.bold,
         ),
-        'p': Style(
-          margin: Margins.zero,
-          lineHeight: const LineHeight(1.5),
-        ),
         'a': Style(
           color: Colors.white,
           textDecoration: TextDecoration.underline,
@@ -164,6 +161,29 @@ class HTMLParser {
           },
         ),
         const TableHtmlExtension(),
+        TagExtension(
+          tagsToExtend: {'code'},
+          builder: (child) {
+            return Container(
+              margin: const EdgeInsets.all(0),
+              padding: const EdgeInsets.symmetric(
+                horizontal: 4,
+              ),
+              decoration: BoxDecoration(
+                color: FccColors.gray75,
+                borderRadius: BorderRadius.circular(4),
+              ),
+              child: Text(
+                parser.parseFragment(child.innerHtml).text ?? '',
+                style: TextStyle(
+                  fontSize: 18,
+                  color: FccColors.gray05,
+                ),
+                textAlign: TextAlign.center,
+              ),
+            );
+          },
+        ),
         TagExtension(
           tagsToExtend: {'pre'},
           builder: (child) {
