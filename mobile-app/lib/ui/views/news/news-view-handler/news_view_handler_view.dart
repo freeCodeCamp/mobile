@@ -8,7 +8,7 @@ import 'package:freecodecamp/ui/widgets/drawer_widget/drawer_widget_view.dart';
 import 'package:stacked/stacked.dart';
 
 class NewsViewHandlerView extends StatelessWidget {
-  const NewsViewHandlerView({Key? key}) : super(key: key);
+  const NewsViewHandlerView({super.key});
 
   @override
   Widget build(BuildContext context) {

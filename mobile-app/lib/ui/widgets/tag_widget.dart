@@ -7,10 +7,10 @@ import 'package:stacked_services/stacked_services.dart';
 
 class TagButton extends StatefulWidget {
   const TagButton({
-    Key? key,
+    super.key,
     required this.tagName,
     required this.tagSlug,
-  }) : super(key: key);
+  });
 
   final String tagName;
   final String tagSlug;

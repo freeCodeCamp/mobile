@@ -32,7 +32,7 @@ Map<String, int> calculateStreak(FccUserModel user) {
 }
 
 class ProfileView extends StatelessWidget {
-  const ProfileView({Key? key}) : super(key: key);
+  const ProfileView({super.key});
 
   BoxBorder borderPicker(FccUserModel user) {
     if (user.isDonating && user.yearsTopContributor.isNotEmpty) {
@@ -140,6 +140,16 @@ class ProfileView extends StatelessWidget {
                   'show': user.isRelationalDatabaseCertV8,
                   'title': 'Relational Database Certification',
                   'certSlug': 'relational-database-v8',
+                },
+                {
+                  'show': user.isCollegeAlgebraPyCertV8,
+                  'title': 'College Algebra with Python',
+                  'certSlug': 'college-algebra-with-python-v8',
+                },
+                {
+                  'show': user.isFoundationalCSharpCertV8,
+                  'title': 'Foundational C# with Microsoft',
+                  'certSlug': 'foundational-c-sharp-with-microsoft',
                 }
               ];
               final legacyCerts = [
@@ -358,13 +368,12 @@ class ProfileView extends StatelessWidget {
 
 class CertificationWidget extends StatelessWidget {
   const CertificationWidget(
-      {Key? key,
+      {super.key,
       required this.user,
       required this.hasModernCert,
       required this.hasLegacyCert,
       required this.currentCerts,
-      required this.legacyCerts})
-      : super(key: key);
+      required this.legacyCerts});
 
   final FccUserModel user;
   final bool hasModernCert;
@@ -487,7 +496,7 @@ class CertificationWidget extends StatelessWidget {
 }
 
 class PortfolioWidget extends StatelessWidget {
-  const PortfolioWidget({Key? key, required this.user}) : super(key: key);
+  const PortfolioWidget({super.key, required this.user});
 
   final FccUserModel user;
 

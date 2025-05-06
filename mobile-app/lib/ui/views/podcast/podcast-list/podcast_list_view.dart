@@ -15,7 +15,7 @@ List views = [
 ];
 
 class PodcastListView extends StatelessWidget {
-  const PodcastListView({Key? key}) : super(key: key);
+  const PodcastListView({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -58,9 +58,9 @@ class PodcastListView extends StatelessWidget {
 
 class PodcastListViewBuilder extends StatelessWidget {
   const PodcastListViewBuilder({
-    Key? key,
+    super.key,
     required this.isDownloadView,
-  }) : super(key: key);
+  });
 
   final bool isDownloadView;
 
@@ -139,11 +139,11 @@ class PodcastListViewBuilder extends StatelessWidget {
 
 class PodcastTemplate extends StatelessWidget {
   const PodcastTemplate({
-    Key? key,
+    super.key,
     required this.podcast,
     required this.i,
     required this.isDownloadView,
-  }) : super(key: key);
+  });
 
   final Podcasts podcast;
   final int i;

@@ -45,13 +45,13 @@ jobs:
           cache: pnpm
           cache-dependency-path: freeCodeCamp/pnpm-lock.yaml
 
-      - name: Setup Flutter 3.27.x
+      - name: Setup Flutter 3.29.x
         uses: subosito/flutter-action@e938fdf56512cc96ef2f93601a5a40bde3801046 # v2
         with:
-          flutter-version: "3.27.x"
+          flutter-version: "3.29.x"
           channel: "stable"
           cache: true
-          cache-key: flutter-3.27.x
+          cache-key: flutter-3.29.x
           cache-path: ${{ runner.tool_cache }}/flutter
 
       - name: Set freeCodeCamp Environment Variables

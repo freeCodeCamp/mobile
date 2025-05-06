@@ -2,12 +2,12 @@ import 'package:flutter/material.dart';
 
 class DrawerTile extends StatefulWidget {
   const DrawerTile({
-    Key? key,
+    super.key,
     this.textColor = Colors.white,
     required this.component,
     required this.icon,
     required this.route,
-  }) : super(key: key);
+  });
 
   final String component;
   final dynamic icon;

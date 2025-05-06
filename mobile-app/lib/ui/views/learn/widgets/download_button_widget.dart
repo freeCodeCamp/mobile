@@ -5,10 +5,10 @@ import 'package:freecodecamp/ui/views/learn/block/block_viewmodel.dart';
 
 class DownloadButton extends StatelessWidget {
   const DownloadButton({
-    Key? key,
+    super.key,
     required this.model,
     required this.block,
-  }) : super(key: key);
+  });
 
   final BlockViewModel model;
   final Block block;

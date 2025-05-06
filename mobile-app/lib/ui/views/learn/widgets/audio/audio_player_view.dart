@@ -5,7 +5,7 @@ import 'package:freecodecamp/ui/views/learn/widgets/audio/audio_player_viewmodel
 import 'package:stacked/stacked.dart';
 
 class AudioPlayerView extends StatelessWidget {
-  const AudioPlayerView({Key? key, required this.audio}) : super(key: key);
+  const AudioPlayerView({super.key, required this.audio});
 
   final EnglishAudio audio;
 

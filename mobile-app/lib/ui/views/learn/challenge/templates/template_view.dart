@@ -11,11 +11,11 @@ import 'package:stacked/stacked.dart';
 
 class ChallengeTemplateView extends StatelessWidget {
   const ChallengeTemplateView({
-    Key? key,
+    super.key,
     required this.block,
     required this.challengeId,
     required this.challengesCompleted,
-  }) : super(key: key);
+  });
 
   final Block block;
   final String challengeId;
@@ -27,6 +27,7 @@ class ChallengeTemplateView extends StatelessWidget {
       onViewModelReady: (model) => model.initiate(block, challengeId),
       viewModelBuilder: () => ChallengeTemplateViewModel(),
       builder: (context, model, child) => Scaffold(
+        resizeToAvoidBottomInset: false,
         body: FutureBuilder<Challenge?>(
           future: model.challenge,
           builder: (context, snapshot) {

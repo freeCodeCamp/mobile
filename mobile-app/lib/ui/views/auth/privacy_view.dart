@@ -3,7 +3,7 @@ import 'package:freecodecamp/extensions/i18n_extension.dart';
 import 'package:freecodecamp/ui/widgets/drawer_widget/drawer_widget_view.dart';
 
 class PrivacyView extends StatelessWidget {
-  const PrivacyView({Key? key}) : super(key: key);
+  const PrivacyView({super.key});
 
   @override
   Widget build(BuildContext context) {

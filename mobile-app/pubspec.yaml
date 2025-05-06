@@ -1,76 +1,73 @@
 name: freecodecamp
 description: freecodecamp.org app.
 publish_to: none
-version: 5.0.2+50002
+version: 5.0.3+50003
 environment:
   sdk: ">=3.0.0 <4.0.0"
 dependencies:
-  algolia_helper_flutter: ^1.0.0
-  audio_service: ^0.18.13
-  # NOTE: Versions 1.5.0 and above support iOS 13+ only
-  auth0_flutter: <=1.4.1
-  cached_network_image: ^3.3.1
-  curl_logger_dio_interceptor: ^1.0.0 # NOTE: Do we still want this?
-  device_info_plus: ^9.1.2 # TODO: upgrade after migrating to FLutter 3.19
-  dio: ^5.4.3+1
-  firebase_analytics: ^11.3.3
-  firebase_core: ^3.7.0
-  firebase_crashlytics: ^4.1.3
-  firebase_remote_config: ^5.1.3
+  algolia_helper_flutter: ^1.2.0
+  audio_service: ^0.18.18
+  auth0_flutter: ^1.9.0
+  cached_network_image: ^3.4.1
+  device_info_plus: ^11.3.0
+  dio: ^5.8.0+1
+  firebase_analytics: ^11.4.5
+  firebase_core: ^3.13.0
+  firebase_crashlytics: ^4.3.5
+  firebase_remote_config: ^5.4.3
   flutter:
     sdk: flutter
-  flutter_custom_tabs: ^2.0.0
-  flutter_dotenv: ^5.1.0
-  flutter_heatmap_calendar: ^1.0.4
+  flutter_custom_tabs: ^2.4.0
+  flutter_dotenv: ^5.2.1
+  flutter_heatmap_calendar: ^1.0.5
   flutter_highlight: ^0.7.0
-  flutter_hooks: ^0.20.5
+  flutter_hooks: ^0.21.2
   flutter_html: ^3.0.0
   flutter_html_table: ^3.0.0
-  flutter_inappwebview: ^6.1.0 # TODO: upgrade after migrating to FLutter 3.19
-  flutter_local_notifications: ^17.1.0
+  flutter_inappwebview: ^6.1.5
+  flutter_local_notifications: ^19.1.0
   flutter_localizations:
     sdk: flutter
-  flutter_scroll_shadow: ^1.2.4
-  flutter_secure_storage: ^9.0.0
-  graphql: ^5.1.3
-  graphql_flutter: ^5.1.2
-  html: ^0.15.4
-  infinite_scroll_pagination: ^4.0.0
-  jiffy: ^6.2.1 # TODO: upgrade after migrating to FLutter 3.19
-  just_audio: ^0.9.37
-  path: ^1.8.3 # TODO: upgrade after migrating to FLutter 3.19
-  path_provider: ^2.1.3
-  phone_ide: ^1.4.0
+  flutter_scroll_shadow: ^1.2.6
+  flutter_secure_storage: ^9.2.4
+  graphql: ^5.2.0
+  html: ^0.15.5+1
+  infinite_scroll_pagination: ^5.0.0
+  jiffy: ^6.3.2
+  just_audio: ^0.10.0
+  path: ^1.9.1
+  path_provider: ^2.1.5
+  phone_ide: ^1.5.1
   photo_view: ^0.15.0
-  pretty_dio_logger: ^1.2.0-beta-1 # NOTE: Do we still want this?
-  quick_actions: ^1.0.7
-  share_plus: ^7.2.2 # TODO: upgrade after migrating to FLutter 3.19
-  shared_preferences: ^2.2.3
-  sqflite: ^2.3.3
+  pretty_dio_logger: ^1.4.0
+  quick_actions: ^1.1.0
+  share_plus: ^10.1.4 # NOTE: v11 has breaking changes
+  shared_preferences: ^2.5.3 # TODO: update deprecated code
+  sqflite: ^2.4.2
   # TODO: Replace with sqflite methods as below package isn't actively maintained
   sqflite_migration_service: ^2.0.0-nullsafety.1
-  stacked: ^3.4.2
-  stacked_services: ^1.5.0
+  stacked: ^3.4.3 # NOTE: 3.4.4+ is blocked by sqflite_migration_service
+  stacked_services: ^1.6.0
   ua_client_hints: ^1.4.1
-  upgrader: ^10.2.0
-  url_launcher: ^6.2.6
-  web_socket_channel: ^2.4.0
-  youtube_player_iframe: ^5.1.2 # 2.3.0 last working with fullscreen
+  upgrader: ^11.3.1
+  url_launcher: ^6.3.1
+  web_socket_channel: ^3.0.3
+  youtube_player_iframe: ^5.1.2
 dev_dependencies:
-  build_runner: ^2.4.9
+  build_runner: ^2.4.15
   dependency_validator: ^3.2.3
   flutter_driver:
     sdk: flutter
   flutter_launcher_icons: ^0.14.3
-  flutter_lints: ^2.0.3
-  flutter_native_splash: ^2.4.0
+  flutter_lints: ^5.0.0
+  flutter_native_splash: ^2.4.6
   flutter_test:
     sdk: flutter
   integration_test:
     sdk: flutter
-  mockito: ^5.4.4
-  sqflite_common_ffi: ^2.3.3
-  stacked_generator: ^1.6.0
+  mockito: ^5.4.5 # NOTE: 5.4.6+ is blocked by stacked_generator
+  sqflite_common_ffi: ^2.3.5
+  stacked_generator: ^1.6.1
 
 flutter:
   fonts:
