@@ -21,21 +21,21 @@ class SuperBlock {
       return SuperBlock(
         dashedName: dashedName,
         name: name,
-        chapters: (data[data.keys.first]['chapters']).map((key, value) {
+        chapters: (data[data.keys.first]['chapters']).map<Chapter>((chapter) {
           return Chapter(
-            dashedName: key,
-            comingSoon: value['comingSoon'] ?? false,
-            chapterType: value['chapterType'],
-            modules: (value['modules']).map((key, value) {
+            dashedName: chapter['dashedName'],
+            comingSoon: chapter['comingSoon'] ?? false,
+            chapterType: chapter['chapterType'],
+            modules: (chapter['modules']).map<Module>((module) {
               return Module(
-                  dashedName: key,
-                  comingSoon: value['comingSoon'] ?? false,
-                  moduleType: value['moduleType'],
-                  blocks: (value['blocks']).map((key, value) {
+                  dashedName: module['dashedName'],
+                  comingSoon: module['comingSoon'] ?? false,
+                  moduleType: module['moduleType'],
+                  blocks: (module['blocks']).map<Block>((block) {
                     return Block.fromJson(
-                      value['meta'],
-                      value['intro'],
-                      value['meta']['dashedName'],
+                      block['meta'],
+                      block['intro'],
+                      block['meta']['dashedName'],
                       dashedName,
                       name,
                     );
@@ -46,38 +46,18 @@ class SuperBlock {
       );
     }
 
-    // final parsedBlocks = (data[data.keys.first]['blocks']).map((block) {
-    //   return Block.fromJson(
-    //     block['meta'],
-    //     block['intro'],
-    //     block['meta']['dashedName'],
-    //     dashedName,
-    //     name,
-    //   );
-    // }).toList()
-    //   ..sort(
-    //     (Block a, Block b) => (a.order == null && b.order == null)
-    //         ? 0
-    //         : a.order!.compareTo(b.order!),
-    //   );
-
-    // print('--- parsed blocks: $parsedBlocks');
-
     return SuperBlock(
       dashedName: dashedName,
       name: name,
-      blocks: (data[data.keys.first]['blocks'])
-          .map((block) {
-            return Block.fromJson(
-              block['meta'],
-              block['intro'],
-              block['meta']['dashedName'],
-              dashedName,
-              name,
-            );
-          })
-          .toList()
-          .cast<Block>()
+      blocks: (data[data.keys.first]['blocks']).map<Block>((block) {
+        return Block.fromJson(
+          block['meta'],
+          block['intro'],
+          block['meta']['dashedName'],
+          dashedName,
+          name,
+        );
+      }).toList()
         ..sort(
           (Block a, Block b) => a.order == null && b.order == null
               ? 0
