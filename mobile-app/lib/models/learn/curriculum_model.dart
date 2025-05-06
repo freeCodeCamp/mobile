@@ -92,9 +92,9 @@ class Block {
     required this.dashedName,
     required this.description,
     required this.isStepBased,
-    required this.order,
     required this.challenges,
     required this.challengeTiles,
+    this.order,
   });
 
   static bool checkIfStepBased(String superblock) {
