@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_inappwebview/flutter_inappwebview.dart';
 import 'package:flutter_scroll_shadow/flutter_scroll_shadow.dart';
@@ -6,7 +8,6 @@ import 'package:freecodecamp/extensions/i18n_extension.dart';
 import 'package:freecodecamp/models/learn/challenge_model.dart';
 import 'package:freecodecamp/models/learn/curriculum_model.dart';
 import 'package:freecodecamp/ui/views/learn/challenge/challenge_viewmodel.dart';
-import 'package:freecodecamp/ui/views/learn/test_runner.dart';
 import 'package:freecodecamp/ui/views/learn/widgets/console/console_view.dart';
 import 'package:freecodecamp/ui/views/learn/widgets/dynamic_panel/panels/dynamic_panel.dart';
 import 'package:phone_ide/phone_ide.dart';
@@ -311,14 +312,36 @@ class ChallengeView extends StatelessWidget {
               SizedBox(
                 height: 1,
                 width: 1,
-                child: Builder(
-                  builder: (context) {
-                    if (model.testRunner != null) {
-                      return model.testRunner!;
-                    }
-
-                    return Container();
+                child: InAppWebView(
+                  initialUrlRequest: URLRequest(
+                    url: WebUri('http://localhost:8080/'),
+                  ),
+                  onWebViewCreated: (controller) {
+                    model.setTestController = controller;
                   },
+                  onConsoleMessage: (controller, console) {
+                    log('Console message: ${console.message}');
+                  },
+                  onLoadStop: (controller, url) async {
+                    final res = await controller.callAsyncJavaScript(
+                      // TODO: Move this to a function or constant
+                      functionBody: '''
+await import("http://localhost:8080/index.js");
+window.TestRunner = await window.FCCSandbox.createTestRunner({
+  source: "",
+  type: "${model.getWorkerType(challenge.challengeType).name}",
+  code: {
+    contents: "",
+  },
+  assetPath: "/",
+});
+  ''',
+                    );
+                    log('TestRunner: $res');
+                  },
+                  initialSettings: InAppWebViewSettings(
+                    isInspectable: true,
+                  ),
                 ),
               ),
               Container(
@@ -446,24 +469,34 @@ class ChallengeView extends StatelessWidget {
                                   );
                                 }
 
-                                model.setShowPanel = false;
-                                model.setIsRunningTests = true;
+                                // model.setShowPanel = false;
+                                // model.setIsRunningTests = true;
 
-                                model.setTestRunner = TestRunner(
-                                  builder: TestRunnerBuilder(
-                                    source: '',
-                                    code: Code(
-                                      contents: model.editorText!,
-                                      editableContents:
-                                          model.editableRegionContent,
-                                    ),
-                                    workerType: model.getWorkerType(
-                                      challenge.challengeType,
-                                    ),
-                                  ),
-                                  model: model,
-                                  challenge: challenge,
-                                );
+                                model.runTests();
+
+                                // var res = await model
+                                //     .testRunner?.webViewController
+                                //     ?.evaluateJavascript(
+                                //         source:
+                                //             'console.log("Test Runner", window.FCCSandbox, window.TestRunner)');
+                                // log('RESULT: $res');
+                                // model.setIsRunningTests = false;
+
+                                // model.setTestRunner = TestRunner(
+                                //   builder: TestRunnerBuilder(
+                                //     source: '',
+                                //     code: Code(
+                                //       contents: model.editorText!,
+                                //       editableContents:
+                                //           model.editableRegionContent,
+                                //     ),
+                                //     workerType: model.getWorkerType(
+                                //       challenge.challengeType,
+                                //     ),
+                                //   ),
+                                //   model: model,
+                                //   challenge: challenge,
+                                // );
                               }
                             : null,
                         splashColor: Colors.transparent,

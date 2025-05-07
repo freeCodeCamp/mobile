@@ -7,7 +7,6 @@ import 'package:freecodecamp/app/app.locator.dart';
 import 'package:freecodecamp/enums/ext_type.dart';
 import 'package:freecodecamp/models/learn/challenge_model.dart';
 import 'package:freecodecamp/service/learn/learn_file_service.dart';
-import 'package:freecodecamp/ui/views/learn/challenge/challenge_viewmodel.dart';
 import 'package:html/dom.dart';
 import 'package:html/parser.dart';
 
@@ -20,17 +19,29 @@ class Code {
   final String? editableContents;
 }
 
+const hideFccHeaderStyle = '''
+<style class="fcc-hide-header">
+  head *,
+  title,
+  meta,
+  link,
+  script {
+    display: none !important;
+  }
+</style>
+''';
+
 // Compiles the document into a valid HTML and JS/CSS structure
 
 class FrameBuilder {
   FrameBuilder({
     this.controller,
-    required this.builder,
+    // required this.builder,
     required this.challenge,
   });
   final InAppWebViewController? controller;
 
-  final TestRunnerBuilder builder;
+  // final TestRunnerBuilder builder;
   final LearnFileService fileService = locator<LearnFileService>();
   final Challenge challenge;
 
@@ -82,31 +93,32 @@ class FrameBuilder {
     return firstHTMlfile;
   }
 
-  String getTestRunnerType(WorkerType type) {
-    switch (type) {
-      case WorkerType.python:
-        return 'python';
-      case WorkerType.frame:
-        return 'frame';
-      case WorkerType.worker:
-        return 'worker';
-    }
-  }
+  // String getTestRunnerType(WorkerType type) {
+  //   switch (type) {
+  //     case WorkerType.python:
+  //       return 'python';
+  //     case WorkerType.frame:
+  //       return 'frame';
+  //     case WorkerType.worker:
+  //       return 'worker';
+  //   }
+  // }
 
-  Future<(InAppWebViewController?, String)> buildFrame() async {
+  Future<(InAppWebViewController?, String)> buildFrame(
+      String workerType, String editableContents) async {
     Document document = Document();
     document = parse('');
+
+    // document.append();
 
     String firstHtmlFile = await htmlFlow(
       challenge,
       Ext.html,
-      testing: builder.testing,
+      // testing: builder.testing,
     );
     String tail = challenge.files[0].tail ?? '';
     String script = '''
     <script type="module">
-    import 'http://localhost:8080/index.js';
-    const doc = new DOMParser().parseFromString('', 'text/html');
 
     const tests = ${parseTest(challenge.tests)};
     const testText = ${challenge.tests.map((e) => '''"${e.instruction.replaceAll('"', '\\"').replaceAll('\n', ' ')}"''').toList().toString()};
@@ -130,45 +142,29 @@ class FrameBuilder {
       }
     </style>`;
 
-    doc.__runTest = async function runtTests(testString) {
 
-      const runner = await window.FCCSandbox.createTestRunner({
-        source: `\${invisibleStyle} \\n $firstHtmlFile`,
-        type: "${getTestRunnerType(builder.workerType)}",
-        code: {
-          contents: `$firstHtmlFile`,
-          editableContents: `${builder.code.editableContents ?? ''}`,
-        },
-        assetPath: "${builder.assetPath}",
-      })
-
-      for(let i = 0; i < tests.length; i++){
-        const result =  await runner.runTest(${tail.isNotEmpty ? 'tail + "\\n" +' : ""} tests[i]);
-
-        if(result.err){
-          console.log(`testMSG: \${testText[i]}`);
-          break;
-        }
-
-        if(i === tests.length -1){
-          console.log('completed');
-        }
-      }
-    };
-
-    doc.__runTest(tests);
+    const runner = await window.FCCSandbox.createTestRunner({
+      source: `\${invisibleStyle} \\n $firstHtmlFile`,
+      type: "$workerType",
+      code: {
+        contents: `$firstHtmlFile`,
+        editableContents: `${editableContents ?? ''}`,
+      },
+      assetPath: "/",
+    })
+    const result =  await runner.runTest(${tail.isNotEmpty ? 'tail + "\\n" +' : ""} tests[i]);
   </script>''';
 
     document.body!.append(parse(script));
 
-    if (!builder.testing && controller != null) {
-      controller!.loadData(
-        data: document.outerHtml,
-        mimeType: 'text/html',
-        encoding: 'utf-8',
-        baseUrl: WebUri('http://localhost:8080'),
-      );
-    }
+    // if (!builder.testing && controller != null) {
+    //   controller!.loadData(
+    //     data: document.outerHtml,
+    //     mimeType: 'text/html',
+    //     encoding: 'utf-8',
+    //     baseUrl: WebUri('http://localhost:8080'),
+    //   );
+    // }
 
     return (controller, document.outerHtml);
   }
@@ -184,70 +180,100 @@ class TestRunnerBuilder {
   });
   final String source;
   final Code code;
-  final String? assetPath;
+  final String assetPath;
   final WorkerType workerType;
   final bool testing;
 }
 
 class TestRunner extends StatefulWidget {
   const TestRunner({
-    Key? key,
+    super.key,
     required this.builder,
-    required this.challenge,
-    required this.model,
-  }) : super(key: key);
+    required this.webViewController,
+  });
 
   final TestRunnerBuilder builder;
-  final Challenge challenge;
-  final ChallengeViewModel model;
+  final InAppWebViewController? webViewController;
 
   @override
   State<TestRunner> createState() => _TestRunnerState();
 }
 
 class _TestRunnerState extends State<TestRunner> {
-  InAppWebViewController? webViewController;
+  // InAppWebViewController? webViewController;
 
   @override
   Widget build(BuildContext context) {
-    if (webViewController != null) {
-      Future.delayed(const Duration(seconds: 0), () async {
-        FrameBuilder frame = FrameBuilder(
-          challenge: widget.challenge,
-          controller: webViewController!,
-          builder: widget.builder,
-        );
-        var (buildFrame, document) = await frame.buildFrame();
-        webViewController = buildFrame;
-      });
-    }
-
     return InAppWebView(
-      onWebViewCreated: (controller) async {
-        if (webViewController == null) {
-          FrameBuilder frame = FrameBuilder(
-            challenge: widget.challenge,
-            controller: controller,
-            builder: widget.builder,
-          );
-
-          var (buildFrame, document) = await frame.buildFrame();
-          webViewController = buildFrame;
-        }
+      initialUrlRequest: URLRequest(
+        url: WebUri('http://localhost:8080/'),
+      ),
+      onWebViewCreated: (controller) {
+        // webViewController = controller;
+        // log('WebView created: $webViewController');
+        // widget.webViewController = controller;
       },
-
       onConsoleMessage: (controller, console) {
-        widget.model.handleConsoleLogMessagges(console, widget.challenge);
-        log(console.message);
+        // widget.model.handleConsoleLogMessagges(console, widget.challenge);
+        log('Console message: ${console.message}');
       },
-      // DEBUG for when you break stuff:
-      // onLoadStop: (controller, url) async {
-      //   var html = await controller.evaluateJavascript(source: """
-      //   document.documentElement.innerHTML;
-      // """);
-
-      //   log("FULL DOCUMENT HTML: $html");
-      // },
+      onLoadStop: (controller, url) async {
+        var res = await controller.callAsyncJavaScript(functionBody: '''
+await import("http://localhost:8080/index.js");
+window.TestRunner = await window.FCCSandbox.createTestRunner({
+  source: "",
+  type: "${widget.builder.workerType.name}",
+  code: {
+    contents: "",
+  },
+  assetPath: "${widget.builder.assetPath}",
+});
+  ''');
+        log('TestRunner: $res');
+      },
+      initialSettings: InAppWebViewSettings(
+        isInspectable: true,
+      ),
     );
+
+    // if (webViewController != null) {
+    //   Future.delayed(const Duration(seconds: 0), () async {
+    //     FrameBuilder frame = FrameBuilder(
+    //       challenge: widget.challenge,
+    //       controller: webViewController!,
+    //       builder: widget.builder,
+    //     );
+    //     var (buildFrame, document) = await frame.buildFrame();
+    //     webViewController = buildFrame;
+    //   });
+    // }
+
+    // return InAppWebView(
+    //   onWebViewCreated: (controller) async {
+    //     if (webViewController == null) {
+    //       FrameBuilder frame = FrameBuilder(
+    //         challenge: widget.challenge,
+    //         controller: controller,
+    //         builder: widget.builder,
+    //       );
+
+    //       var (buildFrame, document) = await frame.buildFrame();
+    //       webViewController = buildFrame;
+    //     }
+    //   },
+
+    //   onConsoleMessage: (controller, console) {
+    //     widget.model.handleConsoleLogMessagges(console, widget.challenge);
+    //     log(console.message);
+    //   },
+    //   // DEBUG for when you break stuff:
+    //   // onLoadStop: (controller, url) async {
+    //   //   var html = await controller.evaluateJavascript(source: """
+    //   //   document.documentElement.innerHTML;
+    //   // """);
+
+    //   //   log("FULL DOCUMENT HTML: $html");
+    //   // },
+    // );
   }
 }

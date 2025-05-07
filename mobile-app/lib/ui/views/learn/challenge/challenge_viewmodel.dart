@@ -1,4 +1,6 @@
 import 'dart:convert';
+import 'dart:developer';
+
 import 'package:dio/dio.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_inappwebview/flutter_inappwebview.dart';
@@ -16,7 +18,7 @@ import 'package:freecodecamp/service/learn/learn_offline_service.dart';
 import 'package:freecodecamp/service/learn/learn_service.dart';
 import 'package:freecodecamp/ui/views/learn/test_runner.dart';
 import 'package:freecodecamp/ui/widgets/setup_dialog_ui.dart';
-import 'package:html/dom.dart' as dom;
+import 'package:html/dom.dart';
 import 'package:html/parser.dart';
 import 'package:phone_ide/controller/custom_text_controller.dart';
 import 'package:phone_ide/models/textfield_data.dart';
@@ -87,8 +89,8 @@ class ChallengeViewModel extends BaseViewModel {
 
   bool _mounted = false;
 
-  TestRunner? _testRunner;
-  TestRunner? get testRunner => _testRunner;
+  // TestRunner? _testRunner;
+  // TestRunner? get testRunner => _testRunner;
 
   String _editableRegionContent = '';
   String get editableRegionContent => _editableRegionContent;
@@ -132,10 +134,10 @@ class ChallengeViewModel extends BaseViewModel {
     notifyListeners();
   }
 
-  set setTestRunner(TestRunner? value) {
-    _testRunner = value;
-    notifyListeners();
-  }
+  // set setTestRunner(TestRunner? value) {
+  //   _testRunner = value;
+  //   notifyListeners();
+  // }
 
   set setEditableRegionContent(String value) {
     _editableRegionContent = value;
@@ -254,12 +256,22 @@ class ChallengeViewModel extends BaseViewModel {
     setChallenge = challenge;
     setBlock = block;
     setChallengesCompleted = challengesCompleted;
+
+    // _testRunner = TestRunner(
+    //   model: this,
+    //   challenge: challenge,
+    //   builder: TestRunnerBuilder(
+    //     source: '',
+    //     code: Code(contents: ''),
+    //     workerType: getWorkerType(challenge.challengeType),
+    //   ),
+    // );
   }
 
   void shutdownLocalHost() {
     _localhostServer.close();
   }
-  
+
   void initFile(
     Editor editor,
     Challenge challenge,
@@ -390,7 +402,7 @@ class ChallengeViewModel extends BaseViewModel {
         .where((ChallengeFile file) => file.ext == Ext.css)
         .toList();
 
-    dom.Document document = parse(doc);
+    Document document = parse(doc);
 
     List<ChallengeFile> currentFile = currChallenge.files
         .where((element) => element.ext == Ext.html)
@@ -415,8 +427,8 @@ class ChallengeViewModel extends BaseViewModel {
          user-scalable=no" name="viewport">
          <meta>''';
 
-    dom.Document viewPortParsed = parse(viewPort);
-    dom.Node meta = viewPortParsed.getElementsByTagName('META')[0];
+    Document viewPortParsed = parse(viewPort);
+    Node meta = viewPortParsed.getElementsByTagName('META')[0];
 
     document.getElementsByTagName('HEAD')[0].append(meta);
 
@@ -505,6 +517,112 @@ class ChallengeViewModel extends BaseViewModel {
         ),
       );
     }
+  }
+
+  Future<String> htmlFlow(
+    Challenge challenge,
+    Ext ext, {
+    bool testing = false,
+  }) async {
+    String firstHTMlfile = await fileService.getFirstFileFromCache(
+      challenge,
+      ext,
+      testing: testing,
+    );
+    // log('firstHTMlfile: $firstHTMlfile');
+
+    firstHTMlfile = fileService.removeExcessiveScriptsInHTMLdocument(
+      firstHTMlfile,
+    );
+    // log('firstHTMlfile after removeExcessiveScriptsInHTMLdocument: $firstHTMlfile');
+
+    String parsedWithStyleTags = await fileService.parseCssDocmentsAsStyleTags(
+      challenge,
+      firstHTMlfile,
+      testing: testing,
+    );
+    // log('parsedWithStyleTags: $parsedWithStyleTags');
+
+    if (challenge.id != '646c48df8674cf2b91020ecc') {
+      firstHTMlfile = fileService.changeActiveFileLinks(
+        parsedWithStyleTags,
+      );
+    }
+
+    return firstHTMlfile;
+  }
+
+  Future<String> combinedCode() async {
+    String combinedCode = '';
+
+    for (ChallengeFile file in challenge!.files) {
+      combinedCode += await fileService.getExactFileFromCache(challenge!, file);
+    }
+
+    return combinedCode;
+  }
+
+  void runTests() async {
+    setShowPanel = false;
+    setIsRunningTests = true;
+    bool hasTestsFailed = false;
+    ChallengeTest? failedTest;
+
+    String firstHtmlFile = await htmlFlow(
+      challenge!,
+      Ext.html,
+      // testing: builder.testing,
+    );
+    String sourceContents = '<!DOCTYPE html>$hideFccHeaderStyle$firstHtmlFile';
+    // log('firstHtmlFile: ${hideFccHeaderStyle + firstHtmlFile}');
+    String updateFunction = '''
+window.testRunner = await window.FCCSandbox.createTestRunner({
+  source: `$sourceContents`,
+  type: "${getWorkerType(challenge!.challengeType).name}",
+  assetPath: "/",
+  code: {
+    contents: `${await combinedCode()}`,
+  },
+})
+''';
+    log('updateFunction: $updateFunction');
+
+    final updateTestRunnerRes = await testController!.callAsyncJavaScript(
+      functionBody: updateFunction,
+    );
+    log('updateTestRunnerRes: $updateTestRunnerRes');
+
+    for (ChallengeTest test in challenge!.tests) {
+      log('test: ${test.javaScript}');
+      String testString = test.javaScript
+          .replaceAll('\\', '\\\\')
+          .replaceAll('`', '\\`')
+          .replaceAll('\$', r'\$');
+      final testRes = await testController!.callAsyncJavaScript(
+        functionBody: '''
+const testRes = await window.testRunner.runTest(`$testString`);
+return testRes;
+            ''',
+      );
+      log('testRes: $testRes - ${test.javaScript}');
+      if (testRes?.value['pass'] == null) {
+        log('TEST FAILED: ${test.instruction} - ${test.javaScript} - ${testRes?.value['error']}');
+        hasTestsFailed = true;
+        failedTest = test;
+        break;
+      }
+    }
+
+    if (hasTestsFailed) {
+      setPanelType = PanelType.hint;
+      setHint = failedTest!.instruction;
+    } else {
+      setPanelType = PanelType.pass;
+      setCompletedChallenge = true;
+    }
+
+    setIsRunningTests = false;
+    setShowPanel = true;
   }
 
   void handleConsoleLogMessagges(ConsoleMessage console, Challenge challenge) {
