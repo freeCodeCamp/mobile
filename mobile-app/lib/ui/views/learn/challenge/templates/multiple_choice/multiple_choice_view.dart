@@ -273,15 +273,13 @@ class MultipleChoiceView extends StatelessWidget {
         key: ValueKey(model.lastAnswer),
         selected: answerObj.key == model.currentChoice,
         tileColor: const Color(0xFF0a0a23),
-        selectedTileColor: const Color(0xDEFFFFFF),
-        activeColor: const Color(0xFF0a0a23),
+        selectedTileColor: const Color(0xFF0a0a23),
+        activeColor: const Color(0xDEFFFFFF),
         value: answerObj.key,
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(0),
           side: BorderSide(
-            color: answerObj.key == model.currentChoice
-                ? const Color(0xFF0a0a23)
-                : const Color(0xFFAAAAAA),
+            color: const Color(0xFFAAAAAA),
             width: 2,
           ),
         ),
@@ -295,13 +293,8 @@ class MultipleChoiceView extends StatelessWidget {
             Expanded(
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
-                children: parser.parse(
-                  answerObj.value.answer,
-                  isSelectable: false,
-                  fontColor: answerObj.key == model.currentChoice
-                      ? const Color(0xFF0a0a23)
-                      : null,
-                ),
+                children: parser.parse(answerObj.value.answer,
+                    isSelectable: false, fontColor: const Color(0xDEFFFFFF)),
               ),
             ),
             SizedBox(
