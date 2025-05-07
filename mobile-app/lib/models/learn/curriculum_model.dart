@@ -59,9 +59,8 @@ class SuperBlock {
         );
       }).toList()
         ..sort(
-          (Block a, Block b) => a.order == null && b.order == null
-              ? 0
-              : a.order!.compareTo(b.order!),
+          // `order` is guaranteed for block-based super blocks.
+          (Block a, Block b) => a.order!.compareTo(b.order!),
         ),
     );
   }
