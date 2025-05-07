@@ -5,6 +5,7 @@ import 'package:freecodecamp/models/learn/challenge_model.dart';
 import 'package:freecodecamp/models/learn/curriculum_model.dart';
 import 'package:freecodecamp/service/learn/learn_offline_service.dart';
 import 'package:freecodecamp/service/learn/learn_service.dart';
+import 'package:freecodecamp/ui/theme/fcc_theme.dart';
 import 'package:freecodecamp/ui/views/learn/superblock/superblock_view.dart';
 import 'package:stacked/stacked.dart';
 
@@ -98,9 +99,7 @@ class EnglishViewModel extends BaseViewModel {
   OutlineInputBorder handleInputBorderColor(int inputIndex) {
     if (inputValuesCorrect.isEmpty) {
       return const OutlineInputBorder(
-        borderSide: BorderSide(
-          color: Colors.white,
-        ),
+        borderSide: BorderSide(color: FccColors.blue50),
       );
     }
 
@@ -172,10 +171,17 @@ class EnglishViewModel extends BaseViewModel {
               spellCheckConfiguration: const SpellCheckConfiguration.disabled(),
               autocorrect: false,
               decoration: InputDecoration(
-                contentPadding: const EdgeInsets.all(3),
+                contentPadding: const EdgeInsets.symmetric(horizontal: 8),
                 focusedBorder: handleInputBorderColor(blankIndex),
+                border: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(5),
+                ),
                 isDense: true,
                 enabledBorder: handleInputBorderColor(blankIndex),
+              ),
+              style: const TextStyle(
+                fontSize: 19,
+                letterSpacing: 0,
               ),
             ),
           ),

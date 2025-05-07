@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
-
 import 'package:freecodecamp/models/learn/challenge_model.dart';
 import 'package:freecodecamp/models/learn/curriculum_model.dart';
 import 'package:freecodecamp/ui/theme/fcc_theme.dart';
 import 'package:freecodecamp/ui/views/learn/challenge/templates/english/english_viewmodel.dart';
 import 'package:freecodecamp/ui/views/learn/widgets/audio/audio_player_view.dart';
+import 'package:freecodecamp/ui/views/learn/widgets/challenge_card.dart';
 import 'package:freecodecamp/ui/views/news/html_handler/html_handler.dart';
 import 'package:stacked/stacked.dart';
 
@@ -19,34 +19,6 @@ class EnglishView extends StatelessWidget {
   final Challenge challenge;
   final Block block;
   final int currentChallengeNum;
-
-  Widget card(String title, Widget child) {
-    return Container(
-      margin: const EdgeInsets.all(8),
-      decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(12.0),
-        color: FccColors.gray85,
-      ),
-      child: Column(
-        children: [
-          Padding(
-            padding: const EdgeInsets.only(top: 14.0),
-            child: Text(
-              title.toUpperCase(),
-              style: TextStyle(
-                fontSize: 18,
-                fontWeight: FontWeight.bold,
-              ),
-            ),
-          ),
-          Padding(
-            padding: const EdgeInsets.all(8.0),
-            child: child,
-          )
-        ],
-      ),
-    );
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -69,9 +41,9 @@ class EnglishView extends StatelessWidget {
             body: SafeArea(
               child: ListView(
                 children: [
-                  card(
-                    challenge.title,
-                    Column(
+                  ChallengeCard(
+                    title: challenge.title,
+                    child: Column(
                       children: [
                         ...parser.parse(
                           challenge.description,
@@ -81,24 +53,24 @@ class EnglishView extends StatelessWidget {
                     ),
                   ),
                   if (challenge.audio != null) ...[
-                    card(
-                      'Listen to the Audio',
-                      AudioPlayerView(
+                    ChallengeCard(
+                      title: 'Listen to the Audio',
+                      child: AudioPlayerView(
                         audio: challenge.audio!,
                       ),
                     ),
                   ],
                   if (model.feedback.isNotEmpty)
-                    card(
-                      'Feedback',
-                      Column(
+                    ChallengeCard(
+                      title: 'Feedback',
+                      child: Column(
                         children: parser.parse(model.feedback),
                       ),
                     ),
                   if (challenge.fillInTheBlank != null)
-                    card(
-                      'Fill in the Blank',
-                      Wrap(
+                    ChallengeCard(
+                      title: 'Fill in the Blank',
+                      child: Wrap(
                         children: model.getFillInBlankWidgets(
                           challenge,
                           context,
