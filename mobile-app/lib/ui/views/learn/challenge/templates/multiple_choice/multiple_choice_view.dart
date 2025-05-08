@@ -340,18 +340,12 @@ class MultipleChoiceView extends StatelessWidget {
               ),
             ],
           ),
-          subtitle: Container(
-            constraints: const BoxConstraints(minHeight: 24),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                if (answerObj.key == model.lastAnswer) ...model.feedback,
-                if (answerObj.key != model.lastAnswer)
-                  const SizedBox(height: 24),
-              ],
-            ),
+          subtitle: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              if (answerObj.key == model.lastAnswer) ...model.feedback
+            ],
           ),
-          isThreeLine: true,
         ),
       ),
     );
