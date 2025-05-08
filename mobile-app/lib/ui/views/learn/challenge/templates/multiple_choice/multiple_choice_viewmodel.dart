@@ -95,7 +95,7 @@ class MultipleChoiceViewmodel extends BaseViewModel {
       feedbackWidgets.addAll(
         parser.parse(
           answer.feedback!,
-          fontColor: FccColors.red15,
+          fontColor: isCorrect ? FccColors.green40 : FccColors.red15,
         ),
       );
     }
