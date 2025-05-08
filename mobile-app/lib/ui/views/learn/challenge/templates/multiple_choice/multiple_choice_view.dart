@@ -5,6 +5,7 @@ import 'package:freecodecamp/models/learn/challenge_model.dart';
 import 'package:freecodecamp/models/learn/curriculum_model.dart';
 import 'package:freecodecamp/ui/views/learn/challenge/templates/multiple_choice/multiple_choice_viewmodel.dart';
 import 'package:freecodecamp/ui/views/learn/widgets/audio/audio_player_view.dart';
+import 'package:freecodecamp/ui/views/learn/widgets/explanation_widget.dart';
 import 'package:freecodecamp/ui/views/news/html_handler/html_handler.dart';
 import 'package:freecodecamp/ui/widgets/drawer_widget/drawer_widget_view.dart';
 import 'package:stacked/stacked.dart';
@@ -27,6 +28,9 @@ class MultipleChoiceView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     HTMLParser parser = HTMLParser(context: context);
+
+    bool shouldShowExplanation =
+        challenge.explanation != null && challenge.explanation!.isNotEmpty;
 
     return ViewModelBuilder<MultipleChoiceViewmodel>.reactive(
       viewModelBuilder: () => MultipleChoiceViewmodel(),
@@ -162,30 +166,8 @@ class MultipleChoiceView extends StatelessWidget {
                   const SizedBox(height: 8),
                   if (challenge.explanation != null &&
                       challenge.explanation!.isNotEmpty) ...[
-                    ExpansionTile(
-                      title: Text(
-                        'Explanation',
-                        style: TextStyle(
-                          fontSize: FontSize.large.value,
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
-                      shape: RoundedRectangleBorder(
-                        side: BorderSide.none,
-                        borderRadius: BorderRadius.zero,
-                      ),
-                      collapsedShape: RoundedRectangleBorder(
-                        side: BorderSide.none,
-                        borderRadius: BorderRadius.zero,
-                      ),
-                      children: [
-                        const SizedBox(height: 8),
-                        ...parser.parse(challenge.explanation!),
-                        const SizedBox(height: 8),
-                      ],
-                    ),
+                    Explanation(challenge: challenge),
                   ],
-                  buildDivider(),
                   const SizedBox(height: 16),
                   ElevatedButton(
                     style: ElevatedButton.styleFrom(
