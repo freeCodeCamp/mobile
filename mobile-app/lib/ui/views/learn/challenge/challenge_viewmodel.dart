@@ -450,7 +450,7 @@ class ChallengeViewModel extends BaseViewModel {
       );
 
       String slug = block!.challengeTiles[challengeIndex].id;
-      String url = LearnService.baseUrl;
+      String url = LearnService.baseUrlV2;
       String challengeUrl =
           '$url/challenges/${block!.superBlock.dashedName}/${block!.dashedName}/$slug.json';
 

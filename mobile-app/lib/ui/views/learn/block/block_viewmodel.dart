@@ -188,7 +188,7 @@ class BlockViewModel extends BaseViewModel {
   }
 
   Future<void> startDownload(Block block) async {
-    String url = LearnService.baseUrl;
+    String url = LearnService.baseUrlV2;
     learnOfflineService
         .getChallengeBatch(
       block,
