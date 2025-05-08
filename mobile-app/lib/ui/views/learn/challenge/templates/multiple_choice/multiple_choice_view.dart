@@ -5,6 +5,7 @@ import 'package:freecodecamp/models/learn/curriculum_model.dart';
 import 'package:freecodecamp/ui/views/learn/challenge/templates/multiple_choice/multiple_choice_viewmodel.dart';
 import 'package:freecodecamp/ui/views/learn/widgets/audio/audio_player_view.dart';
 import 'package:freecodecamp/ui/views/learn/widgets/challenge_card.dart';
+import 'package:freecodecamp/ui/views/learn/widgets/explanation_widget.dart';
 import 'package:freecodecamp/ui/views/news/html_handler/html_handler.dart';
 import 'package:stacked/stacked.dart';
 import 'package:youtube_player_iframe/youtube_player_iframe.dart';
@@ -33,6 +34,9 @@ class MultipleChoiceView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     HTMLParser parser = HTMLParser(context: context);
+
+    bool shouldShowExplanation =
+        challenge.explanation != null && challenge.explanation!.isNotEmpty;
 
     return ViewModelBuilder<MultipleChoiceViewmodel>.reactive(
       viewModelBuilder: () => MultipleChoiceViewmodel(),
@@ -151,22 +155,7 @@ class MultipleChoiceView extends StatelessWidget {
                       challenge.explanation!.isNotEmpty) ...[
                     ChallengeCard(
                       title: 'Explanation',
-                      child: ExpansionTile(
-                        backgroundColor: Colors.transparent,
-                        collapsedBackgroundColor: Colors.transparent,
-                        title: const Text('Click to expand'),
-                        shape: const RoundedRectangleBorder(
-                          side: BorderSide.none,
-                          borderRadius: BorderRadius.zero,
-                        ),
-                        collapsedShape: const RoundedRectangleBorder(
-                          side: BorderSide.none,
-                          borderRadius: BorderRadius.zero,
-                        ),
-                        children: [
-                          ...parser.parse(challenge.explanation!),
-                        ],
-                      ),
+                      child: Explanation(challenge: challenge),
                     ),
                   ],
                   const SizedBox(height: 16),
