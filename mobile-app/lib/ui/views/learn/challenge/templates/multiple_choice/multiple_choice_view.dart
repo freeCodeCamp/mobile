@@ -319,7 +319,7 @@ class MultipleChoiceView extends StatelessWidget {
           subtitle: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              if (answerObj.key == model.lastAnswer) ...model.feedback
+              if (answerObj.key == model.lastAnswer) ...model.feedback,
             ],
           ),
         ),

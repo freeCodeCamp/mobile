@@ -79,7 +79,7 @@ class MultipleChoiceViewmodel extends BaseViewModel {
 
     feedbackWidgets.add(
       Padding(
-        padding: const EdgeInsets.only(left: 12),
+        padding: EdgeInsets.only(left: 12, bottom: isCorrect ? 32 : 0),
         child: Text(
           isCorrect ? 'Correct!' : 'Incorrect!',
           style: TextStyle(
