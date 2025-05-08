@@ -159,6 +159,33 @@ class MultipleChoiceView extends StatelessWidget {
                   for (var answerObj
                       in challenge.question!.answers.asMap().entries)
                     questionOption(answerObj, model, context),
+                  const SizedBox(height: 8),
+                  if (challenge.explanation != null &&
+                      challenge.explanation!.isNotEmpty) ...[
+                    ExpansionTile(
+                      title: Text(
+                        'Explanation',
+                        style: TextStyle(
+                          fontSize: FontSize.large.value,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                      shape: RoundedRectangleBorder(
+                        side: BorderSide.none,
+                        borderRadius: BorderRadius.zero,
+                      ),
+                      collapsedShape: RoundedRectangleBorder(
+                        side: BorderSide.none,
+                        borderRadius: BorderRadius.zero,
+                      ),
+                      children: [
+                        const SizedBox(height: 8),
+                        ...parser.parse(challenge.explanation!),
+                        const SizedBox(height: 8),
+                      ],
+                    ),
+                  ],
+                  buildDivider(),
                   const SizedBox(height: 16),
                   ElevatedButton(
                     style: ElevatedButton.styleFrom(
@@ -269,53 +296,57 @@ class MultipleChoiceView extends StatelessWidget {
 
     return Container(
       margin: const EdgeInsets.symmetric(vertical: 8),
-      child: RadioListTile<int>(
-        key: ValueKey(model.lastAnswer),
-        selected: answerObj.key == model.currentChoice,
-        tileColor: const Color(0xFF0a0a23),
-        selectedTileColor: const Color(0xFF0a0a23),
-        activeColor: const Color(0xDEFFFFFF),
-        value: answerObj.key,
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(0),
-          side: BorderSide(
-            color: const Color(0xFFAAAAAA),
-            width: 2,
+      child: Material(
+        color: Colors.transparent,
+        child: RadioListTile<int>(
+          key: ValueKey(model.lastAnswer),
+          selected: answerObj.key == model.currentChoice,
+          tileColor: const Color(0xFF0a0a23),
+          selectedTileColor: const Color(0xFF0a0a23),
+          activeColor: const Color(0xDEFFFFFF),
+          value: answerObj.key,
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(0),
+            side: BorderSide(
+              color: const Color(0xFFAAAAAA),
+              width: 2,
+            ),
+          ),
+          groupValue: model.currentChoice,
+          onChanged: (value) {
+            model.setChoiceStatus = null;
+            model.setCurrentChoice = value ?? -1;
+          },
+          title: Row(
+            children: [
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: parser.parse(answerObj.value.answer,
+                      isSelectable: false, fontColor: const Color(0xDEFFFFFF)),
+                ),
+              ),
+              SizedBox(
+                width: 24,
+                child: model.choiceStatus != null &&
+                        model.currentChoice == answerObj.key
+                    ? Icon(
+                        model.choiceStatus! ? Icons.check_circle : Icons.cancel,
+                        color: model.choiceStatus!
+                            ? Colors.green.shade600
+                            : Colors.red.shade600,
+                      )
+                    : null,
+              ),
+            ],
+          ),
+          subtitle: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              if (answerObj.key == model.lastAnswer) ...model.feedback
+            ],
           ),
         ),
-        groupValue: model.currentChoice,
-        onChanged: (value) {
-          model.setChoiceStatus = null;
-          model.setCurrentChoice = value ?? -1;
-        },
-        title: Row(
-          children: [
-            Expanded(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: parser.parse(answerObj.value.answer,
-                    isSelectable: false, fontColor: const Color(0xDEFFFFFF)),
-              ),
-            ),
-            SizedBox(
-              width: 24,
-              child: model.choiceStatus != null &&
-                      model.currentChoice == answerObj.key
-                  ? Icon(
-                      model.choiceStatus! ? Icons.check_circle : Icons.cancel,
-                      color: model.choiceStatus!
-                          ? Colors.green.shade600
-                          : Colors.red.shade600,
-                    )
-                  : null,
-            ),
-          ],
-        ),
-        subtitle: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [if (answerObj.key == model.lastAnswer) ...model.feedback],
-        ),
-        isThreeLine: true,
       ),
     );
   }
