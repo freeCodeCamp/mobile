@@ -160,7 +160,8 @@ class MultipleChoiceView extends StatelessWidget {
                       in challenge.question!.answers.asMap().entries)
                     questionOption(answerObj, model, context),
                   const SizedBox(height: 8),
-                  if (challenge.explanation != null) ...[
+                  if (challenge.explanation != null &&
+                      challenge.explanation!.isNotEmpty) ...[
                     ExpansionTile(
                       title: Text(
                         'Explanation',
@@ -168,6 +169,14 @@ class MultipleChoiceView extends StatelessWidget {
                           fontSize: FontSize.large.value,
                           fontWeight: FontWeight.bold,
                         ),
+                      ),
+                      shape: RoundedRectangleBorder(
+                        side: BorderSide.none,
+                        borderRadius: BorderRadius.zero,
+                      ),
+                      collapsedShape: RoundedRectangleBorder(
+                        side: BorderSide.none,
+                        borderRadius: BorderRadius.zero,
                       ),
                       children: [
                         const SizedBox(height: 8),
