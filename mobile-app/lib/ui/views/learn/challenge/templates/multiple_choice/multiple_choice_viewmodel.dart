@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:freecodecamp/app/app.locator.dart';
 import 'package:freecodecamp/models/learn/challenge_model.dart';
 import 'package:freecodecamp/service/learn/learn_service.dart';
+import 'package:freecodecamp/ui/theme/fcc_theme.dart';
 import 'package:freecodecamp/ui/views/news/html_handler/html_handler.dart';
 import 'package:stacked/stacked.dart';
 
@@ -63,20 +64,42 @@ class MultipleChoiceViewmodel extends BaseViewModel {
     );
   }
 
-  void checkOption(Challenge challenge) async {
+  void setValidationStatus(Challenge challenge) {
     bool isCorrect = challenge.question!.solution - 1 == currentChoice;
     setChoiceStatus = isCorrect;
     setLastAnswer = currentChoice;
   }
 
-  void getFeedback(Challenge challenge, BuildContext context) {
+  void updateFeedback(Challenge challenge, BuildContext context) {
     HTMLParser parser = HTMLParser(context: context);
     Answer answer = challenge.question!.answers[currentChoice];
     bool isCorrect = challenge.question!.solution - 1 == currentChoice;
 
-    setFeedback = parser.parse(
-      answer.feedback ?? (isCorrect ? '<p>Correct!</p>' : ''),
-      fontColor: isCorrect ? Colors.green : Colors.red,
+    List<Widget> feedbackWidgets = [];
+
+    feedbackWidgets.add(
+      Padding(
+        padding: const EdgeInsets.only(left: 12),
+        child: Text(
+          isCorrect ? 'Correct!' : 'Incorrect!',
+          style: TextStyle(
+            color: isCorrect ? FccColors.green40 : FccColors.red15,
+            fontWeight: FontWeight.bold,
+            fontSize: 18,
+          ),
+        ),
+      ),
     );
+
+    if (answer.feedback != null && answer.feedback!.isNotEmpty) {
+      feedbackWidgets.addAll(
+        parser.parse(
+          answer.feedback!,
+          fontColor: FccColors.red15,
+        ),
+      );
+    }
+
+    setFeedback = feedbackWidgets;
   }
 }

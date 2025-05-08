@@ -180,8 +180,8 @@ class MultipleChoiceView extends StatelessWidget {
                                   block,
                                 )
                             : () {
-                                model.checkOption(challenge);
-                                model.getFeedback(challenge, context);
+                                model.setValidationStatus(challenge);
+                                model.updateFeedback(challenge, context);
                               }
                         : null,
                     child: Text(
