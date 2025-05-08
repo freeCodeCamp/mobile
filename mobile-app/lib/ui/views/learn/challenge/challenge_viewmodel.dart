@@ -529,7 +529,6 @@ class ChallengeViewModel extends BaseViewModel {
       ext,
       testing: testing,
     );
-    // log('firstHTMlfile: $firstHTMlfile');
 
     firstHTMlfile = fileService.removeExcessiveScriptsInHTMLdocument(
       firstHTMlfile,
@@ -565,7 +564,6 @@ class ChallengeViewModel extends BaseViewModel {
   void runTests() async {
     setShowPanel = false;
     setIsRunningTests = true;
-    bool hasTestsFailed = false;
     ChallengeTest? failedTest;
 
     String firstHtmlFile = await htmlFlow(
@@ -607,15 +605,14 @@ return testRes;
       log('testRes: $testRes - ${test.javaScript}');
       if (testRes?.value['pass'] == null) {
         log('TEST FAILED: ${test.instruction} - ${test.javaScript} - ${testRes?.value['error']}');
-        hasTestsFailed = true;
         failedTest = test;
         break;
       }
     }
 
-    if (hasTestsFailed) {
+    if (failedTest != null) {
       setPanelType = PanelType.hint;
-      setHint = failedTest!.instruction;
+      setHint = failedTest.instruction;
     } else {
       setPanelType = PanelType.pass;
       setCompletedChallenge = true;
