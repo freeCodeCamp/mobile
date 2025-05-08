@@ -214,7 +214,9 @@ class ChallengeView extends StatelessWidget {
                               model: model,
                             )
                           : JavaScriptConsole(
-                              messages: model.consoleMessages,
+                              // TODO: Update logic when working on JS challenges
+                              // messages: model.consoleMessages,
+                              messages: [],
                             )
                     ],
                   ),
@@ -320,7 +322,7 @@ class ChallengeView extends StatelessWidget {
                     model.setTestController = controller;
                   },
                   onConsoleMessage: (controller, console) {
-                    log('Console message: ${console.message}');
+                    log('Test Runner Console message: ${console.message}');
                   },
                   onLoadStop: (controller, url) async {
                     final res = await controller.callAsyncJavaScript(
@@ -456,9 +458,9 @@ window.TestRunner = await window.FCCSandbox.createTestRunner({
                                 : const Icon(Icons.done_rounded, size: 30),
                         onPressed: model.hasTypedInEditor
                             ? () async {
-                                model.setAfterFirstTest = false;
-                                model.setConsoleMessages = [];
-                                model.setUserConsoleMessages = [];
+                                // NOTE: Check comment in line 605 in viewmodel
+                                // model.setConsoleMessages = [];
+                                // model.setUserConsoleMessages = [];
                                 if (model.showPanel &&
                                     model.panelType == PanelType.pass) {
                                   model.learnService.goToNextChallenge(
@@ -469,34 +471,7 @@ window.TestRunner = await window.FCCSandbox.createTestRunner({
                                   );
                                 }
 
-                                // model.setShowPanel = false;
-                                // model.setIsRunningTests = true;
-
                                 model.runTests();
-
-                                // var res = await model
-                                //     .testRunner?.webViewController
-                                //     ?.evaluateJavascript(
-                                //         source:
-                                //             'console.log("Test Runner", window.FCCSandbox, window.TestRunner)');
-                                // log('RESULT: $res');
-                                // model.setIsRunningTests = false;
-
-                                // model.setTestRunner = TestRunner(
-                                //   builder: TestRunnerBuilder(
-                                //     source: '',
-                                //     code: Code(
-                                //       contents: model.editorText!,
-                                //       editableContents:
-                                //           model.editableRegionContent,
-                                //     ),
-                                //     workerType: model.getWorkerType(
-                                //       challenge.challengeType,
-                                //     ),
-                                //   ),
-                                //   model: model,
-                                //   challenge: challenge,
-                                // );
                               }
                             : null,
                         splashColor: Colors.transparent,

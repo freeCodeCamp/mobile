@@ -78,12 +78,6 @@ class ChallengeViewModel extends BaseViewModel {
   InAppWebViewController? _testController;
   InAppWebViewController? get testController => _testController;
 
-  List<ConsoleMessage> _consoleMessages = [];
-  List<ConsoleMessage> get consoleMessages => _consoleMessages;
-
-  List<ConsoleMessage> _userConsoleMessages = [];
-  List<ConsoleMessage> get userConsoleMessages => _userConsoleMessages;
-
   Syntax _currFileType = Syntax.HTML;
   Syntax get currFileType => _currFileType;
 
@@ -221,16 +215,6 @@ class ChallengeViewModel extends BaseViewModel {
 
   set setMounted(bool value) {
     _mounted = value;
-    notifyListeners();
-  }
-
-  set setConsoleMessages(List<ConsoleMessage> messages) {
-    _consoleMessages = messages;
-    notifyListeners();
-  }
-
-  set setUserConsoleMessages(List<ConsoleMessage> messages) {
-    _userConsoleMessages = messages;
     notifyListeners();
   }
 
@@ -533,14 +517,12 @@ class ChallengeViewModel extends BaseViewModel {
     firstHTMlfile = fileService.removeExcessiveScriptsInHTMLdocument(
       firstHTMlfile,
     );
-    // log('firstHTMlfile after removeExcessiveScriptsInHTMLdocument: $firstHTMlfile');
 
     String parsedWithStyleTags = await fileService.parseCssDocmentsAsStyleTags(
       challenge,
       firstHTMlfile,
       testing: testing,
     );
-    // log('parsedWithStyleTags: $parsedWithStyleTags');
 
     if (challenge.id != '646c48df8674cf2b91020ecc') {
       firstHTMlfile = fileService.changeActiveFileLinks(
@@ -569,10 +551,8 @@ class ChallengeViewModel extends BaseViewModel {
     String firstHtmlFile = await htmlFlow(
       challenge!,
       Ext.html,
-      // testing: builder.testing,
     );
     String sourceContents = '<!DOCTYPE html>$hideFccHeaderStyle$firstHtmlFile';
-    // log('firstHtmlFile: ${hideFccHeaderStyle + firstHtmlFile}');
     String updateFunction = '''
 window.testRunner = await window.FCCSandbox.createTestRunner({
   source: `$sourceContents`,
@@ -583,15 +563,14 @@ window.testRunner = await window.FCCSandbox.createTestRunner({
   },
 })
 ''';
-    log('updateFunction: $updateFunction');
 
+    // TODO: Handle the case when the test runner is not created
+    // ignore: unused_local_variable
     final updateTestRunnerRes = await testController!.callAsyncJavaScript(
       functionBody: updateFunction,
     );
-    log('updateTestRunnerRes: $updateTestRunnerRes');
 
     for (ChallengeTest test in challenge!.tests) {
-      log('test: ${test.javaScript}');
       String testString = test.javaScript
           .replaceAll('\\', '\\\\')
           .replaceAll('`', '\\`')
@@ -602,7 +581,6 @@ const testRes = await window.testRunner.runTest(`$testString`);
 return testRes;
             ''',
       );
-      log('testRes: $testRes - ${test.javaScript}');
       if (testRes?.value['pass'] == null) {
         log('TEST FAILED: ${test.instruction} - ${test.javaScript} - ${testRes?.value['error']}');
         failedTest = test;
@@ -622,58 +600,75 @@ return testRes;
     setShowPanel = true;
   }
 
-  void handleConsoleLogMessagges(ConsoleMessage console, Challenge challenge) {
-    // Create a new console log message that adds html tags to the console message
+  // TODO: Update logic when working on JS challenges
+  // List<ConsoleMessage> _consoleMessages = [];
+  // List<ConsoleMessage> get consoleMessages => _consoleMessages;
 
-    ConsoleMessage newMessage = ConsoleMessage(
-      message: parseUsersConsoleMessages(console.message),
-      messageLevel: ConsoleMessageLevel.LOG,
-    );
+  // List<ConsoleMessage> _userConsoleMessages = [];
+  // List<ConsoleMessage> get userConsoleMessages => _userConsoleMessages;
 
-    String msg = console.message;
+  // set setConsoleMessages(List<ConsoleMessage> messages) {
+  //   _consoleMessages = messages;
+  //   notifyListeners();
+  // }
 
-    // We want to know if it is the first test because when the eval function is called
-    // it will run the first test and logs everything to the console. This means that
-    // we don't want to add the console messages more than once. So we ignore anything
-    // that comes after the first test.
+  // set setUserConsoleMessages(List<ConsoleMessage> messages) {
+  //   _userConsoleMessages = messages;
+  //   notifyListeners();
+  // }
 
-    bool testRelated = msg.startsWith('testMSG: ') || msg.startsWith('index: ');
+  // void handleConsoleLogMessagges(ConsoleMessage console, Challenge challenge) {
+  //   // Create a new console log message that adds html tags to the console message
 
-    if (msg.startsWith('first test done')) {
-      setAfterFirstTest = true;
-    }
+  //   ConsoleMessage newMessage = ConsoleMessage(
+  //     message: parseUsersConsoleMessages(console.message),
+  //     messageLevel: ConsoleMessageLevel.LOG,
+  //   );
 
-    if (!testRelated && !afterFirstTest) {
-      setUserConsoleMessages = [
-        ...userConsoleMessages,
-        newMessage,
-      ];
-    }
+  //   String msg = console.message;
 
-    // When the message starts with testMSG it indactes that the user has done something
-    // that has triggered a test to throw an error. We want to show the error to the user.
+  //   // We want to know if it is the first test because when the eval function is called
+  //   // it will run the first test and logs everything to the console. This means that
+  //   // we don't want to add the console messages more than once. So we ignore anything
+  //   // that comes after the first test.
 
-    if (msg.startsWith('testMSG: ')) {
-      setPanelType = PanelType.hint;
-      setHint = msg.split('testMSG: ')[1];
+  //   bool testRelated = msg.startsWith('testMSG: ') || msg.startsWith('index: ');
 
-      setConsoleMessages = [newMessage, ...userConsoleMessages];
-    }
+  //   if (msg.startsWith('first test done')) {
+  //     setAfterFirstTest = true;
+  //   }
 
-    if (msg == 'completed') {
-      setConsoleMessages = [
-        ...userConsoleMessages,
-        ...consoleMessages,
-      ];
+  //   if (!testRelated && !afterFirstTest) {
+  //     setUserConsoleMessages = [
+  //       ...userConsoleMessages,
+  //       newMessage,
+  //     ];
+  //   }
 
-      setPanelType = PanelType.pass;
-      setCompletedChallenge = true;
-    }
+  //   // When the message starts with testMSG it indactes that the user has done something
+  //   // that has triggered a test to throw an error. We want to show the error to the user.
 
-    setIsRunningTests = false;
+  //   if (msg.startsWith('testMSG: ')) {
+  //     setPanelType = PanelType.hint;
+  //     setHint = msg.split('testMSG: ')[1];
 
-    if (panelType != PanelType.instruction) {
-      setShowPanel = true;
-    }
-  }
+  //     setConsoleMessages = [newMessage, ...userConsoleMessages];
+  //   }
+
+  //   if (msg == 'completed') {
+  //     setConsoleMessages = [
+  //       ...userConsoleMessages,
+  //       ...consoleMessages,
+  //     ];
+
+  //     setPanelType = PanelType.pass;
+  //     setCompletedChallenge = true;
+  //   }
+
+  //   setIsRunningTests = false;
+
+  //   if (panelType != PanelType.instruction) {
+  //     setShowPanel = true;
+  //   }
+  // }
 }
