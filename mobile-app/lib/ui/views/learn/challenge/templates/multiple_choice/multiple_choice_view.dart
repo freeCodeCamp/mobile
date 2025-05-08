@@ -23,6 +23,13 @@ class MultipleChoiceView extends StatelessWidget {
   final int currentChallengeNum;
   final int challengesCompleted;
 
+  Widget buildDivider() {
+    return const Divider(
+      color: Colors.white,
+      thickness: 1,
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     HTMLParser parser = HTMLParser(context: context);
@@ -139,6 +146,29 @@ class MultipleChoiceView extends StatelessWidget {
                       ],
                     ),
                   ),
+                  const SizedBox(height: 8),
+                  if (challenge.explanation != null &&
+                      challenge.explanation!.isNotEmpty) ...[
+                    ChallengeCard(
+                      title: 'Explanation',
+                      child: ExpansionTile(
+                        backgroundColor: Colors.transparent,
+                        collapsedBackgroundColor: Colors.transparent,
+                        title: const Text('Click to expand'),
+                        shape: const RoundedRectangleBorder(
+                          side: BorderSide.none,
+                          borderRadius: BorderRadius.zero,
+                        ),
+                        collapsedShape: const RoundedRectangleBorder(
+                          side: BorderSide.none,
+                          borderRadius: BorderRadius.zero,
+                        ),
+                        children: [
+                          ...parser.parse(challenge.explanation!),
+                        ],
+                      ),
+                    ),
+                  ],
                   const SizedBox(height: 16),
                   ElevatedButton(
                     style: ElevatedButton.styleFrom(
@@ -162,7 +192,10 @@ class MultipleChoiceView extends StatelessWidget {
                                   challenge,
                                   block,
                                 )
-                            : () => model.checkOption(challenge)
+                            : () {
+                                model.setValidationStatus(challenge);
+                                model.updateFeedback(challenge, context);
+                              }
                         : null,
                     child: Text(
                       model.choiceStatus != null
@@ -252,17 +285,16 @@ class MultipleChoiceView extends StatelessWidget {
       child: Material(
         color: Colors.transparent,
         child: RadioListTile<int>(
+          key: ValueKey(model.lastAnswer),
           selected: answerObj.key == model.currentChoice,
           tileColor: const Color(0xFF0a0a23),
-          selectedTileColor: const Color(0xDEFFFFFF),
-          activeColor: const Color(0xFF0a0a23),
+          selectedTileColor: const Color(0xFF0a0a23),
           value: answerObj.key,
+          contentPadding: const EdgeInsets.all(0),
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(0),
             side: BorderSide(
-              color: answerObj.key == model.currentChoice
-                  ? const Color(0xFF0a0a23)
-                  : const Color(0xFFAAAAAA),
+              color: const Color(0xFFAAAAAA),
               width: 2,
             ),
           ),
@@ -279,24 +311,15 @@ class MultipleChoiceView extends StatelessWidget {
                   children: parser.parse(
                     answerObj.value.answer,
                     isSelectable: false,
-                    fontColor: answerObj.key == model.currentChoice
-                        ? const Color(0xFF0a0a23)
-                        : null,
                   ),
                 ),
-              ),
-              SizedBox(
-                width: 24,
-                child: model.choiceStatus != null &&
-                        model.currentChoice == answerObj.key
-                    ? Icon(
-                        model.choiceStatus! ? Icons.check_circle : Icons.cancel,
-                        color: model.choiceStatus!
-                            ? Colors.green.shade600
-                            : Colors.red.shade600,
-                      )
-                    : null,
-              ),
+              )
+            ],
+          ),
+          subtitle: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              if (answerObj.key == model.lastAnswer) ...model.feedback
             ],
           ),
         ),
