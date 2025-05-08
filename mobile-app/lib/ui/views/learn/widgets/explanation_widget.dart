@@ -19,7 +19,7 @@ class Explanation extends StatelessWidget {
     return ExpansionTile(
       backgroundColor: Colors.transparent,
       collapsedBackgroundColor: Colors.transparent,
-      title: const Text('Click to expand'),
+      title: const Text('Tap to expand'),
       shape: const RoundedRectangleBorder(
         side: BorderSide.none,
         borderRadius: BorderRadius.zero,
