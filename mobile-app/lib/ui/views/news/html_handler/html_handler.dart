@@ -140,8 +140,7 @@ class HTMLParser {
         ),
         'code': Style(
           fontFamily: 'Hack',
-          backgroundColor: const Color.fromRGBO(0x3b, 0x3b, 0x4f, 0.5),
-          padding: HtmlPaddings.symmetric(vertical: 2, horizontal: 4),
+          backgroundColor: FccColors.gray75,
           color: Colors.white.withValues(alpha: 0.87),
           fontSize: FontSize.xLarge,
         ),
@@ -161,29 +160,6 @@ class HTMLParser {
           },
         ),
         const TableHtmlExtension(),
-        TagExtension(
-          tagsToExtend: {'code'},
-          builder: (child) {
-            return Container(
-              margin: const EdgeInsets.all(0),
-              padding: const EdgeInsets.symmetric(
-                horizontal: 4,
-              ),
-              decoration: BoxDecoration(
-                color: FccColors.gray75,
-                borderRadius: BorderRadius.circular(4),
-              ),
-              child: Text(
-                parser.parseFragment(child.innerHtml).text ?? '',
-                style: TextStyle(
-                  fontSize: 18,
-                  color: FccColors.gray05,
-                ),
-                textAlign: TextAlign.center,
-              ),
-            );
-          },
-        ),
         TagExtension(
           tagsToExtend: {'pre'},
           builder: (child) {
