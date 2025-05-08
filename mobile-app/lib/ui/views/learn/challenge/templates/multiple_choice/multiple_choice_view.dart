@@ -296,53 +296,63 @@ class MultipleChoiceView extends StatelessWidget {
 
     return Container(
       margin: const EdgeInsets.symmetric(vertical: 8),
-      child: RadioListTile<int>(
-        key: ValueKey(model.lastAnswer),
-        selected: answerObj.key == model.currentChoice,
-        tileColor: const Color(0xFF0a0a23),
-        selectedTileColor: const Color(0xFF0a0a23),
-        activeColor: const Color(0xDEFFFFFF),
-        value: answerObj.key,
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(0),
-          side: BorderSide(
-            color: const Color(0xFFAAAAAA),
-            width: 2,
+      child: Material(
+        color: Colors.transparent,
+        child: RadioListTile<int>(
+          key: ValueKey(model.lastAnswer),
+          selected: answerObj.key == model.currentChoice,
+          tileColor: const Color(0xFF0a0a23),
+          selectedTileColor: const Color(0xFF0a0a23),
+          activeColor: const Color(0xDEFFFFFF),
+          value: answerObj.key,
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(0),
+            side: BorderSide(
+              color: const Color(0xFFAAAAAA),
+              width: 2,
+            ),
           ),
-        ),
-        groupValue: model.currentChoice,
-        onChanged: (value) {
-          model.setChoiceStatus = null;
-          model.setCurrentChoice = value ?? -1;
-        },
-        title: Row(
-          children: [
-            Expanded(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: parser.parse(answerObj.value.answer,
-                    isSelectable: false, fontColor: const Color(0xDEFFFFFF)),
+          groupValue: model.currentChoice,
+          onChanged: (value) {
+            model.setChoiceStatus = null;
+            model.setCurrentChoice = value ?? -1;
+          },
+          title: Row(
+            children: [
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: parser.parse(answerObj.value.answer,
+                      isSelectable: false, fontColor: const Color(0xDEFFFFFF)),
+                ),
               ),
+              SizedBox(
+                width: 24,
+                child: model.choiceStatus != null &&
+                        model.currentChoice == answerObj.key
+                    ? Icon(
+                        model.choiceStatus! ? Icons.check_circle : Icons.cancel,
+                        color: model.choiceStatus!
+                            ? Colors.green.shade600
+                            : Colors.red.shade600,
+                      )
+                    : null,
+              ),
+            ],
+          ),
+          subtitle: Container(
+            constraints: const BoxConstraints(minHeight: 24),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                if (answerObj.key == model.lastAnswer) ...model.feedback,
+                if (answerObj.key != model.lastAnswer)
+                  const SizedBox(height: 24),
+              ],
             ),
-            SizedBox(
-              width: 24,
-              child: model.choiceStatus != null &&
-                      model.currentChoice == answerObj.key
-                  ? Icon(
-                      model.choiceStatus! ? Icons.check_circle : Icons.cancel,
-                      color: model.choiceStatus!
-                          ? Colors.green.shade600
-                          : Colors.red.shade600,
-                    )
-                  : null,
-            ),
-          ],
+          ),
+          isThreeLine: true,
         ),
-        subtitle: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [if (answerObj.key == model.lastAnswer) ...model.feedback],
-        ),
-        isThreeLine: true,
       ),
     );
   }
