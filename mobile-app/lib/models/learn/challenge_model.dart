@@ -300,6 +300,79 @@ class Blank {
   }
 }
 
+class Scene {
+  final SceneSetup setup;
+  final SceneCommands commands;
+
+  const Scene({
+    required this.setup,
+    required this.commands,
+  });
+}
+
+class SceneSetup {
+  final String background;
+  final bool? alwaysShowDialogue;
+  final EnglishAudio audio;
+  final List<SceneCharacter> characters;
+
+  const SceneSetup({
+    required this.background,
+    required this.audio,
+    required this.characters,
+    this.alwaysShowDialogue,
+  });
+}
+
+class SceneCommands {
+  final String? background;
+  final String character;
+  final SceneCharacterPosition? position;
+  final double? opacity;
+  final double startTime;
+  final double? finishTime;
+  final SceneDialogue? dialogue;
+
+  const SceneCommands({
+    this.background,
+    required this.character,
+    this.position,
+    this.opacity,
+    required this.startTime,
+    this.finishTime,
+    this.dialogue,
+  });
+}
+
+class SceneCharacter {
+  final String character;
+  final double opacity;
+
+  const SceneCharacter({required this.character, required this.opacity});
+}
+
+class SceneCharacterPosition {
+  final double x;
+  final double y;
+  final double z;
+
+  const SceneCharacterPosition({
+    required this.x,
+    required this.y,
+    required this.z,
+  });
+}
+
+class SceneDialogue {
+  final String dialogue;
+  final String align;
+
+  const SceneDialogue({
+    required this.dialogue,
+    required this.align,
+  });
+}
+
 class EnglishAudio {
   final String fileName;
   final String startTime;
