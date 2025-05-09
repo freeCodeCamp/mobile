@@ -136,6 +136,7 @@ class MultipleChoiceView extends StatelessWidget {
                   ChallengeCard(
                     title: 'Question',
                     child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         ...parser.parse(
                           challenge.question!.text,
