@@ -121,31 +121,31 @@ void main() async {
             return editableLines.join('\n');
           }
 
-          FrameBuilder frameBuilder = FrameBuilder(
-            builder: TestRunnerBuilder(
-              // We are not yet using source and code in the test runner
-              source: '',
-              code: Code(
-                contents: '',
-                editableContents: getLines(
-                  challenge.files[0].contents,
-                  challenge.files[0].editableRegionBoundaries,
-                ),
-              ),
-              workerType: getWorkerType(challenge.challengeType),
-              testing: true,
-            ),
-            challenge: challenge,
-          );
+          // FrameBuilder frameBuilder = FrameBuilder(
+          //   builder: TestRunnerBuilder(
+          //     // We are not yet using source and code in the test runner
+          //     source: '',
+          //     code: Code(
+          //       contents: '',
+          //       editableContents: getLines(
+          //         challenge.files[0].contents,
+          //         challenge.files[0].editableRegionBoundaries,
+          //       ),
+          //     ),
+          //     workerType: getWorkerType(challenge.challengeType),
+          //     testing: true,
+          //   ),
+          //   challenge: challenge,
+          // );
 
-          var (buildFrame, document) = await frameBuilder.buildFrame();
+          // var (buildFrame, document) = await frameBuilder.buildFrame();
 
-          File genTestFile = File(
-            '../e2e/public/generated-tests/$currSuperBlock/${challenge.block}/${challenge.id}.html',
-          );
+          // File genTestFile = File(
+          //   '../e2e/public/generated-tests/$currSuperBlock/${challenge.block}/${challenge.id}.html',
+          // );
 
-          genTestFile.createSync(recursive: true);
-          genTestFile.writeAsStringSync(document);
+          // genTestFile.createSync(recursive: true);
+          // genTestFile.writeAsStringSync(document);
         }
       }
     }
