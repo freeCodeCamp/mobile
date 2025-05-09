@@ -7,6 +7,7 @@ import 'package:freecodecamp/service/learn/learn_offline_service.dart';
 import 'package:freecodecamp/service/learn/learn_service.dart';
 import 'package:freecodecamp/ui/theme/fcc_theme.dart';
 import 'package:freecodecamp/ui/views/learn/superblock/superblock_view.dart';
+import 'package:html/parser.dart';
 import 'package:stacked/stacked.dart';
 
 class EnglishViewModel extends BaseViewModel {
@@ -125,90 +126,105 @@ class EnglishViewModel extends BaseViewModel {
     BuildContext context,
   ) {
     List<Widget> widgets = [];
-    List<String> words = challenge.fillInTheBlank!.sentence.split(' ');
+
+    List<String> sentences = challenge.fillInTheBlank!.sentence.split('\n');
 
     int blankIndex = 0;
+    for (String sentence in sentences) {
+      List<Widget> children = [];
 
-    for (String word in words) {
-      if (word.contains('BLANK')) {
-        String uniqueId = 'blank_$blankIndex';
+      List<String> words = sentence.split(' ');
+      for (String word in words) {
+        if (word.contains('BLANK')) {
+          String uniqueId = 'blank_$blankIndex';
 
-        if (currentBlankValues[uniqueId] == null) {
-          currentBlankValues.addAll({uniqueId: ''});
-        }
+          if (currentBlankValues[uniqueId] == null) {
+            currentBlankValues.addAll({uniqueId: ''});
+          }
 
-        // The blank word is sometimes concatenated with the previous or next word
-        List splitWord = word.split('BLANK');
+          // The blank word is sometimes concatenated with the previous or next word
+          List splitWord = word.split('BLANK');
 
-        if (splitWord.isNotEmpty) {
-          widgets.add(
-            Text(
-              splitWord[0].replaceAll('<p>', ''),
-              style: const TextStyle(fontSize: 20, letterSpacing: 0),
-            ),
-          );
-        }
+          if (splitWord.isNotEmpty) {
+            children.add(
+              Text(
+                parseFragment(splitWord[0]).text ?? '',
+                textAlign: TextAlign.start,
+                style: const TextStyle(fontSize: 20, letterSpacing: 0),
+              ),
+            );
+          }
 
-        widgets.add(
-          Container(
-            margin: const EdgeInsets.only(
-              left: 5,
-              right: 5,
-            ),
-            width: calculateTextWidth(
-                  challenge.fillInTheBlank!.blanks[blankIndex].answer,
-                  const TextStyle(fontSize: 20),
-                ) +
-                20,
-            child: TextFormField(
-              initialValue: currentBlankValues[uniqueId],
-              onChanged: (value) {
-                Map<String, String> local = currentBlankValues;
-                local[uniqueId] = value;
-                fills.add(local);
-              },
-              smartQuotesType: SmartQuotesType.disabled,
-              spellCheckConfiguration: const SpellCheckConfiguration.disabled(),
-              autocorrect: false,
-              decoration: InputDecoration(
-                contentPadding: const EdgeInsets.symmetric(horizontal: 8),
-                focusedBorder: handleInputBorderColor(blankIndex),
-                border: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(5),
+          children.add(
+            Container(
+              margin: const EdgeInsets.only(
+                left: 5,
+                right: 5,
+              ),
+              width: calculateTextWidth(
+                    challenge.fillInTheBlank!.blanks[blankIndex].answer,
+                    const TextStyle(fontSize: 20),
+                  ) +
+                  20,
+              child: TextFormField(
+                initialValue: currentBlankValues[uniqueId],
+                onChanged: (value) {
+                  Map<String, String> local = currentBlankValues;
+                  local[uniqueId] = value;
+                  fills.add(local);
+                },
+                smartQuotesType: SmartQuotesType.disabled,
+                spellCheckConfiguration:
+                    const SpellCheckConfiguration.disabled(),
+                autocorrect: false,
+                decoration: InputDecoration(
+                  contentPadding: const EdgeInsets.symmetric(horizontal: 8),
+                  focusedBorder: handleInputBorderColor(blankIndex),
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(5),
+                  ),
+                  isDense: true,
+                  enabledBorder: handleInputBorderColor(blankIndex),
                 ),
-                isDense: true,
-                enabledBorder: handleInputBorderColor(blankIndex),
-              ),
-              style: const TextStyle(
-                fontSize: 19,
-                letterSpacing: 0,
+                style: const TextStyle(
+                  fontSize: 19,
+                  letterSpacing: 0,
+                ),
               ),
             ),
-          ),
-        );
+          );
 
-        if (splitWord.length > 1) {
-          widgets.add(
+          if (splitWord.length > 1) {
+            children.add(
+              Text(
+                parseFragment(splitWord[1]).text ?? '',
+                style: const TextStyle(fontSize: 20, letterSpacing: 0),
+              ),
+            );
+          }
+
+          blankIndex++;
+        } else {
+          children.add(
             Text(
-              splitWord[splitWord.length - 1].replaceAll('</p>', ''),
+              parseFragment(word).text ?? '',
               style: const TextStyle(fontSize: 20, letterSpacing: 0),
             ),
           );
         }
-
-        blankIndex++;
-      } else {
-        widgets.add(
-          Padding(
-            padding: const EdgeInsets.only(right: 5),
-            child: Text(
-              word.replaceAll(RegExp('<p>|</p>'), ''),
-              style: const TextStyle(fontSize: 20, letterSpacing: 0),
-            ),
-          ),
-        );
       }
+
+      widgets.add(
+        Padding(
+          padding: const EdgeInsets.only(top: 16),
+          child: Align(
+            alignment: Alignment.topLeft,
+            child: Wrap(spacing: 3, runSpacing: 3, children: children),
+          ),
+        ),
+      );
     }
+
     return widgets;
   }
 
