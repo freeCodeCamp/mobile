@@ -35,9 +35,6 @@ class MultipleChoiceView extends StatelessWidget {
   Widget build(BuildContext context) {
     HTMLParser parser = HTMLParser(context: context);
 
-    bool shouldShowExplanation =
-        challenge.explanation != null && challenge.explanation!.isNotEmpty;
-
     return ViewModelBuilder<MultipleChoiceViewmodel>.reactive(
       viewModelBuilder: () => MultipleChoiceViewmodel(),
       onViewModelReady: (model) => model.initChallenge(challenge),
@@ -272,14 +269,12 @@ class MultipleChoiceView extends StatelessWidget {
     return Container(
       margin: const EdgeInsets.symmetric(vertical: 8),
       child: Material(
-        color: Colors.transparent,
         child: RadioListTile<int>(
           key: ValueKey(model.lastAnswer),
           selected: answerObj.key == model.currentChoice,
           tileColor: const Color(0xFF0a0a23),
           selectedTileColor: const Color(0xFF0a0a23),
           value: answerObj.key,
-          contentPadding: const EdgeInsets.all(0),
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(0),
             side: BorderSide(
@@ -292,18 +287,19 @@ class MultipleChoiceView extends StatelessWidget {
             model.setChoiceStatus = null;
             model.setCurrentChoice = value ?? -1;
           },
-          title: Row(
-            children: [
-              Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: parser.parse(
-                    answerObj.value.answer,
-                    isSelectable: false,
-                  ),
+          title: Align(
+            alignment: Alignment.centerLeft,
+            child: SizedBox(
+              height: 90,
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: parser.parse(
+                  answerObj.value.answer,
+                  isSelectable: false,
                 ),
-              )
-            ],
+              ),
+            ),
           ),
           subtitle: Column(
             crossAxisAlignment: CrossAxisAlignment.start,

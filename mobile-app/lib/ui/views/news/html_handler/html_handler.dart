@@ -97,6 +97,9 @@ class HTMLParser {
           fontSize: FontSize.xLarge,
           color: fontColor ?? Colors.white.withValues(alpha: 0.87),
         ),
+        'p': Style(
+          margin: Margins.all(0),
+        ),
         'body': Style(
           fontFamily: 'Lato',
           padding: HtmlPaddings.only(left: 4, right: 4),
