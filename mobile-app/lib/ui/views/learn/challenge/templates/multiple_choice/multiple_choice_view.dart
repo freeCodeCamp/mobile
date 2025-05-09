@@ -289,14 +289,17 @@ class MultipleChoiceView extends StatelessWidget {
           },
           title: Align(
             alignment: Alignment.centerLeft,
-            child: SizedBox(
-              height: 90,
+            child: ConstrainedBox(
+              constraints: const BoxConstraints(
+                minHeight: 100,
+              ),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: parser.parse(
                   answerObj.value.answer,
                   isSelectable: false,
+                  removeParagraphMargin: true,
                 ),
               ),
             ),

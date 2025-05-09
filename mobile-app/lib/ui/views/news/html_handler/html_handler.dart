@@ -24,6 +24,7 @@ class HTMLParser {
   List<Widget> parse(
     String html, {
     bool isSelectable = true,
+    bool removeParagraphMargin = false,
     Color? fontColor,
   }) {
     dom.Document result = parser.parse(html);
@@ -35,6 +36,7 @@ class HTMLParser {
         _parseHTMLWidget(
           result.body!.children[i].outerHtml,
           isSelectable,
+          removeParagraphMargin,
           fontColor,
         ),
       );
@@ -63,6 +65,7 @@ class HTMLParser {
   Widget _parseHTMLWidget(
     child, [
     bool isSelectable = true,
+    bool removeParagraphMargin = false,
     Color? fontColor,
   ]) {
     Html htmlWidget = Html(
@@ -97,9 +100,6 @@ class HTMLParser {
           fontSize: FontSize.xLarge,
           color: fontColor ?? Colors.white.withValues(alpha: 0.87),
         ),
-        'p': Style(
-          margin: Margins.all(0),
-        ),
         'body': Style(
           fontFamily: 'Lato',
           padding: HtmlPaddings.only(left: 4, right: 4),
@@ -111,6 +111,11 @@ class HTMLParser {
           color: Colors.white,
           textDecoration: TextDecoration.underline,
           textDecorationColor: Colors.white,
+        ),
+        'p': Style(
+          margin: removeParagraphMargin
+              ? Margins.all(0)
+              : Margins.only(top: 8, bottom: 8),
         ),
         'li': Style(
           margin: Margins.only(top: 8),
