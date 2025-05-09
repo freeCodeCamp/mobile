@@ -1,6 +1,7 @@
 import 'package:audio_service/audio_service.dart';
 import 'package:flutter/material.dart';
 import 'package:freecodecamp/models/learn/challenge_model.dart';
+import 'package:freecodecamp/ui/theme/fcc_theme.dart';
 import 'package:freecodecamp/ui/views/learn/widgets/audio/audio_player_viewmodel.dart';
 import 'package:stacked/stacked.dart';
 
@@ -93,6 +94,10 @@ class InnerAudioWidget extends StatelessWidget {
           return Column(
             children: [
               LinearProgressIndicator(
+                backgroundColor: FccColors.gray75,
+                valueColor: const AlwaysStoppedAnimation<Color>(
+                  FccColors.blue50,
+                ),
                 value: hasZeroValue ? 0 : position.inMilliseconds / handleTotal,
                 minHeight: 8,
               ),

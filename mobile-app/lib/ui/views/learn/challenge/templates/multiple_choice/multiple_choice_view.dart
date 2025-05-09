@@ -1,13 +1,12 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_html/flutter_html.dart';
 import 'package:freecodecamp/extensions/i18n_extension.dart';
 import 'package:freecodecamp/models/learn/challenge_model.dart';
 import 'package:freecodecamp/models/learn/curriculum_model.dart';
 import 'package:freecodecamp/ui/views/learn/challenge/templates/multiple_choice/multiple_choice_viewmodel.dart';
 import 'package:freecodecamp/ui/views/learn/widgets/audio/audio_player_view.dart';
+import 'package:freecodecamp/ui/views/learn/widgets/challenge_card.dart';
 import 'package:freecodecamp/ui/views/learn/widgets/explanation_widget.dart';
 import 'package:freecodecamp/ui/views/news/html_handler/html_handler.dart';
-import 'package:freecodecamp/ui/widgets/drawer_widget/drawer_widget_view.dart';
 import 'package:stacked/stacked.dart';
 import 'package:youtube_player_iframe/youtube_player_iframe.dart';
 
@@ -25,12 +24,16 @@ class MultipleChoiceView extends StatelessWidget {
   final int currentChallengeNum;
   final int challengesCompleted;
 
+  Widget buildDivider() {
+    return const Divider(
+      color: Colors.white,
+      thickness: 1,
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     HTMLParser parser = HTMLParser(context: context);
-
-    bool shouldShowExplanation =
-        challenge.explanation != null && challenge.explanation!.isNotEmpty;
 
     return ViewModelBuilder<MultipleChoiceViewmodel>.reactive(
       viewModelBuilder: () => MultipleChoiceViewmodel(),
@@ -82,91 +85,75 @@ class MultipleChoiceView extends StatelessWidget {
             model.learnService.updateProgressOnPop(context, block);
           },
           child: Scaffold(
+            backgroundColor: const Color(0xFF0a0a23),
             appBar: AppBar(
-              title: Text(
-                handleChallengeTitle(),
-              ),
+              backgroundColor: const Color(0xFF0a0a23),
+              title: Text(handleChallengeTitle()),
             ),
             body: SafeArea(
-              bottom: false,
               child: ListView(
                 padding: const EdgeInsets.all(12),
                 children: [
-                  Center(
-                    child: Text(
-                      challenge.title,
-                      textAlign: TextAlign.center,
-                      style: const TextStyle(
-                        fontSize: 20,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                  ),
-                  const SizedBox(height: 12),
                   if (challenge.videoId != null) ...[
-                    Padding(
-                      padding: const EdgeInsets.symmetric(
-                        horizontal: 16,
-                      ),
+                    ChallengeCard(
+                      title: 'Watch the Video',
                       child: YoutubePlayer(
                         controller: controller,
                         enableFullScreenOnVerticalDrag: false,
                       ),
                     ),
-                    const SizedBox(height: 12),
                   ],
-                  ...parser.parse(
-                    challenge.description,
-                  ),
                   if (challenge.audio != null) ...[
-                    Padding(
-                      padding: const EdgeInsets.all(8.0),
-                      child: Text(
-                        'Listen to the Audio',
-                        style: TextStyle(
-                          fontSize: FontSize.large.value,
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
-                    ),
-                    Container(
-                      color: const Color(0xFF0a0a23),
-                      height: 104,
-                      padding: const EdgeInsets.all(8),
-                      margin: const EdgeInsets.all(8),
+                    ChallengeCard(
+                      title: 'Listen to the Audio',
                       child: AudioPlayerView(
                         audio: challenge.audio!,
                       ),
-                    )
+                    ),
                   ],
                   if (challenge.assignments != null &&
                       challenge.assignments!.isNotEmpty) ...[
-                    buildDivider(),
-                    Text(
-                      'Assignments',
-                      textAlign: TextAlign.center,
-                      style: TextStyle(
-                        fontSize: FontSize.xLarge.value,
-                        fontWeight: FontWeight.bold,
+                    ChallengeCard(
+                      title: 'Assignments',
+                      child: Column(
+                        children: [
+                          for (final (i, assignment)
+                              in challenge.assignments!.indexed)
+                            assignmentTile(assignment, i, model, context),
+                        ],
                       ),
                     ),
-                    const SizedBox(height: 8),
-                    for (final (i, assignment)
-                        in challenge.assignments!.indexed)
-                      assignmentTile(assignment, i, model, context),
                   ],
-                  if (challenge.description.isNotEmpty) buildDivider(),
-                  ...parser.parse(
-                    challenge.question!.text,
+                  if (challenge.description.isNotEmpty)
+                    ChallengeCard(
+                      title: 'Description',
+                      child: Column(
+                        children: parser.parse(
+                          challenge.description,
+                        ),
+                      ),
+                    ),
+                  ChallengeCard(
+                    title: 'Question',
+                    child: Column(
+                      children: [
+                        ...parser.parse(
+                          challenge.question!.text,
+                        ),
+                        const SizedBox(height: 8),
+                        for (var answerObj
+                            in challenge.question!.answers.asMap().entries)
+                          questionOption(answerObj, model, context),
+                      ],
+                    ),
                   ),
-                  const SizedBox(height: 8),
-                  for (var answerObj
-                      in challenge.question!.answers.asMap().entries)
-                    questionOption(answerObj, model, context),
                   const SizedBox(height: 8),
                   if (challenge.explanation != null &&
                       challenge.explanation!.isNotEmpty) ...[
-                    Explanation(challenge: challenge),
+                    ChallengeCard(
+                      title: 'Explanation',
+                      child: Explanation(challenge: challenge),
+                    ),
                   ],
                   const SizedBox(height: 16),
                   ElevatedButton(
@@ -177,6 +164,9 @@ class MultipleChoiceView extends StatelessWidget {
                       side: const BorderSide(
                         width: 2,
                         color: Colors.white,
+                      ),
+                      shape: const RoundedRectangleBorder(
+                        borderRadius: BorderRadius.zero,
                       ),
                     ),
                     onPressed: model.currentChoice != -1 &&
@@ -279,13 +269,11 @@ class MultipleChoiceView extends StatelessWidget {
     return Container(
       margin: const EdgeInsets.symmetric(vertical: 8),
       child: Material(
-        color: Colors.transparent,
         child: RadioListTile<int>(
           key: ValueKey(model.lastAnswer),
           selected: answerObj.key == model.currentChoice,
           tileColor: const Color(0xFF0a0a23),
           selectedTileColor: const Color(0xFF0a0a23),
-          activeColor: const Color(0xDEFFFFFF),
           value: answerObj.key,
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(0),
@@ -299,33 +287,27 @@ class MultipleChoiceView extends StatelessWidget {
             model.setChoiceStatus = null;
             model.setCurrentChoice = value ?? -1;
           },
-          title: Row(
-            children: [
-              Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: parser.parse(answerObj.value.answer,
-                      isSelectable: false, fontColor: const Color(0xDEFFFFFF)),
+          title: Align(
+            alignment: Alignment.centerLeft,
+            child: ConstrainedBox(
+              constraints: const BoxConstraints(
+                minHeight: 100,
+              ),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: parser.parse(
+                  answerObj.value.answer,
+                  isSelectable: false,
+                  removeParagraphMargin: true,
                 ),
               ),
-              SizedBox(
-                width: 24,
-                child: model.choiceStatus != null &&
-                        model.currentChoice == answerObj.key
-                    ? Icon(
-                        model.choiceStatus! ? Icons.check_circle : Icons.cancel,
-                        color: model.choiceStatus!
-                            ? Colors.green.shade600
-                            : Colors.red.shade600,
-                      )
-                    : null,
-              ),
-            ],
+            ),
           ),
           subtitle: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              if (answerObj.key == model.lastAnswer) ...model.feedback
+              if (answerObj.key == model.lastAnswer) ...model.feedback,
             ],
           ),
         ),

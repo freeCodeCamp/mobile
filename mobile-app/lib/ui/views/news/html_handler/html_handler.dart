@@ -6,6 +6,7 @@ import 'package:flutter_highlight/flutter_highlight.dart';
 import 'package:flutter_highlight/theme_map.dart';
 import 'package:flutter_html/flutter_html.dart';
 import 'package:flutter_html_table/flutter_html_table.dart';
+import 'package:freecodecamp/ui/theme/fcc_theme.dart';
 import 'package:freecodecamp/ui/views/news/news-image-viewer/news_image_view.dart';
 import 'package:html/dom.dart' as dom;
 import 'package:html/parser.dart' as parser;
@@ -23,6 +24,7 @@ class HTMLParser {
   List<Widget> parse(
     String html, {
     bool isSelectable = true,
+    bool removeParagraphMargin = false,
     Color? fontColor,
   }) {
     dom.Document result = parser.parse(html);
@@ -34,6 +36,7 @@ class HTMLParser {
         _parseHTMLWidget(
           result.body!.children[i].outerHtml,
           isSelectable,
+          removeParagraphMargin,
           fontColor,
         ),
       );
@@ -62,6 +65,7 @@ class HTMLParser {
   Widget _parseHTMLWidget(
     child, [
     bool isSelectable = true,
+    bool removeParagraphMargin = false,
     Color? fontColor,
   ]) {
     Html htmlWidget = Html(
@@ -103,14 +107,15 @@ class HTMLParser {
         'strong': Style(
           fontWeight: FontWeight.bold,
         ),
-        'p': Style(
-          margin: Margins.zero,
-          lineHeight: const LineHeight(1.5),
-        ),
         'a': Style(
           color: Colors.white,
           textDecoration: TextDecoration.underline,
           textDecorationColor: Colors.white,
+        ),
+        'p': Style(
+          margin: removeParagraphMargin
+              ? Margins.all(0)
+              : Margins.only(top: 8, bottom: 8),
         ),
         'li': Style(
           margin: Margins.only(top: 8),
@@ -143,8 +148,7 @@ class HTMLParser {
         ),
         'code': Style(
           fontFamily: 'Hack',
-          backgroundColor: const Color.fromRGBO(0x3b, 0x3b, 0x4f, 0.5),
-          padding: HtmlPaddings.symmetric(vertical: 2, horizontal: 4),
+          backgroundColor: FccColors.gray75,
           color: Colors.white.withValues(alpha: 0.87),
           fontSize: FontSize.xLarge,
         ),
