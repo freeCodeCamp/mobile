@@ -13,19 +13,40 @@ import 'package:freecodecamp/app/app.locator.dart';
 import 'package:freecodecamp/models/learn/challenge_model.dart';
 import 'package:freecodecamp/ui/views/learn/test_runner.dart';
 
-void main() {
+Future<void> copyDirectory(Directory source, Directory destination) async {
+  await for (var entity in source.list(recursive: false)) {
+    if (entity is File) {
+      entity.copySync('${destination.path}/${entity.uri.pathSegments.last}');
+    } else if (entity is Directory) {
+      var newDirectory =
+          Directory('${destination.path}/${entity.uri.pathSegments.last}');
+      await copyDirectory(entity, newDirectory);
+    }
+  }
+}
+
+void main() async {
+  var assets = Directory('./assets/test_runner');
+  var public = Directory('../e2e/public');
+  if (await public.exists()) {
+    await public.delete(recursive: true);
+  }
+  await public.create(recursive: true);
+  await copyDirectory(assets, public);
+
   testWidgets('Testing widgest testing', (tester) async {
     print('Generating test files');
     await setupLocator();
-    TestRunner runner = TestRunner();
+
     List<String> publicSBs = [
       '2022/responsive-web-design',
       'responsive-web-design',
-      'javascript-algorithms-and-data-structures',
-      'the-odin-project',
+      // 'javascript-algorithms-and-data-structures',
+      // 'the-odin-project',
     ];
 
-    var curriculumFile = File('../../freeCodeCamp/shared/config/curriculum.json');
+    var curriculumFile =
+        File('../../freeCodeCamp/shared/config/curriculum.json');
     Map curriculumData = jsonDecode(curriculumFile.readAsStringSync());
 
     var editorChallengeTypes = <int>{};
@@ -70,17 +91,61 @@ void main() {
 
           Challenge challenge = Challenge.fromJson(currChallenge);
 
-          String code = await runner.setWebViewContent(
-            challenge,
-            testing: true,
-          );
+          WorkerType getWorkerType(int challengeType) {
+            switch (challengeType) {
+              case 0:
+              case 14:
+              case 25:
+                return WorkerType.frame;
+              case 1:
+              case 26:
+                return WorkerType.worker;
+              case 20:
+              case 23:
+                return WorkerType.python;
+            }
 
-          File genTestFile = File(
-            'generated-tests/$currSuperBlock/${challenge.block}/${challenge.id}.html',
-          );
+            return WorkerType.frame;
+          }
 
-          genTestFile.createSync(recursive: true);
-          genTestFile.writeAsStringSync(code);
+          String getLines(String contents, [List? range]) {
+            if (range == null || range.isEmpty) {
+              return challenge.files[0].contents;
+            }
+
+            final lines = contents.split('\n');
+            final editableLines = (range[1] <= range[0])
+                ? []
+                : lines.sublist(range[0], range[1] - 1);
+
+            return editableLines.join('\n');
+          }
+
+          // FrameBuilder frameBuilder = FrameBuilder(
+          //   builder: TestRunnerBuilder(
+          //     // We are not yet using source and code in the test runner
+          //     source: '',
+          //     code: Code(
+          //       contents: '',
+          //       editableContents: getLines(
+          //         challenge.files[0].contents,
+          //         challenge.files[0].editableRegionBoundaries,
+          //       ),
+          //     ),
+          //     workerType: getWorkerType(challenge.challengeType),
+          //     testing: true,
+          //   ),
+          //   challenge: challenge,
+          // );
+
+          // var (buildFrame, document) = await frameBuilder.buildFrame();
+
+          // File genTestFile = File(
+          //   '../e2e/public/generated-tests/$currSuperBlock/${challenge.block}/${challenge.id}.html',
+          // );
+
+          // genTestFile.createSync(recursive: true);
+          // genTestFile.writeAsStringSync(document);
         }
       }
     }

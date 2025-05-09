@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_inappwebview/flutter_inappwebview.dart';
 import 'package:flutter_scroll_shadow/flutter_scroll_shadow.dart';
@@ -32,6 +34,7 @@ class ChallengeView extends StatelessWidget {
       onViewModelReady: (model) {
         model.init(block, challenge, challengesCompleted);
       },
+      onDispose: (model) => model.shutdownLocalHost(),
       builder: (context, model, child) {
         int maxChallenges = block.challenges.length;
         ChallengeFile currFile = model.currentFile(challenge);
@@ -70,6 +73,12 @@ class ChallengeView extends StatelessWidget {
           model.setHasTypedInEditor = true;
           model.setCompletedChallenge = false;
         });
+
+        if (editableRegion) {
+          editor.editableRegion.stream.listen((region) {
+            model.setEditableRegionContent = region;
+          });
+        }
 
         BoxDecoration decoration = const BoxDecoration(
           border: Border(
@@ -205,7 +214,9 @@ class ChallengeView extends StatelessWidget {
                               model: model,
                             )
                           : JavaScriptConsole(
-                              messages: model.consoleMessages,
+                              // TODO: Update logic when working on JS challenges
+                              // messages: model.consoleMessages,
+                              messages: [],
                             )
                     ],
                   ),
@@ -245,7 +256,6 @@ class ChallengeView extends StatelessWidget {
               challenge,
               currFile,
             );
-
             bool hasRegion = currFile.editableRegionBoundaries.isNotEmpty;
 
             editor.fileTextStream.sink.add(
@@ -302,15 +312,38 @@ class ChallengeView extends StatelessWidget {
           Row(
             children: [
               SizedBox(
-                width: 1,
                 height: 1,
+                width: 1,
                 child: InAppWebView(
+                  initialUrlRequest: URLRequest(
+                    url: WebUri('http://localhost:8080/'),
+                  ),
                   onWebViewCreated: (controller) {
                     model.setTestController = controller;
                   },
                   onConsoleMessage: (controller, console) {
-                    model.handleConsoleLogMessagges(console, challenge);
+                    log('Test Runner Console message: ${console.message}');
                   },
+                  onLoadStop: (controller, url) async {
+                    final res = await controller.callAsyncJavaScript(
+                      // TODO: Move this to a function or constant
+                      functionBody: '''
+await import("http://localhost:8080/index.js");
+window.TestRunner = await window.FCCSandbox.createTestRunner({
+  source: "",
+  type: "${model.getWorkerType(challenge.challengeType).name}",
+  code: {
+    contents: "",
+  },
+  assetPath: "/",
+});
+  ''',
+                    );
+                    log('TestRunner: $res');
+                  },
+                  initialSettings: InAppWebViewSettings(
+                    isInspectable: true,
+                  ),
                 ),
               ),
               Container(
@@ -425,9 +458,9 @@ class ChallengeView extends StatelessWidget {
                                 : const Icon(Icons.done_rounded, size: 30),
                         onPressed: model.hasTypedInEditor
                             ? () async {
-                                model.setAfterFirstTest = false;
-                                model.setConsoleMessages = [];
-                                model.setUserConsoleMessages = [];
+                                // NOTE: Check comment in line 605 in viewmodel
+                                // model.setConsoleMessages = [];
+                                // model.setUserConsoleMessages = [];
                                 if (model.showPanel &&
                                     model.panelType == PanelType.pass) {
                                   model.learnService.goToNextChallenge(
@@ -438,12 +471,7 @@ class ChallengeView extends StatelessWidget {
                                   );
                                 }
 
-                                model.setShowPanel = false;
-                                model.setIsRunningTests = true;
-                                await model.runner.setWebViewContent(
-                                  challenge,
-                                  controller: model.testController!,
-                                );
+                                model.runTests();
                               }
                             : null,
                         splashColor: Colors.transparent,

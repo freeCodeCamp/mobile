@@ -55,8 +55,15 @@ test.describe("Test challenges in mobile", () => {
               logMsges.push(msg.text());
             });
             await page.goto(
-              `/${superBlock}/${currChallenge["block"]}/${currChallenge["id"]}`
+              `/generated-tests/${superBlock}/${currChallenge["block"]}/${currChallenge["id"]}`
             );
+
+            const iframeElement = await page.waitForSelector('iframe');
+
+            const frame = await iframeElement.contentFrame();
+
+            await frame.waitForLoadState('load');
+
             expect(logMsges).toContain("completed");
           });
         }

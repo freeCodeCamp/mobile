@@ -1,4 +1,6 @@
 import 'dart:convert';
+import 'dart:developer';
+
 import 'package:dio/dio.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_inappwebview/flutter_inappwebview.dart';
@@ -16,7 +18,7 @@ import 'package:freecodecamp/service/learn/learn_offline_service.dart';
 import 'package:freecodecamp/service/learn/learn_service.dart';
 import 'package:freecodecamp/ui/views/learn/test_runner.dart';
 import 'package:freecodecamp/ui/widgets/setup_dialog_ui.dart';
-import 'package:html/dom.dart' as dom;
+import 'package:html/dom.dart';
 import 'package:html/parser.dart';
 import 'package:phone_ide/controller/custom_text_controller.dart';
 import 'package:phone_ide/models/textfield_data.dart';
@@ -26,6 +28,9 @@ import 'package:stacked/stacked.dart';
 import 'package:stacked_services/stacked_services.dart';
 
 class ChallengeViewModel extends BaseViewModel {
+  final InAppLocalhostServer _localhostServer =
+      InAppLocalhostServer(documentRoot: 'assets/test_runner');
+
   String? _editorText;
   String? get editorText => _editorText;
 
@@ -73,18 +78,16 @@ class ChallengeViewModel extends BaseViewModel {
   InAppWebViewController? _testController;
   InAppWebViewController? get testController => _testController;
 
-  List<ConsoleMessage> _consoleMessages = [];
-  List<ConsoleMessage> get consoleMessages => _consoleMessages;
-
-  List<ConsoleMessage> _userConsoleMessages = [];
-  List<ConsoleMessage> get userConsoleMessages => _userConsoleMessages;
-
   Syntax _currFileType = Syntax.HTML;
   Syntax get currFileType => _currFileType;
 
   bool _mounted = false;
 
-  TestRunner runner = TestRunner();
+  // TestRunner? _testRunner;
+  // TestRunner? get testRunner => _testRunner;
+
+  String _editableRegionContent = '';
+  String get editableRegionContent => _editableRegionContent;
 
   SnackbarService snackbar = locator<SnackbarService>();
 
@@ -122,6 +125,16 @@ class ChallengeViewModel extends BaseViewModel {
 
   set setAfterFirstTest(bool value) {
     _afterFirstTest = value;
+    notifyListeners();
+  }
+
+  // set setTestRunner(TestRunner? value) {
+  //   _testRunner = value;
+  //   notifyListeners();
+  // }
+
+  set setEditableRegionContent(String value) {
+    _editableRegionContent = value;
     notifyListeners();
   }
 
@@ -205,16 +218,6 @@ class ChallengeViewModel extends BaseViewModel {
     notifyListeners();
   }
 
-  set setConsoleMessages(List<ConsoleMessage> messages) {
-    _consoleMessages = messages;
-    notifyListeners();
-  }
-
-  set setUserConsoleMessages(List<ConsoleMessage> messages) {
-    _userConsoleMessages = messages;
-    notifyListeners();
-  }
-
   set setTextFieldData(TextFieldData textfieldData) {
     _textFieldData = textfieldData;
     notifyListeners();
@@ -230,11 +233,27 @@ class ChallengeViewModel extends BaseViewModel {
     Challenge challenge,
     int challengesCompleted,
   ) async {
+    await _localhostServer.start();
+
     setupDialogUi();
 
     setChallenge = challenge;
     setBlock = block;
     setChallengesCompleted = challengesCompleted;
+
+    // _testRunner = TestRunner(
+    //   model: this,
+    //   challenge: challenge,
+    //   builder: TestRunnerBuilder(
+    //     source: '',
+    //     code: Code(contents: ''),
+    //     workerType: getWorkerType(challenge.challengeType),
+    //   ),
+    // );
+  }
+
+  void shutdownLocalHost() {
+    _localhostServer.close();
   }
 
   void initFile(
@@ -289,6 +308,23 @@ class ChallengeViewModel extends BaseViewModel {
         setSymbolBarIsScrollable = true;
       }
     });
+  }
+
+  WorkerType getWorkerType(int challengeType) {
+    switch (challengeType) {
+      case 0:
+      case 14:
+      case 25:
+        return WorkerType.frame;
+      case 1:
+      case 26:
+        return WorkerType.worker;
+      case 20:
+      case 23:
+        return WorkerType.python;
+    }
+
+    return WorkerType.frame;
   }
 
   // This function allows the symbols to be insterted into the text controllers
@@ -350,7 +386,7 @@ class ChallengeViewModel extends BaseViewModel {
         .where((ChallengeFile file) => file.ext == Ext.css)
         .toList();
 
-    dom.Document document = parse(doc);
+    Document document = parse(doc);
 
     List<ChallengeFile> currentFile = currChallenge.files
         .where((element) => element.ext == Ext.html)
@@ -375,8 +411,8 @@ class ChallengeViewModel extends BaseViewModel {
          user-scalable=no" name="viewport">
          <meta>''';
 
-    dom.Document viewPortParsed = parse(viewPort);
-    dom.Node meta = viewPortParsed.getElementsByTagName('META')[0];
+    Document viewPortParsed = parse(viewPort);
+    Node meta = viewPortParsed.getElementsByTagName('META')[0];
 
     document.getElementsByTagName('HEAD')[0].append(meta);
 
@@ -467,58 +503,172 @@ class ChallengeViewModel extends BaseViewModel {
     }
   }
 
-  void handleConsoleLogMessagges(ConsoleMessage console, Challenge challenge) {
-    // Create a new console log message that adds html tags to the console message
-
-    ConsoleMessage newMessage = ConsoleMessage(
-      message: parseUsersConsoleMessages(console.message),
-      messageLevel: ConsoleMessageLevel.LOG,
+  Future<String> htmlFlow(
+    Challenge challenge,
+    Ext ext, {
+    bool testing = false,
+  }) async {
+    String firstHTMlfile = await fileService.getFirstFileFromCache(
+      challenge,
+      ext,
+      testing: testing,
     );
 
-    String msg = console.message;
+    firstHTMlfile = fileService.removeExcessiveScriptsInHTMLdocument(
+      firstHTMlfile,
+    );
 
-    // We want to know if it is the first test because when the eval function is called
-    // it will run the first test and logs everything to the console. This means that
-    // we don't want to add the console messages more than once. So we ignore anything
-    // that comes after the first test.
+    String parsedWithStyleTags = await fileService.parseCssDocmentsAsStyleTags(
+      challenge,
+      firstHTMlfile,
+      testing: testing,
+    );
 
-    bool testRelated = msg.startsWith('testMSG: ') || msg.startsWith('index: ');
-
-    if (msg.startsWith('first test done')) {
-      setAfterFirstTest = true;
+    if (challenge.id != '646c48df8674cf2b91020ecc') {
+      firstHTMlfile = fileService.changeActiveFileLinks(
+        parsedWithStyleTags,
+      );
     }
 
-    if (!testRelated && !afterFirstTest) {
-      setUserConsoleMessages = [
-        ...userConsoleMessages,
-        newMessage,
-      ];
+    return firstHTMlfile;
+  }
+
+  Future<String> combinedCode() async {
+    String combinedCode = '';
+
+    for (ChallengeFile file in challenge!.files) {
+      combinedCode += await fileService.getExactFileFromCache(challenge!, file);
     }
 
-    // When the message starts with testMSG it indactes that the user has done something
-    // that has triggered a test to throw an error. We want to show the error to the user.
+    return combinedCode;
+  }
 
-    if (msg.startsWith('testMSG: ')) {
+  void runTests() async {
+    setShowPanel = false;
+    setIsRunningTests = true;
+    ChallengeTest? failedTest;
+
+    String firstHtmlFile = await htmlFlow(
+      challenge!,
+      Ext.html,
+    );
+    String sourceContents = '<!DOCTYPE html>$hideFccHeaderStyle$firstHtmlFile';
+    String updateFunction = '''
+window.testRunner = await window.FCCSandbox.createTestRunner({
+  source: `$sourceContents`,
+  type: "${getWorkerType(challenge!.challengeType).name}",
+  assetPath: "/",
+  code: {
+    contents: `${await combinedCode()}`,
+  },
+})
+''';
+
+    // TODO: Handle the case when the test runner is not created
+    // ignore: unused_local_variable
+    final updateTestRunnerRes = await testController!.callAsyncJavaScript(
+      functionBody: updateFunction,
+    );
+
+    for (ChallengeTest test in challenge!.tests) {
+      String testString = test.javaScript
+          .replaceAll('\\', '\\\\')
+          .replaceAll('`', '\\`')
+          .replaceAll('\$', r'\$');
+      final testRes = await testController!.callAsyncJavaScript(
+        functionBody: '''
+const testRes = await window.testRunner.runTest(`$testString`);
+return testRes;
+            ''',
+      );
+      if (testRes?.value['pass'] == null) {
+        log('TEST FAILED: ${test.instruction} - ${test.javaScript} - ${testRes?.value['error']}');
+        failedTest = test;
+        break;
+      }
+    }
+
+    if (failedTest != null) {
       setPanelType = PanelType.hint;
-      setHint = msg.split('testMSG: ')[1];
-
-      setConsoleMessages = [newMessage, ...userConsoleMessages];
-    }
-
-    if (msg == 'completed') {
-      setConsoleMessages = [
-        ...userConsoleMessages,
-        ...consoleMessages,
-      ];
-
+      setHint = failedTest.instruction;
+    } else {
       setPanelType = PanelType.pass;
       setCompletedChallenge = true;
     }
 
     setIsRunningTests = false;
-
-    if (panelType != PanelType.instruction) {
-      setShowPanel = true;
-    }
+    setShowPanel = true;
   }
+
+  // TODO: Update logic when working on JS challenges
+  // List<ConsoleMessage> _consoleMessages = [];
+  // List<ConsoleMessage> get consoleMessages => _consoleMessages;
+
+  // List<ConsoleMessage> _userConsoleMessages = [];
+  // List<ConsoleMessage> get userConsoleMessages => _userConsoleMessages;
+
+  // set setConsoleMessages(List<ConsoleMessage> messages) {
+  //   _consoleMessages = messages;
+  //   notifyListeners();
+  // }
+
+  // set setUserConsoleMessages(List<ConsoleMessage> messages) {
+  //   _userConsoleMessages = messages;
+  //   notifyListeners();
+  // }
+
+  // void handleConsoleLogMessagges(ConsoleMessage console, Challenge challenge) {
+  //   // Create a new console log message that adds html tags to the console message
+
+  //   ConsoleMessage newMessage = ConsoleMessage(
+  //     message: parseUsersConsoleMessages(console.message),
+  //     messageLevel: ConsoleMessageLevel.LOG,
+  //   );
+
+  //   String msg = console.message;
+
+  //   // We want to know if it is the first test because when the eval function is called
+  //   // it will run the first test and logs everything to the console. This means that
+  //   // we don't want to add the console messages more than once. So we ignore anything
+  //   // that comes after the first test.
+
+  //   bool testRelated = msg.startsWith('testMSG: ') || msg.startsWith('index: ');
+
+  //   if (msg.startsWith('first test done')) {
+  //     setAfterFirstTest = true;
+  //   }
+
+  //   if (!testRelated && !afterFirstTest) {
+  //     setUserConsoleMessages = [
+  //       ...userConsoleMessages,
+  //       newMessage,
+  //     ];
+  //   }
+
+  //   // When the message starts with testMSG it indactes that the user has done something
+  //   // that has triggered a test to throw an error. We want to show the error to the user.
+
+  //   if (msg.startsWith('testMSG: ')) {
+  //     setPanelType = PanelType.hint;
+  //     setHint = msg.split('testMSG: ')[1];
+
+  //     setConsoleMessages = [newMessage, ...userConsoleMessages];
+  //   }
+
+  //   if (msg == 'completed') {
+  //     setConsoleMessages = [
+  //       ...userConsoleMessages,
+  //       ...consoleMessages,
+  //     ];
+
+  //     setPanelType = PanelType.pass;
+  //     setCompletedChallenge = true;
+  //   }
+
+  //   setIsRunningTests = false;
+
+  //   if (panelType != PanelType.instruction) {
+  //     setShowPanel = true;
+  //   }
+  // }
 }
