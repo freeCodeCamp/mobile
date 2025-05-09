@@ -71,7 +71,7 @@ class EnglishView extends StatelessWidget {
                   if (challenge.fillInTheBlank != null)
                     ChallengeCard(
                       title: 'Fill in the Blank',
-                      child: Wrap(
+                      child: Column(
                         children: model.getFillInBlankWidgets(
                           challenge,
                           context,
