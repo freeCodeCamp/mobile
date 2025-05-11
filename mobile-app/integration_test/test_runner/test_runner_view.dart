@@ -1,5 +1,3 @@
-// TODO: Possibly think of a better file name, widget name and location
-
 import 'dart:developer';
 
 import 'package:flutter/material.dart';

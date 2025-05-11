@@ -1,24 +1,22 @@
-// Command to run: flutter drive --no-pub --driver=test_driver/integration_test.dart --target=test/curriculum_test_runner.dart --dart-define CURRENT_DIR=$(pwd)
-// TODO: Add above command to integration_test_runner.dart
-// TODO: Possibly think of a better file name
+// Command to run: flutter test --no-pub integration_test/test_runner/curriculum_tests.dart
+// TODO: Make the test customizable for specific superblocks, blocks, and challenges
 
 import 'dart:convert';
 import 'dart:io';
 
-import 'package:dio/dio.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:freecodecamp/app/app.locator.dart';
 import 'package:freecodecamp/enums/ext_type.dart';
 import 'package:freecodecamp/models/learn/challenge_model.dart';
 import 'package:freecodecamp/service/learn/learn_file_service.dart';
 import 'package:freecodecamp/ui/views/learn/test_runner.dart';
-import 'package:freecodecamp/ui/views/test/curriculum_test_runner.dart';
 import 'package:integration_test/integration_test.dart';
 
-final dio = Dio();
+import 'test_runner_view.dart';
+
+final Uri basedir = (goldenFileComparator as LocalFileComparator).basedir;
 
 void main() {
-  final binding = IntegrationTestWidgetsFlutterBinding();
   IntegrationTestWidgetsFlutterBinding.ensureInitialized();
 
   testWidgets('Curriculum Test Runner', (WidgetTester tester) async {
@@ -94,21 +92,21 @@ void main() {
       // 'the-odin-project',
     ];
 
-    Directory.current = const String.fromEnvironment('CURRENT_DIR');
+    Directory.current = Directory.fromUri(basedir).parent;
     File curriculumFile =
-        File('../../freeCodeCamp/shared/config/curriculum.json');
+        File('../../../freeCodeCamp/shared/config/curriculum.json');
     Map curriculumData = jsonDecode(curriculumFile.readAsStringSync());
+    List<String> failedTests = [];
 
     // Setup the test widget and check web controller is not null
     await tester.pumpWidget(CurriculumTestRunner());
-    await binding.convertFlutterSurfaceToImage();
     await tester.pumpAndSettle();
     // NOTE: To be on the safe side, we wait for 30 seconds to make sure the webview is loaded
     await Future.delayed(Duration(seconds: 30));
-    await binding.takeScreenshot('curriculum_test_runner');
     final widgetState = tester
         .state<CurriculumTestRunnerState>(find.byType(CurriculumTestRunner));
     expect(widgetState.webViewController, isNotNull);
+    final testController = widgetState.webViewController;
 
     // Run the curriculum tests one by one
     var editorChallengeTypes = <int>{};
@@ -169,7 +167,7 @@ window.testRunner = await window.FCCSandbox.createTestRunner({
 })
 ''';
 
-          await widgetState.webViewController!.callAsyncJavaScript(
+          await testController!.callAsyncJavaScript(
             functionBody: updateFunction,
           );
 
@@ -178,31 +176,46 @@ window.testRunner = await window.FCCSandbox.createTestRunner({
                 .replaceAll('\\', '\\\\')
                 .replaceAll('`', '\\`')
                 .replaceAll('\$', r'\$');
-            final testRes =
-                await widgetState.webViewController!.callAsyncJavaScript(
+            final testRes = await testController.callAsyncJavaScript(
               functionBody: '''
 const testRes = await window.testRunner.runTest(`$testString`);
 return testRes;
             ''',
             );
-            if (testRes?.value['pass'] == null) {
+            if (testRes?.value['pass'] == null || testRes?.error != null) {
               print(
-                  'TEST FAILED: ${test.instruction} - ${test.javaScript} - ${testRes?.value['error']}');
+                  'TEST FAILED: ${test.instruction} - ${test.javaScript} - $testRes');
               testFailed = true;
+              failedTests.add(
+                  'TEST FAILED: ${challenge.id} - ${challenge.title} - ${test.instruction} - ${test.javaScript} - $testRes\n');
             }
           }
 
           if (testFailed) {
             print(
-                'Test failed for challenge: ${challenge.id} - ${challenge.title}');
-            // throw Exception(
-            //   'Test failed for challenge: ${challenge.id} - ${challenge.title}',
-            // );
+                'Test(s) failed for challenge: ${challenge.id} - ${challenge.title}');
           } else {
-            print('Test passed for challenge: ${challenge.id}');
+            print(
+                'Test(s) passed for challenge: ${challenge.id} - ${challenge.title}');
           }
         }
       }
+    }
+
+    // If tests failed, output them to a file and fail the test
+    if (failedTests.isNotEmpty) {
+      final file = await File('test_runner_results.txt').create(
+        recursive: true,
+      );
+      await file.writeAsString(
+        'Failed tests:\n\n',
+      );
+      await file.writeAsString(
+        failedTests.join('\n'),
+        mode: FileMode.append,
+      );
+      print('Tests failed. See test_runner_results.txt for details.');
+      expect(failedTests.isEmpty, true);
     }
   });
 }
