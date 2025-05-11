@@ -28,9 +28,6 @@ class CurriculumTestRunnerState extends State<CurriculumTestRunner> {
         if (snapshot.hasError) {
           log('Error starting server: ${snapshot.error}');
           throw Exception('Error starting server: ${snapshot.error}');
-          // return Center(
-          //   child: Text('Error starting server: ${snapshot.error}'),
-          // );
         }
 
         return MaterialApp(

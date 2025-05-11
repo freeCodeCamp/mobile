@@ -2,8 +2,8 @@
 // TODO: Make the test customizable for specific superblocks, blocks, and challenges
 
 import 'dart:convert';
-import 'dart:io';
 
+import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:freecodecamp/app/app.locator.dart';
 import 'package:freecodecamp/enums/ext_type.dart';
@@ -13,8 +13,6 @@ import 'package:freecodecamp/ui/views/learn/test_runner.dart';
 import 'package:integration_test/integration_test.dart';
 
 import 'test_runner_view.dart';
-
-final Uri basedir = (goldenFileComparator as LocalFileComparator).basedir;
 
 void main() {
   IntegrationTestWidgetsFlutterBinding.ensureInitialized();
@@ -92,11 +90,10 @@ void main() {
       // 'the-odin-project',
     ];
 
-    Directory.current = Directory.fromUri(basedir).parent;
-    File curriculumFile =
-        File('../../../freeCodeCamp/shared/config/curriculum.json');
-    Map curriculumData = jsonDecode(curriculumFile.readAsStringSync());
-    List<String> failedTests = [];
+    String curriculumFilePath = 'assets/learn/curriculum.json';
+    String curriculumFile = await rootBundle.loadString(curriculumFilePath);
+    Map curriculumData = jsonDecode(curriculumFile);
+    bool didTestsFail = false;
 
     // Setup the test widget and check web controller is not null
     await tester.pumpWidget(CurriculumTestRunner());
@@ -184,10 +181,9 @@ return testRes;
             );
             if (testRes?.value['pass'] == null || testRes?.error != null) {
               print(
-                  'TEST FAILED: ${test.instruction} - ${test.javaScript} - $testRes');
-              testFailed = true;
-              failedTests.add(
                   'TEST FAILED: ${challenge.id} - ${challenge.title} - ${test.instruction} - ${test.javaScript} - $testRes\n');
+              testFailed = true;
+              didTestsFail = true;
             }
           }
 
@@ -202,20 +198,7 @@ return testRes;
       }
     }
 
-    // If tests failed, output them to a file and fail the test
-    if (failedTests.isNotEmpty) {
-      final file = await File('test_runner_results.txt').create(
-        recursive: true,
-      );
-      await file.writeAsString(
-        'Failed tests:\n\n',
-      );
-      await file.writeAsString(
-        failedTests.join('\n'),
-        mode: FileMode.append,
-      );
-      print('Tests failed. See test_runner_results.txt for details.');
-      expect(failedTests.isEmpty, true);
-    }
+    // Fail the integration test if any challenge tests failed
+    expect(didTestsFail, false);
   });
 }
