@@ -4,8 +4,11 @@ void main(List<String> args) {
   exitCode = 0;
 
   bool isMacOS = false;
-  final testResults = [];
+
   int errorCount = 0;
+  final testResults = [];
+
+  late String bootedDeviceId;
 
   if (args.contains('--ios')) {
     isMacOS = true;
@@ -23,29 +26,53 @@ brew install applesimutils
 ------------------------------------------''');
       exit(1);
     }
+
+    final deviceIdResult = Process.runSync(
+      'bash',
+      [
+        '-c',
+        "xcrun simctl list devices | grep Booted | awk -F '[()]' '{print \$2}'"
+      ],
+      runInShell: true,
+    );
+    if (deviceIdResult.exitCode != 0) {
+      print('ERROR: Failed to fetch booted iOS simulator device ID.');
+      print(deviceIdResult.stderr);
+      exit(1);
+    }
+
+    bootedDeviceId = deviceIdResult.stdout.trim();
+    if (bootedDeviceId.isEmpty) {
+      print('ERROR: No booted iOS simulator found.');
+      exit(1);
+    }
   }
 
   final testFilePaths = Directory('integration_test')
       .listSync(recursive: true)
       .whereType<File>()
       .map((file) => file.path)
+      .where((testFilePath) =>
+          !testFilePath.contains('test_runner') &&
+          !testFilePath.contains('DS_Store'))
       .toList();
 
   for (final testFile in testFilePaths) {
     if (isMacOS) {
       final result = Process.runSync(
-          'applesimutils',
-          [
-            '--byName',
-            'iPhone 16 Pro Max',
-            '--bundle',
-            'org.freecodecamp.ios',
-            '--setPermissions',
-            'notifications=YES'
-          ],
-          runInShell: true);
+        'applesimutils',
+        [
+          '--byId',
+          bootedDeviceId,
+          '--bundle',
+          'org.freecodecamp.ios',
+          '--setPermissions',
+          'notifications=YES'
+        ],
+        runInShell: true,
+      );
       if (result.exitCode != 0) {
-        print('Test failed: $testFile');
+        print('ERROR: $testFile');
         print(result.stdout);
         print(result.stderr);
         exit(1);
@@ -55,14 +82,15 @@ brew install applesimutils
     print('Testing: $testFile');
 
     final result = Process.runSync(
-        'flutter',
-        [
-          'drive',
-          '--no-pub',
-          '--driver=test_driver/integration_test.dart',
-          '--target=$testFile',
-        ],
-        runInShell: true);
+      'flutter',
+      [
+        'drive',
+        '--no-pub',
+        '--driver=test_driver/integration_test.dart',
+        '--target=$testFile',
+      ],
+      runInShell: true,
+    );
 
     print(result.stdout);
 
