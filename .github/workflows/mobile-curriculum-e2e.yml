@@ -17,9 +17,6 @@ jobs:
   mobile-test:
     name: Test curriculum for mobile app
     runs-on: ubuntu-22.04
-    # strategy:
-    #   matrix:
-    #     node-version: [20.x]
 
     steps:
       - name: Remove unused software
@@ -86,13 +83,6 @@ jobs:
         with:
           version: 9
 
-      # - name: Use Node.js ${{ matrix.node-version }}
-      #   uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4
-      #   with:
-      #     node-version: ${{ matrix.node-version }}
-      #     cache: pnpm
-      #     cache-dependency-path: freeCodeCamp/pnpm-lock.yaml
-
       - name: Setup Flutter 3.29.x
         uses: subosito/flutter-action@e938fdf56512cc96ef2f93601a5a40bde3801046 # v2
         with:
@@ -138,32 +128,6 @@ jobs:
         uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
         with:
           name: test_runner_results.txt
-          path: mobile/mobile-app/integration_test/test_runner_results.txt
+          path: mobile/mobile-app/integration_test/test_runner/test_runner_results.txt
           if-no-files-found: error
           retention-days: 7
-
-      # - name: Generate mobile test files
-      #   working-directory: mobile/mobile-app
-      #   run: |
-      #     echo "DEVELOPMENTMODE=true" > .env
-      #     echo "HASHNODE_PUBLICATION_ID=$HASHNODE_PUBLICATION_ID" > .env
-      #     flutter pub get
-      #     flutter test test/widget_test.dart
-
-      # - name: Install playwright dependencies
-      #   working-directory: mobile
-      #   run: npx playwright install --with-deps
-
-      # - name: Install serve
-      #   run: npm install -g serve
-
-      # - name: Run playwright tests
-      #   working-directory: mobile
-      #   run: npx playwright test --config=e2e/playwright.config.js
-
-      # - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
-      #   if: ${{ !cancelled() }}
-      #   with:
-      #     name: playwright-report-mobile
-      #     path: playwright/reporter
-      #     retention-days: 30
