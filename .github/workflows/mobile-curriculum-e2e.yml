@@ -27,6 +27,8 @@ jobs:
         run: |
           sudo rm -rf /usr/share/dotnet
           sudo rm -rf /opt/ghc
+          sudo rm -rf "/usr/local/share/boost"
+          sudo rm -rf "$AGENT_TOOLSDIRECTORY"
           echo "Free space:"
           df -h /
 
@@ -114,6 +116,7 @@ jobs:
           pnpm install
           pnpm run create:shared
           pnpm run build:curriculum
+          pnpm run clean:packages
 
       - name: Install mobile app dependencies
         working-directory: mobile/mobile-app
