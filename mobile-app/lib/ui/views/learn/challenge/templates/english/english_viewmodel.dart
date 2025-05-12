@@ -168,6 +168,7 @@ class EnglishViewModel extends BaseViewModel {
                   20,
               child: TextFormField(
                 initialValue: currentBlankValues[uniqueId],
+                cursorHeight: 19,
                 onChanged: (value) {
                   Map<String, String> local = currentBlankValues;
                   local[uniqueId] = value;
@@ -178,7 +179,9 @@ class EnglishViewModel extends BaseViewModel {
                     const SpellCheckConfiguration.disabled(),
                 autocorrect: false,
                 decoration: InputDecoration(
-                  contentPadding: const EdgeInsets.symmetric(horizontal: 8),
+                  contentPadding: const EdgeInsets.symmetric(
+                    horizontal: 8,
+                  ),
                   focusedBorder: handleInputBorderColor(blankIndex),
                   border: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(5),
