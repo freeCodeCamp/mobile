@@ -5,9 +5,7 @@ import 'dart:convert';
 import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:freecodecamp/app/app.locator.dart';
-import 'package:freecodecamp/enums/ext_type.dart';
 import 'package:freecodecamp/models/learn/challenge_model.dart';
-import 'package:freecodecamp/service/learn/learn_file_service.dart';
 import 'package:freecodecamp/ui/views/learn/test_runner.dart';
 import 'package:integration_test/integration_test.dart';
 
@@ -21,66 +19,6 @@ void main() {
 
     // Setup the test environment with constants and functions
     await setupLocator();
-    final LearnFileService fileService = locator<LearnFileService>();
-
-    Future<String> htmlFlow(
-      Challenge challenge,
-      Ext ext, {
-      bool testing = true,
-    }) async {
-      String firstHTMlfile = await fileService.getFirstFileFromCache(
-        challenge,
-        ext,
-        testing: testing,
-      );
-
-      firstHTMlfile = fileService.removeExcessiveScriptsInHTMLdocument(
-        firstHTMlfile,
-      );
-
-      String parsedWithStyleTags =
-          await fileService.parseCssDocmentsAsStyleTags(
-        challenge,
-        firstHTMlfile,
-        testing: testing,
-      );
-
-      if (challenge.id != '646c48df8674cf2b91020ecc') {
-        firstHTMlfile = fileService.changeActiveFileLinks(
-          parsedWithStyleTags,
-        );
-      }
-
-      return firstHTMlfile;
-    }
-
-    Future<String> combinedCode(Challenge challenge) async {
-      String combinedCode = '';
-
-      for (ChallengeFile file in challenge.files) {
-        combinedCode +=
-            await fileService.getExactFileFromCache(challenge, file);
-      }
-
-      return combinedCode;
-    }
-
-    WorkerType getWorkerType(int challengeType) {
-      switch (challengeType) {
-        case 0:
-        case 14:
-        case 25:
-          return WorkerType.dom;
-        case 1:
-        case 26:
-          return WorkerType.javascript;
-        case 20:
-        case 23:
-          return WorkerType.python;
-      }
-
-      return WorkerType.dom;
-    }
 
     List<String> publicSBs = [
       '2022/responsive-web-design',
@@ -146,25 +84,11 @@ void main() {
           }
 
           Challenge challenge = Challenge.fromJson(currChallenge);
-
+          ScriptBuilder builder = ScriptBuilder(challenge: challenge);
           bool testFailed = false;
 
-          String firstHtmlFile = await htmlFlow(challenge, Ext.html);
-          String sourceContents =
-              '<!DOCTYPE html>$hideFccHeaderStyle$firstHtmlFile';
-          String updateFunction = '''
-window.testRunner = await window.FCCSandbox.createTestRunner({
-  source: `$sourceContents`,
-  type: "${getWorkerType(challenge.challengeType).name}",
-  assetPath: "/",
-  code: {
-    contents: `${await combinedCode(challenge)}`,
-  },
-})
-''';
-
           await testController!.callAsyncJavaScript(
-            functionBody: updateFunction,
+            functionBody: await builder.runnerScript(),
           );
 
           for (ChallengeTest test in challenge.tests) {

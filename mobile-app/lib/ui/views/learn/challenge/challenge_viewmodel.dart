@@ -310,23 +310,6 @@ class ChallengeViewModel extends BaseViewModel {
     });
   }
 
-  WorkerType getWorkerType(int challengeType) {
-    switch (challengeType) {
-      case 0:
-      case 14:
-      case 25:
-        return WorkerType.dom;
-      case 1:
-      case 26:
-        return WorkerType.javascript;
-      case 20:
-      case 23:
-        return WorkerType.python;
-    }
-
-    return WorkerType.dom;
-  }
-
   // This function allows the symbols to be insterted into the text controllers
   void insertSymbol(String symbol, Editor editor) async {
     final TextEditingControllerIDE focused = textFieldData!.controller;
@@ -503,71 +486,17 @@ class ChallengeViewModel extends BaseViewModel {
     }
   }
 
-  Future<String> htmlFlow(
-    Challenge challenge,
-    Ext ext, {
-    bool testing = false,
-  }) async {
-    String firstHTMlfile = await fileService.getFirstFileFromCache(
-      challenge,
-      ext,
-      testing: testing,
-    );
-
-    firstHTMlfile = fileService.removeExcessiveScriptsInHTMLdocument(
-      firstHTMlfile,
-    );
-
-    String parsedWithStyleTags = await fileService.parseCssDocmentsAsStyleTags(
-      challenge,
-      firstHTMlfile,
-      testing: testing,
-    );
-
-    if (challenge.id != '646c48df8674cf2b91020ecc') {
-      firstHTMlfile = fileService.changeActiveFileLinks(
-        parsedWithStyleTags,
-      );
-    }
-
-    return firstHTMlfile;
-  }
-
-  Future<String> combinedCode() async {
-    String combinedCode = '';
-
-    for (ChallengeFile file in challenge!.files) {
-      combinedCode += await fileService.getExactFileFromCache(challenge!, file);
-    }
-
-    return combinedCode;
-  }
-
   void runTests() async {
     setShowPanel = false;
     setIsRunningTests = true;
     ChallengeTest? failedTest;
+    ScriptBuilder builder = ScriptBuilder(challenge: challenge!);
 
-    String firstHtmlFile = await htmlFlow(
-      challenge!,
-      Ext.html,
-    );
-    String sourceContents = '<!DOCTYPE html>$hideFccHeaderStyle$firstHtmlFile';
-    String updateFunction = '''
-window.testRunner = await window.FCCSandbox.createTestRunner({
-  source: `$sourceContents`,
-  type: "${getWorkerType(challenge!.challengeType).name}",
-  assetPath: "/",
-  code: {
-    contents: `${await combinedCode()}`,
-  },
-})
-''';
-
+    String body = await builder.runnerScript();
     // TODO: Handle the case when the test runner is not created
     // ignore: unused_local_variable
     final updateTestRunnerRes = await testController!.callAsyncJavaScript(
-      functionBody: updateFunction,
+      functionBody: body,
     );
 
     for (ChallengeTest test in challenge!.tests) {

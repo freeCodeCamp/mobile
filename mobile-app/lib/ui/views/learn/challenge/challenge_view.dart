@@ -8,6 +8,7 @@ import 'package:freecodecamp/extensions/i18n_extension.dart';
 import 'package:freecodecamp/models/learn/challenge_model.dart';
 import 'package:freecodecamp/models/learn/curriculum_model.dart';
 import 'package:freecodecamp/ui/views/learn/challenge/challenge_viewmodel.dart';
+import 'package:freecodecamp/ui/views/learn/test_runner.dart';
 import 'package:freecodecamp/ui/views/learn/widgets/console/console_view.dart';
 import 'package:freecodecamp/ui/views/learn/widgets/dynamic_panel/panels/dynamic_panel.dart';
 import 'package:phone_ide/phone_ide.dart';
@@ -325,19 +326,10 @@ class ChallengeView extends StatelessWidget {
                     log('Test Runner Console message: ${console.message}');
                   },
                   onLoadStop: (controller, url) async {
+                    ScriptBuilder builder = ScriptBuilder(challenge: challenge);
+                    String body = await builder.runnerScript();
                     final res = await controller.callAsyncJavaScript(
-                      // TODO: Move this to a function or constant
-                      functionBody: '''
-await import("http://localhost:8080/index.js");
-window.TestRunner = await window.FCCSandbox.createTestRunner({
-  source: "",
-  type: "${model.getWorkerType(challenge.challengeType).name}",
-  code: {
-    contents: "",
-  },
-  assetPath: "/",
-});
-  ''',
+                      functionBody: body,
                     );
                     log('TestRunner: $res');
                   },

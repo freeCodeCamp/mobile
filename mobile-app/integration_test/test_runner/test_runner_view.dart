@@ -51,7 +51,7 @@ class CurriculumTestRunnerState extends State<CurriculumTestRunner> {
                   // NOTE: I'm loading frame test runner here as a placeholder
                   functionBody: '''
 await import("http://localhost:8080/index.js");
-window.TestRunner = await window.FCCSandbox.createTestRunner({
+window.testRunner = await window.FCCSandbox.createTestRunner({
   source: "",
   type: "frame",
   code: {
