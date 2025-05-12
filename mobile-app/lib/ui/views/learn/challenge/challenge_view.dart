@@ -471,7 +471,18 @@ class SymbolBar extends StatelessWidget {
   final Editor editor;
   final ChallengeViewModel model;
 
-  static List<String> symbols = ['<', '/', '>', '\\', '\'', '"', '=', '{', '}'];
+  static List<String> symbols = [
+    'Tab',
+    '<',
+    '/',
+    '>',
+    '\\',
+    '\'',
+    '"',
+    '=',
+    '{',
+    '}'
+  ];
 
   @override
   Widget build(BuildContext context) {
