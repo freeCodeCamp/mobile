@@ -1,4 +1,3 @@
-// Command to run: flutter test --no-pub integration_test/test_runner/curriculum_tests.dart
 // TODO: Make the test customizable for specific superblocks, blocks, and challenges
 
 import 'dart:convert';
