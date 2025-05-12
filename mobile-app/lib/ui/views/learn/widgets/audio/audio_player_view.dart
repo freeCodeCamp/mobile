@@ -22,28 +22,16 @@ class AudioPlayerView extends StatelessWidget {
       builder: (context, model, child) => Padding(
         padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 16),
         child: StreamBuilder(
+          initialData: PlaybackState(),
           stream: model.audioService.playbackState,
           builder: (context, snapshot) {
-            if (snapshot.hasData) {
-              final playerState = snapshot.data as PlaybackState;
+            final playerState = snapshot.data as PlaybackState;
 
-              List<AudioProcessingState> validStates = [
-                AudioProcessingState.completed,
-                AudioProcessingState.idle,
-                AudioProcessingState.loading,
-                AudioProcessingState.ready,
-              ];
-
-              if (validStates.contains(playerState.processingState)) {
-                return InnerAudioWidget(
-                  model: model,
-                  audio: audio,
-                  playerState: playerState,
-                );
-              }
-            }
-
-            return const CircularProgressIndicator();
+            return InnerAudioWidget(
+              model: model,
+              audio: audio,
+              playerState: playerState,
+            );
           },
         ),
       ),
