@@ -116,15 +116,9 @@ void main() {
           );
 
           for (ChallengeTest test in challenge.tests) {
-            String testString = test.javaScript
-                .replaceAll('\\', '\\\\')
-                .replaceAll('`', '\\`')
-                .replaceAll('\$', r'\$');
             final testRes = await testController.callAsyncJavaScript(
-              functionBody: '''
-const testRes = await window.testRunner.runTest(`$testString`);
-return testRes;
-            ''',
+              functionBody:
+                  builder.generateTestExecutionScript(test.javaScript),
             );
             if (testRes?.value['pass'] == null || testRes?.error != null) {
               print(

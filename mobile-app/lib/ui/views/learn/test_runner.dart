@@ -94,4 +94,19 @@ class ScriptBuilder {
 
     return testRunner;
   }
+
+  String escapeTestString(String testString) {
+    return testString
+        .replaceAll('\\', '\\\\')
+        .replaceAll('`', '\\`')
+        .replaceAll('\$', r'\$');
+  }
+
+  String generateTestExecutionScript(String testString) {
+    String escapedTestString = escapeTestString(testString);
+    return '''
+const testRes = await window.testRunner.runTest(`$escapedTestString`);
+return testRes;
+''';
+  }
 }

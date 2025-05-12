@@ -503,15 +503,8 @@ class ChallengeViewModel extends BaseViewModel {
     );
 
     for (ChallengeTest test in challenge!.tests) {
-      String testString = test.javaScript
-          .replaceAll('\\', '\\\\')
-          .replaceAll('`', '\\`')
-          .replaceAll('\$', r'\$');
       final testRes = await testController!.callAsyncJavaScript(
-        functionBody: '''
-const testRes = await window.testRunner.runTest(`$testString`);
-return testRes;
-            ''',
+        functionBody: builder.generateTestExecutionScript(test.javaScript),
       );
       if (testRes?.value['pass'] == null) {
         log('TEST FAILED: ${test.instruction} - ${test.javaScript} - ${testRes?.value['error']}');
