@@ -490,7 +490,10 @@ class ChallengeViewModel extends BaseViewModel {
     setShowPanel = false;
     setIsRunningTests = true;
     ChallengeTest? failedTest;
-    ScriptBuilder builder = ScriptBuilder(challenge: challenge!);
+    ScriptBuilder builder = ScriptBuilder(
+      challenge: challenge!,
+      editableRegionContent: editableRegionContent,
+    );
 
     String body = await builder.runnerScript();
     // TODO: Handle the case when the test runner is not created

@@ -4,11 +4,10 @@ import 'package:freecodecamp/models/learn/challenge_model.dart';
 import 'package:freecodecamp/service/learn/learn_file_service.dart';
 
 class ScriptBuilder {
-  ScriptBuilder({
-    required this.challenge,
-  });
+  ScriptBuilder({required this.challenge, this.editableRegionContent = ''});
 
   final LearnFileService fileService = locator<LearnFileService>();
+  final String? editableRegionContent;
   final Challenge challenge;
 
   static const hideFccHeaderStyle = '''
@@ -89,6 +88,7 @@ class ScriptBuilder {
           assetPath: "/",
           code: {
             contents: `${await combinedCode()}`,
+            editableContents: `$editableRegionContent`
           },
         })''';
 

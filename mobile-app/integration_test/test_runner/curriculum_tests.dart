@@ -6,6 +6,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:freecodecamp/app/app.locator.dart';
 import 'package:freecodecamp/models/learn/challenge_model.dart';
+import 'package:freecodecamp/service/learn/learn_file_service.dart';
 import 'package:freecodecamp/ui/views/learn/test_runner.dart';
 import 'package:integration_test/integration_test.dart';
 
@@ -84,7 +85,30 @@ void main() {
           }
 
           Challenge challenge = Challenge.fromJson(currChallenge);
-          ScriptBuilder builder = ScriptBuilder(challenge: challenge);
+
+          String getLines(String contents, [List? range]) {
+            if (range == null || range.isEmpty) {
+              return challenge.files[0].contents;
+            }
+
+            final lines = contents.split('\n');
+            final editableLines = (range[1] <= range[0])
+                ? []
+                : lines.sublist(range[0], range[1] - 1);
+
+            return editableLines.join('\n');
+          }
+
+          final LearnFileService fileService = locator<LearnFileService>();
+          String editableRegion = getLines(
+            await fileService.getCurrentEditedFileFromCache(challenge),
+            challenge.files[0].editableRegionBoundaries,
+          );
+
+          ScriptBuilder builder = ScriptBuilder(
+            challenge: challenge,
+            editableRegionContent: editableRegion,
+          );
           bool testFailed = false;
 
           await testController!.callAsyncJavaScript(
