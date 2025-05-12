@@ -82,7 +82,9 @@ class EnglishView extends StatelessWidget {
                       challenge.explanation!.isNotEmpty) ...[
                     ChallengeCard(
                       title: 'Explanation',
-                      child: Explanation(challenge: challenge),
+                      child: Explanation(
+                        explanation: challenge.explanation ?? '',
+                      ),
                     ),
                   ],
                   Row(
