@@ -1,4 +1,4 @@
-enum WorkerType { python, frame, worker }
+enum WorkerType { python, dom, javascript }
 
 class Code {
   const Code({required this.contents, this.editableContents});

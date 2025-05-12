@@ -315,16 +315,16 @@ class ChallengeViewModel extends BaseViewModel {
       case 0:
       case 14:
       case 25:
-        return WorkerType.frame;
+        return WorkerType.dom;
       case 1:
       case 26:
-        return WorkerType.worker;
+        return WorkerType.javascript;
       case 20:
       case 23:
         return WorkerType.python;
     }
 
-    return WorkerType.frame;
+    return WorkerType.dom;
   }
 
   // This function allows the symbols to be insterted into the text controllers
