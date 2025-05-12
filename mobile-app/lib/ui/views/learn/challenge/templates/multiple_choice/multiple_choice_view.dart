@@ -92,7 +92,6 @@ class MultipleChoiceView extends StatelessWidget {
             ),
             body: SafeArea(
               child: ListView(
-                padding: const EdgeInsets.all(12),
                 children: [
                   if (challenge.videoId != null) ...[
                     ChallengeCard(
