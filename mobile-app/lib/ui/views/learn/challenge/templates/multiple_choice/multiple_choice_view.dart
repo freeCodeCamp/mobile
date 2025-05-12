@@ -155,41 +155,44 @@ class MultipleChoiceView extends StatelessWidget {
                       child: Explanation(challenge: challenge),
                     ),
                   ],
-                  const SizedBox(height: 16),
-                  ElevatedButton(
-                    style: ElevatedButton.styleFrom(
-                      minimumSize: const Size(0, 50),
-                      backgroundColor:
-                          const Color.fromRGBO(0x3b, 0x3b, 0x4f, 1),
-                      side: const BorderSide(
-                        width: 2,
-                        color: Colors.white,
+                  const SizedBox(height: 8),
+                  Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: ElevatedButton(
+                      style: ElevatedButton.styleFrom(
+                        minimumSize: const Size(0, 50),
+                        backgroundColor:
+                            const Color.fromRGBO(0x3b, 0x3b, 0x4f, 1),
+                        side: const BorderSide(
+                          width: 2,
+                          color: Colors.white,
+                        ),
+                        shape: const RoundedRectangleBorder(
+                          borderRadius: BorderRadius.zero,
+                        ),
                       ),
-                      shape: const RoundedRectangleBorder(
-                        borderRadius: BorderRadius.zero,
+                      onPressed: model.currentChoice != -1 &&
+                              model.assignmentStatus.every((element) => element)
+                          ? model.choiceStatus != null && model.choiceStatus!
+                              ? () => model.learnService.goToNextChallenge(
+                                    block.challenges.length,
+                                    challengesCompleted,
+                                    challenge,
+                                    block,
+                                  )
+                              : () {
+                                  model.setValidationStatus(challenge);
+                                  model.updateFeedback(challenge, context);
+                                }
+                          : null,
+                      child: Text(
+                        model.choiceStatus != null
+                            ? model.choiceStatus!
+                                ? context.t.next_challenge
+                                : context.t.try_again
+                            : context.t.questions_check,
+                        style: const TextStyle(fontSize: 20),
                       ),
-                    ),
-                    onPressed: model.currentChoice != -1 &&
-                            model.assignmentStatus.every((element) => element)
-                        ? model.choiceStatus != null && model.choiceStatus!
-                            ? () => model.learnService.goToNextChallenge(
-                                  block.challenges.length,
-                                  challengesCompleted,
-                                  challenge,
-                                  block,
-                                )
-                            : () {
-                                model.setValidationStatus(challenge);
-                                model.updateFeedback(challenge, context);
-                              }
-                        : null,
-                    child: Text(
-                      model.choiceStatus != null
-                          ? model.choiceStatus!
-                              ? context.t.next_challenge
-                              : context.t.try_again
-                          : context.t.questions_check,
-                      style: const TextStyle(fontSize: 20),
                     ),
                   ),
                   const SizedBox(height: 50),
