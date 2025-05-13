@@ -4,13 +4,13 @@ import 'package:freecodecamp/ui/views/learn/block/block_template_viewmodel.dart'
 
 class ChallengeTile extends StatelessWidget {
   const ChallengeTile({
-    Key? key,
+    super.key,
     required this.block,
     required this.model,
     required this.step,
     required this.isDownloaded,
     required this.challengeId,
-  }) : super(key: key);
+  });
 
   final Block block;
   final BlockTemplateViewModel model;

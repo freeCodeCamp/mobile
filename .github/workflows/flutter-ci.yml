@@ -48,7 +48,7 @@ jobs:
           gradle-version: 7.6.3
 
       - name: Setup Java 17
-        uses: actions/setup-java@3a4f6e1af504cf6a31855fa899c6aa5355ba6c12 # v4
+        uses: actions/setup-java@c5195efecf7bdfc987ee8bae7a71cb8b11521c00 # v4
         with:
           distribution: "temurin"
           java-version: "17"
@@ -74,13 +74,13 @@ jobs:
           disable-animations: false
           script: echo "Generated AVD snapshot for caching."
 
-      - name: Setup Flutter 3.27.x
+      - name: Setup Flutter 3.29.x
         uses: subosito/flutter-action@e938fdf56512cc96ef2f93601a5a40bde3801046 # v2
         with:
-          flutter-version: "3.27.x"
+          flutter-version: "3.29.x"
           channel: "stable"
           cache: true
-          cache-key: flutter-3.27.x
+          cache-key: flutter-3.29.x
           cache-path: ${{ runner.tool_cache }}/flutter
 
       - name: Create .env file

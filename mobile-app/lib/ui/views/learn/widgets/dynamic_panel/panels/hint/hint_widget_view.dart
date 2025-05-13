@@ -1,9 +1,7 @@
-import 'dart:convert';
 import 'dart:io';
 
 import 'package:device_info_plus/device_info_plus.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:freecodecamp/extensions/i18n_extension.dart';
 import 'package:freecodecamp/models/learn/challenge_model.dart';
 import 'package:freecodecamp/models/learn/curriculum_model.dart';
@@ -60,12 +58,8 @@ Future<String> genForumLink(
   String editorText = '',
 }) async {
   Challenge? currChallenge = challenge;
-  String helpCategoryPath = 'assets/learn/help-category.json';
-  String helpCategoryFile = await rootBundle.loadString(helpCategoryPath);
 
-  final String helpCategory = Uri.encodeComponent(
-    jsonDecode(helpCategoryFile)[currChallenge.block] ?? 'Help',
-  );
+  final HelpCategory helpCategory = challenge.helpCategory;
   final String blockTitle = block.name;
 
   final userDeviceInfo = await getDeviceInfo(context);
@@ -85,7 +79,7 @@ Future<String> genForumLink(
   String altStudentCode = Uri.encodeComponent(altTextMessage);
 
   final String baseURL =
-      '$forumLocation/new-topic?category=$helpCategory&title=$titleText&body=';
+      '$forumLocation/new-topic?category=${helpCategory.value}&title=$titleText&body=';
   final String defaultURL = '$baseURL$studentCode';
   final String altURL = '$baseURL$altStudentCode';
 
@@ -94,11 +88,10 @@ Future<String> genForumLink(
 
 class HintWidgetView extends StatelessWidget {
   const HintWidgetView(
-      {Key? key,
+      {super.key,
       required this.hint,
       required this.challengeModel,
-      required this.editor})
-      : super(key: key);
+      required this.editor});
 
   final String hint;
   final ChallengeViewModel challengeModel;
@@ -124,7 +117,6 @@ class HintWidgetView extends StatelessWidget {
                     style: TextStyle(
                       fontSize: 28,
                       fontWeight: FontWeight.bold,
-                      fontFamily: 'Inter',
                       color: Colors.white.withValues(alpha: 0.87),
                     ),
                   ),

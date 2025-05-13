@@ -8,11 +8,11 @@ import 'package:stacked/stacked.dart';
 
 class SuperBlockView extends StatelessWidget {
   const SuperBlockView({
-    Key? key,
+    super.key,
     required this.superBlockDashedName,
     required this.superBlockName,
     required this.hasInternet,
-  }) : super(key: key);
+  });
 
   final String superBlockDashedName;
   final String superBlockName;

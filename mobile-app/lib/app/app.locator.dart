@@ -59,5 +59,5 @@ Future<void> setupLocator({
   locator.registerLazySingleton(() => BookmarksDatabaseService());
   locator.registerLazySingleton(() => LocaleService());
   locator.registerLazySingleton(() => DioService());
-  locator.registerLazySingleton(() => NewsApiServive());
+  locator.registerLazySingleton(() => NewsApiService());
 }

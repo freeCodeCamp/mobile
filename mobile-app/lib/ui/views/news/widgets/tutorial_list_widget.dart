@@ -11,17 +11,17 @@ import 'package:stacked_services/stacked_services.dart';
 class TutorialList extends StatefulWidget {
   // ignore: prefer_const_constructors_in_immutables
   TutorialList({
-    Key? key,
+    super.key,
     required this.authorSlug,
     required this.authorName,
     required this.authorId,
-  }) : super(key: key);
+  });
 
   final String authorSlug;
   final String authorName;
   final String authorId;
   final _navigationService = locator<NavigationService>();
-  final _newsApiService = locator<NewsApiServive>();
+  final _newsApiService = locator<NewsApiService>();
 
   Future<List<Tutorial>> fetchList() async {
     List<Tutorial> tutorials = [];
@@ -100,8 +100,7 @@ class TutorialListState extends State<TutorialList> {
 }
 
 class TileLayout extends StatelessWidget {
-  const TileLayout({Key? key, required this.widget, required this.snapshot})
-      : super(key: key);
+  const TileLayout({super.key, required this.widget, required this.snapshot});
 
   final TutorialList widget;
   final AsyncSnapshot<List<Tutorial>> snapshot;

@@ -6,13 +6,12 @@ import 'package:stacked/stacked.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 class DeleteAccountView extends StatelessWidget {
-  const DeleteAccountView({Key? key}) : super(key: key);
+  const DeleteAccountView({super.key});
 
   @override
   Widget build(BuildContext context) {
     const paragraphTextStyle = TextStyle(
       fontSize: 18,
-      fontFamily: 'Lato',
       height: 1.2,
     );
 

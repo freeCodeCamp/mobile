@@ -13,16 +13,19 @@ import 'package:stacked_services/stacked_services.dart';
 
 class NewsFeedViewModel extends BaseViewModel {
   final _navigationService = locator<NavigationService>();
-  final _newsApiService = locator<NewsApiServive>();
+  final _newsApiService = locator<NewsApiService>();
 
-  final PagingController<String, Tutorial> _pagingController =
-      PagingController(firstPageKey: '');
+  String nextPageKey = '';
+
+  late final PagingController<String, Tutorial> _pagingController;
   PagingController<String, Tutorial> get pagingController => _pagingController;
 
   void initState(String tagSlug, String authorId) {
-    _pagingController.addPageRequestListener((pageKey) {
-      fetchTutorials(pageKey, tagSlug: tagSlug, authorId: authorId);
-    });
+    _pagingController = PagingController(
+      getNextPageKey: (state) => nextPageKey,
+      fetchPage: (pageKey) =>
+          fetchTutorials(pageKey, tagSlug: tagSlug, authorId: authorId),
+    );
   }
 
   void navigateTo(String id, String title) {
@@ -59,7 +62,7 @@ class NewsFeedViewModel extends BaseViewModel {
   //   return tutorials;
   // }
 
-  void fetchTutorials(
+  Future<List<Tutorial>> fetchTutorials(
     String afterCursor, {
     String? tagSlug,
     String? authorId,
@@ -91,13 +94,13 @@ class NewsFeedViewModel extends BaseViewModel {
       tutorials.add(Tutorial.fromJson(tutorialJson[i]['node']));
     }
     if (data.hasNextPage) {
-      _pagingController.appendPage(
-        tutorials,
-        data.endCursor,
-      );
+      nextPageKey = data.endCursor;
     } else {
-      _pagingController.appendLastPage(tutorials);
+      _pagingController.value = _pagingController.value.copyWith(
+        hasNextPage: false,
+      );
     }
+    return tutorials;
   }
 
   // TODO: Add search results feed back post-migration

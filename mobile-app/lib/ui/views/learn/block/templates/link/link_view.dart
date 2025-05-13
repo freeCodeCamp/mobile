@@ -6,10 +6,10 @@ import 'package:stacked/stacked.dart';
 
 class BlockLinkView extends StatelessWidget {
   const BlockLinkView({
-    Key? key,
+    super.key,
     required this.block,
     required this.model,
-  }) : super(key: key);
+  });
 
   final Block block;
   final BlockTemplateViewModel model;

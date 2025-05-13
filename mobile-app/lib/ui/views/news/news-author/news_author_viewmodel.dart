@@ -5,7 +5,7 @@ import 'package:freecodecamp/service/news/api_service.dart';
 import 'package:stacked/stacked.dart';
 
 class NewsAuthorViewModel extends BaseViewModel {
-  final _newsApiService = locator<NewsApiServive>();
+  final _newsApiService = locator<NewsApiService>();
 
   Future<Author> fetchAuthor(String authorSlug) async {
     await dotenv.load(fileName: '.env');

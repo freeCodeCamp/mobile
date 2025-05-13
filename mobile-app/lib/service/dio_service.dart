@@ -1,4 +1,3 @@
-import 'package:curl_logger_dio_interceptor/curl_logger_dio_interceptor.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:pretty_dio_logger/pretty_dio_logger.dart';
@@ -19,7 +18,6 @@ class DioService {
 
     if (isDevMode) {
       dio.interceptors.add(PrettyDioLogger(responseBody: false));
-      dio.interceptors.add(CurlLoggerDioInterceptor());
     }
   }
 

@@ -7,7 +7,7 @@ import 'package:freecodecamp/ui/widgets/drawer_widget/drawer_widget_view.dart';
 import 'package:stacked/stacked.dart';
 
 class SettingsView extends StatelessWidget {
-  const SettingsView({Key? key}) : super(key: key);
+  const SettingsView({super.key});
 
   @override
   Widget build(BuildContext context) {

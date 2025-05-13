@@ -32,7 +32,7 @@ Future<void> main({bool testing = false}) async {
   await DioService().init();
   await AppAudioService().init();
   await AuthenticationService().init();
-  await NewsApiServive().init();
+  await NewsApiService().init();
   var fbApp = await Firebase.initializeApp(
     options: DefaultFirebaseOptions.currentPlatform,
   );
@@ -58,7 +58,7 @@ Future<void> main({bool testing = false}) async {
 }
 
 class FreeCodeCampMobileApp extends StatelessWidget {
-  const FreeCodeCampMobileApp({Key? key}) : super(key: key);
+  const FreeCodeCampMobileApp({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -92,7 +92,6 @@ class FreeCodeCampMobileApp extends StatelessWidget {
                   ? UpgradeDialogStyle.cupertino
                   : UpgradeDialogStyle.material,
               showIgnore: false,
-              showLater: false,
               upgrader: upgraderController,
               child: child,
             );

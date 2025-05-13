@@ -5,8 +5,8 @@ import 'package:stacked/stacked.dart';
 
 class NewsBookmarkFeedView extends StatelessWidget {
   const NewsBookmarkFeedView({
-    Key? key,
-  }) : super(key: key);
+    super.key,
+  });
 
   @override
   Widget build(BuildContext context) {

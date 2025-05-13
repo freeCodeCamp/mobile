@@ -1,10 +1,14 @@
 import { expect, test } from "@playwright/test";
 
-// These are all in the freeCodeCamp repo. That repo is installed at the root
-// in CI.
-import currData from "../../shared/config/curriculum.json";
-import { orderedSuperBlockInfo } from "../../tools/scripts/build/build-external-curricula-data";
-import { SuperBlocks } from "../../shared/config/curriculum";
+// These are all in the freeCodeCamp repo. That repo is installed alongside this
+// repo in CI. i.e. the structure is:
+//
+// workspace-root/freeCodeCamp
+// workspace-root/mobile
+
+import currData from "../../freeCodeCamp/shared/config/curriculum.json";
+import { orderedSuperBlockInfo } from "../../freeCodeCamp/tools/scripts/build/build-external-curricula-data-v1";
+import { SuperBlocks } from "../../freeCodeCamp/shared/config/curriculum";
 
 // non editor superblocks should be skipped because they are not
 // checked if they are compatible with the mobile app.
@@ -16,7 +20,7 @@ const nonEditorSB = [
   SuperBlocks.CollegeAlgebraPy,
   SuperBlocks.A2English,
   SuperBlocks.B1English,
-  SuperBlocks.TheOdinProject
+  SuperBlocks.TheOdinProject,
 ];
 
 const publicSB = orderedSuperBlockInfo

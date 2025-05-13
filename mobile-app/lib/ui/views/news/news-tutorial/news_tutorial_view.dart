@@ -8,8 +8,7 @@ import 'package:share_plus/share_plus.dart';
 import 'package:stacked/stacked.dart';
 
 class NewsTutorialHeader extends StatelessWidget {
-  const NewsTutorialHeader({Key? key, required this.tutorial})
-      : super(key: key);
+  const NewsTutorialHeader({super.key, required this.tutorial});
 
   final Tutorial tutorial;
 
@@ -41,14 +40,18 @@ class NewsTutorialHeader extends StatelessWidget {
                     Text(
                       tutorial.title,
                       style: const TextStyle(
-                          fontSize: 24, height: 1.5, fontFamily: 'Lato'),
+                        fontSize: 24,
+                        height: 1.5,
+                      ),
                       key: const Key('title'),
                     ),
                     Text(
                       context.t.tutorial_written_by(
                         tutorial.authorName,
                       ),
-                      style: const TextStyle(height: 1.5, fontFamily: 'Lato'),
+                      style: const TextStyle(
+                        height: 1.5,
+                      ),
                     ),
                     Wrap(
                       children: [
@@ -71,10 +74,10 @@ class NewsTutorialHeader extends StatelessWidget {
 
 class NewsTutorialView extends StatelessWidget {
   const NewsTutorialView({
-    Key? key,
+    super.key,
     required this.refId,
     required this.title,
-  }) : super(key: key);
+  });
   final String refId;
   final String? title;
 
@@ -190,12 +193,12 @@ class NewsTutorialView extends StatelessWidget {
 
 class BottomButton extends StatelessWidget {
   const BottomButton({
-    Key? key,
+    super.key,
     required this.label,
     required this.onPressed,
     required this.icon,
     required this.rightSided,
-  }) : super(key: key);
+  });
 
   final Function onPressed;
   final String label;

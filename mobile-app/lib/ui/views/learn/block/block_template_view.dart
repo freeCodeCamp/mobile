@@ -9,11 +9,11 @@ class BlockTemplateView extends StatelessWidget {
   final Function isOpenFunction;
 
   const BlockTemplateView({
-    Key? key,
+    super.key,
     required this.block,
     required this.isOpen,
     required this.isOpenFunction,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {

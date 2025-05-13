@@ -6,6 +6,7 @@ import 'package:flutter_highlight/flutter_highlight.dart';
 import 'package:flutter_highlight/theme_map.dart';
 import 'package:flutter_html/flutter_html.dart';
 import 'package:flutter_html_table/flutter_html_table.dart';
+import 'package:freecodecamp/ui/theme/fcc_theme.dart';
 import 'package:freecodecamp/ui/views/news/news-image-viewer/news_image_view.dart';
 import 'package:html/dom.dart' as dom;
 import 'package:html/parser.dart' as parser;
@@ -16,15 +17,14 @@ class HTMLParser {
   const HTMLParser({
     Key? key,
     required this.context,
-    this.fontFamily = 'Lato',
   });
 
-  final String fontFamily;
   final BuildContext context;
 
   List<Widget> parse(
     String html, {
     bool isSelectable = true,
+    bool removeParagraphMargin = false,
     Color? fontColor,
   }) {
     dom.Document result = parser.parse(html);
@@ -36,6 +36,7 @@ class HTMLParser {
         _parseHTMLWidget(
           result.body!.children[i].outerHtml,
           isSelectable,
+          removeParagraphMargin,
           fontColor,
         ),
       );
@@ -64,6 +65,7 @@ class HTMLParser {
   Widget _parseHTMLWidget(
     child, [
     bool isSelectable = true,
+    bool removeParagraphMargin = false,
     Color? fontColor,
   ]) {
     Html htmlWidget = Html(
@@ -97,23 +99,23 @@ class HTMLParser {
         '*:not(h1):not(h2):not(h3):not(h4):not(h5):not(h6)': Style(
           fontSize: FontSize.xLarge,
           color: fontColor ?? Colors.white.withValues(alpha: 0.87),
-          fontWeight:
-              fontFamily == 'Inter' ? FontWeight.w400 : FontWeight.normal,
         ),
         'body': Style(
-          fontFamily: fontFamily,
+          fontFamily: 'Lato',
           padding: HtmlPaddings.only(left: 4, right: 4),
         ),
         'strong': Style(
           fontWeight: FontWeight.bold,
         ),
-        'p': Style(
-          margin: Margins.zero,
-          lineHeight: const LineHeight(1.5),
-        ),
         'a': Style(
-          color: Colors.blue,
+          color: Colors.white,
           textDecoration: TextDecoration.underline,
+          textDecorationColor: Colors.white,
+        ),
+        'p': Style(
+          margin: removeParagraphMargin
+              ? Margins.all(0)
+              : Margins.only(top: 8, bottom: 8),
         ),
         'li': Style(
           margin: Margins.only(top: 8),
@@ -145,17 +147,26 @@ class HTMLParser {
           fontSize: FontSize.medium,
         ),
         'code': Style(
-          backgroundColor: const Color.fromRGBO(0x3b, 0x3b, 0x4f, 0.5),
-          padding: HtmlPaddings.symmetric(vertical: 2, horizontal: 4),
+          fontFamily: 'Hack',
+          backgroundColor: FccColors.gray75,
           color: Colors.white.withValues(alpha: 0.87),
           fontSize: FontSize.xLarge,
-          fontFamily: 'Roboto Mono',
         ),
+        'pre': Style(fontFamily: 'Hack')
       },
       onLinkTap: (url, attributes, element) {
         launchUrl(Uri.parse(url!.trim()));
       },
       extensions: [
+        TagWrapExtension(
+          tagsToWrap: {'table'},
+          builder: (child) {
+            return SingleChildScrollView(
+              scrollDirection: Axis.horizontal,
+              child: child,
+            );
+          },
+        ),
         const TableHtmlExtension(),
         TagExtension(
           tagsToExtend: {'pre'},
@@ -166,7 +177,7 @@ class HTMLParser {
             String? currentClass;
 
             bool codeLanguageIsPresent(List classNames) {
-              RegExp regExp = RegExp(r'language-', caseSensitive: false);
+              RegExp regExp = RegExp(r'\blang(uage)?\b');
 
               for (String className in classNames) {
                 if (className.contains(regExp)) {
@@ -202,12 +213,11 @@ class HTMLParser {
                               : 'plaintext',
                           theme: themeMap['atom-one-dark']!,
                           textStyle: TextStyle(
-                            fontFamily: 'RobotoMono',
-                            fontSize: double.parse(
-                              FontSize.large.value.toString(),
-                            ),
-                            color: Colors.white,
-                          ),
+                              fontSize: double.parse(
+                                FontSize.large.value.toString(),
+                              ),
+                              color: Colors.white,
+                              fontFamily: 'Hack'),
                         ),
                       ),
                     ),

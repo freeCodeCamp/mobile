@@ -8,12 +8,11 @@ import 'package:stacked/stacked.dart';
 
 class BlockGridView extends StatelessWidget {
   const BlockGridView(
-      {Key? key,
+      {super.key,
       required this.block,
       required this.model,
       required this.isOpen,
-      required this.isOpenFunction})
-      : super(key: key);
+      required this.isOpenFunction});
 
   final Block block;
   final BlockTemplateViewModel model;

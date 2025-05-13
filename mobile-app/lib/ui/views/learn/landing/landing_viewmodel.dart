@@ -93,7 +93,7 @@ class LearnLandingViewModel extends BaseViewModel {
         lastVisitedChallenge[0],
       );
 
-      String baseUrl = LearnService.baseUrl;
+      String baseUrl = LearnService.baseUrlV2;
 
       final Response res =
           await _dio.get('$baseUrl/${lastVisitedChallenge[1]}.json');

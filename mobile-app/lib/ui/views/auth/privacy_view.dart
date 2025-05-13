@@ -3,13 +3,12 @@ import 'package:freecodecamp/extensions/i18n_extension.dart';
 import 'package:freecodecamp/ui/widgets/drawer_widget/drawer_widget_view.dart';
 
 class PrivacyView extends StatelessWidget {
-  const PrivacyView({Key? key}) : super(key: key);
+  const PrivacyView({super.key});
 
   @override
   Widget build(BuildContext context) {
     const paragraphTextStyle = TextStyle(
       fontSize: 18,
-      fontFamily: 'Lato',
       height: 1.2,
     );
     return Scaffold(
@@ -128,7 +127,6 @@ class PrivacyView extends StatelessWidget {
                 textAlign: TextAlign.right,
                 style: const TextStyle(
                   fontSize: 20,
-                  fontFamily: 'Lato',
                 ),
               ),
               const SizedBox(

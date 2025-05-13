@@ -62,7 +62,7 @@ class SuperBlockViewModel extends BaseViewModel {
     String name,
     bool hasInternet,
   ) async {
-    String baseUrl = LearnService.baseUrl;
+    String baseUrl = LearnService.baseUrlV2;
 
     if (!hasInternet) {
       return SuperBlock(

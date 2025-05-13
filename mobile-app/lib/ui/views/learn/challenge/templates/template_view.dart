@@ -11,11 +11,11 @@ import 'package:stacked/stacked.dart';
 
 class ChallengeTemplateView extends StatelessWidget {
   const ChallengeTemplateView({
-    Key? key,
+    super.key,
     required this.block,
     required this.challengeId,
     required this.challengesCompleted,
-  }) : super(key: key);
+  });
 
   final Block block;
   final String challengeId;
@@ -27,6 +27,7 @@ class ChallengeTemplateView extends StatelessWidget {
       onViewModelReady: (model) => model.initiate(block, challengeId),
       viewModelBuilder: () => ChallengeTemplateViewModel(),
       builder: (context, model, child) => Scaffold(
+        resizeToAvoidBottomInset: false,
         body: FutureBuilder<Challenge?>(
           future: model.challenge,
           builder: (context, snapshot) {
@@ -38,8 +39,8 @@ class ChallengeTemplateView extends StatelessWidget {
               int challNum =
                   tiles.indexWhere((el) => el.id == challenge.id) + 1;
               switch (challengeType) {
-                case 14:
                 case 0:
+                case 14:
                   return ChallengeView(
                     challenge: challenge,
                     block: block,
@@ -75,8 +76,10 @@ class ChallengeTemplateView extends StatelessWidget {
                     currentChallengeNum: challNum,
                   );
                 default:
-                  return Text(
-                    'Unknown Challenge, info : ${challenge.challengeType}',
+                  return Center(
+                    child: Text(
+                      'Unknown Challenge, info : ${challenge.challengeType}',
+                    ),
                   );
               }
             }
