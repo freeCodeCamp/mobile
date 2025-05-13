@@ -297,6 +297,11 @@ class ChallengeViewModel extends BaseViewModel {
     final RegionPosition position = textFieldData!.position;
     final String text = focused.text;
     final selection = focused.selection;
+
+    if (symbol == 'Tab') {
+      symbol = '\t';
+    }
+
     final newText = text.replaceRange(selection.start, selection.end, symbol);
     focused.value = TextEditingValue(
       text: newText,
@@ -450,7 +455,7 @@ class ChallengeViewModel extends BaseViewModel {
       );
 
       String slug = block!.challengeTiles[challengeIndex].id;
-      String url = LearnService.baseUrl;
+      String url = LearnService.baseUrlV2;
       String challengeUrl =
           '$url/challenges/${block!.superBlock.dashedName}/${block!.dashedName}/$slug.json';
 
