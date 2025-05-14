@@ -5,6 +5,7 @@ import 'dart:convert';
 import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:freecodecamp/app/app.locator.dart';
+import 'package:freecodecamp/enums/ext_type.dart';
 import 'package:freecodecamp/models/learn/challenge_model.dart';
 import 'package:freecodecamp/service/learn/learn_file_service.dart';
 import 'package:freecodecamp/ui/views/learn/test_runner.dart';
@@ -105,20 +106,25 @@ void main() {
             challenge.files[0].editableRegionBoundaries,
           );
 
-          ScriptBuilder builder = ScriptBuilder(
-            challenge: challenge,
-            editableRegionContent: editableRegion,
-          );
+          ScriptBuilder builder = ScriptBuilder();
           bool testFailed = false;
 
           await testController!.callAsyncJavaScript(
-            functionBody: await builder.runnerScript(),
+            functionBody: ScriptBuilder.runnerScript,
+            arguments: {
+              'userCode': await builder.buildUserCode(challenge, Ext.html),
+              'workerType': builder.getWorkerType(challenge.challengeType),
+              'combinedCode': await builder.combinedCode(challenge),
+              'editableRegionContent': editableRegion,
+            },
           );
 
           for (ChallengeTest test in challenge.tests) {
             final testRes = await testController.callAsyncJavaScript(
-              functionBody:
-                  builder.generateTestExecutionScript(test.javaScript),
+              functionBody: ScriptBuilder.testExecutionScript,
+              arguments: {
+                'testStr': test.javaScript,
+              },
             );
             if (testRes?.value['pass'] == null || testRes?.error != null) {
               print(

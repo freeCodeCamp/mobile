@@ -4,11 +4,7 @@ import 'package:freecodecamp/models/learn/challenge_model.dart';
 import 'package:freecodecamp/service/learn/learn_file_service.dart';
 
 class ScriptBuilder {
-  ScriptBuilder({required this.challenge, this.editableRegionContent = ''});
-
   final LearnFileService fileService = locator<LearnFileService>();
-  final String? editableRegionContent;
-  final Challenge challenge;
 
   static const hideFccHeaderStyle = '''
 <style class="fcc-hide-header">
@@ -20,6 +16,24 @@ class ScriptBuilder {
     display: none !important;
   }
 </style>
+''';
+
+  static String runnerScript = '''
+await import("http://localhost:8080/index.js");
+window.TestRunner = await window.FCCSandbox.createTestRunner({
+  source: userCode,
+  type: workerType,
+  assetPath: "/",
+  code: {
+    contents: combinedCode,
+    editableContents: editableRegionContent,
+  },
+});
+''';
+
+  static String testExecutionScript = '''
+const testRes = await window.TestRunner.runTest(testStr);
+return testRes;
 ''';
 
   Future<String> buildUserCode(
@@ -67,7 +81,7 @@ class ScriptBuilder {
     return 'dom';
   }
 
-  Future<String> combinedCode() async {
+  Future<String> combinedCode(Challenge challenge) async {
     String combinedCode = '';
 
     for (ChallengeFile file in challenge.files) {
@@ -75,38 +89,5 @@ class ScriptBuilder {
     }
 
     return combinedCode;
-  }
-
-  Future<String> runnerScript() async {
-    String userCode = await buildUserCode(challenge, Ext.html);
-
-    String testRunner = '''
-        await import("http://localhost:8080/index.js");
-        window.testRunner = await window.FCCSandbox.createTestRunner({
-          source: `<!DOCTYPE html>$hideFccHeaderStyle$userCode`,
-          type: "${getWorkerType(challenge.challengeType)}",
-          assetPath: "/",
-          code: {
-            contents: `${await combinedCode()}`,
-            editableContents: `$editableRegionContent`
-          },
-        })''';
-
-    return testRunner;
-  }
-
-  String escapeTestString(String testString) {
-    return testString
-        .replaceAll('\\', '\\\\')
-        .replaceAll('`', '\\`')
-        .replaceAll('\$', r'\$');
-  }
-
-  String generateTestExecutionScript(String testString) {
-    String escapedTestString = escapeTestString(testString);
-    return '''
-const testRes = await window.testRunner.runTest(`$escapedTestString`);
-return testRes;
-''';
   }
 }

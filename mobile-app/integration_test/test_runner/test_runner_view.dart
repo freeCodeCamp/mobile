@@ -2,6 +2,7 @@ import 'dart:developer';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_inappwebview/flutter_inappwebview.dart';
+import 'package:freecodecamp/ui/views/learn/test_runner.dart';
 
 final InAppLocalhostServer _localhostServer =
     InAppLocalhostServer(documentRoot: 'assets/test_runner');
@@ -47,19 +48,14 @@ class CurriculumTestRunnerState extends State<CurriculumTestRunner> {
               // },
               onLoadStop: (controller, url) async {
                 final res = await controller.callAsyncJavaScript(
-                  // TODO: Move this to a function or constant
                   // NOTE: I'm loading frame test runner here as a placeholder
-                  functionBody: '''
-await import("http://localhost:8080/index.js");
-window.testRunner = await window.FCCSandbox.createTestRunner({
-  source: "",
-  type: "frame",
-  code: {
-    contents: "",
-  },
-  assetPath: "/",
-});
-  ''',
+                  functionBody: ScriptBuilder.runnerScript,
+                  arguments: {
+                    'userCode': '',
+                    'workerType': 'frame',
+                    'combinedCode': '',
+                    'editableRegionContent': '',
+                  },
                 );
                 log('TestRunner: $res');
               },

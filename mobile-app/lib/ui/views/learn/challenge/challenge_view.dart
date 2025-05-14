@@ -326,13 +326,16 @@ class ChallengeView extends StatelessWidget {
                     log('Test Runner Console message: ${console.message}');
                   },
                   onLoadStop: (controller, url) async {
-                    ScriptBuilder builder = ScriptBuilder(
-                      challenge: challenge,
-                      editableRegionContent: model.editableRegionContent,
-                    );
-                    String body = await builder.runnerScript();
+                    ScriptBuilder builder = ScriptBuilder();
                     final res = await controller.callAsyncJavaScript(
-                      functionBody: body,
+                      functionBody: ScriptBuilder.runnerScript,
+                      arguments: {
+                        'userCode': '',
+                        'workerType':
+                            builder.getWorkerType(challenge.challengeType),
+                        'combinedCode': '',
+                        'editableRegionContent': '',
+                      },
                     );
                     log('TestRunner: $res');
                   },

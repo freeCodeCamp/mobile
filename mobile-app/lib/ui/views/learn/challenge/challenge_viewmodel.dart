@@ -490,21 +490,26 @@ class ChallengeViewModel extends BaseViewModel {
     setShowPanel = false;
     setIsRunningTests = true;
     ChallengeTest? failedTest;
-    ScriptBuilder builder = ScriptBuilder(
-      challenge: challenge!,
-      editableRegionContent: editableRegionContent,
-    );
+    ScriptBuilder builder = ScriptBuilder();
 
-    String body = await builder.runnerScript();
     // TODO: Handle the case when the test runner is not created
     // ignore: unused_local_variable
     final updateTestRunnerRes = await testController!.callAsyncJavaScript(
-      functionBody: body,
+      functionBody: ScriptBuilder.runnerScript,
+      arguments: {
+        'userCode': await builder.buildUserCode(challenge!, Ext.html),
+        'workerType': builder.getWorkerType(challenge!.challengeType),
+        'combinedCode': await builder.combinedCode(challenge!),
+        'editableRegionContent': editableRegionContent,
+      },
     );
 
     for (ChallengeTest test in challenge!.tests) {
       final testRes = await testController!.callAsyncJavaScript(
-        functionBody: builder.generateTestExecutionScript(test.javaScript),
+        functionBody: ScriptBuilder.testExecutionScript,
+        arguments: {
+          'testStr': test.javaScript,
+        },
       );
       if (testRes?.value['pass'] == null) {
         log('TEST FAILED: ${test.instruction} - ${test.javaScript} - ${testRes?.value['error']}');
