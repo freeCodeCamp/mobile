@@ -21,7 +21,12 @@ class EpisodeView extends StatelessWidget {
     return ViewModelBuilder<EpisodeViewModel>.reactive(
       viewModelBuilder: () => EpisodeViewModel(),
       onViewModelReady: (model) {
-        model.loadEpisode(episode, podcast);
+        if (!model.audioService.isPlaying(
+          'podcast',
+          episodeId: model.audioService.episodeId,
+        )) {
+          model.loadEpisode(episode, podcast);
+        }
         model.hasDownloadedEpisode(episode);
         model.initProgressListener(episode);
         model.initDownloadListener();
@@ -142,9 +147,10 @@ class EpisodeView extends StatelessWidget {
                     IconButton(
                       iconSize: 80,
                       onPressed: () {
-                        model.playOrPause(episode);
+                        model.playOrPause(episode, podcast);
                       },
-                      icon: model.isPlaying
+                      icon: model.isPlaying &&
+                              model.audioService.episodeId == episode.id
                           ? const Icon(Icons.pause)
                           : const Icon(Icons.play_arrow_rounded),
                     ),

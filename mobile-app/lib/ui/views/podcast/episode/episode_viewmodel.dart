@@ -83,14 +83,17 @@ class EpisodeViewModel extends BaseViewModel {
   }
 
   void initProgressListener(Episodes episode) {
-    setProgressListener = AudioService.position.listen(
-      (event) {
-        int duration = episode.duration!.inSeconds;
-        double sliderValue = event.inSeconds / duration;
-        setSliderValue = sliderValue;
-        handleTimeVortex(duration, event.inSeconds);
-      },
-    );
+    if (audioService.episodeId == episode.id ||
+        audioService.episodeId.isEmpty) {
+      setProgressListener = AudioService.position.listen(
+        (event) {
+          int duration = episode.duration!.inSeconds;
+          double sliderValue = event.inSeconds / duration;
+          setSliderValue = sliderValue;
+          handleTimeVortex(duration, event.inSeconds);
+        },
+      );
+    }
   }
 
   void handleTimeVortex(int duration, int inSeconds) {
@@ -194,10 +197,11 @@ class EpisodeViewModel extends BaseViewModel {
     setSliderValue = value > 0 ? value : 0.0;
   }
 
-  void playOrPause(Episodes episode) {
+  void playOrPause(Episodes episode, Podcasts podcast) {
     if (audioService.isPlaying('podcast', episodeId: episode.id)) {
       audioService.pause();
     } else {
+      loadEpisode(episode, podcast);
       audioService.play();
     }
   }
@@ -217,6 +221,7 @@ class EpisodeViewModel extends BaseViewModel {
     if (audioService.episodeId != episode.id) {
       audioService.setEpisodeId = episode.id;
       audioService.loadEpisode(episode, downloaded, podcast);
+      initProgressListener(episode);
     }
   }
 }
