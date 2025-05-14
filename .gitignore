@@ -71,3 +71,4 @@ curriculum.json
 # e2e tests
 
 /e2e/playwright
+/e2e/public
