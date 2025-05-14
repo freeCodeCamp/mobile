@@ -501,6 +501,9 @@ class ChallengeViewModel extends BaseViewModel {
         'workerType': builder.getWorkerType(challenge!.challengeType),
         'combinedCode': await builder.combinedCode(challenge!),
         'editableRegionContent': editableRegionContent,
+        'hooks': {
+          'beforeAll': challenge!.hooks.beforeAll,
+        },
       },
     );
 

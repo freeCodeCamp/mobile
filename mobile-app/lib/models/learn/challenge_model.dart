@@ -59,6 +59,7 @@ class Challenge {
 
   final List<ChallengeTest> tests;
   final List<ChallengeFile> files;
+  final Hooks hooks;
 
   // English Challenges
   final FillInTheBlank? fillInTheBlank;
@@ -88,6 +89,7 @@ class Challenge {
     this.assignments,
     this.fillInTheBlank,
     this.audio,
+    required this.hooks,
   });
 
   factory Challenge.fromJson(Map<String, dynamic> data) {
@@ -120,6 +122,9 @@ class Challenge {
       assignments: data['assignments'] != null
           ? (data['assignments'] as List).cast<String>()
           : null,
+      hooks: Hooks.fromJson(
+        data['hooks'] ?? {'beforeAll': ''},
+      ),
     );
   }
 
@@ -166,6 +171,20 @@ class Challenge {
             }
           : null,
     };
+  }
+}
+
+class Hooks {
+  final String beforeAll;
+
+  Hooks({
+    required this.beforeAll,
+  });
+
+  factory Hooks.fromJson(Map<String, dynamic> data) {
+    return Hooks(
+      beforeAll: data['beforeAll'] ?? '',
+    );
   }
 }
 

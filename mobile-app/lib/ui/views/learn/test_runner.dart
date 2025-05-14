@@ -28,6 +28,7 @@ window.TestRunner = await window.FCCSandbox.createTestRunner({
     contents: combinedCode,
     editableContents: editableRegionContent,
   },
+  hooks
 });
 ''';
 

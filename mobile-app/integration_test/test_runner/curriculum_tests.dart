@@ -116,6 +116,9 @@ void main() {
               'workerType': builder.getWorkerType(challenge.challengeType),
               'combinedCode': await builder.combinedCode(challenge),
               'editableRegionContent': editableRegion,
+              'hooks': {
+                'beforeAll': challenge.hooks.beforeAll,
+              },
             },
           );
 
