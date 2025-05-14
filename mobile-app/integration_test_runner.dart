@@ -107,6 +107,7 @@ brew install applesimutils
       [
         'test',
         '--no-pub',
+        '--reporter=expanded',
         if (isMacOS) ...[
           '-d',
           bootedDeviceId,
@@ -115,13 +116,13 @@ brew install applesimutils
       ],
     );
     process.stdout.transform(utf8.decoder).forEach((line) {
-      if (line.startsWith('TEST FAILED:')) {
+      if (line.contains('TEST FAILED:')) {
         failedTests.add(line);
       }
-      if (line.startsWith('Test(s) passed')) {
+      if (line.contains('Test(s) passed')) {
         passedChallenges++;
       }
-      if (line.startsWith('Test(s) failed')) {
+      if (line.contains('Test(s) failed')) {
         failedChallenges++;
       }
       print(line);
