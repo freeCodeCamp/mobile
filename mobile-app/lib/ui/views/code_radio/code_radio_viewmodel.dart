@@ -63,7 +63,7 @@ class CodeRadioViewModel extends BaseViewModel {
     SharedPreferences prefs = await SharedPreferences.getInstance();
 
     if (prefs.getString('lastSongId') == null) {
-      prefs.setString('lastSongId', radio.nowPlaying.id);
+      await prefs.setString('lastSongId', radio.nowPlaying.id);
     }
 
     if (radio.nowPlaying.id != prefs.getString('lastSongId')) {
@@ -71,7 +71,7 @@ class CodeRadioViewModel extends BaseViewModel {
       if (!stoppedManually) {
         audioService.play();
       }
-      prefs.setString('lastSongId', radio.nowPlaying.id);
+      await prefs.setString('lastSongId', radio.nowPlaying.id);
     }
   }
 

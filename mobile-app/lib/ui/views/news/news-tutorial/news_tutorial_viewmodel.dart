@@ -80,7 +80,7 @@ class NewsTutorialViewModel extends BaseViewModel {
       SharedPreferences prefs = await SharedPreferences.getInstance();
 
       if (prefs.getDouble('position') == null) {
-        prefs.setDouble('position', _scrollController.offset);
+        await prefs.setDouble('position', _scrollController.offset);
       }
 
       double oldScrollPos = prefs.getDouble('position') as double;
@@ -98,9 +98,9 @@ class NewsTutorialViewModel extends BaseViewModel {
           curve: Curves.easeInOut,
         );
       }
-      Timer(const Duration(seconds: 2), () {
+      Timer(const Duration(seconds: 2), () async {
         if (_scrollController.hasClients) {
-          prefs.setDouble('position', _scrollController.offset);
+          await prefs.setDouble('position', _scrollController.offset);
         }
       });
     });
@@ -176,7 +176,7 @@ class NewsTutorialViewModel extends BaseViewModel {
     _scrollController.dispose();
     _bottomButtonController.dispose();
 
-    prefs.remove('position');
+    await prefs.remove('position');
   }
 
   Future<Tutorial> fetchTutorial(tutorialId) async {

@@ -327,7 +327,7 @@ class ChallengeViewModel extends BaseViewModel {
       if (res.statusCode == 200) {
         Challenge challenge = Challenge.fromJson(res.data);
 
-        prefs.setString(url, res.data);
+        await prefs.setString(url, res.data);
 
         return challenge;
       }
@@ -446,8 +446,8 @@ class ChallengeViewModel extends BaseViewModel {
       Challenge? currChallenge = challenge;
 
       for (ChallengeFile file in currChallenge!.files) {
-        prefs.remove('${currChallenge.id}.${file.name}');
-        prefs.remove('${currChallenge.id}${file.name}');
+        await prefs.remove('${currChallenge.id}.${file.name}');
+        await prefs.remove('${currChallenge.id}${file.name}');
       }
 
       var challengeIndex = block!.challengeTiles.indexWhere(
