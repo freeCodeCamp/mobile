@@ -71,10 +71,13 @@ class EnglishView extends StatelessWidget {
                   if (challenge.fillInTheBlank != null)
                     ChallengeCard(
                       title: 'Fill in the Blank',
-                      child: Wrap(
-                        children: model.getFillInBlankWidgets(
-                          challenge,
-                          context,
+                      child: Padding(
+                        padding: const EdgeInsets.all(10.0),
+                        child: Column(
+                          children: model.getFillInBlankWidgets(
+                            challenge,
+                            context,
+                          ),
                         ),
                       ),
                     ),
@@ -82,7 +85,9 @@ class EnglishView extends StatelessWidget {
                       challenge.explanation!.isNotEmpty) ...[
                     ChallengeCard(
                       title: 'Explanation',
-                      child: Explanation(challenge: challenge),
+                      child: Explanation(
+                        explanation: challenge.explanation ?? '',
+                      ),
                     ),
                   ],
                   Row(

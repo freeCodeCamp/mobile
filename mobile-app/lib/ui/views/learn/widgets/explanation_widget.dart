@@ -1,14 +1,13 @@
 import 'package:flutter/material.dart';
-import 'package:freecodecamp/models/learn/challenge_model.dart';
 import 'package:freecodecamp/ui/views/news/html_handler/html_handler.dart';
 
 class Explanation extends StatelessWidget {
   const Explanation({
     super.key,
-    required this.challenge,
+    required this.explanation,
   });
 
-  final Challenge challenge;
+  final String explanation;
 
   @override
   Widget build(BuildContext context) {
@@ -27,7 +26,7 @@ class Explanation extends StatelessWidget {
         borderRadius: BorderRadius.zero,
       ),
       children: [
-        ...parser.parse(challenge.explanation!),
+        ...parser.parse(explanation),
       ],
     );
   }
