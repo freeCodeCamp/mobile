@@ -61,13 +61,6 @@ class EnglishView extends StatelessWidget {
                       ),
                     ),
                   ],
-                  if (model.feedback.isNotEmpty)
-                    ChallengeCard(
-                      title: 'Feedback',
-                      child: Column(
-                        children: parser.parse(model.feedback),
-                      ),
-                    ),
                   if (challenge.fillInTheBlank != null)
                     ChallengeCard(
                       title: 'Fill in the Blank',
@@ -79,6 +72,13 @@ class EnglishView extends StatelessWidget {
                             context,
                           ),
                         ),
+                      ),
+                    ),
+                  if (model.feedback.isNotEmpty)
+                    ChallengeCard(
+                      title: 'Feedback',
+                      child: Column(
+                        children: parser.parse(model.feedback),
                       ),
                     ),
                   if (challenge.explanation != null &&
