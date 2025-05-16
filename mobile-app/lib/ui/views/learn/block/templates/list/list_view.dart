@@ -104,7 +104,7 @@ class BlockListView extends StatelessWidget {
                               ? const Color.fromRGBO(0x00, 0x2e, 0xad, 0.3)
                               : const Color.fromRGBO(0x2a, 0x2a, 0x40, 1),
                           child: Padding(
-                            padding: const EdgeInsets.all(8.0),
+                            padding: const EdgeInsets.all(16.0),
                             child: Text(block.challenges[index].title),
                           ),
                         ),
