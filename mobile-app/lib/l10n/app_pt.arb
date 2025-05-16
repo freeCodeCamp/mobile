@@ -64,10 +64,6 @@
   "@email": {
       "description": "login view"
   },
-  "email_sign_in_code": "Email a sign in code",
-  "@email_sign_in_code": {
-      "description": "login view"
-  },
   "email_enter_sign_in_code": "Enter sign in code",
   "@email_enter_sign_in_code": {
       "description": "login view"

@@ -30,6 +30,7 @@ class CodeRadioViewModel extends BaseViewModel {
     _webSocketChannel.sink.add(jsonEncode({
       'subs': {'station:coderadio': {}}
     }));
+    await _webSocketChannel.ready;
     await _webSocketController.addStream(_webSocketChannel.stream);
   }
 
@@ -62,7 +63,7 @@ class CodeRadioViewModel extends BaseViewModel {
     SharedPreferences prefs = await SharedPreferences.getInstance();
 
     if (prefs.getString('lastSongId') == null) {
-      prefs.setString('lastSongId', radio.nowPlaying.id);
+      await prefs.setString('lastSongId', radio.nowPlaying.id);
     }
 
     if (radio.nowPlaying.id != prefs.getString('lastSongId')) {
@@ -70,7 +71,7 @@ class CodeRadioViewModel extends BaseViewModel {
       if (!stoppedManually) {
         audioService.play();
       }
-      prefs.setString('lastSongId', radio.nowPlaying.id);
+      await prefs.setString('lastSongId', radio.nowPlaying.id);
     }
   }
 

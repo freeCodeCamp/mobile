@@ -8,7 +8,7 @@ import 'package:freecodecamp/ui/widgets/drawer_widget/drawer_widget_view.dart';
 import 'package:stacked/stacked.dart';
 
 class LearnLandingView extends StatelessWidget {
-  const LearnLandingView({Key? key}) : super(key: key);
+  const LearnLandingView({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -177,9 +177,9 @@ class LearnLandingView extends StatelessWidget {
 
 class ContinueLearningButton extends StatelessWidget {
   const ContinueLearningButton({
-    Key? key,
+    super.key,
     required this.model,
-  }) : super(key: key);
+  });
 
   final LearnLandingViewModel model;
 
@@ -234,9 +234,9 @@ class ContinueLearningButton extends StatelessWidget {
 
 class SuperBlockButton extends StatelessWidget {
   const SuperBlockButton({
-    Key? key,
+    super.key,
     required this.button,
-  }) : super(key: key);
+  });
 
   final SuperBlockButtonData button;
 
@@ -304,8 +304,8 @@ class SuperBlockButton extends StatelessWidget {
 
 class QuoteWidget extends StatelessWidget {
   const QuoteWidget({
-    Key? key,
-  }) : super(key: key);
+    super.key,
+  });
 
   @override
   Widget build(BuildContext context) {

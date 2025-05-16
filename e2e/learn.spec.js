@@ -7,7 +7,7 @@ import { expect, test } from "@playwright/test";
 // workspace-root/mobile
 
 import currData from "../../freeCodeCamp/shared/config/curriculum.json";
-import { orderedSuperBlockInfo } from "../../freeCodeCamp/tools/scripts/build/build-external-curricula-data";
+import { orderedSuperBlockInfo } from "../../freeCodeCamp/tools/scripts/build/build-external-curricula-data-v1";
 import { SuperBlocks } from "../../freeCodeCamp/shared/config/curriculum";
 
 // non editor superblocks should be skipped because they are not

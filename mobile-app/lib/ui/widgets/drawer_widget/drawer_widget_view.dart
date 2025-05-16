@@ -11,8 +11,8 @@ import 'package:stacked/stacked.dart';
 
 class DrawerWidgetView extends StatelessWidget {
   const DrawerWidgetView({
-    Key? key,
-  }) : super(key: key);
+    super.key,
+  });
 
   @override
   Widget build(BuildContext context) {

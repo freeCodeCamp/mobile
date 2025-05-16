@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:developer';
 import 'dart:io';
 
@@ -8,6 +9,7 @@ import 'package:freecodecamp/models/podcasts/episodes_model.dart';
 import 'package:freecodecamp/models/podcasts/podcasts_model.dart';
 import 'package:just_audio/just_audio.dart';
 import 'package:path_provider/path_provider.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class AppAudioService {
   static final AppAudioService _appAudioService = AppAudioService._internal();
@@ -38,6 +40,8 @@ class AudioPlayerHandler extends BaseAudioHandler {
 
   String _episodeId = '';
   String _audioType = '';
+
+  StreamSubscription? cacheSub;
 
   String get episodeId => _episodeId;
   set setEpisodeId(String state) {
@@ -74,8 +78,31 @@ class AudioPlayerHandler extends BaseAudioHandler {
   }
 
   @override
+  Future<int> fastForward() async {
+    await _audioPlayer.seek(
+      Duration(seconds: _audioPlayer.position.inSeconds + 30),
+    );
+
+    return _audioPlayer.position.inSeconds;
+  }
+
+  @override
+  Future<int> rewind() async {
+    await _audioPlayer.seek(
+      Duration(seconds: _audioPlayer.position.inSeconds - 10),
+    );
+
+    return _audioPlayer.position.inSeconds;
+  }
+
+  @override
   Future<void> seek(Duration position) async {
     await _audioPlayer.seek(position);
+  }
+
+  @override
+  Future<void> setSpeed(double speed) async {
+    await _audioPlayer.setSpeed(speed);
   }
 
   @override
@@ -86,6 +113,10 @@ class AudioPlayerHandler extends BaseAudioHandler {
 
   Duration? duration() {
     return _audioPlayer.duration;
+  }
+
+  double getSpeed() {
+    return _audioPlayer.speed;
   }
 
   Future<void> loadEpisode(
@@ -122,9 +153,32 @@ class AudioPlayerHandler extends BaseAudioHandler {
         );
       }
       await _audioPlayer.load();
+
+      SharedPreferences prefs = await SharedPreferences.getInstance();
+      int? possibleValue = prefs.getInt('${episode.id}_progress');
+      if (possibleValue != null) {
+        _audioPlayer.seek(Duration(seconds: possibleValue));
+      } else {
+        _audioPlayer.seek(Duration(seconds: 0));
+      }
+
       _audioType = 'episode';
       queue.add([audioMediaItem]);
       mediaItem.add(audioMediaItem);
+
+      if (cacheSub != null) {
+        cacheSub!.cancel();
+      }
+
+      cacheSub = _audioPlayer.positionStream.listen((pos) async {
+        // position stream has an initial value of zero before seeking
+        // to the position that is stored in the cache. Which means
+        // "seconds" needs to be bigger than zero.
+        if (pos.inSeconds > 1) {
+          SharedPreferences prefs = await SharedPreferences.getInstance();
+          await prefs.setInt('${episode.id}_progress', pos.inSeconds);
+        }
+      });
     } catch (e) {
       log('Cannot play audio: $e');
     }
@@ -144,14 +198,10 @@ class AudioPlayerHandler extends BaseAudioHandler {
         title: radio.nextPlaying.title,
         artUri: Uri.parse(radio.nextPlaying.artUrl),
       );
-      await _audioPlayer.setAudioSource(
-        ConcatenatingAudioSource(
-          children: [
-            AudioSource.uri(Uri.parse(radio.listenUrl), tag: currentSong),
-            AudioSource.uri(Uri.parse(radio.listenUrl), tag: nextSong)
-          ],
-        ),
-      );
+      await _audioPlayer.setAudioSources([
+        AudioSource.uri(Uri.parse(radio.listenUrl), tag: currentSong),
+        AudioSource.uri(Uri.parse(radio.listenUrl), tag: nextSong)
+      ]);
       await _audioPlayer.load();
       _audioType = 'coderadio';
       setEpisodeId = '';

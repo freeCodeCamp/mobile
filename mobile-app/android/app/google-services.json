@@ -12,12 +12,7 @@
           "package_name": "org.freecodecamp"
         }
       },
-      "oauth_client": [
-        {
-          "client_id": "363152234407-7si5dsj66c61lohgt73o1fh8kndqchpe.apps.googleusercontent.com",
-          "client_type": 3
-        }
-      ],
+      "oauth_client": [],
       "api_key": [
         {
           "current_key": "AIzaSyCP3yAWau0JJE8BPgsUrbT2K27EJX3z2KE"
@@ -25,19 +20,7 @@
       ],
       "services": {
         "appinvite_service": {
-          "other_platform_oauth_client": [
-            {
-              "client_id": "363152234407-7si5dsj66c61lohgt73o1fh8kndqchpe.apps.googleusercontent.com",
-              "client_type": 3
-            },
-            {
-              "client_id": "363152234407-qb25f7aak3egr8iod13bhsltjgf8viuq.apps.googleusercontent.com",
-              "client_type": 2,
-              "ios_info": {
-                "bundle_id": "org.freecodecamp.ios"
-              }
-            }
-          ]
+          "other_platform_oauth_client": []
         }
       }
     }

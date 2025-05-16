@@ -10,11 +10,11 @@ import 'package:stacked/stacked.dart';
 
 class PythonProjectView extends StatelessWidget {
   const PythonProjectView({
-    Key? key,
+    super.key,
     required this.challenge,
     required this.block,
     required this.challengesCompleted,
-  }) : super(key: key);
+  });
 
   final Challenge challenge;
   final Block block;

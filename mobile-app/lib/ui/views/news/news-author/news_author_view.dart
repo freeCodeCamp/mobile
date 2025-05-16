@@ -3,14 +3,14 @@ import 'package:flutter/material.dart';
 import 'package:freecodecamp/extensions/i18n_extension.dart';
 import 'package:freecodecamp/models/news/tutorial_model.dart';
 import 'package:freecodecamp/ui/views/news/news-author/news_author_viewmodel.dart';
-import 'package:freecodecamp/ui/widgets/tutorial_list_widget.dart';
+import 'package:freecodecamp/ui/views/news/widgets/tutorial_list_widget.dart';
 import 'package:stacked/stacked.dart';
 
 class NewsAuthorView extends StatelessWidget {
   const NewsAuthorView({
-    Key? key,
+    super.key,
     required this.authorSlug,
-  }) : super(key: key);
+  });
 
   final String authorSlug;
 

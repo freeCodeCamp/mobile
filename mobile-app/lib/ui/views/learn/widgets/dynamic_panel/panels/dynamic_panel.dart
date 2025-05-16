@@ -9,14 +9,14 @@ import 'package:phone_ide/phone_ide.dart';
 
 class DynamicPanel extends StatelessWidget {
   const DynamicPanel({
-    Key? key,
+    super.key,
     required this.challenge,
     required this.model,
     required this.panel,
     required this.maxChallenges,
     required this.challengesCompleted,
     required this.editor,
-  }) : super(key: key);
+  });
 
   final Challenge challenge;
   final ChallengeViewModel model;

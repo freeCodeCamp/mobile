@@ -32,7 +32,7 @@ Map<String, int> calculateStreak(FccUserModel user) {
 }
 
 class ProfileView extends StatelessWidget {
-  const ProfileView({Key? key}) : super(key: key);
+  const ProfileView({super.key});
 
   BoxBorder borderPicker(FccUserModel user) {
     if (user.isDonating && user.yearsTopContributor.isNotEmpty) {
@@ -368,13 +368,12 @@ class ProfileView extends StatelessWidget {
 
 class CertificationWidget extends StatelessWidget {
   const CertificationWidget(
-      {Key? key,
+      {super.key,
       required this.user,
       required this.hasModernCert,
       required this.hasLegacyCert,
       required this.currentCerts,
-      required this.legacyCerts})
-      : super(key: key);
+      required this.legacyCerts});
 
   final FccUserModel user;
   final bool hasModernCert;
@@ -497,7 +496,7 @@ class CertificationWidget extends StatelessWidget {
 }
 
 class PortfolioWidget extends StatelessWidget {
-  const PortfolioWidget({Key? key, required this.user}) : super(key: key);
+  const PortfolioWidget({super.key, required this.user});
 
   final FccUserModel user;
 

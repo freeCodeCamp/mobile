@@ -3,10 +3,10 @@ import 'package:freecodecamp/enums/alert_type.dart';
 
 class CustomAlert extends StatelessWidget {
   const CustomAlert({
-    Key? key,
+    super.key,
     required this.text,
     required this.alertType,
-  }) : super(key: key);
+  });
 
   final String text;
   final Alert alertType;
