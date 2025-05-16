@@ -35,19 +35,11 @@ class EnglishViewModel extends BaseViewModel {
   bool _allAssignmentsDone = false;
   bool get allAsignmentsDone => _allAssignmentsDone;
 
-  bool _allInputsFilled = false;
-  bool get allInputsFilled => _allInputsFilled;
-
   final StreamController<Map<String, String>> fills =
       StreamController<Map<String, String>>.broadcast();
 
   set setAssignmentStatus(List<bool> status) {
     _assignmentStatus = status;
-    notifyListeners();
-  }
-
-  set setAllInputsFilled(bool status) {
-    _allInputsFilled = status;
     notifyListeners();
   }
 
