@@ -137,6 +137,7 @@ class MultipleChoiceView extends StatelessWidget {
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
+                        ...parser.parse(challenge.instructions),
                         ...parser.parse(
                           challenge.question!.text,
                         ),
