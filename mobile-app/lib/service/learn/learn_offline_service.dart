@@ -187,11 +187,11 @@ class LearnOfflineService {
           'block': challenge.block
         });
 
-        prefs.setStringList(
+        await prefs.setStringList(
           'storedChallenges',
           downloadObjects.map((e) => jsonEncode(e)).toList(),
         );
-        prefs.setString(challenge.id, jsonEncode(challengeObj));
+        await prefs.setString(challenge.id, jsonEncode(challengeObj));
       }
 
       return Future<String>.value('download completed');
@@ -232,7 +232,7 @@ class LearnOfflineService {
         );
       }
 
-      prefs.setStringList(
+      await prefs.setStringList(
         'storedChallenges',
         challengeObjects.map((e) => jsonEncode(e)).toList(),
       );
@@ -271,7 +271,7 @@ class LearnOfflineService {
       List<String>? storedBlocks = prefs.getStringList('storedBlocks');
 
       if (storedBlocks == null) {
-        prefs.setStringList('storedBlocks', [
+        await prefs.setStringList('storedBlocks', [
           jsonEncode(blockToJson),
         ]);
 
@@ -281,7 +281,7 @@ class LearnOfflineService {
 
         newInfo.add(jsonEncode(blockToJson));
 
-        prefs.setStringList(
+        await prefs.setStringList(
           'storedBlocks',
           newInfo,
         );
@@ -319,9 +319,9 @@ class LearnOfflineService {
             storedBlocks.removeAt(i);
 
             if (storedBlocks.isEmpty) {
-              prefs.setStringList('storedBlocks', []);
+              await prefs.setStringList('storedBlocks', []);
             } else {
-              prefs.setStringList('storedBlocks', [...storedBlocks]);
+              await prefs.setStringList('storedBlocks', [...storedBlocks]);
             }
 
             break;
