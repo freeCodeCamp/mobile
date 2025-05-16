@@ -928,10 +928,10 @@ packages:
     dependency: "direct main"
     description:
       name: graphql
-      sha256: b67471ddb954fd538c5930f989c5072e038a9fc910afc85a8a926a7f9b8c56d3
+      sha256: "735bbbaa4db10d38054932e726d291bdd46e46e0575cd482a74b0615b8622e1c"
       url: "https://pub.dev"
     source: hosted
-    version: "5.2.0"
+    version: "5.2.1"
   graphs:
     dependency: transitive
     description:
