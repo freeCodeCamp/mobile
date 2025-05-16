@@ -1,4 +1,5 @@
 import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:freecodecamp/app/app.locator.dart';
 import 'package:freecodecamp/models/learn/challenge_model.dart';
@@ -22,14 +23,38 @@ class EnglishViewModel extends BaseViewModel {
   Map<String, bool> _inputValuesCorrect = {};
   Map<String, bool> get inputValuesCorrect => _inputValuesCorrect;
 
+  List<bool> _assignmentStatus = [];
+  List<bool> get assignmentStatus => _assignmentStatus;
+
   String _feedback = '';
   String get feedback => _feedback;
 
   bool _allInputsCorrect = false;
   bool get allInputsCorrect => _allInputsCorrect;
 
+  bool _allAssignmentsDone = false;
+  bool get allAsignmentsDone => _allAssignmentsDone;
+
+  bool _allInputsFilled = false;
+  bool get allInputsFilled => _allInputsFilled;
+
   final StreamController<Map<String, String>> fills =
       StreamController<Map<String, String>>.broadcast();
+
+  set setAssignmentStatus(List<bool> status) {
+    _assignmentStatus = status;
+    notifyListeners();
+  }
+
+  set setAllInputsFilled(bool status) {
+    _allInputsFilled = status;
+    notifyListeners();
+  }
+
+  set setAllAssignmentsDone(bool status) {
+    _allAssignmentsDone = status;
+    notifyListeners();
+  }
 
   set setCurrentBlankValues(Map<String, String> value) {
     _currentBlankValues = value;
@@ -52,9 +77,7 @@ class EnglishViewModel extends BaseViewModel {
   }
 
   void initBlankInputStreamListener() {
-    fills.stream.listen((Map<String, String> event) {
-      setCurrentBlankValues = event;
-    });
+    fills.stream.listen((Map<String, String> event) {});
   }
 
   double calculateTextWidth(String text, TextStyle style) {
@@ -63,6 +86,21 @@ class EnglishViewModel extends BaseViewModel {
       textDirection: TextDirection.ltr,
     )..layout();
     return textPainter.size.width;
+  }
+
+  void initChallenge(Challenge challenge) {
+    setAssignmentStatus = List.filled(
+      challenge.assignments?.length ?? 0,
+      false,
+    );
+
+    if (challenge.assignments == null) {
+      setAllAssignmentsDone = true;
+    }
+
+    if (challenge.fillInTheBlank == null) {
+      setAllInputsCorrect = true;
+    }
   }
 
   void checkAnswers(Challenge challenge) {
