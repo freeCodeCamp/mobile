@@ -19,23 +19,24 @@ class ChallengeCard extends StatelessWidget {
         borderRadius: BorderRadius.circular(12.0),
         color: FccColors.gray85,
       ),
-      child: Column(
-        children: [
-          Padding(
-            padding: const EdgeInsets.only(top: 14.0),
-            child: Text(
-              title.toUpperCase(),
-              style: const TextStyle(
-                fontSize: 18,
-                fontWeight: FontWeight.bold,
+      child: Padding(
+        padding: const EdgeInsets.all(8.0),
+        child: Column(
+          children: [
+            Padding(
+              padding: const EdgeInsets.only(top: 14.0, left: 8, right: 8),
+              child: Text(
+                title.toUpperCase(),
+                style: const TextStyle(
+                  fontSize: 18,
+                  fontWeight: FontWeight.bold,
+                ),
+                textAlign: TextAlign.center,
               ),
             ),
-          ),
-          Padding(
-            padding: const EdgeInsets.all(8.0),
-            child: child,
-          )
-        ],
+            child
+          ],
+        ),
       ),
     );
   }
