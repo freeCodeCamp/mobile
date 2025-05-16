@@ -3,6 +3,7 @@ import 'package:freecodecamp/models/learn/challenge_model.dart';
 import 'package:freecodecamp/models/learn/curriculum_model.dart';
 import 'package:freecodecamp/ui/theme/fcc_theme.dart';
 import 'package:freecodecamp/ui/views/learn/challenge/templates/english/english_viewmodel.dart';
+import 'package:freecodecamp/ui/views/learn/widgets/assignment_tile.dart';
 import 'package:freecodecamp/ui/views/learn/widgets/audio/audio_player_view.dart';
 import 'package:freecodecamp/ui/views/learn/widgets/challenge_card.dart';
 import 'package:freecodecamp/ui/views/learn/widgets/explanation_widget.dart';
@@ -23,10 +24,13 @@ class EnglishView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    HTMLParser parser = HTMLParser(context: context);
+    HTMLParser parser = HTMLParser(
+      context: context,
+    );
 
     return ViewModelBuilder<EnglishViewModel>.reactive(
       viewModelBuilder: () => EnglishViewModel(),
+      onViewModelReady: (model) => model.initChallenge(challenge),
       builder: (context, model, child) {
         return PopScope(
           canPop: true,
@@ -53,6 +57,46 @@ class EnglishView extends StatelessWidget {
                       ],
                     ),
                   ),
+                  if (challenge.assignments != null &&
+                      challenge.assignments!.isNotEmpty)
+                    ChallengeCard(
+                      title: 'Assignments',
+                      child: Column(
+                        children: [
+                          for (final (i, assignment)
+                              in challenge.assignments!.indexed)
+                            AssignmentTile(
+                              index: i,
+                              assignment: assignment,
+                              callback: () {
+                                Future.delayed(
+                                  const Duration(seconds: 0),
+                                  () {
+                                    model.setAssignmentStatus = model
+                                        .assignmentStatus
+                                      ..[i] = !model.assignmentStatus[i];
+                                    model.setAllAssignmentsDone = model
+                                        .assignmentStatus
+                                        .every((val) => val);
+                                  },
+                                );
+                              },
+                              selected: model.assignmentStatus[i],
+                            ),
+                          Row(
+                            children: [
+                              Icon(Icons.info_outlined),
+                              Padding(
+                                padding: const EdgeInsets.all(8.0),
+                                child: Text(
+                                  'Asignment videos are unavailable.',
+                                ),
+                              )
+                            ],
+                          )
+                        ],
+                      ),
+                    ),
                   if (challenge.audio != null) ...[
                     ChallengeCard(
                       title: 'Listen to the Audio',
@@ -108,13 +152,20 @@ class EnglishView extends StatelessWidget {
                                 ),
                               ),
                             ),
-                            onPressed: model.allInputsCorrect
-                                ? () => model.learnService.goToNextChallenge(
-                                    block.challenges.length,
-                                    currentChallengeNum,
-                                    challenge,
-                                    block)
-                                : () => {model.checkAnswers(challenge)},
+                            onPressed: model.allInputsCorrect &&
+                                    model.allAsignmentsDone
+                                ? () => {
+                                      model.learnService.goToNextChallenge(
+                                          block.challenges.length,
+                                          currentChallengeNum,
+                                          challenge,
+                                          block),
+                                    }
+                                : challenge.fillInTheBlank != null
+                                    ? () {
+                                        model.checkAnswers(challenge);
+                                      }
+                                    : null,
                             child: Text(
                               model.allInputsCorrect ||
                                       challenge.fillInTheBlank == null
