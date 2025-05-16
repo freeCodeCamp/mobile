@@ -21,6 +21,13 @@ class SuperBlockViewModel extends BaseViewModel {
 
   final _dio = DioService.dio;
 
+  Future<SuperBlock>? superBlockData;
+
+  set setSuperBlockData(value) {
+    superBlockData = value;
+    notifyListeners();
+  }
+
   double getPaddingBetweenBlocks(Block block) {
     if (block.isStepBased) {
       return 3.0;
