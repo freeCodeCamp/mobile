@@ -121,7 +121,7 @@ jobs:
           force-avd-creation: false
           emulator-options: -no-snapshot-save -no-window -gpu swiftshader_indirect -noaudio -no-boot-anim -camera-back none
           disable-animations: true
-          script: cd mobile/mobile-app && if adb shell pm list packages | grep -q org.freecodecamp; then adb uninstall org.freecodecamp; fi && dart integration_test_runner.dart --curriculum
+          script: cd mobile/mobile-app && if adb shell pm list packages | grep -q org.freecodecamp; then adb uninstall org.freecodecamp; fi && dart integration_test_runner.dart --curriculum ${RUNNER_DEBUG:+--debug}
 
       - name: Upload failed tests logs
         if: failure()
