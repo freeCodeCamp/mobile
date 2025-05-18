@@ -55,6 +55,9 @@ class CurriculumTestRunnerState extends State<CurriculumTestRunner> {
                     'workerType': 'frame',
                     'combinedCode': '',
                     'editableRegionContent': '',
+                    'hooks': {
+                      'beforeAll': '',
+                    },
                   },
                 );
                 log('TestRunner: $res');

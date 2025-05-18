@@ -112,7 +112,11 @@ void main() {
           await testController!.callAsyncJavaScript(
             functionBody: ScriptBuilder.runnerScript,
             arguments: {
-              'userCode': await builder.buildUserCode(challenge, Ext.html),
+              'userCode': await builder.buildUserCode(
+                challenge,
+                Ext.html,
+                testing: true,
+              ),
               'workerType': builder.getWorkerType(challenge.challengeType),
               'combinedCode': await builder.combinedCode(challenge),
               'editableRegionContent': editableRegion,

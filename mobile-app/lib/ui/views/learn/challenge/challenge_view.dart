@@ -335,6 +335,9 @@ class ChallengeView extends StatelessWidget {
                             builder.getWorkerType(challenge.challengeType),
                         'combinedCode': '',
                         'editableRegionContent': '',
+                        'hooks': {
+                          'beforeAll': '',
+                        },
                       },
                     );
                     log('TestRunner: $res');

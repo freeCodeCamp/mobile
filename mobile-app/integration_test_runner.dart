@@ -11,9 +11,14 @@ Test summary:
 Total: $total
 Passed: ${total - failed}
 Failed: $failed
-$extraInfo
 ------------------------------------------
 ''');
+
+  if (extraInfo != null) {
+    print('''$extraInfo
+------------------------------------------
+''');
+  }
 }
 
 void main(List<String> args) async {
@@ -21,11 +26,16 @@ void main(List<String> args) async {
 
   bool isMacOS = false;
   bool isCurriculumTest = false;
+  bool isDebug = false;
 
   int errorCount = 0;
   final testResults = [];
 
   late String bootedDeviceId;
+
+  if (args.contains('--debug')) {
+    isDebug = true;
+  }
 
   if (args.contains('--curriculum')) {
     isCurriculumTest = true;
@@ -116,14 +126,17 @@ brew install applesimutils
       ],
     );
     process.stdout.transform(utf8.decoder).forEach((line) {
-      if (line.contains('TEST FAILED:')) {
-        failedTests.add(line);
-      }
       if (line.contains('Test(s) passed')) {
         passedChallenges++;
+        if (!isDebug) {
+          return;
+        }
       }
       if (line.contains('Test(s) failed')) {
         failedChallenges++;
+      }
+      if (line.contains('TEST FAILED:')) {
+        failedTests.add(line);
       }
       print(line);
     });
