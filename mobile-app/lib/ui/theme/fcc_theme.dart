@@ -58,6 +58,7 @@ class FccSemanticColors {
   static const foregroundSuccess = FccColors.green90;
   static const foregroundInfo = FccColors.blue90;
   static const foregroundWarning = FccColors.yellow40;
+  static const foregroundCta = FccColors.gray90;
 
   static const backgroundPrimary = FccColors.gray90;
   static const backgroundSecondary = FccColors.gray85;
@@ -67,6 +68,7 @@ class FccSemanticColors {
   static const backgroundSuccess = FccColors.green40;
   static const backgroundInfo = FccColors.blue30;
   static const backgroundSelection = FccColors.blue30Translucent;
+  static const backgroundCta = FccColors.yellow40;
 }
 
 class FccTheme {
