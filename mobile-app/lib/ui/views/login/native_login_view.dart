@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:freecodecamp/extensions/i18n_extension.dart';
+import 'package:freecodecamp/ui/theme/fcc_theme.dart';
 import 'package:freecodecamp/ui/views/login/native_login_viewmodel.dart';
 import 'package:freecodecamp/ui/widgets/drawer_widget/drawer_widget_view.dart';
 import 'package:stacked/stacked.dart';
@@ -26,6 +27,17 @@ class NativeLoginView extends StatelessWidget {
     TextStyle textStyle = const TextStyle(
       fontSize: 20,
       color: Colors.black,
+    );
+
+    ButtonStyle ctaButtonStyle = ElevatedButton.styleFrom(
+      backgroundColor: FccSemanticColors.backgroundCta,
+      foregroundColor: FccSemanticColors.foregroundCta,
+      disabledBackgroundColor:
+          Color(0xCCFFC300), // backgroundCta with 80% opacity
+      disabledForegroundColor: FccSemanticColors.foregroundCta,
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(0),
+      ),
     );
 
     return ViewModelBuilder<NativeLoginViewModel>.reactive(
@@ -170,7 +182,7 @@ class NativeLoginView extends StatelessWidget {
                           controller: model.otpController,
                           keyboardType: TextInputType.number,
                           decoration: InputDecoration(
-                            hintText: context.t.email_sign_in_code,
+                            hintText: context.t.email_enter_sign_in_code,
                             errorText: model.incorrectOTP
                                 ? context.t.email_invalid_code
                                 : null,
@@ -190,7 +202,7 @@ class NativeLoginView extends StatelessWidget {
                         child: Container(
                           margin: const EdgeInsets.all(16),
                           child: ElevatedButton(
-                            style: buttonStyle.copyWith(
+                            style: ctaButtonStyle.copyWith(
                               padding: const WidgetStatePropertyAll(
                                 EdgeInsets.symmetric(vertical: 8),
                               ),
@@ -202,7 +214,9 @@ class NativeLoginView extends StatelessWidget {
                                 : null,
                             child: Text(
                               'Submit and sign in to freeCodeCamp',
-                              style: textStyle,
+                              style: TextStyle(
+                                fontSize: 20,
+                              ),
                               textAlign: TextAlign.center,
                             ),
                           ),
@@ -214,7 +228,7 @@ class NativeLoginView extends StatelessWidget {
                           margin: const EdgeInsets.all(16),
                           constraints: const BoxConstraints(minHeight: 50),
                           child: ElevatedButton(
-                            style: buttonStyle,
+                            style: ctaButtonStyle,
                             onPressed: model.emailFieldIsValid
                                 ? () {
                                     model.sendOTPtoEmail();
@@ -225,7 +239,9 @@ class NativeLoginView extends StatelessWidget {
                               child: Align(
                                 child: Text(
                                   context.t.email_submit_code,
-                                  style: textStyle,
+                                  style: TextStyle(
+                                    fontSize: 20,
+                                  ),
                                   textAlign: TextAlign.center,
                                 ),
                               ),

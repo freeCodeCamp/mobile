@@ -69,7 +69,7 @@ class BlockViewModel extends BaseViewModel {
     SharedPreferences prefs = await SharedPreferences.getInstance();
 
     if (!prefs.containsKey(blockName)) {
-      prefs.setBool(blockName, true);
+      await prefs.setBool(blockName, true);
     }
 
     setBlockOpenState(blockName, prefs.getBool(blockName) ?? false);
@@ -77,7 +77,7 @@ class BlockViewModel extends BaseViewModel {
 
   void setBlockOpenState(String blockName, bool value) async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
-    prefs.setBool(blockName, !value);
+    await prefs.setBool(blockName, !value);
     _isOpen = !value;
     notifyListeners();
   }

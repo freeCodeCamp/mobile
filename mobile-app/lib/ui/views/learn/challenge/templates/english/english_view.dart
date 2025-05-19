@@ -47,6 +47,10 @@ class EnglishView extends StatelessWidget {
                     child: Column(
                       children: [
                         ...parser.parse(
+                          challenge.instructions,
+                          fontColor: FccColors.gray05,
+                        ),
+                        ...parser.parse(
                           challenge.description,
                           fontColor: FccColors.gray05,
                         ),
@@ -61,6 +65,19 @@ class EnglishView extends StatelessWidget {
                       ),
                     ),
                   ],
+                  if (challenge.fillInTheBlank != null)
+                    ChallengeCard(
+                      title: 'Fill in the Blank',
+                      child: Padding(
+                        padding: const EdgeInsets.all(10.0),
+                        child: Column(
+                          children: model.getFillInBlankWidgets(
+                            challenge,
+                            context,
+                          ),
+                        ),
+                      ),
+                    ),
                   if (model.feedback.isNotEmpty)
                     ChallengeCard(
                       title: 'Feedback',
@@ -68,21 +85,13 @@ class EnglishView extends StatelessWidget {
                         children: parser.parse(model.feedback),
                       ),
                     ),
-                  if (challenge.fillInTheBlank != null)
-                    ChallengeCard(
-                      title: 'Fill in the Blank',
-                      child: Wrap(
-                        children: model.getFillInBlankWidgets(
-                          challenge,
-                          context,
-                        ),
-                      ),
-                    ),
                   if (challenge.explanation != null &&
                       challenge.explanation!.isNotEmpty) ...[
                     ChallengeCard(
                       title: 'Explanation',
-                      child: Explanation(challenge: challenge),
+                      child: Explanation(
+                        explanation: challenge.explanation ?? '',
+                      ),
                     ),
                   ],
                   Row(

@@ -10,32 +10,36 @@ void main() {
   LearnFileService service = LearnFileService();
 
   Challenge challenge = Challenge(
-      id: '1',
-      block: 'basic html',
-      title: 'hello-world',
-      description: 'this is the description',
-      instructions: 'make your first header',
-      dashedName: 'hello-world',
-      superBlock: '2022/responsive-web-design',
-      challengeType: 1,
-      helpCategory: HelpCategory.htmlCss,
-      tests: [],
-      files: [
-        ChallengeFile(
-            ext: Ext.html,
-            name: 'index',
-            editableRegionBoundaries: [],
-            contents: 'this is the html file content',
-            history: [],
-            fileKey: 'index.html'),
-        ChallengeFile(
-            ext: Ext.css,
-            name: 'styles',
-            editableRegionBoundaries: [1, 5],
-            contents: 'this is the css file content',
-            history: [],
-            fileKey: 'styles.css')
-      ]);
+    id: '1',
+    block: 'basic html',
+    title: 'hello-world',
+    description: 'this is the description',
+    instructions: 'make your first header',
+    dashedName: 'hello-world',
+    superBlock: '2022/responsive-web-design',
+    challengeType: 1,
+    helpCategory: HelpCategory.htmlCss,
+    tests: [],
+    hooks: Hooks(beforeAll: ''),
+    files: [
+      ChallengeFile(
+        ext: Ext.html,
+        name: 'index',
+        editableRegionBoundaries: [],
+        contents: 'this is the html file content',
+        history: [],
+        fileKey: 'index.html',
+      ),
+      ChallengeFile(
+        ext: Ext.css,
+        name: 'styles',
+        editableRegionBoundaries: [1, 5],
+        contents: 'this is the css file content',
+        history: [],
+        fileKey: 'styles.css',
+      )
+    ],
+  );
 
   group('getExactFileFromCache function', () {
     testWidgets(

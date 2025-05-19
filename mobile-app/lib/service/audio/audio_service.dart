@@ -176,7 +176,7 @@ class AudioPlayerHandler extends BaseAudioHandler {
         // "seconds" needs to be bigger than zero.
         if (pos.inSeconds > 1) {
           SharedPreferences prefs = await SharedPreferences.getInstance();
-          prefs.setInt('${episode.id}_progress', pos.inSeconds);
+          await prefs.setInt('${episode.id}_progress', pos.inSeconds);
         }
       });
     } catch (e) {

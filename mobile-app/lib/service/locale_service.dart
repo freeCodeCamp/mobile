@@ -27,8 +27,9 @@ class LocaleService {
   Stream<Locale> get localeStream => _localeController.stream;
   final _localeController = StreamController<Locale>.broadcast();
 
-  void changeLocale(String locale, {isLocaleCode = false}) {
+  void changeLocale(String locale, {isLocaleCode = false}) async {
     int localeIndex = 0;
+    final SharedPreferences prefs = await SharedPreferences.getInstance();
 
     if (!isLocaleCode) {
       localeIndex = localeNames.indexWhere((element) {
@@ -48,12 +49,10 @@ class LocaleService {
       languageCode: isLocaleCode ? locale : locales[localeIndex].languageCode,
     );
 
-    SharedPreferences.getInstance().then((prefs) {
-      prefs.setString(
-        'locale',
-        isLocaleCode ? locale : locales[localeIndex].languageCode,
-      );
-    });
+    await prefs.setString(
+      'locale',
+      isLocaleCode ? locale : locales[localeIndex].languageCode,
+    );
 
     _localeController.sink.add(this.locale);
   }

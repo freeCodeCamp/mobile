@@ -37,7 +37,7 @@ class LearnService {
 
   void setLastVisitedChallenge(String url, Block block) async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
-    prefs.setStringList('lastVisitedChallenge', [
+    await prefs.setStringList('lastVisitedChallenge', [
       url,
       block.superBlock.dashedName,
       block.superBlock.name,
