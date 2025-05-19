@@ -48,10 +48,6 @@ return testRes;
       testing: testing,
     );
 
-    firstHTMlfile = fileService.removeExcessiveScriptsInHTMLdocument(
-      firstHTMlfile,
-    );
-
     String parsedWithStyleTags = await fileService.parseCssDocmentsAsStyleTags(
       challenge,
       firstHTMlfile,

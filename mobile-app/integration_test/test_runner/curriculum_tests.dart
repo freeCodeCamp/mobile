@@ -5,7 +5,6 @@ import 'dart:convert';
 import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:freecodecamp/app/app.locator.dart';
-import 'package:freecodecamp/enums/ext_type.dart';
 import 'package:freecodecamp/models/learn/challenge_model.dart';
 import 'package:freecodecamp/service/learn/learn_file_service.dart';
 import 'package:freecodecamp/ui/views/learn/test_runner.dart';
@@ -101,8 +100,14 @@ void main() {
           }
 
           final LearnFileService fileService = locator<LearnFileService>();
+
+          ChallengeFile currentFile =
+              await fileService.getCurrentEditedFileFromCache(
+            challenge,
+          );
+
           String editableRegion = getLines(
-            await fileService.getCurrentEditedFileFromCache(challenge),
+            currentFile.contents,
             challenge.files[0].editableRegionBoundaries,
           );
 
@@ -114,7 +119,7 @@ void main() {
             arguments: {
               'userCode': await builder.buildUserCode(
                 challenge,
-                Ext.html,
+                currentFile.ext,
                 testing: true,
               ),
               'workerType': builder.getWorkerType(challenge.challengeType),
