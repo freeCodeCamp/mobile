@@ -37,7 +37,7 @@
     "@types/node": "22.15.19",
     "@typescript-eslint/eslint-plugin": "7.18.0",
     "@typescript-eslint/parser": "7.18.0",
-    "eslint": "8.57.0",
+    "eslint": "9.27.0",
     "eslint-config-prettier": "9.1.0",
     "nodemon": "3.1.10",
     "prettier": "3.5.3",
