@@ -1300,10 +1300,9 @@ packages:
   phone_ide:
     dependency: "direct main"
     description:
-      name: phone_ide
-      sha256: "6c9b69acd1ac46318c0a3a660abce936cf979d41a485109f2baf2697b42cea7e"
-      url: "https://pub.dev"
-    source: hosted
+      path: "../../phoneide"
+      relative: true
+    source: path
     version: "1.5.1"
   photo_view:
     dependency: "direct main"

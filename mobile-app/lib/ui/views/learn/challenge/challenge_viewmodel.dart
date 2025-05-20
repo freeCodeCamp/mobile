@@ -268,20 +268,7 @@ class ChallengeViewModel extends BaseViewModel {
         challenge,
         currFile,
       );
-      editor.fileTextStream.sink.add(
-        FileIDE(
-          id: challenge.id + currFile.name,
-          ext: currFile.ext.name,
-          name: currFile.name,
-          content: fileContents,
-          hasRegion: hasRegion,
-          region: EditorRegionOptions(
-            start: hasRegion ? currFile.editableRegionBoundaries[0] : null,
-            end: hasRegion ? currFile.editableRegionBoundaries[1] : null,
-            condition: completedChallenge,
-          ),
-        ),
-      );
+
       _mounted = true;
 
       if (currFile.name != currentSelectedFile) {

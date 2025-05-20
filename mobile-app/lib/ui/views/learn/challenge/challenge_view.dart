@@ -47,11 +47,17 @@ class ChallengeView extends StatelessWidget {
         bool editableRegion = currFile.editableRegionBoundaries.isNotEmpty;
         EditorOptions options = EditorOptions(
           hasRegion: editableRegion,
+          regionOptions: EditorRegionOptions(
+            start: currFile.editableRegionBoundaries[0],
+            end: currFile.editableRegionBoundaries[1],
+          ),
           fontFamily: 'Hack',
         );
 
         Editor editor = Editor(
-          language: currFile.ext.name.toUpperCase(),
+          defaultLanguage: 'html',
+          defaultValue: currFile.contents,
+          path: '/${challenge.id}/${currFile.name}',
           options: options,
         );
 
@@ -257,22 +263,7 @@ class ChallengeView extends StatelessWidget {
               challenge,
               currFile,
             );
-            bool hasRegion = currFile.editableRegionBoundaries.isNotEmpty;
-
-            editor.fileTextStream.sink.add(
-              FileIDE(
-                id: challenge.id + currFile.name,
-                ext: currFile.ext.name.toUpperCase(),
-                name: currFile.name,
-                content: currText == '' ? currFile.contents : currText,
-                hasRegion: currFile.editableRegionBoundaries.isNotEmpty,
-                region: EditorRegionOptions(
-                  start:
-                      hasRegion ? currFile.editableRegionBoundaries[0] : null,
-                  end: hasRegion ? currFile.editableRegionBoundaries[1] : null,
-                ),
-              ),
-            );
+            //bool hasRegion = currFile.editableRegionBoundaries.isNotEmpty;
 
             model.setEditorText = currText == '' ? currFile.contents : currText;
             model.setShowPreview = false;
@@ -406,21 +397,6 @@ class ChallengeView extends StatelessWidget {
 
                     model.setMounted = false;
 
-                    editor.fileTextStream.sink.add(FileIDE(
-                      id: challenge.id + currFile.name,
-                      ext: currFile.ext.name.toUpperCase(),
-                      name: currFile.name,
-                      content: currText == '' ? currFile.contents : currText,
-                      hasRegion: currFile.editableRegionBoundaries.isNotEmpty,
-                      region: EditorRegionOptions(
-                        start: currFile.editableRegionBoundaries.isNotEmpty
-                            ? currFile.editableRegionBoundaries[0]
-                            : null,
-                        end: currFile.editableRegionBoundaries.isNotEmpty
-                            ? currFile.editableRegionBoundaries[1]
-                            : null,
-                      ),
-                    ));
                     model.setEditorText =
                         currText == '' ? currFile.contents : currText;
                     model.setShowPreview = !model.showPreview;
