@@ -22,13 +22,16 @@ class SuperBlockView extends StatelessWidget {
   Widget build(BuildContext context) {
     return ViewModelBuilder<SuperBlockViewModel>.reactive(
       viewModelBuilder: () => SuperBlockViewModel(),
-      onViewModelReady: (model) => {
-        AuthenticationService.staticIsloggedIn ? model.auth.fetchUser() : null,
+      onViewModelReady: (model) {
+        if (AuthenticationService.staticIsloggedIn) {
+          model.auth.fetchUser();
+        }
+
         model.setSuperBlockData = model.getSuperBlockData(
           superBlockDashedName,
           superBlockName,
           hasInternet,
-        )
+        );
       },
       builder: (context, model, child) => Scaffold(
         appBar: AppBar(

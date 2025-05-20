@@ -65,6 +65,7 @@ class Challenge {
   // English Challenges
   final FillInTheBlank? fillInTheBlank;
   final EnglishAudio? audio;
+  final Scene? scene;
 
   // Challenge Type 11 - Video
   // TODO: Renamed to questions and its an array of questions
@@ -91,6 +92,7 @@ class Challenge {
     this.assignments,
     this.fillInTheBlank,
     this.audio,
+    this.scene,
     required this.hooks,
   });
 
@@ -125,6 +127,7 @@ class Challenge {
       assignments: data['assignments'] != null
           ? (data['assignments'] as List).cast<String>()
           : null,
+      scene: data['scene'] != null ? Scene.fromJson(data['scene']) : null,
       hooks: Hooks.fromJson(
         data['hooks'] ?? {'beforeAll': ''},
       ),
@@ -315,6 +318,146 @@ class Blank {
     return Blank(
       answer: data['answer'],
       feedback: data['feedback'] ?? '',
+    );
+  }
+}
+
+class Scene {
+  final SceneSetup setup;
+  final List<SceneCommand> commands;
+
+  const Scene({
+    required this.setup,
+    required this.commands,
+  });
+
+  factory Scene.fromJson(Map<String, dynamic> data) {
+    return Scene(
+      setup: SceneSetup.fromJson(data['setup']),
+      commands: data['commands']
+          .map<SceneCommand>(
+            (command) => SceneCommand.fromjson(command),
+          )
+          .toList(),
+    );
+  }
+}
+
+class SceneSetup {
+  final String background;
+  final bool? alwaysShowDialogue;
+  final EnglishAudio audio;
+  final List<SceneCharacter> characters;
+
+  const SceneSetup({
+    required this.background,
+    required this.audio,
+    required this.characters,
+    this.alwaysShowDialogue,
+  });
+
+  factory SceneSetup.fromJson(Map<String, dynamic> data) {
+    return SceneSetup(
+      background: data['background'],
+      audio: EnglishAudio.fromJson(data['audio']),
+      characters: data['characters']
+          .map<SceneCharacter>(
+            (character) => SceneCharacter.fromJson(character),
+          )
+          .toList(),
+    );
+  }
+}
+
+class SceneCommand {
+  final String? background;
+  final String character;
+  final SceneCharacterPosition? position;
+  final num? opacity;
+  final num startTime;
+  final num? finishTime;
+  final SceneDialogue? dialogue;
+
+  const SceneCommand({
+    this.background,
+    required this.character,
+    this.position,
+    this.opacity,
+    required this.startTime,
+    this.finishTime,
+    this.dialogue,
+  });
+
+  factory SceneCommand.fromjson(Map<String, dynamic> data) {
+    return SceneCommand(
+      background: data['background'],
+      character: data['character'],
+      position: data['position'] != null
+          ? SceneCharacterPosition.fromJson(data['position'])
+          : null,
+      opacity: data['opacity'],
+      startTime: data['startTime'],
+      finishTime: data['finishTime'],
+      dialogue: data['dialogue'] != null
+          ? SceneDialogue.fromJson(
+              data['dialogue'],
+            )
+          : null,
+    );
+  }
+}
+
+class SceneCharacter {
+  final String character;
+  final num opacity;
+  final SceneCharacterPosition position;
+
+  const SceneCharacter({
+    required this.character,
+    required this.opacity,
+    required this.position,
+  });
+
+  factory SceneCharacter.fromJson(Map<String, dynamic> data) {
+    return SceneCharacter(
+      character: data['character'],
+      opacity: data['opacity'],
+      position: SceneCharacterPosition.fromJson(
+        data['position'],
+      ),
+    );
+  }
+}
+
+class SceneCharacterPosition {
+  final num x;
+  final num y;
+  final num z;
+
+  const SceneCharacterPosition({
+    required this.x,
+    required this.y,
+    required this.z,
+  });
+
+  factory SceneCharacterPosition.fromJson(Map<String, dynamic> data) {
+    return SceneCharacterPosition(x: data['x'], y: data['y'], z: data['z']);
+  }
+}
+
+class SceneDialogue {
+  final String text;
+  final String align;
+
+  const SceneDialogue({
+    required this.text,
+    required this.align,
+  });
+
+  factory SceneDialogue.fromJson(Map<String, dynamic> data) {
+    return SceneDialogue(
+      text: data['text'],
+      align: data['align'],
     );
   }
 }

@@ -26,13 +26,13 @@ class SuperBlockViewModel extends BaseViewModel {
   Future<SuperBlock>? _superBlockData;
   Future<SuperBlock>? get superBlockData => _superBlockData;
 
-  set blockOpenStates(Map<String, bool> openStates) {
-    _blockOpenStates = openStates;
+  set setSuperBlockData(Future<SuperBlock>? superBlockData) {
+    _superBlockData = superBlockData;
     notifyListeners();
   }
 
-  set setSuperBlockData(Future<SuperBlock>? superBlockData) {
-    _superBlockData = superBlockData;
+  set blockOpenStates(Map<String, bool> openStates) {
+    _blockOpenStates = openStates;
     notifyListeners();
   }
 

@@ -47,6 +47,10 @@ class EnglishView extends StatelessWidget {
                     child: Column(
                       children: [
                         ...parser.parse(
+                          challenge.instructions,
+                          fontColor: FccColors.gray05,
+                        ),
+                        ...parser.parse(
                           challenge.description,
                           fontColor: FccColors.gray05,
                         ),

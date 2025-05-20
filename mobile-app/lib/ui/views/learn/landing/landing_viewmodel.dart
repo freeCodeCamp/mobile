@@ -60,7 +60,7 @@ class LearnLandingViewModel extends BaseViewModel {
     retrieveNewQuote();
     initLoggedInListener();
 
-    setSuperBlockButtons = getSuperBlocks();
+    setSuperBlockButtons = requestSuperBlocks();
 
     retrieveLastVisitedChallenge();
   }
@@ -138,15 +138,8 @@ class LearnLandingViewModel extends BaseViewModel {
     }
   }
 
-  Future<List<SuperBlockButtonData>> getSuperBlocks() async {
-    return await _learnOfflineService.hasInternet()
-        ? requestSuperBlocks()
-        : _learnOfflineService.getCachedSuperblocks();
-  }
-
   void refresh() async {
-    setSuperBlockButtons = getSuperBlocks();
-
+    setSuperBlockButtons = requestSuperBlocks();
     notifyListeners();
   }
 
