@@ -85,6 +85,14 @@ class ChallengeTemplateView extends StatelessWidget {
               }
             }
 
+            if (snapshot.hasError) {
+              return Center(
+                child: Text(
+                  'Error: ${snapshot.error}\n${snapshot.stackTrace}',
+                ),
+              );
+            }
+
             return const Center(
               child: CircularProgressIndicator(),
             );
