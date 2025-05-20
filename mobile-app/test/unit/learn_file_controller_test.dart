@@ -73,9 +73,8 @@ void main() {
     testWidgets('it should get the file with the editable region',
         (tester) async {
       SharedPreferences.setMockInitialValues({});
-      String value = await service
-          .getCurrentEditedFileFromCache(challenge)
-          .then((val) => val.contents);
+      String value =
+          (await service.getCurrentEditedFileFromCache(challenge)).contents;
 
       expect(value, 'this is the css file content');
     });
@@ -86,9 +85,8 @@ void main() {
       Challenge newChallenge = challenge;
       newChallenge.files[1].editableRegionBoundaries = [];
 
-      String value = await service
-          .getCurrentEditedFileFromCache(newChallenge)
-          .then((val) => val.contents);
+      String value =
+          (await service.getCurrentEditedFileFromCache(newChallenge)).contents;
 
       expect(value, 'this is the html file content');
     });
