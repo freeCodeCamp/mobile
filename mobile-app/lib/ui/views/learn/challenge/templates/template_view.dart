@@ -41,6 +41,7 @@ class ChallengeTemplateView extends StatelessWidget {
               switch (challengeType) {
                 case 0:
                 case 14:
+                case 20:
                   return ChallengeView(
                     challenge: challenge,
                     block: block,
@@ -82,6 +83,14 @@ class ChallengeTemplateView extends StatelessWidget {
                     ),
                   );
               }
+            }
+
+            if (snapshot.hasError) {
+              return Center(
+                child: Text(
+                  'Error: ${snapshot.error}\n${snapshot.stackTrace}',
+                ),
+              );
             }
 
             return const Center(

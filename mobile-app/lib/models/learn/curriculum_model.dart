@@ -73,12 +73,23 @@ class SuperBlock {
   }
 }
 
+enum BlockType { lecture, workshop, lab, review, quiz, exam, legacy }
+
+enum BlockLayout {
+  challengeList,
+  challengeGrid,
+  challengeDialogue,
+  challengeLink,
+  project,
+}
+
 class Block {
   final String name;
   final String dashedName;
   final SuperBlock superBlock;
+  final BlockLayout layout;
+  final BlockType type;
   final List description;
-  final bool isStepBased;
   // Blocks in chapter-based super blocks don't have `order`.
   final int? order;
 
@@ -87,24 +98,15 @@ class Block {
 
   Block({
     required this.superBlock,
+    required this.layout,
+    required this.type,
     required this.name,
     required this.dashedName,
     required this.description,
-    required this.isStepBased,
     required this.challenges,
     required this.challengeTiles,
     this.order,
   });
-
-  static bool checkIfStepBased(String superblock) {
-    List<String> stepbased = [
-      '2022/responsive-web-design',
-      'a2-english-for-developers',
-      'b1-english-for-developers'
-    ];
-
-    return stepbased.contains(superblock);
-  }
 
   factory Block.fromJson(
     Map<String, dynamic> data,
@@ -118,18 +120,36 @@ class Block {
 
     data['challengeTiles'] = [];
 
+    BlockLayout handleLayout(String? layout) {
+      switch (layout) {
+        case 'project-list':
+        case 'challenge-list':
+        case 'legacy-challenge-list':
+          return BlockLayout.challengeList;
+        case 'dialogue-grid':
+          return BlockLayout.challengeDialogue;
+        case 'challenge-grid':
+        case 'legacy-challenge-grid':
+          return BlockLayout.challengeGrid;
+        case 'link':
+        case 'legacy-link':
+          return BlockLayout.challengeLink;
+        default:
+          return BlockLayout.challengeGrid;
+      }
+    }
+
     return Block(
       superBlock: SuperBlock(
         dashedName: superBlockDashedName,
         name: superBlockName,
       ),
+      layout: handleLayout(data['blockLayout']),
+      type: BlockType.legacy,
       name: data['name'],
       dashedName: dashedName,
       description: description,
       order: data['order'],
-      isStepBased: checkIfStepBased(
-        superBlockDashedName,
-      ),
       challenges: (data['challengeOrder'] as List)
           .map<ChallengeOrder>(
             (dynamic challenge) => ChallengeOrder(
@@ -152,22 +172,6 @@ class Block {
           )
           .toList(),
     );
-  }
-
-  static Map<String, dynamic> toCachedObject(Block block) {
-    return {
-      'superBlock': {
-        'dashedName': block.superBlock.dashedName,
-        'name': block.superBlock.name,
-      },
-      'name': block.name,
-      'dashedName': block.dashedName,
-      'description': block.description,
-      'order': block.order,
-      'isStepBased': block.isStepBased,
-      'challengeOrder': block.challenges,
-      'challengeTiles': block.challenges,
-    };
   }
 }
 
