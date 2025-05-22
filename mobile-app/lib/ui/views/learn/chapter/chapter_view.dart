@@ -1,0 +1,159 @@
+import 'package:flutter/material.dart';
+import 'package:freecodecamp/models/learn/curriculum_model.dart';
+import 'package:freecodecamp/ui/theme/fcc_theme.dart';
+import 'package:freecodecamp/ui/views/learn/chapter/chapter_viewmodel.dart';
+import 'package:stacked/stacked.dart';
+
+class ChapterView extends StatelessWidget {
+  const ChapterView({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return ViewModelBuilder<ChapterViewModel>.reactive(
+      viewModelBuilder: () => ChapterViewModel(),
+      onViewModelReady: (model) => model.init(),
+      builder: (context, model, child) {
+        return Scaffold(
+          backgroundColor: FccColors.gray90,
+          appBar: AppBar(
+            title: Text('Chapters'),
+          ),
+          body: FutureBuilder(
+            future: model.superBlock,
+            builder: (context, snapshot) {
+              if (snapshot.hasData) {
+                SuperBlock superBlock = snapshot.data as SuperBlock;
+                List<Chapter> chapters = superBlock.chapters as List<Chapter>;
+
+                return ListView(
+                  shrinkWrap: true,
+                  children: [
+                    Column(
+                      children: [
+                        ...[
+                          for (Chapter chapter in chapters)
+                            chapterBlock(chapter, context)
+                        ]
+                      ],
+                    ),
+                  ],
+                );
+              }
+
+              return Center(
+                child: CircularProgressIndicator(),
+              );
+            },
+          ),
+        );
+      },
+    );
+  }
+
+  Widget chapterBlock(Chapter chapter, BuildContext context) {
+    return Container(
+      padding: EdgeInsets.all(16),
+      margin: EdgeInsets.symmetric(vertical: 8, horizontal: 8),
+      decoration: BoxDecoration(
+          color: const Color.fromRGBO(0x1b, 0x1b, 0x32, 1),
+          borderRadius: BorderRadius.all(Radius.circular(10))),
+      child: Row(
+        children: [
+          Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: Text(
+                  'Chapter Name',
+                  style: TextStyle(
+                    fontSize: 28,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+              ),
+              Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: Text(
+                  'Step 0/89 complete',
+                  style: TextStyle(
+                    color: FccColors.gray15,
+                    fontSize: 20,
+                  ),
+                ),
+              ),
+              for (Module module in chapter.modules as List<Module>)
+                Container(
+                  margin: const EdgeInsets.all(5),
+                  constraints: BoxConstraints(minHeight: 100, maxHeight: 200),
+                  width: MediaQuery.of(context).size.width * 0.85,
+                  child: TextButton(
+                    style: ButtonStyle(
+                      padding: WidgetStatePropertyAll<EdgeInsetsGeometry>(
+                        EdgeInsets.all(12),
+                      ),
+                      alignment: Alignment.centerLeft,
+                      shape: WidgetStatePropertyAll<RoundedRectangleBorder>(
+                        RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(10.0),
+                          side: BorderSide(
+                            color: FccColors.gray75,
+                            width: 2,
+                          ),
+                        ),
+                      ),
+                      backgroundColor:
+                          WidgetStatePropertyAll<Color>(FccColors.gray80),
+                    ),
+                    onPressed: () {},
+                    child: Row(
+                      children: [
+                        Expanded(
+                          flex: 2,
+                          child: Column(
+                            mainAxisSize: MainAxisSize.min,
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              Text(
+                                module.dashedName,
+                                style: TextStyle(
+                                  fontSize: 21,
+                                  fontWeight: FontWeight.bold,
+                                ),
+                              ),
+                              Text(
+                                'Step 0/89 complete',
+                                style: TextStyle(
+                                  color: FccColors.gray15,
+                                  fontSize: 20,
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                        Expanded(
+                          flex: 1,
+                          child: Column(
+                            mainAxisSize: MainAxisSize.min,
+                            crossAxisAlignment: CrossAxisAlignment.end,
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              const Icon(
+                                Icons.arrow_forward_ios_outlined,
+                                size: 25,
+                              )
+                            ],
+                          ),
+                        )
+                      ],
+                    ),
+                  ),
+                )
+            ],
+          ),
+        ],
+      ),
+    );
+  }
+}

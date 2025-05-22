@@ -61,18 +61,12 @@ class LearnLandingView extends StatelessWidget {
                         fontWeight: FontWeight.bold,
                       ),
                     ),
-                    FutureBuilder(
-                      future: model.fullStackButton,
-                      builder: (context, snapshot) {
-                        if (snapshot.hasData) {
-                          SuperBlockButtonData btn =
-                              snapshot.data as SuperBlockButtonData;
-
-                          return SuperBlockButton(button: btn);
-                        }
-
-                        return Container();
-                      },
+                    SuperBlockButton(
+                      button: SuperBlockButtonData(
+                        path: 'full-stack-developer',
+                        name: 'Certified Full Stack Developer Curriculum',
+                        public: true,
+                      ),
                     ),
                     Text(
                       'Our archived coursework:',

@@ -39,8 +39,6 @@ class LearnLandingViewModel extends BaseViewModel {
   Future<List<SuperBlockButtonData>>? superBlockButtons;
   final _dio = DioService.dio;
 
-  Future<SuperBlockButtonData>? fullStackButton;
-
   bool _hasLastVisitedChallenge = false;
   bool get hasLastVisitedChallenge => _hasLastVisitedChallenge;
 
@@ -49,11 +47,6 @@ class LearnLandingViewModel extends BaseViewModel {
 
   set setSuperBlockButtons(value) {
     superBlockButtons = value;
-    notifyListeners();
-  }
-
-  set setFullStackButton(value) {
-    fullStackButton = value;
     notifyListeners();
   }
 
@@ -68,13 +61,6 @@ class LearnLandingViewModel extends BaseViewModel {
     initLoggedInListener();
 
     setSuperBlockButtons = requestSuperBlocks();
-    setFullStackButton = Future.value(
-      SuperBlockButtonData(
-        path: 'full-stack-developer',
-        name: 'Certified Full Stack Developer Curriculum',
-        public: true,
-      ),
-    );
   }
 
   void retrieveLastVisitedChallenge() async {
@@ -150,20 +136,6 @@ class LearnLandingViewModel extends BaseViewModel {
     }
   }
 
-  Future requestChapters() async {
-    String baseUrl = LearnService.baseUrlV2;
-
-    final Response res = await _dio.get('$baseUrl/full-stack-developer.json');
-
-    if (res.statusCode == 200) {
-      return SuperBlock.fromJson(
-        res.data,
-        'full-stack-developer',
-        'Certified Full Stack Developer Curriculum',
-      );
-    }
-  }
-
   void refresh() async {
     setSuperBlockButtons = requestSuperBlocks();
     notifyListeners();
@@ -221,14 +193,18 @@ class LearnLandingViewModel extends BaseViewModel {
   }
 
   void routeToSuperBlock(String dashedName, String name) async {
-    _navigationService.navigateTo(
-      Routes.superBlockView,
-      arguments: SuperBlockViewArguments(
-        superBlockDashedName: dashedName,
-        superBlockName: name,
-        hasInternet: await learnOfflineService.hasInternet(),
-      ),
-    );
+    if (dashedName == 'full-stack-developer') {
+      _navigationService.navigateTo(Routes.chapterView);
+    } else {
+      _navigationService.navigateTo(
+        Routes.superBlockView,
+        arguments: SuperBlockViewArguments(
+          superBlockDashedName: dashedName,
+          superBlockName: name,
+          hasInternet: await learnOfflineService.hasInternet(),
+        ),
+      );
+    }
   }
 
   void goBack() {
