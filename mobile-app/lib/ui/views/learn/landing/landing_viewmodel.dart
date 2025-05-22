@@ -39,6 +39,8 @@ class LearnLandingViewModel extends BaseViewModel {
   Future<List<SuperBlockButtonData>>? superBlockButtons;
   final _dio = DioService.dio;
 
+  Future<SuperBlockButtonData>? fullStackButton;
+
   bool _hasLastVisitedChallenge = false;
   bool get hasLastVisitedChallenge => _hasLastVisitedChallenge;
 
@@ -47,6 +49,11 @@ class LearnLandingViewModel extends BaseViewModel {
 
   set setSuperBlockButtons(value) {
     superBlockButtons = value;
+    notifyListeners();
+  }
+
+  set setFullStackButton(value) {
+    fullStackButton = value;
     notifyListeners();
   }
 
@@ -60,9 +67,11 @@ class LearnLandingViewModel extends BaseViewModel {
     retrieveNewQuote();
     initLoggedInListener();
 
-    setSuperBlockButtons = requestSuperBlocks();
-
-    retrieveLastVisitedChallenge();
+    final result = await requestSuperBlocks();
+    if (result != null) {
+      setSuperBlockButtons = result.$1;
+      setFullStackButton = result.$2;
+    }
   }
 
   void retrieveLastVisitedChallenge() async {
@@ -138,6 +147,20 @@ class LearnLandingViewModel extends BaseViewModel {
     }
   }
 
+  Future requestChapters() async {
+    String baseUrl = LearnService.baseUrlV2;
+
+    final Response res = await _dio.get('$baseUrl/full-stack-developer.json');
+
+    if (res.statusCode == 200) {
+      return SuperBlock.fromJson(
+        res.data,
+        'full-stack-developer',
+        'Certified Full Stack Developer Curriculum',
+      );
+    }
+  }
+
   void refresh() async {
     setSuperBlockButtons = requestSuperBlocks();
     notifyListeners();
@@ -159,7 +182,8 @@ class LearnLandingViewModel extends BaseViewModel {
     });
   }
 
-  Future<List<SuperBlockButtonData>> requestSuperBlocks() async {
+  Future<(Future<List<SuperBlockButtonData>>, Future<SuperBlockButtonData>)?>
+      requestSuperBlocks() async {
     String baseUrl = LearnService.baseUrl;
 
     final Response res = await _dio.get('$baseUrl/available-superblocks.json');
@@ -174,7 +198,18 @@ class LearnLandingViewModel extends BaseViewModel {
       bool showAllSB =
           dotenv.get('SHOWALLSB', fallback: 'false').toLowerCase() == 'true';
 
+      Future<SuperBlockButtonData> fullStack = Future.value(
+        SuperBlockButtonData(
+          path: 'full-stack-developer',
+          name: 'Certified Full Stack Developer Curriculum',
+          public: true,
+        ),
+      );
+
       for (int i = 0; i < superBlocks.length; i++) {
+        if (superBlocks[i]['dashedName'].toString().contains('full-stack')) {
+          continue;
+        }
         buttonData.add(
           SuperBlockButtonData(
             path: superBlocks[i]['dashedName'],
@@ -184,9 +219,11 @@ class LearnLandingViewModel extends BaseViewModel {
         );
       }
 
-      return buttonData;
+      Future<List<SuperBlockButtonData>> btnList = Future.value(buttonData);
+
+      return (btnList, fullStack);
     }
-    return [];
+    return null;
   }
 
   void routeToSuperBlock(String dashedName, String name) async {
