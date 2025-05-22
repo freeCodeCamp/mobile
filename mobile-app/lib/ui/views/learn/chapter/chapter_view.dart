@@ -19,7 +19,7 @@ class ChapterView extends StatelessWidget {
             title: Text('Chapters'),
           ),
           body: FutureBuilder(
-            future: model.superBlock,
+            future: model.superBlockFuture,
             builder: (context, snapshot) {
               if (snapshot.hasData) {
                 SuperBlock superBlock = snapshot.data as SuperBlock;
@@ -32,7 +32,7 @@ class ChapterView extends StatelessWidget {
                       children: [
                         ...[
                           for (Chapter chapter in chapters)
-                            chapterBlock(chapter, context)
+                            chapterBlock(chapter, model, context)
                         ]
                       ],
                     ),
@@ -50,13 +50,20 @@ class ChapterView extends StatelessWidget {
     );
   }
 
-  Widget chapterBlock(Chapter chapter, BuildContext context) {
+  Widget chapterBlock(
+    Chapter chapter,
+    ChapterViewModel model,
+    BuildContext context,
+  ) {
     return Container(
-      padding: EdgeInsets.all(16),
+      padding: EdgeInsets.all(8),
       margin: EdgeInsets.symmetric(vertical: 8, horizontal: 8),
       decoration: BoxDecoration(
-          color: const Color.fromRGBO(0x1b, 0x1b, 0x32, 1),
-          borderRadius: BorderRadius.all(Radius.circular(10))),
+        color: const Color.fromRGBO(0x1b, 0x1b, 0x32, 1),
+        borderRadius: BorderRadius.all(
+          Radius.circular(10),
+        ),
+      ),
       child: Row(
         children: [
           Column(
@@ -86,7 +93,7 @@ class ChapterView extends StatelessWidget {
                 Container(
                   margin: const EdgeInsets.all(5),
                   constraints: BoxConstraints(minHeight: 100, maxHeight: 200),
-                  width: MediaQuery.of(context).size.width * 0.85,
+                  width: MediaQuery.of(context).size.width * 0.90,
                   child: TextButton(
                     style: ButtonStyle(
                       padding: WidgetStatePropertyAll<EdgeInsetsGeometry>(
@@ -123,7 +130,7 @@ class ChapterView extends StatelessWidget {
                                 ),
                               ),
                               Text(
-                                'Step 0/89 complete',
+                                '${model.calculateProgress(module)} Steps Complete',
                                 style: TextStyle(
                                   color: FccColors.gray15,
                                   fontSize: 20,
