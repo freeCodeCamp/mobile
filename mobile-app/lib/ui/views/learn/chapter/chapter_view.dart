@@ -66,100 +66,115 @@ class ChapterView extends StatelessWidget {
       ),
       child: Row(
         children: [
-          Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Padding(
-                padding: const EdgeInsets.all(8.0),
-                child: Text(
-                  'Chapter Name',
-                  style: TextStyle(
-                    fontSize: 28,
-                    fontWeight: FontWeight.bold,
-                  ),
-                ),
-              ),
-              Padding(
-                padding: const EdgeInsets.all(8.0),
-                child: Text(
-                  'Step 0/89 complete',
-                  style: TextStyle(
-                    color: FccColors.gray15,
-                    fontSize: 20,
-                  ),
-                ),
-              ),
-              for (Module module in chapter.modules as List<Module>)
-                Container(
-                  margin: const EdgeInsets.all(5),
-                  constraints: BoxConstraints(minHeight: 100, maxHeight: 200),
-                  width: MediaQuery.of(context).size.width * 0.90,
-                  child: TextButton(
-                    style: ButtonStyle(
-                      padding: WidgetStatePropertyAll<EdgeInsetsGeometry>(
-                        EdgeInsets.all(12),
-                      ),
-                      alignment: Alignment.centerLeft,
-                      shape: WidgetStatePropertyAll<RoundedRectangleBorder>(
-                        RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(10.0),
-                          side: BorderSide(
-                            color: FccColors.gray75,
-                            width: 2,
-                          ),
-                        ),
-                      ),
-                      backgroundColor:
-                          WidgetStatePropertyAll<Color>(FccColors.gray80),
-                    ),
-                    onPressed: () {},
-                    child: Row(
-                      children: [
-                        Expanded(
-                          flex: 2,
-                          child: Column(
-                            mainAxisSize: MainAxisSize.min,
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: [
-                              Text(
-                                module.dashedName,
-                                style: TextStyle(
-                                  fontSize: 21,
-                                  fontWeight: FontWeight.bold,
-                                ),
-                              ),
-                              Text(
-                                '${model.calculateProgress(module)} Steps Complete',
-                                style: TextStyle(
-                                  color: FccColors.gray15,
-                                  fontSize: 20,
-                                ),
-                              ),
-                            ],
-                          ),
-                        ),
-                        Expanded(
-                          flex: 1,
-                          child: Column(
-                            mainAxisSize: MainAxisSize.min,
-                            crossAxisAlignment: CrossAxisAlignment.end,
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: [
-                              const Icon(
-                                Icons.arrow_forward_ios_outlined,
-                                size: 25,
-                              )
-                            ],
-                          ),
-                        )
-                      ],
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: Text(
+                    chapter.name,
+                    style: TextStyle(
+                      fontSize: 28,
+                      fontWeight: FontWeight.bold,
                     ),
                   ),
-                )
-            ],
+                ),
+                Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: Text(
+                    'Step 0/89 complete',
+                    style: TextStyle(
+                      color: FccColors.gray15,
+                      fontSize: 20,
+                    ),
+                  ),
+                ),
+                for (Module module in chapter.modules as List<Module>)
+                  chapterButton(context, module, model)
+              ],
+            ),
           ),
         ],
+      ),
+    );
+  }
+
+  Container chapterButton(
+    BuildContext context,
+    Module module,
+    ChapterViewModel model,
+  ) {
+    if (module.comingSoon != null && module.comingSoon == true) {
+      return Container();
+    }
+
+    return Container(
+      margin: const EdgeInsets.all(5),
+      constraints: BoxConstraints(minHeight: 100, maxHeight: 200),
+      width: MediaQuery.of(context).size.width * 0.90,
+      child: TextButton(
+        style: ButtonStyle(
+          padding: WidgetStatePropertyAll<EdgeInsetsGeometry>(
+            EdgeInsets.all(12),
+          ),
+          alignment: Alignment.centerLeft,
+          shape: WidgetStatePropertyAll<RoundedRectangleBorder>(
+            RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(10.0),
+              side: BorderSide(
+                color: FccColors.gray75,
+                width: 2,
+              ),
+            ),
+          ),
+          backgroundColor: WidgetStatePropertyAll<Color>(FccColors.gray80),
+        ),
+        onPressed: () {
+          model.routeToBlockView(module.blocks!, module.name);
+        },
+        child: Row(
+          children: [
+            Expanded(
+              flex: 2,
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Text(
+                    module.name,
+                    style: TextStyle(
+                      fontSize: 21,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                  Text(
+                    '${model.calculateProgress(module)} Steps Complete',
+                    style: TextStyle(
+                      color: FccColors.gray15,
+                      fontSize: 20,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+            Expanded(
+              flex: 1,
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                crossAxisAlignment: CrossAxisAlignment.end,
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  const Icon(
+                    Icons.arrow_forward_ios_outlined,
+                    size: 25,
+                  )
+                ],
+              ),
+            )
+          ],
+        ),
       ),
     );
   }

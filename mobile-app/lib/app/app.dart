@@ -20,6 +20,7 @@ import 'package:freecodecamp/ui/views/learn/challenge/templates/template_view.da
 import 'package:freecodecamp/ui/views/learn/landing/landing_view.dart';
 import 'package:freecodecamp/ui/views/learn/superblock/superblock_view.dart';
 import 'package:freecodecamp/ui/views/learn/chapter/chapter_view.dart';
+import 'package:freecodecamp/ui/views/learn/chapter/chapter_block_view.dart';
 import 'package:freecodecamp/ui/views/login/native_login_view.dart';
 import 'package:freecodecamp/ui/views/news/news-author/news_author_view.dart';
 import 'package:freecodecamp/ui/views/news/news-bookmark/news_bookmark_view.dart';
@@ -51,6 +52,7 @@ import 'package:stacked_services/stacked_services.dart';
     MaterialRoute(page: CodeRadioView),
     MaterialRoute(page: ChallengeTemplateView),
     MaterialRoute(page: ChapterView),
+    MaterialRoute(page: ChapterBlockView),
     MaterialRoute(page: ProfileView),
     MaterialRoute(page: LearnLandingView, initial: true),
     MaterialRoute(page: NativeLoginView),

@@ -23,11 +23,13 @@ class SuperBlock {
         name: name,
         chapters: (data[data.keys.first]['chapters']).map<Chapter>((chapter) {
           return Chapter(
+            name: chapter['name'],
             dashedName: chapter['dashedName'],
             comingSoon: chapter['comingSoon'] ?? false,
             chapterType: chapter['chapterType'],
             modules: (chapter['modules']).map<Module>((module) {
               return Module(
+                  name: module['name'] ?? 'No name',
                   dashedName: module['dashedName'],
                   comingSoon: module['comingSoon'] ?? false,
                   moduleType: module['moduleType'],
@@ -210,12 +212,14 @@ class ChallengeOrder {
 }
 
 class Chapter {
+  final String name;
   final String dashedName;
   final bool? comingSoon;
   final String? chapterType;
   final List<Module>? modules;
 
   Chapter({
+    required this.name,
     required this.dashedName,
     this.comingSoon,
     this.chapterType,
@@ -224,12 +228,14 @@ class Chapter {
 }
 
 class Module {
+  final String name;
   final String dashedName;
   final bool? comingSoon;
   final String? moduleType;
   final List<Block>? blocks;
 
   Module({
+    required this.name,
     required this.dashedName,
     this.comingSoon,
     this.moduleType,

@@ -1,5 +1,6 @@
 import 'package:dio/dio.dart';
 import 'package:freecodecamp/app/app.locator.dart';
+import 'package:freecodecamp/app/app.router.dart';
 import 'package:freecodecamp/models/learn/completed_challenge_model.dart';
 import 'package:freecodecamp/models/learn/curriculum_model.dart';
 import 'package:freecodecamp/models/main/user_model.dart';
@@ -7,9 +8,11 @@ import 'package:freecodecamp/service/authentication/authentication_service.dart'
 import 'package:freecodecamp/service/dio_service.dart';
 import 'package:freecodecamp/service/learn/learn_service.dart';
 import 'package:stacked/stacked.dart';
+import 'package:stacked_services/stacked_services.dart';
 
 class ChapterViewModel extends BaseViewModel {
   final _dio = DioService.dio;
+  final NavigationService _navigationService = locator<NavigationService>();
   final AuthenticationService _auth = locator<AuthenticationService>();
 
   Future<SuperBlock?>? superBlockFuture;
@@ -61,5 +64,18 @@ class ChapterViewModel extends BaseViewModel {
     }
 
     return null;
+  }
+
+  void routeToBlockView(
+    List<Block> blocks,
+    String moduleName,
+  ) {
+    _navigationService.navigateTo(
+      Routes.chapterBlockView,
+      arguments: ChapterBlockViewArguments(
+        blocks: blocks,
+        moduleName: moduleName,
+      ),
+    );
   }
 }
