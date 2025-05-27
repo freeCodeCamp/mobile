@@ -75,7 +75,15 @@ class SuperBlock {
   }
 }
 
-enum BlockType { lecture, workshop, lab, review, quiz, exam, legacy }
+enum BlockType {
+  lecture,
+  workshop,
+  lab,
+  review,
+  quiz,
+  exam,
+  legacy,
+}
 
 enum BlockLayout {
   challengeList,
@@ -141,13 +149,22 @@ class Block {
       }
     }
 
+    BlockType blockTypeFromString(String type) {
+      return BlockType.values.firstWhere(
+        (e) => e.name.toLowerCase() == type.toLowerCase(),
+        orElse: () => BlockType.legacy, // or return null if preferred
+      );
+    }
+
     return Block(
       superBlock: SuperBlock(
         dashedName: superBlockDashedName,
         name: superBlockName,
       ),
       layout: handleLayout(data['blockLayout']),
-      type: BlockType.legacy,
+      type: data['blockType'] != null
+          ? blockTypeFromString(data['blockType'])
+          : BlockType.legacy,
       name: data['name'],
       dashedName: dashedName,
       description: description,

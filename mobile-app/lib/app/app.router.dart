@@ -263,8 +263,7 @@ class StackedRouter extends _i1.RouterBase {
             key: args.key,
             block: args.block,
             challengeId: args.challengeId,
-            challengesCompleted: args.challengesCompleted,
-            module: args.module),
+            challengesCompleted: args.challengesCompleted),
         settings: data,
       );
     },
@@ -549,7 +548,6 @@ class ChallengeTemplateViewArguments {
     required this.block,
     required this.challengeId,
     required this.challengesCompleted,
-    this.module,
   });
 
   final _i20.Key? key;
@@ -560,11 +558,9 @@ class ChallengeTemplateViewArguments {
 
   final int challengesCompleted;
 
-  final _i24.Module? module;
-
   @override
   String toString() {
-    return '{"key": "$key", "block": "$block", "challengeId": "$challengeId", "challengesCompleted": "$challengesCompleted", "module": "$module"}';
+    return '{"key": "$key", "block": "$block", "challengeId": "$challengeId", "challengesCompleted": "$challengesCompleted"}';
   }
 
   @override
@@ -573,8 +569,7 @@ class ChallengeTemplateViewArguments {
     return other.key == key &&
         other.block == block &&
         other.challengeId == challengeId &&
-        other.challengesCompleted == challengesCompleted &&
-        other.module == module;
+        other.challengesCompleted == challengesCompleted;
   }
 
   @override
@@ -582,8 +577,7 @@ class ChallengeTemplateViewArguments {
     return key.hashCode ^
         block.hashCode ^
         challengeId.hashCode ^
-        challengesCompleted.hashCode ^
-        module.hashCode;
+        challengesCompleted.hashCode;
   }
 }
 
@@ -856,7 +850,6 @@ extension NavigatorStateExtension on _i25.NavigationService {
     required _i24.Block block,
     required String challengeId,
     required int challengesCompleted,
-    _i24.Module? module,
     int? routerId,
     bool preventDuplicates = true,
     Map<String, String>? parameters,
@@ -868,8 +861,7 @@ extension NavigatorStateExtension on _i25.NavigationService {
             key: key,
             block: block,
             challengeId: challengeId,
-            challengesCompleted: challengesCompleted,
-            module: module),
+            challengesCompleted: challengesCompleted),
         id: routerId,
         preventDuplicates: preventDuplicates,
         parameters: parameters,
@@ -1175,7 +1167,6 @@ extension NavigatorStateExtension on _i25.NavigationService {
     required _i24.Block block,
     required String challengeId,
     required int challengesCompleted,
-    _i24.Module? module,
     int? routerId,
     bool preventDuplicates = true,
     Map<String, String>? parameters,
@@ -1187,8 +1178,7 @@ extension NavigatorStateExtension on _i25.NavigationService {
             key: key,
             block: block,
             challengeId: challengeId,
-            challengesCompleted: challengesCompleted,
-            module: module),
+            challengesCompleted: challengesCompleted),
         id: routerId,
         preventDuplicates: preventDuplicates,
         parameters: parameters,

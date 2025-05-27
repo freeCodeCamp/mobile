@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:freecodecamp/models/learn/curriculum_model.dart';
 import 'package:freecodecamp/ui/views/learn/block/block_template_viewmodel.dart';
+
 import 'package:stacked/stacked.dart';
 
 class BlockTemplateView extends StatelessWidget {
@@ -28,6 +29,8 @@ class BlockTemplateView extends StatelessWidget {
         model,
         child,
       ) {
+        final (icon, color) = model.getIconData(block.type);
+
         return Padding(
           padding: const EdgeInsets.only(bottom: 16.0),
           child: Container(
@@ -50,16 +53,22 @@ class BlockTemplateView extends StatelessWidget {
                       Row(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
+                          if (icon != null)
+                            Padding(
+                              padding: const EdgeInsets.all(8.0),
+                              child: Icon(icon, color: color, size: 30),
+                            ),
                           Expanded(
                             child: Padding(
                               padding: const EdgeInsets.all(8.0),
                               child: Text(
                                 block.name,
-                                style: const TextStyle(
+                                style: TextStyle(
                                   wordSpacing: 0,
                                   letterSpacing: 0,
-                                  fontSize: 18,
+                                  fontSize: 22,
                                   fontWeight: FontWeight.bold,
+                                  color: color,
                                 ),
                               ),
                             ),

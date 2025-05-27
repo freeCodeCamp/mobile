@@ -9,6 +9,7 @@ import 'package:freecodecamp/service/authentication/authentication_service.dart'
 import 'package:freecodecamp/service/developer_service.dart';
 import 'package:freecodecamp/service/learn/learn_offline_service.dart';
 import 'package:freecodecamp/service/learn/learn_service.dart';
+import 'package:freecodecamp/ui/theme/fcc_theme.dart';
 import 'package:freecodecamp/ui/views/learn/block/templates/dialogue/dialogue_view.dart';
 import 'package:freecodecamp/ui/views/learn/block/templates/grid/grid_view.dart';
 import 'package:freecodecamp/ui/views/learn/block/templates/link/link_view.dart';
@@ -135,6 +136,25 @@ class BlockTemplateViewModel extends BaseViewModel {
           isOpen: isOpen,
           isOpenFunction: isOpenFunction,
         );
+    }
+  }
+
+  (IconData?, Color) getIconData(BlockType type) {
+    switch (type) {
+      case BlockType.lecture:
+        return (Icons.menu_book_outlined, FccColors.blue30);
+      case BlockType.quiz:
+        return (Icons.help_outline, FccColors.yellow40);
+      case BlockType.lab:
+        return (Icons.science_outlined, FccColors.green40);
+      case BlockType.workshop:
+        return (Icons.build_outlined, FccColors.purple10);
+      case BlockType.exam:
+        return (Icons.school, FccColors.red15);
+      case BlockType.review:
+        return (Icons.edit_document, FccColors.yellow10);
+      default: // BlockType.legacy or unknown
+        return (null, FccColors.blue05);
     }
   }
 }
