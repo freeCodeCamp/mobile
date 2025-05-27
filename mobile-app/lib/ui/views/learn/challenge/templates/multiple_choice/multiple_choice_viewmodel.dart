@@ -22,8 +22,8 @@ class MultipleChoiceViewmodel extends BaseViewModel {
   List<Widget> _feedback = [];
   List<Widget> get feedback => _feedback;
 
-  List<bool> _assignmentStatus = [];
-  List<bool> get assignmentStatus => _assignmentStatus;
+  List<bool> _assignmentsStatus = [];
+  List<bool> get assignmentsStatus => _assignmentsStatus;
 
   final LearnService learnService = locator<LearnService>();
 
@@ -52,13 +52,19 @@ class MultipleChoiceViewmodel extends BaseViewModel {
     notifyListeners();
   }
 
-  set setAssignmentStatus(List<bool> status) {
-    _assignmentStatus = status;
+  set setAssignmentsStatus(List<bool> status) {
+    _assignmentsStatus = status;
+    notifyListeners();
+  }
+
+  void setAssignmentStatus(int index) {
+    setAssignmentsStatus = List<bool>.from(_assignmentsStatus)
+      ..[index] = !_assignmentsStatus[index];
     notifyListeners();
   }
 
   void initChallenge(Challenge challenge) {
-    setAssignmentStatus = List.filled(
+    setAssignmentsStatus = List.filled(
       challenge.assignments?.length ?? 0,
       false,
     );

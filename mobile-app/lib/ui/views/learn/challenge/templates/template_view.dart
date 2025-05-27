@@ -6,6 +6,7 @@ import 'package:freecodecamp/ui/views/learn/challenge/templates/english/english_
 import 'package:freecodecamp/ui/views/learn/challenge/templates/multiple_choice/multiple_choice_view.dart';
 import 'package:freecodecamp/ui/views/learn/challenge/templates/python-project/python_project_view.dart';
 import 'package:freecodecamp/ui/views/learn/challenge/templates/python/python_view.dart';
+import 'package:freecodecamp/ui/views/learn/challenge/templates/review/review_view.dart';
 import 'package:freecodecamp/ui/views/learn/challenge/templates/template_viewmodel.dart';
 import 'package:stacked/stacked.dart';
 
@@ -75,6 +76,12 @@ class ChallengeTemplateView extends StatelessWidget {
                     challenge: challenge,
                     block: block,
                     currentChallengeNum: challNum,
+                  );
+                case 24:
+                  return ReviewView(
+                    challenge: challenge,
+                    block: block,
+                    challengesCompleted: challengesCompleted,
                   );
                 default:
                   return Center(
