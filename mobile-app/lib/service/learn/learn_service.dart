@@ -1,7 +1,6 @@
 import 'dart:developer';
 
 import 'package:dio/dio.dart';
-import 'package:flutter/material.dart';
 import 'package:freecodecamp/app/app.locator.dart';
 import 'package:freecodecamp/app/app.router.dart';
 import 'package:freecodecamp/enums/dialog_type.dart';
@@ -10,7 +9,6 @@ import 'package:freecodecamp/models/learn/curriculum_model.dart';
 import 'package:freecodecamp/service/authentication/authentication_service.dart';
 import 'package:freecodecamp/service/dio_service.dart';
 import 'package:freecodecamp/service/learn/learn_offline_service.dart';
-import 'package:freecodecamp/ui/views/learn/superblock/superblock_view.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:stacked_services/stacked_services.dart';
 import 'package:url_launcher/url_launcher.dart';
@@ -111,27 +109,6 @@ class LearnService {
         break;
     }
     await _authenticationService.fetchUser();
-  }
-
-  void updateProgressOnPop(BuildContext context, Block block) async {
-    learnOfflineService.hasInternet().then(
-          (value) => Navigator.pushReplacement(
-            context,
-            PageRouteBuilder(
-              transitionDuration: Duration.zero,
-              pageBuilder: (
-                context,
-                animation1,
-                animation2,
-              ) =>
-                  SuperBlockView(
-                superBlockDashedName: block.superBlock.dashedName,
-                superBlockName: block.superBlock.name,
-                hasInternet: value,
-              ),
-            ),
-          ),
-        );
   }
 
   void passChallenge(
