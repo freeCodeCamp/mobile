@@ -77,28 +77,28 @@ class MultipleChoiceViewmodel extends BaseViewModel {
 
     List<Widget> feedbackWidgets = [];
 
-    feedbackWidgets.add(
-      Padding(
-        padding: EdgeInsets.only(left: 12, bottom: isCorrect ? 32 : 0),
-        child: Text(
-          isCorrect ? 'Correct!' : 'Incorrect!',
-          style: TextStyle(
-            color: isCorrect ? FccColors.green40 : FccColors.red15,
-            fontWeight: FontWeight.bold,
-            fontSize: 18,
-          ),
-        ),
-      ),
-    );
+    // feedbackWidgets.add(
+    //   Padding(
+    //     padding: EdgeInsets.only(left: 12, bottom: isCorrect ? 32 : 0),
+    //     child: Text(
+    //       isCorrect ? 'Correct!' : 'Incorrect!',
+    //       style: TextStyle(
+    //         color: isCorrect ? FccColors.green40 : FccColors.red15,
+    //         fontWeight: FontWeight.bold,
+    //         fontSize: 18,
+    //       ),
+    //     ),
+    //   ),
+    // );
 
-    if (answer.feedback != null && answer.feedback!.isNotEmpty) {
-      feedbackWidgets.addAll(
-        parser.parse(
-          answer.feedback!,
-          fontColor: isCorrect ? FccColors.green40 : FccColors.red15,
-        ),
-      );
-    }
+    // if (answer.feedback != null && answer.feedback!.isNotEmpty) {
+    //   feedbackWidgets.addAll(
+    //     parser.parse(
+    //       answer.feedback!,
+    //       fontColor: isCorrect ? FccColors.green40 : FccColors.red15,
+    //     ),
+    //   );
+    // }
 
     setFeedback = feedbackWidgets;
   }
