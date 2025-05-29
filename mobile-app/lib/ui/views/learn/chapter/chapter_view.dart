@@ -81,16 +81,29 @@ class ChapterView extends StatelessWidget {
                     ),
                   ),
                 ),
-                Padding(
-                  padding: const EdgeInsets.all(8.0),
-                  child: Text(
-                    'Step 0/89 complete',
-                    style: TextStyle(
-                      color: FccColors.gray15,
-                      fontSize: 20,
+                if (chapter.comingSoon != null && chapter.comingSoon == true)
+                  Container(
+                    margin: const EdgeInsets.all(8),
+                    padding: const EdgeInsets.all(3),
+                    decoration: BoxDecoration(
+                        border: Border.all(
+                          color: Colors.white,
+                          width: 2,
+                        ),
+                        borderRadius: BorderRadius.circular(5)),
+                    child: Text('Coming Soon'),
+                  ),
+                if (chapter.comingSoon == null && chapter.comingSoon == false)
+                  Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: Text(
+                      'Step 0/89 complete',
+                      style: TextStyle(
+                        color: FccColors.gray15,
+                        fontSize: 20,
+                      ),
                     ),
                   ),
-                ),
                 for (Module module in chapter.modules as List<Module>)
                   chapterButton(context, module, model)
               ],
