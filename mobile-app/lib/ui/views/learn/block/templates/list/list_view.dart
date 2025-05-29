@@ -90,41 +90,48 @@ class BlockListView extends StatelessWidget {
                       physics: const ClampingScrollPhysics(),
                       itemCount: block.challenges.length,
                       itemBuilder: (context, index) {
-                        bool isCompleted = model
-                            .completedChallenge(block.challenges[index].id);
+                        return FutureBuilder(
+                          future: model.completedChallenge(
+                            block.challenges[index].id,
+                          ),
+                          builder: (context, snapshot) {
+                            bool isCompleted = snapshot.data ?? false;
 
-                        return InkWell(
-                          onTap: () {
-                            model.routeToChallengeView(
-                              block,
-                              block.challenges[index].id,
+                            return InkWell(
+                              onTap: () {
+                                model.routeToChallengeView(
+                                  block,
+                                  block.challenges[index].id,
+                                );
+                              },
+                              child: Card(
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(5),
+                                  side: isCompleted
+                                      ? const BorderSide(
+                                          width: 1,
+                                          color: Color.fromRGBO(
+                                              0xbc, 0xe8, 0xf1, 1),
+                                        )
+                                      : const BorderSide(
+                                          color: Color.fromRGBO(
+                                              0x3b, 0x3b, 0x4f, 1),
+                                        ),
+                                ),
+                                color: isCompleted
+                                    ? const Color.fromRGBO(
+                                        0x00, 0x2e, 0xad, 0.3)
+                                    : const Color.fromRGBO(0x2a, 0x2a, 0x40, 1),
+                                child: Padding(
+                                  padding: const EdgeInsets.all(16.0),
+                                  child: Text(
+                                    block.challenges[index].title,
+                                    style: TextStyle(fontSize: 18),
+                                  ),
+                                ),
+                              ),
                             );
                           },
-                          child: Card(
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(5),
-                              side: isCompleted
-                                  ? const BorderSide(
-                                      width: 1,
-                                      color:
-                                          Color.fromRGBO(0xbc, 0xe8, 0xf1, 1),
-                                    )
-                                  : const BorderSide(
-                                      color:
-                                          Color.fromRGBO(0x3b, 0x3b, 0x4f, 1),
-                                    ),
-                            ),
-                            color: isCompleted
-                                ? const Color.fromRGBO(0x00, 0x2e, 0xad, 0.3)
-                                : const Color.fromRGBO(0x2a, 0x2a, 0x40, 1),
-                            child: Padding(
-                              padding: const EdgeInsets.all(16.0),
-                              child: Text(
-                                block.challenges[index].title,
-                                style: TextStyle(fontSize: 18),
-                              ),
-                            ),
-                          ),
                         );
                       },
                     ),

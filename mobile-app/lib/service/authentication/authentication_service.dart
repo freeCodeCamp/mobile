@@ -44,6 +44,8 @@ class AuthenticationService {
   static StreamController<bool> isLoggedInStream =
       StreamController<bool>.broadcast();
 
+  StreamController<bool> progressStream = StreamController.broadcast();
+
   final Stream<bool> _isLoggedIn = isLoggedInStream.stream;
   Stream<bool> get isLoggedIn => _isLoggedIn;
   static bool staticIsloggedIn = false;
@@ -377,6 +379,7 @@ class AuthenticationService {
         userModel = parseUserModel(res.data['user'][res.data['result']]);
         staticIsloggedIn = true;
         isLoggedInStream.sink.add(true);
+        progressStream.add(true);
       } else {
         staticIsloggedIn = false;
         isLoggedInStream.sink.add(false);

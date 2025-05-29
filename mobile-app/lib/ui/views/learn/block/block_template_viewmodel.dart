@@ -19,9 +19,7 @@ import 'package:stacked_services/stacked_services.dart';
 
 class BlockTemplateViewModel extends BaseViewModel {
   final NavigationService _navigationService = locator<NavigationService>();
-  final AuthenticationService _auth = locator<AuthenticationService>();
-
-  FccUserModel? user;
+  final AuthenticationService auth = locator<AuthenticationService>();
 
   bool _isDev = false;
   bool get isDev => _isDev;
@@ -61,15 +59,18 @@ class BlockTemplateViewModel extends BaseViewModel {
   }
 
   void init(List<ChallengeListTile> challengeBatch) async {
-    user = await _auth.userModel;
     setNumberOfCompletedChallenges(challengeBatch);
     notifyListeners();
   }
 
-  void setNumberOfCompletedChallenges(List<ChallengeListTile> challengeBatch) {
+  void setNumberOfCompletedChallenges(
+    List<ChallengeListTile> challengeBatch,
+  ) async {
     int count = 0;
+
+    FccUserModel? user = await auth.userModel;
     if (user != null) {
-      Iterable<String> completedChallengeIds = user!.completedChallenges.map(
+      Iterable<String> completedChallengeIds = user.completedChallenges.map(
         (e) => e.id,
       );
 
@@ -83,9 +84,10 @@ class BlockTemplateViewModel extends BaseViewModel {
     }
   }
 
-  bool completedChallenge(String incomingId) {
+  Future<bool> completedChallenge(String incomingId) async {
+    FccUserModel? user = await auth.userModel;
     if (user != null) {
-      for (CompletedChallenge challenge in user!.completedChallenges) {
+      for (CompletedChallenge challenge in user.completedChallenges) {
         if (challenge.id == incomingId) {
           return true;
         }

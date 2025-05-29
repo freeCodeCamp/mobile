@@ -1,9 +1,12 @@
+import 'package:freecodecamp/app/app.locator.dart';
 import 'package:freecodecamp/models/learn/curriculum_model.dart';
+import 'package:freecodecamp/service/authentication/authentication_service.dart';
 import 'package:stacked/stacked.dart';
 
 class ChapterBlockViewmodel extends BaseViewModel {
   Map<String, bool> _blockOpenStates = {};
   Map<String, bool> get blockOpenStates => _blockOpenStates;
+  final authenticationService = locator<AuthenticationService>();
 
   set blockOpenStates(Map<String, bool> openStates) {
     _blockOpenStates = openStates;
@@ -19,5 +22,9 @@ class ChapterBlockViewmodel extends BaseViewModel {
     }
 
     blockOpenStates = local;
+  }
+
+  void updateUserProgress() {
+    authenticationService.fetchUser();
   }
 }

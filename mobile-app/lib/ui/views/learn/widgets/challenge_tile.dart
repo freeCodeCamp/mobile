@@ -20,34 +20,39 @@ class ChallengeTile extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    bool isCompleted = model.completedChallenge(challengeId);
+    return FutureBuilder<bool>(
+      future: model.completedChallenge(challengeId),
+      builder: (context, snapshot) {
+        final isCompleted = snapshot.data ?? false;
 
-    return TextButton(
-      onPressed: () {
-        model.routeToChallengeView(
-          block,
-          challengeId,
+        return TextButton(
+          onPressed: () {
+            model.routeToChallengeView(
+              block,
+              challengeId,
+            );
+          },
+          style: TextButton.styleFrom(
+            backgroundColor: isCompleted
+                ? const Color.fromRGBO(0x00, 0x2e, 0xad, 0.3)
+                : const Color.fromRGBO(0x2a, 0x2a, 0x40, 1),
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(5),
+              side: isCompleted
+                  ? const BorderSide(
+                      width: 1,
+                      color: Color.fromRGBO(0xbc, 0xe8, 0xf1, 1),
+                    )
+                  : const BorderSide(
+                      color: Color.fromRGBO(0x3b, 0x3b, 0x4f, 1),
+                    ),
+            ),
+          ),
+          child: Text(
+            step.toString(),
+          ),
         );
       },
-      style: TextButton.styleFrom(
-        backgroundColor: isCompleted
-            ? const Color.fromRGBO(0x00, 0x2e, 0xad, 0.3)
-            : const Color.fromRGBO(0x2a, 0x2a, 0x40, 1),
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(5),
-          side: isCompleted
-              ? const BorderSide(
-                  width: 1,
-                  color: Color.fromRGBO(0xbc, 0xe8, 0xf1, 1),
-                )
-              : const BorderSide(
-                  color: Color.fromRGBO(0x3b, 0x3b, 0x4f, 1),
-                ),
-        ),
-      ),
-      child: Text(
-        step.toString(),
-      ),
     );
   }
 }
