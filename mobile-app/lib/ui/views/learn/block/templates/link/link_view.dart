@@ -41,8 +41,7 @@ class BlockLinkView extends StatelessWidget {
                           model.routeToCertification(block);
                         },
                         style: TextButton.styleFrom(
-                          backgroundColor:
-                              const Color.fromRGBO(0x19, 0x8e, 0xee, 1),
+                          backgroundColor: FccColors.gray80,
                           shape: RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(5),
                           ),
