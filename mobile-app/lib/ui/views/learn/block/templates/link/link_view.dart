@@ -24,17 +24,18 @@ class BlockLinkView extends StatelessWidget {
       viewModelBuilder: () => BlockLinkViewModel(),
       builder: (context, childModel, child) {
         return Expanded(
-          child: Padding(
-            padding: const EdgeInsets.all(8.0),
-            child: Column(
-              children: [
-                ...parser.parse(
-                  '<p>${block.description.join(' ')}</p>',
-                  fontColor: FccColors.gray05,
-                ),
-                Row(
-                  children: [
-                    Expanded(
+          child: Column(
+            children: [
+              ...parser.parse(
+                '<p>${block.description.join(' ')}</p>',
+                fontColor: FccColors.gray05,
+                removeParagraphMargin: true,
+              ),
+              Row(
+                children: [
+                  Expanded(
+                    child: Padding(
+                      padding: const EdgeInsets.all(8.0),
                       child: TextButton(
                         onPressed: () {
                           model.routeToCertification(block);
@@ -52,10 +53,10 @@ class BlockLinkView extends StatelessWidget {
                         ),
                       ),
                     ),
-                  ],
-                ),
-              ],
-            ),
+                  ),
+                ],
+              ),
+            ],
           ),
         );
       },

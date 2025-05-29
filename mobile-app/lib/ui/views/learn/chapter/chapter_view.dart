@@ -32,7 +32,7 @@ class ChapterView extends StatelessWidget {
                       children: [
                         ...[
                           for (Chapter chapter in chapters)
-                            chapterBlock(chapter, model, context)
+                            chapterBlock(superBlock, chapter, model, context)
                         ]
                       ],
                     ),
@@ -51,6 +51,7 @@ class ChapterView extends StatelessWidget {
   }
 
   Widget chapterBlock(
+    SuperBlock superBlock,
     Chapter chapter,
     ChapterViewModel model,
     BuildContext context,

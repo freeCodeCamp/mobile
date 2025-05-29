@@ -27,10 +27,29 @@ class ChapterBlockView extends StatelessWidget {
             itemCount: blocks.length,
             padding: const EdgeInsets.all(8),
             itemBuilder: (context, index) {
+              WidgetsBinding.instance.addPostFrameCallback((_) {
+                if (model.blockOpenStates.isEmpty) {
+                  Map<String, bool> openStates = {
+                    for (var block in blocks) block.dashedName: false
+                  };
+
+                  // Set first block open
+                  String firstBlockKey = openStates.entries.toList()[0].key;
+
+                  openStates[firstBlockKey] = true;
+
+                  model.blockOpenStates = openStates;
+                }
+              });
+
               return BlockTemplateView(
                 block: blocks[index],
-                isOpen: true,
-                isOpenFunction: () {},
+                isOpen:
+                    model.blockOpenStates[blocks[index].dashedName] ?? false,
+                isOpenFunction: () => model.setBlockOpenClosedState(
+                  blocks,
+                  index,
+                ),
               );
             },
           ),
