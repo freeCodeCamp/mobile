@@ -150,7 +150,7 @@ class BlockTemplateViewModel extends BaseViewModel {
       case BlockType.lecture:
         return (Icons.menu_book_outlined, FccColors.blue30);
       case BlockType.quiz:
-        return (Icons.help_outline, FccColors.yellow40);
+        return (Icons.help_outline, FccColors.orange30);
       case BlockType.lab:
         return (Icons.science_outlined, FccColors.green40);
       case BlockType.workshop:
