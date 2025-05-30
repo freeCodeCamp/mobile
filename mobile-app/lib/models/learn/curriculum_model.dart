@@ -25,12 +25,12 @@ class SuperBlock {
           return Chapter(
             dashedName: chapter['dashedName'],
             comingSoon: chapter['comingSoon'] ?? false,
-            chapterType: chapter['chapterType'],
+            chapterType: ChapterType.fromValue(chapter['chapterType']),
             modules: (chapter['modules']).map<Module>((module) {
               return Module(
                   dashedName: module['dashedName'],
                   comingSoon: module['comingSoon'] ?? false,
-                  moduleType: module['moduleType'],
+                  moduleType: ModuleType.fromValue(module['moduleType']),
                   blocks: (module['blocks']).map<Block>((block) {
                     return Block.fromJson(
                       block['meta'],
@@ -209,10 +209,24 @@ class ChallengeOrder {
   });
 }
 
+enum ChapterType {
+  exam('exam');
+
+  static ChapterType fromValue(String value) {
+    return ChapterType.values.firstWhere(
+      (chapterType) => chapterType.value == value,
+      orElse: () => throw ArgumentError('Invalid chapter type value: $value'),
+    );
+  }
+
+  final String value;
+  const ChapterType(this.value);
+}
+
 class Chapter {
   final String dashedName;
   final bool? comingSoon;
-  final String? chapterType;
+  final ChapterType? chapterType;
   final List<Module>? modules;
 
   Chapter({
@@ -223,10 +237,25 @@ class Chapter {
   });
 }
 
+enum ModuleType {
+  review('review'),
+  exam('exam');
+
+  static ModuleType fromValue(String value) {
+    return ModuleType.values.firstWhere(
+      (moduleType) => moduleType.value == value,
+      orElse: () => throw ArgumentError('Invalid module type value: $value'),
+    );
+  }
+
+  final String value;
+  const ModuleType(this.value);
+}
+
 class Module {
   final String dashedName;
   final bool? comingSoon;
-  final String? moduleType;
+  final ModuleType? moduleType;
   final List<Block>? blocks;
 
   Module({
