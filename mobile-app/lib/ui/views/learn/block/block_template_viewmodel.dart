@@ -9,6 +9,7 @@ import 'package:freecodecamp/service/authentication/authentication_service.dart'
 import 'package:freecodecamp/service/developer_service.dart';
 import 'package:freecodecamp/service/learn/learn_offline_service.dart';
 import 'package:freecodecamp/service/learn/learn_service.dart';
+import 'package:freecodecamp/ui/theme/fcc_theme.dart';
 import 'package:freecodecamp/ui/views/learn/block/templates/dialogue/dialogue_view.dart';
 import 'package:freecodecamp/ui/views/learn/block/templates/grid/grid_view.dart';
 import 'package:freecodecamp/ui/views/learn/block/templates/link/link_view.dart';
@@ -18,9 +19,7 @@ import 'package:stacked_services/stacked_services.dart';
 
 class BlockTemplateViewModel extends BaseViewModel {
   final NavigationService _navigationService = locator<NavigationService>();
-  final AuthenticationService _auth = locator<AuthenticationService>();
-
-  FccUserModel? user;
+  final AuthenticationService auth = locator<AuthenticationService>();
 
   bool _isDev = false;
   bool get isDev => _isDev;
@@ -60,15 +59,18 @@ class BlockTemplateViewModel extends BaseViewModel {
   }
 
   void init(List<ChallengeListTile> challengeBatch) async {
-    user = await _auth.userModel;
     setNumberOfCompletedChallenges(challengeBatch);
     notifyListeners();
   }
 
-  void setNumberOfCompletedChallenges(List<ChallengeListTile> challengeBatch) {
+  void setNumberOfCompletedChallenges(
+    List<ChallengeListTile> challengeBatch,
+  ) async {
     int count = 0;
+
+    FccUserModel? user = await auth.userModel;
     if (user != null) {
-      Iterable<String> completedChallengeIds = user!.completedChallenges.map(
+      Iterable<String> completedChallengeIds = user.completedChallenges.map(
         (e) => e.id,
       );
 
@@ -82,9 +84,10 @@ class BlockTemplateViewModel extends BaseViewModel {
     }
   }
 
-  bool completedChallenge(String incomingId) {
+  Future<bool> completedChallenge(String incomingId) async {
+    FccUserModel? user = await auth.userModel;
     if (user != null) {
-      for (CompletedChallenge challenge in user!.completedChallenges) {
+      for (CompletedChallenge challenge in user.completedChallenges) {
         if (challenge.id == incomingId) {
           return true;
         }
@@ -100,6 +103,7 @@ class BlockTemplateViewModel extends BaseViewModel {
     Block block,
     bool isOpen,
     Function isOpenFunction,
+    Color color,
   ) {
     switch (layout) {
       case BlockLayout.challengeGrid:
@@ -108,6 +112,7 @@ class BlockTemplateViewModel extends BaseViewModel {
           model: model,
           isOpen: isOpen,
           isOpenFunction: isOpenFunction,
+          color: color,
         );
       case BlockLayout.challengeDialogue:
         return BlockDialogueView(
@@ -127,6 +132,7 @@ class BlockTemplateViewModel extends BaseViewModel {
         return BlockLinkView(
           block: block,
           model: model,
+          color: color,
         );
       default:
         return BlockGridView(
@@ -134,7 +140,27 @@ class BlockTemplateViewModel extends BaseViewModel {
           model: model,
           isOpen: isOpen,
           isOpenFunction: isOpenFunction,
+          color: color,
         );
+    }
+  }
+
+  (IconData?, Color) getIconData(BlockType type) {
+    switch (type) {
+      case BlockType.lecture:
+        return (Icons.menu_book_outlined, FccColors.blue30);
+      case BlockType.quiz:
+        return (Icons.help_outline, FccColors.orange30);
+      case BlockType.lab:
+        return (Icons.science_outlined, FccColors.green40);
+      case BlockType.workshop:
+        return (Icons.build_outlined, FccColors.purple10);
+      case BlockType.exam:
+        return (Icons.school, FccColors.red15);
+      case BlockType.review:
+        return (Icons.edit_document, FccColors.yellow10);
+      default: // BlockType.legacy or unknown
+        return (null, FccColors.blue05);
     }
   }
 }

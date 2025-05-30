@@ -46,6 +46,8 @@ class FccColors {
   static const red70 = Color(0xFFA94442);
   static const red80 = Color(0xFFF82153);
   static const red90 = Color(0xFF850000);
+
+  static const orange30 = Color(0xFFEDA971);
 }
 
 // Based on https://github.com/freeCodeCamp/ui/blob/01048178d606f404256c8f02299f6323c25e6a73/src/colors.css#L120-L140
