@@ -11,10 +11,12 @@ class BlockLinkView extends StatelessWidget {
     super.key,
     required this.block,
     required this.model,
+    required this.color,
   });
 
   final Block block;
   final BlockTemplateViewModel model;
+  final Color color;
 
   @override
   Widget build(BuildContext context) {
@@ -30,6 +32,7 @@ class BlockLinkView extends StatelessWidget {
                 '<p>${block.description.join(' ')}</p>',
                 fontColor: FccColors.gray05,
                 removeParagraphMargin: true,
+                isSelectable: false,
               ),
               Row(
                 children: [
@@ -41,14 +44,17 @@ class BlockLinkView extends StatelessWidget {
                           model.routeToCertification(block);
                         },
                         style: TextButton.styleFrom(
-                          backgroundColor: FccColors.gray80,
+                          backgroundColor: color,
                           shape: RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(5),
                           ),
                         ),
                         child: const Text(
                           'Start',
-                          style: TextStyle(fontWeight: FontWeight.bold),
+                          style: TextStyle(
+                            fontWeight: FontWeight.bold,
+                            color: FccColors.gray90,
+                          ),
                         ),
                       ),
                     ),

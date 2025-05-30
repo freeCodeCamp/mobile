@@ -86,6 +86,7 @@ class BlockTemplateView extends StatelessWidget {
                                   block,
                                   isOpen,
                                   isOpenFunction,
+                                  color,
                                 ),
                               ],
                             ),

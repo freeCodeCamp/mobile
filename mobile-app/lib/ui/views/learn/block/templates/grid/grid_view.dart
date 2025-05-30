@@ -9,17 +9,20 @@ import 'package:freecodecamp/ui/views/news/html_handler/html_handler.dart';
 import 'package:stacked/stacked.dart';
 
 class BlockGridView extends StatelessWidget {
-  const BlockGridView(
-      {super.key,
-      required this.block,
-      required this.model,
-      required this.isOpen,
-      required this.isOpenFunction});
+  const BlockGridView({
+    super.key,
+    required this.block,
+    required this.model,
+    required this.isOpen,
+    required this.isOpenFunction,
+    required this.color,
+  });
 
   final Block block;
   final BlockTemplateViewModel model;
   final bool isOpen;
   final Function isOpenFunction;
+  final Color color;
 
   @override
   Widget build(BuildContext context) {
@@ -46,8 +49,8 @@ class BlockGridView extends StatelessWidget {
               child: LinearProgressIndicator(
                 minHeight: 12,
                 value: progress,
-                valueColor: const AlwaysStoppedAnimation<Color>(
-                  Color.fromRGBO(0x99, 0xc9, 0xff, 1),
+                valueColor: AlwaysStoppedAnimation<Color>(
+                  color,
                 ),
                 backgroundColor: const Color.fromRGBO(0x2a, 0x2a, 0x40, 1),
                 borderRadius: BorderRadius.circular(10),
@@ -57,6 +60,7 @@ class BlockGridView extends StatelessWidget {
               '<p>${block.description.join(' ')}</p>',
               fontColor: FccColors.gray05,
               removeParagraphMargin: true,
+              isSelectable: false,
             ),
             Row(
               children: [

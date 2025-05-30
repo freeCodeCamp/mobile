@@ -103,6 +103,7 @@ class BlockTemplateViewModel extends BaseViewModel {
     Block block,
     bool isOpen,
     Function isOpenFunction,
+    Color color,
   ) {
     switch (layout) {
       case BlockLayout.challengeGrid:
@@ -111,6 +112,7 @@ class BlockTemplateViewModel extends BaseViewModel {
           model: model,
           isOpen: isOpen,
           isOpenFunction: isOpenFunction,
+          color: color,
         );
       case BlockLayout.challengeDialogue:
         return BlockDialogueView(
@@ -130,6 +132,7 @@ class BlockTemplateViewModel extends BaseViewModel {
         return BlockLinkView(
           block: block,
           model: model,
+          color: color,
         );
       default:
         return BlockGridView(
@@ -137,6 +140,7 @@ class BlockTemplateViewModel extends BaseViewModel {
           model: model,
           isOpen: isOpen,
           isOpenFunction: isOpenFunction,
+          color: color,
         );
     }
   }

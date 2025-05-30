@@ -53,6 +53,7 @@ class BlockListView extends StatelessWidget {
               '<p>${block.description.join(' ')}</p>',
               fontColor: FccColors.gray05,
               removeParagraphMargin: true,
+              isSelectable: false,
             ),
             Row(
               children: [
