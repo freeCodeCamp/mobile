@@ -23,6 +23,7 @@ class BlockListView extends StatelessWidget {
     double progress = model.challengesCompleted == 0
         ? 0.01
         : model.challengesCompleted / block.challenges.length;
+
     return ViewModelBuilder.reactive(
       viewModelBuilder: () => BlockGridViewModel(),
       builder: (context, childModel, child) => Column(
@@ -105,7 +106,10 @@ class BlockListView extends StatelessWidget {
                               : const Color.fromRGBO(0x2a, 0x2a, 0x40, 1),
                           child: Padding(
                             padding: const EdgeInsets.all(16.0),
-                            child: Text(block.challenges[index].title),
+                            child: Text(
+                              block.challenges[index].title,
+                              style: TextStyle(fontSize: 18),
+                            ),
                           ),
                         ),
                       );

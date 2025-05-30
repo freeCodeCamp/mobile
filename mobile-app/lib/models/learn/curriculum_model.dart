@@ -23,11 +23,13 @@ class SuperBlock {
         name: name,
         chapters: (data[data.keys.first]['chapters']).map<Chapter>((chapter) {
           return Chapter(
+            name: chapter['name'],
             dashedName: chapter['dashedName'],
             comingSoon: chapter['comingSoon'] ?? false,
             chapterType: ChapterType.fromValue(chapter['chapterType']),
             modules: (chapter['modules']).map<Module>((module) {
               return Module(
+                  name: module['name'] ?? 'No name',
                   dashedName: module['dashedName'],
                   comingSoon: module['comingSoon'] ?? false,
                   moduleType: ModuleType.fromValue(module['moduleType']),
@@ -73,7 +75,15 @@ class SuperBlock {
   }
 }
 
-enum BlockType { lecture, workshop, lab, review, quiz, exam, legacy }
+enum BlockType {
+  lecture,
+  workshop,
+  lab,
+  review,
+  quiz,
+  exam,
+  legacy,
+}
 
 enum BlockLayout {
   challengeList,
@@ -139,13 +149,22 @@ class Block {
       }
     }
 
+    BlockType blockTypeFromString(String type) {
+      return BlockType.values.firstWhere(
+        (e) => e.name.toLowerCase() == type.toLowerCase(),
+        orElse: () => BlockType.legacy, // or return null if preferred
+      );
+    }
+
     return Block(
       superBlock: SuperBlock(
         dashedName: superBlockDashedName,
         name: superBlockName,
       ),
       layout: handleLayout(data['blockLayout']),
-      type: BlockType.legacy,
+      type: data['blockType'] != null
+          ? blockTypeFromString(data['blockType'])
+          : BlockType.legacy,
       name: data['name'],
       dashedName: dashedName,
       description: description,
@@ -224,12 +243,14 @@ enum ChapterType {
 }
 
 class Chapter {
+  final String name;
   final String dashedName;
   final bool? comingSoon;
   final ChapterType? chapterType;
   final List<Module>? modules;
 
   Chapter({
+    required this.name,
     required this.dashedName,
     this.comingSoon,
     this.chapterType,
@@ -253,12 +274,14 @@ enum ModuleType {
 }
 
 class Module {
+  final String name;
   final String dashedName;
   final bool? comingSoon;
   final ModuleType? moduleType;
   final List<Block>? blocks;
 
   Module({
+    required this.name,
     required this.dashedName,
     this.comingSoon,
     this.moduleType,

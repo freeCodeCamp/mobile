@@ -1,3 +1,5 @@
+import 'dart:ffi';
+
 import 'package:flutter/material.dart';
 import 'package:freecodecamp/app/app.locator.dart';
 import 'package:freecodecamp/models/learn/challenge_model.dart';
@@ -52,13 +54,14 @@ class MultipleChoiceViewmodel extends BaseViewModel {
     notifyListeners();
   }
 
-  set setAssignmentStatus(List<bool> status) {
-    _assignmentStatus = status;
+  void setAssignmentStatus(int ind) {
+    _assignmentStatus = List<bool>.from(_assignmentStatus)
+      ..[ind] = !_assignmentStatus[ind];
     notifyListeners();
   }
 
   void initChallenge(Challenge challenge) {
-    setAssignmentStatus = List.filled(
+    _assignmentStatus = List.filled(
       challenge.assignments?.length ?? 0,
       false,
     );

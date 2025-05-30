@@ -1,32 +1,33 @@
 import 'package:flutter/material.dart';
+import 'package:freecodecamp/extensions/i18n_extension.dart';
 import 'package:freecodecamp/models/learn/challenge_model.dart';
 import 'package:freecodecamp/models/learn/curriculum_model.dart';
 import 'package:freecodecamp/ui/theme/fcc_theme.dart';
-import 'package:freecodecamp/ui/views/learn/challenge/templates/english/english_viewmodel.dart';
-import 'package:freecodecamp/ui/views/learn/widgets/audio/audio_player_view.dart';
+import 'package:freecodecamp/ui/views/learn/challenge/templates/review/review_viewmodel.dart';
+import 'package:freecodecamp/ui/views/learn/widgets/assignment_widget.dart';
 import 'package:freecodecamp/ui/views/learn/widgets/challenge_card.dart';
-import 'package:freecodecamp/ui/views/learn/widgets/explanation_widget.dart';
 import 'package:freecodecamp/ui/views/news/html_handler/html_handler.dart';
 import 'package:stacked/stacked.dart';
 
-class EnglishView extends StatelessWidget {
-  const EnglishView({
+class ReviewView extends StatelessWidget {
+  const ReviewView({
     super.key,
     required this.challenge,
     required this.block,
-    required this.currentChallengeNum,
+    required this.challengesCompleted,
   });
 
   final Challenge challenge;
   final Block block;
-  final int currentChallengeNum;
+  final int challengesCompleted;
 
   @override
   Widget build(BuildContext context) {
     HTMLParser parser = HTMLParser(context: context);
 
-    return ViewModelBuilder<EnglishViewModel>.reactive(
-      viewModelBuilder: () => EnglishViewModel(),
+    return ViewModelBuilder<ReviewViewmodel>.reactive(
+      viewModelBuilder: () => ReviewViewmodel(),
+      onViewModelReady: (model) => model.initChallenge(challenge),
       builder: (context, model, child) {
         return Scaffold(
           backgroundColor: FccColors.gray90,
@@ -52,43 +53,24 @@ class EnglishView extends StatelessWidget {
                     ],
                   ),
                 ),
-                if (challenge.audio != null) ...[
-                  ChallengeCard(
-                    title: 'Listen to the Audio',
-                    child: AudioPlayerView(
-                      audio: challenge.audio!,
-                    ),
+                ChallengeCard(
+                  title: 'Assignments',
+                  child: Column(
+                    children: [
+                      for (final (i, assignment)
+                          in challenge.assignments!.indexed)
+                        Assignment(
+                            label: assignment,
+                            value: model.assignmentStatus[i],
+                            onTap: () {
+                              model.setAssignmentStatus(i);
+                            },
+                            onChanged: (value) {
+                              model.setAssignmentStatus(i);
+                            }),
+                    ],
                   ),
-                ],
-                if (challenge.fillInTheBlank != null)
-                  ChallengeCard(
-                    title: 'Fill in the Blank',
-                    child: Padding(
-                      padding: const EdgeInsets.all(10.0),
-                      child: Column(
-                        children: model.getFillInBlankWidgets(
-                          challenge,
-                          context,
-                        ),
-                      ),
-                    ),
-                  ),
-                if (model.feedback.isNotEmpty)
-                  ChallengeCard(
-                    title: 'Feedback',
-                    child: Column(
-                      children: parser.parse(model.feedback),
-                    ),
-                  ),
-                if (challenge.explanation != null &&
-                    challenge.explanation!.isNotEmpty) ...[
-                  ChallengeCard(
-                    title: 'Explanation',
-                    child: Explanation(
-                      explanation: challenge.explanation ?? '',
-                    ),
-                  ),
-                ],
+                ),
                 Row(
                   children: [
                     Expanded(
@@ -107,18 +89,16 @@ class EnglishView extends StatelessWidget {
                               ),
                             ),
                           ),
-                          onPressed: model.allInputsCorrect
-                              ? () => model.learnService.goToNextChallenge(
-                                  block.challenges.length,
-                                  currentChallengeNum,
-                                  challenge,
-                                  block)
-                              : () => {model.checkAnswers(challenge)},
+                          onPressed:
+                              model.assignmentStatus.every((element) => element)
+                                  ? () => model.learnService.goToNextChallenge(
+                                      block.challenges.length,
+                                      challengesCompleted,
+                                      challenge,
+                                      block)
+                                  : null,
                           child: Text(
-                            model.allInputsCorrect ||
-                                    challenge.fillInTheBlank == null
-                                ? 'Go to Next Challenge'
-                                : 'Check Answers',
+                            context.t.next,
                             style: const TextStyle(fontSize: 20),
                           ),
                         ),

@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:freecodecamp/models/learn/curriculum_model.dart';
+import 'package:freecodecamp/ui/theme/fcc_theme.dart';
 import 'package:freecodecamp/ui/views/learn/block/block_template_viewmodel.dart';
 import 'package:freecodecamp/ui/views/learn/block/templates/link/link_viewmodel.dart';
+import 'package:freecodecamp/ui/views/news/html_handler/html_handler.dart';
 import 'package:stacked/stacked.dart';
 
 class BlockLinkView extends StatelessWidget {
@@ -16,6 +18,8 @@ class BlockLinkView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    HTMLParser parser = HTMLParser(context: context);
+
     return ViewModelBuilder.reactive(
       viewModelBuilder: () => BlockLinkViewModel(),
       builder: (context, childModel, child) {
@@ -24,7 +28,10 @@ class BlockLinkView extends StatelessWidget {
             padding: const EdgeInsets.all(8.0),
             child: Column(
               children: [
-                Text(block.description.join(' ')),
+                ...parser.parse(
+                  '<p>${block.description.join(' ')}</p>',
+                  fontColor: FccColors.gray05,
+                ),
                 Row(
                   children: [
                     Expanded(

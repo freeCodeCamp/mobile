@@ -3,6 +3,7 @@ import 'package:freecodecamp/extensions/i18n_extension.dart';
 import 'package:freecodecamp/models/learn/challenge_model.dart';
 import 'package:freecodecamp/models/learn/curriculum_model.dart';
 import 'package:freecodecamp/ui/views/learn/challenge/templates/multiple_choice/multiple_choice_viewmodel.dart';
+import 'package:freecodecamp/ui/views/learn/widgets/assignment_widget.dart';
 import 'package:freecodecamp/ui/views/learn/widgets/audio/audio_player_view.dart';
 import 'package:freecodecamp/ui/views/learn/widgets/challenge_card.dart';
 import 'package:freecodecamp/ui/views/learn/widgets/explanation_widget.dart';
@@ -79,189 +80,134 @@ class MultipleChoiceView extends StatelessWidget {
           }
         }
 
-        return PopScope(
-          canPop: true,
-          onPopInvokedWithResult: (bool didPop, dynamic result) {
-            model.learnService.updateProgressOnPop(context, block);
-          },
-          child: Scaffold(
+        return Scaffold(
+          backgroundColor: const Color(0xFF0a0a23),
+          appBar: AppBar(
             backgroundColor: const Color(0xFF0a0a23),
-            appBar: AppBar(
-              backgroundColor: const Color(0xFF0a0a23),
-              title: Text(handleChallengeTitle()),
-            ),
-            body: SafeArea(
-              child: ListView(
-                children: [
-                  if (challenge.videoId != null) ...[
-                    ChallengeCard(
-                      title: 'Watch the Video',
-                      child: YoutubePlayer(
-                        controller: controller,
-                        enableFullScreenOnVerticalDrag: false,
-                      ),
-                    ),
-                  ],
-                  if (challenge.audio != null) ...[
-                    ChallengeCard(
-                      title: 'Listen to the Audio',
-                      child: AudioPlayerView(
-                        audio: challenge.audio!,
-                      ),
-                    ),
-                  ],
-                  if (challenge.assignments != null &&
-                      challenge.assignments!.isNotEmpty) ...[
-                    ChallengeCard(
-                      title: 'Assignments',
-                      child: Column(
-                        children: [
-                          for (final (i, assignment)
-                              in challenge.assignments!.indexed)
-                            assignmentTile(assignment, i, model, context),
-                        ],
-                      ),
-                    ),
-                  ],
-                  if (challenge.description.isNotEmpty)
-                    ChallengeCard(
-                      title: 'Description',
-                      child: Column(
-                        children: parser.parse(
-                          challenge.description,
-                        ),
-                      ),
-                    ),
+            title: Text(handleChallengeTitle()),
+          ),
+          body: SafeArea(
+            child: ListView(
+              children: [
+                if (challenge.videoId != null) ...[
                   ChallengeCard(
-                    title: 'Question',
+                    title: 'Watch the Video',
+                    child: YoutubePlayer(
+                      controller: controller,
+                      enableFullScreenOnVerticalDrag: false,
+                    ),
+                  ),
+                ],
+                if (challenge.audio != null) ...[
+                  ChallengeCard(
+                    title: 'Listen to the Audio',
+                    child: AudioPlayerView(
+                      audio: challenge.audio!,
+                    ),
+                  ),
+                ],
+                if (challenge.assignments != null &&
+                    challenge.assignments!.isNotEmpty) ...[
+                  ChallengeCard(
+                    title: 'Assignments',
                     child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        ...parser.parse(challenge.instructions),
-                        ...parser.parse(
-                          challenge.question!.text,
-                        ),
-                        const SizedBox(height: 8),
-                        for (var answerObj
-                            in challenge.question!.answers.asMap().entries)
-                          questionOption(answerObj, model, context),
+                        for (final (i, assignment)
+                            in challenge.assignments!.indexed)
+                          Assignment(
+                              label: assignment,
+                              value: model.assignmentStatus[i],
+                              onTap: () {
+                                model.setAssignmentStatus(i);
+                              },
+                              onChanged: (value) {
+                                model.setAssignmentStatus(i);
+                              }),
                       ],
                     ),
                   ),
-                  const SizedBox(height: 8),
-                  if (challenge.explanation != null &&
-                      challenge.explanation!.isNotEmpty) ...[
-                    ChallengeCard(
-                      title: 'Explanation',
-                      child: Explanation(
-                        explanation: challenge.explanation ?? '',
-                      ),
-                    ),
-                  ],
-                  const SizedBox(height: 8),
-                  Padding(
-                    padding: const EdgeInsets.all(8.0),
-                    child: ElevatedButton(
-                      style: ElevatedButton.styleFrom(
-                        minimumSize: const Size(0, 50),
-                        backgroundColor:
-                            const Color.fromRGBO(0x3b, 0x3b, 0x4f, 1),
-                        side: const BorderSide(
-                          width: 2,
-                          color: Colors.white,
-                        ),
-                        shape: const RoundedRectangleBorder(
-                          borderRadius: BorderRadius.zero,
-                        ),
-                      ),
-                      onPressed: model.currentChoice != -1 &&
-                              model.assignmentStatus.every((element) => element)
-                          ? model.choiceStatus != null && model.choiceStatus!
-                              ? () => model.learnService.goToNextChallenge(
-                                    block.challenges.length,
-                                    challengesCompleted,
-                                    challenge,
-                                    block,
-                                  )
-                              : () {
-                                  model.setValidationStatus(challenge);
-                                  model.updateFeedback(challenge, context);
-                                }
-                          : null,
-                      child: Text(
-                        model.choiceStatus != null
-                            ? model.choiceStatus!
-                                ? context.t.next_challenge
-                                : context.t.try_again
-                            : context.t.questions_check,
-                        style: const TextStyle(fontSize: 20),
+                ],
+                if (challenge.description.isNotEmpty)
+                  ChallengeCard(
+                    title: 'Description',
+                    child: Column(
+                      children: parser.parse(
+                        challenge.description,
                       ),
                     ),
                   ),
-                  const SizedBox(height: 50),
+                ChallengeCard(
+                  title: 'Question',
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      ...parser.parse(challenge.instructions),
+                      ...parser.parse(
+                        challenge.question!.text,
+                      ),
+                      const SizedBox(height: 8),
+                      for (var answerObj
+                          in challenge.question!.answers.asMap().entries)
+                        questionOption(answerObj, model, context),
+                    ],
+                  ),
+                ),
+                const SizedBox(height: 8),
+                if (challenge.explanation != null &&
+                    challenge.explanation!.isNotEmpty) ...[
+                  ChallengeCard(
+                    title: 'Explanation',
+                    child: Explanation(
+                      explanation: challenge.explanation ?? '',
+                    ),
+                  ),
                 ],
-              ),
+                const SizedBox(height: 8),
+                Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: ElevatedButton(
+                    style: ElevatedButton.styleFrom(
+                      minimumSize: const Size(0, 50),
+                      backgroundColor:
+                          const Color.fromRGBO(0x3b, 0x3b, 0x4f, 1),
+                      side: const BorderSide(
+                        width: 2,
+                        color: Colors.white,
+                      ),
+                      shape: const RoundedRectangleBorder(
+                        borderRadius: BorderRadius.zero,
+                      ),
+                    ),
+                    onPressed: model.currentChoice != -1 &&
+                            model.assignmentStatus.every((element) => element)
+                        ? model.choiceStatus != null && model.choiceStatus!
+                            ? () => model.learnService.goToNextChallenge(
+                                  block.challenges.length,
+                                  challengesCompleted,
+                                  challenge,
+                                  block,
+                                )
+                            : () {
+                                model.setValidationStatus(challenge);
+                                model.updateFeedback(challenge, context);
+                              }
+                        : null,
+                    child: Text(
+                      model.choiceStatus != null
+                          ? model.choiceStatus!
+                              ? context.t.next_challenge
+                              : context.t.try_again
+                          : context.t.questions_check,
+                      style: const TextStyle(fontSize: 20),
+                    ),
+                  ),
+                ),
+                const SizedBox(height: 50),
+              ],
             ),
           ),
         );
       },
-    );
-  }
-
-  Container assignmentTile(
-    String assignment,
-    int ind,
-    MultipleChoiceViewmodel model,
-    BuildContext context,
-  ) {
-    HTMLParser parser = HTMLParser(context: context);
-
-    return Container(
-      margin: const EdgeInsets.symmetric(vertical: 8),
-      child: ListTile(
-        selected: model.assignmentStatus[ind],
-        tileColor: const Color(0xFF0a0a23),
-        selectedTileColor: const Color(0xDEFFFFFF),
-        onTap: () {
-          model.setAssignmentStatus = model.assignmentStatus
-            ..[ind] = !model.assignmentStatus[ind];
-        },
-        leading: Checkbox(
-          focusNode: FocusNode(),
-          value: model.assignmentStatus[ind],
-          onChanged: (value) {
-            model.setAssignmentStatus = model.assignmentStatus
-              ..[ind] = value ?? false;
-          },
-          activeColor: const Color(0xFF0a0a23),
-          checkColor: const Color(0xDEFFFFFF),
-        ),
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(0),
-          side: BorderSide(
-            color: model.assignmentStatus[ind]
-                ? const Color(0xFF0a0a23)
-                : const Color(0xFFAAAAAA),
-            width: 2,
-          ),
-        ),
-        title: Row(
-          children: [
-            Expanded(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: parser.parse(
-                  assignment,
-                  isSelectable: false,
-                  fontColor: model.assignmentStatus[ind]
-                      ? const Color(0xFF0a0a23)
-                      : null,
-                ),
-              ),
-            ),
-          ],
-        ),
-      ),
     );
   }
 
