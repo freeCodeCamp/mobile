@@ -18,30 +18,37 @@ class ChapterView extends StatelessWidget {
           appBar: AppBar(
             title: Text('Chapters'),
           ),
-          body: FutureBuilder(
-            future: model.superBlockFuture,
+          body: StreamBuilder(
+            stream: model.auth.progress.stream,
             builder: (context, snapshot) {
-              if (snapshot.hasData) {
-                SuperBlock superBlock = snapshot.data as SuperBlock;
-                List<Chapter> chapters = superBlock.chapters as List<Chapter>;
+              return FutureBuilder(
+                future: model.superBlockFuture,
+                builder: (context, snapshot) {
+                  if (snapshot.hasData) {
+                    SuperBlock superBlock = snapshot.data as SuperBlock;
+                    List<Chapter> chapters =
+                        superBlock.chapters as List<Chapter>;
 
-                return ListView(
-                  shrinkWrap: true,
-                  children: [
-                    Column(
+                    return ListView(
+                      shrinkWrap: true,
                       children: [
-                        ...[
-                          for (Chapter chapter in chapters)
-                            chapterBlock(superBlock, chapter, model, context)
-                        ]
+                        Column(
+                          children: [
+                            ...[
+                              for (Chapter chapter in chapters)
+                                chapterBlock(
+                                    superBlock, chapter, model, context)
+                            ]
+                          ],
+                        ),
                       ],
-                    ),
-                  ],
-                );
-              }
+                    );
+                  }
 
-              return Center(
-                child: CircularProgressIndicator(),
+                  return Center(
+                    child: CircularProgressIndicator(),
+                  );
+                },
               );
             },
           ),
@@ -152,12 +159,19 @@ class ChapterView extends StatelessWidget {
                       fontWeight: FontWeight.bold,
                     ),
                   ),
-                  Text(
-                    '${model.calculateProgress(module)} Steps Complete',
-                    style: TextStyle(
-                      color: FccColors.gray15,
-                      fontSize: 20,
-                    ),
+                  FutureBuilder(
+                    future: model.calculateProgress(module),
+                    builder: (context, snapshot) {
+                      String steps = snapshot.data ?? '0';
+
+                      return Text(
+                        '$steps Steps Complete',
+                        style: TextStyle(
+                          color: FccColors.gray15,
+                          fontSize: 20,
+                        ),
+                      );
+                    },
                   ),
                 ],
               ),

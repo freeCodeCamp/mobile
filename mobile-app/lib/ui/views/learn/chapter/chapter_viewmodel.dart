@@ -13,17 +13,15 @@ import 'package:stacked_services/stacked_services.dart';
 class ChapterViewModel extends BaseViewModel {
   final _dio = DioService.dio;
   final NavigationService _navigationService = locator<NavigationService>();
-  final AuthenticationService _auth = locator<AuthenticationService>();
+  final AuthenticationService auth = locator<AuthenticationService>();
 
   Future<SuperBlock?>? superBlockFuture;
-  FccUserModel? user;
 
   void init() async {
     superBlockFuture = requestChapters();
-    user = await _auth.userModel;
   }
 
-  String calculateProgress(Module module) {
+  Future<String> calculateProgress(Module module) async {
     int steps = 0;
     num completedCount = 0;
 
@@ -32,16 +30,20 @@ class ChapterViewModel extends BaseViewModel {
 
       for (int j = 0; j < module.blocks![i].challenges.length; j++) {
         completedCount +=
-            completedChallenge(module.blocks![i].challenges[j].id) ? 1 : 0;
+            await completedChallenge(module.blocks![i].challenges[j].id)
+                ? 1
+                : 0;
       }
     }
 
     return '$completedCount/$steps';
   }
 
-  bool completedChallenge(String incomingId) {
+  Future<bool> completedChallenge(String incomingId) async {
+    FccUserModel? user = await auth.userModel;
+
     if (user != null) {
-      for (CompletedChallenge challenge in user!.completedChallenges) {
+      for (CompletedChallenge challenge in user.completedChallenges) {
         if (challenge.id == incomingId) {
           return true;
         }

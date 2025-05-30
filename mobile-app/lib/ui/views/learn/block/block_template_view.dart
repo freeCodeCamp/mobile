@@ -34,7 +34,7 @@ class BlockTemplateView extends StatelessWidget {
         return Padding(
           padding: const EdgeInsets.only(bottom: 16.0),
           child: StreamBuilder<Object>(
-              stream: model.auth.progressStream.stream,
+              stream: model.auth.progress.stream,
               builder: (context, snapshot) {
                 return Container(
                   decoration: BoxDecoration(
