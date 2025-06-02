@@ -31,8 +31,14 @@ class ChallengeViewModel extends BaseViewModel {
   final InAppLocalhostServer _localhostServer =
       InAppLocalhostServer(documentRoot: 'assets/test_runner');
 
+  Editor? _editor;
+  Editor? get editor => _editor;
+
   String? _editorText;
   String? get editorText => _editorText;
+
+  String _editorLanguage = 'html';
+  String get editorLanguage => _editorLanguage;
 
   String _currentSelectedFile = '';
   String get currentSelectedFile => _currentSelectedFile;
@@ -82,6 +88,7 @@ class ChallengeViewModel extends BaseViewModel {
   Syntax get currFileType => _currFileType;
 
   bool _mounted = false;
+  bool get mounted => _mounted;
 
   // TestRunner? _testRunner;
   // TestRunner? get testRunner => _testRunner;
@@ -228,6 +235,16 @@ class ChallengeViewModel extends BaseViewModel {
     notifyListeners();
   }
 
+  set setEditor(Editor editor) {
+    _editor = editor;
+    notifyListeners();
+  }
+
+  set setEditorLanguage(String value) {
+    _editorLanguage = value;
+    notifyListeners();
+  }
+
   void init(
     Block block,
     Challenge challenge,
@@ -241,15 +258,7 @@ class ChallengeViewModel extends BaseViewModel {
     setBlock = block;
     setChallengesCompleted = challengesCompleted;
 
-    // _testRunner = TestRunner(
-    //   model: this,
-    //   challenge: challenge,
-    //   builder: TestRunnerBuilder(
-    //     source: '',
-    //     code: Code(contents: ''),
-    //     workerType: getWorkerType(challenge.challengeType),
-    //   ),
-    // );
+    listenToSymbolBarScrollController();
   }
 
   void shutdownLocalHost() {
@@ -257,32 +266,78 @@ class ChallengeViewModel extends BaseViewModel {
   }
 
   void initFile(
-    Editor editor,
     Challenge challenge,
     ChallengeFile currFile,
-    bool hasRegion,
   ) async {
     if (!_mounted) {
-      await Future.delayed(Duration.zero);
       String fileContents = await fileService.getExactFileFromCache(
         challenge,
         currFile,
       );
 
+      setCurrentSelectedFile = currFile.name;
+      setEditorText = fileContents;
+      setEditorLanguage = currFile.ext.value;
+      initEditor(challenge, currFile);
       _mounted = true;
-
-      if (currFile.name != currentSelectedFile) {
-        setCurrentSelectedFile = currFile.name;
-        setEditorText = fileContents;
-      }
     }
   }
 
-  void listenToFocusedController(Editor editor) {
+  void initEditor(Challenge challenge, ChallengeFile file) {
+    bool editableRegion = file.editableRegionBoundaries.isNotEmpty;
+
+    EditorOptions options = EditorOptions(
+      hasRegion: editableRegion,
+      regionOptions: editableRegion
+          ? EditorRegionOptions(
+              start: file.editableRegionBoundaries[0],
+              end: file.editableRegionBoundaries[1],
+            )
+          : null,
+      fontFamily: 'Hack',
+    );
+
+    Editor editor = Editor(
+      defaultLanguage: editorLanguage,
+      defaultValue: editorText ?? '',
+      path: '/${challenge.id}/${file.name}',
+      options: options,
+    );
+
+    setEditor = editor;
+
+    initEditorListeners(challenge, file, editor);
+  }
+
+  void initEditorListeners(
+    Challenge challenge,
+    ChallengeFile file,
+    Editor editor,
+  ) {
+    bool editableRegion = file.editableRegionBoundaries.isNotEmpty;
+
     editor.textfieldData.stream.listen((textfieldData) {
       setTextFieldData = textfieldData;
       setShowPanel = false;
     });
+
+    editor.onTextChange.stream.listen((text) {
+      fileService.saveFileInCache(
+        challenge,
+        currentSelectedFile,
+        text,
+      );
+
+      setEditorText = text;
+      setHasTypedInEditor = true;
+      setCompletedChallenge = false;
+    });
+
+    if (editableRegion) {
+      editor.editableRegion.stream.listen((region) {
+        setEditableRegionContent = region;
+      });
+    }
   }
 
   void listenToSymbolBarScrollController() {

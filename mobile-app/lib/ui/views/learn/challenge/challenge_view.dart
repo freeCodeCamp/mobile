@@ -44,47 +44,10 @@ class ChallengeView extends StatelessWidget {
 
         bool onlyJs = challenge.files.every((file) => file.ext.name == 'js');
 
-        bool editableRegion = currFile.editableRegionBoundaries.isNotEmpty;
-        EditorOptions options = EditorOptions(
-          hasRegion: editableRegion,
-          regionOptions: EditorRegionOptions(
-            start: currFile.editableRegionBoundaries[0],
-            end: currFile.editableRegionBoundaries[1],
-          ),
-          fontFamily: 'Hack',
-        );
-
-        Editor editor = Editor(
-          defaultLanguage: 'html',
-          defaultValue: currFile.contents,
-          path: '/${challenge.id}/${currFile.name}',
-          options: options,
-        );
-
-        model.initFile(editor, challenge, currFile, editableRegion);
-        model.listenToFocusedController(editor);
-        model.listenToSymbolBarScrollController();
+        model.initFile(challenge, currFile);
 
         if (model.showPanel) {
           FocusManager.instance.primaryFocus?.unfocus();
-        }
-
-        editor.onTextChange.stream.listen((text) {
-          model.fileService.saveFileInCache(
-            challenge,
-            model.currentSelectedFile,
-            text,
-          );
-
-          model.setEditorText = text;
-          model.setHasTypedInEditor = true;
-          model.setCompletedChallenge = false;
-        });
-
-        if (editableRegion) {
-          editor.editableRegion.stream.listen((region) {
-            model.setEditableRegionContent = region;
-          });
         }
 
         BoxDecoration decoration = const BoxDecoration(
@@ -95,6 +58,12 @@ class ChallengeView extends StatelessWidget {
             ),
           ),
         );
+
+        if (!model.mounted) {
+          return Center(
+            child: CircularProgressIndicator(),
+          );
+        }
 
         return PopScope(
           canPop: true,
@@ -160,12 +129,7 @@ class ChallengeView extends StatelessWidget {
                             ),
                           if (!model.showPreview && challenge.files.length > 1)
                             for (ChallengeFile file in challenge.files)
-                              customTabBar(
-                                model,
-                                challenge,
-                                file,
-                                editor,
-                              )
+                              customTabBar(model, challenge, file)
                         ],
                       ),
               ),
@@ -185,7 +149,6 @@ class ChallengeView extends StatelessWidget {
                 model,
                 keyboard,
                 challenge,
-                editor,
                 context,
               ),
             ),
@@ -199,9 +162,9 @@ class ChallengeView extends StatelessWidget {
                           panel: model.panelType,
                           maxChallenges: maxChallenges,
                           challengesCompleted: challengesCompleted,
-                          editor: editor,
+                          editor: model.editor!,
                         ),
-                      Expanded(child: editor)
+                      Expanded(child: model.editor!)
                     ],
                   )
                 : Column(
@@ -213,7 +176,7 @@ class ChallengeView extends StatelessWidget {
                           panel: model.panelType,
                           maxChallenges: maxChallenges,
                           challengesCompleted: challengesCompleted,
-                          editor: editor,
+                          editor: model.editor!,
                         ),
                       model.showProjectPreview && !onlyJs
                           ? ProjectPreview(
@@ -237,7 +200,6 @@ class ChallengeView extends StatelessWidget {
     ChallengeViewModel model,
     Challenge challenge,
     ChallengeFile file,
-    Editor editor,
   ) {
     return Expanded(
       child: Container(
@@ -287,7 +249,6 @@ class ChallengeView extends StatelessWidget {
     ChallengeViewModel model,
     bool keyboard,
     Challenge challenge,
-    Editor editor,
     BuildContext context,
   ) {
     return BottomAppBar(
@@ -299,7 +260,7 @@ class ChallengeView extends StatelessWidget {
           if (keyboard)
             SymbolBar(
               model: model,
-              editor: editor,
+              editor: model.editor!,
             ),
           Row(
             children: [
@@ -389,23 +350,7 @@ class ChallengeView extends StatelessWidget {
                   onPressed: () async {
                     ChallengeFile currFile = model.currentFile(challenge);
 
-                    String currText =
-                        await model.fileService.getExactFileFromCache(
-                      challenge,
-                      currFile,
-                    );
-
-                    model.setMounted = false;
-
-                    model.setEditorText =
-                        currText == '' ? currFile.contents : currText;
-                    model.setShowPreview = !model.showPreview;
-
-                    if (!model.showProjectPreview && !model.showConsole) {
-                      model.setShowProjectPreview = true;
-                    }
-
-                    model.refresh();
+                    model.initFile(challenge, currFile);
                   },
                   splashColor: Colors.transparent,
                   highlightColor: Colors.transparent,
