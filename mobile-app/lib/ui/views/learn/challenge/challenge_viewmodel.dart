@@ -279,7 +279,7 @@ class ChallengeViewModel extends BaseViewModel {
       setEditorText = fileContents;
       setEditorLanguage = currFile.ext.value;
       initEditor(challenge, currFile);
-      _mounted = true;
+      setMounted = true;
     }
   }
 
@@ -298,6 +298,7 @@ class ChallengeViewModel extends BaseViewModel {
     );
 
     Editor editor = Editor(
+      key: ValueKey(editorText),
       defaultLanguage: editorLanguage,
       defaultValue: editorText ?? '',
       path: '/${challenge.id}/${file.name}',

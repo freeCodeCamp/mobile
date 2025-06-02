@@ -219,16 +219,9 @@ class ChallengeView extends StatelessWidget {
           ),
           onPressed: () async {
             model.setCurrentSelectedFile = file.name;
+            model.setMounted = false;
             ChallengeFile currFile = model.currentFile(challenge);
-
-            String currText = await model.fileService.getExactFileFromCache(
-              challenge,
-              currFile,
-            );
-            //bool hasRegion = currFile.editableRegionBoundaries.isNotEmpty;
-
-            model.setEditorText = currText == '' ? currFile.contents : currText;
-            model.setShowPreview = false;
+            model.initFile(challenge, currFile);
           },
           child: Text(
             '${file.name}.${file.ext.name}',
