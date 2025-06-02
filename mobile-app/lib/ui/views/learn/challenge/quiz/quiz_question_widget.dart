@@ -4,16 +4,16 @@ import 'package:freecodecamp/ui/theme/fcc_theme.dart';
 import 'package:freecodecamp/ui/views/learn/widgets/challenge_card.dart';
 import 'package:freecodecamp/ui/views/news/html_handler/html_handler.dart';
 
-class MultipleChoiceQuestion extends StatelessWidget {
-  const MultipleChoiceQuestion({
+class QuizQuestionWidget extends StatelessWidget {
+  const QuizQuestionWidget({
     super.key,
-    required this.challenge,
+    required this.question,
     required this.selectedAnswer,
     required this.isCorrect,
     required this.onChanged,
   });
 
-  final Challenge challenge;
+  final Question question;
   final int selectedAnswer;
   final bool? isCorrect;
   final ValueChanged<int> onChanged;
@@ -27,12 +27,12 @@ class MultipleChoiceQuestion extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          ...parser.parse(challenge.instructions),
+          // ...parser.parse(challenge.instructions),
           ...parser.parse(
-            challenge.question!.text,
+            question.text,
           ),
           const SizedBox(height: 8),
-          for (var answerObj in challenge.question!.answers.asMap().entries)
+          for (var answerObj in question.answers.asMap().entries)
             Option(
                 answerObj: answerObj,
                 selectedAnswer: selectedAnswer,

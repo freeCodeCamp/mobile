@@ -2,11 +2,11 @@ import 'package:flutter/material.dart';
 import 'package:freecodecamp/extensions/i18n_extension.dart';
 import 'package:freecodecamp/models/learn/challenge_model.dart';
 import 'package:freecodecamp/models/learn/curriculum_model.dart';
+import 'package:freecodecamp/ui/views/learn/challenge/quiz/quiz_view.dart';
 import 'package:freecodecamp/ui/views/learn/challenge/templates/multiple_choice/multiple_choice_viewmodel.dart';
 import 'package:freecodecamp/ui/views/learn/widgets/audio/audio_player_view.dart';
 import 'package:freecodecamp/ui/views/learn/widgets/challenge_card.dart';
 import 'package:freecodecamp/ui/views/learn/widgets/explanation_widget.dart';
-import 'package:freecodecamp/ui/views/learn/widgets/multiple_choice_question.dart';
 import 'package:freecodecamp/ui/views/news/html_handler/html_handler.dart';
 import 'package:stacked/stacked.dart';
 import 'package:youtube_player_iframe/youtube_player_iframe.dart';
@@ -133,14 +133,8 @@ class MultipleChoiceView extends StatelessWidget {
                         ),
                       ),
                     ),
-                  MultipleChoiceQuestion(
-                      challenge: challenge,
-                      selectedAnswer: model.currentChoice,
-                      isCorrect: model.choiceStatus,
-                      onChanged: (value) {
-                        model.setChoiceStatus = null;
-                        model.setCurrentChoice = value;
-                      }),
+                  // TODO: Change challenge.question to a list
+                  Quiz(questions: [challenge.question!]),
                   const SizedBox(height: 8),
                   if (challenge.explanation != null &&
                       challenge.explanation!.isNotEmpty) ...[
