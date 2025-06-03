@@ -84,9 +84,6 @@ class ChallengeViewModel extends BaseViewModel {
   InAppWebViewController? _testController;
   InAppWebViewController? get testController => _testController;
 
-  Syntax _currFileType = Syntax.HTML;
-  Syntax get currFileType => _currFileType;
-
   bool _mounted = false;
   bool get mounted => _mounted;
 
@@ -212,11 +209,6 @@ class ChallengeViewModel extends BaseViewModel {
 
   set setChallengesCompleted(int value) {
     _challengesCompleted = value;
-    notifyListeners();
-  }
-
-  set setCurrFileType(Syntax value) {
-    _currFileType = value;
     notifyListeners();
   }
 

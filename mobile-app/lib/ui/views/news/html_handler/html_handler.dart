@@ -2,14 +2,14 @@ import 'dart:convert';
 
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_highlight/flutter_highlight.dart';
-import 'package:flutter_highlight/theme_map.dart';
+
 import 'package:flutter_html/flutter_html.dart';
 import 'package:flutter_html_table/flutter_html_table.dart';
 import 'package:freecodecamp/ui/theme/fcc_theme.dart';
 import 'package:freecodecamp/ui/views/news/news-image-viewer/news_image_view.dart';
 import 'package:html/dom.dart' as dom;
 import 'package:html/parser.dart' as parser;
+import 'package:phone_ide/phone_ide.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:youtube_player_iframe/youtube_player_iframe.dart';
 
@@ -192,38 +192,19 @@ class HTMLParser {
 
             List classes = codeElement.classes.toList();
 
-            return Row(
-              children: [
-                Expanded(
-                  flex: 1,
-                  child: SingleChildScrollView(
-                    physics: const NeverScrollableScrollPhysics(),
-                    child: SingleChildScrollView(
-                      scrollDirection: Axis.horizontal,
-                      physics: const ClampingScrollPhysics(),
-                      child: ConstrainedBox(
-                        constraints: BoxConstraints(
-                          minWidth: MediaQuery.of(context).size.width - 25,
-                        ),
-                        child: HighlightView(
-                          codeElement.text,
-                          padding: const EdgeInsets.all(16),
-                          language: codeLanguageIsPresent(classes)
-                              ? currentClass!.split('-')[1]
-                              : 'plaintext',
-                          theme: themeMap['atom-one-dark']!,
-                          textStyle: TextStyle(
-                              fontSize: double.parse(
-                                FontSize.large.value.toString(),
-                              ),
-                              color: Colors.white,
-                              fontFamily: 'Hack'),
-                        ),
-                      ),
-                    ),
-                  ),
-                ),
-              ],
+            return Editor(
+              options: EditorOptions(
+                fontFamily: 'Hack',
+                takeFullHeight: false,
+              ),
+              defaultLanguage: codeLanguageIsPresent(classes)
+                  ? currentClass!.split('-')[1]
+                  : '',
+              defaultValue: codeElement.text.substring(
+                0,
+                codeElement.text.length - 1,
+              ),
+              path: 'example',
             );
           },
         ),
