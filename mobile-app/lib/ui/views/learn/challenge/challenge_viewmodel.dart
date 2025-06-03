@@ -287,7 +287,6 @@ class ChallengeViewModel extends BaseViewModel {
     bool editableRegion = file.editableRegionBoundaries.isNotEmpty;
 
     EditorOptions options = EditorOptions(
-      hasRegion: editableRegion,
       regionOptions: editableRegion
           ? EditorRegionOptions(
               start: file.editableRegionBoundaries[0],
