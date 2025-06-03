@@ -185,9 +185,7 @@ class LearnLandingViewModel extends BaseViewModel {
         );
       }
 
-      Future<List<SuperBlockButtonData>> btnList = Future.value(buttonData);
-
-      return btnList;
+      return buttonData;
     }
     return [];
   }
