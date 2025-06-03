@@ -28,111 +28,105 @@ class EnglishView extends StatelessWidget {
     return ViewModelBuilder<EnglishViewModel>.reactive(
       viewModelBuilder: () => EnglishViewModel(),
       builder: (context, model, child) {
-        return PopScope(
-          canPop: true,
-          onPopInvokedWithResult: (bool didPop, dynamic result) {
-            model.learnService.updateProgressOnPop(context, block);
-          },
-          child: Scaffold(
+        return Scaffold(
+          backgroundColor: FccColors.gray90,
+          persistentFooterAlignment: AlignmentDirectional.topStart,
+          appBar: AppBar(
             backgroundColor: FccColors.gray90,
-            persistentFooterAlignment: AlignmentDirectional.topStart,
-            appBar: AppBar(
-              backgroundColor: FccColors.gray90,
-            ),
-            body: SafeArea(
-              child: ListView(
-                children: [
-                  ChallengeCard(
-                    title: challenge.title,
-                    child: Column(
-                      children: [
-                        ...parser.parse(
-                          challenge.instructions,
-                          fontColor: FccColors.gray05,
-                        ),
-                        ...parser.parse(
-                          challenge.description,
-                          fontColor: FccColors.gray05,
-                        ),
-                      ],
-                    ),
-                  ),
-                  if (challenge.audio != null) ...[
-                    ChallengeCard(
-                      title: 'Listen to the Audio',
-                      child: AudioPlayerView(
-                        audio: challenge.audio!,
-                      ),
-                    ),
-                  ],
-                  if (challenge.fillInTheBlank != null)
-                    ChallengeCard(
-                      title: 'Fill in the Blank',
-                      child: Padding(
-                        padding: const EdgeInsets.all(10.0),
-                        child: Column(
-                          children: model.getFillInBlankWidgets(
-                            challenge,
-                            context,
-                          ),
-                        ),
-                      ),
-                    ),
-                  if (model.feedback.isNotEmpty)
-                    ChallengeCard(
-                      title: 'Feedback',
-                      child: Column(
-                        children: parser.parse(model.feedback),
-                      ),
-                    ),
-                  if (challenge.explanation != null &&
-                      challenge.explanation!.isNotEmpty) ...[
-                    ChallengeCard(
-                      title: 'Explanation',
-                      child: Explanation(
-                        explanation: challenge.explanation ?? '',
-                      ),
-                    ),
-                  ],
-                  Row(
+          ),
+          body: SafeArea(
+            child: ListView(
+              children: [
+                ChallengeCard(
+                  title: challenge.title,
+                  child: Column(
                     children: [
-                      Expanded(
-                        child: Container(
-                          margin: const EdgeInsets.all(8),
-                          child: ElevatedButton(
-                            style: ElevatedButton.styleFrom(
-                              minimumSize: const Size(0, 50),
-                              backgroundColor:
-                                  const Color.fromRGBO(0x3b, 0x3b, 0x4f, 1),
-                              shape: const RoundedRectangleBorder(
-                                borderRadius: BorderRadius.zero,
-                                side: BorderSide(
-                                  width: 2,
-                                  color: Colors.white,
-                                ),
-                              ),
-                            ),
-                            onPressed: model.allInputsCorrect
-                                ? () => model.learnService.goToNextChallenge(
-                                    block.challenges.length,
-                                    currentChallengeNum,
-                                    challenge,
-                                    block)
-                                : () => {model.checkAnswers(challenge)},
-                            child: Text(
-                              model.allInputsCorrect ||
-                                      challenge.fillInTheBlank == null
-                                  ? 'Go to Next Challenge'
-                                  : 'Check Answers',
-                              style: const TextStyle(fontSize: 20),
-                            ),
-                          ),
-                        ),
+                      ...parser.parse(
+                        challenge.instructions,
+                        fontColor: FccColors.gray05,
+                      ),
+                      ...parser.parse(
+                        challenge.description,
+                        fontColor: FccColors.gray05,
                       ),
                     ],
-                  )
+                  ),
+                ),
+                if (challenge.audio != null) ...[
+                  ChallengeCard(
+                    title: 'Listen to the Audio',
+                    child: AudioPlayerView(
+                      audio: challenge.audio!,
+                    ),
+                  ),
                 ],
-              ),
+                if (challenge.fillInTheBlank != null)
+                  ChallengeCard(
+                    title: 'Fill in the Blank',
+                    child: Padding(
+                      padding: const EdgeInsets.all(10.0),
+                      child: Column(
+                        children: model.getFillInBlankWidgets(
+                          challenge,
+                          context,
+                        ),
+                      ),
+                    ),
+                  ),
+                if (model.feedback.isNotEmpty)
+                  ChallengeCard(
+                    title: 'Feedback',
+                    child: Column(
+                      children: parser.parse(model.feedback),
+                    ),
+                  ),
+                if (challenge.explanation != null &&
+                    challenge.explanation!.isNotEmpty) ...[
+                  ChallengeCard(
+                    title: 'Explanation',
+                    child: Explanation(
+                      explanation: challenge.explanation ?? '',
+                    ),
+                  ),
+                ],
+                Row(
+                  children: [
+                    Expanded(
+                      child: Container(
+                        margin: const EdgeInsets.all(8),
+                        child: ElevatedButton(
+                          style: ElevatedButton.styleFrom(
+                            minimumSize: const Size(0, 50),
+                            backgroundColor:
+                                const Color.fromRGBO(0x3b, 0x3b, 0x4f, 1),
+                            shape: const RoundedRectangleBorder(
+                              borderRadius: BorderRadius.zero,
+                              side: BorderSide(
+                                width: 2,
+                                color: Colors.white,
+                              ),
+                            ),
+                          ),
+                          onPressed: model.allInputsCorrect
+                              ? () => model.learnService.goToNextChallenge(
+                                  block.challenges.length,
+                                  currentChallengeNum,
+                                  challenge,
+                                  block)
+                              : () => {model.checkAnswers(challenge)},
+                          child: Text(
+                            model.allInputsCorrect ||
+                                    challenge.fillInTheBlank == null
+                                ? 'Go to Next Challenge'
+                                : 'Check Answers',
+                            style: const TextStyle(fontSize: 20),
+                          ),
+                        ),
+                      ),
+                    ),
+                  ],
+                )
+              ],
             ),
           ),
         );

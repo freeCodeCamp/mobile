@@ -57,90 +57,83 @@ class PythonView extends StatelessWidget {
           },
         );
 
-        return PopScope(
-          canPop: true,
-          onPopInvokedWithResult: (bool didPop, dynamic result) {
-            model.learnService.updateProgressOnPop(context, block);
-          },
-          child: Scaffold(
-            appBar: AppBar(
-              title: Text(
-                '$currentChallengeNum of ${block.challenges.length} Questions',
-              ),
+        return Scaffold(
+          appBar: AppBar(
+            title: Text(
+              '$currentChallengeNum of ${block.challenges.length} Questions',
             ),
-            body: SafeArea(
-              bottom: false,
-              child: ListView(
-                padding: const EdgeInsets.all(12),
-                children: [
-                  Center(
-                    child: Text(
-                      challenge.title,
-                      textAlign: TextAlign.center,
-                      style: const TextStyle(
-                        fontSize: 20,
-                        fontWeight: FontWeight.bold,
-                      ),
+          ),
+          body: SafeArea(
+            bottom: false,
+            child: ListView(
+              padding: const EdgeInsets.all(12),
+              children: [
+                Center(
+                  child: Text(
+                    challenge.title,
+                    textAlign: TextAlign.center,
+                    style: const TextStyle(
+                      fontSize: 20,
+                      fontWeight: FontWeight.bold,
                     ),
                   ),
-                  const SizedBox(height: 12),
-                  Padding(
-                    padding: const EdgeInsets.symmetric(
-                      horizontal: 16,
-                    ),
-                    child: YoutubePlayer(
-                      controller: controller,
-                      enableFullScreenOnVerticalDrag: false,
-                    ),
+                ),
+                const SizedBox(height: 12),
+                Padding(
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 16,
                   ),
-                  const SizedBox(height: 12),
-                  ...parser.parse(
-                    challenge.description,
+                  child: YoutubePlayer(
+                    controller: controller,
+                    enableFullScreenOnVerticalDrag: false,
                   ),
-                  if (challenge.description.isNotEmpty) buildDivider(),
-                  ...parser.parse(
-                    challenge.question!.text,
-                  ),
-                  const SizedBox(height: 8),
-                  for (var answerObj
-                      in challenge.question!.answers.asMap().entries)
-                    questionOption(answerObj, model, context),
-                  const SizedBox(height: 16),
-                  ElevatedButton(
-                    style: ElevatedButton.styleFrom(
-                      minimumSize: const Size(0, 50),
-                      backgroundColor:
-                          const Color.fromRGBO(0x3b, 0x3b, 0x4f, 1),
-                      side: const BorderSide(
-                        width: 2,
-                        color: Colors.white,
-                      ),
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(0),
-                      ),
+                ),
+                const SizedBox(height: 12),
+                ...parser.parse(
+                  challenge.description,
+                ),
+                if (challenge.description.isNotEmpty) buildDivider(),
+                ...parser.parse(
+                  challenge.question!.text,
+                ),
+                const SizedBox(height: 8),
+                for (var answerObj
+                    in challenge.question!.answers.asMap().entries)
+                  questionOption(answerObj, model, context),
+                const SizedBox(height: 16),
+                ElevatedButton(
+                  style: ElevatedButton.styleFrom(
+                    minimumSize: const Size(0, 50),
+                    backgroundColor: const Color.fromRGBO(0x3b, 0x3b, 0x4f, 1),
+                    side: const BorderSide(
+                      width: 2,
+                      color: Colors.white,
                     ),
-                    onPressed: model.currentChoice != -1
-                        ? model.choiceStatus != null && model.choiceStatus!
-                            ? () => model.learnService.goToNextChallenge(
-                                  block.challenges.length,
-                                  challengesCompleted,
-                                  challenge,
-                                  block,
-                                )
-                            : () => model.checkOption(challenge)
-                        : null,
-                    child: Text(
-                      model.choiceStatus != null
-                          ? model.choiceStatus!
-                              ? context.t.next_challenge
-                              : context.t.try_again
-                          : context.t.questions_check,
-                      style: const TextStyle(fontSize: 20),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(0),
                     ),
                   ),
-                  const SizedBox(height: 50),
-                ],
-              ),
+                  onPressed: model.currentChoice != -1
+                      ? model.choiceStatus != null && model.choiceStatus!
+                          ? () => model.learnService.goToNextChallenge(
+                                block.challenges.length,
+                                challengesCompleted,
+                                challenge,
+                                block,
+                              )
+                          : () => model.checkOption(challenge)
+                      : null,
+                  child: Text(
+                    model.choiceStatus != null
+                        ? model.choiceStatus!
+                            ? context.t.next_challenge
+                            : context.t.try_again
+                        : context.t.questions_check,
+                    style: const TextStyle(fontSize: 20),
+                  ),
+                ),
+                const SizedBox(height: 50),
+              ],
             ),
           ),
         );

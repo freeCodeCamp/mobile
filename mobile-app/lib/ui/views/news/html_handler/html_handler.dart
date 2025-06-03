@@ -26,6 +26,7 @@ class HTMLParser {
     bool isSelectable = true,
     bool removeParagraphMargin = false,
     Color? fontColor,
+    double? fontSize,
   }) {
     dom.Document result = parser.parse(html);
 
@@ -62,12 +63,11 @@ class HTMLParser {
     );
   }
 
-  Widget _parseHTMLWidget(
-    child, [
-    bool isSelectable = true,
-    bool removeParagraphMargin = false,
-    Color? fontColor,
-  ]) {
+  Widget _parseHTMLWidget(child,
+      [bool isSelectable = true,
+      bool removeParagraphMargin = false,
+      Color? fontColor,
+      double? fontSize]) {
     Html htmlWidget = Html(
       shrinkWrap: true,
       data: child,
@@ -113,6 +113,7 @@ class HTMLParser {
           textDecorationColor: Colors.white,
         ),
         'p': Style(
+          fontSize: FontSize(fontSize ?? 20),
           margin: removeParagraphMargin
               ? Margins.all(0)
               : Margins.only(top: 8, bottom: 8),
