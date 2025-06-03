@@ -25,6 +25,9 @@ class MultipleChoiceViewmodel extends BaseViewModel {
   List<bool> _assignmentStatus = [];
   List<bool> get assignmentStatus => _assignmentStatus;
 
+  bool? _isValidated;
+  bool? get isValidated => _isValidated;
+
   final LearnService learnService = locator<LearnService>();
 
   set setCurrentChoice(int choice) {
@@ -57,6 +60,11 @@ class MultipleChoiceViewmodel extends BaseViewModel {
     notifyListeners();
   }
 
+  set setIsValidated(bool? isValidated) {
+    _isValidated = isValidated;
+    notifyListeners();
+  }
+
   void initChallenge(Challenge challenge) {
     setAssignmentStatus = List.filled(
       challenge.assignments?.length ?? 0,
@@ -65,9 +73,12 @@ class MultipleChoiceViewmodel extends BaseViewModel {
   }
 
   void setValidationStatus(Challenge challenge) {
-    bool isCorrect = challenge.question!.solution - 1 == currentChoice;
-    setChoiceStatus = isCorrect;
-    setLastAnswer = currentChoice;
+    // bool isCorrect = challenge.question!.solution - 1 == currentChoice;
+    // setChoiceStatus = isCorrect;
+    // setLastAnswer = currentChoice;
+
+    // TODO: check if all questions have been answered before setting isValidated to true
+    setIsValidated = true;
   }
 
   void updateFeedback(Challenge challenge, BuildContext context) {

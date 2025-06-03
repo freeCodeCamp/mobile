@@ -3,12 +3,16 @@ import 'package:stacked/stacked.dart';
 
 // Model that extends Question with feedback/status info
 class QuizQuestion {
-  final Question question;
+  final String text;
+  final List<Answer> answers;
+  final int solution;
   int selectedAnswer;
   bool? isCorrect;
 
   QuizQuestion({
-    required this.question,
+    required this.text,
+    required this.answers,
+    required this.solution,
     this.selectedAnswer = -1,
     this.isCorrect,
   });
@@ -18,13 +22,16 @@ class QuizViewModel extends BaseViewModel {
   final List<QuizQuestion> quizQuestions;
 
   QuizViewModel({required List<Question> questions})
-      : quizQuestions =
-            questions.map((q) => QuizQuestion(question: q)).toList();
+      : quizQuestions = questions
+            .map((q) => QuizQuestion(
+                text: q.text, answers: q.answers, solution: q.solution))
+            .toList();
 
   void selectAnswer(int questionIndex, int answerIndex) {
     quizQuestions[questionIndex].selectedAnswer = answerIndex;
 
-    final solution = quizQuestions[questionIndex].question.solution;
+    // Compute the isCorrect status
+    final solution = quizQuestions[questionIndex].solution;
     quizQuestions[questionIndex].isCorrect = (answerIndex == solution - 1);
 
     notifyListeners();
