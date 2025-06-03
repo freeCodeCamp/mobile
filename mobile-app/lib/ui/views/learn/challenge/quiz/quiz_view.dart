@@ -13,18 +13,20 @@ class Quiz extends StatelessWidget {
   Widget build(BuildContext context) {
     return ViewModelBuilder<QuizViewModel>.reactive(
       viewModelBuilder: () => QuizViewModel(questions: questions),
-      builder: (context, model, child) => ListView.builder(
-        itemCount: model.quizQuestions.length,
-        itemBuilder: (context, index) {
-          final quizQuestion = model.quizQuestions[index];
-
-          return QuizQuestionWidget(
-            question: quizQuestion.question,
-            selectedAnswer: quizQuestion.selectedAnswer,
-            isCorrect: quizQuestion.isCorrect,
-            onChanged: (answerIndex) => model.selectAnswer(index, answerIndex),
-          );
-        },
+      builder: (context, model, child) => Column(
+        children: List.generate(
+          model.quizQuestions.length,
+          (index) {
+            final quizQuestion = model.quizQuestions[index];
+            return QuizQuestionWidget(
+              question: quizQuestion.question,
+              selectedAnswer: quizQuestion.selectedAnswer,
+              isCorrect: quizQuestion.isCorrect,
+              onChanged: (answerIndex) =>
+                  model.selectAnswer(index, answerIndex),
+            );
+          },
+        ),
       ),
     );
   }
