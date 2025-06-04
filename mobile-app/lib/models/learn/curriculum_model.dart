@@ -26,13 +26,17 @@ class SuperBlock {
             name: chapter['name'],
             dashedName: chapter['dashedName'],
             comingSoon: chapter['comingSoon'] ?? false,
-            chapterType: ChapterType.fromValue(chapter['chapterType']),
+            chapterType: chapter['chapterType'] != null
+                ? ChapterType.fromValue(chapter['chapterType'])
+                : null,
             modules: (chapter['modules']).map<Module>((module) {
               return Module(
                   name: module['name'] ?? 'No name',
                   dashedName: module['dashedName'],
                   comingSoon: module['comingSoon'] ?? false,
-                  moduleType: ModuleType.fromValue(module['moduleType']),
+                  moduleType: module['moduleType'] != null
+                      ? ModuleType.fromValue(module['moduleType'])
+                      : null,
                   blocks: (module['blocks']).map<Block>((block) {
                     return Block.fromJson(
                       block['meta'],
