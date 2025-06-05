@@ -60,6 +60,9 @@ class BlockTemplateViewModel extends BaseViewModel {
 
   void init(List<ChallengeListTile> challengeBatch) async {
     setNumberOfCompletedChallenges(challengeBatch);
+    auth.progress.stream.listen(
+      (val) => setNumberOfCompletedChallenges(challengeBatch),
+    );
     notifyListeners();
   }
 

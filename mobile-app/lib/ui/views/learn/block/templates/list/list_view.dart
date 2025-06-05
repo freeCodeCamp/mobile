@@ -34,20 +34,46 @@ class BlockListView extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Container(
-              padding: const EdgeInsets.all(8),
-              // For some dumb reason the progress indicator does not
-              // get a specified width from the column.
-              width: MediaQuery.of(context).size.width * 0.9,
-              child: LinearProgressIndicator(
-                minHeight: 10,
-                value: progress,
-                valueColor: const AlwaysStoppedAnimation<Color>(
-                  Color.fromRGBO(0x99, 0xc9, 0xff, 1),
-                ),
-                backgroundColor: const Color.fromRGBO(0x2a, 0x2a, 0x40, 1),
-                borderRadius: BorderRadius.circular(10),
-              ),
+            Row(
+              children: [
+                model.challengesCompleted == block.challenges.length
+                    ? Padding(
+                        padding: const EdgeInsets.all(8.0),
+                        child: Row(
+                          children: [
+                            Padding(
+                              padding: const EdgeInsets.only(right: 8.0),
+                              child: Icon(
+                                Icons.check_circle,
+                                color: Color.fromRGBO(0x99, 0xc9, 0xff, 1),
+                              ),
+                            ),
+                            Text(
+                              'Completed',
+                              style: TextStyle(
+                                  color: Color.fromRGBO(0x99, 0xc9, 0xff, 1),
+                                  fontWeight: FontWeight.bold),
+                            )
+                          ],
+                        ),
+                      )
+                    : Container(
+                        padding: const EdgeInsets.all(10),
+                        // For some dumb reason the progress indicator does not
+                        // get a specified width from the column.
+                        width: MediaQuery.of(context).size.width * 0.9,
+                        child: LinearProgressIndicator(
+                          minHeight: 12,
+                          value: progress,
+                          valueColor: AlwaysStoppedAnimation<Color>(
+                            Color.fromRGBO(0x99, 0xc9, 0xff, 1),
+                          ),
+                          backgroundColor:
+                              const Color.fromRGBO(0x2a, 0x2a, 0x40, 1),
+                          borderRadius: BorderRadius.circular(10),
+                        ),
+                      ),
+              ],
             ),
             ...parser.parse(
               '<p>${block.description.join(' ')}</p>',
