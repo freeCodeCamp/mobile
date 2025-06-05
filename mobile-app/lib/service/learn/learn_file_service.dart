@@ -148,6 +148,35 @@ class LearnFileService {
     return linkedFileNames.contains(cssFileName);
   }
 
+  // This function checks if the given document contains any script elements.
+  // If so check if the js file name corresponds with the names put in the array.
+  // If the file is linked return true.
+
+  Future<bool> jsFileIsLinked(
+    String document,
+    String jsFileName,
+  ) async {
+    Document doc = parse(document);
+
+    List<Node> scripts = doc.getElementsByTagName('SCRIPT');
+
+    List<String> linkedFileNames = [];
+
+    if (scripts.isNotEmpty) {
+      for (Node node in scripts) {
+        if (node.attributes['src'] == null) continue;
+
+        if (node.attributes['src']!.contains('/')) {
+          linkedFileNames.add(node.attributes['src']!.split('/').last);
+        } else if (node.attributes['src']!.isNotEmpty) {
+          linkedFileNames.add(node.attributes['src'] as String);
+        }
+      }
+    }
+
+    return linkedFileNames.contains(jsFileName);
+  }
+
   // This function puts the given css content in the same file as the HTML content.
   // It will parse the current CSS content into style tags only if it is linked.
   // If there is nothing to parse it will return the plain content document.
@@ -184,6 +213,55 @@ class LearnFileService {
 
       for (String contents in cssFilesWithCache) {
         String tag = '<style class="fcc-injected-styles"> $contents </style>';
+        tags.add(tag);
+      }
+
+      for (String tag in tags) {
+        content += tag;
+      }
+
+      return content;
+    }
+
+    return content;
+  }
+
+  // This function puts the given js content in the same file as the HTML content.
+  // It will parse the current JS content into script tags only if it is linked.
+  // If there is nothing to parse it will return the plain content document.
+
+  Future<String> parseJsDocmentsAsScriptTags(
+    Challenge challenge,
+    String content, {
+    bool testing = false,
+  }) async {
+    List<ChallengeFile> jsFiles = challenge.files
+        .where(
+          (element) => element.ext == Ext.js,
+        )
+        .toList();
+    List<String> jsFilesWithCache = [];
+    List<String> tags = [];
+
+    if (jsFiles.isNotEmpty) {
+      for (ChallengeFile file in jsFiles) {
+        String? cache = await getExactFileFromCache(
+          challenge,
+          file,
+          testing: testing,
+        );
+
+        if (!await jsFileIsLinked(content, '${file.name}.${file.ext.name}')) {
+          continue;
+        }
+
+        String handledFile = cache;
+
+        jsFilesWithCache.add(handledFile);
+      }
+
+      for (String contents in jsFilesWithCache) {
+        String tag = '<script data-src="script.js"> $contents </script>';
         tags.add(tag);
       }
 
