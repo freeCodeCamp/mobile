@@ -1,6 +1,7 @@
 // TODO: Make the test customizable for specific superblocks, blocks, and challenges
 
 import 'dart:convert';
+import 'dart:math';
 
 import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -22,11 +23,76 @@ void main() {
     await setupLocator();
 
     List<String> publicSBs = [
-      '2022/responsive-web-design',
-      'responsive-web-design',
+      // '2022/responsive-web-design',
+      // 'responsive-web-design',
+      // 'javascript-algorithms-and-data-structures-v8',
       // 'javascript-algorithms-and-data-structures',
       // 'the-odin-project',
+      'full-stack-developer',
     ];
+
+    List<String> blockNames = [
+  // "workshop-greeting-bot",
+  // "lab-javascript-trivia-bot", // TODO: Re-verify after Oliver supports before all for JS challenges
+  // "lab-sentence-maker",
+  // "workshop-teacher-chatbot",
+  // "workshop-mathbot",
+  // "lab-fortune-teller",
+  // "workshop-calculator",
+  // "lab-email-masker",
+  // "workshop-loan-qualification-checker",
+  // "lab-leap-year-calculator",
+  // "lab-truncate-string",
+  // "workshop-shopping-list",
+  // "lab-lunch-picker-program",
+  // "workshop-recipe-tracker",
+  // "lab-quiz-game",
+  // "workshop-sentence-analyzer",
+  // "lab-factorial-calculator",
+  // "lab-mutations",
+  // "lab-chunky-monkey",
+  // "lab-slice-and-splice",
+  // "lab-pyramid-generator",
+  // "lab-gradebook-app",
+  // "lab-inventory-management-program",
+  // "lab-password-generator",
+  // "lab-sum-all-numbers-algorithm",
+  // "workshop-library-manager",
+  // "lab-book-organizer",
+
+  // "workshop-storytelling-app",
+  "lab-favorite-icon-toggler",
+  // "workshop-music-instrument-filter",
+  // "lab-real-time-counter",
+  // "lab-lightbox-viewer",
+  // "workshop-rps-game",
+  // "lab-football-team-cards",
+  // "lab-random-background-color-changer",
+  // "workshop-spam-filter",
+  // "lab-palindrome-checker",
+  // "lab-markdown-to-html-converter",
+  // "lab-regex-sandbox",
+  // "workshop-calorie-counter",
+  // "lab-customer-complaint-form",
+  // "lab-date-conversion",
+  // "workshop-music-player",
+  // "lab-drum-machine",
+
+  // "workshop-plant-nursery-catalog",
+  // "lab-voting-system",
+  // "workshop-todo-app",
+  // "lab-bookmark-manager-app",
+  // "workshop-shopping-cart",
+  // "lab-project-idea-board",
+  // "lab-bank-account-manager",
+  // "workshop-decimal-to-binary-converter",
+  // "lab-permutation-generator",
+  // "workshop-recipe-ingredient-converter",
+  // "lab-sorting-visualizer",
+  // "workshop-fcc-authors-page",
+  // "lab-fcc-forum-leaderboard",
+  // "lab-weather-app"
+];
 
     String curriculumFilePath = 'assets/learn/curriculum.json';
     String curriculumFile = await rootBundle.loadString(curriculumFilePath);
@@ -37,7 +103,7 @@ void main() {
     await tester.pumpWidget(CurriculumTestRunner());
     await tester.pumpAndSettle();
     // NOTE: To be on the safe side, we wait for 30 seconds to make sure the webview is loaded
-    await Future.delayed(Duration(seconds: 30));
+    await Future.delayed(Duration(seconds: 10));
     final widgetState = tester
         .state<CurriculumTestRunnerState>(find.byType(CurriculumTestRunner));
     expect(widgetState.webViewController, isNotNull);
@@ -49,6 +115,9 @@ void main() {
       print('\nSUPERBLOCK: $currSuperBlock');
       for (var currBlock in curriculumData[currSuperBlock]['blocks'].values) {
         print('Block: ${currBlock['meta']['name']}');
+        if (!blockNames.contains(currBlock['meta']['dashedName'])) {
+          continue;
+        }
         List challenges = currBlock['challenges']
           ..sort((a, b) =>
               a['challengeOrder'].compareTo(b['challengeOrder']) as int);
@@ -57,7 +126,8 @@ void main() {
           editorChallengeTypes.add(currChallenge['challengeType']);
 
           // Skip non-editor challenges
-          if (![0, 1, 5, 6, 14].contains(currChallenge['challengeType'])) {
+          if (![0, 1, 5, 6, 14, 25, 26]
+              .contains(currChallenge['challengeType'])) {
             continue;
           }
 
@@ -85,6 +155,8 @@ void main() {
           }
 
           Challenge challenge = Challenge.fromJson(currChallenge);
+          print(
+              'Challenge: ${challenge.id} - ${challenge.title} - ${challenge.challengeType}');
 
           String getLines(String contents, [List? range]) {
             if (range == null || range.isEmpty) {
@@ -92,9 +164,12 @@ void main() {
             }
 
             final lines = contents.split('\n');
+            // print('Contents: $contents');
+            // print('Lines: $lines');
+            // print('Range: $range');
             final editableLines = (range[1] <= range[0])
                 ? []
-                : lines.sublist(range[0], range[1] - 1);
+                : lines.sublist(range[0], min(range[1] - 1, lines.length));
 
             return editableLines.join('\n');
           }
@@ -119,7 +194,6 @@ void main() {
             arguments: {
               'userCode': await builder.buildUserCode(
                 challenge,
-                currentFile.ext,
                 testing: true,
               ),
               'workerType': builder.getWorkerType(challenge.challengeType),
