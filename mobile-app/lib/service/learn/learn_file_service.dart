@@ -1,3 +1,4 @@
+import 'package:flutter_inappwebview/flutter_inappwebview.dart';
 import 'package:freecodecamp/enums/ext_type.dart';
 import 'package:freecodecamp/models/learn/challenge_model.dart';
 import 'package:html/dom.dart';
@@ -234,6 +235,7 @@ class LearnFileService {
     Challenge challenge,
     String content, {
     bool testing = false,
+    InAppWebViewController? babelController,
   }) async {
     List<ChallengeFile> jsFiles = challenge.files
         .where(
@@ -261,6 +263,19 @@ class LearnFileService {
       }
 
       for (String contents in jsFilesWithCache) {
+        // If babelController is provided, we can use it to transpile the JS code.
+        if (babelController != null) {
+          final babelRes = await babelController.callAsyncJavaScript(
+            functionBody:
+                'return Babel.transform(code, { presets: ["env"] }).code',
+            arguments: {'code': contents},
+          );
+
+          if (babelRes?.error != null) {
+            throw Exception('Babel transpilation failed: ${babelRes?.error}');
+          }
+          contents = babelRes?.value ?? contents;
+        }
         String tag = '<script data-src="script.js"> $contents </script>';
         tags.add(tag);
       }

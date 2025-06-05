@@ -78,6 +78,9 @@ class ChallengeViewModel extends BaseViewModel {
   InAppWebViewController? _testController;
   InAppWebViewController? get testController => _testController;
 
+  InAppWebViewController? _babelController;
+  InAppWebViewController? get babelController => _babelController;
+
   Syntax _currFileType = Syntax.HTML;
   Syntax get currFileType => _currFileType;
 
@@ -140,6 +143,11 @@ class ChallengeViewModel extends BaseViewModel {
 
   set setTestController(InAppWebViewController controller) {
     _testController = controller;
+    notifyListeners();
+  }
+
+  set setBabelController(InAppWebViewController controller) {
+    _babelController = controller;
     notifyListeners();
   }
 
@@ -374,26 +382,36 @@ class ChallengeViewModel extends BaseViewModel {
         .where((ChallengeFile file) => file.ext == Ext.css)
         .toList();
 
+    List<ChallengeFile> jsFiles = currChallenge.files
+        .where((ChallengeFile file) => file.ext == Ext.js)
+        .toList();
+
     Document document = parse(doc);
+    String? cssParsed, jsParsed;
 
     List<ChallengeFile> currentFile = currChallenge.files
         .where((element) => element.ext == Ext.html)
         .toList();
 
-    if (cssFiles.isNotEmpty) {
-      String text = prefs.getString(
-            '${currChallenge.id}.${currentFile[0].name}',
-          ) ??
-          currentFile[0].contents;
+    String text = prefs.getString(
+          '${currChallenge.id}.${currentFile[0].name}',
+        ) ??
+        currentFile[0].contents;
 
-      String cssParsed = await fileService.parseCssDocmentsAsStyleTags(
+    if (cssFiles.isNotEmpty) {
+      cssParsed = await fileService.parseCssDocmentsAsStyleTags(
         currChallenge,
         text,
       );
 
-      String jsParsed = await fileService.parseJsDocmentsAsScriptTags(
+      document = parse(cssParsed);
+    }
+
+    if (jsFiles.isNotEmpty) {
+      jsParsed = await fileService.parseJsDocmentsAsScriptTags(
         currChallenge,
-        cssParsed,
+        cssParsed ?? text,
+        babelController: babelController
       );
 
       document = parse(jsParsed);
