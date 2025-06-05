@@ -28,6 +28,31 @@ class BlockLinkView extends StatelessWidget {
         return Expanded(
           child: Column(
             children: [
+              Row(
+                children: [
+                  model.challengesCompleted == block.challenges.length
+                      ? Padding(
+                          padding: const EdgeInsets.all(8.0),
+                          child: Row(
+                            children: [
+                              Padding(
+                                padding: const EdgeInsets.only(right: 8.0),
+                                child: Icon(
+                                  Icons.check_circle,
+                                  color: color,
+                                ),
+                              ),
+                              Text(
+                                'Completed',
+                                style: TextStyle(
+                                    color: color, fontWeight: FontWeight.bold),
+                              )
+                            ],
+                          ),
+                        )
+                      : Container()
+                ],
+              ),
               ...parser.parse(
                 '<p>${block.description.join(' ')}</p>',
                 fontColor: FccColors.gray05,
