@@ -14,23 +14,15 @@ import 'package:stacked/stacked.dart';
 class PassWidgetModel extends BaseViewModel {
   final AuthenticationService auth = locator<AuthenticationService>();
 
-  // TODO: Investigate why this keeps getting thrown as not been initialized - LateInitializationError
-  late FccUserModel? _user;
-
-  void init() async {
-    _user = await auth.userModel;
-    notifyListeners();
-  }
-
   Future<int> numCompletedChallenges(
     ChallengeViewModel challengeModel,
     int challengesCompleted,
   ) async {
-    if (_user != null) {
-      List<CompletedChallenge>? completedChallenges =
-          _user?.completedChallenges;
+    FccUserModel? user = await auth.userModel;
+    if (user != null) {
+      List<CompletedChallenge> completedChallenges = user.completedChallenges;
       Challenge? currChallenge = challengeModel.challenge;
-      if (currChallenge != null && completedChallenges != null) {
+      if (currChallenge != null) {
         if (completedChallenges
                 .indexWhere((element) => element.id == currChallenge.id) !=
             -1) {

@@ -24,6 +24,13 @@ class ChapterView extends StatelessWidget {
               return FutureBuilder(
                 future: model.superBlockFuture,
                 builder: (context, snapshot) {
+                  if (snapshot.hasError) {
+                    return Center(
+                      child: Text(
+                          'Error loading chapters: ${snapshot.error} ${snapshot.stackTrace}'),
+                    );
+                  }
+
                   if (snapshot.hasData) {
                     SuperBlock superBlock = snapshot.data as SuperBlock;
                     List<Chapter> chapters =
