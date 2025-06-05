@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:freecodecamp/extensions/i18n_extension.dart';
 import 'package:freecodecamp/models/learn/challenge_model.dart';
 import 'package:freecodecamp/models/learn/curriculum_model.dart';
+import 'package:freecodecamp/ui/theme/fcc_theme.dart';
 import 'package:freecodecamp/ui/views/learn/challenge/templates/multiple_choice/multiple_choice_viewmodel.dart';
 import 'package:freecodecamp/ui/views/learn/widgets/audio/audio_player_view.dart';
 import 'package:freecodecamp/ui/views/learn/widgets/challenge_card.dart';
@@ -227,8 +228,8 @@ class MultipleChoiceView extends StatelessWidget {
             model.setAssignmentStatus = model.assignmentStatus
               ..[ind] = value ?? false;
           },
-          activeColor: const Color(0xFF0a0a23),
-          checkColor: const Color(0xDEFFFFFF),
+          activeColor: FccColors.gray00,
+          checkColor: FccColors.gray90,
         ),
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(0),
@@ -247,9 +248,7 @@ class MultipleChoiceView extends StatelessWidget {
                 children: parser.parse(
                   assignment,
                   isSelectable: false,
-                  fontColor: model.assignmentStatus[ind]
-                      ? const Color(0xFF0a0a23)
-                      : null,
+                  fontColor: FccColors.gray00,
                 ),
               ),
             ),
