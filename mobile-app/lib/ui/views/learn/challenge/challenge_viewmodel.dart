@@ -78,6 +78,9 @@ class ChallengeViewModel extends BaseViewModel {
   InAppWebViewController? _testController;
   InAppWebViewController? get testController => _testController;
 
+  InAppWebViewController? _babelController;
+  InAppWebViewController? get babelController => _babelController;
+
   Syntax _currFileType = Syntax.HTML;
   Syntax get currFileType => _currFileType;
 
@@ -140,6 +143,11 @@ class ChallengeViewModel extends BaseViewModel {
 
   set setTestController(InAppWebViewController controller) {
     _testController = controller;
+    notifyListeners();
+  }
+
+  set setBabelController(InAppWebViewController controller) {
+    _babelController = controller;
     notifyListeners();
   }
 
@@ -374,24 +382,39 @@ class ChallengeViewModel extends BaseViewModel {
         .where((ChallengeFile file) => file.ext == Ext.css)
         .toList();
 
+    List<ChallengeFile> jsFiles = currChallenge.files
+        .where((ChallengeFile file) => file.ext == Ext.js)
+        .toList();
+
     Document document = parse(doc);
+    String? cssParsed, jsParsed;
 
     List<ChallengeFile> currentFile = currChallenge.files
         .where((element) => element.ext == Ext.html)
         .toList();
 
-    if (cssFiles.isNotEmpty) {
-      String text = prefs.getString(
-            '${currChallenge.id}.${currentFile[0].name}',
-          ) ??
-          currentFile[0].contents;
+    String text = prefs.getString(
+          '${currChallenge.id}.${currentFile[0].name}',
+        ) ??
+        currentFile[0].contents;
 
-      document = parse(
-        await fileService.parseCssDocmentsAsStyleTags(
-          currChallenge,
-          text,
-        ),
+    if (cssFiles.isNotEmpty) {
+      cssParsed = await fileService.parseCssDocmentsAsStyleTags(
+        currChallenge,
+        text,
       );
+
+      document = parse(cssParsed);
+    }
+
+    if (jsFiles.isNotEmpty) {
+      jsParsed = await fileService.parseJsDocmentsAsScriptTags(
+        currChallenge,
+        cssParsed ?? text,
+        babelController: babelController
+      );
+
+      document = parse(jsParsed);
     }
 
     String viewPort = '''<meta content="width=device-width,
@@ -497,12 +520,20 @@ class ChallengeViewModel extends BaseViewModel {
     ChallengeTest? failedTest;
     ScriptBuilder builder = ScriptBuilder();
 
+    // TODO: Remove logs after PR is ready
+    log('Running tests for challenge: ${challenge!.id} - ${challenge!.title} - ${challenge!.challengeType}');
+    log('workerType: ${builder.getWorkerType(challenge!.challengeType)}');
+    log('editableRegionContent: $editableRegionContent');
+    log('userCode: ${await builder.buildUserCode(challenge!)}');
+    log('combinedCode: ${await builder.combinedCode(challenge!)}');
+    log('hooks: ${challenge!.hooks}');
+
     // TODO: Handle the case when the test runner is not created
     // ignore: unused_local_variable
     final updateTestRunnerRes = await testController!.callAsyncJavaScript(
       functionBody: ScriptBuilder.runnerScript,
       arguments: {
-        'userCode': await builder.buildUserCode(challenge!, Ext.html),
+        'userCode': await builder.buildUserCode(challenge!),
         'workerType': builder.getWorkerType(challenge!.challengeType),
         'combinedCode': await builder.combinedCode(challenge!),
         'editableRegionContent': editableRegionContent,
@@ -519,6 +550,7 @@ class ChallengeViewModel extends BaseViewModel {
           'testStr': test.javaScript,
         },
       );
+      log('Running test: ${challenge!.id} - ${challenge!.title} - ${test.instruction} - ${test.javaScript} - $testRes');
       if (testRes?.value['pass'] == null) {
         log('TEST FAILED: ${test.instruction} - ${test.javaScript} - ${testRes?.value['error']}');
         failedTest = test;

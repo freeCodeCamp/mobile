@@ -89,3 +89,4 @@ flutter:
     - assets/database/bookmarked-article.db
     - assets/learn/
     - assets/test_runner/
+    - assets/babel/

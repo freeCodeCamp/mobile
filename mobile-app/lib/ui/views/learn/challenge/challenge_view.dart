@@ -339,6 +339,29 @@ class ChallengeView extends StatelessWidget {
                   ),
                 ),
               ),
+              SizedBox(
+                height: 1,
+                width: 1,
+                child: InAppWebView(
+                  initialData: InAppWebViewInitialData(
+                    data: '<html><head><title>Babel</title></head><body></body></html>',
+                    mimeType: 'text/html',
+                  ),
+                  onWebViewCreated: (controller) {
+                    model.setBabelController = controller;
+                  },
+                  onConsoleMessage: (controller, console) {
+                    log('Babel Console message: ${console.message}');
+                  },
+                  onLoadStop: (controller, url) async {
+                    final res = await controller.injectJavascriptFileFromAsset(assetFilePath: 'assets/babel/babel.min.js');
+                    log('Babel load: $res');
+                  },
+                  initialSettings: InAppWebViewSettings(
+                    isInspectable: true,
+                  ),
+                ),
+              ),
               Container(
                 margin: const EdgeInsets.symmetric(horizontal: 8),
                 color:
@@ -569,6 +592,10 @@ class ProjectPreview extends StatelessWidget {
                 onWebViewCreated: (controller) {
                   model.setWebviewController = controller;
                 },
+                initialSettings: InAppWebViewSettings(
+                  // TODO: Set this to true only in dev mode
+                  isInspectable: true,
+                ),
               );
             }
           }
