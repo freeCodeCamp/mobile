@@ -386,12 +386,17 @@ class ChallengeViewModel extends BaseViewModel {
           ) ??
           currentFile[0].contents;
 
-      document = parse(
-        await fileService.parseCssDocmentsAsStyleTags(
-          currChallenge,
-          text,
-        ),
+      String cssParsed = await fileService.parseCssDocmentsAsStyleTags(
+        currChallenge,
+        text,
       );
+
+      String jsParsed = await fileService.parseJsDocmentsAsScriptTags(
+        currChallenge,
+        cssParsed,
+      );
+
+      document = parse(jsParsed);
     }
 
     String viewPort = '''<meta content="width=device-width,
@@ -497,12 +502,20 @@ class ChallengeViewModel extends BaseViewModel {
     ChallengeTest? failedTest;
     ScriptBuilder builder = ScriptBuilder();
 
+    // TODO: Remove logs after PR is ready
+    log('Running tests for challenge: ${challenge!.id} - ${challenge!.title} - ${challenge!.challengeType}');
+    log('workerType: ${builder.getWorkerType(challenge!.challengeType)}');
+    log('editableRegionContent: $editableRegionContent');
+    log('userCode: ${await builder.buildUserCode(challenge!)}');
+    log('combinedCode: ${await builder.combinedCode(challenge!)}');
+    log('hooks: ${challenge!.hooks}');
+
     // TODO: Handle the case when the test runner is not created
     // ignore: unused_local_variable
     final updateTestRunnerRes = await testController!.callAsyncJavaScript(
       functionBody: ScriptBuilder.runnerScript,
       arguments: {
-        'userCode': await builder.buildUserCode(challenge!, Ext.html),
+        'userCode': await builder.buildUserCode(challenge!),
         'workerType': builder.getWorkerType(challenge!.challengeType),
         'combinedCode': await builder.combinedCode(challenge!),
         'editableRegionContent': editableRegionContent,
@@ -519,6 +532,7 @@ class ChallengeViewModel extends BaseViewModel {
           'testStr': test.javaScript,
         },
       );
+      log('Running test: ${challenge!.id} - ${challenge!.title} - ${test.instruction} - ${test.javaScript} - $testRes');
       if (testRes?.value['pass'] == null) {
         log('TEST FAILED: ${test.instruction} - ${test.javaScript} - ${testRes?.value['error']}');
         failedTest = test;

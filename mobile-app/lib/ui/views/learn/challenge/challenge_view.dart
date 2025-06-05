@@ -571,6 +571,10 @@ class ProjectPreview extends StatelessWidget {
                 onWebViewCreated: (controller) {
                   model.setWebviewController = controller;
                 },
+                initialSettings: InAppWebViewSettings(
+                  // TODO: Set this to true only in dev mode
+                  isInspectable: true,
+                ),
               );
             }
           }
