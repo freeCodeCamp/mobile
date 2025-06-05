@@ -59,23 +59,23 @@ void main() {
   // "lab-sum-all-numbers-algorithm",
   // "workshop-library-manager",
   // "lab-book-organizer",
-
   // "workshop-storytelling-app",
-  "lab-favorite-icon-toggler",
+  // "lab-favorite-icon-toggler",
+
   // "workshop-music-instrument-filter",
   // "lab-real-time-counter",
   // "lab-lightbox-viewer",
   // "workshop-rps-game",
   // "lab-football-team-cards",
   // "lab-random-background-color-changer",
-  // "workshop-spam-filter",
+  "workshop-spam-filter", // Step 4 and 11 failed
   // "lab-palindrome-checker",
-  // "lab-markdown-to-html-converter",
+  // "lab-markdown-to-html-converter", // Failed
   // "lab-regex-sandbox",
   // "workshop-calorie-counter",
-  // "lab-customer-complaint-form",
+  // "lab-customer-complaint-form", // Failed
   // "lab-date-conversion",
-  // "workshop-music-player",
+  // "workshop-music-player", // Step 12, 16-18, 20, 21, 25-27, 29, 30, 35, 42, 44, 45 Failed
   // "lab-drum-machine",
 
   // "workshop-plant-nursery-catalog",
