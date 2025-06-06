@@ -196,6 +196,8 @@ class HTMLParser {
               options: EditorOptions(
                 fontFamily: 'Hack',
                 takeFullHeight: false,
+                isEditable: false,
+                showLinebar: false,
               ),
               defaultLanguage: codeLanguageIsPresent(classes)
                   ? currentClass!.split('-')[1]
