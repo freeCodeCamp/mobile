@@ -61,8 +61,6 @@ class LearnLandingViewModel extends BaseViewModel {
     initLoggedInListener();
 
     setSuperBlockButtons = requestSuperBlocks();
-
-    retrieveLastVisitedChallenge();
   }
 
   void retrieveLastVisitedChallenge() async {
@@ -175,6 +173,9 @@ class LearnLandingViewModel extends BaseViewModel {
           dotenv.get('SHOWALLSB', fallback: 'false').toLowerCase() == 'true';
 
       for (int i = 0; i < superBlocks.length; i++) {
+        if (superBlocks[i]['dashedName'].toString().contains('full-stack')) {
+          continue;
+        }
         buttonData.add(
           SuperBlockButtonData(
             path: superBlocks[i]['dashedName'],
@@ -190,14 +191,18 @@ class LearnLandingViewModel extends BaseViewModel {
   }
 
   void routeToSuperBlock(String dashedName, String name) async {
-    _navigationService.navigateTo(
-      Routes.superBlockView,
-      arguments: SuperBlockViewArguments(
-        superBlockDashedName: dashedName,
-        superBlockName: name,
-        hasInternet: await learnOfflineService.hasInternet(),
-      ),
-    );
+    if (dashedName == 'full-stack-developer') {
+      _navigationService.navigateTo(Routes.chapterView);
+    } else {
+      _navigationService.navigateTo(
+        Routes.superBlockView,
+        arguments: SuperBlockViewArguments(
+          superBlockDashedName: dashedName,
+          superBlockName: name,
+          hasInternet: await learnOfflineService.hasInternet(),
+        ),
+      );
+    }
   }
 
   void goBack() {

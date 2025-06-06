@@ -50,6 +50,12 @@ class ChallengeView extends StatelessWidget {
           FocusManager.instance.primaryFocus?.unfocus();
         }
 
+        if (model.editor == null) {
+          return Center(
+            child: CircularProgressIndicator(),
+          );
+        }
+
         BoxDecoration decoration = const BoxDecoration(
           border: Border(
             bottom: BorderSide(
@@ -59,138 +65,128 @@ class ChallengeView extends StatelessWidget {
           ),
         );
 
-        if (!model.mounted) {
-          return Center(
-            child: CircularProgressIndicator(),
-          );
-        }
-
-        return PopScope(
-          canPop: true,
-          onPopInvokedWithResult: (bool didPop, dynamic result) {
-            model.learnService.updateProgressOnPop(context, block);
-          },
-          child: Scaffold(
-            appBar: PreferredSize(
-              preferredSize: Size(
-                MediaQuery.sizeOf(context).width,
-                model.showPanel ? 0 : 50,
-              ),
-              child: AppBar(
-                automaticallyImplyLeading: !model.showPreview,
-                title: challenge.files.length == 1 && !model.showPreview
-                    ? Text(context.t.editor)
-                    : Row(
-                        children: [
-                          if (model.showPreview && !onlyJs)
-                            Expanded(
-                              child: Container(
-                                decoration: model.showProjectPreview
-                                    ? decoration
-                                    : null,
-                                child: ElevatedButton(
-                                  style: ElevatedButton.styleFrom(
-                                    shape: RoundedRectangleBorder(
-                                      borderRadius: BorderRadius.circular(0),
-                                    ),
-                                    elevation: 0,
-                                  ),
-                                  onPressed: () {
-                                    model.setShowConsole = false;
-                                    model.setShowProjectPreview = true;
-                                  },
-                                  child: Text(
-                                    context.t.preview,
-                                  ),
-                                ),
-                              ),
-                            ),
-                          if (model.showPreview)
-                            Expanded(
-                              child: Container(
-                                decoration:
-                                    model.showConsole ? decoration : null,
-                                child: ElevatedButton(
-                                  style: ElevatedButton.styleFrom(
-                                    shape: RoundedRectangleBorder(
-                                      borderRadius: BorderRadius.circular(0),
-                                    ),
-                                    elevation: 0,
-                                  ),
-                                  onPressed: () {
-                                    model.setShowConsole = true;
-                                    model.setShowProjectPreview = false;
-                                  },
-                                  child: Text(
-                                    context.t.console,
-                                  ),
-                                ),
-                              ),
-                            ),
-                          if (!model.showPreview && challenge.files.length > 1)
-                            for (ChallengeFile file in challenge.files)
-                              customTabBar(model, challenge, file)
-                        ],
-                      ),
-              ),
+        return Scaffold(
+          appBar: PreferredSize(
+            preferredSize: Size(
+              MediaQuery.sizeOf(context).width,
+              model.showPanel ? 0 : 50,
             ),
-            bottomNavigationBar: Container(
-              decoration: const BoxDecoration(
-                border: Border(
-                  top: BorderSide(
-                    color: Colors.white70,
-                  ),
+            child: AppBar(
+              automaticallyImplyLeading: !model.showPreview,
+              title: challenge.files.length == 1 && !model.showPreview
+                  ? Text(context.t.editor)
+                  : Row(
+                      children: [
+                        if (model.showPreview && !onlyJs)
+                          Expanded(
+                            child: Container(
+                              decoration:
+                                  model.showProjectPreview ? decoration : null,
+                              child: ElevatedButton(
+                                style: ElevatedButton.styleFrom(
+                                  shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(0),
+                                  ),
+                                  elevation: 0,
+                                ),
+                                onPressed: () {
+                                  model.setShowConsole = false;
+                                  model.setShowProjectPreview = true;
+                                },
+                                child: Text(
+                                  context.t.preview,
+                                ),
+                              ),
+                            ),
+                          ),
+                        if (model.showPreview)
+                          Expanded(
+                            child: Container(
+                              decoration: model.showConsole ? decoration : null,
+                              child: ElevatedButton(
+                                style: ElevatedButton.styleFrom(
+                                  shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(0),
+                                  ),
+                                  elevation: 0,
+                                ),
+                                onPressed: () {
+                                  model.setShowConsole = true;
+                                  model.setShowProjectPreview = false;
+                                },
+                                child: Text(
+                                  context.t.console,
+                                ),
+                              ),
+                            ),
+                          ),
+                        if (!model.showPreview && challenge.files.length > 1)
+                          for (ChallengeFile file in challenge.files)
+                            customTabBar(
+                              model,
+                              challenge,
+                              file,
+                            )
+                      ],
+                    ),
+            ),
+          ),
+          bottomNavigationBar: Container(
+            decoration: const BoxDecoration(
+              border: Border(
+                top: BorderSide(
+                  color: Colors.white70,
                 ),
               ),
-              padding: EdgeInsets.only(
-                bottom: MediaQuery.of(context).viewInsets.bottom,
-              ),
-              child: customBottomBar(
-                model,
-                keyboard,
-                challenge,
-                context,
-              ),
             ),
-            body: !model.showPreview
-                ? Column(
-                    children: [
-                      if (model.showPanel && !keyboard)
-                        DynamicPanel(
-                          challenge: challenge,
-                          model: model,
-                          panel: model.panelType,
-                          maxChallenges: maxChallenges,
-                          challengesCompleted: challengesCompleted,
-                          editor: model.editor!,
-                        ),
-                      Expanded(child: model.editor!)
-                    ],
-                  )
-                : Column(
-                    children: [
-                      if (model.showPanel && !keyboard)
-                        DynamicPanel(
-                          challenge: challenge,
-                          model: model,
-                          panel: model.panelType,
-                          maxChallenges: maxChallenges,
-                          challengesCompleted: challengesCompleted,
-                          editor: model.editor!,
-                        ),
-                      model.showProjectPreview && !onlyJs
-                          ? ProjectPreview(
-                              challenge: challenge,
-                              model: model,
-                            )
-                          : JavaScriptConsole(
-                              // TODO: Update logic when working on JS challenges
-                              // messages: model.consoleMessages,
-                              messages: [],
-                            )
-                    ],
-                  ),
+            padding: EdgeInsets.only(
+              bottom: MediaQuery.of(context).viewInsets.bottom,
+            ),
+            child: customBottomBar(
+              model,
+              keyboard,
+              challenge,
+              context,
+            ),
           ),
+          body: !model.showPreview
+              ? Column(
+                  children: [
+                    if (model.showPanel && !keyboard)
+                      DynamicPanel(
+                        challenge: challenge,
+                        model: model,
+                        panel: model.panelType,
+                        maxChallenges: maxChallenges,
+                        challengesCompleted: challengesCompleted,
+                        editor: model.editor!,
+                      ),
+                    Expanded(child: model.editor!)
+                  ],
+                )
+              : Column(
+                  children: [
+                    if (model.showPanel && !keyboard)
+                      DynamicPanel(
+                        challenge: challenge,
+                        model: model,
+                        panel: model.panelType,
+                        maxChallenges: maxChallenges,
+                        challengesCompleted: challengesCompleted,
+                        editor: model.editor!,
+                      ),
+                    model.showProjectPreview && !onlyJs
+                        ? ProjectPreview(
+                            challenge: challenge,
+                            model: model,
+                          )
+                        : JavaScriptConsole(
+                            // TODO: Update logic when working on JS challenges
+                            // messages: model.consoleMessages,
+                            messages: [],
+                          )
+                  ],
+                ),
         );
       },
     );

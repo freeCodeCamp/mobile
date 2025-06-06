@@ -76,7 +76,7 @@ class LearnFileService {
   // this function will get the current file which is being edited.
   // otherwise we can not detect which file is currently being worked on. This is only for the new RWD.
 
-  Future<String> getCurrentEditedFileFromCache(
+  Future<ChallengeFile> getCurrentEditedFileFromCache(
     Challenge challenge, {
     bool testing = false,
   }) async {
@@ -88,8 +88,8 @@ class LearnFileService {
 
     if (testing) {
       return fileWithEditableRegion.isNotEmpty
-          ? fileWithEditableRegion[0].contents
-          : challenge.files[0].contents;
+          ? fileWithEditableRegion[0]
+          : challenge.files[0];
     }
 
     SharedPreferences prefs = await SharedPreferences.getInstance();
@@ -101,12 +101,21 @@ class LearnFileService {
           '';
 
       if (cache.isNotEmpty) {
-        return removeExcessiveScriptsInHTMLdocument(cache);
+        ChallengeFile file = fileWithEditableRegion[0];
+
+        return ChallengeFile(
+          ext: file.ext,
+          name: file.name,
+          editableRegionBoundaries: file.editableRegionBoundaries,
+          contents: cache,
+          history: file.history,
+          fileKey: file.fileKey,
+        );
       } else {
-        return fileWithEditableRegion[0].contents;
+        return fileWithEditableRegion[0];
       }
     } else {
-      return challenge.files[0].contents;
+      return challenge.files[0];
     }
   }
 
@@ -186,21 +195,6 @@ class LearnFileService {
     }
 
     return content;
-  }
-
-  String removeExcessiveScriptsInHTMLdocument(String file) {
-    Document document = parse(file);
-    List<Element> elements = document.querySelectorAll('SCRIPT');
-
-    if (elements.isEmpty) return file;
-
-    for (int i = 0; i < elements.length; i++) {
-      elements[i].remove();
-    }
-
-    file = document.outerHtml.toString();
-
-    return file;
   }
 
   String changeActiveFileLinks(String file) {

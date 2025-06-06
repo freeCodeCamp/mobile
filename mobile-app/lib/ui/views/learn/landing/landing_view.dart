@@ -51,6 +51,38 @@ class LearnLandingView extends StatelessWidget {
                     model: model,
                   ),
                 const SizedBox(height: 16),
+                Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Padding(
+                      padding: const EdgeInsets.all(8.0),
+                      child: Text(
+                        'Certified Full Stack Developer Curriculum',
+                        style: TextStyle(
+                          fontSize: 22,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                    ),
+                    SuperBlockButton(
+                      button: SuperBlockButtonData(
+                        path: 'full-stack-developer',
+                        name: 'Certified Full Stack Developer Curriculum',
+                        public: true,
+                      ),
+                    ),
+                    Padding(
+                      padding: const EdgeInsets.all(8.0),
+                      child: Text(
+                        'Our archived coursework:',
+                        style: TextStyle(
+                          fontSize: 22,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
                 FutureBuilder<List<SuperBlockButtonData>>(
                   future: model.superBlockButtons,
                   builder: (context, snapshot) {

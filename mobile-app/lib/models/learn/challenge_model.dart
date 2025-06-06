@@ -409,12 +409,12 @@ class SceneCommand {
 
 class SceneCharacter {
   final String character;
-  final num opacity;
+  final num? opacity;
   final SceneCharacterPosition position;
 
   const SceneCharacter({
     required this.character,
-    required this.opacity,
+    this.opacity,
     required this.position,
   });
 
