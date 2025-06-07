@@ -61,7 +61,6 @@ void main() {
       // "lab-book-organizer",
       // "workshop-storytelling-app",
       // "lab-favorite-icon-toggler",
-
       // "workshop-music-instrument-filter",
       // "lab-real-time-counter",
       // "lab-lightbox-viewer",
@@ -75,17 +74,17 @@ void main() {
       // "workshop-calorie-counter",
       // "lab-customer-complaint-form",
       // "lab-date-conversion",
-      "workshop-music-player", // Step 21 Failed
+      // "workshop-music-player", // Step 21 Failed - Safari bug?
       // "lab-drum-machine",
 
       // "workshop-plant-nursery-catalog",
       // "lab-voting-system",
       // "workshop-todo-app",
-      // "lab-bookmark-manager-app",
+      "lab-bookmark-manager-app", // Failed
       // "workshop-shopping-cart",
       // "lab-project-idea-board",
       // "lab-bank-account-manager",
-      // "workshop-decimal-to-binary-converter",
+      // "workshop-decimal-to-binary-converter", // Steps 60, 62-64, 68, 70-73, 108 Failed
       // "lab-permutation-generator",
       // "workshop-recipe-ingredient-converter",
       // "lab-sorting-visualizer",
