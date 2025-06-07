@@ -101,9 +101,6 @@ class ChallengeViewModel extends BaseViewModel {
 
   bool _mounted = false;
 
-  // TestRunner? _testRunner;
-  // TestRunner? get testRunner => _testRunner;
-
   String _editableRegionContent = '';
   String get editableRegionContent => _editableRegionContent;
 
@@ -145,11 +142,6 @@ class ChallengeViewModel extends BaseViewModel {
     _afterFirstTest = value;
     notifyListeners();
   }
-
-  // set setTestRunner(TestRunner? value) {
-  //   _testRunner = value;
-  //   notifyListeners();
-  // }
 
   set setEditableRegionContent(String value) {
     _editableRegionContent = value;
