@@ -68,7 +68,6 @@ class PythonView extends StatelessWidget {
           body: SafeArea(
             bottom: false,
             child: ListView(
-              padding: const EdgeInsets.all(12),
               children: [
                 Center(
                   child: Text(
