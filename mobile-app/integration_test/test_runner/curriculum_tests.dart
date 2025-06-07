@@ -32,67 +32,67 @@ void main() {
     ];
 
     List<String> blockNames = [
-  // "workshop-greeting-bot",
-  // "lab-javascript-trivia-bot", // TODO: Re-verify after Oliver supports before all for JS challenges
-  // "lab-sentence-maker",
-  // "workshop-teacher-chatbot",
-  // "workshop-mathbot",
-  // "lab-fortune-teller",
-  // "workshop-calculator",
-  // "lab-email-masker",
-  // "workshop-loan-qualification-checker",
-  // "lab-leap-year-calculator",
-  // "lab-truncate-string",
-  // "workshop-shopping-list",
-  // "lab-lunch-picker-program",
-  // "workshop-recipe-tracker",
-  // "lab-quiz-game",
-  // "workshop-sentence-analyzer",
-  // "lab-factorial-calculator",
-  // "lab-mutations",
-  // "lab-chunky-monkey",
-  // "lab-slice-and-splice",
-  // "lab-pyramid-generator",
-  // "lab-gradebook-app",
-  // "lab-inventory-management-program",
-  // "lab-password-generator",
-  // "lab-sum-all-numbers-algorithm",
-  // "workshop-library-manager",
-  // "lab-book-organizer",
-  // "workshop-storytelling-app",
-  // "lab-favorite-icon-toggler",
+      // "workshop-greeting-bot",
+      // "lab-javascript-trivia-bot", // TODO: Re-verify after Oliver supports before all for JS challenges
+      // "lab-sentence-maker",
+      // "workshop-teacher-chatbot",
+      // "workshop-mathbot",
+      // "lab-fortune-teller",
+      // "workshop-calculator",
+      // "lab-email-masker",
+      // "workshop-loan-qualification-checker",
+      // "lab-leap-year-calculator",
+      // "lab-truncate-string",
+      // "workshop-shopping-list",
+      // "lab-lunch-picker-program",
+      // "workshop-recipe-tracker",
+      // "lab-quiz-game",
+      // "workshop-sentence-analyzer",
+      // "lab-factorial-calculator",
+      // "lab-mutations",
+      // "lab-chunky-monkey",
+      // "lab-slice-and-splice",
+      // "lab-pyramid-generator",
+      // "lab-gradebook-app",
+      // "lab-inventory-management-program",
+      // "lab-password-generator",
+      // "lab-sum-all-numbers-algorithm",
+      // "workshop-library-manager",
+      // "lab-book-organizer",
+      // "workshop-storytelling-app",
+      // "lab-favorite-icon-toggler",
 
-  // "workshop-music-instrument-filter",
-  // "lab-real-time-counter",
-  // "lab-lightbox-viewer",
-  // "workshop-rps-game",
-  // "lab-football-team-cards",
-  // "lab-random-background-color-changer",
-  "workshop-spam-filter", // Step 4 and 11 failed
-  // "lab-palindrome-checker",
-  // "lab-markdown-to-html-converter", // Failed
-  // "lab-regex-sandbox",
-  // "workshop-calorie-counter",
-  // "lab-customer-complaint-form", // Failed
-  // "lab-date-conversion",
-  // "workshop-music-player", // Step 12, 16-18, 20, 21, 25-27, 29, 30, 35, 42, 44, 45 Failed
-  // "lab-drum-machine",
+      // "workshop-music-instrument-filter",
+      // "lab-real-time-counter",
+      // "lab-lightbox-viewer",
+      // "workshop-rps-game",
+      // "lab-football-team-cards",
+      // "lab-random-background-color-changer",
+      // "workshop-spam-filter",
+      // "lab-palindrome-checker",
+      // "lab-markdown-to-html-converter",
+      // "lab-regex-sandbox",
+      // "workshop-calorie-counter",
+      // "lab-customer-complaint-form",
+      // "lab-date-conversion",
+      "workshop-music-player", // Step 21 Failed
+      // "lab-drum-machine",
 
-  // "workshop-plant-nursery-catalog",
-  // "lab-voting-system",
-  // "workshop-todo-app",
-  // "lab-bookmark-manager-app",
-  // "workshop-shopping-cart",
-  // "lab-project-idea-board",
-  // "lab-bank-account-manager",
-  // "workshop-decimal-to-binary-converter",
-  // "lab-permutation-generator",
-  // "workshop-recipe-ingredient-converter",
-  // "lab-sorting-visualizer",
-  // "workshop-fcc-authors-page",
-  // "lab-fcc-forum-leaderboard",
-  // "lab-weather-app"
-];
+      // "workshop-plant-nursery-catalog",
+      // "lab-voting-system",
+      // "workshop-todo-app",
+      // "lab-bookmark-manager-app",
+      // "workshop-shopping-cart",
+      // "lab-project-idea-board",
+      // "lab-bank-account-manager",
+      // "workshop-decimal-to-binary-converter",
+      // "lab-permutation-generator",
+      // "workshop-recipe-ingredient-converter",
+      // "lab-sorting-visualizer",
+      // "workshop-fcc-authors-page",
+      // "lab-fcc-forum-leaderboard",
+      // "lab-weather-app"
+    ];
 
     String curriculumFilePath = 'assets/learn/curriculum.json';
     String curriculumFile = await rootBundle.loadString(curriculumFilePath);
@@ -108,6 +108,8 @@ void main() {
         .state<CurriculumTestRunnerState>(find.byType(CurriculumTestRunner));
     expect(widgetState.webViewController, isNotNull);
     final testController = widgetState.webViewController;
+    final babelWebView = widgetState.babelWebView;
+    expect(babelWebView.isRunning(), true);
 
     // Run the curriculum tests one by one
     var editorChallengeTypes = <int>{};
@@ -189,11 +191,18 @@ void main() {
           ScriptBuilder builder = ScriptBuilder();
           bool testFailed = false;
 
+          // print('challnge code: ${await builder.buildUserCode(
+          //   challenge,
+          //   babelWebView.webViewController,
+          //   testing: true,
+          // )}');
+
           await testController!.callAsyncJavaScript(
             functionBody: ScriptBuilder.runnerScript,
             arguments: {
               'userCode': await builder.buildUserCode(
                 challenge,
+                babelWebView.webViewController,
                 testing: true,
               ),
               'workerType': builder.getWorkerType(challenge.challengeType),

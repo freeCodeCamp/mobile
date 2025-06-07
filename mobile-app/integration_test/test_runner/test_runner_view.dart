@@ -17,6 +17,37 @@ class CurriculumTestRunner extends StatefulWidget {
 class CurriculumTestRunnerState extends State<CurriculumTestRunner> {
   InAppWebViewController? webViewController;
 
+  final HeadlessInAppWebView babelWebView = HeadlessInAppWebView(
+    initialData: InAppWebViewInitialData(
+      data: '<html><head><title>Babel</title></head><body></body></html>',
+      mimeType: 'text/html',
+    ),
+    onConsoleMessage: (controller, console) {
+      log('Babel Console message: ${console.message}');
+    },
+    onLoadStop: (controller, url) async {
+      final res = await controller.injectJavascriptFileFromAsset(
+          assetFilePath: 'assets/babel/babel.min.js');
+      log('Babel load: $res');
+    },
+    initialSettings: InAppWebViewSettings(
+      isInspectable: true,
+    ),
+  );
+
+  @override
+  void initState() {
+    super.initState();
+    babelWebView.run();
+  }
+
+  @override
+  void dispose() {
+    _localhostServer.close();
+    babelWebView.dispose();
+    super.dispose();
+  }
+
   @override
   Widget build(BuildContext context) {
     return FutureBuilder(

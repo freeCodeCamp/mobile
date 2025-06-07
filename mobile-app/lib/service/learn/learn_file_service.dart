@@ -1,6 +1,7 @@
 import 'package:flutter_inappwebview/flutter_inappwebview.dart';
 import 'package:freecodecamp/enums/ext_type.dart';
 import 'package:freecodecamp/models/learn/challenge_model.dart';
+import 'package:freecodecamp/ui/views/learn/test_runner.dart';
 import 'package:html/dom.dart';
 import 'package:html/parser.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -233,61 +234,54 @@ class LearnFileService {
 
   Future<String> parseJsDocmentsAsScriptTags(
     Challenge challenge,
-    String content, {
+    String challengeContent,
+    InAppWebViewController? babelController, {
     bool testing = false,
-    InAppWebViewController? babelController,
   }) async {
     List<ChallengeFile> jsFiles = challenge.files
         .where(
           (element) => element.ext == Ext.js,
         )
         .toList();
-    List<String> jsFilesWithCache = [];
-    List<String> tags = [];
 
     if (jsFiles.isNotEmpty) {
       for (ChallengeFile file in jsFiles) {
-        String? cache = await getExactFileFromCache(
+        String filename = '${file.name}.${file.ext.name}';
+        String? fileContents = await getExactFileFromCache(
           challenge,
           file,
           testing: testing,
         );
 
-        if (!await jsFileIsLinked(content, '${file.name}.${file.ext.name}')) {
+        if (!await jsFileIsLinked(challengeContent, filename)) {
           continue;
         }
 
-        String handledFile = cache;
-
-        jsFilesWithCache.add(handledFile);
-      }
-
-      for (String contents in jsFilesWithCache) {
-        // If babelController is provided, we can use it to transpile the JS code.
+        // NOTE: Do we throw an error if babelController is null?
         if (babelController != null) {
           final babelRes = await babelController.callAsyncJavaScript(
-            functionBody:
-                'return Babel.transform(code, { presets: ["env"] }).code',
-            arguments: {'code': contents},
+            functionBody: ScriptBuilder.transpileScript,
+            arguments: {'code': fileContents},
           );
 
           if (babelRes?.error != null) {
             throw Exception('Babel transpilation failed: ${babelRes?.error}');
           }
-          contents = babelRes?.value ?? contents;
+          fileContents = babelRes?.value;
         }
-        String tag = '<script data-src="script.js"> $contents </script>';
-        tags.add(tag);
-      }
 
-      for (String tag in tags) {
-        content += tag;
-      }
+        Document document = parse(challengeContent);
 
-      return content;
+        Element scriptElement =
+            document.querySelector('script[src\$="$filename"]')!;
+
+        scriptElement.text = fileContents;
+
+        challengeContent = document.outerHtml;
+      }
     }
 
-    return content;
+    return challengeContent;
   }
 
   String changeActiveFileLinks(String file) {

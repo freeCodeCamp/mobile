@@ -78,8 +78,23 @@ class ChallengeViewModel extends BaseViewModel {
   InAppWebViewController? _testController;
   InAppWebViewController? get testController => _testController;
 
-  InAppWebViewController? _babelController;
-  InAppWebViewController? get babelController => _babelController;
+  final HeadlessInAppWebView _babelWebView = HeadlessInAppWebView(
+    initialData: InAppWebViewInitialData(
+      data: '<html><head><title>Babel</title></head><body></body></html>',
+      mimeType: 'text/html',
+    ),
+    onConsoleMessage: (controller, console) {
+      log('Babel Console message: ${console.message}');
+    },
+    onLoadStop: (controller, url) async {
+      final res = await controller.injectJavascriptFileFromAsset(
+          assetFilePath: 'assets/babel/babel.min.js');
+      log('Babel load: $res');
+    },
+    initialSettings: InAppWebViewSettings(
+      isInspectable: true,
+    ),
+  );
 
   Syntax _currFileType = Syntax.HTML;
   Syntax get currFileType => _currFileType;
@@ -143,11 +158,6 @@ class ChallengeViewModel extends BaseViewModel {
 
   set setTestController(InAppWebViewController controller) {
     _testController = controller;
-    notifyListeners();
-  }
-
-  set setBabelController(InAppWebViewController controller) {
-    _babelController = controller;
     notifyListeners();
   }
 
@@ -241,6 +251,7 @@ class ChallengeViewModel extends BaseViewModel {
     Challenge challenge,
     int challengesCompleted,
   ) async {
+    await _babelWebView.run();
     await _localhostServer.start();
 
     setupDialogUi();
@@ -260,8 +271,11 @@ class ChallengeViewModel extends BaseViewModel {
     // );
   }
 
-  void shutdownLocalHost() {
+  @override
+  void dispose() {
+    _babelWebView.dispose();
     _localhostServer.close();
+    super.dispose();
   }
 
   void initFile(
@@ -398,6 +412,7 @@ class ChallengeViewModel extends BaseViewModel {
         ) ??
         currentFile[0].contents;
 
+    // TODO: Remove check since we do it in function also
     if (cssFiles.isNotEmpty) {
       cssParsed = await fileService.parseCssDocmentsAsStyleTags(
         currChallenge,
@@ -411,7 +426,7 @@ class ChallengeViewModel extends BaseViewModel {
       jsParsed = await fileService.parseJsDocmentsAsScriptTags(
         currChallenge,
         cssParsed ?? text,
-        babelController: babelController
+        _babelWebView.webViewController,
       );
 
       document = parse(jsParsed);
@@ -524,7 +539,10 @@ class ChallengeViewModel extends BaseViewModel {
     log('Running tests for challenge: ${challenge!.id} - ${challenge!.title} - ${challenge!.challengeType}');
     log('workerType: ${builder.getWorkerType(challenge!.challengeType)}');
     log('editableRegionContent: $editableRegionContent');
-    log('userCode: ${await builder.buildUserCode(challenge!)}');
+    log('userCode: ${await builder.buildUserCode(
+      challenge!,
+      _babelWebView.webViewController,
+    )}');
     log('combinedCode: ${await builder.combinedCode(challenge!)}');
     log('hooks: ${challenge!.hooks}');
 
@@ -533,7 +551,10 @@ class ChallengeViewModel extends BaseViewModel {
     final updateTestRunnerRes = await testController!.callAsyncJavaScript(
       functionBody: ScriptBuilder.runnerScript,
       arguments: {
-        'userCode': await builder.buildUserCode(challenge!),
+        'userCode': await builder.buildUserCode(
+          challenge!,
+          _babelWebView.webViewController,
+        ),
         'workerType': builder.getWorkerType(challenge!.challengeType),
         'combinedCode': await builder.combinedCode(challenge!),
         'editableRegionContent': editableRegionContent,

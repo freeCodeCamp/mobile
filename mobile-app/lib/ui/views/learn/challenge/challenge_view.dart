@@ -35,7 +35,7 @@ class ChallengeView extends StatelessWidget {
       onViewModelReady: (model) {
         model.init(block, challenge, challengesCompleted);
       },
-      onDispose: (model) => model.shutdownLocalHost(),
+      onDispose: (model) => model.dispose(),
       builder: (context, model, child) {
         int maxChallenges = block.challenges.length;
         ChallengeFile currFile = model.currentFile(challenge);
@@ -335,29 +335,6 @@ class ChallengeView extends StatelessWidget {
                       },
                     );
                     log('TestRunner: $res');
-                  },
-                  initialSettings: InAppWebViewSettings(
-                    isInspectable: true,
-                  ),
-                ),
-              ),
-              SizedBox(
-                height: 1,
-                width: 1,
-                child: InAppWebView(
-                  initialData: InAppWebViewInitialData(
-                    data: '<html><head><title>Babel</title></head><body></body></html>',
-                    mimeType: 'text/html',
-                  ),
-                  onWebViewCreated: (controller) {
-                    model.setBabelController = controller;
-                  },
-                  onConsoleMessage: (controller, console) {
-                    log('Babel Console message: ${console.message}');
-                  },
-                  onLoadStop: (controller, url) async {
-                    final res = await controller.injectJavascriptFileFromAsset(assetFilePath: 'assets/babel/babel.min.js');
-                    log('Babel load: $res');
                   },
                   initialSettings: InAppWebViewSettings(
                     isInspectable: true,
