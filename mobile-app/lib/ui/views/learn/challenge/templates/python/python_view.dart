@@ -115,41 +115,45 @@ class PythonView extends StatelessWidget {
                   ),
                 ],
                 const SizedBox(height: 16),
-                ElevatedButton(
-                  style: ElevatedButton.styleFrom(
-                    minimumSize: const Size(0, 50),
-                    backgroundColor: const Color.fromRGBO(0x3b, 0x3b, 0x4f, 1),
-                    side: const BorderSide(
-                      width: 2,
-                      color: Colors.white,
+                Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: ElevatedButton(
+                    style: ElevatedButton.styleFrom(
+                      minimumSize: const Size(0, 50),
+                      backgroundColor:
+                          const Color.fromRGBO(0x3b, 0x3b, 0x4f, 1),
+                      side: const BorderSide(
+                        width: 2,
+                        color: Colors.white,
+                      ),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(0),
+                      ),
                     ),
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(0),
-                    ),
-                  ),
-                  onPressed:
-                      model.quizQuestions.every((q) => q.selectedAnswer != -1)
-                          ? () {
-                              if (model.isValidated &&
-                                  model.hasPassedAllQuestions) {
-                                model.learnService.goToNextChallenge(
-                                  block.challenges.length,
-                                  challengesCompleted,
-                                  challenge,
-                                  block,
-                                );
-                              } else {
-                                model.validateChallenge();
+                    onPressed:
+                        model.quizQuestions.every((q) => q.selectedAnswer != -1)
+                            ? () {
+                                if (model.isValidated &&
+                                    model.hasPassedAllQuestions) {
+                                  model.learnService.goToNextChallenge(
+                                    block.challenges.length,
+                                    challengesCompleted,
+                                    challenge,
+                                    block,
+                                  );
+                                } else {
+                                  model.validateChallenge();
+                                }
                               }
-                            }
-                          : null,
-                  child: Text(
-                    model.isValidated
-                        ? model.hasPassedAllQuestions
-                            ? context.t.next_challenge
-                            : context.t.try_again
-                        : context.t.questions_check,
-                    style: const TextStyle(fontSize: 20),
+                            : null,
+                    child: Text(
+                      model.isValidated
+                          ? model.hasPassedAllQuestions
+                              ? context.t.next_challenge
+                              : context.t.try_again
+                          : context.t.questions_check,
+                      style: const TextStyle(fontSize: 20),
+                    ),
                   ),
                 ),
                 const SizedBox(height: 50),
