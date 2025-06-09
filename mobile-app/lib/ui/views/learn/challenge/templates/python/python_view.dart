@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:freecodecamp/extensions/i18n_extension.dart';
 import 'package:freecodecamp/models/learn/challenge_model.dart';
 import 'package:freecodecamp/models/learn/curriculum_model.dart';
-import 'package:freecodecamp/ui/theme/fcc_theme.dart';
 import 'package:freecodecamp/ui/views/learn/challenge/templates/python/python_viewmodel.dart';
 import 'package:freecodecamp/ui/views/learn/widgets/quiz_widget.dart';
 import 'package:freecodecamp/ui/views/news/html_handler/html_handler.dart';
@@ -95,7 +94,7 @@ class PythonView extends StatelessWidget {
                   challenge.description,
                 ),
                 if (challenge.description.isNotEmpty) buildDivider(),
-                Quiz(
+                QuizWidget(
                     isValidated: model.isValidated,
                     questions: model.quizQuestions,
                     onChanged: (questionIndex, answerIndex) {
@@ -108,7 +107,6 @@ class PythonView extends StatelessWidget {
                     child: Text(
                       model.errMessage,
                       style: const TextStyle(
-                        color: FccColors.red15,
                         fontSize: 18,
                       ),
                     ),
