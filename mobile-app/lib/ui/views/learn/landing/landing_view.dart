@@ -1,5 +1,3 @@
-import 'dart:developer';
-
 import 'package:flutter/material.dart';
 import 'package:freecodecamp/extensions/i18n_extension.dart';
 import 'package:freecodecamp/models/learn/curriculum_model.dart';
@@ -128,8 +126,6 @@ class LearnLandingView extends StatelessWidget {
                             shrinkWrap: true,
                             itemCount: buttons.length,
                             itemBuilder: (BuildContext context, int i) {
-                              log(buttons[i].path);
-
                               return buttons[i].public
                                   ? SuperBlockButton(
                                       button: buttons[i],
