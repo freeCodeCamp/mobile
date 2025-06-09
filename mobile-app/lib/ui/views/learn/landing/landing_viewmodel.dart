@@ -48,6 +48,8 @@ class LearnLandingViewModel extends BaseViewModel {
 
   Color? _lastAvatarColor;
 
+  TextStyle headerStyle = TextStyle(fontSize: 20, fontWeight: FontWeight.bold);
+
   set setSuperBlockButtons(value) {
     superBlockButtons = value;
     notifyListeners();
@@ -175,8 +177,14 @@ class LearnLandingViewModel extends BaseViewModel {
       bool showAllSB =
           dotenv.get('SHOWALLSB', fallback: 'false').toLowerCase() == 'true';
 
+      List manualPlacement = [
+        'full-stack',
+        'a2-english-for-developers',
+        'b1-english-for-developers'
+      ];
+
       for (int i = 0; i < superBlocks.length; i++) {
-        if (superBlocks[i]['dashedName'].toString().contains('full-stack')) {
+        if (manualPlacement.contains(superBlocks[i]['dashedName'])) {
           continue;
         }
         buttonData.add(
@@ -195,13 +203,10 @@ class LearnLandingViewModel extends BaseViewModel {
 
   Color getRandomColor() {
     List colors = [
-      FccColors.red80,
       FccColors.blue50,
-      FccColors.green40,
       FccColors.green70,
       FccColors.yellow40,
-      FccColors.red30,
-      FccColors.blue90,
+      FccColors.red80,
       FccColors.purple50
     ];
 

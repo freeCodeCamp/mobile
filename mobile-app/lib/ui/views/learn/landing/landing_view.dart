@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:flutter/material.dart';
 import 'package:freecodecamp/extensions/i18n_extension.dart';
 import 'package:freecodecamp/models/learn/curriculum_model.dart';
@@ -61,6 +63,13 @@ class LearnLandingView extends StatelessWidget {
                   Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
+                      Padding(
+                        padding: const EdgeInsets.all(8.0),
+                        child: Text(
+                          'Our latest Curriculum',
+                          style: model.headerStyle,
+                        ),
+                      ),
                       SuperBlockButton(
                         button: SuperBlockButtonData(
                           path: 'full-stack-developer',
@@ -68,6 +77,38 @@ class LearnLandingView extends StatelessWidget {
                           public: true,
                         ),
                         model: model,
+                      ),
+                      Padding(
+                        padding: const EdgeInsets.all(8.0),
+                        child: Text(
+                          'Learn English for developers',
+                          style: model.headerStyle,
+                        ),
+                      ),
+                      SuperBlockButton(
+                        button: SuperBlockButtonData(
+                          path: 'a2-english-for-developers',
+                          name:
+                              'A2 English for Developers (Beta) Certification',
+                          public: true,
+                        ),
+                        model: model,
+                      ),
+                      SuperBlockButton(
+                        button: SuperBlockButtonData(
+                          path: 'b1-english-for-developers',
+                          name:
+                              ' B1 English for Developers (Beta) Certification',
+                          public: true,
+                        ),
+                        model: model,
+                      ),
+                      Padding(
+                        padding: const EdgeInsets.all(8.0),
+                        child: Text(
+                          'Our Legacy Courses',
+                          style: model.headerStyle,
+                        ),
                       ),
                     ],
                   ),
@@ -87,8 +128,14 @@ class LearnLandingView extends StatelessWidget {
                             shrinkWrap: true,
                             itemCount: buttons.length,
                             itemBuilder: (BuildContext context, int i) {
-                              return SuperBlockButton(
-                                  button: buttons[i], model: model);
+                              log(buttons[i].path);
+
+                              return buttons[i].public
+                                  ? SuperBlockButton(
+                                      button: buttons[i],
+                                      model: model,
+                                    )
+                                  : null;
                             },
                           );
                         }
