@@ -53,10 +53,6 @@ class LearnLandingView extends StatelessWidget {
                   ),
                   const QuoteWidget(),
                   if (!model.isLoggedIn) loginButton(model, context),
-                  if (model.hasLastVisitedChallenge && model.isLoggedIn)
-                    ContinueLearningButton(
-                      model: model,
-                    ),
                   const SizedBox(height: 16),
                   Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
@@ -234,63 +230,6 @@ class LearnLandingView extends StatelessWidget {
 
         return const Center(child: CircularProgressIndicator());
       }),
-    );
-  }
-}
-
-class ContinueLearningButton extends StatelessWidget {
-  const ContinueLearningButton({
-    super.key,
-    required this.model,
-  });
-
-  final LearnLandingViewModel model;
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      padding: const EdgeInsets.symmetric(
-        vertical: 6,
-        horizontal: 8,
-      ),
-      height: 80,
-      child: ElevatedButton(
-        onPressed: () {
-          model.fastRouteToChallenge();
-        },
-        style: ElevatedButton.styleFrom(
-          backgroundColor: const Color.fromRGBO(0x19, 0x8E, 0xEE, 1),
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(0),
-          ),
-        ),
-        child: Row(
-          children: [
-            Align(
-              alignment: Alignment.centerLeft,
-              child: SizedBox(
-                width: MediaQuery.of(context).size.width * 0.70,
-                child: Text(
-                  context.t.continue_left_off,
-                  overflow: TextOverflow.ellipsis,
-                  maxLines: 2,
-                  textAlign: TextAlign.left,
-                  style: const TextStyle(
-                    fontSize: 20,
-                    fontWeight: FontWeight.w700,
-                  ),
-                ),
-              ),
-            ),
-            const Expanded(
-              child: Align(
-                alignment: Alignment.centerRight,
-                child: Icon(Icons.arrow_forward_ios),
-              ),
-            )
-          ],
-        ),
-      ),
     );
   }
 }

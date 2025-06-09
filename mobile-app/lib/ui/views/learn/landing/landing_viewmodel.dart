@@ -40,9 +40,6 @@ class LearnLandingViewModel extends BaseViewModel {
   Future<List<SuperBlockButtonData>>? superBlockButtons;
   final _dio = DioService.dio;
 
-  bool _hasLastVisitedChallenge = false;
-  bool get hasLastVisitedChallenge => _hasLastVisitedChallenge;
-
   bool _isLoggedIn = false;
   bool get isLoggedIn => _isLoggedIn;
 
@@ -55,24 +52,12 @@ class LearnLandingViewModel extends BaseViewModel {
     notifyListeners();
   }
 
-  set setHasLastVisitedChallenge(value) {
-    _hasLastVisitedChallenge = value;
-    notifyListeners();
-  }
-
   void init(BuildContext context) async {
     setupDialogUi();
     retrieveNewQuote();
     initLoggedInListener();
 
     setSuperBlockButtons = requestSuperBlocks();
-  }
-
-  void retrieveLastVisitedChallenge() async {
-    SharedPreferences prefs = await SharedPreferences.getInstance();
-    setHasLastVisitedChallenge =
-        prefs.getStringList('lastVisitedChallenge')?.isNotEmpty ?? false;
-    notifyListeners();
   }
 
   void fastRouteToChallenge() async {
