@@ -73,6 +73,7 @@ class Challenge {
   final List<String>? assignments;
 
   // Challenge Type 8 - Quiz
+  // This list contains multiple sets of quiz
   final List<Quiz>? quizzes;
 
   Challenge({
@@ -135,7 +136,7 @@ class Challenge {
         hooks: Hooks.fromJson(
           data['hooks'] ?? {'beforeAll': ''},
         ),
-        quizzes: (data['quizzes'] as List).isNotEmpty
+        quizzes: (data['quizzes'] != null)
             ? (data['quizzes'] as List)
                 .map<Quiz>((quiz) => Quiz.fromJson(quiz))
                 .toList()
@@ -182,6 +183,17 @@ class Challenge {
                 'text': question.text,
                 'answers': question.answers,
                 'solution': question.solution,
+              })
+          .toList(),
+      'quizzes': challenge.quizzes
+          ?.map((quiz) => {
+                'questions': quiz.questions
+                    .map((question) => {
+                          'text': question.text,
+                          'answers': question.answers,
+                          'solution': question.solution,
+                        })
+                    .toList(),
               })
           .toList(),
     };
@@ -332,21 +344,35 @@ class Blank {
 
 class QuizQuestion {
   final String text;
-  final List<String> distractors;
-  final String answer;
+  final List<Answer> answers;
+  final int solution;
 
   const QuizQuestion({
     required this.text,
-    required this.distractors,
-    required this.answer,
+    required this.answers,
+    required this.solution,
   });
 
   factory QuizQuestion.fromJson(Map<String, dynamic> data) {
+    // Quiz data has answer and distractors as separate fields rather than in a single array.
+    // We combine them into one so that the question schema
+    // is consistent with the other MCQ challenges.
+    final allAnswers = [
+      ...(data['distractors'] as List)
+          .map<Answer>((item) => Answer(answer: item, feedback: null)),
+      Answer(answer: data['answer'], feedback: null)
+    ];
+
+    // shuffle so the correct answer is not always the last
+    allAnswers.shuffle();
+
+    // Solution is the index of the correct answer in the shuffled list.
+    // + 1 here so that it matches the 1-based index used in the UI logic.
+    final solutionIndex =
+        allAnswers.indexWhere((a) => a.answer == data['answer']) + 1;
+
     return QuizQuestion(
-      text: data['answer'],
-      answer: data['answer'],
-      distractors: data['distractors'],
-    );
+        text: data['text'], answers: allAnswers, solution: solutionIndex);
   }
 }
 
@@ -360,7 +386,7 @@ class Quiz {
   factory Quiz.fromJson(Map<String, dynamic> data) {
     return Quiz(
       questions: (data['questions'] as List)
-          .map((item) => QuizQuestion.fromJson(item))
+          .map<QuizQuestion>((item) => QuizQuestion.fromJson(item))
           .toList(),
     );
   }

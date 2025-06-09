@@ -14,12 +14,12 @@ class QuizViewModel extends BaseViewModel {
   String _errMessage = '';
   String get errMessage => _errMessage;
 
-  List<QuizQuestion> _quizQuestions = [];
-  List<QuizQuestion> get quizQuestions => _quizQuestions;
+  List<QuizWidgetQuestion> _quizQuestions = [];
+  List<QuizWidgetQuestion> get quizQuestions => _quizQuestions;
 
   final LearnService learnService = locator<LearnService>();
 
-  set setQuizQuestions(List<QuizQuestion> questions) {
+  set setQuizQuestions(List<QuizWidgetQuestion> questions) {
     _quizQuestions = questions;
     notifyListeners();
   }
@@ -40,9 +40,15 @@ class QuizViewModel extends BaseViewModel {
   }
 
   void initChallenge(Challenge challenge) {
-    print(challenge.questions);
-    setQuizQuestions = (challenge.questions ?? [])
-        .map<QuizQuestion>((q) => QuizQuestion(
+    // Randomly select a question set from challenge.quizzes
+    final questionSet =
+        (challenge.quizzes != null && challenge.quizzes!.isNotEmpty)
+            ? (challenge.quizzes!..shuffle()).first
+            : null;
+    final questions = questionSet?.questions ?? [];
+
+    setQuizQuestions = questions
+        .map<QuizWidgetQuestion>((q) => QuizWidgetQuestion(
             text: q.text, answers: q.answers, solution: q.solution))
         .toList();
   }
@@ -67,18 +73,23 @@ class QuizViewModel extends BaseViewModel {
         question.isCorrect = question.selectedAnswer == question.solution - 1;
       });
 
-    final unansweredQuestions =
-        quizQuestions.where((q) => q.selectedAnswer == -1).toList();
+    final unansweredQuestions = List.generate(quizQuestions.length, (i) => i)
+        .where((i) => quizQuestions[i].selectedAnswer == -1)
+        .map((i) => i + 1)
+        .toList();
 
-    setHasPassedAllQuestions = unansweredQuestions.isEmpty;
+    setHasPassedAllQuestions = unansweredQuestions.isEmpty &&
+        quizQuestions.every((question) => question.isCorrect == true);
 
     setIsValidated = true;
 
     if (unansweredQuestions.length > 1) {
       setErrMessage =
-          "The following questions are unanswered: ${unansweredQuestions.join(',')}. You must answer all questions.";
+          "The following questions are unanswered: ${unansweredQuestions.join(', ')}. You must answer all questions.";
     } else {
-      setErrMessage = 'Some answers are incorrect.';
+      setErrMessage = hasPassedAllQuestions
+          ? 'You answered all questions correctly!'
+          : 'Some answers are incorrect.';
     }
   }
 }

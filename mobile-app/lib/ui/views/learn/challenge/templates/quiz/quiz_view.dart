@@ -53,12 +53,25 @@ class QuizView extends StatelessWidget {
                     ],
                   ),
                 ),
-                Quiz(
+                QuizWidget(
                     isValidated: model.isValidated,
                     questions: model.quizQuestions,
                     onChanged: (questionIndex, answerIndex) {
                       model.setSelectedAnswer(questionIndex, answerIndex);
                     }),
+                const SizedBox(height: 16),
+                if (model.errMessage.isNotEmpty) ...[
+                  Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 16.0),
+                    child: Text(
+                      model.errMessage,
+                      style: const TextStyle(
+                        fontSize: 18,
+                      ),
+                    ),
+                  ),
+                ],
+                const SizedBox(height: 16),
                 Row(
                   children: [
                     Expanded(
@@ -77,24 +90,25 @@ class QuizView extends StatelessWidget {
                               ),
                             ),
                           ),
-                          onPressed: model.quizQuestions
-                                  .every((q) => q.selectedAnswer != -1)
-                              ? () {
-                                  if (model.isValidated &&
-                                      model.hasPassedAllQuestions) {
-                                    model.learnService.goToNextChallenge(
-                                      block.challenges.length,
-                                      challengesCompleted,
-                                      challenge,
-                                      block,
-                                    );
-                                  } else {
-                                    model.validateChallenge();
-                                  }
-                                }
-                              : null,
+                          onPressed: () {
+                            if (model.isValidated &&
+                                model.hasPassedAllQuestions) {
+                              model.learnService.goToNextChallenge(
+                                block.challenges.length,
+                                challengesCompleted,
+                                challenge,
+                                block,
+                              );
+                            } else {
+                              model.validateChallenge();
+                            }
+                          },
                           child: Text(
-                            context.t.next,
+                            model.isValidated
+                                ? model.hasPassedAllQuestions
+                                    ? context.t.next_challenge
+                                    : context.t.try_again
+                                : context.t.questions_check,
                             style: const TextStyle(fontSize: 20),
                           ),
                         ),
