@@ -40,6 +40,7 @@ class Quiz extends StatelessWidget {
         (index) {
           return quizQuestion(
               context: context,
+              questionNumber: questions.length > 1 ? index + 1 : null,
               question: questions[index],
               selectedAnswer: questions[index].selectedAnswer,
               isCorrect: questions[index].isCorrect,
@@ -51,17 +52,17 @@ class Quiz extends StatelessWidget {
     );
   }
 
-  ChallengeCard quizQuestion({
-    required BuildContext context,
-    required QuizQuestion question,
-    required int selectedAnswer,
-    required ValueChanged<int> onChanged,
-    bool? isCorrect,
-  }) {
+  ChallengeCard quizQuestion(
+      {required BuildContext context,
+      required QuizQuestion question,
+      required int selectedAnswer,
+      required ValueChanged<int> onChanged,
+      bool? isCorrect,
+      int? questionNumber}) {
     HTMLParser parser = HTMLParser(context: context);
 
     return ChallengeCard(
-      title: 'Question',
+      title: questionNumber != null ? 'Question $questionNumber' : 'Question',
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
