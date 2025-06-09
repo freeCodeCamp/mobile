@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:freecodecamp/extensions/i18n_extension.dart';
 import 'package:freecodecamp/models/learn/challenge_model.dart';
 import 'package:freecodecamp/models/learn/curriculum_model.dart';
-import 'package:freecodecamp/ui/theme/fcc_theme.dart';
 import 'package:freecodecamp/ui/views/learn/challenge/templates/multiple_choice/multiple_choice_viewmodel.dart';
 import 'package:freecodecamp/ui/views/learn/widgets/assignment_widget.dart';
 import 'package:freecodecamp/ui/views/learn/widgets/audio/audio_player_view.dart';
@@ -138,7 +137,7 @@ class MultipleChoiceView extends StatelessWidget {
                       ),
                     ),
                   ),
-                Quiz(
+                QuizWidget(
                     isValidated: model.isValidated,
                     questions: model.quizQuestions,
                     onChanged: (questionIndex, answerIndex) {
@@ -161,7 +160,6 @@ class MultipleChoiceView extends StatelessWidget {
                     child: Text(
                       model.errMessage,
                       style: const TextStyle(
-                        color: FccColors.red15,
                         fontSize: 18,
                       ),
                     ),

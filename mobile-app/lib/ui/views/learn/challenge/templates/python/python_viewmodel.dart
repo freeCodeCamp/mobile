@@ -14,12 +14,12 @@ class PythonViewModel extends BaseViewModel {
   String _errMessage = '';
   String get errMessage => _errMessage;
 
-  List<QuizQuestion> _quizQuestions = [];
-  List<QuizQuestion> get quizQuestions => _quizQuestions;
+  List<QuizWidgetQuestion> _quizQuestions = [];
+  List<QuizWidgetQuestion> get quizQuestions => _quizQuestions;
 
   final LearnService learnService = locator<LearnService>();
 
-  set setQuizQuestions(List<QuizQuestion> questions) {
+  set setQuizQuestions(List<QuizWidgetQuestion> questions) {
     _quizQuestions = questions;
     notifyListeners();
   }
@@ -41,7 +41,7 @@ class PythonViewModel extends BaseViewModel {
 
   void initChallenge(Challenge challenge) {
     setQuizQuestions = (challenge.questions ?? [])
-        .map<QuizQuestion>((q) => QuizQuestion(
+        .map<QuizWidgetQuestion>((q) => QuizWidgetQuestion(
             text: q.text, answers: q.answers, solution: q.solution))
         .toList();
   }

@@ -5,14 +5,14 @@ import 'package:freecodecamp/ui/views/learn/widgets/challenge_card.dart';
 import 'package:freecodecamp/ui/views/news/html_handler/html_handler.dart';
 
 // Model that extends Question with selectedAnswer and validation status
-class QuizQuestion {
+class QuizWidgetQuestion {
   final String text;
   final List<Answer> answers;
   final int solution;
   int selectedAnswer;
   bool? isCorrect;
 
-  QuizQuestion({
+  QuizWidgetQuestion({
     required this.text,
     required this.answers,
     required this.solution,
@@ -21,12 +21,12 @@ class QuizQuestion {
   });
 }
 
-class Quiz extends StatelessWidget {
-  final List<QuizQuestion> questions;
+class QuizWidget extends StatelessWidget {
+  final List<QuizWidgetQuestion> questions;
   final Function(int, int) onChanged;
   final bool? isValidated;
 
-  const Quiz(
+  const QuizWidget(
       {super.key,
       required this.questions,
       required this.onChanged,
@@ -54,7 +54,7 @@ class Quiz extends StatelessWidget {
 
   ChallengeCard quizQuestion(
       {required BuildContext context,
-      required QuizQuestion question,
+      required QuizWidgetQuestion question,
       required int selectedAnswer,
       required ValueChanged<int> onChanged,
       bool? isCorrect,
