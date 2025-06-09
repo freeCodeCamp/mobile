@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:freecodecamp/extensions/i18n_extension.dart';
 import 'package:freecodecamp/models/learn/challenge_model.dart';
 import 'package:freecodecamp/models/learn/curriculum_model.dart';
+import 'package:freecodecamp/ui/theme/fcc_theme.dart';
 import 'package:freecodecamp/ui/views/learn/challenge/templates/multiple_choice/multiple_choice_viewmodel.dart';
 import 'package:freecodecamp/ui/views/learn/widgets/assignment_widget.dart';
 import 'package:freecodecamp/ui/views/learn/widgets/audio/audio_player_view.dart';
@@ -150,6 +151,19 @@ class MultipleChoiceView extends StatelessWidget {
                     title: 'Explanation',
                     child: Explanation(
                       explanation: challenge.explanation ?? '',
+                    ),
+                  ),
+                ],
+                const SizedBox(height: 8),
+                if (model.errMessage.isNotEmpty) ...[
+                  Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 16.0),
+                    child: Text(
+                      model.errMessage,
+                      style: const TextStyle(
+                        color: FccColors.red15,
+                        fontSize: 18,
+                      ),
                     ),
                   ),
                 ],

@@ -73,6 +73,7 @@ class MultipleChoiceViewmodel extends BaseViewModel {
 
     // Reset the validation status when user changes the selection
     setIsValidated = false;
+    setErrMessage = '';
 
     notifyListeners();
   }
@@ -88,5 +89,12 @@ class MultipleChoiceViewmodel extends BaseViewModel {
         quizQuestions.every((question) => question.isCorrect == true);
 
     setIsValidated = true;
+
+    // Show the error message if there are multiple questions.
+    // Otherwise, the validation message is sufficient.
+    if (quizQuestions.length > 1) {
+      setErrMessage =
+          hasPassedAllQuestions ? '' : 'Some answers are incorrect.';
+    }
   }
 }

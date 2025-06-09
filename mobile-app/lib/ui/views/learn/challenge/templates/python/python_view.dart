@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:freecodecamp/extensions/i18n_extension.dart';
 import 'package:freecodecamp/models/learn/challenge_model.dart';
 import 'package:freecodecamp/models/learn/curriculum_model.dart';
+import 'package:freecodecamp/ui/theme/fcc_theme.dart';
 import 'package:freecodecamp/ui/views/learn/challenge/templates/python/python_viewmodel.dart';
 import 'package:freecodecamp/ui/views/learn/widgets/quiz_widget.dart';
 import 'package:freecodecamp/ui/views/news/html_handler/html_handler.dart';
@@ -100,6 +101,19 @@ class PythonView extends StatelessWidget {
                     onChanged: (questionIndex, answerIndex) {
                       model.setSelectedAnswer(questionIndex, answerIndex);
                     }),
+                const SizedBox(height: 16),
+                if (model.errMessage.isNotEmpty) ...[
+                  Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 16.0),
+                    child: Text(
+                      model.errMessage,
+                      style: const TextStyle(
+                        color: FccColors.red15,
+                        fontSize: 18,
+                      ),
+                    ),
+                  ),
+                ],
                 const SizedBox(height: 16),
                 ElevatedButton(
                   style: ElevatedButton.styleFrom(

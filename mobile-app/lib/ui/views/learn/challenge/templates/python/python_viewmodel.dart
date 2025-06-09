@@ -11,6 +11,9 @@ class PythonViewModel extends BaseViewModel {
   bool _hasPassedAllQuestions = false;
   bool get hasPassedAllQuestions => _hasPassedAllQuestions;
 
+  String _errMessage = '';
+  String get errMessage => _errMessage;
+
   List<QuizQuestion> _quizQuestions = [];
   List<QuizQuestion> get quizQuestions => _quizQuestions;
 
@@ -31,6 +34,11 @@ class PythonViewModel extends BaseViewModel {
     notifyListeners();
   }
 
+  set setErrMessage(String message) {
+    _errMessage = message;
+    notifyListeners();
+  }
+
   void initChallenge(Challenge challenge) {
     setQuizQuestions = (challenge.questions ?? [])
         .map<QuizQuestion>((q) => QuizQuestion(
@@ -46,6 +54,7 @@ class PythonViewModel extends BaseViewModel {
 
     // Reset the validation status when user changes the selection
     setIsValidated = false;
+    setErrMessage = '';
 
     notifyListeners();
   }
@@ -61,20 +70,12 @@ class PythonViewModel extends BaseViewModel {
         quizQuestions.every((question) => question.isCorrect == true);
 
     setIsValidated = true;
+
+    // Show the error message if there are multiple questions.
+    // Otherwise, the validation message is sufficient.
+    if (quizQuestions.length > 1) {
+      setErrMessage =
+          hasPassedAllQuestions ? '' : 'Some answers are incorrect.';
+    }
   }
-
-  // set setCurrentChoice(int choice) {
-  //   _currentChoice = choice;
-  //   notifyListeners();
-  // }
-
-  // set setChoiceStatus(bool? status) {
-  //   _choiceStatus = status;
-  //   notifyListeners();
-  // }
-
-  // void checkOption(Challenge challenge) async {
-  //   bool isCorrect = challenge.question!.solution - 1 == currentChoice;
-  //   setChoiceStatus = isCorrect;
-  // }
 }
