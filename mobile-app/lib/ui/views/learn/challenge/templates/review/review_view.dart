@@ -8,6 +8,7 @@ import 'package:freecodecamp/ui/views/learn/widgets/assignment_widget.dart';
 import 'package:freecodecamp/ui/views/learn/widgets/challenge_card.dart';
 import 'package:freecodecamp/ui/views/news/html_handler/html_handler.dart';
 import 'package:stacked/stacked.dart';
+import 'package:youtube_player_iframe/youtube_player_iframe.dart';
 
 class ReviewView extends StatelessWidget {
   const ReviewView({
@@ -29,6 +30,34 @@ class ReviewView extends StatelessWidget {
       viewModelBuilder: () => ReviewViewmodel(),
       onViewModelReady: (model) => model.initChallenge(challenge),
       builder: (context, model, child) {
+        YoutubePlayerController controller =
+            YoutubePlayerController.fromVideoId(
+          videoId: challenge.videoId!,
+          autoPlay: false,
+          params: const YoutubePlayerParams(
+            showControls: true,
+            showFullscreenButton: true,
+            strictRelatedVideos: true,
+          ),
+        );
+
+        controller.setFullScreenListener(
+          (_) async {
+            final videoData = await controller.videoData;
+            final startSeconds = await controller.currentTime;
+
+            final currentTime = await FullscreenYoutubePlayer.launch(
+              context,
+              videoId: videoData.videoId,
+              startSeconds: startSeconds,
+            );
+
+            if (currentTime != null) {
+              controller.seekTo(seconds: currentTime);
+            }
+          },
+        );
+
         return Scaffold(
           backgroundColor: FccColors.gray90,
           persistentFooterAlignment: AlignmentDirectional.topStart,
@@ -53,6 +82,17 @@ class ReviewView extends StatelessWidget {
                     ],
                   ),
                 ),
+                const SizedBox(height: 12),
+                Padding(
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 16,
+                  ),
+                  child: YoutubePlayer(
+                    controller: controller,
+                    enableFullScreenOnVerticalDrag: false,
+                  ),
+                ),
+                const SizedBox(height: 12),
                 ChallengeCard(
                   title: 'Assignments',
                   child: Column(
