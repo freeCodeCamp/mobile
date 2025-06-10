@@ -40,7 +40,7 @@ class CurriculumTestRunnerState extends State<CurriculumTestRunner> {
             body: InAppWebView(
               initialData: InAppWebViewInitialData(
                 data:
-                    '<html><head><title>Babel</title></head><body></body></html>',
+                    '<html><head><title>Test Runner</title></head><body></body></html>',
                 mimeType: 'text/html',
               ),
               onWebViewCreated: (controller) {
