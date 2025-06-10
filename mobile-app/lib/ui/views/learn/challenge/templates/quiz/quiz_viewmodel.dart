@@ -4,7 +4,7 @@ import 'package:freecodecamp/service/learn/learn_service.dart';
 import 'package:freecodecamp/ui/views/learn/widgets/quiz_widget.dart';
 import 'package:stacked/stacked.dart';
 
-class MultipleChoiceViewmodel extends BaseViewModel {
+class QuizViewModel extends BaseViewModel {
   bool _isValidated = false;
   bool get isValidated => _isValidated;
 
@@ -14,13 +14,15 @@ class MultipleChoiceViewmodel extends BaseViewModel {
   String _errMessage = '';
   String get errMessage => _errMessage;
 
-  List<bool> _assignmentsStatus = [];
-  List<bool> get assignmentsStatus => _assignmentsStatus;
-
   List<QuizWidgetQuestion> _quizQuestions = [];
   List<QuizWidgetQuestion> get quizQuestions => _quizQuestions;
 
   final LearnService learnService = locator<LearnService>();
+
+  set setQuizQuestions(List<QuizWidgetQuestion> questions) {
+    _quizQuestions = questions;
+    notifyListeners();
+  }
 
   set setIsValidated(bool status) {
     _isValidated = status;
@@ -37,29 +39,15 @@ class MultipleChoiceViewmodel extends BaseViewModel {
     notifyListeners();
   }
 
-  set setQuizQuestions(List<QuizWidgetQuestion> questions) {
-    _quizQuestions = questions;
-    notifyListeners();
-  }
-
-  set setAssignmentsStatus(List<bool> status) {
-    _assignmentsStatus = status;
-    notifyListeners();
-  }
-
-  void setAssignmentStatus(int index) {
-    setAssignmentsStatus = List<bool>.from(_assignmentsStatus)
-      ..[index] = !_assignmentsStatus[index];
-    notifyListeners();
-  }
-
   void initChallenge(Challenge challenge) {
-    setAssignmentsStatus = List.filled(
-      challenge.assignments?.length ?? 0,
-      false,
-    );
+    // Randomly select a question set from challenge.quizzes
+    final questionSet =
+        (challenge.quizzes != null && challenge.quizzes!.isNotEmpty)
+            ? (challenge.quizzes!..shuffle()).first
+            : null;
+    final questions = questionSet?.questions ?? [];
 
-    setQuizQuestions = (challenge.questions ?? [])
+    setQuizQuestions = questions
         .map<QuizWidgetQuestion>((q) => QuizWidgetQuestion(
             text: q.text, answers: q.answers, solution: q.solution))
         .toList();
@@ -85,16 +73,23 @@ class MultipleChoiceViewmodel extends BaseViewModel {
         question.isCorrect = question.selectedAnswer == question.solution - 1;
       });
 
-    setHasPassedAllQuestions =
+    final unansweredQuestions = List.generate(quizQuestions.length, (i) => i)
+        .where((i) => quizQuestions[i].selectedAnswer == -1)
+        .map((i) => i + 1)
+        .toList();
+
+    setHasPassedAllQuestions = unansweredQuestions.isEmpty &&
         quizQuestions.every((question) => question.isCorrect == true);
 
     setIsValidated = true;
 
-    // Show the error message if there are multiple questions.
-    // Otherwise, the validation message is sufficient.
-    if (quizQuestions.length > 1) {
+    if (unansweredQuestions.length > 1) {
       setErrMessage =
-          hasPassedAllQuestions ? '' : 'Some answers are incorrect.';
+          "The following questions are unanswered: ${unansweredQuestions.join(', ')}. You must answer all questions.";
+    } else {
+      setErrMessage = hasPassedAllQuestions
+          ? 'You answered all questions correctly!'
+          : 'Some answers are incorrect.';
     }
   }
 }
