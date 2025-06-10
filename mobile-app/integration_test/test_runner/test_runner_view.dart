@@ -27,7 +27,7 @@ class CurriculumTestRunnerState extends State<CurriculumTestRunner> {
     },
     onLoadStop: (controller, url) async {
       final res = await controller.injectJavascriptFileFromAsset(
-          assetFilePath: 'assets/babel/babel.min.js');
+          assetFilePath: 'assets/test_runner/babel/babel.min.js');
       log('Babel load: $res');
     },
     initialSettings: InAppWebViewSettings(

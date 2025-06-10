@@ -23,11 +23,11 @@ class ScriptBuilder {
 ''';
 
   static String runnerScript = '''
-await import("http://localhost:8080/index.js");
+await import("http://localhost:8080/dist/index.js");
 window.TestRunner = await window.FCCSandbox.createTestRunner({
   source: userCode,
   type: workerType,
-  assetPath: "/",
+  assetPath: "/dist",
   code: {
     contents: combinedCode,
     editableContents: editableRegionContent,
