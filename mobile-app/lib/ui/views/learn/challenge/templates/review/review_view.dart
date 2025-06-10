@@ -6,6 +6,7 @@ import 'package:freecodecamp/ui/theme/fcc_theme.dart';
 import 'package:freecodecamp/ui/views/learn/challenge/templates/review/review_viewmodel.dart';
 import 'package:freecodecamp/ui/views/learn/widgets/assignment_widget.dart';
 import 'package:freecodecamp/ui/views/learn/widgets/challenge_card.dart';
+import 'package:freecodecamp/ui/views/learn/widgets/transcript_widget.dart';
 import 'package:freecodecamp/ui/views/news/html_handler/html_handler.dart';
 import 'package:stacked/stacked.dart';
 import 'package:youtube_player_iframe/youtube_player_iframe.dart';
@@ -92,6 +93,16 @@ class ReviewView extends StatelessWidget {
                     enableFullScreenOnVerticalDrag: false,
                   ),
                 ),
+                const SizedBox(height: 12),
+                if (challenge.transcript != null &&
+                    challenge.transcript!.isNotEmpty) ...[
+                  ChallengeCard(
+                    title: 'Transcript',
+                    child: Transcript(
+                      transcript: challenge.transcript!,
+                    ),
+                  ),
+                ],
                 const SizedBox(height: 12),
                 ChallengeCard(
                   title: 'Assignments',
