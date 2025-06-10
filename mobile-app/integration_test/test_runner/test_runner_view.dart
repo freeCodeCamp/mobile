@@ -38,8 +38,11 @@ class CurriculumTestRunnerState extends State<CurriculumTestRunner> {
               title: Text('Curriculum Test Runner'),
             ),
             body: InAppWebView(
-              initialUrlRequest:
-                  URLRequest(url: WebUri('http://localhost:8080')),
+              initialData: InAppWebViewInitialData(
+                data:
+                    '<html><head><title>Test Runner</title></head><body></body></html>',
+                mimeType: 'text/html',
+              ),
               onWebViewCreated: (controller) {
                 webViewController = controller;
               },

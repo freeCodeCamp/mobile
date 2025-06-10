@@ -308,8 +308,10 @@ class ChallengeView extends StatelessWidget {
                 height: 1,
                 width: 1,
                 child: InAppWebView(
-                  initialUrlRequest: URLRequest(
-                    url: WebUri('http://localhost:8080/'),
+                  initialData: InAppWebViewInitialData(
+                    data:
+                        '<html><head><title>Test Runner</title></head><body></body></html>',
+                    mimeType: 'text/html',
                   ),
                   onWebViewCreated: (controller) {
                     model.setTestController = controller;
