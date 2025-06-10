@@ -16,6 +16,7 @@ import 'package:freecodecamp/service/authentication/authentication_service.dart'
 import 'package:freecodecamp/service/dio_service.dart';
 import 'package:freecodecamp/service/learn/learn_offline_service.dart';
 import 'package:freecodecamp/service/learn/learn_service.dart';
+import 'package:freecodecamp/ui/theme/fcc_theme.dart';
 import 'package:freecodecamp/ui/widgets/setup_dialog_ui.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:stacked/stacked.dart';
@@ -39,19 +40,15 @@ class LearnLandingViewModel extends BaseViewModel {
   Future<List<SuperBlockButtonData>>? superBlockButtons;
   final _dio = DioService.dio;
 
-  bool _hasLastVisitedChallenge = false;
-  bool get hasLastVisitedChallenge => _hasLastVisitedChallenge;
-
   bool _isLoggedIn = false;
   bool get isLoggedIn => _isLoggedIn;
 
+  Color? _lastAvatarColor;
+
+  TextStyle headerStyle = TextStyle(fontSize: 20, fontWeight: FontWeight.bold);
+
   set setSuperBlockButtons(value) {
     superBlockButtons = value;
-    notifyListeners();
-  }
-
-  set setHasLastVisitedChallenge(value) {
-    _hasLastVisitedChallenge = value;
     notifyListeners();
   }
 
@@ -61,13 +58,6 @@ class LearnLandingViewModel extends BaseViewModel {
     initLoggedInListener();
 
     setSuperBlockButtons = requestSuperBlocks();
-  }
-
-  void retrieveLastVisitedChallenge() async {
-    SharedPreferences prefs = await SharedPreferences.getInstance();
-    setHasLastVisitedChallenge =
-        prefs.getStringList('lastVisitedChallenge')?.isNotEmpty ?? false;
-    notifyListeners();
   }
 
   void fastRouteToChallenge() async {
@@ -172,8 +162,14 @@ class LearnLandingViewModel extends BaseViewModel {
       bool showAllSB =
           dotenv.get('SHOWALLSB', fallback: 'false').toLowerCase() == 'true';
 
+      List manualPlacement = [
+        'full-stack',
+        'a2-english-for-developers',
+        'b1-english-for-developers'
+      ];
+
       for (int i = 0; i < superBlocks.length; i++) {
-        if (superBlocks[i]['dashedName'].toString().contains('full-stack')) {
+        if (manualPlacement.contains(superBlocks[i]['dashedName'])) {
           continue;
         }
         buttonData.add(
@@ -188,6 +184,31 @@ class LearnLandingViewModel extends BaseViewModel {
       return buttonData;
     }
     return [];
+  }
+
+  Color getRandomColor() {
+    List colors = [
+      FccColors.blue50,
+      FccColors.green70,
+      FccColors.yellow40,
+      FccColors.red80,
+      FccColors.purple50
+    ];
+
+    int random = Random().nextInt(colors.length);
+
+    if (_lastAvatarColor == null) {
+      _lastAvatarColor = colors[random];
+      return getRandomColor();
+    }
+
+    if (_lastAvatarColor == colors[random]) {
+      return getRandomColor();
+    } else {
+      _lastAvatarColor = colors[random];
+    }
+
+    return colors[random];
   }
 
   void routeToSuperBlock(String dashedName, String name) async {
