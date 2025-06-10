@@ -35,7 +35,7 @@ class ChallengeView extends StatelessWidget {
       onViewModelReady: (model) {
         model.init(block, challenge, challengesCompleted);
       },
-      onDispose: (model) => model.dispose(),
+      onDispose: (model) => model.closeWebViews(),
       builder: (context, model, child) {
         int maxChallenges = block.challenges.length;
         ChallengeFile currFile = model.currentFile(challenge);

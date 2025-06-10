@@ -23,74 +23,127 @@ void main() {
     await setupLocator();
 
     List<String> publicSBs = [
-      // '2022/responsive-web-design',
-      // 'responsive-web-design',
+      '2022/responsive-web-design',
+      'responsive-web-design',
       // 'javascript-algorithms-and-data-structures-v8',
       // 'javascript-algorithms-and-data-structures',
-      // 'the-odin-project',
+      'the-odin-project',
       'full-stack-developer',
     ];
 
-    List<String> blockNames = [
-      // "workshop-greeting-bot",
-      // "lab-javascript-trivia-bot", // TODO: Re-verify after Oliver supports before all for JS challenges
-      // "lab-sentence-maker",
-      // "workshop-teacher-chatbot",
-      // "workshop-mathbot",
-      // "lab-fortune-teller",
-      // "workshop-calculator",
-      // "lab-email-masker",
-      // "workshop-loan-qualification-checker",
-      // "lab-leap-year-calculator",
-      // "lab-truncate-string",
-      // "workshop-shopping-list",
-      // "lab-lunch-picker-program",
-      // "workshop-recipe-tracker",
-      // "lab-quiz-game",
-      // "workshop-sentence-analyzer",
-      // "lab-factorial-calculator",
-      // "lab-mutations",
-      // "lab-chunky-monkey",
-      // "lab-slice-and-splice",
-      // "lab-pyramid-generator",
-      // "lab-gradebook-app",
-      // "lab-inventory-management-program",
-      // "lab-password-generator",
-      // "lab-sum-all-numbers-algorithm",
-      // "workshop-library-manager",
-      // "lab-book-organizer",
-      // "workshop-storytelling-app",
-      // "lab-favorite-icon-toggler",
-      // "workshop-music-instrument-filter",
-      // "lab-real-time-counter",
-      // "lab-lightbox-viewer",
-      // "workshop-rps-game",
-      // "lab-football-team-cards",
-      // "lab-random-background-color-changer",
-      // "workshop-spam-filter",
-      // "lab-palindrome-checker",
-      // "lab-markdown-to-html-converter",
-      // "lab-regex-sandbox",
-      // "workshop-calorie-counter",
-      // "lab-customer-complaint-form",
-      // "lab-date-conversion",
-      // "workshop-music-player", // Step 21 Failed - Safari bug?
-      // "lab-drum-machine",
+    List<String> publicFwdBlocks = [
+      // HTML Chapter
+      'workshop-curriculum-outline',
+      'lab-debug-camperbots-profile-page',
+      'workshop-cat-photo-app',
+      'lab-recipe-page',
+      'lab-travel-agency-page',
+      'lab-video-compilation-page',
+      'workshop-blog-page',
+      'lab-event-hub',
+      'workshop-hotel-feedback-form',
+      'lab-survey-form',
+      'workshop-final-exams-table',
+      'lab-book-catalog-table',
+      'lab-checkout-page',
+      'lab-movie-review-page',
+      'lab-multimedia-player',
 
-      // "workshop-plant-nursery-catalog",
-      // "lab-voting-system",
-      // "workshop-todo-app",
-      "lab-bookmark-manager-app", // Failed
-      // "workshop-shopping-cart",
-      // "lab-project-idea-board",
-      // "lab-bank-account-manager",
-      // "workshop-decimal-to-binary-converter", // Steps 60, 62-64, 68, 70-73, 108 Failed
-      // "lab-permutation-generator",
-      // "workshop-recipe-ingredient-converter",
-      // "lab-sorting-visualizer",
-      // "workshop-fcc-authors-page",
-      // "lab-fcc-forum-leaderboard",
-      // "lab-weather-app"
+      // CSS Chapter
+      'workshop-cafe-menu',
+      'lab-business-card',
+      'lab-stylized-to-do-list',
+      'lab-blog-post-card',
+      'lab-event-flyer-page',
+      'workshop-greeting-card',
+      'lab-job-application-form',
+      'workshop-colored-markers',
+      'lab-colored-boxes',
+      'workshop-registration-form',
+      'lab-contact-form',
+      'workshop-rothko-painting',
+      'lab-confidential-email-page',
+      'workshop-flexbox-photo-gallery',
+      'lab-page-of-playing-cards',
+      'workshop-nutritional-label',
+      'lab-newspaper-article',
+      'workshop-accessibility-quiz',
+      'lab-tribute-page',
+      'workshop-cat-painting',
+      'lab-house-painting',
+      'workshop-balance-sheet',
+      'lab-book-inventory-app',
+      'workshop-piano',
+      'lab-technical-documentation-page',
+      'workshop-city-skyline',
+      'lab-availability-table',
+      'workshop-magazine',
+      'lab-magazine-layout',
+      'lab-product-landing-page',
+      'workshop-ferris-wheel',
+      'lab-moon-orbit',
+      'workshop-flappy-penguin',
+      'lab-personal-portfolio',
+
+      // JavaScript Chapter
+      'workshop-greeting-bot',
+      'lab-javascript-trivia-bot', // TODO: Re-verify after Oliver supports before all for JS challenges
+      'lab-sentence-maker',
+      'workshop-teacher-chatbot',
+      'workshop-mathbot',
+      'lab-fortune-teller',
+      'workshop-calculator',
+      'lab-email-masker',
+      'workshop-loan-qualification-checker',
+      'lab-leap-year-calculator',
+      'lab-truncate-string',
+      'workshop-shopping-list',
+      'lab-lunch-picker-program',
+      'workshop-recipe-tracker',
+      'lab-quiz-game',
+      'workshop-sentence-analyzer',
+      'lab-factorial-calculator',
+      'lab-mutations',
+      'lab-chunky-monkey',
+      'lab-slice-and-splice',
+      'lab-pyramid-generator',
+      'lab-gradebook-app',
+      'lab-inventory-management-program',
+      'lab-password-generator',
+      'lab-sum-all-numbers-algorithm',
+      'workshop-library-manager',
+      'lab-book-organizer',
+      'workshop-storytelling-app',
+      'lab-favorite-icon-toggler',
+      'workshop-music-instrument-filter',
+      'lab-real-time-counter',
+      'lab-lightbox-viewer',
+      'workshop-rps-game',
+      'lab-football-team-cards',
+      'lab-random-background-color-changer',
+      'workshop-spam-filter',
+      'lab-palindrome-checker',
+      'lab-markdown-to-html-converter',
+      'lab-regex-sandbox',
+      'workshop-calorie-counter',
+      'lab-customer-complaint-form',
+      'lab-date-conversion',
+      'workshop-music-player', // Step 21 Failed - Safari bug
+      'lab-drum-machine',
+      'workshop-plant-nursery-catalog',
+      'lab-voting-system',
+      'workshop-todo-app',
+      'lab-bookmark-manager-app',
+      'workshop-shopping-cart',
+      'lab-project-idea-board',
+      'lab-bank-account-manager',
+      'workshop-decimal-to-binary-converter',
+      'lab-permutation-generator',
+      'workshop-recipe-ingredient-converter',
+      'lab-sorting-visualizer',
+      'workshop-fcc-authors-page',
+      'lab-fcc-forum-leaderboard',
+      'lab-weather-app'
     ];
 
     String curriculumFilePath = 'assets/learn/curriculum.json';
@@ -102,7 +155,7 @@ void main() {
     await tester.pumpWidget(CurriculumTestRunner());
     await tester.pumpAndSettle();
     // NOTE: To be on the safe side, we wait for 30 seconds to make sure the webview is loaded
-    await Future.delayed(Duration(seconds: 10));
+    await Future.delayed(Duration(seconds: 30));
     final widgetState = tester
         .state<CurriculumTestRunnerState>(find.byType(CurriculumTestRunner));
     expect(widgetState.webViewController, isNotNull);
@@ -115,10 +168,13 @@ void main() {
     for (var currSuperBlock in publicSBs) {
       print('\nSUPERBLOCK: $currSuperBlock');
       for (var currBlock in curriculumData[currSuperBlock]['blocks'].values) {
-        print('Block: ${currBlock['meta']['name']}');
-        if (!blockNames.contains(currBlock['meta']['dashedName'])) {
+        // NOTE: Skip blocks which are not public in the mobile app
+        if (currSuperBlock == 'full-stack-developer' &&
+            !publicFwdBlocks.contains(currBlock['meta']['dashedName'])) {
           continue;
         }
+
+        print('Block: ${currBlock['meta']['name']}');
         List challenges = currBlock['challenges']
           ..sort((a, b) =>
               a['challengeOrder'].compareTo(b['challengeOrder']) as int);
@@ -165,9 +221,6 @@ void main() {
             }
 
             final lines = contents.split('\n');
-            // print('Contents: $contents');
-            // print('Lines: $lines');
-            // print('Range: $range');
             final editableLines = (range[1] <= range[0])
                 ? []
                 : lines.sublist(range[0], min(range[1] - 1, lines.length));
@@ -189,12 +242,6 @@ void main() {
 
           ScriptBuilder builder = ScriptBuilder();
           bool testFailed = false;
-
-          // print('challnge code: ${await builder.buildUserCode(
-          //   challenge,
-          //   babelWebView.webViewController,
-          //   testing: true,
-          // )}');
 
           await testController!.callAsyncJavaScript(
             functionBody: ScriptBuilder.runnerScript,
