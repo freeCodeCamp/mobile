@@ -253,11 +253,9 @@ class ChallengeViewModel extends BaseViewModel {
     setChallengesCompleted = challengesCompleted;
   }
 
-  @override
-  void dispose() {
-    _babelWebView.dispose();
-    _localhostServer.close();
-    super.dispose();
+  void closeWebViews() async {
+    await _babelWebView.dispose();
+    await _localhostServer.close();
   }
 
   void initFile(
