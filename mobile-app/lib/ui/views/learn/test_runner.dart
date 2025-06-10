@@ -1,5 +1,6 @@
 import 'package:flutter_inappwebview/flutter_inappwebview.dart';
 import 'package:freecodecamp/app/app.locator.dart';
+import 'package:freecodecamp/enums/ext_type.dart';
 import 'package:freecodecamp/models/learn/challenge_model.dart';
 import 'package:freecodecamp/service/learn/learn_file_service.dart';
 
@@ -45,34 +46,39 @@ return testRes;
     InAppWebViewController? babelController, {
     bool testing = false,
   }) async {
-    ChallengeFile currentFile = await fileService.getCurrentEditedFileFromCache(
+    String challengeFile = await fileService.getFirstFileFromCache(
       challenge,
-    );
-
-    String firstHTMlfile = await fileService.getFirstFileFromCache(
-      challenge,
-      currentFile.ext,
+      getChallengeExt(challenge.challengeType),
       testing: testing,
     );
 
-    String parsedWithStyleTags = await fileService.parseCssDocmentsAsStyleTags(
-      challenge,
-      firstHTMlfile,
-      testing: testing,
-    );
+    switch (challenge.challengeType) {
+      // JS-only challenges
+      case 1:
+      case 26:
+        return challengeFile;
+      default:
+        String parsedWithStyleTags =
+            await fileService.parseCssDocmentsAsStyleTags(
+          challenge,
+          challengeFile,
+          testing: testing,
+        );
 
-    String parsedWithScriptTags = await fileService.parseJsDocmentsAsScriptTags(
-      challenge,
-      parsedWithStyleTags,
-      babelController,
-      testing: testing,
-    );
+        String parsedWithScriptTags =
+            await fileService.parseJsDocmentsAsScriptTags(
+          challenge,
+          parsedWithStyleTags,
+          babelController,
+          testing: testing,
+        );
 
-    firstHTMlfile = fileService.changeActiveFileLinks(
-      parsedWithScriptTags,
-    );
+        challengeFile = fileService.changeActiveFileLinks(
+          parsedWithScriptTags,
+        );
 
-    return firstHTMlfile;
+        return challengeFile;
+    }
   }
 
   String getWorkerType(int challengeType) {
@@ -90,6 +96,17 @@ return testRes;
     }
 
     return 'dom';
+  }
+
+  Ext getChallengeExt(int challengeType) {
+    switch (challengeType) {
+      // JS-only challenges
+      case 1:
+      case 26:
+        return Ext.js;
+      default:
+        return Ext.html;
+    }
   }
 
   Future<String> combinedCode(Challenge challenge) async {
