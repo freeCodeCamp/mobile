@@ -251,16 +251,6 @@ class ChallengeViewModel extends BaseViewModel {
     setChallenge = challenge;
     setBlock = block;
     setChallengesCompleted = challengesCompleted;
-
-    // _testRunner = TestRunner(
-    //   model: this,
-    //   challenge: challenge,
-    //   builder: TestRunnerBuilder(
-    //     source: '',
-    //     code: Code(contents: ''),
-    //     workerType: getWorkerType(challenge.challengeType),
-    //   ),
-    // );
   }
 
   @override
