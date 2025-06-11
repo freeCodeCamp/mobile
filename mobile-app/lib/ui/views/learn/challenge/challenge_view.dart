@@ -312,6 +312,7 @@ class ChallengeView extends StatelessWidget {
                     data:
                         '<html><head><title>Test Runner</title></head><body></body></html>',
                     mimeType: 'text/html',
+                    baseUrl: WebUri('http://localhost:8080/test-runner'),
                   ),
                   onWebViewCreated: (controller) {
                     model.setTestController = controller;

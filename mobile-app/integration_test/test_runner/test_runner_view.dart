@@ -21,6 +21,7 @@ class CurriculumTestRunnerState extends State<CurriculumTestRunner> {
     initialData: InAppWebViewInitialData(
       data: '<html><head><title>Babel</title></head><body></body></html>',
       mimeType: 'text/html',
+      baseUrl: WebUri('http://localhost:8080/babel-transformer'),
     ),
     onConsoleMessage: (controller, console) {
       log('Babel Console message: ${console.message}');
@@ -73,6 +74,7 @@ class CurriculumTestRunnerState extends State<CurriculumTestRunner> {
                 data:
                     '<html><head><title>Test Runner</title></head><body></body></html>',
                 mimeType: 'text/html',
+                baseUrl: WebUri('http://localhost:8080/test-runner'),
               ),
               onWebViewCreated: (controller) {
                 webViewController = controller;
