@@ -4,6 +4,7 @@ import 'package:freecodecamp/models/learn/challenge_model.dart';
 import 'package:freecodecamp/models/learn/curriculum_model.dart';
 import 'package:freecodecamp/ui/theme/fcc_theme.dart';
 import 'package:freecodecamp/ui/views/learn/challenge/templates/review/review_viewmodel.dart';
+import 'package:freecodecamp/ui/views/learn/utils/challenge_utils.dart';
 import 'package:freecodecamp/ui/views/learn/widgets/assignment_widget.dart';
 import 'package:freecodecamp/ui/views/learn/widgets/challenge_card.dart';
 import 'package:freecodecamp/ui/views/news/html_handler/html_handler.dart';
@@ -33,8 +34,8 @@ class ReviewView extends StatelessWidget {
           backgroundColor: FccColors.gray90,
           persistentFooterAlignment: AlignmentDirectional.topStart,
           appBar: AppBar(
-            backgroundColor: FccColors.gray90,
-          ),
+              backgroundColor: FccColors.gray90,
+              title: Text(handleChallengeTitle(challenge, block))),
           body: SafeArea(
             child: ListView(
               children: [
