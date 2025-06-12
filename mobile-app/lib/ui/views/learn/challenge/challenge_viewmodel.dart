@@ -337,10 +337,7 @@ class ChallengeViewModel extends BaseViewModel {
     }
   }
 
-  @override
-  void dispose() {
-    super.dispose();
-
+  void disposeOfListeners() {
     _textFieldDataSub.cancel();
     _onTextChangeSub.cancel();
 
