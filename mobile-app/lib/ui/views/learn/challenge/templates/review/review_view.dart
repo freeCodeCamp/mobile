@@ -54,16 +54,18 @@ class ReviewView extends StatelessWidget {
                     ],
                   ),
                 ),
-                const SizedBox(height: 12),
-                Padding(
-                  padding: const EdgeInsets.symmetric(
-                    horizontal: 16,
+                if (challenge.videoId != null) ...[
+                  const SizedBox(height: 12),
+                  Padding(
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 16,
+                    ),
+                    child: YoutubePlayerWidget(
+                      videoId: challenge.videoId!,
+                    ),
                   ),
-                  child: YoutubePlayerWidget(
-                    videoId: challenge.videoId!,
-                  ),
-                ),
-                const SizedBox(height: 12),
+                  const SizedBox(height: 12),
+                ],
                 ChallengeCard(
                   title: 'Assignments',
                   child: Column(
