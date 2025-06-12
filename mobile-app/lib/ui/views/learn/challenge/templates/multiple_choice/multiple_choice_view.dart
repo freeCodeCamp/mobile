@@ -7,6 +7,7 @@ import 'package:freecodecamp/ui/views/learn/widgets/assignment_widget.dart';
 import 'package:freecodecamp/ui/views/learn/widgets/audio/audio_player_view.dart';
 import 'package:freecodecamp/ui/views/learn/widgets/challenge_card.dart';
 import 'package:freecodecamp/ui/views/learn/widgets/explanation_widget.dart';
+import 'package:freecodecamp/ui/views/learn/widgets/quiz_widget.dart';
 import 'package:freecodecamp/ui/views/news/html_handler/html_handler.dart';
 import 'package:stacked/stacked.dart';
 import 'package:youtube_player_iframe/youtube_player_iframe.dart';
@@ -136,22 +137,12 @@ class MultipleChoiceView extends StatelessWidget {
                       ),
                     ),
                   ),
-                ChallengeCard(
-                  title: 'Question',
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      ...parser.parse(challenge.instructions),
-                      ...parser.parse(
-                        challenge.question!.text,
-                      ),
-                      const SizedBox(height: 8),
-                      for (var answerObj
-                          in challenge.question!.answers.asMap().entries)
-                        questionOption(answerObj, model, context),
-                    ],
-                  ),
-                ),
+                QuizWidget(
+                    isValidated: model.isValidated,
+                    questions: model.quizQuestions,
+                    onChanged: (questionIndex, answerIndex) {
+                      model.setSelectedAnswer(questionIndex, answerIndex);
+                    }),
                 const SizedBox(height: 8),
                 if (challenge.explanation != null &&
                     challenge.explanation!.isNotEmpty) ...[
@@ -159,6 +150,18 @@ class MultipleChoiceView extends StatelessWidget {
                     title: 'Explanation',
                     child: Explanation(
                       explanation: challenge.explanation ?? '',
+                    ),
+                  ),
+                ],
+                const SizedBox(height: 8),
+                if (model.errMessage.isNotEmpty) ...[
+                  Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 16.0),
+                    child: Text(
+                      model.errMessage,
+                      style: const TextStyle(
+                        fontSize: 18,
+                      ),
                     ),
                   ),
                 ],
@@ -178,23 +181,27 @@ class MultipleChoiceView extends StatelessWidget {
                         borderRadius: BorderRadius.zero,
                       ),
                     ),
-                    onPressed: model.currentChoice != -1 &&
-                            model.assignmentsStatus.every((element) => element)
-                        ? model.choiceStatus != null && model.choiceStatus!
-                            ? () => model.learnService.goToNextChallenge(
-                                  block.challenges.length,
-                                  challengesCompleted,
-                                  challenge,
-                                  block,
-                                )
-                            : () {
-                                model.setValidationStatus(challenge);
-                                model.updateFeedback(challenge, context);
+                    onPressed:
+                        model.assignmentsStatus.every((element) => element) &&
+                                model.quizQuestions
+                                    .every((q) => q.selectedAnswer != -1)
+                            ? () {
+                                if (model.isValidated &&
+                                    model.hasPassedAllQuestions) {
+                                  model.learnService.goToNextChallenge(
+                                    block.challenges.length,
+                                    challengesCompleted,
+                                    challenge,
+                                    block,
+                                  );
+                                } else {
+                                  model.validateChallenge();
+                                }
                               }
-                        : null,
+                            : null,
                     child: Text(
-                      model.choiceStatus != null
-                          ? model.choiceStatus!
+                      model.isValidated
+                          ? model.hasPassedAllQuestions
                               ? context.t.next_challenge
                               : context.t.try_again
                           : context.t.questions_check,
@@ -208,62 +215,6 @@ class MultipleChoiceView extends StatelessWidget {
           ),
         );
       },
-    );
-  }
-
-  Container questionOption(
-    MapEntry<int, Answer> answerObj,
-    MultipleChoiceViewmodel model,
-    BuildContext context,
-  ) {
-    HTMLParser parser = HTMLParser(context: context);
-
-    return Container(
-      margin: const EdgeInsets.symmetric(vertical: 8),
-      child: Material(
-        child: RadioListTile<int>(
-          key: ValueKey(model.lastAnswer),
-          selected: answerObj.key == model.currentChoice,
-          tileColor: const Color(0xFF0a0a23),
-          selectedTileColor: const Color(0xFF0a0a23),
-          value: answerObj.key,
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(0),
-            side: BorderSide(
-              color: const Color(0xFFAAAAAA),
-              width: 2,
-            ),
-          ),
-          groupValue: model.currentChoice,
-          onChanged: (value) {
-            model.setChoiceStatus = null;
-            model.setCurrentChoice = value ?? -1;
-          },
-          title: Align(
-            alignment: Alignment.centerLeft,
-            child: ConstrainedBox(
-              constraints: const BoxConstraints(
-                minHeight: 100,
-              ),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: parser.parse(
-                  answerObj.value.answer,
-                  isSelectable: false,
-                  removeParagraphMargin: true,
-                ),
-              ),
-            ),
-          ),
-          subtitle: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              if (answerObj.key == model.lastAnswer) ...model.feedback,
-            ],
-          ),
-        ),
-      ),
     );
   }
 }
