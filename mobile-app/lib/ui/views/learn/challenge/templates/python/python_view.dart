@@ -3,10 +3,10 @@ import 'package:freecodecamp/extensions/i18n_extension.dart';
 import 'package:freecodecamp/models/learn/challenge_model.dart';
 import 'package:freecodecamp/models/learn/curriculum_model.dart';
 import 'package:freecodecamp/ui/views/learn/challenge/templates/python/python_viewmodel.dart';
+import 'package:freecodecamp/ui/views/learn/widgets/youtube_player_widget.dart';
 import 'package:freecodecamp/ui/views/news/html_handler/html_handler.dart';
 import 'package:freecodecamp/ui/widgets/drawer_widget/drawer_widget_view.dart';
 import 'package:stacked/stacked.dart';
-import 'package:youtube_player_iframe/youtube_player_iframe.dart';
 
 class PythonView extends StatelessWidget {
   const PythonView({
@@ -29,34 +29,6 @@ class PythonView extends StatelessWidget {
     return ViewModelBuilder<PythonViewModel>.reactive(
       viewModelBuilder: () => PythonViewModel(),
       builder: (context, model, child) {
-        YoutubePlayerController controller =
-            YoutubePlayerController.fromVideoId(
-          videoId: challenge.videoId!,
-          autoPlay: false,
-          params: const YoutubePlayerParams(
-            showControls: true,
-            showFullscreenButton: true,
-            strictRelatedVideos: true,
-          ),
-        );
-
-        controller.setFullScreenListener(
-          (_) async {
-            final videoData = await controller.videoData;
-            final startSeconds = await controller.currentTime;
-
-            final currentTime = await FullscreenYoutubePlayer.launch(
-              context,
-              videoId: videoData.videoId,
-              startSeconds: startSeconds,
-            );
-
-            if (currentTime != null) {
-              controller.seekTo(seconds: currentTime);
-            }
-          },
-        );
-
         return Scaffold(
           appBar: AppBar(
             title: Text(
@@ -83,9 +55,8 @@ class PythonView extends StatelessWidget {
                   padding: const EdgeInsets.symmetric(
                     horizontal: 16,
                   ),
-                  child: YoutubePlayer(
-                    controller: controller,
-                    enableFullScreenOnVerticalDrag: false,
+                  child: YoutubePlayerWidget(
+                    videoId: challenge.videoId!,
                   ),
                 ),
                 const SizedBox(height: 12),
