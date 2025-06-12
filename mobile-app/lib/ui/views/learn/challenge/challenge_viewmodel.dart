@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:convert';
 import 'dart:developer';
 
@@ -116,6 +117,10 @@ class ChallengeViewModel extends BaseViewModel {
   final learnOfflineService = locator<LearnOfflineService>();
 
   final _dio = DioService.dio;
+
+  late StreamSubscription<TextFieldData> _textFieldDataSub;
+  late StreamSubscription<String> _onTextChangeSub;
+  StreamSubscription<String>? _editableRegionSub;
 
   set setCurrentSelectedFile(String value) {
     _currentSelectedFile = value;
@@ -308,12 +313,12 @@ class ChallengeViewModel extends BaseViewModel {
   ) {
     bool editableRegion = file.editableRegionBoundaries.isNotEmpty;
 
-    editor.textfieldData.stream.listen((textfieldData) {
+    _textFieldDataSub = editor.textfieldData.stream.listen((textfieldData) {
       setTextFieldData = textfieldData;
       setShowPanel = false;
     });
 
-    editor.onTextChange.stream.listen((text) {
+    _onTextChangeSub = editor.onTextChange.stream.listen((text) {
       fileService.saveFileInCache(
         challenge,
         currentSelectedFile,
@@ -326,9 +331,21 @@ class ChallengeViewModel extends BaseViewModel {
     });
 
     if (editableRegion) {
-      editor.editableRegion.stream.listen((region) {
+      _editableRegionSub = editor.editableRegion.stream.listen((region) {
         setEditableRegionContent = region;
       });
+    }
+  }
+
+  @override
+  void dispose() {
+    super.dispose();
+
+    _textFieldDataSub.cancel();
+    _onTextChangeSub.cancel();
+
+    if (_editableRegionSub != null) {
+      _editableRegionSub!.cancel();
     }
   }
 
