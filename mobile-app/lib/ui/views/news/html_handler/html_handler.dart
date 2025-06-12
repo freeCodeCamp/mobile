@@ -203,10 +203,7 @@ class HTMLParser {
               defaultLanguage: codeLanguageIsPresent(classes)
                   ? currentClass!.split('-')[1]
                   : '',
-              defaultValue: codeElement.text.substring(
-                0,
-                codeElement.text.length - 1,
-              ),
+              defaultValue: codeElement.text.trimRight(),
               path: 'example',
             );
           },
