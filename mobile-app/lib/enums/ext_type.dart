@@ -1,4 +1,12 @@
-enum Ext { js, html, css, jsx }
+enum Ext {
+  js('js'),
+  html('html'),
+  css('css'),
+  jsx('jsx');
+
+  final String value;
+  const Ext(this.value);
+}
 
 Ext parseExt(String ext) {
   switch (ext) {
