@@ -70,15 +70,17 @@ class QuizWidget extends StatelessWidget {
             question.text,
           ),
           const SizedBox(height: 8),
-          for (var answerObj in question.answers.asMap().entries)
+          for (final answerObj in question.answers.asMap().entries) ...[
             option(
-                context: context,
-                answerObj: answerObj,
-                selectedAnswer: selectedAnswer,
-                isCorrect: isCorrect,
-                onChanged: (value) {
-                  onChanged(value);
-                }),
+              context: context,
+              answerObj: answerObj,
+              selectedAnswer: selectedAnswer,
+              isCorrect: isCorrect,
+              onChanged: (value) {
+                onChanged(value);
+              },
+            ),
+          ],
         ],
       ),
     );
