@@ -155,7 +155,7 @@ class QuizWidget extends StatelessWidget {
 
     feedbackWidgets.add(
       Padding(
-        padding: EdgeInsets.only(left: 12, bottom: isCorrect ? 32 : 0),
+        padding: EdgeInsets.only(left: 12, bottom: feedback == null ? 32 : 0),
         child: Text(
           isCorrect && isCorrect == true ? 'Correct!' : 'Incorrect!',
           style: TextStyle(
