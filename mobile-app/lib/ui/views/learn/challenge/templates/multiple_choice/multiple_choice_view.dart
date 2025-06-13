@@ -3,6 +3,7 @@ import 'package:freecodecamp/extensions/i18n_extension.dart';
 import 'package:freecodecamp/models/learn/challenge_model.dart';
 import 'package:freecodecamp/models/learn/curriculum_model.dart';
 import 'package:freecodecamp/ui/views/learn/challenge/templates/multiple_choice/multiple_choice_viewmodel.dart';
+import 'package:freecodecamp/ui/views/learn/utils/challenge_utils.dart';
 import 'package:freecodecamp/ui/views/learn/widgets/assignment_widget.dart';
 import 'package:freecodecamp/ui/views/learn/widgets/audio/audio_player_view.dart';
 import 'package:freecodecamp/ui/views/learn/widgets/challenge_card.dart';
@@ -68,23 +69,11 @@ class MultipleChoiceView extends StatelessWidget {
           },
         );
 
-        int numberOfDialogueHeaders = block.challenges
-            .where((challenge) => challenge.title.contains('Dialogue'))
-            .length;
-
-        String handleChallengeTitle() {
-          if (challenge.title.contains('Task')) {
-            return '${challenge.title} of ${block.challenges.length - numberOfDialogueHeaders} Tasks';
-          } else {
-            return 'Question ${challenge.title} of ${block.challenges.length - numberOfDialogueHeaders} Questions';
-          }
-        }
-
         return Scaffold(
           backgroundColor: const Color(0xFF0a0a23),
           appBar: AppBar(
             backgroundColor: const Color(0xFF0a0a23),
-            title: Text(handleChallengeTitle()),
+            title: Text(handleChallengeTitle(challenge, block)),
           ),
           body: SafeArea(
             child: ListView(

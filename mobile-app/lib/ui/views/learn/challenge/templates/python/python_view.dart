@@ -3,6 +3,7 @@ import 'package:freecodecamp/extensions/i18n_extension.dart';
 import 'package:freecodecamp/models/learn/challenge_model.dart';
 import 'package:freecodecamp/models/learn/curriculum_model.dart';
 import 'package:freecodecamp/ui/views/learn/challenge/templates/python/python_viewmodel.dart';
+import 'package:freecodecamp/ui/views/learn/utils/challenge_utils.dart';
 import 'package:freecodecamp/ui/views/news/html_handler/html_handler.dart';
 import 'package:freecodecamp/ui/widgets/drawer_widget/drawer_widget_view.dart';
 import 'package:stacked/stacked.dart';
@@ -59,9 +60,7 @@ class PythonView extends StatelessWidget {
 
         return Scaffold(
           appBar: AppBar(
-            title: Text(
-              '$currentChallengeNum of ${block.challenges.length} Questions',
-            ),
+            title: Text(handleChallengeTitle(challenge, block)),
           ),
           body: SafeArea(
             bottom: false,
