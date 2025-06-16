@@ -17,7 +17,10 @@ class LearnLandingView extends StatelessWidget {
       viewModelBuilder: () => LearnLandingViewModel(),
       onViewModelReady: (model) => model.init(context),
       builder: (context, model, child) => Scaffold(
-        appBar: AppBar(),
+        backgroundColor: FccColors.gray90,
+        appBar: AppBar(
+          title: Text('LEARN'),
+        ),
         drawer: const DrawerWidgetView(
           key: Key('drawer'),
         ),
@@ -31,12 +34,9 @@ class LearnLandingView extends StatelessWidget {
           },
           child: SingleChildScrollView(
             child: Container(
-              margin: const EdgeInsets.all(8),
               padding: const EdgeInsets.all(4),
               decoration: BoxDecoration(
                 color: FccColors.gray90,
-                border: Border(),
-                borderRadius: BorderRadius.all(Radius.circular(10)),
               ),
               child: Column(
                 children: [
@@ -54,59 +54,7 @@ class LearnLandingView extends StatelessWidget {
                   const QuoteWidget(),
                   if (!model.isLoggedIn) loginButton(model, context),
                   const SizedBox(height: 16),
-                  Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Padding(
-                        padding: const EdgeInsets.all(8.0),
-                        child: Text(
-                          'Our latest Curriculum',
-                          style: model.headerStyle,
-                        ),
-                      ),
-                      SuperBlockButton(
-                        button: SuperBlockButtonData(
-                          path: 'full-stack-developer',
-                          name: 'Certified Full Stack Developer Curriculum',
-                          public: true,
-                        ),
-                        model: model,
-                      ),
-                      Padding(
-                        padding: const EdgeInsets.all(8.0),
-                        child: Text(
-                          'Learn English for developers',
-                          style: model.headerStyle,
-                        ),
-                      ),
-                      SuperBlockButton(
-                        button: SuperBlockButtonData(
-                          path: 'a2-english-for-developers',
-                          name:
-                              'A2 English for Developers (Beta) Certification',
-                          public: true,
-                        ),
-                        model: model,
-                      ),
-                      SuperBlockButton(
-                        button: SuperBlockButtonData(
-                          path: 'b1-english-for-developers',
-                          name:
-                              ' B1 English for Developers (Beta) Certification',
-                          public: true,
-                        ),
-                        model: model,
-                      ),
-                      Padding(
-                        padding: const EdgeInsets.all(8.0),
-                        child: Text(
-                          'Our Legacy Courses',
-                          style: model.headerStyle,
-                        ),
-                      ),
-                    ],
-                  ),
-                  FutureBuilder<List<SuperBlockButtonData>>(
+                  FutureBuilder<List<Widget>>(
                     future: model.superBlockButtons,
                     builder: (context, snapshot) {
                       if (snapshot.hasData) {
@@ -114,20 +62,15 @@ class LearnLandingView extends StatelessWidget {
                           return errorMessage(context);
                         }
 
-                        if (snapshot.data is List<SuperBlockButtonData>) {
-                          List<SuperBlockButtonData> buttons = snapshot.data!;
+                        if (snapshot.data is List<Widget>) {
+                          List<Widget> widgets = snapshot.data!;
 
                           return ListView.builder(
                             physics: const ClampingScrollPhysics(),
                             shrinkWrap: true,
-                            itemCount: buttons.length,
+                            itemCount: widgets.length,
                             itemBuilder: (BuildContext context, int i) {
-                              return buttons[i].public
-                                  ? SuperBlockButton(
-                                      button: buttons[i],
-                                      model: model,
-                                    )
-                                  : null;
+                              return widgets[i];
                             },
                           );
                         }
