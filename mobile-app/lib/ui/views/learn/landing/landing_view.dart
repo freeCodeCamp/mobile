@@ -239,7 +239,7 @@ class SuperBlockButton extends StatelessWidget {
               ),
             ),
             Expanded(
-              flex: 10,
+              flex: 8,
               child: Text(
                 button.name,
                 textAlign: TextAlign.left,
@@ -247,10 +247,13 @@ class SuperBlockButton extends StatelessWidget {
               ),
             ),
             const Expanded(
-              flex: 1,
+              flex: 2,
               child: Align(
                 alignment: Alignment.centerRight,
-                child: Icon(Icons.arrow_forward_ios),
+                child: Padding(
+                  padding: EdgeInsets.symmetric(vertical: 8, horizontal: 12),
+                  child: Icon(Icons.arrow_forward_ios),
+                ),
               ),
             )
           ],
