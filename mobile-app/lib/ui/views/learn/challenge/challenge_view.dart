@@ -72,10 +72,7 @@ class ChallengeView extends StatelessWidget {
                   ? Row(
                       children: [
                         if (!model.showPreview)
-                          customTabBar(
-                            model,
-                            challenge,
-                          )
+                          customTabBar(model, challenge, context)
                       ],
                     )
                   : Container(),
@@ -145,51 +142,54 @@ class ChallengeView extends StatelessWidget {
   Widget customTabBar(
     ChallengeViewModel model,
     Challenge challenge,
+    BuildContext context,
   ) {
-    return SizedBox(
-      width: 300,
+    return Expanded(
       child: Row(
         children: [
           Expanded(
-            child: Align(
-              alignment: Alignment.center,
-              child: DropdownButton<ChallengeFile>(
-                value: challenge.files[0],
-                isExpanded: false,
+            child: DropdownButton<String>(
+                isExpanded: true,
+                dropdownColor: FccColors.gray85,
+                value: model.currentSelectedFile,
                 items: [
                   for (ChallengeFile file in challenge.files)
                     DropdownMenuItem(
-                      value: file,
+                      value: file.name,
                       child: Text(
                         file.name,
-                        style: TextStyle(
-                          color: Colors.white,
-                        ),
+                        style: TextStyle(color: Colors.white),
                       ),
                     )
                 ],
-                onChanged: (value) {},
+                onChanged: (file) {
+                  model.setCurrentSelectedFile =
+                      file ?? challenge.files[0].name;
+                  model.setMounted = false;
+                  ChallengeFile currFile = model.currentFile(challenge);
+                  model.initFile(challenge, currFile);
+                },
                 underline: SizedBox(),
                 selectedItemBuilder: (context) {
                   return challenge.files.map((file) {
-                    return Align(
-                      alignment: Alignment.centerRight,
-                      child: Text(
-                        file.name,
-                        style: TextStyle(
-                          color: Colors.white,
+                    return Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Text(
+                          file.name,
+                          style: TextStyle(color: Colors.white),
                         ),
-                      ),
+                        Padding(
+                          padding: const EdgeInsets.all(8.0),
+                          child: const Icon(Icons.file_copy),
+                        )
+                      ],
                     );
                   }).toList();
                 },
-                icon: Padding(
-                  padding: const EdgeInsets.all(8.0),
-                  child: Icon(Icons.file_copy, color: Colors.white),
-                ),
-              ),
-            ),
+                icon: SizedBox.shrink()),
           ),
+          SizedBox(width: 8),
           Expanded(
             child: TextButton.icon(
               onPressed: () {},
@@ -204,13 +204,13 @@ class ChallengeView extends StatelessWidget {
                   ),
                 ),
               ),
-              icon: const Icon(
+              icon: Icon(
                 Icons.science_outlined,
                 size: 30,
               ),
               iconAlignment: IconAlignment.end,
             ),
-          )
+          ),
         ],
       ),
     );
