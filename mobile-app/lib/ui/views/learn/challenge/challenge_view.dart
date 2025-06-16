@@ -36,7 +36,7 @@ class ChallengeView extends StatelessWidget {
         model.init(block, challenge, challengesCompleted);
       },
       onDispose: (model) {
-        model.shutdownLocalHost();
+        model.closeWebViews();
         model.disposeOfListeners();
       },
       builder: (context, model, child) {
@@ -260,8 +260,11 @@ class ChallengeView extends StatelessWidget {
                 height: 1,
                 width: 1,
                 child: InAppWebView(
-                  initialUrlRequest: URLRequest(
-                    url: WebUri('http://localhost:8080/'),
+                  initialData: InAppWebViewInitialData(
+                    data:
+                        '<html><head><title>Test Runner</title></head><body></body></html>',
+                    mimeType: 'text/html',
+                    baseUrl: WebUri('http://localhost:8080/test-runner'),
                   ),
                   onWebViewCreated: (controller) {
                     model.setTestController = controller;
@@ -490,6 +493,10 @@ class ProjectPreview extends StatelessWidget {
                 onWebViewCreated: (controller) {
                   model.setWebviewController = controller;
                 },
+                initialSettings: InAppWebViewSettings(
+                  // TODO: Set this to true only in dev mode
+                  isInspectable: true,
+                ),
               );
             }
           }
