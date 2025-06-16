@@ -259,14 +259,17 @@ class SuperBlockButton extends StatelessWidget {
           children: [
             Padding(
               padding: const EdgeInsets.all(12.0),
-              child: SvgPicture.asset(
-                iconMap[SuperBlocks.fromValue(button.path)] ??
-                    'assets/learn/graduation.svg',
-                width: 32,
-                height: 32,
-                colorFilter: ColorFilter.mode(
-                  FccColors.gray00,
-                  BlendMode.srcIn,
+              child: SizedBox(
+                width: 36,
+                height: 36,
+                child: SvgPicture.asset(
+                  iconMap[SuperBlocks.fromValue(button.path)] ??
+                      'assets/learn/html.svg',
+                  fit: BoxFit.contain,
+                  colorFilter: ColorFilter.mode(
+                    FccColors.gray00,
+                    BlendMode.srcIn,
+                  ),
                 ),
               ),
             ),
