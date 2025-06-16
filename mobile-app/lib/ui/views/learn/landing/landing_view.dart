@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 import 'package:freecodecamp/extensions/i18n_extension.dart';
 import 'package:freecodecamp/models/learn/curriculum_model.dart';
 import 'package:freecodecamp/models/learn/motivational_quote_model.dart';
@@ -178,7 +179,7 @@ class LearnLandingView extends StatelessWidget {
 }
 
 class SuperBlockButton extends StatelessWidget {
-  const SuperBlockButton({
+  SuperBlockButton({
     super.key,
     required this.button,
     required this.model,
@@ -186,6 +187,35 @@ class SuperBlockButton extends StatelessWidget {
 
   final LearnLandingViewModel model;
   final SuperBlockButtonData button;
+
+  final iconMap = {
+    SuperBlocks.respWebDesignNew: 'assets/learn/responsive-design.svg',
+    SuperBlocks.respWebDesign: 'assets/learn/responsive-design.svg',
+    SuperBlocks.jsAlgoDataStruct: 'assets/learn/javascript.svg',
+    SuperBlocks.jsAlgoDataStructNew: 'assets/learn/javascript.svg',
+    SuperBlocks.frontEndDevLibs: 'assets/learn/react.svg',
+    SuperBlocks.dataVis: 'assets/learn/d3.svg',
+    SuperBlocks.backEndDevApis: 'assets/learn/api.svg',
+    SuperBlocks.relationalDb: 'assets/learn/database.svg',
+    SuperBlocks.qualityAssurance: 'assets/learn/clipboard.svg',
+    SuperBlocks.sciCompPy: 'assets/learn/python.svg',
+    SuperBlocks.dataAnalysisPy: 'assets/learn/analytics.svg',
+    SuperBlocks.infoSec: 'assets/learn/shield.svg',
+    SuperBlocks.machineLearningPy: 'assets/learn/tensorflow.svg',
+    SuperBlocks.codingInterviewPrep: 'assets/learn/algorithm.svg',
+    SuperBlocks.theOdinProject: 'assets/learn/viking-helmet.svg',
+    SuperBlocks.projectEuler: 'assets/learn/graduation.svg',
+    SuperBlocks.collegeAlgebraPy: 'assets/learn/college-algebra.svg',
+    SuperBlocks.foundationalCSharp: 'assets/learn/c-sharp.svg',
+    SuperBlocks.fullStackDeveloper: 'assets/learn/code.svg',
+    SuperBlocks.a2English: 'assets/learn/a2-english.svg',
+    SuperBlocks.b1English: 'assets/learn/b1-english.svg',
+    SuperBlocks.a2Spanish: 'assets/learn/a2-english.svg',
+    SuperBlocks.a2Chinese: 'assets/learn/a2-english.svg',
+    SuperBlocks.rosettaCode: 'assets/learn/rosetta-code.svg',
+    SuperBlocks.pythonForEverybody: 'assets/learn/python.svg',
+    SuperBlocks.devPlayground: 'assets/learn/code.svg',
+  };
 
   @override
   Widget build(BuildContext context) {
@@ -229,12 +259,14 @@ class SuperBlockButton extends StatelessWidget {
           children: [
             Padding(
               padding: const EdgeInsets.all(12.0),
-              child: CircleAvatar(
-                radius: 25,
-                backgroundColor: model.getRandomColor(),
-                child: const Icon(
-                  Icons.star,
-                  color: FccColors.gray00,
+              child: SvgPicture.asset(
+                iconMap[SuperBlocks.fromValue(button.path)] ??
+                    'assets/learn/graduation.svg',
+                width: 32,
+                height: 32,
+                colorFilter: ColorFilter.mode(
+                  FccColors.gray00,
+                  BlendMode.srcIn,
                 ),
               ),
             ),
