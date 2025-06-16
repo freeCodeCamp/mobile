@@ -7,6 +7,7 @@ import 'package:freecodecamp/enums/panel_type.dart';
 import 'package:freecodecamp/extensions/i18n_extension.dart';
 import 'package:freecodecamp/models/learn/challenge_model.dart';
 import 'package:freecodecamp/models/learn/curriculum_model.dart';
+import 'package:freecodecamp/ui/theme/fcc_theme.dart';
 import 'package:freecodecamp/ui/views/learn/challenge/challenge_viewmodel.dart';
 import 'package:freecodecamp/ui/views/learn/test_runner.dart';
 import 'package:freecodecamp/ui/views/learn/widgets/console/console_view.dart';
@@ -59,15 +60,6 @@ class ChallengeView extends StatelessWidget {
           );
         }
 
-        BoxDecoration decoration = const BoxDecoration(
-          border: Border(
-            bottom: BorderSide(
-              width: 4,
-              color: Colors.blue,
-            ),
-          ),
-        );
-
         return Scaffold(
           appBar: PreferredSize(
             preferredSize: Size(
@@ -76,62 +68,17 @@ class ChallengeView extends StatelessWidget {
             ),
             child: AppBar(
               automaticallyImplyLeading: !model.showPreview,
-              title: challenge.files.length == 1 && !model.showPreview
-                  ? Text(context.t.editor)
-                  : Row(
+              title: !model.showPreview
+                  ? Row(
                       children: [
-                        if (model.showPreview && !onlyJs)
-                          Expanded(
-                            child: Container(
-                              decoration:
-                                  model.showProjectPreview ? decoration : null,
-                              child: ElevatedButton(
-                                style: ElevatedButton.styleFrom(
-                                  shape: RoundedRectangleBorder(
-                                    borderRadius: BorderRadius.circular(0),
-                                  ),
-                                  elevation: 0,
-                                ),
-                                onPressed: () {
-                                  model.setShowConsole = false;
-                                  model.setShowProjectPreview = true;
-                                },
-                                child: Text(
-                                  context.t.preview,
-                                ),
-                              ),
-                            ),
-                          ),
-                        if (model.showPreview)
-                          Expanded(
-                            child: Container(
-                              decoration: model.showConsole ? decoration : null,
-                              child: ElevatedButton(
-                                style: ElevatedButton.styleFrom(
-                                  shape: RoundedRectangleBorder(
-                                    borderRadius: BorderRadius.circular(0),
-                                  ),
-                                  elevation: 0,
-                                ),
-                                onPressed: () {
-                                  model.setShowConsole = true;
-                                  model.setShowProjectPreview = false;
-                                },
-                                child: Text(
-                                  context.t.console,
-                                ),
-                              ),
-                            ),
-                          ),
-                        if (!model.showPreview && challenge.files.length > 1)
-                          for (ChallengeFile file in challenge.files)
-                            customTabBar(
-                              model,
-                              challenge,
-                              file,
-                            )
+                        if (!model.showPreview)
+                          customTabBar(
+                            model,
+                            challenge,
+                          )
                       ],
-                    ),
+                    )
+                  : Container(),
             ),
           ),
           bottomNavigationBar: Container(
@@ -198,41 +145,73 @@ class ChallengeView extends StatelessWidget {
   Widget customTabBar(
     ChallengeViewModel model,
     Challenge challenge,
-    ChallengeFile file,
   ) {
-    return Expanded(
-      child: Container(
-        decoration: BoxDecoration(
-          border: Border(
-            bottom: model.currentFile(challenge).name == file.name
-                ? const BorderSide(width: 4, color: Colors.blue)
-                : const BorderSide(),
-          ),
-        ),
-        child: ElevatedButton(
-          style: ElevatedButton.styleFrom(
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(0),
+    return SizedBox(
+      width: 300,
+      child: Row(
+        children: [
+          Expanded(
+            child: Align(
+              alignment: Alignment.center,
+              child: DropdownButton<ChallengeFile>(
+                value: challenge.files[0],
+                isExpanded: false,
+                items: [
+                  for (ChallengeFile file in challenge.files)
+                    DropdownMenuItem(
+                      value: file,
+                      child: Text(
+                        file.name,
+                        style: TextStyle(
+                          color: Colors.white,
+                        ),
+                      ),
+                    )
+                ],
+                onChanged: (value) {},
+                underline: SizedBox(),
+                selectedItemBuilder: (context) {
+                  return challenge.files.map((file) {
+                    return Align(
+                      alignment: Alignment.centerRight,
+                      child: Text(
+                        file.name,
+                        style: TextStyle(
+                          color: Colors.white,
+                        ),
+                      ),
+                    );
+                  }).toList();
+                },
+                icon: Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: Icon(Icons.file_copy, color: Colors.white),
+                ),
+              ),
             ),
-            elevation: 0,
           ),
-          onPressed: () async {
-            model.setCurrentSelectedFile = file.name;
-            model.setMounted = false;
-            ChallengeFile currFile = model.currentFile(challenge);
-            model.initFile(challenge, currFile);
-          },
-          child: Text(
-            '${file.name}.${file.ext.name}',
-            style: TextStyle(
-                color: model.currentFile(challenge).name == file.name
-                    ? Colors.blue
-                    : Colors.white,
-                fontWeight: model.currentFile(challenge).name == file.name
-                    ? FontWeight.bold
-                    : null),
-          ),
-        ),
+          Expanded(
+            child: TextButton.icon(
+              onPressed: () {},
+              label: Text('Tests'),
+              style: ButtonStyle(
+                backgroundColor: WidgetStateProperty.all<Color>(
+                  FccColors.gray90,
+                ),
+                shape: WidgetStateProperty.all<RoundedRectangleBorder>(
+                  RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(0),
+                  ),
+                ),
+              ),
+              icon: const Icon(
+                Icons.science_outlined,
+                size: 30,
+              ),
+              iconAlignment: IconAlignment.end,
+            ),
+          )
+        ],
       ),
     );
   }
