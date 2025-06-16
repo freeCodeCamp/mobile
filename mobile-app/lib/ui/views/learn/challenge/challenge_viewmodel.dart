@@ -78,13 +78,29 @@ class ChallengeViewModel extends BaseViewModel {
   InAppWebViewController? _testController;
   InAppWebViewController? get testController => _testController;
 
+  final HeadlessInAppWebView _babelWebView = HeadlessInAppWebView(
+    initialData: InAppWebViewInitialData(
+      data: '<html><head><title>Babel</title></head><body></body></html>',
+      mimeType: 'text/html',
+      baseUrl: WebUri('http://localhost:8080/babel-transformer'),
+    ),
+    onConsoleMessage: (controller, console) {
+      log('Babel Console message: ${console.message}');
+    },
+    onLoadStop: (controller, url) async {
+      final res = await controller.injectJavascriptFileFromAsset(
+          assetFilePath: 'assets/test_runner/babel/babel.min.js');
+      log('Babel load: $res');
+    },
+    initialSettings: InAppWebViewSettings(
+      isInspectable: true,
+    ),
+  );
+
   Syntax _currFileType = Syntax.HTML;
   Syntax get currFileType => _currFileType;
 
   bool _mounted = false;
-
-  // TestRunner? _testRunner;
-  // TestRunner? get testRunner => _testRunner;
 
   String _editableRegionContent = '';
   String get editableRegionContent => _editableRegionContent;
@@ -127,11 +143,6 @@ class ChallengeViewModel extends BaseViewModel {
     _afterFirstTest = value;
     notifyListeners();
   }
-
-  // set setTestRunner(TestRunner? value) {
-  //   _testRunner = value;
-  //   notifyListeners();
-  // }
 
   set setEditableRegionContent(String value) {
     _editableRegionContent = value;
@@ -233,6 +244,7 @@ class ChallengeViewModel extends BaseViewModel {
     Challenge challenge,
     int challengesCompleted,
   ) async {
+    await _babelWebView.run();
     await _localhostServer.start();
 
     setupDialogUi();
@@ -240,20 +252,11 @@ class ChallengeViewModel extends BaseViewModel {
     setChallenge = challenge;
     setBlock = block;
     setChallengesCompleted = challengesCompleted;
-
-    // _testRunner = TestRunner(
-    //   model: this,
-    //   challenge: challenge,
-    //   builder: TestRunnerBuilder(
-    //     source: '',
-    //     code: Code(contents: ''),
-    //     workerType: getWorkerType(challenge.challengeType),
-    //   ),
-    // );
   }
 
-  void shutdownLocalHost() {
-    _localhostServer.close();
+  void closeWebViews() async {
+    await _babelWebView.dispose();
+    await _localhostServer.close();
   }
 
   void initFile(
@@ -374,24 +377,40 @@ class ChallengeViewModel extends BaseViewModel {
         .where((ChallengeFile file) => file.ext == Ext.css)
         .toList();
 
+    List<ChallengeFile> jsFiles = currChallenge.files
+        .where((ChallengeFile file) => file.ext == Ext.js)
+        .toList();
+
     Document document = parse(doc);
+    String? cssParsed, jsParsed;
 
     List<ChallengeFile> currentFile = currChallenge.files
         .where((element) => element.ext == Ext.html)
         .toList();
 
-    if (cssFiles.isNotEmpty) {
-      String text = prefs.getString(
-            '${currChallenge.id}.${currentFile[0].name}',
-          ) ??
-          currentFile[0].contents;
+    String text = prefs.getString(
+          '${currChallenge.id}.${currentFile[0].name}',
+        ) ??
+        currentFile[0].contents;
 
-      document = parse(
-        await fileService.parseCssDocmentsAsStyleTags(
-          currChallenge,
-          text,
-        ),
+    // TODO: Remove check since we do it in function also
+    if (cssFiles.isNotEmpty) {
+      cssParsed = await fileService.parseCssDocmentsAsStyleTags(
+        currChallenge,
+        text,
       );
+
+      document = parse(cssParsed);
+    }
+
+    if (jsFiles.isNotEmpty) {
+      jsParsed = await fileService.parseJsDocmentsAsScriptTags(
+        currChallenge,
+        cssParsed ?? text,
+        _babelWebView.webViewController,
+      );
+
+      document = parse(jsParsed);
     }
 
     String viewPort = '''<meta content="width=device-width,
@@ -502,7 +521,10 @@ class ChallengeViewModel extends BaseViewModel {
     final updateTestRunnerRes = await testController!.callAsyncJavaScript(
       functionBody: ScriptBuilder.runnerScript,
       arguments: {
-        'userCode': await builder.buildUserCode(challenge!, Ext.html),
+        'userCode': await builder.buildUserCode(
+          challenge!,
+          _babelWebView.webViewController,
+        ),
         'workerType': builder.getWorkerType(challenge!.challengeType),
         'combinedCode': await builder.combinedCode(challenge!),
         'editableRegionContent': editableRegionContent,
