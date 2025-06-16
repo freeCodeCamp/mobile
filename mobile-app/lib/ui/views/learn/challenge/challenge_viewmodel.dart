@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:convert';
 import 'dart:developer';
 
@@ -31,8 +32,14 @@ class ChallengeViewModel extends BaseViewModel {
   final InAppLocalhostServer _localhostServer =
       InAppLocalhostServer(documentRoot: 'assets/test_runner');
 
+  Editor? _editor;
+  Editor? get editor => _editor;
+
   String? _editorText;
   String? get editorText => _editorText;
+
+  String _editorLanguage = 'html';
+  String get editorLanguage => _editorLanguage;
 
   String _currentSelectedFile = '';
   String get currentSelectedFile => _currentSelectedFile;
@@ -97,10 +104,8 @@ class ChallengeViewModel extends BaseViewModel {
     ),
   );
 
-  Syntax _currFileType = Syntax.HTML;
-  Syntax get currFileType => _currFileType;
-
   bool _mounted = false;
+  bool get mounted => _mounted;
 
   String _editableRegionContent = '';
   String get editableRegionContent => _editableRegionContent;
@@ -128,6 +133,10 @@ class ChallengeViewModel extends BaseViewModel {
   final learnOfflineService = locator<LearnOfflineService>();
 
   final _dio = DioService.dio;
+
+  late StreamSubscription<TextFieldData> _textFieldDataSub;
+  late StreamSubscription<String> _onTextChangeSub;
+  StreamSubscription<String>? _editableRegionSub;
 
   set setCurrentSelectedFile(String value) {
     _currentSelectedFile = value;
@@ -219,11 +228,6 @@ class ChallengeViewModel extends BaseViewModel {
     notifyListeners();
   }
 
-  set setCurrFileType(Syntax value) {
-    _currFileType = value;
-    notifyListeners();
-  }
-
   set setMounted(bool value) {
     _mounted = value;
     notifyListeners();
@@ -236,6 +240,16 @@ class ChallengeViewModel extends BaseViewModel {
 
   set setSymbolBarIsScrollable(bool value) {
     _symbolBarIsScrollable = value;
+    notifyListeners();
+  }
+
+  set setEditor(Editor editor) {
+    _editor = editor;
+    notifyListeners();
+  }
+
+  set setEditorLanguage(String value) {
+    _editorLanguage = value;
     notifyListeners();
   }
 
@@ -252,6 +266,8 @@ class ChallengeViewModel extends BaseViewModel {
     setChallenge = challenge;
     setBlock = block;
     setChallengesCompleted = challengesCompleted;
+
+    listenToSymbolBarScrollController();
   }
 
   void closeWebViews() async {
@@ -260,45 +276,87 @@ class ChallengeViewModel extends BaseViewModel {
   }
 
   void initFile(
-    Editor editor,
     Challenge challenge,
     ChallengeFile currFile,
-    bool hasRegion,
   ) async {
     if (!_mounted) {
-      await Future.delayed(Duration.zero);
       String fileContents = await fileService.getExactFileFromCache(
         challenge,
         currFile,
       );
-      editor.fileTextStream.sink.add(
-        FileIDE(
-          id: challenge.id + currFile.name,
-          ext: currFile.ext.name,
-          name: currFile.name,
-          content: fileContents,
-          hasRegion: hasRegion,
-          region: EditorRegionOptions(
-            start: hasRegion ? currFile.editableRegionBoundaries[0] : null,
-            end: hasRegion ? currFile.editableRegionBoundaries[1] : null,
-            condition: completedChallenge,
-          ),
-        ),
-      );
-      _mounted = true;
 
-      if (currFile.name != currentSelectedFile) {
-        setCurrentSelectedFile = currFile.name;
-        setEditorText = fileContents;
-      }
+      setCurrentSelectedFile = currFile.name;
+      setEditorText = fileContents;
+      setEditorLanguage = currFile.ext.value;
+      initEditor(challenge, currFile);
+      setMounted = true;
     }
   }
 
-  void listenToFocusedController(Editor editor) {
-    editor.textfieldData.stream.listen((textfieldData) {
+  void initEditor(Challenge challenge, ChallengeFile file) {
+    bool editableRegion = file.editableRegionBoundaries.isNotEmpty;
+
+    EditorOptions options = EditorOptions(
+      regionOptions: editableRegion
+          ? EditorRegionOptions(
+              start: file.editableRegionBoundaries[0],
+              end: file.editableRegionBoundaries[1],
+            )
+          : null,
+      fontFamily: 'Hack',
+    );
+
+    Editor editor = Editor(
+      key: ValueKey(editorText),
+      defaultLanguage: editorLanguage,
+      defaultValue: editorText ?? '',
+      path: '/${challenge.id}/${file.name}',
+      options: options,
+    );
+
+    setEditor = editor;
+
+    initEditorListeners(challenge, file, editor);
+  }
+
+  void initEditorListeners(
+    Challenge challenge,
+    ChallengeFile file,
+    Editor editor,
+  ) {
+    bool editableRegion = file.editableRegionBoundaries.isNotEmpty;
+
+    _textFieldDataSub = editor.textfieldData.stream.listen((textfieldData) {
       setTextFieldData = textfieldData;
       setShowPanel = false;
     });
+
+    _onTextChangeSub = editor.onTextChange.stream.listen((text) {
+      fileService.saveFileInCache(
+        challenge,
+        currentSelectedFile,
+        text,
+      );
+
+      setEditorText = text;
+      setHasTypedInEditor = true;
+      setCompletedChallenge = false;
+    });
+
+    if (editableRegion) {
+      _editableRegionSub = editor.editableRegion.stream.listen((region) {
+        setEditableRegionContent = region;
+      });
+    }
+  }
+
+  void disposeOfListeners() {
+    _textFieldDataSub.cancel();
+    _onTextChangeSub.cancel();
+
+    if (_editableRegionSub != null) {
+      _editableRegionSub!.cancel();
+    }
   }
 
   void listenToSymbolBarScrollController() {
