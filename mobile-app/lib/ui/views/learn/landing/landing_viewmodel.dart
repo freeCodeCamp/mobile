@@ -16,7 +16,6 @@ import 'package:freecodecamp/service/authentication/authentication_service.dart'
 import 'package:freecodecamp/service/dio_service.dart';
 import 'package:freecodecamp/service/learn/learn_offline_service.dart';
 import 'package:freecodecamp/service/learn/learn_service.dart';
-import 'package:freecodecamp/ui/theme/fcc_theme.dart';
 import 'package:freecodecamp/ui/views/learn/landing/landing_view.dart';
 import 'package:freecodecamp/ui/widgets/setup_dialog_ui.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -43,8 +42,6 @@ class LearnLandingViewModel extends BaseViewModel {
 
   bool _isLoggedIn = false;
   bool get isLoggedIn => _isLoggedIn;
-
-  Color? _lastAvatarColor;
 
   TextStyle headerStyle = TextStyle(fontSize: 20, fontWeight: FontWeight.bold);
 
@@ -217,31 +214,6 @@ class LearnLandingViewModel extends BaseViewModel {
       return layout;
     }
     return [];
-  }
-
-  Color getRandomColor() {
-    List colors = [
-      FccColors.blue50,
-      FccColors.green70,
-      FccColors.yellow40,
-      FccColors.red80,
-      FccColors.purple50
-    ];
-
-    int random = Random().nextInt(colors.length);
-
-    if (_lastAvatarColor == null) {
-      _lastAvatarColor = colors[random];
-      return getRandomColor();
-    }
-
-    if (_lastAvatarColor == colors[random]) {
-      return getRandomColor();
-    } else {
-      _lastAvatarColor = colors[random];
-    }
-
-    return colors[random];
   }
 
   void routeToSuperBlock(String dashedName, String name) async {
