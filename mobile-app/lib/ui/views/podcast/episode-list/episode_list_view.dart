@@ -77,10 +77,7 @@ class EpisodeListView extends StatelessWidget {
                             ),
                           ),
                           separatorBuilder: (BuildContext context, int index) =>
-                              const Divider(
-                            height: 1,
-                            thickness: 1,
-                          ),
+                              const SizedBox(height: 0),
                         ),
                       )
                     : SliverToBoxAdapter(
@@ -101,10 +98,7 @@ class EpisodeListView extends StatelessWidget {
                                 },
                                 separatorBuilder:
                                     (BuildContext context, int index) {
-                                  return const Divider(
-                                    height: 1,
-                                    thickness: 1,
-                                  );
+                                  return const SizedBox(height: 0);
                                 },
                               );
                             } else if (snapshot.hasError) {
