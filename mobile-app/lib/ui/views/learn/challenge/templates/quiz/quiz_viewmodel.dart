@@ -49,7 +49,10 @@ class QuizViewModel extends BaseViewModel {
 
     setQuizQuestions = questions
         .map<QuizWidgetQuestion>((q) => QuizWidgetQuestion(
-            text: q.text, answers: q.answers, solution: q.solution))
+              text: q.text,
+              answers: q.answers,
+              solution: q.solution,
+            ))
         .toList();
   }
 
