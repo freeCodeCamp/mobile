@@ -12,6 +12,7 @@ import 'package:freecodecamp/ui/views/learn/challenge/challenge_viewmodel.dart';
 import 'package:freecodecamp/ui/views/learn/test_runner.dart';
 import 'package:freecodecamp/ui/views/learn/widgets/console/console_view.dart';
 import 'package:freecodecamp/ui/views/learn/widgets/dynamic_panel/panels/dynamic_panel.dart';
+import 'package:freecodecamp/ui/views/news/html_handler/html_handler.dart';
 import 'package:phone_ide/phone_ide.dart';
 import 'package:stacked/stacked.dart';
 
@@ -46,8 +47,6 @@ class ChallengeView extends StatelessWidget {
 
         bool keyboard = MediaQuery.of(context).viewInsets.bottom != 0;
 
-        bool onlyJs = challenge.files.every((file) => file.ext.name == 'js');
-
         model.initFile(challenge, currFile);
 
         if (model.showPanel) {
@@ -67,15 +66,21 @@ class ChallengeView extends StatelessWidget {
               model.showPanel ? 0 : 50,
             ),
             child: AppBar(
-              automaticallyImplyLeading: !model.showPreview,
-              title: !model.showPreview
-                  ? Row(
-                      children: [
-                        if (!model.showPreview)
-                          customTabBar(model, challenge, context)
-                      ],
-                    )
-                  : Container(),
+              automaticallyImplyLeading:
+                  !(model.showPreview || model.showConsole),
+              title: (() {
+                if (model.showPreview) {
+                  return const Text('PREVIEW',
+                      style: TextStyle(fontWeight: FontWeight.bold));
+                } else if (model.showConsole) {
+                  return const Text('CONSOLE',
+                      style: TextStyle(fontWeight: FontWeight.bold));
+                } else {
+                  return Row(
+                    children: [customTabBar(model, challenge, context)],
+                  );
+                }
+              })(),
             ),
           ),
           bottomNavigationBar: Container(
@@ -96,7 +101,7 @@ class ChallengeView extends StatelessWidget {
               context,
             ),
           ),
-          body: !model.showPreview
+          body: model.showConsole
               ? Column(
                   children: [
                     if (model.showPanel && !keyboard)
@@ -108,32 +113,48 @@ class ChallengeView extends StatelessWidget {
                         challengesCompleted: challengesCompleted,
                         editor: model.editor!,
                       ),
-                    Expanded(child: model.editor!)
+                    JavaScriptConsole(
+                      // TODO: Update logic when working on JS challenges
+                      // messages: model.consoleMessages,
+                      messages: [],
+                    ),
                   ],
                 )
-              : Column(
-                  children: [
-                    if (model.showPanel && !keyboard)
-                      DynamicPanel(
-                        challenge: challenge,
-                        model: model,
-                        panel: model.panelType,
-                        maxChallenges: maxChallenges,
-                        challengesCompleted: challengesCompleted,
-                        editor: model.editor!,
-                      ),
-                    model.showProjectPreview && !onlyJs
-                        ? ProjectPreview(
+              : model.showPreview
+                  ? Column(
+                      children: [
+                        if (model.showPanel && !keyboard)
+                          DynamicPanel(
                             challenge: challenge,
                             model: model,
-                          )
-                        : JavaScriptConsole(
-                            // TODO: Update logic when working on JS challenges
-                            // messages: model.consoleMessages,
-                            messages: [],
-                          )
-                  ],
-                ),
+                            panel: model.panelType,
+                            maxChallenges: maxChallenges,
+                            challengesCompleted: challengesCompleted,
+                            editor: model.editor!,
+                          ),
+                        ProjectPreview(
+                          challenge: challenge,
+                          model: model,
+                        ),
+                      ],
+                    )
+                  : Column(
+                      children: [
+                        if (model.showPanel && !keyboard)
+                          DynamicPanel(
+                            challenge: challenge,
+                            model: model,
+                            panel: model.panelType,
+                            maxChallenges: maxChallenges,
+                            challengesCompleted: challengesCompleted,
+                            editor: model.editor!,
+                          ),
+                        if (model.showTestsPanel)
+                          Expanded(child: testList(challenge, model)),
+                        if (!model.showTestsPanel)
+                          Expanded(child: model.editor!),
+                      ],
+                    ),
         );
       },
     );
@@ -163,6 +184,7 @@ class ChallengeView extends StatelessWidget {
                     )
                 ],
                 onChanged: (file) {
+                  model.setShowTestsPanel = false;
                   model.setCurrentSelectedFile =
                       file ?? challenge.files[0].name;
                   model.setMounted = false;
@@ -192,7 +214,9 @@ class ChallengeView extends StatelessWidget {
           SizedBox(width: 8),
           Expanded(
             child: TextButton.icon(
-              onPressed: () {},
+              onPressed: () {
+                model.setShowTestsPanel = !model.showTestsPanel;
+              },
               label: Text('Tests'),
               style: ButtonStyle(
                 backgroundColor: WidgetStateProperty.all<Color>(
@@ -323,12 +347,35 @@ class ChallengeView extends StatelessWidget {
                   ),
                   onPressed: () async {
                     ChallengeFile currFile = model.currentFile(challenge);
-
+                    model.setShowPreview = !model.showPreview;
                     model.initFile(challenge, currFile);
                   },
                   splashColor: Colors.transparent,
                   highlightColor: Colors.transparent,
                 ),
+              ),
+              Container(
+                margin: const EdgeInsets.symmetric(horizontal: 8),
+                color: model.showConsole
+                    ? Colors.white
+                    : const Color.fromRGBO(0x3B, 0x3B, 0x4F, 1),
+                child: challenge.files.any((file) => file.ext.name == 'js')
+                    ? IconButton(
+                        icon: Icon(
+                          Icons.terminal,
+                          size: 32,
+                          color: model.showConsole
+                              ? const Color.fromRGBO(0x3B, 0x3B, 0x4F, 1)
+                              : Colors.white,
+                        ),
+                        onPressed: () {
+                          model.setShowConsole = !model.showConsole;
+                          model.setShowPreview = false;
+                        },
+                        splashColor: Colors.transparent,
+                        highlightColor: Colors.transparent,
+                      )
+                    : null,
               ),
               Expanded(
                 child: Row(
@@ -381,6 +428,51 @@ class ChallengeView extends StatelessWidget {
           ),
         ],
       ),
+    );
+  }
+
+  Widget testList(Challenge challenge, ChallengeViewModel model) {
+    return ListView.builder(
+      shrinkWrap: true,
+      itemCount: challenge.tests.length,
+      itemBuilder: (context, index) {
+        final test = challenge.tests[index];
+        return ExpansionTile(
+          backgroundColor: FccColors.gray90,
+          collapsedBackgroundColor: FccColors.gray85,
+          title: Builder(
+            builder: (context) {
+              final parser = HTMLParser(context: context);
+              final widgets = parser.parse(
+                test.instruction,
+                isSelectable: true,
+                removeParagraphMargin: true,
+                fontColor: FccColors.gray00,
+              );
+              return Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: widgets,
+              );
+            },
+          ),
+          children: [
+            Container(
+              width: double.infinity,
+              color: FccColors.gray80,
+              constraints: BoxConstraints(minHeight: 120, maxHeight: 1000),
+              child: Editor(
+                defaultLanguage: 'javascript',
+                path: '',
+                defaultValue: test.javaScript,
+                options: EditorOptions(
+                    isEditable: false,
+                    takeFullHeight: false,
+                    showLinebar: false),
+              ),
+            ),
+          ],
+        );
+      },
     );
   }
 }
