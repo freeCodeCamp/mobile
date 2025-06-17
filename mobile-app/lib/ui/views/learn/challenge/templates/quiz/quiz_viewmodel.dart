@@ -11,6 +11,13 @@ class QuizViewModel extends BaseViewModel {
   bool _hasPassedAllQuestions = false;
   bool get hasPassedAllQuestions => _hasPassedAllQuestions;
 
+  List<int> get unansweredQuestions => _quizQuestions
+      .asMap()
+      .entries
+      .where((entry) => entry.value.selectedAnswer == -1)
+      .map((entry) => entry.key + 1) // Convert to 1-based indexing for display
+      .toList();
+
   String _errMessage = '';
   String get errMessage => _errMessage;
 
@@ -76,13 +83,11 @@ class QuizViewModel extends BaseViewModel {
         question.isCorrect = question.selectedAnswer == question.solution - 1;
       });
 
-    final unansweredQuestions = List.generate(quizQuestions.length, (i) => i)
-        .where((i) => quizQuestions[i].selectedAnswer == -1)
-        .map((i) => i + 1)
-        .toList();
+    final correctQuestionsCount =
+        quizQuestions.where((q) => q.isCorrect == true).length;
 
     setHasPassedAllQuestions = unansweredQuestions.isEmpty &&
-        quizQuestions.every((question) => question.isCorrect == true);
+        correctQuestionsCount == quizQuestions.length;
 
     setIsValidated = true;
 
@@ -91,8 +96,8 @@ class QuizViewModel extends BaseViewModel {
           "The following questions are unanswered: ${unansweredQuestions.join(', ')}. You must answer all questions.";
     } else {
       setErrMessage = hasPassedAllQuestions
-          ? 'You answered all questions correctly!'
-          : 'Some answers are incorrect.';
+          ? '✅ You answered all questions correctly!'
+          : '❌ You have $correctQuestionsCount out of ${quizQuestions.length} questions correct.';
     }
   }
 }
