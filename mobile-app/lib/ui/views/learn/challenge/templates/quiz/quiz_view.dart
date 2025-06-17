@@ -77,7 +77,10 @@ class QuizView extends StatelessWidget {
               backgroundColor: FccColors.gray90,
             ),
             body: SafeArea(
+              bottom: false, // Don't pad bottom as we have a sticky footer
               child: ListView(
+                // Add bottom padding to ensure content isn't hidden behind sticky footer
+                padding: const EdgeInsets.only(bottom: 80),
                 children: [
                   ChallengeCard(
                     title: challenge.title,
@@ -101,63 +104,79 @@ class QuizView extends StatelessWidget {
                         model.setSelectedAnswer(questionIndex, answerIndex);
                       }),
                   const SizedBox(height: 16),
-                  if (model.errMessage.isNotEmpty) ...[
-                    Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 16.0),
-                      child: Text(
-                        model.errMessage,
-                        style: const TextStyle(
-                          fontSize: 18,
-                        ),
-                      ),
-                    ),
-                  ],
-                  const SizedBox(height: 16),
-                  Row(
+                ],
+              ),
+            ),
+            // Add sticky footer
+            bottomNavigationBar: Container(
+              decoration: BoxDecoration(
+                color: FccColors.gray80,
+                boxShadow: [
+                  BoxShadow(
+                    color: Colors.black.withValues(alpha: 0.3),
+                    blurRadius: 4,
+                    offset: const Offset(0, -2),
+                  ),
+                ],
+              ),
+              child: SafeArea(
+                child: Padding(
+                  padding: const EdgeInsets.all(12.0),
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    crossAxisAlignment: CrossAxisAlignment.stretch,
                     children: [
-                      Expanded(
-                        child: Container(
-                          margin: const EdgeInsets.all(8),
-                          child: ElevatedButton(
-                            style: ElevatedButton.styleFrom(
-                              minimumSize: const Size(0, 50),
-                              backgroundColor:
-                                  const Color.fromRGBO(0x3b, 0x3b, 0x4f, 1),
-                              shape: const RoundedRectangleBorder(
-                                borderRadius: BorderRadius.zero,
-                                side: BorderSide(
-                                  width: 2,
-                                  color: Colors.white,
-                                ),
-                              ),
-                            ),
-                            onPressed: () {
-                              if (model.isValidated &&
-                                  model.hasPassedAllQuestions) {
-                                model.learnService.goToNextChallenge(
-                                  block.challenges.length,
-                                  challengesCompleted,
-                                  challenge,
-                                  block,
-                                );
-                              } else {
-                                model.validateChallenge();
-                              }
-                            },
-                            child: Text(
-                              model.isValidated
-                                  ? model.hasPassedAllQuestions
-                                      ? context.t.next_challenge
-                                      : context.t.try_again
-                                  : context.t.questions_check,
-                              style: const TextStyle(fontSize: 20),
+                      // Error message above the button
+                      if (model.errMessage.isNotEmpty) ...[
+                        Padding(
+                          padding: const EdgeInsets.only(bottom: 12.0),
+                          child: Text(
+                            model.errMessage,
+                            style: const TextStyle(
+                              fontSize: 18,
                             ),
                           ),
                         ),
+                      ],
+                      // Action button
+                      ElevatedButton(
+                        style: ElevatedButton.styleFrom(
+                          minimumSize: const Size(0, 50),
+                          backgroundColor:
+                              const Color.fromRGBO(0x3b, 0x3b, 0x4f, 1),
+                          shape: const RoundedRectangleBorder(
+                            borderRadius: BorderRadius.zero,
+                            side: BorderSide(
+                              width: 2,
+                              color: Colors.white,
+                            ),
+                          ),
+                        ),
+                        onPressed: () {
+                          if (model.isValidated &&
+                              model.hasPassedAllQuestions) {
+                            model.learnService.goToNextChallenge(
+                              block.challenges.length,
+                              challengesCompleted,
+                              challenge,
+                              block,
+                            );
+                          } else {
+                            model.validateChallenge();
+                          }
+                        },
+                        child: Text(
+                          model.isValidated
+                              ? model.hasPassedAllQuestions
+                                  ? context.t.next_challenge
+                                  : context.t.try_again
+                              : context.t.questions_check,
+                          style: const TextStyle(fontSize: 20),
+                        ),
                       ),
                     ],
-                  )
-                ],
+                  ),
+                ),
               ),
             ),
           ),
