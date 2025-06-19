@@ -100,6 +100,7 @@ class CurriculumTestRunnerState extends State<CurriculumTestRunner> {
               },
               initialSettings: InAppWebViewSettings(
                 isInspectable: true,
+                mediaPlaybackRequiresUserGesture: false
               ),
             ),
           ),
