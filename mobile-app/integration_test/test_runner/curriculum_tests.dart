@@ -256,6 +256,8 @@ void main() {
               'editableRegionContent': editableRegion,
               'hooks': {
                 'beforeAll': challenge.hooks.beforeAll,
+                'beforeEach': challenge.hooks.beforeEach,
+                'afterEach': challenge.hooks.afterEach,
               },
             },
           );

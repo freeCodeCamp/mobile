@@ -284,6 +284,8 @@ class ChallengeView extends StatelessWidget {
                         'editableRegionContent': '',
                         'hooks': {
                           'beforeAll': '',
+                          'beforeEach': '',
+                          'afterEach': '',
                         },
                       },
                     );
