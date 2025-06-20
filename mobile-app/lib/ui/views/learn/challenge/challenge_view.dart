@@ -291,6 +291,7 @@ class ChallengeView extends StatelessWidget {
                   },
                   initialSettings: InAppWebViewSettings(
                     isInspectable: true,
+                    mediaPlaybackRequiresUserGesture: false
                   ),
                 ),
               ),
