@@ -72,6 +72,10 @@ class Challenge {
   // Challenge Type 15 - Odin
   final List<String>? assignments;
 
+  // Challenge Type 8 - Quiz
+  // This list contains multiple sets of quiz
+  final List<Quiz>? quizzes;
+
   Challenge({
     required this.id,
     required this.block,
@@ -91,47 +95,52 @@ class Challenge {
     this.fillInTheBlank,
     this.audio,
     this.scene,
+    this.quizzes,
     required this.hooks,
   });
 
   factory Challenge.fromJson(Map<String, dynamic> data) {
     return Challenge(
-      id: data['id'],
-      block: data['block'],
-      title: data['title'],
-      description: data['description'] ?? '',
-      instructions: data['instructions'] ?? '',
-      dashedName: data['dashedName'],
-      superBlock: data['superBlock'],
-      videoId: data['videoId'],
-      challengeType: data['challengeType'],
-      helpCategory: HelpCategory.fromValue(data['helpCategory']),
-      explanation: data['explanation'] ?? '',
-      fillInTheBlank: data['fillInTheBlank'] != null
-          ? FillInTheBlank.fromJson(data['fillInTheBlank'])
-          : null,
-      audio: data['scene'] != null
-          ? EnglishAudio.fromJson(data['scene']['setup']['audio'])
-          : null,
-      tests: (data['tests'] ?? [])
-          .map<ChallengeTest>((file) => ChallengeTest.fromJson(file))
-          .toList(),
-      files: (data['challengeFiles'] ?? [])
-          .map<ChallengeFile>((file) => ChallengeFile.fromJson(file))
-          .toList(),
-      questions: (data['questions'] as List).isNotEmpty
-          ? (data['questions'] as List)
-              .map<Question>((q) => Question.fromJson(q))
-              .toList()
-          : null,
-      assignments: data['assignments'] != null
-          ? (data['assignments'] as List).cast<String>()
-          : null,
-      scene: data['scene'] != null ? Scene.fromJson(data['scene']) : null,
-      hooks: Hooks.fromJson(
-        data['hooks'] ?? {'beforeAll': ''},
-      ),
-    );
+        id: data['id'],
+        block: data['block'],
+        title: data['title'],
+        description: data['description'] ?? '',
+        instructions: data['instructions'] ?? '',
+        dashedName: data['dashedName'],
+        superBlock: data['superBlock'],
+        videoId: data['videoId'],
+        challengeType: data['challengeType'],
+        helpCategory: HelpCategory.fromValue(data['helpCategory']),
+        explanation: data['explanation'] ?? '',
+        fillInTheBlank: data['fillInTheBlank'] != null
+            ? FillInTheBlank.fromJson(data['fillInTheBlank'])
+            : null,
+        audio: data['scene'] != null
+            ? EnglishAudio.fromJson(data['scene']['setup']['audio'])
+            : null,
+        tests: (data['tests'] ?? [])
+            .map<ChallengeTest>((file) => ChallengeTest.fromJson(file))
+            .toList(),
+        files: (data['challengeFiles'] ?? [])
+            .map<ChallengeFile>((file) => ChallengeFile.fromJson(file))
+            .toList(),
+        questions: (data['questions'] as List).isNotEmpty
+            ? (data['questions'] as List)
+                .map<Question>((q) => Question.fromJson(q))
+                .toList()
+            : null,
+        assignments: data['assignments'] != null
+            ? (data['assignments'] as List).cast<String>()
+            : null,
+        scene: data['scene'] != null ? Scene.fromJson(data['scene']) : null,
+        hooks: Hooks.fromJson(
+          data['hooks'] ?? {'beforeAll': ''},
+        ),
+        quizzes: (data['quizzes'] != null)
+            ? (data['quizzes'] as List)
+                .map<Quiz>((quiz) => Quiz.fromJson(quiz))
+                .toList()
+            : null);
   }
 
   static toJson(Challenge challenge) {
@@ -174,6 +183,17 @@ class Challenge {
                 'text': question.text,
                 'answers': question.answers,
                 'solution': question.solution,
+              })
+          .toList(),
+      'quizzes': challenge.quizzes
+          ?.map((quiz) => {
+                'questions': quiz.questions
+                    .map((question) => {
+                          'text': question.text,
+                          'answers': question.answers,
+                          'solution': question.solution,
+                        })
+                    .toList(),
               })
           .toList(),
     };
@@ -318,6 +338,56 @@ class Blank {
     return Blank(
       answer: data['answer'],
       feedback: data['feedback'] ?? '',
+    );
+  }
+}
+
+class QuizQuestion {
+  final String text;
+  final List<Answer> answers;
+  final int solution;
+
+  const QuizQuestion({
+    required this.text,
+    required this.answers,
+    required this.solution,
+  });
+
+  factory QuizQuestion.fromJson(Map<String, dynamic> data) {
+    // Quiz data has answer and distractors as separate fields rather than in a single array.
+    // We combine them into one so that the question schema
+    // is consistent with the other MCQ challenges.
+    final allAnswers = [
+      ...(data['distractors'] as List)
+          .map<Answer>((item) => Answer(answer: item, feedback: null)),
+      Answer(answer: data['answer'], feedback: null)
+    ];
+
+    // shuffle so the correct answer is not always the last
+    allAnswers.shuffle();
+
+    // Solution is the index of the correct answer in the shuffled list.
+    // + 1 here so that it matches the 1-based index used in the UI logic.
+    final solutionIndex =
+        allAnswers.indexWhere((a) => a.answer == data['answer']) + 1;
+
+    return QuizQuestion(
+        text: data['text'], answers: allAnswers, solution: solutionIndex);
+  }
+}
+
+class Quiz {
+  final List<QuizQuestion> questions;
+
+  const Quiz({
+    required this.questions,
+  });
+
+  factory Quiz.fromJson(Map<String, dynamic> data) {
+    return Quiz(
+      questions: (data['questions'] as List)
+          .map<QuizQuestion>((item) => QuizQuestion.fromJson(item))
+          .toList(),
     );
   }
 }
