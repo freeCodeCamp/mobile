@@ -93,6 +93,8 @@ class CurriculumTestRunnerState extends State<CurriculumTestRunner> {
                     'editableRegionContent': '',
                     'hooks': {
                       'beforeAll': '',
+                      'beforeEach': '',
+                      'afterEach': '',
                     },
                   },
                 );

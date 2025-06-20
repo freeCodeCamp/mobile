@@ -1,1 +1,1 @@
-(self.webpackChunktest_runner=self.webpackChunktest_runner||[]).push([[512],{7512:()=>{}}]);
+(self.webpackChunk_freecodecamp_curriculum_helpers=self.webpackChunk_freecodecamp_curriculum_helpers||[]).push([[512],{7512:()=>{}}]);
