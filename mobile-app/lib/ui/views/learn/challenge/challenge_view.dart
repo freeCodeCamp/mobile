@@ -213,10 +213,15 @@ class ChallengeView extends StatelessWidget {
               onPressed: () {
                 model.setShowTestsPanel = !model.showTestsPanel;
               },
-              label: Text('Tests'),
+              label: Text(
+                'Tests',
+                style: TextStyle(
+                  color: model.showTestsPanel ? FccColors.blue50 : Colors.white,
+                ),
+              ),
               style: ButtonStyle(
                 backgroundColor: WidgetStateProperty.all<Color>(
-                  FccColors.gray90,
+                  FccColors.gray90, // Always gray background
                 ),
                 shape: WidgetStateProperty.all<RoundedRectangleBorder>(
                   RoundedRectangleBorder(
@@ -227,6 +232,7 @@ class ChallengeView extends StatelessWidget {
               icon: Icon(
                 Icons.science_outlined,
                 size: 30,
+                color: model.showTestsPanel ? FccColors.blue50 : Colors.white,
               ),
               iconAlignment: IconAlignment.end,
             ),
