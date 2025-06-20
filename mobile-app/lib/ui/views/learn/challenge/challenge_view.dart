@@ -170,46 +170,42 @@ class ChallengeView extends StatelessWidget {
         children: [
           Expanded(
             child: DropdownButton<String>(
-                isExpanded: true,
-                dropdownColor: FccColors.gray85,
-                value: model.currentSelectedFile,
-                items: [
-                  for (ChallengeFile file in challenge.files)
-                    DropdownMenuItem(
-                      value: file.name,
-                      child: Text(
-                        file.name,
+              isExpanded: true,
+              dropdownColor: FccColors.gray85,
+              value: model.currentSelectedFile,
+              items: [
+                for (ChallengeFile file in challenge.files)
+                  DropdownMenuItem(
+                    value: file.name,
+                    child: Text(
+                      '${file.name}.${file.ext.name}',
+                      style: TextStyle(color: Colors.white),
+                    ),
+                  )
+              ],
+              onChanged: (file) {
+                model.setShowTestsPanel = false;
+                model.setCurrentSelectedFile = file ?? challenge.files[0].name;
+                model.setMounted = false;
+                ChallengeFile currFile = model.currentFile(challenge);
+                model.initFile(challenge, currFile);
+              },
+              underline: SizedBox(),
+              selectedItemBuilder: (context) {
+                return challenge.files.map((file) {
+                  return Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Text(
+                        '${file.name}.${file.ext.name}',
                         style: TextStyle(color: Colors.white),
                       ),
-                    )
-                ],
-                onChanged: (file) {
-                  model.setShowTestsPanel = false;
-                  model.setCurrentSelectedFile =
-                      file ?? challenge.files[0].name;
-                  model.setMounted = false;
-                  ChallengeFile currFile = model.currentFile(challenge);
-                  model.initFile(challenge, currFile);
-                },
-                underline: SizedBox(),
-                selectedItemBuilder: (context) {
-                  return challenge.files.map((file) {
-                    return Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        Text(
-                          file.name,
-                          style: TextStyle(color: Colors.white),
-                        ),
-                        Padding(
-                          padding: const EdgeInsets.all(8.0),
-                          child: const Icon(Icons.file_copy),
-                        )
-                      ],
-                    );
-                  }).toList();
-                },
-                icon: SizedBox.shrink()),
+                    ],
+                  );
+                }).toList();
+              },
+              icon: const Icon(Icons.arrow_drop_down), // Downwards arrow icon
+            ),
           ),
           SizedBox(width: 8),
           Expanded(
@@ -332,28 +328,31 @@ class ChallengeView extends StatelessWidget {
                   highlightColor: Colors.transparent,
                 ),
               ),
-              Container(
-                margin: const EdgeInsets.symmetric(horizontal: 8),
-                color: !model.showPreview
-                    ? const Color.fromRGBO(0x3B, 0x3B, 0x4F, 1)
-                    : Colors.white,
-                child: IconButton(
-                  icon: Icon(
-                    Icons.remove_red_eye_outlined,
-                    size: 32,
-                    color: model.showPreview
-                        ? const Color.fromRGBO(0x3B, 0x3B, 0x4F, 1)
-                        : Colors.white,
+              // Only show preview button for non-JS challenges
+              if (challenge.challengeType != 1)
+                Container(
+                  margin: const EdgeInsets.symmetric(horizontal: 8),
+                  color: !model.showPreview
+                      ? const Color.fromRGBO(0x3B, 0x3B, 0x4F, 1)
+                      : Colors.white,
+                  child: IconButton(
+                    icon: Icon(
+                      Icons.remove_red_eye_outlined,
+                      size: 32,
+                      color: model.showPreview
+                          ? const Color.fromRGBO(0x3B, 0x3B, 0x4F, 1)
+                          : Colors.white,
+                    ),
+                    onPressed: () async {
+                      ChallengeFile currFile = model.currentFile(challenge);
+                      model.setShowPreview = !model.showPreview;
+                      model.setShowConsole = false;
+                      model.initFile(challenge, currFile);
+                    },
+                    splashColor: Colors.transparent,
+                    highlightColor: Colors.transparent,
                   ),
-                  onPressed: () async {
-                    ChallengeFile currFile = model.currentFile(challenge);
-                    model.setShowPreview = !model.showPreview;
-                    model.initFile(challenge, currFile);
-                  },
-                  splashColor: Colors.transparent,
-                  highlightColor: Colors.transparent,
                 ),
-              ),
               Container(
                 margin: const EdgeInsets.symmetric(horizontal: 8),
                 color: model.showConsole
@@ -434,6 +433,7 @@ class ChallengeView extends StatelessWidget {
   Widget testList(Challenge challenge, ChallengeViewModel model) {
     return ListView.builder(
       shrinkWrap: true,
+      physics: const ClampingScrollPhysics(),
       itemCount: challenge.tests.length,
       itemBuilder: (context, index) {
         final test = challenge.tests[index];
@@ -459,15 +459,19 @@ class ChallengeView extends StatelessWidget {
             Container(
               width: double.infinity,
               color: FccColors.gray80,
-              constraints: BoxConstraints(minHeight: 120, maxHeight: 1000),
+              constraints: BoxConstraints(minHeight: 10, maxHeight: 1000),
+              padding: const EdgeInsets.symmetric(
+                vertical: 12,
+              ),
               child: Editor(
                 defaultLanguage: 'javascript',
                 path: '',
                 defaultValue: test.javaScript,
                 options: EditorOptions(
-                    isEditable: false,
-                    takeFullHeight: false,
-                    showLinebar: false),
+                  isEditable: false,
+                  takeFullHeight: false,
+                  showLinebar: false,
+                ),
               ),
             ),
           ],
