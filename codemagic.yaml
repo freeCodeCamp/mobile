@@ -1,7 +1,7 @@
 workflows:
   flutter-ios-ci:
     name: Flutter iOS CI
-    instance_type: mac_mini_m1
+    instance_type: mac_mini_m2
     max_build_duration: 30
 
     triggering:
@@ -15,7 +15,7 @@ workflows:
       cancel_previous_builds: true
 
     environment:
-      flutter: 3.29.3
+      flutter: 3.32.4
       xcode: latest
       cocoapods: default
       groups:
@@ -74,7 +74,7 @@ workflows:
 
   flutter-ios-deploy:
     name: Deploy iOS App
-    instance_type: mac_mini_m1
+    instance_type: mac_mini_m2
     max_build_duration: 30
 
     triggering:
@@ -86,7 +86,7 @@ workflows:
       cancel_previous_builds: true
 
     environment:
-      flutter: 3.29.3
+      flutter: 3.32.4
       xcode: latest
       cocoapods: default
       ios_signing:
