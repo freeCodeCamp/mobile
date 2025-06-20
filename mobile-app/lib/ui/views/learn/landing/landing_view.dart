@@ -188,33 +188,52 @@ class SuperBlockButton extends StatelessWidget {
   final LearnLandingViewModel model;
   final SuperBlockButtonData button;
 
+  static const String learnAssetsPath = 'assets/learn';
+
   final iconMap = {
-    SuperBlocks.respWebDesignNew: 'assets/learn/responsive-design.svg',
-    SuperBlocks.respWebDesign: 'assets/learn/responsive-design.svg',
-    SuperBlocks.jsAlgoDataStruct: 'assets/learn/javascript.svg',
-    SuperBlocks.jsAlgoDataStructNew: 'assets/learn/javascript.svg',
-    SuperBlocks.frontEndDevLibs: 'assets/learn/react.svg',
-    SuperBlocks.dataVis: 'assets/learn/d3.svg',
-    SuperBlocks.backEndDevApis: 'assets/learn/api.svg',
-    SuperBlocks.relationalDb: 'assets/learn/database.svg',
-    SuperBlocks.qualityAssurance: 'assets/learn/clipboard.svg',
-    SuperBlocks.sciCompPy: 'assets/learn/python.svg',
-    SuperBlocks.dataAnalysisPy: 'assets/learn/analytics.svg',
-    SuperBlocks.infoSec: 'assets/learn/shield.svg',
-    SuperBlocks.machineLearningPy: 'assets/learn/tensorflow.svg',
-    SuperBlocks.codingInterviewPrep: 'assets/learn/algorithm.svg',
-    SuperBlocks.theOdinProject: 'assets/learn/viking-helmet.svg',
-    SuperBlocks.projectEuler: 'assets/learn/graduation.svg',
-    SuperBlocks.collegeAlgebraPy: 'assets/learn/college-algebra.svg',
-    SuperBlocks.foundationalCSharp: 'assets/learn/c-sharp.svg',
-    SuperBlocks.fullStackDeveloper: 'assets/learn/code.svg',
-    SuperBlocks.a2English: 'assets/learn/a2-english.svg',
-    SuperBlocks.b1English: 'assets/learn/b1-english.svg',
-    SuperBlocks.a2Spanish: 'assets/learn/a2-english.svg',
-    SuperBlocks.a2Chinese: 'assets/learn/a2-english.svg',
-    SuperBlocks.rosettaCode: 'assets/learn/rosetta-code.svg',
-    SuperBlocks.pythonForEverybody: 'assets/learn/python.svg',
-    SuperBlocks.devPlayground: 'assets/learn/code.svg',
+    SuperBlocks.respWebDesignNew:
+        '${SuperBlockButton.learnAssetsPath}/responsive-design.svg',
+    SuperBlocks.respWebDesign:
+        '${SuperBlockButton.learnAssetsPath}/responsive-design.svg',
+    SuperBlocks.jsAlgoDataStruct:
+        '${SuperBlockButton.learnAssetsPath}/javascript.svg',
+    SuperBlocks.jsAlgoDataStructNew:
+        '${SuperBlockButton.learnAssetsPath}/javascript.svg',
+    SuperBlocks.frontEndDevLibs:
+        '${SuperBlockButton.learnAssetsPath}/react.svg',
+    SuperBlocks.dataVis: '${SuperBlockButton.learnAssetsPath}/d3.svg',
+    SuperBlocks.backEndDevApis: '${SuperBlockButton.learnAssetsPath}/api.svg',
+    SuperBlocks.relationalDb:
+        '${SuperBlockButton.learnAssetsPath}/database.svg',
+    SuperBlocks.qualityAssurance:
+        '${SuperBlockButton.learnAssetsPath}/clipboard.svg',
+    SuperBlocks.sciCompPy: '${SuperBlockButton.learnAssetsPath}/python.svg',
+    SuperBlocks.dataAnalysisPy:
+        '${SuperBlockButton.learnAssetsPath}/analytics.svg',
+    SuperBlocks.infoSec: '${SuperBlockButton.learnAssetsPath}/shield.svg',
+    SuperBlocks.machineLearningPy:
+        '${SuperBlockButton.learnAssetsPath}/tensorflow.svg',
+    SuperBlocks.codingInterviewPrep:
+        '${SuperBlockButton.learnAssetsPath}/algorithm.svg',
+    SuperBlocks.theOdinProject:
+        '${SuperBlockButton.learnAssetsPath}/viking-helmet.svg',
+    SuperBlocks.projectEuler:
+        '${SuperBlockButton.learnAssetsPath}/graduation.svg',
+    SuperBlocks.collegeAlgebraPy:
+        '${SuperBlockButton.learnAssetsPath}/college-algebra.svg',
+    SuperBlocks.foundationalCSharp:
+        '${SuperBlockButton.learnAssetsPath}/c-sharp.svg',
+    SuperBlocks.fullStackDeveloper:
+        '${SuperBlockButton.learnAssetsPath}/code.svg',
+    SuperBlocks.a2English: '${SuperBlockButton.learnAssetsPath}/a2-english.svg',
+    SuperBlocks.b1English: '${SuperBlockButton.learnAssetsPath}/b1-english.svg',
+    SuperBlocks.a2Spanish: '${SuperBlockButton.learnAssetsPath}/a2-english.svg',
+    SuperBlocks.a2Chinese: '${SuperBlockButton.learnAssetsPath}/a2-english.svg',
+    SuperBlocks.rosettaCode:
+        '${SuperBlockButton.learnAssetsPath}/rosetta-code.svg',
+    SuperBlocks.pythonForEverybody:
+        '${SuperBlockButton.learnAssetsPath}/python.svg',
+    SuperBlocks.devPlayground: '${SuperBlockButton.learnAssetsPath}/code.svg',
   };
 
   @override
@@ -264,7 +283,7 @@ class SuperBlockButton extends StatelessWidget {
                 height: 36,
                 child: SvgPicture.asset(
                   iconMap[SuperBlocks.fromValue(button.path)] ??
-                      'assets/learn/graduation.svg',
+                      '${SuperBlockButton.learnAssetsPath}/graduation.svg',
                   fit: BoxFit.contain,
                   colorFilter: ColorFilter.mode(
                     FccColors.gray00,
