@@ -35,7 +35,10 @@ class ChallengeView extends StatelessWidget {
       onViewModelReady: (model) {
         model.init(block, challenge, challengesCompleted);
       },
-      onDispose: (model) => model.shutdownLocalHost(),
+      onDispose: (model) {
+        model.closeWebViews();
+        model.disposeOfListeners();
+      },
       builder: (context, model, child) {
         int maxChallenges = block.challenges.length;
         ChallengeFile currFile = model.currentFile(challenge);
@@ -44,41 +47,16 @@ class ChallengeView extends StatelessWidget {
 
         bool onlyJs = challenge.files.every((file) => file.ext.name == 'js');
 
-        bool editableRegion = currFile.editableRegionBoundaries.isNotEmpty;
-        EditorOptions options = EditorOptions(
-          hasRegion: editableRegion,
-          fontFamily: 'Hack',
-        );
-
-        Editor editor = Editor(
-          language: currFile.ext.name.toUpperCase(),
-          options: options,
-        );
-
-        model.initFile(editor, challenge, currFile, editableRegion);
-        model.listenToFocusedController(editor);
-        model.listenToSymbolBarScrollController();
+        model.initFile(challenge, currFile);
 
         if (model.showPanel) {
           FocusManager.instance.primaryFocus?.unfocus();
         }
 
-        editor.onTextChange.stream.listen((text) {
-          model.fileService.saveFileInCache(
-            challenge,
-            model.currentSelectedFile,
-            text,
+        if (model.editor == null) {
+          return Center(
+            child: CircularProgressIndicator(),
           );
-
-          model.setEditorText = text;
-          model.setHasTypedInEditor = true;
-          model.setCompletedChallenge = false;
-        });
-
-        if (editableRegion) {
-          editor.editableRegion.stream.listen((region) {
-            model.setEditableRegionContent = region;
-          });
         }
 
         BoxDecoration decoration = const BoxDecoration(
@@ -151,7 +129,6 @@ class ChallengeView extends StatelessWidget {
                               model,
                               challenge,
                               file,
-                              editor,
                             )
                       ],
                     ),
@@ -172,7 +149,6 @@ class ChallengeView extends StatelessWidget {
               model,
               keyboard,
               challenge,
-              editor,
               context,
             ),
           ),
@@ -186,9 +162,9 @@ class ChallengeView extends StatelessWidget {
                         panel: model.panelType,
                         maxChallenges: maxChallenges,
                         challengesCompleted: challengesCompleted,
-                        editor: editor,
+                        editor: model.editor!,
                       ),
-                    Expanded(child: editor)
+                    Expanded(child: model.editor!)
                   ],
                 )
               : Column(
@@ -200,7 +176,7 @@ class ChallengeView extends StatelessWidget {
                         panel: model.panelType,
                         maxChallenges: maxChallenges,
                         challengesCompleted: challengesCompleted,
-                        editor: editor,
+                        editor: model.editor!,
                       ),
                     model.showProjectPreview && !onlyJs
                         ? ProjectPreview(
@@ -223,7 +199,6 @@ class ChallengeView extends StatelessWidget {
     ChallengeViewModel model,
     Challenge challenge,
     ChallengeFile file,
-    Editor editor,
   ) {
     return Expanded(
       child: Container(
@@ -243,31 +218,9 @@ class ChallengeView extends StatelessWidget {
           ),
           onPressed: () async {
             model.setCurrentSelectedFile = file.name;
+            model.setMounted = false;
             ChallengeFile currFile = model.currentFile(challenge);
-
-            String currText = await model.fileService.getExactFileFromCache(
-              challenge,
-              currFile,
-            );
-            bool hasRegion = currFile.editableRegionBoundaries.isNotEmpty;
-
-            editor.fileTextStream.sink.add(
-              FileIDE(
-                id: challenge.id + currFile.name,
-                ext: currFile.ext.name.toUpperCase(),
-                name: currFile.name,
-                content: currText == '' ? currFile.contents : currText,
-                hasRegion: currFile.editableRegionBoundaries.isNotEmpty,
-                region: EditorRegionOptions(
-                  start:
-                      hasRegion ? currFile.editableRegionBoundaries[0] : null,
-                  end: hasRegion ? currFile.editableRegionBoundaries[1] : null,
-                ),
-              ),
-            );
-
-            model.setEditorText = currText == '' ? currFile.contents : currText;
-            model.setShowPreview = false;
+            model.initFile(challenge, currFile);
           },
           child: Text(
             '${file.name}.${file.ext.name}',
@@ -288,7 +241,6 @@ class ChallengeView extends StatelessWidget {
     ChallengeViewModel model,
     bool keyboard,
     Challenge challenge,
-    Editor editor,
     BuildContext context,
   ) {
     return BottomAppBar(
@@ -300,7 +252,7 @@ class ChallengeView extends StatelessWidget {
           if (keyboard)
             SymbolBar(
               model: model,
-              editor: editor,
+              editor: model.editor!,
             ),
           Row(
             children: [
@@ -312,6 +264,7 @@ class ChallengeView extends StatelessWidget {
                     data:
                         '<html><head><title>Test Runner</title></head><body></body></html>',
                     mimeType: 'text/html',
+                    baseUrl: WebUri('http://localhost:8080/test-runner'),
                   ),
                   onWebViewCreated: (controller) {
                     model.setTestController = controller;
@@ -338,6 +291,7 @@ class ChallengeView extends StatelessWidget {
                   },
                   initialSettings: InAppWebViewSettings(
                     isInspectable: true,
+                    mediaPlaybackRequiresUserGesture: false
                   ),
                 ),
               ),
@@ -392,38 +346,7 @@ class ChallengeView extends StatelessWidget {
                   onPressed: () async {
                     ChallengeFile currFile = model.currentFile(challenge);
 
-                    String currText =
-                        await model.fileService.getExactFileFromCache(
-                      challenge,
-                      currFile,
-                    );
-
-                    model.setMounted = false;
-
-                    editor.fileTextStream.sink.add(FileIDE(
-                      id: challenge.id + currFile.name,
-                      ext: currFile.ext.name.toUpperCase(),
-                      name: currFile.name,
-                      content: currText == '' ? currFile.contents : currText,
-                      hasRegion: currFile.editableRegionBoundaries.isNotEmpty,
-                      region: EditorRegionOptions(
-                        start: currFile.editableRegionBoundaries.isNotEmpty
-                            ? currFile.editableRegionBoundaries[0]
-                            : null,
-                        end: currFile.editableRegionBoundaries.isNotEmpty
-                            ? currFile.editableRegionBoundaries[1]
-                            : null,
-                      ),
-                    ));
-                    model.setEditorText =
-                        currText == '' ? currFile.contents : currText;
-                    model.setShowPreview = !model.showPreview;
-
-                    if (!model.showProjectPreview && !model.showConsole) {
-                      model.setShowProjectPreview = true;
-                    }
-
-                    model.refresh();
+                    model.initFile(challenge, currFile);
                   },
                   splashColor: Colors.transparent,
                   highlightColor: Colors.transparent,
@@ -571,6 +494,10 @@ class ProjectPreview extends StatelessWidget {
                 onWebViewCreated: (controller) {
                   model.setWebviewController = controller;
                 },
+                initialSettings: InAppWebViewSettings(
+                  // TODO: Set this to true only in dev mode
+                  isInspectable: true,
+                ),
               );
             }
           }

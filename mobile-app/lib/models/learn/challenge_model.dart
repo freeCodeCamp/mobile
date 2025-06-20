@@ -67,9 +67,7 @@ class Challenge {
   final EnglishAudio? audio;
   final Scene? scene;
 
-  // Challenge Type 11 - Video
-  // TODO: Renamed to questions and its an array of questions
-  Question? question;
+  final List<Question>? questions;
 
   // Challenge Type 15 - Odin
   final List<String>? assignments;
@@ -88,7 +86,7 @@ class Challenge {
     required this.files,
     required this.helpCategory,
     this.explanation,
-    this.question,
+    this.questions,
     this.assignments,
     this.fillInTheBlank,
     this.audio,
@@ -121,8 +119,10 @@ class Challenge {
       files: (data['challengeFiles'] ?? [])
           .map<ChallengeFile>((file) => ChallengeFile.fromJson(file))
           .toList(),
-      question: (data['questions'] as List).isNotEmpty
-          ? Question.fromJson(data['questions'][0])
+      questions: (data['questions'] as List).isNotEmpty
+          ? (data['questions'] as List)
+              .map<Question>((q) => Question.fromJson(q))
+              .toList()
           : null,
       assignments: data['assignments'] != null
           ? (data['assignments'] as List).cast<String>()
@@ -169,13 +169,13 @@ class Challenge {
             },
           )
           .toList(),
-      'question': challenge.question != null
-          ? {
-              'text': challenge.question!.text,
-              'answers': challenge.question!.answers,
-              'solution': challenge.question!.solution,
-            }
-          : null,
+      'questions': challenge.questions
+          ?.map((question) => {
+                'text': question.text,
+                'answers': question.answers,
+                'solution': question.solution,
+              })
+          .toList(),
     };
   }
 }

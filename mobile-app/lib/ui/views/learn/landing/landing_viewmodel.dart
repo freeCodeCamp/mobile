@@ -16,6 +16,7 @@ import 'package:freecodecamp/service/authentication/authentication_service.dart'
 import 'package:freecodecamp/service/dio_service.dart';
 import 'package:freecodecamp/service/learn/learn_offline_service.dart';
 import 'package:freecodecamp/service/learn/learn_service.dart';
+import 'package:freecodecamp/ui/views/learn/landing/landing_view.dart';
 import 'package:freecodecamp/ui/widgets/setup_dialog_ui.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:stacked/stacked.dart';
@@ -36,22 +37,16 @@ class LearnLandingViewModel extends BaseViewModel {
   final _learnOfflineService = locator<LearnOfflineService>();
   LearnOfflineService get learnOfflineService => _learnOfflineService;
 
-  Future<List<SuperBlockButtonData>>? superBlockButtons;
+  Future<List<Widget>>? superBlockButtons;
   final _dio = DioService.dio;
-
-  bool _hasLastVisitedChallenge = false;
-  bool get hasLastVisitedChallenge => _hasLastVisitedChallenge;
 
   bool _isLoggedIn = false;
   bool get isLoggedIn => _isLoggedIn;
 
+  TextStyle headerStyle = TextStyle(fontSize: 20, fontWeight: FontWeight.bold);
+
   set setSuperBlockButtons(value) {
     superBlockButtons = value;
-    notifyListeners();
-  }
-
-  set setHasLastVisitedChallenge(value) {
-    _hasLastVisitedChallenge = value;
     notifyListeners();
   }
 
@@ -61,13 +56,6 @@ class LearnLandingViewModel extends BaseViewModel {
     initLoggedInListener();
 
     setSuperBlockButtons = requestSuperBlocks();
-  }
-
-  void retrieveLastVisitedChallenge() async {
-    SharedPreferences prefs = await SharedPreferences.getInstance();
-    setHasLastVisitedChallenge =
-        prefs.getStringList('lastVisitedChallenge')?.isNotEmpty ?? false;
-    notifyListeners();
   }
 
   void fastRouteToChallenge() async {
@@ -157,35 +145,73 @@ class LearnLandingViewModel extends BaseViewModel {
     });
   }
 
-  Future<List<SuperBlockButtonData>> requestSuperBlocks() async {
-    String baseUrl = LearnService.baseUrl;
+  Text handleStageTitle(String stage) {
+    switch (stage) {
+      case 'core':
+        return Text(
+          'Recommended curriculum (still in beta):',
+          style: headerStyle,
+        );
+      case 'english':
+        return Text(
+          'Learn English for Developers:',
+          style: headerStyle,
+        );
+      case 'extra':
+        return Text(
+          'Prepare for the developer interview job search:',
+          style: headerStyle,
+        );
+      case 'legacy':
+        return Text(
+          'Our archived coursework:',
+          style: headerStyle,
+        );
+      case 'professional':
+        return Text(
+          'Professional certifications:',
+          style: headerStyle,
+        );
+    }
+
+    return Text('');
+  }
+
+  Future<List<Widget>> requestSuperBlocks() async {
+    String baseUrl = LearnService.baseUrlV2;
 
     final Response res = await _dio.get('$baseUrl/available-superblocks.json');
 
-    List<SuperBlockButtonData> buttonData = [];
-
+    List<Widget> layout = [];
     if (res.statusCode == 200) {
-      List superBlocks = res.data['superblocks'];
+      Map<String, dynamic> superBlockStages = res.data['superblocks'];
 
       await dotenv.load(fileName: '.env');
 
       bool showAllSB =
           dotenv.get('SHOWALLSB', fallback: 'false').toLowerCase() == 'true';
 
-      for (int i = 0; i < superBlocks.length; i++) {
-        if (superBlocks[i]['dashedName'].toString().contains('full-stack')) {
-          continue;
+      for (var superBlockStage in superBlockStages.keys) {
+        layout.add(Padding(
+          padding: const EdgeInsets.all(8.0),
+          child: handleStageTitle(superBlockStage),
+        ));
+
+        for (var superBlock in superBlockStages[superBlockStage]) {
+          layout.add(
+            SuperBlockButton(
+              button: SuperBlockButtonData(
+                path: superBlock['dashedName'],
+                name: superBlock['title'],
+                public: !showAllSB ? superBlock['public'] : true,
+              ),
+              model: this,
+            ),
+          );
         }
-        buttonData.add(
-          SuperBlockButtonData(
-            path: superBlocks[i]['dashedName'],
-            name: superBlocks[i]['title'],
-            public: !showAllSB ? superBlocks[i]['public'] : true,
-          ),
-        );
       }
 
-      return buttonData;
+      return layout;
     }
     return [];
   }
