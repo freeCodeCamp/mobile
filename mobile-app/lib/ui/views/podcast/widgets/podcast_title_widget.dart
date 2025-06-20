@@ -218,7 +218,7 @@ class PodcastTileState extends State<PodcastTile> {
           firstSentence,
           style: const TextStyle(
             color: FccColors.gray10,
-            fontSize: 17,
+            fontSize: 16,
           ),
         ),
         const SizedBox(height: 14),
@@ -231,7 +231,7 @@ class PodcastTileState extends State<PodcastTile> {
     return Text(
       date != null ? Jiffy.parseFromDateTime(date).fromNow().toUpperCase() : '',
       style: const TextStyle(
-        fontSize: 13,
+        fontSize: 12,
         color: FccColors.gray10,
         fontWeight: FontWeight.w600,
         letterSpacing: 1.1,
@@ -247,7 +247,6 @@ class PodcastTileState extends State<PodcastTile> {
       ),
       child: IconButton(
         padding: const EdgeInsets.symmetric(horizontal: 18),
-        constraints: const BoxConstraints(),
         icon: _isEpisodeLoading()
             ? const Center(
                 child: SizedBox(
@@ -288,7 +287,6 @@ class PodcastTileState extends State<PodcastTile> {
               },
         iconSize: 28,
         padding: EdgeInsets.zero,
-        constraints: const BoxConstraints(),
         icon: isCurrentDownload
             ? StreamBuilder<String>(
                 stream: widget._downloadService.progress,
