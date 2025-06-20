@@ -193,7 +193,19 @@ class PodcastTileState extends State<PodcastTile> {
     final document = html_parser.parse(html);
     final text = document.body?.text ?? '';
     final match = RegExp(r'([^.?!]*[.?!])').firstMatch(text);
-    return match != null ? match.group(0)!.trim() : text.trim();
+    String sentence = match != null ? match.group(0)!.trim() : text.trim();
+    if (sentence.length > 120) {
+      sentence = '${sentence.substring(0, 120).trimRight()}...';
+    }
+    return sentence;
+  }
+
+  bool _isEpisodeLoading() {
+    return (widget._audioService.playbackState.value.processingState ==
+                AudioProcessingState.loading ||
+            widget._audioService.playbackState.value.processingState ==
+                AudioProcessingState.buffering) &&
+        widget._audioService.episodeId == widget.episode.id;
   }
 
   Widget _buildEpisodeTitle() {
@@ -240,34 +252,38 @@ class PodcastTileState extends State<PodcastTile> {
   }
 
   Widget _buildPlayButton(bool isPlaying) {
-    return Container(
-      decoration: BoxDecoration(
-        color: isPlaying ? FccColors.purple90 : FccColors.gray80,
-        borderRadius: BorderRadius.circular(24),
-      ),
-      child: IconButton(
-        padding: const EdgeInsets.symmetric(horizontal: 18),
-        icon: _isEpisodeLoading()
-            ? const Center(
-                child: SizedBox(
-                  width: 28,
-                  height: 28,
-                  child: CircularProgressIndicator(
-                    color: FccColors.gray00,
-                    strokeWidth: 2.5,
-                  ),
+    return IconButton(
+      icon: _isEpisodeLoading()
+          ? const Center(
+              child: SizedBox(
+                width: 28,
+                height: 28,
+                child: CircularProgressIndicator(
+                  color: FccColors.gray00,
+                  strokeWidth: 1.8,
                 ),
-              )
-            : Icon(
-                widget.playing ? Icons.pause : Icons.play_arrow,
-                color: FccColors.gray00,
-                semanticLabel:
-                    widget.playing ? 'Pause episode' : 'Play episode',
               ),
-        onPressed: () {
-          playBtnClick();
-        },
-        iconSize: 28,
+            )
+          : Icon(
+              widget.playing ? Icons.pause : Icons.play_arrow,
+              color: FccColors.gray00,
+              size: 33,
+              semanticLabel: widget.playing ? 'Pause episode' : 'Play episode',
+            ),
+      onPressed: () {
+        playBtnClick();
+      },
+      iconSize: 33,
+      splashRadius: 16,
+      padding: EdgeInsets.zero,
+      constraints: const BoxConstraints(minWidth: 48, minHeight: 48),
+      style: ButtonStyle(
+        backgroundColor: WidgetStateProperty.all(
+          isPlaying ? FccColors.purple90 : FccColors.gray80,
+        ),
+        shape: WidgetStateProperty.all(
+          const CircleBorder(),
+        ),
       ),
     );
   }
@@ -275,64 +291,74 @@ class PodcastTileState extends State<PodcastTile> {
   Widget _buildDownloadButton() {
     final isCurrentDownload = widget.isDownloading &&
         widget._downloadService.downloadId == widget.episode.id;
-    return SizedBox(
-      width: 48,
-      height: 48,
-      child: IconButton(
-        onPressed: isCurrentDownload
-            ? null
-            : () {
-                widget._downloadService.setDownloadId = widget.episode.id;
-                downloadBtnClick();
-              },
-        iconSize: 28,
-        padding: EdgeInsets.zero,
-        icon: isCurrentDownload
-            ? StreamBuilder<String>(
-                stream: widget._downloadService.progress,
-                builder: (context, snapshot) {
-                  final progress = snapshot.data;
-                  if (progress == '100') {
-                    return const Icon(
-                      Icons.download_done,
-                      color: FccColors.gray10,
-                      size: 28,
-                      semanticLabel: 'Download complete',
-                    );
-                  } else if (progress != null && progress != '') {
-                    return Stack(alignment: Alignment.center, children: [
-                      Text(
-                        '$progress%',
-                        style: const TextStyle(fontSize: 16),
-                      ),
-                      CircularProgressIndicator(
-                          color: Colors.white,
-                          strokeWidth: 2,
-                          value: double.tryParse(progress) != null
-                              ? double.parse(progress) / 100
-                              : 0),
-                    ]);
-                  } else {
-                    return const CircularProgressIndicator(
-                      color: Colors.white,
-                      strokeWidth: 2,
-                      value: 0,
-                    );
-                  }
-                })
-            : widget.downloaded
-                ? const Icon(
+    return IconButton(
+      onPressed: isCurrentDownload
+          ? null
+          : () {
+              widget._downloadService.setDownloadId = widget.episode.id;
+              downloadBtnClick();
+            },
+      iconSize: 20,
+      splashRadius: 12,
+      padding: EdgeInsets.zero,
+      constraints: const BoxConstraints(minWidth: 45, minHeight: 45),
+      style: ButtonStyle(
+        shape: WidgetStateProperty.all(
+          const CircleBorder(),
+        ),
+        side: WidgetStateProperty.all(
+          const BorderSide(
+            color: FccColors.gray80,
+            width: 1,
+          ),
+        ),
+      ),
+      icon: isCurrentDownload
+          ? StreamBuilder<String>(
+              stream: widget._downloadService.progress,
+              builder: (context, snapshot) {
+                final progress = snapshot.data;
+                if (progress == '100') {
+                  return const Icon(
                     Icons.download_done,
                     color: FccColors.gray10,
-                    size: 28,
+                    size: 20,
                     semanticLabel: 'Download complete',
-                  )
-                : const Icon(
-                    Icons.arrow_circle_down_outlined,
-                    color: FccColors.gray10,
-                    semanticLabel: 'Download episode',
-                  ),
-      ),
+                  );
+                } else if (progress != null && progress != '') {
+                  return Stack(alignment: Alignment.center, children: [
+                    Text(
+                      '$progress%',
+                      style: const TextStyle(fontSize: 10),
+                    ),
+                    CircularProgressIndicator(
+                        color: Colors.white,
+                        strokeWidth: 1,
+                        value: double.tryParse(progress) != null
+                            ? double.parse(progress) / 100
+                            : 0),
+                  ]);
+                } else {
+                  return const CircularProgressIndicator(
+                    color: Colors.white,
+                    strokeWidth: 1,
+                    value: 0,
+                  );
+                }
+              })
+          : widget.downloaded
+              ? const Icon(
+                  Icons.download_done,
+                  color: FccColors.gray10,
+                  size: 20,
+                  semanticLabel: 'Download complete',
+                )
+              : const Icon(
+                  Icons.download,
+                  color: FccColors.gray10,
+                  size: 20,
+                  semanticLabel: 'Download episode',
+                ),
     );
   }
 
@@ -386,23 +412,8 @@ class PodcastTileState extends State<PodcastTile> {
               child: _buildPodcastTile(context, isPlaying: isPlaying),
             ),
           ),
-          const Divider(
-            color: FccColors.gray80,
-            thickness: 1,
-            height: 1,
-            indent: 16,
-            endIndent: 16,
-          ),
         ],
       ),
     );
-  }
-
-  bool _isEpisodeLoading() {
-    return (widget._audioService.playbackState.value.processingState ==
-                AudioProcessingState.loading ||
-            widget._audioService.playbackState.value.processingState ==
-                AudioProcessingState.buffering) &&
-        widget._audioService.episodeId == widget.episode.id;
   }
 }

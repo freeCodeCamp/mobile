@@ -6,6 +6,7 @@ import 'package:flutter_html/flutter_html.dart';
 import 'package:freecodecamp/extensions/i18n_extension.dart';
 import 'package:freecodecamp/models/podcasts/episodes_model.dart';
 import 'package:freecodecamp/models/podcasts/podcasts_model.dart';
+import 'package:freecodecamp/ui/theme/fcc_theme.dart';
 import 'package:freecodecamp/ui/views/podcast/episode-list/episode_list_viewmodel.dart';
 import 'package:freecodecamp/ui/views/podcast/podcast-list/podcast_list_viewmodel.dart';
 import 'package:freecodecamp/ui/views/podcast/widgets/podcast_title_widget.dart';
@@ -77,7 +78,13 @@ class EpisodeListView extends StatelessWidget {
                             ),
                           ),
                           separatorBuilder: (BuildContext context, int index) =>
-                              const SizedBox(height: 0),
+                              const Divider(
+                            color: FccColors.gray80,
+                            thickness: 1,
+                            height: 1,
+                            indent: 16,
+                            endIndent: 16,
+                          ),
                         ),
                       )
                     : SliverToBoxAdapter(
@@ -98,7 +105,13 @@ class EpisodeListView extends StatelessWidget {
                                 },
                                 separatorBuilder:
                                     (BuildContext context, int index) {
-                                  return const SizedBox(height: 0);
+                                  return const Divider(
+                                    color: FccColors.gray80,
+                                    thickness: 1,
+                                    height: 1,
+                                    indent: 16,
+                                    endIndent: 16,
+                                  );
                                 },
                               );
                             } else if (snapshot.hasError) {
