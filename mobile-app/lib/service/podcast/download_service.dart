@@ -38,6 +38,9 @@ class DownloadService {
   String _downloadId = '';
   String get downloadId => _downloadId;
 
+  bool _isDownloading = false;
+  bool get isDownloading => _isDownloading;
+
   factory DownloadService() {
     return _downloadService;
   }
@@ -54,7 +57,6 @@ class DownloadService {
       _progStream.sink.add(((recevied / total) * 100).toStringAsFixed(0));
     }, options: Options(headers: {'User-Agent': await userAgent()}));
     _downloading.sink.add(false);
-    setDownloadId = '';
     _progStream.sink.add('');
     await _notificationService.showNotification(
       'Download complete',
@@ -62,7 +64,12 @@ class DownloadService {
     );
     await _databaseService.addPodcast(podcast);
     await _databaseService.addEpisode(episode);
+    setDownloadId = '';
   }
 
-  DownloadService._internal();
+  DownloadService._internal() {
+    _downloading.stream.listen((event) {
+      _isDownloading = event;
+    });
+  }
 }
