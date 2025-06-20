@@ -253,6 +253,14 @@ class ChallengeViewModel extends BaseViewModel {
     notifyListeners();
   }
 
+  bool _showTestsPanel = false;
+  bool get showTestsPanel => _showTestsPanel;
+
+  set setShowTestsPanel(bool value) {
+    _showTestsPanel = value;
+    notifyListeners();
+  }
+
   void init(
     Block block,
     Challenge challenge,
