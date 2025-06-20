@@ -37,7 +37,9 @@ class EpisodeListView extends StatelessWidget {
           title: Text(podcast.title!),
         ),
         body: RefreshIndicator(
-          onRefresh: () => Future.sync(() => model.pagingController.refresh()),
+          onRefresh: () => Future.sync(() => isDownloadView
+              ? model.episodes
+              : model.pagingController?.refresh()),
           backgroundColor: const Color(0xFF0a0a23),
           color: Colors.white,
           child: Align(
@@ -58,9 +60,9 @@ class EpisodeListView extends StatelessWidget {
                     ],
                   ),
                 ),
-                !isDownloadView
+                !isDownloadView && model.pagingController != null
                     ? PagingListener(
-                        controller: model.pagingController,
+                        controller: model.pagingController!,
                         builder: (context, state, fetchNextPage) =>
                             PagedSliverList.separated(
                           state: state,
