@@ -69,8 +69,6 @@ class MultipleChoiceViewmodel extends BaseViewModel {
     final question = quizQuestions[questionIndex];
     question.selectedAnswer = answerIndex;
 
-    setQuizQuestions = List.from(quizQuestions)..[questionIndex] = question;
-
     // Reset the validation status when user changes the selection
     setIsValidated = false;
     setErrMessage = '';

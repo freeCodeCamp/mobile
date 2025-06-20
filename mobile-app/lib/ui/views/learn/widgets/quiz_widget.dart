@@ -70,15 +70,17 @@ class QuizWidget extends StatelessWidget {
             question.text,
           ),
           const SizedBox(height: 8),
-          for (var answerObj in question.answers.asMap().entries)
+          for (final answerObj in question.answers.asMap().entries) ...[
             option(
-                context: context,
-                answerObj: answerObj,
-                selectedAnswer: selectedAnswer,
-                isCorrect: isCorrect,
-                onChanged: (value) {
-                  onChanged(value);
-                }),
+              context: context,
+              answerObj: answerObj,
+              selectedAnswer: selectedAnswer,
+              isCorrect: isCorrect,
+              onChanged: (value) {
+                onChanged(value);
+              },
+            ),
+          ],
         ],
       ),
     );
@@ -155,7 +157,7 @@ class QuizWidget extends StatelessWidget {
 
     feedbackWidgets.add(
       Padding(
-        padding: EdgeInsets.only(left: 12, bottom: isCorrect ? 32 : 0),
+        padding: EdgeInsets.only(left: 12, bottom: feedback == null ? 24 : 0),
         child: Text(
           isCorrect && isCorrect == true ? 'Correct!' : 'Incorrect!',
           style: TextStyle(

@@ -30,7 +30,8 @@ dependencies:
     sdk: flutter
   flutter_scroll_shadow: 1.2.6
   flutter_secure_storage: 9.2.4
-  focus_detector: ^2.0.1
+  flutter_svg: 2.1.0
+  focus_detector: 2.0.1
   graphql: 5.2.0
   html: 0.15.5+1
   infinite_scroll_pagination: 5.0.0
@@ -38,7 +39,7 @@ dependencies:
   just_audio: 0.10.2
   path: 1.9.1
   path_provider: 2.1.5
-  phone_ide: 1.5.1
+  phone_ide: 2.0.0
   photo_view: 0.15.0
   pretty_dio_logger: 1.4.0
   quick_actions: 1.1.0
@@ -88,4 +89,5 @@ flutter:
     - assets/test_data/news_feed.json
     - assets/database/bookmarked-article.db
     - assets/learn/
-    - assets/test_runner/
+    - assets/test_runner/dist/
+    - assets/test_runner/babel/
