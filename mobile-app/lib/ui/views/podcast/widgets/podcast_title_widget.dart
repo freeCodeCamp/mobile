@@ -172,7 +172,8 @@ class PodcastTileState extends State<PodcastTile> {
     await widget._databaseService.removePodcast(widget.podcast);
   }
 
-  void downloadBtnClick() async {
+  void downloadBtnClick(Episodes episode) async {
+    widget._downloadService.setDownloadId = episode.id;
     Directory appDir = await getApplicationSupportDirectory();
 
     if (!widget.downloaded && !widget.isDownloading) {
@@ -295,8 +296,7 @@ class PodcastTileState extends State<PodcastTile> {
       onPressed: isCurrentDownload
           ? null
           : () {
-              widget._downloadService.setDownloadId = widget.episode.id;
-              downloadBtnClick();
+              downloadBtnClick(widget.episode);
             },
       iconSize: 20,
       splashRadius: 12,
