@@ -24,7 +24,7 @@ class ScriptBuilder {
 
   static String runnerScript = '''
 await import("http://localhost:8080/dist/index.js");
-window.TestRunner = await window.FCCSandbox.createTestRunner({
+window.TestRunner = await window.FCCTestRunner.createTestRunner({
   source: userCode,
   type: workerType,
   assetPath: "/dist",
