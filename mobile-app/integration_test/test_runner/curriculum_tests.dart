@@ -223,7 +223,10 @@ void main() {
             final lines = contents.split('\n');
             final editableLines = (range[1] <= range[0])
                 ? []
-                : lines.sublist(range[0], min(range[1] - 1, lines.length));
+                : lines.sublist(
+                    min(range[0], lines.length),
+                    min(range[1] - 1, lines.length),
+                  );
 
             return editableLines.join('\n');
           }
