@@ -122,6 +122,7 @@ class EpisodeViewModel extends BaseViewModel {
   }
 
   void downloadBtnClick(Episodes episode, Podcasts podcast) async {
+    downloadService.setDownloadId = episode.id;
     Directory appDir = await getApplicationSupportDirectory();
 
     if (!isDownloaded && isDownloading) {
@@ -141,20 +142,18 @@ class EpisodeViewModel extends BaseViewModel {
     setIsDownloaded = await _databaseService.episodeExists(episode);
   }
 
-  void downloadComplete() {
-    setIsDownloading = false;
-    setIsDownloaded = true;
-    downloadService.setDownloadId = '';
-  }
-
-  void initDownloadListener() {
+  void initDownloadListener(Episodes episode) {
+    if (downloadService.isDownloading &&
+        downloadService.downloadId == episode.id) {
+      setIsDownloading = true;
+    }
     downloadService.downloadingStream.listen(
-      (event) {
-        setIsDownloading = event;
-
-        if (event == false) {
-          setIsDownloaded = true;
-          setIsDownloading = false;
+      (event) async {
+        if (downloadService.downloadId == episode.id) {
+          if (event == false) {
+            setIsDownloaded = true;
+            setIsDownloading = false;
+          }
         }
       },
     );

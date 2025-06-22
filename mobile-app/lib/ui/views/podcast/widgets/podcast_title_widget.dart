@@ -3,17 +3,16 @@ import 'dart:io';
 import 'package:audio_service/audio_service.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/scheduler.dart';
 import 'package:freecodecamp/app/app.locator.dart';
-import 'package:freecodecamp/extensions/i18n_extension.dart';
 import 'package:freecodecamp/models/podcasts/episodes_model.dart';
 import 'package:freecodecamp/models/podcasts/podcasts_model.dart';
 import 'package:freecodecamp/service/audio/audio_service.dart';
 import 'package:freecodecamp/service/dio_service.dart';
 import 'package:freecodecamp/service/podcast/download_service.dart';
 import 'package:freecodecamp/service/podcast/podcasts_service.dart';
+import 'package:freecodecamp/ui/theme/fcc_theme.dart';
 import 'package:freecodecamp/ui/views/podcast/episode/episode_view.dart';
-import 'package:html/parser.dart';
+import 'package:html/parser.dart' as html_parser;
 import 'package:jiffy/jiffy.dart';
 import 'package:path_provider/path_provider.dart';
 
@@ -36,9 +35,6 @@ class PodcastTile extends StatefulWidget {
   final _downloadService = locator<DownloadService>();
 
   final dio = DioService.dio;
-
-  final int _episodeLength = 0;
-  int get episodeLength => _episodeLength;
 
   bool _downloaded = false;
   bool get downloaded => _downloaded;
@@ -102,10 +98,17 @@ class PodcastTileState extends State<PodcastTile> {
       setIsDownloading = event;
     });
 
-    widget._downloadService.progress.listen((event) {
+    widget._downloadService.progress.listen((event) async {
       if (widget._downloadService.downloadId == widget.episode.id && mounted) {
         if (event != '') {
           setIsDownloading = true;
+        }
+        if (event == '100') {
+          // Download complete, update state and DB
+          if (!widget.downloaded) {
+            setIsDownloaded = true;
+            await widget._databaseService.addEpisode(widget.episode);
+          }
         }
       }
     });
@@ -169,7 +172,8 @@ class PodcastTileState extends State<PodcastTile> {
     await widget._databaseService.removePodcast(widget.podcast);
   }
 
-  void downloadBtnClick() async {
+  void downloadBtnClick(Episodes episode) async {
+    widget._downloadService.setDownloadId = episode.id;
     Directory appDir = await getApplicationSupportDirectory();
 
     if (!widget.downloaded && !widget.isDownloading) {
@@ -185,213 +189,230 @@ class PodcastTileState extends State<PodcastTile> {
     }
   }
 
-  String _parseDuration(Duration dur, BuildContext context) {
-    String hours = (widget.episode.duration!.inMinutes ~/ 60).toString();
-    String minutes = (widget.episode.duration!.inMinutes % 60).toString();
-
-    if (dur.inMinutes > 59) {
-      return context.t.podcast_duration_hours(
-        hours,
-        minutes,
-      );
-    } else {
-      return context.t.podcast_duration_minutes(
-        minutes,
-      );
+  String getFirstSentenceFromHtml(String? html) {
+    if (html == null || html.isEmpty) return '';
+    final document = html_parser.parse(html);
+    final text = document.body?.text ?? '';
+    final match = RegExp(r'([^.?!]*[.?!])').firstMatch(text);
+    String sentence = match != null ? match.group(0)!.trim() : text.trim();
+    if (sentence.length > 120) {
+      sentence = '${sentence.substring(0, 120).trimRight()}...';
     }
+    return sentence;
   }
 
-  @override
-  Widget build(BuildContext context) {
-    return widget.playing
-        ? Card(
-            margin: const EdgeInsets.all(8),
-            elevation: 10,
-            shadowColor: Colors.black,
-            color: const Color.fromRGBO(0x1b, 0x1b, 0x32, 1),
-            child: podcastTile(context),
-          )
-        : podcastTile(context);
+  bool _isEpisodeLoading() {
+    return (widget._audioService.playbackState.value.processingState ==
+                AudioProcessingState.loading ||
+            widget._audioService.playbackState.value.processingState ==
+                AudioProcessingState.buffering) &&
+        widget._audioService.episodeId == widget.episode.id;
   }
 
-  ListTile podcastTile(BuildContext context) {
-    return ListTile(
-      title: Row(
-        children: [
-          Expanded(
-            child: Padding(
-              padding: const EdgeInsets.all(8.0),
-              child: Text(
-                widget.episode.title,
-                style: const TextStyle(fontWeight: FontWeight.w700),
-              ),
-            ),
-          ),
-        ],
-      ),
-      onTap: () {
-        Navigator.push(
-          context,
-          MaterialPageRoute(
-            builder: (context) => EpisodeView(
-              episode: widget.episode,
-              podcast: widget.podcast,
-            ),
-            settings: RouteSettings(
-              name: '/podcasts-episode/${widget.episode.title}',
-            ),
-          ),
-        );
-      },
-      minVerticalPadding: 16,
-      isThreeLine: true,
-      subtitle: Column(
-        children: [
-          descriptionWidget(),
-          footerWidget(context),
-        ],
+  Widget _buildEpisodeTitle() {
+    return Text(
+      widget.episode.title,
+      style: const TextStyle(
+        fontWeight: FontWeight.bold,
+        fontSize: 20,
+        color: FccColors.gray00,
       ),
     );
   }
 
-  Row footerWidget(BuildContext context) {
-    return Row(
+  Widget _buildEpisodeDescription() {
+    final firstSentence = getFirstSentenceFromHtml(widget.episode.description);
+    if (firstSentence.isEmpty) return const SizedBox(height: 14);
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        (widget._audioService.playbackState.value.processingState ==
-                        AudioProcessingState.loading ||
-                    widget._audioService.playbackState.value.processingState ==
-                        AudioProcessingState.buffering) &&
-                widget._audioService.episodeId == widget.episode.id
-            ? Padding(
-                padding: const EdgeInsets.all(8.0),
-                child: SizedBox(
-                    height: MediaQuery.of(context).size.height * 0.0375,
-                    width: MediaQuery.of(context).size.height * 0.0375,
-                    child: const CircularProgressIndicator()),
-              )
-            : playbuttonWidget(context),
-        widget.isDownloading &&
-                widget._downloadService.downloadId == widget.episode.id
-            ? StreamBuilder<String>(
-                stream: widget._downloadService.progress,
-                builder: (context, snapshot) {
-                  if (snapshot.data == '100') {
-                    SchedulerBinding.instance.addPostFrameCallback((timeStamp) {
-                      setIsDownloaded = true;
-                    });
-                  }
-
-                  if (snapshot.hasData) {
-                    return Text(
-                      'Downloaded ${snapshot.data}%',
-                      style: const TextStyle(
-                        fontSize: 16,
-                        height: 2,
-                      ),
-                    );
-                  }
-
-                  return const CircularProgressIndicator(
-                    color: Colors.white,
-                    strokeWidth: 2,
-                    value: 0,
-                  );
-                })
-            : Text(
-                Jiffy.parseFromDateTime(widget.episode.publicationDate!).yMMMd +
-                    (widget.episode.duration != null &&
-                            widget.episode.duration != Duration.zero
-                        ? (' • ${_parseDuration(
-                            widget.episode.duration!,
-                            context,
-                          )}')
-                        : ''),
-                style: const TextStyle(
-                  fontSize: 16,
-                  height: 2,
-                ),
-              ),
-        Expanded(
-          child: Container(
-            alignment: Alignment.centerRight,
-            child: downloadbuttonWidget(),
+        const SizedBox(height: 6),
+        Text(
+          firstSentence,
+          style: const TextStyle(
+            color: FccColors.gray10,
+            fontSize: 16,
           ),
-        )
+        ),
+        const SizedBox(height: 14),
       ],
     );
   }
 
-  Widget downloadbuttonWidget() {
-    return IconButton(
-      onPressed: widget.isDownloading
-          ? null
-          : () {
-              widget._downloadService.setDownloadId = widget.episode.id;
-              downloadBtnClick();
-            },
-      iconSize: MediaQuery.of(context).size.height * 0.0375,
-      icon: widget.isDownloading &&
-              widget._downloadService.downloadId == widget.episode.id
-          ? StreamBuilder<String>(
-              stream: widget._downloadService.progress,
-              builder: (context, snapshot) {
-                if (snapshot.data == '100') {
-                  SchedulerBinding.instance.addPostFrameCallback((timeStamp) {
-                    setIsDownloaded = true;
-                  });
-                }
-
-                if (snapshot.hasData) {
-                  return Stack(alignment: Alignment.center, children: [
-                    Text(
-                      '${snapshot.data}%',
-                      style: const TextStyle(fontSize: 16),
-                    ),
-                    CircularProgressIndicator(
-                        color: Colors.white,
-                        strokeWidth: 2,
-                        value: double.parse(snapshot.data as String) / 100),
-                  ]);
-                }
-
-                return const CircularProgressIndicator(
-                  color: Colors.white,
-                  strokeWidth: 2,
-                  value: 0,
-                );
-              })
-          : Icon(
-              widget.downloaded
-                  ? Icons.download_done
-                  : Icons.arrow_circle_down_outlined,
-            ),
-    );
-  }
-
-  IconButton playbuttonWidget(BuildContext context) {
-    return IconButton(
-      onPressed: () {
-        playBtnClick();
-      },
-      iconSize: MediaQuery.of(context).size.height * 0.05,
-      icon: Icon(
-        widget.playing ? Icons.pause : Icons.play_arrow,
+  Widget _buildEpisodeDate() {
+    final date = widget.episode.publicationDate;
+    return Text(
+      date != null ? Jiffy.parseFromDateTime(date).fromNow().toUpperCase() : '',
+      style: const TextStyle(
+        fontSize: 12,
+        color: FccColors.gray10,
+        fontWeight: FontWeight.w600,
+        letterSpacing: 1.1,
       ),
     );
   }
 
-  Padding descriptionWidget() {
-    final textContent = parse(widget.episode.description!).body?.text ?? '';
-    return Padding(
-      padding: const EdgeInsets.all(8.0),
-      child: Text(
-        textContent,
-        maxLines: 3,
-        overflow: TextOverflow.ellipsis,
-        style: TextStyle(
-          fontSize: 16,
-          color: Colors.white.withValues(alpha: 0.87),
+  Widget _buildPlayButton(bool isPlaying) {
+    return IconButton(
+      icon: _isEpisodeLoading()
+          ? const Center(
+              child: SizedBox(
+                width: 28,
+                height: 28,
+                child: CircularProgressIndicator(
+                  color: FccColors.gray00,
+                  strokeWidth: 1.8,
+                ),
+              ),
+            )
+          : Icon(
+              widget.playing ? Icons.pause : Icons.play_arrow,
+              color: FccColors.gray00,
+              size: 33,
+              semanticLabel: widget.playing ? 'Pause episode' : 'Play episode',
+            ),
+      onPressed: () {
+        playBtnClick();
+      },
+      iconSize: 33,
+      splashRadius: 16,
+      padding: EdgeInsets.zero,
+      constraints: const BoxConstraints(minWidth: 48, minHeight: 48),
+      style: ButtonStyle(
+        backgroundColor: WidgetStateProperty.all(
+          isPlaying ? FccColors.purple90 : FccColors.gray80,
         ),
+        shape: WidgetStateProperty.all(
+          const CircleBorder(),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildDownloadButton() {
+    final isCurrentDownload = widget.isDownloading &&
+        widget._downloadService.downloadId == widget.episode.id;
+    return IconButton(
+      onPressed: isCurrentDownload
+          ? null
+          : () {
+              downloadBtnClick(widget.episode);
+            },
+      iconSize: 20,
+      splashRadius: 12,
+      padding: EdgeInsets.zero,
+      constraints: const BoxConstraints(minWidth: 45, minHeight: 45),
+      style: ButtonStyle(
+        shape: WidgetStateProperty.all(
+          const CircleBorder(),
+        ),
+        side: WidgetStateProperty.all(
+          const BorderSide(
+            color: FccColors.gray80,
+            width: 1,
+          ),
+        ),
+      ),
+      icon: isCurrentDownload
+          ? StreamBuilder<String>(
+              stream: widget._downloadService.progress,
+              builder: (context, snapshot) {
+                final progress = snapshot.data;
+                if (progress == '100') {
+                  return const Icon(
+                    Icons.download_done,
+                    color: FccColors.gray10,
+                    size: 20,
+                    semanticLabel: 'Download complete',
+                  );
+                } else if (progress != null && progress != '') {
+                  return Stack(alignment: Alignment.center, children: [
+                    Text(
+                      '$progress%',
+                      style: const TextStyle(fontSize: 14),
+                    ),
+                    CircularProgressIndicator(
+                        color: Colors.white,
+                        strokeWidth: 1,
+                        value: double.tryParse(progress) != null
+                            ? double.parse(progress) / 100
+                            : 0),
+                  ]);
+                } else {
+                  return const CircularProgressIndicator(
+                    color: Colors.white,
+                    strokeWidth: 1,
+                    value: 0,
+                  );
+                }
+              })
+          : widget.downloaded
+              ? const Icon(
+                  Icons.download_done,
+                  color: FccColors.gray10,
+                  size: 20,
+                  semanticLabel: 'Download complete',
+                )
+              : const Icon(
+                  Icons.download,
+                  color: FccColors.gray10,
+                  size: 20,
+                  semanticLabel: 'Download episode',
+                ),
+    );
+  }
+
+  Widget _buildButtonRow(bool isPlaying) {
+    return Row(
+      children: [
+        _buildPlayButton(isPlaying),
+        const SizedBox(width: 12),
+        _buildDownloadButton(),
+      ],
+    );
+  }
+
+  Widget _buildPodcastTile(BuildContext context, {bool isPlaying = false}) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 12),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          _buildEpisodeDate(),
+          const SizedBox(height: 6),
+          _buildEpisodeTitle(),
+          _buildEpisodeDescription(),
+          _buildButtonRow(isPlaying),
+        ],
+      ),
+    );
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final bool isPlaying = widget.playing;
+    return Container(
+      color: FccColors.gray90,
+      child: Column(
+        children: [
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+            child: InkWell(
+              borderRadius: BorderRadius.circular(12),
+              onTap: () {
+                Navigator.of(context).push(
+                  MaterialPageRoute(
+                    builder: (context) => EpisodeView(
+                      podcast: widget.podcast,
+                      episode: widget.episode,
+                    ),
+                  ),
+                );
+              },
+              child: _buildPodcastTile(context, isPlaying: isPlaying),
+            ),
+          ),
+        ],
       ),
     );
   }
