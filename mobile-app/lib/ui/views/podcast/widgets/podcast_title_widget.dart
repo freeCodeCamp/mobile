@@ -329,7 +329,7 @@ class PodcastTileState extends State<PodcastTile> {
                   return Stack(alignment: Alignment.center, children: [
                     Text(
                       '$progress%',
-                      style: const TextStyle(fontSize: 10),
+                      style: const TextStyle(fontSize: 14),
                     ),
                     CircularProgressIndicator(
                         color: Colors.white,
