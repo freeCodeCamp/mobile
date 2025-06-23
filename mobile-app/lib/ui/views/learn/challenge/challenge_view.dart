@@ -179,7 +179,14 @@ class ChallengeView extends StatelessWidget {
                     value: file.name,
                     child: Text(
                       '${file.name}.${file.ext.name}',
-                      style: TextStyle(color: Colors.white),
+                      style: TextStyle(
+                        color: model.currentSelectedFile == file.name
+                            ? FccColors.blue50
+                            : Colors.white,
+                        fontWeight: model.currentSelectedFile == file.name
+                            ? FontWeight.bold
+                            : FontWeight.normal,
+                      ),
                     ),
                   )
               ],
@@ -193,14 +200,18 @@ class ChallengeView extends StatelessWidget {
               underline: SizedBox(),
               selectedItemBuilder: (context) {
                 return challenge.files.map((file) {
-                  return Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      Text(
-                        '${file.name}.${file.ext.name}',
-                        style: TextStyle(color: Colors.white),
+                  return Center(
+                    child: Text(
+                      '${file.name}.${file.ext.name}',
+                      style: TextStyle(
+                        color: model.currentSelectedFile == file.name
+                            ? FccColors.blue50
+                            : Colors.white,
+                        fontWeight: model.currentSelectedFile == file.name
+                            ? FontWeight.bold
+                            : FontWeight.normal,
                       ),
-                    ],
+                    ),
                   );
                 }).toList();
               },
@@ -334,8 +345,8 @@ class ChallengeView extends StatelessWidget {
                   highlightColor: Colors.transparent,
                 ),
               ),
-              // Only show preview button for non-JS challenges
-              if (challenge.challengeType != 1)
+              // Only show preview button for non-JS-only challenges (type 1 and 26)
+              if (challenge.challengeType != 1 && challenge.challengeType != 26)
                 Container(
                   margin: const EdgeInsets.symmetric(horizontal: 8),
                   color: !model.showPreview
