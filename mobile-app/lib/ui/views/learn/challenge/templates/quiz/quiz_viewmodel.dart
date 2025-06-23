@@ -83,9 +83,11 @@ class QuizViewModel extends BaseViewModel {
 
     final correctQuestionsCount =
         quizQuestions.where((q) => q.isCorrect == true).length;
+    final totalQuestions = quizQuestions.length;
+    final minCorrectToPass = (totalQuestions * 0.9).ceil();
 
     setHasPassedAllQuestions = unansweredQuestions.isEmpty &&
-        correctQuestionsCount == quizQuestions.length;
+        correctQuestionsCount >= minCorrectToPass;
 
     setIsValidated = true;
 
@@ -94,8 +96,8 @@ class QuizViewModel extends BaseViewModel {
           "The following questions are unanswered: ${unansweredQuestions.join(', ')}. You must answer all questions.";
     } else {
       setErrMessage = hasPassedAllQuestions
-          ? '✅ You answered all questions correctly!'
-          : '❌ You have $correctQuestionsCount out of ${quizQuestions.length} questions correct.';
+          ? '✅ You have $correctQuestionsCount out of $totalQuestions questions correct. You have passed.'
+          : "❌ You have $correctQuestionsCount out of $totalQuestions questions correct. You didn't pass.";
     }
   }
 }
