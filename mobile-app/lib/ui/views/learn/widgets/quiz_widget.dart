@@ -101,7 +101,7 @@ class QuizWidget extends StatelessWidget {
       margin: const EdgeInsets.symmetric(vertical: 8),
       child: Material(
         child: RadioListTile<int>(
-          key: ValueKey(selectedAnswer),
+          key: ValueKey(answerObj.key),
           selected: isSelected,
           tileColor: const Color(0xFF0a0a23),
           selectedTileColor: const Color(0xFF0a0a23),
