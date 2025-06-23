@@ -202,14 +202,20 @@ class Challenge {
 
 class Hooks {
   final String beforeAll;
+  final String beforeEach;
+  final String afterEach;
 
   Hooks({
     required this.beforeAll,
+    required this.beforeEach,
+    required this.afterEach,
   });
 
   factory Hooks.fromJson(Map<String, dynamic> data) {
     return Hooks(
       beforeAll: data['beforeAll'] ?? '',
+      beforeEach: data['beforeEach'] ?? '',
+      afterEach: data['afterEach'] ?? '',
     );
   }
 }
