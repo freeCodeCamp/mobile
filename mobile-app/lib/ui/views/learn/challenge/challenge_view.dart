@@ -169,54 +169,87 @@ class ChallengeView extends StatelessWidget {
       child: Row(
         children: [
           Expanded(
-            child: DropdownButton<String>(
-              isExpanded: true,
-              dropdownColor: FccColors.gray85,
-              value: model.currentSelectedFile,
-              items: [
-                for (ChallengeFile file in challenge.files)
-                  DropdownMenuItem(
-                    value: file.name,
-                    child: Text(
-                      '${file.name}.${file.ext.name}',
-                      style: TextStyle(
-                        color: model.currentSelectedFile == file.name
-                            ? FccColors.blue50
-                            : Colors.white,
-                        fontWeight: model.currentSelectedFile == file.name
-                            ? FontWeight.bold
-                            : FontWeight.normal,
-                      ),
-                    ),
+            child: challenge.files.length > 1
+                ? DropdownButton<String>(
+                    isExpanded: true,
+                    dropdownColor: FccColors.gray85,
+                    value: model.currentSelectedFile,
+                    items: [
+                      for (ChallengeFile file in challenge.files)
+                        DropdownMenuItem(
+                          value: file.name,
+                          child: Text(
+                            '${file.name}.${file.ext.name}',
+                            style: TextStyle(
+                              color: model.currentSelectedFile == file.name
+                                  ? FccColors.blue50
+                                  : Colors.white,
+                              fontWeight: model.currentSelectedFile == file.name
+                                  ? FontWeight.bold
+                                  : FontWeight.normal,
+                            ),
+                          ),
+                        )
+                    ],
+                    onChanged: (file) {
+                      model.setShowTestsPanel = false;
+                      model.setCurrentSelectedFile =
+                          file ?? challenge.files[0].name;
+                      model.setMounted = false;
+                      ChallengeFile currFile = model.currentFile(challenge);
+                      model.initFile(challenge, currFile);
+                    },
+                    underline: SizedBox(),
+                    selectedItemBuilder: (context) {
+                      return challenge.files.map((file) {
+                        return Center(
+                          child: Text(
+                            '${file.name}.${file.ext.name}',
+                            style: TextStyle(
+                              color: model.currentSelectedFile == file.name
+                                  ? FccColors.blue50
+                                  : Colors.white,
+                              fontWeight: model.currentSelectedFile == file.name
+                                  ? FontWeight.bold
+                                  : FontWeight.normal,
+                            ),
+                          ),
+                        );
+                      }).toList();
+                    },
+                    icon: const Icon(Icons.arrow_drop_down),
                   )
-              ],
-              onChanged: (file) {
-                model.setShowTestsPanel = false;
-                model.setCurrentSelectedFile = file ?? challenge.files[0].name;
-                model.setMounted = false;
-                ChallengeFile currFile = model.currentFile(challenge);
-                model.initFile(challenge, currFile);
-              },
-              underline: SizedBox(),
-              selectedItemBuilder: (context) {
-                return challenge.files.map((file) {
-                  return Center(
-                    child: Text(
-                      '${file.name}.${file.ext.name}',
+                : TextButton.icon(
+                    onPressed: () {
+                      model.setShowTestsPanel = false;
+                    },
+                    label: Text(
+                      '${challenge.files[0].name}.${challenge.files[0].ext.name}',
                       style: TextStyle(
-                        color: model.currentSelectedFile == file.name
+                        color: !model.showTestsPanel
                             ? FccColors.blue50
                             : Colors.white,
-                        fontWeight: model.currentSelectedFile == file.name
-                            ? FontWeight.bold
-                            : FontWeight.normal,
                       ),
                     ),
-                  );
-                }).toList();
-              },
-              icon: const Icon(Icons.arrow_drop_down), // Downwards arrow icon
-            ),
+                    style: ButtonStyle(
+                      backgroundColor: WidgetStateProperty.all<Color>(
+                        FccColors.gray90,
+                      ),
+                      shape: WidgetStateProperty.all<RoundedRectangleBorder>(
+                        RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(0),
+                        ),
+                      ),
+                    ),
+                    icon: Icon(
+                      Icons.insert_drive_file_outlined,
+                      size: 30,
+                      color: !model.showTestsPanel
+                          ? FccColors.blue50
+                          : Colors.white,
+                    ),
+                    iconAlignment: IconAlignment.end,
+                  ),
           ),
           SizedBox(width: 8),
           Expanded(
@@ -232,7 +265,7 @@ class ChallengeView extends StatelessWidget {
               ),
               style: ButtonStyle(
                 backgroundColor: WidgetStateProperty.all<Color>(
-                  FccColors.gray90, // Always gray background
+                  FccColors.gray90,
                 ),
                 shape: WidgetStateProperty.all<RoundedRectangleBorder>(
                   RoundedRectangleBorder(
