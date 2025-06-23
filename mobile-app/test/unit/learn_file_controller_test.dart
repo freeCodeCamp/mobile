@@ -20,7 +20,7 @@ void main() {
     challengeType: 1,
     helpCategory: HelpCategory.htmlCss,
     tests: [],
-    hooks: Hooks(beforeAll: ''),
+    hooks: Hooks(beforeAll: '', beforeEach: '', afterEach: ''),
     files: [
       ChallengeFile(
         ext: Ext.html,

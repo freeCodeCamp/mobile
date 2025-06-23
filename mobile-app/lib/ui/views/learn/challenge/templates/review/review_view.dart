@@ -7,6 +7,7 @@ import 'package:freecodecamp/ui/views/learn/challenge/templates/review/review_vi
 import 'package:freecodecamp/ui/views/learn/utils/challenge_utils.dart';
 import 'package:freecodecamp/ui/views/learn/widgets/assignment_widget.dart';
 import 'package:freecodecamp/ui/views/learn/widgets/challenge_card.dart';
+import 'package:freecodecamp/ui/views/learn/widgets/youtube_player_widget.dart';
 import 'package:freecodecamp/ui/views/news/html_handler/html_handler.dart';
 import 'package:stacked/stacked.dart';
 
@@ -54,6 +55,18 @@ class ReviewView extends StatelessWidget {
                     ],
                   ),
                 ),
+                if (challenge.videoId != null) ...[
+                  const SizedBox(height: 12),
+                  Padding(
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 16,
+                    ),
+                    child: YoutubePlayerWidget(
+                      videoId: challenge.videoId!,
+                    ),
+                  ),
+                  const SizedBox(height: 12),
+                ],
                 ChallengeCard(
                   title: 'Assignments',
                   child: Column(

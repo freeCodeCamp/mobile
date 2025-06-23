@@ -35,8 +35,8 @@ class Assignment extends StatelessWidget {
               onChanged(!value);
             }
           },
-          activeColor: const Color(0xFF0a0a23),
-          checkColor: const Color(0xDEFFFFFF),
+          activeColor: const Color(0xDEFFFFFF),
+          checkColor: const Color(0xFF0a0a23),
         ),
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(0),
@@ -53,7 +53,7 @@ class Assignment extends StatelessWidget {
                 children: parser.parse(
                   label,
                   isSelectable: false,
-                  fontColor: value ? const Color(0xFF0a0a23) : null,
+                  fontColor: value ? const Color(0xDEFFFFFF) : null,
                 ),
               ),
             ),

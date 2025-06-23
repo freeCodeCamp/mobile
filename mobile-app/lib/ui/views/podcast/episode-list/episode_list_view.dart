@@ -6,6 +6,7 @@ import 'package:flutter_html/flutter_html.dart';
 import 'package:freecodecamp/extensions/i18n_extension.dart';
 import 'package:freecodecamp/models/podcasts/episodes_model.dart';
 import 'package:freecodecamp/models/podcasts/podcasts_model.dart';
+import 'package:freecodecamp/ui/theme/fcc_theme.dart';
 import 'package:freecodecamp/ui/views/podcast/episode-list/episode_list_viewmodel.dart';
 import 'package:freecodecamp/ui/views/podcast/podcast-list/podcast_list_viewmodel.dart';
 import 'package:freecodecamp/ui/views/podcast/widgets/podcast_title_widget.dart';
@@ -36,7 +37,9 @@ class EpisodeListView extends StatelessWidget {
           title: Text(podcast.title!),
         ),
         body: RefreshIndicator(
-          onRefresh: () => Future.sync(() => model.pagingController.refresh()),
+          onRefresh: () => Future.sync(() => isDownloadView
+              ? model.episodes
+              : model.pagingController?.refresh()),
           backgroundColor: const Color(0xFF0a0a23),
           color: Colors.white,
           child: Align(
@@ -57,9 +60,9 @@ class EpisodeListView extends StatelessWidget {
                     ],
                   ),
                 ),
-                !isDownloadView
+                !isDownloadView && model.pagingController != null
                     ? PagingListener(
-                        controller: model.pagingController,
+                        controller: model.pagingController!,
                         builder: (context, state, fetchNextPage) =>
                             PagedSliverList.separated(
                           state: state,
@@ -78,8 +81,11 @@ class EpisodeListView extends StatelessWidget {
                           ),
                           separatorBuilder: (BuildContext context, int index) =>
                               const Divider(
-                            height: 1,
+                            color: FccColors.gray80,
                             thickness: 1,
+                            height: 1,
+                            indent: 16,
+                            endIndent: 16,
                           ),
                         ),
                       )
@@ -102,8 +108,11 @@ class EpisodeListView extends StatelessWidget {
                                 separatorBuilder:
                                     (BuildContext context, int index) {
                                   return const Divider(
-                                    height: 1,
+                                    color: FccColors.gray80,
                                     thickness: 1,
+                                    height: 1,
+                                    indent: 16,
+                                    endIndent: 16,
                                   );
                                 },
                               );

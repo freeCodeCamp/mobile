@@ -1,5 +1,44 @@
 const chapterBasedSuperBlocks = ['full-stack-developer'];
 
+enum SuperBlocks {
+  respWebDesignNew('2022/responsive-web-design'),
+  respWebDesign('responsive-web-design'),
+  jsAlgoDataStruct('javascript-algorithms-and-data-structures'),
+  jsAlgoDataStructNew('javascript-algorithms-and-data-structures-v8'),
+  frontEndDevLibs('front-end-development-libraries'),
+  dataVis('data-visualization'),
+  relationalDb('relational-database'),
+  backEndDevApis('back-end-development-and-apis'),
+  qualityAssurance('quality-assurance'),
+  sciCompPy('scientific-computing-with-python'),
+  dataAnalysisPy('data-analysis-with-python'),
+  infoSec('information-security'),
+  machineLearningPy('machine-learning-with-python'),
+  codingInterviewPrep('coding-interview-prep'),
+  theOdinProject('the-odin-project'),
+  projectEuler('project-euler'),
+  collegeAlgebraPy('college-algebra-with-python'),
+  foundationalCSharp('foundational-c-sharp-with-microsoft'),
+  fullStackDeveloper('full-stack-developer'),
+  a2English('a2-english-for-developers'),
+  b1English('b1-english-for-developers'),
+  a2Spanish('a2-professional-spanish'),
+  a2Chinese('a2-professional-chinese'),
+  rosettaCode('rosetta-code'),
+  pythonForEverybody('python-for-everybody'),
+  devPlayground('dev-playground');
+
+  final String value;
+  const SuperBlocks(this.value);
+
+  static SuperBlocks fromValue(String value) {
+    return SuperBlocks.values.firstWhere(
+      (superBlock) => superBlock.value == value,
+      orElse: () => throw ArgumentError('Invalid super block value: $value'),
+    );
+  }
+}
+
 class SuperBlock {
   final String dashedName;
   final String name;
