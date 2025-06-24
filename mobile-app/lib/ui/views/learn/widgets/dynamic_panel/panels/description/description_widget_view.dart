@@ -68,18 +68,25 @@ class DescriptionView extends StatelessWidget {
                       ],
                     ),
                     Expanded(
-                      child: Scrollbar(
-                        thumbVisibility: true,
-                        trackVisibility: true,
-                        child: SingleChildScrollView(
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: parser.parse(
-                                  description,
-                                ) +
-                                parser.parse(instructions),
-                          ),
-                        ),
+                      child: Builder(
+                        builder: (context) {
+                          final scrollController = ScrollController();
+                          return Scrollbar(
+                            thumbVisibility: true,
+                            trackVisibility: true,
+                            controller: scrollController,
+                            child: SingleChildScrollView(
+                              controller: scrollController,
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: parser.parse(
+                                      description,
+                                    ) +
+                                    parser.parse(instructions),
+                              ),
+                            ),
+                          );
+                        },
                       ),
                     ),
                   ]
