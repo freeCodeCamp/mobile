@@ -73,23 +73,23 @@ class _QuizWidgetState extends State<QuizWidget> {
 
   @override
   Widget build(BuildContext context) {
-    return Column(
-      children: List.generate(
-        widget.questions.length,
-        (index) {
-          return quizQuestion(
-            context: context,
-            questionNumber: widget.questions.length > 1 ? index + 1 : null,
-            question: widget.questions[index],
-            selectedAnswer: widget.questions[index].selectedAnswer,
-            isCorrect: widget.questions[index].isCorrect,
-            onChanged: (answerIndex) {
-              widget.onChanged(index, answerIndex);
-            },
-            questionIndex: index,
-          );
-        },
-      ),
+    return ListView.builder(
+      shrinkWrap: true,
+      physics: const NeverScrollableScrollPhysics(),
+      itemCount: widget.questions.length,
+      itemBuilder: (context, index) {
+        return quizQuestion(
+          context: context,
+          questionNumber: widget.questions.length > 1 ? index + 1 : null,
+          question: widget.questions[index],
+          selectedAnswer: widget.questions[index].selectedAnswer,
+          isCorrect: widget.questions[index].isCorrect,
+          onChanged: (answerIndex) {
+            widget.onChanged(index, answerIndex);
+          },
+          questionIndex: index,
+        );
+      },
     );
   }
 
