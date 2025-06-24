@@ -7,10 +7,12 @@ import 'package:freecodecamp/enums/panel_type.dart';
 import 'package:freecodecamp/extensions/i18n_extension.dart';
 import 'package:freecodecamp/models/learn/challenge_model.dart';
 import 'package:freecodecamp/models/learn/curriculum_model.dart';
+import 'package:freecodecamp/ui/theme/fcc_theme.dart';
 import 'package:freecodecamp/ui/views/learn/challenge/challenge_viewmodel.dart';
 import 'package:freecodecamp/ui/views/learn/test_runner.dart';
 import 'package:freecodecamp/ui/views/learn/widgets/console/console_view.dart';
 import 'package:freecodecamp/ui/views/learn/widgets/dynamic_panel/panels/dynamic_panel.dart';
+import 'package:freecodecamp/ui/views/news/html_handler/html_handler.dart';
 import 'package:phone_ide/phone_ide.dart';
 import 'package:stacked/stacked.dart';
 
@@ -45,8 +47,6 @@ class ChallengeView extends StatelessWidget {
 
         bool keyboard = MediaQuery.of(context).viewInsets.bottom != 0;
 
-        bool onlyJs = challenge.files.every((file) => file.ext.name == 'js');
-
         model.initFile(challenge, currFile);
 
         if (model.showPanel) {
@@ -59,15 +59,6 @@ class ChallengeView extends StatelessWidget {
           );
         }
 
-        BoxDecoration decoration = const BoxDecoration(
-          border: Border(
-            bottom: BorderSide(
-              width: 4,
-              color: Colors.blue,
-            ),
-          ),
-        );
-
         return Scaffold(
           appBar: PreferredSize(
             preferredSize: Size(
@@ -75,63 +66,21 @@ class ChallengeView extends StatelessWidget {
               model.showPanel ? 0 : 50,
             ),
             child: AppBar(
-              automaticallyImplyLeading: !model.showPreview,
-              title: challenge.files.length == 1 && !model.showPreview
-                  ? Text(context.t.editor)
-                  : Row(
-                      children: [
-                        if (model.showPreview && !onlyJs)
-                          Expanded(
-                            child: Container(
-                              decoration:
-                                  model.showProjectPreview ? decoration : null,
-                              child: ElevatedButton(
-                                style: ElevatedButton.styleFrom(
-                                  shape: RoundedRectangleBorder(
-                                    borderRadius: BorderRadius.circular(0),
-                                  ),
-                                  elevation: 0,
-                                ),
-                                onPressed: () {
-                                  model.setShowConsole = false;
-                                  model.setShowProjectPreview = true;
-                                },
-                                child: Text(
-                                  context.t.preview,
-                                ),
-                              ),
-                            ),
-                          ),
-                        if (model.showPreview)
-                          Expanded(
-                            child: Container(
-                              decoration: model.showConsole ? decoration : null,
-                              child: ElevatedButton(
-                                style: ElevatedButton.styleFrom(
-                                  shape: RoundedRectangleBorder(
-                                    borderRadius: BorderRadius.circular(0),
-                                  ),
-                                  elevation: 0,
-                                ),
-                                onPressed: () {
-                                  model.setShowConsole = true;
-                                  model.setShowProjectPreview = false;
-                                },
-                                child: Text(
-                                  context.t.console,
-                                ),
-                              ),
-                            ),
-                          ),
-                        if (!model.showPreview && challenge.files.length > 1)
-                          for (ChallengeFile file in challenge.files)
-                            customTabBar(
-                              model,
-                              challenge,
-                              file,
-                            )
-                      ],
-                    ),
+              automaticallyImplyLeading:
+                  !(model.showPreview || model.showConsole),
+              title: (() {
+                if (model.showPreview) {
+                  return const Text('PREVIEW',
+                      style: TextStyle(fontWeight: FontWeight.bold));
+                } else if (model.showConsole) {
+                  return const Text('CONSOLE',
+                      style: TextStyle(fontWeight: FontWeight.bold));
+                } else {
+                  return Row(
+                    children: [customTabBar(model, challenge, context)],
+                  );
+                }
+              })(),
             ),
           ),
           bottomNavigationBar: Container(
@@ -152,7 +101,7 @@ class ChallengeView extends StatelessWidget {
               context,
             ),
           ),
-          body: !model.showPreview
+          body: model.showConsole
               ? Column(
                   children: [
                     if (model.showPanel && !keyboard)
@@ -164,32 +113,48 @@ class ChallengeView extends StatelessWidget {
                         challengesCompleted: challengesCompleted,
                         editor: model.editor!,
                       ),
-                    Expanded(child: model.editor!)
+                    JavaScriptConsole(
+                      // TODO: Update logic when working on JS challenges
+                      // messages: model.consoleMessages,
+                      messages: [],
+                    ),
                   ],
                 )
-              : Column(
-                  children: [
-                    if (model.showPanel && !keyboard)
-                      DynamicPanel(
-                        challenge: challenge,
-                        model: model,
-                        panel: model.panelType,
-                        maxChallenges: maxChallenges,
-                        challengesCompleted: challengesCompleted,
-                        editor: model.editor!,
-                      ),
-                    model.showProjectPreview && !onlyJs
-                        ? ProjectPreview(
+              : model.showPreview
+                  ? Column(
+                      children: [
+                        if (model.showPanel && !keyboard)
+                          DynamicPanel(
                             challenge: challenge,
                             model: model,
-                          )
-                        : JavaScriptConsole(
-                            // TODO: Update logic when working on JS challenges
-                            // messages: model.consoleMessages,
-                            messages: [],
-                          )
-                  ],
-                ),
+                            panel: model.panelType,
+                            maxChallenges: maxChallenges,
+                            challengesCompleted: challengesCompleted,
+                            editor: model.editor!,
+                          ),
+                        ProjectPreview(
+                          challenge: challenge,
+                          model: model,
+                        ),
+                      ],
+                    )
+                  : Column(
+                      children: [
+                        if (model.showPanel && !keyboard)
+                          DynamicPanel(
+                            challenge: challenge,
+                            model: model,
+                            panel: model.panelType,
+                            maxChallenges: maxChallenges,
+                            challengesCompleted: challengesCompleted,
+                            editor: model.editor!,
+                          ),
+                        if (model.showTestsPanel)
+                          Expanded(child: testList(challenge, model)),
+                        if (!model.showTestsPanel)
+                          Expanded(child: model.editor!),
+                      ],
+                    ),
         );
       },
     );
@@ -198,41 +163,131 @@ class ChallengeView extends StatelessWidget {
   Widget customTabBar(
     ChallengeViewModel model,
     Challenge challenge,
-    ChallengeFile file,
+    BuildContext context,
   ) {
     return Expanded(
-      child: Container(
-        decoration: BoxDecoration(
-          border: Border(
-            bottom: model.currentFile(challenge).name == file.name
-                ? const BorderSide(width: 4, color: Colors.blue)
-                : const BorderSide(),
+      child: Row(
+        children: [
+          Expanded(
+            child: challenge.files.length > 1
+                ? DropdownButton<String>(
+                    isExpanded: true,
+                    dropdownColor: FccColors.gray85,
+                    value: model.currentSelectedFile,
+                    items: [
+                      for (ChallengeFile file in challenge.files)
+                        DropdownMenuItem(
+                          value: file.name,
+                          child: Text(
+                            '${file.name}.${file.ext.name}',
+                            style: TextStyle(
+                              color: model.currentSelectedFile == file.name &&
+                                      !model.showTestsPanel
+                                  ? FccColors.blue50
+                                  : Colors.white,
+                              fontWeight:
+                                  model.currentSelectedFile == file.name &&
+                                          !model.showTestsPanel
+                                      ? FontWeight.bold
+                                      : FontWeight.normal,
+                            ),
+                          ),
+                        )
+                    ],
+                    onChanged: (file) {
+                      model.setShowTestsPanel = false;
+                      model.setCurrentSelectedFile =
+                          file ?? challenge.files[0].name;
+                      model.setMounted = false;
+                      ChallengeFile currFile = model.currentFile(challenge);
+                      model.initFile(challenge, currFile);
+                    },
+                    underline: SizedBox(),
+                    selectedItemBuilder: (context) {
+                      return challenge.files.map((file) {
+                        return Center(
+                          child: Text(
+                            '${file.name}.${file.ext.name}',
+                            style: TextStyle(
+                              color: model.currentSelectedFile == file.name &&
+                                      !model.showTestsPanel
+                                  ? FccColors.blue50
+                                  : Colors.white,
+                              fontWeight:
+                                  model.currentSelectedFile == file.name &&
+                                          !model.showTestsPanel
+                                      ? FontWeight.bold
+                                      : FontWeight.normal,
+                            ),
+                          ),
+                        );
+                      }).toList();
+                    },
+                    icon: const Icon(Icons.arrow_drop_down),
+                  )
+                : TextButton.icon(
+                    onPressed: () {
+                      model.setShowTestsPanel = false;
+                    },
+                    label: Text(
+                      '${challenge.files[0].name}.${challenge.files[0].ext.name}',
+                      style: TextStyle(
+                        color: !model.showTestsPanel
+                            ? FccColors.blue50
+                            : Colors.white,
+                      ),
+                    ),
+                    style: ButtonStyle(
+                      backgroundColor: WidgetStateProperty.all<Color>(
+                        FccColors.gray90,
+                      ),
+                      shape: WidgetStateProperty.all<RoundedRectangleBorder>(
+                        RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(0),
+                        ),
+                      ),
+                    ),
+                    icon: Icon(
+                      Icons.insert_drive_file_outlined,
+                      size: 30,
+                      color: !model.showTestsPanel
+                          ? FccColors.blue50
+                          : Colors.white,
+                    ),
+                    iconAlignment: IconAlignment.end,
+                  ),
           ),
-        ),
-        child: ElevatedButton(
-          style: ElevatedButton.styleFrom(
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(0),
+          SizedBox(width: 8),
+          Expanded(
+            child: TextButton.icon(
+              onPressed: () {
+                model.setShowTestsPanel = !model.showTestsPanel;
+              },
+              label: Text(
+                'Tests',
+                style: TextStyle(
+                  color: model.showTestsPanel ? FccColors.blue50 : Colors.white,
+                ),
+              ),
+              style: ButtonStyle(
+                backgroundColor: WidgetStateProperty.all<Color>(
+                  FccColors.gray90,
+                ),
+                shape: WidgetStateProperty.all<RoundedRectangleBorder>(
+                  RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(0),
+                  ),
+                ),
+              ),
+              icon: Icon(
+                Icons.science_outlined,
+                size: 30,
+                color: model.showTestsPanel ? FccColors.blue50 : Colors.white,
+              ),
+              iconAlignment: IconAlignment.end,
             ),
-            elevation: 0,
           ),
-          onPressed: () async {
-            model.setCurrentSelectedFile = file.name;
-            model.setMounted = false;
-            ChallengeFile currFile = model.currentFile(challenge);
-            model.initFile(challenge, currFile);
-          },
-          child: Text(
-            '${file.name}.${file.ext.name}',
-            style: TextStyle(
-                color: model.currentFile(challenge).name == file.name
-                    ? Colors.blue
-                    : Colors.white,
-                fontWeight: model.currentFile(challenge).name == file.name
-                    ? FontWeight.bold
-                    : null),
-          ),
-        ),
+        ],
       ),
     );
   }
@@ -332,27 +387,53 @@ class ChallengeView extends StatelessWidget {
                   highlightColor: Colors.transparent,
                 ),
               ),
+              // Only show preview button for non-JS-only challenges (type 1 and 26)
+              if (challenge.challengeType != 1 && challenge.challengeType != 26)
+                Container(
+                  margin: const EdgeInsets.symmetric(horizontal: 8),
+                  color: !model.showPreview
+                      ? const Color.fromRGBO(0x3B, 0x3B, 0x4F, 1)
+                      : Colors.white,
+                  child: IconButton(
+                    icon: Icon(
+                      Icons.remove_red_eye_outlined,
+                      size: 32,
+                      color: model.showPreview
+                          ? const Color.fromRGBO(0x3B, 0x3B, 0x4F, 1)
+                          : Colors.white,
+                    ),
+                    onPressed: () async {
+                      ChallengeFile currFile = model.currentFile(challenge);
+                      model.setShowPreview = !model.showPreview;
+                      model.setShowConsole = false;
+                      model.initFile(challenge, currFile);
+                    },
+                    splashColor: Colors.transparent,
+                    highlightColor: Colors.transparent,
+                  ),
+                ),
               Container(
                 margin: const EdgeInsets.symmetric(horizontal: 8),
-                color: !model.showPreview
-                    ? const Color.fromRGBO(0x3B, 0x3B, 0x4F, 1)
-                    : Colors.white,
-                child: IconButton(
-                  icon: Icon(
-                    Icons.remove_red_eye_outlined,
-                    size: 32,
-                    color: model.showPreview
-                        ? const Color.fromRGBO(0x3B, 0x3B, 0x4F, 1)
-                        : Colors.white,
-                  ),
-                  onPressed: () async {
-                    ChallengeFile currFile = model.currentFile(challenge);
-
-                    model.initFile(challenge, currFile);
-                  },
-                  splashColor: Colors.transparent,
-                  highlightColor: Colors.transparent,
-                ),
+                color: model.showConsole
+                    ? Colors.white
+                    : const Color.fromRGBO(0x3B, 0x3B, 0x4F, 1),
+                child: challenge.files.any((file) => file.ext.name == 'js')
+                    ? IconButton(
+                        icon: Icon(
+                          Icons.terminal,
+                          size: 32,
+                          color: model.showConsole
+                              ? const Color.fromRGBO(0x3B, 0x3B, 0x4F, 1)
+                              : Colors.white,
+                        ),
+                        onPressed: () {
+                          model.setShowConsole = !model.showConsole;
+                          model.setShowPreview = false;
+                        },
+                        splashColor: Colors.transparent,
+                        highlightColor: Colors.transparent,
+                      )
+                    : null,
               ),
               Expanded(
                 child: Row(
@@ -405,6 +486,56 @@ class ChallengeView extends StatelessWidget {
           ),
         ],
       ),
+    );
+  }
+
+  Widget testList(Challenge challenge, ChallengeViewModel model) {
+    return ListView.builder(
+      shrinkWrap: true,
+      physics: const ClampingScrollPhysics(),
+      itemCount: challenge.tests.length,
+      itemBuilder: (context, index) {
+        final test = challenge.tests[index];
+        return ExpansionTile(
+          backgroundColor: FccColors.gray90,
+          collapsedBackgroundColor: FccColors.gray85,
+          title: Builder(
+            builder: (context) {
+              final parser = HTMLParser(context: context);
+              final widgets = parser.parse(
+                test.instruction,
+                isSelectable: true,
+                removeParagraphMargin: true,
+                fontColor: FccColors.gray00,
+              );
+              return Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: widgets,
+              );
+            },
+          ),
+          children: [
+            Container(
+              width: double.infinity,
+              color: FccColors.gray80,
+              constraints: BoxConstraints(minHeight: 10, maxHeight: 1000),
+              padding: const EdgeInsets.symmetric(
+                vertical: 12,
+              ),
+              child: Editor(
+                defaultLanguage: 'javascript',
+                path: '',
+                defaultValue: test.javaScript,
+                options: EditorOptions(
+                  isEditable: false,
+                  takeFullHeight: false,
+                  showLinebar: false,
+                ),
+              ),
+            ),
+          ],
+        );
+      },
     );
   }
 }
