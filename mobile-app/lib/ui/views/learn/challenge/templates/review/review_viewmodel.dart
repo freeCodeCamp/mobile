@@ -12,18 +12,18 @@ class ReviewViewmodel extends BaseViewModel {
 
   final LearnService learnService = locator<LearnService>();
 
-  List<Widget>? _parsedInstructions;
-  List<Widget>? get parsedInstructions => _parsedInstructions;
+  List<Widget> _parsedInstructions = [];
+  List<Widget> get parsedInstructions => _parsedInstructions;
 
-  List<Widget>? _parsedDescription;
-  List<Widget>? get parsedDescription => _parsedDescription;
+  List<Widget> _parsedDescription = [];
+  List<Widget> get parsedDescription => _parsedDescription;
 
-  set setParsedInstructions(List<Widget>? widgets) {
+  set setParsedInstructions(List<Widget> widgets) {
     _parsedInstructions = widgets;
     notifyListeners();
   }
 
-  set setParsedDescription(List<Widget>? widgets) {
+  set setParsedDescription(List<Widget> widgets) {
     _parsedDescription = widgets;
     notifyListeners();
   }

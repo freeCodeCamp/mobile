@@ -41,14 +41,8 @@ class ReviewView extends StatelessWidget {
                   title: challenge.title,
                   child: Column(
                     children: [
-                      if (model.parsedInstructions != null)
-                        ...model.parsedInstructions!
-                      else
-                        const SizedBox.shrink(),
-                      if (model.parsedDescription != null)
-                        ...model.parsedDescription!
-                      else
-                        const SizedBox.shrink(),
+                      ...model.parsedInstructions,
+                      ...model.parsedDescription,
                     ],
                   ),
                 ),
