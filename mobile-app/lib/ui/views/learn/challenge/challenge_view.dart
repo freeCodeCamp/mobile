@@ -11,7 +11,6 @@ import 'package:freecodecamp/ui/theme/fcc_theme.dart';
 import 'package:freecodecamp/ui/views/learn/challenge/challenge_viewmodel.dart';
 import 'package:freecodecamp/ui/views/learn/test_runner.dart';
 import 'package:freecodecamp/ui/views/learn/widgets/console/console_view.dart';
-import 'package:freecodecamp/ui/views/learn/widgets/dynamic_panel/panels/dynamic_panel.dart';
 import 'package:freecodecamp/ui/views/news/html_handler/html_handler.dart';
 import 'package:phone_ide/phone_ide.dart';
 import 'package:stacked/stacked.dart';
@@ -44,8 +43,6 @@ class ChallengeView extends StatelessWidget {
       builder: (context, model, child) {
         int maxChallenges = block.challenges.length;
         ChallengeFile currFile = model.currentFile(challenge);
-
-        bool keyboard = MediaQuery.of(context).viewInsets.bottom != 0;
 
         model.initFile(challenge, currFile);
 
@@ -115,7 +112,6 @@ class ChallengeView extends StatelessWidget {
             ),
             child: customBottomBar(
               model,
-              keyboard,
               challenge,
               context,
             ),
@@ -123,15 +119,6 @@ class ChallengeView extends StatelessWidget {
           body: model.showConsole
               ? Column(
                   children: [
-                    if (model.showPanel && !keyboard)
-                      DynamicPanel(
-                        challenge: challenge,
-                        model: model,
-                        panel: model.panelType,
-                        maxChallenges: maxChallenges,
-                        challengesCompleted: challengesCompleted,
-                        editor: model.editor!,
-                      ),
                     JavaScriptConsole(
                       // TODO: Update logic when working on JS challenges
                       // messages: model.consoleMessages,
@@ -295,10 +282,11 @@ class ChallengeView extends StatelessWidget {
 
   Widget customBottomBar(
     ChallengeViewModel model,
-    bool keyboard,
     Challenge challenge,
     BuildContext context,
   ) {
+    bool keyboard = MediaQuery.of(context).viewInsets.bottom != 0;
+
     return BottomAppBar(
       height: keyboard ? 116 : 72,
       padding: keyboard ? const EdgeInsets.only(bottom: 8) : null,
