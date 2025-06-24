@@ -540,16 +540,17 @@ class ChallengeView extends StatelessWidget {
           model.scaffoldKey.currentState?.openEndDrawer();
         },
       ),
-      _panelIconButton(
-        isActive: model.showPreview,
-        icon: Icons.remove_red_eye_outlined,
-        onPressed: () async {
-          ChallengeFile currFile = model.currentFile(challenge);
-          model.setShowPreview = !model.showPreview;
-          model.setShowConsole = false;
-          model.initFile(challenge, currFile);
-        },
-      ),
+      if (challenge.challengeType != 1 && challenge.challengeType != 26)
+        _panelIconButton(
+          isActive: model.showPreview,
+          icon: Icons.remove_red_eye_outlined,
+          onPressed: () async {
+            ChallengeFile currFile = model.currentFile(challenge);
+            model.setShowPreview = !model.showPreview;
+            model.setShowConsole = false;
+            model.initFile(challenge, currFile);
+          },
+        ),
       if (challenge.challengeType == 1 || challenge.challengeType == 26)
         _panelIconButton(
           isActive: model.showConsole,
