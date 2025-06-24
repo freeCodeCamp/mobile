@@ -67,14 +67,26 @@ class QuizViewModel extends BaseViewModel {
     final question = quizQuestions[questionIndex];
     question.selectedAnswer = answerIndex;
 
-    // Reset the validation status when user changes the selection
-    setIsValidated = false;
-    setErrMessage = '';
+    if (isValidated) {
+      // Reset the validation status when user changes the selection
+      setIsValidated = false;
+    }
+
+    if (errMessage.isNotEmpty) {
+      // Clear the error message when user changes the selection
+      setErrMessage = '';
+    }
 
     notifyListeners();
   }
 
   void validateChallenge() {
+    if (unansweredQuestions.length > 1) {
+      setErrMessage =
+          "The following questions are unanswered: ${unansweredQuestions.join(', ')}. You must answer all questions.";
+      return;
+    }
+
     // Loop through each question and set isCorrect status
     setQuizQuestions = List.from(quizQuestions)
       ..asMap().forEach((i, question) {
@@ -91,13 +103,8 @@ class QuizViewModel extends BaseViewModel {
 
     setIsValidated = true;
 
-    if (unansweredQuestions.length > 1) {
-      setErrMessage =
-          "The following questions are unanswered: ${unansweredQuestions.join(', ')}. You must answer all questions.";
-    } else {
-      setErrMessage = hasPassedAllQuestions
-          ? '✅ You have $correctQuestionsCount out of $totalQuestions questions correct. You have passed.'
-          : "❌ You have $correctQuestionsCount out of $totalQuestions questions correct. You didn't pass.";
-    }
+    setErrMessage = hasPassedAllQuestions
+        ? '✅ You have $correctQuestionsCount out of $totalQuestions questions correct. You have passed.'
+        : "❌ You have $correctQuestionsCount out of $totalQuestions questions correct. You didn't pass.";
   }
 }
