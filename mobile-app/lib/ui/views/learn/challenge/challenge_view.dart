@@ -181,12 +181,15 @@ class ChallengeView extends StatelessWidget {
                           child: Text(
                             '${file.name}.${file.ext.name}',
                             style: TextStyle(
-                              color: model.currentSelectedFile == file.name
+                              color: model.currentSelectedFile == file.name &&
+                                      !model.showTestsPanel
                                   ? FccColors.blue50
                                   : Colors.white,
-                              fontWeight: model.currentSelectedFile == file.name
-                                  ? FontWeight.bold
-                                  : FontWeight.normal,
+                              fontWeight:
+                                  model.currentSelectedFile == file.name &&
+                                          !model.showTestsPanel
+                                      ? FontWeight.bold
+                                      : FontWeight.normal,
                             ),
                           ),
                         )
@@ -206,12 +209,15 @@ class ChallengeView extends StatelessWidget {
                           child: Text(
                             '${file.name}.${file.ext.name}',
                             style: TextStyle(
-                              color: model.currentSelectedFile == file.name
+                              color: model.currentSelectedFile == file.name &&
+                                      !model.showTestsPanel
                                   ? FccColors.blue50
                                   : Colors.white,
-                              fontWeight: model.currentSelectedFile == file.name
-                                  ? FontWeight.bold
-                                  : FontWeight.normal,
+                              fontWeight:
+                                  model.currentSelectedFile == file.name &&
+                                          !model.showTestsPanel
+                                      ? FontWeight.bold
+                                      : FontWeight.normal,
                             ),
                           ),
                         );
