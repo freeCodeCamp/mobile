@@ -8,7 +8,6 @@ import 'package:freecodecamp/ui/views/learn/utils/challenge_utils.dart';
 import 'package:freecodecamp/ui/views/learn/widgets/assignment_widget.dart';
 import 'package:freecodecamp/ui/views/learn/widgets/challenge_card.dart';
 import 'package:freecodecamp/ui/views/learn/widgets/youtube_player_widget.dart';
-import 'package:freecodecamp/ui/views/news/html_handler/html_handler.dart';
 import 'package:stacked/stacked.dart';
 
 class ReviewView extends StatelessWidget {
@@ -25,11 +24,9 @@ class ReviewView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    HTMLParser parser = HTMLParser(context: context);
-
     return ViewModelBuilder<ReviewViewmodel>.reactive(
       viewModelBuilder: () => ReviewViewmodel(),
-      onViewModelReady: (model) => model.initChallenge(challenge),
+      onViewModelReady: (model) => model.initChallenge(challenge, context),
       builder: (context, model, child) {
         return Scaffold(
           backgroundColor: FccColors.gray90,
@@ -44,14 +41,14 @@ class ReviewView extends StatelessWidget {
                   title: challenge.title,
                   child: Column(
                     children: [
-                      ...parser.parse(
-                        challenge.instructions,
-                        fontColor: FccColors.gray05,
-                      ),
-                      ...parser.parse(
-                        challenge.description,
-                        fontColor: FccColors.gray05,
-                      ),
+                      if (model.parsedInstructions != null)
+                        ...model.parsedInstructions!
+                      else
+                        const SizedBox.shrink(),
+                      if (model.parsedDescription != null)
+                        ...model.parsedDescription!
+                      else
+                        const SizedBox.shrink(),
                     ],
                   ),
                 ),
