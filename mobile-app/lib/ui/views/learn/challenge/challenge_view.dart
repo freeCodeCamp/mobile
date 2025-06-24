@@ -59,30 +59,49 @@ class ChallengeView extends StatelessWidget {
           );
         }
 
+        WidgetsBinding.instance.addPostFrameCallback((_) {
+          final scaffoldState = model.scaffoldKey.currentState;
+          if (!model.drawerOpened) {
+            model.setDrawerOpened = true;
+            if (scaffoldState != null && !(scaffoldState.isEndDrawerOpen)) {
+              scaffoldState.openEndDrawer();
+            }
+          }
+        });
+
         return Scaffold(
-          appBar: PreferredSize(
-            preferredSize: Size(
-              MediaQuery.sizeOf(context).width,
-              model.showPanel ? 0 : 50,
-            ),
-            child: AppBar(
-              automaticallyImplyLeading:
-                  !(model.showPreview || model.showConsole),
-              title: (() {
-                if (model.showPreview) {
-                  return const Text('PREVIEW',
-                      style: TextStyle(fontWeight: FontWeight.bold));
-                } else if (model.showConsole) {
-                  return const Text('CONSOLE',
-                      style: TextStyle(fontWeight: FontWeight.bold));
-                } else {
-                  return Row(
-                    children: [customTabBar(model, challenge, context)],
-                  );
-                }
-              })(),
+          key: model.scaffoldKey,
+          appBar: AppBar(
+            actions: <Widget>[
+              Container(),
+            ],
+            title: (() {
+              if (model.showPreview) {
+                return const Text('PREVIEW',
+                    style: TextStyle(fontWeight: FontWeight.bold));
+              } else if (model.showConsole) {
+                return const Text('CONSOLE',
+                    style: TextStyle(fontWeight: FontWeight.bold));
+              } else {
+                return Row(
+                  children: [customTabBar(model, challenge, context)],
+                );
+              }
+            })(),
+          ),
+          endDrawer: Drawer(
+            width: MediaQuery.of(context).size.width * 0.9,
+            child: SafeArea(
+              child: model.getPanelWidget(
+                panelType: model.panelType,
+                challenge: challenge,
+                model: model,
+                maxChallenges: maxChallenges,
+                challengesCompleted: challengesCompleted,
+              ),
             ),
           ),
+          onEndDrawerChanged: (isOpened) => model.setShowPanel = isOpened,
           bottomNavigationBar: Container(
             decoration: const BoxDecoration(
               border: Border(
@@ -123,15 +142,6 @@ class ChallengeView extends StatelessWidget {
               : model.showPreview
                   ? Column(
                       children: [
-                        if (model.showPanel && !keyboard)
-                          DynamicPanel(
-                            challenge: challenge,
-                            model: model,
-                            panel: model.panelType,
-                            maxChallenges: maxChallenges,
-                            challengesCompleted: challengesCompleted,
-                            editor: model.editor!,
-                          ),
                         ProjectPreview(
                           challenge: challenge,
                           model: model,
@@ -140,15 +150,6 @@ class ChallengeView extends StatelessWidget {
                     )
                   : Column(
                       children: [
-                        if (model.showPanel && !keyboard)
-                          DynamicPanel(
-                            challenge: challenge,
-                            model: model,
-                            panel: model.panelType,
-                            maxChallenges: maxChallenges,
-                            challengesCompleted: challengesCompleted,
-                            editor: model.editor!,
-                          ),
                         if (model.showTestsPanel)
                           Expanded(child: testList(challenge, model)),
                         if (!model.showTestsPanel)
@@ -347,9 +348,8 @@ class ChallengeView extends StatelessWidget {
                     log('TestRunner: $res');
                   },
                   initialSettings: InAppWebViewSettings(
-                    isInspectable: true,
-                    mediaPlaybackRequiresUserGesture: false
-                  ),
+                      isInspectable: true,
+                      mediaPlaybackRequiresUserGesture: false),
                 ),
               ),
               Container(
@@ -368,20 +368,12 @@ class ChallengeView extends StatelessWidget {
                         : Colors.white,
                   ),
                   onPressed: () {
-                    if (model.showPanel &&
-                        model.panelType != PanelType.instruction) {
+                    if (model.panelType != PanelType.instruction) {
                       model.setPanelType = PanelType.instruction;
-                    } else {
-                      model.setPanelType = PanelType.instruction;
-                      if (MediaQuery.of(context).viewInsets.bottom > 0) {
-                        FocusManager.instance.primaryFocus?.unfocus();
-                        if (!model.showPanel) {
-                          model.setShowPanel = true;
-                        }
-                      } else {
-                        model.setShowPanel = !model.showPanel;
-                      }
                     }
+                    model.setShowPanel = !model.showPanel;
+
+                    model.scaffoldKey.currentState?.openEndDrawer();
                   },
                   splashColor: Colors.transparent,
                   highlightColor: Colors.transparent,
