@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_heatmap_calendar/flutter_heatmap_calendar.dart';
 import 'package:freecodecamp/extensions/i18n_extension.dart';
 import 'package:freecodecamp/models/main/user_model.dart';
-import 'package:freecodecamp/service/authentication/authentication_service.dart';
+import 'package:freecodecamp/ui/theme/fcc_theme.dart';
 import 'package:freecodecamp/ui/views/profile/profile_viewmodel.dart';
 import 'package:freecodecamp/ui/widgets/drawer_widget/drawer_widget_view.dart';
 import 'package:jiffy/jiffy.dart';
@@ -36,34 +36,49 @@ class ProfileView extends StatelessWidget {
 
   BoxBorder borderPicker(FccUserModel user) {
     if (user.isDonating && user.yearsTopContributor.isNotEmpty) {
-      return Border.all(width: 5, color: const Color(0xFF9400D3));
+      return Border.all(width: 5, color: FccColors.purple50);
     } else if (user.yearsTopContributor.isNotEmpty) {
-      return Border.all(width: 5, color: const Color(0xFF198EEE));
+      return Border.all(width: 5, color: FccColors.blue50);
     } else if (user.isDonating) {
-      return Border.all(width: 5, color: const Color(0xFFFFBF00));
+      return Border.all(width: 5, color: FccColors.yellow45);
     } else {
-      return Border.all(width: 5, color: const Color(0xFFD0D0D5));
+      return Border.all(width: 5, color: FccColors.gray15);
     }
   }
+
+  Widget buildDivider() => Divider(
+        color: FccColors.gray75,
+        thickness: 1.2,
+        height: 24,
+      );
 
   @override
   Widget build(BuildContext context) {
     return ViewModelBuilder<ProfileViewModel>.reactive(
       viewModelBuilder: () => ProfileViewModel(),
       builder: (context, model, child) => Scaffold(
-        backgroundColor: const Color(0xFF0a0a23),
+        backgroundColor: FccSemanticColors.backgroundPrimary,
         appBar: AppBar(
-          title: Text(context.t.profile_title),
+          title: Text(
+            context.t.profile_title,
+            style: const TextStyle(color: FccSemanticColors.foregroundPrimary),
+          ),
+          backgroundColor: FccSemanticColors.backgroundSecondary,
+          iconTheme:
+              const IconThemeData(color: FccSemanticColors.foregroundPrimary),
         ),
         drawer: const DrawerWidgetView(),
         body: FutureBuilder<FccUserModel>(
           future: model.auth.userModel,
           builder: (context, snapshot) {
             if (snapshot.connectionState != ConnectionState.done) {
-              return const Center(child: CircularProgressIndicator());
+              return const Center(
+                  child: CircularProgressIndicator(color: FccColors.yellow40));
             }
             if (snapshot.hasError) {
-              return Text('${snapshot.error}');
+              return Text('${snapshot.error}',
+                  style: const TextStyle(
+                      color: FccSemanticColors.foregroundDanger));
             }
             if (snapshot.hasData) {
               FccUserModel user = snapshot.data!;
@@ -184,170 +199,17 @@ class ProfileView extends StatelessWidget {
               final streak = calculateStreak(user);
 
               return Container(
-                padding: const EdgeInsets.all(4),
+                color: FccSemanticColors.backgroundPrimary,
                 child: SingleChildScrollView(
-                  physics: const ScrollPhysics(),
                   child: Column(
                     children: [
-                      Row(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Container(
-                            margin: const EdgeInsets.all(16),
-                            padding: const EdgeInsets.all(5),
-                            decoration: BoxDecoration(
-                              border: borderPicker(user),
-                            ),
-                            child: user.picture == ''
-                                ? Image.asset(
-                                    'assets/images/placeholder-profile-img.png',
-                                    height: MediaQuery.of(context).size.width *
-                                        0.25,
-                                    width: MediaQuery.of(context).size.width *
-                                        0.25,
-                                  )
-                                : CachedNetworkImage(
-                                    imageUrl: user.picture,
-                                    height: MediaQuery.of(context).size.width *
-                                        0.25,
-                                    width: MediaQuery.of(context).size.width *
-                                        0.25,
-                                    errorWidget: (context, url, error) =>
-                                        Image.asset(
-                                            'assets/images/placeholder-profile-img.png'),
-                                    imageBuilder: (context, imageProvider) =>
-                                        Container(
-                                      decoration: BoxDecoration(
-                                        image: DecorationImage(
-                                          image: imageProvider,
-                                          fit: BoxFit.cover,
-                                        ),
-                                      ),
-                                    ),
-                                  ),
-                          ),
-                          Expanded(
-                            child: Container(
-                              margin: const EdgeInsets.all(16),
-                              child: ListTile(
-                                title: Text('@${user.username}',
-                                    style: const TextStyle(
-                                        fontSize: 32,
-                                        fontWeight: FontWeight.w700)),
-                                subtitle: Text(
-                                  user.name,
-                                  style: const TextStyle(fontSize: 16),
-                                ),
-                              ),
-                            ),
-                          )
-                        ],
-                      ),
-                      buildDivider(),
-                      ListView(
-                        physics: const NeverScrollableScrollPhysics(),
-                        shrinkWrap: true,
-                        children: [
-                          user.location != null
-                              ? ListTile(
-                                  leading: const Icon(Icons.location_on),
-                                  title: Text(
-                                    user.location as String,
-                                  ))
-                              : Container(),
-                          user.isDonating
-                              ? ListTile(
-                                  leading: const Icon(Icons.favorite),
-                                  title: Text(
-                                    context.t.profile_supporter,
-                                  ),
-                                )
-                              : Container(),
-                          user.about != null
-                              ? ListTile(
-                                  leading: const Icon(Icons.chat_bubble),
-                                  title: Text(
-                                    user.about as String,
-                                  ),
-                                )
-                              : Container(),
-                          ListTile(
-                            leading: const Icon(Icons.calendar_month),
-                            title: Text(
-                              context.t.profile_join_date(
-                                Jiffy.parseFromDateTime(user.joinDate).yMMMM,
-                              ),
-                            ),
-                          )
-                        ],
-                      ),
-                      buildDivider(),
-                      ListTile(
-                        leading: const Icon(Icons.local_fire_department_sharp),
-                        title: Text(
-                          context.t.profile_points(
-                            user.points.toString(),
-                          ),
-                        ),
-                      ),
-                      HeatMap(
-                        startDate: Jiffy.now().subtract(months: 3).dateTime,
-                        datasets: user.heatMapCal,
-                        colorsets: const {
-                          0: Color(0xFF2A2A40),
-                          1: Color(0xFF858591),
-                          4: Color(0xFFD0D0D5),
-                          8: Colors.white,
-                        },
-                        defaultColor: const Color(0xFF2A2A40),
-                        scrollable: true,
-                        colorMode: ColorMode.color,
-                        showColorTip: false,
-                        onClick: (value) {
-                          ScaffoldMessenger.of(context).showSnackBar(
-                            SnackBar(
-                              duration: const Duration(seconds: 2),
-                              content: Text(
-                                context.t.profile_points_on_date(
-                                  (user.heatMapCal[value] ?? 0),
-                                  Jiffy.parseFromDateTime(value).yMMMd,
-                                ),
-                              ),
-                            ),
-                          );
-                        },
-                      ),
-                      Padding(
-                        padding: const EdgeInsets.symmetric(vertical: 4),
-                        child: Text(
-                          context.t.profile_longest_streak(
-                            streak['longest'] ?? 0,
-                          ),
-                          textAlign: TextAlign.center,
-                          style: const TextStyle(fontSize: 16, height: 1.25),
-                        ),
-                      ),
-                      Padding(
-                        padding: const EdgeInsets.only(top: 4, bottom: 8),
-                        child: Text(
-                          context.t.profile_current_streak(
-                            streak['current'] ?? 0,
-                          ),
-                          textAlign: TextAlign.center,
-                          style: const TextStyle(fontSize: 16, height: 1.25),
-                        ),
-                      ),
-                      buildDivider(),
-                      CertificationWidget(
-                        user: user,
-                        hasModernCert: hasModernCert,
-                        hasLegacyCert: hasLegacyCert,
-                        currentCerts: currentCerts,
-                        legacyCerts: legacyCerts,
-                      ),
-                      user.portfolio.isNotEmpty
-                          ? PortfolioWidget(user: user)
-                          : Container(),
+                      _buildHeader(user),
+                      _buildAboutCard(user),
+                      _buildInfoSection(context, user, streak),
+                      _buildHeatmap(context, user, streak),
+                      _buildCertifications(user, hasModernCert, hasLegacyCert,
+                          currentCerts, legacyCerts),
+                      _buildPortfolio(user),
                     ],
                   ),
                 ),
@@ -356,6 +218,8 @@ class ProfileView extends StatelessWidget {
               return Center(
                 child: Text(
                   context.t.profile_no_userdata.toString(),
+                  style: const TextStyle(
+                      color: FccSemanticColors.foregroundDanger),
                 ),
               );
             }
@@ -364,16 +228,387 @@ class ProfileView extends StatelessWidget {
       ),
     );
   }
+
+  Widget _buildHeader(FccUserModel user) {
+    return Stack(
+      children: [
+        Container(
+          width: double.infinity,
+          margin: const EdgeInsets.fromLTRB(8, 64, 8, 6),
+          child: Card(
+            color: FccColors.gray85,
+            shape:
+                RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+            child: Padding(
+              padding: const EdgeInsets.only(
+                top: 60,
+                bottom: 24,
+                left: 16,
+                right: 16,
+              ),
+              child: Column(
+                children: [
+                  SizedBox(height: 32),
+                  Text(
+                    user.name,
+                    style: const TextStyle(
+                      fontSize: 26,
+                      fontWeight: FontWeight.bold,
+                      color: FccColors.gray00,
+                    ),
+                  ),
+                  SizedBox(height: 4),
+                  Text(
+                    '@${user.username}',
+                    style: const TextStyle(
+                      fontSize: 16,
+                      color: FccColors.yellow40,
+                      fontWeight: FontWeight.w600,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ),
+        ),
+        Center(
+          child: Stack(
+            children: [
+              Container(
+                decoration: BoxDecoration(
+                  shape: BoxShape.circle,
+                  border: Border.all(
+                    color: FccColors.blue50,
+                    width: 3,
+                  ),
+                ),
+                child: CircleAvatar(
+                  radius: 54,
+                  backgroundColor: FccColors.gray85,
+                  backgroundImage: user.picture == ''
+                      ? const AssetImage(
+                          'assets/images/placeholder-profile-img.png')
+                      : CachedNetworkImageProvider(user.picture)
+                          as ImageProvider,
+                ),
+              ),
+              if (user.isDonating || user.yearsTopContributor.isNotEmpty)
+                Positioned(
+                  bottom: 4,
+                  right: 4,
+                  child: Container(
+                    decoration: BoxDecoration(
+                      color: FccColors.yellow45,
+                      shape: BoxShape.circle,
+                      border: Border.all(color: Colors.white, width: 2),
+                    ),
+                    padding: const EdgeInsets.all(4),
+                    child: Icon(
+                      user.isDonating ? Icons.favorite : Icons.emoji_events,
+                      color: FccColors.gray85,
+                      size: 18,
+                    ),
+                  ),
+                ),
+            ],
+          ),
+        ),
+      ],
+    );
+  }
+
+  Widget _buildAboutCard(FccUserModel user) {
+    if (user.about == null || user.about!.trim().isEmpty) {
+      return const SizedBox.shrink();
+    }
+    return Container(
+      width: double.infinity,
+      margin: const EdgeInsets.symmetric(horizontal: 8, vertical: 6),
+      child: Card(
+        color: FccColors.gray85,
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+        child: Padding(
+          padding: const EdgeInsets.symmetric(vertical: 16, horizontal: 16),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Row(
+                children: [
+                  Icon(Icons.chat_bubble, color: FccColors.purple50, size: 22),
+                  const SizedBox(width: 10),
+                  const Text(
+                    'About',
+                    style: TextStyle(
+                      color: FccColors.purple50,
+                      fontWeight: FontWeight.bold,
+                      fontSize: 16,
+                    ),
+                  ),
+                ],
+              ),
+              const SizedBox(height: 8),
+              Text(
+                user.about!,
+                style: const TextStyle(
+                  color: Colors.white,
+                  fontWeight: FontWeight.w600,
+                  fontSize: 15,
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildInfoSection(
+      BuildContext context, FccUserModel user, Map<String, int> streak) {
+    final infoRows = <Widget>[
+      if (user.location != null && user.location!.trim().isNotEmpty)
+        _infoRow(
+            Icons.location_on, 'Location', user.location!, FccColors.blue50),
+      if (user.isDonating)
+        _infoRow(Icons.favorite, 'Supporter', context.t.profile_supporter,
+            FccColors.yellow45),
+      if (user.twitter != null && user.twitter!.trim().isNotEmpty)
+        _infoRow(
+            Icons.alternate_email, 'X', '@${user.twitter}', FccColors.blue50),
+      if (user.githubProfile != null && user.githubProfile!.trim().isNotEmpty)
+        _infoRow(Icons.code, 'GitHub', user.githubProfile!, FccColors.blue50),
+      if (user.linkedin != null && user.linkedin!.trim().isNotEmpty)
+        _infoRow(Icons.business, 'LinkedIn', user.linkedin!, FccColors.blue50),
+      if (user.website != null && user.website!.trim().isNotEmpty)
+        _infoRow(Icons.language, 'Website', user.website!, FccColors.blue50),
+      _infoRow(Icons.calendar_month, 'Joined',
+          Jiffy.parseFromDateTime(user.joinDate).yMMMM, FccColors.gray15),
+      _infoRow(Icons.local_fire_department_sharp, 'Points',
+          user.points.toString(), FccColors.red30),
+      _infoRow(Icons.emoji_events, 'Longest Streak',
+          (streak['longest'] ?? 0).toString(), FccColors.yellow40),
+      _infoRow(Icons.bolt, 'Current Streak',
+          (streak['current'] ?? 0).toString(), FccColors.yellow40),
+    ];
+    return Container(
+      width: double.infinity,
+      margin: const EdgeInsets.symmetric(horizontal: 8, vertical: 6),
+      child: Card(
+        color: FccColors.gray85,
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+        child: Padding(
+          padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 16),
+          child: Column(
+            children: [
+              ...infoRows.expand((row) sync* {
+                yield row;
+                yield const Divider(
+                    color: FccColors.gray75, height: 18, thickness: 1);
+              }).toList()
+                ..removeLast(),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget _infoRow(IconData icon, String label, String value, Color iconColor) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 4),
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.center,
+        children: [
+          Icon(icon, color: iconColor, size: 22),
+          const SizedBox(width: 14),
+          Text(
+            label,
+            style: const TextStyle(
+              color: FccColors.gray15,
+              fontWeight: FontWeight.w600,
+              fontSize: 14,
+            ),
+          ),
+          const SizedBox(width: 10),
+          Expanded(
+            child: Text(
+              value,
+              style: const TextStyle(
+                color: Colors.white,
+                fontWeight: FontWeight.w500,
+                fontSize: 15,
+              ),
+              overflow: TextOverflow.ellipsis,
+              maxLines: 1,
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildHeatmap(
+      BuildContext context, FccUserModel user, Map<String, int> streak) {
+    return Container(
+      width: double.infinity,
+      margin: const EdgeInsets.symmetric(horizontal: 8, vertical: 6),
+      child: Card(
+        color: FccColors.gray85,
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+        child: Padding(
+          padding: const EdgeInsets.all(12),
+          child: Column(
+            children: [
+              HeatMap(
+                startDate: Jiffy.now().subtract(months: 3).dateTime,
+                datasets: user.heatMapCal,
+                colorsets: const {
+                  0: FccColors.gray80,
+                  1: FccColors.gray45,
+                  4: FccColors.gray15,
+                  8: FccColors.gray00,
+                },
+                defaultColor: FccColors.gray80,
+                scrollable: true,
+                colorMode: ColorMode.color,
+                showColorTip: false,
+                onClick: (value) {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(
+                      backgroundColor: FccColors.gray75,
+                      duration: const Duration(seconds: 2),
+                      content: Text(
+                        context.t.profile_points_on_date(
+                          (user.heatMapCal[value] ?? 0),
+                          Jiffy.parseFromDateTime(value).yMMMd,
+                        ),
+                        style: const TextStyle(
+                            color: FccSemanticColors.foregroundPrimary),
+                      ),
+                    ),
+                  );
+                },
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildCertifications(FccUserModel user, bool hasModernCert,
+      bool hasLegacyCert, List currentCerts, List legacyCerts) {
+    return Container(
+      width: double.infinity,
+      margin: const EdgeInsets.symmetric(horizontal: 8, vertical: 6),
+      child: Card(
+        color: FccColors.gray85,
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+        child: Padding(
+          padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 8),
+          child: CertificationWidget(
+            user: user,
+            hasModernCert: hasModernCert,
+            hasLegacyCert: hasLegacyCert,
+            currentCerts: currentCerts,
+            legacyCerts: legacyCerts,
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildPortfolio(FccUserModel user) {
+    if (user.portfolio.isEmpty) return const SizedBox.shrink();
+    return Container(
+      width: double.infinity,
+      margin: const EdgeInsets.symmetric(horizontal: 8, vertical: 6),
+      child: Card(
+        color: FccColors.gray85,
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+        child: Padding(
+          padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 8),
+          child: _buildPortfolioWidget(user),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildPortfolioWidget(FccUserModel user) {
+    return Column(
+      children: [
+        buildDivider(),
+        Padding(
+          padding: const EdgeInsets.all(8),
+          child: Text(
+            'Portfolio',
+            textAlign: TextAlign.center,
+            style: const TextStyle(
+              fontSize: 20,
+              height: 1.25,
+              fontWeight: FontWeight.w700,
+            ),
+          ),
+        ),
+        ...user.portfolio.map(
+          (portfolio) => InkWell(
+            onTap: () => launchUrl(Uri.parse(portfolio.url!)),
+            child: Card(
+              margin: const EdgeInsets.symmetric(
+                horizontal: 12,
+                vertical: 6,
+              ),
+              color: const Color.fromRGBO(0x2A, 0x2A, 0x40, 1),
+              child: Padding(
+                padding: const EdgeInsets.all(12),
+                child: Column(
+                  children: [
+                    if (portfolio.image != null && portfolio.image!.isNotEmpty)
+                      Image.network(
+                        portfolio.image!,
+                        height: 120,
+                        fit: BoxFit.cover,
+                      ),
+                    const SizedBox(height: 8),
+                    Text(
+                      portfolio.title!,
+                      textAlign: TextAlign.center,
+                      style: const TextStyle(
+                        fontSize: 16,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                    if (portfolio.description != null &&
+                        portfolio.description!.isNotEmpty)
+                      Padding(
+                        padding: const EdgeInsets.only(top: 8.0),
+                        child: Text(
+                          portfolio.description!,
+                          textAlign: TextAlign.center,
+                          style: const TextStyle(
+                            fontSize: 14,
+                          ),
+                        ),
+                      ),
+                  ],
+                ),
+              ),
+            ),
+          ),
+        ),
+      ],
+    );
+  }
 }
 
 class CertificationWidget extends StatelessWidget {
-  const CertificationWidget(
-      {super.key,
-      required this.user,
-      required this.hasModernCert,
-      required this.hasLegacyCert,
-      required this.currentCerts,
-      required this.legacyCerts});
+  const CertificationWidget({
+    super.key,
+    required this.user,
+    required this.hasModernCert,
+    required this.hasLegacyCert,
+    required this.currentCerts,
+    required this.legacyCerts,
+  });
 
   final FccUserModel user;
   final bool hasModernCert;
@@ -399,193 +634,44 @@ class CertificationWidget extends StatelessWidget {
               ),
             ),
           ),
-          hasModernCert
-              ? ListView(
-                  padding: const EdgeInsets.all(4),
-                  physics: const NeverScrollableScrollPhysics(),
-                  shrinkWrap: true,
-                  children: currentCerts
-                      .map(
-                        (cert) => (cert['show'] as bool)
-                            ? SizedBox(
-                                height: 50,
-                                child: ListTile(
-                                  title: Text(
-                                    context.t.profile_view_cert(
-                                      cert['title'].toString(),
-                                    ),
-                                  ),
-                                  trailing: const Icon(
-                                    Icons.arrow_forward_ios_sharp,
-                                    color: Colors.white,
-                                  ),
-                                  onTap: () => launchUrl(
-                                    Uri.parse(
-                                      '${AuthenticationService.baseURL}/certification/${user.username}/${cert["certSlug"]}',
-                                    ),
-                                  ),
-                                ),
-                              )
-                            : Container(),
-                      )
-                      .toList(),
-                )
-              : Padding(
-                  padding: const EdgeInsets.all(4),
-                  child: Text(
-                    context.t.profile_no_modern_certs,
-                    textAlign: TextAlign.center,
-                    style: const TextStyle(
-                      fontSize: 16,
-                      height: 1.25,
-                    ),
-                  ),
-                ),
-          hasLegacyCert
-              ? Column(
-                  children: [
-                    Padding(
-                      padding: const EdgeInsets.only(top: 16, bottom: 2),
-                      child: Text(
-                        context.t.profile_legacy_certs,
-                        textAlign: TextAlign.center,
-                        style: const TextStyle(
-                          fontSize: 18,
-                          height: 1.25,
-                          fontWeight: FontWeight.w700,
-                        ),
-                      ),
-                    ),
-                    ListView(
-                      padding: const EdgeInsets.all(4),
-                      physics: const NeverScrollableScrollPhysics(),
-                      shrinkWrap: true,
-                      children: legacyCerts
-                          .map(
-                            (cert) => (cert['show'] as bool)
-                                ? SizedBox(
-                                    height: 50,
-                                    child: ListTile(
-                                      title: Text(
-                                        context.t.profile_view_cert(
-                                          cert['title'].toString(),
-                                        ),
-                                      ),
-                                      trailing: const Icon(
-                                        Icons.arrow_forward_ios_sharp,
-                                        color: Colors.white,
-                                      ),
-                                      onTap: () => launchUrl(
-                                        Uri.parse(
-                                          '${AuthenticationService.baseURL}/certification/${user.username}/${cert["certSlug"]}',
-                                        ),
-                                      ),
-                                    ),
-                                  )
-                                : Container(),
-                          )
-                          .toList(),
-                    ),
-                  ],
-                )
-              : Container(),
+          if (hasModernCert) _buildTrophyList(currentCerts),
+          if (hasLegacyCert) _buildTrophyList(legacyCerts),
         ],
       ),
     );
   }
-}
 
-class PortfolioWidget extends StatelessWidget {
-  const PortfolioWidget({super.key, required this.user});
-
-  final FccUserModel user;
-
-  @override
-  Widget build(BuildContext context) {
-    return ViewModelBuilder<ProfileViewModel>.reactive(
-      viewModelBuilder: () => ProfileViewModel(),
-      builder: (context, model, child) => Column(
-        // mainAxisSize: MainAxisSize.min,
-        children: [
-          buildDivider(),
-          Padding(
-            padding: const EdgeInsets.all(8),
-            child: Text(
-              context.t.profile_portfolio,
-              textAlign: TextAlign.center,
-              style: const TextStyle(
-                fontSize: 20,
-                height: 1.25,
-                fontWeight: FontWeight.w700,
-              ),
-            ),
+  Widget _buildTrophyList(List certs) {
+    return Column(
+      children: certs.where((cert) => cert['show']).map<Widget>((cert) {
+        return Container(
+          margin: const EdgeInsets.symmetric(vertical: 6, horizontal: 0),
+          decoration: BoxDecoration(
+            color: FccColors.gray85,
+            borderRadius: BorderRadius.circular(16),
           ),
-          ...user.portfolio.map(
-            (portfolio) => InkWell(
-              onTap: () => launchUrl(Uri.parse(portfolio.url!)),
-              child: Card(
-                margin: const EdgeInsets.symmetric(
-                  horizontal: 12,
-                  vertical: 6,
-                ),
-                color: const Color.fromRGBO(0x2A, 0x2A, 0x40, 1),
-                child: Padding(
-                  padding: const EdgeInsets.all(8),
-                  child: Column(
-                    children: [
-                      // Apparentlly all properties are present with empty values - CONFIRM
-                      portfolio.image!.isNotEmpty
-                          ? Padding(
-                              padding: const EdgeInsets.only(
-                                bottom: 6,
-                              ),
-                              child: CachedNetworkImage(
-                                imageUrl: portfolio.image ?? '',
-                                height: 200,
-                                errorWidget: (context, url, error) => Image.asset(
-                                    'assets/images/placeholder-profile-img.png'),
-                                imageBuilder: (context, imageProvider) =>
-                                    Container(
-                                  decoration: BoxDecoration(
-                                    image: DecorationImage(
-                                      image: imageProvider,
-                                      fit: BoxFit.contain,
-                                    ),
-                                  ),
-                                ),
-                              ),
-                            )
-                          : Container(),
-                      Text(
-                        portfolio.title!,
-                        textAlign: TextAlign.center,
-                        style: const TextStyle(
-                          fontSize: 18,
-                          // height: 1.25,
-                        ),
-                      ),
-                      portfolio.description!.isNotEmpty
-                          ? Padding(
-                              padding: const EdgeInsets.only(top: 6),
-                              child: Text(
-                                portfolio.description!,
-                                textAlign: TextAlign.center,
-                                style: const TextStyle(
-                                  fontSize: 14,
-                                  // height: 1.25,
-                                  // fontWeight: FontWeight.w700,
-                                ),
-                              ),
-                            )
-                          : Container(),
-                    ],
+          child: Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+            child: Row(
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: [
+                Icon(Icons.emoji_events, color: FccColors.yellow40, size: 26),
+                const SizedBox(width: 14),
+                Expanded(
+                  child: Text(
+                    cert['title'],
+                    style: const TextStyle(
+                      color: FccColors.yellow40,
+                      fontWeight: FontWeight.w600,
+                      fontSize: 15,
+                    ),
                   ),
                 ),
-              ),
+              ],
             ),
           ),
-        ],
-      ),
+        );
+      }).toList(),
     );
   }
 }
