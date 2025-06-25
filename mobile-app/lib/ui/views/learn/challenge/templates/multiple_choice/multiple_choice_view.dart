@@ -52,6 +52,15 @@ class MultipleChoiceView extends StatelessWidget {
           body: SafeArea(
             child: ListView(
               children: [
+                if (challenge.description.isNotEmpty)
+                  ChallengeCard(
+                    title: 'Description',
+                    child: Column(
+                      children: parser.parse(
+                        challenge.description,
+                      ),
+                    ),
+                  ),
                 if (challenge.videoId != null) ...[
                   ChallengeCard(
                     title: 'Watch the Video',
@@ -98,15 +107,6 @@ class MultipleChoiceView extends StatelessWidget {
                     ),
                   ),
                 ],
-                if (challenge.description.isNotEmpty)
-                  ChallengeCard(
-                    title: 'Description',
-                    child: Column(
-                      children: parser.parse(
-                        challenge.description,
-                      ),
-                    ),
-                  ),
                 QuizWidget(
                     isValidated: model.isValidated,
                     questions: model.quizQuestions,

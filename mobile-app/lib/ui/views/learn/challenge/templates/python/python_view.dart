@@ -70,8 +70,8 @@ class PythonView extends StatelessWidget {
                       transcript: challenge.transcript!,
                     ),
                   ),
+                  const SizedBox(height: 12),
                 ],
-                const SizedBox(height: 12),
                 ...parser.parse(
                   challenge.description,
                 ),
