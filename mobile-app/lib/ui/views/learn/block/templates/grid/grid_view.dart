@@ -129,11 +129,21 @@ class BlockGridView extends StatelessWidget {
                         ),
                         itemCount: block.challenges.length,
                         itemBuilder: (context, step) {
+                          final challenge = block.challengeTiles[step];
+
+                          // challenge.name follows the "Step 1", "Step 2" format
+                          // so we extract the step number here
+                          final match =
+                              RegExp(r'\d+').firstMatch(challenge.name);
+                          final stepNumber = match != null
+                              ? int.parse(match.group(0)!)
+                              : step + 1;
+
                           return ChallengeTile(
                             block: block,
                             model: model,
-                            step: step + 1,
-                            challengeId: block.challengeTiles[step].id,
+                            step: stepNumber,
+                            challengeId: challenge.id,
                             isDownloaded: false,
                           );
                         },
