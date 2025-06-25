@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_inappwebview/flutter_inappwebview.dart';
 import 'package:freecodecamp/ui/views/learn/widgets/console/console_viewmodel.dart';
 import 'package:freecodecamp/ui/views/news/html_handler/html_handler.dart';
 import 'package:stacked/stacked.dart';
@@ -7,12 +6,12 @@ import 'package:stacked/stacked.dart';
 class JavaScriptConsole extends StatelessWidget {
   const JavaScriptConsole({super.key, required this.messages});
 
-  final List<ConsoleMessage> messages;
+  final List<String> messages;
 
-  static String defaultMessage = '''
-  /**
-  * Your test output will go here
-  */
+  final String defaultMessage = '''
+  <p>/**<br/>
+  * Your test output will go here<br/>
+  */</p>
   ''';
 
   @override
@@ -24,21 +23,23 @@ class JavaScriptConsole extends StatelessWidget {
           context: context,
         );
 
+        final scrollController = ScrollController();
+
         return Expanded(
           child: Row(
             children: [
               Expanded(
                 child: Scrollbar(
+                  controller: scrollController,
                   child: ListView.builder(
                     padding: const EdgeInsets.all(8),
                     physics: const ClampingScrollPhysics(),
+                    controller: scrollController,
                     primary: false,
                     itemCount: messages.isEmpty ? 1 : messages.length,
                     itemBuilder: (context, index) {
                       List<Widget> htmlWidgets = parser.parse(
-                        messages.isEmpty
-                            ? defaultMessage
-                            : messages[index].message,
+                        messages.isEmpty ? defaultMessage : messages[index],
                       );
 
                       return consoleMessage(htmlWidgets, model, context);
@@ -58,22 +59,13 @@ class JavaScriptConsole extends StatelessWidget {
     JavaScriptConsoleViewModel model,
     BuildContext context,
   ) {
-    return messages.isEmpty
-        ? Text(
-            defaultMessage,
-            style: TextStyle(
-              color: model.getConsoleTextColor(
-                ConsoleMessageLevel.LOG,
-              ),
-            ),
+    return Row(
+      children: [
+        for (int i = 0; i < htmlWidgets.length; i++)
+          Expanded(
+            child: htmlWidgets[i],
           )
-        : Row(
-            children: [
-              for (int i = 0; i < htmlWidgets.length; i++)
-                Expanded(
-                  child: htmlWidgets[i],
-                )
-            ],
-          );
+      ],
+    );
   }
 }

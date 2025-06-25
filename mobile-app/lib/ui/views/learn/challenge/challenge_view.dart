@@ -166,7 +166,10 @@ class ChallengeView extends StatelessWidget {
       return Column(
         children: [
           JavaScriptConsole(
-            messages: [],
+            messages: [
+              ...model.testConsoleMessages,
+              ...model.userConsoleMessages
+            ],
           ),
         ],
       );
@@ -255,7 +258,10 @@ class ChallengeView extends StatelessWidget {
                     model.setTestController = controller;
                   },
                   onConsoleMessage: (controller, console) {
-                    log('Test Runner Console message: \\${console.message}');
+                    model.setUserConsoleMessages = [
+                      ...model.userConsoleMessages,
+                      '<p>${console.message}</p>',
+                    ];
                   },
                   onLoadStop: (controller, url) async {
                     ScriptBuilder builder = ScriptBuilder();
