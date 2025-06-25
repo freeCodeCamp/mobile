@@ -53,12 +53,12 @@ class QuizView extends StatelessWidget {
                   ),
                   TextButton(
                     style: TextButton.styleFrom(
-                      backgroundColor: FccColors.gray80,
+                      backgroundColor: FccColors.red15,
                     ),
                     onPressed: () => Navigator.of(context).pop(true),
                     child: const Text(
                       'Leave',
-                      style: TextStyle(color: FccColors.red30),
+                      style: TextStyle(color: FccColors.red90),
                     ),
                   ),
                 ],
