@@ -60,6 +60,15 @@ class MultipleChoiceView extends StatelessWidget {
                     ),
                   ),
                 ],
+                if (challenge.transcript != null &&
+                    challenge.transcript!.isNotEmpty) ...[
+                  ChallengeCard(
+                    title: 'Transcript',
+                    child: Transcript(
+                      transcript: challenge.transcript!,
+                    ),
+                  ),
+                ],
                 if (challenge.audio != null) ...[
                   ChallengeCard(
                     title: 'Listen to the Audio',
@@ -98,15 +107,6 @@ class MultipleChoiceView extends StatelessWidget {
                       ),
                     ),
                   ),
-                if (challenge.transcript != null &&
-                    challenge.transcript!.isNotEmpty) ...[
-                  ChallengeCard(
-                    title: 'Transcript',
-                    child: Transcript(
-                      transcript: challenge.transcript!,
-                    ),
-                  ),
-                ],
                 QuizWidget(
                     isValidated: model.isValidated,
                     questions: model.quizQuestions,
