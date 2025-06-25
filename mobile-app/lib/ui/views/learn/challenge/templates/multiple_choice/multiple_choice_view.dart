@@ -79,7 +79,7 @@ class MultipleChoiceView extends StatelessWidget {
                 ],
                 if (challenge.audio != null) ...[
                   ChallengeCard(
-                    title: 'Audio',
+                    title: 'Listen to the Audio',
                     child: AudioPlayerView(
                       audio: challenge.audio!,
                     ),

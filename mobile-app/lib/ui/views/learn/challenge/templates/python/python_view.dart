@@ -53,6 +53,15 @@ class PythonView extends StatelessWidget {
                   ),
                 ),
                 const SizedBox(height: 12),
+                if (challenge.description.isNotEmpty)
+                  ChallengeCard(
+                    title: 'Description',
+                    child: Column(
+                      children: parser.parse(
+                        challenge.description,
+                      ),
+                    ),
+                  ),
                 Padding(
                   padding: const EdgeInsets.symmetric(
                     horizontal: 16,
@@ -69,12 +78,16 @@ class PythonView extends StatelessWidget {
                       transcript: challenge.transcript,
                     ),
                   ),
-                  const SizedBox(height: 12),
                 ],
-                ...parser.parse(
-                  challenge.description,
-                ),
-                if (challenge.description.isNotEmpty) buildDivider(),
+                if (challenge.instructions.isNotEmpty)
+                  ChallengeCard(
+                    title: 'Instructions',
+                    child: Column(
+                      children: parser.parse(
+                        challenge.instructions,
+                      ),
+                    ),
+                  ),
                 QuizWidget(
                     isValidated: model.isValidated,
                     questions: model.quizQuestions,
