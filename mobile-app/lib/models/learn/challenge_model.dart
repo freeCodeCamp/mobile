@@ -57,7 +57,7 @@ class Challenge {
   final int challengeType;
   final HelpCategory helpCategory;
   final String? explanation;
-  final String? transcript;
+  final String transcript;
 
   final List<ChallengeTest> tests;
   final List<ChallengeFile> files;
@@ -87,7 +87,7 @@ class Challenge {
     required this.files,
     required this.helpCategory,
     this.explanation,
-    this.transcript,
+    required this.transcript,
     this.questions,
     this.assignments,
     this.fillInTheBlank,

@@ -62,12 +62,11 @@ class PythonView extends StatelessWidget {
                   ),
                 ),
                 const SizedBox(height: 12),
-                if (challenge.transcript != null &&
-                    challenge.transcript!.isNotEmpty) ...[
+                if (challenge.transcript.isNotEmpty) ...[
                   ChallengeCard(
                     title: 'Transcript',
                     child: Transcript(
-                      transcript: challenge.transcript!,
+                      transcript: challenge.transcript,
                     ),
                   ),
                   const SizedBox(height: 12),
