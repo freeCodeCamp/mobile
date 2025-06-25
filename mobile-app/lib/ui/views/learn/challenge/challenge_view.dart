@@ -7,10 +7,11 @@ import 'package:freecodecamp/enums/panel_type.dart';
 import 'package:freecodecamp/extensions/i18n_extension.dart';
 import 'package:freecodecamp/models/learn/challenge_model.dart';
 import 'package:freecodecamp/models/learn/curriculum_model.dart';
+import 'package:freecodecamp/ui/theme/fcc_theme.dart';
 import 'package:freecodecamp/ui/views/learn/challenge/challenge_viewmodel.dart';
 import 'package:freecodecamp/ui/views/learn/test_runner.dart';
 import 'package:freecodecamp/ui/views/learn/widgets/console/console_view.dart';
-import 'package:freecodecamp/ui/views/learn/widgets/dynamic_panel/panels/dynamic_panel.dart';
+import 'package:freecodecamp/ui/views/news/html_handler/html_handler.dart';
 import 'package:phone_ide/phone_ide.dart';
 import 'package:stacked/stacked.dart';
 
@@ -35,128 +36,69 @@ class ChallengeView extends StatelessWidget {
       onViewModelReady: (model) {
         model.init(block, challenge, challengesCompleted);
       },
-      onDispose: (model) => model.shutdownLocalHost(),
+      onDispose: (model) {
+        model.closeWebViews();
+        model.disposeOfListeners();
+      },
       builder: (context, model, child) {
         int maxChallenges = block.challenges.length;
         ChallengeFile currFile = model.currentFile(challenge);
 
-        bool keyboard = MediaQuery.of(context).viewInsets.bottom != 0;
-
-        bool onlyJs = challenge.files.every((file) => file.ext.name == 'js');
-
-        bool editableRegion = currFile.editableRegionBoundaries.isNotEmpty;
-        EditorOptions options = EditorOptions(
-          hasRegion: editableRegion,
-          fontFamily: 'Hack',
-        );
-
-        Editor editor = Editor(
-          language: currFile.ext.name.toUpperCase(),
-          options: options,
-        );
-
-        model.initFile(editor, challenge, currFile, editableRegion);
-        model.listenToFocusedController(editor);
-        model.listenToSymbolBarScrollController();
+        model.initFile(challenge, currFile);
 
         if (model.showPanel) {
           FocusManager.instance.primaryFocus?.unfocus();
         }
 
-        editor.onTextChange.stream.listen((text) {
-          model.fileService.saveFileInCache(
-            challenge,
-            model.currentSelectedFile,
-            text,
+        if (model.editor == null) {
+          return Center(
+            child: CircularProgressIndicator(),
           );
-
-          model.setEditorText = text;
-          model.setHasTypedInEditor = true;
-          model.setCompletedChallenge = false;
-        });
-
-        if (editableRegion) {
-          editor.editableRegion.stream.listen((region) {
-            model.setEditableRegionContent = region;
-          });
         }
 
-        BoxDecoration decoration = const BoxDecoration(
-          border: Border(
-            bottom: BorderSide(
-              width: 4,
-              color: Colors.blue,
-            ),
-          ),
-        );
+        WidgetsBinding.instance.addPostFrameCallback((_) {
+          final scaffoldState = model.scaffoldKey.currentState;
+          if (!model.drawerOpened) {
+            model.setDrawerOpened = true;
+            if (scaffoldState != null && !(scaffoldState.isEndDrawerOpen)) {
+              scaffoldState.openEndDrawer();
+            }
+          }
+        });
 
         return Scaffold(
-          appBar: PreferredSize(
-            preferredSize: Size(
-              MediaQuery.sizeOf(context).width,
-              model.showPanel ? 0 : 50,
-            ),
-            child: AppBar(
-              automaticallyImplyLeading: !model.showPreview,
-              title: challenge.files.length == 1 && !model.showPreview
-                  ? Text(context.t.editor)
-                  : Row(
-                      children: [
-                        if (model.showPreview && !onlyJs)
-                          Expanded(
-                            child: Container(
-                              decoration:
-                                  model.showProjectPreview ? decoration : null,
-                              child: ElevatedButton(
-                                style: ElevatedButton.styleFrom(
-                                  shape: RoundedRectangleBorder(
-                                    borderRadius: BorderRadius.circular(0),
-                                  ),
-                                  elevation: 0,
-                                ),
-                                onPressed: () {
-                                  model.setShowConsole = false;
-                                  model.setShowProjectPreview = true;
-                                },
-                                child: Text(
-                                  context.t.preview,
-                                ),
-                              ),
-                            ),
-                          ),
-                        if (model.showPreview)
-                          Expanded(
-                            child: Container(
-                              decoration: model.showConsole ? decoration : null,
-                              child: ElevatedButton(
-                                style: ElevatedButton.styleFrom(
-                                  shape: RoundedRectangleBorder(
-                                    borderRadius: BorderRadius.circular(0),
-                                  ),
-                                  elevation: 0,
-                                ),
-                                onPressed: () {
-                                  model.setShowConsole = true;
-                                  model.setShowProjectPreview = false;
-                                },
-                                child: Text(
-                                  context.t.console,
-                                ),
-                              ),
-                            ),
-                          ),
-                        if (!model.showPreview && challenge.files.length > 1)
-                          for (ChallengeFile file in challenge.files)
-                            customTabBar(
-                              model,
-                              challenge,
-                              file,
-                              editor,
-                            )
-                      ],
-                    ),
+          key: model.scaffoldKey,
+          appBar: AppBar(
+            actions: <Widget>[
+              Container(),
+            ],
+            title: (() {
+              if (model.showPreview) {
+                return const Text('PREVIEW',
+                    style: TextStyle(fontWeight: FontWeight.bold));
+              } else if (model.showConsole) {
+                return const Text('CONSOLE',
+                    style: TextStyle(fontWeight: FontWeight.bold));
+              } else {
+                return Row(
+                  children: [customTabBar(model, challenge, context)],
+                );
+              }
+            })(),
+          ),
+          endDrawer: Drawer(
+            width: MediaQuery.of(context).size.width * 0.9,
+            child: SafeArea(
+              child: model.getPanelWidget(
+                panelType: model.panelType,
+                challenge: challenge,
+                model: model,
+                maxChallenges: maxChallenges,
+                challengesCompleted: challengesCompleted,
+              ),
             ),
           ),
+          onEndDrawerChanged: (isOpened) => model.setShowPanel = isOpened,
           bottomNavigationBar: Container(
             decoration: const BoxDecoration(
               border: Border(
@@ -170,50 +112,37 @@ class ChallengeView extends StatelessWidget {
             ),
             child: customBottomBar(
               model,
-              keyboard,
               challenge,
-              editor,
               context,
             ),
           ),
-          body: !model.showPreview
+          body: model.showConsole
               ? Column(
                   children: [
-                    if (model.showPanel && !keyboard)
-                      DynamicPanel(
-                        challenge: challenge,
-                        model: model,
-                        panel: model.panelType,
-                        maxChallenges: maxChallenges,
-                        challengesCompleted: challengesCompleted,
-                        editor: editor,
-                      ),
-                    Expanded(child: editor)
+                    JavaScriptConsole(
+                      // TODO: Update logic when working on JS challenges
+                      // messages: model.consoleMessages,
+                      messages: [],
+                    ),
                   ],
                 )
-              : Column(
-                  children: [
-                    if (model.showPanel && !keyboard)
-                      DynamicPanel(
-                        challenge: challenge,
-                        model: model,
-                        panel: model.panelType,
-                        maxChallenges: maxChallenges,
-                        challengesCompleted: challengesCompleted,
-                        editor: editor,
-                      ),
-                    model.showProjectPreview && !onlyJs
-                        ? ProjectPreview(
-                            challenge: challenge,
-                            model: model,
-                          )
-                        : JavaScriptConsole(
-                            // TODO: Update logic when working on JS challenges
-                            // messages: model.consoleMessages,
-                            messages: [],
-                          )
-                  ],
-                ),
+              : model.showPreview
+                  ? Column(
+                      children: [
+                        ProjectPreview(
+                          challenge: challenge,
+                          model: model,
+                        ),
+                      ],
+                    )
+                  : Column(
+                      children: [
+                        if (model.showTestsPanel)
+                          Expanded(child: testList(challenge, model)),
+                        if (!model.showTestsPanel)
+                          Expanded(child: model.editor!),
+                      ],
+                    ),
         );
       },
     );
@@ -222,75 +151,142 @@ class ChallengeView extends StatelessWidget {
   Widget customTabBar(
     ChallengeViewModel model,
     Challenge challenge,
-    ChallengeFile file,
-    Editor editor,
+    BuildContext context,
   ) {
     return Expanded(
-      child: Container(
-        decoration: BoxDecoration(
-          border: Border(
-            bottom: model.currentFile(challenge).name == file.name
-                ? const BorderSide(width: 4, color: Colors.blue)
-                : const BorderSide(),
+      child: Row(
+        children: [
+          Expanded(
+            child: challenge.files.length > 1
+                ? DropdownButton<String>(
+                    isExpanded: true,
+                    dropdownColor: FccColors.gray85,
+                    value: model.currentSelectedFile,
+                    items: [
+                      for (ChallengeFile file in challenge.files)
+                        DropdownMenuItem(
+                          value: file.name,
+                          child: Text(
+                            '${file.name}.${file.ext.name}',
+                            style: TextStyle(
+                              color: model.currentSelectedFile == file.name &&
+                                      !model.showTestsPanel
+                                  ? FccColors.blue50
+                                  : Colors.white,
+                              fontWeight:
+                                  model.currentSelectedFile == file.name &&
+                                          !model.showTestsPanel
+                                      ? FontWeight.bold
+                                      : FontWeight.normal,
+                            ),
+                          ),
+                        )
+                    ],
+                    onChanged: (file) {
+                      model.setShowTestsPanel = false;
+                      model.setCurrentSelectedFile =
+                          file ?? challenge.files[0].name;
+                      model.setMounted = false;
+                      ChallengeFile currFile = model.currentFile(challenge);
+                      model.initFile(challenge, currFile);
+                    },
+                    underline: SizedBox(),
+                    selectedItemBuilder: (context) {
+                      return challenge.files.map((file) {
+                        return Center(
+                          child: Text(
+                            '${file.name}.${file.ext.name}',
+                            style: TextStyle(
+                              color: model.currentSelectedFile == file.name &&
+                                      !model.showTestsPanel
+                                  ? FccColors.blue50
+                                  : Colors.white,
+                              fontWeight:
+                                  model.currentSelectedFile == file.name &&
+                                          !model.showTestsPanel
+                                      ? FontWeight.bold
+                                      : FontWeight.normal,
+                            ),
+                          ),
+                        );
+                      }).toList();
+                    },
+                    icon: const Icon(Icons.arrow_drop_down),
+                  )
+                : TextButton.icon(
+                    onPressed: () {
+                      model.setShowTestsPanel = false;
+                    },
+                    label: Text(
+                      '${challenge.files[0].name}.${challenge.files[0].ext.name}',
+                      style: TextStyle(
+                        color: !model.showTestsPanel
+                            ? FccColors.blue50
+                            : Colors.white,
+                      ),
+                    ),
+                    style: ButtonStyle(
+                      backgroundColor: WidgetStateProperty.all<Color>(
+                        FccColors.gray90,
+                      ),
+                      shape: WidgetStateProperty.all<RoundedRectangleBorder>(
+                        RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(0),
+                        ),
+                      ),
+                    ),
+                    icon: Icon(
+                      Icons.insert_drive_file_outlined,
+                      size: 30,
+                      color: !model.showTestsPanel
+                          ? FccColors.blue50
+                          : Colors.white,
+                    ),
+                    iconAlignment: IconAlignment.end,
+                  ),
           ),
-        ),
-        child: ElevatedButton(
-          style: ElevatedButton.styleFrom(
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(0),
-            ),
-            elevation: 0,
-          ),
-          onPressed: () async {
-            model.setCurrentSelectedFile = file.name;
-            ChallengeFile currFile = model.currentFile(challenge);
-
-            String currText = await model.fileService.getExactFileFromCache(
-              challenge,
-              currFile,
-            );
-            bool hasRegion = currFile.editableRegionBoundaries.isNotEmpty;
-
-            editor.fileTextStream.sink.add(
-              FileIDE(
-                id: challenge.id + currFile.name,
-                ext: currFile.ext.name.toUpperCase(),
-                name: currFile.name,
-                content: currText == '' ? currFile.contents : currText,
-                hasRegion: currFile.editableRegionBoundaries.isNotEmpty,
-                region: EditorRegionOptions(
-                  start:
-                      hasRegion ? currFile.editableRegionBoundaries[0] : null,
-                  end: hasRegion ? currFile.editableRegionBoundaries[1] : null,
+          SizedBox(width: 8),
+          Expanded(
+            child: TextButton.icon(
+              onPressed: () {
+                model.setShowTestsPanel = !model.showTestsPanel;
+              },
+              label: Text(
+                'Tests',
+                style: TextStyle(
+                  color: model.showTestsPanel ? FccColors.blue50 : Colors.white,
                 ),
               ),
-            );
-
-            model.setEditorText = currText == '' ? currFile.contents : currText;
-            model.setShowPreview = false;
-          },
-          child: Text(
-            '${file.name}.${file.ext.name}',
-            style: TextStyle(
-                color: model.currentFile(challenge).name == file.name
-                    ? Colors.blue
-                    : Colors.white,
-                fontWeight: model.currentFile(challenge).name == file.name
-                    ? FontWeight.bold
-                    : null),
+              style: ButtonStyle(
+                backgroundColor: WidgetStateProperty.all<Color>(
+                  FccColors.gray90,
+                ),
+                shape: WidgetStateProperty.all<RoundedRectangleBorder>(
+                  RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(0),
+                  ),
+                ),
+              ),
+              icon: Icon(
+                Icons.science_outlined,
+                size: 30,
+                color: model.showTestsPanel ? FccColors.blue50 : Colors.white,
+              ),
+              iconAlignment: IconAlignment.end,
+            ),
           ),
-        ),
+        ],
       ),
     );
   }
 
   Widget customBottomBar(
     ChallengeViewModel model,
-    bool keyboard,
     Challenge challenge,
-    Editor editor,
     BuildContext context,
   ) {
+    bool keyboard = MediaQuery.of(context).viewInsets.bottom != 0;
+
     return BottomAppBar(
       height: keyboard ? 116 : 72,
       padding: keyboard ? const EdgeInsets.only(bottom: 8) : null,
@@ -300,7 +296,7 @@ class ChallengeView extends StatelessWidget {
           if (keyboard)
             SymbolBar(
               model: model,
-              editor: editor,
+              editor: model.editor!,
             ),
           Row(
             children: [
@@ -312,6 +308,7 @@ class ChallengeView extends StatelessWidget {
                     data:
                         '<html><head><title>Test Runner</title></head><body></body></html>',
                     mimeType: 'text/html',
+                    baseUrl: WebUri('http://localhost:8080/test-runner'),
                   ),
                   onWebViewCreated: (controller) {
                     model.setTestController = controller;
@@ -331,14 +328,16 @@ class ChallengeView extends StatelessWidget {
                         'editableRegionContent': '',
                         'hooks': {
                           'beforeAll': '',
+                          'beforeEach': '',
+                          'afterEach': '',
                         },
                       },
                     );
                     log('TestRunner: $res');
                   },
                   initialSettings: InAppWebViewSettings(
-                    isInspectable: true,
-                  ),
+                      isInspectable: true,
+                      mediaPlaybackRequiresUserGesture: false),
                 ),
               ),
               Container(
@@ -357,77 +356,64 @@ class ChallengeView extends StatelessWidget {
                         : Colors.white,
                   ),
                   onPressed: () {
-                    if (model.showPanel &&
-                        model.panelType != PanelType.instruction) {
+                    if (model.panelType != PanelType.instruction) {
                       model.setPanelType = PanelType.instruction;
-                    } else {
-                      model.setPanelType = PanelType.instruction;
-                      if (MediaQuery.of(context).viewInsets.bottom > 0) {
-                        FocusManager.instance.primaryFocus?.unfocus();
-                        if (!model.showPanel) {
-                          model.setShowPanel = true;
-                        }
-                      } else {
-                        model.setShowPanel = !model.showPanel;
-                      }
                     }
+                    model.setShowPanel = !model.showPanel;
+
+                    model.scaffoldKey.currentState?.openEndDrawer();
                   },
                   splashColor: Colors.transparent,
                   highlightColor: Colors.transparent,
                 ),
               ),
+              // Only show preview button for non-JS-only challenges (type 1 and 26)
+              if (challenge.challengeType != 1 && challenge.challengeType != 26)
+                Container(
+                  margin: const EdgeInsets.symmetric(horizontal: 8),
+                  color: !model.showPreview
+                      ? const Color.fromRGBO(0x3B, 0x3B, 0x4F, 1)
+                      : Colors.white,
+                  child: IconButton(
+                    icon: Icon(
+                      Icons.remove_red_eye_outlined,
+                      size: 32,
+                      color: model.showPreview
+                          ? const Color.fromRGBO(0x3B, 0x3B, 0x4F, 1)
+                          : Colors.white,
+                    ),
+                    onPressed: () async {
+                      ChallengeFile currFile = model.currentFile(challenge);
+                      model.setShowPreview = !model.showPreview;
+                      model.setShowConsole = false;
+                      model.initFile(challenge, currFile);
+                    },
+                    splashColor: Colors.transparent,
+                    highlightColor: Colors.transparent,
+                  ),
+                ),
               Container(
                 margin: const EdgeInsets.symmetric(horizontal: 8),
-                color: !model.showPreview
-                    ? const Color.fromRGBO(0x3B, 0x3B, 0x4F, 1)
-                    : Colors.white,
-                child: IconButton(
-                  icon: Icon(
-                    Icons.remove_red_eye_outlined,
-                    size: 32,
-                    color: model.showPreview
-                        ? const Color.fromRGBO(0x3B, 0x3B, 0x4F, 1)
-                        : Colors.white,
-                  ),
-                  onPressed: () async {
-                    ChallengeFile currFile = model.currentFile(challenge);
-
-                    String currText =
-                        await model.fileService.getExactFileFromCache(
-                      challenge,
-                      currFile,
-                    );
-
-                    model.setMounted = false;
-
-                    editor.fileTextStream.sink.add(FileIDE(
-                      id: challenge.id + currFile.name,
-                      ext: currFile.ext.name.toUpperCase(),
-                      name: currFile.name,
-                      content: currText == '' ? currFile.contents : currText,
-                      hasRegion: currFile.editableRegionBoundaries.isNotEmpty,
-                      region: EditorRegionOptions(
-                        start: currFile.editableRegionBoundaries.isNotEmpty
-                            ? currFile.editableRegionBoundaries[0]
-                            : null,
-                        end: currFile.editableRegionBoundaries.isNotEmpty
-                            ? currFile.editableRegionBoundaries[1]
-                            : null,
-                      ),
-                    ));
-                    model.setEditorText =
-                        currText == '' ? currFile.contents : currText;
-                    model.setShowPreview = !model.showPreview;
-
-                    if (!model.showProjectPreview && !model.showConsole) {
-                      model.setShowProjectPreview = true;
-                    }
-
-                    model.refresh();
-                  },
-                  splashColor: Colors.transparent,
-                  highlightColor: Colors.transparent,
-                ),
+                color: model.showConsole
+                    ? Colors.white
+                    : const Color.fromRGBO(0x3B, 0x3B, 0x4F, 1),
+                child: challenge.files.any((file) => file.ext.name == 'js')
+                    ? IconButton(
+                        icon: Icon(
+                          Icons.terminal,
+                          size: 32,
+                          color: model.showConsole
+                              ? const Color.fromRGBO(0x3B, 0x3B, 0x4F, 1)
+                              : Colors.white,
+                        ),
+                        onPressed: () {
+                          model.setShowConsole = !model.showConsole;
+                          model.setShowPreview = false;
+                        },
+                        splashColor: Colors.transparent,
+                        highlightColor: Colors.transparent,
+                      )
+                    : null,
               ),
               Expanded(
                 child: Row(
@@ -480,6 +466,56 @@ class ChallengeView extends StatelessWidget {
           ),
         ],
       ),
+    );
+  }
+
+  Widget testList(Challenge challenge, ChallengeViewModel model) {
+    return ListView.builder(
+      shrinkWrap: true,
+      physics: const ClampingScrollPhysics(),
+      itemCount: challenge.tests.length,
+      itemBuilder: (context, index) {
+        final test = challenge.tests[index];
+        return ExpansionTile(
+          backgroundColor: FccColors.gray90,
+          collapsedBackgroundColor: FccColors.gray85,
+          title: Builder(
+            builder: (context) {
+              final parser = HTMLParser(context: context);
+              final widgets = parser.parse(
+                test.instruction,
+                isSelectable: true,
+                removeParagraphMargin: true,
+                fontColor: FccColors.gray00,
+              );
+              return Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: widgets,
+              );
+            },
+          ),
+          children: [
+            Container(
+              width: double.infinity,
+              color: FccColors.gray80,
+              constraints: BoxConstraints(minHeight: 10, maxHeight: 1000),
+              padding: const EdgeInsets.symmetric(
+                vertical: 12,
+              ),
+              child: Editor(
+                defaultLanguage: 'javascript',
+                path: '',
+                defaultValue: test.javaScript,
+                options: EditorOptions(
+                  isEditable: false,
+                  takeFullHeight: false,
+                  showLinebar: false,
+                ),
+              ),
+            ),
+          ],
+        );
+      },
     );
   }
 }
@@ -571,6 +607,10 @@ class ProjectPreview extends StatelessWidget {
                 onWebViewCreated: (controller) {
                   model.setWebviewController = controller;
                 },
+                initialSettings: InAppWebViewSettings(
+                  // TODO: Set this to true only in dev mode
+                  isInspectable: true,
+                ),
               );
             }
           }

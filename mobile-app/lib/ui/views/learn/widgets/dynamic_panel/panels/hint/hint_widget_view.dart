@@ -121,18 +121,6 @@ class HintWidgetView extends StatelessWidget {
                     ),
                   ),
                 ),
-                Expanded(
-                  child: Container(
-                    alignment: Alignment.centerRight,
-                    child: IconButton(
-                      onPressed: () {
-                        challengeModel.setShowPanel = false;
-                      },
-                      icon: const Icon(Icons.clear_sharp),
-                      iconSize: 40,
-                    ),
-                  ),
-                )
               ],
             ),
             const SizedBox(height: 8),

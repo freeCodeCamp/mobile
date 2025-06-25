@@ -1,5 +1,7 @@
+import 'package:flutter_inappwebview/flutter_inappwebview.dart';
 import 'package:freecodecamp/enums/ext_type.dart';
 import 'package:freecodecamp/models/learn/challenge_model.dart';
+import 'package:freecodecamp/ui/views/learn/test_runner.dart';
 import 'package:html/dom.dart';
 import 'package:html/parser.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -148,6 +150,35 @@ class LearnFileService {
     return linkedFileNames.contains(cssFileName);
   }
 
+  // This function checks if the given document contains any script elements.
+  // If so check if the js file name corresponds with the names put in the array.
+  // If the file is linked return true.
+
+  Future<bool> jsFileIsLinked(
+    String document,
+    String jsFileName,
+  ) async {
+    Document doc = parse(document);
+
+    List<Node> scripts = doc.getElementsByTagName('SCRIPT');
+
+    List<String> linkedFileNames = [];
+
+    if (scripts.isNotEmpty) {
+      for (Node node in scripts) {
+        if (node.attributes['src'] == null) continue;
+
+        if (node.attributes['src']!.contains('/')) {
+          linkedFileNames.add(node.attributes['src']!.split('/').last);
+        } else if (node.attributes['src']!.isNotEmpty) {
+          linkedFileNames.add(node.attributes['src'] as String);
+        }
+      }
+    }
+
+    return linkedFileNames.contains(jsFileName);
+  }
+
   // This function puts the given css content in the same file as the HTML content.
   // It will parse the current CSS content into style tags only if it is linked.
   // If there is nothing to parse it will return the plain content document.
@@ -195,6 +226,62 @@ class LearnFileService {
     }
 
     return content;
+  }
+
+  // This function puts the given js content in the same file as the HTML content.
+  // It will parse the current JS content into script tags only if it is linked.
+  // If there is nothing to parse it will return the plain content document.
+
+  Future<String> parseJsDocmentsAsScriptTags(
+    Challenge challenge,
+    String challengeContent,
+    InAppWebViewController? babelController, {
+    bool testing = false,
+  }) async {
+    List<ChallengeFile> jsFiles = challenge.files
+        .where(
+          (element) => element.ext == Ext.js,
+        )
+        .toList();
+
+    if (jsFiles.isNotEmpty) {
+      for (ChallengeFile file in jsFiles) {
+        String filename = '${file.name}.${file.ext.name}';
+        String? fileContents = await getExactFileFromCache(
+          challenge,
+          file,
+          testing: testing,
+        );
+
+        if (!await jsFileIsLinked(challengeContent, filename)) {
+          continue;
+        }
+
+        // NOTE: Do we throw an error if babelController is null?
+        if (babelController != null) {
+          final babelRes = await babelController.callAsyncJavaScript(
+            functionBody: ScriptBuilder.transpileScript,
+            arguments: {'code': fileContents},
+          );
+
+          if (babelRes?.error != null) {
+            throw Exception('Babel transpilation failed: ${babelRes?.error}');
+          }
+          fileContents = babelRes?.value;
+        }
+
+        Document document = parse(challengeContent);
+
+        Element scriptElement =
+            document.querySelector('script[src\$="$filename"]')!;
+
+        scriptElement.text = fileContents;
+
+        challengeContent = document.outerHtml;
+      }
+    }
+
+    return challengeContent;
   }
 
   String changeActiveFileLinks(String file) {

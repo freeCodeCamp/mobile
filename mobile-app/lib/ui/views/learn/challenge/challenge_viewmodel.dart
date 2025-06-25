@@ -1,8 +1,9 @@
+import 'dart:async';
 import 'dart:convert';
 import 'dart:developer';
 
 import 'package:dio/dio.dart';
-import 'package:flutter/widgets.dart';
+import 'package:flutter/material.dart';
 import 'package:flutter_inappwebview/flutter_inappwebview.dart';
 import 'package:freecodecamp/app/app.locator.dart';
 import 'package:freecodecamp/app/app.router.dart';
@@ -17,6 +18,9 @@ import 'package:freecodecamp/service/learn/learn_file_service.dart';
 import 'package:freecodecamp/service/learn/learn_offline_service.dart';
 import 'package:freecodecamp/service/learn/learn_service.dart';
 import 'package:freecodecamp/ui/views/learn/test_runner.dart';
+import 'package:freecodecamp/ui/views/learn/widgets/dynamic_panel/panels/description/description_widget_view.dart';
+import 'package:freecodecamp/ui/views/learn/widgets/dynamic_panel/panels/hint/hint_widget_view.dart';
+import 'package:freecodecamp/ui/views/learn/widgets/dynamic_panel/panels/pass/pass_widget_view.dart';
 import 'package:freecodecamp/ui/widgets/setup_dialog_ui.dart';
 import 'package:html/dom.dart';
 import 'package:html/parser.dart';
@@ -31,8 +35,14 @@ class ChallengeViewModel extends BaseViewModel {
   final InAppLocalhostServer _localhostServer =
       InAppLocalhostServer(documentRoot: 'assets/test_runner');
 
+  Editor? _editor;
+  Editor? get editor => _editor;
+
   String? _editorText;
   String? get editorText => _editorText;
+
+  String _editorLanguage = 'html';
+  String get editorLanguage => _editorLanguage;
 
   String _currentSelectedFile = '';
   String get currentSelectedFile => _currentSelectedFile;
@@ -78,13 +88,27 @@ class ChallengeViewModel extends BaseViewModel {
   InAppWebViewController? _testController;
   InAppWebViewController? get testController => _testController;
 
-  Syntax _currFileType = Syntax.HTML;
-  Syntax get currFileType => _currFileType;
+  final HeadlessInAppWebView _babelWebView = HeadlessInAppWebView(
+    initialData: InAppWebViewInitialData(
+      data: '<html><head><title>Babel</title></head><body></body></html>',
+      mimeType: 'text/html',
+      baseUrl: WebUri('http://localhost:8080/babel-transformer'),
+    ),
+    onConsoleMessage: (controller, console) {
+      log('Babel Console message: ${console.message}');
+    },
+    onLoadStop: (controller, url) async {
+      final res = await controller.injectJavascriptFileFromAsset(
+          assetFilePath: 'assets/test_runner/babel/babel.min.js');
+      log('Babel load: $res');
+    },
+    initialSettings: InAppWebViewSettings(
+      isInspectable: true,
+    ),
+  );
 
   bool _mounted = false;
-
-  // TestRunner? _testRunner;
-  // TestRunner? get testRunner => _testRunner;
+  bool get mounted => _mounted;
 
   String _editableRegionContent = '';
   String get editableRegionContent => _editableRegionContent;
@@ -113,6 +137,10 @@ class ChallengeViewModel extends BaseViewModel {
 
   final _dio = DioService.dio;
 
+  late StreamSubscription<TextFieldData> _textFieldDataSub;
+  late StreamSubscription<String> _onTextChangeSub;
+  StreamSubscription<String>? _editableRegionSub;
+
   set setCurrentSelectedFile(String value) {
     _currentSelectedFile = value;
     notifyListeners();
@@ -127,11 +155,6 @@ class ChallengeViewModel extends BaseViewModel {
     _afterFirstTest = value;
     notifyListeners();
   }
-
-  // set setTestRunner(TestRunner? value) {
-  //   _testRunner = value;
-  //   notifyListeners();
-  // }
 
   set setEditableRegionContent(String value) {
     _editableRegionContent = value;
@@ -208,11 +231,6 @@ class ChallengeViewModel extends BaseViewModel {
     notifyListeners();
   }
 
-  set setCurrFileType(Syntax value) {
-    _currFileType = value;
-    notifyListeners();
-  }
-
   set setMounted(bool value) {
     _mounted = value;
     notifyListeners();
@@ -228,11 +246,44 @@ class ChallengeViewModel extends BaseViewModel {
     notifyListeners();
   }
 
+  set setEditor(Editor editor) {
+    _editor = editor;
+    notifyListeners();
+  }
+
+  set setEditorLanguage(String value) {
+    _editorLanguage = value;
+    notifyListeners();
+  }
+
+  bool _showTestsPanel = false;
+  bool get showTestsPanel => _showTestsPanel;
+
+  set setShowTestsPanel(bool value) {
+    _showTestsPanel = value;
+    notifyListeners();
+  }
+
+  bool _drawerOpened = false;
+  bool get drawerOpened => _drawerOpened;
+  set setDrawerOpened(bool value) {
+    _drawerOpened = value;
+    notifyListeners();
+  }
+
+  GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
+  GlobalKey<ScaffoldState> get scaffoldKey => _scaffoldKey;
+  set setScaffoldKey(GlobalKey<ScaffoldState> key) {
+    _scaffoldKey = key;
+    notifyListeners();
+  }
+
   void init(
     Block block,
     Challenge challenge,
     int challengesCompleted,
   ) async {
+    await _babelWebView.run();
     await _localhostServer.start();
 
     setupDialogUi();
@@ -241,61 +292,96 @@ class ChallengeViewModel extends BaseViewModel {
     setBlock = block;
     setChallengesCompleted = challengesCompleted;
 
-    // _testRunner = TestRunner(
-    //   model: this,
-    //   challenge: challenge,
-    //   builder: TestRunnerBuilder(
-    //     source: '',
-    //     code: Code(contents: ''),
-    //     workerType: getWorkerType(challenge.challengeType),
-    //   ),
-    // );
+    listenToSymbolBarScrollController();
   }
 
-  void shutdownLocalHost() {
-    _localhostServer.close();
+  void closeWebViews() async {
+    await _babelWebView.dispose();
+    await _localhostServer.close();
   }
 
   void initFile(
-    Editor editor,
     Challenge challenge,
     ChallengeFile currFile,
-    bool hasRegion,
   ) async {
     if (!_mounted) {
-      await Future.delayed(Duration.zero);
       String fileContents = await fileService.getExactFileFromCache(
         challenge,
         currFile,
       );
-      editor.fileTextStream.sink.add(
-        FileIDE(
-          id: challenge.id + currFile.name,
-          ext: currFile.ext.name,
-          name: currFile.name,
-          content: fileContents,
-          hasRegion: hasRegion,
-          region: EditorRegionOptions(
-            start: hasRegion ? currFile.editableRegionBoundaries[0] : null,
-            end: hasRegion ? currFile.editableRegionBoundaries[1] : null,
-            condition: completedChallenge,
-          ),
-        ),
-      );
-      _mounted = true;
 
-      if (currFile.name != currentSelectedFile) {
-        setCurrentSelectedFile = currFile.name;
-        setEditorText = fileContents;
-      }
+      setCurrentSelectedFile = currFile.name;
+      setEditorText = fileContents;
+      setEditorLanguage = currFile.ext.value;
+      initEditor(challenge, currFile);
+      setMounted = true;
     }
   }
 
-  void listenToFocusedController(Editor editor) {
-    editor.textfieldData.stream.listen((textfieldData) {
+  void initEditor(Challenge challenge, ChallengeFile file) {
+    bool editableRegion = file.editableRegionBoundaries.isNotEmpty;
+
+    EditorOptions options = EditorOptions(
+      regionOptions: editableRegion
+          ? EditorRegionOptions(
+              start: file.editableRegionBoundaries[0],
+              end: file.editableRegionBoundaries[1],
+            )
+          : null,
+      fontFamily: 'Hack',
+    );
+
+    Editor editor = Editor(
+      key: ValueKey(editorText),
+      defaultLanguage: editorLanguage,
+      defaultValue: editorText ?? '',
+      path: '/${challenge.id}/${file.name}',
+      options: options,
+    );
+
+    setEditor = editor;
+
+    initEditorListeners(challenge, file, editor);
+  }
+
+  void initEditorListeners(
+    Challenge challenge,
+    ChallengeFile file,
+    Editor editor,
+  ) {
+    bool editableRegion = file.editableRegionBoundaries.isNotEmpty;
+
+    _textFieldDataSub = editor.textfieldData.stream.listen((textfieldData) {
       setTextFieldData = textfieldData;
       setShowPanel = false;
     });
+
+    _onTextChangeSub = editor.onTextChange.stream.listen((text) {
+      fileService.saveFileInCache(
+        challenge,
+        currentSelectedFile,
+        text,
+      );
+
+      setEditorText = text;
+      setHasTypedInEditor = true;
+      setCompletedChallenge = false;
+    });
+
+    if (editableRegion) {
+      _editableRegionSub = editor.editableRegion.stream.listen((region) {
+        setEditableRegionContent = region;
+      });
+    }
+  }
+
+  void disposeOfListeners() {
+    _textFieldDataSub.cancel();
+    _onTextChangeSub.cancel();
+
+    if (_editableRegionSub != null) {
+      _editableRegionSub!.cancel();
+    }
   }
 
   void listenToSymbolBarScrollController() {
@@ -374,24 +460,40 @@ class ChallengeViewModel extends BaseViewModel {
         .where((ChallengeFile file) => file.ext == Ext.css)
         .toList();
 
+    List<ChallengeFile> jsFiles = currChallenge.files
+        .where((ChallengeFile file) => file.ext == Ext.js)
+        .toList();
+
     Document document = parse(doc);
+    String? cssParsed, jsParsed;
 
     List<ChallengeFile> currentFile = currChallenge.files
         .where((element) => element.ext == Ext.html)
         .toList();
 
-    if (cssFiles.isNotEmpty) {
-      String text = prefs.getString(
-            '${currChallenge.id}.${currentFile[0].name}',
-          ) ??
-          currentFile[0].contents;
+    String text = prefs.getString(
+          '${currChallenge.id}.${currentFile[0].name}',
+        ) ??
+        currentFile[0].contents;
 
-      document = parse(
-        await fileService.parseCssDocmentsAsStyleTags(
-          currChallenge,
-          text,
-        ),
+    // TODO: Remove check since we do it in function also
+    if (cssFiles.isNotEmpty) {
+      cssParsed = await fileService.parseCssDocmentsAsStyleTags(
+        currChallenge,
+        text,
       );
+
+      document = parse(cssParsed);
+    }
+
+    if (jsFiles.isNotEmpty) {
+      jsParsed = await fileService.parseJsDocmentsAsScriptTags(
+        currChallenge,
+        cssParsed ?? text,
+        _babelWebView.webViewController,
+      );
+
+      document = parse(jsParsed);
     }
 
     String viewPort = '''<meta content="width=device-width,
@@ -502,12 +604,17 @@ class ChallengeViewModel extends BaseViewModel {
     final updateTestRunnerRes = await testController!.callAsyncJavaScript(
       functionBody: ScriptBuilder.runnerScript,
       arguments: {
-        'userCode': await builder.buildUserCode(challenge!, Ext.html),
+        'userCode': await builder.buildUserCode(
+          challenge!,
+          _babelWebView.webViewController,
+        ),
         'workerType': builder.getWorkerType(challenge!.challengeType),
         'combinedCode': await builder.combinedCode(challenge!),
         'editableRegionContent': editableRegionContent,
         'hooks': {
           'beforeAll': challenge!.hooks.beforeAll,
+          'beforeEach': challenge!.hooks.beforeEach,
+          'afterEach': challenge!.hooks.afterEach,
         },
       },
     );
@@ -529,9 +636,11 @@ class ChallengeViewModel extends BaseViewModel {
     if (failedTest != null) {
       setPanelType = PanelType.hint;
       setHint = failedTest.instruction;
+      _scaffoldKey.currentState?.openEndDrawer();
     } else {
       setPanelType = PanelType.pass;
       setCompletedChallenge = true;
+      _scaffoldKey.currentState?.openEndDrawer();
     }
 
     setIsRunningTests = false;
@@ -609,4 +718,37 @@ class ChallengeViewModel extends BaseViewModel {
   //     setShowPanel = true;
   //   }
   // }
+
+  Widget getPanelWidget({
+    required PanelType panelType,
+    required Challenge challenge,
+    required ChallengeViewModel model,
+    required int maxChallenges,
+    required int challengesCompleted,
+  }) {
+    switch (panelType) {
+      case PanelType.instruction:
+        return DescriptionView(
+          description: challenge.description,
+          instructions: challenge.instructions,
+          challengeModel: model,
+          maxChallenges: maxChallenges,
+          title: challenge.title,
+        );
+      case PanelType.hint:
+        return HintWidgetView(
+          hint: model.hint,
+          challengeModel: model,
+          editor: model.editor!,
+        );
+      case PanelType.pass:
+        return PassWidgetView(
+          challengeModel: model,
+          challengesCompleted: challengesCompleted,
+          maxChallenges: maxChallenges,
+        );
+      default:
+        return Container();
+    }
+  }
 }

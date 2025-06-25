@@ -4,9 +4,11 @@ import 'package:freecodecamp/models/learn/challenge_model.dart';
 import 'package:freecodecamp/models/learn/curriculum_model.dart';
 import 'package:freecodecamp/ui/theme/fcc_theme.dart';
 import 'package:freecodecamp/ui/views/learn/challenge/templates/review/review_viewmodel.dart';
+import 'package:freecodecamp/ui/views/learn/utils/challenge_utils.dart';
 import 'package:freecodecamp/ui/views/learn/widgets/assignment_widget.dart';
 import 'package:freecodecamp/ui/views/learn/widgets/challenge_card.dart';
 import 'package:freecodecamp/ui/views/learn/widgets/transcript_widget.dart';
+import 'package:freecodecamp/ui/views/learn/widgets/youtube_player_widget.dart';
 import 'package:freecodecamp/ui/views/news/html_handler/html_handler.dart';
 import 'package:stacked/stacked.dart';
 import 'package:youtube_player_iframe/youtube_player_iframe.dart';
@@ -63,8 +65,8 @@ class ReviewView extends StatelessWidget {
           backgroundColor: FccColors.gray90,
           persistentFooterAlignment: AlignmentDirectional.topStart,
           appBar: AppBar(
-            backgroundColor: FccColors.gray90,
-          ),
+              backgroundColor: FccColors.gray90,
+              title: Text(handleChallengeTitle(challenge, block))),
           body: SafeArea(
             child: ListView(
               children: [
@@ -84,16 +86,6 @@ class ReviewView extends StatelessWidget {
                   ),
                 ),
                 const SizedBox(height: 12),
-                Padding(
-                  padding: const EdgeInsets.symmetric(
-                    horizontal: 16,
-                  ),
-                  child: YoutubePlayer(
-                    controller: controller,
-                    enableFullScreenOnVerticalDrag: false,
-                  ),
-                ),
-                const SizedBox(height: 12),
                 if (challenge.transcript != null &&
                     challenge.transcript!.isNotEmpty) ...[
                   ChallengeCard(
@@ -104,6 +96,18 @@ class ReviewView extends StatelessWidget {
                   ),
                 ],
                 const SizedBox(height: 12),
+                if (challenge.videoId != null) ...[
+                  const SizedBox(height: 12),
+                  Padding(
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 16,
+                    ),
+                    child: YoutubePlayerWidget(
+                      videoId: challenge.videoId!,
+                    ),
+                  ),
+                  const SizedBox(height: 12),
+                ],
                 ChallengeCard(
                   title: 'Assignments',
                   child: Column(
