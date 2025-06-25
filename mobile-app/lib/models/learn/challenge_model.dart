@@ -101,46 +101,47 @@ class Challenge {
 
   factory Challenge.fromJson(Map<String, dynamic> data) {
     return Challenge(
-        id: data['id'],
-        block: data['block'],
-        title: data['title'],
-        description: data['description'] ?? '',
-        instructions: data['instructions'] ?? '',
-        dashedName: data['dashedName'],
-        superBlock: data['superBlock'],
-        videoId: data['videoId'],
-        challengeType: data['challengeType'],
-        helpCategory: HelpCategory.fromValue(data['helpCategory']),
-        explanation: data['explanation'] ?? '',
-        fillInTheBlank: data['fillInTheBlank'] != null
-            ? FillInTheBlank.fromJson(data['fillInTheBlank'])
-            : null,
-        audio: data['scene'] != null
-            ? EnglishAudio.fromJson(data['scene']['setup']['audio'])
-            : null,
-        tests: (data['tests'] ?? [])
-            .map<ChallengeTest>((file) => ChallengeTest.fromJson(file))
-            .toList(),
-        files: (data['challengeFiles'] ?? [])
-            .map<ChallengeFile>((file) => ChallengeFile.fromJson(file))
-            .toList(),
-        questions: (data['questions'] as List).isNotEmpty
-            ? (data['questions'] as List)
-                .map<Question>((q) => Question.fromJson(q))
-                .toList()
-            : null,
-        assignments: data['assignments'] != null
-            ? (data['assignments'] as List).cast<String>()
-            : null,
-        scene: data['scene'] != null ? Scene.fromJson(data['scene']) : null,
-        hooks: Hooks.fromJson(
-          data['hooks'] ?? {'beforeAll': ''},
-        ),
-        quizzes: (data['quizzes'] != null)
-            ? (data['quizzes'] as List)
-                .map<Quiz>((quiz) => Quiz.fromJson(quiz))
-                .toList()
-            : null);
+      id: data['id'],
+      block: data['block'],
+      title: data['title'],
+      description: data['description'] ?? '',
+      instructions: data['instructions'] ?? '',
+      dashedName: data['dashedName'],
+      superBlock: data['superBlock'],
+      videoId: data['videoId'],
+      challengeType: data['challengeType'],
+      helpCategory: HelpCategory.fromValue(data['helpCategory']),
+      explanation: data['explanation'] ?? '',
+      fillInTheBlank: data['fillInTheBlank'] != null
+          ? FillInTheBlank.fromJson(data['fillInTheBlank'])
+          : null,
+      audio: data['scene'] != null
+          ? EnglishAudio.fromJson(data['scene']['setup']['audio'])
+          : null,
+      tests: (data['tests'] ?? [])
+          .map<ChallengeTest>((file) => ChallengeTest.fromJson(file))
+          .toList(),
+      files: (data['challengeFiles'] ?? [])
+          .map<ChallengeFile>((file) => ChallengeFile.fromJson(file))
+          .toList(),
+      questions: (data['questions'] as List).isNotEmpty
+          ? (data['questions'] as List)
+              .map<Question>((q) => Question.fromJson(q))
+              .toList()
+          : null,
+      assignments: data['assignments'] != null
+          ? (data['assignments'] as List).cast<String>()
+          : null,
+      scene: data['scene'] != null ? Scene.fromJson(data['scene']) : null,
+      hooks: Hooks.fromJson(
+        data['hooks'] ?? {'beforeAll': ''},
+      ),
+      quizzes: (data['quizzes'] != null)
+          ? (data['quizzes'] as List)
+              .map<Quiz>((quiz) => Quiz.fromJson(quiz))
+              .toList()
+          : null,
+    );
   }
 
   static toJson(Challenge challenge) {
