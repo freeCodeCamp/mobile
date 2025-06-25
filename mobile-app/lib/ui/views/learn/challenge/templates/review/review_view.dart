@@ -56,7 +56,6 @@ class ReviewView extends StatelessWidget {
                     ],
                   ),
                 ),
-                const SizedBox(height: 12),
                 if (challenge.videoId != null) ...[
                   const SizedBox(height: 12),
                   Padding(
@@ -69,7 +68,6 @@ class ReviewView extends StatelessWidget {
                   ),
                   const SizedBox(height: 12),
                 ],
-                const SizedBox(height: 12),
                 if (challenge.transcript != null &&
                     challenge.transcript!.isNotEmpty) ...[
                   ChallengeCard(
