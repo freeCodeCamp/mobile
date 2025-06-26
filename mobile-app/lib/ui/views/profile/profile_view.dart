@@ -83,119 +83,6 @@ class ProfileView extends StatelessWidget {
             if (snapshot.hasData) {
               FccUserModel user = snapshot.data!;
 
-              final hasModernCert = user.isRespWebDesignCert ||
-                  user.is2018DataVisCert ||
-                  user.isFrontEndLibsCert ||
-                  user.isJsAlgoDataStructCert ||
-                  user.isApisMicroservicesCert ||
-                  user.isQaCertV7 ||
-                  user.isInfosecCertV7 ||
-                  user.isFullStackCert ||
-                  user.isSciCompPyCertV7 ||
-                  user.isDataAnalysisPyCertV7 ||
-                  user.isMachineLearningPyCertV7 ||
-                  user.isRelationalDatabaseCertV8;
-              final hasLegacyCert = user.isFrontEndCert ||
-                  user.isBackEndCert ||
-                  user.isDataVisCert ||
-                  user.isInfosecQaCert;
-              final currentCerts = [
-                {
-                  'show': user.isRespWebDesignCert,
-                  'title': 'Responsive Web Design Certification',
-                  'certSlug': 'responsive-web-design',
-                },
-                {
-                  'show': user.isJsAlgoDataStructCert,
-                  'title':
-                      'JavaScript Algorithms and Data Structures Certification',
-                  'certSlug': 'javascript-algorithms-and-data-structures'
-                },
-                {
-                  'show': user.isFrontEndLibsCert,
-                  'title': 'Front End Development Libraries Certification',
-                  'certSlug': 'front-end-development-libraries',
-                },
-                {
-                  'show': user.is2018DataVisCert,
-                  'title': 'Data Visualization Certification',
-                  'certSlug': 'data-visualization',
-                },
-                {
-                  'show': user.isApisMicroservicesCert,
-                  'title': 'Back End Development and APIs Certification',
-                  'certSlug': 'back-end-development-and-apis',
-                },
-                {
-                  'show': user.isQaCertV7,
-                  'title': ' Quality Assurance Certification',
-                  'certSlug': 'quality-assurance-v7',
-                },
-                {
-                  'show': user.isInfosecCertV7,
-                  'title': 'Information Security Certification',
-                  'certSlug': 'information-security-v7',
-                },
-                {
-                  'show': user.isSciCompPyCertV7,
-                  'title': 'Scientific Computing with Python Certification',
-                  'certSlug': 'scientific-computing-with-python-v7',
-                },
-                {
-                  'show': user.isDataAnalysisPyCertV7,
-                  'title': 'Data Analysis with Python Certification',
-                  'certSlug': 'data-analysis-with-python-v7',
-                },
-                {
-                  'show': user.isMachineLearningPyCertV7,
-                  'title': 'Machine Learning with Python Certification',
-                  'certSlug': 'machine-learning-with-python-v7',
-                },
-                {
-                  'show': user.isRelationalDatabaseCertV8,
-                  'title': 'Relational Database Certification',
-                  'certSlug': 'relational-database-v8',
-                },
-                {
-                  'show': user.isCollegeAlgebraPyCertV8,
-                  'title': 'College Algebra with Python',
-                  'certSlug': 'college-algebra-with-python-v8',
-                },
-                {
-                  'show': user.isFoundationalCSharpCertV8,
-                  'title': 'Foundational C# with Microsoft',
-                  'certSlug': 'foundational-c-sharp-with-microsoft',
-                }
-              ];
-              final legacyCerts = [
-                {
-                  'show': user.isFrontEndCert,
-                  'title': 'Front End Certification',
-                  'certSlug': 'legacy-front-end'
-                },
-                {
-                  'show': user.isBackEndCert,
-                  'title': 'Back End Certification',
-                  'certSlug': 'legacy-back-end'
-                },
-                {
-                  'show': user.isDataVisCert,
-                  'title': 'Data Visualization Certification',
-                  'certSlug': 'legacy-data-visualization'
-                },
-                {
-                  'show': user.isInfosecQaCert,
-                  'title':
-                      'Information Security and Quality Assurance Certification',
-                  'certSlug': 'information-security-and-quality-assurance'
-                },
-                {
-                  'show': user.isFullStackCert,
-                  'title': 'Full Stack Certification',
-                  'certSlug': 'full-stack'
-                }
-              ];
-
               final streak = calculateStreak(user);
 
               return Container(
@@ -207,8 +94,7 @@ class ProfileView extends StatelessWidget {
                       _buildAboutCard(user),
                       _buildInfoSection(context, user, streak),
                       _buildHeatmap(context, user, streak),
-                      _buildCertifications(user, hasModernCert, hasLegacyCert,
-                          currentCerts, legacyCerts),
+                      _buildCertifications(user),
                       _buildPortfolio(user),
                     ],
                   ),
@@ -224,6 +110,96 @@ class ProfileView extends StatelessWidget {
               );
             }
           },
+        ),
+      ),
+    );
+  }
+
+  Widget _infoRow(IconData icon, String label, String value, Color iconColor) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 4),
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.center,
+        children: [
+          Icon(icon, color: iconColor, size: 22),
+          const SizedBox(width: 14),
+          Expanded(
+            child: Text(
+              label,
+              style: const TextStyle(
+                color: FccColors.gray15,
+                fontWeight: FontWeight.w600,
+                fontSize: 14,
+              ),
+            ),
+          ),
+          Text(
+            value,
+            style: const TextStyle(
+              color: Colors.white,
+              fontWeight: FontWeight.w500,
+              fontSize: 14,
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildInfoSection(
+    BuildContext context,
+    FccUserModel user,
+    Map<String, int> streak,
+  ) {
+    final infoRows = <Widget>[
+      if (user.location != null && user.location!.trim().isNotEmpty)
+        _infoRow(
+            Icons.location_on, 'Location', user.location!, FccColors.blue50),
+      if (user.isDonating)
+        _infoRow(Icons.favorite, 'Supporter', context.t.profile_supporter,
+            FccColors.yellow45),
+      if (user.twitter != null && user.twitter!.trim().isNotEmpty)
+        _infoRow(
+            Icons.alternate_email, 'X', '@${user.twitter}', FccColors.blue50),
+      if (user.githubProfile != null && user.githubProfile!.trim().isNotEmpty)
+        _infoRow(Icons.code, 'GitHub', user.githubProfile!, FccColors.blue50),
+      if (user.linkedin != null && user.linkedin!.trim().isNotEmpty)
+        _infoRow(Icons.business, 'LinkedIn', user.linkedin!, FccColors.blue50),
+      if (user.website != null && user.website!.trim().isNotEmpty)
+        _infoRow(Icons.language, 'Website', user.website!, FccColors.blue50),
+      _infoRow(Icons.calendar_month, 'Joined',
+          Jiffy.parseFromDateTime(user.joinDate).yMMMM, FccColors.gray15),
+      _infoRow(Icons.local_fire_department_sharp, 'Points',
+          user.points.toString(), FccColors.red30),
+      _infoRow(
+          Icons.emoji_events,
+          'Longest Streak',
+          (streak['longest'] ?? 0).toString(),
+          FccColors.orange30), // Changed icon color
+      _infoRow(
+          Icons.bolt,
+          'Current Streak',
+          (streak['current'] ?? 0).toString(),
+          FccColors.orange30), // Changed icon color
+    ];
+    return Container(
+      width: double.infinity,
+      margin: const EdgeInsets.symmetric(horizontal: 8, vertical: 6),
+      child: Card(
+        color: FccColors.gray85,
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+        child: Padding(
+          padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 16),
+          child: Column(
+            children: [
+              ...infoRows.expand((row) sync* {
+                yield row;
+                yield const Divider(
+                    color: FccColors.gray75, height: 18, thickness: 1);
+              }).toList()
+                ..removeLast(),
+            ],
+          ),
         ),
       ),
     );
@@ -251,18 +227,22 @@ class ProfileView extends StatelessWidget {
                   SizedBox(height: 32),
                   Text(
                     user.name,
-                    style: const TextStyle(
+                    style: TextStyle(
                       fontSize: 26,
                       fontWeight: FontWeight.bold,
-                      color: FccColors.gray00,
+                      color: user.isDonating
+                          ? FccColors.yellow40
+                          : Colors.white, // Conditional color
                     ),
                   ),
                   SizedBox(height: 4),
                   Text(
                     '@${user.username}',
-                    style: const TextStyle(
+                    style: TextStyle(
                       fontSize: 16,
-                      color: FccColors.yellow40,
+                      color: user.isDonating
+                          ? FccColors.yellow40
+                          : Colors.white, // Conditional color
                       fontWeight: FontWeight.w600,
                     ),
                   ),
@@ -362,90 +342,6 @@ class ProfileView extends StatelessWidget {
     );
   }
 
-  Widget _buildInfoSection(
-      BuildContext context, FccUserModel user, Map<String, int> streak) {
-    final infoRows = <Widget>[
-      if (user.location != null && user.location!.trim().isNotEmpty)
-        _infoRow(
-            Icons.location_on, 'Location', user.location!, FccColors.blue50),
-      if (user.isDonating)
-        _infoRow(Icons.favorite, 'Supporter', context.t.profile_supporter,
-            FccColors.yellow45),
-      if (user.twitter != null && user.twitter!.trim().isNotEmpty)
-        _infoRow(
-            Icons.alternate_email, 'X', '@${user.twitter}', FccColors.blue50),
-      if (user.githubProfile != null && user.githubProfile!.trim().isNotEmpty)
-        _infoRow(Icons.code, 'GitHub', user.githubProfile!, FccColors.blue50),
-      if (user.linkedin != null && user.linkedin!.trim().isNotEmpty)
-        _infoRow(Icons.business, 'LinkedIn', user.linkedin!, FccColors.blue50),
-      if (user.website != null && user.website!.trim().isNotEmpty)
-        _infoRow(Icons.language, 'Website', user.website!, FccColors.blue50),
-      _infoRow(Icons.calendar_month, 'Joined',
-          Jiffy.parseFromDateTime(user.joinDate).yMMMM, FccColors.gray15),
-      _infoRow(Icons.local_fire_department_sharp, 'Points',
-          user.points.toString(), FccColors.red30),
-      _infoRow(Icons.emoji_events, 'Longest Streak',
-          (streak['longest'] ?? 0).toString(), FccColors.yellow40),
-      _infoRow(Icons.bolt, 'Current Streak',
-          (streak['current'] ?? 0).toString(), FccColors.yellow40),
-    ];
-    return Container(
-      width: double.infinity,
-      margin: const EdgeInsets.symmetric(horizontal: 8, vertical: 6),
-      child: Card(
-        color: FccColors.gray85,
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
-        child: Padding(
-          padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 16),
-          child: Column(
-            children: [
-              ...infoRows.expand((row) sync* {
-                yield row;
-                yield const Divider(
-                    color: FccColors.gray75, height: 18, thickness: 1);
-              }).toList()
-                ..removeLast(),
-            ],
-          ),
-        ),
-      ),
-    );
-  }
-
-  Widget _infoRow(IconData icon, String label, String value, Color iconColor) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 4),
-      child: Row(
-        crossAxisAlignment: CrossAxisAlignment.center,
-        children: [
-          Icon(icon, color: iconColor, size: 22),
-          const SizedBox(width: 14),
-          Text(
-            label,
-            style: const TextStyle(
-              color: FccColors.gray15,
-              fontWeight: FontWeight.w600,
-              fontSize: 14,
-            ),
-          ),
-          const SizedBox(width: 10),
-          Expanded(
-            child: Text(
-              value,
-              style: const TextStyle(
-                color: Colors.white,
-                fontWeight: FontWeight.w500,
-                fontSize: 15,
-              ),
-              overflow: TextOverflow.ellipsis,
-              maxLines: 1,
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-
   Widget _buildHeatmap(
       BuildContext context, FccUserModel user, Map<String, int> streak) {
     return Container(
@@ -495,8 +391,121 @@ class ProfileView extends StatelessWidget {
     );
   }
 
-  Widget _buildCertifications(FccUserModel user, bool hasModernCert,
-      bool hasLegacyCert, List currentCerts, List legacyCerts) {
+  Widget _buildCertifications(FccUserModel user) {
+    final hasModernCert = user.isRespWebDesignCert ||
+        user.is2018DataVisCert ||
+        user.isFrontEndLibsCert ||
+        user.isJsAlgoDataStructCert ||
+        user.isApisMicroservicesCert ||
+        user.isQaCertV7 ||
+        user.isInfosecCertV7 ||
+        user.isFullStackCert ||
+        user.isSciCompPyCertV7 ||
+        user.isDataAnalysisPyCertV7 ||
+        user.isMachineLearningPyCertV7 ||
+        user.isRelationalDatabaseCertV8;
+
+    final hasLegacyCert = user.isFrontEndCert ||
+        user.isBackEndCert ||
+        user.isDataVisCert ||
+        user.isInfosecQaCert;
+
+    final currentCerts = [
+      {
+        'show': user.isRespWebDesignCert,
+        'title': 'Responsive Web Design Certification',
+        'certSlug': 'responsive-web-design',
+      },
+      {
+        'show': user.isJsAlgoDataStructCert,
+        'title': 'JavaScript Algorithms and Data Structures Certification',
+        'certSlug': 'javascript-algorithms-and-data-structures'
+      },
+      {
+        'show': user.isFrontEndLibsCert,
+        'title': 'Front End Development Libraries Certification',
+        'certSlug': 'front-end-development-libraries',
+      },
+      {
+        'show': user.is2018DataVisCert,
+        'title': 'Data Visualization Certification',
+        'certSlug': 'data-visualization',
+      },
+      {
+        'show': user.isApisMicroservicesCert,
+        'title': 'Back End Development and APIs Certification',
+        'certSlug': 'back-end-development-and-apis',
+      },
+      {
+        'show': user.isQaCertV7,
+        'title': ' Quality Assurance Certification',
+        'certSlug': 'quality-assurance-v7',
+      },
+      {
+        'show': user.isInfosecCertV7,
+        'title': 'Information Security Certification',
+        'certSlug': 'information-security-v7',
+      },
+      {
+        'show': user.isSciCompPyCertV7,
+        'title': 'Scientific Computing with Python Certification',
+        'certSlug': 'scientific-computing-with-python-v7',
+      },
+      {
+        'show': user.isDataAnalysisPyCertV7,
+        'title': 'Data Analysis with Python Certification',
+        'certSlug': 'data-analysis-with-python-v7',
+      },
+      {
+        'show': user.isMachineLearningPyCertV7,
+        'title': 'Machine Learning with Python Certification',
+        'certSlug': 'machine-learning-with-python-v7',
+      },
+      {
+        'show': user.isRelationalDatabaseCertV8,
+        'title': 'Relational Database Certification',
+        'certSlug': 'relational-database-v8',
+      },
+      {
+        'show': user.isCollegeAlgebraPyCertV8,
+        'title': 'College Algebra with Python',
+        'certSlug': 'college-algebra-with-python-v8',
+      },
+      {
+        'show': user.isFoundationalCSharpCertV8,
+        'title': 'Foundational C# with Microsoft',
+        'certSlug': 'foundational-c-sharp-with-microsoft',
+      }
+    ];
+
+    final legacyCerts = [
+      {
+        'show': user.isFrontEndCert,
+        'title': 'Front End Certification',
+        'certSlug': 'legacy-front-end'
+      },
+      {
+        'show': user.isBackEndCert,
+        'title': 'Back End Certification',
+        'certSlug': 'legacy-back-end'
+      },
+      {
+        'show': user.isDataVisCert,
+        'title': 'Data Visualization Certification',
+        'certSlug': 'legacy-data-visualization'
+      },
+      {
+        'show': user.isInfosecQaCert,
+        'title': 'Information Security and Quality Assurance Certification',
+        'certSlug': 'information-security-and-quality-assurance'
+      },
+      {
+        'show': user.isFullStackCert,
+        'title': 'Full Stack Certification',
+        'certSlug': 'full-stack'
+      }
+    ];
+
     return Container(
       width: double.infinity,
       margin: const EdgeInsets.symmetric(horizontal: 8, vertical: 6),
@@ -661,7 +670,7 @@ class CertificationWidget extends StatelessWidget {
                   child: Text(
                     cert['title'],
                     style: const TextStyle(
-                      color: FccColors.yellow40,
+                      color: Colors.white, // Changed cert names to white
                       fontWeight: FontWeight.w600,
                       fontSize: 15,
                     ),
