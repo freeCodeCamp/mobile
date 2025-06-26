@@ -206,7 +206,7 @@ class ChallengeView extends StatelessWidget {
       child: Row(
         children: [
           Expanded(
-            child: fileSelector(
+            child: _fileSelector(
               model: model,
               challenge: challenge,
             ),
@@ -342,7 +342,7 @@ class ChallengeView extends StatelessWidget {
     );
   }
 
-  Widget fileSelector({
+  Widget _fileSelector({
     required ChallengeViewModel model,
     required Challenge challenge,
   }) {
@@ -501,7 +501,6 @@ class ChallengeView extends StatelessWidget {
       ),
       children: [
         Container(
-          width: double.infinity,
           color: FccColors.gray80,
           constraints: const BoxConstraints(minHeight: 10, maxHeight: 1000),
           padding: const EdgeInsets.symmetric(
