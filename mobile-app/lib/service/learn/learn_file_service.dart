@@ -257,18 +257,19 @@ class LearnFileService {
           continue;
         }
 
-        // NOTE: Do we throw an error if babelController is null?
-        if (babelController != null) {
-          final babelRes = await babelController.callAsyncJavaScript(
-            functionBody: ScriptBuilder.transpileScript,
-            arguments: {'code': fileContents},
-          );
-
-          if (babelRes?.error != null) {
-            throw Exception('Babel transpilation failed: ${babelRes?.error}');
-          }
-          fileContents = babelRes?.value;
+        if (babelController == null) {
+          throw Exception('Babel controller is required to transpile JS code.');
         }
+
+        final babelRes = await babelController.callAsyncJavaScript(
+          functionBody: ScriptBuilder.transpileScript,
+          arguments: {'code': fileContents},
+        );
+
+        if (babelRes?.error != null) {
+          throw Exception('Babel transpilation failed: ${babelRes?.error}');
+        }
+        fileContents = babelRes?.value;
 
         Document document = parse(challengeContent);
 
