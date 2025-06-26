@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_html/flutter_html.dart';
 import 'package:freecodecamp/models/learn/challenge_model.dart';
 import 'package:freecodecamp/models/learn/curriculum_model.dart';
 import 'package:freecodecamp/ui/theme/fcc_theme.dart';
@@ -45,11 +46,17 @@ class EnglishView extends StatelessWidget {
                     children: [
                       ...parser.parse(
                         challenge.instructions,
-                        fontColor: FccColors.gray05,
+                        customStyles: {
+                          '*:not(h1):not(h2):not(h3):not(h4):not(h5):not(h6)':
+                              Style(color: FccColors.gray05),
+                        },
                       ),
                       ...parser.parse(
                         challenge.description,
-                        fontColor: FccColors.gray05,
+                        customStyles: {
+                          '*:not(h1):not(h2):not(h3):not(h4):not(h5):not(h6)':
+                              Style(color: FccColors.gray05),
+                        },
                       ),
                     ],
                   ),
