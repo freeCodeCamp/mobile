@@ -15,6 +15,7 @@ void main() {
     title: 'hello-world',
     description: 'this is the description',
     instructions: 'make your first header',
+    transcript: 'this is the transcript',
     dashedName: 'hello-world',
     superBlock: '2022/responsive-web-design',
     challengeType: 1,

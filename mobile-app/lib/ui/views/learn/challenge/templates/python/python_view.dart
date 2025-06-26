@@ -5,11 +5,10 @@ import 'package:freecodecamp/models/learn/curriculum_model.dart';
 import 'package:freecodecamp/ui/views/learn/challenge/templates/python/python_viewmodel.dart';
 import 'package:freecodecamp/ui/views/learn/utils/challenge_utils.dart';
 import 'package:freecodecamp/ui/views/learn/widgets/challenge_card.dart';
-import 'package:freecodecamp/ui/views/learn/widgets/transcript_widget.dart';
 import 'package:freecodecamp/ui/views/learn/widgets/quiz_widget.dart';
+import 'package:freecodecamp/ui/views/learn/widgets/transcript_widget.dart';
 import 'package:freecodecamp/ui/views/learn/widgets/youtube_player_widget.dart';
 import 'package:freecodecamp/ui/views/news/html_handler/html_handler.dart';
-import 'package:freecodecamp/ui/widgets/drawer_widget/drawer_widget_view.dart';
 import 'package:stacked/stacked.dart';
 
 class PythonView extends StatelessWidget {
