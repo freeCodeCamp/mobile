@@ -11,7 +11,6 @@ on:
 jobs:
   flutter_deploy:
     name: Deploy flutter app
-    needs: unit-tests
     defaults:
       run:
         working-directory: ./mobile-app

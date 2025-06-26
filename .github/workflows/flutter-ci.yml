@@ -16,7 +16,6 @@ on:
 jobs:
   flutter_test:
     name: flutter test
-    needs: unit-tests
     defaults:
       run:
         working-directory: ./mobile-app
