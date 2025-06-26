@@ -9,6 +9,7 @@ import 'package:freecodecamp/ui/views/learn/widgets/audio/audio_player_view.dart
 import 'package:freecodecamp/ui/views/learn/widgets/challenge_card.dart';
 import 'package:freecodecamp/ui/views/learn/widgets/explanation_widget.dart';
 import 'package:freecodecamp/ui/views/learn/widgets/quiz_widget.dart';
+import 'package:freecodecamp/ui/views/learn/widgets/transcript_widget.dart';
 import 'package:freecodecamp/ui/views/learn/widgets/youtube_player_widget.dart';
 import 'package:freecodecamp/ui/views/news/html_handler/html_handler.dart';
 import 'package:stacked/stacked.dart';
@@ -51,11 +52,28 @@ class MultipleChoiceView extends StatelessWidget {
           body: SafeArea(
             child: ListView(
               children: [
+                if (challenge.description.isNotEmpty)
+                  ChallengeCard(
+                    title: 'Description',
+                    child: Column(
+                      children: parser.parse(
+                        challenge.description,
+                      ),
+                    ),
+                  ),
                 if (challenge.videoId != null) ...[
                   ChallengeCard(
                     title: 'Watch the Video',
                     child: YoutubePlayerWidget(
                       videoId: challenge.videoId!,
+                    ),
+                  ),
+                ],
+                if (challenge.transcript.isNotEmpty) ...[
+                  ChallengeCard(
+                    title: 'Transcript',
+                    child: Transcript(
+                      transcript: challenge.transcript,
                     ),
                   ),
                 ],
@@ -67,6 +85,15 @@ class MultipleChoiceView extends StatelessWidget {
                     ),
                   ),
                 ],
+                if (challenge.instructions.isNotEmpty)
+                  ChallengeCard(
+                    title: 'Instructions',
+                    child: Column(
+                      children: parser.parse(
+                        challenge.instructions,
+                      ),
+                    ),
+                  ),
                 if (challenge.assignments != null &&
                     challenge.assignments!.isNotEmpty) ...[
                   ChallengeCard(
@@ -88,15 +115,6 @@ class MultipleChoiceView extends StatelessWidget {
                     ),
                   ),
                 ],
-                if (challenge.description.isNotEmpty)
-                  ChallengeCard(
-                    title: 'Description',
-                    child: Column(
-                      children: parser.parse(
-                        challenge.description,
-                      ),
-                    ),
-                  ),
                 QuizWidget(
                     isValidated: model.isValidated,
                     questions: model.quizQuestions,
