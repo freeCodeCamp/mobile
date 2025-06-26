@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_html/flutter_html.dart';
 import 'package:freecodecamp/ui/views/learn/widgets/console/console_viewmodel.dart';
 import 'package:freecodecamp/ui/views/news/html_handler/html_handler.dart';
 import 'package:stacked/stacked.dart';
@@ -40,9 +41,25 @@ class JavaScriptConsole extends StatelessWidget {
                     itemBuilder: (context, index) {
                       List<Widget> htmlWidgets = parser.parse(
                         messages.isEmpty ? defaultMessage : messages[index],
+                        customStyles: {
+                          'body': Style(
+                            margin: Margins.symmetric(
+                              vertical: 0,
+                              horizontal: 8,
+                            ),
+                          ),
+                          'p': Style(margin: Margins.zero),
+                        },
                       );
 
-                      return consoleMessage(htmlWidgets, model, context);
+                      return Row(
+                        children: [
+                          for (int i = 0; i < htmlWidgets.length; i++)
+                            Expanded(
+                              child: htmlWidgets[i],
+                            )
+                        ],
+                      );
                     },
                   ),
                 ),
@@ -51,21 +68,6 @@ class JavaScriptConsole extends StatelessWidget {
           ),
         );
       },
-    );
-  }
-
-  Widget consoleMessage(
-    List<Widget> htmlWidgets,
-    JavaScriptConsoleViewModel model,
-    BuildContext context,
-  ) {
-    return Row(
-      children: [
-        for (int i = 0; i < htmlWidgets.length; i++)
-          Expanded(
-            child: htmlWidgets[i],
-          )
-      ],
     );
   }
 }
