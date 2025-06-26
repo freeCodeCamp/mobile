@@ -1,0 +1,56 @@
+name: Flutter Unit Tests
+
+on:
+  pull_request:
+    branches: [main, prod]
+    paths:
+      - "mobile-app/**"
+      - ".github/**"
+  push:
+    branches: [main, prod]
+
+jobs:
+  unit-tests:
+    name: Analyze and Run Unit Tests
+    defaults:
+      run:
+        working-directory: ./mobile-app
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout files
+        uses: actions/checkout@v4
+
+      - name: Setup Flutter 3.29.x
+        uses: subosito/flutter-action@e938fdf56512cc96ef2f93601a5a40bde3801046 # v2
+        with:
+          flutter-version: "3.29.x"
+          channel: "stable"
+          cache: true
+          cache-key: flutter-3.29.x
+          cache-path: ${{ runner.tool_cache }}/flutter
+
+      - name: Create .env file
+        run: |
+          echo "HASHNODE_PUBLICATION_ID=$HASHNODE_PUBLICATION_ID" > .env
+          echo "ALGOLIAAPPID=$ALGOLIA_APP_ID" >> .env
+          echo "ALGOLIAKEY=$ALGOLIA_KEY" >> .env
+          echo "AUTH0_DOMAIN=$AUTH0_DOMAIN" >> .env
+          echo "AUTH0_CLIENT_ID=$AUTH0_CLIENT_ID" >> .env
+        env:
+          HASHNODE_PUBLICATION_ID: ${{ secrets.HASHNODE_PUBLICATION_ID }}
+          ALGOLIA_APP_ID: ${{ secrets.ALGOLIA_APP_ID }}
+          ALGOLIA_KEY: ${{ secrets.ALGOLIA_KEY }}
+          AUTH0_DOMAIN: ${{ secrets.AUTH0_DOMAIN }}
+          AUTH0_CLIENT_ID: ${{ secrets.AUTH0_CLIENT_ID }}
+
+      - name: Install packages
+        run: flutter pub get
+
+      - name: Analyze code
+        run: flutter analyze
+
+      - name: Run unit tests
+        run: |
+          cd test
+          flutter test unit
+          flutter test services
