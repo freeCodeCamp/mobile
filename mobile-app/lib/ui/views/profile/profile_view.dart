@@ -171,16 +171,10 @@ class ProfileView extends StatelessWidget {
           Jiffy.parseFromDateTime(user.joinDate).yMMMM, FccColors.gray15),
       _infoRow(Icons.local_fire_department_sharp, 'Points',
           user.points.toString(), FccColors.red30),
-      _infoRow(
-          Icons.emoji_events,
-          'Longest Streak',
-          (streak['longest'] ?? 0).toString(),
-          FccColors.orange30), // Changed icon color
-      _infoRow(
-          Icons.bolt,
-          'Current Streak',
-          (streak['current'] ?? 0).toString(),
-          FccColors.orange30), // Changed icon color
+      _infoRow(Icons.emoji_events, 'Longest Streak',
+          (streak['longest'] ?? 0).toString(), FccColors.orange30),
+      _infoRow(Icons.bolt, 'Current Streak',
+          (streak['current'] ?? 0).toString(), FccColors.orange30),
     ];
     return Container(
       width: double.infinity,
@@ -230,9 +224,8 @@ class ProfileView extends StatelessWidget {
                     style: TextStyle(
                       fontSize: 26,
                       fontWeight: FontWeight.bold,
-                      color: user.isDonating
-                          ? FccColors.yellow40
-                          : Colors.white, // Conditional color
+                      color:
+                          user.isDonating ? FccColors.yellow40 : Colors.white,
                     ),
                   ),
                   SizedBox(height: 4),
@@ -240,9 +233,8 @@ class ProfileView extends StatelessWidget {
                     '@${user.username}',
                     style: TextStyle(
                       fontSize: 16,
-                      color: user.isDonating
-                          ? FccColors.yellow40
-                          : Colors.white, // Conditional color
+                      color:
+                          user.isDonating ? FccColors.yellow40 : Colors.white,
                       fontWeight: FontWeight.w600,
                     ),
                   ),
@@ -670,7 +662,7 @@ class CertificationWidget extends StatelessWidget {
                   child: Text(
                     cert['title'],
                     style: const TextStyle(
-                      color: Colors.white, // Changed cert names to white
+                      color: Colors.white,
                       fontWeight: FontWeight.w600,
                       fontSize: 15,
                     ),
