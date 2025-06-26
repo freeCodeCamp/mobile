@@ -94,8 +94,8 @@ class ProfileView extends StatelessWidget {
                       _buildAboutCard(user),
                       _buildInfoSection(context, user, streak),
                       _buildHeatmap(context, user, streak),
-                      _buildCertifications(user),
                       _buildPortfolio(user),
+                      _buildCertifications(user),
                     ],
                   ),
                 ),
@@ -159,8 +159,7 @@ class ProfileView extends StatelessWidget {
         _infoRow(Icons.favorite, 'Supporter', context.t.profile_supporter,
             FccColors.yellow45),
       if (user.twitter != null && user.twitter!.trim().isNotEmpty)
-        _infoRow(
-            Icons.alternate_email, 'X', '@${user.twitter}', FccColors.blue50),
+        _infoRow(Icons.alternate_email, 'X', user.twitter!, FccColors.blue50),
       if (user.githubProfile != null && user.githubProfile!.trim().isNotEmpty)
         _infoRow(Icons.code, 'GitHub', user.githubProfile!, FccColors.blue50),
       if (user.linkedin != null && user.linkedin!.trim().isNotEmpty)
@@ -306,12 +305,12 @@ class ProfileView extends StatelessWidget {
             children: [
               Row(
                 children: [
-                  Icon(Icons.chat_bubble, color: FccColors.purple50, size: 22),
+                  Icon(Icons.chat_bubble, color: FccColors.gray00, size: 22),
                   const SizedBox(width: 10),
                   const Text(
                     'About',
                     style: TextStyle(
-                      color: FccColors.purple50,
+                      color: FccColors.gray00,
                       fontWeight: FontWeight.bold,
                       fontSize: 16,
                     ),
@@ -537,19 +536,6 @@ class ProfileView extends StatelessWidget {
   Widget _buildPortfolioWidget(FccUserModel user) {
     return Column(
       children: [
-        buildDivider(),
-        Padding(
-          padding: const EdgeInsets.all(8),
-          child: Text(
-            'Portfolio',
-            textAlign: TextAlign.center,
-            style: const TextStyle(
-              fontSize: 20,
-              height: 1.25,
-              fontWeight: FontWeight.w700,
-            ),
-          ),
-        ),
         ...user.portfolio.map(
           (portfolio) => InkWell(
             onTap: () => launchUrl(Uri.parse(portfolio.url!)),
@@ -558,24 +544,32 @@ class ProfileView extends StatelessWidget {
                 horizontal: 12,
                 vertical: 6,
               ),
-              color: const Color.fromRGBO(0x2A, 0x2A, 0x40, 1),
+              color: FccColors.gray85,
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(16),
+              ),
               child: Padding(
-                padding: const EdgeInsets.all(12),
+                padding: const EdgeInsets.all(16),
                 child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     if (portfolio.image != null && portfolio.image!.isNotEmpty)
-                      Image.network(
-                        portfolio.image!,
-                        height: 120,
-                        fit: BoxFit.cover,
+                      ClipRRect(
+                        borderRadius: BorderRadius.circular(12),
+                        child: Image.network(
+                          portfolio.image!,
+                          height: 150,
+                          width: double.infinity,
+                          fit: BoxFit.cover,
+                        ),
                       ),
-                    const SizedBox(height: 8),
+                    const SizedBox(height: 12),
                     Text(
                       portfolio.title!,
-                      textAlign: TextAlign.center,
                       style: const TextStyle(
-                        fontSize: 16,
+                        fontSize: 18,
                         fontWeight: FontWeight.bold,
+                        color: Colors.white,
                       ),
                     ),
                     if (portfolio.description != null &&
@@ -584,12 +578,34 @@ class ProfileView extends StatelessWidget {
                         padding: const EdgeInsets.only(top: 8.0),
                         child: Text(
                           portfolio.description!,
-                          textAlign: TextAlign.center,
                           style: const TextStyle(
                             fontSize: 14,
+                            color: FccColors.gray15,
                           ),
                         ),
                       ),
+                    const SizedBox(height: 12),
+                    Row(
+                      children: [
+                        const Icon(Icons.link,
+                            color: FccColors.blue50, size: 20),
+                        const SizedBox(width: 8),
+                        Expanded(
+                          child: GestureDetector(
+                            onTap: () => launchUrl(Uri.parse(portfolio.url!)),
+                            child: Text(
+                              portfolio.url!,
+                              style: const TextStyle(
+                                fontSize: 14,
+                                color: FccColors.blue50,
+                                decoration: TextDecoration.underline,
+                              ),
+                              overflow: TextOverflow.ellipsis,
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
                   ],
                 ),
               ),
