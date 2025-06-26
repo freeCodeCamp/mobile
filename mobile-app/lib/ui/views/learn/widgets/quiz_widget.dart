@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_html/flutter_html.dart';
 import 'package:freecodecamp/models/learn/challenge_model.dart';
 import 'package:freecodecamp/ui/theme/fcc_theme.dart';
 import 'package:freecodecamp/ui/views/learn/widgets/challenge_card.dart';
@@ -129,7 +130,9 @@ class QuizWidget extends StatelessWidget {
                 children: parser.parse(
                   answerObj.value.answer,
                   isSelectable: false,
-                  removeParagraphMargin: true,
+                  customStyles: {
+                    'p': Style(margin: Margins.zero),
+                  },
                 ),
               ),
             ),
@@ -175,7 +178,11 @@ class QuizWidget extends StatelessWidget {
       feedbackWidgets.addAll(
         parser.parse(
           feedback,
-          fontColor: isCorrect == true ? FccColors.green40 : FccColors.red15,
+          customStyles: {
+            '*:not(h1):not(h2):not(h3):not(h4):not(h5):not(h6)': Style(
+              color: isCorrect == true ? FccColors.green40 : FccColors.red15,
+            ),
+          },
         ),
       );
     }
