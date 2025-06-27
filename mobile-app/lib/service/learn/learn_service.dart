@@ -205,14 +205,14 @@ class LearnService {
   ) async {
     DialogResponse? res = await _dialogService.showCustomDialog(
         barrierDismissible: true,
-        variant: DialogType.buttonForm,
+        variant: DialogType.askForHelp,
         title: 'Ask for Help',
         description:
             "If you've already tried the Read-Search-Ask method, then you can try asking for help on the freeCodeCamp forum.",
         mainButtonTitle: 'Create a post');
     if (res != null && res.confirmed) {
       DialogResponse? forumRes = await _dialogService.showCustomDialog(
-        variant: DialogType.forumHelp,
+        variant: DialogType.askForHelpInput,
         title: 'Create a post',
         description:
             'You must confirm the following statements before you can submit your post to the forum.',

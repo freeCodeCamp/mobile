@@ -18,9 +18,12 @@ void setupDialogUi() {
     DialogType.buttonForm: (BuildContext context, DialogRequest sheetRequest,
             Function(DialogResponse) completer) =>
         _buttonDialog(request: sheetRequest, onDialogTap: completer),
-    DialogType.forumHelp: (BuildContext context, DialogRequest sheetRequest,
+    DialogType.askForHelp: (BuildContext context, DialogRequest sheetRequest,
             Function(DialogResponse) completer) =>
-        _forumHelpDialog(request: sheetRequest, onDialogTap: completer),
+        _askForHelpDialog(request: sheetRequest, onDialogTap: completer),
+    DialogType.askForHelpInput: (BuildContext context,
+            DialogRequest sheetRequest, Function(DialogResponse) completer) =>
+        _askForHelpInputDialogue(request: sheetRequest, onDialogTap: completer),
     DialogType.deleteAccount: (BuildContext context, DialogRequest sheetRequest,
             Function(DialogResponse) completer) =>
         _deleteAccountDialog(request: sheetRequest, onDialogTap: completer),
@@ -52,7 +55,7 @@ class _buttonDialog extends HookWidget {
               runSpacing: 20,
               children: [
                 Text(
-                  'Ask for help',
+                  request.title as String,
                   style: const TextStyle(
                     fontSize: 24,
                     height: 1.5,
@@ -60,29 +63,12 @@ class _buttonDialog extends HookWidget {
                     color: Colors.white,
                   ),
                 ),
-                Text.rich(
-                  TextSpan(
-                    text: '',
-                    children: [
-                      TextSpan(
-                        text: 'Read-Search-Ask',
-                        style: const TextStyle(
-                          color: FccColors.yellow40,
-                          decoration: TextDecoration.underline,
-                          decorationColor: FccColors
-                              .yellow40, // Set underline color to yellow
-                        ),
-                        recognizer: TapGestureRecognizer()
-                          ..onTap = () {
-                            launchUrl(Uri.parse(
-                                'https://forum.freecodecamp.org/t/how-to-get-help-when-you-are-stuck-coding/19514'));
-                          },
-                      ),
-                      const TextSpan(
-                        text:
-                            ' method, then you can ask for help on the freeCodeCamp forum.',
-                      ),
-                    ],
+                Text(
+                  request.description as String,
+                  style: const TextStyle(
+                    height: 1.5,
+                    fontSize: 16,
+                    color: Colors.white,
                   ),
                 ),
                 SizedBox(
@@ -329,11 +315,14 @@ class _BasicDialog extends StatelessWidget {
 }
 
 // ignore: camel_case_types
-class _forumHelpDialog extends HookWidget {
+class _askForHelpInputDialogue extends HookWidget {
   final DialogRequest request;
   final Function(DialogResponse) onDialogTap;
 
-  const _forumHelpDialog({required this.request, required this.onDialogTap});
+  const _askForHelpInputDialogue({
+    required this.request,
+    required this.onDialogTap,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -502,6 +491,124 @@ class _forumHelpDialog extends HookWidget {
                                   ),
                                 }
                             : null,
+                    child: Text(
+                      request.mainButtonTitle as String,
+                      textAlign: TextAlign.center,
+                      style: const TextStyle(
+                        fontSize: 16,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                  ),
+                ),
+                SizedBox(
+                  height: 50,
+                  width: MediaQuery.of(context).size.width,
+                  child: ElevatedButton(
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: FccColors.gray75,
+                      foregroundColor: FccColors.gray00,
+                      side: const BorderSide(width: 2, color: FccColors.gray00),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(0),
+                      ),
+                    ),
+                    onPressed: () => {
+                      onDialogTap(DialogResponse(confirmed: false)),
+                    },
+                    child: Text(
+                      request.secondaryButtonTitle ?? 'Cancel',
+                      textAlign: TextAlign.center,
+                      style: const TextStyle(
+                        fontSize: 16,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          )
+        ],
+      ),
+    );
+  }
+}
+
+// ignore: camel_case_types
+class _askForHelpDialog extends HookWidget {
+  final DialogRequest request;
+  final Function(DialogResponse) onDialogTap;
+
+  const _askForHelpDialog({required this.request, required this.onDialogTap});
+
+  @override
+  Widget build(BuildContext context) {
+    return Dialog(
+      backgroundColor: FccColors.gray90,
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(0),
+      ),
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Container(
+            padding: const EdgeInsets.all(16),
+            child: Wrap(
+              runSpacing: 20,
+              children: [
+                Text(
+                  request.title as String,
+                  style: const TextStyle(
+                    fontSize: 24,
+                    fontWeight: FontWeight.bold,
+                    color: FccColors.gray00,
+                  ),
+                ),
+                RichText(
+                  text: TextSpan(
+                    text: 'Please follow the ',
+                    style: const TextStyle(
+                      fontSize: 16,
+                      color: FccColors.gray05,
+                    ),
+                    children: [
+                      TextSpan(
+                        text: 'Read-Search-Ask',
+                        style: const TextStyle(
+                          fontSize: 16,
+                          color: FccColors.yellow40,
+                          decoration: TextDecoration.underline,
+                          decorationColor: FccColors.yellow40,
+                        ),
+                        recognizer: TapGestureRecognizer()
+                          ..onTap = () {
+                            launchUrl(Uri.parse(
+                                'https://forum.freecodecamp.org/t/how-to-get-help-when-you-are-stuck-coding/19514'));
+                          },
+                      ),
+                      const TextSpan(
+                        text: ' method before asking for help.',
+                        style: TextStyle(color: FccColors.gray05),
+                      ),
+                    ],
+                  ),
+                ),
+                SizedBox(
+                  height: 50,
+                  width: MediaQuery.of(context).size.width,
+                  child: ElevatedButton(
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: FccColors.gray75,
+                      foregroundColor: FccColors.gray00,
+                      side: const BorderSide(width: 2, color: FccColors.gray00),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(0),
+                      ),
+                    ),
+                    onPressed: () => {
+                      onDialogTap(DialogResponse(confirmed: true)),
+                    },
                     child: Text(
                       request.mainButtonTitle as String,
                       textAlign: TextAlign.center,
