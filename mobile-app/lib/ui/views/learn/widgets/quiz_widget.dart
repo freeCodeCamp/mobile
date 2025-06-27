@@ -52,9 +52,25 @@ class _QuizWidgetState extends State<QuizWidget> {
   @override
   void didUpdateWidget(covariant QuizWidget oldWidget) {
     super.didUpdateWidget(oldWidget);
-    if (oldWidget.questions != widget.questions) {
+    if (_areQuestionsChanged(oldWidget.questions, widget.questions)) {
       _parseAll();
     }
+  }
+
+  bool _areQuestionsChanged(List<QuizWidgetQuestion> oldQuestions,
+      List<QuizWidgetQuestion> newQuestions) {
+    if (oldQuestions.length != newQuestions.length) {
+      return true;
+    }
+
+    for (int i = 0; i < oldQuestions.length; i++) {
+      // Only check for selectedAnswer changes as the other information is not changed between updates
+      if (oldQuestions[i].selectedAnswer != newQuestions[i].selectedAnswer) {
+        return true;
+      }
+    }
+
+    return false;
   }
 
   void _parseAll() {
