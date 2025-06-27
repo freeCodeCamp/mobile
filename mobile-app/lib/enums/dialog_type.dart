@@ -1,5 +1,1 @@
-enum DialogType {
-  basic,
-  buttonForm,
-  deleteAccount
-}
+enum DialogType { basic, buttonForm, deleteAccount, forumHelp }

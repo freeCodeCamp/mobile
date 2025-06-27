@@ -169,7 +169,24 @@ class LearnService {
             "If you've already tried the Read-Search-Ask method, then you can try asking for help on the freeCodeCamp forum.",
         mainButtonTitle: 'Create a post');
     if (res != null && res.confirmed) {
-      launchUrl(Uri.parse(url));
+      DialogResponse? forumRes = await _dialogService.showCustomDialog(
+        variant: DialogType.forumHelp,
+        title: 'Create a post',
+        description:
+            'You must confirm the following statements before you can submit your post to the forum.',
+        mainButtonTitle: 'Submit',
+        secondaryButtonTitle: 'Cancel',
+      );
+      if (forumRes != null && forumRes.confirmed) {
+        String? forumLink = forumRes.data['forumLink'];
+        if (forumLink != null && forumLink.isNotEmpty) {
+          try {
+            await launchUrl(Uri.parse(forumLink));
+          } catch (e) {
+            log('Error launching forum link: $e');
+          }
+        }
+      }
     }
   }
 
