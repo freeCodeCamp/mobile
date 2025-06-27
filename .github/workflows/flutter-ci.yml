@@ -1,4 +1,4 @@
-name: Flutter CI
+name: Flutter Android
 
 on:
   pull_request:
@@ -15,7 +15,7 @@ on:
 
 jobs:
   flutter_test:
-    name: flutter test
+    name: e2e Tests
     defaults:
       run:
         working-directory: ./mobile-app
