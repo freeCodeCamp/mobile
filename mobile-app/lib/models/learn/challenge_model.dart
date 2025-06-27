@@ -366,8 +366,8 @@ class QuizQuestion {
     // is consistent with the other MCQ challenges.
     final allAnswers = [
       ...(data['distractors'] as List)
-          .map<Answer>((item) => Answer(answer: item, feedback: null)),
-      Answer(answer: data['answer'], feedback: null)
+          .map<Answer>((item) => Answer(answer: item)),
+      Answer(answer: data['answer'])
     ];
 
     // shuffle so the correct answer is not always the last
