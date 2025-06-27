@@ -2,7 +2,8 @@ enum Ext {
   js('js'),
   html('html'),
   css('css'),
-  jsx('jsx');
+  jsx('jsx'),
+  py('py');
 
   final String value;
   const Ext(this.value);
@@ -18,6 +19,8 @@ Ext parseExt(String ext) {
       return Ext.css;
     case 'jsx':
       return Ext.jsx;
+    case 'py':
+      return Ext.py;
     default:
       return Ext.html;
   }
