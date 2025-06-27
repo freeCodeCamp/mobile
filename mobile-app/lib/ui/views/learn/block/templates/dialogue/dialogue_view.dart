@@ -152,12 +152,22 @@ class BlockDialogueView extends StatelessWidget {
                                         crossAxisSpacing: 3,
                                       ),
                                       itemBuilder: (context, task) {
+                                        final challenge =
+                                            structure[dialogueBlock][task];
+
+                                        // challenge.name follows the "Task 1", "Task 2" format
+                                        // so we extract the task number here
+                                        final match = RegExp(r'\d+')
+                                            .firstMatch(challenge.title);
+                                        final taskNumber = match != null
+                                            ? int.parse(match.group(0)!)
+                                            : task + 1;
+
                                         return ChallengeTile(
                                           block: block,
                                           model: model,
-                                          challengeId:
-                                              structure[dialogueBlock][task].id,
-                                          step: task + 1,
+                                          challengeId: challenge.id,
+                                          step: taskNumber,
                                           isDownloaded: false,
                                         );
                                       },
