@@ -1,6 +1,7 @@
 import 'dart:developer';
 
 import 'package:dio/dio.dart';
+import 'package:flutter/material.dart';
 import 'package:freecodecamp/app/app.locator.dart';
 import 'package:freecodecamp/app/app.router.dart';
 import 'package:freecodecamp/enums/dialog_type.dart';
@@ -9,6 +10,7 @@ import 'package:freecodecamp/models/learn/curriculum_model.dart';
 import 'package:freecodecamp/service/authentication/authentication_service.dart';
 import 'package:freecodecamp/service/dio_service.dart';
 import 'package:freecodecamp/service/learn/learn_offline_service.dart';
+import 'package:freecodecamp/ui/views/learn/widgets/hint/hint_widget_view.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:stacked_services/stacked_services.dart';
 import 'package:url_launcher/url_launcher.dart';
@@ -160,7 +162,47 @@ class LearnService {
     }
   }
 
-  Future forumHelpDialog(String url) async {
+  Future<String> genForumLink(
+    Challenge challenge,
+    Block block,
+    String description,
+    BuildContext context, {
+    String editorText = '',
+  }) async {
+    Challenge? currChallenge = challenge;
+
+    final HelpCategory helpCategory = challenge.helpCategory;
+    final String blockTitle = block.name;
+
+    final userDeviceInfo = await getDeviceInfo(context);
+
+    final titleText = '$blockTitle - ${currChallenge.title}';
+    final String endingText =
+        '**Your mobile information:**\n```txt\n$userDeviceInfo\n```\n\n**Challenge:** $titleText\n\n**Link to the challenge:**\nhttps://www.freecodecamp.org/learn/${currChallenge.superBlock}/${currChallenge.block}/${currChallenge.dashedName}';
+
+    final String userCode = await filesToMarkdown(currChallenge, editorText);
+
+    final String textMessage =
+        "**Tell us what's happening:**\nDescribe your issue in detail here. \n\n$description \n\n**Your code so far**$userCode\n\n$endingText";
+    final String altTextMessage =
+        "**Tell us what's happening:**\n\n\n\n**Your code so far**\n\nWARNING\n\nThe challenge seed code and/or your solution exceeded the maximum length we can port over from the challenge.\n\nYou will need to take an additional step here so the code you wrote presents in an easy to read format.\n\nPlease copy/paste all the editor code showing in the challenge from where you just linked.\n\n```\nReplace these two sentences with your copied code.\nPlease leave the ``` line above and the ``` line below,\nbecause they allow your code to properly format in the post.\n\n```\n$endingText";
+
+    String studentCode = Uri.encodeComponent(textMessage);
+    String altStudentCode = Uri.encodeComponent(altTextMessage);
+
+    final String baseURL =
+        '$forumLocation/new-topic?category=${helpCategory.value}&title=$titleText&body=';
+    final String defaultURL = '$baseURL$studentCode';
+    final String altURL = '$baseURL$altStudentCode';
+
+    return defaultURL.length < 8000 ? defaultURL : altURL;
+  }
+
+  Future forumHelpDialog(
+    Challenge challenge,
+    Block block,
+    BuildContext context,
+  ) async {
     DialogResponse? res = await _dialogService.showCustomDialog(
         barrierDismissible: true,
         variant: DialogType.buttonForm,
@@ -177,14 +219,21 @@ class LearnService {
         mainButtonTitle: 'Submit',
         secondaryButtonTitle: 'Cancel',
       );
+
+      String description = forumRes?.data ?? '';
+
       if (forumRes != null && forumRes.confirmed) {
-        String? forumLink = forumRes.data['forumLink'];
-        if (forumLink != null && forumLink.isNotEmpty) {
-          try {
-            await launchUrl(Uri.parse(forumLink));
-          } catch (e) {
-            log('Error launching forum link: $e');
-          }
+        try {
+          final forumLink = await genForumLink(
+            challenge,
+            block,
+            description,
+            context,
+          );
+
+          await launchUrl(Uri.parse(forumLink));
+        } catch (e) {
+          log('Error launching forum link: $e');
         }
       }
     }

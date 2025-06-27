@@ -494,9 +494,12 @@ class _forumHelpDialog extends HookWidget {
                                     true &&
                                 charCount.value >= 50
                             ? () => {
-                                  onDialogTap(DialogResponse(
+                                  onDialogTap(
+                                    DialogResponse(
                                       confirmed: true,
-                                      data: requestData.value)),
+                                      data: textController.text,
+                                    ),
+                                  ),
                                 }
                             : null,
                     child: Text(

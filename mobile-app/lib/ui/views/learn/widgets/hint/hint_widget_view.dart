@@ -51,41 +51,6 @@ Future<String> getDeviceInfo(BuildContext context) async {
   }
 }
 
-Future<String> genForumLink(
-  Challenge challenge,
-  Block block,
-  BuildContext context, {
-  String editorText = '',
-}) async {
-  Challenge? currChallenge = challenge;
-
-  final HelpCategory helpCategory = challenge.helpCategory;
-  final String blockTitle = block.name;
-
-  final userDeviceInfo = await getDeviceInfo(context);
-
-  final titleText = '$blockTitle - ${currChallenge.title}';
-  final String endingText =
-      '**Your mobile information:**\n```txt\n$userDeviceInfo\n```\n\n**Challenge:** $titleText\n\n**Link to the challenge:**\nhttps://www.freecodecamp.org/learn/${currChallenge.superBlock}/${currChallenge.block}/${currChallenge.dashedName}';
-
-  final String userCode = await filesToMarkdown(currChallenge, editorText);
-
-  final String textMessage =
-      "**Tell us what's happening:**\nDescribe your issue in detail here.\n\n**Your code so far**$userCode\n\n$endingText";
-  final String altTextMessage =
-      "**Tell us what's happening:**\n\n\n\n**Your code so far**\n\nWARNING\n\nThe challenge seed code and/or your solution exceeded the maximum length we can port over from the challenge.\n\nYou will need to take an additional step here so the code you wrote presents in an easy to read format.\n\nPlease copy/paste all the editor code showing in the challenge from where you just linked.\n\n```\nReplace these two sentences with your copied code.\nPlease leave the ``` line above and the ``` line below,\nbecause they allow your code to properly format in the post.\n\n```\n$endingText";
-
-  String studentCode = Uri.encodeComponent(textMessage);
-  String altStudentCode = Uri.encodeComponent(altTextMessage);
-
-  final String baseURL =
-      '$forumLocation/new-topic?category=${helpCategory.value}&title=$titleText&body=';
-  final String defaultURL = '$baseURL$studentCode';
-  final String altURL = '$baseURL$altStudentCode';
-
-  return defaultURL.length < 8000 ? defaultURL : altURL;
-}
-
 class HintWidgetView extends StatelessWidget {
   const HintWidgetView(
       {super.key,
@@ -141,12 +106,11 @@ class HintWidgetView extends StatelessWidget {
                   children: [
                     IconButton(
                       onPressed: () async {
-                        final forumLink = await genForumLink(
-                            challengeModel.challenge as Challenge,
-                            challengeModel.block as Block,
-                            context,
-                            editorText: challengeModel.editorText ?? '');
-                        challengeModel.learnService.forumHelpDialog(forumLink);
+                        challengeModel.learnService.forumHelpDialog(
+                          challengeModel.challenge as Challenge,
+                          challengeModel.block as Block,
+                          context,
+                        );
                       },
                       icon: const Icon(Icons.question_mark),
                       padding: const EdgeInsets.all(16),
