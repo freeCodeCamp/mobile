@@ -50,11 +50,15 @@ class PythonViewModel extends BaseViewModel {
     final question = quizQuestions[questionIndex];
     question.selectedAnswer = answerIndex;
 
-    setQuizQuestions = List.from(quizQuestions)..[questionIndex] = question;
+    if (isValidated) {
+      // Reset the validation status when user changes the selection
+      setIsValidated = false;
+    }
 
-    // Reset the validation status when user changes the selection
-    setIsValidated = false;
-    setErrMessage = '';
+    if (errMessage.isNotEmpty) {
+      // Clear the error message when user changes the selection
+      setErrMessage = '';
+    }
 
     notifyListeners();
   }

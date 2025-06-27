@@ -57,6 +57,7 @@ class Challenge {
   final int challengeType;
   final HelpCategory helpCategory;
   final String? explanation;
+  final String transcript;
 
   final List<ChallengeTest> tests;
   final List<ChallengeFile> files;
@@ -90,6 +91,7 @@ class Challenge {
     required this.files,
     required this.helpCategory,
     this.explanation,
+    required this.transcript,
     this.questions,
     this.assignments,
     this.fillInTheBlank,
@@ -112,6 +114,7 @@ class Challenge {
       challengeType: data['challengeType'],
       helpCategory: HelpCategory.fromValue(data['helpCategory']),
       explanation: data['explanation'] ?? '',
+      transcript: data['transcript'] ?? '',
       fillInTheBlank: data['fillInTheBlank'] != null
           ? FillInTheBlank.fromJson(data['fillInTheBlank'])
           : null,
@@ -156,6 +159,7 @@ class Challenge {
       'videoId': challenge.videoId,
       'challengeType': challenge.challengeType,
       'helpCategory': challenge.helpCategory.value,
+      'transcript': challenge.transcript,
       'tests': challenge.tests
           .map(
             (challengeTest) => {

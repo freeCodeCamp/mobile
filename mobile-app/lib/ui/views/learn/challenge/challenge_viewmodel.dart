@@ -3,7 +3,7 @@ import 'dart:convert';
 import 'dart:developer';
 
 import 'package:dio/dio.dart';
-import 'package:flutter/widgets.dart';
+import 'package:flutter/material.dart';
 import 'package:flutter_inappwebview/flutter_inappwebview.dart';
 import 'package:freecodecamp/app/app.locator.dart';
 import 'package:freecodecamp/app/app.router.dart';
@@ -18,6 +18,9 @@ import 'package:freecodecamp/service/learn/learn_file_service.dart';
 import 'package:freecodecamp/service/learn/learn_offline_service.dart';
 import 'package:freecodecamp/service/learn/learn_service.dart';
 import 'package:freecodecamp/ui/views/learn/test_runner.dart';
+import 'package:freecodecamp/ui/views/learn/widgets/description/description_widget_view.dart';
+import 'package:freecodecamp/ui/views/learn/widgets/hint/hint_widget_view.dart';
+import 'package:freecodecamp/ui/views/learn/widgets/pass/pass_widget_view.dart';
 import 'package:freecodecamp/ui/widgets/setup_dialog_ui.dart';
 import 'package:html/dom.dart';
 import 'package:html/parser.dart';
@@ -250,6 +253,28 @@ class ChallengeViewModel extends BaseViewModel {
 
   set setEditorLanguage(String value) {
     _editorLanguage = value;
+    notifyListeners();
+  }
+
+  bool _showTestsPanel = false;
+  bool get showTestsPanel => _showTestsPanel;
+
+  set setShowTestsPanel(bool value) {
+    _showTestsPanel = value;
+    notifyListeners();
+  }
+
+  bool _drawerOpened = false;
+  bool get drawerOpened => _drawerOpened;
+  set setDrawerOpened(bool value) {
+    _drawerOpened = value;
+    notifyListeners();
+  }
+
+  GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
+  GlobalKey<ScaffoldState> get scaffoldKey => _scaffoldKey;
+  set setScaffoldKey(GlobalKey<ScaffoldState> key) {
+    _scaffoldKey = key;
     notifyListeners();
   }
 
@@ -611,9 +636,11 @@ class ChallengeViewModel extends BaseViewModel {
     if (failedTest != null) {
       setPanelType = PanelType.hint;
       setHint = failedTest.instruction;
+      _scaffoldKey.currentState?.openEndDrawer();
     } else {
       setPanelType = PanelType.pass;
       setCompletedChallenge = true;
+      _scaffoldKey.currentState?.openEndDrawer();
     }
 
     setIsRunningTests = false;
@@ -691,4 +718,37 @@ class ChallengeViewModel extends BaseViewModel {
   //     setShowPanel = true;
   //   }
   // }
+
+  Widget getPanelWidget({
+    required PanelType panelType,
+    required Challenge challenge,
+    required ChallengeViewModel model,
+    required int maxChallenges,
+    required int challengesCompleted,
+  }) {
+    switch (panelType) {
+      case PanelType.instruction:
+        return DescriptionView(
+          description: challenge.description,
+          instructions: challenge.instructions,
+          challengeModel: model,
+          maxChallenges: maxChallenges,
+          title: challenge.title,
+        );
+      case PanelType.hint:
+        return HintWidgetView(
+          hint: model.hint,
+          challengeModel: model,
+          editor: model.editor!,
+        );
+      case PanelType.pass:
+        return PassWidgetView(
+          challengeModel: model,
+          challengesCompleted: challengesCompleted,
+          maxChallenges: maxChallenges,
+        );
+      default:
+        return Container();
+    }
+  }
 }

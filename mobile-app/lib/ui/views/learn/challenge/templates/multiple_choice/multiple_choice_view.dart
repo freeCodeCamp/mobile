@@ -3,11 +3,13 @@ import 'package:freecodecamp/extensions/i18n_extension.dart';
 import 'package:freecodecamp/models/learn/challenge_model.dart';
 import 'package:freecodecamp/models/learn/curriculum_model.dart';
 import 'package:freecodecamp/ui/views/learn/challenge/templates/multiple_choice/multiple_choice_viewmodel.dart';
+import 'package:freecodecamp/ui/views/learn/utils/challenge_utils.dart';
 import 'package:freecodecamp/ui/views/learn/widgets/assignment_widget.dart';
 import 'package:freecodecamp/ui/views/learn/widgets/audio/audio_player_view.dart';
 import 'package:freecodecamp/ui/views/learn/widgets/challenge_card.dart';
 import 'package:freecodecamp/ui/views/learn/widgets/explanation_widget.dart';
 import 'package:freecodecamp/ui/views/learn/widgets/quiz_widget.dart';
+import 'package:freecodecamp/ui/views/learn/widgets/transcript_widget.dart';
 import 'package:freecodecamp/ui/views/learn/widgets/youtube_player_widget.dart';
 import 'package:freecodecamp/ui/views/news/html_handler/html_handler.dart';
 import 'package:stacked/stacked.dart';
@@ -41,32 +43,37 @@ class MultipleChoiceView extends StatelessWidget {
       viewModelBuilder: () => MultipleChoiceViewmodel(),
       onViewModelReady: (model) => model.initChallenge(challenge),
       builder: (context, model, child) {
-        int numberOfDialogueHeaders = block.challenges
-            .where((challenge) => challenge.title.contains('Dialogue'))
-            .length;
-
-        String handleChallengeTitle() {
-          if (challenge.title.contains('Task')) {
-            return '${challenge.title} of ${block.challenges.length - numberOfDialogueHeaders} Tasks';
-          } else {
-            return 'Question ${challenge.title} of ${block.challenges.length - numberOfDialogueHeaders} Questions';
-          }
-        }
-
         return Scaffold(
           backgroundColor: const Color(0xFF0a0a23),
           appBar: AppBar(
             backgroundColor: const Color(0xFF0a0a23),
-            title: Text(handleChallengeTitle()),
+            title: Text(handleChallengeTitle(challenge, block)),
           ),
           body: SafeArea(
             child: ListView(
               children: [
+                if (challenge.description.isNotEmpty)
+                  ChallengeCard(
+                    title: 'Description',
+                    child: Column(
+                      children: parser.parse(
+                        challenge.description,
+                      ),
+                    ),
+                  ),
                 if (challenge.videoId != null) ...[
                   ChallengeCard(
                     title: 'Watch the Video',
                     child: YoutubePlayerWidget(
                       videoId: challenge.videoId!,
+                    ),
+                  ),
+                ],
+                if (challenge.transcript.isNotEmpty) ...[
+                  ChallengeCard(
+                    title: 'Transcript',
+                    child: Transcript(
+                      transcript: challenge.transcript,
                     ),
                   ),
                 ],
@@ -78,6 +85,15 @@ class MultipleChoiceView extends StatelessWidget {
                     ),
                   ),
                 ],
+                if (challenge.instructions.isNotEmpty)
+                  ChallengeCard(
+                    title: 'Instructions',
+                    child: Column(
+                      children: parser.parse(
+                        challenge.instructions,
+                      ),
+                    ),
+                  ),
                 if (challenge.assignments != null &&
                     challenge.assignments!.isNotEmpty) ...[
                   ChallengeCard(
@@ -99,15 +115,6 @@ class MultipleChoiceView extends StatelessWidget {
                     ),
                   ),
                 ],
-                if (challenge.description.isNotEmpty)
-                  ChallengeCard(
-                    title: 'Description',
-                    child: Column(
-                      children: parser.parse(
-                        challenge.description,
-                      ),
-                    ),
-                  ),
                 QuizWidget(
                     isValidated: model.isValidated,
                     questions: model.quizQuestions,
