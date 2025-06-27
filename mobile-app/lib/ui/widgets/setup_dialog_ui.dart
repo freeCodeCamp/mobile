@@ -1,8 +1,12 @@
+import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:freecodecamp/app/app.locator.dart';
 import 'package:freecodecamp/enums/dialog_type.dart';
+import 'package:freecodecamp/ui/theme/fcc_theme.dart';
 import 'package:stacked_services/stacked_services.dart';
+
+import 'package:url_launcher/url_launcher.dart';
 
 void setupDialogUi() {
   final dialogService = locator<DialogService>();
@@ -14,6 +18,12 @@ void setupDialogUi() {
     DialogType.buttonForm: (BuildContext context, DialogRequest sheetRequest,
             Function(DialogResponse) completer) =>
         _buttonDialog(request: sheetRequest, onDialogTap: completer),
+    DialogType.askForHelp: (BuildContext context, DialogRequest sheetRequest,
+            Function(DialogResponse) completer) =>
+        _askForHelpDialog(request: sheetRequest, onDialogTap: completer),
+    DialogType.askForHelpInput: (BuildContext context,
+            DialogRequest sheetRequest, Function(DialogResponse) completer) =>
+        _askForHelpInputDialogue(request: sheetRequest, onDialogTap: completer),
     DialogType.deleteAccount: (BuildContext context, DialogRequest sheetRequest,
             Function(DialogResponse) completer) =>
         _deleteAccountDialog(request: sheetRequest, onDialogTap: completer),
@@ -27,8 +37,7 @@ class _buttonDialog extends HookWidget {
   final DialogRequest request;
   final Function(DialogResponse) onDialogTap;
 
-  const _buttonDialog(
-      {required this.request, required this.onDialogTap});
+  const _buttonDialog({required this.request, required this.onDialogTap});
 
   @override
   Widget build(BuildContext context) {
@@ -51,6 +60,7 @@ class _buttonDialog extends HookWidget {
                     fontSize: 24,
                     height: 1.5,
                     fontWeight: FontWeight.bold,
+                    color: Colors.white,
                   ),
                 ),
                 Text(
@@ -58,6 +68,7 @@ class _buttonDialog extends HookWidget {
                   style: const TextStyle(
                     height: 1.5,
                     fontSize: 16,
+                    color: Colors.white,
                   ),
                 ),
                 SizedBox(
@@ -217,8 +228,7 @@ class _buttonDialog2 extends HookWidget {
   final DialogRequest request;
   final Function(DialogResponse) onDialogTap;
 
-  const _buttonDialog2(
-      {required this.request, required this.onDialogTap});
+  const _buttonDialog2({required this.request, required this.onDialogTap});
 
   @override
   Widget build(BuildContext context) {
@@ -301,5 +311,344 @@ class _BasicDialog extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Dialog(child: Container());
+  }
+}
+
+// ignore: camel_case_types
+class _askForHelpInputDialogue extends HookWidget {
+  final DialogRequest request;
+  final Function(DialogResponse) onDialogTap;
+
+  const _askForHelpInputDialogue({
+    required this.request,
+    required this.onDialogTap,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    // Ensure request.data is initialized to avoid null errors
+    final requestData = useState<Map<String, dynamic>>(request.data ?? {});
+
+    // Use a state variable to track the character count
+    final charCount =
+        useState(requestData.value['issueDescription']?.length ?? 0);
+
+    // Use a persistent TextEditingController
+    final textController = useTextEditingController(
+      text: requestData.value['issueDescription'] ?? '',
+    );
+
+    return Dialog(
+      backgroundColor: FccColors.gray90,
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(0),
+      ),
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Container(
+            padding: const EdgeInsets.all(16),
+            child: Wrap(
+              runSpacing: 20,
+              children: [
+                Text(
+                  request.title as String,
+                  style: const TextStyle(
+                    fontSize: 24,
+                    fontWeight: FontWeight.bold,
+                    color: FccColors.gray00,
+                  ),
+                ),
+                Text(
+                  request.description as String,
+                  style: const TextStyle(
+                    fontSize: 16,
+                    color: FccColors.gray05,
+                  ),
+                ),
+                Wrap(
+                  spacing: 8,
+                  runSpacing: 8,
+                  alignment: WrapAlignment.start,
+                  children: [
+                    Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        Checkbox(
+                          value: requestData.value['readSearchAskChecked'] ??
+                              false,
+                          onChanged: (value) {
+                            requestData.value['readSearchAskChecked'] = value;
+                            requestData.value = Map.from(requestData.value);
+                          },
+                          activeColor: FccColors.yellow40,
+                        ),
+                        Flexible(
+                          child: RichText(
+                            text: TextSpan(
+                              text: 'I have tried the ',
+                              style: const TextStyle(
+                                fontSize: 14,
+                                color: FccColors.gray00,
+                              ),
+                              children: [
+                                TextSpan(
+                                  text: 'Read-Search-Ask',
+                                  style: const TextStyle(
+                                    fontSize: 14,
+                                    color: FccColors.yellow40,
+                                    decoration: TextDecoration.underline,
+                                    decorationColor: FccColors
+                                        .yellow40, // Set underline color to yellow
+                                  ),
+                                  recognizer: TapGestureRecognizer()
+                                    ..onTap = () {
+                                      launchUrl(Uri.parse(
+                                          'https://forum.freecodecamp.org/t/how-to-get-help-when-you-are-stuck-coding/19514'));
+                                    },
+                                ),
+                                const TextSpan(
+                                  text: ' method',
+                                  style: TextStyle(color: FccColors.gray00),
+                                ),
+                              ],
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                    Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        Checkbox(
+                          value: requestData.value['similarQuestionsChecked'] ??
+                              false,
+                          onChanged: (value) {
+                            requestData.value['similarQuestionsChecked'] =
+                                value;
+                            requestData.value = Map.from(requestData.value);
+                          },
+                          activeColor: FccColors.yellow40,
+                        ),
+                        Flexible(
+                          child: Text(
+                            'I have searched for similar questions that have already been answered on the forum',
+                            style: const TextStyle(
+                              fontSize: 14,
+                              color: FccColors.gray00,
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ],
+                ),
+                if (charCount.value < 50)
+                  Text(
+                    'Please enter at least ${50 - charCount.value} more characters.',
+                    style: const TextStyle(
+                      fontSize: 14,
+                      color: FccColors.gray00,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                TextField(
+                  controller: textController,
+                  onChanged: (value) {
+                    requestData.value['issueDescription'] = value;
+                    requestData.value = Map.from(requestData.value);
+                    charCount.value = value.length;
+                  },
+                  decoration: const InputDecoration(
+                    hintText: 'Describe your issue in detail here...',
+                    border: OutlineInputBorder(),
+                  ),
+                  maxLines: 5,
+                ),
+                SizedBox(
+                  height: 50,
+                  width: MediaQuery.of(context).size.width,
+                  child: ElevatedButton(
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: FccColors.gray75,
+                      foregroundColor: FccColors.gray00,
+                      side: const BorderSide(width: 2, color: FccColors.gray00),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(0),
+                      ),
+                    ),
+                    onPressed:
+                        requestData.value['readSearchAskChecked'] == true &&
+                                requestData.value['similarQuestionsChecked'] ==
+                                    true &&
+                                charCount.value >= 50
+                            ? () => {
+                                  onDialogTap(
+                                    DialogResponse(
+                                      confirmed: true,
+                                      data: textController.text,
+                                    ),
+                                  ),
+                                }
+                            : null,
+                    child: Text(
+                      request.mainButtonTitle as String,
+                      textAlign: TextAlign.center,
+                      style: const TextStyle(
+                        fontSize: 16,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                  ),
+                ),
+                SizedBox(
+                  height: 50,
+                  width: MediaQuery.of(context).size.width,
+                  child: ElevatedButton(
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: FccColors.gray75,
+                      foregroundColor: FccColors.gray00,
+                      side: const BorderSide(width: 2, color: FccColors.gray00),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(0),
+                      ),
+                    ),
+                    onPressed: () => {
+                      onDialogTap(DialogResponse(confirmed: false)),
+                    },
+                    child: Text(
+                      request.secondaryButtonTitle ?? 'Cancel',
+                      textAlign: TextAlign.center,
+                      style: const TextStyle(
+                        fontSize: 16,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          )
+        ],
+      ),
+    );
+  }
+}
+
+// ignore: camel_case_types
+class _askForHelpDialog extends HookWidget {
+  final DialogRequest request;
+  final Function(DialogResponse) onDialogTap;
+
+  const _askForHelpDialog({required this.request, required this.onDialogTap});
+
+  @override
+  Widget build(BuildContext context) {
+    return Dialog(
+      backgroundColor: FccColors.gray90,
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(0),
+      ),
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Container(
+            padding: const EdgeInsets.all(16),
+            child: Wrap(
+              runSpacing: 20,
+              children: [
+                Text(
+                  request.title as String,
+                  style: const TextStyle(
+                    fontSize: 24,
+                    fontWeight: FontWeight.bold,
+                    color: FccColors.gray00,
+                  ),
+                ),
+                RichText(
+                  text: TextSpan(
+                    text: 'Please follow the ',
+                    style: const TextStyle(
+                      fontSize: 16,
+                      color: FccColors.gray05,
+                    ),
+                    children: [
+                      TextSpan(
+                        text: 'Read-Search-Ask',
+                        style: const TextStyle(
+                          fontSize: 16,
+                          color: FccColors.yellow40,
+                          decoration: TextDecoration.underline,
+                          decorationColor: FccColors.yellow40,
+                        ),
+                        recognizer: TapGestureRecognizer()
+                          ..onTap = () {
+                            launchUrl(Uri.parse(
+                                'https://forum.freecodecamp.org/t/how-to-get-help-when-you-are-stuck-coding/19514'));
+                          },
+                      ),
+                      const TextSpan(
+                        text: ' method before asking for help.',
+                        style: TextStyle(color: FccColors.gray05),
+                      ),
+                    ],
+                  ),
+                ),
+                SizedBox(
+                  height: 50,
+                  width: MediaQuery.of(context).size.width,
+                  child: ElevatedButton(
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: FccColors.gray75,
+                      foregroundColor: FccColors.gray00,
+                      side: const BorderSide(width: 2, color: FccColors.gray00),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(0),
+                      ),
+                    ),
+                    onPressed: () => {
+                      onDialogTap(DialogResponse(confirmed: true)),
+                    },
+                    child: Text(
+                      request.mainButtonTitle as String,
+                      textAlign: TextAlign.center,
+                      style: const TextStyle(
+                        fontSize: 16,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                  ),
+                ),
+                SizedBox(
+                  height: 50,
+                  width: MediaQuery.of(context).size.width,
+                  child: ElevatedButton(
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: FccColors.gray75,
+                      foregroundColor: FccColors.gray00,
+                      side: const BorderSide(width: 2, color: FccColors.gray00),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(0),
+                      ),
+                    ),
+                    onPressed: () => {
+                      onDialogTap(DialogResponse(confirmed: false)),
+                    },
+                    child: Text(
+                      request.secondaryButtonTitle ?? 'Cancel',
+                      textAlign: TextAlign.center,
+                      style: const TextStyle(
+                        fontSize: 16,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          )
+        ],
+      ),
+    );
   }
 }

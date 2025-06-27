@@ -3,7 +3,6 @@ import 'package:freecodecamp/extensions/i18n_extension.dart';
 import 'package:freecodecamp/models/learn/challenge_model.dart';
 import 'package:freecodecamp/models/learn/curriculum_model.dart';
 import 'package:freecodecamp/ui/views/learn/challenge/templates/python-project/python_project_viewmodel.dart';
-import 'package:freecodecamp/ui/views/learn/widgets/hint/hint_widget_view.dart';
 import 'package:freecodecamp/ui/views/news/html_handler/html_handler.dart';
 import 'package:freecodecamp/ui/widgets/drawer_widget/drawer_widget_view.dart';
 import 'package:stacked/stacked.dart';
@@ -153,12 +152,11 @@ class PythonProjectView extends StatelessWidget {
                       ),
                     ),
                     onPressed: () async {
-                      final forumLink = await genForumLink(
+                      model.learnService.forumHelpDialog(
                         challenge,
                         block,
                         context,
                       );
-                      model.learnService.forumHelpDialog(forumLink);
                     },
                     child: Text(
                       context.t.ask_for_help,

@@ -1,5 +1,7 @@
 enum DialogType {
   basic,
   buttonForm,
-  deleteAccount
+  deleteAccount,
+  askForHelp,
+  askForHelpInput
 }
