@@ -97,12 +97,6 @@ class _QuizWidgetState extends State<QuizWidget> {
         return quizQuestion(
           context: context,
           questionNumber: widget.questions.length > 1 ? index + 1 : null,
-          question: widget.questions[index],
-          selectedAnswer: widget.questions[index].selectedAnswer,
-          isCorrect: widget.questions[index].isCorrect,
-          onChanged: (answerIndex) {
-            widget.onChanged(index, answerIndex);
-          },
           questionIndex: index,
         );
       },
@@ -112,12 +106,9 @@ class _QuizWidgetState extends State<QuizWidget> {
   ChallengeCard quizQuestion({
     required BuildContext context,
     required int questionIndex,
-    required QuizWidgetQuestion question,
-    required int selectedAnswer,
-    required ValueChanged<int> onChanged,
-    bool? isCorrect,
     int? questionNumber,
   }) {
+    final question = widget.questions[questionIndex];
     return ChallengeCard(
       title: questionNumber != null ? 'Question $questionNumber' : 'Question',
       child: Column(
@@ -129,11 +120,6 @@ class _QuizWidgetState extends State<QuizWidget> {
             option(
               context: context,
               answerObj: answerObj,
-              selectedAnswer: selectedAnswer,
-              isCorrect: isCorrect,
-              onChanged: (value) {
-                onChanged(value);
-              },
               questionIndex: questionIndex,
             ),
           ],
@@ -145,11 +131,11 @@ class _QuizWidgetState extends State<QuizWidget> {
   Container option({
     required BuildContext context,
     required MapEntry<int, Answer> answerObj,
-    required int selectedAnswer,
-    required bool? isCorrect,
-    required ValueChanged<int> onChanged,
     required int questionIndex,
   }) {
+    final question = widget.questions[questionIndex];
+    final selectedAnswer = question.selectedAnswer;
+    final isCorrect = question.isCorrect;
     final isSelected = answerObj.key == selectedAnswer;
     final optionWidgets = parsedOptions[questionIndex][answerObj.key];
 
@@ -171,7 +157,7 @@ class _QuizWidgetState extends State<QuizWidget> {
           ),
           groupValue: selectedAnswer,
           onChanged: (value) {
-            onChanged(value ?? -1);
+            widget.onChanged(questionIndex, value ?? -1);
           },
           title: Align(
             alignment: Alignment.centerLeft,
