@@ -95,12 +95,12 @@ class _QuizWidgetState extends State<QuizWidget> {
 
   ChallengeCard quizQuestion({
     required BuildContext context,
+    required int questionIndex,
     required QuizWidgetQuestion question,
     required int selectedAnswer,
     required ValueChanged<int> onChanged,
     bool? isCorrect,
     int? questionNumber,
-    required int questionIndex,
   }) {
     return ChallengeCard(
       title: questionNumber != null ? 'Question $questionNumber' : 'Question',
