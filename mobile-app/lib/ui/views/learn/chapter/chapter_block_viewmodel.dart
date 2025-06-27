@@ -25,6 +25,8 @@ class ChapterBlockViewmodel extends BaseViewModel {
   }
 
   void updateUserProgress() {
-    authenticationService.fetchUser();
+    if (AuthenticationService.staticIsloggedIn) {
+      authenticationService.fetchUser();
+    }
   }
 }
