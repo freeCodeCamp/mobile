@@ -6,16 +6,16 @@ class JavaScriptConsoleViewModel extends BaseViewModel {
   ScrollController controller = ScrollController();
 
   Color getConsoleTextColor(ConsoleMessageLevel messageLevel) {
-    switch (messageLevel.toString()) {
-      case 'ConsoleMessageLevel.DEBUG':
+    switch (messageLevel) {
+      case ConsoleMessageLevel.DEBUG:
         return Colors.white.withValues(alpha: 0.87);
-      case 'ConsoleMessageLevel.ERROR':
+      case ConsoleMessageLevel.ERROR:
         return Colors.red.withValues(alpha: 0.87);
-      case 'ConsoleMessageLevel.LOG':
+      case ConsoleMessageLevel.LOG:
         return Colors.white.withValues(alpha: 0.87);
-      case 'ConsoleMessageLevel.TIP':
+      case ConsoleMessageLevel.TIP:
         return Colors.blue.withValues(alpha: 0.87);
-      case 'ConsoleMessageLevel.WARNING':
+      case ConsoleMessageLevel.WARNING:
         return Colors.yellow.withValues(alpha: 0.87);
       default:
         return Colors.white.withValues(alpha: 0.87);

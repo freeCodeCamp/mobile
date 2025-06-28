@@ -1,6 +1,7 @@
 import 'dart:developer';
 
 import 'package:flutter/material.dart';
+import 'package:flutter_html/flutter_html.dart';
 import 'package:flutter_inappwebview/flutter_inappwebview.dart';
 import 'package:freecodecamp/enums/panel_type.dart';
 import 'package:freecodecamp/models/learn/challenge_model.dart';
@@ -165,7 +166,10 @@ class ChallengeView extends StatelessWidget {
       return Column(
         children: [
           JavaScriptConsole(
-            messages: [],
+            messages: [
+              ...model.testConsoleMessages,
+              ...model.userConsoleMessages
+            ],
           ),
         ],
       );
@@ -254,7 +258,10 @@ class ChallengeView extends StatelessWidget {
                     model.setTestController = controller;
                   },
                   onConsoleMessage: (controller, console) {
-                    log('Test Runner Console message: \\${console.message}');
+                    model.setUserConsoleMessages = [
+                      ...model.userConsoleMessages,
+                      '<p>${console.message}</p>',
+                    ];
                   },
                   onLoadStop: (controller, url) async {
                     ScriptBuilder builder = ScriptBuilder();
@@ -489,8 +496,12 @@ class ChallengeView extends StatelessWidget {
     final widgets = parser.parse(
       test.instruction,
       isSelectable: true,
-      removeParagraphMargin: true,
-      fontColor: FccColors.gray00,
+      customStyles: {
+        '*:not(h1):not(h2):not(h3):not(h4):not(h5):not(h6)': Style(
+          color: FccColors.gray00,
+        ),
+        'p': Style(margin: Margins.zero),
+      },
     );
     return ExpansionTile(
       backgroundColor: FccColors.gray90,
