@@ -1,4 +1,5 @@
 import 'package:flutter/widgets.dart';
+import 'package:flutter_html/flutter_html.dart';
 import 'package:freecodecamp/app/app.locator.dart';
 import 'package:freecodecamp/models/learn/challenge_model.dart';
 import 'package:freecodecamp/service/learn/learn_service.dart';
@@ -49,12 +50,20 @@ class ReviewViewmodel extends BaseViewModel {
 
     setParsedInstructions = parser.parse(
       challenge.instructions,
-      fontColor: FccColors.gray05,
+      customStyles: {
+        '*:not(h1):not(h2):not(h3):not(h4):not(h5):not(h6)': Style(
+          color: FccColors.gray05,
+        ),
+      },
     );
 
     setParsedDescription = parser.parse(
       challenge.description,
-      fontColor: FccColors.gray05,
+      customStyles: {
+        '*:not(h1):not(h2):not(h3):not(h4):not(h5):not(h6)': Style(
+          color: FccColors.gray05,
+        ),
+      },
     );
   }
 }
