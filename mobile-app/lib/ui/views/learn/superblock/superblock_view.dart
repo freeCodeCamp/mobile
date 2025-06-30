@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:freecodecamp/extensions/i18n_extension.dart';
 import 'package:freecodecamp/models/learn/curriculum_model.dart';
 import 'package:freecodecamp/service/authentication/authentication_service.dart';
-import 'package:freecodecamp/ui/theme/fcc_theme.dart';
 import 'package:freecodecamp/ui/views/learn/block/block_template_view.dart';
 import 'package:freecodecamp/ui/views/learn/superblock/superblock_viewmodel.dart';
 import 'package:stacked/stacked.dart';
@@ -35,81 +34,47 @@ class SuperBlockView extends StatelessWidget {
         );
       },
       builder: (context, model, child) => Scaffold(
-        body: Column(
-          children: [
-            Container(
-              color: FccColors.gray90,
-              child: SafeArea(
-                bottom: false,
-                child: Padding(
-                  padding: const EdgeInsets.only(
-                      top: 0, right: 8, left: 8, bottom: 16),
-                  child: Row(
-                    children: [
-                      IconButton(
-                        icon: const Icon(
-                          Icons.arrow_back_ios,
-                          color: Colors.white,
-                        ),
-                        onPressed: () => Navigator.of(context).pop(),
-                      ),
-                      Expanded(
-                        child: Text(
-                          superBlockName,
-                          style: const TextStyle(
-                            fontSize: 18,
-                            color: Colors.white,
-                          ),
-                          softWrap: true,
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-              ),
-            ),
-            Expanded(
-              child: FutureBuilder<SuperBlock>(
-                initialData: null,
-                future: model.superBlockData,
-                builder: ((context, snapshot) {
-                  if (snapshot.hasData) {
-                    if (snapshot.data is SuperBlock) {
-                      SuperBlock superBlock = snapshot.data as SuperBlock;
+        appBar: AppBar(
+          title: Text(superBlockName),
+        ),
+        backgroundColor: const Color.fromRGBO(0x0a, 0x0a, 0x23, 1),
+        body: FutureBuilder<SuperBlock>(
+          initialData: null,
+          future: model.superBlockData,
+          builder: ((context, snapshot) {
+            if (snapshot.hasData) {
+              if (snapshot.data is SuperBlock) {
+                SuperBlock superBlock = snapshot.data as SuperBlock;
 
-                      WidgetsBinding.instance.addPostFrameCallback((_) {
-                        if (model.blockOpenStates.isEmpty) {
-                          Map<String, bool> openStates = {
-                            if (superBlock.blocks != null)
-                              for (var block in superBlock.blocks!)
-                                block.dashedName: false
-                          };
+                WidgetsBinding.instance.addPostFrameCallback((_) {
+                  if (model.blockOpenStates.isEmpty) {
+                    Map<String, bool> openStates = {
+                      if (superBlock.blocks != null)
+                        for (var block in superBlock.blocks!)
+                          block.dashedName: false
+                    };
 
-                          // Set first block open
-                          String firstBlockKey =
-                              openStates.entries.toList()[0].key;
+                    // Set first block open
+                    String firstBlockKey = openStates.entries.toList()[0].key;
 
-                          openStates[firstBlockKey] = true;
+                    openStates[firstBlockKey] = true;
 
-                          model.blockOpenStates = openStates;
-                        }
-                      });
-
-                      return blockTemplate(model, superBlock);
-                    }
+                    model.blockOpenStates = openStates;
                   }
+                });
 
-                  if (snapshot.hasError) {
-                    return Text(context.t.error);
-                  }
+                return blockTemplate(model, superBlock);
+              }
+            }
 
-                  return const Center(
-                    child: CircularProgressIndicator(),
-                  );
-                }),
-              ),
-            ),
-          ],
+            if (snapshot.hasError) {
+              return Text(context.t.error);
+            }
+
+            return const Center(
+              child: CircularProgressIndicator(),
+            );
+          }),
         ),
       ),
     );
@@ -127,7 +92,6 @@ class SuperBlockView extends StatelessWidget {
           return true;
         },
         child: ListView.builder(
-          padding: EdgeInsets.zero,
           itemCount: superBlock.blocks!.length,
           itemBuilder: (context, block) {
             return Padding(
