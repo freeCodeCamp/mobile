@@ -199,6 +199,9 @@ class ProfileView extends StatelessWidget {
   }
 
   Widget _buildHeader(FccUserModel user) {
+    final displayName =
+        user.name.trim().isEmpty ? '@${user.username}' : user.name;
+
     return Stack(
       children: [
         Container(
@@ -219,7 +222,7 @@ class ProfileView extends StatelessWidget {
                 children: [
                   SizedBox(height: 32),
                   Text(
-                    user.name,
+                    displayName,
                     style: TextStyle(
                       fontSize: 26,
                       fontWeight: FontWeight.bold,
@@ -227,16 +230,17 @@ class ProfileView extends StatelessWidget {
                           user.isDonating ? FccColors.yellow40 : Colors.white,
                     ),
                   ),
-                  SizedBox(height: 4),
-                  Text(
-                    '@${user.username}',
-                    style: TextStyle(
-                      fontSize: 16,
-                      color:
-                          user.isDonating ? FccColors.yellow40 : Colors.white,
-                      fontWeight: FontWeight.w600,
+                  if (user.name.trim().isNotEmpty) SizedBox(height: 4),
+                  if (user.name.trim().isNotEmpty)
+                    Text(
+                      '@${user.username}',
+                      style: TextStyle(
+                        fontSize: 16,
+                        color:
+                            user.isDonating ? FccColors.yellow40 : Colors.white,
+                        fontWeight: FontWeight.w600,
+                      ),
                     ),
-                  ),
                 ],
               ),
             ),
@@ -382,6 +386,105 @@ class ProfileView extends StatelessWidget {
     );
   }
 
+  Widget _buildPortfolio(FccUserModel user) {
+    if (user.portfolio.isEmpty) return const SizedBox.shrink();
+    return Container(
+      width: double.infinity,
+      margin: const EdgeInsets.symmetric(horizontal: 8, vertical: 6),
+      child: Card(
+        color: FccColors.gray85,
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+        child: Padding(
+          padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 8),
+          child: _buildPortfolioWidget(user),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildPortfolioWidget(FccUserModel user) {
+    return Column(
+      children: [
+        ...user.portfolio.map(
+          (portfolio) => InkWell(
+            onTap: () => launchUrl(Uri.parse(portfolio.url!)),
+            child: Card(
+              margin: const EdgeInsets.symmetric(
+                horizontal: 12,
+                vertical: 6,
+              ),
+              color: FccColors.gray85,
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(16),
+              ),
+              child: Padding(
+                padding: const EdgeInsets.all(16),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    if (portfolio.image != null && portfolio.image!.isNotEmpty)
+                      ClipRRect(
+                        borderRadius: BorderRadius.circular(12),
+                        child: Image.network(
+                          portfolio.image!,
+                          height: 150,
+                          width: double.infinity,
+                          fit: BoxFit.cover,
+                        ),
+                      ),
+                    const SizedBox(height: 12),
+                    Text(
+                      portfolio.title!,
+                      style: const TextStyle(
+                        fontSize: 18,
+                        fontWeight: FontWeight.bold,
+                        color: Colors.white,
+                      ),
+                    ),
+                    if (portfolio.description != null &&
+                        portfolio.description!.isNotEmpty)
+                      Padding(
+                        padding: const EdgeInsets.only(top: 8.0),
+                        child: Text(
+                          portfolio.description!,
+                          style: const TextStyle(
+                            fontSize: 14,
+                            color: FccColors.gray15,
+                          ),
+                        ),
+                      ),
+                    const SizedBox(height: 12),
+                    Row(
+                      children: [
+                        const Icon(Icons.link,
+                            color: FccColors.blue50, size: 20),
+                        const SizedBox(width: 8),
+                        Expanded(
+                          child: GestureDetector(
+                            onTap: () => launchUrl(Uri.parse(portfolio.url!)),
+                            child: Text(
+                              portfolio.url!,
+                              style: const TextStyle(
+                                fontSize: 14,
+                                color: FccColors.blue50,
+                                decoration: TextDecoration.underline,
+                              ),
+                              overflow: TextOverflow.ellipsis,
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ],
+                ),
+              ),
+            ),
+          ),
+        ),
+      ],
+    );
+  }
+
   Widget _buildCertifications(FccUserModel user) {
     final hasModernCert = user.isRespWebDesignCert ||
         user.is2018DataVisCert ||
@@ -505,114 +608,38 @@ class ProfileView extends StatelessWidget {
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
         child: Padding(
           padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 8),
-          child: CertificationWidget(
-            user: user,
-            hasModernCert: hasModernCert,
-            hasLegacyCert: hasLegacyCert,
-            currentCerts: currentCerts,
-            legacyCerts: legacyCerts,
-          ),
-        ),
-      ),
-    );
-  }
-
-  Widget _buildPortfolio(FccUserModel user) {
-    if (user.portfolio.isEmpty) return const SizedBox.shrink();
-    return Container(
-      width: double.infinity,
-      margin: const EdgeInsets.symmetric(horizontal: 8, vertical: 6),
-      child: Card(
-        color: FccColors.gray85,
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
-        child: Padding(
-          padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 8),
-          child: _buildPortfolioWidget(user),
-        ),
-      ),
-    );
-  }
-
-  Widget _buildPortfolioWidget(FccUserModel user) {
-    return Column(
-      children: [
-        ...user.portfolio.map(
-          (portfolio) => InkWell(
-            onTap: () => launchUrl(Uri.parse(portfolio.url!)),
-            child: Card(
-              margin: const EdgeInsets.symmetric(
-                horizontal: 12,
-                vertical: 6,
-              ),
-              color: FccColors.gray85,
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(16),
-              ),
-              child: Padding(
-                padding: const EdgeInsets.all(16),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    if (portfolio.image != null && portfolio.image!.isNotEmpty)
-                      ClipRRect(
-                        borderRadius: BorderRadius.circular(12),
-                        child: Image.network(
-                          portfolio.image!,
-                          height: 150,
-                          width: double.infinity,
-                          fit: BoxFit.cover,
-                        ),
-                      ),
-                    const SizedBox(height: 12),
-                    Text(
-                      portfolio.title!,
-                      style: const TextStyle(
-                        fontSize: 18,
-                        fontWeight: FontWeight.bold,
-                        color: Colors.white,
-                      ),
-                    ),
-                    if (portfolio.description != null &&
-                        portfolio.description!.isNotEmpty)
-                      Padding(
-                        padding: const EdgeInsets.only(top: 8.0),
-                        child: Text(
-                          portfolio.description!,
-                          style: const TextStyle(
-                            fontSize: 14,
-                            color: FccColors.gray15,
-                          ),
-                        ),
-                      ),
-                    const SizedBox(height: 12),
-                    Row(
-                      children: [
-                        const Icon(Icons.link,
-                            color: FccColors.blue50, size: 20),
-                        const SizedBox(width: 8),
-                        Expanded(
-                          child: GestureDetector(
-                            onTap: () => launchUrl(Uri.parse(portfolio.url!)),
-                            child: Text(
-                              portfolio.url!,
-                              style: const TextStyle(
-                                fontSize: 14,
-                                color: FccColors.blue50,
-                                decoration: TextDecoration.underline,
-                              ),
-                              overflow: TextOverflow.ellipsis,
-                            ),
-                          ),
-                        ),
-                      ],
-                    ),
-                  ],
+          child: Column(
+            children: [
+              const Padding(
+                padding: EdgeInsets.only(top: 8, bottom: 2),
+                child: Text(
+                  'freeCodeCamp Certifications',
+                  textAlign: TextAlign.center,
+                  style: TextStyle(
+                    fontSize: 20,
+                    height: 1.25,
+                    fontWeight: FontWeight.w700,
+                  ),
                 ),
               ),
-            ),
+              if (!hasModernCert && !hasLegacyCert)
+                const Text(
+                  'You have not yet received any certifications.',
+                  style: TextStyle(
+                    fontSize: 16,
+                    color: Colors.white,
+                    fontWeight: FontWeight.w600,
+                  ),
+                  textAlign: TextAlign.center,
+                ),
+              if (hasModernCert)
+                CertificationWidget._buildTrophyList(currentCerts),
+              if (hasLegacyCert)
+                CertificationWidget._buildTrophyList(legacyCerts),
+            ],
           ),
         ),
-      ],
+      ),
     );
   }
 }
@@ -658,7 +685,7 @@ class CertificationWidget extends StatelessWidget {
     );
   }
 
-  Widget _buildTrophyList(List certs) {
+  static Widget _buildTrophyList(List certs) {
     return Column(
       children: certs.where((cert) => cert['show']).map<Widget>((cert) {
         return Container(
