@@ -90,12 +90,14 @@ class ProfileView extends StatelessWidget {
                 child: SingleChildScrollView(
                   child: Column(
                     children: [
+                      SizedBox(height: 25),
                       _buildHeader(user),
                       _buildAboutCard(user),
                       _buildInfoSection(context, user, streak),
                       _buildHeatmap(context, user, streak),
                       _buildPortfolio(user),
                       _buildCertifications(user),
+                      SizedBox(height: 50)
                     ],
                   ),
                 ),
