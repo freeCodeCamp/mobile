@@ -113,46 +113,49 @@ class BlockGridView extends StatelessWidget {
               ],
             ),
             if (isOpen)
-              Row(
-                children: [
-                  Container(
-                    padding: const EdgeInsets.all(8),
-                    height: 195,
-                    width: MediaQuery.of(context).size.width - 34,
-                    child: ScrollShadow(
-                      child: GridView.builder(
-                        padding: const EdgeInsets.all(0),
-                        gridDelegate:
-                            const SliverGridDelegateWithFixedCrossAxisCount(
-                          crossAxisCount: 6,
-                          mainAxisSpacing: 3,
-                          crossAxisSpacing: 3,
-                        ),
-                        itemCount: block.challenges.length,
-                        itemBuilder: (context, step) {
-                          final challenge = block.challengeTiles[step];
+              Container(
+                padding: const EdgeInsets.all(8),
+                constraints: BoxConstraints(
+                  maxHeight: 300,
+                ),
+                child: Builder(builder: (context) {
+                  final tiles = block.challengeTiles.length;
 
-                          // challenge.name follows the "Step 1", "Step 2" format
-                          // so we extract the step number here
-                          final match =
-                              RegExp(r'\d+').firstMatch(challenge.name);
-                          final stepNumber = match != null
-                              ? int.parse(match.group(0)!)
-                              : step + 1;
+                  final scrollOn = tiles > 24;
 
-                          return ChallengeTile(
-                            block: block,
-                            model: model,
-                            step: stepNumber,
-                            challengeId: challenge.id,
-                            isDownloaded: false,
-                          );
-                        },
+                  return ScrollShadow(
+                    child: GridView.builder(
+                      shrinkWrap: true,
+                      padding: const EdgeInsets.all(0),
+                      physics: scrollOn
+                          ? const AlwaysScrollableScrollPhysics()
+                          : const NeverScrollableScrollPhysics(),
+                      gridDelegate:
+                          const SliverGridDelegateWithFixedCrossAxisCount(
+                        crossAxisCount: 6,
+                        mainAxisSpacing: 3,
+                        crossAxisSpacing: 3,
                       ),
+                      itemCount: block.challenges.length,
+                      itemBuilder: (context, step) {
+                        final challenge = block.challengeTiles[step];
+                        final match = RegExp(r'\d+').firstMatch(challenge.name);
+                        final stepNumber = match != null
+                            ? int.parse(match.group(0)!)
+                            : step + 1;
+
+                        return ChallengeTile(
+                          block: block,
+                          model: model,
+                          step: stepNumber,
+                          challengeId: challenge.id,
+                          isDownloaded: false,
+                        );
+                      },
                     ),
-                  ),
-                ],
-              ),
+                  );
+                }),
+              )
           ],
         ),
       ),
