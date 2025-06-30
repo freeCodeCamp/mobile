@@ -121,6 +121,7 @@ class BlockGridView extends StatelessWidget {
                     width: MediaQuery.of(context).size.width - 34,
                     child: ScrollShadow(
                       child: GridView.builder(
+                        padding: const EdgeInsets.all(0),
                         gridDelegate:
                             const SliverGridDelegateWithFixedCrossAxisCount(
                           crossAxisCount: 6,

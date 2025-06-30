@@ -114,6 +114,7 @@ class BlockListView extends StatelessWidget {
                     width: MediaQuery.of(context).size.width - 34,
                     child: ListView.builder(
                       shrinkWrap: true,
+                      padding: const EdgeInsets.all(0),
                       physics: const ClampingScrollPhysics(),
                       itemCount: block.challenges.length,
                       itemBuilder: (context, index) {
