@@ -114,6 +114,14 @@ class ChallengeView extends StatelessWidget {
           );
         }
       })(),
+      bottom: const PreferredSize(
+        preferredSize: Size.fromHeight(1.0),
+        child: Divider(
+          height: 1,
+          thickness: 1,
+          color: FccColors.gray45,
+        ),
+      ),
     );
   }
 
@@ -143,7 +151,7 @@ class ChallengeView extends StatelessWidget {
     return Container(
       decoration: const BoxDecoration(
         border: Border(
-          top: BorderSide(color: Colors.white70),
+          top: BorderSide(color: FccColors.gray45),
         ),
       ),
       padding: EdgeInsets.only(
