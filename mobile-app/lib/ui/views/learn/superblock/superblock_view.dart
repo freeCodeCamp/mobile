@@ -35,7 +35,10 @@ class SuperBlockView extends StatelessWidget {
       },
       builder: (context, model, child) => Scaffold(
         appBar: AppBar(
-          title: Text(superBlockName),
+          title: SingleChildScrollView(
+            scrollDirection: Axis.horizontal,
+            child: Text(superBlockName),
+          ),
         ),
         backgroundColor: const Color.fromRGBO(0x0a, 0x0a, 0x23, 1),
         body: FutureBuilder<SuperBlock>(
