@@ -21,64 +21,106 @@ class QuizWidgetQuestion {
   });
 }
 
-class QuizWidget extends StatelessWidget {
+class QuizWidget extends StatefulWidget {
   final List<QuizWidgetQuestion> questions;
   final Function(int, int) onChanged;
   final bool? isValidated;
 
-  const QuizWidget(
-      {super.key,
-      required this.questions,
-      required this.onChanged,
-      this.isValidated});
+  const QuizWidget({
+    super.key,
+    required this.questions,
+    required this.onChanged,
+    this.isValidated,
+  });
+
+  @override
+  State<QuizWidget> createState() => _QuizWidgetState();
+}
+
+class _QuizWidgetState extends State<QuizWidget> {
+  late final HTMLParser parser;
+  late List<List<Widget>> parsedQuestions;
+  late List<List<List<Widget>>> parsedOptions;
+
+  @override
+  void initState() {
+    super.initState();
+    parser = HTMLParser(context: context);
+    _parseAll();
+  }
+
+  @override
+  void didUpdateWidget(covariant QuizWidget oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    if (_areQuestionsChanged(oldWidget.questions, widget.questions)) {
+      _parseAll();
+    }
+  }
+
+  bool _areQuestionsChanged(List<QuizWidgetQuestion> oldQuestions,
+      List<QuizWidgetQuestion> newQuestions) {
+    if (oldQuestions.length != newQuestions.length) {
+      return true;
+    }
+
+    for (int i = 0; i < oldQuestions.length; i++) {
+      // Only check for selectedAnswer changes as the other information is not changed between updates
+      if (oldQuestions[i].selectedAnswer != newQuestions[i].selectedAnswer) {
+        return true;
+      }
+    }
+
+    return false;
+  }
+
+  void _parseAll() {
+    parsedQuestions =
+        widget.questions.map((q) => parser.parse(q.text)).toList();
+    parsedOptions = widget.questions
+        .map((q) => q.answers
+            .map((a) => parser.parse(
+                  a.answer,
+                  isSelectable: false,
+                  removeParagraphMargin: true,
+                ))
+            .toList())
+        .toList();
+  }
 
   @override
   Widget build(BuildContext context) {
-    return Column(
-      children: List.generate(
-        questions.length,
-        (index) {
-          return quizQuestion(
-              context: context,
-              questionNumber: questions.length > 1 ? index + 1 : null,
-              question: questions[index],
-              selectedAnswer: questions[index].selectedAnswer,
-              isCorrect: questions[index].isCorrect,
-              onChanged: (answerIndex) {
-                onChanged(index, answerIndex);
-              });
-        },
-      ),
+    return ListView.builder(
+      shrinkWrap: true,
+      physics: const NeverScrollableScrollPhysics(),
+      itemCount: widget.questions.length,
+      itemBuilder: (context, index) {
+        return quizQuestion(
+          context: context,
+          questionNumber: widget.questions.length > 1 ? index + 1 : null,
+          questionIndex: index,
+        );
+      },
     );
   }
 
-  ChallengeCard quizQuestion(
-      {required BuildContext context,
-      required QuizWidgetQuestion question,
-      required int selectedAnswer,
-      required ValueChanged<int> onChanged,
-      bool? isCorrect,
-      int? questionNumber}) {
-    HTMLParser parser = HTMLParser(context: context);
-
+  ChallengeCard quizQuestion({
+    required BuildContext context,
+    required int questionIndex,
+    int? questionNumber,
+  }) {
+    final question = widget.questions[questionIndex];
     return ChallengeCard(
       title: questionNumber != null ? 'Question $questionNumber' : 'Question',
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          ...parser.parse(
-            question.text,
-          ),
+          ...parsedQuestions[questionIndex],
           const SizedBox(height: 8),
           for (final answerObj in question.answers.asMap().entries) ...[
             option(
               context: context,
               answerObj: answerObj,
-              selectedAnswer: selectedAnswer,
-              isCorrect: isCorrect,
-              onChanged: (value) {
-                onChanged(value);
-              },
+              questionIndex: questionIndex,
             ),
           ],
         ],
@@ -89,19 +131,19 @@ class QuizWidget extends StatelessWidget {
   Container option({
     required BuildContext context,
     required MapEntry<int, Answer> answerObj,
-    required int selectedAnswer,
-    required bool? isCorrect,
-    required ValueChanged<int> onChanged,
+    required int questionIndex,
   }) {
-    HTMLParser parser = HTMLParser(context: context);
-
+    final question = widget.questions[questionIndex];
+    final selectedAnswer = question.selectedAnswer;
+    final isCorrect = question.isCorrect;
     final isSelected = answerObj.key == selectedAnswer;
+    final optionWidgets = parsedOptions[questionIndex][answerObj.key];
 
     return Container(
       margin: const EdgeInsets.symmetric(vertical: 8),
       child: Material(
         child: RadioListTile<int>(
-          key: ValueKey(selectedAnswer),
+          key: ValueKey(answerObj.key),
           selected: isSelected,
           tileColor: const Color(0xFF0a0a23),
           selectedTileColor: const Color(0xFF0a0a23),
@@ -115,7 +157,7 @@ class QuizWidget extends StatelessWidget {
           ),
           groupValue: selectedAnswer,
           onChanged: (value) {
-            onChanged(value ?? -1);
+            widget.onChanged(questionIndex, value ?? -1);
           },
           title: Align(
             alignment: Alignment.centerLeft,
@@ -126,15 +168,11 @@ class QuizWidget extends StatelessWidget {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 mainAxisAlignment: MainAxisAlignment.center,
-                children: parser.parse(
-                  answerObj.value.answer,
-                  isSelectable: false,
-                  removeParagraphMargin: true,
-                ),
+                children: optionWidgets,
               ),
             ),
           ),
-          subtitle: isSelected && isValidated == true
+          subtitle: isSelected && widget.isValidated == true
               ? validationStatusAndFeedback(
                   context: context,
                   isCorrect: isCorrect,
@@ -146,8 +184,11 @@ class QuizWidget extends StatelessWidget {
     );
   }
 
-  Widget validationStatusAndFeedback(
-      {required BuildContext context, bool? isCorrect, String? feedback}) {
+  Widget validationStatusAndFeedback({
+    required BuildContext context,
+    bool? isCorrect,
+    String? feedback,
+  }) {
     HTMLParser parser = HTMLParser(context: context);
     final List<Widget> feedbackWidgets = [];
 
