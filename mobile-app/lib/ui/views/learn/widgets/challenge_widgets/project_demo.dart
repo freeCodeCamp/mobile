@@ -36,35 +36,26 @@ class ProjectDemo extends StatelessWidget {
               ],
             ),
             Expanded(
-              child: FutureBuilder(
-                future: model.provideDemo(solutions),
-                builder: (context, snapshot) {
-                  if (snapshot.hasData) {
-                    if (snapshot.data is String) {
-                      return InAppWebView(
-                        initialData: InAppWebViewInitialData(
-                          data: snapshot.data as String,
-                          mimeType: 'text/html',
-                        ),
-                        onWebViewCreated: (controller) {
-                          model.setWebviewController = controller;
-                        },
-                        initialSettings: InAppWebViewSettings(
-                          // TODO: Set this to true only in dev mode
-                          isInspectable: true,
-                        ),
-                      );
-                    }
-                  }
-
-                  if (snapshot.hasError) {
-                    return Center(
-                      child: Text(context.t.error),
+              child: Builder(
+                builder: (context) {
+                  final html = model.provideDemo(solutions);
+                  if (html != null) {
+                    return InAppWebView(
+                      initialData: InAppWebViewInitialData(
+                        data: html,
+                        mimeType: 'text/html',
+                      ),
+                      onWebViewCreated: (controller) {
+                        model.setWebviewController = controller;
+                      },
+                      initialSettings: InAppWebViewSettings(
+                        // TODO: Set this to true only in dev mode
+                        isInspectable: true,
+                      ),
                     );
                   }
-
                   return const Center(
-                    child: CircularProgressIndicator(),
+                    child: Text('No demo available'),
                   );
                 },
               ),

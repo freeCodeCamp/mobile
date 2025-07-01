@@ -520,8 +520,7 @@ class ChallengeViewModel extends BaseViewModel {
     return document;
   }
 
-  Future<String> writeDemoDocument(
-      String doc, List<List<SolutionFile>>? solutions) async {
+  String writeDemoDocument(String doc, List<List<SolutionFile>>? solutions) {
     if (solutions == null || solutions.isEmpty) {
       return parse(doc).outerHtml;
     }
@@ -560,9 +559,9 @@ class ChallengeViewModel extends BaseViewModel {
     }
 
     String viewPort = '''<meta content="width=device-width,
-         initial-scale=1.0, maximum-scale=1.0,
-         user-scalable=no" name="viewport">
-         <meta>''';
+       initial-scale=1.0, maximum-scale=1.0,
+       user-scalable=no" name="viewport">
+       <meta>''';
     Document viewPortParsed = parse(viewPort);
     Node meta = viewPortParsed.getElementsByTagName('META')[0];
     document.getElementsByTagName('HEAD')[0].append(meta);
@@ -570,8 +569,7 @@ class ChallengeViewModel extends BaseViewModel {
     return document.outerHtml;
   }
 
-  Future<String?> provideDemo(List<List<SolutionFile>>? solutions) async {
-    // Use the first solution's HTML file as the base doc
+  String? provideDemo(List<List<SolutionFile>>? solutions) {
     if (solutions == null || solutions.isEmpty) {
       return null;
     }
@@ -579,7 +577,7 @@ class ChallengeViewModel extends BaseViewModel {
     List<SolutionFile> htmlFiles =
         solutions[0].where((file) => file.ext == 'html').toList();
     String doc = htmlFiles.isNotEmpty ? htmlFiles[0].contents : '';
-    String document = await writeDemoDocument(doc, solutions);
+    String document = writeDemoDocument(doc, solutions);
 
     return document;
   }
