@@ -73,6 +73,8 @@ class Challenge {
   // Challenge Type 15 - Odin
   final List<String>? assignments;
 
+  final List<List<SolutionFile>>? solutions;
+
   Challenge({
     required this.id,
     required this.block,
@@ -94,6 +96,7 @@ class Challenge {
     this.audio,
     this.scene,
     required this.hooks,
+    this.solutions,
   });
 
   factory Challenge.fromJson(Map<String, dynamic> data) {
@@ -134,6 +137,13 @@ class Challenge {
       hooks: Hooks.fromJson(
         data['hooks'] ?? {'beforeAll': ''},
       ),
+      solutions: data['solutions'] != null
+          ? (data['solutions'] as List)
+              .map<List<SolutionFile>>((solutionList) => (solutionList as List)
+                  .map<SolutionFile>((file) => SolutionFile.fromJson(file))
+                  .toList())
+              .toList()
+          : null,
     );
   }
 
@@ -179,6 +189,10 @@ class Challenge {
                 'answers': question.answers,
                 'solution': question.solution,
               })
+          .toList(),
+      'solutions': challenge.solutions
+          ?.map((solutionList) =>
+              solutionList.map((file) => file.toJson()).toList())
           .toList(),
     };
   }
@@ -493,4 +507,62 @@ class EnglishAudio {
       finishTimeStamp: data['finishTimestamp']?.toString(),
     );
   }
+}
+
+class SolutionFile {
+  final String head;
+  final String tail;
+  final String id;
+  final List<String> history;
+  final String name;
+  final String ext;
+  final String path;
+  final String fileKey;
+  final String contents;
+  final String seed;
+  final String? error;
+
+  SolutionFile({
+    required this.head,
+    required this.tail,
+    required this.id,
+    required this.history,
+    required this.name,
+    required this.ext,
+    required this.path,
+    required this.fileKey,
+    required this.contents,
+    required this.seed,
+    this.error,
+  });
+
+  factory SolutionFile.fromJson(Map<String, dynamic> data) {
+    return SolutionFile(
+      head: data['head'] ?? '',
+      tail: data['tail'] ?? '',
+      id: data['id'] ?? '',
+      history: ((data['history'] ?? []) as List).cast<String>(),
+      name: data['name'] ?? '',
+      ext: data['ext'] ?? '',
+      path: data['path'] ?? '',
+      fileKey: data['fileKey'] ?? '',
+      contents: data['contents'] ?? '',
+      seed: data['seed'] ?? '',
+      error: data['error'],
+    );
+  }
+
+  Map<String, dynamic> toJson() => {
+        'head': head,
+        'tail': tail,
+        'id': id,
+        'history': history,
+        'name': name,
+        'ext': ext,
+        'path': path,
+        'fileKey': fileKey,
+        'contents': contents,
+        'seed': seed,
+        'error': error,
+      };
 }
