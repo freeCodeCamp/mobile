@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:freecodecamp/extensions/i18n_extension.dart';
+import 'package:freecodecamp/ui/theme/fcc_theme.dart';
 import 'package:freecodecamp/ui/views/learn/challenge/challenge_viewmodel.dart';
+import 'package:freecodecamp/ui/views/learn/widgets/challenge_widgets/project_demo.dart';
 import 'package:freecodecamp/ui/views/learn/widgets/description/description_widget_model.dart';
 import 'package:freecodecamp/ui/views/news/html_handler/html_handler.dart';
 import 'package:stacked/stacked.dart';
@@ -35,62 +37,114 @@ class DescriptionView extends StatelessWidget {
         return SafeArea(
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
-            children: instructions.isNotEmpty || description.isNotEmpty
-                ? [
-                    Row(
+            children: [
+              Row(
+                children: [
+                  Padding(
+                    padding: const EdgeInsets.only(left: 12),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        Padding(
-                          padding: const EdgeInsets.only(left: 12),
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Text(
-                                context.t.instructions,
-                                style: const TextStyle(
-                                  fontSize: 24,
-                                  fontWeight: FontWeight.bold,
-                                ),
-                              ),
-                              if (isMultiStepChallenge)
-                                Text(
-                                  context.t.step_count(
-                                    splitTitle[1],
-                                    maxChallenges.toString(),
-                                  ),
-                                  style: const TextStyle(
-                                    fontSize: 14,
-                                    color: Colors.white70,
-                                  ),
-                                )
-                            ],
+                        Text(
+                          context.t.instructions,
+                          style: const TextStyle(
+                            fontSize: 24,
+                            fontWeight: FontWeight.bold,
                           ),
                         ),
+                        if (isMultiStepChallenge)
+                          Text(
+                            context.t.step_count(
+                              splitTitle[1],
+                              maxChallenges.toString(),
+                            ),
+                            style: const TextStyle(
+                              fontSize: 14,
+                              color: Colors.white70,
+                            ),
+                          )
                       ],
                     ),
-                    Expanded(
-                      child: Builder(
-                        builder: (context) {
-                          final scrollController = ScrollController();
-                          return Scrollbar(
-                            thumbVisibility: true,
-                            trackVisibility: true,
-                            controller: scrollController,
-                            child: SingleChildScrollView(
-                              controller: scrollController,
-                              child: Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: parser.parse(
-                                      description,
-                                    ) +
-                                    parser.parse(instructions),
+                  ),
+                ],
+              ),
+              Expanded(
+                child: Builder(
+                  builder: (context) {
+                    final scrollController = ScrollController();
+                    return Scrollbar(
+                      thumbVisibility: true,
+                      trackVisibility: true,
+                      controller: scrollController,
+                      child: SingleChildScrollView(
+                        controller: scrollController,
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            if (challengeModel.challenge?.challengeType == 25)
+                              Padding(
+                                padding: const EdgeInsets.all(12.0),
+                                child: RichText(
+                                  text: TextSpan(
+                                    style: DefaultTextStyle.of(context)
+                                        .style
+                                        .copyWith(fontSize: 20),
+                                    children: [
+                                      const TextSpan(
+                                        text:
+                                            'Build an app that is functionally similar to ',
+                                      ),
+                                      WidgetSpan(
+                                        alignment: PlaceholderAlignment.middle,
+                                        child: TextButton(
+                                          style: TextButton.styleFrom(
+                                            padding: EdgeInsets.zero,
+                                            minimumSize: Size(0, 0),
+                                            tapTargetSize: MaterialTapTargetSize
+                                                .shrinkWrap,
+                                            visualDensity:
+                                                VisualDensity.compact,
+                                            backgroundColor: Colors.transparent,
+                                          ),
+                                          onPressed: () {
+                                            showDialog(
+                                              context: context,
+                                              builder: (context) => ProjectDemo(
+                                                challenge:
+                                                    challengeModel.challenge!,
+                                                model: challengeModel,
+                                              ),
+                                            );
+                                          },
+                                          child: const Text(
+                                            'this example project',
+                                            style: TextStyle(
+                                              fontSize: 20,
+                                              decoration:
+                                                  TextDecoration.underline,
+                                              color: FccColors.gray00,
+                                            ),
+                                          ),
+                                        ),
+                                      ),
+                                      const TextSpan(
+                                        text:
+                                            '. Try not to copy the example project, give it your own personal style.',
+                                      ),
+                                    ],
+                                  ),
+                                ),
                               ),
-                            ),
-                          );
-                        },
+                            ...parser.parse(description),
+                            ...parser.parse(instructions),
+                          ],
+                        ),
                       ),
-                    ),
-                  ]
-                : [],
+                    );
+                  },
+                ),
+              ),
+            ],
           ),
         );
       },

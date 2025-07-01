@@ -63,12 +63,10 @@ class AppLocalizationsEn extends AppLocalizations {
   String get email_submit_code => 'Submit and sign in to freeCodeCamp';
 
   @override
-  String get email_invalid_code =>
-      'The code you entered is not valid. Please check the last OTP you received and try again.';
+  String get email_invalid_code => 'The code you entered is not valid. Please check the last OTP you received and try again.';
 
   @override
-  String get login_data_message =>
-      'freeCodeCamp is free and your account is private by default. We use your email address to connect you to your account.';
+  String get login_data_message => 'freeCodeCamp is free and your account is private by default. We use your email address to connect you to your account.';
 
   @override
   String get login_load_message => 'Signing in...';
@@ -77,8 +75,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get login_cancelled => 'Login canceled';
 
   @override
-  String get login_age_message =>
-      'You must be at least 13 years old to create an account on freeCodeCamp.';
+  String get login_age_message => 'You must be at least 13 years old to create an account on freeCodeCamp.';
 
   @override
   String login_welcome_back(String username) {
@@ -212,8 +209,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get tutorial_search_no_results => 'No Tutorials Found';
 
   @override
-  String get tutorial_search_error =>
-      'There was an error loading tutorials \n please try again';
+  String get tutorial_search_error => 'There was an error loading tutorials \n please try again';
 
   @override
   String get tutorial_search_placeholder => 'SEARCH TUTORIALS...';
@@ -268,8 +264,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get podcast_show_less => 'Show Less';
 
   @override
-  String get podcast_unable_to_load_podcasts =>
-      'Unable to load podcasts \n please try again.';
+  String get podcast_unable_to_load_podcasts => 'Unable to load podcasts \n please try again.';
 
   @override
   String get settings_title => 'SETTINGS';
@@ -278,15 +273,13 @@ class AppLocalizationsEn extends AppLocalizations {
   String get settings_reset_cache => 'Reset Cache';
 
   @override
-  String get settings_reset_cache_message =>
-      'Are you sure you want to clear the cache? - this resets all your progress and local data';
+  String get settings_reset_cache_message => 'Are you sure you want to clear the cache? - this resets all your progress and local data';
 
   @override
   String get settings_reset_cache_confirm => 'Clear';
 
   @override
-  String get settings_reset_cache_description =>
-      'Clears all local data and progress';
+  String get settings_reset_cache_description => 'Clears all local data and progress';
 
   @override
   String get settings_privacy_policy => 'Privacy Policy';
@@ -298,24 +291,19 @@ class AppLocalizationsEn extends AppLocalizations {
   String get settings_language => 'Language';
 
   @override
-  String get delete_account_message_one =>
-      'This will really delete all your data, including all your progress and account information.';
+  String get delete_account_message_one => 'This will really delete all your data, including all your progress and account information.';
 
   @override
-  String get delete_account_message_two =>
-      'We won\'t be able to recover any of it for you later, even if you change your mind.';
+  String get delete_account_message_two => 'We won\'t be able to recover any of it for you later, even if you change your mind.';
 
   @override
-  String get delete_account_message_three =>
-      'If there\'s something we could do better, send us an email instead and we\'ll do our best:';
+  String get delete_account_message_three => 'If there\'s something we could do better, send us an email instead and we\'ll do our best:';
 
   @override
-  String get delete_account_message_four =>
-      'I am 100% certain. Delete everything related to this account';
+  String get delete_account_message_four => 'I am 100% certain. Delete everything related to this account';
 
   @override
-  String get delete_account_are_you_sure =>
-      'Are you sure you want to delete your account? - this deletes everything related to your account';
+  String get delete_account_are_you_sure => 'Are you sure you want to delete your account? - this deletes everything related to your account';
 
   @override
   String get delete_account_deleting => 'Deleting account...';
@@ -324,19 +312,16 @@ class AppLocalizationsEn extends AppLocalizations {
   String get delete_success => 'Account deleted successfully';
 
   @override
-  String get delete_failed =>
-      'Account deletion failed. Please try again later.';
+  String get delete_failed => 'Account deletion failed. Please try again later.';
 
   @override
-  String get settings_delete_account_description =>
-      'Delete your freeCodeCamp account';
+  String get settings_delete_account_description => 'Delete your freeCodeCamp account';
 
   @override
   String get settings_privacy_policy_description => 'Read our privacy policy';
 
   @override
-  String get coderadio_unable_to_load =>
-      'Unable to load coderadio \n please try again.';
+  String get coderadio_unable_to_load => 'Unable to load coderadio \n please try again.';
 
   @override
   String get coderadio_next_song => 'Next Song';
@@ -376,6 +361,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String profile_points_on_date(int point, String date) {
     final intl.NumberFormat pointNumberFormat = intl.NumberFormat.compact(
       locale: localeName,
+      
     );
     final String pointString = pointNumberFormat.format(point);
 
@@ -412,8 +398,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get profile_no_userdata => 'No user data found';
 
   @override
-  String get profile_no_modern_certs =>
-      'No certifications have been earned under the current curriculum';
+  String get profile_no_modern_certs => 'No certifications have been earned under the current curriculum';
 
   @override
   String get profile_legacy_certs => 'Legacy Certifications';
@@ -428,59 +413,46 @@ class AppLocalizationsEn extends AppLocalizations {
   String get quincy_email_part_one => 'Please slow down and read this.';
 
   @override
-  String get quincy_email_part_two =>
-      'freeCodeCamp is a proven path to your first software developer job.';
+  String get quincy_email_part_two => 'freeCodeCamp is a proven path to your first software developer job.';
 
   @override
-  String get quincy_email_part_three =>
-      'More than 40,000 people have gotten developer jobs after completing this — including at big companies like Google and Microsoft.';
+  String get quincy_email_part_three => 'More than 40,000 people have gotten developer jobs after completing this — including at big companies like Google and Microsoft.';
 
   @override
-  String get quincy_email_part_four =>
-      'If you are new to programming, we recommend you start at the beginning and earn these certifications in order.';
+  String get quincy_email_part_four => 'If you are new to programming, we recommend you start at the beginning and earn these certifications in order.';
 
   @override
-  String get quincy_email_part_five =>
-      'To earn each certification, build its 5 required projects and get all their tests to pass.';
+  String get quincy_email_part_five => 'To earn each certification, build its 5 required projects and get all their tests to pass.';
 
   @override
-  String get quincy_email_part_six =>
-      'You can add these certifications to your résumé or LinkedIn. But more important than the certifications is the practice you get along the way.';
+  String get quincy_email_part_six => 'You can add these certifications to your résumé or LinkedIn. But more important than the certifications is the practice you get along the way.';
 
   @override
-  String get quincy_email_part_seven =>
-      'If you feel overwhelmed, that is normal. Programming is hard.';
+  String get quincy_email_part_seven => 'If you feel overwhelmed, that is normal. Programming is hard.';
 
   @override
-  String get quincy_email_part_eight =>
-      'Practice is the key. Practice, practice, practice.';
+  String get quincy_email_part_eight => 'Practice is the key. Practice, practice, practice.';
 
   @override
-  String get quincy_email_part_nine =>
-      'And this curriculum will give you thousands of hours of hands-on programming practice.';
+  String get quincy_email_part_nine => 'And this curriculum will give you thousands of hours of hands-on programming practice.';
 
   @override
-  String get quincy_email_part_ten =>
-      'And if you want to learn more math and computer science theory, we also have thousands of hours of video courses on freeCodeCamp\\\'s YouTube channel.';
+  String get quincy_email_part_ten => 'And if you want to learn more math and computer science theory, we also have thousands of hours of video courses on freeCodeCamp\\\'s YouTube channel.';
 
   @override
-  String get quincy_email_part_eleven =>
-      'If you want to get a developer job or freelance clients, programming skills will be just part of the puzzle. You also need to build your personal network and your reputation as a developer.';
+  String get quincy_email_part_eleven => 'If you want to get a developer job or freelance clients, programming skills will be just part of the puzzle. You also need to build your personal network and your reputation as a developer.';
 
   @override
-  String get quincy_email_part_twelve =>
-      'You can do this on LinkedIn and GitHub, and also on the freeCodeCamp forum.';
+  String get quincy_email_part_twelve => 'You can do this on LinkedIn and GitHub, and also on the freeCodeCamp forum.';
 
   @override
   String get quincy_email_part_thirteen => 'Happy coding!';
 
   @override
-  String get quincy_email_part_fourteen =>
-      '- Quincy Larson, the teacher who founded freeCodeCamp.org';
+  String get quincy_email_part_fourteen => '- Quincy Larson, the teacher who founded freeCodeCamp.org';
 
   @override
-  String get quincy_email_part_fifteen =>
-      'By the way, each Friday I send an email with 5 links about programming and computer science. I send these to about 4 million people. Would you like me to send this to you, too?';
+  String get quincy_email_part_fifteen => 'By the way, each Friday I send an email with 5 links about programming and computer science. I send these to about 4 million people. Would you like me to send this to you, too?';
 
   @override
   String get quincy_email_confirm => 'Yes Please';
@@ -495,8 +467,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get error_two => 'Error';
 
   @override
-  String get error_three =>
-      'Oops! Something went wrong. Please try again in a moment.';
+  String get error_three => 'Oops! Something went wrong. Please try again in a moment.';
 
   @override
   String get loading => 'Loading';
