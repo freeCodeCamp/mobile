@@ -381,7 +381,7 @@ class _askForHelpInputDialogue extends HookWidget {
                             requestData.value['readSearchAskChecked'] = value;
                             requestData.value = Map.from(requestData.value);
                           },
-                          activeColor: FccColors.yellow40,
+                          activeColor: FccColors.gray00,
                         ),
                         Flexible(
                           child: RichText(
@@ -396,10 +396,9 @@ class _askForHelpInputDialogue extends HookWidget {
                                   text: 'Read-Search-Ask',
                                   style: const TextStyle(
                                     fontSize: 14,
-                                    color: FccColors.yellow40,
+                                    color: FccColors.gray00,
                                     decoration: TextDecoration.underline,
-                                    decorationColor: FccColors
-                                        .yellow40, // Set underline color to yellow
+                                    decorationColor: FccColors.gray00,
                                   ),
                                   recognizer: TapGestureRecognizer()
                                     ..onTap = () {
@@ -428,7 +427,7 @@ class _askForHelpInputDialogue extends HookWidget {
                                 value;
                             requestData.value = Map.from(requestData.value);
                           },
-                          activeColor: FccColors.yellow40,
+                          activeColor: FccColors.gray00,
                         ),
                         Flexible(
                           child: Text(
@@ -577,9 +576,9 @@ class _askForHelpDialog extends HookWidget {
                         text: 'Read-Search-Ask',
                         style: const TextStyle(
                           fontSize: 16,
-                          color: FccColors.yellow40,
+                          color: FccColors.gray00,
                           decoration: TextDecoration.underline,
-                          decorationColor: FccColors.yellow40,
+                          decorationColor: FccColors.gray00,
                         ),
                         recognizer: TapGestureRecognizer()
                           ..onTap = () {
