@@ -45,6 +45,23 @@ enum HelpCategory {
   const HelpCategory(this.value);
 }
 
+enum DemoType {
+  onLoad('onLoad'),
+  onClick('onClick');
+
+  final String value;
+  const DemoType(this.value);
+
+  static DemoType? fromValue(String? value) {
+    if (value == null) return null;
+    try {
+      return DemoType.values.firstWhere((type) => type.value == value);
+    } catch (_) {
+      return null;
+    }
+  }
+}
+
 class Challenge {
   final String id;
   final String block;
@@ -74,6 +91,7 @@ class Challenge {
   final List<String>? assignments;
 
   final List<List<SolutionFile>>? solutions;
+  final DemoType? demoType;
 
   Challenge({
     required this.id,
@@ -97,6 +115,7 @@ class Challenge {
     this.scene,
     required this.hooks,
     this.solutions,
+    this.demoType,
   });
 
   factory Challenge.fromJson(Map<String, dynamic> data) {
@@ -144,6 +163,7 @@ class Challenge {
                   .toList())
               .toList()
           : null,
+      demoType: DemoType.fromValue(data['demoType']),
     );
   }
 
@@ -194,6 +214,7 @@ class Challenge {
           ?.map((solutionList) =>
               solutionList.map((file) => file.toJson()).toList())
           .toList(),
+      'demoType': challenge.demoType?.value,
     };
   }
 }

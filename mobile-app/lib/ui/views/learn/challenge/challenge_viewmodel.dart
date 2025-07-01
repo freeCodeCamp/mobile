@@ -520,6 +520,70 @@ class ChallengeViewModel extends BaseViewModel {
     return document;
   }
 
+  Future<String> writeDemoDocument(
+      String doc, List<List<SolutionFile>>? solutions) async {
+    if (solutions == null || solutions.isEmpty) {
+      return parse(doc).outerHtml;
+    }
+
+    List<SolutionFile> solutionFiles = solutions[0];
+    List<SolutionFile> cssFiles =
+        solutionFiles.where((file) => file.ext == 'css').toList();
+    List<SolutionFile> jsFiles =
+        solutionFiles.where((file) => file.ext == 'js').toList();
+    List<SolutionFile> htmlFiles =
+        solutionFiles.where((file) => file.ext == 'html').toList();
+
+    String text = htmlFiles.isNotEmpty ? htmlFiles[0].contents : doc;
+    Document document = parse(text);
+
+    if (cssFiles.isNotEmpty) {
+      // Insert CSS as <style> tags into <head>
+      StringBuffer cssBuffer = StringBuffer();
+      for (var css in cssFiles) {
+        cssBuffer.writeln('<style>${css.contents}</style>');
+      }
+      if (document.head != null) {
+        document.head!.append(parseFragment(cssBuffer.toString()));
+      }
+    }
+
+    if (jsFiles.isNotEmpty) {
+      // Insert JS as <script> tags before </body>
+      StringBuffer jsBuffer = StringBuffer();
+      for (var js in jsFiles) {
+        jsBuffer.writeln('<script>${js.contents}</script>');
+      }
+      if (document.body != null) {
+        document.body!.append(parseFragment(jsBuffer.toString()));
+      }
+    }
+
+    String viewPort = '''<meta content="width=device-width,
+         initial-scale=1.0, maximum-scale=1.0,
+         user-scalable=no" name="viewport">
+         <meta>''';
+    Document viewPortParsed = parse(viewPort);
+    Node meta = viewPortParsed.getElementsByTagName('META')[0];
+    document.getElementsByTagName('HEAD')[0].append(meta);
+
+    return document.outerHtml;
+  }
+
+  Future<String?> provideDemo(List<List<SolutionFile>>? solutions) async {
+    // Use the first solution's HTML file as the base doc
+    if (solutions == null || solutions.isEmpty) {
+      return null;
+    }
+
+    List<SolutionFile> htmlFiles =
+        solutions[0].where((file) => file.ext == 'html').toList();
+    String doc = htmlFiles.isNotEmpty ? htmlFiles[0].contents : '';
+    String document = await writeDemoDocument(doc, solutions);
+
+    return document;
+  }
+
   String parseUsersConsoleMessages(String string) {
     if (!string.startsWith('testMSG')) {
       return '<p>$string</p>';
@@ -731,6 +795,8 @@ class ChallengeViewModel extends BaseViewModel {
         return DescriptionView(
           description: challenge.description,
           instructions: challenge.instructions,
+          solutions: challenge.solutions,
+          demoType: challenge.demoType,
           challengeModel: model,
           maxChallenges: maxChallenges,
           title: challenge.title,
