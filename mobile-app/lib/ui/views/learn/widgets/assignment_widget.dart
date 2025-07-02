@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_html/flutter_html.dart';
+import 'package:freecodecamp/ui/theme/fcc_theme.dart';
 import 'package:freecodecamp/ui/views/news/html_handler/html_handler.dart';
 
 class Assignment extends StatelessWidget {
@@ -56,10 +57,7 @@ class Assignment extends StatelessWidget {
                   isSelectable: false,
                   customStyles: value
                       ? {
-                          '*:not(h1):not(h2):not(h3):not(h4):not(h5):not(h6)':
-                              Style(
-                            color: const Color(0xDEFFFFFF),
-                          ),
+                          '*': Style(color: FccColors.gray00),
                         }
                       : {},
                 ),

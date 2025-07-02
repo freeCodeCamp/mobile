@@ -220,7 +220,7 @@ class _QuizWidgetState extends State<QuizWidget> {
         parser.parse(
           feedback,
           customStyles: {
-            '*:not(h1):not(h2):not(h3):not(h4):not(h5):not(h6)': Style(
+            '*:not(pre):not(code)': Style(
               color: isCorrect == true ? FccColors.green40 : FccColors.red15,
             ),
           },
