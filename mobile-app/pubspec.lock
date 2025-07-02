@@ -50,10 +50,10 @@ packages:
     dependency: "direct main"
     description:
       name: algolia_helper_flutter
-      sha256: a1184985d8fd613fd70ee2e3fd0ae5ed61286d87f7f13e89656ed050a650fd97
+      sha256: "95e99a9e9cc6dbb89a9d00b2966354735bcc6ac2b371311311cc83653e36a028"
       url: "https://pub.dev"
     source: hosted
-    version: "1.2.0"
+    version: "1.2.1"
   algolia_insights:
     dependency: transitive
     description:
