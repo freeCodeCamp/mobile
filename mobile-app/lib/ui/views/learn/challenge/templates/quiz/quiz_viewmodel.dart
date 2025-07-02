@@ -107,4 +107,17 @@ class QuizViewModel extends BaseViewModel {
         ? '✅ You have $correctQuestionsCount out of $totalQuestions questions correct. You have passed.'
         : "❌ You have $correctQuestionsCount out of $totalQuestions questions correct. You didn't pass.";
   }
+
+  void resetQuiz() {
+    setQuizQuestions = quizQuestions
+        .map((q) => QuizWidgetQuestion(
+              text: q.text,
+              answers: q.answers,
+              solution: q.solution,
+            ))
+        .toList();
+
+    setIsValidated = false;
+    setErrMessage = '';
+  }
 }

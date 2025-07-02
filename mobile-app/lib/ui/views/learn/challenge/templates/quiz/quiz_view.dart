@@ -161,6 +161,9 @@ class QuizView extends StatelessWidget {
                               challenge,
                               block,
                             );
+                          } else if (model.isValidated &&
+                              !model.hasPassedAllQuestions) {
+                            model.resetQuiz();
                           } else {
                             model.validateChallenge();
                           }
