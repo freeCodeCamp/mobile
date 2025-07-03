@@ -25,9 +25,16 @@ class ChapterBlockView extends StatelessWidget {
           appBar: AppBar(
             title: Text(moduleName),
           ),
-          body: Stack(
-            children: [
-              FocusDetector(
+          floatingActionButton: blocks.isNotEmpty
+              ? FloatingNavigationButtons(
+                  onPrevious: model.scrollToPrevious,
+                  onNext: model.scrollToNext,
+                  hasPrevious: model.hasPrevious,
+                  hasNext: model.hasNext,
+                  isAnimating: model.isAnimating,
+                )
+              : null,
+          body: FocusDetector(
                 onFocusGained: () {
                   model.updateUserProgress();
                 },
@@ -50,7 +57,6 @@ class ChapterBlockView extends StatelessWidget {
                         model.blockOpenStates = openStates;
                       }
                       
-                      // Set blocks for navigation
                       if (model.blocks.isEmpty) {
                         model.setBlocks(blocks);
                       }
@@ -71,17 +77,6 @@ class ChapterBlockView extends StatelessWidget {
                   },
                 ),
               ),
-              // Add floating navigation buttons
-              if (blocks.isNotEmpty)
-                FloatingNavigationButtons(
-                  onPrevious: model.scrollToPrevious,
-                  onNext: model.scrollToNext,
-                  hasPrevious: model.hasPrevious,
-                  hasNext: model.hasNext,
-                  isAnimating: model.isAnimating,
-                ),
-            ],
-          ),
         );
       },
     );

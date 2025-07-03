@@ -6,9 +6,10 @@ import 'package:freecodecamp/service/authentication/authentication_service.dart'
 import 'package:freecodecamp/service/dio_service.dart';
 import 'package:freecodecamp/service/learn/learn_offline_service.dart';
 import 'package:freecodecamp/service/learn/learn_service.dart';
+import 'package:freecodecamp/ui/mixins/navigation_mixin.dart';
 import 'package:stacked/stacked.dart';
 
-class SuperBlockViewModel extends BaseViewModel {
+class SuperBlockViewModel extends BaseViewModel with NavigationMixin<Block> {
   final _learnOfflineService = locator<LearnOfflineService>();
   LearnOfflineService get learnOfflineService => _learnOfflineService;
 
@@ -23,20 +24,8 @@ class SuperBlockViewModel extends BaseViewModel {
   Map<String, bool> _blockOpenStates = {};
   Map<String, bool> get blockOpenStates => _blockOpenStates;
 
-  final ScrollController _scrollController = ScrollController();
-  ScrollController get scrollController => _scrollController;
-
-  int _currentBlockIndex = 0;
-  int get currentBlockIndex => _currentBlockIndex;
-
-  List<Block> _blocks = [];
-  List<Block> get blocks => _blocks;
-
-  List<GlobalKey> _blockKeys = [];
-  List<GlobalKey> get blockKeys => _blockKeys;
-
-  bool _isAnimating = false;
-  bool get isAnimating => _isAnimating;
+  List<Block> get blocks => items;
+  List<GlobalKey> get blockKeys => itemKeys;
 
   Future<SuperBlock>? _superBlockData;
   Future<SuperBlock>? get superBlockData => _superBlockData;
@@ -52,58 +41,7 @@ class SuperBlockViewModel extends BaseViewModel {
   }
 
   void setBlocks(List<Block> blocks) {
-    _blocks = blocks;
-    // Create GlobalKeys for each block for accurate scrolling
-    _blockKeys = List.generate(blocks.length, (index) => GlobalKey());
-    notifyListeners();
-  }
-
-  void scrollToPrevious() {
-    if (_currentBlockIndex > 0 && !_isAnimating) {
-      _currentBlockIndex--;
-      _scrollToBlock(_currentBlockIndex);
-      notifyListeners();
-    }
-  }
-
-  void scrollToNext() {
-    if (_currentBlockIndex < _blocks.length - 1 && !_isAnimating) {
-      _currentBlockIndex++;
-      _scrollToBlock(_currentBlockIndex);
-      notifyListeners();
-    }
-  }
-
-  void _scrollToBlock(int index) async {
-    if (index >= 0 && index < _blockKeys.length) {
-      final context = _blockKeys[index].currentContext;
-      if (context != null) {
-        _isAnimating = true;
-        notifyListeners();
-        
-        try {
-          // Use ensureVisible to center the block in the viewport
-          await Scrollable.ensureVisible(
-            context,
-            duration: const Duration(milliseconds: 500),
-            curve: Curves.easeInOut,
-            alignment: 0.5, // Center the block in the viewport
-          );
-        } finally {
-          _isAnimating = false;
-          notifyListeners();
-        }
-      }
-    }
-  }
-
-  bool get hasPrevious => _currentBlockIndex > 0;
-  bool get hasNext => _currentBlockIndex < _blocks.length - 1;
-
-  @override
-  void dispose() {
-    _scrollController.dispose();
-    super.dispose();
+    setItems(blocks);
   }
 
   EdgeInsets getPaddingBeginAndEnd(int index, int challenges) {

@@ -36,9 +36,27 @@ class SuperBlockView extends StatelessWidget {
         );
       },
       builder: (context, model, child) => Scaffold(
-        body: Stack(
-          children: [
-            Column(
+        floatingActionButton: model.superBlockData != null
+            ? FutureBuilder<SuperBlock>(
+                future: model.superBlockData,
+                builder: (context, snapshot) {
+                  if (snapshot.hasData && 
+                      snapshot.data is SuperBlock && 
+                      (snapshot.data as SuperBlock).blocks != null &&
+                      (snapshot.data as SuperBlock).blocks!.isNotEmpty) {
+                    return FloatingNavigationButtons(
+                      onPrevious: model.scrollToPrevious,
+                      onNext: model.scrollToNext,
+                      hasPrevious: model.hasPrevious,
+                      hasNext: model.hasNext,
+                      isAnimating: model.isAnimating,
+                    );
+                  }
+                  return const SizedBox.shrink();
+                },
+              )
+            : null,
+        body: Column(
               children: [
                 Container(
                   color: FccColors.gray90,
@@ -97,10 +115,8 @@ class SuperBlockView extends StatelessWidget {
                               model.blockOpenStates = openStates;
                             }
                             
-                            // Set blocks for navigation
-                            if (superBlock.blocks != null) {
+                            if (model.blocks.isEmpty) {
                               model.setBlocks(superBlock.blocks!);
-                            }
                           });
 
                           return blockTemplate(model, superBlock);
@@ -119,27 +135,7 @@ class SuperBlockView extends StatelessWidget {
                 ),
               ],
             ),
-            // Add floating navigation buttons
-            if (model.superBlockData != null)
-              FutureBuilder<SuperBlock>(
-                future: model.superBlockData,
-                builder: (context, snapshot) {
-                  if (snapshot.hasData && 
-                      snapshot.data is SuperBlock && 
-                      (snapshot.data as SuperBlock).blocks != null &&
-                      (snapshot.data as SuperBlock).blocks!.isNotEmpty) {
-                    return FloatingNavigationButtons(
-                      onPrevious: model.scrollToPrevious,
-                      onNext: model.scrollToNext,
-                      hasPrevious: model.hasPrevious,
-                      hasNext: model.hasNext,
-                      isAnimating: model.isAnimating,
-                    );
-                  }
-                  return const SizedBox.shrink();
-                },
-              ),
-          ],
+          ),
         ),
       ),
     );

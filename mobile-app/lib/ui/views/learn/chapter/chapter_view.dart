@@ -19,9 +19,16 @@ class ChapterView extends StatelessWidget {
           appBar: AppBar(
             title: Text('Chapters'),
           ),
-          body: Stack(
-            children: [
-              StreamBuilder(
+          floatingActionButton: model.chapters.isNotEmpty
+              ? FloatingNavigationButtons(
+                  onPrevious: model.scrollToPrevious,
+                  onNext: model.scrollToNext,
+                  hasPrevious: model.hasPrevious,
+                  hasNext: model.hasNext,
+                  isAnimating: model.isAnimating,
+                )
+              : null,
+          body: StreamBuilder(
                 stream: model.auth.progress.stream,
                 builder: (context, snapshot) {
                   return FutureBuilder(
@@ -40,7 +47,6 @@ class ChapterView extends StatelessWidget {
                             superBlock.chapters as List<Chapter>;
 
                         WidgetsBinding.instance.addPostFrameCallback((_) {
-                          // Set chapters for navigation
                           if (model.chapters.isEmpty) {
                             model.setChapters(chapters);
                           }
@@ -75,16 +81,7 @@ class ChapterView extends StatelessWidget {
                   );
                 },
               ),
-              // Add floating navigation buttons
-              if (model.chapters.isNotEmpty)
-                FloatingNavigationButtons(
-                  onPrevious: model.scrollToPrevious,
-                  onNext: model.scrollToNext,
-                  hasPrevious: model.hasPrevious,
-                  hasNext: model.hasNext,
-                  isAnimating: model.isAnimating,
-                ),
-            ],
+            ),
           ),
         );
       },

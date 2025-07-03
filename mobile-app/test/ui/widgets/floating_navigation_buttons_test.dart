@@ -1,78 +1,6 @@
-// Simple test to validate the FloatingNavigationButtons widget
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
-
-// Create a standalone copy of the widget for testing
-class TestFloatingNavigationButtons extends StatelessWidget {
-  final VoidCallback? onPrevious;
-  final VoidCallback? onNext;
-  final bool hasPrevious;
-  final bool hasNext;
-  final bool isAnimating;
-
-  const TestFloatingNavigationButtons({
-    super.key,
-    this.onPrevious,
-    this.onNext,
-    required this.hasPrevious,
-    required this.hasNext,
-    this.isAnimating = false,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    return Positioned(
-      bottom: 16,
-      right: 16,
-      child: Column(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          // Previous button
-          FloatingActionButton(
-            heroTag: "previous",
-            onPressed: (hasPrevious && !isAnimating) ? onPrevious : null,
-            shape: RoundedRectangleBorder(
-              side: const BorderSide(
-                width: 1,
-                color: Colors.white,
-              ),
-              borderRadius: BorderRadius.circular(100),
-            ),
-            backgroundColor: (hasPrevious && !isAnimating)
-                ? const Color.fromRGBO(0x2A, 0x2A, 0x40, 1)
-                : const Color.fromRGBO(0x2A, 0x2A, 0x40, 0.5),
-            child: Icon(
-              Icons.keyboard_arrow_up,
-              size: 30,
-              color: (hasPrevious && !isAnimating) ? Colors.white : Colors.grey,
-            ),
-          ),
-          const SizedBox(height: 12),
-          // Next button
-          FloatingActionButton(
-            heroTag: "next",
-            onPressed: (hasNext && !isAnimating) ? onNext : null,
-            shape: RoundedRectangleBorder(
-              side: const BorderSide(
-                width: 1,
-                color: Colors.white,
-              ),
-              borderRadius: BorderRadius.circular(100),
-            ),
-            backgroundColor: (hasNext && !isAnimating)
-                ? const Color.fromRGBO(0x2A, 0x2A, 0x40, 1)
-                : const Color.fromRGBO(0x2A, 0x2A, 0x40, 0.5),
-            child: Icon(
-              Icons.keyboard_arrow_down,
-              size: 30,
-              color: (hasNext && !isAnimating) ? Colors.white : Colors.grey,
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-}
+import 'package:freecodecamp/ui/widgets/floating_navigation_buttons.dart';
 
 void main() {
   testWidgets('FloatingNavigationButtons should render correctly', (WidgetTester tester) async {
@@ -81,27 +9,20 @@ void main() {
 
     await tester.pumpWidget(MaterialApp(
       home: Scaffold(
-        body: Stack(
-          children: [
-            TestFloatingNavigationButtons(
-              onPrevious: () => previousPressed = true,
-              onNext: () => nextPressed = true,
-              hasPrevious: true,
-              hasNext: true,
-            ),
-          ],
+        floatingActionButton: FloatingNavigationButtons(
+          onPrevious: () => previousPressed = true,
+          onNext: () => nextPressed = true,
+          hasPrevious: true,
+          hasNext: true,
         ),
       ),
     ));
 
-    // Check that both buttons are present
     expect(find.byType(FloatingActionButton), findsExactly(2));
     
-    // Check that the buttons have correct icons
     expect(find.byIcon(Icons.keyboard_arrow_up), findsOneWidget);
     expect(find.byIcon(Icons.keyboard_arrow_down), findsOneWidget);
 
-    // Test button functionality
     await tester.tap(find.byIcon(Icons.keyboard_arrow_up));
     await tester.tap(find.byIcon(Icons.keyboard_arrow_down));
     
@@ -112,53 +33,43 @@ void main() {
   testWidgets('FloatingNavigationButtons should disable buttons when appropriate', (WidgetTester tester) async {
     await tester.pumpWidget(MaterialApp(
       home: Scaffold(
-        body: Stack(
-          children: [
-            TestFloatingNavigationButtons(
-              onPrevious: () {},
-              onNext: () {},
-              hasPrevious: false,
-              hasNext: false,
-            ),
-          ],
+        floatingActionButton: FloatingNavigationButtons(
+          onPrevious: () {},
+          onNext: () {},
+          hasPrevious: false,
+          hasNext: false,
         ),
       ),
     ));
 
-    // Check that buttons are disabled by verifying they have null onPressed
     final floatingActionButtons = tester.widgetList<FloatingActionButton>(
       find.byType(FloatingActionButton),
     ).toList();
     
     expect(floatingActionButtons.length, 2);
-    expect(floatingActionButtons[0].onPressed, null); // Previous button
-    expect(floatingActionButtons[1].onPressed, null); // Next button
+    expect(floatingActionButtons[0].onPressed, null);
+    expect(floatingActionButtons[1].onPressed, null);
   });
 
   testWidgets('FloatingNavigationButtons should disable buttons when animating', (WidgetTester tester) async {
     await tester.pumpWidget(MaterialApp(
       home: Scaffold(
-        body: Stack(
-          children: [
-            TestFloatingNavigationButtons(
-              onPrevious: () {},
-              onNext: () {},
-              hasPrevious: true,
-              hasNext: true,
-              isAnimating: true,
-            ),
-          ],
+        floatingActionButton: FloatingNavigationButtons(
+          onPrevious: () {},
+          onNext: () {},
+          hasPrevious: true,
+          hasNext: true,
+          isAnimating: true,
         ),
       ),
     ));
 
-    // Check that buttons are disabled when animating by verifying they have null onPressed
     final floatingActionButtons = tester.widgetList<FloatingActionButton>(
       find.byType(FloatingActionButton),
     ).toList();
     
     expect(floatingActionButtons.length, 2);
-    expect(floatingActionButtons[0].onPressed, null); // Previous button
-    expect(floatingActionButtons[1].onPressed, null); // Next button
+    expect(floatingActionButtons[0].onPressed, null);
+    expect(floatingActionButtons[1].onPressed, null);
   });
 }

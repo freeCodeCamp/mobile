@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:freecodecamp/ui/theme/fcc_theme.dart';
 
 class FloatingNavigationButtons extends StatelessWidget {
   final VoidCallback? onPrevious;
@@ -19,55 +18,49 @@ class FloatingNavigationButtons extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Positioned(
-      bottom: 16,
-      right: 16,
-      child: Column(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          // Previous button
-          FloatingActionButton(
-            heroTag: "previous",
-            onPressed: (hasPrevious && !isAnimating) ? onPrevious : null,
-            shape: RoundedRectangleBorder(
-              side: const BorderSide(
-                width: 1,
-                color: Colors.white,
-              ),
-              borderRadius: BorderRadius.circular(100),
+    return Column(
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        FloatingActionButton(
+          heroTag: "previous",
+          onPressed: (hasPrevious && !isAnimating) ? onPrevious : null,
+          shape: RoundedRectangleBorder(
+            side: const BorderSide(
+              width: 1,
+              color: Colors.white,
             ),
-            backgroundColor: (hasPrevious && !isAnimating)
-                ? const Color.fromRGBO(0x2A, 0x2A, 0x40, 1)
-                : const Color.fromRGBO(0x2A, 0x2A, 0x40, 0.5),
-            child: Icon(
-              Icons.keyboard_arrow_up,
-              size: 30,
-              color: (hasPrevious && !isAnimating) ? Colors.white : Colors.grey,
-            ),
+            borderRadius: BorderRadius.circular(100),
           ),
-          const SizedBox(height: 12),
-          // Next button
-          FloatingActionButton(
-            heroTag: "next",
-            onPressed: (hasNext && !isAnimating) ? onNext : null,
-            shape: RoundedRectangleBorder(
-              side: const BorderSide(
-                width: 1,
-                color: Colors.white,
-              ),
-              borderRadius: BorderRadius.circular(100),
-            ),
-            backgroundColor: (hasNext && !isAnimating)
-                ? const Color.fromRGBO(0x2A, 0x2A, 0x40, 1)
-                : const Color.fromRGBO(0x2A, 0x2A, 0x40, 0.5),
-            child: Icon(
-              Icons.keyboard_arrow_down,
-              size: 30,
-              color: (hasNext && !isAnimating) ? Colors.white : Colors.grey,
-            ),
+          backgroundColor: (hasPrevious && !isAnimating)
+              ? const Color.fromRGBO(0x2A, 0x2A, 0x40, 1)
+              : const Color.fromRGBO(0x2A, 0x2A, 0x40, 0.5),
+          child: Icon(
+            Icons.keyboard_arrow_up,
+            size: 30,
+            color: (hasPrevious && !isAnimating) ? Colors.white : Colors.grey,
           ),
-        ],
-      ),
+        ),
+        const SizedBox(height: 12),
+        FloatingActionButton(
+          heroTag: "next",
+          onPressed: (hasNext && !isAnimating) ? onNext : null,
+          shape: RoundedRectangleBorder(
+            side: const BorderSide(
+              width: 1,
+              color: Colors.white,
+            ),
+            borderRadius: BorderRadius.circular(100),
+          ),
+          backgroundColor: (hasNext && !isAnimating)
+              ? const Color.fromRGBO(0x2A, 0x2A, 0x40, 1)
+              : const Color.fromRGBO(0x2A, 0x2A, 0x40, 0.5),
+          child: Icon(
+            Icons.keyboard_arrow_down,
+            size: 30,
+            color: (hasNext && !isAnimating) ? Colors.white : Colors.grey,
+          ),
+        ),
+      ],
     );
   }
 }
