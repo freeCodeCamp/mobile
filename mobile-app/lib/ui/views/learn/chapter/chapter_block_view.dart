@@ -72,7 +72,7 @@ class ChapterBlockView extends StatelessWidget {
                 ),
               ),
               // Add floating navigation buttons
-              if (model.blocks.isNotEmpty)
+              if (blocks.isNotEmpty)
                 FloatingNavigationButtons(
                   onPrevious: model.scrollToPrevious,
                   onNext: model.scrollToNext,

@@ -120,12 +120,23 @@ class SuperBlockView extends StatelessWidget {
               ],
             ),
             // Add floating navigation buttons
-            if (model.blocks.isNotEmpty)
-              FloatingNavigationButtons(
-                onPrevious: model.scrollToPrevious,
-                onNext: model.scrollToNext,
-                hasPrevious: model.hasPrevious,
-                hasNext: model.hasNext,
+            if (model.superBlockData != null)
+              FutureBuilder<SuperBlock>(
+                future: model.superBlockData,
+                builder: (context, snapshot) {
+                  if (snapshot.hasData && 
+                      snapshot.data is SuperBlock && 
+                      (snapshot.data as SuperBlock).blocks != null &&
+                      (snapshot.data as SuperBlock).blocks!.isNotEmpty) {
+                    return FloatingNavigationButtons(
+                      onPrevious: model.scrollToPrevious,
+                      onNext: model.scrollToNext,
+                      hasPrevious: model.hasPrevious,
+                      hasNext: model.hasNext,
+                    );
+                  }
+                  return const SizedBox.shrink();
+                },
               ),
           ],
         ),
