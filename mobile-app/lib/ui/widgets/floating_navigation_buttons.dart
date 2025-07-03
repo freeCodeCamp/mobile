@@ -22,7 +22,7 @@ class FloatingNavigationButtons extends StatelessWidget {
       mainAxisSize: MainAxisSize.min,
       children: [
         FloatingActionButton(
-          heroTag: "previous",
+          heroTag: 'previous',
           onPressed: (hasPrevious && !isAnimating) ? onPrevious : null,
           shape: RoundedRectangleBorder(
             side: const BorderSide(
@@ -42,7 +42,7 @@ class FloatingNavigationButtons extends StatelessWidget {
         ),
         const SizedBox(height: 12),
         FloatingActionButton(
-          heroTag: "next",
+          heroTag: 'next',
           onPressed: (hasNext && !isAnimating) ? onNext : null,
           shape: RoundedRectangleBorder(
             side: const BorderSide(

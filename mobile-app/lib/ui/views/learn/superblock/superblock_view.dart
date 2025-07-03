@@ -40,8 +40,8 @@ class SuperBlockView extends StatelessWidget {
             ? FutureBuilder<SuperBlock>(
                 future: model.superBlockData,
                 builder: (context, snapshot) {
-                  if (snapshot.hasData && 
-                      snapshot.data is SuperBlock && 
+                  if (snapshot.hasData &&
+                      snapshot.data is SuperBlock &&
                       (snapshot.data as SuperBlock).blocks != null &&
                       (snapshot.data as SuperBlock).blocks!.isNotEmpty) {
                     return FloatingNavigationButtons(
@@ -57,85 +57,84 @@ class SuperBlockView extends StatelessWidget {
               )
             : null,
         body: Column(
-              children: [
-                Container(
-                  color: FccColors.gray90,
-                  child: SafeArea(
-                    bottom: false,
-                    child: Padding(
-                      padding: const EdgeInsets.only(
-                          top: 0, right: 8, left: 8, bottom: 16),
-                      child: Row(
-                        children: [
-                          IconButton(
-                            icon: const Icon(
-                              Icons.arrow_back_ios,
-                              color: Colors.white,
-                            ),
-                            onPressed: () => Navigator.of(context).pop(),
-                          ),
-                          Expanded(
-                            child: Text(
-                              superBlockName,
-                              style: const TextStyle(
-                                fontSize: 18,
-                                color: Colors.white,
-                              ),
-                              softWrap: true,
-                            ),
-                          ),
-                        ],
+          children: [
+            Container(
+              color: FccColors.gray90,
+              child: SafeArea(
+                bottom: false,
+                child: Padding(
+                  padding: const EdgeInsets.only(
+                      top: 0, right: 8, left: 8, bottom: 16),
+                  child: Row(
+                    children: [
+                      IconButton(
+                        icon: const Icon(
+                          Icons.arrow_back_ios,
+                          color: Colors.white,
+                        ),
+                        onPressed: () => Navigator.of(context).pop(),
                       ),
-                    ),
+                      Expanded(
+                        child: Text(
+                          superBlockName,
+                          style: const TextStyle(
+                            fontSize: 18,
+                            color: Colors.white,
+                          ),
+                          softWrap: true,
+                        ),
+                      ),
+                    ],
                   ),
                 ),
-                Expanded(
-                  child: FutureBuilder<SuperBlock>(
-                    initialData: null,
-                    future: model.superBlockData,
-                    builder: ((context, snapshot) {
-                      if (snapshot.hasData) {
-                        if (snapshot.data is SuperBlock) {
-                          SuperBlock superBlock = snapshot.data as SuperBlock;
-
-                          WidgetsBinding.instance.addPostFrameCallback((_) {
-                            if (model.blockOpenStates.isEmpty) {
-                              Map<String, bool> openStates = {
-                                if (superBlock.blocks != null)
-                                  for (var block in superBlock.blocks!)
-                                    block.dashedName: false
-                              };
-
-                              // Set first block open
-                              String firstBlockKey =
-                                  openStates.entries.toList()[0].key;
-
-                              openStates[firstBlockKey] = true;
-
-                              model.blockOpenStates = openStates;
-                            }
-                            
-                            if (model.blocks.isEmpty) {
-                              model.setBlocks(superBlock.blocks!);
-                          });
-
-                          return blockTemplate(model, superBlock);
-                        }
-                      }
-
-                      if (snapshot.hasError) {
-                        return Text(context.t.error);
-                      }
-
-                      return const Center(
-                        child: CircularProgressIndicator(),
-                      );
-                    }),
-                  ),
-                ),
-              ],
+              ),
             ),
-          ),
+            Expanded(
+              child: FutureBuilder<SuperBlock>(
+                initialData: null,
+                future: model.superBlockData,
+                builder: ((context, snapshot) {
+                  if (snapshot.hasData) {
+                    if (snapshot.data is SuperBlock) {
+                      SuperBlock superBlock = snapshot.data as SuperBlock;
+
+                      WidgetsBinding.instance.addPostFrameCallback((_) {
+                        if (model.blockOpenStates.isEmpty) {
+                          Map<String, bool> openStates = {
+                            if (superBlock.blocks != null)
+                              for (var block in superBlock.blocks!)
+                                block.dashedName: false
+                          };
+
+                          // Set first block open
+                          String firstBlockKey =
+                              openStates.entries.toList()[0].key;
+
+                          openStates[firstBlockKey] = true;
+
+                          model.blockOpenStates = openStates;
+                        }
+
+                        if (model.blocks.isEmpty) {
+                          model.setBlocks(superBlock.blocks!);
+                        }
+                      });
+
+                      return blockTemplate(model, superBlock);
+                    }
+                  }
+
+                  if (snapshot.hasError) {
+                    return Text(context.t.error);
+                  }
+
+                  return const Center(
+                    child: CircularProgressIndicator(),
+                  );
+                }),
+              ),
+            ),
+          ],
         ),
       ),
     );
@@ -165,8 +164,9 @@ class SuperBlockView extends StatelessWidget {
               child: Column(
                 children: [
                   BlockTemplateView(
-                    key: model.blockKeys.isNotEmpty && block < model.blockKeys.length 
-                        ? model.blockKeys[block] 
+                    key: model.blockKeys.isNotEmpty &&
+                            block < model.blockKeys.length
+                        ? model.blockKeys[block]
                         : ValueKey(block),
                     block: superBlock.blocks![block],
                     isOpen: model.blockOpenStates[

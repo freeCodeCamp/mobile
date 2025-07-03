@@ -17,7 +17,7 @@ class ChapterView extends StatelessWidget {
         return Scaffold(
           backgroundColor: FccColors.gray90,
           appBar: AppBar(
-            title: Text('Chapters'),
+            title: const Text('Chapters'),
           ),
           floatingActionButton: model.chapters.isNotEmpty
               ? FloatingNavigationButtons(
@@ -29,59 +29,59 @@ class ChapterView extends StatelessWidget {
                 )
               : null,
           body: StreamBuilder(
-                stream: model.auth.progress.stream,
+            stream: model.auth.progress.stream,
+            builder: (context, _) {
+              return FutureBuilder(
+                future: model.superBlockFuture,
                 builder: (context, snapshot) {
-                  return FutureBuilder(
-                    future: model.superBlockFuture,
-                    builder: (context, snapshot) {
-                      if (snapshot.hasError) {
-                        return Center(
-                          child: Text(
-                              'Error loading chapters: ${snapshot.error} ${snapshot.stackTrace}'),
-                        );
+                  if (snapshot.hasError) {
+                    return Center(
+                      child: Text(
+                        'Error loading chapters: ${snapshot.error} ${snapshot.stackTrace}',
+                      ),
+                    );
+                  }
+
+                  if (snapshot.hasData) {
+                    SuperBlock superBlock = snapshot.data as SuperBlock;
+                    List<Chapter> chapters =
+                        superBlock.chapters as List<Chapter>;
+
+                    WidgetsBinding.instance.addPostFrameCallback((_) {
+                      if (model.chapters.isEmpty) {
+                        model.setChapters(chapters);
                       }
+                    });
 
-                      if (snapshot.hasData) {
-                        SuperBlock superBlock = snapshot.data as SuperBlock;
-                        List<Chapter> chapters =
-                            superBlock.chapters as List<Chapter>;
-
-                        WidgetsBinding.instance.addPostFrameCallback((_) {
-                          if (model.chapters.isEmpty) {
-                            model.setChapters(chapters);
-                          }
-                        });
-
-                        return ListView(
-                          controller: model.scrollController,
-                          shrinkWrap: true,
+                    return ListView(
+                      controller: model.scrollController,
+                      shrinkWrap: true,
+                      children: [
+                        Column(
                           children: [
-                            Column(
-                              children: [
-                                ...[
-                                  for (int index = 0; index < chapters.length; index++)
-                                    Container(
-                                      key: model.chapterKeys.isNotEmpty && index < model.chapterKeys.length 
-                                          ? model.chapterKeys[index] 
-                                          : ValueKey(index),
-                                      child: chapterBlock(
-                                          superBlock, chapters[index], model, context),
-                                    )
-                                ]
-                              ],
-                            ),
+                            for (int index = 0;
+                                index < chapters.length;
+                                index++)
+                              Container(
+                                key: model.chapterKeys.isNotEmpty &&
+                                        index < model.chapterKeys.length
+                                    ? model.chapterKeys[index]
+                                    : ValueKey(index),
+                                child: chapterBlock(superBlock, chapters[index],
+                                    model, context),
+                              )
                           ],
-                        );
-                      }
+                        ),
+                      ],
+                    );
+                  }
 
-                      return Center(
-                        child: CircularProgressIndicator(),
-                      );
-                    },
+                  return const Center(
+                    child: CircularProgressIndicator(),
                   );
                 },
-              ),
-            ),
+              );
+            },
           ),
         );
       },
@@ -95,11 +95,11 @@ class ChapterView extends StatelessWidget {
     BuildContext context,
   ) {
     return Container(
-      padding: EdgeInsets.all(8),
-      margin: EdgeInsets.symmetric(vertical: 8, horizontal: 8),
+      padding: const EdgeInsets.all(8),
+      margin: const EdgeInsets.symmetric(vertical: 8, horizontal: 8),
       decoration: BoxDecoration(
         color: const Color.fromRGBO(0x1b, 0x1b, 0x32, 1),
-        borderRadius: BorderRadius.all(
+        borderRadius: const BorderRadius.all(
           Radius.circular(10),
         ),
       ),
@@ -113,7 +113,7 @@ class ChapterView extends StatelessWidget {
                   padding: const EdgeInsets.all(8.0),
                   child: Text(
                     chapter.name,
-                    style: TextStyle(
+                    style: const TextStyle(
                       fontSize: 28,
                       fontWeight: FontWeight.bold,
                     ),
@@ -124,12 +124,13 @@ class ChapterView extends StatelessWidget {
                     margin: const EdgeInsets.all(8),
                     padding: const EdgeInsets.all(3),
                     decoration: BoxDecoration(
-                        border: Border.all(
-                          color: Colors.white,
-                          width: 2,
-                        ),
-                        borderRadius: BorderRadius.circular(5)),
-                    child: Text('Coming Soon'),
+                      border: Border.all(
+                        color: Colors.white,
+                        width: 2,
+                      ),
+                      borderRadius: BorderRadius.circular(5),
+                    ),
+                    child: const Text('Coming Soon'),
                   ),
                 for (Module module in chapter.modules as List<Module>)
                   chapterButton(context, module, model)
@@ -152,11 +153,11 @@ class ChapterView extends StatelessWidget {
 
     return Container(
       margin: const EdgeInsets.all(5),
-      constraints: BoxConstraints(minHeight: 100, maxHeight: 200),
+      constraints: const BoxConstraints(minHeight: 100, maxHeight: 200),
       width: MediaQuery.of(context).size.width * 0.90,
       child: TextButton(
         style: ButtonStyle(
-          padding: WidgetStatePropertyAll<EdgeInsetsGeometry>(
+          padding: const WidgetStatePropertyAll<EdgeInsetsGeometry>(
             EdgeInsets.all(12),
           ),
           alignment: Alignment.centerLeft,
@@ -169,7 +170,8 @@ class ChapterView extends StatelessWidget {
               ),
             ),
           ),
-          backgroundColor: WidgetStatePropertyAll<Color>(FccColors.gray80),
+          backgroundColor:
+              const WidgetStatePropertyAll<Color>(FccColors.gray80),
         ),
         onPressed: () {
           model.routeToBlockView(module.blocks!, module.name);
@@ -185,7 +187,7 @@ class ChapterView extends StatelessWidget {
                 children: [
                   Text(
                     module.name,
-                    style: TextStyle(
+                    style: const TextStyle(
                       fontSize: 21,
                       fontWeight: FontWeight.bold,
                     ),
@@ -213,8 +215,8 @@ class ChapterView extends StatelessWidget {
                 mainAxisSize: MainAxisSize.min,
                 crossAxisAlignment: CrossAxisAlignment.end,
                 mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  const Icon(
+                children: const [
+                  Icon(
                     Icons.arrow_forward_ios_outlined,
                     size: 25,
                   )

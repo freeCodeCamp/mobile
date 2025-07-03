@@ -8,12 +8,12 @@ import 'package:freecodecamp/models/main/user_model.dart';
 import 'package:freecodecamp/service/authentication/authentication_service.dart';
 import 'package:freecodecamp/service/dio_service.dart';
 import 'package:freecodecamp/service/learn/learn_service.dart';
-import 'package:freecodecamp/ui/mixins/navigation_mixin.dart';
 import 'package:freecodecamp/ui/mixins/chapter_navigation_mixin.dart';
+import 'package:freecodecamp/ui/mixins/navigation_mixin.dart';
 import 'package:stacked/stacked.dart';
 import 'package:stacked_services/stacked_services.dart';
 
-class ChapterViewModel extends BaseViewModel 
+class ChapterViewModel extends BaseViewModel
     with NavigationMixin<Chapter>, ChapterNavigationMixin {
   final _dio = DioService.dio;
   final NavigationService _navigationService = locator<NavigationService>();
