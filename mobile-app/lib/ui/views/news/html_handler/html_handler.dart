@@ -1,8 +1,8 @@
 import 'dart:convert';
 
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:collection/collection.dart';
 import 'package:flutter/material.dart';
-
 import 'package:flutter_html/flutter_html.dart';
 import 'package:flutter_html_table/flutter_html_table.dart';
 import 'package:freecodecamp/ui/theme/fcc_theme.dart';
@@ -12,6 +12,89 @@ import 'package:html/parser.dart' as parser;
 import 'package:phone_ide/phone_ide.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:youtube_player_iframe/youtube_player_iframe.dart';
+
+final Map<String, Style> defaultStyles = {
+  'h1': Style(
+    margin: Margins.only(left: 2, top: 32, right: 2),
+    fontSize: FontSize.xxLarge,
+  ),
+  'h2': Style(
+    margin: Margins.only(left: 2, top: 32, right: 2),
+    fontSize: FontSize.xxLarge,
+  ),
+  'h3': Style(
+    margin: Margins.only(left: 2, top: 32, right: 2),
+    fontSize: FontSize.xLarge,
+  ),
+  'h4': Style(
+    margin: Margins.only(left: 2, top: 32, right: 2),
+    fontSize: FontSize.large,
+  ),
+  'h5': Style(
+    margin: Margins.only(left: 2, top: 32, right: 2),
+    fontSize: FontSize.large,
+  ),
+  'h6': Style(
+    margin: Margins.only(left: 2, top: 32, right: 2),
+    fontSize: FontSize.large,
+  ),
+  '*:not(h1):not(h2):not(h3):not(h4):not(h5):not(h6)': Style(
+    fontSize: FontSize.xLarge,
+    color: Colors.white.withValues(alpha: 0.87),
+  ),
+  'body': Style(
+    fontFamily: 'Lato',
+    padding: HtmlPaddings.only(left: 4, right: 4),
+  ),
+  'strong': Style(
+    fontWeight: FontWeight.bold,
+  ),
+  'a': Style(
+    color: Colors.white,
+    textDecoration: TextDecoration.underline,
+    textDecorationColor: Colors.white,
+  ),
+  'p': Style(
+    fontSize: FontSize(20),
+    margin: Margins.only(top: 8, bottom: 8),
+  ),
+  'li': Style(
+    margin: Margins.only(top: 8),
+    lineHeight: const LineHeight(1.5),
+  ),
+  'td': Style(
+    border: const Border(
+      bottom: BorderSide(color: Colors.grey),
+    ),
+    padding: HtmlPaddings.all(12),
+    backgroundColor: Colors.white,
+    color: Colors.black,
+    fontSize: FontSize.medium,
+  ),
+  'th': Style(
+    padding: HtmlPaddings.all(12),
+    backgroundColor: const Color.fromRGBO(0xdf, 0xdf, 0xe2, 1),
+    color: Colors.black,
+  ),
+  'th strong': Style(
+    color: Colors.black,
+    fontSize: FontSize.medium,
+  ),
+  'figure': Style(
+    margin: Margins.zero,
+    textAlign: TextAlign.center,
+  ),
+  'figcaption': Style(
+    fontSize: FontSize.medium,
+  ),
+  'code': Style(
+    fontFamily: 'Hack',
+    backgroundColor: FccColors.gray75,
+    color: Colors.white.withValues(alpha: 0.87),
+    fontSize: FontSize.xLarge,
+  ),
+  'pre': Style(fontFamily: 'Hack')
+};
 
 class HTMLParser {
   const HTMLParser({
@@ -24,9 +107,7 @@ class HTMLParser {
   List<Widget> parse(
     String html, {
     bool isSelectable = true,
-    bool removeParagraphMargin = false,
-    Color? fontColor,
-    double? fontSize,
+    Map<String, Style> customStyles = const {},
   }) {
     dom.Document result = parser.parse(html);
 
@@ -37,8 +118,7 @@ class HTMLParser {
         _parseHTMLWidget(
           result.body!.children[i].outerHtml,
           isSelectable,
-          removeParagraphMargin,
-          fontColor,
+          customStyles,
         ),
       );
     }
@@ -63,98 +143,21 @@ class HTMLParser {
     );
   }
 
-  Widget _parseHTMLWidget(child,
-      [bool isSelectable = true,
-      bool removeParagraphMargin = false,
-      Color? fontColor,
-      double? fontSize]) {
+  Widget _parseHTMLWidget(
+    child, [
+    bool isSelectable = true,
+    Map<String, Style> customStyles = const {},
+  ]) {
     Html htmlWidget = Html(
       shrinkWrap: true,
       data: child,
-      style: {
-        'h1': Style(
-          margin: Margins.only(left: 2, top: 32, right: 2),
-          fontSize: FontSize.xxLarge,
-        ),
-        'h2': Style(
-          margin: Margins.only(left: 2, top: 32, right: 2),
-          fontSize: FontSize.xxLarge,
-        ),
-        'h3': Style(
-          margin: Margins.only(left: 2, top: 32, right: 2),
-          fontSize: FontSize.xLarge,
-        ),
-        'h4': Style(
-          margin: Margins.only(left: 2, top: 32, right: 2),
-          fontSize: FontSize.large,
-        ),
-        'h5': Style(
-          margin: Margins.only(left: 2, top: 32, right: 2),
-          fontSize: FontSize.large,
-        ),
-        'h6': Style(
-          margin: Margins.only(left: 2, top: 32, right: 2),
-          fontSize: FontSize.large,
-        ),
-        '*:not(h1):not(h2):not(h3):not(h4):not(h5):not(h6)': Style(
-          fontSize: FontSize.xLarge,
-          color: fontColor ?? Colors.white.withValues(alpha: 0.87),
-        ),
-        'body': Style(
-          fontFamily: 'Lato',
-          padding: HtmlPaddings.only(left: 4, right: 4),
-        ),
-        'strong': Style(
-          fontWeight: FontWeight.bold,
-        ),
-        'a': Style(
-          color: Colors.white,
-          textDecoration: TextDecoration.underline,
-          textDecorationColor: Colors.white,
-        ),
-        'p': Style(
-          fontSize: FontSize(fontSize ?? 20),
-          margin: removeParagraphMargin
-              ? Margins.all(0)
-              : Margins.only(top: 8, bottom: 8),
-        ),
-        'li': Style(
-          margin: Margins.only(top: 8),
-          lineHeight: const LineHeight(1.5),
-        ),
-        'td': Style(
-          border: const Border(
-            bottom: BorderSide(color: Colors.grey),
-          ),
-          padding: HtmlPaddings.all(12),
-          backgroundColor: Colors.white,
-          color: Colors.black,
-          fontSize: FontSize.medium,
-        ),
-        'th': Style(
-          padding: HtmlPaddings.all(12),
-          backgroundColor: const Color.fromRGBO(0xdf, 0xdf, 0xe2, 1),
-          color: Colors.black,
-        ),
-        'th strong': Style(
-          color: Colors.black,
-          fontSize: FontSize.medium,
-        ),
-        'figure': Style(
-          margin: Margins.zero,
-          textAlign: TextAlign.center,
-        ),
-        'figcaption': Style(
-          fontSize: FontSize.medium,
-        ),
-        'code': Style(
-          fontFamily: 'Hack',
-          backgroundColor: FccColors.gray75,
-          color: Colors.white.withValues(alpha: 0.87),
-          fontSize: FontSize.xLarge,
-        ),
-        'pre': Style(fontFamily: 'Hack')
-      },
+      style: mergeMaps(
+        defaultStyles,
+        customStyles,
+        value: (s0, s1) {
+          return s0.merge(s1);
+        },
+      ),
       onLinkTap: (url, attributes, element) {
         launchUrl(Uri.parse(url!.trim()));
       },

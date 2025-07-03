@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_html/flutter_html.dart';
 import 'package:freecodecamp/models/learn/curriculum_model.dart';
 import 'package:freecodecamp/ui/theme/fcc_theme.dart';
 import 'package:freecodecamp/ui/views/learn/block/block_template_viewmodel.dart';
@@ -77,9 +78,13 @@ class BlockListView extends StatelessWidget {
             ),
             ...parser.parse(
               '<p>${block.description.join(' ')}</p>',
-              fontColor: FccColors.gray05,
-              removeParagraphMargin: true,
               isSelectable: false,
+              customStyles: {
+                '*:not(h1):not(h2):not(h3):not(h4):not(h5):not(h6)': Style(
+                  color: FccColors.gray05,
+                ),
+                'p': Style(margin: Margins.zero),
+              },
             ),
             Row(
               children: [

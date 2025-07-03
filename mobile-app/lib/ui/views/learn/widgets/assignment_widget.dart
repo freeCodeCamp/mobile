@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_html/flutter_html.dart';
+import 'package:freecodecamp/ui/theme/fcc_theme.dart';
 import 'package:freecodecamp/ui/views/news/html_handler/html_handler.dart';
 
 class Assignment extends StatelessWidget {
@@ -53,7 +55,11 @@ class Assignment extends StatelessWidget {
                 children: parser.parse(
                   label,
                   isSelectable: false,
-                  fontColor: value ? const Color(0xDEFFFFFF) : null,
+                  customStyles: value
+                      ? {
+                          '*': Style(color: FccColors.gray00),
+                        }
+                      : {},
                 ),
               ),
             ),
