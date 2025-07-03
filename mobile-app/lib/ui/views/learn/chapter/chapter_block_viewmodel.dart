@@ -18,6 +18,9 @@ class ChapterBlockViewmodel extends BaseViewModel {
   List<Block> _blocks = [];
   List<Block> get blocks => _blocks;
 
+  List<GlobalKey> _blockKeys = [];
+  List<GlobalKey> get blockKeys => _blockKeys;
+
   set blockOpenStates(Map<String, bool> openStates) {
     _blockOpenStates = openStates;
     notifyListeners();
@@ -25,6 +28,8 @@ class ChapterBlockViewmodel extends BaseViewModel {
 
   void setBlocks(List<Block> blocks) {
     _blocks = blocks;
+    // Create GlobalKeys for each block for accurate scrolling
+    _blockKeys = List.generate(blocks.length, (index) => GlobalKey());
     notifyListeners();
   }
 
@@ -45,15 +50,18 @@ class ChapterBlockViewmodel extends BaseViewModel {
   }
 
   void _scrollToBlock(int index) {
-    // Calculate approximate item height (this is an estimation)
-    const double itemHeight = 120.0; // Approximate height of each block item
-    final double targetPosition = index * itemHeight;
-    
-    _scrollController.animateTo(
-      targetPosition,
-      duration: const Duration(milliseconds: 500),
-      curve: Curves.easeInOut,
-    );
+    if (index >= 0 && index < _blockKeys.length) {
+      final context = _blockKeys[index].currentContext;
+      if (context != null) {
+        // Use ensureVisible to center the block in the viewport
+        Scrollable.ensureVisible(
+          context,
+          duration: const Duration(milliseconds: 500),
+          curve: Curves.easeInOut,
+          alignment: 0.5, // Center the block in the viewport
+        );
+      }
+    }
   }
 
   bool get hasPrevious => _currentBlockIndex > 0;

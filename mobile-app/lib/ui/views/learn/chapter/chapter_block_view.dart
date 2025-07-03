@@ -57,6 +57,9 @@ class ChapterBlockView extends StatelessWidget {
                     });
 
                     return BlockTemplateView(
+                      key: model.blockKeys.isNotEmpty && index < model.blockKeys.length 
+                          ? model.blockKeys[index] 
+                          : ValueKey(index),
                       block: blocks[index],
                       isOpen:
                           model.blockOpenStates[blocks[index].dashedName] ?? false,

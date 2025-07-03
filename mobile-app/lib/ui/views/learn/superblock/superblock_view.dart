@@ -157,7 +157,9 @@ class SuperBlockView extends StatelessWidget {
               child: Column(
                 children: [
                   BlockTemplateView(
-                    key: ValueKey(block),
+                    key: model.blockKeys.isNotEmpty && block < model.blockKeys.length 
+                        ? model.blockKeys[block] 
+                        : ValueKey(block),
                     block: superBlock.blocks![block],
                     isOpen: model.blockOpenStates[
                             superBlock.blocks![block].dashedName] ??
