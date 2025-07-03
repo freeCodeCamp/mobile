@@ -126,15 +126,13 @@ void main() {
     ));
 
     // Check that buttons are disabled by verifying they have null onPressed
-    final previousButton = tester.widget<FloatingActionButton>(
-      find.byIcon(Icons.keyboard_arrow_up).first,
-    );
-    final nextButton = tester.widget<FloatingActionButton>(
-      find.byIcon(Icons.keyboard_arrow_down).first,
-    );
-
-    expect(previousButton.onPressed, null);
-    expect(nextButton.onPressed, null);
+    final floatingActionButtons = tester.widgetList<FloatingActionButton>(
+      find.byType(FloatingActionButton),
+    ).toList();
+    
+    expect(floatingActionButtons.length, 2);
+    expect(floatingActionButtons[0].onPressed, null); // Previous button
+    expect(floatingActionButtons[1].onPressed, null); // Next button
   });
 
   testWidgets('FloatingNavigationButtons should disable buttons when animating', (WidgetTester tester) async {
@@ -155,14 +153,12 @@ void main() {
     ));
 
     // Check that buttons are disabled when animating by verifying they have null onPressed
-    final previousButton = tester.widget<FloatingActionButton>(
-      find.byIcon(Icons.keyboard_arrow_up).first,
-    );
-    final nextButton = tester.widget<FloatingActionButton>(
-      find.byIcon(Icons.keyboard_arrow_down).first,
-    );
-
-    expect(previousButton.onPressed, null);
-    expect(nextButton.onPressed, null);
+    final floatingActionButtons = tester.widgetList<FloatingActionButton>(
+      find.byType(FloatingActionButton),
+    ).toList();
+    
+    expect(floatingActionButtons.length, 2);
+    expect(floatingActionButtons[0].onPressed, null); // Previous button
+    expect(floatingActionButtons[1].onPressed, null); // Next button
   });
 }
