@@ -78,6 +78,7 @@ class ChapterBlockView extends StatelessWidget {
                   onNext: model.scrollToNext,
                   hasPrevious: model.hasPrevious,
                   hasNext: model.hasNext,
+                  isAnimating: model.isAnimating,
                 ),
             ],
           ),

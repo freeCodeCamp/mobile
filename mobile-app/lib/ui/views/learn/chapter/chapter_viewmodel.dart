@@ -30,6 +30,9 @@ class ChapterViewModel extends BaseViewModel {
   List<GlobalKey> _chapterKeys = [];
   List<GlobalKey> get chapterKeys => _chapterKeys;
 
+  bool _isAnimating = false;
+  bool get isAnimating => _isAnimating;
+
   void init() async {
     superBlockFuture = requestChapters();
   }
@@ -44,34 +47,46 @@ class ChapterViewModel extends BaseViewModel {
   }
 
   void scrollToPrevious() {
-    int previousIndex = _findPreviousAvailableChapter(_currentChapterIndex);
-    if (previousIndex != -1) {
-      _currentChapterIndex = previousIndex;
-      _scrollToChapter(_currentChapterIndex);
-      notifyListeners();
+    if (!_isAnimating) {
+      int previousIndex = _findPreviousAvailableChapter(_currentChapterIndex);
+      if (previousIndex != -1) {
+        _currentChapterIndex = previousIndex;
+        _scrollToChapter(_currentChapterIndex);
+        notifyListeners();
+      }
     }
   }
 
   void scrollToNext() {
-    int nextIndex = _findNextAvailableChapter(_currentChapterIndex);
-    if (nextIndex != -1) {
-      _currentChapterIndex = nextIndex;
-      _scrollToChapter(_currentChapterIndex);
-      notifyListeners();
+    if (!_isAnimating) {
+      int nextIndex = _findNextAvailableChapter(_currentChapterIndex);
+      if (nextIndex != -1) {
+        _currentChapterIndex = nextIndex;
+        _scrollToChapter(_currentChapterIndex);
+        notifyListeners();
+      }
     }
   }
 
-  void _scrollToChapter(int index) {
+  void _scrollToChapter(int index) async {
     if (index >= 0 && index < _chapterKeys.length) {
       final context = _chapterKeys[index].currentContext;
       if (context != null) {
-        // Use ensureVisible to scroll to the beginning of the chapter
-        Scrollable.ensureVisible(
-          context,
-          duration: const Duration(milliseconds: 500),
-          curve: Curves.easeInOut,
-          alignment: 0.0, // Scroll to the beginning of the chapter
-        );
+        _isAnimating = true;
+        notifyListeners();
+        
+        try {
+          // Use ensureVisible to scroll to the beginning of the chapter
+          await Scrollable.ensureVisible(
+            context,
+            duration: const Duration(milliseconds: 500),
+            curve: Curves.easeInOut,
+            alignment: 0.0, // Scroll to the beginning of the chapter
+          );
+        } finally {
+          _isAnimating = false;
+          notifyListeners();
+        }
       }
     }
   }

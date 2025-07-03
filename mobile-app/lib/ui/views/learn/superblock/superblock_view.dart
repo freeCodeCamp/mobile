@@ -133,6 +133,7 @@ class SuperBlockView extends StatelessWidget {
                       onNext: model.scrollToNext,
                       hasPrevious: model.hasPrevious,
                       hasNext: model.hasNext,
+                      isAnimating: model.isAnimating,
                     );
                   }
                   return const SizedBox.shrink();

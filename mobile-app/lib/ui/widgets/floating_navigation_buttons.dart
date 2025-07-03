@@ -6,6 +6,7 @@ class FloatingNavigationButtons extends StatelessWidget {
   final VoidCallback? onNext;
   final bool hasPrevious;
   final bool hasNext;
+  final bool isAnimating;
 
   const FloatingNavigationButtons({
     super.key,
@@ -13,6 +14,7 @@ class FloatingNavigationButtons extends StatelessWidget {
     this.onNext,
     required this.hasPrevious,
     required this.hasNext,
+    this.isAnimating = false,
   });
 
   @override
@@ -26,7 +28,7 @@ class FloatingNavigationButtons extends StatelessWidget {
           // Previous button
           FloatingActionButton(
             heroTag: "previous",
-            onPressed: hasPrevious ? onPrevious : null,
+            onPressed: (hasPrevious && !isAnimating) ? onPrevious : null,
             shape: RoundedRectangleBorder(
               side: const BorderSide(
                 width: 1,
@@ -34,20 +36,20 @@ class FloatingNavigationButtons extends StatelessWidget {
               ),
               borderRadius: BorderRadius.circular(100),
             ),
-            backgroundColor: hasPrevious 
+            backgroundColor: (hasPrevious && !isAnimating)
                 ? const Color.fromRGBO(0x2A, 0x2A, 0x40, 1)
                 : const Color.fromRGBO(0x2A, 0x2A, 0x40, 0.5),
             child: Icon(
               Icons.keyboard_arrow_up,
               size: 30,
-              color: hasPrevious ? Colors.white : Colors.grey,
+              color: (hasPrevious && !isAnimating) ? Colors.white : Colors.grey,
             ),
           ),
           const SizedBox(height: 12),
           // Next button
           FloatingActionButton(
             heroTag: "next",
-            onPressed: hasNext ? onNext : null,
+            onPressed: (hasNext && !isAnimating) ? onNext : null,
             shape: RoundedRectangleBorder(
               side: const BorderSide(
                 width: 1,
@@ -55,13 +57,13 @@ class FloatingNavigationButtons extends StatelessWidget {
               ),
               borderRadius: BorderRadius.circular(100),
             ),
-            backgroundColor: hasNext 
+            backgroundColor: (hasNext && !isAnimating)
                 ? const Color.fromRGBO(0x2A, 0x2A, 0x40, 1)
                 : const Color.fromRGBO(0x2A, 0x2A, 0x40, 0.5),
             child: Icon(
               Icons.keyboard_arrow_down,
               size: 30,
-              color: hasNext ? Colors.white : Colors.grey,
+              color: (hasNext && !isAnimating) ? Colors.white : Colors.grey,
             ),
           ),
         ],

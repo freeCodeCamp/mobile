@@ -21,6 +21,9 @@ class ChapterBlockViewmodel extends BaseViewModel {
   List<GlobalKey> _blockKeys = [];
   List<GlobalKey> get blockKeys => _blockKeys;
 
+  bool _isAnimating = false;
+  bool get isAnimating => _isAnimating;
+
   set blockOpenStates(Map<String, bool> openStates) {
     _blockOpenStates = openStates;
     notifyListeners();
@@ -34,7 +37,7 @@ class ChapterBlockViewmodel extends BaseViewModel {
   }
 
   void scrollToPrevious() {
-    if (_currentBlockIndex > 0) {
+    if (_currentBlockIndex > 0 && !_isAnimating) {
       _currentBlockIndex--;
       _scrollToBlock(_currentBlockIndex);
       notifyListeners();
@@ -42,24 +45,32 @@ class ChapterBlockViewmodel extends BaseViewModel {
   }
 
   void scrollToNext() {
-    if (_currentBlockIndex < _blocks.length - 1) {
+    if (_currentBlockIndex < _blocks.length - 1 && !_isAnimating) {
       _currentBlockIndex++;
       _scrollToBlock(_currentBlockIndex);
       notifyListeners();
     }
   }
 
-  void _scrollToBlock(int index) {
+  void _scrollToBlock(int index) async {
     if (index >= 0 && index < _blockKeys.length) {
       final context = _blockKeys[index].currentContext;
       if (context != null) {
-        // Use ensureVisible to center the block in the viewport
-        Scrollable.ensureVisible(
-          context,
-          duration: const Duration(milliseconds: 500),
-          curve: Curves.easeInOut,
-          alignment: 0.5, // Center the block in the viewport
-        );
+        _isAnimating = true;
+        notifyListeners();
+        
+        try {
+          // Use ensureVisible to center the block in the viewport
+          await Scrollable.ensureVisible(
+            context,
+            duration: const Duration(milliseconds: 500),
+            curve: Curves.easeInOut,
+            alignment: 0.5, // Center the block in the viewport
+          );
+        } finally {
+          _isAnimating = false;
+          notifyListeners();
+        }
       }
     }
   }
