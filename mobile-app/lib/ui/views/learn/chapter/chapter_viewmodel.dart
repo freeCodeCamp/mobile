@@ -38,20 +38,24 @@ class ChapterViewModel extends BaseViewModel {
     _chapters = chapters;
     // Create GlobalKeys for each chapter for accurate scrolling
     _chapterKeys = List.generate(chapters.length, (index) => GlobalKey());
+    // Set current chapter index to first available (non-coming-soon) chapter
+    _currentChapterIndex = _findFirstAvailableChapter();
     notifyListeners();
   }
 
   void scrollToPrevious() {
-    if (_currentChapterIndex > 0) {
-      _currentChapterIndex--;
+    int previousIndex = _findPreviousAvailableChapter(_currentChapterIndex);
+    if (previousIndex != -1) {
+      _currentChapterIndex = previousIndex;
       _scrollToChapter(_currentChapterIndex);
       notifyListeners();
     }
   }
 
   void scrollToNext() {
-    if (_currentChapterIndex < _chapters.length - 1) {
-      _currentChapterIndex++;
+    int nextIndex = _findNextAvailableChapter(_currentChapterIndex);
+    if (nextIndex != -1) {
+      _currentChapterIndex = nextIndex;
       _scrollToChapter(_currentChapterIndex);
       notifyListeners();
     }
@@ -61,19 +65,49 @@ class ChapterViewModel extends BaseViewModel {
     if (index >= 0 && index < _chapterKeys.length) {
       final context = _chapterKeys[index].currentContext;
       if (context != null) {
-        // Use ensureVisible to center the chapter in the viewport
+        // Use ensureVisible to scroll to the beginning of the chapter
         Scrollable.ensureVisible(
           context,
           duration: const Duration(milliseconds: 500),
           curve: Curves.easeInOut,
-          alignment: 0.5, // Center the chapter in the viewport
+          alignment: 0.0, // Scroll to the beginning of the chapter
         );
       }
     }
   }
 
-  bool get hasPrevious => _currentChapterIndex > 0;
-  bool get hasNext => _currentChapterIndex < _chapters.length - 1;
+  bool get hasPrevious => _findPreviousAvailableChapter(_currentChapterIndex) != -1;
+  bool get hasNext => _findNextAvailableChapter(_currentChapterIndex) != -1;
+
+  /// Find the first available (non-coming-soon) chapter index
+  int _findFirstAvailableChapter() {
+    for (int i = 0; i < _chapters.length; i++) {
+      if (!(_chapters[i].comingSoon ?? false)) {
+        return i;
+      }
+    }
+    return 0; // Fallback to first chapter if all are coming soon
+  }
+
+  /// Find the previous available (non-coming-soon) chapter index
+  int _findPreviousAvailableChapter(int currentIndex) {
+    for (int i = currentIndex - 1; i >= 0; i--) {
+      if (i < _chapters.length && !(_chapters[i].comingSoon ?? false)) {
+        return i;
+      }
+    }
+    return -1; // No previous available chapter found
+  }
+
+  /// Find the next available (non-coming-soon) chapter index
+  int _findNextAvailableChapter(int currentIndex) {
+    for (int i = currentIndex + 1; i < _chapters.length; i++) {
+      if (!(_chapters[i].comingSoon ?? false)) {
+        return i;
+      }
+    }
+    return -1; // No next available chapter found
+  }
 
   Future<String> calculateProgress(Module module) async {
     int steps = 0;
