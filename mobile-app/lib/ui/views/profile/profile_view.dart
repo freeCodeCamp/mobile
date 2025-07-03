@@ -90,14 +90,12 @@ class ProfileView extends StatelessWidget {
                 child: SingleChildScrollView(
                   child: Column(
                     children: [
-                      SizedBox(height: 25),
                       _buildHeader(user),
                       _buildAboutCard(user),
                       _buildInfoSection(context, user, streak),
                       _buildHeatmap(context, user, streak),
                       _buildPortfolio(user),
                       _buildCertifications(user),
-                      SizedBox(height: 50)
                     ],
                   ),
                 ),
@@ -208,7 +206,7 @@ class ProfileView extends StatelessWidget {
       children: [
         Container(
           width: double.infinity,
-          margin: const EdgeInsets.fromLTRB(8, 64, 8, 6),
+          margin: const EdgeInsets.fromLTRB(8, 89, 8, 6),
           child: Card(
             color: FccColors.gray85,
             shape:
@@ -232,8 +230,8 @@ class ProfileView extends StatelessWidget {
                           user.isDonating ? FccColors.yellow40 : Colors.white,
                     ),
                   ),
-                  if (user.name.trim().isNotEmpty) SizedBox(height: 4),
-                  if (user.name.trim().isNotEmpty)
+                  if (user.name.trim().isNotEmpty) ...[
+                    SizedBox(height: 4),
                     Text(
                       '@${user.username}',
                       style: TextStyle(
@@ -243,6 +241,7 @@ class ProfileView extends StatelessWidget {
                         fontWeight: FontWeight.w600,
                       ),
                     ),
+                  ]
                 ],
               ),
             ),
@@ -487,6 +486,40 @@ class ProfileView extends StatelessWidget {
     );
   }
 
+  Widget _buildTrophyList(List certs) {
+    return Column(
+      children: certs.where((cert) => cert['show']).map<Widget>((cert) {
+        return Container(
+          margin: const EdgeInsets.symmetric(vertical: 6, horizontal: 0),
+          decoration: BoxDecoration(
+            color: FccColors.gray85,
+            borderRadius: BorderRadius.circular(16),
+          ),
+          child: Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+            child: Row(
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: [
+                Icon(Icons.emoji_events, color: FccColors.yellow40, size: 26),
+                const SizedBox(width: 14),
+                Expanded(
+                  child: Text(
+                    cert['title'],
+                    style: const TextStyle(
+                      color: Colors.white,
+                      fontWeight: FontWeight.w600,
+                      fontSize: 15,
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ),
+        );
+      }).toList(),
+    );
+  }
+
   Widget _buildCertifications(FccUserModel user) {
     final hasModernCert = user.isRespWebDesignCert ||
         user.is2018DataVisCert ||
@@ -604,7 +637,7 @@ class ProfileView extends StatelessWidget {
 
     return Container(
       width: double.infinity,
-      margin: const EdgeInsets.symmetric(horizontal: 8, vertical: 6),
+      margin: const EdgeInsets.fromLTRB(8, 6, 8, 56),
       child: Card(
         color: FccColors.gray85,
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
@@ -612,8 +645,8 @@ class ProfileView extends StatelessWidget {
           padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 8),
           child: Column(
             children: [
-              const Padding(
-                padding: EdgeInsets.only(top: 8, bottom: 2),
+              Padding(
+                padding: EdgeInsets.only(top: 8, bottom: 8),
                 child: Text(
                   'freeCodeCamp Certifications',
                   textAlign: TextAlign.center,
@@ -625,99 +658,20 @@ class ProfileView extends StatelessWidget {
                 ),
               ),
               if (!hasModernCert && !hasLegacyCert)
-                const Text(
-                  'You have not yet received any certifications.',
+                Text(
+                  'You have not yet earned any certifications.',
                   style: TextStyle(
                     fontSize: 16,
                     color: Colors.white,
-                    fontWeight: FontWeight.w600,
                   ),
                   textAlign: TextAlign.center,
                 ),
-              if (hasModernCert)
-                CertificationWidget._buildTrophyList(currentCerts),
-              if (hasLegacyCert)
-                CertificationWidget._buildTrophyList(legacyCerts),
+              if (hasModernCert) _buildTrophyList(currentCerts),
+              if (hasLegacyCert) _buildTrophyList(legacyCerts),
             ],
           ),
         ),
       ),
-    );
-  }
-}
-
-class CertificationWidget extends StatelessWidget {
-  const CertificationWidget({
-    super.key,
-    required this.user,
-    required this.hasModernCert,
-    required this.hasLegacyCert,
-    required this.currentCerts,
-    required this.legacyCerts,
-  });
-
-  final FccUserModel user;
-  final bool hasModernCert;
-  final bool hasLegacyCert;
-  final List currentCerts;
-  final List legacyCerts;
-
-  @override
-  Widget build(BuildContext context) {
-    return ViewModelBuilder<ProfileViewModel>.reactive(
-      viewModelBuilder: () => ProfileViewModel(),
-      builder: (context, model, child) => Column(
-        children: [
-          const Padding(
-            padding: EdgeInsets.only(top: 8, bottom: 2),
-            child: Text(
-              'freeCodeCamp Certifications',
-              textAlign: TextAlign.center,
-              style: TextStyle(
-                fontSize: 20,
-                height: 1.25,
-                fontWeight: FontWeight.w700,
-              ),
-            ),
-          ),
-          if (hasModernCert) _buildTrophyList(currentCerts),
-          if (hasLegacyCert) _buildTrophyList(legacyCerts),
-        ],
-      ),
-    );
-  }
-
-  static Widget _buildTrophyList(List certs) {
-    return Column(
-      children: certs.where((cert) => cert['show']).map<Widget>((cert) {
-        return Container(
-          margin: const EdgeInsets.symmetric(vertical: 6, horizontal: 0),
-          decoration: BoxDecoration(
-            color: FccColors.gray85,
-            borderRadius: BorderRadius.circular(16),
-          ),
-          child: Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
-            child: Row(
-              crossAxisAlignment: CrossAxisAlignment.center,
-              children: [
-                Icon(Icons.emoji_events, color: FccColors.yellow40, size: 26),
-                const SizedBox(width: 14),
-                Expanded(
-                  child: Text(
-                    cert['title'],
-                    style: const TextStyle(
-                      color: Colors.white,
-                      fontWeight: FontWeight.w600,
-                      fontSize: 15,
-                    ),
-                  ),
-                ),
-              ],
-            ),
-          ),
-        );
-      }).toList(),
     );
   }
 }
