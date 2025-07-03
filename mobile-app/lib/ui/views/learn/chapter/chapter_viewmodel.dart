@@ -1,4 +1,5 @@
 import 'package:dio/dio.dart';
+import 'package:flutter/material.dart';
 import 'package:freecodecamp/app/app.locator.dart';
 import 'package:freecodecamp/app/app.router.dart';
 import 'package:freecodecamp/models/learn/completed_challenge_model.dart';
@@ -17,9 +18,62 @@ class ChapterViewModel extends BaseViewModel {
 
   Future<SuperBlock?>? superBlockFuture;
 
+  final ScrollController _scrollController = ScrollController();
+  ScrollController get scrollController => _scrollController;
+
+  int _currentChapterIndex = 0;
+  int get currentChapterIndex => _currentChapterIndex;
+
+  List<Chapter> _chapters = [];
+  List<Chapter> get chapters => _chapters;
+
+  List<GlobalKey> _chapterKeys = [];
+  List<GlobalKey> get chapterKeys => _chapterKeys;
+
   void init() async {
     superBlockFuture = requestChapters();
   }
+
+  void setChapters(List<Chapter> chapters) {
+    _chapters = chapters;
+    // Create GlobalKeys for each chapter for accurate scrolling
+    _chapterKeys = List.generate(chapters.length, (index) => GlobalKey());
+    notifyListeners();
+  }
+
+  void scrollToPrevious() {
+    if (_currentChapterIndex > 0) {
+      _currentChapterIndex--;
+      _scrollToChapter(_currentChapterIndex);
+      notifyListeners();
+    }
+  }
+
+  void scrollToNext() {
+    if (_currentChapterIndex < _chapters.length - 1) {
+      _currentChapterIndex++;
+      _scrollToChapter(_currentChapterIndex);
+      notifyListeners();
+    }
+  }
+
+  void _scrollToChapter(int index) {
+    if (index >= 0 && index < _chapterKeys.length) {
+      final context = _chapterKeys[index].currentContext;
+      if (context != null) {
+        // Use ensureVisible to center the chapter in the viewport
+        Scrollable.ensureVisible(
+          context,
+          duration: const Duration(milliseconds: 500),
+          curve: Curves.easeInOut,
+          alignment: 0.5, // Center the chapter in the viewport
+        );
+      }
+    }
+  }
+
+  bool get hasPrevious => _currentChapterIndex > 0;
+  bool get hasNext => _currentChapterIndex < _chapters.length - 1;
 
   Future<String> calculateProgress(Module module) async {
     int steps = 0;
@@ -79,5 +133,11 @@ class ChapterViewModel extends BaseViewModel {
         moduleName: moduleName,
       ),
     );
+  }
+
+  @override
+  void dispose() {
+    _scrollController.dispose();
+    super.dispose();
   }
 }

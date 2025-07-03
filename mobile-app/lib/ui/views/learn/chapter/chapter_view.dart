@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:freecodecamp/models/learn/curriculum_model.dart';
 import 'package:freecodecamp/ui/theme/fcc_theme.dart';
 import 'package:freecodecamp/ui/views/learn/chapter/chapter_viewmodel.dart';
+import 'package:freecodecamp/ui/widgets/floating_navigation_buttons.dart';
 import 'package:stacked/stacked.dart';
 
 class ChapterView extends StatelessWidget {
@@ -18,46 +19,71 @@ class ChapterView extends StatelessWidget {
           appBar: AppBar(
             title: Text('Chapters'),
           ),
-          body: StreamBuilder(
-            stream: model.auth.progress.stream,
-            builder: (context, snapshot) {
-              return FutureBuilder(
-                future: model.superBlockFuture,
+          body: Stack(
+            children: [
+              StreamBuilder(
+                stream: model.auth.progress.stream,
                 builder: (context, snapshot) {
-                  if (snapshot.hasError) {
-                    return Center(
-                      child: Text(
-                          'Error loading chapters: ${snapshot.error} ${snapshot.stackTrace}'),
-                    );
-                  }
+                  return FutureBuilder(
+                    future: model.superBlockFuture,
+                    builder: (context, snapshot) {
+                      if (snapshot.hasError) {
+                        return Center(
+                          child: Text(
+                              'Error loading chapters: ${snapshot.error} ${snapshot.stackTrace}'),
+                        );
+                      }
 
-                  if (snapshot.hasData) {
-                    SuperBlock superBlock = snapshot.data as SuperBlock;
-                    List<Chapter> chapters =
-                        superBlock.chapters as List<Chapter>;
+                      if (snapshot.hasData) {
+                        SuperBlock superBlock = snapshot.data as SuperBlock;
+                        List<Chapter> chapters =
+                            superBlock.chapters as List<Chapter>;
 
-                    return ListView(
-                      shrinkWrap: true,
-                      children: [
-                        Column(
+                        WidgetsBinding.instance.addPostFrameCallback((_) {
+                          // Set chapters for navigation
+                          if (model.chapters.isEmpty) {
+                            model.setChapters(chapters);
+                          }
+                        });
+
+                        return ListView(
+                          controller: model.scrollController,
+                          shrinkWrap: true,
                           children: [
-                            ...[
-                              for (Chapter chapter in chapters)
-                                chapterBlock(
-                                    superBlock, chapter, model, context)
-                            ]
+                            Column(
+                              children: [
+                                ...[
+                                  for (int index = 0; index < chapters.length; index++)
+                                    Container(
+                                      key: model.chapterKeys.isNotEmpty && index < model.chapterKeys.length 
+                                          ? model.chapterKeys[index] 
+                                          : ValueKey(index),
+                                      child: chapterBlock(
+                                          superBlock, chapters[index], model, context),
+                                    )
+                                ]
+                              ],
+                            ),
                           ],
-                        ),
-                      ],
-                    );
-                  }
+                        );
+                      }
 
-                  return Center(
-                    child: CircularProgressIndicator(),
+                      return Center(
+                        child: CircularProgressIndicator(),
+                      );
+                    },
                   );
                 },
-              );
-            },
+              ),
+              // Add floating navigation buttons
+              if (model.chapters.isNotEmpty)
+                FloatingNavigationButtons(
+                  onPrevious: model.scrollToPrevious,
+                  onNext: model.scrollToNext,
+                  hasPrevious: model.hasPrevious,
+                  hasNext: model.hasNext,
+                ),
+            ],
           ),
         );
       },
