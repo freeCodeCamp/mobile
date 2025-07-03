@@ -7,6 +7,10 @@ import 'package:html/parser.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class LearnFileService {
+  String getFullFileName(ChallengeFile file) {
+    return '${file.name}.${file.ext.value}';
+  }
+
   // This function returns a specific file content from the cache.
   // If testing is enabled on the function it will return
   // the first file with the given file name.
@@ -20,11 +24,12 @@ class LearnFileService {
 
     if (testing) {
       cache = challenge.files
-          .firstWhere((element) => element.name == file.name)
+          .firstWhere(
+              (element) => getFullFileName(element) == getFullFileName(file))
           .contents;
     } else {
       SharedPreferences prefs = await SharedPreferences.getInstance();
-      cache = prefs.getString('${challenge.id}.${file.name}');
+      cache = prefs.getString('${challenge.id}.${getFullFileName(file)}');
     }
 
     return cache ?? file.contents;
@@ -40,7 +45,7 @@ class LearnFileService {
     await prefs.setString('${challenge.id}.$currentSelectedFile', value);
   }
 
-  // This funciton returns the first file content with the given extension from the
+  // This function returns the first file content with the given extension from the
   // cache. If testing is enabled it will return the file directly from the challenge.
   // If a CSS extension is put as a parameter it will return the first HTML file instead.
 
@@ -67,7 +72,7 @@ class LearnFileService {
       SharedPreferences prefs = await SharedPreferences.getInstance();
 
       fileContent = prefs.getString(
-            '${challenge.id}.${firstChallenge[0].name}',
+            '${challenge.id}.${getFullFileName(firstChallenge[0])}',
           ) ??
           firstChallenge[0].contents;
     }
@@ -98,7 +103,7 @@ class LearnFileService {
 
     if (fileWithEditableRegion.isNotEmpty) {
       cache = prefs.getString(
-            '${challenge.id}.${fileWithEditableRegion[0].name}',
+            '${challenge.id}.${getFullFileName(fileWithEditableRegion[0])}',
           ) ??
           '';
 
@@ -204,7 +209,7 @@ class LearnFileService {
           testing: testing,
         );
 
-        if (!await cssFileIsLinked(content, '${file.name}.${file.ext.name}')) {
+        if (!await cssFileIsLinked(content, getFullFileName(file))) {
           continue;
         }
 
@@ -246,7 +251,7 @@ class LearnFileService {
 
     if (jsFiles.isNotEmpty) {
       for (ChallengeFile file in jsFiles) {
-        String filename = '${file.name}.${file.ext.name}';
+        String filename = getFullFileName(file);
         String? fileContents = await getExactFileFromCache(
           challenge,
           file,

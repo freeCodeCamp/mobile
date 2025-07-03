@@ -363,15 +363,17 @@ class ChallengeView extends StatelessWidget {
         items: [
           for (ChallengeFile file in challenge.files)
             DropdownMenuItem(
-              value: file.name,
+              value: model.getFullFileName(file),
               child: Text(
-                '${file.name}.${file.ext.name}',
+                model.getFullFileName(file),
                 style: TextStyle(
-                  color: model.currentSelectedFile == file.name &&
+                  color: model.currentSelectedFile ==
+                              model.getFullFileName(file) &&
                           !model.showTestsPanel
                       ? FccColors.blue50
                       : Colors.white,
-                  fontWeight: model.currentSelectedFile == file.name &&
+                  fontWeight: model.currentSelectedFile ==
+                              model.getFullFileName(file) &&
                           !model.showTestsPanel
                       ? FontWeight.bold
                       : FontWeight.normal,
@@ -381,7 +383,8 @@ class ChallengeView extends StatelessWidget {
         ],
         onChanged: (file) {
           model.setShowTestsPanel = false;
-          model.setCurrentSelectedFile = file ?? challenge.files[0].name;
+          model.setCurrentSelectedFile =
+              file ?? model.getFullFileName(challenge.files[0]);
           model.setMounted = false;
           ChallengeFile currFile = model.currentFile(challenge);
           model.initFile(challenge, currFile);
@@ -391,13 +394,15 @@ class ChallengeView extends StatelessWidget {
           return challenge.files.map((file) {
             return Center(
               child: Text(
-                '${file.name}.${file.ext.name}',
+                model.getFullFileName(file),
                 style: TextStyle(
-                  color: model.currentSelectedFile == file.name &&
+                  color: model.currentSelectedFile ==
+                              model.getFullFileName(file) &&
                           !model.showTestsPanel
                       ? FccColors.blue50
                       : Colors.white,
-                  fontWeight: model.currentSelectedFile == file.name &&
+                  fontWeight: model.currentSelectedFile ==
+                              model.getFullFileName(file) &&
                           !model.showTestsPanel
                       ? FontWeight.bold
                       : FontWeight.normal,
