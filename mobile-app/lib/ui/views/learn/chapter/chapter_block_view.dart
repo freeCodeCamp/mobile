@@ -3,6 +3,7 @@ import 'package:focus_detector/focus_detector.dart';
 import 'package:freecodecamp/models/learn/curriculum_model.dart';
 import 'package:freecodecamp/ui/views/learn/block/block_template_view.dart';
 import 'package:freecodecamp/ui/views/learn/chapter/chapter_block_viewmodel.dart';
+import 'package:freecodecamp/ui/widgets/floating_navigation_buttons.dart';
 import 'package:stacked/stacked.dart';
 
 class ChapterBlockView extends StatelessWidget {
@@ -24,40 +25,58 @@ class ChapterBlockView extends StatelessWidget {
           appBar: AppBar(
             title: Text(moduleName),
           ),
-          body: FocusDetector(
-            onFocusGained: () {
-              model.updateUserProgress();
-            },
-            child: ListView.builder(
-              itemCount: blocks.length,
-              padding: const EdgeInsets.all(8),
-              itemBuilder: (context, index) {
-                WidgetsBinding.instance.addPostFrameCallback((_) {
-                  if (model.blockOpenStates.isEmpty) {
-                    Map<String, bool> openStates = {
-                      for (var block in blocks) block.dashedName: false
-                    };
+          body: Stack(
+            children: [
+              FocusDetector(
+                onFocusGained: () {
+                  model.updateUserProgress();
+                },
+                child: ListView.builder(
+                  controller: model.scrollController,
+                  itemCount: blocks.length,
+                  padding: const EdgeInsets.all(8),
+                  itemBuilder: (context, index) {
+                    WidgetsBinding.instance.addPostFrameCallback((_) {
+                      if (model.blockOpenStates.isEmpty) {
+                        Map<String, bool> openStates = {
+                          for (var block in blocks) block.dashedName: false
+                        };
 
-                    // Set first block open
-                    String firstBlockKey = openStates.entries.toList()[0].key;
+                        // Set first block open
+                        String firstBlockKey = openStates.entries.toList()[0].key;
 
-                    openStates[firstBlockKey] = true;
+                        openStates[firstBlockKey] = true;
 
-                    model.blockOpenStates = openStates;
-                  }
-                });
+                        model.blockOpenStates = openStates;
+                      }
+                      
+                      // Set blocks for navigation
+                      if (model.blocks.isEmpty) {
+                        model.setBlocks(blocks);
+                      }
+                    });
 
-                return BlockTemplateView(
-                  block: blocks[index],
-                  isOpen:
-                      model.blockOpenStates[blocks[index].dashedName] ?? false,
-                  isOpenFunction: () => model.setBlockOpenClosedState(
-                    blocks,
-                    index,
-                  ),
-                );
-              },
-            ),
+                    return BlockTemplateView(
+                      block: blocks[index],
+                      isOpen:
+                          model.blockOpenStates[blocks[index].dashedName] ?? false,
+                      isOpenFunction: () => model.setBlockOpenClosedState(
+                        blocks,
+                        index,
+                      ),
+                    );
+                  },
+                ),
+              ),
+              // Add floating navigation buttons
+              if (model.blocks.isNotEmpty)
+                FloatingNavigationButtons(
+                  onPrevious: model.scrollToPrevious,
+                  onNext: model.scrollToNext,
+                  hasPrevious: model.hasPrevious,
+                  hasNext: model.hasNext,
+                ),
+            ],
           ),
         );
       },

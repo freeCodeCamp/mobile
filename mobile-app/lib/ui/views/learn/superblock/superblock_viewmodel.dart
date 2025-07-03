@@ -23,6 +23,15 @@ class SuperBlockViewModel extends BaseViewModel {
   Map<String, bool> _blockOpenStates = {};
   Map<String, bool> get blockOpenStates => _blockOpenStates;
 
+  final ScrollController _scrollController = ScrollController();
+  ScrollController get scrollController => _scrollController;
+
+  int _currentBlockIndex = 0;
+  int get currentBlockIndex => _currentBlockIndex;
+
+  List<Block> _blocks = [];
+  List<Block> get blocks => _blocks;
+
   Future<SuperBlock>? _superBlockData;
   Future<SuperBlock>? get superBlockData => _superBlockData;
 
@@ -34,6 +43,48 @@ class SuperBlockViewModel extends BaseViewModel {
   set blockOpenStates(Map<String, bool> openStates) {
     _blockOpenStates = openStates;
     notifyListeners();
+  }
+
+  void setBlocks(List<Block> blocks) {
+    _blocks = blocks;
+    notifyListeners();
+  }
+
+  void scrollToPrevious() {
+    if (_currentBlockIndex > 0) {
+      _currentBlockIndex--;
+      _scrollToBlock(_currentBlockIndex);
+      notifyListeners();
+    }
+  }
+
+  void scrollToNext() {
+    if (_currentBlockIndex < _blocks.length - 1) {
+      _currentBlockIndex++;
+      _scrollToBlock(_currentBlockIndex);
+      notifyListeners();
+    }
+  }
+
+  void _scrollToBlock(int index) {
+    // Calculate approximate item height (this is an estimation)
+    const double itemHeight = 120.0; // Approximate height of each block item
+    final double targetPosition = index * itemHeight;
+    
+    _scrollController.animateTo(
+      targetPosition,
+      duration: const Duration(milliseconds: 500),
+      curve: Curves.easeInOut,
+    );
+  }
+
+  bool get hasPrevious => _currentBlockIndex > 0;
+  bool get hasNext => _currentBlockIndex < _blocks.length - 1;
+
+  @override
+  void dispose() {
+    _scrollController.dispose();
+    super.dispose();
   }
 
   EdgeInsets getPaddingBeginAndEnd(int index, int challenges) {
