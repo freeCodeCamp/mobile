@@ -121,13 +121,13 @@ class BlockGridView extends StatelessWidget {
                 child: Builder(builder: (context) {
                   final tiles = block.challengeTiles.length;
 
-                  final scrollOn = tiles > 24;
+                  final isScrollable = tiles > 24;
 
                   return ScrollShadow(
                     child: GridView.builder(
                       shrinkWrap: true,
                       padding: const EdgeInsets.all(0),
-                      physics: scrollOn
+                      physics: isScrollable
                           ? const AlwaysScrollableScrollPhysics()
                           : const NeverScrollableScrollPhysics(),
                       gridDelegate:
