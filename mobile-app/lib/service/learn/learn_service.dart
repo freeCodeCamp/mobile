@@ -1,21 +1,21 @@
 import 'dart:developer';
-import 'dart:io';
 
-import 'package:device_info_plus/device_info_plus.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:freecodecamp/app/app.locator.dart';
 import 'package:freecodecamp/app/app.router.dart';
 import 'package:freecodecamp/enums/dialog_type.dart';
-import 'package:freecodecamp/extensions/i18n_extension.dart';
 import 'package:freecodecamp/models/learn/challenge_model.dart';
 import 'package:freecodecamp/models/learn/curriculum_model.dart';
 import 'package:freecodecamp/service/authentication/authentication_service.dart';
 import 'package:freecodecamp/service/dio_service.dart';
 import 'package:freecodecamp/service/learn/learn_offline_service.dart';
+import 'package:freecodecamp/utils/helpers.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:stacked_services/stacked_services.dart';
 import 'package:url_launcher/url_launcher.dart';
+
+const forumLocation = 'https://forum.freecodecamp.org';
 
 class LearnService {
   static final LearnService _learnService = LearnService._internal();
@@ -164,45 +164,6 @@ class LearnService {
     }
   }
 
-  static const forumLocation = 'https://forum.freecodecamp.org';
-
-  Future<String> filesToMarkdown(
-    Challenge challenge,
-    String editorText,
-  ) async {
-    SharedPreferences prefs = await SharedPreferences.getInstance();
-    final challengeFiles = challenge.files;
-    final bool moreThanOneFile = challengeFiles.length > 1;
-    String markdownStr = '\n';
-
-    for (var challengeFile in challengeFiles) {
-      final fileName = moreThanOneFile
-          ? '/* file: ${challengeFile.name}.${challengeFile.ext} */\n'
-          : '';
-      final fileType = challengeFile.ext.name;
-      final fileContent =
-          prefs.getString('${challenge.id}.${challengeFile.name}') ??
-              challengeFile.contents;
-      markdownStr += '```$fileType\n$fileName$fileContent\n```\n\n';
-    }
-
-    return markdownStr;
-  }
-
-  Future<String> getDeviceInfo(BuildContext context) async {
-    final deviceInfoPlugin = DeviceInfoPlugin();
-
-    if (Platform.isAndroid) {
-      final deviceInfo = await deviceInfoPlugin.androidInfo;
-      return '${deviceInfo.model} - Android ${deviceInfo.version.release} - Android SDK ${deviceInfo.version.sdkInt}';
-    } else if (Platform.isIOS) {
-      final deviceInfo = await deviceInfoPlugin.iosInfo;
-      return '${deviceInfo.model} - ${deviceInfo.systemName}${deviceInfo.systemVersion}';
-    } else {
-      return context.t.unrecognized_device;
-    }
-  }
-
   Future<String> genForumLink(
     Challenge challenge,
     Block block,
@@ -250,7 +211,8 @@ class LearnService {
         title: 'Ask for Help',
         description:
             "If you've already tried the Read-Search-Ask method, then you can try asking for help on the freeCodeCamp forum.",
-        mainButtonTitle: 'Create a post');
+        mainButtonTitle: 'Create a post',
+        data: {'challengeName': challenge.title, 'blockName': block.name});
     if (res != null && res.confirmed) {
       DialogResponse? forumRes = await _dialogService.showCustomDialog(
         variant: DialogType.askForHelpInput,
@@ -259,6 +221,7 @@ class LearnService {
             'You must confirm the following statements before you can submit your post to the forum.',
         mainButtonTitle: 'Submit',
         secondaryButtonTitle: 'Cancel',
+        data: {'challengeName': challenge.title, 'blockName': block.name},
       );
 
       String description = forumRes?.data ?? '';

@@ -6,6 +6,7 @@ import 'package:freecodecamp/service/learn/learn_service.dart';
 import 'package:freecodecamp/ui/views/learn/challenge/challenge_viewmodel.dart';
 import 'package:freecodecamp/ui/views/learn/widgets/hint/hint_widget_model.dart';
 import 'package:freecodecamp/ui/views/news/html_handler/html_handler.dart';
+import 'package:freecodecamp/utils/helpers.dart';
 import 'package:phone_ide/phone_ide.dart';
 import 'package:stacked/stacked.dart';
 
@@ -20,14 +21,13 @@ Future<String> genForumLink(
   final HelpCategory helpCategory = challenge.helpCategory;
   final String blockTitle = block.name;
 
-  final userDeviceInfo = await LearnService().getDeviceInfo(context);
+  final userDeviceInfo = await getDeviceInfo(context);
 
   final titleText = '$blockTitle - ${currChallenge.title}';
   final String endingText =
       '**Your mobile information:**\n```txt\n$userDeviceInfo\n```\n\n**Challenge:** $titleText\n\n**Link to the challenge:**\nhttps://www.freecodecamp.org/learn/${currChallenge.superBlock}/${currChallenge.block}/${currChallenge.dashedName}';
 
-  final String userCode =
-      await LearnService().filesToMarkdown(currChallenge, editorText);
+  final String userCode = await filesToMarkdown(currChallenge, editorText);
 
   final String textMessage =
       "**Tell us what's happening:**\nDescribe your issue in detail here.\n\n**Your code so far**$userCode\n\n$endingText";
@@ -38,7 +38,7 @@ Future<String> genForumLink(
   String altStudentCode = Uri.encodeComponent(altTextMessage);
 
   final String baseURL =
-      '${LearnService.forumLocation}/new-topic?category=${helpCategory.value}&title=$titleText&body=';
+      '$forumLocation/new-topic?category=${helpCategory.value}&title=$titleText&body=';
   final String defaultURL = '$baseURL$studentCode';
   final String altURL = '$baseURL$altStudentCode';
 

@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:freecodecamp/app/app.locator.dart';
 import 'package:freecodecamp/enums/dialog_type.dart';
+import 'package:freecodecamp/service/learn/learn_service.dart';
 import 'package:freecodecamp/ui/theme/fcc_theme.dart';
 import 'package:stacked_services/stacked_services.dart';
 
@@ -326,14 +327,9 @@ class _askForHelpInputDialogue extends HookWidget {
 
   @override
   Widget build(BuildContext context) {
-    // Ensure request.data is initialized to avoid null errors
     final requestData = useState<Map<String, dynamic>>(request.data ?? {});
-
-    // Use a state variable to track the character count
     final charCount =
         useState(requestData.value['issueDescription']?.length ?? 0);
-
-    // Use a persistent TextEditingController
     final textController = useTextEditingController(
       text: requestData.value['issueDescription'] ?? '',
     );
@@ -403,7 +399,7 @@ class _askForHelpInputDialogue extends HookWidget {
                                   recognizer: TapGestureRecognizer()
                                     ..onTap = () {
                                       launchUrl(Uri.parse(
-                                          'https://forum.freecodecamp.org/t/how-to-get-help-when-you-are-stuck-coding/19514'));
+                                          '$forumLocation/t/how-to-get-help-when-you-are-stuck-coding/19514'));
                                     },
                                 ),
                                 const TextSpan(
@@ -430,11 +426,32 @@ class _askForHelpInputDialogue extends HookWidget {
                           activeColor: FccColors.gray00,
                         ),
                         Flexible(
-                          child: Text(
-                            'I have searched for similar questions that have already been answered on the forum',
-                            style: const TextStyle(
-                              fontSize: 14,
-                              color: FccColors.gray00,
+                          child: RichText(
+                            text: TextSpan(
+                              text: 'I have searched for ',
+                              style: const TextStyle(
+                                fontSize: 14,
+                                color: FccColors.gray00,
+                              ),
+                              children: [
+                                TextSpan(
+                                  text:
+                                      'similar questions that have already been answered on the forum',
+                                  style: const TextStyle(
+                                    fontSize: 14,
+                                    color: FccColors.gray00,
+                                    decoration: TextDecoration.underline,
+                                    decorationColor: FccColors.gray00,
+                                  ),
+                                  recognizer: TapGestureRecognizer()
+                                    ..onTap = () {
+                                      final query = Uri.encodeComponent(
+                                          '${requestData.value['blockName']} - ${requestData.value['challengeName']} in:title');
+                                      launchUrl(Uri.parse(
+                                          '$forumLocation/search?q=$query'));
+                                    },
+                                ),
+                              ],
                             ),
                           ),
                         ),
@@ -543,6 +560,8 @@ class _askForHelpDialog extends HookWidget {
 
   @override
   Widget build(BuildContext context) {
+    final requestData = useState<Map<String, dynamic>>(request.data ?? {});
+
     return Dialog(
       backgroundColor: FccColors.gray90,
       shape: RoundedRectangleBorder(
@@ -566,7 +585,7 @@ class _askForHelpDialog extends HookWidget {
                 ),
                 RichText(
                   text: TextSpan(
-                    text: 'Please follow the ',
+                    text: "If you've already tried the ",
                     style: const TextStyle(
                       fontSize: 16,
                       color: FccColors.gray05,
@@ -583,11 +602,44 @@ class _askForHelpDialog extends HookWidget {
                         recognizer: TapGestureRecognizer()
                           ..onTap = () {
                             launchUrl(Uri.parse(
-                                'https://forum.freecodecamp.org/t/how-to-get-help-when-you-are-stuck-coding/19514'));
+                                '$forumLocation/t/how-to-get-help-when-you-are-stuck-coding/19514'));
                           },
                       ),
                       const TextSpan(
-                        text: ' method before asking for help.',
+                        text:
+                            ' method, then you can ask for help on the freeCodeCamp forum.',
+                        style: TextStyle(color: FccColors.gray05),
+                      ),
+                    ],
+                  ),
+                ),
+                RichText(
+                  text: TextSpan(
+                    text: 'Before making a new post please ',
+                    style: const TextStyle(
+                      fontSize: 16,
+                      color: FccColors.gray05,
+                    ),
+                    children: [
+                      TextSpan(
+                        text:
+                            'check if your question has already been answered on the forum',
+                        style: const TextStyle(
+                          fontSize: 16,
+                          color: FccColors.gray00,
+                          decoration: TextDecoration.underline,
+                          decorationColor: FccColors.gray00,
+                        ),
+                        recognizer: TapGestureRecognizer()
+                          ..onTap = () {
+                            final query = Uri.encodeComponent(
+                                '${requestData.value['blockName']} - ${requestData.value['challengeName']} in:title');
+                            launchUrl(
+                                Uri.parse('$forumLocation/search?q=$query'));
+                          },
+                      ),
+                      const TextSpan(
+                        text: '.',
                         style: TextStyle(color: FccColors.gray05),
                       ),
                     ],
