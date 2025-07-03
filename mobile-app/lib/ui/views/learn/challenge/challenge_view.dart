@@ -1,6 +1,7 @@
 import 'dart:developer';
 
 import 'package:flutter/material.dart';
+import 'package:flutter_html/flutter_html.dart';
 import 'package:flutter_inappwebview/flutter_inappwebview.dart';
 import 'package:freecodecamp/enums/panel_type.dart';
 import 'package:freecodecamp/models/learn/challenge_model.dart';
@@ -114,6 +115,14 @@ class ChallengeView extends StatelessWidget {
           );
         }
       })(),
+      bottom: const PreferredSize(
+        preferredSize: Size.fromHeight(1.0),
+        child: Divider(
+          height: 1,
+          thickness: 1,
+          color: FccColors.gray45,
+        ),
+      ),
     );
   }
 
@@ -143,7 +152,7 @@ class ChallengeView extends StatelessWidget {
     return Container(
       decoration: const BoxDecoration(
         border: Border(
-          top: BorderSide(color: Colors.white70),
+          top: BorderSide(color: FccColors.gray45),
         ),
       ),
       padding: EdgeInsets.only(
@@ -489,8 +498,12 @@ class ChallengeView extends StatelessWidget {
     final widgets = parser.parse(
       test.instruction,
       isSelectable: true,
-      removeParagraphMargin: true,
-      fontColor: FccColors.gray00,
+      customStyles: {
+        '*:not(h1):not(h2):not(h3):not(h4):not(h5):not(h6)': Style(
+          color: FccColors.gray00,
+        ),
+        'p': Style(margin: Margins.zero),
+      },
     );
     return ExpansionTile(
       backgroundColor: FccColors.gray90,

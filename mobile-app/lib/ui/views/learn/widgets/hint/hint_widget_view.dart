@@ -158,14 +158,6 @@ class HintWidgetView extends StatelessWidget {
                       icon: const Icon(Icons.restart_alt),
                       padding: const EdgeInsets.all(16),
                     ),
-                    IconButton(
-                      onPressed: () {
-                        challengeModel.setShowPreview = true;
-                        challengeModel.setShowPanel = false;
-                      },
-                      icon: const Icon(Icons.remove_red_eye_outlined),
-                      padding: const EdgeInsets.all(16),
-                    )
                   ],
                 ),
               ),

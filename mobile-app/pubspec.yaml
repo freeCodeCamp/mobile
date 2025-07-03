@@ -5,10 +5,11 @@ version: 5.0.3+50003
 environment:
   sdk: ">=3.0.0 <4.0.0"
 dependencies:
-  algolia_helper_flutter: 1.2.0
+  algolia_helper_flutter: 1.2.1
   audio_service: 0.18.18
   auth0_flutter: 1.9.0
   cached_network_image: 3.4.1
+  collection: 1.19.1
   device_info_plus: 11.3.0
   dio: 5.8.0+1
   firebase_analytics: 11.4.5

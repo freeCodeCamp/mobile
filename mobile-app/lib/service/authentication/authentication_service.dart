@@ -356,6 +356,9 @@ class AuthenticationService {
   Future<void> logout() async {
     staticIsloggedIn = false;
     isLoggedInStream.sink.add(false);
+    _csrf = '';
+    _csrfToken = '';
+    _jwtAccessToken = '';
     await store.delete(key: 'csrf');
     await store.delete(key: 'csrf_token');
     await store.delete(key: 'jwt_access_token');

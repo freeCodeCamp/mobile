@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_html/flutter_html.dart';
 import 'package:flutter_scroll_shadow/flutter_scroll_shadow.dart';
 import 'package:freecodecamp/models/learn/curriculum_model.dart';
 import 'package:freecodecamp/ui/theme/fcc_theme.dart';
@@ -83,9 +84,13 @@ class BlockGridView extends StatelessWidget {
             ),
             ...parser.parse(
               '<p>${block.description.join(' ')}</p>',
-              fontColor: FccColors.gray05,
-              removeParagraphMargin: true,
               isSelectable: false,
+              customStyles: {
+                '*:not(h1):not(h2):not(h3):not(h4):not(h5):not(h6)': Style(
+                  color: FccColors.gray05,
+                ),
+                'p': Style(margin: Margins.zero),
+              },
             ),
             Row(
               children: [
@@ -113,35 +118,49 @@ class BlockGridView extends StatelessWidget {
               ],
             ),
             if (isOpen)
-              Row(
-                children: [
-                  Container(
-                    padding: const EdgeInsets.all(8),
-                    height: 195,
-                    width: MediaQuery.of(context).size.width - 34,
-                    child: ScrollShadow(
-                      child: GridView.builder(
-                        gridDelegate:
-                            const SliverGridDelegateWithFixedCrossAxisCount(
-                          crossAxisCount: 6,
-                          mainAxisSpacing: 3,
-                          crossAxisSpacing: 3,
-                        ),
-                        itemCount: block.challenges.length,
-                        itemBuilder: (context, step) {
-                          return ChallengeTile(
-                            block: block,
-                            model: model,
-                            step: step + 1,
-                            challengeId: block.challengeTiles[step].id,
-                            isDownloaded: false,
-                          );
-                        },
+              Container(
+                padding: const EdgeInsets.all(8),
+                constraints: BoxConstraints(
+                  maxHeight: 300,
+                ),
+                child: Builder(builder: (context) {
+                  final tiles = block.challengeTiles.length;
+
+                  final isScrollable = tiles > 24;
+
+                  return ScrollShadow(
+                    child: GridView.builder(
+                      shrinkWrap: true,
+                      padding: const EdgeInsets.all(0),
+                      physics: isScrollable
+                          ? const AlwaysScrollableScrollPhysics()
+                          : const NeverScrollableScrollPhysics(),
+                      gridDelegate:
+                          const SliverGridDelegateWithFixedCrossAxisCount(
+                        crossAxisCount: 6,
+                        mainAxisSpacing: 3,
+                        crossAxisSpacing: 3,
                       ),
+                      itemCount: block.challenges.length,
+                      itemBuilder: (context, step) {
+                        final challenge = block.challengeTiles[step];
+                        final match = RegExp(r'\d+').firstMatch(challenge.name);
+                        final stepNumber = match != null
+                            ? int.parse(match.group(0)!)
+                            : step + 1;
+
+                        return ChallengeTile(
+                          block: block,
+                          model: model,
+                          step: stepNumber,
+                          challengeId: challenge.id,
+                          isDownloaded: false,
+                        );
+                      },
                     ),
-                  ),
-                ],
-              ),
+                  );
+                }),
+              )
           ],
         ),
       ),
