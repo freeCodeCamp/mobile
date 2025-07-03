@@ -9,7 +9,7 @@ import 'package:freecodecamp/service/learn/learn_service.dart';
 import 'package:freecodecamp/ui/mixins/navigation_mixin.dart';
 import 'package:stacked/stacked.dart';
 
-class SuperBlockViewModel extends BaseViewModel with NavigationMixin<Block> {
+class SuperBlockViewModel extends BaseViewModel with FloatingNavigationMixin<Block> {
   final _learnOfflineService = locator<LearnOfflineService>();
   LearnOfflineService get learnOfflineService => _learnOfflineService;
 

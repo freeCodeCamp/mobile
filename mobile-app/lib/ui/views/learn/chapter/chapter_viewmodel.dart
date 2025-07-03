@@ -14,7 +14,7 @@ import 'package:stacked/stacked.dart';
 import 'package:stacked_services/stacked_services.dart';
 
 class ChapterViewModel extends BaseViewModel
-    with NavigationMixin<Chapter>, ChapterNavigationMixin {
+    with FloatingNavigationMixin<Chapter>, ChapterNavigationMixin {
   final _dio = DioService.dio;
   final NavigationService _navigationService = locator<NavigationService>();
   final AuthenticationService auth = locator<AuthenticationService>();

@@ -59,6 +59,7 @@ class ChapterBlockView extends StatelessWidget {
                       
                       if (model.blocks.isEmpty) {
                         model.setBlocks(blocks);
+                        model.initializeScrollListener();
                       }
                     });
 

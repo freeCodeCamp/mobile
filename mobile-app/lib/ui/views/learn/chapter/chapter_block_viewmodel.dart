@@ -5,7 +5,7 @@ import 'package:freecodecamp/service/authentication/authentication_service.dart'
 import 'package:freecodecamp/ui/mixins/navigation_mixin.dart';
 import 'package:stacked/stacked.dart';
 
-class ChapterBlockViewmodel extends BaseViewModel with NavigationMixin<Block> {
+class ChapterBlockViewmodel extends BaseViewModel with FloatingNavigationMixin<Block> {
   Map<String, bool> _blockOpenStates = {};
   Map<String, bool> get blockOpenStates => _blockOpenStates;
   final authenticationService = locator<AuthenticationService>();

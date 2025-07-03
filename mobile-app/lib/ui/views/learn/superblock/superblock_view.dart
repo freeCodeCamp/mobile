@@ -117,6 +117,7 @@ class SuperBlockView extends StatelessWidget {
 
                         if (model.blocks.isEmpty) {
                           model.setBlocks(superBlock.blocks!);
+                          model.initializeScrollListener();
                         }
                       });
 

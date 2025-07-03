@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:stacked/stacked.dart';
 
-mixin NavigationMixin<T> on BaseViewModel {
+mixin FloatingNavigationMixin<T> on BaseViewModel {
   final ScrollController _scrollController = ScrollController();
   ScrollController get scrollController => _scrollController;
 
@@ -17,11 +17,57 @@ mixin NavigationMixin<T> on BaseViewModel {
   bool _isAnimating = false;
   bool get isAnimating => _isAnimating;
 
+  bool _isScrollListenerAttached = false;
+
   void setItems(List<T> items) {
     _items = items;
     _itemKeys = List.generate(items.length, (index) => GlobalKey());
     _currentIndex = findFirstAvailableIndex();
     notifyListeners();
+  }
+
+  void initializeScrollListener() {
+    if (!_isScrollListenerAttached) {
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        _attachScrollListener();
+      });
+    }
+  }
+
+  void _attachScrollListener() {
+    if (!_isScrollListenerAttached && _scrollController.hasClients) {
+      _scrollController.addListener(_onScroll);
+      _isScrollListenerAttached = true;
+    }
+  }
+
+  void _onScroll() {
+    if (!_isAnimating) {
+      _updateCurrentIndexFromScroll();
+    }
+  }
+
+  void _updateCurrentIndexFromScroll() {
+    if (_itemKeys.isEmpty || !_scrollController.hasClients) return;
+
+    // Get the current scroll position
+    final scrollOffset = _scrollController.offset;
+    int newIndex = 0;
+    
+    // Simple approximation: if we can estimate item heights, we can determine which item is visible
+    // For now, we'll use a simple approach based on scroll position relative to total scrollable height
+    if (_scrollController.position.maxScrollExtent > 0) {
+      final scrollRatio = scrollOffset / _scrollController.position.maxScrollExtent;
+      newIndex = (scrollRatio * (_items.length - 1)).round();
+      newIndex = newIndex.clamp(0, _items.length - 1);
+    }
+
+    // Find the nearest available index
+    int availableIndex = findNearestAvailableIndex(newIndex);
+    if (availableIndex != _currentIndex) {
+      _currentIndex = availableIndex;
+      notifyListeners();
+    }
   }
 
   void scrollToPrevious() {
@@ -72,10 +118,14 @@ mixin NavigationMixin<T> on BaseViewModel {
   int findFirstAvailableIndex() => 0;
   int findPreviousAvailableIndex(int currentIndex) => currentIndex > 0 ? currentIndex - 1 : -1;
   int findNextAvailableIndex(int currentIndex) => currentIndex < _items.length - 1 ? currentIndex + 1 : -1;
+  int findNearestAvailableIndex(int index) => index;
   double getScrollAlignment() => 0.5;
 
   @override
   void dispose() {
+    if (_isScrollListenerAttached) {
+      _scrollController.removeListener(_onScroll);
+    }
     _scrollController.dispose();
     super.dispose();
   }

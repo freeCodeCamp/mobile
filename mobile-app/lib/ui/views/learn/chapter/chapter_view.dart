@@ -50,6 +50,7 @@ class ChapterView extends StatelessWidget {
                     WidgetsBinding.instance.addPostFrameCallback((_) {
                       if (model.chapters.isEmpty) {
                         model.setChapters(chapters);
+                        model.initializeScrollListener();
                       }
                     });
 
