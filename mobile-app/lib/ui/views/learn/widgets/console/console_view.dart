@@ -49,6 +49,9 @@ class JavaScriptConsole extends StatelessWidget {
                             ),
                           ),
                           'p': Style(margin: Margins.zero),
+                          'ol': Style(
+                            padding: HtmlPaddings.only(inlineStart: 20),
+                          ),
                         },
                       );
 

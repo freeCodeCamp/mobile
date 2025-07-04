@@ -176,6 +176,9 @@ class ChallengeView extends StatelessWidget {
           JavaScriptConsole(
             messages: [
               ...model.testConsoleMessages,
+              model.userConsoleMessages.isNotEmpty
+                  ? '<p>// console output</p>'
+                  : '',
               ...model.userConsoleMessages
             ],
           ),
@@ -266,10 +269,12 @@ class ChallengeView extends StatelessWidget {
                     model.setTestController = controller;
                   },
                   onConsoleMessage: (controller, console) {
-                    model.setUserConsoleMessages = [
-                      ...model.userConsoleMessages,
-                      '<p>${console.message}</p>',
-                    ];
+                    if (console.messageLevel == ConsoleMessageLevel.LOG) {
+                      model.setUserConsoleMessages = [
+                        ...model.userConsoleMessages,
+                        '<p>${console.message}</p>',
+                      ];
+                    }
                   },
                   onLoadStop: (controller, url) async {
                     ScriptBuilder builder = ScriptBuilder();
@@ -569,15 +574,14 @@ class ChallengeView extends StatelessWidget {
             model.initFile(challenge, currFile);
           },
         ),
-      if (challenge.challengeType == 1 || challenge.challengeType == 26)
-        _panelIconButton(
-          isActive: model.showConsole,
-          icon: Icons.terminal,
-          onPressed: () {
-            model.setShowConsole = !model.showConsole;
-            model.setShowPreview = false;
-          },
-        ),
+      _panelIconButton(
+        isActive: model.showConsole,
+        icon: Icons.terminal,
+        onPressed: () {
+          model.setShowConsole = !model.showConsole;
+          model.setShowPreview = false;
+        },
+      ),
     ];
   }
 

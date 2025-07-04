@@ -65,9 +65,6 @@ class ChallengeViewModel extends BaseViewModel {
   bool _runningTests = false;
   bool get runningTests => _runningTests;
 
-  // bool _afterFirstTest = false;
-  // bool get afterFirstTest => _afterFirstTest;
-
   bool _hasTypedInEditor = false;
   bool get hasTypedInEditor => _hasTypedInEditor;
 
@@ -76,6 +73,12 @@ class ChallengeViewModel extends BaseViewModel {
 
   bool _symbolBarIsScrollable = true;
   bool get symbolBarIsScrollable => _symbolBarIsScrollable;
+
+  List<String> _testConsoleMessages = [];
+  List<String> get testConsoleMessages => _testConsoleMessages;
+
+  List<String> _userConsoleMessages = [];
+  List<String> get userConsoleMessages => _userConsoleMessages;
 
   ScrollController symbolBarScrollController = ScrollController();
 
@@ -150,11 +153,6 @@ class ChallengeViewModel extends BaseViewModel {
     _runningTests = value;
     notifyListeners();
   }
-
-  // set setAfterFirstTest(bool value) {
-  //   _afterFirstTest = value;
-  //   notifyListeners();
-  // }
 
   set setEditableRegionContent(String value) {
     _editableRegionContent = value;
@@ -253,6 +251,16 @@ class ChallengeViewModel extends BaseViewModel {
 
   set setEditorLanguage(String value) {
     _editorLanguage = value;
+    notifyListeners();
+  }
+
+  set setTestConsoleMessages(List<String> messages) {
+    _testConsoleMessages = messages;
+    notifyListeners();
+  }
+
+  set setUserConsoleMessages(List<String> messages) {
+    _userConsoleMessages = messages;
     notifyListeners();
   }
 
@@ -598,22 +606,25 @@ class ChallengeViewModel extends BaseViewModel {
     setIsRunningTests = true;
     ChallengeTest? failedTest;
     ScriptBuilder builder = ScriptBuilder();
+    List<String> failedTestsConsole = [];
 
     _userConsoleMessages = [];
     setTestConsoleMessages = ['<p>// running tests</p>'];
 
     // Get user code console messages
-    final evalResult = await testController!.callAsyncJavaScript(
-      functionBody: await builder.buildUserCode(
-        challenge!,
-        _babelWebView.webViewController,
-      ),
-    );
-    if (evalResult != null && evalResult.error != null) {
-      setUserConsoleMessages = [
-        ...userConsoleMessages.sublist(0, userConsoleMessages.length - 1),
-        '<p>${evalResult.error}</p>',
-      ];
+    if (challenge!.challengeType == 1 || challenge!.challengeType == 26) {
+      final evalResult = await testController!.callAsyncJavaScript(
+        functionBody: await builder.buildUserCode(
+          challenge!,
+          _babelWebView.webViewController,
+        ),
+      );
+      if (evalResult != null && evalResult.error != null) {
+        setUserConsoleMessages = [
+          ...userConsoleMessages.sublist(0, userConsoleMessages.length - 1),
+          '<p>${evalResult.error}</p>',
+        ];
+      }
     }
 
     // TODO: Handle the case when the test runner is not created
@@ -646,46 +657,32 @@ class ChallengeViewModel extends BaseViewModel {
       if (testRes?.value['pass'] == null) {
         log('TEST FAILED: ${test.instruction} - ${test.javaScript} - ${testRes?.value['error']}');
         failedTest = failedTest ?? test;
-        setTestConsoleMessages = [
-          ...testConsoleMessages,
-          test.instruction,
-        ];
+        failedTestsConsole.add(
+          '<li>${test.instruction}</li>',
+        );
       }
     }
 
     if (failedTest != null) {
       setPanelType = PanelType.hint;
       setHint = failedTest.instruction;
-      // _scaffoldKey.currentState?.openEndDrawer();
+      _scaffoldKey.currentState?.openEndDrawer();
     } else {
       setPanelType = PanelType.pass;
       setCompletedChallenge = true;
-      // _scaffoldKey.currentState?.openEndDrawer();
+      _scaffoldKey.currentState?.openEndDrawer();
     }
 
     setTestConsoleMessages = [
       ...testConsoleMessages,
+      failedTestsConsole.isNotEmpty
+          ? '<ol>${failedTestsConsole.join()}</ol>'
+          : '',
       '<p>// tests completed</p>',
-      '<p>// console output</p>',
     ];
     setIsRunningTests = false;
     // TODO: Do we still need this variable
     setShowPanel = true;
-  }
-
-  // TODO: Update logic when working on JS challenges
-  List<String> _testConsoleMessages = [];
-  List<String> get testConsoleMessages => _testConsoleMessages;
-  set setTestConsoleMessages(List<String> messages) {
-    _testConsoleMessages = messages;
-    notifyListeners();
-  }
-
-  List<String> _userConsoleMessages = [];
-  List<String> get userConsoleMessages => _userConsoleMessages;
-  set setUserConsoleMessages(List<String> messages) {
-    _userConsoleMessages = messages;
-    notifyListeners();
   }
 
   Widget getPanelWidget({
