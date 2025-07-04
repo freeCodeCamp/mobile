@@ -6,9 +6,10 @@ import 'package:freecodecamp/service/authentication/authentication_service.dart'
 import 'package:freecodecamp/service/dio_service.dart';
 import 'package:freecodecamp/service/learn/learn_offline_service.dart';
 import 'package:freecodecamp/service/learn/learn_service.dart';
+import 'package:freecodecamp/ui/mixins/navigation_mixin.dart';
 import 'package:stacked/stacked.dart';
 
-class SuperBlockViewModel extends BaseViewModel {
+class SuperBlockViewModel extends BaseViewModel with FloatingNavigationMixin<Block> {
   final _learnOfflineService = locator<LearnOfflineService>();
   LearnOfflineService get learnOfflineService => _learnOfflineService;
 
@@ -23,6 +24,9 @@ class SuperBlockViewModel extends BaseViewModel {
   Map<String, bool> _blockOpenStates = {};
   Map<String, bool> get blockOpenStates => _blockOpenStates;
 
+  List<Block> get blocks => items;
+  List<GlobalKey> get blockKeys => itemKeys;
+
   Future<SuperBlock>? _superBlockData;
   Future<SuperBlock>? get superBlockData => _superBlockData;
 
@@ -34,6 +38,10 @@ class SuperBlockViewModel extends BaseViewModel {
   set blockOpenStates(Map<String, bool> openStates) {
     _blockOpenStates = openStates;
     notifyListeners();
+  }
+
+  void setBlocks(List<Block> blocks) {
+    setItems(blocks);
   }
 
   EdgeInsets getPaddingBeginAndEnd(int index, int challenges) {

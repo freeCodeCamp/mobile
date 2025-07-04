@@ -1,4 +1,5 @@
 import 'package:dio/dio.dart';
+import 'package:flutter/material.dart';
 import 'package:freecodecamp/app/app.locator.dart';
 import 'package:freecodecamp/app/app.router.dart';
 import 'package:freecodecamp/models/learn/completed_challenge_model.dart';
@@ -7,18 +8,28 @@ import 'package:freecodecamp/models/main/user_model.dart';
 import 'package:freecodecamp/service/authentication/authentication_service.dart';
 import 'package:freecodecamp/service/dio_service.dart';
 import 'package:freecodecamp/service/learn/learn_service.dart';
+import 'package:freecodecamp/ui/mixins/chapter_navigation_mixin.dart';
+import 'package:freecodecamp/ui/mixins/navigation_mixin.dart';
 import 'package:stacked/stacked.dart';
 import 'package:stacked_services/stacked_services.dart';
 
-class ChapterViewModel extends BaseViewModel {
+class ChapterViewModel extends BaseViewModel
+    with FloatingNavigationMixin<Chapter>, ChapterNavigationMixin {
   final _dio = DioService.dio;
   final NavigationService _navigationService = locator<NavigationService>();
   final AuthenticationService auth = locator<AuthenticationService>();
 
   Future<SuperBlock?>? superBlockFuture;
 
+  List<Chapter> get chapters => items;
+  List<GlobalKey> get chapterKeys => itemKeys;
+
   void init() async {
     superBlockFuture = requestChapters();
+  }
+
+  void setChapters(List<Chapter> chapters) {
+    setItems(chapters);
   }
 
   Future<String> calculateProgress(Module module) async {
