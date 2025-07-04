@@ -59,14 +59,14 @@ return testRes;
         return challengeFile;
       default:
         String parsedWithStyleTags =
-            await fileService.parseCssDocmentsAsStyleTags(
+            await fileService.parseCssDocumentsAsStyleTags(
           challenge,
           challengeFile,
           testing: testing,
         );
 
         String parsedWithScriptTags =
-            await fileService.parseJsDocmentsAsScriptTags(
+            await fileService.parseJsDocumentsAsScriptTags(
           challenge,
           parsedWithStyleTags,
           babelController,

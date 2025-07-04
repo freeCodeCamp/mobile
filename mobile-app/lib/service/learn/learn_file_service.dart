@@ -183,7 +183,7 @@ class LearnFileService {
   // It will parse the current CSS content into style tags only if it is linked.
   // If there is nothing to parse it will return the plain content document.
 
-  Future<String> parseCssDocmentsAsStyleTags(
+  Future<String> parseCssDocumentsAsStyleTags(
     Challenge challenge,
     String content, {
     bool testing = false,
@@ -232,7 +232,7 @@ class LearnFileService {
   // It will parse the current JS content into script tags only if it is linked.
   // If there is nothing to parse it will return the plain content document.
 
-  Future<String> parseJsDocmentsAsScriptTags(
+  Future<String> parseJsDocumentsAsScriptTags(
     Challenge challenge,
     String challengeContent,
     InAppWebViewController? babelController, {
