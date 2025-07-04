@@ -20,7 +20,32 @@ class LearnLandingView extends StatelessWidget {
       builder: (context, model, child) => Scaffold(
         backgroundColor: FccColors.gray90,
         appBar: AppBar(
-          title: Text('LEARN'),
+          leading: Builder(
+            builder: (context) => IconButton(
+              icon: Stack(
+                clipBehavior: Clip.none,
+                children: [
+                  const Icon(Icons.menu),
+                  // Show notification indicator
+                  Positioned(
+                    right: -2,
+                    top: -2,
+                    child: Container(
+                      width: 10,
+                      height: 10,
+                      decoration: BoxDecoration(
+                        color: Colors.red,
+                        shape: BoxShape.circle,
+                        border: Border.all(color: Colors.white, width: 1),
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+              onPressed: () => Scaffold.of(context).openDrawer(),
+            ),
+          ),
+          title: const Text('LEARN'),
         ),
         drawer: const DrawerWidgetView(
           key: Key('drawer'),
