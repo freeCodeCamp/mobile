@@ -11,6 +11,7 @@ import 'package:freecodecamp/ui/views/profile/profile_view.dart';
 import 'package:freecodecamp/ui/views/settings/settings_view.dart';
 import 'package:stacked/stacked.dart';
 import 'package:stacked_services/stacked_services.dart';
+import 'package:freecodecamp/ui/views/learn/daily_challenges/daily_challenges_view.dart';
 
 class DrawerWidgtetViewModel extends BaseViewModel {
   final AuthenticationService auth = locator<AuthenticationService>();
@@ -58,6 +59,19 @@ class DrawerWidgtetViewModel extends BaseViewModel {
 
   void routeComponent(view, context) async {
     switch (view) {
+      case 'DAILY_CHALLENGES':
+        Navigator.pushReplacement(
+          context,
+          PageRouteBuilder(
+            transitionDuration: Duration.zero,
+            pageBuilder: (context, animation1, animation2) =>
+                const DailyChallengesView(),
+            settings: const RouteSettings(
+              name: '/daily-challenges',
+            ),
+          ),
+        );
+        break;
       case 'LEARN':
         Navigator.pushReplacement(
           context,
