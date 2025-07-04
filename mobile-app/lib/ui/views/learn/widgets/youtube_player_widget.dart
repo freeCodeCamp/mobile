@@ -32,9 +32,12 @@ class YoutubePlayerWidget extends StatelessWidget {
       },
     );
 
-    return YoutubePlayer(
-      controller: controller,
-      enableFullScreenOnVerticalDrag: false,
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 8.0),
+      child: YoutubePlayer(
+        controller: controller,
+        enableFullScreenOnVerticalDrag: false,
+      ),
     );
   }
 }
