@@ -65,9 +65,6 @@ class ChallengeViewModel extends BaseViewModel {
   bool _runningTests = false;
   bool get runningTests => _runningTests;
 
-  bool _afterFirstTest = false;
-  bool get afterFirstTest => _afterFirstTest;
-
   bool _hasTypedInEditor = false;
   bool get hasTypedInEditor => _hasTypedInEditor;
 
@@ -76,6 +73,12 @@ class ChallengeViewModel extends BaseViewModel {
 
   bool _symbolBarIsScrollable = true;
   bool get symbolBarIsScrollable => _symbolBarIsScrollable;
+
+  List<String> _testConsoleMessages = [];
+  List<String> get testConsoleMessages => _testConsoleMessages;
+
+  List<String> _userConsoleMessages = [];
+  List<String> get userConsoleMessages => _userConsoleMessages;
 
   ScrollController symbolBarScrollController = ScrollController();
 
@@ -148,11 +151,6 @@ class ChallengeViewModel extends BaseViewModel {
 
   set setIsRunningTests(bool value) {
     _runningTests = value;
-    notifyListeners();
-  }
-
-  set setAfterFirstTest(bool value) {
-    _afterFirstTest = value;
     notifyListeners();
   }
 
@@ -253,6 +251,16 @@ class ChallengeViewModel extends BaseViewModel {
 
   set setEditorLanguage(String value) {
     _editorLanguage = value;
+    notifyListeners();
+  }
+
+  set setTestConsoleMessages(List<String> messages) {
+    _testConsoleMessages = messages;
+    notifyListeners();
+  }
+
+  set setUserConsoleMessages(List<String> messages) {
+    _userConsoleMessages = messages;
     notifyListeners();
   }
 
@@ -598,6 +606,26 @@ class ChallengeViewModel extends BaseViewModel {
     setIsRunningTests = true;
     ChallengeTest? failedTest;
     ScriptBuilder builder = ScriptBuilder();
+    List<String> failedTestsConsole = [];
+
+    _userConsoleMessages = [];
+    setTestConsoleMessages = ['<p>// running tests</p>'];
+
+    // Get user code console messages
+    if (challenge!.challengeType == 1 || challenge!.challengeType == 26) {
+      final evalResult = await testController!.callAsyncJavaScript(
+        functionBody: await builder.buildUserCode(
+          challenge!,
+          _babelWebView.webViewController,
+        ),
+      );
+      if (evalResult != null && evalResult.error != null) {
+        setUserConsoleMessages = [
+          ...userConsoleMessages.sublist(0, userConsoleMessages.length - 1),
+          '<p>${evalResult.error}</p>',
+        ];
+      }
+    }
 
     // TODO: Handle the case when the test runner is not created
     // ignore: unused_local_variable
@@ -628,8 +656,10 @@ class ChallengeViewModel extends BaseViewModel {
       );
       if (testRes?.value['pass'] == null) {
         log('TEST FAILED: ${test.instruction} - ${test.javaScript} - ${testRes?.value['error']}');
-        failedTest = test;
-        break;
+        failedTest = failedTest ?? test;
+        failedTestsConsole.add(
+          '<li>${test.instruction}</li>',
+        );
       }
     }
 
@@ -643,81 +673,17 @@ class ChallengeViewModel extends BaseViewModel {
       _scaffoldKey.currentState?.openEndDrawer();
     }
 
+    setTestConsoleMessages = [
+      ...testConsoleMessages,
+      failedTestsConsole.isNotEmpty
+          ? '<ol>${failedTestsConsole.join()}</ol>'
+          : '',
+      '<p>// tests completed</p>',
+    ];
     setIsRunningTests = false;
+    // TODO: Do we still need this variable
     setShowPanel = true;
   }
-
-  // TODO: Update logic when working on JS challenges
-  // List<ConsoleMessage> _consoleMessages = [];
-  // List<ConsoleMessage> get consoleMessages => _consoleMessages;
-
-  // List<ConsoleMessage> _userConsoleMessages = [];
-  // List<ConsoleMessage> get userConsoleMessages => _userConsoleMessages;
-
-  // set setConsoleMessages(List<ConsoleMessage> messages) {
-  //   _consoleMessages = messages;
-  //   notifyListeners();
-  // }
-
-  // set setUserConsoleMessages(List<ConsoleMessage> messages) {
-  //   _userConsoleMessages = messages;
-  //   notifyListeners();
-  // }
-
-  // void handleConsoleLogMessagges(ConsoleMessage console, Challenge challenge) {
-  //   // Create a new console log message that adds html tags to the console message
-
-  //   ConsoleMessage newMessage = ConsoleMessage(
-  //     message: parseUsersConsoleMessages(console.message),
-  //     messageLevel: ConsoleMessageLevel.LOG,
-  //   );
-
-  //   String msg = console.message;
-
-  //   // We want to know if it is the first test because when the eval function is called
-  //   // it will run the first test and logs everything to the console. This means that
-  //   // we don't want to add the console messages more than once. So we ignore anything
-  //   // that comes after the first test.
-
-  //   bool testRelated = msg.startsWith('testMSG: ') || msg.startsWith('index: ');
-
-  //   if (msg.startsWith('first test done')) {
-  //     setAfterFirstTest = true;
-  //   }
-
-  //   if (!testRelated && !afterFirstTest) {
-  //     setUserConsoleMessages = [
-  //       ...userConsoleMessages,
-  //       newMessage,
-  //     ];
-  //   }
-
-  //   // When the message starts with testMSG it indactes that the user has done something
-  //   // that has triggered a test to throw an error. We want to show the error to the user.
-
-  //   if (msg.startsWith('testMSG: ')) {
-  //     setPanelType = PanelType.hint;
-  //     setHint = msg.split('testMSG: ')[1];
-
-  //     setConsoleMessages = [newMessage, ...userConsoleMessages];
-  //   }
-
-  //   if (msg == 'completed') {
-  //     setConsoleMessages = [
-  //       ...userConsoleMessages,
-  //       ...consoleMessages,
-  //     ];
-
-  //     setPanelType = PanelType.pass;
-  //     setCompletedChallenge = true;
-  //   }
-
-  //   setIsRunningTests = false;
-
-  //   if (panelType != PanelType.instruction) {
-  //     setShowPanel = true;
-  //   }
-  // }
 
   Widget getPanelWidget({
     required PanelType panelType,
