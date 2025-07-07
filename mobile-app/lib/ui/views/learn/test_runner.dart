@@ -56,7 +56,21 @@ return testRes;
       // JS-only challenges
       case 1:
       case 26:
-        return challengeFile;
+        // TODO: Move to learn file service
+        if (babelController == null) {
+          throw Exception('Babel controller is required to transpile JS code.');
+        }
+
+        final babelRes = await babelController.callAsyncJavaScript(
+          functionBody: ScriptBuilder.transpileScript,
+          arguments: {'code': challengeFile},
+        );
+
+        if (babelRes?.error != null) {
+          throw Exception('Babel transpilation failed: ${babelRes?.error}');
+        }
+
+        return babelRes?.value ?? challengeFile;
       default:
         String parsedWithStyleTags =
             await fileService.parseCssDocumentsAsStyleTags(
