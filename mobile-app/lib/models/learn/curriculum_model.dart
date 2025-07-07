@@ -1,39 +1,111 @@
+const chapterBasedSuperBlocks = ['full-stack-developer'];
+
+enum SuperBlocks {
+  respWebDesignNew('2022/responsive-web-design'),
+  respWebDesign('responsive-web-design'),
+  jsAlgoDataStruct('javascript-algorithms-and-data-structures'),
+  jsAlgoDataStructNew('javascript-algorithms-and-data-structures-v8'),
+  frontEndDevLibs('front-end-development-libraries'),
+  dataVis('data-visualization'),
+  relationalDb('relational-database'),
+  backEndDevApis('back-end-development-and-apis'),
+  qualityAssurance('quality-assurance'),
+  sciCompPy('scientific-computing-with-python'),
+  dataAnalysisPy('data-analysis-with-python'),
+  infoSec('information-security'),
+  machineLearningPy('machine-learning-with-python'),
+  codingInterviewPrep('coding-interview-prep'),
+  theOdinProject('the-odin-project'),
+  projectEuler('project-euler'),
+  collegeAlgebraPy('college-algebra-with-python'),
+  foundationalCSharp('foundational-c-sharp-with-microsoft'),
+  fullStackDeveloper('full-stack-developer'),
+  a2English('a2-english-for-developers'),
+  b1English('b1-english-for-developers'),
+  a2Spanish('a2-professional-spanish'),
+  a2Chinese('a2-professional-chinese'),
+  rosettaCode('rosetta-code'),
+  pythonForEverybody('python-for-everybody'),
+  devPlayground('dev-playground');
+
+  final String value;
+  const SuperBlocks(this.value);
+
+  static SuperBlocks fromValue(String value) {
+    return SuperBlocks.values.firstWhere(
+      (superBlock) => superBlock.value == value,
+      orElse: () => throw ArgumentError('Invalid super block value: $value'),
+    );
+  }
+}
+
 class SuperBlock {
   final String dashedName;
   final String name;
   final List<Block>? blocks;
+  final List<Chapter>? chapters;
 
-  SuperBlock({
-    required this.dashedName,
-    required this.name,
-    this.blocks,
-  });
+  SuperBlock(
+      {required this.dashedName,
+      required this.name,
+      this.blocks,
+      this.chapters});
 
   factory SuperBlock.fromJson(
     Map<String, dynamic> data,
     String dashedName,
     String name,
   ) {
+    if (chapterBasedSuperBlocks.contains(dashedName)) {
+      return SuperBlock(
+        dashedName: dashedName,
+        name: name,
+        chapters: (data[data.keys.first]['chapters']).map<Chapter>((chapter) {
+          return Chapter(
+            name: chapter['name'],
+            dashedName: chapter['dashedName'],
+            comingSoon: chapter['comingSoon'] ?? false,
+            chapterType: chapter['chapterType'] != null
+                ? ChapterType.fromValue(chapter['chapterType'])
+                : null,
+            modules: (chapter['modules']).map<Module>((module) {
+              return Module(
+                  name: module['name'] ?? 'No name',
+                  dashedName: module['dashedName'],
+                  comingSoon: module['comingSoon'] ?? false,
+                  moduleType: module['moduleType'] != null
+                      ? ModuleType.fromValue(module['moduleType'])
+                      : null,
+                  blocks: (module['blocks']).map<Block>((block) {
+                    return Block.fromJson(
+                      block['meta'],
+                      block['intro'],
+                      block['meta']['dashedName'],
+                      dashedName,
+                      name,
+                    );
+                  }).toList());
+            }).toList(),
+          );
+        }).toList(),
+      );
+    }
+
     return SuperBlock(
       dashedName: dashedName,
       name: name,
-      blocks: (data[data.keys.first]['blocks'] as Map)
-          .map((key, value) {
-            return MapEntry(
-              key,
-              Block.fromJson(
-                value['challenges'],
-                value['desc'],
-                key,
-                dashedName,
-                name,
-              ),
-            );
-          })
-          .values
-          .toList()
+      blocks: (data[data.keys.first]['blocks']).map<Block>((block) {
+        return Block.fromJson(
+          block['meta'],
+          block['intro'],
+          block['meta']['dashedName'],
+          dashedName,
+          name,
+        );
+      }).toList()
         ..sort(
-          (Block a, Block b) => a.order.compareTo(b.order),
+          // `order` is guaranteed for block-based super blocks.
+          (Block a, Block b) => a.order!.compareTo(b.order!),
         ),
     );
   }
@@ -46,42 +118,53 @@ class SuperBlock {
   }
 }
 
+enum BlockType {
+  lecture,
+  workshop,
+  lab,
+  review,
+  quiz,
+  exam,
+  legacy,
+}
+
+enum BlockLayout {
+  challengeList,
+  challengeGrid,
+  challengeDialogue,
+  challengeLink,
+  project,
+}
+
 class Block {
   final String name;
   final String dashedName;
   final SuperBlock superBlock;
+  final BlockLayout layout;
+  final BlockType type;
   final List description;
-  final bool isStepBased;
-  final int order;
+  // Blocks in chapter-based super blocks don't have `order`.
+  final int? order;
 
   final List<ChallengeOrder> challenges;
   final List<ChallengeListTile> challengeTiles;
 
   Block({
     required this.superBlock,
+    required this.layout,
+    required this.type,
     required this.name,
     required this.dashedName,
     required this.description,
-    required this.isStepBased,
-    required this.order,
     required this.challenges,
     required this.challengeTiles,
+    this.order,
   });
-
-  static bool checkIfStepBased(String superblock) {
-    List<String> stepbased = [
-      '2022/responsive-web-design',
-      'a2-english-for-developers',
-      'b1-english-for-developers'
-    ];
-
-    return stepbased.contains(superblock);
-  }
 
   factory Block.fromJson(
     Map<String, dynamic> data,
     List description,
-    String key,
+    String dashedName,
     String superBlockDashedName,
     String superBlockName,
   ) {
@@ -90,18 +173,45 @@ class Block {
 
     data['challengeTiles'] = [];
 
+    BlockLayout handleLayout(String? layout) {
+      switch (layout) {
+        case 'project-list':
+        case 'challenge-list':
+        case 'legacy-challenge-list':
+          return BlockLayout.challengeList;
+        case 'dialogue-grid':
+          return BlockLayout.challengeDialogue;
+        case 'challenge-grid':
+        case 'legacy-challenge-grid':
+          return BlockLayout.challengeGrid;
+        case 'link':
+        case 'legacy-link':
+          return BlockLayout.challengeLink;
+        default:
+          return BlockLayout.challengeGrid;
+      }
+    }
+
+    BlockType blockTypeFromString(String type) {
+      return BlockType.values.firstWhere(
+        (e) => e.name.toLowerCase() == type.toLowerCase(),
+        orElse: () => BlockType.legacy, // or return null if preferred
+      );
+    }
+
     return Block(
       superBlock: SuperBlock(
         dashedName: superBlockDashedName,
         name: superBlockName,
       ),
+      layout: handleLayout(data['blockLayout']),
+      type: data['blockType'] != null
+          ? blockTypeFromString(data['blockType'])
+          : BlockType.legacy,
       name: data['name'],
-      dashedName: key,
+      dashedName: dashedName,
       description: description,
       order: data['order'],
-      isStepBased: checkIfStepBased(
-        superBlockDashedName,
-      ),
       challenges: (data['challengeOrder'] as List)
           .map<ChallengeOrder>(
             (dynamic challenge) => ChallengeOrder(
@@ -124,22 +234,6 @@ class Block {
           )
           .toList(),
     );
-  }
-
-  static Map<String, dynamic> toCachedObject(Block block) {
-    return {
-      'superBlock': {
-        'dashedName': block.superBlock.dashedName,
-        'name': block.superBlock.name,
-      },
-      'name': block.name,
-      'dashedName': block.dashedName,
-      'description': block.description,
-      'order': block.order,
-      'isStepBased': block.isStepBased,
-      'challengeOrder': block.challenges,
-      'challengeTiles': block.challenges,
-    };
   }
 }
 
@@ -174,5 +268,66 @@ class ChallengeOrder {
   ChallengeOrder({
     required this.id,
     required this.title,
+  });
+}
+
+enum ChapterType {
+  exam('exam');
+
+  static ChapterType fromValue(String value) {
+    return ChapterType.values.firstWhere(
+      (chapterType) => chapterType.value == value,
+      orElse: () => throw ArgumentError('Invalid chapter type value: $value'),
+    );
+  }
+
+  final String value;
+  const ChapterType(this.value);
+}
+
+class Chapter {
+  final String name;
+  final String dashedName;
+  final bool? comingSoon;
+  final ChapterType? chapterType;
+  final List<Module>? modules;
+
+  Chapter({
+    required this.name,
+    required this.dashedName,
+    this.comingSoon,
+    this.chapterType,
+    this.modules,
+  });
+}
+
+enum ModuleType {
+  review('review'),
+  exam('exam');
+
+  static ModuleType fromValue(String value) {
+    return ModuleType.values.firstWhere(
+      (moduleType) => moduleType.value == value,
+      orElse: () => throw ArgumentError('Invalid module type value: $value'),
+    );
+  }
+
+  final String value;
+  const ModuleType(this.value);
+}
+
+class Module {
+  final String name;
+  final String dashedName;
+  final bool? comingSoon;
+  final ModuleType? moduleType;
+  final List<Block>? blocks;
+
+  Module({
+    required this.name,
+    required this.dashedName,
+    this.comingSoon,
+    this.moduleType,
+    this.blocks,
   });
 }

@@ -17,11 +17,56 @@ jobs:
   mobile-test:
     name: Test curriculum for mobile app
     runs-on: ubuntu-22.04
-    strategy:
-      matrix:
-        node-version: [20.x]
 
     steps:
+      - name: Remove unused software
+        working-directory: /
+        run: |
+          sudo rm -rf /usr/share/dotnet
+          sudo rm -rf /opt/ghc
+          sudo rm -rf "/usr/local/share/boost"
+          sudo rm -rf "$AGENT_TOOLSDIRECTORY"
+          echo "Free space:"
+          df -h /
+
+      - name: Enable KVM
+        run: |
+          echo 'KERNEL=="kvm", GROUP="kvm", MODE="0666", OPTIONS+="static_node=kvm"' | sudo tee /etc/udev/rules.d/99-kvm4all.rules
+          sudo udevadm control --reload-rules
+          sudo udevadm trigger --name-match=kvm
+
+      - name: Gradle cache
+        uses: gradle/actions/setup-gradle@d9c87d481d55275bb5441eef3fe0e46805f9ef70 # v3
+        with:
+          gradle-version: 8.7
+
+      - name: Setup Java 17
+        uses: actions/setup-java@c5195efecf7bdfc987ee8bae7a71cb8b11521c00 # v4
+        with:
+          distribution: "temurin"
+          java-version: "17"
+
+      - name: AVD cache
+        uses: actions/cache@5a3ec84eff668545956fd18022155c47e93e2684 # v4
+        id: avd-cache
+        with:
+          path: |
+            ~/.android/avd/*
+            ~/.android/adb*
+          key: avd-34
+
+      - name: Ceate AVD and generate snapshot for caching
+        if: steps.avd-cache.outputs.cache-hit != 'true'
+        uses: reactivecircus/android-emulator-runner@1dcd0090116d15e7c562f8db72807de5e036a4ed # v2
+        with:
+          api-level: 34
+          target: google_apis
+          arch: x86_64
+          force-avd-creation: false
+          emulator-options: -no-window -gpu swiftshader_indirect -noaudio -no-boot-anim -camera-back none
+          disable-animations: false
+          script: echo "Generated AVD snapshot for caching."
+
       - name: Checkout freeCodeCamp main repo
         uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4
         with:
@@ -36,27 +81,24 @@ jobs:
       - name: Setup pnpm
         uses: pnpm/action-setup@v2
         with:
-          version: 9
+          version: 10
 
-      - name: Use Node.js ${{ matrix.node-version }}
-        uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4
-        with:
-          node-version: ${{ matrix.node-version }}
-          cache: pnpm
-          cache-dependency-path: freeCodeCamp/pnpm-lock.yaml
-
-      - name: Setup Flutter 3.29.x
+      - name: Setup Flutter 3.32.x
         uses: subosito/flutter-action@e938fdf56512cc96ef2f93601a5a40bde3801046 # v2
         with:
-          flutter-version: "3.29.x"
+          flutter-version: "3.32.x"
           channel: "stable"
           cache: true
-          cache-key: flutter-3.29.x
+          cache-key: flutter-3.32.x
           cache-path: ${{ runner.tool_cache }}/flutter
 
       - name: Set freeCodeCamp Environment Variables
         working-directory: freeCodeCamp
         run: cp sample.env .env
+
+      - name: Create dummy mobile app .env file
+        working-directory: mobile/mobile-app
+        run: touch .env
 
       - name: Install and Build Curriculum
         working-directory: freeCodeCamp
@@ -64,33 +106,28 @@ jobs:
           pnpm install
           pnpm run create:shared
           pnpm run build:curriculum
+          pnpm run clean:packages
 
-      - name: Install mobile dependencies
-        working-directory: mobile
-        run: npm ci
-
-      - name: Generate mobile test files
+      - name: Install mobile app dependencies
         working-directory: mobile/mobile-app
-        run: |
-          echo "DEVELOPMENTMODE=true" > .env
-          echo "HASHNODE_PUBLICATION_ID=$HASHNODE_PUBLICATION_ID" > .env
-          flutter pub get
-          flutter test test/widget_test.dart
+        run: flutter pub get
 
-      - name: Install playwright dependencies
-        working-directory: mobile
-        run: npx playwright install --with-deps
-
-      - name: Install serve
-        run: npm install -g serve
-
-      - name: Run playwright tests
-        working-directory: mobile
-        run: npx playwright test --config=e2e/playwright.config.js
-
-      - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
-        if: ${{ !cancelled() }}
+      - name: Run curriculum tests in emulator
+        uses: reactivecircus/android-emulator-runner@1dcd0090116d15e7c562f8db72807de5e036a4ed # v2
         with:
-          name: playwright-report-mobile
-          path: playwright/reporter
-          retention-days: 30
+          api-level: 34
+          target: google_apis
+          arch: x86_64
+          force-avd-creation: false
+          emulator-options: -no-snapshot-save -no-window -gpu swiftshader_indirect -noaudio -no-boot-anim -camera-back none
+          disable-animations: true
+          script: cd mobile/mobile-app && if adb shell pm list packages | grep -q org.freecodecamp; then adb uninstall org.freecodecamp; fi && dart integration_test_runner.dart --curriculum ${RUNNER_DEBUG:+--debug}
+
+      - name: Upload failed tests logs
+        if: failure()
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
+        with:
+          name: test_runner_results.txt
+          path: mobile/mobile-app/integration_test/test_runner/test_runner_results.txt
+          if-no-files-found: error
+          retention-days: 7

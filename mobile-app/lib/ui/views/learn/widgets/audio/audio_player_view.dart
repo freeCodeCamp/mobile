@@ -1,6 +1,7 @@
 import 'package:audio_service/audio_service.dart';
 import 'package:flutter/material.dart';
 import 'package:freecodecamp/models/learn/challenge_model.dart';
+import 'package:freecodecamp/ui/theme/fcc_theme.dart';
 import 'package:freecodecamp/ui/views/learn/widgets/audio/audio_player_viewmodel.dart';
 import 'package:stacked/stacked.dart';
 
@@ -21,28 +22,16 @@ class AudioPlayerView extends StatelessWidget {
       builder: (context, model, child) => Padding(
         padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 16),
         child: StreamBuilder(
+          initialData: PlaybackState(),
           stream: model.audioService.playbackState,
           builder: (context, snapshot) {
-            if (snapshot.hasData) {
-              final playerState = snapshot.data as PlaybackState;
+            final playerState = snapshot.data as PlaybackState;
 
-              List<AudioProcessingState> validStates = [
-                AudioProcessingState.completed,
-                AudioProcessingState.idle,
-                AudioProcessingState.loading,
-                AudioProcessingState.ready,
-              ];
-
-              if (validStates.contains(playerState.processingState)) {
-                return InnerAudioWidget(
-                  model: model,
-                  audio: audio,
-                  playerState: playerState,
-                );
-              }
-            }
-
-            return const CircularProgressIndicator();
+            return InnerAudioWidget(
+              model: model,
+              audio: audio,
+              playerState: playerState,
+            );
           },
         ),
       ),
@@ -93,6 +82,10 @@ class InnerAudioWidget extends StatelessWidget {
           return Column(
             children: [
               LinearProgressIndicator(
+                backgroundColor: FccColors.gray75,
+                valueColor: const AlwaysStoppedAnimation<Color>(
+                  FccColors.blue50,
+                ),
                 value: hasZeroValue ? 0 : position.inMilliseconds / handleTotal,
                 minHeight: 8,
               ),

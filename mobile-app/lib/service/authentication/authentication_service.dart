@@ -44,6 +44,8 @@ class AuthenticationService {
   static StreamController<bool> isLoggedInStream =
       StreamController<bool>.broadcast();
 
+  StreamController<bool> progress = StreamController.broadcast();
+
   final Stream<bool> _isLoggedIn = isLoggedInStream.stream;
   Stream<bool> get isLoggedIn => _isLoggedIn;
   static bool staticIsloggedIn = false;
@@ -354,6 +356,9 @@ class AuthenticationService {
   Future<void> logout() async {
     staticIsloggedIn = false;
     isLoggedInStream.sink.add(false);
+    _csrf = '';
+    _csrfToken = '';
+    _jwtAccessToken = '';
     await store.delete(key: 'csrf');
     await store.delete(key: 'csrf_token');
     await store.delete(key: 'jwt_access_token');
@@ -377,6 +382,7 @@ class AuthenticationService {
         userModel = parseUserModel(res.data['user'][res.data['result']]);
         staticIsloggedIn = true;
         isLoggedInStream.sink.add(true);
+        progress.add(true);
       } else {
         staticIsloggedIn = false;
         isLoggedInStream.sink.add(false);

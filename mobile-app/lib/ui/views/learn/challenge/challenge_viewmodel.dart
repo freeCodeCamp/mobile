@@ -1,6 +1,9 @@
+import 'dart:async';
 import 'dart:convert';
+import 'dart:developer';
+
 import 'package:dio/dio.dart';
-import 'package:flutter/widgets.dart';
+import 'package:flutter/material.dart';
 import 'package:flutter_inappwebview/flutter_inappwebview.dart';
 import 'package:freecodecamp/app/app.locator.dart';
 import 'package:freecodecamp/app/app.router.dart';
@@ -15,8 +18,11 @@ import 'package:freecodecamp/service/learn/learn_file_service.dart';
 import 'package:freecodecamp/service/learn/learn_offline_service.dart';
 import 'package:freecodecamp/service/learn/learn_service.dart';
 import 'package:freecodecamp/ui/views/learn/test_runner.dart';
+import 'package:freecodecamp/ui/views/learn/widgets/description/description_widget_view.dart';
+import 'package:freecodecamp/ui/views/learn/widgets/hint/hint_widget_view.dart';
+import 'package:freecodecamp/ui/views/learn/widgets/pass/pass_widget_view.dart';
 import 'package:freecodecamp/ui/widgets/setup_dialog_ui.dart';
-import 'package:html/dom.dart' as dom;
+import 'package:html/dom.dart';
 import 'package:html/parser.dart';
 import 'package:phone_ide/controller/custom_text_controller.dart';
 import 'package:phone_ide/models/textfield_data.dart';
@@ -26,8 +32,17 @@ import 'package:stacked/stacked.dart';
 import 'package:stacked_services/stacked_services.dart';
 
 class ChallengeViewModel extends BaseViewModel {
+  final InAppLocalhostServer _localhostServer =
+      InAppLocalhostServer(documentRoot: 'assets/test_runner');
+
+  Editor? _editor;
+  Editor? get editor => _editor;
+
   String? _editorText;
   String? get editorText => _editorText;
+
+  String _editorLanguage = 'html';
+  String get editorLanguage => _editorLanguage;
 
   String _currentSelectedFile = '';
   String get currentSelectedFile => _currentSelectedFile;
@@ -50,9 +65,6 @@ class ChallengeViewModel extends BaseViewModel {
   bool _runningTests = false;
   bool get runningTests => _runningTests;
 
-  bool _afterFirstTest = false;
-  bool get afterFirstTest => _afterFirstTest;
-
   bool _hasTypedInEditor = false;
   bool get hasTypedInEditor => _hasTypedInEditor;
 
@@ -61,6 +73,12 @@ class ChallengeViewModel extends BaseViewModel {
 
   bool _symbolBarIsScrollable = true;
   bool get symbolBarIsScrollable => _symbolBarIsScrollable;
+
+  List<String> _testConsoleMessages = [];
+  List<String> get testConsoleMessages => _testConsoleMessages;
+
+  List<String> _userConsoleMessages = [];
+  List<String> get userConsoleMessages => _userConsoleMessages;
 
   ScrollController symbolBarScrollController = ScrollController();
 
@@ -73,18 +91,30 @@ class ChallengeViewModel extends BaseViewModel {
   InAppWebViewController? _testController;
   InAppWebViewController? get testController => _testController;
 
-  List<ConsoleMessage> _consoleMessages = [];
-  List<ConsoleMessage> get consoleMessages => _consoleMessages;
-
-  List<ConsoleMessage> _userConsoleMessages = [];
-  List<ConsoleMessage> get userConsoleMessages => _userConsoleMessages;
-
-  Syntax _currFileType = Syntax.HTML;
-  Syntax get currFileType => _currFileType;
+  final HeadlessInAppWebView _babelWebView = HeadlessInAppWebView(
+    initialData: InAppWebViewInitialData(
+      data: '<html><head><title>Babel</title></head><body></body></html>',
+      mimeType: 'text/html',
+      baseUrl: WebUri('http://localhost:8080/babel-transformer'),
+    ),
+    onConsoleMessage: (controller, console) {
+      log('Babel Console message: ${console.message}');
+    },
+    onLoadStop: (controller, url) async {
+      final res = await controller.injectJavascriptFileFromAsset(
+          assetFilePath: 'assets/test_runner/babel/babel.min.js');
+      log('Babel load: $res');
+    },
+    initialSettings: InAppWebViewSettings(
+      isInspectable: true,
+    ),
+  );
 
   bool _mounted = false;
+  bool get mounted => _mounted;
 
-  TestRunner runner = TestRunner();
+  String _editableRegionContent = '';
+  String get editableRegionContent => _editableRegionContent;
 
   SnackbarService snackbar = locator<SnackbarService>();
 
@@ -110,6 +140,10 @@ class ChallengeViewModel extends BaseViewModel {
 
   final _dio = DioService.dio;
 
+  late StreamSubscription<TextFieldData> _textFieldDataSub;
+  late StreamSubscription<String> _onTextChangeSub;
+  StreamSubscription<String>? _editableRegionSub;
+
   set setCurrentSelectedFile(String value) {
     _currentSelectedFile = value;
     notifyListeners();
@@ -120,8 +154,8 @@ class ChallengeViewModel extends BaseViewModel {
     notifyListeners();
   }
 
-  set setAfterFirstTest(bool value) {
-    _afterFirstTest = value;
+  set setEditableRegionContent(String value) {
+    _editableRegionContent = value;
     notifyListeners();
   }
 
@@ -195,23 +229,8 @@ class ChallengeViewModel extends BaseViewModel {
     notifyListeners();
   }
 
-  set setCurrFileType(Syntax value) {
-    _currFileType = value;
-    notifyListeners();
-  }
-
   set setMounted(bool value) {
     _mounted = value;
-    notifyListeners();
-  }
-
-  set setConsoleMessages(List<ConsoleMessage> messages) {
-    _consoleMessages = messages;
-    notifyListeners();
-  }
-
-  set setUserConsoleMessages(List<ConsoleMessage> messages) {
-    _userConsoleMessages = messages;
     notifyListeners();
   }
 
@@ -225,58 +244,152 @@ class ChallengeViewModel extends BaseViewModel {
     notifyListeners();
   }
 
+  set setEditor(Editor editor) {
+    _editor = editor;
+    notifyListeners();
+  }
+
+  set setEditorLanguage(String value) {
+    _editorLanguage = value;
+    notifyListeners();
+  }
+
+  set setTestConsoleMessages(List<String> messages) {
+    _testConsoleMessages = messages;
+    notifyListeners();
+  }
+
+  set setUserConsoleMessages(List<String> messages) {
+    _userConsoleMessages = messages;
+    notifyListeners();
+  }
+
+  bool _showTestsPanel = false;
+  bool get showTestsPanel => _showTestsPanel;
+
+  set setShowTestsPanel(bool value) {
+    _showTestsPanel = value;
+    notifyListeners();
+  }
+
+  bool _drawerOpened = false;
+  bool get drawerOpened => _drawerOpened;
+  set setDrawerOpened(bool value) {
+    _drawerOpened = value;
+    notifyListeners();
+  }
+
+  GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
+  GlobalKey<ScaffoldState> get scaffoldKey => _scaffoldKey;
+  set setScaffoldKey(GlobalKey<ScaffoldState> key) {
+    _scaffoldKey = key;
+    notifyListeners();
+  }
+
   void init(
     Block block,
     Challenge challenge,
     int challengesCompleted,
   ) async {
+    await _babelWebView.run();
+    await _localhostServer.start();
+
     setupDialogUi();
 
     setChallenge = challenge;
     setBlock = block;
     setChallengesCompleted = challengesCompleted;
+
+    listenToSymbolBarScrollController();
+  }
+
+  void closeWebViews() async {
+    await _babelWebView.dispose();
+    await _localhostServer.close();
   }
 
   void initFile(
-    Editor editor,
     Challenge challenge,
     ChallengeFile currFile,
-    bool hasRegion,
   ) async {
     if (!_mounted) {
-      await Future.delayed(Duration.zero);
       String fileContents = await fileService.getExactFileFromCache(
         challenge,
         currFile,
       );
-      editor.fileTextStream.sink.add(
-        FileIDE(
-          id: challenge.id + currFile.name,
-          ext: currFile.ext.name,
-          name: currFile.name,
-          content: fileContents,
-          hasRegion: hasRegion,
-          region: EditorRegionOptions(
-            start: hasRegion ? currFile.editableRegionBoundaries[0] : null,
-            end: hasRegion ? currFile.editableRegionBoundaries[1] : null,
-            condition: completedChallenge,
-          ),
-        ),
-      );
-      _mounted = true;
 
-      if (currFile.name != currentSelectedFile) {
-        setCurrentSelectedFile = currFile.name;
-        setEditorText = fileContents;
-      }
+      setCurrentSelectedFile = currFile.name;
+      setEditorText = fileContents;
+      setEditorLanguage = currFile.ext.value;
+      initEditor(challenge, currFile);
+      setMounted = true;
     }
   }
 
-  void listenToFocusedController(Editor editor) {
-    editor.textfieldData.stream.listen((textfieldData) {
+  void initEditor(Challenge challenge, ChallengeFile file) {
+    bool editableRegion = file.editableRegionBoundaries.isNotEmpty;
+
+    EditorOptions options = EditorOptions(
+      regionOptions: editableRegion
+          ? EditorRegionOptions(
+              start: file.editableRegionBoundaries[0],
+              end: file.editableRegionBoundaries[1],
+            )
+          : null,
+      fontFamily: 'Hack',
+    );
+
+    Editor editor = Editor(
+      key: ValueKey(editorText),
+      defaultLanguage: editorLanguage,
+      defaultValue: editorText ?? '',
+      path: '/${challenge.id}/${file.name}',
+      options: options,
+    );
+
+    setEditor = editor;
+
+    initEditorListeners(challenge, file, editor);
+  }
+
+  void initEditorListeners(
+    Challenge challenge,
+    ChallengeFile file,
+    Editor editor,
+  ) {
+    bool editableRegion = file.editableRegionBoundaries.isNotEmpty;
+
+    _textFieldDataSub = editor.textfieldData.stream.listen((textfieldData) {
       setTextFieldData = textfieldData;
       setShowPanel = false;
     });
+
+    _onTextChangeSub = editor.onTextChange.stream.listen((text) {
+      fileService.saveFileInCache(
+        challenge,
+        currentSelectedFile,
+        text,
+      );
+
+      setEditorText = text;
+      setHasTypedInEditor = true;
+      setCompletedChallenge = false;
+    });
+
+    if (editableRegion) {
+      _editableRegionSub = editor.editableRegion.stream.listen((region) {
+        setEditableRegionContent = region;
+      });
+    }
+  }
+
+  void disposeOfListeners() {
+    _textFieldDataSub.cancel();
+    _onTextChangeSub.cancel();
+
+    if (_editableRegionSub != null) {
+      _editableRegionSub!.cancel();
+    }
   }
 
   void listenToSymbolBarScrollController() {
@@ -297,6 +410,11 @@ class ChallengeViewModel extends BaseViewModel {
     final RegionPosition position = textFieldData!.position;
     final String text = focused.text;
     final selection = focused.selection;
+
+    if (symbol == 'Tab') {
+      symbol = '\t';
+    }
+
     final newText = text.replaceRange(selection.start, selection.end, symbol);
     focused.value = TextEditingValue(
       text: newText,
@@ -322,7 +440,7 @@ class ChallengeViewModel extends BaseViewModel {
       if (res.statusCode == 200) {
         Challenge challenge = Challenge.fromJson(res.data);
 
-        prefs.setString(url, res.data);
+        await prefs.setString(url, res.data);
 
         return challenge;
       }
@@ -350,24 +468,40 @@ class ChallengeViewModel extends BaseViewModel {
         .where((ChallengeFile file) => file.ext == Ext.css)
         .toList();
 
-    dom.Document document = parse(doc);
+    List<ChallengeFile> jsFiles = currChallenge.files
+        .where((ChallengeFile file) => file.ext == Ext.js)
+        .toList();
+
+    Document document = parse(doc);
+    String? cssParsed, jsParsed;
 
     List<ChallengeFile> currentFile = currChallenge.files
         .where((element) => element.ext == Ext.html)
         .toList();
 
-    if (cssFiles.isNotEmpty) {
-      String text = prefs.getString(
-            '${currChallenge.id}.${currentFile[0].name}',
-          ) ??
-          currentFile[0].contents;
+    String text = prefs.getString(
+          '${currChallenge.id}.${currentFile[0].name}',
+        ) ??
+        currentFile[0].contents;
 
-      document = parse(
-        await fileService.parseCssDocmentsAsStyleTags(
-          currChallenge,
-          text,
-        ),
+    // TODO: Remove check since we do it in function also
+    if (cssFiles.isNotEmpty) {
+      cssParsed = await fileService.parseCssDocmentsAsStyleTags(
+        currChallenge,
+        text,
       );
+
+      document = parse(cssParsed);
+    }
+
+    if (jsFiles.isNotEmpty) {
+      jsParsed = await fileService.parseJsDocmentsAsScriptTags(
+        currChallenge,
+        cssParsed ?? text,
+        _babelWebView.webViewController,
+      );
+
+      document = parse(jsParsed);
     }
 
     String viewPort = '''<meta content="width=device-width,
@@ -375,8 +509,8 @@ class ChallengeViewModel extends BaseViewModel {
          user-scalable=no" name="viewport">
          <meta>''';
 
-    dom.Document viewPortParsed = parse(viewPort);
-    dom.Node meta = viewPortParsed.getElementsByTagName('META')[0];
+    Document viewPortParsed = parse(viewPort);
+    Node meta = viewPortParsed.getElementsByTagName('META')[0];
 
     document.getElementsByTagName('HEAD')[0].append(meta);
 
@@ -441,8 +575,8 @@ class ChallengeViewModel extends BaseViewModel {
       Challenge? currChallenge = challenge;
 
       for (ChallengeFile file in currChallenge!.files) {
-        prefs.remove('${currChallenge.id}.${file.name}');
-        prefs.remove('${currChallenge.id}${file.name}');
+        await prefs.remove('${currChallenge.id}.${file.name}');
+        await prefs.remove('${currChallenge.id}${file.name}');
       }
 
       var challengeIndex = block!.challengeTiles.indexWhere(
@@ -450,7 +584,7 @@ class ChallengeViewModel extends BaseViewModel {
       );
 
       String slug = block!.challengeTiles[challengeIndex].id;
-      String url = LearnService.baseUrl;
+      String url = LearnService.baseUrlV2;
       String challengeUrl =
           '$url/challenges/${block!.superBlock.dashedName}/${block!.dashedName}/$slug.json';
 
@@ -467,58 +601,120 @@ class ChallengeViewModel extends BaseViewModel {
     }
   }
 
-  void handleConsoleLogMessagges(ConsoleMessage console, Challenge challenge) {
-    // Create a new console log message that adds html tags to the console message
+  void runTests() async {
+    setShowPanel = false;
+    setIsRunningTests = true;
+    ChallengeTest? failedTest;
+    ScriptBuilder builder = ScriptBuilder();
+    List<String> failedTestsConsole = [];
 
-    ConsoleMessage newMessage = ConsoleMessage(
-      message: parseUsersConsoleMessages(console.message),
-      messageLevel: ConsoleMessageLevel.LOG,
+    _userConsoleMessages = [];
+    setTestConsoleMessages = ['<p>// running tests</p>'];
+
+    // Get user code console messages
+    if (challenge!.challengeType == 1 || challenge!.challengeType == 26) {
+      final evalResult = await testController!.callAsyncJavaScript(
+        functionBody: await builder.buildUserCode(
+          challenge!,
+          _babelWebView.webViewController,
+        ),
+      );
+      if (evalResult != null && evalResult.error != null) {
+        setUserConsoleMessages = [
+          ...userConsoleMessages.sublist(0, userConsoleMessages.length - 1),
+          '<p>${evalResult.error}</p>',
+        ];
+      }
+    }
+
+    // TODO: Handle the case when the test runner is not created
+    // ignore: unused_local_variable
+    final updateTestRunnerRes = await testController!.callAsyncJavaScript(
+      functionBody: ScriptBuilder.runnerScript,
+      arguments: {
+        'userCode': await builder.buildUserCode(
+          challenge!,
+          _babelWebView.webViewController,
+        ),
+        'workerType': builder.getWorkerType(challenge!.challengeType),
+        'combinedCode': await builder.combinedCode(challenge!),
+        'editableRegionContent': editableRegionContent,
+        'hooks': {
+          'beforeAll': challenge!.hooks.beforeAll,
+          'beforeEach': challenge!.hooks.beforeEach,
+          'afterEach': challenge!.hooks.afterEach,
+        },
+      },
     );
 
-    String msg = console.message;
-
-    // We want to know if it is the first test because when the eval function is called
-    // it will run the first test and logs everything to the console. This means that
-    // we don't want to add the console messages more than once. So we ignore anything
-    // that comes after the first test.
-
-    bool testRelated = msg.startsWith('testMSG: ') || msg.startsWith('index: ');
-
-    if (msg.startsWith('first test done')) {
-      setAfterFirstTest = true;
+    for (ChallengeTest test in challenge!.tests) {
+      final testRes = await testController!.callAsyncJavaScript(
+        functionBody: ScriptBuilder.testExecutionScript,
+        arguments: {
+          'testStr': test.javaScript,
+        },
+      );
+      if (testRes?.value['pass'] == null) {
+        log('TEST FAILED: ${test.instruction} - ${test.javaScript} - ${testRes?.value['error']}');
+        failedTest = failedTest ?? test;
+        failedTestsConsole.add(
+          '<li>${test.instruction}</li>',
+        );
+      }
     }
 
-    if (!testRelated && !afterFirstTest) {
-      setUserConsoleMessages = [
-        ...userConsoleMessages,
-        newMessage,
-      ];
-    }
-
-    // When the message starts with testMSG it indactes that the user has done something
-    // that has triggered a test to throw an error. We want to show the error to the user.
-
-    if (msg.startsWith('testMSG: ')) {
+    if (failedTest != null) {
       setPanelType = PanelType.hint;
-      setHint = msg.split('testMSG: ')[1];
-
-      setConsoleMessages = [newMessage, ...userConsoleMessages];
-    }
-
-    if (msg == 'completed') {
-      setConsoleMessages = [
-        ...userConsoleMessages,
-        ...consoleMessages,
-      ];
-
+      setHint = failedTest.instruction;
+      _scaffoldKey.currentState?.openEndDrawer();
+    } else {
       setPanelType = PanelType.pass;
       setCompletedChallenge = true;
+      _scaffoldKey.currentState?.openEndDrawer();
     }
 
+    setTestConsoleMessages = [
+      ...testConsoleMessages,
+      failedTestsConsole.isNotEmpty
+          ? '<ol>${failedTestsConsole.join()}</ol>'
+          : '',
+      '<p>// tests completed</p>',
+    ];
     setIsRunningTests = false;
+    // TODO: Do we still need this variable
+    setShowPanel = true;
+  }
 
-    if (panelType != PanelType.instruction) {
-      setShowPanel = true;
+  Widget getPanelWidget({
+    required PanelType panelType,
+    required Challenge challenge,
+    required ChallengeViewModel model,
+    required int maxChallenges,
+    required int challengesCompleted,
+  }) {
+    switch (panelType) {
+      case PanelType.instruction:
+        return DescriptionView(
+          description: challenge.description,
+          instructions: challenge.instructions,
+          challengeModel: model,
+          maxChallenges: maxChallenges,
+          title: challenge.title,
+        );
+      case PanelType.hint:
+        return HintWidgetView(
+          hint: model.hint,
+          challengeModel: model,
+          editor: model.editor!,
+        );
+      case PanelType.pass:
+        return PassWidgetView(
+          challengeModel: model,
+          challengesCompleted: challengesCompleted,
+          maxChallenges: maxChallenges,
+        );
+      default:
+        return Container();
     }
   }
 }

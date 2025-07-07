@@ -27,8 +27,8 @@ class EpisodeListViewModel extends BaseViewModel {
     notifyListeners();
   }
 
-  late final PagingController<int, Episodes> _pagingController;
-  PagingController<int, Episodes> get pagingController => _pagingController;
+  PagingController<int, Episodes>? _pagingController;
+  PagingController<int, Episodes>? get pagingController => _pagingController;
 
   void initState(bool isDownloadView) async {
     _databaseService.initialise();
@@ -57,9 +57,9 @@ class EpisodeListViewModel extends BaseViewModel {
     notifyListeners();
     final List<Episodes> eps =
         episodes.map((e) => Episodes.fromAPIJson(e)).toList();
-    final prevCount = _pagingController.items?.length ?? 0;
+    final prevCount = _pagingController?.items?.length ?? 0;
     if (prevCount + 20 >= epsLength) {
-      _pagingController.value = _pagingController.value.copyWith(
+      _pagingController?.value = _pagingController!.value.copyWith(
         hasNextPage: false,
       );
     }
@@ -68,7 +68,7 @@ class EpisodeListViewModel extends BaseViewModel {
 
   @override
   void dispose() {
-    _pagingController.dispose();
+    _pagingController?.dispose();
     super.dispose();
   }
 }

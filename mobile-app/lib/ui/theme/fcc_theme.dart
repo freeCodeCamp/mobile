@@ -22,6 +22,7 @@ class FccColors {
   static const yellow45 = Color(0xFFFFBF00);
   static const yellow50 = Color(0xFFF1BE32);
   static const yellow70 = Color(0xFF8A6D3B);
+  static const yellow80 = Color(0xFF66512C);
   static const yellow90 = Color(0xFF4D3800);
 
   static const blue05 = Color(0xFFD9EDF7);
@@ -37,6 +38,7 @@ class FccColors {
   static const green10 = Color(0xFFD6E9C6);
   static const green40 = Color(0xFFACD157);
   static const green70 = Color(0xFF3C763D);
+  static const green80 = Color(0xFF19562A);
   static const green90 = Color(0xFF00471B);
 
   static const red05 = Color(0xFFF2DEDE);
@@ -46,6 +48,8 @@ class FccColors {
   static const red70 = Color(0xFFA94442);
   static const red80 = Color(0xFFF82153);
   static const red90 = Color(0xFF850000);
+
+  static const orange30 = Color(0xFFEDA971);
 }
 
 // Based on https://github.com/freeCodeCamp/ui/blob/01048178d606f404256c8f02299f6323c25e6a73/src/colors.css#L120-L140
@@ -58,6 +62,7 @@ class FccSemanticColors {
   static const foregroundSuccess = FccColors.green90;
   static const foregroundInfo = FccColors.blue90;
   static const foregroundWarning = FccColors.yellow40;
+  static const foregroundCta = FccColors.gray90;
 
   static const backgroundPrimary = FccColors.gray90;
   static const backgroundSecondary = FccColors.gray85;
@@ -67,6 +72,7 @@ class FccSemanticColors {
   static const backgroundSuccess = FccColors.green40;
   static const backgroundInfo = FccColors.blue30;
   static const backgroundSelection = FccColors.blue30Translucent;
+  static const backgroundCta = FccColors.yellow40;
 }
 
 class FccTheme {

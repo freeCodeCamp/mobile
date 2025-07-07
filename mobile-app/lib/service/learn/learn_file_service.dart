@@ -1,5 +1,7 @@
+import 'package:flutter_inappwebview/flutter_inappwebview.dart';
 import 'package:freecodecamp/enums/ext_type.dart';
 import 'package:freecodecamp/models/learn/challenge_model.dart';
+import 'package:freecodecamp/ui/views/learn/test_runner.dart';
 import 'package:html/dom.dart';
 import 'package:html/parser.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -76,7 +78,7 @@ class LearnFileService {
   // this function will get the current file which is being edited.
   // otherwise we can not detect which file is currently being worked on. This is only for the new RWD.
 
-  Future<String> getCurrentEditedFileFromCache(
+  Future<ChallengeFile> getCurrentEditedFileFromCache(
     Challenge challenge, {
     bool testing = false,
   }) async {
@@ -88,8 +90,8 @@ class LearnFileService {
 
     if (testing) {
       return fileWithEditableRegion.isNotEmpty
-          ? fileWithEditableRegion[0].contents
-          : challenge.files[0].contents;
+          ? fileWithEditableRegion[0]
+          : challenge.files[0];
     }
 
     SharedPreferences prefs = await SharedPreferences.getInstance();
@@ -101,12 +103,21 @@ class LearnFileService {
           '';
 
       if (cache.isNotEmpty) {
-        return removeExcessiveScriptsInHTMLdocument(cache);
+        ChallengeFile file = fileWithEditableRegion[0];
+
+        return ChallengeFile(
+          ext: file.ext,
+          name: file.name,
+          editableRegionBoundaries: file.editableRegionBoundaries,
+          contents: cache,
+          history: file.history,
+          fileKey: file.fileKey,
+        );
       } else {
-        return fileWithEditableRegion[0].contents;
+        return fileWithEditableRegion[0];
       }
     } else {
-      return challenge.files[0].contents;
+      return challenge.files[0];
     }
   }
 
@@ -137,6 +148,35 @@ class LearnFileService {
     }
 
     return linkedFileNames.contains(cssFileName);
+  }
+
+  // This function checks if the given document contains any script elements.
+  // If so check if the js file name corresponds with the names put in the array.
+  // If the file is linked return true.
+
+  Future<bool> jsFileIsLinked(
+    String document,
+    String jsFileName,
+  ) async {
+    Document doc = parse(document);
+
+    List<Node> scripts = doc.getElementsByTagName('SCRIPT');
+
+    List<String> linkedFileNames = [];
+
+    if (scripts.isNotEmpty) {
+      for (Node node in scripts) {
+        if (node.attributes['src'] == null) continue;
+
+        if (node.attributes['src']!.contains('/')) {
+          linkedFileNames.add(node.attributes['src']!.split('/').last);
+        } else if (node.attributes['src']!.isNotEmpty) {
+          linkedFileNames.add(node.attributes['src'] as String);
+        }
+      }
+    }
+
+    return linkedFileNames.contains(jsFileName);
   }
 
   // This function puts the given css content in the same file as the HTML content.
@@ -188,19 +228,61 @@ class LearnFileService {
     return content;
   }
 
-  String removeExcessiveScriptsInHTMLdocument(String file) {
-    Document document = parse(file);
-    List<Element> elements = document.querySelectorAll('SCRIPT');
+  // This function puts the given js content in the same file as the HTML content.
+  // It will parse the current JS content into script tags only if it is linked.
+  // If there is nothing to parse it will return the plain content document.
 
-    if (elements.isEmpty) return file;
+  Future<String> parseJsDocmentsAsScriptTags(
+    Challenge challenge,
+    String challengeContent,
+    InAppWebViewController? babelController, {
+    bool testing = false,
+  }) async {
+    List<ChallengeFile> jsFiles = challenge.files
+        .where(
+          (element) => element.ext == Ext.js,
+        )
+        .toList();
 
-    for (int i = 0; i < elements.length; i++) {
-      elements[i].remove();
+    if (jsFiles.isNotEmpty) {
+      for (ChallengeFile file in jsFiles) {
+        String filename = '${file.name}.${file.ext.name}';
+        String? fileContents = await getExactFileFromCache(
+          challenge,
+          file,
+          testing: testing,
+        );
+
+        if (!await jsFileIsLinked(challengeContent, filename)) {
+          continue;
+        }
+
+        if (babelController == null) {
+          throw Exception('Babel controller is required to transpile JS code.');
+        }
+
+        final babelRes = await babelController.callAsyncJavaScript(
+          functionBody: ScriptBuilder.transpileScript,
+          arguments: {'code': fileContents},
+        );
+
+        if (babelRes?.error != null) {
+          throw Exception('Babel transpilation failed: ${babelRes?.error}');
+        }
+        fileContents = babelRes?.value;
+
+        Document document = parse(challengeContent);
+
+        Element scriptElement =
+            document.querySelector('script[src\$="$filename"]')!;
+
+        scriptElement.text = fileContents;
+
+        challengeContent = document.outerHtml;
+      }
     }
 
-    file = document.outerHtml.toString();
-
-    return file;
+    return challengeContent;
   }
 
   String changeActiveFileLinks(String file) {

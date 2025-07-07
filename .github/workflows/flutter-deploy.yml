@@ -40,7 +40,7 @@ jobs:
       - name: Gradle cache
         uses: gradle/actions/setup-gradle@d9c87d481d55275bb5441eef3fe0e46805f9ef70 # v3
         with:
-          gradle-version: 7.6.3
+          gradle-version: 8.7
 
       - name: Setup Java 17
         uses: actions/setup-java@c5195efecf7bdfc987ee8bae7a71cb8b11521c00 # v4
@@ -55,13 +55,13 @@ jobs:
           path: |
             ~/.android/avd/*
             ~/.android/adb*
-          key: avd-33
+          key: avd-34
 
       - name: Ceate AVD and generate snapshot for caching
         if: steps.avd-cache.outputs.cache-hit != 'true'
         uses: reactivecircus/android-emulator-runner@1dcd0090116d15e7c562f8db72807de5e036a4ed # v2
         with:
-          api-level: 33
+          api-level: 34
           target: google_apis
           arch: x86_64
           force-avd-creation: false
@@ -69,13 +69,13 @@ jobs:
           disable-animations: false
           script: echo "Generated AVD snapshot for caching."
 
-      - name: Setup Flutter 3.29.x
+      - name: Setup Flutter 3.32.x
         uses: subosito/flutter-action@e938fdf56512cc96ef2f93601a5a40bde3801046 # v2
         with:
-          flutter-version: "3.29.x"
+          flutter-version: "3.32.x"
           channel: "stable"
           cache: true
-          cache-key: flutter-3.29.x
+          cache-key: flutter-3.32.x
           cache-path: ${{ runner.tool_cache }}/flutter
 
       - name: Create .env file
@@ -95,19 +95,10 @@ jobs:
       - name: Install packages
         run: flutter pub get
 
-      - name: Analyze code
-        run: flutter analyze
-
-      - name: Run unit tests
-        run: |
-          cd test
-          flutter test unit
-          flutter test services
-
       - name: Run tests in emulator
         uses: reactivecircus/android-emulator-runner@1dcd0090116d15e7c562f8db72807de5e036a4ed # v2
         with:
-          api-level: 33
+          api-level: 34
           target: google_apis
           arch: x86_64
           force-avd-creation: false

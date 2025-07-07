@@ -6,6 +6,8 @@ import 'package:freecodecamp/ui/views/learn/challenge/templates/english/english_
 import 'package:freecodecamp/ui/views/learn/challenge/templates/multiple_choice/multiple_choice_view.dart';
 import 'package:freecodecamp/ui/views/learn/challenge/templates/python-project/python_project_view.dart';
 import 'package:freecodecamp/ui/views/learn/challenge/templates/python/python_view.dart';
+import 'package:freecodecamp/ui/views/learn/challenge/templates/quiz/quiz_view.dart';
+import 'package:freecodecamp/ui/views/learn/challenge/templates/review/review_view.dart';
 import 'package:freecodecamp/ui/views/learn/challenge/templates/template_viewmodel.dart';
 import 'package:stacked/stacked.dart';
 
@@ -40,12 +42,22 @@ class ChallengeTemplateView extends StatelessWidget {
                   tiles.indexWhere((el) => el.id == challenge.id) + 1;
               switch (challengeType) {
                 case 0:
+                case 1:
                 case 14:
+                case 20:
+                case 25:
+                case 26:
                   return ChallengeView(
                     challenge: challenge,
                     block: block,
                     challengesCompleted: challengesCompleted,
                     isProject: tiles.length > 1,
+                  );
+                case 8:
+                  return QuizView(
+                    challenge: challenge,
+                    block: block,
+                    challengesCompleted: challengesCompleted,
                   );
                 case 10:
                   return PythonProjectView(
@@ -75,6 +87,12 @@ class ChallengeTemplateView extends StatelessWidget {
                     block: block,
                     currentChallengeNum: challNum,
                   );
+                case 24:
+                  return ReviewView(
+                    challenge: challenge,
+                    block: block,
+                    challengesCompleted: challengesCompleted,
+                  );
                 default:
                   return Center(
                     child: Text(
@@ -82,6 +100,14 @@ class ChallengeTemplateView extends StatelessWidget {
                     ),
                   );
               }
+            }
+
+            if (snapshot.hasError) {
+              return Center(
+                child: Text(
+                  'Error: ${snapshot.error}\n${snapshot.stackTrace}',
+                ),
+              );
             }
 
             return const Center(

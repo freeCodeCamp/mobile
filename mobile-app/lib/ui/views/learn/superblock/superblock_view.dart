@@ -2,7 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:freecodecamp/extensions/i18n_extension.dart';
 import 'package:freecodecamp/models/learn/curriculum_model.dart';
 import 'package:freecodecamp/service/authentication/authentication_service.dart';
-import 'package:freecodecamp/ui/views/learn/block/block_view.dart';
+import 'package:freecodecamp/ui/theme/fcc_theme.dart';
+import 'package:freecodecamp/ui/views/learn/block/block_template_view.dart';
 import 'package:freecodecamp/ui/views/learn/superblock/superblock_viewmodel.dart';
 import 'package:stacked/stacked.dart';
 
@@ -22,35 +23,93 @@ class SuperBlockView extends StatelessWidget {
   Widget build(BuildContext context) {
     return ViewModelBuilder<SuperBlockViewModel>.reactive(
       viewModelBuilder: () => SuperBlockViewModel(),
-      onViewModelReady: (model) => AuthenticationService.staticIsloggedIn
-          ? model.auth.fetchUser()
-          : null,
+      onViewModelReady: (model) {
+        if (AuthenticationService.staticIsloggedIn) {
+          model.auth.fetchUser();
+        }
+
+        model.setSuperBlockData = model.getSuperBlockData(
+          superBlockDashedName,
+          superBlockName,
+          hasInternet,
+        );
+      },
       builder: (context, model, child) => Scaffold(
-        appBar: AppBar(
-          title: Text(superBlockName),
-        ),
-        body: FutureBuilder<SuperBlock>(
-          future: model.getSuperBlockData(
-            superBlockDashedName,
-            superBlockName,
-            hasInternet,
-          ),
-          builder: ((context, snapshot) {
-            if (snapshot.hasData) {
-              if (snapshot.data is SuperBlock) {
-                SuperBlock superBlock = snapshot.data as SuperBlock;
-                return blockTemplate(model, superBlock);
-              }
-            }
+        body: Column(
+          children: [
+            Container(
+              color: FccColors.gray90,
+              child: SafeArea(
+                bottom: false,
+                child: Padding(
+                  padding: const EdgeInsets.only(
+                      top: 0, right: 8, left: 8, bottom: 16),
+                  child: Row(
+                    children: [
+                      IconButton(
+                        icon: const Icon(
+                          Icons.arrow_back_ios,
+                          color: Colors.white,
+                        ),
+                        onPressed: () => Navigator.of(context).pop(),
+                      ),
+                      Expanded(
+                        child: Text(
+                          superBlockName,
+                          style: const TextStyle(
+                            fontSize: 18,
+                            color: Colors.white,
+                          ),
+                          softWrap: true,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+            ),
+            Expanded(
+              child: FutureBuilder<SuperBlock>(
+                initialData: null,
+                future: model.superBlockData,
+                builder: ((context, snapshot) {
+                  if (snapshot.hasData) {
+                    if (snapshot.data is SuperBlock) {
+                      SuperBlock superBlock = snapshot.data as SuperBlock;
 
-            if (snapshot.hasError) {
-              return Text(context.t.error);
-            }
+                      WidgetsBinding.instance.addPostFrameCallback((_) {
+                        if (model.blockOpenStates.isEmpty) {
+                          Map<String, bool> openStates = {
+                            if (superBlock.blocks != null)
+                              for (var block in superBlock.blocks!)
+                                block.dashedName: false
+                          };
 
-            return const Center(
-              child: CircularProgressIndicator(),
-            );
-          }),
+                          // Set first block open
+                          String firstBlockKey =
+                              openStates.entries.toList()[0].key;
+
+                          openStates[firstBlockKey] = true;
+
+                          model.blockOpenStates = openStates;
+                        }
+                      });
+
+                      return blockTemplate(model, superBlock);
+                    }
+                  }
+
+                  if (snapshot.hasError) {
+                    return Text(context.t.error);
+                  }
+
+                  return const Center(
+                    child: CircularProgressIndicator(),
+                  );
+                }),
+              ),
+            ),
+          ],
         ),
       ),
     );
@@ -67,40 +126,32 @@ class SuperBlockView extends StatelessWidget {
           notification.disallowIndicator();
           return true;
         },
-        child: ListView.separated(
-          separatorBuilder: (context, int i) => Divider(
-            height: model.getPaddingBetweenBlocks(superBlock.blocks![i]),
-            color: Colors.transparent,
-          ),
-          shrinkWrap: true,
+        child: ListView.builder(
+          padding: EdgeInsets.zero,
           itemCount: superBlock.blocks!.length,
-          physics: const ClampingScrollPhysics(),
-          itemBuilder: (context, i) => Padding(
-            padding: model.getPaddingBeginAndEnd(
-              i,
-              superBlock.blocks![i].challenges.length,
-            ),
-            child: Column(
-              children: [
-                FutureBuilder<bool>(
-                  future: model.getBlockOpenState(superBlock.blocks![i]),
-                  builder: (context, snapshot) {
-                    if (snapshot.hasData) {
-                      bool isOpen = snapshot.data!;
-
-                      return BlockView(
-                        block: superBlock.blocks![i],
-                        isOpen: isOpen,
-                        isStepBased: superBlock.blocks![i].isStepBased,
-                      );
-                    }
-
-                    return const CircularProgressIndicator();
-                  },
-                )
-              ],
-            ),
-          ),
+          itemBuilder: (context, block) {
+            return Padding(
+              padding: model.getPaddingBeginAndEnd(
+                block,
+                superBlock.blocks![block].challenges.length,
+              ),
+              child: Column(
+                children: [
+                  BlockTemplateView(
+                    key: ValueKey(block),
+                    block: superBlock.blocks![block],
+                    isOpen: model.blockOpenStates[
+                            superBlock.blocks![block].dashedName] ??
+                        false,
+                    isOpenFunction: () => model.setBlockOpenClosedState(
+                      superBlock,
+                      block,
+                    ),
+                  )
+                ],
+              ),
+            );
+          },
         ),
       ),
     );

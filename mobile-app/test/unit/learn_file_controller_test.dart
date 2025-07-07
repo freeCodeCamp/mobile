@@ -10,32 +10,37 @@ void main() {
   LearnFileService service = LearnFileService();
 
   Challenge challenge = Challenge(
-      id: '1',
-      block: 'basic html',
-      title: 'hello-world',
-      description: 'this is the description',
-      instructions: 'make your first header',
-      dashedName: 'hello-world',
-      superBlock: '2022/responsive-web-design',
-      challengeType: 1,
-      helpCategory: HelpCategory.htmlCss,
-      tests: [],
-      files: [
-        ChallengeFile(
-            ext: Ext.html,
-            name: 'index',
-            editableRegionBoundaries: [],
-            contents: 'this is the html file content',
-            history: [],
-            fileKey: 'index.html'),
-        ChallengeFile(
-            ext: Ext.css,
-            name: 'styles',
-            editableRegionBoundaries: [1, 5],
-            contents: 'this is the css file content',
-            history: [],
-            fileKey: 'styles.css')
-      ]);
+    id: '1',
+    block: 'basic html',
+    title: 'hello-world',
+    description: 'this is the description',
+    instructions: 'make your first header',
+    transcript: 'this is the transcript',
+    dashedName: 'hello-world',
+    superBlock: '2022/responsive-web-design',
+    challengeType: 1,
+    helpCategory: HelpCategory.htmlCss,
+    tests: [],
+    hooks: Hooks(beforeAll: '', beforeEach: '', afterEach: ''),
+    files: [
+      ChallengeFile(
+        ext: Ext.html,
+        name: 'index',
+        editableRegionBoundaries: [],
+        contents: 'this is the html file content',
+        history: [],
+        fileKey: 'index.html',
+      ),
+      ChallengeFile(
+        ext: Ext.css,
+        name: 'styles',
+        editableRegionBoundaries: [1, 5],
+        contents: 'this is the css file content',
+        history: [],
+        fileKey: 'styles.css',
+      )
+    ],
+  );
 
   group('getExactFileFromCache function', () {
     testWidgets(
@@ -69,7 +74,8 @@ void main() {
     testWidgets('it should get the file with the editable region',
         (tester) async {
       SharedPreferences.setMockInitialValues({});
-      String value = await service.getCurrentEditedFileFromCache(challenge);
+      String value =
+          (await service.getCurrentEditedFileFromCache(challenge)).contents;
 
       expect(value, 'this is the css file content');
     });
@@ -80,7 +86,8 @@ void main() {
       Challenge newChallenge = challenge;
       newChallenge.files[1].editableRegionBoundaries = [];
 
-      String value = await service.getCurrentEditedFileFromCache(newChallenge);
+      String value =
+          (await service.getCurrentEditedFileFromCache(newChallenge)).contents;
 
       expect(value, 'this is the html file content');
     });

@@ -1,10 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_html/flutter_html.dart';
-
 import 'package:freecodecamp/models/learn/challenge_model.dart';
 import 'package:freecodecamp/models/learn/curriculum_model.dart';
+import 'package:freecodecamp/ui/theme/fcc_theme.dart';
 import 'package:freecodecamp/ui/views/learn/challenge/templates/english/english_viewmodel.dart';
+import 'package:freecodecamp/ui/views/learn/utils/challenge_utils.dart';
 import 'package:freecodecamp/ui/views/learn/widgets/audio/audio_player_view.dart';
+import 'package:freecodecamp/ui/views/learn/widgets/challenge_card.dart';
+import 'package:freecodecamp/ui/views/learn/widgets/explanation_widget.dart';
 import 'package:freecodecamp/ui/views/news/html_handler/html_handler.dart';
 import 'package:stacked/stacked.dart';
 
@@ -24,184 +27,115 @@ class EnglishView extends StatelessWidget {
   Widget build(BuildContext context) {
     HTMLParser parser = HTMLParser(context: context);
 
-    int numberOfDialogueHeaders = block.challenges
-        .where((challenge) => challenge.title.contains('Dialogue'))
-        .length;
-
     return ViewModelBuilder<EnglishViewModel>.reactive(
       viewModelBuilder: () => EnglishViewModel(),
       builder: (context, model, child) {
-        return PopScope(
-          canPop: true,
-          onPopInvokedWithResult: (bool didPop, dynamic result) {
-            model.learnService.updateProgressOnPop(context, block);
-          },
-          child: Scaffold(
-            persistentFooterAlignment: AlignmentDirectional.topStart,
-            appBar: AppBar(
-              title: Text(
-                '${challenge.title} of ${block.challenges.length - numberOfDialogueHeaders}',
-              ),
-            ),
-            body: SafeArea(
-              child: ListView(
-                children: [
-                  Column(
+        return Scaffold(
+          backgroundColor: FccColors.gray90,
+          persistentFooterAlignment: AlignmentDirectional.topStart,
+          appBar: AppBar(
+            backgroundColor: FccColors.gray90,
+            title: Text(handleChallengeTitle(challenge, block)),
+          ),
+          body: SafeArea(
+            child: ListView(
+              children: [
+                ChallengeCard(
+                  title: challenge.title,
+                  child: Column(
                     children: [
-                      Padding(
-                        padding: const EdgeInsets.all(8.0),
-                        child: Text(
-                          challenge.title,
-                          style: TextStyle(
-                            fontSize: FontSize.large.value,
-                            fontWeight: FontWeight.bold,
-                          ),
-                        ),
+                      ...parser.parse(
+                        challenge.instructions,
+                        customStyles: {
+                          '*:not(h1):not(h2):not(h3):not(h4):not(h5):not(h6)':
+                              Style(color: FccColors.gray05),
+                        },
                       ),
-                      Container(
-                        margin: const EdgeInsets.all(8),
-                        color: const Color(0xFF0a0a23),
-                        child: Row(
-                          children: [
-                            Expanded(
-                              child: Column(
-                                children: parser.parse(
-                                  challenge.description,
-                                ),
-                              ),
-                            )
-                          ],
-                        ),
+                      ...parser.parse(
+                        challenge.description,
+                        customStyles: {
+                          '*:not(h1):not(h2):not(h3):not(h4):not(h5):not(h6)':
+                              Style(color: FccColors.gray05),
+                        },
                       ),
                     ],
                   ),
-                  if (challenge.audio != null) ...[
-                    Padding(
-                      padding: const EdgeInsets.all(8.0),
-                      child: Text(
-                        'Listen to the Audio',
-                        textAlign: TextAlign.center,
-                        style: TextStyle(
-                          fontSize: FontSize.large.value,
-                          fontWeight: FontWeight.bold,
+                ),
+                if (challenge.audio != null) ...[
+                  ChallengeCard(
+                    title: 'Listen to the Audio',
+                    child: AudioPlayerView(
+                      audio: challenge.audio!,
+                    ),
+                  ),
+                ],
+                if (challenge.fillInTheBlank != null)
+                  ChallengeCard(
+                    title: 'Fill in the Blank',
+                    child: Padding(
+                      padding: const EdgeInsets.all(10.0),
+                      child: Column(
+                        children: model.getFillInBlankWidgets(
+                          challenge,
+                          context,
                         ),
                       ),
                     ),
-                    Container(
-                      color: const Color(0xFF0a0a23),
-                      padding: const EdgeInsets.all(8),
-                      margin: const EdgeInsets.all(8),
-                      child: AudioPlayerView(
-                        audio: challenge.audio!,
-                      ),
+                  ),
+                if (model.feedback.isNotEmpty)
+                  ChallengeCard(
+                    title: 'Feedback',
+                    child: Column(
+                      children: parser.parse(model.feedback),
                     ),
-                  ],
-                  if (model.feedback.isNotEmpty)
-                    Column(
-                      children: [
-                        Padding(
-                          padding: const EdgeInsets.all(8.0),
-                          child: Text(
-                            'Feedback',
-                            style: TextStyle(
-                              fontSize: FontSize.large.value,
-                              fontWeight: FontWeight.bold,
-                            ),
-                          ),
-                        ),
-                        Container(
-                          color: const Color(0xFF0a0a23),
-                          margin: const EdgeInsets.all(8),
-                          child: Row(
-                            children: [
-                              Expanded(
-                                child: Padding(
-                                  padding: const EdgeInsets.all(16.0),
-                                  child: Column(
-                                    children: parser.parse(model.feedback),
-                                  ),
-                                ),
-                              )
-                            ],
-                          ),
-                        ),
-                      ],
+                  ),
+                if (challenge.explanation != null &&
+                    challenge.explanation!.isNotEmpty) ...[
+                  ChallengeCard(
+                    title: 'Explanation',
+                    child: Explanation(
+                      explanation: challenge.explanation ?? '',
                     ),
-                  Column(
-                    children: [
-                      if (challenge.fillInTheBlank != null) ...[
-                        Padding(
-                          padding: const EdgeInsets.all(8.0),
-                          child: Text(
-                            'Fill in the Blanks',
-                            style: TextStyle(
-                              fontSize: FontSize.large.value,
-                              fontWeight: FontWeight.bold,
-                            ),
-                          ),
-                        ),
-                        Container(
-                          color: const Color(0xFF0a0a23),
-                          margin: const EdgeInsets.all(8),
-                          child: Row(
-                            children: [
-                              Expanded(
-                                child: Padding(
-                                  padding: const EdgeInsets.all(16.0),
-                                  child: Wrap(
-                                    children: model.getFillInBlankWidgets(
-                                      challenge,
-                                      context,
-                                    ),
-                                  ),
-                                ),
-                              )
-                            ],
-                          ),
-                        ),
-                      ],
-                      Row(
-                        children: [
-                          Expanded(
-                            child: Container(
-                              margin: const EdgeInsets.all(8),
-                              child: ElevatedButton(
-                                style: ElevatedButton.styleFrom(
-                                  minimumSize: const Size(0, 50),
-                                  backgroundColor:
-                                      const Color.fromRGBO(0x3b, 0x3b, 0x4f, 1),
-                                  shape: const RoundedRectangleBorder(
-                                    borderRadius: BorderRadius.zero,
-                                    side: BorderSide(
-                                      width: 2,
-                                      color: Colors.white,
-                                    ),
-                                  ),
-                                ),
-                                onPressed: model.allInputsCorrect
-                                    ? () => model.learnService
-                                        .goToNextChallenge(
-                                            block.challenges.length,
-                                            currentChallengeNum,
-                                            challenge,
-                                            block)
-                                    : () => {model.checkAnswers(challenge)},
-                                child: Text(
-                                  model.allInputsCorrect ||
-                                          challenge.fillInTheBlank == null
-                                      ? 'Go to Next Challenge'
-                                      : 'Check Answers',
-                                  style: const TextStyle(fontSize: 20),
-                                ),
+                  ),
+                ],
+                Row(
+                  children: [
+                    Expanded(
+                      child: Container(
+                        margin: const EdgeInsets.all(8),
+                        child: ElevatedButton(
+                          style: ElevatedButton.styleFrom(
+                            minimumSize: const Size(0, 50),
+                            backgroundColor:
+                                const Color.fromRGBO(0x3b, 0x3b, 0x4f, 1),
+                            shape: const RoundedRectangleBorder(
+                              borderRadius: BorderRadius.zero,
+                              side: BorderSide(
+                                width: 2,
+                                color: Colors.white,
                               ),
                             ),
                           ),
-                        ],
+                          onPressed: model.allInputsCorrect
+                              ? () => model.learnService.goToNextChallenge(
+                                  block.challenges.length,
+                                  currentChallengeNum,
+                                  challenge,
+                                  block)
+                              : () => {model.checkAnswers(challenge)},
+                          child: Text(
+                            model.allInputsCorrect ||
+                                    challenge.fillInTheBlank == null
+                                ? 'Go to Next Challenge'
+                                : 'Check Answers',
+                            style: const TextStyle(fontSize: 20),
+                          ),
+                        ),
                       ),
-                    ],
-                  )
-                ],
-              ),
+                    ),
+                  ],
+                )
+              ],
             ),
           ),
         );
