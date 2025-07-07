@@ -78,8 +78,6 @@ class DrawerWidgetView extends StatelessWidget {
                         key: const Key('daily-challenges'),
                         component: 'DAILY CHALLENGES',
                         icon: Icons.flag,
-                        showNotification:
-                            true, // Set to true to show the red dot
                         route: () {
                           model.routeComponent('DAILY_CHALLENGES', context);
                         },
