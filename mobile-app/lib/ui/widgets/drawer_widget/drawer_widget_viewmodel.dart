@@ -3,6 +3,7 @@ import 'package:freecodecamp/app/app.locator.dart';
 import 'package:freecodecamp/service/authentication/authentication_service.dart';
 import 'package:freecodecamp/service/developer_service.dart';
 import 'package:freecodecamp/ui/views/code_radio/code_radio_view.dart';
+import 'package:freecodecamp/ui/views/learn/daily_challenges/daily_challenges_view.dart';
 import 'package:freecodecamp/ui/views/learn/landing/landing_view.dart';
 import 'package:freecodecamp/ui/views/login/native_login_view.dart';
 import 'package:freecodecamp/ui/views/news/news-view-handler/news_view_handler_view.dart';
@@ -11,7 +12,6 @@ import 'package:freecodecamp/ui/views/profile/profile_view.dart';
 import 'package:freecodecamp/ui/views/settings/settings_view.dart';
 import 'package:stacked/stacked.dart';
 import 'package:stacked_services/stacked_services.dart';
-import 'package:freecodecamp/ui/views/learn/daily_challenges/daily_challenges_view.dart';
 
 class DrawerWidgtetViewModel extends BaseViewModel {
   final AuthenticationService auth = locator<AuthenticationService>();
