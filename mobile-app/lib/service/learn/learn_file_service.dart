@@ -188,7 +188,7 @@ class LearnFileService {
   // It will parse the current CSS content into style tags only if it is linked.
   // If there is nothing to parse it will return the plain content document.
 
-  Future<String> parseCssDocmentsAsStyleTags(
+  Future<String> parseCssDocumentsAsStyleTags(
     Challenge challenge,
     String content, {
     bool testing = false,
@@ -237,7 +237,7 @@ class LearnFileService {
   // It will parse the current JS content into script tags only if it is linked.
   // If there is nothing to parse it will return the plain content document.
 
-  Future<String> parseJsDocmentsAsScriptTags(
+  Future<String> parseJsDocumentsAsScriptTags(
     Challenge challenge,
     String challengeContent,
     InAppWebViewController? babelController, {
@@ -262,18 +262,19 @@ class LearnFileService {
           continue;
         }
 
-        // NOTE: Do we throw an error if babelController is null?
-        if (babelController != null) {
-          final babelRes = await babelController.callAsyncJavaScript(
-            functionBody: ScriptBuilder.transpileScript,
-            arguments: {'code': fileContents},
-          );
-
-          if (babelRes?.error != null) {
-            throw Exception('Babel transpilation failed: ${babelRes?.error}');
-          }
-          fileContents = babelRes?.value;
+        if (babelController == null) {
+          throw Exception('Babel controller is required to transpile JS code.');
         }
+
+        final babelRes = await babelController.callAsyncJavaScript(
+          functionBody: ScriptBuilder.transpileScript,
+          arguments: {'code': fileContents},
+        );
+
+        if (babelRes?.error != null) {
+          throw Exception('Babel transpilation failed: ${babelRes?.error}');
+        }
+        fileContents = babelRes?.value;
 
         Document document = parse(challengeContent);
 
