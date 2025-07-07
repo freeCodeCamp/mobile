@@ -60,9 +60,12 @@ class PythonView extends StatelessWidget {
                 if (challenge.description.isNotEmpty)
                   ChallengeCard(
                     title: 'Description',
-                    child: Column(
-                      children: parser.parse(
-                        challenge.description,
+                    child: Align(
+                      alignment: Alignment.centerLeft,
+                      child: Column(
+                        children: parser.parse(
+                          challenge.description,
+                        ),
                       ),
                     ),
                   ),
