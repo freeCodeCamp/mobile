@@ -486,7 +486,7 @@ class ChallengeViewModel extends BaseViewModel {
 
     // TODO: Remove check since we do it in function also
     if (cssFiles.isNotEmpty) {
-      cssParsed = await fileService.parseCssDocmentsAsStyleTags(
+      cssParsed = await fileService.parseCssDocumentsAsStyleTags(
         currChallenge,
         text,
       );
@@ -495,7 +495,7 @@ class ChallengeViewModel extends BaseViewModel {
     }
 
     if (jsFiles.isNotEmpty) {
-      jsParsed = await fileService.parseJsDocmentsAsScriptTags(
+      jsParsed = await fileService.parseJsDocumentsAsScriptTags(
         currChallenge,
         cssParsed ?? text,
         _babelWebView.webViewController,
