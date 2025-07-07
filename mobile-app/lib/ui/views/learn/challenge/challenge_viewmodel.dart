@@ -572,7 +572,6 @@ class ChallengeViewModel extends BaseViewModel {
 
       for (ChallengeFile file in currChallenge!.files) {
         await prefs.remove('${currChallenge.id}.${getFullFileName(file)}');
-        await prefs.remove('${currChallenge.id}${getFullFileName(file)}');
       }
 
       var challengeIndex = block!.challengeTiles.indexWhere(
