@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:freecodecamp/extensions/i18n_extension.dart';
 import 'package:freecodecamp/models/learn/challenge_model.dart';
 import 'package:freecodecamp/models/learn/curriculum_model.dart';
+import 'package:freecodecamp/ui/theme/fcc_theme.dart';
 import 'package:freecodecamp/ui/views/learn/challenge/templates/python/python_viewmodel.dart';
 import 'package:freecodecamp/ui/views/learn/utils/challenge_utils.dart';
 import 'package:freecodecamp/ui/views/learn/widgets/challenge_card.dart';
@@ -34,6 +35,7 @@ class PythonView extends StatelessWidget {
       onViewModelReady: (model) => model.initChallenge(challenge),
       builder: (context, model, child) {
         return Scaffold(
+          backgroundColor: FccColors.gray90,
           appBar: AppBar(
             title: Text(handleChallengeTitle(challenge, block)),
           ),
@@ -41,13 +43,16 @@ class PythonView extends StatelessWidget {
             bottom: false,
             child: ListView(
               children: [
-                Center(
-                  child: Text(
-                    challenge.title,
-                    textAlign: TextAlign.center,
-                    style: const TextStyle(
-                      fontSize: 20,
-                      fontWeight: FontWeight.bold,
+                Container(
+                  margin: const EdgeInsets.all(8),
+                  child: Center(
+                    child: Text(
+                      challenge.title,
+                      textAlign: TextAlign.center,
+                      style: const TextStyle(
+                        fontSize: 20,
+                        fontWeight: FontWeight.bold,
+                      ),
                     ),
                   ),
                 ),
@@ -55,16 +60,18 @@ class PythonView extends StatelessWidget {
                 if (challenge.description.isNotEmpty)
                   ChallengeCard(
                     title: 'Description',
-                    child: Column(
-                      children: parser.parse(
-                        challenge.description,
+                    child: Align(
+                      alignment: Alignment.centerLeft,
+                      child: Column(
+                        children: parser.parse(
+                          challenge.description,
+                        ),
                       ),
                     ),
                   ),
-                Padding(
-                  padding: const EdgeInsets.symmetric(
-                    horizontal: 16,
-                  ),
+                const SizedBox(height: 12),
+                ChallengeCard(
+                  title: 'Video',
                   child: YoutubePlayerWidget(
                     videoId: challenge.videoId!,
                   ),

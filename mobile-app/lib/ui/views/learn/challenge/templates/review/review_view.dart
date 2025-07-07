@@ -49,10 +49,8 @@ class ReviewView extends StatelessWidget {
                 ),
                 if (challenge.videoId != null) ...[
                   const SizedBox(height: 12),
-                  Padding(
-                    padding: const EdgeInsets.symmetric(
-                      horizontal: 16,
-                    ),
+                  ChallengeCard(
+                    title: 'Video',
                     child: YoutubePlayerWidget(
                       videoId: challenge.videoId!,
                     ),
