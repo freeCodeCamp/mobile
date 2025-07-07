@@ -174,7 +174,15 @@ class ChallengeView extends StatelessWidget {
       return Column(
         children: [
           JavaScriptConsole(
-            messages: [],
+            messages: [
+              ...model.testConsoleMessages.isEmpty
+                  ? [JavaScriptConsole.defaultMessage]
+                  : model.testConsoleMessages,
+              model.userConsoleMessages.isNotEmpty
+                  ? '<p>// console output</p>'
+                  : '',
+              ...model.userConsoleMessages
+            ],
           ),
         ],
       );
@@ -263,7 +271,12 @@ class ChallengeView extends StatelessWidget {
                     model.setTestController = controller;
                   },
                   onConsoleMessage: (controller, console) {
-                    log('Test Runner Console message: \\${console.message}');
+                    if (console.messageLevel == ConsoleMessageLevel.LOG) {
+                      model.setUserConsoleMessages = [
+                        ...model.userConsoleMessages,
+                        '<p>${console.message}</p>',
+                      ];
+                    }
                   },
                   onLoadStop: (controller, url) async {
                     ScriptBuilder builder = ScriptBuilder();
@@ -363,15 +376,17 @@ class ChallengeView extends StatelessWidget {
         items: [
           for (ChallengeFile file in challenge.files)
             DropdownMenuItem(
-              value: file.name,
+              value: model.getFullFileName(file),
               child: Text(
-                '${file.name}.${file.ext.name}',
+                model.getFullFileName(file),
                 style: TextStyle(
-                  color: model.currentSelectedFile == file.name &&
+                  color: model.currentSelectedFile ==
+                              model.getFullFileName(file) &&
                           !model.showTestsPanel
                       ? FccColors.blue50
                       : Colors.white,
-                  fontWeight: model.currentSelectedFile == file.name &&
+                  fontWeight: model.currentSelectedFile ==
+                              model.getFullFileName(file) &&
                           !model.showTestsPanel
                       ? FontWeight.bold
                       : FontWeight.normal,
@@ -381,7 +396,8 @@ class ChallengeView extends StatelessWidget {
         ],
         onChanged: (file) {
           model.setShowTestsPanel = false;
-          model.setCurrentSelectedFile = file ?? challenge.files[0].name;
+          model.setCurrentSelectedFile =
+              file ?? model.getFullFileName(challenge.files[0]);
           model.setMounted = false;
           ChallengeFile currFile = model.currentFile(challenge);
           model.initFile(challenge, currFile);
@@ -391,13 +407,15 @@ class ChallengeView extends StatelessWidget {
           return challenge.files.map((file) {
             return Center(
               child: Text(
-                '${file.name}.${file.ext.name}',
+                model.getFullFileName(file),
                 style: TextStyle(
-                  color: model.currentSelectedFile == file.name &&
+                  color: model.currentSelectedFile ==
+                              model.getFullFileName(file) &&
                           !model.showTestsPanel
                       ? FccColors.blue50
                       : Colors.white,
-                  fontWeight: model.currentSelectedFile == file.name &&
+                  fontWeight: model.currentSelectedFile ==
+                              model.getFullFileName(file) &&
                           !model.showTestsPanel
                       ? FontWeight.bold
                       : FontWeight.normal,
@@ -563,15 +581,14 @@ class ChallengeView extends StatelessWidget {
             model.initFile(challenge, currFile);
           },
         ),
-      if (challenge.challengeType == 1 || challenge.challengeType == 26)
-        _panelIconButton(
-          isActive: model.showConsole,
-          icon: Icons.terminal,
-          onPressed: () {
-            model.setShowConsole = !model.showConsole;
-            model.setShowPreview = false;
-          },
-        ),
+      _panelIconButton(
+        isActive: model.showConsole,
+        icon: Icons.terminal,
+        onPressed: () {
+          model.setShowConsole = !model.showConsole;
+          model.setShowPreview = false;
+        },
+      ),
     ];
   }
 
