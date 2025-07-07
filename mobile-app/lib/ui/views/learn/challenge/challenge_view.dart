@@ -175,7 +175,9 @@ class ChallengeView extends StatelessWidget {
         children: [
           JavaScriptConsole(
             messages: [
-              ...model.testConsoleMessages,
+              ...model.testConsoleMessages.isEmpty
+                  ? [JavaScriptConsole.defaultMessage]
+                  : model.testConsoleMessages,
               model.userConsoleMessages.isNotEmpty
                   ? '<p>// console output</p>'
                   : '',

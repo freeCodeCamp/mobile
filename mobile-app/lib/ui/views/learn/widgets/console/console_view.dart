@@ -9,7 +9,7 @@ class JavaScriptConsole extends StatelessWidget {
 
   final List<String> messages;
 
-  final String defaultMessage = '''
+  static final String defaultMessage = '''
   <p>/**<br/>
   * Your test output will go here<br/>
   */</p>
@@ -40,7 +40,7 @@ class JavaScriptConsole extends StatelessWidget {
                     itemCount: messages.isEmpty ? 1 : messages.length,
                     itemBuilder: (context, index) {
                       List<Widget> htmlWidgets = parser.parse(
-                        messages.isEmpty ? defaultMessage : messages[index],
+                        messages.isEmpty ? '' : messages[index],
                         customStyles: {
                           'body': Style(
                             margin: Margins.symmetric(
