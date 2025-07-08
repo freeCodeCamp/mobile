@@ -593,6 +593,9 @@ class ChallengeViewModel extends BaseViewModel {
 
       await prefs.remove(challengeUrl);
 
+      closeWebViews();
+      disposeOfListeners();
+
       _navigationService.replaceWith(
         Routes.challengeTemplateView,
         arguments: ChallengeTemplateViewArguments(
