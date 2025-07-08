@@ -374,8 +374,10 @@ class _askForHelpInputDialogue extends HookWidget {
                           value: requestData.value['readSearchAskChecked'] ??
                               false,
                           onChanged: (value) {
-                            requestData.value['readSearchAskChecked'] = value;
-                            requestData.value = Map.from(requestData.value);
+                            requestData.value = {
+                              ...requestData.value,
+                              'readSearchAskChecked': value,
+                            };
                           },
                           activeColor: FccColors.gray00,
                         ),
@@ -419,9 +421,10 @@ class _askForHelpInputDialogue extends HookWidget {
                           value: requestData.value['similarQuestionsChecked'] ??
                               false,
                           onChanged: (value) {
-                            requestData.value['similarQuestionsChecked'] =
-                                value;
-                            requestData.value = Map.from(requestData.value);
+                            requestData.value = {
+                              ...requestData.value,
+                              'similarQuestionsChecked': value,
+                            };
                           },
                           activeColor: FccColors.gray00,
                         ),
