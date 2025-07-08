@@ -1,37 +1,36 @@
-import 'package:dio/dio.dart';
+import 'package:freecodecamp/models/learn/challenge_model.dart';
 import 'package:freecodecamp/models/learn/curriculum_model.dart';
-import 'package:freecodecamp/service/dio_service.dart';
+import 'package:freecodecamp/service/learn/daily_challenges_service.dart';
 import 'package:stacked/stacked.dart';
 
 class DailyChallengesViewModel extends BaseViewModel {
-  final Dio _dio = DioService.dio;
-
   List<Block> _blocks = [];
   List<Block> get blocks => _blocks;
 
   Map<String, bool> _blockOpenStates = {};
   Map<String, bool> get blockOpenStates => _blockOpenStates;
 
+  Future<void> init() async {
+    await fetchAndCategorizeChallenges();
+  }
+
   void toggleBlock(String blockId) {
     _blockOpenStates[blockId] = !(_blockOpenStates[blockId] ?? false);
     notifyListeners();
   }
 
-  Future<void> fetchDailyChallenges() async {
+  Future<void> fetchAndCategorizeChallenges() async {
     setBusy(true);
+
     try {
-      Response response = await _dio.get(
-        // TODO: Change this to use AuthenticationService.baseURL
-        // when the API is deployed.
-        'http://localhost:3000/api/daily-challenge/all',
-        options: Options(),
-      );
+      final List<DailyChallengeOverview> challenges =
+          await DailyChallengesService().fetchAllDailyChallenges();
 
-      if (response.statusCode == 200) {
-        Map<String, List<Map<String, dynamic>>> challengesByMonth = {};
+      if (challenges.isNotEmpty) {
+        Map<String, List<DailyChallengeOverview>> challengesByMonth = {};
 
-        for (var item in response.data as List) {
-          String monthYear = _formatBlockFromDate(item['date']);
+        for (var item in challenges) {
+          String monthYear = _formatBlockFromDate(item.date);
           if (!challengesByMonth.containsKey(monthYear)) {
             challengesByMonth[monthYear] = [];
           }
@@ -51,23 +50,21 @@ class DailyChallengesViewModel extends BaseViewModel {
 
         // Create a block for each month
         for (String monthYear in sortedMonths) {
-          List<Map<String, dynamic>> monthChallenges =
+          List<DailyChallengeOverview> monthChallenges =
               challengesByMonth[monthYear]!;
 
           // Sort challenges within the month in ascending order (oldest first)
           monthChallenges.sort((a, b) {
-            DateTime dateA = DateTime.parse(a['date']);
-            DateTime dateB = DateTime.parse(b['date']);
+            DateTime dateA = DateTime.parse(a.date);
+            DateTime dateB = DateTime.parse(b.date);
             return dateA.compareTo(dateB);
           });
 
           final List<ChallengeListTile> tiles = monthChallenges
               .map((item) => ChallengeListTile(
-                    id: item['_id'],
-                    name: item['title'],
-                    dashedName: (item['title'] as String)
-                        .toLowerCase()
-                        .replaceAll(' ', '-'),
+                    id: item.id,
+                    name: item.title,
+                    dashedName: (item.title).toLowerCase().replaceAll(' ', '-'),
                   ))
               .toList();
 
@@ -100,8 +97,6 @@ class DailyChallengesViewModel extends BaseViewModel {
         if (_blocks.isNotEmpty) {
           _blockOpenStates[_blocks.first.dashedName] = true;
         }
-      } else {
-        print('Error fetching daily challenges: ${response.statusCode}');
       }
     } catch (e) {
       print('Exception occurred: $e');

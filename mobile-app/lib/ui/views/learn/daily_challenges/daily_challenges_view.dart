@@ -11,7 +11,7 @@ class DailyChallengesView extends StatelessWidget {
   Widget build(BuildContext context) {
     return ViewModelBuilder<DailyChallengesViewModel>.reactive(
       viewModelBuilder: () => DailyChallengesViewModel(),
-      onViewModelReady: (viewModel) => viewModel.fetchDailyChallenges(),
+      onViewModelReady: (viewModel) => viewModel.init(),
       builder: (context, model, child) {
         return Scaffold(
           appBar: AppBar(
