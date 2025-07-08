@@ -40,17 +40,4 @@ class DailyChallengesService {
       throw Exception('Failed to fetch daily challenges');
     }
   }
-
-  Future<DailyChallenge> fetchNewestChallenge() async {
-    // TODO: Change this to use AuthenticationService.baseURL
-    // when the API is deployed.
-    final response =
-        await _dio.get('http://localhost:3000/api/daily-challenge/newest');
-
-    if (response.statusCode == 200) {
-      return DailyChallenge.fromJson(response.data);
-    } else {
-      throw Exception('Failed to fetch daily challenges');
-    }
-  }
 }
