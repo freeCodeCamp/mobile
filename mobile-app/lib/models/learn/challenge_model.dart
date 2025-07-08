@@ -565,3 +565,70 @@ class EnglishAudio {
     );
   }
 }
+
+class DailyChallengeOverview {
+  final String id;
+  final int challengeNumber;
+  final String date; // ISO 8601 format
+  final String title;
+
+  DailyChallengeOverview({
+    required this.id,
+    required this.challengeNumber,
+    required this.date,
+    required this.title,
+  });
+
+  factory DailyChallengeOverview.fromJson(Map<String, dynamic> json) {
+    return DailyChallengeOverview(
+      id: json['_id'],
+      challengeNumber: json['challengeNumber'],
+      date: json['date'],
+      title: json['title'],
+    );
+  }
+}
+
+class DailyChallenge {
+  final String title;
+  final String description;
+  final DailyChallengeLang javascript;
+  final DailyChallengeLang python;
+
+  DailyChallenge({
+    required this.title,
+    required this.description,
+    required this.javascript,
+    required this.python,
+  });
+
+  factory DailyChallenge.fromJson(Map<String, dynamic> data) {
+    return DailyChallenge(
+      title: data['title'],
+      description: data['description'],
+      javascript: DailyChallengeLang.fromJson(data['javascript']),
+      python: DailyChallengeLang.fromJson(data['python']),
+    );
+  }
+}
+
+class DailyChallengeLang {
+  final List<ChallengeTest> tests;
+  final List<ChallengeFile> challengeFiles;
+
+  DailyChallengeLang({
+    required this.tests,
+    required this.challengeFiles,
+  });
+
+  factory DailyChallengeLang.fromJson(Map<String, dynamic> data) {
+    return DailyChallengeLang(
+      tests: (data['tests'] ?? [])
+          .map<ChallengeTest>((test) => ChallengeTest.fromJson(test))
+          .toList(),
+      challengeFiles: (data['challengeFiles'] ?? [])
+          .map<ChallengeFile>((file) => ChallengeFile.fromJson(file))
+          .toList(),
+    );
+  }
+}
