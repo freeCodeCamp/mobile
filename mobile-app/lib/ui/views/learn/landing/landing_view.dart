@@ -6,7 +6,7 @@ import 'package:freecodecamp/models/learn/motivational_quote_model.dart';
 import 'package:freecodecamp/models/main/user_model.dart';
 import 'package:freecodecamp/ui/theme/fcc_theme.dart';
 import 'package:freecodecamp/ui/views/learn/landing/landing_viewmodel.dart';
-import 'package:freecodecamp/ui/views/learn/widgets/dailly_challenge_card.dart';
+import 'package:freecodecamp/ui/views/learn/widgets/daily_challenge_card.dart';
 import 'package:freecodecamp/ui/widgets/drawer_widget/drawer_widget_view.dart';
 import 'package:stacked/stacked.dart';
 
