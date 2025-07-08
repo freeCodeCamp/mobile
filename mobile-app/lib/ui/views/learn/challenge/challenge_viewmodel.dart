@@ -343,7 +343,7 @@ class ChallengeViewModel extends BaseViewModel {
       key: ValueKey(editorText),
       defaultLanguage: editorLanguage,
       defaultValue: editorText ?? '',
-      path: '/${challenge.id}/${getFullFileName(file)}',
+      path: getFullFilePath(challenge, file),
       options: options,
     );
 
@@ -480,7 +480,7 @@ class ChallengeViewModel extends BaseViewModel {
         .toList();
 
     String text = prefs.getString(
-          '${currChallenge.id}.${currentFile[0].name}',
+          '${currChallenge.id}.${getFullFileName(currentFile[0])}',
         ) ??
         currentFile[0].contents;
 
@@ -545,6 +545,10 @@ class ChallengeViewModel extends BaseViewModel {
     return '${file.name}.${file.ext.value}';
   }
 
+  String getFullFilePath(Challenge challenge, ChallengeFile file) {
+    return '/${challenge.id}/${getFullFileName(file)}';
+  }
+
   ChallengeFile currentFile(Challenge challenge) {
     if (currentSelectedFile.isNotEmpty) {
       ChallengeFile file = challenge.files.firstWhere(
@@ -576,10 +580,13 @@ class ChallengeViewModel extends BaseViewModel {
     );
 
     if (res?.confirmed == true) {
-      Challenge? currChallenge = challenge;
+      Challenge currChallenge = challenge!;
 
-      for (ChallengeFile file in currChallenge!.files) {
+      for (ChallengeFile file in currChallenge.files) {
+        // NOTE: Removes file content from cache
         await prefs.remove('${currChallenge.id}.${getFullFileName(file)}');
+        // NOTE: Removes file editable region boundaries from cache
+        await prefs.remove(getFullFilePath(currChallenge, file));
       }
 
       var challengeIndex = block!.challengeTiles.indexWhere(
