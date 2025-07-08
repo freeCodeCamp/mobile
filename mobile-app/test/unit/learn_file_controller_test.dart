@@ -277,7 +277,7 @@ void main() {
 
   group('parseJsDocumentsAsScriptTags function', () {
     testWidgets(
-        'it should inject script content if JS file is linked when babelController is null',
+        'it should throw an error if JS file is linked when babelController is null',
         (tester) async {
       Challenge jsChallenge = Challenge(
         id: '4',
@@ -313,9 +313,10 @@ void main() {
         ],
       );
       String html = jsChallenge.files[0].contents;
-      String result = await service
-          .parseJsDocumentsAsScriptTags(jsChallenge, html, null, testing: true);
-      expect(result, contains('console.log("hello");'));
+      expect(
+        () async => await service.parseJsDocumentsAsScriptTags(jsChallenge, html, null, testing: true),
+        throwsA(isA<Exception>().having((e) => e.toString(), 'description', contains('Babel controller is required to transpile JS code.'))),
+      );
     });
   });
 
