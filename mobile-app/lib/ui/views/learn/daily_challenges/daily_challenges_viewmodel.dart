@@ -1,5 +1,5 @@
-import 'package:freecodecamp/models/learn/challenge_model.dart';
 import 'package:freecodecamp/models/learn/curriculum_model.dart';
+import 'package:freecodecamp/models/learn/daily_challenge_model.dart';
 import 'package:freecodecamp/service/learn/daily_challenges_service.dart';
 import 'package:stacked/stacked.dart';
 
