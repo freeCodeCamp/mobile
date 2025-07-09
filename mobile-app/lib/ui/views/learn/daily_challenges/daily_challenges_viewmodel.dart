@@ -55,8 +55,8 @@ class DailyChallengesViewModel extends BaseViewModel {
 
           // Sort challenges within the month in ascending order (oldest first)
           monthChallenges.sort((a, b) {
-            DateTime dateA = DateTime.parse(a.date);
-            DateTime dateB = DateTime.parse(b.date);
+            DateTime dateA = a.date;
+            DateTime dateB = b.date;
             return dateA.compareTo(dateB);
           });
 
@@ -105,8 +105,7 @@ class DailyChallengesViewModel extends BaseViewModel {
     }
   }
 
-  String _formatBlockFromDate(String isoDate) {
-    final date = DateTime.parse(isoDate);
+  String _formatBlockFromDate(DateTime date) {
     const monthNames = [
       'January',
       'February',
