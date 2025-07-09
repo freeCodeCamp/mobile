@@ -295,7 +295,7 @@ class ChallengeView extends StatelessWidget {
                         },
                       },
                     );
-                    log('TestRunner: \\$res');
+                    log('TestRunner: $res');
                   },
                   initialSettings: InAppWebViewSettings(
                     isInspectable: true,
@@ -459,6 +459,7 @@ class ChallengeView extends StatelessWidget {
     return TextButton.icon(
       onPressed: () {
         model.setShowTestsPanel = !model.showTestsPanel;
+        model.setMounted = false;
       },
       label: Text(
         'Tests',
@@ -578,6 +579,7 @@ class ChallengeView extends StatelessWidget {
             ChallengeFile currFile = model.currentFile(challenge);
             model.setShowPreview = !model.showPreview;
             model.setShowConsole = false;
+            model.setMounted = false;
             model.initFile(challenge, currFile);
           },
         ),
@@ -587,6 +589,7 @@ class ChallengeView extends StatelessWidget {
         onPressed: () {
           model.setShowConsole = !model.showConsole;
           model.setShowPreview = false;
+          model.setMounted = false;
         },
       ),
     ];
