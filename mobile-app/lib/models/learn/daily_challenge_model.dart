@@ -3,7 +3,7 @@ import 'package:freecodecamp/models/learn/challenge_model.dart';
 class DailyChallengeOverview {
   final String id;
   final int challengeNumber;
-  final String date; // ISO 8601 format
+  final DateTime date;
   final String title;
 
   DailyChallengeOverview({
@@ -17,7 +17,7 @@ class DailyChallengeOverview {
     return DailyChallengeOverview(
       id: json['_id'],
       challengeNumber: json['challengeNumber'],
-      date: json['date'],
+      date: DateTime.parse(json['date']),
       title: json['title'],
     );
   }
@@ -26,7 +26,7 @@ class DailyChallengeOverview {
 class DailyChallenge {
   final String id;
   final int challengeNumber; // 1-based index
-  final String date; // ISO 8601 format
+  final DateTime date;
   final String title;
   final String description;
   final DailyChallengeLang javascript;
@@ -47,7 +47,7 @@ class DailyChallenge {
     return DailyChallenge(
       id: data['_id'],
       challengeNumber: data['challengeNumber'],
-      date: data['date'],
+      date: DateTime.parse(data['date']),
       title: data['title'],
       description: data['description'],
       javascript: DailyChallengeLang.fromJson(data['javascript'], 'javascript'),
@@ -65,25 +65,24 @@ class DailyChallengeLang {
     required this.challengeFiles,
   });
 
-  factory DailyChallengeLang.fromJson(Map<String, dynamic> data, String language) {
+  factory DailyChallengeLang.fromJson(
+      Map<String, dynamic> data, String language) {
     return DailyChallengeLang(
       tests: (data['tests'] ?? [])
           .map<ChallengeTest>((test) => ChallengeTest.fromJson(test))
           .toList(),
-      challengeFiles: (data['challengeFiles'] ?? [])
-          .map<ChallengeFile>((file) {
-            // Add ext and name based on language
-            Map<String, dynamic> fileData = Map<String, dynamic>.from(file);
-            if (language == 'javascript') {
-              fileData['ext'] = 'js';
-              fileData['name'] = 'script';
-            } else if (language == 'python') {
-              fileData['ext'] = 'py';
-              fileData['name'] = 'main';
-            }
-            return ChallengeFile.fromJson(fileData);
-          })
-          .toList(),
+      challengeFiles: (data['challengeFiles'] ?? []).map<ChallengeFile>((file) {
+        // Add ext and name based on language
+        Map<String, dynamic> fileData = Map<String, dynamic>.from(file);
+        if (language == 'javascript') {
+          fileData['ext'] = 'js';
+          fileData['name'] = 'script';
+        } else if (language == 'python') {
+          fileData['ext'] = 'py';
+          fileData['name'] = 'main';
+        }
+        return ChallengeFile.fromJson(fileData);
+      }).toList(),
     );
   }
 }
@@ -105,7 +104,7 @@ class DailyChallengeBlock {
 class DailyChallengeItem {
   final String id;
   final String title;
-  final String date; // ISO 8601 format
+  final DateTime date;
   final int challengeNumber;
 
   DailyChallengeItem({

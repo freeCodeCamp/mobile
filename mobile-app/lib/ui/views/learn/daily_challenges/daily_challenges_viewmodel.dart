@@ -69,8 +69,8 @@ class DailyChallengesViewModel extends BaseViewModel {
 
           // Sort challenges within the month in ascending order (oldest first)
           monthChallenges.sort((a, b) {
-            DateTime dateA = DateTime.parse(a.date);
-            DateTime dateB = DateTime.parse(b.date);
+            DateTime dateA = a.date;
+            DateTime dateB = b.date;
             return dateA.compareTo(dateB);
           });
 
@@ -112,12 +112,11 @@ class DailyChallengesViewModel extends BaseViewModel {
     return false;
   }
 
-  Future<void> navigateToDailyChallenge(String date) async {
+  Future<void> navigateToDailyChallenge(DateTime date) async {
     try {
       // Format date to YYYY-MM-DD
-      final parsedDate = DateTime.parse(date);
       final formattedDate =
-          '${parsedDate.year.toString().padLeft(4, '0')}-${parsedDate.month.toString().padLeft(2, '0')}-${parsedDate.day.toString().padLeft(2, '0')}';
+          '${date.year.toString().padLeft(4, '0')}-${date.month.toString().padLeft(2, '0')}-${date.day.toString().padLeft(2, '0')}';
 
       final challenge =
           await DailyChallengesService().fetchChallengeByDate(formattedDate);
@@ -181,8 +180,7 @@ class DailyChallengesViewModel extends BaseViewModel {
     return count;
   }
 
-  String _formatMonthFromDate(String isoDate) {
-    final date = DateTime.parse(isoDate);
+  String _formatMonthFromDate(DateTime date) {
     const monthNames = [
       'January',
       'February',
