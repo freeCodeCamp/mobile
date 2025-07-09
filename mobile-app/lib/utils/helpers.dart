@@ -18,7 +18,7 @@ Future<String> filesToMarkdown(Challenge challenge, String editorText) async {
         : '';
     final fileType = challengeFile.ext.name;
     final fileContent = prefs.getString(
-            '${challenge.id}.${challengeFile.name}${challengeFile.ext.value}') ??
+            '${challenge.id}.${challengeFile.name}.${challengeFile.ext.value}') ??
         challengeFile.contents;
     markdownStr += '```$fileType\n$fileName$fileContent\n```\n\n';
   }
