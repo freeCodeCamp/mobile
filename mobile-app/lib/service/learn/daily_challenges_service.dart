@@ -28,7 +28,7 @@ class DailyChallengesService {
     }
   }
 
-  Future<DailyChallenge> fetchChallengeById(String date) async {
+  Future<DailyChallenge> fetchChallengeByDate(String date) async {
     // TODO: Change this to use AuthenticationService.baseURL
     // when the API is deployed.
     final response =
@@ -37,7 +37,20 @@ class DailyChallengesService {
     if (response.statusCode == 200) {
       return DailyChallenge.fromJson(response.data);
     } else {
-      throw Exception('Failed to fetch daily challenges');
+      throw Exception('Failed to fetch challenge.');
+    }
+  }
+
+  Future<DailyChallenge> fetchTodayChallenge() async {
+    // TODO: Change this to use AuthenticationService.baseURL
+    // when the API is deployed.
+    final response =
+        await _dio.get('http://localhost:3000/api/daily-challenge/today');
+
+    if (response.statusCode == 200) {
+      return DailyChallenge.fromJson(response.data);
+    } else {
+      throw Exception('Failed to fetch challenge.');
     }
   }
 }
