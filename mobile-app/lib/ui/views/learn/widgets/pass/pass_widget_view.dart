@@ -161,11 +161,26 @@ class PassWidgetView extends StatelessWidget {
                           return Center(child: Container());
                         },
                       ),
-                      PassButton(
-                        model: challengeModel,
-                        maxChallenges: maxChallenges,
-                        completed: challengesCompleted,
-                      ),
+                      FutureBuilder(
+                        future: model.numCompletedChallenges(
+                          challengeModel,
+                          challengesCompleted,
+                        ),
+                        builder: (context, completedSnapshot) {
+                          if (completedSnapshot.hasData) {
+                            int completed = completedSnapshot.data as int;
+                            return PassButton(
+                              model: challengeModel,
+                              maxChallenges: maxChallenges,
+                              completed: completed - 1,
+                            );
+                          }
+
+                          return const Center(
+                            child: CircularProgressIndicator(),
+                          );
+                        },
+                      )
                     ],
                   ),
                 ),
