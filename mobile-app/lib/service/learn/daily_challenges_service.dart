@@ -1,5 +1,5 @@
 import 'package:dio/dio.dart';
-import 'package:freecodecamp/models/learn/challenge_model.dart';
+import 'package:freecodecamp/models/learn/daily_challenge_model.dart';
 import 'package:freecodecamp/service/dio_service.dart';
 
 class DailyChallengesService {

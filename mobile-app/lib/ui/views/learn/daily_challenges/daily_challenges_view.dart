@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:freecodecamp/ui/views/learn/block/block_template_view.dart';
 import 'package:freecodecamp/ui/views/learn/daily_challenges/daily_challenges_viewmodel.dart';
+import 'package:freecodecamp/ui/views/learn/daily_challenges/widgets/daily_challenge_block_widget.dart';
 import 'package:freecodecamp/ui/widgets/drawer_widget/drawer_widget_view.dart';
 import 'package:stacked/stacked.dart';
 
@@ -34,16 +34,17 @@ class DailyChallengesView extends StatelessWidget {
                         itemBuilder: (context, index) {
                           final block = model.blocks[index];
                           final isOpen =
-                              model.blockOpenStates[block.dashedName] ?? false;
+                              model.blockOpenStates[block.monthYear] ?? false;
 
                           return Padding(
                             padding: const EdgeInsets.only(bottom: 16),
-                            child: BlockTemplateView(
+                            child: DailyChallengeBlockWidget(
                               key: ValueKey(index),
-                              block: block,
+                              challengeBlock: block,
                               isOpen: isOpen,
-                              isOpenFunction: () =>
-                                  model.toggleBlock(block.dashedName),
+                              onToggleOpen: () =>
+                                  model.toggleBlock(block.monthYear),
+                              model: model,
                             ),
                           );
                         },

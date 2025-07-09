@@ -1,25 +1,38 @@
-import 'package:freecodecamp/models/learn/challenge_model.dart';
+import 'package:freecodecamp/app/app.locator.dart';
+import 'package:freecodecamp/app/app.router.dart';
+import 'package:freecodecamp/models/learn/completed_challenge_model.dart';
 import 'package:freecodecamp/models/learn/curriculum_model.dart';
+import 'package:freecodecamp/models/learn/daily_challenge_model.dart';
+import 'package:freecodecamp/models/main/user_model.dart';
+import 'package:freecodecamp/service/authentication/authentication_service.dart';
 import 'package:freecodecamp/service/learn/daily_challenges_service.dart';
 import 'package:stacked/stacked.dart';
+import 'package:stacked_services/stacked_services.dart';
 
 class DailyChallengesViewModel extends BaseViewModel {
-  List<Block> _blocks = [];
-  List<Block> get blocks => _blocks;
+  final NavigationService _navigationService = locator<NavigationService>();
+  final AuthenticationService _auth = locator<AuthenticationService>();
+
+  List<DailyChallengeBlock> _blocks = [];
+  List<DailyChallengeBlock> get blocks => _blocks;
 
   Map<String, bool> _blockOpenStates = {};
   Map<String, bool> get blockOpenStates => _blockOpenStates;
 
+  int _completedChallengesCount = 0;
+  int get completedChallengesCount => _completedChallengesCount;
+
   Future<void> init() async {
-    await fetchAndCategorizeChallenges();
+    await _fetchAndGroupChallenges();
+    await _updateCompletedCount();
   }
 
-  void toggleBlock(String blockId) {
-    _blockOpenStates[blockId] = !(_blockOpenStates[blockId] ?? false);
+  void toggleBlock(String monthYear) {
+    _blockOpenStates[monthYear] = !(_blockOpenStates[monthYear] ?? false);
     notifyListeners();
   }
 
-  Future<void> fetchAndCategorizeChallenges() async {
+  Future<void> _fetchAndGroupChallenges() async {
     setBusy(true);
 
     try {
@@ -29,12 +42,13 @@ class DailyChallengesViewModel extends BaseViewModel {
       if (challenges.isNotEmpty) {
         Map<String, List<DailyChallengeOverview>> challengesByMonth = {};
 
-        for (var item in challenges) {
-          String monthYear = _formatBlockFromDate(item.date);
+        // Group challenges by month
+        for (var challenge in challenges) {
+          String monthYear = _formatMonthFromDate(challenge.date);
           if (!challengesByMonth.containsKey(monthYear)) {
             challengesByMonth[monthYear] = [];
           }
-          challengesByMonth[monthYear]!.add(item);
+          challengesByMonth[monthYear]!.add(challenge);
         }
 
         // Sort months in descending order (newest first)
@@ -48,7 +62,7 @@ class DailyChallengesViewModel extends BaseViewModel {
         _blocks = [];
         _blockOpenStates = {};
 
-        // Create a block for each month
+        // Create challenge groups for each month
         for (String monthYear in sortedMonths) {
           List<DailyChallengeOverview> monthChallenges =
               challengesByMonth[monthYear]!;
@@ -60,42 +74,22 @@ class DailyChallengesViewModel extends BaseViewModel {
             return dateA.compareTo(dateB);
           });
 
-          final List<ChallengeListTile> tiles = monthChallenges
-              .map((item) => ChallengeListTile(
-                    id: item.id,
-                    name: item.title,
-                    dashedName: (item.title).toLowerCase().replaceAll(' ', '-'),
-                  ))
-              .toList();
-
-          String blockId =
-              'daily-challenges-${monthYear.toLowerCase().replaceAll(' ', '-')}';
-
-          // The API doesn't return all the required fields for blocks,
-          // so improvisation is needed here.
-          Block monthBlock = Block(
-            superBlock: SuperBlock(
-                dashedName: 'daily-coding-challenges',
-                name: 'Daily Coding Challenges'),
-            layout: BlockLayout.challengeGrid,
-            type: BlockType.legacy,
-            name: monthYear,
-            dashedName: blockId,
-            description: [
-              'Explore the daily coding challenges for $monthYear. Stay motivated and keep your learning streak alive!'
-            ],
-            challenges: tiles
-                .map((e) => ChallengeOrder(id: e.id, title: e.name))
+          final block = DailyChallengeBlock(
+            monthYear: monthYear,
+            challenges: monthChallenges
+                .map((overview) => DailyChallengeItem.fromOverview(overview))
                 .toList(),
-            challengeTiles: tiles,
+            description:
+                'Explore the daily coding challenges for $monthYear. Stay motivated and keep your learning streak alive!',
           );
 
-          _blocks.add(monthBlock);
-          _blockOpenStates[blockId] = false;
+          _blocks.add(block);
+          _blockOpenStates[monthYear] = false;
         }
 
+        // Open the first (most recent) group by default
         if (_blocks.isNotEmpty) {
-          _blockOpenStates[_blocks.first.dashedName] = true;
+          _blockOpenStates[_blocks.first.monthYear] = true;
         }
       }
     } catch (e) {
@@ -105,7 +99,89 @@ class DailyChallengesViewModel extends BaseViewModel {
     }
   }
 
-  String _formatBlockFromDate(String isoDate) {
+  /// Check if a daily challenge is completed
+  Future<bool> isChallengeCompleted(String challengeId) async {
+    FccUserModel? user = await _auth.userModel;
+    if (user != null) {
+      for (CompletedChallenge challenge in user.completedChallenges) {
+        if (challenge.id == challengeId) {
+          return true;
+        }
+      }
+    }
+    return false;
+  }
+
+  Future<void> navigateToDailyChallenge(String date) async {
+    try {
+      // Format date to YYYY-MM-DD
+      final parsedDate = DateTime.parse(date);
+      final formattedDate =
+          '${parsedDate.year.toString().padLeft(4, '0')}-${parsedDate.month.toString().padLeft(2, '0')}-${parsedDate.day.toString().padLeft(2, '0')}';
+
+      final challenge =
+          await DailyChallengesService().fetchChallengeByDate(formattedDate);
+
+      print(challenge);
+
+      // Create a block to satisfy ChallengeTemplateView's requirements
+      final block = Block(
+        name: 'Daily Challenge',
+        dashedName:
+            'daily-challenge-${DateTime.parse(formattedDate).millisecondsSinceEpoch}',
+        superBlock: SuperBlock(
+          dashedName: 'daily-challenges',
+          name: 'Daily Challenges',
+        ),
+        layout: BlockLayout.challengeGrid,
+        type: BlockType.legacy,
+        description: [challenge.description],
+        challenges: [],
+        challengeTiles: [],
+      );
+
+      _navigationService.navigateTo(
+        Routes.challengeTemplateView,
+        arguments: ChallengeTemplateViewArguments(
+          challengeId: challenge.id,
+          block: block,
+          challengesCompleted: _completedChallengesCount,
+        ),
+      );
+    } catch (e) {
+      print('Error navigating to daily challenge: $e');
+    }
+  }
+
+  /// Update the count of completed challenges across all groups
+  Future<void> _updateCompletedCount() async {
+    int count = 0;
+
+    for (var block in _blocks) {
+      for (var challenge in block.challenges) {
+        if (await isChallengeCompleted(challenge.id)) {
+          count++;
+        }
+      }
+    }
+
+    _completedChallengesCount = count;
+  }
+
+  /// Get the number of completed challenges for a specific group
+  Future<int> getCompletedChallengesForBlock(DailyChallengeBlock block) async {
+    int count = 0;
+
+    for (var challenge in block.challenges) {
+      if (await isChallengeCompleted(challenge.id)) {
+        count++;
+      }
+    }
+
+    return count;
+  }
+
+  String _formatMonthFromDate(String isoDate) {
     final date = DateTime.parse(isoDate);
     const monthNames = [
       'January',
@@ -125,7 +201,6 @@ class DailyChallengesViewModel extends BaseViewModel {
   }
 
   DateTime _parseMonthYear(String monthYear) {
-    // Parse "January 2025" format back to DateTime
     List<String> parts = monthYear.split(' ');
     String monthName = parts[0];
     int year = int.parse(parts[1]);
