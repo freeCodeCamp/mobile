@@ -198,6 +198,9 @@ class PassButton extends StatelessWidget {
       width: MediaQuery.of(context).size.width,
       child: TextButton(
         onPressed: () async {
+          model.closeWebViews();
+          model.disposeOfListeners();
+
           model.learnService.goToNextChallenge(
             maxChallenges,
             completed,
