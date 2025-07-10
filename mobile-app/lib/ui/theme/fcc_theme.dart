@@ -48,6 +48,7 @@ class FccColors {
   static const red70 = Color(0xFFA94442);
   static const red80 = Color(0xFFF82153);
   static const red90 = Color(0xFF850000);
+  static const red100 = Color(0xFF5A3535);
 
   static const orange30 = Color(0xFFEDA971);
 }
