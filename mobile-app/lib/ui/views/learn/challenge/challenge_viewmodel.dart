@@ -318,7 +318,7 @@ class ChallengeViewModel extends BaseViewModel {
         currFile,
       );
 
-      setCurrentSelectedFile = currFile.name;
+      setCurrentSelectedFile = getFullFileName(currFile);
       setEditorText = fileContents;
       setEditorLanguage = currFile.ext.value;
       initEditor(challenge, currFile);
@@ -343,7 +343,7 @@ class ChallengeViewModel extends BaseViewModel {
       key: ValueKey(editorText),
       defaultLanguage: editorLanguage,
       defaultValue: editorText ?? '',
-      path: '/${challenge.id}/${file.name}',
+      path: '/${challenge.id}/${getFullFileName(file)}',
       options: options,
     );
 
@@ -486,7 +486,7 @@ class ChallengeViewModel extends BaseViewModel {
 
     // TODO: Remove check since we do it in function also
     if (cssFiles.isNotEmpty) {
-      cssParsed = await fileService.parseCssDocmentsAsStyleTags(
+      cssParsed = await fileService.parseCssDocumentsAsStyleTags(
         currChallenge,
         text,
       );
@@ -495,7 +495,7 @@ class ChallengeViewModel extends BaseViewModel {
     }
 
     if (jsFiles.isNotEmpty) {
-      jsParsed = await fileService.parseJsDocmentsAsScriptTags(
+      jsParsed = await fileService.parseJsDocumentsAsScriptTags(
         currChallenge,
         cssParsed ?? text,
         _babelWebView.webViewController,
@@ -541,10 +541,14 @@ class ChallengeViewModel extends BaseViewModel {
     notifyListeners();
   }
 
+  String getFullFileName(ChallengeFile file) {
+    return '${file.name}.${file.ext.value}';
+  }
+
   ChallengeFile currentFile(Challenge challenge) {
     if (currentSelectedFile.isNotEmpty) {
       ChallengeFile file = challenge.files.firstWhere(
-        (file) => file.name == currentSelectedFile,
+        (file) => getFullFileName(file) == currentSelectedFile,
       );
       return file;
     }
@@ -575,8 +579,7 @@ class ChallengeViewModel extends BaseViewModel {
       Challenge? currChallenge = challenge;
 
       for (ChallengeFile file in currChallenge!.files) {
-        await prefs.remove('${currChallenge.id}.${file.name}');
-        await prefs.remove('${currChallenge.id}${file.name}');
+        await prefs.remove('${currChallenge.id}.${getFullFileName(file)}');
       }
 
       var challengeIndex = block!.challengeTiles.indexWhere(

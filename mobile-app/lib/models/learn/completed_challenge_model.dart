@@ -30,3 +30,23 @@ class CompletedChallenge {
     );
   }
 }
+
+class CompletedDailyChallenge {
+  final String id;
+  final int completedDate;
+  final List<String> languages;
+
+  CompletedDailyChallenge({
+    required this.id,
+    required this.completedDate,
+    required this.languages,
+  });
+
+  factory CompletedDailyChallenge.fromJson(Map<String, dynamic> data) {
+    return CompletedDailyChallenge(
+      id: data['id'],
+      completedDate: data['completedDate'],
+      languages: List<String>.from(data['languages']),
+    );
+  }
+}
