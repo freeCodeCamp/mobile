@@ -31,19 +31,19 @@ class CompletedChallenge {
   }
 }
 
-class DailyCodingChallenge {
+class CompletedDailyChallenge {
   final String id;
   final int completedDate;
   final List<String> languages;
 
-  DailyCodingChallenge({
+  CompletedDailyChallenge({
     required this.id,
     required this.completedDate,
     required this.languages,
   });
 
-  factory DailyCodingChallenge.fromJson(Map<String, dynamic> data) {
-    return DailyCodingChallenge(
+  factory CompletedDailyChallenge.fromJson(Map<String, dynamic> data) {
+    return CompletedDailyChallenge(
       id: data['id'],
       completedDate: data['completedDate'],
       languages: List<String>.from(data['languages']),
