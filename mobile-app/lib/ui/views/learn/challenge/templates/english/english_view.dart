@@ -134,7 +134,39 @@ class EnglishView extends StatelessWidget {
                       ),
                     ),
                   ],
-                )
+                ),
+                Row(
+                  children: [
+                    Expanded(
+                      child: Container(
+                        margin: const EdgeInsets.all(8),
+                        child: ElevatedButton(
+                          style: ElevatedButton.styleFrom(
+                            minimumSize: const Size(0, 50),
+                            backgroundColor:
+                                const Color.fromRGBO(0x3b, 0x3b, 0x4f, 1),
+                            shape: const RoundedRectangleBorder(
+                              borderRadius: BorderRadius.zero,
+                              side: BorderSide(
+                                width: 2,
+                                color: Colors.white,
+                              ),
+                            ),
+                          ),
+                          onPressed: () => model.learnService.forumHelpDialog(
+                            challenge,
+                            block,
+                            context,
+                          ),
+                          child: const Text(
+                            'Ask for Help',
+                            style: TextStyle(fontSize: 20),
+                          ),
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
               ],
             ),
           ),

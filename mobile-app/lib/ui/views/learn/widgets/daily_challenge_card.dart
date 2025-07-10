@@ -1,8 +1,9 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
+import 'package:freecodecamp/models/learn/daily_challenge_model.dart';
+import 'package:freecodecamp/service/learn/daily_challenges_service.dart';
 import 'package:freecodecamp/ui/theme/fcc_theme.dart';
-import 'package:jiffy/jiffy.dart';
 import 'package:timezone/data/latest.dart' as tzdata;
 import 'package:timezone/timezone.dart' as tz;
 
@@ -16,13 +17,38 @@ class DailyChallengeCard extends StatefulWidget {
 class _DailyChallengeCardState extends State<DailyChallengeCard> {
   Duration _timeLeft = Duration.zero;
   Timer? _timer;
+  DailyChallenge? _challenge;
+  bool _loading = true;
+  String? _error;
 
   @override
   void initState() {
     super.initState();
     tzdata.initializeTimeZones();
     _updateTimeLeft();
-    _timer = Timer.periodic(Duration(seconds: 1), (_) => _updateTimeLeft());
+    _fetchChallenge();
+    _timer = Timer.periodic(Duration(seconds: 1), (_) {
+      _updateTimeLeft();
+    });
+  }
+
+  Future<void> _fetchChallenge() async {
+    setState(() {
+      _loading = true;
+      _error = null;
+    });
+    try {
+      final challenge = await DailyChallengesService().fetchTodayChallenge();
+      setState(() {
+        _challenge = challenge;
+        _loading = false;
+      });
+    } catch (e) {
+      setState(() {
+        _error = 'Failed to load today\'s challenge';
+        _loading = false;
+      });
+    }
   }
 
   void _updateTimeLeft() {
@@ -46,8 +72,90 @@ class _DailyChallengeCardState extends State<DailyChallengeCard> {
     return '${twoDigits(d.inHours)}:${twoDigits(d.inMinutes % 60)}:${twoDigits(d.inSeconds % 60)}';
   }
 
+  Widget _buildChallengeTitle(DailyChallenge challenge) {
+    return Text(
+      challenge.title,
+      style: TextStyle(
+        fontSize: 20,
+        fontWeight: FontWeight.bold,
+        color: FccColors.gray90,
+      ),
+      textAlign: TextAlign.center,
+    );
+  }
+
+  Widget _buildChallengeCountdown() {
+    return Semantics(
+      label: 'Countdown timer. Next challenge in ${_formatDuration(_timeLeft)}',
+      liveRegion: true,
+      child: Container(
+        padding: EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+        decoration: BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.circular(16),
+        ),
+        child: Text(
+          'Next challenge in: ${_formatDuration(_timeLeft)}',
+          style: TextStyle(
+            color: FccColors.gray90,
+            fontWeight: FontWeight.w600,
+            fontSize: 15,
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildChallengeMotivation() {
+    return Text(
+      'Do you have the skills to complete this challenge?',
+      textAlign: TextAlign.center,
+      style: TextStyle(fontSize: 18, color: FccColors.gray85),
+    );
+  }
+
+  Widget _buildChallengeCTAButton() {
+    return SizedBox(
+      width: double.infinity,
+      child: Tooltip(
+        message: 'Start the daily challenge now',
+        child: ElevatedButton.icon(
+          style: ElevatedButton.styleFrom(
+            backgroundColor: FccColors.yellow50,
+            foregroundColor: FccColors.gray90,
+            elevation: 0,
+            padding: EdgeInsets.symmetric(vertical: 14),
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(12),
+            ),
+          ),
+          onPressed: () {},
+          icon: Icon(Icons.arrow_forward_ios,
+              size: 20, semanticLabel: 'Go to challenge'),
+          label: Text(
+            'Start the challenge',
+            style: TextStyle(
+              fontSize: 18,
+              fontWeight: FontWeight.bold,
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
+    if (_loading) {
+      return Center(child: CircularProgressIndicator());
+    }
+    if (_error != null) {
+      return Center(child: Text(_error!));
+    }
+    if (_challenge == null) {
+      return Center(child: Text('No challenge available today'));
+    }
+    final challenge = _challenge!;
     return Column(
       children: [
         Padding(
@@ -80,8 +188,8 @@ class _DailyChallengeCardState extends State<DailyChallengeCard> {
               padding: const EdgeInsets.all(20),
               width: MediaQuery.of(context).size.width - 24,
               decoration: BoxDecoration(
-                color: FccColors.yellow50,
-                border: Border.all(color: FccColors.yellow50, width: 2),
+                color: FccColors.gray10,
+                border: Border.all(color: FccColors.gray10, width: 2),
                 borderRadius: BorderRadius.all(Radius.circular(16)),
                 boxShadow: [
                   BoxShadow(
@@ -95,138 +203,19 @@ class _DailyChallengeCardState extends State<DailyChallengeCard> {
                 mainAxisSize: MainAxisSize.min,
                 crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
-                  Text(
-                    'Write a Program That Prints Numbers from 1 to 100, Substituting Words Based on Divisibility Rules Using Clean, Readable, and Modular Code Practices',
-                    style: TextStyle(
-                      fontSize: 20,
-                      fontWeight: FontWeight.bold,
-                      color: FccColors.gray90,
-                    ),
-                    textAlign: TextAlign.center,
-                  ),
+                  _buildChallengeTitle(challenge),
                   SizedBox(height: 14),
-                  Semantics(
-                    label:
-                        'Countdown timer. Next challenge in ${_formatDuration(_timeLeft)}',
-                    liveRegion: true,
-                    child: Container(
-                      padding:
-                          EdgeInsets.symmetric(horizontal: 12, vertical: 6),
-                      decoration: BoxDecoration(
-                        color: FccColors.gray10,
-                        borderRadius: BorderRadius.circular(16),
-                      ),
-                      child: Text(
-                        'Next challenge in: ${_formatDuration(_timeLeft)}',
-                        style: TextStyle(
-                          color: FccColors.gray90,
-                          fontWeight: FontWeight.w600,
-                          fontSize: 15,
-                        ),
-                      ),
-                    ),
-                  ),
+                  _buildChallengeCountdown(),
                   SizedBox(height: 14),
-                  Text(
-                    'Do you have the skills to complete this challenge?',
-                    textAlign: TextAlign.center,
-                    style: TextStyle(fontSize: 18, color: FccColors.gray85),
-                  ),
+                  _buildChallengeMotivation(),
                   SizedBox(height: 20),
-                  SizedBox(
-                    width: double.infinity,
-                    child: Tooltip(
-                      message: 'Solve the daily challenge now',
-                      child: ElevatedButton.icon(
-                        style: ElevatedButton.styleFrom(
-                          backgroundColor: FccColors.yellow50,
-                          foregroundColor: FccColors.gray90,
-                          elevation: 0,
-                          padding: EdgeInsets.symmetric(vertical: 14),
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(12),
-                          ),
-                        ),
-                        onPressed: () {},
-                        icon: Icon(Icons.arrow_forward_ios,
-                            size: 20, semanticLabel: 'Go to challenge'),
-                        label: Text(
-                          'Solve it now!',
-                          style: TextStyle(
-                            fontSize: 18,
-                            fontWeight: FontWeight.bold,
-                          ),
-                        ),
-                      ),
-                    ),
-                  ),
+                  _buildChallengeCTAButton(),
                 ],
               ),
             ),
           ),
         ),
         SizedBox(height: 16),
-        Container(
-          width: MediaQuery.of(context).size.width - 24,
-          margin: EdgeInsets.zero,
-          padding: EdgeInsets.all(14),
-          decoration: BoxDecoration(
-            color: FccColors.gray10,
-            borderRadius: BorderRadius.circular(12),
-            border: Border.all(color: FccColors.gray10, width: 1),
-            boxShadow: [
-              BoxShadow(
-                color: Color.fromRGBO(0, 0, 0, 0.05),
-                blurRadius: 6,
-                offset: Offset(0, 2),
-              ),
-            ],
-          ),
-          child: Row(
-            children: [
-              Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      'Missed yesterday? Try the previous challenge!',
-                      style: TextStyle(
-                        fontSize: 15,
-                        fontWeight: FontWeight.w600,
-                        color: FccColors.gray90,
-                      ),
-                    ),
-                    SizedBox(height: 4),
-                    Text(
-                      Jiffy.parse('2025-07-07').format(pattern: 'EEEE, d MMMM'),
-                      style: TextStyle(
-                        fontSize: 13,
-                        color: FccColors.gray85,
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-              SizedBox(width: 8),
-              ElevatedButton(
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: FccColors.yellow50,
-                  foregroundColor: FccColors.gray90,
-                  elevation: 0,
-                  padding: EdgeInsets.symmetric(horizontal: 14, vertical: 8),
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(8),
-                  ),
-                ),
-                onPressed: () {},
-                child: Text(
-                  'View',
-                  style: TextStyle(fontWeight: FontWeight.bold),
-                ),
-              ),
-            ],
-          ),
-        ),
       ],
     );
   }
