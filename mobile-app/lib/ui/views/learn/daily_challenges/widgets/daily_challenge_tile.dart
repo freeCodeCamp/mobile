@@ -17,7 +17,7 @@ class DailyChallengeTile extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return FutureBuilder<bool>(
-      future: model.isChallengeCompleted(challenge.id),
+      future: model.checkIfChallengeCompleted(challenge.id),
       builder: (context, snapshot) {
         final isCompleted = snapshot.data ?? false;
 

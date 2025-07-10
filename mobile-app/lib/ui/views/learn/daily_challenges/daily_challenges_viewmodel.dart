@@ -99,11 +99,11 @@ class DailyChallengesViewModel extends BaseViewModel {
     }
   }
 
-  /// Check if a daily challenge is completed
-  Future<bool> isChallengeCompleted(String challengeId) async {
+  Future<bool> checkIfChallengeCompleted(String challengeId) async {
     FccUserModel? user = await _auth.userModel;
     if (user != null) {
-      for (CompletedChallenge challenge in user.completedChallenges) {
+      for (CompletedDailyChallenge challenge
+          in user.completedDailyCodingChallenges) {
         if (challenge.id == challengeId) {
           return true;
         }
@@ -142,7 +142,7 @@ class DailyChallengesViewModel extends BaseViewModel {
         arguments: ChallengeTemplateViewArguments(
           challengeId: challenge.id,
           block: block,
-          challengesCompleted: _completedChallengesCount,
+          challengesCompleted: completedChallengesCount,
           challengeDate: date,
         ),
       );
@@ -151,27 +151,30 @@ class DailyChallengesViewModel extends BaseViewModel {
     }
   }
 
-  /// Update the count of completed challenges across all groups
+  set completedChallengesCount(int value) {
+    _completedChallengesCount = value;
+    notifyListeners();
+  }
+
   Future<void> _updateCompletedCount() async {
     int count = 0;
 
     for (var block in _blocks) {
       for (var challenge in block.challenges) {
-        if (await isChallengeCompleted(challenge.id)) {
+        if (await checkIfChallengeCompleted(challenge.id)) {
           count++;
         }
       }
     }
 
-    _completedChallengesCount = count;
+    completedChallengesCount = count;
   }
 
-  /// Get the number of completed challenges for a specific group
   Future<int> getCompletedChallengesForBlock(DailyChallengeBlock block) async {
     int count = 0;
 
     for (var challenge in block.challenges) {
-      if (await isChallengeCompleted(challenge.id)) {
+      if (await checkIfChallengeCompleted(challenge.id)) {
         count++;
       }
     }
