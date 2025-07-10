@@ -1,4 +1,5 @@
 import 'package:dio/dio.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:freecodecamp/app/app.locator.dart';
 import 'package:freecodecamp/app/app.router.dart';
 import 'package:freecodecamp/models/learn/completed_challenge_model.dart';
@@ -15,10 +16,19 @@ class ChapterViewModel extends BaseViewModel {
   final NavigationService _navigationService = locator<NavigationService>();
   final AuthenticationService auth = locator<AuthenticationService>();
 
+  bool _isDev = false;
+  bool get isDev => _isDev;
+
   Future<SuperBlock?>? superBlockFuture;
+
+  set setIsDev(bool value) {
+    _isDev = value;
+    notifyListeners();
+  }
 
   void init() async {
     superBlockFuture = requestChapters();
+    developmentMode();
   }
 
   Future<String> calculateProgress(Module module) async {
@@ -66,6 +76,11 @@ class ChapterViewModel extends BaseViewModel {
     }
 
     return null;
+  }
+
+  void developmentMode() async {
+    await dotenv.load();
+    setIsDev = dotenv.env['DEVELOPMENTMODE'] == 'TRUE';
   }
 
   void routeToBlockView(
