@@ -76,6 +76,7 @@ class FccUserModel {
   // We can add this in later after confirming it
   // final List? badges;
   final List<CompletedChallenge> completedChallenges;
+  final List<DailyCodingChallenge> completedDailyCodingChallenges;
   final List<SavedChallenge> savedChallenges;
   final List<Portfolio> portfolio;
   final List<String> yearsTopContributor; // If number, parsing it to string
@@ -127,6 +128,7 @@ class FccUserModel {
     required this.points,
     required this.calendar,
     required this.heatMapCal,
+    required this.completedDailyCodingChallenges,
     required this.completedChallenges,
     required this.savedChallenges,
     required this.portfolio,
@@ -187,6 +189,11 @@ class FccUserModel {
           .map<CompletedChallenge>(
               (challenge) => CompletedChallenge.fromJson(challenge))
           .toList(),
+      completedDailyCodingChallenges:
+          (data['completedDailyCodingChallenges'] as List)
+              .map<DailyCodingChallenge>(
+                  (challenge) => DailyCodingChallenge.fromJson(challenge))
+              .toList(),
       savedChallenges: (data['savedChallenges'] as List)
           .map<SavedChallenge>(
               (challenge) => SavedChallenge.fromJson(challenge))
