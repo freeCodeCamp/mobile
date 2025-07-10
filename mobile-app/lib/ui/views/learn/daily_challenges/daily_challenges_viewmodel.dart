@@ -121,8 +121,6 @@ class DailyChallengesViewModel extends BaseViewModel {
       final challenge =
           await DailyChallengesService().fetchChallengeByDate(formattedDate);
 
-      print(challenge);
-
       // Create a block to satisfy ChallengeTemplateView's requirements
       final block = Block(
         name: 'Daily Challenge',
@@ -145,6 +143,7 @@ class DailyChallengesViewModel extends BaseViewModel {
           challengeId: challenge.id,
           block: block,
           challengesCompleted: _completedChallengesCount,
+          challengeDate: date,
         ),
       );
     } catch (e) {

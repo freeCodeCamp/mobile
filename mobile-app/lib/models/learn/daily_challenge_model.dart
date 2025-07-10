@@ -43,7 +43,6 @@ class DailyChallenge {
   });
 
   factory DailyChallenge.fromJson(Map<String, dynamic> data) {
-    print(data);
     return DailyChallenge(
       id: data['_id'],
       challengeNumber: data['challengeNumber'],
