@@ -1,22 +1,20 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_html/flutter_html.dart';
-import 'package:flutter_scroll_shadow/flutter_scroll_shadow.dart';
 import 'package:freecodecamp/models/learn/daily_challenge_model.dart';
 import 'package:freecodecamp/ui/theme/fcc_theme.dart';
 import 'package:freecodecamp/ui/views/learn/daily_challenges/daily_challenges_viewmodel.dart';
-import 'package:freecodecamp/ui/views/learn/daily_challenges/widgets/daily_challenge_tile.dart';
 import 'package:freecodecamp/ui/views/news/html_handler/html_handler.dart';
 
 class DailyChallengeBlockWidget extends StatelessWidget {
   const DailyChallengeBlockWidget({
     super.key,
-    required this.challengeBlock,
+    required this.block,
     required this.isOpen,
     required this.onToggleOpen,
     required this.model,
   });
 
-  final DailyChallengeBlock challengeBlock;
+  final DailyChallengeBlock block;
   final bool isOpen;
   final VoidCallback onToggleOpen;
   final DailyChallengesViewModel model;
@@ -24,10 +22,10 @@ class DailyChallengeBlockWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return FutureBuilder<int>(
-      future: model.getCompletedChallengesForBlock(challengeBlock),
+      future: model.getCompletedChallengesForBlock(block),
       builder: (context, snapshot) {
         final completedCount = snapshot.data ?? 0;
-        final totalCount = challengeBlock.challenges.length;
+        final totalCount = block.challenges.length;
         final isFullyCompleted = completedCount == totalCount;
 
         // Progress calculation
@@ -67,7 +65,7 @@ class DailyChallengeBlockWidget extends StatelessWidget {
                     child: Padding(
                       padding: const EdgeInsets.all(8.0),
                       child: Text(
-                        challengeBlock.monthYear,
+                        block.monthYear,
                         style: TextStyle(
                           wordSpacing: 0,
                           letterSpacing: 0,
@@ -123,7 +121,7 @@ class DailyChallengeBlockWidget extends StatelessWidget {
 
               // Description
               ...parser.parse(
-                '<p>${challengeBlock.description}</p>',
+                '<p>${block.description}</p>',
                 isSelectable: false,
                 customStyles: {
                   '*:not(h1):not(h2):not(h3):not(h4):not(h5):not(h6)': Style(
@@ -158,45 +156,66 @@ class DailyChallengeBlockWidget extends StatelessWidget {
                 ],
               ),
 
-              // Challenge grid
+              // Challenge list
               if (isOpen)
-                Container(
-                  padding: const EdgeInsets.all(8),
-                  constraints: const BoxConstraints(
-                    maxHeight: 300,
-                  ),
-                  child: Builder(
-                    builder: (context) {
-                      final challengeCount = challengeBlock.challenges.length;
-                      final isScrollable = challengeCount > 24;
+                Row(
+                  children: [
+                    Container(
+                      padding: const EdgeInsets.all(8),
+                      width: MediaQuery.of(context).size.width - 34,
+                      child: ListView.builder(
+                        shrinkWrap: true,
+                        padding: const EdgeInsets.all(0),
+                        physics: const ClampingScrollPhysics(),
+                        itemCount: block.challenges.length,
+                        itemBuilder: (context, index) {
+                          final challenge = block.challenges[index];
 
-                      return ScrollShadow(
-                        child: GridView.builder(
-                          shrinkWrap: true,
-                          padding: const EdgeInsets.all(0),
-                          physics: isScrollable
-                              ? const AlwaysScrollableScrollPhysics()
-                              : const NeverScrollableScrollPhysics(),
-                          gridDelegate:
-                              const SliverGridDelegateWithFixedCrossAxisCount(
-                            crossAxisCount: 6,
-                            mainAxisSpacing: 3,
-                            crossAxisSpacing: 3,
-                          ),
-                          itemCount: challengeCount,
-                          itemBuilder: (context, index) {
-                            final challenge = challengeBlock.challenges[index];
+                          return FutureBuilder<bool>(
+                            future:
+                                model.checkIfChallengeCompleted(challenge.id),
+                            builder: (context, snapshot) {
+                              bool isCompleted = snapshot.data ?? false;
 
-                            return DailyChallengeTile(
-                              challenge: challenge,
-                              model: model,
-                              index: index,
-                            );
-                          },
-                        ),
-                      );
-                    },
-                  ),
+                              return InkWell(
+                                onTap: () {
+                                  model
+                                      .navigateToDailyChallenge(challenge.date);
+                                },
+                                child: Card(
+                                  shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(5),
+                                    side: isCompleted
+                                        ? const BorderSide(
+                                            width: 1,
+                                            color: Color.fromRGBO(
+                                                0xbc, 0xe8, 0xf1, 1),
+                                          )
+                                        : const BorderSide(
+                                            color: Color.fromRGBO(
+                                                0x3b, 0x3b, 0x4f, 1),
+                                          ),
+                                  ),
+                                  color: isCompleted
+                                      ? const Color.fromRGBO(
+                                          0x00, 0x2e, 0xad, 0.3)
+                                      : const Color.fromRGBO(
+                                          0x2a, 0x2a, 0x40, 1),
+                                  child: Padding(
+                                    padding: const EdgeInsets.all(16.0),
+                                    child: Text(
+                                      'Challenge ${challenge.challengeNumber}: ${challenge.title}',
+                                      style: TextStyle(fontSize: 18),
+                                    ),
+                                  ),
+                                ),
+                              );
+                            },
+                          );
+                        },
+                      ),
+                    ),
+                  ],
                 ),
             ],
           ),

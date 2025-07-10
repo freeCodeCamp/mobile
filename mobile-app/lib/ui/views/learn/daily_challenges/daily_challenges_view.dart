@@ -40,7 +40,7 @@ class DailyChallengesView extends StatelessWidget {
                             padding: const EdgeInsets.only(bottom: 16),
                             child: DailyChallengeBlockWidget(
                               key: ValueKey(index),
-                              challengeBlock: block,
+                              block: block,
                               isOpen: isOpen,
                               onToggleOpen: () =>
                                   model.toggleBlock(block.monthYear),

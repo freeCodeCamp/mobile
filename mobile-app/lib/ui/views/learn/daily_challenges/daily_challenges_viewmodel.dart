@@ -67,11 +67,9 @@ class DailyChallengesViewModel extends BaseViewModel {
           List<DailyChallengeOverview> monthChallenges =
               challengesByMonth[monthYear]!;
 
-          // Sort challenges within the month in ascending order (oldest first)
+          // Sort challenges within the month by challengeNumber in descending order (greater first)
           monthChallenges.sort((a, b) {
-            DateTime dateA = a.date;
-            DateTime dateB = b.date;
-            return dateA.compareTo(dateB);
+            return b.challengeNumber.compareTo(a.challengeNumber);
           });
 
           final block = DailyChallengeBlock(
