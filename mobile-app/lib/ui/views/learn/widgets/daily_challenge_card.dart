@@ -2,7 +2,6 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:freecodecamp/ui/theme/fcc_theme.dart';
-import 'package:jiffy/jiffy.dart';
 import 'package:timezone/data/latest.dart' as tzdata;
 import 'package:timezone/timezone.dart' as tz;
 
@@ -80,8 +79,8 @@ class _DailyChallengeCardState extends State<DailyChallengeCard> {
               padding: const EdgeInsets.all(20),
               width: MediaQuery.of(context).size.width - 24,
               decoration: BoxDecoration(
-                color: FccColors.yellow50,
-                border: Border.all(color: FccColors.yellow50, width: 2),
+                color: FccColors.gray10,
+                border: Border.all(color: FccColors.gray10, width: 2),
                 borderRadius: BorderRadius.all(Radius.circular(16)),
                 boxShadow: [
                   BoxShadow(
@@ -96,7 +95,7 @@ class _DailyChallengeCardState extends State<DailyChallengeCard> {
                 crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
                   Text(
-                    'Write a Program That Prints Numbers from 1 to 100, Substituting Words Based on Divisibility Rules Using Clean, Readable, and Modular Code Practices',
+                    'Implement a Conditional Logic Routine That Transforms Sequential Integers into Domain-Specific Outputs',
                     style: TextStyle(
                       fontSize: 20,
                       fontWeight: FontWeight.bold,
@@ -113,7 +112,7 @@ class _DailyChallengeCardState extends State<DailyChallengeCard> {
                       padding:
                           EdgeInsets.symmetric(horizontal: 12, vertical: 6),
                       decoration: BoxDecoration(
-                        color: FccColors.gray10,
+                        color: Colors.white,
                         borderRadius: BorderRadius.circular(16),
                       ),
                       child: Text(
@@ -136,7 +135,7 @@ class _DailyChallengeCardState extends State<DailyChallengeCard> {
                   SizedBox(
                     width: double.infinity,
                     child: Tooltip(
-                      message: 'Solve the daily challenge now',
+                      message: 'Start the daily challenge now',
                       child: ElevatedButton.icon(
                         style: ElevatedButton.styleFrom(
                           backgroundColor: FccColors.yellow50,
@@ -151,7 +150,7 @@ class _DailyChallengeCardState extends State<DailyChallengeCard> {
                         icon: Icon(Icons.arrow_forward_ios,
                             size: 20, semanticLabel: 'Go to challenge'),
                         label: Text(
-                          'Solve it now!',
+                          'Start the challenge',
                           style: TextStyle(
                             fontSize: 18,
                             fontWeight: FontWeight.bold,
@@ -166,67 +165,6 @@ class _DailyChallengeCardState extends State<DailyChallengeCard> {
           ),
         ),
         SizedBox(height: 16),
-        Container(
-          width: MediaQuery.of(context).size.width - 24,
-          margin: EdgeInsets.zero,
-          padding: EdgeInsets.all(14),
-          decoration: BoxDecoration(
-            color: FccColors.gray10,
-            borderRadius: BorderRadius.circular(12),
-            border: Border.all(color: FccColors.gray10, width: 1),
-            boxShadow: [
-              BoxShadow(
-                color: Color.fromRGBO(0, 0, 0, 0.05),
-                blurRadius: 6,
-                offset: Offset(0, 2),
-              ),
-            ],
-          ),
-          child: Row(
-            children: [
-              Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      'Missed yesterday? Try the previous challenge!',
-                      style: TextStyle(
-                        fontSize: 15,
-                        fontWeight: FontWeight.w600,
-                        color: FccColors.gray90,
-                      ),
-                    ),
-                    SizedBox(height: 4),
-                    Text(
-                      Jiffy.parse('2025-07-07').format(pattern: 'EEEE, d MMMM'),
-                      style: TextStyle(
-                        fontSize: 13,
-                        color: FccColors.gray85,
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-              SizedBox(width: 8),
-              ElevatedButton(
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: FccColors.yellow50,
-                  foregroundColor: FccColors.gray90,
-                  elevation: 0,
-                  padding: EdgeInsets.symmetric(horizontal: 14, vertical: 8),
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(8),
-                  ),
-                ),
-                onPressed: () {},
-                child: Text(
-                  'View',
-                  style: TextStyle(fontWeight: FontWeight.bold),
-                ),
-              ),
-            ],
-          ),
-        ),
       ],
     );
   }
