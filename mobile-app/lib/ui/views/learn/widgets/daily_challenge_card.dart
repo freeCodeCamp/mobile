@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
+import 'package:freecodecamp/app/app.router.dart';
 import 'package:freecodecamp/models/learn/daily_challenge_model.dart';
 import 'package:freecodecamp/service/learn/daily_challenges_service.dart';
 import 'package:freecodecamp/ui/theme/fcc_theme.dart';
@@ -17,9 +18,48 @@ class DailyChallengeCard extends StatefulWidget {
 class _DailyChallengeCardState extends State<DailyChallengeCard> {
   Duration _timeLeft = Duration.zero;
   Timer? _timer;
-  DailyChallenge? _challenge;
+  DailyChallengeOverview? _challenge;
   bool _loading = true;
   String? _error;
+
+  String _formatMonthFromDate(DateTime date) {
+    const monthNames = [
+      'January',
+      'February',
+      'March',
+      'April',
+      'May',
+      'June',
+      'July',
+      'August',
+      'September',
+      'October',
+      'November',
+      'December'
+    ];
+    return '${monthNames[date.month - 1]} ${date.year}';
+  }
+
+  void _navigateToDailyChallenge(BuildContext context) {
+    if (_challenge == null) return;
+    final challenge = _challenge!;
+    final monthYear = _formatMonthFromDate(challenge.date);
+    final block = DailyChallengeBlock(
+      monthYear: monthYear,
+      challenges: [challenge],
+      description: '',
+    ).toCurriculumBlock();
+
+    Navigator.of(context).pushNamed(
+      '/challenge-template-view',
+      arguments: ChallengeTemplateViewArguments(
+        challengeId: challenge.id,
+        block: block,
+        challengesCompleted: 0,
+        challengeDate: challenge.date,
+      ),
+    );
+  }
 
   @override
   void initState() {
@@ -38,9 +78,20 @@ class _DailyChallengeCardState extends State<DailyChallengeCard> {
       _error = null;
     });
     try {
-      final challenge = await DailyChallengesService().fetchTodayChallenge();
+      final allChallenges =
+          await DailyChallengesService().fetchAllDailyChallenges();
+
+      if (allChallenges.isEmpty) {
+        setState(() {
+          _challenge = null;
+          _loading = false;
+        });
+        return;
+      }
       setState(() {
-        _challenge = challenge;
+        // Grab the most recent challenge
+        _challenge =
+            (allChallenges..sort((a, b) => b.date.compareTo(a.date))).first;
         _loading = false;
       });
     } catch (e) {
@@ -72,7 +123,7 @@ class _DailyChallengeCardState extends State<DailyChallengeCard> {
     return '${twoDigits(d.inHours)}:${twoDigits(d.inMinutes % 60)}:${twoDigits(d.inSeconds % 60)}';
   }
 
-  Widget _buildChallengeTitle(DailyChallenge challenge) {
+  Widget _buildChallengeTitle(DailyChallengeOverview challenge) {
     return Text(
       challenge.title,
       style: TextStyle(
@@ -129,7 +180,7 @@ class _DailyChallengeCardState extends State<DailyChallengeCard> {
               borderRadius: BorderRadius.circular(12),
             ),
           ),
-          onPressed: () {},
+          onPressed: () => _navigateToDailyChallenge(context),
           icon: Icon(Icons.arrow_forward_ios,
               size: 20, semanticLabel: 'Go to challenge'),
           label: Text(

@@ -1,3 +1,4 @@
+import 'package:freecodecamp/models/learn/curriculum_model.dart';
 import 'package:freecodecamp/models/learn/challenge_model.dart';
 
 class DailyChallengeOverview {
@@ -97,4 +98,26 @@ class DailyChallengeBlock {
     required this.challenges,
     required this.description,
   });
+
+  // Daily challenges don't have a block or a super block.
+  // Return a `Block` here to allow daily challenges
+  // to reuse the code for standard challenges.
+  Block toCurriculumBlock() {
+    final blockName = 'Daily Challenges $monthYear';
+    final blockDashedName =
+        'daily-challenges-${monthYear.toLowerCase().replaceAll(' ', '-')}';
+    return Block(
+      name: blockName,
+      dashedName: blockDashedName,
+      superBlock: SuperBlock(
+        dashedName: 'daily-challenges',
+        name: 'Daily Challenges',
+      ),
+      layout: BlockLayout.challengeGrid,
+      type: BlockType.legacy,
+      description: [description],
+      challenges: [],
+      challengeTiles: [],
+    );
+  }
 }
