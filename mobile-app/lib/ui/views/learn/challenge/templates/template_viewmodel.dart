@@ -12,19 +12,29 @@ class ChallengeTemplateViewModel extends BaseViewModel {
   final LearnOfflineService _learnOfflineService =
       locator<LearnOfflineService>();
   final LearnService _learnService = locator<LearnService>();
+
   set setChallenge(Future<Challenge> challenge) {
     _challenge = challenge;
     notifyListeners();
   }
 
-  void initiate(Block block, String challengeId) {
-    final String base = LearnService.baseUrlV2;
+  void initiate(Block block, String challengeId, DateTime? challengeDate) {
+    if (challengeDate == null) {
+      final String base = LearnService.baseUrlV2;
 
-    String url =
-        '$base/challenges/${block.superBlock.dashedName}/${block.dashedName}/$challengeId.json';
+      String url =
+          '$base/challenges/${block.superBlock.dashedName}/${block.dashedName}/$challengeId.json';
 
-    setChallenge = _learnOfflineService.getChallenge(url);
+      setChallenge = _learnOfflineService.getChallenge(url);
 
-    _learnService.setLastVisitedChallenge(url, block);
+      _learnService.setLastVisitedChallenge(url, block);
+    } else {
+      // Format date to YYYY-MM-DD
+      final formattedChallengeDate =
+          '${challengeDate.year.toString().padLeft(4, '0')}-${challengeDate.month.toString().padLeft(2, '0')}-${challengeDate.day.toString().padLeft(2, '0')}';
+
+      setChallenge =
+          _learnOfflineService.getDailyChallenge(formattedChallengeDate, block);
+    }
   }
 }

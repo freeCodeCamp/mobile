@@ -17,16 +17,21 @@ class ChallengeTemplateView extends StatelessWidget {
     required this.block,
     required this.challengeId,
     required this.challengesCompleted,
+    this.challengeDate,
   });
 
   final Block block;
   final String challengeId;
   final int challengesCompleted;
 
+  // Used for daily challenges
+  final DateTime? challengeDate;
+
   @override
   Widget build(BuildContext context) {
     return ViewModelBuilder<ChallengeTemplateViewModel>.reactive(
-      onViewModelReady: (model) => model.initiate(block, challengeId),
+      onViewModelReady: (model) =>
+          model.initiate(block, challengeId, challengeDate),
       viewModelBuilder: () => ChallengeTemplateViewModel(),
       builder: (context, model, child) => Scaffold(
         resizeToAvoidBottomInset: false,
@@ -47,6 +52,7 @@ class ChallengeTemplateView extends StatelessWidget {
                 case 20:
                 case 25:
                 case 26:
+                case 28:
                   return ChallengeView(
                     challenge: challenge,
                     block: block,

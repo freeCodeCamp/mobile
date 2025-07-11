@@ -43,7 +43,6 @@ class DailyChallenge {
   });
 
   factory DailyChallenge.fromJson(Map<String, dynamic> data) {
-    print(data);
     return DailyChallenge(
       id: data['_id'],
       challengeNumber: data['challengeNumber'],
@@ -85,4 +84,17 @@ class DailyChallengeLang {
       }).toList(),
     );
   }
+}
+
+/// Model representing a block of daily challenges for a specific month
+class DailyChallengeBlock {
+  final String monthYear; // e.g., "January 2025"
+  final List<DailyChallengeOverview> challenges;
+  final String description;
+
+  DailyChallengeBlock({
+    required this.monthYear,
+    required this.challenges,
+    required this.description,
+  });
 }

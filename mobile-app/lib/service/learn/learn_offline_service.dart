@@ -4,9 +4,12 @@ import 'dart:developer';
 import 'dart:io';
 
 import 'package:dio/dio.dart';
+import 'package:freecodecamp/app/app.locator.dart';
 import 'package:freecodecamp/models/learn/challenge_model.dart';
 import 'package:freecodecamp/models/learn/curriculum_model.dart';
+import 'package:freecodecamp/models/learn/daily_challenge_model.dart';
 import 'package:freecodecamp/service/dio_service.dart';
+import 'package:freecodecamp/service/learn/daily_challenges_service.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class ChallengeDownload {
@@ -44,6 +47,13 @@ class LearnOfflineService {
 
   Timer? timer;
   final _dio = DioService.dio;
+
+  // Lazy initialization of the daily challenges service
+  DailyChallengesService? _dailyChallengesService;
+  DailyChallengesService get dailyChallengesService {
+    _dailyChallengesService ??= locator<DailyChallengesService>();
+    return _dailyChallengesService!;
+  }
 
   /*
    This function will return an instance of every challenge download that has
@@ -117,6 +127,44 @@ class LearnOfflineService {
     //   }
     // }
     // return challenge;
+  }
+
+  /*
+    This function fetches a daily challenge by date and map it to Challenge.
+  */
+
+  Future<Challenge> getDailyChallenge(String date, Block block) async {
+    try {
+      DailyChallenge dailyChallenge =
+          await dailyChallengesService.fetchChallengeByDate(date);
+
+      // TODO: Support Python.
+      return Challenge(
+        id: dailyChallenge.id,
+        block: block.dashedName,
+        title: dailyChallenge.title,
+        description: dailyChallenge.description,
+        instructions: '',
+        dashedName: '',
+        superBlock: block.superBlock.dashedName,
+        videoId: null,
+        challengeType: 28,
+        tests: dailyChallenge.javascript.tests,
+        files: dailyChallenge.javascript.challengeFiles,
+        helpCategory: HelpCategory.javascript,
+        explanation: '',
+        transcript: '',
+        hooks: Hooks.fromJson({'beforeAll': ''}),
+        fillInTheBlank: null,
+        audio: null,
+        scene: null,
+        questions: null,
+        assignments: null,
+        quizzes: null,
+      );
+    } catch (e) {
+      throw Exception('Failed to fetch daily challenge: $e');
+    }
   }
 
   /*
