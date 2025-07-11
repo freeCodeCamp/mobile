@@ -72,9 +72,9 @@ class DailyChallengesView extends StatelessWidget {
           decoration: BoxDecoration(
             borderRadius: BorderRadius.circular(10),
             border: Border.all(
-              color: const Color.fromRGBO(0x3b, 0x3b, 0x4f, 1),
+              color: FccColors.gray75,
             ),
-            color: const Color.fromRGBO(0x1b, 0x1b, 0x32, 1),
+            color: FccColors.gray85,
           ),
           padding: const EdgeInsets.all(8),
           width: MediaQuery.of(context).size.width,
@@ -120,13 +120,13 @@ class DailyChallengesView extends StatelessWidget {
                                 padding: const EdgeInsets.only(right: 8.0),
                                 child: Icon(
                                   Icons.check_circle,
-                                  color: FccColors.gray00,
+                                  color: FccColors.blue30,
                                 ),
                               ),
                               Text(
                                 'Completed',
                                 style: TextStyle(
-                                  color: FccColors.gray00,
+                                  color: FccColors.blue30,
                                   fontWeight: FontWeight.bold,
                                 ),
                               )
@@ -140,9 +140,8 @@ class DailyChallengesView extends StatelessWidget {
                             minHeight: 12,
                             value: progress,
                             valueColor:
-                                AlwaysStoppedAnimation<Color>(FccColors.gray00),
-                            backgroundColor:
-                                const Color.fromRGBO(0x2a, 0x2a, 0x40, 1),
+                                AlwaysStoppedAnimation<Color>(FccColors.blue30),
+                            backgroundColor: FccColors.gray80,
                             borderRadius: BorderRadius.circular(10),
                           ),
                         ),
@@ -165,12 +164,11 @@ class DailyChallengesView extends StatelessWidget {
                     child: TextButton(
                       onPressed: () => model.toggleBlock(block.monthYear),
                       style: TextButton.styleFrom(
-                        backgroundColor:
-                            const Color.fromRGBO(0x1b, 0x1b, 0x32, 1),
+                        backgroundColor: FccColors.gray85,
                         shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(5),
-                          side: const BorderSide(
-                            color: Color.fromRGBO(0x3b, 0x3b, 0x4f, 1),
+                          side: BorderSide(
+                            color: FccColors.gray75,
                           ),
                         ),
                       ),
@@ -213,18 +211,17 @@ class DailyChallengesView extends StatelessWidget {
                     },
                     child: Card(
                       shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(5),
-                        side: isCompleted
-                            ? const BorderSide(
-                                width: 1,
-                                color: Color.fromRGBO(0xbc, 0xe8, 0xf1, 1),
-                              )
-                            : const BorderSide(
-                                color: Color.fromRGBO(0x3b, 0x3b, 0x4f, 1),
-                              ),
-                      ),
+                          borderRadius: BorderRadius.circular(5),
+                          side: isCompleted
+                              ? const BorderSide(
+                                  width: 1,
+                                  color: Color.fromRGBO(0xbc, 0xe8, 0xf1, 1),
+                                )
+                              : const BorderSide(
+                                  color: Color.fromRGBO(0x3b, 0x3b, 0x4f, 1),
+                                )),
                       color: isCompleted
-                          ? const Color.fromRGBO(0x00, 0x2e, 0xad, 0.3)
+                          ? Color.fromRGBO(0x00, 0x2e, 0xad, 0.3)
                           : const Color.fromRGBO(0x2a, 0x2a, 0x40, 1),
                       child: Padding(
                         padding: const EdgeInsets.all(16.0),
