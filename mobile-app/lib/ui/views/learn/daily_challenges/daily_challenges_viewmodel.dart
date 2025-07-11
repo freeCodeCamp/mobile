@@ -110,26 +110,15 @@ class DailyChallengesViewModel extends BaseViewModel {
 
   Future<void> navigateToDailyChallenge(
       DailyChallengeOverview challenge) async {
-    final monthYear = _formatMonthFromDate(challenge.date);
-    final blockName = 'Daily Challenges $monthYear';
-    final blockDashedName =
-        'daily-challenges-${monthYear.toLowerCase().replaceAll(' ', '-')}';
+    String monthYear = _formatMonthFromDate(challenge.date);
 
-    // Daily challenges don't have a block or a super block.
-    // Create a block here only to satisfy ChallengeTemplateView's requirements.
-    final block = Block(
-      name: blockName,
-      dashedName: blockDashedName,
-      superBlock: SuperBlock(
-        dashedName: 'daily-challenges',
-        name: 'Daily Challenges',
-      ),
-      layout: BlockLayout.challengeGrid,
-      type: BlockType.legacy,
-      description: ['Daily coding challenge'],
-      challenges: [],
-      challengeTiles: [],
-    );
+    // Map to curriculum block so ChallengeTemplateView can use it
+    Block block = DailyChallengeBlock(
+      monthYear: monthYear,
+      challenges: [challenge],
+      description:
+          'Explore the daily coding challenges for $monthYear. Stay motivated and keep your learning streak alive!',
+    ).toCurriculumBlock();
 
     _navigationService.navigateTo(
       Routes.challengeTemplateView,
