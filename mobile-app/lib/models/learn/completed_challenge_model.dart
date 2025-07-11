@@ -33,7 +33,7 @@ class CompletedChallenge {
 
 class CompletedDailyChallenge {
   final String id;
-  final int completedDate;
+  final DateTime completedDate;
   final List<String> languages;
 
   CompletedDailyChallenge({
@@ -45,7 +45,7 @@ class CompletedDailyChallenge {
   factory CompletedDailyChallenge.fromJson(Map<String, dynamic> data) {
     return CompletedDailyChallenge(
       id: data['id'],
-      completedDate: data['completedDate'],
+      completedDate: DateTime.fromMillisecondsSinceEpoch(data['completedDate']),
       languages: List<String>.from(data['languages']),
     );
   }
