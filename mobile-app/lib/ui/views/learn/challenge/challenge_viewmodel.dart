@@ -336,6 +336,7 @@ class ChallengeViewModel extends BaseViewModel {
               end: file.editableRegionBoundaries[1],
             )
           : null,
+      useHighlightJs: false,
       fontFamily: 'Hack',
     );
 
