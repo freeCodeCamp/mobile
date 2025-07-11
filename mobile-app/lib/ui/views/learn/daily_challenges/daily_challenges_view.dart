@@ -1,14 +1,13 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_html/flutter_html.dart';
 import 'package:freecodecamp/models/learn/daily_challenge_model.dart';
 import 'package:freecodecamp/ui/theme/fcc_theme.dart';
 import 'package:freecodecamp/ui/views/learn/daily_challenges/daily_challenges_viewmodel.dart';
-import 'package:flutter_html/flutter_html.dart';
 import 'package:freecodecamp/ui/views/news/html_handler/html_handler.dart';
 import 'package:freecodecamp/ui/widgets/drawer_widget/drawer_widget_view.dart';
 import 'package:stacked/stacked.dart';
 
 class DailyChallengesView extends StatelessWidget {
-  
   const DailyChallengesView({super.key});
 
   @override
@@ -58,7 +57,8 @@ class DailyChallengesView extends StatelessWidget {
     );
   }
 
-  Widget buildBlock(BuildContext context, DailyChallengeBlock block, bool isOpen, DailyChallengesViewModel model) {
+  Widget buildBlock(BuildContext context, DailyChallengeBlock block,
+      bool isOpen, DailyChallengesViewModel model) {
     HTMLParser parser = HTMLParser(context: context);
     return FutureBuilder<int>(
       future: model.getCompletedChallengesForBlock(block),
@@ -66,7 +66,8 @@ class DailyChallengesView extends StatelessWidget {
         final completedCount = snapshot.data ?? 0;
         final totalCount = block.challenges.length;
         final isFullyCompleted = completedCount == totalCount;
-        double progress = completedCount == 0 ? 0.01 : completedCount / totalCount;
+        double progress =
+            completedCount == 0 ? 0.01 : completedCount / totalCount;
         return Container(
           decoration: BoxDecoration(
             borderRadius: BorderRadius.circular(10),
@@ -138,8 +139,10 @@ class DailyChallengesView extends StatelessWidget {
                           child: LinearProgressIndicator(
                             minHeight: 12,
                             value: progress,
-                            valueColor: AlwaysStoppedAnimation<Color>(FccColors.gray00),
-                            backgroundColor: const Color.fromRGBO(0x2a, 0x2a, 0x40, 1),
+                            valueColor:
+                                AlwaysStoppedAnimation<Color>(FccColors.gray00),
+                            backgroundColor:
+                                const Color.fromRGBO(0x2a, 0x2a, 0x40, 1),
                             borderRadius: BorderRadius.circular(10),
                           ),
                         ),
@@ -162,7 +165,8 @@ class DailyChallengesView extends StatelessWidget {
                     child: TextButton(
                       onPressed: () => model.toggleBlock(block.monthYear),
                       style: TextButton.styleFrom(
-                        backgroundColor: const Color.fromRGBO(0x1b, 0x1b, 0x32, 1),
+                        backgroundColor:
+                            const Color.fromRGBO(0x1b, 0x1b, 0x32, 1),
                         shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(5),
                           side: const BorderSide(
@@ -185,7 +189,8 @@ class DailyChallengesView extends StatelessWidget {
     );
   }
 
-  Widget buildChallengeList(BuildContext context, DailyChallengeBlock block, DailyChallengesViewModel model) {
+  Widget buildChallengeList(BuildContext context, DailyChallengeBlock block,
+      DailyChallengesViewModel model) {
     return Row(
       children: [
         Container(
@@ -204,7 +209,7 @@ class DailyChallengesView extends StatelessWidget {
                   bool isCompleted = snapshot.data ?? false;
                   return InkWell(
                     onTap: () {
-                      model.navigateToDailyChallenge(challenge.date);
+                      model.navigateToDailyChallenge(challenge);
                     },
                     child: Card(
                       shape: RoundedRectangleBorder(

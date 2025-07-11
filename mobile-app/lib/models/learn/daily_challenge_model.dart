@@ -89,7 +89,7 @@ class DailyChallengeLang {
 /// Model representing a block of daily challenges for a specific month
 class DailyChallengeBlock {
   final String monthYear; // e.g., "January 2025"
-  final List<DailyChallengeItem> challenges;
+  final List<DailyChallengeOverview> challenges;
   final String description;
 
   DailyChallengeBlock({
@@ -97,28 +97,4 @@ class DailyChallengeBlock {
     required this.challenges,
     required this.description,
   });
-}
-
-/// Model representing a single daily challenge item in the UI
-class DailyChallengeItem {
-  final String id;
-  final String title;
-  final DateTime date;
-  final int challengeNumber;
-
-  DailyChallengeItem({
-    required this.id,
-    required this.title,
-    required this.date,
-    required this.challengeNumber,
-  });
-
-  factory DailyChallengeItem.fromOverview(DailyChallengeOverview overview) {
-    return DailyChallengeItem(
-      id: overview.id,
-      title: overview.title,
-      date: overview.date,
-      challengeNumber: overview.challengeNumber,
-    );
-  }
 }

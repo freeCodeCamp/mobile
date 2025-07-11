@@ -74,9 +74,7 @@ class DailyChallengesViewModel extends BaseViewModel {
 
           final block = DailyChallengeBlock(
             monthYear: monthYear,
-            challenges: monthChallenges
-                .map((overview) => DailyChallengeItem.fromOverview(overview))
-                .toList(),
+            challenges: monthChallenges,
             description:
                 'Explore the daily coding challenges for $monthYear. Stay motivated and keep your learning streak alive!',
           );
@@ -110,43 +108,38 @@ class DailyChallengesViewModel extends BaseViewModel {
     return false;
   }
 
-  Future<void> navigateToDailyChallenge(DateTime date) async {
-    try {
-      // Format date to YYYY-MM-DD
-      final formattedDate =
-          '${date.year.toString().padLeft(4, '0')}-${date.month.toString().padLeft(2, '0')}-${date.day.toString().padLeft(2, '0')}';
+  Future<void> navigateToDailyChallenge(
+      DailyChallengeOverview challenge) async {
+    final monthYear = _formatMonthFromDate(challenge.date);
+    final blockName = 'Daily Challenges $monthYear';
+    final blockDashedName =
+        'daily-challenges-${monthYear.toLowerCase().replaceAll(' ', '-')}';
 
-      final challenge =
-          await DailyChallengesService().fetchChallengeByDate(formattedDate);
+    // Daily challenges don't have a block or a super block.
+    // Create a block here only to satisfy ChallengeTemplateView's requirements.
+    final block = Block(
+      name: blockName,
+      dashedName: blockDashedName,
+      superBlock: SuperBlock(
+        dashedName: 'daily-challenges',
+        name: 'Daily Challenges',
+      ),
+      layout: BlockLayout.challengeGrid,
+      type: BlockType.legacy,
+      description: ['Daily coding challenge'],
+      challenges: [],
+      challengeTiles: [],
+    );
 
-      // Create a block to satisfy ChallengeTemplateView's requirements
-      final block = Block(
-        name: 'Daily Challenge',
-        dashedName:
-            'daily-challenge-${DateTime.parse(formattedDate).millisecondsSinceEpoch}',
-        superBlock: SuperBlock(
-          dashedName: 'daily-challenges',
-          name: 'Daily Challenges',
-        ),
-        layout: BlockLayout.challengeGrid,
-        type: BlockType.legacy,
-        description: [challenge.description],
-        challenges: [],
-        challengeTiles: [],
-      );
-
-      _navigationService.navigateTo(
-        Routes.challengeTemplateView,
-        arguments: ChallengeTemplateViewArguments(
-          challengeId: challenge.id,
-          block: block,
-          challengesCompleted: completedChallengesCount,
-          challengeDate: date,
-        ),
-      );
-    } catch (e) {
-      print('Error navigating to daily challenge: $e');
-    }
+    _navigationService.navigateTo(
+      Routes.challengeTemplateView,
+      arguments: ChallengeTemplateViewArguments(
+        challengeId: challenge.id,
+        block: block,
+        challengesCompleted: completedChallengesCount,
+        challengeDate: challenge.date,
+      ),
+    );
   }
 
   set completedChallengesCount(int value) {
