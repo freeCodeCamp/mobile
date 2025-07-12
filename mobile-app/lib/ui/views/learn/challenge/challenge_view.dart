@@ -295,7 +295,7 @@ class ChallengeView extends StatelessWidget {
                         },
                       },
                     );
-                    log('TestRunner: \\$res');
+                    log('TestRunner: $res');
                   },
                   initialSettings: InAppWebViewSettings(
                     isInspectable: true,
@@ -306,7 +306,6 @@ class ChallengeView extends StatelessWidget {
               ..._panelIconButtons(
                 model,
                 challenge,
-                challengesCompleted,
                 block,
               ),
               Expanded(
@@ -337,18 +336,7 @@ class ChallengeView extends StatelessWidget {
                                     size: 30,
                                   ),
                         onPressed: model.hasTypedInEditor
-                            ? () async {
-                                if (model.showPanel &&
-                                    model.panelType == PanelType.pass) {
-                                  model.learnService.goToNextChallenge(
-                                    model.block!.challenges.length,
-                                    challengesCompleted,
-                                    challenge,
-                                    block,
-                                  );
-                                }
-                                model.runTests();
-                              }
+                            ? model.runTests
                             : null,
                         splashColor: Colors.transparent,
                         highlightColor: Colors.transparent,
@@ -459,6 +447,7 @@ class ChallengeView extends StatelessWidget {
     return TextButton.icon(
       onPressed: () {
         model.setShowTestsPanel = !model.showTestsPanel;
+        model.setMounted = false;
       },
       label: Text(
         'Tests',
@@ -555,7 +544,6 @@ class ChallengeView extends StatelessWidget {
   List<Widget> _panelIconButtons(
     ChallengeViewModel model,
     Challenge challenge,
-    int challengesCompleted,
     Block block,
   ) {
     return [
@@ -578,6 +566,7 @@ class ChallengeView extends StatelessWidget {
             ChallengeFile currFile = model.currentFile(challenge);
             model.setShowPreview = !model.showPreview;
             model.setShowConsole = false;
+            model.setMounted = false;
             model.initFile(challenge, currFile);
           },
         ),
@@ -587,6 +576,7 @@ class ChallengeView extends StatelessWidget {
         onPressed: () {
           model.setShowConsole = !model.showConsole;
           model.setShowPreview = false;
+          model.setMounted = false;
         },
       ),
     ];

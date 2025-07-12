@@ -87,7 +87,7 @@ void main() {
 
       // JavaScript Chapter
       'workshop-greeting-bot',
-      'lab-javascript-trivia-bot', // TODO: Re-verify after Oliver supports before all for JS challenges
+      'lab-javascript-trivia-bot',
       'lab-sentence-maker',
       'workshop-teacher-chatbot',
       'workshop-mathbot',
