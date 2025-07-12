@@ -5,6 +5,7 @@ import 'package:freecodecamp/service/authentication/authentication_service.dart'
 import 'package:freecodecamp/ui/theme/fcc_theme.dart';
 import 'package:freecodecamp/ui/views/learn/block/block_template_view.dart';
 import 'package:freecodecamp/ui/views/learn/superblock/superblock_viewmodel.dart';
+import 'package:freecodecamp/ui/widgets/floating_navigation_buttons.dart';
 import 'package:stacked/stacked.dart';
 
 class SuperBlockView extends StatelessWidget {
@@ -35,6 +36,26 @@ class SuperBlockView extends StatelessWidget {
         );
       },
       builder: (context, model, child) => Scaffold(
+        floatingActionButton: model.superBlockData != null
+            ? FutureBuilder<SuperBlock>(
+                future: model.superBlockData,
+                builder: (context, snapshot) {
+                  if (snapshot.hasData &&
+                      snapshot.data is SuperBlock &&
+                      (snapshot.data as SuperBlock).blocks != null &&
+                      (snapshot.data as SuperBlock).blocks!.isNotEmpty) {
+                    return FloatingNavigationButtons(
+                      onPrevious: model.scrollToPrevious,
+                      onNext: model.scrollToNext,
+                      hasPrevious: model.hasPrevious,
+                      hasNext: model.hasNext,
+                      isAnimating: model.isAnimating,
+                    );
+                  }
+                  return const SizedBox.shrink();
+                },
+              )
+            : null,
         body: Column(
           children: [
             Container(
@@ -93,6 +114,11 @@ class SuperBlockView extends StatelessWidget {
 
                           model.blockOpenStates = openStates;
                         }
+
+                        if (model.blocks.isEmpty) {
+                          model.setBlocks(superBlock.blocks!);
+                          model.initializeScrollListener();
+                        }
                       });
 
                       return blockTemplate(model, superBlock);
@@ -127,6 +153,7 @@ class SuperBlockView extends StatelessWidget {
           return true;
         },
         child: ListView.builder(
+          controller: model.scrollController,
           padding: EdgeInsets.zero,
           itemCount: superBlock.blocks!.length,
           itemBuilder: (context, block) {
@@ -138,7 +165,10 @@ class SuperBlockView extends StatelessWidget {
               child: Column(
                 children: [
                   BlockTemplateView(
-                    key: ValueKey(block),
+                    key: model.blockKeys.isNotEmpty &&
+                            block < model.blockKeys.length
+                        ? model.blockKeys[block]
+                        : ValueKey(block),
                     block: superBlock.blocks![block],
                     isOpen: model.blockOpenStates[
                             superBlock.blocks![block].dashedName] ??
