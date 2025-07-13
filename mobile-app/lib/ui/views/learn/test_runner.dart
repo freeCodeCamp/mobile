@@ -71,6 +71,12 @@ return testRes;
         }
 
         return babelRes?.value ?? challengeFile;
+      case 20:
+      case 23:
+      case 27:
+      case 29:
+        // Python challenges do not require transpilation, return the file as is.
+        return challengeFile;
       default:
         String parsedWithStyleTags =
             await fileService.parseCssDocumentsAsStyleTags(
@@ -106,6 +112,8 @@ return testRes;
         return 'javascript';
       case 20:
       case 23:
+      case 27:
+      case 29:
         return 'python';
     }
 
@@ -118,6 +126,11 @@ return testRes;
       case 1:
       case 26:
         return Ext.js;
+      case 20:
+      case 23:
+      case 27:
+      case 29:
+        return Ext.py;
       default:
         return Ext.html;
     }
