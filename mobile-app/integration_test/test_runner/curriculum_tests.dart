@@ -28,6 +28,7 @@ void main() {
       // 'javascript-algorithms-and-data-structures-v8',
       // 'javascript-algorithms-and-data-structures',
       'the-odin-project',
+      'scientific-computing-with-python',
       'full-stack-developer',
     ];
 
@@ -143,7 +144,37 @@ void main() {
       'lab-sorting-visualizer',
       'workshop-fcc-authors-page',
       'lab-fcc-forum-leaderboard',
-      'lab-weather-app'
+      'lab-weather-app',
+
+      // Python Chapter
+      'workshop-caesar-cipher',
+      'lab-rpg-character',
+      'workshop-pin-extractor',
+      'lab-number-pattern-generator',
+      'workshop-placeholder-dictionaries-and-sets',
+      'lab-placeholder-dictionaries-and-sets',
+      'lab-isbn-validator',
+      'workshop-placeholder-classes-and-objects',
+      'lab-budget-app',
+      'workshop-placeholder-oop-1',
+      'lab-placeholder-oop-1',
+      'workshop-placeholder-oop-2',
+      'lab-polygon-area-calculator',
+      'workshop-placeholder-oop-3',
+      'lab-placeholder-oop-3',
+      'workshop-linked-list-class',
+      'lab-hash-table',
+      'workshop-binary-search',
+      'lab-bisection-method',
+      'workshop-merge-sort',
+      'lab-quicksort',
+      'lab-selection-sort',
+      'lab-luhn-algorithm',
+      'workshop-shortest-path-algorithm',
+      'lab-adjacency-list-matrix-converter',
+      'workshop-breadth-first-search',
+      'lab-depth-first-search',
+      'lab-nth-fibonacci-number'
     ];
 
     String curriculumFilePath = 'assets/learn/curriculum.json';
@@ -183,7 +214,7 @@ void main() {
           editorChallengeTypes.add(currChallenge['challengeType']);
 
           // Skip non-editor challenges
-          if (![0, 1, 5, 6, 14, 25, 26]
+          if (![0, 1, 5, 6, 14, 25, 26, 20, 23, 27, 29]
               .contains(currChallenge['challengeType'])) {
             continue;
           }
