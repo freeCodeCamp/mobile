@@ -124,9 +124,6 @@ class ChallengeViewModel extends BaseViewModel {
   Block? _block;
   Block? get block => _block;
 
-  int _challengesCompleted = 0;
-  int get challengesCompleted => _challengesCompleted;
-
   EditorOptions defaultEditorOptions = EditorOptions();
 
   TextFieldData? _textFieldData;
@@ -224,11 +221,6 @@ class ChallengeViewModel extends BaseViewModel {
     notifyListeners();
   }
 
-  set setChallengesCompleted(int value) {
-    _challengesCompleted = value;
-    notifyListeners();
-  }
-
   set setMounted(bool value) {
     _mounted = value;
     notifyListeners();
@@ -289,7 +281,6 @@ class ChallengeViewModel extends BaseViewModel {
   void init(
     Block block,
     Challenge challenge,
-    int challengesCompleted,
   ) async {
     await _babelWebView.run();
     await _localhostServer.start();
@@ -298,7 +289,6 @@ class ChallengeViewModel extends BaseViewModel {
 
     setChallenge = challenge;
     setBlock = block;
-    setChallengesCompleted = challengesCompleted;
 
     listenToSymbolBarScrollController();
   }
@@ -608,7 +598,6 @@ class ChallengeViewModel extends BaseViewModel {
         arguments: ChallengeTemplateViewArguments(
           block: block!,
           challengeId: currChallenge.id,
-          challengesCompleted: challengesCompleted,
         ),
       );
     }
@@ -703,7 +692,6 @@ class ChallengeViewModel extends BaseViewModel {
     required Challenge challenge,
     required ChallengeViewModel model,
     required int maxChallenges,
-    required int challengesCompleted,
   }) {
     switch (panelType) {
       case PanelType.instruction:
@@ -723,7 +711,6 @@ class ChallengeViewModel extends BaseViewModel {
       case PanelType.pass:
         return PassWidgetView(
           challengeModel: model,
-          challengesCompleted: challengesCompleted,
           maxChallenges: maxChallenges,
         );
       default:

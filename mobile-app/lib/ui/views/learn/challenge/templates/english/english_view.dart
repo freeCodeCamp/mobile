@@ -118,10 +118,10 @@ class EnglishView extends StatelessWidget {
                           ),
                           onPressed: model.allInputsCorrect
                               ? () => model.learnService.goToNextChallenge(
-                                  block.challenges.length,
-                                  currentChallengeNum,
-                                  challenge,
-                                  block)
+                                    block.challenges.length,
+                                    challenge,
+                                    block,
+                                  )
                               : () => {model.checkAnswers(challenge)},
                           child: Text(
                             model.allInputsCorrect ||

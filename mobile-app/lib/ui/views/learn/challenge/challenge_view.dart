@@ -21,13 +21,11 @@ class ChallengeView extends StatelessWidget {
     super.key,
     required this.block,
     required this.challenge,
-    required this.challengesCompleted,
     required this.isProject,
   });
 
   final Challenge challenge;
   final Block block;
-  final int challengesCompleted;
   final bool isProject;
 
   @override
@@ -35,7 +33,7 @@ class ChallengeView extends StatelessWidget {
     return ViewModelBuilder<ChallengeViewModel>.reactive(
       viewModelBuilder: () => ChallengeViewModel(),
       onViewModelReady: (model) {
-        model.init(block, challenge, challengesCompleted);
+        model.init(block, challenge);
       },
       onDispose: (model) {
         model.closeWebViews();
@@ -139,7 +137,6 @@ class ChallengeView extends StatelessWidget {
           challenge: challenge,
           model: model,
           maxChallenges: maxChallenges,
-          challengesCompleted: challengesCompleted,
         ),
       ),
     );
@@ -335,9 +332,8 @@ class ChallengeView extends StatelessWidget {
                                     Icons.done_rounded,
                                     size: 30,
                                   ),
-                        onPressed: model.hasTypedInEditor
-                            ? model.runTests
-                            : null,
+                        onPressed:
+                            model.hasTypedInEditor ? model.runTests : null,
                         splashColor: Colors.transparent,
                         highlightColor: Colors.transparent,
                       ),
