@@ -6,6 +6,7 @@ import 'package:freecodecamp/models/learn/daily_challenge_model.dart';
 import 'package:freecodecamp/models/main/user_model.dart';
 import 'package:freecodecamp/service/authentication/authentication_service.dart';
 import 'package:freecodecamp/service/learn/daily_challenges_service.dart';
+import 'package:freecodecamp/ui/views/learn/utils/challenge_utils.dart';
 import 'package:stacked/stacked.dart';
 import 'package:stacked_services/stacked_services.dart';
 
@@ -44,7 +45,7 @@ class DailyChallengesViewModel extends BaseViewModel {
 
         // Group challenges by month
         for (var challenge in challenges) {
-          String monthYear = _formatMonthFromDate(challenge.date);
+          String monthYear = formatMonthFromDate(challenge.date);
           if (!challengesByMonth.containsKey(monthYear)) {
             challengesByMonth[monthYear] = [];
           }
@@ -54,8 +55,8 @@ class DailyChallengesViewModel extends BaseViewModel {
         // Sort months in descending order (newest first)
         List<String> sortedMonths = challengesByMonth.keys.toList()
           ..sort((a, b) {
-            DateTime dateA = _parseMonthYear(a);
-            DateTime dateB = _parseMonthYear(b);
+            DateTime dateA = parseMonthYear(a);
+            DateTime dateB = parseMonthYear(b);
             return dateB.compareTo(dateA);
           });
 
@@ -110,7 +111,7 @@ class DailyChallengesViewModel extends BaseViewModel {
 
   Future<void> navigateToDailyChallenge(
       DailyChallengeOverview challenge) async {
-    String monthYear = _formatMonthFromDate(challenge.date);
+    String monthYear = formatMonthFromDate(challenge.date);
 
     // Map to curriculum block so ChallengeTemplateView can use it
     Block block = DailyChallengeBlock(
@@ -160,47 +161,5 @@ class DailyChallengesViewModel extends BaseViewModel {
     }
 
     return count;
-  }
-
-  String _formatMonthFromDate(DateTime date) {
-    const monthNames = [
-      'January',
-      'February',
-      'March',
-      'April',
-      'May',
-      'June',
-      'July',
-      'August',
-      'September',
-      'October',
-      'November',
-      'December'
-    ];
-    return '${monthNames[date.month - 1]} ${date.year}';
-  }
-
-  DateTime _parseMonthYear(String monthYear) {
-    List<String> parts = monthYear.split(' ');
-    String monthName = parts[0];
-    int year = int.parse(parts[1]);
-
-    const monthNames = [
-      'January',
-      'February',
-      'March',
-      'April',
-      'May',
-      'June',
-      'July',
-      'August',
-      'September',
-      'October',
-      'November',
-      'December'
-    ];
-
-    int month = monthNames.indexOf(monthName) + 1;
-    return DateTime(year, month, 1);
   }
 }

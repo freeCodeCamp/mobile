@@ -5,6 +5,7 @@ import 'package:freecodecamp/app/app.router.dart';
 import 'package:freecodecamp/models/learn/daily_challenge_model.dart';
 import 'package:freecodecamp/service/learn/daily_challenges_service.dart';
 import 'package:freecodecamp/ui/theme/fcc_theme.dart';
+import 'package:freecodecamp/ui/views/learn/utils/challenge_utils.dart';
 import 'package:timezone/data/latest.dart' as tzdata;
 import 'package:timezone/timezone.dart' as tz;
 
@@ -22,28 +23,10 @@ class _DailyChallengeCardState extends State<DailyChallengeCard> {
   bool _loading = true;
   String? _error;
 
-  String _formatMonthFromDate(DateTime date) {
-    const monthNames = [
-      'January',
-      'February',
-      'March',
-      'April',
-      'May',
-      'June',
-      'July',
-      'August',
-      'September',
-      'October',
-      'November',
-      'December'
-    ];
-    return '${monthNames[date.month - 1]} ${date.year}';
-  }
-
   void _navigateToDailyChallenge(BuildContext context) {
     if (_challenge == null) return;
     final challenge = _challenge!;
-    final monthYear = _formatMonthFromDate(challenge.date);
+    final monthYear = formatMonthFromDate(challenge.date);
 
     final challengeOverview = DailyChallengeOverview(
       id: challenge.id,
