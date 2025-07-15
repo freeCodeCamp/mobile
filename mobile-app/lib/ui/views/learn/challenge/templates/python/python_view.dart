@@ -81,6 +81,7 @@ class PythonView extends StatelessWidget {
                     title: 'Transcript',
                     child: Transcript(
                       transcript: challenge.transcript,
+                      isCollapsible: challenge.videoId != null,
                     ),
                   ),
                 ],
