@@ -7,8 +7,10 @@ import 'package:freecodecamp/app/app.router.dart';
 import 'package:freecodecamp/enums/dialog_type.dart';
 import 'package:freecodecamp/models/learn/challenge_model.dart';
 import 'package:freecodecamp/models/learn/curriculum_model.dart';
+import 'package:freecodecamp/models/learn/daily_challenge_model.dart';
 import 'package:freecodecamp/service/authentication/authentication_service.dart';
 import 'package:freecodecamp/service/dio_service.dart';
+import 'package:freecodecamp/service/learn/daily_challenges_service.dart';
 import 'package:freecodecamp/service/learn/learn_offline_service.dart';
 import 'package:freecodecamp/utils/helpers.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -30,6 +32,8 @@ class LearnService {
       locator<LearnOfflineService>();
   final NavigationService _navigationService = locator<NavigationService>();
   final DialogService _dialogService = locator<DialogService>();
+  final DailyChallengesService _dailyChallengesService =
+      locator<DailyChallengesService>();
 
   factory LearnService() {
     return _learnService;
@@ -131,6 +135,15 @@ class LearnService {
       };
     }).toList();
 
+    if (challenge.challengeType == 28 || challenge.challengeType == 29) {
+      await _dailyChallengesService.postChallengeCompleted(
+          challengeId: challenge.id,
+          language: challenge.challengeType == 28
+              ? DailyChallengeLanguage.javascript
+              : DailyChallengeLanguage.python);
+      return;
+    }
+
     await postChallengeCompleted(
       challenge,
       challengeFiles: challengeFiles,
@@ -148,6 +161,11 @@ class LearnService {
     if (AuthenticationService.staticIsloggedIn) {
       passChallenge(challenge, solutionLink);
     }
+
+    if (challenge.challengeType == 28 || challenge.challengeType == 29) {
+      _navigationService.back();
+    }
+
     var challengeIndex = block.challengeTiles.indexWhere(
       (element) => element.id == challenge.id,
     );

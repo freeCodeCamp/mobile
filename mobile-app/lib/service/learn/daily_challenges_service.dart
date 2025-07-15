@@ -1,5 +1,6 @@
 import 'package:dio/dio.dart';
 import 'package:freecodecamp/models/learn/daily_challenge_model.dart';
+import 'package:freecodecamp/service/authentication/authentication_service.dart';
 import 'package:freecodecamp/service/dio_service.dart';
 
 class DailyChallengesService {
@@ -51,6 +52,20 @@ class DailyChallengesService {
       return DailyChallenge.fromJson(response.data);
     } else {
       throw Exception('Failed to fetch challenge.');
+    }
+  }
+
+  Future<void> postChallengeCompleted({
+    required String challengeId,
+    required DailyChallengeLanguage language,
+  }) async {
+    final response = await _dio.post(
+      '${AuthenticationService.baseApiURL}/daily-coding-challenge-completed',
+      data: {'id': challengeId, 'language': language.toString()},
+    );
+
+    if (response.statusCode != 200) {
+      throw Exception('Failed to post challenge.');
     }
   }
 }
