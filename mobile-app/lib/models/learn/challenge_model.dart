@@ -5,8 +5,7 @@ enum ChallengeType {
   html, // 0
   js, // 1
   backend, // 2
-  zipline, // 3
-  frontEndProject, // 3
+  zipline, // 3 (frontEndProject is also 3 in main repo, but omitted to avoid duplicate enum values)
   backEndProject, // 4
   jsProject, // 5
   modern, // 6
@@ -20,7 +19,20 @@ enum ChallengeType {
   multifileCertProject, // 14
   theOdinProject, // 15
   colab, // 16
-  exam // 17
+  exam, // 17
+  msTrophy, // 18
+  multipleChoice, // 19
+  python, // 20
+  dialogue, // 21
+  fillInTheBlank, // 22
+  multifilePythonCertProject, // 23
+  generic, // 24
+  lab, // 25
+  jsLab, // 26
+  pyLab, // 27
+  dailyChallengeJs, // 28
+  dailyChallengePy, // 29
+  examDownload // 30
 }
 
 enum HelpCategory {
