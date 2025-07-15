@@ -260,10 +260,7 @@ class StackedRouter extends _i1.RouterBase {
       final args = data.getArgs<ChallengeTemplateViewArguments>(nullOk: false);
       return _i20.MaterialPageRoute<dynamic>(
         builder: (context) => _i11.ChallengeTemplateView(
-            key: args.key,
-            block: args.block,
-            challengeId: args.challengeId,
-            challengesCompleted: args.challengesCompleted),
+            key: args.key, block: args.block, challengeId: args.challengeId),
         settings: data,
       );
     },
@@ -547,7 +544,6 @@ class ChallengeTemplateViewArguments {
     this.key,
     required this.block,
     required this.challengeId,
-    required this.challengesCompleted,
   });
 
   final _i20.Key? key;
@@ -556,11 +552,9 @@ class ChallengeTemplateViewArguments {
 
   final String challengeId;
 
-  final int challengesCompleted;
-
   @override
   String toString() {
-    return '{"key": "$key", "block": "$block", "challengeId": "$challengeId", "challengesCompleted": "$challengesCompleted"}';
+    return '{"key": "$key", "block": "$block", "challengeId": "$challengeId"}';
   }
 
   @override
@@ -568,16 +562,12 @@ class ChallengeTemplateViewArguments {
     if (identical(this, other)) return true;
     return other.key == key &&
         other.block == block &&
-        other.challengeId == challengeId &&
-        other.challengesCompleted == challengesCompleted;
+        other.challengeId == challengeId;
   }
 
   @override
   int get hashCode {
-    return key.hashCode ^
-        block.hashCode ^
-        challengeId.hashCode ^
-        challengesCompleted.hashCode;
+    return key.hashCode ^ block.hashCode ^ challengeId.hashCode;
   }
 }
 
@@ -849,7 +839,6 @@ extension NavigatorStateExtension on _i25.NavigationService {
     _i20.Key? key,
     required _i24.Block block,
     required String challengeId,
-    required int challengesCompleted,
     int? routerId,
     bool preventDuplicates = true,
     Map<String, String>? parameters,
@@ -858,10 +847,7 @@ extension NavigatorStateExtension on _i25.NavigationService {
   }) async {
     return navigateTo<dynamic>(Routes.challengeTemplateView,
         arguments: ChallengeTemplateViewArguments(
-            key: key,
-            block: block,
-            challengeId: challengeId,
-            challengesCompleted: challengesCompleted),
+            key: key, block: block, challengeId: challengeId),
         id: routerId,
         preventDuplicates: preventDuplicates,
         parameters: parameters,
@@ -1166,7 +1152,6 @@ extension NavigatorStateExtension on _i25.NavigationService {
     _i20.Key? key,
     required _i24.Block block,
     required String challengeId,
-    required int challengesCompleted,
     int? routerId,
     bool preventDuplicates = true,
     Map<String, String>? parameters,
@@ -1175,10 +1160,7 @@ extension NavigatorStateExtension on _i25.NavigationService {
   }) async {
     return replaceWith<dynamic>(Routes.challengeTemplateView,
         arguments: ChallengeTemplateViewArguments(
-            key: key,
-            block: block,
-            challengeId: challengeId,
-            challengesCompleted: challengesCompleted),
+            key: key, block: block, challengeId: challengeId),
         id: routerId,
         preventDuplicates: preventDuplicates,
         parameters: parameters,

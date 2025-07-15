@@ -12,12 +12,10 @@ class PassWidgetView extends StatelessWidget {
   const PassWidgetView({
     super.key,
     required this.challengeModel,
-    required this.challengesCompleted,
     required this.maxChallenges,
   });
 
   final ChallengeViewModel challengeModel;
-  final int challengesCompleted;
   final int maxChallenges;
 
   @override
@@ -79,7 +77,6 @@ class PassWidgetView extends StatelessWidget {
                             return FutureBuilder(
                               future: model.numCompletedChallenges(
                                 challengeModel,
-                                challengesCompleted,
                               ),
                               builder: (context, completedSnapshot) {
                                 if (completedSnapshot.hasData) {
@@ -104,8 +101,9 @@ class PassWidgetView extends StatelessWidget {
                                             Expanded(
                                               child: Text(
                                                 context.t.completed_percent(
-                                                  ((completed * 100) ~/
+                                                  ((completed * 100) /
                                                           maxChallenges)
+                                                      .round()
                                                       .toString(),
                                                 ),
                                                 textAlign: TextAlign.right,
@@ -161,11 +159,23 @@ class PassWidgetView extends StatelessWidget {
                           return Center(child: Container());
                         },
                       ),
-                      PassButton(
-                        model: challengeModel,
-                        maxChallenges: maxChallenges,
-                        completed: challengesCompleted,
-                      ),
+                      FutureBuilder(
+                        future: model.numCompletedChallenges(challengeModel),
+                        builder: (context, completedSnapshot) {
+                          if (completedSnapshot.hasData) {
+                            int completed = completedSnapshot.data as int;
+                            return PassButton(
+                              model: challengeModel,
+                              maxChallenges: maxChallenges,
+                              completed: completed - 1,
+                            );
+                          }
+
+                          return const Center(
+                            child: CircularProgressIndicator(),
+                          );
+                        },
+                      )
                     ],
                   ),
                 ),
@@ -198,9 +208,11 @@ class PassButton extends StatelessWidget {
       width: MediaQuery.of(context).size.width,
       child: TextButton(
         onPressed: () async {
+          model.closeWebViews();
+          model.disposeOfListeners();
+
           model.learnService.goToNextChallenge(
             maxChallenges,
-            completed,
             model.challenge as Challenge,
             model.block as Block,
           );

@@ -16,12 +16,10 @@ class ChallengeTemplateView extends StatelessWidget {
     super.key,
     required this.block,
     required this.challengeId,
-    required this.challengesCompleted,
   });
 
   final Block block;
   final String challengeId;
-  final int challengesCompleted;
 
   @override
   Widget build(BuildContext context) {
@@ -50,26 +48,22 @@ class ChallengeTemplateView extends StatelessWidget {
                   return ChallengeView(
                     challenge: challenge,
                     block: block,
-                    challengesCompleted: challengesCompleted,
                     isProject: tiles.length > 1,
                   );
                 case 8:
                   return QuizView(
                     challenge: challenge,
                     block: block,
-                    challengesCompleted: challengesCompleted,
                   );
                 case 10:
                   return PythonProjectView(
                     challenge: challenge,
                     block: block,
-                    challengesCompleted: challengesCompleted,
                   );
                 case 11:
                   return PythonView(
                     challenge: challenge,
                     block: block,
-                    challengesCompleted: challengesCompleted,
                     currentChallengeNum: challNum,
                   );
                 case 15:
@@ -77,7 +71,6 @@ class ChallengeTemplateView extends StatelessWidget {
                   return MultipleChoiceView(
                     challenge: challenge,
                     block: block,
-                    challengesCompleted: challengesCompleted,
                     currentChallengeNum: challNum,
                   );
                 case 21:
@@ -91,7 +84,6 @@ class ChallengeTemplateView extends StatelessWidget {
                   return ReviewView(
                     challenge: challenge,
                     block: block,
-                    challengesCompleted: challengesCompleted,
                   );
                 default:
                   return Center(

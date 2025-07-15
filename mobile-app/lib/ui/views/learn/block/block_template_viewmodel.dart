@@ -44,7 +44,6 @@ class BlockTemplateViewModel extends BaseViewModel {
       arguments: ChallengeTemplateViewArguments(
         challengeId: challengeId,
         block: block,
-        challengesCompleted: _challengesCompleted,
       ),
     );
   }

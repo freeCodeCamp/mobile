@@ -140,7 +140,6 @@ class LearnService {
 
   void goToNextChallenge(
     int maxChallenges,
-    int challengesCompleted,
     Challenge challenge,
     Block block, {
     String solutionLink = '',
@@ -159,7 +158,6 @@ class LearnService {
         arguments: ChallengeTemplateViewArguments(
           challengeId: block.challengeTiles[challengeIndex + 1].id,
           block: block,
-          challengesCompleted: challengesCompleted + 1,
         ),
       );
     }

@@ -17,14 +17,12 @@ class PythonView extends StatelessWidget {
     super.key,
     required this.challenge,
     required this.block,
-    required this.challengesCompleted,
     required this.currentChallengeNum,
   });
 
   final Challenge challenge;
   final Block block;
   final int currentChallengeNum;
-  final int challengesCompleted;
 
   @override
   Widget build(BuildContext context) {
@@ -135,7 +133,6 @@ class PythonView extends StatelessWidget {
                                     model.hasPassedAllQuestions) {
                                   model.learnService.goToNextChallenge(
                                     block.challenges.length,
-                                    challengesCompleted,
                                     challenge,
                                     block,
                                   );

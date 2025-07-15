@@ -12,12 +12,10 @@ class PythonProjectView extends StatelessWidget {
     super.key,
     required this.challenge,
     required this.block,
-    required this.challengesCompleted,
   });
 
   final Challenge challenge;
   final Block block;
-  final int challengesCompleted;
 
   @override
   Widget build(BuildContext context) {
@@ -117,7 +115,6 @@ class PythonProjectView extends StatelessWidget {
                             model.validLink != null && model.validLink!
                                 ? model.learnService.goToNextChallenge(
                                     block.challenges.length,
-                                    challengesCompleted,
                                     challenge,
                                     block,
                                   )
