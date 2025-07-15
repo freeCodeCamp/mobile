@@ -1,9 +1,11 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
+import 'package:freecodecamp/app/app.router.dart';
 import 'package:freecodecamp/models/learn/daily_challenge_model.dart';
 import 'package:freecodecamp/service/learn/daily_challenges_service.dart';
 import 'package:freecodecamp/ui/theme/fcc_theme.dart';
+import 'package:freecodecamp/ui/views/learn/utils/challenge_utils.dart';
 import 'package:timezone/data/latest.dart' as tzdata;
 import 'package:timezone/timezone.dart' as tz;
 
@@ -20,6 +22,35 @@ class _DailyChallengeCardState extends State<DailyChallengeCard> {
   DailyChallenge? _challenge;
   bool _loading = true;
   String? _error;
+
+  void _navigateToDailyChallenge(BuildContext context) {
+    if (_challenge == null) return;
+    final challenge = _challenge!;
+    final monthYear = formatMonthFromDate(challenge.date);
+
+    final challengeOverview = DailyChallengeOverview(
+      id: challenge.id,
+      title: challenge.title,
+      date: challenge.date,
+      challengeNumber: challenge.challengeNumber,
+    );
+
+    final block = DailyChallengeBlock(
+      monthYear: monthYear,
+      challenges: [challengeOverview],
+      description: '',
+    ).toCurriculumBlock();
+
+    Navigator.of(context).pushNamed(
+      '/challenge-template-view',
+      arguments: ChallengeTemplateViewArguments(
+        challengeId: challenge.id,
+        block: block,
+        challengesCompleted: 0,
+        challengeDate: challenge.date,
+      ),
+    );
+  }
 
   @override
   void initState() {
@@ -38,9 +69,11 @@ class _DailyChallengeCardState extends State<DailyChallengeCard> {
       _error = null;
     });
     try {
-      final challenge = await DailyChallengesService().fetchTodayChallenge();
+      final todayChallenge =
+          await DailyChallengesService().fetchTodayChallenge();
+
       setState(() {
-        _challenge = challenge;
+        _challenge = todayChallenge;
         _loading = false;
       });
     } catch (e) {
@@ -129,7 +162,7 @@ class _DailyChallengeCardState extends State<DailyChallengeCard> {
               borderRadius: BorderRadius.circular(12),
             ),
           ),
-          onPressed: () {},
+          onPressed: () => _navigateToDailyChallenge(context),
           icon: Icon(Icons.arrow_forward_ios,
               size: 20, semanticLabel: 'Go to challenge'),
           label: Text(
