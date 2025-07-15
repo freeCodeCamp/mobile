@@ -18,7 +18,7 @@ class DailyChallengeCard extends StatefulWidget {
 class _DailyChallengeCardState extends State<DailyChallengeCard> {
   Duration _timeLeft = Duration.zero;
   Timer? _timer;
-  DailyChallengeOverview? _challenge;
+  DailyChallenge? _challenge;
   bool _loading = true;
   String? _error;
 
@@ -44,9 +44,17 @@ class _DailyChallengeCardState extends State<DailyChallengeCard> {
     if (_challenge == null) return;
     final challenge = _challenge!;
     final monthYear = _formatMonthFromDate(challenge.date);
+
+    final challengeOverview = DailyChallengeOverview(
+      id: challenge.id,
+      title: challenge.title,
+      date: challenge.date,
+      challengeNumber: challenge.challengeNumber,
+    );
+
     final block = DailyChallengeBlock(
       monthYear: monthYear,
-      challenges: [challenge],
+      challenges: [challengeOverview],
       description: '',
     ).toCurriculumBlock();
 
@@ -78,20 +86,11 @@ class _DailyChallengeCardState extends State<DailyChallengeCard> {
       _error = null;
     });
     try {
-      final allChallenges =
-          await DailyChallengesService().fetchAllDailyChallenges();
+      final todayChallenge =
+          await DailyChallengesService().fetchTodayChallenge();
 
-      if (allChallenges.isEmpty) {
-        setState(() {
-          _challenge = null;
-          _loading = false;
-        });
-        return;
-      }
       setState(() {
-        // Grab the most recent challenge
-        _challenge =
-            (allChallenges..sort((a, b) => b.date.compareTo(a.date))).first;
+        _challenge = todayChallenge;
         _loading = false;
       });
     } catch (e) {
@@ -123,7 +122,7 @@ class _DailyChallengeCardState extends State<DailyChallengeCard> {
     return '${twoDigits(d.inHours)}:${twoDigits(d.inMinutes % 60)}:${twoDigits(d.inSeconds % 60)}';
   }
 
-  Widget _buildChallengeTitle(DailyChallengeOverview challenge) {
+  Widget _buildChallengeTitle(DailyChallenge challenge) {
     return Text(
       challenge.title,
       style: TextStyle(
