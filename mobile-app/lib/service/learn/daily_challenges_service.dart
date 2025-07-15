@@ -55,8 +55,10 @@ class DailyChallengesService {
     }
   }
 
-  Future<void> postChallengeCompleted(
-      String challengeId, DailyChallengeLanguage language) async {
+  Future<void> postChallengeCompleted({
+    required String challengeId,
+    required DailyChallengeLanguage language,
+  }) async {
     final response = await _dio.post(
       '${AuthenticationService.baseApiURL}/daily-coding-challenge-completed',
       data: {'id': challengeId, 'language': language.toString()},
