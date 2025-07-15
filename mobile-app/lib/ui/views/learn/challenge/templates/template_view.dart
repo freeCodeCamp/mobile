@@ -34,7 +34,7 @@ class ChallengeTemplateView extends StatelessWidget {
             if (snapshot.hasData) {
               Challenge challenge = snapshot.data!;
 
-              int challengeType = challenge.challengeType;
+              int challengeType = challenge.challengeTypeIndex;
               List<ChallengeListTile> tiles = block.challengeTiles;
               int challNum =
                   tiles.indexWhere((el) => el.id == challenge.id) + 1;
@@ -88,7 +88,7 @@ class ChallengeTemplateView extends StatelessWidget {
                 default:
                   return Center(
                     child: Text(
-                      'Unknown Challenge, info : ${challenge.challengeType}',
+                      'Unknown Challenge, info : ${challenge.challengeTypeIndex}',
                     ),
                   );
               }

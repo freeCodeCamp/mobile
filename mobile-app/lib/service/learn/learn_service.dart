@@ -51,7 +51,7 @@ class LearnService {
     String? solutionLink,
   }) async {
     String challengeId = challenge.id;
-    int challengeType = challenge.challengeType;
+    int challengeType = challenge.challengeTypeIndex;
 
     Response submitTypesRes = await _dio.get('$baseUrlV2/submit-types.json');
     Map<String, dynamic> submitTypes = submitTypesRes.data;

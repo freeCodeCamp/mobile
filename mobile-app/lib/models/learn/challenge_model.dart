@@ -66,7 +66,7 @@ class Challenge {
   final String dashedName;
   final String superBlock;
   final String? videoId;
-  final int challengeType;
+  final ChallengeType challengeType;
   final HelpCategory helpCategory;
   final String? explanation;
   final String transcript;
@@ -113,6 +113,9 @@ class Challenge {
     required this.hooks,
   });
 
+  // Backward compatibility getter for challengeType as int
+  int get challengeTypeIndex => challengeType.index;
+
   factory Challenge.fromJson(Map<String, dynamic> data) {
     return Challenge(
       id: data['id'],
@@ -123,7 +126,7 @@ class Challenge {
       dashedName: data['dashedName'],
       superBlock: data['superBlock'],
       videoId: data['videoId'],
-      challengeType: data['challengeType'],
+      challengeType: ChallengeType.values[data['challengeType']],
       helpCategory: HelpCategory.fromValue(data['helpCategory']),
       explanation: data['explanation'] ?? '',
       transcript: data['transcript'] ?? '',
@@ -169,7 +172,7 @@ class Challenge {
       'dashedName': challenge.dashedName,
       'superBlock': challenge.superBlock,
       'videoId': challenge.videoId,
-      'challengeType': challenge.challengeType,
+      'challengeType': challenge.challengeType.index,
       'helpCategory': challenge.helpCategory.value,
       'transcript': challenge.transcript,
       'tests': challenge.tests

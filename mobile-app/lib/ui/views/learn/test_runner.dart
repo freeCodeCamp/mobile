@@ -48,11 +48,11 @@ return testRes;
   }) async {
     String challengeFile = await fileService.getFirstFileFromCache(
       challenge,
-      getChallengeExt(challenge.challengeType),
+      getChallengeExt(challenge.challengeTypeIndex),
       testing: testing,
     );
 
-    switch (challenge.challengeType) {
+    switch (challenge.challengeTypeIndex) {
       // JS-only challenges
       case 1:
       case 26:

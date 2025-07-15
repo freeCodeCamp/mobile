@@ -282,7 +282,7 @@ class ChallengeView extends StatelessWidget {
                       arguments: {
                         'userCode': '',
                         'workerType':
-                            builder.getWorkerType(challenge.challengeType),
+                            builder.getWorkerType(challenge.challengeTypeIndex),
                         'combinedCode': '',
                         'editableRegionContent': '',
                         'hooks': {
@@ -554,7 +554,7 @@ class ChallengeView extends StatelessWidget {
           model.scaffoldKey.currentState?.openEndDrawer();
         },
       ),
-      if (challenge.challengeType != 1 && challenge.challengeType != 26)
+      if (challenge.challengeTypeIndex != 1 && challenge.challengeTypeIndex != 26)
         _panelIconButton(
           isActive: model.showPreview,
           icon: Icons.remove_red_eye_outlined,
@@ -579,7 +579,7 @@ class ChallengeView extends StatelessWidget {
   }
 
   Widget testList(Challenge challenge, ChallengeViewModel model) {
-    log(challenge.challengeType.toString());
+    log(challenge.challengeTypeIndex.toString());
     return ListView.builder(
       shrinkWrap: true,
       physics: const ClampingScrollPhysics(),

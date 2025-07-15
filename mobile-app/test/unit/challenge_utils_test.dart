@@ -16,7 +16,7 @@ void main() {
       instructions: '',
       dashedName: 'challenge-$id',
       superBlock: 'superblock',
-      challengeType: 0,
+      challengeType: ChallengeType.html,
       tests: [],
       files: [],
       helpCategory: HelpCategory.htmlCss,
