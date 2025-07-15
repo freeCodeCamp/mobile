@@ -30,8 +30,8 @@ class DailyChallenge {
   final DateTime date;
   final String title;
   final String description;
-  final DailyChallengeLang javascript;
-  final DailyChallengeLang python;
+  final DailyChallengeLanguageData javascript;
+  final DailyChallengeLanguageData python;
 
   DailyChallenge({
     required this.id,
@@ -50,24 +50,25 @@ class DailyChallenge {
       date: DateTime.parse(data['date']),
       title: data['title'],
       description: data['description'],
-      javascript: DailyChallengeLang.fromJson(data['javascript'], 'javascript'),
-      python: DailyChallengeLang.fromJson(data['python'], 'python'),
+      javascript:
+          DailyChallengeLanguageData.fromJson(data['javascript'], 'javascript'),
+      python: DailyChallengeLanguageData.fromJson(data['python'], 'python'),
     );
   }
 }
 
-class DailyChallengeLang {
+class DailyChallengeLanguageData {
   final List<ChallengeTest> tests;
   final List<ChallengeFile> challengeFiles;
 
-  DailyChallengeLang({
+  DailyChallengeLanguageData({
     required this.tests,
     required this.challengeFiles,
   });
 
-  factory DailyChallengeLang.fromJson(
+  factory DailyChallengeLanguageData.fromJson(
       Map<String, dynamic> data, String language) {
-    return DailyChallengeLang(
+    return DailyChallengeLanguageData(
       tests: (data['tests'] ?? [])
           .map<ChallengeTest>((test) => ChallengeTest.fromJson(test))
           .toList(),
@@ -118,6 +119,24 @@ class DailyChallengeBlock {
       description: [description],
       challenges: [],
       challengeTiles: [],
+    );
+  }
+}
+
+enum DailyChallengeLanguage {
+  python('python'),
+  javascript('javascript');
+
+  final String value;
+  const DailyChallengeLanguage(this.value);
+
+  @override
+  String toString() => value;
+
+  static DailyChallengeLanguage fromString(String value) {
+    return DailyChallengeLanguage.values.firstWhere(
+      (e) => e.value == value,
+      orElse: () => throw ArgumentError('Invalid language: $value'),
     );
   }
 }
