@@ -68,12 +68,13 @@ class PythonView extends StatelessWidget {
                     ),
                   ),
                 const SizedBox(height: 12),
-                ChallengeCard(
-                  title: 'Video',
-                  child: YoutubePlayerWidget(
-                    videoId: challenge.videoId!,
+                if (challenge.videoId != null)
+                  ChallengeCard(
+                    title: 'Video',
+                    child: YoutubePlayerWidget(
+                      videoId: challenge.videoId!,
+                    ),
                   ),
-                ),
                 const SizedBox(height: 12),
                 if (challenge.transcript.isNotEmpty) ...[
                   ChallengeCard(
