@@ -213,7 +213,7 @@ void main() {
 
           Challenge challenge = Challenge.fromJson(currChallenge);
           print(
-              'Challenge: ${challenge.id} - ${challenge.title} - ${challenge.challengeTypeIndex}');
+              'Challenge: ${challenge.id} - ${challenge.title} - ${challenge.challengeType.index}');
 
           String getLines(String contents, [List? range]) {
             if (range == null || range.isEmpty) {
@@ -254,7 +254,7 @@ void main() {
                 babelWebView.webViewController,
                 testing: true,
               ),
-              'workerType': builder.getWorkerType(challenge.challengeTypeIndex),
+              'workerType': builder.getWorkerType(challenge.challengeType),
               'combinedCode': await builder.combinedCode(challenge),
               'editableRegionContent': editableRegion,
               'hooks': {

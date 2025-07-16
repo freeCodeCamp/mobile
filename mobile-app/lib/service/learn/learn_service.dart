@@ -51,26 +51,26 @@ class LearnService {
     String? solutionLink,
   }) async {
     String challengeId = challenge.id;
-    int challengeType = challenge.challengeTypeIndex;
+    ChallengeType challengeType = challenge.challengeType;
 
     Response submitTypesRes = await _dio.get('$baseUrlV2/submit-types.json');
     Map<String, dynamic> submitTypes = submitTypesRes.data;
 
-    switch (submitTypes[challengeType.toString()]) {
+    switch (submitTypes[challengeType.index.toString()]) {
       case 'tests':
         late Map payload;
-        if (challengeType == 14 ||
+        if (challengeType == ChallengeType.multifileCertProject ||
             challenge.block ==
                 'javascript-algorithms-and-data-structures-projects') {
           payload = {
             'id': challengeId,
-            'challengeType': challengeType,
+            'challengeType': challengeType.index,
             'files': challengeFiles,
           };
         } else {
           payload = {
             'id': challengeId,
-            'challengeType': challengeType,
+            'challengeType': challengeType.index,
           };
         }
         Response res = await _dio.post(
@@ -91,7 +91,7 @@ class LearnService {
       case 'project.backEnd':
         Map payload = {
           'id': challengeId,
-          'challengeType': challengeType,
+          'challengeType': challengeType.index,
           'solution': solutionLink
         };
         Response res = await _dio.post(

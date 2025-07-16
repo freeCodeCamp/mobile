@@ -34,53 +34,52 @@ class ChallengeTemplateView extends StatelessWidget {
             if (snapshot.hasData) {
               Challenge challenge = snapshot.data!;
 
-              int challengeType = challenge.challengeTypeIndex;
               List<ChallengeListTile> tiles = block.challengeTiles;
               int challNum =
                   tiles.indexWhere((el) => el.id == challenge.id) + 1;
-              switch (challengeType) {
-                case 0:
-                case 1:
-                case 14:
-                case 20:
-                case 25:
-                case 26:
+              switch (challenge.challengeType) {
+                case ChallengeType.html:
+                case ChallengeType.js:
+                case ChallengeType.multifileCertProject:
+                case ChallengeType.python:
+                case ChallengeType.lab:
+                case ChallengeType.jsLab:
                   return ChallengeView(
                     challenge: challenge,
                     block: block,
                     isProject: tiles.length > 1,
                   );
-                case 8:
+                case ChallengeType.quiz:
                   return QuizView(
                     challenge: challenge,
                     block: block,
                   );
-                case 10:
+                case ChallengeType.pythonProject:
                   return PythonProjectView(
                     challenge: challenge,
                     block: block,
                   );
-                case 11:
+                case ChallengeType.video:
                   return PythonView(
                     challenge: challenge,
                     block: block,
                     currentChallengeNum: challNum,
                   );
-                case 15:
-                case 19:
+                case ChallengeType.theOdinProject:
+                case ChallengeType.multipleChoice:
                   return MultipleChoiceView(
                     challenge: challenge,
                     block: block,
                     currentChallengeNum: challNum,
                   );
-                case 21:
-                case 22:
+                case ChallengeType.dialogue:
+                case ChallengeType.fillInTheBlank:
                   return EnglishView(
                     challenge: challenge,
                     block: block,
                     currentChallengeNum: challNum,
                   );
-                case 24:
+                case ChallengeType.generic:
                   return ReviewView(
                     challenge: challenge,
                     block: block,
@@ -88,7 +87,7 @@ class ChallengeTemplateView extends StatelessWidget {
                 default:
                   return Center(
                     child: Text(
-                      'Unknown Challenge, info : ${challenge.challengeTypeIndex}',
+                      'Unknown Challenge, info : ${challenge.challengeType}',
                     ),
                   );
               }

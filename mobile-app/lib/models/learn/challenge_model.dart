@@ -1,11 +1,10 @@
 import 'package:freecodecamp/enums/ext_type.dart';
 
-// NOTE: For reference
 enum ChallengeType {
   html, // 0
   js, // 1
   backend, // 2
-  zipline, // 3 (frontEndProject is also 3 in main repo, but omitted to avoid duplicate enum values)
+  frontEndProject, // 3 (zipline is also 3 in main repo, but omitted to avoid duplicate enum values)
   backEndProject, // 4
   jsProject, // 5
   modern, // 6
@@ -112,9 +111,6 @@ class Challenge {
     this.quizzes,
     required this.hooks,
   });
-
-  // Backward compatibility getter for challengeType as int
-  int get challengeTypeIndex => challengeType.index;
 
   factory Challenge.fromJson(Map<String, dynamic> data) {
     return Challenge(

@@ -614,7 +614,8 @@ class ChallengeViewModel extends BaseViewModel {
     setTestConsoleMessages = ['<p>// running tests</p>'];
 
     // Get user code console messages
-    if (challenge!.challengeTypeIndex == 1 || challenge!.challengeTypeIndex == 26) {
+    if (challenge!.challengeType == ChallengeType.js ||
+        challenge!.challengeType == ChallengeType.jsLab) {
       final evalResult = await testController!.callAsyncJavaScript(
         functionBody: await builder.buildUserCode(
           challenge!,
@@ -638,7 +639,7 @@ class ChallengeViewModel extends BaseViewModel {
           challenge!,
           _babelWebView.webViewController,
         ),
-        'workerType': builder.getWorkerType(challenge!.challengeTypeIndex),
+        'workerType': builder.getWorkerType(challenge!.challengeType),
         'combinedCode': await builder.combinedCode(challenge!),
         'editableRegionContent': editableRegionContent,
         'hooks': {

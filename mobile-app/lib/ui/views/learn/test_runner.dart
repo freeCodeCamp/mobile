@@ -48,14 +48,14 @@ return testRes;
   }) async {
     String challengeFile = await fileService.getFirstFileFromCache(
       challenge,
-      getChallengeExt(challenge.challengeTypeIndex),
+      getChallengeExt(challenge.challengeType),
       testing: testing,
     );
 
-    switch (challenge.challengeTypeIndex) {
+    switch (challenge.challengeType) {
       // JS-only challenges
-      case 1:
-      case 26:
+      case ChallengeType.js:
+      case ChallengeType.jsLab:
         // TODO: Move to learn file service
         if (babelController == null) {
           throw Exception('Babel controller is required to transpile JS code.');
@@ -95,28 +95,28 @@ return testRes;
     }
   }
 
-  String getWorkerType(int challengeType) {
+  String getWorkerType(ChallengeType challengeType) {
     switch (challengeType) {
-      case 0:
-      case 14:
-      case 25:
+      case ChallengeType.html:
+      case ChallengeType.multifileCertProject:
+      case ChallengeType.lab:
         return 'dom';
-      case 1:
-      case 26:
+      case ChallengeType.js:
+      case ChallengeType.jsLab:
         return 'javascript';
-      case 20:
-      case 23:
+      case ChallengeType.python:
+      case ChallengeType.multifilePythonCertProject:
         return 'python';
+      default:
+        return 'dom';
     }
-
-    return 'dom';
   }
 
-  Ext getChallengeExt(int challengeType) {
+  Ext getChallengeExt(ChallengeType challengeType) {
     switch (challengeType) {
       // JS-only challenges
-      case 1:
-      case 26:
+      case ChallengeType.js:
+      case ChallengeType.jsLab:
         return Ext.js;
       default:
         return Ext.html;
