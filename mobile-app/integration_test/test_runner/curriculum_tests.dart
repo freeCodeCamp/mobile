@@ -213,7 +213,7 @@ void main() {
 
           Challenge challenge = Challenge.fromJson(currChallenge);
           print(
-              'Challenge: ${challenge.id} - ${challenge.title} - ${challenge.challengeType}');
+              'Challenge: ${challenge.id} - ${challenge.title} - ${challenge.challengeType.index}');
 
           String getLines(String contents, [List? range]) {
             if (range == null || range.isEmpty) {

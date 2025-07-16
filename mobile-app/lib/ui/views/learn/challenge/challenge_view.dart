@@ -554,7 +554,8 @@ class ChallengeView extends StatelessWidget {
           model.scaffoldKey.currentState?.openEndDrawer();
         },
       ),
-      if (challenge.challengeType != 1 && challenge.challengeType != 26)
+      if (challenge.challengeType != ChallengeType.js &&
+          challenge.challengeType != ChallengeType.jsLab)
         _panelIconButton(
           isActive: model.showPreview,
           icon: Icons.remove_red_eye_outlined,
@@ -579,7 +580,7 @@ class ChallengeView extends StatelessWidget {
   }
 
   Widget testList(Challenge challenge, ChallengeViewModel model) {
-    log(challenge.challengeType.toString());
+    log(challenge.challengeType.index.toString());
     return ListView.builder(
       shrinkWrap: true,
       physics: const ClampingScrollPhysics(),

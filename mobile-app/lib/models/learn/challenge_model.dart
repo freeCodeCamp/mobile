@@ -1,12 +1,10 @@
 import 'package:freecodecamp/enums/ext_type.dart';
 
-// NOTE: For reference
 enum ChallengeType {
   html, // 0
   js, // 1
   backend, // 2
-  zipline, // 3
-  frontEndProject, // 3
+  frontEndProject, // 3 (zipline is also 3 in main repo, but omitted to avoid duplicate enum values)
   backEndProject, // 4
   jsProject, // 5
   modern, // 6
@@ -20,7 +18,20 @@ enum ChallengeType {
   multifileCertProject, // 14
   theOdinProject, // 15
   colab, // 16
-  exam // 17
+  exam, // 17
+  msTrophy, // 18
+  multipleChoice, // 19
+  python, // 20
+  dialogue, // 21
+  fillInTheBlank, // 22
+  multifilePythonCertProject, // 23
+  generic, // 24
+  lab, // 25
+  jsLab, // 26
+  pyLab, // 27
+  dailyChallengeJs, // 28
+  dailyChallengePy, // 29
+  examDownload // 30
 }
 
 enum HelpCategory {
@@ -54,7 +65,7 @@ class Challenge {
   final String dashedName;
   final String superBlock;
   final String? videoId;
-  final int challengeType;
+  final ChallengeType challengeType;
   final HelpCategory helpCategory;
   final String? explanation;
   final String transcript;
@@ -111,7 +122,7 @@ class Challenge {
       dashedName: data['dashedName'],
       superBlock: data['superBlock'],
       videoId: data['videoId'],
-      challengeType: data['challengeType'],
+      challengeType: ChallengeType.values[data['challengeType']],
       helpCategory: HelpCategory.fromValue(data['helpCategory']),
       explanation: data['explanation'] ?? '',
       transcript: data['transcript'] ?? '',
@@ -157,7 +168,7 @@ class Challenge {
       'dashedName': challenge.dashedName,
       'superBlock': challenge.superBlock,
       'videoId': challenge.videoId,
-      'challengeType': challenge.challengeType,
+      'challengeType': challenge.challengeType.index,
       'helpCategory': challenge.helpCategory.value,
       'transcript': challenge.transcript,
       'tests': challenge.tests
