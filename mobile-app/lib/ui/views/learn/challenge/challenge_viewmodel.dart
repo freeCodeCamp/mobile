@@ -307,18 +307,7 @@ class ChallengeViewModel extends BaseViewModel {
     await _localhostServer.start();
 
     if (isDailyChallenge) {
-      SharedPreferences prefs = await SharedPreferences.getInstance();
-      String? langStr = prefs.getString('selectedDailyChallengeLanguage');
-
-      if (langStr != null && langStr.isNotEmpty) {
-        _selectedDailyChallengeLanguage =
-            DailyChallengeLanguage.values.firstWhere(
-          (e) => e.name == langStr,
-          orElse: () => DailyChallengeLanguage.javascript,
-        );
-      } else {
-        _selectedDailyChallengeLanguage = DailyChallengeLanguage.javascript;
-      }
+      await loadSelectedDailyChallengeLanguage();
     }
 
     setupDialogUi();
@@ -595,10 +584,10 @@ class ChallengeViewModel extends BaseViewModel {
   }
 
   ChallengeFile currentFile(Challenge challengeParam) {
-    // For daily challenges, we use `_challenge` as the source of truth.
-    // It's because when campers switch language, we need to get a new `challenge` object
-    // with the `files` property of the corresponding language
-    // and store it in the viewmodel's `_challenge` variable.
+    // For daily challenges, we don't use the `challenge` param passed from the view
+    // but use the `_challenge` variable as the source of truth instead.
+    // This is because when a camper switches languages,
+    // we load a new `challenge` object and store it in `_challenge`.
     Challenge currChallenge =
         (isDailyChallenge && challenge != null) ? challenge! : challengeParam;
 
@@ -748,15 +737,8 @@ class ChallengeViewModel extends BaseViewModel {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     String? langStr = prefs.getString('selectedDailyChallengeLanguage');
 
-    if (langStr != null && langStr.isNotEmpty) {
-      _selectedDailyChallengeLanguage =
-          DailyChallengeLanguage.values.firstWhere(
-        (e) => e.name == langStr,
-        orElse: () => DailyChallengeLanguage.javascript,
-      );
-    } else {
-      _selectedDailyChallengeLanguage = DailyChallengeLanguage.javascript;
-    }
+    _selectedDailyChallengeLanguage =
+        LearnOfflineService.parseLanguageFromString(langStr);
     notifyListeners();
   }
 

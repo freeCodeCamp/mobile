@@ -142,20 +142,11 @@ class LearnOfflineService {
     DailyChallengeLanguage? language,
   }) async {
     try {
-      // If no language provided, get from stored preferences
       if (language == null) {
         SharedPreferences prefs = await SharedPreferences.getInstance();
         String? selectedLangStr =
             prefs.getString('selectedDailyChallengeLanguage');
-
-        if (selectedLangStr == null || selectedLangStr.isEmpty) {
-          language = DailyChallengeLanguage.javascript;
-        } else {
-          language = DailyChallengeLanguage.values.firstWhere(
-            (e) => e.name == selectedLangStr,
-            orElse: () => DailyChallengeLanguage.javascript,
-          );
-        }
+        language = parseLanguageFromString(selectedLangStr);
       }
 
       if (_cachedDailyChallenge == null || _cachedChallengeDate != date) {
@@ -211,6 +202,18 @@ class LearnOfflineService {
     } catch (e) {
       throw Exception('Failed to fetch daily challenge: $e');
     }
+  }
+
+  /// Helper method to parse DailyChallengeLanguage from string with fallback
+  static DailyChallengeLanguage parseLanguageFromString(String? langStr) {
+    if (langStr == null || langStr.isEmpty) {
+      return DailyChallengeLanguage.javascript;
+    }
+
+    return DailyChallengeLanguage.values.firstWhere(
+      (e) => e.name == langStr,
+      orElse: () => DailyChallengeLanguage.javascript,
+    );
   }
 
   /*
