@@ -38,7 +38,12 @@ class ChallengeView extends StatelessWidget {
     return ViewModelBuilder<ChallengeViewModel>.reactive(
       viewModelBuilder: () => ChallengeViewModel(),
       onViewModelReady: (model) {
-        model.init(block, challenge, challengesCompleted);
+        model.init(
+          block: block,
+          challenge: challenge,
+          challengesCompleted: challengesCompleted,
+          isDailyChallenge: challengeDate != null,
+        );
       },
       onDispose: (model) {
         model.closeWebViews();
@@ -46,6 +51,7 @@ class ChallengeView extends StatelessWidget {
       },
       builder: (context, model, child) {
         int maxChallenges = block.challenges.length;
+
         ChallengeFile currFile = model.currentFile(challenge);
         model.initFile(challenge, currFile);
         if (model.showPanel) {

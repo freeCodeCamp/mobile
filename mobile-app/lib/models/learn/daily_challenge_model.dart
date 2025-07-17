@@ -124,8 +124,8 @@ class DailyChallengeBlock {
 }
 
 enum DailyChallengeLanguage {
-  python('python'),
-  javascript('javascript');
+  javascript('javascript'),
+  python('python');
 
   final String value;
   const DailyChallengeLanguage(this.value);

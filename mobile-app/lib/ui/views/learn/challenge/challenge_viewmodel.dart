@@ -34,6 +34,7 @@ import 'package:stacked/stacked.dart';
 import 'package:stacked_services/stacked_services.dart';
 
 class ChallengeViewModel extends BaseViewModel {
+  bool get isDailyChallenge => _isDailyChallenge;
   final InAppLocalhostServer _localhostServer =
       InAppLocalhostServer(documentRoot: 'assets/test_runner');
 
@@ -93,9 +94,10 @@ class ChallengeViewModel extends BaseViewModel {
   InAppWebViewController? _testController;
   InAppWebViewController? get testController => _testController;
 
-  DailyChallengeLanguage _selectedDailyChallengeLanguage =
-      DailyChallengeLanguage.javascript;
-  DailyChallengeLanguage get selectedDailyChallengeLanguage =>
+  bool _isDailyChallenge = false;
+
+  DailyChallengeLanguage? _selectedDailyChallengeLanguage;
+  DailyChallengeLanguage? get selectedDailyChallengeLanguage =>
       _selectedDailyChallengeLanguage;
 
   final HeadlessInAppWebView _babelWebView = HeadlessInAppWebView(
@@ -293,13 +295,31 @@ class ChallengeViewModel extends BaseViewModel {
     notifyListeners();
   }
 
-  void init(
-    Block block,
-    Challenge challenge,
-    int challengesCompleted,
-  ) async {
+  void init({
+    required Block block,
+    required Challenge challenge,
+    required int challengesCompleted,
+    required bool isDailyChallenge,
+  }) async {
+    _isDailyChallenge = isDailyChallenge;
+
     await _babelWebView.run();
     await _localhostServer.start();
+
+    if (isDailyChallenge) {
+      SharedPreferences prefs = await SharedPreferences.getInstance();
+      String? langStr = prefs.getString('selectedDailyChallengeLanguage');
+
+      if (langStr != null && langStr.isNotEmpty) {
+        _selectedDailyChallengeLanguage =
+            DailyChallengeLanguage.values.firstWhere(
+          (e) => e.name == langStr,
+          orElse: () => DailyChallengeLanguage.javascript,
+        );
+      } else {
+        _selectedDailyChallengeLanguage = DailyChallengeLanguage.javascript;
+      }
+    }
 
     setupDialogUi();
 
@@ -552,15 +572,22 @@ class ChallengeViewModel extends BaseViewModel {
     return '${file.name}.${file.ext.value}';
   }
 
-  ChallengeFile currentFile(Challenge challenge) {
+  ChallengeFile currentFile(Challenge challengeParam) {
+    // For daily challenges, we use `_challenge` as the source of truth.
+    // It's because when campers switch language, we need to get a new `challenge` object
+    // with the `files` property of the corresponding language
+    // and store it in the viewmodel's `_challenge` variable.
+    Challenge currChallenge =
+        (isDailyChallenge && challenge != null) ? challenge! : challengeParam;
+
     if (currentSelectedFile.isNotEmpty) {
-      ChallengeFile file = challenge.files.firstWhere(
+      ChallengeFile file = currChallenge.files.firstWhere(
         (file) => getFullFileName(file) == currentSelectedFile,
       );
       return file;
     }
 
-    List<ChallengeFile>? fileWithEditableRegion = challenge.files
+    List<ChallengeFile>? fileWithEditableRegion = currChallenge.files
         .where((file) => file.editableRegionBoundaries.isNotEmpty)
         .toList();
 
@@ -568,7 +595,7 @@ class ChallengeViewModel extends BaseViewModel {
       return fileWithEditableRegion[0];
     }
 
-    return challenge.files[0];
+    return currChallenge.files[0];
   }
 
   void resetCode(Editor editor, BuildContext context) async {
@@ -722,21 +749,12 @@ class ChallengeViewModel extends BaseViewModel {
     Challenge dailyChallenge = await learnOfflineService.getDailyChallenge(
         formattedChallengeDate, _block!);
 
-    // Update the challenge
+    // Reset the challenge and force the view to re-mount
     setChallenge = dailyChallenge;
-
-    // Reset editor state to force reinitialization
     setMounted = false;
 
-    // Clear the current selected file to start fresh with the new challenge
-    setCurrentSelectedFile = '';
-
-    // Get the current file from the new challenge and reinitialize
-    ChallengeFile currFile = currentFile(dailyChallenge);
-    setCurrentSelectedFile = getFullFileName(currFile);
-
     // Reinitialize the file and editor with the new challenge
-    initFile(dailyChallenge, currFile);
+    initFile(dailyChallenge, dailyChallenge.files[0]);
   }
 
   Widget getPanelWidget({
