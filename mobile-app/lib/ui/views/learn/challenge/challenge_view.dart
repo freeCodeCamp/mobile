@@ -23,14 +23,15 @@ class ChallengeView extends StatelessWidget {
     required this.challenge,
     required this.challengesCompleted,
     required this.isProject,
-    required this.isDailyChallenge,
+    this.challengeDate,
   });
 
   final Challenge challenge;
   final Block block;
   final int challengesCompleted;
   final bool isProject;
-  final bool isDailyChallenge;
+  // Used for daily challenges
+  final DateTime? challengeDate;
 
   @override
   Widget build(BuildContext context) {
@@ -225,8 +226,9 @@ class ChallengeView extends StatelessWidget {
       child: Row(
         children: [
           Expanded(
-            child: isDailyChallenge
-                ? _dailyChallengeLanguageSelector(model: model)
+            child: challengeDate != null
+                ? _dailyChallengeLanguageSelector(
+                    model: model, challengeDate: challengeDate!)
                 : _fileSelector(
                     model: model,
                     challenge: challenge,
@@ -459,9 +461,8 @@ class ChallengeView extends StatelessWidget {
     }
   }
 
-  Widget _dailyChallengeLanguageSelector({
-    required ChallengeViewModel model,
-  }) {
+  Widget _dailyChallengeLanguageSelector(
+      {required ChallengeViewModel model, required DateTime challengeDate}) {
     final selectedLanguage = model.selectedDailyChallengeLanguage;
 
     String getDisplayLanguage(DailyChallengeLanguage lang) {
@@ -495,7 +496,7 @@ class ChallengeView extends StatelessWidget {
       ],
       onChanged: (lang) {
         if (lang != null) {
-          model.setSelectedDailyChallengeLanguage(lang);
+          model.setSelectedDailyChallengeLanguage(lang, challengeDate);
         }
       },
       underline: const SizedBox(),

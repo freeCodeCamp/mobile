@@ -713,11 +713,34 @@ class ChallengeViewModel extends BaseViewModel {
   }
 
   Future<void> setSelectedDailyChallengeLanguage(
-      DailyChallengeLanguage lang) async {
+      DailyChallengeLanguage lang, DateTime challengeDate) async {
     _selectedDailyChallengeLanguage = lang;
+
     SharedPreferences prefs = await SharedPreferences.getInstance();
     await prefs.setString('selectedDailyChallengeLanguage', lang.name);
-    notifyListeners();
+
+    // Format date to YYYY-MM-DD
+    final formattedChallengeDate =
+        '${challengeDate.year.toString().padLeft(4, '0')}-${challengeDate.month.toString().padLeft(2, '0')}-${challengeDate.day.toString().padLeft(2, '0')}';
+
+    Challenge dailyChallenge = await learnOfflineService.getDailyChallenge(
+        formattedChallengeDate, _block!);
+
+    // Update the challenge
+    setChallenge = dailyChallenge;
+
+    // Reset editor state to force reinitialization
+    setMounted = false;
+
+    // Clear the current selected file to start fresh with the new challenge
+    setCurrentSelectedFile = '';
+
+    // Get the current file from the new challenge and reinitialize
+    ChallengeFile currFile = currentFile(dailyChallenge);
+    setCurrentSelectedFile = getFullFileName(currFile);
+
+    // Reinitialize the file and editor with the new challenge
+    initFile(dailyChallenge, currFile);
   }
 
   Widget getPanelWidget({
