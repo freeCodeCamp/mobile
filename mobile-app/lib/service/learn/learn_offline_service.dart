@@ -1,4 +1,3 @@
-import 'package:freecodecamp/models/learn/daily_challenge_model.dart';
 import 'dart:async';
 import 'dart:convert';
 import 'dart:developer';
@@ -49,7 +48,9 @@ class LearnOfflineService {
   Timer? timer;
   final _dio = DioService.dio;
 
-  // Lazy initialization of the daily challenges service
+  DailyChallenge? _cachedDailyChallenge;
+  String? _cachedChallengeDate;
+
   DailyChallengesService? _dailyChallengesService;
   DailyChallengesService get dailyChallengesService {
     _dailyChallengesService ??= locator<DailyChallengesService>();
@@ -131,42 +132,59 @@ class LearnOfflineService {
   }
 
   /*
-    This function fetches a daily challenge by date and map it to Challenge.
+    Fetches daily challenge data and creates a Challenge object for the specified language.
+    Uses caching to avoid redundant API calls when switching between languages for the same date.
+    If no language is provided, uses the stored language preference.
   */
-
-  Future<Challenge> getDailyChallenge(String date, Block block) async {
+  Future<Challenge> getDailyChallenge(
+    String date,
+    Block block, {
+    DailyChallengeLanguage? language,
+  }) async {
     try {
-      DailyChallenge dailyChallenge =
-          await dailyChallengesService.fetchChallengeByDate(date);
+      // If no language provided, get from stored preferences
+      if (language == null) {
+        SharedPreferences prefs = await SharedPreferences.getInstance();
+        String? selectedLangStr =
+            prefs.getString('selectedDailyChallengeLanguage');
 
-      SharedPreferences prefs = await SharedPreferences.getInstance();
-
-      String? selectedLangStr =
-          prefs.getString('selectedDailyChallengeLanguage');
-      DailyChallengeLanguage selectedLangEnum;
-
-      if (selectedLangStr == null || selectedLangStr.isEmpty) {
-        selectedLangEnum = DailyChallengeLanguage.javascript;
-      } else {
-        selectedLangEnum = DailyChallengeLanguage.values.firstWhere(
-          (e) => e.name == selectedLangStr,
-          orElse: () => DailyChallengeLanguage.javascript,
-        );
+        if (selectedLangStr == null || selectedLangStr.isEmpty) {
+          language = DailyChallengeLanguage.javascript;
+        } else {
+          language = DailyChallengeLanguage.values.firstWhere(
+            (e) => e.name == selectedLangStr,
+            orElse: () => DailyChallengeLanguage.javascript,
+          );
+        }
       }
 
-      // Map enum to challenge data and help category
-      dynamic challengeData;
+      if (_cachedDailyChallenge == null || _cachedChallengeDate != date) {
+        // Temporarily cache the challenge data to avoid redundant API calls.
+        // But not saving the cached data to SharedPreferences
+        // so we can still get the up-to-date challenge.
+        _cachedDailyChallenge =
+            await dailyChallengesService.fetchChallengeByDate(date);
+        _cachedChallengeDate = date;
+      }
+
+      DailyChallenge dailyChallenge = _cachedDailyChallenge!;
+
+      // Select language-specific data
+      DailyChallengeLanguageData languageData;
       HelpCategory helpCategory;
-      switch (selectedLangEnum) {
+
+      switch (language) {
         case DailyChallengeLanguage.python:
-          challengeData = dailyChallenge.python;
+          languageData = dailyChallenge.python;
           helpCategory = HelpCategory.python;
           break;
         default:
-          challengeData = dailyChallenge.javascript;
+          languageData = dailyChallenge.javascript;
           helpCategory = HelpCategory.javascript;
+          break;
       }
 
+      // Map the daily challenge to Challenge
       return Challenge(
         id: dailyChallenge.id,
         block: block.dashedName,
@@ -177,8 +195,8 @@ class LearnOfflineService {
         superBlock: block.superBlock.dashedName,
         videoId: null,
         challengeType: 28,
-        tests: challengeData.tests,
-        files: challengeData.challengeFiles,
+        tests: languageData.tests,
+        files: languageData.challengeFiles,
         helpCategory: helpCategory,
         explanation: '',
         transcript: '',

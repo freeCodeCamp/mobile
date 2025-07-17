@@ -330,6 +330,28 @@ class ChallengeViewModel extends BaseViewModel {
     listenToSymbolBarScrollController();
   }
 
+  /// Sets the selected daily challenge language and switches the challenge content accordingly.
+  /// This method uses the LearnOfflineService's caching to avoid redundant API calls.
+  Future<void> setSelectedDailyChallengeLanguage(
+      DailyChallengeLanguage lang, DateTime challengeDate) async {
+    _selectedDailyChallengeLanguage = lang;
+
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    await prefs.setString('selectedDailyChallengeLanguage', lang.name);
+
+    final formattedChallengeDate = formatChallengeDate(challengeDate);
+
+    Challenge dailyChallenge = await learnOfflineService.getDailyChallenge(
+      formattedChallengeDate,
+      _block!,
+      language: lang,
+    );
+
+    setChallenge = dailyChallenge;
+    setMounted = false;
+    initFile(dailyChallenge, dailyChallenge.files[0]);
+  }
+
   void closeWebViews() async {
     await _babelWebView.dispose();
     await _localhostServer.close();
@@ -736,25 +758,6 @@ class ChallengeViewModel extends BaseViewModel {
       _selectedDailyChallengeLanguage = DailyChallengeLanguage.javascript;
     }
     notifyListeners();
-  }
-
-  Future<void> setSelectedDailyChallengeLanguage(
-      DailyChallengeLanguage lang, DateTime challengeDate) async {
-    _selectedDailyChallengeLanguage = lang;
-
-    SharedPreferences prefs = await SharedPreferences.getInstance();
-    await prefs.setString('selectedDailyChallengeLanguage', lang.name);
-
-    final formattedChallengeDate = formatChallengeDate(challengeDate);
-    Challenge dailyChallenge = await learnOfflineService.getDailyChallenge(
-        formattedChallengeDate, _block!);
-
-    // Reset the challenge and force the view to re-mount
-    setChallenge = dailyChallenge;
-    setMounted = false;
-
-    // Reinitialize the file and editor with the new challenge
-    initFile(dailyChallenge, dailyChallenge.files[0]);
   }
 
   Widget getPanelWidget({
