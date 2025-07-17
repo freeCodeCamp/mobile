@@ -67,3 +67,8 @@ DateTime parseMonthYear(String monthYear) {
   int month = monthNames.indexOf(monthName) + 1;
   return DateTime(year, month, 1);
 }
+
+// Formats a DateTime as YYYY-MM-DD
+String formatChallengeDate(DateTime date) {
+  return '${date.year.toString().padLeft(4, '0')}-${date.month.toString().padLeft(2, '0')}-${date.day.toString().padLeft(2, '0')}';
+}

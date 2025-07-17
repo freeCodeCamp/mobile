@@ -1,6 +1,3 @@
-import 'package:shared_preferences/shared_preferences.dart';
-import 'package:freecodecamp/models/learn/daily_challenge_model.dart';
-// ...existing code...
 import 'dart:async';
 import 'dart:convert';
 import 'dart:developer';
@@ -16,11 +13,13 @@ import 'package:freecodecamp/enums/panel_type.dart';
 import 'package:freecodecamp/extensions/i18n_extension.dart';
 import 'package:freecodecamp/models/learn/challenge_model.dart';
 import 'package:freecodecamp/models/learn/curriculum_model.dart';
+import 'package:freecodecamp/models/learn/daily_challenge_model.dart';
 import 'package:freecodecamp/service/dio_service.dart';
 import 'package:freecodecamp/service/learn/learn_file_service.dart';
 import 'package:freecodecamp/service/learn/learn_offline_service.dart';
 import 'package:freecodecamp/service/learn/learn_service.dart';
 import 'package:freecodecamp/ui/views/learn/test_runner.dart';
+import 'package:freecodecamp/ui/views/learn/utils/challenge_utils.dart';
 import 'package:freecodecamp/ui/views/learn/widgets/description/description_widget_view.dart';
 import 'package:freecodecamp/ui/views/learn/widgets/hint/hint_widget_view.dart';
 import 'package:freecodecamp/ui/views/learn/widgets/pass/pass_widget_view.dart';
@@ -719,10 +718,7 @@ class ChallengeViewModel extends BaseViewModel {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     await prefs.setString('selectedDailyChallengeLanguage', lang.name);
 
-    // Format date to YYYY-MM-DD
-    final formattedChallengeDate =
-        '${challengeDate.year.toString().padLeft(4, '0')}-${challengeDate.month.toString().padLeft(2, '0')}-${challengeDate.day.toString().padLeft(2, '0')}';
-
+    final formattedChallengeDate = formatChallengeDate(challengeDate);
     Challenge dailyChallenge = await learnOfflineService.getDailyChallenge(
         formattedChallengeDate, _block!);
 
