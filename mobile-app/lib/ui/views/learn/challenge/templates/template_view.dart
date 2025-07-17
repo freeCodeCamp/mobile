@@ -43,6 +43,7 @@ class ChallengeTemplateView extends StatelessWidget {
                 case 1:
                 case 14:
                 case 20:
+                case 23:
                 case 25:
                 case 26:
                   return ChallengeView(
