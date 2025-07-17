@@ -1,11 +1,11 @@
 import 'dart:developer';
-
 import 'package:flutter/material.dart';
 import 'package:flutter_html/flutter_html.dart';
 import 'package:flutter_inappwebview/flutter_inappwebview.dart';
 import 'package:freecodecamp/enums/panel_type.dart';
 import 'package:freecodecamp/models/learn/challenge_model.dart';
 import 'package:freecodecamp/models/learn/curriculum_model.dart';
+import 'package:freecodecamp/models/learn/daily_challenge_model.dart';
 import 'package:freecodecamp/ui/theme/fcc_theme.dart';
 import 'package:freecodecamp/ui/views/learn/challenge/challenge_viewmodel.dart';
 import 'package:freecodecamp/ui/views/learn/test_runner.dart';
@@ -23,12 +23,14 @@ class ChallengeView extends StatelessWidget {
     required this.challenge,
     required this.challengesCompleted,
     required this.isProject,
+    required this.isDailyChallenge,
   });
 
   final Challenge challenge;
   final Block block;
   final int challengesCompleted;
   final bool isProject;
+  final bool isDailyChallenge;
 
   @override
   Widget build(BuildContext context) {
@@ -223,10 +225,12 @@ class ChallengeView extends StatelessWidget {
       child: Row(
         children: [
           Expanded(
-            child: _fileSelector(
-              model: model,
-              challenge: challenge,
-            ),
+            child: isDailyChallenge
+                ? _dailyChallengeLanguageSelector(model: model)
+                : _fileSelector(
+                    model: model,
+                    challenge: challenge,
+                  ),
           ),
           const SizedBox(width: 8),
           Expanded(
@@ -453,6 +457,66 @@ class ChallengeView extends StatelessWidget {
         iconAlignment: IconAlignment.end,
       );
     }
+  }
+
+  Widget _dailyChallengeLanguageSelector({
+    required ChallengeViewModel model,
+  }) {
+    final selectedLanguage = model.selectedDailyChallengeLanguage;
+
+    String getDisplayLanguage(DailyChallengeLanguage lang) {
+      switch (lang) {
+        case DailyChallengeLanguage.python:
+          return 'Python';
+        default:
+          return 'JavaScript';
+      }
+    }
+
+    return DropdownButton<DailyChallengeLanguage>(
+      isExpanded: true,
+      dropdownColor: FccColors.gray85,
+      value: selectedLanguage,
+      items: [
+        for (final lang in DailyChallengeLanguage.values)
+          DropdownMenuItem(
+            value: lang,
+            child: Text(
+              getDisplayLanguage(lang),
+              style: TextStyle(
+                color:
+                    selectedLanguage == lang ? FccColors.blue50 : Colors.white,
+                fontWeight: selectedLanguage == lang
+                    ? FontWeight.bold
+                    : FontWeight.normal,
+              ),
+            ),
+          ),
+      ],
+      onChanged: (lang) {
+        if (lang != null) {
+          model.setSelectedDailyChallengeLanguage(lang);
+        }
+      },
+      underline: const SizedBox(),
+      selectedItemBuilder: (context) {
+        return DailyChallengeLanguage.values.map((lang) {
+          return Center(
+            child: Text(
+              getDisplayLanguage(lang),
+              style: TextStyle(
+                color:
+                    selectedLanguage == lang ? FccColors.blue50 : Colors.white,
+                fontWeight: selectedLanguage == lang
+                    ? FontWeight.bold
+                    : FontWeight.normal,
+              ),
+            ),
+          );
+        }).toList();
+      },
+      icon: const Icon(Icons.arrow_drop_down),
+    );
   }
 
   Widget _testsTabButton(ChallengeViewModel model) {

@@ -1,3 +1,4 @@
+import 'package:freecodecamp/models/learn/daily_challenge_model.dart';
 import 'dart:async';
 import 'dart:convert';
 import 'dart:developer';
@@ -138,7 +139,34 @@ class LearnOfflineService {
       DailyChallenge dailyChallenge =
           await dailyChallengesService.fetchChallengeByDate(date);
 
-      // TODO: Support Python.
+      SharedPreferences prefs = await SharedPreferences.getInstance();
+
+      String? selectedLangStr =
+          prefs.getString('selectedDailyChallengeLanguage');
+      DailyChallengeLanguage selectedLangEnum;
+
+      if (selectedLangStr == null || selectedLangStr.isEmpty) {
+        selectedLangEnum = DailyChallengeLanguage.javascript;
+      } else {
+        selectedLangEnum = DailyChallengeLanguage.values.firstWhere(
+          (e) => e.name == selectedLangStr,
+          orElse: () => DailyChallengeLanguage.javascript,
+        );
+      }
+
+      // Map enum to challenge data and help category
+      dynamic challengeData;
+      HelpCategory helpCategory;
+      switch (selectedLangEnum) {
+        case DailyChallengeLanguage.python:
+          challengeData = dailyChallenge.python;
+          helpCategory = HelpCategory.python;
+          break;
+        default:
+          challengeData = dailyChallenge.javascript;
+          helpCategory = HelpCategory.javascript;
+      }
+
       return Challenge(
         id: dailyChallenge.id,
         block: block.dashedName,
@@ -149,9 +177,9 @@ class LearnOfflineService {
         superBlock: block.superBlock.dashedName,
         videoId: null,
         challengeType: 28,
-        tests: dailyChallenge.javascript.tests,
-        files: dailyChallenge.javascript.challengeFiles,
-        helpCategory: HelpCategory.javascript,
+        tests: challengeData.tests,
+        files: challengeData.challengeFiles,
+        helpCategory: helpCategory,
         explanation: '',
         transcript: '',
         hooks: Hooks.fromJson({'beforeAll': ''}),

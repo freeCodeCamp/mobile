@@ -1,3 +1,6 @@
+import 'package:shared_preferences/shared_preferences.dart';
+import 'package:freecodecamp/models/learn/daily_challenge_model.dart';
+// ...existing code...
 import 'dart:async';
 import 'dart:convert';
 import 'dart:developer';
@@ -90,6 +93,11 @@ class ChallengeViewModel extends BaseViewModel {
 
   InAppWebViewController? _testController;
   InAppWebViewController? get testController => _testController;
+
+  DailyChallengeLanguage _selectedDailyChallengeLanguage =
+      DailyChallengeLanguage.javascript;
+  DailyChallengeLanguage get selectedDailyChallengeLanguage =>
+      _selectedDailyChallengeLanguage;
 
   final HeadlessInAppWebView _babelWebView = HeadlessInAppWebView(
     initialData: InAppWebViewInitialData(
@@ -686,6 +694,30 @@ class ChallengeViewModel extends BaseViewModel {
     setIsRunningTests = false;
     // TODO: Do we still need this variable
     setShowPanel = true;
+  }
+
+  Future<void> loadSelectedDailyChallengeLanguage() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    String? langStr = prefs.getString('selectedDailyChallengeLanguage');
+
+    if (langStr != null && langStr.isNotEmpty) {
+      _selectedDailyChallengeLanguage =
+          DailyChallengeLanguage.values.firstWhere(
+        (e) => e.name == langStr,
+        orElse: () => DailyChallengeLanguage.javascript,
+      );
+    } else {
+      _selectedDailyChallengeLanguage = DailyChallengeLanguage.javascript;
+    }
+    notifyListeners();
+  }
+
+  Future<void> setSelectedDailyChallengeLanguage(
+      DailyChallengeLanguage lang) async {
+    _selectedDailyChallengeLanguage = lang;
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    await prefs.setString('selectedDailyChallengeLanguage', lang.name);
+    notifyListeners();
   }
 
   Widget getPanelWidget({
