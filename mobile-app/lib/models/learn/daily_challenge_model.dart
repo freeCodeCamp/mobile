@@ -75,10 +75,10 @@ class DailyChallengeLanguageData {
       challengeFiles: (data['challengeFiles'] ?? []).map<ChallengeFile>((file) {
         // Add ext and name based on language
         Map<String, dynamic> fileData = Map<String, dynamic>.from(file);
-        if (language == 'javascript') {
+        if (language == DailyChallengeLanguage.javascript.value) {
           fileData['ext'] = 'js';
           fileData['name'] = 'script';
-        } else if (language == 'python') {
+        } else if (language == DailyChallengeLanguage.python.value) {
           fileData['ext'] = 'py';
           fileData['name'] = 'main';
         }
