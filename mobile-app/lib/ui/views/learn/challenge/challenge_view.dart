@@ -469,37 +469,23 @@ class ChallengeView extends StatelessWidget {
 
   Widget _dailyChallengeLanguageSelector(
       {required ChallengeViewModel model, required DateTime challengeDate}) {
-    final selectedLanguage = model.selectedDailyChallengeLanguage;
-
-    String getDisplayLanguage(DailyChallengeLanguage lang) {
-      switch (lang) {
-        case DailyChallengeLanguage.python:
-          return 'Python';
-        default:
-          return 'JavaScript';
-      }
-    }
-
     return DropdownButton<DailyChallengeLanguage>(
       isExpanded: true,
       dropdownColor: FccColors.gray85,
-      value: selectedLanguage,
-      items: [
-        for (final lang in DailyChallengeLanguage.values)
-          DropdownMenuItem(
-            value: lang,
-            child: Text(
-              getDisplayLanguage(lang),
-              style: TextStyle(
-                color:
-                    selectedLanguage == lang ? FccColors.blue50 : Colors.white,
-                fontWeight: selectedLanguage == lang
-                    ? FontWeight.bold
-                    : FontWeight.normal,
-              ),
+      value: model.selectedDailyChallengeLanguage,
+      items: DailyChallengeLanguage.values.map((lang) {
+        final isSelected = model.selectedDailyChallengeLanguage == lang;
+        return DropdownMenuItem(
+          value: lang,
+          child: Text(
+            lang == DailyChallengeLanguage.python ? 'Python' : 'JavaScript',
+            style: TextStyle(
+              color: isSelected ? FccColors.blue50 : Colors.white,
+              fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
             ),
           ),
-      ],
+        );
+      }).toList(),
       onChanged: (lang) {
         if (lang != null) {
           model.setSelectedDailyChallengeLanguage(lang, challengeDate);
@@ -508,15 +494,13 @@ class ChallengeView extends StatelessWidget {
       underline: const SizedBox(),
       selectedItemBuilder: (context) {
         return DailyChallengeLanguage.values.map((lang) {
+          final isSelected = model.selectedDailyChallengeLanguage == lang;
           return Center(
             child: Text(
-              getDisplayLanguage(lang),
+              lang == DailyChallengeLanguage.python ? 'Python' : 'JavaScript',
               style: TextStyle(
-                color:
-                    selectedLanguage == lang ? FccColors.blue50 : Colors.white,
-                fontWeight: selectedLanguage == lang
-                    ? FontWeight.bold
-                    : FontWeight.normal,
+                color: isSelected ? FccColors.blue50 : Colors.white,
+                fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
               ),
             ),
           );
