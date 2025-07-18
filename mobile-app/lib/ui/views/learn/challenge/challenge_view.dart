@@ -1,11 +1,11 @@
 import 'dart:developer';
-
 import 'package:flutter/material.dart';
 import 'package:flutter_html/flutter_html.dart';
 import 'package:flutter_inappwebview/flutter_inappwebview.dart';
 import 'package:freecodecamp/enums/panel_type.dart';
 import 'package:freecodecamp/models/learn/challenge_model.dart';
 import 'package:freecodecamp/models/learn/curriculum_model.dart';
+import 'package:freecodecamp/models/learn/daily_challenge_model.dart';
 import 'package:freecodecamp/ui/theme/fcc_theme.dart';
 import 'package:freecodecamp/ui/views/learn/challenge/challenge_viewmodel.dart';
 import 'package:freecodecamp/ui/views/learn/test_runner.dart';
@@ -23,19 +23,27 @@ class ChallengeView extends StatelessWidget {
     required this.challenge,
     required this.challengesCompleted,
     required this.isProject,
+    this.challengeDate,
   });
 
   final Challenge challenge;
   final Block block;
   final int challengesCompleted;
   final bool isProject;
+  // Used for daily challenges
+  final DateTime? challengeDate;
 
   @override
   Widget build(BuildContext context) {
     return ViewModelBuilder<ChallengeViewModel>.reactive(
       viewModelBuilder: () => ChallengeViewModel(),
       onViewModelReady: (model) {
-        model.init(block, challenge, challengesCompleted);
+        model.init(
+          block: block,
+          challenge: challenge,
+          challengesCompleted: challengesCompleted,
+          isDailyChallenge: challengeDate != null,
+        );
       },
       onDispose: (model) {
         model.closeWebViews();
@@ -43,6 +51,7 @@ class ChallengeView extends StatelessWidget {
       },
       builder: (context, model, child) {
         int maxChallenges = block.challenges.length;
+
         ChallengeFile currFile = model.currentFile(challenge);
         model.initFile(challenge, currFile);
         if (model.showPanel) {
@@ -223,10 +232,13 @@ class ChallengeView extends StatelessWidget {
       child: Row(
         children: [
           Expanded(
-            child: _fileSelector(
-              model: model,
-              challenge: challenge,
-            ),
+            child: challengeDate != null
+                ? _dailyChallengeLanguageSelector(
+                    model: model, challengeDate: challengeDate!)
+                : _fileSelector(
+                    model: model,
+                    challenge: challenge,
+                  ),
           ),
           const SizedBox(width: 8),
           Expanded(
@@ -453,6 +465,49 @@ class ChallengeView extends StatelessWidget {
         iconAlignment: IconAlignment.end,
       );
     }
+  }
+
+  Widget _dailyChallengeLanguageSelector(
+      {required ChallengeViewModel model, required DateTime challengeDate}) {
+    return DropdownButton<DailyChallengeLanguage>(
+      isExpanded: true,
+      dropdownColor: FccColors.gray85,
+      value: model.selectedDailyChallengeLanguage,
+      items: DailyChallengeLanguage.values.map((lang) {
+        final isSelected = model.selectedDailyChallengeLanguage == lang;
+        return DropdownMenuItem(
+          value: lang,
+          child: Text(
+            lang == DailyChallengeLanguage.python ? 'Python' : 'JavaScript',
+            style: TextStyle(
+              color: isSelected ? FccColors.blue50 : Colors.white,
+              fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
+            ),
+          ),
+        );
+      }).toList(),
+      onChanged: (lang) {
+        if (lang != null) {
+          model.setSelectedDailyChallengeLanguage(lang, challengeDate);
+        }
+      },
+      underline: const SizedBox(),
+      selectedItemBuilder: (context) {
+        return DailyChallengeLanguage.values.map((lang) {
+          final isSelected = model.selectedDailyChallengeLanguage == lang;
+          return Center(
+            child: Text(
+              lang == DailyChallengeLanguage.python ? 'Python' : 'JavaScript',
+              style: TextStyle(
+                color: isSelected ? FccColors.blue50 : Colors.white,
+                fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
+              ),
+            ),
+          );
+        }).toList();
+      },
+      icon: const Icon(Icons.arrow_drop_down),
+    );
   }
 
   Widget _testsTabButton(ChallengeViewModel model) {

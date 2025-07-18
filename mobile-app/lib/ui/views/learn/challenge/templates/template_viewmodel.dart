@@ -3,6 +3,7 @@ import 'package:freecodecamp/models/learn/challenge_model.dart';
 import 'package:freecodecamp/models/learn/curriculum_model.dart';
 import 'package:freecodecamp/service/learn/learn_offline_service.dart';
 import 'package:freecodecamp/service/learn/learn_service.dart';
+import 'package:freecodecamp/ui/views/learn/utils/challenge_utils.dart';
 import 'package:stacked/stacked.dart';
 
 class ChallengeTemplateViewModel extends BaseViewModel {
@@ -29,9 +30,7 @@ class ChallengeTemplateViewModel extends BaseViewModel {
 
       _learnService.setLastVisitedChallenge(url, block);
     } else {
-      // Format date to YYYY-MM-DD
-      final formattedChallengeDate =
-          '${challengeDate.year.toString().padLeft(4, '0')}-${challengeDate.month.toString().padLeft(2, '0')}-${challengeDate.day.toString().padLeft(2, '0')}';
+      final formattedChallengeDate = formatChallengeDate(challengeDate);
 
       setChallenge =
           _learnOfflineService.getDailyChallenge(formattedChallengeDate, block);

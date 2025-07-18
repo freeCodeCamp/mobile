@@ -58,6 +58,7 @@ class ChallengeTemplateView extends StatelessWidget {
                     block: block,
                     challengesCompleted: challengesCompleted,
                     isProject: tiles.length > 1,
+                    challengeDate: challengeDate,
                   );
                 case 8:
                   return QuizView(

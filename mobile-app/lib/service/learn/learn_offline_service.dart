@@ -48,7 +48,9 @@ class LearnOfflineService {
   Timer? timer;
   final _dio = DioService.dio;
 
-  // Lazy initialization of the daily challenges service
+  DailyChallenge? _cachedDailyChallenge;
+  String? _cachedChallengeDate;
+
   DailyChallengesService? _dailyChallengesService;
   DailyChallengesService get dailyChallengesService {
     _dailyChallengesService ??= locator<DailyChallengesService>();
@@ -130,15 +132,50 @@ class LearnOfflineService {
   }
 
   /*
-    This function fetches a daily challenge by date and map it to Challenge.
+    Fetches daily challenge data and creates a Challenge object for the specified language.
+    Uses caching to avoid redundant API calls when switching between languages for the same date.
+    If no language is provided, uses the stored language preference.
   */
-
-  Future<Challenge> getDailyChallenge(String date, Block block) async {
+  Future<Challenge> getDailyChallenge(
+    String date,
+    Block block, {
+    DailyChallengeLanguage? language,
+  }) async {
     try {
-      DailyChallenge dailyChallenge =
-          await dailyChallengesService.fetchChallengeByDate(date);
+      if (language == null) {
+        SharedPreferences prefs = await SharedPreferences.getInstance();
+        String? selectedLangStr =
+            prefs.getString('selectedDailyChallengeLanguage');
+        language = parseLanguageFromString(selectedLangStr);
+      }
 
-      // TODO: Support Python.
+      if (_cachedDailyChallenge == null || _cachedChallengeDate != date) {
+        // Temporarily cache the challenge data to avoid redundant API calls.
+        // But not saving the cached data to SharedPreferences
+        // so we can still get the up-to-date challenge.
+        _cachedDailyChallenge =
+            await dailyChallengesService.fetchChallengeByDate(date);
+        _cachedChallengeDate = date;
+      }
+
+      DailyChallenge dailyChallenge = _cachedDailyChallenge!;
+
+      // Select language-specific data
+      DailyChallengeLanguageData languageData;
+      HelpCategory helpCategory;
+
+      switch (language) {
+        case DailyChallengeLanguage.python:
+          languageData = dailyChallenge.python;
+          helpCategory = HelpCategory.python;
+          break;
+        default:
+          languageData = dailyChallenge.javascript;
+          helpCategory = HelpCategory.javascript;
+          break;
+      }
+
+      // Map the daily challenge to Challenge
       return Challenge(
         id: dailyChallenge.id,
         block: block.dashedName,
@@ -149,9 +186,9 @@ class LearnOfflineService {
         superBlock: block.superBlock.dashedName,
         videoId: null,
         challengeType: 28,
-        tests: dailyChallenge.javascript.tests,
-        files: dailyChallenge.javascript.challengeFiles,
-        helpCategory: HelpCategory.javascript,
+        tests: languageData.tests,
+        files: languageData.challengeFiles,
+        helpCategory: helpCategory,
         explanation: '',
         transcript: '',
         hooks: Hooks.fromJson({'beforeAll': ''}),
@@ -165,6 +202,18 @@ class LearnOfflineService {
     } catch (e) {
       throw Exception('Failed to fetch daily challenge: $e');
     }
+  }
+
+  /// Helper method to parse DailyChallengeLanguage from string with fallback
+  static DailyChallengeLanguage parseLanguageFromString(String? langStr) {
+    if (langStr == null || langStr.isEmpty) {
+      return DailyChallengeLanguage.javascript;
+    }
+
+    return DailyChallengeLanguage.values.firstWhere(
+      (e) => e.name == langStr,
+      orElse: () => DailyChallengeLanguage.javascript,
+    );
   }
 
   /*

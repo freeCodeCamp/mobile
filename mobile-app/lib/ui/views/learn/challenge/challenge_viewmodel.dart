@@ -13,11 +13,13 @@ import 'package:freecodecamp/enums/panel_type.dart';
 import 'package:freecodecamp/extensions/i18n_extension.dart';
 import 'package:freecodecamp/models/learn/challenge_model.dart';
 import 'package:freecodecamp/models/learn/curriculum_model.dart';
+import 'package:freecodecamp/models/learn/daily_challenge_model.dart';
 import 'package:freecodecamp/service/dio_service.dart';
 import 'package:freecodecamp/service/learn/learn_file_service.dart';
 import 'package:freecodecamp/service/learn/learn_offline_service.dart';
 import 'package:freecodecamp/service/learn/learn_service.dart';
 import 'package:freecodecamp/ui/views/learn/test_runner.dart';
+import 'package:freecodecamp/ui/views/learn/utils/challenge_utils.dart';
 import 'package:freecodecamp/ui/views/learn/widgets/description/description_widget_view.dart';
 import 'package:freecodecamp/ui/views/learn/widgets/hint/hint_widget_view.dart';
 import 'package:freecodecamp/ui/views/learn/widgets/pass/pass_widget_view.dart';
@@ -32,6 +34,7 @@ import 'package:stacked/stacked.dart';
 import 'package:stacked_services/stacked_services.dart';
 
 class ChallengeViewModel extends BaseViewModel {
+  bool get isDailyChallenge => _isDailyChallenge;
   final InAppLocalhostServer _localhostServer =
       InAppLocalhostServer(documentRoot: 'assets/test_runner');
 
@@ -90,6 +93,12 @@ class ChallengeViewModel extends BaseViewModel {
 
   InAppWebViewController? _testController;
   InAppWebViewController? get testController => _testController;
+
+  bool _isDailyChallenge = false;
+
+  DailyChallengeLanguage? _selectedDailyChallengeLanguage;
+  DailyChallengeLanguage? get selectedDailyChallengeLanguage =>
+      _selectedDailyChallengeLanguage;
 
   final HeadlessInAppWebView _babelWebView = HeadlessInAppWebView(
     initialData: InAppWebViewInitialData(
@@ -286,13 +295,20 @@ class ChallengeViewModel extends BaseViewModel {
     notifyListeners();
   }
 
-  void init(
-    Block block,
-    Challenge challenge,
-    int challengesCompleted,
-  ) async {
+  void init({
+    required Block block,
+    required Challenge challenge,
+    required int challengesCompleted,
+    required bool isDailyChallenge,
+  }) async {
+    _isDailyChallenge = isDailyChallenge;
+
     await _babelWebView.run();
     await _localhostServer.start();
+
+    if (isDailyChallenge) {
+      await loadSelectedDailyChallengeLanguage();
+    }
 
     setupDialogUi();
 
@@ -301,6 +317,28 @@ class ChallengeViewModel extends BaseViewModel {
     setChallengesCompleted = challengesCompleted;
 
     listenToSymbolBarScrollController();
+  }
+
+  /// Sets the selected daily challenge language and switches the challenge content accordingly.
+  /// This method uses the LearnOfflineService's caching to avoid redundant API calls.
+  Future<void> setSelectedDailyChallengeLanguage(
+      DailyChallengeLanguage lang, DateTime challengeDate) async {
+    _selectedDailyChallengeLanguage = lang;
+
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    await prefs.setString('selectedDailyChallengeLanguage', lang.name);
+
+    final formattedChallengeDate = formatChallengeDate(challengeDate);
+
+    Challenge dailyChallenge = await learnOfflineService.getDailyChallenge(
+      formattedChallengeDate,
+      _block!,
+      language: lang,
+    );
+
+    setChallenge = dailyChallenge;
+    setMounted = false;
+    initFile(dailyChallenge, dailyChallenge.files[0]);
   }
 
   void closeWebViews() async {
@@ -545,15 +583,22 @@ class ChallengeViewModel extends BaseViewModel {
     return '${file.name}.${file.ext.value}';
   }
 
-  ChallengeFile currentFile(Challenge challenge) {
+  ChallengeFile currentFile(Challenge challengeParam) {
+    // For daily challenges, we don't use the `challenge` param passed from the view
+    // but use the `_challenge` variable as the source of truth instead.
+    // This is because when a camper switches languages,
+    // we load a new `challenge` object and store it in `_challenge`.
+    Challenge currChallenge =
+        (isDailyChallenge && challenge != null) ? challenge! : challengeParam;
+
     if (currentSelectedFile.isNotEmpty) {
-      ChallengeFile file = challenge.files.firstWhere(
+      ChallengeFile file = currChallenge.files.firstWhere(
         (file) => getFullFileName(file) == currentSelectedFile,
       );
       return file;
     }
 
-    List<ChallengeFile>? fileWithEditableRegion = challenge.files
+    List<ChallengeFile>? fileWithEditableRegion = currChallenge.files
         .where((file) => file.editableRegionBoundaries.isNotEmpty)
         .toList();
 
@@ -561,7 +606,7 @@ class ChallengeViewModel extends BaseViewModel {
       return fileWithEditableRegion[0];
     }
 
-    return challenge.files[0];
+    return currChallenge.files[0];
   }
 
   void resetCode(Editor editor, BuildContext context) async {
@@ -686,6 +731,15 @@ class ChallengeViewModel extends BaseViewModel {
     setIsRunningTests = false;
     // TODO: Do we still need this variable
     setShowPanel = true;
+  }
+
+  Future<void> loadSelectedDailyChallengeLanguage() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    String? langStr = prefs.getString('selectedDailyChallengeLanguage');
+
+    _selectedDailyChallengeLanguage =
+        LearnOfflineService.parseLanguageFromString(langStr);
+    notifyListeners();
   }
 
   Widget getPanelWidget({
