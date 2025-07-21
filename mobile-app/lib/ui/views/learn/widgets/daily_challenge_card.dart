@@ -117,6 +117,18 @@ class _DailyChallengeCardState extends State<DailyChallengeCard> {
     );
   }
 
+  Widget _buildCardLabel() {
+    return Text(
+      "Today's Challenge",
+      style: TextStyle(
+        fontSize: 14,
+        fontWeight: FontWeight.w500,
+        color: FccColors.gray80,
+      ),
+      textAlign: TextAlign.center,
+    );
+  }
+
   Widget _buildChallengeCountdown() {
     return Semantics(
       label: 'Countdown timer. Next challenge in ${_formatDuration(_timeLeft)}',
@@ -191,27 +203,7 @@ class _DailyChallengeCardState extends State<DailyChallengeCard> {
     final challenge = _challenge!;
     return Column(
       children: [
-        Padding(
-          padding: const EdgeInsets.symmetric(vertical: 16.0),
-          child: Column(
-            children: [
-              Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Text(
-                    'Daily Challenge',
-                    style: TextStyle(
-                      fontSize: 26,
-                      fontWeight: FontWeight.bold,
-                      color: FccColors.gray00,
-                    ),
-                  ),
-                ],
-              ),
-              SizedBox(height: 8),
-            ],
-          ),
-        ),
+        SizedBox(height: 16),
         GestureDetector(
           onTap: () {},
           child: Semantics(
@@ -236,6 +228,8 @@ class _DailyChallengeCardState extends State<DailyChallengeCard> {
                 mainAxisSize: MainAxisSize.min,
                 crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
+                  _buildCardLabel(),
+                  SizedBox(height: 4),
                   _buildChallengeTitle(challenge),
                   SizedBox(height: 14),
                   _buildChallengeCountdown(),
