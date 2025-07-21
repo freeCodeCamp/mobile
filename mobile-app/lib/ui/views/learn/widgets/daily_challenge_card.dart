@@ -1,11 +1,16 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
+import 'package:freecodecamp/app/app.locator.dart';
 import 'package:freecodecamp/app/app.router.dart';
+import 'package:freecodecamp/models/learn/completed_challenge_model.dart';
 import 'package:freecodecamp/models/learn/daily_challenge_model.dart';
+import 'package:freecodecamp/models/main/user_model.dart';
+import 'package:freecodecamp/service/authentication/authentication_service.dart';
 import 'package:freecodecamp/service/learn/daily_challenges_service.dart';
 import 'package:freecodecamp/ui/theme/fcc_theme.dart';
 import 'package:freecodecamp/ui/views/learn/utils/challenge_utils.dart';
+import 'package:stacked_services/stacked_services.dart';
 import 'package:timezone/data/latest.dart' as tzdata;
 import 'package:timezone/timezone.dart' as tz;
 
@@ -22,6 +27,9 @@ class _DailyChallengeCardState extends State<DailyChallengeCard> {
   DailyChallenge? _challenge;
   bool _loading = true;
   String? _error;
+  bool _isCompleted = false;
+  final AuthenticationService _auth = locator<AuthenticationService>();
+  final NavigationService _navigationService = locator<NavigationService>();
 
   void _navigateToDailyChallenge(BuildContext context) {
     if (_challenge == null) return;
@@ -72,8 +80,11 @@ class _DailyChallengeCardState extends State<DailyChallengeCard> {
       final todayChallenge =
           await DailyChallengesService().fetchTodayChallenge();
 
+      final isCompleted = await _checkIfChallengeCompleted(todayChallenge.id);
+
       setState(() {
         _challenge = todayChallenge;
+        _isCompleted = isCompleted;
         _loading = false;
       });
     } catch (e) {
@@ -82,6 +93,19 @@ class _DailyChallengeCardState extends State<DailyChallengeCard> {
         _loading = false;
       });
     }
+  }
+
+  Future<bool> _checkIfChallengeCompleted(String challengeId) async {
+    FccUserModel? user = await _auth.userModel;
+    if (user != null) {
+      for (CompletedDailyChallenge challenge
+          in user.completedDailyCodingChallenges) {
+        if (challenge.id == challengeId) {
+          return true;
+        }
+      }
+    }
+    return false;
   }
 
   void _updateTimeLeft() {
@@ -105,87 +129,146 @@ class _DailyChallengeCardState extends State<DailyChallengeCard> {
     return '${twoDigits(d.inHours)}:${twoDigits(d.inMinutes % 60)}:${twoDigits(d.inSeconds % 60)}';
   }
 
-  Widget _buildChallengeTitle(DailyChallenge challenge) {
-    return Text(
-      challenge.title,
-      style: TextStyle(
-        fontSize: 20,
-        fontWeight: FontWeight.bold,
-        color: FccColors.gray90,
-      ),
-      textAlign: TextAlign.center,
-    );
-  }
-
-  Widget _buildCardLabel() {
-    return Text(
-      "Today's Challenge",
-      style: TextStyle(
-        fontSize: 14,
-        fontWeight: FontWeight.w500,
-        color: FccColors.gray80,
-      ),
-      textAlign: TextAlign.center,
-    );
-  }
-
-  Widget _buildChallengeCountdown() {
-    return Semantics(
-      label: 'Countdown timer. Next challenge in ${_formatDuration(_timeLeft)}',
-      liveRegion: true,
-      child: Container(
-        padding: EdgeInsets.symmetric(horizontal: 12, vertical: 6),
-        decoration: BoxDecoration(
-          color: Colors.white,
-          borderRadius: BorderRadius.circular(16),
-        ),
-        child: Text(
-          'Next challenge in: ${_formatDuration(_timeLeft)}',
+  Widget _buildCompletedContent() {
+    return Column(
+      children: [
+        // Card label
+        Text(
+          "Today's challenge completed!",
           style: TextStyle(
+            fontSize: 14,
+            fontWeight: FontWeight.w500,
+            color: FccColors.gray80,
+          ),
+          textAlign: TextAlign.center,
+        ),
+        SizedBox(height: 14),
+        // Countdown timer
+        Semantics(
+          label:
+              'Countdown timer. Next challenge in ${_formatDuration(_timeLeft)}',
+          liveRegion: true,
+          child: Container(
+            padding: EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+            decoration: BoxDecoration(
+              color: Colors.white,
+              borderRadius: BorderRadius.circular(16),
+            ),
+            child: Text(
+              'Next challenge in: ${_formatDuration(_timeLeft)}',
+              style: TextStyle(
+                color: FccColors.gray90,
+                fontWeight: FontWeight.w600,
+                fontSize: 15,
+              ),
+            ),
+          ),
+        ),
+        SizedBox(height: 14),
+        // CTA Button
+        SizedBox(
+          width: double.infinity,
+          child: Tooltip(
+            message: 'View past daily challenges',
+            child: ElevatedButton.icon(
+              style: ElevatedButton.styleFrom(
+                backgroundColor: FccColors.yellow50,
+                foregroundColor: FccColors.gray90,
+                elevation: 0,
+                padding: EdgeInsets.symmetric(vertical: 14),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(12),
+                ),
+              ),
+              onPressed: () {
+                _navigationService.navigateTo(Routes.dailyChallengesView);
+              },
+              icon: Icon(
+                Icons.history,
+                size: 20,
+                semanticLabel: 'View past challenges',
+              ),
+              label: Text(
+                'View past challenges',
+                style: TextStyle(
+                  fontSize: 18,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+            ),
+          ),
+        ),
+      ],
+    );
+  }
+
+  Widget _buildNotCompletedContent() {
+    if (_challenge == null) {
+      return SizedBox();
+    }
+    return Column(
+      children: [
+        // Card label
+        Text(
+          "Today's challenge",
+          style: TextStyle(
+            fontSize: 14,
+            fontWeight: FontWeight.w500,
+            color: FccColors.gray80,
+          ),
+          textAlign: TextAlign.center,
+        ),
+        SizedBox(height: 4),
+        // Challenge title
+        Text(
+          _challenge!.title,
+          style: TextStyle(
+            fontSize: 20,
+            fontWeight: FontWeight.bold,
             color: FccColors.gray90,
-            fontWeight: FontWeight.w600,
-            fontSize: 15,
           ),
+          textAlign: TextAlign.center,
         ),
-      ),
-    );
-  }
-
-  Widget _buildChallengeMotivation() {
-    return Text(
-      'Do you have the skills to complete this challenge?',
-      textAlign: TextAlign.center,
-      style: TextStyle(fontSize: 18, color: FccColors.gray85),
-    );
-  }
-
-  Widget _buildChallengeCTAButton() {
-    return SizedBox(
-      width: double.infinity,
-      child: Tooltip(
-        message: 'Start the daily challenge now',
-        child: ElevatedButton.icon(
-          style: ElevatedButton.styleFrom(
-            backgroundColor: FccColors.yellow50,
-            foregroundColor: FccColors.gray90,
-            elevation: 0,
-            padding: EdgeInsets.symmetric(vertical: 14),
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(12),
+        SizedBox(height: 14),
+        // Motivation text
+        Text(
+          'Do you have the skills to complete this challenge?',
+          textAlign: TextAlign.center,
+          style: TextStyle(fontSize: 18, color: FccColors.gray85),
+        ),
+        SizedBox(height: 20),
+        // CTA Button
+        SizedBox(
+          width: double.infinity,
+          child: Tooltip(
+            message: 'Start the daily challenge now',
+            child: ElevatedButton.icon(
+              style: ElevatedButton.styleFrom(
+                backgroundColor: FccColors.yellow50,
+                foregroundColor: FccColors.gray90,
+                elevation: 0,
+                padding: EdgeInsets.symmetric(vertical: 14),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(12),
+                ),
+              ),
+              onPressed: () => _navigateToDailyChallenge(context),
+              icon: Icon(
+                Icons.arrow_forward_ios,
+                size: 20,
+                semanticLabel: 'Go to challenge',
+              ),
+              label: Text(
+                'Start the challenge',
+                style: TextStyle(
+                  fontSize: 18,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
             ),
           ),
-          onPressed: () => _navigateToDailyChallenge(context),
-          icon: Icon(Icons.arrow_forward_ios,
-              size: 20, semanticLabel: 'Go to challenge'),
-          label: Text(
-            'Start the challenge',
-            style: TextStyle(
-              fontSize: 18,
-              fontWeight: FontWeight.bold,
-            ),
-          ),
         ),
-      ),
+      ],
     );
   }
 
@@ -200,14 +283,15 @@ class _DailyChallengeCardState extends State<DailyChallengeCard> {
     if (_challenge == null) {
       return Center(child: Text('No challenge available today'));
     }
-    final challenge = _challenge!;
     return Column(
       children: [
         SizedBox(height: 16),
         GestureDetector(
           onTap: () {},
           child: Semantics(
-            label: 'Daily challenge card',
+            label: _isCompleted
+                ? 'Daily challenge completed. View past challenges.'
+                : 'Daily challenge card',
             container: true,
             child: Container(
               padding: const EdgeInsets.all(20),
@@ -228,15 +312,9 @@ class _DailyChallengeCardState extends State<DailyChallengeCard> {
                 mainAxisSize: MainAxisSize.min,
                 crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
-                  _buildCardLabel(),
-                  SizedBox(height: 4),
-                  _buildChallengeTitle(challenge),
-                  SizedBox(height: 14),
-                  _buildChallengeCountdown(),
-                  SizedBox(height: 14),
-                  _buildChallengeMotivation(),
-                  SizedBox(height: 20),
-                  _buildChallengeCTAButton(),
+                  _isCompleted
+                      ? _buildCompletedContent()
+                      : _buildNotCompletedContent(),
                 ],
               ),
             ),
