@@ -14,7 +14,7 @@ import 'package:freecodecamp/service/authentication/authentication_service.dart'
 import 'package:freecodecamp/service/dio_service.dart';
 import 'package:freecodecamp/service/firebase/analytics_service.dart';
 import 'package:freecodecamp/service/firebase/remote_config_service.dart';
-import 'package:freecodecamp/service/learn/daily_challenge_notification_service.dart';
+import 'package:freecodecamp/service/learn/daily_challenges_notification_service.dart';
 import 'package:freecodecamp/service/locale_service.dart';
 import 'package:freecodecamp/service/navigation/quick_actions_service.dart';
 import 'package:freecodecamp/service/news/api_service.dart';
