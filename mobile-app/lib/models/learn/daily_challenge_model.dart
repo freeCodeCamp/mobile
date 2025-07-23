@@ -1,5 +1,5 @@
-import 'package:freecodecamp/models/learn/curriculum_model.dart';
 import 'package:freecodecamp/models/learn/challenge_model.dart';
+import 'package:freecodecamp/models/learn/curriculum_model.dart';
 
 class DailyChallengeOverview {
   final String id;
