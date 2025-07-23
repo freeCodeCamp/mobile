@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 import 'package:freecodecamp/extensions/i18n_extension.dart';
 import 'package:freecodecamp/models/learn/curriculum_model.dart';
 import 'package:freecodecamp/models/learn/motivational_quote_model.dart';
 import 'package:freecodecamp/models/main/user_model.dart';
+import 'package:freecodecamp/ui/theme/fcc_theme.dart';
 import 'package:freecodecamp/ui/views/learn/landing/landing_viewmodel.dart';
 import 'package:freecodecamp/ui/widgets/drawer_widget/drawer_widget_view.dart';
 import 'package:stacked/stacked.dart';
@@ -16,8 +18,9 @@ class LearnLandingView extends StatelessWidget {
       viewModelBuilder: () => LearnLandingViewModel(),
       onViewModelReady: (model) => model.init(context),
       builder: (context, model, child) => Scaffold(
+        backgroundColor: FccColors.gray90,
         appBar: AppBar(
-          title: const Text('LEARN'),
+          title: Text('LEARN'),
         ),
         drawer: const DrawerWidgetView(
           key: Key('drawer'),
@@ -31,62 +34,62 @@ class LearnLandingView extends StatelessWidget {
             return Future.delayed(Duration.zero);
           },
           child: SingleChildScrollView(
-            child: Column(
-              children: [
-                const SizedBox(height: 32),
-                StreamBuilder(
-                  stream: model.auth.isLoggedIn,
-                  builder: (context, snapshot) {
-                    return Column(
-                      children: [
-                        if (model.isLoggedIn) welcomeMessage(model),
-                      ],
-                    );
-                  },
-                ),
-                const QuoteWidget(),
-                if (!model.isLoggedIn) loginButton(model, context),
-                if (model.hasLastVisitedChallenge && model.isLoggedIn)
-                  ContinueLearningButton(
-                    model: model,
+            child: Container(
+              padding: const EdgeInsets.all(4),
+              decoration: BoxDecoration(
+                color: FccColors.gray90,
+              ),
+              child: Column(
+                children: [
+                  const SizedBox(height: 32),
+                  StreamBuilder(
+                    stream: model.auth.isLoggedIn,
+                    builder: (context, snapshot) {
+                      return Column(
+                        children: [
+                          if (model.isLoggedIn) welcomeMessage(model),
+                        ],
+                      );
+                    },
                   ),
-                const SizedBox(height: 16),
-                FutureBuilder<List<SuperBlockButtonData>>(
-                  future: model.superBlockButtons,
-                  builder: (context, snapshot) {
-                    if (snapshot.hasData) {
-                      if (snapshot.data!.isEmpty) {
-                        return errorMessage(context);
+                  const QuoteWidget(),
+                  if (!model.isLoggedIn) loginButton(model, context),
+                  const SizedBox(height: 16),
+                  FutureBuilder<List<Widget>>(
+                    future: model.superBlockButtons,
+                    builder: (context, snapshot) {
+                      if (snapshot.hasData) {
+                        if (snapshot.data!.isEmpty) {
+                          return errorMessage(context);
+                        }
+
+                        if (snapshot.data is List<Widget>) {
+                          List<Widget> widgets = snapshot.data!;
+
+                          return ListView.builder(
+                            physics: const ClampingScrollPhysics(),
+                            shrinkWrap: true,
+                            itemCount: widgets.length,
+                            itemBuilder: (BuildContext context, int i) {
+                              return widgets[i];
+                            },
+                          );
+                        }
                       }
 
-                      if (snapshot.data is List<SuperBlockButtonData>) {
-                        List<SuperBlockButtonData> buttons = snapshot.data!;
-
-                        return ListView.builder(
-                          physics: const ClampingScrollPhysics(),
-                          shrinkWrap: true,
-                          itemCount: buttons.length,
-                          itemBuilder: (BuildContext context, int i) {
-                            return SuperBlockButton(
-                              button: buttons[i],
-                            );
-                          },
+                      if (ConnectionState.waiting == snapshot.connectionState) {
+                        return const Center(
+                          child: CircularProgressIndicator(),
                         );
                       }
-                    }
 
-                    if (ConnectionState.waiting == snapshot.connectionState) {
                       return const Center(
                         child: CircularProgressIndicator(),
                       );
-                    }
-
-                    return const Center(
-                      child: CircularProgressIndicator(),
-                    );
-                  },
-                ),
-              ],
+                    },
+                  ),
+                ],
+              ),
             ),
           ),
         ),
@@ -175,94 +178,91 @@ class LearnLandingView extends StatelessWidget {
   }
 }
 
-class ContinueLearningButton extends StatelessWidget {
-  const ContinueLearningButton({
+class SuperBlockButton extends StatelessWidget {
+  SuperBlockButton({
     super.key,
+    required this.button,
     required this.model,
   });
 
   final LearnLandingViewModel model;
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      padding: const EdgeInsets.symmetric(
-        vertical: 6,
-        horizontal: 8,
-      ),
-      height: 80,
-      child: ElevatedButton(
-        onPressed: () {
-          model.fastRouteToChallenge();
-        },
-        style: ElevatedButton.styleFrom(
-          backgroundColor: const Color.fromRGBO(0x19, 0x8E, 0xEE, 1),
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(0),
-          ),
-        ),
-        child: Row(
-          children: [
-            Align(
-              alignment: Alignment.centerLeft,
-              child: SizedBox(
-                width: MediaQuery.of(context).size.width * 0.70,
-                child: Text(
-                  context.t.continue_left_off,
-                  overflow: TextOverflow.ellipsis,
-                  maxLines: 2,
-                  textAlign: TextAlign.left,
-                  style: const TextStyle(
-                    fontSize: 20,
-                    fontWeight: FontWeight.w700,
-                  ),
-                ),
-              ),
-            ),
-            const Expanded(
-              child: Align(
-                alignment: Alignment.centerRight,
-                child: Icon(Icons.arrow_forward_ios),
-              ),
-            )
-          ],
-        ),
-      ),
-    );
-  }
-}
-
-class SuperBlockButton extends StatelessWidget {
-  const SuperBlockButton({
-    super.key,
-    required this.button,
-  });
-
   final SuperBlockButtonData button;
 
+  static const String learnAssetsPath = 'assets/learn';
+
+  final iconMap = {
+    SuperBlocks.respWebDesignNew:
+        '${SuperBlockButton.learnAssetsPath}/responsive-design.svg',
+    SuperBlocks.respWebDesign:
+        '${SuperBlockButton.learnAssetsPath}/responsive-design.svg',
+    SuperBlocks.jsAlgoDataStruct:
+        '${SuperBlockButton.learnAssetsPath}/javascript.svg',
+    SuperBlocks.jsAlgoDataStructNew:
+        '${SuperBlockButton.learnAssetsPath}/javascript.svg',
+    SuperBlocks.frontEndDevLibs:
+        '${SuperBlockButton.learnAssetsPath}/react.svg',
+    SuperBlocks.dataVis: '${SuperBlockButton.learnAssetsPath}/d3.svg',
+    SuperBlocks.backEndDevApis: '${SuperBlockButton.learnAssetsPath}/api.svg',
+    SuperBlocks.relationalDb:
+        '${SuperBlockButton.learnAssetsPath}/database.svg',
+    SuperBlocks.qualityAssurance:
+        '${SuperBlockButton.learnAssetsPath}/clipboard.svg',
+    SuperBlocks.sciCompPy: '${SuperBlockButton.learnAssetsPath}/python.svg',
+    SuperBlocks.dataAnalysisPy:
+        '${SuperBlockButton.learnAssetsPath}/analytics.svg',
+    SuperBlocks.infoSec: '${SuperBlockButton.learnAssetsPath}/shield.svg',
+    SuperBlocks.machineLearningPy:
+        '${SuperBlockButton.learnAssetsPath}/tensorflow.svg',
+    SuperBlocks.codingInterviewPrep:
+        '${SuperBlockButton.learnAssetsPath}/algorithm.svg',
+    SuperBlocks.theOdinProject:
+        '${SuperBlockButton.learnAssetsPath}/viking-helmet.svg',
+    SuperBlocks.projectEuler:
+        '${SuperBlockButton.learnAssetsPath}/graduation.svg',
+    SuperBlocks.collegeAlgebraPy:
+        '${SuperBlockButton.learnAssetsPath}/college-algebra.svg',
+    SuperBlocks.foundationalCSharp:
+        '${SuperBlockButton.learnAssetsPath}/c-sharp.svg',
+    SuperBlocks.fullStackDeveloper:
+        '${SuperBlockButton.learnAssetsPath}/code.svg',
+    SuperBlocks.a2English: '${SuperBlockButton.learnAssetsPath}/a2-english.svg',
+    SuperBlocks.b1English: '${SuperBlockButton.learnAssetsPath}/b1-english.svg',
+    SuperBlocks.a2Spanish: '${SuperBlockButton.learnAssetsPath}/a2-english.svg',
+    SuperBlocks.a2Chinese: '${SuperBlockButton.learnAssetsPath}/a2-english.svg',
+    SuperBlocks.rosettaCode:
+        '${SuperBlockButton.learnAssetsPath}/rosetta-code.svg',
+    SuperBlocks.pythonForEverybody:
+        '${SuperBlockButton.learnAssetsPath}/python.svg',
+    SuperBlocks.devPlayground: '${SuperBlockButton.learnAssetsPath}/code.svg',
+  };
+
   @override
   Widget build(BuildContext context) {
-    LearnLandingViewModel model = LearnLandingViewModel();
-
     return Container(
       padding: const EdgeInsets.symmetric(
         vertical: 6,
-        horizontal: 8,
+        horizontal: 4,
       ),
-      height: 80,
+      constraints: BoxConstraints(
+        minHeight: 80,
+      ),
       child: ElevatedButton(
         style: ElevatedButton.styleFrom(
+          padding: const EdgeInsets.all(5),
           backgroundColor: button.public
-              ? const Color.fromRGBO(0x3b, 0x3b, 0x4f, 1)
+              ? FccColors.gray80
               : const Color.fromARGB(255, 41, 41, 54),
           side: button.public
-              ? const BorderSide(width: 2, color: Colors.white)
+              ? const BorderSide(
+                  width: 2,
+                  color: FccColors.gray75,
+                )
               : const BorderSide(
                   width: 2,
                   color: Color.fromRGBO(0x3b, 0x3b, 0x4f, 1),
                 ),
           shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(0),
+            borderRadius: BorderRadius.all(Radius.circular(5)),
             side: const BorderSide(
               color: Colors.teal,
               width: 2.0,
@@ -276,23 +276,38 @@ class SuperBlockButton extends StatelessWidget {
         },
         child: Row(
           children: [
-            Align(
-              alignment: Alignment.centerLeft,
+            Padding(
+              padding: const EdgeInsets.all(12.0),
               child: SizedBox(
-                width: MediaQuery.of(context).size.width * 0.70,
-                child: Text(
-                  button.name,
-                  overflow: TextOverflow.ellipsis,
-                  maxLines: 2,
-                  textAlign: TextAlign.left,
-                  style: const TextStyle(fontSize: 20),
+                width: 36,
+                height: 36,
+                child: SvgPicture.asset(
+                  iconMap[SuperBlocks.fromValue(button.path)] ??
+                      '${SuperBlockButton.learnAssetsPath}/graduation.svg',
+                  fit: BoxFit.contain,
+                  colorFilter: ColorFilter.mode(
+                    FccColors.gray00,
+                    BlendMode.srcIn,
+                  ),
                 ),
               ),
             ),
+            Expanded(
+              flex: 8,
+              child: Text(
+                button.name,
+                textAlign: TextAlign.left,
+                style: const TextStyle(fontSize: 20),
+              ),
+            ),
             const Expanded(
+              flex: 2,
               child: Align(
                 alignment: Alignment.centerRight,
-                child: Icon(Icons.arrow_forward_ios),
+                child: Padding(
+                  padding: EdgeInsets.symmetric(vertical: 8, horizontal: 12),
+                  child: Icon(Icons.arrow_forward_ios),
+                ),
               ),
             )
           ],

@@ -7,6 +7,7 @@ on:
       - main
     paths:
       - "mobile-app/**"
+      - ".github/**"
   push:
     branches:
       - main
@@ -17,6 +18,14 @@ jobs:
   mobile-test:
     name: Test curriculum for mobile app
     runs-on: ubuntu-22.04
+
+    strategy:
+      matrix:
+        gradle-version: [8.7]
+        java-version: [17]
+        android-api-level: [35]
+        pnpm-version: [10]
+        flutter-version: ["3.32.x"]
 
     steps:
       - name: Remove unused software
@@ -35,31 +44,31 @@ jobs:
           sudo udevadm control --reload-rules
           sudo udevadm trigger --name-match=kvm
 
-      - name: Gradle cache
+      - name: Gradle cache - ${{ matrix.gradle-version }}
         uses: gradle/actions/setup-gradle@d9c87d481d55275bb5441eef3fe0e46805f9ef70 # v3
         with:
-          gradle-version: 7.6.3
+          gradle-version: ${{ matrix.gradle-version }}
 
-      - name: Setup Java 17
+      - name: Setup Java - ${{ matrix.java-version }}
         uses: actions/setup-java@c5195efecf7bdfc987ee8bae7a71cb8b11521c00 # v4
         with:
           distribution: "temurin"
-          java-version: "17"
+          java-version: ${{ matrix.java-version }}
 
-      - name: AVD cache
+      - name: AVD cache - ${{ matrix.android-api-level }}
         uses: actions/cache@5a3ec84eff668545956fd18022155c47e93e2684 # v4
         id: avd-cache
         with:
           path: |
             ~/.android/avd/*
             ~/.android/adb*
-          key: avd-33
+          key: avd-${{ matrix.android-api-level }}
 
-      - name: Ceate AVD and generate snapshot for caching
+      - name: Create AVD and generate snapshot for caching - ${{ matrix.android-api-level }}
         if: steps.avd-cache.outputs.cache-hit != 'true'
         uses: reactivecircus/android-emulator-runner@1dcd0090116d15e7c562f8db72807de5e036a4ed # v2
         with:
-          api-level: 33 # TODO: Update to 34
+          api-level: ${{ matrix.android-api-level }}
           target: google_apis
           arch: x86_64
           force-avd-creation: false
@@ -78,18 +87,18 @@ jobs:
         with:
           path: mobile
 
-      - name: Setup pnpm
+      - name: Setup pnpm - ${{ matrix.pnpm-version }}
         uses: pnpm/action-setup@v2
         with:
-          version: 10
+          version: ${{ matrix.pnpm-version }}
 
-      - name: Setup Flutter 3.29.x
+      - name: Setup Flutter - ${{ matrix.flutter-version }}
         uses: subosito/flutter-action@e938fdf56512cc96ef2f93601a5a40bde3801046 # v2
         with:
-          flutter-version: "3.29.x"
+          flutter-version: ${{ matrix.flutter-version }}
           channel: "stable"
           cache: true
-          cache-key: flutter-3.29.x
+          cache-key: flutter-${{ matrix.flutter-version }}
           cache-path: ${{ runner.tool_cache }}/flutter
 
       - name: Set freeCodeCamp Environment Variables
@@ -112,10 +121,10 @@ jobs:
         working-directory: mobile/mobile-app
         run: flutter pub get
 
-      - name: Run curriculum tests in emulator
+      - name: Run curriculum tests in emulator - ${{ matrix.android-api-level }}
         uses: reactivecircus/android-emulator-runner@1dcd0090116d15e7c562f8db72807de5e036a4ed # v2
         with:
-          api-level: 33
+          api-level: ${{ matrix.android-api-level }}
           target: google_apis
           arch: x86_64
           force-avd-creation: false

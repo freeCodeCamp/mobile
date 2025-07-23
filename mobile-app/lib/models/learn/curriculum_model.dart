@@ -1,5 +1,44 @@
 const chapterBasedSuperBlocks = ['full-stack-developer'];
 
+enum SuperBlocks {
+  respWebDesignNew('2022/responsive-web-design'),
+  respWebDesign('responsive-web-design'),
+  jsAlgoDataStruct('javascript-algorithms-and-data-structures'),
+  jsAlgoDataStructNew('javascript-algorithms-and-data-structures-v8'),
+  frontEndDevLibs('front-end-development-libraries'),
+  dataVis('data-visualization'),
+  relationalDb('relational-database'),
+  backEndDevApis('back-end-development-and-apis'),
+  qualityAssurance('quality-assurance'),
+  sciCompPy('scientific-computing-with-python'),
+  dataAnalysisPy('data-analysis-with-python'),
+  infoSec('information-security'),
+  machineLearningPy('machine-learning-with-python'),
+  codingInterviewPrep('coding-interview-prep'),
+  theOdinProject('the-odin-project'),
+  projectEuler('project-euler'),
+  collegeAlgebraPy('college-algebra-with-python'),
+  foundationalCSharp('foundational-c-sharp-with-microsoft'),
+  fullStackDeveloper('full-stack-developer'),
+  a2English('a2-english-for-developers'),
+  b1English('b1-english-for-developers'),
+  a2Spanish('a2-professional-spanish'),
+  a2Chinese('a2-professional-chinese'),
+  rosettaCode('rosetta-code'),
+  pythonForEverybody('python-for-everybody'),
+  devPlayground('dev-playground');
+
+  final String value;
+  const SuperBlocks(this.value);
+
+  static SuperBlocks fromValue(String value) {
+    return SuperBlocks.values.firstWhere(
+      (superBlock) => superBlock.value == value,
+      orElse: () => throw ArgumentError('Invalid super block value: $value'),
+    );
+  }
+}
+
 class SuperBlock {
   final String dashedName;
   final String name;
@@ -23,14 +62,20 @@ class SuperBlock {
         name: name,
         chapters: (data[data.keys.first]['chapters']).map<Chapter>((chapter) {
           return Chapter(
+            name: chapter['name'],
             dashedName: chapter['dashedName'],
             comingSoon: chapter['comingSoon'] ?? false,
-            chapterType: chapter['chapterType'],
+            chapterType: chapter['chapterType'] != null
+                ? ChapterType.fromValue(chapter['chapterType'])
+                : null,
             modules: (chapter['modules']).map<Module>((module) {
               return Module(
+                  name: module['name'] ?? 'No name',
                   dashedName: module['dashedName'],
                   comingSoon: module['comingSoon'] ?? false,
-                  moduleType: module['moduleType'],
+                  moduleType: module['moduleType'] != null
+                      ? ModuleType.fromValue(module['moduleType'])
+                      : null,
                   blocks: (module['blocks']).map<Block>((block) {
                     return Block.fromJson(
                       block['meta'],
@@ -73,7 +118,15 @@ class SuperBlock {
   }
 }
 
-enum BlockType { lecture, workshop, lab, review, quiz, exam, legacy }
+enum BlockType {
+  lecture,
+  workshop,
+  lab,
+  review,
+  quiz,
+  exam,
+  legacy,
+}
 
 enum BlockLayout {
   challengeList,
@@ -139,13 +192,22 @@ class Block {
       }
     }
 
+    BlockType blockTypeFromString(String type) {
+      return BlockType.values.firstWhere(
+        (e) => e.name.toLowerCase() == type.toLowerCase(),
+        orElse: () => BlockType.legacy, // or return null if preferred
+      );
+    }
+
     return Block(
       superBlock: SuperBlock(
         dashedName: superBlockDashedName,
         name: superBlockName,
       ),
       layout: handleLayout(data['blockLayout']),
-      type: BlockType.legacy,
+      type: data['blockType'] != null
+          ? blockTypeFromString(data['blockType'])
+          : BlockType.legacy,
       name: data['name'],
       dashedName: dashedName,
       description: description,
@@ -209,13 +271,29 @@ class ChallengeOrder {
   });
 }
 
+enum ChapterType {
+  exam('exam');
+
+  static ChapterType fromValue(String value) {
+    return ChapterType.values.firstWhere(
+      (chapterType) => chapterType.value == value,
+      orElse: () => throw ArgumentError('Invalid chapter type value: $value'),
+    );
+  }
+
+  final String value;
+  const ChapterType(this.value);
+}
+
 class Chapter {
+  final String name;
   final String dashedName;
   final bool? comingSoon;
-  final String? chapterType;
+  final ChapterType? chapterType;
   final List<Module>? modules;
 
   Chapter({
+    required this.name,
     required this.dashedName,
     this.comingSoon,
     this.chapterType,
@@ -223,13 +301,30 @@ class Chapter {
   });
 }
 
+enum ModuleType {
+  review('review'),
+  exam('exam');
+
+  static ModuleType fromValue(String value) {
+    return ModuleType.values.firstWhere(
+      (moduleType) => moduleType.value == value,
+      orElse: () => throw ArgumentError('Invalid module type value: $value'),
+    );
+  }
+
+  final String value;
+  const ModuleType(this.value);
+}
+
 class Module {
+  final String name;
   final String dashedName;
   final bool? comingSoon;
-  final String? moduleType;
+  final ModuleType? moduleType;
   final List<Block>? blocks;
 
   Module({
+    required this.name,
     required this.dashedName,
     this.comingSoon,
     this.moduleType,

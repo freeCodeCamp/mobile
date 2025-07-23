@@ -1,6 +1,7 @@
 // TODO: Make the test customizable for specific superblocks, blocks, and challenges
 
 import 'dart:convert';
+import 'dart:math';
 
 import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -24,8 +25,158 @@ void main() {
     List<String> publicSBs = [
       '2022/responsive-web-design',
       'responsive-web-design',
+      // 'javascript-algorithms-and-data-structures-v8',
       // 'javascript-algorithms-and-data-structures',
-      // 'the-odin-project',
+      'the-odin-project',
+      'full-stack-developer',
+
+      // Python SBs
+      // 'scientific-computing-with-python',
+    ];
+
+    List<String> publicFwdBlocks = [
+      // HTML Chapter
+      'workshop-curriculum-outline',
+      'lab-debug-camperbots-profile-page',
+      'workshop-cat-photo-app',
+      'lab-recipe-page',
+      'lab-travel-agency-page',
+      'lab-video-compilation-page',
+      'workshop-blog-page',
+      'lab-event-hub',
+      'workshop-hotel-feedback-form',
+      'lab-survey-form',
+      'workshop-final-exams-table',
+      'lab-book-catalog-table',
+      'lab-checkout-page',
+      'lab-movie-review-page',
+      'lab-multimedia-player',
+
+      // CSS Chapter
+      'workshop-cafe-menu',
+      'lab-business-card',
+      'lab-stylized-to-do-list',
+      'lab-blog-post-card',
+      'lab-event-flyer-page',
+      'workshop-greeting-card',
+      'lab-job-application-form',
+      'workshop-colored-markers',
+      'lab-colored-boxes',
+      'workshop-registration-form',
+      'lab-contact-form',
+      'workshop-rothko-painting',
+      'lab-confidential-email-page',
+      'workshop-flexbox-photo-gallery',
+      'lab-page-of-playing-cards',
+      'workshop-nutritional-label',
+      'lab-newspaper-article',
+      'workshop-accessibility-quiz',
+      'lab-tribute-page',
+      'workshop-cat-painting',
+      'lab-house-painting',
+      'workshop-balance-sheet',
+      'lab-book-inventory-app',
+      'workshop-piano',
+      'lab-technical-documentation-page',
+      'workshop-city-skyline',
+      'lab-availability-table',
+      'workshop-magazine',
+      'lab-magazine-layout',
+      'lab-product-landing-page',
+      'workshop-ferris-wheel',
+      'lab-moon-orbit',
+      'workshop-flappy-penguin',
+      'lab-personal-portfolio',
+
+      // JavaScript Chapter
+      'workshop-greeting-bot',
+      'lab-javascript-trivia-bot',
+      'lab-sentence-maker',
+      'workshop-teacher-chatbot',
+      'workshop-mathbot',
+      'lab-fortune-teller',
+      'workshop-calculator',
+      'lab-email-masker',
+      'workshop-loan-qualification-checker',
+      'lab-leap-year-calculator',
+      'lab-truncate-string',
+      'workshop-shopping-list',
+      'lab-lunch-picker-program',
+      'workshop-recipe-tracker',
+      'lab-quiz-game',
+      'workshop-sentence-analyzer',
+      'lab-factorial-calculator',
+      'lab-mutations',
+      'lab-chunky-monkey',
+      'lab-slice-and-splice',
+      'lab-pyramid-generator',
+      'lab-gradebook-app',
+      'lab-inventory-management-program',
+      'lab-password-generator',
+      'lab-sum-all-numbers-algorithm',
+      'workshop-library-manager',
+      'lab-book-organizer',
+      'workshop-storytelling-app',
+      'lab-favorite-icon-toggler',
+      'workshop-music-instrument-filter',
+      'lab-real-time-counter',
+      'lab-lightbox-viewer',
+      'workshop-rps-game',
+      'lab-football-team-cards',
+      'lab-random-background-color-changer',
+      'workshop-spam-filter',
+      'lab-palindrome-checker',
+      'lab-markdown-to-html-converter',
+      'lab-regex-sandbox',
+      'workshop-calorie-counter',
+      'lab-customer-complaint-form',
+      'lab-date-conversion',
+      'workshop-music-player', // Step 21 Failed - Safari bug
+      'lab-drum-machine',
+      'workshop-plant-nursery-catalog',
+      'lab-voting-system',
+      'workshop-todo-app',
+      'lab-bookmark-manager-app',
+      'workshop-shopping-cart',
+      'lab-project-idea-board',
+      'lab-bank-account-manager',
+      'workshop-decimal-to-binary-converter',
+      'lab-permutation-generator',
+      'workshop-recipe-ingredient-converter',
+      'lab-sorting-visualizer',
+      'workshop-fcc-authors-page',
+      'lab-fcc-forum-leaderboard',
+      'lab-weather-app',
+
+      // Python Chapter
+      // 'workshop-caesar-cipher',
+      // 'lab-rpg-character',
+      // 'workshop-pin-extractor',
+      // 'lab-number-pattern-generator',
+      // 'workshop-placeholder-dictionaries-and-sets',
+      // 'lab-placeholder-dictionaries-and-sets',
+      // 'lab-isbn-validator',
+      // 'workshop-placeholder-classes-and-objects',
+      // 'lab-budget-app',
+      // 'workshop-placeholder-oop-1',
+      // 'lab-placeholder-oop-1',
+      // 'workshop-placeholder-oop-2',
+      // 'lab-polygon-area-calculator',
+      // 'workshop-placeholder-oop-3',
+      // 'lab-placeholder-oop-3',
+      // 'workshop-linked-list-class',
+      // 'lab-hash-table',
+      // 'workshop-binary-search',
+      // 'lab-bisection-method',
+      // 'workshop-merge-sort',
+      // 'lab-quicksort',
+      // 'lab-selection-sort',
+      // 'lab-luhn-algorithm',
+      // 'workshop-shortest-path-algorithm',
+      // 'lab-adjacency-list-matrix-converter',
+      // 'workshop-breadth-first-search',
+      // 'lab-depth-first-search',
+      // 'lab-nth-fibonacci-number'
     ];
 
     String curriculumFilePath = 'assets/learn/curriculum.json';
@@ -42,12 +193,20 @@ void main() {
         .state<CurriculumTestRunnerState>(find.byType(CurriculumTestRunner));
     expect(widgetState.webViewController, isNotNull);
     final testController = widgetState.webViewController;
+    final babelWebView = widgetState.babelWebView;
+    expect(babelWebView.isRunning(), true);
 
     // Run the curriculum tests one by one
     var editorChallengeTypes = <int>{};
     for (var currSuperBlock in publicSBs) {
       print('\nSUPERBLOCK: $currSuperBlock');
       for (var currBlock in curriculumData[currSuperBlock]['blocks'].values) {
+        // NOTE: Skip blocks which are not public in the mobile app
+        if (currSuperBlock == 'full-stack-developer' &&
+            !publicFwdBlocks.contains(currBlock['meta']['dashedName'])) {
+          continue;
+        }
+
         print('Block: ${currBlock['meta']['name']}');
         List challenges = currBlock['challenges']
           ..sort((a, b) =>
@@ -57,7 +216,8 @@ void main() {
           editorChallengeTypes.add(currChallenge['challengeType']);
 
           // Skip non-editor challenges
-          if (![0, 1, 5, 6, 14].contains(currChallenge['challengeType'])) {
+          if (![0, 1, 5, 6, 14, 25, 26, 20, 23, 27, 29]
+              .contains(currChallenge['challengeType'])) {
             continue;
           }
 
@@ -85,6 +245,8 @@ void main() {
           }
 
           Challenge challenge = Challenge.fromJson(currChallenge);
+          print(
+              'Challenge: ${challenge.id} - ${challenge.title} - ${challenge.challengeType}');
 
           String getLines(String contents, [List? range]) {
             if (range == null || range.isEmpty) {
@@ -94,7 +256,10 @@ void main() {
             final lines = contents.split('\n');
             final editableLines = (range[1] <= range[0])
                 ? []
-                : lines.sublist(range[0], range[1] - 1);
+                : lines.sublist(
+                    min(range[0], lines.length),
+                    min(range[1] - 1, lines.length),
+                  );
 
             return editableLines.join('\n');
           }
@@ -119,7 +284,7 @@ void main() {
             arguments: {
               'userCode': await builder.buildUserCode(
                 challenge,
-                currentFile.ext,
+                babelWebView.webViewController,
                 testing: true,
               ),
               'workerType': builder.getWorkerType(challenge.challengeType),
@@ -127,6 +292,8 @@ void main() {
               'editableRegionContent': editableRegion,
               'hooks': {
                 'beforeAll': challenge.hooks.beforeAll,
+                'beforeEach': challenge.hooks.beforeEach,
+                'afterEach': challenge.hooks.afterEach,
               },
             },
           );

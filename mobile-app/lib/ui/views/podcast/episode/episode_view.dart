@@ -29,7 +29,7 @@ class EpisodeView extends StatelessWidget {
         }
         model.hasDownloadedEpisode(episode);
         model.initProgressListener(episode);
-        model.initDownloadListener();
+        model.initDownloadListener(episode);
         model.initPlaybackListener();
         model.initPlayBackSpeed();
       },
@@ -175,45 +175,61 @@ class EpisodeView extends StatelessWidget {
                               model.downloadService.setDownloadId = episode.id;
                               model.downloadBtnClick(episode, podcast);
                             },
-                      icon: model.isDownloading &&
-                              model.downloadService.downloadId == episode.id
-                          ? StreamBuilder<String>(
-                              stream: model.downloadService.progress,
-                              builder: (context, snapshot) {
-                                double? val = double.tryParse(
-                                  snapshot.data ?? '0',
+                      icon: (() {
+                        if (model.isDownloaded) {
+                          return const Icon(
+                            Icons.download_done,
+                            color: Colors.white,
+                            size: 30,
+                            semanticLabel: 'Download complete',
+                          );
+                        } else if (model.isDownloading &&
+                            model.downloadService.downloadId == episode.id) {
+                          return StreamBuilder<String>(
+                            stream: model.downloadService.progress,
+                            builder: (context, snapshot) {
+                              final progress = snapshot.data;
+                              double? val = double.tryParse(progress ?? '0');
+                              if (progress == '100') {
+                                return const Icon(
+                                  Icons.download_done,
+                                  color: Colors.white,
+                                  size: 30,
+                                  semanticLabel: 'Download complete',
                                 );
-
-                                if (snapshot.hasData) {
-                                  return Stack(
-                                    alignment: Alignment.center,
-                                    children: [
-                                      Text(
-                                        '${snapshot.data}%',
-                                        style: const TextStyle(fontSize: 16),
-                                      ),
-                                      CircularProgressIndicator(
-                                        color: Colors.white,
-                                        strokeWidth: 2,
-                                        value: snapshot.hasData && val != null
-                                            ? val / 100
-                                            : 0,
-                                      )
-                                    ],
-                                  );
-                                }
-
+                              } else if (progress != null && progress != '') {
+                                return Stack(
+                                  alignment: Alignment.center,
+                                  children: [
+                                    Text(
+                                      '$progress%',
+                                      style: const TextStyle(fontSize: 16),
+                                    ),
+                                    CircularProgressIndicator(
+                                      color: Colors.white,
+                                      strokeWidth: 2,
+                                      value: val != null ? val / 100 : 0,
+                                    )
+                                  ],
+                                );
+                              } else {
                                 return const CircularProgressIndicator(
                                   color: Colors.white,
                                   strokeWidth: 2,
                                   value: 0,
                                 );
-                              })
-                          : Icon(
-                              model.isDownloaded
-                                  ? Icons.download_done
-                                  : Icons.arrow_circle_down_outlined,
-                            ),
+                              }
+                            },
+                          );
+                        } else {
+                          return const Icon(
+                            Icons.arrow_circle_down_outlined,
+                            color: Colors.white,
+                            size: 30,
+                            semanticLabel: 'Download episode',
+                          );
+                        }
+                      })(),
                     )
                   ],
                 ),

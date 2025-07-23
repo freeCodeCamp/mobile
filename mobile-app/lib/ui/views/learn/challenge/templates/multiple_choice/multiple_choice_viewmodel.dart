@@ -1,49 +1,34 @@
-import 'package:flutter/material.dart';
 import 'package:freecodecamp/app/app.locator.dart';
 import 'package:freecodecamp/models/learn/challenge_model.dart';
 import 'package:freecodecamp/service/learn/learn_service.dart';
-import 'package:freecodecamp/ui/theme/fcc_theme.dart';
-import 'package:freecodecamp/ui/views/news/html_handler/html_handler.dart';
+import 'package:freecodecamp/ui/views/learn/widgets/quiz_widget.dart';
 import 'package:stacked/stacked.dart';
 
 class MultipleChoiceViewmodel extends BaseViewModel {
-  int _currentChoice = -1;
-  int get currentChoice => _currentChoice;
+  bool _isValidated = false;
+  bool get isValidated => _isValidated;
 
-  int _lastAnswer = -1;
-  int get lastAnswer => _lastAnswer;
-
-  bool? _choiceStatus;
-  bool? get choiceStatus => _choiceStatus;
+  bool _hasPassedAllQuestions = false;
+  bool get hasPassedAllQuestions => _hasPassedAllQuestions;
 
   String _errMessage = '';
   String get errMessage => _errMessage;
 
-  List<Widget> _feedback = [];
-  List<Widget> get feedback => _feedback;
+  List<bool> _assignmentsStatus = [];
+  List<bool> get assignmentsStatus => _assignmentsStatus;
 
-  List<bool> _assignmentStatus = [];
-  List<bool> get assignmentStatus => _assignmentStatus;
+  List<QuizWidgetQuestion> _quizQuestions = [];
+  List<QuizWidgetQuestion> get quizQuestions => _quizQuestions;
 
   final LearnService learnService = locator<LearnService>();
 
-  set setCurrentChoice(int choice) {
-    _currentChoice = choice;
+  set setIsValidated(bool status) {
+    _isValidated = status;
     notifyListeners();
   }
 
-  set setLastAnswer(int answer) {
-    _lastAnswer = answer;
-    notifyListeners();
-  }
-
-  set setFeedback(List<Widget> feedback) {
-    _feedback = feedback;
-    notifyListeners();
-  }
-
-  set setChoiceStatus(bool? status) {
-    _choiceStatus = status;
+  set setHasPassedAllQuestions(bool status) {
+    _hasPassedAllQuestions = status;
     notifyListeners();
   }
 
@@ -52,54 +37,68 @@ class MultipleChoiceViewmodel extends BaseViewModel {
     notifyListeners();
   }
 
-  set setAssignmentStatus(List<bool> status) {
-    _assignmentStatus = status;
+  set setQuizQuestions(List<QuizWidgetQuestion> questions) {
+    _quizQuestions = questions;
+    notifyListeners();
+  }
+
+  set setAssignmentsStatus(List<bool> status) {
+    _assignmentsStatus = status;
+    notifyListeners();
+  }
+
+  void setAssignmentStatus(int index) {
+    setAssignmentsStatus = List<bool>.from(_assignmentsStatus)
+      ..[index] = !_assignmentsStatus[index];
     notifyListeners();
   }
 
   void initChallenge(Challenge challenge) {
-    setAssignmentStatus = List.filled(
+    setAssignmentsStatus = List.filled(
       challenge.assignments?.length ?? 0,
       false,
     );
+
+    setQuizQuestions = (challenge.questions ?? [])
+        .map<QuizWidgetQuestion>((q) => QuizWidgetQuestion(
+            text: q.text, answers: q.answers, solution: q.solution))
+        .toList();
   }
 
-  void setValidationStatus(Challenge challenge) {
-    bool isCorrect = challenge.question!.solution - 1 == currentChoice;
-    setChoiceStatus = isCorrect;
-    setLastAnswer = currentChoice;
-  }
+  void setSelectedAnswer(int questionIndex, int answerIndex) {
+    final question = quizQuestions[questionIndex];
+    question.selectedAnswer = answerIndex;
 
-  void updateFeedback(Challenge challenge, BuildContext context) {
-    HTMLParser parser = HTMLParser(context: context);
-    Answer answer = challenge.question!.answers[currentChoice];
-    bool isCorrect = challenge.question!.solution - 1 == currentChoice;
-
-    List<Widget> feedbackWidgets = [];
-
-    feedbackWidgets.add(
-      Padding(
-        padding: EdgeInsets.only(left: 12, bottom: isCorrect ? 32 : 0),
-        child: Text(
-          isCorrect ? 'Correct!' : 'Incorrect!',
-          style: TextStyle(
-            color: isCorrect ? FccColors.green40 : FccColors.red15,
-            fontWeight: FontWeight.bold,
-            fontSize: 18,
-          ),
-        ),
-      ),
-    );
-
-    if (answer.feedback != null && answer.feedback!.isNotEmpty) {
-      feedbackWidgets.addAll(
-        parser.parse(
-          answer.feedback!,
-          fontColor: isCorrect ? FccColors.green40 : FccColors.red15,
-        ),
-      );
+    if (isValidated) {
+      // Reset the validation status when user changes the selection
+      setIsValidated = false;
     }
 
-    setFeedback = feedbackWidgets;
+    if (errMessage.isNotEmpty) {
+      // Clear the error message when user changes the selection
+      setErrMessage = '';
+    }
+
+    notifyListeners();
+  }
+
+  void validateChallenge() {
+    // Loop through each question and set isCorrect status
+    setQuizQuestions = List.from(quizQuestions)
+      ..asMap().forEach((i, question) {
+        question.isCorrect = question.selectedAnswer == question.solution - 1;
+      });
+
+    setHasPassedAllQuestions =
+        quizQuestions.every((question) => question.isCorrect == true);
+
+    setIsValidated = true;
+
+    // Show the error message if there are multiple questions.
+    // Otherwise, the validation message is sufficient.
+    if (quizQuestions.length > 1) {
+      setErrMessage =
+          hasPassedAllQuestions ? '' : 'Some answers are incorrect.';
+    }
   }
 }

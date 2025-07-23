@@ -1,10 +1,16 @@
+import 'package:flutter_inappwebview/flutter_inappwebview.dart';
 import 'package:freecodecamp/enums/ext_type.dart';
 import 'package:freecodecamp/models/learn/challenge_model.dart';
+import 'package:freecodecamp/ui/views/learn/test_runner.dart';
 import 'package:html/dom.dart';
 import 'package:html/parser.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class LearnFileService {
+  String getFullFileName(ChallengeFile file) {
+    return '${file.name}.${file.ext.value}';
+  }
+
   // This function returns a specific file content from the cache.
   // If testing is enabled on the function it will return
   // the first file with the given file name.
@@ -18,11 +24,12 @@ class LearnFileService {
 
     if (testing) {
       cache = challenge.files
-          .firstWhere((element) => element.name == file.name)
+          .firstWhere(
+              (element) => getFullFileName(element) == getFullFileName(file))
           .contents;
     } else {
       SharedPreferences prefs = await SharedPreferences.getInstance();
-      cache = prefs.getString('${challenge.id}.${file.name}');
+      cache = prefs.getString('${challenge.id}.${getFullFileName(file)}');
     }
 
     return cache ?? file.contents;
@@ -38,7 +45,7 @@ class LearnFileService {
     await prefs.setString('${challenge.id}.$currentSelectedFile', value);
   }
 
-  // This funciton returns the first file content with the given extension from the
+  // This function returns the first file content with the given extension from the
   // cache. If testing is enabled it will return the file directly from the challenge.
   // If a CSS extension is put as a parameter it will return the first HTML file instead.
 
@@ -65,7 +72,7 @@ class LearnFileService {
       SharedPreferences prefs = await SharedPreferences.getInstance();
 
       fileContent = prefs.getString(
-            '${challenge.id}.${firstChallenge[0].name}',
+            '${challenge.id}.${getFullFileName(firstChallenge[0])}',
           ) ??
           firstChallenge[0].contents;
     }
@@ -96,7 +103,7 @@ class LearnFileService {
 
     if (fileWithEditableRegion.isNotEmpty) {
       cache = prefs.getString(
-            '${challenge.id}.${fileWithEditableRegion[0].name}',
+            '${challenge.id}.${getFullFileName(fileWithEditableRegion[0])}',
           ) ??
           '';
 
@@ -148,11 +155,40 @@ class LearnFileService {
     return linkedFileNames.contains(cssFileName);
   }
 
+  // This function checks if the given document contains any script elements.
+  // If so check if the js file name corresponds with the names put in the array.
+  // If the file is linked return true.
+
+  Future<bool> jsFileIsLinked(
+    String document,
+    String jsFileName,
+  ) async {
+    Document doc = parse(document);
+
+    List<Node> scripts = doc.getElementsByTagName('SCRIPT');
+
+    List<String> linkedFileNames = [];
+
+    if (scripts.isNotEmpty) {
+      for (Node node in scripts) {
+        if (node.attributes['src'] == null) continue;
+
+        if (node.attributes['src']!.contains('/')) {
+          linkedFileNames.add(node.attributes['src']!.split('/').last);
+        } else if (node.attributes['src']!.isNotEmpty) {
+          linkedFileNames.add(node.attributes['src'] as String);
+        }
+      }
+    }
+
+    return linkedFileNames.contains(jsFileName);
+  }
+
   // This function puts the given css content in the same file as the HTML content.
   // It will parse the current CSS content into style tags only if it is linked.
   // If there is nothing to parse it will return the plain content document.
 
-  Future<String> parseCssDocmentsAsStyleTags(
+  Future<String> parseCssDocumentsAsStyleTags(
     Challenge challenge,
     String content, {
     bool testing = false,
@@ -173,7 +209,7 @@ class LearnFileService {
           testing: testing,
         );
 
-        if (!await cssFileIsLinked(content, '${file.name}.${file.ext.name}')) {
+        if (!await cssFileIsLinked(content, getFullFileName(file))) {
           continue;
         }
 
@@ -195,6 +231,63 @@ class LearnFileService {
     }
 
     return content;
+  }
+
+  // This function puts the given js content in the same file as the HTML content.
+  // It will parse the current JS content into script tags only if it is linked.
+  // If there is nothing to parse it will return the plain content document.
+
+  Future<String> parseJsDocumentsAsScriptTags(
+    Challenge challenge,
+    String challengeContent,
+    InAppWebViewController? babelController, {
+    bool testing = false,
+  }) async {
+    List<ChallengeFile> jsFiles = challenge.files
+        .where(
+          (element) => element.ext == Ext.js,
+        )
+        .toList();
+
+    if (jsFiles.isNotEmpty) {
+      for (ChallengeFile file in jsFiles) {
+        String filename = getFullFileName(file);
+        String? fileContents = await getExactFileFromCache(
+          challenge,
+          file,
+          testing: testing,
+        );
+
+        if (!await jsFileIsLinked(challengeContent, filename)) {
+          continue;
+        }
+
+        if (babelController == null) {
+          throw Exception('Babel controller is required to transpile JS code.');
+        }
+
+        final babelRes = await babelController.callAsyncJavaScript(
+          functionBody: ScriptBuilder.transpileScript,
+          arguments: {'code': fileContents},
+        );
+
+        if (babelRes?.error != null) {
+          throw Exception('Babel transpilation failed: ${babelRes?.error}');
+        }
+        fileContents = babelRes?.value;
+
+        Document document = parse(challengeContent);
+
+        Element scriptElement =
+            document.querySelector('script[src\$="$filename"]')!;
+
+        scriptElement.text = fileContents;
+
+        challengeContent = document.outerHtml;
+      }
+    }
+
+    return challengeContent;
   }
 
   String changeActiveFileLinks(String file) {

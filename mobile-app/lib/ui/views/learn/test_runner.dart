@@ -1,3 +1,4 @@
+import 'package:flutter_inappwebview/flutter_inappwebview.dart';
 import 'package:freecodecamp/app/app.locator.dart';
 import 'package:freecodecamp/enums/ext_type.dart';
 import 'package:freecodecamp/models/learn/challenge_model.dart';
@@ -5,6 +6,9 @@ import 'package:freecodecamp/service/learn/learn_file_service.dart';
 
 class ScriptBuilder {
   final LearnFileService fileService = locator<LearnFileService>();
+
+  static const transpileScript =
+      'return Babel.transform(code, { presets: ["env"] }).code';
 
   static const hideFccHeaderStyle = '''
 <style class="fcc-hide-header">
@@ -19,11 +23,11 @@ class ScriptBuilder {
 ''';
 
   static String runnerScript = '''
-await import("http://localhost:8080/index.js");
-window.TestRunner = await window.FCCSandbox.createTestRunner({
+await import("http://localhost:8080/dist/index.js");
+window.TestRunner = await window.FCCTestRunner.createTestRunner({
   source: userCode,
   type: workerType,
-  assetPath: "/",
+  assetPath: "/dist",
   code: {
     contents: combinedCode,
     editableContents: editableRegionContent,
@@ -39,26 +43,62 @@ return testRes;
 
   Future<String> buildUserCode(
     Challenge challenge,
-    Ext ext, {
+    InAppWebViewController? babelController, {
     bool testing = false,
   }) async {
-    String firstHTMlfile = await fileService.getFirstFileFromCache(
+    String challengeFile = await fileService.getFirstFileFromCache(
       challenge,
-      ext,
+      getChallengeExt(challenge.challengeType),
       testing: testing,
     );
 
-    String parsedWithStyleTags = await fileService.parseCssDocmentsAsStyleTags(
-      challenge,
-      firstHTMlfile,
-      testing: testing,
-    );
+    switch (challenge.challengeType) {
+      // JS-only challenges
+      case 1:
+      case 26:
+        // TODO: Move to learn file service
+        if (babelController == null) {
+          throw Exception('Babel controller is required to transpile JS code.');
+        }
 
-    firstHTMlfile = fileService.changeActiveFileLinks(
-      parsedWithStyleTags,
-    );
+        final babelRes = await babelController.callAsyncJavaScript(
+          functionBody: ScriptBuilder.transpileScript,
+          arguments: {'code': challengeFile},
+        );
 
-    return firstHTMlfile;
+        if (babelRes?.error != null) {
+          throw Exception('Babel transpilation failed: ${babelRes?.error}');
+        }
+
+        return babelRes?.value ?? challengeFile;
+      case 20:
+      case 23:
+      case 27:
+      case 29:
+        // Python challenges do not require transpilation, return the file as is.
+        return challengeFile;
+      default:
+        String parsedWithStyleTags =
+            await fileService.parseCssDocumentsAsStyleTags(
+          challenge,
+          challengeFile,
+          testing: testing,
+        );
+
+        String parsedWithScriptTags =
+            await fileService.parseJsDocumentsAsScriptTags(
+          challenge,
+          parsedWithStyleTags,
+          babelController,
+          testing: testing,
+        );
+
+        challengeFile = fileService.changeActiveFileLinks(
+          parsedWithScriptTags,
+        );
+
+        return challengeFile;
+    }
   }
 
   String getWorkerType(int challengeType) {
@@ -72,10 +112,28 @@ return testRes;
         return 'javascript';
       case 20:
       case 23:
+      case 27:
+      case 29:
         return 'python';
     }
 
     return 'dom';
+  }
+
+  Ext getChallengeExt(int challengeType) {
+    switch (challengeType) {
+      // JS-only challenges
+      case 1:
+      case 26:
+        return Ext.js;
+      case 20:
+      case 23:
+      case 27:
+      case 29:
+        return Ext.py;
+      default:
+        return Ext.html;
+    }
   }
 
   Future<String> combinedCode(Challenge challenge) async {

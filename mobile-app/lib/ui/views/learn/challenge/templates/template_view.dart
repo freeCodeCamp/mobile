@@ -6,6 +6,8 @@ import 'package:freecodecamp/ui/views/learn/challenge/templates/english/english_
 import 'package:freecodecamp/ui/views/learn/challenge/templates/multiple_choice/multiple_choice_view.dart';
 import 'package:freecodecamp/ui/views/learn/challenge/templates/python-project/python_project_view.dart';
 import 'package:freecodecamp/ui/views/learn/challenge/templates/python/python_view.dart';
+import 'package:freecodecamp/ui/views/learn/challenge/templates/quiz/quiz_view.dart';
+import 'package:freecodecamp/ui/views/learn/challenge/templates/review/review_view.dart';
 import 'package:freecodecamp/ui/views/learn/challenge/templates/template_viewmodel.dart';
 import 'package:stacked/stacked.dart';
 
@@ -14,12 +16,10 @@ class ChallengeTemplateView extends StatelessWidget {
     super.key,
     required this.block,
     required this.challengeId,
-    required this.challengesCompleted,
   });
 
   final Block block;
   final String challengeId;
-  final int challengesCompleted;
 
   @override
   Widget build(BuildContext context) {
@@ -40,25 +40,31 @@ class ChallengeTemplateView extends StatelessWidget {
                   tiles.indexWhere((el) => el.id == challenge.id) + 1;
               switch (challengeType) {
                 case 0:
+                case 1:
                 case 14:
                 case 20:
+                case 23:
+                case 25:
+                case 26:
                   return ChallengeView(
                     challenge: challenge,
                     block: block,
-                    challengesCompleted: challengesCompleted,
                     isProject: tiles.length > 1,
+                  );
+                case 8:
+                  return QuizView(
+                    challenge: challenge,
+                    block: block,
                   );
                 case 10:
                   return PythonProjectView(
                     challenge: challenge,
                     block: block,
-                    challengesCompleted: challengesCompleted,
                   );
                 case 11:
                   return PythonView(
                     challenge: challenge,
                     block: block,
-                    challengesCompleted: challengesCompleted,
                     currentChallengeNum: challNum,
                   );
                 case 15:
@@ -66,7 +72,6 @@ class ChallengeTemplateView extends StatelessWidget {
                   return MultipleChoiceView(
                     challenge: challenge,
                     block: block,
-                    challengesCompleted: challengesCompleted,
                     currentChallengeNum: challNum,
                   );
                 case 21:
@@ -75,6 +80,11 @@ class ChallengeTemplateView extends StatelessWidget {
                     challenge: challenge,
                     block: block,
                     currentChallengeNum: challNum,
+                  );
+                case 24:
+                  return ReviewView(
+                    challenge: challenge,
+                    block: block,
                   );
                 default:
                   return Center(
