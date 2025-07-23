@@ -9,7 +9,7 @@ import 'package:freecodecamp/models/learn/challenge_model.dart';
 import 'package:freecodecamp/models/learn/curriculum_model.dart';
 import 'package:freecodecamp/models/learn/daily_challenge_model.dart';
 import 'package:freecodecamp/service/dio_service.dart';
-import 'package:freecodecamp/service/learn/daily_challenges_service.dart';
+import 'package:freecodecamp/service/learn/daily_challenge_service.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class ChallengeDownload {
@@ -51,10 +51,10 @@ class LearnOfflineService {
   DailyChallenge? _cachedDailyChallenge;
   String? _cachedChallengeDate;
 
-  DailyChallengesService? _dailyChallengesService;
-  DailyChallengesService get dailyChallengesService {
-    _dailyChallengesService ??= locator<DailyChallengesService>();
-    return _dailyChallengesService!;
+  DailyChallengeService? _dailyChallengeService;
+  DailyChallengeService get dailyChallengeService {
+    _dailyChallengeService ??= locator<DailyChallengeService>();
+    return _dailyChallengeService!;
   }
 
   /*
@@ -154,7 +154,7 @@ class LearnOfflineService {
         // But not saving the cached data to SharedPreferences
         // so we can still get the up-to-date challenge.
         _cachedDailyChallenge =
-            await dailyChallengesService.fetchChallengeByDate(date);
+            await dailyChallengeService.fetchChallengeByDate(date);
         _cachedChallengeDate = date;
       }
 

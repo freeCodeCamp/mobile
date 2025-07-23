@@ -4,17 +4,17 @@ import 'package:freecodecamp/models/learn/daily_challenge_model.dart';
 import 'package:freecodecamp/service/authentication/authentication_service.dart';
 import 'package:freecodecamp/service/dio_service.dart';
 
-class DailyChallengesService {
-  static final DailyChallengesService _instance =
-      DailyChallengesService._internal();
+class DailyChallengeService {
+  static final DailyChallengeService _instance =
+      DailyChallengeService._internal();
   final Dio _dio = DioService.dio;
   final _authenticationService = locator<AuthenticationService>();
 
-  factory DailyChallengesService() {
+  factory DailyChallengeService() {
     return _instance;
   }
 
-  DailyChallengesService._internal();
+  DailyChallengeService._internal();
 
   Future<List<DailyChallengeOverview>> fetchAllDailyChallenges() async {
     final response = await _dio

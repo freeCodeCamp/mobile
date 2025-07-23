@@ -7,7 +7,7 @@ import 'package:freecodecamp/models/learn/completed_challenge_model.dart';
 import 'package:freecodecamp/models/learn/daily_challenge_model.dart';
 import 'package:freecodecamp/models/main/user_model.dart';
 import 'package:freecodecamp/service/authentication/authentication_service.dart';
-import 'package:freecodecamp/service/learn/daily_challenges_service.dart';
+import 'package:freecodecamp/service/learn/daily_challenge_service.dart';
 import 'package:freecodecamp/ui/theme/fcc_theme.dart';
 import 'package:freecodecamp/ui/views/learn/utils/challenge_utils.dart';
 import 'package:stacked_services/stacked_services.dart';
@@ -77,7 +77,7 @@ class _DailyChallengeCardState extends State<DailyChallengeCard> {
     });
     try {
       final todayChallenge =
-          await DailyChallengesService().fetchTodayChallenge();
+          await DailyChallengeService().fetchTodayChallenge();
 
       final isCompleted = await _checkIfChallengeCompleted(todayChallenge.id);
 

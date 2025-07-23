@@ -10,7 +10,7 @@ import 'package:freecodecamp/models/learn/curriculum_model.dart';
 import 'package:freecodecamp/models/learn/daily_challenge_model.dart';
 import 'package:freecodecamp/service/authentication/authentication_service.dart';
 import 'package:freecodecamp/service/dio_service.dart';
-import 'package:freecodecamp/service/learn/daily_challenges_service.dart';
+import 'package:freecodecamp/service/learn/daily_challenge_service.dart';
 import 'package:freecodecamp/service/learn/learn_offline_service.dart';
 import 'package:freecodecamp/utils/helpers.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -32,8 +32,8 @@ class LearnService {
       locator<LearnOfflineService>();
   final NavigationService _navigationService = locator<NavigationService>();
   final DialogService _dialogService = locator<DialogService>();
-  final DailyChallengesService _dailyChallengesService =
-      locator<DailyChallengesService>();
+  final DailyChallengeService _dailyChallengeService =
+      locator<DailyChallengeService>();
 
   factory LearnService() {
     return _learnService;
@@ -143,7 +143,7 @@ class LearnService {
   }
 
   void passDailyChallenge(Challenge challenge) async {
-    await _dailyChallengesService.postChallengeCompleted(
+    await _dailyChallengeService.postChallengeCompleted(
         challengeId: challenge.id,
         language: challenge.challengeType == 28
             ? DailyChallengeLanguage.javascript
