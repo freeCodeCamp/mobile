@@ -16,7 +16,7 @@ class DailyChallengeOverview {
 
   factory DailyChallengeOverview.fromJson(Map<String, dynamic> json) {
     return DailyChallengeOverview(
-      id: json['_id'],
+      id: json['id'],
       challengeNumber: json['challengeNumber'],
       date: DateTime.parse(json['date']),
       title: json['title'],
@@ -45,7 +45,7 @@ class DailyChallenge {
 
   factory DailyChallenge.fromJson(Map<String, dynamic> data) {
     return DailyChallenge(
-      id: data['_id'],
+      id: data['id'],
       challengeNumber: data['challengeNumber'],
       date: DateTime.parse(data['date']),
       title: data['title'],
