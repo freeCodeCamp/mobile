@@ -16,13 +16,11 @@ class ChallengeTemplateView extends StatelessWidget {
     super.key,
     required this.block,
     required this.challengeId,
-    required this.challengesCompleted,
     this.challengeDate,
   });
 
   final Block block;
   final String challengeId;
-  final int challengesCompleted;
 
   // Used for daily challenges
   final DateTime? challengeDate;
@@ -50,6 +48,7 @@ class ChallengeTemplateView extends StatelessWidget {
                 case 1:
                 case 14:
                 case 20:
+                case 23:
                 case 25:
                 case 26:
                 case 28:
@@ -57,7 +56,6 @@ class ChallengeTemplateView extends StatelessWidget {
                   return ChallengeView(
                     challenge: challenge,
                     block: block,
-                    challengesCompleted: challengesCompleted,
                     isProject: tiles.length > 1,
                     challengeDate: challengeDate,
                   );
@@ -65,19 +63,16 @@ class ChallengeTemplateView extends StatelessWidget {
                   return QuizView(
                     challenge: challenge,
                     block: block,
-                    challengesCompleted: challengesCompleted,
                   );
                 case 10:
                   return PythonProjectView(
                     challenge: challenge,
                     block: block,
-                    challengesCompleted: challengesCompleted,
                   );
                 case 11:
                   return PythonView(
                     challenge: challenge,
                     block: block,
-                    challengesCompleted: challengesCompleted,
                     currentChallengeNum: challNum,
                   );
                 case 15:
@@ -85,7 +80,6 @@ class ChallengeTemplateView extends StatelessWidget {
                   return MultipleChoiceView(
                     challenge: challenge,
                     block: block,
-                    challengesCompleted: challengesCompleted,
                     currentChallengeNum: challNum,
                   );
                 case 21:
@@ -99,7 +93,6 @@ class ChallengeTemplateView extends StatelessWidget {
                   return ReviewView(
                     challenge: challenge,
                     block: block,
-                    challengesCompleted: challengesCompleted,
                   );
                 default:
                   return Center(

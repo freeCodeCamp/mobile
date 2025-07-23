@@ -16,12 +16,10 @@ class ReviewView extends StatelessWidget {
     super.key,
     required this.challenge,
     required this.block,
-    required this.challengesCompleted,
   });
 
   final Challenge challenge;
   final Block block;
-  final int challengesCompleted;
 
   @override
   Widget build(BuildContext context) {
@@ -62,6 +60,7 @@ class ReviewView extends StatelessWidget {
                     title: 'Transcript',
                     child: Transcript(
                       transcript: challenge.transcript,
+                      isCollapsible: challenge.videoId != null,
                     ),
                   ),
                 ],
@@ -104,10 +103,10 @@ class ReviewView extends StatelessWidget {
                           onPressed: model.assignmentsStatus
                                   .every((element) => element)
                               ? () => model.learnService.goToNextChallenge(
-                                  block.challenges.length,
-                                  challengesCompleted,
-                                  challenge,
-                                  block)
+                                    block.challenges.length,
+                                    challenge,
+                                    block,
+                                  )
                               : null,
                           child: Text(
                             context.t.next,

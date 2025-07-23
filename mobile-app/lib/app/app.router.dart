@@ -272,7 +272,6 @@ class StackedRouter extends _i1.RouterBase {
             key: args.key,
             block: args.block,
             challengeId: args.challengeId,
-            challengesCompleted: args.challengesCompleted,
             challengeDate: args.challengeDate),
         settings: data,
       );
@@ -563,7 +562,6 @@ class ChallengeTemplateViewArguments {
     this.key,
     required this.block,
     required this.challengeId,
-    required this.challengesCompleted,
     this.challengeDate,
   });
 
@@ -573,13 +571,11 @@ class ChallengeTemplateViewArguments {
 
   final String challengeId;
 
-  final int challengesCompleted;
-
   final DateTime? challengeDate;
 
   @override
   String toString() {
-    return '{"key": "$key", "block": "$block", "challengeId": "$challengeId", "challengesCompleted": "$challengesCompleted", "challengeDate": "$challengeDate"}';
+    return '{"key": "$key", "block": "$block", "challengeId": "$challengeId", "challengeDate": "$challengeDate"}';
   }
 
   @override
@@ -588,7 +584,6 @@ class ChallengeTemplateViewArguments {
     return other.key == key &&
         other.block == block &&
         other.challengeId == challengeId &&
-        other.challengesCompleted == challengesCompleted &&
         other.challengeDate == challengeDate;
   }
 
@@ -597,7 +592,6 @@ class ChallengeTemplateViewArguments {
     return key.hashCode ^
         block.hashCode ^
         challengeId.hashCode ^
-        challengesCompleted.hashCode ^
         challengeDate.hashCode;
   }
 }
@@ -870,7 +864,6 @@ extension NavigatorStateExtension on _i26.NavigationService {
     _i21.Key? key,
     required _i25.Block block,
     required String challengeId,
-    required int challengesCompleted,
     DateTime? challengeDate,
     int? routerId,
     bool preventDuplicates = true,
@@ -883,7 +876,6 @@ extension NavigatorStateExtension on _i26.NavigationService {
             key: key,
             block: block,
             challengeId: challengeId,
-            challengesCompleted: challengesCompleted,
             challengeDate: challengeDate),
         id: routerId,
         preventDuplicates: preventDuplicates,
@@ -1203,7 +1195,6 @@ extension NavigatorStateExtension on _i26.NavigationService {
     _i21.Key? key,
     required _i25.Block block,
     required String challengeId,
-    required int challengesCompleted,
     DateTime? challengeDate,
     int? routerId,
     bool preventDuplicates = true,
@@ -1216,7 +1207,6 @@ extension NavigatorStateExtension on _i26.NavigationService {
             key: key,
             block: block,
             challengeId: challengeId,
-            challengesCompleted: challengesCompleted,
             challengeDate: challengeDate),
         id: routerId,
         preventDuplicates: preventDuplicates,

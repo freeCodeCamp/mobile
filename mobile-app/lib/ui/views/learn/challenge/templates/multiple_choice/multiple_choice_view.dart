@@ -19,14 +19,12 @@ class MultipleChoiceView extends StatelessWidget {
     super.key,
     required this.challenge,
     required this.block,
-    required this.challengesCompleted,
     required this.currentChallengeNum,
   });
 
   final Challenge challenge;
   final Block block;
   final int currentChallengeNum;
-  final int challengesCompleted;
 
   Widget buildDivider() {
     return const Divider(
@@ -74,6 +72,7 @@ class MultipleChoiceView extends StatelessWidget {
                     title: 'Transcript',
                     child: Transcript(
                       transcript: challenge.transcript,
+                      isCollapsible: challenge.videoId != null,
                     ),
                   ),
                 ],
@@ -168,7 +167,6 @@ class MultipleChoiceView extends StatelessWidget {
                                     model.hasPassedAllQuestions) {
                                   model.learnService.goToNextChallenge(
                                     block.challenges.length,
-                                    challengesCompleted,
                                     challenge,
                                     block,
                                   );

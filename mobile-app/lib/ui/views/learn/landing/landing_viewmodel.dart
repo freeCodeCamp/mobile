@@ -11,7 +11,6 @@ import 'package:freecodecamp/app/app.router.dart';
 import 'package:freecodecamp/models/learn/challenge_model.dart';
 import 'package:freecodecamp/models/learn/curriculum_model.dart';
 import 'package:freecodecamp/models/learn/motivational_quote_model.dart';
-import 'package:freecodecamp/models/main/user_model.dart';
 import 'package:freecodecamp/service/authentication/authentication_service.dart';
 import 'package:freecodecamp/service/dio_service.dart';
 import 'package:freecodecamp/service/learn/learn_offline_service.dart';
@@ -59,10 +58,6 @@ class LearnLandingViewModel extends BaseViewModel {
   }
 
   void fastRouteToChallenge() async {
-    FccUserModel? user;
-
-    int completedChallenges = 0;
-
     SharedPreferences prefs = await SharedPreferences.getInstance();
     List<String>? lastVisitedChallenge = prefs.getStringList(
       'lastVisitedChallenge',
@@ -91,23 +86,9 @@ class LearnLandingViewModel extends BaseViewModel {
           lastVisitedChallenge[2],
         ).blocks as List<Block>;
 
-        if (AuthenticationService.staticIsloggedIn) {
-          user = await auth.userModel;
-        }
-
         Block block = blocks.firstWhere(
           (element) => element.dashedName == lastVisitedChallenge[3],
         );
-
-        Iterable<String> completedChallengeIds = user!.completedChallenges.map(
-          (e) => e.id,
-        );
-
-        for (int i = 0; i < block.challenges.length; i++) {
-          if (completedChallengeIds.contains(block.challenges[i].id)) {
-            completedChallenges++;
-          }
-        }
 
         _navigationService.navigateToSuperBlockView(
           superBlockDashedName: lastVisitedChallenge[1],
@@ -117,7 +98,6 @@ class LearnLandingViewModel extends BaseViewModel {
 
         _navigationService.navigateToChallengeTemplateView(
           block: block,
-          challengesCompleted: completedChallenges,
           challengeId: challenge.id,
         );
       }

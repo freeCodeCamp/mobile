@@ -133,9 +133,6 @@ class ChallengeViewModel extends BaseViewModel {
   Block? _block;
   Block? get block => _block;
 
-  int _challengesCompleted = 0;
-  int get challengesCompleted => _challengesCompleted;
-
   EditorOptions defaultEditorOptions = EditorOptions();
 
   TextFieldData? _textFieldData;
@@ -233,11 +230,6 @@ class ChallengeViewModel extends BaseViewModel {
     notifyListeners();
   }
 
-  set setChallengesCompleted(int value) {
-    _challengesCompleted = value;
-    notifyListeners();
-  }
-
   set setMounted(bool value) {
     _mounted = value;
     notifyListeners();
@@ -298,13 +290,12 @@ class ChallengeViewModel extends BaseViewModel {
   void init({
     required Block block,
     required Challenge challenge,
-    required int challengesCompleted,
     required bool isDailyChallenge,
   }) async {
-    _isDailyChallenge = isDailyChallenge;
-
     await _babelWebView.run();
     await _localhostServer.start();
+
+    _isDailyChallenge = isDailyChallenge;
 
     if (isDailyChallenge) {
       await loadSelectedDailyChallengeLanguage();
@@ -314,7 +305,6 @@ class ChallengeViewModel extends BaseViewModel {
 
     setChallenge = challenge;
     setBlock = block;
-    setChallengesCompleted = challengesCompleted;
 
     listenToSymbolBarScrollController();
   }
@@ -381,7 +371,7 @@ class ChallengeViewModel extends BaseViewModel {
       key: ValueKey(editorText),
       defaultLanguage: editorLanguage,
       defaultValue: editorText ?? '',
-      path: '/${challenge.id}/${getFullFileName(file)}',
+      path: getFullFilePath(challenge, file),
       options: options,
     );
 
@@ -518,7 +508,7 @@ class ChallengeViewModel extends BaseViewModel {
         .toList();
 
     String text = prefs.getString(
-          '${currChallenge.id}.${currentFile[0].name}',
+          '${currChallenge.id}.${getFullFileName(currentFile[0])}',
         ) ??
         currentFile[0].contents;
 
@@ -583,6 +573,10 @@ class ChallengeViewModel extends BaseViewModel {
     return '${file.name}.${file.ext.value}';
   }
 
+  String getFullFilePath(Challenge challenge, ChallengeFile file) {
+    return '/${challenge.id}/${getFullFileName(file)}';
+  }
+
   ChallengeFile currentFile(Challenge challengeParam) {
     // For daily challenges, we don't use the `challenge` param passed from the view
     // but use the `_challenge` variable as the source of truth instead.
@@ -621,10 +615,13 @@ class ChallengeViewModel extends BaseViewModel {
     );
 
     if (res?.confirmed == true) {
-      Challenge? currChallenge = challenge;
+      Challenge currChallenge = challenge!;
 
-      for (ChallengeFile file in currChallenge!.files) {
+      for (ChallengeFile file in currChallenge.files) {
+        // NOTE: Removes file content from cache
         await prefs.remove('${currChallenge.id}.${getFullFileName(file)}');
+        // NOTE: Removes file editable region boundaries from cache
+        await prefs.remove(getFullFilePath(currChallenge, file));
       }
 
       var challengeIndex = block!.challengeTiles.indexWhere(
@@ -638,12 +635,14 @@ class ChallengeViewModel extends BaseViewModel {
 
       await prefs.remove(challengeUrl);
 
+      closeWebViews();
+      disposeOfListeners();
+
       _navigationService.replaceWith(
         Routes.challengeTemplateView,
         arguments: ChallengeTemplateViewArguments(
           block: block!,
           challengeId: currChallenge.id,
-          challengesCompleted: challengesCompleted,
         ),
       );
     }
@@ -749,7 +748,6 @@ class ChallengeViewModel extends BaseViewModel {
     required Challenge challenge,
     required ChallengeViewModel model,
     required int maxChallenges,
-    required int challengesCompleted,
   }) {
     switch (panelType) {
       case PanelType.instruction:
@@ -769,7 +767,6 @@ class ChallengeViewModel extends BaseViewModel {
       case PanelType.pass:
         return PassWidgetView(
           challengeModel: model,
-          challengesCompleted: challengesCompleted,
           maxChallenges: maxChallenges,
         );
       default:
