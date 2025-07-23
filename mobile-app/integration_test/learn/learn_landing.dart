@@ -37,7 +37,10 @@ void main() {
     final publicSuperBlockButtons = find.byWidgetPredicate(
       (widget) => widget is SuperBlockButton && widget.button.public == true,
     );
-    expect(superBlockButtons, findsNWidgets(superBlocks.length));
+    expect(
+      superBlockButtons,
+      findsNWidgets(superBlocks.length - 1), // Exclude 'full-stack' superblock
+    );
     expect(publicSuperBlockButtons, findsNWidgets(publicSuperBlocks));
 
     // Check for login button
