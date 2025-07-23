@@ -309,8 +309,6 @@ class ChallengeViewModel extends BaseViewModel {
     listenToSymbolBarScrollController();
   }
 
-  /// Sets the selected daily challenge language and switches the challenge content accordingly.
-  /// This method uses the LearnOfflineService's caching to avoid redundant API calls.
   Future<void> setSelectedDailyChallengeLanguage(
       DailyChallengeLanguage lang, DateTime challengeDate) async {
     _selectedDailyChallengeLanguage = lang;
@@ -318,8 +316,10 @@ class ChallengeViewModel extends BaseViewModel {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     await prefs.setString('selectedDailyChallengeLanguage', lang.name);
 
+    // Switching languages require re-fetching the challenge data
+    // as we only store the data for a single language in the `challenge` object.
+    // This, however, is not expensive because we do cache the challenge data in learnOfflineService.
     final formattedChallengeDate = formatChallengeDate(challengeDate);
-
     Challenge dailyChallenge = await learnOfflineService.getDailyChallenge(
       formattedChallengeDate,
       _block!,
