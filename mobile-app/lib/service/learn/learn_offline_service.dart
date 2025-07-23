@@ -163,15 +163,18 @@ class LearnOfflineService {
       // Select language-specific data
       DailyChallengeLanguageData languageData;
       HelpCategory helpCategory;
+      int challengeType;
 
       switch (language) {
         case DailyChallengeLanguage.python:
           languageData = dailyChallenge.python;
           helpCategory = HelpCategory.python;
+          challengeType = 29;
           break;
         default:
           languageData = dailyChallenge.javascript;
           helpCategory = HelpCategory.javascript;
+          challengeType = 28;
           break;
       }
 
@@ -185,7 +188,7 @@ class LearnOfflineService {
         dashedName: '',
         superBlock: block.superBlock.dashedName,
         videoId: null,
-        challengeType: 28,
+        challengeType: challengeType,
         tests: languageData.tests,
         files: languageData.challengeFiles,
         helpCategory: helpCategory,

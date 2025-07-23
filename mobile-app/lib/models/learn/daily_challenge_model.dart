@@ -117,8 +117,19 @@ class DailyChallengeBlock {
       layout: BlockLayout.challengeGrid,
       type: BlockType.legacy,
       description: [description],
-      challenges: [],
-      challengeTiles: [],
+      challenges: challenges
+          .map((overview) => ChallengeOrder(
+                id: overview.id,
+                title: overview.title,
+              ))
+          .toList(),
+      challengeTiles: challenges
+          .map((overview) => ChallengeListTile(
+                id: overview.id,
+                name: overview.title,
+                dashedName: overview.title.toLowerCase().replaceAll(' ', '-'),
+              ))
+          .toList(),
     );
   }
 }

@@ -625,7 +625,10 @@ class ChallengeView extends StatelessWidget {
           model.scaffoldKey.currentState?.openEndDrawer();
         },
       ),
-      if (challenge.challengeType != 1 && challenge.challengeType != 26)
+      if (challenge.challengeType != 1 &&
+          challenge.challengeType != 26 &&
+          challenge.challengeType != 28 &&
+          challenge.challengeType != 29)
         _panelIconButton(
           isActive: model.showPreview,
           icon: Icons.remove_red_eye_outlined,
