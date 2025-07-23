@@ -54,7 +54,6 @@ class _DailyChallengeCardState extends State<DailyChallengeCard> {
       arguments: ChallengeTemplateViewArguments(
         challengeId: challenge.id,
         block: block,
-        challengesCompleted: 0,
         challengeDate: challenge.date,
       ),
     );

@@ -20,12 +20,8 @@ class DailyChallengesViewModel extends BaseViewModel {
   Map<String, bool> _blockOpenStates = {};
   Map<String, bool> get blockOpenStates => _blockOpenStates;
 
-  int _completedChallengesCount = 0;
-  int get completedChallengesCount => _completedChallengesCount;
-
   Future<void> init() async {
     await _fetchAndGroupChallenges();
-    await _updateCompletedCount();
   }
 
   void toggleBlock(String monthYear) {
@@ -126,29 +122,9 @@ class DailyChallengesViewModel extends BaseViewModel {
       arguments: ChallengeTemplateViewArguments(
         challengeId: challenge.id,
         block: block,
-        challengesCompleted: completedChallengesCount,
         challengeDate: challenge.date,
       ),
     );
-  }
-
-  set completedChallengesCount(int value) {
-    _completedChallengesCount = value;
-    notifyListeners();
-  }
-
-  Future<void> _updateCompletedCount() async {
-    int count = 0;
-
-    for (var block in _blocks) {
-      for (var challenge in block.challenges) {
-        if (await checkIfChallengeCompleted(challenge.id)) {
-          count++;
-        }
-      }
-    }
-
-    completedChallengesCount = count;
   }
 
   Future<int> getCompletedChallengesForBlock(DailyChallengeBlock block) async {
