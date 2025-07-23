@@ -1,4 +1,5 @@
 import 'package:dio/dio.dart';
+import 'package:freecodecamp/app/app.locator.dart';
 import 'package:freecodecamp/models/learn/daily_challenge_model.dart';
 import 'package:freecodecamp/service/authentication/authentication_service.dart';
 import 'package:freecodecamp/service/dio_service.dart';
@@ -7,6 +8,7 @@ class DailyChallengesService {
   static final DailyChallengesService _instance =
       DailyChallengesService._internal();
   final Dio _dio = DioService.dio;
+  final _authenticationService = locator<AuthenticationService>();
 
   factory DailyChallengesService() {
     return _instance;
@@ -56,6 +58,13 @@ class DailyChallengesService {
     final response = await _dio.post(
       '${AuthenticationService.baseApiURL}/daily-coding-challenge-completed',
       data: {'id': challengeId, 'language': language.toString()},
+      options: Options(
+        headers: {
+          'CSRF-Token': _authenticationService.csrfToken,
+          'Cookie':
+              'jwt_access_token=${_authenticationService.jwtAccessToken}; _csrf=${_authenticationService.csrf};',
+        },
+      ),
     );
 
     if (response.statusCode != 200) {
