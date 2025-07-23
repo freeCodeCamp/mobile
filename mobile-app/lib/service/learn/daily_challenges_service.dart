@@ -15,10 +15,8 @@ class DailyChallengesService {
   DailyChallengesService._internal();
 
   Future<List<DailyChallengeOverview>> fetchAllDailyChallenges() async {
-    // TODO: Change this to use AuthenticationService.baseURL
-    // when the API is deployed.
-    final response =
-        await _dio.get('http://localhost:3000/api/daily-challenge/all');
+    final response = await _dio
+        .get('${AuthenticationService.baseApiURL}/daily-coding-challenge/all');
 
     if (response.statusCode == 200 && response.data is List) {
       return (response.data as List)
@@ -30,10 +28,8 @@ class DailyChallengesService {
   }
 
   Future<DailyChallenge> fetchChallengeByDate(String date) async {
-    // TODO: Change this to use AuthenticationService.baseURL
-    // when the API is deployed.
-    final response =
-        await _dio.get('http://localhost:3000/api/daily-challenge/date/$date');
+    final response = await _dio.get(
+        '${AuthenticationService.baseApiURL}/daily-coding-challenge/date/$date');
 
     if (response.statusCode == 200) {
       return DailyChallenge.fromJson(response.data);
@@ -43,10 +39,8 @@ class DailyChallengesService {
   }
 
   Future<DailyChallenge> fetchTodayChallenge() async {
-    // TODO: Change this to use AuthenticationService.baseURL
-    // when the API is deployed.
-    final response =
-        await _dio.get('http://localhost:3000/api/daily-challenge/today');
+    final response = await _dio.get(
+        '${AuthenticationService.baseApiURL}/daily-coding-challenge/today');
 
     if (response.statusCode == 200) {
       return DailyChallenge.fromJson(response.data);
