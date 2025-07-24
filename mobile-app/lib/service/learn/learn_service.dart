@@ -42,7 +42,7 @@ class LearnService {
     await prefs.setStringList('lastVisitedChallenge', [
       url,
       block.superBlock.dashedName,
-      block.superBlock.name,
+      block.superBlock.name.toString(),
       block.dashedName,
     ]);
   }
