@@ -131,7 +131,7 @@ class DailyChallengeNotificationService {
 
     await _flutterLocalNotificationsPlugin.zonedSchedule(
       0,
-      'New Daily Challenge Available! 🚀',
+      'New Daily Challenge Available! 🧩',
       'A fresh coding challenge is waiting for you. Ready to solve it?',
       tz.TZDateTime.from(scheduleTime, tz.local),
       const NotificationDetails(
