@@ -30,6 +30,8 @@ class _DailyChallengeCardState extends State<DailyChallengeCard> {
   bool _isCompleted = false;
   final AuthenticationService _auth = locator<AuthenticationService>();
   final NavigationService _navigationService = locator<NavigationService>();
+  final DailyChallengeService _dailyChallengeService =
+      locator<DailyChallengeService>();
 
   void _navigateToDailyChallenge(BuildContext context) {
     if (_challenge == null) return;
@@ -76,8 +78,7 @@ class _DailyChallengeCardState extends State<DailyChallengeCard> {
       _error = null;
     });
     try {
-      final todayChallenge =
-          await DailyChallengeService().fetchTodayChallenge();
+      final todayChallenge = await _dailyChallengeService.fetchTodayChallenge();
 
       final isCompleted = await _checkIfChallengeCompleted(todayChallenge.id);
 
