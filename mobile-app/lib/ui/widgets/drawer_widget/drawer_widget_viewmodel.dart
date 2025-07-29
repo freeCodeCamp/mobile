@@ -12,7 +12,7 @@ import 'package:freecodecamp/ui/views/settings/settings_view.dart';
 import 'package:stacked/stacked.dart';
 import 'package:stacked_services/stacked_services.dart';
 
-class DrawerWidgtetViewModel extends BaseViewModel {
+class DrawerWidgetViewModel extends BaseViewModel {
   final AuthenticationService auth = locator<AuthenticationService>();
 
   final SnackbarService snack = locator<SnackbarService>();

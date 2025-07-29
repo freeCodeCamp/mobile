@@ -16,8 +16,8 @@ class DrawerWidgetView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return ViewModelBuilder<DrawerWidgtetViewModel>.reactive(
-      viewModelBuilder: () => DrawerWidgtetViewModel(),
+    return ViewModelBuilder<DrawerWidgetViewModel>.reactive(
+      viewModelBuilder: () => DrawerWidgetViewModel(),
       onViewModelReady: (model) => model.initState(),
       builder: (context, model, child) => Drawer(
         shape: RoundedRectangleBorder(
