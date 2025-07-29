@@ -26,7 +26,7 @@ class DailyChallengeCard extends StatefulWidget {
 
 class _DailyChallengeCardState extends State<DailyChallengeCard> {
   Duration _timeLeft = Duration.zero;
-  Timer? _timer;
+  Timer? countdownTimer;
   final NavigationService _navigationService = locator<NavigationService>();
 
   void _navigateToDailyChallenge(BuildContext context) {
@@ -63,7 +63,7 @@ class _DailyChallengeCardState extends State<DailyChallengeCard> {
     super.initState();
     tzdata.initializeTimeZones();
     _updateTimeLeft();
-    _timer = Timer.periodic(Duration(seconds: 1), (_) {
+    countdownTimer = Timer.periodic(Duration(seconds: 1), (_) {
       _updateTimeLeft();
     });
   }
@@ -80,7 +80,7 @@ class _DailyChallengeCardState extends State<DailyChallengeCard> {
 
   @override
   void dispose() {
-    _timer?.cancel();
+    countdownTimer?.cancel();
     super.dispose();
   }
 
