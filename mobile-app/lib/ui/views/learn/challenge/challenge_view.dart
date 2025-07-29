@@ -39,7 +39,7 @@ class ChallengeView extends StatelessWidget {
         model.init(
           block: block,
           challenge: challenge,
-          isDailyChallenge: challengeDate != null,
+          challengeDate: challengeDate,
         );
       },
       onDispose: (model) {

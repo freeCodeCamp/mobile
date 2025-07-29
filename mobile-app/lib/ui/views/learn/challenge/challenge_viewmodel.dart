@@ -95,6 +95,7 @@ class ChallengeViewModel extends BaseViewModel {
   InAppWebViewController? _testController;
   InAppWebViewController? get testController => _testController;
 
+  DateTime? _challengeDate;
   bool _isDailyChallenge = false;
 
   DailyChallengeLanguage? _selectedDailyChallengeLanguage;
@@ -292,14 +293,15 @@ class ChallengeViewModel extends BaseViewModel {
   void init({
     required Block block,
     required Challenge challenge,
-    required bool isDailyChallenge,
+    required DateTime? challengeDate,
   }) async {
     await _babelWebView.run();
     await _localhostServer.start();
 
-    _isDailyChallenge = isDailyChallenge;
+    _challengeDate = challengeDate;
+    _isDailyChallenge = challengeDate != null;
 
-    if (isDailyChallenge) {
+    if (challengeDate != null) {
       await loadSelectedDailyChallengeLanguage();
     }
 
@@ -616,16 +618,43 @@ class ChallengeViewModel extends BaseViewModel {
       mainButtonTitle: context.t.reset,
     );
 
-    if (res?.confirmed == true) {
-      Challenge currChallenge = challenge!;
+    if (res?.confirmed != true) {
+      return;
+    }
 
-      for (ChallengeFile file in currChallenge.files) {
-        // NOTE: Removes file content from cache
-        await prefs.remove('${currChallenge.id}.${getFullFileName(file)}');
-        // NOTE: Removes file editable region boundaries from cache
-        await prefs.remove(getFullFilePath(currChallenge, file));
-      }
+    Challenge currChallenge = challenge!;
 
+    for (ChallengeFile file in currChallenge.files) {
+      // NOTE: Removes file content from cache
+      await prefs.remove('${currChallenge.id}.${getFullFileName(file)}');
+      // NOTE: Removes file editable region boundaries from cache
+      await prefs.remove(getFullFilePath(currChallenge, file));
+    }
+
+    if (isDailyChallenge) {
+      final formattedChallengeDate = formatChallengeDate(_challengeDate!);
+      Challenge refreshedChallenge =
+          await dailyChallengeService.getDailyChallenge(
+        formattedChallengeDate,
+        block!,
+        language: selectedDailyChallengeLanguage!,
+      );
+
+      setChallenge = refreshedChallenge;
+
+      closeWebViews();
+      disposeOfListeners();
+
+      _navigationService.replaceWith(
+        Routes.challengeTemplateView,
+        arguments: ChallengeTemplateViewArguments(
+          block: block!,
+          challengeId: currChallenge.id,
+          challengeDate: _challengeDate,
+        ),
+      );
+    } else {
+      // For standard challenges, keep the existing behavior
       var challengeIndex = block!.challengeTiles.indexWhere(
         (element) => element.id == currChallenge.id,
       );
