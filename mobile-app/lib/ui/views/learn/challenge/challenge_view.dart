@@ -206,7 +206,9 @@ class ChallengeView extends StatelessWidget {
           if (model.showTestsPanel)
             Expanded(
               child: testList(
-                challenge,
+                // Use the challenge from the viewmodel as the source of truth
+                // as the challenge object changes dynamically when the user switch languages.
+                model.challenge!,
                 model,
               ),
             ),
