@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:dio/dio.dart';
 import 'package:freecodecamp/app/app.locator.dart';
 import 'package:freecodecamp/models/learn/challenge_model.dart';
@@ -32,6 +34,7 @@ class DailyChallengeService {
           .map((item) => DailyChallengeOverview.fromJson(item))
           .toList();
     } else {
+      log('Failed to fetch daily challenges - Status: ${response.statusCode}');
       throw Exception('Failed to fetch daily challenges');
     }
   }
@@ -43,6 +46,7 @@ class DailyChallengeService {
     if (response.statusCode == 200) {
       return DailyChallenge.fromJson(response.data);
     } else {
+      log('Failed to fetch challenge for date: $date - Status: ${response.statusCode}');
       throw Exception('Failed to fetch challenge.');
     }
   }
@@ -54,6 +58,7 @@ class DailyChallengeService {
     if (response.statusCode == 200) {
       return DailyChallenge.fromJson(response.data);
     } else {
+      log('Failed to fetch today\'s challenge - Status: ${response.statusCode}');
       throw Exception('Failed to fetch challenge.');
     }
   }
@@ -75,6 +80,7 @@ class DailyChallengeService {
     );
 
     if (response.statusCode != 200) {
+      log('Failed to post challenge completion for $challengeId - Status: ${response.statusCode}');
       throw Exception('Failed to post challenge.');
     }
   }
@@ -89,69 +95,65 @@ class DailyChallengeService {
     Block block, {
     DailyChallengeLanguage? language,
   }) async {
-    try {
-      if (language == null) {
-        SharedPreferences prefs = await SharedPreferences.getInstance();
-        String? selectedLangStr =
-            prefs.getString('selectedDailyChallengeLanguage');
-        language = parseLanguageFromString(selectedLangStr);
-      }
-
-      if (_cachedDailyChallenge == null || _cachedChallengeDate != date) {
-        // Temporarily cache the challenge data to avoid redundant API calls.
-        // But not saving the cached data to SharedPreferences
-        // so we can still get the up-to-date challenge.
-        _cachedDailyChallenge = await fetchChallengeByDate(date);
-        _cachedChallengeDate = date;
-      }
-
-      DailyChallenge dailyChallenge = _cachedDailyChallenge!;
-
-      // Select language-specific data
-      DailyChallengeLanguageData languageData;
-      HelpCategory helpCategory;
-      int challengeType;
-
-      switch (language) {
-        case DailyChallengeLanguage.python:
-          languageData = dailyChallenge.python;
-          helpCategory = HelpCategory.python;
-          challengeType = 29;
-          break;
-        default:
-          languageData = dailyChallenge.javascript;
-          helpCategory = HelpCategory.javascript;
-          challengeType = 28;
-          break;
-      }
-
-      // Map the daily challenge to Challenge
-      return Challenge(
-        id: dailyChallenge.id,
-        block: block.dashedName,
-        title: dailyChallenge.title,
-        description: dailyChallenge.description,
-        instructions: '',
-        dashedName: '',
-        superBlock: block.superBlock.dashedName,
-        videoId: null,
-        challengeType: challengeType,
-        tests: languageData.tests,
-        files: languageData.challengeFiles,
-        helpCategory: helpCategory,
-        explanation: '',
-        transcript: '',
-        hooks: Hooks.fromJson({'beforeAll': ''}),
-        fillInTheBlank: null,
-        audio: null,
-        scene: null,
-        questions: null,
-        assignments: null,
-        quizzes: null,
-      );
-    } catch (e) {
-      throw Exception('Failed to fetch daily challenge: $e');
+    if (language == null) {
+      SharedPreferences prefs = await SharedPreferences.getInstance();
+      String? selectedLangStr =
+          prefs.getString('selectedDailyChallengeLanguage');
+      language = parseLanguageFromString(selectedLangStr);
     }
+
+    if (_cachedDailyChallenge == null || _cachedChallengeDate != date) {
+      // Temporarily cache the challenge data to avoid redundant API calls.
+      // But not saving the cached data to SharedPreferences
+      // so we can still get the up-to-date challenge.
+      _cachedDailyChallenge = await fetchChallengeByDate(date);
+      _cachedChallengeDate = date;
+    }
+
+    DailyChallenge dailyChallenge = _cachedDailyChallenge!;
+
+    // Select language-specific data
+    DailyChallengeLanguageData languageData;
+    HelpCategory helpCategory;
+    int challengeType;
+
+    switch (language) {
+      case DailyChallengeLanguage.python:
+        languageData = dailyChallenge.python;
+        helpCategory = HelpCategory.python;
+        challengeType = 29;
+        break;
+      default:
+        languageData = dailyChallenge.javascript;
+        helpCategory = HelpCategory.javascript;
+        challengeType = 28;
+        break;
+    }
+
+    // Map the daily challenge to Challenge
+    return Challenge(
+      id: dailyChallenge.id,
+      block: block.dashedName,
+      title: dailyChallenge.title,
+      description: dailyChallenge.description,
+      instructions: '',
+      dashedName: '',
+      superBlock: block.superBlock.dashedName,
+      videoId: null,
+      challengeType: challengeType,
+      tests: languageData.tests,
+      files: languageData.challengeFiles,
+      helpCategory: helpCategory,
+      explanation: '',
+      transcript: '',
+      hooks: Hooks.fromJson({'beforeAll': ''}),
+      fillInTheBlank: null,
+      audio: null,
+      scene: null,
+      questions: null,
+      assignments: null,
+      quizzes: null,
+    );
   }
 
   /// Helper method to parse DailyChallengeLanguage from string with fallback
