@@ -212,6 +212,14 @@ class PassButton extends StatelessWidget {
       width: MediaQuery.of(context).size.width,
       child: TextButton(
         onPressed: () async {
+          // Close the end drawer if open before navigating.
+          // This is needed to ensure the back navigation works correctly.
+          final scaffoldState = model.scaffoldKey.currentState;
+          if (scaffoldState != null && scaffoldState.isEndDrawerOpen) {
+            scaffoldState.closeEndDrawer();
+            await Future.delayed(const Duration(milliseconds: 300));
+          }
+
           model.closeWebViews();
           model.disposeOfListeners();
 

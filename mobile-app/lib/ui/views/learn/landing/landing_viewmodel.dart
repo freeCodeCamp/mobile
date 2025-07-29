@@ -75,7 +75,7 @@ class LearnLandingViewModel extends BaseViewModel {
     try {
       // Run both API calls in parallel, but handle failures independently
       final results = await Future.wait([
-        _requestSuperBlocks().catchError((e) => <Widget>[]),
+        requestSuperBlocks().catchError((e) => <Widget>[]),
         _fetchDailyChallenge().catchError((e) {
           _dailyChallenge = null;
           _isDailyChallengeCompleted = false;
@@ -106,7 +106,7 @@ class LearnLandingViewModel extends BaseViewModel {
         lastVisitedChallenge[0],
       );
 
-      String baseUrl = LearnService.baseUrlV2;
+      String baseUrl = LearnService.baseUrl;
 
       final Response res =
           await _dio.get('$baseUrl/${lastVisitedChallenge[1]}.json');
@@ -188,38 +188,54 @@ class LearnLandingViewModel extends BaseViewModel {
     return Text('');
   }
 
-  Future<List<Widget>> _requestSuperBlocks() async {
-    String baseUrl = LearnService.baseUrlV2;
+  Future<List<Widget>> requestSuperBlocks() async {
+    String baseUrl = LearnService.baseUrl;
 
     final Response res = await _dio.get('$baseUrl/available-superblocks.json');
 
     List<Widget> layout = [];
     if (res.statusCode == 200) {
-      Map<String, dynamic> superBlockStages = res.data['superblocks'];
-
       await dotenv.load(fileName: '.env');
 
       bool showAllSB =
           dotenv.get('SHOWALLSB', fallback: 'false').toLowerCase() == 'true';
 
-      for (var superBlockStage in superBlockStages.keys) {
-        layout.add(Padding(
-          padding: const EdgeInsets.all(8.0),
-          child: handleStageTitle(superBlockStage),
-        ));
+      // Map<String, dynamic> superBlockStages = res.data['superblocks'];
+      // for (var superBlockStage in superBlockStages.keys) {
+      //   layout.add(Padding(
+      //     padding: const EdgeInsets.all(8.0),
+      //     child: handleStageTitle(superBlockStage),
+      //   ));
 
-        for (var superBlock in superBlockStages[superBlockStage]) {
-          layout.add(
-            SuperBlockButton(
-              button: SuperBlockButtonData(
-                path: superBlock['dashedName'],
-                name: superBlock['title'],
-                public: !showAllSB ? superBlock['public'] : true,
-              ),
-              model: this,
-            ),
-          );
+      //   for (var superBlock in superBlockStages[superBlockStage]) {
+      //     layout.add(
+      //       SuperBlockButton(
+      //         button: SuperBlockButtonData(
+      //           path: superBlock['dashedName'],
+      //           name: superBlock['title'],
+      //           public: !showAllSB ? superBlock['public'] : true,
+      //         ),
+      //         model: this,
+      //       ),
+      //     );
+      //   }
+      // }
+
+      List superBlocks = res.data['superblocks'];
+      for (int i = 0; i < superBlocks.length; i++) {
+        if (superBlocks[i]['dashedName'].toString().contains('full-stack')) {
+          continue;
         }
+        layout.add(
+          SuperBlockButton(
+            button: SuperBlockButtonData(
+              path: superBlocks[i]['dashedName'],
+              name: superBlocks[i]['title'],
+              public: !showAllSB ? superBlocks[i]['public'] : true,
+            ),
+            model: this,
+          ),
+        );
       }
 
       return layout;
