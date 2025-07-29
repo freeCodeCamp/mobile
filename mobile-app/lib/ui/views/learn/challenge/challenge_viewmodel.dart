@@ -15,6 +15,7 @@ import 'package:freecodecamp/models/learn/challenge_model.dart';
 import 'package:freecodecamp/models/learn/curriculum_model.dart';
 import 'package:freecodecamp/models/learn/daily_challenge_model.dart';
 import 'package:freecodecamp/service/dio_service.dart';
+import 'package:freecodecamp/service/learn/daily_challenge_service.dart';
 import 'package:freecodecamp/service/learn/learn_file_service.dart';
 import 'package:freecodecamp/service/learn/learn_offline_service.dart';
 import 'package:freecodecamp/service/learn/learn_service.dart';
@@ -143,6 +144,7 @@ class ChallengeViewModel extends BaseViewModel {
   final LearnFileService fileService = locator<LearnFileService>();
   final LearnService learnService = locator<LearnService>();
   final learnOfflineService = locator<LearnOfflineService>();
+  final dailyChallengeService = locator<DailyChallengeService>();
 
   final _dio = DioService.dio;
 
@@ -318,9 +320,9 @@ class ChallengeViewModel extends BaseViewModel {
 
     // Switching languages require re-fetching the challenge data
     // as we only store the data for a single language in the `challenge` object.
-    // This, however, is not expensive because we do cache the challenge data in learnOfflineService.
+    // This, however, is not expensive because we do cache the challenge data in dailyChallengeService.
     final formattedChallengeDate = formatChallengeDate(challengeDate);
-    Challenge dailyChallenge = await learnOfflineService.getDailyChallenge(
+    Challenge dailyChallenge = await dailyChallengeService.getDailyChallenge(
       formattedChallengeDate,
       _block!,
       language: lang,
@@ -739,7 +741,7 @@ class ChallengeViewModel extends BaseViewModel {
     String? langStr = prefs.getString('selectedDailyChallengeLanguage');
 
     _selectedDailyChallengeLanguage =
-        LearnOfflineService.parseLanguageFromString(langStr);
+        DailyChallengeService.parseLanguageFromString(langStr);
     notifyListeners();
   }
 

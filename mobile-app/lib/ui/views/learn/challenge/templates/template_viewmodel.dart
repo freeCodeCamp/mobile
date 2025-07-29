@@ -1,6 +1,7 @@
 import 'package:freecodecamp/app/app.locator.dart';
 import 'package:freecodecamp/models/learn/challenge_model.dart';
 import 'package:freecodecamp/models/learn/curriculum_model.dart';
+import 'package:freecodecamp/service/learn/daily_challenge_service.dart';
 import 'package:freecodecamp/service/learn/learn_offline_service.dart';
 import 'package:freecodecamp/service/learn/learn_service.dart';
 import 'package:freecodecamp/ui/views/learn/utils/challenge_utils.dart';
@@ -12,6 +13,8 @@ class ChallengeTemplateViewModel extends BaseViewModel {
 
   final LearnOfflineService _learnOfflineService =
       locator<LearnOfflineService>();
+  final DailyChallengeService _dailyChallengeService =
+      locator<DailyChallengeService>();
   final LearnService _learnService = locator<LearnService>();
 
   set setChallenge(Future<Challenge> challenge) {
@@ -32,8 +35,8 @@ class ChallengeTemplateViewModel extends BaseViewModel {
     } else {
       final formattedChallengeDate = formatChallengeDate(challengeDate);
 
-      setChallenge =
-          _learnOfflineService.getDailyChallenge(formattedChallengeDate, block);
+      setChallenge = _dailyChallengeService.getDailyChallenge(
+          formattedChallengeDate, block);
     }
   }
 }
