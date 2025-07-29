@@ -10,7 +10,7 @@ import 'package:freecodecamp/ui/views/learn/utils/challenge_utils.dart';
 import 'package:stacked/stacked.dart';
 import 'package:stacked_services/stacked_services.dart';
 
-class DailyChallengesViewModel extends BaseViewModel {
+class DailyChallengeViewModel extends BaseViewModel {
   final NavigationService _navigationService = locator<NavigationService>();
   final AuthenticationService _auth = locator<AuthenticationService>();
 

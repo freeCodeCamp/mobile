@@ -57,7 +57,7 @@ class QuickActionsService {
           _navigationService.replaceWith(Routes.podcastListView);
           break;
         case 'action_daily_challenges':
-          _navigationService.replaceWith(Routes.dailyChallengesView);
+          _navigationService.replaceWith(Routes.dailyChallengeView);
           break;
         default:
       }

@@ -3,7 +3,7 @@ import 'package:freecodecamp/app/app.locator.dart';
 import 'package:freecodecamp/service/authentication/authentication_service.dart';
 import 'package:freecodecamp/service/developer_service.dart';
 import 'package:freecodecamp/ui/views/code_radio/code_radio_view.dart';
-import 'package:freecodecamp/ui/views/learn/daily_challenges/daily_challenges_view.dart';
+import 'package:freecodecamp/ui/views/learn/daily_challenge/daily_challenge_view.dart';
 import 'package:freecodecamp/ui/views/learn/landing/landing_view.dart';
 import 'package:freecodecamp/ui/views/login/native_login_view.dart';
 import 'package:freecodecamp/ui/views/news/news-view-handler/news_view_handler_view.dart';
@@ -65,9 +65,9 @@ class DrawerWidgtetViewModel extends BaseViewModel {
           PageRouteBuilder(
             transitionDuration: Duration.zero,
             pageBuilder: (context, animation1, animation2) =>
-                const DailyChallengesView(),
+                const DailyChallengeView(),
             settings: const RouteSettings(
-              name: '/daily-challenges',
+              name: '/daily-challenge',
             ),
           ),
         );

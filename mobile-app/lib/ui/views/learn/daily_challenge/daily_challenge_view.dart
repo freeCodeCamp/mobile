@@ -2,18 +2,18 @@ import 'package:flutter/material.dart';
 import 'package:flutter_html/flutter_html.dart';
 import 'package:freecodecamp/models/learn/daily_challenge_model.dart';
 import 'package:freecodecamp/ui/theme/fcc_theme.dart';
-import 'package:freecodecamp/ui/views/learn/daily_challenges/daily_challenges_viewmodel.dart';
+import 'package:freecodecamp/ui/views/learn/daily_challenge/daily_challenge_viewmodel.dart';
 import 'package:freecodecamp/ui/views/news/html_handler/html_handler.dart';
 import 'package:freecodecamp/ui/widgets/drawer_widget/drawer_widget_view.dart';
 import 'package:stacked/stacked.dart';
 
-class DailyChallengesView extends StatelessWidget {
-  const DailyChallengesView({super.key});
+class DailyChallengeView extends StatelessWidget {
+  const DailyChallengeView({super.key});
 
   @override
   Widget build(BuildContext context) {
-    return ViewModelBuilder<DailyChallengesViewModel>.reactive(
-      viewModelBuilder: () => DailyChallengesViewModel(),
+    return ViewModelBuilder<DailyChallengeViewModel>.reactive(
+      viewModelBuilder: () => DailyChallengeViewModel(),
       onViewModelReady: (viewModel) => viewModel.init(),
       builder: (context, model, child) {
         return Scaffold(
@@ -58,7 +58,7 @@ class DailyChallengesView extends StatelessWidget {
   }
 
   Widget buildBlock(BuildContext context, DailyChallengeBlock block,
-      bool isOpen, DailyChallengesViewModel model) {
+      bool isOpen, DailyChallengeViewModel model) {
     HTMLParser parser = HTMLParser(context: context);
     return FutureBuilder<int>(
       future: model.getCompletedChallengesForBlock(block),
@@ -188,7 +188,7 @@ class DailyChallengesView extends StatelessWidget {
   }
 
   Widget buildChallengeList(BuildContext context, DailyChallengeBlock block,
-      DailyChallengesViewModel model) {
+      DailyChallengeViewModel model) {
     return Row(
       children: [
         Container(

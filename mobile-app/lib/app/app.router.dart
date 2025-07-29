@@ -18,7 +18,7 @@ import 'package:freecodecamp/ui/views/learn/challenge/templates/template_view.da
 import 'package:freecodecamp/ui/views/learn/chapter/chapter_block_view.dart'
     as _i13;
 import 'package:freecodecamp/ui/views/learn/chapter/chapter_view.dart' as _i12;
-import 'package:freecodecamp/ui/views/learn/daily_challenges/daily_challenges_view.dart'
+import 'package:freecodecamp/ui/views/learn/daily_challenge/daily_challenge_view.dart'
     as _i20;
 import 'package:freecodecamp/ui/views/learn/landing/landing_view.dart' as _i15;
 import 'package:freecodecamp/ui/views/learn/superblock/superblock_view.dart'
@@ -83,7 +83,7 @@ class Routes {
 
   static const deleteAccountView = '/delete-account-view';
 
-  static const dailyChallengesView = '/daily-challenges-view';
+  static const dailyChallengeView = '/daily-challenge-view';
 
   static const all = <String>{
     newsViewHandlerView,
@@ -104,7 +104,7 @@ class Routes {
     superBlockView,
     settingsView,
     deleteAccountView,
-    dailyChallengesView,
+    dailyChallengeView,
   };
 }
 
@@ -183,8 +183,8 @@ class StackedRouter extends _i1.RouterBase {
       page: _i19.DeleteAccountView,
     ),
     _i1.RouteDef(
-      Routes.dailyChallengesView,
-      page: _i20.DailyChallengesView,
+      Routes.dailyChallengeView,
+      page: _i20.DailyChallengeView,
     ),
   ];
 
@@ -335,9 +335,9 @@ class StackedRouter extends _i1.RouterBase {
         settings: data,
       );
     },
-    _i20.DailyChallengesView: (data) {
+    _i20.DailyChallengeView: (data) {
       return _i21.MaterialPageRoute<dynamic>(
-        builder: (context) => const _i20.DailyChallengesView(),
+        builder: (context) => const _i20.DailyChallengeView(),
         settings: data,
       );
     },
@@ -1012,14 +1012,14 @@ extension NavigatorStateExtension on _i26.NavigationService {
         transition: transition);
   }
 
-  Future<dynamic> navigateToDailyChallengesView([
+  Future<dynamic> navigateToDailyChallengeView([
     int? routerId,
     bool preventDuplicates = true,
     Map<String, String>? parameters,
     Widget Function(BuildContext, Animation<double>, Animation<double>, Widget)?
         transition,
   ]) async {
-    return navigateTo<dynamic>(Routes.dailyChallengesView,
+    return navigateTo<dynamic>(Routes.dailyChallengeView,
         id: routerId,
         preventDuplicates: preventDuplicates,
         parameters: parameters,
@@ -1343,14 +1343,14 @@ extension NavigatorStateExtension on _i26.NavigationService {
         transition: transition);
   }
 
-  Future<dynamic> replaceWithDailyChallengesView([
+  Future<dynamic> replaceWithDailyChallengeView([
     int? routerId,
     bool preventDuplicates = true,
     Map<String, String>? parameters,
     Widget Function(BuildContext, Animation<double>, Animation<double>, Widget)?
         transition,
   ]) async {
-    return replaceWith<dynamic>(Routes.dailyChallengesView,
+    return replaceWith<dynamic>(Routes.dailyChallengeView,
         id: routerId,
         preventDuplicates: preventDuplicates,
         parameters: parameters,

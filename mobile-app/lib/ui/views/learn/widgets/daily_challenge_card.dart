@@ -180,7 +180,7 @@ class _DailyChallengeCardState extends State<DailyChallengeCard> {
                 ),
               ),
               onPressed: () {
-                _navigationService.navigateTo(Routes.dailyChallengesView);
+                _navigationService.navigateTo(Routes.dailyChallengeView);
               },
               icon: Icon(
                 Icons.history,
