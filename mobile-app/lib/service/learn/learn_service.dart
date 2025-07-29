@@ -25,6 +25,8 @@ class LearnService {
 
   final Dio _dio = DioService.dio;
 
+  // TODO: change this to v2 and remove baseUrlV2 once the migration is complete
+  static final baseUrl = '${AuthenticationService.baseURL}/curriculum-data/v1';
   static final baseUrlV2 =
       '${AuthenticationService.baseURL}/curriculum-data/v2';
 
