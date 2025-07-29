@@ -61,6 +61,16 @@ class LearnLandingViewModel extends BaseViewModel {
     notifyListeners();
   }
 
+  set setDailyChallenge(DailyChallenge? value) {
+    _dailyChallenge = value;
+    notifyListeners();
+  }
+
+  set setIsDailyChallengeCompleted(bool value) {
+    _isDailyChallengeCompleted = value;
+    notifyListeners();
+  }
+
   void init(BuildContext context) async {
     setupDialogUi();
     retrieveNewQuote();
@@ -77,8 +87,8 @@ class LearnLandingViewModel extends BaseViewModel {
       final results = await Future.wait([
         requestSuperBlocks().catchError((e) => <Widget>[]),
         _fetchDailyChallenge().catchError((e) {
-          _dailyChallenge = null;
-          _isDailyChallengeCompleted = false;
+          setDailyChallenge = null;
+          setIsDailyChallengeCompleted = false;
           return null;
         }),
       ]);
@@ -143,10 +153,20 @@ class LearnLandingViewModel extends BaseViewModel {
   void initLoggedInListener() {
     _isLoggedIn = AuthenticationService.staticIsloggedIn;
     notifyListeners();
-    auth.isLoggedIn.listen((e) {
+    auth.isLoggedIn.listen((e) async {
       _isLoggedIn = e;
+      await updateDailyChallengeCompletionStatus();
       notifyListeners();
     });
+  }
+
+  Future<void> updateDailyChallengeCompletionStatus() async {
+    if (!_isLoggedIn) {
+      setIsDailyChallengeCompleted = false;
+    } else if (_dailyChallenge != null) {
+      final isCompleted = await _checkIfChallengeCompleted(_dailyChallenge!.id);
+      setIsDailyChallengeCompleted = isCompleted;
+    }
   }
 
   void disabledButtonSnack() {
@@ -247,8 +267,8 @@ class LearnLandingViewModel extends BaseViewModel {
     final todayChallenge = await _dailyChallengeService.fetchTodayChallenge();
     final isCompleted = await _checkIfChallengeCompleted(todayChallenge.id);
 
-    _dailyChallenge = todayChallenge;
-    _isDailyChallengeCompleted = isCompleted;
+    setDailyChallenge = todayChallenge;
+    setIsDailyChallengeCompleted = isCompleted;
   }
 
   Future<bool> _checkIfChallengeCompleted(String challengeId) async {
