@@ -3,11 +3,7 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:freecodecamp/app/app.locator.dart';
 import 'package:freecodecamp/app/app.router.dart';
-import 'package:freecodecamp/models/learn/completed_challenge_model.dart';
 import 'package:freecodecamp/models/learn/daily_challenge_model.dart';
-import 'package:freecodecamp/models/main/user_model.dart';
-import 'package:freecodecamp/service/authentication/authentication_service.dart';
-import 'package:freecodecamp/service/learn/daily_challenge_service.dart';
 import 'package:freecodecamp/ui/theme/fcc_theme.dart';
 import 'package:freecodecamp/ui/views/learn/utils/challenge_utils.dart';
 import 'package:stacked_services/stacked_services.dart';
@@ -15,7 +11,14 @@ import 'package:timezone/data/latest.dart' as tzdata;
 import 'package:timezone/timezone.dart' as tz;
 
 class DailyChallengeCard extends StatefulWidget {
-  const DailyChallengeCard({super.key});
+  final DailyChallenge? dailyChallenge;
+  final bool isCompleted;
+
+  const DailyChallengeCard({
+    super.key,
+    this.dailyChallenge,
+    this.isCompleted = false,
+  });
 
   @override
   State<DailyChallengeCard> createState() => _DailyChallengeCardState();
@@ -24,16 +27,12 @@ class DailyChallengeCard extends StatefulWidget {
 class _DailyChallengeCardState extends State<DailyChallengeCard> {
   Duration _timeLeft = Duration.zero;
   Timer? _timer;
-  DailyChallenge? _challenge;
-  bool _loading = true;
-  String? _error;
-  bool _isCompleted = false;
-  final AuthenticationService _auth = locator<AuthenticationService>();
   final NavigationService _navigationService = locator<NavigationService>();
 
   void _navigateToDailyChallenge(BuildContext context) {
-    if (_challenge == null) return;
-    final challenge = _challenge!;
+    final challenge = widget.dailyChallenge;
+    if (challenge == null) return;
+
     final monthYear = formatMonthFromDate(challenge.date);
 
     final challengeOverview = DailyChallengeOverview(
@@ -64,47 +63,9 @@ class _DailyChallengeCardState extends State<DailyChallengeCard> {
     super.initState();
     tzdata.initializeTimeZones();
     _updateTimeLeft();
-    _fetchChallenge();
     _timer = Timer.periodic(Duration(seconds: 1), (_) {
       _updateTimeLeft();
     });
-  }
-
-  Future<void> _fetchChallenge() async {
-    setState(() {
-      _loading = true;
-      _error = null;
-    });
-    try {
-      final todayChallenge =
-          await DailyChallengeService().fetchTodayChallenge();
-
-      final isCompleted = await _checkIfChallengeCompleted(todayChallenge.id);
-
-      setState(() {
-        _challenge = todayChallenge;
-        _isCompleted = isCompleted;
-        _loading = false;
-      });
-    } catch (e) {
-      setState(() {
-        _error = 'Failed to load today\'s challenge';
-        _loading = false;
-      });
-    }
-  }
-
-  Future<bool> _checkIfChallengeCompleted(String challengeId) async {
-    FccUserModel? user = await _auth.userModel;
-    if (user != null) {
-      for (CompletedDailyChallenge challenge
-          in user.completedDailyCodingChallenges) {
-        if (challenge.id == challengeId) {
-          return true;
-        }
-      }
-    }
-    return false;
   }
 
   void _updateTimeLeft() {
@@ -202,7 +163,8 @@ class _DailyChallengeCardState extends State<DailyChallengeCard> {
   }
 
   Widget _buildNotCompletedContent() {
-    if (_challenge == null) {
+    final challenge = widget.dailyChallenge;
+    if (challenge == null) {
       return SizedBox();
     }
     return Column(
@@ -220,7 +182,7 @@ class _DailyChallengeCardState extends State<DailyChallengeCard> {
         SizedBox(height: 4),
         // Challenge title
         Text(
-          _challenge!.title,
+          challenge.title,
           style: TextStyle(
             fontSize: 20,
             fontWeight: FontWeight.bold,
@@ -273,22 +235,17 @@ class _DailyChallengeCardState extends State<DailyChallengeCard> {
 
   @override
   Widget build(BuildContext context) {
-    if (_loading) {
-      return Center(child: CircularProgressIndicator());
+    if (widget.dailyChallenge == null) {
+      return SizedBox.shrink();
     }
-    if (_error != null) {
-      return Center(child: Text(_error!));
-    }
-    if (_challenge == null) {
-      return Center(child: Text('No challenge available today'));
-    }
+
     return Column(
       children: [
         SizedBox(height: 16),
         GestureDetector(
           onTap: () {},
           child: Semantics(
-            label: _isCompleted
+            label: widget.isCompleted
                 ? 'Daily challenge completed. View past challenges.'
                 : 'Daily challenge card',
             container: true,
@@ -311,7 +268,7 @@ class _DailyChallengeCardState extends State<DailyChallengeCard> {
                 mainAxisSize: MainAxisSize.min,
                 crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
-                  _isCompleted
+                  widget.isCompleted
                       ? _buildCompletedContent()
                       : _buildNotCompletedContent(),
                 ],

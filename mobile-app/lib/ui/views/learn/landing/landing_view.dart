@@ -56,41 +56,41 @@ class LearnLandingView extends StatelessWidget {
                   const QuoteWidget(),
                   if (!model.isLoggedIn) loginButton(model, context),
                   const SizedBox(height: 16),
-                  DailyChallengeCard(),
-                  const SizedBox(height: 16),
-                  FutureBuilder<List<Widget>>(
-                    future: model.superBlockButtons,
-                    builder: (context, snapshot) {
-                      if (snapshot.hasData) {
-                        if (snapshot.data!.isEmpty) {
-                          return errorMessage(context);
-                        }
-
-                        if (snapshot.data is List<Widget>) {
-                          List<Widget> widgets = snapshot.data!;
-
-                          return ListView.builder(
-                            physics: const ClampingScrollPhysics(),
-                            shrinkWrap: true,
-                            itemCount: widgets.length,
-                            itemBuilder: (BuildContext context, int i) {
-                              return widgets[i];
-                            },
-                          );
-                        }
-                      }
-
-                      if (ConnectionState.waiting == snapshot.connectionState) {
-                        return const Center(
-                          child: CircularProgressIndicator(),
-                        );
-                      }
-
-                      return const Center(
-                        child: CircularProgressIndicator(),
-                      );
-                    },
+                  DailyChallengeCard(
+                    dailyChallenge: model.dailyChallenge,
+                    isCompleted: model.isDailyChallengeCompleted,
                   ),
+                  const SizedBox(height: 16),
+                  if (model.isBusy)
+                    const Center(
+                      child: CircularProgressIndicator(),
+                    )
+                  else
+                    FutureBuilder<List<Widget>>(
+                      future: model.superBlockButtons,
+                      builder: (context, snapshot) {
+                        if (snapshot.hasData) {
+                          if (snapshot.data!.isEmpty) {
+                            return errorMessage(context);
+                          }
+
+                          if (snapshot.data is List<Widget>) {
+                            List<Widget> widgets = snapshot.data!;
+
+                            return ListView.builder(
+                              physics: const ClampingScrollPhysics(),
+                              shrinkWrap: true,
+                              itemCount: widgets.length,
+                              itemBuilder: (BuildContext context, int i) {
+                                return widgets[i];
+                              },
+                            );
+                          }
+                        }
+
+                        return errorMessage(context);
+                      },
+                    ),
                 ],
               ),
             ),
