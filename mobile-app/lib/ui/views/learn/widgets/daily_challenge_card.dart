@@ -96,7 +96,7 @@ class _DailyChallengeCardState extends State<DailyChallengeCard> {
         Text(
           "Today's challenge completed!",
           style: TextStyle(
-            fontSize: 14,
+            fontSize: 16,
             fontWeight: FontWeight.w500,
             color: FccColors.gray80,
           ),
@@ -173,7 +173,7 @@ class _DailyChallengeCardState extends State<DailyChallengeCard> {
         Text(
           "Today's challenge",
           style: TextStyle(
-            fontSize: 14,
+            fontSize: 16,
             fontWeight: FontWeight.w500,
             color: FccColors.gray80,
           ),
