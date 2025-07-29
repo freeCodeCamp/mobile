@@ -457,7 +457,8 @@ class ChallengeView extends StatelessWidget {
       dropdownColor: FccColors.gray85,
       value: model.selectedDailyChallengeLanguage,
       items: DailyChallengeLanguage.values.map((lang) {
-        final isSelected = model.selectedDailyChallengeLanguage == lang;
+        final isSelected = model.selectedDailyChallengeLanguage == lang &&
+            !model.showTestsPanel;
         return DropdownMenuItem(
           value: lang,
           child: Text(
@@ -477,7 +478,8 @@ class ChallengeView extends StatelessWidget {
       underline: const SizedBox(),
       selectedItemBuilder: (context) {
         return DailyChallengeLanguage.values.map((lang) {
-          final isSelected = model.selectedDailyChallengeLanguage == lang;
+          final isSelected = model.selectedDailyChallengeLanguage == lang &&
+              !model.showTestsPanel;
           return Center(
             child: Text(
               lang == DailyChallengeLanguage.python ? 'Python' : 'JavaScript',
