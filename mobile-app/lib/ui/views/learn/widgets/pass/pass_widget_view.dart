@@ -73,7 +73,11 @@ class PassWidgetView extends StatelessWidget {
                       StreamBuilder<bool>(
                         stream: AuthenticationService.isLoggedInStream.stream,
                         builder: (context, snapshot) {
-                          if (AuthenticationService.staticIsloggedIn) {
+                          // Hide progress bar for daily challenges as the challenges technically aren't related.
+                          // Also, if the user access the challenge from the landing page,
+                          // we don't have the total challenges count to compute the progress.
+                          if (AuthenticationService.staticIsloggedIn &&
+                              !challengeModel.isDailyChallenge) {
                             return FutureBuilder(
                               future: model.numCompletedChallenges(
                                 challengeModel,
