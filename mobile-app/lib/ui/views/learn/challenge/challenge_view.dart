@@ -1,6 +1,6 @@
 import 'dart:developer';
-
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_html/flutter_html.dart';
 import 'package:flutter_inappwebview/flutter_inappwebview.dart';
 import 'package:freecodecamp/enums/panel_type.dart';
@@ -12,6 +12,8 @@ import 'package:freecodecamp/ui/views/learn/test_runner.dart';
 import 'package:freecodecamp/ui/views/learn/widgets/challenge_widgets/project_preview.dart';
 import 'package:freecodecamp/ui/views/learn/widgets/challenge_widgets/symbol_bar.dart';
 import 'package:freecodecamp/ui/views/learn/widgets/console/console_view.dart';
+import 'package:freecodecamp/ui/views/learn/widgets/dynamic_panel/panels/dynamic_panel.dart';
+import 'package:get/get.dart';
 import 'package:freecodecamp/ui/views/news/html_handler/html_handler.dart';
 import 'package:phone_ide/phone_ide.dart';
 import 'package:stacked/stacked.dart';
@@ -27,7 +29,6 @@ class ChallengeView extends StatelessWidget {
   final Challenge challenge;
   final Block block;
   final bool isProject;
-
   @override
   Widget build(BuildContext context) {
     return ViewModelBuilder<ChallengeViewModel>.reactive(
@@ -305,6 +306,34 @@ class ChallengeView extends StatelessWidget {
                 challenge,
                 block,
               ),
+              //copy link button
+              Container(
+                margin: const EdgeInsets.symmetric(horizontal: 8),
+                color: !model.showPreview
+                    ? Colors.white
+                    : const Color.fromRGBO(0x3B, 0x3B, 0x4F, 1),
+                child: IconButton(
+                  icon: Icon(
+                    Icons.share,
+                    size: 32,
+                    color: model.showPreview
+                        ? Colors.white
+                        : const Color.fromRGBO(0x3B, 0x3B, 0x4F, 1),
+                  ),
+                  onPressed: () {
+                    String curriculumsteplink =
+                        'https://www.freecodecamp.org/learn/${challenge.superBlock}/${challenge.block}/${challenge.dashedName}';
+                    // ignore: no_leading_underscores_for_local_identifiers
+                    //TextEditingController _controller = TextEditingController();
+                    //_controller.text = curriculumsteplink;
+                    Get.put(DataController());
+                    Get.find<DataController>()
+                        .copyToClipboard(curriculumsteplink);
+                  },
+                  splashColor: Colors.transparent,
+                  highlightColor: Colors.transparent,
+                ),
+              ),
               Expanded(
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.end,
@@ -348,6 +377,42 @@ class ChallengeView extends StatelessWidget {
     );
   }
 
+}
+
+class DataController extends GetxController {
+  var lastCopiedLink = ''.obs;
+
+  void copyToClipboard(String text) {
+    lastCopiedLink.value = text;
+    Clipboard.setData(ClipboardData(text: text));
+    Get.snackbar('Copied!', 'Text copied to clipboard.',
+        snackPosition: SnackPosition.BOTTOM);
+  }
+}
+
+class SymbolBar extends StatelessWidget {
+  const SymbolBar({
+    super.key,
+    required this.editor,
+    required this.model,
+  });
+
+  final Editor editor;
+  final ChallengeViewModel model;
+
+  static List<String> symbols = [
+    'Tab',
+    '<',
+    '/',
+    '>',
+    '\\',
+    '\'',
+    '"',
+    '=',
+    '{',
+    '}'
+  ];
+ main
   Widget _fileSelector({
     required ChallengeViewModel model,
     required Challenge challenge,
