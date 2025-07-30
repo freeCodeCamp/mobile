@@ -22,6 +22,19 @@ class DailyChallengeViewModel extends BaseViewModel {
 
   Future<void> init() async {
     await _fetchAndGroupChallenges();
+    _initAuthenticationListener();
+  }
+
+  void _initAuthenticationListener() {
+    // Listen to authentication state changes to refresh completion status
+    _auth.isLoggedIn.listen((isLoggedIn) async {
+      notifyListeners();
+    });
+
+    // Also listen to progress stream for user data updates
+    _auth.progress.stream.listen((_) {
+      notifyListeners();
+    });
   }
 
   void toggleBlock(String monthYear) {
