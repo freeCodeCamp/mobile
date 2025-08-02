@@ -75,6 +75,14 @@ class DrawerWidgetView extends StatelessWidget {
                       ),
                       buildDivider(),
                       DrawerTile(
+                        key: const Key('daily-challenges'),
+                        component: 'DAILY CHALLENGES',
+                        icon: Icons.extension,
+                        route: () {
+                          model.routeComponent('DAILY_CHALLENGES', context);
+                        },
+                      ),
+                      DrawerTile(
                         key: const Key('learn'),
                         component: 'LEARN',
                         icon: '',
