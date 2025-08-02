@@ -690,9 +690,7 @@ class ChallengeViewModel extends BaseViewModel {
     setTestConsoleMessages = ['<p>// running tests</p>'];
 
     // Get user code console messages
-    if (challenge!.challengeType == 1 ||
-        challenge!.challengeType == 26 ||
-        challenge!.challengeType == 28) {
+    if ([1, 26, 28].contains(challenge!.challengeType)) {
       final evalResult = await testController!.callAsyncJavaScript(
         functionBody: await builder.buildUserCode(
           challenge!,
