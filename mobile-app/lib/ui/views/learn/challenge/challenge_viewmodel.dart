@@ -315,6 +315,7 @@ class ChallengeViewModel extends BaseViewModel {
 
   Future<void> setSelectedDailyChallengeLanguage(
       DailyChallengeLanguage lang, DateTime challengeDate) async {
+    setShowTestsPanel = false;
     _selectedDailyChallengeLanguage = lang;
 
     SharedPreferences prefs = await SharedPreferences.getInstance();
