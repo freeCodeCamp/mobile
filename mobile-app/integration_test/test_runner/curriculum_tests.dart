@@ -29,6 +29,7 @@ void main() {
       // 'javascript-algorithms-and-data-structures',
       'the-odin-project',
       'full-stack-developer',
+      'dev-playground',
 
       // Python SBs
       // 'scientific-computing-with-python',
@@ -216,7 +217,7 @@ void main() {
           editorChallengeTypes.add(currChallenge['challengeType']);
 
           // Skip non-editor challenges
-          if (![0, 1, 5, 6, 14, 25, 26, 20, 23, 27, 29]
+          if (![0, 1, 5, 6, 14, 20, 23, 25, 26, 27, 28, 29]
               .contains(currChallenge['challengeType'])) {
             continue;
           }
