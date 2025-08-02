@@ -13,6 +13,8 @@ import 'package:stacked_services/stacked_services.dart';
 class DailyChallengeViewModel extends BaseViewModel {
   final NavigationService _navigationService = locator<NavigationService>();
   final AuthenticationService _auth = locator<AuthenticationService>();
+  final DailyChallengeService _dailyChallengeService =
+      locator<DailyChallengeService>();
 
   List<DailyChallengeBlock> _blocks = [];
   List<DailyChallengeBlock> get blocks => _blocks;
@@ -47,7 +49,7 @@ class DailyChallengeViewModel extends BaseViewModel {
 
     try {
       final List<DailyChallengeOverview> challenges =
-          await DailyChallengeService().fetchAllDailyChallenges();
+          await _dailyChallengeService.fetchAllDailyChallenges();
 
       if (challenges.isNotEmpty) {
         Map<String, List<DailyChallengeOverview>> challengesByMonth = {};
