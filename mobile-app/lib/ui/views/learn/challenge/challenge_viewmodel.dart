@@ -607,6 +607,7 @@ class ChallengeViewModel extends BaseViewModel {
     setShowPanel = false;
     setIsRunningTests = true;
     ChallengeTest? failedTest;
+    Map<dynamic, dynamic>? failedTestErr;
     ScriptBuilder builder = ScriptBuilder();
     List<String> failedTestsConsole = [];
 
@@ -657,17 +658,22 @@ class ChallengeViewModel extends BaseViewModel {
         },
       );
       if (testRes?.value['pass'] == null) {
-        log('TEST FAILED: ${test.instruction} - ${test.javaScript} - ${testRes?.value['error']}');
+        log('TEST FAILED: ${test.instruction} - ${test.javaScript} - ${testRes?.value['err']}');
         failedTest = failedTest ?? test;
+        failedTestErr = failedTestErr ?? testRes?.value['err'] as Map;
         failedTestsConsole.add(
-          '<li>${test.instruction}</li>',
+          '<li>${test.instruction.replaceAll('--fcc-expected--', (testRes?.value['err']['expected'] ?? '').toString()).replaceAll('--fcc-actual--', (testRes?.value['err']['actual'] ?? '').toString())}</li>',
         );
       }
     }
 
     if (failedTest != null) {
       setPanelType = PanelType.hint;
-      setHint = failedTest.instruction;
+      setHint = failedTest.instruction
+          .replaceAll(
+              '--fcc-expected--', (failedTestErr?['expected'] ?? '').toString())
+          .replaceAll(
+              '--fcc-actual--', (failedTestErr?['actual'] ?? '').toString());
       _scaffoldKey.currentState?.openEndDrawer();
     } else {
       setPanelType = PanelType.pass;
