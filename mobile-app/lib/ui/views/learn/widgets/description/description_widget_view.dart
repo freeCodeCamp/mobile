@@ -45,11 +45,13 @@ class DescriptionView extends StatelessWidget {
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
                               Text(
-                                context.t.instructions,
+                                title,
                                 style: const TextStyle(
                                   fontSize: 24,
                                   fontWeight: FontWeight.bold,
                                 ),
+                                overflow: TextOverflow.ellipsis,
+                                maxLines: 2,
                               ),
                               if (isMultiStepChallenge)
                                 Text(
