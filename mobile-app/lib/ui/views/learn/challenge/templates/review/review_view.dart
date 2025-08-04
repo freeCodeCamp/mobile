@@ -40,8 +40,8 @@ class ReviewView extends StatelessWidget {
                   title: challenge.title,
                   child: Column(
                     children: [
-                      ...model.parsedInstructions,
                       ...model.parsedDescription,
+                      ...model.parsedInstructions,
                     ],
                   ),
                 ),
