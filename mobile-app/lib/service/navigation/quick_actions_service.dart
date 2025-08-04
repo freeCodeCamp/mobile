@@ -20,6 +20,10 @@ class QuickActionsService {
   Future<void> init() async {
     await quickActions.setShortcutItems([
       const ShortcutItem(
+        type: 'action_daily_challenges',
+        localizedTitle: 'Daily Challenges',
+      ),
+      const ShortcutItem(
         type: 'action_learn',
         localizedTitle: 'Learn',
       ),
@@ -51,6 +55,9 @@ class QuickActionsService {
           break;
         case 'action_podcasts':
           _navigationService.replaceWith(Routes.podcastListView);
+          break;
+        case 'action_daily_challenges':
+          _navigationService.replaceWith(Routes.dailyChallengeView);
           break;
         default:
       }

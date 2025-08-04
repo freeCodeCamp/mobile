@@ -23,3 +23,52 @@ String handleChallengeTitle(Challenge challenge, Block block) {
     return 'Step $challengeStepNumber of ${block.challenges.length}';
   }
 }
+
+// Takes a DateTime and returns a formatted string like "January 2025"
+String formatMonthFromDate(DateTime date) {
+  const monthNames = [
+    'January',
+    'February',
+    'March',
+    'April',
+    'May',
+    'June',
+    'July',
+    'August',
+    'September',
+    'October',
+    'November',
+    'December'
+  ];
+  return '${monthNames[date.month - 1]} ${date.year}';
+}
+
+// Parses a month-year string like "January 2025" into a DateTime object
+DateTime parseMonthYear(String monthYear) {
+  List<String> parts = monthYear.split(' ');
+  String monthName = parts[0];
+  int year = int.parse(parts[1]);
+
+  const monthNames = [
+    'January',
+    'February',
+    'March',
+    'April',
+    'May',
+    'June',
+    'July',
+    'August',
+    'September',
+    'October',
+    'November',
+    'December'
+  ];
+
+  int month = monthNames.indexOf(monthName) + 1;
+  return DateTime(year, month, 1);
+}
+
+// Formats a DateTime as YYYY-MM-DD
+String formatChallengeDate(DateTime date) {
+  return '${date.year.toString().padLeft(4, '0')}-${date.month.toString().padLeft(2, '0')}-${date.day.toString().padLeft(2, '0')}';
+}

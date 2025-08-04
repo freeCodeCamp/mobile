@@ -86,4 +86,32 @@ void main() {
       expect(handleChallengeTitle(challenge2, block), 'Step 2 of 2');
     });
   });
+
+  group('formatMonthFromDate', () {
+    test('should format date correctly', () {
+      final date = DateTime(2025, 1, 15);
+      expect(formatMonthFromDate(date), 'January 2025');
+    });
+  });
+
+  group('parseMonthYear', () {
+    test('should parse date correctly', () {
+      final result = parseMonthYear('January 2025');
+      expect(result.year, 2025);
+      expect(result.month, 1);
+      expect(result.day, 1);
+    });
+  });
+
+  group('formatChallengeDate', () {
+    test('formats single-digit month and day with leading zeros', () {
+      final date = DateTime(2025, 3, 7);
+      expect(formatChallengeDate(date), '2025-03-07');
+    });
+
+    test('formats double-digit month and day correctly', () {
+      final date = DateTime(2025, 12, 31);
+      expect(formatChallengeDate(date), '2025-12-31');
+    });
+  });
 }

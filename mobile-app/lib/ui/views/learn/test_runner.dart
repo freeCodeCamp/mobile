@@ -56,6 +56,7 @@ return testRes;
       // JS-only challenges
       case 1:
       case 26:
+      case 28:
         // TODO: Move to learn file service
         if (babelController == null) {
           throw Exception('Babel controller is required to transpile JS code.');
@@ -109,6 +110,7 @@ return testRes;
         return 'dom';
       case 1:
       case 26:
+      case 28:
         return 'javascript';
       case 20:
       case 23:
@@ -125,6 +127,7 @@ return testRes;
       // JS-only challenges
       case 1:
       case 26:
+      case 28:
         return Ext.js;
       case 20:
       case 23:
