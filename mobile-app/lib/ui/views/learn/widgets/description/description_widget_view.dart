@@ -39,32 +39,32 @@ class DescriptionView extends StatelessWidget {
                 ? [
                     Row(
                       children: [
-                        Padding(
-                          padding: const EdgeInsets.only(left: 12),
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Text(
-                                title,
-                                style: const TextStyle(
-                                  fontSize: 24,
-                                  fontWeight: FontWeight.bold,
-                                ),
-                                overflow: TextOverflow.ellipsis,
-                                maxLines: 2,
-                              ),
-                              if (isMultiStepChallenge)
+                        Expanded(
+                          child: Padding(
+                            padding: const EdgeInsets.only(left: 12, right: 6),
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
                                 Text(
-                                  context.t.step_count(
-                                    splitTitle[1],
-                                    maxChallenges.toString(),
-                                  ),
+                                  title,
                                   style: const TextStyle(
-                                    fontSize: 14,
-                                    color: Colors.white70,
+                                    fontSize: 24,
+                                    fontWeight: FontWeight.bold,
                                   ),
-                                )
-                            ],
+                                ),
+                                if (isMultiStepChallenge)
+                                  Text(
+                                    context.t.step_count(
+                                      splitTitle[1],
+                                      maxChallenges.toString(),
+                                    ),
+                                    style: const TextStyle(
+                                      fontSize: 14,
+                                      color: Colors.white70,
+                                    ),
+                                  )
+                              ],
+                            ),
                           ),
                         ),
                       ],
