@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:collection/collection.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_html/flutter_html.dart';
 import 'package:flutter_html_table/flutter_html_table.dart';
 import 'package:freecodecamp/ui/theme/fcc_theme.dart';
@@ -236,6 +237,49 @@ class HTMLParser {
             }
 
             return Container();
+          },
+        ),
+        TagExtension(
+          tagsToExtend: {'code'},
+          builder: (child) {
+            String? parsed = parser.parseFragment(child.innerHtml).text ?? '';
+
+            return InkWell(
+              onTap: () {
+                Clipboard.setData(ClipboardData(text: parsed));
+                ScaffoldMessenger.of(context).showSnackBar(
+                  SnackBar(
+                    content: Text.rich(
+                      TextSpan(
+                        children: [
+                          TextSpan(
+                            text: parsed,
+                            style: const TextStyle(
+                              fontWeight: FontWeight.bold,
+                              fontSize: 20,
+                            ),
+                          ),
+                          const TextSpan(
+                            text: ' copied to clipboard!',
+                            style: TextStyle(fontSize: 20),
+                          ),
+                        ],
+                      ),
+                    ),
+                    duration: const Duration(seconds: 1),
+                  ),
+                );
+              },
+              child: Text(
+                parsed,
+                style: const TextStyle(
+                  fontFamily: 'Hack',
+                  color: Colors.white,
+                  fontSize: 18,
+                  backgroundColor: FccColors.gray75,
+                ),
+              ),
+            );
           },
         ),
         TagExtension(
