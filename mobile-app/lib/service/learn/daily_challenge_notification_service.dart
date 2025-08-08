@@ -2,6 +2,12 @@ import 'dart:io';
 import 'dart:math';
 
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
+import 'package:freecodecamp/app/app.locator.dart';
+import 'package:freecodecamp/models/learn/completed_challenge_model.dart';
+import 'package:freecodecamp/models/main/user_model.dart';
+import 'package:freecodecamp/service/authentication/authentication_service.dart';
+import 'package:freecodecamp/service/learn/daily_challenge_service.dart';
+import 'package:freecodecamp/ui/views/learn/utils/challenge_utils.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:timezone/data/latest.dart' as tz;
 import 'package:timezone/timezone.dart' as tz;
@@ -13,7 +19,15 @@ class DailyChallengeNotificationService {
       FlutterLocalNotificationsPlugin();
   Random random = Random();
 
+  // Service dependencies
+  final AuthenticationService _authenticationService =
+      locator<AuthenticationService>();
+  final DailyChallengeService _dailyChallengeService =
+      locator<DailyChallengeService>();
+
   static const String _channelId = 'daily_challenge_channel';
+
+  static const int _maxDaysToSchedule = 7;
 
   factory DailyChallengeNotificationService() {
     return _instance;
@@ -70,7 +84,7 @@ class DailyChallengeNotificationService {
   void _onNotificationResponse(NotificationResponse response) {
     if (response.payload == 'daily_challenge_notification') {
       // Schedule the next notification
-      rescheduleNextNotification();
+      scheduleDailyChallengeNotification();
     }
   }
 
@@ -122,40 +136,69 @@ class DailyChallengeNotificationService {
     final centralLocation = tz.getLocation('America/Chicago');
     final now = DateTime.now();
 
-    // Find the next time when both conditions are met:
-    // 1. After US Central midnight (new challenge available)
-    // 2. Between 9 AM and 9 PM local time
+    // Schedule notifications for the next 7 days.
+    // If the app isn't opened for over 7 days, notifications will stop until the app is opened again
+    // and the service reschedules future notifications.
+    for (int i = 0; i < _maxDaysToSchedule; i++) {
+      final targetDate = now.add(Duration(days: i));
 
-    DateTime scheduleTime =
-        _findNextValidNotificationTime(now, centralLocation);
+      // Skip if challenge for this date is already completed
+      if (await isDailyChallengeCompletedForDate(targetDate)) {
+        continue;
+      }
 
-    await _flutterLocalNotificationsPlugin.zonedSchedule(
-      0,
-      'New Daily Challenge Available! 🧩',
-      'A fresh coding challenge is waiting for you. Ready to solve it?',
-      tz.TZDateTime.from(scheduleTime, tz.local),
-      const NotificationDetails(
-        android: AndroidNotificationDetails(
-          _channelId,
-          'Daily Challenge Notifications',
-          channelDescription: 'Notifications for new daily coding challenges',
-          priority: Priority.high,
-          importance: Importance.max,
-        ),
-        iOS: DarwinNotificationDetails(
-          threadIdentifier: 'daily-challenge-notification',
-          categoryIdentifier: 'DAILY_CHALLENGE',
-        ),
-      ),
-      androidScheduleMode: AndroidScheduleMode.exactAllowWhileIdle,
-      payload: 'daily_challenge_notification',
-    );
+      // Find the next valid notification time for this date
+      DateTime scheduleTime =
+          _findNextValidNotificationTime(targetDate, centralLocation);
+
+      // Only schedule if the time is in the future
+      if (scheduleTime.isAfter(now)) {
+        await _flutterLocalNotificationsPlugin.zonedSchedule(
+          i, // Use day offset as unique notification ID
+          'New Daily Challenge Available! 🧩',
+          'A fresh coding challenge is waiting for you. Ready to solve it?',
+          tz.TZDateTime.from(scheduleTime, tz.local),
+          const NotificationDetails(
+            android: AndroidNotificationDetails(
+              _channelId,
+              'Daily Challenge Notifications',
+              channelDescription:
+                  'Notifications for new daily coding challenges',
+              priority: Priority.high,
+              importance: Importance.max,
+            ),
+            iOS: DarwinNotificationDetails(
+              threadIdentifier: 'daily-challenge-notification',
+              categoryIdentifier: 'DAILY_CHALLENGE',
+            ),
+          ),
+          androidScheduleMode: AndroidScheduleMode.exactAllowWhileIdle,
+          payload: 'daily_challenge_notification',
+        );
+      }
+    }
   }
 
-  Future<void> rescheduleNextNotification() async {
-    // This should be called after a notification is handled
-    // to schedule the next one
-    await scheduleDailyChallengeNotification();
+  Future<bool> isDailyChallengeCompletedForDate(DateTime date) async {
+    try {
+      final challenge = await _dailyChallengeService
+          .fetchChallengeByDate(formatChallengeDate(date));
+
+      final FccUserModel? user = await _authenticationService.userModel;
+      if (user != null) {
+        for (CompletedDailyChallenge completedChallenge
+            in user.completedDailyCodingChallenges) {
+          if (completedChallenge.id == challenge.id) {
+            return true;
+          }
+        }
+      }
+      return false;
+    } catch (e) {
+      // If we can't fetch the challenge or user data, assume it's not completed
+      // to err on the side of sending notifications
+      return false;
+    }
   }
 
   DateTime _findNextValidNotificationTime(
@@ -177,6 +220,14 @@ class DailyChallengeNotificationService {
     }
 
     return candidate;
+  }
+
+  /// Call this method when a daily challenge is completed to refresh notifications
+  Future<void> onTodayChallengeCompleted() async {
+    if (await areNotificationsEnabled()) {
+      // Re-schedule notifications to skip the newly completed challenge
+      await scheduleDailyChallengeNotification();
+    }
   }
 
   DailyChallengeNotificationService._internal();
