@@ -2,22 +2,33 @@ import 'dart:io';
 import 'dart:math';
 
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
+import 'package:freecodecamp/app/app.locator.dart';
+import 'package:freecodecamp/models/learn/completed_challenge_model.dart';
+import 'package:freecodecamp/models/main/user_model.dart';
+import 'package:freecodecamp/service/authentication/authentication_service.dart';
+import 'package:freecodecamp/service/learn/daily_challenge_service.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:timezone/data/latest.dart' as tz;
 import 'package:timezone/timezone.dart' as tz;
 
 class DailyChallengeNotificationService {
-  static final DailyChallengeNotificationService _instance =
-      DailyChallengeNotificationService._internal();
-  final FlutterLocalNotificationsPlugin _flutterLocalNotificationsPlugin =
-      FlutterLocalNotificationsPlugin();
+  final FlutterLocalNotificationsPlugin _flutterLocalNotificationsPlugin;
+  final DailyChallengeService _dailyChallengeService;
+  final AuthenticationService _authenticationService;
   Random random = Random();
 
   static const String _channelId = 'daily_challenge_channel';
 
-  factory DailyChallengeNotificationService() {
-    return _instance;
-  }
+  DailyChallengeNotificationService({
+    FlutterLocalNotificationsPlugin? flutterLocalNotificationsPlugin,
+    DailyChallengeService? dailyChallengeService,
+    AuthenticationService? authenticationService,
+  })  : _flutterLocalNotificationsPlugin = flutterLocalNotificationsPlugin ??
+            FlutterLocalNotificationsPlugin(),
+        _dailyChallengeService =
+            dailyChallengeService ?? locator<DailyChallengeService>(),
+        _authenticationService =
+            authenticationService ?? locator<AuthenticationService>();
 
   Future<void> init() async {
     tz.initializeTimeZones();
@@ -70,7 +81,7 @@ class DailyChallengeNotificationService {
   void _onNotificationResponse(NotificationResponse response) {
     if (response.payload == 'daily_challenge_notification') {
       // Schedule the next notification
-      rescheduleNextNotification();
+      scheduleDailyChallengeNotification();
     }
   }
 
@@ -118,66 +129,161 @@ class DailyChallengeNotificationService {
     // Cancel any previous scheduled notifications
     await _flutterLocalNotificationsPlugin.cancelAll();
 
-    // Get US Central timezone
-    final centralLocation = tz.getLocation('America/Chicago');
+    final prefs = await SharedPreferences.getInstance();
     final now = DateTime.now();
 
-    // Find the next time when both conditions are met:
-    // 1. After US Central midnight (new challenge available)
-    // 2. Between 9 AM and 9 PM local time
+    // Check if notification window has expired
+    if (await hasNotificationWindowExpired(prefs, now)) {
+      return;
+    }
 
-    DateTime scheduleTime =
-        _findNextValidNotificationTime(now, centralLocation);
+    // Determine when to start scheduling notifications
+    final startSchedulingFrom = await determineSchedulingStartDate(prefs, now);
+    await prefs.setString('notification_schedule_start_date',
+        startSchedulingFrom.toIso8601String());
 
-    await _flutterLocalNotificationsPlugin.zonedSchedule(
-      0,
-      'New Daily Challenge Available! 🧩',
-      'A fresh coding challenge is waiting for you. Ready to solve it?',
-      tz.TZDateTime.from(scheduleTime, tz.local),
-      const NotificationDetails(
-        android: AndroidNotificationDetails(
-          _channelId,
-          'Daily Challenge Notifications',
-          channelDescription: 'Notifications for new daily coding challenges',
-          priority: Priority.high,
-          importance: Importance.max,
-        ),
-        iOS: DarwinNotificationDetails(
-          threadIdentifier: 'daily-challenge-notification',
-          categoryIdentifier: 'DAILY_CHALLENGE',
-        ),
-      ),
-      androidScheduleMode: AndroidScheduleMode.exactAllowWhileIdle,
-      payload: 'daily_challenge_notification',
-    );
+    // Schedule notifications for the next 7 days
+    await scheduleNotificationsForPeriod(startSchedulingFrom, now);
   }
 
-  Future<void> rescheduleNextNotification() async {
-    // This should be called after a notification is handled
-    // to schedule the next one
-    await scheduleDailyChallengeNotification();
+  Future<bool> hasNotificationWindowExpired(
+      SharedPreferences prefs, DateTime now) async {
+    const maxDays = 7;
+    final scheduleStartDateStr =
+        prefs.getString('notification_schedule_start_date');
+
+    if (scheduleStartDateStr != null) {
+      final scheduleStartDate = DateTime.parse(scheduleStartDateStr);
+      final daysSinceStart = now.difference(scheduleStartDate).inDays;
+
+      // If more than 7 days have passed and user hasn't opened the app,
+      // we assume the user has stopped engaging and stop sending them notifications.
+      return daysSinceStart >= maxDays;
+    }
+
+    return false;
   }
 
-  DateTime _findNextValidNotificationTime(
-      DateTime now, tz.Location centralLocation) {
+  Future<DateTime> determineSchedulingStartDate(
+      SharedPreferences prefs, DateTime now) async {
+    final scheduleStartDateStr =
+        prefs.getString('notification_schedule_start_date');
+
+    final todayChallengeCompleted = await isTodayChallengeCompleted();
+    DateTime startSchedulingFrom;
+
+    if (todayChallengeCompleted) {
+      // If today's challenge is completed, start from tomorrow
+      final tomorrow = now.add(const Duration(days: 1));
+
+      startSchedulingFrom =
+          DateTime(tomorrow.year, tomorrow.month, tomorrow.day);
+    } else {
+      // If not completed, use cache if available, else today
+      if (scheduleStartDateStr != null) {
+        startSchedulingFrom = DateTime.parse(scheduleStartDateStr);
+      } else {
+        startSchedulingFrom = DateTime(now.year, now.month, now.day);
+      }
+    }
+
+    return startSchedulingFrom;
+  }
+
+  Future<bool> isTodayChallengeCompleted() async {
+    try {
+      final todayChallenge = await _dailyChallengeService.fetchTodayChallenge();
+      return await checkIfChallengeCompleted(todayChallenge.id);
+    } catch (e) {
+      // If we can't fetch today's challenge, assume it's not completed
+      return false;
+    }
+  }
+
+  Future<void> scheduleNotificationsForPeriod(
+      DateTime startSchedulingFrom, DateTime now) async {
+    final centralLocation = tz.getLocation('America/Chicago');
+    final endDate = startSchedulingFrom.add(const Duration(days: 7));
+    int notificationId = 0;
+
+    for (DateTime date = startSchedulingFrom;
+        date.isBefore(endDate);
+        date = date.add(const Duration(days: 1))) {
+      final scheduleTime = findNextValidNotificationTime(date, centralLocation);
+
+      // Only schedule if the notification time is in the future
+      if (scheduleTime.isAfter(now)) {
+        await _flutterLocalNotificationsPlugin.zonedSchedule(
+          notificationId++,
+          'New Daily Challenge Available! 🧩',
+          'A fresh coding challenge is waiting for you. Ready to solve it?',
+          tz.TZDateTime.from(scheduleTime, tz.local),
+          const NotificationDetails(
+            android: AndroidNotificationDetails(
+              _channelId,
+              'Daily Challenge Notifications',
+              channelDescription:
+                  'Notifications for new daily coding challenges',
+              priority: Priority.high,
+              importance: Importance.max,
+            ),
+            iOS: DarwinNotificationDetails(
+              threadIdentifier: 'daily-challenge-notification',
+              categoryIdentifier: 'DAILY_CHALLENGE',
+            ),
+          ),
+          androidScheduleMode: AndroidScheduleMode.exactAllowWhileIdle,
+          payload: 'daily_challenge_notification',
+        );
+      }
+    }
+  }
+
+  DateTime findNextValidNotificationTime(
+      DateTime scheduleDate, tz.Location centralLocation) {
+    // For a given date, find the best notification time:
+    // Between 9 AM and 9 PM local time, but after US Central midnight (when new challenge is available)
+
+    final now = DateTime.now();
     DateTime candidate;
 
-    // Start with the next valid notification window (9 AM today or tomorrow)
-    if (now.hour < 9) {
-      // Before 9 AM today, try 9 AM today
-      candidate = DateTime(now.year, now.month, now.day, 9);
-    } else if (now.hour >= 21) {
-      // After 9 PM today, schedule for 9 AM tomorrow
-      candidate = DateTime(now.year, now.month, now.day, 9)
-          .add(const Duration(days: 1));
-    } else {
-      // Between 9 AM and 9 PM, schedule for 9 AM tomorrow
-      candidate = DateTime(now.year, now.month, now.day, 9)
-          .add(const Duration(days: 1));
+    // Start with 9 AM on the given schedule date
+    candidate =
+        DateTime(scheduleDate.year, scheduleDate.month, scheduleDate.day, 9);
+
+    if (scheduleDate.day == now.day &&
+        scheduleDate.month == now.month &&
+        scheduleDate.year == now.year) {
+      if (now.hour < 9) {
+        // Before 9 AM today, schedule for 9 AM today
+        candidate = DateTime(now.year, now.month, now.day, 9);
+      } else if (now.hour >= 21) {
+        // After 9 PM today, schedule for 9 AM tomorrow
+        candidate = DateTime(now.year, now.month, now.day + 1, 9);
+      } else {
+        // Between 9 AM and 9 PM, schedule for 9 AM tomorrow
+        candidate = DateTime(now.year, now.month, now.day + 1, 9);
+      }
     }
 
     return candidate;
   }
 
-  DailyChallengeNotificationService._internal();
+  Future<bool> checkIfChallengeCompleted(String challengeId) async {
+    final userModelFuture = _authenticationService.userModel;
+    if (userModelFuture != null) {
+      try {
+        FccUserModel user = await userModelFuture;
+        for (CompletedDailyChallenge challenge
+            in user.completedDailyCodingChallenges) {
+          if (challenge.id == challengeId) {
+            return true;
+          }
+        }
+      } catch (e) {
+        return false;
+      }
+    }
+    return false;
+  }
 }

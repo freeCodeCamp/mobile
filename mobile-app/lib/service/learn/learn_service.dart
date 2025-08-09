@@ -10,6 +10,7 @@ import 'package:freecodecamp/models/learn/curriculum_model.dart';
 import 'package:freecodecamp/models/learn/daily_challenge_model.dart';
 import 'package:freecodecamp/service/authentication/authentication_service.dart';
 import 'package:freecodecamp/service/dio_service.dart';
+import 'package:freecodecamp/service/learn/daily_challenge_notification_service.dart';
 import 'package:freecodecamp/service/learn/daily_challenge_service.dart';
 import 'package:freecodecamp/service/learn/learn_offline_service.dart';
 import 'package:freecodecamp/utils/helpers.dart';
@@ -36,6 +37,8 @@ class LearnService {
   final DialogService _dialogService = locator<DialogService>();
   final DailyChallengeService _dailyChallengeService =
       locator<DailyChallengeService>();
+  final DailyChallengeNotificationService _notificationService =
+      locator<DailyChallengeNotificationService>();
 
   factory LearnService() {
     return _learnService;
@@ -145,13 +148,26 @@ class LearnService {
   }
 
   void passDailyChallenge(Challenge challenge) async {
-    await _dailyChallengeService.postChallengeCompleted(
-        challengeId: challenge.id,
-        language: challenge.challengeType == 28
-            ? DailyChallengeLanguage.javascript
-            : DailyChallengeLanguage.python);
+    if (AuthenticationService.staticIsloggedIn) {
+      await _dailyChallengeService.postChallengeCompleted(
+          challengeId: challenge.id,
+          language: challenge.challengeType == 28
+              ? DailyChallengeLanguage.javascript
+              : DailyChallengeLanguage.python);
 
-    await _authenticationService.fetchUser();
+      await _authenticationService.fetchUser();
+    }
+
+    // Refresh notifications if today's challenge was completed
+    try {
+      final todayChallenge = await _dailyChallengeService.fetchTodayChallenge();
+
+      if (challenge.id == todayChallenge.id) {
+        await _notificationService.scheduleDailyChallengeNotification();
+      }
+    } catch (e) {
+      log('Failed to check today\'s challenge for notification update: $e');
+    }
   }
 
   void goToNextChallenge(
@@ -160,14 +176,14 @@ class LearnService {
     Block block, {
     String solutionLink = '',
   }) async {
+    if (challenge.challengeType == 28 || challenge.challengeType == 29) {
+      passDailyChallenge(challenge);
+      _navigationService.back();
+      return;
+    }
+
     if (AuthenticationService.staticIsloggedIn) {
-      if (challenge.challengeType == 28 || challenge.challengeType == 29) {
-        passDailyChallenge(challenge);
-        _navigationService.back();
-        return;
-      } else {
-        passChallenge(challenge, solutionLink);
-      }
+      passChallenge(challenge, solutionLink);
     }
 
     var challengeIndex = block.challengeTiles.indexWhere(
