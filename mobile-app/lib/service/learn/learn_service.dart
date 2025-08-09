@@ -148,15 +148,13 @@ class LearnService {
   }
 
   void passDailyChallenge(Challenge challenge) async {
-    if (AuthenticationService.staticIsloggedIn) {
-      await _dailyChallengeService.postChallengeCompleted(
-          challengeId: challenge.id,
-          language: challenge.challengeType == 28
-              ? DailyChallengeLanguage.javascript
-              : DailyChallengeLanguage.python);
+    await _dailyChallengeService.postChallengeCompleted(
+        challengeId: challenge.id,
+        language: challenge.challengeType == 28
+            ? DailyChallengeLanguage.javascript
+            : DailyChallengeLanguage.python);
 
-      await _authenticationService.fetchUser();
-    }
+    await _authenticationService.fetchUser();
 
     // Refresh notifications if today's challenge was completed
     try {
@@ -176,14 +174,14 @@ class LearnService {
     Block block, {
     String solutionLink = '',
   }) async {
-    if (challenge.challengeType == 28 || challenge.challengeType == 29) {
-      passDailyChallenge(challenge);
-      _navigationService.back();
-      return;
-    }
-
     if (AuthenticationService.staticIsloggedIn) {
-      passChallenge(challenge, solutionLink);
+      if (challenge.challengeType == 28 || challenge.challengeType == 29) {
+        passDailyChallenge(challenge);
+        _navigationService.back();
+        return;
+      } else {
+        passChallenge(challenge, solutionLink);
+      }
     }
 
     var challengeIndex = block.challengeTiles.indexWhere(
