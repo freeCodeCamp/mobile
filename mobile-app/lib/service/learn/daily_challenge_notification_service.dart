@@ -18,6 +18,7 @@ class DailyChallengeNotificationService {
   Random random = Random();
 
   static const String _channelId = 'daily_challenge_channel';
+  static const int _maxDays = 7;
 
   DailyChallengeNotificationService({
     FlutterLocalNotificationsPlugin? flutterLocalNotificationsPlugin,
@@ -120,6 +121,10 @@ class DailyChallengeNotificationService {
     return true;
   }
 
+  // This method orchestrates the scheduling of daily challenge notifications for the user.
+  // It ensures notifications are only scheduled if both user and system settings allow, and the notification window is still valid.
+  // The method determines the appropriate start date based on user progress and cached data, updates the cache,
+  // and schedules notifications for the next 7 days. If any prerequisite is not met, it exits early without scheduling.
   Future<void> scheduleDailyChallengeNotification() async {
     if (!(await areNotificationsEnabled()) ||
         !(await areSystemNotificationsEnabled())) {
@@ -148,7 +153,6 @@ class DailyChallengeNotificationService {
 
   Future<bool> hasNotificationWindowExpired(
       SharedPreferences prefs, DateTime now) async {
-    const maxDays = 7;
     final scheduleStartDateStr =
         prefs.getString('notification_schedule_start_date');
 
@@ -158,12 +162,15 @@ class DailyChallengeNotificationService {
 
       // If more than 7 days have passed and user hasn't opened the app,
       // we assume the user has stopped engaging and stop sending them notifications.
-      return daysSinceStart >= maxDays;
+      return daysSinceStart >= _maxDays;
     }
 
     return false;
   }
 
+  // This method determines the correct start date for scheduling notifications.
+  // If the user has completed today's challenge, returns tomorrow's date.
+  // Otherwise, returns the cached start date if available, or today if not.
   Future<DateTime> determineSchedulingStartDate(
       SharedPreferences prefs, DateTime now) async {
     final scheduleStartDateStr =
@@ -215,6 +222,9 @@ class DailyChallengeNotificationService {
     }
   }
 
+  // This method schedules daily notifications for up to 7 days starting from the given date.
+  // For each day in the period, this method calculates the appropriate notification time and schedules a notification if the time is in the future.
+  // Notifications are set for 9 AM local time, and only future notifications are scheduled.
   Future<void> scheduleNotificationsForPeriod(
       DateTime startSchedulingFrom, DateTime now) async {
     final centralLocation = tz.getLocation('America/Chicago');
@@ -257,10 +267,8 @@ class DailyChallengeNotificationService {
   DateTime findNextValidNotificationTime(
       DateTime scheduleDate, tz.Location centralLocation,
       {DateTime? now}) {
-    // For a given date, find the best notification time:
-    // Between 9 AM and 9 PM local time, but after US Central midnight (when new challenge is available)
-
     final current = now ?? DateTime.now();
+
     // Default to 9 AM on the scheduleDate. This is used if scheduleDate is not today
     DateTime candidate =
         DateTime(scheduleDate.year, scheduleDate.month, scheduleDate.day, 9);
