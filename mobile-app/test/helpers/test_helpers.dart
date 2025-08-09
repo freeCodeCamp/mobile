@@ -1,8 +1,8 @@
+import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:freecodecamp/app/app.locator.dart';
 import 'package:freecodecamp/service/authentication/authentication_service.dart';
 import 'package:freecodecamp/service/learn/daily_challenge_service.dart';
 import 'package:freecodecamp/service/news/bookmark_service.dart';
-import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:mockito/annotations.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:stacked_services/stacked_services.dart';
