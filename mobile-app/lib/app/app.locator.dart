@@ -18,6 +18,7 @@ import '../service/developer_service.dart';
 import '../service/dio_service.dart';
 import '../service/firebase/analytics_service.dart';
 import '../service/firebase/remote_config_service.dart';
+import '../service/learn/daily_challenge_notification_service.dart';
 import '../service/learn/daily_challenge_service.dart';
 import '../service/learn/learn_file_service.dart';
 import '../service/learn/learn_offline_service.dart';
@@ -47,6 +48,7 @@ Future<void> setupLocator({
   locator.registerLazySingleton(() => DatabaseMigrationService());
   locator.registerLazySingleton(() => PodcastsDatabaseService());
   locator.registerLazySingleton(() => NotificationService());
+  locator.registerLazySingleton(() => DailyChallengeNotificationService());
   locator.registerLazySingleton(() => DeveloperService());
   locator.registerLazySingleton(() => AuthenticationService());
   locator.registerLazySingleton(() => AppAudioService());
