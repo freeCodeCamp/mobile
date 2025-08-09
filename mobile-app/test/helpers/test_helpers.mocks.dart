@@ -9,6 +9,17 @@ import 'dart:ui' as _i11;
 import 'package:auth0_flutter/auth0_flutter.dart' as _i4;
 import 'package:dio/dio.dart' as _i13;
 import 'package:flutter/material.dart' as _i10;
+import 'package:flutter_local_notifications/src/flutter_local_notifications_plugin.dart'
+    as _i16;
+import 'package:flutter_local_notifications/src/initialization_settings.dart'
+    as _i17;
+import 'package:flutter_local_notifications/src/notification_details.dart'
+    as _i19;
+import 'package:flutter_local_notifications/src/platform_specifics/android/schedule_mode.dart'
+    as _i21;
+import 'package:flutter_local_notifications/src/types.dart' as _i22;
+import 'package:flutter_local_notifications_platform_interface/flutter_local_notifications_platform_interface.dart'
+    as _i18;
 import 'package:flutter_secure_storage/flutter_secure_storage.dart' as _i3;
 import 'package:freecodecamp/models/learn/challenge_model.dart' as _i8;
 import 'package:freecodecamp/models/learn/curriculum_model.dart' as _i15;
@@ -20,7 +31,9 @@ import 'package:freecodecamp/service/learn/daily_challenge_service.dart'
     as _i14;
 import 'package:mockito/mockito.dart' as _i1;
 import 'package:mockito/src/dummies.dart' as _i9;
+import 'package:shared_preferences/shared_preferences.dart' as _i23;
 import 'package:stacked_services/stacked_services.dart' as _i2;
+import 'package:timezone/timezone.dart' as _i20;
 
 // ignore_for_file: type=lint
 // ignore_for_file: avoid_redundant_argument_values
@@ -1056,4 +1069,415 @@ class MockDailyChallengeService extends _i1.Mock
           ),
         )),
       ) as _i5.Future<_i8.Challenge>);
+}
+
+/// A class which mocks [FlutterLocalNotificationsPlugin].
+///
+/// See the documentation for Mockito's code generation for more information.
+class MockFlutterLocalNotificationsPlugin extends _i1.Mock
+    implements _i16.FlutterLocalNotificationsPlugin {
+  @override
+  _i5.Future<bool?> initialize(
+    _i17.InitializationSettings? initializationSettings, {
+    _i18.DidReceiveNotificationResponseCallback?
+        onDidReceiveNotificationResponse,
+    _i18.DidReceiveBackgroundNotificationResponseCallback?
+        onDidReceiveBackgroundNotificationResponse,
+  }) =>
+      (super.noSuchMethod(
+        Invocation.method(
+          #initialize,
+          [initializationSettings],
+          {
+            #onDidReceiveNotificationResponse: onDidReceiveNotificationResponse,
+            #onDidReceiveBackgroundNotificationResponse:
+                onDidReceiveBackgroundNotificationResponse,
+          },
+        ),
+        returnValue: _i5.Future<bool?>.value(),
+        returnValueForMissingStub: _i5.Future<bool?>.value(),
+      ) as _i5.Future<bool?>);
+
+  @override
+  _i5.Future<_i18.NotificationAppLaunchDetails?>
+      getNotificationAppLaunchDetails() => (super.noSuchMethod(
+            Invocation.method(
+              #getNotificationAppLaunchDetails,
+              [],
+            ),
+            returnValue: _i5.Future<_i18.NotificationAppLaunchDetails?>.value(),
+            returnValueForMissingStub:
+                _i5.Future<_i18.NotificationAppLaunchDetails?>.value(),
+          ) as _i5.Future<_i18.NotificationAppLaunchDetails?>);
+
+  @override
+  _i5.Future<void> show(
+    int? id,
+    String? title,
+    String? body,
+    _i19.NotificationDetails? notificationDetails, {
+    String? payload,
+  }) =>
+      (super.noSuchMethod(
+        Invocation.method(
+          #show,
+          [
+            id,
+            title,
+            body,
+            notificationDetails,
+          ],
+          {#payload: payload},
+        ),
+        returnValue: _i5.Future<void>.value(),
+        returnValueForMissingStub: _i5.Future<void>.value(),
+      ) as _i5.Future<void>);
+
+  @override
+  _i5.Future<void> cancel(
+    int? id, {
+    String? tag,
+  }) =>
+      (super.noSuchMethod(
+        Invocation.method(
+          #cancel,
+          [id],
+          {#tag: tag},
+        ),
+        returnValue: _i5.Future<void>.value(),
+        returnValueForMissingStub: _i5.Future<void>.value(),
+      ) as _i5.Future<void>);
+
+  @override
+  _i5.Future<void> cancelAll() => (super.noSuchMethod(
+        Invocation.method(
+          #cancelAll,
+          [],
+        ),
+        returnValue: _i5.Future<void>.value(),
+        returnValueForMissingStub: _i5.Future<void>.value(),
+      ) as _i5.Future<void>);
+
+  @override
+  _i5.Future<void> zonedSchedule(
+    int? id,
+    String? title,
+    String? body,
+    _i20.TZDateTime? scheduledDate,
+    _i19.NotificationDetails? notificationDetails, {
+    required _i21.AndroidScheduleMode? androidScheduleMode,
+    String? payload,
+    _i22.DateTimeComponents? matchDateTimeComponents,
+  }) =>
+      (super.noSuchMethod(
+        Invocation.method(
+          #zonedSchedule,
+          [
+            id,
+            title,
+            body,
+            scheduledDate,
+            notificationDetails,
+          ],
+          {
+            #androidScheduleMode: androidScheduleMode,
+            #payload: payload,
+            #matchDateTimeComponents: matchDateTimeComponents,
+          },
+        ),
+        returnValue: _i5.Future<void>.value(),
+        returnValueForMissingStub: _i5.Future<void>.value(),
+      ) as _i5.Future<void>);
+
+  @override
+  _i5.Future<void> periodicallyShow(
+    int? id,
+    String? title,
+    String? body,
+    _i18.RepeatInterval? repeatInterval,
+    _i19.NotificationDetails? notificationDetails, {
+    required _i21.AndroidScheduleMode? androidScheduleMode,
+    String? payload,
+  }) =>
+      (super.noSuchMethod(
+        Invocation.method(
+          #periodicallyShow,
+          [
+            id,
+            title,
+            body,
+            repeatInterval,
+            notificationDetails,
+          ],
+          {
+            #androidScheduleMode: androidScheduleMode,
+            #payload: payload,
+          },
+        ),
+        returnValue: _i5.Future<void>.value(),
+        returnValueForMissingStub: _i5.Future<void>.value(),
+      ) as _i5.Future<void>);
+
+  @override
+  _i5.Future<void> periodicallyShowWithDuration(
+    int? id,
+    String? title,
+    String? body,
+    Duration? repeatDurationInterval,
+    _i19.NotificationDetails? notificationDetails, {
+    _i21.AndroidScheduleMode? androidScheduleMode =
+        _i21.AndroidScheduleMode.exact,
+    String? payload,
+  }) =>
+      (super.noSuchMethod(
+        Invocation.method(
+          #periodicallyShowWithDuration,
+          [
+            id,
+            title,
+            body,
+            repeatDurationInterval,
+            notificationDetails,
+          ],
+          {
+            #androidScheduleMode: androidScheduleMode,
+            #payload: payload,
+          },
+        ),
+        returnValue: _i5.Future<void>.value(),
+        returnValueForMissingStub: _i5.Future<void>.value(),
+      ) as _i5.Future<void>);
+
+  @override
+  _i5.Future<List<_i18.PendingNotificationRequest>>
+      pendingNotificationRequests() => (super.noSuchMethod(
+            Invocation.method(
+              #pendingNotificationRequests,
+              [],
+            ),
+            returnValue:
+                _i5.Future<List<_i18.PendingNotificationRequest>>.value(
+                    <_i18.PendingNotificationRequest>[]),
+            returnValueForMissingStub:
+                _i5.Future<List<_i18.PendingNotificationRequest>>.value(
+                    <_i18.PendingNotificationRequest>[]),
+          ) as _i5.Future<List<_i18.PendingNotificationRequest>>);
+
+  @override
+  _i5.Future<List<_i18.ActiveNotification>> getActiveNotifications() =>
+      (super.noSuchMethod(
+        Invocation.method(
+          #getActiveNotifications,
+          [],
+        ),
+        returnValue: _i5.Future<List<_i18.ActiveNotification>>.value(
+            <_i18.ActiveNotification>[]),
+        returnValueForMissingStub:
+            _i5.Future<List<_i18.ActiveNotification>>.value(
+                <_i18.ActiveNotification>[]),
+      ) as _i5.Future<List<_i18.ActiveNotification>>);
+}
+
+/// A class which mocks [SharedPreferences].
+///
+/// See the documentation for Mockito's code generation for more information.
+class MockSharedPreferences extends _i1.Mock implements _i23.SharedPreferences {
+  @override
+  Set<String> getKeys() => (super.noSuchMethod(
+        Invocation.method(
+          #getKeys,
+          [],
+        ),
+        returnValue: <String>{},
+        returnValueForMissingStub: <String>{},
+      ) as Set<String>);
+
+  @override
+  Object? get(String? key) => (super.noSuchMethod(
+        Invocation.method(
+          #get,
+          [key],
+        ),
+        returnValueForMissingStub: null,
+      ) as Object?);
+
+  @override
+  bool? getBool(String? key) => (super.noSuchMethod(
+        Invocation.method(
+          #getBool,
+          [key],
+        ),
+        returnValueForMissingStub: null,
+      ) as bool?);
+
+  @override
+  int? getInt(String? key) => (super.noSuchMethod(
+        Invocation.method(
+          #getInt,
+          [key],
+        ),
+        returnValueForMissingStub: null,
+      ) as int?);
+
+  @override
+  double? getDouble(String? key) => (super.noSuchMethod(
+        Invocation.method(
+          #getDouble,
+          [key],
+        ),
+        returnValueForMissingStub: null,
+      ) as double?);
+
+  @override
+  String? getString(String? key) => (super.noSuchMethod(
+        Invocation.method(
+          #getString,
+          [key],
+        ),
+        returnValueForMissingStub: null,
+      ) as String?);
+
+  @override
+  bool containsKey(String? key) => (super.noSuchMethod(
+        Invocation.method(
+          #containsKey,
+          [key],
+        ),
+        returnValue: false,
+        returnValueForMissingStub: false,
+      ) as bool);
+
+  @override
+  List<String>? getStringList(String? key) => (super.noSuchMethod(
+        Invocation.method(
+          #getStringList,
+          [key],
+        ),
+        returnValueForMissingStub: null,
+      ) as List<String>?);
+
+  @override
+  _i5.Future<bool> setBool(
+    String? key,
+    bool? value,
+  ) =>
+      (super.noSuchMethod(
+        Invocation.method(
+          #setBool,
+          [
+            key,
+            value,
+          ],
+        ),
+        returnValue: _i5.Future<bool>.value(false),
+        returnValueForMissingStub: _i5.Future<bool>.value(false),
+      ) as _i5.Future<bool>);
+
+  @override
+  _i5.Future<bool> setInt(
+    String? key,
+    int? value,
+  ) =>
+      (super.noSuchMethod(
+        Invocation.method(
+          #setInt,
+          [
+            key,
+            value,
+          ],
+        ),
+        returnValue: _i5.Future<bool>.value(false),
+        returnValueForMissingStub: _i5.Future<bool>.value(false),
+      ) as _i5.Future<bool>);
+
+  @override
+  _i5.Future<bool> setDouble(
+    String? key,
+    double? value,
+  ) =>
+      (super.noSuchMethod(
+        Invocation.method(
+          #setDouble,
+          [
+            key,
+            value,
+          ],
+        ),
+        returnValue: _i5.Future<bool>.value(false),
+        returnValueForMissingStub: _i5.Future<bool>.value(false),
+      ) as _i5.Future<bool>);
+
+  @override
+  _i5.Future<bool> setString(
+    String? key,
+    String? value,
+  ) =>
+      (super.noSuchMethod(
+        Invocation.method(
+          #setString,
+          [
+            key,
+            value,
+          ],
+        ),
+        returnValue: _i5.Future<bool>.value(false),
+        returnValueForMissingStub: _i5.Future<bool>.value(false),
+      ) as _i5.Future<bool>);
+
+  @override
+  _i5.Future<bool> setStringList(
+    String? key,
+    List<String>? value,
+  ) =>
+      (super.noSuchMethod(
+        Invocation.method(
+          #setStringList,
+          [
+            key,
+            value,
+          ],
+        ),
+        returnValue: _i5.Future<bool>.value(false),
+        returnValueForMissingStub: _i5.Future<bool>.value(false),
+      ) as _i5.Future<bool>);
+
+  @override
+  _i5.Future<bool> remove(String? key) => (super.noSuchMethod(
+        Invocation.method(
+          #remove,
+          [key],
+        ),
+        returnValue: _i5.Future<bool>.value(false),
+        returnValueForMissingStub: _i5.Future<bool>.value(false),
+      ) as _i5.Future<bool>);
+
+  @override
+  _i5.Future<bool> commit() => (super.noSuchMethod(
+        Invocation.method(
+          #commit,
+          [],
+        ),
+        returnValue: _i5.Future<bool>.value(false),
+        returnValueForMissingStub: _i5.Future<bool>.value(false),
+      ) as _i5.Future<bool>);
+
+  @override
+  _i5.Future<bool> clear() => (super.noSuchMethod(
+        Invocation.method(
+          #clear,
+          [],
+        ),
+        returnValue: _i5.Future<bool>.value(false),
+        returnValueForMissingStub: _i5.Future<bool>.value(false),
+      ) as _i5.Future<bool>);
+
+  @override
+  _i5.Future<void> reload() => (super.noSuchMethod(
+        Invocation.method(
+          #reload,
+          [],
+        ),
+        returnValue: _i5.Future<void>.value(),
+        returnValueForMissingStub: _i5.Future<void>.value(),
+      ) as _i5.Future<void>);
 }

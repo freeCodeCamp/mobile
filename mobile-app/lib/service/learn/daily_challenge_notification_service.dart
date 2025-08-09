@@ -169,7 +169,7 @@ class DailyChallengeNotificationService {
     final scheduleStartDateStr =
         prefs.getString('notification_schedule_start_date');
 
-    final todayChallengeCompleted = await isTodayChallengeCompleted();
+    final todayChallengeCompleted = await checkIfTodayChallengeCompleted();
     DateTime startSchedulingFrom;
 
     if (todayChallengeCompleted) {
@@ -190,10 +190,25 @@ class DailyChallengeNotificationService {
     return startSchedulingFrom;
   }
 
-  Future<bool> isTodayChallengeCompleted() async {
+  Future<bool> checkIfTodayChallengeCompleted() async {
     try {
       final todayChallenge = await _dailyChallengeService.fetchTodayChallenge();
-      return await checkIfChallengeCompleted(todayChallenge.id);
+      final userModelFuture = _authenticationService.userModel;
+
+      if (userModelFuture != null) {
+        try {
+          FccUserModel user = await userModelFuture;
+          for (CompletedDailyChallenge challenge
+              in user.completedDailyCodingChallenges) {
+            if (challenge.id == todayChallenge.id) {
+              return true;
+            }
+          }
+        } catch (e) {
+          return false;
+        }
+      }
+      return false;
     } catch (e) {
       // If we can't fetch today's challenge, assume it's not completed
       return false;
@@ -240,50 +255,32 @@ class DailyChallengeNotificationService {
   }
 
   DateTime findNextValidNotificationTime(
-      DateTime scheduleDate, tz.Location centralLocation) {
+      DateTime scheduleDate, tz.Location centralLocation,
+      {DateTime? now}) {
     // For a given date, find the best notification time:
     // Between 9 AM and 9 PM local time, but after US Central midnight (when new challenge is available)
 
-    final now = DateTime.now();
-    DateTime candidate;
-
-    // Start with 9 AM on the given schedule date
-    candidate =
+    final current = now ?? DateTime.now();
+    // Default to 9 AM on the scheduleDate. This is used if scheduleDate is not today
+    DateTime candidate =
         DateTime(scheduleDate.year, scheduleDate.month, scheduleDate.day, 9);
 
-    if (scheduleDate.day == now.day &&
-        scheduleDate.month == now.month &&
-        scheduleDate.year == now.year) {
-      if (now.hour < 9) {
+    // If scheduleDate is today, adjust based on current time
+    if (scheduleDate.day == current.day &&
+        scheduleDate.month == current.month &&
+        scheduleDate.year == current.year) {
+      if (current.hour < 9) {
         // Before 9 AM today, schedule for 9 AM today
-        candidate = DateTime(now.year, now.month, now.day, 9);
-      } else if (now.hour >= 21) {
+        candidate = DateTime(current.year, current.month, current.day, 9);
+      } else if (current.hour >= 21) {
         // After 9 PM today, schedule for 9 AM tomorrow
-        candidate = DateTime(now.year, now.month, now.day + 1, 9);
+        candidate = DateTime(current.year, current.month, current.day + 1, 9);
       } else {
         // Between 9 AM and 9 PM, schedule for 9 AM tomorrow
-        candidate = DateTime(now.year, now.month, now.day + 1, 9);
+        candidate = DateTime(current.year, current.month, current.day + 1, 9);
       }
     }
 
     return candidate;
-  }
-
-  Future<bool> checkIfChallengeCompleted(String challengeId) async {
-    final userModelFuture = _authenticationService.userModel;
-    if (userModelFuture != null) {
-      try {
-        FccUserModel user = await userModelFuture;
-        for (CompletedDailyChallenge challenge
-            in user.completedDailyCodingChallenges) {
-          if (challenge.id == challengeId) {
-            return true;
-          }
-        }
-      } catch (e) {
-        return false;
-      }
-    }
-    return false;
   }
 }
