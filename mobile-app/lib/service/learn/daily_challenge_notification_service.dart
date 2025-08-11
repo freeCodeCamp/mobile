@@ -238,28 +238,33 @@ class DailyChallengeNotificationService {
 
       // Only schedule if the notification time is in the future
       if (scheduleTime.isAfter(now)) {
-        await _flutterLocalNotificationsPlugin.zonedSchedule(
-          notificationId++,
-          'New Daily Challenge Available! 🧩',
-          'A fresh coding challenge is waiting for you. Ready to solve it?',
-          tz.TZDateTime.from(scheduleTime, tz.local),
-          const NotificationDetails(
-            android: AndroidNotificationDetails(
-              _channelId,
-              'Daily Challenge Notifications',
-              channelDescription:
-                  'Notifications for new daily coding challenges',
-              priority: Priority.high,
-              importance: Importance.max,
+        try {
+          await _flutterLocalNotificationsPlugin.zonedSchedule(
+            notificationId++,
+            'New Daily Challenge Available! 🧩',
+            'A fresh coding challenge is waiting for you. Ready to solve it?',
+            tz.TZDateTime.from(scheduleTime, tz.local),
+            const NotificationDetails(
+              android: AndroidNotificationDetails(
+                _channelId,
+                'Daily Challenge Notifications',
+                channelDescription:
+                    'Notifications for new daily coding challenges',
+                priority: Priority.high,
+                importance: Importance.max,
+              ),
+              iOS: DarwinNotificationDetails(
+                threadIdentifier: 'daily-challenge-notification',
+                categoryIdentifier: 'DAILY_CHALLENGE',
+              ),
             ),
-            iOS: DarwinNotificationDetails(
-              threadIdentifier: 'daily-challenge-notification',
-              categoryIdentifier: 'DAILY_CHALLENGE',
-            ),
-          ),
-          androidScheduleMode: AndroidScheduleMode.exactAllowWhileIdle,
-          payload: 'daily_challenge_notification',
-        );
+            androidScheduleMode: AndroidScheduleMode.inexact,
+            payload: 'daily_challenge_notification',
+          );
+        } catch (e) {
+          // Log the error but continue scheduling other notifications
+          print('Failed to schedule notification for $scheduleTime: $e');
+        }
       }
     }
   }
