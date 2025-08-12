@@ -76,11 +76,9 @@ class NewsTutorialView extends StatelessWidget {
   const NewsTutorialView({
     super.key,
     required this.refId,
-    required this.title,
     required this.slug,
   });
   final String refId;
-  final String title;
   final String slug;
 
   @override

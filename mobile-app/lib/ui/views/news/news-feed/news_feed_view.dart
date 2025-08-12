@@ -131,7 +131,7 @@ class NewsFeedView extends StatelessWidget {
       key: Key(tutorial.id),
       splashColor: Colors.transparent,
       onTap: () {
-        model.navigateTo(tutorial.id, tutorial.title, tutorial.slug);
+        model.navigateTo(tutorial.id, tutorial.slug);
       },
       child: Padding(
         padding: const EdgeInsets.only(bottom: 32.0),
