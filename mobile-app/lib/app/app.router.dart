@@ -213,7 +213,10 @@ class StackedRouter extends _i1.RouterBase {
       final args = data.getArgs<NewsTutorialViewArguments>(nullOk: false);
       return _i21.MaterialPageRoute<dynamic>(
         builder: (context) => _i5.NewsTutorialView(
-            key: args.key, refId: args.refId, title: args.title),
+            key: args.key,
+            refId: args.refId,
+            title: args.title,
+            slug: args.slug),
         settings: data,
       );
     },
@@ -387,28 +390,34 @@ class NewsTutorialViewArguments {
     this.key,
     required this.refId,
     required this.title,
+    required this.slug,
   });
 
   final _i21.Key? key;
 
   final String refId;
 
-  final String? title;
+  final String title;
+
+  final String slug;
 
   @override
   String toString() {
-    return '{"key": "$key", "refId": "$refId", "title": "$title"}';
+    return '{"key": "$key", "refId": "$refId", "title": "$title", "slug": "$slug"}';
   }
 
   @override
   bool operator ==(covariant NewsTutorialViewArguments other) {
     if (identical(this, other)) return true;
-    return other.key == key && other.refId == refId && other.title == title;
+    return other.key == key &&
+        other.refId == refId &&
+        other.title == title &&
+        other.slug == slug;
   }
 
   @override
   int get hashCode {
-    return key.hashCode ^ refId.hashCode ^ title.hashCode;
+    return key.hashCode ^ refId.hashCode ^ title.hashCode ^ slug.hashCode;
   }
 }
 
@@ -745,7 +754,8 @@ extension NavigatorStateExtension on _i26.NavigationService {
   Future<dynamic> navigateToNewsTutorialView({
     _i21.Key? key,
     required String refId,
-    required String? title,
+    required String title,
+    required String slug,
     int? routerId,
     bool preventDuplicates = true,
     Map<String, String>? parameters,
@@ -753,8 +763,8 @@ extension NavigatorStateExtension on _i26.NavigationService {
         transition,
   }) async {
     return navigateTo<dynamic>(Routes.newsTutorialView,
-        arguments:
-            NewsTutorialViewArguments(key: key, refId: refId, title: title),
+        arguments: NewsTutorialViewArguments(
+            key: key, refId: refId, title: title, slug: slug),
         id: routerId,
         preventDuplicates: preventDuplicates,
         parameters: parameters,
@@ -1076,7 +1086,8 @@ extension NavigatorStateExtension on _i26.NavigationService {
   Future<dynamic> replaceWithNewsTutorialView({
     _i21.Key? key,
     required String refId,
-    required String? title,
+    required String title,
+    required String slug,
     int? routerId,
     bool preventDuplicates = true,
     Map<String, String>? parameters,
@@ -1084,8 +1095,8 @@ extension NavigatorStateExtension on _i26.NavigationService {
         transition,
   }) async {
     return replaceWith<dynamic>(Routes.newsTutorialView,
-        arguments:
-            NewsTutorialViewArguments(key: key, refId: refId, title: title),
+        arguments: NewsTutorialViewArguments(
+            key: key, refId: refId, title: title, slug: slug),
         id: routerId,
         preventDuplicates: preventDuplicates,
         parameters: parameters,

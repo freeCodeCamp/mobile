@@ -37,9 +37,13 @@ class TutorialList extends StatefulWidget {
     return tutorials;
   }
 
-  void navigateToTutorial(String id, String title) {
+  void navigateToTutorial(String id, String title, String slug) {
     _navigationService.navigateTo(Routes.newsTutorialView,
-        arguments: NewsTutorialViewArguments(refId: id, title: title));
+        arguments: NewsTutorialViewArguments(
+          refId: id,
+          title: title,
+          slug: slug,
+        ));
   }
 
   void navigateToFeed() {
@@ -151,7 +155,11 @@ class TileLayout extends StatelessWidget {
                     ),
             ),
             onTap: () {
-              widget.navigateToTutorial(tutorial.id, tutorial.title);
+              widget.navigateToTutorial(
+                tutorial.id,
+                tutorial.title,
+                tutorial.slug,
+              );
             },
           );
         },
