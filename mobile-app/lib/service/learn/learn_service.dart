@@ -10,6 +10,7 @@ import 'package:freecodecamp/models/learn/curriculum_model.dart';
 import 'package:freecodecamp/models/learn/daily_challenge_model.dart';
 import 'package:freecodecamp/service/authentication/authentication_service.dart';
 import 'package:freecodecamp/service/dio_service.dart';
+import 'package:freecodecamp/service/learn/daily_challenge_notification_service.dart';
 import 'package:freecodecamp/service/learn/daily_challenge_service.dart';
 import 'package:freecodecamp/service/learn/learn_offline_service.dart';
 import 'package:freecodecamp/utils/helpers.dart';
@@ -36,6 +37,8 @@ class LearnService {
   final DialogService _dialogService = locator<DialogService>();
   final DailyChallengeService _dailyChallengeService =
       locator<DailyChallengeService>();
+  final DailyChallengeNotificationService _notificationService =
+      locator<DailyChallengeNotificationService>();
 
   factory LearnService() {
     return _learnService;
@@ -152,6 +155,17 @@ class LearnService {
             : DailyChallengeLanguage.python);
 
     await _authenticationService.fetchUser();
+
+    // Refresh notifications if today's challenge was completed
+    try {
+      final todayChallenge = await _dailyChallengeService.fetchTodayChallenge();
+
+      if (challenge.id == todayChallenge.id) {
+        await _notificationService.scheduleDailyChallengeNotification();
+      }
+    } catch (e) {
+      log('Failed to check today\'s challenge for notification update: $e');
+    }
   }
 
   void goToNextChallenge(
