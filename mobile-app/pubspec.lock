@@ -1285,7 +1285,7 @@ packages:
     source: hosted
     version: "2.2.1"
   path_provider_platform_interface:
-    dependency: transitive
+    dependency: "direct dev"
     description:
       name: path_provider_platform_interface
       sha256: "88f5779f72ba699763fa3a3b06aa4bf6de76c8e5de842cf6f29e2e06476c2334"
@@ -1617,14 +1617,6 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "2.4.2"
-  sqflite_migration_service:
-    dependency: "direct main"
-    description:
-      name: sqflite_migration_service
-      sha256: "40d2d074ebd54fde5e476ef20eec8c6c8285b4bf89d3c9dd880dfcc3489b1355"
-      url: "https://pub.dev"
-    source: hosted
-    version: "2.0.0-nullsafety.1"
   sqflite_platform_interface:
     dependency: transitive
     description:
