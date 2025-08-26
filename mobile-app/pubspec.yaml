@@ -47,7 +47,9 @@ dependencies:
   share_plus: 10.1.4 # NOTE: v11 has breaking changes
   shared_preferences: 2.5.3 # TODO: update deprecated code
   sqflite: 2.4.2
-  stacked: 3.4.3
+  # TODO: Replace with sqflite methods as below package isn't actively maintained
+  sqflite_migration_service: 2.0.0-nullsafety.1
+  stacked: 3.4.3 # NOTE: 3.4.4+ is blocked by sqflite_migration_service
   stacked_services: 1.6.0
   timezone: 0.10.1
   ua_client_hints: 1.4.1
@@ -85,6 +87,7 @@ flutter:
   assets:
     - .env
     - assets/images/
+    - assets/sql/
     - assets/test_data/news_post.json
     - assets/test_data/news_feed.json
     - assets/learn/
