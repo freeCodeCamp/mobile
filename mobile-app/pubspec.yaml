@@ -1,7 +1,7 @@
 name: freecodecamp
 description: freecodecamp.org app.
 publish_to: none
-version: 5.0.3+50003
+version: 6.0.0+60000
 environment:
   sdk: ">=3.0.0 <4.0.0"
 dependencies:
@@ -51,6 +51,7 @@ dependencies:
   sqflite_migration_service: 2.0.0-nullsafety.1
   stacked: 3.4.3 # NOTE: 3.4.4+ is blocked by sqflite_migration_service
   stacked_services: 1.6.0
+  timezone: 0.10.1
   ua_client_hints: 1.4.1
   upgrader: 11.3.1
   url_launcher: 6.3.1

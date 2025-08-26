@@ -7,8 +7,11 @@ import 'package:freecodecamp/app/app.router.dart';
 import 'package:freecodecamp/enums/dialog_type.dart';
 import 'package:freecodecamp/models/learn/challenge_model.dart';
 import 'package:freecodecamp/models/learn/curriculum_model.dart';
+import 'package:freecodecamp/models/learn/daily_challenge_model.dart';
 import 'package:freecodecamp/service/authentication/authentication_service.dart';
 import 'package:freecodecamp/service/dio_service.dart';
+import 'package:freecodecamp/service/learn/daily_challenge_notification_service.dart';
+import 'package:freecodecamp/service/learn/daily_challenge_service.dart';
 import 'package:freecodecamp/service/learn/learn_offline_service.dart';
 import 'package:freecodecamp/utils/helpers.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -23,6 +26,8 @@ class LearnService {
 
   final Dio _dio = DioService.dio;
 
+  // TODO: change this to v2 and remove baseUrlV2 once the migration is complete
+  static final baseUrl = '${AuthenticationService.baseURL}/curriculum-data/v1';
   static final baseUrlV2 =
       '${AuthenticationService.baseURL}/curriculum-data/v2';
 
@@ -30,6 +35,10 @@ class LearnService {
       locator<LearnOfflineService>();
   final NavigationService _navigationService = locator<NavigationService>();
   final DialogService _dialogService = locator<DialogService>();
+  final DailyChallengeService _dailyChallengeService =
+      locator<DailyChallengeService>();
+  final DailyChallengeNotificationService _notificationService =
+      locator<DailyChallengeNotificationService>();
 
   factory LearnService() {
     return _learnService;
@@ -138,6 +147,27 @@ class LearnService {
     );
   }
 
+  void passDailyChallenge(Challenge challenge) async {
+    await _dailyChallengeService.postChallengeCompleted(
+        challengeId: challenge.id,
+        language: challenge.challengeType == 28
+            ? DailyChallengeLanguage.javascript
+            : DailyChallengeLanguage.python);
+
+    await _authenticationService.fetchUser();
+
+    // Refresh notifications if today's challenge was completed
+    try {
+      final todayChallenge = await _dailyChallengeService.fetchTodayChallenge();
+
+      if (challenge.id == todayChallenge.id) {
+        await _notificationService.scheduleDailyChallengeNotification();
+      }
+    } catch (e) {
+      log('Failed to check today\'s challenge for notification update: $e');
+    }
+  }
+
   void goToNextChallenge(
     int maxChallenges,
     Challenge challenge,
@@ -145,8 +175,15 @@ class LearnService {
     String solutionLink = '',
   }) async {
     if (AuthenticationService.staticIsloggedIn) {
-      passChallenge(challenge, solutionLink);
+      if (challenge.challengeType == 28 || challenge.challengeType == 29) {
+        passDailyChallenge(challenge);
+        _navigationService.back();
+        return;
+      } else {
+        passChallenge(challenge, solutionLink);
+      }
     }
+
     var challengeIndex = block.challengeTiles.indexWhere(
       (element) => element.id == challenge.id,
     );

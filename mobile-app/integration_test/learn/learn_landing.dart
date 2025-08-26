@@ -20,24 +20,16 @@ void main() {
     await tester.pumpAndSettle();
     await binding.takeScreenshot('learn/learn-landing');
 
-    String baseUrlV2 = LearnService.baseUrlV2;
-    final Response res = await dio.get('$baseUrlV2/available-superblocks.json');
-    Map<String, dynamic> superBlockStages = res.data['superblocks'];
+    String baseUrl = LearnService.baseUrl;
+    final Response res = await dio.get('$baseUrl/available-superblocks.json');
+    List superBlocks = res.data['superblocks'];
     int publicSuperBlocks = 0;
-    int totalSuperBlocks = 0;
 
-    // Iterate through each stage and count the superblocks
-    superBlockStages.forEach((stage, superBlocksList) {
-      for (final superBlock in superBlocksList) {
-        totalSuperBlocks++;
-        if (superBlock['public']) {
-          publicSuperBlocks++;
-        }
+    for (int i = 0; i < superBlocks.length; i++) {
+      if (superBlocks[i]['public']) {
+        publicSuperBlocks++;
       }
-    });
-
-    print('Total SuperBlocks: $totalSuperBlocks');
-    print('Total Public SuperBlocks: $publicSuperBlocks');
+    }
     await tester.pumpAndSettle();
 
     // Check if all superblocks are displayed
@@ -45,7 +37,10 @@ void main() {
     final publicSuperBlockButtons = find.byWidgetPredicate(
       (widget) => widget is SuperBlockButton && widget.button.public == true,
     );
-    expect(superBlockButtons, findsNWidgets(totalSuperBlocks));
+    expect(
+      superBlockButtons,
+      findsNWidgets(superBlocks.length - 1), // Exclude 'full-stack' superblock
+    );
     expect(publicSuperBlockButtons, findsNWidgets(publicSuperBlocks));
 
     // Check for login button

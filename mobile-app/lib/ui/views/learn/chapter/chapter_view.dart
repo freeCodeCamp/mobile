@@ -70,6 +70,8 @@ class ChapterView extends StatelessWidget {
     ChapterViewModel model,
     BuildContext context,
   ) {
+    bool disabled = chapter.dashedName == 'frontend-libraries' && !model.isDev;
+
     return Container(
       padding: EdgeInsets.all(8),
       margin: EdgeInsets.symmetric(vertical: 8, horizontal: 8),
@@ -95,7 +97,8 @@ class ChapterView extends StatelessWidget {
                     ),
                   ),
                 ),
-                if (chapter.comingSoon != null && chapter.comingSoon == true)
+                if (chapter.comingSoon != null && chapter.comingSoon == true ||
+                    disabled)
                   Container(
                     margin: const EdgeInsets.all(8),
                     padding: const EdgeInsets.all(3),
@@ -108,7 +111,7 @@ class ChapterView extends StatelessWidget {
                     child: Text('Coming Soon'),
                   ),
                 for (Module module in chapter.modules as List<Module>)
-                  chapterButton(context, module, model)
+                  chapterButton(context, module, model, chapter)
               ],
             ),
           ),
@@ -121,8 +124,10 @@ class ChapterView extends StatelessWidget {
     BuildContext context,
     Module module,
     ChapterViewModel model,
+    Chapter chapter,
   ) {
-    if (module.comingSoon != null && module.comingSoon == true) {
+    bool disabled = chapter.dashedName == 'frontend-libraries' && !model.isDev;
+    if (module.comingSoon != null && module.comingSoon == true || disabled) {
       return Container();
     }
 

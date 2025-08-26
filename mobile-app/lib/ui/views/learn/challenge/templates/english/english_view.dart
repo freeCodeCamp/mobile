@@ -45,14 +45,14 @@ class EnglishView extends StatelessWidget {
                   child: Column(
                     children: [
                       ...parser.parse(
-                        challenge.instructions,
+                        challenge.description,
                         customStyles: {
                           '*:not(h1):not(h2):not(h3):not(h4):not(h5):not(h6)':
                               Style(color: FccColors.gray05),
                         },
                       ),
                       ...parser.parse(
-                        challenge.description,
+                        challenge.instructions,
                         customStyles: {
                           '*:not(h1):not(h2):not(h3):not(h4):not(h5):not(h6)':
                               Style(color: FccColors.gray05),

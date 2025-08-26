@@ -73,7 +73,11 @@ class PassWidgetView extends StatelessWidget {
                       StreamBuilder<bool>(
                         stream: AuthenticationService.isLoggedInStream.stream,
                         builder: (context, snapshot) {
-                          if (AuthenticationService.staticIsloggedIn) {
+                          // Hide progress bar for daily challenges as the challenges technically aren't related.
+                          // Also, if the user access the challenge from the landing page,
+                          // we don't have the total challenges count to compute the progress.
+                          if (AuthenticationService.staticIsloggedIn &&
+                              !challengeModel.isDailyChallenge) {
                             return FutureBuilder(
                               future: model.numCompletedChallenges(
                                 challengeModel,
@@ -208,6 +212,14 @@ class PassButton extends StatelessWidget {
       width: MediaQuery.of(context).size.width,
       child: TextButton(
         onPressed: () async {
+          // Close the end drawer if open before navigating.
+          // This is needed to ensure the back navigation works correctly.
+          final scaffoldState = model.scaffoldKey.currentState;
+          if (scaffoldState != null && scaffoldState.isEndDrawerOpen) {
+            scaffoldState.closeEndDrawer();
+            await Future.delayed(const Duration(milliseconds: 300));
+          }
+
           model.closeWebViews();
           model.disposeOfListeners();
 

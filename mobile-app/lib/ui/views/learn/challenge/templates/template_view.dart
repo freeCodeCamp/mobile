@@ -16,15 +16,20 @@ class ChallengeTemplateView extends StatelessWidget {
     super.key,
     required this.block,
     required this.challengeId,
+    this.challengeDate,
   });
 
   final Block block;
   final String challengeId;
 
+  // Used for daily challenges
+  final DateTime? challengeDate;
+
   @override
   Widget build(BuildContext context) {
     return ViewModelBuilder<ChallengeTemplateViewModel>.reactive(
-      onViewModelReady: (model) => model.initiate(block, challengeId),
+      onViewModelReady: (model) =>
+          model.initiate(block, challengeId, challengeDate),
       viewModelBuilder: () => ChallengeTemplateViewModel(),
       builder: (context, model, child) => Scaffold(
         resizeToAvoidBottomInset: false,
@@ -42,12 +47,16 @@ class ChallengeTemplateView extends StatelessWidget {
                 case ChallengeType.js:
                 case ChallengeType.multifileCertProject:
                 case ChallengeType.python:
+                case ChallengeType.multifilePythonCertProject:
                 case ChallengeType.lab:
                 case ChallengeType.jsLab:
+                case ChallengeType.dailyChallengeJs:
+                case ChallengeType.dailyChallengePy:
                   return ChallengeView(
                     challenge: challenge,
                     block: block,
                     isProject: tiles.length > 1,
+                    challengeDate: challengeDate,
                   );
                 case ChallengeType.quiz:
                   return QuizView(

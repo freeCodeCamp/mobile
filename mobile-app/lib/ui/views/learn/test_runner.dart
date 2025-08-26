@@ -56,6 +56,7 @@ return testRes;
       // JS-only challenges
       case ChallengeType.js:
       case ChallengeType.jsLab:
+      case ChallengeType.dailyChallengeJs:
         // TODO: Move to learn file service
         if (babelController == null) {
           throw Exception('Babel controller is required to transpile JS code.');
@@ -71,6 +72,12 @@ return testRes;
         }
 
         return babelRes?.value ?? challengeFile;
+      case ChallengeType.python:
+      case ChallengeType.multifilePythonCertProject:
+      case ChallengeType.pyLab:
+      case ChallengeType.dailyChallengePy:
+        // Python challenges do not require transpilation, return the file as is.
+        return challengeFile;
       default:
         String parsedWithStyleTags =
             await fileService.parseCssDocumentsAsStyleTags(
@@ -103,9 +110,12 @@ return testRes;
         return 'dom';
       case ChallengeType.js:
       case ChallengeType.jsLab:
+      case ChallengeType.dailyChallengeJs:
         return 'javascript';
       case ChallengeType.python:
       case ChallengeType.multifilePythonCertProject:
+      case ChallengeType.pyLab:
+      case ChallengeType.dailyChallengePy:
         return 'python';
       default:
         return 'dom';
@@ -117,7 +127,13 @@ return testRes;
       // JS-only challenges
       case ChallengeType.js:
       case ChallengeType.jsLab:
+      case ChallengeType.dailyChallengeJs:
         return Ext.js;
+      case ChallengeType.python:
+      case ChallengeType.multifilePythonCertProject:
+      case ChallengeType.pyLab:
+      case ChallengeType.dailyChallengePy:
+        return Ext.py;
       default:
         return Ext.html;
     }
