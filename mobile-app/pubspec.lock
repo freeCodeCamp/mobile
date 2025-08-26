@@ -197,10 +197,10 @@ packages:
     dependency: "direct dev"
     description:
       name: build_runner
-      sha256: "028819cfb90051c6b5440c7e574d1896f8037e3c96cf17aaeb054c9311cfbf4d"
+      sha256: "644dc98a0f179b872f612d3eb627924b578897c629788e858157fa5e704ca0c7"
       url: "https://pub.dev"
     source: hosted
-    version: "2.4.13"
+    version: "2.4.11"
   build_runner_core:
     dependency: transitive
     description:
@@ -1168,10 +1168,10 @@ packages:
     dependency: transitive
     description:
       name: mime
-      sha256: "41a20518f0cb1256669420fdba0cd90d21561e560ac240f26ef8322e45bb7ed6"
+      sha256: "801fd0b26f14a4a58ccb09d5892c3fbdeff209594300a542492cf13fba9d247a"
       url: "https://pub.dev"
     source: hosted
-    version: "2.0.0"
+    version: "1.0.6"
   mockito:
     dependency: "direct dev"
     description:
@@ -1617,6 +1617,14 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "2.4.2"
+  sqflite_migration_service:
+    dependency: "direct main"
+    description:
+      name: sqflite_migration_service
+      sha256: "40d2d074ebd54fde5e476ef20eec8c6c8285b4bf89d3c9dd880dfcc3489b1355"
+      url: "https://pub.dev"
+    source: hosted
+    version: "2.0.0-nullsafety.1"
   sqflite_platform_interface:
     dependency: transitive
     description:
