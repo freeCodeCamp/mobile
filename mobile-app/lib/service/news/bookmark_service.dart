@@ -3,14 +3,11 @@ import 'dart:convert';
 import 'dart:developer';
 import 'dart:io';
 
-import 'package:flutter/services.dart';
 import 'package:freecodecamp/models/news/bookmarked_tutorial_model.dart';
 import 'package:freecodecamp/models/news/tutorial_model.dart';
 import 'package:path/path.dart' as path;
 import 'package:path_provider/path_provider.dart';
-import 'package:sqflite/sqflite.dart';
 
-const String bookmarksTableName = 'bookmarks';
 const String articlesFileName = 'articles.json';
 
 class BookmarksDatabaseService {
@@ -23,9 +20,6 @@ class BookmarksDatabaseService {
       final directory = await getApplicationDocumentsDirectory();
       _articlesFile = File(path.join(directory.path, articlesFileName));
       
-      // Try to migrate from old SQLite database first
-      await _migrateFromSqliteIfExists();
-      
       // Load existing bookmarks from JSON file
       await _loadBookmarksFromFile();
       
@@ -33,38 +27,6 @@ class BookmarksDatabaseService {
     } catch (e) {
       log('Error initializing bookmark service: $e');
       _bookmarks = [];
-    }
-  }
-
-  Future _migrateFromSqliteIfExists() async {
-    try {
-      String dbPath = await getDatabasesPath();
-      String dbPathTutorials = path.join(dbPath, 'bookmarked-article.db');
-      bool dbExists = await databaseExists(dbPathTutorials);
-      
-      if (dbExists && _bookmarks.isEmpty) {
-        log('Migrating bookmarks from SQLite database');
-        Database db = await openDatabase(dbPathTutorials, version: 1);
-        
-        List<Map<String, dynamic>> results = await db.query(bookmarksTableName);
-        
-        for (Map<String, dynamic> row in results) {
-          BookmarkedTutorial bookmark = BookmarkedTutorial.fromMap(row);
-          _bookmarks.add(bookmark);
-          if (bookmark.bookmarkId >= _nextBookmarkId) {
-            _nextBookmarkId = bookmark.bookmarkId + 1;
-          }
-        }
-        
-        await db.close();
-        
-        // Save migrated data to JSON file
-        await _saveBookmarksToFile();
-        
-        log('Successfully migrated ${_bookmarks.length} bookmarks from SQLite');
-      }
-    } catch (e) {
-      log('Error during SQLite migration: $e');
     }
   }
 
