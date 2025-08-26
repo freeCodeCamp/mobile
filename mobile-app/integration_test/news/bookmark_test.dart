@@ -1,10 +1,13 @@
+import 'dart:convert';
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:freecodecamp/main.dart' as app;
 import 'package:freecodecamp/ui/views/news/news-tutorial/news_tutorial_view.dart';
 import 'package:integration_test/integration_test.dart';
 import 'package:path/path.dart' as path;
-import 'package:sqflite/sqflite.dart';
+import 'package:path_provider/path_provider.dart';
 
 void main() {
   final binding = IntegrationTestWidgetsFlutterBinding();
@@ -89,17 +92,18 @@ void main() {
       author.split('Written by ')[1],
     );
 
-    // Check database if record exists
-    final db = await openDatabase(
-        path.join(await getDatabasesPath(), 'bookmarked-article.db'));
-    final List<Map<String, dynamic>> result = await db.query(
-      'bookmarks',
-      where: 'articleId = ?',
-      whereArgs: [firstTutorialKey.value],
-    );
-    expect(result.length, 1);
-    expect(result[0]['articleId'], firstTutorialKey.value);
-    expect(result[0]['articleTitle'], title.data);
-    expect(result[0]['authorName'], author.split('Written by ')[1]);
+    // Check JSON file if record exists
+    final directory = await getApplicationDocumentsDirectory();
+    final articlesFile = File(path.join(directory.path, 'articles.json'));
+    
+    expect(await articlesFile.exists(), true);
+    
+    final contents = await articlesFile.readAsString();
+    final List<dynamic> bookmarks = json.decode(contents);
+    
+    expect(bookmarks.length, 1);
+    expect(bookmarks[0]['id'], firstTutorialKey.value);
+    expect(bookmarks[0]['tutorialTitle'], title.data);
+    expect(bookmarks[0]['authorName'], author.split('Written by ')[1]);
   });
 }
