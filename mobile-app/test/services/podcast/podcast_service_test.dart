@@ -4,27 +4,30 @@ import 'package:freecodecamp/models/podcasts/episodes_model.dart';
 import 'package:freecodecamp/models/podcasts/podcasts_model.dart';
 import 'package:freecodecamp/service/podcast/podcasts_service.dart';
 import 'package:path_provider_platform_interface/path_provider_platform_interface.dart';
-import 'package:plugin_platform_interface/plugin_platform_interface.dart';
-
-class MockPathProviderPlatform extends Fake
-    with MockPlatformInterfaceMixin
-    implements PathProviderPlatform {
-  @override
-  Future<String?> getApplicationDocumentsPath() async {
-    return Directory.systemTemp.createTempSync().path;
-  }
-}
 
 void main() {
+  TestWidgetsFlutterBinding.ensureInitialized();
+  
   group('PodcastsDatabaseService Tests', () {
     late PodcastsDatabaseService service;
-    late MockPathProviderPlatform mockPathProvider;
+    late Directory tempDir;
 
     setUp(() async {
-      mockPathProvider = MockPathProviderPlatform();
-      PathProviderPlatform.instance = mockPathProvider;
+      // Create a temporary directory for testing
+      tempDir = await Directory.systemTemp.createTemp('podcast_test_');
+      
+      // Mock path_provider to use our temp directory
+      PathProviderPlatform.instance = FakePathProviderPlatform(tempDir.path);
+      
       service = PodcastsDatabaseService();
       await service.initialise();
+    });
+
+    tearDown(() async {
+      // Clean up temporary directory
+      if (await tempDir.exists()) {
+        await tempDir.delete(recursive: true);
+      }
     });
 
     test('should initialize with empty lists', () async {
@@ -139,5 +142,76 @@ void main() {
       final podcastsAfterRemoval = await service.getPodcasts();
       expect(podcastsAfterRemoval.length, 0);
     });
+
+    test('should persist data between service instances', () async {
+      final podcast = Podcasts(
+        id: 'test-id',
+        url: 'https://example.com/feed.xml',
+        title: 'Test Podcast',
+      );
+
+      // Add podcast with first service instance
+      await service.addPodcast(podcast);
+      var podcasts = await service.getPodcasts();
+      expect(podcasts.length, 1);
+
+      // Create new service instance
+      final newService = PodcastsDatabaseService();
+      await newService.initialise();
+      
+      // Should load the previously saved podcast
+      podcasts = await newService.getPodcasts();
+      expect(podcasts.length, 1);
+      expect(podcasts.first.id, 'test-id');
+    });
   });
+}
+
+// Mock PathProviderPlatform for testing
+class FakePathProviderPlatform extends PathProviderPlatform {
+  final String tempPath;
+  
+  FakePathProviderPlatform(this.tempPath);
+  
+  @override
+  Future<String?> getApplicationDocumentsPath() async {
+    return tempPath;
+  }
+  
+  @override
+  Future<String?> getTemporaryPath() async {
+    return tempPath;
+  }
+  
+  @override
+  Future<String?> getApplicationSupportPath() async {
+    return tempPath;
+  }
+  
+  @override
+  Future<String?> getLibraryPath() async {
+    return tempPath;
+  }
+  
+  @override
+  Future<String?> getExternalStoragePath() async {
+    return tempPath;
+  }
+  
+  @override
+  Future<List<String>?> getExternalCachePaths() async {
+    return [tempPath];
+  }
+  
+  @override
+  Future<List<String>?> getExternalStoragePaths({
+    StorageDirectory? type,
+  }) async {
+    return [tempPath];
+  }
+  
+  @override
+  Future<String?> getDownloadsPath() async {
+    return tempPath;
+  }
 }
