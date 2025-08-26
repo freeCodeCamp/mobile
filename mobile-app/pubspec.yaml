@@ -46,6 +46,7 @@ dependencies:
   quick_actions: 1.1.0
   share_plus: 10.1.4 # NOTE: v11 has breaking changes
   shared_preferences: 2.5.3 # TODO: update deprecated code
+  sqflite: 2.4.2
   stacked: 3.4.4 # Unlocked since sqflite_migration_service is removed
   stacked_services: 1.6.0
   timezone: 0.10.1
@@ -68,6 +69,7 @@ dev_dependencies:
     sdk: flutter
   mockito: 5.4.4 # NOTE: 5.4.6+ is blocked by stacked_generator
   path_provider_platform_interface: 2.1.2
+  sqflite_common_ffi: 2.3.5
   stacked_generator: 1.6.1
 
 flutter:
