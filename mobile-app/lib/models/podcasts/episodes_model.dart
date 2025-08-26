@@ -40,8 +40,7 @@ class Episodes {
             ? null
             : DateTime.parse(json['publicationDate']),
         contentUrl: json['contentUrl'] as String?,
-        duration:
-            json['duration'] == null ? null : parseDuration(json['duration']),
+        duration: json['duration'] == null ? null : parseDuration(json['duration']),
       );
 
   Map<String, dynamic> toJson() => {
@@ -51,7 +50,7 @@ class Episodes {
         'description': description,
         'publicationDate': publicationDate?.toIso8601String(),
         'contentUrl': contentUrl,
-        'duration': duration.toString(),
+        'duration': duration?.toString(),
       };
 
   @override
@@ -60,7 +59,7 @@ class Episodes {
       id: $id,
       podcastId: $podcastId,
       title: $title,
-      description: ${description!.substring(0, 100)},
+      description: ${description != null && description!.length > 100 ? description!.substring(0, 100) : description},
       publicationDate: $publicationDate,
       contentUrl: $contentUrl,
       duration: $duration,
