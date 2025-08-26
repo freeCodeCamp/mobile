@@ -5,16 +5,7 @@ class BookmarkedTutorial {
   late String tutorialText;
   late String authorName;
 
-  // Legacy constructor for database migration
-  BookmarkedTutorial.fromMap(Map<String, dynamic> map) {
-    bookmarkId = map['bookmark_id'];
-    tutorialTitle = map['articleTitle'];
-    id = map['articleId'];
-    tutorialText = map['articleText'];
-    authorName = map['authorName'];
-  }
-
-  // New constructor for JSON serialization
+  // Constructor for JSON serialization
   BookmarkedTutorial.fromJson(Map<String, dynamic> json) {
     bookmarkId = json['bookmarkId'] ?? 0;
     tutorialTitle = json['tutorialTitle'] ?? '';
