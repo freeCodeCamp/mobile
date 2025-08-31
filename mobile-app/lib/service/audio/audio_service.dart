@@ -253,7 +253,7 @@ class AudioPlayerHandler extends BaseAudioHandler {
   }
 
   void loadEnglishAudio(EnglishAudio audio) async {
-    _audioPlayer.setAudioSource(
+    await _audioPlayer.setAudioSource(
       ClippingAudioSource(
         start: parseTimeStamp(audio.startTimeStamp),
         end: audio.finishTimeStamp == null

@@ -37,7 +37,7 @@ dependencies:
   html: 0.15.5+1
   infinite_scroll_pagination: 5.0.0
   jiffy: 6.3.2
-  just_audio: 0.10.2
+  just_audio: 0.10.4
   path: 1.9.1
   path_provider: 2.1.5
   phone_ide: 2.0.0
