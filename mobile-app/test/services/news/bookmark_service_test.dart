@@ -12,6 +12,7 @@ import '../../helpers/test_helpers.dart';
 
 final Tutorial testTutorial = Tutorial(
   id: '61fad67af2ed6b06db5ab66f',
+  slug: 'hello-world',
   featureImage:
       'https://www.freecodecamp.org/news/content/images/2022/01/python-game.png',
   title:

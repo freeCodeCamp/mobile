@@ -13,28 +13,29 @@ class AnalyticsObserver extends RouteObserver {
     String screenName = route.settings.name ?? 'could-not-find-view';
 
     if (route.settings.arguments != null) {
-      switch (route.settings.arguments.runtimeType) {
-        case SuperBlockViewArguments _:
+      String runtimeType = route.settings.arguments.runtimeType.toString();
+      switch (runtimeType) {
+        case 'SuperBlockViewArguments':
           final routeArgs = route.settings.arguments as SuperBlockViewArguments;
           screenName += '/${routeArgs.superBlockDashedName}';
           break;
-        case NewsTutorialViewArguments _:
+        case 'NewsTutorialViewArguments':
           final routeArgs =
               route.settings.arguments as NewsTutorialViewArguments;
-          screenName += '/${routeArgs.title}';
+          screenName += '/${routeArgs.slug}';
           break;
-        case NewsBookmarkTutorialViewArguments _:
+        case 'NewsBookmarkTutorialViewArguments':
           final routeArgs =
               route.settings.arguments as NewsBookmarkTutorialViewArguments;
           screenName += '/${routeArgs.tutorial.tutorialTitle}';
           break;
-        case ChallengeTemplateViewArguments _:
+        case 'ChallengeTemplateViewArguments':
           final routeArgs =
               route.settings.arguments as ChallengeTemplateViewArguments;
           screenName += '/${routeArgs.challengeId}';
           break;
         default:
-          screenName += '/${route.settings.arguments}';
+          screenName += '/could-not-find-view';
       }
     }
     log('Setting screen to $screenName');
