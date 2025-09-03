@@ -102,7 +102,8 @@ class AuthenticationService {
     isDevMode =
         dotenv.get('DEVELOPMENTMODE', fallback: '').toLowerCase() == 'true';
     baseURL = isDevMode
-        ? 'https://www.freecodecamp.dev'
+        ? 'http://localhost:8000'
+        // ? 'https://www.freecodecamp.dev'
         : 'https://www.freecodecamp.org';
     baseApiURL = isDevMode
         ? 'https://api.freecodecamp.dev'
