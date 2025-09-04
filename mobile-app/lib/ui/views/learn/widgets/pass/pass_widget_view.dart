@@ -22,6 +22,7 @@ class PassWidgetView extends StatelessWidget {
   Widget build(BuildContext context) {
     return ViewModelBuilder<PassWidgetModel>.reactive(
       viewModelBuilder: () => PassWidgetModel(),
+      onViewModelReady: (model) => model.initQuoute(),
       builder: (context, model, child) => SafeArea(
         child: Column(
           children: [
@@ -48,7 +49,7 @@ class PassWidgetView extends StatelessWidget {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       FutureBuilder(
-                        future: model.retrieveNewQuote(),
+                        future: model.quoteFuture,
                         builder: (context, snapshot) {
                           if (snapshot.hasData) {
                             MotivationalQuote quote =

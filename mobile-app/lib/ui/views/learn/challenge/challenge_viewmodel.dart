@@ -712,7 +712,8 @@ class ChallengeViewModel extends BaseViewModel {
       );
       if (evalResult != null && evalResult.error != null) {
         setUserConsoleMessages = [
-          ...userConsoleMessages.sublist(0, userConsoleMessages.length - 1),
+          if (userConsoleMessages.isNotEmpty)
+            ...userConsoleMessages.sublist(0, userConsoleMessages.length - 1),
           '<p>${evalResult.error}</p>',
         ];
       }
@@ -745,13 +746,16 @@ class ChallengeViewModel extends BaseViewModel {
           'testStr': test.javaScript,
         },
       );
-      if (testRes?.value['pass'] == null) {
-        log('TEST FAILED: ${test.instruction} - ${test.javaScript} - ${testRes?.value['err']}');
+      if (testRes != null && testRes.value['pass'] == null) {
+        log('TEST FAILED: ${test.instruction} - ${test.javaScript} - ${testRes.value['err']}');
         failedTest = failedTest ?? test;
-        failedTestErr = failedTestErr ?? testRes?.value['err'] as Map;
+        failedTestErr = failedTestErr ?? testRes.value['err'] as Map;
         failedTestsConsole.add(
           '<li>${replacePlaceholders(test.instruction, failedTestErr)}</li>',
         );
+      } else if (testRes == null) {
+        log('TEST RESULT NULL: $testRes');
+        throw Exception('Test result is null ${testRes.toString()}');
       }
     }
 

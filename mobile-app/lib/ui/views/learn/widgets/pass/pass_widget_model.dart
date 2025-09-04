@@ -15,6 +15,17 @@ import 'package:stacked/stacked.dart';
 class PassWidgetModel extends BaseViewModel {
   final AuthenticationService auth = locator<AuthenticationService>();
 
+  Future<MotivationalQuote>? quoteFuture;
+
+  set setQuoteFuture(Future<MotivationalQuote> value) {
+    quoteFuture = value;
+    notifyListeners();
+  }
+
+  void initQuoute() {
+    setQuoteFuture = retrieveNewQuote();
+  }
+
   Future<int> numCompletedChallenges(ChallengeViewModel challengeModel) async {
     FccUserModel? user = await auth.userModel;
     if (user != null) {
