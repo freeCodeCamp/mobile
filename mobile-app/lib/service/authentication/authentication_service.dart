@@ -44,6 +44,8 @@ class AuthenticationService {
   static StreamController<bool> isLoggedInStream =
       StreamController<bool>.broadcast();
 
+  static const String supportEmail = 'mobile@freecodecamp.org';
+
   StreamController<bool> progress = StreamController.broadcast();
 
   final Stream<bool> _isLoggedIn = isLoggedInStream.stream;
@@ -214,12 +216,11 @@ class AuthenticationService {
       await writeTokensToStorage();
       await fetchUser();
     } on DioException catch (err, st) {
-      String supportEmail = Uri.encodeComponent('mobile@feeecodecamp.org');
       String subject = Uri.encodeComponent('Error logging in to mobile app');
       Navigator.pop(context);
       if (err.response != null) {
         String body = Uri.encodeComponent(
-            'Please email the below error to mobile@freecodecamp.org\n\n${err.response!.data.toString()}\n\n${st.toString()}');
+            'Please email the below error to ${AuthenticationService.supportEmail}\n\n${err.response!.data.toString()}\n\n${st.toString()}');
         await showDialog(
           context: context,
           barrierDismissible: false,
@@ -235,7 +236,7 @@ class AuthenticationService {
             content: SingleChildScrollView(
               child: SelectionArea(
                 child: Text(
-                  'Please email the below error to mobile@freecodecamp.org:\n\n${err.response!.data.toString()}\n\n${st.toString()}',
+                  'Please email the below error to ${AuthenticationService.supportEmail}:\n\n${err.response!.data.toString()}\n\n${st.toString()}',
                 ),
               ),
             ),
@@ -247,7 +248,7 @@ class AuthenticationService {
                 onPressed: () async {
                   logout();
                   await launchUrl(Uri.parse(
-                      'mailto:$supportEmail?subject=$subject&body=$body'));
+                      'mailto:${AuthenticationService.supportEmail}?subject=$subject&body=$body'));
                   Navigator.pop(context);
                 },
                 child: const Text('Email Error'),
@@ -267,7 +268,7 @@ class AuthenticationService {
         );
       } else {
         String body = Uri.encodeComponent(
-            'Please email the below error to mobile@freecodecamp.org\n\n${err.toString()}\n\n${st.toString()}');
+            'Please email the below error to ${AuthenticationService.supportEmail}\n\n${err.toString()}\n\n${st.toString()}');
         await showDialog(
           context: context,
           barrierDismissible: false,
@@ -283,7 +284,7 @@ class AuthenticationService {
             content: SingleChildScrollView(
               child: SelectionArea(
                 child: Text(
-                  'Please email the below error to mobile@freecodecamp.org:\n\n${err.toString()}\n\n${st.toString()}',
+                  'Please email the below error to ${AuthenticationService.supportEmail}:\n\n${err.toString()}\n\n${st.toString()}',
                 ),
               ),
             ),
@@ -295,7 +296,7 @@ class AuthenticationService {
                 onPressed: () async {
                   logout();
                   await launchUrl(Uri.parse(
-                      'mailto:$supportEmail?subject=$subject&body=$body'));
+                      'mailto:${AuthenticationService.supportEmail}?subject=$subject&body=$body'));
                   Navigator.pop(context);
                 },
                 child: const Text('Email Error'),
