@@ -81,12 +81,12 @@ class NewsSearchModel extends BaseViewModel {
   //   );
   // }
 
-  void navigateToTutorial(String id, String title) {
+  void navigateToTutorial(String id, String slug) {
     _navigationService.navigateTo(
       Routes.newsTutorialView,
       arguments: NewsTutorialViewArguments(
         refId: id,
-        title: title,
+        slug: slug,
       ),
     );
   }
