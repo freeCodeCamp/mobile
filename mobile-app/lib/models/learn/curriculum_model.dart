@@ -119,7 +119,7 @@ class SuperBlock {
 }
 
 enum BlockType {
-  lecture,
+  lesson,
   workshop,
   lab,
   review,

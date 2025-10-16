@@ -149,7 +149,7 @@ class BlockTemplateViewModel extends BaseViewModel {
 
   (IconData?, Color) getIconData(BlockType type) {
     switch (type) {
-      case BlockType.lecture:
+      case BlockType.lesson:
         return (Icons.menu_book_outlined, FccColors.blue30);
       case BlockType.quiz:
         return (Icons.help_outline, FccColors.orange30);
