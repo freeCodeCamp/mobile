@@ -113,12 +113,21 @@ class AuthenticationService {
     await dotenv.load();
     auth0 = Auth0(dotenv.get('AUTH0_DOMAIN'), dotenv.get('AUTH0_CLIENT_ID'));
 
+    // fyi: This will refresh the token if needed
+    await auth0.credentialsManager.credentials();
+
     await setCurrentClientMode();
 
-    if (await hasRequiredTokens()) {
+    bool loginValid = await hasRequiredTokens() &&
+        await auth0.credentialsManager.hasValidCredentials();
+
+    if (loginValid) {
       log('message: Tokens found in storage');
       await setRequiredTokens();
       await fetchUser();
+    } else {
+      log('message: No valid credentials found');
+      logout();
     }
   }
 
@@ -179,6 +188,10 @@ class AuthenticationService {
         creds = await auth0
             .webAuthentication(scheme: 'fccapp')
             .login(parameters: {'connection': connectionType});
+
+        await auth0.credentialsManager.storeCredentials(creds);
+
+        log('set new credentials');
       }
     } on WebAuthenticationException {
       // NOTE: The most likely case is that the user canceled the login
@@ -202,6 +215,7 @@ class AuthenticationService {
       String accessToken = connectionType == 'email'
           ? emailLoginRes.data['access_token']
           : creds.accessToken;
+
       res = await _dio.get(
         '$baseApiURL/mobile-login',
         options: Options(
@@ -344,7 +358,6 @@ class AuthenticationService {
       );
     }
 
-    await auth0.credentialsManager.clearCredentials();
     // ignore: unnecessary_null_comparison
     if (res != null) {
       Navigator.pop(context);
@@ -363,6 +376,7 @@ class AuthenticationService {
     await store.delete(key: 'csrf_token');
     await store.delete(key: 'jwt_access_token');
     userModel = null;
+    auth0.credentialsManager.clearCredentials();
   }
 
   Future<void> fetchUser() async {
