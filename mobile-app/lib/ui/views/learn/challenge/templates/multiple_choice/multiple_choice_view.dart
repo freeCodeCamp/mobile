@@ -12,6 +12,7 @@ import 'package:freecodecamp/ui/views/learn/widgets/quiz_widget.dart';
 import 'package:freecodecamp/ui/views/learn/widgets/transcript_widget.dart';
 import 'package:freecodecamp/ui/views/learn/widgets/youtube_player_widget.dart';
 import 'package:freecodecamp/ui/views/news/html_handler/html_handler.dart';
+import 'package:phone_ide/phone_ide.dart';
 import 'package:stacked/stacked.dart';
 
 class MultipleChoiceView extends StatelessWidget {
@@ -57,6 +58,35 @@ class MultipleChoiceView extends StatelessWidget {
                       children: parser.parse(
                         challenge.description,
                       ),
+                    ),
+                  ),
+                if (challenge.nodules!.isNotEmpty)
+                  ChallengeCard(
+                    title: 'Lesson',
+                    child: Column(
+                      children: [
+                        ...challenge.nodules!.map(
+                          (nodule) {
+                            if (nodule.type == NoduleType.paragraph) {
+                              return Column(
+                                children: parser.parse(nodule.asString()),
+                              );
+                            } else if (nodule.type ==
+                                NoduleType.interactiveEditor) {
+                              return Editor(
+                                  options: EditorOptions(
+                                    takeFullHeight: false,
+                                    showLinebar: false,
+                                  ),
+                                  defaultLanguage: nodule.asList()[0].ext,
+                                  defaultValue: nodule.asList()[0].contents,
+                                  path: '/');
+                            } else {
+                              return const SizedBox.shrink();
+                            }
+                          },
+                        )
+                      ],
                     ),
                   ),
                 if (challenge.videoId != null) ...[

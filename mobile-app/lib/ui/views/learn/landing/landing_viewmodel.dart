@@ -243,9 +243,9 @@ class LearnLandingViewModel extends BaseViewModel {
 
       List superBlocks = res.data['superblocks'];
       for (int i = 0; i < superBlocks.length; i++) {
-        if (superBlocks[i]['dashedName'].toString().contains('full-stack')) {
-          continue;
-        }
+        // if (superBlocks[i]['dashedName'].toString().contains('full-stack')) {
+        //   continue;
+        // }
         layout.add(
           SuperBlockButton(
             button: SuperBlockButtonData(
