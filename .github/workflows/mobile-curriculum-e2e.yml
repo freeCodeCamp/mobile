@@ -92,6 +92,13 @@ jobs:
         with:
           version: ${{ matrix.pnpm-version }}
 
+      - name: Setup Node.js v22
+        uses: actions/setup-node@39370e3970a6d050c480ffad4ff0ed4d3fdee5af # v4
+        with:
+          node-version: "22"
+          cache: "pnpm"
+          cache-dependency-path: "freeCodeCamp/pnpm-lock.yaml"
+
       - name: Setup Flutter - ${{ matrix.flutter-version }}
         uses: subosito/flutter-action@e938fdf56512cc96ef2f93601a5a40bde3801046 # v2
         with:
