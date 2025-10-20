@@ -24,6 +24,7 @@ jobs:
         gradle-version: [8.7]
         java-version: [17]
         android-api-level: [35]
+        node-version: [22]
         pnpm-version: [10]
         flutter-version: ["3.32.x"]
 
@@ -92,10 +93,10 @@ jobs:
         with:
           version: ${{ matrix.pnpm-version }}
 
-      - name: Setup Node.js v22
-        uses: actions/setup-node@39370e3970a6d050c480ffad4ff0ed4d3fdee5af # v4
+      - name: Use Node.js ${{ matrix.node-version }}
+        uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4
         with:
-          node-version: "22"
+          node-version: ${{ matrix.node-version }}
 
       - name: Setup Flutter - ${{ matrix.flutter-version }}
         uses: subosito/flutter-action@e938fdf56512cc96ef2f93601a5a40bde3801046 # v2
