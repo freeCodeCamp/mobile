@@ -24,6 +24,7 @@ jobs:
         gradle-version: [8.7]
         java-version: [17]
         android-api-level: [35]
+        node-version: [22]
         pnpm-version: [10]
         flutter-version: ["3.32.x"]
 
@@ -86,6 +87,11 @@ jobs:
         uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4
         with:
           path: mobile
+
+      - name: Use Node.js ${{ matrix.node-version }}
+        uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4
+        with:
+          node-version: ${{ matrix.node-version }}
 
       - name: Setup pnpm - ${{ matrix.pnpm-version }}
         uses: pnpm/action-setup@v2
