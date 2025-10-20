@@ -60,12 +60,12 @@ class MultipleChoiceView extends StatelessWidget {
                       ),
                     ),
                   ),
-                if (challenge.nodules!.isNotEmpty)
+                if (challenge.nodules?.isNotEmpty ?? false)
                   ChallengeCard(
                     title: 'Lesson',
                     child: Column(
                       children: [
-                        ...challenge.nodules!.map(
+                        ...(challenge.nodules ?? []).map(
                           (nodule) {
                             if (nodule.type == NoduleType.paragraph) {
                               return Column(
