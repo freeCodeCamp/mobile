@@ -22,7 +22,18 @@ void main() {
 
     String baseUrl = LearnService.baseUrl;
     final Response res = await dio.get('$baseUrl/available-superblocks.json');
-    List superBlocks = res.data['superblocks'];
+    Map<String, dynamic> superBlockStages = res.data['superblocks'];
+
+    List<Map<String, dynamic>> superBlocks = [];
+    for (var stage in superBlockStages.keys) {
+      List stageBlocks = superBlockStages[stage];
+      for (var superBlock in stageBlocks) {
+        if (!superBlock['dashedName'].toString().contains('full-stack')) {
+          superBlocks.add(superBlock);
+        }
+      }
+    }
+
     int publicSuperBlocks = 0;
 
     for (int i = 0; i < superBlocks.length; i++) {
@@ -39,7 +50,8 @@ void main() {
     );
     expect(
       superBlockButtons,
-      findsNWidgets(superBlocks.length - 1), // Exclude 'full-stack' superblock
+      findsNWidgets(
+          superBlocks.length), // Already excludes 'full-stack' superblock
     );
     expect(publicSuperBlockButtons, findsNWidgets(publicSuperBlocks));
 
