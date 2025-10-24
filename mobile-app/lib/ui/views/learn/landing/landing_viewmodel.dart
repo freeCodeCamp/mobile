@@ -261,7 +261,6 @@ class LearnLandingViewModel extends BaseViewModel {
         }
       }
 
-      // Combine: public buttons first, then non-public buttons
       layout = [...publicButtons, ...nonPublicButtons];
 
       return layout;
