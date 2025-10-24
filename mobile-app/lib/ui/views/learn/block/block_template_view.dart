@@ -29,7 +29,7 @@ class BlockTemplateView extends StatelessWidget {
         model,
         child,
       ) {
-        final (icon, color) = model.getIconData(block.type);
+        final (icon, color) = model.getIconData(block.label);
 
         return Padding(
           padding: const EdgeInsets.only(bottom: 16.0),

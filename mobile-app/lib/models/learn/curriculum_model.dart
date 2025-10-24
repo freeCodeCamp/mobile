@@ -118,14 +118,27 @@ class SuperBlock {
   }
 }
 
-enum BlockType {
-  lecture,
-  workshop,
-  lab,
-  review,
-  quiz,
-  exam,
-  legacy,
+enum BlockLabel {
+  lecture('lecture'),
+  workshop('workshop'),
+  lab('lab'),
+  review('review'),
+  quiz('quiz'),
+  exam('exam'),
+  warmup('warm-up'),
+  learn('learn'),
+  practice('practice'),
+  legacy('legacy');
+
+  final String value;
+  const BlockLabel(this.value);
+
+  static BlockLabel fromValue(String value) {
+    return BlockLabel.values.firstWhere(
+      (blockLabel) => blockLabel.value == value,
+      orElse: () => BlockLabel.legacy,
+    );
+  }
 }
 
 enum BlockLayout {
@@ -141,7 +154,7 @@ class Block {
   final String dashedName;
   final SuperBlock superBlock;
   final BlockLayout layout;
-  final BlockType type;
+  final BlockLabel label;
   final List description;
   // Blocks in chapter-based super blocks don't have `order`.
   final int? order;
@@ -152,7 +165,7 @@ class Block {
   Block({
     required this.superBlock,
     required this.layout,
-    required this.type,
+    required this.label,
     required this.name,
     required this.dashedName,
     required this.description,
@@ -192,11 +205,8 @@ class Block {
       }
     }
 
-    BlockType blockTypeFromString(String type) {
-      return BlockType.values.firstWhere(
-        (e) => e.name.toLowerCase() == type.toLowerCase(),
-        orElse: () => BlockType.legacy, // or return null if preferred
-      );
+    BlockLabel blockLabelFromString(String type) {
+      return BlockLabel.fromValue(type);
     }
 
     return Block(
@@ -205,9 +215,10 @@ class Block {
         name: superBlockName,
       ),
       layout: handleLayout(data['blockLayout']),
-      type: data['blockType'] != null
-          ? blockTypeFromString(data['blockType'])
-          : BlockType.legacy,
+      // Support both blockLabel and blockType for backward compatibility
+      label: (data['blockLabel'] ?? data['blockType']) != null
+          ? blockLabelFromString(data['blockLabel'] ?? data['blockType'])
+          : BlockLabel.legacy,
       name: data['name'],
       dashedName: dashedName,
       description: description,
