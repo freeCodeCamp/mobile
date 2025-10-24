@@ -154,7 +154,7 @@ class Block {
   final String dashedName;
   final SuperBlock superBlock;
   final BlockLayout layout;
-  final BlockLabel type;
+  final BlockLabel label;
   final List description;
   // Blocks in chapter-based super blocks don't have `order`.
   final int? order;
@@ -165,7 +165,7 @@ class Block {
   Block({
     required this.superBlock,
     required this.layout,
-    required this.type,
+    required this.label,
     required this.name,
     required this.dashedName,
     required this.description,
@@ -216,7 +216,7 @@ class Block {
       ),
       layout: handleLayout(data['blockLayout']),
       // Support both blockLabel and blockType for backward compatibility
-      type: (data['blockLabel'] ?? data['blockType']) != null
+      label: (data['blockLabel'] ?? data['blockType']) != null
           ? blockLabelFromString(data['blockLabel'] ?? data['blockType'])
           : BlockLabel.legacy,
       name: data['name'],
