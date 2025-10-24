@@ -121,7 +121,7 @@ jobs:
         working-directory: freeCodeCamp
         run: |
           pnpm install
-          pnpm run create:shared
+          pnpm run compile:ts
           pnpm run build:curriculum
           pnpm run clean:packages
 
