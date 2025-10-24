@@ -50,8 +50,7 @@ void main() {
     );
     expect(
       superBlockButtons,
-      findsNWidgets(
-          superBlocks.length), // Already excludes 'full-stack' superblock
+      findsNWidgets(superBlocks.length),
     );
     expect(publicSuperBlockButtons, findsNWidgets(publicSuperBlocks));
 
