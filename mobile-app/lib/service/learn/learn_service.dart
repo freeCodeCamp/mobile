@@ -26,10 +26,7 @@ class LearnService {
 
   final Dio _dio = DioService.dio;
 
-  // TODO: change this to v2 and remove baseUrlV2 once the migration is complete
-  static final baseUrl = '${AuthenticationService.baseURL}/curriculum-data/v1';
-  static final baseUrlV2 =
-      '${AuthenticationService.baseURL}/curriculum-data/v2';
+  static final baseUrl = '${AuthenticationService.baseURL}/curriculum-data/v2';
 
   final LearnOfflineService learnOfflineService =
       locator<LearnOfflineService>();
@@ -62,7 +59,7 @@ class LearnService {
     String challengeId = challenge.id;
     int challengeType = challenge.challengeType;
 
-    Response submitTypesRes = await _dio.get('$baseUrlV2/submit-types.json');
+    Response submitTypesRes = await _dio.get('$baseUrl/submit-types.json');
     Map<String, dynamic> submitTypes = submitTypesRes.data;
 
     switch (submitTypes[challengeType.toString()]) {
