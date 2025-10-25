@@ -59,7 +59,7 @@ class Podcasts {
       url: $url,
       link: $link,
       title: $title,
-      description: ${description!.substring(0, 100)},
+      description: ${description != null && description!.length > 100 ? description!.substring(0, 100) : description},
       image: $image,
       copyright: $copyright
       numEps: $numEps
