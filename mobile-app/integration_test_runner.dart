@@ -89,7 +89,7 @@ brew install applesimutils
     File curriculumFile = File(join(
       mobileAppPath.parent.parent.path,
       'freeCodeCamp',
-      'shared',
+      'shared-dist',
       'config',
       'curriculum.json',
     ));
