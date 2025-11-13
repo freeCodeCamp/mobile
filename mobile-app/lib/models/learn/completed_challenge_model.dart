@@ -4,7 +4,7 @@ class CompletedChallenge {
   final String id;
   final String? solution;
   final String? githubLink;
-  final int? challengeType;
+  final ChallengeType? challengeType;
   final DateTime completedDate;
   final List<ChallengeFile> files;
 
@@ -22,7 +22,9 @@ class CompletedChallenge {
       id: data['id'],
       solution: data['solution'],
       githubLink: data['githubLink'],
-      challengeType: data['challengeType'],
+      challengeType: data['challengeType'] != null
+          ? ChallengeType.values[data['challengeType']]
+          : null,
       completedDate: DateTime.fromMillisecondsSinceEpoch(data['completedDate']),
       files: (data['files'] as List)
           .map<ChallengeFile>((file) => ChallengeFile.fromJson(file))
