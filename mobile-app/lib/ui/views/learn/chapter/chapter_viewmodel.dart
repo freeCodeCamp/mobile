@@ -64,7 +64,7 @@ class ChapterViewModel extends BaseViewModel {
   }
 
   Future<SuperBlock?> requestChapters() async {
-    String baseUrl = LearnService.baseUrlV2;
+    String baseUrl = LearnService.baseUrl;
 
     final Response res = await _dio.get('$baseUrl/full-stack-developer.json');
     if (res.statusCode == 200) {

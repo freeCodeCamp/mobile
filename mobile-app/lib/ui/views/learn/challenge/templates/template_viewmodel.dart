@@ -24,7 +24,7 @@ class ChallengeTemplateViewModel extends BaseViewModel {
 
   void initiate(Block block, String challengeId, DateTime? challengeDate) {
     if (challengeDate == null) {
-      final String base = LearnService.baseUrlV2;
+      final String base = LearnService.baseUrl;
 
       String url =
           '$base/challenges/${block.superBlock.dashedName}/${block.dashedName}/$challengeId.json';
