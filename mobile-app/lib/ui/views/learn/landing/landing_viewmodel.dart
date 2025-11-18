@@ -220,43 +220,48 @@ class LearnLandingViewModel extends BaseViewModel {
       bool showAllSB =
           dotenv.get('SHOWALLSB', fallback: 'false').toLowerCase() == 'true';
 
-      // Map<String, dynamic> superBlockStages = res.data['superblocks'];
-      // for (var superBlockStage in superBlockStages.keys) {
-      //   layout.add(Padding(
-      //     padding: const EdgeInsets.all(8.0),
-      //     child: handleStageTitle(superBlockStage),
-      //   ));
+      Map<String, dynamic> superBlockStages = res.data['superblocks'];
 
-      //   for (var superBlock in superBlockStages[superBlockStage]) {
-      //     layout.add(
-      //       SuperBlockButton(
-      //         button: SuperBlockButtonData(
-      //           path: superBlock['dashedName'],
-      //           name: superBlock['title'],
-      //           public: !showAllSB ? superBlock['public'] : true,
-      //         ),
-      //         model: this,
-      //       ),
-      //     );
-      //   }
-      // }
+      List<String> stageOrder = [
+        'legacy',
+        'professional',
+        'extra',
+        'core',
+        'english'
+      ];
 
-      List superBlocks = res.data['superblocks'];
-      for (int i = 0; i < superBlocks.length; i++) {
-        if (superBlocks[i]['dashedName'].toString().contains('full-stack')) {
-          continue;
+      List<Widget> publicButtons = [];
+      List<Widget> nonPublicButtons = [];
+
+      for (var stage in stageOrder) {
+        if (superBlockStages.containsKey(stage)) {
+          List stageBlocks = superBlockStages[stage];
+
+          for (var superBlock in stageBlocks) {
+            if (superBlock['dashedName'].toString().contains('full-stack')) {
+              continue;
+            }
+
+            bool isPublic = superBlock['public'] ?? false;
+            Widget button = SuperBlockButton(
+              button: SuperBlockButtonData(
+                path: superBlock['dashedName'],
+                name: superBlock['title'],
+                public: !showAllSB ? superBlock['public'] : true,
+              ),
+              model: this,
+            );
+
+            if (isPublic) {
+              publicButtons.add(button);
+            } else {
+              nonPublicButtons.add(button);
+            }
+          }
         }
-        layout.add(
-          SuperBlockButton(
-            button: SuperBlockButtonData(
-              path: superBlocks[i]['dashedName'],
-              name: superBlocks[i]['title'],
-              public: !showAllSB ? superBlocks[i]['public'] : true,
-            ),
-            model: this,
-          ),
-        );
       }
+
+      layout = [...publicButtons, ...nonPublicButtons];
 
       return layout;
     }

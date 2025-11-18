@@ -1,6 +1,12 @@
 const chapterBasedSuperBlocks = ['full-stack-developer'];
 
 enum SuperBlocks {
+  respWebDesignV9('responsive-web-design-v9'),
+  javascriptV9('javascript-v9'),
+  frontEndDevLibsV9('front-end-development-libraries-v9'),
+  pythonV9('python-v9'),
+  relationalDbV9('relational-databases-v9'),
+  backEndDevApisV9('back-end-development-and-apis-v9'),
   respWebDesignNew('2022/responsive-web-design'),
   respWebDesign('responsive-web-design'),
   jsAlgoDataStruct('javascript-algorithms-and-data-structures'),
