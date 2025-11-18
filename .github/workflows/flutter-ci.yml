@@ -1,6 +1,7 @@
 name: Flutter Android
 
 on:
+  workflow_dispatch:
   pull_request:
     branches:
       - main
