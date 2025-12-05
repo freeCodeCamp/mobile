@@ -26,8 +26,8 @@ class ChapterViewModel extends BaseViewModel {
     notifyListeners();
   }
 
-  void init() async {
-    superBlockFuture = requestChapters();
+  void init(String chapterBasedSuperBlock) async {
+    superBlockFuture = requestChapters(chapterBasedSuperBlock);
     developmentMode();
   }
 
@@ -63,14 +63,16 @@ class ChapterViewModel extends BaseViewModel {
     return false;
   }
 
-  Future<SuperBlock?> requestChapters() async {
+  Future<SuperBlock?> requestChapters(String chapterBasedSuperBlock) async {
     String baseUrl = LearnService.baseUrl;
 
-    final Response res = await _dio.get('$baseUrl/full-stack-developer.json');
+    final Response res = await _dio.get(
+      '$baseUrl/$chapterBasedSuperBlock.json',
+    );
     if (res.statusCode == 200) {
       return SuperBlock.fromJson(
         res.data,
-        'full-stack-developer',
+        chapterBasedSuperBlock,
         'Certified Full Stack Developer Curriculum',
       );
     }

@@ -5,13 +5,15 @@ import 'package:freecodecamp/ui/views/learn/chapter/chapter_viewmodel.dart';
 import 'package:stacked/stacked.dart';
 
 class ChapterView extends StatelessWidget {
-  const ChapterView({super.key});
+  const ChapterView({super.key, required this.chapterBasedSuperBlock});
+
+  final String chapterBasedSuperBlock;
 
   @override
   Widget build(BuildContext context) {
     return ViewModelBuilder<ChapterViewModel>.reactive(
       viewModelBuilder: () => ChapterViewModel(),
-      onViewModelReady: (model) => model.init(),
+      onViewModelReady: (model) => model.init(chapterBasedSuperBlock),
       builder: (context, model, child) {
         return Scaffold(
           backgroundColor: FccColors.gray90,

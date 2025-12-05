@@ -277,8 +277,10 @@ class StackedRouter extends _i1.RouterBase {
       );
     },
     _i12.ChapterView: (data) {
+      final args = data.getArgs<ChapterViewArguments>(nullOk: false);
       return _i21.MaterialPageRoute<dynamic>(
-        builder: (context) => const _i12.ChapterView(),
+        builder: (context) => _i12.ChapterView(
+            key: args.key, chapterBasedSuperBlock: args.chapterBasedSuperBlock),
         settings: data,
       );
     },
@@ -596,6 +598,34 @@ class ChallengeTemplateViewArguments {
   }
 }
 
+class ChapterViewArguments {
+  const ChapterViewArguments({
+    this.key,
+    required this.chapterBasedSuperBlock,
+  });
+
+  final _i21.Key? key;
+
+  final String chapterBasedSuperBlock;
+
+  @override
+  String toString() {
+    return '{"key": "$key", "chapterBasedSuperBlock": "$chapterBasedSuperBlock"}';
+  }
+
+  @override
+  bool operator ==(covariant ChapterViewArguments other) {
+    if (identical(this, other)) return true;
+    return other.key == key &&
+        other.chapterBasedSuperBlock == chapterBasedSuperBlock;
+  }
+
+  @override
+  int get hashCode {
+    return key.hashCode ^ chapterBasedSuperBlock.hashCode;
+  }
+}
+
 class ChapterBlockViewArguments {
   const ChapterBlockViewArguments({
     this.key,
@@ -883,14 +913,18 @@ extension NavigatorStateExtension on _i26.NavigationService {
         transition: transition);
   }
 
-  Future<dynamic> navigateToChapterView([
+  Future<dynamic> navigateToChapterView({
+    _i21.Key? key,
+    required String chapterBasedSuperBlock,
     int? routerId,
     bool preventDuplicates = true,
     Map<String, String>? parameters,
     Widget Function(BuildContext, Animation<double>, Animation<double>, Widget)?
         transition,
-  ]) async {
+  }) async {
     return navigateTo<dynamic>(Routes.chapterView,
+        arguments: ChapterViewArguments(
+            key: key, chapterBasedSuperBlock: chapterBasedSuperBlock),
         id: routerId,
         preventDuplicates: preventDuplicates,
         parameters: parameters,
@@ -1214,14 +1248,18 @@ extension NavigatorStateExtension on _i26.NavigationService {
         transition: transition);
   }
 
-  Future<dynamic> replaceWithChapterView([
+  Future<dynamic> replaceWithChapterView({
+    _i21.Key? key,
+    required String chapterBasedSuperBlock,
     int? routerId,
     bool preventDuplicates = true,
     Map<String, String>? parameters,
     Widget Function(BuildContext, Animation<double>, Animation<double>, Widget)?
         transition,
-  ]) async {
+  }) async {
     return replaceWith<dynamic>(Routes.chapterView,
+        arguments: ChapterViewArguments(
+            key: key, chapterBasedSuperBlock: chapterBasedSuperBlock),
         id: routerId,
         preventDuplicates: preventDuplicates,
         parameters: parameters,
