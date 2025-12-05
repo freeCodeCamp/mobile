@@ -5,20 +5,28 @@ import 'package:freecodecamp/ui/views/learn/chapter/chapter_viewmodel.dart';
 import 'package:stacked/stacked.dart';
 
 class ChapterView extends StatelessWidget {
-  const ChapterView({super.key, required this.chapterBasedSuperBlock});
+  const ChapterView({
+    super.key,
+    required this.superBlockDashedName,
+    required this.superBlockName,
+  });
 
-  final String chapterBasedSuperBlock;
+  final String superBlockDashedName;
+  final String superBlockName;
 
   @override
   Widget build(BuildContext context) {
     return ViewModelBuilder<ChapterViewModel>.reactive(
       viewModelBuilder: () => ChapterViewModel(),
-      onViewModelReady: (model) => model.init(chapterBasedSuperBlock),
+      onViewModelReady: (model) => model.init(
+        superBlockDashedName,
+        superBlockName,
+      ),
       builder: (context, model, child) {
         return Scaffold(
           backgroundColor: FccColors.gray90,
           appBar: AppBar(
-            title: Text('Chapters'),
+            title: Text(superBlockName),
           ),
           body: StreamBuilder(
             stream: model.auth.progress.stream,

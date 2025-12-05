@@ -295,7 +295,8 @@ class LearnLandingViewModel extends BaseViewModel {
       _navigationService.navigateTo(
         Routes.chapterView,
         arguments: ChapterViewArguments(
-          chapterBasedSuperBlock: dashedName,
+          superBlockDashedName: dashedName,
+          superBlockName: name,
         ),
       );
     } else {

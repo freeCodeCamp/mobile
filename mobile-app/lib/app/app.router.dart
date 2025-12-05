@@ -280,7 +280,9 @@ class StackedRouter extends _i1.RouterBase {
       final args = data.getArgs<ChapterViewArguments>(nullOk: false);
       return _i21.MaterialPageRoute<dynamic>(
         builder: (context) => _i12.ChapterView(
-            key: args.key, chapterBasedSuperBlock: args.chapterBasedSuperBlock),
+            key: args.key,
+            superBlockDashedName: args.superBlockDashedName,
+            superBlockName: args.superBlockName),
         settings: data,
       );
     },
@@ -601,28 +603,34 @@ class ChallengeTemplateViewArguments {
 class ChapterViewArguments {
   const ChapterViewArguments({
     this.key,
-    required this.chapterBasedSuperBlock,
+    required this.superBlockDashedName,
+    required this.superBlockName,
   });
 
   final _i21.Key? key;
 
-  final String chapterBasedSuperBlock;
+  final String superBlockDashedName;
+
+  final String superBlockName;
 
   @override
   String toString() {
-    return '{"key": "$key", "chapterBasedSuperBlock": "$chapterBasedSuperBlock"}';
+    return '{"key": "$key", "superBlockDashedName": "$superBlockDashedName", "superBlockName": "$superBlockName"}';
   }
 
   @override
   bool operator ==(covariant ChapterViewArguments other) {
     if (identical(this, other)) return true;
     return other.key == key &&
-        other.chapterBasedSuperBlock == chapterBasedSuperBlock;
+        other.superBlockDashedName == superBlockDashedName &&
+        other.superBlockName == superBlockName;
   }
 
   @override
   int get hashCode {
-    return key.hashCode ^ chapterBasedSuperBlock.hashCode;
+    return key.hashCode ^
+        superBlockDashedName.hashCode ^
+        superBlockName.hashCode;
   }
 }
 
@@ -915,7 +923,8 @@ extension NavigatorStateExtension on _i26.NavigationService {
 
   Future<dynamic> navigateToChapterView({
     _i21.Key? key,
-    required String chapterBasedSuperBlock,
+    required String superBlockDashedName,
+    required String superBlockName,
     int? routerId,
     bool preventDuplicates = true,
     Map<String, String>? parameters,
@@ -924,7 +933,9 @@ extension NavigatorStateExtension on _i26.NavigationService {
   }) async {
     return navigateTo<dynamic>(Routes.chapterView,
         arguments: ChapterViewArguments(
-            key: key, chapterBasedSuperBlock: chapterBasedSuperBlock),
+            key: key,
+            superBlockDashedName: superBlockDashedName,
+            superBlockName: superBlockName),
         id: routerId,
         preventDuplicates: preventDuplicates,
         parameters: parameters,
@@ -1250,7 +1261,8 @@ extension NavigatorStateExtension on _i26.NavigationService {
 
   Future<dynamic> replaceWithChapterView({
     _i21.Key? key,
-    required String chapterBasedSuperBlock,
+    required String superBlockDashedName,
+    required String superBlockName,
     int? routerId,
     bool preventDuplicates = true,
     Map<String, String>? parameters,
@@ -1259,7 +1271,9 @@ extension NavigatorStateExtension on _i26.NavigationService {
   }) async {
     return replaceWith<dynamic>(Routes.chapterView,
         arguments: ChapterViewArguments(
-            key: key, chapterBasedSuperBlock: chapterBasedSuperBlock),
+            key: key,
+            superBlockDashedName: superBlockDashedName,
+            superBlockName: superBlockName),
         id: routerId,
         preventDuplicates: preventDuplicates,
         parameters: parameters,
