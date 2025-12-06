@@ -9,7 +9,6 @@ List<String> hasDialogue = [
 ];
 
 const chapterBasedSuperBlocks = [
-  'full-stack-developer',
   'responsive-web-design-v9',
   'javascript-v9',
   'python-v9'
