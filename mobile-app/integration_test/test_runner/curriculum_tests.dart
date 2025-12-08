@@ -22,7 +22,7 @@ void main() {
     // Setup the test environment with constants and functions
     await setupLocator();
 
-    List<String> publicSBs = ['responsive-web-design-v9'];
+    List<String> publicSBs = ['responsive-web-design-v9', 'javascript-v9'];
 
     String curriculumFilePath = 'assets/learn/curriculum.json';
     String curriculumFile = await rootBundle.loadString(curriculumFilePath);
