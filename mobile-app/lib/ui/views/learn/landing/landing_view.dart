@@ -252,9 +252,7 @@ class SuperBlockButton extends StatelessWidget {
       child: ElevatedButton(
         style: ElevatedButton.styleFrom(
           padding: const EdgeInsets.all(5),
-          backgroundColor: button.public
-              ? FccColors.gray80
-              : const Color.fromARGB(255, 41, 41, 54),
+          backgroundColor: button.public ? FccColors.gray80 : FccColors.gray75,
           side: button.public
               ? const BorderSide(
                   width: 2,
