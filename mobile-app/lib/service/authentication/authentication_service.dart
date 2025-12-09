@@ -12,7 +12,6 @@ import 'package:freecodecamp/app/app.router.dart';
 import 'package:freecodecamp/extensions/i18n_extension.dart';
 import 'package:freecodecamp/models/main/user_model.dart';
 import 'package:freecodecamp/service/dio_service.dart';
-import 'package:freecodecamp/ui/views/auth/privacy_view.dart';
 import 'package:stacked_services/stacked_services.dart';
 import 'package:url_launcher/url_launcher.dart';
 
@@ -316,33 +315,6 @@ class AuthenticationService {
         );
       }
       return false;
-    }
-
-    final user = await userModel;
-
-    if (user != null && user.acceptedPrivacyTerms == false) {
-      bool? quincyEmails = await Navigator.push(
-        context,
-        MaterialPageRoute(
-          builder: (context) => const PrivacyView(),
-          settings: const RouteSettings(
-            name: '/new-user-accept-privacy',
-          ),
-        ),
-      );
-
-      await _dio.put(
-        '$baseApiURL/update-privacy-terms',
-        data: {
-          'quincyEmails': quincyEmails ?? false,
-        },
-        options: Options(
-          headers: {
-            'CSRF-Token': _csrfToken,
-            'Cookie': 'jwt_access_token=$_jwtAccessToken; _csrf=$_csrf',
-          },
-        ),
-      );
     }
 
     await auth0.credentialsManager.clearCredentials();
