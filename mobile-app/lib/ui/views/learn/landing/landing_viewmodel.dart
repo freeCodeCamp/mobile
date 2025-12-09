@@ -226,8 +226,8 @@ class LearnLandingViewModel extends BaseViewModel {
         'core': 'Recommended curriculum (still in beta):',
         'english': 'Learn English for Developers:',
         'legacy': 'Our archived coursework:',
+		'extra': 'Prepare for the developer interview job search:',
         'professional': 'Professional certifications:',
-        'extra': 'Prepare for the developer interview job search:',
       };
 
       List<Widget> widgetOrder = [];
