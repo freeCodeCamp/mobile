@@ -15,7 +15,7 @@ workflows:
       cancel_previous_builds: true
 
     environment:
-      flutter: 3.32.4
+      flutter: 3.38.5
       xcode: latest
       cocoapods: default
       groups:
@@ -86,7 +86,7 @@ workflows:
       cancel_previous_builds: true
 
     environment:
-      flutter: 3.32.4
+      flutter: 3.38.5
       xcode: latest
       cocoapods: default
       ios_signing:
