@@ -212,9 +212,9 @@ class LearnLandingViewModel extends BaseViewModel {
   Future<List<Widget>> requestSuperBlocks() async {
     String baseUrl = LearnService.baseUrl;
 
-    final Response res = await _dio.get('$baseUrl/available-superblocks.json');
+    TextStyle headerStyle = TextStyle(fontSize: 21);
 
-    List<Widget> layout = [];
+    final Response res = await _dio.get('$baseUrl/available-superblocks.json');
     if (res.statusCode == 200) {
       await dotenv.load(fileName: '.env');
 
@@ -223,27 +223,32 @@ class LearnLandingViewModel extends BaseViewModel {
 
       Map<String, dynamic> superBlockStages = res.data['superblocks'];
 
-      List<String> stageOrder = [
-        'legacy',
-        'professional',
-        'extra',
-        'core',
-        'english'
-      ];
+      Map<String, String> stageOrder = {
+        'core': 'Recommended curriculum (still in beta):',
+        'english': 'Learn English for Developers:',
+        'legacy': 'Our archived coursework:',
+		'extra': 'Prepare for the developer interview job search:',
+        'professional': 'Professional certifications:',
+      };
 
-      List<Widget> publicButtons = [];
-      List<Widget> nonPublicButtons = [];
+      List<Widget> widgetOrder = [];
 
-      for (var stage in stageOrder) {
+      for (var stage in stageOrder.keys) {
         if (superBlockStages.containsKey(stage)) {
           List stageBlocks = superBlockStages[stage];
+
+          widgetOrder.add(
+            Text(
+              stageOrder[stage] ?? '',
+              style: headerStyle,
+            ),
+          );
 
           for (var superBlock in stageBlocks) {
             if (superBlock['dashedName'].toString().contains('full-stack')) {
               continue;
             }
 
-            bool isPublic = superBlock['public'] ?? false;
             Widget button = SuperBlockButton(
               button: SuperBlockButtonData(
                 path: superBlock['dashedName'],
@@ -253,18 +258,12 @@ class LearnLandingViewModel extends BaseViewModel {
               model: this,
             );
 
-            if (isPublic) {
-              publicButtons.add(button);
-            } else {
-              nonPublicButtons.add(button);
-            }
+            widgetOrder.add(button);
           }
         }
       }
 
-      layout = [...publicButtons, ...nonPublicButtons];
-
-      return layout;
+      return widgetOrder;
     }
     return [];
   }
