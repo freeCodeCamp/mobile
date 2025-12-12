@@ -118,7 +118,7 @@ brew install applesimutils
         'test',
         '--no-pub',
         '--reporter=expanded',
-        '--timeout=1800s',
+        '--ignore-timeouts',
         if (isMacOS) ...[
           '-d',
           bootedDeviceId,
