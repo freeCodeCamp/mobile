@@ -7,3 +7,9 @@ List<String> hasDialogue = [
   'a2-english-for-developers',
   'b1-english-for-developers',
 ];
+
+const chapterBasedSuperBlocks = [
+  'responsive-web-design-v9',
+  'javascript-v9',
+  'python-v9'
+];

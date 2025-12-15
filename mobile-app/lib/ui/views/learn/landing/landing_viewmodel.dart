@@ -20,6 +20,7 @@ import 'package:freecodecamp/service/learn/daily_challenge_service.dart';
 import 'package:freecodecamp/service/learn/learn_offline_service.dart';
 import 'package:freecodecamp/service/learn/learn_service.dart';
 import 'package:freecodecamp/ui/views/learn/landing/landing_view.dart';
+import 'package:freecodecamp/ui/views/learn/utils/learn_globals.dart';
 import 'package:freecodecamp/ui/widgets/setup_dialog_ui.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:stacked/stacked.dart';
@@ -290,8 +291,14 @@ class LearnLandingViewModel extends BaseViewModel {
   }
 
   void routeToSuperBlock(String dashedName, String name) async {
-    if (dashedName == 'full-stack-developer') {
-      _navigationService.navigateTo(Routes.chapterView);
+    if (chapterBasedSuperBlocks.contains(dashedName)) {
+      _navigationService.navigateTo(
+        Routes.chapterView,
+        arguments: ChapterViewArguments(
+          superBlockDashedName: dashedName,
+          superBlockName: name,
+        ),
+      );
     } else {
       _navigationService.navigateTo(
         Routes.superBlockView,

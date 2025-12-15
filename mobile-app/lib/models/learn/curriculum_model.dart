@@ -1,4 +1,4 @@
-const chapterBasedSuperBlocks = ['full-stack-developer'];
+import 'package:freecodecamp/ui/views/learn/utils/learn_globals.dart';
 
 enum SuperBlocks {
   respWebDesignV9('responsive-web-design-v9'),
@@ -320,7 +320,8 @@ class Chapter {
 
 enum ModuleType {
   review('review'),
-  exam('exam');
+  exam('exam'),
+  certProject('cert-project');
 
   static ModuleType fromValue(String value) {
     return ModuleType.values.firstWhere(
