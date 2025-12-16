@@ -89,7 +89,9 @@ class FreeCodeCampMobileApp extends StatelessWidget {
                   : UpgradeDialogStyle.material,
               showIgnore: false,
               upgrader: upgraderController,
-              child: child,
+              child: Overlay(
+                initialEntries: [OverlayEntry(builder: (context) => child!)],
+              ),
             );
           },
         );
