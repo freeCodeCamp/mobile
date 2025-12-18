@@ -54,9 +54,9 @@ dependencies:
   timezone: 0.10.1
   ua_client_hints: 1.4.1
   upgrader: 11.3.1
-  url_launcher: 6.3.1
+  url_launcher: 6.3.2
   web_socket_channel: 3.0.3
-  youtube_player_iframe: 5.2.1
+  youtube_player_iframe: 5.2.2
 dev_dependencies:
   build_runner: 2.4.13
   dependency_validator: 3.2.3
