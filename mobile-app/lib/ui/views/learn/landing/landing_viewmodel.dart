@@ -228,7 +228,8 @@ class LearnLandingViewModel extends BaseViewModel {
         'professional',
         'extra',
         'core',
-        'english'
+        'english',
+        'spanish',
       ];
 
       List<Widget> publicButtons = [];

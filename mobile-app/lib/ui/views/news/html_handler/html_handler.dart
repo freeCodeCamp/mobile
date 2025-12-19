@@ -227,6 +227,8 @@ class HTMLParser {
                 params: const YoutubePlayerParams(
                   showControls: true,
                   showFullscreenButton: true,
+                  strictRelatedVideos: true,
+                  origin: 'https://www.youtube-nocookie.com',
                 ),
               );
 
