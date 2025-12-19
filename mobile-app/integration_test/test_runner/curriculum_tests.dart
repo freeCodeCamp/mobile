@@ -25,7 +25,8 @@ void main() {
     List<String> publicSBs = [
       'responsive-web-design-v9',
       'javascript-v9',
-      'python-v9'
+      'python-v9',
+      'the-odin-project',
     ];
 
     String curriculumFilePath = 'assets/learn/curriculum.json';
