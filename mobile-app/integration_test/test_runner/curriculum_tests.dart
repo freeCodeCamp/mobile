@@ -52,7 +52,6 @@ void main() {
     for (var currSuperBlock in publicSBs) {
       print('\nSUPERBLOCK: $currSuperBlock');
       for (var currBlock in curriculumData[currSuperBlock]['blocks'].values) {
-        // NOTE: Skip blocks which are not public in the mobile app
 
         print('Block: ${currBlock['meta']['name']}');
         List challenges = currBlock['challenges']
