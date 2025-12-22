@@ -27,6 +27,7 @@ void main() {
       'javascript-v9',
       'python-v9',
       'the-odin-project',
+      'dev-playground'
     ];
 
     String curriculumFilePath = 'assets/learn/curriculum.json';
