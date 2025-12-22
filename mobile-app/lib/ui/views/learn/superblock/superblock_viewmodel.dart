@@ -67,7 +67,7 @@ class SuperBlockViewModel extends BaseViewModel {
     if (!hasInternet) {
       return SuperBlock(
         dashedName: dashedName,
-        name: name,
+        name: SuperBlocks.fromValue(name),
         blocks: await _learnOfflineService.getCachedBlocks(
           dashedName,
         ),
