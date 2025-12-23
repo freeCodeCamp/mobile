@@ -81,9 +81,9 @@ class FccTheme {
     brightness: Brightness.dark,
     fontFamily: 'Lato',
     scaffoldBackgroundColor: const Color.fromRGBO(0x2A, 0x2A, 0x40, 1),
-    appBarTheme: const AppBarTheme(
+    appBarTheme: const AppBarThemeData(
       centerTitle: true,
-      color: Color(0xFF0a0a23),
+      backgroundColor: Color(0xFF0a0a23),
       scrolledUnderElevation: 0,
     ),
     bottomNavigationBarTheme: const BottomNavigationBarThemeData(

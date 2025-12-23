@@ -14,6 +14,7 @@ class YoutubePlayerWidget extends StatelessWidget {
         showControls: true,
         showFullscreenButton: true,
         strictRelatedVideos: true,
+        origin: 'https://www.youtube-nocookie.com',
       ),
     );
 

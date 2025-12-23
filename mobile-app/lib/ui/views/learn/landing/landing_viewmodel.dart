@@ -226,6 +226,7 @@ class LearnLandingViewModel extends BaseViewModel {
       Map<String, String> stageOrder = {
         'core': 'Recommended curriculum (still in beta):',
         'english': 'Learn English for Developers:',
+        'spanish': 'Learn Professional Spanish:',
         'legacy': 'Our archived coursework:',
 		'extra': 'Prepare for the developer interview job search:',
         'professional': 'Professional certifications:',

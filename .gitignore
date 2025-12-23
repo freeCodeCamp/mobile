@@ -58,8 +58,9 @@ app.*.map.json
 .env*
 .fvm/
 
-# Test screenshots
+# Mobile Tests
 mobile-app/screenshots/
+mobile-app/integration_test/test_runner/test_runner_results.txt
 
 # fastlane
 **/fastlane/report.xml
