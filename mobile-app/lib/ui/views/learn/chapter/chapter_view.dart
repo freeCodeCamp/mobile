@@ -1,4 +1,3 @@
-import 'dart:developer';
 
 import 'package:flutter/material.dart';
 import 'package:freecodecamp/models/learn/curriculum_model.dart';
@@ -90,7 +89,7 @@ class ChapterView extends StatelessWidget {
     BuildContext context,
   ) {
     bool disabled = chapter.dashedName == 'frontend-libraries' && !model.isDev;
-    log(chapter.dashedName);
+
     return Container(
       padding: EdgeInsets.all(8),
       margin: EdgeInsets.symmetric(vertical: 8, horizontal: 8),
