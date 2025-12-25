@@ -73,14 +73,42 @@ class MultipleChoiceView extends StatelessWidget {
                               );
                             } else if (nodule.type ==
                                 NoduleType.interactiveEditor) {
-                              return Editor(
-                                  options: EditorOptions(
-                                    takeFullHeight: false,
-                                    showLinebar: false,
-                                  ),
-                                  defaultLanguage: nodule.asList()[0].ext,
-                                  defaultValue: nodule.asList()[0].contents,
-                                  path: '/');
+                              return Column(
+                                children: nodule
+                                    .asList()
+                                    .map(
+                                      (file) => Padding(
+                                        padding:
+                                            const EdgeInsets.only(bottom: 16.0),
+                                        child: Column(
+                                          crossAxisAlignment:
+                                              CrossAxisAlignment.start,
+                                          children: [
+                                            Text(
+                                              file.ext.toUpperCase(),
+                                              style: const TextStyle(
+                                                fontWeight: FontWeight.bold,
+                                                fontSize: 16,
+                                              ),
+                                            ),
+                                            const SizedBox(height: 8),
+                                            Editor(
+                                              options: EditorOptions(
+                                                fontFamily: 'Hack',
+                                                takeFullHeight: false,
+                                                showLinebar: false,
+                                                isEditable: false,
+                                              ),
+                                              defaultLanguage: file.ext,
+                                              defaultValue: file.contents,
+                                              path: '/',
+                                            ),
+                                          ],
+                                        ),
+                                      ),
+                                    )
+                                    .toList(),
+                              );
                             } else {
                               return const SizedBox.shrink();
                             }

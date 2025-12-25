@@ -279,12 +279,12 @@ class Nodules {
     );
 
     final noduleData = data['data'];
-    if (noduleData is String) {
+    if (noduleType == NoduleType.paragraph) {
       return Nodules(
         type: noduleType,
         data: NoduleTypeString(noduleData),
       );
-    } else if (noduleData is List) {
+    } else if (noduleType == NoduleType.interactiveEditor) {
       return Nodules(
         type: noduleType,
         data: NoduleTypeList(
