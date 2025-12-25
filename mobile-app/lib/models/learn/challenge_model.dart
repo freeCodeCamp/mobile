@@ -68,6 +68,9 @@ class Challenge {
   final EnglishAudio? audio;
   final Scene? scene;
 
+  // Nodules for interactive challenges
+  final List<Nodules>? nodules;
+
   final List<Question>? questions;
 
   // Challenge Type 15 - Odin
@@ -92,6 +95,7 @@ class Challenge {
     required this.helpCategory,
     this.explanation,
     required this.transcript,
+    this.nodules,
     this.questions,
     this.assignments,
     this.fillInTheBlank,
@@ -126,6 +130,9 @@ class Challenge {
           .toList(),
       files: (data['challengeFiles'] ?? [])
           .map<ChallengeFile>((file) => ChallengeFile.fromJson(file))
+          .toList(),
+      nodules: (data['nodules'] ?? [])
+          .map<Nodules>((nodule) => Nodules.fromJson(nodule))
           .toList(),
       questions: (data['questions'] as List).isNotEmpty
           ? (data['questions'] as List)
@@ -221,6 +228,96 @@ class Hooks {
       beforeAll: data['beforeAll'] ?? '',
       beforeEach: data['beforeEach'] ?? '',
       afterEach: data['afterEach'] ?? '',
+    );
+  }
+}
+
+sealed class StringOrList {}
+
+enum NoduleType {
+  paragraph('paragraph'),
+  interactiveEditor('interactiveEditor');
+
+  final String type;
+
+  const NoduleType(this.type);
+}
+
+class NoduleTypeString extends StringOrList {
+  final String value;
+
+  NoduleTypeString(this.value);
+}
+
+class NoduleTypeList extends StringOrList {
+  final List<InterActiveFile> value;
+
+  NoduleTypeList(this.value);
+}
+
+class Nodules {
+  final NoduleType type;
+  final StringOrList data;
+
+  Nodules({
+    required this.type,
+    required this.data,
+  });
+
+  String asString() {
+    return (data as NoduleTypeString).value;
+  }
+
+  List<InterActiveFile> asList() {
+    return (data as NoduleTypeList).value;
+  }
+
+  factory Nodules.fromJson(Map<String, dynamic> data) {
+    final noduleType = NoduleType.values.firstWhere(
+      (type) => type.type == data['type'],
+      orElse: () => throw ArgumentError('Invalid nodule type: ${data['type']}'),
+    );
+
+    final noduleData = data['data'];
+    if (noduleType == NoduleType.paragraph) {
+      return Nodules(
+        type: noduleType,
+        data: NoduleTypeString(noduleData),
+      );
+    } else if (noduleType == NoduleType.interactiveEditor) {
+      return Nodules(
+        type: noduleType,
+        data: NoduleTypeList(
+          noduleData
+              .map<InterActiveFile>(
+                (item) => InterActiveFile.fromJson(item),
+              )
+              .toList(),
+        ),
+      );
+    } else {
+      throw ArgumentError(
+          'Invalid nodule data type: ${noduleData.runtimeType}');
+    }
+  }
+}
+
+class InterActiveFile {
+  final String name;
+  final String contents;
+  final String ext;
+
+  InterActiveFile({
+    required this.ext,
+    required this.name,
+    required this.contents,
+  });
+
+  factory InterActiveFile.fromJson(Map<String, dynamic> data) {
+    return InterActiveFile(
+      ext: data['ext'],
+      name: data['name'],
+      contents: data['contents'],
     );
   }
 }
