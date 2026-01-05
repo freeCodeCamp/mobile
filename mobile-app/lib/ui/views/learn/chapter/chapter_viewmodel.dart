@@ -1,4 +1,5 @@
 import 'package:dio/dio.dart';
+import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:freecodecamp/app/app.locator.dart';
 import 'package:freecodecamp/app/app.router.dart';
@@ -8,6 +9,7 @@ import 'package:freecodecamp/models/main/user_model.dart';
 import 'package:freecodecamp/service/authentication/authentication_service.dart';
 import 'package:freecodecamp/service/dio_service.dart';
 import 'package:freecodecamp/service/learn/learn_service.dart';
+import 'package:freecodecamp/ui/theme/fcc_theme.dart';
 import 'package:stacked/stacked.dart';
 import 'package:stacked_services/stacked_services.dart';
 
@@ -97,5 +99,62 @@ class ChapterViewModel extends BaseViewModel {
         moduleName: moduleName,
       ),
     );
+  }
+
+  void routeToChallengeView(Block block, String challengeId) {
+    _navigationService.navigateTo(
+      Routes.challengeTemplateView,
+      arguments: ChallengeTemplateViewArguments(
+        challengeId: challengeId,
+        block: block,
+      ),
+    );
+  }
+
+  bool isSingleStepModule(Module module) {
+    if (module.blocks == null || module.blocks!.isEmpty) {
+      return false;
+    }
+
+    int totalChallenges = 0;
+    for (Block block in module.blocks!) {
+      totalChallenges += block.challenges.length;
+    }
+
+    return totalChallenges == 1;
+  }
+
+  Color getModuleColor(Module module) {
+    if (module.blocks == null || module.blocks!.isEmpty) {
+      return FccColors.gray80;
+    }
+
+    Block firstBlock = module.blocks!.first;
+    return _getBlockColor(firstBlock.label);
+  }
+
+  Color _getBlockColor(BlockLabel type) {
+    switch (type) {
+      case BlockLabel.lecture:
+        return FccColors.blue30;
+      case BlockLabel.quiz:
+        return FccColors.orange30;
+      case BlockLabel.lab:
+        return FccColors.green40;
+      case BlockLabel.workshop:
+        return FccColors.purple10;
+      case BlockLabel.exam:
+        return FccColors.red15;
+      case BlockLabel.review:
+        return FccColors.yellow10;
+      case BlockLabel.warmup:
+        return FccColors.blue30;
+      case BlockLabel.learn:
+        return FccColors.green40;
+      case BlockLabel.practice:
+        return FccColors.purple10;
+      default:
+        return FccColors.blue05;
+    }
   }
 }
