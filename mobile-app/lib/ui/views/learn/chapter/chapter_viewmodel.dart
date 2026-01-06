@@ -126,35 +126,19 @@ class ChapterViewModel extends BaseViewModel {
 
   Color getModuleColor(Module module) {
     if (module.blocks == null || module.blocks!.isEmpty) {
-      return FccColors.gray80;
+      return FccColors.blue30;
     }
 
     Block firstBlock = module.blocks!.first;
-    return _getBlockColor(firstBlock.label);
-  }
 
-  Color _getBlockColor(BlockLabel type) {
-    switch (type) {
-      case BlockLabel.lecture:
-        return FccColors.blue30;
-      case BlockLabel.quiz:
-        return FccColors.orange30;
-      case BlockLabel.lab:
-        return FccColors.green40;
-      case BlockLabel.workshop:
-        return FccColors.purple10;
-      case BlockLabel.exam:
-        return FccColors.red15;
-      case BlockLabel.review:
-        return FccColors.yellow10;
-      case BlockLabel.warmup:
-        return FccColors.blue30;
-      case BlockLabel.learn:
-        return FccColors.green40;
-      case BlockLabel.practice:
-        return FccColors.purple10;
-      default:
-        return FccColors.blue05;
+    if (firstBlock.label == BlockLabel.review) {
+      return FccColors.orange30;
     }
+
+    if (module.moduleType == ModuleType.certProject) {
+      return FccColors.green40;
+    }
+
+    return FccColors.blue30;
   }
 }

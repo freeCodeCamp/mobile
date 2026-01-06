@@ -143,6 +143,10 @@ class ChapterView extends StatelessWidget {
 
     bool isSingleStep = model.isSingleStepModule(module);
     Color moduleColor = model.getModuleColor(module);
+    bool isReview = module.blocks != null &&
+                    module.blocks!.isNotEmpty &&
+                    module.blocks!.first.label == BlockLabel.review;
+    bool isCertProject = module.moduleType == ModuleType.certProject;
     Color backgroundColor = isSingleStep
         ? moduleColor.withValues(alpha: 0.3)
         : moduleColor.withValues(alpha: 0.1);
@@ -208,7 +212,31 @@ class ChapterView extends StatelessWidget {
                       color: textColor,
                     ),
                   ),
-                  if (!isSingleStep)
+                  if (isCertProject)
+                    Padding(
+                      padding: const EdgeInsets.only(top: 4.0),
+                      child: Text(
+                        'Certification Project',
+                        style: TextStyle(
+                          color: moduleColor.withValues(alpha: 0.8),
+                          fontSize: 14,
+                          fontWeight: FontWeight.w500,
+                        ),
+                      ),
+                    ),
+                  if (isReview)
+                    Padding(
+                      padding: const EdgeInsets.only(top: 4.0),
+                      child: Text(
+                        'Review',
+                        style: TextStyle(
+                          color: moduleColor.withValues(alpha: 0.8),
+                          fontSize: 14,
+                          fontWeight: FontWeight.w500,
+                        ),
+                      ),
+                    ),
+                  if (!isSingleStep && !isReview)
                     FutureBuilder(
                       future: model.calculateProgress(module),
                       builder: (context, snapshot) {
