@@ -149,10 +149,32 @@ class ChapterView extends StatelessWidget {
       return Container();
     }
 
+    bool isSingleStep = model.isSingleStepModule(module);
+    Color moduleColor = model.getModuleColor(module);
+    bool isReview = module.blocks != null &&
+                    module.blocks!.isNotEmpty &&
+                    module.blocks!.first.label == BlockLabel.review;
+    bool isCertProject = module.moduleType == ModuleType.certProject;
+    Color backgroundColor = isSingleStep
+        ? moduleColor.withValues(alpha: 0.3)
+        : moduleColor.withValues(alpha: 0.1);
+    Color borderColor = isSingleStep
+        ? moduleColor.withValues(alpha: 0.5)
+        : moduleColor.withValues(alpha: 0.4);
+    Color textColor = isSingleStep ? moduleColor : Colors.white;
+
     return Container(
       margin: const EdgeInsets.all(5),
       constraints: BoxConstraints(minHeight: 100, maxHeight: 200),
       width: MediaQuery.of(context).size.width * 0.90,
+      decoration: BoxDecoration(
+        color: backgroundColor,
+        borderRadius: BorderRadius.circular(10.0),
+        border: Border.all(
+          color: borderColor,
+          width: 2,
+        ),
+      ),
       child: TextButton(
         style: ButtonStyle(
           padding: WidgetStatePropertyAll<EdgeInsetsGeometry>(
@@ -162,21 +184,29 @@ class ChapterView extends StatelessWidget {
           shape: WidgetStatePropertyAll<RoundedRectangleBorder>(
             RoundedRectangleBorder(
               borderRadius: BorderRadius.circular(10.0),
-              side: BorderSide(
-                color: FccColors.gray75,
-                width: 2,
-              ),
             ),
           ),
-          backgroundColor: WidgetStatePropertyAll<Color>(FccColors.gray80),
+          backgroundColor: WidgetStatePropertyAll<Color>(Colors.transparent),
+          overlayColor: WidgetStatePropertyAll<Color>(
+            Colors.white.withValues(alpha: 0.1),
+          ),
         ),
         onPressed: () {
-          model.routeToBlockView(module.blocks!, module.name);
+          if (isSingleStep && module.blocks!.isNotEmpty) {
+            Block firstBlock = module.blocks!.first;
+            if (firstBlock.challenges.isNotEmpty) {
+              model.routeToChallengeView(
+                firstBlock,
+                firstBlock.challenges.first.id,
+              );
+            }
+          } else {
+            model.routeToBlockView(module.blocks!, module.name);
+          }
         },
         child: Row(
           children: [
             Expanded(
-              flex: 2,
               child: Column(
                 mainAxisSize: MainAxisSize.min,
                 crossAxisAlignment: CrossAxisAlignment.start,
@@ -187,38 +217,58 @@ class ChapterView extends StatelessWidget {
                     style: TextStyle(
                       fontSize: 21,
                       fontWeight: FontWeight.bold,
+                      color: textColor,
                     ),
                   ),
-                  FutureBuilder(
-                    future: model.calculateProgress(module),
-                    builder: (context, snapshot) {
-                      String steps = snapshot.data ?? '0';
-
-                      return Text(
-                        '$steps Steps Complete',
+                  if (isCertProject)
+                    Padding(
+                      padding: const EdgeInsets.only(top: 4.0),
+                      child: Text(
+                        'Certification Project',
                         style: TextStyle(
-                          color: FccColors.gray15,
-                          fontSize: 20,
+                          color: moduleColor.withValues(alpha: 0.8),
+                          fontSize: 14,
+                          fontWeight: FontWeight.w500,
                         ),
-                      );
-                    },
-                  ),
+                      ),
+                    ),
+                  if (isReview)
+                    Padding(
+                      padding: const EdgeInsets.only(top: 4.0),
+                      child: Text(
+                        'Review',
+                        style: TextStyle(
+                          color: moduleColor.withValues(alpha: 0.8),
+                          fontSize: 14,
+                          fontWeight: FontWeight.w500,
+                        ),
+                      ),
+                    ),
+                  if (!isSingleStep && !isReview)
+                    FutureBuilder(
+                      future: model.calculateProgress(module),
+                      builder: (context, snapshot) {
+                        String steps = snapshot.data ?? '0';
+
+                        return Text(
+                          '$steps Steps Complete',
+                          style: TextStyle(
+                            color: FccColors.gray15,
+                            fontSize: 18,
+                          ),
+                        );
+                      },
+                    ),
                 ],
               ),
             ),
-            Expanded(
-              flex: 1,
-              child: Column(
-                mainAxisSize: MainAxisSize.min,
-                crossAxisAlignment: CrossAxisAlignment.end,
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  const Icon(
-                    Icons.arrow_forward_ios_outlined,
-                    size: 25,
-                  )
-                ],
-              ),
+            SizedBox(width: 8),
+            Icon(
+              isSingleStep
+                  ? Icons.play_arrow_rounded
+                  : Icons.arrow_forward_ios_outlined,
+              size: 25,
+              color: textColor,
             )
           ],
         ),
