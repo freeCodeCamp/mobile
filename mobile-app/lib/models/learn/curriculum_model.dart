@@ -30,7 +30,7 @@ enum SuperBlocks {
   b1English('b1-english-for-developers'),
   a2Spanish('a2-professional-spanish'),
   a1Spanish('a1-professional-spanish'),
-  a2Chinese('a2-professional-chinese'),
+  a1Chinese('a1-professional-chinese'),
   rosettaCode('rosetta-code'),
   pythonForEverybody('python-for-everybody'),
   devPlayground('dev-playground');

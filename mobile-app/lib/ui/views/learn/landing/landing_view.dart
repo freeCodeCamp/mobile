@@ -231,7 +231,6 @@ class SuperBlockButton extends StatelessWidget {
     SuperBlocks.a2English: '${SuperBlockButton.learnAssetsPath}/a2-english.svg',
     SuperBlocks.b1English: '${SuperBlockButton.learnAssetsPath}/b1-english.svg',
     SuperBlocks.a2Spanish: '${SuperBlockButton.learnAssetsPath}/a2-english.svg',
-    SuperBlocks.a2Chinese: '${SuperBlockButton.learnAssetsPath}/a2-english.svg',
     SuperBlocks.rosettaCode:
         '${SuperBlockButton.learnAssetsPath}/rosetta-code.svg',
     SuperBlocks.pythonForEverybody:
