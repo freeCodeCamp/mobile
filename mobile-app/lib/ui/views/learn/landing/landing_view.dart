@@ -194,6 +194,16 @@ class SuperBlockButton extends StatelessWidget {
   static const String learnAssetsPath = 'assets/learn';
 
   final iconMap = {
+    SuperBlocks.respWebDesignV9:
+        '${SuperBlockButton.learnAssetsPath}/responsive-design.svg',
+    SuperBlocks.javascriptV9:
+        '${SuperBlockButton.learnAssetsPath}/javascript.svg',
+    SuperBlocks.frontEndDevLibsV9:
+        '${SuperBlockButton.learnAssetsPath}/react.svg',
+    SuperBlocks.pythonV9: '${SuperBlockButton.learnAssetsPath}/python.svg',
+    SuperBlocks.relationalDbV9:
+        '${SuperBlockButton.learnAssetsPath}/database.svg',
+    SuperBlocks.backEndDevApisV9: '${SuperBlockButton.learnAssetsPath}/api.svg',
     SuperBlocks.respWebDesignNew:
         '${SuperBlockButton.learnAssetsPath}/responsive-design.svg',
     SuperBlocks.respWebDesign:
@@ -231,6 +241,8 @@ class SuperBlockButton extends StatelessWidget {
     SuperBlocks.a2English: '${SuperBlockButton.learnAssetsPath}/a2-english.svg',
     SuperBlocks.b1English: '${SuperBlockButton.learnAssetsPath}/b1-english.svg',
     SuperBlocks.a2Spanish: '${SuperBlockButton.learnAssetsPath}/a2-english.svg',
+    SuperBlocks.a1Spanish: '${SuperBlockButton.learnAssetsPath}/a2-english.svg',
+    SuperBlocks.a1Chinese: '${SuperBlockButton.learnAssetsPath}/a2-english.svg',
     SuperBlocks.rosettaCode:
         '${SuperBlockButton.learnAssetsPath}/rosetta-code.svg',
     SuperBlocks.pythonForEverybody:
