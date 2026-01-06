@@ -40,7 +40,7 @@ dependencies:
   just_audio: 0.10.4
   path: 1.9.1
   path_provider: 2.1.5
-  phone_ide: 2.0.0
+  phone_ide: 2.0.1
   photo_view: 0.15.0
   pretty_dio_logger: 1.4.0
   quick_actions: 1.1.0

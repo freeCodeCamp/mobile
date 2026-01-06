@@ -1,3 +1,4 @@
+
 import 'package:flutter/material.dart';
 import 'package:freecodecamp/models/learn/curriculum_model.dart';
 import 'package:freecodecamp/ui/theme/fcc_theme.dart';
@@ -43,8 +44,15 @@ class ChapterView extends StatelessWidget {
 
                   if (snapshot.hasData) {
                     SuperBlock superBlock = snapshot.data as SuperBlock;
+
+                    List exams = [
+                      'responsive-web-design-certification-exam',
+                      'javascript-certification-exam',
+                      'python-certification-exam'
+                    ];
+
                     List<Chapter> chapters =
-                        superBlock.chapters as List<Chapter>;
+                        (superBlock.chapters as List<Chapter>).where((chapter) => !exams.contains(chapter.dashedName)).toList();
 
                     return ListView(
                       shrinkWrap: true,

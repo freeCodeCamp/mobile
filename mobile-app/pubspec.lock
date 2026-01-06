@@ -1312,10 +1312,10 @@ packages:
     dependency: "direct main"
     description:
       name: phone_ide
-      sha256: a63447e2dda56ac52367edb2f6b1cc09d1e5b73c48478e7d4a53b26253e9ee5c
+      sha256: "6d30607fb42f1df40d95be3fa062715c80ca2731a4254dcf1394c114258690b5"
       url: "https://pub.dev"
     source: hosted
-    version: "2.0.0"
+    version: "2.0.1"
   photo_view:
     dependency: "direct main"
     description:

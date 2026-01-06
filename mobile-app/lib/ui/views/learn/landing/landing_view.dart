@@ -242,7 +242,7 @@ class SuperBlockButton extends StatelessWidget {
     SuperBlocks.b1English: '${SuperBlockButton.learnAssetsPath}/b1-english.svg',
     SuperBlocks.a2Spanish: '${SuperBlockButton.learnAssetsPath}/a2-english.svg',
     SuperBlocks.a1Spanish: '${SuperBlockButton.learnAssetsPath}/a2-english.svg',
-    SuperBlocks.a2Chinese: '${SuperBlockButton.learnAssetsPath}/a2-english.svg',
+    SuperBlocks.a1Chinese: '${SuperBlockButton.learnAssetsPath}/a2-english.svg',
     SuperBlocks.rosettaCode:
         '${SuperBlockButton.learnAssetsPath}/rosetta-code.svg',
     SuperBlocks.pythonForEverybody:
@@ -263,9 +263,7 @@ class SuperBlockButton extends StatelessWidget {
       child: ElevatedButton(
         style: ElevatedButton.styleFrom(
           padding: const EdgeInsets.all(5),
-          backgroundColor: button.public
-              ? FccColors.gray80
-              : const Color.fromARGB(255, 41, 41, 54),
+          backgroundColor: button.public ? FccColors.gray80 : FccColors.gray75,
           side: button.public
               ? const BorderSide(
                   width: 2,
