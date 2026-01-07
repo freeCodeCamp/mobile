@@ -177,38 +177,6 @@ class LearnLandingViewModel extends BaseViewModel {
     });
   }
 
-  Text handleStageTitle(String stage) {
-    switch (stage) {
-      case 'core':
-        return Text(
-          'Recommended curriculum (still in beta):',
-          style: headerStyle,
-        );
-      case 'english':
-        return Text(
-          'Learn English for Developers:',
-          style: headerStyle,
-        );
-      case 'extra':
-        return Text(
-          'Prepare for the developer interview job search:',
-          style: headerStyle,
-        );
-      case 'legacy':
-        return Text(
-          'Our archived coursework:',
-          style: headerStyle,
-        );
-      case 'professional':
-        return Text(
-          'Professional certifications:',
-          style: headerStyle,
-        );
-    }
-
-    return Text('');
-  }
-
   Future<List<Widget>> requestSuperBlocks() async {
     String baseUrl = LearnService.baseUrl;
 
@@ -228,7 +196,6 @@ class LearnLandingViewModel extends BaseViewModel {
         'english': 'Learn English for Developers:',
         'spanish': 'Learn Professional Spanish:',
         'chinese': 'Learn Professional Chinese:',
-        'legacy': 'Our archived coursework:',
         'extra': 'Prepare for the developer interview job search:',
         'professional': 'Professional certifications:',
       };
