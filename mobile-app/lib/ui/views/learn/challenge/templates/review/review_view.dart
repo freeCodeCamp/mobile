@@ -56,7 +56,7 @@ class ReviewView extends StatelessWidget {
                   ),
                   const SizedBox(height: 12),
                 ],
-                                if (challenge.audio != null) ...[
+                if (challenge.audio != null) ...[
                   ChallengeCard(
                     title: 'Listen to the Audio',
                     child: AudioPlayerView(
