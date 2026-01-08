@@ -30,6 +30,8 @@ enum HelpCategory {
   backend('Backend Development'),
   cSharp('C-Sharp'),
   english('English'),
+  chinese('Chinese Curriculum'),
+  spanish('Spanish Curriculum'),
   odin('Odin'),
   euler('Euler'),
   rosetta('Rosetta');
