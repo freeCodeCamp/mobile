@@ -94,7 +94,12 @@ final Map<String, Style> defaultStyles = {
     color: Colors.white.withValues(alpha: 0.87),
     fontSize: FontSize.xLarge,
   ),
-  'pre': Style(fontFamily: 'Hack')
+  'pre': Style(fontFamily: 'Hack'),
+  // NOTE: Text within backticks in en-US, es, and zh-CN challenge files is
+  // parsed into spans with this class.
+  'span.highlighted-text': Style(
+    backgroundColor: FccSemanticColors.backgroundTertiary,
+  )
 };
 
 class HTMLParser {
