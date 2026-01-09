@@ -30,7 +30,7 @@ enum SuperBlocks {
   b1English('b1-english-for-developers'),
   a2Spanish('a2-professional-spanish'),
   a1Spanish('a1-professional-spanish'),
-  a2Chinese('a2-professional-chinese'),
+  a1Chinese('a1-professional-chinese'),
   rosettaCode('rosetta-code'),
   pythonForEverybody('python-for-everybody'),
   devPlayground('dev-playground');
@@ -102,6 +102,7 @@ class SuperBlock {
       dashedName: dashedName,
       name: name,
       blocks: (data[data.keys.first]['blocks']).map<Block>((block) {
+
         return Block.fromJson(
           block['meta'],
           block['intro'],
@@ -193,6 +194,16 @@ class Block {
 
     data['challengeTiles'] = [];
 
+    // Clean up description by filtering out empty or whitespace-only strings
+    final cleanedDescription = description
+        .where((item) => item != null && item.toString().trim().isNotEmpty)
+        .toList();
+
+    // If description is empty, provide a default message
+    final finalDescription = cleanedDescription.isEmpty
+        ? ['Continue to improve your skills']
+        : cleanedDescription;
+
     BlockLayout handleLayout(String? layout) {
       switch (layout) {
         case 'project-list':
@@ -228,7 +239,7 @@ class Block {
           : BlockLabel.legacy,
       name: data['name'],
       dashedName: dashedName,
-      description: description,
+      description: finalDescription,
       order: data['order'],
       challenges: (data['challengeOrder'] as List)
           .map<ChallengeOrder>(

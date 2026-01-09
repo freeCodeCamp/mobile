@@ -1,4 +1,5 @@
 import 'package:dio/dio.dart';
+import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:freecodecamp/app/app.locator.dart';
 import 'package:freecodecamp/app/app.router.dart';
@@ -8,6 +9,7 @@ import 'package:freecodecamp/models/main/user_model.dart';
 import 'package:freecodecamp/service/authentication/authentication_service.dart';
 import 'package:freecodecamp/service/dio_service.dart';
 import 'package:freecodecamp/service/learn/learn_service.dart';
+import 'package:freecodecamp/ui/theme/fcc_theme.dart';
 import 'package:stacked/stacked.dart';
 import 'package:stacked_services/stacked_services.dart';
 
@@ -97,5 +99,46 @@ class ChapterViewModel extends BaseViewModel {
         moduleName: moduleName,
       ),
     );
+  }
+
+  void routeToChallengeView(Block block, String challengeId) {
+    _navigationService.navigateTo(
+      Routes.challengeTemplateView,
+      arguments: ChallengeTemplateViewArguments(
+        challengeId: challengeId,
+        block: block,
+      ),
+    );
+  }
+
+  bool isSingleStepModule(Module module) {
+    if (module.blocks == null || module.blocks!.isEmpty) {
+      return false;
+    }
+
+    int totalChallenges = 0;
+    for (Block block in module.blocks!) {
+      totalChallenges += block.challenges.length;
+    }
+
+    return totalChallenges == 1;
+  }
+
+  Color getModuleColor(Module module) {
+    if (module.blocks == null || module.blocks!.isEmpty) {
+      return FccColors.blue30;
+    }
+
+    Block firstBlock = module.blocks!.first;
+
+    if (firstBlock.label == BlockLabel.review) {
+      return FccColors.orange30;
+    }
+
+    if (module.moduleType == ModuleType.certProject) {
+      return FccColors.green40;
+    }
+
+    return FccColors.blue30;
   }
 }
