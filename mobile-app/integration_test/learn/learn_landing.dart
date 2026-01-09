@@ -26,6 +26,9 @@ void main() {
 
     List<Map<String, dynamic>> superBlocks = [];
     for (var stage in superBlockStages.keys) {
+      if (stage == 'legacy') {
+        continue;
+      }
       List stageBlocks = superBlockStages[stage];
       for (var superBlock in stageBlocks) {
         if (!superBlock['dashedName'].toString().contains('full-stack')) {
