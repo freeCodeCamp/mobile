@@ -75,13 +75,13 @@ jobs:
           disable-animations: false
           script: echo "Generated AVD snapshot for caching."
 
-      - name: Setup Flutter 3.32.x
+      - name: Setup Flutter 3.38.x
         uses: subosito/flutter-action@e938fdf56512cc96ef2f93601a5a40bde3801046 # v2
         with:
-          flutter-version: "3.32.x"
+          flutter-version: "3.38.x"
           channel: "stable"
           cache: true
-          cache-key: flutter-3.32.x
+          cache-key: flutter-3.38.x
           cache-path: ${{ runner.tool_cache }}/flutter
 
       - name: Create .env file

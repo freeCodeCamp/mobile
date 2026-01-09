@@ -112,6 +112,7 @@ class _QuizWidgetState extends State<QuizWidget> {
     int? questionNumber,
   }) {
     final question = widget.questions[questionIndex];
+    final selectedAnswer = question.selectedAnswer;
     return ChallengeCard(
       title: questionNumber != null ? 'Question $questionNumber' : 'Question',
       child: Column(
@@ -119,13 +120,23 @@ class _QuizWidgetState extends State<QuizWidget> {
         children: [
           ...parsedQuestions[questionIndex],
           const SizedBox(height: 8),
-          for (final answerObj in question.answers.asMap().entries) ...[
-            option(
-              context: context,
-              answerObj: answerObj,
-              questionIndex: questionIndex,
+          RadioGroup<int>(
+            groupValue: selectedAnswer,
+            onChanged: (value) {
+              widget.onChanged(questionIndex, value ?? -1);
+            },
+            child: Column(
+              children: [
+                for (final answerObj in question.answers.asMap().entries) ...[
+                  option(
+                    context: context,
+                    answerObj: answerObj,
+                    questionIndex: questionIndex,
+                  ),
+                ],
+              ],
             ),
-          ],
+          ),
         ],
       ),
     );
@@ -158,10 +169,6 @@ class _QuizWidgetState extends State<QuizWidget> {
               width: 2,
             ),
           ),
-          groupValue: selectedAnswer,
-          onChanged: (value) {
-            widget.onChanged(questionIndex, value ?? -1);
-          },
           title: Align(
             alignment: Alignment.centerLeft,
             child: ConstrainedBox(

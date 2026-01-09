@@ -18,6 +18,7 @@ jobs:
   mobile-test:
     name: Test curriculum for mobile app
     runs-on: ubuntu-22.04
+    timeout-minutes: 60
 
     strategy:
       matrix:
@@ -26,7 +27,7 @@ jobs:
         android-api-level: [35]
         node-version: [22]
         pnpm-version: [10]
-        flutter-version: ["3.32.x"]
+        flutter-version: ["3.38.x"]
 
     steps:
       - name: Remove unused software
