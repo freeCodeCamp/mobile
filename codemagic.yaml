@@ -53,9 +53,10 @@ workflows:
 
       - name: Boot iOS simulator
         script: |
+          echo "Booting simulator: $DEVICE_NAME"
           xcrun simctl shutdown all
-          xcrun simctl boot "iPhone 16 Pro Max"
-          xcrun simctl bootstatus "iPhone 16 Pro Max"
+          xcrun simctl boot "$DEVICE_NAME"
+          xcrun simctl bootstatus "$DEVICE_NAME"
 
       - name: Run integration tests
         script: dart integration_test_runner.dart --ios
@@ -130,9 +131,10 @@ workflows:
 
       - name: Boot iOS simulator
         script: |
+          echo "Booting simulator: $DEVICE_NAME"
           xcrun simctl shutdown all
-          xcrun simctl boot "iPhone 16 Pro Max"
-          xcrun simctl bootstatus "iPhone 16 Pro Max"
+          xcrun simctl boot "$DEVICE_NAME"
+          xcrun simctl bootstatus "$DEVICE_NAME"
 
       - name: Run integration tests
         script: dart integration_test_runner.dart --ios
