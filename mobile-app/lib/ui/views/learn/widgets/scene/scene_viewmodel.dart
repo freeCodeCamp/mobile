@@ -1,24 +1,24 @@
 import 'dart:async';
-import 'dart:developer' as developer;
 import 'dart:math';
 
 import 'package:audio_service/audio_service.dart';
+import 'package:flutter/scheduler.dart';
 import 'package:freecodecamp/app/app.locator.dart';
 import 'package:freecodecamp/models/learn/challenge_model.dart';
+import 'package:freecodecamp/models/learn/scene_assets_model.dart';
 import 'package:freecodecamp/service/audio/audio_service.dart';
+import 'package:freecodecamp/service/learn/scene_assets_service.dart';
 import 'package:stacked/stacked.dart';
 
 class CharacterState {
   final String characterName;
   final SceneCharacterPosition position;
-  final double opacity;
   final bool showMouth;
   final String mouthType;
 
   CharacterState({
     required this.characterName,
     required this.position,
-    required this.opacity,
     this.showMouth = false,
     this.mouthType = 'smile',
   });
@@ -26,14 +26,12 @@ class CharacterState {
   CharacterState copyWith({
     String? characterName,
     SceneCharacterPosition? position,
-    double? opacity,
     bool? showMouth,
     String? mouthType,
   }) {
     return CharacterState(
       characterName: characterName ?? this.characterName,
       position: position ?? this.position,
-      opacity: opacity ?? this.opacity,
       showMouth: showMouth ?? this.showMouth,
       mouthType: mouthType ?? this.mouthType,
     );
@@ -41,30 +39,58 @@ class CharacterState {
 }
 
 class SceneViewModel extends BaseViewModel {
-  static const String _cdnBase = 'https://cdn.freecodecamp.org';
-  static const List<String> _mouthTypes = ['neutral', 'laugh'];
+  static const String _cdnBase = 'https://cdn.freecodecamp.org/curriculum/english/animation-assets/images';
+  static const List<String> _mouthTypes = ['closed', 'open'];
   static const int _minMouthInterval = 85;
   static const int _maxMouthInterval = 105;
-  static const int _fadeInDuration = 1000;
 
   final audioService = locator<AppAudioService>().audioHandler;
+  final _sceneAssetsService = SceneAssetsService();
+  SceneAssets? _sceneAssets;
   final StreamController<Duration> position = StreamController<Duration>.broadcast();
   final Map<String, Timer> _mouthAnimationTimers = {};
+  final Set<int> _appliedCommandIndices = {};
 
   Scene? _scene;
   String? _currentBackground;
   String? get currentBackground => _currentBackground;
 
-  List<CharacterState> _visibleCharacters = [];
+  List<CharacterState> _availableCharacters = [];
   List<CharacterState> get visibleCharacters {
-    final sorted = List<CharacterState>.from(_visibleCharacters);
+    final sorted = List<CharacterState>.from(_availableCharacters);
     sorted.sort((a, b) => b.position.z.compareTo(a.position.z));
     return sorted;
   }
 
   bool _isPlaying = false;
-  bool _isFadingIn = false;
+  bool _isCompleted = false;
   double _audioStartOffset = 0.0;
+  bool _hasStarted = false;
+
+  final StreamController<bool> _charactersVisibleController = StreamController<bool>.broadcast();
+  Stream<bool> get charactersVisibleStream => _charactersVisibleController.stream;
+  bool _charactersVisible = false;
+  bool get charactersVisible => _charactersVisible;
+
+  Future<void> onPlay() async {
+    if (_hasStarted && !_isCompleted) {
+      await audioService.play();
+      return;
+    }
+
+    if (_isCompleted) {
+      await prepareForReplay();
+    }
+
+    _hasStarted = true;
+    _charactersVisible = true;
+    if (!_charactersVisibleController.isClosed) {
+      _charactersVisibleController.add(true);
+    }
+
+    await Future.delayed(const Duration(milliseconds: 1000));
+    await startAudioAfterFadeIn();
+  }
 
   Duration searchTimeStamp(bool forwards, int currentPosition, EnglishAudio audio) {
     return Duration(milliseconds: currentPosition + (forwards ? 2000 : -2));
@@ -72,7 +98,7 @@ class SceneViewModel extends BaseViewModel {
 
   void initPositionListener() {
     AudioService.position.listen((event) {
-      if (position.isClosed) return;
+      if (position.isClosed) return;  
       position.add(event);
       _updateSceneForTime(event);
     });
@@ -84,71 +110,105 @@ class SceneViewModel extends BaseViewModel {
         _stopAllMouthAnimations();
       }
 
-      if (state.processingState == AudioProcessingState.completed) {
+      if (state.processingState == AudioProcessingState.completed && !_isCompleted) {
         _handleAudioComplete();
       }
     });
   }
 
   void _handleAudioComplete() {
+    if (_isCompleted) return;
+    _isCompleted = true;
     _stopAllMouthAnimations();
     _fadeOutCharacters();
   }
 
-  void initScene(Scene scene) {
+  Future<void> initScene(Scene scene) async {
     _scene = scene;
     _currentBackground = scene.setup.background;
-
-    _visibleCharacters = scene.setup.characters
-        .map((char) => CharacterState(
-              characterName: char.character,
-              position: char.position,
-              opacity: 0.0,
-              showMouth: true,
-              mouthType: 'neutral',
-            ))
-        .toList();
+    _initializeCharactersFromSetup();
+    _applyInitialCommands();
 
     notifyListeners();
+
+    // Force another rebuild after the first frame to ensure correct layout constraints
+    SchedulerBinding.instance.addPostFrameCallback((_) {
+      notifyListeners();
+    });
+
+    fetchSceneAssets();
   }
 
-  Future<void> playWithFadeIn() async {
-    if (_isFadingIn) return;
+  void _initializeCharactersFromSetup() {
+    if (_scene == null) return;
+    _availableCharacters = _scene!.setup.characters
+        .map((char) => CharacterState(
+              characterName: char.character,
+              position: SceneCharacterPosition(
+                x: char.position.x,
+                y: char.position.y,
+                z: 1.0,
+              ),
+              showMouth: true,
+              mouthType: 'closed',
+            ))
+        .toList();
+  }
 
-    developer.log('Starting fade-in animation', name: 'SceneViewModel');
-    _isFadingIn = true;
+  void _applyInitialCommands() {
+    if (_scene == null) return;
 
-    if (_isPlaying) {
-      await audioService.pause();
+    // Apply all commands that happen before the audio starts
+    final audioStartTime = double.tryParse(_scene!.setup.audio.startTime) ?? 0.0;
+
+    for (final command in _scene!.commands) {
+      final startTime = command.startTime.toDouble();
+      // Apply commands that happen before audio starts (characters should be in position)
+      if (startTime < audioStartTime) {
+        if (command.background != null) {
+          _currentBackground = command.background;
+        }
+        _updateCharacterState(command);
+      }
     }
+  }
 
-    _updateAllCharacters(opacity: 1.0);
-    await Future.delayed(const Duration(milliseconds: _fadeInDuration));
-    developer.log('Fade-in complete', name: 'SceneViewModel');
+  Future<void> startAudioAfterFadeIn() async {
+    _isCompleted = false;
+    _appliedCommandIndices.clear();
 
     if (_scene != null) {
       final startTime = double.parse(_scene!.setup.audio.startTime);
       _audioStartOffset = startTime;
-      await Future.delayed(Duration(milliseconds: (startTime * 1000).toInt()));
-      developer.log('Waited ${startTime}s, now starting audio', name: 'SceneViewModel');
+      if (startTime > 0) {
+        await Future.delayed(Duration(milliseconds: (startTime * 1000).toInt()));
+      }
     }
 
-    _isFadingIn = false;
     await audioService.play();
   }
 
+  Future<void> prepareForReplay() async {
+    _charactersVisible = false;
+    if (!_charactersVisibleController.isClosed) {
+      _charactersVisibleController.add(false);
+    }
+    await audioService.seek(Duration.zero);
+    _reinitializeCharacters();
+  }
+
   void _updateSceneForTime(Duration currentTime) {
-    if (_scene == null || !_isPlaying) return;
+    if (_scene == null || !_isPlaying || _isCompleted) return;
 
     final currentSeconds = (currentTime.inMilliseconds / 1000) + _audioStartOffset;
     bool sceneChanged = false;
     final Map<String, bool> charactersSpeaking = {};
 
-    for (final command in _scene!.commands) {
+    for (int i = 0; i < _scene!.commands.length; i++) {
+      final command = _scene!.commands[i];
       final startTime = command.startTime.toDouble();
       final finishTime = command.finishTime?.toDouble();
 
-      // Track speaking characters
       if (command.dialogue != null) {
         final isSpeaking = finishTime != null
             ? currentSeconds >= startTime && currentSeconds <= finishTime
@@ -157,20 +217,15 @@ class SceneViewModel extends BaseViewModel {
         if (isSpeaking) charactersSpeaking[command.character] = true;
       }
 
-      // Apply active commands
-      if (currentSeconds >= startTime) {
+      if (currentSeconds >= startTime && !_appliedCommandIndices.contains(i)) {
+        _appliedCommandIndices.add(i);
+
         if (command.background != null && _currentBackground != command.background) {
           _currentBackground = command.background;
           sceneChanged = true;
         }
 
         sceneChanged |= _updateCharacterState(command);
-
-        // Remove character if expired
-        if (finishTime != null && currentSeconds > finishTime && command.opacity == 0) {
-          _visibleCharacters.removeWhere((c) => c.characterName == command.character);
-          sceneChanged = true;
-        }
       }
     }
 
@@ -180,32 +235,42 @@ class SceneViewModel extends BaseViewModel {
   }
 
   bool _updateCharacterState(SceneCommand command) {
-    final characterIndex = _visibleCharacters.indexWhere((c) => c.characterName == command.character);
+    final characterIndex = _availableCharacters.indexWhere((c) => c.characterName == command.character);
 
     if (characterIndex >= 0) {
-      final currentChar = _visibleCharacters[characterIndex];
-      _visibleCharacters[characterIndex] = currentChar.copyWith(
-        position: command.position ?? currentChar.position,
-        opacity: command.opacity?.toDouble() ?? 1.0,
-      );
-      return true;
+      final currentChar = _availableCharacters[characterIndex];
+      final newPosition = command.position;
+
+      // Skip position updates that would move characters off-screen (exit animations)
+      // These positions (x <= 0 or x >= 100) indicate characters leaving the scene
+      if (newPosition != null) {
+        final x = newPosition.x.toDouble();
+        if (x <= 0 || x >= 100) {
+          // This is an exit position, skip it so characters stay visible for fade-out
+          return false;
+        }
+        _availableCharacters[characterIndex] = currentChar.copyWith(
+          position: newPosition,
+        );
+        return true;
+      }
+      return false;
     } else {
-      _visibleCharacters.add(CharacterState(
+      _availableCharacters.add(CharacterState(
         characterName: command.character,
         position: command.position ?? const SceneCharacterPosition(x: 0, y: 0, z: 0),
-        opacity: command.opacity?.toDouble() ?? 1.0,
+        showMouth: true,
+        mouthType: 'closed',
       ));
       return true;
     }
   }
 
   void _updateMouthAnimations(Map<String, bool> charactersSpeaking) {
-    // Start animations for speaking characters
     charactersSpeaking.keys
         .where((char) => !_mouthAnimationTimers.containsKey(char))
         .forEach(_startMouthAnimation);
 
-    // Stop animations for silent characters
     _mouthAnimationTimers.keys
         .where((char) => !charactersSpeaking.containsKey(char))
         .toList()
@@ -213,8 +278,6 @@ class SceneViewModel extends BaseViewModel {
   }
 
   void _startMouthAnimation(String characterName) {
-    developer.log('Starting mouth animation for $characterName', name: 'SceneViewModel');
-
     int cycleCount = 0;
     final random = Random();
 
@@ -224,10 +287,10 @@ class SceneViewModel extends BaseViewModel {
       _mouthAnimationTimers[characterName] = Timer(
         Duration(milliseconds: interval),
         () {
-          final characterIndex = _visibleCharacters.indexWhere((c) => c.characterName == characterName);
+          final characterIndex = _availableCharacters.indexWhere((c) => c.characterName == characterName);
 
           if (characterIndex >= 0) {
-            _visibleCharacters[characterIndex] = _visibleCharacters[characterIndex].copyWith(
+            _availableCharacters[characterIndex] = _availableCharacters[characterIndex].copyWith(
               showMouth: true,
               mouthType: _mouthTypes[cycleCount % _mouthTypes.length],
             );
@@ -246,16 +309,14 @@ class SceneViewModel extends BaseViewModel {
   }
 
   void _stopMouthAnimationForCharacter(String characterName) {
-    developer.log('Stopping mouth animation for $characterName', name: 'SceneViewModel');
-
     _mouthAnimationTimers[characterName]?.cancel();
     _mouthAnimationTimers.remove(characterName);
 
-    final characterIndex = _visibleCharacters.indexWhere((c) => c.characterName == characterName);
+    final characterIndex = _availableCharacters.indexWhere((c) => c.characterName == characterName);
     if (characterIndex >= 0) {
-      _visibleCharacters[characterIndex] = _visibleCharacters[characterIndex].copyWith(
+      _availableCharacters[characterIndex] = _availableCharacters[characterIndex].copyWith(
         showMouth: true,
-        mouthType: 'neutral',
+        mouthType: 'closed',
       );
       notifyListeners();
     }
@@ -266,17 +327,24 @@ class SceneViewModel extends BaseViewModel {
       timer.cancel();
     }
     _mouthAnimationTimers.clear();
-    _updateAllCharacters(showMouth: true, mouthType: 'neutral');
+    _updateAllCharacters(showMouth: true, mouthType: 'closed');
   }
 
   void _fadeOutCharacters() {
-    _updateAllCharacters(opacity: 0.0);
+    _charactersVisible = false;
+    if (_charactersVisibleController.isClosed) return;
+    _charactersVisibleController.add(false);
   }
 
-  void _updateAllCharacters({double? opacity, bool? showMouth, String? mouthType}) {
-    for (int i = 0; i < _visibleCharacters.length; i++) {
-      _visibleCharacters[i] = _visibleCharacters[i].copyWith(
-        opacity: opacity,
+  void _reinitializeCharacters() {
+    _initializeCharactersFromSetup();
+    _applyInitialCommands();
+    notifyListeners();
+  }
+
+  void _updateAllCharacters({bool? showMouth, String? mouthType}) {
+    for (int i = 0; i < _availableCharacters.length; i++) {
+      _availableCharacters[i] = _availableCharacters[i].copyWith(
         showMouth: showMouth,
         mouthType: mouthType,
       );
@@ -284,23 +352,48 @@ class SceneViewModel extends BaseViewModel {
     notifyListeners();
   }
 
-  String _buildCharacterUrl(String characterName, String path) {
-    final lowerName = characterName.toLowerCase();
-    return '$_cdnBase/curriculum/english/animation-assets/images/characters/$lowerName/$path';
+  Future<void> fetchSceneAssets() async {
+    _sceneAssets = await _sceneAssetsService.fetchSceneAssets();
+  }
+
+  CharacterAssets? _getCharacterAssets(String characterName) {
+    return _sceneAssets?.characterAssets[characterName];
+  }
+
+  String _buildFallbackUrl(String characterName, String asset) {
+    return '$_cdnBase/characters/${characterName.toLowerCase()}/$asset';
   }
 
   String getBackgroundUrl(String backgroundName) {
     final cleanName = backgroundName.endsWith('.png') ? backgroundName : '$backgroundName.png';
-    return '$_cdnBase/curriculum/english/animation-assets/images/backgrounds/$cleanName';
+    if (_sceneAssets != null) {
+      return '${_sceneAssets!.backgrounds}/$cleanName';
+    }
+    return '$_cdnBase/backgrounds/$cleanName';
   }
 
-  String getCharacterBaseUrl(String characterName) => _buildCharacterUrl(characterName, 'base.png');
-  String getCharacterEyesUrl(String characterName) => _buildCharacterUrl(characterName, 'eyes-open.png');
-  String getCharacterMouthUrl(String characterName, String mouthType) =>
-      _buildCharacterUrl(characterName, 'mouth-$mouthType.png');
+  String getCharacterBaseUrl(String characterName) =>
+      _getCharacterAssets(characterName)?.base ?? _buildFallbackUrl(characterName, 'base.png');
+
+  String getCharacterBrowsUrl(String characterName) =>
+      _getCharacterAssets(characterName)?.brows ?? _buildFallbackUrl(characterName, 'brows.png');
+
+  String getCharacterEyesUrl(String characterName) =>
+      _getCharacterAssets(characterName)?.eyesOpen ?? _buildFallbackUrl(characterName, 'eyes-open.png');
+
+  String? getCharacterGlassesUrl(String characterName) => _getCharacterAssets(characterName)?.glasses;
+
+  String getCharacterMouthUrl(String characterName, String mouthType) {
+    final assets = _getCharacterAssets(characterName);
+    if (assets != null) {
+      return mouthType == 'open' ? assets.mouthOpen : assets.mouthClosed;
+    }
+    return _buildFallbackUrl(characterName, mouthType == 'open' ? 'mouth-open.png' : 'mouth-closed.png');
+  }
 
   void onDispose() {
     position.close();
+    _charactersVisibleController.close();
     for (final timer in _mouthAnimationTimers.values) {
       timer.cancel();
     }
