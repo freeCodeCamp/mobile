@@ -73,6 +73,9 @@ class _FullscreenSceneOverlay extends StatefulWidget {
 }
 
 class _FullscreenSceneOverlayState extends State<_FullscreenSceneOverlay> {
+  final GlobalKey _controlsKey = GlobalKey();
+  double _controlsHeight = 0;
+
   @override
   void initState() {
     super.initState();
@@ -81,6 +84,17 @@ class _FullscreenSceneOverlayState extends State<_FullscreenSceneOverlay> {
       DeviceOrientation.landscapeRight,
     ]);
     SystemChrome.setEnabledSystemUIMode(SystemUiMode.immersiveSticky);
+    WidgetsBinding.instance.addPostFrameCallback((_) => _measureControlsHeight());
+  }
+
+  void _measureControlsHeight() {
+    final renderBox =
+        _controlsKey.currentContext?.findRenderObject() as RenderBox?;
+    if (renderBox != null && renderBox.hasSize) {
+      setState(() {
+        _controlsHeight = renderBox.size.height;
+      });
+    }
   }
 
   @override
@@ -100,7 +114,10 @@ class _FullscreenSceneOverlayState extends State<_FullscreenSceneOverlay> {
       body: Stack(
         children: [
           Positioned.fill(
-            child: _SceneCanvas(model: widget.model),
+            child: _SceneCanvas(
+              model: widget.model,
+              dialogueBottomPadding: _controlsHeight,
+            ),
           ),
           Positioned(
             top: 16,
@@ -123,7 +140,10 @@ class _FullscreenSceneOverlayState extends State<_FullscreenSceneOverlay> {
             left: 0,
             right: 0,
             bottom: 0,
-            child: _FullscreenControls(model: widget.model),
+            child: _FullscreenControls(
+              key: _controlsKey,
+              model: widget.model,
+            ),
           ),
         ],
       ),
@@ -132,7 +152,7 @@ class _FullscreenSceneOverlayState extends State<_FullscreenSceneOverlay> {
 }
 
 class _FullscreenControls extends StatelessWidget {
-  const _FullscreenControls({required this.model});
+  const _FullscreenControls({super.key, required this.model});
 
   final SceneViewModel model;
 
@@ -162,6 +182,8 @@ class _FullscreenControls extends StatelessWidget {
 
             final isPlaying = playerState.playing &&
                 playerState.processingState != AudioProcessingState.completed;
+            final isCompleted =
+                playerState.processingState == AudioProcessingState.completed;
 
             return Container(
               color: Colors.black54,
@@ -177,7 +199,11 @@ class _FullscreenControls extends StatelessWidget {
                       }
                     },
                     icon: Icon(
-                      isPlaying ? Icons.pause : Icons.play_arrow,
+                      isCompleted
+                          ? Icons.replay
+                          : isPlaying
+                              ? Icons.pause
+                              : Icons.play_arrow,
                       color: Colors.white,
                       size: 32,
                     ),
@@ -192,7 +218,17 @@ class _FullscreenControls extends StatelessWidget {
                       minHeight: 6,
                     ),
                   ),
-                  const SizedBox(width: 16),
+                  const SizedBox(width: 12),
+                  IconButton(
+                    onPressed: () => model.toggleCaptions(),
+                    icon: Icon(
+                      model.showCaptions
+                          ? Icons.closed_caption
+                          : Icons.closed_caption_off,
+                      color: Colors.white,
+                      size: 28,
+                    ),
+                  ),
                 ],
               ),
             );
@@ -204,9 +240,10 @@ class _FullscreenControls extends StatelessWidget {
 }
 
 class _SceneCanvas extends StatelessWidget {
-  const _SceneCanvas({required this.model});
+  const _SceneCanvas({required this.model, this.dialogueBottomPadding = 0});
 
   final SceneViewModel model;
+  final double dialogueBottomPadding;
 
   @override
   Widget build(BuildContext context) {
@@ -233,9 +270,65 @@ class _SceneCanvas extends StatelessWidget {
             Positioned.fill(
               child: _CharactersContainer(model: model),
             ),
+            if (model.showCaptions && model.currentDialogueText != null)
+              Positioned(
+                left: 0,
+                right: 0,
+                bottom: dialogueBottomPadding,
+                child: _DialogueOverlay(
+                  character: model.currentDialogueCharacter ?? '',
+                  text: model.currentDialogueText!,
+                  align: model.currentDialogueAlign ?? 'left',
+                ),
+              ),
           ],
         );
       },
+    );
+  }
+}
+
+class _DialogueOverlay extends StatelessWidget {
+  const _DialogueOverlay({
+    required this.character,
+    required this.text,
+    required this.align,
+  });
+
+  final String character;
+  final String text;
+  final String align;
+
+  @override
+  Widget build(BuildContext context) {
+    final crossAxisAlignment =
+        align == 'right' ? CrossAxisAlignment.end : CrossAxisAlignment.start;
+
+    return Container(
+      color: Colors.black.withValues(alpha: 0.7),
+      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        crossAxisAlignment: crossAxisAlignment,
+        children: [
+          Text(
+            character,
+            style: const TextStyle(
+              color: FccColors.blue50,
+              fontWeight: FontWeight.bold,
+              fontSize: 12,
+            ),
+          ),
+          const SizedBox(height: 2),
+          Text(
+            text,
+            style: const TextStyle(
+              color: Colors.white,
+              fontSize: 14,
+            ),
+          ),
+        ],
+      ),
     );
   }
 }
@@ -304,7 +397,7 @@ class _CharacterSlot extends StatelessWidget {
     final handleRemoveBottomYScale = yPercent <= 0 ? removeBottomYScale / 2 : removeBottomYScale * 2;
     final bottomPos = (yPercent * canvasHeight) - handleRemoveBottomYScale;
 
-    return AnimatedPositioned(
+    return AnimatedPositioned(  
       duration: const Duration(milliseconds: 500),
       curve: Curves.easeInOut,
       left: leftPos,
@@ -426,11 +519,20 @@ class _AudioControls extends StatelessWidget {
                           model.onPlay();
                         }
                       },
-                      icon: playerState.playing &&
-                              playerState.processingState !=
-                                  AudioProcessingState.completed
-                          ? const Icon(Icons.pause)
-                          : const Icon(Icons.play_arrow),
+                      icon: playerState.processingState ==
+                              AudioProcessingState.completed
+                          ? const Icon(Icons.replay)
+                          : playerState.playing
+                              ? const Icon(Icons.pause)
+                              : const Icon(Icons.play_arrow),
+                    ),
+                    IconButton(
+                      onPressed: () => model.toggleCaptions(),
+                      icon: Icon(
+                        model.showCaptions
+                            ? Icons.closed_caption
+                            : Icons.closed_caption_off,
+                      ),
                     ),
                     IconButton(
                       onPressed: () => _showFullscreenOverlay(context, model),

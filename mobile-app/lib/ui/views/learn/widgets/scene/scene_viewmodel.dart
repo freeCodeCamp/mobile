@@ -71,6 +71,20 @@ class SceneViewModel extends BaseViewModel {
   double _audioStartOffset = 0.0;
   bool _hasStarted = false;
 
+  String? _currentDialogueCharacter;
+  String? _currentDialogueText;
+  String? _currentDialogueAlign;
+  String? get currentDialogueCharacter => _currentDialogueCharacter;
+  String? get currentDialogueText => _currentDialogueText;
+  String? get currentDialogueAlign => _currentDialogueAlign;
+
+  bool _showCaptions = false;
+  bool get showCaptions => _showCaptions;
+  void toggleCaptions() {
+    _showCaptions = !_showCaptions;
+    notifyListeners();
+  }
+
   Future<void> onPlay() async {
     if (_hasStarted && !_isCompleted) {
       await audioService.play();
@@ -116,6 +130,9 @@ class SceneViewModel extends BaseViewModel {
   void _handleAudioComplete() {
     if (_isCompleted) return;
     _isCompleted = true;
+    _currentDialogueCharacter = null;
+    _currentDialogueText = null;
+    _currentDialogueAlign = null;
     _stopAllMouthAnimations();
     _applyRemainingCommands();
   }
@@ -216,6 +233,10 @@ class SceneViewModel extends BaseViewModel {
     bool sceneChanged = false;
     final Map<String, bool> charactersSpeaking = {};
 
+    String? activeDialogueCharacter;
+    String? activeDialogueText;
+    String? activeDialogueAlign;
+
     for (int i = 0; i < _scene!.commands.length; i++) {
       final command = _scene!.commands[i];
       final startTime = command.startTime.toDouble();
@@ -226,7 +247,12 @@ class SceneViewModel extends BaseViewModel {
             ? currentSeconds >= startTime && currentSeconds <= finishTime
             : currentSeconds >= startTime;
 
-        if (isSpeaking) charactersSpeaking[command.character] = true;
+        if (isSpeaking) {
+          charactersSpeaking[command.character] = true;
+          activeDialogueCharacter = command.character;
+          activeDialogueText = command.dialogue!.text;
+          activeDialogueAlign = command.dialogue!.align;
+        }
       }
 
       if (currentSeconds >= startTime && !_appliedCommandIndices.contains(i)) {
@@ -239,6 +265,16 @@ class SceneViewModel extends BaseViewModel {
 
         sceneChanged |= _updateCharacterState(command);
       }
+    }
+
+    // Only update dialogue when there's a new active dialogue (keep last one visible)
+    if (activeDialogueText != null &&
+        (_currentDialogueCharacter != activeDialogueCharacter ||
+            _currentDialogueText != activeDialogueText)) {
+      _currentDialogueCharacter = activeDialogueCharacter;
+      _currentDialogueText = activeDialogueText;
+      _currentDialogueAlign = activeDialogueAlign;
+      sceneChanged = true;
     }
 
     _updateMouthAnimations(charactersSpeaking);
@@ -337,6 +373,9 @@ class SceneViewModel extends BaseViewModel {
   }
 
   void _reinitializeCharacters() {
+    _currentDialogueCharacter = null;
+    _currentDialogueText = null;
+    _currentDialogueAlign = null;
     _initializeCharactersFromSetup();
     notifyListeners();
   }
