@@ -15,12 +15,14 @@ class CharacterState {
   final SceneCharacterPosition position;
   final bool showMouth;
   final String mouthType;
+  final double opacity;
 
   CharacterState({
     required this.characterName,
     required this.position,
     this.showMouth = false,
     this.mouthType = 'smile',
+    this.opacity = 1.0,
   });
 
   CharacterState copyWith({
@@ -28,12 +30,14 @@ class CharacterState {
     SceneCharacterPosition? position,
     bool? showMouth,
     String? mouthType,
+    double? opacity,
   }) {
     return CharacterState(
       characterName: characterName ?? this.characterName,
       position: position ?? this.position,
       showMouth: showMouth ?? this.showMouth,
       mouthType: mouthType ?? this.mouthType,
+      opacity: opacity ?? this.opacity,
     );
   }
 }
@@ -67,11 +71,6 @@ class SceneViewModel extends BaseViewModel {
   double _audioStartOffset = 0.0;
   bool _hasStarted = false;
 
-  final StreamController<bool> _charactersVisibleController = StreamController<bool>.broadcast();
-  Stream<bool> get charactersVisibleStream => _charactersVisibleController.stream;
-  bool _charactersVisible = false;
-  bool get charactersVisible => _charactersVisible;
-
   Future<void> onPlay() async {
     if (_hasStarted && !_isCompleted) {
       await audioService.play();
@@ -83,13 +82,11 @@ class SceneViewModel extends BaseViewModel {
     }
 
     _hasStarted = true;
-    _charactersVisible = true;
-    if (!_charactersVisibleController.isClosed) {
-      _charactersVisibleController.add(true);
-    }
+    _applyInitialCommands();
+    notifyListeners();
 
     await Future.delayed(const Duration(milliseconds: 1000));
-    await startAudioAfterFadeIn();
+    await startAudio();
   }
 
   Duration searchTimeStamp(bool forwards, int currentPosition, EnglishAudio audio) {
@@ -120,14 +117,12 @@ class SceneViewModel extends BaseViewModel {
     if (_isCompleted) return;
     _isCompleted = true;
     _stopAllMouthAnimations();
-    _fadeOutCharacters();
   }
 
   Future<void> initScene(Scene scene) async {
     _scene = scene;
     _currentBackground = scene.setup.background;
     _initializeCharactersFromSetup();
-    _applyInitialCommands();
 
     notifyListeners();
 
@@ -173,7 +168,7 @@ class SceneViewModel extends BaseViewModel {
     }
   }
 
-  Future<void> startAudioAfterFadeIn() async {
+  Future<void> startAudio() async {
     _isCompleted = false;
     _appliedCommandIndices.clear();
 
@@ -189,10 +184,6 @@ class SceneViewModel extends BaseViewModel {
   }
 
   Future<void> prepareForReplay() async {
-    _charactersVisible = false;
-    if (!_charactersVisibleController.isClosed) {
-      _charactersVisibleController.add(false);
-    }
     await audioService.seek(Duration.zero);
     _reinitializeCharacters();
   }
@@ -238,29 +229,23 @@ class SceneViewModel extends BaseViewModel {
     final characterIndex = _availableCharacters.indexWhere((c) => c.characterName == command.character);
 
     if (characterIndex >= 0) {
-      final currentChar = _availableCharacters[characterIndex];
       final newPosition = command.position;
+      final newOpacity = command.opacity;
 
-      // Skip position updates that would move characters off-screen (exit animations)
-      // These positions (x <= 0 or x >= 100) indicate characters leaving the scene
-      if (newPosition != null) {
-        final x = newPosition.x.toDouble();
-        if (x <= 0 || x >= 100) {
-          // This is an exit position, skip it so characters stay visible for fade-out
-          return false;
-        }
-        _availableCharacters[characterIndex] = currentChar.copyWith(
-          position: newPosition,
-        );
-        return true;
-      }
-      return false;
+      if (newPosition == null && newOpacity == null) return false;
+
+      _availableCharacters[characterIndex] = _availableCharacters[characterIndex].copyWith(
+        position: newPosition,
+        opacity: newOpacity?.toDouble(),
+      );
+      return true;
     } else {
       _availableCharacters.add(CharacterState(
         characterName: command.character,
         position: command.position ?? const SceneCharacterPosition(x: 0, y: 0, z: 0),
         showMouth: true,
         mouthType: 'closed',
+        opacity: command.opacity?.toDouble() ?? 1.0,
       ));
       return true;
     }
@@ -330,15 +315,8 @@ class SceneViewModel extends BaseViewModel {
     _updateAllCharacters(showMouth: true, mouthType: 'closed');
   }
 
-  void _fadeOutCharacters() {
-    _charactersVisible = false;
-    if (_charactersVisibleController.isClosed) return;
-    _charactersVisibleController.add(false);
-  }
-
   void _reinitializeCharacters() {
     _initializeCharactersFromSetup();
-    _applyInitialCommands();
     notifyListeners();
   }
 
@@ -393,7 +371,6 @@ class SceneViewModel extends BaseViewModel {
 
   void onDispose() {
     position.close();
-    _charactersVisibleController.close();
     for (final timer in _mouthAnimationTimers.values) {
       timer.cancel();
     }

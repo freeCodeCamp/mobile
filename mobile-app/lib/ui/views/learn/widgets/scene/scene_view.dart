@@ -1,5 +1,3 @@
-import 'dart:async';
-
 import 'package:audio_service/audio_service.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
@@ -54,10 +52,7 @@ class SceneView extends StatelessWidget {
                         ),
                       ),
                     Positioned.fill(
-                      child: _CharactersContainer(
-                        model: model,
-                        visibleStream: model.charactersVisibleStream,
-                      ),
+                      child: _CharactersContainer(model: model),
                     ),
                   ],
                 ),
@@ -72,89 +67,34 @@ class SceneView extends StatelessWidget {
   }
 }
 
-class _CharactersContainer extends StatefulWidget {
+class _CharactersContainer extends StatelessWidget {
   const _CharactersContainer({
     required this.model,
-    required this.visibleStream,
   });
 
   final SceneViewModel model;
-  final Stream<bool> visibleStream;
-
-  @override
-  State<_CharactersContainer> createState() => _CharactersContainerState();
-}
-
-class _CharactersContainerState extends State<_CharactersContainer>
-    with SingleTickerProviderStateMixin {
-  late final AnimationController _controller;
-  late final Animation<double> _fade;
-  StreamSubscription<bool>? _sub;
-
-  @override
-  void initState() {
-    super.initState();
-
-    _controller = AnimationController(
-      duration: const Duration(milliseconds: 1000),
-      vsync: this,
-      value: 0.0,
-    );
-    _fade = CurvedAnimation(parent: _controller, curve: Curves.easeInOut);
-
-    _sub = widget.visibleStream.listen((visible) {
-      if (!mounted) return;
-      if (visible) {
-        _controller.forward(from: 0.0);
-      } else {
-        _controller.reverse(from: 1.0);
-      }
-    });
-  }
-
-  @override
-  void didUpdateWidget(covariant _CharactersContainer oldWidget) {
-    super.didUpdateWidget(oldWidget);
-
-    if (oldWidget.visibleStream != widget.visibleStream) {
-      _sub?.cancel();
-      _sub = widget.visibleStream.listen((visible) {
-        if (!mounted) return;
-        visible ? _controller.forward() : _controller.reverse();
-      });
-    }
-  }
-
-  @override
-  void dispose() {
-    _sub?.cancel();
-    _controller.dispose();
-    super.dispose();
-  }
 
   @override
   Widget build(BuildContext context) {
-    final characters = widget.model.visibleCharacters;
+    final characters = model.visibleCharacters;
 
     return LayoutBuilder(
       builder: (context, constraints) {
         final canvasWidth = constraints.maxWidth;
         final canvasHeight = constraints.maxHeight;
 
-        return FadeTransition(
-          opacity: _fade,
-          child: Stack(
-            children: [
-              for (final character in characters)
-                _CharacterSlot(
-                  key: ValueKey('slot_${character.characterName}'),
-                  state: character,
-                  model: widget.model,
-                  canvasWidth: canvasWidth,
-                  canvasHeight: canvasHeight,
-                ),
-            ],
-          ),
+        return Stack(
+          clipBehavior: Clip.hardEdge,
+          children: [
+            for (final character in characters)
+              _CharacterSlot(
+                key: ValueKey('slot_${character.characterName}'),
+                state: character,
+                model: model,
+                canvasWidth: canvasWidth,
+                canvasHeight: canvasHeight,
+              ),
+          ],
         );
       },
     );
@@ -187,15 +127,21 @@ class _CharacterSlot extends StatelessWidget {
     final leftPos = (xPercent * canvasWidth) - (characterWidth / 2);
     final bottomPos = yPercent * canvasHeight;
 
-    return Positioned(
+    return AnimatedPositioned(
+      duration: const Duration(milliseconds: 500),
+      curve: Curves.easeInOut,
       left: leftPos,
       bottom: bottomPos,
-      child: SizedBox(
-        width: characterWidth,
-        height: characterHeight,
-        child: _CharacterSpriteBody(
-          characterState: state,
-          model: model,
+      child: AnimatedOpacity(
+        opacity: state.opacity,
+        duration: const Duration(milliseconds: 500),
+        child: SizedBox(
+          width: characterWidth,
+          height: characterHeight,
+          child: _CharacterSpriteBody(
+            characterState: state,
+            model: model,
+          ),
         ),
       ),
     );
@@ -211,13 +157,27 @@ class _CharacterSpriteBody extends StatelessWidget {
   final CharacterState characterState;
   final SceneViewModel model;
 
+  Widget _buildLayer(String imageUrl) {
+    return Positioned.fill(
+      child: CachedNetworkImage(
+        imageUrl: imageUrl,
+        fit: BoxFit.contain,
+        placeholder: (context, url) => const SizedBox.expand(),
+        errorWidget: (context, url, error) => const SizedBox.shrink(),
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
+    final name = characterState.characterName;
+    final glassesUrl = model.getCharacterGlassesUrl(name);
+
     return Stack(
       children: [
         Positioned.fill(
           child: CachedNetworkImage(
-            imageUrl: model.getCharacterBaseUrl(characterState.characterName),
+            imageUrl: model.getCharacterBaseUrl(name),
             fit: BoxFit.contain,
             placeholder: (context, url) => Container(color: FccColors.gray45),
             errorWidget: (context, url, error) => Container(
@@ -226,43 +186,11 @@ class _CharacterSpriteBody extends StatelessWidget {
             ),
           ),
         ),
-        Positioned.fill(
-          child: CachedNetworkImage(
-            imageUrl: model.getCharacterBrowsUrl(characterState.characterName),
-            fit: BoxFit.contain,
-            placeholder: (context, url) => const SizedBox.expand(),
-            errorWidget: (context, url, error) => const SizedBox.shrink(),
-          ),
-        ),
-        Positioned.fill(
-          child: CachedNetworkImage(
-            imageUrl: model.getCharacterEyesUrl(characterState.characterName),
-            fit: BoxFit.contain,
-            placeholder: (context, url) => const SizedBox.expand(),
-            errorWidget: (context, url, error) => const SizedBox.shrink(),
-          ),
-        ),
-        if (model.getCharacterGlassesUrl(characterState.characterName) != null)
-          Positioned.fill(
-            child: CachedNetworkImage(
-              imageUrl: model.getCharacterGlassesUrl(characterState.characterName)!,
-              fit: BoxFit.contain,
-              placeholder: (context, url) => const SizedBox.expand(),
-              errorWidget: (context, url, error) => const SizedBox.shrink(),
-            ),
-          ),
+        _buildLayer(model.getCharacterBrowsUrl(name)),
+        _buildLayer(model.getCharacterEyesUrl(name)),
+        if (glassesUrl != null) _buildLayer(glassesUrl),
         if (characterState.showMouth)
-          Positioned.fill(
-            child: CachedNetworkImage(
-              imageUrl: model.getCharacterMouthUrl(
-                characterState.characterName,
-                characterState.mouthType,
-              ),
-              fit: BoxFit.contain,
-              placeholder: (context, url) => const SizedBox.expand(),
-              errorWidget: (context, url, error) => const SizedBox.shrink(),
-            ),
-          ),
+          _buildLayer(model.getCharacterMouthUrl(name, characterState.mouthType)),
       ],
     );
   }
