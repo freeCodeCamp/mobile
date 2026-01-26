@@ -160,7 +160,7 @@ class SceneViewModel extends BaseViewModel {
               position: SceneCharacterPosition(
                 x: char.position.x,
                 y: char.position.y,
-                z: 1.0,
+                z: char.position.z,
               ),
               showMouth: true,
               mouthType: 'closed',
@@ -204,6 +204,7 @@ class SceneViewModel extends BaseViewModel {
   }
 
   Future<void> prepareForReplay() async {
+    await audioService.stop();
     await audioService.seek(Duration.zero);
     _reinitializeCharacters();
   }

@@ -68,7 +68,8 @@ class _FullscreenSceneOverlay extends StatefulWidget {
   final SceneViewModel model;
 
   @override
-  State<_FullscreenSceneOverlay> createState() => _FullscreenSceneOverlayState();
+  State<_FullscreenSceneOverlay> createState() =>
+      _FullscreenSceneOverlayState();
 }
 
 class _FullscreenSceneOverlayState extends State<_FullscreenSceneOverlay> {
@@ -110,7 +111,8 @@ class _FullscreenSceneOverlayState extends State<_FullscreenSceneOverlay> {
                 borderRadius: BorderRadius.circular(4),
               ),
               child: IconButton(
-                icon: const Icon(Icons.fullscreen_exit, color: Colors.white, size: 32),
+                icon: const Icon(Icons.fullscreen_exit,
+                    color: Colors.white, size: 32),
                 onPressed: () => Navigator.of(context).pop(),
                 padding: const EdgeInsets.all(8),
                 constraints: const BoxConstraints(),
@@ -155,7 +157,8 @@ class _FullscreenControls extends StatelessWidget {
             final totalMs = totalDuration?.inMilliseconds ?? 0;
 
             final hasZeroValue = totalMs == 0 || position.inMilliseconds == 0;
-            final progress = hasZeroValue ? 0.0 : position.inMilliseconds / totalMs;
+            final progress =
+                hasZeroValue ? 0.0 : position.inMilliseconds / totalMs;
 
             final isPlaying = playerState.playing &&
                 playerState.processingState != AudioProcessingState.completed;
@@ -183,7 +186,8 @@ class _FullscreenControls extends StatelessWidget {
                   Expanded(
                     child: LinearProgressIndicator(
                       backgroundColor: FccColors.gray75,
-                      valueColor: const AlwaysStoppedAnimation<Color>(FccColors.blue50),
+                      valueColor:
+                          const AlwaysStoppedAnimation<Color>(FccColors.blue50),
                       value: progress.clamp(0.0, 1.0),
                       minHeight: 6,
                     ),
@@ -216,7 +220,8 @@ class _SceneCanvas extends StatelessWidget {
                 child: CachedNetworkImage(
                   imageUrl: model.getBackgroundUrl(model.currentBackground!),
                   fit: BoxFit.cover,
-                  placeholder: (context, url) => Container(color: FccColors.gray75),
+                  placeholder: (context, url) =>
+                      Container(color: FccColors.gray75),
                   errorWidget: (context, url, error) => Container(
                     color: FccColors.gray75,
                     child: const Center(
@@ -289,11 +294,15 @@ class _CharacterSlot extends StatelessWidget {
     final characterHeight = canvasHeight * scale;
     final characterWidth = characterHeight * (2 / 3);
 
-    final xPercent = state.position.x.toDouble() / 100;
+    final xPercent = state.position.x.toDouble()  / 100;
     final yPercent = state.position.y.toDouble() / 100;
 
     final leftPos = (xPercent * canvasWidth) - (characterWidth / 2);
-    final bottomPos = yPercent * canvasHeight;
+
+   // I have no clue why this works, but it does.
+    final removeBottomYScale = characterHeight - canvasHeight;
+    final handleRemoveBottomYScale = yPercent <= 0 ? removeBottomYScale / 2 : removeBottomYScale * 2;
+    final bottomPos = (yPercent * canvasHeight) - handleRemoveBottomYScale;
 
     return AnimatedPositioned(
       duration: const Duration(milliseconds: 500),
@@ -358,7 +367,8 @@ class _CharacterSpriteBody extends StatelessWidget {
         _buildLayer(model.getCharacterEyesUrl(name)),
         if (glassesUrl != null) _buildLayer(glassesUrl),
         if (characterState.showMouth)
-          _buildLayer(model.getCharacterMouthUrl(name, characterState.mouthType)),
+          _buildLayer(
+              model.getCharacterMouthUrl(name, characterState.mouthType)),
       ],
     );
   }
@@ -391,13 +401,15 @@ class _AudioControls extends StatelessWidget {
             final totalMs = totalDuration?.inMilliseconds ?? 0;
 
             final hasZeroValue = totalMs == 0 || position.inMilliseconds == 0;
-            final progress = hasZeroValue ? 0.0 : position.inMilliseconds / totalMs;
+            final progress =
+                hasZeroValue ? 0.0 : position.inMilliseconds / totalMs;
 
             return Column(
               children: [
                 LinearProgressIndicator(
                   backgroundColor: FccColors.gray75,
-                  valueColor: const AlwaysStoppedAnimation<Color>(FccColors.blue50),
+                  valueColor:
+                      const AlwaysStoppedAnimation<Color>(FccColors.blue50),
                   value: progress.clamp(0.0, 1.0),
                   minHeight: 8,
                 ),
@@ -407,14 +419,16 @@ class _AudioControls extends StatelessWidget {
                     IconButton(
                       onPressed: () {
                         if (playerState.playing &&
-                            playerState.processingState != AudioProcessingState.completed) {
+                            playerState.processingState !=
+                                AudioProcessingState.completed) {
                           model.audioService.pause();
                         } else {
                           model.onPlay();
                         }
                       },
                       icon: playerState.playing &&
-                              playerState.processingState != AudioProcessingState.completed
+                              playerState.processingState !=
+                                  AudioProcessingState.completed
                           ? const Icon(Icons.pause)
                           : const Icon(Icons.play_arrow),
                     ),
