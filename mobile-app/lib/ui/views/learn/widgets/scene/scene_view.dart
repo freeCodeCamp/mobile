@@ -1,6 +1,7 @@
 import 'package:audio_service/audio_service.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:freecodecamp/models/learn/challenge_model.dart';
 import 'package:freecodecamp/ui/theme/fcc_theme.dart';
 import 'package:freecodecamp/ui/views/learn/widgets/scene/scene_viewmodel.dart';
@@ -35,27 +36,7 @@ class SceneView extends StatelessWidget {
                   color: Colors.black,
                   border: Border.all(color: FccColors.gray75, width: 2),
                 ),
-                child: Stack(
-                  children: [
-                    if (model.currentBackground != null)
-                      Positioned.fill(
-                        child: CachedNetworkImage(
-                          imageUrl: model.getBackgroundUrl(model.currentBackground!),
-                          fit: BoxFit.cover,
-                          placeholder: (context, url) => Container(color: FccColors.gray75),
-                          errorWidget: (context, url, error) => Container(
-                            color: FccColors.gray75,
-                            child: const Center(
-                              child: Icon(Icons.broken_image, size: 48),
-                            ),
-                          ),
-                        ),
-                      ),
-                    Positioned.fill(
-                      child: _CharactersContainer(model: model),
-                    ),
-                  ],
-                ),
+                child: _SceneCanvas(model: model),
               ),
             ),
             const SizedBox(height: 16),
@@ -63,6 +44,193 @@ class SceneView extends StatelessWidget {
           ],
         ),
       ),
+    );
+  }
+}
+
+void _showFullscreenOverlay(BuildContext context, SceneViewModel model) {
+  Navigator.of(context).push(
+    PageRouteBuilder(
+      opaque: false,
+      pageBuilder: (context, animation, secondaryAnimation) {
+        return _FullscreenSceneOverlay(model: model);
+      },
+      transitionsBuilder: (context, animation, secondaryAnimation, child) {
+        return FadeTransition(opacity: animation, child: child);
+      },
+    ),
+  );
+}
+
+class _FullscreenSceneOverlay extends StatefulWidget {
+  const _FullscreenSceneOverlay({required this.model});
+
+  final SceneViewModel model;
+
+  @override
+  State<_FullscreenSceneOverlay> createState() => _FullscreenSceneOverlayState();
+}
+
+class _FullscreenSceneOverlayState extends State<_FullscreenSceneOverlay> {
+  @override
+  void initState() {
+    super.initState();
+    SystemChrome.setPreferredOrientations([
+      DeviceOrientation.landscapeLeft,
+      DeviceOrientation.landscapeRight,
+    ]);
+    SystemChrome.setEnabledSystemUIMode(SystemUiMode.immersiveSticky);
+  }
+
+  @override
+  void dispose() {
+    SystemChrome.setPreferredOrientations([
+      DeviceOrientation.portraitUp,
+      DeviceOrientation.portraitDown,
+    ]);
+    SystemChrome.setEnabledSystemUIMode(SystemUiMode.edgeToEdge);
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      backgroundColor: Colors.black,
+      body: Stack(
+        children: [
+          Positioned.fill(
+            child: _SceneCanvas(model: widget.model),
+          ),
+          Positioned(
+            top: 16,
+            right: 16,
+            child: Container(
+              decoration: BoxDecoration(
+                color: Colors.black54,
+                borderRadius: BorderRadius.circular(4),
+              ),
+              child: IconButton(
+                icon: const Icon(Icons.fullscreen_exit, color: Colors.white, size: 32),
+                onPressed: () => Navigator.of(context).pop(),
+                padding: const EdgeInsets.all(8),
+                constraints: const BoxConstraints(),
+              ),
+            ),
+          ),
+          Positioned(
+            left: 0,
+            right: 0,
+            bottom: 0,
+            child: _FullscreenControls(model: widget.model),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class _FullscreenControls extends StatelessWidget {
+  const _FullscreenControls({required this.model});
+
+  final SceneViewModel model;
+
+  @override
+  Widget build(BuildContext context) {
+    return StreamBuilder(
+      initialData: PlaybackState(),
+      stream: model.audioService.playbackState,
+      builder: (context, snapshot) {
+        final playerState = snapshot.data as PlaybackState;
+
+        return StreamBuilder(
+          initialData: Duration.zero,
+          stream: model.position.stream,
+          builder: (context, positionSnapshot) {
+            if (positionSnapshot.data == null) {
+              return const SizedBox.shrink();
+            }
+
+            final position = positionSnapshot.data as Duration;
+            final totalDuration = model.audioService.duration();
+            final totalMs = totalDuration?.inMilliseconds ?? 0;
+
+            final hasZeroValue = totalMs == 0 || position.inMilliseconds == 0;
+            final progress = hasZeroValue ? 0.0 : position.inMilliseconds / totalMs;
+
+            final isPlaying = playerState.playing &&
+                playerState.processingState != AudioProcessingState.completed;
+
+            return Container(
+              color: Colors.black54,
+              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+              child: Row(
+                children: [
+                  IconButton(
+                    onPressed: () {
+                      if (isPlaying) {
+                        model.audioService.pause();
+                      } else {
+                        model.onPlay();
+                      }
+                    },
+                    icon: Icon(
+                      isPlaying ? Icons.pause : Icons.play_arrow,
+                      color: Colors.white,
+                      size: 32,
+                    ),
+                  ),
+                  const SizedBox(width: 12),
+                  Expanded(
+                    child: LinearProgressIndicator(
+                      backgroundColor: FccColors.gray75,
+                      valueColor: const AlwaysStoppedAnimation<Color>(FccColors.blue50),
+                      value: progress.clamp(0.0, 1.0),
+                      minHeight: 6,
+                    ),
+                  ),
+                  const SizedBox(width: 16),
+                ],
+              ),
+            );
+          },
+        );
+      },
+    );
+  }
+}
+
+class _SceneCanvas extends StatelessWidget {
+  const _SceneCanvas({required this.model});
+
+  final SceneViewModel model;
+
+  @override
+  Widget build(BuildContext context) {
+    return ListenableBuilder(
+      listenable: model,
+      builder: (context, child) {
+        return Stack(
+          children: [
+            if (model.currentBackground != null)
+              Positioned.fill(
+                child: CachedNetworkImage(
+                  imageUrl: model.getBackgroundUrl(model.currentBackground!),
+                  fit: BoxFit.cover,
+                  placeholder: (context, url) => Container(color: FccColors.gray75),
+                  errorWidget: (context, url, error) => Container(
+                    color: FccColors.gray75,
+                    child: const Center(
+                      child: Icon(Icons.broken_image, size: 48),
+                    ),
+                  ),
+                ),
+              ),
+            Positioned.fill(
+              child: _CharactersContainer(model: model),
+            ),
+          ],
+        );
+      },
     );
   }
 }
@@ -219,12 +387,6 @@ class _AudioControls extends StatelessWidget {
             }
 
             final position = positionSnapshot.data as Duration;
-
-            final canSeekForward =
-                model.audioService.canSeek(true, position.inSeconds, scene.setup.audio);
-            final canSeekBackward =
-                model.audioService.canSeek(false, position.inSeconds, scene.setup.audio);
-
             final totalDuration = model.audioService.duration();
             final totalMs = totalDuration?.inMilliseconds ?? 0;
 
@@ -243,16 +405,6 @@ class _AudioControls extends StatelessWidget {
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
                     IconButton(
-                      onPressed: canSeekBackward
-                          ? () {
-                              model.audioService.seek(
-                                model.searchTimeStamp(false, position.inSeconds, scene.setup.audio),
-                              );
-                            }
-                          : null,
-                      icon: const Icon(Icons.skip_previous),
-                    ),
-                    IconButton(
                       onPressed: () {
                         if (playerState.playing &&
                             playerState.processingState != AudioProcessingState.completed) {
@@ -267,14 +419,8 @@ class _AudioControls extends StatelessWidget {
                           : const Icon(Icons.play_arrow),
                     ),
                     IconButton(
-                      onPressed: canSeekForward
-                          ? () {
-                              model.audioService.seek(
-                                model.searchTimeStamp(true, position.inSeconds, scene.setup.audio),
-                              );
-                            }
-                          : null,
-                      icon: const Icon(Icons.skip_next),
+                      onPressed: () => _showFullscreenOverlay(context, model),
+                      icon: const Icon(Icons.fullscreen),
                     ),
                   ],
                 ),

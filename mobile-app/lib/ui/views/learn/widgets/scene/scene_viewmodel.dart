@@ -117,6 +117,24 @@ class SceneViewModel extends BaseViewModel {
     if (_isCompleted) return;
     _isCompleted = true;
     _stopAllMouthAnimations();
+    _applyRemainingCommands();
+  }
+
+  void _applyRemainingCommands() {
+    if (_scene == null) return;
+
+    for (int i = 0; i < _scene!.commands.length; i++) {
+      if (!_appliedCommandIndices.contains(i)) {
+        final command = _scene!.commands[i];
+        _appliedCommandIndices.add(i);
+
+        if (command.background != null && _currentBackground != command.background) {
+          _currentBackground = command.background;
+        }
+        _updateCharacterState(command);
+      }
+    }
+    notifyListeners();
   }
 
   Future<void> initScene(Scene scene) async {
@@ -146,6 +164,8 @@ class SceneViewModel extends BaseViewModel {
               ),
               showMouth: true,
               mouthType: 'closed',
+              opacity: char.opacity?.toDouble() ?? 1.0,
+
             ))
         .toList();
   }
