@@ -69,13 +69,6 @@ class EnglishView extends StatelessWidget {
                       scene: challenge.scene!,
                     ),
                   ),
-                ] else if (challenge.audio != null) ...[
-                  ChallengeCard(
-                    title: 'Listen to the Audio',
-                    child: AudioPlayerView(
-                      audio: challenge.audio!,
-                    ),
-                  ),
                 ],
                 if (challenge.fillInTheBlank != null)
                   ChallengeCard(

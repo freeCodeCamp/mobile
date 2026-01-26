@@ -50,7 +50,6 @@ class CharacterState {
 
 class SceneViewModel extends BaseViewModel {
   static const String _cdnBase = 'https://cdn.freecodecamp.org/curriculum/english/animation-assets/images';
-  static const List<String> _mouthTypes = ['closed', 'open'];
   static const int _minMouthInterval = 85;
   static const int _maxMouthInterval = 105;
   static const int _minBlinkInterval = 2000;
@@ -149,6 +148,7 @@ class SceneViewModel extends BaseViewModel {
 
       if (!_isPlaying) {
         _stopAllMouthAnimations();
+        _stopAllBlinkAnimations();
       }
 
       if (state.processingState == AudioProcessingState.completed && !_isCompleted) {
@@ -366,34 +366,41 @@ class SceneViewModel extends BaseViewModel {
   }
 
   void _startMouthAnimation(String characterName) {
-    int cycleCount = 0;
     final random = Random();
 
-    void scheduleMouthUpdate() {
+    final characterIndex = _findCharacterIndex(characterName);
+    if (characterIndex >= 0) {
+      _availableCharacters[characterIndex] = _availableCharacters[characterIndex].copyWith(
+        showMouth: true,
+        mouthType: 'open',
+      );
+      notifyListeners();
+    }
+
+    void scheduleMouthUpdate(String nextMouthType) {
       final interval = _minMouthInterval + random.nextInt(_maxMouthInterval - _minMouthInterval + 1);
 
       _mouthAnimationTimers[characterName] = Timer(
         Duration(milliseconds: interval),
         () {
-          final characterIndex = _findCharacterIndex(characterName);
+          final idx = _findCharacterIndex(characterName);
 
-          if (characterIndex >= 0) {
-            _availableCharacters[characterIndex] = _availableCharacters[characterIndex].copyWith(
+          if (idx >= 0) {
+            _availableCharacters[idx] = _availableCharacters[idx].copyWith(
               showMouth: true,
-              mouthType: _mouthTypes[cycleCount % _mouthTypes.length],
+              mouthType: nextMouthType,
             );
-            cycleCount++;
             notifyListeners();
           }
 
           if (_mouthAnimationTimers.containsKey(characterName)) {
-            scheduleMouthUpdate();
+            scheduleMouthUpdate(nextMouthType == 'open' ? 'closed' : 'open');
           }
         },
       );
     }
 
-    scheduleMouthUpdate();
+    scheduleMouthUpdate('closed');
   }
 
   void _stopMouthAnimationForCharacter(String characterName) {
