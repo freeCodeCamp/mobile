@@ -25,25 +25,28 @@ class SceneView extends StatelessWidget {
         model.initScene(scene);
       },
       onDispose: (model) => model.onDispose(),
-      builder: (context, model, child) => Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 16),
-        child: Column(
-          children: [
-            AspectRatio(
-              aspectRatio: 16 / 9,
-              child: Container(
-                decoration: BoxDecoration(
-                  color: Colors.black,
-                  border: Border.all(color: FccColors.gray75, width: 2),
+      builder: (context, model, child) {
+        model.preloadBackgrounds(context);
+        return Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 16),
+          child: Column(
+            children: [
+              AspectRatio(
+                aspectRatio: 16 / 9,
+                child: Container(
+                  decoration: BoxDecoration(
+                    color: Colors.black,
+                    border: Border.all(color: FccColors.gray75, width: 2),
+                  ),
+                  child: _SceneCanvas(model: model),
                 ),
-                child: _SceneCanvas(model: model),
               ),
-            ),
-            const SizedBox(height: 16),
-            _AudioControls(scene: scene, model: model),
-          ],
-        ),
-      ),
+              const SizedBox(height: 16),
+              _AudioControls(scene: scene, model: model),
+            ],
+          ),
+        );
+      },
     );
   }
 }
@@ -457,7 +460,7 @@ class _CharacterSpriteBody extends StatelessWidget {
           ),
         ),
         _buildLayer(model.getCharacterBrowsUrl(name)),
-        _buildLayer(model.getCharacterEyesUrl(name)),
+        _buildLayer(model.getCharacterEyesUrl(name, characterState.eyeState)),
         if (glassesUrl != null) _buildLayer(glassesUrl),
         if (characterState.showMouth)
           _buildLayer(

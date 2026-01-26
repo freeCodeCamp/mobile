@@ -2,7 +2,9 @@ import 'dart:async';
 import 'dart:math';
 
 import 'package:audio_service/audio_service.dart';
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/scheduler.dart';
+import 'package:flutter/widgets.dart';
 import 'package:freecodecamp/app/app.locator.dart';
 import 'package:freecodecamp/models/learn/challenge_model.dart';
 import 'package:freecodecamp/models/learn/scene_assets_model.dart';
@@ -15,6 +17,7 @@ class CharacterState {
   final SceneCharacterPosition position;
   final bool showMouth;
   final String mouthType;
+  final String eyeState;
   final double opacity;
 
   CharacterState({
@@ -22,6 +25,7 @@ class CharacterState {
     required this.position,
     this.showMouth = false,
     this.mouthType = 'smile',
+    this.eyeState = 'open',
     this.opacity = 1.0,
   });
 
@@ -30,6 +34,7 @@ class CharacterState {
     SceneCharacterPosition? position,
     bool? showMouth,
     String? mouthType,
+    String? eyeState,
     double? opacity,
   }) {
     return CharacterState(
@@ -37,6 +42,7 @@ class CharacterState {
       position: position ?? this.position,
       showMouth: showMouth ?? this.showMouth,
       mouthType: mouthType ?? this.mouthType,
+      eyeState: eyeState ?? this.eyeState,
       opacity: opacity ?? this.opacity,
     );
   }
@@ -47,12 +53,16 @@ class SceneViewModel extends BaseViewModel {
   static const List<String> _mouthTypes = ['closed', 'open'];
   static const int _minMouthInterval = 85;
   static const int _maxMouthInterval = 105;
+  static const int _minBlinkInterval = 2000;
+  static const int _maxBlinkInterval = 4000;
+  static const int _blinkDuration = 150;
 
   final audioService = locator<AppAudioService>().audioHandler;
   final _sceneAssetsService = SceneAssetsService();
   SceneAssets? _sceneAssets;
   final StreamController<Duration> position = StreamController<Duration>.broadcast();
   final Map<String, Timer> _mouthAnimationTimers = {};
+  final Map<String, Timer> _blinkTimers = {};
   final Set<int> _appliedCommandIndices = {};
 
   Scene? _scene;
@@ -70,6 +80,7 @@ class SceneViewModel extends BaseViewModel {
   bool _isCompleted = false;
   double _audioStartOffset = 0.0;
   bool _hasStarted = false;
+  bool _backgroundsPreloaded = false;
 
   String? _currentDialogueCharacter;
   String? _currentDialogueText;
@@ -85,6 +96,24 @@ class SceneViewModel extends BaseViewModel {
     notifyListeners();
   }
 
+  // Helper methods for DRY code
+  int _findCharacterIndex(String characterName) {
+    return _availableCharacters.indexWhere((c) => c.characterName == characterName);
+  }
+
+  void _clearTimers(Map<String, Timer> timers) {
+    for (final timer in timers.values) {
+      timer.cancel();
+    }
+    timers.clear();
+  }
+
+  void _clearDialogue() {
+    _currentDialogueCharacter = null;
+    _currentDialogueText = null;
+    _currentDialogueAlign = null;
+  }
+
   Future<void> onPlay() async {
     if (_hasStarted && !_isCompleted) {
       await audioService.play();
@@ -97,6 +126,7 @@ class SceneViewModel extends BaseViewModel {
 
     _hasStarted = true;
     _applyInitialCommands();
+    _startBlinkAnimations();
     notifyListeners();
 
     await Future.delayed(const Duration(milliseconds: 1000));
@@ -130,10 +160,9 @@ class SceneViewModel extends BaseViewModel {
   void _handleAudioComplete() {
     if (_isCompleted) return;
     _isCompleted = true;
-    _currentDialogueCharacter = null;
-    _currentDialogueText = null;
-    _currentDialogueAlign = null;
+    _clearDialogue();
     _stopAllMouthAnimations();
+    _stopAllBlinkAnimations();
     _applyRemainingCommands();
   }
 
@@ -166,7 +195,24 @@ class SceneViewModel extends BaseViewModel {
       notifyListeners();
     });
 
-    fetchSceneAssets();
+    await fetchSceneAssets();
+  }
+
+  void preloadBackgrounds(BuildContext context) {
+    if (_scene == null || _backgroundsPreloaded) return;
+    _backgroundsPreloaded = true;
+
+    final backgrounds = <String>{_scene!.setup.background};
+    for (final command in _scene!.commands) {
+      if (command.background != null) {
+        backgrounds.add(command.background!);
+      }
+    }
+
+    for (final background in backgrounds) {
+      final url = getBackgroundUrl(background);
+      precacheImage(CachedNetworkImageProvider(url), context);
+    }
   }
 
   void _initializeCharactersFromSetup() {
@@ -283,7 +329,7 @@ class SceneViewModel extends BaseViewModel {
   }
 
   bool _updateCharacterState(SceneCommand command) {
-    final characterIndex = _availableCharacters.indexWhere((c) => c.characterName == command.character);
+    final characterIndex = _findCharacterIndex(command.character);
 
     if (characterIndex >= 0) {
       final newPosition = command.position;
@@ -329,7 +375,7 @@ class SceneViewModel extends BaseViewModel {
       _mouthAnimationTimers[characterName] = Timer(
         Duration(milliseconds: interval),
         () {
-          final characterIndex = _availableCharacters.indexWhere((c) => c.characterName == characterName);
+          final characterIndex = _findCharacterIndex(characterName);
 
           if (characterIndex >= 0) {
             _availableCharacters[characterIndex] = _availableCharacters[characterIndex].copyWith(
@@ -354,7 +400,7 @@ class SceneViewModel extends BaseViewModel {
     _mouthAnimationTimers[characterName]?.cancel();
     _mouthAnimationTimers.remove(characterName);
 
-    final characterIndex = _availableCharacters.indexWhere((c) => c.characterName == characterName);
+    final characterIndex = _findCharacterIndex(characterName);
     if (characterIndex >= 0) {
       _availableCharacters[characterIndex] = _availableCharacters[characterIndex].copyWith(
         showMouth: true,
@@ -365,17 +411,64 @@ class SceneViewModel extends BaseViewModel {
   }
 
   void _stopAllMouthAnimations() {
-    for (final timer in _mouthAnimationTimers.values) {
-      timer.cancel();
-    }
-    _mouthAnimationTimers.clear();
+    _clearTimers(_mouthAnimationTimers);
     _updateAllCharacters(showMouth: true, mouthType: 'closed');
   }
 
+  void _startBlinkAnimations() {
+    for (final character in _availableCharacters) {
+      _startBlinkAnimation(character.characterName);
+    }
+  }
+
+  void _startBlinkAnimation(String characterName) {
+    if (_blinkTimers.containsKey(characterName)) return;
+
+    final random = Random();
+
+    void scheduleNextBlink() {
+      final interval =
+          _minBlinkInterval + random.nextInt(_maxBlinkInterval - _minBlinkInterval + 1);
+
+      _blinkTimers[characterName] = Timer(
+        Duration(milliseconds: interval),
+        () {
+          final characterIndex = _findCharacterIndex(characterName);
+
+          if (characterIndex >= 0) {
+            // Close eyes
+            _availableCharacters[characterIndex] =
+                _availableCharacters[characterIndex].copyWith(eyeState: 'closed');
+            notifyListeners();
+
+            // Open eyes after blink duration
+            Future.delayed(Duration(milliseconds: _blinkDuration), () {
+              final idx = _findCharacterIndex(characterName);
+              if (idx >= 0 && _blinkTimers.containsKey(characterName)) {
+                _availableCharacters[idx] =
+                    _availableCharacters[idx].copyWith(eyeState: 'open');
+                notifyListeners();
+              }
+            });
+          }
+
+          if (_blinkTimers.containsKey(characterName)) {
+            scheduleNextBlink();
+          }
+        },
+      );
+    }
+
+    scheduleNextBlink();
+  }
+
+  void _stopAllBlinkAnimations() {
+    _clearTimers(_blinkTimers);
+  }
+
   void _reinitializeCharacters() {
-    _currentDialogueCharacter = null;
-    _currentDialogueText = null;
-    _currentDialogueAlign = null;
+    _clearDialogue();
+    _stopAllBlinkAnimations();
     _initializeCharactersFromSetup();
     notifyListeners();
   }
@@ -416,8 +509,14 @@ class SceneViewModel extends BaseViewModel {
   String getCharacterBrowsUrl(String characterName) =>
       _getCharacterAssets(characterName)?.brows ?? _buildFallbackUrl(characterName, 'brows.png');
 
-  String getCharacterEyesUrl(String characterName) =>
-      _getCharacterAssets(characterName)?.eyesOpen ?? _buildFallbackUrl(characterName, 'eyes-open.png');
+  String getCharacterEyesUrl(String characterName, String eyeState) {
+    final assets = _getCharacterAssets(characterName);
+    if (assets != null) {
+      return eyeState == 'closed' ? assets.eyesClosed : assets.eyesOpen;
+    }
+    return _buildFallbackUrl(
+        characterName, eyeState == 'closed' ? 'eyes-closed.png' : 'eyes-open.png');
+  }
 
   String? getCharacterGlassesUrl(String characterName) => _getCharacterAssets(characterName)?.glasses;
 
@@ -431,10 +530,8 @@ class SceneViewModel extends BaseViewModel {
 
   void onDispose() {
     position.close();
-    for (final timer in _mouthAnimationTimers.values) {
-      timer.cancel();
-    }
-    _mouthAnimationTimers.clear();
+    _clearTimers(_mouthAnimationTimers);
+    _clearTimers(_blinkTimers);
     audioService.stop();
   }
 }
