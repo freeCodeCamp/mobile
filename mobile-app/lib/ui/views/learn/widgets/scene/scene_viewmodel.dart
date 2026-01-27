@@ -128,7 +128,6 @@ class SceneViewModel extends BaseViewModel {
     _startBlinkAnimations();
     notifyListeners();
 
-    await Future.delayed(const Duration(milliseconds: 1000));
     await startAudio();
   }
 
