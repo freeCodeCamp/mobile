@@ -10,10 +10,12 @@ class TagButton extends StatefulWidget {
     super.key,
     required this.tagName,
     required this.tagSlug,
+    this.compact = false,
   });
 
   final String tagName;
   final String tagSlug;
+  final bool compact;
 
   static Color randomColor() {
     var randomNum = Random();
@@ -39,8 +41,10 @@ class _TagButtonState extends State<TagButton>
   @override
   // ignore: must_call_super
   Widget build(BuildContext context) {
+    final isCompact = widget.compact;
+
     return Padding(
-      padding: const EdgeInsets.fromLTRB(0, 8, 8, 0),
+      padding: EdgeInsets.fromLTRB(0, isCompact ? 0 : 8, isCompact ? 6 : 8, 0),
       child: InkWell(
         onTap: () {
           _navigationService.navigateTo(
@@ -54,15 +58,15 @@ class _TagButtonState extends State<TagButton>
         },
         child: Container(
           constraints: BoxConstraints(
-              maxWidth: MediaQuery.of(context).size.width * 0.45),
+              maxWidth: MediaQuery.of(context).size.width * (isCompact ? 0.35 : 0.45)),
           decoration: ShapeDecoration(
             color: _tagColor,
             shape: const StadiumBorder(),
           ),
           child: Padding(
-            padding: const EdgeInsets.symmetric(
-              vertical: 4,
-              horizontal: 8,
+            padding: EdgeInsets.symmetric(
+              vertical: isCompact ? 2 : 4,
+              horizontal: isCompact ? 6 : 8,
             ),
             child: Tooltip(
               message: '#${widget.tagName}',
@@ -70,8 +74,8 @@ class _TagButtonState extends State<TagButton>
                 '#${widget.tagName}',
                 maxLines: 1,
                 overflow: TextOverflow.ellipsis,
-                style: const TextStyle(
-                  fontSize: 16,
+                style: TextStyle(
+                  fontSize: isCompact ? 11 : 16,
                   color: Colors.black,
                 ),
               ),

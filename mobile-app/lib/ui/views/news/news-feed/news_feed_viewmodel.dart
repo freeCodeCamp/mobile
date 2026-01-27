@@ -22,7 +22,7 @@ class NewsFeedViewModel extends BaseViewModel {
 
   void initState(String tagSlug, String authorId) {
     _pagingController = PagingController(
-      getNextPageKey: (state) => nextPageKey,
+      getNextPageKey: (state) => (state.pages?.isEmpty ?? true) ? '' : nextPageKey,
       fetchPage: (pageKey) =>
           fetchTutorials(pageKey, tagSlug: tagSlug, authorId: authorId),
     );
