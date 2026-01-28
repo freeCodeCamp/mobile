@@ -394,11 +394,8 @@ class _CharacterSlot extends StatelessWidget {
     final yPercent = state.position.y.toDouble() / 100;
 
     final leftPos = (xPercent * canvasWidth) - (characterWidth / 2);
-
-   // I have no clue why this works, but it does.
-    final removeBottomYScale = characterHeight - canvasHeight;
-    final handleRemoveBottomYScale = yPercent <= 0 ? removeBottomYScale / 2 : removeBottomYScale * 2;
-    final bottomPos = (yPercent * canvasHeight) - handleRemoveBottomYScale;
+    final overflowHeight = characterHeight - canvasHeight;
+    final bottomPos = -(overflowHeight / 2) - (yPercent * canvasHeight);
 
     return AnimatedPositioned(  
       duration: const Duration(milliseconds: 500),

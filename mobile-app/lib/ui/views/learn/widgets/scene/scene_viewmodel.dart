@@ -125,7 +125,6 @@ class SceneViewModel extends BaseViewModel {
 
     _hasStarted = true;
     _applyInitialCommands();
-    _startBlinkAnimations();
     notifyListeners();
 
     await startAudio();
@@ -145,8 +144,10 @@ class SceneViewModel extends BaseViewModel {
     audioService.playbackState.listen((state) {
       _isPlaying = state.playing;
 
-      if (!_isPlaying) {
-        _stopAllMouthAnimations();
+      if (_isPlaying) {
+        _startBlinkAnimations();
+      } else {
+        _stopAllMouthAnimations();  
         _stopAllBlinkAnimations();
       }
 
