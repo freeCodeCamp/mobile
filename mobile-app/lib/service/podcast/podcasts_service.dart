@@ -1,133 +1,253 @@
-import 'dart:async';
 import 'dart:developer';
+import 'dart:io';
 
-import 'package:freecodecamp/app/app.locator.dart';
 import 'package:freecodecamp/models/podcasts/episodes_model.dart';
 import 'package:freecodecamp/models/podcasts/podcasts_model.dart';
-import 'package:sqflite/sqflite.dart';
-import 'package:sqflite_migration_service/sqflite_migration_service.dart';
-
-const String podcastsTableName = 'podcasts';
-const String episodesTableName = 'episodes';
+import 'package:freecodecamp/service/podcast/legacy/podcasts_sqlite_migrator.dart';
+import 'package:freecodecamp/service/storage/json_file_store.dart';
+import 'package:path/path.dart' as path;
+import 'package:path_provider/path_provider.dart';
 
 class PodcastsDatabaseService {
-  final _migrationService = locator<DatabaseMigrationService>();
-  late Database _db;
+  PodcastsDatabaseService({Directory? storageDirectoryOverride})
+      : _storageDirectoryOverride = storageDirectoryOverride;
 
-  Future initialise() async {
-    _db = await openDatabase('podcasts.db', version: 1);
-    log(_db.path);
-    // Uncomment below line to reset migrations
-    // _migrationService.resetVersion();
+  final Directory? _storageDirectoryOverride;
+  final _legacyMigrator = const PodcastsSqliteMigrator();
 
-    await _migrationService.runMigration(
-      _db,
-      migrationFiles: [
-        '1_create_db_schema.sql',
-        '2_delete_all_values.sql',
-        '3_reset_episodes_schema.sql',
-        '4_delete_all_values.sql',
-      ],
-      verbose: true,
+  JsonFileStore? _store;
+  Future<void>? _initFuture;
+
+  Future<void> initialise() {
+    _initFuture ??= _initialiseInternal();
+    return _initFuture!;
+  }
+
+  Future<void> _initialiseInternal() async {
+    final baseDir =
+        _storageDirectoryOverride ?? await getApplicationDocumentsDirectory();
+
+    final file = File(
+      path.join(baseDir.path, 'storage', 'podcast-downloads.json'),
     );
-    log('FINISHED LOADING MIGRATIONS');
+    final store = JsonFileStore(
+      file: file,
+      defaultValue: {
+        'version': 1,
+        'migratedFromSqlite': false,
+        'podcasts': [],
+      },
+    );
+    await store.ensureExists();
+    _store = store;
+
+    await _migrateFromSqliteIfNeeded();
+  }
+
+  Future<void> _migrateFromSqliteIfNeeded() async {
+    final store = _store;
+    if (store == null) return;
+
+    await store.updateAndWrite((current) async {
+      final migrated = current['migratedFromSqlite'] == true;
+      if (migrated) return current;
+
+      final existingPodcasts = current['podcasts'] ?? [];
+      // If JSON already has data, don't overwrite it.
+      if (existingPodcasts.isNotEmpty) {
+        return {
+          ...current,
+          'migratedFromSqlite': true,
+        };
+      }
+
+      final legacy = await _legacyMigrator.readPodcastsAndEpisodes();
+      if (legacy.podcasts.isEmpty && legacy.episodes.isEmpty) {
+        return {
+          ...current,
+          'migratedFromSqlite': true,
+        };
+      }
+
+      // Normalize legacy rows to match Podcasts/Episodes.fromDBJson.
+      final podcasts = legacy.podcasts.map((p) {
+        return {
+          'id': p['id'],
+          'url': p['url'],
+          'link': p['link'],
+          'title': p['title'],
+          'description': p['description'],
+          'image': p['image'],
+          'copyright': p['copyright'],
+          'numEps': p['numEps'],
+          'episodes': [],
+        };
+      }).toList();
+
+      final episodes = legacy.episodes.map((e) {
+        return {
+          'id': e['id'],
+          'podcastId': e['podcastId'],
+          'title': e['title'],
+          'description': e['description'],
+          'publicationDate': e['publicationDate'],
+          'contentUrl': e['contentUrl'],
+          'duration': e['duration'],
+        };
+      }).toList();
+
+      final episodesByPodcastId = <String, List<Map<String, dynamic>>>{};
+      for (final e in episodes) {
+        final podcastId = e['podcastId'];
+        if (podcastId.isEmpty) continue;
+        (episodesByPodcastId[podcastId] ??= []).add(e);
+      }
+
+      for (final p in podcasts) {
+        final id = p['id'];
+        p['episodes'] = episodesByPodcastId[id] ?? [];
+      }
+
+      log(
+        'Migrated ${podcasts.length} podcasts and ${episodes.length} episodes from SQLite to JSON (embedded)',
+      );
+      return {
+        ...current,
+        'version': 1,
+        'migratedFromSqlite': true,
+        'podcasts': podcasts,
+      };
+    });
+  }
+
+  Map<String, dynamic>? _findPodcastEntry(JsonMap data, String podcastId) {
+    final podcasts = data['podcasts'];
+    for (final p in podcasts) {
+      if (p['id'] == podcastId) return p;
+    }
+    return null;
   }
 
   // PODCAST QUERIES
   Future<List<Podcasts>> getPodcasts() async {
-    List<Map<String, dynamic>> podcastsResults =
-        await _db.query(podcastsTableName);
-    return podcastsResults
-        .map((podcast) => Podcasts.fromDBJson(podcast))
-        .toList();
+    await initialise();
+    final data = await _store!.read();
+    final podcasts = data['podcasts'];
+    return podcasts.map((podcast) {
+      final withoutEpisodes = Map<String, dynamic>.from(podcast)
+        ..remove('episodes');
+      return Podcasts.fromDBJson(withoutEpisodes);
+    }).toList();
   }
 
   Future addPodcast(Podcasts podcast) async {
-    try {
-      await _db.insert(
-        podcastsTableName,
-        podcast.toJson(),
-        conflictAlgorithm: ConflictAlgorithm.replace,
-      );
+    await initialise();
+    await _store!.updateAndWrite((current) async {
+      final list = current['podcasts'];
+
+      final existingIndex = list.indexWhere((e) => e['id'] == podcast.id);
+      final existingEpisodes =
+          existingIndex == -1 ? [] : list[existingIndex]['episodes'];
+
+      if (existingIndex != -1) {
+        list.removeAt(existingIndex);
+      }
+      list.add({
+        ...podcast.toJson(),
+        'episodes': existingEpisodes,
+      });
       log('Added Podcast: ${podcast.title}');
-    } catch (e) {
-      log('Could not insert the podcast: $e');
-    }
+      return {
+        ...current,
+        'podcasts': list,
+      };
+    });
   }
 
   Future removePodcast(Podcasts podcast) async {
-    try {
-      final res = await _db.rawQuery(
-        'SELECT COUNT(*) FROM episodes GROUP BY podcastId HAVING podcastId = ?',
-        [podcast.id],
-      );
-      final count = Sqflite.firstIntValue(res);
-      if (count == 0 || count == null) {
-        await _db.delete(
-          podcastsTableName,
-          where: 'id = ?',
-          whereArgs: [podcast.id],
-        );
-        log('Removed Podcast: ${podcast.title}');
-      } else {
-        log('Did not remove podcast: ${podcast.title} because it has $count episodes');
+    await initialise();
+    await _store!.updateAndWrite((current) async {
+      final list = current['podcasts'];
+      final index = list.indexWhere((p) => p['id'] == podcast.id);
+      if (index == -1) return current;
+
+      final episodes = list[index]['episodes'];
+      final episodeCount = episodes.length;
+
+      if (episodeCount > 0) {
+        log('Did not remove podcast: ${podcast.title} because it has $episodeCount episodes');
+        return current;
       }
-    } catch (e) {
-      log('Could not remove the podcast: $e');
-    }
+
+      list.removeAt(index);
+      log('Removed Podcast: ${podcast.title}');
+      return {
+        ...current,
+        'podcasts': list,
+      };
+    });
   }
 
   // EPISODE QUERIES
   Future<List<Episodes>> getEpisodes(Podcasts podcast) async {
-    List<Map<String, dynamic>> epsResults = await _db.query(
-      episodesTableName,
-      where: 'podcastId = ?',
-      whereArgs: [podcast.id],
-    );
-    return epsResults.map((episode) => Episodes.fromDBJson(episode)).toList();
-  }
-
-  Future<Episodes> getEpisode(String podcastId, String guid) async {
-    List<Map<String, dynamic>> epResult = await _db.query(
-      episodesTableName,
-      where: 'podcastId = ? AND guid = ?',
-      whereArgs: [podcastId, guid],
-    );
-    return Episodes.fromDBJson(epResult.first);
+    await initialise();
+    final data = await _store!.read();
+    final entry = _findPodcastEntry(data, podcast.id);
+    if (entry == null) return [];
+    final rawEpisodes = entry['episodes'];
+    return rawEpisodes
+        .map((e) => Episodes.fromDBJson(Map<String, dynamic>.from(e)))
+        .toList();
   }
 
   Future addEpisode(Episodes episode) async {
-    try {
-      await _db.insert(
-        episodesTableName,
-        episode.toJson(),
-        conflictAlgorithm: ConflictAlgorithm.replace,
-      );
+    await initialise();
+    await _store!.updateAndWrite((current) async {
+      final list = current['podcasts'];
+      var index = list.indexWhere((p) => p['id'] == episode.podcastId);
+
+      final episodes = list[index]['episodes'];
+      episodes.removeWhere((e) => e['id'] == episode.id);
+      episodes.add(episode.toJson());
+      list[index] = {
+        ...list[index],
+        'episodes': episodes,
+      };
       log('Added Episode: ${episode.title}');
-    } catch (e) {
-      log('Could not insert the episode: $e');
-    }
+      return {
+        ...current,
+        'podcasts': list,
+      };
+    });
   }
 
   Future removeEpisode(Episodes episode) async {
-    try {
-      await _db.delete(
-        episodesTableName,
-        where: 'podcastId = ? AND id = ?',
-        whereArgs: [episode.podcastId, episode.id],
-      );
+    await initialise();
+    await _store!.updateAndWrite((current) async {
+      final list = current['podcasts'];
+      final index = list.indexWhere((p) => p['id'] == episode.podcastId);
+      if (index == -1) return current;
+
+      final episodes = list[index]['episodes'];
+      episodes.removeWhere((e) => e['id'] == episode.id);
+      list[index] = {
+        ...list[index],
+        'episodes': episodes,
+      };
       log('Removed Episode: ${episode.title}');
-    } catch (e) {
-      log('Could not remove the episode: $e');
-    }
+      return {
+        ...current,
+        'podcasts': list,
+      };
+    });
   }
 
   Future<bool> episodeExists(Episodes episode) async {
-    List<Map<String, dynamic>> epResult = await _db.query(
-      episodesTableName,
-      where: 'podcastId = ? AND id = ?',
-      whereArgs: [episode.podcastId, episode.id],
-    );
-    return epResult.isNotEmpty;
+    await initialise();
+    final data = await _store!.read();
+    final entry = _findPodcastEntry(data, episode.podcastId);
+    if (entry == null) return false;
+    final List episodes = entry['episodes'];
+    return episodes.any((e) => e['id'] == episode.id);
   }
 }

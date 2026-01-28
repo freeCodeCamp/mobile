@@ -31,7 +31,7 @@ class EpisodeListViewModel extends BaseViewModel {
   PagingController<int, Episodes>? get pagingController => _pagingController;
 
   void initState(bool isDownloadView) async {
-    _databaseService.initialise();
+    await _databaseService.initialise();
     if (isDownloadView) {
       _episodes = _databaseService.getEpisodes(podcast);
       epsLength = (await episodes).length;
