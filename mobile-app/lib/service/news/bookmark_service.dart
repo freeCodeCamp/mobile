@@ -1,66 +1,106 @@
-import 'dart:async';
 import 'dart:developer';
 import 'dart:io';
 
-import 'package:flutter/services.dart';
 import 'package:freecodecamp/models/news/bookmarked_tutorial_model.dart';
 import 'package:freecodecamp/models/news/tutorial_model.dart';
+import 'package:freecodecamp/service/news/legacy/bookmark_sqlite_migrator.dart';
+import 'package:freecodecamp/service/storage/json_file_store.dart';
 import 'package:path/path.dart' as path;
-import 'package:sqflite/sqflite.dart';
-
-const String bookmarksTableName = 'bookmarks';
+import 'package:path_provider/path_provider.dart';
 
 class BookmarksDatabaseService {
-  late Database _db;
+  BookmarksDatabaseService({Directory? storageDirectoryOverride})
+      : _storageDirectoryOverride = storageDirectoryOverride;
 
-  Future initialise() async {
-    String dbPath = await getDatabasesPath();
-    String dbPathTutorials = path.join(dbPath, 'bookmarked-article.db');
-    bool dbExists = await databaseExists(dbPathTutorials);
+  final Directory? _storageDirectoryOverride;
+  final _legacyMigrator = const BookmarkSqliteMigrator();
 
-    if (!dbExists) {
-      // Making new copy from assets
-      log('copying database from assets');
-      try {
-        await Directory(
-          path.dirname(dbPathTutorials),
-        ).create(recursive: true);
-      } catch (error) {
-        log(error.toString());
+  JsonFileStore? _store;
+  Future<void>? _initFuture;
+
+  Future<void> initialise() {
+    _initFuture ??= _initialiseInternal();
+    return _initFuture!;
+  }
+
+  Future<void> _initialiseInternal() async {
+    final baseDir =
+        _storageDirectoryOverride ?? await getApplicationDocumentsDirectory();
+
+    final file = File(
+      path.join(baseDir.path, 'storage', 'bookmarked-articles.json'),
+    );
+    final store = JsonFileStore(
+      file: file,
+      defaultValue: {
+        'version': 1,
+        'migratedFromSqlite': false,
+        'bookmarks': [],
+      },
+    );
+    await store.ensureExists();
+    _store = store;
+
+    await _migrateFromSqliteIfNeeded();
+  }
+
+  Future<void> _migrateFromSqliteIfNeeded() async {
+    final store = _store;
+    if (store == null) return;
+
+    await store.updateAndWrite((current) async {
+      final migrated = current['migratedFromSqlite'] == true;
+      final existing = current['bookmarks'] ?? [];
+      if (migrated) return current;
+
+      // If the JSON store already has data, don't overwrite it.
+      if (existing.isNotEmpty) {
+        return {
+          ...current,
+          'migratedFromSqlite': true,
+        };
       }
 
-      ByteData data = await rootBundle.load(
-        path.join(
-          'assets',
-          'database',
-          'bookmarked-article.db',
-        ),
-      );
-      List<int> bytes = data.buffer.asUint8List(
-        data.offsetInBytes,
-        data.lengthInBytes,
-      );
+      final legacy = await _legacyMigrator.readBookmarks();
+      if (legacy.isEmpty) {
+        return {
+          ...current,
+          'migratedFromSqlite': true,
+        };
+      }
 
-      await File(dbPathTutorials).writeAsBytes(bytes, flush: true);
-    }
+      final normalized = legacy.map((row) {
+        return {
+          'articleTitle': row['articleTitle'],
+          'articleId': row['articleId'],
+          'articleText': row['articleText'],
+          'authorName': row['authorName'],
+        };
+      }).toList();
 
-    _db = await openDatabase(dbPathTutorials, version: 1);
+      log('Migrated ${normalized.length} bookmarks from SQLite to JSON');
+      return {
+        ...current,
+        'migratedFromSqlite': true,
+        'bookmarks': normalized,
+      };
+    });
   }
 
   Map<String, dynamic> tutorialToMap(dynamic tutorial) {
     if (tutorial is Tutorial) {
       return {
-        'articleTitle': tutorial.title,
         'articleId': tutorial.id,
+        'articleTitle': tutorial.title,
+        'authorName': tutorial.authorName,
         'articleText': tutorial.text,
-        'authorName': tutorial.authorName
       };
     } else if (tutorial is BookmarkedTutorial) {
       return {
-        'articleTitle': tutorial.tutorialTitle,
         'articleId': tutorial.id,
+        'articleTitle': tutorial.tutorialTitle,
+        'authorName': tutorial.authorName,
         'articleText': tutorial.tutorialText,
-        'authorName': tutorial.authorName
       };
     } else {
       throw Exception(
@@ -70,50 +110,72 @@ class BookmarksDatabaseService {
   }
 
   Future<List<BookmarkedTutorial>> getBookmarks() async {
-    List<Map<String, dynamic>> bookmarksResults =
-        await _db.query(bookmarksTableName);
+    await initialise();
+    final store = _store!;
 
-    List bookmarks = bookmarksResults
-        .map(
-          (tutorial) => BookmarkedTutorial.fromMap(tutorial),
-        )
+    final data = await store.read();
+    final raw = (data['bookmarks'] as List?) ?? <dynamic>[];
+
+    final normalized = <Map<String, dynamic>>[];
+    for (var i = 0; i < raw.length; i++) {
+      final entry = raw[i];
+      if (entry is Map) {
+        normalized.add(Map<String, dynamic>.from(entry));
+      }
+    }
+
+    final bookmarks = normalized
+        .map((tutorial) => BookmarkedTutorial.fromMap(tutorial))
         .toList();
 
-    return List.from(bookmarks.reversed);
+    return List<BookmarkedTutorial>.from(bookmarks.reversed);
   }
 
   Future<bool> isBookmarked(dynamic tutorial) async {
-    List<Map<String, dynamic>> bookmarksResults = await _db.query(
-      bookmarksTableName,
-      where: 'articleId = ?',
-      whereArgs: [tutorial.id],
-    );
-    return bookmarksResults.isNotEmpty;
+    await initialise();
+    final store = _store!;
+    final data = await store.read();
+    final raw = (data['bookmarks'] as List?) ?? <dynamic>[];
+    return raw.any((e) => e is Map && e['articleId'] == tutorial.id);
   }
 
   Future addBookmark(dynamic tutorial) async {
-    try {
-      await _db.insert(
-        bookmarksTableName,
-        tutorialToMap(tutorial),
-        conflictAlgorithm: ConflictAlgorithm.replace,
-      );
+    await initialise();
+    final store = _store!;
+    await store.updateAndWrite((current) async {
+      final raw = (current['bookmarks'] as List?) ?? <dynamic>[];
+      final list = raw
+          .whereType<Map>()
+          .map((e) => Map<String, dynamic>.from(e))
+          .toList();
+
+      list.removeWhere((e) => e['articleId'] == tutorial.id);
+      list.add(tutorialToMap(tutorial));
+
       log('Added bookmark: ${tutorial.id}');
-    } catch (e) {
-      log('Could not insert the bookmark: $e');
-    }
+      return {
+        ...current,
+        'bookmarks': list,
+      };
+    });
   }
 
   Future removeBookmark(dynamic tutorial) async {
-    try {
-      await _db.delete(
-        bookmarksTableName,
-        where: 'articleId = ?',
-        whereArgs: [tutorial.id],
-      );
+    await initialise();
+    final store = _store!;
+    await store.updateAndWrite((current) async {
+      final raw = (current['bookmarks'] as List?) ?? <dynamic>[];
+      final list = raw
+          .whereType<Map>()
+          .map((e) => Map<String, dynamic>.from(e))
+          .toList();
+
+      list.removeWhere((e) => e['articleId'] == tutorial.id);
       log('Removed bookmark: ${tutorial.id}');
-    } catch (e) {
-      log('Could not remove the bookmark: $e');
-    }
+      return {
+        ...current,
+        'bookmarks': list,
+      };
+    });
   }
 }
