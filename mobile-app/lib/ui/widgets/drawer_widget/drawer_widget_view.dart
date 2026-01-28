@@ -131,6 +131,12 @@ class DrawerWidgetView extends StatelessWidget {
                         },
                       ),
                       buildDivider(),
+                      const CustomTabButton(
+                        key: Key('report-issue'),
+                        component: 'REPORT AN ISSUE',
+                        url: 'https://github.com/freeCodeCamp/mobile',
+                        icon: Icons.bug_report,
+                      ),
                       DrawerTile(
                           key: const Key('auth'),
                           component: model.loggedIn
