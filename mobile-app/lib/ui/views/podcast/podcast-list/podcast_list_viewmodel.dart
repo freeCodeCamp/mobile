@@ -45,8 +45,8 @@ class PodcastListViewModel extends BaseViewModel {
     String baseUrl = (await _developerService.developmentMode())
         ? 'https://api.mobile.freecodecamp.dev'
         : 'https://api.mobile.freecodecamp.org';
-    await _databaseService.initialise();
     if (isDownloadView) {
+      await _databaseService.initialise();
       return await _databaseService.getPodcasts();
     } else {
       final res = await _dio.get('$baseUrl/podcasts');

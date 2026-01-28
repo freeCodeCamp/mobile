@@ -60,7 +60,7 @@ class EpisodeListView extends StatelessWidget {
                     ],
                   ),
                 ),
-                !isDownloadView && model.pagingController != null
+                !isDownloadView
                     ? PagingListener(
                         controller: model.pagingController!,
                         builder: (context, state, fetchNextPage) =>

@@ -37,7 +37,6 @@ import 'package:freecodecamp/ui/views/profile/profile_view.dart';
 import 'package:freecodecamp/ui/views/settings/delete-account/delete_account_view.dart';
 import 'package:freecodecamp/ui/views/settings/settings_view.dart';
 
-import 'package:sqflite_migration_service/sqflite_migration_service.dart';
 import 'package:stacked/stacked_annotations.dart';
 import 'package:stacked_services/stacked_services.dart';
 
@@ -68,7 +67,6 @@ import 'package:stacked_services/stacked_services.dart';
     LazySingleton(classType: NavigationService),
     LazySingleton(classType: DialogService),
     LazySingleton(classType: SnackbarService),
-    LazySingleton(classType: DatabaseMigrationService),
     LazySingleton(classType: PodcastsDatabaseService),
     LazySingleton(classType: NotificationService),
     LazySingleton(classType: DailyChallengeNotificationService),
