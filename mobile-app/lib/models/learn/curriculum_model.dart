@@ -48,7 +48,7 @@ enum SuperBlocks {
 
 class SuperBlock {
   final String dashedName;
-  final String name;
+  final SuperBlocks name;
   final List<Block>? blocks;
   final List<Chapter>? chapters;
 
@@ -66,7 +66,7 @@ class SuperBlock {
     if (chapterBasedSuperBlocks.contains(dashedName)) {
       return SuperBlock(
         dashedName: dashedName,
-        name: name,
+        name: SuperBlocks.fromValue(dashedName),
         chapters: (data[data.keys.first]['chapters']).map<Chapter>((chapter) {
           return Chapter(
             name: chapter['name'],
@@ -100,7 +100,7 @@ class SuperBlock {
 
     return SuperBlock(
       dashedName: dashedName,
-      name: name,
+      name: SuperBlocks.fromValue(dashedName),
       blocks: (data[data.keys.first]['blocks']).map<Block>((block) {
 
         return Block.fromJson(
@@ -230,7 +230,7 @@ class Block {
     return Block(
       superBlock: SuperBlock(
         dashedName: superBlockDashedName,
-        name: superBlockName,
+        name: SuperBlocks.fromValue(superBlockDashedName),
       ),
       layout: handleLayout(data['blockLayout']),
       // Support both blockLabel and blockType for backward compatibility
