@@ -122,7 +122,6 @@ jobs:
         working-directory: freeCodeCamp
         run: |
           pnpm install
-          pnpm exec turbo compile
           pnpm run build:curriculum
           pnpm run clean:packages
 
