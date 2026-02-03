@@ -1,10 +1,13 @@
+import 'dart:convert';
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:freecodecamp/main.dart' as app;
 import 'package:freecodecamp/ui/views/news/news-tutorial/news_tutorial_view.dart';
 import 'package:integration_test/integration_test.dart';
 import 'package:path/path.dart' as path;
-import 'package:sqflite/sqflite.dart';
+import 'package:path_provider/path_provider.dart';
 
 void main() {
   final binding = IntegrationTestWidgetsFlutterBinding();
@@ -89,17 +92,32 @@ void main() {
       author.split('Written by ')[1],
     );
 
-    // Check database if record exists
-    final db = await openDatabase(
-        path.join(await getDatabasesPath(), 'bookmarked-article.db'));
-    final List<Map<String, dynamic>> result = await db.query(
-      'bookmarks',
-      where: 'articleId = ?',
-      whereArgs: [firstTutorialKey.value],
+    // Check JSON store if record exists
+    final docsDir = await getApplicationDocumentsDirectory();
+    final jsonFile = File(
+      path.join(docsDir.path, 'storage', 'bookmarked-articles.json'),
     );
-    expect(result.length, 1);
-    expect(result[0]['articleId'], firstTutorialKey.value);
-    expect(result[0]['articleTitle'], title.data);
-    expect(result[0]['authorName'], author.split('Written by ')[1]);
+
+    Map<String, dynamic>? found;
+    if (await jsonFile.exists()) {
+      final decoded = jsonDecode(await jsonFile.readAsString());
+      if (decoded is Map) {
+        final bookmarks = decoded['bookmarks'];
+        for (final entry in bookmarks) {
+          if (entry is! Map) continue;
+          final m = Map<String, dynamic>.from(entry);
+          if (m['articleId'] == firstTutorialKey.value) {
+            found = m;
+            break;
+          }
+        }
+      }
+    }
+
+    expect(found, isNotNull);
+    final result = found!;
+    expect(result['articleId'], firstTutorialKey.value);
+    expect(result['articleTitle'], title.data);
+    expect(result['authorName'], author.split('Written by ')[1]);
   });
 }
