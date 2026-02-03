@@ -1,5 +1,6 @@
 ### Backend API ###
 node_modules/
+package-lock.json
 
 # Production build
 mobile-api/prod/
