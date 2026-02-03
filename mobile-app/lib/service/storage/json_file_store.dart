@@ -3,49 +3,52 @@ import 'dart:io';
 
 typedef JsonMap = Map<String, dynamic>;
 
-class JsonFileStore {
-  JsonFileStore({required this.file, required JsonMap defaultValue})
-      : _defaultValue = defaultValue;
+class JsonFileStore<T> {
+  JsonFileStore({
+    required this.file,
+    required T defaultValue,
+    required T Function(JsonMap json) fromJson,
+    required JsonMap Function(T value) toJson,
+  })  : _defaultValue = defaultValue,
+        _fromJson = fromJson,
+        _toJson = toJson;
 
   final File file;
-  final JsonMap _defaultValue;
+  final T _defaultValue;
+  final T Function(JsonMap json) _fromJson;
+  final JsonMap Function(T value) _toJson;
 
   Future<void> ensureExists() async {
     if (await file.exists()) return;
     await file.parent.create(recursive: true);
-    await _atomicWrite(_defaultValue);
+    await _atomicWrite(_toJson(_defaultValue));
   }
 
-  Future<JsonMap> read() async {
+  Future<T> read() async {
     await ensureExists();
     final contents = await file.readAsString();
     if (contents.trim().isEmpty) {
-      return Map<String, dynamic>.from(_defaultValue);
+      return _defaultValue;
     }
 
-    final decoded = jsonDecode(contents);
-    if (decoded is JsonMap) {
-      return decoded;
+    try {
+      final decoded = jsonDecode(contents);
+      if (decoded is Map) {
+        return _fromJson(JsonMap.from(decoded));
+      }
+    } catch (_) {
+      // Ignore and return default.
     }
 
-    return Map<String, dynamic>.from(_defaultValue);
+    return _defaultValue;
   }
 
-  Future<void> write(JsonMap value) async {
+  Future<void> write(T value) async {
     await ensureExists();
-    await _atomicWrite(value);
+    await _atomicWrite(_toJson(value));
   }
 
-  Future<T> update<T>(Future<T> Function(JsonMap current) updater) {
-    return _synchronized(() async {
-      final current = await read();
-      final result = await updater(current);
-      return result;
-    });
-  }
-
-  Future<void> updateAndWrite(
-      Future<JsonMap> Function(JsonMap current) updater) {
+  Future<void> updateAndWrite(Future<T> Function(T current) updater) {
     return _synchronized(() async {
       final current = await read();
       final updated = await updater(current);
@@ -68,7 +71,7 @@ class JsonFileStore {
 
   Future<void> _tail = Future<void>.value();
 
-  Future<T> _synchronized<T>(Future<T> Function() action) {
+  Future<void> _synchronized(Future<void> Function() action) {
     final next = _tail.then((_) => action());
     _tail = next.then((_) {}).catchError((_) {});
     return next;

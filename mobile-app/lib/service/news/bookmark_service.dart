@@ -15,8 +15,15 @@ class BookmarksDatabaseService {
   final Directory? _storageDirectoryOverride;
   final _legacyMigrator = const BookmarkSqliteMigrator();
 
-  JsonFileStore? _store;
+  JsonFileStore<
+      ({
+        int version,
+        bool migratedFromSqlite,
+        List<BookmarkedTutorial> bookmarks,
+      })>? _store;
   Future<void>? _initFuture;
+
+  static const int _storeVersion = 1;
 
   Future<void> initialise() {
     _initFuture ??= _initialiseInternal();
@@ -30,13 +37,20 @@ class BookmarksDatabaseService {
     final file = File(
       path.join(baseDir.path, 'storage', 'bookmarked-articles.json'),
     );
-    final store = JsonFileStore(
+    final store = JsonFileStore<
+        ({
+          int version,
+          bool migratedFromSqlite,
+          List<BookmarkedTutorial> bookmarks,
+        })>(
       file: file,
-      defaultValue: {
-        'version': 1,
-        'migratedFromSqlite': false,
-        'bookmarks': [],
-      },
+      defaultValue: (
+        version: _storeVersion,
+        migratedFromSqlite: false,
+        bookmarks: <BookmarkedTutorial>[],
+      ),
+      fromJson: _fromStoreJson,
+      toJson: _toStoreJson,
     );
     await store.ensureExists();
     _store = store;
@@ -49,59 +63,108 @@ class BookmarksDatabaseService {
     if (store == null) return;
 
     await store.updateAndWrite((current) async {
-      final migrated = current['migratedFromSqlite'] == true;
-      final existing = current['bookmarks'] ?? [];
-      if (migrated) return current;
+      if (current.migratedFromSqlite) return current;
 
       // If the JSON store already has data, don't overwrite it.
-      if (existing.isNotEmpty) {
-        return {
-          ...current,
-          'migratedFromSqlite': true,
-        };
+      if (current.bookmarks.isNotEmpty) {
+        return (
+          version: current.version,
+          migratedFromSqlite: true,
+          bookmarks: current.bookmarks,
+        );
       }
 
       final legacy = await _legacyMigrator.readBookmarks();
       if (legacy.isEmpty) {
-        return {
-          ...current,
-          'migratedFromSqlite': true,
-        };
+        return (
+          version: current.version,
+          migratedFromSqlite: true,
+          bookmarks: current.bookmarks,
+        );
       }
 
       final normalized = legacy.map((row) {
-        return {
-          'articleTitle': row['articleTitle'],
+        return BookmarkedTutorial.fromMap(<String, dynamic>{
           'articleId': row['articleId'],
-          'articleText': row['articleText'],
+          'articleTitle': row['articleTitle'],
           'authorName': row['authorName'],
-        };
+          'articleText': row['articleText'],
+        });
       }).toList();
 
       log('Migrated ${normalized.length} bookmarks from SQLite to JSON');
-      return {
-        ...current,
-        'migratedFromSqlite': true,
-        'bookmarks': normalized,
-      };
+      return (
+        version: _storeVersion,
+        migratedFromSqlite: true,
+        bookmarks: normalized,
+      );
     });
   }
 
-  Map<String, dynamic> tutorialToMap(dynamic tutorial) {
+  static ({
+    int version,
+    bool migratedFromSqlite,
+    List<BookmarkedTutorial> bookmarks,
+  }) _fromStoreJson(JsonMap json) {
+    final version = json['version'];
+    final migratedFromSqlite = json['migratedFromSqlite'] == true;
+
+    final raw = json['bookmarks'];
+    final bookmarks = <BookmarkedTutorial>[];
+    if (raw is List) {
+      for (final entry in raw) {
+        if (entry is Map) {
+          final m = Map<String, dynamic>.from(entry);
+          bookmarks.add(
+            BookmarkedTutorial(
+              id: m['articleId'],
+              tutorialTitle: m['articleTitle'],
+              authorName: m['authorName'],
+              tutorialText: m['articleText'],
+            ),
+          );
+        }
+      }
+    }
+
+    return (
+      version: version,
+      migratedFromSqlite: migratedFromSqlite,
+      bookmarks: bookmarks,
+    );
+  }
+
+  static JsonMap _toStoreJson(
+    ({
+      int version,
+      bool migratedFromSqlite,
+      List<BookmarkedTutorial> bookmarks,
+    }) value,
+  ) {
+    return <String, dynamic>{
+      'version': value.version,
+      'migratedFromSqlite': value.migratedFromSqlite,
+      'bookmarks': value.bookmarks.map((b) {
+        return {
+          'articleId': b.id,
+          'articleTitle': b.tutorialTitle,
+          'authorName': b.authorName,
+          'articleText': b.tutorialText,
+        };
+      }).toList(),
+    };
+  }
+
+  BookmarkedTutorial _toBookmarkedTutorial(Object tutorial) {
     if (tutorial is Tutorial) {
-      return {
-        'articleId': tutorial.id,
-        'articleTitle': tutorial.title,
-        'authorName': tutorial.authorName,
-        'articleText': tutorial.text,
-      };
+      return BookmarkedTutorial(
+        id: tutorial.id,
+        tutorialTitle: tutorial.title,
+        authorName: tutorial.authorName,
+        tutorialText: tutorial.text ?? '',
+      );
     } else if (tutorial is BookmarkedTutorial) {
-      return {
-        'articleId': tutorial.id,
-        'articleTitle': tutorial.tutorialTitle,
-        'authorName': tutorial.authorName,
-        'articleText': tutorial.tutorialText,
-      };
+      return tutorial;
     } else {
       throw Exception(
         'unable to convert tutorial to map type: ${tutorial.runtimeType}',
@@ -109,73 +172,59 @@ class BookmarksDatabaseService {
     }
   }
 
+  String _idFor(Object tutorial) {
+    if (tutorial is Tutorial) return tutorial.id;
+    if (tutorial is BookmarkedTutorial) return tutorial.id;
+    throw Exception('unsupported tutorial type: ${tutorial.runtimeType}');
+  }
+
   Future<List<BookmarkedTutorial>> getBookmarks() async {
     await initialise();
     final store = _store!;
 
     final data = await store.read();
-    final raw = (data['bookmarks'] as List?) ?? <dynamic>[];
-
-    final normalized = <Map<String, dynamic>>[];
-    for (var i = 0; i < raw.length; i++) {
-      final entry = raw[i];
-      if (entry is Map) {
-        normalized.add(Map<String, dynamic>.from(entry));
-      }
-    }
-
-    final bookmarks = normalized
-        .map((tutorial) => BookmarkedTutorial.fromMap(tutorial))
-        .toList();
-
-    return List<BookmarkedTutorial>.from(bookmarks.reversed);
+    return List<BookmarkedTutorial>.from(data.bookmarks.reversed);
   }
 
-  Future<bool> isBookmarked(dynamic tutorial) async {
+  Future<bool> isBookmarked(Object tutorial) async {
     await initialise();
     final store = _store!;
     final data = await store.read();
-    final raw = (data['bookmarks'] as List?) ?? <dynamic>[];
-    return raw.any((e) => e is Map && e['articleId'] == tutorial.id);
+    final id = _idFor(tutorial);
+    return data.bookmarks.any((b) => b.id == id);
   }
 
-  Future addBookmark(dynamic tutorial) async {
+  Future addBookmark(Object tutorial) async {
     await initialise();
     final store = _store!;
     await store.updateAndWrite((current) async {
-      final raw = (current['bookmarks'] as List?) ?? <dynamic>[];
-      final list = raw
-          .whereType<Map>()
-          .map((e) => Map<String, dynamic>.from(e))
-          .toList();
+      final list = List<BookmarkedTutorial>.from(current.bookmarks);
+      final id = _idFor(tutorial);
+      list.removeWhere((b) => b.id == id);
+      list.add(_toBookmarkedTutorial(tutorial));
 
-      list.removeWhere((e) => e['articleId'] == tutorial.id);
-      list.add(tutorialToMap(tutorial));
-
-      log('Added bookmark: ${tutorial.id}');
-      return {
-        ...current,
-        'bookmarks': list,
-      };
+      log('Added bookmark: $id');
+      return (
+        version: current.version,
+        migratedFromSqlite: current.migratedFromSqlite,
+        bookmarks: list,
+      );
     });
   }
 
-  Future removeBookmark(dynamic tutorial) async {
+  Future removeBookmark(Object tutorial) async {
     await initialise();
     final store = _store!;
     await store.updateAndWrite((current) async {
-      final raw = (current['bookmarks'] as List?) ?? <dynamic>[];
-      final list = raw
-          .whereType<Map>()
-          .map((e) => Map<String, dynamic>.from(e))
-          .toList();
-
-      list.removeWhere((e) => e['articleId'] == tutorial.id);
-      log('Removed bookmark: ${tutorial.id}');
-      return {
-        ...current,
-        'bookmarks': list,
-      };
+      final list = List<BookmarkedTutorial>.from(current.bookmarks);
+      final id = _idFor(tutorial);
+      list.removeWhere((b) => b.id == id);
+      log('Removed bookmark: $id');
+      return (
+        version: current.version,
+        migratedFromSqlite: current.migratedFromSqlite,
+        bookmarks: list,
+      );
     });
   }
 }
