@@ -1,9 +1,11 @@
+import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:freecodecamp/extensions/i18n_extension.dart';
 import 'package:freecodecamp/ui/theme/fcc_theme.dart';
 import 'package:freecodecamp/ui/views/login/native_login_viewmodel.dart';
 import 'package:freecodecamp/ui/widgets/drawer_widget/drawer_widget_view.dart';
 import 'package:stacked/stacked.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class NativeLoginView extends StatelessWidget {
   const NativeLoginView({super.key, this.fromButton = false});
@@ -282,6 +284,62 @@ class NativeLoginView extends StatelessWidget {
                         ),
                       ),
                     )
+                  ],
+                ),
+                Row(
+                  children: [
+                    Expanded(
+                        child: Padding(
+                      padding: const EdgeInsets.all(8.0),
+                      child: RichText(
+                        textAlign: TextAlign.center,
+                        text: TextSpan(
+                          style: TextStyle(
+                            color: Colors.white.withValues(alpha: 0.87),
+                          ),
+                          children: [
+                            TextSpan(
+                              text:
+                                  "By continuing, you indicate that you have read and agree to freeCodeCamp.org's ",
+                            ),
+                            TextSpan(
+                              text: 'Terms of Service',
+                              style: const TextStyle(
+                                decoration: TextDecoration.underline,
+                              ),
+                              recognizer: TapGestureRecognizer()
+                                ..onTap = () {
+                                  launchUrl(
+                                    Uri.parse(
+                                      'https://www.freecodecamp.org/news/terms-of-service',
+                                    ),
+                                  );
+                                },
+                            ),
+                            TextSpan(
+                              text: ' and ',
+                            ),
+                            TextSpan(
+                              text: 'Privacy Policy',
+                              style: const TextStyle(
+                                decoration: TextDecoration.underline,
+                              ),
+                              recognizer: TapGestureRecognizer()
+                                ..onTap = () {
+                                  launchUrl(
+                                    Uri.parse(
+                                      'https://www.freecodecamp.org/news/privacy-policy',
+                                    ),
+                                  );
+                                },
+                            ),
+                            TextSpan(
+                              text: '.',
+                            ),
+                          ],
+                        ),
+                      ),
+                    )),
                   ],
                 )
               ],

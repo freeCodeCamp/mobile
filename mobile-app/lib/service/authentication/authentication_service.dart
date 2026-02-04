@@ -12,7 +12,6 @@ import 'package:freecodecamp/app/app.router.dart';
 import 'package:freecodecamp/extensions/i18n_extension.dart';
 import 'package:freecodecamp/models/main/user_model.dart';
 import 'package:freecodecamp/service/dio_service.dart';
-import 'package:freecodecamp/ui/views/auth/privacy_view.dart';
 import 'package:stacked_services/stacked_services.dart';
 import 'package:url_launcher/url_launcher.dart';
 
@@ -43,6 +42,8 @@ class AuthenticationService {
 
   static StreamController<bool> isLoggedInStream =
       StreamController<bool>.broadcast();
+
+  static const String supportEmail = 'mobile@freecodecamp.org';
 
   StreamController<bool> progress = StreamController.broadcast();
 
@@ -214,12 +215,11 @@ class AuthenticationService {
       await writeTokensToStorage();
       await fetchUser();
     } on DioException catch (err, st) {
-      String supportEmail = Uri.encodeComponent('mobile@feeecodecamp.org');
       String subject = Uri.encodeComponent('Error logging in to mobile app');
       Navigator.pop(context);
       if (err.response != null) {
         String body = Uri.encodeComponent(
-            'Please email the below error to mobile@freecodecamp.org\n\n${err.response!.data.toString()}\n\n${st.toString()}');
+            'Please email the below error to ${AuthenticationService.supportEmail}\n\n${err.response!.data.toString()}\n\n${st.toString()}');
         await showDialog(
           context: context,
           barrierDismissible: false,
@@ -235,7 +235,7 @@ class AuthenticationService {
             content: SingleChildScrollView(
               child: SelectionArea(
                 child: Text(
-                  'Please email the below error to mobile@freecodecamp.org:\n\n${err.response!.data.toString()}\n\n${st.toString()}',
+                  'Please email the below error to ${AuthenticationService.supportEmail}:\n\n${err.response!.data.toString()}\n\n${st.toString()}',
                 ),
               ),
             ),
@@ -247,7 +247,7 @@ class AuthenticationService {
                 onPressed: () async {
                   logout();
                   await launchUrl(Uri.parse(
-                      'mailto:$supportEmail?subject=$subject&body=$body'));
+                      'mailto:${AuthenticationService.supportEmail}?subject=$subject&body=$body'));
                   Navigator.pop(context);
                 },
                 child: const Text('Email Error'),
@@ -267,7 +267,7 @@ class AuthenticationService {
         );
       } else {
         String body = Uri.encodeComponent(
-            'Please email the below error to mobile@freecodecamp.org\n\n${err.toString()}\n\n${st.toString()}');
+            'Please email the below error to ${AuthenticationService.supportEmail}\n\n${err.toString()}\n\n${st.toString()}');
         await showDialog(
           context: context,
           barrierDismissible: false,
@@ -283,7 +283,7 @@ class AuthenticationService {
             content: SingleChildScrollView(
               child: SelectionArea(
                 child: Text(
-                  'Please email the below error to mobile@freecodecamp.org:\n\n${err.toString()}\n\n${st.toString()}',
+                  'Please email the below error to ${AuthenticationService.supportEmail}:\n\n${err.toString()}\n\n${st.toString()}',
                 ),
               ),
             ),
@@ -295,7 +295,7 @@ class AuthenticationService {
                 onPressed: () async {
                   logout();
                   await launchUrl(Uri.parse(
-                      'mailto:$supportEmail?subject=$subject&body=$body'));
+                      'mailto:${AuthenticationService.supportEmail}?subject=$subject&body=$body'));
                   Navigator.pop(context);
                 },
                 child: const Text('Email Error'),
@@ -315,33 +315,6 @@ class AuthenticationService {
         );
       }
       return false;
-    }
-
-    final user = await userModel;
-
-    if (user != null && user.acceptedPrivacyTerms == false) {
-      bool? quincyEmails = await Navigator.push(
-        context,
-        MaterialPageRoute(
-          builder: (context) => const PrivacyView(),
-          settings: const RouteSettings(
-            name: '/new-user-accept-privacy',
-          ),
-        ),
-      );
-
-      await _dio.put(
-        '$baseApiURL/update-privacy-terms',
-        data: {
-          'quincyEmails': quincyEmails ?? false,
-        },
-        options: Options(
-          headers: {
-            'CSRF-Token': _csrfToken,
-            'Cookie': 'jwt_access_token=$_jwtAccessToken; _csrf=$_csrf',
-          },
-        ),
-      );
     }
 
     await auth0.credentialsManager.clearCredentials();

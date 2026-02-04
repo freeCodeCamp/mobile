@@ -29,7 +29,7 @@ void main() {
     return Block(
       superBlock: SuperBlock(dashedName: 'superblock', name: 'Super Block'),
       layout: BlockLayout.challengeList,
-      type: BlockType.lecture,
+      label: BlockLabel.lecture,
       name: 'Block 1',
       dashedName: 'block-1',
       description: [],

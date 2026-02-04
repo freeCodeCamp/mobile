@@ -213,7 +213,7 @@ class StackedRouter extends _i1.RouterBase {
       final args = data.getArgs<NewsTutorialViewArguments>(nullOk: false);
       return _i21.MaterialPageRoute<dynamic>(
         builder: (context) => _i5.NewsTutorialView(
-            key: args.key, refId: args.refId, title: args.title),
+            key: args.key, refId: args.refId, slug: args.slug),
         settings: data,
       );
     },
@@ -277,8 +277,12 @@ class StackedRouter extends _i1.RouterBase {
       );
     },
     _i12.ChapterView: (data) {
+      final args = data.getArgs<ChapterViewArguments>(nullOk: false);
       return _i21.MaterialPageRoute<dynamic>(
-        builder: (context) => const _i12.ChapterView(),
+        builder: (context) => _i12.ChapterView(
+            key: args.key,
+            superBlockDashedName: args.superBlockDashedName,
+            superBlockName: args.superBlockName),
         settings: data,
       );
     },
@@ -386,29 +390,29 @@ class NewsTutorialViewArguments {
   const NewsTutorialViewArguments({
     this.key,
     required this.refId,
-    required this.title,
+    required this.slug,
   });
 
   final _i21.Key? key;
 
   final String refId;
 
-  final String? title;
+  final String slug;
 
   @override
   String toString() {
-    return '{"key": "$key", "refId": "$refId", "title": "$title"}';
+    return '{"key": "$key", "refId": "$refId", "slug": "$slug"}';
   }
 
   @override
   bool operator ==(covariant NewsTutorialViewArguments other) {
     if (identical(this, other)) return true;
-    return other.key == key && other.refId == refId && other.title == title;
+    return other.key == key && other.refId == refId && other.slug == slug;
   }
 
   @override
   int get hashCode {
-    return key.hashCode ^ refId.hashCode ^ title.hashCode;
+    return key.hashCode ^ refId.hashCode ^ slug.hashCode;
   }
 }
 
@@ -596,6 +600,40 @@ class ChallengeTemplateViewArguments {
   }
 }
 
+class ChapterViewArguments {
+  const ChapterViewArguments({
+    this.key,
+    required this.superBlockDashedName,
+    required this.superBlockName,
+  });
+
+  final _i21.Key? key;
+
+  final String superBlockDashedName;
+
+  final String superBlockName;
+
+  @override
+  String toString() {
+    return '{"key": "$key", "superBlockDashedName": "$superBlockDashedName", "superBlockName": "$superBlockName"}';
+  }
+
+  @override
+  bool operator ==(covariant ChapterViewArguments other) {
+    if (identical(this, other)) return true;
+    return other.key == key &&
+        other.superBlockDashedName == superBlockDashedName &&
+        other.superBlockName == superBlockName;
+  }
+
+  @override
+  int get hashCode {
+    return key.hashCode ^
+        superBlockDashedName.hashCode ^
+        superBlockName.hashCode;
+  }
+}
+
 class ChapterBlockViewArguments {
   const ChapterBlockViewArguments({
     this.key,
@@ -745,7 +783,7 @@ extension NavigatorStateExtension on _i26.NavigationService {
   Future<dynamic> navigateToNewsTutorialView({
     _i21.Key? key,
     required String refId,
-    required String? title,
+    required String slug,
     int? routerId,
     bool preventDuplicates = true,
     Map<String, String>? parameters,
@@ -754,7 +792,7 @@ extension NavigatorStateExtension on _i26.NavigationService {
   }) async {
     return navigateTo<dynamic>(Routes.newsTutorialView,
         arguments:
-            NewsTutorialViewArguments(key: key, refId: refId, title: title),
+            NewsTutorialViewArguments(key: key, refId: refId, slug: slug),
         id: routerId,
         preventDuplicates: preventDuplicates,
         parameters: parameters,
@@ -883,14 +921,21 @@ extension NavigatorStateExtension on _i26.NavigationService {
         transition: transition);
   }
 
-  Future<dynamic> navigateToChapterView([
+  Future<dynamic> navigateToChapterView({
+    _i21.Key? key,
+    required String superBlockDashedName,
+    required String superBlockName,
     int? routerId,
     bool preventDuplicates = true,
     Map<String, String>? parameters,
     Widget Function(BuildContext, Animation<double>, Animation<double>, Widget)?
         transition,
-  ]) async {
+  }) async {
     return navigateTo<dynamic>(Routes.chapterView,
+        arguments: ChapterViewArguments(
+            key: key,
+            superBlockDashedName: superBlockDashedName,
+            superBlockName: superBlockName),
         id: routerId,
         preventDuplicates: preventDuplicates,
         parameters: parameters,
@@ -1076,7 +1121,7 @@ extension NavigatorStateExtension on _i26.NavigationService {
   Future<dynamic> replaceWithNewsTutorialView({
     _i21.Key? key,
     required String refId,
-    required String? title,
+    required String slug,
     int? routerId,
     bool preventDuplicates = true,
     Map<String, String>? parameters,
@@ -1085,7 +1130,7 @@ extension NavigatorStateExtension on _i26.NavigationService {
   }) async {
     return replaceWith<dynamic>(Routes.newsTutorialView,
         arguments:
-            NewsTutorialViewArguments(key: key, refId: refId, title: title),
+            NewsTutorialViewArguments(key: key, refId: refId, slug: slug),
         id: routerId,
         preventDuplicates: preventDuplicates,
         parameters: parameters,
@@ -1214,14 +1259,21 @@ extension NavigatorStateExtension on _i26.NavigationService {
         transition: transition);
   }
 
-  Future<dynamic> replaceWithChapterView([
+  Future<dynamic> replaceWithChapterView({
+    _i21.Key? key,
+    required String superBlockDashedName,
+    required String superBlockName,
     int? routerId,
     bool preventDuplicates = true,
     Map<String, String>? parameters,
     Widget Function(BuildContext, Animation<double>, Animation<double>, Widget)?
         transition,
-  ]) async {
+  }) async {
     return replaceWith<dynamic>(Routes.chapterView,
+        arguments: ChapterViewArguments(
+            key: key,
+            superBlockDashedName: superBlockDashedName,
+            superBlockName: superBlockName),
         id: routerId,
         preventDuplicates: preventDuplicates,
         parameters: parameters,

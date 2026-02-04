@@ -6,12 +6,12 @@ import 'package:freecodecamp/models/news/bookmarked_tutorial_model.dart';
 import 'package:freecodecamp/models/news/tutorial_model.dart';
 import 'package:freecodecamp/service/news/bookmark_service.dart';
 import 'package:path/path.dart' as path;
-import 'package:sqflite_common_ffi/sqflite_ffi.dart';
 
 import '../../helpers/test_helpers.dart';
 
 final Tutorial testTutorial = Tutorial(
   id: '61fad67af2ed6b06db5ab66f',
+  slug: 'hello-world',
   featureImage:
       'https://www.freecodecamp.org/news/content/images/2022/01/python-game.png',
   title:
@@ -26,7 +26,6 @@ final Tutorial testTutorial = Tutorial(
 );
 
 final BookmarkedTutorial testBookmarkTutorial = BookmarkedTutorial(
-  bookmarkId: 1,
   id: '61fad67af2ed6b06db5ab66f',
   tutorialTitle:
       'Python Game Development - How to Make a Turtle Racing Game with PyCharm',
@@ -37,24 +36,36 @@ final BookmarkedTutorial testBookmarkTutorial = BookmarkedTutorial(
 
 void main() {
   TestWidgetsFlutterBinding.ensureInitialized();
-  sqfliteFfiInit();
-  databaseFactory = databaseFactoryFfi;
+  Directory? tempDir;
+
   group('News Bookmark Service Test -', () {
-    setUp(() => registerServices());
-    tearDown(() => locator.reset());
-    tearDownAll(() async {
-      String dbPath = await getDatabasesPath();
-      String dbPathTutorials = path.join(dbPath, 'bookmarked-article.db');
-      File(dbPathTutorials).deleteSync();
+    setUp(() {
+      registerServices();
+      tempDir = Directory.systemTemp.createTempSync('fcc_bookmarks_test_');
+      if (locator.isRegistered<BookmarksDatabaseService>()) {
+        locator.unregister<BookmarksDatabaseService>();
+      }
+      locator.registerSingleton<BookmarksDatabaseService>(
+        BookmarksDatabaseService(storageDirectoryOverride: tempDir),
+      );
+    });
+
+    tearDown(() {
+      locator.reset();
+      try {
+        tempDir?.deleteSync(recursive: true);
+      } catch (_) {}
     });
 
     test('init service', () async {
       final service = locator<BookmarksDatabaseService>();
       await service.initialise();
-      String dbPath = await getDatabasesPath();
-      String dbPathTutorials = path.join(dbPath, 'bookmarked-article.db');
       expect(service, isA<BookmarksDatabaseService>());
-      expect(await databaseExists(dbPathTutorials), true);
+
+      final file = File(
+        path.join(tempDir!.path, 'storage', 'bookmarked-articles.json'),
+      );
+      expect(await file.exists(), true);
     });
 
     test('get all bookmarks', () async {
@@ -72,22 +83,23 @@ void main() {
       final bookmarks = await service.getBookmarks();
       expect(bookmarks, isA<List<BookmarkedTutorial>>());
       expect(bookmarks.length, 1);
-      expect(bookmarks[0].authorName, testBookmarkTutorial.authorName);
-      expect(bookmarks[0].bookmarkId, testBookmarkTutorial.bookmarkId);
       expect(bookmarks[0].id, testBookmarkTutorial.id);
-      expect(bookmarks[0].tutorialText, testBookmarkTutorial.tutorialText);
       expect(bookmarks[0].tutorialTitle, testBookmarkTutorial.tutorialTitle);
+      expect(bookmarks[0].authorName, testBookmarkTutorial.authorName);
+      expect(bookmarks[0].tutorialText, testBookmarkTutorial.tutorialText);
     });
 
     test('check if bookmark exists', () async {
       final service = locator<BookmarksDatabaseService>();
       await service.initialise();
+      await service.addBookmark(testTutorial);
       expect(await service.isBookmarked(testBookmarkTutorial), true);
     });
 
     test('delete bookmark', () async {
       final service = locator<BookmarksDatabaseService>();
       await service.initialise();
+      await service.addBookmark(testTutorial);
       await service.removeBookmark(testBookmarkTutorial);
       final bookmarks = await service.getBookmarks();
       expect(bookmarks, isA<List<BookmarkedTutorial>>());

@@ -5,9 +5,9 @@ import 'package:freecodecamp/models/learn/curriculum_model.dart';
 import 'package:freecodecamp/ui/theme/fcc_theme.dart';
 import 'package:freecodecamp/ui/views/learn/challenge/templates/english/english_viewmodel.dart';
 import 'package:freecodecamp/ui/views/learn/utils/challenge_utils.dart';
-import 'package:freecodecamp/ui/views/learn/widgets/audio/audio_player_view.dart';
 import 'package:freecodecamp/ui/views/learn/widgets/challenge_card.dart';
 import 'package:freecodecamp/ui/views/learn/widgets/explanation_widget.dart';
+import 'package:freecodecamp/ui/views/learn/widgets/scene/scene_view.dart';
 import 'package:freecodecamp/ui/views/news/html_handler/html_handler.dart';
 import 'package:stacked/stacked.dart';
 
@@ -61,11 +61,11 @@ class EnglishView extends StatelessWidget {
                     ],
                   ),
                 ),
-                if (challenge.audio != null) ...[
+                if (challenge.scene != null) ...[
                   ChallengeCard(
-                    title: 'Listen to the Audio',
-                    child: AudioPlayerView(
-                      audio: challenge.audio!,
+                    title: 'Scene',
+                    child: SceneView(
+                      scene: challenge.scene!,
                     ),
                   ),
                 ],

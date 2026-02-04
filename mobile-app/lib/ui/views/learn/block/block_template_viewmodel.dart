@@ -147,21 +147,27 @@ class BlockTemplateViewModel extends BaseViewModel {
     }
   }
 
-  (IconData?, Color) getIconData(BlockType type) {
+  (IconData?, Color) getIconData(BlockLabel type) {
     switch (type) {
-      case BlockType.lecture:
+      case BlockLabel.lecture:
         return (Icons.menu_book_outlined, FccColors.blue30);
-      case BlockType.quiz:
+      case BlockLabel.quiz:
         return (Icons.help_outline, FccColors.orange30);
-      case BlockType.lab:
+      case BlockLabel.lab:
         return (Icons.science_outlined, FccColors.green40);
-      case BlockType.workshop:
+      case BlockLabel.workshop:
         return (Icons.build_outlined, FccColors.purple10);
-      case BlockType.exam:
+      case BlockLabel.exam:
         return (Icons.school, FccColors.red15);
-      case BlockType.review:
+      case BlockLabel.review:
         return (Icons.edit_document, FccColors.yellow10);
-      default: // BlockType.legacy or unknown
+      case BlockLabel.warmup:
+        return (Icons.fitbit_outlined, FccColors.blue30);
+      case BlockLabel.learn:
+        return (Icons.school_outlined, FccColors.green40);
+      case BlockLabel.practice:
+        return (Icons.edit_outlined, FccColors.purple10);
+      default: // BlockLabel.legacy or unknown
         return (null, FccColors.blue05);
     }
   }

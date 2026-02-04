@@ -3,6 +3,7 @@ import 'package:freecodecamp/ui/views/news/widgets/tag_widget.dart';
 
 class Tutorial {
   final String id;
+  final String slug;
   final String title;
   final String? featureImage;
   final String? profileImage;
@@ -16,6 +17,7 @@ class Tutorial {
 
   Tutorial({
     required this.id,
+    required this.slug,
     required this.featureImage,
     required this.title,
     required this.profileImage,
@@ -56,6 +58,7 @@ class Tutorial {
       authorSlug: data['author']['username'],
       tagNames: returnTags(data['tags']),
       id: data['id'],
+      slug: data['slug'],
     );
   }
 
@@ -70,6 +73,7 @@ class Tutorial {
       authorSlug: returnSlug(data['author']['url']),
       tagNames: returnTags(data['tags']),
       id: data['objectID'],
+      slug: data['slug'],
     );
   }
 
@@ -93,6 +97,7 @@ class Tutorial {
       url: json['url'],
       text: json['content']['html'],
       featureImage: json['coverImage']['url'],
+      slug: json['slug'],
     );
   }
 }

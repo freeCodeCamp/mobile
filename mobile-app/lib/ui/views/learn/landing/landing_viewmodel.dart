@@ -20,6 +20,7 @@ import 'package:freecodecamp/service/learn/daily_challenge_service.dart';
 import 'package:freecodecamp/service/learn/learn_offline_service.dart';
 import 'package:freecodecamp/service/learn/learn_service.dart';
 import 'package:freecodecamp/ui/views/learn/landing/landing_view.dart';
+import 'package:freecodecamp/ui/views/learn/utils/learn_globals.dart';
 import 'package:freecodecamp/ui/widgets/setup_dialog_ui.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:stacked/stacked.dart';
@@ -176,89 +177,62 @@ class LearnLandingViewModel extends BaseViewModel {
     });
   }
 
-  Text handleStageTitle(String stage) {
-    switch (stage) {
-      case 'core':
-        return Text(
-          'Recommended curriculum (still in beta):',
-          style: headerStyle,
-        );
-      case 'english':
-        return Text(
-          'Learn English for Developers:',
-          style: headerStyle,
-        );
-      case 'extra':
-        return Text(
-          'Prepare for the developer interview job search:',
-          style: headerStyle,
-        );
-      case 'legacy':
-        return Text(
-          'Our archived coursework:',
-          style: headerStyle,
-        );
-      case 'professional':
-        return Text(
-          'Professional certifications:',
-          style: headerStyle,
-        );
-    }
-
-    return Text('');
-  }
-
   Future<List<Widget>> requestSuperBlocks() async {
     String baseUrl = LearnService.baseUrl;
 
-    final Response res = await _dio.get('$baseUrl/available-superblocks.json');
+    TextStyle headerStyle = TextStyle(fontSize: 21);
 
-    List<Widget> layout = [];
+    final Response res = await _dio.get('$baseUrl/available-superblocks.json');
     if (res.statusCode == 200) {
       await dotenv.load(fileName: '.env');
 
       bool showAllSB =
           dotenv.get('SHOWALLSB', fallback: 'false').toLowerCase() == 'true';
 
-      // Map<String, dynamic> superBlockStages = res.data['superblocks'];
-      // for (var superBlockStage in superBlockStages.keys) {
-      //   layout.add(Padding(
-      //     padding: const EdgeInsets.all(8.0),
-      //     child: handleStageTitle(superBlockStage),
-      //   ));
+      Map<String, dynamic> superBlockStages = res.data['superblocks'];
 
-      //   for (var superBlock in superBlockStages[superBlockStage]) {
-      //     layout.add(
-      //       SuperBlockButton(
-      //         button: SuperBlockButtonData(
-      //           path: superBlock['dashedName'],
-      //           name: superBlock['title'],
-      //           public: !showAllSB ? superBlock['public'] : true,
-      //         ),
-      //         model: this,
-      //       ),
-      //     );
-      //   }
-      // }
+      Map<String, String> stageOrder = {
+        'core': 'Recommended curriculum (still in beta):',
+        'english': 'Learn English for Developers:',
+        'spanish': 'Learn Professional Spanish:',
+        'chinese': 'Learn Professional Chinese:',
+        'extra': 'Prepare for the developer interview job search:',
+        'professional': 'Professional certifications:',
+      };
 
-      List superBlocks = res.data['superblocks'];
-      for (int i = 0; i < superBlocks.length; i++) {
-        if (superBlocks[i]['dashedName'].toString().contains('full-stack')) {
-          continue;
-        }
-        layout.add(
-          SuperBlockButton(
-            button: SuperBlockButtonData(
-              path: superBlocks[i]['dashedName'],
-              name: superBlocks[i]['title'],
-              public: !showAllSB ? superBlocks[i]['public'] : true,
+      List<Widget> widgetOrder = [];
+
+      for (var stage in stageOrder.keys) {
+        if (superBlockStages.containsKey(stage)) {
+          List stageBlocks = superBlockStages[stage];
+
+          widgetOrder.add(
+            Text(
+              stageOrder[stage] ?? '',
+              style: headerStyle,
             ),
-            model: this,
-          ),
-        );
+          );
+
+          for (var superBlock in stageBlocks) {
+            if (superBlock['dashedName'].toString().contains('full-stack')) {
+              continue;
+            }
+
+            Widget button = SuperBlockButton(
+              button: SuperBlockButtonData(
+                path: superBlock['dashedName'],
+                name: superBlock['title'],
+                public: !showAllSB ? superBlock['public'] : true,
+              ),
+              model: this,
+            );
+
+            widgetOrder.add(button);
+          }
+        }
       }
 
-      return layout;
+      return widgetOrder;
     }
     return [];
   }
@@ -285,8 +259,14 @@ class LearnLandingViewModel extends BaseViewModel {
   }
 
   void routeToSuperBlock(String dashedName, String name) async {
-    if (dashedName == 'full-stack-developer') {
-      _navigationService.navigateTo(Routes.chapterView);
+    if (chapterBasedSuperBlocks.contains(dashedName)) {
+      _navigationService.navigateTo(
+        Routes.chapterView,
+        arguments: ChapterViewArguments(
+          superBlockDashedName: dashedName,
+          superBlockName: name,
+        ),
+      );
     } else {
       _navigationService.navigateTo(
         Routes.superBlockView,

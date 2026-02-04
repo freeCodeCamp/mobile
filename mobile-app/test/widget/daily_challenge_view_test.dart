@@ -46,11 +46,7 @@ void main() {
     }
 
     testWidgets('should display app bar with correct title', (tester) async {
-      await tester.pumpWidget(
-        const MaterialApp(
-          home: DailyChallengeView(),
-        ),
-      );
+      await tester.pumpWidget(createTestWidget());
 
       await tester.pump();
 

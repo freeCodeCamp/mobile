@@ -100,7 +100,7 @@ class SuperBlockView extends StatelessWidget {
                   }
 
                   if (snapshot.hasError) {
-                    return Text(context.t.error);
+                    return Center(child: Text(context.t.error));
                   }
 
                   return const Center(

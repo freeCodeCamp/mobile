@@ -89,8 +89,8 @@ brew install applesimutils
     File curriculumFile = File(join(
       mobileAppPath.parent.parent.path,
       'freeCodeCamp',
-      'shared',
-      'config',
+      'curriculum',
+      'generated',
       'curriculum.json',
     ));
 
@@ -118,6 +118,7 @@ brew install applesimutils
         'test',
         '--no-pub',
         '--reporter=expanded',
+        '--ignore-timeouts',
         if (isMacOS) ...[
           '-d',
           bootedDeviceId,

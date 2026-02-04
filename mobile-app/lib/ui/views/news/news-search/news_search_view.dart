@@ -1,6 +1,8 @@
 import 'package:algolia_helper_flutter/algolia_helper_flutter.dart';
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:freecodecamp/extensions/i18n_extension.dart';
+import 'package:freecodecamp/ui/views/news/news-feed/news_feed_viewmodel.dart';
 import 'package:freecodecamp/ui/views/news/news-search/news_search_viewmodel.dart';
 import 'package:stacked/stacked.dart';
 
@@ -98,26 +100,132 @@ class NewsSearchView extends StatelessWidget {
                               itemCount: currentData.length,
                               separatorBuilder: (context, int i) =>
                                   const Divider(
-                                color: Color.fromRGBO(0x42, 0x42, 0x55, 1),
-                                thickness: 2,
-                                height: 5,
+                                color: Color.fromRGBO(0x2A, 0x2A, 0x40, 1),
+                                thickness: 1,
+                                height: 1,
                               ),
                               itemBuilder: (context, index) {
-                                return ListTile(
-                                  title: Text(
-                                    currentData[index]['title'],
-                                    maxLines: 2,
-                                    overflow: TextOverflow.ellipsis,
-                                    style: TextStyle(
-                                      color:
-                                          Colors.white.withValues(alpha: 0.87),
+                                final item = currentData[index];
+                                final String? featureImage = item['featureImage'];
+                                final String title = item['title'] ?? '';
+                                final String? authorName = item['author']?['name'];
+                                final String? authorImage = item['author']?['profileImage'];
+                                final String? publishedAt = item['publishedAt'];
+
+                                return InkWell(
+                                  onTap: () => model.navigateToTutorial(
+                                    item['objectID'] ?? '',
+                                    item['slug'] ?? '',
+                                  ),
+                                  child: Padding(
+                                    padding: const EdgeInsets.symmetric(
+                                      vertical: 12,
+                                      horizontal: 16,
+                                    ),
+                                    child: Row(
+                                      crossAxisAlignment: CrossAxisAlignment.start,
+                                      children: [
+                                        ClipRRect(
+                                          borderRadius: BorderRadius.circular(8),
+                                          child: SizedBox(
+                                            width: 120,
+                                            height: 80,
+                                            child: featureImage != null
+                                                ? CachedNetworkImage(
+                                                    imageUrl: featureImage,
+                                                    fit: BoxFit.cover,
+                                                    placeholder: (context, url) =>
+                                                        Container(
+                                                      color: const Color(0xFF2A2A40),
+                                                    ),
+                                                    errorWidget: (context, url, error) =>
+                                                        Image.asset(
+                                                      'assets/images/freecodecamp-banner.png',
+                                                      fit: BoxFit.cover,
+                                                    ),
+                                                  )
+                                                : Image.asset(
+                                                    'assets/images/freecodecamp-banner.png',
+                                                    fit: BoxFit.cover,
+                                                  ),
+                                          ),
+                                        ),
+                                        const SizedBox(width: 12),
+                                        Expanded(
+                                          child: Column(
+                                            crossAxisAlignment: CrossAxisAlignment.start,
+                                            children: [
+                                              Text(
+                                                title,
+                                                maxLines: 2,
+                                                overflow: TextOverflow.ellipsis,
+                                                style: const TextStyle(
+                                                  fontSize: 16,
+                                                  fontWeight: FontWeight.w500,
+                                                  height: 1.3,
+                                                ),
+                                              ),
+                                              const SizedBox(height: 8),
+                                              Row(
+                                                children: [
+                                                  if (authorImage != null)
+                                                    ClipRRect(
+                                                      borderRadius:
+                                                          BorderRadius.circular(12),
+                                                      child: CachedNetworkImage(
+                                                        imageUrl: authorImage,
+                                                        width: 24,
+                                                        height: 24,
+                                                        fit: BoxFit.cover,
+                                                        errorWidget:
+                                                            (context, url, error) =>
+                                                                Image.asset(
+                                                          'assets/images/placeholder-profile-img.png',
+                                                          width: 24,
+                                                          height: 24,
+                                                        ),
+                                                      ),
+                                                    )
+                                                  else
+                                                    Image.asset(
+                                                      'assets/images/placeholder-profile-img.png',
+                                                      width: 24,
+                                                      height: 24,
+                                                    ),
+                                                  const SizedBox(width: 8),
+                                                  Expanded(
+                                                    child: Text(
+                                                      authorName ?? '',
+                                                      maxLines: 1,
+                                                      overflow: TextOverflow.ellipsis,
+                                                      style: TextStyle(
+                                                        fontSize: 13,
+                                                        color: Colors.white
+                                                            .withValues(alpha: 0.7),
+                                                      ),
+                                                    ),
+                                                  ),
+                                                ],
+                                              ),
+                                              if (publishedAt != null)
+                                                Padding(
+                                                  padding: const EdgeInsets.only(top: 4),
+                                                  child: Text(
+                                                    NewsFeedViewModel.parseDate(
+                                                        publishedAt),
+                                                    style: TextStyle(
+                                                      fontSize: 12,
+                                                      color: Colors.white
+                                                          .withValues(alpha: 0.5),
+                                                    ),
+                                                  ),
+                                                ),
+                                            ],
+                                          ),
+                                        ),
+                                      ],
                                     ),
                                   ),
-                                  onTap: () => {
-                                    model.navigateToTutorial(
-                                        currentData[index]['objectID'],
-                                        currentData[index]['title']),
-                                  },
                                 );
                               },
                             ),

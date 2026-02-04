@@ -1,6 +1,12 @@
-const chapterBasedSuperBlocks = ['full-stack-developer'];
+import 'package:freecodecamp/ui/views/learn/utils/learn_globals.dart';
 
 enum SuperBlocks {
+  respWebDesignV9('responsive-web-design-v9'),
+  javascriptV9('javascript-v9'),
+  frontEndDevLibsV9('front-end-development-libraries-v9'),
+  pythonV9('python-v9'),
+  relationalDbV9('relational-databases-v9'),
+  backEndDevApisV9('back-end-development-and-apis-v9'),
   respWebDesignNew('2022/responsive-web-design'),
   respWebDesign('responsive-web-design'),
   jsAlgoDataStruct('javascript-algorithms-and-data-structures'),
@@ -23,7 +29,8 @@ enum SuperBlocks {
   a2English('a2-english-for-developers'),
   b1English('b1-english-for-developers'),
   a2Spanish('a2-professional-spanish'),
-  a2Chinese('a2-professional-chinese'),
+  a1Spanish('a1-professional-spanish'),
+  a1Chinese('a1-professional-chinese'),
   rosettaCode('rosetta-code'),
   pythonForEverybody('python-for-everybody'),
   devPlayground('dev-playground');
@@ -95,6 +102,7 @@ class SuperBlock {
       dashedName: dashedName,
       name: name,
       blocks: (data[data.keys.first]['blocks']).map<Block>((block) {
+
         return Block.fromJson(
           block['meta'],
           block['intro'],
@@ -118,14 +126,27 @@ class SuperBlock {
   }
 }
 
-enum BlockType {
-  lecture,
-  workshop,
-  lab,
-  review,
-  quiz,
-  exam,
-  legacy,
+enum BlockLabel {
+  lecture('lecture'),
+  workshop('workshop'),
+  lab('lab'),
+  review('review'),
+  quiz('quiz'),
+  exam('exam'),
+  warmup('warm-up'),
+  learn('learn'),
+  practice('practice'),
+  legacy('legacy');
+
+  final String value;
+  const BlockLabel(this.value);
+
+  static BlockLabel fromValue(String value) {
+    return BlockLabel.values.firstWhere(
+      (blockLabel) => blockLabel.value == value,
+      orElse: () => BlockLabel.legacy,
+    );
+  }
 }
 
 enum BlockLayout {
@@ -141,7 +162,7 @@ class Block {
   final String dashedName;
   final SuperBlock superBlock;
   final BlockLayout layout;
-  final BlockType type;
+  final BlockLabel label;
   final List description;
   // Blocks in chapter-based super blocks don't have `order`.
   final int? order;
@@ -152,7 +173,7 @@ class Block {
   Block({
     required this.superBlock,
     required this.layout,
-    required this.type,
+    required this.label,
     required this.name,
     required this.dashedName,
     required this.description,
@@ -173,6 +194,16 @@ class Block {
 
     data['challengeTiles'] = [];
 
+    // Clean up description by filtering out empty or whitespace-only strings
+    final cleanedDescription = description
+        .where((item) => item != null && item.toString().trim().isNotEmpty)
+        .toList();
+
+    // If description is empty, provide a default message
+    final finalDescription = cleanedDescription.isEmpty
+        ? ['Continue to improve your skills']
+        : cleanedDescription;
+
     BlockLayout handleLayout(String? layout) {
       switch (layout) {
         case 'project-list':
@@ -192,11 +223,8 @@ class Block {
       }
     }
 
-    BlockType blockTypeFromString(String type) {
-      return BlockType.values.firstWhere(
-        (e) => e.name.toLowerCase() == type.toLowerCase(),
-        orElse: () => BlockType.legacy, // or return null if preferred
-      );
+    BlockLabel blockLabelFromString(String type) {
+      return BlockLabel.fromValue(type);
     }
 
     return Block(
@@ -205,12 +233,13 @@ class Block {
         name: superBlockName,
       ),
       layout: handleLayout(data['blockLayout']),
-      type: data['blockType'] != null
-          ? blockTypeFromString(data['blockType'])
-          : BlockType.legacy,
+      // Support both blockLabel and blockType for backward compatibility
+      label: (data['blockLabel'] ?? data['blockType']) != null
+          ? blockLabelFromString(data['blockLabel'] ?? data['blockType'])
+          : BlockLabel.legacy,
       name: data['name'],
       dashedName: dashedName,
-      description: description,
+      description: finalDescription,
       order: data['order'],
       challenges: (data['challengeOrder'] as List)
           .map<ChallengeOrder>(
@@ -303,7 +332,8 @@ class Chapter {
 
 enum ModuleType {
   review('review'),
-  exam('exam');
+  exam('exam'),
+  certProject('cert-project');
 
   static ModuleType fromValue(String value) {
     return ModuleType.values.firstWhere(

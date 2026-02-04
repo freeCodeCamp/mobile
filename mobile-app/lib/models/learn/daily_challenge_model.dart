@@ -115,7 +115,7 @@ class DailyChallengeBlock {
         name: 'Daily Challenges',
       ),
       layout: BlockLayout.challengeGrid,
-      type: BlockType.legacy,
+      label: BlockLabel.legacy,
       description: [description],
       challenges: challenges
           .map((overview) => ChallengeOrder(

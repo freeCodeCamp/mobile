@@ -12,20 +12,22 @@ on:
     branches:
       - main
   schedule:
-    - cron: "0 0 * * 0"
+    - cron: "0 0 * * *"
 
 jobs:
   mobile-test:
     name: Test curriculum for mobile app
     runs-on: ubuntu-22.04
+    timeout-minutes: 60
 
     strategy:
       matrix:
         gradle-version: [8.7]
         java-version: [17]
         android-api-level: [35]
+        node-version: [24]
         pnpm-version: [10]
-        flutter-version: ["3.32.x"]
+        flutter-version: ["3.38.x"]
 
     steps:
       - name: Remove unused software
@@ -87,6 +89,11 @@ jobs:
         with:
           path: mobile
 
+      - name: Use Node.js ${{ matrix.node-version }}
+        uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4
+        with:
+          node-version: ${{ matrix.node-version }}
+
       - name: Setup pnpm - ${{ matrix.pnpm-version }}
         uses: pnpm/action-setup@v2
         with:
@@ -115,7 +122,6 @@ jobs:
         working-directory: freeCodeCamp
         run: |
           pnpm install
-          pnpm run create:shared
           pnpm run build:curriculum
           pnpm run clean:packages
 
