@@ -236,8 +236,6 @@ class SuperBlockButton extends StatelessWidget {
         '${SuperBlockButton.learnAssetsPath}/college-algebra.svg',
     SuperBlocks.foundationalCSharp:
         '${SuperBlockButton.learnAssetsPath}/c-sharp.svg',
-    SuperBlocks.fullStackDeveloper:
-        '${SuperBlockButton.learnAssetsPath}/code.svg',
     SuperBlocks.a2English: '${SuperBlockButton.learnAssetsPath}/a2-english.svg',
     SuperBlocks.b1English: '${SuperBlockButton.learnAssetsPath}/b1-english.svg',
     SuperBlocks.a1Spanish: '${SuperBlockButton.learnAssetsPath}/a1-spanish.svg',

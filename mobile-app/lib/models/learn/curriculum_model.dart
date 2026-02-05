@@ -25,7 +25,6 @@ enum SuperBlocks {
   projectEuler('project-euler'),
   collegeAlgebraPy('college-algebra-with-python'),
   foundationalCSharp('foundational-c-sharp-with-microsoft'),
-  fullStackDeveloper('full-stack-developer'),
   a2English('a2-english-for-developers'),
   b1English('b1-english-for-developers'),
   a2Spanish('a2-professional-spanish'),
@@ -102,7 +101,6 @@ class SuperBlock {
       dashedName: dashedName,
       name: name,
       blocks: (data[data.keys.first]['blocks']).map<Block>((block) {
-
         return Block.fromJson(
           block['meta'],
           block['intro'],
