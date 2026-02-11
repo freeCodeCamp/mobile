@@ -73,7 +73,7 @@ class EnglishViewModel extends BaseViewModel {
       if (challenge.fillInTheBlank == null) break;
       inputValues[i] = inputValues[i].trim();
 
-      bool value = inputValues[i] == challenge.fillInTheBlank!.blanks[i].answer;
+      bool value = inputValues[i].toLowerCase() == challenge.fillInTheBlank!.blanks[i].answer.toLowerCase();
       correctIncorrect['blank_correct_$i'] = value;
     }
 
