@@ -114,4 +114,40 @@ void main() {
       expect(formatChallengeDate(date), '2025-12-31');
     });
   });
+
+  group('parseSyntaxError', () {
+    test('parses syntax error with line number', () {
+      final errorMessage =
+          'Exception: Babel transpilation failed: SyntaxError: unknown: Unexpected token (4:0)';
+      final result = parseSyntaxError(errorMessage);
+      expect(
+        result,
+        'There is a syntax error on line 3. Please check for missing brackets, quotes, or other syntax issues.',
+      );
+    });
+
+    test('parses syntax error with different line number', () {
+      final errorMessage = 'SyntaxError: Unexpected identifier (15:22)';
+      final result = parseSyntaxError(errorMessage);
+      expect(
+        result,
+        'There is a syntax error on line 14. Please check for missing brackets, quotes, or other syntax issues.',
+      );
+    });
+
+    test('returns generic message for Babel error without line numbers', () {
+      final errorMessage = 'Babel transpilation failed: unknown error';
+      final result = parseSyntaxError(errorMessage);
+      expect(
+        result,
+        'There is a syntax error in your code. Please check for missing brackets, quotes, or other syntax issues.',
+      );
+    });
+
+    test('returns original message for non-syntax errors', () {
+      final errorMessage = 'Some other error occurred';
+      final result = parseSyntaxError(errorMessage);
+      expect(result, 'Some other error occurred');
+    });
+  });
 }

@@ -25,7 +25,7 @@ jobs:
         gradle-version: [8.7]
         java-version: [17]
         android-api-level: [35]
-        node-version: [22]
+        node-version: [24]
         pnpm-version: [10]
         flutter-version: ["3.38.x"]
 
@@ -122,7 +122,6 @@ jobs:
         working-directory: freeCodeCamp
         run: |
           pnpm install
-          pnpm turbo compile
           pnpm run build:curriculum
           pnpm run clean:packages
 

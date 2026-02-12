@@ -55,6 +55,11 @@ Future<void> main({bool testing = false}) async {
 
   runApp(const FreeCodeCampMobileApp());
 
+  WidgetsBinding.instance.addPostFrameCallback((_) async {
+    await NotificationService().requestPermission();
+    await DailyChallengeNotificationService().setupNotifications();
+  });
+
   await QuickActionsService().init();
 }
 
