@@ -8,7 +8,7 @@ import 'package:stacked/stacked.dart';
 class AudioPlayerView extends StatelessWidget {
   const AudioPlayerView({super.key, required this.audio});
 
-  final EnglishAudio audio;
+  final EnglishScene audio;
 
   @override
   Widget build(BuildContext context) {
@@ -16,7 +16,7 @@ class AudioPlayerView extends StatelessWidget {
       viewModelBuilder: () => AudioPlayerViewmodel(),
       onViewModelReady: (model) => {
         model.initPositionListener(),
-        model.audioService.loadEnglishAudio(audio)
+        model.audioService.loadCurriculumAudio(audio)
       },
       onDispose: (model) => model.onDispose(),
       builder: (context, model, child) => Padding(
@@ -48,7 +48,7 @@ class InnerAudioWidget extends StatelessWidget {
   });
 
   final AudioPlayerViewmodel model;
-  final EnglishAudio audio;
+  final EnglishScene audio;
   final PlaybackState playerState;
 
   @override
