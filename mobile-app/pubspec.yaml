@@ -86,6 +86,7 @@ flutter:
     - assets/sql/
     - assets/test_data/news_post.json
     - assets/test_data/news_feed.json
+    - assets/test_data/quiz_with_audio.json
     - assets/database/bookmarked-article.db
     - assets/learn/
     - assets/test_runner/dist/

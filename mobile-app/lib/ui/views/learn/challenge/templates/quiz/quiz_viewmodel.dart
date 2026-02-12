@@ -1,5 +1,8 @@
+import 'dart:convert';
+import 'package:flutter/services.dart';
 import 'package:freecodecamp/app/app.locator.dart';
 import 'package:freecodecamp/models/learn/challenge_model.dart';
+import 'package:freecodecamp/service/developer_service.dart';
 import 'package:freecodecamp/service/learn/learn_service.dart';
 import 'package:freecodecamp/ui/views/learn/widgets/quiz_widget.dart';
 import 'package:stacked/stacked.dart';
@@ -25,6 +28,16 @@ class QuizViewModel extends BaseViewModel {
   List<QuizWidgetQuestion> get quizQuestions => _quizQuestions;
 
   final LearnService learnService = locator<LearnService>();
+  final DeveloperService developerService = locator<DeveloperService>();
+
+  Future<Challenge> loadTestQuizData() async {
+    String jsonString = await rootBundle.loadString(
+      'assets/test_data/quiz_with_audio.json',
+    );
+
+    var decodedJson = jsonDecode(jsonString);
+    return Challenge.fromJson(decodedJson);
+  }
 
   set setQuizQuestions(List<QuizWidgetQuestion> questions) {
     _quizQuestions = questions;
@@ -46,7 +59,15 @@ class QuizViewModel extends BaseViewModel {
     notifyListeners();
   }
 
-  void initChallenge(Challenge challenge) {
+  Future<void> initChallenge(Challenge challenge) async {
+    // In development mode, load test data with audio instead of real challenge
+    final isDevMode = await developerService.developmentMode();
+    print('Development mode: $isDevMode');
+
+    if (isDevMode) {
+      challenge = await loadTestQuizData();
+    }
+
     // Randomly select a question set from challenge.quizzes
     final questionSet =
         (challenge.quizzes != null && challenge.quizzes!.isNotEmpty)
