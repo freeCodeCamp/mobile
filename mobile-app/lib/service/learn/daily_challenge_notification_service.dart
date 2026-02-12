@@ -49,21 +49,11 @@ class DailyChallengeNotificationService {
       initializationSettings,
       onDidReceiveNotificationResponse: _onNotificationResponse,
     );
+  }
 
-    bool permissionGranted = false;
-    if (Platform.isAndroid) {
-      permissionGranted = await _flutterLocalNotificationsPlugin
-              .resolvePlatformSpecificImplementation<
-                  AndroidFlutterLocalNotificationsPlugin>()
-              ?.requestNotificationsPermission() ??
-          false;
-    } else {
-      // For iOS, we assume permission is granted after init
-      permissionGranted = true;
-    }
+  Future<void> setupNotifications() async {
+    final permissionGranted = await areSystemNotificationsEnabled();
 
-    // Auto-enable daily notifications if system permission is granted
-    // and user hasn't explicitly disabled them
     if (permissionGranted) {
       final prefs = await SharedPreferences.getInstance();
       final hasSetPreference =
