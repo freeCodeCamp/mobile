@@ -12,6 +12,7 @@ class Tutorial {
   final String authorSlug;
   final String? createdAt;
   final List<Widget> tagNames;
+  final List<dynamic> rawTags;
   final String? url;
   final String? text;
 
@@ -26,13 +27,15 @@ class Tutorial {
     required this.authorSlug,
     this.createdAt,
     this.tagNames = const [],
+    this.rawTags = const [],
     this.url,
     this.text,
   });
 
   static List<Widget> returnTags(
-    list,
-  ) {
+    list, {
+    bool compact = false,
+  }) {
     List<Widget> tags = [];
 
     for (int i = 0; i < list.length; i++) {
@@ -40,6 +43,7 @@ class Tutorial {
         tagName: list[i]['name'],
         tagSlug: list[i]['slug'] ?? list[i]['id'],
         key: UniqueKey(),
+        compact: compact,
       ));
     }
     return tags;
@@ -57,6 +61,7 @@ class Tutorial {
       authorName: data['author']['name'],
       authorSlug: data['author']['username'],
       tagNames: returnTags(data['tags']),
+      rawTags: data['tags'] ?? [],
       id: data['id'],
       slug: data['slug'],
     );
@@ -72,6 +77,7 @@ class Tutorial {
       authorName: data['author']['name'],
       authorSlug: returnSlug(data['author']['url']),
       tagNames: returnTags(data['tags']),
+      rawTags: data['tags'] ?? [],
       id: data['objectID'],
       slug: data['slug'],
     );
@@ -92,6 +98,7 @@ class Tutorial {
       authorSlug: json['author']['username'],
       profileImage: json['author']['profilePicture'],
       tagNames: returnTags(json['tags']),
+      rawTags: json['tags'] ?? [],
       id: json['id'],
       title: json['title'],
       url: json['url'],

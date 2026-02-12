@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:freecodecamp/extensions/i18n_extension.dart';
 import 'package:freecodecamp/models/news/tutorial_model.dart';
 import 'package:freecodecamp/ui/views/news/news-feed/news_feed_viewmodel.dart';
+import 'package:freecodecamp/ui/views/news/widgets/tag_widget.dart';
 import 'package:infinite_scroll_pagination/infinite_scroll_pagination.dart';
 import 'package:stacked/stacked.dart';
 
@@ -82,8 +83,8 @@ class NewsFeedView extends StatelessWidget {
               fetchNextPage: fetchNextPage,
               separatorBuilder: (context, int i) => const Divider(
                 color: Color.fromRGBO(0x2A, 0x2A, 0x40, 1),
-                thickness: 3,
-                height: 3,
+                thickness: 1,
+                height: 1,
               ),
               builderDelegate: PagedChildBuilderDelegate<Tutorial>(
                 itemBuilder: (context, tutorial, index) => Container(
@@ -126,7 +127,7 @@ class NewsFeedView extends StatelessWidget {
   //   );
   // }
 
-  InkWell tutorialThumbnailBuilder(Tutorial tutorial, NewsFeedViewModel model) {
+  Widget tutorialThumbnailBuilder(Tutorial tutorial, NewsFeedViewModel model) {
     return InkWell(
       key: Key(tutorial.id),
       splashColor: Colors.transparent,
@@ -134,135 +135,129 @@ class NewsFeedView extends StatelessWidget {
         model.navigateTo(tutorial.id, tutorial.slug);
       },
       child: Padding(
-        padding: const EdgeInsets.only(bottom: 32.0),
-        child: thumbnailView(tutorial, model),
-      ),
-    );
-  }
-
-  Column thumbnailView(Tutorial tutorial, NewsFeedViewModel model) {
-    return Column(
-      children: [
-        Container(
-          color: const Color.fromRGBO(0x2A, 0x2A, 0x40, 1),
-          child: AspectRatio(
-            aspectRatio: 16 / 9,
-            child: tutorial.featureImage == null
-                ? Image.asset(
-                    'assets/images/freecodecamp-banner.png',
-                    fit: BoxFit.cover,
-                  )
-                : CachedNetworkImage(
-                    imageUrl: tutorial.featureImage!,
-                    errorWidget: (context, url, error) {
-                      log('Error loading image: $url - $tutorial.featureImage $error');
-                      return const Icon(Icons.error);
-                    },
-                    imageBuilder: (context, imageProvider) => Container(
-                      decoration: BoxDecoration(
-                        image: DecorationImage(
-                          image: imageProvider,
-                          fit: BoxFit.cover,
-                        ),
-                      ),
-                    ),
-                  ),
-          ),
-        ),
-        Align(
-          alignment: Alignment.centerLeft,
-          child: Padding(
-            padding: const EdgeInsets.only(left: 16, right: 16),
-            child: Wrap(
-              children: [
-                for (int j = 0; j < tutorial.tagNames.length && j < 3; j++)
-                  tutorial.tagNames[j]
-              ],
-            ),
-          ),
-        ),
-        Container(
-          padding: const EdgeInsets.only(left: 16, right: 16, top: 8),
-          child: tutorialHeader(tutorial, model),
-        )
-      ],
-    );
-  }
-
-  Widget tutorialHeader(Tutorial tutorial, NewsFeedViewModel model) {
-    return Column(
-      children: [
-        Row(
+        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Expanded(
-              child: Text(
-                tutorial.title,
-                maxLines: 2,
-                style: const TextStyle(
-                  fontSize: 20,
-                  overflow: TextOverflow.ellipsis,
-                  height: 1.5,
-                ),
-              ),
-            ),
-          ],
-        ),
-        Row(
-          children: [
-            Padding(
-              padding: const EdgeInsets.only(right: 16, top: 16),
-              child: InkWell(
-                onTap: () {
-                  model.navigateToAuthor(tutorial.authorSlug);
-                },
+            ClipRRect(
+              borderRadius: BorderRadius.circular(12),
+              child: AspectRatio(
+                aspectRatio: 16 / 9,
                 child: Container(
-                  width: 45,
-                  height: 45,
-                  color: const Color.fromRGBO(0x2A, 0x2A, 0x40, 1),
-                  child: tutorial.profileImage == null
+                  color: const Color(0xFF2A2A40),
+                  child: tutorial.featureImage == null
                       ? Image.asset(
-                          'assets/images/placeholder-profile-img.png',
-                          width: 45,
-                          height: 45,
+                          'assets/images/freecodecamp-banner.png',
                           fit: BoxFit.cover,
                         )
                       : CachedNetworkImage(
-                          imageUrl: tutorial.profileImage as String,
-                          errorWidget: (context, url, error) => Image.asset(
-                            'assets/images/placeholder-profile-img.png',
-                            width: 45,
-                            height: 45,
-                            fit: BoxFit.cover,
+                          imageUrl: tutorial.featureImage!,
+                          fit: BoxFit.cover,
+                          placeholder: (context, url) => Container(
+                            color: const Color(0xFF2A2A40),
                           ),
-                          imageBuilder: (context, imageProvider) => Container(
-                            decoration: BoxDecoration(
-                              image: DecorationImage(
-                                image: imageProvider,
-                                fit: BoxFit.cover,
-                              ),
-                            ),
-                          ),
+                          errorWidget: (context, url, error) {
+                            log('Error loading image: $url - ${tutorial.featureImage} $error');
+                            return Image.asset(
+                              'assets/images/freecodecamp-banner.png',
+                              fit: BoxFit.cover,
+                            );
+                          },
                         ),
                 ),
               ),
             ),
-            Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
+            const SizedBox(height: 8),
+            if (tutorial.rawTags.isNotEmpty)
+              Padding(
+                padding: const EdgeInsets.only(bottom: 6),
+                child: Wrap(
+                  spacing: 0,
+                  runSpacing: 4,
+                  children: [
+                    for (int j = 0; j < tutorial.rawTags.length && j < 3; j++)
+                      TagButton(
+                        tagName: tutorial.rawTags[j]['name'],
+                        tagSlug: tutorial.rawTags[j]['slug'] ?? tutorial.rawTags[j]['id'],
+                        compact: true,
+                        key: UniqueKey(),
+                      ),
+                  ],
+                ),
+              ),
+            Text(
+              tutorial.title,
+              maxLines: 2,
+              overflow: TextOverflow.ellipsis,
+              style: const TextStyle(
+                fontSize: 16,
+                fontWeight: FontWeight.w600,
+                height: 1.25,
+              ),
+            ),
+            const SizedBox(height: 8),
+            Row(
               children: [
-                Padding(
-                  padding: const EdgeInsets.only(bottom: 10, top: 16),
-                  child: Text(
-                    tutorial.authorName.toUpperCase(),
+                GestureDetector(
+                  onTap: () => model.navigateToAuthor(tutorial.authorSlug),
+                  child: ClipRRect(
+                    borderRadius: BorderRadius.circular(12),
+                    child: SizedBox(
+                      width: 24,
+                      height: 24,
+                      child: tutorial.profileImage == null
+                          ? Image.asset(
+                              'assets/images/placeholder-profile-img.png',
+                              fit: BoxFit.cover,
+                            )
+                          : CachedNetworkImage(
+                              imageUrl: tutorial.profileImage!,
+                              fit: BoxFit.cover,
+                              placeholder: (context, url) => Container(
+                                color: const Color(0xFF2A2A40),
+                              ),
+                              errorWidget: (context, url, error) => Image.asset(
+                                'assets/images/placeholder-profile-img.png',
+                                fit: BoxFit.cover,
+                              ),
+                            ),
+                    ),
+                  ),
+                ),
+                const SizedBox(width: 8),
+                Flexible(
+                  child: GestureDetector(
+                    onTap: () => model.navigateToAuthor(tutorial.authorSlug),
+                    child: Text(
+                      tutorial.authorName,
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                      style: TextStyle(
+                        fontSize: 13,
+                        color: Colors.white.withValues(alpha: 0.8),
+                      ),
+                    ),
+                  ),
+                ),
+                Text(
+                  '  •  ',
+                  style: TextStyle(
+                    fontSize: 13,
+                    color: Colors.white.withValues(alpha: 0.5),
                   ),
                 ),
                 Text(
                   NewsFeedViewModel.parseDate(tutorial.createdAt),
+                  style: TextStyle(
+                    fontSize: 13,
+                    color: Colors.white.withValues(alpha: 0.5),
+                  ),
                 ),
               ],
             ),
           ],
         ),
-      ],
+      ),
     );
   }
 }
