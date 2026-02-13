@@ -49,7 +49,8 @@ class CharacterState {
 }
 
 class SceneViewModel extends BaseViewModel {
-  static const String _cdnBase = 'https://cdn.freecodecamp.org/curriculum/english/animation-assets/images';
+  static const String _cdnBase =
+      'https://cdn.freecodecamp.org/curriculum/english/animation-assets/images';
   static const int _minMouthInterval = 85;
   static const int _maxMouthInterval = 105;
   static const int _minBlinkInterval = 2000;
@@ -59,7 +60,8 @@ class SceneViewModel extends BaseViewModel {
   final audioService = locator<AppAudioService>().audioHandler;
   final _sceneAssetsService = SceneAssetsService();
   SceneAssets? _sceneAssets;
-  final StreamController<Duration> position = StreamController<Duration>.broadcast();
+  final StreamController<Duration> position =
+      StreamController<Duration>.broadcast();
   final Map<String, Timer> _mouthAnimationTimers = {};
   final Map<String, Timer> _blinkTimers = {};
   final Set<int> _appliedCommandIndices = {};
@@ -97,7 +99,8 @@ class SceneViewModel extends BaseViewModel {
 
   // Helper methods for DRY code
   int _findCharacterIndex(String characterName) {
-    return _availableCharacters.indexWhere((c) => c.characterName == characterName);
+    return _availableCharacters
+        .indexWhere((c) => c.characterName == characterName);
   }
 
   void _clearTimers(Map<String, Timer> timers) {
@@ -130,13 +133,14 @@ class SceneViewModel extends BaseViewModel {
     await startAudio();
   }
 
-  Duration searchTimeStamp(bool forwards, int currentPosition, EnglishAudio audio) {
+  Duration searchTimeStamp(
+      bool forwards, int currentPosition, EnglishScene audio) {
     return Duration(milliseconds: currentPosition + (forwards ? 2000 : -2));
   }
 
   void initPositionListener() {
     AudioService.position.listen((event) {
-      if (position.isClosed) return;  
+      if (position.isClosed) return;
       position.add(event);
       _updateSceneForTime(event);
     });
@@ -147,11 +151,12 @@ class SceneViewModel extends BaseViewModel {
       if (_isPlaying) {
         _startBlinkAnimations();
       } else {
-        _stopAllMouthAnimations();  
+        _stopAllMouthAnimations();
         _stopAllBlinkAnimations();
       }
 
-      if (state.processingState == AudioProcessingState.completed && !_isCompleted) {
+      if (state.processingState == AudioProcessingState.completed &&
+          !_isCompleted) {
         _handleAudioComplete();
       }
     });
@@ -174,7 +179,8 @@ class SceneViewModel extends BaseViewModel {
         final command = _scene!.commands[i];
         _appliedCommandIndices.add(i);
 
-        if (command.background != null && _currentBackground != command.background) {
+        if (command.background != null &&
+            _currentBackground != command.background) {
           _currentBackground = command.background;
         }
         _updateCharacterState(command);
@@ -228,7 +234,6 @@ class SceneViewModel extends BaseViewModel {
               showMouth: true,
               mouthType: 'closed',
               opacity: char.opacity?.toDouble() ?? 1.0,
-
             ))
         .toList();
   }
@@ -237,7 +242,8 @@ class SceneViewModel extends BaseViewModel {
     if (_scene == null) return;
 
     // Apply all commands that happen before the audio starts
-    final audioStartTime = double.tryParse(_scene!.setup.audio.startTime) ?? 0.0;
+    final audioStartTime =
+        double.tryParse(_scene!.setup.audio.startTime) ?? 0.0;
 
     for (final command in _scene!.commands) {
       final startTime = command.startTime.toDouble();
@@ -256,10 +262,11 @@ class SceneViewModel extends BaseViewModel {
     _appliedCommandIndices.clear();
 
     if (_scene != null) {
-      final startTime = double.parse(_scene!.setup.audio.startTime);
+      final startTime = double.tryParse(_scene!.setup.audio.startTime) ?? 0.0;
       _audioStartOffset = startTime;
       if (startTime > 0) {
-        await Future.delayed(Duration(milliseconds: (startTime * 1000).toInt()));
+        await Future.delayed(
+            Duration(milliseconds: (startTime * 1000).toInt()));
       }
     }
 
@@ -275,7 +282,8 @@ class SceneViewModel extends BaseViewModel {
   void _updateSceneForTime(Duration currentTime) {
     if (_scene == null || !_isPlaying || _isCompleted) return;
 
-    final currentSeconds = (currentTime.inMilliseconds / 1000) + _audioStartOffset;
+    final currentSeconds =
+        (currentTime.inMilliseconds / 1000) + _audioStartOffset;
     bool sceneChanged = false;
     final Map<String, bool> charactersSpeaking = {};
 
@@ -304,7 +312,8 @@ class SceneViewModel extends BaseViewModel {
       if (currentSeconds >= startTime && !_appliedCommandIndices.contains(i)) {
         _appliedCommandIndices.add(i);
 
-        if (command.background != null && _currentBackground != command.background) {
+        if (command.background != null &&
+            _currentBackground != command.background) {
           _currentBackground = command.background;
           sceneChanged = true;
         }
@@ -337,7 +346,8 @@ class SceneViewModel extends BaseViewModel {
 
       if (newPosition == null && newOpacity == null) return false;
 
-      _availableCharacters[characterIndex] = _availableCharacters[characterIndex].copyWith(
+      _availableCharacters[characterIndex] =
+          _availableCharacters[characterIndex].copyWith(
         position: newPosition,
         opacity: newOpacity?.toDouble(),
       );
@@ -345,7 +355,8 @@ class SceneViewModel extends BaseViewModel {
     } else {
       _availableCharacters.add(CharacterState(
         characterName: command.character,
-        position: command.position ?? const SceneCharacterPosition(x: 0, y: 0, z: 0),
+        position:
+            command.position ?? const SceneCharacterPosition(x: 0, y: 0, z: 0),
         showMouth: true,
         mouthType: 'closed',
         opacity: command.opacity?.toDouble() ?? 1.0,
@@ -370,7 +381,8 @@ class SceneViewModel extends BaseViewModel {
 
     final characterIndex = _findCharacterIndex(characterName);
     if (characterIndex >= 0) {
-      _availableCharacters[characterIndex] = _availableCharacters[characterIndex].copyWith(
+      _availableCharacters[characterIndex] =
+          _availableCharacters[characterIndex].copyWith(
         showMouth: true,
         mouthType: 'open',
       );
@@ -378,7 +390,8 @@ class SceneViewModel extends BaseViewModel {
     }
 
     void scheduleMouthUpdate(String nextMouthType) {
-      final interval = _minMouthInterval + random.nextInt(_maxMouthInterval - _minMouthInterval + 1);
+      final interval = _minMouthInterval +
+          random.nextInt(_maxMouthInterval - _minMouthInterval + 1);
 
       _mouthAnimationTimers[characterName] = Timer(
         Duration(milliseconds: interval),
@@ -409,7 +422,8 @@ class SceneViewModel extends BaseViewModel {
 
     final characterIndex = _findCharacterIndex(characterName);
     if (characterIndex >= 0) {
-      _availableCharacters[characterIndex] = _availableCharacters[characterIndex].copyWith(
+      _availableCharacters[characterIndex] =
+          _availableCharacters[characterIndex].copyWith(
         showMouth: true,
         mouthType: 'closed',
       );
@@ -434,8 +448,8 @@ class SceneViewModel extends BaseViewModel {
     final random = Random();
 
     void scheduleNextBlink() {
-      final interval =
-          _minBlinkInterval + random.nextInt(_maxBlinkInterval - _minBlinkInterval + 1);
+      final interval = _minBlinkInterval +
+          random.nextInt(_maxBlinkInterval - _minBlinkInterval + 1);
 
       _blinkTimers[characterName] = Timer(
         Duration(milliseconds: interval),
@@ -445,7 +459,8 @@ class SceneViewModel extends BaseViewModel {
           if (characterIndex >= 0) {
             // Close eyes
             _availableCharacters[characterIndex] =
-                _availableCharacters[characterIndex].copyWith(eyeState: 'closed');
+                _availableCharacters[characterIndex]
+                    .copyWith(eyeState: 'closed');
             notifyListeners();
 
             // Open eyes after blink duration
@@ -503,7 +518,9 @@ class SceneViewModel extends BaseViewModel {
   }
 
   String getBackgroundUrl(String backgroundName) {
-    final cleanName = backgroundName.endsWith('.png') ? backgroundName : '$backgroundName.png';
+    final cleanName = backgroundName.endsWith('.png')
+        ? backgroundName
+        : '$backgroundName.png';
     if (_sceneAssets != null) {
       return '${_sceneAssets!.backgrounds}/$cleanName';
     }
@@ -511,28 +528,32 @@ class SceneViewModel extends BaseViewModel {
   }
 
   String getCharacterBaseUrl(String characterName) =>
-      _getCharacterAssets(characterName)?.base ?? _buildFallbackUrl(characterName, 'base.png');
+      _getCharacterAssets(characterName)?.base ??
+      _buildFallbackUrl(characterName, 'base.png');
 
   String getCharacterBrowsUrl(String characterName) =>
-      _getCharacterAssets(characterName)?.brows ?? _buildFallbackUrl(characterName, 'brows.png');
+      _getCharacterAssets(characterName)?.brows ??
+      _buildFallbackUrl(characterName, 'brows.png');
 
   String getCharacterEyesUrl(String characterName, String eyeState) {
     final assets = _getCharacterAssets(characterName);
     if (assets != null) {
       return eyeState == 'closed' ? assets.eyesClosed : assets.eyesOpen;
     }
-    return _buildFallbackUrl(
-        characterName, eyeState == 'closed' ? 'eyes-closed.png' : 'eyes-open.png');
+    return _buildFallbackUrl(characterName,
+        eyeState == 'closed' ? 'eyes-closed.png' : 'eyes-open.png');
   }
 
-  String? getCharacterGlassesUrl(String characterName) => _getCharacterAssets(characterName)?.glasses;
+  String? getCharacterGlassesUrl(String characterName) =>
+      _getCharacterAssets(characterName)?.glasses;
 
   String getCharacterMouthUrl(String characterName, String mouthType) {
     final assets = _getCharacterAssets(characterName);
     if (assets != null) {
       return mouthType == 'open' ? assets.mouthOpen : assets.mouthClosed;
     }
-    return _buildFallbackUrl(characterName, mouthType == 'open' ? 'mouth-open.png' : 'mouth-closed.png');
+    return _buildFallbackUrl(characterName,
+        mouthType == 'open' ? 'mouth-open.png' : 'mouth-closed.png');
   }
 
   void onDispose() {

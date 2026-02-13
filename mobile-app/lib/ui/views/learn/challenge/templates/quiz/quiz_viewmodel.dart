@@ -59,6 +59,7 @@ class QuizViewModel extends BaseViewModel {
               text: q.text,
               answers: q.answers,
               solution: q.solution,
+              audioData: q.audioData,
             ))
         .toList();
   }
@@ -114,6 +115,7 @@ class QuizViewModel extends BaseViewModel {
               text: q.text,
               answers: q.answers,
               solution: q.solution,
+              audioData: q.audioData,
             ))
         .toList();
 

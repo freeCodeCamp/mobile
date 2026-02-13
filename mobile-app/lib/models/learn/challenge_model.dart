@@ -67,7 +67,7 @@ class Challenge {
 
   // English Challenges
   final FillInTheBlank? fillInTheBlank;
-  final EnglishAudio? audio;
+  final EnglishScene? audio;
   final Scene? scene;
 
   // Nodules for interactive challenges
@@ -125,7 +125,7 @@ class Challenge {
           ? FillInTheBlank.fromJson(data['fillInTheBlank'])
           : null,
       audio: data['scene'] != null
-          ? EnglishAudio.fromJson(data['scene']['setup']['audio'])
+          ? EnglishScene.fromJson(data['scene']['setup']['audio'])
           : null,
       tests: (data['tests'] ?? [])
           .map<ChallengeTest>((file) => ChallengeTest.fromJson(file))
@@ -456,11 +456,13 @@ class QuizQuestion {
   final String text;
   final List<Answer> answers;
   final int solution;
+  final QuizAudioData? audioData;
 
   const QuizQuestion({
     required this.text,
     required this.answers,
     required this.solution,
+    this.audioData,
   });
 
   factory QuizQuestion.fromJson(Map<String, dynamic> data) {
@@ -482,7 +484,13 @@ class QuizQuestion {
         allAnswers.indexWhere((a) => a.answer == data['answer']) + 1;
 
     return QuizQuestion(
-        text: data['text'], answers: allAnswers, solution: solutionIndex);
+      text: data['text'],
+      answers: allAnswers,
+      solution: solutionIndex,
+      audioData: data['audioData'] != null
+          ? QuizAudioData.fromJson(data['audioData'])
+          : null,
+    );
   }
 }
 
@@ -526,7 +534,7 @@ class Scene {
 class SceneSetup {
   final String background;
   final bool? alwaysShowDialogue;
-  final EnglishAudio audio;
+  final EnglishScene audio;
   final List<SceneCharacter> characters;
 
   const SceneSetup({
@@ -539,7 +547,7 @@ class SceneSetup {
   factory SceneSetup.fromJson(Map<String, dynamic> data) {
     return SceneSetup(
       background: data['background'],
-      audio: EnglishAudio.fromJson(data['audio']),
+      audio: EnglishScene.fromJson(data['audio']),
       characters: data['characters']
           .map<SceneCharacter>(
             (character) => SceneCharacter.fromJson(character),
@@ -642,25 +650,96 @@ class SceneDialogue {
   }
 }
 
-class EnglishAudio {
+abstract class AudioClip {
+  String get fileName;
+  String? get startTimeStamp;
+  String? get finishTimeStamp;
+}
+
+class EnglishScene implements AudioClip {
+  @override
   final String fileName;
   final String startTime;
+  @override
   final String? startTimeStamp;
+  @override
   final String? finishTimeStamp;
 
-  const EnglishAudio({
+  const EnglishScene({
     required this.fileName,
     required this.startTime,
     required this.startTimeStamp,
     required this.finishTimeStamp,
   });
 
-  factory EnglishAudio.fromJson(Map<String, dynamic> data) {
-    return EnglishAudio(
+  factory EnglishScene.fromJson(Map<String, dynamic> data) {
+    return EnglishScene(
       fileName: data['filename'],
       startTime: data['startTime'].toString(),
       startTimeStamp: data['startTimestamp']?.toString(),
       finishTimeStamp: data['finishTimestamp']?.toString(),
+    );
+  }
+}
+
+class QuizTranscriptLine {
+  final String character;
+  final String text;
+
+  const QuizTranscriptLine({
+    required this.character,
+    required this.text,
+  });
+
+  factory QuizTranscriptLine.fromJson(Map<String, dynamic> data) {
+    return QuizTranscriptLine(
+      character: data['character'],
+      text: data['text'],
+    );
+  }
+}
+
+class QuizAudio implements AudioClip {
+  @override
+  final String fileName;
+  @override
+  final String? startTimeStamp;
+  @override
+  final String? finishTimeStamp;
+
+  const QuizAudio({
+    required this.fileName,
+    this.startTimeStamp,
+    this.finishTimeStamp,
+  });
+
+  factory QuizAudio.fromJson(Map<String, dynamic> data) {
+    return QuizAudio(
+      fileName: data['filename'],
+      startTimeStamp: data['startTimestamp']?.toString(),
+      finishTimeStamp: data['finishTimestamp']?.toString(),
+    );
+  }
+}
+
+class QuizAudioData {
+  final QuizAudio audio;
+  final List<QuizTranscriptLine> transcript;
+
+  const QuizAudioData({
+    required this.audio,
+    required this.transcript,
+  });
+
+  factory QuizAudioData.fromJson(Map<String, dynamic> data) {
+    final audioData = data['audio'];
+    return QuizAudioData(
+      audio: QuizAudio.fromJson(audioData),
+      transcript: (data['transcript'] as List)
+          .map<QuizTranscriptLine>(
+            (item) => QuizTranscriptLine.fromJson(item),
+          )
+          .toList(),
     );
   }
 }
