@@ -5,8 +5,8 @@
   "license": "BSD-3-Clause",
   "private": true,
   "engines": {
-    "node": ">=16",
-    "npm": ">=8"
+    "node": ">=24",
+    "pnpm": ">=9"
   },
   "repository": {
     "type": "git",
@@ -18,12 +18,12 @@
   "homepage": "https://github.com/freeCodeCamp/mobile#readme",
   "author": "freeCodeCamp <team@freecodecamp.org>",
   "scripts": {
-    "build:api": "cd mobile-api && npm run build",
+    "build:api": "cd mobile-api && pnpm run build",
     "develop": "npm-run-all flutter:build-runner -p develop:*",
-    "develop:api": "cd mobile-api && npm run dev",
+    "develop:api": "cd mobile-api && pnpm run dev",
     "develop:app": "cd mobile-app && flutter run",
     "flutter:build-runner": "cd mobile-app && flutter pub run build_runner build --delete-conflicting-outputs",
-    "install:api": "cd mobile-api && npm ci",
+    "install:api": "cd mobile-api && pnpm install --frozen-lockfile",
     "install:app": "cd mobile-app && flutter pub get",
     "postinstall": "npm-run-all -p install:*",
     "prepare": "husky"
