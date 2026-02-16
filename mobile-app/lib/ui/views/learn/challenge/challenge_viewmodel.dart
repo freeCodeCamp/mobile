@@ -69,6 +69,9 @@ class ChallengeViewModel extends BaseViewModel {
   bool _runningTests = false;
   bool get runningTests => _runningTests;
 
+  List<int> _failedTestIndexes = [];
+  List<int> get failedTestIndexes => _failedTestIndexes;
+
   bool _hasTypedInEditor = false;
   bool get hasTypedInEditor => _hasTypedInEditor;
 
@@ -694,6 +697,7 @@ class ChallengeViewModel extends BaseViewModel {
   void runTests() async {
     setShowPanel = false;
     setIsRunningTests = true;
+    _failedTestIndexes = [];
     ChallengeTest? failedTest;
     Map<dynamic, dynamic>? failedTestErr;
     ScriptBuilder builder = ScriptBuilder();
@@ -757,7 +761,8 @@ class ChallengeViewModel extends BaseViewModel {
       },
     );
 
-    for (ChallengeTest test in challenge!.tests) {
+    for (int i = 0; i < challenge!.tests.length; i++) {
+      ChallengeTest test = challenge!.tests[i];
       final testRes = await testController!.callAsyncJavaScript(
         functionBody: ScriptBuilder.testExecutionScript,
         arguments: {
@@ -771,6 +776,7 @@ class ChallengeViewModel extends BaseViewModel {
         failedTestsConsole.add(
           '<li>${replacePlaceholders(test.instruction, failedTestErr)}</li>',
         );
+        _failedTestIndexes.add(i);
       } else if (testRes == null) {
         log('TEST RESULT NULL: $testRes');
         throw Exception('Test result is null ${testRes.toString()}');
