@@ -13,7 +13,7 @@ class ExampleEditor extends StatelessWidget {
     required this.parser,
   });
 
-  final List<Nodules> nodules;
+  final List<Nodule> nodules;
   final HTMLParser parser;
 
   @override
@@ -29,7 +29,7 @@ class ExampleEditor extends StatelessWidget {
               if (nodule.type == NoduleType.paragraph) {
                 return Column(
                   children: parser.parse(
-                    nodule.asString(),
+                    (nodule as ParagraphNodule).contents,
                     customStyles: {
                       '*': Style(
                         fontSize: FontSize(18),
@@ -42,8 +42,8 @@ class ExampleEditor extends StatelessWidget {
                 );
               } else if (nodule.type == NoduleType.interactiveEditor) {
                 return Column(
-                  children: nodule
-                      .asList()
+                  children: (nodule as InteractiveEditorNodule)
+                      .files
                       .map(
                         (file) => Padding(
                           padding: const EdgeInsets.only(bottom: 16.0),
