@@ -26,58 +26,54 @@ class ExampleEditor extends StatelessWidget {
         children: [
           ...nodules.map(
             (nodule) {
-              if (nodule.type == NoduleType.paragraph) {
-                return Column(
-                  children: parser.parse(
-                    (nodule as ParagraphNodule).contents,
-                    customStyles: {
-                      '*': Style(
-                        fontSize: FontSize(18),
-                      ),
-                      'ul': Style(
+              return switch (nodule) {
+                ParagraphNodule(:final contents) => Column(
+                    children: parser.parse(
+                      contents,
+                      customStyles: {
+                        '*': Style(
                           fontSize: FontSize(18),
-                          padding: HtmlPaddings.only(left: 10))
-                    },
-                  ),
-                );
-              } else if (nodule.type == NoduleType.interactiveEditor) {
-                return Column(
-                  children: (nodule as InteractiveEditorNodule)
-                      .files
-                      .map(
-                        (file) => Padding(
-                          padding: const EdgeInsets.only(bottom: 16.0),
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Text(
-                                file.ext.toUpperCase(),
-                                style: const TextStyle(
-                                  fontWeight: FontWeight.bold,
-                                  fontSize: 16,
-                                ),
-                              ),
-                              const SizedBox(height: 8),
-                              Editor(
-                                options: EditorOptions(
-                                  fontFamily: 'Hack',
-                                  takeFullHeight: false,
-                                  showLinebar: false,
-                                  isEditable: false,
-                                ),
-                                defaultLanguage: file.ext,
-                                defaultValue: file.contents,
-                                path: '/',
-                              ),
-                            ],
-                          ),
                         ),
-                      )
-                      .toList(),
-                );
-              } else {
-                return const SizedBox.shrink();
-              }
+                        'ul': Style(
+                            fontSize: FontSize(18),
+                            padding: HtmlPaddings.only(left: 10))
+                      },
+                    ),
+                  ),
+                InteractiveEditorNodule(:final files) => Column(
+                    children: files
+                        .map(
+                          (file) => Padding(
+                            padding: const EdgeInsets.only(bottom: 16.0),
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Text(
+                                  file.ext.toUpperCase(),
+                                  style: const TextStyle(
+                                    fontWeight: FontWeight.bold,
+                                    fontSize: 16,
+                                  ),
+                                ),
+                                const SizedBox(height: 8),
+                                Editor(
+                                  options: EditorOptions(
+                                    fontFamily: 'Hack',
+                                    takeFullHeight: false,
+                                    showLinebar: false,
+                                    isEditable: false,
+                                  ),
+                                  defaultLanguage: file.ext,
+                                  defaultValue: file.contents,
+                                  path: '/',
+                                ),
+                              ],
+                            ),
+                          ),
+                        )
+                        .toList(),
+                  )
+              };
             },
           )
         ],
