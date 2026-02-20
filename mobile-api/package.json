@@ -5,13 +5,13 @@
   "license": "BSD-3-Clause",
   "private": true,
   "engines": {
-    "node": ">=16",
-    "npm": ">=8"
+    "node": ">=24",
+    "pnpm": ">=9"
   },
   "scripts": {
     "build": "tsc",
     "dev": "nodemon src/index.ts",
-    "lint": "npm run lint:prettier && npm run lint:src",
+    "lint": "pnpm run lint:prettier && pnpm run lint:src",
     "lint:src": "eslint --max-warnings 0 .",
     "lint:prettier": "prettier --check .",
     "prettier:fix": "prettier --write .",
