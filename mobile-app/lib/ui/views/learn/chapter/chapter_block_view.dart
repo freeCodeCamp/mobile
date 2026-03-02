@@ -21,14 +21,6 @@ class ChapterBlockView extends ConsumerStatefulWidget {
 
 class _ChapterBlockViewState extends ConsumerState<ChapterBlockView> {
   @override
-  void initState() {
-    super.initState();
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      ref.read(chapterBlockViewModelProvider).init(ref);
-    });
-  }
-
-  @override
   Widget build(BuildContext context) {
     final model = ref.watch(chapterBlockViewModelProvider);
     return Scaffold(
@@ -60,8 +52,8 @@ class _ChapterBlockViewState extends ConsumerState<ChapterBlockView> {
 
             return BlockTemplateView(
               block: widget.blocks[index],
-              isOpen:
-                  model.blockOpenStates[widget.blocks[index].dashedName] ?? false,
+              isOpen: model.blockOpenStates[widget.blocks[index].dashedName] ??
+                  false,
               isOpenFunction: () => model.setBlockOpenClosedState(
                 widget.blocks,
                 index,

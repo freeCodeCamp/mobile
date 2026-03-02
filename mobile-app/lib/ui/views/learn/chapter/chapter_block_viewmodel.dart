@@ -5,14 +5,14 @@ import 'package:freecodecamp/models/learn/curriculum_model.dart';
 import 'package:freecodecamp/service/authentication/authentication_service.dart';
 
 class ChapterBlockViewmodel extends ChangeNotifier {
+  ChapterBlockViewmodel({
+    required AuthenticationService authenticationService,
+  }) : _authenticationService = authenticationService;
+
   Map<String, bool> _blockOpenStates = {};
   Map<String, bool> get blockOpenStates => _blockOpenStates;
 
-  late final AuthenticationService authenticationService;
-
-  void init(WidgetRef ref) {
-    authenticationService = ref.read(authenticationServiceProvider);
-  }
+  final AuthenticationService _authenticationService;
 
   set blockOpenStates(Map<String, bool> openStates) {
     _blockOpenStates = openStates;
@@ -32,12 +32,14 @@ class ChapterBlockViewmodel extends ChangeNotifier {
 
   void updateUserProgress() {
     if (AuthenticationService.staticIsloggedIn) {
-      authenticationService.fetchUser();
+      _authenticationService.fetchUser();
     }
   }
 }
 
 final chapterBlockViewModelProvider =
     ChangeNotifierProvider.autoDispose<ChapterBlockViewmodel>(
-  (ref) => ChapterBlockViewmodel(),
+  (ref) => ChapterBlockViewmodel(
+    authenticationService: ref.read(authenticationServiceProvider),
+  ),
 );

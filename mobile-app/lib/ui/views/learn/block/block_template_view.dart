@@ -25,7 +25,7 @@ class _BlockTemplateViewState extends ConsumerState<BlockTemplateView> {
     super.initState();
     WidgetsBinding.instance.addPostFrameCallback((_) async {
       final model = ref.read(blockTemplateViewModelProvider);
-      model.init(ref, widget.block.challengeTiles);
+      model.init(widget.block.challengeTiles);
       model.setIsDev = await model.developerService.developmentMode();
     });
   }

@@ -18,10 +18,19 @@ import 'package:freecodecamp/ui/views/learn/block/templates/link/link_view.dart'
 import 'package:freecodecamp/ui/views/learn/block/templates/list/list_view.dart';
 
 class BlockTemplateViewModel extends ChangeNotifier {
-  late final AuthenticationService auth;
-  late final LearnOfflineService learnOfflineService;
-  late final DeveloperService developerService;
-  late final LearnService learnService;
+  BlockTemplateViewModel({
+    required this.auth,
+    required this.learnOfflineService,
+    required this.developerService,
+    required this.learnService,
+  });
+
+  final AuthenticationService auth;
+  final LearnOfflineService learnOfflineService;
+  final DeveloperService developerService;
+  final LearnService learnService;
+  StreamSubscription<bool>? _authProgressSubscription;
+  bool _initialized = false;
 
   bool _isDev = false;
   bool get isDev => _isDev;
@@ -34,17 +43,21 @@ class BlockTemplateViewModel extends ChangeNotifier {
     notifyListeners();
   }
 
-  void init(WidgetRef ref, List<ChallengeListTile> challengeBatch) {
-    auth = ref.read(authenticationServiceProvider);
-    learnOfflineService = ref.read(learnOfflineServiceProvider);
-    developerService = ref.read(developerServiceProvider);
-    learnService = ref.read(learnServiceProvider);
+  void init(List<ChallengeListTile> challengeBatch) {
+    if (_initialized) return;
+    _initialized = true;
 
     setNumberOfCompletedChallenges(challengeBatch);
-    auth.progress.stream.listen(
+    _authProgressSubscription = auth.progress.stream.listen(
       (val) => setNumberOfCompletedChallenges(challengeBatch),
     );
     notifyListeners();
+  }
+
+  @override
+  void dispose() {
+    _authProgressSubscription?.cancel();
+    super.dispose();
   }
 
   void routeToChallengeView(Block block, String challengeId) {
@@ -176,5 +189,10 @@ class BlockTemplateViewModel extends ChangeNotifier {
 
 final blockTemplateViewModelProvider =
     ChangeNotifierProvider.autoDispose<BlockTemplateViewModel>(
-  (ref) => BlockTemplateViewModel(),
+  (ref) => BlockTemplateViewModel(
+    auth: ref.read(authenticationServiceProvider),
+    learnOfflineService: ref.read(learnOfflineServiceProvider),
+    developerService: ref.read(developerServiceProvider),
+    learnService: ref.read(learnServiceProvider),
+  ),
 );
