@@ -7,13 +7,13 @@ import 'package:freecodecamp/ui/views/learn/utils/challenge_utils.dart';
 import 'package:freecodecamp/ui/views/learn/widgets/assignment_widget.dart';
 import 'package:freecodecamp/ui/views/learn/widgets/audio/audio_player_view.dart';
 import 'package:freecodecamp/ui/views/learn/widgets/challenge_card.dart';
+import 'package:freecodecamp/ui/views/learn/widgets/example_editor.dart';
 import 'package:freecodecamp/ui/views/learn/widgets/explanation_widget.dart';
 import 'package:freecodecamp/ui/views/learn/widgets/quiz_widget.dart';
 import 'package:freecodecamp/ui/views/learn/widgets/scene/scene_view.dart';
 import 'package:freecodecamp/ui/views/learn/widgets/transcript_widget.dart';
 import 'package:freecodecamp/ui/views/learn/widgets/youtube_player_widget.dart';
 import 'package:freecodecamp/ui/views/news/html_handler/html_handler.dart';
-import 'package:phone_ide/phone_ide.dart';
 import 'package:stacked/stacked.dart';
 
 class MultipleChoiceView extends StatelessWidget {
@@ -241,70 +241,4 @@ class MultipleChoiceView extends StatelessWidget {
   }
 }
 
-class ExampleEditor extends StatelessWidget {
-  const ExampleEditor({
-    super.key,
-    required this.nodules,
-    required this.parser,
-  });
 
-  final List<Nodules> nodules;
-  final HTMLParser parser;
-
-  @override
-  Widget build(BuildContext context) {
-    return ChallengeCard(
-      title: 'Lesson',
-      child: Column(
-        children: [
-          ...nodules.map(
-            (nodule) {
-              if (nodule.type == NoduleType.paragraph) {
-                return Column(
-                  children: parser.parse(nodule.asString()),
-                );
-              } else if (nodule.type == NoduleType.interactiveEditor) {
-                return Column(
-                  children: nodule
-                      .asList()
-                      .map(
-                        (file) => Padding(
-                          padding: const EdgeInsets.only(bottom: 16.0),
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Text(
-                                file.ext.toUpperCase(),
-                                style: const TextStyle(
-                                  fontWeight: FontWeight.bold,
-                                  fontSize: 16,
-                                ),
-                              ),
-                              const SizedBox(height: 8),
-                              Editor(
-                                options: EditorOptions(
-                                  fontFamily: 'Hack',
-                                  takeFullHeight: false,
-                                  showLinebar: false,
-                                  isEditable: false,
-                                ),
-                                defaultLanguage: file.ext,
-                                defaultValue: file.contents,
-                                path: '/',
-                              ),
-                            ],
-                          ),
-                        ),
-                      )
-                      .toList(),
-                );
-              } else {
-                return const SizedBox.shrink();
-              }
-            },
-          )
-        ],
-      ),
-    );
-  }
-}
