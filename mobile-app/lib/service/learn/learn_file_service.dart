@@ -274,7 +274,12 @@ class LearnFileService {
         if (babelRes?.error != null) {
           throw Exception('Babel transpilation failed: ${babelRes?.error}');
         }
-        fileContents = babelRes?.value;
+
+        final result = babelRes?.value as Map<dynamic, dynamic>?;
+        if (result?['success'] == false) {
+          throw Exception('Babel transpilation failed: ${result?['error']}');
+        }
+        fileContents = result?['code'];
 
         Document document = parse(challengeContent);
 
