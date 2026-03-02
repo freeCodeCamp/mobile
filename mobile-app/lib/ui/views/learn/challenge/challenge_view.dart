@@ -1,4 +1,5 @@
 import 'dart:developer';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_html/flutter_html.dart';
 import 'package:flutter_inappwebview/flutter_inappwebview.dart';
@@ -13,7 +14,6 @@ import 'package:freecodecamp/ui/views/learn/widgets/challenge_widgets/project_pr
 import 'package:freecodecamp/ui/views/learn/widgets/challenge_widgets/symbol_bar.dart';
 import 'package:freecodecamp/ui/views/learn/widgets/console/console_view.dart';
 import 'package:freecodecamp/ui/views/news/html_handler/html_handler.dart';
-import 'package:phone_ide/phone_ide.dart';
 import 'package:stacked/stacked.dart';
 
 class ChallengeView extends StatelessWidget {
@@ -550,10 +550,11 @@ class ChallengeView extends StatelessWidget {
     );
   }
 
-  Widget _testExpansionTile({
+  Widget _testTile({
     required dynamic test,
     required BuildContext context,
     required ChallengeViewModel model,
+    required int index,
   }) {
     final parser = HTMLParser(context: context);
     final widgets = parser.parse(
@@ -566,32 +567,27 @@ class ChallengeView extends StatelessWidget {
         'p': Style(margin: Margins.zero),
       },
     );
-    return ExpansionTile(
-      backgroundColor: FccColors.gray90,
-      collapsedBackgroundColor: FccColors.gray85,
-      title: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: widgets,
-      ),
-      children: [
-        Container(
-          color: FccColors.gray80,
-          constraints: const BoxConstraints(minHeight: 10, maxHeight: 1000),
-          padding: const EdgeInsets.symmetric(
-            vertical: 12,
-          ),
-          child: Editor(
-            defaultLanguage: 'javascript',
-            path: '',
-            defaultValue: test.javaScript,
-            options: EditorOptions(
-              isEditable: false,
-              takeFullHeight: false,
-              showLinebar: false,
+    return Padding(
+      padding: const EdgeInsets.all(12),
+      child: Row(
+        children: [
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: widgets,
             ),
           ),
-        ),
-      ],
+          if (model.testConsoleMessages.isNotEmpty ||
+              model.userConsoleMessages.isNotEmpty) ...[
+            const SizedBox(width: 8),
+            Icon(
+              model.failedTestIndexes.contains(index)
+                  ? Icons.cancel_rounded
+                  : Icons.check_circle_rounded,
+            ),
+          ]
+        ],
+      ),
     );
   }
 
@@ -640,19 +636,23 @@ class ChallengeView extends StatelessWidget {
   }
 
   Widget testList(Challenge challenge, ChallengeViewModel model) {
-    log(challenge.challengeType.toString());
-    return ListView.builder(
+    return ListView.separated(
       shrinkWrap: true,
       physics: const ClampingScrollPhysics(),
       itemCount: challenge.tests.length,
       itemBuilder: (context, index) {
         final test = challenge.tests[index];
-        return _testExpansionTile(
+        return _testTile(
           test: test,
           context: context,
           model: model,
+          index: index,
         );
       },
+      separatorBuilder: (BuildContext context, int i) => const Divider(
+        color: Colors.white,
+        height: 1,
+      ),
     );
   }
 }
