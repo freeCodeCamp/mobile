@@ -69,6 +69,9 @@ class ChallengeViewModel extends BaseViewModel {
   bool _runningTests = false;
   bool get runningTests => _runningTests;
 
+  List<int> _failedTestIndexes = [];
+  List<int> get failedTestIndexes => _failedTestIndexes;
+
   bool _hasTypedInEditor = false;
   bool get hasTypedInEditor => _hasTypedInEditor;
 
@@ -694,6 +697,7 @@ class ChallengeViewModel extends BaseViewModel {
   void runTests() async {
     setShowPanel = false;
     setIsRunningTests = true;
+    _failedTestIndexes = [];
     ChallengeTest? failedTest;
     Map<dynamic, dynamic>? failedTestErr;
     ScriptBuilder builder = ScriptBuilder();
@@ -702,13 +706,34 @@ class ChallengeViewModel extends BaseViewModel {
     _userConsoleMessages = [];
     setTestConsoleMessages = ['<p>// running tests</p>'];
 
-    // Get user code console messages
+    String userCode;
+    try {
+      userCode = await builder.buildUserCode(
+        challenge!,
+        _babelWebView.webViewController,
+      );
+    } catch (e) {
+      String errorMessage = e.toString();
+      if (errorMessage.contains('Babel transpilation failed')) {
+        errorMessage = errorMessage.replaceFirst('Exception: ', '');
+      }
+      String userFriendlyMessage = parseSyntaxError(errorMessage);
+
+      setPanelType = PanelType.hint;
+      setHint = '<p>$userFriendlyMessage</p>';
+      setTestConsoleMessages = [
+        ...testConsoleMessages,
+        '<p>$userFriendlyMessage</p>',
+        '<p>// tests completed</p>',
+      ];
+      setIsRunningTests = false;
+      _scaffoldKey.currentState?.openEndDrawer();
+      return;
+    }
+
     if ([1, 26, 28].contains(challenge!.challengeType)) {
       final evalResult = await testController!.callAsyncJavaScript(
-        functionBody: await builder.buildUserCode(
-          challenge!,
-          _babelWebView.webViewController,
-        ),
+        functionBody: userCode,
       );
       if (evalResult != null && evalResult.error != null) {
         setUserConsoleMessages = [
@@ -724,10 +749,7 @@ class ChallengeViewModel extends BaseViewModel {
     final updateTestRunnerRes = await testController!.callAsyncJavaScript(
       functionBody: ScriptBuilder.runnerScript,
       arguments: {
-        'userCode': await builder.buildUserCode(
-          challenge!,
-          _babelWebView.webViewController,
-        ),
+        'userCode': userCode,
         'workerType': builder.getWorkerType(challenge!.challengeType),
         'combinedCode': await builder.combinedCode(challenge!),
         'editableRegionContent': editableRegionContent,
@@ -739,7 +761,8 @@ class ChallengeViewModel extends BaseViewModel {
       },
     );
 
-    for (ChallengeTest test in challenge!.tests) {
+    for (int i = 0; i < challenge!.tests.length; i++) {
+      ChallengeTest test = challenge!.tests[i];
       final testRes = await testController!.callAsyncJavaScript(
         functionBody: ScriptBuilder.testExecutionScript,
         arguments: {
@@ -753,6 +776,7 @@ class ChallengeViewModel extends BaseViewModel {
         failedTestsConsole.add(
           '<li>${replacePlaceholders(test.instruction, failedTestErr)}</li>',
         );
+        _failedTestIndexes.add(i);
       } else if (testRes == null) {
         log('TEST RESULT NULL: $testRes');
         throw Exception('Test result is null ${testRes.toString()}');

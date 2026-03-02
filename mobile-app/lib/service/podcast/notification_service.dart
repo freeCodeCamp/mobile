@@ -28,13 +28,17 @@ class NotificationService {
     );
 
     await _flutterLocalNotificationsPlugin.initialize(initializationSettings);
+  }
 
+  Future<bool> requestPermission() async {
     if (Platform.isAndroid) {
-      await _flutterLocalNotificationsPlugin
-          .resolvePlatformSpecificImplementation<
-              AndroidFlutterLocalNotificationsPlugin>()
-          ?.requestNotificationsPermission();
+      return await _flutterLocalNotificationsPlugin
+              .resolvePlatformSpecificImplementation<
+                  AndroidFlutterLocalNotificationsPlugin>()
+              ?.requestNotificationsPermission() ??
+          false;
     }
+    return true;
   }
 
   Future<void> showNotification(String title, String body) async {

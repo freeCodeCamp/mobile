@@ -8,9 +8,11 @@ import 'package:freecodecamp/ui/views/learn/utils/challenge_utils.dart';
 import 'package:freecodecamp/ui/views/learn/widgets/assignment_widget.dart';
 import 'package:freecodecamp/ui/views/learn/widgets/audio/audio_player_view.dart';
 import 'package:freecodecamp/ui/views/learn/widgets/challenge_card.dart';
+import 'package:freecodecamp/ui/views/learn/widgets/example_editor.dart';
 import 'package:freecodecamp/ui/views/learn/widgets/scene/scene_view.dart';
 import 'package:freecodecamp/ui/views/learn/widgets/transcript_widget.dart';
 import 'package:freecodecamp/ui/views/learn/widgets/youtube_player_widget.dart';
+import 'package:freecodecamp/ui/views/news/html_handler/html_handler.dart';
 import 'package:stacked/stacked.dart';
 
 class ReviewView extends StatelessWidget {
@@ -25,6 +27,8 @@ class ReviewView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    HTMLParser parser = HTMLParser(context: context);
+
     return ViewModelBuilder<ReviewViewmodel>.reactive(
       viewModelBuilder: () => ReviewViewmodel(),
       onViewModelReady: (model) => model.initChallenge(challenge, context),
@@ -47,6 +51,11 @@ class ReviewView extends StatelessWidget {
                     ],
                   ),
                 ),
+                if (challenge.nodules?.isNotEmpty ?? false)
+                  ExampleEditor(
+                    nodules: challenge.nodules!,
+                    parser: parser,
+                  ),
                 if (challenge.videoId != null) ...[
                   const SizedBox(height: 12),
                   ChallengeCard(
