@@ -3,41 +3,58 @@ import 'dart:io';
 import 'package:algolia_helper_flutter/algolia_helper_flutter.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
-import 'package:freecodecamp/app/app.locator.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:freecodecamp/app/app.router.dart';
 import 'package:freecodecamp/constants/radio_articles.dart';
-import 'package:stacked/stacked.dart';
-import 'package:stacked_services/stacked_services.dart';
+import 'package:freecodecamp/core/navigation/app_navigator.dart';
 
-class NewsSearchModel extends BaseViewModel {
-  String _searchTerm = '';
-  String get getSearchTerm => _searchTerm;
+class NewsSearchState {
+  const NewsSearchState({
+    this.searchTerm = '',
+    this.hasData = false,
+    this.isLoading = true,
+    this.currentResult = const [],
+  });
 
-  bool _hasData = false;
-  bool get hasData => _hasData;
+  final String searchTerm;
+  final bool hasData;
+  final bool isLoading;
+  final List currentResult;
 
-  bool _isLoading = true;
-  bool get isLoading => _isLoading;
-
-  List currentResult = [];
-
-  final searchbarController = TextEditingController();
-  final _navigationService = locator<NavigationService>();
-
-  final algolia = HitsSearcher(
-    applicationID: dotenv.get('ALGOLIAAPPID'),
-    apiKey: dotenv.get('ALGOLIAKEY'),
-    indexName: 'news',
-  );
-
-  set setHasData(value) {
-    _hasData = value;
-    notifyListeners();
+  NewsSearchState copyWith({
+    String? searchTerm,
+    bool? hasData,
+    bool? isLoading,
+    List? currentResult,
+  }) {
+    return NewsSearchState(
+      searchTerm: searchTerm ?? this.searchTerm,
+      hasData: hasData ?? this.hasData,
+      isLoading: isLoading ?? this.isLoading,
+      currentResult: currentResult ?? this.currentResult,
+    );
   }
+}
 
-  set setIsLoading(value) {
-    _isLoading = value;
-    notifyListeners();
+class NewsSearchNotifier extends Notifier<NewsSearchState> {
+  final searchbarController = TextEditingController();
+
+  late final HitsSearcher algolia;
+
+  @override
+  NewsSearchState build() {
+    algolia = HitsSearcher(
+      applicationID: dotenv.get('ALGOLIAAPPID'),
+      apiKey: dotenv.get('ALGOLIAKEY'),
+      indexName: 'news',
+    );
+
+    ref.onDispose(() {
+      algolia.dispose();
+      searchbarController.dispose();
+    });
+
+    return const NewsSearchState();
   }
 
   void init() {
@@ -49,40 +66,31 @@ class NewsSearchModel extends BaseViewModel {
             (element) => radioArticles.contains(element['objectID']));
       }
 
-      currentResult = res.hits;
-      _hasData = res.hits.isNotEmpty;
-      _isLoading = false;
-      notifyListeners();
+      state = state.copyWith(
+        currentResult: res.hits,
+        hasData: res.hits.isNotEmpty,
+        isLoading: false,
+      );
     });
   }
 
-  void onDispose() {
-    algolia.dispose();
-    searchbarController.dispose();
-  }
-
   void setSearchTerm(value) {
-    _searchTerm = value;
+    state = state.copyWith(searchTerm: value);
     algolia.query(
       value.isEmpty ? 'JavaScript' : value,
     );
-    notifyListeners();
   }
 
-  // TODO: Add search results feed back post-migration
-  // void searchSubject() {
-  //   _navigationService.navigateTo(
-  //     Routes.newsFeedView,
-  //     arguments: NewsFeedViewArguments(
-  //       fromSearch: true,
-  //       tutorials: currentResult,
-  //       subject: _searchTerm == '' ? 'JavaScript' : _searchTerm,
-  //     ),
-  //   );
-  // }
+  void setHasData(bool value) {
+    state = state.copyWith(hasData: value);
+  }
+
+  void setIsLoading(bool value) {
+    state = state.copyWith(isLoading: value);
+  }
 
   void navigateToTutorial(String id, String slug) {
-    _navigationService.navigateTo(
+    AppNavigator.navigateTo(
       Routes.newsTutorialView,
       arguments: NewsTutorialViewArguments(
         refId: id,
@@ -91,3 +99,8 @@ class NewsSearchModel extends BaseViewModel {
     );
   }
 }
+
+final newsSearchProvider =
+    NotifierProvider<NewsSearchNotifier, NewsSearchState>(
+  NewsSearchNotifier.new,
+);

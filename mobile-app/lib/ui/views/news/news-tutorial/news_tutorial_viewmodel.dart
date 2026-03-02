@@ -10,9 +10,11 @@ import 'package:freecodecamp/service/news/api_service.dart';
 import 'package:freecodecamp/ui/views/news/html_handler/html_handler.dart';
 import 'package:freecodecamp/ui/views/news/news-tutorial/news_tutorial_view.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:stacked/stacked.dart';
 
-class NewsTutorialViewModel extends BaseViewModel {
+// This class is intentionally kept as a plain Dart object (not a Riverpod
+// Notifier) because it manages two ScrollControllers whose lifetime must be
+// tied to a specific StatefulWidget, not to the provider graph.
+class NewsTutorialViewModel {
   late Future<Tutorial> _tutorialFuture;
   final _newsApiService = locator<NewsApiService>();
 
@@ -27,9 +29,12 @@ class NewsTutorialViewModel extends BaseViewModel {
   bool _showToTopButton = false;
   bool get showToTopButton => _showToTopButton;
 
+  // Callback used by the view to trigger a rebuild when this value changes.
+  VoidCallback? onShowToTopButtonChanged;
+
   set showToTopButton(bool value) {
     _showToTopButton = value;
-    notifyListeners();
+    onShowToTopButtonChanged?.call();
   }
 
   Future<Tutorial> readFromFiles() async {
@@ -46,10 +51,6 @@ class NewsTutorialViewModel extends BaseViewModel {
     handleBottomButtonAnimation();
     handleToTopButton();
 
-    // if (await _developerService.developmentMode()) {
-    //   return readFromFiles();
-    // } else {
-    // }
     return fetchTutorial(id);
   }
 

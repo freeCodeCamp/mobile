@@ -1,3 +1,2 @@
-import 'package:stacked/stacked.dart';
-
-class NewsImageModel extends BaseViewModel {}
+// Empty viewmodel retained for structural consistency; no state needed.
+class NewsImageModel {}

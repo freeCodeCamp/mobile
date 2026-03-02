@@ -1,12 +1,12 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:freecodecamp/extensions/i18n_extension.dart';
 import 'package:freecodecamp/models/news/tutorial_model.dart';
 import 'package:freecodecamp/ui/views/news/news-author/news_author_viewmodel.dart';
 import 'package:freecodecamp/ui/views/news/widgets/tutorial_list_widget.dart';
-import 'package:stacked/stacked.dart';
 
-class NewsAuthorView extends StatelessWidget {
+class NewsAuthorView extends ConsumerWidget {
   const NewsAuthorView({
     super.key,
     required this.authorSlug,
@@ -15,32 +15,31 @@ class NewsAuthorView extends StatelessWidget {
   final String authorSlug;
 
   @override
-  Widget build(BuildContext context) {
-    return ViewModelBuilder<NewsAuthorViewModel>.reactive(
-      viewModelBuilder: () => NewsAuthorViewModel(),
-      builder: (context, model, child) => Scaffold(
-        appBar: AppBar(
-          title: Text(context.t.tutorial_author_title),
-        ),
-        body: SingleChildScrollView(
-          child: FutureBuilder<Author>(
-            future: model.fetchAuthor(authorSlug),
-            builder: (context, snapshot) {
-              if (snapshot.hasData) {
-                Author? author = snapshot.data;
+  Widget build(BuildContext context, WidgetRef ref) {
+    final model = ref.watch(newsAuthorViewModelProvider);
 
-                return view(model, context, author);
-              }
+    return Scaffold(
+      appBar: AppBar(
+        title: Text(context.t.tutorial_author_title),
+      ),
+      body: SingleChildScrollView(
+        child: FutureBuilder<Author>(
+          future: model.fetchAuthor(authorSlug),
+          builder: (context, snapshot) {
+            if (snapshot.hasData) {
+              Author? author = snapshot.data;
 
-              return const Center(child: CircularProgressIndicator());
-            },
-          ),
+              return view(context, author);
+            }
+
+            return const Center(child: CircularProgressIndicator());
+          },
         ),
       ),
     );
   }
 
-  Column view(NewsAuthorViewModel model, BuildContext ctxt, Author? author) {
+  Column view(BuildContext ctxt, Author? author) {
     return Column(
       children: [
         Stack(

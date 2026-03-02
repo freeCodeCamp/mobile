@@ -1,12 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
-import 'package:freecodecamp/app/app.locator.dart';
 import 'package:freecodecamp/app/app.router.dart';
+import 'package:freecodecamp/core/navigation/app_navigator.dart';
 import 'package:freecodecamp/extensions/i18n_extension.dart';
 import 'package:freecodecamp/models/news/tutorial_model.dart';
 import 'package:freecodecamp/service/news/api_service.dart';
 import 'package:freecodecamp/ui/views/news/news-feed/news_feed_viewmodel.dart';
-import 'package:stacked_services/stacked_services.dart';
+import 'package:freecodecamp/app/app.locator.dart';
 
 class TutorialList extends StatefulWidget {
   // ignore: prefer_const_constructors_in_immutables
@@ -20,7 +20,6 @@ class TutorialList extends StatefulWidget {
   final String authorSlug;
   final String authorName;
   final String authorId;
-  final _navigationService = locator<NavigationService>();
   final _newsApiService = locator<NewsApiService>();
 
   Future<List<Tutorial>> fetchList() async {
@@ -38,7 +37,7 @@ class TutorialList extends StatefulWidget {
   }
 
   void navigateToTutorial(String id, String slug) {
-    _navigationService.navigateTo(
+    AppNavigator.navigateTo(
       Routes.newsTutorialView,
       arguments: NewsTutorialViewArguments(
         refId: id,
@@ -48,7 +47,7 @@ class TutorialList extends StatefulWidget {
   }
 
   void navigateToFeed() {
-    _navigationService.navigateTo(
+    AppNavigator.navigateTo(
       Routes.newsFeedView,
       arguments: NewsFeedViewArguments(
         fromAuthor: true,

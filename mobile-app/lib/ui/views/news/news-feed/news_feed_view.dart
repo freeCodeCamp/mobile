@@ -2,13 +2,13 @@ import 'dart:developer';
 
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:freecodecamp/extensions/i18n_extension.dart';
 import 'package:freecodecamp/models/news/tutorial_model.dart';
 import 'package:freecodecamp/ui/views/news/news-feed/news_feed_viewmodel.dart';
 import 'package:infinite_scroll_pagination/infinite_scroll_pagination.dart';
-import 'package:stacked/stacked.dart';
 
-class NewsFeedView extends StatelessWidget {
+class NewsFeedView extends ConsumerWidget {
   const NewsFeedView({
     super.key,
     this.tagSlug = '',
@@ -31,65 +31,40 @@ class NewsFeedView extends StatelessWidget {
   final bool fromSearch;
 
   @override
-  Widget build(BuildContext context) {
-    return ViewModelBuilder<NewsFeedViewModel>.reactive(
-      viewModelBuilder: () => NewsFeedViewModel(),
-      onViewModelReady: (model) => model.initState(tagSlug, authorId),
-      builder: (context, model, child) => Scaffold(
-        appBar: fromTag || fromAuthor || fromSearch
-            ? AppBar(
-                title: fromAuthor
-                    ? Text(
-                        context.t.tutorials_from(subject),
-                      )
-                    : Text(
-                        context.t.tutorials_about(subject),
-                      ),
-              )
-            : null,
+  Widget build(BuildContext context, WidgetRef ref) {
+    final model = ref.watch(newsFeedViewModelProvider((tagSlug, authorId)));
+
+    return Scaffold(
+      appBar: fromTag || fromAuthor || fromSearch
+          ? AppBar(
+              title: fromAuthor
+                  ? Text(
+                      context.t.tutorials_from(subject),
+                    )
+                  : Text(
+                      context.t.tutorials_about(subject),
+                    ),
+            )
+          : null,
+      backgroundColor: const Color(0xFF0a0a23),
+      body: RefreshIndicator(
+        onRefresh: () => Future.sync(() => model.pagingController.refresh()),
         backgroundColor: const Color(0xFF0a0a23),
-        // body: FutureBuilder(
-        //   future: !model.devmode
-        //       ? !fromSearch
-        //           ? model.fetchTutorials(slug, author)
-        //           : model.returnTutorialsFromSearch(tutorials)
-        //       : model.readFromFiles(),
-        //   builder: (context, snapshot) {
-        //     if (snapshot.hasData) {
-        //       return RefreshIndicator(
-        //         backgroundColor: const Color(0xFF0a0a23),
-        //         color: Colors.white,
-        //         child: tutorialThumbnailBuilder(model),
-        //         onRefresh: () {
-        //           return model.refresh();
-        //         },
-        //       );
-        //     } else if (snapshot.hasError) {
-        //       return errorMessage(context);
-        //     }
-        //     return const Center(child: CircularProgressIndicator());
-        //   },
-        // ),
-        body: RefreshIndicator(
-          onRefresh: () => Future.sync(() => model.pagingController.refresh()),
-          backgroundColor: const Color(0xFF0a0a23),
-          color: Colors.white,
-          // child: tutorialThumbnailBuilder(model),
-          child: PagingListener(
-            controller: model.pagingController,
-            builder: (context, state, fetchNextPage) => PagedListView.separated(
-              state: state,
-              fetchNextPage: fetchNextPage,
-              separatorBuilder: (context, int i) => const Divider(
-                color: Color.fromRGBO(0x2A, 0x2A, 0x40, 1),
-                thickness: 3,
-                height: 3,
-              ),
-              builderDelegate: PagedChildBuilderDelegate<Tutorial>(
-                itemBuilder: (context, tutorial, index) => Container(
-                  key: Key('news-tutorial-$index'),
-                  child: tutorialThumbnailBuilder(tutorial, model),
-                ),
+        color: Colors.white,
+        child: PagingListener(
+          controller: model.pagingController,
+          builder: (context, state, fetchNextPage) => PagedListView.separated(
+            state: state,
+            fetchNextPage: fetchNextPage,
+            separatorBuilder: (context, int i) => const Divider(
+              color: Color.fromRGBO(0x2A, 0x2A, 0x40, 1),
+              thickness: 1,
+              height: 1,
+            ),
+            builderDelegate: PagedChildBuilderDelegate<Tutorial>(
+              itemBuilder: (context, tutorial, index) => Container(
+                key: Key('news-tutorial-$index'),
+                child: tutorialThumbnailBuilder(tutorial, model),
               ),
             ),
           ),
@@ -98,35 +73,7 @@ class NewsFeedView extends StatelessWidget {
     );
   }
 
-  // Column errorMessage(BuildContext context) {
-  //   return Column(
-  //     mainAxisAlignment: MainAxisAlignment.center,
-  //     crossAxisAlignment: CrossAxisAlignment.stretch,
-  //     children: [
-  //       Text(
-  //         context.t.tutorial_load_error,
-  //         textAlign: TextAlign.center,
-  //       ),
-  //       Padding(
-  //         padding: const EdgeInsets.all(8.0),
-  //         child: InkWell(
-  //           child: Text(
-  //             context.t.tutorial_read_online,
-  //             textAlign: TextAlign.center,
-  //             style: const TextStyle(
-  //               color: Color.fromRGBO(0x99, 0xc9, 0xff, 1),
-  //             ),
-  //           ),
-  //           onTap: () {
-  //             launchUrl(Uri.parse('https://www.freecodecamp.org/news/'));
-  //           },
-  //         ),
-  //       ),
-  //     ],
-  //   );
-  // }
-
-  InkWell tutorialThumbnailBuilder(Tutorial tutorial, NewsFeedViewModel model) {
+  Widget tutorialThumbnailBuilder(Tutorial tutorial, NewsFeedViewModel model) {
     return InkWell(
       key: Key(tutorial.id),
       splashColor: Colors.transparent,

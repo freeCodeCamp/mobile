@@ -1,11 +1,13 @@
 import 'package:flutter_dotenv/flutter_dotenv.dart';
-import 'package:freecodecamp/app/app.locator.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:freecodecamp/core/providers/service_providers.dart';
 import 'package:freecodecamp/models/news/tutorial_model.dart';
 import 'package:freecodecamp/service/news/api_service.dart';
-import 'package:stacked/stacked.dart';
 
-class NewsAuthorViewModel extends BaseViewModel {
-  final _newsApiService = locator<NewsApiService>();
+class NewsAuthorViewModel {
+  NewsAuthorViewModel(this._newsApiService);
+
+  final NewsApiService _newsApiService;
 
   Future<Author> fetchAuthor(String authorSlug) async {
     await dotenv.load(fileName: '.env');
@@ -15,3 +17,8 @@ class NewsAuthorViewModel extends BaseViewModel {
     return Author.toAuthorFromJson(authorData);
   }
 }
+
+final newsAuthorViewModelProvider = Provider<NewsAuthorViewModel>((ref) {
+  final newsApiService = ref.watch(newsApiServiceProvider);
+  return NewsAuthorViewModel(newsApiService);
+});

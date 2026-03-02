@@ -5,7 +5,6 @@ import 'package:freecodecamp/ui/views/news/news-bookmark/news_bookmark_widget.da
 import 'package:freecodecamp/ui/views/news/news-tutorial/news_tutorial_viewmodel.dart';
 import 'package:freecodecamp/ui/views/news/widgets/back_to_top_button.dart';
 import 'package:share_plus/share_plus.dart';
-import 'package:stacked/stacked.dart';
 
 class NewsTutorialHeader extends StatelessWidget {
   const NewsTutorialHeader({super.key, required this.tutorial});
@@ -72,7 +71,7 @@ class NewsTutorialHeader extends StatelessWidget {
   }
 }
 
-class NewsTutorialView extends StatelessWidget {
+class NewsTutorialView extends StatefulWidget {
   const NewsTutorialView({
     super.key,
     required this.refId,
@@ -82,45 +81,62 @@ class NewsTutorialView extends StatelessWidget {
   final String slug;
 
   @override
-  Widget build(BuildContext context) {
-    return ViewModelBuilder<NewsTutorialViewModel>.reactive(
-      onViewModelReady: (model) => model.initState(refId),
-      onDispose: (model) => model.removeScrollPosition(),
-      builder: (context, model, child) => Scaffold(
-        backgroundColor: const Color(0xFF0a0a23),
-        body: FutureBuilder<Tutorial>(
-          future: model.initState(refId),
-          builder: (context, snapshot) {
-            if (snapshot.hasData) {
-              var tutorial = snapshot.data;
-              return Column(
-                children: [
-                  Expanded(
-                    child: Stack(
-                      children: [
-                        lazyLoadHtml(tutorial!.text!, context, tutorial, model),
-                        bottomButtons(tutorial, model, context),
-                      ],
-                    ),
-                  )
-                ],
-              );
-            } else if (snapshot.hasError) {
-              throw Exception(snapshot.error);
-            }
+  State<NewsTutorialView> createState() => _NewsTutorialViewState();
+}
 
-            return const Center(
-              child: CircularProgressIndicator(),
+class _NewsTutorialViewState extends State<NewsTutorialView> {
+  late final NewsTutorialViewModel _model;
+
+  @override
+  void initState() {
+    super.initState();
+    _model = NewsTutorialViewModel();
+    _model.onShowToTopButtonChanged = () {
+      if (mounted) setState(() {});
+    };
+  }
+
+  @override
+  void dispose() {
+    _model.removeScrollPosition();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      backgroundColor: const Color(0xFF0a0a23),
+      body: FutureBuilder<Tutorial>(
+        future: _model.initState(widget.refId),
+        builder: (context, snapshot) {
+          if (snapshot.hasData) {
+            var tutorial = snapshot.data;
+            return Column(
+              children: [
+                Expanded(
+                  child: Stack(
+                    children: [
+                      lazyLoadHtml(tutorial!.text!, context, tutorial, _model),
+                      bottomButtons(tutorial, _model, context),
+                    ],
+                  ),
+                )
+              ],
             );
-          },
-        ),
-        floatingActionButton: model.showToTopButton
-            ? BackToTopButton(
-                onPressed: () => model.goToTop(),
-              )
-            : null,
+          } else if (snapshot.hasError) {
+            throw Exception(snapshot.error);
+          }
+
+          return const Center(
+            child: CircularProgressIndicator(),
+          );
+        },
       ),
-      viewModelBuilder: () => NewsTutorialViewModel(),
+      floatingActionButton: _model.showToTopButton
+          ? BackToTopButton(
+              onPressed: () => _model.goToTop(),
+            )
+          : null,
     );
   }
 

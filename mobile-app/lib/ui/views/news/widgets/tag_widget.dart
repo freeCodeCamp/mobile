@@ -1,9 +1,8 @@
 import 'dart:math';
 
 import 'package:flutter/material.dart';
-import 'package:freecodecamp/app/app.locator.dart';
 import 'package:freecodecamp/app/app.router.dart';
-import 'package:stacked_services/stacked_services.dart';
+import 'package:freecodecamp/core/navigation/app_navigator.dart';
 
 class TagButton extends StatefulWidget {
   const TagButton({
@@ -34,7 +33,6 @@ class TagButton extends StatefulWidget {
 
 class _TagButtonState extends State<TagButton>
     with AutomaticKeepAliveClientMixin {
-  final _navigationService = locator<NavigationService>();
   final _tagColor = TagButton.randomColor();
   @override
   // ignore: must_call_super
@@ -43,7 +41,7 @@ class _TagButtonState extends State<TagButton>
       padding: const EdgeInsets.fromLTRB(0, 8, 8, 0),
       child: InkWell(
         onTap: () {
-          _navigationService.navigateTo(
+          AppNavigator.navigateTo(
             Routes.newsFeedView,
             arguments: NewsFeedViewArguments(
               tagSlug: widget.tagSlug,

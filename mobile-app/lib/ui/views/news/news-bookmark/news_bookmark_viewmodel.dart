@@ -1,52 +1,73 @@
 import 'package:flutter/material.dart';
-import 'package:freecodecamp/app/app.locator.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:freecodecamp/app/app.router.dart';
+import 'package:freecodecamp/core/navigation/app_navigator.dart';
+import 'package:freecodecamp/core/providers/service_providers.dart';
 import 'package:freecodecamp/models/news/bookmarked_tutorial_model.dart';
 import 'package:freecodecamp/service/news/bookmark_service.dart';
-import 'package:stacked/stacked.dart';
-import 'package:stacked_services/stacked_services.dart';
 
-class NewsBookmarkViewModel extends BaseViewModel {
-  bool _isBookmarked = false;
-  bool get bookmarked => _isBookmarked;
+class NewsBookmarkState {
+  const NewsBookmarkState({
+    this.isBookmarked = false,
+    this.gotoTopButtonVisible = false,
+    this.userHasBookmarkedTutorials = false,
+    this.tutorials = const [],
+    this.count = 0,
+  });
 
-  bool _gotoTopButtonVisible = false;
-  bool get gotoTopButtonVisible => _gotoTopButtonVisible;
+  final bool isBookmarked;
+  final bool gotoTopButtonVisible;
+  final bool userHasBookmarkedTutorials;
+  final List<BookmarkedTutorial> tutorials;
+  final int count;
 
-  bool _userHasBookmarkedTutorials = false;
-  bool get userHasBookmarkedTutorials => _userHasBookmarkedTutorials;
+  NewsBookmarkState copyWith({
+    bool? isBookmarked,
+    bool? gotoTopButtonVisible,
+    bool? userHasBookmarkedTutorials,
+    List<BookmarkedTutorial>? tutorials,
+    int? count,
+  }) {
+    return NewsBookmarkState(
+      isBookmarked: isBookmarked ?? this.isBookmarked,
+      gotoTopButtonVisible: gotoTopButtonVisible ?? this.gotoTopButtonVisible,
+      userHasBookmarkedTutorials:
+          userHasBookmarkedTutorials ?? this.userHasBookmarkedTutorials,
+      tutorials: tutorials ?? this.tutorials,
+      count: count ?? this.count,
+    );
+  }
+}
 
-  late List<BookmarkedTutorial> _tutorials;
-  List<BookmarkedTutorial> get bookMarkedTutorials => _tutorials;
+class NewsBookmarkNotifier extends Notifier<NewsBookmarkState> {
+  late BookmarksDatabaseService _databaseService;
 
-  int _count = 0;
-  int get count => _count;
+  final ScrollController scrollController = ScrollController();
 
-  final _navigationService = locator<NavigationService>();
-  final _databaseService = locator<BookmarksDatabaseService>();
-
-  ScrollController scrollController = ScrollController();
+  @override
+  NewsBookmarkState build() {
+    _databaseService = ref.watch(bookmarksDatabaseServiceProvider);
+    ref.onDispose(scrollController.dispose);
+    return const NewsBookmarkState();
+  }
 
   Future<void> initDB() async {
     await _databaseService.initialise();
   }
 
   Future<void> bookmarkAndUnbookmark(dynamic tutorial) async {
-    if (_isBookmarked) {
-      _isBookmarked = false;
+    if (state.isBookmarked) {
+      state = state.copyWith(isBookmarked: false);
       await _databaseService.removeBookmark(tutorial);
-      notifyListeners();
     } else {
-      _isBookmarked = true;
+      state = state.copyWith(isBookmarked: true);
       await insertTutorial(tutorial);
-      notifyListeners();
     }
   }
 
   Future<void> updateListView() async {
-    _tutorials = await _databaseService.getBookmarks();
-    _count = _tutorials.length;
-    notifyListeners();
+    final tutorials = await _databaseService.getBookmarks();
+    state = state.copyWith(tutorials: tutorials, count: tutorials.length);
   }
 
   Future<void> refresh() async {
@@ -65,14 +86,12 @@ class NewsBookmarkViewModel extends BaseViewModel {
   Future<void> goToTopButtonHandler() async {
     scrollController.addListener(() {
       if (scrollController.offset >= 100) {
-        if (!_gotoTopButtonVisible) {
-          _gotoTopButtonVisible = true;
-          notifyListeners();
+        if (!state.gotoTopButtonVisible) {
+          state = state.copyWith(gotoTopButtonVisible: true);
         }
       } else {
-        if (_gotoTopButtonVisible) {
-          _gotoTopButtonVisible = false;
-          notifyListeners();
+        if (state.gotoTopButtonVisible) {
+          state = state.copyWith(gotoTopButtonVisible: false);
         }
       }
     });
@@ -87,24 +106,22 @@ class NewsBookmarkViewModel extends BaseViewModel {
   }
 
   Future<void> isTutorialBookmarked(dynamic tutorial) async {
-    _isBookmarked = await _databaseService.isBookmarked(tutorial);
-    notifyListeners();
+    final isBookmarked = await _databaseService.isBookmarked(tutorial);
+    state = state.copyWith(isBookmarked: isBookmarked);
   }
 
   Future<void> hasBookmarkedTutorials() async {
     var isInDatabase = await _databaseService.getBookmarks();
 
     if (isInDatabase.isNotEmpty) {
-      _userHasBookmarkedTutorials = true;
-      notifyListeners();
+      state = state.copyWith(userHasBookmarkedTutorials: true);
     } else {
-      _userHasBookmarkedTutorials = false;
-      notifyListeners();
+      state = state.copyWith(userHasBookmarkedTutorials: false);
     }
   }
 
   void routeToBookmarkedTutorial(BookmarkedTutorial tutorial) {
-    _navigationService.navigateTo(
+    AppNavigator.navigateTo(
       Routes.newsBookmarkTutorialView,
       arguments: NewsBookmarkTutorialViewArguments(
         tutorial: tutorial,
@@ -112,3 +129,8 @@ class NewsBookmarkViewModel extends BaseViewModel {
     );
   }
 }
+
+final newsBookmarkProvider =
+    NotifierProvider<NewsBookmarkNotifier, NewsBookmarkState>(
+  NewsBookmarkNotifier.new,
+);

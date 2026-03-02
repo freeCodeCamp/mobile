@@ -1,52 +1,69 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:freecodecamp/extensions/i18n_extension.dart';
+import 'package:freecodecamp/models/news/bookmarked_tutorial_model.dart';
 import 'package:freecodecamp/ui/views/news/news-bookmark/news_bookmark_viewmodel.dart';
-import 'package:stacked/stacked.dart';
 
-class NewsBookmarkFeedView extends StatelessWidget {
+class NewsBookmarkFeedView extends ConsumerStatefulWidget {
   const NewsBookmarkFeedView({
     super.key,
   });
 
   @override
+  ConsumerState<NewsBookmarkFeedView> createState() =>
+      _NewsBookmarkFeedViewState();
+}
+
+class _NewsBookmarkFeedViewState extends ConsumerState<NewsBookmarkFeedView> {
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) async {
+      final notifier = ref.read(newsBookmarkProvider.notifier);
+      await notifier.initDB();
+      await notifier.hasBookmarkedTutorials();
+      await notifier.updateListView();
+    });
+  }
+
+  @override
   Widget build(BuildContext context) {
-    return ViewModelBuilder<NewsBookmarkViewModel>.reactive(
-      viewModelBuilder: () => NewsBookmarkViewModel(),
-      onViewModelReady: (model) async {
-        await model.initDB();
-        model.hasBookmarkedTutorials();
-        model.updateListView();
-      },
-      builder: (context, model, child) => Scaffold(
-        backgroundColor: const Color.fromRGBO(0x2A, 0x2A, 0x40, 1),
-        body: RefreshIndicator(
-          backgroundColor: const Color(0xFF0a0a23),
-          color: Colors.white,
-          onRefresh: () {
-            return model.refresh();
-          },
-          child: model.userHasBookmarkedTutorials
-              ? populateListViewModel(model)
-              : Center(
-                  child: Text(
-                    context.t.tutorial_no_bookmarks,
-                    textAlign: TextAlign.center,
-                  ),
+    final state = ref.watch(newsBookmarkProvider);
+    final notifier = ref.read(newsBookmarkProvider.notifier);
+
+    return Scaffold(
+      backgroundColor: const Color.fromRGBO(0x2A, 0x2A, 0x40, 1),
+      body: RefreshIndicator(
+        backgroundColor: const Color(0xFF0a0a23),
+        color: Colors.white,
+        onRefresh: () {
+          return notifier.refresh();
+        },
+        child: state.userHasBookmarkedTutorials
+            ? populateListView(state.tutorials, state.count, notifier)
+            : Center(
+                child: Text(
+                  context.t.tutorial_no_bookmarks,
+                  textAlign: TextAlign.center,
                 ),
-        ),
+              ),
       ),
     );
   }
 }
 
-ListView populateListViewModel(NewsBookmarkViewModel model) {
+ListView populateListView(
+  List<BookmarkedTutorial> tutorials,
+  int count,
+  NewsBookmarkNotifier notifier,
+) {
   return ListView.separated(
-    itemCount: model.count,
+    itemCount: count,
     separatorBuilder: (BuildContext context, int i) => const Divider(
       color: Colors.white,
     ),
     itemBuilder: (context, index) {
-      var tutorial = model.bookMarkedTutorials[index];
+      var tutorial = tutorials[index];
 
       return ListTile(
         key: Key('bookmark_tutorial_$index'),
@@ -57,7 +74,7 @@ ListView populateListViewModel(NewsBookmarkViewModel model) {
           child: Text('Written by: ${tutorial.authorName}'),
         ),
         onTap: () {
-          model.routeToBookmarkedTutorial(tutorial);
+          notifier.routeToBookmarkedTutorial(tutorial);
         },
         contentPadding: const EdgeInsets.all(16),
         minVerticalPadding: 8,
