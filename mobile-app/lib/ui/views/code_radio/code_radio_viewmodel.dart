@@ -1,14 +1,15 @@
 import 'dart:async';
 import 'dart:convert';
 
+import 'package:flutter/foundation.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:freecodecamp/app/app.locator.dart';
 import 'package:freecodecamp/models/code-radio/code_radio_model.dart';
 import 'package:freecodecamp/service/audio/audio_service.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:stacked/stacked.dart';
 import 'package:web_socket_channel/web_socket_channel.dart';
 
-class CodeRadioViewModel extends BaseViewModel {
+class CodeRadioViewModel extends ChangeNotifier {
   final audioService = locator<AppAudioService>().audioHandler;
   bool stoppedManually = false;
 
@@ -88,4 +89,21 @@ class CodeRadioViewModel extends BaseViewModel {
 
     await audioService.codeRadioMusic(radio);
   }
+
+  void disposeModel() {
+    _timer?.cancel();
+    _audioStateController.close();
+    _webSocketController.close();
+    _webSocketChannel.sink.close();
+  }
 }
+
+final codeRadioViewModelProvider =
+    ChangeNotifierProvider.autoDispose<CodeRadioViewModel>(
+  (ref) {
+    final vm = CodeRadioViewModel();
+    vm.init();
+    ref.onDispose(vm.disposeModel);
+    return vm;
+  },
+);

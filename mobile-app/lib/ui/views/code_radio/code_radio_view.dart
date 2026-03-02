@@ -1,28 +1,25 @@
 import 'dart:convert';
 
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:freecodecamp/extensions/i18n_extension.dart';
 import 'package:freecodecamp/models/code-radio/code_radio_model.dart';
 import 'package:freecodecamp/ui/views/code_radio/code_radio_viewmodel.dart';
 import 'package:freecodecamp/ui/widgets/drawer_widget/drawer_widget_view.dart';
-import 'package:stacked/stacked.dart';
 
-class CodeRadioView extends StatelessWidget {
+class CodeRadioView extends ConsumerWidget {
   const CodeRadioView({super.key});
 
   @override
-  Widget build(BuildContext context) {
-    return ViewModelBuilder<CodeRadioViewModel>.reactive(
-      viewModelBuilder: () => CodeRadioViewModel(),
-      onViewModelReady: (model) => model.init(),
-      builder: (context, model, child) => Scaffold(
-        backgroundColor: const Color(0xFF0a0a23),
-        appBar: AppBar(
-          title: const Text('CODE RADIO'),
-        ),
-        drawer: const DrawerWidgetView(),
-        body: template(context, model),
+  Widget build(BuildContext context, WidgetRef ref) {
+    final model = ref.watch(codeRadioViewModelProvider);
+    return Scaffold(
+      backgroundColor: const Color(0xFF0a0a23),
+      appBar: AppBar(
+        title: const Text('CODE RADIO'),
       ),
+      drawer: const DrawerWidgetView(),
+      body: template(context, model),
     );
   }
 
