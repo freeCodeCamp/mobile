@@ -1,13 +1,13 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_heatmap_calendar/flutter_heatmap_calendar.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:freecodecamp/extensions/i18n_extension.dart';
 import 'package:freecodecamp/models/main/user_model.dart';
 import 'package:freecodecamp/ui/theme/fcc_theme.dart';
 import 'package:freecodecamp/ui/views/profile/profile_viewmodel.dart';
 import 'package:freecodecamp/ui/widgets/drawer_widget/drawer_widget_view.dart';
 import 'package:jiffy/jiffy.dart';
-import 'package:stacked/stacked.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 Map<String, int> calculateStreak(FccUserModel user) {
@@ -31,7 +31,7 @@ Map<String, int> calculateStreak(FccUserModel user) {
   };
 }
 
-class ProfileView extends StatelessWidget {
+class ProfileView extends ConsumerWidget {
   const ProfileView({super.key});
 
   BoxBorder borderPicker(FccUserModel user) {
@@ -53,64 +53,63 @@ class ProfileView extends StatelessWidget {
       );
 
   @override
-  Widget build(BuildContext context) {
-    return ViewModelBuilder<ProfileViewModel>.reactive(
-      viewModelBuilder: () => ProfileViewModel(),
-      builder: (context, model, child) => Scaffold(
-        backgroundColor: FccSemanticColors.backgroundPrimary,
-        appBar: AppBar(
-          title: Text(
-            context.t.profile_title,
-            style: const TextStyle(color: FccSemanticColors.foregroundPrimary),
-          ),
-          backgroundColor: FccSemanticColors.backgroundSecondary,
-          iconTheme:
-              const IconThemeData(color: FccSemanticColors.foregroundPrimary),
-        ),
-        drawer: const DrawerWidgetView(),
-        body: FutureBuilder<FccUserModel>(
-          future: model.auth.userModel,
-          builder: (context, snapshot) {
-            if (snapshot.connectionState != ConnectionState.done) {
-              return const Center(
-                  child: CircularProgressIndicator(color: FccColors.yellow40));
-            }
-            if (snapshot.hasError) {
-              return Text('${snapshot.error}',
-                  style: const TextStyle(
-                      color: FccSemanticColors.foregroundDanger));
-            }
-            if (snapshot.hasData) {
-              FccUserModel user = snapshot.data!;
+  Widget build(BuildContext context, WidgetRef ref) {
+    final model = ref.watch(profileViewModelProvider);
 
-              final streak = calculateStreak(user);
-
-              return Container(
-                color: FccSemanticColors.backgroundPrimary,
-                child: SingleChildScrollView(
-                  child: Column(
-                    children: [
-                      _buildHeader(user),
-                      _buildAboutCard(user),
-                      _buildInfoSection(context, user, streak),
-                      _buildHeatmap(context, user, streak),
-                      _buildPortfolio(user),
-                      _buildCertifications(user),
-                    ],
-                  ),
-                ),
-              );
-            } else {
-              return Center(
-                child: Text(
-                  context.t.profile_no_userdata.toString(),
-                  style: const TextStyle(
-                      color: FccSemanticColors.foregroundDanger),
-                ),
-              );
-            }
-          },
+    return Scaffold(
+      backgroundColor: FccSemanticColors.backgroundPrimary,
+      appBar: AppBar(
+        title: Text(
+          context.t.profile_title,
+          style: const TextStyle(color: FccSemanticColors.foregroundPrimary),
         ),
+        backgroundColor: FccSemanticColors.backgroundSecondary,
+        iconTheme:
+            const IconThemeData(color: FccSemanticColors.foregroundPrimary),
+      ),
+      drawer: const DrawerWidgetView(),
+      body: FutureBuilder<FccUserModel>(
+        future: model.auth.userModel,
+        builder: (context, snapshot) {
+          if (snapshot.connectionState != ConnectionState.done) {
+            return const Center(
+                child: CircularProgressIndicator(color: FccColors.yellow40));
+          }
+          if (snapshot.hasError) {
+            return Text('${snapshot.error}',
+                style: const TextStyle(
+                    color: FccSemanticColors.foregroundDanger));
+          }
+          if (snapshot.hasData) {
+            FccUserModel user = snapshot.data!;
+
+            final streak = calculateStreak(user);
+
+            return Container(
+              color: FccSemanticColors.backgroundPrimary,
+              child: SingleChildScrollView(
+                child: Column(
+                  children: [
+                    _buildHeader(user),
+                    _buildAboutCard(user),
+                    _buildInfoSection(context, user, streak),
+                    _buildHeatmap(context, user, streak),
+                    _buildPortfolio(user),
+                    _buildCertifications(user),
+                  ],
+                ),
+              ),
+            );
+          } else {
+            return Center(
+              child: Text(
+                context.t.profile_no_userdata.toString(),
+                style: const TextStyle(
+                    color: FccSemanticColors.foregroundDanger),
+              ),
+            );
+          }
+        },
       ),
     );
   }

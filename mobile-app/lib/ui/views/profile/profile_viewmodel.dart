@@ -1,8 +1,14 @@
-import 'package:freecodecamp/app/app.locator.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:freecodecamp/core/providers/service_providers.dart';
 import 'package:freecodecamp/service/authentication/authentication_service.dart';
-import 'package:stacked/stacked.dart';
 
-// import 'dart:developer';
-class ProfileViewModel extends BaseViewModel {
-  final AuthenticationService auth = locator<AuthenticationService>();
+class ProfileViewModel {
+  ProfileViewModel(this.auth);
+
+  final AuthenticationService auth;
 }
+
+final profileViewModelProvider = Provider<ProfileViewModel>((ref) {
+  final auth = ref.watch(authenticationServiceProvider);
+  return ProfileViewModel(auth);
+});
