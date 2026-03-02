@@ -744,6 +744,14 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "2.4.6"
+  flutter_riverpod:
+    dependency: "direct main"
+    description:
+      name: flutter_riverpod
+      sha256: "9532ee6db4a943a1ed8383072a2e3eeda041db5657cdf6d2acecf3c21ecbe7e1"
+      url: "https://pub.dev"
+    source: hosted
+    version: "2.6.1"
   flutter_scroll_shadow:
     dependency: "direct main"
     description:
@@ -834,14 +842,6 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "2.0.1"
-  freezed_annotation:
-    dependency: transitive
-    description:
-      name: freezed_annotation
-      sha256: c2e2d632dd9b8a2b7751117abcfc2b4888ecfe181bd9fca7170d9ef02e595fe2
-      url: "https://pub.dev"
-    source: hosted
-    version: "2.4.4"
   frontend_server_client:
     dependency: transitive
     description:
@@ -855,16 +855,8 @@ packages:
     description: flutter
     source: sdk
     version: "0.0.0"
-  get:
-    dependency: transitive
-    description:
-      name: get
-      sha256: c79eeb4339f1f3deffd9ec912f8a923834bec55f7b49c9e882b8fef2c139d425
-      url: "https://pub.dev"
-    source: hosted
-    version: "4.7.2"
   get_it:
-    dependency: transitive
+    dependency: "direct main"
     description:
       name: get_it
       sha256: d85128a5dae4ea777324730dc65edd9c9f43155c109d5cc0a69cab74139fbac1
@@ -1124,14 +1116,6 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "1.0.2"
-  logger:
-    dependency: transitive
-    description:
-      name: logger
-      sha256: "7ad7215c15420a102ec687bb320a7312afd449bac63bfb1c60d9787c27b9767f"
-      url: "https://pub.dev"
-    source: hosted
-    version: "1.4.0"
   logging:
     dependency: transitive
     description:
@@ -1180,14 +1164,6 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "5.4.4"
-  nested:
-    dependency: transitive
-    description:
-      name: nested
-      sha256: "03bac4c528c64c95c722ec99280375a6f2fc708eec17c7b3f07253b626cd2a20"
-      url: "https://pub.dev"
-    source: hosted
-    version: "1.0.0"
   normalize:
     dependency: transitive
     description:
@@ -1372,14 +1348,6 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "5.0.3"
-  provider:
-    dependency: transitive
-    description:
-      name: provider
-      sha256: "489024f942069c2920c844ee18bb3d467c69e48955a4f32d1677f71be103e310"
-      url: "https://pub.dev"
-    source: hosted
-    version: "6.1.4"
   pub_semver:
     dependency: transitive
     description:
@@ -1436,14 +1404,14 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "3.2.2"
-  recase:
+  riverpod:
     dependency: transitive
     description:
-      name: recase
-      sha256: e4eb4ec2dcdee52dcf99cb4ceabaffc631d7424ee55e56f280bc039737f89213
+      name: riverpod
+      sha256: "59062512288d3056b2321804332a13ffdd1bf16df70dcc8e506e411280a72959"
       url: "https://pub.dev"
     source: hosted
-    version: "4.1.0"
+    version: "2.6.1"
   rxdart:
     dependency: transitive
     description:
@@ -1625,38 +1593,14 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "1.12.1"
-  stacked:
-    dependency: "direct main"
-    description:
-      name: stacked
-      sha256: ed19ecdc2dcc682b9be9c7e34646e603c0f770437a914b15c7d2d13391c92a09
-      url: "https://pub.dev"
-    source: hosted
-    version: "3.4.3"
-  stacked_generator:
-    dependency: "direct dev"
-    description:
-      name: stacked_generator
-      sha256: eaa6447e3fd4d4010b746629b5518364d7fa7f6453ffb6416ad449fd352d1181
-      url: "https://pub.dev"
-    source: hosted
-    version: "1.6.1"
-  stacked_services:
-    dependency: "direct main"
-    description:
-      name: stacked_services
-      sha256: a70c5c86f89a9258139ff174bf045a527099ea8552f8497ebb0b755469841bb4
-      url: "https://pub.dev"
-    source: hosted
-    version: "1.6.0"
-  stacked_shared:
+  state_notifier:
     dependency: transitive
     description:
-      name: stacked_shared
-      sha256: "26e11dcfe23df81d565d0180eb5bcf4742efed066ba3328623b458f21a82b346"
+      name: state_notifier
+      sha256: b8677376aa54f2d7c58280d5a007f9e8774f1968d1fb1c096adcb4792fba29bb
       url: "https://pub.dev"
     source: hosted
-    version: "1.4.1"
+    version: "1.0.0"
   stream_channel:
     dependency: transitive
     description:

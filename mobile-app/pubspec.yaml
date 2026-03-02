@@ -29,10 +29,12 @@ dependencies:
   flutter_local_notifications: 19.1.0
   flutter_localizations:
     sdk: flutter
+  flutter_riverpod: 2.6.1
   flutter_scroll_shadow: 1.2.6
   flutter_secure_storage: 9.2.4
   flutter_svg: 2.1.0
   focus_detector: 2.0.1
+  get_it: 7.7.0
   graphql: 5.2.0
   html: 0.15.5+1
   infinite_scroll_pagination: 5.0.0
@@ -47,8 +49,6 @@ dependencies:
   share_plus: 10.1.4 # NOTE: v11 has breaking changes
   shared_preferences: 2.5.3 # TODO: update deprecated code
   sqflite: 2.4.2
-  stacked: 3.4.3
-  stacked_services: 1.6.0
   timezone: 0.10.1
   ua_client_hints: 1.4.1
   upgrader: 11.3.1
@@ -67,8 +67,7 @@ dev_dependencies:
     sdk: flutter
   integration_test:
     sdk: flutter
-  mockito: 5.4.4 # NOTE: 5.4.6+ is blocked by stacked_generator
-  stacked_generator: 1.6.1
+  mockito: 5.4.4
 
 flutter:
   fonts:

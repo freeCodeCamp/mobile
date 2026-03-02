@@ -5,8 +5,10 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_crashlytics/firebase_crashlytics.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:freecodecamp/app/app.locator.dart';
-import 'package:freecodecamp/app/app.router.dart';
+import 'package:freecodecamp/app/app_router.dart';
+import 'package:freecodecamp/core/navigation/app_navigator.dart';
 import 'package:freecodecamp/firebase_options.dart';
 import 'package:freecodecamp/l10n/app_localizations.dart';
 import 'package:freecodecamp/service/audio/audio_service.dart';
@@ -21,7 +23,6 @@ import 'package:freecodecamp/service/news/api_service.dart';
 import 'package:freecodecamp/service/podcast/notification_service.dart';
 import 'package:freecodecamp/ui/theme/fcc_theme.dart';
 import 'package:freecodecamp/utils/upgrade_controller.dart';
-import 'package:stacked_services/stacked_services.dart';
 import 'package:upgrader/upgrader.dart';
 
 Future<void> main({bool testing = false}) async {
@@ -50,10 +51,16 @@ Future<void> main({bool testing = false}) async {
     }
   }
   await RemoteConfigService().init();
-  await NotificationService().init();
+  await locator<NotificationService>().init();
   await DailyChallengeNotificationService().init();
 
-  runApp(const FreeCodeCampMobileApp());
+  runApp(
+    // ProviderScope is the root of the Riverpod tree.
+    // All feature views can now consume providers via ref.watch / ref.read.
+    const ProviderScope(
+      child: FreeCodeCampMobileApp(),
+    ),
+  );
 
   await QuickActionsService().init();
 }
@@ -76,14 +83,18 @@ class FreeCodeCampMobileApp extends StatelessWidget {
           supportedLocales: locator<LocaleService>().locales,
           locale: snapshot.data ?? locator<LocaleService>().locale,
           debugShowCheckedModeBanner: false,
-          navigatorKey: StackedService.navigatorKey,
-          onGenerateRoute: StackedRouter().onGenerateRoute,
+          // Use the shared AppNavigator key.
+          // The key is a plain GlobalKey<NavigatorState> and works with all
+          // named-route navigation in the app.
+          navigatorKey: AppNavigator.navigatorKey,
+          // Standalone router — no Stacked runtime required.
+          onGenerateRoute: generateRoute,
           navigatorObservers: [
             locator<AnalyticsService>().getAnalyticsObserver()
           ],
           builder: (context, child) {
             return UpgradeAlert(
-              navigatorKey: StackedService.navigatorKey,
+              navigatorKey: AppNavigator.navigatorKey,
               dialogStyle: Platform.isIOS
                   ? UpgradeDialogStyle.cupertino
                   : UpgradeDialogStyle.material,
