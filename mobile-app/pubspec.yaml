@@ -49,6 +49,8 @@ dependencies:
   share_plus: 10.1.4 # NOTE: v11 has breaking changes
   shared_preferences: 2.5.3 # TODO: update deprecated code
   sqflite: 2.4.2
+  stacked: 3.4.3
+  stacked_services: 1.6.0
   timezone: 0.10.1
   ua_client_hints: 1.4.1
   upgrader: 11.3.1
@@ -67,7 +69,8 @@ dev_dependencies:
     sdk: flutter
   integration_test:
     sdk: flutter
-  mockito: 5.4.4
+  mockito: 5.4.4 # NOTE: 5.4.6+ is blocked by stacked_generator
+  stacked_generator: 1.6.1
 
 flutter:
   fonts:
