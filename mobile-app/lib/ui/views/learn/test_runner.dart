@@ -7,8 +7,17 @@ import 'package:freecodecamp/service/learn/learn_file_service.dart';
 class ScriptBuilder {
   final LearnFileService fileService = locator<LearnFileService>();
 
-  static const transpileScript =
-      'return Babel.transform(code, { presets: ["env"] }).code';
+  static const transpileScript = '''
+try {
+  return { success: true, code: Babel.transform(code, { presets: ["env"] }).code };
+} catch (e) {
+  let errorMsg = e.message || e.toString();
+  if (e.loc) {
+    errorMsg = "SyntaxError: " + e.message + " (" + e.loc.line + ":" + e.loc.column + ")";
+  }
+  return { success: false, error: errorMsg };
+}
+''';
 
   static const hideFccHeaderStyle = '''
 <style class="fcc-hide-header">
@@ -71,7 +80,12 @@ return testRes;
           throw Exception('Babel transpilation failed: ${babelRes?.error}');
         }
 
-        return babelRes?.value ?? challengeFile;
+        final result = babelRes?.value as Map<dynamic, dynamic>?;
+        if (result?['success'] == false) {
+          throw Exception('Babel transpilation failed: ${result?['error']}');
+        }
+
+        return result?['code'] ?? challengeFile;
       case 20:
       case 23:
       case 27:

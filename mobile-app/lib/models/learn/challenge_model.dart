@@ -71,7 +71,7 @@ class Challenge {
   final Scene? scene;
 
   // Nodules for interactive challenges
-  final List<Nodules>? nodules;
+  final List<Nodule>? nodules;
 
   final List<Question>? questions;
 
@@ -134,7 +134,7 @@ class Challenge {
           .map<ChallengeFile>((file) => ChallengeFile.fromJson(file))
           .toList(),
       nodules: (data['nodules'] ?? [])
-          .map<Nodules>((nodule) => Nodules.fromJson(nodule))
+          .map<Nodule>((nodule) => Nodule.fromJson(nodule))
           .toList(),
       questions: (data['questions'] as List).isNotEmpty
           ? (data['questions'] as List)
@@ -234,8 +234,6 @@ class Hooks {
   }
 }
 
-sealed class StringOrList {}
-
 enum NoduleType {
   paragraph('paragraph'),
   interactiveEditor('interactiveEditor');
@@ -245,57 +243,43 @@ enum NoduleType {
   const NoduleType(this.type);
 }
 
-class NoduleTypeString extends StringOrList {
-  final String value;
+class ParagraphNodule implements Nodule {
+  @override
+  final NoduleType type = NoduleType.paragraph;
+  final String contents;
 
-  NoduleTypeString(this.value);
+  ParagraphNodule(this.contents);
 }
 
-class NoduleTypeList extends StringOrList {
-  final List<InterActiveFile> value;
+class InteractiveEditorNodule implements Nodule {
+  @override
+  final NoduleType type = NoduleType.interactiveEditor;
+  final List<InterActiveFile> files;
 
-  NoduleTypeList(this.value);
+  InteractiveEditorNodule(this.files);
 }
 
-class Nodules {
-  final NoduleType type;
-  final StringOrList data;
+sealed class Nodule {
+  abstract final NoduleType type;
 
-  Nodules({
-    required this.type,
-    required this.data,
-  });
-
-  String asString() {
-    return (data as NoduleTypeString).value;
-  }
-
-  List<InterActiveFile> asList() {
-    return (data as NoduleTypeList).value;
-  }
-
-  factory Nodules.fromJson(Map<String, dynamic> data) {
+  factory Nodule.fromJson(Map<String, dynamic> data) {
     final noduleType = NoduleType.values.firstWhere(
       (type) => type.type == data['type'],
       orElse: () => throw ArgumentError('Invalid nodule type: ${data['type']}'),
     );
 
     final noduleData = data['data'];
+    final noduleContents = data['contents'];
+    final noduleFiles = data['files'];
     if (noduleType == NoduleType.paragraph) {
-      return Nodules(
-        type: noduleType,
-        data: NoduleTypeString(noduleData),
-      );
+      return ParagraphNodule(noduleContents ?? noduleData);
     } else if (noduleType == NoduleType.interactiveEditor) {
-      return Nodules(
-        type: noduleType,
-        data: NoduleTypeList(
-          noduleData
-              .map<InterActiveFile>(
-                (item) => InterActiveFile.fromJson(item),
-              )
-              .toList(),
-        ),
+      return InteractiveEditorNodule(
+        (noduleFiles ?? noduleData)
+            .map<InterActiveFile>(
+              (item) => InterActiveFile.fromJson(item),
+            )
+            .toList(),
       );
     } else {
       throw ArgumentError(
