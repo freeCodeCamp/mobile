@@ -7,20 +7,17 @@ import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
-import 'package:freecodecamp/app/app.locator.dart';
 import 'package:freecodecamp/app/app.router.dart';
+import 'package:freecodecamp/core/navigation/app_navigator.dart';
+import 'package:freecodecamp/core/navigation/app_snackbar.dart';
 import 'package:freecodecamp/extensions/i18n_extension.dart';
 import 'package:freecodecamp/models/main/user_model.dart';
 import 'package:freecodecamp/service/dio_service.dart';
-import 'package:stacked_services/stacked_services.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 class AuthenticationService {
   static final AuthenticationService _authenticationService =
       AuthenticationService._internal();
-
-  SnackbarService snackbar = locator<SnackbarService>();
-  final NavigationService _navigationService = locator<NavigationService>();
 
   final FlutterSecureStorage store = const FlutterSecureStorage();
   final Dio _dio = DioService.dio;
@@ -183,7 +180,7 @@ class AuthenticationService {
       }
     } on WebAuthenticationException {
       // NOTE: The most likely case is that the user canceled the login
-      snackbar.showSnackbar(
+      AppSnackbar.show(
         title: context.t.login_cancelled,
         message: '',
       );
@@ -369,7 +366,7 @@ class AuthenticationService {
   }
 
   void routeToLogin([bool fromButton = false]) {
-    _navigationService.navigateTo(
+    AppNavigator.navigateTo(
       Routes.nativeLoginView,
       arguments: NativeLoginViewArguments(
         fromButton: fromButton,

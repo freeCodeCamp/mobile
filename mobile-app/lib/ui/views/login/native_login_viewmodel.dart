@@ -1,36 +1,57 @@
 import 'package:dio/dio.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
-import 'package:freecodecamp/app/app.locator.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:freecodecamp/core/providers/service_providers.dart';
 import 'package:freecodecamp/service/authentication/authentication_service.dart';
 import 'package:freecodecamp/service/developer_service.dart';
 import 'package:freecodecamp/service/dio_service.dart';
-import 'package:stacked/stacked.dart';
 
-class NativeLoginViewModel extends BaseViewModel {
-  TextEditingController emailController = TextEditingController();
-  TextEditingController otpController = TextEditingController();
-  bool showOTPfield = false;
-  bool incorrectOTP = false;
+class NativeLoginState {
+  const NativeLoginState({
+    this.showOTPfield = false,
+    this.incorrectOTP = false,
+    this.emailFieldIsValid = false,
+    this.otpFieldIsValid = false,
+  });
+
+  final bool showOTPfield;
+  final bool incorrectOTP;
+  final bool emailFieldIsValid;
+  final bool otpFieldIsValid;
+
+  NativeLoginState copyWith({
+    bool? showOTPfield,
+    bool? incorrectOTP,
+    bool? emailFieldIsValid,
+    bool? otpFieldIsValid,
+  }) {
+    return NativeLoginState(
+      showOTPfield: showOTPfield ?? this.showOTPfield,
+      incorrectOTP: incorrectOTP ?? this.incorrectOTP,
+      emailFieldIsValid: emailFieldIsValid ?? this.emailFieldIsValid,
+      otpFieldIsValid: otpFieldIsValid ?? this.otpFieldIsValid,
+    );
+  }
+}
+
+class NativeLoginNotifier extends Notifier<NativeLoginState> {
+  final TextEditingController emailController = TextEditingController();
+  final TextEditingController otpController = TextEditingController();
   final Dio _dio = DioService.dio;
 
-  final AuthenticationService auth = locator<AuthenticationService>();
-  final DeveloperService developerService = locator<DeveloperService>();
+  late AuthenticationService auth;
+  late DeveloperService developerService;
 
-  bool _emailFieldIsValid = false;
-  bool get emailFieldIsValid => _emailFieldIsValid;
-
-  bool _otpFieldIsValid = false;
-  bool get otpFieldIsValid => _otpFieldIsValid;
-
-  set emailFieldIsValid(bool value) {
-    _emailFieldIsValid = value;
-    notifyListeners();
-  }
-
-  set otpFieldIsValid(bool value) {
-    _otpFieldIsValid = value;
-    notifyListeners();
+  @override
+  NativeLoginState build() {
+    auth = ref.watch(authenticationServiceProvider);
+    developerService = ref.watch(developerServiceProvider);
+    ref.onDispose(() {
+      emailController.dispose();
+      otpController.dispose();
+    });
+    return const NativeLoginState();
   }
 
   void init() async {
@@ -45,24 +66,23 @@ class NativeLoginViewModel extends BaseViewModel {
 
     emailController.addListener(() {
       if (isEmail(emailController.text)) {
-        emailFieldIsValid = true;
-      } else if (emailFieldIsValid) {
-        emailFieldIsValid = false;
+        state = state.copyWith(emailFieldIsValid: true);
+      } else if (state.emailFieldIsValid) {
+        state = state.copyWith(emailFieldIsValid: false);
       }
     });
 
     otpController.addListener(() {
       if (RegExp(r'^[0-9]{6}$').hasMatch(otpController.text)) {
-        otpFieldIsValid = true;
-      } else if (emailFieldIsValid) {
-        otpFieldIsValid = false;
+        state = state.copyWith(otpFieldIsValid: true);
+      } else if (state.emailFieldIsValid) {
+        state = state.copyWith(otpFieldIsValid: false);
       }
     });
   }
 
   void sendOTPtoEmail() async {
-    showOTPfield = true;
-    notifyListeners();
+    state = state.copyWith(showOTPfield: true);
     await dotenv.load();
     await _dio.post(
       'https://${dotenv.get('AUTH0_DOMAIN')}/passwordless/start',
@@ -84,10 +104,14 @@ class NativeLoginViewModel extends BaseViewModel {
       otp: otpController.text,
     );
     if (isSuccess) {
-      incorrectOTP = false;
+      state = state.copyWith(incorrectOTP: false);
     } else {
-      incorrectOTP = true;
+      state = state.copyWith(incorrectOTP: true);
     }
-    notifyListeners();
   }
 }
+
+final nativeLoginProvider =
+    NotifierProvider<NativeLoginNotifier, NativeLoginState>(
+  NativeLoginNotifier.new,
+);
