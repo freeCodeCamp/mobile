@@ -27,16 +27,27 @@ import 'package:freecodecamp/ui/views/learn/utils/learn_globals.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class LearnLandingViewModel extends ChangeNotifier {
-  late final AuthenticationService _auth;
+  LearnLandingViewModel({
+    required AuthenticationService auth,
+    required LearnService learnService,
+    required LearnOfflineService learnOfflineService,
+    required DailyChallengeService dailyChallengeService,
+  })  : _auth = auth,
+        _learnService = learnService,
+        _learnOfflineService = learnOfflineService,
+        _dailyChallengeService = dailyChallengeService;
+
+  final AuthenticationService _auth;
   AuthenticationService get auth => _auth;
 
-  late final LearnService _learnService;
+  final LearnService _learnService;
   LearnService get learnService => _learnService;
 
-  late final LearnOfflineService _learnOfflineService;
+  final LearnOfflineService _learnOfflineService;
   LearnOfflineService get learnOfflineService => _learnOfflineService;
 
-  late final DailyChallengeService _dailyChallengeService;
+  final DailyChallengeService _dailyChallengeService;
+  bool _initialized = false;
 
   Future<List<Widget>>? superBlockButtons;
   final _dio = DioService.dio;
@@ -75,12 +86,9 @@ class LearnLandingViewModel extends ChangeNotifier {
     notifyListeners();
   }
 
-  void init(BuildContext context, WidgetRef ref) {
-    _auth = ref.read(authenticationServiceProvider);
-    _learnService = ref.read(learnServiceProvider);
-    _learnOfflineService = ref.read(learnOfflineServiceProvider);
-    _dailyChallengeService = ref.read(dailyChallengeServiceProvider);
-
+  void init() {
+    if (_initialized) return;
+    _initialized = true;
     retrieveNewQuote();
     initLoggedInListener();
     _loadInitialData();
@@ -312,5 +320,10 @@ class LearnLandingViewModel extends ChangeNotifier {
 
 final learnLandingViewModelProvider =
     ChangeNotifierProvider.autoDispose<LearnLandingViewModel>(
-  (ref) => LearnLandingViewModel(),
+  (ref) => LearnLandingViewModel(
+    auth: ref.read(authenticationServiceProvider),
+    learnService: ref.read(learnServiceProvider),
+    learnOfflineService: ref.read(learnOfflineServiceProvider),
+    dailyChallengeService: ref.read(dailyChallengeServiceProvider),
+  ),
 );

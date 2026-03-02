@@ -23,7 +23,7 @@ class _LearnLandingViewState extends ConsumerState<LearnLandingView> {
     super.initState();
     WidgetsBinding.instance.addPostFrameCallback((_) {
       final model = ref.read(learnLandingViewModelProvider);
-      model.init(context, ref);
+      model.init();
     });
   }
 
@@ -31,83 +31,83 @@ class _LearnLandingViewState extends ConsumerState<LearnLandingView> {
   Widget build(BuildContext context) {
     final model = ref.watch(learnLandingViewModelProvider);
     return Scaffold(
-        backgroundColor: FccColors.gray90,
-        appBar: AppBar(
-          title: Text('LEARN'),
-        ),
-        drawer: const DrawerWidgetView(
-          key: Key('drawer'),
-        ),
-        body: RefreshIndicator(
-          backgroundColor: const Color(0xFF0a0a23),
-          color: Colors.white,
-          onRefresh: () {
-            model.refresh();
+      backgroundColor: FccColors.gray90,
+      appBar: AppBar(
+        title: Text('LEARN'),
+      ),
+      drawer: const DrawerWidgetView(
+        key: Key('drawer'),
+      ),
+      body: RefreshIndicator(
+        backgroundColor: const Color(0xFF0a0a23),
+        color: Colors.white,
+        onRefresh: () {
+          model.refresh();
 
-            return Future.delayed(Duration.zero);
-          },
-          child: SingleChildScrollView(
-            child: Container(
-              padding: const EdgeInsets.all(4),
-              decoration: BoxDecoration(
-                color: FccColors.gray90,
-              ),
-              child: Column(
-                children: [
-                  const SizedBox(height: 32),
-                  StreamBuilder(
-                    stream: model.auth.isLoggedIn,
+          return Future.delayed(Duration.zero);
+        },
+        child: SingleChildScrollView(
+          child: Container(
+            padding: const EdgeInsets.all(4),
+            decoration: BoxDecoration(
+              color: FccColors.gray90,
+            ),
+            child: Column(
+              children: [
+                const SizedBox(height: 32),
+                StreamBuilder(
+                  stream: model.auth.isLoggedIn,
+                  builder: (context, snapshot) {
+                    return Column(
+                      children: [
+                        if (model.isLoggedIn) welcomeMessage(model),
+                      ],
+                    );
+                  },
+                ),
+                const QuoteWidget(),
+                if (!model.isLoggedIn) loginButton(model, context),
+                const SizedBox(height: 16),
+                DailyChallengeCard(
+                  dailyChallenge: model.dailyChallenge,
+                  isCompleted: model.isDailyChallengeCompleted,
+                ),
+                const SizedBox(height: 16),
+                if (model.isBusy)
+                  const Center(
+                    child: CircularProgressIndicator(),
+                  )
+                else
+                  FutureBuilder<List<Widget>>(
+                    future: model.superBlockButtons,
                     builder: (context, snapshot) {
-                      return Column(
-                        children: [
-                          if (model.isLoggedIn) welcomeMessage(model),
-                        ],
-                      );
-                    },
-                  ),
-                  const QuoteWidget(),
-                  if (!model.isLoggedIn) loginButton(model, context),
-                  const SizedBox(height: 16),
-                  DailyChallengeCard(
-                    dailyChallenge: model.dailyChallenge,
-                    isCompleted: model.isDailyChallengeCompleted,
-                  ),
-                  const SizedBox(height: 16),
-                  if (model.isBusy)
-                    const Center(
-                      child: CircularProgressIndicator(),
-                    )
-                  else
-                    FutureBuilder<List<Widget>>(
-                      future: model.superBlockButtons,
-                      builder: (context, snapshot) {
-                        if (snapshot.hasData) {
-                          if (snapshot.data!.isEmpty) {
-                            return errorMessage(context);
-                          }
-
-                          if (snapshot.data is List<Widget>) {
-                            List<Widget> widgets = snapshot.data!;
-
-                            return ListView.builder(
-                              physics: const ClampingScrollPhysics(),
-                              shrinkWrap: true,
-                              itemCount: widgets.length,
-                              itemBuilder: (BuildContext context, int i) {
-                                return widgets[i];
-                              },
-                            );
-                          }
+                      if (snapshot.hasData) {
+                        if (snapshot.data!.isEmpty) {
+                          return errorMessage(context);
                         }
 
-                        return errorMessage(context);
-                      },
-                    ),
-                ],
-              ),
+                        if (snapshot.data is List<Widget>) {
+                          List<Widget> widgets = snapshot.data!;
+
+                          return ListView.builder(
+                            physics: const ClampingScrollPhysics(),
+                            shrinkWrap: true,
+                            itemCount: widgets.length,
+                            itemBuilder: (BuildContext context, int i) {
+                              return widgets[i];
+                            },
+                          );
+                        }
+                      }
+
+                      return errorMessage(context);
+                    },
+                  ),
+              ],
             ),
           ),
         ),
+      ),
     );
   }
 
@@ -339,14 +339,14 @@ class SuperBlockButton extends StatelessWidget {
   }
 }
 
-class QuoteWidget extends StatelessWidget {
+class QuoteWidget extends ConsumerWidget {
   const QuoteWidget({
     super.key,
   });
 
   @override
-  Widget build(BuildContext context) {
-    LearnLandingViewModel model = LearnLandingViewModel();
+  Widget build(BuildContext context, WidgetRef ref) {
+    final model = ref.read(learnLandingViewModelProvider);
 
     return FutureBuilder(
       future: model.retrieveNewQuote(),
