@@ -3,6 +3,7 @@ import 'dart:io';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_html/flutter_html.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:freecodecamp/extensions/i18n_extension.dart';
 import 'package:freecodecamp/models/podcasts/episodes_model.dart';
 import 'package:freecodecamp/models/podcasts/podcasts_model.dart';
@@ -11,10 +12,9 @@ import 'package:freecodecamp/ui/views/podcast/episode-list/episode_list_viewmode
 import 'package:freecodecamp/ui/views/podcast/podcast-list/podcast_list_viewmodel.dart';
 import 'package:freecodecamp/ui/views/podcast/widgets/podcast_title_widget.dart';
 import 'package:infinite_scroll_pagination/infinite_scroll_pagination.dart';
-import 'package:stacked/stacked.dart';
 import 'package:url_launcher/url_launcher.dart';
 
-class EpisodeListView extends StatelessWidget {
+class EpisodeListView extends ConsumerStatefulWidget {
   const EpisodeListView({
     super.key,
     required this.podcast,
@@ -28,112 +28,133 @@ class EpisodeListView extends StatelessWidget {
   final TextStyle _subTitleStyle = const TextStyle(fontSize: 14);
 
   @override
+  ConsumerState<EpisodeListView> createState() => _EpisodeListViewState();
+}
+
+class _EpisodeListViewState extends ConsumerState<EpisodeListView> {
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      ref
+          .read(episodeListProvider(widget.podcast).notifier)
+          .initState(widget.isDownloadView);
+    });
+  }
+
+  @override
   Widget build(BuildContext context) {
-    return ViewModelBuilder<EpisodeListViewModel>.reactive(
-      viewModelBuilder: () => EpisodeListViewModel(podcast),
-      onViewModelReady: (model) => model.initState(isDownloadView),
-      builder: (context, model, child) => Scaffold(
-        appBar: AppBar(
-          title: Text(podcast.title!),
-        ),
-        body: RefreshIndicator(
-          onRefresh: () => Future.sync(() => isDownloadView
-              ? model.episodes
-              : model.pagingController?.refresh()),
-          backgroundColor: const Color(0xFF0a0a23),
-          color: Colors.white,
-          child: Align(
-            alignment: Alignment.topCenter,
-            child: CustomScrollView(
-              slivers: [
-                SliverToBoxAdapter(
-                  child: Column(
-                    children: [
-                      podcastHeader(),
-                      Container(
-                        color: const Color(0xFF0a0a23),
-                        child: Padding(
-                          padding: const EdgeInsets.all(20.0),
-                          child: description(model, context),
-                        ),
+    final state = ref.watch(episodeListProvider(widget.podcast));
+    final notifier =
+        ref.read(episodeListProvider(widget.podcast).notifier);
+
+    return Scaffold(
+      appBar: AppBar(
+        title: Text(widget.podcast.title!),
+      ),
+      body: RefreshIndicator(
+        onRefresh: () => Future.sync(() => widget.isDownloadView
+            ? notifier.episodes
+            : notifier.pagingController?.refresh()),
+        backgroundColor: const Color(0xFF0a0a23),
+        color: Colors.white,
+        child: Align(
+          alignment: Alignment.topCenter,
+          child: CustomScrollView(
+            slivers: [
+              SliverToBoxAdapter(
+                child: Column(
+                  children: [
+                    podcastHeader(widget.podcast, widget.isDownloadView),
+                    Container(
+                      color: const Color(0xFF0a0a23),
+                      child: Padding(
+                        padding: const EdgeInsets.all(20.0),
+                        child: description(state, notifier, context,
+                            widget.podcast),
                       ),
-                    ],
-                  ),
+                    ),
+                  ],
                 ),
-                !isDownloadView
-                    ? PagingListener(
-                        controller: model.pagingController!,
-                        builder: (context, state, fetchNextPage) =>
-                            PagedSliverList.separated(
-                          state: state,
-                          fetchNextPage: fetchNextPage,
-                          builderDelegate: PagedChildBuilderDelegate<Episodes>(
-                            itemBuilder: (
-                              BuildContext context,
-                              Episodes episode,
-                              int index,
-                            ) =>
-                                PodcastTile(
-                              episode: episode,
-                              podcast: podcast,
-                              isFromDownloadView: isDownloadView,
-                            ),
-                          ),
-                          separatorBuilder: (BuildContext context, int index) =>
-                              const Divider(
-                            color: FccColors.gray80,
-                            thickness: 1,
-                            height: 1,
-                            indent: 16,
-                            endIndent: 16,
+              ),
+              !widget.isDownloadView
+                  ? PagingListener(
+                      controller: notifier.pagingController!,
+                      builder: (context, pageState, fetchNextPage) =>
+                          PagedSliverList.separated(
+                        state: pageState,
+                        fetchNextPage: fetchNextPage,
+                        builderDelegate: PagedChildBuilderDelegate<Episodes>(
+                          itemBuilder: (
+                            BuildContext context,
+                            Episodes episode,
+                            int index,
+                          ) =>
+                              PodcastTile(
+                            episode: episode,
+                            podcast: widget.podcast,
+                            isFromDownloadView: widget.isDownloadView,
                           ),
                         ),
-                      )
-                    : SliverToBoxAdapter(
-                        child: FutureBuilder<List<Episodes>>(
-                          future: model.episodes,
-                          builder: (context, snapshot) {
-                            if (snapshot.hasData) {
-                              return ListView.separated(
-                                shrinkWrap: true,
-                                physics: const NeverScrollableScrollPhysics(),
-                                itemCount: snapshot.data!.length,
-                                itemBuilder: (BuildContext context, int index) {
-                                  return PodcastTile(
-                                    episode: snapshot.data![index],
-                                    podcast: podcast,
-                                    isFromDownloadView: isDownloadView,
-                                  );
-                                },
-                                separatorBuilder:
-                                    (BuildContext context, int index) {
-                                  return const Divider(
-                                    color: FccColors.gray80,
-                                    thickness: 1,
-                                    height: 1,
-                                    indent: 16,
-                                    endIndent: 16,
-                                  );
-                                },
-                              );
-                            } else if (snapshot.hasError) {
-                              return Text('${snapshot.error}');
-                            }
-                            return const Center(
-                              child: CircularProgressIndicator(),
-                            );
-                          },
+                        separatorBuilder: (BuildContext context, int index) =>
+                            const Divider(
+                          color: FccColors.gray80,
+                          thickness: 1,
+                          height: 1,
+                          indent: 16,
+                          endIndent: 16,
                         ),
                       ),
-              ],
-            ),
+                    )
+                  : SliverToBoxAdapter(
+                      child: FutureBuilder<List<Episodes>>(
+                        future: notifier.episodes,
+                        builder: (context, snapshot) {
+                          if (snapshot.hasData) {
+                            return ListView.separated(
+                              shrinkWrap: true,
+                              physics: const NeverScrollableScrollPhysics(),
+                              itemCount: snapshot.data!.length,
+                              itemBuilder: (BuildContext context, int index) {
+                                return PodcastTile(
+                                  episode: snapshot.data![index],
+                                  podcast: widget.podcast,
+                                  isFromDownloadView: widget.isDownloadView,
+                                );
+                              },
+                              separatorBuilder:
+                                  (BuildContext context, int index) {
+                                return const Divider(
+                                  color: FccColors.gray80,
+                                  thickness: 1,
+                                  height: 1,
+                                  indent: 16,
+                                  endIndent: 16,
+                                );
+                              },
+                            );
+                          } else if (snapshot.hasError) {
+                            return Text('${snapshot.error}');
+                          }
+                          return const Center(
+                            child: CircularProgressIndicator(),
+                          );
+                        },
+                      ),
+                    ),
+            ],
           ),
         ),
       ),
     );
   }
 
-  Column description(EpisodeListViewModel model, BuildContext context) {
+  Column description(
+    EpisodeListState state,
+    EpisodeListNotifier notifier,
+    BuildContext context,
+    Podcasts podcast,
+  ) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -155,13 +176,13 @@ class EpisodeListView extends StatelessWidget {
               fontSize: FontSize(16),
               color: Colors.white.withValues(alpha: 0.87),
               margin: Margins.zero,
-              maxLines: model.showDescription ? null : 3,
+              maxLines: state.showMoreDescription ? null : 3,
             )
           },
         ),
         TextButton(
           onPressed: () {
-            model.setShowMoreDescription = !model.showDescription;
+            notifier.setShowMoreDescription(!state.showMoreDescription);
           },
           style: TextButton.styleFrom(
             shape: RoundedRectangleBorder(
@@ -169,7 +190,7 @@ class EpisodeListView extends StatelessWidget {
             ),
           ),
           child: Text(
-            model.showDescription
+            state.showMoreDescription
                 ? context.t.podcast_show_less
                 : context.t.podcast_show_more,
             style: const TextStyle(
@@ -181,14 +202,14 @@ class EpisodeListView extends StatelessWidget {
     );
   }
 
-  Stack podcastHeader() {
+  Stack podcastHeader(Podcasts podcast, bool isDownloadView) {
     return Stack(
       alignment: Alignment.bottomCenter,
       children: [
         isDownloadView
             ? Image.file(
                 File(
-                  '${PodcastListViewModel.appDir.path}/images/podcast/${podcast.id}.jpg',
+                  '${PodcastListNotifier.appDir.path}/images/podcast/${podcast.id}.jpg',
                 ),
               )
             : CachedNetworkImage(

@@ -2,94 +2,88 @@ import 'dart:async';
 import 'dart:io';
 
 import 'package:audio_service/audio_service.dart';
-import 'package:freecodecamp/app/app.locator.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:freecodecamp/core/providers/service_providers.dart';
 import 'package:freecodecamp/models/podcasts/episodes_model.dart';
 import 'package:freecodecamp/models/podcasts/podcasts_model.dart';
 import 'package:freecodecamp/service/audio/audio_service.dart';
 import 'package:freecodecamp/service/podcast/download_service.dart';
 import 'package:freecodecamp/service/podcast/podcasts_service.dart';
 import 'package:path_provider/path_provider.dart';
-import 'package:stacked/stacked.dart';
 
-class EpisodeViewModel extends BaseViewModel {
-  final audioService = locator<AppAudioService>().audioHandler;
-  final _databaseService = locator<PodcastsDatabaseService>();
-  final DownloadService downloadService = locator<DownloadService>();
+class EpisodeState {
+  const EpisodeState({
+    this.sliderValue = 0.0,
+    this.isPlaying = false,
+    this.playBackSpeed = 1.0,
+    this.timeElapsed = '--:--',
+    this.timeLeft = '--:--',
+    this.isDownloading = false,
+    this.isDownloaded = false,
+  });
+
+  final double sliderValue;
+  final bool isPlaying;
+  final double playBackSpeed;
+  final String timeElapsed;
+  final String timeLeft;
+  final bool isDownloading;
+  final bool isDownloaded;
+
+  EpisodeState copyWith({
+    double? sliderValue,
+    bool? isPlaying,
+    double? playBackSpeed,
+    String? timeElapsed,
+    String? timeLeft,
+    bool? isDownloading,
+    bool? isDownloaded,
+  }) {
+    return EpisodeState(
+      sliderValue: sliderValue ?? this.sliderValue,
+      isPlaying: isPlaying ?? this.isPlaying,
+      playBackSpeed: playBackSpeed ?? this.playBackSpeed,
+      timeElapsed: timeElapsed ?? this.timeElapsed,
+      timeLeft: timeLeft ?? this.timeLeft,
+      isDownloading: isDownloading ?? this.isDownloading,
+      isDownloaded: isDownloaded ?? this.isDownloaded,
+    );
+  }
+}
+
+class EpisodeNotifier extends Notifier<EpisodeState> {
+  late AppAudioService _appAudioService;
+  late PodcastsDatabaseService _databaseService;
+  late DownloadService _downloadService;
 
   StreamSubscription<Duration>? _progressListener;
-  StreamSubscription<Duration>? get progressListener => _progressListener;
-
-  double _sliderValue = 0.0;
-  double get sliderValue => _sliderValue;
-
-  bool _isPlaying = false;
-  bool get isPlaying => _isPlaying;
-
-  double _playBackSpeed = 1.0;
-  double get playBackSpeed => _playBackSpeed;
-
-  String _timeElapsed = '--:--';
-  String get timeElapsed => _timeElapsed;
-
-  String _timeLeft = '--:--';
-  String get timeLeft => _timeLeft;
-
-  bool _isDownloading = false;
-  bool get isDownloading => _isDownloading;
-
-  bool _isDownloaded = false;
-  bool get isDownloaded => _isDownloaded;
 
   final List<double> speedOptions = [0.75, 1.0, 1.25, 1.5, 2.0];
 
-  set setSliderValue(double value) {
-    _sliderValue = value;
-    notifyListeners();
+  @override
+  EpisodeState build() {
+    _appAudioService = ref.watch(appAudioServiceProvider);
+    _databaseService = ref.watch(podcastsDatabaseServiceProvider);
+    _downloadService = ref.watch(downloadServiceProvider);
+
+    ref.onDispose(() {
+      _progressListener?.cancel();
+    });
+
+    return const EpisodeState();
   }
 
-  set setTimeElapsed(String value) {
-    _timeElapsed = value;
-    notifyListeners();
-  }
-
-  set setTimeLeft(String value) {
-    _timeLeft = value;
-    notifyListeners();
-  }
-
-  set setProgressListener(StreamSubscription<Duration>? value) {
-    _progressListener = value;
-    notifyListeners();
-  }
-
-  set setPlayBackSpeed(double value) {
-    _playBackSpeed = value;
-    notifyListeners();
-  }
-
-  set setIsDownloading(bool value) {
-    _isDownloading = value;
-    notifyListeners();
-  }
-
-  set setIsDownloaded(bool value) {
-    _isDownloaded = value;
-    notifyListeners();
-  }
-
-  set setIsPlaying(bool value) {
-    _isPlaying = value;
-    notifyListeners();
-  }
+  AppAudioService get appAudioService => _appAudioService;
+  DownloadService get downloadService => _downloadService;
 
   void initProgressListener(Episodes episode) {
-    if (audioService.episodeId == episode.id ||
-        audioService.episodeId.isEmpty) {
-      setProgressListener = AudioService.position.listen(
+    if (_appAudioService.audioHandler.episodeId == episode.id ||
+        _appAudioService.audioHandler.episodeId.isEmpty) {
+      _progressListener = AudioService.position.listen(
         (event) {
           int duration = episode.duration!.inSeconds;
           double sliderValue = event.inSeconds / duration;
-          setSliderValue = sliderValue;
+          state = state.copyWith(sliderValue: sliderValue);
           handleTimeVortex(duration, event.inSeconds);
         },
       );
@@ -97,8 +91,10 @@ class EpisodeViewModel extends BaseViewModel {
   }
 
   void handleTimeVortex(int duration, int inSeconds) {
-    setTimeElapsed = timeDisplay(inSeconds);
-    setTimeLeft = timeDisplay(duration - inSeconds - 1);
+    state = state.copyWith(
+      timeElapsed: timeDisplay(inSeconds),
+      timeLeft: timeDisplay(duration - inSeconds - 1),
+    );
   }
 
   String timeDisplay(int totalSeconds) {
@@ -118,16 +114,16 @@ class EpisodeViewModel extends BaseViewModel {
   void removeEpisode(Episodes episode, Podcasts podcast) async {
     await _databaseService.removeEpisode(episode);
     await _databaseService.removePodcast(podcast);
-    setIsDownloaded = false;
+    state = state.copyWith(isDownloaded: false);
   }
 
   void downloadBtnClick(Episodes episode, Podcasts podcast) async {
-    downloadService.setDownloadId = episode.id;
+    _downloadService.setDownloadId = episode.id;
     Directory appDir = await getApplicationSupportDirectory();
 
-    if (!isDownloaded && isDownloading) {
-      downloadService.download(episode, podcast);
-    } else if (isDownloaded) {
+    if (!state.isDownloaded && state.isDownloading) {
+      _downloadService.download(episode, podcast);
+    } else if (state.isDownloaded) {
       File audioFile =
           File('${appDir.path}/episodes/${podcast.id}/${episode.id}.mp3');
       if (audioFile.existsSync()) {
@@ -139,20 +135,21 @@ class EpisodeViewModel extends BaseViewModel {
   }
 
   void hasDownloadedEpisode(Episodes episode) async {
-    setIsDownloaded = await _databaseService.episodeExists(episode);
+    state = state.copyWith(
+      isDownloaded: await _databaseService.episodeExists(episode),
+    );
   }
 
   void initDownloadListener(Episodes episode) {
-    if (downloadService.isDownloading &&
-        downloadService.downloadId == episode.id) {
-      setIsDownloading = true;
+    if (_downloadService.isDownloading &&
+        _downloadService.downloadId == episode.id) {
+      state = state.copyWith(isDownloading: true);
     }
-    downloadService.downloadingStream.listen(
+    _downloadService.downloadingStream.listen(
       (event) async {
-        if (downloadService.downloadId == episode.id) {
+        if (_downloadService.downloadId == episode.id) {
           if (event == false) {
-            setIsDownloaded = true;
-            setIsDownloading = false;
+            state = state.copyWith(isDownloaded: true, isDownloading: false);
           }
         }
       },
@@ -160,67 +157,81 @@ class EpisodeViewModel extends BaseViewModel {
   }
 
   void initPlaybackListener() {
-    audioService.playbackState.listen((event) {
-      if (event.playing && !isPlaying) {
-        setIsPlaying = true;
-      } else if (!event.playing && isPlaying) {
-        setIsPlaying = false;
+    _appAudioService.audioHandler.playbackState.listen((event) {
+      if (event.playing && !state.isPlaying) {
+        state = state.copyWith(isPlaying: true);
+      } else if (!event.playing && state.isPlaying) {
+        state = state.copyWith(isPlaying: false);
       }
     });
   }
 
   void setAudioProgress(double value, Episodes episode) {
-    audioService.seek(
+    _appAudioService.audioHandler.seek(
       Duration(seconds: (value * episode.duration!.inSeconds).toInt()),
     );
-    setSliderValue = value.toDouble();
+    state = state.copyWith(sliderValue: value);
+  }
+
+  void setSliderValue(double value) {
+    state = state.copyWith(sliderValue: value);
+  }
+
+  void setIsDownloading(bool value) {
+    state = state.copyWith(isDownloading: value);
   }
 
   void disposeProgressListener() {
-    progressListener!.cancel();
+    _progressListener?.cancel();
   }
 
   void forward(Episodes episode) async {
-    int newPos = await audioService.fastForward();
+    int newPos = await _appAudioService.audioHandler.fastForward();
 
     double value = newPos / episode.duration!.inSeconds;
 
-    setSliderValue = value < 1 ? value : 1.0;
+    state = state.copyWith(sliderValue: value < 1 ? value : 1.0);
   }
 
   void rewind(Episodes episode) async {
-    int newPos = await audioService.rewind();
+    int newPos = await _appAudioService.audioHandler.rewind();
 
     double value = newPos / episode.duration!.inSeconds;
 
-    setSliderValue = value > 0 ? value : 0.0;
+    state = state.copyWith(sliderValue: value > 0 ? value : 0.0);
   }
 
   void playOrPause(Episodes episode, Podcasts podcast) {
-    if (audioService.isPlaying('podcast', episodeId: episode.id)) {
-      audioService.pause();
+    if (_appAudioService.audioHandler
+        .isPlaying('podcast', episodeId: episode.id)) {
+      _appAudioService.audioHandler.pause();
     } else {
       loadEpisode(episode, podcast);
-      audioService.play();
+      _appAudioService.audioHandler.play();
     }
   }
 
   void handlePlayBackSpeed(speed) {
-    setPlayBackSpeed = speed;
-    audioService.setSpeed(speed);
+    state = state.copyWith(playBackSpeed: speed as double);
+    _appAudioService.audioHandler.setSpeed(speed);
   }
 
   void initPlayBackSpeed() {
-    setPlayBackSpeed = audioService.getSpeed();
+    state = state.copyWith(
+      playBackSpeed: _appAudioService.audioHandler.getSpeed(),
+    );
   }
 
   void loadEpisode(Episodes episode, Podcasts podcast) async {
     bool downloaded = await _databaseService.episodeExists(episode);
 
-    if (audioService.episodeId != episode.id) {
-      audioService.setEpisodeId = episode.id;
-      audioService.loadEpisode(episode, downloaded, podcast);
+    if (_appAudioService.audioHandler.episodeId != episode.id) {
+      _appAudioService.audioHandler.setEpisodeId = episode.id;
+      _appAudioService.audioHandler.loadEpisode(episode, downloaded, podcast);
       initProgressListener(episode);
     }
   }
 }
+
+final episodeProvider =
+    NotifierProvider<EpisodeNotifier, EpisodeState>(EpisodeNotifier.new);

@@ -1,12 +1,12 @@
 import 'dart:io';
 
-import 'package:freecodecamp/app/app.locator.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:freecodecamp/core/providers/service_providers.dart';
 import 'package:freecodecamp/models/podcasts/podcasts_model.dart';
 import 'package:freecodecamp/service/developer_service.dart';
 import 'package:freecodecamp/service/dio_service.dart';
 import 'package:freecodecamp/service/podcast/podcasts_service.dart';
 import 'package:path_provider/path_provider.dart';
-import 'package:stacked/stacked.dart';
 
 const fccPodcastUrls = [
   // English
@@ -19,26 +19,35 @@ const fccPodcastUrls = [
   'https://anchor.fm/s/ff026c00/podcast/rss',
 ];
 
-class PodcastListViewModel extends BaseViewModel {
-  final _databaseService = locator<PodcastsDatabaseService>();
-  final _developerService = locator<DeveloperService>();
+class PodcastListState {
+  const PodcastListState({this.index = 0});
+
+  final int index;
+
+  PodcastListState copyWith({int? index}) {
+    return PodcastListState(index: index ?? this.index);
+  }
+}
+
+class PodcastListNotifier extends Notifier<PodcastListState> {
+  late PodcastsDatabaseService _databaseService;
+  late DeveloperService _developerService;
   static late Directory appDir;
-  int _index = 0;
   final _dio = DioService.dio;
 
-  int get index => _index;
+  @override
+  PodcastListState build() {
+    _databaseService = ref.watch(podcastsDatabaseServiceProvider);
+    _developerService = ref.watch(developerServiceProvider);
+    return const PodcastListState();
+  }
 
-  void setIndex(i) {
-    _index = i;
-    notifyListeners();
+  void setIndex(int i) {
+    state = state.copyWith(index: i);
   }
 
   Future<void> init() async {
     appDir = await getApplicationDocumentsDirectory();
-  }
-
-  void refresh() {
-    notifyListeners();
   }
 
   Future<List<Podcasts>> fetchPodcasts(bool isDownloadView) async {
@@ -63,3 +72,8 @@ class PodcastListViewModel extends BaseViewModel {
     }
   }
 }
+
+final podcastListProvider =
+    NotifierProvider<PodcastListNotifier, PodcastListState>(
+  PodcastListNotifier.new,
+);

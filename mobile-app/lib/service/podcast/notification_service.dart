@@ -1,19 +1,20 @@
 import 'dart:io';
-import 'dart:math';
+import 'dart:math' show Random;
 
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 
-// This is a singleton class and initialized only once
 class NotificationService {
-  static final NotificationService _notificationService =
-      NotificationService._internal();
-  final FlutterLocalNotificationsPlugin _flutterLocalNotificationsPlugin =
-      FlutterLocalNotificationsPlugin();
-  Random random = Random();
+  NotificationService({
+    FlutterLocalNotificationsPlugin? flutterLocalNotificationsPlugin,
+    Random? random,
+  })  : _flutterLocalNotificationsPlugin =
+            flutterLocalNotificationsPlugin ?? FlutterLocalNotificationsPlugin(),
+        _random = random ?? Random();
 
-  factory NotificationService() {
-    return _notificationService;
-  }
+  static const int _maxNotificationId = 0x7fffffff;
+
+  final FlutterLocalNotificationsPlugin _flutterLocalNotificationsPlugin;
+  final Random _random;
 
   Future<void> init() async {
     const AndroidInitializationSettings androidInitializationSettings =
@@ -30,11 +31,20 @@ class NotificationService {
     await _flutterLocalNotificationsPlugin.initialize(initializationSettings);
 
     if (Platform.isAndroid) {
-      await _flutterLocalNotificationsPlugin
-          .resolvePlatformSpecificImplementation<
-              AndroidFlutterLocalNotificationsPlugin>()
-          ?.requestNotificationsPermission();
+      await requestPermission();
     }
+  }
+
+  Future<bool> requestPermission() async {
+    if (!Platform.isAndroid) {
+      return true;
+    }
+
+    return await _flutterLocalNotificationsPlugin
+            .resolvePlatformSpecificImplementation<
+                AndroidFlutterLocalNotificationsPlugin>()
+            ?.requestNotificationsPermission() ??
+        false;
   }
 
   Future<void> showNotification(String title, String body) async {
@@ -57,12 +67,10 @@ class NotificationService {
     );
 
     await _flutterLocalNotificationsPlugin.show(
-      random.nextInt(pow(2, 31).toInt() - 1),
+      _random.nextInt(_maxNotificationId),
       title,
       body,
       platformChannelSpecifics,
     );
   }
-
-  NotificationService._internal();
 }
