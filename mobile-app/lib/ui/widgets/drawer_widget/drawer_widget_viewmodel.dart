@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:freecodecamp/app/app.locator.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:freecodecamp/core/navigation/app_snackbar.dart';
+import 'package:freecodecamp/core/providers/service_providers.dart';
 import 'package:freecodecamp/service/authentication/authentication_service.dart';
 import 'package:freecodecamp/service/developer_service.dart';
 import 'package:freecodecamp/ui/views/code_radio/code_radio_view.dart';
@@ -10,54 +12,66 @@ import 'package:freecodecamp/ui/views/news/news-view-handler/news_view_handler_v
 import 'package:freecodecamp/ui/views/podcast/podcast-list/podcast_list_view.dart';
 import 'package:freecodecamp/ui/views/profile/profile_view.dart';
 import 'package:freecodecamp/ui/views/settings/settings_view.dart';
-import 'package:stacked/stacked.dart';
-import 'package:stacked_services/stacked_services.dart';
 
-class DrawerWidgetViewModel extends BaseViewModel {
-  final AuthenticationService auth = locator<AuthenticationService>();
+class DrawerWidgetState {
+  const DrawerWidgetState({
+    this.loggedIn = false,
+    this.devMode = false,
+  });
 
-  final SnackbarService snack = locator<SnackbarService>();
+  final bool loggedIn;
+  final bool devMode;
 
-  bool _loggedIn = false;
-  bool get loggedIn => _loggedIn;
+  DrawerWidgetState copyWith({bool? loggedIn, bool? devMode}) {
+    return DrawerWidgetState(
+      loggedIn: loggedIn ?? this.loggedIn,
+      devMode: devMode ?? this.devMode,
+    );
+  }
+}
 
-  bool _devMode = false;
-  bool get devmode => _devMode;
+class DrawerWidgetNotifier extends Notifier<DrawerWidgetState> {
+  late AuthenticationService auth;
+  late DeveloperService _developerService;
 
-  final ScrollController _scrollController = ScrollController();
-  ScrollController get scrollController => _scrollController;
+  final ScrollController scrollController = ScrollController();
+
+  @override
+  DrawerWidgetState build() {
+    auth = ref.watch(authenticationServiceProvider);
+    _developerService = ref.watch(developerServiceProvider);
+    ref.onDispose(scrollController.dispose);
+    return const DrawerWidgetState();
+  }
 
   void initState() async {
-    _loggedIn = AuthenticationService.staticIsloggedIn;
-    await devMode();
-    notifyListeners();
+    state = state.copyWith(
+      loggedIn: AuthenticationService.staticIsloggedIn,
+    );
+    await _checkDevMode();
     auth.isLoggedIn.listen((event) {
-      _loggedIn = event;
-      notifyListeners();
+      state = state.copyWith(loggedIn: event);
     });
   }
 
-  static final _developerService = locator<DeveloperService>();
-
-  devMode() async {
+  Future<void> _checkDevMode() async {
     if (await _developerService.developmentMode()) {
-      _devMode = true;
-      notifyListeners();
+      state = state.copyWith(devMode: true);
     }
   }
 
   void snackbar() {
-    snack.showSnackbar(
+    AppSnackbar.show(
       title: 'Coming soon - use the web version',
       message: '',
     );
   }
 
   void loginSnack() {
-    snack.showSnackbar(message: '', title: 'Login will soon be available!');
+    AppSnackbar.show(message: '', title: 'Login will soon be available!');
   }
 
-  void routeComponent(view, context) async {
+  void routeComponent(String view, BuildContext context) async {
     switch (view) {
       case 'DAILY_CHALLENGES':
         Navigator.pushReplacement(
@@ -166,3 +180,8 @@ class DrawerWidgetViewModel extends BaseViewModel {
     }
   }
 }
+
+final drawerWidgetProvider =
+    NotifierProvider<DrawerWidgetNotifier, DrawerWidgetState>(
+  DrawerWidgetNotifier.new,
+);
