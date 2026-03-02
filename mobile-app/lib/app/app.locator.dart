@@ -1,4 +1,5 @@
 import 'package:get_it/get_it.dart';
+import 'package:stacked_services/stacked_services.dart';
 
 import '../service/audio/audio_service.dart';
 import '../service/authentication/authentication_service.dart';
@@ -22,6 +23,9 @@ import '../service/podcast/podcasts_service.dart';
 final locator = GetIt.instance;
 
 Future<void> setupLocator() async {
+  _registerLazySingleton<NavigationService>(() => NavigationService());
+  _registerLazySingleton<DialogService>(() => DialogService());
+  _registerLazySingleton<SnackbarService>(() => SnackbarService());
   _registerLazySingleton<PodcastsDatabaseService>(
     () => PodcastsDatabaseService(),
   );
