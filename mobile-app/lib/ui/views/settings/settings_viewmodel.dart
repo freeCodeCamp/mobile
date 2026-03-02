@@ -1,38 +1,61 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_custom_tabs/flutter_custom_tabs.dart';
-import 'package:freecodecamp/app/app.locator.dart';
-import 'package:freecodecamp/enums/dialog_type.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:freecodecamp/core/providers/service_providers.dart';
 import 'package:freecodecamp/extensions/i18n_extension.dart';
 import 'package:freecodecamp/service/developer_service.dart';
 import 'package:freecodecamp/service/locale_service.dart';
-import 'package:freecodecamp/ui/widgets/setup_dialog_ui.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:stacked/stacked.dart';
-import 'package:stacked_services/stacked_services.dart';
 
-class SettingsViewModel extends BaseViewModel {
-  final DialogService _dialogService = locator<DialogService>();
-  final LocaleService localeService = locator<LocaleService>();
-  final developerService = locator<DeveloperService>();
+class SettingsState {
+  const SettingsState({this.isDev = false});
 
-  bool isDev = false;
+  final bool isDev;
+
+  SettingsState copyWith({bool? isDev}) {
+    return SettingsState(isDev: isDev ?? this.isDev);
+  }
+}
+
+class SettingsNotifier extends Notifier<SettingsState> {
+  late LocaleService localeService;
+  late DeveloperService developerService;
+
+  @override
+  SettingsState build() {
+    localeService = ref.watch(localeServiceProvider);
+    developerService = ref.watch(developerServiceProvider);
+    return const SettingsState();
+  }
 
   void init() async {
-    setupDialogUi();
-    isDev = await developerService.developmentMode();
-    notifyListeners();
+    final isDev = await developerService.developmentMode();
+    state = state.copyWith(isDev: isDev);
   }
 
   void resetCache(BuildContext context) async {
-    DialogResponse? res = await _dialogService.showCustomDialog(
+    final confirmed = await showDialog<bool>(
+      context: context,
       barrierDismissible: true,
-      variant: DialogType.buttonForm,
-      title: context.t.settings_reset_cache,
-      description: context.t.settings_reset_cache_description,
-      mainButtonTitle: context.t.settings_reset_cache_confirm,
+      builder: (dialogContext) => AlertDialog(
+        backgroundColor: const Color(0xFF2A2A40),
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(0)),
+        title: Text(context.t.settings_reset_cache),
+        content: Text(context.t.settings_reset_cache_description),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.of(dialogContext).pop(false),
+            child: const Text('Cancel'),
+          ),
+          TextButton(
+            onPressed: () => Navigator.of(dialogContext).pop(true),
+            child: Text(context.t.settings_reset_cache_confirm),
+          ),
+        ],
+      ),
     );
 
-    if (res?.confirmed == true) {
+    if (confirmed == true) {
       SharedPreferences prefs = await SharedPreferences.getInstance();
       prefs.clear();
     }
@@ -58,3 +81,6 @@ class SettingsViewModel extends BaseViewModel {
     );
   }
 }
+
+final settingsProvider =
+    NotifierProvider<SettingsNotifier, SettingsState>(SettingsNotifier.new);
