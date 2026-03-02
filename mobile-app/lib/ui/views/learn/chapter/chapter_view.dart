@@ -1,4 +1,3 @@
-
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:freecodecamp/models/learn/curriculum_model.dart';
@@ -25,7 +24,6 @@ class _ChapterViewState extends ConsumerState<ChapterView> {
     super.initState();
     WidgetsBinding.instance.addPostFrameCallback((_) {
       ref.read(chapterViewModelProvider).init(
-            ref,
             widget.superBlockDashedName,
             widget.superBlockName,
           );
@@ -62,8 +60,9 @@ class _ChapterViewState extends ConsumerState<ChapterView> {
                   'python-certification-exam'
                 ];
 
-                List<Chapter> chapters =
-                    (superBlock.chapters as List<Chapter>).where((chapter) => !exams.contains(chapter.dashedName)).toList();
+                List<Chapter> chapters = (superBlock.chapters as List<Chapter>)
+                    .where((chapter) => !exams.contains(chapter.dashedName))
+                    .toList();
 
                 return ListView(
                   shrinkWrap: true,
@@ -72,8 +71,7 @@ class _ChapterViewState extends ConsumerState<ChapterView> {
                       children: [
                         ...[
                           for (Chapter chapter in chapters)
-                            chapterBlock(
-                                superBlock, chapter, model, context)
+                            chapterBlock(superBlock, chapter, model, context)
                         ]
                       ],
                     ),
@@ -161,8 +159,8 @@ class _ChapterViewState extends ConsumerState<ChapterView> {
     bool isSingleStep = model.isSingleStepModule(module);
     Color moduleColor = model.getModuleColor(module);
     bool isReview = module.blocks != null &&
-                    module.blocks!.isNotEmpty &&
-                    module.blocks!.first.label == BlockLabel.review;
+        module.blocks!.isNotEmpty &&
+        module.blocks!.first.label == BlockLabel.review;
     bool isCertProject = module.moduleType == ModuleType.certProject;
     Color backgroundColor = isSingleStep
         ? moduleColor.withValues(alpha: 0.3)

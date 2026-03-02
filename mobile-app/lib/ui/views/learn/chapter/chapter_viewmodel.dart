@@ -14,8 +14,14 @@ import 'package:freecodecamp/service/learn/learn_service.dart';
 import 'package:freecodecamp/ui/theme/fcc_theme.dart';
 
 class ChapterViewModel extends ChangeNotifier {
+  ChapterViewModel({
+    required AuthenticationService auth,
+  }) : _auth = auth;
+
   final _dio = DioService.dio;
-  late final AuthenticationService auth;
+  final AuthenticationService _auth;
+  AuthenticationService get auth => _auth;
+  bool _initialized = false;
 
   bool _isDev = false;
   bool get isDev => _isDev;
@@ -27,8 +33,9 @@ class ChapterViewModel extends ChangeNotifier {
     notifyListeners();
   }
 
-  void init(WidgetRef ref, String superBlockDashedName, superBlockName) async {
-    auth = ref.read(authenticationServiceProvider);
+  void init(String superBlockDashedName, superBlockName) {
+    if (_initialized) return;
+    _initialized = true;
     superBlockFuture = requestChapters(superBlockDashedName, superBlockName);
     developmentMode();
   }
@@ -145,5 +152,7 @@ class ChapterViewModel extends ChangeNotifier {
 
 final chapterViewModelProvider =
     ChangeNotifierProvider.autoDispose<ChapterViewModel>(
-  (ref) => ChapterViewModel(),
+  (ref) => ChapterViewModel(
+    auth: ref.read(authenticationServiceProvider),
+  ),
 );
