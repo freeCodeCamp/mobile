@@ -1,21 +1,21 @@
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
-import 'package:freecodecamp/app/app.locator.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:freecodecamp/core/providers/service_providers.dart';
 import 'package:freecodecamp/models/learn/curriculum_model.dart';
 import 'package:freecodecamp/service/authentication/authentication_service.dart';
 import 'package:freecodecamp/service/dio_service.dart';
 import 'package:freecodecamp/service/learn/learn_offline_service.dart';
 import 'package:freecodecamp/service/learn/learn_service.dart';
-import 'package:stacked/stacked.dart';
 
-class SuperBlockViewModel extends BaseViewModel {
-  final _learnOfflineService = locator<LearnOfflineService>();
+class SuperBlockViewModel extends ChangeNotifier {
+  late final LearnOfflineService _learnOfflineService;
   LearnOfflineService get learnOfflineService => _learnOfflineService;
 
-  final _learnService = locator<LearnService>();
+  late final LearnService _learnService;
   LearnService get learnService => _learnService;
 
-  final AuthenticationService _auth = locator<AuthenticationService>();
+  late final AuthenticationService _auth;
   AuthenticationService get auth => _auth;
 
   final _dio = DioService.dio;
@@ -25,6 +25,12 @@ class SuperBlockViewModel extends BaseViewModel {
 
   Future<SuperBlock>? _superBlockData;
   Future<SuperBlock>? get superBlockData => _superBlockData;
+
+  void init(WidgetRef ref) {
+    _learnOfflineService = ref.read(learnOfflineServiceProvider);
+    _learnService = ref.read(learnServiceProvider);
+    _auth = ref.read(authenticationServiceProvider);
+  }
 
   set setSuperBlockData(Future<SuperBlock>? superBlockData) {
     _superBlockData = superBlockData;
@@ -87,3 +93,8 @@ class SuperBlockViewModel extends BaseViewModel {
     }
   }
 }
+
+final superBlockViewModelProvider =
+    ChangeNotifierProvider.autoDispose<SuperBlockViewModel>(
+  (ref) => SuperBlockViewModel(),
+);

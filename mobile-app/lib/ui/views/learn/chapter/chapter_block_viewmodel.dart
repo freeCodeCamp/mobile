@@ -1,12 +1,18 @@
-import 'package:freecodecamp/app/app.locator.dart';
+import 'package:flutter/foundation.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:freecodecamp/core/providers/service_providers.dart';
 import 'package:freecodecamp/models/learn/curriculum_model.dart';
 import 'package:freecodecamp/service/authentication/authentication_service.dart';
-import 'package:stacked/stacked.dart';
 
-class ChapterBlockViewmodel extends BaseViewModel {
+class ChapterBlockViewmodel extends ChangeNotifier {
   Map<String, bool> _blockOpenStates = {};
   Map<String, bool> get blockOpenStates => _blockOpenStates;
-  final authenticationService = locator<AuthenticationService>();
+
+  late final AuthenticationService authenticationService;
+
+  void init(WidgetRef ref) {
+    authenticationService = ref.read(authenticationServiceProvider);
+  }
 
   set blockOpenStates(Map<String, bool> openStates) {
     _blockOpenStates = openStates;
@@ -30,3 +36,8 @@ class ChapterBlockViewmodel extends BaseViewModel {
     }
   }
 }
+
+final chapterBlockViewModelProvider =
+    ChangeNotifierProvider.autoDispose<ChapterBlockViewmodel>(
+  (ref) => ChapterBlockViewmodel(),
+);

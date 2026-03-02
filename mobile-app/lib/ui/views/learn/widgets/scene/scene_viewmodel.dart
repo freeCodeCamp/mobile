@@ -5,12 +5,11 @@ import 'package:audio_service/audio_service.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/scheduler.dart';
 import 'package:flutter/widgets.dart';
-import 'package:freecodecamp/app/app.locator.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:freecodecamp/core/providers/service_providers.dart';
 import 'package:freecodecamp/models/learn/challenge_model.dart';
 import 'package:freecodecamp/models/learn/scene_assets_model.dart';
-import 'package:freecodecamp/service/audio/audio_service.dart';
 import 'package:freecodecamp/service/learn/scene_assets_service.dart';
-import 'package:stacked/stacked.dart';
 
 class CharacterState {
   final String characterName;
@@ -48,7 +47,7 @@ class CharacterState {
   }
 }
 
-class SceneViewModel extends BaseViewModel {
+class SceneViewModel extends ChangeNotifier {
   static const String _cdnBase = 'https://cdn.freecodecamp.org/curriculum/english/animation-assets/images';
   static const int _minMouthInterval = 85;
   static const int _maxMouthInterval = 105;
@@ -56,7 +55,7 @@ class SceneViewModel extends BaseViewModel {
   static const int _maxBlinkInterval = 4000;
   static const int _blinkDuration = 150;
 
-  final audioService = locator<AppAudioService>().audioHandler;
+  late final dynamic audioService;
   final _sceneAssetsService = SceneAssetsService();
   SceneAssets? _sceneAssets;
   final StreamController<Duration> position = StreamController<Duration>.broadcast();
@@ -93,6 +92,10 @@ class SceneViewModel extends BaseViewModel {
   void toggleCaptions() {
     _showCaptions = !_showCaptions;
     notifyListeners();
+  }
+
+  void initAudioService(WidgetRef ref) {
+    audioService = ref.read(appAudioServiceProvider).audioHandler;
   }
 
   // Helper methods for DRY code
@@ -136,7 +139,7 @@ class SceneViewModel extends BaseViewModel {
 
   void initPositionListener() {
     AudioService.position.listen((event) {
-      if (position.isClosed) return;  
+      if (position.isClosed) return;
       position.add(event);
       _updateSceneForTime(event);
     });
@@ -147,7 +150,7 @@ class SceneViewModel extends BaseViewModel {
       if (_isPlaying) {
         _startBlinkAnimations();
       } else {
-        _stopAllMouthAnimations();  
+        _stopAllMouthAnimations();
         _stopAllBlinkAnimations();
       }
 
@@ -542,3 +545,8 @@ class SceneViewModel extends BaseViewModel {
     audioService.stop();
   }
 }
+
+final sceneViewModelProvider =
+    ChangeNotifierProvider.autoDispose<SceneViewModel>(
+  (ref) => SceneViewModel(),
+);

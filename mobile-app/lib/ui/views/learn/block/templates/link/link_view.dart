@@ -3,9 +3,7 @@ import 'package:flutter_html/flutter_html.dart';
 import 'package:freecodecamp/models/learn/curriculum_model.dart';
 import 'package:freecodecamp/ui/theme/fcc_theme.dart';
 import 'package:freecodecamp/ui/views/learn/block/block_template_viewmodel.dart';
-import 'package:freecodecamp/ui/views/learn/block/templates/link/link_viewmodel.dart';
 import 'package:freecodecamp/ui/views/news/html_handler/html_handler.dart';
-import 'package:stacked/stacked.dart';
 
 class BlockLinkView extends StatelessWidget {
   const BlockLinkView({
@@ -23,12 +21,9 @@ class BlockLinkView extends StatelessWidget {
   Widget build(BuildContext context) {
     HTMLParser parser = HTMLParser(context: context);
 
-    return ViewModelBuilder.reactive(
-      viewModelBuilder: () => BlockLinkViewModel(),
-      builder: (context, childModel, child) {
-        return Expanded(
-          child: Column(
-            children: [
+    return Expanded(
+      child: Column(
+        children: [
               Row(
                 children: [
                   model.challengesCompleted == block.challenges.length
@@ -91,10 +86,8 @@ class BlockLinkView extends StatelessWidget {
                   ),
                 ],
               ),
-            ],
-          ),
-        );
-      },
+        ],
+      ),
     );
   }
 }

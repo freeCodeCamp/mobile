@@ -1,9 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/foundation.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:freecodecamp/app/app.locator.dart';
 import 'package:freecodecamp/service/learn/learn_service.dart';
-import 'package:stacked/stacked.dart';
 
-class PythonProjectViewModel extends BaseViewModel {
+class PythonProjectViewModel extends ChangeNotifier {
   final LearnService learnService = locator<LearnService>();
 
   TextEditingController linkController = TextEditingController();
@@ -61,3 +62,8 @@ class PythonProjectViewModel extends BaseViewModel {
     }
   }
 }
+
+final pythonProjectViewModelProvider =
+    ChangeNotifierProvider.autoDispose<PythonProjectViewModel>(
+  (ref) => PythonProjectViewModel(),
+);

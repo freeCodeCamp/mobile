@@ -4,10 +4,8 @@ import 'package:flutter_scroll_shadow/flutter_scroll_shadow.dart';
 import 'package:freecodecamp/models/learn/curriculum_model.dart';
 import 'package:freecodecamp/ui/theme/fcc_theme.dart';
 import 'package:freecodecamp/ui/views/learn/block/block_template_viewmodel.dart';
-import 'package:freecodecamp/ui/views/learn/block/templates/grid/grid_viewmodel.dart';
 import 'package:freecodecamp/ui/views/learn/widgets/challenge_tile.dart';
 import 'package:freecodecamp/ui/views/news/html_handler/html_handler.dart';
-import 'package:stacked/stacked.dart';
 
 class BlockGridView extends StatelessWidget {
   const BlockGridView({
@@ -36,12 +34,10 @@ class BlockGridView extends StatelessWidget {
 
     HTMLParser parser = HTMLParser(context: context);
 
-    return ViewModelBuilder.reactive(
-      viewModelBuilder: () => BlockGridViewModel(),
-      builder: (context, childModel, child) => Expanded(
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
+    return Expanded(
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
             Row(
               children: [
                 model.challengesCompleted == block.challenges.length
@@ -161,8 +157,7 @@ class BlockGridView extends StatelessWidget {
                   );
                 }),
               )
-          ],
-        ),
+        ],
       ),
     );
   }

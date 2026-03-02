@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:freecodecamp/extensions/i18n_extension.dart';
 import 'package:freecodecamp/models/learn/challenge_model.dart';
 import 'package:freecodecamp/models/learn/curriculum_model.dart';
@@ -11,9 +12,8 @@ import 'package:freecodecamp/ui/views/learn/widgets/challenge_card.dart';
 import 'package:freecodecamp/ui/views/learn/widgets/scene/scene_view.dart';
 import 'package:freecodecamp/ui/views/learn/widgets/transcript_widget.dart';
 import 'package:freecodecamp/ui/views/learn/widgets/youtube_player_widget.dart';
-import 'package:stacked/stacked.dart';
 
-class ReviewView extends StatelessWidget {
+class ReviewView extends ConsumerStatefulWidget {
   const ReviewView({
     super.key,
     required this.challenge,
@@ -24,22 +24,32 @@ class ReviewView extends StatelessWidget {
   final Block block;
 
   @override
+  ConsumerState<ReviewView> createState() => _ReviewViewState();
+}
+
+class _ReviewViewState extends ConsumerState<ReviewView> {
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      ref.read(reviewViewModelProvider).initChallenge(widget.challenge, context);
+    });
+  }
+
+  @override
   Widget build(BuildContext context) {
-    return ViewModelBuilder<ReviewViewmodel>.reactive(
-      viewModelBuilder: () => ReviewViewmodel(),
-      onViewModelReady: (model) => model.initChallenge(challenge, context),
-      builder: (context, model, child) {
-        return Scaffold(
+    final model = ref.watch(reviewViewModelProvider);
+    return Scaffold(
           backgroundColor: FccColors.gray90,
           persistentFooterAlignment: AlignmentDirectional.topStart,
           appBar: AppBar(
               backgroundColor: FccColors.gray90,
-              title: Text(handleChallengeTitle(challenge, block))),
+              title: Text(handleChallengeTitle(widget.challenge, widget.block))),
           body: SafeArea(
             child: ListView(
               children: [
                 ChallengeCard(
-                  title: challenge.title,
+                  title: widget.challenge.title,
                   child: Column(
                     children: [
                       ...model.parsedDescription,
@@ -47,37 +57,37 @@ class ReviewView extends StatelessWidget {
                     ],
                   ),
                 ),
-                if (challenge.videoId != null) ...[
+                if (widget.challenge.videoId != null) ...[
                   const SizedBox(height: 12),
                   ChallengeCard(
                     title: 'Video',
                     child: YoutubePlayerWidget(
-                      videoId: challenge.videoId!,
+                      videoId: widget.challenge.videoId!,
                     ),
                   ),
                   const SizedBox(height: 12),
                 ],
-                if (challenge.scene != null) ...[
+                if (widget.challenge.scene != null) ...[
                   ChallengeCard(
                     title: 'Scene',
                     child: SceneView(
-                      scene: challenge.scene!,
+                      scene: widget.challenge.scene!,
                     ),
                   ),
-                ] else if (challenge.audio != null) ...[
+                ] else if (widget.challenge.audio != null) ...[
                   ChallengeCard(
                     title: 'Listen to the Audio',
                     child: AudioPlayerView(
-                      audio: challenge.audio!,
+                      audio: widget.challenge.audio!,
                     ),
                   ),
                 ],
-                if (challenge.transcript.isNotEmpty) ...[
+                if (widget.challenge.transcript.isNotEmpty) ...[
                   ChallengeCard(
                     title: 'Transcript',
                     child: Transcript(
-                      transcript: challenge.transcript,
-                      isCollapsible: challenge.videoId != null,
+                      transcript: widget.challenge.transcript,
+                      isCollapsible: widget.challenge.videoId != null,
                     ),
                   ),
                 ],
@@ -86,7 +96,7 @@ class ReviewView extends StatelessWidget {
                   child: Column(
                     children: [
                       for (final (i, assignment)
-                          in challenge.assignments!.indexed)
+                          in widget.challenge.assignments!.indexed)
                         Assignment(
                             label: assignment,
                             value: model.assignmentsStatus[i],
@@ -120,9 +130,9 @@ class ReviewView extends StatelessWidget {
                           onPressed: model.assignmentsStatus
                                   .every((element) => element)
                               ? () => model.learnService.goToNextChallenge(
-                                    block.challenges.length,
-                                    challenge,
-                                    block,
+                                    widget.block.challenges.length,
+                                    widget.challenge,
+                                    widget.block,
                                   )
                               : null,
                           child: Text(
@@ -138,7 +148,5 @@ class ReviewView extends StatelessWidget {
             ),
           ),
         );
-      },
-    );
   }
 }

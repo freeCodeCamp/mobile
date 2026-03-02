@@ -1,5 +1,8 @@
-import 'package:freecodecamp/app/app.locator.dart';
+import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:freecodecamp/app/app.router.dart';
+import 'package:freecodecamp/core/navigation/app_navigator.dart';
+import 'package:freecodecamp/core/providers/service_providers.dart';
 import 'package:freecodecamp/models/learn/completed_challenge_model.dart';
 import 'package:freecodecamp/models/learn/curriculum_model.dart';
 import 'package:freecodecamp/models/learn/daily_challenge_model.dart';
@@ -7,14 +10,10 @@ import 'package:freecodecamp/models/main/user_model.dart';
 import 'package:freecodecamp/service/authentication/authentication_service.dart';
 import 'package:freecodecamp/service/learn/daily_challenge_service.dart';
 import 'package:freecodecamp/ui/views/learn/utils/challenge_utils.dart';
-import 'package:stacked/stacked.dart';
-import 'package:stacked_services/stacked_services.dart';
 
-class DailyChallengeViewModel extends BaseViewModel {
-  final NavigationService _navigationService = locator<NavigationService>();
-  final AuthenticationService _auth = locator<AuthenticationService>();
-  final DailyChallengeService _dailyChallengeService =
-      locator<DailyChallengeService>();
+class DailyChallengeViewModel extends ChangeNotifier {
+  late final AuthenticationService _auth;
+  late final DailyChallengeService _dailyChallengeService;
 
   List<DailyChallengeBlock> _blocks = [];
   List<DailyChallengeBlock> get blocks => _blocks;
@@ -22,7 +21,17 @@ class DailyChallengeViewModel extends BaseViewModel {
   Map<String, bool> _blockOpenStates = {};
   Map<String, bool> get blockOpenStates => _blockOpenStates;
 
-  Future<void> init() async {
+  bool _isBusy = false;
+  bool get isBusy => _isBusy;
+
+  void _setBusy(bool value) {
+    _isBusy = value;
+    notifyListeners();
+  }
+
+  void init(WidgetRef ref) async {
+    _auth = ref.read(authenticationServiceProvider);
+    _dailyChallengeService = ref.read(dailyChallengeServiceProvider);
     await _fetchAndGroupChallenges();
     _initAuthenticationListener();
   }
@@ -45,7 +54,7 @@ class DailyChallengeViewModel extends BaseViewModel {
   }
 
   Future<void> _fetchAndGroupChallenges() async {
-    setBusy(true);
+    _setBusy(true);
 
     try {
       final List<DailyChallengeOverview> challenges =
@@ -103,7 +112,7 @@ class DailyChallengeViewModel extends BaseViewModel {
     } catch (e) {
       print('Exception occurred: $e');
     } finally {
-      setBusy(false);
+      _setBusy(false);
     }
   }
 
@@ -132,7 +141,7 @@ class DailyChallengeViewModel extends BaseViewModel {
           'Explore the daily coding challenges for $monthYear. Stay motivated and keep your learning streak alive!',
     ).toCurriculumBlock();
 
-    _navigationService.navigateTo(
+    AppNavigator.navigateTo(
       Routes.challengeTemplateView,
       arguments: ChallengeTemplateViewArguments(
         challengeId: challenge.id,
@@ -154,3 +163,8 @@ class DailyChallengeViewModel extends BaseViewModel {
     return count;
   }
 }
+
+final dailyChallengeViewModelProvider =
+    ChangeNotifierProvider.autoDispose<DailyChallengeViewModel>(
+  (ref) => DailyChallengeViewModel(),
+);

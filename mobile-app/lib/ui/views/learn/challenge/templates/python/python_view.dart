@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:freecodecamp/extensions/i18n_extension.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:freecodecamp/models/learn/challenge_model.dart';
 import 'package:freecodecamp/models/learn/curriculum_model.dart';
 import 'package:freecodecamp/ui/theme/fcc_theme.dart';
@@ -10,9 +11,8 @@ import 'package:freecodecamp/ui/views/learn/widgets/quiz_widget.dart';
 import 'package:freecodecamp/ui/views/learn/widgets/transcript_widget.dart';
 import 'package:freecodecamp/ui/views/learn/widgets/youtube_player_widget.dart';
 import 'package:freecodecamp/ui/views/news/html_handler/html_handler.dart';
-import 'package:stacked/stacked.dart';
 
-class PythonView extends StatelessWidget {
+class PythonView extends ConsumerStatefulWidget {
   const PythonView({
     super.key,
     required this.challenge,
@@ -25,17 +25,27 @@ class PythonView extends StatelessWidget {
   final int currentChallengeNum;
 
   @override
+  ConsumerState<PythonView> createState() => _PythonViewState();
+}
+
+class _PythonViewState extends ConsumerState<PythonView> {
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      ref.read(pythonViewModelProvider).initChallenge(widget.challenge);
+    });
+  }
+
+  @override
   Widget build(BuildContext context) {
     HTMLParser parser = HTMLParser(context: context);
+    final model = ref.watch(pythonViewModelProvider);
 
-    return ViewModelBuilder<PythonViewModel>.reactive(
-      viewModelBuilder: () => PythonViewModel(),
-      onViewModelReady: (model) => model.initChallenge(challenge),
-      builder: (context, model, child) {
-        return Scaffold(
+    return Scaffold(
           backgroundColor: FccColors.gray90,
           appBar: AppBar(
-            title: Text(handleChallengeTitle(challenge, block)),
+            title: Text(handleChallengeTitle(widget.challenge, widget.block)),
           ),
           body: SafeArea(
             bottom: false,
@@ -45,7 +55,7 @@ class PythonView extends StatelessWidget {
                   margin: const EdgeInsets.all(8),
                   child: Center(
                     child: Text(
-                      challenge.title,
+                      widget.challenge.title,
                       textAlign: TextAlign.center,
                       style: const TextStyle(
                         fontSize: 20,
@@ -55,42 +65,42 @@ class PythonView extends StatelessWidget {
                   ),
                 ),
                 const SizedBox(height: 12),
-                if (challenge.description.isNotEmpty)
+                if (widget.challenge.description.isNotEmpty)
                   ChallengeCard(
                     title: 'Description',
                     child: Align(
                       alignment: Alignment.centerLeft,
                       child: Column(
                         children: parser.parse(
-                          challenge.description,
+                          widget.challenge.description,
                         ),
                       ),
                     ),
                   ),
                 const SizedBox(height: 12),
-                if (challenge.videoId != null)
+                if (widget.challenge.videoId != null)
                   ChallengeCard(
                     title: 'Video',
                     child: YoutubePlayerWidget(
-                      videoId: challenge.videoId!,
+                      videoId: widget.challenge.videoId!,
                     ),
                   ),
                 const SizedBox(height: 12),
-                if (challenge.transcript.isNotEmpty) ...[
+                if (widget.challenge.transcript.isNotEmpty) ...[
                   ChallengeCard(
                     title: 'Transcript',
                     child: Transcript(
-                      transcript: challenge.transcript,
-                      isCollapsible: challenge.videoId != null,
+                      transcript: widget.challenge.transcript,
+                      isCollapsible: widget.challenge.videoId != null,
                     ),
                   ),
                 ],
-                if (challenge.instructions.isNotEmpty)
+                if (widget.challenge.instructions.isNotEmpty)
                   ChallengeCard(
                     title: 'Instructions',
                     child: Column(
                       children: parser.parse(
-                        challenge.instructions,
+                        widget.challenge.instructions,
                       ),
                     ),
                   ),
@@ -134,9 +144,9 @@ class PythonView extends StatelessWidget {
                                 if (model.isValidated &&
                                     model.hasPassedAllQuestions) {
                                   model.learnService.goToNextChallenge(
-                                    block.challenges.length,
-                                    challenge,
-                                    block,
+                                    widget.block.challenges.length,
+                                    widget.challenge,
+                                    widget.block,
                                   );
                                 } else {
                                   model.validateChallenge();
@@ -172,8 +182,8 @@ class PythonView extends StatelessWidget {
                             ),
                           ),
                           onPressed: () => model.learnService.forumHelpDialog(
-                            challenge,
-                            block,
+                            widget.challenge,
+                            widget.block,
                             context,
                           ),
                           child: const Text(
@@ -190,7 +200,5 @@ class PythonView extends StatelessWidget {
             ),
           ),
         );
-      },
-    );
   }
 }

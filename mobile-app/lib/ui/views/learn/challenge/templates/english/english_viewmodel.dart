@@ -1,14 +1,15 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
+import 'package:flutter/foundation.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:freecodecamp/app/app.locator.dart';
 import 'package:freecodecamp/models/learn/challenge_model.dart';
 import 'package:freecodecamp/service/learn/learn_offline_service.dart';
 import 'package:freecodecamp/service/learn/learn_service.dart';
 import 'package:freecodecamp/ui/theme/fcc_theme.dart';
 import 'package:html/parser.dart';
-import 'package:stacked/stacked.dart';
 
-class EnglishViewModel extends BaseViewModel {
+class EnglishViewModel extends ChangeNotifier {
   final LearnOfflineService learnOfflineService =
       locator<LearnOfflineService>();
 
@@ -229,3 +230,8 @@ class EnglishViewModel extends BaseViewModel {
     return widgets;
   }
 }
+
+final englishViewModelProvider =
+    ChangeNotifierProvider.autoDispose<EnglishViewModel>(
+  (ref) => EnglishViewModel(),
+);

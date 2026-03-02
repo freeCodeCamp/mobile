@@ -1,8 +1,10 @@
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
-import 'package:freecodecamp/app/app.locator.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:freecodecamp/app/app.router.dart';
+import 'package:freecodecamp/core/navigation/app_navigator.dart';
+import 'package:freecodecamp/core/providers/service_providers.dart';
 import 'package:freecodecamp/models/learn/completed_challenge_model.dart';
 import 'package:freecodecamp/models/learn/curriculum_model.dart';
 import 'package:freecodecamp/models/main/user_model.dart';
@@ -10,13 +12,10 @@ import 'package:freecodecamp/service/authentication/authentication_service.dart'
 import 'package:freecodecamp/service/dio_service.dart';
 import 'package:freecodecamp/service/learn/learn_service.dart';
 import 'package:freecodecamp/ui/theme/fcc_theme.dart';
-import 'package:stacked/stacked.dart';
-import 'package:stacked_services/stacked_services.dart';
 
-class ChapterViewModel extends BaseViewModel {
+class ChapterViewModel extends ChangeNotifier {
   final _dio = DioService.dio;
-  final NavigationService _navigationService = locator<NavigationService>();
-  final AuthenticationService auth = locator<AuthenticationService>();
+  late final AuthenticationService auth;
 
   bool _isDev = false;
   bool get isDev => _isDev;
@@ -28,7 +27,8 @@ class ChapterViewModel extends BaseViewModel {
     notifyListeners();
   }
 
-  void init(String superBlockDashedName, superBlockName) async {
+  void init(WidgetRef ref, String superBlockDashedName, superBlockName) async {
+    auth = ref.read(authenticationServiceProvider);
     superBlockFuture = requestChapters(superBlockDashedName, superBlockName);
     developmentMode();
   }
@@ -92,7 +92,7 @@ class ChapterViewModel extends BaseViewModel {
     List<Block> blocks,
     String moduleName,
   ) {
-    _navigationService.navigateTo(
+    AppNavigator.navigateTo(
       Routes.chapterBlockView,
       arguments: ChapterBlockViewArguments(
         blocks: blocks,
@@ -102,7 +102,7 @@ class ChapterViewModel extends BaseViewModel {
   }
 
   void routeToChallengeView(Block block, String challengeId) {
-    _navigationService.navigateTo(
+    AppNavigator.navigateTo(
       Routes.challengeTemplateView,
       arguments: ChallengeTemplateViewArguments(
         challengeId: challengeId,
@@ -142,3 +142,8 @@ class ChapterViewModel extends BaseViewModel {
     return FccColors.blue30;
   }
 }
+
+final chapterViewModelProvider =
+    ChangeNotifierProvider.autoDispose<ChapterViewModel>(
+  (ref) => ChapterViewModel(),
+);

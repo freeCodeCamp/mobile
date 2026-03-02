@@ -4,9 +4,8 @@ import 'package:audio_service/audio_service.dart';
 import 'package:freecodecamp/app/app.locator.dart';
 import 'package:freecodecamp/models/learn/challenge_model.dart';
 import 'package:freecodecamp/service/audio/audio_service.dart';
-import 'package:stacked/stacked.dart';
 
-class AudioPlayerViewmodel extends BaseViewModel {
+class AudioPlayerViewmodel {
   final audioService = locator<AppAudioService>().audioHandler;
 
   StreamController<Duration> position = StreamController<Duration>.broadcast();

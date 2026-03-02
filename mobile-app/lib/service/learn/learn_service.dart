@@ -4,7 +4,8 @@ import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:freecodecamp/app/app.locator.dart';
 import 'package:freecodecamp/app/app.router.dart';
-import 'package:freecodecamp/enums/dialog_type.dart';
+import 'package:freecodecamp/core/navigation/app_dialog.dart';
+import 'package:freecodecamp/core/navigation/app_navigator.dart';
 import 'package:freecodecamp/models/learn/challenge_model.dart';
 import 'package:freecodecamp/models/learn/curriculum_model.dart';
 import 'package:freecodecamp/models/learn/daily_challenge_model.dart';
@@ -15,7 +16,6 @@ import 'package:freecodecamp/service/learn/daily_challenge_service.dart';
 import 'package:freecodecamp/service/learn/learn_offline_service.dart';
 import 'package:freecodecamp/utils/helpers.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:stacked_services/stacked_services.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 const forumLocation = 'https://forum.freecodecamp.org';
@@ -30,8 +30,6 @@ class LearnService {
 
   final LearnOfflineService learnOfflineService =
       locator<LearnOfflineService>();
-  final NavigationService _navigationService = locator<NavigationService>();
-  final DialogService _dialogService = locator<DialogService>();
   final DailyChallengeService _dailyChallengeService =
       locator<DailyChallengeService>();
   final DailyChallengeNotificationService _notificationService =
@@ -174,7 +172,7 @@ class LearnService {
     if (AuthenticationService.staticIsloggedIn) {
       if (challenge.challengeType == 28 || challenge.challengeType == 29) {
         passDailyChallenge(challenge);
-        _navigationService.back();
+        AppNavigator.pop();
         return;
       } else {
         passChallenge(challenge, solutionLink);
@@ -185,9 +183,9 @@ class LearnService {
       (element) => element.id == challenge.id,
     );
     if (challengeIndex == maxChallenges - 1) {
-      _navigationService.back();
+      AppNavigator.pop();
     } else {
-      _navigationService.replaceWith(
+      AppNavigator.replaceWith(
         Routes.challengeTemplateView,
         arguments: ChallengeTemplateViewArguments(
           challengeId: block.challengeTiles[challengeIndex + 1].id,
@@ -238,42 +236,113 @@ class LearnService {
     Block block,
     BuildContext context,
   ) async {
-    DialogResponse? res = await _dialogService.showCustomDialog(
-        barrierDismissible: true,
-        variant: DialogType.askForHelp,
-        title: 'Ask for Help',
-        description:
-            "If you've already tried the Read-Search-Ask method, then you can try asking for help on the freeCodeCamp forum.",
-        mainButtonTitle: 'Create a post',
-        data: {'challengeName': challenge.title, 'blockName': block.name});
-    if (res != null && res.confirmed) {
-      DialogResponse? forumRes = await _dialogService.showCustomDialog(
-        variant: DialogType.askForHelpInput,
-        title: 'Create a post',
-        description:
-            'You must confirm the following statements before you can submit your post to the forum.',
-        mainButtonTitle: 'Submit',
-        secondaryButtonTitle: 'Cancel',
-        data: {'challengeName': challenge.title, 'blockName': block.name},
+    final wantsToCreatePost = await AppDialog.showConfirmation(
+      title: 'Ask for Help',
+      description:
+          "If you've already tried the Read-Search-Ask method, then you can try asking for help on the freeCodeCamp forum.",
+      confirmLabel: 'Create a post',
+      cancelLabel: 'Cancel',
+    );
+    if (!wantsToCreatePost) {
+      return;
+    }
+
+    final description = await _showForumInputDialog(context);
+    if (description == null) {
+      return;
+    }
+
+    try {
+      final forumLink = await genForumLink(
+        challenge,
+        block,
+        description,
+        context,
       );
 
-      String description = forumRes?.data ?? '';
-
-      if (forumRes != null && forumRes.confirmed) {
-        try {
-          final forumLink = await genForumLink(
-            challenge,
-            block,
-            description,
-            context,
-          );
-
-          await launchUrl(Uri.parse(forumLink));
-        } catch (e) {
-          log('Error launching forum link: $e');
-        }
-      }
+      await launchUrl(Uri.parse(forumLink));
+    } catch (e) {
+      log('Error launching forum link: $e');
     }
+  }
+
+  Future<String?> _showForumInputDialog(BuildContext context) async {
+    final descriptionController = TextEditingController();
+    bool didReadSearchAsk = false;
+    bool didReadPostingGuide = false;
+
+    final result = await showDialog<String?>(
+      context: context,
+      barrierDismissible: false,
+      builder: (dialogContext) {
+        return StatefulBuilder(
+          builder: (dialogContext, setState) {
+            return AlertDialog(
+              title: const Text('Create a post'),
+              content: SingleChildScrollView(
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    const Text(
+                      'You must confirm the following statements before you can submit your post to the forum.',
+                    ),
+                    const SizedBox(height: 12),
+                    CheckboxListTile(
+                      contentPadding: EdgeInsets.zero,
+                      title: const Text('I have tried the Read-Search-Ask method.'),
+                      value: didReadSearchAsk,
+                      onChanged: (value) {
+                        setState(() {
+                          didReadSearchAsk = value ?? false;
+                        });
+                      },
+                    ),
+                    CheckboxListTile(
+                      contentPadding: EdgeInsets.zero,
+                      title: const Text(
+                        'I will include enough context and code so people can help.',
+                      ),
+                      value: didReadPostingGuide,
+                      onChanged: (value) {
+                        setState(() {
+                          didReadPostingGuide = value ?? false;
+                        });
+                      },
+                    ),
+                    const SizedBox(height: 8),
+                    TextField(
+                      controller: descriptionController,
+                      minLines: 3,
+                      maxLines: 6,
+                      decoration: const InputDecoration(
+                        labelText: 'What are you stuck on? (optional)',
+                        border: OutlineInputBorder(),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+              actions: [
+                TextButton(
+                  onPressed: () => Navigator.of(dialogContext).pop(null),
+                  child: const Text('Cancel'),
+                ),
+                TextButton(
+                  onPressed: didReadSearchAsk && didReadPostingGuide
+                      ? () => Navigator.of(dialogContext)
+                          .pop(descriptionController.text.trim())
+                      : null,
+                  child: const Text('Submit'),
+                ),
+              ],
+            );
+          },
+        );
+      },
+    );
+
+    descriptionController.dispose();
+    return result;
   }
 
   LearnService._internal();

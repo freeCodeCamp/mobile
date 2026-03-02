@@ -1,12 +1,11 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
-import 'package:freecodecamp/app/app.locator.dart';
 import 'package:freecodecamp/app/app.router.dart';
+import 'package:freecodecamp/core/navigation/app_navigator.dart';
 import 'package:freecodecamp/models/learn/daily_challenge_model.dart';
 import 'package:freecodecamp/ui/theme/fcc_theme.dart';
 import 'package:freecodecamp/ui/views/learn/utils/challenge_utils.dart';
-import 'package:stacked_services/stacked_services.dart';
 import 'package:timezone/data/latest.dart' as tzdata;
 import 'package:timezone/timezone.dart' as tz;
 
@@ -27,7 +26,6 @@ class DailyChallengeCard extends StatefulWidget {
 class _DailyChallengeCardState extends State<DailyChallengeCard> {
   Duration _timeLeft = Duration.zero;
   Timer? countdownTimer;
-  final NavigationService _navigationService = locator<NavigationService>();
 
   void _navigateToDailyChallenge(BuildContext context) {
     final challenge = widget.dailyChallenge;
@@ -48,8 +46,8 @@ class _DailyChallengeCardState extends State<DailyChallengeCard> {
       description: '',
     ).toCurriculumBlock();
 
-    Navigator.of(context).pushNamed(
-      '/challenge-template-view',
+    AppNavigator.navigateTo(
+      Routes.challengeTemplateView,
       arguments: ChallengeTemplateViewArguments(
         challengeId: challenge.id,
         block: block,
@@ -141,7 +139,7 @@ class _DailyChallengeCardState extends State<DailyChallengeCard> {
                 ),
               ),
               onPressed: () {
-                _navigationService.navigateTo(Routes.dailyChallengeView);
+                AppNavigator.navigateTo(Routes.dailyChallengeView);
               },
               icon: Icon(
                 Icons.history,

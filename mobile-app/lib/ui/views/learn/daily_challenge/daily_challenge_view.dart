@@ -1,59 +1,67 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_html/flutter_html.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:freecodecamp/models/learn/daily_challenge_model.dart';
 import 'package:freecodecamp/ui/theme/fcc_theme.dart';
 import 'package:freecodecamp/ui/views/learn/daily_challenge/daily_challenge_viewmodel.dart';
 import 'package:freecodecamp/ui/views/news/html_handler/html_handler.dart';
 import 'package:freecodecamp/ui/widgets/drawer_widget/drawer_widget_view.dart';
-import 'package:stacked/stacked.dart';
 
-class DailyChallengeView extends StatelessWidget {
+class DailyChallengeView extends ConsumerStatefulWidget {
   const DailyChallengeView({super.key});
 
   @override
+  ConsumerState<DailyChallengeView> createState() => _DailyChallengeViewState();
+}
+
+class _DailyChallengeViewState extends ConsumerState<DailyChallengeView> {
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      ref.read(dailyChallengeViewModelProvider).init(ref);
+    });
+  }
+
+  @override
   Widget build(BuildContext context) {
-    return ViewModelBuilder<DailyChallengeViewModel>.reactive(
-      viewModelBuilder: () => DailyChallengeViewModel(),
-      onViewModelReady: (viewModel) => viewModel.init(),
-      builder: (context, model, child) {
-        return Scaffold(
-          appBar: AppBar(
-            leading: Builder(
-              builder: (context) => IconButton(
-                icon: const Icon(Icons.menu),
-                onPressed: () => Scaffold.of(context).openDrawer(),
-              ),
-            ),
-            title: const Text('Daily Coding Challenges'),
+    final model = ref.watch(dailyChallengeViewModelProvider);
+    return Scaffold(
+      appBar: AppBar(
+        leading: Builder(
+          builder: (context) => IconButton(
+            icon: const Icon(Icons.menu),
+            onPressed: () => Scaffold.of(context).openDrawer(),
           ),
-          drawer: const DrawerWidgetView(),
-          body: model.isBusy
-              ? const Center(child: CircularProgressIndicator())
-              : model.blocks.isNotEmpty
-                  ? Padding(
-                      padding: const EdgeInsets.all(8),
-                      child: ListView.builder(
-                        itemCount: model.blocks.length,
-                        itemBuilder: (context, index) {
-                          final block = model.blocks[index];
-                          final isOpen =
-                              model.blockOpenStates[block.monthYear] ?? false;
-                          return Padding(
-                            padding: const EdgeInsets.only(bottom: 16),
-                            child: buildBlock(context, block, isOpen, model),
-                          );
-                        },
-                      ),
-                    )
-                  : const Center(
-                      child: Text(
-                        'No challenges available at the moment.',
-                        style: TextStyle(fontSize: 16),
-                        textAlign: TextAlign.center,
-                      ),
-                    ),
-        );
-      },
+        ),
+        title: const Text('Daily Coding Challenges'),
+      ),
+      drawer: const DrawerWidgetView(),
+      body: model.isBusy
+          ? const Center(child: CircularProgressIndicator())
+          : model.blocks.isNotEmpty
+              ? Padding(
+                  padding: const EdgeInsets.all(8),
+                  child: ListView.builder(
+                    itemCount: model.blocks.length,
+                    itemBuilder: (context, index) {
+                      final block = model.blocks[index];
+                      final isOpen =
+                          model.blockOpenStates[block.monthYear] ?? false;
+                      return Padding(
+                        padding: const EdgeInsets.only(bottom: 16),
+                        child: buildBlock(context, block, isOpen, model),
+                      );
+                    },
+                  ),
+                )
+              : const Center(
+                  child: Text(
+                    'No challenges available at the moment.',
+                    style: TextStyle(fontSize: 16),
+                    textAlign: TextAlign.center,
+                  ),
+                ),
     );
   }
 

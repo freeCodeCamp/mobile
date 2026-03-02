@@ -1,13 +1,13 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:freecodecamp/extensions/i18n_extension.dart';
 import 'package:freecodecamp/models/learn/curriculum_model.dart';
 import 'package:freecodecamp/service/authentication/authentication_service.dart';
 import 'package:freecodecamp/ui/theme/fcc_theme.dart';
 import 'package:freecodecamp/ui/views/learn/block/block_template_view.dart';
 import 'package:freecodecamp/ui/views/learn/superblock/superblock_viewmodel.dart';
-import 'package:stacked/stacked.dart';
 
-class SuperBlockView extends StatelessWidget {
+class SuperBlockView extends ConsumerStatefulWidget {
   const SuperBlockView({
     super.key,
     required this.superBlockDashedName,
@@ -20,97 +20,108 @@ class SuperBlockView extends StatelessWidget {
   final bool hasInternet;
 
   @override
-  Widget build(BuildContext context) {
-    return ViewModelBuilder<SuperBlockViewModel>.reactive(
-      viewModelBuilder: () => SuperBlockViewModel(),
-      onViewModelReady: (model) {
-        if (AuthenticationService.staticIsloggedIn) {
-          model.auth.fetchUser();
-        }
+  ConsumerState<SuperBlockView> createState() => _SuperBlockViewState();
+}
 
-        model.setSuperBlockData = model.getSuperBlockData(
-          superBlockDashedName,
-          superBlockName,
-          hasInternet,
-        );
-      },
-      builder: (context, model, child) => Scaffold(
-        body: Column(
-          children: [
-            Container(
-              color: FccColors.gray90,
-              child: SafeArea(
-                bottom: false,
-                child: Padding(
-                  padding: const EdgeInsets.only(
-                      top: 0, right: 8, left: 8, bottom: 16),
-                  child: Row(
-                    children: [
-                      IconButton(
-                        icon: const Icon(
-                          Icons.arrow_back_ios,
+class _SuperBlockViewState extends ConsumerState<SuperBlockView> {
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      final model = ref.read(superBlockViewModelProvider);
+      model.init(ref);
+
+      if (AuthenticationService.staticIsloggedIn) {
+        model.auth.fetchUser();
+      }
+
+      model.setSuperBlockData = model.getSuperBlockData(
+        widget.superBlockDashedName,
+        widget.superBlockName,
+        widget.hasInternet,
+      );
+    });
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final model = ref.watch(superBlockViewModelProvider);
+    return Scaffold(
+      body: Column(
+        children: [
+          Container(
+            color: FccColors.gray90,
+            child: SafeArea(
+              bottom: false,
+              child: Padding(
+                padding: const EdgeInsets.only(
+                    top: 0, right: 8, left: 8, bottom: 16),
+                child: Row(
+                  children: [
+                    IconButton(
+                      icon: const Icon(
+                        Icons.arrow_back_ios,
+                        color: Colors.white,
+                      ),
+                      onPressed: () => Navigator.of(context).pop(),
+                    ),
+                    Expanded(
+                      child: Text(
+                        widget.superBlockName,
+                        style: const TextStyle(
+                          fontSize: 18,
                           color: Colors.white,
                         ),
-                        onPressed: () => Navigator.of(context).pop(),
+                        softWrap: true,
                       ),
-                      Expanded(
-                        child: Text(
-                          superBlockName,
-                          style: const TextStyle(
-                            fontSize: 18,
-                            color: Colors.white,
-                          ),
-                          softWrap: true,
-                        ),
-                      ),
-                    ],
-                  ),
+                    ),
+                  ],
                 ),
               ),
             ),
-            Expanded(
-              child: FutureBuilder<SuperBlock>(
-                initialData: null,
-                future: model.superBlockData,
-                builder: ((context, snapshot) {
-                  if (snapshot.hasData) {
-                    if (snapshot.data is SuperBlock) {
-                      SuperBlock superBlock = snapshot.data as SuperBlock;
+          ),
+          Expanded(
+            child: FutureBuilder<SuperBlock>(
+              initialData: null,
+              future: model.superBlockData,
+              builder: ((context, snapshot) {
+                if (snapshot.hasData) {
+                  if (snapshot.data is SuperBlock) {
+                    SuperBlock superBlock = snapshot.data as SuperBlock;
 
-                      WidgetsBinding.instance.addPostFrameCallback((_) {
-                        if (model.blockOpenStates.isEmpty) {
-                          Map<String, bool> openStates = {
-                            if (superBlock.blocks != null)
-                              for (var block in superBlock.blocks!)
-                                block.dashedName: false
-                          };
+                    WidgetsBinding.instance.addPostFrameCallback((_) {
+                      if (model.blockOpenStates.isEmpty) {
+                        Map<String, bool> openStates = {
+                          if (superBlock.blocks != null)
+                            for (var block in superBlock.blocks!)
+                              block.dashedName: false
+                        };
 
-                          // Set first block open
-                          String firstBlockKey =
-                              openStates.entries.toList()[0].key;
+                        // Set first block open
+                        String firstBlockKey =
+                            openStates.entries.toList()[0].key;
 
-                          openStates[firstBlockKey] = true;
+                        openStates[firstBlockKey] = true;
 
-                          model.blockOpenStates = openStates;
-                        }
-                      });
+                        model.blockOpenStates = openStates;
+                      }
+                    });
 
-                      return blockTemplate(model, superBlock);
-                    }
+                    return blockTemplate(model, superBlock);
                   }
+                }
 
-                  if (snapshot.hasError) {
-                    return Center(child: Text(context.t.error));
-                  }
+                if (snapshot.hasError) {
+                  return Center(child: Text(context.t.error));
+                }
 
-                  return const Center(
-                    child: CircularProgressIndicator(),
-                  );
-                }),
-              ),
+                return const Center(
+                  child: CircularProgressIndicator(),
+                );
+              }),
             ),
-          ],
-        ),
+          ),
+        ],
       ),
     );
   }

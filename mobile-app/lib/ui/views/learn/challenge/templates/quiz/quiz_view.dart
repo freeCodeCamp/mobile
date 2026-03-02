@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_html/flutter_html.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:freecodecamp/extensions/i18n_extension.dart';
 import 'package:freecodecamp/models/learn/challenge_model.dart';
 import 'package:freecodecamp/models/learn/curriculum_model.dart';
@@ -8,9 +9,8 @@ import 'package:freecodecamp/ui/views/learn/challenge/templates/quiz/quiz_viewmo
 import 'package:freecodecamp/ui/views/learn/widgets/challenge_card.dart';
 import 'package:freecodecamp/ui/views/learn/widgets/quiz_widget.dart';
 import 'package:freecodecamp/ui/views/news/html_handler/html_handler.dart';
-import 'package:stacked/stacked.dart';
 
-class QuizView extends StatelessWidget {
+class QuizView extends ConsumerStatefulWidget {
   const QuizView({
     super.key,
     required this.challenge,
@@ -21,14 +21,26 @@ class QuizView extends StatelessWidget {
   final Block block;
 
   @override
+  ConsumerState<QuizView> createState() => _QuizViewState();
+}
+
+class _QuizViewState extends ConsumerState<QuizView> {
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      final model = ref.read(quizViewModelProvider);
+      model.init(ref);
+      model.initChallenge(widget.challenge);
+    });
+  }
+
+  @override
   Widget build(BuildContext context) {
+    final model = ref.watch(quizViewModelProvider);
     HTMLParser parser = HTMLParser(context: context);
 
-    return ViewModelBuilder<QuizViewModel>.reactive(
-      viewModelBuilder: () => QuizViewModel(),
-      onViewModelReady: (model) => model.initChallenge(challenge),
-      builder: (context, model, child) {
-        return PopScope<bool>(
+    return PopScope<bool>(
           canPop: false,
           onPopInvokedWithResult: (didPop, result) async {
             if (didPop) {
@@ -82,18 +94,18 @@ class QuizView extends StatelessWidget {
                 padding: const EdgeInsets.only(bottom: 80),
                 children: [
                   ChallengeCard(
-                    title: challenge.title,
+                    title: widget.challenge.title,
                     child: Column(
                       children: [
                         ...parser.parse(
-                          challenge.description,
+                          widget.challenge.description,
                           customStyles: {
                             '*:not(h1):not(h2):not(h3):not(h4):not(h5):not(h6)':
                                 Style(color: FccColors.gray05),
                           },
                         ),
                         ...parser.parse(
-                          challenge.instructions,
+                          widget.challenge.instructions,
                           customStyles: {
                             '*:not(h1):not(h2):not(h3):not(h4):not(h5):not(h6)':
                                 Style(color: FccColors.gray05),
@@ -161,9 +173,9 @@ class QuizView extends StatelessWidget {
                           if (model.isValidated &&
                               model.hasPassedAllQuestions) {
                             model.learnService.goToNextChallenge(
-                              block.challenges.length,
-                              challenge,
-                              block,
+                              widget.block.challenges.length,
+                              widget.challenge,
+                              widget.block,
                             );
                           } else if (model.isValidated &&
                               !model.hasPassedAllQuestions) {
@@ -188,7 +200,5 @@ class QuizView extends StatelessWidget {
             ),
           ),
         );
-      },
-    );
   }
 }

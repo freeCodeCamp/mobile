@@ -2,6 +2,7 @@ import 'dart:developer';
 import 'package:flutter/material.dart';
 import 'package:flutter_html/flutter_html.dart';
 import 'package:flutter_inappwebview/flutter_inappwebview.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:freecodecamp/enums/panel_type.dart';
 import 'package:freecodecamp/models/learn/challenge_model.dart';
 import 'package:freecodecamp/models/learn/curriculum_model.dart';
@@ -14,9 +15,8 @@ import 'package:freecodecamp/ui/views/learn/widgets/challenge_widgets/symbol_bar
 import 'package:freecodecamp/ui/views/learn/widgets/console/console_view.dart';
 import 'package:freecodecamp/ui/views/news/html_handler/html_handler.dart';
 import 'package:phone_ide/phone_ide.dart';
-import 'package:stacked/stacked.dart';
 
-class ChallengeView extends StatelessWidget {
+class ChallengeView extends ConsumerStatefulWidget {
   const ChallengeView({
     super.key,
     required this.block,
@@ -32,61 +32,73 @@ class ChallengeView extends StatelessWidget {
   final DateTime? challengeDate;
 
   @override
-  Widget build(BuildContext context) {
-    return ViewModelBuilder<ChallengeViewModel>.reactive(
-      viewModelBuilder: () => ChallengeViewModel(),
-      onViewModelReady: (model) {
-        model.init(
-          block: block,
-          challenge: challenge,
-          challengeDate: challengeDate,
-        );
-      },
-      onDispose: (model) {
-        model.closeWebViews();
-        model.disposeOfListeners();
-      },
-      builder: (context, model, child) {
-        int maxChallenges = block.challenges.length;
+  ConsumerState<ChallengeView> createState() => _ChallengeViewState();
+}
 
-        ChallengeFile currFile = model.currentFile(challenge);
-        model.initFile(challenge, currFile);
-        if (model.showPanel) {
-          FocusManager.instance.primaryFocus?.unfocus();
+class _ChallengeViewState extends ConsumerState<ChallengeView> {
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      final model = ref.read(challengeViewModelProvider);
+      model.init(
+        block: widget.block,
+        challenge: widget.challenge,
+        challengeDate: widget.challengeDate,
+        ref: ref,
+      );
+    });
+  }
+
+  @override
+  void dispose() {
+    final model = ref.read(challengeViewModelProvider);
+    model.closeWebViews();
+    model.disposeOfListeners();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final model = ref.watch(challengeViewModelProvider);
+    int maxChallenges = widget.block.challenges.length;
+
+    ChallengeFile currFile = model.currentFile(widget.challenge);
+    model.initFile(widget.challenge, currFile);
+    if (model.showPanel) {
+      FocusManager.instance.primaryFocus?.unfocus();
+    }
+    if (model.editor == null) {
+      return const Center(
+        child: CircularProgressIndicator(),
+      );
+    }
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      final scaffoldState = model.scaffoldKey.currentState;
+      if (!model.drawerOpened) {
+        model.setDrawerOpened = true;
+        if (scaffoldState != null && !(scaffoldState.isEndDrawerOpen)) {
+          scaffoldState.openEndDrawer();
         }
-        if (model.editor == null) {
-          return const Center(
-            child: CircularProgressIndicator(),
-          );
-        }
-        WidgetsBinding.instance.addPostFrameCallback((_) {
-          final scaffoldState = model.scaffoldKey.currentState;
-          if (!model.drawerOpened) {
-            model.setDrawerOpened = true;
-            if (scaffoldState != null && !(scaffoldState.isEndDrawerOpen)) {
-              scaffoldState.openEndDrawer();
-            }
-          }
-        });
-        return Scaffold(
-          key: model.scaffoldKey,
-          appBar: _buildAppBar(context, model),
-          endDrawer: _buildEndDrawer(
-            context,
-            model,
-            maxChallenges,
-          ),
-          onEndDrawerChanged: (isOpened) => model.setShowPanel = isOpened,
-          bottomNavigationBar: _buildBottomBar(
-            context,
-            model,
-          ),
-          body: _buildBody(
-            context,
-            model,
-          ),
-        );
-      },
+      }
+    });
+    return Scaffold(
+      key: model.scaffoldKey,
+      appBar: _buildAppBar(context, model),
+      endDrawer: _buildEndDrawer(
+        context,
+        model,
+        maxChallenges,
+      ),
+      onEndDrawerChanged: (isOpened) => model.setShowPanel = isOpened,
+      bottomNavigationBar: _buildBottomBar(
+        context,
+        model,
+      ),
+      body: _buildBody(
+        context,
+        model,
+      ),
     );
   }
 
@@ -114,7 +126,7 @@ class ChallengeView extends StatelessWidget {
             children: [
               _customTabBar(
                 model,
-                challenge,
+                widget.challenge,
                 context,
               ),
             ],
@@ -142,7 +154,7 @@ class ChallengeView extends StatelessWidget {
       child: SafeArea(
         child: model.getPanelWidget(
           panelType: model.panelType,
-          challenge: challenge,
+          challenge: widget.challenge,
           model: model,
           maxChallenges: maxChallenges,
         ),
@@ -165,7 +177,7 @@ class ChallengeView extends StatelessWidget {
       ),
       child: _customBottomBar(
         model,
-        challenge,
+        widget.challenge,
         context,
       ),
     );
@@ -195,7 +207,7 @@ class ChallengeView extends StatelessWidget {
       return Column(
         children: [
           ProjectPreview(
-            challenge: challenge,
+            challenge: widget.challenge,
             model: model,
           ),
         ],
@@ -230,9 +242,9 @@ class ChallengeView extends StatelessWidget {
       child: Row(
         children: [
           Expanded(
-            child: challengeDate != null
+            child: widget.challengeDate != null
                 ? _dailyChallengeLanguageSelector(
-                    model: model, challengeDate: challengeDate!)
+                    model: model, challengeDate: widget.challengeDate!)
                 : _fileSelector(
                     model: model,
                     challenge: challenge,
@@ -316,7 +328,7 @@ class ChallengeView extends StatelessWidget {
               ..._panelIconButtons(
                 model,
                 challenge,
-                block,
+                widget.block,
               ),
               Expanded(
                 child: Row(

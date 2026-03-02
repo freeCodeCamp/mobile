@@ -1,3 +1,5 @@
+import 'package:flutter/foundation.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_html/flutter_html.dart';
 import 'package:freecodecamp/app/app.locator.dart';
@@ -5,9 +7,8 @@ import 'package:freecodecamp/models/learn/challenge_model.dart';
 import 'package:freecodecamp/service/learn/learn_service.dart';
 import 'package:freecodecamp/ui/theme/fcc_theme.dart';
 import 'package:freecodecamp/ui/views/news/html_handler/html_handler.dart';
-import 'package:stacked/stacked.dart';
 
-class ReviewViewmodel extends BaseViewModel {
+class ReviewViewmodel extends ChangeNotifier {
   List<bool> _assignmentsStatus = [];
   List<bool> get assignmentsStatus => _assignmentsStatus;
 
@@ -67,3 +68,8 @@ class ReviewViewmodel extends BaseViewModel {
     );
   }
 }
+
+final reviewViewModelProvider =
+    ChangeNotifierProvider.autoDispose<ReviewViewmodel>(
+  (ref) => ReviewViewmodel(),
+);

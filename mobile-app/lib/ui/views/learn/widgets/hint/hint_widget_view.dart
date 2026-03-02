@@ -4,11 +4,9 @@ import 'package:freecodecamp/models/learn/challenge_model.dart';
 import 'package:freecodecamp/models/learn/curriculum_model.dart';
 import 'package:freecodecamp/service/learn/learn_service.dart';
 import 'package:freecodecamp/ui/views/learn/challenge/challenge_viewmodel.dart';
-import 'package:freecodecamp/ui/views/learn/widgets/hint/hint_widget_model.dart';
 import 'package:freecodecamp/ui/views/news/html_handler/html_handler.dart';
 import 'package:freecodecamp/utils/helpers.dart';
 import 'package:phone_ide/phone_ide.dart';
-import 'package:stacked/stacked.dart';
 
 Future<String> genForumLink(
   Challenge challenge,
@@ -61,12 +59,10 @@ class HintWidgetView extends StatelessWidget {
   Widget build(BuildContext context) {
     HTMLParser parser = HTMLParser(context: context);
 
-    return ViewModelBuilder<HintWidgetModel>.reactive(
-      viewModelBuilder: () => HintWidgetModel(),
-      builder: (context, model, child) => SafeArea(
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
+    return SafeArea(
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
             Row(
               children: [
                 Padding(
@@ -120,8 +116,7 @@ class HintWidgetView extends StatelessWidget {
                 ),
               ),
             )
-          ],
-        ),
+        ],
       ),
     );
   }

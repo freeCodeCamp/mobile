@@ -1,7 +1,9 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
-import 'package:freecodecamp/app/app.locator.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:freecodecamp/app/app.router.dart';
+import 'package:freecodecamp/core/navigation/app_navigator.dart';
+import 'package:freecodecamp/core/providers/service_providers.dart';
 import 'package:freecodecamp/models/learn/completed_challenge_model.dart';
 import 'package:freecodecamp/models/learn/curriculum_model.dart';
 import 'package:freecodecamp/models/main/user_model.dart';
@@ -14,12 +16,12 @@ import 'package:freecodecamp/ui/views/learn/block/templates/dialogue/dialogue_vi
 import 'package:freecodecamp/ui/views/learn/block/templates/grid/grid_view.dart';
 import 'package:freecodecamp/ui/views/learn/block/templates/link/link_view.dart';
 import 'package:freecodecamp/ui/views/learn/block/templates/list/list_view.dart';
-import 'package:stacked/stacked.dart';
-import 'package:stacked_services/stacked_services.dart';
 
-class BlockTemplateViewModel extends BaseViewModel {
-  final NavigationService _navigationService = locator<NavigationService>();
-  final AuthenticationService auth = locator<AuthenticationService>();
+class BlockTemplateViewModel extends ChangeNotifier {
+  late final AuthenticationService auth;
+  late final LearnOfflineService learnOfflineService;
+  late final DeveloperService developerService;
+  late final LearnService learnService;
 
   bool _isDev = false;
   bool get isDev => _isDev;
@@ -27,19 +29,26 @@ class BlockTemplateViewModel extends BaseViewModel {
   int _challengesCompleted = 0;
   int get challengesCompleted => _challengesCompleted;
 
-  final learnOfflineService = locator<LearnOfflineService>();
-
-  final developerService = locator<DeveloperService>();
-
-  final learnService = locator<LearnService>();
-
   set setIsDev(bool value) {
     _isDev = value;
     notifyListeners();
   }
 
+  void init(WidgetRef ref, List<ChallengeListTile> challengeBatch) {
+    auth = ref.read(authenticationServiceProvider);
+    learnOfflineService = ref.read(learnOfflineServiceProvider);
+    developerService = ref.read(developerServiceProvider);
+    learnService = ref.read(learnServiceProvider);
+
+    setNumberOfCompletedChallenges(challengeBatch);
+    auth.progress.stream.listen(
+      (val) => setNumberOfCompletedChallenges(challengeBatch),
+    );
+    notifyListeners();
+  }
+
   void routeToChallengeView(Block block, String challengeId) {
-    _navigationService.navigateTo(
+    AppNavigator.navigateTo(
       Routes.challengeTemplateView,
       arguments: ChallengeTemplateViewArguments(
         challengeId: challengeId,
@@ -55,14 +64,6 @@ class BlockTemplateViewModel extends BaseViewModel {
       block,
       challengeId,
     );
-  }
-
-  void init(List<ChallengeListTile> challengeBatch) async {
-    setNumberOfCompletedChallenges(challengeBatch);
-    auth.progress.stream.listen(
-      (val) => setNumberOfCompletedChallenges(challengeBatch),
-    );
-    notifyListeners();
   }
 
   void setNumberOfCompletedChallenges(
@@ -172,3 +173,8 @@ class BlockTemplateViewModel extends BaseViewModel {
     }
   }
 }
+
+final blockTemplateViewModelProvider =
+    ChangeNotifierProvider.autoDispose<BlockTemplateViewModel>(
+  (ref) => BlockTemplateViewModel(),
+);

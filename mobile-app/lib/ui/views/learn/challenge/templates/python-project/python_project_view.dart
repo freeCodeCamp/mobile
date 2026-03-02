@@ -1,13 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:freecodecamp/extensions/i18n_extension.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:freecodecamp/models/learn/challenge_model.dart';
 import 'package:freecodecamp/models/learn/curriculum_model.dart';
 import 'package:freecodecamp/ui/views/learn/challenge/templates/python-project/python_project_viewmodel.dart';
 import 'package:freecodecamp/ui/views/news/html_handler/html_handler.dart';
 import 'package:freecodecamp/ui/widgets/drawer_widget/drawer_widget_view.dart';
-import 'package:stacked/stacked.dart';
 
-class PythonProjectView extends StatelessWidget {
+class PythonProjectView extends ConsumerWidget {
   const PythonProjectView({
     super.key,
     required this.challenge,
@@ -18,13 +18,11 @@ class PythonProjectView extends StatelessWidget {
   final Block block;
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     HTMLParser parser = HTMLParser(context: context);
+    final model = ref.watch(pythonProjectViewModelProvider);
 
-    return ViewModelBuilder<PythonProjectViewModel>.reactive(
-      viewModelBuilder: () => PythonProjectViewModel(),
-      builder: (context, model, child) {
-        return Scaffold(
+    return Scaffold(
           appBar: AppBar(
             title: Text(challenge.title),
           ),
@@ -165,7 +163,5 @@ class PythonProjectView extends StatelessWidget {
             ),
           ),
         );
-      },
-    );
   }
 }

@@ -6,8 +6,11 @@ import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
-import 'package:freecodecamp/app/app.locator.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:freecodecamp/app/app.router.dart';
+import 'package:freecodecamp/core/navigation/app_navigator.dart';
+import 'package:freecodecamp/core/navigation/app_snackbar.dart';
+import 'package:freecodecamp/core/providers/service_providers.dart';
 import 'package:freecodecamp/models/learn/challenge_model.dart';
 import 'package:freecodecamp/models/learn/completed_challenge_model.dart';
 import 'package:freecodecamp/models/learn/curriculum_model.dart';
@@ -21,33 +24,28 @@ import 'package:freecodecamp/service/learn/learn_offline_service.dart';
 import 'package:freecodecamp/service/learn/learn_service.dart';
 import 'package:freecodecamp/ui/views/learn/landing/landing_view.dart';
 import 'package:freecodecamp/ui/views/learn/utils/learn_globals.dart';
-import 'package:freecodecamp/ui/widgets/setup_dialog_ui.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:stacked/stacked.dart';
-import 'package:stacked_services/stacked_services.dart';
 
-class LearnLandingViewModel extends BaseViewModel {
-  final NavigationService _navigationService = locator<NavigationService>();
-
-  final AuthenticationService _auth = locator<AuthenticationService>();
+class LearnLandingViewModel extends ChangeNotifier {
+  late final AuthenticationService _auth;
   AuthenticationService get auth => _auth;
 
-  final LearnService _learnService = locator<LearnService>();
+  late final LearnService _learnService;
   LearnService get learnService => _learnService;
 
-  final SnackbarService _snack = locator<SnackbarService>();
-  SnackbarService get snack => _snack;
-
-  final _learnOfflineService = locator<LearnOfflineService>();
+  late final LearnOfflineService _learnOfflineService;
   LearnOfflineService get learnOfflineService => _learnOfflineService;
 
-  final _dailyChallengeService = DailyChallengeService();
+  late final DailyChallengeService _dailyChallengeService;
 
   Future<List<Widget>>? superBlockButtons;
   final _dio = DioService.dio;
 
   bool _isLoggedIn = false;
   bool get isLoggedIn => _isLoggedIn;
+
+  bool _isBusy = false;
+  bool get isBusy => _isBusy;
 
   DailyChallenge? _dailyChallenge;
   DailyChallenge? get dailyChallenge => _dailyChallenge;
@@ -72,16 +70,24 @@ class LearnLandingViewModel extends BaseViewModel {
     notifyListeners();
   }
 
-  void init(BuildContext context) async {
-    setupDialogUi();
+  void _setBusy(bool value) {
+    _isBusy = value;
+    notifyListeners();
+  }
+
+  void init(BuildContext context, WidgetRef ref) {
+    _auth = ref.read(authenticationServiceProvider);
+    _learnService = ref.read(learnServiceProvider);
+    _learnOfflineService = ref.read(learnOfflineServiceProvider);
+    _dailyChallengeService = ref.read(dailyChallengeServiceProvider);
+
     retrieveNewQuote();
     initLoggedInListener();
-
     _loadInitialData();
   }
 
   Future<void> _loadInitialData() async {
-    setBusy(true);
+    _setBusy(true);
 
     try {
       // Run both API calls in parallel, but handle failures independently
@@ -96,7 +102,7 @@ class LearnLandingViewModel extends BaseViewModel {
 
       setSuperBlockButtons = Future.value(results[0] as List<Widget>);
     } finally {
-      setBusy(false);
+      _setBusy(false);
     }
   }
 
@@ -133,15 +139,21 @@ class LearnLandingViewModel extends BaseViewModel {
           (element) => element.dashedName == lastVisitedChallenge[3],
         );
 
-        _navigationService.navigateToSuperBlockView(
-          superBlockDashedName: lastVisitedChallenge[1],
-          superBlockName: lastVisitedChallenge[2],
-          hasInternet: true,
+        AppNavigator.navigateTo(
+          Routes.superBlockView,
+          arguments: SuperBlockViewArguments(
+            superBlockDashedName: lastVisitedChallenge[1],
+            superBlockName: lastVisitedChallenge[2],
+            hasInternet: true,
+          ),
         );
 
-        _navigationService.navigateToChallengeTemplateView(
-          block: block,
-          challengeId: challenge.id,
+        AppNavigator.navigateTo(
+          Routes.challengeTemplateView,
+          arguments: ChallengeTemplateViewArguments(
+            block: block,
+            challengeId: challenge.id,
+          ),
         );
       }
     }
@@ -154,7 +166,7 @@ class LearnLandingViewModel extends BaseViewModel {
   void initLoggedInListener() {
     _isLoggedIn = AuthenticationService.staticIsloggedIn;
     notifyListeners();
-    auth.isLoggedIn.listen((e) async {
+    _auth.isLoggedIn.listen((e) async {
       _isLoggedIn = e;
       await updateDailyChallengeCompletionStatus();
       notifyListeners();
@@ -171,10 +183,7 @@ class LearnLandingViewModel extends BaseViewModel {
   }
 
   void disabledButtonSnack() {
-    snack.showSnackbar(title: 'Not available use the web version', message: '');
-    Future.delayed(const Duration(milliseconds: 2500), () {
-      snack.closeSnackbar();
-    });
+    AppSnackbar.show(title: 'Not available use the web version', message: '');
   }
 
   Future<List<Widget>> requestSuperBlocks() async {
@@ -260,7 +269,7 @@ class LearnLandingViewModel extends BaseViewModel {
 
   void routeToSuperBlock(String dashedName, String name) async {
     if (chapterBasedSuperBlocks.contains(dashedName)) {
-      _navigationService.navigateTo(
+      AppNavigator.navigateTo(
         Routes.chapterView,
         arguments: ChapterViewArguments(
           superBlockDashedName: dashedName,
@@ -268,7 +277,7 @@ class LearnLandingViewModel extends BaseViewModel {
         ),
       );
     } else {
-      _navigationService.navigateTo(
+      AppNavigator.navigateTo(
         Routes.superBlockView,
         arguments: SuperBlockViewArguments(
           superBlockDashedName: dashedName,
@@ -280,7 +289,7 @@ class LearnLandingViewModel extends BaseViewModel {
   }
 
   void goBack() {
-    _navigationService.back();
+    AppNavigator.pop();
   }
 
   Future<MotivationalQuote> retrieveNewQuote() async {
@@ -300,3 +309,8 @@ class LearnLandingViewModel extends BaseViewModel {
     return quote;
   }
 }
+
+final learnLandingViewModelProvider =
+    ChangeNotifierProvider.autoDispose<LearnLandingViewModel>(
+  (ref) => LearnLandingViewModel(),
+);

@@ -4,10 +4,8 @@ import 'package:flutter_scroll_shadow/flutter_scroll_shadow.dart';
 import 'package:freecodecamp/models/learn/curriculum_model.dart';
 import 'package:freecodecamp/ui/theme/fcc_theme.dart';
 import 'package:freecodecamp/ui/views/learn/block/block_template_viewmodel.dart';
-import 'package:freecodecamp/ui/views/learn/block/templates/dialogue/dialogue_viewmodel.dart';
 import 'package:freecodecamp/ui/views/learn/widgets/challenge_tile.dart';
 import 'package:freecodecamp/ui/views/news/html_handler/html_handler.dart';
-import 'package:stacked/stacked.dart';
 
 class BlockDialogueView extends StatelessWidget {
   const BlockDialogueView(
@@ -44,11 +42,9 @@ class BlockDialogueView extends StatelessWidget {
 
     HTMLParser parser = HTMLParser(context: context);
 
-    return ViewModelBuilder.reactive(
-      viewModelBuilder: () => BlockDialogueViewModel(),
-      builder: (context, childModel, child) => Expanded(
-        child: Column(
-          children: [
+    return Expanded(
+      child: Column(
+        children: [
             ...parser.parse(
               '<p>${block.description.join(' ')}</p>',
               isSelectable: false,
@@ -61,8 +57,7 @@ class BlockDialogueView extends StatelessWidget {
             ),
             _buildToggleButton(context),
             _buildChallengeList(context, structure, dialogueHeaders),
-          ],
-        ),
+        ],
       ),
     );
   }

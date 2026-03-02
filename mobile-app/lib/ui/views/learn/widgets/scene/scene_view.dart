@@ -2,12 +2,12 @@ import 'package:audio_service/audio_service.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:freecodecamp/models/learn/challenge_model.dart';
 import 'package:freecodecamp/ui/theme/fcc_theme.dart';
 import 'package:freecodecamp/ui/views/learn/widgets/scene/scene_viewmodel.dart';
-import 'package:stacked/stacked.dart';
 
-class SceneView extends StatelessWidget {
+class SceneView extends ConsumerStatefulWidget {
   const SceneView({
     super.key,
     required this.scene,
@@ -16,37 +16,50 @@ class SceneView extends StatelessWidget {
   final Scene scene;
 
   @override
+  ConsumerState<SceneView> createState() => _SceneViewState();
+}
+
+class _SceneViewState extends ConsumerState<SceneView> {
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      final model = ref.read(sceneViewModelProvider);
+      model.initAudioService(ref);
+      model.initPositionListener();
+      model.audioService.loadEnglishAudio(widget.scene.setup.audio);
+      model.initScene(widget.scene);
+    });
+  }
+
+  @override
+  void dispose() {
+    ref.read(sceneViewModelProvider).onDispose();
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
-    return ViewModelBuilder<SceneViewModel>.reactive(
-      viewModelBuilder: () => SceneViewModel(),
-      onViewModelReady: (model) {
-        model.initPositionListener();
-        model.audioService.loadEnglishAudio(scene.setup.audio);
-        model.initScene(scene);
-      },
-      onDispose: (model) => model.onDispose(),
-      builder: (context, model, child) {
-        model.preloadBackgrounds(context);
-        return Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 16),
-          child: Column(
-            children: [
-              AspectRatio(
-                aspectRatio: 16 / 9,
-                child: Container(
-                  decoration: BoxDecoration(
-                    color: Colors.black,
-                    border: Border.all(color: FccColors.gray75, width: 2),
-                  ),
-                  child: _SceneCanvas(model: model),
-                ),
+    final model = ref.watch(sceneViewModelProvider);
+    model.preloadBackgrounds(context);
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 16),
+      child: Column(
+        children: [
+          AspectRatio(
+            aspectRatio: 16 / 9,
+            child: Container(
+              decoration: BoxDecoration(
+                color: Colors.black,
+                border: Border.all(color: FccColors.gray75, width: 2),
               ),
-              const SizedBox(height: 16),
-              _AudioControls(scene: scene, model: model),
-            ],
+              child: _SceneCanvas(model: model),
+            ),
           ),
-        );
-      },
+          const SizedBox(height: 16),
+          _AudioControls(scene: widget.scene, model: model),
+        ],
+      ),
     );
   }
 }
@@ -397,7 +410,7 @@ class _CharacterSlot extends StatelessWidget {
     final overflowHeight = characterHeight - canvasHeight;
     final bottomPos = -(overflowHeight / 2) - (yPercent * canvasHeight);
 
-    return AnimatedPositioned(  
+    return AnimatedPositioned(
       duration: const Duration(milliseconds: 500),
       curve: Curves.easeInOut,
       left: leftPos,

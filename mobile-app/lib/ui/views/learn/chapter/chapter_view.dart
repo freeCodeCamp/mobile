@@ -1,11 +1,11 @@
 
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:freecodecamp/models/learn/curriculum_model.dart';
 import 'package:freecodecamp/ui/theme/fcc_theme.dart';
 import 'package:freecodecamp/ui/views/learn/chapter/chapter_viewmodel.dart';
-import 'package:stacked/stacked.dart';
 
-class ChapterView extends StatelessWidget {
+class ChapterView extends ConsumerStatefulWidget {
   const ChapterView({
     super.key,
     required this.superBlockDashedName,
@@ -16,69 +16,78 @@ class ChapterView extends StatelessWidget {
   final String superBlockName;
 
   @override
+  ConsumerState<ChapterView> createState() => _ChapterViewState();
+}
+
+class _ChapterViewState extends ConsumerState<ChapterView> {
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      ref.read(chapterViewModelProvider).init(
+            ref,
+            widget.superBlockDashedName,
+            widget.superBlockName,
+          );
+    });
+  }
+
+  @override
   Widget build(BuildContext context) {
-    return ViewModelBuilder<ChapterViewModel>.reactive(
-      viewModelBuilder: () => ChapterViewModel(),
-      onViewModelReady: (model) => model.init(
-        superBlockDashedName,
-        superBlockName,
+    final model = ref.watch(chapterViewModelProvider);
+    return Scaffold(
+      backgroundColor: FccColors.gray90,
+      appBar: AppBar(
+        title: Text(widget.superBlockName),
       ),
-      builder: (context, model, child) {
-        return Scaffold(
-          backgroundColor: FccColors.gray90,
-          appBar: AppBar(
-            title: Text(superBlockName),
-          ),
-          body: StreamBuilder(
-            stream: model.auth.progress.stream,
+      body: StreamBuilder(
+        stream: model.auth.progress.stream,
+        builder: (context, snapshot) {
+          return FutureBuilder(
+            future: model.superBlockFuture,
             builder: (context, snapshot) {
-              return FutureBuilder(
-                future: model.superBlockFuture,
-                builder: (context, snapshot) {
-                  if (snapshot.hasError) {
-                    return Center(
-                      child: Text(
-                          'Error loading chapters: ${snapshot.error} ${snapshot.stackTrace}'),
-                    );
-                  }
+              if (snapshot.hasError) {
+                return Center(
+                  child: Text(
+                      'Error loading chapters: ${snapshot.error} ${snapshot.stackTrace}'),
+                );
+              }
 
-                  if (snapshot.hasData) {
-                    SuperBlock superBlock = snapshot.data as SuperBlock;
+              if (snapshot.hasData) {
+                SuperBlock superBlock = snapshot.data as SuperBlock;
 
-                    List exams = [
-                      'responsive-web-design-certification-exam',
-                      'javascript-certification-exam',
-                      'python-certification-exam'
-                    ];
+                List exams = [
+                  'responsive-web-design-certification-exam',
+                  'javascript-certification-exam',
+                  'python-certification-exam'
+                ];
 
-                    List<Chapter> chapters =
-                        (superBlock.chapters as List<Chapter>).where((chapter) => !exams.contains(chapter.dashedName)).toList();
+                List<Chapter> chapters =
+                    (superBlock.chapters as List<Chapter>).where((chapter) => !exams.contains(chapter.dashedName)).toList();
 
-                    return ListView(
-                      shrinkWrap: true,
+                return ListView(
+                  shrinkWrap: true,
+                  children: [
+                    Column(
                       children: [
-                        Column(
-                          children: [
-                            ...[
-                              for (Chapter chapter in chapters)
-                                chapterBlock(
-                                    superBlock, chapter, model, context)
-                            ]
-                          ],
-                        ),
+                        ...[
+                          for (Chapter chapter in chapters)
+                            chapterBlock(
+                                superBlock, chapter, model, context)
+                        ]
                       ],
-                    );
-                  }
+                    ),
+                  ],
+                );
+              }
 
-                  return Center(
-                    child: CircularProgressIndicator(),
-                  );
-                },
+              return Center(
+                child: CircularProgressIndicator(),
               );
             },
-          ),
-        );
-      },
+          );
+        },
+      ),
     );
   }
 

@@ -1,10 +1,11 @@
-import 'package:freecodecamp/app/app.locator.dart';
+import 'package:flutter/foundation.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:freecodecamp/core/providers/service_providers.dart';
 import 'package:freecodecamp/models/learn/challenge_model.dart';
 import 'package:freecodecamp/service/learn/learn_service.dart';
 import 'package:freecodecamp/ui/views/learn/widgets/quiz_widget.dart';
-import 'package:stacked/stacked.dart';
 
-class QuizViewModel extends BaseViewModel {
+class QuizViewModel extends ChangeNotifier {
   bool _isValidated = false;
   bool get isValidated => _isValidated;
 
@@ -24,7 +25,11 @@ class QuizViewModel extends BaseViewModel {
   List<QuizWidgetQuestion> _quizQuestions = [];
   List<QuizWidgetQuestion> get quizQuestions => _quizQuestions;
 
-  final LearnService learnService = locator<LearnService>();
+  late final LearnService learnService;
+
+  void init(WidgetRef ref) {
+    learnService = ref.read(learnServiceProvider);
+  }
 
   set setQuizQuestions(List<QuizWidgetQuestion> questions) {
     _quizQuestions = questions;
@@ -121,3 +126,8 @@ class QuizViewModel extends BaseViewModel {
     setErrMessage = '';
   }
 }
+
+final quizViewModelProvider =
+    ChangeNotifierProvider.autoDispose<QuizViewModel>(
+  (ref) => QuizViewModel(),
+);

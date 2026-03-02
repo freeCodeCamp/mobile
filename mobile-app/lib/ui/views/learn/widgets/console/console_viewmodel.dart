@@ -1,8 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_inappwebview/flutter_inappwebview.dart';
-import 'package:stacked/stacked.dart';
 
-class JavaScriptConsoleViewModel extends BaseViewModel {
+class JavaScriptConsoleViewModel {
   ScrollController controller = ScrollController();
 
   Color getConsoleTextColor(ConsoleMessageLevel messageLevel) {

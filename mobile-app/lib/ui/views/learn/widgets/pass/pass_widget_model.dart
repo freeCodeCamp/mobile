@@ -1,6 +1,8 @@
 import 'dart:convert';
 import 'dart:math';
 
+import 'package:flutter/foundation.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter/services.dart';
 import 'package:freecodecamp/app/app.locator.dart';
 import 'package:freecodecamp/models/learn/challenge_model.dart';
@@ -10,9 +12,8 @@ import 'package:freecodecamp/models/learn/motivational_quote_model.dart';
 import 'package:freecodecamp/models/main/user_model.dart';
 import 'package:freecodecamp/service/authentication/authentication_service.dart';
 import 'package:freecodecamp/ui/views/learn/challenge/challenge_viewmodel.dart';
-import 'package:stacked/stacked.dart';
 
-class PassWidgetModel extends BaseViewModel {
+class PassWidgetModel extends ChangeNotifier {
   final AuthenticationService auth = locator<AuthenticationService>();
 
   Future<MotivationalQuote>? quoteFuture;
@@ -70,3 +71,8 @@ class PassWidgetModel extends BaseViewModel {
     return quote;
   }
 }
+
+final passWidgetModelProvider =
+    ChangeNotifierProvider.autoDispose<PassWidgetModel>(
+  (ref) => PassWidgetModel(),
+);

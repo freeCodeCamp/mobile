@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:freecodecamp/extensions/i18n_extension.dart';
 import 'package:freecodecamp/models/learn/curriculum_model.dart';
@@ -8,17 +9,28 @@ import 'package:freecodecamp/ui/theme/fcc_theme.dart';
 import 'package:freecodecamp/ui/views/learn/landing/landing_viewmodel.dart';
 import 'package:freecodecamp/ui/views/learn/widgets/daily_challenge_card.dart';
 import 'package:freecodecamp/ui/widgets/drawer_widget/drawer_widget_view.dart';
-import 'package:stacked/stacked.dart';
 
-class LearnLandingView extends StatelessWidget {
+class LearnLandingView extends ConsumerStatefulWidget {
   const LearnLandingView({super.key});
 
   @override
+  ConsumerState<LearnLandingView> createState() => _LearnLandingViewState();
+}
+
+class _LearnLandingViewState extends ConsumerState<LearnLandingView> {
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      final model = ref.read(learnLandingViewModelProvider);
+      model.init(context, ref);
+    });
+  }
+
+  @override
   Widget build(BuildContext context) {
-    return ViewModelBuilder<LearnLandingViewModel>.reactive(
-      viewModelBuilder: () => LearnLandingViewModel(),
-      onViewModelReady: (model) => model.init(context),
-      builder: (context, model, child) => Scaffold(
+    final model = ref.watch(learnLandingViewModelProvider);
+    return Scaffold(
         backgroundColor: FccColors.gray90,
         appBar: AppBar(
           title: Text('LEARN'),
@@ -96,7 +108,6 @@ class LearnLandingView extends StatelessWidget {
             ),
           ),
         ),
-      ),
     );
   }
 

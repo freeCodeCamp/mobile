@@ -5,9 +5,11 @@ import 'dart:developer';
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_inappwebview/flutter_inappwebview.dart';
-import 'package:freecodecamp/app/app.locator.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:freecodecamp/app/app.router.dart';
-import 'package:freecodecamp/enums/dialog_type.dart';
+import 'package:freecodecamp/core/navigation/app_dialog.dart';
+import 'package:freecodecamp/core/navigation/app_navigator.dart';
+import 'package:freecodecamp/core/providers/service_providers.dart';
 import 'package:freecodecamp/enums/ext_type.dart';
 import 'package:freecodecamp/enums/panel_type.dart';
 import 'package:freecodecamp/extensions/i18n_extension.dart';
@@ -17,24 +19,20 @@ import 'package:freecodecamp/models/learn/daily_challenge_model.dart';
 import 'package:freecodecamp/service/dio_service.dart';
 import 'package:freecodecamp/service/learn/daily_challenge_service.dart';
 import 'package:freecodecamp/service/learn/learn_file_service.dart';
-import 'package:freecodecamp/service/learn/learn_offline_service.dart';
 import 'package:freecodecamp/service/learn/learn_service.dart';
 import 'package:freecodecamp/ui/views/learn/test_runner.dart';
 import 'package:freecodecamp/ui/views/learn/utils/challenge_utils.dart';
 import 'package:freecodecamp/ui/views/learn/widgets/description/description_widget_view.dart';
 import 'package:freecodecamp/ui/views/learn/widgets/hint/hint_widget_view.dart';
 import 'package:freecodecamp/ui/views/learn/widgets/pass/pass_widget_view.dart';
-import 'package:freecodecamp/ui/widgets/setup_dialog_ui.dart';
 import 'package:html/dom.dart';
 import 'package:html/parser.dart';
 import 'package:phone_ide/controller/custom_text_controller.dart';
 import 'package:phone_ide/models/textfield_data.dart';
 import 'package:phone_ide/phone_ide.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:stacked/stacked.dart';
-import 'package:stacked_services/stacked_services.dart';
 
-class ChallengeViewModel extends BaseViewModel {
+class ChallengeViewModel extends ChangeNotifier {
   bool get isDailyChallenge => _isDailyChallenge;
   final InAppLocalhostServer _localhostServer =
       InAppLocalhostServer(documentRoot: 'assets/test_runner');
@@ -127,8 +125,6 @@ class ChallengeViewModel extends BaseViewModel {
   String _editableRegionContent = '';
   String get editableRegionContent => _editableRegionContent;
 
-  SnackbarService snackbar = locator<SnackbarService>();
-
   Challenge? _challenge;
   Challenge? get challenge => _challenge;
 
@@ -140,12 +136,9 @@ class ChallengeViewModel extends BaseViewModel {
   TextFieldData? _textFieldData;
   TextFieldData? get textFieldData => _textFieldData;
 
-  final _dialogService = locator<DialogService>();
-  final NavigationService _navigationService = locator<NavigationService>();
-  final LearnFileService fileService = locator<LearnFileService>();
-  final LearnService learnService = locator<LearnService>();
-  final learnOfflineService = locator<LearnOfflineService>();
-  final dailyChallengeService = locator<DailyChallengeService>();
+  late LearnFileService fileService;
+  late LearnService learnService;
+  late DailyChallengeService dailyChallengeService;
 
   final _dio = DioService.dio;
 
@@ -294,7 +287,12 @@ class ChallengeViewModel extends BaseViewModel {
     required Block block,
     required Challenge challenge,
     required DateTime? challengeDate,
+    required WidgetRef ref,
   }) async {
+    fileService = ref.read(learnFileServiceProvider);
+    learnService = ref.read(learnServiceProvider);
+    dailyChallengeService = ref.read(dailyChallengeServiceProvider);
+
     await _babelWebView.run();
     await _localhostServer.start();
 
@@ -304,8 +302,6 @@ class ChallengeViewModel extends BaseViewModel {
     if (challengeDate != null) {
       await loadSelectedDailyChallengeLanguage();
     }
-
-    setupDialogUi();
 
     setChallenge = challenge;
     setBlock = block;
@@ -611,15 +607,13 @@ class ChallengeViewModel extends BaseViewModel {
   void resetCode(Editor editor, BuildContext context) async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
 
-    DialogResponse? res = await _dialogService.showCustomDialog(
-      barrierDismissible: true,
-      variant: DialogType.buttonForm,
+    final confirmed = await AppDialog.showConfirmation(
       title: context.t.reset_code,
       description: context.t.reset_description,
-      mainButtonTitle: context.t.reset,
+      confirmLabel: context.t.reset,
     );
 
-    if (res?.confirmed != true) {
+    if (!confirmed) {
       return;
     }
 
@@ -646,7 +640,7 @@ class ChallengeViewModel extends BaseViewModel {
       closeWebViews();
       disposeOfListeners();
 
-      _navigationService.replaceWith(
+      AppNavigator.replaceWith(
         Routes.challengeTemplateView,
         arguments: ChallengeTemplateViewArguments(
           block: block!,
@@ -670,7 +664,7 @@ class ChallengeViewModel extends BaseViewModel {
       closeWebViews();
       disposeOfListeners();
 
-      _navigationService.replaceWith(
+      AppNavigator.replaceWith(
         Routes.challengeTemplateView,
         arguments: ChallengeTemplateViewArguments(
           block: block!,
@@ -821,3 +815,8 @@ class ChallengeViewModel extends BaseViewModel {
     }
   }
 }
+
+final challengeViewModelProvider =
+    ChangeNotifierProvider.autoDispose<ChallengeViewModel>(
+  (ref) => ChallengeViewModel(),
+);

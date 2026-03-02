@@ -1,10 +1,11 @@
+import 'package:flutter/foundation.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:freecodecamp/app/app.locator.dart';
 import 'package:freecodecamp/models/learn/challenge_model.dart';
 import 'package:freecodecamp/service/learn/learn_service.dart';
 import 'package:freecodecamp/ui/views/learn/widgets/quiz_widget.dart';
-import 'package:stacked/stacked.dart';
 
-class PythonViewModel extends BaseViewModel {
+class PythonViewModel extends ChangeNotifier {
   bool _isValidated = false;
   bool get isValidated => _isValidated;
 
@@ -83,3 +84,8 @@ class PythonViewModel extends BaseViewModel {
     }
   }
 }
+
+final pythonViewModelProvider =
+    ChangeNotifierProvider.autoDispose<PythonViewModel>(
+  (ref) => PythonViewModel(),
+);

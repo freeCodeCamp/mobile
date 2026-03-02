@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:freecodecamp/app/app.locator.dart';
 import 'package:freecodecamp/models/learn/daily_challenge_model.dart';
@@ -40,8 +41,10 @@ void main() {
     });
 
     Widget createTestWidget() {
-      return const MaterialApp(
-        home: DailyChallengeView(),
+      return const ProviderScope(
+        child: MaterialApp(
+          home: DailyChallengeView(),
+        ),
       );
     }
 

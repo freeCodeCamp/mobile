@@ -3,37 +3,49 @@ import 'package:flutter/material.dart';
 import 'package:freecodecamp/models/learn/challenge_model.dart';
 import 'package:freecodecamp/ui/theme/fcc_theme.dart';
 import 'package:freecodecamp/ui/views/learn/widgets/audio/audio_player_viewmodel.dart';
-import 'package:stacked/stacked.dart';
 
-class AudioPlayerView extends StatelessWidget {
+class AudioPlayerView extends StatefulWidget {
   const AudioPlayerView({super.key, required this.audio});
 
   final EnglishAudio audio;
 
   @override
-  Widget build(BuildContext context) {
-    return ViewModelBuilder<AudioPlayerViewmodel>.reactive(
-      viewModelBuilder: () => AudioPlayerViewmodel(),
-      onViewModelReady: (model) => {
-        model.initPositionListener(),
-        model.audioService.loadEnglishAudio(audio)
-      },
-      onDispose: (model) => model.onDispose(),
-      builder: (context, model, child) => Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 16),
-        child: StreamBuilder(
-          initialData: PlaybackState(),
-          stream: model.audioService.playbackState,
-          builder: (context, snapshot) {
-            final playerState = snapshot.data as PlaybackState;
+  State<AudioPlayerView> createState() => _AudioPlayerViewState();
+}
 
-            return InnerAudioWidget(
-              model: model,
-              audio: audio,
-              playerState: playerState,
-            );
-          },
-        ),
+class _AudioPlayerViewState extends State<AudioPlayerView> {
+  late final AudioPlayerViewmodel model;
+
+  @override
+  void initState() {
+    super.initState();
+    model = AudioPlayerViewmodel();
+    model.initPositionListener();
+    model.audioService.loadEnglishAudio(widget.audio);
+  }
+
+  @override
+  void dispose() {
+    model.onDispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 16),
+      child: StreamBuilder(
+        initialData: PlaybackState(),
+        stream: model.audioService.playbackState,
+        builder: (context, snapshot) {
+          final playerState = snapshot.data as PlaybackState;
+
+          return InnerAudioWidget(
+            model: model,
+            audio: widget.audio,
+            playerState: playerState,
+          );
+        },
       ),
     );
   }

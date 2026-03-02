@@ -1,21 +1,26 @@
-import 'package:freecodecamp/app/app.locator.dart';
+import 'package:flutter/foundation.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:freecodecamp/core/providers/service_providers.dart';
 import 'package:freecodecamp/models/learn/challenge_model.dart';
 import 'package:freecodecamp/models/learn/curriculum_model.dart';
 import 'package:freecodecamp/service/learn/daily_challenge_service.dart';
 import 'package:freecodecamp/service/learn/learn_offline_service.dart';
 import 'package:freecodecamp/service/learn/learn_service.dart';
 import 'package:freecodecamp/ui/views/learn/utils/challenge_utils.dart';
-import 'package:stacked/stacked.dart';
 
-class ChallengeTemplateViewModel extends BaseViewModel {
+class ChallengeTemplateViewModel extends ChangeNotifier {
   Future<Challenge>? _challenge;
   Future<Challenge>? get challenge => _challenge;
 
-  final LearnOfflineService _learnOfflineService =
-      locator<LearnOfflineService>();
-  final DailyChallengeService _dailyChallengeService =
-      locator<DailyChallengeService>();
-  final LearnService _learnService = locator<LearnService>();
+  late final LearnOfflineService _learnOfflineService;
+  late final DailyChallengeService _dailyChallengeService;
+  late final LearnService _learnService;
+
+  void init(WidgetRef ref) {
+    _learnOfflineService = ref.read(learnOfflineServiceProvider);
+    _dailyChallengeService = ref.read(dailyChallengeServiceProvider);
+    _learnService = ref.read(learnServiceProvider);
+  }
 
   set setChallenge(Future<Challenge> challenge) {
     _challenge = challenge;
@@ -40,3 +45,8 @@ class ChallengeTemplateViewModel extends BaseViewModel {
     }
   }
 }
+
+final challengeTemplateViewModelProvider =
+    ChangeNotifierProvider.autoDispose<ChallengeTemplateViewModel>(
+  (ref) => ChallengeTemplateViewModel(),
+);

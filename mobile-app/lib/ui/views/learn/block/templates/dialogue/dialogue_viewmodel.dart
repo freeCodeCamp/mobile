@@ -1,3 +1,1 @@
-import 'package:stacked/stacked.dart';
-
-class BlockDialogueViewModel extends BaseViewModel {}
+class BlockDialogueViewModel {}
