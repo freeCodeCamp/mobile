@@ -5,8 +5,7 @@
   "license": "BSD-3-Clause",
   "private": true,
   "engines": {
-    "node": ">=16",
-    "npm": ">=8"
+    "node": ">=24"
   },
   "repository": {
     "type": "git",
