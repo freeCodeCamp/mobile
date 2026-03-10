@@ -239,7 +239,7 @@ class AudioPlayerHandler extends BaseAudioHandler {
     return 'https://cdn.freecodecamp.org/curriculum/english/animation-assets/sounds/$fileName';
   }
 
-  bool canSeek(bool forward, int currentDuration, EnglishAudio audio) {
+  bool canSeek(bool forward, int currentDuration, AudioClip audio) {
     currentDuration =
         currentDuration + parseTimeStamp(audio.startTimeStamp).inSeconds;
 
@@ -252,7 +252,7 @@ class AudioPlayerHandler extends BaseAudioHandler {
     }
   }
 
-  void loadEnglishAudio(EnglishAudio audio) async {
+  Future<void> loadCurriculumAudio(AudioClip audio) async {
     await _audioPlayer.setAudioSource(
       ClippingAudioSource(
         start: parseTimeStamp(audio.startTimeStamp),
@@ -260,15 +260,13 @@ class AudioPlayerHandler extends BaseAudioHandler {
             ? null
             : parseTimeStamp(audio.finishTimeStamp),
         child: AudioSource.uri(
-          Uri.parse(
-            returnUrl(audio.fileName),
-          ),
+          Uri.parse(returnUrl(audio.fileName)),
         ),
       ),
     );
     await _audioPlayer.load();
     setEpisodeId = '';
-    _audioType = 'english';
+    _audioType = 'curriculum';
   }
 
   void _notifyAudioHandlerAboutPlaybackEvents() {

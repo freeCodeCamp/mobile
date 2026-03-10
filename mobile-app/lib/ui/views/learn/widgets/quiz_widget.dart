@@ -3,6 +3,7 @@ import 'package:flutter_html/flutter_html.dart';
 import 'package:freecodecamp/models/learn/challenge_model.dart';
 import 'package:freecodecamp/ui/theme/fcc_theme.dart';
 import 'package:freecodecamp/ui/views/learn/widgets/challenge_card.dart';
+import 'package:freecodecamp/ui/views/learn/widgets/quiz_audio_player.dart';
 import 'package:freecodecamp/ui/views/news/html_handler/html_handler.dart';
 
 // Model that extends Question with selectedAnswer and validation status
@@ -10,6 +11,7 @@ class QuizWidgetQuestion {
   final String text;
   final List<Answer> answers;
   final int solution;
+  final QuizAudioData? audioData;
   int selectedAnswer;
   bool? isCorrect;
 
@@ -17,6 +19,7 @@ class QuizWidgetQuestion {
     required this.text,
     required this.answers,
     required this.solution,
+    this.audioData,
     this.selectedAnswer = -1,
     this.isCorrect,
   });
@@ -119,6 +122,10 @@ class _QuizWidgetState extends State<QuizWidget> {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           ...parsedQuestions[questionIndex],
+          if (question.audioData != null) ...[
+            const SizedBox(height: 16),
+            QuizAudioPlayer(audioData: question.audioData!),
+          ],
           const SizedBox(height: 8),
           RadioGroup<int>(
             groupValue: selectedAnswer,

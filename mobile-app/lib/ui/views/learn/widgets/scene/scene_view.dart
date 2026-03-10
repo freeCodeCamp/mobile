@@ -21,7 +21,7 @@ class SceneView extends StatelessWidget {
       viewModelBuilder: () => SceneViewModel(),
       onViewModelReady: (model) {
         model.initPositionListener();
-        model.audioService.loadEnglishAudio(scene.setup.audio);
+        model.audioService.loadCurriculumAudio(scene.setup.audio);
         model.initScene(scene);
       },
       onDispose: (model) => model.onDispose(),
@@ -87,7 +87,8 @@ class _FullscreenSceneOverlayState extends State<_FullscreenSceneOverlay> {
       DeviceOrientation.landscapeRight,
     ]);
     SystemChrome.setEnabledSystemUIMode(SystemUiMode.immersiveSticky);
-    WidgetsBinding.instance.addPostFrameCallback((_) => _measureControlsHeight());
+    WidgetsBinding.instance
+        .addPostFrameCallback((_) => _measureControlsHeight());
   }
 
   void _measureControlsHeight() {
@@ -390,14 +391,14 @@ class _CharacterSlot extends StatelessWidget {
     final characterHeight = canvasHeight * scale;
     final characterWidth = characterHeight * (2 / 3);
 
-    final xPercent = state.position.x.toDouble()  / 100;
+    final xPercent = state.position.x.toDouble() / 100;
     final yPercent = state.position.y.toDouble() / 100;
 
     final leftPos = (xPercent * canvasWidth) - (characterWidth / 2);
     final overflowHeight = characterHeight - canvasHeight;
     final bottomPos = -(overflowHeight / 2) - (yPercent * canvasHeight);
 
-    return AnimatedPositioned(  
+    return AnimatedPositioned(
       duration: const Duration(milliseconds: 500),
       curve: Curves.easeInOut,
       left: leftPos,

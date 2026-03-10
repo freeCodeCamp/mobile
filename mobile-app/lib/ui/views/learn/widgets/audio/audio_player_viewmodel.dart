@@ -17,7 +17,7 @@ class AudioPlayerViewmodel extends BaseViewModel {
   Duration searchTimeStamp(
     bool forwards,
     int currentPosition,
-    EnglishAudio audio,
+    EnglishScene audio,
   ) {
     if (forwards) {
       return Duration(
