@@ -60,77 +60,92 @@ class EpisodeListView extends StatelessWidget {
                     ],
                   ),
                 ),
-                !isDownloadView
-                    ? PagingListener(
-                        controller: model.pagingController!,
-                        builder: (context, state, fetchNextPage) =>
-                            PagedSliverList.separated(
-                          state: state,
-                          fetchNextPage: fetchNextPage,
-                          builderDelegate: PagedChildBuilderDelegate<Episodes>(
-                            itemBuilder: (
-                              BuildContext context,
-                              Episodes episode,
-                              int index,
-                            ) =>
-                                PodcastTile(
-                              episode: episode,
-                              podcast: podcast,
-                              isFromDownloadView: isDownloadView,
-                            ),
-                          ),
-                          separatorBuilder: (BuildContext context, int index) =>
-                              const Divider(
-                            color: FccColors.gray80,
-                            thickness: 1,
-                            height: 1,
-                            indent: 16,
-                            endIndent: 16,
-                          ),
+                model.isBusy
+                    ? const SliverFillRemaining(
+                        child: Center(
+                          child: CircularProgressIndicator(),
                         ),
                       )
-                    : SliverToBoxAdapter(
-                        child: FutureBuilder<List<Episodes>>(
-                          future: model.episodes,
-                          builder: (context, snapshot) {
-                            if (snapshot.hasData) {
-                              return ListView.separated(
-                                shrinkWrap: true,
-                                physics: const NeverScrollableScrollPhysics(),
-                                itemCount: snapshot.data!.length,
-                                itemBuilder: (BuildContext context, int index) {
-                                  return PodcastTile(
-                                    episode: snapshot.data![index],
-                                    podcast: podcast,
-                                    isFromDownloadView: isDownloadView,
-                                  );
-                                },
-                                separatorBuilder:
-                                    (BuildContext context, int index) {
-                                  return const Divider(
-                                    color: FccColors.gray80,
-                                    thickness: 1,
-                                    height: 1,
-                                    indent: 16,
-                                    endIndent: 16,
-                                  );
-                                },
-                              );
-                            } else if (snapshot.hasError) {
-                              return Text('${snapshot.error}');
-                            }
-                            return const Center(
-                              child: CircularProgressIndicator(),
-                            );
-                          },
-                        ),
-                      ),
+                    : model.hasError
+                        ? SliverFillRemaining(
+                            child: Center(
+                              child: Text('Error: ${model.modelError}'),
+                            ),
+                          )
+                        : renderEpisodeList(isDownloadView, model)
               ],
             ),
           ),
         ),
       ),
     );
+  }
+
+  Widget renderEpisodeList(bool isDownloadView, EpisodeListViewModel model) {
+    return !isDownloadView
+        ? PagingListener(
+            controller: model.pagingController!,
+            builder: (context, state, fetchNextPage) =>
+                PagedSliverList.separated(
+              state: state,
+              fetchNextPage: fetchNextPage,
+              builderDelegate: PagedChildBuilderDelegate<Episodes>(
+                itemBuilder: (
+                  BuildContext context,
+                  Episodes episode,
+                  int index,
+                ) =>
+                    PodcastTile(
+                  episode: episode,
+                  podcast: podcast,
+                  isFromDownloadView: isDownloadView,
+                ),
+              ),
+              separatorBuilder: (BuildContext context, int index) =>
+                  const Divider(
+                color: FccColors.gray80,
+                thickness: 1,
+                height: 1,
+                indent: 16,
+                endIndent: 16,
+              ),
+            ),
+          )
+        : SliverToBoxAdapter(
+            child: FutureBuilder<List<Episodes>>(
+              future: model.episodes,
+              builder: (context, snapshot) {
+                if (snapshot.hasData) {
+                  return ListView.separated(
+                    shrinkWrap: true,
+                    physics: const NeverScrollableScrollPhysics(),
+                    itemCount: snapshot.data!.length,
+                    itemBuilder: (BuildContext context, int index) {
+                      return PodcastTile(
+                        episode: snapshot.data![index],
+                        podcast: podcast,
+                        isFromDownloadView: isDownloadView,
+                      );
+                    },
+                    separatorBuilder: (BuildContext context, int index) {
+                      return const Divider(
+                        color: FccColors.gray80,
+                        thickness: 1,
+                        height: 1,
+                        indent: 16,
+                        endIndent: 16,
+                      );
+                    },
+                  );
+                } else if (snapshot.hasError) {
+                  return Text('${snapshot.error}');
+                }
+                return const Center(
+                  child: CircularProgressIndicator(),
+                );
+              },
+            ),
+          );
   }
 
   Column description(EpisodeListViewModel model, BuildContext context) {
