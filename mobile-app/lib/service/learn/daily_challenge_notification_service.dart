@@ -1,6 +1,8 @@
+import 'dart:developer' as developer;
 import 'dart:io';
 import 'dart:math';
 
+import 'package:flutter/services.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:freecodecamp/app/app.locator.dart';
 import 'package:freecodecamp/models/learn/completed_challenge_model.dart';
@@ -51,9 +53,73 @@ class DailyChallengeNotificationService {
     );
   }
 
-  Future<void> setupNotifications() async {
-    final permissionGranted = await areSystemNotificationsEnabled();
+  Future<bool> requestPermissionIfNeeded() async {
+    if (Platform.isAndroid) {
+      final androidImplementation = _flutterLocalNotificationsPlugin
+          .resolvePlatformSpecificImplementation<
+              AndroidFlutterLocalNotificationsPlugin>();
 
+      if (androidImplementation == null) {
+        return false;
+      }
+
+      try {
+        return await androidImplementation.requestNotificationsPermission() ??
+            false;
+      } on PlatformException catch (e, stackTrace) {
+        developer.log(
+          'Failed to request Android notification permission.',
+          error: e,
+          stackTrace: stackTrace,
+        );
+        return false;
+      } catch (e, stackTrace) {
+        developer.log(
+          'Unexpected failure while requesting Android notification permission.',
+          error: e,
+          stackTrace: stackTrace,
+        );
+        return false;
+      }
+    }
+
+    if (Platform.isIOS) {
+      final iosImplementation = _flutterLocalNotificationsPlugin
+          .resolvePlatformSpecificImplementation<
+              IOSFlutterLocalNotificationsPlugin>();
+
+      try {
+        return await iosImplementation?.requestPermissions(
+              alert: true,
+              badge: true,
+              sound: true,
+            ) ??
+            false;
+      } on PlatformException catch (e, stackTrace) {
+        developer.log(
+          'Failed to request iOS notification permission.',
+          error: e,
+          stackTrace: stackTrace,
+        );
+        return false;
+      } catch (e, stackTrace) {
+        developer.log(
+          'Unexpected failure while requesting iOS notification permission.',
+          error: e,
+          stackTrace: stackTrace,
+        );
+        return false;
+      }
+    }
+
+    return true;
+  }
+
+  Future<void> setupNotifications() async {
+    final permissionGranted = await requestPermissionIfNeeded();
+
+    // Auto-enable daily notifications if system permission is granted
+    // and user hasn't explicitly disabled them
     if (permissionGranted) {
       final prefs = await SharedPreferences.getInstance();
       final hasSetPreference =
@@ -68,6 +134,8 @@ class DailyChallengeNotificationService {
       }
     }
   }
+
+  Future<void> requestPermissionAndConfigure() => setupNotifications();
 
   void _onNotificationResponse(NotificationResponse response) {
     if (response.payload == 'daily_challenge_notification') {
@@ -103,7 +171,27 @@ class DailyChallengeNotificationService {
       final androidImplementation = _flutterLocalNotificationsPlugin
           .resolvePlatformSpecificImplementation<
               AndroidFlutterLocalNotificationsPlugin>();
-      return await androidImplementation?.areNotificationsEnabled() ?? false;
+      if (androidImplementation == null) {
+        return false;
+      }
+
+      try {
+        return await androidImplementation.areNotificationsEnabled() ?? false;
+      } on PlatformException catch (e, stackTrace) {
+        developer.log(
+          'Failed to check Android notification permission state.',
+          error: e,
+          stackTrace: stackTrace,
+        );
+        return false;
+      } catch (e, stackTrace) {
+        developer.log(
+          'Unexpected failure while checking Android notification permission state.',
+          error: e,
+          stackTrace: stackTrace,
+        );
+        return false;
+      }
     }
 
     // iOS does not let apps check notification status after permission is granted, so we always return true.
