@@ -20,6 +20,7 @@ import 'package:stacked_services/stacked_services.dart';
 class BlockTemplateViewModel extends BaseViewModel {
   final NavigationService _navigationService = locator<NavigationService>();
   final AuthenticationService auth = locator<AuthenticationService>();
+  final SnackbarService _snack = locator<SnackbarService>();
 
   bool _isDev = false;
   bool get isDev => _isDev;
@@ -36,6 +37,16 @@ class BlockTemplateViewModel extends BaseViewModel {
   set setIsDev(bool value) {
     _isDev = value;
     notifyListeners();
+  }
+
+  void showDisabledSnackbar() {
+    _snack.showSnackbar(
+      title: 'Temporarily unavailable, come back soon.',
+      message: '',
+    );
+    Future.delayed(const Duration(milliseconds: 2500), () {
+      _snack.closeSnackbar();
+    });
   }
 
   void routeToChallengeView(Block block, String challengeId) {

@@ -97,10 +97,25 @@ class SuperBlockViewModel extends BaseViewModel {
   }
 
   List<Block> _filterAvailableBlocks(List<Block> blocks) {
-    return blocks.where((block) {
-      return _remoteConfigService.isBlockActive(
+    return blocks.map((block) {
+      final isActive = _remoteConfigService.isBlockActive(
         superBlockDashedName: block.superBlock.dashedName,
         blockDashedName: block.dashedName,
+      );
+
+      if (isActive) return block;
+
+      return Block(
+        superBlock: block.superBlock,
+        layout: block.layout,
+        label: block.label,
+        name: block.name,
+        dashedName: block.dashedName,
+        description: block.description,
+        challenges: block.challenges,
+        challengeTiles: block.challengeTiles,
+        order: block.order,
+        isDisabledByOverride: true,
       );
     }).toList();
   }
