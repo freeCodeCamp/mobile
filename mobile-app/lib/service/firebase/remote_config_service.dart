@@ -12,6 +12,7 @@ class RemoteConfigService {
 
   static final remoteConfig = FirebaseRemoteConfig.instance;
   static const _superblockActivationKey = 'superblock_activation_overrides';
+  static const _blockActivationKey = 'block_activation_overrides';
 
   factory RemoteConfigService() {
     return _instance;
@@ -28,6 +29,7 @@ class RemoteConfigService {
       await remoteConfig.setDefaults({
         'min_app_version': '7.2.1',
         _superblockActivationKey: '{}',
+        _blockActivationKey: '{}',
       });
 
       await remoteConfig.fetchAndActivate();
@@ -68,8 +70,75 @@ class RemoteConfigService {
   }
 
   bool? getSuperBlockActivationOverride(String dashedName) {
+    return _getOverrideValue(
+      configKey: _superblockActivationKey,
+      key: dashedName,
+    );
+  }
+
+  bool isBlockActive({
+    required String superBlockDashedName,
+    required String blockDashedName,
+    bool fallbackValue = true,
+  }) {
+    final override = getBlockActivationOverride(
+      superBlockDashedName: superBlockDashedName,
+      blockDashedName: blockDashedName,
+    );
+    return override ?? fallbackValue;
+  }
+
+  bool? getBlockActivationOverride({
+    required String superBlockDashedName,
+    required String blockDashedName,
+  }) {
+    final overrides = _getOverridesMap(_blockActivationKey);
+    if (overrides == null) {
+      return null;
+    }
+
+    final superBlockScopedKey = '$superBlockDashedName/$blockDashedName';
+    final directScopedOverride = overrides[superBlockScopedKey];
+    if (directScopedOverride is bool) {
+      return directScopedOverride;
+    }
+
+    final scopedOverrides = overrides[superBlockDashedName];
+    if (scopedOverrides is Map) {
+      final nestedOverride = scopedOverrides[blockDashedName];
+      if (nestedOverride is bool) {
+        return nestedOverride;
+      }
+    }
+
+    final directOverride = overrides[blockDashedName];
+    if (directOverride is bool) {
+      return directOverride;
+    }
+
+    return null;
+  }
+
+  bool? _getOverrideValue({
+    required String configKey,
+    required String key,
+  }) {
+    final overrides = _getOverridesMap(configKey);
+    if (overrides == null) {
+      return null;
+    }
+
+    final overrideValue = overrides[key];
+    if (overrideValue is bool) {
+      return overrideValue;
+    }
+
+    return null;
+  }
+
+  Map<String, dynamic>? _getOverridesMap(String configKey) {
     try {
-      final String rawConfig = remoteConfig.getString(_superblockActivationKey);
+      final String rawConfig = remoteConfig.getString(configKey);
       if (rawConfig.trim().isEmpty) {
         return null;
       }
@@ -78,17 +147,11 @@ class RemoteConfigService {
       if (decoded is! Map<String, dynamic>) {
         return null;
       }
-
-      final dynamic overrideValue = decoded[dashedName];
-      if (overrideValue is bool) {
-        return overrideValue;
-      }
-
-      return null;
+      return decoded;
     } catch (exception) {
       log(
-        'Invalid remote config for $_superblockActivationKey. '
-        'Ignoring override for $dashedName: $exception',
+        'Invalid remote config for $configKey. '
+        'Ignoring overrides: $exception',
       );
       return null;
     }

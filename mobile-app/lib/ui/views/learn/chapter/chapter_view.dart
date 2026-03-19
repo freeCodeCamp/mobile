@@ -1,4 +1,3 @@
-
 import 'package:flutter/material.dart';
 import 'package:freecodecamp/models/learn/curriculum_model.dart';
 import 'package:freecodecamp/ui/theme/fcc_theme.dart';
@@ -51,8 +50,16 @@ class ChapterView extends StatelessWidget {
                       'python-certification-exam'
                     ];
 
-                    List<Chapter> chapters =
-                        (superBlock.chapters as List<Chapter>).where((chapter) => !exams.contains(chapter.dashedName)).toList();
+                    List<Chapter> chapters = (superBlock.chapters
+                            as List<Chapter>)
+                        .where((chapter) => !exams.contains(chapter.dashedName))
+                        .toList();
+
+                    if (chapters.isEmpty) {
+                      return const Center(
+                        child: Text('No blocks available right now.'),
+                      );
+                    }
 
                     return ListView(
                       shrinkWrap: true,
@@ -152,8 +159,8 @@ class ChapterView extends StatelessWidget {
     bool isSingleStep = model.isSingleStepModule(module);
     Color moduleColor = model.getModuleColor(module);
     bool isReview = module.blocks != null &&
-                    module.blocks!.isNotEmpty &&
-                    module.blocks!.first.label == BlockLabel.review;
+        module.blocks!.isNotEmpty &&
+        module.blocks!.first.label == BlockLabel.review;
     bool isCertProject = module.moduleType == ModuleType.certProject;
     Color backgroundColor = isSingleStep
         ? moduleColor.withValues(alpha: 0.3)

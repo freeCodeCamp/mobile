@@ -4,6 +4,7 @@ import 'package:freecodecamp/app/app.locator.dart';
 import 'package:freecodecamp/models/learn/curriculum_model.dart';
 import 'package:freecodecamp/service/authentication/authentication_service.dart';
 import 'package:freecodecamp/service/dio_service.dart';
+import 'package:freecodecamp/service/firebase/remote_config_service.dart';
 import 'package:freecodecamp/service/learn/learn_offline_service.dart';
 import 'package:freecodecamp/service/learn/learn_service.dart';
 import 'package:stacked/stacked.dart';
@@ -14,6 +15,7 @@ class SuperBlockViewModel extends BaseViewModel {
 
   final _learnService = locator<LearnService>();
   LearnService get learnService => _learnService;
+  final _remoteConfigService = locator<RemoteConfigService>();
 
   final AuthenticationService _auth = locator<AuthenticationService>();
   AuthenticationService get auth => _auth;
@@ -65,25 +67,41 @@ class SuperBlockViewModel extends BaseViewModel {
     String baseUrl = LearnService.baseUrl;
 
     if (!hasInternet) {
+      final cachedBlocks =
+          await _learnOfflineService.getCachedBlocks(dashedName) ?? [];
+
       return SuperBlock(
         dashedName: dashedName,
         name: name,
-        blocks: await _learnOfflineService.getCachedBlocks(
-          dashedName,
-        ),
+        blocks: _filterAvailableBlocks(cachedBlocks),
       );
     }
 
     final Response res = await _dio.get('$baseUrl/$dashedName.json');
 
     if (res.statusCode == 200) {
-      return SuperBlock.fromJson(
+      final superBlock = SuperBlock.fromJson(
         res.data,
         dashedName,
         name,
       );
+
+      return SuperBlock(
+        dashedName: superBlock.dashedName,
+        name: superBlock.name,
+        blocks: _filterAvailableBlocks(superBlock.blocks ?? []),
+      );
     } else {
       throw Exception(res.data);
     }
+  }
+
+  List<Block> _filterAvailableBlocks(List<Block> blocks) {
+    return blocks.where((block) {
+      return _remoteConfigService.isBlockActive(
+        superBlockDashedName: block.superBlock.dashedName,
+        blockDashedName: block.dashedName,
+      );
+    }).toList();
   }
 }
