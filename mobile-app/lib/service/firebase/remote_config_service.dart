@@ -27,7 +27,7 @@ class RemoteConfigService {
         ),
       );
       await remoteConfig.setDefaults({
-        'min_app_version': '7.2.1',
+        'min_app_version': '7.2.2',
         _superblockActivationKey: '{}',
         _blockActivationKey: '{}',
       });
