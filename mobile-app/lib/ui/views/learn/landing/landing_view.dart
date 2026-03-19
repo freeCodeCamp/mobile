@@ -249,27 +249,24 @@ class SuperBlockButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      padding: const EdgeInsets.symmetric(
-        vertical: 6,
-        horizontal: 4,
-      ),
+    return Opacity(
+      opacity: button.public ? 1.0 : 0.7,
+      child: Container(
+        padding: const EdgeInsets.symmetric(
+          vertical: 6,
+          horizontal: 4,
+        ),
       constraints: BoxConstraints(
         minHeight: 80,
       ),
       child: ElevatedButton(
         style: ElevatedButton.styleFrom(
           padding: const EdgeInsets.all(5),
-          backgroundColor: button.public ? FccColors.gray80 : FccColors.gray75,
-          side: button.public
-              ? const BorderSide(
-                  width: 2,
-                  color: FccColors.gray75,
-                )
-              : const BorderSide(
-                  width: 2,
-                  color: Color.fromRGBO(0x3b, 0x3b, 0x4f, 1),
-                ),
+          backgroundColor: FccColors.gray80,
+          side: const BorderSide(
+            width: 2,
+            color: FccColors.gray75,
+          ),
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.all(Radius.circular(5)),
             side: const BorderSide(
@@ -322,6 +319,7 @@ class SuperBlockButton extends StatelessWidget {
           ],
         ),
       ),
+    ),
     );
   }
 }
