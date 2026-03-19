@@ -164,6 +164,8 @@ class Block {
   final List description;
   // Blocks in chapter-based super blocks don't have `order`.
   final int? order;
+  // Blocks can be disabled by manual override on Firebase
+  final bool isDisabledByOverride;
 
   final List<ChallengeOrder> challenges;
   final List<ChallengeListTile> challengeTiles;
@@ -178,6 +180,7 @@ class Block {
     required this.challenges,
     required this.challengeTiles,
     this.order,
+    this.isDisabledByOverride = false,
   });
 
   factory Block.fromJson(
@@ -280,11 +283,13 @@ class SuperBlockButtonData {
   final String path;
   final String name;
   final bool public;
+  final bool disabledByManualOverride;
 
   SuperBlockButtonData({
     required this.path,
     required this.name,
     required this.public,
+    this.disabledByManualOverride = false,
   });
 }
 

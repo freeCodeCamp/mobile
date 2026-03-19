@@ -8,6 +8,7 @@ import 'package:freecodecamp/models/learn/curriculum_model.dart';
 import 'package:freecodecamp/models/main/user_model.dart';
 import 'package:freecodecamp/service/authentication/authentication_service.dart';
 import 'package:freecodecamp/service/dio_service.dart';
+import 'package:freecodecamp/service/firebase/remote_config_service.dart';
 import 'package:freecodecamp/service/learn/learn_service.dart';
 import 'package:freecodecamp/ui/theme/fcc_theme.dart';
 import 'package:stacked/stacked.dart';
@@ -17,6 +18,8 @@ class ChapterViewModel extends BaseViewModel {
   final _dio = DioService.dio;
   final NavigationService _navigationService = locator<NavigationService>();
   final AuthenticationService auth = locator<AuthenticationService>();
+  final RemoteConfigService _remoteConfigService =
+      locator<RemoteConfigService>();
 
   bool _isDev = false;
   bool get isDev => _isDev;
@@ -73,14 +76,62 @@ class ChapterViewModel extends BaseViewModel {
       '$baseUrl/$superBlockDashedName.json',
     );
     if (res.statusCode == 200) {
-      return SuperBlock.fromJson(
+      final superBlock = SuperBlock.fromJson(
         res.data,
         superBlockDashedName,
         superBlockName,
       );
+
+      return _filterUnavailableBlocks(superBlock);
     }
 
     return null;
+  }
+
+  SuperBlock _filterUnavailableBlocks(SuperBlock superBlock) {
+    if (superBlock.chapters == null) {
+      return superBlock;
+    }
+
+    final List<Chapter> filteredChapters = superBlock.chapters!
+        .map((chapter) {
+          final List<Module> filteredModules = chapter.modules
+                  ?.map((module) {
+                    final List<Block> filteredBlocks = (module.blocks ?? [])
+                        .where((block) => _remoteConfigService.isBlockActive(
+                              superBlockDashedName: block.superBlock.dashedName,
+                              blockDashedName: block.dashedName,
+                            ))
+                        .toList();
+
+                    return Module(
+                      name: module.name,
+                      dashedName: module.dashedName,
+                      comingSoon: module.comingSoon,
+                      moduleType: module.moduleType,
+                      blocks: filteredBlocks,
+                    );
+                  })
+                  .where((module) => module.blocks?.isNotEmpty ?? false)
+                  .toList() ??
+              [];
+
+          return Chapter(
+            name: chapter.name,
+            dashedName: chapter.dashedName,
+            comingSoon: chapter.comingSoon,
+            chapterType: chapter.chapterType,
+            modules: filteredModules,
+          );
+        })
+        .where((chapter) => chapter.modules?.isNotEmpty ?? false)
+        .toList();
+
+    return SuperBlock(
+      dashedName: superBlock.dashedName,
+      name: superBlock.name,
+      chapters: filteredChapters,
+    );
   }
 
   void developmentMode() async {

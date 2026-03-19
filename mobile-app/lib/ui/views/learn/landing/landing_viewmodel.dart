@@ -16,6 +16,7 @@ import 'package:freecodecamp/models/learn/motivational_quote_model.dart';
 import 'package:freecodecamp/models/main/user_model.dart';
 import 'package:freecodecamp/service/authentication/authentication_service.dart';
 import 'package:freecodecamp/service/dio_service.dart';
+import 'package:freecodecamp/service/firebase/remote_config_service.dart';
 import 'package:freecodecamp/service/learn/daily_challenge_service.dart';
 import 'package:freecodecamp/service/learn/learn_offline_service.dart';
 import 'package:freecodecamp/service/learn/learn_service.dart';
@@ -42,6 +43,7 @@ class LearnLandingViewModel extends BaseViewModel {
   LearnOfflineService get learnOfflineService => _learnOfflineService;
 
   final _dailyChallengeService = DailyChallengeService();
+  final _remoteConfigService = locator<RemoteConfigService>();
 
   Future<List<Widget>>? superBlockButtons;
   final _dio = DioService.dio;
@@ -170,8 +172,12 @@ class LearnLandingViewModel extends BaseViewModel {
     }
   }
 
-  void disabledButtonSnack() {
-    snack.showSnackbar(title: 'Not available use the web version', message: '');
+  void disabledButtonSnack(bool disabledByManualOverride) {
+    final message = disabledByManualOverride
+        ? 'Temporarily unavailable, come back soon.'
+        : 'Not available use the web version';
+
+    snack.showSnackbar(title: message, message: '');
     Future.delayed(const Duration(milliseconds: 2500), () {
       snack.closeSnackbar();
     });
@@ -218,11 +224,19 @@ class LearnLandingViewModel extends BaseViewModel {
               continue;
             }
 
+            final fallbackValue = showAllSB || superBlock['public'] == true;
+            final override =
+                _remoteConfigService.getSuperBlockActivationOverride(
+              superBlock['dashedName'],
+            );
+            final isPublic = override ?? fallbackValue;
+
             Widget button = SuperBlockButton(
               button: SuperBlockButtonData(
                 path: superBlock['dashedName'],
                 name: superBlock['title'],
-                public: !showAllSB ? superBlock['public'] : true,
+                public: isPublic,
+                disabledByManualOverride: override == false,
               ),
               model: this,
             );

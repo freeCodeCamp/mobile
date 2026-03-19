@@ -85,9 +85,12 @@ class SuperBlockView extends StatelessWidget {
                                 block.dashedName: false
                           };
 
+                          if (openStates.isEmpty) {
+                            return;
+                          }
+
                           // Set first block open
-                          String firstBlockKey =
-                              openStates.entries.toList()[0].key;
+                          String firstBlockKey = openStates.entries.first.key;
 
                           openStates[firstBlockKey] = true;
 
@@ -119,6 +122,12 @@ class SuperBlockView extends StatelessWidget {
     SuperBlockViewModel model,
     SuperBlock superBlock,
   ) {
+    if (superBlock.blocks == null || superBlock.blocks!.isEmpty) {
+      return const Center(
+        child: Text('No blocks available right now.'),
+      );
+    }
+
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 8),
       child: NotificationListener<OverscrollIndicatorNotification>(
