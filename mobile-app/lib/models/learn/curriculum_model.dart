@@ -280,11 +280,13 @@ class SuperBlockButtonData {
   final String path;
   final String name;
   final bool public;
+  final bool disabledByManualOverride;
 
   SuperBlockButtonData({
     required this.path,
     required this.name,
     required this.public,
+    this.disabledByManualOverride = false,
   });
 }
 

@@ -1,3 +1,4 @@
+import 'dart:convert';
 import 'dart:developer';
 
 import 'package:firebase_crashlytics/firebase_crashlytics.dart';
@@ -10,6 +11,7 @@ class RemoteConfigService {
   static final RemoteConfigService _instance = RemoteConfigService._internal();
 
   static final remoteConfig = FirebaseRemoteConfig.instance;
+  static const _superblockActivationKey = 'superblock_activation_overrides';
 
   factory RemoteConfigService() {
     return _instance;
@@ -25,6 +27,7 @@ class RemoteConfigService {
       );
       await remoteConfig.setDefaults({
         'min_app_version': '7.2.1',
+        _superblockActivationKey: '{}',
       });
 
       await remoteConfig.fetchAndActivate();
@@ -55,4 +58,39 @@ class RemoteConfigService {
   }
 
   RemoteConfigService._internal();
+
+  bool isSuperBlockActive(
+    String dashedName, {
+    required bool fallbackValue,
+  }) {
+    final override = getSuperBlockActivationOverride(dashedName);
+    return override ?? fallbackValue;
+  }
+
+  bool? getSuperBlockActivationOverride(String dashedName) {
+    try {
+      final String rawConfig = remoteConfig.getString(_superblockActivationKey);
+      if (rawConfig.trim().isEmpty) {
+        return null;
+      }
+
+      final dynamic decoded = jsonDecode(rawConfig);
+      if (decoded is! Map<String, dynamic>) {
+        return null;
+      }
+
+      final dynamic overrideValue = decoded[dashedName];
+      if (overrideValue is bool) {
+        return overrideValue;
+      }
+
+      return null;
+    } catch (exception) {
+      log(
+        'Invalid remote config for $_superblockActivationKey. '
+        'Ignoring override for $dashedName: $exception',
+      );
+      return null;
+    }
+  }
 }

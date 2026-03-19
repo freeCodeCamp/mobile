@@ -281,7 +281,7 @@ class SuperBlockButton extends StatelessWidget {
         onPressed: () {
           button.public
               ? model.routeToSuperBlock(button.path, button.name)
-              : model.disabledButtonSnack();
+              : model.disabledButtonSnack(button.disabledByManualOverride);
         },
         child: Row(
           children: [
