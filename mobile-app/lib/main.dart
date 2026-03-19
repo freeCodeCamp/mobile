@@ -50,14 +50,13 @@ Future<void> main({bool testing = false}) async {
     }
   }
   await RemoteConfigService().init();
-  await NotificationService().init();
-  await DailyChallengeNotificationService().init();
+  await locator<NotificationService>().init();
+  await locator<DailyChallengeNotificationService>().init();
 
   runApp(const FreeCodeCampMobileApp());
-
   WidgetsBinding.instance.addPostFrameCallback((_) async {
-    await NotificationService().requestPermission();
-    await DailyChallengeNotificationService().setupNotifications();
+    await locator<NotificationService>().requestPermission();
+    await locator<DailyChallengeNotificationService>().setupNotifications();
   });
 
   await QuickActionsService().init();
