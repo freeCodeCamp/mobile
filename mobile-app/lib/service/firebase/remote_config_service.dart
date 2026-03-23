@@ -92,31 +92,11 @@ class RemoteConfigService {
     required String superBlockDashedName,
     required String blockDashedName,
   }) {
-    final overrides = _getOverridesMap(_blockActivationKey);
-    if (overrides == null) {
-      return null;
-    }
-
     final superBlockScopedKey = '$superBlockDashedName/$blockDashedName';
-    final directScopedOverride = overrides[superBlockScopedKey];
-    if (directScopedOverride is bool) {
-      return directScopedOverride;
-    }
-
-    final scopedOverrides = overrides[superBlockDashedName];
-    if (scopedOverrides is Map) {
-      final nestedOverride = scopedOverrides[blockDashedName];
-      if (nestedOverride is bool) {
-        return nestedOverride;
-      }
-    }
-
-    final directOverride = overrides[blockDashedName];
-    if (directOverride is bool) {
-      return directOverride;
-    }
-
-    return null;
+    return _getOverrideValue(
+      configKey: _blockActivationKey,
+      key: superBlockScopedKey,
+    );
   }
 
   bool? _getOverrideValue({
