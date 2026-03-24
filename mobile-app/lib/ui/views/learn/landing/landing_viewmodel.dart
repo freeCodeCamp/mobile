@@ -225,9 +225,8 @@ class LearnLandingViewModel extends BaseViewModel {
             }
 
             final fallbackValue = showAllSB || superBlock['public'] == true;
-            final override =
-                _remoteConfigService.getSuperBlockActivationOverride(
-              superBlock['dashedName'],
+            final override = _remoteConfigService.getActivationOverride(
+              superBlockDashedName: superBlock['dashedName'],
             );
             final isPublic = override ?? fallbackValue;
 

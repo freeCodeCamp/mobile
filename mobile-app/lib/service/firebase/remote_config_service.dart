@@ -3,6 +3,7 @@ import 'dart:developer';
 
 import 'package:firebase_crashlytics/firebase_crashlytics.dart';
 import 'package:firebase_remote_config/firebase_remote_config.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/services.dart';
 import 'package:freecodecamp/utils/upgrade_controller.dart';
 import 'package:upgrader/upgrader.dart';
@@ -12,9 +13,17 @@ class RemoteConfigService {
 
   static final remoteConfig = FirebaseRemoteConfig.instance;
   static const _activationOverridesKey = 'activation_overrides';
+  final String Function(String key) _getConfigString;
 
   factory RemoteConfigService() {
     return _instance;
+  }
+
+  @visibleForTesting
+  factory RemoteConfigService.withConfigReader(
+    String Function(String key) getConfigString,
+  ) {
+    return RemoteConfigService._internal(getConfigString: getConfigString);
   }
 
   Future<void> init() async {
@@ -57,38 +66,30 @@ class RemoteConfigService {
     }
   }
 
-  RemoteConfigService._internal();
+  RemoteConfigService._internal({
+    String Function(String key)? getConfigString,
+  }) : _getConfigString = getConfigString ?? remoteConfig.getString;
 
-  bool isSuperBlockActive(
-    String dashedName, {
+  bool isActive({
+    required String superBlockDashedName,
+    String? blockDashedName,
     required bool fallbackValue,
   }) {
-    final override = getSuperBlockActivationOverride(dashedName);
-    return override ?? fallbackValue;
-  }
-
-  bool? getSuperBlockActivationOverride(String dashedName) {
-    return _getOverrideValue(key: dashedName);
-  }
-
-  bool isBlockActive({
-    required String superBlockDashedName,
-    required String blockDashedName,
-    bool fallbackValue = true,
-  }) {
-    final override = getBlockActivationOverride(
+    final override = getActivationOverride(
       superBlockDashedName: superBlockDashedName,
       blockDashedName: blockDashedName,
     );
     return override ?? fallbackValue;
   }
 
-  bool? getBlockActivationOverride({
+  bool? getActivationOverride({
     required String superBlockDashedName,
-    required String blockDashedName,
+    String? blockDashedName,
   }) {
-    final superBlockScopedKey = '$superBlockDashedName/$blockDashedName';
-    return _getOverrideValue(key: superBlockScopedKey);
+    final overrideKey = blockDashedName == null
+        ? superBlockDashedName
+        : '$superBlockDashedName/$blockDashedName';
+    return _getOverrideValue(key: overrideKey);
   }
 
   bool? _getOverrideValue({
@@ -109,7 +110,7 @@ class RemoteConfigService {
 
   Map<String, dynamic>? _getOverridesMap() {
     try {
-      final String rawConfig = remoteConfig.getString(_activationOverridesKey);
+      final String rawConfig = _getConfigString(_activationOverridesKey);
       if (rawConfig.trim().isEmpty) {
         return null;
       }
