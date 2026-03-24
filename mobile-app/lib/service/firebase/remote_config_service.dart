@@ -11,8 +11,7 @@ class RemoteConfigService {
   static final RemoteConfigService _instance = RemoteConfigService._internal();
 
   static final remoteConfig = FirebaseRemoteConfig.instance;
-  static const _superblockActivationKey = 'superblock_activation_overrides';
-  static const _blockActivationKey = 'block_activation_overrides';
+  static const _activationOverridesKey = 'activation_overrides';
 
   factory RemoteConfigService() {
     return _instance;
@@ -28,8 +27,7 @@ class RemoteConfigService {
       );
       await remoteConfig.setDefaults({
         'min_app_version': '7.3.0',
-        _superblockActivationKey: '{}',
-        _blockActivationKey: '{}',
+        _activationOverridesKey: '{}',
       });
 
       await remoteConfig.fetchAndActivate();
@@ -70,10 +68,7 @@ class RemoteConfigService {
   }
 
   bool? getSuperBlockActivationOverride(String dashedName) {
-    return _getOverrideValue(
-      configKey: _superblockActivationKey,
-      key: dashedName,
-    );
+    return _getOverrideValue(key: dashedName);
   }
 
   bool isBlockActive({
@@ -93,17 +88,13 @@ class RemoteConfigService {
     required String blockDashedName,
   }) {
     final superBlockScopedKey = '$superBlockDashedName/$blockDashedName';
-    return _getOverrideValue(
-      configKey: _blockActivationKey,
-      key: superBlockScopedKey,
-    );
+    return _getOverrideValue(key: superBlockScopedKey);
   }
 
   bool? _getOverrideValue({
-    required String configKey,
     required String key,
   }) {
-    final overrides = _getOverridesMap(configKey);
+    final overrides = _getOverridesMap();
     if (overrides == null) {
       return null;
     }
@@ -116,9 +107,9 @@ class RemoteConfigService {
     return null;
   }
 
-  Map<String, dynamic>? _getOverridesMap(String configKey) {
+  Map<String, dynamic>? _getOverridesMap() {
     try {
-      final String rawConfig = remoteConfig.getString(configKey);
+      final String rawConfig = remoteConfig.getString(_activationOverridesKey);
       if (rawConfig.trim().isEmpty) {
         return null;
       }
@@ -130,7 +121,7 @@ class RemoteConfigService {
       return decoded;
     } catch (exception) {
       log(
-        'Invalid remote config for $configKey. '
+        'Invalid remote config for $_activationOverridesKey. '
         'Ignoring overrides: $exception',
       );
       return null;
