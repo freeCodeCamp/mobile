@@ -3,6 +3,7 @@ import 'dart:developer';
 
 import 'package:firebase_crashlytics/firebase_crashlytics.dart';
 import 'package:firebase_remote_config/firebase_remote_config.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/services.dart';
 import 'package:freecodecamp/utils/upgrade_controller.dart';
 import 'package:upgrader/upgrader.dart';
@@ -11,11 +12,18 @@ class RemoteConfigService {
   static final RemoteConfigService _instance = RemoteConfigService._internal();
 
   static final remoteConfig = FirebaseRemoteConfig.instance;
-  static const _superblockActivationKey = 'superblock_activation_overrides';
-  static const _blockActivationKey = 'block_activation_overrides';
+  static const _activationOverridesKey = 'activation_overrides';
+  final String Function(String key) _getConfigString;
 
   factory RemoteConfigService() {
     return _instance;
+  }
+
+  @visibleForTesting
+  factory RemoteConfigService.withConfigReader(
+    String Function(String key) getConfigString,
+  ) {
+    return RemoteConfigService._internal(getConfigString: getConfigString);
   }
 
   Future<void> init() async {
@@ -28,8 +36,7 @@ class RemoteConfigService {
       );
       await remoteConfig.setDefaults({
         'min_app_version': '7.3.0',
-        _superblockActivationKey: '{}',
-        _blockActivationKey: '{}',
+        _activationOverridesKey: '{}',
       });
 
       await remoteConfig.fetchAndActivate();
@@ -59,71 +66,36 @@ class RemoteConfigService {
     }
   }
 
-  RemoteConfigService._internal();
+  RemoteConfigService._internal({
+    String Function(String key)? getConfigString,
+  }) : _getConfigString = getConfigString ?? remoteConfig.getString;
 
-  bool isSuperBlockActive(
-    String dashedName, {
+  bool isActive({
+    required String superBlockDashedName,
+    String? blockDashedName,
     required bool fallbackValue,
   }) {
-    final override = getSuperBlockActivationOverride(dashedName);
-    return override ?? fallbackValue;
-  }
-
-  bool? getSuperBlockActivationOverride(String dashedName) {
-    return _getOverrideValue(
-      configKey: _superblockActivationKey,
-      key: dashedName,
-    );
-  }
-
-  bool isBlockActive({
-    required String superBlockDashedName,
-    required String blockDashedName,
-    bool fallbackValue = true,
-  }) {
-    final override = getBlockActivationOverride(
+    final override = getActivationOverride(
       superBlockDashedName: superBlockDashedName,
       blockDashedName: blockDashedName,
     );
     return override ?? fallbackValue;
   }
 
-  bool? getBlockActivationOverride({
+  bool? getActivationOverride({
     required String superBlockDashedName,
-    required String blockDashedName,
+    String? blockDashedName,
   }) {
-    final overrides = _getOverridesMap(_blockActivationKey);
-    if (overrides == null) {
-      return null;
-    }
-
-    final superBlockScopedKey = '$superBlockDashedName/$blockDashedName';
-    final directScopedOverride = overrides[superBlockScopedKey];
-    if (directScopedOverride is bool) {
-      return directScopedOverride;
-    }
-
-    final scopedOverrides = overrides[superBlockDashedName];
-    if (scopedOverrides is Map) {
-      final nestedOverride = scopedOverrides[blockDashedName];
-      if (nestedOverride is bool) {
-        return nestedOverride;
-      }
-    }
-
-    final directOverride = overrides[blockDashedName];
-    if (directOverride is bool) {
-      return directOverride;
-    }
-
-    return null;
+    final overrideKey = blockDashedName == null
+        ? superBlockDashedName
+        : '$superBlockDashedName/$blockDashedName';
+    return _getOverrideValue(key: overrideKey);
   }
 
   bool? _getOverrideValue({
-    required String configKey,
     required String key,
   }) {
-    final overrides = _getOverridesMap(configKey);
+    final overrides = _getOverridesMap();
     if (overrides == null) {
       return null;
     }
@@ -136,9 +108,9 @@ class RemoteConfigService {
     return null;
   }
 
-  Map<String, dynamic>? _getOverridesMap(String configKey) {
+  Map<String, dynamic>? _getOverridesMap() {
     try {
-      final String rawConfig = remoteConfig.getString(configKey);
+      final String rawConfig = _getConfigString(_activationOverridesKey);
       if (rawConfig.trim().isEmpty) {
         return null;
       }
@@ -150,7 +122,7 @@ class RemoteConfigService {
       return decoded;
     } catch (exception) {
       log(
-        'Invalid remote config for $configKey. '
+        'Invalid remote config for $_activationOverridesKey. '
         'Ignoring overrides: $exception',
       );
       return null;

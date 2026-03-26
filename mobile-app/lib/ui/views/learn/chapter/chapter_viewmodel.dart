@@ -98,9 +98,10 @@ class ChapterViewModel extends BaseViewModel {
           final List<Module> filteredModules = chapter.modules
                   ?.map((module) {
                     final List<Block> filteredBlocks = (module.blocks ?? [])
-                        .where((block) => _remoteConfigService.isBlockActive(
+                        .where((block) => _remoteConfigService.isActive(
                               superBlockDashedName: block.superBlock.dashedName,
                               blockDashedName: block.dashedName,
+                              fallbackValue: true,
                             ))
                         .toList();
 

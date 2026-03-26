@@ -98,9 +98,10 @@ class SuperBlockViewModel extends BaseViewModel {
 
   List<Block> _filterAvailableBlocks(List<Block> blocks) {
     return blocks.map((block) {
-      final isActive = _remoteConfigService.isBlockActive(
+      final isActive = _remoteConfigService.isActive(
         superBlockDashedName: block.superBlock.dashedName,
         blockDashedName: block.dashedName,
+        fallbackValue: true,
       );
 
       if (isActive) return block;
