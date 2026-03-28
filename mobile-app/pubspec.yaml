@@ -7,7 +7,7 @@ environment:
 dependencies:
   algolia_helper_flutter: 1.2.1
   audio_service: 0.18.18
-  auth0_flutter: 1.9.0
+  auth0_flutter: 2.0.0
   cached_network_image: 3.4.1
   collection: 1.19.1
   device_info_plus: 11.3.0
