@@ -351,7 +351,7 @@ class AuthenticationService {
         ),
       );
 
-      if (res.statusCode == 200) {
+      if (res.statusCode == 200 && res.data['result'] != '') {
         userModel = parseUserModel(res.data['user'][res.data['result']]);
         staticIsloggedIn = true;
         isLoggedInStream.sink.add(true);

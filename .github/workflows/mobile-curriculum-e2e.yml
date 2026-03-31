@@ -27,7 +27,7 @@ jobs:
         android-api-level: [35]
         node-version: [24]
         pnpm-version: [10]
-        flutter-version: ["3.38.x"]
+        flutter-version: ["3.41.x"]
 
     steps:
       - name: Remove unused software
