@@ -4,6 +4,7 @@ import 'dart:io';
 
 import 'package:auth0_flutter/auth0_flutter.dart';
 import 'package:dio/dio.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
@@ -177,9 +178,10 @@ class AuthenticationService {
           },
         );
       } else {
+        // NOTE: scheme is only needed for Android in debug mode, as the callback URL is different in that case
         creds = await auth0
-            .webAuthentication(scheme: 'fccapp')
-            .login(parameters: {'connection': connectionType});
+            .webAuthentication(scheme: kReleaseMode ? null : 'org.freecodecamp')
+            .login(useHTTPS: true, parameters: {'connection': connectionType});
       }
     } on WebAuthenticationException {
       // NOTE: The most likely case is that the user canceled the login
