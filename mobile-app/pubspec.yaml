@@ -18,7 +18,7 @@ dependencies:
   firebase_remote_config: 5.4.3
   flutter:
     sdk: flutter
-  flutter_custom_tabs: 2.4.0
+  flutter_custom_tabs: 2.5.0
   flutter_dotenv: 5.2.1
   flutter_heatmap_calendar: 1.0.5
   flutter_highlight: 0.7.0
