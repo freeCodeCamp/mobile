@@ -178,10 +178,10 @@ class AuthenticationService {
           },
         );
       } else {
-        creds = await auth0.webAuthentication().login(
-          useHTTPS: kReleaseMode,
-          parameters: {'connection': connectionType},
-        );
+        // NOTE: scheme is only needed for Android in debug mode, as the callback URL is different in that case
+        creds = await auth0
+            .webAuthentication(scheme: kReleaseMode ? null : 'org.freecodecamp')
+            .login(useHTTPS: true, parameters: {'connection': connectionType});
       }
     } on WebAuthenticationException {
       // NOTE: The most likely case is that the user canceled the login

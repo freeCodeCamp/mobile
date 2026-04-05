@@ -59,7 +59,7 @@ android {
         versionName flutterVersionName
         manifestPlaceholders += [
           auth0Domain: "freecodecamp-dev.auth0.com",
-          auth0Scheme: "https"
+          auth0Scheme: "org.freecodecamp"
         ]
     }
 
@@ -76,6 +76,7 @@ android {
         release {
             signingConfig signingConfigs.release
             manifestPlaceholders['auth0Domain'] = "auth.freecodecamp.org"
+            manifestPlaceholders['auth0Scheme'] = "https"
         }
     }
 }
