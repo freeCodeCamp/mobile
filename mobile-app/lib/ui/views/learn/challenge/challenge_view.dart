@@ -596,6 +596,8 @@ class ChallengeView extends StatelessWidget {
     Challenge challenge,
     Block block,
   ) {
+    const noPreviewChallengeTypes = <int>[1, 20, 23, 26, 27, 28, 29];
+
     return [
       _panelIconButton(
         isActive: model.showPanel && model.panelType == PanelType.instruction,
@@ -608,10 +610,7 @@ class ChallengeView extends StatelessWidget {
           model.scaffoldKey.currentState?.openEndDrawer();
         },
       ),
-      if (challenge.challengeType != 1 &&
-          challenge.challengeType != 26 &&
-          challenge.challengeType != 28 &&
-          challenge.challengeType != 29)
+      if (!noPreviewChallengeTypes.contains(challenge.challengeType))
         _panelIconButton(
           isActive: model.showPreview,
           icon: Icons.remove_red_eye_outlined,
