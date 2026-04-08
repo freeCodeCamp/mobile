@@ -53,7 +53,7 @@ void main() {
       print('\nSUPERBLOCK: $currSuperBlock');
       for (var currBlock in curriculumData[currSuperBlock]['blocks'].values) {
 
-        print('Block: ${currBlock['meta']['name']}');
+        print('Block: ${currBlock['meta']['dashedName']}');
         List challenges = currBlock['challenges']
           ..sort((a, b) =>
               a['challengeOrder'].compareTo(b['challengeOrder']) as int);
