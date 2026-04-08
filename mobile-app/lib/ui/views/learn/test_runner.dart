@@ -9,7 +9,7 @@ class ScriptBuilder {
 
   static const transpileScript = '''
 try {
-  return { success: true, code: Babel.transform(code, { presets: ["env"] }).code };
+  return { success: true, code: Babel.transform(code, { presets: [["env", { exclude: ["transform-spread"] }]] }).code };
 } catch (e) {
   let errorMsg = e.message || e.toString();
   if (e.loc) {
