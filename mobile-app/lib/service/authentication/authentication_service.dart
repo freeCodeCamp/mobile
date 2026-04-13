@@ -344,7 +344,7 @@ class AuthenticationService {
     late final Response res;
     try {
       res = await _dio.get(
-        '$baseApiURL/user/get-session-user',
+        '$baseApiURL/user/session-user',
         options: Options(
           headers: {
             'CSRF-Token': _csrfToken,
