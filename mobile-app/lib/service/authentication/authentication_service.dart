@@ -183,7 +183,10 @@ class AuthenticationService {
             .webAuthentication(scheme: kReleaseMode ? null : 'org.freecodecamp')
             .login(useHTTPS: true, parameters: {'connection': connectionType});
       }
-    } on WebAuthenticationException {
+    } on WebAuthenticationException  catch (e) {
+
+      log('message: WebAuthenticationException: ${e.message}');
+
       // NOTE: The most likely case is that the user canceled the login
       snackbar.showSnackbar(
         title: context.t.login_cancelled,
@@ -344,7 +347,7 @@ class AuthenticationService {
     late final Response res;
     try {
       res = await _dio.get(
-        '$baseApiURL/user/get-session-user',
+        '$baseApiURL/user/session-user',
         options: Options(
           headers: {
             'CSRF-Token': _csrfToken,
