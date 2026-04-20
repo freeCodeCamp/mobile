@@ -76,7 +76,12 @@ class ChallengeView extends StatelessWidget {
             model,
             maxChallenges,
           ),
-          onEndDrawerChanged: (isOpened) => model.setShowPanel = isOpened,
+          onEndDrawerChanged: (isOpened) {
+            model.syncShowPanel(isOpened);
+            if (isOpened) {
+              FocusManager.instance.primaryFocus?.unfocus();
+            }
+          },
           bottomNavigationBar: _buildBottomBar(
             context,
             model,
@@ -606,8 +611,18 @@ class ChallengeView extends StatelessWidget {
           if (model.panelType != PanelType.instruction) {
             model.setPanelType = PanelType.instruction;
           }
-          model.setShowPanel = !model.showPanel;
-          model.scaffoldKey.currentState?.openEndDrawer();
+          final scaffoldState = model.scaffoldKey.currentState;
+          if (scaffoldState == null) {
+            return;
+          }
+
+          if (scaffoldState.isEndDrawerOpen) {
+            model.setShowPanel = false;
+            scaffoldState.closeEndDrawer();
+          } else {
+            model.setShowPanel = true;
+            scaffoldState.openEndDrawer();
+          }
         },
       ),
       if (!noPreviewChallengeTypes.contains(challenge.challengeType))

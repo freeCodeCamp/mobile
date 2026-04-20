@@ -177,8 +177,13 @@ class ChallengeViewModel extends BaseViewModel {
   }
 
   set setShowPanel(bool value) {
+    if (_showPanel == value) return;
     _showPanel = value;
     notifyListeners();
+  }
+
+  void syncShowPanel(bool value) {
+    _showPanel = value;
   }
 
   set setWebviewController(InAppWebViewController value) {
