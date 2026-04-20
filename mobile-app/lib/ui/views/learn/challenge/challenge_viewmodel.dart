@@ -123,6 +123,47 @@ class ChallengeViewModel extends BaseViewModel {
       isInspectable: true,
     ),
   );
+  late final HeadlessInAppWebView _testRunnerWebView = HeadlessInAppWebView(
+    initialData: InAppWebViewInitialData(
+      data: '<html><head><title>Test Runner</title></head><body></body></html>',
+      mimeType: 'text/html',
+      baseUrl: WebUri('http://localhost:8080/test-runner'),
+    ),
+    onWebViewCreated: (controller) {
+      _testController = controller;
+    },
+    onConsoleMessage: (controller, console) {
+      if (console.messageLevel == ConsoleMessageLevel.LOG) {
+        setUserConsoleMessages = [
+          ...userConsoleMessages,
+          '<p>${console.message}</p>',
+        ];
+      }
+    },
+    onLoadStop: (controller, url) async {
+      ScriptBuilder builder = ScriptBuilder();
+      final res = await controller.callAsyncJavaScript(
+        functionBody: ScriptBuilder.runnerScript,
+        arguments: {
+          'userCode': '',
+          'workerType': builder.getWorkerType(challenge?.challengeType ?? 0),
+          'combinedCode': '',
+          'editableRegionContent': '',
+          'hooks': {
+            'beforeAll': '',
+            'beforeEach': '',
+            'afterEach': '',
+          },
+        },
+      );
+      log('TestRunner: $res');
+    },
+    initialSettings: InAppWebViewSettings(
+      isInspectable: true,
+      mediaPlaybackRequiresUserGesture: false,
+    ),
+  );
+  bool _webViewsClosed = false;
 
   bool _mounted = false;
   bool get mounted => _mounted;
@@ -168,11 +209,6 @@ class ChallengeViewModel extends BaseViewModel {
 
   set setEditableRegionContent(String value) {
     _editableRegionContent = value;
-    notifyListeners();
-  }
-
-  set setTestController(InAppWebViewController controller) {
-    _testController = controller;
     notifyListeners();
   }
 
@@ -298,9 +334,6 @@ class ChallengeViewModel extends BaseViewModel {
     required Challenge challenge,
     required DateTime? challengeDate,
   }) async {
-    await _babelWebView.run();
-    await _localhostServer.start();
-
     _challengeDate = challengeDate;
     _isDailyChallenge = challengeDate != null;
 
@@ -312,6 +345,13 @@ class ChallengeViewModel extends BaseViewModel {
 
     setChallenge = challenge;
     setBlock = block;
+
+    if (_webViewsClosed) return;
+    await _localhostServer.start();
+    if (_webViewsClosed) return;
+    await _babelWebView.run();
+    if (_webViewsClosed) return;
+    await _testRunnerWebView.run();
 
     listenToSymbolBarScrollController();
   }
@@ -340,8 +380,24 @@ class ChallengeViewModel extends BaseViewModel {
   }
 
   void closeWebViews() async {
-    await _babelWebView.dispose();
-    await _localhostServer.close();
+    if (_webViewsClosed) return;
+    _webViewsClosed = true;
+
+    try {
+      await _testRunnerWebView.dispose();
+    } catch (e) {
+      log('Test runner dispose error: $e');
+    }
+    try {
+      await _babelWebView.dispose();
+    } catch (e) {
+      log('Babel dispose error: $e');
+    }
+    try {
+      await _localhostServer.close();
+    } catch (e) {
+      log('Localhost server close error: $e');
+    }
   }
 
   void initFile(
@@ -731,8 +787,19 @@ class ChallengeViewModel extends BaseViewModel {
       return;
     }
 
+    InAppWebViewController? runnerController = testController;
+    if (runnerController == null) {
+      setTestConsoleMessages = [
+        ...testConsoleMessages,
+        '<p>Test runner is still initializing. Please try again.</p>',
+        '<p>// tests completed</p>',
+      ];
+      setIsRunningTests = false;
+      return;
+    }
+
     if ([1, 26, 28].contains(challenge!.challengeType)) {
-      final evalResult = await testController!.callAsyncJavaScript(
+      final evalResult = await runnerController.callAsyncJavaScript(
         functionBody: userCode,
       );
       if (evalResult != null && evalResult.error != null) {
@@ -744,9 +811,7 @@ class ChallengeViewModel extends BaseViewModel {
       }
     }
 
-    // TODO: Handle the case when the test runner is not created
-    // ignore: unused_local_variable
-    final updateTestRunnerRes = await testController!.callAsyncJavaScript(
+    await runnerController.callAsyncJavaScript(
       functionBody: ScriptBuilder.runnerScript,
       arguments: {
         'userCode': userCode,
@@ -763,7 +828,7 @@ class ChallengeViewModel extends BaseViewModel {
 
     for (int i = 0; i < challenge!.tests.length; i++) {
       ChallengeTest test = challenge!.tests[i];
-      final testRes = await testController!.callAsyncJavaScript(
+      final testRes = await runnerController.callAsyncJavaScript(
         functionBody: ScriptBuilder.testExecutionScript,
         arguments: {
           'testStr': test.javaScript,
