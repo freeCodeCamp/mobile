@@ -68,8 +68,7 @@ const getAllPostsQuery = postFieldsFragment +
     }
   ''';
 
-const getAuthorQuery = postFieldsFragment +
-    r'''
+const getAuthorQuery = r'''
     query GetAuthor($authorSlug: String!) {
       user(username: $authorSlug) {
         id
