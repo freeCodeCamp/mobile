@@ -94,7 +94,10 @@ class ChallengeView extends StatelessWidget {
     BuildContext context,
     ChallengeViewModel model,
   ) {
+    final bool isPreviewOrConsole = model.showPreview || model.showConsole;
+
     return AppBar(
+      automaticallyImplyLeading: !isPreviewOrConsole,
       actions: <Widget>[
         Container(),
       ],
