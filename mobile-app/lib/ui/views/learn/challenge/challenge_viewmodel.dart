@@ -163,6 +163,7 @@ class ChallengeViewModel extends BaseViewModel {
       mediaPlaybackRequiresUserGesture: false,
     ),
   );
+  bool _closingWebViews = false;
   bool _webViewsClosed = false;
 
   bool _mounted = false;
@@ -346,14 +347,27 @@ class ChallengeViewModel extends BaseViewModel {
     setChallenge = challenge;
     setBlock = block;
 
-    if (_webViewsClosed) return;
-    await _localhostServer.start();
-    if (_webViewsClosed) return;
-    await _babelWebView.run();
-    if (_webViewsClosed) return;
-    await _testRunnerWebView.run();
+    final webViewsStarted = await _startWebViews();
+    if (!webViewsStarted) return;
 
     listenToSymbolBarScrollController();
+  }
+
+  bool get _shouldStopWebViewSetup => _closingWebViews || _webViewsClosed;
+
+  Future<bool> _startWebViews() async {
+    final setupSteps = [
+      _localhostServer.start,
+      _babelWebView.run,
+      _testRunnerWebView.run,
+    ];
+
+    for (final setupStep in setupSteps) {
+      if (_shouldStopWebViewSetup) return false;
+      await setupStep();
+    }
+
+    return !_shouldStopWebViewSetup;
   }
 
   Future<void> setSelectedDailyChallengeLanguage(
@@ -380,8 +394,8 @@ class ChallengeViewModel extends BaseViewModel {
   }
 
   void closeWebViews() async {
-    if (_webViewsClosed) return;
-    _webViewsClosed = true;
+    if (_closingWebViews || _webViewsClosed) return;
+    _closingWebViews = true;
 
     try {
       await _testRunnerWebView.dispose();
@@ -398,6 +412,9 @@ class ChallengeViewModel extends BaseViewModel {
     } catch (e) {
       log('Localhost server close error: $e');
     }
+
+    _webViewsClosed = true;
+    _closingWebViews = false;
   }
 
   void initFile(
