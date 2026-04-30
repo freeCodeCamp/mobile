@@ -4,12 +4,36 @@ import 'package:freecodecamp/enums/ext_type.dart';
 import 'package:freecodecamp/models/learn/challenge_model.dart';
 import 'package:freecodecamp/service/learn/learn_file_service.dart';
 
+class UserCodeVariants {
+  UserCodeVariants({
+    required this.transpileScriptWithTargets,
+    required this.transpileScript,
+  });
+
+  final String transpileScriptWithTargets;
+  final String transpileScript;
+
+  List<String> get all => [transpileScriptWithTargets, transpileScript];
+}
+
 class ScriptBuilder {
   final LearnFileService fileService = locator<LearnFileService>();
 
   static const transpileScript = '''
 try {
   return { success: true, code: Babel.transform(code, { presets: [["env", { exclude: ["transform-spread"] }]] }).code };
+} catch (e) {
+  let errorMsg = e.message || e.toString();
+  if (e.loc) {
+    errorMsg = "SyntaxError: " + e.message + " (" + e.loc.line + ":" + e.loc.column + ")";
+  }
+  return { success: false, error: errorMsg };
+}
+''';
+
+  static const transpileScriptWithTargets = '''
+try {
+  return { success: true, code: Babel.transform(code, { presets: [["env", { "targets": "> 0.4%, not dead" }]] }).code };
 } catch (e) {
   let errorMsg = e.message || e.toString();
   if (e.loc) {
@@ -50,7 +74,7 @@ const testRes = await window.TestRunner.runTest(testStr);
 return testRes;
 ''';
 
-  Future<String> buildUserCode(
+  Future<UserCodeVariants> buildUserCode(
     Challenge challenge,
     InAppWebViewController? babelController, {
     bool testing = false,
@@ -66,32 +90,31 @@ return testRes;
       case 1:
       case 26:
       case 28:
-        // TODO: Move to learn file service
-        if (babelController == null) {
-          throw Exception('Babel controller is required to transpile JS code.');
-        }
-
-        final babelRes = await babelController.callAsyncJavaScript(
-          functionBody: ScriptBuilder.transpileScript,
-          arguments: {'code': challengeFile},
+        final transpiledWithTargets = await _transpileJs(
+          challengeFile,
+          ScriptBuilder.transpileScriptWithTargets,
+          babelController,
         );
 
-        if (babelRes?.error != null) {
-          throw Exception('Babel transpilation failed: ${babelRes?.error}');
-        }
+        final transpiled = await _transpileJs(
+          challengeFile,
+          ScriptBuilder.transpileScript,
+          babelController,
+        );
 
-        final result = babelRes?.value as Map<dynamic, dynamic>?;
-        if (result?['success'] == false) {
-          throw Exception('Babel transpilation failed: ${result?['error']}');
-        }
-
-        return result?['code'] ?? challengeFile;
+        return UserCodeVariants(
+          transpileScriptWithTargets: transpiledWithTargets,
+          transpileScript: transpiled,
+        );
       case 20:
       case 23:
       case 27:
       case 29:
         // Python challenges do not require transpilation, return the file as is.
-        return challengeFile;
+        return UserCodeVariants(
+          transpileScriptWithTargets: challengeFile,
+          transpileScript: challengeFile,
+        );
       default:
         String parsedWithStyleTags =
             await fileService.parseCssDocumentsAsStyleTags(
@@ -112,8 +135,38 @@ return testRes;
           parsedWithScriptTags,
         );
 
-        return challengeFile;
+        return UserCodeVariants(
+          transpileScriptWithTargets: challengeFile,
+          transpileScript: challengeFile,
+        );
     }
+  }
+
+  Future<String> _transpileJs(
+    String code,
+    String transpileScript,
+    InAppWebViewController? babelController,
+  ) async {
+    // TODO: Move to learn file service
+    if (babelController == null) {
+      throw Exception('Babel controller is required to transpile JS code.');
+    }
+
+    final babelRes = await babelController.callAsyncJavaScript(
+      functionBody: transpileScript,
+      arguments: {'code': code},
+    );
+
+    if (babelRes?.error != null) {
+      throw Exception('Babel transpilation failed: ${babelRes?.error}');
+    }
+
+    final result = babelRes?.value as Map<dynamic, dynamic>?;
+    if (result?['success'] == false) {
+      throw Exception('Babel transpilation failed: ${result?['error']}');
+    }
+
+    return result?['code'] ?? code;
   }
 
   String getWorkerType(int challengeType) {

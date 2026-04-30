@@ -708,10 +708,11 @@ class ChallengeViewModel extends BaseViewModel {
 
     String userCode;
     try {
-      userCode = await builder.buildUserCode(
+      final userCodeVariants = await builder.buildUserCode(
         challenge!,
         _babelWebView.webViewController,
       );
+      userCode = userCodeVariants.transpileScriptWithTargets;
     } catch (e) {
       String errorMessage = e.toString();
       if (errorMessage.contains('Babel transpilation failed')) {
