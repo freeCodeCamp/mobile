@@ -1,15 +1,11 @@
-import 'dart:developer';
-
 import 'package:flutter/material.dart';
 import 'package:flutter_html/flutter_html.dart';
-import 'package:flutter_inappwebview/flutter_inappwebview.dart';
 import 'package:freecodecamp/enums/panel_type.dart';
 import 'package:freecodecamp/models/learn/challenge_model.dart';
 import 'package:freecodecamp/models/learn/curriculum_model.dart';
 import 'package:freecodecamp/models/learn/daily_challenge_model.dart';
 import 'package:freecodecamp/ui/theme/fcc_theme.dart';
 import 'package:freecodecamp/ui/views/learn/challenge/challenge_viewmodel.dart';
-import 'package:freecodecamp/ui/views/learn/test_runner.dart';
 import 'package:freecodecamp/ui/views/learn/widgets/challenge_widgets/project_preview.dart';
 import 'package:freecodecamp/ui/views/learn/widgets/challenge_widgets/symbol_bar.dart';
 import 'package:freecodecamp/ui/views/learn/widgets/console/console_view.dart';
@@ -270,52 +266,6 @@ class ChallengeView extends StatelessWidget {
             ),
           Row(
             children: [
-              SizedBox(
-                height: 1,
-                width: 1,
-                child: InAppWebView(
-                  initialData: InAppWebViewInitialData(
-                    data:
-                        '<html><head><title>Test Runner</title></head><body></body></html>',
-                    mimeType: 'text/html',
-                    baseUrl: WebUri('http://localhost:8080/test-runner'),
-                  ),
-                  onWebViewCreated: (controller) {
-                    model.setTestController = controller;
-                  },
-                  onConsoleMessage: (controller, console) {
-                    if (console.messageLevel == ConsoleMessageLevel.LOG) {
-                      model.setUserConsoleMessages = [
-                        ...model.userConsoleMessages,
-                        '<p>${console.message}</p>',
-                      ];
-                    }
-                  },
-                  onLoadStop: (controller, url) async {
-                    ScriptBuilder builder = ScriptBuilder();
-                    final res = await controller.callAsyncJavaScript(
-                      functionBody: ScriptBuilder.runnerScript,
-                      arguments: {
-                        'userCode': '',
-                        'workerType':
-                            builder.getWorkerType(challenge.challengeType),
-                        'combinedCode': '',
-                        'editableRegionContent': '',
-                        'hooks': {
-                          'beforeAll': '',
-                          'beforeEach': '',
-                          'afterEach': '',
-                        },
-                      },
-                    );
-                    log('TestRunner: $res');
-                  },
-                  initialSettings: InAppWebViewSettings(
-                    isInspectable: true,
-                    mediaPlaybackRequiresUserGesture: false,
-                  ),
-                ),
-              ),
               ..._panelIconButtons(
                 model,
                 challenge,
