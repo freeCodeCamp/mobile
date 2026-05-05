@@ -35,10 +35,15 @@ class DrawerWidgetView extends StatelessWidget {
                     children: [
                       ListTile(
                         contentPadding: const EdgeInsets.all(16),
-                        leading: Image.asset(
-                          'assets/images/placeholder-profile-img.png',
-                          width: 75,
-                          height: 75,
+                        leading: Semantics(
+                          image: true,
+                          label: 'User profile picture',
+                          child: Image.asset(
+                            'assets/images/placeholder-profile-img.png',
+                            width: 75,
+                            height: 75,
+                            semanticLabel: 'User profile picture',
+                          ),
                         ),
                         title: model.loggedIn
                             ? FutureBuilder(
@@ -47,24 +52,45 @@ class DrawerWidgetView extends StatelessWidget {
                                   if (snapshot.hasData) {
                                     FccUserModel user =
                                         snapshot.data as FccUserModel;
-                                    return Text(
-                                      user.name.isEmpty
-                                          ? user.username
-                                          : user.name,
+                                    String userName = user.name.isEmpty
+                                        ? user.username
+                                        : user.name;
+                                    return Semantics(
+                                      label: 'User name: $userName',
+                                      child: Text(
+                                        userName,
+                                        semanticsLabel: userName,
+                                      ),
                                     );
                                   }
 
-                                  return Text(
-                                    context.t.anonymous_user,
+                                  return Semantics(
+                                    label: context.t.anonymous_user,
+                                    child: Text(
+                                      context.t.anonymous_user,
+                                      semanticsLabel: context.t.anonymous_user,
+                                    ),
                                   );
                                 })
-                            : Text(
-                                context.t.anonymous_user,
+                            : Semantics(
+                                label: context.t.anonymous_user,
+                                child: Text(
+                                  context.t.anonymous_user,
+                                  semanticsLabel: context.t.anonymous_user,
+                                ),
                               ),
-                        subtitle: Text(
-                          model.loggedIn
+                        subtitle: Semantics(
+                          label: model.loggedIn
                               ? context.t.coolest_camper
                               : context.t.login_save_progress,
+                          child: Text(
+                            model.loggedIn
+                                ? context.t.coolest_camper
+                                : context.t.login_save_progress,
+                            semanticsLabel: model.loggedIn
+                                ? context.t.coolest_camper
+                                : context.t.login_save_progress,
+                          ),
                         ),
                         isThreeLine: true,
                         onTap: () {
