@@ -35,7 +35,7 @@ class RemoteConfigService {
         ),
       );
       await remoteConfig.setDefaults({
-        'min_app_version': '7.4.1',
+        'min_app_version': '7.5.0',
         _activationOverridesKey: '{}',
       });
 
