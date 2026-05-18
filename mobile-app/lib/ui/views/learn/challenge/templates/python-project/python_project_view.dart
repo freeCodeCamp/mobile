@@ -55,7 +55,7 @@ class PythonProjectView extends StatelessWidget {
                     controller: model.linkController,
                     onChanged: (value) => model.setValidLink = null,
                     decoration: InputDecoration(
-                      hintText: 'ex: https://replit.com/@camperbot/hello',
+                      hintText: context.t.project_link_hint,
                       errorText: model.validLink != null && !model.validLink!
                           ? model.linkErrMsg
                           : null,
@@ -118,7 +118,16 @@ class PythonProjectView extends StatelessWidget {
                                     challenge,
                                     block,
                                   )
-                                : model.checkLink();
+                                : model.checkLink(
+                                    invalidLinkMessage:
+                                        context.t.project_link_invalid,
+                                    ownWorkMessage:
+                                        context.t.project_link_own_work,
+                                    insecureUrlMessage:
+                                        context.t.project_link_insecure,
+                                    publicUrlMessage:
+                                        context.t.project_link_public_url,
+                                  );
                           },
                     child: Text(
                       model.validLink != null && model.validLink!

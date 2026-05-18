@@ -1,5 +1,6 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
+import 'package:freecodecamp/extensions/i18n_extension.dart';
 import 'package:freecodecamp/models/podcasts/episodes_model.dart';
 import 'package:freecodecamp/models/podcasts/podcasts_model.dart';
 import 'package:freecodecamp/ui/views/news/html_handler/html_handler.dart';
@@ -177,11 +178,11 @@ class EpisodeView extends StatelessWidget {
                             },
                       icon: (() {
                         if (model.isDownloaded) {
-                          return const Icon(
+                          return Icon(
                             Icons.download_done,
                             color: Colors.white,
                             size: 30,
-                            semanticLabel: 'Download complete',
+                            semanticLabel: context.t.download_complete,
                           );
                         } else if (model.isDownloading &&
                             model.downloadService.downloadId == episode.id) {
@@ -191,11 +192,11 @@ class EpisodeView extends StatelessWidget {
                               final progress = snapshot.data;
                               double? val = double.tryParse(progress ?? '0');
                               if (progress == '100') {
-                                return const Icon(
+                                return Icon(
                                   Icons.download_done,
                                   color: Colors.white,
                                   size: 30,
-                                  semanticLabel: 'Download complete',
+                                  semanticLabel: context.t.download_complete,
                                 );
                               } else if (progress != null && progress != '') {
                                 return Stack(
@@ -222,11 +223,11 @@ class EpisodeView extends StatelessWidget {
                             },
                           );
                         } else {
-                          return const Icon(
+                          return Icon(
                             Icons.arrow_circle_down_outlined,
                             color: Colors.white,
                             size: 30,
-                            semanticLabel: 'Download episode',
+                            semanticLabel: context.t.download_episode,
                           );
                         }
                       })(),

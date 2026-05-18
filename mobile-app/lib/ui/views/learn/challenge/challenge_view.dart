@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_html/flutter_html.dart';
 import 'package:freecodecamp/enums/panel_type.dart';
+import 'package:freecodecamp/extensions/i18n_extension.dart';
 import 'package:freecodecamp/models/learn/challenge_model.dart';
 import 'package:freecodecamp/models/learn/curriculum_model.dart';
 import 'package:freecodecamp/models/learn/daily_challenge_model.dart';
@@ -239,7 +240,7 @@ class ChallengeView extends StatelessWidget {
           ),
           const SizedBox(width: 8),
           Expanded(
-            child: _testsTabButton(model),
+            child: _testsTabButton(context, model),
           ),
         ],
       ),
@@ -298,8 +299,9 @@ class ChallengeView extends StatelessWidget {
                                     Icons.done_rounded,
                                     size: 30,
                                   ),
-                        onPressed:
-                            model.hasTypedInEditor ? model.runTests : null,
+                        onPressed: model.hasTypedInEditor
+                            ? () => model.runTests(context)
+                            : null,
                         splashColor: Colors.transparent,
                         highlightColor: Colors.transparent,
                       ),
@@ -450,14 +452,14 @@ class ChallengeView extends StatelessWidget {
     );
   }
 
-  Widget _testsTabButton(ChallengeViewModel model) {
+  Widget _testsTabButton(BuildContext context, ChallengeViewModel model) {
     return TextButton.icon(
       onPressed: () {
         model.setShowTestsPanel = !model.showTestsPanel;
         model.setMounted = false;
       },
       label: Text(
-        'Tests',
+        context.t.tests,
         style: TextStyle(
           color: model.showTestsPanel ? FccColors.blue50 : Colors.white,
         ),

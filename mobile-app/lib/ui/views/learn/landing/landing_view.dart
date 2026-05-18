@@ -21,7 +21,7 @@ class LearnLandingView extends StatelessWidget {
       builder: (context, model, child) => Scaffold(
         backgroundColor: FccColors.gray90,
         appBar: AppBar(
-          title: Text('LEARN'),
+          title: Text(context.t.learn),
         ),
         drawer: const DrawerWidgetView(
           key: Key('drawer'),

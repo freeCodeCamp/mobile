@@ -18,7 +18,7 @@ class CodeRadioView extends StatelessWidget {
       builder: (context, model, child) => Scaffold(
         backgroundColor: const Color(0xFF0a0a23),
         appBar: AppBar(
-          title: const Text('CODE RADIO'),
+          title: Text(context.t.code_radio),
         ),
         drawer: const DrawerWidgetView(),
         body: template(context, model),
@@ -132,7 +132,7 @@ class CodeRadioView extends StatelessWidget {
       stream: model.audioService.playbackState.stream,
       builder: (context, snapshot) {
         if (snapshot.hasData) {
-          if(!snapshot.data.playing) {
+          if (!snapshot.data.playing) {
             model.stoppedManually = true;
           }
           return ElevatedButton.icon(

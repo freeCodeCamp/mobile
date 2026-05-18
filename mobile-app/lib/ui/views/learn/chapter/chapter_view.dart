@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:freecodecamp/extensions/i18n_extension.dart';
 import 'package:freecodecamp/models/learn/curriculum_model.dart';
 import 'package:freecodecamp/ui/theme/fcc_theme.dart';
 import 'package:freecodecamp/ui/views/learn/chapter/chapter_viewmodel.dart';
@@ -37,7 +38,11 @@ class ChapterView extends StatelessWidget {
                   if (snapshot.hasError) {
                     return Center(
                       child: Text(
-                          'Error loading chapters: ${snapshot.error} ${snapshot.stackTrace}'),
+                        context.t.error_loading_chapters(
+                          snapshot.error.toString(),
+                          snapshot.stackTrace.toString(),
+                        ),
+                      ),
                     );
                   }
 
@@ -56,8 +61,8 @@ class ChapterView extends StatelessWidget {
                         .toList();
 
                     if (chapters.isEmpty) {
-                      return const Center(
-                        child: Text('No blocks available right now.'),
+                      return Center(
+                        child: Text(context.t.no_blocks_available),
                       );
                     }
 
@@ -133,7 +138,7 @@ class ChapterView extends StatelessWidget {
                           width: 2,
                         ),
                         borderRadius: BorderRadius.circular(5)),
-                    child: Text('Coming Soon'),
+                    child: Text(context.t.coming_soon),
                   ),
                 for (Module module in chapter.modules as List<Module>)
                   chapterButton(context, module, model, chapter)

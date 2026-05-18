@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:freecodecamp/app/app.locator.dart';
 import 'package:freecodecamp/app/app.router.dart';
+import 'package:freecodecamp/extensions/i18n_extension.dart';
 import 'package:freecodecamp/models/learn/daily_challenge_model.dart';
 import 'package:freecodecamp/ui/theme/fcc_theme.dart';
 import 'package:freecodecamp/ui/views/learn/utils/challenge_utils.dart';
@@ -94,7 +95,7 @@ class _DailyChallengeCardState extends State<DailyChallengeCard> {
       children: [
         // Card label
         Text(
-          "Today's challenge completed!",
+          context.t.daily_challenge_completed,
           style: TextStyle(
             fontSize: 16,
             fontWeight: FontWeight.w500,
@@ -105,8 +106,8 @@ class _DailyChallengeCardState extends State<DailyChallengeCard> {
         SizedBox(height: 14),
         // Countdown timer
         Semantics(
-          label:
-              'Countdown timer. Next challenge in ${_formatDuration(_timeLeft)}',
+          label: context.t
+              .daily_challenge_countdown_label(_formatDuration(_timeLeft)),
           liveRegion: true,
           child: Container(
             padding: EdgeInsets.symmetric(horizontal: 12, vertical: 6),
@@ -115,7 +116,7 @@ class _DailyChallengeCardState extends State<DailyChallengeCard> {
               borderRadius: BorderRadius.circular(16),
             ),
             child: Text(
-              'Next challenge in: ${_formatDuration(_timeLeft)}',
+              context.t.daily_challenge_next_in(_formatDuration(_timeLeft)),
               style: TextStyle(
                 color: FccColors.gray90,
                 fontWeight: FontWeight.w600,
@@ -129,7 +130,7 @@ class _DailyChallengeCardState extends State<DailyChallengeCard> {
         SizedBox(
           width: double.infinity,
           child: Tooltip(
-            message: 'View past daily challenges',
+            message: context.t.daily_challenge_view_past_tooltip,
             child: ElevatedButton.icon(
               style: ElevatedButton.styleFrom(
                 backgroundColor: FccColors.yellow50,
@@ -146,10 +147,10 @@ class _DailyChallengeCardState extends State<DailyChallengeCard> {
               icon: Icon(
                 Icons.history,
                 size: 20,
-                semanticLabel: 'View past challenges',
+                semanticLabel: context.t.daily_challenge_view_past,
               ),
               label: Text(
-                'View past challenges',
+                context.t.daily_challenge_view_past,
                 style: TextStyle(
                   fontSize: 18,
                   fontWeight: FontWeight.bold,
@@ -171,7 +172,7 @@ class _DailyChallengeCardState extends State<DailyChallengeCard> {
       children: [
         // Card label
         Text(
-          "Today's challenge",
+          context.t.daily_challenge_today,
           style: TextStyle(
             fontSize: 16,
             fontWeight: FontWeight.w500,
@@ -193,7 +194,7 @@ class _DailyChallengeCardState extends State<DailyChallengeCard> {
         SizedBox(height: 14),
         // Motivation text
         Text(
-          'Do you have the skills to complete this challenge?',
+          context.t.daily_challenge_prompt,
           textAlign: TextAlign.center,
           style: TextStyle(fontSize: 18, color: FccColors.gray85),
         ),
@@ -202,7 +203,7 @@ class _DailyChallengeCardState extends State<DailyChallengeCard> {
         SizedBox(
           width: double.infinity,
           child: Tooltip(
-            message: 'Start the daily challenge now',
+            message: context.t.daily_challenge_start_tooltip,
             child: ElevatedButton.icon(
               style: ElevatedButton.styleFrom(
                 backgroundColor: FccColors.yellow50,
@@ -217,10 +218,10 @@ class _DailyChallengeCardState extends State<DailyChallengeCard> {
               icon: Icon(
                 Icons.arrow_forward_ios,
                 size: 20,
-                semanticLabel: 'Go to challenge',
+                semanticLabel: context.t.daily_challenge_go_to_challenge,
               ),
               label: Text(
-                'Start the challenge',
+                context.t.daily_challenge_start,
                 style: TextStyle(
                   fontSize: 18,
                   fontWeight: FontWeight.bold,
@@ -246,8 +247,8 @@ class _DailyChallengeCardState extends State<DailyChallengeCard> {
           onTap: () {},
           child: Semantics(
             label: widget.isCompleted
-                ? 'Daily challenge completed. View past challenges.'
-                : 'Daily challenge card',
+                ? context.t.daily_challenge_completed_semantics
+                : context.t.daily_challenge_card_semantics,
             container: true,
             child: Container(
               padding: const EdgeInsets.all(20),

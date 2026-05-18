@@ -59,7 +59,7 @@ class ReviewView extends StatelessWidget {
                 if (challenge.videoId != null) ...[
                   const SizedBox(height: 12),
                   ChallengeCard(
-                    title: 'Video',
+                    title: context.t.challenge_card_video,
                     child: YoutubePlayerWidget(
                       videoId: challenge.videoId!,
                     ),
@@ -68,14 +68,14 @@ class ReviewView extends StatelessWidget {
                 ],
                 if (challenge.scene != null) ...[
                   ChallengeCard(
-                    title: 'Scene',
+                    title: context.t.challenge_card_scene,
                     child: SceneView(
                       scene: challenge.scene!,
                     ),
                   ),
                 ] else if (challenge.audio != null) ...[
                   ChallengeCard(
-                    title: 'Listen to the Audio',
+                    title: context.t.challenge_card_listen_audio,
                     child: AudioPlayerView(
                       audio: challenge.audio!,
                     ),
@@ -83,7 +83,7 @@ class ReviewView extends StatelessWidget {
                 ],
                 if (challenge.transcript.isNotEmpty) ...[
                   ChallengeCard(
-                    title: 'Transcript',
+                    title: context.t.challenge_card_transcript,
                     child: Transcript(
                       transcript: challenge.transcript,
                       isCollapsible: challenge.videoId != null,
@@ -91,7 +91,7 @@ class ReviewView extends StatelessWidget {
                   ),
                 ],
                 ChallengeCard(
-                  title: 'Assignments',
+                  title: context.t.challenge_card_assignments,
                   child: Column(
                     children: [
                       for (final (i, assignment)

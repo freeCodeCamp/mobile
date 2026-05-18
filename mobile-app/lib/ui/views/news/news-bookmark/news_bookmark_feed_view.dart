@@ -54,7 +54,7 @@ ListView populateListViewModel(NewsBookmarkViewModel model) {
         trailing: const Icon(Icons.arrow_forward_ios_sharp),
         subtitle: Padding(
           padding: const EdgeInsets.only(top: 8.0),
-          child: Text('Written by: ${tutorial.authorName}'),
+          child: Text(context.t.tutorial_written_by_colon(tutorial.authorName)),
         ),
         onTap: () {
           model.routeToBookmarkedTutorial(tutorial);

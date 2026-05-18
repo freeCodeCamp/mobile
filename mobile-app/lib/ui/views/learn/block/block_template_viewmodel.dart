@@ -1,7 +1,9 @@
 import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:freecodecamp/app/app.locator.dart';
 import 'package:freecodecamp/app/app.router.dart';
+import 'package:freecodecamp/l10n/app_localizations.dart';
 import 'package:freecodecamp/models/learn/completed_challenge_model.dart';
 import 'package:freecodecamp/models/learn/curriculum_model.dart';
 import 'package:freecodecamp/models/main/user_model.dart';
@@ -9,6 +11,7 @@ import 'package:freecodecamp/service/authentication/authentication_service.dart'
 import 'package:freecodecamp/service/developer_service.dart';
 import 'package:freecodecamp/service/learn/learn_offline_service.dart';
 import 'package:freecodecamp/service/learn/learn_service.dart';
+import 'package:freecodecamp/service/locale_service.dart';
 import 'package:freecodecamp/ui/theme/fcc_theme.dart';
 import 'package:freecodecamp/ui/views/learn/block/templates/dialogue/dialogue_view.dart';
 import 'package:freecodecamp/ui/views/learn/block/templates/grid/grid_view.dart';
@@ -21,6 +24,7 @@ class BlockTemplateViewModel extends BaseViewModel {
   final NavigationService _navigationService = locator<NavigationService>();
   final AuthenticationService auth = locator<AuthenticationService>();
   final SnackbarService _snack = locator<SnackbarService>();
+  final LocaleService _localeService = locator<LocaleService>();
 
   bool _isDev = false;
   bool get isDev => _isDev;
@@ -40,8 +44,9 @@ class BlockTemplateViewModel extends BaseViewModel {
   }
 
   void showDisabledSnackbar() {
+    final t = lookupAppLocalizations(_localeService.locale);
     _snack.showSnackbar(
-      title: 'Temporarily unavailable, come back soon.',
+      title: t.temporarily_unavailable,
       message: '',
     );
     Future.delayed(const Duration(milliseconds: 2500), () {

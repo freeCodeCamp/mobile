@@ -489,6 +489,314 @@ class AppLocalizationsEn extends AppLocalizations {
   String get quincy_email_no_thanks => 'No Thanks';
 
   @override
+  String get cancel => 'Cancel';
+
+  @override
+  String get leave => 'Leave';
+
+  @override
+  String get back => 'Back';
+
+  @override
+  String get email_error => 'Email Error';
+
+  @override
+  String get login_email_error_subject => 'Error logging in to mobile app';
+
+  @override
+  String login_email_error_message(
+      String supportEmail, String error, String stackTrace) {
+    return 'Please email the below error to $supportEmail:\n\n$error\n\n$stackTrace';
+  }
+
+  @override
+  String get quick_action_daily_challenges => 'Daily Challenges';
+
+  @override
+  String get code_radio => 'CODE RADIO';
+
+  @override
+  String get no_blocks_available => 'No blocks available right now.';
+
+  @override
+  String get coming_soon => 'Coming Soon';
+
+  @override
+  String get temporarily_unavailable =>
+      'Temporarily unavailable, come back soon.';
+
+  @override
+  String get login_coming_soon => 'Login will soon be available!';
+
+  @override
+  String get coming_soon_web => 'Coming soon - use the web version';
+
+  @override
+  String get daily_coding_challenges => 'Daily Coding Challenges';
+
+  @override
+  String get daily_challenge_empty => 'No challenges available at the moment.';
+
+  @override
+  String get daily_challenge_completed => 'Today\'s challenge completed!';
+
+  @override
+  String daily_challenge_countdown_label(String timeLeft) {
+    return 'Countdown timer. Next challenge in $timeLeft';
+  }
+
+  @override
+  String daily_challenge_next_in(String timeLeft) {
+    return 'Next challenge in: $timeLeft';
+  }
+
+  @override
+  String get daily_challenge_view_past_tooltip => 'View past daily challenges';
+
+  @override
+  String get daily_challenge_view_past => 'View past challenges';
+
+  @override
+  String get daily_challenge_today => 'Today\'s challenge';
+
+  @override
+  String get daily_challenge_prompt =>
+      'Do you have the skills to complete this challenge?';
+
+  @override
+  String get daily_challenge_start_tooltip => 'Start the daily challenge now';
+
+  @override
+  String get daily_challenge_go_to_challenge => 'Go to challenge';
+
+  @override
+  String get daily_challenge_start => 'Start the challenge';
+
+  @override
+  String get daily_challenge_completed_semantics =>
+      'Daily challenge completed. View past challenges.';
+
+  @override
+  String get daily_challenge_card_semantics => 'Daily challenge card';
+
+  @override
+  String get download_complete => 'Download complete';
+
+  @override
+  String get download_episode => 'Download episode';
+
+  @override
+  String get challenge_card_description => 'Description';
+
+  @override
+  String get challenge_card_video => 'Video';
+
+  @override
+  String get challenge_card_watch_video => 'Watch the Video';
+
+  @override
+  String get challenge_card_transcript => 'Transcript';
+
+  @override
+  String get challenge_card_scene => 'Scene';
+
+  @override
+  String get challenge_card_listen_audio => 'Listen to the Audio';
+
+  @override
+  String get challenge_card_assignments => 'Assignments';
+
+  @override
+  String get challenge_card_explanation => 'Explanation';
+
+  @override
+  String get challenge_card_fill_blank => 'Fill in the Blank';
+
+  @override
+  String get challenge_card_feedback => 'Feedback';
+
+  @override
+  String get challenge_card_lesson => 'Lesson';
+
+  @override
+  String get tap_to_expand => 'Tap to expand';
+
+  @override
+  String get tests => 'Tests';
+
+  @override
+  String get quiz_leave_title => 'Are you sure?';
+
+  @override
+  String get quiz_leave_message =>
+      'Do you want to leave this quiz? Your progress will be lost.';
+
+  @override
+  String get quiz_question => 'Question';
+
+  @override
+  String quiz_question_number(int questionNumber) {
+    return 'Question $questionNumber';
+  }
+
+  @override
+  String get quiz_correct => 'Correct!';
+
+  @override
+  String get quiz_incorrect => 'Incorrect!';
+
+  @override
+  String quiz_unanswered_questions(String questions) {
+    return 'The following questions are unanswered: $questions. You must answer all questions.';
+  }
+
+  @override
+  String quiz_passed(int correctQuestionsCount, int totalQuestions) {
+    return 'You have $correctQuestionsCount out of $totalQuestions questions correct. You have passed.';
+  }
+
+  @override
+  String quiz_failed(int correctQuestionsCount, int totalQuestions) {
+    return 'You have $correctQuestionsCount out of $totalQuestions questions correct. You did not pass.';
+  }
+
+  @override
+  String get some_answers_are_incorrect => 'Some answers are incorrect.';
+
+  @override
+  String get show_transcript => 'Show transcript';
+
+  @override
+  String get audio_load_error => 'Error loading audio';
+
+  @override
+  String get project_link_hint => 'ex: https://replit.com/@camperbot/hello';
+
+  @override
+  String get project_link_invalid => 'Please enter a valid link.';
+
+  @override
+  String get project_link_own_work => 'Remember to submit your own work.';
+
+  @override
+  String get project_link_insecure => 'An unsecure (http) URL cannot be used.';
+
+  @override
+  String get project_link_public_url =>
+      'Remember to submit a publicly visible app URL.';
+
+  @override
+  String get forum_create_post => 'Create a post';
+
+  @override
+  String get forum_help_description =>
+      'If you\'ve already tried the Read-Search-Ask method, then you can try asking for help on the freeCodeCamp forum.';
+
+  @override
+  String get forum_confirm_description =>
+      'You must confirm the following statements before you can submit your post to the forum.';
+
+  @override
+  String get forum_tell_us_heading => 'Tell us what\'s happening:';
+
+  @override
+  String get forum_describe_issue => 'Describe your issue in detail here.';
+
+  @override
+  String get forum_code_so_far => 'Your code so far';
+
+  @override
+  String get forum_mobile_info => 'Your mobile information:';
+
+  @override
+  String get forum_challenge => 'Challenge:';
+
+  @override
+  String get forum_challenge_link => 'Link to the challenge:';
+
+  @override
+  String get forum_warning => 'WARNING';
+
+  @override
+  String get forum_code_too_long =>
+      'The challenge seed code and/or your solution exceeded the maximum length we can port over from the challenge.';
+
+  @override
+  String get forum_additional_step =>
+      'You will need to take an additional step here so the code you wrote presents in an easy to read format.';
+
+  @override
+  String get forum_copy_editor_code =>
+      'Please copy/paste all the editor code showing in the challenge from where you just linked.';
+
+  @override
+  String get forum_replace_code =>
+      'Replace these two sentences with your copied code.\nPlease leave the ``` line above and the ``` line below,\nbecause they allow your code to properly format in the post.';
+
+  @override
+  String get forum_tried => 'I have tried the ';
+
+  @override
+  String get forum_read_search_ask => 'Read-Search-Ask';
+
+  @override
+  String get forum_method => ' method';
+
+  @override
+  String get forum_searched_for => 'I have searched for ';
+
+  @override
+  String get forum_similar_questions =>
+      'similar questions that have already been answered on the forum';
+
+  @override
+  String forum_enter_more_chars(int characterCount) {
+    return 'Please enter at least $characterCount more characters.';
+  }
+
+  @override
+  String get forum_issue_hint => 'Describe your issue in detail here...';
+
+  @override
+  String get forum_help_dialog_prefix => 'If you\'ve already tried the ';
+
+  @override
+  String get forum_help_dialog_suffix =>
+      ' method, then you can ask for help on the freeCodeCamp forum.';
+
+  @override
+  String get forum_before_post => 'Before making a new post please ';
+
+  @override
+  String get forum_check_answered =>
+      'check if your question has already been answered on the forum';
+
+  @override
+  String get go_to_next_challenge => 'Go to Next Challenge';
+
+  @override
+  String get check_answers => 'Check Answers';
+
+  @override
+  String tutorial_written_by_colon(String author) {
+    return 'Written by: $author';
+  }
+
+  @override
+  String error_loading_chapters(String error, String stackTrace) {
+    return 'Error loading chapters: $error $stackTrace';
+  }
+
+  @override
+  String syntax_error_line(int line) {
+    return 'There is a syntax error on line $line. Please check for missing brackets, quotes, or other syntax issues.';
+  }
+
+  @override
+  String get syntax_error_general =>
+      'There is a syntax error in your code. Please check for missing brackets, quotes, or other syntax issues.';
+
+  @override
   String get error => 'Something went wrong!';
 
   @override

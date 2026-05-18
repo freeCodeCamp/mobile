@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:freecodecamp/extensions/i18n_extension.dart';
 import 'package:freecodecamp/ui/views/news/html_handler/html_handler.dart';
 
 class Transcript extends StatelessWidget {
@@ -19,7 +20,7 @@ class Transcript extends StatelessWidget {
       return ExpansionTile(
         backgroundColor: Colors.transparent,
         collapsedBackgroundColor: Colors.transparent,
-        title: const Text('Tap to expand'),
+        title: Text(context.t.tap_to_expand),
         shape: const RoundedRectangleBorder(
           side: BorderSide.none,
           borderRadius: BorderRadius.zero,
