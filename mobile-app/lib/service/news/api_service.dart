@@ -138,7 +138,7 @@ class NewsApiService {
   static final NewsApiService _instance = NewsApiService._internal();
   factory NewsApiService() => _instance;
 
-  HttpLink apiLink = HttpLink('https://gql.hashnode.com');
+  HttpLink apiLink = HttpLink('https://gql-beta.hashnode.com');
   late final GraphQLClient client;
   late final String publicationId;
 
