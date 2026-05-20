@@ -815,7 +815,7 @@ class ChallengeViewModel extends BaseViewModel {
       return;
     }
 
-    checkUserCodeForErrors(String userCode) async {
+    Future<void> checkUserCodeForErrors(String userCode) async {
       if ([1, 26, 28].contains(challenge!.challengeType)) {
         final evalResult = await runnerController.callAsyncJavaScript(
           functionBody: userCode,
@@ -830,7 +830,7 @@ class ChallengeViewModel extends BaseViewModel {
       }
     }
 
-    updateTestRunner(String userCode) async {
+    Future<void> updateTestRunner(String userCode) async {
       // ignore: unused_local_variable
       final updateTestRunnerRes = await runnerController.callAsyncJavaScript(
         functionBody: ScriptBuilder.runnerScript,
@@ -848,7 +848,7 @@ class ChallengeViewModel extends BaseViewModel {
       );
     }
 
-    evaluateTests(String userCode) async {
+    Future<Map<String, List<Object>>> evaluateTests(String userCode) async {
       List<ChallengeTest> failingTests = [];
       List<CallAsyncJavaScriptResult> failingResults = [];
       List<int> failedIndexes = [];
@@ -878,7 +878,7 @@ class ChallengeViewModel extends BaseViewModel {
       };
     }
 
-    logFailures(
+    void logFailures(
       List<ChallengeTest> tests,
       List<CallAsyncJavaScriptResult> results,
     ) {
@@ -897,8 +897,8 @@ class ChallengeViewModel extends BaseViewModel {
     }
 
     for (final userCode in userCodeVariants.all) {
-      checkUserCodeForErrors(userCode);
-      updateTestRunner(userCode);
+      await checkUserCodeForErrors(userCode);
+      await updateTestRunner(userCode);
       var {
         'failingTests': failingTests,
         'failingResults': failingResults,
@@ -921,7 +921,7 @@ class ChallengeViewModel extends BaseViewModel {
     final failedTest = failedTests.isEmpty ? null : failedTests.first;
     final failedTestErr = failedResults.isEmpty
         ? null
-        : failedResults.first as Map<dynamic, dynamic>;
+        : failedResults.first.value['err'] as Map?;
 
     if (failedTest != null) {
       setPanelType = PanelType.hint;
