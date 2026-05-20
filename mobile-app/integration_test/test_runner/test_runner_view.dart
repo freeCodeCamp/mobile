@@ -15,8 +15,6 @@ class CurriculumTestRunner extends StatefulWidget {
 }
 
 class CurriculumTestRunnerState extends State<CurriculumTestRunner> {
-  InAppWebViewController? webViewController;
-
   final HeadlessInAppWebView babelWebView = HeadlessInAppWebView(
     initialData: InAppWebViewInitialData(
       data: '<html><head><title>Babel</title></head><body></body></html>',
@@ -36,16 +34,51 @@ class CurriculumTestRunnerState extends State<CurriculumTestRunner> {
     ),
   );
 
+  final HeadlessInAppWebView testRunnerWebView = HeadlessInAppWebView(
+    initialData: InAppWebViewInitialData(
+      data: '<html><head><title>Test Runner</title></head><body></body></html>',
+      mimeType: 'text/html',
+      baseUrl: WebUri('http://localhost:8080/test-runner'),
+    ),
+    // onConsoleMessage: (controller, console) {
+    //   log('Test Runner Console message: ${console.message}');
+    // },
+    onLoadStop: (controller, url) async {
+      final res = await controller.callAsyncJavaScript(
+        // NOTE: I'm loading frame test runner here as a placeholder
+        functionBody: ScriptBuilder.runnerScript,
+        arguments: {
+          'userCode': '',
+          'workerType': 'frame',
+          'combinedCode': '',
+          'editableRegionContent': '',
+          'hooks': {
+            'beforeAll': '',
+            'beforeEach': '',
+            'afterEach': '',
+          },
+        },
+      );
+      log('TestRunner: $res');
+    },
+    initialSettings: InAppWebViewSettings(
+      isInspectable: true,
+      mediaPlaybackRequiresUserGesture: false,
+    ),
+  );
+
   @override
   void initState() {
     super.initState();
     babelWebView.run();
+    testRunnerWebView.run();
   }
 
   @override
   void dispose() {
     _localhostServer.close();
     babelWebView.dispose();
+    testRunnerWebView.dispose();
     super.dispose();
   }
 
@@ -69,40 +102,12 @@ class CurriculumTestRunnerState extends State<CurriculumTestRunner> {
             appBar: AppBar(
               title: Text('Curriculum Test Runner'),
             ),
-            body: InAppWebView(
-              initialData: InAppWebViewInitialData(
-                data:
-                    '<html><head><title>Test Runner</title></head><body></body></html>',
-                mimeType: 'text/html',
-                baseUrl: WebUri('http://localhost:8080/test-runner'),
-              ),
-              onWebViewCreated: (controller) {
-                webViewController = controller;
-              },
-              // onConsoleMessage: (controller, console) {
-              //   log('Test Runner Console message: ${console.message}');
-              // },
-              onLoadStop: (controller, url) async {
-                final res = await controller.callAsyncJavaScript(
-                  // NOTE: I'm loading frame test runner here as a placeholder
-                  functionBody: ScriptBuilder.runnerScript,
-                  arguments: {
-                    'userCode': '',
-                    'workerType': 'frame',
-                    'combinedCode': '',
-                    'editableRegionContent': '',
-                    'hooks': {
-                      'beforeAll': '',
-                      'beforeEach': '',
-                      'afterEach': '',
-                    },
-                  },
-                );
-                log('TestRunner: $res');
-              },
-              initialSettings: InAppWebViewSettings(
-                isInspectable: true,
-                mediaPlaybackRequiresUserGesture: false
+            body: Center(
+              child: Text(
+                'Server running at http://localhost:8080\n'
+                'Babel WebView running: ${babelWebView.isRunning()}\n'
+                'Test Runner WebView running: ${testRunnerWebView.isRunning()}',
+                textAlign: TextAlign.center,
               ),
             ),
           ),

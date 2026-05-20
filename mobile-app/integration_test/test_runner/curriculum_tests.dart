@@ -42,17 +42,18 @@ void main() {
     await Future.delayed(Duration(seconds: 30));
     final widgetState = tester
         .state<CurriculumTestRunnerState>(find.byType(CurriculumTestRunner));
-    expect(widgetState.webViewController, isNotNull);
-    final testController = widgetState.webViewController;
     final babelWebView = widgetState.babelWebView;
+    final testRunnerWebView = widgetState.testRunnerWebView;
+    final testController = testRunnerWebView.webViewController;
     expect(babelWebView.isRunning(), true);
+    expect(testRunnerWebView.isRunning(), true);
+    expect(testController, isNotNull);
 
     // Run the curriculum tests one by one
     var editorChallengeTypes = <int>{};
     for (var currSuperBlock in publicSBs) {
       print('\nSUPERBLOCK: $currSuperBlock');
       for (var currBlock in curriculumData[currSuperBlock]['blocks'].values) {
-
         print('Block: ${currBlock['meta']['dashedName']}');
         List challenges = currBlock['challenges']
           ..sort((a, b) =>
