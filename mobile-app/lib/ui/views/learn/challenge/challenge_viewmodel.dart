@@ -771,17 +771,17 @@ class ChallengeViewModel extends BaseViewModel {
     setShowPanel = false;
     setIsRunningTests = true;
     _failedTestIndexes = [];
-    ChallengeTest? failedTest;
-    Map<dynamic, dynamic>? failedTestErr;
+    List<ChallengeTest> failedTests = [];
+    List<CallAsyncJavaScriptResult> failedResults = [];
+
     ScriptBuilder builder = ScriptBuilder();
     List<String> failedTestsConsole = [];
 
     _userConsoleMessages = [];
     setTestConsoleMessages = ['<p>// running tests</p>'];
-
-    String userCode;
+    UserCodeVariants userCodeVariants;
     try {
-      userCode = await builder.buildUserCode(
+      userCodeVariants = await builder.buildUserCode(
         challenge!,
         _babelWebView.webViewController,
       );
@@ -815,55 +815,113 @@ class ChallengeViewModel extends BaseViewModel {
       return;
     }
 
-    if ([1, 26, 28].contains(challenge!.challengeType)) {
-      final evalResult = await runnerController.callAsyncJavaScript(
-        functionBody: userCode,
-      );
-      if (evalResult != null && evalResult.error != null) {
-        setUserConsoleMessages = [
-          if (userConsoleMessages.isNotEmpty)
-            ...userConsoleMessages.sublist(0, userConsoleMessages.length - 1),
-          '<p>${evalResult.error}</p>',
-        ];
-      }
-    }
-
-    await runnerController.callAsyncJavaScript(
-      functionBody: ScriptBuilder.runnerScript,
-      arguments: {
-        'userCode': userCode,
-        'workerType': builder.getWorkerType(challenge!.challengeType),
-        'combinedCode': await builder.combinedCode(challenge!),
-        'editableRegionContent': editableRegionContent,
-        'hooks': {
-          'beforeAll': challenge!.hooks.beforeAll,
-          'beforeEach': challenge!.hooks.beforeEach,
-          'afterEach': challenge!.hooks.afterEach,
-        },
-      },
-    );
-
-    for (int i = 0; i < challenge!.tests.length; i++) {
-      ChallengeTest test = challenge!.tests[i];
-      final testRes = await runnerController.callAsyncJavaScript(
-        functionBody: ScriptBuilder.testExecutionScript,
-        arguments: {
-          'testStr': test.javaScript,
-        },
-      );
-      if (testRes != null && testRes.value['pass'] == null) {
-        log('TEST FAILED: ${test.instruction} - ${test.javaScript} - ${testRes.value['err']}');
-        failedTest = failedTest ?? test;
-        failedTestErr = failedTestErr ?? testRes.value['err'] as Map;
-        failedTestsConsole.add(
-          '<li>${replacePlaceholders(test.instruction, failedTestErr)}</li>',
+    Future<void> checkUserCodeForErrors(String userCode) async {
+      if ([1, 26, 28].contains(challenge!.challengeType)) {
+        final evalResult = await runnerController.callAsyncJavaScript(
+          functionBody: userCode,
         );
-        _failedTestIndexes.add(i);
-      } else if (testRes == null) {
-        log('TEST RESULT NULL: $testRes');
-        throw Exception('Test result is null ${testRes.toString()}');
+        if (evalResult != null && evalResult.error != null) {
+          setUserConsoleMessages = [
+            if (userConsoleMessages.isNotEmpty)
+              ...userConsoleMessages.sublist(0, userConsoleMessages.length - 1),
+            '<p>${evalResult.error}</p>',
+          ];
+        }
       }
     }
+
+    Future<void> updateTestRunner(String userCode) async {
+      // ignore: unused_local_variable
+      final updateTestRunnerRes = await runnerController.callAsyncJavaScript(
+        functionBody: ScriptBuilder.runnerScript,
+        arguments: {
+          'userCode': userCode,
+          'workerType': builder.getWorkerType(challenge!.challengeType),
+          'combinedCode': await builder.combinedCode(challenge!),
+          'editableRegionContent': editableRegionContent,
+          'hooks': {
+            'beforeAll': challenge!.hooks.beforeAll,
+            'beforeEach': challenge!.hooks.beforeEach,
+            'afterEach': challenge!.hooks.afterEach,
+          },
+        },
+      );
+    }
+
+    Future<Map<String, List<Object>>> evaluateTests(String userCode) async {
+      List<ChallengeTest> failingTests = [];
+      List<CallAsyncJavaScriptResult> failingResults = [];
+      List<int> failedIndexes = [];
+
+      for (int i = 0; i < challenge!.tests.length; i++) {
+        ChallengeTest test = challenge!.tests[i];
+        final testRes = await runnerController.callAsyncJavaScript(
+          functionBody: ScriptBuilder.testExecutionScript,
+          arguments: {
+            'testStr': test.javaScript,
+          },
+        );
+        if (testRes != null && testRes.value['pass'] == null) {
+          failingTests.add(test);
+          failingResults.add(testRes);
+          failedIndexes.add(i);
+        } else if (testRes == null) {
+          log('TEST RESULT NULL: $testRes');
+          throw Exception('Test result is null ${testRes.toString()}');
+        }
+      }
+
+      return {
+        'failingTests': failingTests,
+        'failingResults': failingResults,
+        'failedIndexes': failedIndexes
+      };
+    }
+
+    void logFailures(
+      List<ChallengeTest> tests,
+      List<CallAsyncJavaScriptResult> results,
+    ) {
+      final pairCount =
+          tests.length < results.length ? tests.length : results.length;
+
+      for (int i = 0; i < pairCount; i++) {
+        final test = tests[i];
+        final testErr = results[i].value['err'];
+
+        log('TEST FAILED: ${test.instruction} - ${test.javaScript} - $testErr');
+        failedTestsConsole.add(
+          '<li>${replacePlaceholders(test.instruction, testErr)}</li>',
+        );
+      }
+    }
+
+    for (final userCode in userCodeVariants.all) {
+      await checkUserCodeForErrors(userCode);
+      await updateTestRunner(userCode);
+      var {
+        'failingTests': failingTests,
+        'failingResults': failingResults,
+        'failedIndexes': failedIndexes
+      } = await evaluateTests(userCode);
+
+      if (failingTests.isEmpty) {
+        // clear the failures, since only one attempt needs to pass.
+        failedTests = [];
+        failedResults = [];
+        _failedTestIndexes = [];
+      } else {
+        failedTests = failingTests as List<ChallengeTest>;
+        failedResults = failingResults as List<CallAsyncJavaScriptResult>;
+        logFailures(failedTests, failedResults);
+        _failedTestIndexes = failedIndexes as List<int>;
+      }
+    }
+
+    final failedTest = failedTests.isEmpty ? null : failedTests.first;
+    final failedTestErr = failedResults.isEmpty
+        ? null
+        : failedResults.first.value['err'] as Map?;
 
     if (failedTest != null) {
       setPanelType = PanelType.hint;

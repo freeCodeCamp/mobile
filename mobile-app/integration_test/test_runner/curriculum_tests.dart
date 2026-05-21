@@ -42,17 +42,18 @@ void main() {
     await Future.delayed(Duration(seconds: 30));
     final widgetState = tester
         .state<CurriculumTestRunnerState>(find.byType(CurriculumTestRunner));
-    expect(widgetState.webViewController, isNotNull);
-    final testController = widgetState.webViewController;
     final babelWebView = widgetState.babelWebView;
+    final testRunnerWebView = widgetState.testRunnerWebView;
+    final testController = testRunnerWebView.webViewController;
     expect(babelWebView.isRunning(), true);
+    expect(testRunnerWebView.isRunning(), true);
+    expect(testController, isNotNull);
 
     // Run the curriculum tests one by one
     var editorChallengeTypes = <int>{};
     for (var currSuperBlock in publicSBs) {
       print('\nSUPERBLOCK: $currSuperBlock');
       for (var currBlock in curriculumData[currSuperBlock]['blocks'].values) {
-
         print('Block: ${currBlock['meta']['dashedName']}');
         List challenges = currBlock['challenges']
           ..sort((a, b) =>
@@ -123,43 +124,53 @@ void main() {
           );
 
           ScriptBuilder builder = ScriptBuilder();
-          bool testFailed = false;
-
-          await testController!.callAsyncJavaScript(
-            functionBody: ScriptBuilder.runnerScript,
-            arguments: {
-              'userCode': await builder.buildUserCode(
-                challenge,
-                babelWebView.webViewController,
-                testing: true,
-              ),
-              'workerType': builder.getWorkerType(challenge.challengeType),
-              'combinedCode': await builder.combinedCode(challenge),
-              'editableRegionContent': editableRegion,
-              'hooks': {
-                'beforeAll': challenge.hooks.beforeAll,
-                'beforeEach': challenge.hooks.beforeEach,
-                'afterEach': challenge.hooks.afterEach,
-              },
-            },
+          final userCodeVariants = await builder.buildUserCode(
+            challenge,
+            babelWebView.webViewController,
+            testing: true,
           );
 
-          for (ChallengeTest test in challenge.tests) {
-            final testRes = await testController.callAsyncJavaScript(
-              functionBody: ScriptBuilder.testExecutionScript,
+          bool challengePassed = false;
+          for (final userCode in userCodeVariants.all) {
+            bool testFailed = false;
+
+            await testController!.callAsyncJavaScript(
+              functionBody: ScriptBuilder.runnerScript,
               arguments: {
-                'testStr': test.javaScript,
+                'userCode': userCode,
+                'workerType': builder.getWorkerType(challenge.challengeType),
+                'combinedCode': await builder.combinedCode(challenge),
+                'editableRegionContent': editableRegion,
+                'hooks': {
+                  'beforeAll': challenge.hooks.beforeAll,
+                  'beforeEach': challenge.hooks.beforeEach,
+                  'afterEach': challenge.hooks.afterEach,
+                },
               },
             );
-            if (testRes?.value['pass'] == null || testRes?.error != null) {
-              print(
-                  'TEST FAILED: ${challenge.id} - ${challenge.title} - ${test.instruction} - ${test.javaScript} - $testRes\n');
-              testFailed = true;
-              didTestsFail = true;
+
+            for (ChallengeTest test in challenge.tests) {
+              final testRes = await testController.callAsyncJavaScript(
+                functionBody: ScriptBuilder.testExecutionScript,
+                arguments: {
+                  'testStr': test.javaScript,
+                },
+              );
+              if (testRes?.value['pass'] == null || testRes?.error != null) {
+                print(
+                    'TEST FAILED: ${challenge.id} - ${challenge.title} - ${test.instruction} - ${test.javaScript} - $testRes\n');
+                testFailed = true;
+              }
+            }
+
+            if (!testFailed) {
+              challengePassed = true;
+              break;
             }
           }
 
-          if (testFailed) {
+          if (!challengePassed) {
+            didTestsFail = true;
             print(
                 'Test(s) failed for challenge: ${challenge.id} - ${challenge.title}');
           } else {
