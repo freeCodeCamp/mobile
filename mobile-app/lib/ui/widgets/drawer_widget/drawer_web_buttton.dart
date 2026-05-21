@@ -58,22 +58,39 @@ class _CustomTabButtonState extends State<CustomTabButton> {
   Widget build(BuildContext context) {
     return Padding(
       padding: const EdgeInsets.all(10.0),
-      child: ListTile(
-        dense: true,
-        onTap: () {
-          widget.startCustomTabs(widget.url);
-        },
-        leading: Icon(
-          widget.icon,
-          color: Colors.white,
-        ),
-        title: Text(
-          widget.component,
-          style: const TextStyle(
-            fontSize: 16,
-            fontWeight: FontWeight.w400,
-            color: Colors.white,
-            letterSpacing: 0.5,
+      child: Tooltip(
+        message: widget.component,
+        child: Semantics(
+          button: true,
+          enabled: true,
+          label: widget.component,
+          onTap: () {
+            widget.startCustomTabs(widget.url);
+          },
+          child: ListTile(
+            dense: true,
+            onTap: () {
+              widget.startCustomTabs(widget.url);
+            },
+            leading: Semantics(
+              image: true,
+              label: widget.component,
+              child: Icon(
+                widget.icon,
+                color: Colors.white,
+                semanticLabel: widget.component,
+              ),
+            ),
+            title: Text(
+              widget.component,
+              style: const TextStyle(
+                fontSize: 16,
+                fontWeight: FontWeight.w400,
+                color: Colors.white,
+                letterSpacing: 0.5,
+              ),
+              semanticsLabel: widget.component,
+            ),
           ),
         ),
       ),
