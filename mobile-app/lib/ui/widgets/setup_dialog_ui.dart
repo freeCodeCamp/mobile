@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:freecodecamp/app/app.locator.dart';
 import 'package:freecodecamp/enums/dialog_type.dart';
+import 'package:freecodecamp/extensions/i18n_extension.dart';
 import 'package:freecodecamp/service/learn/learn_service.dart';
 import 'package:freecodecamp/ui/theme/fcc_theme.dart';
 import 'package:stacked_services/stacked_services.dart';
@@ -110,7 +111,7 @@ class _buttonDialog extends HookWidget {
                       onDialogTap(DialogResponse(confirmed: false)),
                     },
                     child: Text(
-                      request.secondaryButtonTitle ?? 'Cancel',
+                      request.secondaryButtonTitle ?? context.t.cancel,
                       textAlign: TextAlign.center,
                       style: const TextStyle(fontSize: 16),
                     ),
@@ -384,14 +385,14 @@ class _askForHelpInputDialogue extends HookWidget {
                         Flexible(
                           child: RichText(
                             text: TextSpan(
-                              text: 'I have tried the ',
+                              text: context.t.forum_tried,
                               style: const TextStyle(
                                 fontSize: 14,
                                 color: FccColors.gray00,
                               ),
                               children: [
                                 TextSpan(
-                                  text: 'Read-Search-Ask',
+                                  text: context.t.forum_read_search_ask,
                                   style: const TextStyle(
                                     fontSize: 14,
                                     color: FccColors.gray00,
@@ -404,9 +405,10 @@ class _askForHelpInputDialogue extends HookWidget {
                                           '$forumLocation/t/how-to-get-help-when-you-are-stuck-coding/19514'));
                                     },
                                 ),
-                                const TextSpan(
-                                  text: ' method',
-                                  style: TextStyle(color: FccColors.gray00),
+                                TextSpan(
+                                  text: context.t.forum_method,
+                                  style:
+                                      const TextStyle(color: FccColors.gray00),
                                 ),
                               ],
                             ),
@@ -431,15 +433,14 @@ class _askForHelpInputDialogue extends HookWidget {
                         Flexible(
                           child: RichText(
                             text: TextSpan(
-                              text: 'I have searched for ',
+                              text: context.t.forum_searched_for,
                               style: const TextStyle(
                                 fontSize: 14,
                                 color: FccColors.gray00,
                               ),
                               children: [
                                 TextSpan(
-                                  text:
-                                      'similar questions that have already been answered on the forum',
+                                  text: context.t.forum_similar_questions,
                                   style: const TextStyle(
                                     fontSize: 14,
                                     color: FccColors.gray00,
@@ -464,7 +465,9 @@ class _askForHelpInputDialogue extends HookWidget {
                 ),
                 if (charCount.value < 50)
                   Text(
-                    'Please enter at least ${50 - charCount.value} more characters.',
+                    context.t.forum_enter_more_chars(
+                      (50 - charCount.value).toInt(),
+                    ),
                     style: const TextStyle(
                       fontSize: 14,
                       color: FccColors.gray00,
@@ -478,9 +481,9 @@ class _askForHelpInputDialogue extends HookWidget {
                     requestData.value = Map.from(requestData.value);
                     charCount.value = value.length;
                   },
-                  decoration: const InputDecoration(
-                    hintText: 'Describe your issue in detail here...',
-                    border: OutlineInputBorder(),
+                  decoration: InputDecoration(
+                    hintText: context.t.forum_issue_hint,
+                    border: const OutlineInputBorder(),
                   ),
                   maxLines: 5,
                 ),
@@ -536,7 +539,7 @@ class _askForHelpInputDialogue extends HookWidget {
                       onDialogTap(DialogResponse(confirmed: false)),
                     },
                     child: Text(
-                      request.secondaryButtonTitle ?? 'Cancel',
+                      request.secondaryButtonTitle ?? context.t.cancel,
                       textAlign: TextAlign.center,
                       style: const TextStyle(
                         fontSize: 16,
@@ -588,14 +591,14 @@ class _askForHelpDialog extends HookWidget {
                 ),
                 RichText(
                   text: TextSpan(
-                    text: "If you've already tried the ",
+                    text: context.t.forum_help_dialog_prefix,
                     style: const TextStyle(
                       fontSize: 16,
                       color: FccColors.gray05,
                     ),
                     children: [
                       TextSpan(
-                        text: 'Read-Search-Ask',
+                        text: context.t.forum_read_search_ask,
                         style: const TextStyle(
                           fontSize: 16,
                           color: FccColors.gray00,
@@ -608,25 +611,23 @@ class _askForHelpDialog extends HookWidget {
                                 '$forumLocation/t/how-to-get-help-when-you-are-stuck-coding/19514'));
                           },
                       ),
-                      const TextSpan(
-                        text:
-                            ' method, then you can ask for help on the freeCodeCamp forum.',
-                        style: TextStyle(color: FccColors.gray05),
+                      TextSpan(
+                        text: context.t.forum_help_dialog_suffix,
+                        style: const TextStyle(color: FccColors.gray05),
                       ),
                     ],
                   ),
                 ),
                 RichText(
                   text: TextSpan(
-                    text: 'Before making a new post please ',
+                    text: context.t.forum_before_post,
                     style: const TextStyle(
                       fontSize: 16,
                       color: FccColors.gray05,
                     ),
                     children: [
                       TextSpan(
-                        text:
-                            'check if your question has already been answered on the forum',
+                        text: context.t.forum_check_answered,
                         style: const TextStyle(
                           fontSize: 16,
                           color: FccColors.gray00,

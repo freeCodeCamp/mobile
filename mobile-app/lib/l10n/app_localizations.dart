@@ -910,6 +910,547 @@ abstract class AppLocalizations {
   /// **'No Thanks'**
   String get quincy_email_no_thanks;
 
+  /// No description provided for @cancel.
+  ///
+  /// In en, this message translates to:
+  /// **'Cancel'**
+  String get cancel;
+
+  /// No description provided for @leave.
+  ///
+  /// In en, this message translates to:
+  /// **'Leave'**
+  String get leave;
+
+  /// No description provided for @back.
+  ///
+  /// In en, this message translates to:
+  /// **'Back'**
+  String get back;
+
+  /// No description provided for @email_error.
+  ///
+  /// In en, this message translates to:
+  /// **'Email Error'**
+  String get email_error;
+
+  /// No description provided for @login_email_error_subject.
+  ///
+  /// In en, this message translates to:
+  /// **'Error logging in to mobile app'**
+  String get login_email_error_subject;
+
+  /// No description provided for @login_email_error_message.
+  ///
+  /// In en, this message translates to:
+  /// **'Please email the below error to {supportEmail}:\n\n{error}\n\n{stackTrace}'**
+  String login_email_error_message(
+      String supportEmail, String error, String stackTrace);
+
+  /// No description provided for @quick_action_daily_challenges.
+  ///
+  /// In en, this message translates to:
+  /// **'Daily Challenges'**
+  String get quick_action_daily_challenges;
+
+  /// No description provided for @code_radio.
+  ///
+  /// In en, this message translates to:
+  /// **'CODE RADIO'**
+  String get code_radio;
+
+  /// No description provided for @no_blocks_available.
+  ///
+  /// In en, this message translates to:
+  /// **'No blocks available right now.'**
+  String get no_blocks_available;
+
+  /// No description provided for @coming_soon.
+  ///
+  /// In en, this message translates to:
+  /// **'Coming Soon'**
+  String get coming_soon;
+
+  /// No description provided for @temporarily_unavailable.
+  ///
+  /// In en, this message translates to:
+  /// **'Temporarily unavailable, come back soon.'**
+  String get temporarily_unavailable;
+
+  /// No description provided for @login_coming_soon.
+  ///
+  /// In en, this message translates to:
+  /// **'Login will soon be available!'**
+  String get login_coming_soon;
+
+  /// No description provided for @coming_soon_web.
+  ///
+  /// In en, this message translates to:
+  /// **'Coming soon - use the web version'**
+  String get coming_soon_web;
+
+  /// No description provided for @daily_coding_challenges.
+  ///
+  /// In en, this message translates to:
+  /// **'Daily Coding Challenges'**
+  String get daily_coding_challenges;
+
+  /// No description provided for @daily_challenge_empty.
+  ///
+  /// In en, this message translates to:
+  /// **'No challenges available at the moment.'**
+  String get daily_challenge_empty;
+
+  /// No description provided for @daily_challenge_completed.
+  ///
+  /// In en, this message translates to:
+  /// **'Today\'s challenge completed!'**
+  String get daily_challenge_completed;
+
+  /// No description provided for @daily_challenge_countdown_label.
+  ///
+  /// In en, this message translates to:
+  /// **'Countdown timer. Next challenge in {timeLeft}'**
+  String daily_challenge_countdown_label(String timeLeft);
+
+  /// No description provided for @daily_challenge_next_in.
+  ///
+  /// In en, this message translates to:
+  /// **'Next challenge in: {timeLeft}'**
+  String daily_challenge_next_in(String timeLeft);
+
+  /// No description provided for @daily_challenge_view_past_tooltip.
+  ///
+  /// In en, this message translates to:
+  /// **'View past daily challenges'**
+  String get daily_challenge_view_past_tooltip;
+
+  /// No description provided for @daily_challenge_view_past.
+  ///
+  /// In en, this message translates to:
+  /// **'View past challenges'**
+  String get daily_challenge_view_past;
+
+  /// No description provided for @daily_challenge_today.
+  ///
+  /// In en, this message translates to:
+  /// **'Today\'s challenge'**
+  String get daily_challenge_today;
+
+  /// No description provided for @daily_challenge_prompt.
+  ///
+  /// In en, this message translates to:
+  /// **'Do you have the skills to complete this challenge?'**
+  String get daily_challenge_prompt;
+
+  /// No description provided for @daily_challenge_start_tooltip.
+  ///
+  /// In en, this message translates to:
+  /// **'Start the daily challenge now'**
+  String get daily_challenge_start_tooltip;
+
+  /// No description provided for @daily_challenge_go_to_challenge.
+  ///
+  /// In en, this message translates to:
+  /// **'Go to challenge'**
+  String get daily_challenge_go_to_challenge;
+
+  /// No description provided for @daily_challenge_start.
+  ///
+  /// In en, this message translates to:
+  /// **'Start the challenge'**
+  String get daily_challenge_start;
+
+  /// No description provided for @daily_challenge_completed_semantics.
+  ///
+  /// In en, this message translates to:
+  /// **'Daily challenge completed. View past challenges.'**
+  String get daily_challenge_completed_semantics;
+
+  /// No description provided for @daily_challenge_card_semantics.
+  ///
+  /// In en, this message translates to:
+  /// **'Daily challenge card'**
+  String get daily_challenge_card_semantics;
+
+  /// No description provided for @download_complete.
+  ///
+  /// In en, this message translates to:
+  /// **'Download complete'**
+  String get download_complete;
+
+  /// No description provided for @download_episode.
+  ///
+  /// In en, this message translates to:
+  /// **'Download episode'**
+  String get download_episode;
+
+  /// No description provided for @challenge_card_description.
+  ///
+  /// In en, this message translates to:
+  /// **'Description'**
+  String get challenge_card_description;
+
+  /// No description provided for @challenge_card_video.
+  ///
+  /// In en, this message translates to:
+  /// **'Video'**
+  String get challenge_card_video;
+
+  /// No description provided for @challenge_card_watch_video.
+  ///
+  /// In en, this message translates to:
+  /// **'Watch the Video'**
+  String get challenge_card_watch_video;
+
+  /// No description provided for @challenge_card_transcript.
+  ///
+  /// In en, this message translates to:
+  /// **'Transcript'**
+  String get challenge_card_transcript;
+
+  /// No description provided for @challenge_card_scene.
+  ///
+  /// In en, this message translates to:
+  /// **'Scene'**
+  String get challenge_card_scene;
+
+  /// No description provided for @challenge_card_listen_audio.
+  ///
+  /// In en, this message translates to:
+  /// **'Listen to the Audio'**
+  String get challenge_card_listen_audio;
+
+  /// No description provided for @challenge_card_assignments.
+  ///
+  /// In en, this message translates to:
+  /// **'Assignments'**
+  String get challenge_card_assignments;
+
+  /// No description provided for @challenge_card_explanation.
+  ///
+  /// In en, this message translates to:
+  /// **'Explanation'**
+  String get challenge_card_explanation;
+
+  /// No description provided for @challenge_card_fill_blank.
+  ///
+  /// In en, this message translates to:
+  /// **'Fill in the Blank'**
+  String get challenge_card_fill_blank;
+
+  /// No description provided for @challenge_card_feedback.
+  ///
+  /// In en, this message translates to:
+  /// **'Feedback'**
+  String get challenge_card_feedback;
+
+  /// No description provided for @challenge_card_lesson.
+  ///
+  /// In en, this message translates to:
+  /// **'Lesson'**
+  String get challenge_card_lesson;
+
+  /// No description provided for @tap_to_expand.
+  ///
+  /// In en, this message translates to:
+  /// **'Tap to expand'**
+  String get tap_to_expand;
+
+  /// No description provided for @tests.
+  ///
+  /// In en, this message translates to:
+  /// **'Tests'**
+  String get tests;
+
+  /// No description provided for @quiz_leave_title.
+  ///
+  /// In en, this message translates to:
+  /// **'Are you sure?'**
+  String get quiz_leave_title;
+
+  /// No description provided for @quiz_leave_message.
+  ///
+  /// In en, this message translates to:
+  /// **'Do you want to leave this quiz? Your progress will be lost.'**
+  String get quiz_leave_message;
+
+  /// No description provided for @quiz_question.
+  ///
+  /// In en, this message translates to:
+  /// **'Question'**
+  String get quiz_question;
+
+  /// No description provided for @quiz_question_number.
+  ///
+  /// In en, this message translates to:
+  /// **'Question {questionNumber}'**
+  String quiz_question_number(int questionNumber);
+
+  /// No description provided for @quiz_correct.
+  ///
+  /// In en, this message translates to:
+  /// **'Correct!'**
+  String get quiz_correct;
+
+  /// No description provided for @quiz_incorrect.
+  ///
+  /// In en, this message translates to:
+  /// **'Incorrect!'**
+  String get quiz_incorrect;
+
+  /// No description provided for @quiz_unanswered_questions.
+  ///
+  /// In en, this message translates to:
+  /// **'The following questions are unanswered: {questions}. You must answer all questions.'**
+  String quiz_unanswered_questions(String questions);
+
+  /// No description provided for @quiz_passed.
+  ///
+  /// In en, this message translates to:
+  /// **'You have {correctQuestionsCount} out of {totalQuestions} questions correct. You have passed.'**
+  String quiz_passed(int correctQuestionsCount, int totalQuestions);
+
+  /// No description provided for @quiz_failed.
+  ///
+  /// In en, this message translates to:
+  /// **'You have {correctQuestionsCount} out of {totalQuestions} questions correct. You did not pass.'**
+  String quiz_failed(int correctQuestionsCount, int totalQuestions);
+
+  /// No description provided for @some_answers_are_incorrect.
+  ///
+  /// In en, this message translates to:
+  /// **'Some answers are incorrect.'**
+  String get some_answers_are_incorrect;
+
+  /// No description provided for @show_transcript.
+  ///
+  /// In en, this message translates to:
+  /// **'Show transcript'**
+  String get show_transcript;
+
+  /// No description provided for @audio_load_error.
+  ///
+  /// In en, this message translates to:
+  /// **'Error loading audio'**
+  String get audio_load_error;
+
+  /// No description provided for @project_link_hint.
+  ///
+  /// In en, this message translates to:
+  /// **'ex: https://replit.com/@camperbot/hello'**
+  String get project_link_hint;
+
+  /// No description provided for @project_link_invalid.
+  ///
+  /// In en, this message translates to:
+  /// **'Please enter a valid link.'**
+  String get project_link_invalid;
+
+  /// No description provided for @project_link_own_work.
+  ///
+  /// In en, this message translates to:
+  /// **'Remember to submit your own work.'**
+  String get project_link_own_work;
+
+  /// No description provided for @project_link_insecure.
+  ///
+  /// In en, this message translates to:
+  /// **'An unsecure (http) URL cannot be used.'**
+  String get project_link_insecure;
+
+  /// No description provided for @project_link_public_url.
+  ///
+  /// In en, this message translates to:
+  /// **'Remember to submit a publicly visible app URL.'**
+  String get project_link_public_url;
+
+  /// No description provided for @forum_create_post.
+  ///
+  /// In en, this message translates to:
+  /// **'Create a post'**
+  String get forum_create_post;
+
+  /// No description provided for @forum_help_description.
+  ///
+  /// In en, this message translates to:
+  /// **'If you\'ve already tried the Read-Search-Ask method, then you can try asking for help on the freeCodeCamp forum.'**
+  String get forum_help_description;
+
+  /// No description provided for @forum_confirm_description.
+  ///
+  /// In en, this message translates to:
+  /// **'You must confirm the following statements before you can submit your post to the forum.'**
+  String get forum_confirm_description;
+
+  /// No description provided for @forum_tell_us_heading.
+  ///
+  /// In en, this message translates to:
+  /// **'Tell us what\'s happening:'**
+  String get forum_tell_us_heading;
+
+  /// No description provided for @forum_describe_issue.
+  ///
+  /// In en, this message translates to:
+  /// **'Describe your issue in detail here.'**
+  String get forum_describe_issue;
+
+  /// No description provided for @forum_code_so_far.
+  ///
+  /// In en, this message translates to:
+  /// **'Your code so far'**
+  String get forum_code_so_far;
+
+  /// No description provided for @forum_mobile_info.
+  ///
+  /// In en, this message translates to:
+  /// **'Your mobile information:'**
+  String get forum_mobile_info;
+
+  /// No description provided for @forum_challenge.
+  ///
+  /// In en, this message translates to:
+  /// **'Challenge:'**
+  String get forum_challenge;
+
+  /// No description provided for @forum_challenge_link.
+  ///
+  /// In en, this message translates to:
+  /// **'Link to the challenge:'**
+  String get forum_challenge_link;
+
+  /// No description provided for @forum_warning.
+  ///
+  /// In en, this message translates to:
+  /// **'WARNING'**
+  String get forum_warning;
+
+  /// No description provided for @forum_code_too_long.
+  ///
+  /// In en, this message translates to:
+  /// **'The challenge seed code and/or your solution exceeded the maximum length we can port over from the challenge.'**
+  String get forum_code_too_long;
+
+  /// No description provided for @forum_additional_step.
+  ///
+  /// In en, this message translates to:
+  /// **'You will need to take an additional step here so the code you wrote presents in an easy to read format.'**
+  String get forum_additional_step;
+
+  /// No description provided for @forum_copy_editor_code.
+  ///
+  /// In en, this message translates to:
+  /// **'Please copy/paste all the editor code showing in the challenge from where you just linked.'**
+  String get forum_copy_editor_code;
+
+  /// No description provided for @forum_replace_code.
+  ///
+  /// In en, this message translates to:
+  /// **'Replace these two sentences with your copied code.\nPlease leave the ``` line above and the ``` line below,\nbecause they allow your code to properly format in the post.'**
+  String get forum_replace_code;
+
+  /// No description provided for @forum_tried.
+  ///
+  /// In en, this message translates to:
+  /// **'I have tried the '**
+  String get forum_tried;
+
+  /// No description provided for @forum_read_search_ask.
+  ///
+  /// In en, this message translates to:
+  /// **'Read-Search-Ask'**
+  String get forum_read_search_ask;
+
+  /// No description provided for @forum_method.
+  ///
+  /// In en, this message translates to:
+  /// **' method'**
+  String get forum_method;
+
+  /// No description provided for @forum_searched_for.
+  ///
+  /// In en, this message translates to:
+  /// **'I have searched for '**
+  String get forum_searched_for;
+
+  /// No description provided for @forum_similar_questions.
+  ///
+  /// In en, this message translates to:
+  /// **'similar questions that have already been answered on the forum'**
+  String get forum_similar_questions;
+
+  /// No description provided for @forum_enter_more_chars.
+  ///
+  /// In en, this message translates to:
+  /// **'Please enter at least {characterCount} more characters.'**
+  String forum_enter_more_chars(int characterCount);
+
+  /// No description provided for @forum_issue_hint.
+  ///
+  /// In en, this message translates to:
+  /// **'Describe your issue in detail here...'**
+  String get forum_issue_hint;
+
+  /// No description provided for @forum_help_dialog_prefix.
+  ///
+  /// In en, this message translates to:
+  /// **'If you\'ve already tried the '**
+  String get forum_help_dialog_prefix;
+
+  /// No description provided for @forum_help_dialog_suffix.
+  ///
+  /// In en, this message translates to:
+  /// **' method, then you can ask for help on the freeCodeCamp forum.'**
+  String get forum_help_dialog_suffix;
+
+  /// No description provided for @forum_before_post.
+  ///
+  /// In en, this message translates to:
+  /// **'Before making a new post please '**
+  String get forum_before_post;
+
+  /// No description provided for @forum_check_answered.
+  ///
+  /// In en, this message translates to:
+  /// **'check if your question has already been answered on the forum'**
+  String get forum_check_answered;
+
+  /// No description provided for @go_to_next_challenge.
+  ///
+  /// In en, this message translates to:
+  /// **'Go to Next Challenge'**
+  String get go_to_next_challenge;
+
+  /// No description provided for @check_answers.
+  ///
+  /// In en, this message translates to:
+  /// **'Check Answers'**
+  String get check_answers;
+
+  /// No description provided for @tutorial_written_by_colon.
+  ///
+  /// In en, this message translates to:
+  /// **'Written by: {author}'**
+  String tutorial_written_by_colon(String author);
+
+  /// No description provided for @error_loading_chapters.
+  ///
+  /// In en, this message translates to:
+  /// **'Error loading chapters: {error} {stackTrace}'**
+  String error_loading_chapters(String error, String stackTrace);
+
+  /// No description provided for @syntax_error_line.
+  ///
+  /// In en, this message translates to:
+  /// **'There is a syntax error on line {line}. Please check for missing brackets, quotes, or other syntax issues.'**
+  String syntax_error_line(int line);
+
+  /// No description provided for @syntax_error_general.
+  ///
+  /// In en, this message translates to:
+  /// **'There is a syntax error in your code. Please check for missing brackets, quotes, or other syntax issues.'**
+  String get syntax_error_general;
+
   /// No description provided for @error.
   ///
   /// In en, this message translates to:

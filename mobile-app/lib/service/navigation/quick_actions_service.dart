@@ -2,6 +2,8 @@ import 'dart:io';
 
 import 'package:freecodecamp/app/app.locator.dart';
 import 'package:freecodecamp/app/app.router.dart';
+import 'package:freecodecamp/l10n/app_localizations.dart';
+import 'package:freecodecamp/service/locale_service.dart';
 import 'package:quick_actions/quick_actions.dart';
 import 'package:stacked_services/stacked_services.dart';
 
@@ -18,27 +20,29 @@ class QuickActionsService {
   }
 
   Future<void> init() async {
+    final t = lookupAppLocalizations(locator<LocaleService>().locale);
+
     await quickActions.setShortcutItems([
-      const ShortcutItem(
+      ShortcutItem(
         type: 'action_daily_challenges',
-        localizedTitle: 'Daily Challenges',
+        localizedTitle: t.quick_action_daily_challenges,
       ),
-      const ShortcutItem(
+      ShortcutItem(
         type: 'action_learn',
-        localizedTitle: 'Learn',
+        localizedTitle: t.learn,
       ),
-      const ShortcutItem(
+      ShortcutItem(
         type: 'action_tutorials',
-        localizedTitle: 'Tutorials',
+        localizedTitle: t.tutorials,
       ),
       if (!Platform.isIOS)
-        const ShortcutItem(
+        ShortcutItem(
           type: 'action_code_radio',
-          localizedTitle: 'Code Radio',
+          localizedTitle: t.code_radio,
         ),
-      const ShortcutItem(
+      ShortcutItem(
         type: 'action_podcasts',
-        localizedTitle: 'Podcasts',
+        localizedTitle: t.podcasts,
       ),
     ]);
 

@@ -550,6 +550,188 @@
     "quincy_email_part_fifteen": "By the way, each Friday I send an email with 5 links about programming and computer science. I send these to about 4 million people. Would you like me to send this to you, too?",
     "quincy_email_confirm": "Yes Please",
     "quincy_email_no_thanks": "No Thanks",
+    "cancel": "Cancel",
+    "leave": "Leave",
+    "back": "Back",
+    "email_error": "Email Error",
+    "login_email_error_subject": "Error logging in to mobile app",
+    "login_email_error_message": "Please email the below error to {supportEmail}:\n\n{error}\n\n{stackTrace}",
+    "@login_email_error_message": {
+        "placeholders": {
+            "supportEmail": {
+                "type": "String"
+            },
+            "error": {
+                "type": "String"
+            },
+            "stackTrace": {
+                "type": "String"
+            }
+        }
+    },
+    "quick_action_daily_challenges": "Daily Challenges",
+    "code_radio": "CODE RADIO",
+    "no_blocks_available": "No blocks available right now.",
+    "coming_soon": "Coming Soon",
+    "temporarily_unavailable": "Temporarily unavailable, come back soon.",
+    "login_coming_soon": "Login will soon be available!",
+    "coming_soon_web": "Coming soon - use the web version",
+    "daily_coding_challenges": "Daily Coding Challenges",
+    "daily_challenge_empty": "No challenges available at the moment.",
+    "daily_challenge_completed": "Today's challenge completed!",
+    "daily_challenge_countdown_label": "Countdown timer. Next challenge in {timeLeft}",
+    "@daily_challenge_countdown_label": {
+        "placeholders": {
+            "timeLeft": {
+                "type": "String"
+            }
+        }
+    },
+    "daily_challenge_next_in": "Next challenge in: {timeLeft}",
+    "@daily_challenge_next_in": {
+        "placeholders": {
+            "timeLeft": {
+                "type": "String"
+            }
+        }
+    },
+    "daily_challenge_view_past_tooltip": "View past daily challenges",
+    "daily_challenge_view_past": "View past challenges",
+    "daily_challenge_today": "Today's challenge",
+    "daily_challenge_prompt": "Do you have the skills to complete this challenge?",
+    "daily_challenge_start_tooltip": "Start the daily challenge now",
+    "daily_challenge_go_to_challenge": "Go to challenge",
+    "daily_challenge_start": "Start the challenge",
+    "daily_challenge_completed_semantics": "Daily challenge completed. View past challenges.",
+    "daily_challenge_card_semantics": "Daily challenge card",
+    "download_complete": "Download complete",
+    "download_episode": "Download episode",
+    "challenge_card_description": "Description",
+    "challenge_card_video": "Video",
+    "challenge_card_watch_video": "Watch the Video",
+    "challenge_card_transcript": "Transcript",
+    "challenge_card_scene": "Scene",
+    "challenge_card_listen_audio": "Listen to the Audio",
+    "challenge_card_assignments": "Assignments",
+    "challenge_card_explanation": "Explanation",
+    "challenge_card_fill_blank": "Fill in the Blank",
+    "challenge_card_feedback": "Feedback",
+    "challenge_card_lesson": "Lesson",
+    "tap_to_expand": "Tap to expand",
+    "tests": "Tests",
+    "quiz_leave_title": "Are you sure?",
+    "quiz_leave_message": "Do you want to leave this quiz? Your progress will be lost.",
+    "quiz_question": "Question",
+    "quiz_question_number": "Question {questionNumber}",
+    "@quiz_question_number": {
+        "placeholders": {
+            "questionNumber": {
+                "type": "int"
+            }
+        }
+    },
+    "quiz_correct": "Correct!",
+    "quiz_incorrect": "Incorrect!",
+    "quiz_unanswered_questions": "The following questions are unanswered: {questions}. You must answer all questions.",
+    "@quiz_unanswered_questions": {
+        "placeholders": {
+            "questions": {
+                "type": "String"
+            }
+        }
+    },
+    "quiz_passed": "You have {correctQuestionsCount} out of {totalQuestions} questions correct. You have passed.",
+    "@quiz_passed": {
+        "placeholders": {
+            "correctQuestionsCount": {
+                "type": "int"
+            },
+            "totalQuestions": {
+                "type": "int"
+            }
+        }
+    },
+    "quiz_failed": "You have {correctQuestionsCount} out of {totalQuestions} questions correct. You did not pass.",
+    "@quiz_failed": {
+        "placeholders": {
+            "correctQuestionsCount": {
+                "type": "int"
+            },
+            "totalQuestions": {
+                "type": "int"
+            }
+        }
+    },
+    "some_answers_are_incorrect": "Some answers are incorrect.",
+    "show_transcript": "Show transcript",
+    "audio_load_error": "Error loading audio",
+    "project_link_hint": "ex: https://replit.com/@camperbot/hello",
+    "project_link_invalid": "Please enter a valid link.",
+    "project_link_own_work": "Remember to submit your own work.",
+    "project_link_insecure": "An unsecure (http) URL cannot be used.",
+    "project_link_public_url": "Remember to submit a publicly visible app URL.",
+    "forum_create_post": "Create a post",
+    "forum_help_description": "If you've already tried the Read-Search-Ask method, then you can try asking for help on the freeCodeCamp forum.",
+    "forum_confirm_description": "You must confirm the following statements before you can submit your post to the forum.",
+    "forum_tell_us_heading": "Tell us what's happening:",
+    "forum_describe_issue": "Describe your issue in detail here.",
+    "forum_code_so_far": "Your code so far",
+    "forum_mobile_info": "Your mobile information:",
+    "forum_challenge": "Challenge:",
+    "forum_challenge_link": "Link to the challenge:",
+    "forum_warning": "WARNING",
+    "forum_code_too_long": "The challenge seed code and/or your solution exceeded the maximum length we can port over from the challenge.",
+    "forum_additional_step": "You will need to take an additional step here so the code you wrote presents in an easy to read format.",
+    "forum_copy_editor_code": "Please copy/paste all the editor code showing in the challenge from where you just linked.",
+    "forum_replace_code": "Replace these two sentences with your copied code.\nPlease leave the ``` line above and the ``` line below,\nbecause they allow your code to properly format in the post.",
+    "forum_tried": "I have tried the ",
+    "forum_read_search_ask": "Read-Search-Ask",
+    "forum_method": " method",
+    "forum_searched_for": "I have searched for ",
+    "forum_similar_questions": "similar questions that have already been answered on the forum",
+    "forum_enter_more_chars": "Please enter at least {characterCount} more characters.",
+    "@forum_enter_more_chars": {
+        "placeholders": {
+            "characterCount": {
+                "type": "int"
+            }
+        }
+    },
+    "forum_issue_hint": "Describe your issue in detail here...",
+    "forum_help_dialog_prefix": "If you've already tried the ",
+    "forum_help_dialog_suffix": " method, then you can ask for help on the freeCodeCamp forum.",
+    "forum_before_post": "Before making a new post please ",
+    "forum_check_answered": "check if your question has already been answered on the forum",
+    "go_to_next_challenge": "Go to Next Challenge",
+    "check_answers": "Check Answers",
+    "tutorial_written_by_colon": "Written by: {author}",
+    "@tutorial_written_by_colon": {
+        "placeholders": {
+            "author": {
+                "type": "String"
+            }
+        }
+    },
+    "error_loading_chapters": "Error loading chapters: {error} {stackTrace}",
+    "@error_loading_chapters": {
+        "placeholders": {
+            "error": {
+                "type": "String"
+            },
+            "stackTrace": {
+                "type": "String"
+            }
+        }
+    },
+    "syntax_error_line": "There is a syntax error on line {line}. Please check for missing brackets, quotes, or other syntax issues.",
+    "@syntax_error_line": {
+        "placeholders": {
+            "line": {
+                "type": "int"
+            }
+        }
+    },
+    "syntax_error_general": "There is a syntax error in your code. Please check for missing brackets, quotes, or other syntax issues.",
     "error": "Something went wrong!",
     "error_two": "Error",
     "error_three": "Oops! Something went wrong. Please try again in a moment.",
