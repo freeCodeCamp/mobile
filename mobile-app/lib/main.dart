@@ -14,6 +14,7 @@ import 'package:freecodecamp/service/authentication/authentication_service.dart'
 import 'package:freecodecamp/service/dio_service.dart';
 import 'package:freecodecamp/service/firebase/analytics_service.dart';
 import 'package:freecodecamp/service/firebase/remote_config_service.dart';
+import 'package:freecodecamp/service/learn/curriculum_language_service.dart';
 import 'package:freecodecamp/service/learn/daily_challenge_notification_service.dart';
 import 'package:freecodecamp/service/locale_service.dart';
 import 'package:freecodecamp/service/navigation/quick_actions_service.dart';
@@ -28,6 +29,7 @@ Future<void> main({bool testing = false}) async {
   WidgetsFlutterBinding.ensureInitialized();
   setupLocator();
   locator<LocaleService>().init();
+  await locator<CurriculumLanguageService>().init();
 
   await DioService().init();
   await AppAudioService().init();

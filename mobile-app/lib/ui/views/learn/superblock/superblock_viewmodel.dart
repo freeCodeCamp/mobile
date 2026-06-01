@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:freecodecamp/app/app.locator.dart';
@@ -5,11 +7,13 @@ import 'package:freecodecamp/models/learn/curriculum_model.dart';
 import 'package:freecodecamp/service/authentication/authentication_service.dart';
 import 'package:freecodecamp/service/dio_service.dart';
 import 'package:freecodecamp/service/firebase/remote_config_service.dart';
+import 'package:freecodecamp/service/learn/curriculum_language_service.dart';
 import 'package:freecodecamp/service/learn/learn_offline_service.dart';
 import 'package:freecodecamp/service/learn/learn_service.dart';
 import 'package:stacked/stacked.dart';
 
 class SuperBlockViewModel extends BaseViewModel {
+  final _curriculumLanguageService = locator<CurriculumLanguageService>();
   final _learnOfflineService = locator<LearnOfflineService>();
   LearnOfflineService get learnOfflineService => _learnOfflineService;
 
@@ -22,6 +26,11 @@ class SuperBlockViewModel extends BaseViewModel {
 
   final _dio = DioService.dio;
 
+  StreamSubscription<CurriculumLanguage>? _languageSubscription;
+  String? _dashedName;
+  String? _name;
+  bool _hasInternet = true;
+
   Map<String, bool> _blockOpenStates = {};
   Map<String, bool> get blockOpenStates => _blockOpenStates;
 
@@ -31,6 +40,29 @@ class SuperBlockViewModel extends BaseViewModel {
   set setSuperBlockData(Future<SuperBlock>? superBlockData) {
     _superBlockData = superBlockData;
     notifyListeners();
+  }
+
+  void init(String dashedName, String name, bool hasInternet) {
+    _dashedName = dashedName;
+    _name = name;
+    _hasInternet = hasInternet;
+
+    _languageSubscription ??=
+        _curriculumLanguageService.stream.listen((_) => _reload());
+
+    setSuperBlockData = getSuperBlockData(dashedName, name, hasInternet);
+  }
+
+  void _reload() {
+    if (_dashedName != null && _name != null) {
+      setSuperBlockData = getSuperBlockData(_dashedName!, _name!, _hasInternet);
+    }
+  }
+
+  @override
+  void dispose() {
+    _languageSubscription?.cancel();
+    super.dispose();
   }
 
   set blockOpenStates(Map<String, bool> openStates) {
@@ -64,7 +96,7 @@ class SuperBlockViewModel extends BaseViewModel {
     String name,
     bool hasInternet,
   ) async {
-    String baseUrl = LearnService.baseUrl;
+    String baseUrl = _curriculumLanguageService.baseUrl;
 
     if (!hasInternet) {
       final cachedBlocks =

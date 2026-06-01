@@ -20,6 +20,7 @@ import '../service/firebase/remote_config_service.dart';
 import '../service/learn/daily_challenge_notification_service.dart';
 import '../service/learn/daily_challenge_service.dart';
 import '../service/learn/learn_file_service.dart';
+import '../service/learn/curriculum_language_service.dart';
 import '../service/learn/learn_offline_service.dart';
 import '../service/learn/learn_service.dart';
 import '../service/locale_service.dart';
@@ -60,6 +61,7 @@ Future<void> setupLocator({
   locator.registerLazySingleton(() => RemoteConfigService());
   locator.registerLazySingleton(() => BookmarksDatabaseService());
   locator.registerLazySingleton(() => LocaleService());
+  locator.registerLazySingleton(() => CurriculumLanguageService());
   locator.registerLazySingleton(() => DioService());
   locator.registerLazySingleton(() => NewsApiService());
 }

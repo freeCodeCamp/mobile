@@ -22,6 +22,28 @@ class LearnLandingView extends StatelessWidget {
         backgroundColor: FccColors.gray90,
         appBar: AppBar(
           title: Text('LEARN'),
+          actions: [
+            PopupMenuButton<String>(
+              color: FccColors.gray85,
+              onSelected: (code) => model.changeLocale(code),
+              itemBuilder: (context) => [
+                for (int i = 0; i < model.curriculumLocaleCodes.length; i++)
+                  PopupMenuItem<String>(
+                    value: model.curriculumLocaleCodes[i],
+                    child: Text(
+                      model.curriculumLocaleNames[i],
+                      style: TextStyle(
+                        color: model.currentLocaleCode ==
+                                model.curriculumLocaleCodes[i]
+                            ? FccColors.blue50
+                            : Colors.white,
+                      ),
+                    ),
+                  ),
+              ],
+              icon: const Icon(Icons.language),
+            ),
+          ],
         ),
         drawer: const DrawerWidgetView(
           key: Key('drawer'),
@@ -256,70 +278,70 @@ class SuperBlockButton extends StatelessWidget {
           vertical: 6,
           horizontal: 4,
         ),
-      constraints: BoxConstraints(
-        minHeight: 80,
-      ),
-      child: ElevatedButton(
-        style: ElevatedButton.styleFrom(
-          padding: const EdgeInsets.all(5),
-          backgroundColor: FccColors.gray80,
-          side: const BorderSide(
-            width: 2,
-            color: FccColors.gray75,
-          ),
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.all(Radius.circular(5)),
+        constraints: BoxConstraints(
+          minHeight: 80,
+        ),
+        child: ElevatedButton(
+          style: ElevatedButton.styleFrom(
+            padding: const EdgeInsets.all(5),
+            backgroundColor: FccColors.gray80,
             side: const BorderSide(
-              color: Colors.teal,
-              width: 2.0,
+              width: 2,
+              color: FccColors.gray75,
+            ),
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.all(Radius.circular(5)),
+              side: const BorderSide(
+                color: Colors.teal,
+                width: 2.0,
+              ),
             ),
           ),
-        ),
-        onPressed: () {
-          button.public
-              ? model.routeToSuperBlock(button.path, button.name)
-              : model.disabledButtonSnack(button.disabledByManualOverride);
-        },
-        child: Row(
-          children: [
-            Padding(
-              padding: const EdgeInsets.all(12.0),
-              child: SizedBox(
-                width: 36,
-                height: 36,
-                child: SvgPicture.asset(
-                  iconMap[SuperBlocks.fromValue(button.path)] ??
-                      '${SuperBlockButton.learnAssetsPath}/graduation.svg',
-                  fit: BoxFit.contain,
-                  colorFilter: ColorFilter.mode(
-                    FccColors.gray00,
-                    BlendMode.srcIn,
+          onPressed: () {
+            button.public
+                ? model.routeToSuperBlock(button.path, button.name)
+                : model.disabledButtonSnack(button.disabledByManualOverride);
+          },
+          child: Row(
+            children: [
+              Padding(
+                padding: const EdgeInsets.all(12.0),
+                child: SizedBox(
+                  width: 36,
+                  height: 36,
+                  child: SvgPicture.asset(
+                    iconMap[SuperBlocks.fromValue(button.path)] ??
+                        '${SuperBlockButton.learnAssetsPath}/graduation.svg',
+                    fit: BoxFit.contain,
+                    colorFilter: ColorFilter.mode(
+                      FccColors.gray00,
+                      BlendMode.srcIn,
+                    ),
                   ),
                 ),
               ),
-            ),
-            Expanded(
-              flex: 8,
-              child: Text(
-                button.name,
-                textAlign: TextAlign.left,
-                style: const TextStyle(fontSize: 20),
-              ),
-            ),
-            const Expanded(
-              flex: 2,
-              child: Align(
-                alignment: Alignment.centerRight,
-                child: Padding(
-                  padding: EdgeInsets.symmetric(vertical: 8, horizontal: 12),
-                  child: Icon(Icons.arrow_forward_ios),
+              Expanded(
+                flex: 8,
+                child: Text(
+                  button.name,
+                  textAlign: TextAlign.left,
+                  style: const TextStyle(fontSize: 20),
                 ),
               ),
-            )
-          ],
+              const Expanded(
+                flex: 2,
+                child: Align(
+                  alignment: Alignment.centerRight,
+                  child: Padding(
+                    padding: EdgeInsets.symmetric(vertical: 8, horizontal: 12),
+                    child: Icon(Icons.arrow_forward_ios),
+                  ),
+                ),
+              )
+            ],
+          ),
         ),
       ),
-    ),
     );
   }
 }
