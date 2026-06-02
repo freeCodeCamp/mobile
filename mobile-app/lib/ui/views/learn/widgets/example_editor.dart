@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_html/flutter_html.dart';
+import 'package:freecodecamp/extensions/i18n_extension.dart';
 import 'package:freecodecamp/models/learn/challenge_model.dart';
 import 'package:freecodecamp/ui/views/learn/widgets/challenge_card.dart';
 import 'package:freecodecamp/ui/views/news/html_handler/html_handler.dart';
@@ -19,7 +20,7 @@ class ExampleEditor extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return ChallengeCard(
-      title: 'Lesson',
+      title: context.t.challenge_card_lesson,
       child: Column(
         mainAxisAlignment: MainAxisAlignment.start,
         crossAxisAlignment: CrossAxisAlignment.start,

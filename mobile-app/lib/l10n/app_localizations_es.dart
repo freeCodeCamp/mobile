@@ -132,6 +132,14 @@ class AppLocalizationsEs extends AppLocalizations {
   String get passed => 'Passed';
 
   @override
+  String get review => 'Review';
+
+  @override
+  String steps_complete(String progress) {
+    return '$progress Steps Complete';
+  }
+
+  @override
   String get hint => 'Hint';
 
   @override
@@ -487,6 +495,532 @@ class AppLocalizationsEs extends AppLocalizations {
 
   @override
   String get quincy_email_no_thanks => 'No Thanks';
+
+  @override
+  String get cancel => 'Cancel';
+
+  @override
+  String get leave => 'Leave';
+
+  @override
+  String get back => 'Back';
+
+  @override
+  String get completed => 'Completed';
+
+  @override
+  String get start => 'Start';
+
+  @override
+  String get hide_steps => 'Hide Steps';
+
+  @override
+  String get show_steps => 'Show Steps';
+
+  @override
+  String get hide_challenges => 'Hide Challenges';
+
+  @override
+  String get show_challenges => 'Show Challenges';
+
+  @override
+  String get hide_tasks => 'Hide Tasks';
+
+  @override
+  String get show_tasks => 'Show Tasks';
+
+  @override
+  String copied_to_clipboard(String subject) {
+    return '$subject copied to clipboard!';
+  }
+
+  @override
+  String get email_error => 'Email Error';
+
+  @override
+  String get login_email_error_subject => 'Error logging in to mobile app';
+
+  @override
+  String login_email_error_message(
+      String supportEmail, String error, String stackTrace) {
+    return 'Please email the below error to $supportEmail:\n\n$error\n\n$stackTrace';
+  }
+
+  @override
+  String get quick_action_daily_challenges => 'Daily Challenges';
+
+  @override
+  String get code_radio => 'CODE RADIO';
+
+  @override
+  String get report_an_issue => 'REPORT AN ISSUE';
+
+  @override
+  String login_terms(String termsOfService, String privacyPolicy) {
+    return 'By continuing, you indicate that you have read and agree to freeCodeCamp.org\'s $termsOfService and $privacyPolicy.';
+  }
+
+  @override
+  String get terms_of_service => 'Terms of Service';
+
+  @override
+  String get privacy_policy => 'Privacy Policy';
+
+  @override
+  String get no_blocks_available => 'No blocks available right now.';
+
+  @override
+  String get coming_soon => 'Coming Soon';
+
+  @override
+  String get temporarily_unavailable =>
+      'Temporarily unavailable, come back soon.';
+
+  @override
+  String get not_available_web => 'Not available use the web version';
+
+  @override
+  String get stage_core => 'Recommended curriculum (still in beta):';
+
+  @override
+  String get stage_english => 'Learn English for Developers:';
+
+  @override
+  String get stage_spanish => 'Learn Professional Spanish:';
+
+  @override
+  String get stage_chinese => 'Learn Professional Chinese:';
+
+  @override
+  String get stage_extra => 'Prepare for the developer interview job search:';
+
+  @override
+  String get stage_professional => 'Professional certifications:';
+
+  @override
+  String get login_coming_soon => 'Login will soon be available!';
+
+  @override
+  String get coming_soon_web => 'Coming soon - use the web version';
+
+  @override
+  String get daily_coding_challenges => 'Daily Coding Challenges';
+
+  @override
+  String get daily_challenge_empty => 'No challenges available at the moment.';
+
+  @override
+  String get daily_challenge_completed => 'Today\'s challenge completed!';
+
+  @override
+  String daily_challenge_countdown_label(String timeLeft) {
+    return 'Countdown timer. Next challenge in $timeLeft';
+  }
+
+  @override
+  String daily_challenge_next_in(String timeLeft) {
+    return 'Next challenge in: $timeLeft';
+  }
+
+  @override
+  String get daily_challenge_view_past_tooltip => 'View past daily challenges';
+
+  @override
+  String get daily_challenge_view_past => 'View past challenges';
+
+  @override
+  String get daily_challenge_today => 'Today\'s challenge';
+
+  @override
+  String get daily_challenge_prompt =>
+      'Do you have the skills to complete this challenge?';
+
+  @override
+  String get daily_challenge_start_tooltip => 'Start the daily challenge now';
+
+  @override
+  String get daily_challenge_go_to_challenge => 'Go to challenge';
+
+  @override
+  String get daily_challenge_start => 'Start the challenge';
+
+  @override
+  String get daily_challenge_completed_semantics =>
+      'Daily challenge completed. View past challenges.';
+
+  @override
+  String get daily_challenge_card_semantics => 'Daily challenge card';
+
+  @override
+  String daily_challenge_month_description(String monthYear) {
+    return 'Explore the daily coding challenges for $monthYear. Stay motivated and keep your learning streak alive!';
+  }
+
+  @override
+  String daily_challenge_item_title(
+      int challengeNumber, String challengeTitle) {
+    return 'Challenge $challengeNumber: $challengeTitle';
+  }
+
+  @override
+  String daily_challenge_item_completed_label(
+      int challengeNumber, String challengeTitle) {
+    return 'Challenge $challengeNumber: $challengeTitle, completed';
+  }
+
+  @override
+  String daily_challenge_item_not_completed_label(
+      int challengeNumber, String challengeTitle) {
+    return 'Challenge $challengeNumber: $challengeTitle, not completed';
+  }
+
+  @override
+  String get new_daily_challenge_available =>
+      'New Daily Challenge Available! 🧩';
+
+  @override
+  String get daily_challenge_notification_body =>
+      'A fresh coding challenge is waiting for you. Ready to solve it?';
+
+  @override
+  String get daily_challenge_notifications => 'Daily Challenge Notifications';
+
+  @override
+  String get daily_challenge_notifications_description =>
+      'Notifications for new daily coding challenges';
+
+  @override
+  String get download_complete => 'Download complete';
+
+  @override
+  String get download_episode => 'Download episode';
+
+  @override
+  String get notification_channel_description =>
+      'Notifications for completed podcast episode downloads';
+
+  @override
+  String get podcast_pause_episode => 'Pause episode';
+
+  @override
+  String get podcast_play_episode => 'Play episode';
+
+  @override
+  String get user => 'User';
+
+  @override
+  String get profile_location => 'Location';
+
+  @override
+  String get profile_x => 'X';
+
+  @override
+  String get profile_github => 'GitHub';
+
+  @override
+  String get profile_linkedin => 'LinkedIn';
+
+  @override
+  String get profile_website => 'Website';
+
+  @override
+  String get profile_joined => 'Joined';
+
+  @override
+  String get profile_points_label => 'Points';
+
+  @override
+  String get profile_longest_streak_label => 'Longest Streak';
+
+  @override
+  String get profile_current_streak_label => 'Current Streak';
+
+  @override
+  String get profile_about => 'About';
+
+  @override
+  String get profile_no_certifications =>
+      'You have not yet earned any certifications.';
+
+  @override
+  String get cert_responsive_web_design =>
+      'Responsive Web Design Certification';
+
+  @override
+  String get cert_javascript_algorithms =>
+      'JavaScript Algorithms and Data Structures Certification';
+
+  @override
+  String get cert_front_end_libraries =>
+      'Front End Development Libraries Certification';
+
+  @override
+  String get cert_data_visualization => 'Data Visualization Certification';
+
+  @override
+  String get cert_back_end_development_apis =>
+      'Back End Development and APIs Certification';
+
+  @override
+  String get cert_quality_assurance => 'Quality Assurance Certification';
+
+  @override
+  String get cert_information_security => 'Information Security Certification';
+
+  @override
+  String get cert_scientific_computing_python =>
+      'Scientific Computing with Python Certification';
+
+  @override
+  String get cert_data_analysis_python =>
+      'Data Analysis with Python Certification';
+
+  @override
+  String get cert_machine_learning_python =>
+      'Machine Learning with Python Certification';
+
+  @override
+  String get cert_relational_database => 'Relational Database Certification';
+
+  @override
+  String get cert_college_algebra_python => 'College Algebra with Python';
+
+  @override
+  String get cert_foundational_csharp => 'Foundational C# with Microsoft';
+
+  @override
+  String get cert_front_end => 'Front End Certification';
+
+  @override
+  String get cert_back_end => 'Back End Certification';
+
+  @override
+  String get cert_information_security_quality_assurance =>
+      'Information Security and Quality Assurance Certification';
+
+  @override
+  String get cert_full_stack => 'Full Stack Certification';
+
+  @override
+  String get challenge_card_description => 'Description';
+
+  @override
+  String get challenge_card_video => 'Video';
+
+  @override
+  String get challenge_card_watch_video => 'Watch the Video';
+
+  @override
+  String get challenge_card_transcript => 'Transcript';
+
+  @override
+  String get challenge_card_scene => 'Scene';
+
+  @override
+  String get challenge_card_listen_audio => 'Listen to the Audio';
+
+  @override
+  String get challenge_card_assignments => 'Assignments';
+
+  @override
+  String get challenge_card_explanation => 'Explanation';
+
+  @override
+  String get challenge_card_fill_blank => 'Fill in the Blank';
+
+  @override
+  String get challenge_card_feedback => 'Feedback';
+
+  @override
+  String get challenge_card_lesson => 'Lesson';
+
+  @override
+  String get tap_to_expand => 'Tap to expand';
+
+  @override
+  String get tests => 'Tests';
+
+  @override
+  String get quiz_leave_title => 'Are you sure?';
+
+  @override
+  String get quiz_leave_message =>
+      'Do you want to leave this quiz? Your progress will be lost.';
+
+  @override
+  String get quiz_question => 'Question';
+
+  @override
+  String quiz_question_number(int questionNumber) {
+    return 'Question $questionNumber';
+  }
+
+  @override
+  String get quiz_correct => 'Correct!';
+
+  @override
+  String get quiz_incorrect => 'Incorrect!';
+
+  @override
+  String quiz_unanswered_questions(String questions) {
+    return 'The following questions are unanswered: $questions. You must answer all questions.';
+  }
+
+  @override
+  String quiz_passed(int correctQuestionsCount, int totalQuestions) {
+    return 'You have $correctQuestionsCount out of $totalQuestions questions correct. You have passed.';
+  }
+
+  @override
+  String quiz_failed(int correctQuestionsCount, int totalQuestions) {
+    return 'You have $correctQuestionsCount out of $totalQuestions questions correct. You did not pass.';
+  }
+
+  @override
+  String get some_answers_are_incorrect => 'Some answers are incorrect.';
+
+  @override
+  String get show_transcript => 'Show transcript';
+
+  @override
+  String get audio_load_error => 'Error loading audio';
+
+  @override
+  String get project_link_hint => 'ex: https://replit.com/@camperbot/hello';
+
+  @override
+  String get project_link_invalid => 'Please enter a valid link.';
+
+  @override
+  String get project_link_own_work => 'Remember to submit your own work.';
+
+  @override
+  String get project_link_insecure => 'An unsecure (http) URL cannot be used.';
+
+  @override
+  String get project_link_public_url =>
+      'Remember to submit a publicly visible app URL.';
+
+  @override
+  String get forum_create_post => 'Create a post';
+
+  @override
+  String get forum_help_description =>
+      'If you\'ve already tried the Read-Search-Ask method, then you can try asking for help on the freeCodeCamp forum.';
+
+  @override
+  String get forum_confirm_description =>
+      'You must confirm the following statements before you can submit your post to the forum.';
+
+  @override
+  String get forum_tell_us_heading => 'Tell us what\'s happening:';
+
+  @override
+  String get forum_describe_issue => 'Describe your issue in detail here.';
+
+  @override
+  String get forum_code_so_far => 'Your code so far';
+
+  @override
+  String get forum_mobile_info => 'Your mobile information:';
+
+  @override
+  String get forum_challenge => 'Challenge:';
+
+  @override
+  String get forum_challenge_link => 'Link to the challenge:';
+
+  @override
+  String get forum_warning => 'WARNING';
+
+  @override
+  String get forum_code_too_long =>
+      'The challenge seed code and/or your solution exceeded the maximum length we can port over from the challenge.';
+
+  @override
+  String get forum_additional_step =>
+      'You will need to take an additional step here so the code you wrote presents in an easy to read format.';
+
+  @override
+  String get forum_copy_editor_code =>
+      'Please copy/paste all the editor code showing in the challenge from where you just linked.';
+
+  @override
+  String get forum_replace_code =>
+      'Replace these two sentences with your copied code.\nPlease leave the ``` line above and the ``` line below,\nbecause they allow your code to properly format in the post.';
+
+  @override
+  String get forum_tried => 'I have tried the ';
+
+  @override
+  String get forum_read_search_ask => 'Read-Search-Ask';
+
+  @override
+  String get forum_method => ' method';
+
+  @override
+  String get forum_searched_for => 'I have searched for ';
+
+  @override
+  String get forum_similar_questions =>
+      'similar questions that have already been answered on the forum';
+
+  @override
+  String forum_enter_more_chars(int characterCount) {
+    return 'Please enter at least $characterCount more characters.';
+  }
+
+  @override
+  String get forum_issue_hint => 'Describe your issue in detail here...';
+
+  @override
+  String get forum_help_dialog_prefix => 'If you\'ve already tried the ';
+
+  @override
+  String get forum_help_dialog_suffix =>
+      ' method, then you can ask for help on the freeCodeCamp forum.';
+
+  @override
+  String get forum_before_post => 'Before making a new post please ';
+
+  @override
+  String get forum_check_answered =>
+      'check if your question has already been answered on the forum';
+
+  @override
+  String get go_to_next_challenge => 'Go to Next Challenge';
+
+  @override
+  String get check_answers => 'Check Answers';
+
+  @override
+  String tutorial_written_by_colon(String author) {
+    return 'Written by: $author';
+  }
+
+  @override
+  String error_loading_chapters(String error, String stackTrace) {
+    return 'Error loading chapters: $error $stackTrace';
+  }
+
+  @override
+  String syntax_error_line(int line) {
+    return 'There is a syntax error on line $line. Please check for missing brackets, quotes, or other syntax issues.';
+  }
+
+  @override
+  String get syntax_error_general =>
+      'There is a syntax error in your code. Please check for missing brackets, quotes, or other syntax issues.';
+
+  @override
+  String unknown_challenge(String challengeType) {
+    return 'Unknown Challenge, info : $challengeType';
+  }
+
+  @override
+  String challenge_error(String error, String stackTrace) {
+    return 'Error: $error\n$stackTrace';
+  }
 
   @override
   String get error => 'Something went wrong!';

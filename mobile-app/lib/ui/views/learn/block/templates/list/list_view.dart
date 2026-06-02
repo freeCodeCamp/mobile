@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_html/flutter_html.dart';
+import 'package:freecodecamp/extensions/i18n_extension.dart';
 import 'package:freecodecamp/models/learn/curriculum_model.dart';
 import 'package:freecodecamp/ui/theme/fcc_theme.dart';
 import 'package:freecodecamp/ui/views/learn/block/block_template_viewmodel.dart';
@@ -50,7 +51,7 @@ class BlockListView extends StatelessWidget {
                               ),
                             ),
                             Text(
-                              'Completed',
+                              context.t.completed,
                               style: TextStyle(
                                   color: Color.fromRGBO(0x99, 0xc9, 0xff, 1),
                                   fontWeight: FontWeight.bold),
@@ -105,7 +106,7 @@ class BlockListView extends StatelessWidget {
                       ),
                     ),
                     child: Text(
-                      isOpen ? 'Hide Steps' : 'Show Steps',
+                      isOpen ? context.t.hide_steps : context.t.show_steps,
                     ),
                   ),
                 ),

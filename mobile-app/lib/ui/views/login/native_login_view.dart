@@ -215,7 +215,7 @@ class NativeLoginView extends StatelessWidget {
                                   }
                                 : null,
                             child: Text(
-                              'Submit and sign in to freeCodeCamp',
+                              context.t.email_submit_code,
                               style: TextStyle(
                                 fontSize: 20,
                               ),
@@ -297,46 +297,7 @@ class NativeLoginView extends StatelessWidget {
                           style: TextStyle(
                             color: Colors.white.withValues(alpha: 0.87),
                           ),
-                          children: [
-                            TextSpan(
-                              text:
-                                  "By continuing, you indicate that you have read and agree to freeCodeCamp.org's ",
-                            ),
-                            TextSpan(
-                              text: 'Terms of Service',
-                              style: const TextStyle(
-                                decoration: TextDecoration.underline,
-                              ),
-                              recognizer: TapGestureRecognizer()
-                                ..onTap = () {
-                                  launchUrl(
-                                    Uri.parse(
-                                      'https://www.freecodecamp.org/news/terms-of-service',
-                                    ),
-                                  );
-                                },
-                            ),
-                            TextSpan(
-                              text: ' and ',
-                            ),
-                            TextSpan(
-                              text: 'Privacy Policy',
-                              style: const TextStyle(
-                                decoration: TextDecoration.underline,
-                              ),
-                              recognizer: TapGestureRecognizer()
-                                ..onTap = () {
-                                  launchUrl(
-                                    Uri.parse(
-                                      'https://www.freecodecamp.org/news/privacy-policy',
-                                    ),
-                                  );
-                                },
-                            ),
-                            TextSpan(
-                              text: '.',
-                            ),
-                          ],
+                          children: _buildLoginTermsSpans(context),
                         ),
                       ),
                     )),
@@ -349,4 +310,73 @@ class NativeLoginView extends StatelessWidget {
       ),
     );
   }
+
+  List<TextSpan> _buildLoginTermsSpans(BuildContext context) {
+    final linkStyle = const TextStyle(
+      decoration: TextDecoration.underline,
+    );
+    final termsOfService = context.t.terms_of_service;
+    final privacyPolicy = context.t.privacy_policy;
+    final message = context.t.login_terms(termsOfService, privacyPolicy);
+    final links = [
+      _LoginTermsLink(
+        label: termsOfService,
+        url: 'https://www.freecodecamp.org/news/terms-of-service',
+      ),
+      _LoginTermsLink(
+        label: privacyPolicy,
+        url: 'https://www.freecodecamp.org/news/privacy-policy',
+      ),
+    ];
+
+    final orderedLinks = links
+        .map((link) => MapEntry(message.indexOf(link.label), link))
+        .where((entry) => entry.key >= 0)
+        .toList()
+      ..sort((a, b) => a.key.compareTo(b.key));
+
+    if (orderedLinks.length != links.length) {
+      return [TextSpan(text: message)];
+    }
+
+    final spans = <TextSpan>[];
+    var cursor = 0;
+
+    for (final entry in orderedLinks) {
+      final linkStart = entry.key;
+      final link = entry.value;
+
+      if (linkStart > cursor) {
+        spans.add(TextSpan(text: message.substring(cursor, linkStart)));
+      }
+
+      spans.add(
+        TextSpan(
+          text: link.label,
+          style: linkStyle,
+          recognizer: TapGestureRecognizer()
+            ..onTap = () {
+              launchUrl(Uri.parse(link.url));
+            },
+        ),
+      );
+      cursor = linkStart + link.label.length;
+    }
+
+    if (cursor < message.length) {
+      spans.add(TextSpan(text: message.substring(cursor)));
+    }
+
+    return spans;
+  }
+}
+
+class _LoginTermsLink {
+  const _LoginTermsLink({
+    required this.label,
+    required this.url,
+  });
+
+  final String label;
+  final String url;
 }

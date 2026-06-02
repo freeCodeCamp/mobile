@@ -153,6 +153,20 @@
     "@passed": {
         "description": "learn > block > challenge > *complete challenge* > pass panel"
     },
+    "review": "Review",
+    "@review": {
+        "description": "learn > chapter card label for review modules"
+    },
+    "steps_complete": "{progress} Steps Complete",
+    "@steps_complete": {
+        "description": "learn > chapter card progress label. The progress placeholder is a completed/total value, for example 2/10.",
+        "placeholders": {
+            "progress": {
+                "type": "String",
+                "example": "2/10"
+            }
+        }
+    },
     "hint": "Hint",
     "@hint": {
         "description": "learn > block > challenge > *fail challenge* > hint panel"
@@ -550,6 +564,514 @@
     "quincy_email_part_fifteen": "By the way, each Friday I send an email with 5 links about programming and computer science. I send these to about 4 million people. Would you like me to send this to you, too?",
     "quincy_email_confirm": "Yes Please",
     "quincy_email_no_thanks": "No Thanks",
+    "cancel": "Cancel",
+    "@cancel": {
+        "description": "generic cancel action"
+    },
+    "leave": "Leave",
+    "@leave": {
+        "description": "generic leave action"
+    },
+    "back": "Back",
+    "@back": {
+        "description": "generic back navigation label"
+    },
+    "completed": "Completed",
+    "@completed": {
+        "description": "status label for a completed lesson or challenge"
+    },
+    "start": "Start",
+    "@start": {
+        "description": "generic start action"
+    },
+    "hide_steps": "Hide Steps",
+    "@hide_steps": {
+        "description": "learn > block button that collapses the steps list"
+    },
+    "show_steps": "Show Steps",
+    "@show_steps": {
+        "description": "learn > block button that expands the steps list"
+    },
+    "hide_challenges": "Hide Challenges",
+    "@hide_challenges": {
+        "description": "daily challenges view button that collapses a month of challenges"
+    },
+    "show_challenges": "Show Challenges",
+    "@show_challenges": {
+        "description": "daily challenges view button that expands a month of challenges"
+    },
+    "hide_tasks": "Hide Tasks",
+    "@hide_tasks": {
+        "description": "dialogue block button that collapses the task list"
+    },
+    "show_tasks": "Show Tasks",
+    "@show_tasks": {
+        "description": "dialogue block button that expands the task list"
+    },
+    "copied_to_clipboard": "{subject} copied to clipboard!",
+    "@copied_to_clipboard": {
+        "description": "snackbar shown after copying inline code from a tutorial",
+        "placeholders": {
+            "subject": {
+                "type": "String",
+                "example": "console.log()"
+            }
+        }
+    },
+    "email_error": "Email Error",
+    "login_email_error_subject": "Error logging in to mobile app",
+    "login_email_error_message": "Please email the below error to {supportEmail}:\n\n{error}\n\n{stackTrace}",
+    "@login_email_error_message": {
+        "placeholders": {
+            "supportEmail": {
+                "type": "String"
+            },
+            "error": {
+                "type": "String"
+            },
+            "stackTrace": {
+                "type": "String"
+            }
+        }
+    },
+    "quick_action_daily_challenges": "Daily Challenges",
+    "code_radio": "CODE RADIO",
+    "@code_radio": {
+        "description": "drawer and quick action label for Code Radio"
+    },
+    "report_an_issue": "REPORT AN ISSUE",
+    "@report_an_issue": {
+        "description": "drawer action that opens the GitHub issue form"
+    },
+    "login_terms": "By continuing, you indicate that you have read and agree to freeCodeCamp.org's {termsOfService} and {privacyPolicy}.",
+    "@login_terms": {
+        "description": "login view legal copy. The termsOfService and privacyPolicy placeholders are displayed as tappable links.",
+        "placeholders": {
+            "termsOfService": {
+                "type": "String",
+                "example": "Terms of Service"
+            },
+            "privacyPolicy": {
+                "type": "String",
+                "example": "Privacy Policy"
+            }
+        }
+    },
+    "terms_of_service": "Terms of Service",
+    "@terms_of_service": {
+        "description": "login view link text for the terms page"
+    },
+    "privacy_policy": "Privacy Policy",
+    "@privacy_policy": {
+        "description": "login view link text for the privacy policy page"
+    },
+    "no_blocks_available": "No blocks available right now.",
+    "coming_soon": "Coming Soon",
+    "temporarily_unavailable": "Temporarily unavailable, come back soon.",
+    "@temporarily_unavailable": {
+        "description": "snackbar shown when a curriculum item is temporarily disabled"
+    },
+    "not_available_web": "Not available use the web version",
+    "@not_available_web": {
+        "description": "snackbar shown when a curriculum item is only available on the web"
+    },
+    "stage_core": "Recommended curriculum (still in beta):",
+    "@stage_core": {
+        "description": "learn landing heading for recommended curriculum stage"
+    },
+    "stage_english": "Learn English for Developers:",
+    "@stage_english": {
+        "description": "learn landing heading for English curriculum stage"
+    },
+    "stage_spanish": "Learn Professional Spanish:",
+    "@stage_spanish": {
+        "description": "learn landing heading for Spanish curriculum stage"
+    },
+    "stage_chinese": "Learn Professional Chinese:",
+    "@stage_chinese": {
+        "description": "learn landing heading for Chinese curriculum stage"
+    },
+    "stage_extra": "Prepare for the developer interview job search:",
+    "@stage_extra": {
+        "description": "learn landing heading for interview and job search preparation stage"
+    },
+    "stage_professional": "Professional certifications:",
+    "@stage_professional": {
+        "description": "learn landing heading for professional certification stage"
+    },
+    "login_coming_soon": "Login will soon be available!",
+    "coming_soon_web": "Coming soon - use the web version",
+    "daily_coding_challenges": "Daily Coding Challenges",
+    "daily_challenge_empty": "No challenges available at the moment.",
+    "daily_challenge_completed": "Today's challenge completed!",
+    "daily_challenge_countdown_label": "Countdown timer. Next challenge in {timeLeft}",
+    "@daily_challenge_countdown_label": {
+        "placeholders": {
+            "timeLeft": {
+                "type": "String"
+            }
+        }
+    },
+    "daily_challenge_next_in": "Next challenge in: {timeLeft}",
+    "@daily_challenge_next_in": {
+        "placeholders": {
+            "timeLeft": {
+                "type": "String"
+            }
+        }
+    },
+    "daily_challenge_view_past_tooltip": "View past daily challenges",
+    "daily_challenge_view_past": "View past challenges",
+    "daily_challenge_today": "Today's challenge",
+    "daily_challenge_prompt": "Do you have the skills to complete this challenge?",
+    "daily_challenge_start_tooltip": "Start the daily challenge now",
+    "daily_challenge_go_to_challenge": "Go to challenge",
+    "daily_challenge_start": "Start the challenge",
+    "daily_challenge_completed_semantics": "Daily challenge completed. View past challenges.",
+    "daily_challenge_card_semantics": "Daily challenge card",
+    "daily_challenge_month_description": "Explore the daily coding challenges for {monthYear}. Stay motivated and keep your learning streak alive!",
+    "@daily_challenge_month_description": {
+        "description": "daily challenges view description for a month group",
+        "placeholders": {
+            "monthYear": {
+                "type": "String",
+                "example": "January 2026"
+            }
+        }
+    },
+    "daily_challenge_item_title": "Challenge {challengeNumber}: {challengeTitle}",
+    "@daily_challenge_item_title": {
+        "description": "daily challenges view list item title",
+        "placeholders": {
+            "challengeNumber": {
+                "type": "int",
+                "example": "1"
+            },
+            "challengeTitle": {
+                "type": "String",
+                "example": "Build a Palindrome Checker"
+            }
+        }
+    },
+    "daily_challenge_item_completed_label": "Challenge {challengeNumber}: {challengeTitle}, completed",
+    "@daily_challenge_item_completed_label": {
+        "description": "accessibility label for a completed daily challenge list item",
+        "placeholders": {
+            "challengeNumber": {
+                "type": "int",
+                "example": "1"
+            },
+            "challengeTitle": {
+                "type": "String",
+                "example": "Build a Palindrome Checker"
+            }
+        }
+    },
+    "daily_challenge_item_not_completed_label": "Challenge {challengeNumber}: {challengeTitle}, not completed",
+    "@daily_challenge_item_not_completed_label": {
+        "description": "accessibility label for an incomplete daily challenge list item",
+        "placeholders": {
+            "challengeNumber": {
+                "type": "int",
+                "example": "1"
+            },
+            "challengeTitle": {
+                "type": "String",
+                "example": "Build a Palindrome Checker"
+            }
+        }
+    },
+    "new_daily_challenge_available": "New Daily Challenge Available! 🧩",
+    "@new_daily_challenge_available": {
+        "description": "daily challenge notification title"
+    },
+    "daily_challenge_notification_body": "A fresh coding challenge is waiting for you. Ready to solve it?",
+    "@daily_challenge_notification_body": {
+        "description": "daily challenge notification body"
+    },
+    "daily_challenge_notifications": "Daily Challenge Notifications",
+    "@daily_challenge_notifications": {
+        "description": "Android notification channel name for daily challenge notifications"
+    },
+    "daily_challenge_notifications_description": "Notifications for new daily coding challenges",
+    "@daily_challenge_notifications_description": {
+        "description": "Android notification channel description for daily challenge notifications"
+    },
+    "download_complete": "Download complete",
+    "download_episode": "Download episode",
+    "notification_channel_description": "Notifications for completed podcast episode downloads",
+    "@notification_channel_description": {
+        "description": "Android notification channel description for podcast download notifications"
+    },
+    "podcast_pause_episode": "Pause episode",
+    "@podcast_pause_episode": {
+        "description": "accessibility label for the podcast pause button"
+    },
+    "podcast_play_episode": "Play episode",
+    "@podcast_play_episode": {
+        "description": "accessibility label for the podcast play button"
+    },
+    "user": "User",
+    "@user": {
+        "description": "generic fallback username"
+    },
+    "profile_location": "Location",
+    "@profile_location": {
+        "description": "profile metadata label"
+    },
+    "profile_x": "X",
+    "@profile_x": {
+        "description": "profile social link label for X/Twitter"
+    },
+    "profile_github": "GitHub",
+    "@profile_github": {
+        "description": "profile social link label for GitHub"
+    },
+    "profile_linkedin": "LinkedIn",
+    "@profile_linkedin": {
+        "description": "profile social link label for LinkedIn"
+    },
+    "profile_website": "Website",
+    "@profile_website": {
+        "description": "profile website link label"
+    },
+    "profile_joined": "Joined",
+    "@profile_joined": {
+        "description": "profile metadata label for join date"
+    },
+    "profile_points_label": "Points",
+    "@profile_points_label": {
+        "description": "profile metadata label for point total"
+    },
+    "profile_longest_streak_label": "Longest Streak",
+    "@profile_longest_streak_label": {
+        "description": "profile metadata label for longest coding streak"
+    },
+    "profile_current_streak_label": "Current Streak",
+    "@profile_current_streak_label": {
+        "description": "profile metadata label for current coding streak"
+    },
+    "profile_about": "About",
+    "@profile_about": {
+        "description": "profile section heading"
+    },
+    "profile_no_certifications": "You have not yet earned any certifications.",
+    "@profile_no_certifications": {
+        "description": "profile empty state when the user has no certifications"
+    },
+    "cert_responsive_web_design": "Responsive Web Design Certification",
+    "@cert_responsive_web_design": {
+        "description": "profile certification title"
+    },
+    "cert_javascript_algorithms": "JavaScript Algorithms and Data Structures Certification",
+    "@cert_javascript_algorithms": {
+        "description": "profile certification title"
+    },
+    "cert_front_end_libraries": "Front End Development Libraries Certification",
+    "@cert_front_end_libraries": {
+        "description": "profile certification title"
+    },
+    "cert_data_visualization": "Data Visualization Certification",
+    "@cert_data_visualization": {
+        "description": "profile certification title"
+    },
+    "cert_back_end_development_apis": "Back End Development and APIs Certification",
+    "@cert_back_end_development_apis": {
+        "description": "profile certification title"
+    },
+    "cert_quality_assurance": "Quality Assurance Certification",
+    "@cert_quality_assurance": {
+        "description": "profile certification title"
+    },
+    "cert_information_security": "Information Security Certification",
+    "@cert_information_security": {
+        "description": "profile certification title"
+    },
+    "cert_scientific_computing_python": "Scientific Computing with Python Certification",
+    "@cert_scientific_computing_python": {
+        "description": "profile certification title"
+    },
+    "cert_data_analysis_python": "Data Analysis with Python Certification",
+    "@cert_data_analysis_python": {
+        "description": "profile certification title"
+    },
+    "cert_machine_learning_python": "Machine Learning with Python Certification",
+    "@cert_machine_learning_python": {
+        "description": "profile certification title"
+    },
+    "cert_relational_database": "Relational Database Certification",
+    "@cert_relational_database": {
+        "description": "profile certification title"
+    },
+    "cert_college_algebra_python": "College Algebra with Python",
+    "@cert_college_algebra_python": {
+        "description": "profile certification title"
+    },
+    "cert_foundational_csharp": "Foundational C# with Microsoft",
+    "@cert_foundational_csharp": {
+        "description": "profile certification title"
+    },
+    "cert_front_end": "Front End Certification",
+    "@cert_front_end": {
+        "description": "profile legacy certification title"
+    },
+    "cert_back_end": "Back End Certification",
+    "@cert_back_end": {
+        "description": "profile legacy certification title"
+    },
+    "cert_information_security_quality_assurance": "Information Security and Quality Assurance Certification",
+    "@cert_information_security_quality_assurance": {
+        "description": "profile legacy certification title"
+    },
+    "cert_full_stack": "Full Stack Certification",
+    "@cert_full_stack": {
+        "description": "profile legacy certification title"
+    },
+    "challenge_card_description": "Description",
+    "challenge_card_video": "Video",
+    "challenge_card_watch_video": "Watch the Video",
+    "challenge_card_transcript": "Transcript",
+    "challenge_card_scene": "Scene",
+    "challenge_card_listen_audio": "Listen to the Audio",
+    "challenge_card_assignments": "Assignments",
+    "challenge_card_explanation": "Explanation",
+    "challenge_card_fill_blank": "Fill in the Blank",
+    "challenge_card_feedback": "Feedback",
+    "challenge_card_lesson": "Lesson",
+    "tap_to_expand": "Tap to expand",
+    "tests": "Tests",
+    "quiz_leave_title": "Are you sure?",
+    "quiz_leave_message": "Do you want to leave this quiz? Your progress will be lost.",
+    "quiz_question": "Question",
+    "quiz_question_number": "Question {questionNumber}",
+    "@quiz_question_number": {
+        "placeholders": {
+            "questionNumber": {
+                "type": "int"
+            }
+        }
+    },
+    "quiz_correct": "Correct!",
+    "quiz_incorrect": "Incorrect!",
+    "quiz_unanswered_questions": "The following questions are unanswered: {questions}. You must answer all questions.",
+    "@quiz_unanswered_questions": {
+        "placeholders": {
+            "questions": {
+                "type": "String"
+            }
+        }
+    },
+    "quiz_passed": "You have {correctQuestionsCount} out of {totalQuestions} questions correct. You have passed.",
+    "@quiz_passed": {
+        "placeholders": {
+            "correctQuestionsCount": {
+                "type": "int"
+            },
+            "totalQuestions": {
+                "type": "int"
+            }
+        }
+    },
+    "quiz_failed": "You have {correctQuestionsCount} out of {totalQuestions} questions correct. You did not pass.",
+    "@quiz_failed": {
+        "placeholders": {
+            "correctQuestionsCount": {
+                "type": "int"
+            },
+            "totalQuestions": {
+                "type": "int"
+            }
+        }
+    },
+    "some_answers_are_incorrect": "Some answers are incorrect.",
+    "show_transcript": "Show transcript",
+    "audio_load_error": "Error loading audio",
+    "project_link_hint": "ex: https://replit.com/@camperbot/hello",
+    "project_link_invalid": "Please enter a valid link.",
+    "project_link_own_work": "Remember to submit your own work.",
+    "project_link_insecure": "An unsecure (http) URL cannot be used.",
+    "project_link_public_url": "Remember to submit a publicly visible app URL.",
+    "forum_create_post": "Create a post",
+    "forum_help_description": "If you've already tried the Read-Search-Ask method, then you can try asking for help on the freeCodeCamp forum.",
+    "forum_confirm_description": "You must confirm the following statements before you can submit your post to the forum.",
+    "forum_tell_us_heading": "Tell us what's happening:",
+    "forum_describe_issue": "Describe your issue in detail here.",
+    "forum_code_so_far": "Your code so far",
+    "forum_mobile_info": "Your mobile information:",
+    "forum_challenge": "Challenge:",
+    "forum_challenge_link": "Link to the challenge:",
+    "forum_warning": "WARNING",
+    "forum_code_too_long": "The challenge seed code and/or your solution exceeded the maximum length we can port over from the challenge.",
+    "forum_additional_step": "You will need to take an additional step here so the code you wrote presents in an easy to read format.",
+    "forum_copy_editor_code": "Please copy/paste all the editor code showing in the challenge from where you just linked.",
+    "forum_replace_code": "Replace these two sentences with your copied code.\nPlease leave the ``` line above and the ``` line below,\nbecause they allow your code to properly format in the post.",
+    "forum_tried": "I have tried the ",
+    "forum_read_search_ask": "Read-Search-Ask",
+    "forum_method": " method",
+    "forum_searched_for": "I have searched for ",
+    "forum_similar_questions": "similar questions that have already been answered on the forum",
+    "forum_enter_more_chars": "Please enter at least {characterCount} more characters.",
+    "@forum_enter_more_chars": {
+        "placeholders": {
+            "characterCount": {
+                "type": "int"
+            }
+        }
+    },
+    "forum_issue_hint": "Describe your issue in detail here...",
+    "forum_help_dialog_prefix": "If you've already tried the ",
+    "forum_help_dialog_suffix": " method, then you can ask for help on the freeCodeCamp forum.",
+    "forum_before_post": "Before making a new post please ",
+    "forum_check_answered": "check if your question has already been answered on the forum",
+    "go_to_next_challenge": "Go to Next Challenge",
+    "check_answers": "Check Answers",
+    "tutorial_written_by_colon": "Written by: {author}",
+    "@tutorial_written_by_colon": {
+        "placeholders": {
+            "author": {
+                "type": "String"
+            }
+        }
+    },
+    "error_loading_chapters": "Error loading chapters: {error} {stackTrace}",
+    "@error_loading_chapters": {
+        "placeholders": {
+            "error": {
+                "type": "String"
+            },
+            "stackTrace": {
+                "type": "String"
+            }
+        }
+    },
+    "syntax_error_line": "There is a syntax error on line {line}. Please check for missing brackets, quotes, or other syntax issues.",
+    "@syntax_error_line": {
+        "placeholders": {
+            "line": {
+                "type": "int"
+            }
+        }
+    },
+    "syntax_error_general": "There is a syntax error in your code. Please check for missing brackets, quotes, or other syntax issues.",
+    "unknown_challenge": "Unknown Challenge, info : {challengeType}",
+    "@unknown_challenge": {
+        "placeholders": {
+            "challengeType": {
+                "type": "String"
+            }
+        }
+    },
+    "challenge_error": "Error: {error}\n{stackTrace}",
+    "@challenge_error": {
+        "placeholders": {
+            "error": {
+                "type": "String"
+            },
+            "stackTrace": {
+                "type": "String"
+            }
+        }
+    },
     "error": "Something went wrong!",
     "error_two": "Error",
     "error_three": "Oops! Something went wrong. Please try again in a moment.",

@@ -98,7 +98,7 @@ class SuperBlockView extends StatelessWidget {
                         }
                       });
 
-                      return blockTemplate(model, superBlock);
+                      return blockTemplate(context, model, superBlock);
                     }
                   }
 
@@ -119,12 +119,13 @@ class SuperBlockView extends StatelessWidget {
   }
 
   Widget blockTemplate(
+    BuildContext context,
     SuperBlockViewModel model,
     SuperBlock superBlock,
   ) {
     if (superBlock.blocks == null || superBlock.blocks!.isEmpty) {
-      return const Center(
-        child: Text('No blocks available right now.'),
+      return Center(
+        child: Text(context.t.no_blocks_available),
       );
     }
 

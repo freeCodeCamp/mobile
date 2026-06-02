@@ -76,7 +76,7 @@ class DrawerWidgetView extends StatelessWidget {
                       buildDivider(),
                       DrawerTile(
                         key: const Key('daily-challenges'),
-                        component: 'DAILY CHALLENGES',
+                        component: context.t.quick_action_daily_challenges,
                         icon: Icons.extension,
                         route: () {
                           model.routeComponent('DAILY_CHALLENGES', context);
@@ -84,7 +84,7 @@ class DrawerWidgetView extends StatelessWidget {
                       ),
                       DrawerTile(
                         key: const Key('learn'),
-                        component: 'LEARN',
+                        component: context.t.learn,
                         icon: '',
                         route: () {
                           model.routeComponent('LEARN', context);
@@ -92,7 +92,7 @@ class DrawerWidgetView extends StatelessWidget {
                       ),
                       DrawerTile(
                         key: const Key('news'),
-                        component: 'TUTORIALS',
+                        component: context.t.tutorials,
                         icon: Icons.forum_outlined,
                         route: () {
                           model.routeComponent('NEWS', context);
@@ -100,7 +100,7 @@ class DrawerWidgetView extends StatelessWidget {
                       ),
                       DrawerTile(
                         key: const Key('podcasts'),
-                        component: 'PODCASTS',
+                        component: context.t.podcasts,
                         icon: Icons.podcasts_outlined,
                         route: () {
                           model.routeComponent('PODCAST', context);
@@ -109,31 +109,31 @@ class DrawerWidgetView extends StatelessWidget {
                       if (!Platform.isIOS)
                         DrawerTile(
                           key: const Key('code-radio'),
-                          component: 'CODE RADIO',
+                          component: context.t.code_radio,
                           icon: Icons.radio,
                           route: () {
                             model.routeComponent('CODERADIO', context);
                           },
                         ),
                       buildDivider(),
-                      const CustomTabButton(
-                        key: Key('donate'),
-                        component: 'DONATE',
+                      CustomTabButton(
+                        key: const Key('donate'),
+                        component: context.t.donate,
                         url: 'https://www.freecodecamp.org/donate/',
                         icon: Icons.favorite,
                       ),
                       DrawerTile(
                         key: const Key('settings'),
-                        component: 'SETTINGS',
+                        component: context.t.settings,
                         icon: Icons.settings,
                         route: () {
                           model.routeComponent('SETTINGS', context);
                         },
                       ),
                       buildDivider(),
-                      const CustomTabButton(
-                        key: Key('report-issue'),
-                        component: 'REPORT AN ISSUE',
+                      CustomTabButton(
+                        key: const Key('report-issue'),
+                        component: context.t.report_an_issue,
                         url: 'https://github.com/freeCodeCamp/mobile',
                         icon: Icons.bug_report,
                       ),

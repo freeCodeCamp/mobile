@@ -82,7 +82,7 @@ class MultipleChoiceViewmodel extends BaseViewModel {
     notifyListeners();
   }
 
-  void validateChallenge() {
+  void validateChallenge(String incorrectAnswersMessage) {
     // Loop through each question and set isCorrect status
     setQuizQuestions = List.from(quizQuestions)
       ..asMap().forEach((i, question) {
@@ -97,8 +97,7 @@ class MultipleChoiceViewmodel extends BaseViewModel {
     // Show the error message if there are multiple questions.
     // Otherwise, the validation message is sufficient.
     if (quizQuestions.length > 1) {
-      setErrMessage =
-          hasPassedAllQuestions ? '' : 'Some answers are incorrect.';
+      setErrMessage = hasPassedAllQuestions ? '' : incorrectAnswersMessage;
     }
   }
 }

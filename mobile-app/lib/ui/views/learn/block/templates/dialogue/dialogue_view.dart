@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_html/flutter_html.dart';
 import 'package:flutter_scroll_shadow/flutter_scroll_shadow.dart';
+import 'package:freecodecamp/extensions/i18n_extension.dart';
 import 'package:freecodecamp/models/learn/curriculum_model.dart';
 import 'package:freecodecamp/ui/theme/fcc_theme.dart';
 import 'package:freecodecamp/ui/views/learn/block/block_template_viewmodel.dart';
@@ -86,7 +87,7 @@ class BlockDialogueView extends StatelessWidget {
               ),
             ),
             child: Text(
-              isOpen ? 'Hide Tasks' : 'Show Tasks',
+              isOpen ? context.t.hide_tasks : context.t.show_tasks,
             ),
           ),
         ),

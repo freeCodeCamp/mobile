@@ -73,17 +73,23 @@ String formatChallengeDate(DateTime date) {
   return '${date.year.toString().padLeft(4, '0')}-${date.month.toString().padLeft(2, '0')}-${date.day.toString().padLeft(2, '0')}';
 }
 
-String parseSyntaxError(String errorMessage) {
+String parseSyntaxError(
+  String errorMessage, {
+  String Function(int line)? lineMessage,
+  String? generalMessage,
+}) {
   final syntaxErrorRegex = RegExp(r'SyntaxError:.*?\((\d+):(\d+)\)');
   final match = syntaxErrorRegex.firstMatch(errorMessage);
 
   if (match != null) {
     final line = int.parse(match.group(1)!) - 1;
-    return 'There is a syntax error on line $line. Please check for missing brackets, quotes, or other syntax issues.';
+    return lineMessage?.call(line) ??
+        'There is a syntax error on line $line. Please check for missing brackets, quotes, or other syntax issues.';
   }
 
   if (errorMessage.contains('Babel transpilation failed')) {
-    return 'There is a syntax error in your code. Please check for missing brackets, quotes, or other syntax issues.';
+    return generalMessage ??
+        'There is a syntax error in your code. Please check for missing brackets, quotes, or other syntax issues.';
   }
 
   return errorMessage;

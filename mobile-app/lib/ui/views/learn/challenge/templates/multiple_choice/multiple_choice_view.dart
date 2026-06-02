@@ -54,7 +54,7 @@ class MultipleChoiceView extends StatelessWidget {
               children: [
                 if (challenge.description.isNotEmpty)
                   ChallengeCard(
-                    title: 'Description',
+                    title: context.t.challenge_card_description,
                     child: Column(
                       children: parser.parse(
                         challenge.description,
@@ -68,7 +68,7 @@ class MultipleChoiceView extends StatelessWidget {
                   ),
                 if (challenge.videoId != null) ...[
                   ChallengeCard(
-                    title: 'Watch the Video',
+                    title: context.t.challenge_card_watch_video,
                     child: YoutubePlayerWidget(
                       videoId: challenge.videoId!,
                     ),
@@ -76,7 +76,7 @@ class MultipleChoiceView extends StatelessWidget {
                 ],
                 if (challenge.transcript.isNotEmpty) ...[
                   ChallengeCard(
-                    title: 'Transcript',
+                    title: context.t.challenge_card_transcript,
                     child: Transcript(
                       transcript: challenge.transcript,
                       isCollapsible: challenge.videoId != null,
@@ -85,14 +85,14 @@ class MultipleChoiceView extends StatelessWidget {
                 ],
                 if (challenge.scene != null) ...[
                   ChallengeCard(
-                    title: 'Scene',
+                    title: context.t.challenge_card_scene,
                     child: SceneView(
                       scene: challenge.scene!,
                     ),
                   ),
                 ] else if (challenge.audio != null) ...[
                   ChallengeCard(
-                    title: 'Listen to the Audio',
+                    title: context.t.challenge_card_listen_audio,
                     child: AudioPlayerView(
                       audio: challenge.audio!,
                     ),
@@ -100,7 +100,7 @@ class MultipleChoiceView extends StatelessWidget {
                 ],
                 if (challenge.instructions.isNotEmpty)
                   ChallengeCard(
-                    title: 'Instructions',
+                    title: context.t.instructions,
                     child: Column(
                       children: parser.parse(
                         challenge.instructions,
@@ -110,7 +110,7 @@ class MultipleChoiceView extends StatelessWidget {
                 if (challenge.assignments != null &&
                     challenge.assignments!.isNotEmpty) ...[
                   ChallengeCard(
-                    title: 'Assignments',
+                    title: context.t.challenge_card_assignments,
                     child: Column(
                       children: [
                         for (final (i, assignment)
@@ -138,7 +138,7 @@ class MultipleChoiceView extends StatelessWidget {
                 if (challenge.explanation != null &&
                     challenge.explanation!.isNotEmpty) ...[
                   ChallengeCard(
-                    title: 'Explanation',
+                    title: context.t.challenge_card_explanation,
                     child: Explanation(
                       explanation: challenge.explanation ?? '',
                     ),
@@ -185,7 +185,8 @@ class MultipleChoiceView extends StatelessWidget {
                                     block,
                                   );
                                 } else {
-                                  model.validateChallenge();
+                                  model.validateChallenge(
+                                      context.t.some_answers_are_incorrect);
                                 }
                               }
                             : null,
@@ -222,9 +223,9 @@ class MultipleChoiceView extends StatelessWidget {
                             block,
                             context,
                           ),
-                          child: const Text(
-                            'Ask for Help',
-                            style: TextStyle(fontSize: 20),
+                          child: Text(
+                            context.t.ask_for_help,
+                            style: const TextStyle(fontSize: 20),
                           ),
                         ),
                       ),
@@ -240,5 +241,3 @@ class MultipleChoiceView extends StatelessWidget {
     );
   }
 }
-
-

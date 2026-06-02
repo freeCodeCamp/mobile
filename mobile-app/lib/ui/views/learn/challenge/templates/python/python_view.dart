@@ -57,7 +57,7 @@ class PythonView extends StatelessWidget {
                 const SizedBox(height: 12),
                 if (challenge.description.isNotEmpty)
                   ChallengeCard(
-                    title: 'Description',
+                    title: context.t.challenge_card_description,
                     child: Align(
                       alignment: Alignment.centerLeft,
                       child: Column(
@@ -70,7 +70,7 @@ class PythonView extends StatelessWidget {
                 const SizedBox(height: 12),
                 if (challenge.videoId != null)
                   ChallengeCard(
-                    title: 'Video',
+                    title: context.t.challenge_card_video,
                     child: YoutubePlayerWidget(
                       videoId: challenge.videoId!,
                     ),
@@ -78,7 +78,7 @@ class PythonView extends StatelessWidget {
                 const SizedBox(height: 12),
                 if (challenge.transcript.isNotEmpty) ...[
                   ChallengeCard(
-                    title: 'Transcript',
+                    title: context.t.challenge_card_transcript,
                     child: Transcript(
                       transcript: challenge.transcript,
                       isCollapsible: challenge.videoId != null,
@@ -87,7 +87,7 @@ class PythonView extends StatelessWidget {
                 ],
                 if (challenge.instructions.isNotEmpty)
                   ChallengeCard(
-                    title: 'Instructions',
+                    title: context.t.instructions,
                     child: Column(
                       children: parser.parse(
                         challenge.instructions,
@@ -139,7 +139,8 @@ class PythonView extends StatelessWidget {
                                     block,
                                   );
                                 } else {
-                                  model.validateChallenge();
+                                  model.validateChallenge(
+                                      context.t.some_answers_are_incorrect);
                                 }
                               }
                             : null,
@@ -176,9 +177,9 @@ class PythonView extends StatelessWidget {
                             block,
                             context,
                           ),
-                          child: const Text(
-                            'Ask for Help',
-                            style: TextStyle(fontSize: 20),
+                          child: Text(
+                            context.t.ask_for_help,
+                            style: const TextStyle(fontSize: 20),
                           ),
                         ),
                       ),

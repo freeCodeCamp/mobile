@@ -328,6 +328,18 @@ abstract class AppLocalizations {
   /// **'Passed'**
   String get passed;
 
+  /// learn > chapter card label for review modules
+  ///
+  /// In en, this message translates to:
+  /// **'Review'**
+  String get review;
+
+  /// learn > chapter card progress label. The progress placeholder is a completed/total value, for example 2/10.
+  ///
+  /// In en, this message translates to:
+  /// **'{progress} Steps Complete'**
+  String steps_complete(String progress);
+
   /// learn > block > challenge > *fail challenge* > hint panel
   ///
   /// In en, this message translates to:
@@ -909,6 +921,921 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'No Thanks'**
   String get quincy_email_no_thanks;
+
+  /// generic cancel action
+  ///
+  /// In en, this message translates to:
+  /// **'Cancel'**
+  String get cancel;
+
+  /// generic leave action
+  ///
+  /// In en, this message translates to:
+  /// **'Leave'**
+  String get leave;
+
+  /// generic back navigation label
+  ///
+  /// In en, this message translates to:
+  /// **'Back'**
+  String get back;
+
+  /// status label for a completed lesson or challenge
+  ///
+  /// In en, this message translates to:
+  /// **'Completed'**
+  String get completed;
+
+  /// generic start action
+  ///
+  /// In en, this message translates to:
+  /// **'Start'**
+  String get start;
+
+  /// learn > block button that collapses the steps list
+  ///
+  /// In en, this message translates to:
+  /// **'Hide Steps'**
+  String get hide_steps;
+
+  /// learn > block button that expands the steps list
+  ///
+  /// In en, this message translates to:
+  /// **'Show Steps'**
+  String get show_steps;
+
+  /// daily challenges view button that collapses a month of challenges
+  ///
+  /// In en, this message translates to:
+  /// **'Hide Challenges'**
+  String get hide_challenges;
+
+  /// daily challenges view button that expands a month of challenges
+  ///
+  /// In en, this message translates to:
+  /// **'Show Challenges'**
+  String get show_challenges;
+
+  /// dialogue block button that collapses the task list
+  ///
+  /// In en, this message translates to:
+  /// **'Hide Tasks'**
+  String get hide_tasks;
+
+  /// dialogue block button that expands the task list
+  ///
+  /// In en, this message translates to:
+  /// **'Show Tasks'**
+  String get show_tasks;
+
+  /// snackbar shown after copying inline code from a tutorial
+  ///
+  /// In en, this message translates to:
+  /// **'{subject} copied to clipboard!'**
+  String copied_to_clipboard(String subject);
+
+  /// No description provided for @email_error.
+  ///
+  /// In en, this message translates to:
+  /// **'Email Error'**
+  String get email_error;
+
+  /// No description provided for @login_email_error_subject.
+  ///
+  /// In en, this message translates to:
+  /// **'Error logging in to mobile app'**
+  String get login_email_error_subject;
+
+  /// No description provided for @login_email_error_message.
+  ///
+  /// In en, this message translates to:
+  /// **'Please email the below error to {supportEmail}:\n\n{error}\n\n{stackTrace}'**
+  String login_email_error_message(
+      String supportEmail, String error, String stackTrace);
+
+  /// No description provided for @quick_action_daily_challenges.
+  ///
+  /// In en, this message translates to:
+  /// **'Daily Challenges'**
+  String get quick_action_daily_challenges;
+
+  /// drawer and quick action label for Code Radio
+  ///
+  /// In en, this message translates to:
+  /// **'CODE RADIO'**
+  String get code_radio;
+
+  /// drawer action that opens the GitHub issue form
+  ///
+  /// In en, this message translates to:
+  /// **'REPORT AN ISSUE'**
+  String get report_an_issue;
+
+  /// login view legal copy. The termsOfService and privacyPolicy placeholders are displayed as tappable links.
+  ///
+  /// In en, this message translates to:
+  /// **'By continuing, you indicate that you have read and agree to freeCodeCamp.org\'s {termsOfService} and {privacyPolicy}.'**
+  String login_terms(String termsOfService, String privacyPolicy);
+
+  /// login view link text for the terms page
+  ///
+  /// In en, this message translates to:
+  /// **'Terms of Service'**
+  String get terms_of_service;
+
+  /// login view link text for the privacy policy page
+  ///
+  /// In en, this message translates to:
+  /// **'Privacy Policy'**
+  String get privacy_policy;
+
+  /// No description provided for @no_blocks_available.
+  ///
+  /// In en, this message translates to:
+  /// **'No blocks available right now.'**
+  String get no_blocks_available;
+
+  /// No description provided for @coming_soon.
+  ///
+  /// In en, this message translates to:
+  /// **'Coming Soon'**
+  String get coming_soon;
+
+  /// snackbar shown when a curriculum item is temporarily disabled
+  ///
+  /// In en, this message translates to:
+  /// **'Temporarily unavailable, come back soon.'**
+  String get temporarily_unavailable;
+
+  /// snackbar shown when a curriculum item is only available on the web
+  ///
+  /// In en, this message translates to:
+  /// **'Not available use the web version'**
+  String get not_available_web;
+
+  /// learn landing heading for recommended curriculum stage
+  ///
+  /// In en, this message translates to:
+  /// **'Recommended curriculum (still in beta):'**
+  String get stage_core;
+
+  /// learn landing heading for English curriculum stage
+  ///
+  /// In en, this message translates to:
+  /// **'Learn English for Developers:'**
+  String get stage_english;
+
+  /// learn landing heading for Spanish curriculum stage
+  ///
+  /// In en, this message translates to:
+  /// **'Learn Professional Spanish:'**
+  String get stage_spanish;
+
+  /// learn landing heading for Chinese curriculum stage
+  ///
+  /// In en, this message translates to:
+  /// **'Learn Professional Chinese:'**
+  String get stage_chinese;
+
+  /// learn landing heading for interview and job search preparation stage
+  ///
+  /// In en, this message translates to:
+  /// **'Prepare for the developer interview job search:'**
+  String get stage_extra;
+
+  /// learn landing heading for professional certification stage
+  ///
+  /// In en, this message translates to:
+  /// **'Professional certifications:'**
+  String get stage_professional;
+
+  /// No description provided for @login_coming_soon.
+  ///
+  /// In en, this message translates to:
+  /// **'Login will soon be available!'**
+  String get login_coming_soon;
+
+  /// No description provided for @coming_soon_web.
+  ///
+  /// In en, this message translates to:
+  /// **'Coming soon - use the web version'**
+  String get coming_soon_web;
+
+  /// No description provided for @daily_coding_challenges.
+  ///
+  /// In en, this message translates to:
+  /// **'Daily Coding Challenges'**
+  String get daily_coding_challenges;
+
+  /// No description provided for @daily_challenge_empty.
+  ///
+  /// In en, this message translates to:
+  /// **'No challenges available at the moment.'**
+  String get daily_challenge_empty;
+
+  /// No description provided for @daily_challenge_completed.
+  ///
+  /// In en, this message translates to:
+  /// **'Today\'s challenge completed!'**
+  String get daily_challenge_completed;
+
+  /// No description provided for @daily_challenge_countdown_label.
+  ///
+  /// In en, this message translates to:
+  /// **'Countdown timer. Next challenge in {timeLeft}'**
+  String daily_challenge_countdown_label(String timeLeft);
+
+  /// No description provided for @daily_challenge_next_in.
+  ///
+  /// In en, this message translates to:
+  /// **'Next challenge in: {timeLeft}'**
+  String daily_challenge_next_in(String timeLeft);
+
+  /// No description provided for @daily_challenge_view_past_tooltip.
+  ///
+  /// In en, this message translates to:
+  /// **'View past daily challenges'**
+  String get daily_challenge_view_past_tooltip;
+
+  /// No description provided for @daily_challenge_view_past.
+  ///
+  /// In en, this message translates to:
+  /// **'View past challenges'**
+  String get daily_challenge_view_past;
+
+  /// No description provided for @daily_challenge_today.
+  ///
+  /// In en, this message translates to:
+  /// **'Today\'s challenge'**
+  String get daily_challenge_today;
+
+  /// No description provided for @daily_challenge_prompt.
+  ///
+  /// In en, this message translates to:
+  /// **'Do you have the skills to complete this challenge?'**
+  String get daily_challenge_prompt;
+
+  /// No description provided for @daily_challenge_start_tooltip.
+  ///
+  /// In en, this message translates to:
+  /// **'Start the daily challenge now'**
+  String get daily_challenge_start_tooltip;
+
+  /// No description provided for @daily_challenge_go_to_challenge.
+  ///
+  /// In en, this message translates to:
+  /// **'Go to challenge'**
+  String get daily_challenge_go_to_challenge;
+
+  /// No description provided for @daily_challenge_start.
+  ///
+  /// In en, this message translates to:
+  /// **'Start the challenge'**
+  String get daily_challenge_start;
+
+  /// No description provided for @daily_challenge_completed_semantics.
+  ///
+  /// In en, this message translates to:
+  /// **'Daily challenge completed. View past challenges.'**
+  String get daily_challenge_completed_semantics;
+
+  /// No description provided for @daily_challenge_card_semantics.
+  ///
+  /// In en, this message translates to:
+  /// **'Daily challenge card'**
+  String get daily_challenge_card_semantics;
+
+  /// daily challenges view description for a month group
+  ///
+  /// In en, this message translates to:
+  /// **'Explore the daily coding challenges for {monthYear}. Stay motivated and keep your learning streak alive!'**
+  String daily_challenge_month_description(String monthYear);
+
+  /// daily challenges view list item title
+  ///
+  /// In en, this message translates to:
+  /// **'Challenge {challengeNumber}: {challengeTitle}'**
+  String daily_challenge_item_title(int challengeNumber, String challengeTitle);
+
+  /// accessibility label for a completed daily challenge list item
+  ///
+  /// In en, this message translates to:
+  /// **'Challenge {challengeNumber}: {challengeTitle}, completed'**
+  String daily_challenge_item_completed_label(
+      int challengeNumber, String challengeTitle);
+
+  /// accessibility label for an incomplete daily challenge list item
+  ///
+  /// In en, this message translates to:
+  /// **'Challenge {challengeNumber}: {challengeTitle}, not completed'**
+  String daily_challenge_item_not_completed_label(
+      int challengeNumber, String challengeTitle);
+
+  /// daily challenge notification title
+  ///
+  /// In en, this message translates to:
+  /// **'New Daily Challenge Available! 🧩'**
+  String get new_daily_challenge_available;
+
+  /// daily challenge notification body
+  ///
+  /// In en, this message translates to:
+  /// **'A fresh coding challenge is waiting for you. Ready to solve it?'**
+  String get daily_challenge_notification_body;
+
+  /// Android notification channel name for daily challenge notifications
+  ///
+  /// In en, this message translates to:
+  /// **'Daily Challenge Notifications'**
+  String get daily_challenge_notifications;
+
+  /// Android notification channel description for daily challenge notifications
+  ///
+  /// In en, this message translates to:
+  /// **'Notifications for new daily coding challenges'**
+  String get daily_challenge_notifications_description;
+
+  /// No description provided for @download_complete.
+  ///
+  /// In en, this message translates to:
+  /// **'Download complete'**
+  String get download_complete;
+
+  /// No description provided for @download_episode.
+  ///
+  /// In en, this message translates to:
+  /// **'Download episode'**
+  String get download_episode;
+
+  /// Android notification channel description for podcast download notifications
+  ///
+  /// In en, this message translates to:
+  /// **'Notifications for completed podcast episode downloads'**
+  String get notification_channel_description;
+
+  /// accessibility label for the podcast pause button
+  ///
+  /// In en, this message translates to:
+  /// **'Pause episode'**
+  String get podcast_pause_episode;
+
+  /// accessibility label for the podcast play button
+  ///
+  /// In en, this message translates to:
+  /// **'Play episode'**
+  String get podcast_play_episode;
+
+  /// generic fallback username
+  ///
+  /// In en, this message translates to:
+  /// **'User'**
+  String get user;
+
+  /// profile metadata label
+  ///
+  /// In en, this message translates to:
+  /// **'Location'**
+  String get profile_location;
+
+  /// profile social link label for X/Twitter
+  ///
+  /// In en, this message translates to:
+  /// **'X'**
+  String get profile_x;
+
+  /// profile social link label for GitHub
+  ///
+  /// In en, this message translates to:
+  /// **'GitHub'**
+  String get profile_github;
+
+  /// profile social link label for LinkedIn
+  ///
+  /// In en, this message translates to:
+  /// **'LinkedIn'**
+  String get profile_linkedin;
+
+  /// profile website link label
+  ///
+  /// In en, this message translates to:
+  /// **'Website'**
+  String get profile_website;
+
+  /// profile metadata label for join date
+  ///
+  /// In en, this message translates to:
+  /// **'Joined'**
+  String get profile_joined;
+
+  /// profile metadata label for point total
+  ///
+  /// In en, this message translates to:
+  /// **'Points'**
+  String get profile_points_label;
+
+  /// profile metadata label for longest coding streak
+  ///
+  /// In en, this message translates to:
+  /// **'Longest Streak'**
+  String get profile_longest_streak_label;
+
+  /// profile metadata label for current coding streak
+  ///
+  /// In en, this message translates to:
+  /// **'Current Streak'**
+  String get profile_current_streak_label;
+
+  /// profile section heading
+  ///
+  /// In en, this message translates to:
+  /// **'About'**
+  String get profile_about;
+
+  /// profile empty state when the user has no certifications
+  ///
+  /// In en, this message translates to:
+  /// **'You have not yet earned any certifications.'**
+  String get profile_no_certifications;
+
+  /// profile certification title
+  ///
+  /// In en, this message translates to:
+  /// **'Responsive Web Design Certification'**
+  String get cert_responsive_web_design;
+
+  /// profile certification title
+  ///
+  /// In en, this message translates to:
+  /// **'JavaScript Algorithms and Data Structures Certification'**
+  String get cert_javascript_algorithms;
+
+  /// profile certification title
+  ///
+  /// In en, this message translates to:
+  /// **'Front End Development Libraries Certification'**
+  String get cert_front_end_libraries;
+
+  /// profile certification title
+  ///
+  /// In en, this message translates to:
+  /// **'Data Visualization Certification'**
+  String get cert_data_visualization;
+
+  /// profile certification title
+  ///
+  /// In en, this message translates to:
+  /// **'Back End Development and APIs Certification'**
+  String get cert_back_end_development_apis;
+
+  /// profile certification title
+  ///
+  /// In en, this message translates to:
+  /// **'Quality Assurance Certification'**
+  String get cert_quality_assurance;
+
+  /// profile certification title
+  ///
+  /// In en, this message translates to:
+  /// **'Information Security Certification'**
+  String get cert_information_security;
+
+  /// profile certification title
+  ///
+  /// In en, this message translates to:
+  /// **'Scientific Computing with Python Certification'**
+  String get cert_scientific_computing_python;
+
+  /// profile certification title
+  ///
+  /// In en, this message translates to:
+  /// **'Data Analysis with Python Certification'**
+  String get cert_data_analysis_python;
+
+  /// profile certification title
+  ///
+  /// In en, this message translates to:
+  /// **'Machine Learning with Python Certification'**
+  String get cert_machine_learning_python;
+
+  /// profile certification title
+  ///
+  /// In en, this message translates to:
+  /// **'Relational Database Certification'**
+  String get cert_relational_database;
+
+  /// profile certification title
+  ///
+  /// In en, this message translates to:
+  /// **'College Algebra with Python'**
+  String get cert_college_algebra_python;
+
+  /// profile certification title
+  ///
+  /// In en, this message translates to:
+  /// **'Foundational C# with Microsoft'**
+  String get cert_foundational_csharp;
+
+  /// profile legacy certification title
+  ///
+  /// In en, this message translates to:
+  /// **'Front End Certification'**
+  String get cert_front_end;
+
+  /// profile legacy certification title
+  ///
+  /// In en, this message translates to:
+  /// **'Back End Certification'**
+  String get cert_back_end;
+
+  /// profile legacy certification title
+  ///
+  /// In en, this message translates to:
+  /// **'Information Security and Quality Assurance Certification'**
+  String get cert_information_security_quality_assurance;
+
+  /// profile legacy certification title
+  ///
+  /// In en, this message translates to:
+  /// **'Full Stack Certification'**
+  String get cert_full_stack;
+
+  /// No description provided for @challenge_card_description.
+  ///
+  /// In en, this message translates to:
+  /// **'Description'**
+  String get challenge_card_description;
+
+  /// No description provided for @challenge_card_video.
+  ///
+  /// In en, this message translates to:
+  /// **'Video'**
+  String get challenge_card_video;
+
+  /// No description provided for @challenge_card_watch_video.
+  ///
+  /// In en, this message translates to:
+  /// **'Watch the Video'**
+  String get challenge_card_watch_video;
+
+  /// No description provided for @challenge_card_transcript.
+  ///
+  /// In en, this message translates to:
+  /// **'Transcript'**
+  String get challenge_card_transcript;
+
+  /// No description provided for @challenge_card_scene.
+  ///
+  /// In en, this message translates to:
+  /// **'Scene'**
+  String get challenge_card_scene;
+
+  /// No description provided for @challenge_card_listen_audio.
+  ///
+  /// In en, this message translates to:
+  /// **'Listen to the Audio'**
+  String get challenge_card_listen_audio;
+
+  /// No description provided for @challenge_card_assignments.
+  ///
+  /// In en, this message translates to:
+  /// **'Assignments'**
+  String get challenge_card_assignments;
+
+  /// No description provided for @challenge_card_explanation.
+  ///
+  /// In en, this message translates to:
+  /// **'Explanation'**
+  String get challenge_card_explanation;
+
+  /// No description provided for @challenge_card_fill_blank.
+  ///
+  /// In en, this message translates to:
+  /// **'Fill in the Blank'**
+  String get challenge_card_fill_blank;
+
+  /// No description provided for @challenge_card_feedback.
+  ///
+  /// In en, this message translates to:
+  /// **'Feedback'**
+  String get challenge_card_feedback;
+
+  /// No description provided for @challenge_card_lesson.
+  ///
+  /// In en, this message translates to:
+  /// **'Lesson'**
+  String get challenge_card_lesson;
+
+  /// No description provided for @tap_to_expand.
+  ///
+  /// In en, this message translates to:
+  /// **'Tap to expand'**
+  String get tap_to_expand;
+
+  /// No description provided for @tests.
+  ///
+  /// In en, this message translates to:
+  /// **'Tests'**
+  String get tests;
+
+  /// No description provided for @quiz_leave_title.
+  ///
+  /// In en, this message translates to:
+  /// **'Are you sure?'**
+  String get quiz_leave_title;
+
+  /// No description provided for @quiz_leave_message.
+  ///
+  /// In en, this message translates to:
+  /// **'Do you want to leave this quiz? Your progress will be lost.'**
+  String get quiz_leave_message;
+
+  /// No description provided for @quiz_question.
+  ///
+  /// In en, this message translates to:
+  /// **'Question'**
+  String get quiz_question;
+
+  /// No description provided for @quiz_question_number.
+  ///
+  /// In en, this message translates to:
+  /// **'Question {questionNumber}'**
+  String quiz_question_number(int questionNumber);
+
+  /// No description provided for @quiz_correct.
+  ///
+  /// In en, this message translates to:
+  /// **'Correct!'**
+  String get quiz_correct;
+
+  /// No description provided for @quiz_incorrect.
+  ///
+  /// In en, this message translates to:
+  /// **'Incorrect!'**
+  String get quiz_incorrect;
+
+  /// No description provided for @quiz_unanswered_questions.
+  ///
+  /// In en, this message translates to:
+  /// **'The following questions are unanswered: {questions}. You must answer all questions.'**
+  String quiz_unanswered_questions(String questions);
+
+  /// No description provided for @quiz_passed.
+  ///
+  /// In en, this message translates to:
+  /// **'You have {correctQuestionsCount} out of {totalQuestions} questions correct. You have passed.'**
+  String quiz_passed(int correctQuestionsCount, int totalQuestions);
+
+  /// No description provided for @quiz_failed.
+  ///
+  /// In en, this message translates to:
+  /// **'You have {correctQuestionsCount} out of {totalQuestions} questions correct. You did not pass.'**
+  String quiz_failed(int correctQuestionsCount, int totalQuestions);
+
+  /// No description provided for @some_answers_are_incorrect.
+  ///
+  /// In en, this message translates to:
+  /// **'Some answers are incorrect.'**
+  String get some_answers_are_incorrect;
+
+  /// No description provided for @show_transcript.
+  ///
+  /// In en, this message translates to:
+  /// **'Show transcript'**
+  String get show_transcript;
+
+  /// No description provided for @audio_load_error.
+  ///
+  /// In en, this message translates to:
+  /// **'Error loading audio'**
+  String get audio_load_error;
+
+  /// No description provided for @project_link_hint.
+  ///
+  /// In en, this message translates to:
+  /// **'ex: https://replit.com/@camperbot/hello'**
+  String get project_link_hint;
+
+  /// No description provided for @project_link_invalid.
+  ///
+  /// In en, this message translates to:
+  /// **'Please enter a valid link.'**
+  String get project_link_invalid;
+
+  /// No description provided for @project_link_own_work.
+  ///
+  /// In en, this message translates to:
+  /// **'Remember to submit your own work.'**
+  String get project_link_own_work;
+
+  /// No description provided for @project_link_insecure.
+  ///
+  /// In en, this message translates to:
+  /// **'An unsecure (http) URL cannot be used.'**
+  String get project_link_insecure;
+
+  /// No description provided for @project_link_public_url.
+  ///
+  /// In en, this message translates to:
+  /// **'Remember to submit a publicly visible app URL.'**
+  String get project_link_public_url;
+
+  /// No description provided for @forum_create_post.
+  ///
+  /// In en, this message translates to:
+  /// **'Create a post'**
+  String get forum_create_post;
+
+  /// No description provided for @forum_help_description.
+  ///
+  /// In en, this message translates to:
+  /// **'If you\'ve already tried the Read-Search-Ask method, then you can try asking for help on the freeCodeCamp forum.'**
+  String get forum_help_description;
+
+  /// No description provided for @forum_confirm_description.
+  ///
+  /// In en, this message translates to:
+  /// **'You must confirm the following statements before you can submit your post to the forum.'**
+  String get forum_confirm_description;
+
+  /// No description provided for @forum_tell_us_heading.
+  ///
+  /// In en, this message translates to:
+  /// **'Tell us what\'s happening:'**
+  String get forum_tell_us_heading;
+
+  /// No description provided for @forum_describe_issue.
+  ///
+  /// In en, this message translates to:
+  /// **'Describe your issue in detail here.'**
+  String get forum_describe_issue;
+
+  /// No description provided for @forum_code_so_far.
+  ///
+  /// In en, this message translates to:
+  /// **'Your code so far'**
+  String get forum_code_so_far;
+
+  /// No description provided for @forum_mobile_info.
+  ///
+  /// In en, this message translates to:
+  /// **'Your mobile information:'**
+  String get forum_mobile_info;
+
+  /// No description provided for @forum_challenge.
+  ///
+  /// In en, this message translates to:
+  /// **'Challenge:'**
+  String get forum_challenge;
+
+  /// No description provided for @forum_challenge_link.
+  ///
+  /// In en, this message translates to:
+  /// **'Link to the challenge:'**
+  String get forum_challenge_link;
+
+  /// No description provided for @forum_warning.
+  ///
+  /// In en, this message translates to:
+  /// **'WARNING'**
+  String get forum_warning;
+
+  /// No description provided for @forum_code_too_long.
+  ///
+  /// In en, this message translates to:
+  /// **'The challenge seed code and/or your solution exceeded the maximum length we can port over from the challenge.'**
+  String get forum_code_too_long;
+
+  /// No description provided for @forum_additional_step.
+  ///
+  /// In en, this message translates to:
+  /// **'You will need to take an additional step here so the code you wrote presents in an easy to read format.'**
+  String get forum_additional_step;
+
+  /// No description provided for @forum_copy_editor_code.
+  ///
+  /// In en, this message translates to:
+  /// **'Please copy/paste all the editor code showing in the challenge from where you just linked.'**
+  String get forum_copy_editor_code;
+
+  /// No description provided for @forum_replace_code.
+  ///
+  /// In en, this message translates to:
+  /// **'Replace these two sentences with your copied code.\nPlease leave the ``` line above and the ``` line below,\nbecause they allow your code to properly format in the post.'**
+  String get forum_replace_code;
+
+  /// No description provided for @forum_tried.
+  ///
+  /// In en, this message translates to:
+  /// **'I have tried the '**
+  String get forum_tried;
+
+  /// No description provided for @forum_read_search_ask.
+  ///
+  /// In en, this message translates to:
+  /// **'Read-Search-Ask'**
+  String get forum_read_search_ask;
+
+  /// No description provided for @forum_method.
+  ///
+  /// In en, this message translates to:
+  /// **' method'**
+  String get forum_method;
+
+  /// No description provided for @forum_searched_for.
+  ///
+  /// In en, this message translates to:
+  /// **'I have searched for '**
+  String get forum_searched_for;
+
+  /// No description provided for @forum_similar_questions.
+  ///
+  /// In en, this message translates to:
+  /// **'similar questions that have already been answered on the forum'**
+  String get forum_similar_questions;
+
+  /// No description provided for @forum_enter_more_chars.
+  ///
+  /// In en, this message translates to:
+  /// **'Please enter at least {characterCount} more characters.'**
+  String forum_enter_more_chars(int characterCount);
+
+  /// No description provided for @forum_issue_hint.
+  ///
+  /// In en, this message translates to:
+  /// **'Describe your issue in detail here...'**
+  String get forum_issue_hint;
+
+  /// No description provided for @forum_help_dialog_prefix.
+  ///
+  /// In en, this message translates to:
+  /// **'If you\'ve already tried the '**
+  String get forum_help_dialog_prefix;
+
+  /// No description provided for @forum_help_dialog_suffix.
+  ///
+  /// In en, this message translates to:
+  /// **' method, then you can ask for help on the freeCodeCamp forum.'**
+  String get forum_help_dialog_suffix;
+
+  /// No description provided for @forum_before_post.
+  ///
+  /// In en, this message translates to:
+  /// **'Before making a new post please '**
+  String get forum_before_post;
+
+  /// No description provided for @forum_check_answered.
+  ///
+  /// In en, this message translates to:
+  /// **'check if your question has already been answered on the forum'**
+  String get forum_check_answered;
+
+  /// No description provided for @go_to_next_challenge.
+  ///
+  /// In en, this message translates to:
+  /// **'Go to Next Challenge'**
+  String get go_to_next_challenge;
+
+  /// No description provided for @check_answers.
+  ///
+  /// In en, this message translates to:
+  /// **'Check Answers'**
+  String get check_answers;
+
+  /// No description provided for @tutorial_written_by_colon.
+  ///
+  /// In en, this message translates to:
+  /// **'Written by: {author}'**
+  String tutorial_written_by_colon(String author);
+
+  /// No description provided for @error_loading_chapters.
+  ///
+  /// In en, this message translates to:
+  /// **'Error loading chapters: {error} {stackTrace}'**
+  String error_loading_chapters(String error, String stackTrace);
+
+  /// No description provided for @syntax_error_line.
+  ///
+  /// In en, this message translates to:
+  /// **'There is a syntax error on line {line}. Please check for missing brackets, quotes, or other syntax issues.'**
+  String syntax_error_line(int line);
+
+  /// No description provided for @syntax_error_general.
+  ///
+  /// In en, this message translates to:
+  /// **'There is a syntax error in your code. Please check for missing brackets, quotes, or other syntax issues.'**
+  String get syntax_error_general;
+
+  /// No description provided for @unknown_challenge.
+  ///
+  /// In en, this message translates to:
+  /// **'Unknown Challenge, info : {challengeType}'**
+  String unknown_challenge(String challengeType);
+
+  /// No description provided for @challenge_error.
+  ///
+  /// In en, this message translates to:
+  /// **'Error: {error}\n{stackTrace}'**
+  String challenge_error(String error, String stackTrace);
 
   /// No description provided for @error.
   ///
