@@ -110,6 +110,23 @@ class HTMLParser {
 
   final BuildContext context;
 
+  void _copyToClipboard(String text, String copiedMessage) {
+    Clipboard.setData(ClipboardData(text: text));
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        backgroundColor: FccColors.gray75,
+        content: Text(
+          copiedMessage,
+          style: const TextStyle(
+            color: FccSemanticColors.foregroundPrimary,
+            fontSize: 20,
+          ),
+        ),
+        duration: const Duration(seconds: 1),
+      ),
+    );
+  }
+
   List<Widget> parse(
     String html, {
     bool isSelectable = true,
@@ -201,19 +218,59 @@ class HTMLParser {
             }
 
             List classes = codeElement.classes.toList();
+            String codeText = codeElement.text.trimRight();
 
-            return Editor(
-              options: EditorOptions(
-                fontFamily: 'Hack',
-                takeFullHeight: false,
-                isEditable: false,
-                showLinebar: false,
+            return Container(
+              color: FccColors.gray80,
+              child: Row(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Expanded(
+                    child: Editor(
+                      options: EditorOptions(
+                        fontFamily: 'Hack',
+                        takeFullHeight: false,
+                        isEditable: false,
+                        showLinebar: false,
+                      ),
+                      defaultLanguage: codeLanguageIsPresent(classes)
+                          ? currentClass!.split('-')[1]
+                          : '',
+                      defaultValue: codeText,
+                      path: 'example',
+                    ),
+                  ),
+                  SelectionContainer.disabled(
+                    child: Padding(
+                      padding: const EdgeInsets.only(top: 4, right: 12),
+                      child: Tooltip(
+                        message: 'Copy code',
+                        child: Semantics(
+                          label: 'Copy code block',
+                          button: true,
+                          child: GestureDetector(
+                            behavior: HitTestBehavior.opaque,
+                            onTap: () {
+                              _copyToClipboard(
+                                codeText,
+                                'Code copied to clipboard!',
+                              );
+                            },
+                            child: const SizedBox.square(
+                              dimension: 28,
+                              child: Icon(
+                                Icons.copy,
+                                size: 20,
+                                color: FccSemanticColors.foregroundPrimary,
+                              ),
+                            ),
+                          ),
+                        ),
+                      ),
+                    ),
+                  ),
+                ],
               ),
-              defaultLanguage: codeLanguageIsPresent(classes)
-                  ? currentClass!.split('-')[1]
-                  : '',
-              defaultValue: codeElement.text.trimRight(),
-              path: 'example',
             );
           },
         ),
@@ -253,29 +310,7 @@ class HTMLParser {
 
             return InkWell(
               onTap: () {
-                Clipboard.setData(ClipboardData(text: parsed));
-                ScaffoldMessenger.of(context).showSnackBar(
-                  SnackBar(
-                    content: Text.rich(
-                      TextSpan(
-                        children: [
-                          TextSpan(
-                            text: parsed,
-                            style: const TextStyle(
-                              fontWeight: FontWeight.bold,
-                              fontSize: 20,
-                            ),
-                          ),
-                          const TextSpan(
-                            text: ' copied to clipboard!',
-                            style: TextStyle(fontSize: 20),
-                          ),
-                        ],
-                      ),
-                    ),
-                    duration: const Duration(seconds: 1),
-                  ),
-                );
+                _copyToClipboard(parsed, '$parsed copied to clipboard!');
               },
               child: Text(
                 parsed,
