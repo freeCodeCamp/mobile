@@ -154,10 +154,10 @@
       "description": "learn > block > challenge > *complete challenge* > pass panel"
   },
   "review": "Review",
-  "steps_complete": "{steps} Steps Complete",
+  "steps_complete": "{progress} Steps Complete",
   "@steps_complete": {
       "placeholders": {
-          "steps": {
+          "progress": {
               "type": "String"
           }
       }
@@ -570,7 +570,14 @@
   "show_challenges": "Show Challenges",
   "hide_tasks": "Hide Tasks",
   "show_tasks": "Show Tasks",
-  "copied_to_clipboard": " copied to clipboard!",
+  "copied_to_clipboard": "{subject} copied to clipboard!",
+  "@copied_to_clipboard": {
+      "placeholders": {
+          "subject": {
+              "type": "String"
+          }
+      }
+  },
   "email_error": "Email Error",
   "login_email_error_subject": "Error logging in to mobile app",
   "login_email_error_message": "Please email the below error to {supportEmail}:\n\n{error}\n\n{stackTrace}",
@@ -590,9 +597,18 @@
   "quick_action_daily_challenges": "Daily Challenges",
   "code_radio": "CODE RADIO",
   "report_an_issue": "REPORT AN ISSUE",
-  "login_terms_prefix": "By continuing, you indicate that you have read and agree to freeCodeCamp.org's ",
+  "login_terms": "By continuing, you indicate that you have read and agree to freeCodeCamp.org's {termsOfService} and {privacyPolicy}.",
+  "@login_terms": {
+      "placeholders": {
+          "termsOfService": {
+              "type": "String"
+          },
+          "privacyPolicy": {
+              "type": "String"
+          }
+      }
+  },
   "terms_of_service": "Terms of Service",
-  "and": " and ",
   "privacy_policy": "Privacy Policy",
   "no_blocks_available": "No blocks available right now.",
   "coming_soon": "Coming Soon",
@@ -681,7 +697,7 @@
   "daily_challenge_notifications_description": "Notifications for new daily coding challenges",
   "download_complete": "Download complete",
   "download_episode": "Download episode",
-  "notification_channel_description": "Channel description",
+  "notification_channel_description": "Notifications for completed podcast episode downloads",
   "podcast_pause_episode": "Pause episode",
   "podcast_play_episode": "Play episode",
   "user": "User",

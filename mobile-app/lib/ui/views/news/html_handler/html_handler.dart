@@ -257,22 +257,9 @@ class HTMLParser {
                 Clipboard.setData(ClipboardData(text: parsed));
                 ScaffoldMessenger.of(context).showSnackBar(
                   SnackBar(
-                    content: Text.rich(
-                      TextSpan(
-                        children: [
-                          TextSpan(
-                            text: parsed,
-                            style: const TextStyle(
-                              fontWeight: FontWeight.bold,
-                              fontSize: 20,
-                            ),
-                          ),
-                          TextSpan(
-                            text: context.t.copied_to_clipboard,
-                            style: const TextStyle(fontSize: 20),
-                          ),
-                        ],
-                      ),
+                    content: Text(
+                      context.t.copied_to_clipboard(parsed),
+                      style: const TextStyle(fontSize: 20),
                     ),
                     duration: const Duration(seconds: 1),
                   ),

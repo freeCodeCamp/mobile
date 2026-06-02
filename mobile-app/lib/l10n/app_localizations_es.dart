@@ -135,8 +135,8 @@ class AppLocalizationsEs extends AppLocalizations {
   String get review => 'Review';
 
   @override
-  String steps_complete(String steps) {
-    return '$steps Steps Complete';
+  String steps_complete(String progress) {
+    return '$progress Steps Complete';
   }
 
   @override
@@ -530,7 +530,9 @@ class AppLocalizationsEs extends AppLocalizations {
   String get show_tasks => 'Show Tasks';
 
   @override
-  String get copied_to_clipboard => ' copied to clipboard!';
+  String copied_to_clipboard(String subject) {
+    return '$subject copied to clipboard!';
+  }
 
   @override
   String get email_error => 'Email Error';
@@ -554,14 +556,12 @@ class AppLocalizationsEs extends AppLocalizations {
   String get report_an_issue => 'REPORT AN ISSUE';
 
   @override
-  String get login_terms_prefix =>
-      'By continuing, you indicate that you have read and agree to freeCodeCamp.org\'s ';
+  String login_terms(String termsOfService, String privacyPolicy) {
+    return 'By continuing, you indicate that you have read and agree to freeCodeCamp.org\'s $termsOfService and $privacyPolicy.';
+  }
 
   @override
   String get terms_of_service => 'Terms of Service';
-
-  @override
-  String get and => ' and ';
 
   @override
   String get privacy_policy => 'Privacy Policy';
@@ -696,7 +696,8 @@ class AppLocalizationsEs extends AppLocalizations {
   String get download_episode => 'Download episode';
 
   @override
-  String get notification_channel_description => 'Channel description';
+  String get notification_channel_description =>
+      'Notifications for completed podcast episode downloads';
 
   @override
   String get podcast_pause_episode => 'Pause episode';
