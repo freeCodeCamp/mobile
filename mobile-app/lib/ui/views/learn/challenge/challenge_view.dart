@@ -100,14 +100,14 @@ class ChallengeView extends StatelessWidget {
       ],
       title: (() {
         if (model.showPreview) {
-          return const Text(
-            'PREVIEW',
-            style: TextStyle(fontWeight: FontWeight.bold),
+          return Text(
+            context.t.preview,
+            style: const TextStyle(fontWeight: FontWeight.bold),
           );
         } else if (model.showConsole) {
-          return const Text(
-            'CONSOLE',
-            style: TextStyle(fontWeight: FontWeight.bold),
+          return Text(
+            context.t.console,
+            style: const TextStyle(fontWeight: FontWeight.bold),
           );
         } else {
           return Row(

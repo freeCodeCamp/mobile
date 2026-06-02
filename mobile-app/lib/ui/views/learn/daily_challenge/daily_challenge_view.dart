@@ -125,7 +125,7 @@ class DailyChallengeView extends StatelessWidget {
                                 ),
                               ),
                               Text(
-                                'Completed',
+                                context.t.completed,
                                 style: TextStyle(
                                   color: FccColors.blue30,
                                   fontWeight: FontWeight.bold,

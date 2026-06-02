@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_html/flutter_html.dart';
+import 'package:freecodecamp/extensions/i18n_extension.dart';
 import 'package:freecodecamp/models/learn/curriculum_model.dart';
 import 'package:freecodecamp/ui/theme/fcc_theme.dart';
 import 'package:freecodecamp/ui/views/learn/block/block_template_viewmodel.dart';
@@ -44,7 +45,7 @@ class BlockLinkView extends StatelessWidget {
                                 ),
                               ),
                               Text(
-                                'Completed',
+                                context.t.completed,
                                 style: TextStyle(
                                     color: color, fontWeight: FontWeight.bold),
                               )
@@ -79,9 +80,9 @@ class BlockLinkView extends StatelessWidget {
                             borderRadius: BorderRadius.circular(5),
                           ),
                         ),
-                        child: const Text(
-                          'Start',
-                          style: TextStyle(
+                        child: Text(
+                          context.t.start,
+                          style: const TextStyle(
                             fontWeight: FontWeight.bold,
                             color: FccColors.gray90,
                           ),

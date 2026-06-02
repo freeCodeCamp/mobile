@@ -6,6 +6,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_html/flutter_html.dart';
 import 'package:flutter_html_table/flutter_html_table.dart';
+import 'package:freecodecamp/extensions/i18n_extension.dart';
 import 'package:freecodecamp/ui/theme/fcc_theme.dart';
 import 'package:freecodecamp/ui/views/news/news-image-viewer/news_image_view.dart';
 import 'package:html/dom.dart' as dom;
@@ -266,9 +267,9 @@ class HTMLParser {
                               fontSize: 20,
                             ),
                           ),
-                          const TextSpan(
-                            text: ' copied to clipboard!',
-                            style: TextStyle(fontSize: 20),
+                          TextSpan(
+                            text: context.t.copied_to_clipboard,
+                            style: const TextStyle(fontSize: 20),
                           ),
                         ],
                       ),

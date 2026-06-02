@@ -498,6 +498,21 @@ class AppLocalizationsPt extends AppLocalizations {
   String get back => 'Back';
 
   @override
+  String get completed => 'Completed';
+
+  @override
+  String get start => 'Start';
+
+  @override
+  String get hide_steps => 'Hide Steps';
+
+  @override
+  String get show_steps => 'Show Steps';
+
+  @override
+  String get copied_to_clipboard => ' copied to clipboard!';
+
+  @override
   String get email_error => 'Email Error';
 
   @override
@@ -584,6 +599,40 @@ class AppLocalizationsPt extends AppLocalizations {
 
   @override
   String get download_episode => 'Download episode';
+
+  @override
+  String get profile_location => 'Location';
+
+  @override
+  String get profile_x => 'X';
+
+  @override
+  String get profile_github => 'GitHub';
+
+  @override
+  String get profile_linkedin => 'LinkedIn';
+
+  @override
+  String get profile_website => 'Website';
+
+  @override
+  String get profile_joined => 'Joined';
+
+  @override
+  String get profile_points_label => 'Points';
+
+  @override
+  String get profile_longest_streak_label => 'Longest Streak';
+
+  @override
+  String get profile_current_streak_label => 'Current Streak';
+
+  @override
+  String get profile_about => 'About';
+
+  @override
+  String get profile_no_certifications =>
+      'You have not yet earned any certifications.';
 
   @override
   String get challenge_card_description => 'Description';

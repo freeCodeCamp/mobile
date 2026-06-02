@@ -928,6 +928,36 @@ abstract class AppLocalizations {
   /// **'Back'**
   String get back;
 
+  /// No description provided for @completed.
+  ///
+  /// In en, this message translates to:
+  /// **'Completed'**
+  String get completed;
+
+  /// No description provided for @start.
+  ///
+  /// In en, this message translates to:
+  /// **'Start'**
+  String get start;
+
+  /// No description provided for @hide_steps.
+  ///
+  /// In en, this message translates to:
+  /// **'Hide Steps'**
+  String get hide_steps;
+
+  /// No description provided for @show_steps.
+  ///
+  /// In en, this message translates to:
+  /// **'Show Steps'**
+  String get show_steps;
+
+  /// No description provided for @copied_to_clipboard.
+  ///
+  /// In en, this message translates to:
+  /// **' copied to clipboard!'**
+  String get copied_to_clipboard;
+
   /// No description provided for @email_error.
   ///
   /// In en, this message translates to:
@@ -1084,6 +1114,72 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Download episode'**
   String get download_episode;
+
+  /// No description provided for @profile_location.
+  ///
+  /// In en, this message translates to:
+  /// **'Location'**
+  String get profile_location;
+
+  /// No description provided for @profile_x.
+  ///
+  /// In en, this message translates to:
+  /// **'X'**
+  String get profile_x;
+
+  /// No description provided for @profile_github.
+  ///
+  /// In en, this message translates to:
+  /// **'GitHub'**
+  String get profile_github;
+
+  /// No description provided for @profile_linkedin.
+  ///
+  /// In en, this message translates to:
+  /// **'LinkedIn'**
+  String get profile_linkedin;
+
+  /// No description provided for @profile_website.
+  ///
+  /// In en, this message translates to:
+  /// **'Website'**
+  String get profile_website;
+
+  /// No description provided for @profile_joined.
+  ///
+  /// In en, this message translates to:
+  /// **'Joined'**
+  String get profile_joined;
+
+  /// No description provided for @profile_points_label.
+  ///
+  /// In en, this message translates to:
+  /// **'Points'**
+  String get profile_points_label;
+
+  /// No description provided for @profile_longest_streak_label.
+  ///
+  /// In en, this message translates to:
+  /// **'Longest Streak'**
+  String get profile_longest_streak_label;
+
+  /// No description provided for @profile_current_streak_label.
+  ///
+  /// In en, this message translates to:
+  /// **'Current Streak'**
+  String get profile_current_streak_label;
+
+  /// No description provided for @profile_about.
+  ///
+  /// In en, this message translates to:
+  /// **'About'**
+  String get profile_about;
+
+  /// No description provided for @profile_no_certifications.
+  ///
+  /// In en, this message translates to:
+  /// **'You have not yet earned any certifications.'**
+  String get profile_no_certifications;
 
   /// No description provided for @challenge_card_description.
   ///
