@@ -236,7 +236,7 @@ class ChapterView extends StatelessWidget {
                     Padding(
                       padding: const EdgeInsets.only(top: 4.0),
                       child: Text(
-                        'Certification Project',
+                        context.t.certification_project,
                         style: TextStyle(
                           color: moduleColor.withValues(alpha: 0.8),
                           fontSize: 14,
@@ -248,7 +248,7 @@ class ChapterView extends StatelessWidget {
                     Padding(
                       padding: const EdgeInsets.only(top: 4.0),
                       child: Text(
-                        'Review',
+                        context.t.review,
                         style: TextStyle(
                           color: moduleColor.withValues(alpha: 0.8),
                           fontSize: 14,
@@ -263,7 +263,7 @@ class ChapterView extends StatelessWidget {
                         String steps = snapshot.data ?? '0';
 
                         return Text(
-                          '$steps Steps Complete',
+                          context.t.steps_complete(steps),
                           style: TextStyle(
                             color: FccColors.gray15,
                             fontSize: 18,

@@ -132,6 +132,14 @@ class AppLocalizationsEs extends AppLocalizations {
   String get passed => 'Passed';
 
   @override
+  String get review => 'Review';
+
+  @override
+  String steps_complete(String steps) {
+    return '$steps Steps Complete';
+  }
+
+  @override
   String get hint => 'Hint';
 
   @override
@@ -510,6 +518,18 @@ class AppLocalizationsEs extends AppLocalizations {
   String get show_steps => 'Show Steps';
 
   @override
+  String get hide_challenges => 'Hide Challenges';
+
+  @override
+  String get show_challenges => 'Show Challenges';
+
+  @override
+  String get hide_tasks => 'Hide Tasks';
+
+  @override
+  String get show_tasks => 'Show Tasks';
+
+  @override
   String get copied_to_clipboard => ' copied to clipboard!';
 
   @override
@@ -531,6 +551,22 @@ class AppLocalizationsEs extends AppLocalizations {
   String get code_radio => 'CODE RADIO';
 
   @override
+  String get report_an_issue => 'REPORT AN ISSUE';
+
+  @override
+  String get login_terms_prefix =>
+      'By continuing, you indicate that you have read and agree to freeCodeCamp.org\'s ';
+
+  @override
+  String get terms_of_service => 'Terms of Service';
+
+  @override
+  String get and => ' and ';
+
+  @override
+  String get privacy_policy => 'Privacy Policy';
+
+  @override
   String get no_blocks_available => 'No blocks available right now.';
 
   @override
@@ -539,6 +575,27 @@ class AppLocalizationsEs extends AppLocalizations {
   @override
   String get temporarily_unavailable =>
       'Temporarily unavailable, come back soon.';
+
+  @override
+  String get not_available_web => 'Not available use the web version';
+
+  @override
+  String get stage_core => 'Recommended curriculum (still in beta):';
+
+  @override
+  String get stage_english => 'Learn English for Developers:';
+
+  @override
+  String get stage_spanish => 'Learn Professional Spanish:';
+
+  @override
+  String get stage_chinese => 'Learn Professional Chinese:';
+
+  @override
+  String get stage_extra => 'Prepare for the developer interview job search:';
+
+  @override
+  String get stage_professional => 'Professional certifications:';
 
   @override
   String get login_coming_soon => 'Login will soon be available!';
@@ -595,10 +652,60 @@ class AppLocalizationsEs extends AppLocalizations {
   String get daily_challenge_card_semantics => 'Daily challenge card';
 
   @override
+  String daily_challenge_month_description(String monthYear) {
+    return 'Explore the daily coding challenges for $monthYear. Stay motivated and keep your learning streak alive!';
+  }
+
+  @override
+  String daily_challenge_item_title(
+      int challengeNumber, String challengeTitle) {
+    return 'Challenge $challengeNumber: $challengeTitle';
+  }
+
+  @override
+  String daily_challenge_item_completed_label(
+      int challengeNumber, String challengeTitle) {
+    return 'Challenge $challengeNumber: $challengeTitle, completed';
+  }
+
+  @override
+  String daily_challenge_item_not_completed_label(
+      int challengeNumber, String challengeTitle) {
+    return 'Challenge $challengeNumber: $challengeTitle, not completed';
+  }
+
+  @override
+  String get new_daily_challenge_available =>
+      'New Daily Challenge Available! 🧩';
+
+  @override
+  String get daily_challenge_notification_body =>
+      'A fresh coding challenge is waiting for you. Ready to solve it?';
+
+  @override
+  String get daily_challenge_notifications => 'Daily Challenge Notifications';
+
+  @override
+  String get daily_challenge_notifications_description =>
+      'Notifications for new daily coding challenges';
+
+  @override
   String get download_complete => 'Download complete';
 
   @override
   String get download_episode => 'Download episode';
+
+  @override
+  String get notification_channel_description => 'Channel description';
+
+  @override
+  String get podcast_pause_episode => 'Pause episode';
+
+  @override
+  String get podcast_play_episode => 'Play episode';
+
+  @override
+  String get user => 'User';
 
   @override
   String get profile_location => 'Location';
@@ -633,6 +740,65 @@ class AppLocalizationsEs extends AppLocalizations {
   @override
   String get profile_no_certifications =>
       'You have not yet earned any certifications.';
+
+  @override
+  String get cert_responsive_web_design =>
+      'Responsive Web Design Certification';
+
+  @override
+  String get cert_javascript_algorithms =>
+      'JavaScript Algorithms and Data Structures Certification';
+
+  @override
+  String get cert_front_end_libraries =>
+      'Front End Development Libraries Certification';
+
+  @override
+  String get cert_data_visualization => 'Data Visualization Certification';
+
+  @override
+  String get cert_back_end_development_apis =>
+      'Back End Development and APIs Certification';
+
+  @override
+  String get cert_quality_assurance => 'Quality Assurance Certification';
+
+  @override
+  String get cert_information_security => 'Information Security Certification';
+
+  @override
+  String get cert_scientific_computing_python =>
+      'Scientific Computing with Python Certification';
+
+  @override
+  String get cert_data_analysis_python =>
+      'Data Analysis with Python Certification';
+
+  @override
+  String get cert_machine_learning_python =>
+      'Machine Learning with Python Certification';
+
+  @override
+  String get cert_relational_database => 'Relational Database Certification';
+
+  @override
+  String get cert_college_algebra_python => 'College Algebra with Python';
+
+  @override
+  String get cert_foundational_csharp => 'Foundational C# with Microsoft';
+
+  @override
+  String get cert_front_end => 'Front End Certification';
+
+  @override
+  String get cert_back_end => 'Back End Certification';
+
+  @override
+  String get cert_information_security_quality_assurance =>
+      'Information Security and Quality Assurance Certification';
+
+  @override
+  String get cert_full_stack => 'Full Stack Certification';
 
   @override
   String get challenge_card_description => 'Description';
@@ -844,6 +1010,16 @@ class AppLocalizationsEs extends AppLocalizations {
   @override
   String get syntax_error_general =>
       'There is a syntax error in your code. Please check for missing brackets, quotes, or other syntax issues.';
+
+  @override
+  String unknown_challenge(String challengeType) {
+    return 'Unknown Challenge, info : $challengeType';
+  }
+
+  @override
+  String challenge_error(String error, String stackTrace) {
+    return 'Error: $error\n$stackTrace';
+  }
 
   @override
   String get error => 'Something went wrong!';

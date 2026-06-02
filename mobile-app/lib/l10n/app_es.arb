@@ -153,6 +153,15 @@
   "@passed": {
       "description": "learn > block > challenge > *complete challenge* > pass panel"
   },
+  "review": "Review",
+  "steps_complete": "{steps} Steps Complete",
+  "@steps_complete": {
+      "placeholders": {
+          "steps": {
+              "type": "String"
+          }
+      }
+  },
   "hint": "Hint",
   "@hint": {
       "description": "learn > block > challenge > *fail challenge* > hint panel"
@@ -557,6 +566,10 @@
   "start": "Start",
   "hide_steps": "Hide Steps",
   "show_steps": "Show Steps",
+  "hide_challenges": "Hide Challenges",
+  "show_challenges": "Show Challenges",
+  "hide_tasks": "Hide Tasks",
+  "show_tasks": "Show Tasks",
   "copied_to_clipboard": " copied to clipboard!",
   "email_error": "Email Error",
   "login_email_error_subject": "Error logging in to mobile app",
@@ -576,9 +589,21 @@
   },
   "quick_action_daily_challenges": "Daily Challenges",
   "code_radio": "CODE RADIO",
+  "report_an_issue": "REPORT AN ISSUE",
+  "login_terms_prefix": "By continuing, you indicate that you have read and agree to freeCodeCamp.org's ",
+  "terms_of_service": "Terms of Service",
+  "and": " and ",
+  "privacy_policy": "Privacy Policy",
   "no_blocks_available": "No blocks available right now.",
   "coming_soon": "Coming Soon",
   "temporarily_unavailable": "Temporarily unavailable, come back soon.",
+  "not_available_web": "Not available use the web version",
+  "stage_core": "Recommended curriculum (still in beta):",
+  "stage_english": "Learn English for Developers:",
+  "stage_spanish": "Learn Professional Spanish:",
+  "stage_chinese": "Learn Professional Chinese:",
+  "stage_extra": "Prepare for the developer interview job search:",
+  "stage_professional": "Professional certifications:",
   "login_coming_soon": "Login will soon be available!",
   "coming_soon_web": "Coming soon - use the web version",
   "daily_coding_challenges": "Daily Coding Challenges",
@@ -609,8 +634,57 @@
   "daily_challenge_start": "Start the challenge",
   "daily_challenge_completed_semantics": "Daily challenge completed. View past challenges.",
   "daily_challenge_card_semantics": "Daily challenge card",
+  "daily_challenge_month_description": "Explore the daily coding challenges for {monthYear}. Stay motivated and keep your learning streak alive!",
+  "@daily_challenge_month_description": {
+      "placeholders": {
+          "monthYear": {
+              "type": "String"
+          }
+      }
+  },
+  "daily_challenge_item_title": "Challenge {challengeNumber}: {challengeTitle}",
+  "@daily_challenge_item_title": {
+      "placeholders": {
+          "challengeNumber": {
+              "type": "int"
+          },
+          "challengeTitle": {
+              "type": "String"
+          }
+      }
+  },
+  "daily_challenge_item_completed_label": "Challenge {challengeNumber}: {challengeTitle}, completed",
+  "@daily_challenge_item_completed_label": {
+      "placeholders": {
+          "challengeNumber": {
+              "type": "int"
+          },
+          "challengeTitle": {
+              "type": "String"
+          }
+      }
+  },
+  "daily_challenge_item_not_completed_label": "Challenge {challengeNumber}: {challengeTitle}, not completed",
+  "@daily_challenge_item_not_completed_label": {
+      "placeholders": {
+          "challengeNumber": {
+              "type": "int"
+          },
+          "challengeTitle": {
+              "type": "String"
+          }
+      }
+  },
+  "new_daily_challenge_available": "New Daily Challenge Available! 🧩",
+  "daily_challenge_notification_body": "A fresh coding challenge is waiting for you. Ready to solve it?",
+  "daily_challenge_notifications": "Daily Challenge Notifications",
+  "daily_challenge_notifications_description": "Notifications for new daily coding challenges",
   "download_complete": "Download complete",
   "download_episode": "Download episode",
+  "notification_channel_description": "Channel description",
+  "podcast_pause_episode": "Pause episode",
+  "podcast_play_episode": "Play episode",
+  "user": "User",
   "profile_location": "Location",
   "profile_x": "X",
   "profile_github": "GitHub",
@@ -622,6 +696,23 @@
   "profile_current_streak_label": "Current Streak",
   "profile_about": "About",
   "profile_no_certifications": "You have not yet earned any certifications.",
+  "cert_responsive_web_design": "Responsive Web Design Certification",
+  "cert_javascript_algorithms": "JavaScript Algorithms and Data Structures Certification",
+  "cert_front_end_libraries": "Front End Development Libraries Certification",
+  "cert_data_visualization": "Data Visualization Certification",
+  "cert_back_end_development_apis": "Back End Development and APIs Certification",
+  "cert_quality_assurance": "Quality Assurance Certification",
+  "cert_information_security": "Information Security Certification",
+  "cert_scientific_computing_python": "Scientific Computing with Python Certification",
+  "cert_data_analysis_python": "Data Analysis with Python Certification",
+  "cert_machine_learning_python": "Machine Learning with Python Certification",
+  "cert_relational_database": "Relational Database Certification",
+  "cert_college_algebra_python": "College Algebra with Python",
+  "cert_foundational_csharp": "Foundational C# with Microsoft",
+  "cert_front_end": "Front End Certification",
+  "cert_back_end": "Back End Certification",
+  "cert_information_security_quality_assurance": "Information Security and Quality Assurance Certification",
+  "cert_full_stack": "Full Stack Certification",
   "challenge_card_description": "Description",
   "challenge_card_video": "Video",
   "challenge_card_watch_video": "Watch the Video",
@@ -748,6 +839,25 @@
       }
   },
   "syntax_error_general": "There is a syntax error in your code. Please check for missing brackets, quotes, or other syntax issues.",
+  "unknown_challenge": "Unknown Challenge, info : {challengeType}",
+  "@unknown_challenge": {
+      "placeholders": {
+          "challengeType": {
+              "type": "String"
+          }
+      }
+  },
+  "challenge_error": "Error: {error}\n{stackTrace}",
+  "@challenge_error": {
+      "placeholders": {
+          "error": {
+              "type": "String"
+          },
+          "stackTrace": {
+              "type": "String"
+          }
+      }
+  },
   "error": "Something went wrong!",
   "error_two": "Error",
   "error_three": "Oops! Something went wrong. Please try again in a moment.",

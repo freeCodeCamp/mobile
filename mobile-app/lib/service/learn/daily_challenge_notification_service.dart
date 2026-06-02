@@ -5,10 +5,12 @@ import 'dart:math';
 import 'package:flutter/services.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:freecodecamp/app/app.locator.dart';
+import 'package:freecodecamp/l10n/app_localizations.dart';
 import 'package:freecodecamp/models/learn/completed_challenge_model.dart';
 import 'package:freecodecamp/models/main/user_model.dart';
 import 'package:freecodecamp/service/authentication/authentication_service.dart';
 import 'package:freecodecamp/service/learn/daily_challenge_service.dart';
+import 'package:freecodecamp/service/locale_service.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:timezone/data/latest.dart' as tz;
 import 'package:timezone/timezone.dart' as tz;
@@ -17,6 +19,7 @@ class DailyChallengeNotificationService {
   final FlutterLocalNotificationsPlugin _flutterLocalNotificationsPlugin;
   final DailyChallengeService _dailyChallengeService;
   final AuthenticationService _authenticationService;
+  final LocaleService _localeService;
   Random random = Random();
 
   static const String _channelId = 'daily_challenge_channel';
@@ -26,12 +29,14 @@ class DailyChallengeNotificationService {
     FlutterLocalNotificationsPlugin? flutterLocalNotificationsPlugin,
     DailyChallengeService? dailyChallengeService,
     AuthenticationService? authenticationService,
+    LocaleService? localeService,
   })  : _flutterLocalNotificationsPlugin = flutterLocalNotificationsPlugin ??
             FlutterLocalNotificationsPlugin(),
         _dailyChallengeService =
             dailyChallengeService ?? locator<DailyChallengeService>(),
         _authenticationService =
-            authenticationService ?? locator<AuthenticationService>();
+            authenticationService ?? locator<AuthenticationService>(),
+        _localeService = localeService ?? locator<LocaleService>();
 
   Future<void> init() async {
     tz.initializeTimeZones();
@@ -307,6 +312,7 @@ class DailyChallengeNotificationService {
       DateTime startSchedulingFrom, DateTime now) async {
     final centralLocation = tz.getLocation('America/Chicago');
     final endDate = startSchedulingFrom.add(const Duration(days: 7));
+    final t = lookupAppLocalizations(_localeService.locale);
     int notificationId = 0;
 
     for (DateTime date = startSchedulingFrom;
@@ -319,19 +325,18 @@ class DailyChallengeNotificationService {
         try {
           await _flutterLocalNotificationsPlugin.zonedSchedule(
             notificationId++,
-            'New Daily Challenge Available! 🧩',
-            'A fresh coding challenge is waiting for you. Ready to solve it?',
+            t.new_daily_challenge_available,
+            t.daily_challenge_notification_body,
             tz.TZDateTime.from(scheduleTime, tz.local),
-            const NotificationDetails(
+            NotificationDetails(
               android: AndroidNotificationDetails(
                 _channelId,
-                'Daily Challenge Notifications',
-                channelDescription:
-                    'Notifications for new daily coding challenges',
+                t.daily_challenge_notifications,
+                channelDescription: t.daily_challenge_notifications_description,
                 priority: Priority.high,
                 importance: Importance.max,
               ),
-              iOS: DarwinNotificationDetails(
+              iOS: const DarwinNotificationDetails(
                 threadIdentifier: 'daily-challenge-notification',
                 categoryIdentifier: 'DAILY_CHALLENGE',
               ),

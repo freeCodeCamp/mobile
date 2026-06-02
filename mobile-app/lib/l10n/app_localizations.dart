@@ -328,6 +328,18 @@ abstract class AppLocalizations {
   /// **'Passed'**
   String get passed;
 
+  /// No description provided for @review.
+  ///
+  /// In en, this message translates to:
+  /// **'Review'**
+  String get review;
+
+  /// No description provided for @steps_complete.
+  ///
+  /// In en, this message translates to:
+  /// **'{steps} Steps Complete'**
+  String steps_complete(String steps);
+
   /// learn > block > challenge > *fail challenge* > hint panel
   ///
   /// In en, this message translates to:
@@ -952,6 +964,30 @@ abstract class AppLocalizations {
   /// **'Show Steps'**
   String get show_steps;
 
+  /// No description provided for @hide_challenges.
+  ///
+  /// In en, this message translates to:
+  /// **'Hide Challenges'**
+  String get hide_challenges;
+
+  /// No description provided for @show_challenges.
+  ///
+  /// In en, this message translates to:
+  /// **'Show Challenges'**
+  String get show_challenges;
+
+  /// No description provided for @hide_tasks.
+  ///
+  /// In en, this message translates to:
+  /// **'Hide Tasks'**
+  String get hide_tasks;
+
+  /// No description provided for @show_tasks.
+  ///
+  /// In en, this message translates to:
+  /// **'Show Tasks'**
+  String get show_tasks;
+
   /// No description provided for @copied_to_clipboard.
   ///
   /// In en, this message translates to:
@@ -989,6 +1025,36 @@ abstract class AppLocalizations {
   /// **'CODE RADIO'**
   String get code_radio;
 
+  /// No description provided for @report_an_issue.
+  ///
+  /// In en, this message translates to:
+  /// **'REPORT AN ISSUE'**
+  String get report_an_issue;
+
+  /// No description provided for @login_terms_prefix.
+  ///
+  /// In en, this message translates to:
+  /// **'By continuing, you indicate that you have read and agree to freeCodeCamp.org\'s '**
+  String get login_terms_prefix;
+
+  /// No description provided for @terms_of_service.
+  ///
+  /// In en, this message translates to:
+  /// **'Terms of Service'**
+  String get terms_of_service;
+
+  /// No description provided for @and.
+  ///
+  /// In en, this message translates to:
+  /// **' and '**
+  String get and;
+
+  /// No description provided for @privacy_policy.
+  ///
+  /// In en, this message translates to:
+  /// **'Privacy Policy'**
+  String get privacy_policy;
+
   /// No description provided for @no_blocks_available.
   ///
   /// In en, this message translates to:
@@ -1006,6 +1072,48 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Temporarily unavailable, come back soon.'**
   String get temporarily_unavailable;
+
+  /// No description provided for @not_available_web.
+  ///
+  /// In en, this message translates to:
+  /// **'Not available use the web version'**
+  String get not_available_web;
+
+  /// No description provided for @stage_core.
+  ///
+  /// In en, this message translates to:
+  /// **'Recommended curriculum (still in beta):'**
+  String get stage_core;
+
+  /// No description provided for @stage_english.
+  ///
+  /// In en, this message translates to:
+  /// **'Learn English for Developers:'**
+  String get stage_english;
+
+  /// No description provided for @stage_spanish.
+  ///
+  /// In en, this message translates to:
+  /// **'Learn Professional Spanish:'**
+  String get stage_spanish;
+
+  /// No description provided for @stage_chinese.
+  ///
+  /// In en, this message translates to:
+  /// **'Learn Professional Chinese:'**
+  String get stage_chinese;
+
+  /// No description provided for @stage_extra.
+  ///
+  /// In en, this message translates to:
+  /// **'Prepare for the developer interview job search:'**
+  String get stage_extra;
+
+  /// No description provided for @stage_professional.
+  ///
+  /// In en, this message translates to:
+  /// **'Professional certifications:'**
+  String get stage_professional;
 
   /// No description provided for @login_coming_soon.
   ///
@@ -1103,6 +1211,56 @@ abstract class AppLocalizations {
   /// **'Daily challenge card'**
   String get daily_challenge_card_semantics;
 
+  /// No description provided for @daily_challenge_month_description.
+  ///
+  /// In en, this message translates to:
+  /// **'Explore the daily coding challenges for {monthYear}. Stay motivated and keep your learning streak alive!'**
+  String daily_challenge_month_description(String monthYear);
+
+  /// No description provided for @daily_challenge_item_title.
+  ///
+  /// In en, this message translates to:
+  /// **'Challenge {challengeNumber}: {challengeTitle}'**
+  String daily_challenge_item_title(int challengeNumber, String challengeTitle);
+
+  /// No description provided for @daily_challenge_item_completed_label.
+  ///
+  /// In en, this message translates to:
+  /// **'Challenge {challengeNumber}: {challengeTitle}, completed'**
+  String daily_challenge_item_completed_label(
+      int challengeNumber, String challengeTitle);
+
+  /// No description provided for @daily_challenge_item_not_completed_label.
+  ///
+  /// In en, this message translates to:
+  /// **'Challenge {challengeNumber}: {challengeTitle}, not completed'**
+  String daily_challenge_item_not_completed_label(
+      int challengeNumber, String challengeTitle);
+
+  /// No description provided for @new_daily_challenge_available.
+  ///
+  /// In en, this message translates to:
+  /// **'New Daily Challenge Available! 🧩'**
+  String get new_daily_challenge_available;
+
+  /// No description provided for @daily_challenge_notification_body.
+  ///
+  /// In en, this message translates to:
+  /// **'A fresh coding challenge is waiting for you. Ready to solve it?'**
+  String get daily_challenge_notification_body;
+
+  /// No description provided for @daily_challenge_notifications.
+  ///
+  /// In en, this message translates to:
+  /// **'Daily Challenge Notifications'**
+  String get daily_challenge_notifications;
+
+  /// No description provided for @daily_challenge_notifications_description.
+  ///
+  /// In en, this message translates to:
+  /// **'Notifications for new daily coding challenges'**
+  String get daily_challenge_notifications_description;
+
   /// No description provided for @download_complete.
   ///
   /// In en, this message translates to:
@@ -1114,6 +1272,30 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Download episode'**
   String get download_episode;
+
+  /// No description provided for @notification_channel_description.
+  ///
+  /// In en, this message translates to:
+  /// **'Channel description'**
+  String get notification_channel_description;
+
+  /// No description provided for @podcast_pause_episode.
+  ///
+  /// In en, this message translates to:
+  /// **'Pause episode'**
+  String get podcast_pause_episode;
+
+  /// No description provided for @podcast_play_episode.
+  ///
+  /// In en, this message translates to:
+  /// **'Play episode'**
+  String get podcast_play_episode;
+
+  /// No description provided for @user.
+  ///
+  /// In en, this message translates to:
+  /// **'User'**
+  String get user;
 
   /// No description provided for @profile_location.
   ///
@@ -1180,6 +1362,108 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'You have not yet earned any certifications.'**
   String get profile_no_certifications;
+
+  /// No description provided for @cert_responsive_web_design.
+  ///
+  /// In en, this message translates to:
+  /// **'Responsive Web Design Certification'**
+  String get cert_responsive_web_design;
+
+  /// No description provided for @cert_javascript_algorithms.
+  ///
+  /// In en, this message translates to:
+  /// **'JavaScript Algorithms and Data Structures Certification'**
+  String get cert_javascript_algorithms;
+
+  /// No description provided for @cert_front_end_libraries.
+  ///
+  /// In en, this message translates to:
+  /// **'Front End Development Libraries Certification'**
+  String get cert_front_end_libraries;
+
+  /// No description provided for @cert_data_visualization.
+  ///
+  /// In en, this message translates to:
+  /// **'Data Visualization Certification'**
+  String get cert_data_visualization;
+
+  /// No description provided for @cert_back_end_development_apis.
+  ///
+  /// In en, this message translates to:
+  /// **'Back End Development and APIs Certification'**
+  String get cert_back_end_development_apis;
+
+  /// No description provided for @cert_quality_assurance.
+  ///
+  /// In en, this message translates to:
+  /// **'Quality Assurance Certification'**
+  String get cert_quality_assurance;
+
+  /// No description provided for @cert_information_security.
+  ///
+  /// In en, this message translates to:
+  /// **'Information Security Certification'**
+  String get cert_information_security;
+
+  /// No description provided for @cert_scientific_computing_python.
+  ///
+  /// In en, this message translates to:
+  /// **'Scientific Computing with Python Certification'**
+  String get cert_scientific_computing_python;
+
+  /// No description provided for @cert_data_analysis_python.
+  ///
+  /// In en, this message translates to:
+  /// **'Data Analysis with Python Certification'**
+  String get cert_data_analysis_python;
+
+  /// No description provided for @cert_machine_learning_python.
+  ///
+  /// In en, this message translates to:
+  /// **'Machine Learning with Python Certification'**
+  String get cert_machine_learning_python;
+
+  /// No description provided for @cert_relational_database.
+  ///
+  /// In en, this message translates to:
+  /// **'Relational Database Certification'**
+  String get cert_relational_database;
+
+  /// No description provided for @cert_college_algebra_python.
+  ///
+  /// In en, this message translates to:
+  /// **'College Algebra with Python'**
+  String get cert_college_algebra_python;
+
+  /// No description provided for @cert_foundational_csharp.
+  ///
+  /// In en, this message translates to:
+  /// **'Foundational C# with Microsoft'**
+  String get cert_foundational_csharp;
+
+  /// No description provided for @cert_front_end.
+  ///
+  /// In en, this message translates to:
+  /// **'Front End Certification'**
+  String get cert_front_end;
+
+  /// No description provided for @cert_back_end.
+  ///
+  /// In en, this message translates to:
+  /// **'Back End Certification'**
+  String get cert_back_end;
+
+  /// No description provided for @cert_information_security_quality_assurance.
+  ///
+  /// In en, this message translates to:
+  /// **'Information Security and Quality Assurance Certification'**
+  String get cert_information_security_quality_assurance;
+
+  /// No description provided for @cert_full_stack.
+  ///
+  /// In en, this message translates to:
+  /// **'Full Stack Certification'**
+  String get cert_full_stack;
 
   /// No description provided for @challenge_card_description.
   ///
@@ -1546,6 +1830,18 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'There is a syntax error in your code. Please check for missing brackets, quotes, or other syntax issues.'**
   String get syntax_error_general;
+
+  /// No description provided for @unknown_challenge.
+  ///
+  /// In en, this message translates to:
+  /// **'Unknown Challenge, info : {challengeType}'**
+  String unknown_challenge(String challengeType);
+
+  /// No description provided for @challenge_error.
+  ///
+  /// In en, this message translates to:
+  /// **'Error: {error}\n{stackTrace}'**
+  String challenge_error(String error, String stackTrace);
 
   /// No description provided for @error.
   ///

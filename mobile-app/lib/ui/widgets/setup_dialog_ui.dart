@@ -210,7 +210,7 @@ class _deleteAccountDialog extends HookWidget {
                       onDialogTap(DialogResponse(confirmed: false)),
                     },
                     child: Text(
-                      request.secondaryButtonTitle ?? 'Cancel',
+                      request.secondaryButtonTitle ?? context.t.cancel,
                       textAlign: TextAlign.center,
                       style: const TextStyle(fontSize: 16),
                     ),
@@ -690,7 +690,7 @@ class _askForHelpDialog extends HookWidget {
                       onDialogTap(DialogResponse(confirmed: false)),
                     },
                     child: Text(
-                      request.secondaryButtonTitle ?? 'Cancel',
+                      request.secondaryButtonTitle ?? context.t.cancel,
                       textAlign: TextAlign.center,
                       style: const TextStyle(
                         fontSize: 16,

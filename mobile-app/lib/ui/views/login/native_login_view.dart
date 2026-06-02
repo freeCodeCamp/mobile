@@ -215,7 +215,7 @@ class NativeLoginView extends StatelessWidget {
                                   }
                                 : null,
                             child: Text(
-                              'Submit and sign in to freeCodeCamp',
+                              context.t.email_submit_code,
                               style: TextStyle(
                                 fontSize: 20,
                               ),
@@ -299,11 +299,10 @@ class NativeLoginView extends StatelessWidget {
                           ),
                           children: [
                             TextSpan(
-                              text:
-                                  "By continuing, you indicate that you have read and agree to freeCodeCamp.org's ",
+                              text: context.t.login_terms_prefix,
                             ),
                             TextSpan(
-                              text: 'Terms of Service',
+                              text: context.t.terms_of_service,
                               style: const TextStyle(
                                 decoration: TextDecoration.underline,
                               ),
@@ -317,10 +316,10 @@ class NativeLoginView extends StatelessWidget {
                                 },
                             ),
                             TextSpan(
-                              text: ' and ',
+                              text: context.t.and,
                             ),
                             TextSpan(
-                              text: 'Privacy Policy',
+                              text: context.t.privacy_policy,
                               style: const TextStyle(
                                 decoration: TextDecoration.underline,
                               ),

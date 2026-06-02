@@ -156,8 +156,8 @@ class ProfileView extends StatelessWidget {
         _infoRow(Icons.location_on, context.t.profile_location, user.location!,
             FccColors.blue50),
       if (user.isDonating)
-        _infoRow(Icons.favorite, 'Supporter', context.t.profile_supporter,
-            FccColors.yellow45),
+        _infoRow(Icons.favorite, context.t.profile_supporter,
+            context.t.profile_supporter, FccColors.yellow45),
       if (user.twitter != null && user.twitter!.trim().isNotEmpty)
         _infoRow(Icons.alternate_email, context.t.profile_x, user.twitter!,
             FccColors.blue50),
@@ -549,67 +549,67 @@ class ProfileView extends StatelessWidget {
     final currentCerts = [
       {
         'show': user.isRespWebDesignCert,
-        'title': 'Responsive Web Design Certification',
+        'title': context.t.cert_responsive_web_design,
         'certSlug': 'responsive-web-design',
       },
       {
         'show': user.isJsAlgoDataStructCert,
-        'title': 'JavaScript Algorithms and Data Structures Certification',
+        'title': context.t.cert_javascript_algorithms,
         'certSlug': 'javascript-algorithms-and-data-structures'
       },
       {
         'show': user.isFrontEndLibsCert,
-        'title': 'Front End Development Libraries Certification',
+        'title': context.t.cert_front_end_libraries,
         'certSlug': 'front-end-development-libraries',
       },
       {
         'show': user.is2018DataVisCert,
-        'title': 'Data Visualization Certification',
+        'title': context.t.cert_data_visualization,
         'certSlug': 'data-visualization',
       },
       {
         'show': user.isApisMicroservicesCert,
-        'title': 'Back End Development and APIs Certification',
+        'title': context.t.cert_back_end_development_apis,
         'certSlug': 'back-end-development-and-apis',
       },
       {
         'show': user.isQaCertV7,
-        'title': ' Quality Assurance Certification',
+        'title': context.t.cert_quality_assurance,
         'certSlug': 'quality-assurance-v7',
       },
       {
         'show': user.isInfosecCertV7,
-        'title': 'Information Security Certification',
+        'title': context.t.cert_information_security,
         'certSlug': 'information-security-v7',
       },
       {
         'show': user.isSciCompPyCertV7,
-        'title': 'Scientific Computing with Python Certification',
+        'title': context.t.cert_scientific_computing_python,
         'certSlug': 'scientific-computing-with-python-v7',
       },
       {
         'show': user.isDataAnalysisPyCertV7,
-        'title': 'Data Analysis with Python Certification',
+        'title': context.t.cert_data_analysis_python,
         'certSlug': 'data-analysis-with-python-v7',
       },
       {
         'show': user.isMachineLearningPyCertV7,
-        'title': 'Machine Learning with Python Certification',
+        'title': context.t.cert_machine_learning_python,
         'certSlug': 'machine-learning-with-python-v7',
       },
       {
         'show': user.isRelationalDatabaseCertV8,
-        'title': 'Relational Database Certification',
+        'title': context.t.cert_relational_database,
         'certSlug': 'relational-database-v8',
       },
       {
         'show': user.isCollegeAlgebraPyCertV8,
-        'title': 'College Algebra with Python',
+        'title': context.t.cert_college_algebra_python,
         'certSlug': 'college-algebra-with-python-v8',
       },
       {
         'show': user.isFoundationalCSharpCertV8,
-        'title': 'Foundational C# with Microsoft',
+        'title': context.t.cert_foundational_csharp,
         'certSlug': 'foundational-c-sharp-with-microsoft',
       }
     ];
@@ -617,27 +617,27 @@ class ProfileView extends StatelessWidget {
     final legacyCerts = [
       {
         'show': user.isFrontEndCert,
-        'title': 'Front End Certification',
+        'title': context.t.cert_front_end,
         'certSlug': 'legacy-front-end'
       },
       {
         'show': user.isBackEndCert,
-        'title': 'Back End Certification',
+        'title': context.t.cert_back_end,
         'certSlug': 'legacy-back-end'
       },
       {
         'show': user.isDataVisCert,
-        'title': 'Data Visualization Certification',
+        'title': context.t.cert_data_visualization,
         'certSlug': 'legacy-data-visualization'
       },
       {
         'show': user.isInfosecQaCert,
-        'title': 'Information Security and Quality Assurance Certification',
+        'title': context.t.cert_information_security_quality_assurance,
         'certSlug': 'information-security-and-quality-assurance'
       },
       {
         'show': user.isFullStackCert,
-        'title': 'Full Stack Certification',
+        'title': context.t.cert_full_stack,
         'certSlug': 'full-stack'
       }
     ];

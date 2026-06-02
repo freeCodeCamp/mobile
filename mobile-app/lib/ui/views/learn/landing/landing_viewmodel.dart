@@ -8,6 +8,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:freecodecamp/app/app.locator.dart';
 import 'package:freecodecamp/app/app.router.dart';
+import 'package:freecodecamp/l10n/app_localizations.dart';
 import 'package:freecodecamp/models/learn/challenge_model.dart';
 import 'package:freecodecamp/models/learn/completed_challenge_model.dart';
 import 'package:freecodecamp/models/learn/curriculum_model.dart';
@@ -20,6 +21,7 @@ import 'package:freecodecamp/service/firebase/remote_config_service.dart';
 import 'package:freecodecamp/service/learn/daily_challenge_service.dart';
 import 'package:freecodecamp/service/learn/learn_offline_service.dart';
 import 'package:freecodecamp/service/learn/learn_service.dart';
+import 'package:freecodecamp/service/locale_service.dart';
 import 'package:freecodecamp/ui/views/learn/landing/landing_view.dart';
 import 'package:freecodecamp/ui/views/learn/utils/learn_globals.dart';
 import 'package:freecodecamp/ui/widgets/setup_dialog_ui.dart';
@@ -38,6 +40,8 @@ class LearnLandingViewModel extends BaseViewModel {
 
   final SnackbarService _snack = locator<SnackbarService>();
   SnackbarService get snack => _snack;
+
+  final LocaleService _localeService = locator<LocaleService>();
 
   final _learnOfflineService = locator<LearnOfflineService>();
   LearnOfflineService get learnOfflineService => _learnOfflineService;
@@ -173,9 +177,10 @@ class LearnLandingViewModel extends BaseViewModel {
   }
 
   void disabledButtonSnack(bool disabledByManualOverride) {
+    final t = lookupAppLocalizations(_localeService.locale);
     final message = disabledByManualOverride
-        ? 'Temporarily unavailable, come back soon.'
-        : 'Not available use the web version';
+        ? t.temporarily_unavailable
+        : t.not_available_web;
 
     snack.showSnackbar(title: message, message: '');
     Future.delayed(const Duration(milliseconds: 2500), () {
@@ -197,13 +202,14 @@ class LearnLandingViewModel extends BaseViewModel {
 
       Map<String, dynamic> superBlockStages = res.data['superblocks'];
 
+      final t = lookupAppLocalizations(_localeService.locale);
       Map<String, String> stageOrder = {
-        'core': 'Recommended curriculum (still in beta):',
-        'english': 'Learn English for Developers:',
-        'spanish': 'Learn Professional Spanish:',
-        'chinese': 'Learn Professional Chinese:',
-        'extra': 'Prepare for the developer interview job search:',
-        'professional': 'Professional certifications:',
+        'core': t.stage_core,
+        'english': t.stage_english,
+        'spanish': t.stage_spanish,
+        'chinese': t.stage_chinese,
+        'extra': t.stage_extra,
+        'professional': t.stage_professional,
       };
 
       List<Widget> widgetOrder = [];

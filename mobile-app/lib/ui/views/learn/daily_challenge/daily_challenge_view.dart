@@ -174,7 +174,9 @@ class DailyChallengeView extends StatelessWidget {
                         ),
                       ),
                       child: Text(
-                        isOpen ? 'Hide Challenges' : 'Show Challenges',
+                        isOpen
+                            ? context.t.hide_challenges
+                            : context.t.show_challenges,
                       ),
                     ),
                   ),
@@ -212,8 +214,14 @@ class DailyChallengeView extends StatelessWidget {
                     },
                     child: Semantics(
                       label: isCompleted
-                          ? 'Challenge ${challenge.challengeNumber}: ${challenge.title}, completed'
-                          : 'Challenge ${challenge.challengeNumber}: ${challenge.title}, not completed',
+                          ? context.t.daily_challenge_item_completed_label(
+                              challenge.challengeNumber,
+                              challenge.title,
+                            )
+                          : context.t.daily_challenge_item_not_completed_label(
+                              challenge.challengeNumber,
+                              challenge.title,
+                            ),
                       button: true,
                       child: Card(
                         shape: RoundedRectangleBorder(
@@ -244,7 +252,10 @@ class DailyChallengeView extends StatelessWidget {
                                 ),
                               Expanded(
                                 child: Text(
-                                  'Challenge ${challenge.challengeNumber}: ${challenge.title}',
+                                  context.t.daily_challenge_item_title(
+                                    challenge.challengeNumber,
+                                    challenge.title,
+                                  ),
                                   style: TextStyle(fontSize: 18),
                                 ),
                               ),

@@ -270,7 +270,9 @@ class PodcastTileState extends State<PodcastTile> {
               widget.playing ? Icons.pause : Icons.play_arrow,
               color: FccColors.gray00,
               size: 33,
-              semanticLabel: widget.playing ? 'Pause episode' : 'Play episode',
+              semanticLabel: widget.playing
+                  ? context.t.podcast_pause_episode
+                  : context.t.podcast_play_episode,
             ),
       onPressed: () {
         playBtnClick();

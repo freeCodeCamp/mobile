@@ -1,11 +1,13 @@
 import 'package:freecodecamp/app/app.locator.dart';
 import 'package:freecodecamp/app/app.router.dart';
+import 'package:freecodecamp/l10n/app_localizations.dart';
 import 'package:freecodecamp/models/learn/completed_challenge_model.dart';
 import 'package:freecodecamp/models/learn/curriculum_model.dart';
 import 'package:freecodecamp/models/learn/daily_challenge_model.dart';
 import 'package:freecodecamp/models/main/user_model.dart';
 import 'package:freecodecamp/service/authentication/authentication_service.dart';
 import 'package:freecodecamp/service/learn/daily_challenge_service.dart';
+import 'package:freecodecamp/service/locale_service.dart';
 import 'package:freecodecamp/ui/views/learn/utils/challenge_utils.dart';
 import 'package:stacked/stacked.dart';
 import 'package:stacked_services/stacked_services.dart';
@@ -15,6 +17,7 @@ class DailyChallengeViewModel extends BaseViewModel {
   final AuthenticationService _auth = locator<AuthenticationService>();
   final DailyChallengeService _dailyChallengeService =
       locator<DailyChallengeService>();
+  final LocaleService _localeService = locator<LocaleService>();
 
   List<DailyChallengeBlock> _blocks = [];
   List<DailyChallengeBlock> get blocks => _blocks;
@@ -73,6 +76,7 @@ class DailyChallengeViewModel extends BaseViewModel {
 
         _blocks = [];
         _blockOpenStates = {};
+        final t = lookupAppLocalizations(_localeService.locale);
 
         // Create challenge groups for each month
         for (String monthYear in sortedMonths) {
@@ -87,8 +91,7 @@ class DailyChallengeViewModel extends BaseViewModel {
           final block = DailyChallengeBlock(
             monthYear: monthYear,
             challenges: monthChallenges,
-            description:
-                'Explore the daily coding challenges for $monthYear. Stay motivated and keep your learning streak alive!',
+            description: t.daily_challenge_month_description(monthYear),
           );
 
           _blocks.add(block);
@@ -123,13 +126,13 @@ class DailyChallengeViewModel extends BaseViewModel {
   Future<void> navigateToDailyChallenge(
       DailyChallengeOverview challenge) async {
     String monthYear = formatMonthFromDate(challenge.date);
+    final t = lookupAppLocalizations(_localeService.locale);
 
     // Map to curriculum block so ChallengeTemplateView can use it
     Block block = DailyChallengeBlock(
       monthYear: monthYear,
       challenges: [challenge],
-      description:
-          'Explore the daily coding challenges for $monthYear. Stay motivated and keep your learning streak alive!',
+      description: t.daily_challenge_month_description(monthYear),
     ).toCurriculumBlock();
 
     _navigationService.navigateTo(
