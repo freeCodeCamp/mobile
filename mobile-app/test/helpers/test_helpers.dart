@@ -2,6 +2,7 @@ import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:freecodecamp/app/app.locator.dart';
 import 'package:freecodecamp/service/authentication/authentication_service.dart';
 import 'package:freecodecamp/service/learn/daily_challenge_service.dart';
+import 'package:freecodecamp/service/locale_service.dart';
 import 'package:freecodecamp/service/news/bookmark_service.dart';
 import 'package:mockito/annotations.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -26,6 +27,7 @@ void registerServices() {
   getAndRegisterNewsBookmarkService();
   getAndRegisterAuthenticationService();
   getAndRegisterDailyChallengeService();
+  getAndRegisterLocaleService();
 // @stacked-mock-register
 }
 
@@ -61,6 +63,13 @@ MockDailyChallengeService getAndRegisterDailyChallengeService() {
   _removeRegistrationIfExists<DailyChallengeService>();
   final service = MockDailyChallengeService();
   locator.registerSingleton<DailyChallengeService>(service);
+  return service;
+}
+
+LocaleService getAndRegisterLocaleService() {
+  _removeRegistrationIfExists<LocaleService>();
+  final service = LocaleService();
+  locator.registerSingleton<LocaleService>(service);
   return service;
 }
 // @stacked-mock-create

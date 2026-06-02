@@ -8,6 +8,7 @@ import 'package:freecodecamp/models/main/user_model.dart';
 import 'package:freecodecamp/service/authentication/authentication_service.dart';
 import 'package:freecodecamp/service/learn/daily_challenge_notification_service.dart';
 import 'package:freecodecamp/service/learn/daily_challenge_service.dart';
+import 'package:freecodecamp/service/locale_service.dart';
 import 'package:mockito/mockito.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:timezone/data/latest.dart' as tz;
@@ -23,10 +24,12 @@ class TestDailyChallengeNotificationService
     required FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin,
     required DailyChallengeService dailyChallengeService,
     required AuthenticationService authenticationService,
+    required LocaleService localeService,
   }) : super(
           flutterLocalNotificationsPlugin: flutterLocalNotificationsPlugin,
           dailyChallengeService: dailyChallengeService,
           authenticationService: authenticationService,
+          localeService: localeService,
         );
 
   @override
@@ -46,6 +49,7 @@ void main() {
   late MockFlutterLocalNotificationsPlugin mockNotifications;
   late MockDailyChallengeService mockDailyChallengeService;
   late MockAuthenticationService mockAuthenticationService;
+  late LocaleService localeService;
   late tz.Location tzLocation;
   late DailyChallengeNotificationService service;
   late SharedPreferences prefs;
@@ -58,10 +62,12 @@ void main() {
     mockNotifications = MockFlutterLocalNotificationsPlugin();
     mockDailyChallengeService = MockDailyChallengeService();
     mockAuthenticationService = MockAuthenticationService();
+    localeService = LocaleService();
     service = DailyChallengeNotificationService(
       flutterLocalNotificationsPlugin: mockNotifications,
       dailyChallengeService: mockDailyChallengeService,
       authenticationService: mockAuthenticationService,
+      localeService: localeService,
     );
     mockAndroidNotifications = MockAndroidFlutterLocalNotificationsPlugin();
 
@@ -76,6 +82,7 @@ void main() {
       flutterLocalNotificationsPlugin: mockNotifications,
       dailyChallengeService: mockDailyChallengeService,
       authenticationService: mockAuthenticationService,
+      localeService: localeService,
     );
   });
 
