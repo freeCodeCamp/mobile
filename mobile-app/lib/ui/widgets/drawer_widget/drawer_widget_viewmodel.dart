@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:freecodecamp/app/app.locator.dart';
+import 'package:freecodecamp/l10n/app_localizations.dart';
 import 'package:freecodecamp/service/authentication/authentication_service.dart';
 import 'package:freecodecamp/service/developer_service.dart';
+import 'package:freecodecamp/service/locale_service.dart';
 import 'package:freecodecamp/ui/views/code_radio/code_radio_view.dart';
 import 'package:freecodecamp/ui/views/learn/daily_challenge/daily_challenge_view.dart';
 import 'package:freecodecamp/ui/views/learn/landing/landing_view.dart';
@@ -17,6 +19,7 @@ class DrawerWidgetViewModel extends BaseViewModel {
   final AuthenticationService auth = locator<AuthenticationService>();
 
   final SnackbarService snack = locator<SnackbarService>();
+  final LocaleService _localeService = locator<LocaleService>();
 
   bool _loggedIn = false;
   bool get loggedIn => _loggedIn;
@@ -47,14 +50,16 @@ class DrawerWidgetViewModel extends BaseViewModel {
   }
 
   void snackbar() {
+    final t = lookupAppLocalizations(_localeService.locale);
     snack.showSnackbar(
-      title: 'Coming soon - use the web version',
+      title: t.coming_soon_web,
       message: '',
     );
   }
 
   void loginSnack() {
-    snack.showSnackbar(message: '', title: 'Login will soon be available!');
+    final t = lookupAppLocalizations(_localeService.locale);
+    snack.showSnackbar(message: '', title: t.login_coming_soon);
   }
 
   void routeComponent(view, context) async {

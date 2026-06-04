@@ -21,7 +21,7 @@ class LearnLandingView extends StatelessWidget {
       builder: (context, model, child) => Scaffold(
         backgroundColor: FccColors.gray90,
         appBar: AppBar(
-          title: Text('LEARN'),
+          title: Text(context.t.learn),
           actions: [
             PopupMenuButton<String>(
               color: FccColors.gray85,
@@ -187,7 +187,7 @@ class LearnLandingView extends StatelessWidget {
 
           return Text(
             context.t.login_welcome_back(
-              user.username.startsWith('fcc') ? 'User' : user.username,
+              user.username.startsWith('fcc') ? context.t.user : user.username,
             ),
             textAlign: TextAlign.center,
             style: const TextStyle(

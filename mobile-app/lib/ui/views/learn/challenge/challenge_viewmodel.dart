@@ -767,7 +767,7 @@ class ChallengeViewModel extends BaseViewModel {
             '--fcc-actual--', (failedTestErr?['actual'] ?? '').toString());
   }
 
-  void runTests() async {
+  void runTests(BuildContext context) async {
     setShowPanel = false;
     setIsRunningTests = true;
     _failedTestIndexes = [];
@@ -790,7 +790,11 @@ class ChallengeViewModel extends BaseViewModel {
       if (errorMessage.contains('Babel transpilation failed')) {
         errorMessage = errorMessage.replaceFirst('Exception: ', '');
       }
-      String userFriendlyMessage = parseSyntaxError(errorMessage);
+      String userFriendlyMessage = parseSyntaxError(
+        errorMessage,
+        lineMessage: context.t.syntax_error_line,
+        generalMessage: context.t.syntax_error_general,
+      );
 
       setPanelType = PanelType.hint;
       setHint = '<p>$userFriendlyMessage</p>';

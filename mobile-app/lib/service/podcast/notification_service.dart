@@ -4,6 +4,9 @@ import 'dart:math';
 
 import 'package:flutter/services.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
+import 'package:freecodecamp/app/app.locator.dart';
+import 'package:freecodecamp/l10n/app_localizations.dart';
+import 'package:freecodecamp/service/locale_service.dart';
 
 // This is a singleton class and initialized only once
 class NotificationService {
@@ -11,6 +14,7 @@ class NotificationService {
       NotificationService._internal();
   final FlutterLocalNotificationsPlugin _flutterLocalNotificationsPlugin =
       FlutterLocalNotificationsPlugin();
+  final LocaleService _localeService = locator<LocaleService>();
   Random random = Random();
 
   factory NotificationService() {
@@ -96,12 +100,14 @@ class NotificationService {
   Future<bool> requestPermissionIfNeeded() => requestPermission();
 
   Future<void> showNotification(String title, String body) async {
+    final t = lookupAppLocalizations(_localeService.locale);
+
     // Check up more on the below values here
-    const AndroidNotificationDetails androidNotificationDetails =
+    final AndroidNotificationDetails androidNotificationDetails =
         AndroidNotificationDetails(
       'fcc-notif-channel',
       'podcast-episodes',
-      channelDescription: 'Channel description',
+      channelDescription: t.notification_channel_description,
       priority: Priority.high,
       importance: Importance.max,
     );
@@ -109,7 +115,7 @@ class NotificationService {
     const DarwinNotificationDetails iosNotificationDetails =
         DarwinNotificationDetails(threadIdentifier: 'fcc-ios-notif-channel');
 
-    const NotificationDetails platformChannelSpecifics = NotificationDetails(
+    final NotificationDetails platformChannelSpecifics = NotificationDetails(
       android: androidNotificationDetails,
       iOS: iosNotificationDetails,
     );

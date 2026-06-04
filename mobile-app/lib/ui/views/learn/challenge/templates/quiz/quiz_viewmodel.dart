@@ -1,4 +1,5 @@
 import 'package:freecodecamp/app/app.locator.dart';
+import 'package:freecodecamp/l10n/app_localizations.dart';
 import 'package:freecodecamp/models/learn/challenge_model.dart';
 import 'package:freecodecamp/service/learn/learn_service.dart';
 import 'package:freecodecamp/ui/views/learn/widgets/quiz_widget.dart';
@@ -81,10 +82,10 @@ class QuizViewModel extends BaseViewModel {
     notifyListeners();
   }
 
-  void validateChallenge() {
+  void validateChallenge(AppLocalizations t) {
     if (unansweredQuestions.length > 1) {
       setErrMessage =
-          "The following questions are unanswered: ${unansweredQuestions.join(', ')}. You must answer all questions.";
+          t.quiz_unanswered_questions(unansweredQuestions.join(', '));
       return;
     }
 
@@ -105,8 +106,8 @@ class QuizViewModel extends BaseViewModel {
     setIsValidated = true;
 
     setErrMessage = hasPassedAllQuestions
-        ? '✅ You have $correctQuestionsCount out of $totalQuestions questions correct. You have passed.'
-        : "❌ You have $correctQuestionsCount out of $totalQuestions questions correct. You didn't pass.";
+        ? '✅ ${t.quiz_passed(correctQuestionsCount, totalQuestions)}'
+        : '❌ ${t.quiz_failed(correctQuestionsCount, totalQuestions)}';
   }
 
   void resetQuiz() {

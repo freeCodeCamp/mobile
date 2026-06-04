@@ -183,8 +183,7 @@ class AuthenticationService {
             .webAuthentication(scheme: kReleaseMode ? null : 'org.freecodecamp')
             .login(useHTTPS: true, parameters: {'connection': connectionType});
       }
-    } on WebAuthenticationException  catch (e) {
-
+    } on WebAuthenticationException catch (e) {
       log('message: WebAuthenticationException: ${e.message}');
 
       // NOTE: The most likely case is that the user canceled the login
@@ -220,11 +219,14 @@ class AuthenticationService {
       await writeTokensToStorage();
       await fetchUser();
     } on DioException catch (err, st) {
-      String subject = Uri.encodeComponent('Error logging in to mobile app');
+      String subject = Uri.encodeComponent(context.t.login_email_error_subject);
       Navigator.pop(context);
       if (err.response != null) {
-        String body = Uri.encodeComponent(
-            'Please email the below error to ${AuthenticationService.supportEmail}\n\n${err.response!.data.toString()}\n\n${st.toString()}');
+        String body = Uri.encodeComponent(context.t.login_email_error_message(
+          AuthenticationService.supportEmail,
+          err.response!.data.toString(),
+          st.toString(),
+        ));
         await showDialog(
           context: context,
           barrierDismissible: false,
@@ -239,9 +241,11 @@ class AuthenticationService {
             ),
             content: SingleChildScrollView(
               child: SelectionArea(
-                child: Text(
-                  'Please email the below error to ${AuthenticationService.supportEmail}:\n\n${err.response!.data.toString()}\n\n${st.toString()}',
-                ),
+                child: Text(context.t.login_email_error_message(
+                  AuthenticationService.supportEmail,
+                  err.response!.data.toString(),
+                  st.toString(),
+                )),
               ),
             ),
             actions: [
@@ -255,7 +259,7 @@ class AuthenticationService {
                       'mailto:${AuthenticationService.supportEmail}?subject=$subject&body=$body'));
                   Navigator.pop(context);
                 },
-                child: const Text('Email Error'),
+                child: Text(context.t.email_error),
               ),
               TextButton(
                 style: TextButton.styleFrom(
@@ -271,8 +275,11 @@ class AuthenticationService {
           ),
         );
       } else {
-        String body = Uri.encodeComponent(
-            'Please email the below error to ${AuthenticationService.supportEmail}\n\n${err.toString()}\n\n${st.toString()}');
+        String body = Uri.encodeComponent(context.t.login_email_error_message(
+          AuthenticationService.supportEmail,
+          err.toString(),
+          st.toString(),
+        ));
         await showDialog(
           context: context,
           barrierDismissible: false,
@@ -287,9 +294,11 @@ class AuthenticationService {
             title: Text(context.t.error_two),
             content: SingleChildScrollView(
               child: SelectionArea(
-                child: Text(
-                  'Please email the below error to ${AuthenticationService.supportEmail}:\n\n${err.toString()}\n\n${st.toString()}',
-                ),
+                child: Text(context.t.login_email_error_message(
+                  AuthenticationService.supportEmail,
+                  err.toString(),
+                  st.toString(),
+                )),
               ),
             ),
             actions: [
@@ -303,7 +312,7 @@ class AuthenticationService {
                       'mailto:${AuthenticationService.supportEmail}?subject=$subject&body=$body'));
                   Navigator.pop(context);
                 },
-                child: const Text('Email Error'),
+                child: Text(context.t.email_error),
               ),
               TextButton(
                 style: TextButton.styleFrom(

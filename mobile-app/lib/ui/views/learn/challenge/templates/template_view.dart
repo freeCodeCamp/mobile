@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:freecodecamp/extensions/i18n_extension.dart';
 import 'package:freecodecamp/models/learn/challenge_model.dart';
 import 'package:freecodecamp/models/learn/curriculum_model.dart';
 import 'package:freecodecamp/ui/views/learn/challenge/challenge_view.dart';
@@ -99,7 +100,9 @@ class ChallengeTemplateView extends StatelessWidget {
                 default:
                   return Center(
                     child: Text(
-                      'Unknown Challenge, info : ${challenge.challengeType}',
+                      context.t.unknown_challenge(
+                        challenge.challengeType.toString(),
+                      ),
                     ),
                   );
               }
@@ -108,7 +111,10 @@ class ChallengeTemplateView extends StatelessWidget {
             if (snapshot.hasError) {
               return Center(
                 child: Text(
-                  'Error: ${snapshot.error}\n${snapshot.stackTrace}',
+                  context.t.challenge_error(
+                    snapshot.error.toString(),
+                    snapshot.stackTrace.toString(),
+                  ),
                 ),
               );
             }

@@ -1,6 +1,7 @@
 import 'dart:convert';
 
 import 'package:flutter/material.dart';
+import 'package:freecodecamp/extensions/i18n_extension.dart';
 import 'package:freecodecamp/ui/views/news/news-image-viewer/news_image_viewmodel.dart';
 import 'package:photo_view/photo_view.dart';
 import 'package:stacked/stacked.dart';
@@ -24,7 +25,7 @@ class NewsImageView extends StatelessWidget {
           backgroundColor: Colors.transparent,
           shadowColor: Colors.transparent,
           leading: Tooltip(
-                message: 'Back',
+                message: context.t.back,
                 child: InkWell(
                   onTap: () {
                     Navigator.pop(context);

@@ -24,15 +24,16 @@ Future<String> genForumLink(
   final userDeviceInfo = await getDeviceInfo(context);
 
   final titleText = '$blockTitle - ${currChallenge.title}';
+  final t = context.t;
   final String endingText =
-      '**Your mobile information:**\n```txt\n$userDeviceInfo\n```\n\n**Challenge:** $titleText\n\n**Link to the challenge:**\nhttps://www.freecodecamp.org/learn/${currChallenge.superBlock}/${currChallenge.block}/${currChallenge.dashedName}';
+      '**${t.forum_mobile_info}**\n```txt\n$userDeviceInfo\n```\n\n**${t.forum_challenge}** $titleText\n\n**${t.forum_challenge_link}**\nhttps://www.freecodecamp.org/learn/${currChallenge.superBlock}/${currChallenge.block}/${currChallenge.dashedName}';
 
   final String userCode = await filesToMarkdown(currChallenge, editorText);
 
   final String textMessage =
-      "**Tell us what's happening:**\nDescribe your issue in detail here.\n\n**Your code so far**$userCode\n\n$endingText";
+      '**${t.forum_tell_us_heading}**\n${t.forum_describe_issue}\n\n**${t.forum_code_so_far}**$userCode\n\n$endingText';
   final String altTextMessage =
-      "**Tell us what's happening:**\n\n\n\n**Your code so far**\n\nWARNING\n\nThe challenge seed code and/or your solution exceeded the maximum length we can port over from the challenge.\n\nYou will need to take an additional step here so the code you wrote presents in an easy to read format.\n\nPlease copy/paste all the editor code showing in the challenge from where you just linked.\n\n```\nReplace these two sentences with your copied code.\nPlease leave the ``` line above and the ``` line below,\nbecause they allow your code to properly format in the post.\n\n```\n$endingText";
+      '**${t.forum_tell_us_heading}**\n\n\n\n**${t.forum_code_so_far}**\n\n${t.forum_warning}\n\n${t.forum_code_too_long}\n\n${t.forum_additional_step}\n\n${t.forum_copy_editor_code}\n\n```\n${t.forum_replace_code}\n\n```\n$endingText';
 
   String studentCode = Uri.encodeComponent(textMessage);
   String altStudentCode = Uri.encodeComponent(altTextMessage);

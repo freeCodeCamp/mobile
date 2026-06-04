@@ -4,9 +4,11 @@ import 'dart:io';
 
 import 'package:dio/dio.dart';
 import 'package:freecodecamp/app/app.locator.dart';
+import 'package:freecodecamp/l10n/app_localizations.dart';
 import 'package:freecodecamp/models/podcasts/episodes_model.dart';
 import 'package:freecodecamp/models/podcasts/podcasts_model.dart';
 import 'package:freecodecamp/service/dio_service.dart';
+import 'package:freecodecamp/service/locale_service.dart';
 import 'package:freecodecamp/service/podcast/notification_service.dart';
 import 'package:freecodecamp/service/podcast/podcasts_service.dart';
 import 'package:path_provider/path_provider.dart';
@@ -17,6 +19,7 @@ class DownloadService {
   static final DownloadService _downloadService = DownloadService._internal();
   final _databaseService = locator<PodcastsDatabaseService>();
   final _notificationService = locator<NotificationService>();
+  final _localeService = locator<LocaleService>();
 
   static final StreamController<String> _progStream =
       StreamController<String>.broadcast();
@@ -58,8 +61,9 @@ class DownloadService {
     }, options: Options(headers: {'User-Agent': await userAgent()}));
     _downloading.sink.add(false);
     _progStream.sink.add('');
+    final t = lookupAppLocalizations(_localeService.locale);
     await _notificationService.showNotification(
-      'Download complete',
+      t.download_complete,
       '${podcast.title} - ${episode.title}',
     );
     await _databaseService.addPodcast(podcast);
