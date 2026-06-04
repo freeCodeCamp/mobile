@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
@@ -9,7 +11,7 @@ import 'package:freecodecamp/models/main/user_model.dart';
 import 'package:freecodecamp/service/authentication/authentication_service.dart';
 import 'package:freecodecamp/service/dio_service.dart';
 import 'package:freecodecamp/service/firebase/remote_config_service.dart';
-import 'package:freecodecamp/service/learn/learn_service.dart';
+import 'package:freecodecamp/service/learn/curriculum_language_service.dart';
 import 'package:freecodecamp/ui/theme/fcc_theme.dart';
 import 'package:stacked/stacked.dart';
 import 'package:stacked_services/stacked_services.dart';
@@ -20,6 +22,12 @@ class ChapterViewModel extends BaseViewModel {
   final AuthenticationService auth = locator<AuthenticationService>();
   final RemoteConfigService _remoteConfigService =
       locator<RemoteConfigService>();
+  final CurriculumLanguageService _curriculumLanguageService =
+      locator<CurriculumLanguageService>();
+
+  StreamSubscription<CurriculumLanguage>? _languageSubscription;
+  String? _superBlockDashedName;
+  String? _superBlockName;
 
   bool _isDev = false;
   bool get isDev => _isDev;
@@ -32,8 +40,28 @@ class ChapterViewModel extends BaseViewModel {
   }
 
   void init(String superBlockDashedName, superBlockName) async {
+    _superBlockDashedName = superBlockDashedName;
+    _superBlockName = superBlockName;
+
+    _languageSubscription ??=
+        _curriculumLanguageService.stream.listen((_) => _reload());
+
     superBlockFuture = requestChapters(superBlockDashedName, superBlockName);
     developmentMode();
+  }
+
+  void _reload() {
+    if (_superBlockDashedName != null && _superBlockName != null) {
+      superBlockFuture =
+          requestChapters(_superBlockDashedName!, _superBlockName!);
+      notifyListeners();
+    }
+  }
+
+  @override
+  void dispose() {
+    _languageSubscription?.cancel();
+    super.dispose();
   }
 
   Future<String> calculateProgress(Module module) async {
@@ -70,7 +98,7 @@ class ChapterViewModel extends BaseViewModel {
 
   Future<SuperBlock?> requestChapters(
       String superBlockDashedName, String superBlockName) async {
-    String baseUrl = LearnService.baseUrl;
+    String baseUrl = _curriculumLanguageService.baseUrl;
 
     final Response res = await _dio.get(
       '$baseUrl/$superBlockDashedName.json',

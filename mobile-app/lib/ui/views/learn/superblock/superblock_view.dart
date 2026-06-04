@@ -28,7 +28,7 @@ class SuperBlockView extends StatelessWidget {
           model.auth.fetchUser();
         }
 
-        model.setSuperBlockData = model.getSuperBlockData(
+        model.init(
           superBlockDashedName,
           superBlockName,
           hasInternet,

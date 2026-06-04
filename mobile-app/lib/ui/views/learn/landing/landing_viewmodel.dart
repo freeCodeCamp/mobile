@@ -18,6 +18,7 @@ import 'package:freecodecamp/models/main/user_model.dart';
 import 'package:freecodecamp/service/authentication/authentication_service.dart';
 import 'package:freecodecamp/service/dio_service.dart';
 import 'package:freecodecamp/service/firebase/remote_config_service.dart';
+import 'package:freecodecamp/service/learn/curriculum_language_service.dart';
 import 'package:freecodecamp/service/learn/daily_challenge_service.dart';
 import 'package:freecodecamp/service/learn/learn_offline_service.dart';
 import 'package:freecodecamp/service/learn/learn_service.dart';
@@ -45,6 +46,19 @@ class LearnLandingViewModel extends BaseViewModel {
 
   final _learnOfflineService = locator<LearnOfflineService>();
   LearnOfflineService get learnOfflineService => _learnOfflineService;
+
+  final CurriculumLanguageService _curriculumLanguageService =
+      locator<CurriculumLanguageService>();
+  StreamSubscription<CurriculumLanguage>? _languageSubscription;
+
+  String get currentLocaleCode => _curriculumLanguageService.current.slug;
+  List<String> get curriculumLocaleCodes =>
+      CurriculumLanguageService.languages.map((l) => l.slug).toList();
+  List<String> get curriculumLocaleNames =>
+      CurriculumLanguageService.languages.map((l) => l.name).toList();
+
+  void changeLocale(String slug) =>
+      _curriculumLanguageService.setLanguage(slug);
 
   final _dailyChallengeService = DailyChallengeService();
   final _remoteConfigService = locator<RemoteConfigService>();
@@ -82,8 +96,16 @@ class LearnLandingViewModel extends BaseViewModel {
     setupDialogUi();
     retrieveNewQuote();
     initLoggedInListener();
+    _languageSubscription =
+        _curriculumLanguageService.stream.listen((_) => _loadInitialData());
 
     _loadInitialData();
+  }
+
+  @override
+  void dispose() {
+    _languageSubscription?.cancel();
+    super.dispose();
   }
 
   Future<void> _loadInitialData() async {
@@ -123,7 +145,7 @@ class LearnLandingViewModel extends BaseViewModel {
         lastVisitedChallenge[0],
       );
 
-      String baseUrl = LearnService.baseUrl;
+      String baseUrl = _curriculumLanguageService.baseUrl;
 
       final Response res =
           await _dio.get('$baseUrl/${lastVisitedChallenge[1]}.json');
@@ -189,7 +211,7 @@ class LearnLandingViewModel extends BaseViewModel {
   }
 
   Future<List<Widget>> requestSuperBlocks() async {
-    String baseUrl = LearnService.baseUrl;
+    String baseUrl = _curriculumLanguageService.baseUrl;
 
     TextStyle headerStyle = TextStyle(fontSize: 21);
 

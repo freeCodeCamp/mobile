@@ -22,6 +22,28 @@ class LearnLandingView extends StatelessWidget {
         backgroundColor: FccColors.gray90,
         appBar: AppBar(
           title: Text(context.t.learn),
+          actions: [
+            PopupMenuButton<String>(
+              color: FccColors.gray85,
+              onSelected: (code) => model.changeLocale(code),
+              itemBuilder: (context) => [
+                for (int i = 0; i < model.curriculumLocaleCodes.length; i++)
+                  PopupMenuItem<String>(
+                    value: model.curriculumLocaleCodes[i],
+                    child: Text(
+                      model.curriculumLocaleNames[i],
+                      style: TextStyle(
+                        color: model.currentLocaleCode ==
+                                model.curriculumLocaleCodes[i]
+                            ? FccColors.blue50
+                            : Colors.white,
+                      ),
+                    ),
+                  ),
+              ],
+              icon: const Icon(Icons.language),
+            ),
+          ],
         ),
         drawer: const DrawerWidgetView(
           key: Key('drawer'),
