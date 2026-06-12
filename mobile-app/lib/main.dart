@@ -19,8 +19,10 @@ import 'package:freecodecamp/service/locale_service.dart';
 import 'package:freecodecamp/service/navigation/quick_actions_service.dart';
 import 'package:freecodecamp/service/news/api_service.dart';
 import 'package:freecodecamp/service/podcast/notification_service.dart';
+import 'package:freecodecamp/service/symbol_bar_service.dart';
 import 'package:freecodecamp/ui/theme/fcc_theme.dart';
 import 'package:freecodecamp/utils/upgrade_controller.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:stacked_services/stacked_services.dart';
 import 'package:upgrader/upgrader.dart';
 
@@ -33,6 +35,9 @@ Future<void> main({bool testing = false}) async {
   await AppAudioService().init();
   await AuthenticationService().init();
   await NewsApiService().init();
+  await locator<SymbolBarService>().init(
+    await SharedPreferences.getInstance(),
+  );
   var fbApp = await Firebase.initializeApp(
     options: DefaultFirebaseOptions.currentPlatform,
   );

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_html/flutter_html.dart';
+import 'package:freecodecamp/extensions/i18n_extension.dart';
 import 'package:freecodecamp/models/learn/challenge_model.dart';
 import 'package:freecodecamp/ui/theme/fcc_theme.dart';
 import 'package:freecodecamp/ui/views/learn/widgets/challenge_card.dart';
@@ -117,7 +118,9 @@ class _QuizWidgetState extends State<QuizWidget> {
     final question = widget.questions[questionIndex];
     final selectedAnswer = question.selectedAnswer;
     return ChallengeCard(
-      title: questionNumber != null ? 'Question $questionNumber' : 'Question',
+      title: questionNumber != null
+          ? context.t.quiz_question_number(questionNumber)
+          : context.t.quiz_question,
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -217,7 +220,9 @@ class _QuizWidgetState extends State<QuizWidget> {
       Padding(
         padding: EdgeInsets.only(left: 12, bottom: feedback == null ? 24 : 0),
         child: Text(
-          isCorrect && isCorrect == true ? 'Correct!' : 'Incorrect!',
+          isCorrect && isCorrect == true
+              ? context.t.quiz_correct
+              : context.t.quiz_incorrect,
           style: TextStyle(
             color: isCorrect && isCorrect == true
                 ? FccColors.green40

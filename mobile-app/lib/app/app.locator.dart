@@ -29,6 +29,7 @@ import '../service/news/bookmark_service.dart';
 import '../service/podcast/download_service.dart';
 import '../service/podcast/notification_service.dart';
 import '../service/podcast/podcasts_service.dart';
+import '../service/symbol_bar_service.dart';
 
 final locator = StackedLocator.instance;
 
@@ -62,4 +63,5 @@ Future<void> setupLocator({
   locator.registerLazySingleton(() => LocaleService());
   locator.registerLazySingleton(() => DioService());
   locator.registerLazySingleton(() => NewsApiService());
+  locator.registerLazySingleton(() => SymbolBarService());
 }

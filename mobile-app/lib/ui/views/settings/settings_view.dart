@@ -3,6 +3,7 @@ import 'package:freecodecamp/extensions/i18n_extension.dart';
 import 'package:freecodecamp/service/authentication/authentication_service.dart';
 import 'package:freecodecamp/ui/views/settings/delete-account/delete_account_view.dart';
 import 'package:freecodecamp/ui/views/settings/settings_viewmodel.dart';
+import 'package:freecodecamp/ui/views/settings/widgets/symbol_settings_widget.dart';
 import 'package:freecodecamp/ui/widgets/drawer_widget/drawer_widget_view.dart';
 import 'package:stacked/stacked.dart';
 
@@ -49,6 +50,21 @@ class SettingsView extends StatelessWidget {
                 context.t.settings_reset_cache_description,
               ),
               onTap: () => model.resetCache(context),
+            ),
+            buildDivider(),
+            ListTile(
+              leading: const Icon(Icons.functions),
+              title: const Text('Symbol Bar Settings'),
+              subtitle: const Text(
+                'Customize quick-access symbols',
+              ),
+              onTap: () => Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => const SymbolSettingsWidget(),
+                  settings: const RouteSettings(name: '/symbol-settings'),
+                ),
+              ),
             ),
             buildDivider(),
             ListTile(

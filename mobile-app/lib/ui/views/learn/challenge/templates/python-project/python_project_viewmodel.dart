@@ -39,22 +39,27 @@ class PythonProjectViewModel extends BaseViewModel {
     }
   }
 
-  void checkLink() {
+  void checkLink({
+    required String invalidLinkMessage,
+    required String ownWorkMessage,
+    required String insecureUrlMessage,
+    required String publicUrlMessage,
+  }) {
     if (!isUrl(linkController.text)) {
       setValidLink = false;
-      setLinkErrMsg = 'Please enter a valid link.';
+      setLinkErrMsg = invalidLinkMessage;
       return;
     } else if (fCCRegex.hasMatch(linkController.text)) {
       setValidLink = false;
-      setLinkErrMsg = 'Remember to submit your own work.';
+      setLinkErrMsg = ownWorkMessage;
       return;
     } else if (httpRegex.hasMatch(linkController.text)) {
       setValidLink = false;
-      setLinkErrMsg = 'An unsecure (http) URL cannot be used.';
+      setLinkErrMsg = insecureUrlMessage;
       return;
     } else if (localhostRegex.hasMatch(linkController.text)) {
       setValidLink = false;
-      setLinkErrMsg = 'Remember to submit a publicly visible app URL.';
+      setLinkErrMsg = publicUrlMessage;
       return;
     } else {
       setValidLink = true;

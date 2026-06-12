@@ -513,7 +513,18 @@ class ChallengeViewModel extends BaseViewModel {
     });
   }
 
-  // This function allows the symbols to be insterted into the text controllers
+  /// Insert a symbol at the current cursor position in the editor
+  ///
+  /// This method is called by the SymbolBar widget when a user clicks a symbol.
+  /// The SymbolBar widget displays symbols from SymbolBarService, which manages
+  /// predefined and custom symbol sets. This method handles the actual text insertion.
+  ///
+  /// Architecture: SymbolBarService (state/persistence) → SymbolBar widget (UI) →
+  /// insertSymbol (insertion logic)
+  ///
+  /// Parameters:
+  /// - [symbol]: The symbol string to insert (can be multi-character like "=>")
+  /// - [editor]: The Editor instance where the symbol should be inserted
   void insertSymbol(String symbol, Editor editor) async {
     final TextEditingControllerIDE focused = textFieldData!.controller;
     final RegionPosition position = textFieldData!.position;
@@ -767,7 +778,7 @@ class ChallengeViewModel extends BaseViewModel {
             '--fcc-actual--', (failedTestErr?['actual'] ?? '').toString());
   }
 
-  void runTests() async {
+  void runTests(BuildContext context) async {
     setShowPanel = false;
     setIsRunningTests = true;
     _failedTestIndexes = [];
@@ -790,7 +801,11 @@ class ChallengeViewModel extends BaseViewModel {
       if (errorMessage.contains('Babel transpilation failed')) {
         errorMessage = errorMessage.replaceFirst('Exception: ', '');
       }
-      String userFriendlyMessage = parseSyntaxError(errorMessage);
+      String userFriendlyMessage = parseSyntaxError(
+        errorMessage,
+        lineMessage: context.t.syntax_error_line,
+        generalMessage: context.t.syntax_error_general,
+      );
 
       setPanelType = PanelType.hint;
       setHint = '<p>$userFriendlyMessage</p>';

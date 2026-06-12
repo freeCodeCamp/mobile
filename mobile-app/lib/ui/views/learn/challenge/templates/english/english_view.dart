@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_html/flutter_html.dart';
+import 'package:freecodecamp/extensions/i18n_extension.dart';
 import 'package:freecodecamp/models/learn/challenge_model.dart';
 import 'package:freecodecamp/models/learn/curriculum_model.dart';
 import 'package:freecodecamp/ui/theme/fcc_theme.dart';
@@ -63,7 +64,7 @@ class EnglishView extends StatelessWidget {
                 ),
                 if (challenge.scene != null) ...[
                   ChallengeCard(
-                    title: 'Scene',
+                    title: context.t.challenge_card_scene,
                     child: SceneView(
                       scene: challenge.scene!,
                     ),
@@ -71,7 +72,7 @@ class EnglishView extends StatelessWidget {
                 ],
                 if (challenge.fillInTheBlank != null)
                   ChallengeCard(
-                    title: 'Fill in the Blank',
+                    title: context.t.challenge_card_fill_blank,
                     child: Padding(
                       padding: const EdgeInsets.all(10.0),
                       child: Column(
@@ -84,7 +85,7 @@ class EnglishView extends StatelessWidget {
                   ),
                 if (model.feedback.isNotEmpty)
                   ChallengeCard(
-                    title: 'Feedback',
+                    title: context.t.challenge_card_feedback,
                     child: Column(
                       children: parser.parse(model.feedback),
                     ),
@@ -92,7 +93,7 @@ class EnglishView extends StatelessWidget {
                 if (challenge.explanation != null &&
                     challenge.explanation!.isNotEmpty) ...[
                   ChallengeCard(
-                    title: 'Explanation',
+                    title: context.t.challenge_card_explanation,
                     child: Explanation(
                       explanation: challenge.explanation ?? '',
                     ),
@@ -126,8 +127,8 @@ class EnglishView extends StatelessWidget {
                           child: Text(
                             model.allInputsCorrect ||
                                     challenge.fillInTheBlank == null
-                                ? 'Go to Next Challenge'
-                                : 'Check Answers',
+                                ? context.t.go_to_next_challenge
+                                : context.t.check_answers,
                             style: const TextStyle(fontSize: 20),
                           ),
                         ),
@@ -158,9 +159,9 @@ class EnglishView extends StatelessWidget {
                             block,
                             context,
                           ),
-                          child: const Text(
-                            'Ask for Help',
-                            style: TextStyle(fontSize: 20),
+                          child: Text(
+                            context.t.ask_for_help,
+                            style: const TextStyle(fontSize: 20),
                           ),
                         ),
                       ),

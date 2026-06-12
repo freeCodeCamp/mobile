@@ -4,6 +4,7 @@ import 'package:audio_service/audio_service.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:freecodecamp/app/app.locator.dart';
+import 'package:freecodecamp/extensions/i18n_extension.dart';
 import 'package:freecodecamp/models/podcasts/episodes_model.dart';
 import 'package:freecodecamp/models/podcasts/podcasts_model.dart';
 import 'package:freecodecamp/service/audio/audio_service.dart';
@@ -269,7 +270,9 @@ class PodcastTileState extends State<PodcastTile> {
               widget.playing ? Icons.pause : Icons.play_arrow,
               color: FccColors.gray00,
               size: 33,
-              semanticLabel: widget.playing ? 'Pause episode' : 'Play episode',
+              semanticLabel: widget.playing
+                  ? context.t.podcast_pause_episode
+                  : context.t.podcast_play_episode,
             ),
       onPressed: () {
         playBtnClick();
@@ -319,11 +322,11 @@ class PodcastTileState extends State<PodcastTile> {
               builder: (context, snapshot) {
                 final progress = snapshot.data;
                 if (progress == '100') {
-                  return const Icon(
+                  return Icon(
                     Icons.download_done,
                     color: FccColors.gray10,
                     size: 20,
-                    semanticLabel: 'Download complete',
+                    semanticLabel: context.t.download_complete,
                   );
                 } else if (progress != null && progress != '') {
                   return Stack(alignment: Alignment.center, children: [
@@ -347,17 +350,17 @@ class PodcastTileState extends State<PodcastTile> {
                 }
               })
           : widget.downloaded
-              ? const Icon(
+              ? Icon(
                   Icons.download_done,
                   color: FccColors.gray10,
                   size: 20,
-                  semanticLabel: 'Download complete',
+                  semanticLabel: context.t.download_complete,
                 )
-              : const Icon(
+              : Icon(
                   Icons.download,
                   color: FccColors.gray10,
                   size: 20,
-                  semanticLabel: 'Download episode',
+                  semanticLabel: context.t.download_episode,
                 ),
     );
   }

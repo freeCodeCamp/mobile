@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_html/flutter_html.dart';
+import 'package:freecodecamp/extensions/i18n_extension.dart';
 import 'package:freecodecamp/models/learn/daily_challenge_model.dart';
 import 'package:freecodecamp/ui/theme/fcc_theme.dart';
 import 'package:freecodecamp/ui/views/learn/daily_challenge/daily_challenge_viewmodel.dart';
@@ -24,7 +25,7 @@ class DailyChallengeView extends StatelessWidget {
                 onPressed: () => Scaffold.of(context).openDrawer(),
               ),
             ),
-            title: const Text('Daily Coding Challenges'),
+            title: Text(context.t.daily_coding_challenges),
           ),
           drawer: const DrawerWidgetView(),
           body: model.isBusy
@@ -45,10 +46,10 @@ class DailyChallengeView extends StatelessWidget {
                         },
                       ),
                     )
-                  : const Center(
+                  : Center(
                       child: Text(
-                        'No challenges available at the moment.',
-                        style: TextStyle(fontSize: 16),
+                        context.t.daily_challenge_empty,
+                        style: const TextStyle(fontSize: 16),
                         textAlign: TextAlign.center,
                       ),
                     ),
@@ -124,7 +125,7 @@ class DailyChallengeView extends StatelessWidget {
                                 ),
                               ),
                               Text(
-                                'Completed',
+                                context.t.completed,
                                 style: TextStyle(
                                   color: FccColors.blue30,
                                   fontWeight: FontWeight.bold,
@@ -173,7 +174,9 @@ class DailyChallengeView extends StatelessWidget {
                         ),
                       ),
                       child: Text(
-                        isOpen ? 'Hide Challenges' : 'Show Challenges',
+                        isOpen
+                            ? context.t.hide_challenges
+                            : context.t.show_challenges,
                       ),
                     ),
                   ),
@@ -211,8 +214,14 @@ class DailyChallengeView extends StatelessWidget {
                     },
                     child: Semantics(
                       label: isCompleted
-                          ? 'Challenge ${challenge.challengeNumber}: ${challenge.title}, completed'
-                          : 'Challenge ${challenge.challengeNumber}: ${challenge.title}, not completed',
+                          ? context.t.daily_challenge_item_completed_label(
+                              challenge.challengeNumber,
+                              challenge.title,
+                            )
+                          : context.t.daily_challenge_item_not_completed_label(
+                              challenge.challengeNumber,
+                              challenge.title,
+                            ),
                       button: true,
                       child: Card(
                         shape: RoundedRectangleBorder(
@@ -243,7 +252,10 @@ class DailyChallengeView extends StatelessWidget {
                                 ),
                               Expanded(
                                 child: Text(
-                                  'Challenge ${challenge.challengeNumber}: ${challenge.title}',
+                                  context.t.daily_challenge_item_title(
+                                    challenge.challengeNumber,
+                                    challenge.title,
+                                  ),
                                   style: TextStyle(fontSize: 18),
                                 ),
                               ),

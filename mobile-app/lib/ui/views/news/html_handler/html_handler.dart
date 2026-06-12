@@ -6,6 +6,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_html/flutter_html.dart';
 import 'package:flutter_html_table/flutter_html_table.dart';
+import 'package:freecodecamp/extensions/i18n_extension.dart';
 import 'package:freecodecamp/ui/theme/fcc_theme.dart';
 import 'package:freecodecamp/ui/views/news/news-image-viewer/news_image_view.dart';
 import 'package:html/dom.dart' as dom;
@@ -256,22 +257,9 @@ class HTMLParser {
                 Clipboard.setData(ClipboardData(text: parsed));
                 ScaffoldMessenger.of(context).showSnackBar(
                   SnackBar(
-                    content: Text.rich(
-                      TextSpan(
-                        children: [
-                          TextSpan(
-                            text: parsed,
-                            style: const TextStyle(
-                              fontWeight: FontWeight.bold,
-                              fontSize: 20,
-                            ),
-                          ),
-                          const TextSpan(
-                            text: ' copied to clipboard!',
-                            style: TextStyle(fontSize: 20),
-                          ),
-                        ],
-                      ),
+                    content: Text(
+                      context.t.copied_to_clipboard(parsed),
+                      style: const TextStyle(fontSize: 20),
                     ),
                     duration: const Duration(seconds: 1),
                   ),

@@ -39,25 +39,24 @@ class QuizView extends StatelessWidget {
             final shouldPop = await showDialog<bool>(
               context: context,
               builder: (context) => AlertDialog(
-                title: const Text('Are you sure?'),
-                content: const Text(
-                    'Do you want to leave this quiz? Your progress will be lost.'),
+                title: Text(context.t.quiz_leave_title),
+                content: Text(context.t.quiz_leave_message),
                 actions: [
                   TextButton(
                     style: TextButton.styleFrom(
                       backgroundColor: FccColors.gray80,
                     ),
                     onPressed: () => Navigator.of(context).pop(false),
-                    child: const Text('Cancel'),
+                    child: Text(context.t.cancel),
                   ),
                   TextButton(
                     style: TextButton.styleFrom(
                       backgroundColor: FccColors.red15,
                     ),
                     onPressed: () => Navigator.of(context).pop(true),
-                    child: const Text(
-                      'Leave',
-                      style: TextStyle(color: FccColors.red90),
+                    child: Text(
+                      context.t.leave,
+                      style: const TextStyle(color: FccColors.red90),
                     ),
                   ),
                 ],
@@ -169,7 +168,7 @@ class QuizView extends StatelessWidget {
                               !model.hasPassedAllQuestions) {
                             model.resetQuiz();
                           } else {
-                            model.validateChallenge();
+                            model.validateChallenge(context.t);
                           }
                         },
                         child: Text(
