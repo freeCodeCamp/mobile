@@ -4,34 +4,10 @@ import 'package:freecodecamp/enums/ext_type.dart';
 import 'package:freecodecamp/models/learn/challenge_model.dart';
 import 'package:freecodecamp/service/learn/learn_file_service.dart';
 
-class UserCodeVariants {
-  UserCodeVariants({
-    required this.transpileScriptWithTargets,
-    required this.transpileScript,
-  });
-
-  final String transpileScriptWithTargets;
-  final String transpileScript;
-
-  List<String> get all => [transpileScriptWithTargets, transpileScript];
-}
-
 class ScriptBuilder {
   final LearnFileService fileService = locator<LearnFileService>();
 
   static const transpileScript = '''
-try {
-  return { success: true, code: Babel.transform(code, { presets: [["env", { exclude: ["transform-spread"] }]] }).code };
-} catch (e) {
-  let errorMsg = e.message || e.toString();
-  if (e.loc) {
-    errorMsg = "SyntaxError: " + e.message + " (" + e.loc.line + ":" + e.loc.column + ")";
-  }
-  return { success: false, error: errorMsg };
-}
-''';
-
-  static const transpileScriptWithTargets = '''
 try {
   return { success: true, code: Babel.transform(code, { presets: [["env", { "targets": "> 0.4%, not dead" }]] }).code };
 } catch (e) {
@@ -74,7 +50,7 @@ const testRes = await window.TestRunner.runTest(testStr);
 return testRes;
 ''';
 
-  Future<UserCodeVariants> buildUserCode(
+  Future<String> buildUserCode(
     Challenge challenge,
     InAppWebViewController? babelController, {
     bool testing = false,
@@ -90,31 +66,17 @@ return testRes;
       case 1:
       case 26:
       case 28:
-        final transpiledWithTargets = await _transpileJs(
-          challengeFile,
-          ScriptBuilder.transpileScriptWithTargets,
-          babelController,
-        );
-
-        final transpiled = await _transpileJs(
+        return await _transpileJs(
           challengeFile,
           ScriptBuilder.transpileScript,
           babelController,
-        );
-
-        return UserCodeVariants(
-          transpileScriptWithTargets: transpiledWithTargets,
-          transpileScript: transpiled,
         );
       case 20:
       case 23:
       case 27:
       case 29:
         // Python challenges do not require transpilation, return the file as is.
-        return UserCodeVariants(
-          transpileScriptWithTargets: challengeFile,
-          transpileScript: challengeFile,
-        );
+        return challengeFile;
       default:
         String parsedWithStyleTags =
             await fileService.parseCssDocumentsAsStyleTags(
@@ -135,10 +97,7 @@ return testRes;
           parsedWithScriptTags,
         );
 
-        return UserCodeVariants(
-          transpileScriptWithTargets: challengeFile,
-          transpileScript: challengeFile,
-        );
+        return challengeFile;
     }
   }
 

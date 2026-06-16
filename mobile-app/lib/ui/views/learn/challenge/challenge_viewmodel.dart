@@ -779,9 +779,9 @@ class ChallengeViewModel extends BaseViewModel {
 
     _userConsoleMessages = [];
     setTestConsoleMessages = ['<p>// running tests</p>'];
-    UserCodeVariants userCodeVariants;
+    String userCode;
     try {
-      userCodeVariants = await builder.buildUserCode(
+      userCode = await builder.buildUserCode(
         challenge!,
         _babelWebView.webViewController,
       );
@@ -900,32 +900,24 @@ class ChallengeViewModel extends BaseViewModel {
       }
     }
 
-    for (final userCode in userCodeVariants.all) {
-      await checkUserCodeForErrors(userCode);
-      await updateTestRunner(userCode);
-      var {
-        'failingTests': failingTests,
-        'failingResults': failingResults,
-        'failedIndexes': failedIndexes
-      } = await evaluateTests(userCode);
+    await checkUserCodeForErrors(userCode);
+    await updateTestRunner(userCode);
+    var {
+      'failingTests': failingTests,
+      'failingResults': failingResults,
+      'failedIndexes': failedIndexes
+    } = await evaluateTests(userCode);
 
-      if (failingTests.isEmpty) {
-        // clear the failures, since only one attempt needs to pass.
-        failedTests = [];
-        failedResults = [];
-        _failedTestIndexes = [];
-      } else {
-        failedTests = failingTests as List<ChallengeTest>;
-        failedResults = failingResults as List<CallAsyncJavaScriptResult>;
-        logFailures(failedTests, failedResults);
-        _failedTestIndexes = failedIndexes as List<int>;
-      }
+    if (failingTests.isNotEmpty) {
+      failedTests = failingTests as List<ChallengeTest>;
+      failedResults = failingResults as List<CallAsyncJavaScriptResult>;
+      logFailures(failedTests, failedResults);
+      _failedTestIndexes = failedIndexes as List<int>;
     }
 
     final failedTest = failedTests.isEmpty ? null : failedTests.first;
-    final failedTestErr = failedResults.isEmpty
-        ? null
-        : failedResults.first.value['err'] as Map?;
+    final failedTestErr =
+        failedResults.isEmpty ? null : failedResults.first.value['err'] as Map?;
 
     if (failedTest != null) {
       setPanelType = PanelType.hint;

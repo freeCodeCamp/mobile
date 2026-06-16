@@ -124,53 +124,45 @@ void main() {
           );
 
           ScriptBuilder builder = ScriptBuilder();
-          final userCodeVariants = await builder.buildUserCode(
+          final userCode = await builder.buildUserCode(
             challenge,
             babelWebView.webViewController,
             testing: true,
           );
 
-          bool challengePassed = false;
-          for (final userCode in userCodeVariants.all) {
-            bool testFailed = false;
+          bool testFailed = false;
 
-            await testController!.callAsyncJavaScript(
-              functionBody: ScriptBuilder.runnerScript,
+          await testController!.callAsyncJavaScript(
+            functionBody: ScriptBuilder.runnerScript,
+            arguments: {
+              'userCode': userCode,
+              'workerType': builder.getWorkerType(challenge.challengeType),
+              'combinedCode': await builder.combinedCode(challenge),
+              'editableRegionContent': editableRegion,
+              'hooks': {
+                'beforeAll': challenge.hooks.beforeAll,
+                'beforeEach': challenge.hooks.beforeEach,
+                'afterEach': challenge.hooks.afterEach,
+              },
+            },
+          );
+
+          for (ChallengeTest test in challenge.tests) {
+            final testRes = await testController.callAsyncJavaScript(
+              functionBody: ScriptBuilder.testExecutionScript,
               arguments: {
-                'userCode': userCode,
-                'workerType': builder.getWorkerType(challenge.challengeType),
-                'combinedCode': await builder.combinedCode(challenge),
-                'editableRegionContent': editableRegion,
-                'hooks': {
-                  'beforeAll': challenge.hooks.beforeAll,
-                  'beforeEach': challenge.hooks.beforeEach,
-                  'afterEach': challenge.hooks.afterEach,
-                },
+                'testStr': test.javaScript,
               },
             );
-
-            for (ChallengeTest test in challenge.tests) {
-              final testRes = await testController.callAsyncJavaScript(
-                functionBody: ScriptBuilder.testExecutionScript,
-                arguments: {
-                  'testStr': test.javaScript,
-                },
-              );
-              if (testRes?.value['pass'] == null || testRes?.error != null) {
-                print(
-                    'TEST FAILED: ${challenge.id} - ${challenge.title} - ${test.instruction} - ${test.javaScript} - $testRes\n');
-                testFailed = true;
-              }
-            }
-
-            if (!testFailed) {
-              challengePassed = true;
-              break;
+            if (testRes?.value['pass'] == null || testRes?.error != null) {
+              print(
+                  'TEST FAILED: ${challenge.id} - ${challenge.title} - ${test.instruction} - ${test.javaScript} - $testRes\n');
+              testFailed = true;
+              didTestsFail = true;
             }
           }
 
-          if (!challengePassed) {
-            didTestsFail = true;
+          if (testFailed) {
             print(
                 'Test(s) failed for challenge: ${challenge.id} - ${challenge.title}');
           } else {
