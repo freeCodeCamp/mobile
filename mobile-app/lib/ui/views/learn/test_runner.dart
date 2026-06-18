@@ -7,6 +7,13 @@ import 'package:freecodecamp/service/learn/learn_file_service.dart';
 class ScriptBuilder {
   final LearnFileService fileService = locator<LearnFileService>();
 
+  // Challenges where Babel syntax errors are expected and should be ignored.
+  static const skipBabelErrorChallengeIds = {
+    // workshop-fcc-authors-page
+    '69e16a610b33e847d85be16e', // step 27
+    '69e1e83ac6424325f77331e8', // step 28
+  };
+
   static const transpileScript = '''
 try {
   return { success: true, code: Babel.transform(code, { presets: [["env", { "targets": "> 0.4%, not dead" }]] }).code };
@@ -66,11 +73,18 @@ return testRes;
       case 1:
       case 26:
       case 28:
-        return await _transpileJs(
-          challengeFile,
-          ScriptBuilder.transpileScript,
-          babelController,
-        );
+        try {
+          return await _transpileJs(
+            challengeFile,
+            ScriptBuilder.transpileScript,
+            babelController,
+          );
+        } catch (e) {
+          if (ScriptBuilder.skipBabelErrorChallengeIds.contains(challenge.id)) {
+            return challengeFile;
+          }
+          rethrow;
+        }
       case 20:
       case 23:
       case 27:
