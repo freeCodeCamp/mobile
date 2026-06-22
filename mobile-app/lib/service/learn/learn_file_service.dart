@@ -271,15 +271,24 @@ class LearnFileService {
           arguments: {'code': fileContents},
         );
 
+        final skipBabelError = ScriptBuilder
+            .skipBabelErrorChallengeIds
+            .contains(challenge.id);
+
         if (babelRes?.error != null) {
-          throw Exception('Babel transpilation failed: ${babelRes?.error}');
+          if (!skipBabelError) {
+            throw Exception('Babel transpilation failed: ${babelRes?.error}');
+          }
         }
 
         final result = babelRes?.value as Map<dynamic, dynamic>?;
         if (result?['success'] == false) {
-          throw Exception('Babel transpilation failed: ${result?['error']}');
+          if (!skipBabelError) {
+            throw Exception('Babel transpilation failed: ${result?['error']}');
+          }
+        } else {
+          fileContents = result?['code'];
         }
-        fileContents = result?['code'];
 
         Document document = parse(challengeContent);
 

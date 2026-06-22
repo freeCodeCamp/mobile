@@ -49,6 +49,7 @@ workflows:
       - name: Install applesimutils
         script: |
           brew tap wix/brew
+          brew trust --formula wix/brew/applesimutils
           brew install applesimutils
 
       - name: Boot iOS simulator
@@ -127,6 +128,7 @@ workflows:
       - name: Install applesimutils
         script: |
           brew tap wix/brew
+          brew trust --formula wix/brew/applesimutils
           brew install applesimutils
 
       - name: Boot iOS simulator
