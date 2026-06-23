@@ -262,7 +262,7 @@ class ChallengeView extends StatelessWidget {
         children: [
           if (keyboard)
             SymbolBar(
-              model: model,
+              challengeModel: model,
               editor: model.editor!,
             ),
           Row(

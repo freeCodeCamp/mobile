@@ -38,6 +38,7 @@ dependencies:
   infinite_scroll_pagination: 5.0.0
   jiffy: 6.3.2
   just_audio: 0.10.4
+  logger: ^1.4.0
   path: 1.9.1
   path_provider: 2.1.5
   phone_ide: 2.0.1
@@ -81,7 +82,6 @@ flutter:
   uses-material-design: true
   generate: true
   assets:
-    - .env
     - assets/images/
     - assets/sql/
     - assets/test_data/news_post.json
@@ -90,3 +90,4 @@ flutter:
     - assets/learn/
     - assets/test_runner/dist/
     - assets/test_runner/babel/
+    - .env
