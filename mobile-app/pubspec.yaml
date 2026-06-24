@@ -7,7 +7,7 @@ environment:
 dependencies:
   algolia_helper_flutter: 1.2.1
   audio_service: 0.18.18
-  auth0_flutter: 2.0.2
+  auth0_flutter: 2.3.0
   cached_network_image: 3.4.1
   collection: 1.19.1
   device_info_plus: 11.3.0
@@ -30,7 +30,7 @@ dependencies:
   flutter_localizations:
     sdk: flutter
   flutter_scroll_shadow: 1.2.6
-  flutter_secure_storage: 9.2.4
+  flutter_secure_storage: 10.3.1
   flutter_svg: 2.1.0
   focus_detector: 2.0.1
   graphql: 5.2.0
@@ -50,7 +50,7 @@ dependencies:
   stacked: 3.4.3
   stacked_services: 1.6.0
   timezone: 0.10.1
-  ua_client_hints: 1.4.1
+  ua_client_hints: 1.7.0
   upgrader: 11.3.1
   url_launcher: 6.3.2
   web_socket_channel: 3.0.3
