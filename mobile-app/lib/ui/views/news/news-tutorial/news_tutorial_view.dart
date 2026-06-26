@@ -89,7 +89,7 @@ class NewsTutorialView extends StatelessWidget {
       builder: (context, model, child) => Scaffold(
         backgroundColor: const Color(0xFF0a0a23),
         body: FutureBuilder<Tutorial>(
-          future: model.initState(refId),
+          future: model.tutorialFuture,
           builder: (context, snapshot) {
             if (snapshot.hasData) {
               var tutorial = snapshot.data;
@@ -131,37 +131,38 @@ class NewsTutorialView extends StatelessWidget {
   ) {
     return Align(
       alignment: Alignment.bottomCenter,
-      child: SizedBox(
-        height: 75,
-        width: 300,
-        child: ListView(
-          physics: const NeverScrollableScrollPhysics(),
-          controller: model.bottomButtonController,
-          children: [
-            Row(
-              children: [
-                Container(
-                  height: 150,
-                ),
-                NewsBookmarkViewWidget(tutorial: tutorial),
-                const SizedBox(
-                  height: 35,
-                  child: VerticalDivider(
-                    color: Colors.white,
-                    width: 0,
+      child: SafeArea(
+        child: AnimatedSlide(
+          offset: model.showBottomButtons ? Offset.zero : const Offset(0, 2.0),
+          duration: const Duration(milliseconds: 300),
+          curve: Curves.easeInOut,
+          child: Padding(
+            padding: const EdgeInsets.only(bottom: 8.0),
+            child: SizedBox(
+              height: 50,
+              width: 300,
+              child: Row(
+                children: [
+                  NewsBookmarkViewWidget(tutorial: tutorial),
+                  const SizedBox(
+                    height: 35,
+                    child: VerticalDivider(
+                      color: Colors.white,
+                      width: 0,
+                    ),
                   ),
-                ),
-                BottomButton(
-                  label: context.t.share,
-                  icon: Icons.share,
-                  onPressed: () {
-                    Share.share('${tutorial.title}\n\n${tutorial.url}');
-                  },
-                  rightSided: true,
-                )
-              ],
+                  BottomButton(
+                    label: context.t.share,
+                    icon: Icons.share,
+                    onPressed: () {
+                      Share.share('${tutorial.title}\n\n${tutorial.url}');
+                    },
+                    rightSided: true,
+                  )
+                ],
+              ),
             ),
-          ],
+          ),
         ),
       ),
     );
