@@ -155,7 +155,9 @@ class NewsTutorialView extends StatelessWidget {
                   label: context.t.share,
                   icon: Icons.share,
                   onPressed: () {
-                    Share.share('${tutorial.title}\n\n${tutorial.url}');
+                    SharePlus.instance.share(
+                      ShareParams(text: '${tutorial.title}\n\n${tutorial.url}'),
+                    );
                   },
                   rightSided: true,
                 )

@@ -20,151 +20,148 @@ class DrawerWidgetView extends StatelessWidget {
       viewModelBuilder: () => DrawerWidgetViewModel(),
       onViewModelReady: (model) => model.initState(),
       builder: (context, model, child) => Drawer(
+        backgroundColor: const Color.fromRGBO(0x2A, 0x2A, 0x40, 1),
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(0),
         ),
-        child: Container(
-          color: const Color.fromRGBO(0x2A, 0x2A, 0x40, 1),
-          child: Column(
-            children: [
-              Expanded(
-                child: ScrollShadow(
-                  color: Colors.black,
-                  child: ListView(
-                    controller: model.scrollController,
-                    children: [
-                      ListTile(
-                        contentPadding: const EdgeInsets.all(16),
-                        leading: Image.asset(
-                          'assets/images/placeholder-profile-img.png',
-                          width: 75,
-                          height: 75,
-                        ),
-                        title: model.loggedIn
-                            ? FutureBuilder(
-                                future: model.auth.userModel,
-                                builder: (context, snapshot) {
-                                  if (snapshot.hasData) {
-                                    FccUserModel user =
-                                        snapshot.data as FccUserModel;
-                                    return Text(
-                                      user.name.isEmpty
-                                          ? user.username
-                                          : user.name,
-                                    );
-                                  }
-
+        child: Column(
+          children: [
+            Expanded(
+              child: ScrollShadow(
+                color: Colors.black,
+                child: ListView(
+                  controller: model.scrollController,
+                  children: [
+                    ListTile(
+                      contentPadding: const EdgeInsets.all(16),
+                      leading: Image.asset(
+                        'assets/images/placeholder-profile-img.png',
+                        width: 75,
+                        height: 75,
+                      ),
+                      title: model.loggedIn
+                          ? FutureBuilder(
+                              future: model.auth.userModel,
+                              builder: (context, snapshot) {
+                                if (snapshot.hasData) {
+                                  FccUserModel user =
+                                      snapshot.data as FccUserModel;
                                   return Text(
-                                    context.t.anonymous_user,
+                                    user.name.isEmpty
+                                        ? user.username
+                                        : user.name,
                                   );
-                                })
-                            : Text(
-                                context.t.anonymous_user,
-                              ),
-                        subtitle: Text(
+                                }
+
+                                return Text(
+                                  context.t.anonymous_user,
+                                );
+                              })
+                          : Text(
+                              context.t.anonymous_user,
+                            ),
+                      subtitle: Text(
+                        model.loggedIn
+                            ? context.t.coolest_camper
+                            : context.t.login_save_progress,
+                      ),
+                      isThreeLine: true,
+                      onTap: () {
+                        if (model.loggedIn) {
+                          model.routeComponent('PROFILE', context);
+                        }
+                      },
+                    ),
+                    buildDivider(),
+                    DrawerTile(
+                      key: const Key('daily-challenges'),
+                      component: context.t.quick_action_daily_challenges,
+                      icon: Icons.extension,
+                      route: () {
+                        model.routeComponent('DAILY_CHALLENGES', context);
+                      },
+                    ),
+                    DrawerTile(
+                      key: const Key('learn'),
+                      component: context.t.learn,
+                      icon: '',
+                      route: () {
+                        model.routeComponent('LEARN', context);
+                      },
+                    ),
+                    DrawerTile(
+                      key: const Key('news'),
+                      component: context.t.tutorials,
+                      icon: Icons.forum_outlined,
+                      route: () {
+                        model.routeComponent('NEWS', context);
+                      },
+                    ),
+                    DrawerTile(
+                      key: const Key('podcasts'),
+                      component: context.t.podcasts,
+                      icon: Icons.podcasts_outlined,
+                      route: () {
+                        model.routeComponent('PODCAST', context);
+                      },
+                    ),
+                    if (!Platform.isIOS)
+                      DrawerTile(
+                        key: const Key('code-radio'),
+                        component: context.t.code_radio,
+                        icon: Icons.radio,
+                        route: () {
+                          model.routeComponent('CODERADIO', context);
+                        },
+                      ),
+                    buildDivider(),
+                    CustomTabButton(
+                      key: const Key('donate'),
+                      component: context.t.donate,
+                      url: 'https://www.freecodecamp.org/donate/',
+                      icon: Icons.favorite,
+                    ),
+                    DrawerTile(
+                      key: const Key('settings'),
+                      component: context.t.settings,
+                      icon: Icons.settings,
+                      route: () {
+                        model.routeComponent('SETTINGS', context);
+                      },
+                    ),
+                    buildDivider(),
+                    CustomTabButton(
+                      key: const Key('report-issue'),
+                      component: context.t.report_an_issue,
+                      url: 'https://github.com/freeCodeCamp/mobile',
+                      icon: Icons.bug_report,
+                    ),
+                    DrawerTile(
+                        key: const Key('auth'),
+                        component:
+                            model.loggedIn ? context.t.logout : context.t.login,
+                        icon: model.loggedIn ? Icons.logout : Icons.login,
+                        textColor: model.loggedIn
+                            ? const Color.fromARGB(255, 230, 59, 59)
+                            : null,
+                        route: () {
                           model.loggedIn
-                              ? context.t.coolest_camper
-                              : context.t.login_save_progress,
-                        ),
-                        isThreeLine: true,
-                        onTap: () {
-                          if (model.loggedIn) {
-                            model.routeComponent('PROFILE', context);
-                          }
-                        },
-                      ),
-                      buildDivider(),
-                      DrawerTile(
-                        key: const Key('daily-challenges'),
-                        component: context.t.quick_action_daily_challenges,
-                        icon: Icons.extension,
-                        route: () {
-                          model.routeComponent('DAILY_CHALLENGES', context);
-                        },
-                      ),
-                      DrawerTile(
-                        key: const Key('learn'),
-                        component: context.t.learn,
-                        icon: '',
-                        route: () {
-                          model.routeComponent('LEARN', context);
-                        },
-                      ),
-                      DrawerTile(
-                        key: const Key('news'),
-                        component: context.t.tutorials,
-                        icon: Icons.forum_outlined,
-                        route: () {
-                          model.routeComponent('NEWS', context);
-                        },
-                      ),
-                      DrawerTile(
-                        key: const Key('podcasts'),
-                        component: context.t.podcasts,
-                        icon: Icons.podcasts_outlined,
-                        route: () {
-                          model.routeComponent('PODCAST', context);
-                        },
-                      ),
-                      if (!Platform.isIOS)
-                        DrawerTile(
-                          key: const Key('code-radio'),
-                          component: context.t.code_radio,
-                          icon: Icons.radio,
-                          route: () {
-                            model.routeComponent('CODERADIO', context);
-                          },
-                        ),
-                      buildDivider(),
-                      CustomTabButton(
-                        key: const Key('donate'),
-                        component: context.t.donate,
-                        url: 'https://www.freecodecamp.org/donate/',
-                        icon: Icons.favorite,
-                      ),
-                      DrawerTile(
-                        key: const Key('settings'),
-                        component: context.t.settings,
-                        icon: Icons.settings,
-                        route: () {
-                          model.routeComponent('SETTINGS', context);
-                        },
-                      ),
-                      buildDivider(),
-                      CustomTabButton(
-                        key: const Key('report-issue'),
-                        component: context.t.report_an_issue,
-                        url: 'https://github.com/freeCodeCamp/mobile',
-                        icon: Icons.bug_report,
-                      ),
-                      DrawerTile(
-                          key: const Key('auth'),
-                          component: model.loggedIn
-                              ? context.t.logout
-                              : context.t.login,
-                          icon: model.loggedIn ? Icons.logout : Icons.login,
-                          textColor: model.loggedIn
-                              ? const Color.fromARGB(255, 230, 59, 59)
-                              : null,
-                          route: () {
-                            model.loggedIn
-                                ? model.auth.logout()
-                                : model.routeComponent('LOGIN', context);
-                          }),
-                    ],
-                  ),
+                              ? model.auth.logout()
+                              : model.routeComponent('LOGIN', context);
+                        }),
+                  ],
                 ),
               ),
-              const SafeArea(
-                minimum: EdgeInsets.only(bottom: 16),
-                child: Text(
-                  'freeCodeCamp is a donor-supported tax-exempt 501(c)(3) nonprofit organization',
-                  textAlign: TextAlign.center,
-                  style: TextStyle(fontSize: 10, color: Colors.white70),
-                ),
-              )
-            ],
-          ),
+            ),
+            const SafeArea(
+              minimum: EdgeInsets.only(bottom: 16),
+              child: Text(
+                'freeCodeCamp is a donor-supported tax-exempt 501(c)(3) nonprofit organization',
+                textAlign: TextAlign.center,
+                style: TextStyle(fontSize: 10, color: Colors.white70),
+              ),
+            )
+          ],
         ),
       ),
     );

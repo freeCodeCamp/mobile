@@ -547,7 +547,7 @@ class AppLocalizationsEs extends AppLocalizations {
   }
 
   @override
-  String get quick_action_daily_challenges => 'Daily Challenges';
+  String get quick_action_daily_challenges => 'DAILY CHALLENGES';
 
   @override
   String get code_radio => 'CODE RADIO';
