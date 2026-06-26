@@ -14,7 +14,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:stacked/stacked.dart';
 
 class NewsTutorialViewModel extends BaseViewModel {
-  late Future<Tutorial> _tutorialFuture;
+  Future<Tutorial>? _tutorialFuture;
   final _newsApiService = locator<NewsApiService>();
 
   Future<Tutorial>? get tutorialFuture => _tutorialFuture;
@@ -22,8 +22,15 @@ class NewsTutorialViewModel extends BaseViewModel {
   final ScrollController _scrollController = ScrollController();
   ScrollController get scrollController => _scrollController;
 
-  final ScrollController _bottomButtonController = ScrollController();
-  ScrollController get bottomButtonController => _bottomButtonController;
+  bool _showBottomButtons = false;
+  bool get showBottomButtons => _showBottomButtons;
+
+  set showBottomButtons(bool value) {
+    if (_showBottomButtons != value) {
+      _showBottomButtons = value;
+      notifyListeners();
+    }
+  }
 
   bool _showToTopButton = false;
   bool get showToTopButton => _showToTopButton;
@@ -43,15 +50,13 @@ class NewsTutorialViewModel extends BaseViewModel {
     return Tutorial.toPostFromJson(decodedJson);
   }
 
-  Future<Tutorial> initState(id) async {
-    handleBottomButtonAnimation();
-    handleToTopButton();
-
-    // if (await _developerService.developmentMode()) {
-    //   return readFromFiles();
-    // } else {
-    // }
-    return fetchTutorial(id);
+  Future<Tutorial> initState(id) {
+    if (_tutorialFuture == null) {
+      handleBottomButtonAnimation();
+      handleToTopButton();
+      _tutorialFuture = fetchTutorial(id);
+    }
+    return _tutorialFuture!;
   }
 
   Future<void> handleToTopButton() async {
@@ -87,17 +92,9 @@ class NewsTutorialViewModel extends BaseViewModel {
       double oldScrollPos = prefs.getDouble('position') as double;
 
       if (_scrollController.offset <= oldScrollPos) {
-        _bottomButtonController.animateTo(
-          _bottomButtonController.position.maxScrollExtent - 50,
-          duration: const Duration(milliseconds: 1000),
-          curve: Curves.easeInOut,
-        );
+        showBottomButtons = true;
       } else {
-        _bottomButtonController.animateTo(
-          0,
-          duration: const Duration(milliseconds: 1000),
-          curve: Curves.easeInOut,
-        );
+        showBottomButtons = false;
       }
       Timer(const Duration(seconds: 2), () async {
         if (_scrollController.hasClients) {
@@ -112,15 +109,8 @@ class NewsTutorialViewModel extends BaseViewModel {
     // this means we need to animate it manually.
     Future.delayed(
       const Duration(seconds: 1),
-      () => {
-        if (_bottomButtonController.hasClients)
-          {
-            _bottomButtonController.animateTo(
-              _bottomButtonController.position.maxScrollExtent - 50,
-              duration: const Duration(milliseconds: 1000),
-              curve: Curves.easeInOut,
-            )
-          }
+      () {
+        showBottomButtons = true;
       },
     );
   }
@@ -175,7 +165,6 @@ class NewsTutorialViewModel extends BaseViewModel {
   Future<void> removeScrollPosition() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     _scrollController.dispose();
-    _bottomButtonController.dispose();
 
     await prefs.remove('position');
   }
