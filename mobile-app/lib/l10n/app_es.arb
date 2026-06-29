@@ -594,7 +594,7 @@
           }
       }
   },
-  "quick_action_daily_challenges": "Daily Challenges",
+  "quick_action_daily_challenges": "DAILY CHALLENGES",
   "code_radio": "CODE RADIO",
   "report_an_issue": "REPORT AN ISSUE",
   "login_terms": "By continuing, you indicate that you have read and agree to freeCodeCamp.org's {termsOfService} and {privacyPolicy}.",

@@ -634,7 +634,7 @@
             }
         }
     },
-    "quick_action_daily_challenges": "Daily Challenges",
+    "quick_action_daily_challenges": "DAILY CHALLENGES",
     "code_radio": "CODE RADIO",
     "@code_radio": {
         "description": "drawer and quick action label for Code Radio"

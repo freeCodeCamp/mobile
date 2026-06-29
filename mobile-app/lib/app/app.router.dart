@@ -5,13 +5,14 @@
 // **************************************************************************
 
 // ignore_for_file: no_leading_underscores_for_library_prefixes
+import 'package:flutter/foundation.dart' as _i22;
 import 'package:flutter/material.dart' as _i21;
 import 'package:flutter/material.dart';
-import 'package:freecodecamp/models/learn/curriculum_model.dart' as _i25;
+import 'package:freecodecamp/models/learn/curriculum_model.dart' as _i26;
 import 'package:freecodecamp/models/news/bookmarked_tutorial_model.dart'
-    as _i24;
-import 'package:freecodecamp/models/podcasts/episodes_model.dart' as _i22;
-import 'package:freecodecamp/models/podcasts/podcasts_model.dart' as _i23;
+    as _i25;
+import 'package:freecodecamp/models/podcasts/episodes_model.dart' as _i23;
+import 'package:freecodecamp/models/podcasts/podcasts_model.dart' as _i24;
 import 'package:freecodecamp/ui/views/code_radio/code_radio_view.dart' as _i10;
 import 'package:freecodecamp/ui/views/learn/challenge/templates/template_view.dart'
     as _i11;
@@ -44,7 +45,7 @@ import 'package:freecodecamp/ui/views/settings/delete-account/delete_account_vie
     as _i19;
 import 'package:freecodecamp/ui/views/settings/settings_view.dart' as _i18;
 import 'package:stacked/stacked.dart' as _i1;
-import 'package:stacked_services/stacked_services.dart' as _i26;
+import 'package:stacked_services/stacked_services.dart' as _i27;
 
 class Routes {
   static const newsViewHandlerView = '/news-view-handler-view';
@@ -361,11 +362,11 @@ class EpisodeViewArguments {
     required this.podcast,
   });
 
-  final _i21.Key? key;
+  final _i22.Key? key;
 
-  final _i22.Episodes episode;
+  final _i23.Episodes episode;
 
-  final _i23.Podcasts podcast;
+  final _i24.Podcasts podcast;
 
   @override
   String toString() {
@@ -393,7 +394,7 @@ class NewsTutorialViewArguments {
     required this.slug,
   });
 
-  final _i21.Key? key;
+  final _i22.Key? key;
 
   final String refId;
 
@@ -422,9 +423,9 @@ class NewsBookmarkTutorialViewArguments {
     required this.tutorial,
   });
 
-  final _i21.Key? key;
+  final _i22.Key? key;
 
-  final _i24.BookmarkedTutorial tutorial;
+  final _i25.BookmarkedTutorial tutorial;
 
   @override
   String toString() {
@@ -455,7 +456,7 @@ class NewsFeedViewArguments {
     this.subject = '',
   });
 
-  final _i21.Key? key;
+  final _i22.Key? key;
 
   final String tagSlug;
 
@@ -508,7 +509,7 @@ class NewsAuthorViewArguments {
     required this.authorSlug,
   });
 
-  final _i21.Key? key;
+  final _i22.Key? key;
 
   final String authorSlug;
 
@@ -536,7 +537,7 @@ class NewsImageViewArguments {
     required this.isDataUrl,
   });
 
-  final _i21.Key? key;
+  final _i22.Key? key;
 
   final String imgUrl;
 
@@ -569,9 +570,9 @@ class ChallengeTemplateViewArguments {
     this.challengeDate,
   });
 
-  final _i21.Key? key;
+  final _i22.Key? key;
 
-  final _i25.Block block;
+  final _i26.Block block;
 
   final String challengeId;
 
@@ -607,7 +608,7 @@ class ChapterViewArguments {
     required this.superBlockName,
   });
 
-  final _i21.Key? key;
+  final _i22.Key? key;
 
   final String superBlockDashedName;
 
@@ -641,11 +642,11 @@ class ChapterBlockViewArguments {
     required this.blocks,
   });
 
-  final _i21.Key? key;
+  final _i22.Key? key;
 
   final String moduleName;
 
-  final List<_i25.Block> blocks;
+  final List<_i26.Block> blocks;
 
   @override
   String toString() {
@@ -672,7 +673,7 @@ class NativeLoginViewArguments {
     this.fromButton = false,
   });
 
-  final _i21.Key? key;
+  final _i22.Key? key;
 
   final bool fromButton;
 
@@ -701,7 +702,7 @@ class SuperBlockViewArguments {
     required this.hasInternet,
   });
 
-  final _i21.Key? key;
+  final _i22.Key? key;
 
   final String superBlockDashedName;
 
@@ -732,7 +733,7 @@ class SuperBlockViewArguments {
   }
 }
 
-extension NavigatorStateExtension on _i26.NavigationService {
+extension NavigatorStateExtension on _i27.NavigationService {
   Future<dynamic> navigateToNewsViewHandlerView([
     int? routerId,
     bool preventDuplicates = true,
@@ -762,9 +763,9 @@ extension NavigatorStateExtension on _i26.NavigationService {
   }
 
   Future<dynamic> navigateToEpisodeView({
-    _i21.Key? key,
-    required _i22.Episodes episode,
-    required _i23.Podcasts podcast,
+    _i22.Key? key,
+    required _i23.Episodes episode,
+    required _i24.Podcasts podcast,
     int? routerId,
     bool preventDuplicates = true,
     Map<String, String>? parameters,
@@ -781,7 +782,7 @@ extension NavigatorStateExtension on _i26.NavigationService {
   }
 
   Future<dynamic> navigateToNewsTutorialView({
-    _i21.Key? key,
+    _i22.Key? key,
     required String refId,
     required String slug,
     int? routerId,
@@ -800,8 +801,8 @@ extension NavigatorStateExtension on _i26.NavigationService {
   }
 
   Future<dynamic> navigateToNewsBookmarkTutorialView({
-    _i21.Key? key,
-    required _i24.BookmarkedTutorial tutorial,
+    _i22.Key? key,
+    required _i25.BookmarkedTutorial tutorial,
     int? routerId,
     bool preventDuplicates = true,
     Map<String, String>? parameters,
@@ -818,7 +819,7 @@ extension NavigatorStateExtension on _i26.NavigationService {
   }
 
   Future<dynamic> navigateToNewsFeedView({
-    _i21.Key? key,
+    _i22.Key? key,
     String tagSlug = '',
     String authorId = '',
     bool fromAuthor = false,
@@ -849,7 +850,7 @@ extension NavigatorStateExtension on _i26.NavigationService {
   }
 
   Future<dynamic> navigateToNewsAuthorView({
-    _i21.Key? key,
+    _i22.Key? key,
     required String authorSlug,
     int? routerId,
     bool preventDuplicates = true,
@@ -866,7 +867,7 @@ extension NavigatorStateExtension on _i26.NavigationService {
   }
 
   Future<dynamic> navigateToNewsImageView({
-    _i21.Key? key,
+    _i22.Key? key,
     required String imgUrl,
     required bool isDataUrl,
     int? routerId,
@@ -899,8 +900,8 @@ extension NavigatorStateExtension on _i26.NavigationService {
   }
 
   Future<dynamic> navigateToChallengeTemplateView({
-    _i21.Key? key,
-    required _i25.Block block,
+    _i22.Key? key,
+    required _i26.Block block,
     required String challengeId,
     DateTime? challengeDate,
     int? routerId,
@@ -922,7 +923,7 @@ extension NavigatorStateExtension on _i26.NavigationService {
   }
 
   Future<dynamic> navigateToChapterView({
-    _i21.Key? key,
+    _i22.Key? key,
     required String superBlockDashedName,
     required String superBlockName,
     int? routerId,
@@ -943,9 +944,9 @@ extension NavigatorStateExtension on _i26.NavigationService {
   }
 
   Future<dynamic> navigateToChapterBlockView({
-    _i21.Key? key,
+    _i22.Key? key,
     required String moduleName,
-    required List<_i25.Block> blocks,
+    required List<_i26.Block> blocks,
     int? routerId,
     bool preventDuplicates = true,
     Map<String, String>? parameters,
@@ -990,7 +991,7 @@ extension NavigatorStateExtension on _i26.NavigationService {
   }
 
   Future<dynamic> navigateToNativeLoginView({
-    _i21.Key? key,
+    _i22.Key? key,
     bool fromButton = false,
     int? routerId,
     bool preventDuplicates = true,
@@ -1007,7 +1008,7 @@ extension NavigatorStateExtension on _i26.NavigationService {
   }
 
   Future<dynamic> navigateToSuperBlockView({
-    _i21.Key? key,
+    _i22.Key? key,
     required String superBlockDashedName,
     required String superBlockName,
     required bool hasInternet,
@@ -1100,9 +1101,9 @@ extension NavigatorStateExtension on _i26.NavigationService {
   }
 
   Future<dynamic> replaceWithEpisodeView({
-    _i21.Key? key,
-    required _i22.Episodes episode,
-    required _i23.Podcasts podcast,
+    _i22.Key? key,
+    required _i23.Episodes episode,
+    required _i24.Podcasts podcast,
     int? routerId,
     bool preventDuplicates = true,
     Map<String, String>? parameters,
@@ -1119,7 +1120,7 @@ extension NavigatorStateExtension on _i26.NavigationService {
   }
 
   Future<dynamic> replaceWithNewsTutorialView({
-    _i21.Key? key,
+    _i22.Key? key,
     required String refId,
     required String slug,
     int? routerId,
@@ -1138,8 +1139,8 @@ extension NavigatorStateExtension on _i26.NavigationService {
   }
 
   Future<dynamic> replaceWithNewsBookmarkTutorialView({
-    _i21.Key? key,
-    required _i24.BookmarkedTutorial tutorial,
+    _i22.Key? key,
+    required _i25.BookmarkedTutorial tutorial,
     int? routerId,
     bool preventDuplicates = true,
     Map<String, String>? parameters,
@@ -1156,7 +1157,7 @@ extension NavigatorStateExtension on _i26.NavigationService {
   }
 
   Future<dynamic> replaceWithNewsFeedView({
-    _i21.Key? key,
+    _i22.Key? key,
     String tagSlug = '',
     String authorId = '',
     bool fromAuthor = false,
@@ -1187,7 +1188,7 @@ extension NavigatorStateExtension on _i26.NavigationService {
   }
 
   Future<dynamic> replaceWithNewsAuthorView({
-    _i21.Key? key,
+    _i22.Key? key,
     required String authorSlug,
     int? routerId,
     bool preventDuplicates = true,
@@ -1204,7 +1205,7 @@ extension NavigatorStateExtension on _i26.NavigationService {
   }
 
   Future<dynamic> replaceWithNewsImageView({
-    _i21.Key? key,
+    _i22.Key? key,
     required String imgUrl,
     required bool isDataUrl,
     int? routerId,
@@ -1237,8 +1238,8 @@ extension NavigatorStateExtension on _i26.NavigationService {
   }
 
   Future<dynamic> replaceWithChallengeTemplateView({
-    _i21.Key? key,
-    required _i25.Block block,
+    _i22.Key? key,
+    required _i26.Block block,
     required String challengeId,
     DateTime? challengeDate,
     int? routerId,
@@ -1260,7 +1261,7 @@ extension NavigatorStateExtension on _i26.NavigationService {
   }
 
   Future<dynamic> replaceWithChapterView({
-    _i21.Key? key,
+    _i22.Key? key,
     required String superBlockDashedName,
     required String superBlockName,
     int? routerId,
@@ -1281,9 +1282,9 @@ extension NavigatorStateExtension on _i26.NavigationService {
   }
 
   Future<dynamic> replaceWithChapterBlockView({
-    _i21.Key? key,
+    _i22.Key? key,
     required String moduleName,
-    required List<_i25.Block> blocks,
+    required List<_i26.Block> blocks,
     int? routerId,
     bool preventDuplicates = true,
     Map<String, String>? parameters,
@@ -1328,7 +1329,7 @@ extension NavigatorStateExtension on _i26.NavigationService {
   }
 
   Future<dynamic> replaceWithNativeLoginView({
-    _i21.Key? key,
+    _i22.Key? key,
     bool fromButton = false,
     int? routerId,
     bool preventDuplicates = true,
@@ -1345,7 +1346,7 @@ extension NavigatorStateExtension on _i26.NavigationService {
   }
 
   Future<dynamic> replaceWithSuperBlockView({
-    _i21.Key? key,
+    _i22.Key? key,
     required String superBlockDashedName,
     required String superBlockName,
     required bool hasInternet,

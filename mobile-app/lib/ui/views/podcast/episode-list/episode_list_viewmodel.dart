@@ -31,17 +31,24 @@ class EpisodeListViewModel extends BaseViewModel {
   PagingController<int, Episodes>? get pagingController => _pagingController;
 
   void initState(bool isDownloadView) async {
-    await _databaseService.initialise();
-    if (isDownloadView) {
-      _episodes = _databaseService.getEpisodes(podcast);
-      epsLength = (await episodes).length;
-    } else {
-      _pagingController = PagingController(
-        getNextPageKey: (state) => (state.keys?.last ?? -1) + 1,
-        fetchPage: (pageKey) => fetchEpisodes(podcast.id, pageKey),
-      );
+    try {
+      setBusy(true);
+      await _databaseService.initialise();
+      if (isDownloadView) {
+        _episodes = _databaseService.getEpisodes(podcast);
+        epsLength = (await episodes).length;
+      } else {
+        _pagingController = PagingController(
+          getNextPageKey: (state) => (state.keys?.last ?? -1) + 1,
+          fetchPage: (pageKey) => fetchEpisodes(podcast.id, pageKey),
+        );
+      }
+    } catch (e) {
+      setError(e);
+    } finally {
+      setBusy(false);
+      notifyListeners();
     }
-    notifyListeners();
   }
 
   Future<List<Episodes>> fetchEpisodes(String podcastId,

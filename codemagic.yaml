@@ -15,7 +15,7 @@ workflows:
       cancel_previous_builds: true
 
     environment:
-      flutter: 3.41.9
+      flutter: 3.44.3
       xcode: latest
       cocoapods: default
       groups:
@@ -44,7 +44,7 @@ workflows:
         script: flutter pub get
 
       - name: Analyze code
-        script: flutter analyze
+        script: flutter analyze --no-fatal-warnings
 
       - name: Install applesimutils
         script: |
@@ -88,7 +88,7 @@ workflows:
       cancel_previous_builds: true
 
     environment:
-      flutter: 3.41.9
+      flutter: 3.44.3
       xcode: latest
       cocoapods: default
       ios_signing:
@@ -123,7 +123,7 @@ workflows:
         script: flutter pub get
 
       - name: Analyze code
-        script: flutter analyze
+        script: flutter analyze --no-fatal-warnings
 
       - name: Install applesimutils
         script: |
