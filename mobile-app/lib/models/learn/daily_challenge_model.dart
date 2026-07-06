@@ -90,7 +90,7 @@ class DailyChallengeLanguageData {
 
 /// Model representing a block of daily challenges for a specific month
 class DailyChallengeBlock {
-  final String monthYear; // e.g., "January 2025"
+  final String monthYear; // e.g., "January 2025" — used as an internal key
   final List<DailyChallengeOverview> challenges;
   final String description;
 
@@ -100,11 +100,14 @@ class DailyChallengeBlock {
     required this.description,
   });
 
+  // Year-agnostic display name, e.g. "January"
+  String get displayMonth => monthYear.split(' ').first;
+
   // Daily challenges don't have a block or a super block.
   // Return a `Block` here to allow daily challenges
   // to reuse the code for standard challenges.
   Block toCurriculumBlock() {
-    final blockName = 'Daily Challenges $monthYear';
+    final blockName = 'Daily Challenges $displayMonth';
     final blockDashedName =
         'daily-challenges-${monthYear.toLowerCase().replaceAll(' ', '-')}';
     return Block(

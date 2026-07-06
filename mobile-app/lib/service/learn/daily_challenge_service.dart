@@ -40,8 +40,12 @@ class DailyChallengeService {
   }
 
   Future<DailyChallenge> fetchChallengeByDate(String date) async {
+    // Convert YYYY-MM-DD to MM-DD for the year-agnostic /day/:day endpoint.
+    // Also accepts an already-converted MM-DD string.
+    final monthDay =
+        date.length == 10 ? date.substring(5) : date;
     final response = await _dio.get(
-        '${AuthenticationService.baseApiURL}/daily-coding-challenge/date/$date');
+        '${AuthenticationService.baseApiURL}/daily-coding-challenge/day/$monthDay');
 
     if (response.statusCode == 200) {
       return DailyChallenge.fromJson(response.data);

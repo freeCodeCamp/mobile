@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:freecodecamp/app/app.locator.dart';
+import 'package:freecodecamp/app/app.router.dart';
 import 'package:freecodecamp/extensions/i18n_extension.dart';
 import 'package:freecodecamp/models/learn/curriculum_model.dart';
 import 'package:freecodecamp/models/learn/motivational_quote_model.dart';
@@ -9,6 +11,7 @@ import 'package:freecodecamp/ui/views/learn/landing/landing_viewmodel.dart';
 import 'package:freecodecamp/ui/views/learn/widgets/daily_challenge_card.dart';
 import 'package:freecodecamp/ui/widgets/drawer_widget/drawer_widget_view.dart';
 import 'package:stacked/stacked.dart';
+import 'package:stacked_services/stacked_services.dart';
 
 class LearnLandingView extends StatelessWidget {
   const LearnLandingView({super.key});
@@ -318,6 +321,79 @@ class SuperBlockButton extends StatelessWidget {
               )
             ],
           ),
+        ),
+      ),
+    );
+  }
+}
+
+class DailyChallengeButton extends StatelessWidget {
+  const DailyChallengeButton({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    final navigationService = locator<NavigationService>();
+
+    return Container(
+      padding: const EdgeInsets.symmetric(
+        vertical: 6,
+        horizontal: 4,
+      ),
+      constraints: BoxConstraints(
+        minHeight: 80,
+      ),
+      child: ElevatedButton(
+        style: ElevatedButton.styleFrom(
+          padding: const EdgeInsets.all(5),
+          backgroundColor: FccColors.gray80,
+          side: const BorderSide(
+            width: 2,
+            color: FccColors.gray75,
+          ),
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.all(Radius.circular(5)),
+            side: const BorderSide(
+              color: Colors.teal,
+              width: 2.0,
+            ),
+          ),
+        ),
+        onPressed: () {
+          navigationService.navigateTo(Routes.dailyChallengeView);
+        },
+        child: Row(
+          children: [
+            Padding(
+              padding: const EdgeInsets.all(12.0),
+              child: SizedBox(
+                width: 36,
+                height: 36,
+                child: Icon(
+                  Icons.calendar_today,
+                  color: FccColors.gray00,
+                  size: 36,
+                ),
+              ),
+            ),
+            Expanded(
+              flex: 8,
+              child: Text(
+                context.t.daily_challenge_view_archive,
+                textAlign: TextAlign.left,
+                style: const TextStyle(fontSize: 20),
+              ),
+            ),
+            const Expanded(
+              flex: 2,
+              child: Align(
+                alignment: Alignment.centerRight,
+                child: Padding(
+                  padding: EdgeInsets.symmetric(vertical: 8, horizontal: 12),
+                  child: Icon(Icons.arrow_forward_ios),
+                ),
+              ),
+            )
+          ],
         ),
       ),
     );

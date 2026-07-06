@@ -652,6 +652,16 @@ class AppLocalizationsPt extends AppLocalizations {
   String get daily_challenge_card_semantics => 'Daily challenge card';
 
   @override
+  String get daily_challenge_archive_card_semantics =>
+      'A year of coding challenges. View the archive.';
+
+  @override
+  String get daily_challenge_archive_title => 'A year of coding challenges';
+
+  @override
+  String get daily_challenge_view_archive => 'View challenge archive';
+
+  @override
   String daily_challenge_month_description(String monthYear) {
     return 'Explore the daily coding challenges for $monthYear. Stay motivated and keep your learning streak alive!';
   }
@@ -675,12 +685,11 @@ class AppLocalizationsPt extends AppLocalizations {
   }
 
   @override
-  String get new_daily_challenge_available =>
-      'New Daily Challenge Available! 🧩';
+  String get new_daily_challenge_available => 'Daily Coding Challenge';
 
   @override
   String get daily_challenge_notification_body =>
-      'A fresh coding challenge is waiting for you. Ready to solve it?';
+      'Today\'s coding challenge is ready. Can you solve it?';
 
   @override
   String get daily_challenge_notifications => 'Daily Challenge Notifications';

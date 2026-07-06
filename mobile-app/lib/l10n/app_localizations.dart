@@ -1205,6 +1205,24 @@ abstract class AppLocalizations {
   /// **'Daily challenge card'**
   String get daily_challenge_card_semantics;
 
+  /// No description provided for @daily_challenge_archive_card_semantics.
+  ///
+  /// In en, this message translates to:
+  /// **'A year of coding challenges. View the archive.'**
+  String get daily_challenge_archive_card_semantics;
+
+  /// No description provided for @daily_challenge_archive_title.
+  ///
+  /// In en, this message translates to:
+  /// **'A year of coding challenges'**
+  String get daily_challenge_archive_title;
+
+  /// No description provided for @daily_challenge_view_archive.
+  ///
+  /// In en, this message translates to:
+  /// **'View challenge archive'**
+  String get daily_challenge_view_archive;
+
   /// daily challenges view description for a month group
   ///
   /// In en, this message translates to:
@@ -1234,13 +1252,13 @@ abstract class AppLocalizations {
   /// daily challenge notification title
   ///
   /// In en, this message translates to:
-  /// **'New Daily Challenge Available! 🧩'**
+  /// **'Daily Coding Challenge'**
   String get new_daily_challenge_available;
 
   /// daily challenge notification body
   ///
   /// In en, this message translates to:
-  /// **'A fresh coding challenge is waiting for you. Ready to solve it?'**
+  /// **'Today\'s coding challenge is ready. Can you solve it?'**
   String get daily_challenge_notification_body;
 
   /// Android notification channel name for daily challenge notifications

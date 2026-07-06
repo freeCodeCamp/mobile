@@ -729,6 +729,9 @@
     "daily_challenge_start": "Start the challenge",
     "daily_challenge_completed_semantics": "Daily challenge completed. View past challenges.",
     "daily_challenge_card_semantics": "Daily challenge card",
+    "daily_challenge_archive_card_semantics": "A year of coding challenges. View the archive.",
+    "daily_challenge_archive_title": "A year of coding challenges",
+    "daily_challenge_view_archive": "View challenge archive",
     "daily_challenge_month_description": "Explore the daily coding challenges for {monthYear}. Stay motivated and keep your learning streak alive!",
     "@daily_challenge_month_description": {
         "description": "daily challenges view description for a month group",
@@ -781,11 +784,11 @@
             }
         }
     },
-    "new_daily_challenge_available": "New Daily Challenge Available! 🧩",
+    "new_daily_challenge_available": "Daily Coding Challenge",
     "@new_daily_challenge_available": {
         "description": "daily challenge notification title"
     },
-    "daily_challenge_notification_body": "A fresh coding challenge is waiting for you. Ready to solve it?",
+    "daily_challenge_notification_body": "Today's coding challenge is ready. Can you solve it?",
     "@daily_challenge_notification_body": {
         "description": "daily challenge notification body"
     },

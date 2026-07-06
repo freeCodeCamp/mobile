@@ -91,7 +91,8 @@ class DailyChallengeViewModel extends BaseViewModel {
           final block = DailyChallengeBlock(
             monthYear: monthYear,
             challenges: monthChallenges,
-            description: t.daily_challenge_month_description(monthYear),
+            description: t.daily_challenge_month_description(
+                monthYear.split(' ').first),
           );
 
           _blocks.add(block);
@@ -132,7 +133,8 @@ class DailyChallengeViewModel extends BaseViewModel {
     Block block = DailyChallengeBlock(
       monthYear: monthYear,
       challenges: [challenge],
-      description: t.daily_challenge_month_description(monthYear),
+      description: t.daily_challenge_month_description(
+          monthYear.split(' ').first),
     ).toCurriculumBlock();
 
     _navigationService.navigateTo(

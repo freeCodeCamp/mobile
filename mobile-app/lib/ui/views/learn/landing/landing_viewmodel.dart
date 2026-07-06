@@ -248,6 +248,19 @@ class LearnLandingViewModel extends BaseViewModel {
 
             widgetOrder.add(button);
           }
+
+          // Insert daily challenge archive after core curriculum
+          if (stage == 'core') {
+            widgetOrder.add(
+              Text(
+                t.daily_challenge_archive_title,
+                style: headerStyle,
+              ),
+            );
+            widgetOrder.add(
+              const DailyChallengeButton(),
+            );
+          }
         }
       }
 

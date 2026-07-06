@@ -97,7 +97,7 @@ class DailyChallengeView extends StatelessWidget {
                     child: Padding(
                       padding: const EdgeInsets.all(8.0),
                       child: Text(
-                        block.monthYear,
+                        block.displayMonth,
                         style: TextStyle(
                           wordSpacing: 0,
                           letterSpacing: 0,
