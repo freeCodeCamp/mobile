@@ -17,7 +17,6 @@ import 'package:flutter_local_notifications/src/notification_details.dart'
     as _i19;
 import 'package:flutter_local_notifications/src/platform_specifics/android/schedule_mode.dart'
     as _i21;
-import 'package:flutter_local_notifications/src/types.dart' as _i22;
 import 'package:flutter_local_notifications_platform_interface/flutter_local_notifications_platform_interface.dart'
     as _i18;
 import 'package:flutter_secure_storage/flutter_secure_storage.dart' as _i3;
@@ -31,7 +30,7 @@ import 'package:freecodecamp/service/learn/daily_challenge_service.dart'
     as _i14;
 import 'package:mockito/mockito.dart' as _i1;
 import 'package:mockito/src/dummies.dart' as _i9;
-import 'package:shared_preferences/shared_preferences.dart' as _i23;
+import 'package:shared_preferences/shared_preferences.dart' as _i22;
 import 'package:stacked_services/stacked_services.dart' as _i2;
 import 'package:timezone/timezone.dart' as _i20;
 
@@ -1076,8 +1075,8 @@ class MockDailyChallengeService extends _i1.Mock
 class MockFlutterLocalNotificationsPlugin extends _i1.Mock
     implements _i16.FlutterLocalNotificationsPlugin {
   @override
-  _i5.Future<bool?> initialize(
-    _i17.InitializationSettings? initializationSettings, {
+  _i5.Future<bool?> initialize({
+    required _i17.InitializationSettings? settings,
     _i18.DidReceiveNotificationResponseCallback?
         onDidReceiveNotificationResponse,
     _i18.DidReceiveBackgroundNotificationResponseCallback?
@@ -1086,8 +1085,9 @@ class MockFlutterLocalNotificationsPlugin extends _i1.Mock
       (super.noSuchMethod(
         Invocation.method(
           #initialize,
-          [initializationSettings],
+          [],
           {
+            #settings: settings,
             #onDidReceiveNotificationResponse: onDidReceiveNotificationResponse,
             #onDidReceiveBackgroundNotificationResponse:
                 onDidReceiveBackgroundNotificationResponse,
@@ -1110,38 +1110,42 @@ class MockFlutterLocalNotificationsPlugin extends _i1.Mock
           ) as _i5.Future<_i18.NotificationAppLaunchDetails?>);
 
   @override
-  _i5.Future<void> show(
-    int? id,
+  _i5.Future<void> show({
+    required int? id,
     String? title,
     String? body,
-    _i19.NotificationDetails? notificationDetails, {
+    _i19.NotificationDetails? notificationDetails,
     String? payload,
   }) =>
       (super.noSuchMethod(
         Invocation.method(
           #show,
-          [
-            id,
-            title,
-            body,
-            notificationDetails,
-          ],
-          {#payload: payload},
+          [],
+          {
+            #id: id,
+            #title: title,
+            #body: body,
+            #notificationDetails: notificationDetails,
+            #payload: payload,
+          },
         ),
         returnValue: _i5.Future<void>.value(),
         returnValueForMissingStub: _i5.Future<void>.value(),
       ) as _i5.Future<void>);
 
   @override
-  _i5.Future<void> cancel(
-    int? id, {
+  _i5.Future<void> cancel({
+    required int? id,
     String? tag,
   }) =>
       (super.noSuchMethod(
         Invocation.method(
           #cancel,
-          [id],
-          {#tag: tag},
+          [],
+          {
+            #id: id,
+            #tag: tag,
+          },
         ),
         returnValue: _i5.Future<void>.value(),
         returnValueForMissingStub: _i5.Future<void>.value(),
@@ -1158,28 +1162,37 @@ class MockFlutterLocalNotificationsPlugin extends _i1.Mock
       ) as _i5.Future<void>);
 
   @override
-  _i5.Future<void> zonedSchedule(
-    int? id,
+  _i5.Future<void> cancelAllPendingNotifications() => (super.noSuchMethod(
+        Invocation.method(
+          #cancelAllPendingNotifications,
+          [],
+        ),
+        returnValue: _i5.Future<void>.value(),
+        returnValueForMissingStub: _i5.Future<void>.value(),
+      ) as _i5.Future<void>);
+
+  @override
+  _i5.Future<void> zonedSchedule({
+    required int? id,
+    required _i20.TZDateTime? scheduledDate,
+    required _i19.NotificationDetails? notificationDetails,
+    required _i21.AndroidScheduleMode? androidScheduleMode,
     String? title,
     String? body,
-    _i20.TZDateTime? scheduledDate,
-    _i19.NotificationDetails? notificationDetails, {
-    required _i21.AndroidScheduleMode? androidScheduleMode,
     String? payload,
-    _i22.DateTimeComponents? matchDateTimeComponents,
+    _i18.DateTimeComponents? matchDateTimeComponents,
   }) =>
       (super.noSuchMethod(
         Invocation.method(
           #zonedSchedule,
-          [
-            id,
-            title,
-            body,
-            scheduledDate,
-            notificationDetails,
-          ],
+          [],
           {
+            #id: id,
+            #scheduledDate: scheduledDate,
+            #notificationDetails: notificationDetails,
             #androidScheduleMode: androidScheduleMode,
+            #title: title,
+            #body: body,
             #payload: payload,
             #matchDateTimeComponents: matchDateTimeComponents,
           },
@@ -1189,27 +1202,26 @@ class MockFlutterLocalNotificationsPlugin extends _i1.Mock
       ) as _i5.Future<void>);
 
   @override
-  _i5.Future<void> periodicallyShow(
-    int? id,
+  _i5.Future<void> periodicallyShow({
+    required int? id,
+    required _i18.RepeatInterval? repeatInterval,
+    required _i19.NotificationDetails? notificationDetails,
+    required _i21.AndroidScheduleMode? androidScheduleMode,
     String? title,
     String? body,
-    _i18.RepeatInterval? repeatInterval,
-    _i19.NotificationDetails? notificationDetails, {
-    required _i21.AndroidScheduleMode? androidScheduleMode,
     String? payload,
   }) =>
       (super.noSuchMethod(
         Invocation.method(
           #periodicallyShow,
-          [
-            id,
-            title,
-            body,
-            repeatInterval,
-            notificationDetails,
-          ],
+          [],
           {
+            #id: id,
+            #repeatInterval: repeatInterval,
+            #notificationDetails: notificationDetails,
             #androidScheduleMode: androidScheduleMode,
+            #title: title,
+            #body: body,
             #payload: payload,
           },
         ),
@@ -1218,12 +1230,12 @@ class MockFlutterLocalNotificationsPlugin extends _i1.Mock
       ) as _i5.Future<void>);
 
   @override
-  _i5.Future<void> periodicallyShowWithDuration(
-    int? id,
+  _i5.Future<void> periodicallyShowWithDuration({
+    required int? id,
+    required Duration? repeatDurationInterval,
+    required _i19.NotificationDetails? notificationDetails,
     String? title,
     String? body,
-    Duration? repeatDurationInterval,
-    _i19.NotificationDetails? notificationDetails, {
     _i21.AndroidScheduleMode? androidScheduleMode =
         _i21.AndroidScheduleMode.exact,
     String? payload,
@@ -1231,14 +1243,13 @@ class MockFlutterLocalNotificationsPlugin extends _i1.Mock
       (super.noSuchMethod(
         Invocation.method(
           #periodicallyShowWithDuration,
-          [
-            id,
-            title,
-            body,
-            repeatDurationInterval,
-            notificationDetails,
-          ],
+          [],
           {
+            #id: id,
+            #repeatDurationInterval: repeatDurationInterval,
+            #notificationDetails: notificationDetails,
+            #title: title,
+            #body: body,
             #androidScheduleMode: androidScheduleMode,
             #payload: payload,
           },
@@ -1280,7 +1291,7 @@ class MockFlutterLocalNotificationsPlugin extends _i1.Mock
 /// A class which mocks [SharedPreferences].
 ///
 /// See the documentation for Mockito's code generation for more information.
-class MockSharedPreferences extends _i1.Mock implements _i23.SharedPreferences {
+class MockSharedPreferences extends _i1.Mock implements _i22.SharedPreferences {
   @override
   Set<String> getKeys() => (super.noSuchMethod(
         Invocation.method(

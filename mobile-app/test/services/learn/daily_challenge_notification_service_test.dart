@@ -400,11 +400,11 @@ void main() {
       await service.scheduleNotificationsForPeriod(startSchedulingFrom, now);
 
       verify(mockNotifications.zonedSchedule(
-        any,
-        any,
-        any,
-        any,
-        any,
+        id: anyNamed('id'),
+        title: anyNamed('title'),
+        body: anyNamed('body'),
+        scheduledDate: anyNamed('scheduledDate'),
+        notificationDetails: anyNamed('notificationDetails'),
         androidScheduleMode: anyNamed('androidScheduleMode'),
         payload: anyNamed('payload'),
       )).called(7);
@@ -422,11 +422,11 @@ void main() {
       await service.scheduleNotificationsForPeriod(startSchedulingFrom, now);
 
       verify(mockNotifications.zonedSchedule(
-        any,
-        any,
-        any,
-        any,
-        any,
+        id: anyNamed('id'),
+        title: anyNamed('title'),
+        body: anyNamed('body'),
+        scheduledDate: anyNamed('scheduledDate'),
+        notificationDetails: anyNamed('notificationDetails'),
         androidScheduleMode: anyNamed('androidScheduleMode'),
         payload: anyNamed('payload'),
       )).called(5);
@@ -441,11 +441,11 @@ void main() {
       await service.scheduleNotificationsForPeriod(startSchedulingFrom, now);
 
       verifyNever(mockNotifications.zonedSchedule(
-        any,
-        any,
-        any,
-        any,
-        any,
+        id: anyNamed('id'),
+        title: anyNamed('title'),
+        body: anyNamed('body'),
+        scheduledDate: anyNamed('scheduledDate'),
+        notificationDetails: anyNamed('notificationDetails'),
         androidScheduleMode: anyNamed('androidScheduleMode'),
         payload: anyNamed('payload'),
       ));
@@ -462,11 +462,11 @@ void main() {
       await notificationService.scheduleDailyChallengeNotification();
 
       verifyNever(mockNotifications.zonedSchedule(
-        any,
-        any,
-        any,
-        any,
-        any,
+        id: anyNamed('id'),
+        title: anyNamed('title'),
+        body: anyNamed('body'),
+        scheduledDate: anyNamed('scheduledDate'),
+        notificationDetails: anyNamed('notificationDetails'),
         androidScheduleMode: anyNamed('androidScheduleMode'),
         payload: anyNamed('payload'),
       ));
@@ -482,11 +482,11 @@ void main() {
       await notificationService.scheduleDailyChallengeNotification();
 
       verifyNever(mockNotifications.zonedSchedule(
-        any,
-        any,
-        any,
-        any,
-        any,
+        id: anyNamed('id'),
+        title: anyNamed('title'),
+        body: anyNamed('body'),
+        scheduledDate: anyNamed('scheduledDate'),
+        notificationDetails: anyNamed('notificationDetails'),
         androidScheduleMode: anyNamed('androidScheduleMode'),
         payload: anyNamed('payload'),
       ));
@@ -526,11 +526,11 @@ void main() {
       await notificationService.scheduleDailyChallengeNotification();
 
       verifyNever(mockNotifications.zonedSchedule(
-        any,
-        any,
-        any,
-        any,
-        any,
+        id: anyNamed('id'),
+        title: anyNamed('title'),
+        body: anyNamed('body'),
+        scheduledDate: anyNamed('scheduledDate'),
+        notificationDetails: anyNamed('notificationDetails'),
         androidScheduleMode: anyNamed('androidScheduleMode'),
         payload: anyNamed('payload'),
       ));
@@ -574,11 +574,11 @@ void main() {
       await notificationService.scheduleDailyChallengeNotification();
 
       verify(mockNotifications.zonedSchedule(
-        any,
-        any,
-        any,
-        any,
-        any,
+        id: anyNamed('id'),
+        title: anyNamed('title'),
+        body: anyNamed('body'),
+        scheduledDate: anyNamed('scheduledDate'),
+        notificationDetails: anyNamed('notificationDetails'),
         androidScheduleMode: anyNamed('androidScheduleMode'),
         payload: anyNamed('payload'),
       )).called(equals(7));
@@ -629,11 +629,11 @@ void main() {
       await notificationService.scheduleDailyChallengeNotification();
 
       verify(mockNotifications.zonedSchedule(
-        any,
-        any,
-        any,
-        any,
-        any,
+        id: anyNamed('id'),
+        title: anyNamed('title'),
+        body: anyNamed('body'),
+        scheduledDate: anyNamed('scheduledDate'),
+        notificationDetails: anyNamed('notificationDetails'),
         androidScheduleMode: anyNamed('androidScheduleMode'),
         payload: anyNamed('payload'),
       )).called(equals(7));
