@@ -23,7 +23,7 @@ class NotificationService {
 
   Future<void> init() async {
     const AndroidInitializationSettings androidInitializationSettings =
-        AndroidInitializationSettings('@mipmap/launcher_icon');
+        AndroidInitializationSettings('@mipmap/ic_launcher');
     const DarwinInitializationSettings iosInitializationSettings =
         DarwinInitializationSettings();
 
@@ -33,7 +33,7 @@ class NotificationService {
       iOS: iosInitializationSettings,
     );
 
-    await _flutterLocalNotificationsPlugin.initialize(initializationSettings);
+    await _flutterLocalNotificationsPlugin.initialize(settings: initializationSettings);
   }
 
   Future<bool> requestPermission() async {
@@ -121,10 +121,10 @@ class NotificationService {
     );
 
     await _flutterLocalNotificationsPlugin.show(
-      random.nextInt(pow(2, 31).toInt() - 1),
-      title,
-      body,
-      platformChannelSpecifics,
+      id: random.nextInt(pow(2, 31).toInt() - 1),
+      title: title,
+      body: body,
+      notificationDetails: platformChannelSpecifics,
     );
   }
 

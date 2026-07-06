@@ -42,7 +42,7 @@ class DailyChallengeNotificationService {
     tz.initializeTimeZones();
 
     const AndroidInitializationSettings androidInitializationSettings =
-        AndroidInitializationSettings('@mipmap/launcher_icon');
+        AndroidInitializationSettings('@mipmap/ic_launcher');
     const DarwinInitializationSettings iosInitializationSettings =
         DarwinInitializationSettings();
 
@@ -53,7 +53,7 @@ class DailyChallengeNotificationService {
     );
 
     await _flutterLocalNotificationsPlugin.initialize(
-      initializationSettings,
+      settings: initializationSettings,
       onDidReceiveNotificationResponse: _onNotificationResponse,
     );
   }
@@ -324,11 +324,11 @@ class DailyChallengeNotificationService {
       if (scheduleTime.isAfter(now)) {
         try {
           await _flutterLocalNotificationsPlugin.zonedSchedule(
-            notificationId++,
-            t.new_daily_challenge_available,
-            t.daily_challenge_notification_body,
-            tz.TZDateTime.from(scheduleTime, tz.local),
-            NotificationDetails(
+            id: notificationId++,
+            title: t.new_daily_challenge_available,
+            body: t.daily_challenge_notification_body,
+            scheduledDate: tz.TZDateTime.from(scheduleTime, tz.local),
+            notificationDetails: NotificationDetails(
               android: AndroidNotificationDetails(
                 _channelId,
                 t.daily_challenge_notifications,

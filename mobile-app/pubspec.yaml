@@ -26,7 +26,7 @@ dependencies:
   flutter_html: 3.0.0
   flutter_html_table: 3.0.0
   flutter_inappwebview: 6.2.0-beta.3
-  flutter_local_notifications: 19.1.0
+  flutter_local_notifications: 22.0.1
   flutter_localizations:
     sdk: flutter
   flutter_scroll_shadow: 1.2.6
@@ -49,7 +49,7 @@ dependencies:
   sqflite: 2.4.2
   stacked: 3.4.3
   stacked_services: 1.6.0
-  timezone: 0.10.1
+  timezone: 0.11.1
   ua_client_hints: 1.7.0
   upgrader: 13.5.0
   url_launcher: 6.3.2
@@ -60,7 +60,7 @@ dev_dependencies:
   dependency_validator: 3.2.3
   flutter_driver:
     sdk: flutter
-  flutter_launcher_icons: 0.14.3
+  flutter_launcher_icons: 0.14.4
   flutter_lints: 5.0.0
   flutter_native_splash: 2.4.6
   flutter_test:
