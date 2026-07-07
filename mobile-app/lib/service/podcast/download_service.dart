@@ -49,6 +49,11 @@ class DownloadService {
   }
 
   void download(Episodes episode, Podcasts podcast) async {
+    if (episode.contentUrl == null) {
+      dev.log('DownloadService: contentUrl is null for episode ${episode.id}');
+      return;
+    }
+
     Directory app = await getApplicationDocumentsDirectory();
     dev.log(_downloadId);
     _downloading.sink.add(true);
