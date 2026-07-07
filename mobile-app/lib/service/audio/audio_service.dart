@@ -40,6 +40,9 @@ class AudioPlayerHandler extends BaseAudioHandler {
 
   String _episodeId = '';
   String _audioType = '';
+  String _curriculumAudioFile = '';
+
+  String get curriculumAudioFile => _curriculumAudioFile;
 
   StreamSubscription? cacheSub;
 
@@ -74,6 +77,7 @@ class AudioPlayerHandler extends BaseAudioHandler {
   Future<void> stop() async {
     await _audioPlayer.stop();
     _audioType = '';
+    _curriculumAudioFile = '';
     return super.stop();
   }
 
@@ -180,7 +184,7 @@ class AudioPlayerHandler extends BaseAudioHandler {
         }
       });
     } catch (e) {
-      log('Cannot play audio: $e');
+      log('loadEpisode: Cannot play audio: $e');
     }
   }
 
@@ -208,7 +212,7 @@ class AudioPlayerHandler extends BaseAudioHandler {
       queue.add([currentSong, nextSong]);
       mediaItem.add(currentSong);
     } catch (e) {
-      log('Cannot play audio: $e');
+      log('codeRadioMusic: Cannot play audio: $e');
     }
   }
 
@@ -253,20 +257,25 @@ class AudioPlayerHandler extends BaseAudioHandler {
   }
 
   Future<void> loadCurriculumAudio(AudioClip audio) async {
-    await _audioPlayer.setAudioSource(
-      ClippingAudioSource(
-        start: parseTimeStamp(audio.startTimeStamp),
-        end: audio.finishTimeStamp == null
-            ? null
-            : parseTimeStamp(audio.finishTimeStamp),
-        child: AudioSource.uri(
-          Uri.parse(returnUrl(audio.fileName)),
+    try {
+      await _audioPlayer.setAudioSource(
+        ClippingAudioSource(
+          start: parseTimeStamp(audio.startTimeStamp),
+          end: audio.finishTimeStamp == null
+              ? null
+              : parseTimeStamp(audio.finishTimeStamp),
+          child: AudioSource.uri(
+            Uri.parse(returnUrl(audio.fileName)),
+          ),
         ),
-      ),
-    );
-    await _audioPlayer.load();
-    setEpisodeId = '';
-    _audioType = 'curriculum';
+      );
+      await _audioPlayer.load();
+      setEpisodeId = '';
+      _audioType = 'curriculum';
+      _curriculumAudioFile = audio.fileName;
+    } catch (e) {
+      log('loadCurriculumAudio: Cannot play audio: $e');
+    }
   }
 
   void _notifyAudioHandlerAboutPlaybackEvents() {
@@ -301,6 +310,9 @@ class AudioPlayerHandler extends BaseAudioHandler {
             queueIndex: event.currentIndex,
           ),
         );
+      },
+      onError: (Object e, StackTrace st) {
+        log('Playback event error: $e\n$st');
       },
     );
   }
