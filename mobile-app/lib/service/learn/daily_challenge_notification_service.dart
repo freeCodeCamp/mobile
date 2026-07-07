@@ -11,6 +11,7 @@ import 'package:freecodecamp/models/main/user_model.dart';
 import 'package:freecodecamp/service/authentication/authentication_service.dart';
 import 'package:freecodecamp/service/learn/daily_challenge_service.dart';
 import 'package:freecodecamp/service/locale_service.dart';
+import 'package:freecodecamp/ui/theme/fcc_theme.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:timezone/data/latest.dart' as tz;
 import 'package:timezone/timezone.dart' as tz;
@@ -42,7 +43,7 @@ class DailyChallengeNotificationService {
     tz.initializeTimeZones();
 
     const AndroidInitializationSettings androidInitializationSettings =
-        AndroidInitializationSettings('@mipmap/ic_launcher');
+        AndroidInitializationSettings('notification_icon');
     const DarwinInitializationSettings iosInitializationSettings =
         DarwinInitializationSettings();
 
@@ -335,6 +336,7 @@ class DailyChallengeNotificationService {
                 channelDescription: t.daily_challenge_notifications_description,
                 priority: Priority.high,
                 importance: Importance.max,
+                color: FccColors.gray90,
               ),
               iOS: const DarwinNotificationDetails(
                 threadIdentifier: 'daily-challenge-notification',

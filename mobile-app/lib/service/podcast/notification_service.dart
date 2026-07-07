@@ -7,6 +7,7 @@ import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:freecodecamp/app/app.locator.dart';
 import 'package:freecodecamp/l10n/app_localizations.dart';
 import 'package:freecodecamp/service/locale_service.dart';
+import 'package:freecodecamp/ui/theme/fcc_theme.dart';
 
 // This is a singleton class and initialized only once
 class NotificationService {
@@ -23,7 +24,7 @@ class NotificationService {
 
   Future<void> init() async {
     const AndroidInitializationSettings androidInitializationSettings =
-        AndroidInitializationSettings('@mipmap/ic_launcher');
+        AndroidInitializationSettings('notification_icon');
     const DarwinInitializationSettings iosInitializationSettings =
         DarwinInitializationSettings();
 
@@ -33,7 +34,9 @@ class NotificationService {
       iOS: iosInitializationSettings,
     );
 
-    await _flutterLocalNotificationsPlugin.initialize(settings: initializationSettings);
+    await _flutterLocalNotificationsPlugin.initialize(
+      settings: initializationSettings,
+    );
   }
 
   Future<bool> requestPermission() async {
@@ -110,6 +113,7 @@ class NotificationService {
       channelDescription: t.notification_channel_description,
       priority: Priority.high,
       importance: Importance.max,
+      color: FccColors.gray90,
     );
 
     const DarwinNotificationDetails iosNotificationDetails =
