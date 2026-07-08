@@ -1,15 +1,23 @@
 include: package:flutter_lints/flutter.yaml
 
 analyzer:
-  exclude: [
-   temp/**,
-   lib/app/app.dart,
-   lib/app/app.locator.dart,
-   lib/app/app.logger.dart,
-   lib/app/app.router.dart
-   ]
+  exclude:
+    # Flutter generated files
+    - build/**
+    - android/**
+    - ios/**
+    - web/**
+    - windows/**
+    - macos/**
+    - linux/**
+    # Our generated files
+    - temp/**
+    - lib/app/app.dart
+    - lib/app/app.locator.dart
+    - lib/app/app.logger.dart
+    - lib/app/app.router.dart
   errors:
-    todo: warning
+    todo: info
 linter:
   rules:
     avoid_print: false

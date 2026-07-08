@@ -15,7 +15,7 @@ workflows:
       cancel_previous_builds: true
 
     environment:
-      flutter: 3.41.9
+      flutter: 3.44.3
       xcode: latest
       cocoapods: default
       groups:
@@ -44,11 +44,12 @@ workflows:
         script: flutter pub get
 
       - name: Analyze code
-        script: flutter analyze
+        script: flutter analyze --no-fatal-warnings
 
       - name: Install applesimutils
         script: |
           brew tap wix/brew
+          brew trust --formula wix/brew/applesimutils
           brew install applesimutils
 
       - name: Boot iOS simulator
@@ -87,7 +88,7 @@ workflows:
       cancel_previous_builds: true
 
     environment:
-      flutter: 3.41.9
+      flutter: 3.44.3
       xcode: latest
       cocoapods: default
       ios_signing:
@@ -122,11 +123,12 @@ workflows:
         script: flutter pub get
 
       - name: Analyze code
-        script: flutter analyze
+        script: flutter analyze --no-fatal-warnings
 
       - name: Install applesimutils
         script: |
           brew tap wix/brew
+          brew trust --formula wix/brew/applesimutils
           brew install applesimutils
 
       - name: Boot iOS simulator

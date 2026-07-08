@@ -1016,7 +1016,7 @@ abstract class AppLocalizations {
   /// No description provided for @quick_action_daily_challenges.
   ///
   /// In en, this message translates to:
-  /// **'Daily Challenges'**
+  /// **'DAILY CHALLENGES'**
   String get quick_action_daily_challenges;
 
   /// drawer and quick action label for Code Radio
