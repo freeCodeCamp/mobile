@@ -68,17 +68,20 @@ class _QuizAudioPlayerState extends State<QuizAudioPlayer> {
           stream: audioHandler.playbackState,
           builder: (context, snapshot) {
             final playerState = snapshot.data as PlaybackState;
+            final quizAudio = widget.audioData.audio;
             final isActive = audioHandler.curriculumAudioFile ==
-                widget.audioData.audio.fileName;
+                '${quizAudio.fileName}-${quizAudio.startTimeStamp}-${quizAudio.finishTimeStamp}';
 
             return StreamBuilder<Duration>(
               initialData: Duration.zero,
               stream: AudioService.position,
               builder: (context, positionSnapshot) {
-                final currentPosition =
-                    isActive ? (positionSnapshot.data ?? Duration.zero) : Duration.zero;
-                final totalDuration =
-                    isActive ? (audioHandler.duration() ?? Duration.zero) : Duration.zero;
+                final currentPosition = isActive
+                    ? (positionSnapshot.data ?? Duration.zero)
+                    : Duration.zero;
+                final totalDuration = isActive
+                    ? (audioHandler.duration() ?? Duration.zero)
+                    : Duration.zero;
                 final hasZeroValue = totalDuration.inMilliseconds == 0 ||
                     currentPosition.inMilliseconds == 0;
 
