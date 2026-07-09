@@ -1,4 +1,4 @@
-import 'dart:async';
+import 'dart:developer';
 
 import 'package:audio_service/audio_service.dart';
 import 'package:flutter/material.dart';
@@ -20,18 +20,10 @@ class QuizAudioPlayer extends StatefulWidget {
 
 class _QuizAudioPlayerState extends State<QuizAudioPlayer> {
   final audioHandler = locator<AppAudioService>().audioHandler;
-  final StreamController<Duration> position =
-      StreamController<Duration>.broadcast();
-  bool _isLoading = true;
+  bool _isLoading = false;
   bool _hasError = false;
 
-  @override
-  void initState() {
-    super.initState();
-    _loadAudio();
-  }
-
-  Future<void> _loadAudio() async {
+  Future<void> _loadAndPlay() async {
     try {
       setState(() {
         _isLoading = true;
@@ -41,41 +33,25 @@ class _QuizAudioPlayerState extends State<QuizAudioPlayer> {
       await audioHandler.stop();
       await audioHandler.loadCurriculumAudio(widget.audioData.audio);
 
-      // Listen to position changes
-      AudioService.position.listen((pos) {
-        if (mounted) {
-          position.add(pos);
-        }
-      });
-
-      setState(() {
-        _isLoading = false;
-      });
+      if (mounted) {
+        setState(() {
+          _isLoading = false;
+        });
+        audioHandler.play();
+      }
     } catch (e) {
-      setState(() {
-        _isLoading = false;
-        _hasError = true;
-      });
+      if (mounted) {
+        log('QuizAudioPlayer: Error loading audio: $e');
+        setState(() {
+          _isLoading = false;
+          _hasError = true;
+        });
+      }
     }
-  }
-
-  @override
-  void dispose() {
-    position.close();
-    super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
-    if (_isLoading) {
-      return const Center(
-        child: Padding(
-          padding: EdgeInsets.all(16.0),
-          child: CircularProgressIndicator(),
-        ),
-      );
-    }
-
     if (_hasError) {
       return Center(
         child: Padding(
@@ -92,17 +68,20 @@ class _QuizAudioPlayerState extends State<QuizAudioPlayer> {
           stream: audioHandler.playbackState,
           builder: (context, snapshot) {
             final playerState = snapshot.data as PlaybackState;
+            final quizAudio = widget.audioData.audio;
+            final isActive = audioHandler.curriculumAudioFile ==
+                '${quizAudio.fileName}-${quizAudio.startTimeStamp}-${quizAudio.finishTimeStamp}';
 
             return StreamBuilder<Duration>(
               initialData: Duration.zero,
-              stream: position.stream,
+              stream: AudioService.position,
               builder: (context, positionSnapshot) {
-                if (!positionSnapshot.hasData) {
-                  return const CircularProgressIndicator();
-                }
-
-                final currentPosition = positionSnapshot.data!;
-                final totalDuration = audioHandler.duration() ?? Duration.zero;
+                final currentPosition = isActive
+                    ? (positionSnapshot.data ?? Duration.zero)
+                    : Duration.zero;
+                final totalDuration = isActive
+                    ? (audioHandler.duration() ?? Duration.zero)
+                    : Duration.zero;
                 final hasZeroValue = totalDuration.inMilliseconds == 0 ||
                     currentPosition.inMilliseconds == 0;
 
@@ -122,26 +101,39 @@ class _QuizAudioPlayerState extends State<QuizAudioPlayer> {
                     Row(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
-                        IconButton(
-                          onPressed: () {
-                            if (playerState.playing &&
-                                playerState.processingState !=
-                                    AudioProcessingState.completed) {
-                              audioHandler.pause();
-                            } else if (playerState.processingState ==
-                                AudioProcessingState.completed) {
-                              audioHandler.seek(Duration.zero);
-                              audioHandler.play();
-                            } else {
-                              audioHandler.play();
-                            }
-                          },
-                          icon: playerState.playing &&
+                        if (_isLoading)
+                          const Padding(
+                            padding: EdgeInsets.all(8.0),
+                            child: SizedBox(
+                              width: 24,
+                              height: 24,
+                              child: CircularProgressIndicator(strokeWidth: 2),
+                            ),
+                          )
+                        else
+                          IconButton(
+                            onPressed: () {
+                              if (!isActive) {
+                                _loadAndPlay();
+                              } else if (playerState.playing &&
                                   playerState.processingState !=
-                                      AudioProcessingState.completed
-                              ? const Icon(Icons.pause)
-                              : const Icon(Icons.play_arrow),
-                        ),
+                                      AudioProcessingState.completed) {
+                                audioHandler.pause();
+                              } else if (playerState.processingState ==
+                                  AudioProcessingState.completed) {
+                                audioHandler.seek(Duration.zero);
+                                audioHandler.play();
+                              } else {
+                                audioHandler.play();
+                              }
+                            },
+                            icon: isActive &&
+                                    playerState.playing &&
+                                    playerState.processingState !=
+                                        AudioProcessingState.completed
+                                ? const Icon(Icons.pause)
+                                : const Icon(Icons.play_arrow),
+                          ),
                       ],
                     ),
                   ],

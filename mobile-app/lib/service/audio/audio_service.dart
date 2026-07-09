@@ -7,9 +7,28 @@ import 'package:freecodecamp/models/code-radio/code_radio_model.dart';
 import 'package:freecodecamp/models/learn/challenge_model.dart';
 import 'package:freecodecamp/models/podcasts/episodes_model.dart';
 import 'package:freecodecamp/models/podcasts/podcasts_model.dart';
+import 'package:freecodecamp/ui/theme/fcc_theme.dart';
 import 'package:just_audio/just_audio.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+
+sealed class AudioTypeConfig {
+  const AudioTypeConfig();
+}
+
+class EpisodeAudioConfig extends AudioTypeConfig {
+  final String episodeId;
+  const EpisodeAudioConfig(this.episodeId);
+}
+
+class CurriculumAudioConfig extends AudioTypeConfig {
+  final String curriculumAudioFile;
+  const CurriculumAudioConfig(this.curriculumAudioFile);
+}
+
+class CodeRadioAudioConfig extends AudioTypeConfig {
+  const CodeRadioAudioConfig();
+}
 
 class AppAudioService {
   static final AppAudioService _appAudioService = AppAudioService._internal();
@@ -28,6 +47,8 @@ class AppAudioService {
         androidNotificationChannelName: 'Audio playback',
         androidNotificationOngoing: true,
         androidStopForegroundOnPause: true,
+        androidNotificationIcon: 'drawable/notification_icon',
+        notificationColor: FccColors.gray90,
       ),
     );
   }
@@ -38,17 +59,15 @@ class AppAudioService {
 class AudioPlayerHandler extends BaseAudioHandler {
   final AudioPlayer _audioPlayer = AudioPlayer();
 
-  String _episodeId = '';
   String _audioType = '';
-
-  StreamSubscription? cacheSub;
-
-  String get episodeId => _episodeId;
-  set setEpisodeId(String state) {
-    _episodeId = state;
-  }
+  String _episodeId = '';
+  String _curriculumAudioFile = '';
 
   String get audioType => _audioType;
+  String get episodeId => _episodeId;
+  String get curriculumAudioFile => _curriculumAudioFile;
+
+  StreamSubscription? cacheSub;
 
   @override
   AudioPlayerHandler() {
@@ -74,6 +93,8 @@ class AudioPlayerHandler extends BaseAudioHandler {
   Future<void> stop() async {
     await _audioPlayer.stop();
     _audioType = '';
+    _episodeId = '';
+    _curriculumAudioFile = '';
     return super.stop();
   }
 
@@ -119,6 +140,26 @@ class AudioPlayerHandler extends BaseAudioHandler {
     return _audioPlayer.speed;
   }
 
+  void setAudioCtx(AudioTypeConfig audioConfig) {
+    switch (audioConfig) {
+      case EpisodeAudioConfig(:final episodeId):
+        _audioType = 'episode';
+        _episodeId = episodeId;
+        _curriculumAudioFile = '';
+        break;
+      case CurriculumAudioConfig(:final curriculumAudioFile):
+        _audioType = 'curriculum';
+        _episodeId = '';
+        _curriculumAudioFile = curriculumAudioFile;
+        break;
+      case CodeRadioAudioConfig():
+        _audioType = 'coderadio';
+        _episodeId = '';
+        _curriculumAudioFile = '';
+        break;
+    }
+  }
+
   Future<void> loadEpisode(
     Episodes episode,
     bool isDownloaded,
@@ -162,7 +203,8 @@ class AudioPlayerHandler extends BaseAudioHandler {
         _audioPlayer.seek(Duration(seconds: 0));
       }
 
-      _audioType = 'episode';
+      setAudioCtx(EpisodeAudioConfig(episode.id));
+
       queue.add([audioMediaItem]);
       mediaItem.add(audioMediaItem);
 
@@ -180,7 +222,7 @@ class AudioPlayerHandler extends BaseAudioHandler {
         }
       });
     } catch (e) {
-      log('Cannot play audio: $e');
+      log('loadEpisode: Cannot play audio: $e');
     }
   }
 
@@ -203,12 +245,11 @@ class AudioPlayerHandler extends BaseAudioHandler {
         AudioSource.uri(Uri.parse(radio.listenUrl), tag: nextSong)
       ]);
       await _audioPlayer.load();
-      _audioType = 'coderadio';
-      setEpisodeId = '';
+      setAudioCtx(const CodeRadioAudioConfig());
       queue.add([currentSong, nextSong]);
       mediaItem.add(currentSong);
     } catch (e) {
-      log('Cannot play audio: $e');
+      log('codeRadioMusic: Cannot play audio: $e');
     }
   }
 
@@ -253,20 +294,27 @@ class AudioPlayerHandler extends BaseAudioHandler {
   }
 
   Future<void> loadCurriculumAudio(AudioClip audio) async {
-    await _audioPlayer.setAudioSource(
-      ClippingAudioSource(
-        start: parseTimeStamp(audio.startTimeStamp),
-        end: audio.finishTimeStamp == null
-            ? null
-            : parseTimeStamp(audio.finishTimeStamp),
-        child: AudioSource.uri(
-          Uri.parse(returnUrl(audio.fileName)),
+    try {
+      await _audioPlayer.setAudioSource(
+        ClippingAudioSource(
+          start: parseTimeStamp(audio.startTimeStamp),
+          end: audio.finishTimeStamp == null
+              ? null
+              : parseTimeStamp(audio.finishTimeStamp),
+          child: AudioSource.uri(
+            Uri.parse(returnUrl(audio.fileName)),
+          ),
         ),
-      ),
-    );
-    await _audioPlayer.load();
-    setEpisodeId = '';
-    _audioType = 'curriculum';
+      );
+      await _audioPlayer.load();
+      setAudioCtx(
+        CurriculumAudioConfig(
+          '${audio.fileName}-${audio.startTimeStamp}-${audio.finishTimeStamp}',
+        ),
+      );
+    } catch (e) {
+      log('loadCurriculumAudio: Cannot play audio: $e');
+    }
   }
 
   void _notifyAudioHandlerAboutPlaybackEvents() {
@@ -301,6 +349,9 @@ class AudioPlayerHandler extends BaseAudioHandler {
             queueIndex: event.currentIndex,
           ),
         );
+      },
+      onError: (Object e, StackTrace st) {
+        log('Playback event error: $e\n$st');
       },
     );
   }

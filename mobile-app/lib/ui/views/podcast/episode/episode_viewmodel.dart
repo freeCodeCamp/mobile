@@ -218,7 +218,7 @@ class EpisodeViewModel extends BaseViewModel {
     bool downloaded = await _databaseService.episodeExists(episode);
 
     if (audioService.episodeId != episode.id) {
-      audioService.setEpisodeId = episode.id;
+      audioService.setAudioCtx(EpisodeAudioConfig(episode.id));
       audioService.loadEpisode(episode, downloaded, podcast);
       initProgressListener(episode);
     }

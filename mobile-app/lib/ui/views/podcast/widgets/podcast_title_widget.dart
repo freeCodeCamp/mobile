@@ -150,7 +150,7 @@ class PodcastTileState extends State<PodcastTile> {
   Future<void> playBtnClick() async {
     if (!widget.loading) {
       if (!widget.playing) {
-        widget._audioService.setEpisodeId = widget.episode.id;
+        widget._audioService.setAudioCtx(EpisodeAudioConfig(widget.episode.id));
         setIsLoading = true;
 
         await widget._audioService.loadEpisode(
@@ -161,7 +161,7 @@ class PodcastTileState extends State<PodcastTile> {
 
         await widget._audioService.play();
       } else {
-        widget._audioService.setEpisodeId = '';
+        widget._audioService.setAudioCtx(const EpisodeAudioConfig(''));
         await widget._audioService.pause();
       }
       setIsLoading = false;
