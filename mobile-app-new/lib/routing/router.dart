@@ -1,6 +1,6 @@
 import 'package:go_router/go_router.dart';
 import 'package:mobile_app_new/main.dart';
-import 'package:mobile_app_new/router/news.dart';
+import 'package:mobile_app_new/routing/news.dart';
 
 final router = GoRouter(
   routes: [
