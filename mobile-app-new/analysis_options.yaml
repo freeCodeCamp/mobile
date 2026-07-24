@@ -27,5 +27,10 @@ linter:
 # Additional information about this file can be found at
 # https://dart.dev/guides/language/analysis-options
 
+analyzer:
+  language:
+    strict-raw-types: true
+    strict-casts: true
+
 plugins:
   riverpod_lint: 3.1.4
