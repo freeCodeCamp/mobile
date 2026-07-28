@@ -121,7 +121,7 @@ abstract class Tag with _$Tag {
 
 @freezed
 abstract class CoverImage with _$CoverImage {
-  const factory CoverImage({required String url}) = _CoverImage;
+  const factory CoverImage({String? url}) = _CoverImage;
 
   factory CoverImage.fromJson(Map<String, Object?> json) =>
       _$CoverImageFromJson(json);
@@ -141,13 +141,13 @@ abstract class Post with _$Post {
     required String id,
     required String slug,
     required String title,
-    String? url,
+    required String url,
     required Author author,
     @Default([]) List<Tag> tags,
     CoverImage? coverImage,
     required int readTimeInMinutes,
-    Content? content,
-    String? publishedAt,
+    required Content content,
+    required String publishedAt,
   }) = _Post;
 
   factory Post.fromJson(Map<String, Object?> json) => _$PostFromJson(json);

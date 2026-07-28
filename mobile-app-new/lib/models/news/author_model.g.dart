@@ -7,7 +7,7 @@ part of 'author_model.dart';
 // **************************************************************************
 
 _Bio _$BioFromJson(Map<String, dynamic> json) =>
-    _Bio(text: json['text'] as String?);
+    _Bio(text: json['text'] as String);
 
 Map<String, dynamic> _$BioToJson(_Bio instance) => <String, dynamic>{
   'text': instance.text,

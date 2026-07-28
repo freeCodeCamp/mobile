@@ -284,7 +284,7 @@ as String,
 /// @nodoc
 mixin _$CoverImage {
 
- String get url;
+ String? get url;
 /// Create a copy of CoverImage
 /// with the given fields replaced by the non-null parameter values.
 @JsonKey(includeFromJson: false, includeToJson: false)
@@ -317,7 +317,7 @@ abstract mixin class $CoverImageCopyWith<$Res>  {
   factory $CoverImageCopyWith(CoverImage value, $Res Function(CoverImage) _then) = _$CoverImageCopyWithImpl;
 @useResult
 $Res call({
- String url
+ String? url
 });
 
 
@@ -334,10 +334,10 @@ class _$CoverImageCopyWithImpl<$Res>
 
 /// Create a copy of CoverImage
 /// with the given fields replaced by the non-null parameter values.
-@pragma('vm:prefer-inline') @override $Res call({Object? url = null,}) {
+@pragma('vm:prefer-inline') @override $Res call({Object? url = freezed,}) {
   return _then(_self.copyWith(
-url: null == url ? _self.url : url // ignore: cast_nullable_to_non_nullable
-as String,
+url: freezed == url ? _self.url : url // ignore: cast_nullable_to_non_nullable
+as String?,
   ));
 }
 
@@ -422,7 +422,7 @@ return $default(_that);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( String url)?  $default,{required TResult orElse(),}) {final _that = this;
+@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( String? url)?  $default,{required TResult orElse(),}) {final _that = this;
 switch (_that) {
 case _CoverImage() when $default != null:
 return $default(_that.url);case _:
@@ -443,7 +443,7 @@ return $default(_that.url);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( String url)  $default,) {final _that = this;
+@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( String? url)  $default,) {final _that = this;
 switch (_that) {
 case _CoverImage():
 return $default(_that.url);case _:
@@ -463,7 +463,7 @@ return $default(_that.url);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( String url)?  $default,) {final _that = this;
+@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( String? url)?  $default,) {final _that = this;
 switch (_that) {
 case _CoverImage() when $default != null:
 return $default(_that.url);case _:
@@ -478,10 +478,10 @@ return $default(_that.url);case _:
 @JsonSerializable()
 
 class _CoverImage implements CoverImage {
-  const _CoverImage({required this.url});
+  const _CoverImage({this.url});
   factory _CoverImage.fromJson(Map<String, dynamic> json) => _$CoverImageFromJson(json);
 
-@override final  String url;
+@override final  String? url;
 
 /// Create a copy of CoverImage
 /// with the given fields replaced by the non-null parameter values.
@@ -516,7 +516,7 @@ abstract mixin class _$CoverImageCopyWith<$Res> implements $CoverImageCopyWith<$
   factory _$CoverImageCopyWith(_CoverImage value, $Res Function(_CoverImage) _then) = __$CoverImageCopyWithImpl;
 @override @useResult
 $Res call({
- String url
+ String? url
 });
 
 
@@ -533,10 +533,10 @@ class __$CoverImageCopyWithImpl<$Res>
 
 /// Create a copy of CoverImage
 /// with the given fields replaced by the non-null parameter values.
-@override @pragma('vm:prefer-inline') $Res call({Object? url = null,}) {
+@override @pragma('vm:prefer-inline') $Res call({Object? url = freezed,}) {
   return _then(_CoverImage(
-url: null == url ? _self.url : url // ignore: cast_nullable_to_non_nullable
-as String,
+url: freezed == url ? _self.url : url // ignore: cast_nullable_to_non_nullable
+as String?,
   ));
 }
 
@@ -810,7 +810,7 @@ as String,
 /// @nodoc
 mixin _$Post {
 
- String get id; String get slug; String get title; String? get url; Author get author; List<Tag> get tags; CoverImage? get coverImage; int get readTimeInMinutes; Content? get content; String? get publishedAt;
+ String get id; String get slug; String get title; String get url; Author get author; List<Tag> get tags; CoverImage? get coverImage; int get readTimeInMinutes; Content get content; String get publishedAt;
 /// Create a copy of Post
 /// with the given fields replaced by the non-null parameter values.
 @JsonKey(includeFromJson: false, includeToJson: false)
@@ -843,11 +843,11 @@ abstract mixin class $PostCopyWith<$Res>  {
   factory $PostCopyWith(Post value, $Res Function(Post) _then) = _$PostCopyWithImpl;
 @useResult
 $Res call({
- String id, String slug, String title, String? url, Author author, List<Tag> tags, CoverImage? coverImage, int readTimeInMinutes, Content? content, String? publishedAt
+ String id, String slug, String title, String url, Author author, List<Tag> tags, CoverImage? coverImage, int readTimeInMinutes, Content content, String publishedAt
 });
 
 
-$AuthorCopyWith<$Res> get author;$CoverImageCopyWith<$Res>? get coverImage;$ContentCopyWith<$Res>? get content;
+$AuthorCopyWith<$Res> get author;$CoverImageCopyWith<$Res>? get coverImage;$ContentCopyWith<$Res> get content;
 
 }
 /// @nodoc
@@ -860,19 +860,19 @@ class _$PostCopyWithImpl<$Res>
 
 /// Create a copy of Post
 /// with the given fields replaced by the non-null parameter values.
-@pragma('vm:prefer-inline') @override $Res call({Object? id = null,Object? slug = null,Object? title = null,Object? url = freezed,Object? author = null,Object? tags = null,Object? coverImage = freezed,Object? readTimeInMinutes = null,Object? content = freezed,Object? publishedAt = freezed,}) {
+@pragma('vm:prefer-inline') @override $Res call({Object? id = null,Object? slug = null,Object? title = null,Object? url = null,Object? author = null,Object? tags = null,Object? coverImage = freezed,Object? readTimeInMinutes = null,Object? content = null,Object? publishedAt = null,}) {
   return _then(_self.copyWith(
 id: null == id ? _self.id : id // ignore: cast_nullable_to_non_nullable
 as String,slug: null == slug ? _self.slug : slug // ignore: cast_nullable_to_non_nullable
 as String,title: null == title ? _self.title : title // ignore: cast_nullable_to_non_nullable
-as String,url: freezed == url ? _self.url : url // ignore: cast_nullable_to_non_nullable
-as String?,author: null == author ? _self.author : author // ignore: cast_nullable_to_non_nullable
+as String,url: null == url ? _self.url : url // ignore: cast_nullable_to_non_nullable
+as String,author: null == author ? _self.author : author // ignore: cast_nullable_to_non_nullable
 as Author,tags: null == tags ? _self.tags : tags // ignore: cast_nullable_to_non_nullable
 as List<Tag>,coverImage: freezed == coverImage ? _self.coverImage : coverImage // ignore: cast_nullable_to_non_nullable
 as CoverImage?,readTimeInMinutes: null == readTimeInMinutes ? _self.readTimeInMinutes : readTimeInMinutes // ignore: cast_nullable_to_non_nullable
-as int,content: freezed == content ? _self.content : content // ignore: cast_nullable_to_non_nullable
-as Content?,publishedAt: freezed == publishedAt ? _self.publishedAt : publishedAt // ignore: cast_nullable_to_non_nullable
-as String?,
+as int,content: null == content ? _self.content : content // ignore: cast_nullable_to_non_nullable
+as Content,publishedAt: null == publishedAt ? _self.publishedAt : publishedAt // ignore: cast_nullable_to_non_nullable
+as String,
   ));
 }
 /// Create a copy of Post
@@ -900,12 +900,9 @@ $CoverImageCopyWith<$Res>? get coverImage {
 /// with the given fields replaced by the non-null parameter values.
 @override
 @pragma('vm:prefer-inline')
-$ContentCopyWith<$Res>? get content {
-    if (_self.content == null) {
-    return null;
-  }
-
-  return $ContentCopyWith<$Res>(_self.content!, (value) {
+$ContentCopyWith<$Res> get content {
+  
+  return $ContentCopyWith<$Res>(_self.content, (value) {
     return _then(_self.copyWith(content: value));
   });
 }
@@ -990,7 +987,7 @@ return $default(_that);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( String id,  String slug,  String title,  String? url,  Author author,  List<Tag> tags,  CoverImage? coverImage,  int readTimeInMinutes,  Content? content,  String? publishedAt)?  $default,{required TResult orElse(),}) {final _that = this;
+@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( String id,  String slug,  String title,  String url,  Author author,  List<Tag> tags,  CoverImage? coverImage,  int readTimeInMinutes,  Content content,  String publishedAt)?  $default,{required TResult orElse(),}) {final _that = this;
 switch (_that) {
 case _Post() when $default != null:
 return $default(_that.id,_that.slug,_that.title,_that.url,_that.author,_that.tags,_that.coverImage,_that.readTimeInMinutes,_that.content,_that.publishedAt);case _:
@@ -1011,7 +1008,7 @@ return $default(_that.id,_that.slug,_that.title,_that.url,_that.author,_that.tag
 /// }
 /// ```
 
-@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( String id,  String slug,  String title,  String? url,  Author author,  List<Tag> tags,  CoverImage? coverImage,  int readTimeInMinutes,  Content? content,  String? publishedAt)  $default,) {final _that = this;
+@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( String id,  String slug,  String title,  String url,  Author author,  List<Tag> tags,  CoverImage? coverImage,  int readTimeInMinutes,  Content content,  String publishedAt)  $default,) {final _that = this;
 switch (_that) {
 case _Post():
 return $default(_that.id,_that.slug,_that.title,_that.url,_that.author,_that.tags,_that.coverImage,_that.readTimeInMinutes,_that.content,_that.publishedAt);case _:
@@ -1031,7 +1028,7 @@ return $default(_that.id,_that.slug,_that.title,_that.url,_that.author,_that.tag
 /// }
 /// ```
 
-@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( String id,  String slug,  String title,  String? url,  Author author,  List<Tag> tags,  CoverImage? coverImage,  int readTimeInMinutes,  Content? content,  String? publishedAt)?  $default,) {final _that = this;
+@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( String id,  String slug,  String title,  String url,  Author author,  List<Tag> tags,  CoverImage? coverImage,  int readTimeInMinutes,  Content content,  String publishedAt)?  $default,) {final _that = this;
 switch (_that) {
 case _Post() when $default != null:
 return $default(_that.id,_that.slug,_that.title,_that.url,_that.author,_that.tags,_that.coverImage,_that.readTimeInMinutes,_that.content,_that.publishedAt);case _:
@@ -1046,13 +1043,13 @@ return $default(_that.id,_that.slug,_that.title,_that.url,_that.author,_that.tag
 @JsonSerializable()
 
 class _Post implements Post {
-  const _Post({required this.id, required this.slug, required this.title, this.url, required this.author, final  List<Tag> tags = const [], this.coverImage, required this.readTimeInMinutes, this.content, this.publishedAt}): _tags = tags;
+  const _Post({required this.id, required this.slug, required this.title, required this.url, required this.author, final  List<Tag> tags = const [], this.coverImage, required this.readTimeInMinutes, required this.content, required this.publishedAt}): _tags = tags;
   factory _Post.fromJson(Map<String, dynamic> json) => _$PostFromJson(json);
 
 @override final  String id;
 @override final  String slug;
 @override final  String title;
-@override final  String? url;
+@override final  String url;
 @override final  Author author;
  final  List<Tag> _tags;
 @override@JsonKey() List<Tag> get tags {
@@ -1063,8 +1060,8 @@ class _Post implements Post {
 
 @override final  CoverImage? coverImage;
 @override final  int readTimeInMinutes;
-@override final  Content? content;
-@override final  String? publishedAt;
+@override final  Content content;
+@override final  String publishedAt;
 
 /// Create a copy of Post
 /// with the given fields replaced by the non-null parameter values.
@@ -1099,11 +1096,11 @@ abstract mixin class _$PostCopyWith<$Res> implements $PostCopyWith<$Res> {
   factory _$PostCopyWith(_Post value, $Res Function(_Post) _then) = __$PostCopyWithImpl;
 @override @useResult
 $Res call({
- String id, String slug, String title, String? url, Author author, List<Tag> tags, CoverImage? coverImage, int readTimeInMinutes, Content? content, String? publishedAt
+ String id, String slug, String title, String url, Author author, List<Tag> tags, CoverImage? coverImage, int readTimeInMinutes, Content content, String publishedAt
 });
 
 
-@override $AuthorCopyWith<$Res> get author;@override $CoverImageCopyWith<$Res>? get coverImage;@override $ContentCopyWith<$Res>? get content;
+@override $AuthorCopyWith<$Res> get author;@override $CoverImageCopyWith<$Res>? get coverImage;@override $ContentCopyWith<$Res> get content;
 
 }
 /// @nodoc
@@ -1116,19 +1113,19 @@ class __$PostCopyWithImpl<$Res>
 
 /// Create a copy of Post
 /// with the given fields replaced by the non-null parameter values.
-@override @pragma('vm:prefer-inline') $Res call({Object? id = null,Object? slug = null,Object? title = null,Object? url = freezed,Object? author = null,Object? tags = null,Object? coverImage = freezed,Object? readTimeInMinutes = null,Object? content = freezed,Object? publishedAt = freezed,}) {
+@override @pragma('vm:prefer-inline') $Res call({Object? id = null,Object? slug = null,Object? title = null,Object? url = null,Object? author = null,Object? tags = null,Object? coverImage = freezed,Object? readTimeInMinutes = null,Object? content = null,Object? publishedAt = null,}) {
   return _then(_Post(
 id: null == id ? _self.id : id // ignore: cast_nullable_to_non_nullable
 as String,slug: null == slug ? _self.slug : slug // ignore: cast_nullable_to_non_nullable
 as String,title: null == title ? _self.title : title // ignore: cast_nullable_to_non_nullable
-as String,url: freezed == url ? _self.url : url // ignore: cast_nullable_to_non_nullable
-as String?,author: null == author ? _self.author : author // ignore: cast_nullable_to_non_nullable
+as String,url: null == url ? _self.url : url // ignore: cast_nullable_to_non_nullable
+as String,author: null == author ? _self.author : author // ignore: cast_nullable_to_non_nullable
 as Author,tags: null == tags ? _self._tags : tags // ignore: cast_nullable_to_non_nullable
 as List<Tag>,coverImage: freezed == coverImage ? _self.coverImage : coverImage // ignore: cast_nullable_to_non_nullable
 as CoverImage?,readTimeInMinutes: null == readTimeInMinutes ? _self.readTimeInMinutes : readTimeInMinutes // ignore: cast_nullable_to_non_nullable
-as int,content: freezed == content ? _self.content : content // ignore: cast_nullable_to_non_nullable
-as Content?,publishedAt: freezed == publishedAt ? _self.publishedAt : publishedAt // ignore: cast_nullable_to_non_nullable
-as String?,
+as int,content: null == content ? _self.content : content // ignore: cast_nullable_to_non_nullable
+as Content,publishedAt: null == publishedAt ? _self.publishedAt : publishedAt // ignore: cast_nullable_to_non_nullable
+as String,
   ));
 }
 
@@ -1157,12 +1154,9 @@ $CoverImageCopyWith<$Res>? get coverImage {
 /// with the given fields replaced by the non-null parameter values.
 @override
 @pragma('vm:prefer-inline')
-$ContentCopyWith<$Res>? get content {
-    if (_self.content == null) {
-    return null;
-  }
-
-  return $ContentCopyWith<$Res>(_self.content!, (value) {
+$ContentCopyWith<$Res> get content {
+  
+  return $ContentCopyWith<$Res>(_self.content, (value) {
     return _then(_self.copyWith(content: value));
   });
 }

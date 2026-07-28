@@ -5,7 +5,7 @@ part 'author_model.g.dart';
 
 @freezed
 abstract class Bio with _$Bio {
-  const factory Bio({String? text}) = _Bio;
+  const factory Bio({required String text}) = _Bio;
 
   factory Bio.fromJson(Map<String, Object?> json) => _$BioFromJson(json);
 }

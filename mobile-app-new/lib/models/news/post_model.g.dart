@@ -19,7 +19,7 @@ Map<String, dynamic> _$TagToJson(_Tag instance) => <String, dynamic>{
 };
 
 _CoverImage _$CoverImageFromJson(Map<String, dynamic> json) =>
-    _CoverImage(url: json['url'] as String);
+    _CoverImage(url: json['url'] as String?);
 
 Map<String, dynamic> _$CoverImageToJson(_CoverImage instance) =>
     <String, dynamic>{'url': instance.url};
@@ -35,7 +35,7 @@ _Post _$PostFromJson(Map<String, dynamic> json) => _Post(
   id: json['id'] as String,
   slug: json['slug'] as String,
   title: json['title'] as String,
-  url: json['url'] as String?,
+  url: json['url'] as String,
   author: Author.fromJson(json['author'] as Map<String, dynamic>),
   tags:
       (json['tags'] as List<dynamic>?)
@@ -46,10 +46,8 @@ _Post _$PostFromJson(Map<String, dynamic> json) => _Post(
       ? null
       : CoverImage.fromJson(json['coverImage'] as Map<String, dynamic>),
   readTimeInMinutes: (json['readTimeInMinutes'] as num).toInt(),
-  content: json['content'] == null
-      ? null
-      : Content.fromJson(json['content'] as Map<String, dynamic>),
-  publishedAt: json['publishedAt'] as String?,
+  content: Content.fromJson(json['content'] as Map<String, dynamic>),
+  publishedAt: json['publishedAt'] as String,
 );
 
 Map<String, dynamic> _$PostToJson(_Post instance) => <String, dynamic>{
