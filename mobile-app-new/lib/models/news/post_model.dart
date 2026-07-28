@@ -1,7 +1,8 @@
 import 'package:freezed_annotation/freezed_annotation.dart';
+import 'author_model.dart';
 
-part 'tutorial_model.freezed.dart';
-part 'tutorial_model.g.dart';
+part 'post_model.freezed.dart';
+part 'post_model.g.dart';
 
 // class Tutorial {
 //   final String id;
@@ -108,43 +109,46 @@ part 'tutorial_model.g.dart';
 // }
 
 @freezed
-abstract class Author with _$Author {
-  const factory Author({
-    required String slug,
+abstract class Tag with _$Tag {
+  const factory Tag({
     required String id,
-    required String? name,
-    required String? profileImage,
-    required String? bio,
-    String? website,
-    String? location,
-    String? facebook,
-    String? twitter,
-  }) = _Author;
+    required String name,
+    required String slug,
+  }) = _Tag;
 
-  factory Author.fromJson(Map<String, Object?> json) => _$AuthorFromJson(json);
+  factory Tag.fromJson(Map<String, Object?> json) => _$TagFromJson(json);
+}
 
-  // final String slug;
-  // final String id;
-  // final String name;
-  // final String? profileImage;
-  // final String? bio;
-  // // TODO: Below items are not displayed in the UI. To be added
-  // final String? website;
-  // final String? location;
-  // final String? facebook;
-  // final String? twitter;
+@freezed
+abstract class CoverImage with _$CoverImage {
+  const factory CoverImage({required String url}) = _CoverImage;
 
-  // factory Author.toAuthorFromJson(Map<String, dynamic> data) {
-  //   return Author(
-  //     slug: data['username'],
-  //     id: data['id'],
-  //     name: data['name'],
-  //     profileImage: data['profilePicture'],
-  //     bio: data['bio']['text'],
-  //     website: data['socialMediaLinks']['website'],
-  //     location: data['location'],
-  //     facebook: data['socialMediaLinks']['facebook'],
-  //     twitter: data['socialMediaLinks']['twitter'],
-  //   );
-  // }
+  factory CoverImage.fromJson(Map<String, Object?> json) =>
+      _$CoverImageFromJson(json);
+}
+
+@freezed
+abstract class Content with _$Content {
+  const factory Content({required String html}) = _Content;
+
+  factory Content.fromJson(Map<String, Object?> json) =>
+      _$ContentFromJson(json);
+}
+
+@freezed
+abstract class Post with _$Post {
+  const factory Post({
+    required String id,
+    required String slug,
+    required String title,
+    String? url,
+    required Author author,
+    @Default([]) List<Tag> tags,
+    CoverImage? coverImage,
+    required int readTimeInMinutes,
+    Content? content,
+    String? publishedAt,
+  }) = _Post;
+
+  factory Post.fromJson(Map<String, Object?> json) => _$PostFromJson(json);
 }
