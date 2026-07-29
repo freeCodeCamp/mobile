@@ -1,10 +1,16 @@
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:graphql/client.dart';
+import 'package:riverpod_annotation/riverpod_annotation.dart';
 
-typedef ApiData = ({String endCursor, bool hasNextPage, List posts});
-typedef GetAllPostsT = Future<ApiData>;
+part 'news_api_repository.g.dart';
 
-const apiUrl = 'https://gql-beta.hashnode.com';
+typedef RawPaginatedResponse = ({
+  String endCursor,
+  bool hasNextPage,
+  List<Map<String, dynamic>> items,
+});
+
+const _apiUrl = 'https://gql-beta.hashnode.com';
 
 const postsPerPage = 20;
 
@@ -37,20 +43,15 @@ const postFieldsFragment = r'''
       coverImage {
         url
       }
-      brief
       readTimeInMinutes
       content {
         html
       }
-      seo {
-        description
-      }
       publishedAt
-      updatedAt
     }
   ''';
 
-const getAllPostsQuery =
+const _getAllPostsQuery =
     postFieldsFragment +
     r'''
     query GetAllPosts($publicationId: ObjectId!, $first: Int!, $after: String) {
@@ -71,7 +72,7 @@ const getAllPostsQuery =
     }
   ''';
 
-const getAuthorQuery = r'''
+const _getAuthorQuery = r'''
     query GetAuthor($authorSlug: String!) {
       user(username: $authorSlug) {
         id
@@ -91,7 +92,7 @@ const getAuthorQuery = r'''
     }
   ''';
 
-const getPostsByAuthorQuery =
+const _getPostsByAuthorQuery =
     postFieldsFragment +
     r'''
     query GetPostsByAuthorQuery($first: Int!, $after: String, $filter: SearchPostsOfPublicationFilter!) {
@@ -109,7 +110,7 @@ const getPostsByAuthorQuery =
     }
   ''';
 
-const getPostsByTagQuery =
+const _getPostsByTagQuery =
     postFieldsFragment +
     r'''
     query GetPostsByTagQuery($publicationId: ObjectId!, $first: Int!, $after: String, $filter: PublicationPostConnectionFilter!) {
@@ -130,7 +131,7 @@ const getPostsByTagQuery =
     }
   ''';
 
-const getPostQuery =
+const _getPostQuery =
     postFieldsFragment +
     r'''
     query GetPost($id: ID!) {
@@ -140,23 +141,22 @@ const getPostQuery =
     }
   ''';
 
-class NewsApiService {
-  static final NewsApiService _instance = NewsApiService._internal();
-  factory NewsApiService() => _instance;
-  NewsApiService._internal();
+@riverpod
+NewsApiRepository newsApiRepository(Ref ref) => NewsApiRepository();
 
-  final GraphQLClient client = GraphQLClient(
-    link: HttpLink(apiUrl),
+class NewsApiRepository {
+  final GraphQLClient _client = GraphQLClient(
+    link: HttpLink(_apiUrl),
     cache: GraphQLCache(),
   );
-  final String publicationId = dotenv.get('HASHNODE_PUBLICATION_ID');
+  final String _publicationId = dotenv.get('HASHNODE_PUBLICATION_ID');
 
-  GetAllPostsT getAllPosts({String afterCursor = ''}) async {
-    final result = await client.query(
+  Future<RawPaginatedResponse> getAllPosts({String afterCursor = ''}) async {
+    final result = await _client.query(
       QueryOptions(
-        document: gql(getAllPostsQuery),
+        document: gql(_getAllPostsQuery),
         variables: {
-          'publicationId': publicationId,
+          'publicationId': _publicationId,
           'first': postsPerPage,
           'after': afterCursor,
         },
@@ -167,33 +167,30 @@ class NewsApiService {
       throw Exception(result.exception.toString());
     }
 
-    final List<dynamic> posts = result.data!['publication']['posts']['edges'];
-    final String endCursor =
-        result.data!['publication']['posts']['pageInfo']['endCursor'];
-    final bool hasNextPage =
-        result.data!['publication']['posts']['pageInfo']['hasNextPage'];
-
-    return (posts: posts, endCursor: endCursor, hasNextPage: hasNextPage);
+    final data = result.data!['publication']['posts'];
+    return (
+      items: (data['edges'] as List).cast<Map<String, dynamic>>(),
+      endCursor: data['pageInfo']['endCursor'] as String,
+      hasNextPage: data['pageInfo']['hasNextPage'] as bool,
+    );
   }
 
   Future<Map<String, dynamic>> getPost(String postId) async {
-    final result = await client.query(
-      QueryOptions(document: gql(getPostQuery), variables: {'id': postId}),
+    final result = await _client.query(
+      QueryOptions(document: gql(_getPostQuery), variables: {'id': postId}),
     );
 
     if (result.hasException) {
       throw Exception(result.exception.toString());
     }
 
-    final Map<String, dynamic> post = result.data!['post'];
-
-    return post;
+    return result.data!['post'] as Map<String, dynamic>;
   }
 
   Future<Map<String, dynamic>> getAuthor(String authorSlug) async {
-    final result = await client.query(
+    final result = await _client.query(
       QueryOptions(
-        document: gql(getAuthorQuery),
+        document: gql(_getAuthorQuery),
         variables: {'authorSlug': authorSlug},
       ),
     );
@@ -202,23 +199,21 @@ class NewsApiService {
       throw Exception(result.exception.toString());
     }
 
-    final Map<String, dynamic> author = result.data!['user'];
-
-    return author;
+    return result.data!['user'] as Map<String, dynamic>;
   }
 
-  GetAllPostsT getPostsByAuthor(
+  Future<RawPaginatedResponse> getPostsByAuthor(
     String authorId, {
     String afterCursor = '',
   }) async {
-    final result = await client.query(
+    final result = await _client.query(
       QueryOptions(
-        document: gql(getPostsByAuthorQuery),
+        document: gql(_getPostsByAuthorQuery),
         variables: {
           'first': postsPerPage,
           'after': afterCursor,
           'filter': {
-            'publicationId': publicationId,
+            'publicationId': _publicationId,
             'authorIds': [authorId],
           },
         },
@@ -229,22 +224,23 @@ class NewsApiService {
       throw Exception(result.exception.toString());
     }
 
-    final List<dynamic> posts =
-        result.data!['searchPostsOfPublication']['edges'];
-    final String endCursor =
-        result.data!['searchPostsOfPublication']['pageInfo']['endCursor'];
-    final bool hasNextPage =
-        result.data!['searchPostsOfPublication']['pageInfo']['hasNextPage'];
-
-    return (posts: posts, endCursor: endCursor, hasNextPage: hasNextPage);
+    final data = result.data!['searchPostsOfPublication'];
+    return (
+      items: (data['edges'] as List).cast<Map<String, dynamic>>(),
+      endCursor: data['pageInfo']['endCursor'] as String,
+      hasNextPage: data['pageInfo']['hasNextPage'] as bool,
+    );
   }
 
-  GetAllPostsT getPostsByTag(String tagSlug, {String afterCursor = ''}) async {
-    final result = await client.query(
+  Future<RawPaginatedResponse> getPostsByTag(
+    String tagSlug, {
+    String afterCursor = '',
+  }) async {
+    final result = await _client.query(
       QueryOptions(
-        document: gql(getPostsByTagQuery),
+        document: gql(_getPostsByTagQuery),
         variables: {
-          'publicationId': publicationId,
+          'publicationId': _publicationId,
           'first': postsPerPage,
           'after': afterCursor,
           'filter': {
@@ -258,12 +254,11 @@ class NewsApiService {
       throw Exception(result.exception.toString());
     }
 
-    final List<dynamic> posts = result.data!['publication']['posts']['edges'];
-    final String endCursor =
-        result.data!['publication']['posts']['pageInfo']['endCursor'];
-    final bool hasNextPage =
-        result.data!['publication']['posts']['pageInfo']['hasNextPage'];
-
-    return (posts: posts, endCursor: endCursor, hasNextPage: hasNextPage);
+    final data = result.data!['publication']['posts'];
+    return (
+      items: (data['edges'] as List).cast<Map<String, dynamic>>(),
+      endCursor: data['pageInfo']['endCursor'] as String,
+      hasNextPage: data['pageInfo']['hasNextPage'] as bool,
+    );
   }
 }

@@ -1,269 +1,64 @@
-import 'package:flutter_dotenv/flutter_dotenv.dart';
-import 'package:graphql/client.dart';
+import 'package:mobile_app_new/models/news/author_model.dart';
+import 'package:mobile_app_new/models/news/post_model.dart';
+import 'package:mobile_app_new/repositories/news_api_repository.dart';
+import 'package:riverpod_annotation/riverpod_annotation.dart';
 
-typedef ApiData = ({String endCursor, bool hasNextPage, List posts});
-typedef GetAllPostsT = Future<ApiData>;
+part 'api_service.g.dart';
 
-const apiUrl = 'https://gql-beta.hashnode.com';
+typedef PostsPage = ({
+  String endCursor,
+  bool hasNextPage,
+  List<Post> posts,
+});
 
-const postsPerPage = 20;
+@riverpod
+NewsService newsService(Ref ref) {
+  final repo = ref.watch(newsApiRepositoryProvider);
+  return NewsService(repo);
+}
 
-const postFieldsFragment = r'''
-    fragment PostFields on Post {
-      id
-      slug
-      title
-      url
-      author {
-        id
-        username
-        name
-        bio {
-          text
-        }
-        profilePicture
-        socialMediaLinks {
-          website
-          twitter
-          facebook
-        }
-        location
-      }
-      tags {
-        id
-        name
-        slug
-      }
-      coverImage {
-        url
-      }
-      brief
-      readTimeInMinutes
-      content {
-        html
-      }
-      seo {
-        description
-      }
-      publishedAt
-      updatedAt
-    }
-  ''';
+class NewsService {
+  final NewsApiRepository _repo;
 
-const getAllPostsQuery =
-    postFieldsFragment +
-    r'''
-    query GetAllPosts($publicationId: ObjectId!, $first: Int!, $after: String) {
-      publication(id: $publicationId) {
-        id
-        posts(first: $first, after: $after) {
-          edges {
-            node {
-              ...PostFields
-            }
-          }
-          pageInfo {
-            endCursor
-            hasNextPage
-          }
-        }
-      }
-    }
-  ''';
+  NewsService(this._repo);
 
-const getAuthorQuery = r'''
-    query GetAuthor($authorSlug: String!) {
-      user(username: $authorSlug) {
-        id
-        username
-        name
-        bio {
-          text
-        }
-        profilePicture
-        socialMediaLinks {
-          website
-          twitter
-          facebook
-        }
-        location
-      }
-    }
-  ''';
-
-const getPostsByAuthorQuery =
-    postFieldsFragment +
-    r'''
-    query GetPostsByAuthorQuery($first: Int!, $after: String, $filter: SearchPostsOfPublicationFilter!) {
-      searchPostsOfPublication(first: $first, after: $after, filter: $filter) {
-        edges {
-          node {
-            ...PostFields
-          }
-        }
-        pageInfo {
-          endCursor
-          hasNextPage
-        }
-      }
-    }
-  ''';
-
-const getPostsByTagQuery =
-    postFieldsFragment +
-    r'''
-    query GetPostsByTagQuery($publicationId: ObjectId!, $first: Int!, $after: String, $filter: PublicationPostConnectionFilter!) {
-      publication(id: $publicationId) {
-        id
-        posts(first: $first, after: $after, filter: $filter) {
-          edges {
-            node {
-              ...PostFields
-            }
-          }
-          pageInfo {
-            endCursor
-            hasNextPage
-          }
-        }
-      }
-    }
-  ''';
-
-const getPostQuery =
-    postFieldsFragment +
-    r'''
-    query GetPost($id: ID!) {
-      post(id: $id) {
-        ...PostFields
-      }
-    }
-  ''';
-
-class NewsApiService {
-  static final NewsApiService _instance = NewsApiService._internal();
-  factory NewsApiService() => _instance;
-  NewsApiService._internal();
-
-  final GraphQLClient client = GraphQLClient(
-    link: HttpLink(apiUrl),
-    cache: GraphQLCache(),
-  );
-  final String publicationId = dotenv.get('HASHNODE_PUBLICATION_ID');
-
-  GetAllPostsT getAllPosts({String afterCursor = ''}) async {
-    final result = await client.query(
-      QueryOptions(
-        document: gql(getAllPostsQuery),
-        variables: {
-          'publicationId': publicationId,
-          'first': postsPerPage,
-          'after': afterCursor,
-        },
-      ),
-    );
-
-    if (result.hasException) {
-      throw Exception(result.exception.toString());
-    }
-
-    final List<dynamic> posts = result.data!['publication']['posts']['edges'];
-    final String endCursor =
-        result.data!['publication']['posts']['pageInfo']['endCursor'];
-    final bool hasNextPage =
-        result.data!['publication']['posts']['pageInfo']['hasNextPage'];
-
-    return (posts: posts, endCursor: endCursor, hasNextPage: hasNextPage);
+  Future<PostsPage> getAllPosts({String afterCursor = ''}) async {
+    final raw = await _repo.getAllPosts(afterCursor: afterCursor);
+    final posts = raw.items
+        .map((edge) => Post.fromJson(edge['node'] as Map<String, dynamic>))
+        .toList();
+    return (posts: posts, endCursor: raw.endCursor, hasNextPage: raw.hasNextPage);
   }
 
-  Future<Map<String, dynamic>> getPost(String postId) async {
-    final result = await client.query(
-      QueryOptions(document: gql(getPostQuery), variables: {'id': postId}),
-    );
-
-    if (result.hasException) {
-      throw Exception(result.exception.toString());
-    }
-
-    final Map<String, dynamic> post = result.data!['post'];
-
-    return post;
+  Future<Post> getPost(String postId) async {
+    final raw = await _repo.getPost(postId);
+    return Post.fromJson(raw);
   }
 
-  Future<Map<String, dynamic>> getAuthor(String authorSlug) async {
-    final result = await client.query(
-      QueryOptions(
-        document: gql(getAuthorQuery),
-        variables: {'authorSlug': authorSlug},
-      ),
-    );
-
-    if (result.hasException) {
-      throw Exception(result.exception.toString());
-    }
-
-    final Map<String, dynamic> author = result.data!['user'];
-
-    return author;
+  Future<Author> getAuthor(String authorSlug) async {
+    final raw = await _repo.getAuthor(authorSlug);
+    return Author.fromJson(raw);
   }
 
-  GetAllPostsT getPostsByAuthor(
+  Future<PostsPage> getPostsByAuthor(
     String authorId, {
     String afterCursor = '',
   }) async {
-    final result = await client.query(
-      QueryOptions(
-        document: gql(getPostsByAuthorQuery),
-        variables: {
-          'first': postsPerPage,
-          'after': afterCursor,
-          'filter': {
-            'publicationId': publicationId,
-            'authorIds': [authorId],
-          },
-        },
-      ),
-    );
-
-    if (result.hasException) {
-      throw Exception(result.exception.toString());
-    }
-
-    final List<dynamic> posts =
-        result.data!['searchPostsOfPublication']['edges'];
-    final String endCursor =
-        result.data!['searchPostsOfPublication']['pageInfo']['endCursor'];
-    final bool hasNextPage =
-        result.data!['searchPostsOfPublication']['pageInfo']['hasNextPage'];
-
-    return (posts: posts, endCursor: endCursor, hasNextPage: hasNextPage);
+    final raw = await _repo.getPostsByAuthor(authorId, afterCursor: afterCursor);
+    final posts = raw.items
+        .map((edge) => Post.fromJson(edge['node'] as Map<String, dynamic>))
+        .toList();
+    return (posts: posts, endCursor: raw.endCursor, hasNextPage: raw.hasNextPage);
   }
 
-  GetAllPostsT getPostsByTag(String tagSlug, {String afterCursor = ''}) async {
-    final result = await client.query(
-      QueryOptions(
-        document: gql(getPostsByTagQuery),
-        variables: {
-          'publicationId': publicationId,
-          'first': postsPerPage,
-          'after': afterCursor,
-          'filter': {
-            'tagSlugs': [tagSlug],
-          },
-        },
-      ),
-    );
-
-    if (result.hasException) {
-      throw Exception(result.exception.toString());
-    }
-
-    final List<dynamic> posts = result.data!['publication']['posts']['edges'];
-    final String endCursor =
-        result.data!['publication']['posts']['pageInfo']['endCursor'];
-    final bool hasNextPage =
-        result.data!['publication']['posts']['pageInfo']['hasNextPage'];
-
-    return (posts: posts, endCursor: endCursor, hasNextPage: hasNextPage);
+  Future<PostsPage> getPostsByTag(
+    String tagSlug, {
+    String afterCursor = '',
+  }) async {
+    final raw = await _repo.getPostsByTag(tagSlug, afterCursor: afterCursor);
+    final posts = raw.items
+        .map((edge) => Post.fromJson(edge['node'] as Map<String, dynamic>))
+        .toList();
+    return (posts: posts, endCursor: raw.endCursor, hasNextPage: raw.hasNextPage);
   }
 }
