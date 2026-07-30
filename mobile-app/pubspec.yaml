@@ -6,19 +6,19 @@ environment:
   sdk: ">=3.0.0 <4.0.0"
 dependencies:
   algolia_helper_flutter: 1.2.1
-  audio_service: 0.18.18
+  audio_service: 0.18.19
   auth0_flutter: 2.5.0
   cached_network_image: 3.4.1
   collection: 1.19.1
-  device_info_plus: 13.1.0
+  device_info_plus: 13.2.0
   dio: 5.9.2
-  firebase_analytics: 12.4.3
-  firebase_core: 4.11.0
-  firebase_crashlytics: 5.2.4
-  firebase_remote_config: 6.5.3
+  firebase_analytics: 12.4.5
+  firebase_core: 4.12.1
+  firebase_crashlytics: 5.2.6
+  firebase_remote_config: 6.5.5
   flutter:
     sdk: flutter
-  flutter_custom_tabs: 2.5.0
+  flutter_custom_tabs: 2.6.0
   flutter_dotenv: 5.2.1
   flutter_heatmap_calendar: 1.0.5
   flutter_highlight: 0.7.0
@@ -37,15 +37,15 @@ dependencies:
   html: 0.15.5+1
   infinite_scroll_pagination: 5.0.0
   jiffy: 6.3.2
-  just_audio: 0.10.4
+  just_audio: 0.10.6
   path: 1.9.1
   path_provider: 2.1.5
   phone_ide: 2.0.1
   photo_view: 0.15.0
   pretty_dio_logger: 1.4.0
   quick_actions: 1.1.0
-  share_plus: 13.1.0
-  shared_preferences: 2.5.3 # TODO: update deprecated code
+  share_plus: 13.3.0
+  shared_preferences: 2.5.5 # TODO: update deprecated code
   sqflite: 2.4.2
   stacked: 3.4.3
   stacked_services: 1.6.0
