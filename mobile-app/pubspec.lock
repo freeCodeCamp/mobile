@@ -1149,7 +1149,7 @@ packages:
     source: hosted
     version: "1.0.2"
   logger:
-    dependency: transitive
+    dependency: "direct main"
     description:
       name: logger
       sha256: "7ad7215c15420a102ec687bb320a7312afd449bac63bfb1c60d9787c27b9767f"

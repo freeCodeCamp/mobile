@@ -6,6 +6,7 @@ import 'package:freecodecamp/service/firebase/remote_config_service.dart';
 import 'package:freecodecamp/service/learn/learn_file_service.dart';
 import 'package:freecodecamp/service/learn/learn_offline_service.dart';
 import 'package:freecodecamp/service/learn/learn_service.dart';
+import 'package:freecodecamp/service/symbol_bar_service.dart';
 import 'package:freecodecamp/service/learn/daily_challenge_service.dart';
 import 'package:freecodecamp/service/learn/daily_challenge_notification_service.dart';
 import 'package:freecodecamp/service/locale_service.dart';
@@ -85,6 +86,7 @@ import 'package:stacked_services/stacked_services.dart';
     LazySingleton(classType: LocaleService),
     LazySingleton(classType: DioService),
     LazySingleton(classType: NewsApiService),
+    LazySingleton(classType: SymbolBarService),
   ],
   logger: StackedLogger(),
 )
