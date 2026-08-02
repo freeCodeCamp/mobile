@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:go_router/go_router.dart';
 import 'package:mobile_app_new/fcc_theme.dart';
+import 'package:mobile_app_new/routing/learn.dart';
 import 'package:mobile_app_new/routing/news.dart';
 import 'package:mobile_app_new/ui/core/drawer/drawer_tile.dart';
 
@@ -16,12 +16,12 @@ class DrawerWidget extends StatelessWidget {
           DrawerTile(
             component: 'Home',
             icon: Icons.home,
-            route: () => context.go('/'),
+            route: () => LearnLandingRoute().go(context),
           ),
           DrawerTile(
             component: 'Tutorials',
             icon: Icons.forum_outlined,
-            route: () => context.go(newsFeedPath),
+            route: () => NewsFeedRoute().go(context),
           ),
         ],
       ),
