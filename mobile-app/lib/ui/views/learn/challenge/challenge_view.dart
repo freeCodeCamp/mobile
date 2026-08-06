@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_html/flutter_html.dart';
+import 'package:freecodecamp/enums/ext_type.dart';
 import 'package:freecodecamp/enums/panel_type.dart';
 import 'package:freecodecamp/extensions/i18n_extension.dart';
 import 'package:freecodecamp/models/learn/challenge_model.dart';
@@ -553,6 +554,10 @@ class ChallengeView extends StatelessWidget {
   ) {
     const noPreviewChallengeTypes = <int>[1, 20, 23, 26, 27, 28, 29];
 
+    final bool hasJsFile = challenge.files.any(
+      (file) => file.ext == Ext.js || file.ext == Ext.jsx,
+    );
+
     return [
       _panelIconButton(
         isActive: model.showPanel && model.panelType == PanelType.instruction,
@@ -577,15 +582,16 @@ class ChallengeView extends StatelessWidget {
             model.initFile(challenge, currFile);
           },
         ),
-      _panelIconButton(
-        isActive: model.showConsole,
-        icon: Icons.terminal,
-        onPressed: () {
-          model.setShowConsole = !model.showConsole;
-          model.setShowPreview = false;
-          model.setMounted = false;
-        },
-      ),
+      if (hasJsFile)
+        _panelIconButton(
+          isActive: model.showConsole,
+          icon: Icons.terminal,
+          onPressed: () {
+            model.setShowConsole = !model.showConsole;
+            model.setShowPreview = false;
+            model.setMounted = false;
+          },
+        ),
     ];
   }
 
