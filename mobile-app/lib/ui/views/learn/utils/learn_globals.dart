@@ -15,3 +15,13 @@ const chapterBasedSuperBlocks = [
   'a1-professional-spanish',
   'python-v9'
 ];
+
+/// SuperBlocks that require a web browser and cannot be completed
+/// in the mobile app. Tapping these opens freecodecamp.org in the browser.
+const webOnlySuperBlocks = [
+  'coding-interview-prep',
+  'project-euler',
+  'rosetta-code',
+  'the-odin-project',
+  'foundational-c-sharp-with-microsoft',
+];

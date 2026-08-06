@@ -28,6 +28,7 @@ import 'package:freecodecamp/ui/widgets/setup_dialog_ui.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:stacked/stacked.dart';
 import 'package:stacked_services/stacked_services.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class LearnLandingViewModel extends BaseViewModel {
   final NavigationService _navigationService = locator<NavigationService>();
@@ -186,6 +187,12 @@ class LearnLandingViewModel extends BaseViewModel {
     Future.delayed(const Duration(milliseconds: 2500), () {
       snack.closeSnackbar();
     });
+  }
+
+  void openInBrowser(String dashedName) {
+    launchUrl(
+      Uri.parse('${AuthenticationService.baseURL}/learn/$dashedName'),
+    );
   }
 
   Future<List<Widget>> requestSuperBlocks() async {
