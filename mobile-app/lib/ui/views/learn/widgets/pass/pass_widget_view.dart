@@ -91,7 +91,10 @@ class PassWidgetView extends StatelessWidget {
                                       Padding(
                                         padding: const EdgeInsets.all(16.0),
                                         child: LinearProgressIndicator(
-                                          value: completed / maxChallenges,
+                                          value: maxChallenges > 0
+                                              ? (completed / maxChallenges)
+                                                  .clamp(0.0, 1.0)
+                                              : 0.0,
                                           minHeight: 7,
                                           backgroundColor: const Color.fromRGBO(
                                               0x3B, 0x3B, 0x4F, 1),
@@ -106,10 +109,13 @@ class PassWidgetView extends StatelessWidget {
                                             Expanded(
                                               child: Text(
                                                 context.t.completed_percent(
-                                                  ((completed * 100) /
-                                                          maxChallenges)
-                                                      .round()
-                                                      .toString(),
+                                                  maxChallenges > 0
+                                                      ? (((completed * 100) /
+                                                              maxChallenges)
+                                                          .clamp(0, 100)
+                                                          .round()
+                                                          .toString())
+                                                      : '0',
                                                 ),
                                                 textAlign: TextAlign.right,
                                               ),
