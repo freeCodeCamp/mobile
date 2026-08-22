@@ -7,10 +7,12 @@ import 'package:freecodecamp/models/learn/curriculum_model.dart';
 import 'package:freecodecamp/models/learn/daily_challenge_model.dart';
 import 'package:freecodecamp/ui/theme/fcc_theme.dart';
 import 'package:freecodecamp/ui/views/learn/challenge/challenge_viewmodel.dart';
+import 'package:freecodecamp/ui/views/learn/utils/challenge_utils.dart';
 import 'package:freecodecamp/ui/views/learn/widgets/challenge_widgets/project_preview.dart';
 import 'package:freecodecamp/ui/views/learn/widgets/challenge_widgets/symbol_bar.dart';
 import 'package:freecodecamp/ui/views/learn/widgets/console/console_view.dart';
 import 'package:freecodecamp/ui/views/news/html_handler/html_handler.dart';
+import 'package:share_plus/share_plus.dart';
 import 'package:stacked/stacked.dart';
 
 class ChallengeView extends StatelessWidget {
@@ -268,6 +270,7 @@ class ChallengeView extends StatelessWidget {
           Row(
             children: [
               ..._panelIconButtons(
+                context,
                 model,
                 challenge,
                 block,
@@ -485,6 +488,7 @@ class ChallengeView extends StatelessWidget {
     required bool isActive,
     required IconData icon,
     required VoidCallback? onPressed,
+    String? tooltip,
   }) {
     return Container(
       margin: const EdgeInsets.symmetric(horizontal: 8),
@@ -499,6 +503,7 @@ class ChallengeView extends StatelessWidget {
               : Colors.white,
         ),
         onPressed: onPressed,
+        tooltip: tooltip,
         splashColor: Colors.transparent,
         highlightColor: Colors.transparent,
       ),
@@ -547,6 +552,7 @@ class ChallengeView extends StatelessWidget {
   }
 
   List<Widget> _panelIconButtons(
+    BuildContext context,
     ChallengeViewModel model,
     Challenge challenge,
     Block block,
@@ -584,6 +590,19 @@ class ChallengeView extends StatelessWidget {
           model.setShowConsole = !model.showConsole;
           model.setShowPreview = false;
           model.setMounted = false;
+        },
+      ),
+      _panelIconButton(
+        isActive: false,
+        icon: Icons.share,
+        tooltip: context.t.share_challenge,
+        onPressed: () {
+          SharePlus.instance.share(
+            ShareParams(
+              text:
+                  '${block.name} - ${challenge.title}\n\n${challengeUrl(challenge)}',
+            ),
+          );
         },
       ),
     ];

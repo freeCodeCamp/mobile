@@ -4,6 +4,7 @@ import 'package:freecodecamp/models/learn/challenge_model.dart';
 import 'package:freecodecamp/models/learn/curriculum_model.dart';
 import 'package:freecodecamp/service/learn/learn_service.dart';
 import 'package:freecodecamp/ui/views/learn/challenge/challenge_viewmodel.dart';
+import 'package:freecodecamp/ui/views/learn/utils/challenge_utils.dart';
 import 'package:freecodecamp/ui/views/learn/widgets/hint/hint_widget_model.dart';
 import 'package:freecodecamp/ui/views/news/html_handler/html_handler.dart';
 import 'package:freecodecamp/utils/helpers.dart';
@@ -26,7 +27,7 @@ Future<String> genForumLink(
   final titleText = '$blockTitle - ${currChallenge.title}';
   final t = context.t;
   final String endingText =
-      '**${t.forum_mobile_info}**\n```txt\n$userDeviceInfo\n```\n\n**${t.forum_challenge}** $titleText\n\n**${t.forum_challenge_link}**\nhttps://www.freecodecamp.org/learn/${currChallenge.superBlock}/${currChallenge.block}/${currChallenge.dashedName}';
+      '**${t.forum_mobile_info}**\n```txt\n$userDeviceInfo\n```\n\n**${t.forum_challenge}** $titleText\n\n**${t.forum_challenge_link}**\n${challengeUrl(currChallenge)}';
 
   final String userCode = await filesToMarkdown(currChallenge, editorText);
 

@@ -40,6 +40,17 @@ void main() {
     );
   }
 
+  group('challengeUrl', () {
+    test('should build the public learn URL of a challenge', () {
+      final challenge = createChallenge(id: '1', title: 'Step 1');
+
+      expect(
+        challengeUrl(challenge),
+        'https://www.freecodecamp.org/learn/superblock/block1/challenge-1',
+      );
+    });
+  });
+
   group('handleChallengeTitle', () {
     test('should return empty string if the block contains a single challenge',
         () {
