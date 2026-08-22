@@ -671,7 +671,7 @@
     "@temporarily_unavailable": {
         "description": "snackbar shown when a curriculum item is temporarily disabled"
     },
-    "not_available_web": "Not available use the web version",
+    "not_available_web": "Not available - use the web version",
     "@not_available_web": {
         "description": "snackbar shown when a curriculum item is only available on the web"
     },
