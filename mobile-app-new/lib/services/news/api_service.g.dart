@@ -9,43 +9,43 @@ part of 'api_service.dart';
 // GENERATED CODE - DO NOT MODIFY BY HAND
 // ignore_for_file: type=lint, type=warning
 
-@ProviderFor(newsService)
-final newsServiceProvider = NewsServiceProvider._();
+@ProviderFor(newsApiService)
+final newsApiServiceProvider = NewsApiServiceProvider._();
 
-final class NewsServiceProvider
-    extends $FunctionalProvider<NewsService, NewsService, NewsService>
-    with $Provider<NewsService> {
-  NewsServiceProvider._()
+final class NewsApiServiceProvider
+    extends $FunctionalProvider<NewsApiService, NewsApiService, NewsApiService>
+    with $Provider<NewsApiService> {
+  NewsApiServiceProvider._()
     : super(
         from: null,
         argument: null,
         retry: null,
-        name: r'newsServiceProvider',
+        name: r'newsApiServiceProvider',
         isAutoDispose: true,
         dependencies: null,
         $allTransitiveDependencies: null,
       );
 
   @override
-  String debugGetCreateSourceHash() => _$newsServiceHash();
+  String debugGetCreateSourceHash() => _$newsApiServiceHash();
 
   @$internal
   @override
-  $ProviderElement<NewsService> $createElement($ProviderPointer pointer) =>
+  $ProviderElement<NewsApiService> $createElement($ProviderPointer pointer) =>
       $ProviderElement(pointer);
 
   @override
-  NewsService create(Ref ref) {
-    return newsService(ref);
+  NewsApiService create(Ref ref) {
+    return newsApiService(ref);
   }
 
   /// {@macro riverpod.override_with_value}
-  Override overrideWithValue(NewsService value) {
+  Override overrideWithValue(NewsApiService value) {
     return $ProviderOverride(
       origin: this,
-      providerOverride: $SyncValueProvider<NewsService>(value),
+      providerOverride: $SyncValueProvider<NewsApiService>(value),
     );
   }
 }
 
-String _$newsServiceHash() => r'bcc82311e3ebf3c546d6d05938b92d69e24bc6c9';
+String _$newsApiServiceHash() => r'551c870921b060fc2dd8d4f2ca644c0ad229615f';

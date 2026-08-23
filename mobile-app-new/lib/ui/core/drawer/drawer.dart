@@ -21,7 +21,7 @@ class DrawerWidget extends StatelessWidget {
           DrawerTile(
             component: 'Tutorials',
             icon: Icons.forum_outlined,
-            route: () => NewsFeedRoute().go(context),
+            route: () => const NewsFeedRoute().go(context),
           ),
         ],
       ),

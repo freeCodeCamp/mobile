@@ -12,15 +12,15 @@ typedef PostsPage = ({
 });
 
 @riverpod
-NewsService newsService(Ref ref) {
+NewsApiService newsApiService(Ref ref) {
   final repo = ref.watch(newsApiRepositoryProvider);
-  return NewsService(repo);
+  return NewsApiService(repo);
 }
 
-class NewsService {
+class NewsApiService {
   final NewsApiRepository _repo;
 
-  NewsService(this._repo);
+  NewsApiService(this._repo);
 
   Future<PostsPage> getAllPosts({String afterCursor = ''}) async {
     final raw = await _repo.getAllPosts(afterCursor: afterCursor);
