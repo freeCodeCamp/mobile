@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:mobile_app_new/fcc_theme.dart';
 import 'package:mobile_app_new/models/news/post_model.dart';
 import 'package:mobile_app_new/ui/views/news/news-feed/news_feed_viewmodel.dart';
+import 'package:mobile_app_new/ui/views/news/widgets/tag_button.dart';
 
 class PostTile extends StatelessWidget {
   const PostTile({super.key, required this.post});
@@ -25,6 +26,23 @@ class PostTile extends StatelessWidget {
           children: [
             _buildCoverImage(),
             const SizedBox(height: 8),
+            if (post.tags.isNotEmpty)
+              Padding(
+                padding: const EdgeInsets.only(bottom: 6),
+                child: Wrap(
+                  spacing: 0,
+                  runSpacing: 4,
+                  children: [
+                    for (int i = 0; i < post.tags.length && i < 3; i++)
+                      TagButton(
+                        tagName: post.tags[i].name,
+                        tagSlug: post.tags[i].slug,
+                        compact: true,
+                        key: UniqueKey(),
+                      ),
+                  ],
+                ),
+              ),
             Text(
               post.title,
               maxLines: 2,
