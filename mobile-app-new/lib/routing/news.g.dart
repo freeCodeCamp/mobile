@@ -6,7 +6,11 @@ part of 'news.dart';
 // GoRouterGenerator
 // **************************************************************************
 
-List<RouteBase> get $appRoutes => [$newsShellRoute];
+List<RouteBase> get $appRoutes => [
+  $newsShellRoute,
+  $newsPostRoute,
+  $newsImageRoute,
+];
 
 RouteBase get $newsShellRoute => ShellRouteData.$route(
   factory: $NewsShellRouteExtension._fromState,
@@ -94,4 +98,65 @@ mixin $NewsSearchRoute on GoRouteData {
 
   @override
   void replace(BuildContext context) => context.replace(location);
+}
+
+RouteBase get $newsPostRoute => GoRouteData.$route(
+  path: '/news/:slug',
+  hasOverriddenOnExit: false,
+  factory: $NewsPostRoute._fromState,
+);
+
+mixin $NewsPostRoute on GoRouteData {
+  static NewsPostRoute _fromState(GoRouterState state) =>
+      NewsPostRoute(slug: state.pathParameters['slug']!);
+
+  NewsPostRoute get _self => this as NewsPostRoute;
+
+  @override
+  String get location =>
+      GoRouteData.$location('/news/${Uri.encodeComponent(_self.slug)}');
+
+  @override
+  void go(BuildContext context) => context.go(location);
+
+  @override
+  Future<T?> push<T>(BuildContext context) => context.push<T>(location);
+
+  @override
+  void pushReplacement(BuildContext context) =>
+      context.pushReplacement(location);
+
+  @override
+  void replace(BuildContext context) => context.replace(location);
+}
+
+RouteBase get $newsImageRoute => GoRouteData.$route(
+  path: '/news/image',
+  hasOverriddenOnExit: false,
+  factory: $NewsImageRoute._fromState,
+);
+
+mixin $NewsImageRoute on GoRouteData {
+  static NewsImageRoute _fromState(GoRouterState state) =>
+      NewsImageRoute($extra: state.extra as String);
+
+  NewsImageRoute get _self => this as NewsImageRoute;
+
+  @override
+  String get location => GoRouteData.$location('/news/image');
+
+  @override
+  void go(BuildContext context) => context.go(location, extra: _self.$extra);
+
+  @override
+  Future<T?> push<T>(BuildContext context) =>
+      context.push<T>(location, extra: _self.$extra);
+
+  @override
+  void pushReplacement(BuildContext context) =>
+      context.pushReplacement(location, extra: _self.$extra);
+
+  @override
+  void replace(BuildContext context) =>
+      context.replace(location, extra: _self.$extra);
 }

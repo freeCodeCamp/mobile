@@ -30,8 +30,8 @@ class NewsApiService {
     return (posts: posts, endCursor: raw.endCursor, hasNextPage: raw.hasNextPage);
   }
 
-  Future<Post> getPost(String postId) async {
-    final raw = await _repo.getPost(postId);
+  Future<Post> getPostBySlug(String slug) async {
+    final raw = await _repo.getPostBySlug(slug);
     return Post.fromJson(raw);
   }
 

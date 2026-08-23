@@ -4,6 +4,7 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:mobile_app_new/fcc_theme.dart';
 import 'package:mobile_app_new/models/news/post_model.dart';
+import 'package:mobile_app_new/routing/news.dart';
 import 'package:mobile_app_new/ui/views/news/news-feed/news_feed_viewmodel.dart';
 import 'package:mobile_app_new/ui/views/news/widgets/tag_button.dart';
 
@@ -17,7 +18,7 @@ class PostTile extends StatelessWidget {
     return InkWell(
       splashColor: Colors.transparent,
       onTap: () {
-        // TODO: Navigate to post detail
+        NewsPostRoute(slug: post.slug).push(context);
       },
       child: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),

@@ -131,12 +131,14 @@ const _getPostsByTagQuery =
     }
   ''';
 
-const _getPostQuery =
+const _getPostBySlugQuery =
     postFieldsFragment +
     r'''
-    query GetPost($id: ID!) {
-      post(id: $id) {
-        ...PostFields
+    query GetPostBySlug($publicationId: ObjectId!, $slug: String!) {
+      publication(id: $publicationId) {
+        post(slug: $slug) {
+          ...PostFields
+        }
       }
     }
   ''';
@@ -175,16 +177,22 @@ class NewsApiRepository {
     );
   }
 
-  Future<Map<String, dynamic>> getPost(String postId) async {
+  Future<Map<String, dynamic>> getPostBySlug(String slug) async {
     final result = await _client.query(
-      QueryOptions(document: gql(_getPostQuery), variables: {'id': postId}),
+      QueryOptions(
+        document: gql(_getPostBySlugQuery),
+        variables: {
+          'publicationId': _publicationId,
+          'slug': slug,
+        },
+      ),
     );
 
     if (result.hasException) {
       throw Exception(result.exception.toString());
     }
 
-    return result.data!['post'] as Map<String, dynamic>;
+    return result.data!['publication']['post'] as Map<String, dynamic>;
   }
 
   Future<Map<String, dynamic>> getAuthor(String authorSlug) async {
