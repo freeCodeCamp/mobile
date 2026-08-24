@@ -1,5 +1,3 @@
-import 'dart:developer';
-
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
@@ -75,7 +73,6 @@ class _NewsFeedViewState extends ConsumerState<NewsFeedView> {
   Widget _buildLoadingIndicator() {
     final notifier = ref.read(newsFeedProvider.notifier);
     if (!notifier.hasNextPage) {
-      log('No more pages to load');
       return const SizedBox.shrink();
     }
 
@@ -94,7 +91,6 @@ class _ErrorView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    log('Error loading news feed: $error');
     return Center(
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,

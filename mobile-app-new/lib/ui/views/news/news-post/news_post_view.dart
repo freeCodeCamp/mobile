@@ -90,6 +90,8 @@ class _NewsPostViewState extends ConsumerState<NewsPostView> {
   final ScrollController _scrollController = ScrollController();
   final ScrollController _bottomButtonController = ScrollController();
 
+  bool _hasInitializedAnimation = false;
+
   @override
   void initState() {
     super.initState();
@@ -127,6 +129,9 @@ class _NewsPostViewState extends ConsumerState<NewsPostView> {
   }
 
   void _initBottomButtonAnimation() {
+    if (_hasInitializedAnimation) return;
+    _hasInitializedAnimation = true;
+
     Future.delayed(const Duration(seconds: 1), () {
       if (_bottomButtonController.hasClients) {
         _bottomButtonController.animateTo(

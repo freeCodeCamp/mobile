@@ -33,7 +33,7 @@ final class NewsFeedNotifierProvider
   NewsFeedNotifier create() => NewsFeedNotifier();
 }
 
-String _$newsFeedNotifierHash() => r'67e151add1a79b2b221aa59bae7185a965b3ee10';
+String _$newsFeedNotifierHash() => r'486e9dc45f3b60e10877a8ae23ba66c77e15a65f';
 
 abstract class _$NewsFeedNotifier extends $AsyncNotifier<List<Post>> {
   FutureOr<List<Post>> build();

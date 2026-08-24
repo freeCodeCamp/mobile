@@ -6,7 +6,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_html/flutter_html.dart';
 import 'package:flutter_html_table/flutter_html_table.dart';
-import 'package:html/dom.dart' as dom;
 import 'package:html/parser.dart' as parser;
 import 'package:mobile_app_new/fcc_theme.dart';
 import 'package:mobile_app_new/routing/news.dart';
@@ -94,7 +93,7 @@ class HTMLParser {
     bool isSelectable = true,
     Map<String, Style> customStyles = const {},
   }) {
-    dom.Document result = parser.parse(html);
+    final result = parser.parse(html);
 
     List<Widget> elements = [];
 
@@ -267,10 +266,7 @@ class HTMLParser {
               child: Container(
                 decoration: const BoxDecoration(
                   border: Border(
-                    left: BorderSide(
-                      color: FccColors.blue30,
-                      width: 2,
-                    ),
+                    left: BorderSide(color: FccColors.blue30, width: 2),
                   ),
                 ),
                 child: Padding(
