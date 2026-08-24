@@ -9,6 +9,7 @@ import 'package:mobile_app_new/models/news/post_model.dart';
 import 'package:mobile_app_new/ui/core/html_handler/html_handler.dart';
 import 'package:mobile_app_new/ui/views/news/news-post/news_post_viewmodel.dart';
 import 'package:mobile_app_new/ui/views/news/widgets/tag_button.dart';
+import 'package:share_plus/share_plus.dart';
 
 class NewsPostHeader extends StatelessWidget {
   const NewsPostHeader({super.key, required this.post});
@@ -89,6 +90,8 @@ class NewsPostView extends ConsumerStatefulWidget {
 class _NewsPostViewState extends ConsumerState<NewsPostView> {
   final ScrollController _scrollController = ScrollController();
   final ScrollController _bottomButtonController = ScrollController();
+
+  final GlobalKey _shareButtonKey = GlobalKey();
 
   bool _hasInitializedAnimation = false;
 
@@ -227,6 +230,19 @@ class _NewsPostViewState extends ConsumerState<NewsPostView> {
     return elements;
   }
 
+  void _sharePost(Post post) {
+    final box = _shareButtonKey.currentContext?.findRenderObject() as RenderBox?;
+
+    SharePlus.instance.share(
+      ShareParams(
+        text: '${post.title}\n\n${post.url}',
+        sharePositionOrigin: box == null
+            ? null
+            : box.localToGlobal(Offset.zero) & box.size,
+      ),
+    );
+  }
+
   Widget _buildBottomButtons(Post post) {
     return Align(
       alignment: Alignment.bottomCenter,
@@ -254,11 +270,10 @@ class _NewsPostViewState extends ConsumerState<NewsPostView> {
                   child: VerticalDivider(color: Colors.white, width: 0),
                 ),
                 _BottomButton(
+                  key: _shareButtonKey,
                   label: 'Share',
                   icon: Icons.share,
-                  onPressed: () {
-                    // TODO: Implement share functionality
-                  },
+                  onPressed: () => _sharePost(post),
                   rightSided: true,
                 ),
               ],
@@ -272,6 +287,7 @@ class _NewsPostViewState extends ConsumerState<NewsPostView> {
 
 class _BottomButton extends StatelessWidget {
   const _BottomButton({
+    super.key,
     required this.label,
     required this.onPressed,
     required this.icon,
