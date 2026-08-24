@@ -1,6 +1,12 @@
 import 'package:freecodecamp/models/learn/challenge_model.dart';
 import 'package:freecodecamp/models/learn/curriculum_model.dart';
 
+// Builds the public freeCodeCamp URL of a challenge, so campers can share the
+// exact step they are on.
+String challengeUrl(Challenge challenge) {
+  return 'https://www.freecodecamp.org/learn/${challenge.superBlock}/${challenge.block}/${challenge.dashedName}';
+}
+
 String handleChallengeTitle(Challenge challenge, Block block) {
   if (block.challenges.length == 1 ||
       challenge.title.contains('Dialogue') ||

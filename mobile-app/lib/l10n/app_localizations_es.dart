@@ -577,6 +577,9 @@ class AppLocalizationsEs extends AppLocalizations {
       'Temporarily unavailable, come back soon.';
 
   @override
+  String get share_challenge => 'Share this challenge';
+
+  @override
   String get not_available_web => 'Not available use the web version';
 
   @override

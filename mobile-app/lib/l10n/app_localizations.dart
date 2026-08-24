@@ -1067,6 +1067,12 @@ abstract class AppLocalizations {
   /// **'Temporarily unavailable, come back soon.'**
   String get temporarily_unavailable;
 
+  /// tooltip for the button that shares a link to the current challenge
+  ///
+  /// In en, this message translates to:
+  /// **'Share this challenge'**
+  String get share_challenge;
+
   /// snackbar shown when a curriculum item is only available on the web
   ///
   /// In en, this message translates to:
