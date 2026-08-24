@@ -32,7 +32,7 @@ class NewsPostHeader extends StatelessWidget {
                   imageUrl: imageUrl,
                   fit: BoxFit.cover,
                   placeholder: (context, url) =>
-                      Container(color: FccColors.gray80),
+                      ColoredBox(color: FccColors.gray80),
                   errorWidget: (context, url, error) => Image.asset(
                     'assets/images/freecodecamp-banner.png',
                     fit: BoxFit.cover,
@@ -165,23 +165,17 @@ class _NewsPostViewState extends ConsumerState<NewsPostView> {
         },
         data: (post) {
           final htmlWidgets = _buildLazyLoadedHtml(post);
-          return Column(
+          return Stack(
             children: [
-              Expanded(
-                child: Stack(
-                  children: [
-                    ListView.builder(
-                      controller: _scrollController,
-                      itemCount: htmlWidgets.length,
-                      physics: const ClampingScrollPhysics(),
-                      itemBuilder: (context, i) {
-                        return Row(children: [Expanded(child: htmlWidgets[i])]);
-                      },
-                    ),
-                    _buildBottomButtons(post),
-                  ],
-                ),
+              ListView.builder(
+                controller: _scrollController,
+                itemCount: htmlWidgets.length,
+                physics: const ClampingScrollPhysics(),
+                itemBuilder: (context, i) {
+                  return Row(children: [Expanded(child: htmlWidgets[i])]);
+                },
               ),
+              _buildBottomButtons(post),
             ],
           );
         },

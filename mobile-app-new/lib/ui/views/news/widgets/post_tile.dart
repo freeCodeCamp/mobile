@@ -5,7 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:mobile_app_new/fcc_theme.dart';
 import 'package:mobile_app_new/models/news/post_model.dart';
 import 'package:mobile_app_new/routing/news.dart';
-import 'package:mobile_app_new/ui/views/news/news-feed/news_feed_viewmodel.dart';
+import 'package:mobile_app_new/utils/date_utils.dart';
 import 'package:mobile_app_new/ui/views/news/widgets/tag_button.dart';
 
 class PostTile extends StatelessWidget {
@@ -39,7 +39,6 @@ class PostTile extends StatelessWidget {
                         tagName: post.tags[i].name,
                         tagSlug: post.tags[i].slug,
                         compact: true,
-                        key: UniqueKey(),
                       ),
                   ],
                 ),
@@ -80,7 +79,7 @@ class PostTile extends StatelessWidget {
                   imageUrl: imageUrl,
                   fit: BoxFit.cover,
                   placeholder: (context, url) =>
-                      Container(color: FccColors.gray80),
+                      ColoredBox(color: FccColors.gray80),
                   errorWidget: (context, url, error) {
                     log('Error loading image: $url - $imageUrl - $error');
                     return Image.asset(
@@ -122,7 +121,7 @@ class PostTile extends StatelessWidget {
                             imageUrl: profileUrl,
                             fit: BoxFit.cover,
                             placeholder: (context, url) =>
-                                Container(color: FccColors.gray80),
+                                ColoredBox(color: FccColors.gray80),
                             errorWidget: (context, url, error) => Image.asset(
                               'assets/images/placeholder-profile-img.png',
                               fit: BoxFit.cover,
@@ -154,7 +153,7 @@ class PostTile extends StatelessWidget {
           ),
         ),
         Text(
-          NewsFeedNotifier.parseDate(post.publishedAt),
+          parseDate(post.publishedAt),
           style: TextStyle(
             fontSize: 13,
             color: Colors.white.withValues(alpha: 0.5),

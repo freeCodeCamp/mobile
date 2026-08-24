@@ -1,5 +1,3 @@
-import 'package:flutter/foundation.dart';
-import 'package:jiffy/jiffy.dart';
 import 'package:mobile_app_new/models/news/post_model.dart';
 import 'package:mobile_app_new/services/news/api_service.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
@@ -40,13 +38,4 @@ class NewsFeedNotifier extends _$NewsFeedNotifier {
     _isFetchingNext = false;
   }
 
-  static String parseDate(String date) {
-    try {
-      final jiffyDate = Jiffy.parseFromDateTime(DateTime.parse(date));
-      return Jiffy.parseFromJiffy(jiffyDate).fromNow().toUpperCase();
-    } catch (e) {
-      debugPrint('Error parsing date: $e');
-      return '';
-    }
-  }
 }
