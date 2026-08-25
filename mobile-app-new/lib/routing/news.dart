@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:mobile_app_new/ui/views/news/news-feed/news_feed_view.dart';
 import 'package:mobile_app_new/ui/views/news/news-post/news_post_view.dart';
+import 'package:mobile_app_new/ui/views/news/news-search/news_search_view.dart';
 import 'package:mobile_app_new/ui/views/news/news-view-handler/news_view_handler_view.dart';
 import 'package:mobile_app_new/ui/views/news/widgets/news_image_view.dart';
 
@@ -34,7 +35,9 @@ class NewsBookmarksRoute extends GoRouteData with $NewsBookmarksRoute {
 
   @override
   Page<void> buildPage(BuildContext context, GoRouterState state) =>
-      const NoTransitionPage(child: Center(child: Text('Bookmarks - Coming Soon')));
+      const NoTransitionPage(
+        child: Center(child: Text('Bookmarks - Coming Soon')),
+      );
 }
 
 class NewsFeedRoute extends GoRouteData with $NewsFeedRoute {
@@ -50,18 +53,7 @@ class NewsSearchRoute extends GoRouteData with $NewsSearchRoute {
 
   @override
   Page<void> buildPage(BuildContext context, GoRouterState state) =>
-      const NoTransitionPage(child: Center(child: Text('Search - Coming Soon')));
-}
-
-@TypedGoRoute<NewsPostRoute>(path: newsPostPath)
-class NewsPostRoute extends GoRouteData with $NewsPostRoute {
-  const NewsPostRoute({required this.slug});
-
-  final String slug;
-
-  @override
-  Widget build(BuildContext context, GoRouterState state) =>
-      NewsPostView(slug: slug);
+      const NoTransitionPage(child: NewsSearchView());
 }
 
 @TypedGoRoute<NewsImageRoute>(path: newsImagePath)
@@ -73,4 +65,15 @@ class NewsImageRoute extends GoRouteData with $NewsImageRoute {
   @override
   Widget build(BuildContext context, GoRouterState state) =>
       NewsImageView(imgUrl: $extra);
+}
+
+@TypedGoRoute<NewsPostRoute>(path: newsPostPath)
+class NewsPostRoute extends GoRouteData with $NewsPostRoute {
+  const NewsPostRoute({required this.slug});
+
+  final String slug;
+
+  @override
+  Widget build(BuildContext context, GoRouterState state) =>
+      NewsPostView(slug: slug);
 }

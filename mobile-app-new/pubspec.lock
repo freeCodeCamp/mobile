@@ -9,6 +9,54 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "99.0.0"
+  algolia_client_core:
+    dependency: transitive
+    description:
+      name: algolia_client_core
+      sha256: c254e51e30e9b6609a689c1b2a32b185243edd5efb348e624787ebfac8d54da3
+      url: "https://pub.dev"
+    source: hosted
+    version: "1.52.0"
+  algolia_client_insights:
+    dependency: transitive
+    description:
+      name: algolia_client_insights
+      sha256: bbd670cbe476a7e928e33b233f5fccf134c6fa638ef1984f8a405a48bc3e5b51
+      url: "https://pub.dev"
+    source: hosted
+    version: "1.52.0"
+  algolia_client_search:
+    dependency: transitive
+    description:
+      name: algolia_client_search
+      sha256: "97872b4c487e204b0ee7d58229e82f4f79f4123ec42d21aaa7c0ce590fcf1248"
+      url: "https://pub.dev"
+    source: hosted
+    version: "1.49.2"
+  algolia_helper_flutter:
+    dependency: "direct main"
+    description:
+      name: algolia_helper_flutter
+      sha256: "4add0a73f476bbac3204ae1ffbb5e66f73cdaf6ae6496038256d9c56d970a7d9"
+      url: "https://pub.dev"
+    source: hosted
+    version: "1.6.0"
+  algolia_insights:
+    dependency: transitive
+    description:
+      name: algolia_insights
+      sha256: "2d94aecfee207e8c0cb403ec9cdcf98baacdfa89054d5f2a26fbca87f358e0b4"
+      url: "https://pub.dev"
+    source: hosted
+    version: "1.0.4"
+  algoliasearch:
+    dependency: transitive
+    description:
+      name: algoliasearch
+      sha256: "76e64c5582f30c63f9771c3888d81b3a514222765e3b88ceec3f808e677f8431"
+      url: "https://pub.dev"
+    source: hosted
+    version: "1.49.2"
   analyzer:
     dependency: transitive
     description:
@@ -25,6 +73,14 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "0.3.3"
+  archive:
+    dependency: transitive
+    description:
+      name: archive
+      sha256: ace891da0862b0e4cabbb064ee3fd87b2728b898949fdb366d83fe98342c9f19
+      url: "https://pub.dev"
+    source: hosted
+    version: "4.2.0"
   args:
     dependency: transitive
     description:
@@ -496,6 +552,14 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "0.7.0"
+  hive:
+    dependency: transitive
+    description:
+      name: hive
+      sha256: "8dcf6db979d7933da8217edcec84e9df1bdb4e4edc7fc77dbd5aa74356d6d941"
+      url: "https://pub.dev"
+    source: hosted
+    version: "2.2.3"
   hive_ce:
     dependency: transitive
     description:
@@ -840,6 +904,14 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "1.5.2"
+  posix:
+    dependency: transitive
+    description:
+      name: posix
+      sha256: bc1bad54ad2b735816e31f8d4600cfde6c7839975085ddfbca48b6c9f7c4044e
+      url: "https://pub.dev"
+    source: hosted
+    version: "6.5.2"
   pretty_dio_logger:
     dependency: "direct main"
     description:

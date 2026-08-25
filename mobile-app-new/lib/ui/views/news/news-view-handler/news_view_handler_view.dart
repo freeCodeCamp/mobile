@@ -10,13 +10,12 @@ class NewsViewHandlerView extends StatelessWidget {
 
   static const _titles = ['Bookmarks', 'Tutorials', 'Search'];
   static const _paths = [newsBookmarksPath, newsFeedPath, newsSearchPath];
+  static const _feedIndex = 1;
 
   int _currentIndex(BuildContext context) {
     final location = GoRouterState.of(context).uri.path;
-    for (int i = 0; i < _paths.length; i++) {
-      if (location.startsWith(_paths[i])) return i;
-    }
-    return 1;
+    final index = _paths.indexOf(location);
+    return index == -1 ? _feedIndex : index;
   }
 
   @override
