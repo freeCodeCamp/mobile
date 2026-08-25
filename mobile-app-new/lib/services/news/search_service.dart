@@ -24,7 +24,6 @@ class NewsSearchService {
   void query(String term) => _repository.query(term);
 
   List<SearchPost> _toPosts(SearchResponse response) {
-    // NOTE: Radio articles are hidden on iOS.
     final hits = Platform.isIOS
         ? response.hits.where((hit) => !radioArticles.contains(hit['objectID']))
         : response.hits;
