@@ -3,6 +3,7 @@ import 'package:go_router/go_router.dart';
 import 'package:mobile_app_new/ui/views/news/news-feed/news_feed_view.dart';
 import 'package:mobile_app_new/ui/views/news/news-post/news_post_view.dart';
 import 'package:mobile_app_new/ui/views/news/news-search/news_search_view.dart';
+import 'package:mobile_app_new/ui/views/news/news-feed/news_tag_feed_view.dart';
 import 'package:mobile_app_new/ui/views/news/news-view-handler/news_view_handler_view.dart';
 import 'package:mobile_app_new/ui/views/news/widgets/news_image_view.dart';
 
@@ -13,6 +14,7 @@ const newsFeedPath = '/news';
 const newsSearchPath = '/news/search';
 const newsPostPath = '/news/:slug';
 const newsImagePath = '/news/image';
+const newsTagFeedPath = '/news/tag/:tagSlug';
 
 @TypedShellRoute<NewsShellRoute>(
   routes: [
@@ -65,6 +67,20 @@ class NewsImageRoute extends GoRouteData with $NewsImageRoute {
   @override
   Widget build(BuildContext context, GoRouterState state) =>
       NewsImageView(imgUrl: $extra);
+}
+
+@TypedGoRoute<NewsTagFeedRoute>(path: newsTagFeedPath)
+class NewsTagFeedRoute extends GoRouteData with $NewsTagFeedRoute {
+  const NewsTagFeedRoute({required this.tagSlug, this.$extra});
+
+  final String tagSlug;
+
+  // NOTE: Tag display name
+  final String? $extra;
+
+  @override
+  Widget build(BuildContext context, GoRouterState state) =>
+      NewsTagFeedView(tagSlug: tagSlug, tagName: $extra);
 }
 
 @TypedGoRoute<NewsPostRoute>(path: newsPostPath)

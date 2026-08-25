@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:mobile_app_new/fcc_theme.dart';
+import 'package:mobile_app_new/routing/news.dart';
 
 class TagButton extends StatelessWidget {
   const TagButton({
@@ -28,7 +29,7 @@ class TagButton extends StatelessWidget {
       padding: EdgeInsets.fromLTRB(0, compact ? 0 : 8, compact ? 6 : 8, 0),
       child: InkWell(
         onTap: () {
-          // TODO: Navigate to tag-filtered feed
+          NewsTagFeedRoute(tagSlug: tagSlug, $extra: tagName).push(context);
         },
         child: Container(
           constraints: BoxConstraints(

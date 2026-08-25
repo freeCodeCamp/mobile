@@ -9,6 +9,7 @@ part of 'news.dart';
 List<RouteBase> get $appRoutes => [
   $newsShellRoute,
   $newsImageRoute,
+  $newsTagFeedRoute,
   $newsPostRoute,
 ];
 
@@ -114,6 +115,40 @@ mixin $NewsImageRoute on GoRouteData {
 
   @override
   String get location => GoRouteData.$location('/news/image');
+
+  @override
+  void go(BuildContext context) => context.go(location, extra: _self.$extra);
+
+  @override
+  Future<T?> push<T>(BuildContext context) =>
+      context.push<T>(location, extra: _self.$extra);
+
+  @override
+  void pushReplacement(BuildContext context) =>
+      context.pushReplacement(location, extra: _self.$extra);
+
+  @override
+  void replace(BuildContext context) =>
+      context.replace(location, extra: _self.$extra);
+}
+
+RouteBase get $newsTagFeedRoute => GoRouteData.$route(
+  path: '/news/tag/:tagSlug',
+  hasOverriddenOnExit: false,
+  factory: $NewsTagFeedRoute._fromState,
+);
+
+mixin $NewsTagFeedRoute on GoRouteData {
+  static NewsTagFeedRoute _fromState(GoRouterState state) => NewsTagFeedRoute(
+    tagSlug: state.pathParameters['tagSlug']!,
+    $extra: state.extra as String?,
+  );
+
+  NewsTagFeedRoute get _self => this as NewsTagFeedRoute;
+
+  @override
+  String get location =>
+      GoRouteData.$location('/news/tag/${Uri.encodeComponent(_self.tagSlug)}');
 
   @override
   void go(BuildContext context) => context.go(location, extra: _self.$extra);
