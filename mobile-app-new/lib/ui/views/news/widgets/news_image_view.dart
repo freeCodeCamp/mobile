@@ -6,10 +6,7 @@ import 'package:mobile_app_new/fcc_theme.dart';
 import 'package:photo_view/photo_view.dart';
 
 class NewsImageView extends StatelessWidget {
-  const NewsImageView({
-    super.key,
-    required this.imgUrl,
-  });
+  const NewsImageView({super.key, required this.imgUrl});
 
   final String imgUrl;
 

@@ -54,7 +54,7 @@ class PostTile extends StatelessWidget {
               ),
             ),
             const SizedBox(height: 8),
-            _buildAuthorRow(),
+            _buildAuthorRow(context),
           ],
         ),
       ),
@@ -93,7 +93,7 @@ class PostTile extends StatelessWidget {
     );
   }
 
-  Widget _buildAuthorRow() {
+  Widget _buildAuthorRow(BuildContext context) {
     final author = post.author;
     final profileUrl = author.profilePicture;
 
@@ -102,7 +102,10 @@ class PostTile extends StatelessWidget {
         Flexible(
           child: GestureDetector(
             onTap: () {
-              // TODO: Navigate to author profile
+              NewsAuthorRoute(
+                username: author.username,
+                $extra: author,
+              ).push(context);
             },
             child: Row(
               mainAxisSize: MainAxisSize.min,

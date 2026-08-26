@@ -10,6 +10,7 @@ List<RouteBase> get $appRoutes => [
   $newsShellRoute,
   $newsImageRoute,
   $newsTagFeedRoute,
+  $newsAuthorRoute,
   $newsPostRoute,
 ];
 
@@ -149,6 +150,41 @@ mixin $NewsTagFeedRoute on GoRouteData {
   @override
   String get location =>
       GoRouteData.$location('/news/tag/${Uri.encodeComponent(_self.tagSlug)}');
+
+  @override
+  void go(BuildContext context) => context.go(location, extra: _self.$extra);
+
+  @override
+  Future<T?> push<T>(BuildContext context) =>
+      context.push<T>(location, extra: _self.$extra);
+
+  @override
+  void pushReplacement(BuildContext context) =>
+      context.pushReplacement(location, extra: _self.$extra);
+
+  @override
+  void replace(BuildContext context) =>
+      context.replace(location, extra: _self.$extra);
+}
+
+RouteBase get $newsAuthorRoute => GoRouteData.$route(
+  path: '/news/author/:username',
+  hasOverriddenOnExit: false,
+  factory: $NewsAuthorRoute._fromState,
+);
+
+mixin $NewsAuthorRoute on GoRouteData {
+  static NewsAuthorRoute _fromState(GoRouterState state) => NewsAuthorRoute(
+    username: state.pathParameters['username']!,
+    $extra: state.extra as Author?,
+  );
+
+  NewsAuthorRoute get _self => this as NewsAuthorRoute;
+
+  @override
+  String get location => GoRouteData.$location(
+    '/news/author/${Uri.encodeComponent(_self.username)}',
+  );
 
   @override
   void go(BuildContext context) => context.go(location, extra: _self.$extra);

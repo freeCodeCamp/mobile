@@ -30,8 +30,8 @@ abstract class Author with _$Author {
     required String name,
     String? profilePicture,
     Bio? bio,
-    // TODO: Below items are not displayed in the UI. To be added
     String? location,
+    // TODO: Below items are not displayed in the UI. To be added
     SocialMediaLinks? socialMediaLinks,
   }) = _Author;
 

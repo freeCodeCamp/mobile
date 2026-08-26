@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
 import 'package:mobile_app_new/fcc_theme.dart';
-import 'package:mobile_app_new/ui/views/news/news-feed/post_feed_list.dart';
+import 'package:mobile_app_new/ui/views/news/widgets/post-feed-list/post_feed_list.dart';
 
 class NewsTagFeedView extends StatelessWidget {
   const NewsTagFeedView({super.key, required this.tagSlug, this.tagName});

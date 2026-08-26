@@ -2,7 +2,7 @@ import 'package:mobile_app_new/models/news/post_model.dart';
 import 'package:mobile_app_new/services/news/api_service.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
-part 'post_feed_list_viewmodel.g.dart';
+part 'post_feed_list_state.g.dart';
 
 @riverpod
 class NewsFeedNotifier extends _$NewsFeedNotifier {
@@ -15,15 +15,23 @@ class NewsFeedNotifier extends _$NewsFeedNotifier {
   bool get hasNextPage => _hasNextPage;
 
   @override
-  FutureOr<List<Post>> build({String tagSlug = ''}) async {
+  FutureOr<List<Post>> build({
+    String tagSlug = '',
+    String authorId = '',
+  }) async {
     return _fetchPage();
   }
 
   Future<List<Post>> _fetchPage() async {
     final service = ref.read(newsApiServiceProvider);
-    final page = tagSlug.isEmpty
-        ? await service.getAllPosts(afterCursor: _endCursor)
-        : await service.getPostsByTag(tagSlug, afterCursor: _endCursor);
+    final PostsPage page;
+    if (authorId.isNotEmpty) {
+      page = await service.getPostsByAuthor(authorId, afterCursor: _endCursor);
+    } else if (tagSlug.isNotEmpty) {
+      page = await service.getPostsByTag(tagSlug, afterCursor: _endCursor);
+    } else {
+      page = await service.getAllPosts(afterCursor: _endCursor);
+    }
 
     _endCursor = page.endCursor;
     _hasNextPage = page.hasNextPage;

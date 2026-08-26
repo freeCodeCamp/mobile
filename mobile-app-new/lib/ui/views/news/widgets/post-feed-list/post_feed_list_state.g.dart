@@ -1,6 +1,6 @@
 // GENERATED CODE - DO NOT MODIFY BY HAND
 
-part of 'post_feed_list_viewmodel.dart';
+part of 'post_feed_list_state.dart';
 
 // **************************************************************************
 // RiverpodGenerator
@@ -16,7 +16,7 @@ final class NewsFeedNotifierProvider
     extends $AsyncNotifierProvider<NewsFeedNotifier, List<Post>> {
   NewsFeedNotifierProvider._({
     required NewsFeedNotifierFamily super.from,
-    required String super.argument,
+    required ({String tagSlug, String authorId}) super.argument,
   }) : super(
          retry: null,
          name: r'newsFeedProvider',
@@ -32,7 +32,7 @@ final class NewsFeedNotifierProvider
   String toString() {
     return r'newsFeedProvider'
         ''
-        '($argument)';
+        '$argument';
   }
 
   @$internal
@@ -50,7 +50,7 @@ final class NewsFeedNotifierProvider
   }
 }
 
-String _$newsFeedNotifierHash() => r'8a9c5876f06d573366cae016d2d97e3aba37584b';
+String _$newsFeedNotifierHash() => r'7f00ed34d515b8035020b3a8f84c85566c4c6490';
 
 final class NewsFeedNotifierFamily extends $Family
     with
@@ -59,7 +59,7 @@ final class NewsFeedNotifierFamily extends $Family
           AsyncValue<List<Post>>,
           List<Post>,
           FutureOr<List<Post>>,
-          String
+          ({String tagSlug, String authorId})
         > {
   NewsFeedNotifierFamily._()
     : super(
@@ -70,18 +70,22 @@ final class NewsFeedNotifierFamily extends $Family
         isAutoDispose: true,
       );
 
-  NewsFeedNotifierProvider call({String tagSlug = ''}) =>
-      NewsFeedNotifierProvider._(argument: tagSlug, from: this);
+  NewsFeedNotifierProvider call({String tagSlug = '', String authorId = ''}) =>
+      NewsFeedNotifierProvider._(
+        argument: (tagSlug: tagSlug, authorId: authorId),
+        from: this,
+      );
 
   @override
   String toString() => r'newsFeedProvider';
 }
 
 abstract class _$NewsFeedNotifier extends $AsyncNotifier<List<Post>> {
-  late final _$args = ref.$arg as String;
-  String get tagSlug => _$args;
+  late final _$args = ref.$arg as ({String tagSlug, String authorId});
+  String get tagSlug => _$args.tagSlug;
+  String get authorId => _$args.authorId;
 
-  FutureOr<List<Post>> build({String tagSlug = ''});
+  FutureOr<List<Post>> build({String tagSlug = '', String authorId = ''});
   @$mustCallSuper
   @override
   WhenComplete runBuild() {
@@ -94,6 +98,9 @@ abstract class _$NewsFeedNotifier extends $AsyncNotifier<List<Post>> {
               Object?,
               Object?
             >;
-    return element.handleCreate(ref, () => build(tagSlug: _$args));
+    return element.handleCreate(
+      ref,
+      () => build(tagSlug: _$args.tagSlug, authorId: _$args.authorId),
+    );
   }
 }

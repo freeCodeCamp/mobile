@@ -2,13 +2,23 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import 'package:mobile_app_new/fcc_theme.dart';
-import 'package:mobile_app_new/ui/views/news/news-feed/post_feed_list_viewmodel.dart';
+import 'package:mobile_app_new/ui/views/news/widgets/post-feed-list/post_feed_list_state.dart';
 import 'package:mobile_app_new/ui/views/news/widgets/post_tile.dart';
 
 class PostFeedList extends ConsumerStatefulWidget {
-  const PostFeedList({super.key, this.tagSlug = ''});
+  const PostFeedList({
+    super.key,
+    this.tagSlug = '',
+    this.authorId = '',
+    this.header,
+  });
 
   final String tagSlug;
+  final String authorId;
+
+  // NOTE: The header is optional and can be used to display a widget above the
+  // list of posts, such as author details or tag information.
+  final Widget? header;
 
   @override
   ConsumerState<PostFeedList> createState() => _PostFeedListState();
@@ -17,8 +27,10 @@ class PostFeedList extends ConsumerStatefulWidget {
 class _PostFeedListState extends ConsumerState<PostFeedList> {
   final _scrollController = ScrollController();
 
+  bool get _hasNextPage => ref.read(_provider.notifier).hasNextPage;
+
   NewsFeedNotifierProvider get _provider =>
-      newsFeedProvider(tagSlug: widget.tagSlug);
+      newsFeedProvider(tagSlug: widget.tagSlug, authorId: widget.authorId);
 
   @override
   void initState() {
@@ -48,47 +60,55 @@ class _PostFeedListState extends ConsumerState<PostFeedList> {
       child: postsAsync.when(
         loading: () => const Center(child: CircularProgressIndicator()),
         error: (error, stack) =>
-            _ErrorView(error: error, onRetry: () => ref.invalidate(_provider)),
+            _ErrorView(onRetry: () => ref.invalidate(_provider)),
         data: (posts) => RefreshIndicator(
           onRefresh: () async => ref.invalidate(_provider),
           backgroundColor: FccColors.gray90,
           color: Colors.white,
-          child: ListView.separated(
+          child: CustomScrollView(
             controller: _scrollController,
-            itemCount: posts.length + 1,
-            separatorBuilder: (_, _) =>
-                const Divider(color: FccColors.gray80, thickness: 1, height: 1),
-            itemBuilder: (context, index) {
-              if (index == posts.length) {
-                return _buildLoadingIndicator();
-              }
-              return PostTile(
-                key: ValueKey(posts[index].id),
-                post: posts[index],
-              );
-            },
+            slivers: [
+              if (widget.header case final header?)
+                SliverToBoxAdapter(
+                  child: Column(
+                    children: [
+                      header,
+                      const Divider(
+                        color: FccColors.gray80,
+                        thickness: 1,
+                        height: 1,
+                      ),
+                    ],
+                  ),
+                ),
+              SliverList.separated(
+                itemCount: posts.length + (_hasNextPage ? 1 : 0),
+                separatorBuilder: (_, _) => const Divider(
+                  color: FccColors.gray80,
+                  thickness: 1,
+                  height: 1,
+                ),
+                itemBuilder: (context, index) => index == posts.length
+                    ? const Padding(
+                        padding: EdgeInsets.symmetric(vertical: 24),
+                        child: Center(child: CircularProgressIndicator()),
+                      )
+                    : PostTile(
+                        key: ValueKey(posts[index].id),
+                        post: posts[index],
+                      ),
+              ),
+            ],
           ),
         ),
       ),
     );
   }
-
-  Widget _buildLoadingIndicator() {
-    if (!ref.read(_provider.notifier).hasNextPage) {
-      return const SizedBox.shrink();
-    }
-
-    return const Padding(
-      padding: EdgeInsets.symmetric(vertical: 24),
-      child: Center(child: CircularProgressIndicator()),
-    );
-  }
 }
 
 class _ErrorView extends StatelessWidget {
-  const _ErrorView({required this.error, required this.onRetry});
+  const _ErrorView({required this.onRetry});
 
-  final Object error;
   final VoidCallback onRetry;
 
   @override

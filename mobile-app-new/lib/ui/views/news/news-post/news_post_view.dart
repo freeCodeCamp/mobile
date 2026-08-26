@@ -6,6 +6,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:mobile_app_new/fcc_theme.dart';
 import 'package:mobile_app_new/models/news/post_model.dart';
+import 'package:mobile_app_new/routing/news.dart';
 import 'package:mobile_app_new/ui/core/html_handler/html_handler.dart';
 import 'package:mobile_app_new/ui/views/news/news-post/news_post_viewmodel.dart';
 import 'package:mobile_app_new/ui/views/news/widgets/tag_button.dart';
@@ -53,9 +54,15 @@ class NewsPostHeader extends StatelessWidget {
                       post.title,
                       style: const TextStyle(fontSize: 24, height: 1.5),
                     ),
-                    Text(
-                      'Written by ${post.author.name}',
-                      style: const TextStyle(height: 1.5),
+                    GestureDetector(
+                      onTap: () => NewsAuthorRoute(
+                        username: post.author.username,
+                        $extra: post.author,
+                      ).push(context),
+                      child: Text(
+                        'Written by ${post.author.name}',
+                        style: const TextStyle(height: 1.5),
+                      ),
                     ),
                     if (post.tags.isNotEmpty)
                       Wrap(
@@ -231,7 +238,8 @@ class _NewsPostViewState extends ConsumerState<NewsPostView> {
   }
 
   void _sharePost(Post post) {
-    final box = _shareButtonKey.currentContext?.findRenderObject() as RenderBox?;
+    final box =
+        _shareButtonKey.currentContext?.findRenderObject() as RenderBox?;
 
     SharePlus.instance.share(
       ShareParams(

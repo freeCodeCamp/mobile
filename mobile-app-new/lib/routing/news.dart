@@ -3,7 +3,9 @@ import 'package:go_router/go_router.dart';
 import 'package:mobile_app_new/ui/views/news/news-feed/news_feed_view.dart';
 import 'package:mobile_app_new/ui/views/news/news-post/news_post_view.dart';
 import 'package:mobile_app_new/ui/views/news/news-search/news_search_view.dart';
-import 'package:mobile_app_new/ui/views/news/news-feed/news_tag_feed_view.dart';
+import 'package:mobile_app_new/models/news/author_model.dart';
+import 'package:mobile_app_new/ui/views/news/news-author/news_author_view.dart';
+import 'package:mobile_app_new/ui/views/news/news-tag-feed/news_tag_feed_view.dart';
 import 'package:mobile_app_new/ui/views/news/news-view-handler/news_view_handler_view.dart';
 import 'package:mobile_app_new/ui/views/news/widgets/news_image_view.dart';
 
@@ -15,6 +17,7 @@ const newsSearchPath = '/news/search';
 const newsPostPath = '/news/:slug';
 const newsImagePath = '/news/image';
 const newsTagFeedPath = '/news/tag/:tagSlug';
+const newsAuthorPath = '/news/author/:username';
 
 @TypedShellRoute<NewsShellRoute>(
   routes: [
@@ -81,6 +84,20 @@ class NewsTagFeedRoute extends GoRouteData with $NewsTagFeedRoute {
   @override
   Widget build(BuildContext context, GoRouterState state) =>
       NewsTagFeedView(tagSlug: tagSlug, tagName: $extra);
+}
+
+@TypedGoRoute<NewsAuthorRoute>(path: newsAuthorPath)
+class NewsAuthorRoute extends GoRouteData with $NewsAuthorRoute {
+  const NewsAuthorRoute({required this.username, this.$extra});
+
+  final String username;
+
+  // NOTE: Author, when the caller already has it
+  final Author? $extra;
+
+  @override
+  Widget build(BuildContext context, GoRouterState state) =>
+      NewsAuthorView(username: username, author: $extra);
 }
 
 @TypedGoRoute<NewsPostRoute>(path: newsPostPath)

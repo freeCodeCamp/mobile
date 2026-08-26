@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-import 'package:mobile_app_new/ui/views/news/news-feed/post_feed_list.dart';
+import 'package:mobile_app_new/ui/views/news/widgets/post-feed-list/post_feed_list.dart';
 
 class NewsFeedView extends StatelessWidget {
   const NewsFeedView({super.key});
