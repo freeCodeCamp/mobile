@@ -9,6 +9,7 @@ import 'package:mobile_app_new/models/news/post_model.dart';
 import 'package:mobile_app_new/routing/news.dart';
 import 'package:mobile_app_new/ui/core/html_handler/html_handler.dart';
 import 'package:mobile_app_new/ui/views/news/news-post/news_post_viewmodel.dart';
+import 'package:mobile_app_new/ui/views/news/widgets/back_to_top_button.dart';
 import 'package:mobile_app_new/ui/views/news/widgets/tag_button.dart';
 import 'package:share_plus/share_plus.dart';
 
@@ -101,11 +102,13 @@ class _NewsPostViewState extends ConsumerState<NewsPostView> {
   final GlobalKey _shareButtonKey = GlobalKey();
 
   bool _hasInitializedAnimation = false;
+  bool _showToTopButton = false;
 
   @override
   void initState() {
     super.initState();
     _scrollController.addListener(_handleBottomButtonAnimation);
+    _scrollController.addListener(_handleToTopButtonVisibility);
   }
 
   @override
@@ -138,6 +141,20 @@ class _NewsPostViewState extends ConsumerState<NewsPostView> {
     _lastScrollOffset = _scrollController.offset;
   }
 
+  void _handleToTopButtonVisibility() {
+    final shouldShow = _scrollController.offset >= 100;
+    if (shouldShow == _showToTopButton) return;
+    setState(() => _showToTopButton = shouldShow);
+  }
+
+  void _goToTop() {
+    _scrollController.animateTo(
+      0,
+      duration: const Duration(milliseconds: 1000),
+      curve: Curves.easeInOut,
+    );
+  }
+
   void _initBottomButtonAnimation() {
     if (_hasInitializedAnimation) return;
     _hasInitializedAnimation = true;
@@ -159,6 +176,9 @@ class _NewsPostViewState extends ConsumerState<NewsPostView> {
 
     return Scaffold(
       backgroundColor: FccColors.gray90,
+      floatingActionButton: _showToTopButton
+          ? BackToTopButton(onPressed: _goToTop)
+          : null,
       body: postAsync.when(
         loading: () => const Center(child: CircularProgressIndicator()),
         error: (error, stack) {
