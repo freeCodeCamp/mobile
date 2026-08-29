@@ -5,7 +5,7 @@ import 'package:mobile_app_new/fcc_theme.dart';
 import 'package:mobile_app_new/routing/router.dart';
 import 'package:mobile_app_new/services/dio_service.dart';
 
-void main() async {
+Future<void> main() async {
   await dotenv.load();
   await DioService().init();
 

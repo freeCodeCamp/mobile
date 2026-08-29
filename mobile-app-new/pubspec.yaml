@@ -59,6 +59,10 @@ dependencies:
   path_provider: 2.1.6
 
 dev_dependencies:
+  flutter_driver:
+    sdk: flutter
+  integration_test:
+    sdk: flutter
   flutter_test:
     sdk: flutter
 
