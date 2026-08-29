@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'package:mobile_app_new/models/news/bookmarked_post_model.dart';
+import 'package:mobile_app_new/ui/views/news/news-bookmark-feed/news_bookmark_feed_view.dart';
+import 'package:mobile_app_new/ui/views/news/news-bookmark-post/news_bookmark_post_view.dart';
 import 'package:mobile_app_new/ui/views/news/news-feed/news_feed_view.dart';
 import 'package:mobile_app_new/ui/views/news/news-post/news_post_view.dart';
 import 'package:mobile_app_new/ui/views/news/news-search/news_search_view.dart';
@@ -18,6 +21,7 @@ const newsPostPath = '/news/:slug';
 const newsImagePath = '/news/image';
 const newsTagFeedPath = '/news/tag/:tagSlug';
 const newsAuthorPath = '/news/author/:username';
+const newsBookmarkPostPath = '/news/bookmarks/:id';
 
 @TypedShellRoute<NewsShellRoute>(
   routes: [
@@ -40,9 +44,7 @@ class NewsBookmarksRoute extends GoRouteData with $NewsBookmarksRoute {
 
   @override
   Page<void> buildPage(BuildContext context, GoRouterState state) =>
-      const NoTransitionPage(
-        child: Center(child: Text('Bookmarks - Coming Soon')),
-      );
+      const NoTransitionPage(child: NewsBookmarkFeedView());
 }
 
 class NewsFeedRoute extends GoRouteData with $NewsFeedRoute {
@@ -98,6 +100,20 @@ class NewsAuthorRoute extends GoRouteData with $NewsAuthorRoute {
   @override
   Widget build(BuildContext context, GoRouterState state) =>
       NewsAuthorView(username: username, author: $extra);
+}
+
+@TypedGoRoute<NewsBookmarkPostRoute>(path: newsBookmarkPostPath)
+class NewsBookmarkPostRoute extends GoRouteData with $NewsBookmarkPostRoute {
+  const NewsBookmarkPostRoute({required this.id, required this.$extra});
+
+  final String id;
+
+  // NOTE: The bookmarked post passed from feed so we don't have to fetch it again
+  final BookmarkedPost $extra;
+
+  @override
+  Widget build(BuildContext context, GoRouterState state) =>
+      NewsBookmarkPostView(post: $extra);
 }
 
 @TypedGoRoute<NewsPostRoute>(path: newsPostPath)

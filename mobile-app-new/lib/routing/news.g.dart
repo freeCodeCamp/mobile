@@ -11,6 +11,7 @@ List<RouteBase> get $appRoutes => [
   $newsImageRoute,
   $newsTagFeedRoute,
   $newsAuthorRoute,
+  $newsBookmarkPostRoute,
   $newsPostRoute,
 ];
 
@@ -185,6 +186,41 @@ mixin $NewsAuthorRoute on GoRouteData {
   String get location => GoRouteData.$location(
     '/news/author/${Uri.encodeComponent(_self.username)}',
   );
+
+  @override
+  void go(BuildContext context) => context.go(location, extra: _self.$extra);
+
+  @override
+  Future<T?> push<T>(BuildContext context) =>
+      context.push<T>(location, extra: _self.$extra);
+
+  @override
+  void pushReplacement(BuildContext context) =>
+      context.pushReplacement(location, extra: _self.$extra);
+
+  @override
+  void replace(BuildContext context) =>
+      context.replace(location, extra: _self.$extra);
+}
+
+RouteBase get $newsBookmarkPostRoute => GoRouteData.$route(
+  path: '/news/bookmarks/:id',
+  hasOverriddenOnExit: false,
+  factory: $NewsBookmarkPostRoute._fromState,
+);
+
+mixin $NewsBookmarkPostRoute on GoRouteData {
+  static NewsBookmarkPostRoute _fromState(GoRouterState state) =>
+      NewsBookmarkPostRoute(
+        id: state.pathParameters['id']!,
+        $extra: state.extra as BookmarkedPost,
+      );
+
+  NewsBookmarkPostRoute get _self => this as NewsBookmarkPostRoute;
+
+  @override
+  String get location =>
+      GoRouteData.$location('/news/bookmarks/${Uri.encodeComponent(_self.id)}');
 
   @override
   void go(BuildContext context) => context.go(location, extra: _self.$extra);

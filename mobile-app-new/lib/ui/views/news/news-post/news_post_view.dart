@@ -10,6 +10,8 @@ import 'package:mobile_app_new/routing/news.dart';
 import 'package:mobile_app_new/ui/core/html_handler/html_handler.dart';
 import 'package:mobile_app_new/ui/views/news/news-post/news_post_viewmodel.dart';
 import 'package:mobile_app_new/ui/views/news/widgets/back_to_top_button.dart';
+import 'package:mobile_app_new/ui/views/news/widgets/bookmark_button.dart';
+import 'package:mobile_app_new/ui/views/news/widgets/news_bottom_button.dart';
 import 'package:mobile_app_new/ui/views/news/widgets/tag_button.dart';
 import 'package:share_plus/share_plus.dart';
 
@@ -284,20 +286,12 @@ class _NewsPostViewState extends ConsumerState<NewsPostView> {
             Row(
               children: [
                 Container(height: 150),
-                // TODO: Bookmark button
-                _BottomButton(
-                  label: 'Bookmark',
-                  icon: Icons.bookmark_border,
-                  onPressed: () {
-                    // TODO: Implement bookmark functionality
-                  },
-                  rightSided: false,
-                ),
+                BookmarkButton(post: post),
                 const SizedBox(
                   height: 35,
                   child: VerticalDivider(color: Colors.white, width: 0),
                 ),
-                _BottomButton(
+                NewsBottomButton(
                   key: _shareButtonKey,
                   label: 'Share',
                   icon: Icons.share,
@@ -307,43 +301,6 @@ class _NewsPostViewState extends ConsumerState<NewsPostView> {
               ],
             ),
           ],
-        ),
-      ),
-    );
-  }
-}
-
-class _BottomButton extends StatelessWidget {
-  const _BottomButton({
-    super.key,
-    required this.label,
-    required this.onPressed,
-    required this.icon,
-    required this.rightSided,
-  });
-
-  final VoidCallback onPressed;
-  final String label;
-  final bool rightSided;
-  final IconData icon;
-
-  @override
-  Widget build(BuildContext context) {
-    return Expanded(
-      child: ElevatedButton.icon(
-        icon: Icon(icon, color: Colors.white),
-        onPressed: onPressed,
-        label: Text(label),
-        style: ElevatedButton.styleFrom(
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.only(
-              topLeft: Radius.circular(rightSided ? 0 : 10),
-              topRight: Radius.circular(rightSided ? 10 : 0),
-              bottomLeft: Radius.circular(rightSided ? 0 : 10),
-              bottomRight: Radius.circular(rightSided ? 10 : 0),
-            ),
-          ),
-          backgroundColor: FccColors.gray80,
         ),
       ),
     );

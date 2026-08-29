@@ -55,6 +55,8 @@ dependencies:
   algolia_helper_flutter: 1.6.0
   collection: 1.19.1
   html: 0.15.6
+  path: 1.9.1
+  path_provider: 2.1.6
 
 dev_dependencies:
   flutter_test:
