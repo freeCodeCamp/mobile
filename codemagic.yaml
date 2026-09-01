@@ -31,6 +31,10 @@ workflows:
     scripts:
       - name: Create .env file
         script: |
+          if [ -z "${AUTH0_DOMAIN:-}" ] || [ -z "${AUTH0_CLIENT_ID:-}" ]; then
+            echo "AUTH0_DOMAIN and AUTH0_CLIENT_ID must be configured in the Mobile environment group."
+            exit 1
+          fi
           echo "HASHNODE_PUBLICATION_ID=$HASHNODE_PUBLICATION_ID" > .env
           echo "ALGOLIAAPPID=$ALGOLIAAPPID" >> .env
           echo "ALGOLIAKEY=$ALGOLIAKEY" >> .env
@@ -110,6 +114,10 @@ workflows:
     scripts:
       - name: Create .env file
         script: |
+          if [ -z "${AUTH0_DOMAIN:-}" ] || [ -z "${AUTH0_CLIENT_ID:-}" ]; then
+            echo "AUTH0_DOMAIN and AUTH0_CLIENT_ID must be configured in the Mobile environment group."
+            exit 1
+          fi
           echo "HASHNODE_PUBLICATION_ID=$HASHNODE_PUBLICATION_ID" > .env
           echo "ALGOLIAAPPID=$ALGOLIAAPPID" >> .env
           echo "ALGOLIAKEY=$ALGOLIAKEY" >> .env

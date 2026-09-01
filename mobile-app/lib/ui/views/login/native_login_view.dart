@@ -233,7 +233,7 @@ class NativeLoginView extends StatelessWidget {
                             style: ctaButtonStyle,
                             onPressed: model.emailFieldIsValid
                                 ? () {
-                                    model.sendOTPtoEmail();
+                                    model.sendOTPtoEmail(context);
                                   }
                                 : null,
                             child: Padding(

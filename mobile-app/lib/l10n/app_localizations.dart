@@ -214,6 +214,12 @@ abstract class AppLocalizations {
   /// **'The code you entered is not valid. Please check the last OTP you received and try again.'**
   String get email_invalid_code;
 
+  /// login view (when sending an email sign-in code fails)
+  ///
+  /// In en, this message translates to:
+  /// **'We couldn\'t send a sign-in code. Please try again.'**
+  String get email_code_not_sent;
+
   /// login view
   ///
   /// In en, this message translates to:

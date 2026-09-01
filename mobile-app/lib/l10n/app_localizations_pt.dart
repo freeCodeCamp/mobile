@@ -67,6 +67,10 @@ class AppLocalizationsPt extends AppLocalizations {
       'The code you entered is not valid. Please check the last OTP you received and try again.';
 
   @override
+  String get email_code_not_sent =>
+      'We couldn\'t send a sign-in code. Please try again.';
+
+  @override
   String get login_data_message =>
       'freeCodeCamp is free and your account is private by default. We use your email address to connect you to your account.';
 

@@ -76,6 +76,10 @@
     "@email_invalid_code": {
         "description": "login view (when failing to login with email)"
     },
+    "email_code_not_sent": "We couldn't send a sign-in code. Please try again.",
+    "@email_code_not_sent": {
+        "description": "login view (when sending an email sign-in code fails)"
+    },
     "login_data_message": "freeCodeCamp is free and your account is private by default. We use your email address to connect you to your account.",
     "@login_data_message": {
         "description": "login view"
