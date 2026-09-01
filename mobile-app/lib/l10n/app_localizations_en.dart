@@ -577,7 +577,7 @@ class AppLocalizationsEn extends AppLocalizations {
       'Temporarily unavailable, come back soon.';
 
   @override
-  String get not_available_web => 'Not available use the web version';
+  String get not_available_web => 'Not available - use the web version';
 
   @override
   String get stage_core => 'Recommended curriculum (still in beta):';

@@ -1070,7 +1070,7 @@ abstract class AppLocalizations {
   /// snackbar shown when a curriculum item is only available on the web
   ///
   /// In en, this message translates to:
-  /// **'Not available use the web version'**
+  /// **'Not available - use the web version'**
   String get not_available_web;
 
   /// learn landing heading for recommended curriculum stage
