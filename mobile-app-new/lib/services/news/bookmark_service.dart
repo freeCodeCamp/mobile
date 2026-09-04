@@ -1,5 +1,5 @@
 import 'package:mobile_app_new/models/news/bookmarked_post_model.dart';
-import 'package:mobile_app_new/repositories/news_bookmark_repository.dart';
+import 'package:mobile_app_new/repositories/news/bookmark_repository.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
 part 'bookmark_service.g.dart';

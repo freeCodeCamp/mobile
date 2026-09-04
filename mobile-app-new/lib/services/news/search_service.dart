@@ -3,7 +3,7 @@ import 'dart:io';
 import 'package:algolia_helper_flutter/algolia_helper_flutter.dart';
 import 'package:mobile_app_new/constants/radio_articles.dart';
 import 'package:mobile_app_new/models/news/search_post_model.dart';
-import 'package:mobile_app_new/repositories/news_search_repository.dart';
+import 'package:mobile_app_new/repositories/news/search_repository.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
 part 'search_service.g.dart';

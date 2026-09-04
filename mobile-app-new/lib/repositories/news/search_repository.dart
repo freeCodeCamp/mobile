@@ -4,7 +4,7 @@ import 'package:algolia_helper_flutter/algolia_helper_flutter.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
-part 'news_search_repository.g.dart';
+part 'search_repository.g.dart';
 
 const _indexName = 'news';
 

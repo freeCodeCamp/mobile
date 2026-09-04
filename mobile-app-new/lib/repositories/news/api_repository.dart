@@ -2,7 +2,7 @@ import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:graphql/client.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
-part 'news_api_repository.g.dart';
+part 'api_repository.g.dart';
 
 typedef RawPaginatedResponse = ({
   String endCursor,

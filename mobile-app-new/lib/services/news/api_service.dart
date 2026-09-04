@@ -1,6 +1,6 @@
 import 'package:mobile_app_new/models/news/author_model.dart';
 import 'package:mobile_app_new/models/news/post_model.dart';
-import 'package:mobile_app_new/repositories/news_api_repository.dart';
+import 'package:mobile_app_new/repositories/news/api_repository.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
 part 'api_service.g.dart';

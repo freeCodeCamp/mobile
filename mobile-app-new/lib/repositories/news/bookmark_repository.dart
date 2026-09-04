@@ -6,7 +6,7 @@ import 'package:path/path.dart' as path;
 import 'package:path_provider/path_provider.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
-part 'news_bookmark_repository.g.dart';
+part 'bookmark_repository.g.dart';
 
 typedef BookmarkEntry = Map<String, String>;
 
