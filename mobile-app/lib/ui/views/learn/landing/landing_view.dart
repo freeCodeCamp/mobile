@@ -8,6 +8,7 @@ import 'package:freecodecamp/models/learn/motivational_quote_model.dart';
 import 'package:freecodecamp/models/main/user_model.dart';
 import 'package:freecodecamp/ui/theme/fcc_theme.dart';
 import 'package:freecodecamp/ui/views/learn/landing/landing_viewmodel.dart';
+import 'package:freecodecamp/ui/views/learn/utils/learn_globals.dart';
 import 'package:freecodecamp/ui/views/learn/widgets/daily_challenge_card.dart';
 import 'package:freecodecamp/ui/widgets/drawer_widget/drawer_widget_view.dart';
 import 'package:stacked/stacked.dart';
@@ -252,14 +253,16 @@ class SuperBlockButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final isWebOnly = webOnlySuperBlocks.contains(button.path);
+
     return Opacity(
-      opacity: button.public ? 1.0 : 0.7,
+      opacity: (button.public || isWebOnly) ? 1.0 : 0.7,
       child: Container(
         padding: const EdgeInsets.symmetric(
           vertical: 6,
           horizontal: 4,
         ),
-        constraints: BoxConstraints(
+        constraints: const BoxConstraints(
           minHeight: 80,
         ),
         child: ElevatedButton(
@@ -270,18 +273,22 @@ class SuperBlockButton extends StatelessWidget {
               width: 2,
               color: FccColors.gray75,
             ),
-            shape: RoundedRectangleBorder(
+            shape: const RoundedRectangleBorder(
               borderRadius: BorderRadius.all(Radius.circular(5)),
-              side: const BorderSide(
+              side: BorderSide(
                 color: Colors.teal,
                 width: 2.0,
               ),
             ),
           ),
           onPressed: () {
-            button.public
-                ? model.routeToSuperBlock(button.path, button.name)
-                : model.disabledButtonSnack(button.disabledByManualOverride);
+            if (isWebOnly) {
+              model.openInBrowser(button.path);
+            } else if (button.public) {
+              model.routeToSuperBlock(button.path, button.name);
+            } else {
+              model.disabledButtonSnack(button.disabledByManualOverride);
+            }
           },
           child: Row(
             children: [
@@ -294,7 +301,7 @@ class SuperBlockButton extends StatelessWidget {
                     iconMap[SuperBlocks.fromValue(button.path)] ??
                         '${SuperBlockButton.learnAssetsPath}/graduation.svg',
                     fit: BoxFit.contain,
-                    colorFilter: ColorFilter.mode(
+                    colorFilter: const ColorFilter.mode(
                       FccColors.gray00,
                       BlendMode.srcIn,
                     ),
@@ -309,13 +316,23 @@ class SuperBlockButton extends StatelessWidget {
                   style: const TextStyle(fontSize: 20),
                 ),
               ),
-              const Expanded(
+              Expanded(
                 flex: 2,
                 child: Align(
                   alignment: Alignment.centerRight,
                   child: Padding(
-                    padding: EdgeInsets.symmetric(vertical: 8, horizontal: 12),
-                    child: Icon(Icons.arrow_forward_ios),
+                    padding: const EdgeInsets.symmetric(
+                      vertical: 8,
+                      horizontal: 12,
+                    ),
+                    child: Tooltip(
+                      message: isWebOnly ? context.t.not_available_web : '',
+                      child: Icon(
+                        isWebOnly
+                            ? Icons.open_in_new
+                            : Icons.arrow_forward_ios,
+                      ),
+                    ),
                   ),
                 ),
               )
