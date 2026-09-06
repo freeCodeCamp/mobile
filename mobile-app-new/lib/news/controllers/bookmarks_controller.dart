@@ -2,7 +2,7 @@ import 'package:mobile_app_new/news/models/bookmarked_post_model.dart';
 import 'package:mobile_app_new/news/services/bookmark_service.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
-part 'bookmark_feed_viewmodel.g.dart';
+part 'bookmarks_controller.g.dart';
 
 @riverpod
 class NewsBookmarksNotifier extends _$NewsBookmarksNotifier {

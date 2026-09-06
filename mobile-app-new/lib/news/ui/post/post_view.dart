@@ -6,15 +6,15 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:mobile_app_new/fcc_theme.dart';
 import 'package:mobile_app_new/news/models/post_model.dart';
-import 'package:mobile_app_new/routing/news.dart';
-import 'package:mobile_app_new/widgets/html_handler/html_handler.dart';
 import 'package:mobile_app_new/news/ui/post/post_viewmodel.dart';
 import 'package:mobile_app_new/news/ui/widgets/back_to_top_button.dart';
 import 'package:mobile_app_new/news/ui/widgets/bookmark_button.dart';
 import 'package:mobile_app_new/news/ui/widgets/bottom_button.dart';
 import 'package:mobile_app_new/news/ui/widgets/tag_button.dart';
-import 'package:share_plus/share_plus.dart';
+import 'package:mobile_app_new/routing/news.dart';
 import 'package:mobile_app_new/widgets/error_retry.dart';
+import 'package:mobile_app_new/widgets/html_handler/html_handler.dart';
+import 'package:share_plus/share_plus.dart';
 
 class NewsPostHeader extends StatelessWidget {
   const NewsPostHeader({super.key, required this.post});
@@ -71,11 +71,8 @@ class NewsPostHeader extends StatelessWidget {
                     if (post.tags.isNotEmpty)
                       Wrap(
                         children: [
-                          for (int j = 0; j < post.tags.length && j < 3; j++)
-                            TagButton(
-                              tagName: post.tags[j].name,
-                              tagSlug: post.tags[j].slug,
-                            ),
+                          for (final tag in post.tags.take(3))
+                            TagButton(tagName: tag.name, tagSlug: tag.slug),
                         ],
                       ),
                   ],
@@ -100,12 +97,10 @@ class NewsPostView extends ConsumerStatefulWidget {
 
 class _NewsPostViewState extends ConsumerState<NewsPostView> {
   final ScrollController _scrollController = ScrollController();
-  final ScrollController _bottomButtonController = ScrollController();
 
   final GlobalKey _shareButtonKey = GlobalKey();
 
-  bool _hasInitializedAnimation = false;
-  bool _showToTopButton = false;
+  bool _showBottomBar = true;
 
   // NOTE: Parsed and stored here to avoid re-parsing on every build
   List<Widget>? _htmlWidgets;
@@ -113,67 +108,25 @@ class _NewsPostViewState extends ConsumerState<NewsPostView> {
   @override
   void initState() {
     super.initState();
-    _scrollController.addListener(_handleBottomButtonAnimation);
-    _scrollController.addListener(_handleToTopButtonVisibility);
+    _scrollController.addListener(_handleBottomBarVisibility);
   }
 
   @override
   void dispose() {
     _scrollController.dispose();
-    _bottomButtonController.dispose();
     super.dispose();
   }
 
   double _lastScrollOffset = 0;
 
-  void _handleBottomButtonAnimation() {
-    if (!_bottomButtonController.hasClients) return;
+  void _handleBottomBarVisibility() {
+    final offset = _scrollController.offset;
+    // Scrolling up reveals the bar, scrolling down hides it.
+    final shouldShow = offset <= _lastScrollOffset;
+    _lastScrollOffset = offset;
 
-    if (_scrollController.offset <= _lastScrollOffset) {
-      // Scrolling up — show buttons
-      _bottomButtonController.animateTo(
-        _bottomButtonController.position.maxScrollExtent - 50,
-        duration: const Duration(milliseconds: 1000),
-        curve: Curves.easeInOut,
-      );
-    } else {
-      // Scrolling down — hide buttons
-      _bottomButtonController.animateTo(
-        0,
-        duration: const Duration(milliseconds: 1000),
-        curve: Curves.easeInOut,
-      );
-    }
-    _lastScrollOffset = _scrollController.offset;
-  }
-
-  void _handleToTopButtonVisibility() {
-    final shouldShow = _scrollController.offset >= 100;
-    if (shouldShow == _showToTopButton) return;
-    setState(() => _showToTopButton = shouldShow);
-  }
-
-  void _goToTop() {
-    _scrollController.animateTo(
-      0,
-      duration: const Duration(milliseconds: 1000),
-      curve: Curves.easeInOut,
-    );
-  }
-
-  void _initBottomButtonAnimation() {
-    if (_hasInitializedAnimation) return;
-    _hasInitializedAnimation = true;
-
-    Future.delayed(const Duration(seconds: 1), () {
-      if (_bottomButtonController.hasClients) {
-        _bottomButtonController.animateTo(
-          _bottomButtonController.position.maxScrollExtent - 50,
-          duration: const Duration(milliseconds: 1000),
-          curve: Curves.easeInOut,
-        );
-      }
-    });
+    if (shouldShow == _showBottomBar) return;
+    setState(() => _showBottomBar = shouldShow);
   }
 
   @override
@@ -182,9 +135,7 @@ class _NewsPostViewState extends ConsumerState<NewsPostView> {
 
     return Scaffold(
       backgroundColor: FccColors.gray90,
-      floatingActionButton: _showToTopButton
-          ? BackToTopButton(onPressed: _goToTop)
-          : null,
+      floatingActionButton: BackToTopButton(controller: _scrollController),
       body: postAsync.when(
         loading: () => const Center(child: CircularProgressIndicator()),
         error: (error, stack) {
@@ -196,7 +147,6 @@ class _NewsPostViewState extends ConsumerState<NewsPostView> {
         },
         data: (post) {
           final htmlWidgets = _htmlWidgets ??= _parseHtml(post);
-          _initBottomButtonAnimation();
 
           return Stack(
             children: [
@@ -268,16 +218,16 @@ class _NewsPostViewState extends ConsumerState<NewsPostView> {
   Widget _buildBottomButtons(Post post) {
     return Align(
       alignment: Alignment.bottomCenter,
-      child: SizedBox(
-        height: 75,
-        width: 300,
-        child: ListView(
-          physics: const NeverScrollableScrollPhysics(),
-          controller: _bottomButtonController,
-          children: [
-            Row(
+      child: AnimatedSlide(
+        offset: _showBottomBar ? Offset.zero : const Offset(0, 1),
+        duration: const Duration(milliseconds: 250),
+        curve: Curves.easeInOut,
+        child: Padding(
+          padding: const EdgeInsets.only(bottom: 32),
+          child: SizedBox(
+            width: 300,
+            child: Row(
               children: [
-                Container(height: 150),
                 BookmarkButton(post: post),
                 const SizedBox(
                   height: 35,
@@ -292,7 +242,7 @@ class _NewsPostViewState extends ConsumerState<NewsPostView> {
                 ),
               ],
             ),
-          ],
+          ),
         ),
       ),
     );

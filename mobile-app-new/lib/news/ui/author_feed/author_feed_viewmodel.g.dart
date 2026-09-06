@@ -58,7 +58,7 @@ final class NewsAuthorProvider
   }
 }
 
-String _$newsAuthorHash() => r'bdfbffd921588b7ac283c6fa2d79a2453420a862';
+String _$newsAuthorHash() => r'6393ad5923b855669e36c0e372aeb246477dce23';
 
 final class NewsAuthorFamily extends $Family
     with $FunctionalFamilyOverride<FutureOr<Author>, String> {

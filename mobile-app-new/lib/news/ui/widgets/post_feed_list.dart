@@ -2,20 +2,14 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import 'package:mobile_app_new/fcc_theme.dart';
-import 'package:mobile_app_new/news/ui/widgets/post_feed_list/post_feed_list_state.dart';
+import 'package:mobile_app_new/news/controllers/feed_controller.dart';
 import 'package:mobile_app_new/news/ui/widgets/post_tile.dart';
 import 'package:mobile_app_new/widgets/error_retry.dart';
 
 class PostFeedList extends ConsumerStatefulWidget {
-  const PostFeedList({
-    super.key,
-    this.tagSlug = '',
-    this.authorId = '',
-    this.header,
-  });
+  const PostFeedList({super.key, required this.source, this.header});
 
-  final String tagSlug;
-  final String authorId;
+  final NewsFeedSource source;
 
   // NOTE: The header is optional and can be used to display a widget above the
   // list of posts, such as author details or tag information.
@@ -28,8 +22,7 @@ class PostFeedList extends ConsumerStatefulWidget {
 class _PostFeedListState extends ConsumerState<PostFeedList> {
   final _scrollController = ScrollController();
 
-  NewsFeedNotifierProvider get _provider =>
-      newsFeedProvider(tagSlug: widget.tagSlug, authorId: widget.authorId);
+  NewsFeedNotifierProvider get _provider => newsFeedProvider(widget.source);
 
   @override
   void initState() {

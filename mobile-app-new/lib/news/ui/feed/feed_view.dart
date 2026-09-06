@@ -1,10 +1,12 @@
 import 'package:flutter/material.dart';
 
-import 'package:mobile_app_new/news/ui/widgets/post_feed_list/post_feed_list.dart';
+import 'package:mobile_app_new/news/controllers/feed_controller.dart';
+import 'package:mobile_app_new/news/ui/widgets/post_feed_list.dart';
 
 class NewsFeedView extends StatelessWidget {
   const NewsFeedView({super.key});
 
   @override
-  Widget build(BuildContext context) => const PostFeedList();
+  Widget build(BuildContext context) =>
+      const PostFeedList(source: NewsFeedSource.all());
 }

@@ -7,5 +7,5 @@ part 'author_feed_viewmodel.g.dart';
 // Only used on a cold deep link; in-app navigation hands the author over as extra
 @riverpod
 Future<Author> newsAuthor(Ref ref, String username) {
-  return ref.read(newsApiServiceProvider).getAuthor(username);
+  return ref.watch(newsApiServiceProvider).getAuthor(username);
 }

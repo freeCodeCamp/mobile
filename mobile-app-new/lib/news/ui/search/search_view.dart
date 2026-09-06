@@ -17,21 +17,19 @@ class NewsSearchView extends ConsumerStatefulWidget {
 class _NewsSearchViewState extends ConsumerState<NewsSearchView> {
   final TextEditingController _searchBarController = TextEditingController();
 
-  String _searchTerm = '';
-
   @override
   void dispose() {
     _searchBarController.dispose();
     super.dispose();
   }
 
-  void _onSearchTermChanged(String term) {
-    setState(() => _searchTerm = term);
-    ref.read(newsSearchProvider.notifier).search(term);
-  }
+  void _onSearchTermChanged(String term) =>
+      ref.read(newsSearchProvider.notifier).search(term);
 
   @override
   Widget build(BuildContext context) {
+    final results = ref.watch(newsSearchProvider);
+
     return Column(
       children: [
         TextField(
@@ -46,33 +44,34 @@ class _NewsSearchViewState extends ConsumerState<NewsSearchView> {
           ),
         ),
         const Divider(color: FccColors.gray90, thickness: 4, height: 4),
-        Expanded(child: _buildResults()),
+        Expanded(
+          child: ValueListenableBuilder(
+            valueListenable: _searchBarController,
+            builder: (context, value, _) => value.text.isEmpty
+                ? const Center(child: Text('Search for tutorials'))
+                : _buildResults(results),
+          ),
+        ),
       ],
     );
   }
 
-  Widget _buildResults() {
-    if (_searchTerm.isEmpty) {
-      return const Center(child: Text('Search for tutorials'));
-    }
-
-    return ref
-        .watch(newsSearchProvider)
-        .when(
-          loading: () => const Center(child: CircularProgressIndicator()),
-          error: (error, stackTrace) {
-            log('Error loading tutorials: $error\n$stackTrace');
-            return const Center(
-              child: Text(
-                'There was an error loading tutorials \n please try again',
-                textAlign: TextAlign.center,
-              ),
-            );
-          },
-          data: (posts) => posts.isEmpty
-              ? const Center(child: Text('No Tutorials Found'))
-              : _buildResultsList(posts),
+  Widget _buildResults(AsyncValue<List<SearchPost>> results) {
+    return results.when(
+      loading: () => const Center(child: CircularProgressIndicator()),
+      error: (error, stackTrace) {
+        log('Error loading tutorials: $error\n$stackTrace');
+        return const Center(
+          child: Text(
+            'There was an error loading tutorials \n please try again',
+            textAlign: TextAlign.center,
+          ),
         );
+      },
+      data: (posts) => posts.isEmpty
+          ? const Center(child: Text('No Tutorials Found'))
+          : _buildResultsList(posts),
+    );
   }
 
   Widget _buildResultsList(List<SearchPost> posts) {

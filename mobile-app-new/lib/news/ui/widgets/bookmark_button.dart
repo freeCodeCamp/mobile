@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:mobile_app_new/news/models/bookmarked_post_model.dart';
 import 'package:mobile_app_new/news/models/post_model.dart';
-import 'package:mobile_app_new/news/ui/bookmark_feed/bookmark_feed_viewmodel.dart';
+import 'package:mobile_app_new/news/controllers/bookmarks_controller.dart';
 import 'package:mobile_app_new/news/ui/widgets/bottom_button.dart';
 
 class BookmarkButton extends ConsumerWidget {

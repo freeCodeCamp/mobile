@@ -14,12 +14,11 @@ const _apiUrl = 'https://gql-beta.hashnode.com';
 
 const postsPerPage = 20;
 
-const postFieldsFragment = r'''
-    fragment PostFields on Post {
+const _postListFields = r'''
+    fragment PostListFields on Post {
       id
       slug
       title
-      url
       author {
         id
         username
@@ -44,15 +43,24 @@ const postFieldsFragment = r'''
         url
       }
       readTimeInMinutes
-      content {
-        html
-      }
       publishedAt
     }
   ''';
 
+const _postDetailFields =
+    _postListFields +
+    r'''
+    fragment PostDetailFields on Post {
+      ...PostListFields
+      url
+      content {
+        html
+      }
+    }
+  ''';
+
 const _getAllPostsQuery =
-    postFieldsFragment +
+    _postListFields +
     r'''
     query GetAllPosts($publicationId: ObjectId!, $first: Int!, $after: String) {
       publication(id: $publicationId) {
@@ -60,7 +68,7 @@ const _getAllPostsQuery =
         posts(first: $first, after: $after) {
           edges {
             node {
-              ...PostFields
+              ...PostListFields
             }
           }
           pageInfo {
@@ -93,13 +101,13 @@ const _getAuthorQuery = r'''
   ''';
 
 const _getPostsByAuthorQuery =
-    postFieldsFragment +
+    _postListFields +
     r'''
     query GetPostsByAuthorQuery($first: Int!, $after: String, $filter: SearchPostsOfPublicationFilter!) {
       searchPostsOfPublication(first: $first, after: $after, filter: $filter) {
         edges {
           node {
-            ...PostFields
+            ...PostListFields
           }
         }
         pageInfo {
@@ -111,7 +119,7 @@ const _getPostsByAuthorQuery =
   ''';
 
 const _getPostsByTagQuery =
-    postFieldsFragment +
+    _postListFields +
     r'''
     query GetPostsByTagQuery($publicationId: ObjectId!, $first: Int!, $after: String, $filter: PublicationPostConnectionFilter!) {
       publication(id: $publicationId) {
@@ -119,7 +127,7 @@ const _getPostsByTagQuery =
         posts(first: $first, after: $after, filter: $filter) {
           edges {
             node {
-              ...PostFields
+              ...PostListFields
             }
           }
           pageInfo {
@@ -132,12 +140,13 @@ const _getPostsByTagQuery =
   ''';
 
 const _getPostBySlugQuery =
-    postFieldsFragment +
+    _postDetailFields +
     r'''
     query GetPostBySlug($publicationId: ObjectId!, $slug: String!) {
       publication(id: $publicationId) {
+        id
         post(slug: $slug) {
-          ...PostFields
+          ...PostDetailFields
         }
       }
     }
@@ -153,120 +162,81 @@ class NewsApiRepository {
   );
   final String _publicationId = dotenv.get('HASHNODE_PUBLICATION_ID');
 
-  Future<RawPaginatedResponse> getAllPosts({String afterCursor = ''}) async {
+  Future<Map<String, dynamic>> _query(
+    String document,
+    Map<String, dynamic> variables,
+  ) async {
     final result = await _client.query(
-      QueryOptions(
-        document: gql(_getAllPostsQuery),
-        variables: {
-          'publicationId': _publicationId,
-          'first': postsPerPage,
-          'after': afterCursor,
-        },
-      ),
+      QueryOptions(document: gql(document), variables: variables),
     );
 
     if (result.hasException) {
       throw Exception(result.exception.toString());
     }
 
-    final data = result.data!['publication']['posts'];
-    return (
-      items: (data['edges'] as List).cast<Map<String, dynamic>>(),
-      endCursor: data['pageInfo']['endCursor'] as String,
-      hasNextPage: data['pageInfo']['hasNextPage'] as bool,
-    );
+    return result.data!;
+  }
+
+  RawPaginatedResponse _toPage(Map<String, dynamic> connection) => (
+    items: (connection['edges'] as List).cast<Map<String, dynamic>>(),
+    endCursor: connection['pageInfo']['endCursor'] as String,
+    hasNextPage: connection['pageInfo']['hasNextPage'] as bool,
+  );
+
+  Future<RawPaginatedResponse> getAllPosts({String afterCursor = ''}) async {
+    final data = await _query(_getAllPostsQuery, {
+      'publicationId': _publicationId,
+      'first': postsPerPage,
+      'after': afterCursor,
+    });
+
+    return _toPage(data['publication']['posts'] as Map<String, dynamic>);
   }
 
   Future<Map<String, dynamic>> getPostBySlug(String slug) async {
-    final result = await _client.query(
-      QueryOptions(
-        document: gql(_getPostBySlugQuery),
-        variables: {
-          'publicationId': _publicationId,
-          'slug': slug,
-        },
-      ),
-    );
+    final data = await _query(_getPostBySlugQuery, {
+      'publicationId': _publicationId,
+      'slug': slug,
+    });
 
-    if (result.hasException) {
-      throw Exception(result.exception.toString());
-    }
-
-    return result.data!['publication']['post'] as Map<String, dynamic>;
+    return data['publication']['post'] as Map<String, dynamic>;
   }
 
   Future<Map<String, dynamic>> getAuthor(String authorSlug) async {
-    final result = await _client.query(
-      QueryOptions(
-        document: gql(_getAuthorQuery),
-        variables: {'authorSlug': authorSlug},
-      ),
-    );
+    final data = await _query(_getAuthorQuery, {'authorSlug': authorSlug});
 
-    if (result.hasException) {
-      throw Exception(result.exception.toString());
-    }
-
-    return result.data!['user'] as Map<String, dynamic>;
+    return data['user'] as Map<String, dynamic>;
   }
 
   Future<RawPaginatedResponse> getPostsByAuthor(
     String authorId, {
     String afterCursor = '',
   }) async {
-    final result = await _client.query(
-      QueryOptions(
-        document: gql(_getPostsByAuthorQuery),
-        variables: {
-          'first': postsPerPage,
-          'after': afterCursor,
-          'filter': {
-            'publicationId': _publicationId,
-            'authorIds': [authorId],
-          },
-        },
-      ),
-    );
+    final data = await _query(_getPostsByAuthorQuery, {
+      'first': postsPerPage,
+      'after': afterCursor,
+      'filter': {
+        'publicationId': _publicationId,
+        'authorIds': [authorId],
+      },
+    });
 
-    if (result.hasException) {
-      throw Exception(result.exception.toString());
-    }
-
-    final data = result.data!['searchPostsOfPublication'];
-    return (
-      items: (data['edges'] as List).cast<Map<String, dynamic>>(),
-      endCursor: data['pageInfo']['endCursor'] as String,
-      hasNextPage: data['pageInfo']['hasNextPage'] as bool,
-    );
+    return _toPage(data['searchPostsOfPublication'] as Map<String, dynamic>);
   }
 
   Future<RawPaginatedResponse> getPostsByTag(
     String tagSlug, {
     String afterCursor = '',
   }) async {
-    final result = await _client.query(
-      QueryOptions(
-        document: gql(_getPostsByTagQuery),
-        variables: {
-          'publicationId': _publicationId,
-          'first': postsPerPage,
-          'after': afterCursor,
-          'filter': {
-            'tagSlugs': [tagSlug],
-          },
-        },
-      ),
-    );
+    final data = await _query(_getPostsByTagQuery, {
+      'publicationId': _publicationId,
+      'first': postsPerPage,
+      'after': afterCursor,
+      'filter': {
+        'tagSlugs': [tagSlug],
+      },
+    });
 
-    if (result.hasException) {
-      throw Exception(result.exception.toString());
-    }
-
-    final data = result.data!['publication']['posts'];
-    return (
-      items: (data['edges'] as List).cast<Map<String, dynamic>>(),
-      endCursor: data['pageInfo']['endCursor'] as String,
-      hasNextPage: data['pageInfo']['hasNextPage'] as bool,
-    );
+    return _toPage(data['publication']['posts'] as Map<String, dynamic>);
   }
 }

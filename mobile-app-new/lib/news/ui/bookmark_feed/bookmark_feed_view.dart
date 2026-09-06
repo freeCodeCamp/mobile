@@ -3,7 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:mobile_app_new/fcc_theme.dart';
 import 'package:mobile_app_new/news/models/bookmarked_post_model.dart';
 import 'package:mobile_app_new/routing/news.dart';
-import 'package:mobile_app_new/news/ui/bookmark_feed/bookmark_feed_viewmodel.dart';
+import 'package:mobile_app_new/news/controllers/bookmarks_controller.dart';
 import 'package:mobile_app_new/widgets/error_retry.dart';
 
 class NewsBookmarkFeedView extends ConsumerWidget {

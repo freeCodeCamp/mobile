@@ -3,7 +3,7 @@ import 'dart:developer';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:mobile_app_new/fcc_theme.dart';
-import 'package:mobile_app_new/news/models/post_model.dart';
+import 'package:mobile_app_new/news/models/post_summary_model.dart';
 import 'package:mobile_app_new/routing/news.dart';
 import 'package:mobile_app_new/utils/date_utils.dart';
 import 'package:mobile_app_new/news/ui/widgets/tag_button.dart';
@@ -11,7 +11,7 @@ import 'package:mobile_app_new/news/ui/widgets/tag_button.dart';
 class PostTile extends StatelessWidget {
   const PostTile({super.key, required this.post});
 
-  final Post post;
+  final PostSummary post;
 
   @override
   Widget build(BuildContext context) {
@@ -34,10 +34,10 @@ class PostTile extends StatelessWidget {
                   spacing: 0,
                   runSpacing: 4,
                   children: [
-                    for (int i = 0; i < post.tags.length && i < 3; i++)
+                    for (final tag in post.tags.take(3))
                       TagButton(
-                        tagName: post.tags[i].name,
-                        tagSlug: post.tags[i].slug,
+                        tagName: tag.name,
+                        tagSlug: tag.slug,
                         compact: true,
                       ),
                   ],

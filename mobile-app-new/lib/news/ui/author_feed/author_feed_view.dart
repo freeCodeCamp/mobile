@@ -4,8 +4,9 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import 'package:mobile_app_new/fcc_theme.dart';
 import 'package:mobile_app_new/news/models/author_model.dart';
+import 'package:mobile_app_new/news/controllers/feed_controller.dart';
 import 'package:mobile_app_new/news/ui/author_feed/author_feed_viewmodel.dart';
-import 'package:mobile_app_new/news/ui/widgets/post_feed_list/post_feed_list.dart';
+import 'package:mobile_app_new/news/ui/widgets/post_feed_list.dart';
 import 'package:mobile_app_new/widgets/error_retry.dart';
 
 class NewsAuthorFeedView extends ConsumerWidget {
@@ -38,7 +39,7 @@ class NewsAuthorFeedView extends ConsumerWidget {
   }
 
   Widget _buildFeed(Author author) => PostFeedList(
-    authorId: author.id,
+    source: NewsFeedSource.author(author.id),
     header: _AuthorDetails(author: author),
   );
 }

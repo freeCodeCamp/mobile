@@ -4,7 +4,7 @@ import 'package:mobile_app_new/fcc_theme.dart';
 import 'package:mobile_app_new/news/models/bookmarked_post_model.dart';
 import 'package:mobile_app_new/widgets/html_handler/html_handler.dart';
 import 'package:mobile_app_new/news/ui/widgets/back_to_top_button.dart';
-import 'package:mobile_app_new/news/ui/bookmark_feed/bookmark_feed_viewmodel.dart';
+import 'package:mobile_app_new/news/controllers/bookmarks_controller.dart';
 
 // Reads the HTML stored at bookmark time, so it works with no network.
 class NewsBookmarkPostView extends ConsumerStatefulWidget {
@@ -20,35 +20,13 @@ class NewsBookmarkPostView extends ConsumerStatefulWidget {
 class _NewsBookmarkPostViewState extends ConsumerState<NewsBookmarkPostView> {
   final ScrollController _scrollController = ScrollController();
 
-  bool _showToTopButton = false;
-
   // NOTE: Parsed and stored here to avoid re-parsing on every build
   List<Widget>? _htmlWidgets;
-
-  @override
-  void initState() {
-    super.initState();
-    _scrollController.addListener(_handleToTopButtonVisibility);
-  }
 
   @override
   void dispose() {
     _scrollController.dispose();
     super.dispose();
-  }
-
-  void _handleToTopButtonVisibility() {
-    final shouldShow = _scrollController.offset >= 100;
-    if (shouldShow == _showToTopButton) return;
-    setState(() => _showToTopButton = shouldShow);
-  }
-
-  void _goToTop() {
-    _scrollController.animateTo(
-      0,
-      duration: const Duration(milliseconds: 1000),
-      curve: Curves.easeInOut,
-    );
   }
 
   @override
@@ -67,9 +45,7 @@ class _NewsBookmarkPostViewState extends ConsumerState<NewsBookmarkPostView> {
 
     return Scaffold(
       backgroundColor: FccColors.gray90,
-      floatingActionButton: _showToTopButton
-          ? BackToTopButton(onPressed: _goToTop)
-          : null,
+      floatingActionButton: BackToTopButton(controller: _scrollController),
       body: SafeArea(
         child: CustomScrollView(
           controller: _scrollController,

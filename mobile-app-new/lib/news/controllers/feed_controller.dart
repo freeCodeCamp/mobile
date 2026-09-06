@@ -1,15 +1,23 @@
 import 'package:freezed_annotation/freezed_annotation.dart';
-import 'package:mobile_app_new/news/models/post_model.dart';
+import 'package:mobile_app_new/news/models/post_summary_model.dart';
 import 'package:mobile_app_new/news/services/api_service.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
-part 'post_feed_list_state.freezed.dart';
-part 'post_feed_list_state.g.dart';
+part 'feed_controller.freezed.dart';
+part 'feed_controller.g.dart';
+
+// Which posts a feed shows. Exactly one mode, checked by the compiler.
+@freezed
+sealed class NewsFeedSource with _$NewsFeedSource {
+  const factory NewsFeedSource.all() = AllPosts;
+  const factory NewsFeedSource.tag(String slug) = TagPosts;
+  const factory NewsFeedSource.author(String id) = AuthorPosts;
+}
 
 @freezed
 abstract class NewsFeedState with _$NewsFeedState {
   const factory NewsFeedState({
-    @Default([]) List<Post> posts,
+    @Default([]) List<PostSummary> posts,
     @Default('') String cursor,
     @Default(true) bool hasNextPage,
     @Default(false) bool isLoadingMore,
@@ -21,11 +29,8 @@ abstract class NewsFeedState with _$NewsFeedState {
 @riverpod
 class NewsFeedNotifier extends _$NewsFeedNotifier {
   @override
-  FutureOr<NewsFeedState> build({
-    String tagSlug = '',
-    String authorId = '',
-  }) async {
-    final page = await _fetch('');
+  FutureOr<NewsFeedState> build(NewsFeedSource source) async {
+    final page = await _fetch(ref.watch(newsApiServiceProvider), '');
 
     return NewsFeedState(
       posts: page.posts,
@@ -34,17 +39,12 @@ class NewsFeedNotifier extends _$NewsFeedNotifier {
     );
   }
 
-  Future<PostsPage> _fetch(String cursor) {
-    final service = ref.read(newsApiServiceProvider);
-
-    if (authorId.isNotEmpty) {
-      return service.getPostsByAuthor(authorId, afterCursor: cursor);
-    }
-    if (tagSlug.isNotEmpty) {
-      return service.getPostsByTag(tagSlug, afterCursor: cursor);
-    }
-    return service.getAllPosts(afterCursor: cursor);
-  }
+  Future<PostsPage> _fetch(NewsApiService service, String cursor) =>
+      switch (source) {
+        AllPosts() => service.getAllPosts(afterCursor: cursor),
+        TagPosts(:final slug) => service.getPostsByTag(slug, afterCursor: cursor),
+        AuthorPosts(:final id) => service.getPostsByAuthor(id, afterCursor: cursor),
+      };
 
   Future<void> fetchNextPage({bool isRetry = false}) async {
     final current = state.value;
@@ -58,7 +58,10 @@ class NewsFeedNotifier extends _$NewsFeedNotifier {
     );
 
     try {
-      final page = await _fetch(current.cursor);
+      final page = await _fetch(
+        ref.read(newsApiServiceProvider),
+        current.cursor,
+      );
 
       state = AsyncData(
         current.copyWith(

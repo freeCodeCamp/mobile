@@ -58,7 +58,7 @@ final class NewsPostProvider
   }
 }
 
-String _$newsPostHash() => r'26d73110a1b22400e8030d5543a43f78104a83f3';
+String _$newsPostHash() => r'f7390a9239ff0a618776dd692722c37adc28b846';
 
 final class NewsPostFamily extends $Family
     with $FunctionalFamilyOverride<FutureOr<Post>, String> {
