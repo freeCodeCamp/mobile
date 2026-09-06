@@ -1,50 +1,78 @@
+import 'package:freezed_annotation/freezed_annotation.dart';
 import 'package:mobile_app_new/models/news/post_model.dart';
 import 'package:mobile_app_new/services/news/api_service.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
+part 'post_feed_list_state.freezed.dart';
 part 'post_feed_list_state.g.dart';
+
+@freezed
+abstract class NewsFeedState with _$NewsFeedState {
+  const factory NewsFeedState({
+    @Default([]) List<Post> posts,
+    @Default('') String cursor,
+    @Default(true) bool hasNextPage,
+    @Default(false) bool isLoadingMore,
+    // NOTE: Set when appending a page failed; the posts already loaded stay valid.
+    Object? loadMoreError,
+  }) = _NewsFeedState;
+}
 
 @riverpod
 class NewsFeedNotifier extends _$NewsFeedNotifier {
-  bool _isFetchingNext = false;
-
-  String _endCursor = '';
-  bool _hasNextPage = true;
-  final List<Post> _posts = [];
-
-  bool get hasNextPage => _hasNextPage;
-
   @override
-  FutureOr<List<Post>> build({
+  FutureOr<NewsFeedState> build({
     String tagSlug = '',
     String authorId = '',
   }) async {
-    return _fetchPage();
+    final page = await _fetch('');
+
+    return NewsFeedState(
+      posts: page.posts,
+      cursor: page.endCursor,
+      hasNextPage: page.hasNextPage,
+    );
   }
 
-  Future<List<Post>> _fetchPage() async {
+  Future<PostsPage> _fetch(String cursor) {
     final service = ref.read(newsApiServiceProvider);
-    final PostsPage page;
+
     if (authorId.isNotEmpty) {
-      page = await service.getPostsByAuthor(authorId, afterCursor: _endCursor);
-    } else if (tagSlug.isNotEmpty) {
-      page = await service.getPostsByTag(tagSlug, afterCursor: _endCursor);
-    } else {
-      page = await service.getAllPosts(afterCursor: _endCursor);
+      return service.getPostsByAuthor(authorId, afterCursor: cursor);
     }
-
-    _endCursor = page.endCursor;
-    _hasNextPage = page.hasNextPage;
-    _posts.addAll(page.posts);
-
-    return List.unmodifiable(_posts);
+    if (tagSlug.isNotEmpty) {
+      return service.getPostsByTag(tagSlug, afterCursor: cursor);
+    }
+    return service.getAllPosts(afterCursor: cursor);
   }
 
-  Future<void> fetchNextPage() async {
-    if (!_hasNextPage || _isFetchingNext) return;
+  Future<void> fetchNextPage({bool isRetry = false}) async {
+    final current = state.value;
+    if (current == null || !current.hasNextPage || current.isLoadingMore) return;
 
-    _isFetchingNext = true;
-    state = await AsyncValue.guard(() => _fetchPage());
-    _isFetchingNext = false;
+    // A failed append waits for an explicit retry instead of refiring on scroll.
+    if (current.loadMoreError != null && !isRetry) return;
+
+    state = AsyncData(
+      current.copyWith(isLoadingMore: true, loadMoreError: null),
+    );
+
+    try {
+      final page = await _fetch(current.cursor);
+
+      state = AsyncData(
+        current.copyWith(
+          posts: [...current.posts, ...page.posts],
+          cursor: page.endCursor,
+          hasNextPage: page.hasNextPage,
+          isLoadingMore: false,
+        ),
+      );
+    } catch (error) {
+      // Keep the loaded posts; only the append failed.
+      state = AsyncData(
+        current.copyWith(isLoadingMore: false, loadMoreError: error),
+      );
+    }
   }
 }

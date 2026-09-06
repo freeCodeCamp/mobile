@@ -1,16 +1,16 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:mobile_app_new/models/news/bookmarked_post_model.dart';
-import 'package:mobile_app_new/ui/views/news/news-bookmark-feed/news_bookmark_feed_view.dart';
-import 'package:mobile_app_new/ui/views/news/news-bookmark-post/news_bookmark_post_view.dart';
-import 'package:mobile_app_new/ui/views/news/news-feed/news_feed_view.dart';
-import 'package:mobile_app_new/ui/views/news/news-post/news_post_view.dart';
-import 'package:mobile_app_new/ui/views/news/news-search/news_search_view.dart';
+import 'package:mobile_app_new/ui/views/news/bookmark-feed/bookmark_feed_view.dart';
+import 'package:mobile_app_new/ui/views/news/bookmark-post/bookmark_post_view.dart';
+import 'package:mobile_app_new/ui/views/news/feed/feed_view.dart';
+import 'package:mobile_app_new/ui/views/news/post/post_view.dart';
+import 'package:mobile_app_new/ui/views/news/search/search_view.dart';
 import 'package:mobile_app_new/models/news/author_model.dart';
-import 'package:mobile_app_new/ui/views/news/news-author/news_author_view.dart';
-import 'package:mobile_app_new/ui/views/news/news-tag-feed/news_tag_feed_view.dart';
-import 'package:mobile_app_new/ui/views/news/news-view-handler/news_view_handler_view.dart';
-import 'package:mobile_app_new/ui/views/news/widgets/news_image_view.dart';
+import 'package:mobile_app_new/ui/views/news/author-feed/author_feed_view.dart';
+import 'package:mobile_app_new/ui/views/news/tag-feed/tag_feed_view.dart';
+import 'package:mobile_app_new/ui/views/news/news_shell.dart';
+import 'package:mobile_app_new/ui/views/news/image/image_view.dart';
 
 part 'news.g.dart';
 
@@ -35,7 +35,7 @@ class NewsShellRoute extends ShellRouteData {
 
   @override
   Widget builder(BuildContext context, GoRouterState state, Widget navigator) {
-    return NewsViewHandlerView(child: navigator);
+    return NewsShell(child: navigator);
   }
 }
 
@@ -99,7 +99,7 @@ class NewsAuthorRoute extends GoRouteData with $NewsAuthorRoute {
 
   @override
   Widget build(BuildContext context, GoRouterState state) =>
-      NewsAuthorView(username: username, author: $extra);
+      NewsAuthorFeedView(username: username, author: $extra);
 }
 
 @TypedGoRoute<NewsBookmarkPostRoute>(path: newsBookmarkPostPath)

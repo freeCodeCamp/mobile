@@ -8,12 +8,13 @@ import 'package:mobile_app_new/fcc_theme.dart';
 import 'package:mobile_app_new/models/news/post_model.dart';
 import 'package:mobile_app_new/routing/news.dart';
 import 'package:mobile_app_new/ui/core/html_handler/html_handler.dart';
-import 'package:mobile_app_new/ui/views/news/news-post/news_post_viewmodel.dart';
+import 'package:mobile_app_new/ui/views/news/post/post_viewmodel.dart';
 import 'package:mobile_app_new/ui/views/news/widgets/back_to_top_button.dart';
 import 'package:mobile_app_new/ui/views/news/widgets/bookmark_button.dart';
-import 'package:mobile_app_new/ui/views/news/widgets/news_bottom_button.dart';
+import 'package:mobile_app_new/ui/views/news/widgets/bottom_button.dart';
 import 'package:mobile_app_new/ui/views/news/widgets/tag_button.dart';
 import 'package:share_plus/share_plus.dart';
+import 'package:mobile_app_new/ui/core/widgets/error_retry.dart';
 
 class NewsPostHeader extends StatelessWidget {
   const NewsPostHeader({super.key, required this.post});
@@ -106,6 +107,9 @@ class _NewsPostViewState extends ConsumerState<NewsPostView> {
   bool _hasInitializedAnimation = false;
   bool _showToTopButton = false;
 
+  // NOTE: Parsed and stored here to avoid re-parsing on every build
+  List<Widget>? _htmlWidgets;
+
   @override
   void initState() {
     super.initState();
@@ -185,23 +189,15 @@ class _NewsPostViewState extends ConsumerState<NewsPostView> {
         loading: () => const Center(child: CircularProgressIndicator()),
         error: (error, stack) {
           log('Error loading post: $error');
-          return Center(
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                const Text('Unable to load post.', textAlign: TextAlign.center),
-                const SizedBox(height: 12),
-                TextButton(
-                  onPressed: () =>
-                      ref.invalidate(newsPostProvider(widget.slug)),
-                  child: const Text('Retry'),
-                ),
-              ],
-            ),
+          return ErrorRetry(
+            message: 'Unable to load post.',
+            onRetry: () => ref.invalidate(newsPostProvider(widget.slug)),
           );
         },
         data: (post) {
-          final htmlWidgets = _buildLazyLoadedHtml(post);
+          final htmlWidgets = _htmlWidgets ??= _parseHtml(post);
+          _initBottomButtonAnimation();
+
           return Stack(
             children: [
               ListView.builder(
@@ -220,10 +216,8 @@ class _NewsPostViewState extends ConsumerState<NewsPostView> {
     );
   }
 
-  List<Widget> _buildLazyLoadedHtml(Post post) {
-    HTMLParser htmlParser = HTMLParser(context: context);
-
-    List<Widget> elements = htmlParser.parse(post.content.html);
+  List<Widget> _parseHtml(Post post) {
+    final elements = HTMLParser(context: context).parse(post.content.html);
 
     elements.insert(
       0,
@@ -253,8 +247,6 @@ class _NewsPostViewState extends ConsumerState<NewsPostView> {
     );
 
     elements.add(const SizedBox(height: 100));
-
-    _initBottomButtonAnimation();
 
     return elements;
   }

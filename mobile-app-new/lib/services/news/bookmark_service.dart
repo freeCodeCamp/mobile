@@ -41,8 +41,9 @@ class NewsBookmarkService {
 
   Future<void> removeBookmark(String id) {
     return _repo.updateBookmarks(
-      (current) => List<BookmarkEntry>.from(current)
-        ..removeWhere((entry) => entry[_idKey] == id),
+      (current) =>
+          List<BookmarkEntry>.from(current)
+            ..removeWhere((entry) => entry[_idKey] == id),
     );
   }
 
@@ -60,12 +61,7 @@ class NewsBookmarkService {
       _authorKey: final String authorName,
       _textKey: final String text,
     } =>
-      BookmarkedPost(
-        id: id,
-        title: title,
-        authorName: authorName,
-        text: text,
-      ),
+      BookmarkedPost(id: id, title: title, authorName: authorName, text: text),
     _ => throw FormatException('Malformed bookmark entry: $entry'),
   };
 }

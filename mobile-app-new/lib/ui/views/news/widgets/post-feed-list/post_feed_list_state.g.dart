@@ -13,7 +13,7 @@ part of 'post_feed_list_state.dart';
 final newsFeedProvider = NewsFeedNotifierFamily._();
 
 final class NewsFeedNotifierProvider
-    extends $AsyncNotifierProvider<NewsFeedNotifier, List<Post>> {
+    extends $AsyncNotifierProvider<NewsFeedNotifier, NewsFeedState> {
   NewsFeedNotifierProvider._({
     required NewsFeedNotifierFamily super.from,
     required ({String tagSlug, String authorId}) super.argument,
@@ -50,15 +50,15 @@ final class NewsFeedNotifierProvider
   }
 }
 
-String _$newsFeedNotifierHash() => r'7f00ed34d515b8035020b3a8f84c85566c4c6490';
+String _$newsFeedNotifierHash() => r'f67d743e7fd7f603374d990de1f4dd336b91a6ff';
 
 final class NewsFeedNotifierFamily extends $Family
     with
         $ClassFamilyOverride<
           NewsFeedNotifier,
-          AsyncValue<List<Post>>,
-          List<Post>,
-          FutureOr<List<Post>>,
+          AsyncValue<NewsFeedState>,
+          NewsFeedState,
+          FutureOr<NewsFeedState>,
           ({String tagSlug, String authorId})
         > {
   NewsFeedNotifierFamily._()
@@ -80,21 +80,21 @@ final class NewsFeedNotifierFamily extends $Family
   String toString() => r'newsFeedProvider';
 }
 
-abstract class _$NewsFeedNotifier extends $AsyncNotifier<List<Post>> {
+abstract class _$NewsFeedNotifier extends $AsyncNotifier<NewsFeedState> {
   late final _$args = ref.$arg as ({String tagSlug, String authorId});
   String get tagSlug => _$args.tagSlug;
   String get authorId => _$args.authorId;
 
-  FutureOr<List<Post>> build({String tagSlug = '', String authorId = ''});
+  FutureOr<NewsFeedState> build({String tagSlug = '', String authorId = ''});
   @$mustCallSuper
   @override
   WhenComplete runBuild() {
-    final ref = this.ref as $Ref<AsyncValue<List<Post>>, List<Post>>;
+    final ref = this.ref as $Ref<AsyncValue<NewsFeedState>, NewsFeedState>;
     final element =
         ref.element
             as $ClassProviderElement<
-              AnyNotifier<AsyncValue<List<Post>>, List<Post>>,
-              AsyncValue<List<Post>>,
+              AnyNotifier<AsyncValue<NewsFeedState>, NewsFeedState>,
+              AsyncValue<NewsFeedState>,
               Object?,
               Object?
             >;

@@ -1,6 +1,6 @@
 // GENERATED CODE - DO NOT MODIFY BY HAND
 
-part of 'news_author_viewmodel.dart';
+part of 'author_feed_viewmodel.dart';
 
 // **************************************************************************
 // RiverpodGenerator

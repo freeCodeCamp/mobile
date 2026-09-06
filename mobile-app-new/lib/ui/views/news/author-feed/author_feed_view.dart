@@ -4,11 +4,12 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import 'package:mobile_app_new/fcc_theme.dart';
 import 'package:mobile_app_new/models/news/author_model.dart';
-import 'package:mobile_app_new/ui/views/news/news-author/news_author_viewmodel.dart';
+import 'package:mobile_app_new/ui/views/news/author-feed/author_feed_viewmodel.dart';
 import 'package:mobile_app_new/ui/views/news/widgets/post-feed-list/post_feed_list.dart';
+import 'package:mobile_app_new/ui/core/widgets/error_retry.dart';
 
-class NewsAuthorView extends ConsumerWidget {
-  const NewsAuthorView({super.key, required this.username, this.author});
+class NewsAuthorFeedView extends ConsumerWidget {
+  const NewsAuthorFeedView({super.key, required this.username, this.author});
 
   final String username;
   final Author? author;
@@ -27,7 +28,8 @@ class NewsAuthorView extends ConsumerWidget {
                 .when(
                   loading: () =>
                       const Center(child: CircularProgressIndicator()),
-                  error: (error, stack) => _ErrorView(
+                  error: (error, stack) => ErrorRetry(
+                    message: 'Unable to load author.',
                     onRetry: () => ref.invalidate(newsAuthorProvider(username)),
                   ),
                   data: _buildFeed,
@@ -41,28 +43,6 @@ class NewsAuthorView extends ConsumerWidget {
   );
 }
 
-class _ErrorView extends StatelessWidget {
-  const _ErrorView({required this.onRetry});
-
-  final VoidCallback onRetry;
-
-  @override
-  Widget build(BuildContext context) {
-    return Center(
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          const Text(
-            'Unable to load author.',
-            textAlign: TextAlign.center,
-          ),
-          const SizedBox(height: 12),
-          TextButton(onPressed: onRetry, child: const Text('Retry')),
-        ],
-      ),
-    );
-  }
-}
 
 class _AuthorDetails extends StatelessWidget {
   const _AuthorDetails({required this.author});

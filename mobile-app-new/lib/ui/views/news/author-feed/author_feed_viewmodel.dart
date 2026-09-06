@@ -2,7 +2,7 @@ import 'package:mobile_app_new/models/news/author_model.dart';
 import 'package:mobile_app_new/services/news/api_service.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
-part 'news_author_viewmodel.g.dart';
+part 'author_feed_viewmodel.g.dart';
 
 // Only used on a cold deep link; in-app navigation hands the author over as extra
 @riverpod

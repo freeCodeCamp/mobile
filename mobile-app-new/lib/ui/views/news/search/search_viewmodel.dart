@@ -2,7 +2,7 @@ import 'package:mobile_app_new/models/news/search_post_model.dart';
 import 'package:mobile_app_new/services/news/search_service.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
-part 'news_search_viewmodel.g.dart';
+part 'search_viewmodel.g.dart';
 
 @riverpod
 class NewsSearchNotifier extends _$NewsSearchNotifier {

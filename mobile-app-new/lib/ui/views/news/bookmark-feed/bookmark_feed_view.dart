@@ -3,7 +3,8 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:mobile_app_new/fcc_theme.dart';
 import 'package:mobile_app_new/models/news/bookmarked_post_model.dart';
 import 'package:mobile_app_new/routing/news.dart';
-import 'package:mobile_app_new/ui/views/news/news-bookmark-feed/news_bookmark_feed_viewmodel.dart';
+import 'package:mobile_app_new/ui/views/news/bookmark-feed/bookmark_feed_viewmodel.dart';
+import 'package:mobile_app_new/ui/core/widgets/error_retry.dart';
 
 class NewsBookmarkFeedView extends ConsumerWidget {
   const NewsBookmarkFeedView({super.key});
@@ -18,8 +19,9 @@ class NewsBookmarkFeedView extends ConsumerWidget {
       onRefresh: () => ref.refresh(newsBookmarksProvider.future),
       child: bookmarks.when(
         loading: () => const Center(child: CircularProgressIndicator()),
-        error: (error, stack) => const Center(
-          child: Text('Unable to load bookmarks.', textAlign: TextAlign.center),
+        error: (error, stack) => ErrorRetry(
+          message: 'Unable to load bookmarks.',
+          onRetry: () => ref.invalidate(newsBookmarksProvider),
         ),
         data: (posts) =>
             posts.isEmpty ? const _EmptyState() : _BookmarkList(posts: posts),

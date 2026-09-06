@@ -4,7 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:mobile_app_new/fcc_theme.dart';
 import 'package:mobile_app_new/models/news/search_post_model.dart';
-import 'package:mobile_app_new/ui/views/news/news-search/news_search_viewmodel.dart';
+import 'package:mobile_app_new/ui/views/news/search/search_viewmodel.dart';
 import 'package:mobile_app_new/ui/views/news/widgets/search_result_tile.dart';
 
 class NewsSearchView extends ConsumerStatefulWidget {

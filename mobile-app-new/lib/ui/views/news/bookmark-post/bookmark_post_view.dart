@@ -3,8 +3,8 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:mobile_app_new/fcc_theme.dart';
 import 'package:mobile_app_new/models/news/bookmarked_post_model.dart';
 import 'package:mobile_app_new/ui/core/html_handler/html_handler.dart';
-import 'package:mobile_app_new/ui/views/news/news-bookmark-feed/news_bookmark_feed_viewmodel.dart';
 import 'package:mobile_app_new/ui/views/news/widgets/back_to_top_button.dart';
+import 'package:mobile_app_new/ui/views/news/bookmark-feed/bookmark_feed_viewmodel.dart';
 
 // Reads the HTML stored at bookmark time, so it works with no network.
 class NewsBookmarkPostView extends ConsumerStatefulWidget {
