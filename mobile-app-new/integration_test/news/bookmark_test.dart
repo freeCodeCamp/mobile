@@ -5,10 +5,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:integration_test/integration_test.dart';
 import 'package:mobile_app_new/main.dart' as app;
-import 'package:mobile_app_new/ui/views/news/bookmark-feed/bookmark_feed_view.dart';
-import 'package:mobile_app_new/ui/views/news/post/post_view.dart';
-import 'package:mobile_app_new/ui/views/news/widgets/bookmark_button.dart';
-import 'package:mobile_app_new/ui/views/news/widgets/post_tile.dart';
+import 'package:mobile_app_new/news/ui/bookmark_feed/bookmark_feed_view.dart';
+import 'package:mobile_app_new/news/ui/post/post_view.dart';
+import 'package:mobile_app_new/news/ui/widgets/bookmark_button.dart';
+import 'package:mobile_app_new/news/ui/widgets/post_tile.dart';
 import 'package:path/path.dart' as path;
 import 'package:path_provider/path_provider.dart';
 

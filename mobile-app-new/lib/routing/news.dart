@@ -1,16 +1,16 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
-import 'package:mobile_app_new/models/news/bookmarked_post_model.dart';
-import 'package:mobile_app_new/ui/views/news/bookmark-feed/bookmark_feed_view.dart';
-import 'package:mobile_app_new/ui/views/news/bookmark-post/bookmark_post_view.dart';
-import 'package:mobile_app_new/ui/views/news/feed/feed_view.dart';
-import 'package:mobile_app_new/ui/views/news/post/post_view.dart';
-import 'package:mobile_app_new/ui/views/news/search/search_view.dart';
-import 'package:mobile_app_new/models/news/author_model.dart';
-import 'package:mobile_app_new/ui/views/news/author-feed/author_feed_view.dart';
-import 'package:mobile_app_new/ui/views/news/tag-feed/tag_feed_view.dart';
-import 'package:mobile_app_new/ui/views/news/news_shell.dart';
-import 'package:mobile_app_new/ui/views/news/image/image_view.dart';
+import 'package:mobile_app_new/news/models/bookmarked_post_model.dart';
+import 'package:mobile_app_new/news/ui/bookmark_feed/bookmark_feed_view.dart';
+import 'package:mobile_app_new/news/ui/bookmark_post/bookmark_post_view.dart';
+import 'package:mobile_app_new/news/ui/feed/feed_view.dart';
+import 'package:mobile_app_new/news/ui/post/post_view.dart';
+import 'package:mobile_app_new/news/ui/search/search_view.dart';
+import 'package:mobile_app_new/news/models/author_model.dart';
+import 'package:mobile_app_new/news/ui/author_feed/author_feed_view.dart';
+import 'package:mobile_app_new/news/ui/tag_feed/tag_feed_view.dart';
+import 'package:mobile_app_new/news/ui/news_shell.dart';
+import 'package:mobile_app_new/news/ui/image/image_view.dart';
 
 part 'news.g.dart';
 

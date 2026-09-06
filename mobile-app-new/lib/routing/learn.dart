@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
-import 'package:mobile_app_new/home_page.dart';
+import 'package:mobile_app_new/learn/ui/home_page.dart';
 
 part 'learn.g.dart';
 
