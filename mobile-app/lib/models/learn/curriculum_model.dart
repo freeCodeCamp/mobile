@@ -242,27 +242,41 @@ class Block {
       dashedName: dashedName,
       description: finalDescription,
       order: data['order'],
-      challenges: (data['challengeOrder'] as List)
-          .map<ChallengeOrder>(
-            (dynamic challenge) => ChallengeOrder(
-              id: challenge[0] ?? challenge['id'],
-              title: challenge[1] ?? challenge['title'],
-            ),
-          )
-          .toList(),
-      challengeTiles: (data['challengeOrder'] as List)
-          .map<ChallengeListTile>(
-            (dynamic challenge) => ChallengeListTile(
-              id: challenge[0] ?? challenge['id'],
-              name: challenge[1] ?? challenge['title'],
-              dashedName: challenge[1] ??
-                  challenge['title']
-                      .toLowerCase()
-                      .replaceAll(' ', '-')
-                      .replaceAll(RegExp(r"[@':]"), ''),
-            ),
-          )
-          .toList(),
+      challenges: () {
+        final Set<String> seenIds = {};
+        final List<ChallengeOrder> list = [];
+        for (dynamic challenge in (data['challengeOrder'] as List? ?? [])) {
+          final String id = challenge[0] ?? challenge['id'];
+          final String title = challenge[1] ?? challenge['title'];
+          if (!seenIds.contains(id)) {
+            seenIds.add(id);
+            list.add(ChallengeOrder(id: id, title: title));
+          }
+        }
+        return list;
+      }(),
+      challengeTiles: () {
+        final Set<String> seenIds = {};
+        final List<ChallengeListTile> list = [];
+        for (dynamic challenge in (data['challengeOrder'] as List? ?? [])) {
+          final String id = challenge[0] ?? challenge['id'];
+          final String title = challenge[1] ?? challenge['title'];
+          if (!seenIds.contains(id)) {
+            seenIds.add(id);
+            list.add(
+              ChallengeListTile(
+                id: id,
+                name: title,
+                dashedName: title
+                    .toLowerCase()
+                    .replaceAll(' ', '-')
+                    .replaceAll(RegExp(r"[@':]"), ''),
+              ),
+            );
+          }
+        }
+        return list;
+      }(),
     );
   }
 }
