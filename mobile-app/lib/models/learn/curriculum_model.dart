@@ -228,6 +228,11 @@ class Block {
       return BlockLabel.fromValue(type);
     }
 
+    final challengeOrder = _scopedChallengeOrder(
+      data['challengeOrder'] as List,
+      superBlockDashedName,
+    );
+
     return Block(
       superBlock: SuperBlock(
         dashedName: superBlockDashedName,
@@ -242,29 +247,90 @@ class Block {
       dashedName: dashedName,
       description: finalDescription,
       order: data['order'],
-      challenges: (data['challengeOrder'] as List)
+      challenges: challengeOrder
           .map<ChallengeOrder>(
             (dynamic challenge) => ChallengeOrder(
-              id: challenge[0] ?? challenge['id'],
-              title: challenge[1] ?? challenge['title'],
+              id: _challengeId(challenge),
+              title: _challengeTitle(challenge),
             ),
           )
           .toList(),
-      challengeTiles: (data['challengeOrder'] as List)
+      challengeTiles: challengeOrder
           .map<ChallengeListTile>(
             (dynamic challenge) => ChallengeListTile(
-              id: challenge[0] ?? challenge['id'],
-              name: challenge[1] ?? challenge['title'],
-              dashedName: challenge[1] ??
-                  challenge['title']
-                      .toLowerCase()
-                      .replaceAll(' ', '-')
-                      .replaceAll(RegExp(r"[@':]"), ''),
+              id: _challengeId(challenge),
+              name: _challengeTitle(challenge),
+              dashedName: _challengeDashedName(challenge),
             ),
           )
           .toList(),
     );
   }
+}
+
+String _challengeId(dynamic challenge) {
+  if (challenge is List) {
+    return challenge[0];
+  }
+
+  return challenge['id'];
+}
+
+String _challengeTitle(dynamic challenge) {
+  if (challenge is List) {
+    return challenge[1];
+  }
+
+  return challenge['title'];
+}
+
+String _challengeDashedName(dynamic challenge) {
+  if (challenge is Map && challenge['dashedName'] != null) {
+    return challenge['dashedName'];
+  }
+
+  return _challengeTitle(challenge)
+      .toLowerCase()
+      .replaceAll(' ', '-')
+      .replaceAll(RegExp(r"[@':]"), '');
+}
+
+List<dynamic> _scopedChallengeOrder(
+  List<dynamic> challengeOrder,
+  String superBlockDashedName,
+) {
+  final seenIds = <String>{};
+  final scopedChallengeOrder = <dynamic>[];
+
+  for (final challenge in challengeOrder) {
+    if (!_belongsToSuperBlock(challenge, superBlockDashedName)) {
+      continue;
+    }
+
+    final id = _challengeId(challenge);
+
+    if (seenIds.add(id)) {
+      scopedChallengeOrder.add(challenge);
+    }
+  }
+
+  return scopedChallengeOrder;
+}
+
+bool _belongsToSuperBlock(dynamic challenge, String superBlockDashedName) {
+  if (challenge is! Map) {
+    return true;
+  }
+
+  // Prefer superBlock when it is present because it is the direct curriculum
+  // route segment the mobile app uses to fetch block and challenge data.
+  final challengeSuperBlock =
+      challenge['superBlock'] ?? challenge['superblock'];
+  if (challengeSuperBlock != null) {
+    return challengeSuperBlock == superBlockDashedName;
+  }
+
+  return true;
 }
 
 class ChallengeListTile {
