@@ -57,6 +57,9 @@ dependencies:
   html: 0.15.6
   path: 1.9.1
   path_provider: 2.1.6
+  audio_service: 0.18.19
+  just_audio: 0.10.6
+  web_socket_channel: 3.0.3
 
 dev_dependencies:
   flutter_driver:

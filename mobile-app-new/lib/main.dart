@@ -3,13 +3,21 @@ import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:mobile_app_new/fcc_theme.dart';
 import 'package:mobile_app_new/routing/router.dart';
+import 'package:mobile_app_new/services/audio_service.dart';
 import 'package:mobile_app_new/services/dio_service.dart';
 
 Future<void> main() async {
   await dotenv.load();
   await DioService().init();
 
-  runApp(ProviderScope(child: const MyApp()));
+  runApp(
+    ProviderScope(
+      overrides: [
+        audioHandlerProvider.overrideWithValue(await initAudioService()),
+      ],
+      child: const MyApp(),
+    ),
+  );
 }
 
 class MyApp extends StatelessWidget {
