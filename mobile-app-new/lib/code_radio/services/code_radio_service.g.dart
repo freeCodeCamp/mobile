@@ -26,7 +26,7 @@ final class CodeRadioServiceProvider
         argument: null,
         retry: null,
         name: r'codeRadioServiceProvider',
-        isAutoDispose: true,
+        isAutoDispose: false,
         dependencies: null,
         $allTransitiveDependencies: null,
       );
@@ -53,4 +53,4 @@ final class CodeRadioServiceProvider
   }
 }
 
-String _$codeRadioServiceHash() => r'9ce102b6a6ce4ebc4977914b53276ec06277646a';
+String _$codeRadioServiceHash() => r'1334b2003f1086cb57717c0dcb876381666afe3f';

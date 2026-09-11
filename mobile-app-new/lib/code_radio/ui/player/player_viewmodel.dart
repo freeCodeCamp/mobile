@@ -6,8 +6,13 @@ import 'package:riverpod_annotation/riverpod_annotation.dart';
 part 'player_viewmodel.g.dart';
 
 @riverpod
-Stream<CodeRadio> codeRadioNowPlaying(Ref ref) =>
-    ref.watch(codeRadioServiceProvider).nowPlaying;
+Stream<CodeRadio> codeRadioNowPlaying(Ref ref) {
+  final service = ref.watch(codeRadioServiceProvider);
+
+  service.start();
+
+  return service.updates;
+}
 
 // The station only pushes on an event, so the seconds in between are counted
 // locally. Every push resyncs the count to the server's elapsed.
@@ -43,12 +48,7 @@ class CodeRadioPlayerNotifier extends _$CodeRadioPlayerNotifier {
   }
 
   Future<void> _load(CodeRadio radio) async {
-    if (_handler.codeRadioSongId == radio.nowPlaying.song.id) return;
-
-    if (_handler.codeRadioSongId != null) {
-      _handler.updateCodeRadioSong(radio.nowPlaying.song);
-      return;
-    }
+    if (_handler.codeRadioSongId != null) return;
 
     await _handler.loadCodeRadio(radio);
     await _handler.play();

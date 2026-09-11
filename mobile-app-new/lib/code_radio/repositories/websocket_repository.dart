@@ -11,7 +11,7 @@ const _url =
 
 const _station = 'station:coderadio';
 
-@riverpod
+@Riverpod(keepAlive: true)
 CodeRadioWebsocketRepository codeRadioWebsocketRepository(Ref ref) {
   final repository = CodeRadioWebsocketRepository();
   ref.onDispose(repository.dispose);

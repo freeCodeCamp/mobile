@@ -45,10 +45,16 @@ class AudioPlayerHandler extends BaseAudioHandler {
 
   AudioTypeConfig? _audioConfig;
 
+  Uri? _codeRadioUrl;
+
+  // NOTE: Pausing a live stream does not pause the source: the buffer keeps filling
+  // while the playhead sits still, so resuming plays out the backlog instead
+  // of what the station is broadcasting now. Reconnecting on resume is the
+  // only way back to the live edge.
+  bool _resumeNeedsLiveEdge = false;
+
   AudioTypeConfig? get audioConfig => _audioConfig;
 
-  // The song the notification is currently showing, or null when the player
-  // holds something other than code radio.
   String? get codeRadioSongId =>
       _audioConfig is CodeRadioAudioConfig ? mediaItem.value?.id : null;
 
@@ -56,15 +62,31 @@ class AudioPlayerHandler extends BaseAudioHandler {
       _audioPlayer.playing && _audioConfig is CodeRadioAudioConfig;
 
   @override
-  Future<void> play() => _audioPlayer.play();
+  Future<void> play() async {
+    if (_resumeNeedsLiveEdge) {
+      _resumeNeedsLiveEdge = false;
+
+      if (_audioConfig is CodeRadioAudioConfig) {
+        await _rejoinCodeRadioLiveEdge();
+      }
+    }
+
+    await _audioPlayer.play();
+  }
 
   @override
-  Future<void> pause() => _audioPlayer.pause();
+  Future<void> pause() async {
+    if (_audioConfig is CodeRadioAudioConfig) _resumeNeedsLiveEdge = true;
+
+    await _audioPlayer.pause();
+  }
 
   @override
   Future<void> stop() async {
     await _audioPlayer.stop();
     _audioConfig = null;
+    _codeRadioUrl = null;
+    _resumeNeedsLiveEdge = false;
     return super.stop();
   }
 
@@ -73,18 +95,19 @@ class AudioPlayerHandler extends BaseAudioHandler {
 
   @override
   Future<void> onTaskRemoved() async {
-    await _audioPlayer.stop();
+    await stop();
     return super.onTaskRemoved();
   }
 
   Future<void> loadCodeRadio(CodeRadio radio) async {
     try {
       final song = _toMediaItem(radio.nowPlaying.song);
+      final url = Uri.parse(radio.station.listenUrl);
 
-      await _audioPlayer.setAudioSource(
-        AudioSource.uri(Uri.parse(radio.station.listenUrl), tag: song),
-      );
+      await _audioPlayer.setAudioSource(AudioSource.uri(url, tag: song));
 
+      _codeRadioUrl = url;
+      _resumeNeedsLiveEdge = false;
       _audioConfig = const CodeRadioAudioConfig();
       _publish(song);
     } catch (e) {
@@ -93,6 +116,19 @@ class AudioPlayerHandler extends BaseAudioHandler {
   }
 
   void updateCodeRadioSong(Song song) => _publish(_toMediaItem(song));
+
+  Future<void> _rejoinCodeRadioLiveEdge() async {
+    final url = _codeRadioUrl;
+    final song = mediaItem.value;
+
+    if (url == null || song == null) return;
+
+    try {
+      await _audioPlayer.setAudioSource(AudioSource.uri(url, tag: song));
+    } catch (e) {
+      log('rejoinCodeRadioLiveEdge: Cannot reconnect: $e');
+    }
+  }
 
   MediaItem _toMediaItem(Song song) => MediaItem(
     id: song.id,

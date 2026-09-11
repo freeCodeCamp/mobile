@@ -42,7 +42,7 @@ final class CodeRadioNowPlayingProvider
 }
 
 String _$codeRadioNowPlayingHash() =>
-    r'd0f9afcd3106179e55eae66b421dde5852073477';
+    r'642ff517d7359e73249732ea7ccbedfa1c04e48f';
 
 @ProviderFor(codeRadioElapsed)
 final codeRadioElapsedProvider = CodeRadioElapsedProvider._();
@@ -110,7 +110,7 @@ final class CodeRadioPlayerNotifierProvider
 }
 
 String _$codeRadioPlayerNotifierHash() =>
-    r'c03d7ff4bd808ab8292ee9aeaec853a230fee942';
+    r'763710fdaf1ee286a50a7d40ccad330245da1e2a';
 
 abstract class _$CodeRadioPlayerNotifier extends $Notifier<bool> {
   bool build();

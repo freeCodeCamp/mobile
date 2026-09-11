@@ -27,7 +27,7 @@ final class CodeRadioWebsocketRepositoryProvider
         argument: null,
         retry: null,
         name: r'codeRadioWebsocketRepositoryProvider',
-        isAutoDispose: true,
+        isAutoDispose: false,
         dependencies: null,
         $allTransitiveDependencies: null,
       );
@@ -56,4 +56,4 @@ final class CodeRadioWebsocketRepositoryProvider
 }
 
 String _$codeRadioWebsocketRepositoryHash() =>
-    r'6ba28b15535756ff4a682f6e08c0e301f3c47732';
+    r'734876525c907597668041a2538a87774fe7b281';
