@@ -2,6 +2,7 @@ import 'dart:developer';
 
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
+import 'package:freecodecamp/constants/asset_constants.dart';
 import 'package:freecodecamp/extensions/i18n_extension.dart';
 import 'package:freecodecamp/models/news/tutorial_model.dart';
 import 'package:freecodecamp/ui/views/news/news-feed/news_feed_viewmodel.dart';
@@ -147,7 +148,7 @@ class NewsFeedView extends StatelessWidget {
                   color: const Color(0xFF2A2A40),
                   child: tutorial.featureImage == null
                       ? Image.asset(
-                          'assets/images/freecodecamp-banner.png',
+                          AssetConstants.fccBanner,
                           fit: BoxFit.cover,
                         )
                       : CachedNetworkImage(
@@ -159,7 +160,7 @@ class NewsFeedView extends StatelessWidget {
                           errorWidget: (context, url, error) {
                             log('Error loading image: $url - ${tutorial.featureImage} $error');
                             return Image.asset(
-                              'assets/images/freecodecamp-banner.png',
+                              AssetConstants.fccBanner,
                               fit: BoxFit.cover,
                             );
                           },
@@ -207,7 +208,7 @@ class NewsFeedView extends StatelessWidget {
                       height: 24,
                       child: tutorial.profileImage == null
                           ? Image.asset(
-                              'assets/images/placeholder-profile-img.png',
+                              AssetConstants.placeholderProfileImg,
                               fit: BoxFit.cover,
                             )
                           : CachedNetworkImage(
@@ -217,7 +218,7 @@ class NewsFeedView extends StatelessWidget {
                                 color: const Color(0xFF2A2A40),
                               ),
                               errorWidget: (context, url, error) => Image.asset(
-                                'assets/images/placeholder-profile-img.png',
+                                AssetConstants.placeholderProfileImg,
                                 fit: BoxFit.cover,
                               ),
                             ),

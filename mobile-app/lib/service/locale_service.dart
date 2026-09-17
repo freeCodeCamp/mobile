@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:flutter/widgets.dart';
+import 'package:freecodecamp/constants/string_constants.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class LocaleService {
@@ -50,7 +51,7 @@ class LocaleService {
     );
 
     await prefs.setString(
-      'locale',
+      StringConstants.locale,
       isLocaleCode ? locale : locales[localeIndex].languageCode,
     );
 
@@ -59,7 +60,7 @@ class LocaleService {
 
   void init() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
-    String? locale = prefs.getString('locale');
+    String? locale = prefs.getString(StringConstants.locale);
 
     if (locale != null) {
       changeLocale(locale, isLocaleCode: true);

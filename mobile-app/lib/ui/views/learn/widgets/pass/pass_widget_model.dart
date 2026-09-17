@@ -3,6 +3,7 @@ import 'dart:math';
 
 import 'package:flutter/services.dart';
 import 'package:freecodecamp/app/app.locator.dart';
+import 'package:freecodecamp/constants/asset_constants.dart';
 import 'package:freecodecamp/models/learn/challenge_model.dart';
 import 'package:freecodecamp/models/learn/completed_challenge_model.dart';
 import 'package:freecodecamp/models/learn/curriculum_model.dart';
@@ -54,7 +55,7 @@ class PassWidgetModel extends BaseViewModel {
   }
 
   Future<MotivationalQuote> retrieveNewQuote() async {
-    String path = 'assets/learn/motivational-quotes.json';
+    String path = AssetConstants.motivationalQuotes;
     String file = await rootBundle.loadString(path);
 
     int quoteLength = jsonDecode(file)['motivationalQuotes'].length;

@@ -5,6 +5,7 @@ import 'package:firebase_crashlytics/firebase_crashlytics.dart';
 import 'package:firebase_remote_config/firebase_remote_config.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/services.dart';
+import 'package:freecodecamp/constants/string_constants.dart';
 import 'package:freecodecamp/utils/upgrade_controller.dart';
 import 'package:upgrader/upgrader.dart';
 
@@ -35,7 +36,7 @@ class RemoteConfigService {
         ),
       );
       await remoteConfig.setDefaults({
-        'min_app_version': '7.5.6',
+        StringConstants.minAppVersion: '7.5.6',
         _activationOverridesKey: '{}',
       });
 
@@ -48,7 +49,7 @@ class RemoteConfigService {
         UpgraderState currUpgradeState = upgraderController.state;
         upgraderController.updateState(currUpgradeState.copyWith(
           minAppVersion: Upgrader.parseVersion(
-            remoteConfig.getString('min_app_version'),
+            remoteConfig.getString(StringConstants.minAppVersion),
             'minAppVersion',
             false,
           ),

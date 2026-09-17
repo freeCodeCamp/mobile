@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:freecodecamp/app/app.locator.dart';
 import 'package:freecodecamp/app/app.router.dart';
+import 'package:freecodecamp/constants/asset_constants.dart';
 import 'package:freecodecamp/extensions/i18n_extension.dart';
 import 'package:freecodecamp/models/learn/curriculum_model.dart';
 import 'package:freecodecamp/models/learn/motivational_quote_model.dart';
@@ -194,7 +195,7 @@ class SuperBlockButton extends StatelessWidget {
   final LearnLandingViewModel model;
   final SuperBlockButtonData button;
 
-  static const String learnAssetsPath = 'assets/learn';
+  static const String learnAssetsPath = AssetConstants.learnAssetsPath;
 
   final iconMap = {
     SuperBlocks.respWebDesignV9:

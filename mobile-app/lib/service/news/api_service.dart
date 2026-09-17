@@ -1,4 +1,5 @@
 import 'package:flutter_dotenv/flutter_dotenv.dart';
+import 'package:freecodecamp/constants/string_constants.dart';
 import 'package:graphql/client.dart';
 
 typedef ApiData = ({String endCursor, bool hasNextPage, List posts});
@@ -150,7 +151,7 @@ class NewsApiService {
       link: apiLink,
       cache: GraphQLCache(),
     );
-    publicationId = dotenv.get('HASHNODE_PUBLICATION_ID');
+    publicationId = dotenv.get(StringConstants.hashnodePublicationId);
   }
 
   GetAllPostsT getAllPosts({String afterCursor = ''}) async {

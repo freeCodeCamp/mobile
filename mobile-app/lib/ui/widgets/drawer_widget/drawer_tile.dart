@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:freecodecamp/constants/asset_constants.dart';
 
 class DrawerTile extends StatefulWidget {
   const DrawerTile({
@@ -30,7 +31,7 @@ class _DrawerTileState extends State<DrawerTile> {
                 color: widget.textColor,
               )
             : Image.asset(
-                'assets/images/logo.png',
+                AssetConstants.logo,
                 width: 30,
                 height: 30,
                 color: Colors.white,

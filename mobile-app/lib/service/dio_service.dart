@@ -1,5 +1,6 @@
 import 'package:dio/dio.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
+import 'package:freecodecamp/constants/string_constants.dart';
 import 'package:pretty_dio_logger/pretty_dio_logger.dart';
 
 class DioService {
@@ -14,7 +15,7 @@ class DioService {
   Future<void> init() async {
     await dotenv.load();
     bool isDevMode =
-        dotenv.get('DEVELOPMENTMODE', fallback: '').toLowerCase() == 'true';
+        dotenv.get(StringConstants.developmentMode, fallback: '').toLowerCase() == 'true';
 
     if (isDevMode) {
       dio.interceptors.add(PrettyDioLogger(responseBody: false));

@@ -6,6 +6,7 @@ import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:freecodecamp/app/app.locator.dart';
 import 'package:freecodecamp/app/app.router.dart';
 import 'package:freecodecamp/constants/radio_articles.dart';
+import 'package:freecodecamp/constants/string_constants.dart';
 import 'package:stacked/stacked.dart';
 import 'package:stacked_services/stacked_services.dart';
 
@@ -25,8 +26,8 @@ class NewsSearchModel extends BaseViewModel {
   final _navigationService = locator<NavigationService>();
 
   final algolia = HitsSearcher(
-    applicationID: dotenv.get('ALGOLIAAPPID'),
-    apiKey: dotenv.get('ALGOLIAKEY'),
+    applicationID: dotenv.get(StringConstants.algoliaAppId),
+    apiKey: dotenv.get(StringConstants.algoliaKey),
     indexName: 'news',
   );
 

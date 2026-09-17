@@ -2,6 +2,7 @@ import 'dart:developer';
 
 import 'package:dio/dio.dart';
 import 'package:freecodecamp/app/app.locator.dart';
+import 'package:freecodecamp/constants/string_constants.dart';
 import 'package:freecodecamp/models/learn/challenge_model.dart';
 import 'package:freecodecamp/models/learn/curriculum_model.dart';
 import 'package:freecodecamp/models/learn/daily_challenge_model.dart';
@@ -102,7 +103,7 @@ class DailyChallengeService {
     if (language == null) {
       SharedPreferences prefs = await SharedPreferences.getInstance();
       String? selectedLangStr =
-          prefs.getString('selectedDailyChallengeLanguage');
+          prefs.getString(StringConstants.selectedDailyChallengeLanguage);
       language = parseLanguageFromString(selectedLangStr);
     }
 

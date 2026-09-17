@@ -1,6 +1,7 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_heatmap_calendar/flutter_heatmap_calendar.dart';
+import 'package:freecodecamp/constants/asset_constants.dart';
 import 'package:freecodecamp/extensions/i18n_extension.dart';
 import 'package:freecodecamp/models/main/user_model.dart';
 import 'package:freecodecamp/ui/theme/fcc_theme.dart';
@@ -270,7 +271,7 @@ class ProfileView extends StatelessWidget {
                   backgroundColor: FccColors.gray85,
                   backgroundImage: user.picture == ''
                       ? const AssetImage(
-                          'assets/images/placeholder-profile-img.png')
+                          AssetConstants.placeholderProfileImg)
                       : CachedNetworkImageProvider(user.picture)
                           as ImageProvider,
                 ),

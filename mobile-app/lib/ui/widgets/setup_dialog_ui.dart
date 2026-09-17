@@ -2,12 +2,12 @@ import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:freecodecamp/app/app.locator.dart';
+import 'package:freecodecamp/constants/string_constants.dart';
 import 'package:freecodecamp/enums/dialog_type.dart';
 import 'package:freecodecamp/extensions/i18n_extension.dart';
 import 'package:freecodecamp/service/learn/learn_service.dart';
 import 'package:freecodecamp/ui/theme/fcc_theme.dart';
 import 'package:stacked_services/stacked_services.dart';
-
 import 'package:url_launcher/url_launcher.dart';
 
 void setupDialogUi() {
@@ -330,9 +330,9 @@ class _askForHelpInputDialogue extends HookWidget {
   Widget build(BuildContext context) {
     final requestData = useState<Map<String, dynamic>>(request.data ?? {});
     final charCount =
-        useState(requestData.value['issueDescription']?.length ?? 0);
+        useState(requestData.value[StringConstants.issueDescription]?.length ?? 0);
     final textController = useTextEditingController(
-      text: requestData.value['issueDescription'] ?? '',
+      text: requestData.value[StringConstants.issueDescription] ?? '',
     );
 
     return Dialog(
@@ -372,12 +372,12 @@ class _askForHelpInputDialogue extends HookWidget {
                       mainAxisSize: MainAxisSize.min,
                       children: [
                         Checkbox(
-                          value: requestData.value['readSearchAskChecked'] ??
+                          value: requestData.value[StringConstants.readSearchAskChecked] ??
                               false,
                           onChanged: (value) {
                             requestData.value = {
                               ...requestData.value,
-                              'readSearchAskChecked': value,
+                              StringConstants.readSearchAskChecked: value,
                             };
                           },
                           activeColor: FccColors.gray00,
@@ -420,12 +420,12 @@ class _askForHelpInputDialogue extends HookWidget {
                       mainAxisSize: MainAxisSize.min,
                       children: [
                         Checkbox(
-                          value: requestData.value['similarQuestionsChecked'] ??
+                          value: requestData.value[StringConstants.similarQuestionsChecked] ??
                               false,
                           onChanged: (value) {
                             requestData.value = {
                               ...requestData.value,
-                              'similarQuestionsChecked': value,
+                              StringConstants.similarQuestionsChecked: value,
                             };
                           },
                           activeColor: FccColors.gray00,
@@ -450,7 +450,7 @@ class _askForHelpInputDialogue extends HookWidget {
                                   recognizer: TapGestureRecognizer()
                                     ..onTap = () {
                                       final query = Uri.encodeComponent(
-                                          '${requestData.value['blockName']} - ${requestData.value['challengeName']} in:title');
+                                          '${requestData.value[StringConstants.blockName]} - ${requestData.value[StringConstants.challengeName]} in:title');
                                       launchUrl(Uri.parse(
                                           '$forumLocation/search?q=$query'));
                                     },
@@ -477,7 +477,7 @@ class _askForHelpInputDialogue extends HookWidget {
                 TextField(
                   controller: textController,
                   onChanged: (value) {
-                    requestData.value['issueDescription'] = value;
+                    requestData.value[StringConstants.issueDescription] = value;
                     requestData.value = Map.from(requestData.value);
                     charCount.value = value.length;
                   },
@@ -500,8 +500,8 @@ class _askForHelpInputDialogue extends HookWidget {
                       ),
                     ),
                     onPressed:
-                        requestData.value['readSearchAskChecked'] == true &&
-                                requestData.value['similarQuestionsChecked'] ==
+                        requestData.value[StringConstants.readSearchAskChecked] == true &&
+                                requestData.value[StringConstants.similarQuestionsChecked] ==
                                     true &&
                                 charCount.value >= 50
                             ? () => {
@@ -637,7 +637,7 @@ class _askForHelpDialog extends HookWidget {
                         recognizer: TapGestureRecognizer()
                           ..onTap = () {
                             final query = Uri.encodeComponent(
-                                '${requestData.value['blockName']} - ${requestData.value['challengeName']} in:title');
+                                '${requestData.value[StringConstants.blockName]} - ${requestData.value[StringConstants.challengeName]} in:title');
                             launchUrl(
                                 Uri.parse('$forumLocation/search?q=$query'));
                           },
