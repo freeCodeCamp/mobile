@@ -60,6 +60,8 @@ dependencies:
   audio_service: 0.18.19
   just_audio: 0.10.6
   web_socket_channel: 3.0.3
+  shared_preferences: 2.5.5
+  flutter_local_notifications: 22.3.0
 
 dev_dependencies:
   flutter_driver:

@@ -5,6 +5,7 @@ import 'package:mobile_app_new/fcc_theme.dart';
 import 'package:mobile_app_new/routing/code_radio.dart';
 import 'package:mobile_app_new/routing/learn.dart';
 import 'package:mobile_app_new/routing/news.dart';
+import 'package:mobile_app_new/routing/podcasts.dart';
 import 'package:mobile_app_new/widgets/drawer/drawer_tile.dart';
 
 class DrawerWidget extends StatelessWidget {
@@ -25,6 +26,11 @@ class DrawerWidget extends StatelessWidget {
             component: 'Tutorials',
             icon: Icons.forum_outlined,
             route: () => const NewsFeedRoute().go(context),
+          ),
+          DrawerTile(
+            component: 'Podcast',
+            icon: Icons.podcasts,
+            route: () => const PodcastListRoute().go(context),
           ),
           if (!Platform.isIOS)
             DrawerTile(

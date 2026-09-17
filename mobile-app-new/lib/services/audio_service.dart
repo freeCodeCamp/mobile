@@ -5,9 +5,17 @@ import 'package:audio_service/audio_service.dart';
 import 'package:just_audio/just_audio.dart';
 import 'package:mobile_app_new/code_radio/models/code_radio_model.dart';
 import 'package:mobile_app_new/fcc_theme.dart';
+import 'package:mobile_app_new/podcasts/models/episode_model.dart';
+import 'package:mobile_app_new/podcasts/models/podcast_model.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
 part 'audio_service.g.dart';
+
+typedef _MediaControls = ({
+  List<MediaControl> controls,
+  Set<MediaAction> systemActions,
+  List<int> compactIndices,
+});
 
 sealed class AudioTypeConfig {
   const AudioTypeConfig();
@@ -15,6 +23,12 @@ sealed class AudioTypeConfig {
 
 class CodeRadioAudioConfig extends AudioTypeConfig {
   const CodeRadioAudioConfig();
+}
+
+class PodcastAudioConfig extends AudioTypeConfig {
+  const PodcastAudioConfig(this.episodeId);
+
+  final String episodeId;
 }
 
 // NOTE: The handler is created before runApp and injected, so reading
@@ -41,6 +55,10 @@ class AudioPlayerHandler extends BaseAudioHandler {
     _notifyAudioHandlerAboutPlaybackEvents();
   }
 
+  static const _skipForward = Duration(seconds: 30);
+  static const _skipBackward = Duration(seconds: 10);
+  static const _defaultSpeed = 1.0;
+
   final AudioPlayer _audioPlayer = AudioPlayer();
 
   AudioTypeConfig? _audioConfig;
@@ -53,13 +71,20 @@ class AudioPlayerHandler extends BaseAudioHandler {
   // only way back to the live edge.
   bool _resumeNeedsLiveEdge = false;
 
-  AudioTypeConfig? get audioConfig => _audioConfig;
-
   String? get codeRadioSongId =>
       _audioConfig is CodeRadioAudioConfig ? mediaItem.value?.id : null;
 
   bool get isPlayingCodeRadio =>
       _audioPlayer.playing && _audioConfig is CodeRadioAudioConfig;
+
+  String? get episodeId => switch (_audioConfig) {
+    PodcastAudioConfig(:final episodeId) => episodeId,
+    _ => null,
+  };
+
+  Stream<Duration> get positionStream => _audioPlayer.positionStream;
+
+  Duration? get duration => _audioPlayer.duration;
 
   @override
   Future<void> play() async {
@@ -71,7 +96,7 @@ class AudioPlayerHandler extends BaseAudioHandler {
       }
     }
 
-    await _audioPlayer.play();
+    _audioPlayer.play();
   }
 
   @override
@@ -83,10 +108,28 @@ class AudioPlayerHandler extends BaseAudioHandler {
 
   @override
   Future<void> stop() async {
-    await _audioPlayer.stop();
     _audioConfig = null;
     _codeRadioUrl = null;
     _resumeNeedsLiveEdge = false;
+
+    await _audioPlayer.stop();
+
+    playbackState.add(
+      playbackState.value.copyWith(
+        processingState: AudioProcessingState.idle,
+        playing: false,
+        controls: const [],
+        systemActions: const {},
+        androidCompactActionIndices: const [],
+        updatePosition: Duration.zero,
+        bufferedPosition: Duration.zero,
+        speed: _defaultSpeed,
+      ),
+    );
+
+    mediaItem.add(null);
+    queue.add(const []);
+
     return super.stop();
   }
 
@@ -94,23 +137,47 @@ class AudioPlayerHandler extends BaseAudioHandler {
   Future<void> seek(Duration position) => _audioPlayer.seek(position);
 
   @override
+  Future<void> fastForward() => _seekBy(_skipForward);
+
+  @override
+  Future<void> rewind() => _seekBy(-_skipBackward);
+
+  @override
+  Future<void> setSpeed(double speed) => _audioPlayer.setSpeed(speed);
+
+  @override
   Future<void> onTaskRemoved() async {
     await stop();
     return super.onTaskRemoved();
   }
 
+  Future<void> _seekBy(Duration offset) async {
+    final target = _audioPlayer.position + offset;
+    final end = _audioPlayer.duration;
+
+    if (target < Duration.zero) return _audioPlayer.seek(Duration.zero);
+    if (end != null && target > end) return _audioPlayer.seek(end);
+
+    return _audioPlayer.seek(target);
+  }
+
   Future<void> loadCodeRadio(CodeRadio radio) async {
+    final previous = _audioConfig;
+
     try {
       final song = _toMediaItem(radio.nowPlaying.song);
       final url = Uri.parse(radio.station.listenUrl);
 
-      await _audioPlayer.setAudioSource(AudioSource.uri(url, tag: song));
-
       _codeRadioUrl = url;
       _resumeNeedsLiveEdge = false;
       _audioConfig = const CodeRadioAudioConfig();
+
+      await _audioPlayer.setSpeed(_defaultSpeed);
+      await _audioPlayer.setAudioSource(AudioSource.uri(url, tag: song));
+
       _publish(song);
     } catch (e) {
+      _audioConfig = previous;
       log('loadCodeRadio: Cannot play audio: $e');
     }
   }
@@ -130,6 +197,42 @@ class AudioPlayerHandler extends BaseAudioHandler {
     }
   }
 
+  Future<bool> loadEpisode(
+    Episode episode,
+    Podcast podcast, {
+    required Uri source,
+    Uri? artUri,
+    Duration? startAt,
+  }) async {
+    final item = MediaItem(
+      id: episode.id,
+      title: episode.title,
+      album: podcast.title,
+      duration: episode.duration,
+      artUri: artUri,
+    );
+
+    _codeRadioUrl = null;
+    _resumeNeedsLiveEdge = false;
+    _audioConfig = PodcastAudioConfig(episode.id);
+
+    try {
+      await _audioPlayer.setSpeed(_defaultSpeed);
+      await _audioPlayer.setAudioSource(AudioSource.uri(source, tag: item));
+
+      if (startAt != null && startAt > Duration.zero) {
+        await _audioPlayer.seek(startAt);
+      }
+
+      _publish(item);
+      return true;
+    } catch (e) {
+      log('loadEpisode: Cannot play audio: $e');
+      await stop();
+      return false;
+    }
+  }
+
   MediaItem _toMediaItem(Song song) => MediaItem(
     id: song.id,
     title: song.title,
@@ -143,18 +246,47 @@ class AudioPlayerHandler extends BaseAudioHandler {
     mediaItem.add(song);
   }
 
+  _MediaControls _controlsFor(bool playing) {
+    final playPause = playing ? MediaControl.pause : MediaControl.play;
+
+    return switch (_audioConfig) {
+      PodcastAudioConfig() => (
+        controls: [
+          MediaControl.rewind,
+          playPause,
+          MediaControl.fastForward,
+          MediaControl.stop,
+        ],
+        systemActions: const {MediaAction.seek},
+        compactIndices: const [0, 1, 2],
+      ),
+      CodeRadioAudioConfig() || null => (
+        controls: [playPause, MediaControl.stop],
+        systemActions: const <MediaAction>{},
+        compactIndices: const [0, 1],
+      ),
+    };
+  }
+
   void _notifyAudioHandlerAboutPlaybackEvents() {
     _audioPlayer.playbackEventStream.listen(
       (PlaybackEvent event) {
+        if (_audioConfig == null) return;
+
+        if (_audioConfig is PodcastAudioConfig &&
+            _audioPlayer.processingState == ProcessingState.completed) {
+          unawaited(Future.microtask(stop));
+          return;
+        }
+
         final playing = _audioPlayer.playing;
+        final mediaControls = _controlsFor(playing);
+
         playbackState.add(
           playbackState.value.copyWith(
-            controls: [
-              if (playing) MediaControl.pause else MediaControl.play,
-              MediaControl.stop,
-            ],
-            systemActions: const {},
-            androidCompactActionIndices: const [0, 1],
+            controls: mediaControls.controls,
+            systemActions: mediaControls.systemActions,
+            androidCompactActionIndices: mediaControls.compactIndices,
             processingState: const {
               ProcessingState.idle: AudioProcessingState.idle,
               ProcessingState.loading: AudioProcessingState.loading,
