@@ -5,6 +5,7 @@ import 'dart:math';
 import 'package:flutter/services.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:freecodecamp/app/app.locator.dart';
+import 'package:freecodecamp/constants/string_constants.dart';
 import 'package:freecodecamp/l10n/app_localizations.dart';
 import 'package:freecodecamp/models/learn/completed_challenge_model.dart';
 import 'package:freecodecamp/models/main/user_model.dart';
@@ -129,7 +130,7 @@ class DailyChallengeNotificationService {
     if (permissionGranted) {
       final prefs = await SharedPreferences.getInstance();
       final hasSetPreference =
-          prefs.containsKey('daily_challenge_notifications_enabled');
+          prefs.containsKey(StringConstants.dailyChallengeNotificationsEnabled);
 
       if (!hasSetPreference) {
         // First time - enable notifications by default
@@ -152,7 +153,7 @@ class DailyChallengeNotificationService {
 
   Future<void> enableDailyNotifications() async {
     final prefs = await SharedPreferences.getInstance();
-    await prefs.setBool('daily_challenge_notifications_enabled', true);
+    await prefs.setBool(StringConstants.dailyChallengeNotificationsEnabled, true);
 
     await scheduleDailyChallengeNotification();
   }
@@ -160,12 +161,12 @@ class DailyChallengeNotificationService {
   Future<void> disableDailyNotifications() async {
     await _flutterLocalNotificationsPlugin.cancelAll();
     final prefs = await SharedPreferences.getInstance();
-    await prefs.setBool('daily_challenge_notifications_enabled', false);
+    await prefs.setBool(StringConstants.dailyChallengeNotificationsEnabled, false);
   }
 
   Future<bool> areNotificationsEnabled() async {
     final prefs = await SharedPreferences.getInstance();
-    return prefs.getBool('daily_challenge_notifications_enabled') ?? false;
+    return prefs.getBool(StringConstants.dailyChallengeNotificationsEnabled) ?? false;
   }
 
   Future<void> cancelAllNotifications() async {
@@ -228,7 +229,7 @@ class DailyChallengeNotificationService {
 
     // Determine when to start scheduling notifications
     final startSchedulingFrom = await determineSchedulingStartDate(prefs, now);
-    await prefs.setString('notification_schedule_start_date',
+    await prefs.setString(StringConstants.notificationScheduleStartDate,
         startSchedulingFrom.toIso8601String());
 
     // Schedule notifications for the next 7 days
@@ -238,7 +239,7 @@ class DailyChallengeNotificationService {
   Future<bool> hasNotificationWindowExpired(
       SharedPreferences prefs, DateTime now) async {
     final scheduleStartDateStr =
-        prefs.getString('notification_schedule_start_date');
+        prefs.getString(StringConstants.notificationScheduleStartDate);
 
     if (scheduleStartDateStr != null) {
       final scheduleStartDate = DateTime.parse(scheduleStartDateStr);
@@ -258,7 +259,7 @@ class DailyChallengeNotificationService {
   Future<DateTime> determineSchedulingStartDate(
       SharedPreferences prefs, DateTime now) async {
     final scheduleStartDateStr =
-        prefs.getString('notification_schedule_start_date');
+        prefs.getString(StringConstants.notificationScheduleStartDate);
 
     final todayChallengeCompleted = await checkIfTodayChallengeCompleted();
     DateTime startSchedulingFrom;

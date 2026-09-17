@@ -53,7 +53,7 @@ class NewsFeedViewModel extends BaseViewModel {
   // TODO: Add dev mode post-migration
   // Future<List<Tutorial>> readFromFiles() async {
   //   String json = await rootBundle.loadString(
-  //     'assets/test_data/news_feed.json',
+  //     AssetConstants.newsFeedTestData,
   //   );
   //   var decodedJson = jsonDecode(json)['posts'];
   //   for (int i = 0; i < decodedJson.length; i++) {

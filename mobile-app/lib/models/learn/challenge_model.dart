@@ -1,3 +1,4 @@
+import 'package:freecodecamp/constants/string_constants.dart';
 import 'package:freecodecamp/enums/ext_type.dart';
 
 // NOTE: For reference
@@ -564,8 +565,8 @@ class SceneCommand {
     return SceneCommand(
       background: data['background'],
       character: data['character'],
-      position: data['position'] != null
-          ? SceneCharacterPosition.fromJson(data['position'])
+      position: data[StringConstants.position] != null
+          ? SceneCharacterPosition.fromJson(data[StringConstants.position])
           : null,
       opacity: data['opacity'],
       startTime: data['startTime'],
@@ -595,7 +596,7 @@ class SceneCharacter {
       character: data['character'],
       opacity: data['opacity'],
       position: SceneCharacterPosition.fromJson(
-        data['position'],
+        data[StringConstants.position],
       ),
     );
   }

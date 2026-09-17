@@ -2,6 +2,7 @@ import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_scroll_shadow/flutter_scroll_shadow.dart';
+import 'package:freecodecamp/constants/asset_constants.dart';
 import 'package:freecodecamp/extensions/i18n_extension.dart';
 import 'package:freecodecamp/models/main/user_model.dart';
 import 'package:freecodecamp/ui/widgets/drawer_widget/drawer_tile.dart';
@@ -35,7 +36,7 @@ class DrawerWidgetView extends StatelessWidget {
                     ListTile(
                       contentPadding: const EdgeInsets.all(16),
                       leading: Image.asset(
-                        'assets/images/placeholder-profile-img.png',
+                        AssetConstants.placeholderProfileImg,
                         width: 75,
                         height: 75,
                       ),

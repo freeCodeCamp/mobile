@@ -5,6 +5,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:freecodecamp/app/app.locator.dart';
+import 'package:freecodecamp/constants/asset_constants.dart';
+import 'package:freecodecamp/constants/string_constants.dart';
 import 'package:freecodecamp/extensions/i18n_extension.dart';
 import 'package:freecodecamp/models/news/tutorial_model.dart';
 import 'package:freecodecamp/service/news/api_service.dart';
@@ -35,7 +37,7 @@ class NewsTutorialViewModel extends BaseViewModel {
 
   Future<Tutorial> readFromFiles() async {
     String json = await rootBundle.loadString(
-      'assets/test_data/news_post.json',
+      AssetConstants.newsPostTestData,
     );
 
     var decodedJson = jsonDecode(json);
@@ -80,11 +82,11 @@ class NewsTutorialViewModel extends BaseViewModel {
     _scrollController.addListener(() async {
       SharedPreferences prefs = await SharedPreferences.getInstance();
 
-      if (prefs.getDouble('position') == null) {
-        await prefs.setDouble('position', _scrollController.offset);
+      if (prefs.getDouble(StringConstants.position) == null) {
+        await prefs.setDouble(StringConstants.position, _scrollController.offset);
       }
 
-      double oldScrollPos = prefs.getDouble('position') as double;
+      double oldScrollPos = prefs.getDouble(StringConstants.position) as double;
 
       if (_scrollController.offset <= oldScrollPos) {
         _bottomButtonController.animateTo(
@@ -101,7 +103,7 @@ class NewsTutorialViewModel extends BaseViewModel {
       }
       Timer(const Duration(seconds: 2), () async {
         if (_scrollController.hasClients) {
-          await prefs.setDouble('position', _scrollController.offset);
+          await prefs.setDouble(StringConstants.position, _scrollController.offset);
         }
       });
     });
@@ -177,7 +179,7 @@ class NewsTutorialViewModel extends BaseViewModel {
     _scrollController.dispose();
     _bottomButtonController.dispose();
 
-    await prefs.remove('position');
+    await prefs.remove(StringConstants.position);
   }
 
   Future<Tutorial> fetchTutorial(tutorialId) async {

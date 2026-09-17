@@ -1,5 +1,6 @@
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
+import 'package:freecodecamp/constants/asset_constants.dart';
 import 'package:freecodecamp/extensions/i18n_extension.dart';
 import 'package:freecodecamp/ui/theme/fcc_theme.dart';
 import 'package:freecodecamp/ui/views/login/native_login_viewmodel.dart';
@@ -71,7 +72,7 @@ class NativeLoginView extends StatelessWidget {
                             mainAxisAlignment: MainAxisAlignment.start,
                             children: [
                               Image.asset(
-                                'assets/images/google-logo.png',
+                                AssetConstants.googleLogo,
                                 height: 25,
                                 width: 25,
                               ),
@@ -106,7 +107,7 @@ class NativeLoginView extends StatelessWidget {
                             mainAxisAlignment: MainAxisAlignment.start,
                             children: [
                               Image.asset(
-                                'assets/images/github-logo.png',
+                                AssetConstants.githubLogo,
                                 height: 25,
                                 width: 25,
                               ),
@@ -141,7 +142,7 @@ class NativeLoginView extends StatelessWidget {
                             mainAxisAlignment: MainAxisAlignment.start,
                             children: [
                               Image.asset(
-                                'assets/images/apple-logo.png',
+                                AssetConstants.appleLogo,
                                 height: 25,
                                 width: 25,
                               ),

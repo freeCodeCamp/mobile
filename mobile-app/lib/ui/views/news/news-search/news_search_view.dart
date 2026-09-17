@@ -1,6 +1,7 @@
 import 'package:algolia_helper_flutter/algolia_helper_flutter.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
+import 'package:freecodecamp/constants/asset_constants.dart';
 import 'package:freecodecamp/extensions/i18n_extension.dart';
 import 'package:freecodecamp/ui/views/news/news-feed/news_feed_viewmodel.dart';
 import 'package:freecodecamp/ui/views/news/news-search/news_search_viewmodel.dart';
@@ -140,12 +141,12 @@ class NewsSearchView extends StatelessWidget {
                                                     ),
                                                     errorWidget: (context, url, error) =>
                                                         Image.asset(
-                                                      'assets/images/freecodecamp-banner.png',
+                                                      AssetConstants.fccBanner,
                                                       fit: BoxFit.cover,
                                                     ),
                                                   )
                                                 : Image.asset(
-                                                    'assets/images/freecodecamp-banner.png',
+                                                    AssetConstants.fccBanner,
                                                     fit: BoxFit.cover,
                                                   ),
                                           ),
@@ -180,7 +181,7 @@ class NewsSearchView extends StatelessWidget {
                                                         errorWidget:
                                                             (context, url, error) =>
                                                                 Image.asset(
-                                                          'assets/images/placeholder-profile-img.png',
+                                                          AssetConstants.placeholderProfileImg,
                                                           width: 24,
                                                           height: 24,
                                                         ),
@@ -188,7 +189,7 @@ class NewsSearchView extends StatelessWidget {
                                                     )
                                                   else
                                                     Image.asset(
-                                                      'assets/images/placeholder-profile-img.png',
+                                                      AssetConstants.placeholderProfileImg,
                                                       width: 24,
                                                       height: 24,
                                                     ),

@@ -8,6 +8,8 @@ import 'package:flutter/services.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:freecodecamp/app/app.locator.dart';
 import 'package:freecodecamp/app/app.router.dart';
+import 'package:freecodecamp/constants/asset_constants.dart';
+import 'package:freecodecamp/constants/string_constants.dart';
 import 'package:freecodecamp/l10n/app_localizations.dart';
 import 'package:freecodecamp/models/learn/challenge_model.dart';
 import 'package:freecodecamp/models/learn/completed_challenge_model.dart';
@@ -198,7 +200,7 @@ class LearnLandingViewModel extends BaseViewModel {
       await dotenv.load(fileName: '.env');
 
       bool showAllSB =
-          dotenv.get('SHOWALLSB', fallback: 'false').toLowerCase() == 'true';
+          dotenv.get(StringConstants.showAllSb, fallback: 'false').toLowerCase() == 'true';
 
       Map<String, dynamic> superBlockStages = res.data['superblocks'];
 
@@ -316,7 +318,7 @@ class LearnLandingViewModel extends BaseViewModel {
   }
 
   Future<MotivationalQuote> retrieveNewQuote() async {
-    String path = 'assets/learn/motivational-quotes.json';
+    String path = AssetConstants.motivationalQuotes;
     String file = await rootBundle.loadString(path);
 
     int quoteLength = jsonDecode(file)['motivationalQuotes'].length;

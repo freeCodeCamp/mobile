@@ -10,6 +10,7 @@ import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:freecodecamp/app/app.locator.dart';
 import 'package:freecodecamp/app/app.router.dart';
+import 'package:freecodecamp/constants/string_constants.dart';
 import 'package:freecodecamp/extensions/i18n_extension.dart';
 import 'package:freecodecamp/models/main/user_model.dart';
 import 'package:freecodecamp/service/dio_service.dart';
@@ -102,7 +103,7 @@ class AuthenticationService {
     await dotenv.load();
 
     isDevMode =
-        dotenv.get('DEVELOPMENTMODE', fallback: '').toLowerCase() == 'true';
+        dotenv.get(StringConstants.developmentMode, fallback: '').toLowerCase() == 'true';
     baseURL = isDevMode
         ? 'https://www.freecodecamp.dev'
         : 'https://www.freecodecamp.org';
@@ -113,7 +114,7 @@ class AuthenticationService {
 
   Future<void> init() async {
     await dotenv.load();
-    auth0 = Auth0(dotenv.get('AUTH0_DOMAIN'), dotenv.get('AUTH0_CLIENT_ID'));
+    auth0 = Auth0(dotenv.get(StringConstants.auth0Domain), dotenv.get(StringConstants.auth0ClientId));
 
     await setCurrentClientMode();
 
@@ -167,9 +168,9 @@ class AuthenticationService {
     try {
       if (connectionType == 'email') {
         emailLoginRes = await _dio.post(
-          'https://${dotenv.get('AUTH0_DOMAIN')}/oauth/token',
+          'https://${dotenv.get(StringConstants.auth0Domain)}/oauth/token',
           data: {
-            'client_id': dotenv.get('AUTH0_CLIENT_ID'),
+            'client_id': dotenv.get(StringConstants.auth0ClientId),
             'grant_type': 'http://auth0.com/oauth/grant-type/passwordless/otp',
             'realm': 'email',
             'username': email,

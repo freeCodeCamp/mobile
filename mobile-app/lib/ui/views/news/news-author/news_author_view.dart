@@ -1,5 +1,6 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
+import 'package:freecodecamp/constants/asset_constants.dart';
 import 'package:freecodecamp/extensions/i18n_extension.dart';
 import 'package:freecodecamp/models/news/tutorial_model.dart';
 import 'package:freecodecamp/ui/views/news/news-author/news_author_viewmodel.dart';
@@ -108,13 +109,13 @@ class NewsAuthorView extends StatelessWidget {
         ),
         child: author?.profileImage == null
             ? Image.asset(
-                'assets/images/placeholder-profile-img.png',
+                AssetConstants.placeholderProfileImg,
                 fit: BoxFit.cover,
               )
             : CachedNetworkImage(
                 imageUrl: author!.profileImage as String,
                 errorWidget: (context, url, error) => Image.asset(
-                  'assets/images/placeholder-profile-img.png',
+                  AssetConstants.placeholderProfileImg,
                   width: 45,
                   height: 45,
                   fit: BoxFit.cover,

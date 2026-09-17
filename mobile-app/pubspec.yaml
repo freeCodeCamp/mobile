@@ -55,6 +55,7 @@ dependencies:
   url_launcher: 6.3.2
   web_socket_channel: 3.0.3
   youtube_player_iframe: 5.2.2
+  intl: any
 dev_dependencies:
   build_runner: 2.4.13
   dependency_validator: 3.2.3
@@ -70,6 +71,7 @@ dev_dependencies:
   mockito: 5.4.4 # NOTE: 5.4.6+ is blocked by stacked_generator
   stacked_generator: 1.6.1
 
+  flutter_local_notifications_platform_interface: any
 flutter:
   fonts:
     - family: Lato

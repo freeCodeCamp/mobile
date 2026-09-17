@@ -2,6 +2,7 @@ import 'dart:async';
 import 'dart:convert';
 
 import 'package:freecodecamp/app/app.locator.dart';
+import 'package:freecodecamp/constants/string_constants.dart';
 import 'package:freecodecamp/models/code-radio/code_radio_model.dart';
 import 'package:freecodecamp/service/audio/audio_service.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -62,16 +63,16 @@ class CodeRadioViewModel extends BaseViewModel {
   Future<void> setAndGetLastId(CodeRadio radio) async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
 
-    if (prefs.getString('lastSongId') == null) {
-      await prefs.setString('lastSongId', radio.nowPlaying.id);
+    if (prefs.getString(StringConstants.lastSongId) == null) {
+      await prefs.setString(StringConstants.lastSongId, radio.nowPlaying.id);
     }
 
-    if (radio.nowPlaying.id != prefs.getString('lastSongId')) {
+    if (radio.nowPlaying.id != prefs.getString(StringConstants.lastSongId)) {
       setBackgroundWidget(radio);
       if (!stoppedManually) {
         audioService.play();
       }
-      await prefs.setString('lastSongId', radio.nowPlaying.id);
+      await prefs.setString(StringConstants.lastSongId, radio.nowPlaying.id);
     }
   }
 

@@ -2,6 +2,7 @@ import 'package:dio/dio.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:freecodecamp/app/app.locator.dart';
+import 'package:freecodecamp/constants/string_constants.dart';
 import 'package:freecodecamp/service/authentication/authentication_service.dart';
 import 'package:freecodecamp/service/developer_service.dart';
 import 'package:freecodecamp/service/dio_service.dart';
@@ -65,9 +66,9 @@ class NativeLoginViewModel extends BaseViewModel {
     notifyListeners();
     await dotenv.load();
     await _dio.post(
-      'https://${dotenv.get('AUTH0_DOMAIN')}/passwordless/start',
+      'https://${dotenv.get(StringConstants.auth0Domain)}/passwordless/start',
       data: {
-        'client_id': dotenv.get('AUTH0_CLIENT_ID'),
+        'client_id': dotenv.get(StringConstants.auth0ClientId),
         'connection': 'email',
         'email': emailController.text,
         'send': 'code',

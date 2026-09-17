@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:freecodecamp/app/app.locator.dart';
 import 'package:freecodecamp/app/app.router.dart';
+import 'package:freecodecamp/constants/string_constants.dart';
 import 'package:freecodecamp/models/learn/completed_challenge_model.dart';
 import 'package:freecodecamp/models/learn/curriculum_model.dart';
 import 'package:freecodecamp/models/main/user_model.dart';
@@ -137,7 +138,7 @@ class ChapterViewModel extends BaseViewModel {
 
   void developmentMode() async {
     await dotenv.load();
-    setIsDev = dotenv.env['DEVELOPMENTMODE'] == 'TRUE';
+    setIsDev = dotenv.env[StringConstants.developmentMode] == 'TRUE';
   }
 
   void routeToBlockView(

@@ -7,6 +7,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_inappwebview/flutter_inappwebview.dart';
 import 'package:freecodecamp/app/app.locator.dart';
 import 'package:freecodecamp/app/app.router.dart';
+import 'package:freecodecamp/constants/asset_constants.dart';
+import 'package:freecodecamp/constants/string_constants.dart';
 import 'package:freecodecamp/enums/dialog_type.dart';
 import 'package:freecodecamp/enums/ext_type.dart';
 import 'package:freecodecamp/enums/panel_type.dart';
@@ -37,7 +39,7 @@ import 'package:stacked_services/stacked_services.dart';
 class ChallengeViewModel extends BaseViewModel {
   bool get isDailyChallenge => _isDailyChallenge;
   final InAppLocalhostServer _localhostServer =
-      InAppLocalhostServer(documentRoot: 'assets/test_runner');
+      InAppLocalhostServer(documentRoot: AssetConstants.testRunnerDir);
 
   Editor? _editor;
   Editor? get editor => _editor;
@@ -116,7 +118,7 @@ class ChallengeViewModel extends BaseViewModel {
     },
     onLoadStop: (controller, url) async {
       final res = await controller.injectJavascriptFileFromAsset(
-          assetFilePath: 'assets/test_runner/babel/babel.min.js');
+          assetFilePath: AssetConstants.babelMinJs);
       log('Babel load: $res');
     },
     initialSettings: InAppWebViewSettings(
@@ -376,7 +378,7 @@ class ChallengeViewModel extends BaseViewModel {
     _selectedDailyChallengeLanguage = lang;
 
     SharedPreferences prefs = await SharedPreferences.getInstance();
-    await prefs.setString('selectedDailyChallengeLanguage', lang.name);
+    await prefs.setString(StringConstants.selectedDailyChallengeLanguage, lang.name);
 
     // Switching languages require re-fetching the challenge data
     // as we only store the data for a single language in the `challenge` object.
@@ -943,7 +945,7 @@ class ChallengeViewModel extends BaseViewModel {
 
   Future<void> loadSelectedDailyChallengeLanguage() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
-    String? langStr = prefs.getString('selectedDailyChallengeLanguage');
+    String? langStr = prefs.getString(StringConstants.selectedDailyChallengeLanguage);
 
     _selectedDailyChallengeLanguage =
         DailyChallengeService.parseLanguageFromString(langStr);

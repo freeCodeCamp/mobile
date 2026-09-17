@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:freecodecamp/constants/asset_constants.dart';
 import 'package:freecodecamp/extensions/i18n_extension.dart';
 import 'package:freecodecamp/models/news/tutorial_model.dart';
 import 'package:freecodecamp/ui/views/news/news-bookmark/news_bookmark_widget.dart';
@@ -20,7 +21,7 @@ class NewsTutorialHeader extends StatelessWidget {
           aspectRatio: 16 / 9,
           child: tutorial.featureImage == null
               ? Image.asset(
-                  'assets/images/freecodecamp-banner.png',
+                  AssetConstants.fccBanner,
                   fit: BoxFit.cover,
                 )
               : Image.network(

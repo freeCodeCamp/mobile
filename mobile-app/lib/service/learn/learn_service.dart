@@ -4,6 +4,7 @@ import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:freecodecamp/app/app.locator.dart';
 import 'package:freecodecamp/app/app.router.dart';
+import 'package:freecodecamp/constants/string_constants.dart';
 import 'package:freecodecamp/enums/dialog_type.dart';
 import 'package:freecodecamp/extensions/i18n_extension.dart';
 import 'package:freecodecamp/models/learn/challenge_model.dart';
@@ -246,7 +247,7 @@ class LearnService {
         title: context.t.ask_for_help,
         description: context.t.forum_help_description,
         mainButtonTitle: context.t.forum_create_post,
-        data: {'challengeName': challenge.title, 'blockName': block.name});
+        data: {StringConstants.challengeName: challenge.title, StringConstants.blockName: block.name});
     if (res != null && res.confirmed) {
       DialogResponse? forumRes = await _dialogService.showCustomDialog(
         variant: DialogType.askForHelpInput,
@@ -254,7 +255,7 @@ class LearnService {
         description: context.t.forum_confirm_description,
         mainButtonTitle: context.t.solution_link_submit,
         secondaryButtonTitle: context.t.cancel,
-        data: {'challengeName': challenge.title, 'blockName': block.name},
+        data: {StringConstants.challengeName: challenge.title, StringConstants.blockName: block.name},
       );
 
       String description = forumRes?.data ?? '';
