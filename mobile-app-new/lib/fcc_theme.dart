@@ -100,9 +100,11 @@ class FccTheme {
     textButtonTheme: TextButtonThemeData(
       style: ButtonStyle(
         backgroundColor: WidgetStateProperty.resolveWith(
-            (states) => const Color.fromRGBO(0x3b, 0x3b, 0x4f, 1)),
-        foregroundColor:
-            WidgetStateProperty.resolveWith((states) => Colors.white),
+          (states) => const Color.fromRGBO(0x3b, 0x3b, 0x4f, 1),
+        ),
+        foregroundColor: WidgetStateProperty.resolveWith(
+          (states) => Colors.white,
+        ),
         overlayColor: WidgetStateProperty.resolveWith(
           (states) => const Color(0x4DFFFFFF),
         ),
@@ -117,8 +119,8 @@ class FccTheme {
     ),
     primaryColorDark: const Color(0xFF0a0a23),
     primaryIconTheme: ThemeData.dark().primaryIconTheme.copyWith(
-          color: Colors.orange,
-        ),
+      color: Colors.orange,
+    ),
     textSelectionTheme: const TextSelectionThemeData(
       cursorColor: Color.fromRGBO(66, 133, 244, 1.0),
       selectionHandleColor: Color.fromARGB(255, 255, 255, 255),
