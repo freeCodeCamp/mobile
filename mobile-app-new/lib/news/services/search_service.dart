@@ -1,7 +1,7 @@
 import 'dart:io';
 
 import 'package:algolia_helper_flutter/algolia_helper_flutter.dart';
-import 'package:mobile_app_new/news/constants/radio_articles.dart';
+import 'package:mobile_app_new/news/constants.dart';
 import 'package:mobile_app_new/news/models/search_post_model.dart';
 import 'package:mobile_app_new/news/repositories/search_repository.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';

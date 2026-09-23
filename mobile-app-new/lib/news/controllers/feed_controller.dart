@@ -39,16 +39,20 @@ class NewsFeedNotifier extends _$NewsFeedNotifier {
     );
   }
 
-  Future<PostsPage> _fetch(NewsApiService service, String cursor) =>
-      switch (source) {
-        AllPosts() => service.getAllPosts(afterCursor: cursor),
-        TagPosts(:final slug) => service.getPostsByTag(slug, afterCursor: cursor),
-        AuthorPosts(:final id) => service.getPostsByAuthor(id, afterCursor: cursor),
-      };
+  Future<PostsPage> _fetch(
+    NewsApiService service,
+    String cursor,
+  ) => switch (source) {
+    AllPosts() => service.getAllPosts(afterCursor: cursor),
+    TagPosts(:final slug) => service.getPostsByTag(slug, afterCursor: cursor),
+    AuthorPosts(:final id) => service.getPostsByAuthor(id, afterCursor: cursor),
+  };
 
   Future<void> fetchNextPage({bool isRetry = false}) async {
     final current = state.value;
-    if (current == null || !current.hasNextPage || current.isLoadingMore) return;
+    if (current == null || !current.hasNextPage || current.isLoadingMore) {
+      return;
+    }
 
     // A failed append waits for an explicit retry instead of refiring on scroll.
     if (current.loadMoreError != null && !isRetry) return;

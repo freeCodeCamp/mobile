@@ -50,7 +50,7 @@ final class NewsFeedNotifierProvider
   }
 }
 
-String _$newsFeedNotifierHash() => r'7365cd1e53036b584af9c460c278883f8ad28e85';
+String _$newsFeedNotifierHash() => r'42bcd116de8475bd49d6e578fa95ccfe1d2f9de9';
 
 final class NewsFeedNotifierFamily extends $Family
     with

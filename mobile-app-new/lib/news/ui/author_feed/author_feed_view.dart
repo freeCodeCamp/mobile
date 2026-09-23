@@ -44,7 +44,6 @@ class NewsAuthorFeedView extends ConsumerWidget {
   );
 }
 
-
 class _AuthorDetails extends StatelessWidget {
   const _AuthorDetails({required this.author});
 
