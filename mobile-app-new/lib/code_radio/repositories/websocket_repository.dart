@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:convert';
 import 'dart:developer';
 
@@ -11,6 +12,8 @@ const _url =
 
 const _station = 'station:coderadio';
 
+const _connectTimeout = Duration(seconds: 8);
+
 @Riverpod(keepAlive: true)
 CodeRadioWebsocketRepository codeRadioWebsocketRepository(Ref ref) {
   final repository = CodeRadioWebsocketRepository();
@@ -22,11 +25,17 @@ class CodeRadioWebsocketRepository {
   WebSocketChannel? _channel;
 
   Stream<String> connect() async* {
-    await _channel?.sink.close();
+    _discard(_channel);
 
     final channel = _channel = WebSocketChannel.connect(Uri.parse(_url));
 
-    await channel.ready;
+    try {
+      await channel.ready.timeout(_connectTimeout);
+    } catch (_) {
+      _discard(channel);
+      if (identical(_channel, channel)) _channel = null;
+      rethrow;
+    }
 
     channel.sink.add(
       jsonEncode({
@@ -37,8 +46,11 @@ class CodeRadioWebsocketRepository {
     yield* channel.stream.cast<String>();
   }
 
+  void _discard(WebSocketChannel? channel) => channel?.sink.close().ignore();
+
   void dispose() {
     log('Disposing CodeRadioWebsocketRepository');
-    _channel?.sink.close();
+    _discard(_channel);
+    _channel = null;
   }
 }

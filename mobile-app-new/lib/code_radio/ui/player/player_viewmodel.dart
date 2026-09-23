@@ -5,7 +5,9 @@ import 'package:riverpod_annotation/riverpod_annotation.dart';
 
 part 'player_viewmodel.g.dart';
 
-@riverpod
+Duration? _noRetry(int retryCount, Object error) => null;
+
+@Riverpod(retry: _noRetry)
 Stream<CodeRadio> codeRadioNowPlaying(Ref ref) {
   final service = ref.watch(codeRadioServiceProvider);
 
@@ -48,10 +50,12 @@ class CodeRadioPlayerNotifier extends _$CodeRadioPlayerNotifier {
   }
 
   Future<void> _load(CodeRadio radio) async {
-    if (_handler.codeRadioSongId != null) return;
+    final handler = _handler;
 
-    await _handler.loadCodeRadio(radio);
-    await _handler.play();
+    if (handler.codeRadioSongId != null) return;
+
+    await handler.loadCodeRadio(radio);
+    await handler.play();
   }
 
   Future<void> toggle() => state ? _handler.pause() : _handler.play();

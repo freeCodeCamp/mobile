@@ -20,7 +20,7 @@ final class CodeRadioNowPlayingProvider
     : super(
         from: null,
         argument: null,
-        retry: null,
+        retry: _noRetry,
         name: r'codeRadioNowPlayingProvider',
         isAutoDispose: true,
         dependencies: null,
@@ -42,7 +42,7 @@ final class CodeRadioNowPlayingProvider
 }
 
 String _$codeRadioNowPlayingHash() =>
-    r'642ff517d7359e73249732ea7ccbedfa1c04e48f';
+    r'4e8aa95e62f6b2d4dd82363283a5134708abf4b2';
 
 @ProviderFor(codeRadioElapsed)
 final codeRadioElapsedProvider = CodeRadioElapsedProvider._();
@@ -110,7 +110,7 @@ final class CodeRadioPlayerNotifierProvider
 }
 
 String _$codeRadioPlayerNotifierHash() =>
-    r'763710fdaf1ee286a50a7d40ccad330245da1e2a';
+    r'41ace83c0a8ae9b84787322877e033e2a8ef8545';
 
 abstract class _$CodeRadioPlayerNotifier extends $Notifier<bool> {
   bool build();

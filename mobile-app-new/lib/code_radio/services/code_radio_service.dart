@@ -100,5 +100,6 @@ class CodeRadioService {
   void _dropStation() {
     _station?.cancel();
     _station = null;
+    _latest = null;
   }
 }
