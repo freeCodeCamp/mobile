@@ -95,6 +95,12 @@ final Map<String, Style> defaultStyles = {
     color: Colors.white.withValues(alpha: 0.87),
     fontSize: FontSize.xLarge,
   ),
+  'kbd': Style(
+    fontFamily: 'Hack',
+    backgroundColor: FccColors.gray75,
+    color: Colors.white.withValues(alpha: 0.87),
+    fontSize: FontSize.xLarge,
+  ),
   'pre': Style(fontFamily: 'Hack'),
   // NOTE: Text within backticks in en-US, es, and zh-CN challenge files is
   // parsed into spans with this class.
@@ -272,6 +278,34 @@ class HTMLParser {
                   color: Colors.white,
                   fontSize: 18,
                   backgroundColor: FccColors.gray75,
+                ),
+              ),
+            );
+          },
+        ),
+        TagExtension(
+          tagsToExtend: {'kbd'},
+          builder: (child) {
+            String? parsed =
+                parser.parseFragment(child.innerHtml).text ?? '';
+
+            return Container(
+              padding:
+                  const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+              decoration: BoxDecoration(
+                color: FccColors.gray75,
+                borderRadius: BorderRadius.circular(4),
+                border: Border.all(
+                  color: Colors.white30,
+                  width: 1,
+                ),
+              ),
+              child: Text(
+                parsed,
+                style: const TextStyle(
+                  fontFamily: 'Hack',
+                  color: Colors.white,
+                  fontSize: 16,
                 ),
               ),
             );
