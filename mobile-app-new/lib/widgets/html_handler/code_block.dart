@@ -90,7 +90,7 @@ class _FccCodeBlockState extends State<FccCodeBlock> {
     return Container(
       clipBehavior: Clip.antiAlias,
       decoration: BoxDecoration(
-        color: colors.surfaceContainer,
+        color: colors.surface,
         border: Border.all(color: colors.outlineVariant),
         borderRadius: BorderRadius.circular(14),
       ),
@@ -98,24 +98,27 @@ class _FccCodeBlockState extends State<FccCodeBlock> {
         crossAxisAlignment: CrossAxisAlignment.stretch,
         mainAxisSize: MainAxisSize.min,
         children: [
-          Padding(
-            padding: const EdgeInsets.only(left: 16, right: 4),
-            child: Row(
-              children: [
-                Expanded(
-                  child: Text(
-                    language,
-                    style: theme.textTheme.labelMedium?.copyWith(
-                      color: colors.onSurfaceVariant,
+          ColoredBox(
+            color: colors.surfaceContainer,
+            child: Padding(
+              padding: const EdgeInsets.only(left: 16, right: 4),
+              child: Row(
+                children: [
+                  Expanded(
+                    child: Text(
+                      language,
+                      style: theme.textTheme.labelMedium?.copyWith(
+                        color: colors.onSurfaceVariant,
+                      ),
                     ),
                   ),
-                ),
-                IconButton(
-                  tooltip: 'Copy code',
-                  onPressed: _copy,
-                  icon: const Icon(Icons.copy_rounded, size: 18),
-                ),
-              ],
+                  IconButton(
+                    tooltip: 'Copy code',
+                    onPressed: _copy,
+                    icon: const Icon(Icons.copy_rounded, size: 18),
+                  ),
+                ],
+              ),
             ),
           ),
           const Divider(height: 1),
