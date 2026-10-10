@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mobile_app_new/widgets/html_handler/code_highlighter.dart';
+import 'package:phone_ide/highlighting/textmate_highlighter_registry.dart';
 
 List<({String text, Color? color})> _segments(TextSpan span) {
   final segments = <({String text, Color? color})>[];
@@ -19,6 +20,17 @@ List<({String text, Color? color})> _segments(TextSpan span) {
 
   visit(span, null);
   return segments;
+}
+
+List<Color?> _colorsByCodeUnit(TextSpan span) => [
+  for (final segment in _segments(span))
+    ...List<Color?>.filled(segment.text.length, segment.color),
+];
+
+List<Color?> _colorsIn(TextSpan span, String source, String token) {
+  final start = source.indexOf(token);
+  expect(start, isNonNegative, reason: 'Fixture must contain $token');
+  return _colorsByCodeUnit(span).sublist(start, start + token.length);
 }
 
 void main() {
@@ -155,6 +167,83 @@ const element = <div className="greeting">{label}</div>;''',
       isTrue,
     );
   });
+
+  test(
+    'JavaScript regexp ranges preserve functions and Unicode offsets',
+    () async {
+      const code = r'''const label = "🚀 café";
+const words = text.split(/\s+/);
+const isWord = /^[a-z]+$/i.test(label);''';
+      final span = await highlightArticleCode(code, 'javascript');
+      final baseline = TextMateHighlighterRegistry.instance.buildTextSpan(
+        text: code,
+        language: 'javascript',
+      );
+      final stringColor = _colorsIn(baseline, code, 'café').first;
+
+      expect(span.toPlainText(), code);
+      expect(stringColor, isNotNull);
+      for (final regexp in [r'/\s+/', r'/^[a-z]+$/i']) {
+        expect(_colorsIn(span, code, regexp), everyElement(stringColor));
+      }
+      for (final unchanged in ['const', '🚀 café', 'split', 'test']) {
+        expect(
+          _colorsIn(span, code, unchanged),
+          _colorsIn(baseline, code, unchanged),
+          reason:
+              'Regexp highlighting must retain the existing $unchanged style',
+        );
+      }
+    },
+  );
+
+  test(
+    'JavaScript division, comments and string slashes are not regexps',
+    () async {
+      const code = r'''const total = value / divisor / 2;
+const url = "https://example.com/a/b";
+// A comment with /not-a-regexp/
+/* A block comment with /also-not/ */
+const matched = /a\/b/g.test(url);''';
+      final span = await highlightArticleCode(code, 'js');
+      final baseline = TextMateHighlighterRegistry.instance.buildTextSpan(
+        text: code,
+        language: 'javascript',
+      );
+      final stringColor = _colorsIn(
+        baseline,
+        code,
+        'https://example.com/a/b',
+      ).first;
+
+      expect(span.toPlainText(), code);
+      expect(_colorsIn(span, code, r'/a\/b/g'), everyElement(stringColor));
+      for (final unchanged in [
+        'value / divisor / 2',
+        'https://example.com/a/b',
+        '// A comment with /not-a-regexp/',
+        '/* A block comment with /also-not/ */',
+      ]) {
+        expect(
+          _colorsIn(span, code, unchanged),
+          _colorsIn(baseline, code, unchanged),
+          reason: 'Slashes in $unchanged must retain their original styling',
+        );
+      }
+    },
+  );
+
+  for (final code in [
+    r'const pattern = /unterminated;',
+    r'const pattern = /[unterminated/;',
+    r'const pattern = /trailing\',
+  ]) {
+    test('incomplete JavaScript regexp preserves source: $code', () async {
+      final span = await highlightArticleCode(code, 'javascript');
+      expect(span.toPlainText(), code);
+      expect(_colorsByCodeUnit(span), hasLength(code.length));
+    });
+  }
 
   for (final language in ['', 'text', 'plaintext', 'not-a-real-language']) {
     test('unclassified "$language" preserves plain text', () async {

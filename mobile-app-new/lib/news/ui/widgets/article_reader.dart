@@ -88,6 +88,7 @@ class _ArticleReaderState extends State<ArticleReader> {
           lineHeight: const LineHeight(1.65),
         ),
         'code': Style(fontSize: FontSize(_fontSize - 2)),
+        'pre': Style(fontSize: FontSize(_fontSize - 5)),
         'h1': Style(
           fontSize: FontSize(_fontSize + 12),
           fontWeight: FontWeight.w800,
@@ -164,7 +165,7 @@ class _ArticleReaderState extends State<ArticleReader> {
           slivers: [
             SliverToBoxAdapter(child: widget.header),
             SliverPadding(
-              padding: const EdgeInsets.fromLTRB(20, 0, 20, 16),
+              padding: const EdgeInsets.fromLTRB(16, 0, 16, 16),
               sliver: SliverList.builder(
                 itemCount: elements.length,
                 itemBuilder: (_, index) => elements[index],

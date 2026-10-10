@@ -181,7 +181,7 @@ class HTMLParser {
             return FccCodeBlock(
               code: code.text.trimRight(),
               language: language ?? '',
-              fontSize: customStyles['code']?.fontSize?.value ?? 16,
+              fontSize: customStyles['pre']?.fontSize?.value ?? 13,
             );
           },
         ),
@@ -220,13 +220,22 @@ class HTMLParser {
                   ),
                 );
               },
-              child: Text(
-                parsed,
-                style: TextStyle(
-                  fontFamily: 'monospace',
-                  color: colors.onSurface,
-                  fontSize: customStyles['code']?.fontSize?.value ?? 18,
-                  backgroundColor: colors.surfaceContainerLow,
+              borderRadius: BorderRadius.circular(6),
+              child: Container(
+                padding: const EdgeInsets.symmetric(horizontal: 3),
+                decoration: BoxDecoration(
+                  color: colors.outlineVariant,
+                  borderRadius: BorderRadius.circular(6),
+                ),
+                child: Text(
+                  parsed,
+                  style: TextStyle(
+                    fontFamily: 'monospace',
+                    color: colors.onSurface,
+                    fontSize: customStyles['code']?.fontSize?.value ?? 16,
+                    letterSpacing: 0,
+                    height: 1.25,
+                  ),
                 ),
               ),
             );

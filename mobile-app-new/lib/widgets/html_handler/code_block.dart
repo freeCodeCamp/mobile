@@ -13,7 +13,7 @@ class FccCodeBlock extends StatefulWidget {
     super.key,
     required this.code,
     required this.language,
-    this.fontSize = 16,
+    this.fontSize = 13,
   });
 
   final String code;
@@ -73,6 +73,7 @@ class _FccCodeBlockState extends State<FccCodeBlock> {
     final theme = Theme.of(context);
     final colors = theme.colorScheme;
     final palette = _CodePalette(theme);
+    final compact = !widget.code.contains('\n');
     final language = switch (widget.language.trim().toLowerCase()) {
       'js' || 'javascript' => 'JavaScript',
       'htm' || 'html' => 'HTML',
@@ -88,58 +89,113 @@ class _FccCodeBlockState extends State<FccCodeBlock> {
       decoration: BoxDecoration(
         color: colors.surface,
         border: Border.all(color: colors.outlineVariant),
-        borderRadius: BorderRadius.circular(14),
+        borderRadius: BorderRadius.circular(12),
       ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.stretch,
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          ColoredBox(
-            color: colors.surfaceContainer,
-            child: Padding(
-              padding: const EdgeInsets.only(left: 16, right: 4),
-              child: Row(
-                children: [
-                  Expanded(
-                    child: Text(
-                      language,
-                      style: theme.textTheme.labelMedium?.copyWith(
-                        color: colors.onSurfaceVariant,
-                      ),
-                    ),
+      child: compact
+          ? Row(
+              children: [
+                Expanded(
+                  child: _code(
+                    colors,
+                    palette,
+                    padding: const EdgeInsets.fromLTRB(14, 12, 0, 12),
                   ),
-                  IconButton(
+                ),
+                Padding(
+                  padding: const EdgeInsets.only(right: 4),
+                  child: IconButton(
                     tooltip: 'Copy code',
                     onPressed: _copy,
-                    icon: const Icon(Icons.copy_rounded, size: 18),
+                    style: IconButton.styleFrom(
+                      foregroundColor: colors.outline,
+                      minimumSize: const Size(44, 44),
+                      tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                    ),
+                    icon: const Icon(Icons.copy_outlined, size: 16),
                   ),
-                ],
-              ),
-            ),
-          ),
-          const Divider(height: 1),
-          Scrollbar(
-            controller: _scrollController,
-            child: SingleChildScrollView(
-              controller: _scrollController,
-              scrollDirection: Axis.horizontal,
-              padding: const EdgeInsets.all(16),
-              child: SelectableText.rich(
-                palette.apply(_highlighted ?? TextSpan(text: widget.code)),
-                textDirection: TextDirection.ltr,
-                style: TextStyle(
-                  fontFamily: 'monospace',
-                  fontSize: widget.fontSize,
-                  height: 1.6,
-                  color: colors.onSurface,
                 ),
-              ),
+              ],
+            )
+          : Column(
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                ColoredBox(
+                  color: colors.surfaceContainer,
+                  child: Padding(
+                    padding: const EdgeInsets.fromLTRB(12, 6, 6, 6),
+                    child: Row(
+                      children: [
+                        Expanded(
+                          child: Text(
+                            language,
+                            style: TextStyle(
+                              fontFamily: 'monospace',
+                              fontSize: 12,
+                              letterSpacing: 0,
+                              fontWeight: FontWeight.w700,
+                              color: colors.onSurfaceVariant,
+                            ),
+                          ),
+                        ),
+                        Tooltip(
+                          message: 'Copy code',
+                          child: TextButton(
+                            onPressed: _copy,
+                            style: TextButton.styleFrom(
+                              minimumSize: const Size(56, 44),
+                              tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                              padding: const EdgeInsets.symmetric(
+                                horizontal: 12,
+                              ),
+                              backgroundColor: colors.surface,
+                              foregroundColor: colors.onSurface,
+                              textStyle: const TextStyle(
+                                fontFamily: 'Lato',
+                                fontSize: 13,
+                                letterSpacing: 0,
+                                fontWeight: FontWeight.w700,
+                              ),
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(10),
+                              ),
+                            ),
+                            child: const Text('Copy'),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+                _code(colors, palette),
+              ],
             ),
-          ),
-        ],
-      ),
     );
   }
+
+  Widget _code(
+    ColorScheme colors,
+    _CodePalette palette, {
+    EdgeInsets padding = const EdgeInsets.all(12),
+  }) => Scrollbar(
+    controller: _scrollController,
+    child: SingleChildScrollView(
+      controller: _scrollController,
+      scrollDirection: Axis.horizontal,
+      padding: padding,
+      child: SelectableText.rich(
+        palette.apply(_highlighted ?? TextSpan(text: widget.code)),
+        textDirection: TextDirection.ltr,
+        style: TextStyle(
+          fontFamily: 'monospace',
+          fontSize: widget.fontSize,
+          letterSpacing: 0,
+          height: 1.5,
+          color: colors.onSurface,
+        ),
+      ),
+    ),
+  );
 }
 
 /// PhoneIDE 3.0.0 emits a fixed Atom One Dark theme. This adapter translates its
@@ -151,24 +207,23 @@ class _CodePalette {
     final design = theme.extension<FccDesignColors>()!;
     final dark = theme.brightness == Brightness.dark;
     final number = Color(dark ? 0xFFFFAF85 : 0xFFB93D0A);
-    final function = Color(dark ? 0xFF8EC5FF : 0xFF1F6FD1);
     final type = Color(dark ? 0xFFC8B0FF : 0xFF8B3FD9);
     foreground = colors.onSurface;
     tokens = {
       0xFFABB2BF: foreground,
       0xFF5C6370: colors.onSurfaceVariant,
-      0xFFC678DD: colors.primary,
+      0xFFC678DD: design.accentText,
       0xFF98C379: design.success,
       0xFFD19A66: number,
       0xFFE5C07B: type,
-      0xFF61AFEF: function,
-      0xFFE06C75: colors.tertiary,
-      0xFF56B6C2: colors.primary,
-      0xFF5CAEEF: function,
-      0xFFDFB976: number,
-      0xFFC172D9: type,
-      0xFF4FB1BC: colors.primary,
-      0xFF97C26C: design.success,
+      0xFF61AFEF: colors.tertiary,
+      0xFFE06C75: foreground,
+      0xFF56B6C2: foreground,
+      0xFF5CAEEF: foreground,
+      0xFFDFB976: foreground,
+      0xFFC172D9: foreground,
+      0xFF4FB1BC: foreground,
+      0xFF97C26C: foreground,
       0xFFABB2C0: foreground,
       0xFFFF0000: colors.error,
     };

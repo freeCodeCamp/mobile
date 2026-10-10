@@ -22,12 +22,18 @@ SelectableText _selectableText(WidgetTester tester, Finder block) =>
       find.descendant(of: block, matching: find.byType(SelectableText)),
     );
 
-List<TextStyle> _stylesFor(SelectableText widget, String text) {
+List<TextStyle> _stylesFor(
+  SelectableText widget,
+  String text, {
+  bool exact = false,
+}) {
   final matches = <TextStyle>[];
   void visit(InlineSpan span, TextStyle inherited) {
     final style = inherited.merge(span.style);
     if (span is TextSpan) {
-      if (span.text?.contains(text) ?? false) matches.add(style);
+      if (exact ? span.text == text : (span.text?.contains(text) ?? false)) {
+        matches.add(style);
+      }
       for (final child in span.children ?? <InlineSpan>[]) {
         visit(child, style);
       }
@@ -38,6 +44,25 @@ List<TextStyle> _stylesFor(SelectableText widget, String text) {
     visit(span, widget.style ?? const TextStyle());
   }
   return matches;
+}
+
+List<Color?> _colorsIn(SelectableText widget, String token) {
+  final colors = <Color?>[];
+  void visit(InlineSpan span, Color? inherited) {
+    final color = span.style?.color ?? inherited;
+    if (span is TextSpan) {
+      colors.addAll(List<Color?>.filled(span.text?.length ?? 0, color));
+      for (final child in span.children ?? <InlineSpan>[]) {
+        visit(child, color);
+      }
+    }
+  }
+
+  final span = widget.textSpan!;
+  visit(span, widget.style?.color);
+  final start = span.toPlainText().indexOf(token);
+  expect(start, isNonNegative);
+  return colors.sublist(start, start + token.length);
 }
 
 void main() {
@@ -109,7 +134,7 @@ async function request() { return axios.get(message, 42); }''',
           final colors = theme.colorScheme;
           expect(
             _stylesFor(highlighted, snippet.keyword).single.color,
-            colors.primary,
+            theme.extension<FccDesignColors>()!.accentText,
           );
           expect(
             _stylesFor(highlighted, 'Hello').single.color,
@@ -140,6 +165,72 @@ async function request() { return axios.get(message, 42); }''',
       },
     );
   }
+
+  testWidgets('reference JavaScript and HTML retain semantic token colors', (
+    tester,
+  ) async {
+    const javascript = r'const words = text.split(/\s+/);';
+    const html = '''<header class="header-section">
+  <h1>Learn to code</h1>
+</header>''';
+    final dark = ValueNotifier(false);
+    addTearDown(dark.dispose);
+    await tester.pumpWidget(
+      ValueListenableBuilder<bool>(
+        valueListenable: dark,
+        builder: (_, isDark, _) => MaterialApp(
+          theme: FccTheme.themeLight,
+          darkTheme: FccTheme.themeDark,
+          themeMode: isDark ? ThemeMode.dark : ThemeMode.light,
+          home: const Scaffold(
+            body: SingleChildScrollView(
+              child: Column(
+                children: [
+                  FccCodeBlock(code: javascript, language: 'javascript'),
+                  FccCodeBlock(code: html, language: 'html'),
+                ],
+              ),
+            ),
+          ),
+        ),
+      ),
+    );
+    await _settleHighlight(tester);
+
+    void checkSemantics(ThemeData theme) {
+      final blocks = find.byType(FccCodeBlock);
+      final jsText = _selectableText(tester, blocks.first);
+      final htmlText = _selectableText(tester, blocks.last);
+      final design = theme.extension<FccDesignColors>()!;
+      expect(jsText.textSpan!.toPlainText(), javascript);
+      expect(htmlText.textSpan!.toPlainText(), html);
+      expect(_stylesFor(jsText, 'const').single.color, design.accentText);
+      expect(
+        _stylesFor(jsText, 'split').single.color,
+        theme.colorScheme.tertiary,
+      );
+      expect(_colorsIn(jsText, r'/\s+/'), everyElement(design.success));
+      expect(
+        _stylesFor(htmlText, 'header', exact: true).map((style) => style.color),
+        everyElement(design.accentText),
+      );
+      expect(_stylesFor(htmlText, 'header', exact: true), hasLength(2));
+      expect(
+        _stylesFor(htmlText, 'class', exact: true).single.color,
+        theme.colorScheme.tertiary,
+      );
+      expect(
+        _stylesFor(htmlText, 'header-section').single.color,
+        design.success,
+      );
+    }
+
+    checkSemantics(FccTheme.themeLight);
+    dark.value = true;
+    await _settleHighlight(tester);
+    checkSemantics(FccTheme.themeDark);
+    expect(tester.takeException(), isNull);
+  });
 
   testWidgets('long lines stay selectable and scroll on a narrow phone', (
     tester,
@@ -222,7 +313,7 @@ async function request() { return axios.get(message, 42); }''',
     );
     expect(
       _stylesFor(_selectableText(tester, blocks.at(2)), 'const').single.color,
-      FccTheme.themeLight.colorScheme.primary,
+      FccTheme.themeLight.extension<FccDesignColors>()!.accentText,
     );
     expect(
       _selectableText(tester, blocks.at(3)).textSpan!.toPlainText(),
@@ -231,38 +322,44 @@ async function request() { return axios.get(message, 42); }''',
     expect(tester.takeException(), isNull);
   });
 
-  testWidgets('copy code preserves whitespace and symbols', (tester) async {
-    const code = '  if (count < 2) {\n    print("hello");\n  }';
-    String? copied;
-    tester.binding.defaultBinaryMessenger.setMockMethodCallHandler(
-      SystemChannels.platform,
-      (call) async {
-        if (call.method == 'Clipboard.setData') {
-          copied = (call.arguments as Map)['text'] as String;
-        }
-        return null;
-      },
-    );
-    addTearDown(
-      () => tester.binding.defaultBinaryMessenger.setMockMethodCallHandler(
+  for (final example in [
+    (name: 'single-line', code: '  const message = "hello 🚀";  '),
+    (name: 'multiline', code: '  if (count < 2) {\n\tprint("hello 🚀");\n  }'),
+  ]) {
+    testWidgets('${example.name} copy preserves whitespace and symbols', (
+      tester,
+    ) async {
+      String? copied;
+      tester.binding.defaultBinaryMessenger.setMockMethodCallHandler(
         SystemChannels.platform,
-        null,
-      ),
-    );
-    await tester.pumpWidget(
-      MaterialApp(
-        theme: FccTheme.themeLight,
-        home: const Scaffold(
-          body: FccCodeBlock(code: code, language: 'javascript'),
+        (call) async {
+          if (call.method == 'Clipboard.setData') {
+            copied = (call.arguments as Map)['text'] as String;
+          }
+          return null;
+        },
+      );
+      addTearDown(
+        () => tester.binding.defaultBinaryMessenger.setMockMethodCallHandler(
+          SystemChannels.platform,
+          null,
         ),
-      ),
-    );
-    await _settleHighlight(tester);
-    await tester.tap(find.byTooltip('Copy code'));
-    await _settleHighlight(tester);
-    expect(copied, code);
-    expect(tester.takeException(), isNull);
-  });
+      );
+      await tester.pumpWidget(
+        MaterialApp(
+          theme: FccTheme.themeLight,
+          home: Scaffold(
+            body: FccCodeBlock(code: example.code, language: 'javascript'),
+          ),
+        ),
+      );
+      await _settleHighlight(tester);
+      await tester.tap(find.byTooltip('Copy code'));
+      await _settleHighlight(tester);
+      expect(copied, example.code);
+      expect(tester.takeException(), isNull);
+    });
+  }
 
   testWidgets('reader text size updates the rendered code block', (
     tester,
@@ -282,7 +379,7 @@ async function request() { return axios.get(message, 42); }''',
       _selectableText(tester, find.byType(FccCodeBlock)),
       'const',
     ).single.fontSize;
-    expect(before, 16);
+    expect(before, 13);
     await tester.tap(find.byTooltip('Text size'));
     await _settleHighlight(tester);
     await tester.tap(
@@ -296,7 +393,7 @@ async function request() { return axios.get(message, 42); }''',
       _selectableText(tester, find.byType(FccCodeBlock)),
       'const',
     ).single.fontSize;
-    expect(after, 20);
+    expect(after, 17);
     expect(tester.takeException(), isNull);
   });
 }
