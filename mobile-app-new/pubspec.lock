@@ -427,14 +427,6 @@ packages:
     description: flutter
     source: sdk
     version: "0.0.0"
-  flutter_highlight:
-    dependency: transitive
-    description:
-      name: flutter_highlight
-      sha256: "7b96333867aa07e122e245c033b8ad622e4e3a42a1a2372cbb098a2541d8782c"
-      url: "https://pub.dev"
-    source: hosted
-    version: "0.7.0"
   flutter_html:
     dependency: "direct main"
     description:
@@ -650,14 +642,6 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "2.3.2"
-  highlight:
-    dependency: transitive
-    description:
-      name: highlight
-      sha256: "5353a83ffe3e3eca7df0abfb72dcf3fa66cc56b953728e7113ad4ad88497cf21"
-      url: "https://pub.dev"
-    source: hosted
-    version: "0.7.0"
   hive:
     dependency: transitive
     description:
@@ -1019,10 +1003,10 @@ packages:
     dependency: "direct main"
     description:
       name: phone_ide
-      sha256: "6d30607fb42f1df40d95be3fa062715c80ca2731a4254dcf1394c114258690b5"
+      sha256: b5d76e9f44de06d8a6cf83671736508b5f1dd2045d3f923c6b0a55a7609a498b
       url: "https://pub.dev"
     source: hosted
-    version: "2.0.1"
+    version: "3.0.0"
   photo_view:
     dependency: "direct main"
     description:
@@ -1404,6 +1388,15 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "3.4.1+2"
+  syntax_highlight:
+    dependency: "direct overridden"
+    description:
+      path: "."
+      ref: "6331de462c1a7314cdf089d140aac71060692d46"
+      resolved-ref: "6331de462c1a7314cdf089d140aac71060692d46"
+      url: "https://github.com/serverpod/syntax_highlight.git"
+    source: git
+    version: "0.4.0"
   term_glyph:
     dependency: transitive
     description:

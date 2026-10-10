@@ -10,7 +10,7 @@ import 'package:flutter_html_table/flutter_html_table.dart';
 import 'package:html/parser.dart' as parser;
 import 'package:mobile_app_new/fcc_theme.dart';
 import 'package:mobile_app_new/routing/news.dart';
-import 'package:phone_ide/phone_ide.dart';
+import 'package:mobile_app_new/widgets/html_handler/code_block.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:youtube_player_iframe/youtube_player_iframe.dart';
 
@@ -71,12 +71,12 @@ final Map<String, Style> defaultStyles = {
   'figure': Style(margin: Margins.zero, textAlign: TextAlign.center),
   'figcaption': Style(fontSize: FontSize.medium),
   'code': Style(
-    fontFamily: 'Hack',
+    fontFamily: 'monospace',
     backgroundColor: FccColors.gray75,
     color: Colors.white.withValues(alpha: 0.87),
     fontSize: FontSize.xLarge,
   ),
-  'pre': Style(fontFamily: 'Hack'),
+  'pre': Style(fontFamily: 'monospace'),
   // NOTE: Text within backticks in en-US, es, and zh-CN challenge files is
   // parsed into spans with this class.
   'span.highlighted-text': Style(
@@ -170,41 +170,18 @@ class HTMLParser {
         TagExtension(
           tagsToExtend: {'pre'},
           builder: (child) {
-            var codeElement = child.element!.children.isNotEmpty
-                ? child
-                      .element!
-                      .children
-                      .first // code element
-                : child.element!; // pre element
-            String? currentClass;
+            final pre = child.element!;
+            final code = pre.querySelector('code') ?? pre;
+            final languageClass = RegExp(r'^(?:language|lang)-(.+)$');
+            final language = [
+              ...code.classes,
+              ...pre.classes,
+            ].map(languageClass.firstMatch).nonNulls.firstOrNull?.group(1);
 
-            bool codeLanguageIsPresent(List<String> classNames) {
-              RegExp regExp = RegExp(r'\blang(uage)?\b');
-
-              for (String className in classNames) {
-                if (className.contains(regExp)) {
-                  currentClass = className;
-                  return true;
-                }
-              }
-
-              return false;
-            }
-
-            List<String> classes = codeElement.classes.toList();
-
-            return Editor(
-              options: EditorOptions(
-                fontFamily: 'Hack',
-                takeFullHeight: false,
-                isEditable: false,
-                showLinebar: false,
-              ),
-              defaultLanguage: codeLanguageIsPresent(classes)
-                  ? currentClass!.split('-')[1]
-                  : '',
-              defaultValue: codeElement.text.trimRight(),
-              path: 'example',
+            return FccCodeBlock(
+              code: code.text.trimRight(),
+              language: language ?? '',
+              fontSize: customStyles['code']?.fontSize?.value ?? 16,
             );
           },
         ),
@@ -246,7 +223,7 @@ class HTMLParser {
               child: Text(
                 parsed,
                 style: TextStyle(
-                  fontFamily: 'Hack',
+                  fontFamily: 'monospace',
                   color: colors.onSurface,
                   fontSize: customStyles['code']?.fontSize?.value ?? 18,
                   backgroundColor: colors.surfaceContainerLow,

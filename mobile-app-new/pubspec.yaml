@@ -49,7 +49,7 @@ dependencies:
   flutter_html_table: 3.0.0
   url_launcher: 6.3.2
   youtube_player_iframe: 6.0.2
-  phone_ide: 2.0.1
+  phone_ide: 3.0.0
   photo_view: 0.15.0
   share_plus: 13.3.0
   algolia_helper_flutter: 1.6.0
@@ -62,6 +62,17 @@ dependencies:
   web_socket_channel: 3.0.3
   shared_preferences: 2.5.5
   flutter_local_notifications: 22.3.0
+
+dependency_overrides:
+  # This upstream revision has the same highlighting engine and grammar/theme
+  # assets as 0.5.0, before its unrelated CodeEditor/clipboard widget was added.
+  # That widget pulls native clipboard plugins incompatible with Gradle 9 and
+  # share_plus's win32 6 dependency. PhoneIDE only uses the highlighting API.
+  # Remove when a published highlighter no longer brings those incompatibilities.
+  syntax_highlight:
+    git:
+      url: https://github.com/serverpod/syntax_highlight.git
+      ref: 6331de462c1a7314cdf089d140aac71060692d46
 
 dev_dependencies:
   flutter_driver:
