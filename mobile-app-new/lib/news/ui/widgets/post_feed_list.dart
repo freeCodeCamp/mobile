@@ -1,15 +1,20 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-import 'package:mobile_app_new/fcc_theme.dart';
 import 'package:mobile_app_new/news/controllers/feed_controller.dart';
 import 'package:mobile_app_new/news/ui/widgets/post_tile.dart';
 import 'package:mobile_app_new/widgets/error_retry.dart';
 
 class PostFeedList extends ConsumerStatefulWidget {
-  const PostFeedList({super.key, required this.source, this.header});
+  const PostFeedList({
+    super.key,
+    required this.source,
+    this.header,
+    this.featured = false,
+  });
 
   final NewsFeedSource source;
+  final bool featured;
 
   // NOTE: The header is optional and can be used to display a widget above the
   // list of posts, such as author details or tag information.
@@ -48,7 +53,7 @@ class _PostFeedListState extends ConsumerState<PostFeedList> {
     final feedAsync = ref.watch(_provider);
 
     return ColoredBox(
-      color: FccColors.gray90,
+      color: Theme.of(context).scaffoldBackgroundColor,
       child: feedAsync.when(
         loading: () => const Center(child: CircularProgressIndicator()),
         error: (error, stack) => ErrorRetry(
@@ -56,26 +61,26 @@ class _PostFeedListState extends ConsumerState<PostFeedList> {
           onRetry: () => ref.invalidate(_provider),
         ),
         data: (feed) => RefreshIndicator(
-          onRefresh: () async => ref.invalidate(_provider),
-          backgroundColor: FccColors.gray90,
-          color: Colors.white,
+          onRefresh: () async {
+            ref.invalidate(_provider);
+            await ref.read(_provider.future);
+          },
           child: CustomScrollView(
             controller: _scrollController,
+            physics: const AlwaysScrollableScrollPhysics(),
             slivers: [
               if (widget.header case final header?)
-                SliverToBoxAdapter(
-                  child: Column(
-                    children: [
-                      header,
-                      const Divider(
-                        color: FccColors.gray80,
-                        thickness: 1,
-                        height: 1,
-                      ),
-                    ],
-                  ),
+                SliverToBoxAdapter(child: header),
+              if (feed.posts.isEmpty)
+                const SliverFillRemaining(
+                  hasScrollBody: false,
+                  child: Center(child: Text('No tutorials here yet.')),
+                )
+              else
+                SliverPadding(
+                  padding: const EdgeInsets.fromLTRB(20, 0, 20, 24),
+                  sliver: _buildList(feed),
                 ),
-              _buildList(feed),
             ],
           ),
         ),
@@ -88,13 +93,17 @@ class _PostFeedListState extends ConsumerState<PostFeedList> {
 
     return SliverList.separated(
       itemCount: feed.posts.length + (footer == null ? 0 : 1),
-      separatorBuilder: (_, _) =>
-          const Divider(color: FccColors.gray80, thickness: 1, height: 1),
+      separatorBuilder: (_, _) => Divider(
+        color: Theme.of(context).colorScheme.outlineVariant,
+        thickness: 1,
+        height: 1,
+      ),
       itemBuilder: (context, index) => index == feed.posts.length
           ? footer
           : PostTile(
               key: ValueKey(feed.posts[index].id),
               post: feed.posts[index],
+              featured: widget.featured && index == 0,
             ),
     );
   }

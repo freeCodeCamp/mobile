@@ -127,3 +127,11 @@ flutter:
   #
   # For details regarding fonts from package dependencies,
   # see https://flutter.dev/to/font-from-package
+
+  fonts:
+    - family: Lato
+      fonts:
+        - asset: assets/fonts/Lato-Regular.ttf
+    - family: monospace
+      fonts:
+        - asset: assets/fonts/Hack-Regular.ttf

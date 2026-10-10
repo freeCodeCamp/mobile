@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:mobile_app_new/fcc_theme.dart';
 import 'package:mobile_app_new/routing/news.dart';
 
 class TagButton extends StatelessWidget {
@@ -14,48 +13,37 @@ class TagButton extends StatelessWidget {
   final String tagSlug;
   final bool compact;
 
-  static const _colors = [
-    FccColors.purple10,
-    FccColors.yellow50,
-    FccColors.blue30,
-    FccColors.green40,
-  ];
-
-  Color get _tagColor => _colors[tagSlug.hashCode.abs() % _colors.length];
-
   @override
   Widget build(BuildContext context) {
+    final colors = Theme.of(context).colorScheme;
     return Padding(
-      padding: EdgeInsets.fromLTRB(0, compact ? 0 : 8, compact ? 6 : 8, 0),
+      padding: EdgeInsets.only(right: 6, bottom: compact ? 0 : 8),
       child: InkWell(
-        onTap: () {
-          NewsTagFeedRoute(tagSlug: tagSlug, $extra: tagName).push(context);
-        },
+        borderRadius: BorderRadius.circular(30),
+        onTap: () =>
+            NewsTagFeedRoute(tagSlug: tagSlug, $extra: tagName).push(context),
         child: Container(
           constraints: BoxConstraints(
-            maxWidth:
-                MediaQuery.of(context).size.width * (compact ? 0.35 : 0.45),
+            maxWidth: MediaQuery.sizeOf(context).width * (compact ? .5 : .7),
           ),
-          decoration: ShapeDecoration(
-            color: _tagColor,
-            shape: const StadiumBorder(),
-          ),
-          child: Padding(
-            padding: EdgeInsets.symmetric(
-              vertical: compact ? 2 : 4,
-              horizontal: compact ? 6 : 8,
-            ),
-            child: Tooltip(
-              message: '#$tagName',
-              child: Text(
-                '#$tagName',
-                maxLines: 1,
-                overflow: TextOverflow.ellipsis,
-                style: TextStyle(
-                  fontSize: compact ? 11 : 16,
-                  color: Colors.black,
+          padding: compact
+              ? const EdgeInsets.symmetric(vertical: 3)
+              : const EdgeInsets.symmetric(horizontal: 12, vertical: 9),
+          decoration: compact
+              ? null
+              : ShapeDecoration(
+                  color: colors.surfaceContainerLow,
+                  shape: const StadiumBorder(),
                 ),
-              ),
+          child: Text(
+            '#$tagName',
+            maxLines: 1,
+            overflow: TextOverflow.ellipsis,
+            style: TextStyle(
+              fontSize: compact ? 12 : 13,
+              fontWeight: compact ? FontWeight.w500 : FontWeight.w600,
+              color: colors.primary,
+              letterSpacing: compact ? .4 : 0,
             ),
           ),
         ),

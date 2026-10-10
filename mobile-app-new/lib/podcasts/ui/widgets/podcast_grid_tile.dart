@@ -1,9 +1,8 @@
 import 'dart:io';
 
-import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
-import 'package:mobile_app_new/fcc_theme.dart';
 import 'package:mobile_app_new/podcasts/models/podcast_model.dart';
+import 'package:mobile_app_new/podcasts/ui/widgets/podcast_artwork.dart';
 
 class PodcastGridTile extends StatelessWidget {
   const PodcastGridTile({
@@ -15,63 +14,47 @@ class PodcastGridTile extends StatelessWidget {
 
   final Podcast podcast;
   final VoidCallback onTap;
-
   final File? artwork;
 
   @override
   Widget build(BuildContext context) {
+    final colors = Theme.of(context).colorScheme;
     return InkWell(
       onTap: onTap,
       child: Padding(
-        padding: const EdgeInsets.all(4),
-        child: Stack(
-          fit: StackFit.expand,
+        padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 20),
+        child: Row(
           children: [
-            ColoredBox(color: FccColors.gray90, child: _artwork()),
-            Positioned(
-              left: 0,
-              right: 0,
-              bottom: 0,
-              child: DecoratedBox(
-                decoration: BoxDecoration(
-                  boxShadow: [
-                    BoxShadow(
-                      color: Colors.black.withValues(alpha: 0.75),
-                      spreadRadius: 1.5,
-                      blurRadius: 0.1,
+            PodcastArtwork(podcast: podcast, artwork: artwork, size: 60),
+            const SizedBox(width: 14),
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    podcast.title,
+                    style: const TextStyle(
+                      fontSize: 16,
+                      fontWeight: FontWeight.w600,
+                      height: 1.3,
                     ),
-                  ],
-                ),
-                child: Text(
-                  podcast.title,
-                  maxLines: 2,
-                  textAlign: TextAlign.center,
-                  style: const TextStyle(
-                    fontSize: 16,
-                    height: 1.2,
-                    overflow: TextOverflow.ellipsis,
                   ),
-                ),
+                  const SizedBox(height: 4),
+                  Text(
+                    '${podcast.numOfEps} episodes',
+                    style: TextStyle(
+                      color: colors.onSurfaceVariant,
+                      fontSize: 14,
+                    ),
+                  ),
+                ],
               ),
             ),
+            const SizedBox(width: 8),
+            Icon(Icons.chevron_right_rounded, color: colors.onSurfaceVariant),
           ],
         ),
       ),
-    );
-  }
-
-  Widget _artwork() {
-    if (artwork case final file?) return Image.file(file, fit: BoxFit.cover);
-
-    if (podcast.imageLink.isEmpty) {
-      return const Icon(Icons.podcasts, color: FccColors.gray45, size: 48);
-    }
-
-    return CachedNetworkImage(
-      imageUrl: podcast.imageLink,
-      fit: BoxFit.cover,
-      errorWidget: (_, _, _) =>
-          const Icon(Icons.podcasts, color: FccColors.gray45, size: 48),
     );
   }
 }

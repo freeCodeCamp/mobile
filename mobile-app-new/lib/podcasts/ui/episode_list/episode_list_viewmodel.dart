@@ -32,9 +32,11 @@ abstract class PodcastEpisodesState with _$PodcastEpisodesState {
 @riverpod
 class PodcastEpisodesNotifier extends _$PodcastEpisodesNotifier {
   Podcast? _lastKnownPodcast;
+  int _generation = 0;
 
   @override
   FutureOr<PodcastEpisodesState> build(PodcastEpisodeSource source) async {
+    _generation++;
     switch (source) {
       case RemoteEpisodes(:final podcastId):
         final page = await ref
@@ -86,11 +88,14 @@ class PodcastEpisodesNotifier extends _$PodcastEpisodesNotifier {
       );
 
       final next = current.page + 1;
+      final generation = _generation;
 
       try {
         final page = await ref
             .read(podcastApiServiceProvider)
             .getEpisodes(podcastId, page: next);
+
+        if (!ref.mounted || generation != _generation) return;
 
         state = AsyncData(
           current.copyWith(
@@ -98,9 +103,12 @@ class PodcastEpisodesNotifier extends _$PodcastEpisodesNotifier {
             page: next,
             hasNextPage: page.hasMore,
             isLoadingMore: false,
+            loadMoreError: null,
           ),
         );
       } catch (error) {
+        if (!ref.mounted || generation != _generation) return;
+
         state = AsyncData(
           current.copyWith(isLoadingMore: false, loadMoreError: error),
         );

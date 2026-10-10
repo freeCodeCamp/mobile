@@ -63,6 +63,14 @@ class AudioPlayerHandler extends BaseAudioHandler {
 
   AudioTypeConfig? _audioConfig;
 
+  (Podcast, Episode)? _currentPodcastEpisode;
+
+  /// The loaded models let the persistent player reopen the episode screen.
+  (Podcast, Episode)? get currentPodcastEpisode =>
+      episodeId == _currentPodcastEpisode?.$2.id
+      ? _currentPodcastEpisode
+      : null;
+
   Uri? _codeRadioUrl;
 
   // NOTE: Pausing a live stream does not pause the source: the buffer keeps filling
@@ -109,6 +117,7 @@ class AudioPlayerHandler extends BaseAudioHandler {
   @override
   Future<void> stop() async {
     _audioConfig = null;
+    _currentPodcastEpisode = null;
     _codeRadioUrl = null;
     _resumeNeedsLiveEdge = false;
 
@@ -175,6 +184,7 @@ class AudioPlayerHandler extends BaseAudioHandler {
       await _audioPlayer.setSpeed(_defaultSpeed);
       await _audioPlayer.setAudioSource(AudioSource.uri(url, tag: song));
 
+      _currentPodcastEpisode = null;
       _publish(song);
     } catch (e) {
       _audioConfig = previous;
@@ -224,6 +234,7 @@ class AudioPlayerHandler extends BaseAudioHandler {
         await _audioPlayer.seek(startAt);
       }
 
+      _currentPodcastEpisode = (podcast, episode);
       _publish(item);
       return true;
     } catch (e) {

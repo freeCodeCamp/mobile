@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 class DrawerTile extends StatelessWidget {
   const DrawerTile({
     super.key,
-    this.textColor = Colors.white,
+    this.textColor,
     required this.component,
     required this.route,
     this.icon,
@@ -26,7 +26,7 @@ class DrawerTile extends StatelessWidget {
                 'assets/images/logo.png',
                 width: 30,
                 height: 30,
-                color: Colors.white,
+                color: textColor ?? Theme.of(context).colorScheme.onSurface,
               ),
         title: Text(
           component,

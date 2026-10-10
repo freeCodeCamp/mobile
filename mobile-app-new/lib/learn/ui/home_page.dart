@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:mobile_app_new/widgets/drawer/drawer.dart';
+import 'package:mobile_app_new/widgets/app_bottom_navigation.dart';
 
 class MyHomePage extends StatefulWidget {
   const MyHomePage({super.key, required this.title});
@@ -52,6 +53,9 @@ class _MyHomePageState extends State<MyHomePage> {
         title: Text(widget.title),
       ),
       drawer: const DrawerWidget(),
+      bottomNavigationBar: const AppBottomNavigation(
+        selected: AppDestination.learn,
+      ),
       body: Center(
         // Center is a layout widget. It takes a single child and positions it
         // in the middle of the parent.

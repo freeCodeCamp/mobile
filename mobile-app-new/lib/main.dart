@@ -45,8 +45,11 @@ class _MyAppState extends ConsumerState<MyApp> {
   Widget build(BuildContext context) {
     return MaterialApp.router(
       routerConfig: router,
-      title: 'Flutter Demo',
-      theme: FccTheme.themeDark,
+      title: 'freeCodeCamp',
+      debugShowCheckedModeBanner: false,
+      theme: FccTheme.themeLight,
+      darkTheme: FccTheme.themeDark,
+      themeMode: ThemeMode.system,
     );
   }
 }

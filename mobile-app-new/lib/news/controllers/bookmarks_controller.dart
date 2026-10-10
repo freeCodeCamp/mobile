@@ -11,15 +11,28 @@ class NewsBookmarksNotifier extends _$NewsBookmarksNotifier {
     return ref.watch(newsBookmarkServiceProvider).getBookmarks();
   }
 
-  Future<void> toggle(BookmarkedPost post) async {
+  Future<void> toggle(BookmarkedPost post) =>
+      toggleById(post.id, () async => post);
+
+  /// Retain the service while loading a summary's HTML so scrolling its tile
+  /// offscreen cannot cancel an in-flight save.
+  Future<void> toggleById(
+    String id,
+    Future<BookmarkedPost> Function() loadPost,
+  ) async {
     final service = ref.read(newsBookmarkServiceProvider);
+    final pendingSave = ref.keepAlive();
+    try {
+      if (await service.isBookmarked(id)) {
+        await service.removeBookmark(id);
+      } else {
+        await service.addBookmark(await loadPost());
+      }
 
-    if (await service.isBookmarked(post.id)) {
-      await service.removeBookmark(post.id);
-    } else {
-      await service.addBookmark(post);
+      final bookmarks = await service.getBookmarks();
+      if (ref.mounted) state = AsyncData(bookmarks);
+    } finally {
+      pendingSave.close();
     }
-
-    state = AsyncData(await service.getBookmarks());
   }
 }

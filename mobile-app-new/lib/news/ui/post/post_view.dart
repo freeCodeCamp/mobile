@@ -1,20 +1,14 @@
-import 'dart:developer';
-
-import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:go_router/go_router.dart';
-import 'package:mobile_app_new/fcc_theme.dart';
 import 'package:mobile_app_new/news/models/post_model.dart';
 import 'package:mobile_app_new/news/ui/post/post_viewmodel.dart';
-import 'package:mobile_app_new/news/ui/widgets/back_to_top_button.dart';
+import 'package:mobile_app_new/news/ui/widgets/article_reader.dart';
 import 'package:mobile_app_new/news/ui/widgets/bookmark_button.dart';
-import 'package:mobile_app_new/news/ui/widgets/bottom_button.dart';
+import 'package:mobile_app_new/news/ui/widgets/news_image.dart';
 import 'package:mobile_app_new/news/ui/widgets/tag_button.dart';
 import 'package:mobile_app_new/routing/news.dart';
+import 'package:mobile_app_new/utils/date_utils.dart';
 import 'package:mobile_app_new/widgets/error_retry.dart';
-import 'package:mobile_app_new/widgets/html_handler/html_handler.dart';
-import 'package:share_plus/share_plus.dart';
 
 class NewsPostHeader extends StatelessWidget {
   const NewsPostHeader({super.key, required this.post});
@@ -23,228 +17,134 @@ class NewsPostHeader extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final imageUrl = post.coverImage?.url;
-
-    return Column(
-      children: [
-        AspectRatio(
-          aspectRatio: 16 / 9,
-          child: imageUrl == null
-              ? Image.asset(
-                  'assets/images/freecodecamp-banner.png',
-                  fit: BoxFit.cover,
-                )
-              : CachedNetworkImage(
-                  imageUrl: imageUrl,
-                  fit: BoxFit.cover,
-                  placeholder: (context, url) =>
-                      ColoredBox(color: FccColors.gray80),
-                  errorWidget: (context, url, error) => Image.asset(
-                    'assets/images/freecodecamp-banner.png',
-                    fit: BoxFit.cover,
-                  ),
-                ),
-        ),
-        Row(
-          children: [
-            Expanded(
-              child: Container(
-                color: FccColors.gray80,
-                padding: const EdgeInsets.all(16),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      post.title,
-                      style: const TextStyle(fontSize: 24, height: 1.5),
-                    ),
-                    GestureDetector(
-                      onTap: () => NewsAuthorRoute(
-                        username: post.author.username,
-                        $extra: post.author,
-                      ).push(context),
-                      child: Text(
-                        'Written by ${post.author.name}',
-                        style: const TextStyle(height: 1.5),
-                      ),
-                    ),
-                    if (post.tags.isNotEmpty)
-                      Wrap(
-                        children: [
-                          for (final tag in post.tags.take(3))
-                            TagButton(tagName: tag.name, tagSlug: tag.slug),
-                        ],
-                      ),
-                  ],
-                ),
-              ),
-            ),
-          ],
-        ),
-      ],
-    );
-  }
-}
-
-class NewsPostView extends ConsumerStatefulWidget {
-  const NewsPostView({super.key, required this.slug});
-
-  final String slug;
-
-  @override
-  ConsumerState<NewsPostView> createState() => _NewsPostViewState();
-}
-
-class _NewsPostViewState extends ConsumerState<NewsPostView> {
-  final ScrollController _scrollController = ScrollController();
-
-  final GlobalKey _shareButtonKey = GlobalKey();
-
-  bool _showBottomBar = true;
-
-  // NOTE: Parsed and stored here to avoid re-parsing on every build
-  List<Widget>? _htmlWidgets;
-
-  @override
-  void initState() {
-    super.initState();
-    _scrollController.addListener(_handleBottomBarVisibility);
-  }
-
-  @override
-  void dispose() {
-    _scrollController.dispose();
-    super.dispose();
-  }
-
-  double _lastScrollOffset = 0;
-
-  void _handleBottomBarVisibility() {
-    final offset = _scrollController.offset;
-    // Scrolling up reveals the bar, scrolling down hides it.
-    final shouldShow = offset <= _lastScrollOffset;
-    _lastScrollOffset = offset;
-
-    if (shouldShow == _showBottomBar) return;
-    setState(() => _showBottomBar = shouldShow);
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    final postAsync = ref.watch(newsPostProvider(widget.slug));
-
-    return Scaffold(
-      backgroundColor: FccColors.gray90,
-      floatingActionButton: BackToTopButton(controller: _scrollController),
-      body: postAsync.when(
-        loading: () => const Center(child: CircularProgressIndicator()),
-        error: (error, stack) {
-          log('Error loading post: $error');
-          return ErrorRetry(
-            message: 'Unable to load post.',
-            onRetry: () => ref.invalidate(newsPostProvider(widget.slug)),
-          );
-        },
-        data: (post) {
-          final htmlWidgets = _htmlWidgets ??= _parseHtml(post);
-
-          return Stack(
-            children: [
-              ListView.builder(
-                controller: _scrollController,
-                itemCount: htmlWidgets.length,
-                physics: const ClampingScrollPhysics(),
-                itemBuilder: (context, i) {
-                  return Row(children: [Expanded(child: htmlWidgets[i])]);
-                },
-              ),
-              _buildBottomButtons(post),
-            ],
-          );
-        },
-      ),
-    );
-  }
-
-  List<Widget> _parseHtml(Post post) {
-    final elements = HTMLParser(context: context).parse(post.content.html);
-
-    elements.insert(
-      0,
-      Stack(
+    final colors = Theme.of(context).colorScheme;
+    return Padding(
+      padding: const EdgeInsets.fromLTRB(20, 24, 20, 12),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          NewsPostHeader(post: post),
-          AppBar(
-            backgroundColor: Colors.transparent,
-            shadowColor: Colors.transparent,
-            leading: Tooltip(
-              message: 'Back',
-              child: InkWell(
-                onTap: () => context.pop(),
-                child: Container(
-                  margin: const EdgeInsets.all(8),
-                  decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(50),
-                    color: Colors.black.withValues(alpha: 0.5),
-                  ),
-                  child: const Icon(Icons.arrow_back),
+          if (post.tags.isNotEmpty) ...[
+            TagButton(
+              tagName: post.tags.first.name,
+              tagSlug: post.tags.first.slug,
+              compact: true,
+            ),
+            const SizedBox(height: 10),
+          ],
+          Text(
+            post.title,
+            style: const TextStyle(
+              fontSize: 28,
+              height: 1.25,
+              fontWeight: FontWeight.w800,
+            ),
+          ),
+          const SizedBox(height: 18),
+          InkWell(
+            onTap: () => NewsAuthorRoute(
+              username: post.author.username,
+              $extra: post.author,
+            ).push(context),
+            child: Row(
+              children: [
+                NewsImage(
+                  url: post.author.profilePicture,
+                  isAvatar: true,
+                  width: 42,
+                  height: 42,
                 ),
-              ),
+                const SizedBox(width: 10),
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        post.author.name,
+                        style: const TextStyle(fontWeight: FontWeight.w600),
+                      ),
+                      const SizedBox(height: 3),
+                      Text(
+                        '${parseDate(post.publishedAt).toLowerCase()} · ${post.readTimeInMinutes} min read',
+                        style: TextStyle(
+                          fontSize: 12,
+                          color: colors.onSurfaceVariant,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ],
+            ),
+          ),
+          const SizedBox(height: 22),
+          AspectRatio(
+            aspectRatio: 16 / 9,
+            child: InkWell(
+              onTap: post.coverImage?.url == null
+                  ? null
+                  : () => NewsImageRoute(
+                      $extra: post.coverImage!.url!,
+                    ).push(context),
+              child: NewsImage(url: post.coverImage?.url),
             ),
           ),
         ],
       ),
     );
-
-    elements.add(const SizedBox(height: 100));
-
-    return elements;
   }
+}
 
-  void _sharePost(Post post) {
-    final box =
-        _shareButtonKey.currentContext?.findRenderObject() as RenderBox?;
+class NewsPostView extends ConsumerWidget {
+  const NewsPostView({super.key, required this.slug});
 
-    SharePlus.instance.share(
-      ShareParams(
-        text: '${post.title}\n\n${post.url}',
-        sharePositionOrigin: box == null
-            ? null
-            : box.localToGlobal(Offset.zero) & box.size,
-      ),
-    );
-  }
+  final String slug;
 
-  Widget _buildBottomButtons(Post post) {
-    return Align(
-      alignment: Alignment.bottomCenter,
-      child: AnimatedSlide(
-        offset: _showBottomBar ? Offset.zero : const Offset(0, 1),
-        duration: const Duration(milliseconds: 250),
-        curve: Curves.easeInOut,
-        child: Padding(
-          padding: const EdgeInsets.only(bottom: 32),
-          child: SizedBox(
-            width: 300,
-            child: Row(
-              children: [
-                BookmarkButton(post: post),
-                const SizedBox(
-                  height: 35,
-                  child: VerticalDivider(color: Colors.white, width: 0),
-                ),
-                NewsBottomButton(
-                  key: _shareButtonKey,
-                  label: 'Share',
-                  icon: Icons.share,
-                  onPressed: () => _sharePost(post),
-                  rightSided: true,
-                ),
-              ],
-            ),
+  @override
+  Widget build(BuildContext context, WidgetRef ref) => ref
+      .watch(newsPostProvider(slug))
+      .when(
+        loading: () => Scaffold(
+          appBar: AppBar(),
+          body: const Center(child: CircularProgressIndicator()),
+        ),
+        error: (_, _) => Scaffold(
+          appBar: AppBar(),
+          body: ErrorRetry(
+            message: 'Unable to load tutorial.',
+            onRetry: () => ref.invalidate(newsPostProvider(slug)),
           ),
         ),
-      ),
-    );
-  }
+        data: (post) => ArticleReader(
+          html: post.content.html,
+          header: NewsPostHeader(post: post),
+          bookmarkButton: BookmarkButton(post: post),
+          shareText: '${post.title}\n\n${post.url}',
+          footer: post.tags.isEmpty
+              ? null
+              : Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 20),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      const Divider(),
+                      const SizedBox(height: 12),
+                      const Text(
+                        'More on these topics',
+                        style: TextStyle(
+                          fontSize: 17,
+                          fontWeight: FontWeight.w700,
+                        ),
+                      ),
+                      const SizedBox(height: 12),
+                      Wrap(
+                        children: [
+                          for (final tag in post.tags)
+                            TagButton(tagName: tag.name, tagSlug: tag.slug),
+                        ],
+                      ),
+                    ],
+                  ),
+                ),
+        ),
+      );
 }
