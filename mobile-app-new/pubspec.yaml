@@ -50,6 +50,8 @@ dependencies:
   url_launcher: 6.3.2
   youtube_player_iframe: 6.0.2
   phone_ide: 3.0.0
+  # Article languages beyond PhoneIDE's HTML, CSS, and JavaScript grammars.
+  highlight: 0.7.0
   photo_view: 0.15.0
   share_plus: 13.3.0
   algolia_helper_flutter: 1.6.0

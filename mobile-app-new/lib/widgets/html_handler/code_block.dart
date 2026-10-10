@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:mobile_app_new/fcc_theme.dart';
-import 'package:phone_ide/highlighting/textmate_highlighter_registry.dart';
+import 'package:mobile_app_new/widgets/html_handler/code_highlighter.dart';
 
-/// A read-only article snippet using PhoneIDE's TextMate highlighting.
+/// A read-only article snippet using PhoneIDE and additional article grammars.
 ///
 /// PhoneIDE 3's Editor hard-codes its text colors and font size. Rendering its
 /// highlighted spans here lets article snippets follow the app theme and reader
@@ -45,18 +45,12 @@ class _FccCodeBlockState extends State<FccCodeBlock> {
   }
 
   Future<void> _highlight() async {
-    final registry = TextMateHighlighterRegistry.instance;
-    if (TextMateHighlighterRegistry.canonicalizeLanguage(widget.language) ==
-        null) {
-      return;
-    }
-    await registry.initialize();
-    if (!mounted) return;
+    final code = widget.code;
+    final language = widget.language;
+    final highlighted = await highlightArticleCode(code, language);
+    if (!mounted || widget.code != code || widget.language != language) return;
     setState(() {
-      _highlighted = registry.buildTextSpan(
-        text: widget.code,
-        language: widget.language,
-      );
+      _highlighted = highlighted;
     });
   }
 
@@ -83,6 +77,8 @@ class _FccCodeBlockState extends State<FccCodeBlock> {
       'js' || 'javascript' => 'JavaScript',
       'htm' || 'html' => 'HTML',
       'css' => 'CSS',
+      'ts' || 'typescript' => 'TypeScript',
+      'py' || 'py3' || 'python' || 'python3' => 'Python',
       '' => 'Code',
       final name => name,
     };

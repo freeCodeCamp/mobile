@@ -48,68 +48,98 @@ void main() {
     expect(TextMateHighlighterRegistry.instance.isInitialized, isTrue);
   });
 
-  testWidgets('syntax and plain text follow a running app theme change', (
-    tester,
-  ) async {
-    final dark = ValueNotifier(false);
-    addTearDown(dark.dispose);
-    await tester.pumpWidget(
-      ValueListenableBuilder<bool>(
-        valueListenable: dark,
-        builder: (_, isDark, _) => MaterialApp(
-          theme: FccTheme.themeLight,
-          darkTheme: FccTheme.themeDark,
-          themeMode: isDark ? ThemeMode.dark : ThemeMode.light,
-          home: const Scaffold(
-            body: SingleChildScrollView(
-              child: Column(
-                children: [
-                  FccCodeBlock(code: _javascript, language: 'javascript'),
-                  FccCodeBlock(code: 'Unclassified plain text', language: ''),
-                ],
+  for (final snippet in [
+    (language: 'javascript', code: _javascript, keyword: 'const'),
+    (
+      language: 'typescript',
+      code: '''import axios from 'axios';
+const message: string = "Hello";
+// A helpful comment
+async function request() { return axios.get(message, 42); }''',
+      keyword: 'import',
+    ),
+    (
+      language: 'python',
+      code: '''def greet():
+    # A helpful comment
+    print("Hello", 42)
+    return True''',
+      keyword: 'return',
+    ),
+  ]) {
+    testWidgets(
+      '${snippet.language} and plain text follow a running theme change',
+      (tester) async {
+        final dark = ValueNotifier(false);
+        addTearDown(dark.dispose);
+        await tester.pumpWidget(
+          ValueListenableBuilder<bool>(
+            valueListenable: dark,
+            builder: (_, isDark, _) => MaterialApp(
+              theme: FccTheme.themeLight,
+              darkTheme: FccTheme.themeDark,
+              themeMode: isDark ? ThemeMode.dark : ThemeMode.light,
+              home: Scaffold(
+                body: SingleChildScrollView(
+                  child: Column(
+                    children: [
+                      FccCodeBlock(
+                        code: snippet.code,
+                        language: snippet.language,
+                      ),
+                      const FccCodeBlock(
+                        code: 'Unclassified plain text',
+                        language: '',
+                      ),
+                    ],
+                  ),
+                ),
               ),
             ),
           ),
-        ),
-      ),
+        );
+        await _settleHighlight(tester);
+
+        void checkPalette(ThemeData theme) {
+          final highlighted = _selectableText(
+            tester,
+            find.byType(FccCodeBlock).first,
+          );
+          final plain = _selectableText(tester, find.byType(FccCodeBlock).last);
+          final colors = theme.colorScheme;
+          expect(
+            _stylesFor(highlighted, snippet.keyword).single.color,
+            colors.primary,
+          );
+          expect(
+            _stylesFor(highlighted, 'Hello').single.color,
+            theme.extension<FccDesignColors>()!.success,
+          );
+          expect(
+            _stylesFor(highlighted, '42').single.color,
+            theme.brightness == Brightness.dark
+                ? const Color(0xFFFFAF85)
+                : const Color(0xFFB93D0A),
+          );
+          expect(
+            _stylesFor(highlighted, 'A helpful comment').single.color,
+            colors.onSurfaceVariant,
+          );
+          expect(
+            _stylesFor(plain, 'Unclassified plain text').single.color,
+            colors.onSurface,
+          );
+          expect(highlighted.textSpan!.toPlainText(), snippet.code);
+        }
+
+        checkPalette(FccTheme.themeLight);
+        dark.value = true;
+        await _settleHighlight(tester);
+        checkPalette(FccTheme.themeDark);
+        expect(tester.takeException(), isNull);
+      },
     );
-    await _settleHighlight(tester);
-
-    void checkPalette(ThemeData theme) {
-      final highlighted = _selectableText(
-        tester,
-        find.byType(FccCodeBlock).first,
-      );
-      final plain = _selectableText(tester, find.byType(FccCodeBlock).last);
-      final colors = theme.colorScheme;
-      expect(_stylesFor(highlighted, 'const').single.color, colors.primary);
-      expect(
-        _stylesFor(highlighted, 'Hello').single.color,
-        theme.extension<FccDesignColors>()!.success,
-      );
-      expect(
-        _stylesFor(highlighted, '42').single.color,
-        theme.brightness == Brightness.dark
-            ? const Color(0xFFFFAF85)
-            : const Color(0xFFB93D0A),
-      );
-      expect(
-        _stylesFor(highlighted, 'A helpful comment').single.color,
-        colors.onSurfaceVariant,
-      );
-      expect(
-        _stylesFor(plain, 'Unclassified plain text').single.color,
-        colors.onSurface,
-      );
-      expect(highlighted.textSpan!.toPlainText(), _javascript);
-    }
-
-    checkPalette(FccTheme.themeLight);
-    dark.value = true;
-    await _settleHighlight(tester);
-    checkPalette(FccTheme.themeDark);
-    expect(tester.takeException(), isNull);
-  });
+  }
 
   testWidgets('long lines stay selectable and scroll on a narrow phone', (
     tester,
@@ -169,7 +199,7 @@ void main() {
               child: Column(
                 children: HTMLParser(context: context).parse(
                   '<pre><code class="language">Plain &lt;text&gt;</code></pre>'
-                  '<pre><code class="language-rust">let count = 1;</code></pre>'
+                  '<pre><code class="language-unknown-language">let count = 1;</code></pre>'
                   '<pre class="language-js"><code>const count = 2;</code></pre>'
                   '<pre><code class="lang-css">body { color: red; }</code></pre>',
                 ),
