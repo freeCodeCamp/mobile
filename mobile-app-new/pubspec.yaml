@@ -62,6 +62,10 @@ dependencies:
   web_socket_channel: 3.0.3
   shared_preferences: 2.5.5
   flutter_local_notifications: 22.3.0
+  auth0_flutter: 2.6.2
+  flutter_secure_storage: 11.2.0
+  flutter_custom_tabs: 2.6.0
+  flutter_heatmap_calendar: 1.0.5
 
 dev_dependencies:
   flutter_driver:

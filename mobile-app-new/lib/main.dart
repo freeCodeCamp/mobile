@@ -7,6 +7,7 @@ import 'package:mobile_app_new/fcc_theme.dart';
 import 'package:mobile_app_new/podcasts/services/library_service.dart';
 import 'package:mobile_app_new/routing/router.dart';
 import 'package:mobile_app_new/services/audio_service.dart';
+import 'package:mobile_app_new/services/auth_service.dart';
 import 'package:mobile_app_new/services/notification_service.dart';
 
 Future<void> main() async {
@@ -36,6 +37,8 @@ class _MyAppState extends ConsumerState<MyApp> {
 
     WidgetsBinding.instance.addPostFrameCallback((_) {
       unawaited(ref.read(notificationServiceProvider).requestPermission());
+      // NOTE: Starts restoring the stored session so the drawer rarely sees it loading.
+      ref.read(authProvider);
       // NOTE: Deletes audio and artwork that no store row points at
       unawaited(ref.read(podcastLibraryServiceProvider).sweepOrphanedFiles());
     });
