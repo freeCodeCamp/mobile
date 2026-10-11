@@ -66,6 +66,10 @@ dependencies:
   flutter_secure_storage: 11.2.0
   flutter_custom_tabs: 2.6.0
   flutter_heatmap_calendar: 1.0.5
+  firebase_core: 4.15.0
+  firebase_remote_config: 6.7.0
+  flutter_svg: 2.3.0
+  timezone: 0.11.1
 
 dev_dependencies:
   flutter_driver:
@@ -103,6 +107,7 @@ flutter:
   assets:
     - .env
     - assets/images/
+    - assets/learn/
   #   - images/a_dot_burr.jpeg
   #   - images/a_dot_ham.jpeg
 

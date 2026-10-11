@@ -81,6 +81,12 @@ class DrawerWidget extends ConsumerWidget {
                     ),
                     sectionDivider,
                     DrawerTile(
+                      component: 'Daily Challenges',
+                      icon: Icons.extension,
+                      route: () =>
+                          const LearnDailyChallengeArchiveRoute().go(context),
+                    ),
+                    DrawerTile(
                       component: 'Learn',
                       route: () => const LearnLandingRoute().go(context),
                     ),

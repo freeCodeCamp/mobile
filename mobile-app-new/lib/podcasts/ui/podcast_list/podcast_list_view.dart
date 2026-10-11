@@ -22,7 +22,9 @@ class PodcastListView extends ConsumerWidget {
           onRetry: () => ref.invalidate(podcastListProvider),
         ),
         data: (podcasts) => RefreshIndicator(
-          onRefresh: () async => ref.invalidate(podcastListProvider),
+          onRefresh: () => ref
+              .refresh(podcastListProvider.future)
+              .then((_) {}, onError: (_) {}),
           backgroundColor: FccColors.gray90,
           color: Colors.white,
           child: GridView.count(

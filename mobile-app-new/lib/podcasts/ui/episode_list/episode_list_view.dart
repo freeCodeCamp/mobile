@@ -61,7 +61,8 @@ class _PodcastEpisodeListViewState
           onRetry: () => ref.invalidate(_provider),
         ),
         data: (state) => RefreshIndicator(
-          onRefresh: () async => ref.invalidate(_provider),
+          onRefresh: () =>
+              ref.refresh(_provider.future).then((_) {}, onError: (_) {}),
           backgroundColor: FccColors.gray90,
           color: Colors.white,
           child: CustomScrollView(
