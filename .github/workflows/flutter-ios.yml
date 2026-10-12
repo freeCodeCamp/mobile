@@ -32,6 +32,9 @@ jobs:
     env:
       DEVELOPER_DIR: /Applications/Xcode_26.3.app/Contents/Developer
       HOMEBREW_NO_AUTO_UPDATE: "1"
+      FLUTTER_XCODE_COMPILATION_CACHE_ENABLE_CACHING: "YES"
+      FLUTTER_XCODE_COMPILATION_CACHE_ENABLE_DIAGNOSTIC_REMARKS: "YES"
+      FLUTTER_XCODE_SWIFT_ENABLE_EXPLICIT_MODULES: "YES"
 
     steps:
       - name: Checkout files
@@ -85,6 +88,20 @@ jobs:
           restore-keys: |
             ios-spm-${{ runner.os }}-${{ runner.arch }}-xcode-26.3-flutter-3.44.3-
 
+      - name: Configure compilation cache
+        run: |
+          echo "FLUTTER_XCODE_COMPILATION_CACHE_CAS_PATH=$RUNNER_TEMP/CompilationCache.noindex" >> "$GITHUB_ENV"
+          echo "XCBUILD_METRICS_PATH=$RUNNER_TEMP/xcode-build-metrics.json" >> "$GITHUB_ENV"
+
+      - name: Cache Xcode compilations
+        uses: actions/cache@5a3ec84eff668545956fd18022155c47e93e2684 # v4
+        with:
+          path: ${{ env.FLUTTER_XCODE_COMPILATION_CACHE_CAS_PATH }}
+          # Hash checked-in native inputs before Flutter generates project files.
+          key: ios-compilation-v1-${{ runner.os }}-${{ runner.arch }}-xcode-26.3-flutter-3.44.3-${{ hashFiles('mobile-app/pubspec.lock', 'mobile-app/ios/**') }}
+          restore-keys: |
+            ios-compilation-v1-${{ runner.os }}-${{ runner.arch }}-xcode-26.3-flutter-3.44.3-
+
       - name: Install dependencies
         run: |
           flutter pub get
@@ -102,6 +119,19 @@ jobs:
 
       - name: Run iOS integration tests
         run: dart integration_test_runner.dart --ios 2>&1 | tee ios-integration-tests.log
+
+      - name: Collect compilation cache metrics
+        if: always()
+        run: |
+          if [ -d "$FLUTTER_XCODE_COMPILATION_CACHE_CAS_PATH" ]; then
+            du -sh "$FLUTTER_XCODE_COMPILATION_CACHE_CAS_PATH"
+          fi
+          if [ -f "$XCBUILD_METRICS_PATH" ]; then
+            mkdir -p screenshots
+            cp "$XCBUILD_METRICS_PATH" screenshots/xcode-build-metrics.json
+          else
+            echo "::notice::Xcode did not emit compilation cache metrics."
+          fi
 
       - name: Upload test results
         if: always()
