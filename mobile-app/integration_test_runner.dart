@@ -208,7 +208,7 @@ brew install applesimutils
 
       print('Testing: $testFile');
 
-      final result = Process.runSync(
+      final process = await Process.start(
         'flutter',
         [
           'drive',
@@ -223,11 +223,22 @@ brew install applesimutils
         runInShell: true,
       );
 
-      print(result.stdout);
+      final testOutput = StringBuffer();
+      await Future.wait([
+        process.stdout.transform(utf8.decoder).forEach((output) {
+          stdout.write(output);
+          testOutput.write(output);
+        }),
+        process.stderr.transform(utf8.decoder).forEach((output) {
+          stderr.write(output);
+          testOutput.write(output);
+        }),
+      ]);
+      final processExitCode = await process.exitCode;
 
-      if (result.exitCode != 0) {
+      if (processExitCode != 0) {
         print('Test failed: $testFile\n');
-        testResults.add('$testFile\n\n${result.stdout}');
+        testResults.add('$testFile\n\n$testOutput');
         errorCount++;
         exitCode = 1;
       }
