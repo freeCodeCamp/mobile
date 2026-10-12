@@ -22,7 +22,7 @@ workflows:
 
     cache:
       cache_paths:
-        - $FLUTTER_ROOT/.pub-cache
+        - $HOME/.pub-cache
         - $HOME/Library/Caches/org.swift.swiftpm
         - $CM_BUILD_DIR/mobile-app/build/ios/SourcePackages
 
@@ -98,7 +98,7 @@ workflows:
 
     cache:
       cache_paths:
-        - $FLUTTER_ROOT/.pub-cache
+        - $HOME/.pub-cache
         - $HOME/Library/Caches/org.swift.swiftpm
         - $CM_BUILD_DIR/mobile-app/build/ios/SourcePackages
 
