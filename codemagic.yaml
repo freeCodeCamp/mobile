@@ -5,9 +5,10 @@ workflows:
     max_build_duration: 30
 
     triggering:
+      # Pull requests run iOS integration tests in .github/workflows/flutter-ios.yml.
+      # Keep the release IPA build on main.
       events:
         - push
-        - pull_request
       branch_patterns:
         - pattern: main
           include: true
