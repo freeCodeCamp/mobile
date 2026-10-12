@@ -17,14 +17,14 @@ workflows:
     environment:
       flutter: 3.44.3
       xcode: latest
-      cocoapods: default
       groups:
         - Mobile
 
     cache:
       cache_paths:
         - $FLUTTER_ROOT/.pub-cache
-        - $HOME/Library/Caches/CocoaPods
+        - $HOME/Library/Caches/org.swift.swiftpm
+        - $CM_BUILD_DIR/mobile-app/build/ios/SourcePackages
 
     working_directory: mobile-app
 
@@ -90,7 +90,6 @@ workflows:
     environment:
       flutter: 3.44.3
       xcode: latest
-      cocoapods: default
       ios_signing:
         distribution_type: app_store
         bundle_identifier: org.freecodecamp.ios
@@ -100,7 +99,8 @@ workflows:
     cache:
       cache_paths:
         - $FLUTTER_ROOT/.pub-cache
-        - $HOME/Library/Caches/CocoaPods
+        - $HOME/Library/Caches/org.swift.swiftpm
+        - $CM_BUILD_DIR/mobile-app/build/ios/SourcePackages
 
     working_directory: mobile-app
 
