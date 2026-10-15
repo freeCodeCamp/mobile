@@ -15,6 +15,7 @@ class FccCodeBlock extends StatefulWidget {
     required this.language,
     this.fontSize = 13,
     this.plain = false,
+    this.selectable = true,
   });
 
   final String code;
@@ -23,6 +24,7 @@ class FccCodeBlock extends StatefulWidget {
 
   /// Quiz prompts use unframed code with a persistent overflow indicator.
   final bool plain;
+  final bool selectable;
 
   @override
   State<FccCodeBlock> createState() => _FccCodeBlockState();
@@ -192,19 +194,29 @@ class _FccCodeBlockState extends State<FccCodeBlock> {
       controller: _scrollController,
       scrollDirection: Axis.horizontal,
       padding: padding,
-      child: SelectableText.rich(
-        palette.apply(_highlighted ?? TextSpan(text: widget.code)),
-        textDirection: TextDirection.ltr,
-        style: TextStyle(
-          fontFamily: 'monospace',
-          fontSize: widget.fontSize,
-          letterSpacing: 0,
-          height: 1.5,
-          color: colors.onSurface,
-        ),
-      ),
+      child: _codeText(colors, palette),
     ),
   );
+
+  Widget _codeText(ColorScheme colors, _CodePalette palette) {
+    final span = palette.apply(_highlighted ?? TextSpan(text: widget.code));
+    final style = TextStyle(
+      fontFamily: 'monospace',
+      fontSize: widget.fontSize,
+      letterSpacing: 0,
+      height: 1.5,
+      color: colors.onSurface,
+    );
+    // Answer options own taps; text selection would consume taps and swipes.
+    if (!widget.selectable) {
+      return Text.rich(span, textDirection: TextDirection.ltr, style: style);
+    }
+    return SelectableText.rich(
+      span,
+      textDirection: TextDirection.ltr,
+      style: style,
+    );
+  }
 }
 
 /// PhoneIDE 3.0.0 emits a fixed Atom One Dark theme. This adapter translates its

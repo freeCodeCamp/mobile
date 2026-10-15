@@ -135,9 +135,14 @@ class Questions extends StatelessWidget {
                   const SizedBox(width: 12),
                   Expanded(
                     child: IgnorePointer(
+                      // Quiz code answers need their horizontal scroll gestures.
+                      // Nested actions are disabled so taps reach this option.
+                      ignoring: !plainCodeBlocks,
                       child: ParsedHtml(
                         answer.answer,
                         selectable: false,
+                        plainCodeBlocks: plainCodeBlocks,
+                        enableTapActions: false,
                         customStyles: {
                           '*': Style(lineHeight: const LineHeight(1.4)),
                           for (final tag in ['body', 'div', 'p'])

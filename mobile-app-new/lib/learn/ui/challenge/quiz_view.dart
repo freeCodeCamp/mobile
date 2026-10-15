@@ -379,7 +379,7 @@ class _QuizViewState extends State<QuizView> {
                             ),
                           ),
                           const SizedBox(height: 4),
-                          _resultHtml(q.text, plainCodeBlocks: true),
+                          _resultHtml(q.text),
                           if (_selected[i] != q.solution) ...[
                             const SizedBox(height: 8),
                             _resultHtml(
@@ -466,10 +466,9 @@ class _QuizViewState extends State<QuizView> {
     Color? color,
     FontWeight? weight,
     bool inline = false,
-    bool plainCodeBlocks = false,
   }) => ParsedHtml(
     html,
-    plainCodeBlocks: plainCodeBlocks,
+    plainCodeBlocks: true,
     customStyles: {
       '*': Style(
         color: color,

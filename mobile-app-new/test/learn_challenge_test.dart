@@ -613,6 +613,62 @@ void main() {
 
   for (final dark in [false, true]) {
     final mode = dark ? 'dark' : 'light';
+    testWidgets('quiz code answers remain plain in incorrect review $mode', (
+      tester,
+    ) async {
+      const correct =
+          '<pre><code class="language-html">'
+          '&lt;meta name="description"\n'
+          '  content="Discover expert tips and techniques for building accessible websites"&gt;'
+          '</code></pre>';
+      const incorrect =
+          '<pre><code class="language-html">'
+          '&lt;meta add="description"\n'
+          '  content="Discover expert tips and techniques for building accessible websites"&gt;'
+          '</code></pre>';
+      final quiz = _quiz(count: 1).copyWith(
+        quizzes: const [
+          Quiz(
+            questions: [
+              QuizQuestion(
+                text: '<p>Which meta element sets the page description?</p>',
+                answer: correct,
+                distractors: [incorrect],
+              ),
+            ],
+          ),
+        ],
+      );
+      await _pump(
+        tester,
+        QuizView(challenge: quiz, block: _block(quiz)),
+        dark: dark,
+      );
+      final wrong = find.byWidgetPredicate(
+        (widget) => widget is FccCodeBlock && widget.code.contains('add='),
+      );
+      await _tap(tester, wrong);
+      expect(find.text('Question 1 of 1 · 1 answered'), findsOneWidget);
+      await _tap(tester, _button('Submit quiz'));
+      expect(find.text('Keep going!'), findsOneWidget);
+      await tester.ensureVisible(wrong);
+      await tester.pumpAndSettle();
+      final blocks = tester.widgetList<FccCodeBlock>(find.byType(FccCodeBlock));
+      expect(blocks, hasLength(2));
+      expect(blocks.every((block) => block.plain && block.selectable), isTrue);
+      expect(find.byTooltip('Copy code'), findsNothing);
+      expect(find.text('HTML'), findsNothing);
+      expect(
+        find.textContaining('Your answer:', findRichText: true),
+        findsOneWidget,
+      );
+      expect(
+        find.textContaining('Correct answer:', findRichText: true),
+        findsOneWidget,
+      );
+      await _screenshot(tester, 'quiz-code-answer-review-$mode');
+      expect(tester.takeException(), isNull);
+    });
     for (final scale in [1.0, 2.0]) {
       testWidgets(
         'quiz code stays plain in questions and results $mode text$scale',

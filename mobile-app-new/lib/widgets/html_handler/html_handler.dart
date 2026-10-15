@@ -94,8 +94,16 @@ class HTMLParser {
     bool isSelectable = true,
     Map<String, Style> customStyles = const {},
     bool plainCodeBlocks = false,
+    bool enableTapActions = true,
   }) {
     final result = parser.parse(html);
+    if (!enableTapActions) {
+      // flutter_html gives anchors their own tap recognizer even when its
+      // onLinkTap callback is null. In answer choices, the card owns the tap.
+      for (final anchor in result.querySelectorAll('a[href]')) {
+        anchor.attributes.remove('href');
+      }
+    }
 
     List<Widget> elements = [];
 
@@ -106,6 +114,7 @@ class HTMLParser {
           isSelectable,
           customStyles,
           plainCodeBlocks,
+          enableTapActions,
         ),
       );
     }
@@ -118,6 +127,7 @@ class HTMLParser {
     bool isSelectable = true,
     Map<String, Style> customStyles = const {},
     bool plainCodeBlocks = false,
+    bool enableTapActions = true,
   ]) {
     final colors = Theme.of(context).colorScheme;
     final themeStyles = <String, Style>{
@@ -156,9 +166,11 @@ class HTMLParser {
           return s0.merge(s1);
         },
       ),
-      onLinkTap: (url, attributes, element) {
-        launchUrl(Uri.parse(url!.trim()));
-      },
+      onLinkTap: enableTapActions
+          ? (url, attributes, element) {
+              launchUrl(Uri.parse(url!.trim()));
+            }
+          : null,
       extensions: [
         TagWrapExtension(
           tagsToWrap: {'table'},
@@ -186,6 +198,7 @@ class HTMLParser {
               language: language ?? '',
               fontSize: customStyles['pre']?.fontSize?.value ?? 13,
               plain: plainCodeBlocks,
+              selectable: isSelectable,
             );
           },
         ),
@@ -200,7 +213,10 @@ class HTMLParser {
               if (videoId == null || videoId.isEmpty) {
                 return const SizedBox.shrink();
               }
-              return _YouTubeEmbed(key: ValueKey(videoId), videoId: videoId);
+              return IgnorePointer(
+                ignoring: !enableTapActions,
+                child: _YouTubeEmbed(key: ValueKey(videoId), videoId: videoId),
+              );
             }
 
             return Container();
@@ -212,18 +228,20 @@ class HTMLParser {
             String? parsed = parser.parseFragment(child.innerHtml).text ?? '';
 
             return InkWell(
-              onTap: () {
-                Clipboard.setData(ClipboardData(text: parsed));
-                ScaffoldMessenger.of(context).showSnackBar(
-                  SnackBar(
-                    content: Text(
-                      'Copied to clipboard: $parsed',
-                      style: const TextStyle(fontSize: 20),
-                    ),
-                    duration: const Duration(seconds: 1),
-                  ),
-                );
-              },
+              onTap: !enableTapActions
+                  ? null
+                  : () {
+                      Clipboard.setData(ClipboardData(text: parsed));
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        SnackBar(
+                          content: Text(
+                            'Copied to clipboard: $parsed',
+                            style: const TextStyle(fontSize: 20),
+                          ),
+                          duration: const Duration(seconds: 1),
+                        ),
+                      );
+                    },
               borderRadius: BorderRadius.circular(6),
               child: Container(
                 padding: const EdgeInsets.symmetric(horizontal: 3),
@@ -253,16 +271,18 @@ class HTMLParser {
             return Padding(
               padding: const EdgeInsets.all(8.0),
               child: InkWell(
-                onTap: () => NewsImageRoute(
-                  $extra: imgUrl,
-                  alt: child.attributes['alt'],
-                  caption: child.element?.parent?.localName == 'figure'
-                      ? child.element?.parent
-                            ?.querySelector('figcaption')
-                            ?.text
-                            .trim()
-                      : child.attributes['title'],
-                ).push(context),
+                onTap: !enableTapActions
+                    ? null
+                    : () => NewsImageRoute(
+                        $extra: imgUrl,
+                        alt: child.attributes['alt'],
+                        caption: child.element?.parent?.localName == 'figure'
+                            ? child.element?.parent
+                                  ?.querySelector('figcaption')
+                                  ?.text
+                                  .trim()
+                            : child.attributes['title'],
+                      ).push(context),
                 child: isDataUrl
                     ? Image.memory(base64Decode(imgUrl.split(',').last))
                     : CachedNetworkImage(imageUrl: imgUrl),
@@ -279,6 +299,7 @@ class HTMLParser {
               isSelectable: isSelectable,
               customStyles: customStyles,
               plainCodeBlocks: plainCodeBlocks,
+              enableTapActions: enableTapActions,
             );
 
             return Padding(
