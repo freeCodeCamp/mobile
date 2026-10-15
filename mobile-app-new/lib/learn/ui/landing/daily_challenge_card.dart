@@ -23,7 +23,7 @@ class DailyChallengeCard extends ConsumerWidget {
         padding: const EdgeInsets.all(16),
         decoration: BoxDecoration(
           color: design.donate,
-          borderRadius: BorderRadius.circular(18),
+          borderRadius: BorderRadius.circular(14),
         ),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -44,12 +44,7 @@ class DailyChallengeCard extends ConsumerWidget {
                         ref.invalidate(dailyChallengeTodayProvider),
                     child: const Text('Try again'),
                   ),
-                  if (showArchiveLink)
-                    TextButton(
-                      onPressed: () => const LearnDailyChallengeArchiveRoute()
-                          .push<void>(context),
-                      child: const Text('Past challenges'),
-                    ),
+                  if (showArchiveLink) const _ArchiveLink(),
                 ],
               ),
             ] else ...[
@@ -79,7 +74,7 @@ class DailyChallengeCard extends ConsumerWidget {
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
         color: design.donate,
-        borderRadius: BorderRadius.circular(18),
+        borderRadius: BorderRadius.circular(14),
         border: Border.all(color: design.onDonate.withValues(alpha: .2)),
       ),
       child: Column(
@@ -96,8 +91,10 @@ class DailyChallengeCard extends ConsumerWidget {
                 style: TextStyle(
                   color: design.onDonate,
                   fontFamily: 'monospace',
-                  letterSpacing: 1.2,
+                  letterSpacing: 1,
                   fontSize: 11,
+                  fontWeight: FontWeight.w600,
+                  height: 1.2,
                 ),
               ),
               const _Countdown(),
@@ -106,24 +103,40 @@ class DailyChallengeCard extends ConsumerWidget {
           const SizedBox(height: 12),
           Text(
             isCompleted ? "Today's challenge completed!" : challenge.title,
-            style: Theme.of(context).textTheme.titleMedium,
+            style: TextStyle(
+              color: colors.onSurface,
+              fontSize: 20,
+              fontWeight: FontWeight.w700,
+              height: 1.25,
+            ),
           ),
           const SizedBox(height: 6),
           Text(
             isCompleted
                 ? 'Come back tomorrow for a new challenge.'
                 : 'Solve it in JavaScript or Python.',
-            style: TextStyle(color: colors.onSurfaceVariant, fontSize: 13),
+            style: TextStyle(
+              color: colors.onSurfaceVariant,
+              fontSize: 14,
+              height: 1.45,
+            ),
           ),
           const SizedBox(height: 8),
-          Wrap(
-            spacing: 12,
-            runSpacing: 4,
-            crossAxisAlignment: WrapCrossAlignment.center,
-            alignment: WrapAlignment.spaceBetween,
-            children: [
-              FilledButton(
+          LayoutBuilder(
+            builder: (context, constraints) {
+              final button = FilledButton(
                 style: FilledButton.styleFrom(
+                  minimumSize: const Size(48, 44),
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 16,
+                    vertical: 10,
+                  ),
+                  textStyle: const TextStyle(
+                    fontFamily: 'Lato',
+                    fontSize: 16,
+                    fontWeight: FontWeight.w700,
+                    height: 1.25,
+                  ),
                   backgroundColor:
                       Theme.of(context).brightness == Brightness.light
                       ? colors.onSurface
@@ -132,7 +145,7 @@ class DailyChallengeCard extends ConsumerWidget {
                       : design.onDonate,
                   foregroundColor:
                       Theme.of(context).brightness == Brightness.light
-                      ? colors.surface
+                      ? Theme.of(context).scaffoldBackgroundColor
                       : showArchiveLink
                       ? design.onDonate
                       : design.donate,
@@ -142,7 +155,7 @@ class DailyChallengeCard extends ConsumerWidget {
                         : design.onDonate,
                   ),
                   shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(10),
+                    borderRadius: BorderRadius.circular(8),
                   ),
                 ),
                 onPressed: () => LearnDailyChallengeRoute(
@@ -150,21 +163,65 @@ class DailyChallengeCard extends ConsumerWidget {
                 ).push<void>(context),
                 child: Text(
                   isCompleted ? 'Review challenge' : 'Start challenge',
+                  textAlign: TextAlign.center,
                 ),
-              ),
-              if (showArchiveLink)
-                TextButton(
-                  style: TextButton.styleFrom(foregroundColor: design.onDonate),
-                  onPressed: () => const LearnDailyChallengeArchiveRoute()
-                      .push<void>(context),
-                  child: const Text('Past challenges'),
-                ),
-            ],
+              );
+              // Give the primary action the remaining row width. At narrow
+              // widths or large text, stack instead of squeezing either label.
+              if (!showArchiveLink ||
+                  constraints.maxWidth < 300 ||
+                  MediaQuery.textScalerOf(context).scale(16) > 20) {
+                return Column(
+                  crossAxisAlignment: CrossAxisAlignment.stretch,
+                  children: [
+                    button,
+                    if (showArchiveLink) ...[
+                      const SizedBox(height: 4),
+                      const Align(
+                        alignment: Alignment.centerRight,
+                        child: _ArchiveLink(),
+                      ),
+                    ],
+                  ],
+                );
+              }
+              return Row(
+                children: [
+                  Expanded(child: button),
+                  const SizedBox(width: 12),
+                  const _ArchiveLink(),
+                ],
+              );
+            },
           ),
         ],
       ),
     );
   }
+}
+
+class _ArchiveLink extends StatelessWidget {
+  const _ArchiveLink();
+
+  @override
+  Widget build(BuildContext context) => TextButton(
+    style: TextButton.styleFrom(
+      foregroundColor: FccDesignColors.of(context).onDonate,
+      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 10),
+      textStyle: const TextStyle(
+        fontFamily: 'Lato',
+        fontSize: 16,
+        fontWeight: FontWeight.w600,
+        decoration: TextDecoration.underline,
+      ),
+    ),
+    onPressed: () =>
+        const LearnDailyChallengeArchiveRoute().push<void>(context),
+    child: const Text(
+      'Past challenges',
+      style: TextStyle(decoration: TextDecoration.underline),
+    ),
+  );
 }
 
 // NOTE: A new daily challenge unlocks at midnight US Central time.
@@ -217,17 +274,18 @@ class _CountdownState extends ConsumerState<_Countdown> {
       label: 'Countdown timer. Next challenge in $timeLeft',
       excludeSemantics: true,
       child: Container(
-        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+        padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
         decoration: BoxDecoration(
           color: Theme.of(context).colorScheme.surface,
-          borderRadius: BorderRadius.circular(16),
+          borderRadius: BorderRadius.circular(999),
         ),
         child: Text(
           'New in $timeLeft',
           style: TextStyle(
             color: Theme.of(context).colorScheme.onSurfaceVariant,
             fontFamily: 'monospace',
-            fontSize: 10,
+            fontSize: 12,
+            height: 1.2,
           ),
         ),
       ),

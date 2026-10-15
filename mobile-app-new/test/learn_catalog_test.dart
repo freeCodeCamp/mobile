@@ -13,6 +13,7 @@ import 'package:go_router/go_router.dart' hide Block;
 import 'package:mobile_app_new/auth/models/user_model.dart';
 import 'package:mobile_app_new/fcc_theme.dart';
 import 'package:mobile_app_new/learn/controllers/curriculum_controller.dart';
+import 'package:mobile_app_new/learn/constants/curriculum.dart';
 import 'package:mobile_app_new/learn/models/curriculum_model.dart';
 import 'package:mobile_app_new/learn/models/daily_challenge_model.dart';
 import 'package:mobile_app_new/learn/ui/daily_challenge_archive/daily_challenge_archive_view.dart';
@@ -175,7 +176,7 @@ Future<GoRouter> _pump(
           (ref) async => [
             (
               key: 'core',
-              title: 'Recommended curriculum',
+              title: stageTitles['core']!,
               superBlocks: const [
                 SuperBlockSummary(
                   dashedName: 'responsive-web-design-v9',
@@ -252,9 +253,12 @@ void main() {
   setUpAll(() async {
     TestWidgetsFlutterBinding.ensureInitialized();
     tz.initializeTimeZones();
-    await (FontLoader(
-      'Lato',
-    )..addFont(rootBundle.load('assets/fonts/Lato-Regular.ttf'))).load();
+    await (FontLoader('Lato')
+          ..addFont(rootBundle.load('assets/fonts/Lato-Regular.ttf'))
+          ..addFont(rootBundle.load('assets/fonts/Lato-Bold.ttf'))
+          ..addFont(rootBundle.load('assets/fonts/Lato-ExtraBold.ttf'))
+          ..addFont(rootBundle.load('assets/fonts/Lato-Black.ttf')))
+        .load();
     await (FontLoader(
       'monospace',
     )..addFont(rootBundle.load('assets/fonts/Hack-Regular.ttf'))).load();
@@ -353,6 +357,18 @@ void main() {
       tester,
     ) async {
       final router = await _pump(tester, const LearnLandingView(), dark: dark);
+      expect(find.text('CONTINUE'), findsOneWidget);
+      expect(find.textContaining('still in beta'), findsNothing);
+      final course = find.text('Responsive Web Design Certification').first;
+      final workshop = find.text('Build a Curriculum Outline');
+      expect(
+        tester.getTopLeft(course).dy,
+        lessThan(tester.getTopLeft(workshop).dy),
+      );
+      final counter = tester.getRect(find.text('2 of 11 steps'));
+      final bar = tester.getRect(find.byType(LinearProgressIndicator).first);
+      expect(counter.center.dy, closeTo(bar.center.dy, 1));
+      expect(counter.left, greaterThan(bar.right));
       await _screenshot(tester, 'learn-catalog-$mode');
       await tester.ensureVisible(find.text('Python Certification'));
       await tester.tap(find.text('Python Certification'));
@@ -368,6 +384,17 @@ void main() {
       expect(find.text('/learn/javascript-v9'), findsOneWidget);
       expect(tester.takeException(), isNull);
     });
+    testWidgets(
+      'Guest catalog keeps the same Continue card hierarchy in $mode',
+      (tester) async {
+        await _pump(tester, const LearnLandingView(), dark: dark, guest: true);
+        expect(find.text('CONTINUE'), findsOneWidget);
+        expect(find.text('Sign in to save your progress'), findsNothing);
+        expect(find.text('Start step 1'), findsOneWidget);
+        expect(find.text('0 of 11 steps'), findsOneWidget);
+        await _screenshot(tester, 'learn-catalog-guest-$mode');
+      },
+    );
     testWidgets('Course progress uses actual completed steps in $mode', (
       tester,
     ) async {
@@ -396,6 +423,14 @@ void main() {
         dark: dark,
       );
       expect(find.text('2 of 11 steps'), findsOneWidget);
+      expect(find.text('RESPONSIVE WEB DESIGN · HTML'), findsOneWidget);
+      final count = tester.getRect(find.text('2 of 11 steps'));
+      final label = tester.getRect(find.text('WORKSHOP'));
+      final progress = tester.getRect(
+        find.byType(LinearProgressIndicator).first,
+      );
+      expect(count.top, closeTo(label.top, 1));
+      expect(count.right, closeTo(progress.right, 1));
       await _screenshot(tester, 'learn-module-$mode');
       await tester.tap(find.text('Continue step 3'));
       await tester.pumpAndSettle();

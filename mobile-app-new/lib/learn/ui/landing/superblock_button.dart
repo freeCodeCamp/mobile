@@ -60,7 +60,7 @@ class SuperBlockButton extends StatelessWidget {
                   Text(
                     title,
                     style: TextStyle(
-                      fontSize: 14,
+                      fontSize: 16,
                       fontWeight: FontWeight.w700,
                       color: colors.onSurface,
                     ),
@@ -70,7 +70,7 @@ class SuperBlockButton extends StatelessWidget {
                     Text(
                       subtitle ?? 'Not available in the app',
                       style: TextStyle(
-                        fontSize: 12,
+                        fontSize: 13,
                         color: colors.onSurfaceVariant,
                       ),
                     ),

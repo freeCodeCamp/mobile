@@ -15,7 +15,7 @@ const chapterBasedSuperBlocks = [
 
 // NOTE: available-superblocks.json stages shown, in order. `legacy` is deliberately absent.
 const stageTitles = {
-  'core': 'Recommended curriculum (still in beta):',
+  'core': 'Recommended curriculum',
   'english': 'Learn English for Developers:',
   'spanish': 'Learn Professional Spanish:',
   'chinese': 'Learn Professional Chinese:',

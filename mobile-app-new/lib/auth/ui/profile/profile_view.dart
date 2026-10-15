@@ -50,13 +50,6 @@ class ProfileView extends ConsumerWidget {
       appBar: AppBar(
         title: const AppPageTitle('Profile'),
         toolbarHeight: AppPageTitle.toolbarHeight(context),
-        actions: [
-          IconButton(
-            tooltip: 'Settings',
-            icon: const Icon(Icons.settings_outlined),
-            onPressed: () => const SettingsRoute().push<void>(context),
-          ),
-        ],
       ),
       drawer: const DrawerWidget(),
       body: auth.isLoading && user == null

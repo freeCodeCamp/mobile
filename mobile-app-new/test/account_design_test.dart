@@ -329,6 +329,14 @@ void main() {
   ) async {
     await _pump(tester, const ProfileView(), login: _FakeLogin());
     expect(find.text("You're learning as a guest"), findsOneWidget);
+    expect(
+      find.descendant(
+        of: find.byType(AppBar),
+        matching: find.byTooltip('Settings'),
+      ),
+      findsNothing,
+    );
+    expect(find.widgetWithText(ListTile, 'Settings'), findsOneWidget);
     expect(find.text('Activity'), findsNothing);
     await tester.tap(find.text('Downloads'));
     await tester.pumpAndSettle();

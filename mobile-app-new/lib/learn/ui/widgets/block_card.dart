@@ -1,3 +1,5 @@
+import 'dart:math' as math;
+
 import 'package:flutter/material.dart';
 import 'package:flutter_html/flutter_html.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -114,6 +116,10 @@ class BlockCard extends ConsumerWidget {
       padding: const EdgeInsets.only(bottom: 12),
       child: Card(
         clipBehavior: Clip.antiAlias,
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(14),
+          side: BorderSide(color: colors.outlineVariant),
+        ),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
@@ -137,29 +143,63 @@ class BlockCard extends ConsumerWidget {
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            LearnEyebrow(block.label.value, color: color),
-                            const SizedBox(height: 6),
+                            if (expanded)
+                              Row(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Expanded(
+                                    child: LearnEyebrow(
+                                      block.label.value,
+                                      color: color,
+                                    ),
+                                  ),
+                                  const SizedBox(width: 12),
+                                  Flexible(
+                                    child: Align(
+                                      alignment: Alignment.topRight,
+                                      heightFactor: 1,
+                                      child: Text(
+                                        progress,
+                                        textAlign: TextAlign.right,
+                                        style: TextStyle(
+                                          fontSize: 13,
+                                          color: colors.onSurfaceVariant,
+                                        ),
+                                      ),
+                                    ),
+                                  ),
+                                ],
+                              )
+                            else
+                              LearnEyebrow(block.label.value, color: color),
+                            SizedBox(height: expanded ? 12 : 6),
                             Text(
                               block.name,
-                              style: Theme.of(context).textTheme.titleMedium,
+                              style: expanded
+                                  ? Theme.of(context).textTheme.titleLarge
+                                  : Theme.of(context).textTheme.titleMedium,
                             ),
-                            const SizedBox(height: 4),
-                            Text(
-                              disabled ? 'Temporarily unavailable' : progress,
-                              style: TextStyle(
-                                fontSize: 13,
-                                color: colors.onSurfaceVariant,
+                            if (!expanded) ...[
+                              const SizedBox(height: 4),
+                              Text(
+                                disabled ? 'Temporarily unavailable' : progress,
+                                style: TextStyle(
+                                  fontSize: 13,
+                                  color: colors.onSurfaceVariant,
+                                ),
                               ),
-                            ),
+                            ],
                           ],
                         ),
                       ),
-                      const SizedBox(width: 8),
-                      Icon(
-                        expanded ? Icons.expand_less : Icons.chevron_right,
-                        color: colors.onSurfaceVariant,
-                        size: 22,
-                      ),
+                      if (!expanded) ...[
+                        const SizedBox(width: 8),
+                        Icon(
+                          Icons.chevron_right,
+                          color: colors.onSurfaceVariant,
+                          size: 22,
+                        ),
+                      ],
                     ],
                   ),
                 ),
@@ -183,7 +223,8 @@ class BlockCard extends ConsumerWidget {
                         ),
                         'p': Style(
                           margin: Margins.zero,
-                          fontSize: FontSize(14),
+                          fontSize: FontSize(15),
+                          lineHeight: const LineHeight(1.45),
                           color: colors.onSurfaceVariant,
                         ),
                       },
@@ -220,6 +261,11 @@ class BlockCard extends ConsumerWidget {
                       const SizedBox(height: 12),
                       FilledButton(
                         style: FilledButton.styleFrom(
+                          textStyle: const TextStyle(
+                            fontFamily: 'Lato',
+                            fontSize: 18,
+                            fontWeight: FontWeight.w700,
+                          ),
                           shape: RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(10),
                           ),
@@ -329,11 +375,35 @@ class _StepGrid extends StatelessWidget {
     final next = challenges.where((c) => !completed.contains(c.id)).firstOrNull;
     return LayoutBuilder(
       builder: (context, constraints) {
-        final scale = MediaQuery.textScalerOf(context).scale(14) / 14;
-        final minimumSide = 48 * scale;
-        final columns = ((constraints.maxWidth + 6) / (minimumSide + 6))
-            .floor()
-            .clamp(1, 6);
+        final digits = challenges.indexed.fold<int>(1, (longest, entry) {
+          final number =
+              RegExp(r'\d+').firstMatch(entry.$2.title)?.group(0) ??
+              '${entry.$1 + 1}';
+          return math.max(longest, number.length);
+        });
+        final numeral = TextPainter(
+          text: TextSpan(
+            text: '8' * digits,
+            style: const TextStyle(
+              fontFamily: 'monospace',
+              fontSize: 14,
+              fontWeight: FontWeight.w600,
+            ),
+          ),
+          textScaler: MediaQuery.textScalerOf(context),
+          textDirection: Directionality.of(context),
+        )..layout();
+        // Preserve a compact 48px touch target until the scaled number needs
+        // more room. Scaling the entire tile made small numbers look lost.
+        final minimumSide = math.max(
+          48.0,
+          math.max(numeral.width, numeral.height) + 16,
+        );
+        numeral.dispose();
+        final columns = math.max(
+          1,
+          ((constraints.maxWidth + 6) / (minimumSide + 6)).floor(),
+        );
         final side = (constraints.maxWidth - (columns - 1) * 6) / columns;
         return ConstrainedBox(
           constraints: const BoxConstraints(maxHeight: 300),
@@ -387,6 +457,7 @@ class _StepGrid extends StatelessWidget {
                           number,
                           style: const TextStyle(
                             fontFamily: 'monospace',
+                            fontSize: 14,
                             fontWeight: FontWeight.w600,
                           ),
                         ),

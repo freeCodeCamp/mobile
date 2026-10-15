@@ -13,9 +13,7 @@ import 'package:mobile_app_new/learn/ui/landing/daily_challenge_card.dart';
 import 'package:mobile_app_new/learn/ui/landing/landing_viewmodel.dart';
 import 'package:mobile_app_new/learn/ui/landing/superblock_button.dart';
 import 'package:mobile_app_new/learn/ui/widgets/learn_presentation.dart';
-import 'package:mobile_app_new/routing/auth.dart';
 import 'package:mobile_app_new/routing/learn.dart';
-import 'package:mobile_app_new/services/auth_service.dart';
 import 'package:mobile_app_new/widgets/drawer/drawer.dart';
 import 'package:mobile_app_new/widgets/error_retry.dart';
 
@@ -30,7 +28,6 @@ class LearnLandingView extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final stages = ref.watch(curriculumStagesProvider);
-    final username = ref.watch(authProvider.select((s) => s.value?.username));
     final first = stages.value
         ?.expand((s) => s.superBlocks)
         .where((s) => s.isPublic)
@@ -53,14 +50,6 @@ class LearnLandingView extends ConsumerWidget {
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
               if (first != null) _ResumeCard(course: first),
-              if (username == null)
-                Align(
-                  alignment: Alignment.center,
-                  child: TextButton(
-                    onPressed: () => const LoginRoute().push<void>(context),
-                    child: const Text('Sign in to save your progress'),
-                  ),
-                ),
               const DailyChallengeCard(),
               ...switch (stages) {
                 AsyncData(:final value) => [
@@ -106,7 +95,10 @@ class LearnLandingView extends ConsumerWidget {
       const SizedBox(height: 24),
       Text(
         stage.title.replaceAll(RegExp(r':$'), ''),
-        style: Theme.of(context).textTheme.titleMedium,
+        style: Theme.of(context).textTheme.titleMedium?.copyWith(
+          fontSize: 18,
+          fontWeight: FontWeight.w800,
+        ),
       ),
       const SizedBox(height: 8),
       Card(
@@ -185,45 +177,51 @@ class _ResumeCard extends ConsumerWidget {
     final next = resume.value;
     final returning = next?.isReturning ?? false;
     return Container(
-      padding: const EdgeInsets.all(18),
+      padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
         color: FccDesignColors.of(context).hero,
-        borderRadius: BorderRadius.circular(18),
+        borderRadius: BorderRadius.circular(16),
       ),
       child: DefaultTextStyle.merge(
         style: const TextStyle(color: Color(0xFFFFF8EC)),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
-            LearnEyebrow(
-              returning
-                  ? 'Pick up where you left off'
-                  : 'Your learning journey',
-              color: const Color(0xFFFFF8EC),
-            ),
+            const LearnEyebrow('Continue', color: Color(0xFFFFF8EC)),
             const SizedBox(height: 8),
             Text(
-              next?.block.name ?? course.title,
-              style: const TextStyle(
-                fontSize: 22,
-                fontWeight: FontWeight.w800,
-                height: 1.2,
-              ),
+              next?.course.title ?? course.title,
+              style: const TextStyle(fontSize: 14, height: 1.4),
             ),
-            const SizedBox(height: 8),
             if (next != null) ...[
-              Text(next.course.title, style: const TextStyle(fontSize: 14)),
-              const SizedBox(height: 12),
-              LearnProgress(
-                done: next.completed,
-                total: next.block.challenges.length,
-                color: Theme.of(context).colorScheme.secondary,
-                backgroundColor: Colors.white24,
-              ),
-              const SizedBox(height: 8),
               Text(
-                '${next.completed} of ${next.block.challenges.length} complete',
-                style: const TextStyle(fontSize: 12),
+                next.block.name,
+                style: const TextStyle(
+                  fontSize: 22,
+                  fontWeight: FontWeight.w800,
+                  height: 1.25,
+                ),
+              ),
+              const SizedBox(height: 12),
+              Row(
+                children: [
+                  Expanded(
+                    child: SizedBox(
+                      height: 8,
+                      child: LearnProgress(
+                        done: next.completed,
+                        total: next.block.challenges.length,
+                        color: Theme.of(context).colorScheme.secondary,
+                        backgroundColor: Colors.white24,
+                      ),
+                    ),
+                  ),
+                  const SizedBox(width: 8),
+                  Text(
+                    '${next.completed} of ${next.block.challenges.length} steps',
+                    style: const TextStyle(fontSize: 14),
+                  ),
+                ],
               ),
             ] else if (resume.isLoading) ...[
               const Text('Finding your next step…'),
@@ -240,6 +238,11 @@ class _ResumeCard extends ConsumerWidget {
             const SizedBox(height: 16),
             FilledButton.icon(
               style: FilledButton.styleFrom(
+                textStyle: const TextStyle(
+                  fontFamily: 'Lato',
+                  fontSize: 18,
+                  fontWeight: FontWeight.w700,
+                ),
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(10),
                 ),
