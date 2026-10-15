@@ -35,10 +35,12 @@ void main() {
     await binding.convertFlutterSurfaceToImage();
     await tester.pumpAndSettle();
 
-    // Drawer -> Tutorials
+    // Drawer -> Articles
     await tester.tap(find.byIcon(Icons.menu));
     await tester.pumpAndSettle();
-    await tester.tap(find.text('Tutorials'));
+    await tester.tap(
+      find.descendant(of: find.byType(Drawer), matching: find.text('Articles')),
+    );
     await tester.pumpAndSettle();
 
     // News Feed
@@ -53,7 +55,7 @@ void main() {
     await tester.tap(firstTile);
     await tester.pumpAndSettle();
 
-    // Post detail - wait for the body, then for the bottom bar to slide in.
+    // Post detail - wait for the reader body.
     await pumpUntilFound(tester, find.byType(NewsPostHeader));
     await tester.pumpAndSettle(const Duration(seconds: 3));
     await binding.takeScreenshot('news/news-post');
@@ -71,36 +73,28 @@ void main() {
     await tester.tap(bookmarkButton);
     await tester.pumpAndSettle();
 
-    // Back to the feed, then over to the Bookmarks tab
+    // Back to the feed, then open Saved articles
     await tester.tap(find.byTooltip('Back'));
     await tester.pumpAndSettle();
-    await tester.tap(find.byTooltip('Bookmarks'));
+    await tester.tap(find.text('View bookmarks'));
     await tester.pumpAndSettle();
 
+    final savedFeed = find.byType(NewsBookmarkFeedView);
     await pumpUntilFound(
       tester,
-      find.descendant(
-        of: find.byType(NewsBookmarkFeedView),
-        matching: find.byType(ListTile),
-      ),
+      find.descendant(of: savedFeed, matching: find.text(title)),
     );
     await binding.takeScreenshot('news/news-bookmark-feed');
 
-    // Verify that the first row in the bookmarks feed matches the post we bookmarked
-    final firstRow = find
-        .descendant(
-          of: find.byType(NewsBookmarkFeedView),
-          matching: find.byType(ListTile),
-        )
-        .first;
-    expect(firstRow, findsOneWidget);
-
-    final rowText = find.descendant(of: firstRow, matching: find.byType(Text));
-    expect(tester.widget<Text>(rowText.first).data, title);
     expect(
-      tester.widget<Text>(rowText.last).data!.replaceFirst('Written by: ', ''),
-      author,
+      find.descendant(of: savedFeed, matching: find.text(title)),
+      findsOneWidget,
     );
+    expect(
+      find.descendant(of: savedFeed, matching: find.text(author)),
+      findsWidgets,
+    );
+    expect(find.text('Saved articles can be read offline'), findsOneWidget);
 
     // Check that the post is stored in the bookmarks JSON file
     final docsDir = await getApplicationDocumentsDirectory();

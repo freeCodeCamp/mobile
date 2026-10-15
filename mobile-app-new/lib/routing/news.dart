@@ -65,13 +65,15 @@ class NewsSearchRoute extends GoRouteData with $NewsSearchRoute {
 
 @TypedGoRoute<NewsImageRoute>(path: newsImagePath)
 class NewsImageRoute extends GoRouteData with $NewsImageRoute {
-  const NewsImageRoute({required this.$extra});
+  const NewsImageRoute({required this.$extra, this.caption, this.alt});
 
   final String $extra;
+  final String? caption;
+  final String? alt;
 
   @override
   Widget build(BuildContext context, GoRouterState state) =>
-      NewsImageView(imgUrl: $extra);
+      NewsImageView(imgUrl: $extra, caption: caption, alt: alt);
 }
 
 @TypedGoRoute<NewsTagFeedRoute>(path: newsTagFeedPath)

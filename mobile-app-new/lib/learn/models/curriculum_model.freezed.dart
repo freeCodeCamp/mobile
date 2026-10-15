@@ -210,7 +210,7 @@ return $default(_that.dashedName,_that.title,_that.isPublic,_that.isDisabledByOv
 
 class _SuperBlockSummary implements SuperBlockSummary {
   const _SuperBlockSummary({required this.dashedName, required this.title, required this.isPublic, this.isDisabledByOverride = false});
-  
+
 
 @override final  String dashedName;
 @override final  String title;
@@ -746,7 +746,7 @@ return $default(_that.superBlock,_that.dashedName,_that.name,_that.layout,_that.
 
 class _Block implements Block {
   const _Block({required this.superBlock, required this.dashedName, required this.name, required this.layout, required this.label, required final  List<String> description, required final  List<ChallengeOrder> challenges, this.isDisabledByOverride = false}): _description = description,_challenges = challenges;
-  
+
 
 @override final  String superBlock;
 @override final  String dashedName;
@@ -1033,7 +1033,7 @@ return $default(_that.dashedName,_that.name,_that.comingSoon,_that.moduleType,_t
 
 class _Module implements Module {
   const _Module({required this.dashedName, required this.name, this.comingSoon = false, this.moduleType, required final  List<Block> blocks}): _blocks = blocks;
-  
+
 
 @override final  String dashedName;
 @override final  String name;
@@ -1307,7 +1307,7 @@ return $default(_that.dashedName,_that.name,_that.comingSoon,_that.modules);case
 
 class _Chapter implements Chapter {
   const _Chapter({required this.dashedName, required this.name, this.comingSoon = false, required final  List<Module> modules}): _modules = modules;
-  
+
 
 @override final  String dashedName;
 @override final  String name;
@@ -1545,7 +1545,7 @@ return chapters(_that.chapters);case _:
 
 class BlockSuperBlock implements SuperBlock {
   const BlockSuperBlock(final  List<Block> blocks): _blocks = blocks;
-  
+
 
  final  List<Block> _blocks;
  List<Block> get blocks {
@@ -1617,7 +1617,7 @@ as List<Block>,
 
 class ChapterSuperBlock implements SuperBlock {
   const ChapterSuperBlock(final  List<Chapter> chapters): _chapters = chapters;
-  
+
 
  final  List<Chapter> _chapters;
  List<Chapter> get chapters {

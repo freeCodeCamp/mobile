@@ -29,23 +29,59 @@ class ChallengeView extends ConsumerWidget {
       AsyncData(value: (:final challenge, :final block)) =>
         switch (challenge.challengeType) {
           // quiz
-          8 => QuizView(challenge: challenge, block: block),
+          8 => QuizView(
+            key: ValueKey(challenge.id),
+            challenge: challenge,
+            block: block,
+          ),
           // pythonProject
-          10 => PythonProjectView(challenge: challenge, block: block),
+          10 => PythonProjectView(
+            key: ValueKey(challenge.id),
+            challenge: challenge,
+            block: block,
+          ),
           // video
-          11 => LessonView(challenge: challenge, block: block),
+          11 => LessonView(
+            key: ValueKey(challenge.id),
+            challenge: challenge,
+            block: block,
+          ),
           // theOdinProject
-          15 => LessonView(challenge: challenge, block: block),
+          15 => LessonView(
+            key: ValueKey(challenge.id),
+            challenge: challenge,
+            block: block,
+          ),
           // multipleChoice
-          19 => LessonView(challenge: challenge, block: block),
+          19 => LessonView(
+            key: ValueKey(challenge.id),
+            challenge: challenge,
+            block: block,
+          ),
           // generic
-          24 => LessonView(challenge: challenge, block: block),
+          24 => LessonView(
+            key: ValueKey(challenge.id),
+            challenge: challenge,
+            block: block,
+          ),
           // review
-          31 => LessonView(challenge: challenge, block: block),
+          31 => LessonView(
+            key: ValueKey(challenge.id),
+            challenge: challenge,
+            block: block,
+          ),
           // dialogue
-          21 => EnglishView(challenge: challenge, block: block),
+          21 => EnglishView(
+            key: ValueKey(challenge.id),
+            challenge: challenge,
+            block: block,
+          ),
           // fillInTheBlank
-          22 => EnglishView(challenge: challenge, block: block),
+          22 => EnglishView(
+            key: ValueKey(challenge.id),
+            challenge: challenge,
+            block: block,
+          ),
           // NOTE: The editor challenge types arrive in Learn iteration 4.
           // html
           0 => _editorPlaceholder(challenge),

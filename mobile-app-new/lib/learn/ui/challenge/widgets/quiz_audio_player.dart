@@ -1,9 +1,7 @@
 import 'package:audio_service/audio_service.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:mobile_app_new/fcc_theme.dart';
 import 'package:mobile_app_new/learn/models/challenge_model.dart';
-import 'package:mobile_app_new/learn/ui/challenge/widgets/challenge_card.dart';
 import 'package:mobile_app_new/services/audio_service.dart';
 
 class QuizAudioPlayer extends ConsumerStatefulWidget {
@@ -30,7 +28,10 @@ class _QuizAudioPlayerState extends ConsumerState<QuizAudioPlayer> {
   }
 
   Future<void> _loadAndPlay() async {
-    setState(() => _loading = true);
+    setState(() {
+      _loading = true;
+      _failed = false;
+    });
 
     final loaded = await _handler.loadCurriculumAudio(
       _clip.url,
@@ -50,95 +51,140 @@ class _QuizAudioPlayerState extends ConsumerState<QuizAudioPlayer> {
 
   @override
   Widget build(BuildContext context) {
-    if (_failed) {
-      return const Padding(
-        padding: EdgeInsets.all(16),
-        child: Center(child: Text('Error loading audio')),
-      );
-    }
-
+    final colors = Theme.of(context).colorScheme;
     final handler = _handler;
 
-    return Column(
-      children: [
-        StreamBuilder<PlaybackState>(
-          stream: handler.playbackState,
-          builder: (context, snapshot) {
-            final state = snapshot.data ?? PlaybackState();
-            final isActive = handler.curriculumClipId == _clip.id;
-            final completed =
-                state.processingState == AudioProcessingState.completed;
-            final playing = isActive && state.playing && !completed;
-
-            return Column(
-              children: [
-                StreamBuilder<Duration>(
-                  stream: handler.positionStream,
-                  builder: (context, position) => _Progress(
-                    position: isActive ? position.data : null,
-                    total: isActive ? handler.duration : null,
-                  ),
-                ),
-                if (_loading)
-                  const Padding(
-                    padding: EdgeInsets.all(8),
-                    child: SizedBox.square(
-                      dimension: 24,
-                      child: CircularProgressIndicator(strokeWidth: 2),
-                    ),
+    return Card(
+      clipBehavior: Clip.antiAlias,
+      child: Column(
+        children: [
+          Padding(
+            padding: const EdgeInsets.all(12),
+            child: _failed
+                ? Row(
+                    children: [
+                      Icon(Icons.error_outline, color: colors.error),
+                      const SizedBox(width: 12),
+                      const Expanded(
+                        child: Text("We couldn't load this audio."),
+                      ),
+                      TextButton(
+                        onPressed: _loadAndPlay,
+                        child: const Text('Try again'),
+                      ),
+                    ],
                   )
-                else
-                  IconButton(
-                    tooltip: playing ? 'Pause' : 'Play',
-                    icon: Icon(playing ? Icons.pause : Icons.play_arrow),
-                    onPressed: () async {
-                      if (!isActive) return _loadAndPlay();
-                      if (playing) return handler.pause();
-                      if (completed) await handler.seek(Duration.zero);
-                      await handler.play();
+                : StreamBuilder<PlaybackState>(
+                    stream: handler.playbackState,
+                    builder: (context, snapshot) {
+                      final state = snapshot.data ?? PlaybackState();
+                      final isActive = handler.curriculumClipId == _clip.id;
+                      final completed =
+                          state.processingState ==
+                          AudioProcessingState.completed;
+                      final playing = isActive && state.playing && !completed;
+
+                      return Row(
+                        children: [
+                          if (_loading)
+                            const SizedBox.square(
+                              dimension: 48,
+                              child: Padding(
+                                padding: EdgeInsets.all(12),
+                                child: CircularProgressIndicator(
+                                  strokeWidth: 2,
+                                  semanticsLabel: 'Loading audio',
+                                ),
+                              ),
+                            )
+                          else
+                            IconButton.filled(
+                              tooltip: playing ? 'Pause audio' : 'Play audio',
+                              style: IconButton.styleFrom(
+                                backgroundColor: colors.primary,
+                                foregroundColor: colors.onPrimary,
+                                shape: const CircleBorder(),
+                              ),
+                              icon: Icon(
+                                playing ? Icons.pause : Icons.play_arrow,
+                              ),
+                              onPressed: () async {
+                                if (!isActive) return _loadAndPlay();
+                                if (playing) return handler.pause();
+                                if (completed) {
+                                  await handler.seek(Duration.zero);
+                                }
+                                await handler.play();
+                              },
+                            ),
+                          const SizedBox(width: 12),
+                          Expanded(
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Text(
+                                  'Listen to the audio',
+                                  style: Theme.of(
+                                    context,
+                                  ).textTheme.titleMedium,
+                                ),
+                                const SizedBox(height: 8),
+                                StreamBuilder<Duration>(
+                                  stream: handler.positionStream,
+                                  builder: (context, position) => _Progress(
+                                    position: isActive ? position.data : null,
+                                    total: isActive ? handler.duration : null,
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                        ],
+                      );
                     },
                   ),
-              ],
-            );
-          },
-        ),
-        if (widget.audioData.transcript.isNotEmpty) ...[
-          const SizedBox(height: 8),
-          ChallengeCard(
-            title: 'Transcript',
-            child: ExpansionTile(
-              title: const Text(
-                'Show transcript',
-                style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
-              ),
+          ),
+          if (widget.audioData.transcript.isNotEmpty) ...[
+            const Divider(),
+            ExpansionTile(
+              title: const Text('Transcript'),
+              tilePadding: const EdgeInsets.symmetric(horizontal: 16),
+              childrenPadding: const EdgeInsets.fromLTRB(16, 0, 16, 8),
+              textColor: colors.onSurface,
+              collapsedTextColor: colors.onSurface,
+              iconColor: colors.primary,
+              collapsedIconColor: colors.onSurfaceVariant,
               shape: const Border(),
               collapsedShape: const Border(),
               expandedCrossAxisAlignment: CrossAxisAlignment.start,
+              expandedAlignment: Alignment.centerLeft,
               children: [
-                for (final line in widget.audioData.transcript)
+                for (final (index, line) in widget.audioData.transcript.indexed)
                   Padding(
-                    padding: const EdgeInsets.only(bottom: 8),
+                    padding: const EdgeInsets.only(bottom: 12),
                     child: Text.rich(
                       TextSpan(
-                        style: const TextStyle(
-                          fontSize: 14,
-                          color: FccColors.gray05,
-                        ),
                         children: [
                           TextSpan(
                             text: '${line.character}: ',
-                            style: const TextStyle(fontWeight: FontWeight.bold),
+                            style: TextStyle(
+                              fontWeight: FontWeight.w700,
+                              color: index.isEven
+                                  ? colors.tertiary
+                                  : colors.primary,
+                            ),
                           ),
                           TextSpan(text: line.text),
                         ],
                       ),
+                      style: Theme.of(context).textTheme.bodyLarge,
                     ),
                   ),
               ],
             ),
-          ),
+          ],
         ],
-      ],
+      ),
     );
   }
 }
@@ -153,12 +199,15 @@ class _Progress extends StatelessWidget {
   Widget build(BuildContext context) {
     final totalMs = total?.inMilliseconds ?? 0;
     final positionMs = position?.inMilliseconds ?? 0;
+    final colors = Theme.of(context).colorScheme;
 
     return LinearProgressIndicator(
-      backgroundColor: FccColors.gray75,
-      valueColor: const AlwaysStoppedAnimation<Color>(FccColors.blue50),
+      backgroundColor: colors.outlineVariant,
+      color: colors.primary,
       value: totalMs == 0 ? 0 : (positionMs / totalMs).clamp(0.0, 1.0),
-      minHeight: 8,
+      minHeight: 6,
+      borderRadius: BorderRadius.circular(8),
+      semanticsLabel: 'Audio playback progress',
     );
   }
 }

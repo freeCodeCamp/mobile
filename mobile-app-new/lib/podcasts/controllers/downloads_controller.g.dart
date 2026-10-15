@@ -46,7 +46,7 @@ final class PodcastDownloadsNotifierProvider
 }
 
 String _$podcastDownloadsNotifierHash() =>
-    r'b36ce1140f4480667777d8ab57418ada7ab98b98';
+    r'9af5ba39f011369422b7da98ee93f5913e6dda49';
 
 abstract class _$PodcastDownloadsNotifier
     extends $Notifier<Map<String, DownloadStatus>> {

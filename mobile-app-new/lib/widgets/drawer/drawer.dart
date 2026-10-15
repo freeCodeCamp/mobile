@@ -1,10 +1,10 @@
 import 'dart:async';
-import 'dart:io';
 
+import 'package:cached_network_image/cached_network_image.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
-import 'package:mobile_app_new/fcc_theme.dart';
 import 'package:mobile_app_new/routing/auth.dart';
 import 'package:mobile_app_new/routing/code_radio.dart';
 import 'package:mobile_app_new/routing/learn.dart';
@@ -14,144 +14,188 @@ import 'package:mobile_app_new/routing/settings.dart';
 import 'package:mobile_app_new/services/auth_service.dart';
 import 'package:mobile_app_new/utils/custom_tab.dart';
 import 'package:mobile_app_new/widgets/drawer/drawer_tile.dart';
-import 'package:mobile_app_new/widgets/drawer/scroll_shadow.dart';
 import 'package:mobile_app_new/widgets/section_divider.dart';
 
 class DrawerWidget extends ConsumerWidget {
   const DrawerWidget({super.key});
 
-  void _login(BuildContext context) {
+  void _navigate(BuildContext context, VoidCallback route) {
     Scaffold.of(context).closeDrawer();
-    const LoginRoute().push(context);
+    route();
   }
 
-  // NOTE: Only Profile needs a signed-in user, so only it is left behind.
-  void _signOut(BuildContext context, WidgetRef ref) {
-    if (GoRouterState.of(context).uri.path == profilePath) {
-      const LearnLandingRoute().go(context);
+  Future<void> _signOut(BuildContext context, WidgetRef ref) async {
+    Scaffold.of(context).closeDrawer();
+    try {
+      await ref.read(authProvider.notifier).signOut();
+    } catch (_) {
+      if (context.mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text('Could not sign out. Please try again.'),
+          ),
+        );
+      }
     }
-    unawaited(ref.read(authProvider.notifier).signOut());
   }
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final auth = ref.watch(authProvider);
-
+    final user = auth.value;
+    final colors = Theme.of(context).colorScheme;
+    final path = GoRouterState.of(context).uri.path;
     return Drawer(
-      backgroundColor: FccColors.gray80,
-      child: Column(
-        children: [
-          Expanded(
-            child: SafeArea(
-              bottom: false,
-              child: ScrollShadow(
-                child: ListView(
-                  children: [
-                    ListTile(
-                      contentPadding: const EdgeInsets.all(16),
-                      leading: Image.asset(
-                        'assets/images/placeholder-profile-img.png',
-                        width: 75,
-                        height: 75,
-                      ),
-                      title: Text(switch (auth.value) {
-                        _ when auth.isLoading => 'Loading your account…',
-                        _ when auth.hasError => "Couldn't load your account",
-                        null => 'Anonymous User',
-                        final user when user.name.isEmpty => user.username,
-                        final user => user.name,
-                      }),
-                      subtitle: auth.isLoading
-                          ? null
-                          : Text(switch (auth) {
-                              _ when auth.hasError => 'Tap to retry',
-                              _ when auth.isLoggedIn => 'Our coolest Camper',
-                              _ => 'Sign in to save your progress',
-                            }),
-                      onTap: switch (auth) {
-                        _ when auth.isLoading => null,
-                        _ when auth.hasError => () => unawaited(
-                          ref.read(authProvider.notifier).refresh(),
-                        ),
-                        _ when auth.isLoggedIn => () => const ProfileRoute().go(
-                          context,
-                        ),
-                        _ => () => _login(context),
-                      },
-                    ),
-                    sectionDivider,
-                    DrawerTile(
-                      component: 'Daily Challenges',
-                      icon: Icons.extension,
-                      route: () =>
-                          const LearnDailyChallengeArchiveRoute().go(context),
-                    ),
-                    DrawerTile(
-                      component: 'Learn',
-                      route: () => const LearnLandingRoute().go(context),
-                    ),
-                    DrawerTile(
-                      component: 'Tutorials',
-                      icon: Icons.forum_outlined,
-                      route: () => const NewsFeedRoute().go(context),
-                    ),
-                    DrawerTile(
-                      component: 'Podcast',
-                      icon: Icons.podcasts,
-                      route: () => const PodcastListRoute().go(context),
-                    ),
-                    if (!Platform.isIOS)
-                      DrawerTile(
-                        component: 'Code Radio',
-                        icon: Icons.radio,
-                        route: () => const CodeRadioRoute().go(context),
-                      ),
-                    sectionDivider,
-                    DrawerTile(
-                      component: 'Donate',
-                      icon: Icons.favorite,
-                      route: () => openInCustomTab(
-                        'https://www.freecodecamp.org/donate/',
-                      ),
-                    ),
-                    DrawerTile(
-                      component: 'Settings',
-                      icon: Icons.settings,
-                      route: () => const SettingsRoute().go(context),
-                    ),
-                    sectionDivider,
-                    DrawerTile(
-                      component: 'Report an issue',
-                      icon: Icons.bug_report,
-                      route: () => openInCustomTab(
-                        'https://github.com/freeCodeCamp/mobile',
-                      ),
-                    ),
-                    if (!auth.isLoading && !auth.hasError)
-                      DrawerTile(
-                        component: auth.isLoggedIn ? 'Log Out' : 'Log In',
-                        icon: auth.isLoggedIn ? Icons.logout : Icons.login,
-                        textColor: auth.isLoggedIn
-                            ? FccColors.red80
-                            : Colors.white,
-                        route: () => auth.isLoggedIn
-                            ? _signOut(context, ref)
-                            : _login(context),
-                      ),
-                  ],
+      backgroundColor: colors.surface,
+      child: SafeArea(
+        child: ListView(
+          padding: const EdgeInsets.symmetric(vertical: 16),
+          children: [
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 12),
+              child: ListTile(
+                contentPadding: const EdgeInsets.symmetric(
+                  horizontal: 8,
+                  vertical: 8,
                 ),
+                leading: CircleAvatar(
+                  radius: 25,
+                  backgroundColor: colors.surfaceContainer,
+                  backgroundImage: user != null && user.picture.isNotEmpty
+                      ? CachedNetworkImageProvider(user.picture)
+                      : null,
+                  child: user == null || user.picture.isEmpty
+                      ? Icon(
+                          Icons.person_outline,
+                          color: colors.onSurfaceVariant,
+                        )
+                      : null,
+                ),
+                title: Text(switch (auth) {
+                  _ when auth.isLoading => 'Loading your account…',
+                  _ when auth.hasError => "Couldn't load your account",
+                  _ =>
+                    user == null
+                        ? 'Learning as a guest'
+                        : user.name.trim().isEmpty
+                        ? user.username
+                        : user.name,
+                }, style: const TextStyle(fontWeight: FontWeight.w700)),
+                subtitle: Text(
+                  auth.hasError
+                      ? 'Tap to retry'
+                      : user == null
+                      ? 'Sign in to save your progress'
+                      : '@${user.username}',
+                ),
+                onTap: auth.isLoading
+                    ? null
+                    : auth.hasError
+                    ? () => unawaited(ref.read(authProvider.notifier).refresh())
+                    : () => _navigate(
+                        context,
+                        () => const ProfileRoute().go(context),
+                      ),
               ),
             ),
-          ),
-          const SafeArea(
-            minimum: EdgeInsets.only(bottom: 16),
-            child: Text(
-              'freeCodeCamp is a donor-supported tax-exempt 501(c)(3) nonprofit organization',
-              textAlign: TextAlign.center,
-              style: TextStyle(fontSize: 10, color: Colors.white70),
+            const SizedBox(height: 8),
+            sectionDivider,
+            const SizedBox(height: 8),
+            DrawerTile(
+              component: 'Courses',
+              icon: Icons.school_outlined,
+              selected: path.startsWith('/learn'),
+              route: () => _navigate(
+                context,
+                () => const LearnLandingRoute().go(context),
+              ),
             ),
-          ),
-        ],
+            DrawerTile(
+              component: 'Daily challenges',
+              icon: Icons.extension_outlined,
+              route: () => _navigate(
+                context,
+                () => const LearnDailyChallengeArchiveRoute().go(context),
+              ),
+            ),
+            DrawerTile(
+              component: 'Articles',
+              icon: Icons.article_outlined,
+              selected: path.startsWith('/news'),
+              route: () =>
+                  _navigate(context, () => const NewsFeedRoute().go(context)),
+            ),
+            DrawerTile(
+              component: 'Listen',
+              icon: Icons.headphones_outlined,
+              selected: path.startsWith('/podcasts'),
+              route: () => _navigate(
+                context,
+                () => const PodcastListRoute().go(context),
+              ),
+            ),
+            if (defaultTargetPlatform != TargetPlatform.iOS)
+              DrawerTile(
+                component: 'Code Radio',
+                icon: Icons.radio_outlined,
+                route: () => _navigate(
+                  context,
+                  () => const CodeRadioRoute().go(context),
+                ),
+              ),
+            const SizedBox(height: 8),
+            sectionDivider,
+            const SizedBox(height: 8),
+            DrawerTile(
+              component: 'Profile',
+              icon: Icons.person_outline,
+              selected: path == profilePath,
+              route: () =>
+                  _navigate(context, () => const ProfileRoute().go(context)),
+            ),
+            DrawerTile(
+              component: 'Settings',
+              icon: Icons.settings_outlined,
+              selected: path == settingsPath,
+              route: () =>
+                  _navigate(context, () => const SettingsRoute().go(context)),
+            ),
+            DrawerTile(
+              component: 'Donate',
+              icon: Icons.favorite_border,
+              textColor: colors.tertiary,
+              route: () =>
+                  openInCustomTab('https://www.freecodecamp.org/donate/'),
+            ),
+            DrawerTile(
+              component: 'Report an issue',
+              icon: Icons.error_outline,
+              route: () => openInCustomTab(
+                'https://github.com/freeCodeCamp/mobile/issues',
+              ),
+            ),
+            if (!auth.isLoading && !auth.hasError)
+              DrawerTile(
+                component: auth.isLoggedIn ? 'Log out' : 'Sign in',
+                icon: auth.isLoggedIn ? Icons.logout : Icons.login,
+                textColor: auth.isLoggedIn ? colors.error : colors.primary,
+                route: () => auth.isLoggedIn
+                    ? _signOut(context, ref)
+                    : _navigate(
+                        context,
+                        () => const LoginRoute().push<void>(context),
+                      ),
+              ),
+            Padding(
+              padding: const EdgeInsets.fromLTRB(24, 20, 24, 8),
+              child: Text(
+                'freeCodeCamp is a donor-supported tax-exempt 501(c)(3) nonprofit organization.',
+                textAlign: TextAlign.center,
+                style: Theme.of(context).textTheme.bodySmall,
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }

@@ -3,41 +3,40 @@ import 'package:flutter/material.dart';
 class DrawerTile extends StatelessWidget {
   const DrawerTile({
     super.key,
-    this.textColor = Colors.white,
+    this.textColor,
     required this.component,
     required this.route,
     this.icon,
+    this.selected = false,
   });
 
   final String component;
   final IconData? icon;
-  final Function route;
+  final VoidCallback route;
   final Color? textColor;
+  final bool selected;
 
   @override
   Widget build(BuildContext context) {
+    final colors = Theme.of(context).colorScheme;
+    final foreground =
+        textColor ?? (selected ? colors.primary : colors.onSurfaceVariant);
     return Padding(
-      padding: const EdgeInsets.all(10.0),
+      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 2),
       child: ListTile(
-        dense: true,
-        leading: icon != null
-            ? Icon(icon, color: textColor)
-            : Image.asset(
-                'assets/images/logo.png',
-                width: 30,
-                height: 30,
-                color: Colors.white,
-              ),
+        selected: selected,
+        selectedTileColor: colors.primaryContainer,
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+        leading: Icon(icon ?? Icons.school_outlined, color: foreground),
         title: Text(
           component,
           style: TextStyle(
-            fontSize: 16,
-            fontWeight: FontWeight.w400,
-            color: textColor,
-            letterSpacing: 0.5,
+            fontSize: 15,
+            fontWeight: selected ? FontWeight.w700 : FontWeight.w500,
+            color: foreground,
           ),
         ),
-        onTap: () => route(),
+        onTap: route,
       ),
     );
   }

@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:go_router/go_router.dart';
-import 'package:mobile_app_new/fcc_theme.dart';
 import 'package:mobile_app_new/learn/models/challenge_model.dart';
 import 'package:mobile_app_new/learn/ui/challenge/widgets/scene/scene_canvas.dart';
 import 'package:mobile_app_new/learn/ui/challenge/widgets/scene/scene_controls.dart';
@@ -66,13 +65,13 @@ class _SceneFullscreenViewState extends State<SceneFullscreenView> {
             child: DecoratedBox(
               decoration: BoxDecoration(
                 color: Colors.black54,
-                borderRadius: BorderRadius.circular(4),
+                borderRadius: BorderRadius.circular(12),
               ),
               child: IconButton(
                 tooltip: 'Exit fullscreen',
                 icon: const Icon(
                   Icons.fullscreen_exit,
-                  color: FccColors.gray00,
+                  color: Color(0xFFFFF8EC),
                   size: 32,
                 ),
                 onPressed: () => context.pop(),

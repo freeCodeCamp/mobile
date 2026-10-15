@@ -209,7 +209,7 @@ return $default(_that.showOtpField,_that.incorrectOtp,_that.isLoading);case _:
 
 class _LoginState implements LoginState {
   const _LoginState({this.showOtpField = false, this.incorrectOtp = false, this.isLoading = false});
-  
+
 
 @override@JsonKey() final  bool showOtpField;
 @override@JsonKey() final  bool incorrectOtp;

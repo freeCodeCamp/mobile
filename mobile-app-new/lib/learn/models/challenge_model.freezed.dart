@@ -1575,7 +1575,7 @@ as List<TranscriptLine>,
 @override
 @pragma('vm:prefer-inline')
 $AudioClipCopyWith<$Res> get audio {
-  
+
   return $AudioClipCopyWith<$Res>(_self.audio, (value) {
     return _then(_self.copyWith(audio: value));
   });
@@ -1792,7 +1792,7 @@ as List<TranscriptLine>,
 @override
 @pragma('vm:prefer-inline')
 $AudioClipCopyWith<$Res> get audio {
-  
+
   return $AudioClipCopyWith<$Res>(_self.audio, (value) {
     return _then(_self.copyWith(audio: value));
   });
@@ -2887,7 +2887,7 @@ Nodule _$NoduleFromJson(
           return InteractiveEditorNodule.fromJson(
             json
           );
-        
+
           default:
             throw CheckedFromJsonException(
   json,
@@ -2896,7 +2896,7 @@ Nodule _$NoduleFromJson(
   'Invalid union type "${json['type']}"!'
 );
         }
-      
+
 }
 
 /// @nodoc
@@ -3548,7 +3548,7 @@ as List<SceneCommand>,
 @override
 @pragma('vm:prefer-inline')
 $SceneSetupCopyWith<$Res> get setup {
-  
+
   return $SceneSetupCopyWith<$Res>(_self.setup, (value) {
     return _then(_self.copyWith(setup: value));
   });
@@ -3765,7 +3765,7 @@ as List<SceneCommand>,
 @override
 @pragma('vm:prefer-inline')
 $SceneSetupCopyWith<$Res> get setup {
-  
+
   return $SceneSetupCopyWith<$Res>(_self.setup, (value) {
     return _then(_self.copyWith(setup: value));
   });
@@ -3839,7 +3839,7 @@ as List<SceneCharacter>,
 @override
 @pragma('vm:prefer-inline')
 $AudioClipCopyWith<$Res> get audio {
-  
+
   return $AudioClipCopyWith<$Res>(_self.audio, (value) {
     return _then(_self.copyWith(audio: value));
   });
@@ -4058,7 +4058,7 @@ as List<SceneCharacter>,
 @override
 @pragma('vm:prefer-inline')
 $AudioClipCopyWith<$Res> get audio {
-  
+
   return $AudioClipCopyWith<$Res>(_self.audio, (value) {
     return _then(_self.copyWith(audio: value));
   });
@@ -4132,7 +4132,7 @@ as num?,
 @override
 @pragma('vm:prefer-inline')
 $ScenePositionCopyWith<$Res> get position {
-  
+
   return $ScenePositionCopyWith<$Res>(_self.position, (value) {
     return _then(_self.copyWith(position: value));
   });
@@ -4345,7 +4345,7 @@ as num?,
 @override
 @pragma('vm:prefer-inline')
 $ScenePositionCopyWith<$Res> get position {
-  
+
   return $ScenePositionCopyWith<$Res>(_self.position, (value) {
     return _then(_self.copyWith(position: value));
   });

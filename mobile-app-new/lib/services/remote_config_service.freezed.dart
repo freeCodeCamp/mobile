@@ -207,7 +207,7 @@ return $default(_that.activationOverrides);case _:
 
 class _RemoteConfig extends RemoteConfig {
   const _RemoteConfig({final  Map<String, bool> activationOverrides = const {}}): _activationOverrides = activationOverrides,super._();
-  
+
 
  final  Map<String, bool> _activationOverrides;
 @override@JsonKey() Map<String, bool> get activationOverrides {

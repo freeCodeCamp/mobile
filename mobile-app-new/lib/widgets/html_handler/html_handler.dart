@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:convert';
 
 import 'package:cached_network_image/cached_network_image.dart';
@@ -9,7 +10,7 @@ import 'package:flutter_html_table/flutter_html_table.dart';
 import 'package:html/parser.dart' as parser;
 import 'package:mobile_app_new/fcc_theme.dart';
 import 'package:mobile_app_new/routing/news.dart';
-import 'package:phone_ide/phone_ide.dart';
+import 'package:mobile_app_new/widgets/html_handler/code_block.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:youtube_player_iframe/youtube_player_iframe.dart';
 
@@ -70,12 +71,12 @@ final Map<String, Style> defaultStyles = {
   'figure': Style(margin: Margins.zero, textAlign: TextAlign.center),
   'figcaption': Style(fontSize: FontSize.medium),
   'code': Style(
-    fontFamily: 'Hack',
+    fontFamily: 'monospace',
     backgroundColor: FccColors.gray75,
     color: Colors.white.withValues(alpha: 0.87),
     fontSize: FontSize.xLarge,
   ),
-  'pre': Style(fontFamily: 'Hack'),
+  'pre': Style(fontFamily: 'monospace'),
   // NOTE: Text within backticks in en-US, es, and zh-CN challenge files is
   // parsed into spans with this class.
   'span.highlighted-text': Style(
@@ -92,8 +93,18 @@ class HTMLParser {
     String html, {
     bool isSelectable = true,
     Map<String, Style> customStyles = const {},
+    bool plainCodeBlocks = false,
+    bool outlinedInlineCode = false,
+    bool enableTapActions = true,
   }) {
     final result = parser.parse(html);
+    if (!enableTapActions) {
+      // flutter_html gives anchors their own tap recognizer even when its
+      // onLinkTap callback is null. In answer choices, the card owns the tap.
+      for (final anchor in result.querySelectorAll('a[href]')) {
+        anchor.attributes.remove('href');
+      }
+    }
 
     List<Widget> elements = [];
 
@@ -103,6 +114,9 @@ class HTMLParser {
           result.body!.children[i].outerHtml,
           isSelectable,
           customStyles,
+          plainCodeBlocks,
+          enableTapActions,
+          outlinedInlineCode,
         ),
       );
     }
@@ -114,20 +128,98 @@ class HTMLParser {
     String child, [
     bool isSelectable = true,
     Map<String, Style> customStyles = const {},
+    bool plainCodeBlocks = false,
+    bool enableTapActions = true,
+    bool outlinedInlineCode = false,
   ]) {
+    final colors = Theme.of(context).colorScheme;
+    final themeStyles = <String, Style>{
+      '*:not(h1):not(h2):not(h3):not(h4):not(h5):not(h6)': Style(
+        color: colors.onSurface,
+      ),
+      'body': Style(color: colors.onSurface),
+      for (final heading in ['h1', 'h2', 'h3', 'h4', 'h5', 'h6'])
+        heading: Style(color: colors.onSurface),
+      'a': Style(color: colors.primary, textDecorationColor: colors.primary),
+      'td': Style(
+        backgroundColor: colors.surface,
+        color: colors.onSurface,
+        border: Border(bottom: BorderSide(color: colors.outlineVariant)),
+      ),
+      'th': Style(
+        backgroundColor: colors.surfaceContainerLow,
+        color: colors.onSurface,
+      ),
+      'th strong': Style(color: colors.onSurface),
+      'code': Style(
+        backgroundColor: colors.surfaceContainerLow,
+        color: colors.onSurface,
+      ),
+      'span.highlighted-text': Style(
+        backgroundColor: colors.surfaceContainerLow,
+      ),
+    };
+    Widget inlineCode(ExtensionContext child, {bool copyable = true}) {
+      final parsed = parser.parseFragment(child.innerHtml).text ?? '';
+      final borderRadius = BorderRadius.circular(outlinedInlineCode ? 4 : 6);
+      final pill = Container(
+        padding: EdgeInsets.symmetric(horizontal: outlinedInlineCode ? 4 : 3),
+        decoration: BoxDecoration(
+          color: outlinedInlineCode ? colors.surface : colors.outlineVariant,
+          border: outlinedInlineCode
+              ? Border.all(color: colors.outlineVariant)
+              : null,
+          borderRadius: borderRadius,
+        ),
+        child: Text(
+          parsed,
+          style: TextStyle(
+            fontFamily: 'monospace',
+            color: colors.onSurface,
+            fontSize: customStyles['code']?.fontSize?.value ?? 16,
+            letterSpacing: 0,
+            height: 1.25,
+          ),
+        ),
+      );
+      if (!copyable) {
+        return pill;
+      }
+      return InkWell(
+        onTap: !enableTapActions
+            ? null
+            : () {
+                Clipboard.setData(ClipboardData(text: parsed));
+                ScaffoldMessenger.of(context).showSnackBar(
+                  SnackBar(
+                    content: Text(
+                      'Copied to clipboard: $parsed',
+                      style: const TextStyle(fontSize: 20),
+                    ),
+                    duration: const Duration(seconds: 1),
+                  ),
+                );
+              },
+        borderRadius: borderRadius,
+        child: pill,
+      );
+    }
+
     Html htmlWidget = Html(
       shrinkWrap: true,
       data: child,
       style: mergeMaps(
-        defaultStyles,
+        mergeMaps(defaultStyles, themeStyles, value: (s0, s1) => s0.merge(s1)),
         customStyles,
         value: (s0, s1) {
           return s0.merge(s1);
         },
       ),
-      onLinkTap: (url, attributes, element) {
-        launchUrl(Uri.parse(url!.trim()));
-      },
+      onLinkTap: enableTapActions
+          ? (url, attributes, element) {
+              launchUrl(Uri.parse(url!.trim()));
+            }
+          : null,
       extensions: [
         TagWrapExtension(
           tagsToWrap: {'table'},
@@ -142,41 +234,20 @@ class HTMLParser {
         TagExtension(
           tagsToExtend: {'pre'},
           builder: (child) {
-            var codeElement = child.element!.children.isNotEmpty
-                ? child
-                      .element!
-                      .children
-                      .first // code element
-                : child.element!; // pre element
-            String? currentClass;
+            final pre = child.element!;
+            final code = pre.querySelector('code') ?? pre;
+            final languageClass = RegExp(r'^(?:language|lang)-(.+)$');
+            final language = [
+              ...code.classes,
+              ...pre.classes,
+            ].map(languageClass.firstMatch).nonNulls.firstOrNull?.group(1);
 
-            bool codeLanguageIsPresent(List<String> classNames) {
-              RegExp regExp = RegExp(r'\blang(uage)?\b');
-
-              for (String className in classNames) {
-                if (className.contains(regExp)) {
-                  currentClass = className;
-                  return true;
-                }
-              }
-
-              return false;
-            }
-
-            List<String> classes = codeElement.classes.toList();
-
-            return Editor(
-              options: EditorOptions(
-                fontFamily: 'Hack',
-                takeFullHeight: false,
-                isEditable: false,
-                showLinebar: false,
-              ),
-              defaultLanguage: codeLanguageIsPresent(classes)
-                  ? currentClass!.split('-')[1]
-                  : '',
-              defaultValue: codeElement.text.trimRight(),
-              path: 'example',
+            return FccCodeBlock(
+              code: code.text.trimRight(),
+              language: language ?? '',
+              fontSize: customStyles['pre']?.fontSize?.value ?? 13,
+              plain: plainCodeBlocks,
+              selectable: isSelectable,
             );
           },
         ),
@@ -188,57 +259,26 @@ class HTMLParser {
             if (isVideo.hasMatch(videoUrl ?? '')) {
               var videoId = videoUrl?.split('/').last.split('?').first;
 
-              YoutubePlayerController controller =
-                  YoutubePlayerController.fromVideoId(
-                    videoId: videoId!,
-                    autoPlay: false,
-                    params: const YoutubePlayerParams(
-                      showControls: true,
-                      showFullscreenButton: true,
-                      strictRelatedVideos: true,
-                      origin: 'https://www.youtube-nocookie.com',
-                    ),
-                  );
-
-              return YoutubePlayer(
-                enableFullScreenOnVerticalDrag: false,
-                controller: controller,
+              if (videoId == null || videoId.isEmpty) {
+                return const SizedBox.shrink();
+              }
+              return IgnorePointer(
+                ignoring: !enableTapActions,
+                child: _YouTubeEmbed(key: ValueKey(videoId), videoId: videoId),
               );
             }
 
             return Container();
           },
         ),
-        TagExtension(
-          tagsToExtend: {'code'},
-          builder: (child) {
-            String? parsed = parser.parseFragment(child.innerHtml).text ?? '';
-
-            return InkWell(
-              onTap: () {
-                Clipboard.setData(ClipboardData(text: parsed));
-                ScaffoldMessenger.of(context).showSnackBar(
-                  SnackBar(
-                    content: Text(
-                      'Copied to clipboard: $parsed',
-                      style: const TextStyle(fontSize: 20),
-                    ),
-                    duration: const Duration(seconds: 1),
-                  ),
-                );
-              },
-              child: Text(
-                parsed,
-                style: const TextStyle(
-                  fontFamily: 'Hack',
-                  color: Colors.white,
-                  fontSize: 18,
-                  backgroundColor: FccColors.gray75,
-                ),
-              ),
-            );
-          },
-        ),
+        TagExtension(tagsToExtend: {'code'}, builder: inlineCode),
+        if (outlinedInlineCode)
+          MatcherExtension(
+            matcher: (child) =>
+                child.elementName == 'span' &&
+                child.classes.contains('highlighted-text'),
+            builder: (child) => inlineCode(child, copyable: false),
+          ),
         TagExtension(
           tagsToExtend: {'img'},
           builder: (child) {
@@ -247,7 +287,18 @@ class HTMLParser {
             return Padding(
               padding: const EdgeInsets.all(8.0),
               child: InkWell(
-                onTap: () => NewsImageRoute($extra: imgUrl).push(context),
+                onTap: !enableTapActions
+                    ? null
+                    : () => NewsImageRoute(
+                        $extra: imgUrl,
+                        alt: child.attributes['alt'],
+                        caption: child.element?.parent?.localName == 'figure'
+                            ? child.element?.parent
+                                  ?.querySelector('figcaption')
+                                  ?.text
+                                  .trim()
+                            : child.attributes['title'],
+                      ).push(context),
                 child: isDataUrl
                     ? Image.memory(base64Decode(imgUrl.split(',').last))
                     : CachedNetworkImage(imageUrl: imgUrl),
@@ -259,14 +310,21 @@ class HTMLParser {
           tagsToExtend: {'blockquote'},
           builder: (node) {
             HTMLParser innerParser = HTMLParser(context: context);
-            List<Widget> blockQuoteWidgets = innerParser.parse(node.innerHtml);
+            List<Widget> blockQuoteWidgets = innerParser.parse(
+              node.innerHtml,
+              isSelectable: isSelectable,
+              customStyles: customStyles,
+              plainCodeBlocks: plainCodeBlocks,
+              outlinedInlineCode: outlinedInlineCode,
+              enableTapActions: enableTapActions,
+            );
 
             return Padding(
               padding: const EdgeInsets.all(8.0),
               child: Container(
-                decoration: const BoxDecoration(
+                decoration: BoxDecoration(
                   border: Border(
-                    left: BorderSide(color: FccColors.blue30, width: 2),
+                    left: BorderSide(color: colors.primary, width: 2),
                   ),
                 ),
                 child: Padding(
@@ -286,4 +344,58 @@ class HTMLParser {
       return htmlWidget;
     }
   }
+}
+
+/// Owns the platform player independently of HTML parsing and reader styling.
+class _YouTubeEmbed extends StatefulWidget {
+  const _YouTubeEmbed({super.key, required this.videoId});
+
+  final String videoId;
+
+  @override
+  State<_YouTubeEmbed> createState() => _YouTubeEmbedState();
+}
+
+class _YouTubeEmbedState extends State<_YouTubeEmbed> {
+  late YoutubePlayerController _controller;
+
+  YoutubePlayerController _createController() =>
+      YoutubePlayerController.fromVideoId(
+        videoId: widget.videoId,
+        autoPlay: false,
+        params: const YoutubePlayerParams(
+          showControls: true,
+          showFullscreenButton: true,
+          strictRelatedVideos: true,
+          origin: 'https://www.youtube-nocookie.com',
+        ),
+      );
+
+  @override
+  void initState() {
+    super.initState();
+    _controller = _createController();
+  }
+
+  @override
+  void didUpdateWidget(covariant _YouTubeEmbed oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    if (oldWidget.videoId != widget.videoId) {
+      unawaited(_controller.close());
+      _controller = _createController();
+    }
+  }
+
+  @override
+  void dispose() {
+    unawaited(_controller.close());
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) => YoutubePlayer(
+    key: ValueKey(widget.videoId),
+    enableFullScreenOnVerticalDrag: false,
+    controller: _controller,
+  );
 }
