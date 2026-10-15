@@ -111,9 +111,7 @@ class BlockCard extends ConsumerWidget {
         .where((c) => !completed.contains(c.id))
         .firstOrNull;
     final unit = blockUnit(block);
-    final progress = done > 0
-        ? '$done of ${countLabel(total, unit)}'
-        : countLabel(total, unit);
+    final progress = '$done of ${countLabel(total, unit)}';
     final toggle = disabled ? () => _showUnavailable(context) : onToggle;
 
     return Padding(
@@ -147,7 +145,7 @@ class BlockCard extends ConsumerWidget {
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            if (expanded)
+                            if (expanded && done > 0)
                               Row(
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
@@ -183,7 +181,7 @@ class BlockCard extends ConsumerWidget {
                                   ? Theme.of(context).textTheme.titleLarge
                                   : Theme.of(context).textTheme.titleMedium,
                             ),
-                            if (!expanded) ...[
+                            if (!expanded && (disabled || done > 0)) ...[
                               const SizedBox(height: 4),
                               Text(
                                 disabled ? 'Temporarily unavailable' : progress,
