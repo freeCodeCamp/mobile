@@ -106,12 +106,12 @@ class _LessonViewState extends State<LessonView> {
             Chip(
               label: Text(
                 review
-                    ? 'REVIEW'
+                    ? 'Review'
                     : challenge.videoId != null
-                    ? 'VIDEO'
-                    : 'LECTURE',
+                    ? 'Video'
+                    : 'Lecture',
                 style: TextStyle(
-                  fontFamily: 'monospace',
+                  fontFamily: 'Lato',
                   fontSize: 11,
                   fontWeight: FontWeight.w700,
                   color: lectureColor,

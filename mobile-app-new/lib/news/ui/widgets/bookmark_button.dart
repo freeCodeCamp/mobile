@@ -48,7 +48,7 @@ class _BookmarkButtonState extends ConsumerState<BookmarkButton> {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(
-            content: Text('Unable to update saved tutorial. Please try again.'),
+            content: Text('Unable to update saved article. Please try again.'),
           ),
         );
       }
@@ -66,8 +66,8 @@ class _BookmarkButtonState extends ConsumerState<BookmarkButton> {
     );
     return IconButton(
       tooltip: bookmarked
-          ? 'Remove saved tutorial'
-          : 'Save tutorial for offline reading',
+          ? 'Remove saved article'
+          : 'Save article for offline reading',
       onPressed: _saving ? null : _toggle,
       color: bookmarked
           ? Theme.of(context).colorScheme.primary

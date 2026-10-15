@@ -218,13 +218,13 @@ void main() {
           ),
         );
         await tester.pumpAndSettle();
-        expect(find.text('Read tutorials online'), findsOneWidget);
-        await tester.tap(find.text('Read tutorials online'));
+        expect(find.text('Read articles online'), findsOneWidget);
+        await tester.tap(find.text('Read articles online'));
         await tester.pumpAndSettle();
         expect(launchedUrl, 'https://www.freecodecamp.org/news/');
         await tester.tap(find.text('Try again'));
         expect(retries, 1);
-        await tester.tap(find.text('Saved tutorials'));
+        await tester.tap(find.text('Saved articles'));
         await tester.pumpAndSettle();
         expect(find.text('Saved destination'), findsOneWidget);
         router.go('/author');
@@ -235,7 +235,7 @@ void main() {
         final titleY = tester
             .getTopLeft(find.text('Build a useful application'))
             .dy;
-        final footerY = tester.getTopLeft(find.text('See all tutorials')).dy;
+        final footerY = tester.getTopLeft(find.text('See all articles')).dy;
         expect(footerY, greaterThan(titleY));
         await tester.tap(find.text('Build a useful application'));
         await tester.pumpAndSettle();

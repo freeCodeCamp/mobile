@@ -53,11 +53,11 @@ class AppBottomNavigation extends StatelessWidget {
       destinations: const [
         NavigationDestination(
           icon: Icon(Icons.school_outlined),
-          label: 'Learn',
+          label: 'Courses',
         ),
         NavigationDestination(
           icon: Icon(Icons.article_outlined),
-          label: 'Tutorials',
+          label: 'Articles',
         ),
         NavigationDestination(
           icon: Icon(Icons.favorite_border),

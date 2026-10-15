@@ -111,7 +111,7 @@ class NewsPostView extends ConsumerWidget {
         error: (_, _) => Scaffold(
           appBar: AppBar(),
           body: ErrorRetry(
-            message: 'Unable to load tutorial.',
+            message: 'Unable to load article.',
             onRetry: () => ref.invalidate(newsPostProvider(slug)),
           ),
         ),

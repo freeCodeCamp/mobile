@@ -464,7 +464,7 @@ void main() {
       expect(find.text('Keep going!'), findsOneWidget);
       expect(find.text('8 of 10 correct'), findsOneWidget);
       expect(_button('Continue'), findsNothing);
-      await tester.scrollUntilVisible(find.text('QUESTION 9'), 400);
+      await tester.scrollUntilVisible(find.text('Question 9'), 400);
       expect(
         find.textContaining('Your answer: Other choice 9', findRichText: true),
         findsOneWidget,
@@ -781,7 +781,7 @@ void main() {
       await _answerQuiz(tester, correct: 9, settleResult: false);
       await _screenshot(tester, 'learn-quiz-results-$mode');
       await tester.pump(const Duration(milliseconds: 400));
-      await tester.scrollUntilVisible(find.text('QUESTION 10'), 300);
+      await tester.scrollUntilVisible(find.text('Question 10'), 300);
       await tester.pump(const Duration(milliseconds: 400));
       expect(
         find.textContaining('Your answer: Other choice 10', findRichText: true),

@@ -143,7 +143,8 @@ void main() {
         'module matches header and compact square grid ${dark ? 'dark' : 'light'} ${config.$1} text ${config.$2}',
         (tester) async {
           await _pump(tester, dark: dark, width: config.$1, scale: config.$2);
-          expect(find.text('RESPONSIVE WEB DESIGN · HTML'), findsOneWidget);
+          expect(find.text('RESPONSIVE WEB DESIGN · HTML'), findsNothing);
+          expect(find.text('Responsive Web Design · HTML'), findsNothing);
           final appBar = tester.widget<AppBar>(find.byType(AppBar));
           final context = tester.element(find.byType(AppBar));
           expect(
@@ -159,7 +160,10 @@ void main() {
             tester.widget<Text>(find.text('Basic HTML')).style!.fontWeight,
             FontWeight.w800,
           );
-          final eyebrow = tester.getRect(find.text('WORKSHOP'));
+          final eyebrow = tester.getRect(find.text('Workshop'));
+          final label = tester.widget<Text>(find.text('Workshop'));
+          expect(label.style!.fontFamily, 'Lato');
+          expect(label.style!.letterSpacing, 0);
           final count = tester.getRect(find.text('2 of 11 steps'));
           expect(count.top, closeTo(eyebrow.top, .01));
           expect(count.left, greaterThan(eyebrow.right));

@@ -3,7 +3,7 @@ import 'package:go_router/go_router.dart';
 import 'package:mobile_app_new/routing/news.dart';
 import 'package:url_launcher/url_launcher.dart';
 
-/// Tutorials saved on this device remain reachable when the feed is unavailable.
+/// Articles saved on this device remain reachable when the feed is unavailable.
 class NewsLoadError extends StatelessWidget {
   const NewsLoadError({super.key, required this.onRetry});
 
@@ -22,13 +22,13 @@ class NewsLoadError extends StatelessWidget {
             mainAxisSize: MainAxisSize.min,
             children: [
               const Text(
-                'There was an error loading tutorials',
+                'There was an error loading articles',
                 textAlign: TextAlign.center,
                 style: TextStyle(fontSize: 22, fontWeight: FontWeight.w800),
               ),
               const SizedBox(height: 12),
               Text(
-                'Check your connection and try again. Your saved tutorials still work offline.',
+                'Check your connection and try again. Your saved articles still work offline.',
                 textAlign: TextAlign.center,
                 style: TextStyle(
                   color: Theme.of(context).colorScheme.onSurfaceVariant,
@@ -44,7 +44,7 @@ class NewsLoadError extends StatelessWidget {
                 children: [
                   TextButton(
                     onPressed: () => context.go(newsBookmarksPath),
-                    child: const Text('Saved tutorials'),
+                    child: const Text('Saved articles'),
                   ),
                   TextButton(
                     onPressed: () async {
@@ -61,13 +61,13 @@ class NewsLoadError extends StatelessWidget {
                         ScaffoldMessenger.of(context).showSnackBar(
                           const SnackBar(
                             content: Text(
-                              'Unable to open tutorials in your browser.',
+                              'Unable to open articles in your browser.',
                             ),
                           ),
                         );
                       }
                     },
-                    child: const Text('Read tutorials online'),
+                    child: const Text('Read articles online'),
                   ),
                 ],
               ),

@@ -153,7 +153,7 @@ void main() {
           '${dark ? 'dark' : 'light'} at $scale text', (tester) async {
         await _pump(tester, dark: dark, scale: scale);
         expect(find.byTooltip('Ask for help'), findsNothing);
-        expect(find.text('LECTURE'), findsNothing);
+        expect(find.text('Lecture'), findsNothing);
         expect(find.text('Task 3'), findsOneWidget);
         final scene = tester.widget<SceneView>(find.byType(SceneView));
         expect(scene.edgeToEdge, isTrue);
@@ -246,7 +246,7 @@ void main() {
         tester,
         block: _block.copyWith(layout: BlockLayout.challengeList),
       );
-      expect(find.text('LECTURE'), findsOneWidget);
+      expect(find.text('Lecture'), findsOneWidget);
       expect(find.byType(TaskExplanation), findsNothing);
       expect(_text('A team lead guides'), findsOneWidget);
       expect(

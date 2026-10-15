@@ -371,9 +371,9 @@ class _QuizViewState extends State<QuizView> {
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           Text(
-                            'QUESTION ${i + 1}',
+                            'Question ${i + 1}',
                             style: TextStyle(
-                              fontFamily: 'monospace',
+                              fontFamily: 'Lato',
                               fontSize: 12,
                               color: colors.onSurfaceVariant,
                             ),

@@ -40,10 +40,11 @@ class TagButton extends StatelessWidget {
             maxLines: 1,
             overflow: TextOverflow.ellipsis,
             style: TextStyle(
+              fontFamily: 'Lato',
               fontSize: compact ? 12 : 13,
               fontWeight: compact ? FontWeight.w500 : FontWeight.w600,
               color: colors.primary,
-              letterSpacing: compact ? .4 : 0,
+              letterSpacing: 0,
             ),
           ),
         ),

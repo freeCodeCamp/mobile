@@ -46,7 +46,7 @@ class _SuperBlockViewState extends ConsumerState<SuperBlockView> {
       bottomNavigationBar: const AppNavigationFooter(
         selected: AppDestination.learn,
       ),
-      appBar: AppBar(title: const Text('Learn')),
+      appBar: AppBar(title: const Text('Courses')),
       body: superBlock.when(
         loading: () => const Center(child: CircularProgressIndicator()),
         error: (error, stack) => ErrorRetry(
@@ -148,7 +148,7 @@ class _Chapters extends ConsumerWidget {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: [
-                  const LearnEyebrow('Finish line'),
+                  LearnEyebrow('Chapter ${this.chapters.indexOf(exam) + 1}'),
                   const SizedBox(height: 8),
                   Text(
                     'Certification Exam',

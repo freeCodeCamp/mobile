@@ -15,6 +15,8 @@ import 'package:mobile_app_new/news/models/author_model.dart';
 import 'package:mobile_app_new/news/models/bookmarked_post_model.dart';
 import 'package:mobile_app_new/news/models/post_model.dart';
 import 'package:mobile_app_new/news/models/post_summary_model.dart';
+import 'package:mobile_app_new/news/ui/widgets/bookmark_button.dart';
+import 'package:mobile_app_new/news/ui/widgets/post_tile.dart';
 import 'package:mobile_app_new/podcasts/controllers/library_controller.dart';
 import 'package:mobile_app_new/podcasts/controllers/player_controller.dart';
 import 'package:mobile_app_new/podcasts/models/episode_model.dart';
@@ -281,12 +283,25 @@ Future<void> _screenshot(WidgetTester tester, String name) async {
   });
 }
 
+void _expectBookmarksActionVisible(WidgetTester tester) {
+  final button = find.widgetWithText(OutlinedButton, 'View bookmarks');
+  expect(button.hitTestable(), findsOneWidget);
+  final bounds = tester.getRect(button);
+  final appBar = tester.getRect(find.byType(AppBar));
+  expect(bounds.top, greaterThanOrEqualTo(appBar.top));
+  expect(bounds.bottom, lessThanOrEqualTo(appBar.bottom));
+  expect(bounds.left, greaterThanOrEqualTo(0));
+  expect(bounds.right, lessThanOrEqualTo(tester.view.physicalSize.width));
+}
+
 void main() {
   setUpAll(() async {
     TestWidgetsFlutterBinding.ensureInitialized();
-    await (FontLoader(
-      'Lato',
-    )..addFont(rootBundle.load('assets/fonts/Lato-Regular.ttf'))).load();
+    final lato = FontLoader('Lato');
+    for (final weight in ['Regular', 'Bold', 'ExtraBold', 'Black']) {
+      lato.addFont(rootBundle.load('assets/fonts/Lato-$weight.ttf'));
+    }
+    await lato.load();
     await (FontLoader(
       'monospace',
     )..addFont(rootBundle.load('assets/fonts/Hack-Regular.ttf'))).load();
@@ -296,13 +311,24 @@ void main() {
   });
   for (final dark in [false, true]) {
     final mode = dark ? 'dark' : 'light';
-    testWidgets('Tutorials browse, filter and saved navigation in $mode mode', (
+    testWidgets('Articles browse, filter and saved navigation in $mode mode', (
       tester,
     ) async {
       await _pump(tester, '/news', dark: dark);
-      expect(find.text('Search tutorials'), findsOneWidget);
+      expect(find.text('Search articles'), findsOneWidget);
+      _expectBookmarksActionVisible(tester);
+      expect(
+        find.widgetWithText(OutlinedButton, 'View bookmarks'),
+        findsOneWidget,
+      );
+      expect(find.byType(BookmarkButton), findsNothing);
       expect(find.text(_posts.first.title), findsOneWidget);
-      await _screenshot(tester, 'tutorials-$mode');
+      final leadingTile = find.byType(PostTile).first;
+      expect(
+        find.descendant(of: leadingTile, matching: find.byType(IconButton)),
+        findsNothing,
+      );
+      await _screenshot(tester, 'articles-$mode');
       await tester.ensureVisible(
         find.widgetWithText(ChoiceChip, 'Software architecture'),
       );
@@ -316,16 +342,17 @@ void main() {
       );
       expect(find.text(_posts.first.title), findsNothing);
       expect(find.text(_posts.last.title), findsOneWidget);
-      await tester.tap(find.byTooltip('Saved tutorials'));
+      expect(find.byType(BookmarkButton), findsNothing);
+      await tester.tap(find.text('View bookmarks'));
       await tester.pumpAndSettle(
         const Duration(milliseconds: 100),
         EnginePhase.sendSemanticsUpdate,
         const Duration(seconds: 5),
       );
-      expect(find.text('Saved tutorials can be read offline'), findsOneWidget);
-      await tester.tap(find.widgetWithText(NavigationDestination, 'Tutorials'));
+      expect(find.text('Saved articles can be read offline'), findsOneWidget);
+      await tester.tap(find.widgetWithText(NavigationDestination, 'Articles'));
       await tester.pumpAndSettle();
-      expect(find.text('Search tutorials'), findsOneWidget);
+      expect(find.text('Search articles'), findsOneWidget);
       expect(tester.takeException(), isNull);
     });
     testWidgets('Podcasts browse, downloads and detail in $mode mode', (
@@ -408,23 +435,85 @@ void main() {
       }
     });
   }
-  for (final size in [const Size(320, 844), const Size(844, 390)]) {
-    testWidgets(
-      'Tutorials scroll to readable content at 200 percent in $size',
-      (tester) async {
-        await _pump(
-          tester,
-          '/news',
-          width: size.width,
-          height: size.height,
-          scale: 2,
+  for (final dark in [false, true]) {
+    for (final scale in [1.0, 2.0]) {
+      for (final featured in [false, true]) {
+        testWidgets(
+          'Article row reclaims bookmark space dark$dark text$scale featured$featured',
+          (tester) async {
+            tester.view.devicePixelRatio = 1;
+            tester.view.physicalSize = const Size(320, 844);
+            addTearDown(tester.view.resetDevicePixelRatio);
+            addTearDown(tester.view.resetPhysicalSize);
+            await tester.pumpWidget(
+              RepaintBoundary(
+                key: _capture,
+                child: MaterialApp(
+                  debugShowCheckedModeBanner: false,
+                  theme: dark ? FccTheme.themeDark : FccTheme.themeLight,
+                  builder: (context, child) => MediaQuery(
+                    data: MediaQuery.of(
+                      context,
+                    ).copyWith(textScaler: TextScaler.linear(scale)),
+                    child: child!,
+                  ),
+                  home: Scaffold(
+                    body: SingleChildScrollView(
+                      padding: const EdgeInsets.all(20),
+                      child: PostTile(post: _posts[1], featured: featured),
+                    ),
+                  ),
+                ),
+              ),
+            );
+            await tester.pumpAndSettle();
+            expect(find.byType(BookmarkButton), findsNothing);
+            expect(find.byType(IconButton), findsNothing);
+            expect(
+              tester.getSize(find.text(_posts[1].title)).width,
+              closeTo(featured ? 280 : 164, .01),
+            );
+            expect(
+              tester.getRect(find.textContaining('Beau Carnes')).right,
+              closeTo(300, .01),
+            );
+            await _screenshot(
+              tester,
+              'article-${featured ? 'lead' : 'compact'}-${dark ? 'dark' : 'light'}-text${(scale * 100).toInt()}',
+            );
+            expect(tester.takeException(), isNull);
+          },
         );
-        expect(tester.takeException(), isNull);
-        await tester.ensureVisible(find.text(_posts.first.title));
-        await tester.pumpAndSettle();
-        expect(find.text(_posts.first.title).hitTestable(), findsOneWidget);
-        expect(tester.takeException(), isNull);
-      },
-    );
+      }
+    }
+    for (final size in [const Size(320, 844), const Size(844, 390)]) {
+      testWidgets(
+        'Articles scroll to readable content at 200 percent in $size dark$dark',
+        (tester) async {
+          await _pump(
+            tester,
+            '/news',
+            width: size.width,
+            height: size.height,
+            scale: 2,
+            dark: dark,
+          );
+          await _screenshot(
+            tester,
+            'articles-${dark ? 'dark' : 'light'}-${size.width.toInt()}-text200',
+          );
+          _expectBookmarksActionVisible(tester);
+          expect(tester.takeException(), isNull);
+          expect(
+            find.widgetWithText(OutlinedButton, 'View bookmarks').hitTestable(),
+            findsOneWidget,
+          );
+          await tester.ensureVisible(find.text(_posts.first.title));
+          await tester.pumpAndSettle();
+          expect(find.text(_posts.first.title).hitTestable(), findsOneWidget);
+          expect(tester.takeException(), isNull);
+        },
+      );
+    }
   }
 }

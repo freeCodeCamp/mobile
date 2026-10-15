@@ -47,7 +47,7 @@ class _NewsSearchViewState extends ConsumerState<NewsSearchView> {
                   onChanged: _search,
                   textInputAction: TextInputAction.search,
                   decoration: InputDecoration(
-                    hintText: 'Search tutorials',
+                    hintText: 'Search articles',
                     prefixIcon: const Icon(Icons.search_rounded),
                     suffixIcon: _searchBarController.text.isEmpty
                         ? null
@@ -78,7 +78,7 @@ class _NewsSearchViewState extends ConsumerState<NewsSearchView> {
           child: _searchBarController.text.trim().isEmpty
               ? Center(
                   child: Text(
-                    'Find your next tutorial',
+                    'Find your next article',
                     style: TextStyle(color: colors.onSurfaceVariant),
                   ),
                 )
@@ -91,7 +91,7 @@ class _NewsSearchViewState extends ConsumerState<NewsSearchView> {
   Widget _buildResults(AsyncValue<List<SearchPost>> results) => results.when(
     loading: () => const Center(child: CircularProgressIndicator()),
     error: (_, _) => ErrorRetry(
-      message: 'Unable to search tutorials.',
+      message: 'Unable to search articles.',
       onRetry: () => _search(_searchBarController.text),
     ),
     data: (posts) => CustomScrollView(
@@ -112,7 +112,7 @@ class _NewsSearchViewState extends ConsumerState<NewsSearchView> {
           const SliverFillRemaining(
             hasScrollBody: false,
             child: Center(
-              child: Text('No tutorials found. Try another search.'),
+              child: Text('No articles found. Try another search.'),
             ),
           )
         else

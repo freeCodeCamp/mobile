@@ -73,7 +73,7 @@ class _SettingsViewState extends ConsumerState<SettingsView> {
       scrollable: true,
       title: const Text('Language'),
       content: const Text(
-        'English is currently the supported app language. You can find English, Spanish and Chinese language courses in Learn.',
+        'English is currently the supported app language. You can find English, Spanish and Chinese language courses in Courses.',
       ),
       actions: [
         TextButton(

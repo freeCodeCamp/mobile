@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:mobile_app_new/news/models/post_summary_model.dart';
-import 'package:mobile_app_new/news/ui/widgets/bookmark_button.dart';
 import 'package:mobile_app_new/news/ui/widgets/news_image.dart';
 import 'package:mobile_app_new/news/ui/widgets/tag_button.dart';
 import 'package:mobile_app_new/routing/news.dart';
@@ -15,7 +14,6 @@ class PostTile extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final colors = Theme.of(context).colorScheme;
-    final bookmark = BookmarkButton.forSummary(id: post.id, slug: post.slug);
     final title = Text(
       post.title,
       maxLines: featured ? 4 : 3,
@@ -43,12 +41,7 @@ class PostTile extends StatelessWidget {
                   const SizedBox(height: 14),
                   title,
                   const SizedBox(height: 12),
-                  Row(
-                    children: [
-                      Expanded(child: _author(context, withAvatar: true)),
-                      bookmark,
-                    ],
-                  ),
+                  _author(context, withAvatar: true),
                   const SizedBox(height: 8),
                 ],
               )
@@ -73,7 +66,6 @@ class PostTile extends StatelessWidget {
                       ],
                     ),
                   ),
-                  SizedBox(width: 48, child: bookmark),
                 ],
               ),
       ),

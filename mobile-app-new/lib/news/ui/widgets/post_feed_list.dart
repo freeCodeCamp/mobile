@@ -80,7 +80,7 @@ class _PostFeedListState extends ConsumerState<PostFeedList> {
               if (feed.posts.isEmpty)
                 const SliverFillRemaining(
                   hasScrollBody: false,
-                  child: Center(child: Text('No tutorials here yet.')),
+                  child: Center(child: Text('No articles here yet.')),
                 )
               else
                 SliverPadding(
@@ -140,7 +140,7 @@ class _PostFeedListState extends ConsumerState<PostFeedList> {
       return Padding(
         padding: const EdgeInsets.symmetric(vertical: 16),
         child: ErrorRetry(
-          message: 'Unable to load more tutorials.',
+          message: 'Unable to load more articles.',
           onRetry: () =>
               ref.read(_provider.notifier).fetchNextPage(isRetry: true),
         ),

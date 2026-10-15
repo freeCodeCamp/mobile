@@ -37,12 +37,12 @@ class LearnEyebrow extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) => Text(
-    text.toUpperCase(),
+    text.isEmpty ? text : '${text[0].toUpperCase()}${text.substring(1)}',
     style: TextStyle(
-      fontFamily: 'monospace',
+      fontFamily: 'Lato',
       fontSize: 11,
       height: 1.4,
-      letterSpacing: 1.2,
+      letterSpacing: 0,
       fontWeight: FontWeight.w600,
       color: color ?? Theme.of(context).colorScheme.onSurfaceVariant,
     ),

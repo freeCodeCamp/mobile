@@ -27,7 +27,7 @@ class _NewsBookmarkPostViewState extends ConsumerState<NewsBookmarkPostView> {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(
-            content: Text('Unable to update saved tutorial. Please try again.'),
+            content: Text('Unable to update saved article. Please try again.'),
           ),
         );
       }
@@ -48,7 +48,7 @@ class _NewsBookmarkPostViewState extends ConsumerState<NewsBookmarkPostView> {
     return ArticleReader(
       html: post.text,
       bookmarkButton: IconButton(
-        tooltip: isBookmarked ? 'Remove saved tutorial' : 'Save tutorial',
+        tooltip: isBookmarked ? 'Remove saved article' : 'Save article',
         onPressed: _saving ? null : _toggle,
         color: isBookmarked ? colors.primary : colors.onSurfaceVariant,
         icon: Icon(

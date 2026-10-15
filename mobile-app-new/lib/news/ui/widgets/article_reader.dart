@@ -4,7 +4,7 @@ import 'package:mobile_app_new/news/ui/widgets/back_to_top_button.dart';
 import 'package:mobile_app_new/widgets/html_handler/html_handler.dart';
 import 'package:share_plus/share_plus.dart';
 
-/// The same reading controls are available for live and offline tutorials.
+/// The same reading controls are available for live and offline articles.
 class ArticleReader extends StatefulWidget {
   const ArticleReader({
     super.key,
@@ -134,7 +134,7 @@ class _ArticleReaderState extends State<ArticleReader> {
           if (widget.shareText != null)
             IconButton(
               key: _shareButtonKey,
-              tooltip: 'Share tutorial',
+              tooltip: 'Share article',
               icon: const Icon(Icons.ios_share_rounded),
               onPressed: _share,
             ),

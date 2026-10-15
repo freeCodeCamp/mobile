@@ -1,7 +1,7 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 
-/// Shared image treatment for tutorial covers and author portraits.
+/// Shared image treatment for article covers and author portraits.
 class NewsImage extends StatelessWidget {
   const NewsImage({
     super.key,

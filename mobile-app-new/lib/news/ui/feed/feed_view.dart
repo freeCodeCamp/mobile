@@ -55,7 +55,7 @@ class _NewsFeedViewState extends ConsumerState<NewsFeedView> {
                       const SizedBox(width: 12),
                       Expanded(
                         child: Text(
-                          'Search tutorials',
+                          'Search articles',
                           style: TextStyle(
                             fontSize: 17,
                             color: colors.onSurfaceVariant,

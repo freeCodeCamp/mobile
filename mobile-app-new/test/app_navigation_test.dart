@@ -62,14 +62,14 @@ void main() {
         ),
       );
       await tester.pumpAndSettle();
-      for (final label in ['Tutorials', 'Listen', 'Profile', 'Learn']) {
+      for (final label in ['Articles', 'Listen', 'Profile', 'Courses']) {
         await tester.tap(find.text(label));
         await tester.pumpAndSettle();
         final expected = {
-          'Tutorials': '/news',
+          'Articles': '/news',
           'Listen': '/podcasts',
           'Profile': '/profile',
-          'Learn': '/learn',
+          'Courses': '/learn',
         }[label];
         expect(router.routeInformationProvider.value.uri.path, expected);
         expect(find.byType(NavigationDestination), findsNWidgets(5));

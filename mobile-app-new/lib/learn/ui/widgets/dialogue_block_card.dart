@@ -58,11 +58,6 @@ class DialogueBlockCard extends ConsumerWidget {
             )
             .firstOrNull ??
         sections.firstOrNull;
-    final total = sections.fold(
-      0,
-      (sum, section) => sum + section.tasks.length,
-    );
-
     return Padding(
       padding: const EdgeInsets.only(bottom: 12),
       child: Card(
@@ -75,19 +70,6 @@ class DialogueBlockCard extends ConsumerWidget {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
-              Text(
-                '${countLabel(sections.length, 'dialogue')} · ${countLabel(total, 'task')}'
-                    .toUpperCase(),
-                style: TextStyle(
-                  fontFamily: 'monospace',
-                  fontSize: 12,
-                  height: 1.4,
-                  fontWeight: FontWeight.w700,
-                  letterSpacing: 1,
-                  color: FccDesignColors.of(context).accentText,
-                ),
-              ),
-              const SizedBox(height: 10),
               Text(
                 block.name,
                 style: const TextStyle(

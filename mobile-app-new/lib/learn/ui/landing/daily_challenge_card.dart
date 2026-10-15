@@ -8,12 +8,45 @@ import 'package:mobile_app_new/routing/learn.dart';
 import 'package:mobile_app_new/services/auth_service.dart';
 import 'package:timezone/timezone.dart' as tz;
 
-class DailyChallengeCard extends ConsumerWidget {
+class DailyChallengeCard extends ConsumerStatefulWidget {
   const DailyChallengeCard({super.key, this.showArchiveLink = true});
   final bool showArchiveLink;
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
+  ConsumerState<DailyChallengeCard> createState() => _DailyChallengeCardState();
+}
+
+class _DailyChallengeCardState extends ConsumerState<DailyChallengeCard> {
+  Timer? _refreshTimer;
+  bool get showArchiveLink => widget.showArchiveLink;
+
+  @override
+  void initState() {
+    super.initState();
+    _scheduleRefresh();
+  }
+
+  void _scheduleRefresh() {
+    // A new challenge unlocks at midnight US Central time. Keep this refresh
+    // without displaying a countdown or rebuilding the card every second.
+    final chicago = tz.getLocation('America/Chicago');
+    final now = tz.TZDateTime.now(chicago);
+    final midnight = tz.TZDateTime(chicago, now.year, now.month, now.day + 1);
+    _refreshTimer = Timer(midnight.difference(now), () {
+      if (!mounted) return;
+      ref.invalidate(dailyChallengeTodayProvider);
+      _scheduleRefresh();
+    });
+  }
+
+  @override
+  void dispose() {
+    _refreshTimer?.cancel();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
     final today = ref.watch(dailyChallengeTodayProvider);
     final challenge = today.value;
     if (challenge == null) {
@@ -80,25 +113,16 @@ class DailyChallengeCard extends ConsumerWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
-          Wrap(
-            spacing: 12,
-            runSpacing: 8,
-            alignment: WrapAlignment.spaceBetween,
-            crossAxisAlignment: WrapCrossAlignment.center,
-            children: [
-              Text(
-                'DAILY CHALLENGE',
-                style: TextStyle(
-                  color: design.onDonate,
-                  fontFamily: 'monospace',
-                  letterSpacing: 1,
-                  fontSize: 11,
-                  fontWeight: FontWeight.w600,
-                  height: 1.2,
-                ),
-              ),
-              const _Countdown(),
-            ],
+          Text(
+            'Daily challenge',
+            style: TextStyle(
+              color: design.onDonate,
+              fontFamily: 'Lato',
+              letterSpacing: 0,
+              fontSize: 11,
+              fontWeight: FontWeight.w600,
+              height: 1.2,
+            ),
           ),
           const SizedBox(height: 12),
           Text(
@@ -222,73 +246,4 @@ class _ArchiveLink extends StatelessWidget {
       style: TextStyle(decoration: TextDecoration.underline),
     ),
   );
-}
-
-// NOTE: A new daily challenge unlocks at midnight US Central time.
-class _Countdown extends ConsumerStatefulWidget {
-  const _Countdown();
-
-  @override
-  ConsumerState<_Countdown> createState() => _CountdownState();
-}
-
-class _CountdownState extends ConsumerState<_Countdown> {
-  late final Timer _timer;
-  late Duration _timeLeft = _untilMidnight();
-
-  @override
-  void initState() {
-    super.initState();
-    _timer = Timer.periodic(const Duration(seconds: 1), (_) {
-      final next = _untilMidnight();
-      final passedMidnight = next > _timeLeft;
-      if (passedMidnight) ref.invalidate(dailyChallengeTodayProvider);
-      setState(() => _timeLeft = next);
-    });
-  }
-
-  @override
-  void dispose() {
-    _timer.cancel();
-    super.dispose();
-  }
-
-  Duration _untilMidnight() {
-    final chicago = tz.getLocation('America/Chicago');
-    final now = tz.TZDateTime.now(chicago);
-    return tz.TZDateTime(
-      chicago,
-      now.year,
-      now.month,
-      now.day + 1,
-    ).difference(now);
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    String twoDigits(int n) => n.toString().padLeft(2, '0');
-    final timeLeft =
-        '${twoDigits(_timeLeft.inHours)}:${twoDigits(_timeLeft.inMinutes % 60)}:${twoDigits(_timeLeft.inSeconds % 60)}';
-
-    return Semantics(
-      label: 'Countdown timer. Next challenge in $timeLeft',
-      excludeSemantics: true,
-      child: Container(
-        padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-        decoration: BoxDecoration(
-          color: Theme.of(context).colorScheme.surface,
-          borderRadius: BorderRadius.circular(999),
-        ),
-        child: Text(
-          'New in $timeLeft',
-          style: TextStyle(
-            color: Theme.of(context).colorScheme.onSurfaceVariant,
-            fontFamily: 'monospace',
-            fontSize: 12,
-            height: 1.2,
-          ),
-        ),
-      ),
-    );
-  }
 }

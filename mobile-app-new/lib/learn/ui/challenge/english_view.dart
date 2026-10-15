@@ -87,9 +87,9 @@ class _EnglishViewState extends State<EnglishView> {
                     if (challenge.instructions.isNotEmpty)
                       const SizedBox(height: 12),
                     Text(
-                      'FILL IN THE BLANK',
+                      'Fill in the blank',
                       style: TextStyle(
-                        fontFamily: 'monospace',
+                        fontFamily: 'Lato',
                         fontSize: 12,
                         fontWeight: FontWeight.w700,
                         color: FccDesignColors.of(context).accentText,

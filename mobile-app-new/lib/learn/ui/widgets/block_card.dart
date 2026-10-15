@@ -80,9 +80,9 @@ class _BlockListState extends ConsumerState<BlockList> {
           return card;
         }
         final language = switch (block.superBlock) {
-          final name when name.contains('english') => ' · ENGLISH',
-          final name when name.contains('spanish') => ' · SPANISH',
-          final name when name.contains('chinese') => ' · CHINESE',
+          final name when name.contains('english') => ' · English',
+          final name when name.contains('spanish') => ' · Spanish',
+          final name when name.contains('chinese') => ' · Chinese',
           _ => '',
         };
         return Column(
@@ -91,11 +91,11 @@ class _BlockListState extends ConsumerState<BlockList> {
             Padding(
               padding: const EdgeInsets.only(bottom: 12),
               child: Text(
-                'DIALOGUE LAYOUT$language',
+                'Dialogue layout$language',
                 style: TextStyle(
-                  fontFamily: 'monospace',
+                  fontFamily: 'Lato',
                   fontSize: 12,
-                  letterSpacing: 1,
+                  letterSpacing: 0,
                   color: Theme.of(context).colorScheme.onSurfaceVariant,
                 ),
               ),

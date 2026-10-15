@@ -56,7 +56,7 @@ class NewsAuthorFeedView extends ConsumerWidget {
         child: Center(
           child: TextButton(
             onPressed: () => context.go(newsFeedPath),
-            child: const Text('See all tutorials'),
+            child: const Text('See all articles'),
           ),
         ),
       ),
@@ -148,7 +148,7 @@ class _AuthorDetails extends StatelessWidget {
           Align(
             alignment: Alignment.centerLeft,
             child: Text(
-              'Tutorials by ${author.name}',
+              'Articles by ${author.name}',
               style: const TextStyle(fontSize: 20, fontWeight: FontWeight.w800),
             ),
           ),

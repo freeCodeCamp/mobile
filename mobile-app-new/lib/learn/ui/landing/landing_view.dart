@@ -37,7 +37,7 @@ class LearnLandingView extends ConsumerWidget {
         selected: AppDestination.learn,
       ),
       appBar: AppBar(
-        title: const AppPageTitle('Learn'),
+        title: const AppPageTitle('Courses'),
         toolbarHeight: AppPageTitle.toolbarHeight(context),
       ),
       drawer: const DrawerWidget(),
@@ -187,8 +187,6 @@ class _ResumeCard extends ConsumerWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
-            const LearnEyebrow('Continue', color: Color(0xFFFFF8EC)),
-            const SizedBox(height: 8),
             Text(
               next?.course.title ?? course.title,
               style: const TextStyle(fontSize: 14, height: 1.4),

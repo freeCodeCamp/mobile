@@ -20,7 +20,7 @@ class OfflineBanner extends StatelessWidget {
           const SizedBox(width: 10),
           Expanded(
             child: Text(
-              'Saved tutorials can be read offline',
+              'Saved articles can be read offline',
               style: TextStyle(color: foreground, fontWeight: FontWeight.w600),
             ),
           ),

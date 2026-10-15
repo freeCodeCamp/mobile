@@ -235,7 +235,8 @@ void main() {
           final loads = <String>[];
           await _pump(tester, dark: dark, scale: scale, metadataLoads: loads);
           expect(find.byType(DialogueBlockCard), findsOneWidget);
-          expect(find.text('5 DIALOGUES · 171 TASKS'), findsOneWidget);
+          expect(find.text('5 DIALOGUES · 171 TASKS'), findsNothing);
+          expect(find.text('5 dialogues · 171 tasks'), findsNothing);
           expect(find.text(_block.name), findsOneWidget);
           expect(find.text(_block.description.single), findsNothing);
           expect(find.byType(LinearProgressIndicator), findsNothing);
@@ -291,7 +292,7 @@ void main() {
           await _tap(tester, showAll);
           expect(_tile(33), findsOneWidget);
           expect(_tile(34), findsNothing);
-          expect(find.text('5 DIALOGUES · 171 TASKS'), findsOneWidget);
+          expect(find.text('5 DIALOGUES · 171 TASKS'), findsNothing);
           await _tap(
             tester,
             find.widgetWithText(TextButton, 'Show fewer tasks'),
@@ -429,7 +430,7 @@ void main() {
       await tester.pumpAndSettle();
       expect(find.text('Watched'), findsOneWidget);
       expect(find.text('3 of 33 tasks'), findsOneWidget);
-      expect(find.text('5 DIALOGUES · 171 TASKS'), findsOneWidget);
+      expect(find.text('5 DIALOGUES · 171 TASKS'), findsNothing);
     },
   );
 

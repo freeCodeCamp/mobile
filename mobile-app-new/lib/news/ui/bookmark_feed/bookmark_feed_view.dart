@@ -18,7 +18,7 @@ class NewsBookmarkFeedView extends ConsumerWidget {
     return bookmarks.when(
       loading: () => const Center(child: CircularProgressIndicator()),
       error: (_, _) => ErrorRetry(
-        message: 'Unable to load saved tutorials.',
+        message: 'Unable to load saved articles.',
         onRetry: () => ref.invalidate(newsBookmarksProvider),
       ),
       data: (posts) => RefreshIndicator(
@@ -56,7 +56,7 @@ class NewsBookmarkFeedView extends ConsumerWidget {
                     ),
                     const SizedBox(height: 8),
                     Text(
-                      'Save a tutorial to keep it handy, even when you’re offline.',
+                      'Save an article to keep it handy, even when you’re offline.',
                       textAlign: TextAlign.center,
                       style: TextStyle(
                         color: colors.onSurfaceVariant,
@@ -114,7 +114,7 @@ class _SavedTutorialState extends ConsumerState<_SavedTutorial> {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(
-            content: Text('Unable to remove saved tutorial. Please try again.'),
+            content: Text('Unable to remove saved article. Please try again.'),
           ),
         );
       }
@@ -164,7 +164,7 @@ class _SavedTutorialState extends ConsumerState<_SavedTutorial> {
               ),
             ),
             IconButton(
-              tooltip: 'Remove saved tutorial',
+              tooltip: 'Remove saved article',
               onPressed: _removing ? null : _remove,
               icon: const Icon(Icons.bookmark_rounded),
               color: colors.primary,

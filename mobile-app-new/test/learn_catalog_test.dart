@@ -25,6 +25,7 @@ import 'package:mobile_app_new/learn/ui/superblock/superblock_view.dart';
 import 'package:mobile_app_new/learn/ui/widgets/block_card.dart';
 import 'package:mobile_app_new/services/auth_service.dart';
 import 'package:timezone/data/latest.dart' as tz;
+import 'package:timezone/timezone.dart' as timezone;
 
 final _user = FccUserModel(
   id: 'camper',
@@ -316,6 +317,34 @@ void main() {
     expect(find.text('Between Two Buckets'), findsOneWidget);
     expect(attempts, 2);
   });
+  testWidgets('daily challenge refreshes at midnight without a countdown', (
+    tester,
+  ) async {
+    var requests = 0;
+    await _pump(
+      tester,
+      const LearnLandingView(),
+      todayLoader: () async {
+        requests++;
+        return _today;
+      },
+    );
+    expect(requests, 1);
+    expect(find.textContaining('New in '), findsNothing);
+    final chicago = timezone.getLocation('America/Chicago');
+    final now = timezone.TZDateTime.now(chicago);
+    final midnight = timezone.TZDateTime(
+      chicago,
+      now.year,
+      now.month,
+      now.day + 1,
+    );
+    await tester.pump(midnight.difference(now) + const Duration(seconds: 1));
+    await tester.pumpAndSettle();
+    expect(requests, 2);
+    expect(find.textContaining('New in '), findsNothing);
+  });
+
   testWidgets('certification exam opens its website anchor', (tester) async {
     const channel = MethodChannel(
       'plugins.flutter.droibit.github.io/custom_tabs',
@@ -336,6 +365,13 @@ void main() {
       tester,
       const SuperBlockView(dashedName: 'responsive-web-design-v9'),
       courseData: const SuperBlock.chapters([
+        Chapter(dashedName: 'html', name: 'HTML', modules: []),
+        Chapter(dashedName: 'css', name: 'CSS', modules: []),
+        Chapter(
+          dashedName: 'accessibility',
+          name: 'Accessibility',
+          modules: [],
+        ),
         Chapter(
           dashedName: 'responsive-web-design-certification-exam',
           name: 'Certification Exam',
@@ -345,6 +381,10 @@ void main() {
     );
     await tester.ensureVisible(find.text('Open exam on website'));
     await tester.pumpAndSettle();
+    expect(find.text('Chapter 4'), findsOneWidget);
+    expect(find.text('Finish line'), findsNothing);
+    expect(find.text('FINISH LINE'), findsNothing);
+    await _screenshot(tester, 'learn-exam-chapter');
     await tester.tap(find.text('Open exam on website'));
     await tester.pumpAndSettle();
     expect(urls, [
@@ -357,7 +397,20 @@ void main() {
       tester,
     ) async {
       final router = await _pump(tester, const LearnLandingView(), dark: dark);
-      expect(find.text('CONTINUE'), findsOneWidget);
+      expect(find.text('CONTINUE'), findsNothing);
+      expect(find.text('Continue'), findsNothing);
+      expect(
+        find.descendant(
+          of: find.byType(AppBar),
+          matching: find.text('Courses'),
+        ),
+        findsOneWidget,
+      );
+      expect(find.textContaining('New in '), findsNothing);
+      expect(find.bySemanticsLabel(RegExp('Countdown timer')), findsNothing);
+      final dailyLabel = tester.widget<Text>(find.text('Daily challenge'));
+      expect(dailyLabel.style!.fontFamily, 'Lato');
+      expect(dailyLabel.style!.letterSpacing, 0);
       expect(find.textContaining('still in beta'), findsNothing);
       final course = find.text('Responsive Web Design Certification').first;
       final workshop = find.text('Build a Curriculum Outline');
@@ -388,7 +441,8 @@ void main() {
       'Guest catalog keeps the same Continue card hierarchy in $mode',
       (tester) async {
         await _pump(tester, const LearnLandingView(), dark: dark, guest: true);
-        expect(find.text('CONTINUE'), findsOneWidget);
+        expect(find.text('CONTINUE'), findsNothing);
+        expect(find.text('Continue'), findsNothing);
         expect(find.text('Sign in to save your progress'), findsNothing);
         expect(find.text('Start step 1'), findsOneWidget);
         expect(find.text('0 of 11 steps'), findsOneWidget);
@@ -404,6 +458,13 @@ void main() {
         dark: dark,
       );
       expect(find.text('2 of 18 steps complete'), findsOneWidget);
+      expect(
+        find.descendant(
+          of: find.byType(AppBar),
+          matching: find.text('Courses'),
+        ),
+        findsOneWidget,
+      );
       await _screenshot(tester, 'learn-course-$mode');
       await tester.tap(find.widgetWithText(FilledButton, 'Continue'));
       await tester.pumpAndSettle();
@@ -423,9 +484,10 @@ void main() {
         dark: dark,
       );
       expect(find.text('2 of 11 steps'), findsOneWidget);
-      expect(find.text('RESPONSIVE WEB DESIGN · HTML'), findsOneWidget);
+      expect(find.text('RESPONSIVE WEB DESIGN · HTML'), findsNothing);
+      expect(find.text('Responsive Web Design · HTML'), findsNothing);
       final count = tester.getRect(find.text('2 of 11 steps'));
-      final label = tester.getRect(find.text('WORKSHOP'));
+      final label = tester.getRect(find.text('Workshop'));
       final progress = tester.getRect(
         find.byType(LinearProgressIndicator).first,
       );
@@ -443,6 +505,8 @@ void main() {
     testWidgets('Archive filters actual completions in $mode', (tester) async {
       await _pump(tester, const DailyChallengeArchiveView(), dark: dark);
       expect(find.text('1 of 2 done'), findsOneWidget);
+      expect(find.textContaining('New in '), findsNothing);
+      expect(find.bySemanticsLabel(RegExp('Countdown timer')), findsNothing);
       await _screenshot(tester, 'learn-daily-$mode');
       await tester.tap(find.widgetWithText(ChoiceChip, 'Done'));
       await tester.pumpAndSettle();

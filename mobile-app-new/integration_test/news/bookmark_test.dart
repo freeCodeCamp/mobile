@@ -35,14 +35,11 @@ void main() {
     await binding.convertFlutterSurfaceToImage();
     await tester.pumpAndSettle();
 
-    // Drawer -> Tutorials
+    // Drawer -> Articles
     await tester.tap(find.byIcon(Icons.menu));
     await tester.pumpAndSettle();
     await tester.tap(
-      find.descendant(
-        of: find.byType(Drawer),
-        matching: find.text('Tutorials'),
-      ),
+      find.descendant(of: find.byType(Drawer), matching: find.text('Articles')),
     );
     await tester.pumpAndSettle();
 
@@ -76,10 +73,10 @@ void main() {
     await tester.tap(bookmarkButton);
     await tester.pumpAndSettle();
 
-    // Back to the feed, then open Saved tutorials
+    // Back to the feed, then open Saved articles
     await tester.tap(find.byTooltip('Back'));
     await tester.pumpAndSettle();
-    await tester.tap(find.byTooltip('Saved tutorials'));
+    await tester.tap(find.text('View bookmarks'));
     await tester.pumpAndSettle();
 
     final savedFeed = find.byType(NewsBookmarkFeedView);
@@ -97,7 +94,7 @@ void main() {
       find.descendant(of: savedFeed, matching: find.text(author)),
       findsWidgets,
     );
-    expect(find.text('Saved tutorials can be read offline'), findsOneWidget);
+    expect(find.text('Saved articles can be read offline'), findsOneWidget);
 
     // Check that the post is stored in the bookmarks JSON file
     final docsDir = await getApplicationDocumentsDirectory();

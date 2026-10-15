@@ -102,7 +102,7 @@ class DrawerWidget extends ConsumerWidget {
             sectionDivider,
             const SizedBox(height: 8),
             DrawerTile(
-              component: 'Learn',
+              component: 'Courses',
               icon: Icons.school_outlined,
               selected: path.startsWith('/learn'),
               route: () => _navigate(
@@ -119,7 +119,7 @@ class DrawerWidget extends ConsumerWidget {
               ),
             ),
             DrawerTile(
-              component: 'Tutorials',
+              component: 'Articles',
               icon: Icons.article_outlined,
               selected: path.startsWith('/news'),
               route: () =>
