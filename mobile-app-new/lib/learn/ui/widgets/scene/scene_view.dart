@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:mobile_app_new/fcc_theme.dart';
 import 'package:mobile_app_new/learn/models/challenge_model.dart';
+import 'package:mobile_app_new/learn/models/scene_assets_model.dart';
 import 'package:mobile_app_new/learn/ui/widgets/scene/scene_canvas.dart';
 import 'package:mobile_app_new/learn/ui/widgets/scene/scene_controls.dart';
 import 'package:mobile_app_new/learn/controllers/scene_controller.dart';
@@ -21,13 +22,8 @@ class SceneView extends ConsumerStatefulWidget {
 class _SceneViewState extends ConsumerState<SceneView> {
   bool _precached = false;
 
-  @override
-  void didChangeDependencies() {
-    super.didChangeDependencies();
-    if (_precached) return;
+  void _precache(SceneAssets assets) {
     _precached = true;
-
-    final assets = ref.read(sceneAssetsProvider).value;
     final backgrounds = {
       widget.scene.setup.background,
       for (final c in widget.scene.commands) ?c.background,
@@ -42,6 +38,9 @@ class _SceneViewState extends ConsumerState<SceneView> {
 
   @override
   Widget build(BuildContext context) {
+    final assets = ref.watch(sceneAssetsProvider).value;
+    if (assets != null && !_precached) _precache(assets);
+
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 16),
       child: Column(

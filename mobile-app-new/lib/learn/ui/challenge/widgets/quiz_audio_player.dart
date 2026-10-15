@@ -57,15 +57,13 @@ class _QuizAudioPlayerState extends ConsumerState<QuizAudioPlayer> {
       );
     }
 
-    final handler = _handler;
-
     return Column(
       children: [
         StreamBuilder<PlaybackState>(
-          stream: handler.playbackState,
+          stream: _handler.playbackState,
           builder: (context, snapshot) {
             final state = snapshot.data ?? PlaybackState();
-            final isActive = handler.curriculumClipId == _clip.id;
+            final isActive = _handler.curriculumClipId == _clip.id;
             final completed =
                 state.processingState == AudioProcessingState.completed;
             final playing = isActive && state.playing && !completed;
@@ -73,10 +71,10 @@ class _QuizAudioPlayerState extends ConsumerState<QuizAudioPlayer> {
             return Column(
               children: [
                 StreamBuilder<Duration>(
-                  stream: handler.positionStream,
+                  stream: _handler.positionStream,
                   builder: (context, position) => _Progress(
                     position: isActive ? position.data : null,
-                    total: isActive ? handler.duration : null,
+                    total: isActive ? _handler.duration : null,
                   ),
                 ),
                 if (_loading)
@@ -93,9 +91,9 @@ class _QuizAudioPlayerState extends ConsumerState<QuizAudioPlayer> {
                     icon: Icon(playing ? Icons.pause : Icons.play_arrow),
                     onPressed: () async {
                       if (!isActive) return _loadAndPlay();
-                      if (playing) return handler.pause();
-                      if (completed) await handler.seek(Duration.zero);
-                      await handler.play();
+                      if (playing) return _handler.pause();
+                      if (completed) await _handler.seek(Duration.zero);
+                      await _handler.play();
                     },
                   ),
               ],

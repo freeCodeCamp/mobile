@@ -12,8 +12,6 @@ import 'package:riverpod_annotation/riverpod_annotation.dart';
 part 'scene_controller.freezed.dart';
 part 'scene_controller.g.dart';
 
-const _cdn =
-    'https://cdn.freecodecamp.org/curriculum/english/animation-assets/images';
 const _mouthInterval = (min: 85, max: 105);
 const _blinkInterval = (min: 2000, max: 4000);
 const _blinkDuration = Duration(milliseconds: 150);
@@ -55,27 +53,19 @@ abstract class SceneState with _$SceneState {
   }) = _SceneState;
 }
 
-String sceneBackgroundUrl(SceneAssets? assets, String name) {
-  final file = name.endsWith('.png') ? name : '$name.png';
-  return '${assets?.backgrounds ?? '$_cdn/backgrounds'}/$file';
-}
+String sceneBackgroundUrl(SceneAssets assets, String name) =>
+    '${assets.backgrounds}/${name.endsWith('.png') ? name : '$name.png'}';
 
-// NOTE: Falls back to the CDN's folder layout when scene-assets.json hasn't loaded.
-CharacterSprites characterSprites(SceneAssets? assets, CharacterState c) {
-  final a = assets?.characterAssets[c.name];
-  String fallback(String file) =>
-      '$_cdn/characters/${c.name.toLowerCase()}/$file';
+CharacterSprites? characterSprites(SceneAssets assets, CharacterState c) {
+  final a = assets.characterAssets[c.name];
+  if (a == null) return null;
 
   return (
-    base: a?.base ?? fallback('base.png'),
-    brows: a?.brows ?? fallback('brows.png'),
-    eyes: c.eyesClosed
-        ? a?.eyesClosed ?? fallback('eyes-closed.png')
-        : a?.eyesOpen ?? fallback('eyes-open.png'),
-    glasses: a?.glasses,
-    mouth: c.mouthOpen
-        ? a?.mouthOpen ?? fallback('mouth-open.png')
-        : a?.mouthClosed ?? fallback('mouth-closed.png'),
+    base: a.base,
+    brows: a.brows,
+    eyes: c.eyesClosed ? a.eyesClosed : a.eyesOpen,
+    glasses: a.glasses,
+    mouth: c.mouthOpen ? a.mouthOpen : a.mouthClosed,
   );
 }
 
@@ -144,17 +134,10 @@ class SceneNotifier extends _$SceneNotifier {
     _completed = false;
     _applied.clear();
 
-    var next = _initial().copyWith(
-      showCaptions: state.showCaptions,
-      isActive: true,
+    state = _applyDue(
+      _initial().copyWith(showCaptions: state.showCaptions, isActive: true),
+      (start) => start < _audioOffset,
     );
-    for (final (i, command) in scene.commands.indexed) {
-      if (command.startTime < _audioOffset) {
-        _applied.add(i);
-        next = _apply(next, command);
-      }
-    }
-    state = next;
 
     await Future<void>.delayed(
       Duration(milliseconds: (_audioOffset * 1000).round()),
@@ -206,22 +189,18 @@ class SceneNotifier extends _$SceneNotifier {
 
   void _complete() {
     _completed = true;
-    var next = state.copyWith(line: null);
-    for (final (i, command) in scene.commands.indexed) {
-      if (_applied.add(i)) next = _apply(next, command);
-    }
-    state = next;
+    state = _applyDue(state.copyWith(line: null), (_) => true);
   }
 
   void _onPosition(Duration position) {
     if (!_isActive || !_playing || _completed) return;
 
     final seconds = position.inMilliseconds / 1000 + _audioOffset;
-    var next = state;
+    var next = _applyDue(state, (start) => seconds >= start);
     final speaking = <String>{};
     SceneLine? active;
 
-    for (final (i, command) in scene.commands.indexed) {
+    for (final command in scene.commands) {
       final start = command.startTime.toDouble();
       final finish = command.finishTime?.toDouble();
 
@@ -235,8 +214,6 @@ class SceneNotifier extends _$SceneNotifier {
           );
         }
       }
-
-      if (seconds >= start && _applied.add(i)) next = _apply(next, command);
     }
 
     if (active != null && active != next.line) {
@@ -253,6 +230,16 @@ class SceneNotifier extends _$SceneNotifier {
         _update(name, (c) => c.copyWith(mouthOpen: false));
       }
     }
+  }
+
+  SceneState _applyDue(SceneState current, bool Function(num start) due) {
+    var next = current;
+    for (final (i, command) in scene.commands.indexed) {
+      if (due(command.startTime) && _applied.add(i)) {
+        next = _apply(next, command);
+      }
+    }
+    return next;
   }
 
   SceneState _apply(SceneState current, SceneCommand command) {
