@@ -24,6 +24,8 @@ android {
         targetSdk = flutter.targetSdkVersion
         versionCode = flutter.versionCode
         versionName = flutter.versionName
+        manifestPlaceholders["auth0Domain"] = "freecodecamp-dev.auth0.com"
+        manifestPlaceholders["auth0Scheme"] = "org.freecodecamp"
     }
 
     buildTypes {
@@ -31,6 +33,8 @@ android {
             // TODO: Add your own signing config for the release build.
             // Signing with the debug keys for now, so `flutter run --release` works.
             signingConfig = signingConfigs.getByName("debug")
+            manifestPlaceholders["auth0Domain"] = "auth.freecodecamp.org"
+            manifestPlaceholders["auth0Scheme"] = "https"
         }
     }
 }

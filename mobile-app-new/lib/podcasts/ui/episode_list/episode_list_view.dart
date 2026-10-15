@@ -189,7 +189,9 @@ class _PodcastEpisodeListViewState
           return RefreshIndicator(
             onRefresh: () async {
               _sortGeneration++;
-              await ref.refresh(_provider.future).then<void>((_) {});
+              await ref
+                  .refresh(_provider.future)
+                  .then<void>((_) {}, onError: (_) {});
               if (mounted && _oldestFirst) unawaited(_loadOlder());
             },
             child: CustomScrollView(

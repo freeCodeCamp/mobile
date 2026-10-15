@@ -28,7 +28,9 @@ class PodcastListView extends ConsumerWidget {
             .toList();
         return RefreshIndicator(
           onRefresh: () async {
-            await ref.refresh(podcastListProvider.future).then<void>((_) {});
+            await ref
+                .refresh(podcastListProvider.future)
+                .then<void>((_) {}, onError: (_) {});
           },
           child: ListView(
             padding: const EdgeInsets.fromLTRB(18, 0, 18, 24),

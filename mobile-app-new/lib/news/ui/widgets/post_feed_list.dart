@@ -63,7 +63,9 @@ class _PostFeedListState extends ConsumerState<PostFeedList> {
         data: (feed) => RefreshIndicator(
           onRefresh: () async {
             ref.invalidate(_provider);
-            await ref.read(_provider.future);
+            await ref
+                .read(_provider.future)
+                .then<void>((_) {}, onError: (_) {});
           },
           child: CustomScrollView(
             controller: _scrollController,
