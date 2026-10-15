@@ -278,15 +278,6 @@ class _QuizViewState extends State<QuizView> {
                         validated: false,
                         onChanged: (q, a) => setState(() => _selected[q] = a),
                       ),
-                      const SizedBox(height: 8),
-                      Text(
-                        'You’ll see which answers were right after you submit the whole quiz.',
-                        style: TextStyle(
-                          color: colors.onSurfaceVariant,
-                          fontSize: 14,
-                          height: 1.5,
-                        ),
-                      ),
                     ],
                   ],
                 ),

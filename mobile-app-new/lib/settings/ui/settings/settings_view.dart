@@ -67,23 +67,6 @@ class _SettingsViewState extends ConsumerState<SettingsView> {
     }
   }
 
-  Future<void> _showLanguage() => showDialog<void>(
-    context: context,
-    builder: (context) => AlertDialog(
-      scrollable: true,
-      title: const Text('Language'),
-      content: const Text(
-        'English is currently the supported app language. You can find English, Spanish and Chinese language courses in Courses.',
-      ),
-      actions: [
-        TextButton(
-          onPressed: () => Navigator.pop(context),
-          child: const Text('Done'),
-        ),
-      ],
-    ),
-  );
-
   @override
   Widget build(BuildContext context) {
     final auth = ref.watch(authProvider);
@@ -117,7 +100,6 @@ class _SettingsViewState extends ConsumerState<SettingsView> {
                     padding: const EdgeInsets.fromLTRB(16, 12, 16, 32),
                     children: [
                       _Group(
-                        title: 'Appearance',
                         children: [
                           Padding(
                             padding: const EdgeInsets.all(16),
@@ -221,10 +203,9 @@ class _SettingsViewState extends ConsumerState<SettingsView> {
                                         .setDailyReminder(enabled),
                                   ),
                           ),
-                          _SettingsTile(
+                          const _SettingsTile(
                             title: 'Language',
                             subtitle: 'English',
-                            onTap: _showLanguage,
                           ),
                         ],
                       ),
@@ -299,8 +280,6 @@ class _SettingsViewState extends ConsumerState<SettingsView> {
                               : [
                                   _SettingsTile(
                                     title: 'Sign in',
-                                    subtitle:
-                                        'Save your progress across devices',
                                     onTap: () =>
                                         const LoginRoute().push<void>(context),
                                   ),
@@ -389,8 +368,8 @@ class _ThemeChoice extends StatelessWidget {
 }
 
 class _Group extends StatelessWidget {
-  const _Group({required this.title, required this.children});
-  final String title;
+  const _Group({this.title, required this.children});
+  final String? title;
   final List<Widget> children;
 
   @override
@@ -399,13 +378,15 @@ class _Group extends StatelessWidget {
     child: Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text(
-          title,
-          style: Theme.of(context).textTheme.titleSmall?.copyWith(
-            color: Theme.of(context).colorScheme.onSurfaceVariant,
+        if (title case final title?) ...[
+          Text(
+            title,
+            style: Theme.of(context).textTheme.titleSmall?.copyWith(
+              color: Theme.of(context).colorScheme.onSurfaceVariant,
+            ),
           ),
-        ),
-        const SizedBox(height: 8),
+          const SizedBox(height: 8),
+        ],
         Card(
           clipBehavior: Clip.antiAlias,
           child: Column(
@@ -425,14 +406,14 @@ class _Group extends StatelessWidget {
 class _SettingsTile extends StatelessWidget {
   const _SettingsTile({
     required this.title,
-    required this.onTap,
+    this.onTap,
     this.subtitle,
     this.destructive = false,
     this.external = false,
   });
   final String title;
   final String? subtitle;
-  final VoidCallback onTap;
+  final VoidCallback? onTap;
   final bool destructive;
   final bool external;
 
@@ -446,10 +427,9 @@ class _SettingsTile extends StatelessWidget {
       ),
     ),
     subtitle: subtitle == null ? null : Text(subtitle!),
-    trailing: Icon(
-      external ? Icons.open_in_new : Icons.chevron_right,
-      size: 20,
-    ),
+    trailing: onTap == null
+        ? null
+        : Icon(external ? Icons.open_in_new : Icons.chevron_right, size: 20),
     onTap: onTap,
   );
 }

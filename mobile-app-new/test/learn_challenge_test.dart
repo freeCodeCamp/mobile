@@ -553,7 +553,8 @@ void main() {
       await tester.pumpAndSettle();
       expect(find.text('Please enter a valid HTTPS link.'), findsNothing);
       await _tap(tester, _button('Check link'));
-      expect(find.text('Your link is ready to submit.'), findsOneWidget);
+      expect(find.text('Your link is ready to submit.'), findsNothing);
+      expect(find.byIcon(Icons.check_circle_outline), findsOneWidget);
       expect(_button('Submit project'), findsOneWidget);
       await tester.enterText(
         find.byType(TextField),
@@ -561,6 +562,7 @@ void main() {
       );
       await tester.pumpAndSettle();
       expect(find.text('Your link is ready to submit.'), findsNothing);
+      expect(find.byIcon(Icons.check_circle_outline), findsNothing);
       expect(_button('Submit project'), findsNothing);
       await _tap(tester, _button('Check link'));
       expect(find.text('Please use a secure (https) URL.'), findsOneWidget);
@@ -770,6 +772,8 @@ void main() {
         QuizView(challenge: quiz, block: _block(quiz)),
         dark: dark,
       );
+      expect(find.textContaining('see which answers were right'), findsNothing);
+      expect(find.text('About this quiz'), findsNothing);
       await _tap(tester, _text('Correct choice 1'));
       expect(
         DefaultTextStyle.of(

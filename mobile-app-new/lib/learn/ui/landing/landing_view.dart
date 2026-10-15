@@ -128,19 +128,6 @@ class LearnLandingView extends ConsumerWidget {
           ],
         ),
       ),
-      if (stage.key == 'core') ...[
-        const SizedBox(height: 16),
-        Card(
-          clipBehavior: Clip.antiAlias,
-          child: SuperBlockButton(
-            title: 'Daily challenge archive',
-            icon: Icons.calendar_today_outlined,
-            color: colors.tertiary,
-            onPressed: () =>
-                const LearnDailyChallengeArchiveRoute().push<void>(context),
-          ),
-        ),
-      ],
     ];
   }
 

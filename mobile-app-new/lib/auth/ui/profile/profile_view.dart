@@ -674,40 +674,26 @@ class _ProfileLinks extends StatelessWidget {
   Widget build(BuildContext context) => Column(
     crossAxisAlignment: CrossAxisAlignment.start,
     children: [
-      Text('App', style: Theme.of(context).textTheme.titleSmall),
-      const SizedBox(height: 8),
-      _Section(
-        padding: EdgeInsets.zero,
-        child: Column(
-          children: [
-            ListTile(
-              leading: const Icon(Icons.settings_outlined),
-              title: const Text('Settings'),
-              trailing: const Icon(Icons.chevron_right),
-              onTap: () => const SettingsRoute().push<void>(context),
-            ),
-            const Divider(),
-            ListTile(
-              leading: const Icon(Icons.download_outlined),
-              title: const Text('Downloads'),
-              trailing: const Icon(Icons.chevron_right),
-              onTap: () => const PodcastDownloadsRoute().go(context),
-            ),
-          ],
-        ),
+      ListTile(
+        leading: const Icon(Icons.settings_outlined),
+        title: const Text('Settings'),
+        trailing: const Icon(Icons.chevron_right),
+        onTap: () => const SettingsRoute().push<void>(context),
       ),
-      const SizedBox(height: 20),
-      Text('Feedback', style: Theme.of(context).textTheme.titleSmall),
-      const SizedBox(height: 8),
-      _Section(
-        padding: EdgeInsets.zero,
-        child: ListTile(
-          leading: const Icon(Icons.error_outline),
-          title: const Text('Report an issue'),
-          trailing: const Icon(Icons.open_in_new, size: 18),
-          onTap: () =>
-              openInCustomTab('https://github.com/freeCodeCamp/mobile/issues'),
-        ),
+      const Divider(),
+      ListTile(
+        leading: const Icon(Icons.download_outlined),
+        title: const Text('Downloads'),
+        trailing: const Icon(Icons.chevron_right),
+        onTap: () => const PodcastDownloadsRoute().go(context),
+      ),
+      const Divider(),
+      ListTile(
+        leading: const Icon(Icons.error_outline),
+        title: const Text('Report an issue'),
+        trailing: const Icon(Icons.open_in_new, size: 18),
+        onTap: () =>
+            openInCustomTab('https://github.com/freeCodeCamp/mobile/issues'),
       ),
       const SizedBox(height: 18),
       Text(

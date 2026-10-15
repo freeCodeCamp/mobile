@@ -6,14 +6,23 @@ import 'package:mobile_app_new/routing/news.dart';
 import 'package:mobile_app_new/utils/date_utils.dart';
 
 class PostTile extends StatelessWidget {
-  const PostTile({super.key, required this.post, this.featured = false});
+  const PostTile({
+    super.key,
+    required this.post,
+    this.featured = false,
+    this.selectedTagSlug,
+  });
 
   final PostSummary post;
   final bool featured;
+  final String? selectedTagSlug;
 
   @override
   Widget build(BuildContext context) {
     final colors = Theme.of(context).colorScheme;
+    final tag = post.tags
+        .where((tag) => tag.slug != selectedTagSlug)
+        .firstOrNull;
     final title = Text(
       post.title,
       maxLines: featured ? 4 : 3,
@@ -54,10 +63,10 @@ class PostTile extends StatelessWidget {
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        if (post.tags.isNotEmpty)
+                        if (tag != null)
                           TagButton(
-                            tagName: post.tags.first.name,
-                            tagSlug: post.tags.first.slug,
+                            tagName: tag.name,
+                            tagSlug: tag.slug,
                             compact: true,
                           ),
                         title,

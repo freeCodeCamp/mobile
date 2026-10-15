@@ -2,7 +2,6 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:mobile_app_new/podcasts/constants.dart';
 import 'package:mobile_app_new/podcasts/models/episode_model.dart';
 import 'package:mobile_app_new/podcasts/models/podcast_model.dart';
 import 'package:mobile_app_new/podcasts/ui/episode_list/episode_list_viewmodel.dart';
@@ -346,11 +345,6 @@ class _Header extends ConsumerWidget {
               fontWeight: FontWeight.w700,
               height: 1.2,
             ),
-          ),
-          const SizedBox(height: 7),
-          Text(
-            '${fccPodcastUrls.contains(podcast.feedUrl) ? 'freeCodeCamp · ' : ''}${podcast.numOfEps} episodes',
-            style: TextStyle(fontSize: 13, color: colors.onSurfaceVariant),
           ),
           const SizedBox(height: 12),
           Row(

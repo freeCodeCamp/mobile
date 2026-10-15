@@ -99,39 +99,6 @@ class _LessonViewState extends State<LessonView> {
     );
     final readingContent = <Widget>[
       if (!englishTask) ...[
-        Wrap(
-          spacing: 8,
-          runSpacing: 8,
-          children: [
-            Chip(
-              label: Text(
-                review
-                    ? 'Review'
-                    : challenge.videoId != null
-                    ? 'Video'
-                    : 'Lecture',
-                style: TextStyle(
-                  fontFamily: 'Lato',
-                  fontSize: 11,
-                  fontWeight: FontWeight.w700,
-                  color: lectureColor,
-                ),
-              ),
-              backgroundColor: lectureColor.withValues(alpha: .1),
-              side: BorderSide.none,
-            ),
-            if (_questions.isNotEmpty)
-              Chip(
-                label: Text(
-                  '${_questions.length} questions at the end',
-                  style: const TextStyle(fontSize: 12),
-                ),
-                backgroundColor: colors.surfaceContainer,
-                side: BorderSide.none,
-              ),
-          ],
-        ),
-        const SizedBox(height: 16),
         Text(
           challenge.title,
           style: Theme.of(context).textTheme.headlineMedium,

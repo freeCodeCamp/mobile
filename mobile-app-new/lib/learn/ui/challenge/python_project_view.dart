@@ -132,16 +132,6 @@ class _PythonProjectViewState extends State<PythonProjectView> {
                           : null,
                     ),
                   ),
-                  if (_valid)
-                    Padding(
-                      padding: const EdgeInsets.only(top: 12),
-                      child: Text(
-                        'Your link is ready to submit.',
-                        style: TextStyle(
-                          color: FccDesignColors.of(context).success,
-                        ),
-                      ),
-                    ),
                 ],
               ),
             ),

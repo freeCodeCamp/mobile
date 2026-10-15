@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:mobile_app_new/fcc_theme.dart';
 import 'package:mobile_app_new/podcasts/controllers/library_controller.dart';
 import 'package:mobile_app_new/podcasts/models/episode_model.dart';
 import 'package:mobile_app_new/podcasts/models/podcast_model.dart';
@@ -94,34 +93,26 @@ class _PodcastDownloadsViewState extends ConsumerState<PodcastDownloadsView> {
                 ),
               ),
               const SizedBox(height: 16),
-            ] else ...[
-              Row(
-                children: [
-                  Expanded(
-                    child: Text(
-                      '${episodes.length} ${episodes.length == 1 ? 'episode' : 'episodes'} on this device',
-                      style: TextStyle(
-                        fontSize: 14,
-                        color: colors.onSurfaceVariant,
-                      ),
-                    ),
-                  ),
-                  if (episodes.isNotEmpty)
-                    TextButton(
-                      onPressed: _removing
-                          ? null
-                          : () => setState(() {
-                              _managing = !_managing;
-                              _selected.clear();
-                            }),
-                      child: Text(_managing ? 'Done' : 'Manage'),
-                    ),
-                ],
+            ] else if (episodes.isNotEmpty) ...[
+              Align(
+                alignment: Alignment.centerRight,
+                child: TextButton(
+                  onPressed: _removing
+                      ? null
+                      : () => setState(() {
+                          _managing = !_managing;
+                          _selected.clear();
+                        }),
+                  child: Text(_managing ? 'Done' : 'Manage'),
+                ),
               ),
               const SizedBox(height: 14),
             ],
             if (_managing) ...[
-              Row(
+              Wrap(
+                alignment: WrapAlignment.spaceBetween,
+                spacing: 12,
+                runSpacing: 8,
                 children: [
                   TextButton(
                     onPressed: _removing
@@ -141,7 +132,6 @@ class _PodcastDownloadsViewState extends ConsumerState<PodcastDownloadsView> {
                           : 'Select all',
                     ),
                   ),
-                  const Spacer(),
                   TextButton.icon(
                     onPressed: _selected.isEmpty || _removing
                         ? null
@@ -306,15 +296,16 @@ class _DownloadRow extends StatelessWidget {
                       height: 1.35,
                     ),
                   ),
-                  const SizedBox(height: 5),
-                  Text(
-                    '✓ Downloaded${episode.duration == null ? '' : ' · ${podcastDuration(episode.duration)}'}',
-                    style: TextStyle(
-                      fontSize: 12,
-                      fontWeight: FontWeight.w600,
-                      color: FccDesignColors.of(context).success,
+                  if (episode.duration != null) ...[
+                    const SizedBox(height: 5),
+                    Text(
+                      podcastDuration(episode.duration),
+                      style: TextStyle(
+                        fontSize: 12,
+                        color: colors.onSurfaceVariant,
+                      ),
                     ),
-                  ),
+                  ],
                 ],
               ),
             ),

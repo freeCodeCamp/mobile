@@ -310,21 +310,19 @@ class _CreatePostDialogState extends State<_CreatePostDialog> {
                           hintText: 'What did you try, and what happened?',
                         ),
                       ),
-                      const SizedBox(height: 8),
-                      Text(
-                        tooLong
-                            ? 'Shorten your description to continue.'
-                            : remaining > 0
-                            ? 'Add at least $remaining more characters.'
-                            : "Great, that's enough detail.",
-                        style: theme.textTheme.bodyMedium?.copyWith(
-                          color: tooLong
-                              ? colors.error
-                              : remaining > 0
-                              ? colors.onSurfaceVariant
-                              : FccDesignColors.of(context).success,
+                      if (tooLong || remaining > 0) ...[
+                        const SizedBox(height: 8),
+                        Text(
+                          tooLong
+                              ? 'Shorten your description to continue.'
+                              : 'Add at least $remaining more characters.',
+                          style: theme.textTheme.bodyMedium?.copyWith(
+                            color: tooLong
+                                ? colors.error
+                                : colors.onSurfaceVariant,
+                          ),
                         ),
-                      ),
+                      ],
                       const SizedBox(height: 16),
                       Card(
                         child: Padding(

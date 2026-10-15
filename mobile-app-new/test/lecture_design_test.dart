@@ -206,6 +206,8 @@ void main() {
           final colors = theme.colorScheme;
           expect(find.byTooltip('Ask for help'), findsNothing);
           expect(find.byIcon(Icons.help_outline), findsNothing);
+          expect(find.byType(Chip), findsNothing);
+          expect(find.text('2 questions at the end'), findsNothing);
           final continueStyle = _labelStyle(tester, 'Continue to questions');
           expect(continueStyle.fontSize, 16);
           expect(continueStyle.fontWeight, FontWeight.w800);

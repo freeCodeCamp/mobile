@@ -240,13 +240,13 @@ void main() {
   );
 
   testWidgets(
-    'ordinary multiple-choice lessons keep their existing presentation',
+    'ordinary multiple-choice lessons keep lesson reading and feedback',
     (tester) async {
       await _pump(
         tester,
         block: _block.copyWith(layout: BlockLayout.challengeList),
       );
-      expect(find.text('Lecture'), findsOneWidget);
+      expect(find.text('Lecture'), findsNothing);
       expect(find.byType(TaskExplanation), findsNothing);
       expect(_text('A team lead guides'), findsOneWidget);
       expect(

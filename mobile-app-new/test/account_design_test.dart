@@ -28,15 +28,12 @@ import 'support/fake_audio_handler.dart';
 class _FakeAuth extends AuthNotifier {
   _FakeAuth(this.user);
   final FccUserModel? user;
-  int refreshes = 0;
 
   @override
   Future<FccUserModel?> build() async => user;
 
   @override
-  Future<void> refresh() async {
-    refreshes++;
-  }
+  Future<void> refresh() async {}
 
   @override
   Future<void> signOut() async {
@@ -180,12 +177,12 @@ class _FakeReminder extends LearningReminderService {
 }
 
 class _FakeDelete extends DeleteAccountNotifier {
-  int calls = 0;
+  int _calls = 0;
   @override
   bool build() => false;
   @override
   Future<String> deleteAccount() async {
-    calls++;
+    _calls++;
     return 'Deletion failed. Please try again.';
   }
 }
@@ -220,9 +217,11 @@ Future<void> _screenshot(WidgetTester tester, String name) async {
 void main() {
   setUpAll(() async {
     TestWidgetsFlutterBinding.ensureInitialized();
-    await (FontLoader(
-      'Lato',
-    )..addFont(rootBundle.load('assets/fonts/Lato-Regular.ttf'))).load();
+    final lato = FontLoader('Lato');
+    for (final weight in ['Regular', 'Bold', 'ExtraBold', 'Black']) {
+      lato.addFont(rootBundle.load('assets/fonts/Lato-$weight.ttf'));
+    }
+    await lato.load();
     await (FontLoader(
       'monospace',
     )..addFont(rootBundle.load('assets/fonts/Hack-Regular.ttf'))).load();
@@ -252,6 +251,9 @@ void main() {
       expect(login.sentEmails, ['camper@example.com']);
       expect(find.text('Check your email'), findsOneWidget);
       expect(find.text('Continue with Google'), findsNothing);
+      expect(find.text("Didn't get it?"), findsNothing);
+      expect(find.byTooltip('Change email'), findsOneWidget);
+      expect(find.widgetWithText(TextButton, 'Change email'), findsOneWidget);
       await tester.enterText(find.byType(TextField), '12x34567');
       await tester.pump();
       final codeField = tester.widget<TextField>(find.byType(TextField));
@@ -272,6 +274,16 @@ void main() {
       expect(login.sentEmails, ['camper@example.com', 'camper@example.com']);
       await tester.ensureVisible(find.text('Change email'));
       await tester.tap(find.text('Change email'));
+      await tester.pumpAndSettle();
+      expect(find.text('Email me a sign-in code'), findsOneWidget);
+      expect(
+        tester.widget<TextField>(find.byType(TextField)).controller!.text,
+        'camper@example.com',
+      );
+      await tester.ensureVisible(submit);
+      await tester.tap(submit);
+      await tester.pumpAndSettle();
+      await tester.tap(find.byTooltip('Change email'));
       await tester.pumpAndSettle();
       expect(find.text('Email me a sign-in code'), findsOneWidget);
       expect(
@@ -324,11 +336,52 @@ void main() {
     );
   });
 
-  testWidgets('guest profile offers real sign-in and downloads routes', (
+  testWidgets('plain guest profile links preserve every destination', (
     tester,
   ) async {
+    const channel = MethodChannel(
+      'plugins.flutter.droibit.github.io/custom_tabs',
+    );
+    final openedUrls = <String>[];
+    tester.binding.defaultBinaryMessenger.setMockMethodCallHandler(channel, (
+      call,
+    ) async {
+      if (call.method == 'launch') {
+        openedUrls.add((call.arguments as Map)['url'] as String);
+      }
+      return null;
+    });
+    addTearDown(
+      () => tester.binding.defaultBinaryMessenger.setMockMethodCallHandler(
+        channel,
+        null,
+      ),
+    );
     await _pump(tester, const ProfileView(), login: _FakeLogin());
     expect(find.text("You're learning as a guest"), findsOneWidget);
+    expect(
+      find.text(
+        'Sign in to save progress across devices and earn certifications.',
+      ),
+      findsOneWidget,
+    );
+    expect(find.text('App'), findsNothing);
+    expect(find.text('Feedback'), findsNothing);
+    for (final title in ['Settings', 'Downloads', 'Report an issue']) {
+      expect(
+        find.ancestor(
+          of: find.widgetWithText(ListTile, title),
+          matching: find.byType(Card),
+        ),
+        findsNothing,
+      );
+    }
+    expect(
+      find.text(
+        'freeCodeCamp is a donor-supported tax-exempt 501(c)(3) nonprofit organization.',
+      ),
+      findsOneWidget,
+    );
     expect(
       find.descendant(
         of: find.byType(AppBar),
@@ -338,6 +391,22 @@ void main() {
     );
     expect(find.widgetWithText(ListTile, 'Settings'), findsOneWidget);
     expect(find.text('Activity'), findsNothing);
+    await tester.tap(find.widgetWithText(FilledButton, 'Sign in'));
+    await tester.pumpAndSettle();
+    expect(find.text('Sign in to freeCodeCamp'), findsOneWidget);
+    await tester.tap(find.byTooltip('Close'));
+    await tester.pumpAndSettle();
+    await tester.ensureVisible(find.text('Report an issue'));
+    await tester.tap(find.text('Report an issue'));
+    await tester.pumpAndSettle();
+    expect(openedUrls, ['https://github.com/freeCodeCamp/mobile/issues']);
+    await tester.ensureVisible(find.widgetWithText(ListTile, 'Settings'));
+    await tester.tap(find.widgetWithText(ListTile, 'Settings'));
+    await tester.pumpAndSettle();
+    expect(find.text('Theme'), findsOneWidget);
+    await tester.tap(find.byType(BackButton));
+    await tester.pumpAndSettle();
+    await tester.ensureVisible(find.text('Downloads'));
     await tester.tap(find.text('Downloads'));
     await tester.pumpAndSettle();
     expect(find.text('Your downloaded episodes'), findsOneWidget);
@@ -412,6 +481,9 @@ void main() {
     (tester) async {
       final reminder = _FakeReminder()..denied = true;
       await _pump(tester, const SettingsView(), reminder: reminder);
+      expect(find.text('Appearance'), findsNothing);
+      expect(find.text('Theme'), findsOneWidget);
+      expect(find.text('Save your progress across devices'), findsNothing);
       await tester.tap(find.widgetWithText(OutlinedButton, 'Dark'));
       await tester.pumpAndSettle();
       expect(
@@ -453,12 +525,13 @@ void main() {
       );
       await tester.tap(find.text('Language'));
       await tester.pumpAndSettle();
-      expect(
-        find.textContaining('English is currently the supported app language'),
-        findsOneWidget,
+      final language = tester.widget<ListTile>(
+        find.widgetWithText(ListTile, 'Language'),
       );
-      await tester.tap(find.text('Done'));
-      await tester.pumpAndSettle();
+      expect(language.onTap, isNull);
+      expect(language.trailing, isNull);
+      expect((language.subtitle! as Text).data, 'English');
+      expect(find.byType(AlertDialog), findsNothing);
       expect(tester.takeException(), isNull);
     },
   );
@@ -497,12 +570,12 @@ void main() {
       await tester.pumpAndSettle();
       await tester.tap(find.text('Cancel'));
       await tester.pumpAndSettle();
-      expect(deletion.calls, 0);
+      expect(deletion._calls, 0);
       await tester.tap(deleteButton);
       await tester.pumpAndSettle();
       await tester.tap(find.widgetWithText(FilledButton, 'Delete account'));
       await tester.pumpAndSettle();
-      expect(deletion.calls, 1);
+      expect(deletion._calls, 1);
       expect(find.text('Deletion failed. Please try again.'), findsOneWidget);
       await tester.tap(find.text('Keep my account'));
       await tester.pumpAndSettle();
@@ -649,8 +722,88 @@ void main() {
     },
   );
   for (final dark in [false, true]) {
+    for (final dimensions in [
+      (width: 390.0, scale: 1.0),
+      (width: 320.0, scale: 2.0),
+    ]) {
+      final name = '${dark ? 'dark' : 'light'}-${dimensions.width.toInt()}';
+      testWidgets('simplified profile and login remain usable in $name', (
+        tester,
+      ) async {
+        tester.view.physicalSize = Size(dimensions.width, 844);
+        tester.view.devicePixelRatio = 1;
+        addTearDown(tester.view.resetPhysicalSize);
+        addTearDown(tester.view.resetDevicePixelRatio);
+        final login = _FakeLogin();
+        await _pump(
+          tester,
+          const ProfileView(),
+          login: login,
+          dark: dark,
+          scale: dimensions.scale,
+        );
+        await _screenshot(tester, 'profile-guest-$name');
+        await tester.ensureVisible(find.text('Report an issue'));
+        await tester.pumpAndSettle();
+        for (final title in ['Settings', 'Downloads', 'Report an issue']) {
+          expect(
+            find.ancestor(
+              of: find.widgetWithText(ListTile, title),
+              matching: find.byType(Card),
+            ),
+            findsNothing,
+          );
+        }
+        expect(find.text('App'), findsNothing);
+        expect(find.text('Feedback'), findsNothing);
+        await _screenshot(tester, 'profile-links-$name');
+        await tester.ensureVisible(
+          find.widgetWithText(FilledButton, 'Sign in'),
+        );
+        await tester.tap(find.widgetWithText(FilledButton, 'Sign in'));
+        await tester.pumpAndSettle();
+        expect(find.byIcon(Icons.school_outlined), findsNothing);
+        expect(
+          find.text(
+            'Save your progress, earn certifications and keep your streak across devices.',
+          ),
+          findsNothing,
+        );
+        expect(find.text('Sign in to freeCodeCamp'), findsOneWidget);
+        expect(find.text('Continue with Google'), findsOneWidget);
+        expect(find.text('Continue with GitHub'), findsOneWidget);
+        expect(find.text('Continue with Apple'), findsOneWidget);
+        await _screenshot(tester, 'login-$name');
+        await tester.ensureVisible(find.byType(TextField));
+        await tester.enterText(find.byType(TextField), 'camper@example.com');
+        await tester.pump();
+        await tester.ensureVisible(find.text('Email me a sign-in code'));
+        await tester.tap(find.text('Email me a sign-in code'));
+        await tester.pumpAndSettle();
+        expect(login.sentEmails, ['camper@example.com']);
+        expect(find.byIcon(Icons.mail_outline), findsNothing);
+        expect(find.text('Check your email'), findsOneWidget);
+        expect(
+          find.textContaining('We sent a 6-digit code to ', findRichText: true),
+          findsOneWidget,
+        );
+        expect(find.byTooltip('Change email'), findsOneWidget);
+        expect(find.widgetWithText(TextButton, 'Change email'), findsOneWidget);
+        expect(find.text("Didn't get it?"), findsNothing);
+        await tester.ensureVisible(find.text('Check your email'));
+        await tester.pumpAndSettle();
+        await _screenshot(tester, 'otp-$name');
+        await tester.ensureVisible(find.text('Resend code'));
+        await tester.pumpAndSettle();
+        await _screenshot(tester, 'otp-resend-$name');
+        await tester.tap(find.text('Resend code'));
+        await tester.pumpAndSettle();
+        expect(login.sentEmails, ['camper@example.com', 'camper@example.com']);
+        expect(tester.takeException(), isNull);
+      });
+    }
     testWidgets(
-      'settings dialogs remain reachable at 200 percent with keyboard in ${dark ? 'dark' : 'light'}',
+      'language remains informational and reset reachable at 200 percent with keyboard in ${dark ? 'dark' : 'light'}',
       (tester) async {
         tester.view.physicalSize = const Size(320, 640);
         tester.view.devicePixelRatio = 1;
@@ -667,13 +820,17 @@ void main() {
         await tester.pumpAndSettle();
         await tester.tap(find.text('Language'));
         await tester.pumpAndSettle();
+        final language = tester.widget<ListTile>(
+          find.widgetWithText(ListTile, 'Language'),
+        );
+        expect(language.onTap, isNull);
+        expect(language.trailing, isNull);
+        expect(find.byType(AlertDialog), findsNothing);
         await _screenshot(
           tester,
           'settings-language-${dark ? 'dark' : 'light'}-keyboard',
         );
         expect(tester.takeException(), isNull);
-        await tester.tap(find.text('Done'));
-        await tester.pumpAndSettle();
         await tester.scrollUntilVisible(find.text('Reset app data'), 200);
         await tester.pumpAndSettle();
         await tester.tap(find.text('Reset app data'));

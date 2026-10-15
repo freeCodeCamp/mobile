@@ -110,6 +110,7 @@ void main() {
       await tester.tap(find.text(_post.title));
       await tester.pumpAndSettle();
       expect(find.byType(NewsBookmarkPostView), findsOneWidget);
+      expect(find.text('Saved articles can be read offline'), findsNothing);
       expect(
         find.textContaining(
           'Keep the complete tutorial available offline.',
@@ -123,7 +124,7 @@ void main() {
       expect(bookmarks.entries, isEmpty);
       router.go('/saved');
       await tester.pumpAndSettle();
-      expect(find.text('Your reading list starts here'), findsOneWidget);
+      expect(find.text('No saved articles'), findsOneWidget);
       expect(tester.takeException(), isNull);
     },
   );

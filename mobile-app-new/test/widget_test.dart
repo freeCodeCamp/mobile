@@ -16,7 +16,9 @@ import 'package:mobile_app_new/news/models/bookmarked_post_model.dart';
 import 'package:mobile_app_new/news/models/post_model.dart';
 import 'package:mobile_app_new/news/models/post_summary_model.dart';
 import 'package:mobile_app_new/news/ui/widgets/bookmark_button.dart';
+import 'package:mobile_app_new/news/ui/widgets/post_feed_list.dart';
 import 'package:mobile_app_new/news/ui/widgets/post_tile.dart';
+import 'package:mobile_app_new/news/ui/widgets/tag_button.dart';
 import 'package:mobile_app_new/podcasts/controllers/library_controller.dart';
 import 'package:mobile_app_new/podcasts/controllers/player_controller.dart';
 import 'package:mobile_app_new/podcasts/models/episode_model.dart';
@@ -150,6 +152,17 @@ class _Feed extends NewsFeedNotifier {
     posts: source is TagPosts
         ? _posts.where((p) => p.tags.any((t) => t.slug == source.slug)).toList()
         : _posts,
+    hasNextPage: false,
+  );
+}
+
+class _TopicFeed extends NewsFeedNotifier {
+  @override
+  Future<NewsFeedState> build(NewsFeedSource source) async => NewsFeedState(
+    posts: [
+      _posts[1],
+      _posts[2].copyWith(tags: [_tag, ..._posts[2].tags]),
+    ],
     hasNextPage: false,
   );
 }
@@ -361,6 +374,7 @@ void main() {
       final router = await _pump(tester, '/podcasts', dark: dark);
       expect(find.text('From freeCodeCamp'), findsOneWidget);
       expect(find.text('More developer podcasts'), findsOneWidget);
+      expect(find.text('100 episodes'), findsNothing);
       await _screenshot(tester, 'podcasts-$mode');
       await tester.tap(find.text('Downloaded'));
       await tester.pumpAndSettle(
@@ -369,6 +383,10 @@ void main() {
         const Duration(seconds: 5),
       );
       expect(find.text(_episodes[1].title), findsOneWidget);
+      expect(find.text('53 min'), findsOneWidget);
+      expect(find.textContaining('✓ Downloaded'), findsNothing);
+      expect(find.textContaining('on this device'), findsNothing);
+      await _screenshot(tester, 'downloads-$mode');
       await tester.tap(find.text('Manage'));
       await tester.pumpAndSettle();
       expect(find.byType(Checkbox), findsOneWidget);
@@ -384,6 +402,7 @@ void main() {
         const Duration(seconds: 5),
       );
       expect(find.text('Play latest'), findsOneWidget);
+      expect(find.text('freeCodeCamp · 100 episodes'), findsNothing);
       await _screenshot(tester, 'episodes-$mode');
       await tester.tap(find.text('Newest first'));
       await tester.pumpAndSettle();
@@ -404,6 +423,32 @@ void main() {
       await _screenshot(tester, 'player-$mode');
       expect(tester.takeException(), isNull);
     });
+    testWidgets(
+      'topic feed omits its selected tag and keeps other topics in $mode',
+      (tester) async {
+        await tester.pumpWidget(
+          ProviderScope(
+            overrides: [newsFeedProvider.overrideWith2((_) => _TopicFeed())],
+            child: MaterialApp(
+              theme: dark ? FccTheme.themeDark : FccTheme.themeLight,
+              home: const Scaffold(
+                body: PostFeedList(source: NewsFeedSource.tag('hackathon')),
+              ),
+            ),
+          ),
+        );
+        await tester.pumpAndSettle();
+        expect(find.text(_posts[1].title), findsOneWidget);
+        expect(find.text(_posts[2].title), findsOneWidget);
+        expect(find.text('#Hackathon'), findsNothing);
+        expect(find.text('#Software architecture'), findsOneWidget);
+        expect(
+          tester.widget<TagButton>(find.byType(TagButton)).tagSlug,
+          'architecture',
+        );
+        expect(tester.takeException(), isNull);
+      },
+    );
   }
   for (final location in [
     '/news',

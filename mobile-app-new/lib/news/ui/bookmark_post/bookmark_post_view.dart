@@ -3,7 +3,6 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:mobile_app_new/news/models/bookmarked_post_model.dart';
 import 'package:mobile_app_new/news/controllers/bookmarks_controller.dart';
 import 'package:mobile_app_new/news/ui/widgets/article_reader.dart';
-import 'package:mobile_app_new/news/ui/widgets/offline_banner.dart';
 
 // Reads the stored HTML without fetching the live article.
 class NewsBookmarkPostView extends ConsumerStatefulWidget {
@@ -60,8 +59,6 @@ class _NewsBookmarkPostViewState extends ConsumerState<NewsBookmarkPostView> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            const OfflineBanner(),
-            const SizedBox(height: 24),
             Text(
               post.title,
               style: const TextStyle(

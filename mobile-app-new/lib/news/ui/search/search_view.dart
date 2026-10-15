@@ -76,12 +76,7 @@ class _NewsSearchViewState extends ConsumerState<NewsSearchView> {
         ),
         Expanded(
           child: _searchBarController.text.trim().isEmpty
-              ? Center(
-                  child: Text(
-                    'Find your next article',
-                    style: TextStyle(color: colors.onSurfaceVariant),
-                  ),
-                )
+              ? const SizedBox.shrink()
               : _buildResults(results),
         ),
       ],

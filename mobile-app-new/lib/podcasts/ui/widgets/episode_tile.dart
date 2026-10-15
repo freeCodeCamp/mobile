@@ -1,6 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:mobile_app_new/podcasts/controllers/player_controller.dart';
 import 'package:mobile_app_new/podcasts/models/episode_model.dart';
 import 'package:mobile_app_new/podcasts/models/podcast_model.dart';
 import 'package:mobile_app_new/podcasts/ui/widgets/download_button.dart';
@@ -9,7 +7,7 @@ import 'package:mobile_app_new/podcasts/ui/widgets/podcast_artwork.dart';
 import 'package:mobile_app_new/podcasts/ui/widgets/podcast_format.dart';
 import 'package:mobile_app_new/routing/podcasts.dart';
 
-class PodcastEpisodeTile extends ConsumerWidget {
+class PodcastEpisodeTile extends StatelessWidget {
   const PodcastEpisodeTile({
     super.key,
     required this.podcast,
@@ -26,7 +24,7 @@ class PodcastEpisodeTile extends ConsumerWidget {
   ).push<void>(context);
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
+  Widget build(BuildContext context) {
     final colors = Theme.of(context).colorScheme;
     final numberMatch = RegExp(
       r'^(?:#(\d+)\b|(\d+)\s*[-:.])\s*',
@@ -35,9 +33,6 @@ class PodcastEpisodeTile extends ConsumerWidget {
     final title = numberMatch == null
         ? episode.title
         : episode.title.substring(numberMatch.end);
-    final current = ref.watch(
-      podcastPlayerProvider.select((state) => state.isCurrent(episode.id)),
-    );
     return InkWell(
       onTap: () => _open(context),
       child: Padding(
@@ -110,14 +105,6 @@ class PodcastEpisodeTile extends ConsumerWidget {
                           ),
                         ),
                       ),
-                      if (current &&
-                          MediaQuery.sizeOf(context).width >= 400) ...[
-                        const SizedBox(width: 8),
-                        SizedBox(
-                          width: 32,
-                          child: _EpisodeProgress(episode: episode),
-                        ),
-                      ],
                       PodcastDownloadButton(
                         podcast: podcast,
                         episode: episode,
@@ -160,28 +147,6 @@ class PodcastEpisodeTile extends ConsumerWidget {
           ],
         ),
       ),
-    );
-  }
-}
-
-class _EpisodeProgress extends ConsumerWidget {
-  const _EpisodeProgress({required this.episode});
-  final Episode episode;
-
-  @override
-  Widget build(BuildContext context, WidgetRef ref) {
-    final position =
-        ref.watch(podcastPlaybackPositionProvider).value ?? Duration.zero;
-    final duration =
-        ref.watch(podcastPlayerProvider.select((state) => state.duration)) ??
-        episode.duration;
-    final value = duration == null || duration.inMilliseconds == 0
-        ? 0.0
-        : (position.inMilliseconds / duration.inMilliseconds).clamp(0.0, 1.0);
-    return LinearProgressIndicator(
-      value: value,
-      minHeight: 3,
-      borderRadius: BorderRadius.circular(3),
     );
   }
 }

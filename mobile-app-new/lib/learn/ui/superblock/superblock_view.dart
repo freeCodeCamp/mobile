@@ -119,13 +119,7 @@ class _Chapters extends ConsumerWidget {
       physics: const AlwaysScrollableScrollPhysics(),
       padding: const EdgeInsets.fromLTRB(16, 8, 16, 32),
       children: [
-        _CourseHero(
-          title: title,
-          blocks: blocks,
-          details:
-              '${countLabel(chapters.length, 'chapter')} · ${countLabel(chapters.expand((c) => c.modules).length, 'module')}',
-          nextChapter: active?.name,
-        ),
+        _CourseHero(title: title, blocks: blocks),
         if (chapters.isEmpty)
           const Padding(
             padding: EdgeInsets.all(24),
@@ -182,16 +176,9 @@ class _Chapters extends ConsumerWidget {
 }
 
 class _CourseHero extends ConsumerWidget {
-  const _CourseHero({
-    required this.title,
-    required this.blocks,
-    this.details,
-    this.nextChapter,
-  });
+  const _CourseHero({required this.title, required this.blocks});
   final String title;
   final List<Block> blocks;
-  final String? details;
-  final String? nextChapter;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -217,19 +204,7 @@ class _CourseHero extends ConsumerWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
-          LearnEyebrow(
-            title.toLowerCase().contains('certification')
-                ? 'Certification'
-                : 'Course',
-            color: colors.primary,
-          ),
-          const SizedBox(height: 8),
           Text(title, style: Theme.of(context).textTheme.headlineSmall),
-          const SizedBox(height: 8),
-          Text(
-            details ?? countLabel(blocks.length, 'block'),
-            style: TextStyle(color: colors.onSurfaceVariant, fontSize: 13),
-          ),
           const SizedBox(height: 14),
           LearnProgress(
             done: done,
@@ -243,33 +218,20 @@ class _CourseHero extends ConsumerWidget {
           ),
           if (nextBlock != null) ...[
             const SizedBox(height: 14),
-            Wrap(
-              alignment: WrapAlignment.spaceBetween,
-              crossAxisAlignment: WrapCrossAlignment.center,
-              spacing: 12,
-              runSpacing: 8,
-              children: [
-                if (nextChapter != null)
-                  Text(
-                    'Next: $nextChapter',
-                    style: TextStyle(
-                      fontSize: 12,
-                      color: colors.onSurfaceVariant,
-                    ),
-                  ),
-                FilledButton.icon(
-                  onPressed: () => LearnChallengeRoute(
-                    superBlock: nextBlock.superBlock,
-                    block: nextBlock.dashedName,
-                    challengeId: nextBlock.challenges
-                        .firstWhere((c) => !completed.contains(c.id))
-                        .id,
-                  ).push<void>(context),
-                  icon: const Icon(Icons.arrow_forward, size: 18),
-                  iconAlignment: IconAlignment.end,
-                  label: Text(done > 0 ? 'Continue' : 'Start learning'),
-                ),
-              ],
+            Align(
+              alignment: Alignment.centerRight,
+              child: FilledButton.icon(
+                onPressed: () => LearnChallengeRoute(
+                  superBlock: nextBlock.superBlock,
+                  block: nextBlock.dashedName,
+                  challengeId: nextBlock.challenges
+                      .firstWhere((c) => !completed.contains(c.id))
+                      .id,
+                ).push<void>(context),
+                icon: const Icon(Icons.arrow_forward, size: 18),
+                iconAlignment: IconAlignment.end,
+                label: Text(done > 0 ? 'Continue' : 'Start learning'),
+              ),
             ),
           ],
         ],
@@ -340,10 +302,15 @@ class _ChapterCard extends ConsumerWidget {
             chapter.name,
             style: Theme.of(context).textTheme.titleMedium,
           ),
-          subtitle: Text(
-            isLocked ? 'Coming soon' : countLabel(modules.length, 'module'),
-            style: TextStyle(fontSize: 12, color: colors.onSurfaceVariant),
-          ),
+          subtitle: isLocked
+              ? Text(
+                  'Coming soon',
+                  style: TextStyle(
+                    fontSize: 12,
+                    color: colors.onSurfaceVariant,
+                  ),
+                )
+              : null,
           children: [
             Stack(
               children: [
@@ -399,8 +366,10 @@ class _ModuleButton extends ConsumerWidget {
     final subtitle = module.moduleType == ModuleType.certProject
         ? 'Certification project'
         : isReview
-        ? 'Review'
-        : '${countLabel(blocks.length, 'block')} · $done/${challenges.length} steps';
+        ? RegExp(r'\breview\b', caseSensitive: false).hasMatch(module.name)
+              ? null
+              : 'Review'
+        : '$done/${challenges.length} steps';
     return Padding(
       padding: const EdgeInsets.only(bottom: 4),
       child: Material(
@@ -456,14 +425,16 @@ class _ModuleButton extends ConsumerWidget {
                           fontSize: 14,
                         ),
                       ),
-                      const SizedBox(height: 3),
-                      Text(
-                        subtitle,
-                        style: TextStyle(
-                          fontSize: 12,
-                          color: colors.onSurfaceVariant,
+                      if (subtitle != null) ...[
+                        const SizedBox(height: 3),
+                        Text(
+                          subtitle,
+                          style: TextStyle(
+                            fontSize: 12,
+                            color: colors.onSurfaceVariant,
+                          ),
                         ),
-                      ),
+                      ],
                       if (active) ...[
                         const SizedBox(height: 6),
                         LearnProgress(done: done, total: challenges.length),

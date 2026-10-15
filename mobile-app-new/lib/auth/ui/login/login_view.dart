@@ -134,28 +134,6 @@ class _LoginViewState extends ConsumerState<LoginView> {
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          Container(
-                            width: 64,
-                            height: 64,
-                            decoration: BoxDecoration(
-                              color: state.showOtpField
-                                  ? colors.primaryContainer
-                                  : colors.primary,
-                              borderRadius: BorderRadius.circular(
-                                state.showOtpField ? 32 : 20,
-                              ),
-                            ),
-                            child: Icon(
-                              state.showOtpField
-                                  ? Icons.mail_outline
-                                  : Icons.school_outlined,
-                              size: 30,
-                              color: state.showOtpField
-                                  ? colors.primary
-                                  : colors.onPrimary,
-                            ),
-                          ),
-                          const SizedBox(height: 18),
                           Text(
                             state.showOtpField
                                 ? 'Check your email'
@@ -213,13 +191,6 @@ class _LoginViewState extends ConsumerState<LoginView> {
                               label: const Text('Paste code'),
                             ),
                           ] else ...[
-                            Text(
-                              'Save your progress, earn certifications and keep your streak across devices.',
-                              style: theme.textTheme.bodyLarge?.copyWith(
-                                color: colors.onSurfaceVariant,
-                              ),
-                            ),
-                            const SizedBox(height: 24),
                             for (final provider in const [
                               ('Google', 'google-oauth2', 'google'),
                               ('GitHub', 'github', 'github'),
@@ -320,20 +291,11 @@ class _LoginViewState extends ConsumerState<LoginView> {
                           const SizedBox(height: 20),
                           if (state.showOtpField)
                             Center(
-                              child: Wrap(
-                                crossAxisAlignment: WrapCrossAlignment.center,
-                                children: [
-                                  Text(
-                                    "Didn't get it?",
-                                    style: theme.textTheme.bodyMedium,
-                                  ),
-                                  TextButton(
-                                    onPressed: state.isLoading
-                                        ? null
-                                        : () => _sendOtp(resend: true),
-                                    child: const Text('Resend code'),
-                                  ),
-                                ],
+                              child: TextButton(
+                                onPressed: state.isLoading
+                                    ? null
+                                    : () => _sendOtp(resend: true),
+                                child: const Text('Resend code'),
                               ),
                             )
                           else

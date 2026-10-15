@@ -412,6 +412,8 @@ void main() {
       expect(dailyLabel.style!.fontFamily, 'Lato');
       expect(dailyLabel.style!.letterSpacing, 0);
       expect(find.textContaining('still in beta'), findsNothing);
+      expect(find.text('Daily challenge archive'), findsNothing);
+      expect(find.text('Past challenges'), findsOneWidget);
       final course = find.text('Responsive Web Design Certification').first;
       final workshop = find.text('Build a Curriculum Outline');
       expect(
@@ -458,6 +460,13 @@ void main() {
         dark: dark,
       );
       expect(find.text('2 of 18 steps complete'), findsOneWidget);
+      expect(find.text('Certification'), findsNothing);
+      expect(find.text('2 chapters · 3 modules'), findsNothing);
+      expect(find.textContaining('Next:'), findsNothing);
+      expect(find.text('2 modules'), findsNothing);
+      expect(find.text('1 module'), findsNothing);
+      expect(find.text('3 blocks · 2/14 steps'), findsNothing);
+      expect(find.text('2/14 steps'), findsOneWidget);
       expect(
         find.descendant(
           of: find.byType(AppBar),
@@ -520,6 +529,63 @@ void main() {
       expect(find.text('Bucket Fill'), findsNothing);
       expect(find.text('Between Two Buckets'), findsNWidgets(2));
       expect(tester.takeException(), isNull);
+    });
+  }
+  testWidgets('flat courses keep progress and the next-step action', (
+    tester,
+  ) async {
+    await _pump(
+      tester,
+      const SuperBlockView(dashedName: 'responsive-web-design-v9'),
+      courseData: SuperBlock.blocks([_workshop, _lecture]),
+    );
+    expect(find.text('2 blocks'), findsNothing);
+    expect(find.text('2 of 13 steps complete'), findsOneWidget);
+    await tester.tap(find.widgetWithText(FilledButton, 'Continue'));
+    await tester.pumpAndSettle();
+    expect(
+      find.text('/learn/responsive-web-design-v9/curriculum-outline/step-3'),
+      findsOneWidget,
+    );
+  });
+  for (final title in ['HTML Review', 'HTML Concepts']) {
+    testWidgets('review type stays identifiable and opens $title', (
+      tester,
+    ) async {
+      await _pump(
+        tester,
+        const SuperBlockView(dashedName: 'responsive-web-design-v9'),
+        courseData: SuperBlock.chapters([
+          Chapter(
+            dashedName: 'html',
+            name: 'HTML',
+            modules: [
+              Module(
+                dashedName: 'html-review',
+                name: title,
+                blocks: [
+                  _lecture.copyWith(
+                    label: BlockLabel.review,
+                    challenges: const [
+                      ChallengeOrder(id: 'review-1', title: 'HTML Review'),
+                    ],
+                  ),
+                ],
+              ),
+            ],
+          ),
+        ]),
+      );
+      expect(
+        find.text('Review'),
+        title == 'HTML Review' ? findsNothing : findsOneWidget,
+      );
+      await tester.tap(find.text(title));
+      await tester.pumpAndSettle();
+      expect(
+        find.text('/learn/responsive-web-design-v9/html-attributes/review-1'),
+        findsOneWidget,
+      );
     });
   }
   for (final page in <Widget>[

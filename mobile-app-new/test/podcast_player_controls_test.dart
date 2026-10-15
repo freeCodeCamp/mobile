@@ -10,6 +10,7 @@ import 'package:mobile_app_new/podcasts/models/episode_model.dart';
 import 'package:mobile_app_new/podcasts/models/podcast_model.dart';
 import 'package:mobile_app_new/podcasts/services/library_service.dart';
 import 'package:mobile_app_new/podcasts/ui/episode/episode_view.dart';
+import 'package:mobile_app_new/podcasts/ui/widgets/episode_tile.dart';
 
 const _podcast = Podcast(
   id: 'show',
@@ -29,9 +30,11 @@ const _episode = Episode(
 Future<_RecordingPlayer> _pumpPlayer(
   WidgetTester tester, {
   String currentId = 'displayed',
+  Widget? body,
+  double width = 390,
 }) async {
   tester.view.devicePixelRatio = 1;
-  tester.view.physicalSize = const Size(390, 844);
+  tester.view.physicalSize = Size(width, 844);
   addTearDown(tester.view.resetPhysicalSize);
   addTearDown(tester.view.resetDevicePixelRatio);
   final player = _RecordingPlayer(currentId);
@@ -46,7 +49,9 @@ Future<_RecordingPlayer> _pumpPlayer(
       ],
       child: MaterialApp(
         theme: FccTheme.themeLight,
-        home: const PodcastEpisodeView(podcast: _podcast, episode: _episode),
+        home: body == null
+            ? const PodcastEpisodeView(podcast: _podcast, episode: _episode)
+            : Scaffold(body: body),
       ),
     ),
   );
@@ -65,6 +70,25 @@ IconButton _transport(WidgetTester tester, String tooltip) =>
     );
 
 void main() {
+  testWidgets('active episode row keeps playback time and actions', (
+    tester,
+  ) async {
+    final player = await _pumpPlayer(
+      tester,
+      width: 430,
+      body: const PodcastEpisodeTile(podcast: _podcast, episode: _episode),
+    );
+
+    expect(find.text('8 min left'), findsOneWidget);
+    expect(find.byType(LinearProgressIndicator), findsNothing);
+    expect(find.byTooltip('Download episode'), findsOneWidget);
+    expect(find.byTooltip('Episode options'), findsOneWidget);
+    await tester.tap(find.byTooltip('Pause episode'));
+    await tester.pumpAndSettle();
+    expect(player.toggledIds, ['displayed']);
+    expect(tester.takeException(), isNull);
+  });
+
   testWidgets(
     'another playing episode cannot be sought or have its speed changed',
     (tester) async {
@@ -94,8 +118,8 @@ void main() {
 
       await tester.tap(find.byTooltip('Rewind 10 seconds'));
       await tester.tap(find.byTooltip('Forward 30 seconds'));
-      expect(player.rewindCalls, 1);
-      expect(player.forwardCalls, 1);
+      expect(player._rewindCalls, 1);
+      expect(player._forwardCalls, 1);
 
       final slider = tester.widget<Slider>(find.byType(Slider));
       slider.onChanged!(0.5);
@@ -162,8 +186,8 @@ class _EmptyLibrary extends PodcastLibraryNotifier {
 class _RecordingPlayer extends PodcastPlayerNotifier {
   _RecordingPlayer(this.initialEpisodeId);
   final String initialEpisodeId;
-  int rewindCalls = 0;
-  int forwardCalls = 0;
+  int _rewindCalls = 0;
+  int _forwardCalls = 0;
   final seekPositions = <Duration>[];
   final speeds = <double>[];
   final toggledIds = <String>[];
@@ -184,10 +208,10 @@ class _RecordingPlayer extends PodcastPlayerNotifier {
   }
 
   @override
-  Future<void> rewind() async => rewindCalls++;
+  Future<void> rewind() async => _rewindCalls++;
 
   @override
-  Future<void> fastForward() async => forwardCalls++;
+  Future<void> fastForward() async => _forwardCalls++;
 
   @override
   Future<void> seek(Duration position) async => seekPositions.add(position);

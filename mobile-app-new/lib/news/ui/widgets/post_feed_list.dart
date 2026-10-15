@@ -130,6 +130,10 @@ class _PostFeedListState extends ConsumerState<PostFeedList> {
               key: ValueKey(feed.posts[index].id),
               post: feed.posts[index],
               featured: widget.featured && index == 0,
+              selectedTagSlug: switch (widget.source) {
+                TagPosts(:final slug) => slug,
+                _ => null,
+              },
             ),
     );
   }

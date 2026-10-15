@@ -47,7 +47,7 @@ class NewsBookmarkFeedView extends ConsumerWidget {
                     ),
                     const SizedBox(height: 16),
                     const Text(
-                      'Your reading list starts here',
+                      'No saved articles',
                       style: TextStyle(
                         fontSize: 20,
                         fontWeight: FontWeight.w700,
@@ -56,7 +56,7 @@ class NewsBookmarkFeedView extends ConsumerWidget {
                     ),
                     const SizedBox(height: 8),
                     Text(
-                      'Save an article to keep it handy, even when you’re offline.',
+                      'Open an article and tap the bookmark icon to save it.',
                       textAlign: TextAlign.center,
                       style: TextStyle(
                         color: colors.onSurfaceVariant,

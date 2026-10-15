@@ -22,6 +22,7 @@ import 'package:mobile_app_new/news/ui/image/image_view.dart';
 import 'package:mobile_app_new/news/ui/widgets/author_post_tile.dart';
 import 'package:mobile_app_new/news/ui/widgets/news_image.dart';
 import 'package:mobile_app_new/news/ui/widgets/news_load_error.dart';
+import 'package:mobile_app_new/news/ui/widgets/post_feed_list.dart';
 import 'package:mobile_app_new/routing/news.dart' as news;
 import 'package:mobile_app_new/services/audio_service.dart';
 import 'package:photo_view/photo_view.dart';
@@ -229,6 +230,14 @@ void main() {
         expect(find.text('Saved destination'), findsOneWidget);
         router.go('/author');
         await tester.pumpAndSettle();
+        expect(
+          find.descendant(
+            of: find.byType(PostFeedList),
+            matching: find.text('Articles'),
+          ),
+          findsOneWidget,
+        );
+        expect(find.text('Articles by A Camper'), findsNothing);
         await tester.ensureVisible(find.byType(AuthorPostTile));
         expect(find.text('Build a useful application'), findsOneWidget);
         expect(find.byIcon(Icons.bookmark_border_rounded), findsNothing);

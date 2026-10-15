@@ -67,41 +67,11 @@ class _BlockListState extends ConsumerState<BlockList> {
         final blockIndex = index - headerCount;
         final block = widget.blocks[blockIndex];
         final isOpen = _open[block.dashedName] ?? blockIndex == active;
-        final card = BlockCard(
+        return BlockCard(
           key: ValueKey(block.dashedName),
           block: block,
           isOpen: isOpen,
           onToggle: () => setState(() => _open[block.dashedName] = !isOpen),
-        );
-        if (block.layout != BlockLayout.challengeDialogue ||
-            (blockIndex > 0 &&
-                widget.blocks[blockIndex - 1].layout ==
-                    BlockLayout.challengeDialogue)) {
-          return card;
-        }
-        final language = switch (block.superBlock) {
-          final name when name.contains('english') => ' · English',
-          final name when name.contains('spanish') => ' · Spanish',
-          final name when name.contains('chinese') => ' · Chinese',
-          _ => '',
-        };
-        return Column(
-          crossAxisAlignment: CrossAxisAlignment.stretch,
-          children: [
-            Padding(
-              padding: const EdgeInsets.only(bottom: 12),
-              child: Text(
-                'Dialogue layout$language',
-                style: TextStyle(
-                  fontFamily: 'Lato',
-                  fontSize: 12,
-                  letterSpacing: 0,
-                  color: Theme.of(context).colorScheme.onSurfaceVariant,
-                ),
-              ),
-            ),
-            card,
-          ],
         );
       },
     );

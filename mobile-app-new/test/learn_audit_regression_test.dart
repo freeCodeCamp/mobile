@@ -570,15 +570,16 @@ void main() {
           await tester.pumpAndSettle();
           await tester.tap(button);
           await tester.pumpAndSettle();
-          await tester.scrollUntilVisible(
-            find.text(english ? 'Correct!' : 'Your link is ready to submit.'),
-            150,
-            scrollable: scrollable,
-          );
-          expect(
-            find.text(english ? 'Correct!' : 'Your link is ready to submit.'),
-            findsOneWidget,
-          );
+          final result = english
+              ? find.text('Correct!')
+              : find.byIcon(Icons.check_circle_outline);
+          await tester.scrollUntilVisible(result, 150, scrollable: scrollable);
+          expect(result, findsOneWidget);
+          if (!english) {
+            final submit = find.widgetWithText(FilledButton, 'Submit project');
+            expect(submit, findsOneWidget);
+            expect(tester.getRect(submit).bottom, lessThanOrEqualTo(420));
+          }
           await _shot(
             tester,
             '${english ? 'english' : 'project'}-keyboard-$mode',

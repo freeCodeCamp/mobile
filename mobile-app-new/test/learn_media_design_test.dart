@@ -99,10 +99,17 @@ void main() {
           find.widgetWithText(FilledButton, 'Continue to forum'),
         );
         expect(submit().onPressed, isNull);
+        expect(find.text('Add at least 50 more characters.'), findsOneWidget);
+        await tester.enterText(find.byType(TextField), 'short');
+        await tester.pump();
+        expect(find.text('Add at least 45 more characters.'), findsOneWidget);
+        expect(submit().onPressed, isNull);
         const description =
             'I tried changing the link attributes, but the lesson still reports that my answer is incorrect.';
         await tester.enterText(find.byType(TextField), description);
         await tester.pump();
+        expect(find.textContaining('Add at least'), findsNothing);
+        expect(find.text("Great, that's enough detail."), findsNothing);
         expect(submit().onPressed, isNull);
         await tester.ensureVisible(find.byType(Checkbox).first);
         await tester.tap(find.byType(Checkbox).first);

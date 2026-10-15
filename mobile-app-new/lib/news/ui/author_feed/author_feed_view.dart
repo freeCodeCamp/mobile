@@ -148,7 +148,7 @@ class _AuthorDetails extends StatelessWidget {
           Align(
             alignment: Alignment.centerLeft,
             child: Text(
-              'Articles by ${author.name}',
+              'Articles',
               style: const TextStyle(fontSize: 20, fontWeight: FontWeight.w800),
             ),
           ),
