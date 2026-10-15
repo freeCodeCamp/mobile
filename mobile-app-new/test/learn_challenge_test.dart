@@ -163,7 +163,11 @@ Future<void> _pump(
 Finder _text(String text) => find.text(text, findRichText: true);
 Finder _button(String label) => find.widgetWithText(FilledButton, label);
 
-Future<void> _tap(WidgetTester tester, Finder target) async {
+Future<void> _tap(
+  WidgetTester tester,
+  Finder target, {
+  bool settle = true,
+}) async {
   expect(target, findsOneWidget);
   await tester.ensureVisible(target);
   await tester.pumpAndSettle();
@@ -180,7 +184,12 @@ Future<void> _tap(WidgetTester tester, Finder target) async {
   } else {
     await tester.tap(target);
   }
-  await tester.pumpAndSettle();
+  if (settle) {
+    await tester.pumpAndSettle();
+  } else {
+    await tester.pump();
+    await tester.pump(const Duration(milliseconds: 900));
+  }
 }
 
 Future<void> _startLesson(WidgetTester tester) async {
@@ -192,13 +201,18 @@ Future<void> _answerQuiz(
   WidgetTester tester, {
   required int correct,
   int count = 10,
+  bool settleResult = true,
 }) async {
   for (var i = 1; i <= count; i++) {
     await _tap(
       tester,
       _text(i <= correct ? 'Correct choice $i' : 'Other choice $i'),
     );
-    await _tap(tester, _button(i == count ? 'Submit quiz' : 'Next question'));
+    await _tap(
+      tester,
+      _button(i == count ? 'Submit quiz' : 'Next question'),
+      settle: i != count || settleResult,
+    );
   }
 }
 
@@ -220,8 +234,13 @@ Future<void> _screenshot(WidgetTester tester, String name) async {
 void main() {
   setUpAll(() async {
     TestWidgetsFlutterBinding.ensureInitialized();
+    await (FontLoader('Lato')
+          ..addFont(rootBundle.load('assets/fonts/Lato-Regular.ttf'))
+          ..addFont(rootBundle.load('assets/fonts/Lato-Bold.ttf'))
+          ..addFont(rootBundle.load('assets/fonts/Lato-ExtraBold.ttf'))
+          ..addFont(rootBundle.load('assets/fonts/Lato-Black.ttf')))
+        .load();
     for (final font in {
-      'Lato': 'assets/fonts/Lato-Regular.ttf',
       'monospace': 'assets/fonts/Hack-Regular.ttf',
       'MaterialIcons': 'fonts/MaterialIcons-Regular.otf',
     }.entries) {
@@ -407,10 +426,13 @@ void main() {
         width: 320,
         scale: 1.6,
       );
-      expect(tester.widget<FilledButton>(_button('Prev')).onPressed, isNull);
+      expect(
+        tester.widget<FilledButton>(_button('Previous')).onPressed,
+        isNull,
+      );
       await _tap(tester, _button('Next question'));
       await _tap(tester, _text('Correct choice 2'));
-      await _tap(tester, _button('Prev'));
+      await _tap(tester, _button('Previous'));
       expect(find.text('Question 1 of 3 · 1 answered'), findsOneWidget);
       await _tap(tester, find.byTooltip('All questions'));
       await _tap(tester, find.widgetWithText(OutlinedButton, '3'));
@@ -421,7 +443,7 @@ void main() {
         findsOneWidget,
       );
       expect(find.text('Question 1 of 3 · 1 answered'), findsOneWidget);
-      expect(find.text('Quiz results'), findsNothing);
+      expect(find.text('Results'), findsNothing);
       expect(tester.takeException(), isNull);
     },
   );
@@ -436,13 +458,25 @@ void main() {
       expect(find.text('Keep going!'), findsOneWidget);
       expect(find.text('8 of 10 correct'), findsOneWidget);
       expect(_button('Continue'), findsNothing);
-      await tester.scrollUntilVisible(find.text('Question 9'), 400);
-      expect(_text('Other choice 9'), findsOneWidget);
-      expect(_text('Correct choice 9'), findsOneWidget);
-      expect(find.text('Correct answer'), findsWidgets);
+      await tester.scrollUntilVisible(find.text('QUESTION 9'), 400);
+      expect(
+        find.textContaining('Your answer: Other choice 9', findRichText: true),
+        findsOneWidget,
+      );
+      expect(
+        find.textContaining(
+          'Correct answer: Correct choice 9',
+          findRichText: true,
+        ),
+        findsOneWidget,
+      );
+      expect(
+        find.textContaining('Correct answer:', findRichText: true),
+        findsWidgets,
+      );
       await _tap(tester, _button('Try again'));
       expect(find.text('Question 1 of 10 · 0 answered'), findsOneWidget);
-      expect(find.text('Quiz results'), findsNothing);
+      expect(find.text('Results'), findsNothing);
       await _answerQuiz(tester, correct: 9);
       expect(find.text('You passed!'), findsOneWidget);
       expect(find.text('9 of 10 correct'), findsOneWidget);
@@ -594,11 +628,78 @@ void main() {
         QuizView(challenge: quiz, block: _block(quiz)),
         dark: dark,
       );
+      await _tap(tester, _text('Correct choice 1'));
+      expect(
+        DefaultTextStyle.of(
+          tester.element(find.text('Next question')),
+        ).style.fontWeight,
+        FontWeight.w800,
+      );
       await _screenshot(tester, 'learn-quiz-$mode');
-      await _answerQuiz(tester, correct: 9);
+      await _answerQuiz(tester, correct: 9, settleResult: false);
       await _screenshot(tester, 'learn-quiz-results-$mode');
+      await tester.pumpAndSettle();
+      await tester.scrollUntilVisible(find.text('QUESTION 10'), 300);
+      await tester.pumpAndSettle();
+      expect(
+        find.textContaining('Your answer: Other choice 10', findRichText: true),
+        findsOneWidget,
+      );
+      final correct = find.textContaining(
+        'Correct answer: Correct choice 10',
+        findRichText: true,
+      );
+      expect(correct, findsOneWidget);
+      await _screenshot(tester, 'learn-quiz-review-$mode');
+
       expect(tester.takeException(), isNull);
     });
+    for (final scale in [1.0, 2.0]) {
+      testWidgets('quiz exit keeps answers unless confirmed $mode text$scale', (
+        tester,
+      ) async {
+        final quiz = _quiz(count: 3);
+        await _pump(
+          tester,
+          Builder(
+            builder: (context) => Scaffold(
+              body: TextButton(
+                onPressed: () => Navigator.of(context).push<void>(
+                  MaterialPageRoute(
+                    builder: (_) =>
+                        QuizView(challenge: quiz, block: _block(quiz)),
+                  ),
+                ),
+                child: const Text('Open quiz'),
+              ),
+            ),
+          ),
+          dark: dark,
+          width: scale == 1 ? 390 : 320,
+          scale: scale,
+        );
+        await _tap(tester, find.text('Open quiz'));
+        await _tap(tester, _text('Correct choice 1'));
+        await _tap(tester, find.byTooltip('Leave quiz'));
+        expect(find.text('Leave the quiz?'), findsOneWidget);
+        expect(
+          find.text(
+            "You've answered 1 of 3 questions. If you leave now, your answers won't be saved.",
+          ),
+          findsOneWidget,
+        );
+        await _screenshot(tester, 'quiz-leave-$mode-text$scale');
+        await _tap(tester, _button('Keep going'));
+        expect(find.text('Question 1 of 3 · 1 answered'), findsOneWidget);
+        await tester.binding.handlePopRoute();
+        await tester.pumpAndSettle();
+        expect(find.byType(Dialog), findsOneWidget);
+        await _tap(tester, find.widgetWithText(OutlinedButton, 'Leave quiz'));
+        expect(find.text('Open quiz'), findsOneWidget);
+        expect(find.byType(QuizView), findsNothing);
+        expect(tester.takeException(), isNull);
+      });
+    }
     testWidgets('English preview $mode', (tester) async {
       await _pump(
         tester,

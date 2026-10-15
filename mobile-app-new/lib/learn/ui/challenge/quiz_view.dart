@@ -11,7 +11,8 @@ import 'package:mobile_app_new/learn/ui/challenge/widgets/challenge_layout.dart'
 import 'package:mobile_app_new/learn/ui/challenge/widgets/complete_button.dart';
 import 'package:mobile_app_new/learn/ui/challenge/widgets/parsed_html.dart';
 import 'package:mobile_app_new/learn/ui/challenge/widgets/questions.dart';
-import 'package:mobile_app_new/widgets/dialog/confirm_dialog.dart';
+import 'package:mobile_app_new/learn/ui/challenge/widgets/quiz_leave_dialog.dart';
+import 'package:mobile_app_new/learn/ui/challenge/widgets/quiz_result_card.dart';
 
 // NOTE: The quiz picks one of its question sets at random and shuffles each question's answers.
 List<QuestionItem> _pickQuestions(List<Quiz> quizzes) {
@@ -54,6 +55,8 @@ class _QuizViewState extends State<QuizView> {
   final _scroll = ScrollController(keepScrollOffset: false);
   int _current = 0;
   bool _validated = false;
+  bool _leaveDialogOpen = false;
+  bool _allowLeave = false;
   int get _correct =>
       _questions.indexed.where((q) => _selected[q.$1] == q.$2.solution).length;
   int get _required => (_questions.length * _passRate).ceil();
@@ -104,15 +107,18 @@ class _QuizViewState extends State<QuizView> {
   }
 
   Future<void> _leave() async {
-    final leave = await showConfirmDialog(
+    if (_leaveDialogOpen) return;
+    _leaveDialogOpen = true;
+    final leave = await showQuizLeaveDialog(
       context,
-      title: 'Leave this quiz?',
-      description:
-          'Your answers will be lost. You can start the quiz again from the course.',
-      confirmLabel: 'Leave',
-      destructive: true,
+      answered: _selected.whereType<int>().length,
+      total: _questions.length,
     );
-    if (leave && mounted) Navigator.of(context).pop();
+    _leaveDialogOpen = false;
+    if (!leave || !mounted) return;
+    setState(() => _allowLeave = true);
+    await WidgetsBinding.instance.endOfFrame;
+    if (mounted) Navigator.of(context).pop();
   }
 
   Future<void> _jump() async {
@@ -180,7 +186,7 @@ class _QuizViewState extends State<QuizView> {
     final challenge = widget.challenge;
     final colors = Theme.of(context).colorScheme;
     return PopScope(
-      canPop: false,
+      canPop: _allowLeave,
       onPopInvokedWithResult: (didPop, _) {
         if (!didPop) _leave();
       },
@@ -189,7 +195,7 @@ class _QuizViewState extends State<QuizView> {
           context,
           title: challenge.title,
           subtitle: _validated
-              ? 'Quiz results'
+              ? 'Results'
               : _questions.isEmpty
               ? 'Quiz'
               : 'Question ${_current + 1} of ${_questions.length} · ${_selected.whereType<int>().length} answered',
@@ -202,7 +208,7 @@ class _QuizViewState extends State<QuizView> {
             if (!_validated && _questions.isNotEmpty)
               IconButton(
                 tooltip: 'All questions',
-                icon: const Icon(Icons.grid_view_rounded),
+                icon: const Icon(Icons.grid_view_outlined),
                 onPressed: _jump,
               ),
           ],
@@ -216,6 +222,10 @@ class _QuizViewState extends State<QuizView> {
                   padding: const EdgeInsets.symmetric(horizontal: 16),
                   child: QuestionProgress(
                     total: _questions.length,
+                    height: 6,
+                    spacing: 3,
+                    currentColor: colors.secondary,
+                    answeredColor: colors.primary,
                     current: _current,
                     answered: _selected.map((a) => a != null).toList(),
                   ),
@@ -235,12 +245,26 @@ class _QuizViewState extends State<QuizView> {
                     else ...[
                       Align(
                         alignment: Alignment.centerLeft,
-                        child: Chip(
-                          backgroundColor: colors.surfaceContainer,
-                          side: BorderSide.none,
-                          label: Text(
+                        child: Container(
+                          padding: const EdgeInsets.symmetric(
+                            horizontal: 10,
+                            vertical: 4,
+                          ),
+                          decoration: BoxDecoration(
+                            color: colors.surfaceContainer,
+                            borderRadius: BorderRadius.circular(999),
+                            border: Border.all(
+                              color: colors.outlineVariant,
+                              width: 1.5,
+                            ),
+                          ),
+                          child: Text(
                             'Pass with $_required of ${_questions.length} correct',
-                            style: const TextStyle(fontSize: 12),
+                            style: TextStyle(
+                              fontSize: 14,
+                              color: colors.onSurfaceVariant,
+                              height: 1.3,
+                            ),
                           ),
                         ),
                       ),
@@ -279,42 +303,21 @@ class _QuizViewState extends State<QuizView> {
         bottomNavigationBar: _questions.isEmpty
             ? null
             : ChallengeFooter(
+                padding: const EdgeInsets.all(12),
                 child: _validated
                     ? _passed
                           ? CompleteButton(
                               challenge: challenge,
                               block: widget.block,
                               label: 'Continue',
+                              buttonStyle: _buttonStyle(context),
                             )
                           : ChallengeButton(
                               label: 'Try again',
+                              style: _buttonStyle(context),
                               onPressed: _reset,
                             )
-                    : Row(
-                        children: [
-                          Expanded(
-                            child: ChallengeButton(
-                              label: 'Prev',
-                              secondary: true,
-                              onPressed: _current == 0
-                                  ? null
-                                  : () => _show(_current - 1),
-                            ),
-                          ),
-                          const SizedBox(width: 12),
-                          Expanded(
-                            flex: 2,
-                            child: ChallengeButton(
-                              label: _current == _questions.length - 1
-                                  ? 'Submit quiz'
-                                  : 'Next question',
-                              onPressed: _current == _questions.length - 1
-                                  ? _check
-                                  : () => _show(_current + 1),
-                            ),
-                          ),
-                        ],
-                      ),
+                    : _navigation(context),
               ),
       ),
     );
@@ -323,50 +326,20 @@ class _QuizViewState extends State<QuizView> {
   List<Widget> _results(BuildContext context) {
     final colors = Theme.of(context).colorScheme;
     final success = FccDesignColors.of(context).success;
-    final resultColor = _passed ? success : colors.error;
     return [
-      Container(
-        padding: const EdgeInsets.all(24),
-        margin: const EdgeInsets.only(bottom: 24),
-        decoration: BoxDecoration(
-          color: resultColor.withValues(alpha: .1),
-          borderRadius: BorderRadius.circular(16),
-          border: Border.all(color: resultColor.withValues(alpha: .3)),
-        ),
-        child: Column(
-          children: [
-            Icon(
-              _passed ? Icons.check_circle_outline : Icons.refresh,
-              color: resultColor,
-              size: 48,
-            ),
-            const SizedBox(height: 12),
-            Text(
-              _passed ? 'You passed!' : 'Keep going!',
-              style: Theme.of(context).textTheme.headlineMedium,
-            ),
-            const SizedBox(height: 8),
-            Text(
-              '$_correct of ${_questions.length} correct',
-              style: TextStyle(
-                fontSize: 20,
-                fontWeight: FontWeight.w700,
-                color: resultColor,
-              ),
-            ),
-            const SizedBox(height: 8),
-            Text(
-              _passed
-                  ? 'Well done. You’re ready for the next challenge.'
-                  : 'You need $_required correct to pass. Review your answers and try again.',
-              textAlign: TextAlign.center,
-            ),
-          ],
-        ),
+      QuizResultCard(
+        passed: _passed,
+        correct: _correct,
+        total: _questions.length,
+        requiredCorrect: _required,
       ),
+      const SizedBox(height: 20),
       Text(
         'Review your answers',
-        style: Theme.of(context).textTheme.titleLarge,
+        style: Theme.of(context).textTheme.titleLarge?.copyWith(
+          fontSize: 18,
+          fontWeight: FontWeight.w800,
+        ),
       ),
       const SizedBox(height: 16),
       Card(
@@ -385,17 +358,15 @@ class _QuizViewState extends State<QuizView> {
                           ? 'Correct answer'
                           : 'Incorrect answer',
                       child: CircleAvatar(
-                        radius: 13,
+                        radius: 12,
                         backgroundColor: _selected[i] == q.solution
-                            ? success
-                            : colors.error,
+                            ? const Color(0xFF1E7F46)
+                            : const Color(0xFFD6245A),
                         child: Icon(
                           _selected[i] == q.solution
                               ? Icons.check
                               : Icons.close,
-                          color: Theme.of(context).brightness == Brightness.dark
-                              ? colors.surface
-                              : Colors.white,
+                          color: const Color(0xFFFFF8EC),
                           size: 17,
                         ),
                       ),
@@ -406,7 +377,7 @@ class _QuizViewState extends State<QuizView> {
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           Text(
-                            'Question ${i + 1}',
+                            'QUESTION ${i + 1}',
                             style: TextStyle(
                               fontFamily: 'monospace',
                               fontSize: 12,
@@ -417,29 +388,17 @@ class _QuizViewState extends State<QuizView> {
                           _resultHtml(q.text),
                           if (_selected[i] != q.solution) ...[
                             const SizedBox(height: 8),
-                            Text(
-                              'Your answer',
-                              style: TextStyle(
-                                color: colors.error,
-                                fontSize: 13,
-                              ),
-                            ),
                             _resultHtml(
-                              q.answers[_selected[i]!].answer,
+                              '<span>Your answer: </span>${q.answers[_selected[i]!].answer}',
                               color: colors.error,
+                              inline: true,
                             ),
                             const SizedBox(height: 4),
-                            Text(
-                              'Correct answer',
-                              style: TextStyle(
-                                color: success,
-                                fontSize: 13,
-                                fontWeight: FontWeight.w700,
-                              ),
-                            ),
                             _resultHtml(
-                              q.answers[q.solution].answer,
+                              '<span>Correct answer: </span>${q.answers[q.solution].answer}',
                               color: success,
+                              weight: FontWeight.w700,
+                              inline: true,
                             ),
                           ],
                         ],
@@ -455,16 +414,81 @@ class _QuizViewState extends State<QuizView> {
     ];
   }
 
-  Widget _resultHtml(String html, {Color? color}) => ParsedHtml(
+  ButtonStyle _buttonStyle(BuildContext context, {bool secondary = false}) =>
+      FilledButton.styleFrom(
+        minimumSize: const Size(double.infinity, 50),
+        textStyle: const TextStyle(
+          fontFamily: 'Lato',
+          fontSize: 16,
+          fontWeight: FontWeight.w800,
+        ),
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+        side: secondary
+            ? BorderSide(color: Theme.of(context).colorScheme.outlineVariant)
+            : BorderSide.none,
+      );
+
+  Widget _navigation(BuildContext context) => LayoutBuilder(
+    builder: (context, constraints) {
+      final previous = ChallengeButton(
+        label: 'Previous',
+        secondary: true,
+        style: _buttonStyle(context, secondary: true),
+        onPressed: _current == 0 ? null : () => _show(_current - 1),
+      );
+      final next = ChallengeButton(
+        label: _current == _questions.length - 1
+            ? 'Submit quiz'
+            : 'Next question',
+        style: _buttonStyle(context),
+        trailingIcon: _current == _questions.length - 1
+            ? null
+            : Icons.arrow_forward,
+        onPressed: _current == _questions.length - 1
+            ? _check
+            : () => _show(_current + 1),
+      );
+      // Keep full labels at enlarged text sizes without squeezing either action.
+      if (constraints.maxWidth < 360 &&
+          MediaQuery.textScalerOf(context).scale(16) > 20) {
+        return Column(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          mainAxisSize: MainAxisSize.min,
+          children: [previous, const SizedBox(height: 8), next],
+        );
+      }
+      return Row(
+        children: [
+          Expanded(child: previous),
+          const SizedBox(width: 8),
+          Expanded(flex: 2, child: next),
+        ],
+      );
+    },
+  );
+
+  Widget _resultHtml(
+    String html, {
+    Color? color,
+    FontWeight? weight,
+    bool inline = false,
+  }) => ParsedHtml(
     html,
     customStyles: {
       '*': Style(
         color: color,
-        fontSize: FontSize(15),
+        fontSize: FontSize(16),
+        fontWeight: weight,
         lineHeight: const LineHeight(1.4),
       ),
-      'p': Style(margin: Margins.zero),
-      'div': Style(margin: Margins.zero),
+      'p': Style(
+        margin: Margins.zero,
+        display: inline ? Display.inline : Display.block,
+      ),
+      'div': Style(
+        margin: Margins.zero,
+        display: inline ? Display.inline : Display.block,
+      ),
     },
   );
 }

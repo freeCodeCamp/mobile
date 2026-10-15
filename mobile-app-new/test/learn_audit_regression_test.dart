@@ -447,7 +447,10 @@ void main() {
                 'Correct answers are compact; only incorrect answers need their answer details expanded.',
           );
           await tester.scrollUntilVisible(
-            find.text('Wrong choice 3', findRichText: true),
+            find.textContaining(
+              'Your answer: Wrong choice 3',
+              findRichText: true,
+            ),
             120,
             scrollable: find
                 .descendant(
@@ -457,7 +460,10 @@ void main() {
                 .first,
           );
           expect(
-            find.text('Correct choice 3', findRichText: true),
+            find.textContaining(
+              'Correct answer: Correct choice 3',
+              findRichText: true,
+            ),
             findsOneWidget,
           );
           await _shot(tester, 'quiz-wrong-answer-$suffix');

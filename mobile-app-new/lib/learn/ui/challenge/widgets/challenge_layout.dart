@@ -38,8 +38,13 @@ AppBar challengeAppBar(
 );
 
 class ChallengeFooter extends StatelessWidget {
-  const ChallengeFooter({super.key, required this.child});
+  const ChallengeFooter({
+    super.key,
+    required this.child,
+    this.padding = const EdgeInsets.all(16),
+  });
   final Widget child;
+  final EdgeInsets padding;
   @override
   Widget build(BuildContext context) => Padding(
     padding: EdgeInsets.only(bottom: MediaQuery.viewInsetsOf(context).bottom),
@@ -55,7 +60,7 @@ class ChallengeFooter extends StatelessWidget {
         ),
         child: SafeArea(
           top: false,
-          child: Padding(padding: const EdgeInsets.all(16), child: child),
+          child: Padding(padding: padding, child: child),
         ),
       ),
     ),
@@ -68,10 +73,18 @@ class QuestionProgress extends StatelessWidget {
     required this.total,
     required this.current,
     required this.answered,
+    this.height = 4,
+    this.spacing = 4,
+    this.currentColor,
+    this.answeredColor,
   });
   final int total;
   final int current;
   final List<bool> answered;
+  final double height;
+  final double spacing;
+  final Color? currentColor;
+  final Color? answeredColor;
   @override
   Widget build(BuildContext context) {
     final colors = Theme.of(context).colorScheme;
@@ -82,14 +95,14 @@ class QuestionProgress extends StatelessWidget {
           for (var i = 0; i < total; i++)
             Expanded(
               child: Container(
-                height: 4,
-                margin: EdgeInsets.only(right: i == total - 1 ? 0 : 4),
+                height: height,
+                margin: EdgeInsets.only(right: i == total - 1 ? 0 : spacing),
                 decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(2),
+                  borderRadius: BorderRadius.circular(height / 2),
                   color: i == current
-                      ? colors.primary
+                      ? currentColor ?? colors.primary
                       : answered[i]
-                      ? colors.primary.withValues(alpha: .45)
+                      ? answeredColor ?? colors.primary.withValues(alpha: .45)
                       : colors.outlineVariant,
                 ),
               ),

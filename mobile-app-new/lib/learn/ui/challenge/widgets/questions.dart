@@ -46,9 +46,13 @@ class Questions extends StatelessWidget {
             customStyles: {
               '*': Style(
                 fontSize: FontSize(24),
-                fontWeight: FontWeight.w700,
+                fontWeight: FontWeight.w800,
                 lineHeight: const LineHeight(1.35),
               ),
+              for (final tag in ['body', 'div', 'p'])
+                tag: Style(margin: Margins.zero, padding: HtmlPaddings.zero),
+              'strong': Style(fontWeight: FontWeight.w800),
+              'b': Style(fontWeight: FontWeight.w800),
             },
           ),
           if (question.audioData case final audio?) ...[
@@ -74,6 +78,8 @@ class Questions extends StatelessWidget {
     final background = isSelected
         ? (checked ? accent.withValues(alpha: .09) : colors.primaryContainer)
         : colors.surface;
+    final badgeSize = (MediaQuery.textScalerOf(context).scale(16) * 1.2 + 12)
+        .clamp(32.0, double.infinity);
     return Padding(
       padding: const EdgeInsets.only(bottom: 12),
       child: Semantics(
@@ -86,7 +92,7 @@ class Questions extends StatelessWidget {
             borderRadius: BorderRadius.circular(14),
             side: BorderSide(
               color: isSelected ? accent : colors.outlineVariant,
-              width: isSelected ? 1.5 : 1,
+              width: isSelected ? 2 : 1,
             ),
           ),
           clipBehavior: Clip.antiAlias,
@@ -95,11 +101,11 @@ class Questions extends StatelessWidget {
             child: Padding(
               padding: const EdgeInsets.all(14),
               child: Row(
-                crossAxisAlignment: CrossAxisAlignment.start,
+                crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
                   Container(
-                    width: 32,
-                    height: 32,
+                    width: badgeSize,
+                    height: badgeSize,
                     alignment: Alignment.center,
                     decoration: BoxDecoration(
                       shape: BoxShape.circle,
@@ -114,7 +120,9 @@ class Questions extends StatelessWidget {
                         : Text(
                             String.fromCharCode(65 + index),
                             style: TextStyle(
-                              fontWeight: FontWeight.w700,
+                              fontSize: 16,
+                              fontWeight: FontWeight.w800,
+                              height: 1.2,
                               color: isSelected
                                   ? colors.onPrimary
                                   : colors.onSurfaceVariant,
@@ -127,7 +135,14 @@ class Questions extends StatelessWidget {
                       child: ParsedHtml(
                         answer.answer,
                         selectable: false,
-                        customStyles: {'p': Style(margin: Margins.zero)},
+                        customStyles: {
+                          '*': Style(lineHeight: const LineHeight(1.4)),
+                          for (final tag in ['body', 'div', 'p'])
+                            tag: Style(
+                              margin: Margins.zero,
+                              padding: HtmlPaddings.zero,
+                            ),
+                        },
                       ),
                     ),
                   ),
