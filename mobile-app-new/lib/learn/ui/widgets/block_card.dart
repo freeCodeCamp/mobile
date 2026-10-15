@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_html/flutter_html.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:mobile_app_new/learn/models/curriculum_model.dart';
+import 'package:mobile_app_new/learn/ui/widgets/dialogue_block_card.dart';
 import 'package:mobile_app_new/learn/ui/widgets/learn_presentation.dart';
 import 'package:mobile_app_new/routing/learn.dart';
 import 'package:mobile_app_new/services/auth_service.dart';
@@ -66,11 +67,41 @@ class _BlockListState extends ConsumerState<BlockList> {
         final blockIndex = index - headerCount;
         final block = widget.blocks[blockIndex];
         final isOpen = _open[block.dashedName] ?? blockIndex == active;
-        return BlockCard(
+        final card = BlockCard(
           key: ValueKey(block.dashedName),
           block: block,
           isOpen: isOpen,
           onToggle: () => setState(() => _open[block.dashedName] = !isOpen),
+        );
+        if (block.layout != BlockLayout.challengeDialogue ||
+            (blockIndex > 0 &&
+                widget.blocks[blockIndex - 1].layout ==
+                    BlockLayout.challengeDialogue)) {
+          return card;
+        }
+        final language = switch (block.superBlock) {
+          final name when name.contains('english') => ' · ENGLISH',
+          final name when name.contains('spanish') => ' · SPANISH',
+          final name when name.contains('chinese') => ' · CHINESE',
+          _ => '',
+        };
+        return Column(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: [
+            Padding(
+              padding: const EdgeInsets.only(bottom: 12),
+              child: Text(
+                'DIALOGUE LAYOUT$language',
+                style: TextStyle(
+                  fontFamily: 'monospace',
+                  fontSize: 12,
+                  letterSpacing: 1,
+                  color: Theme.of(context).colorScheme.onSurfaceVariant,
+                ),
+              ),
+            ),
+            card,
+          ],
         );
       },
     );
@@ -91,6 +122,9 @@ class BlockCard extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    if (block.layout == BlockLayout.challengeDialogue) {
+      return DialogueBlockCard(block: block);
+    }
     final colors = Theme.of(context).colorScheme;
     final completed = ref.watch(
       authProvider.select(
@@ -239,10 +273,8 @@ class BlockCard extends ConsumerWidget {
                           challenges: block.challenges,
                           completed: completed,
                         ),
-                        BlockLayout.challengeDialogue => _Dialogues(
-                          block: block,
-                          completed: completed,
-                        ),
+                        BlockLayout.challengeDialogue =>
+                          const SizedBox.shrink(),
                         BlockLayout.challengeList => Column(
                           children: [
                             for (final (index, challenge)
@@ -467,74 +499,6 @@ class _StepGrid extends StatelessWidget {
           ),
         );
       },
-    );
-  }
-}
-
-class _Dialogues extends StatelessWidget {
-  const _Dialogues({required this.block, required this.completed});
-  final Block block;
-  final Set<String> completed;
-
-  @override
-  Widget build(BuildContext context) {
-    final sections = <({ChallengeOrder header, List<ChallengeOrder> tasks})>[];
-    for (final (index, challenge) in block.challenges.indexed) {
-      if (index == 0 || challenge.title.contains('Dialogue')) {
-        sections.add((header: challenge, tasks: []));
-      } else {
-        sections.last.tasks.add(challenge);
-      }
-    }
-    return Column(
-      children: [
-        for (final (:header, :tasks) in sections)
-          Padding(
-            padding: const EdgeInsets.only(bottom: 10),
-            child: Card(
-              clipBehavior: Clip.antiAlias,
-              child: ExpansionTile(
-                initiallyExpanded: header == sections.first.header,
-                tilePadding: const EdgeInsets.symmetric(horizontal: 12),
-                childrenPadding: const EdgeInsets.fromLTRB(12, 0, 12, 12),
-                leading: Icon(
-                  Icons.play_circle_outline,
-                  color: Theme.of(context).colorScheme.tertiary,
-                ),
-                title: Text(
-                  header.title,
-                  style: const TextStyle(
-                    fontSize: 14,
-                    fontWeight: FontWeight.w700,
-                  ),
-                ),
-                subtitle: Text(
-                  '${tasks.where((c) => completed.contains(c.id)).length} of ${countLabel(tasks.length, 'task')}',
-                ),
-                children: [
-                  Align(
-                    alignment: Alignment.centerLeft,
-                    child: TextButton.icon(
-                      onPressed: () =>
-                          _openChallenge(context, block, header.id),
-                      icon: const Icon(Icons.play_arrow),
-                      label: Text(
-                        completed.contains(header.id)
-                            ? 'Watch again'
-                            : 'Watch dialogue',
-                      ),
-                    ),
-                  ),
-                  _StepGrid(
-                    block: block,
-                    challenges: tasks,
-                    completed: completed,
-                  ),
-                ],
-              ),
-            ),
-          ),
-      ],
     );
   }
 }
