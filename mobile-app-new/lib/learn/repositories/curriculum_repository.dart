@@ -1,30 +1,26 @@
 import 'package:dio/dio.dart';
-import 'package:flutter_dotenv/flutter_dotenv.dart';
+import 'package:mobile_app_new/auth/repositories/session_repository.dart';
+import 'package:mobile_app_new/learn/constants/curriculum.dart';
 import 'package:mobile_app_new/services/dio_service.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
 part 'curriculum_repository.g.dart';
 
-const _prodUrl = 'https://www.freecodecamp.org/curriculum-data/v2';
-const _devUrl = 'https://www.freecodecamp.dev/curriculum-data/v2';
-
 @riverpod
 LearnCurriculumRepository learnCurriculumRepository(Ref ref) =>
-    LearnCurriculumRepository(ref.watch(dioProvider));
+    LearnCurriculumRepository(
+      ref.watch(dioProvider),
+      ref.watch(authSessionRepositoryProvider),
+    );
 
 class LearnCurriculumRepository {
-  LearnCurriculumRepository(this._dio);
+  LearnCurriculumRepository(this._dio, this._session);
 
   final Dio _dio;
-
-  String get _baseUrl =>
-      dotenv.getBool('DEVELOPMENT_MODE', fallback: false) ? _devUrl : _prodUrl;
+  final AuthSessionRepository _session;
 
   Future<Map<String, List<Map<String, dynamic>>>> getSuperBlockStages() async {
-    final response = await _dio.get<Map<String, dynamic>>(
-      '$_baseUrl/available-superblocks.json',
-    );
-    final stages = response.data?['superblocks'];
+    final stages = (await _get('available-superblocks.json'))['superblocks'];
 
     return {
       if (stages is Map)
@@ -38,14 +34,43 @@ class LearnCurriculumRepository {
   }
 
   Future<Map<String, dynamic>> getSuperBlock(String dashedName) async {
-    final response = await _dio.get<Map<String, dynamic>>(
-      '$_baseUrl/$dashedName.json',
-    );
-    final superBlock = response.data?.values.firstOrNull;
+    final superBlock = (await _get('$dashedName.json')).values.firstOrNull;
 
     if (superBlock is! Map) {
       throw FormatException('No superblock in $dashedName.json');
     }
     return Map<String, dynamic>.from(superBlock);
   }
+
+  Future<Map<String, dynamic>> getChallenge(
+    String superBlock,
+    String block,
+    String challengeId,
+  ) => _get('challenges/$superBlock/$block/$challengeId.json');
+
+  Future<Map<String, dynamic>> getSubmitTypes() => _get('submit-types.json');
+
+  Future<Map<String, dynamic>> getSceneAssets() => _get('scene-assets.json');
+
+  Future<void> postModernChallengeCompleted(Map<String, dynamic> body) =>
+      _post('/modern-challenge-completed', body);
+
+  Future<void> postProjectCompleted(Map<String, dynamic> body) =>
+      _post('/project-completed', body);
+
+  Future<Map<String, dynamic>> _get(String path) async {
+    final response = await _dio.get<Map<String, dynamic>>(
+      '$curriculumDataUrl/$path',
+    );
+    return response.data!;
+  }
+
+  Future<void> _post(String path, Map<String, dynamic> body) =>
+      _session.authenticated(
+        (options) => _dio.post<void>(
+          '${_session.apiUrl}$path',
+          data: body,
+          options: options,
+        ),
+      );
 }

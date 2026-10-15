@@ -1,6 +1,8 @@
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:mobile_app_new/learn/constants/curriculum.dart';
+import 'package:mobile_app_new/learn/models/challenge_model.dart';
 import 'package:mobile_app_new/learn/models/curriculum_model.dart';
+import 'package:mobile_app_new/learn/models/scene_assets_model.dart';
 import 'package:mobile_app_new/learn/repositories/curriculum_repository.dart';
 import 'package:mobile_app_new/services/remote_config_service.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
@@ -24,7 +26,7 @@ class LearnCurriculumService {
 
   Future<List<CurriculumStage>> getStages(RemoteConfig remoteConfig) async {
     final stages = await _repo.getSuperBlockStages();
-    final showAll = dotenv.getBool('SHOWALLSB', fallback: false);
+    final showAll = dotenv.getBool('SHOW_ALL_SB', fallback: false);
 
     return [
       for (final MapEntry(key: stage, value: title) in stageTitles.entries)
@@ -163,4 +165,27 @@ class LearnCurriculumService {
       block['meta'] as Map<String, dynamic>;
 
   int _order(Map<String, dynamic> block) => _meta(block)['order'] as int? ?? 0;
+
+  Future<Challenge> getChallenge(
+    String superBlock,
+    String block,
+    String challengeId,
+  ) async => Challenge.fromJson(
+    await _repo.getChallenge(superBlock, block, challengeId),
+  );
+
+  Future<SceneAssets> getSceneAssets() async =>
+      SceneAssets.fromJson(await _repo.getSceneAssets());
+
+  Future<void> submit(Challenge challenge, {String? solution}) async {
+    final submitTypes = await _repo.getSubmitTypes();
+    final body = {'id': challenge.id, 'challengeType': challenge.challengeType};
+
+    switch (submitTypes['${challenge.challengeType}']) {
+      case 'tests':
+        await _repo.postModernChallengeCompleted(body);
+      case 'project.backEnd':
+        await _repo.postProjectCompleted({...body, 'solution': solution});
+    }
+  }
 }

@@ -55,4 +55,4 @@ final class LearnCurriculumRepositoryProvider
 }
 
 String _$learnCurriculumRepositoryHash() =>
-    r'c8bbb55b468c9158e97204e26db19a27b238d89d';
+    r'598580d4fbebb08e6b30e961d01b96b3c12f10db';

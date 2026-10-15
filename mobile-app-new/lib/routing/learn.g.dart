@@ -10,6 +10,7 @@ List<RouteBase> get $appRoutes => [
   $learnLandingRoute,
   $learnDailyChallengeArchiveRoute,
   $learnDailyChallengeRoute,
+  $learnSceneFullscreenRoute,
   $learnSuperBlockRoute,
   $learnModuleRoute,
   $learnChallengeRoute,
@@ -98,6 +99,37 @@ mixin $LearnDailyChallengeRoute on GoRouteData {
 
   @override
   void replace(BuildContext context) => context.replace(location);
+}
+
+RouteBase get $learnSceneFullscreenRoute => GoRouteData.$route(
+  path: '/learn/scene-fullscreen',
+  hasOverriddenOnExit: false,
+  factory: $LearnSceneFullscreenRoute._fromState,
+);
+
+mixin $LearnSceneFullscreenRoute on GoRouteData {
+  static LearnSceneFullscreenRoute _fromState(GoRouterState state) =>
+      LearnSceneFullscreenRoute($extra: state.extra as (Scene, String));
+
+  LearnSceneFullscreenRoute get _self => this as LearnSceneFullscreenRoute;
+
+  @override
+  String get location => GoRouteData.$location('/learn/scene-fullscreen');
+
+  @override
+  void go(BuildContext context) => context.go(location, extra: _self.$extra);
+
+  @override
+  Future<T?> push<T>(BuildContext context) =>
+      context.push<T>(location, extra: _self.$extra);
+
+  @override
+  void pushReplacement(BuildContext context) =>
+      context.pushReplacement(location, extra: _self.$extra);
+
+  @override
+  void replace(BuildContext context) =>
+      context.replace(location, extra: _self.$extra);
 }
 
 RouteBase get $learnSuperBlockRoute => GoRouteData.$route(

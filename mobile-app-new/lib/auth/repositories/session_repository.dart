@@ -45,7 +45,7 @@ class AuthSessionRepository {
 
   Stream<void> get sessionExpired => _sessionExpired.stream;
 
-  String get _apiUrl => dotenv.getBool('DEVELOPMENT_MODE', fallback: false)
+  String get apiUrl => dotenv.getBool('DEVELOPMENT_MODE', fallback: false)
       ? 'https://api.freecodecamp.dev'
       : 'https://api.freecodecamp.org';
 
@@ -118,15 +118,15 @@ class AuthSessionRepository {
 
   Future<Response<void>> mobileLogin(String accessToken) {
     return _dio.get<void>(
-      '$_apiUrl/mobile-login',
+      '$apiUrl/mobile-login',
       options: Options(headers: {'Authorization': 'Bearer $accessToken'}),
     );
   }
 
   Future<Map<String, dynamic>?> fetchSessionUser() async {
-    final res = await _authenticated(
+    final res = await authenticated(
       (options) => _dio.get<Map<String, dynamic>>(
-        '$_apiUrl/user/session-user',
+        '$apiUrl/user/session-user',
         options: options,
       ),
     );
@@ -140,13 +140,13 @@ class AuthSessionRepository {
   }
 
   Future<void> deleteAccount() async {
-    await _authenticated(
-      (options) => _dio.post<void>('$_apiUrl/account/delete', options: options),
+    await authenticated(
+      (options) => _dio.post<void>('$apiUrl/account/delete', options: options),
     );
   }
 
   // NOTE: Every call carrying the session goes through here, so any 401 signs the user out.
-  Future<T> _authenticated<T>(Future<T> Function(Options) request) async {
+  Future<T> authenticated<T>(Future<T> Function(Options) request) async {
     final tokens = await readTokens();
     if (tokens == null) throw SessionExpiredException();
 

@@ -1,3 +1,11 @@
+import 'package:flutter_dotenv/flutter_dotenv.dart';
+
+const _prodUrl = 'https://www.freecodecamp.org/curriculum-data/v2';
+const _devUrl = 'https://www.freecodecamp.dev/curriculum-data/v2';
+
+String get curriculumDataUrl =>
+    dotenv.getBool('DEVELOPMENT_MODE', fallback: false) ? _devUrl : _prodUrl;
+
 const chapterBasedSuperBlocks = [
   'responsive-web-design-v9',
   'javascript-v9',

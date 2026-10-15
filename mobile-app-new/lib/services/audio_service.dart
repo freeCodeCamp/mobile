@@ -31,6 +31,12 @@ class PodcastAudioConfig extends AudioTypeConfig {
   final String episodeId;
 }
 
+class CurriculumAudioConfig extends AudioTypeConfig {
+  const CurriculumAudioConfig(this.clipId);
+
+  final String clipId;
+}
+
 // NOTE: The handler is created before runApp and injected, so reading
 // this without that override is a wiring mistake rather than a lazy init.
 @Riverpod(keepAlive: true)
@@ -79,6 +85,11 @@ class AudioPlayerHandler extends BaseAudioHandler {
 
   String? get episodeId => switch (_audioConfig) {
     PodcastAudioConfig(:final episodeId) => episodeId,
+    _ => null,
+  };
+
+  String? get curriculumClipId => switch (_audioConfig) {
+    CurriculumAudioConfig(:final clipId) => clipId,
     _ => null,
   };
 
@@ -173,7 +184,7 @@ class AudioPlayerHandler extends BaseAudioHandler {
       _audioConfig = const CodeRadioAudioConfig();
 
       await _audioPlayer.setSpeed(_defaultSpeed);
-      await _audioPlayer.setAudioSource(AudioSource.uri(url, tag: song));
+      await _audioPlayer.setAudioSource(AudioSource.uri(url));
 
       _publish(song);
     } catch (e) {
@@ -186,12 +197,10 @@ class AudioPlayerHandler extends BaseAudioHandler {
 
   Future<void> _rejoinCodeRadioLiveEdge() async {
     final url = _codeRadioUrl;
-    final song = mediaItem.value;
-
-    if (url == null || song == null) return;
+    if (url == null) return;
 
     try {
-      await _audioPlayer.setAudioSource(AudioSource.uri(url, tag: song));
+      await _audioPlayer.setAudioSource(AudioSource.uri(url));
     } catch (e) {
       log('rejoinCodeRadioLiveEdge: Cannot reconnect: $e');
     }
@@ -218,7 +227,7 @@ class AudioPlayerHandler extends BaseAudioHandler {
 
     try {
       await _audioPlayer.setSpeed(_defaultSpeed);
-      await _audioPlayer.setAudioSource(AudioSource.uri(source, tag: item));
+      await _audioPlayer.setAudioSource(AudioSource.uri(source));
 
       if (startAt != null && startAt > Duration.zero) {
         await _audioPlayer.seek(startAt);
@@ -228,6 +237,38 @@ class AudioPlayerHandler extends BaseAudioHandler {
       return true;
     } catch (e) {
       log('loadEpisode: Cannot play audio: $e');
+      await stop();
+      return false;
+    }
+  }
+
+  Future<bool> loadCurriculumAudio(
+    Uri source, {
+    required String clipId,
+    required String title,
+    Duration start = Duration.zero,
+    Duration? end,
+  }) async {
+    final item = MediaItem(id: clipId, title: title, album: 'freeCodeCamp');
+
+    _codeRadioUrl = null;
+    _resumeNeedsLiveEdge = false;
+    _audioConfig = CurriculumAudioConfig(clipId);
+
+    try {
+      await _audioPlayer.setSpeed(_defaultSpeed);
+      await _audioPlayer.setAudioSource(
+        ClippingAudioSource(
+          start: start,
+          end: end,
+          child: AudioSource.uri(source),
+        ),
+      );
+
+      _publish(item);
+      return true;
+    } catch (e) {
+      log('loadCurriculumAudio: Cannot play audio: $e');
       await stop();
       return false;
     }
@@ -260,7 +301,7 @@ class AudioPlayerHandler extends BaseAudioHandler {
         systemActions: const {MediaAction.seek},
         compactIndices: const [0, 1, 2],
       ),
-      CodeRadioAudioConfig() || null => (
+      CodeRadioAudioConfig() || CurriculumAudioConfig() || null => (
         controls: [playPause, MediaControl.stop],
         systemActions: const <MediaAction>{},
         compactIndices: const [0, 1],

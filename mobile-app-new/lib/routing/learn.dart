@@ -1,9 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:mobile_app_new/learn/ui/challenge/challenge_placeholder_view.dart';
+import 'package:mobile_app_new/learn/ui/challenge/challenge_view.dart';
+import 'package:mobile_app_new/learn/models/challenge_model.dart';
 import 'package:mobile_app_new/learn/ui/daily_challenge_archive/daily_challenge_archive_view.dart';
 import 'package:mobile_app_new/learn/ui/landing/landing_view.dart';
 import 'package:mobile_app_new/learn/ui/module/module_view.dart';
+import 'package:mobile_app_new/learn/ui/scene_fullscreen/scene_fullscreen_view.dart';
 import 'package:mobile_app_new/learn/ui/superblock/superblock_view.dart';
 
 part 'learn.g.dart';
@@ -11,6 +14,7 @@ part 'learn.g.dart';
 const learnLandingPath = '/learn';
 const learnDailyChallengeArchivePath = '/learn/daily-challenges';
 const learnDailyChallengePath = '/learn/daily-challenges/:day';
+const learnSceneFullscreenPath = '/learn/scene-fullscreen';
 const learnSuperBlockPath = '/learn/:superBlock';
 const learnModulePath = '/learn/:superBlock/:module';
 const learnChallengePath = '/learn/:superBlock/:block/:challengeId';
@@ -50,6 +54,24 @@ class LearnDailyChallengeRoute extends GoRouteData
       ChallengePlaceholderView(details: 'Daily challenge $day');
 }
 
+@TypedGoRoute<LearnSceneFullscreenRoute>(path: learnSceneFullscreenPath)
+class LearnSceneFullscreenRoute extends GoRouteData
+    with $LearnSceneFullscreenRoute {
+  const LearnSceneFullscreenRoute({required this.$extra});
+
+  final (Scene, String) $extra;
+
+  @override
+  Page<void> buildPage(BuildContext context, GoRouterState state) =>
+      CustomTransitionPage<void>(
+        key: state.pageKey,
+        opaque: false,
+        child: SceneFullscreenView(scene: $extra.$1, title: $extra.$2),
+        transitionsBuilder: (_, animation, _, child) =>
+            FadeTransition(opacity: animation, child: child),
+      );
+}
+
 @TypedGoRoute<LearnSuperBlockRoute>(path: learnSuperBlockPath)
 class LearnSuperBlockRoute extends GoRouteData with $LearnSuperBlockRoute {
   const LearnSuperBlockRoute({required this.superBlock});
@@ -73,7 +95,6 @@ class LearnModuleRoute extends GoRouteData with $LearnModuleRoute {
       ModuleView(superBlock: superBlock, module: module);
 }
 
-// TODO: Iterations 3 and 4 replace the placeholder with the challenge views.
 @TypedGoRoute<LearnChallengeRoute>(path: learnChallengePath)
 class LearnChallengeRoute extends GoRouteData with $LearnChallengeRoute {
   const LearnChallengeRoute({
@@ -87,6 +108,9 @@ class LearnChallengeRoute extends GoRouteData with $LearnChallengeRoute {
   final String challengeId;
 
   @override
-  Widget build(BuildContext context, GoRouterState state) =>
-      ChallengePlaceholderView(details: '$superBlock/$block/$challengeId');
+  Widget build(BuildContext context, GoRouterState state) => ChallengeView(
+    superBlock: superBlock,
+    block: block,
+    challengeId: challengeId,
+  );
 }
