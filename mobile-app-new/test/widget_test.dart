@@ -207,9 +207,10 @@ Future<GoRouter> _pump(
   bool dark = false,
   double scale = 1,
   double width = 390,
+  double height = 844,
 }) async {
   tester.view.devicePixelRatio = 1;
-  tester.view.physicalSize = Size(width, 844);
+  tester.view.physicalSize = Size(width, height);
   addTearDown(tester.view.resetPhysicalSize);
   addTearDown(tester.view.resetDevicePixelRatio);
   final router = GoRouter(
@@ -406,5 +407,24 @@ void main() {
         expect(tester.takeException(), isNull);
       }
     });
+  }
+  for (final size in [const Size(320, 844), const Size(844, 390)]) {
+    testWidgets(
+      'Tutorials scroll to readable content at 200 percent in $size',
+      (tester) async {
+        await _pump(
+          tester,
+          '/news',
+          width: size.width,
+          height: size.height,
+          scale: 2,
+        );
+        expect(tester.takeException(), isNull);
+        await tester.ensureVisible(find.text(_posts.first.title));
+        await tester.pumpAndSettle();
+        expect(find.text(_posts.first.title).hitTestable(), findsOneWidget);
+        expect(tester.takeException(), isNull);
+      },
+    );
   }
 }

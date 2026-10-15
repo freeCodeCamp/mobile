@@ -120,7 +120,7 @@ void main() {
       await tester.pumpAndSettle();
 
       expect(find.text(_episode.title), findsOneWidget);
-      expect(find.text(_podcast.title), findsOneWidget);
+      expect(find.text('0:30 of 2:00'), findsOneWidget);
       expect(
         tester
             .widget<LinearProgressIndicator>(

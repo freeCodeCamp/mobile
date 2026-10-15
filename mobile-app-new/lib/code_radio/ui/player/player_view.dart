@@ -8,7 +8,8 @@ import 'package:mobile_app_new/code_radio/ui/player/player_viewmodel.dart';
 import 'package:mobile_app_new/widgets/app_bottom_navigation.dart';
 import 'package:mobile_app_new/widgets/error_retry.dart';
 import 'package:mobile_app_new/widgets/listen_tabs.dart';
-import 'package:mobile_app_new/widgets/mini_player.dart';
+import 'package:mobile_app_new/widgets/app_page_title.dart';
+import 'package:mobile_app_new/fcc_theme.dart';
 
 class CodeRadioPlayerView extends ConsumerWidget {
   const CodeRadioPlayerView({super.key});
@@ -18,41 +19,41 @@ class CodeRadioPlayerView extends ConsumerWidget {
     final nowPlaying = ref.watch(codeRadioNowPlayingProvider);
 
     return Scaffold(
-      appBar: AppBar(
-        automaticallyImplyLeading: false,
-        centerTitle: false,
-        toolbarHeight: 80,
-        title: const Text(
-          'Listen',
-          style: TextStyle(fontSize: 34, fontWeight: FontWeight.w700),
-        ),
-      ),
-      body: Column(
-        children: [
-          const Padding(
-            padding: EdgeInsets.fromLTRB(16, 8, 16, 0),
-            child: ListenTabs(isRadio: true),
+      body: CustomScrollView(
+        slivers: [
+          SliverAppBar(
+            automaticallyImplyLeading: false,
+            centerTitle: false,
+            toolbarHeight: AppPageTitle.toolbarHeight(context),
+            title: const AppPageTitle('Listen'),
           ),
-          Expanded(
-            child: switch (nowPlaying) {
-              AsyncData(:final value) => _Player(radio: value),
-              AsyncError() => ErrorRetry(
+          const SliverToBoxAdapter(
+            child: Padding(
+              padding: EdgeInsets.fromLTRB(16, 8, 16, 0),
+              child: ListenTabs(isRadio: true),
+            ),
+          ),
+          switch (nowPlaying) {
+            AsyncData(:final value) => SliverToBoxAdapter(
+              child: _Player(radio: value),
+            ),
+            AsyncError() => SliverFillRemaining(
+              hasScrollBody: false,
+              child: ErrorRetry(
                 message: 'Unable to load Code Radio.\nPlease try again.',
                 onRetry: () => ref.invalidate(codeRadioNowPlayingProvider),
               ),
-              AsyncLoading() => const Center(
-                child: CircularProgressIndicator(),
-              ),
-            },
-          ),
+            ),
+            AsyncLoading() => const SliverFillRemaining(
+              hasScrollBody: false,
+              child: Center(child: CircularProgressIndicator()),
+            ),
+          },
         ],
       ),
-      bottomNavigationBar: const Column(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          MiniPlayer(),
-          AppBottomNavigation(selected: AppDestination.listen),
-        ],
+      bottomNavigationBar: const AppNavigationFooter(
+        selected: AppDestination.listen,
+        hideRadioPlayer: true,
       ),
     );
   }
@@ -65,7 +66,7 @@ class _Player extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return SingleChildScrollView(
+    return Padding(
       padding: const EdgeInsets.fromLTRB(16, 24, 16, 24),
       child: Center(
         child: ConstrainedBox(
@@ -147,7 +148,11 @@ class CodeRadioNowPlaying extends StatelessWidget {
               '${radio.nowPlaying.song.artist} ·',
               style: TextStyle(color: colors.onSurfaceVariant),
             ),
-            const Icon(Icons.circle, color: Color(0xFF198754), size: 8),
+            Icon(
+              Icons.circle,
+              color: FccDesignColors.of(context).success,
+              size: 8,
+            ),
             Text(
               'Live · ${radio.listeners.total} listening',
               style: TextStyle(color: colors.onSurfaceVariant),
@@ -276,11 +281,36 @@ class CodeRadioNextSong extends StatelessWidget {
   }
 }
 
-class CodeRadioPlayPauseButton extends ConsumerWidget {
+class CodeRadioPlayPauseButton extends ConsumerStatefulWidget {
   const CodeRadioPlayPauseButton({super.key});
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
+  ConsumerState<CodeRadioPlayPauseButton> createState() =>
+      _CodeRadioPlayPauseButtonState();
+}
+
+class _CodeRadioPlayPauseButtonState
+    extends ConsumerState<CodeRadioPlayPauseButton> {
+  bool _busy = false;
+  Future<void> _toggle() async {
+    setState(() => _busy = true);
+    try {
+      await ref.read(codeRadioPlayerProvider.notifier).toggle();
+    } catch (_) {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text('Could not play Code Radio. Please try again.'),
+          ),
+        );
+      }
+    } finally {
+      if (mounted) setState(() => _busy = false);
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
     final colors = Theme.of(context).colorScheme;
     final isPlaying = ref.watch(codeRadioPlayerProvider);
 
@@ -297,7 +327,7 @@ class CodeRadioPlayPauseButton extends ConsumerWidget {
       ),
       child: IconButton.filled(
         tooltip: isPlaying ? 'Pause Code Radio' : 'Play Code Radio',
-        onPressed: () => ref.read(codeRadioPlayerProvider.notifier).toggle(),
+        onPressed: _busy ? null : _toggle,
         style: IconButton.styleFrom(
           backgroundColor: colors.secondary,
           foregroundColor: colors.onSecondary,

@@ -249,7 +249,16 @@ class HTMLParser {
             return Padding(
               padding: const EdgeInsets.all(8.0),
               child: InkWell(
-                onTap: () => NewsImageRoute($extra: imgUrl).push(context),
+                onTap: () => NewsImageRoute(
+                  $extra: imgUrl,
+                  alt: child.attributes['alt'],
+                  caption: child.element?.parent?.localName == 'figure'
+                      ? child.element?.parent
+                            ?.querySelector('figcaption')
+                            ?.text
+                            .trim()
+                      : child.attributes['title'],
+                ).push(context),
                 child: isDataUrl
                     ? Image.memory(base64Decode(imgUrl.split(',').last))
                     : CachedNetworkImage(imageUrl: imgUrl),

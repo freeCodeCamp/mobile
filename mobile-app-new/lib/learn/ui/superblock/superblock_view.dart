@@ -1,3 +1,5 @@
+import 'package:mobile_app_new/learn/ui/widgets/learning_website.dart';
+import 'package:mobile_app_new/widgets/app_bottom_navigation.dart';
 import 'dart:async';
 
 import 'package:collection/collection.dart';
@@ -41,6 +43,9 @@ class _SuperBlockViewState extends ConsumerState<SuperBlockView> {
       ),
     );
     return Scaffold(
+      bottomNavigationBar: const AppNavigationFooter(
+        selected: AppDestination.learn,
+      ),
       appBar: AppBar(title: const Text('Learn')),
       body: superBlock.when(
         loading: () => const Center(child: CircularProgressIndicator()),
@@ -60,9 +65,7 @@ class _SuperBlockViewState extends ConsumerState<SuperBlockView> {
             ChapterSuperBlock(:final chapters) => _Chapters(
               title: title ?? 'Course',
               superBlock: widget.dashedName,
-              chapters: chapters
-                  .where((c) => !hiddenExamChapters.contains(c.dashedName))
-                  .toList(),
+              chapters: chapters,
             ),
           },
         ),
@@ -89,6 +92,12 @@ class _Chapters extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    final exams = this.chapters
+        .where((c) => hiddenExamChapters.contains(c.dashedName))
+        .toList();
+    final chapters = this.chapters
+        .where((c) => !hiddenExamChapters.contains(c.dashedName))
+        .toList();
     final completed = ref.watch(
       authProvider.select(
         (s) => {...?s.value?.completedChallenges.map((c) => c.id)},
@@ -130,6 +139,42 @@ class _Chapters extends ConsumerWidget {
             number: index + 1,
             active: chapter == active,
             isLocked: _locked(chapter),
+          ),
+        for (final exam in exams)
+          Card(
+            margin: const EdgeInsets.only(top: 8, bottom: 12),
+            child: Padding(
+              padding: const EdgeInsets.all(18),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.stretch,
+                children: [
+                  const LearnEyebrow('Finish line'),
+                  const SizedBox(height: 8),
+                  Text(
+                    'Certification Exam',
+                    style: Theme.of(context).textTheme.titleLarge,
+                  ),
+                  const SizedBox(height: 8),
+                  Text(
+                    _locked(exam)
+                        ? 'This exam is coming soon.'
+                        : 'Complete the exam on freeCodeCamp.org to earn your certification.',
+                  ),
+                  const SizedBox(height: 12),
+                  OutlinedButton.icon(
+                    onPressed: _locked(exam)
+                        ? null
+                        : () => openLearningWebsite(
+                            context,
+                            superBlock,
+                            chapter: exam.dashedName,
+                          ),
+                    icon: const Icon(Icons.open_in_new, size: 18),
+                    label: const Text('Open exam on website'),
+                  ),
+                ],
+              ),
+            ),
           ),
       ],
     );

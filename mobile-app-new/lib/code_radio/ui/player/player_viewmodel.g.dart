@@ -110,7 +110,7 @@ final class CodeRadioPlayerNotifierProvider
 }
 
 String _$codeRadioPlayerNotifierHash() =>
-    r'41ace83c0a8ae9b84787322877e033e2a8ef8545';
+    r'59fd398f9e0ce56c771f53653143fc4ff054dc13';
 
 abstract class _$CodeRadioPlayerNotifier extends $Notifier<bool> {
   bool build();

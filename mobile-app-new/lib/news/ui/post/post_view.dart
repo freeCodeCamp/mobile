@@ -84,6 +84,7 @@ class NewsPostHeader extends StatelessWidget {
                   ? null
                   : () => NewsImageRoute(
                       $extra: post.coverImage!.url!,
+                      alt: post.title,
                     ).push(context),
               child: NewsImage(url: post.coverImage?.url),
             ),

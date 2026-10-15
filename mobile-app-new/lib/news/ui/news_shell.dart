@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:mobile_app_new/routing/news.dart';
 import 'package:mobile_app_new/widgets/app_bottom_navigation.dart';
-import 'package:mobile_app_new/widgets/mini_player.dart';
+import 'package:mobile_app_new/widgets/app_page_title.dart';
 
 class NewsShell extends StatelessWidget {
   const NewsShell({super.key, required this.child});
@@ -24,14 +24,10 @@ class NewsShell extends StatelessWidget {
               leading: isSaved
                   ? BackButton(onPressed: () => context.go(newsFeedPath))
                   : null,
-              title: Text(
-                isSaved ? 'Saved tutorials' : 'Tutorials',
-                style: TextStyle(
-                  fontSize: isSaved ? 20 : 32,
-                  fontWeight: FontWeight.w800,
-                ),
-              ),
-              toolbarHeight: isSaved ? 64 : 80,
+              title: isSaved
+                  ? const Text('Saved tutorials')
+                  : const AppPageTitle('Tutorials'),
+              toolbarHeight: isSaved ? 64 : AppPageTitle.toolbarHeight(context),
               actions: isSaved
                   ? null
                   : [
@@ -54,12 +50,8 @@ class NewsShell extends StatelessWidget {
                     ],
             ),
       body: SafeArea(top: isSearch, bottom: false, child: child),
-      bottomNavigationBar: const Column(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          MiniPlayer(),
-          AppBottomNavigation(selected: AppDestination.tutorials),
-        ],
+      bottomNavigationBar: const AppNavigationFooter(
+        selected: AppDestination.tutorials,
       ),
     );
   }

@@ -14,8 +14,55 @@ class DailyChallengeCard extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final challenge = ref.watch(dailyChallengeTodayProvider).value;
-    if (challenge == null) return const SizedBox.shrink();
+    final today = ref.watch(dailyChallengeTodayProvider);
+    final challenge = today.value;
+    if (challenge == null) {
+      final design = FccDesignColors.of(context);
+      return Container(
+        margin: const EdgeInsets.only(top: 12),
+        padding: const EdgeInsets.all(16),
+        decoration: BoxDecoration(
+          color: design.donate,
+          borderRadius: BorderRadius.circular(18),
+        ),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: [
+            Text(
+              'Daily challenge',
+              style: Theme.of(context).textTheme.titleMedium,
+            ),
+            const SizedBox(height: 12),
+            if (today.hasError) ...[
+              const Text('Could not load today’s challenge.'),
+              const SizedBox(height: 8),
+              Wrap(
+                spacing: 8,
+                children: [
+                  OutlinedButton(
+                    onPressed: () =>
+                        ref.invalidate(dailyChallengeTodayProvider),
+                    child: const Text('Try again'),
+                  ),
+                  if (showArchiveLink)
+                    TextButton(
+                      onPressed: () => const LearnDailyChallengeArchiveRoute()
+                          .push<void>(context),
+                      child: const Text('Past challenges'),
+                    ),
+                ],
+              ),
+            ] else ...[
+              const Text('Loading today’s challenge…'),
+              const SizedBox(height: 12),
+              const LinearProgressIndicator(
+                semanticsLabel: 'Loading daily challenge',
+              ),
+            ],
+          ],
+        ),
+      );
+    }
     final colors = Theme.of(context).colorScheme;
     final design = FccDesignColors.of(context);
     final isCompleted = ref.watch(
@@ -77,8 +124,23 @@ class DailyChallengeCard extends ConsumerWidget {
             children: [
               FilledButton(
                 style: FilledButton.styleFrom(
-                  backgroundColor: colors.onSurface,
-                  foregroundColor: colors.surface,
+                  backgroundColor:
+                      Theme.of(context).brightness == Brightness.light
+                      ? colors.onSurface
+                      : showArchiveLink
+                      ? Colors.transparent
+                      : design.onDonate,
+                  foregroundColor:
+                      Theme.of(context).brightness == Brightness.light
+                      ? colors.surface
+                      : showArchiveLink
+                      ? design.onDonate
+                      : design.donate,
+                  side: BorderSide(
+                    color: Theme.of(context).brightness == Brightness.light
+                        ? colors.onSurface
+                        : design.onDonate,
+                  ),
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(10),
                   ),

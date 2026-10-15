@@ -9,6 +9,7 @@ class SuperBlockButton extends StatelessWidget {
     this.icon,
     this.svgAsset,
     this.isEnabled = true,
+    this.isExternal = false,
     this.subtitle,
     this.color,
   });
@@ -17,6 +18,7 @@ class SuperBlockButton extends StatelessWidget {
   final IconData? icon;
   final String? svgAsset;
   final bool isEnabled;
+  final bool isExternal;
   final String? subtitle;
   final Color? color;
 
@@ -78,7 +80,11 @@ class SuperBlockButton extends StatelessWidget {
             ),
             const SizedBox(width: 8),
             Icon(
-              isEnabled ? Icons.chevron_right : Icons.info_outline,
+              isExternal
+                  ? Icons.open_in_new
+                  : isEnabled
+                  ? Icons.chevron_right
+                  : Icons.info_outline,
               size: 18,
               color: colors.onSurfaceVariant,
             ),

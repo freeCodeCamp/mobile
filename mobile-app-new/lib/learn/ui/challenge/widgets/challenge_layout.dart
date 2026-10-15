@@ -7,14 +7,18 @@ AppBar challengeAppBar(
   List<Widget>? actions,
   Widget? leading,
 }) => AppBar(
-  toolbarHeight: 28 + MediaQuery.textScalerOf(context).scale(52),
+  toolbarHeight:
+      28 +
+      MediaQuery.textScalerOf(
+        context,
+      ).scale(MediaQuery.sizeOf(context).height < 500 ? 30 : 52),
   leading: leading,
   title: Column(
     crossAxisAlignment: CrossAxisAlignment.start,
     children: [
       Text(
         title,
-        maxLines: 2,
+        maxLines: MediaQuery.sizeOf(context).height < 500 ? 1 : 2,
         overflow: TextOverflow.ellipsis,
         style: const TextStyle(fontSize: 18, fontWeight: FontWeight.w800),
       ),
@@ -37,16 +41,23 @@ class ChallengeFooter extends StatelessWidget {
   const ChallengeFooter({super.key, required this.child});
   final Widget child;
   @override
-  Widget build(BuildContext context) => Container(
-    decoration: BoxDecoration(
+  Widget build(BuildContext context) => Padding(
+    padding: EdgeInsets.only(bottom: MediaQuery.viewInsetsOf(context).bottom),
+    child: Material(
       color: Theme.of(context).scaffoldBackgroundColor,
-      border: Border(
-        top: BorderSide(color: Theme.of(context).colorScheme.outlineVariant),
+      child: Container(
+        decoration: BoxDecoration(
+          border: Border(
+            top: BorderSide(
+              color: Theme.of(context).colorScheme.outlineVariant,
+            ),
+          ),
+        ),
+        child: SafeArea(
+          top: false,
+          child: Padding(padding: const EdgeInsets.all(16), child: child),
+        ),
       ),
-    ),
-    child: SafeArea(
-      top: false,
-      child: Padding(padding: const EdgeInsets.all(16), child: child),
     ),
   );
 }

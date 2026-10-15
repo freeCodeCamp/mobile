@@ -1,3 +1,4 @@
+import 'package:mobile_app_new/widgets/app_bottom_navigation.dart';
 import 'package:collection/collection.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -25,6 +26,9 @@ class ModuleView extends ConsumerWidget {
       ),
     );
     return Scaffold(
+      bottomNavigationBar: const AppNavigationFooter(
+        selected: AppDestination.learn,
+      ),
       appBar: AppBar(title: Text(courseTitle ?? 'Course')),
       body: curriculum.when(
         loading: () => const Center(child: CircularProgressIndicator()),

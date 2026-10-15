@@ -20,10 +20,18 @@ NewsBookmarkRepository newsBookmarkRepository(Ref ref) {
 
 class NewsBookmarkRepository {
   File? _file;
+  int _resetGeneration = 0;
+  int get resetGeneration => _resetGeneration;
 
   Future<File> _resolveFile() async {
     final baseDir = await getApplicationDocumentsDirectory();
     return _file ??= File(path.join(baseDir.path, 'storage', _fileName));
+  }
+
+  /// Reset is serialized with saves so a pending file write cannot restore data.
+  Future<void> clearForReset() {
+    _resetGeneration++;
+    return _serialized(() => _write([]));
   }
 
   Future<List<BookmarkEntry>> readBookmarks() => _serialized(_read);

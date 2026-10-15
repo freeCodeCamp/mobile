@@ -5,7 +5,7 @@ import 'package:mobile_app_new/fcc_theme.dart';
 import 'package:mobile_app_new/learn/models/challenge_model.dart';
 import 'package:mobile_app_new/learn/models/curriculum_model.dart';
 import 'package:mobile_app_new/learn/ui/challenge/widgets/challenge_button.dart';
-import 'package:mobile_app_new/learn/ui/challenge/widgets/challenge_card.dart';
+import 'package:flutter_html/flutter_html.dart';
 import 'package:mobile_app_new/learn/ui/challenge/widgets/html_card.dart';
 import 'package:mobile_app_new/learn/ui/challenge/widgets/challenge_layout.dart';
 import 'package:mobile_app_new/learn/ui/challenge/widgets/complete_button.dart';
@@ -51,7 +51,7 @@ class _QuizViewState extends State<QuizView> {
   static const _passRate = .9;
   late final _questions = _pickQuestions(widget.challenge.quizzes);
   late List<int?> _selected = List.filled(_questions.length, null);
-  final _scroll = ScrollController();
+  final _scroll = ScrollController(keepScrollOffset: false);
   int _current = 0;
   bool _validated = false;
   int get _correct =>
@@ -66,7 +66,12 @@ class _QuizViewState extends State<QuizView> {
   }
 
   void _top() {
-    if (_scroll.hasClients) _scroll.jumpTo(0);
+    // Changing questions or replacing the quiz with its results can change
+    // sliver geometry. Reset after that layout so scroll correction cannot
+    // leave the score or the next question above the viewport.
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (mounted && _scroll.hasClients) _scroll.jumpTo(0);
+    });
   }
 
   void _show(int index) {
@@ -217,6 +222,7 @@ class _QuizViewState extends State<QuizView> {
                 ),
               Expanded(
                 child: ListView(
+                  key: ValueKey((_validated, _current)),
                   controller: _scroll,
                   padding: const EdgeInsets.all(16),
                   children: [
@@ -363,49 +369,102 @@ class _QuizViewState extends State<QuizView> {
         style: Theme.of(context).textTheme.titleLarge,
       ),
       const SizedBox(height: 16),
-      for (final (i, q) in _questions.indexed)
-        ChallengeCard(
-          title: '',
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Row(
-                children: [
-                  Icon(
-                    _selected[i] == q.solution
-                        ? Icons.check_circle_outline
-                        : Icons.cancel_outlined,
-                    color: _selected[i] == q.solution ? success : colors.error,
-                    size: 20,
-                  ),
-                  const SizedBox(width: 8),
-                  Text(
-                    'Question ${i + 1}',
-                    style: const TextStyle(fontWeight: FontWeight.w700),
-                  ),
-                ],
-              ),
-              const SizedBox(height: 8),
-              ParsedHtml(q.text),
-              Text(
-                'Your answer',
-                style: TextStyle(color: colors.onSurfaceVariant, fontSize: 12),
-              ),
-              ParsedHtml(q.answers[_selected[i]!].answer),
-              if (_selected[i] != q.solution) ...[
-                Text(
-                  'Correct answer',
-                  style: TextStyle(
-                    color: success,
-                    fontSize: 12,
-                    fontWeight: FontWeight.w700,
-                  ),
+      Card(
+        clipBehavior: Clip.antiAlias,
+        child: Column(
+          children: [
+            for (final (i, q) in _questions.indexed) ...[
+              if (i > 0) const Divider(height: 1),
+              Padding(
+                padding: const EdgeInsets.all(14),
+                child: Row(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Semantics(
+                      label: _selected[i] == q.solution
+                          ? 'Correct answer'
+                          : 'Incorrect answer',
+                      child: CircleAvatar(
+                        radius: 13,
+                        backgroundColor: _selected[i] == q.solution
+                            ? success
+                            : colors.error,
+                        child: Icon(
+                          _selected[i] == q.solution
+                              ? Icons.check
+                              : Icons.close,
+                          color: Theme.of(context).brightness == Brightness.dark
+                              ? colors.surface
+                              : Colors.white,
+                          size: 17,
+                        ),
+                      ),
+                    ),
+                    const SizedBox(width: 12),
+                    Expanded(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            'Question ${i + 1}',
+                            style: TextStyle(
+                              fontFamily: 'monospace',
+                              fontSize: 12,
+                              color: colors.onSurfaceVariant,
+                            ),
+                          ),
+                          const SizedBox(height: 4),
+                          _resultHtml(q.text),
+                          if (_selected[i] != q.solution) ...[
+                            const SizedBox(height: 8),
+                            Text(
+                              'Your answer',
+                              style: TextStyle(
+                                color: colors.error,
+                                fontSize: 13,
+                              ),
+                            ),
+                            _resultHtml(
+                              q.answers[_selected[i]!].answer,
+                              color: colors.error,
+                            ),
+                            const SizedBox(height: 4),
+                            Text(
+                              'Correct answer',
+                              style: TextStyle(
+                                color: success,
+                                fontSize: 13,
+                                fontWeight: FontWeight.w700,
+                              ),
+                            ),
+                            _resultHtml(
+                              q.answers[q.solution].answer,
+                              color: success,
+                            ),
+                          ],
+                        ],
+                      ),
+                    ),
+                  ],
                 ),
-                ParsedHtml(q.answers[q.solution].answer),
-              ],
+              ),
             ],
-          ),
+          ],
         ),
+      ),
     ];
   }
+
+  Widget _resultHtml(String html, {Color? color}) => ParsedHtml(
+    html,
+    customStyles: {
+      '*': Style(
+        color: color,
+        fontSize: FontSize(15),
+        lineHeight: const LineHeight(1.4),
+      ),
+      'p': Style(margin: Margins.zero),
+      'div': Style(margin: Margins.zero),
+    },
+  );
 }

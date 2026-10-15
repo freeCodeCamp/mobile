@@ -86,22 +86,22 @@ class MiniPlayer extends ConsumerWidget {
                                     ),
                                   ),
                                   const SizedBox(height: 2),
-                                  Text(
-                                    isRadio
-                                        ? [
-                                            item.title,
-                                            if (item.artist?.isNotEmpty ??
-                                                false)
-                                              item.artist!,
-                                          ].join(' · ')
-                                        : item.album ?? 'Podcast',
-                                    maxLines: 1,
-                                    overflow: TextOverflow.ellipsis,
-                                    style: TextStyle(
-                                      color: colors.onSurfaceVariant,
-                                      fontSize: 12,
-                                    ),
-                                  ),
+                                  if (isRadio)
+                                    Text(
+                                      [
+                                        item.title,
+                                        if (item.artist?.isNotEmpty ?? false)
+                                          item.artist!,
+                                      ].join(' · '),
+                                      maxLines: 1,
+                                      overflow: TextOverflow.ellipsis,
+                                      style: TextStyle(
+                                        color: colors.onSurfaceVariant,
+                                        fontSize: 12,
+                                      ),
+                                    )
+                                  else
+                                    _PodcastTime(handler: handler, item: item),
                                 ],
                               ),
                             ),
@@ -247,5 +247,45 @@ class _MiniProgress extends ConsumerWidget {
       backgroundColor: colors.outlineVariant,
       semanticsLabel: isRadio ? 'Live song progress' : 'Episode progress',
     );
+  }
+}
+
+class _PodcastTime extends StatelessWidget {
+  const _PodcastTime({required this.handler, required this.item});
+  final AudioPlayerHandler handler;
+  final MediaItem item;
+
+  @override
+  Widget build(BuildContext context) => StreamBuilder<Duration>(
+    stream: handler.positionStream,
+    initialData: handler.playbackState.value.position,
+    builder: (context, snapshot) {
+      final duration = handler.duration ?? item.duration;
+      var position = snapshot.data ?? Duration.zero;
+      if (position.isNegative) position = Duration.zero;
+      if (duration != null && duration > Duration.zero && position > duration) {
+        position = duration;
+      }
+      final text = duration != null && duration > Duration.zero
+          ? '${_clock(position)} of ${_clock(duration)}'
+          : _clock(position);
+      return Text(
+        text,
+        maxLines: 1,
+        overflow: TextOverflow.ellipsis,
+        style: TextStyle(
+          color: Theme.of(context).colorScheme.onSurfaceVariant,
+          fontSize: 12,
+        ),
+      );
+    },
+  );
+
+  String _clock(Duration duration) {
+    final seconds = (duration.inSeconds % 60).toString().padLeft(2, '0');
+    if (duration.inHours > 0) {
+      return '${duration.inHours}:${(duration.inMinutes % 60).toString().padLeft(2, '0')}:$seconds';
+    }
+    return '${duration.inMinutes}:$seconds';
   }
 }

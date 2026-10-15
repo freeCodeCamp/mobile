@@ -11,7 +11,7 @@ const _forum = 'https://forum.freecodecamp.org';
 const _readSearchAsk =
     '$_forum/t/how-to-get-help-when-you-are-stuck-coding/19514';
 const _minDescription = 50;
-// Above this the forum rejects the URL, so use a shorter post template.
+// Keep the draft editable when the encoded URL exceeds the forum limit.
 const _maxUrlLength = 8000;
 
 Future<void> showHelpDialog(
@@ -32,16 +32,15 @@ Future<void> showHelpDialog(
   );
   if (proceed != true || !context.mounted) return;
 
-  final description = await showDialog<String>(
+  await showDialog<void>(
     context: context,
     useSafeArea: false,
     barrierDismissible: false,
-    builder: (context) => _CreatePostDialog(search: search),
+    builder: (context) => _CreatePostDialog(
+      search: search,
+      postUrl: (description) => _forumPostUrl(challenge, block, description),
+    ),
   );
-  if (description == null) return;
-
-  // This opens the forum's composer; the learner reviews and publishes there.
-  await launchUrl(_forumPostUrl(challenge, block, description));
 }
 
 Uri _forumPostUrl(Challenge challenge, Block block, String description) {
@@ -54,15 +53,12 @@ Uri _forumPostUrl(Challenge challenge, Block block, String description) {
 
   final body =
       "**Tell us what's happening:**\nDescribe your issue in detail here. \n\n$description \n\n$ending";
-  final shortBody = "**Tell us what's happening:**\n\n\n\n$ending";
 
   final base =
       '$_forum/new-topic?category=${Uri.encodeComponent(challenge.helpCategory)}&title=${Uri.encodeComponent(title)}&body=';
   final url = '$base${Uri.encodeComponent(body)}';
 
-  return Uri.parse(
-    url.length < _maxUrlLength ? url : '$base${Uri.encodeComponent(shortBody)}',
-  );
+  return Uri.parse(url);
 }
 
 class _HelpDialog extends StatelessWidget {
@@ -186,9 +182,10 @@ class _HelpStep extends StatelessWidget {
 }
 
 class _CreatePostDialog extends StatefulWidget {
-  const _CreatePostDialog({required this.search});
+  const _CreatePostDialog({required this.search, required this.postUrl});
 
   final Uri search;
+  final Uri Function(String description) postUrl;
 
   @override
   State<_CreatePostDialog> createState() => _CreatePostDialogState();
@@ -198,6 +195,32 @@ class _CreatePostDialogState extends State<_CreatePostDialog> {
   final _description = TextEditingController();
   bool _triedReadSearchAsk = false;
   bool _searched = false;
+  bool _opening = false;
+  String? _launchError;
+
+  Future<void> _openForum() async {
+    setState(() {
+      _opening = true;
+      _launchError = null;
+    });
+    try {
+      final opened = await launchUrl(widget.postUrl(_description.text));
+      if (!mounted) return;
+      if (opened) {
+        Navigator.of(context).pop();
+        return;
+      }
+    } catch (_) {
+      // Retain the draft if the browser cannot be opened.
+    }
+    if (mounted) {
+      setState(() {
+        _opening = false;
+        _launchError =
+            'Could not open the forum. Your draft is still here. Try again.';
+      });
+    }
+  }
 
   @override
   void dispose() {
@@ -210,7 +233,14 @@ class _CreatePostDialogState extends State<_CreatePostDialog> {
     final theme = Theme.of(context);
     final colors = theme.colorScheme;
     final remaining = _minDescription - _description.text.length;
-    final canSubmit = _triedReadSearchAsk && _searched && remaining <= 0;
+    final tooLong =
+        widget.postUrl(_description.text).toString().length >= _maxUrlLength;
+    final canSubmit =
+        _triedReadSearchAsk &&
+        _searched &&
+        remaining <= 0 &&
+        !tooLong &&
+        !_opening;
 
     return Dialog.fullscreen(
       child: Scaffold(
@@ -269,20 +299,28 @@ class _CreatePostDialogState extends State<_CreatePostDialog> {
                       const SizedBox(height: 8),
                       TextField(
                         controller: _description,
-                        onChanged: (_) => setState(() {}),
+                        onChanged: (_) => setState(() => _launchError = null),
                         minLines: 5,
                         maxLines: 8,
-                        decoration: const InputDecoration(
+                        decoration: InputDecoration(
+                          errorMaxLines: 4,
+                          errorText: tooLong
+                              ? 'This description is too long to open on the forum. Shorten it before continuing; your text has been kept.'
+                              : null,
                           hintText: 'What did you try, and what happened?',
                         ),
                       ),
                       const SizedBox(height: 8),
                       Text(
-                        remaining > 0
+                        tooLong
+                            ? 'Shorten your description to continue.'
+                            : remaining > 0
                             ? 'Add at least $remaining more characters.'
                             : "Great, that's enough detail.",
                         style: theme.textTheme.bodyMedium?.copyWith(
-                          color: remaining > 0
+                          color: tooLong
+                              ? colors.error
+                              : remaining > 0
                               ? colors.onSurfaceVariant
                               : FccDesignColors.of(context).success,
                         ),
@@ -329,11 +367,17 @@ class _CreatePostDialogState extends State<_CreatePostDialog> {
                       ),
                     ),
                     const SizedBox(height: 8),
+                    if (_launchError != null)
+                      Padding(
+                        padding: const EdgeInsets.only(bottom: 8),
+                        child: Text(
+                          _launchError!,
+                          style: TextStyle(color: colors.error),
+                        ),
+                      ),
                     _PrimaryButton(
-                      label: 'Continue to forum',
-                      onPressed: canSubmit
-                          ? () => Navigator.of(context).pop(_description.text)
-                          : null,
+                      label: _opening ? 'Opening forum…' : 'Continue to forum',
+                      onPressed: canSubmit ? _openForum : null,
                     ),
                   ],
                 ),

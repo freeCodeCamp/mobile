@@ -24,12 +24,9 @@ class SceneControls extends ConsumerWidget {
     final colors = Theme.of(context).colorScheme;
     final handler = ref.watch(audioHandlerProvider);
     final notifier = ref.read(sceneProvider(scene, title).notifier);
-    final showCaptions = ref.watch(
-      sceneProvider(scene, title).select((s) => s.showCaptions),
-    );
-    final active = ref.watch(
-      sceneProvider(scene, title).select((s) => s.isActive),
-    );
+    final sceneState = ref.watch(sceneProvider(scene, title));
+    final showCaptions = sceneState.showCaptions;
+    final active = sceneState.isActive;
     final foreground = fullscreen ? const Color(0xFFFFF8EC) : colors.onSurface;
 
     return StreamBuilder<PlaybackState>(
@@ -43,99 +40,142 @@ class SceneControls extends ConsumerWidget {
         return Container(
           color: fullscreen ? Colors.black54 : colors.surfaceContainerLowest,
           padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 10),
-          child: Row(
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
-              IconButton.filled(
-                tooltip: completed ? 'Replay' : (playing ? 'Pause' : 'Play'),
-                style: IconButton.styleFrom(
-                  backgroundColor: colors.primary,
-                  foregroundColor: colors.onPrimary,
-                  shape: const CircleBorder(),
-                ),
-                onPressed: playing ? notifier.pause : notifier.play,
-                icon: Icon(
-                  completed
-                      ? Icons.replay
-                      : playing
-                      ? Icons.pause
-                      : Icons.play_arrow,
-                  size: 26,
-                ),
-              ),
-              const SizedBox(width: 10),
-              Expanded(
-                child: StreamBuilder<Duration>(
-                  stream: handler.positionStream,
-                  builder: (context, position) {
-                    final total = handler.duration?.inMilliseconds ?? 0;
-                    final current = active
-                        ? position.data ?? Duration.zero
-                        : Duration.zero;
-                    return Row(
-                      children: [
-                        Expanded(
-                          child: LinearProgressIndicator(
-                            backgroundColor: fullscreen
-                                ? Colors.white24
-                                : colors.outlineVariant,
-                            color: colors.primary,
-                            value: !active || total == 0
-                                ? 0
-                                : (current.inMilliseconds / total).clamp(
-                                    0.0,
-                                    1.0,
-                                  ),
-                            minHeight: 6,
-                            borderRadius: BorderRadius.circular(8),
-                            semanticsLabel: 'Dialogue playback progress',
-                          ),
-                        ),
-                        const SizedBox(width: 10),
-                        Text(
-                          '${current.inMinutes}:${(current.inSeconds % 60).toString().padLeft(2, '0')}',
-                          style: TextStyle(
-                            fontFamily: 'monospace',
-                            fontSize: 12,
-                            color: foreground,
-                          ),
-                        ),
-                      ],
-                    );
-                  },
-                ),
-              ),
-              const SizedBox(width: 10),
-              IconButton(
-                tooltip: showCaptions ? 'Hide captions' : 'Show captions',
-                isSelected: showCaptions,
-                style: IconButton.styleFrom(
-                  backgroundColor: showCaptions
-                      ? colors.primary
-                      : Colors.transparent,
-                  foregroundColor: showCaptions ? colors.onPrimary : foreground,
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(12),
-                  ),
-                ),
-                onPressed: notifier.toggleCaptions,
-                icon: const Icon(Icons.closed_caption_outlined),
-                selectedIcon: const Icon(Icons.closed_caption),
-              ),
-              if (!fullscreen) ...[
-                const SizedBox(width: 6),
-                IconButton.outlined(
-                  tooltip: 'Fullscreen',
-                  style: IconButton.styleFrom(
-                    foregroundColor: foreground,
-                    side: BorderSide(color: colors.outlineVariant),
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(12),
+              if (sceneState.error != null)
+                Padding(
+                  padding: const EdgeInsets.only(bottom: 8),
+                  child: Semantics(
+                    liveRegion: true,
+                    child: Text(
+                      sceneState.error!,
+                      style: TextStyle(
+                        color: fullscreen
+                            ? const Color(0xFFFF8FA8)
+                            : colors.error,
+                      ),
                     ),
                   ),
-                  onPressed: onFullscreen,
-                  icon: const Icon(Icons.fullscreen),
                 ),
-              ],
+              Row(
+                children: [
+                  IconButton.filled(
+                    tooltip: sceneState.isLoading
+                        ? 'Loading dialogue'
+                        : sceneState.error != null
+                        ? 'Retry dialogue'
+                        : completed
+                        ? 'Replay'
+                        : (playing ? 'Pause' : 'Play'),
+                    style: IconButton.styleFrom(
+                      backgroundColor: colors.primary,
+                      foregroundColor: colors.onPrimary,
+                      shape: const CircleBorder(),
+                    ),
+                    onPressed: sceneState.isLoading
+                        ? null
+                        : playing
+                        ? notifier.pause
+                        : notifier.play,
+                    icon: sceneState.isLoading
+                        ? SizedBox(
+                            width: 26,
+                            height: 26,
+                            child: CircularProgressIndicator(
+                              strokeWidth: 2,
+                              color: colors.onPrimary,
+                              semanticsLabel: 'Loading dialogue',
+                            ),
+                          )
+                        : Icon(
+                            sceneState.error != null || completed
+                                ? Icons.replay
+                                : playing
+                                ? Icons.pause
+                                : Icons.play_arrow,
+                            size: 26,
+                          ),
+                  ),
+                  const SizedBox(width: 10),
+                  Expanded(
+                    child: StreamBuilder<Duration>(
+                      stream: handler.positionStream,
+                      builder: (context, position) {
+                        final total = handler.duration?.inMilliseconds ?? 0;
+                        final current = active
+                            ? position.data ?? Duration.zero
+                            : Duration.zero;
+                        return Row(
+                          children: [
+                            Expanded(
+                              child: LinearProgressIndicator(
+                                backgroundColor: fullscreen
+                                    ? Colors.white24
+                                    : colors.outlineVariant,
+                                color: colors.primary,
+                                value: !active || total == 0
+                                    ? 0
+                                    : (current.inMilliseconds / total).clamp(
+                                        0.0,
+                                        1.0,
+                                      ),
+                                minHeight: 6,
+                                borderRadius: BorderRadius.circular(8),
+                                semanticsLabel: 'Dialogue playback progress',
+                              ),
+                            ),
+                            const SizedBox(width: 10),
+                            Text(
+                              '${current.inMinutes}:${(current.inSeconds % 60).toString().padLeft(2, '0')}',
+                              style: TextStyle(
+                                fontFamily: 'monospace',
+                                fontSize: 12,
+                                color: foreground,
+                              ),
+                            ),
+                          ],
+                        );
+                      },
+                    ),
+                  ),
+                  const SizedBox(width: 10),
+                  IconButton(
+                    tooltip: showCaptions ? 'Hide captions' : 'Show captions',
+                    isSelected: showCaptions,
+                    style: IconButton.styleFrom(
+                      backgroundColor: showCaptions
+                          ? colors.primary
+                          : Colors.transparent,
+                      foregroundColor: showCaptions
+                          ? colors.onPrimary
+                          : foreground,
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(12),
+                      ),
+                    ),
+                    onPressed: notifier.toggleCaptions,
+                    icon: const Icon(Icons.closed_caption_outlined),
+                    selectedIcon: const Icon(Icons.closed_caption),
+                  ),
+                  if (!fullscreen) ...[
+                    const SizedBox(width: 6),
+                    IconButton.outlined(
+                      tooltip: 'Fullscreen',
+                      style: IconButton.styleFrom(
+                        foregroundColor: foreground,
+                        side: BorderSide(color: colors.outlineVariant),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(12),
+                        ),
+                      ),
+                      onPressed: onFullscreen,
+                      icon: const Icon(Icons.fullscreen),
+                    ),
+                  ],
+                ],
+              ),
             ],
           ),
         );

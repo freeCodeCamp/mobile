@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:jiffy/jiffy.dart';
+import 'package:mobile_app_new/news/ui/widgets/news_image.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:mobile_app_new/news/models/bookmarked_post_model.dart';
 import 'package:mobile_app_new/routing/news.dart';
@@ -133,19 +135,7 @@ class _SavedTutorialState extends ConsumerState<_SavedTutorial> {
         child: Row(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Container(
-              width: 64,
-              height: 72,
-              decoration: BoxDecoration(
-                color: colors.surfaceContainerLow,
-                borderRadius: BorderRadius.circular(12),
-              ),
-              child: Icon(
-                Icons.article_outlined,
-                color: colors.primary,
-                size: 28,
-              ),
-            ),
+            NewsImage(url: post.coverImageUrl, width: 64, height: 72),
             const SizedBox(width: 12),
             Expanded(
               child: Column(
@@ -161,7 +151,10 @@ class _SavedTutorialState extends ConsumerState<_SavedTutorial> {
                   ),
                   const SizedBox(height: 6),
                   Text(
-                    post.authorName,
+                    [
+                      post.authorName,
+                      if (post.savedAt != null) _savedLabel(post.savedAt!),
+                    ].join(' · '),
                     style: TextStyle(
                       fontSize: 13,
                       color: colors.onSurfaceVariant,
@@ -181,4 +174,15 @@ class _SavedTutorialState extends ConsumerState<_SavedTutorial> {
       ),
     );
   }
+}
+
+String _savedLabel(DateTime value) {
+  final saved = value.toLocal();
+  final now = DateTime.now();
+  if (saved.year == now.year &&
+      saved.month == now.month &&
+      saved.day == now.day) {
+    return 'Saved today';
+  }
+  return 'Saved ${Jiffy.parseFromDateTime(saved).format(pattern: 'MMM d, yyyy')}';
 }

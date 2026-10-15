@@ -56,12 +56,21 @@ class PodcastEpisodeTile extends ConsumerWidget {
                   color: colors.surfaceContainerLow,
                   borderRadius: BorderRadius.circular(13),
                 ),
-                child: Text(
-                  '#$number',
-                  style: TextStyle(
-                    color: colors.primary,
-                    fontSize: 12,
-                    fontWeight: FontWeight.w700,
+                child: Padding(
+                  padding: const EdgeInsets.all(6),
+                  child: FittedBox(
+                    fit: BoxFit.scaleDown,
+                    child: Text(
+                      '#$number',
+                      maxLines: 1,
+                      softWrap: false,
+                      semanticsLabel: 'Episode $number',
+                      style: TextStyle(
+                        color: colors.primary,
+                        fontSize: 12,
+                        fontWeight: FontWeight.w700,
+                      ),
+                    ),
                   ),
                 ),
               ),

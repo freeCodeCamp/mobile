@@ -200,6 +200,7 @@ class AudioPlayerHandler extends BaseAudioHandler {
     } catch (e) {
       _audioConfig = previous;
       log('loadCodeRadio: Cannot play audio: $e');
+      rethrow;
     }
   }
 

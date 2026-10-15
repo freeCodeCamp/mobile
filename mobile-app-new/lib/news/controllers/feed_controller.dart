@@ -28,8 +28,11 @@ abstract class NewsFeedState with _$NewsFeedState {
 
 @riverpod
 class NewsFeedNotifier extends _$NewsFeedNotifier {
+  int _generation = 0;
+
   @override
   FutureOr<NewsFeedState> build(NewsFeedSource source) async {
+    _generation++;
     final page = await _fetch(ref.watch(newsApiServiceProvider), '');
 
     return NewsFeedState(
@@ -49,6 +52,7 @@ class NewsFeedNotifier extends _$NewsFeedNotifier {
   };
 
   Future<void> fetchNextPage({bool isRetry = false}) async {
+    final generation = _generation;
     final current = state.value;
     if (current == null || !current.hasNextPage || current.isLoadingMore) {
       return;
@@ -67,6 +71,8 @@ class NewsFeedNotifier extends _$NewsFeedNotifier {
         current.cursor,
       );
 
+      if (!ref.mounted || generation != _generation) return;
+
       state = AsyncData(
         current.copyWith(
           posts: [...current.posts, ...page.posts],
@@ -76,6 +82,7 @@ class NewsFeedNotifier extends _$NewsFeedNotifier {
         ),
       );
     } catch (error) {
+      if (!ref.mounted || generation != _generation) return;
       // Keep the loaded posts; only the append failed.
       state = AsyncData(
         current.copyWith(isLoadingMore: false, loadMoreError: error),

@@ -21,12 +21,17 @@ class NewsBookmarksNotifier extends _$NewsBookmarksNotifier {
     Future<BookmarkedPost> Function() loadPost,
   ) async {
     final service = ref.read(newsBookmarkServiceProvider);
+    final generation = service.resetGeneration;
     final pendingSave = ref.keepAlive();
     try {
-      if (await service.isBookmarked(id)) {
+      final saved = await service.isBookmarked(id);
+      if (generation != service.resetGeneration) return;
+      if (saved) {
         await service.removeBookmark(id);
       } else {
-        await service.addBookmark(await loadPost());
+        final post = await loadPost();
+        if (generation != service.resetGeneration) return;
+        await service.addBookmark(post);
       }
 
       final bookmarks = await service.getBookmarks();

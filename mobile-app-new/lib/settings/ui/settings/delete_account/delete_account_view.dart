@@ -1,17 +1,48 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
+import 'package:mobile_app_new/fcc_theme.dart';
+import 'package:mobile_app_new/routing/auth.dart';
 import 'package:mobile_app_new/routing/learn.dart';
+import 'package:mobile_app_new/routing/settings.dart';
 import 'package:mobile_app_new/services/auth_service.dart';
 import 'package:mobile_app_new/settings/ui/settings/delete_account/delete_account_viewmodel.dart';
 import 'package:mobile_app_new/widgets/dialog/confirm_dialog.dart';
 import 'package:url_launcher/url_launcher.dart';
 
-const _paragraphStyle = TextStyle(fontSize: 16, height: 1.6);
-
-class DeleteAccountView extends ConsumerWidget {
+class DeleteAccountView extends ConsumerStatefulWidget {
   const DeleteAccountView({super.key});
 
-  Future<void> _delete(BuildContext context, WidgetRef ref) async {
+  @override
+  ConsumerState<DeleteAccountView> createState() => _DeleteAccountViewState();
+}
+
+class _DeleteAccountViewState extends ConsumerState<DeleteAccountView> {
+  bool _certain = false;
+
+  void _keepAccount() =>
+      context.canPop() ? context.pop() : const SettingsRoute().go(context);
+
+  Future<void> _contactSupport() async {
+    var opened = false;
+    try {
+      opened = await launchUrl(Uri.parse('mailto:support@freecodecamp.org'));
+    } catch (_) {
+      // The address remains selectable if this device has no email application.
+    }
+    if (!opened && mounted) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text(
+            'No email app is available. You can copy support@freecodecamp.org.',
+          ),
+        ),
+      );
+    }
+  }
+
+  Future<void> _delete() async {
+    if (!_certain || ref.read(deleteAccountProvider)) return;
     final confirmed = await showConfirmDialog(
       context,
       title: 'Delete account?',
@@ -20,106 +51,197 @@ class DeleteAccountView extends ConsumerWidget {
       confirmLabel: 'Delete account',
       destructive: true,
     );
-
-    if (!confirmed || !context.mounted) return;
-
+    if (!confirmed || !mounted) return;
     final messenger = ScaffoldMessenger.of(context);
     final message = await ref
         .read(deleteAccountProvider.notifier)
         .deleteAccount();
-
+    if (!mounted) return;
     messenger.showSnackBar(SnackBar(content: Text(message)));
-
-    // NOTE: Signed out means the account was deleted or the session expired.
-    if (context.mounted && !ref.read(authProvider).isLoggedIn) {
+    if (!ref.read(authProvider).isLoggedIn) {
       const LearnLandingRoute().go(context);
     }
   }
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
+  Widget build(BuildContext context) {
     final isDeleting = ref.watch(deleteAccountProvider);
-    final colors = Theme.of(context).colorScheme;
-
+    final auth = ref.watch(authProvider);
+    final theme = Theme.of(context);
+    final colors = theme.colorScheme;
+    final design = FccDesignColors.of(context);
     return PopScope(
       canPop: !isDeleting,
       child: Scaffold(
-        appBar: AppBar(title: const Text('Delete account')),
+        appBar: AppBar(
+          title: const Text('Delete account'),
+          leading: BackButton(onPressed: isDeleting ? null : _keepAccount),
+        ),
         body: Stack(
           children: [
-            SingleChildScrollView(
-              padding: const EdgeInsets.all(16),
-              child: Column(
-                children: [
-                  CircleAvatar(
-                    radius: 32,
-                    backgroundColor: colors.error.withValues(alpha: 0.12),
-                    child: Icon(
-                      Icons.delete_outline,
-                      size: 32,
-                      color: colors.error,
-                    ),
-                  ),
-                  const SizedBox(height: 20),
-                  const Text(
-                    'This will really delete all your data, including all your progress and account information.',
-                    style: _paragraphStyle,
-                    textAlign: TextAlign.center,
-                  ),
-                  const SizedBox(height: 8),
-                  const Text(
-                    "We won't be able to recover any of it for you later, even if you change your mind.",
-                    style: _paragraphStyle,
-                    textAlign: TextAlign.center,
-                  ),
-                  const SizedBox(height: 8),
-                  const Text(
-                    "If there's something we could do better, send us an email instead and we'll do our best:",
-                    style: _paragraphStyle,
-                    textAlign: TextAlign.center,
-                  ),
-                  const SizedBox(height: 8),
-                  InkWell(
-                    onTap: () =>
-                        launchUrl(Uri.parse('mailto:support@freecodecamp.org')),
-                    child: Text(
-                      'support@freecodecamp.org',
-                      style: _paragraphStyle.copyWith(
-                        decoration: TextDecoration.underline,
-                      ),
-                    ),
-                  ),
-                  const SizedBox(height: 12),
-                  const Divider(),
-                  const SizedBox(height: 12),
-                  SizedBox(
-                    width: double.infinity,
-                    child: FilledButton(
-                      onPressed: isDeleting
-                          ? null
-                          : () => _delete(context, ref),
-                      style: FilledButton.styleFrom(
-                        backgroundColor: colors.error,
-                        foregroundColor: colors.onError,
-                        padding: const EdgeInsets.all(16),
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(12),
+            SafeArea(
+              top: false,
+              bottom: false,
+              child: Align(
+                alignment: Alignment.topCenter,
+                child: ConstrainedBox(
+                  constraints: const BoxConstraints(maxWidth: 640),
+                  child: ListView(
+                    padding: const EdgeInsets.fromLTRB(16, 16, 16, 24),
+                    children: [
+                      Align(
+                        alignment: Alignment.centerLeft,
+                        child: CircleAvatar(
+                          radius: 28,
+                          backgroundColor: design.donate,
+                          child: Icon(
+                            Icons.delete_outline,
+                            size: 28,
+                            color: design.onDonate,
+                          ),
                         ),
                       ),
-                      child: const Text(
-                        'Delete my account and all progress',
-                        textAlign: TextAlign.center,
-                        style: _paragraphStyle,
+                      const SizedBox(height: 16),
+                      Text(
+                        'Delete your account?',
+                        style: theme.textTheme.headlineMedium?.copyWith(
+                          fontWeight: FontWeight.w800,
+                        ),
+                      ),
+                      const SizedBox(height: 16),
+                      const Text(
+                        'This will really delete all your data, including all your progress and account information.',
+                        style: TextStyle(fontSize: 16, height: 1.5),
+                      ),
+                      const SizedBox(height: 16),
+                      const Text(
+                        "We won't be able to recover any of it for you later, even if you change your mind.",
+                        style: TextStyle(fontSize: 16, height: 1.5),
+                      ),
+                      const SizedBox(height: 16),
+                      Card(
+                        child: Padding(
+                          padding: const EdgeInsets.all(16),
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              const Text(
+                                "If there's something we could do better, send us an email instead and we'll do our best:",
+                                style: TextStyle(fontSize: 16, height: 1.5),
+                              ),
+                              const SizedBox(height: 12),
+                              SelectableText(
+                                'support@freecodecamp.org',
+                                onTap: isDeleting ? null : _contactSupport,
+                                style: TextStyle(
+                                  fontSize: 16,
+                                  color: design.accentText,
+                                  decoration: TextDecoration.underline,
+                                  fontWeight: FontWeight.w700,
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ),
+                      const SizedBox(height: 12),
+                      CheckboxListTile(
+                        contentPadding: EdgeInsets.zero,
+                        controlAffinity: ListTileControlAffinity.leading,
+                        activeColor: design.onDonate,
+                        checkColor: colors.surface,
+                        title: const Text(
+                          'I am 100% certain. Delete everything related to this account.',
+                        ),
+                        value: _certain,
+                        onChanged: isDeleting
+                            ? null
+                            : (value) =>
+                                  setState(() => _certain = value ?? false),
+                      ),
+                      if (!auth.isLoading && !auth.isLoggedIn)
+                        TextButton(
+                          onPressed: auth.hasError
+                              ? () => ref.invalidate(authProvider)
+                              : () => const LoginRoute().push<void>(context),
+                          child: Text(
+                            auth.hasError
+                                ? 'Could not load your account. Retry'
+                                : 'Sign in to manage your account',
+                          ),
+                        ),
+                    ],
+                  ),
+                ),
+              ),
+            ),
+            if (isDeleting) ...[
+              const ModalBarrier(dismissible: false, color: Colors.black26),
+              const Center(
+                child: CircularProgressIndicator(
+                  semanticsLabel: 'Deleting account',
+                ),
+              ),
+            ],
+          ],
+        ),
+        bottomNavigationBar: DecoratedBox(
+          decoration: BoxDecoration(
+            color: theme.scaffoldBackgroundColor,
+            border: Border(top: BorderSide(color: colors.outlineVariant)),
+          ),
+          child: SafeArea(
+            top: false,
+            child: Padding(
+              padding: const EdgeInsets.fromLTRB(16, 10, 16, 12),
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  ConstrainedBox(
+                    constraints: const BoxConstraints(maxWidth: 608),
+                    child: SizedBox(
+                      width: double.infinity,
+                      child: FilledButton(
+                        onPressed: _certain && !isDeleting && auth.isLoggedIn
+                            ? _delete
+                            : null,
+                        style: FilledButton.styleFrom(
+                          backgroundColor: design.onDonate,
+                          foregroundColor: colors.surface,
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(12),
+                          ),
+                        ),
+                        child: const Text(
+                          'Delete my account',
+                          textAlign: TextAlign.center,
+                        ),
+                      ),
+                    ),
+                  ),
+                  const SizedBox(height: 8),
+                  ConstrainedBox(
+                    constraints: const BoxConstraints(maxWidth: 608),
+                    child: SizedBox(
+                      width: double.infinity,
+                      child: OutlinedButton(
+                        style: OutlinedButton.styleFrom(
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(12),
+                          ),
+                        ),
+                        onPressed: isDeleting ? null : _keepAccount,
+                        child: const Text(
+                          'Keep my account',
+                          textAlign: TextAlign.center,
+                        ),
                       ),
                     ),
                   ),
                 ],
               ),
             ),
-            if (isDeleting)
-              const ModalBarrier(dismissible: false, color: Colors.black54),
-            if (isDeleting) const Center(child: CircularProgressIndicator()),
-          ],
+          ),
         ),
       ),
     );

@@ -11,6 +11,7 @@ import 'package:mobile_app_new/routing/router.dart';
 import 'package:mobile_app_new/services/audio_service.dart';
 import 'package:mobile_app_new/services/auth_service.dart';
 import 'package:mobile_app_new/services/notification_service.dart';
+import 'package:mobile_app_new/settings/services/app_preferences.dart';
 import 'package:timezone/data/latest.dart' as tz;
 
 Future<void> main() async {
@@ -57,7 +58,9 @@ class _MyAppState extends ConsumerState<MyApp> {
       debugShowCheckedModeBanner: false,
       theme: FccTheme.themeLight,
       darkTheme: FccTheme.themeDark,
-      themeMode: ThemeMode.system,
+      themeMode:
+          ref.watch(appPreferencesProvider).value?.themeMode ??
+          ThemeMode.system,
     );
   }
 }

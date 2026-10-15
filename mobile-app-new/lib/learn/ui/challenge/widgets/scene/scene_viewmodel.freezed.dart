@@ -301,7 +301,7 @@ $ScenePositionCopyWith<$Res> get position {
 /// @nodoc
 mixin _$SceneState {
 
- String get background; List<CharacterState> get characters; SceneLine? get line; bool get showCaptions; bool get isActive;
+ String get background; List<CharacterState> get characters; SceneLine? get line; bool get showCaptions; bool get isActive; bool get isLoading; String? get error;
 /// Create a copy of SceneState
 /// with the given fields replaced by the non-null parameter values.
 @JsonKey(includeFromJson: false, includeToJson: false)
@@ -312,16 +312,16 @@ $SceneStateCopyWith<SceneState> get copyWith => _$SceneStateCopyWithImpl<SceneSt
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is SceneState&&(identical(other.background, background) || other.background == background)&&const DeepCollectionEquality().equals(other.characters, characters)&&(identical(other.line, line) || other.line == line)&&(identical(other.showCaptions, showCaptions) || other.showCaptions == showCaptions)&&(identical(other.isActive, isActive) || other.isActive == isActive));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is SceneState&&(identical(other.background, background) || other.background == background)&&const DeepCollectionEquality().equals(other.characters, characters)&&(identical(other.line, line) || other.line == line)&&(identical(other.showCaptions, showCaptions) || other.showCaptions == showCaptions)&&(identical(other.isActive, isActive) || other.isActive == isActive)&&(identical(other.isLoading, isLoading) || other.isLoading == isLoading)&&(identical(other.error, error) || other.error == error));
 }
 
 
 @override
-int get hashCode => Object.hash(runtimeType,background,const DeepCollectionEquality().hash(characters),line,showCaptions,isActive);
+int get hashCode => Object.hash(runtimeType,background,const DeepCollectionEquality().hash(characters),line,showCaptions,isActive,isLoading,error);
 
 @override
 String toString() {
-  return 'SceneState(background: $background, characters: $characters, line: $line, showCaptions: $showCaptions, isActive: $isActive)';
+  return 'SceneState(background: $background, characters: $characters, line: $line, showCaptions: $showCaptions, isActive: $isActive, isLoading: $isLoading, error: $error)';
 }
 
 
@@ -332,7 +332,7 @@ abstract mixin class $SceneStateCopyWith<$Res>  {
   factory $SceneStateCopyWith(SceneState value, $Res Function(SceneState) _then) = _$SceneStateCopyWithImpl;
 @useResult
 $Res call({
- String background, List<CharacterState> characters, SceneLine? line, bool showCaptions, bool isActive
+ String background, List<CharacterState> characters, SceneLine? line, bool showCaptions, bool isActive, bool isLoading, String? error
 });
 
 
@@ -349,14 +349,16 @@ class _$SceneStateCopyWithImpl<$Res>
 
 /// Create a copy of SceneState
 /// with the given fields replaced by the non-null parameter values.
-@pragma('vm:prefer-inline') @override $Res call({Object? background = null,Object? characters = null,Object? line = freezed,Object? showCaptions = null,Object? isActive = null,}) {
+@pragma('vm:prefer-inline') @override $Res call({Object? background = null,Object? characters = null,Object? line = freezed,Object? showCaptions = null,Object? isActive = null,Object? isLoading = null,Object? error = freezed,}) {
   return _then(_self.copyWith(
 background: null == background ? _self.background : background // ignore: cast_nullable_to_non_nullable
 as String,characters: null == characters ? _self.characters : characters // ignore: cast_nullable_to_non_nullable
 as List<CharacterState>,line: freezed == line ? _self.line : line // ignore: cast_nullable_to_non_nullable
 as SceneLine?,showCaptions: null == showCaptions ? _self.showCaptions : showCaptions // ignore: cast_nullable_to_non_nullable
 as bool,isActive: null == isActive ? _self.isActive : isActive // ignore: cast_nullable_to_non_nullable
-as bool,
+as bool,isLoading: null == isLoading ? _self.isLoading : isLoading // ignore: cast_nullable_to_non_nullable
+as bool,error: freezed == error ? _self.error : error // ignore: cast_nullable_to_non_nullable
+as String?,
   ));
 }
 
@@ -441,10 +443,10 @@ return $default(_that);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( String background,  List<CharacterState> characters,  SceneLine? line,  bool showCaptions,  bool isActive)?  $default,{required TResult orElse(),}) {final _that = this;
+@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( String background,  List<CharacterState> characters,  SceneLine? line,  bool showCaptions,  bool isActive,  bool isLoading,  String? error)?  $default,{required TResult orElse(),}) {final _that = this;
 switch (_that) {
 case _SceneState() when $default != null:
-return $default(_that.background,_that.characters,_that.line,_that.showCaptions,_that.isActive);case _:
+return $default(_that.background,_that.characters,_that.line,_that.showCaptions,_that.isActive,_that.isLoading,_that.error);case _:
   return orElse();
 
 }
@@ -462,10 +464,10 @@ return $default(_that.background,_that.characters,_that.line,_that.showCaptions,
 /// }
 /// ```
 
-@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( String background,  List<CharacterState> characters,  SceneLine? line,  bool showCaptions,  bool isActive)  $default,) {final _that = this;
+@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( String background,  List<CharacterState> characters,  SceneLine? line,  bool showCaptions,  bool isActive,  bool isLoading,  String? error)  $default,) {final _that = this;
 switch (_that) {
 case _SceneState():
-return $default(_that.background,_that.characters,_that.line,_that.showCaptions,_that.isActive);case _:
+return $default(_that.background,_that.characters,_that.line,_that.showCaptions,_that.isActive,_that.isLoading,_that.error);case _:
   throw StateError('Unexpected subclass');
 
 }
@@ -482,10 +484,10 @@ return $default(_that.background,_that.characters,_that.line,_that.showCaptions,
 /// }
 /// ```
 
-@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( String background,  List<CharacterState> characters,  SceneLine? line,  bool showCaptions,  bool isActive)?  $default,) {final _that = this;
+@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( String background,  List<CharacterState> characters,  SceneLine? line,  bool showCaptions,  bool isActive,  bool isLoading,  String? error)?  $default,) {final _that = this;
 switch (_that) {
 case _SceneState() when $default != null:
-return $default(_that.background,_that.characters,_that.line,_that.showCaptions,_that.isActive);case _:
+return $default(_that.background,_that.characters,_that.line,_that.showCaptions,_that.isActive,_that.isLoading,_that.error);case _:
   return null;
 
 }
@@ -497,7 +499,7 @@ return $default(_that.background,_that.characters,_that.line,_that.showCaptions,
 
 
 class _SceneState implements SceneState {
-  const _SceneState({required this.background, required final  List<CharacterState> characters, this.line, this.showCaptions = false, this.isActive = false}): _characters = characters;
+  const _SceneState({required this.background, required final  List<CharacterState> characters, this.line, this.showCaptions = false, this.isActive = false, this.isLoading = false, this.error}): _characters = characters;
 
 
 @override final  String background;
@@ -511,6 +513,8 @@ class _SceneState implements SceneState {
 @override final  SceneLine? line;
 @override@JsonKey() final  bool showCaptions;
 @override@JsonKey() final  bool isActive;
+@override@JsonKey() final  bool isLoading;
+@override final  String? error;
 
 /// Create a copy of SceneState
 /// with the given fields replaced by the non-null parameter values.
@@ -522,16 +526,16 @@ _$SceneStateCopyWith<_SceneState> get copyWith => __$SceneStateCopyWithImpl<_Sce
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is _SceneState&&(identical(other.background, background) || other.background == background)&&const DeepCollectionEquality().equals(other._characters, _characters)&&(identical(other.line, line) || other.line == line)&&(identical(other.showCaptions, showCaptions) || other.showCaptions == showCaptions)&&(identical(other.isActive, isActive) || other.isActive == isActive));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is _SceneState&&(identical(other.background, background) || other.background == background)&&const DeepCollectionEquality().equals(other._characters, _characters)&&(identical(other.line, line) || other.line == line)&&(identical(other.showCaptions, showCaptions) || other.showCaptions == showCaptions)&&(identical(other.isActive, isActive) || other.isActive == isActive)&&(identical(other.isLoading, isLoading) || other.isLoading == isLoading)&&(identical(other.error, error) || other.error == error));
 }
 
 
 @override
-int get hashCode => Object.hash(runtimeType,background,const DeepCollectionEquality().hash(_characters),line,showCaptions,isActive);
+int get hashCode => Object.hash(runtimeType,background,const DeepCollectionEquality().hash(_characters),line,showCaptions,isActive,isLoading,error);
 
 @override
 String toString() {
-  return 'SceneState(background: $background, characters: $characters, line: $line, showCaptions: $showCaptions, isActive: $isActive)';
+  return 'SceneState(background: $background, characters: $characters, line: $line, showCaptions: $showCaptions, isActive: $isActive, isLoading: $isLoading, error: $error)';
 }
 
 
@@ -542,7 +546,7 @@ abstract mixin class _$SceneStateCopyWith<$Res> implements $SceneStateCopyWith<$
   factory _$SceneStateCopyWith(_SceneState value, $Res Function(_SceneState) _then) = __$SceneStateCopyWithImpl;
 @override @useResult
 $Res call({
- String background, List<CharacterState> characters, SceneLine? line, bool showCaptions, bool isActive
+ String background, List<CharacterState> characters, SceneLine? line, bool showCaptions, bool isActive, bool isLoading, String? error
 });
 
 
@@ -559,14 +563,16 @@ class __$SceneStateCopyWithImpl<$Res>
 
 /// Create a copy of SceneState
 /// with the given fields replaced by the non-null parameter values.
-@override @pragma('vm:prefer-inline') $Res call({Object? background = null,Object? characters = null,Object? line = freezed,Object? showCaptions = null,Object? isActive = null,}) {
+@override @pragma('vm:prefer-inline') $Res call({Object? background = null,Object? characters = null,Object? line = freezed,Object? showCaptions = null,Object? isActive = null,Object? isLoading = null,Object? error = freezed,}) {
   return _then(_SceneState(
 background: null == background ? _self.background : background // ignore: cast_nullable_to_non_nullable
 as String,characters: null == characters ? _self._characters : characters // ignore: cast_nullable_to_non_nullable
 as List<CharacterState>,line: freezed == line ? _self.line : line // ignore: cast_nullable_to_non_nullable
 as SceneLine?,showCaptions: null == showCaptions ? _self.showCaptions : showCaptions // ignore: cast_nullable_to_non_nullable
 as bool,isActive: null == isActive ? _self.isActive : isActive // ignore: cast_nullable_to_non_nullable
-as bool,
+as bool,isLoading: null == isLoading ? _self.isLoading : isLoading // ignore: cast_nullable_to_non_nullable
+as bool,error: freezed == error ? _self.error : error // ignore: cast_nullable_to_non_nullable
+as String?,
   ));
 }
 

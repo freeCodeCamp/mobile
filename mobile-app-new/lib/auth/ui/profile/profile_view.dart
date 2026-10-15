@@ -1,3 +1,5 @@
+import 'package:mobile_app_new/widgets/app_page_title.dart';
+import 'package:mobile_app_new/widgets/app_bottom_navigation.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -42,9 +44,12 @@ class ProfileView extends ConsumerWidget {
     final refresh = ref.watch(profileRefreshProvider);
     final user = auth.value;
     return Scaffold(
+      bottomNavigationBar: const AppNavigationFooter(
+        selected: AppDestination.profile,
+      ),
       appBar: AppBar(
-        title: const Text('Profile'),
-        titleTextStyle: Theme.of(context).textTheme.headlineMedium,
+        title: const AppPageTitle('Profile'),
+        toolbarHeight: AppPageTitle.toolbarHeight(context),
         actions: [
           IconButton(
             tooltip: 'Settings',

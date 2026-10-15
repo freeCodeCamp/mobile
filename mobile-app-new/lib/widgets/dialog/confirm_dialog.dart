@@ -13,6 +13,7 @@ Future<bool> showConfirmDialog(
     builder: (context) {
       final colors = Theme.of(context).colorScheme;
       return AlertDialog(
+        scrollable: true,
         backgroundColor: colors.surface,
         surfaceTintColor: Colors.transparent,
         shape: RoundedRectangleBorder(

@@ -1,3 +1,6 @@
+import 'dart:async';
+import 'package:mobile_app_new/services/audio_service.dart';
+import 'support/fake_audio_handler.dart';
 import 'dart:io';
 import 'dart:ui' as ui;
 
@@ -35,6 +38,13 @@ final _user = FccUserModel(
     CompletedDailyChallenge(id: 'daily-1', completedDate: DateTime(2026)),
   ],
 );
+
+class _GuestAuth extends AuthNotifier {
+  @override
+  Future<FccUserModel?> build() async => null;
+  @override
+  Future<void> refresh() async {}
+}
 
 class _Auth extends AuthNotifier {
   @override
@@ -123,9 +133,14 @@ Future<GoRouter> _pump(
   bool dark = false,
   double width = 390,
   double scale = 1,
+  double height = 844,
+  bool guest = false,
+  bool settle = true,
+  SuperBlock? courseData,
+  Future<DailyChallengeOverview> Function()? todayLoader,
 }) async {
   tester.view.devicePixelRatio = 1;
-  tester.view.physicalSize = Size(width, 844);
+  tester.view.physicalSize = Size(width, height);
   addTearDown(tester.view.resetDevicePixelRatio);
   addTearDown(tester.view.resetPhysicalSize);
   final router = GoRouter(
@@ -152,8 +167,10 @@ Future<GoRouter> _pump(
   addTearDown(router.dispose);
   await tester.pumpWidget(
     ProviderScope(
+      key: UniqueKey(),
       overrides: [
-        authProvider.overrideWith(_Auth.new),
+        audioHandlerProvider.overrideWithValue(FakeAudioHandler()),
+        authProvider.overrideWith(guest ? _GuestAuth.new : _Auth.new),
         curriculumStagesProvider.overrideWith(
           (ref) async => [
             (
@@ -180,8 +197,12 @@ Future<GoRouter> _pump(
             ),
           ],
         ),
-        superBlockProvider.overrideWith((ref, name) async => _curriculum),
-        dailyChallengeTodayProvider.overrideWith((ref) async => _today),
+        superBlockProvider.overrideWith(
+          (ref, name) async => courseData ?? _curriculum,
+        ),
+        dailyChallengeTodayProvider.overrideWith(
+          (ref) async => todayLoader == null ? _today : todayLoader(),
+        ),
         dailyChallengeArchiveProvider.overrideWith(
           (ref) async => [
             (month: DateTime(2026, 10), challenges: [_today, _yesterday]),
@@ -204,7 +225,11 @@ Future<GoRouter> _pump(
       ),
     ),
   );
-  await tester.pumpAndSettle();
+  if (settle) {
+    await tester.pumpAndSettle();
+  } else {
+    await tester.pump(const Duration(milliseconds: 100));
+  }
   return router;
 }
 
@@ -238,6 +263,90 @@ void main() {
     )..addFont(rootBundle.load('fonts/MaterialIcons-Regular.otf'))).load();
   });
 
+  testWidgets('resume and first-time actions open the actual step', (
+    tester,
+  ) async {
+    await _pump(tester, const LearnLandingView());
+    await tester.tap(find.text('Continue step 3'));
+    await tester.pumpAndSettle();
+    expect(
+      find.text('/learn/responsive-web-design-v9/curriculum-outline/step-3'),
+      findsOneWidget,
+    );
+    await _pump(tester, const LearnLandingView(), guest: true);
+    await tester.tap(find.text('Start step 1'));
+    await tester.pumpAndSettle();
+    expect(
+      find.text('/learn/responsive-web-design-v9/curriculum-outline/step-1'),
+      findsOneWidget,
+    );
+  });
+  testWidgets('daily loading retains section and failure can retry', (
+    tester,
+  ) async {
+    final pending = Completer<DailyChallengeOverview>();
+    await _pump(
+      tester,
+      const LearnLandingView(),
+      todayLoader: () => pending.future,
+      settle: false,
+    );
+    expect(find.text('Loading today’s challenge…'), findsOneWidget);
+    pending.completeError(StateError('Offline'));
+    await tester.pump();
+    await tester.pump();
+    expect(find.text('Could not load today’s challenge.'), findsOneWidget);
+    var attempts = 0;
+    await _pump(
+      tester,
+      const LearnLandingView(),
+      todayLoader: () async {
+        if (attempts++ == 0) throw StateError('Offline');
+        return _today;
+      },
+      settle: false,
+    );
+    await tester.pump();
+    await tester.tap(find.widgetWithText(OutlinedButton, 'Try again'));
+    await tester.pumpAndSettle();
+    expect(find.text('Between Two Buckets'), findsOneWidget);
+    expect(attempts, 2);
+  });
+  testWidgets('certification exam opens its website anchor', (tester) async {
+    const channel = MethodChannel(
+      'plugins.flutter.droibit.github.io/custom_tabs',
+    );
+    final urls = <String>[];
+    TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger
+        .setMockMethodCallHandler(channel, (call) async {
+          if (call.method == 'launch') {
+            urls.add((call.arguments as Map)['url'] as String);
+          }
+          return null;
+        });
+    addTearDown(
+      () => TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger
+          .setMockMethodCallHandler(channel, null),
+    );
+    await _pump(
+      tester,
+      const SuperBlockView(dashedName: 'responsive-web-design-v9'),
+      courseData: const SuperBlock.chapters([
+        Chapter(
+          dashedName: 'responsive-web-design-certification-exam',
+          name: 'Certification Exam',
+          modules: [],
+        ),
+      ]),
+    );
+    await tester.ensureVisible(find.text('Open exam on website'));
+    await tester.pumpAndSettle();
+    await tester.tap(find.text('Open exam on website'));
+    await tester.pumpAndSettle();
+    expect(urls, [
+      'https://www.freecodecamp.org/learn/responsive-web-design-v9/#responsive-web-design-certification-exam',
+    ]);
+  });
   for (final dark in [false, true]) {
     final mode = dark ? 'dark' : 'light';
     testWidgets('Catalog keeps course availability and navigation in $mode', (
@@ -331,6 +440,45 @@ void main() {
       await tester.pumpAndSettle();
       expect(tester.takeException(), isNull);
     });
+  }
+  for (final dark in [false, true]) {
+    for (final viewport in [
+      const Size(320, 640),
+      const Size(844, 390),
+      const Size(768, 1024),
+    ]) {
+      for (final page in <Widget>[
+        const LearnLandingView(),
+        const SuperBlockView(dashedName: 'responsive-web-design-v9'),
+        const ModuleView(
+          superBlock: 'responsive-web-design-v9',
+          module: 'basic-html',
+        ),
+        const DailyChallengeArchiveView(),
+      ]) {
+        testWidgets(
+          'audit ${page.runtimeType} ${dark ? "dark" : "light"} $viewport at 200% text',
+          (tester) async {
+            await _pump(
+              tester,
+              page,
+              dark: dark,
+              width: viewport.width,
+              height: viewport.height,
+              scale: 2,
+            );
+            expect(find.byType(NavigationDestination), findsNWidgets(5));
+            expect(tester.takeException(), isNull);
+            await tester.drag(
+              find.byType(Scrollable).first,
+              const Offset(0, -1200),
+            );
+            await tester.pumpAndSettle();
+            expect(tester.takeException(), isNull);
+          },
+        );
+      }
+    }
   }
   testWidgets('Long step grids remain scrollable with large text', (
     tester,

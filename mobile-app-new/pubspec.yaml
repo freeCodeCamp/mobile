@@ -72,6 +72,8 @@ dependencies:
   firebase_remote_config: 6.7.0
   flutter_svg: 2.3.0
   timezone: 0.11.1
+  package_info_plus: ^10.2.2
+  flutter_timezone: ^5.1.1
 
 dependency_overrides:
   # This upstream revision has the same highlighting engine and grammar/theme

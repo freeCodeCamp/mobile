@@ -1,3 +1,7 @@
+import 'package:mobile_app_new/learn/ui/landing/learning_resume.dart';
+import 'package:mobile_app_new/learn/ui/widgets/learning_website.dart';
+import 'package:mobile_app_new/widgets/app_page_title.dart';
+import 'package:mobile_app_new/widgets/app_bottom_navigation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:mobile_app_new/fcc_theme.dart';
@@ -32,7 +36,13 @@ class LearnLandingView extends ConsumerWidget {
         .where((s) => s.isPublic)
         .firstOrNull;
     return Scaffold(
-      appBar: AppBar(title: const Text('Learn')),
+      bottomNavigationBar: const AppNavigationFooter(
+        selected: AppDestination.learn,
+      ),
+      appBar: AppBar(
+        title: const AppPageTitle('Learn'),
+        toolbarHeight: AppPageTitle.toolbarHeight(context),
+      ),
       drawer: const DrawerWidget(),
       body: RefreshIndicator(
         onRefresh: () => _refresh(ref),
@@ -42,11 +52,7 @@ class LearnLandingView extends ConsumerWidget {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
-              if (first != null)
-                _StartCard(
-                  course: first,
-                  onPressed: () => _openSuperBlock(context, first),
-                ),
+              if (first != null) _ResumeCard(course: first),
               if (username == null)
                 Align(
                   alignment: Alignment.center,
@@ -119,7 +125,11 @@ class LearnLandingView extends ConsumerWidget {
                 isEnabled: superBlock.isPublic,
                 subtitle: superBlock.isDisabledByOverride
                     ? 'Temporarily unavailable'
+                    : !superBlock.isPublic
+                    ? 'Opens freecodecamp.org'
                     : null,
+                isExternal:
+                    !superBlock.isPublic && !superBlock.isDisabledByOverride,
                 onPressed: () => _openSuperBlock(context, superBlock),
               ),
             ],
@@ -147,6 +157,8 @@ class LearnLandingView extends ConsumerWidget {
       LearnSuperBlockRoute(
         superBlock: superBlock.dashedName,
       ).push<void>(context);
+    } else if (!superBlock.isDisabledByOverride) {
+      openLearningWebsite(context, superBlock.dashedName);
     } else {
       ScaffoldMessenger.of(context)
         ..hideCurrentSnackBar()
@@ -163,50 +175,101 @@ class LearnLandingView extends ConsumerWidget {
   }
 }
 
-class _StartCard extends StatelessWidget {
-  const _StartCard({required this.course, required this.onPressed});
+class _ResumeCard extends ConsumerWidget {
+  const _ResumeCard({required this.course});
   final SuperBlockSummary course;
-  final VoidCallback onPressed;
 
   @override
-  Widget build(BuildContext context) => Container(
-    padding: const EdgeInsets.all(18),
-    decoration: BoxDecoration(
-      color: FccDesignColors.of(context).hero,
-      borderRadius: BorderRadius.circular(18),
-    ),
-    child: Column(
-      crossAxisAlignment: CrossAxisAlignment.stretch,
-      children: [
-        const LearnEyebrow('Build your skills', color: Color(0xFFFFF8EC)),
-        const SizedBox(height: 8),
-        Text(
-          course.title,
-          style: const TextStyle(
-            color: Color(0xFFFFF8EC),
-            fontSize: 22,
-            fontWeight: FontWeight.w800,
-            height: 1.2,
-          ),
-        ),
-        const SizedBox(height: 8),
-        const Text(
-          'Learn by building, one step at a time.',
-          style: TextStyle(color: Color(0xFFFFF8EC), fontSize: 14),
-        ),
-        const SizedBox(height: 16),
-        FilledButton.icon(
-          style: FilledButton.styleFrom(
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(10),
+  Widget build(BuildContext context, WidgetRef ref) {
+    final resume = ref.watch(learningResumeProvider);
+    final next = resume.value;
+    final returning = next?.isReturning ?? false;
+    return Container(
+      padding: const EdgeInsets.all(18),
+      decoration: BoxDecoration(
+        color: FccDesignColors.of(context).hero,
+        borderRadius: BorderRadius.circular(18),
+      ),
+      child: DefaultTextStyle.merge(
+        style: const TextStyle(color: Color(0xFFFFF8EC)),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: [
+            LearnEyebrow(
+              returning
+                  ? 'Pick up where you left off'
+                  : 'Your learning journey',
+              color: const Color(0xFFFFF8EC),
             ),
-          ),
-          onPressed: onPressed,
-          iconAlignment: IconAlignment.end,
-          icon: const Icon(Icons.arrow_forward, size: 18),
-          label: const Text('Explore course'),
+            const SizedBox(height: 8),
+            Text(
+              next?.block.name ?? course.title,
+              style: const TextStyle(
+                fontSize: 22,
+                fontWeight: FontWeight.w800,
+                height: 1.2,
+              ),
+            ),
+            const SizedBox(height: 8),
+            if (next != null) ...[
+              Text(next.course.title, style: const TextStyle(fontSize: 14)),
+              const SizedBox(height: 12),
+              LearnProgress(
+                done: next.completed,
+                total: next.block.challenges.length,
+                color: Theme.of(context).colorScheme.secondary,
+                backgroundColor: Colors.white24,
+              ),
+              const SizedBox(height: 8),
+              Text(
+                '${next.completed} of ${next.block.challenges.length} complete',
+                style: const TextStyle(fontSize: 12),
+              ),
+            ] else if (resume.isLoading) ...[
+              const Text('Finding your next step…'),
+              const SizedBox(height: 12),
+              const LinearProgressIndicator(
+                semanticsLabel: 'Loading your next step',
+              ),
+            ] else
+              Text(
+                resume.hasError
+                    ? 'Could not load your next step.'
+                    : 'Explore the curriculum to keep learning.',
+              ),
+            const SizedBox(height: 16),
+            FilledButton.icon(
+              style: FilledButton.styleFrom(
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(10),
+                ),
+              ),
+              onPressed: resume.isLoading
+                  ? null
+                  : next != null
+                  ? () => LearnChallengeRoute(
+                      superBlock: next.block.superBlock,
+                      block: next.block.dashedName,
+                      challengeId: next.challenge.id,
+                    ).push<void>(context)
+                  : resume.hasError
+                  ? () => retryLearningResume(ref)
+                  : () => LearnSuperBlockRoute(
+                      superBlock: course.dashedName,
+                    ).push<void>(context),
+              iconAlignment: IconAlignment.end,
+              icon: const Icon(Icons.arrow_forward, size: 18),
+              label: Text(
+                next != null
+                    ? '${returning ? 'Continue' : 'Start'} ${blockUnit(next.block)} ${next.step}'
+                    : resume.hasError
+                    ? 'Try again'
+                    : 'Explore course',
+              ),
+            ),
+          ],
         ),
-      ],
-    ),
-  );
+      ),
+    );
+  }
 }

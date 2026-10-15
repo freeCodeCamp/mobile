@@ -3,6 +3,8 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import 'package:mobile_app_new/news/controllers/feed_controller.dart';
 import 'package:mobile_app_new/news/ui/widgets/post_tile.dart';
+import 'package:mobile_app_new/news/ui/widgets/author_post_tile.dart';
+import 'package:mobile_app_new/news/ui/widgets/news_load_error.dart';
 import 'package:mobile_app_new/widgets/error_retry.dart';
 
 class PostFeedList extends ConsumerStatefulWidget {
@@ -11,10 +13,14 @@ class PostFeedList extends ConsumerStatefulWidget {
     required this.source,
     this.header,
     this.featured = false,
+    this.compact = false,
+    this.footer,
   });
 
   final NewsFeedSource source;
   final bool featured;
+  final bool compact;
+  final Widget? footer;
 
   // NOTE: The header is optional and can be used to display a widget above the
   // list of posts, such as author details or tag information.
@@ -56,10 +62,8 @@ class _PostFeedListState extends ConsumerState<PostFeedList> {
       color: Theme.of(context).scaffoldBackgroundColor,
       child: feedAsync.when(
         loading: () => const Center(child: CircularProgressIndicator()),
-        error: (error, stack) => ErrorRetry(
-          message: 'Unable to load tutorials.',
-          onRetry: () => ref.invalidate(_provider),
-        ),
+        error: (error, stack) =>
+            NewsLoadError(onRetry: () => ref.invalidate(_provider)),
         data: (feed) => RefreshIndicator(
           onRefresh: () async {
             ref.invalidate(_provider);
@@ -81,8 +85,23 @@ class _PostFeedListState extends ConsumerState<PostFeedList> {
               else
                 SliverPadding(
                   padding: const EdgeInsets.fromLTRB(20, 0, 20, 24),
-                  sliver: _buildList(feed),
+                  sliver: widget.compact
+                      ? DecoratedSliver(
+                          decoration: BoxDecoration(
+                            color: Theme.of(context).colorScheme.surface,
+                            border: Border.all(
+                              color: Theme.of(
+                                context,
+                              ).colorScheme.outlineVariant,
+                            ),
+                            borderRadius: BorderRadius.circular(16),
+                          ),
+                          sliver: _buildList(feed),
+                        )
+                      : _buildList(feed),
                 ),
+              if (widget.footer case final footer?)
+                SliverToBoxAdapter(child: footer),
             ],
           ),
         ),
@@ -102,6 +121,11 @@ class _PostFeedListState extends ConsumerState<PostFeedList> {
       ),
       itemBuilder: (context, index) => index == feed.posts.length
           ? footer
+          : widget.compact
+          ? AuthorPostTile(
+              key: ValueKey(feed.posts[index].id),
+              post: feed.posts[index],
+            )
           : PostTile(
               key: ValueKey(feed.posts[index].id),
               post: feed.posts[index],

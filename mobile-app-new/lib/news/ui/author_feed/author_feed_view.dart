@@ -49,6 +49,18 @@ class NewsAuthorFeedView extends ConsumerWidget {
   Widget _buildFeed(Author author) => PostFeedList(
     source: NewsFeedSource.author(author.id),
     header: _AuthorDetails(author: author),
+    compact: true,
+    footer: Builder(
+      builder: (context) => Padding(
+        padding: const EdgeInsets.only(bottom: 24),
+        child: Center(
+          child: TextButton(
+            onPressed: () => context.go(newsFeedPath),
+            child: const Text('See all tutorials'),
+          ),
+        ),
+      ),
+    ),
   );
 }
 
@@ -133,11 +145,6 @@ class _AuthorDetails extends StatelessWidget {
             ),
           ],
           const SizedBox(height: 20),
-          TextButton(
-            onPressed: () => context.go(newsFeedPath),
-            child: const Text('See all tutorials'),
-          ),
-          const SizedBox(height: 12),
           Align(
             alignment: Alignment.centerLeft,
             child: Text(
@@ -145,6 +152,7 @@ class _AuthorDetails extends StatelessWidget {
               style: const TextStyle(fontSize: 20, fontWeight: FontWeight.w800),
             ),
           ),
+          const SizedBox(height: 16),
         ],
       ),
     );

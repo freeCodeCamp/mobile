@@ -52,6 +52,8 @@ abstract class SceneState with _$SceneState {
     @Default(false) bool showCaptions,
     // NOTE: Whether the audio handler currently holds this scene's clip.
     @Default(false) bool isActive,
+    @Default(false) bool isLoading,
+    String? error,
   }) = _SceneState;
 }
 
@@ -122,6 +124,23 @@ class SceneNotifier extends _$SceneNotifier {
       state = state.copyWith(showCaptions: !state.showCaptions);
 
   Future<void> play() async {
+    if (state.isLoading) return;
+    state = state.copyWith(isLoading: true, error: null);
+    try {
+      await _play();
+    } catch (_) {
+      if (ref.mounted) {
+        state = state.copyWith(
+          error:
+              'Could not play this dialogue. Check your connection and try again.',
+        );
+      }
+    } finally {
+      if (ref.mounted) state = state.copyWith(isLoading: false);
+    }
+  }
+
+  Future<void> _play() async {
     if (_started && !_completed && _isActive) return _handler.play();
 
     if (!_isActive) {
@@ -132,7 +151,14 @@ class SceneNotifier extends _$SceneNotifier {
         start: _clip.start,
         end: _clip.end,
       );
-      if (!loaded || !ref.mounted) return;
+      if (!ref.mounted) return;
+      if (!loaded) {
+        state = state.copyWith(
+          error:
+              'Could not load this dialogue. Check your connection and try again.',
+        );
+        return;
+      }
     } else if (_completed) {
       await _handler.seek(Duration.zero);
       if (!ref.mounted) return;
@@ -147,6 +173,7 @@ class SceneNotifier extends _$SceneNotifier {
     var next = _initial().copyWith(
       showCaptions: state.showCaptions,
       isActive: true,
+      isLoading: true,
     );
     for (final (i, command) in scene.commands.indexed) {
       if (command.startTime < _audioOffset) {

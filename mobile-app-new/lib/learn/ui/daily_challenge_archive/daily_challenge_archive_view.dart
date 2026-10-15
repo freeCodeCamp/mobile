@@ -1,3 +1,4 @@
+import 'package:mobile_app_new/widgets/app_bottom_navigation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:jiffy/jiffy.dart';
@@ -41,6 +42,9 @@ class _DailyChallengeArchiveViewState
       ),
     );
     return Scaffold(
+      bottomNavigationBar: const AppNavigationFooter(
+        selected: AppDestination.learn,
+      ),
       appBar: AppBar(title: const Text('Daily coding challenges')),
       body: archive.when(
         loading: () => const Center(child: CircularProgressIndicator()),

@@ -37,26 +37,23 @@ class CodeRadioPlayerNotifier extends _$CodeRadioPlayerNotifier {
   @override
   bool build() {
     final subscription = _handler.playbackState.listen((playbackState) {
-      if (ref.mounted) state = playbackState.playing;
+      if (ref.mounted) state = _handler.isPlayingCodeRadio;
     });
     ref.onDispose(subscription.cancel);
-
-    ref.listen(codeRadioNowPlayingProvider, (_, next) {
-      final radio = next.value;
-      if (radio != null) _load(radio);
-    }, fireImmediately: true);
 
     return _handler.isPlayingCodeRadio;
   }
 
-  Future<void> _load(CodeRadio radio) async {
+  Future<void> toggle() async {
     final handler = _handler;
-
-    if (handler.codeRadioSongId != null) return;
-
-    await handler.loadCodeRadio(radio);
+    if (handler.isPlayingCodeRadio) {
+      await handler.pause();
+      return;
+    }
+    if (handler.codeRadioSongId == null) {
+      final radio = await ref.read(codeRadioNowPlayingProvider.future);
+      await handler.loadCodeRadio(radio);
+    }
     await handler.play();
   }
-
-  Future<void> toggle() => state ? _handler.pause() : _handler.play();
 }

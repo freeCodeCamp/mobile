@@ -31,7 +31,13 @@ class _LessonViewState extends State<LessonView> {
     widget.challenge.assignments.length,
     false,
   );
-  final _scroll = ScrollController();
+  final _scroll = ScrollController(keepScrollOffset: false);
+  late final _review = ReviewController(widget.challenge.nodules)
+    ..addListener(_onTopicChanged);
+  void _onTopicChanged() {
+    if (mounted) setState(() {});
+  }
+
   int? _current;
   bool _reviewed = false;
   bool get _assignmentsDone => _assignments.every((done) => done);
@@ -40,14 +46,34 @@ class _LessonViewState extends State<LessonView> {
   );
   @override
   void dispose() {
+    _review.dispose();
     _scroll.dispose();
     super.dispose();
   }
 
   void _show(int? index) {
     setState(() => _current = index);
-    if (_scroll.hasClients) _scroll.jumpTo(0);
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (mounted && _scroll.hasClients) _scroll.jumpTo(0);
+    });
   }
+
+  List<Widget> _reviewConfirmations() => [
+    if (widget.challenge.assignments.isNotEmpty)
+      for (final (i, assignment) in widget.challenge.assignments.indexed)
+        AssignmentTile(
+          label: assignment,
+          value: _assignments[i],
+          onToggle: () => setState(() => _assignments[i] = !_assignments[i]),
+        )
+    else
+      CheckboxListTile(
+        contentPadding: EdgeInsets.zero,
+        title: const Text('I have reviewed these concepts'),
+        value: _reviewed,
+        onChanged: (value) => setState(() => _reviewed = value ?? false),
+      ),
+  ];
 
   @override
   Widget build(BuildContext context) {
@@ -55,6 +81,7 @@ class _LessonViewState extends State<LessonView> {
     final colors = Theme.of(context).colorScheme;
     final current = _current;
     final review = challenge.challengeType == 31;
+    final shortViewport = MediaQuery.sizeOf(context).height < 600;
     final index = widget.block.challenges.indexWhere(
       (c) => c.id == challenge.id,
     );
@@ -65,7 +92,9 @@ class _LessonViewState extends State<LessonView> {
       appBar: challengeAppBar(
         context,
         title: widget.block.name,
-        subtitle: current == null
+        subtitle: current == null && review && _review.topicCount > 0
+            ? 'Topic ${_review.selected + 1} of ${_review.topicCount}'
+            : current == null
             ? '${review
                   ? 'Review'
                   : widget.block.label == BlockLabel.lecture
@@ -102,8 +131,11 @@ class _LessonViewState extends State<LessonView> {
                 color: lectureColor,
                 minHeight: 3,
               ),
+            if (current == null && review && _review.topicCount > 0)
+              ReviewTopics(controller: _review),
             Expanded(
               child: ListView(
+                key: ValueKey(current),
                 controller: _scroll,
                 padding: const EdgeInsets.all(16),
                 children: [
@@ -157,7 +189,10 @@ class _LessonViewState extends State<LessonView> {
                       ParsedHtml(challenge.description),
                     if (challenge.nodules.isNotEmpty)
                       review
-                          ? ReviewContent(nodules: challenge.nodules)
+                          ? ReviewContent(
+                              nodules: challenge.nodules,
+                              controller: _review,
+                            )
                           : ExampleEditor(nodules: challenge.nodules),
                     if (challenge.transcript.isNotEmpty)
                       HtmlCard(
@@ -192,6 +227,7 @@ class _LessonViewState extends State<LessonView> {
                         html: challenge.explanation,
                         collapsible: true,
                       ),
+                    if (review && shortViewport) ..._reviewConfirmations(),
                   ] else
                     Questions(
                       questions: _questions,
@@ -214,23 +250,8 @@ class _LessonViewState extends State<LessonView> {
           mainAxisSize: MainAxisSize.min,
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
-            if (current == null && review)
-              if (challenge.assignments.isNotEmpty)
-                for (final (i, assignment) in challenge.assignments.indexed)
-                  AssignmentTile(
-                    label: assignment,
-                    value: _assignments[i],
-                    onToggle: () =>
-                        setState(() => _assignments[i] = !_assignments[i]),
-                  )
-              else
-                CheckboxListTile(
-                  contentPadding: EdgeInsets.zero,
-                  title: const Text('I have reviewed these concepts'),
-                  value: _reviewed,
-                  onChanged: (value) =>
-                      setState(() => _reviewed = value ?? false),
-                ),
+            if (current == null && review && !shortViewport)
+              ..._reviewConfirmations(),
             if (current == null && _questions.isNotEmpty)
               ChallengeButton(
                 label: 'Continue to questions',

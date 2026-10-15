@@ -329,22 +329,24 @@ class _StepGrid extends StatelessWidget {
     final next = challenges.where((c) => !completed.contains(c.id)).firstOrNull;
     return LayoutBuilder(
       builder: (context, constraints) {
-        final columns = (constraints.maxWidth / 48).floor().clamp(1, 6);
         final scale = MediaQuery.textScalerOf(context).scale(14) / 14;
+        final minimumSide = 48 * scale;
+        final columns = ((constraints.maxWidth + 6) / (minimumSide + 6))
+            .floor()
+            .clamp(1, 6);
+        final side = (constraints.maxWidth - (columns - 1) * 6) / columns;
         return ConstrainedBox(
           constraints: const BoxConstraints(maxHeight: 300),
           child: GridView.builder(
             shrinkWrap: true,
             primary: false,
             padding: EdgeInsets.zero,
-            physics:
-                (challenges.length / columns).ceil() * (48 * scale + 6) - 6 >
-                    300
+            physics: (challenges.length / columns).ceil() * (side + 6) - 6 > 300
                 ? const ClampingScrollPhysics()
                 : const NeverScrollableScrollPhysics(),
             gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
               crossAxisCount: columns,
-              mainAxisExtent: 48 * scale,
+              childAspectRatio: 1,
               mainAxisSpacing: 6,
               crossAxisSpacing: 6,
             ),

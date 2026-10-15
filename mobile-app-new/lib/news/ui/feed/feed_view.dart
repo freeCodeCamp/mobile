@@ -28,59 +28,59 @@ class _NewsFeedViewState extends ConsumerState<NewsFeedView> {
       }
     }
 
-    return Column(
-      children: [
-        Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 20),
-          child: Material(
-            color: colors.surface,
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(14),
-              side: BorderSide(color: colors.outlineVariant),
-            ),
-            clipBehavior: Clip.antiAlias,
-            child: InkWell(
-              onTap: () => context.go(newsSearchPath),
-              child: Padding(
-                padding: const EdgeInsets.all(16),
-                child: Row(
-                  children: [
-                    const Icon(Icons.search_rounded),
-                    const SizedBox(width: 12),
-                    Text(
-                      'Search tutorials',
-                      style: TextStyle(
-                        fontSize: 17,
-                        color: colors.onSurfaceVariant,
+    return PostFeedList(
+      key: ValueKey(_selectedTag?.slug),
+      source: _selectedTag == null
+          ? const NewsFeedSource.all()
+          : NewsFeedSource.tag(_selectedTag!.slug),
+      featured: true,
+      header: Column(
+        children: [
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 20),
+            child: Material(
+              color: colors.surface,
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(14),
+                side: BorderSide(color: colors.outlineVariant),
+              ),
+              clipBehavior: Clip.antiAlias,
+              child: InkWell(
+                onTap: () => context.go(newsSearchPath),
+                child: Padding(
+                  padding: const EdgeInsets.all(16),
+                  child: Row(
+                    children: [
+                      const Icon(Icons.search_rounded),
+                      const SizedBox(width: 12),
+                      Expanded(
+                        child: Text(
+                          'Search tutorials',
+                          style: TextStyle(
+                            fontSize: 17,
+                            color: colors.onSurfaceVariant,
+                          ),
+                        ),
                       ),
-                    ),
-                  ],
+                    ],
+                  ),
                 ),
               ),
             ),
           ),
-        ),
-        SingleChildScrollView(
-          scrollDirection: Axis.horizontal,
-          padding: const EdgeInsets.fromLTRB(20, 16, 20, 12),
-          child: Row(
-            children: [
-              _filter(context, 'Latest', null),
-              for (final tag in tags.values.take(12))
-                _filter(context, tag.name, tag),
-            ],
+          SingleChildScrollView(
+            scrollDirection: Axis.horizontal,
+            padding: const EdgeInsets.fromLTRB(20, 16, 20, 12),
+            child: Row(
+              children: [
+                _filter(context, 'Latest', null),
+                for (final tag in tags.values.take(12))
+                  _filter(context, tag.name, tag),
+              ],
+            ),
           ),
-        ),
-        Expanded(
-          child: PostFeedList(
-            key: ValueKey(_selectedTag?.slug),
-            source: _selectedTag == null
-                ? const NewsFeedSource.all()
-                : NewsFeedSource.tag(_selectedTag!.slug),
-            featured: true,
-          ),
-        ),
-      ],
+        ],
+      ),
     );
   }
 
