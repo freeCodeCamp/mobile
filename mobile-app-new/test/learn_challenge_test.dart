@@ -247,6 +247,8 @@ void main() {
     for (final font in {
       'monospace': 'assets/fonts/Hack-Regular.ttf',
       'MaterialIcons': 'fonts/MaterialIcons-Regular.otf',
+      'packages/cupertino_icons/CupertinoIcons':
+          'packages/cupertino_icons/assets/CupertinoIcons.ttf',
     }.entries) {
       await (FontLoader(font.key)..addFont(rootBundle.load(font.value))).load();
     }

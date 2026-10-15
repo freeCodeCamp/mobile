@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/cupertino.dart' show CupertinoIcons;
+import 'package:mobile_app_new/fcc_theme.dart';
 import 'package:mobile_app_new/learn/models/challenge_model.dart';
 import 'package:mobile_app_new/learn/models/curriculum_model.dart';
 import 'package:mobile_app_new/learn/ui/challenge/widgets/challenge_card.dart';
@@ -10,7 +12,6 @@ import 'package:mobile_app_new/learn/ui/challenge/widgets/complete_button.dart';
 import 'package:mobile_app_new/learn/ui/challenge/widgets/assignment_tile.dart';
 import 'package:mobile_app_new/learn/ui/challenge/widgets/example_editor.dart';
 import 'package:mobile_app_new/learn/ui/challenge/widgets/challenge_video.dart';
-import 'package:mobile_app_new/learn/ui/challenge/widgets/help_dialog.dart';
 import 'package:mobile_app_new/learn/ui/challenge/widgets/questions.dart';
 import 'package:mobile_app_new/learn/ui/challenge/widgets/review_content.dart';
 import 'package:mobile_app_new/learn/ui/challenge/widgets/scene/scene_view.dart';
@@ -101,14 +102,6 @@ class _LessonViewState extends State<LessonView> {
                   ? 'Lecture'
                   : 'Lesson'} ${index + 1} of ${widget.block.challenges.length}'
             : 'Question ${current + 1} of ${_questions.length}',
-        actions: [
-          if (![24, 31].contains(challenge.challengeType))
-            IconButton(
-              tooltip: 'Ask for help',
-              icon: const Icon(Icons.help_outline),
-              onPressed: () => showHelpDialog(context, challenge, widget.block),
-            ),
-        ],
       ),
       body: SafeArea(
         bottom: false,
@@ -116,11 +109,23 @@ class _LessonViewState extends State<LessonView> {
           children: [
             if (current != null)
               Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 16),
-                child: QuestionProgress(
-                  total: _questions.length,
-                  current: current,
-                  answered: _checked,
+                padding: const EdgeInsets.fromLTRB(16, 8, 16, 0),
+                child: Align(
+                  alignment: Alignment.centerLeft,
+                  child: SizedBox(
+                    // Keep short lectures compact; parent constraints shrink
+                    // the row safely if a lesson has many questions.
+                    width: _questions.length * 28 + (_questions.length - 1) * 6,
+                    child: QuestionProgress(
+                      total: _questions.length,
+                      current: current,
+                      answered: _checked,
+                      height: 6,
+                      spacing: 6,
+                      currentColor: colors.secondary,
+                      answeredColor: colors.primary,
+                    ),
+                  ),
                 ),
               )
             else
@@ -246,6 +251,7 @@ class _LessonViewState extends State<LessonView> {
         ),
       ),
       bottomNavigationBar: ChallengeFooter(
+        padding: const EdgeInsets.all(12),
         child: Column(
           mainAxisSize: MainAxisSize.min,
           crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -255,6 +261,7 @@ class _LessonViewState extends State<LessonView> {
             if (current == null && _questions.isNotEmpty)
               ChallengeButton(
                 label: 'Continue to questions',
+                style: _buttonStyle(context),
                 onPressed: _assignmentsDone
                     ? () => _show(
                         _questions.indexed
@@ -274,72 +281,103 @@ class _LessonViewState extends State<LessonView> {
                 challenge: challenge,
                 block: widget.block,
                 label: 'Continue',
+                buttonStyle: _buttonStyle(context),
                 enabled:
                     _assignmentsDone &&
                     (!review || challenge.assignments.isNotEmpty || _reviewed),
               )
             else
-              Row(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Expanded(
-                    child: ChallengeButton(
-                      label: 'Lesson',
-                      secondary: true,
-                      onPressed: () => _show(null),
+              LayoutBuilder(
+                builder: (context, constraints) {
+                  final lesson = ChallengeButton(
+                    label: 'Lesson',
+                    leadingIcon: CupertinoIcons.book,
+                    style: _buttonStyle(context).copyWith(
+                      backgroundColor: WidgetStatePropertyAll(
+                        colors.primaryContainer,
+                      ),
+                      foregroundColor: WidgetStatePropertyAll(
+                        FccDesignColors.of(context).accentText,
+                      ),
                     ),
-                  ),
-                  const SizedBox(width: 12),
-                  Expanded(
-                    flex: 2,
-                    child: _passed
-                        ? CompleteButton(
-                            challenge: challenge,
-                            block: widget.block,
-                            label: 'Continue',
-                            enabled: _assignmentsDone,
-                          )
-                        : ChallengeButton(
-                            label:
-                                _checked[current] &&
-                                    _selected[current] ==
-                                        _questions[current].solution
-                                ? 'Next question'
-                                : _checked[current]
-                                ? 'Pick another answer'
-                                : 'Check answer',
-                            onPressed:
-                                _selected[current] == null ||
-                                    (_checked[current] &&
-                                        _selected[current] !=
-                                            _questions[current].solution)
-                                ? null
-                                : () {
-                                    if (_checked[current]) {
-                                      final next =
-                                          List.generate(
-                                            _questions.length,
-                                            (i) =>
-                                                (current + i + 1) %
-                                                _questions.length,
-                                          ).firstWhere(
-                                            (i) =>
-                                                !_checked[i] ||
-                                                _selected[i] !=
-                                                    _questions[i].solution,
-                                          );
-                                      _show(next);
-                                    } else {
-                                      setState(() => _checked[current] = true);
-                                    }
-                                  },
-                          ),
-                  ),
-                ],
+                    onPressed: () => _show(null),
+                  );
+                  final next = _passed
+                      ? CompleteButton(
+                          challenge: challenge,
+                          block: widget.block,
+                          label: 'Continue',
+                          buttonStyle: _buttonStyle(context),
+                          enabled: _assignmentsDone,
+                        )
+                      : ChallengeButton(
+                          style: _buttonStyle(context),
+                          label:
+                              _checked[current] &&
+                                  _selected[current] ==
+                                      _questions[current].solution
+                              ? 'Next question'
+                              : _checked[current]
+                              ? 'Pick another answer'
+                              : 'Check answer',
+                          onPressed:
+                              _selected[current] == null ||
+                                  (_checked[current] &&
+                                      _selected[current] !=
+                                          _questions[current].solution)
+                              ? null
+                              : () {
+                                  if (_checked[current]) {
+                                    final next =
+                                        List.generate(
+                                          _questions.length,
+                                          (i) =>
+                                              (current + i + 1) %
+                                              _questions.length,
+                                        ).firstWhere(
+                                          (i) =>
+                                              !_checked[i] ||
+                                              _selected[i] !=
+                                                  _questions[i].solution,
+                                        );
+                                    _show(next);
+                                  } else {
+                                    setState(() => _checked[current] = true);
+                                  }
+                                },
+                        );
+                  if (constraints.maxWidth < 360 &&
+                      MediaQuery.textScalerOf(context).scale(16) > 20) {
+                    return Column(
+                      crossAxisAlignment: CrossAxisAlignment.stretch,
+                      mainAxisSize: MainAxisSize.min,
+                      children: [lesson, const SizedBox(height: 8), next],
+                    );
+                  }
+                  return Row(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Expanded(child: lesson),
+                      const SizedBox(width: 8),
+                      Expanded(flex: 2, child: next),
+                    ],
+                  );
+                },
               ),
           ],
         ),
       ),
     );
   }
+
+  ButtonStyle _buttonStyle(BuildContext context) => FilledButton.styleFrom(
+    minimumSize: const Size(double.infinity, 50),
+    padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 12),
+    textStyle: const TextStyle(
+      fontFamily: 'Lato',
+      fontSize: 16,
+      fontWeight: FontWeight.w800,
+    ),
+    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+  );
 }

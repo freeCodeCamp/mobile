@@ -8,6 +8,7 @@ class ChallengeButton extends StatelessWidget {
     this.loading = false,
     this.secondary = false,
     this.style,
+    this.leadingIcon,
     this.trailingIcon,
   });
   final String label;
@@ -15,6 +16,7 @@ class ChallengeButton extends StatelessWidget {
   final bool loading;
   final bool secondary;
   final ButtonStyle? style;
+  final IconData? leadingIcon;
   final IconData? trailingIcon;
   @override
   Widget build(BuildContext context) {
@@ -34,15 +36,21 @@ class ChallengeButton extends StatelessWidget {
               dimension: 22,
               child: CircularProgressIndicator(strokeWidth: 2),
             )
-          : trailingIcon == null
+          : leadingIcon == null && trailingIcon == null
           ? Text(label, textAlign: TextAlign.center)
           : Row(
               mainAxisAlignment: MainAxisAlignment.center,
               mainAxisSize: MainAxisSize.min,
               children: [
+                if (leadingIcon != null) ...[
+                  Icon(leadingIcon, size: 18),
+                  const SizedBox(width: 8),
+                ],
                 Flexible(child: Text(label, textAlign: TextAlign.center)),
-                const SizedBox(width: 8),
-                Icon(trailingIcon, size: 18),
+                if (trailingIcon != null) ...[
+                  const SizedBox(width: 8),
+                  Icon(trailingIcon, size: 18),
+                ],
               ],
             ),
     );

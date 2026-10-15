@@ -92,11 +92,11 @@ class QuestionProgress extends StatelessWidget {
       label: 'Question ${current + 1} of $total',
       child: Row(
         children: [
-          for (var i = 0; i < total; i++)
+          for (var i = 0; i < total; i++) ...[
+            if (i > 0) SizedBox(width: spacing),
             Expanded(
               child: Container(
                 height: height,
-                margin: EdgeInsets.only(right: i == total - 1 ? 0 : spacing),
                 decoration: BoxDecoration(
                   borderRadius: BorderRadius.circular(height / 2),
                   color: i == current
@@ -107,6 +107,7 @@ class QuestionProgress extends StatelessWidget {
                 ),
               ),
             ),
+          ],
         ],
       ),
     );
