@@ -14,7 +14,7 @@ env:
 jobs:
   i18n-download-translations:
     name: Download
-    runs-on: ubuntu-22.04
+    runs-on: ubuntu-26.04
     strategy:
       matrix:
         node-version: [24.x]

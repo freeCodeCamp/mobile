@@ -14,7 +14,7 @@ env:
 jobs:
   i18n-upload-files:
     name: Learn
-    runs-on: ubuntu-22.04
+    runs-on: ubuntu-26.04
 
     steps:
       - name: Checkout Source Files
