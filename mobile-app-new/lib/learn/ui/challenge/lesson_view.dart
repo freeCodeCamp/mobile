@@ -89,9 +89,12 @@ class _LessonViewState extends State<LessonView> {
     final lectureColor = Color(
       Theme.of(context).brightness == Brightness.dark ? 0xFF8EC5FF : 0xFF1F6FD1,
     );
-    return Scaffold(
+    final scaffold = Scaffold(
       appBar: challengeAppBar(
         context,
+        leading: current == null
+            ? null
+            : BackButton(onPressed: () => _show(null)),
         title: widget.block.name,
         subtitle: current == null && review && _review.topicCount > 0
             ? 'Topic ${_review.selected + 1} of ${_review.topicCount}'
@@ -367,6 +370,13 @@ class _LessonViewState extends State<LessonView> {
           ],
         ),
       ),
+    );
+    return PopScope(
+      canPop: current == null,
+      onPopInvokedWithResult: (didPop, _) {
+        if (!didPop && _current != null) _show(null);
+      },
+      child: scaffold,
     );
   }
 

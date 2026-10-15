@@ -307,5 +307,85 @@ void main() {
         },
       );
     }
+
+    testWidgets('question back returns to reading before leaving the lecture '
+        '${dark ? 'dark' : 'light'}', (tester) async {
+      tester.view.devicePixelRatio = 1;
+      tester.view.physicalSize = const Size(390, 844);
+      addTearDown(tester.view.resetDevicePixelRatio);
+      addTearDown(tester.view.resetPhysicalSize);
+      await tester.pumpWidget(
+        MaterialApp(
+          theme: dark ? FccTheme.themeDark : FccTheme.themeLight,
+          home: Scaffold(
+            body: Builder(
+              builder: (context) => Column(
+                children: [
+                  const Text('Parent course'),
+                  FilledButton(
+                    onPressed: () => Navigator.of(context).push<void>(
+                      MaterialPageRoute(
+                        builder: (_) =>
+                            LessonView(challenge: _lecture, block: _block),
+                      ),
+                    ),
+                    child: const Text('Open lecture'),
+                  ),
+                ],
+              ),
+            ),
+          ),
+        ),
+      );
+      await _tap(tester, _button('Open lecture'));
+      expect(find.byType(BackButton), findsOneWidget);
+      expect(find.text('Parent course'), findsNothing);
+      await _tap(tester, _button('Continue to questions'));
+      expect(find.byType(BackButton), findsOneWidget);
+      expect(find.byTooltip('Back'), findsOneWidget);
+      expect(find.byTooltip('Ask for help'), findsNothing);
+      await _tap(tester, _answer('href'));
+      await _tap(tester, _button('Check answer'));
+      expect(find.text('Not quite'), findsOneWidget);
+
+      await tester.binding.handlePopRoute();
+      await tester.pumpAndSettle();
+      expect(find.text('Working with images'), findsOneWidget);
+      expect(find.byType(QuestionProgress), findsNothing);
+      expect(find.text('Parent course'), findsNothing);
+      expect(find.byType(BackButton), findsOneWidget);
+      await _tap(tester, _button('Continue to questions'));
+      expect(find.text('Question 1 of 2'), findsOneWidget);
+      expect(find.text('Not quite'), findsOneWidget);
+      expect(
+        tester.widget<FilledButton>(_button('Pick another answer')).onPressed,
+        isNull,
+      );
+      expect(find.byType(BackButton), findsOneWidget);
+
+      // The question's app-bar Back action has the same destination as the
+      // Android system Back action, without popping the lecture route.
+      await _tap(tester, find.byType(BackButton));
+      expect(find.text('Working with images'), findsOneWidget);
+      expect(find.text('Parent course'), findsNothing);
+      await _tap(tester, _button('Continue to questions'));
+      expect(find.text('Not quite'), findsOneWidget);
+      expect(find.byType(BackButton), findsOneWidget);
+
+      // The explicit Lesson action preserves the same checked selection.
+      await _tap(tester, _button('Lesson'));
+      expect(find.text('Working with images'), findsOneWidget);
+      expect(find.text('Parent course'), findsNothing);
+      await _tap(tester, _button('Continue to questions'));
+      expect(find.text('Not quite'), findsOneWidget);
+      expect(find.byType(BackButton), findsOneWidget);
+
+      await tester.binding.handlePopRoute();
+      await tester.pumpAndSettle();
+      await _tap(tester, find.byType(BackButton));
+      expect(find.text('Parent course'), findsOneWidget);
+      expect(find.byType(LessonView), findsNothing);
+      expect(tester.takeException(), isNull);
+    });
   }
 }
