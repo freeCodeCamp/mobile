@@ -28,6 +28,7 @@ class Questions extends StatelessWidget {
     this.currentIndex,
     this.enabled = true,
     this.plainCodeBlocks = false,
+    this.outlinedFeedbackCode = false,
   });
   final List<QuestionItem> questions;
   final List<int?> selected;
@@ -36,6 +37,7 @@ class Questions extends StatelessWidget {
   final int? currentIndex;
   final bool enabled;
   final bool plainCodeBlocks;
+  final bool outlinedFeedbackCode;
 
   @override
   Widget build(BuildContext context) => Column(
@@ -190,7 +192,7 @@ class Questions extends StatelessWidget {
             ),
           ),
           if (feedback != null && feedback.isNotEmpty)
-            ParsedHtml(feedback)
+            ParsedHtml(feedback, outlinedInlineCode: outlinedFeedbackCode)
           else if (!correct)
             const Padding(
               padding: EdgeInsets.only(top: 6),

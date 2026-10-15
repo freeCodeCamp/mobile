@@ -15,6 +15,7 @@ import 'package:mobile_app_new/learn/ui/challenge/widgets/challenge_video.dart';
 import 'package:mobile_app_new/learn/ui/challenge/widgets/questions.dart';
 import 'package:mobile_app_new/learn/ui/challenge/widgets/review_content.dart';
 import 'package:mobile_app_new/learn/ui/challenge/widgets/scene/scene_view.dart';
+import 'package:mobile_app_new/learn/ui/challenge/widgets/task_explanation.dart';
 
 class LessonView extends StatefulWidget {
   const LessonView({super.key, required this.challenge, required this.block});
@@ -82,6 +83,13 @@ class _LessonViewState extends State<LessonView> {
     final colors = Theme.of(context).colorScheme;
     final current = _current;
     final review = challenge.challengeType == 31;
+    final englishTask =
+        challenge.challengeType == 19 &&
+        widget.block.layout == BlockLayout.challengeDialogue;
+    final taskExplanation = {
+      challenge.description.trim(),
+      challenge.explanation.trim(),
+    }.where((html) => html.isNotEmpty).join('\n');
     final shortViewport = MediaQuery.sizeOf(context).height < 600;
     final index = widget.block.challenges.indexWhere(
       (c) => c.id == challenge.id,
@@ -89,14 +97,104 @@ class _LessonViewState extends State<LessonView> {
     final lectureColor = Color(
       Theme.of(context).brightness == Brightness.dark ? 0xFF8EC5FF : 0xFF1F6FD1,
     );
+    final readingContent = <Widget>[
+      if (!englishTask) ...[
+        Wrap(
+          spacing: 8,
+          runSpacing: 8,
+          children: [
+            Chip(
+              label: Text(
+                review
+                    ? 'REVIEW'
+                    : challenge.videoId != null
+                    ? 'VIDEO'
+                    : 'LECTURE',
+                style: TextStyle(
+                  fontFamily: 'monospace',
+                  fontSize: 11,
+                  fontWeight: FontWeight.w700,
+                  color: lectureColor,
+                ),
+              ),
+              backgroundColor: lectureColor.withValues(alpha: .1),
+              side: BorderSide.none,
+            ),
+            if (_questions.isNotEmpty)
+              Chip(
+                label: Text(
+                  '${_questions.length} questions at the end',
+                  style: const TextStyle(fontSize: 12),
+                ),
+                backgroundColor: colors.surfaceContainer,
+                side: BorderSide.none,
+              ),
+          ],
+        ),
+        const SizedBox(height: 16),
+        Text(
+          challenge.title,
+          style: Theme.of(context).textTheme.headlineMedium,
+        ),
+        const SizedBox(height: 16),
+      ],
+      if (challenge.videoId case final videoId?) ...[
+        ClipRRect(
+          borderRadius: BorderRadius.circular(14),
+          child: ChallengeVideo(videoId: videoId),
+        ),
+        const SizedBox(height: 16),
+      ],
+      if (!englishTask && challenge.description.isNotEmpty)
+        ParsedHtml(challenge.description),
+      if (challenge.nodules.isNotEmpty)
+        review
+            ? ReviewContent(nodules: challenge.nodules, controller: _review)
+            : ExampleEditor(nodules: challenge.nodules),
+      if (challenge.transcript.isNotEmpty)
+        HtmlCard(
+          title: 'Transcript',
+          html: challenge.transcript,
+          collapsible: true,
+        ),
+      if (!englishTask && challenge.scene != null)
+        SceneView(scene: challenge.scene!, title: challenge.title),
+      if (challenge.instructions.isNotEmpty) ParsedHtml(challenge.instructions),
+      if (challenge.assignments.isNotEmpty && !review)
+        ChallengeCard(
+          title: 'Before you continue',
+          child: Column(
+            children: [
+              for (final (i, assignment) in challenge.assignments.indexed)
+                AssignmentTile(
+                  label: assignment,
+                  value: _assignments[i],
+                  onToggle: () =>
+                      setState(() => _assignments[i] = !_assignments[i]),
+                ),
+            ],
+          ),
+        ),
+      if (englishTask && taskExplanation.isNotEmpty)
+        TaskExplanation(html: taskExplanation)
+      else if (!englishTask && challenge.explanation.isNotEmpty)
+        HtmlCard(
+          title: 'Explanation',
+          html: challenge.explanation,
+          collapsible: true,
+        ),
+      if (review && shortViewport) ..._reviewConfirmations(),
+    ];
     final scaffold = Scaffold(
       appBar: challengeAppBar(
         context,
         leading: current == null
             ? null
             : BackButton(onPressed: () => _show(null)),
-        title: widget.block.name,
-        subtitle: current == null && review && _review.topicCount > 0
+        title: englishTask ? challenge.title : widget.block.name,
+        subtitle: current == null && englishTask
+            ? widget.block.name
+            : current == null && review && _review.topicCount > 0
             ? 'Topic ${_review.selected + 1} of ${_review.topicCount}'
             : current == null
             ? '${review
@@ -131,7 +229,7 @@ class _LessonViewState extends State<LessonView> {
                   ),
                 ),
               )
-            else
+            else if (!englishTask)
               LinearProgressIndicator(
                 value: widget.block.challenges.isEmpty
                     ? 0
@@ -145,103 +243,34 @@ class _LessonViewState extends State<LessonView> {
               child: ListView(
                 key: ValueKey(current),
                 controller: _scroll,
-                padding: const EdgeInsets.all(16),
+                padding: englishTask && current == null
+                    ? EdgeInsets.zero
+                    : const EdgeInsets.all(16),
                 children: [
                   if (current == null) ...[
-                    Wrap(
-                      spacing: 8,
-                      runSpacing: 8,
-                      children: [
-                        Chip(
-                          label: Text(
-                            review
-                                ? 'REVIEW'
-                                : challenge.videoId != null
-                                ? 'VIDEO'
-                                : 'LECTURE',
-                            style: TextStyle(
-                              fontFamily: 'monospace',
-                              fontSize: 11,
-                              fontWeight: FontWeight.w700,
-                              color: lectureColor,
-                            ),
-                          ),
-                          backgroundColor: lectureColor.withValues(alpha: .1),
-                          side: BorderSide.none,
-                        ),
-                        if (_questions.isNotEmpty)
-                          Chip(
-                            label: Text(
-                              '${_questions.length} questions at the end',
-                              style: const TextStyle(fontSize: 12),
-                            ),
-                            backgroundColor: colors.surfaceContainer,
-                            side: BorderSide.none,
-                          ),
-                      ],
-                    ),
-                    const SizedBox(height: 16),
-                    Text(
-                      challenge.title,
-                      style: Theme.of(context).textTheme.headlineMedium,
-                    ),
-                    const SizedBox(height: 16),
-                    if (challenge.videoId case final videoId?) ...[
-                      ClipRRect(
-                        borderRadius: BorderRadius.circular(14),
-                        child: ChallengeVideo(videoId: videoId),
+                    if (englishTask && challenge.scene != null)
+                      SceneView(
+                        scene: challenge.scene!,
+                        title: challenge.title,
+                        edgeToEdge: true,
                       ),
-                      const SizedBox(height: 16),
-                    ],
-                    if (challenge.description.isNotEmpty)
-                      ParsedHtml(challenge.description),
-                    if (challenge.nodules.isNotEmpty)
-                      review
-                          ? ReviewContent(
-                              nodules: challenge.nodules,
-                              controller: _review,
-                            )
-                          : ExampleEditor(nodules: challenge.nodules),
-                    if (challenge.transcript.isNotEmpty)
-                      HtmlCard(
-                        title: 'Transcript',
-                        html: challenge.transcript,
-                        collapsible: true,
-                      ),
-                    if (challenge.scene case final scene?)
-                      SceneView(scene: scene, title: challenge.title),
-                    if (challenge.instructions.isNotEmpty)
-                      ParsedHtml(challenge.instructions),
-                    if (challenge.assignments.isNotEmpty && !review)
-                      ChallengeCard(
-                        title: 'Before you continue',
+                    if (englishTask)
+                      Padding(
+                        padding: const EdgeInsets.all(16),
                         child: Column(
-                          children: [
-                            for (final (i, assignment)
-                                in challenge.assignments.indexed)
-                              AssignmentTile(
-                                label: assignment,
-                                value: _assignments[i],
-                                onToggle: () => setState(
-                                  () => _assignments[i] = !_assignments[i],
-                                ),
-                              ),
-                          ],
+                          crossAxisAlignment: CrossAxisAlignment.stretch,
+                          children: readingContent,
                         ),
-                      ),
-                    if (challenge.explanation.isNotEmpty)
-                      HtmlCard(
-                        title: 'Explanation',
-                        html: challenge.explanation,
-                        collapsible: true,
-                      ),
-                    if (review && shortViewport) ..._reviewConfirmations(),
+                      )
+                    else
+                      ...readingContent,
                   ] else
                     Questions(
                       questions: _questions,
                       selected: _selected,
                       currentIndex: current,
                       validated: _checked[current],
+                      outlinedFeedbackCode: englishTask,
                       onChanged: (question, answer) => setState(() {
                         _selected[question] = answer;
                         _checked[question] = false;

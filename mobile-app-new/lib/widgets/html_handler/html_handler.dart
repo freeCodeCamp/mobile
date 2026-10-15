@@ -94,6 +94,7 @@ class HTMLParser {
     bool isSelectable = true,
     Map<String, Style> customStyles = const {},
     bool plainCodeBlocks = false,
+    bool outlinedInlineCode = false,
     bool enableTapActions = true,
   }) {
     final result = parser.parse(html);
@@ -115,6 +116,7 @@ class HTMLParser {
           customStyles,
           plainCodeBlocks,
           enableTapActions,
+          outlinedInlineCode,
         ),
       );
     }
@@ -128,6 +130,7 @@ class HTMLParser {
     Map<String, Style> customStyles = const {},
     bool plainCodeBlocks = false,
     bool enableTapActions = true,
+    bool outlinedInlineCode = false,
   ]) {
     final colors = Theme.of(context).colorScheme;
     final themeStyles = <String, Style>{
@@ -156,6 +159,52 @@ class HTMLParser {
         backgroundColor: colors.surfaceContainerLow,
       ),
     };
+    Widget inlineCode(ExtensionContext child, {bool copyable = true}) {
+      final parsed = parser.parseFragment(child.innerHtml).text ?? '';
+      final borderRadius = BorderRadius.circular(outlinedInlineCode ? 4 : 6);
+      final pill = Container(
+        padding: EdgeInsets.symmetric(horizontal: outlinedInlineCode ? 4 : 3),
+        decoration: BoxDecoration(
+          color: outlinedInlineCode ? colors.surface : colors.outlineVariant,
+          border: outlinedInlineCode
+              ? Border.all(color: colors.outlineVariant)
+              : null,
+          borderRadius: borderRadius,
+        ),
+        child: Text(
+          parsed,
+          style: TextStyle(
+            fontFamily: 'monospace',
+            color: colors.onSurface,
+            fontSize: customStyles['code']?.fontSize?.value ?? 16,
+            letterSpacing: 0,
+            height: 1.25,
+          ),
+        ),
+      );
+      if (!copyable) {
+        return pill;
+      }
+      return InkWell(
+        onTap: !enableTapActions
+            ? null
+            : () {
+                Clipboard.setData(ClipboardData(text: parsed));
+                ScaffoldMessenger.of(context).showSnackBar(
+                  SnackBar(
+                    content: Text(
+                      'Copied to clipboard: $parsed',
+                      style: const TextStyle(fontSize: 20),
+                    ),
+                    duration: const Duration(seconds: 1),
+                  ),
+                );
+              },
+        borderRadius: borderRadius,
+        child: pill,
+      );
+    }
+
     Html htmlWidget = Html(
       shrinkWrap: true,
       data: child,
@@ -222,47 +271,14 @@ class HTMLParser {
             return Container();
           },
         ),
-        TagExtension(
-          tagsToExtend: {'code'},
-          builder: (child) {
-            String? parsed = parser.parseFragment(child.innerHtml).text ?? '';
-
-            return InkWell(
-              onTap: !enableTapActions
-                  ? null
-                  : () {
-                      Clipboard.setData(ClipboardData(text: parsed));
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        SnackBar(
-                          content: Text(
-                            'Copied to clipboard: $parsed',
-                            style: const TextStyle(fontSize: 20),
-                          ),
-                          duration: const Duration(seconds: 1),
-                        ),
-                      );
-                    },
-              borderRadius: BorderRadius.circular(6),
-              child: Container(
-                padding: const EdgeInsets.symmetric(horizontal: 3),
-                decoration: BoxDecoration(
-                  color: colors.outlineVariant,
-                  borderRadius: BorderRadius.circular(6),
-                ),
-                child: Text(
-                  parsed,
-                  style: TextStyle(
-                    fontFamily: 'monospace',
-                    color: colors.onSurface,
-                    fontSize: customStyles['code']?.fontSize?.value ?? 16,
-                    letterSpacing: 0,
-                    height: 1.25,
-                  ),
-                ),
-              ),
-            );
-          },
-        ),
+        TagExtension(tagsToExtend: {'code'}, builder: inlineCode),
+        if (outlinedInlineCode)
+          MatcherExtension(
+            matcher: (child) =>
+                child.elementName == 'span' &&
+                child.classes.contains('highlighted-text'),
+            builder: (child) => inlineCode(child, copyable: false),
+          ),
         TagExtension(
           tagsToExtend: {'img'},
           builder: (child) {
@@ -299,6 +315,7 @@ class HTMLParser {
               isSelectable: isSelectable,
               customStyles: customStyles,
               plainCodeBlocks: plainCodeBlocks,
+              outlinedInlineCode: outlinedInlineCode,
               enableTapActions: enableTapActions,
             );
 
