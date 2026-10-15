@@ -93,6 +93,7 @@ class HTMLParser {
     String html, {
     bool isSelectable = true,
     Map<String, Style> customStyles = const {},
+    bool plainCodeBlocks = false,
   }) {
     final result = parser.parse(html);
 
@@ -104,6 +105,7 @@ class HTMLParser {
           result.body!.children[i].outerHtml,
           isSelectable,
           customStyles,
+          plainCodeBlocks,
         ),
       );
     }
@@ -115,6 +117,7 @@ class HTMLParser {
     String child, [
     bool isSelectable = true,
     Map<String, Style> customStyles = const {},
+    bool plainCodeBlocks = false,
   ]) {
     final colors = Theme.of(context).colorScheme;
     final themeStyles = <String, Style>{
@@ -182,6 +185,7 @@ class HTMLParser {
               code: code.text.trimRight(),
               language: language ?? '',
               fontSize: customStyles['pre']?.fontSize?.value ?? 13,
+              plain: plainCodeBlocks,
             );
           },
         ),
@@ -274,6 +278,7 @@ class HTMLParser {
               node.innerHtml,
               isSelectable: isSelectable,
               customStyles: customStyles,
+              plainCodeBlocks: plainCodeBlocks,
             );
 
             return Padding(

@@ -11,10 +11,12 @@ class ParsedHtml extends StatefulWidget {
     super.key,
     this.customStyles = const {},
     this.selectable = true,
+    this.plainCodeBlocks = false,
   });
   final String html;
   final Map<String, Style> customStyles;
   final bool selectable;
+  final bool plainCodeBlocks;
   @override
   State<ParsedHtml> createState() => _ParsedHtmlState();
 }
@@ -32,6 +34,7 @@ class _ParsedHtmlState extends State<ParsedHtml> {
     super.didUpdateWidget(oldWidget);
     if (oldWidget.html != widget.html ||
         oldWidget.selectable != widget.selectable ||
+        oldWidget.plainCodeBlocks != widget.plainCodeBlocks ||
         !mapEquals(oldWidget.customStyles, widget.customStyles)) {
       _children = null;
     }
@@ -62,6 +65,7 @@ class _ParsedHtmlState extends State<ParsedHtml> {
     return HTMLParser(context: context).parse(
       '<div>${widget.html}</div>',
       isSelectable: widget.selectable,
+      plainCodeBlocks: widget.plainCodeBlocks,
       customStyles: styles,
     );
   }

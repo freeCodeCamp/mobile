@@ -6,7 +6,6 @@ import 'package:mobile_app_new/learn/models/challenge_model.dart';
 import 'package:mobile_app_new/learn/models/curriculum_model.dart';
 import 'package:mobile_app_new/learn/ui/challenge/widgets/challenge_button.dart';
 import 'package:flutter_html/flutter_html.dart';
-import 'package:mobile_app_new/learn/ui/challenge/widgets/html_card.dart';
 import 'package:mobile_app_new/learn/ui/challenge/widgets/challenge_layout.dart';
 import 'package:mobile_app_new/learn/ui/challenge/widgets/complete_button.dart';
 import 'package:mobile_app_new/learn/ui/challenge/widgets/parsed_html.dart';
@@ -268,17 +267,12 @@ class _QuizViewState extends State<QuizView> {
                           ),
                         ),
                       ),
-                      if (_current == 0 && challenge.description.isNotEmpty)
-                        HtmlCard(
-                          title: 'About this quiz',
-                          html: challenge.description,
-                          collapsible: true,
-                        ),
                       if (_current == 0 && challenge.instructions.isNotEmpty)
                         ParsedHtml(challenge.instructions),
                       const SizedBox(height: 12),
                       Questions(
                         questions: _questions,
+                        plainCodeBlocks: true,
                         selected: _selected,
                         currentIndex: _current,
                         validated: false,
@@ -385,7 +379,7 @@ class _QuizViewState extends State<QuizView> {
                             ),
                           ),
                           const SizedBox(height: 4),
-                          _resultHtml(q.text),
+                          _resultHtml(q.text, plainCodeBlocks: true),
                           if (_selected[i] != q.solution) ...[
                             const SizedBox(height: 8),
                             _resultHtml(
@@ -472,8 +466,10 @@ class _QuizViewState extends State<QuizView> {
     Color? color,
     FontWeight? weight,
     bool inline = false,
+    bool plainCodeBlocks = false,
   }) => ParsedHtml(
     html,
+    plainCodeBlocks: plainCodeBlocks,
     customStyles: {
       '*': Style(
         color: color,

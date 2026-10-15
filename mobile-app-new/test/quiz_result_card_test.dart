@@ -14,6 +14,7 @@ Future<void> _pump(
   bool dark = false,
   bool passed = true,
   bool reducedMotion = false,
+  bool tickersEnabled = true,
   double scale = 1,
   Size size = const Size(390, 844),
   VoidCallback? onTap,
@@ -41,11 +42,14 @@ Future<void> _pump(
               key: _capture,
               child: GestureDetector(
                 onTap: onTap,
-                child: QuizResultCard(
-                  passed: passed,
-                  correct: passed ? 19 : 17,
-                  total: 20,
-                  requiredCorrect: 18,
+                child: TickerMode(
+                  enabled: tickersEnabled,
+                  child: QuizResultCard(
+                    passed: passed,
+                    correct: passed ? 19 : 17,
+                    total: 20,
+                    requiredCorrect: 18,
+                  ),
                 ),
               ),
             ),
@@ -93,6 +97,16 @@ double _yellowCenter((Uint8List, int, int) image) {
     reason: 'A falling yellow confetti piece should be visible.',
   );
   return yTotal / count;
+}
+
+int _visiblePixels((Uint8List, int, int) image) {
+  var count = 0;
+  for (var p = 3; p < image.$1.length; p += 4) {
+    if (image.$1[p] > 50) {
+      count++;
+    }
+  }
+  return count;
 }
 
 Future<void> _screenshot(WidgetTester tester, String name) async {
@@ -197,7 +211,7 @@ void main() {
     });
   }
   testWidgets(
-    'confetti visibly falls then disappears and stops scheduling frames',
+    'confetti keeps falling beyond eight seconds without replaying a batch',
     (tester) async {
       var taps = 0;
       await _pump(tester, onTap: () => taps++);
@@ -214,16 +228,88 @@ void main() {
         1,
         reason: 'Decorative confetti must not intercept pointer input.',
       );
+      await tester.pump(const Duration(milliseconds: 7360));
+      final beforeEight = await _confettiPixels(tester);
+      await tester.pump(const Duration(milliseconds: 80));
+      final afterEight = await _confettiPixels(tester);
+      expect(_visiblePixels(beforeEight), greaterThan(120));
+      expect(_visiblePixels(afterEight), greaterThan(120));
       await tester.pump(const Duration(seconds: 8));
-      await tester.pump();
-      final finished = await _confettiPixels(tester);
-      expect([
-        for (var i = 3; i < finished.$1.length; i += 4) finished.$1[i],
-      ], everyElement(0));
-      expect(tester.binding.hasScheduledFrame, isFalse);
+      final afterSixteen = await _confettiPixels(tester);
+      expect(_visiblePixels(afterSixteen), greaterThan(120));
+      expect(afterSixteen.$1, isNot(orderedEquals(afterEight.$1)));
+      expect(tester.binding.hasScheduledFrame, isTrue);
       expect(tester.takeException(), isNull);
     },
   );
+  testWidgets('falling pieces fade out near the bottom of the card', (
+    tester,
+  ) async {
+    await _pump(tester);
+    await tester.pump(const Duration(seconds: 6));
+    var bottomAlpha = 0;
+    var bottomPixels = 0;
+    var middleAlpha = 0;
+    var middlePixels = 0;
+    for (var frame = 0; frame < 12; frame++) {
+      await tester.pump(const Duration(milliseconds: 250));
+      final pixels = await _confettiPixels(tester);
+      for (var y = 0; y < pixels.$3; y++) {
+        for (var x = 0; x < pixels.$2; x++) {
+          final alpha = pixels.$1[(y * pixels.$2 + x) * 4 + 3];
+          if (alpha == 0) {
+            continue;
+          }
+          if (y >= pixels.$3 * .9) {
+            bottomAlpha += alpha;
+            bottomPixels++;
+          } else if (y >= pixels.$3 * .3 && y < pixels.$3 * .7) {
+            middleAlpha += alpha;
+            middlePixels++;
+          }
+        }
+      }
+    }
+    expect(bottomPixels, greaterThan(0));
+    expect(middlePixels, greaterThan(0));
+    expect(
+      bottomAlpha / bottomPixels,
+      lessThan(middleAlpha / middlePixels * .7),
+      reason: 'Pieces should visibly fade before leaving the card.',
+    );
+  });
+  testWidgets('offstage cards pause and safely resume after a long absence', (
+    tester,
+  ) async {
+    await _pump(tester);
+    await tester.pump(const Duration(seconds: 2));
+    await _pump(tester, tickersEnabled: false);
+    expect(tester.binding.hasScheduledFrame, isFalse);
+    await tester.pump(const Duration(hours: 1));
+    expect(tester.binding.hasScheduledFrame, isFalse);
+    await _pump(tester);
+    expect(tester.binding.hasScheduledFrame, isTrue);
+    expect(_visiblePixels(await _confettiPixels(tester)), greaterThan(120));
+    await tester.pump(const Duration(milliseconds: 100));
+    expect(tester.takeException(), isNull);
+  });
+  testWidgets('a failed result stops the stream and passing restarts it', (
+    tester,
+  ) async {
+    await _pump(tester);
+    await tester.pump(const Duration(seconds: 2));
+    await _pump(tester, passed: false);
+    expect(tester.binding.hasScheduledFrame, isFalse);
+    expect(
+      find.byWidgetPredicate((w) => w is CustomPaint && w.painter != null),
+      findsNothing,
+    );
+    await _pump(tester);
+    await tester.pump(const Duration(milliseconds: 600));
+    expect(_visiblePixels(await _confettiPixels(tester)), greaterThan(0));
+    expect(tester.binding.hasScheduledFrame, isTrue);
+    expect(tester.takeException(), isNull);
+  });
   testWidgets(
     'reduced motion suppresses celebration and can be enabled while falling',
     (tester) async {

@@ -27,6 +27,7 @@ class Questions extends StatelessWidget {
     required this.onChanged,
     this.currentIndex,
     this.enabled = true,
+    this.plainCodeBlocks = false,
   });
   final List<QuestionItem> questions;
   final List<int?> selected;
@@ -34,6 +35,7 @@ class Questions extends StatelessWidget {
   final void Function(int question, int answer) onChanged;
   final int? currentIndex;
   final bool enabled;
+  final bool plainCodeBlocks;
 
   @override
   Widget build(BuildContext context) => Column(
@@ -43,6 +45,7 @@ class Questions extends StatelessWidget {
         if (currentIndex == null || currentIndex == i) ...[
           ParsedHtml(
             question.text,
+            plainCodeBlocks: plainCodeBlocks,
             customStyles: {
               '*': Style(
                 fontSize: FontSize(24),

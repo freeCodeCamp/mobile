@@ -14,11 +14,15 @@ class FccCodeBlock extends StatefulWidget {
     required this.code,
     required this.language,
     this.fontSize = 13,
+    this.plain = false,
   });
 
   final String code;
   final String language;
   final double fontSize;
+
+  /// Quiz prompts use unframed code with a persistent overflow indicator.
+  final bool plain;
 
   @override
   State<FccCodeBlock> createState() => _FccCodeBlockState();
@@ -73,6 +77,9 @@ class _FccCodeBlockState extends State<FccCodeBlock> {
     final theme = Theme.of(context);
     final colors = theme.colorScheme;
     final palette = _CodePalette(theme);
+    if (widget.plain) {
+      return _code(colors, palette, padding: const EdgeInsets.only(bottom: 12));
+    }
     final compact = !widget.code.contains('\n');
     final language = switch (widget.language.trim().toLowerCase()) {
       'js' || 'javascript' => 'JavaScript',
@@ -179,6 +186,8 @@ class _FccCodeBlockState extends State<FccCodeBlock> {
     EdgeInsets padding = const EdgeInsets.all(12),
   }) => Scrollbar(
     controller: _scrollController,
+    thumbVisibility: widget.plain ? true : null,
+    trackVisibility: widget.plain ? true : null,
     child: SingleChildScrollView(
       controller: _scrollController,
       scrollDirection: Axis.horizontal,

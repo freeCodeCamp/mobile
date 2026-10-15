@@ -16,6 +16,8 @@ import 'package:mobile_app_new/learn/ui/challenge/python_project_view.dart';
 import 'package:mobile_app_new/learn/ui/challenge/quiz_view.dart';
 import 'package:mobile_app_new/learn/ui/challenge/widgets/parsed_html.dart';
 import 'package:mobile_app_new/services/auth_service.dart';
+import 'package:mobile_app_new/widgets/html_handler/code_block.dart';
+import 'package:phone_ide/highlighting/textmate_highlighter_registry.dart';
 
 const _lesson = Challenge(
   id: 'lesson',
@@ -211,7 +213,8 @@ Future<void> _answerQuiz(
     await _tap(
       tester,
       _button(i == count ? 'Submit quiz' : 'Next question'),
-      settle: i != count || settleResult,
+      // Passing results deliberately keep animating their confetti.
+      settle: i != count || (settleResult && correct < (count * .9).ceil()),
     );
   }
 }
@@ -234,6 +237,7 @@ Future<void> _screenshot(WidgetTester tester, String name) async {
 void main() {
   setUpAll(() async {
     TestWidgetsFlutterBinding.ensureInitialized();
+    await TextMateHighlighterRegistry.instance.initialize();
     await (FontLoader('Lato')
           ..addFont(rootBundle.load('assets/fonts/Lato-Regular.ttf'))
           ..addFont(rootBundle.load('assets/fonts/Lato-Bold.ttf'))
@@ -609,6 +613,86 @@ void main() {
 
   for (final dark in [false, true]) {
     final mode = dark ? 'dark' : 'light';
+    for (final scale in [1.0, 2.0]) {
+      testWidgets(
+        'quiz code stays plain in questions and results $mode text$scale',
+        (tester) async {
+          final quiz = _quiz(count: 1).copyWith(
+            instructions: '<p>Choose the best answer.</p>',
+            quizzes: const [
+              Quiz(
+                questions: [
+                  QuizQuestion(
+                    text:
+                        '<p>What does this code print?</p>'
+                        '<pre><code class="language-javascript">'
+                        'const message = "A long example that scrolls horizontally without wrapping";\n'
+                        'console.log(message);'
+                        '</code></pre><p>Select one answer.</p>',
+                    answer: '<p>The message</p>',
+                    distractors: ['<p>Nothing</p>'],
+                  ),
+                ],
+              ),
+            ],
+          );
+          await _pump(
+            tester,
+            QuizView(challenge: quiz, block: _block(quiz)),
+            dark: dark,
+            scale: scale,
+            width: scale == 1 ? 390 : 320,
+          );
+          await tester.runAsync(() => Future<void>.delayed(Duration.zero));
+          await tester.pumpAndSettle();
+          expect(find.text('About this quiz'), findsNothing);
+          expect(
+            _text('Check what you have learned about HTML.'),
+            findsNothing,
+          );
+          expect(_text('Choose the best answer.'), findsOneWidget);
+          expect(_text('What does this code print?'), findsOneWidget);
+          expect(_text('Select one answer.'), findsOneWidget);
+          final code = find.byType(FccCodeBlock);
+          expect(tester.widget<FccCodeBlock>(code).plain, isTrue);
+          expect(find.byTooltip('Copy code'), findsNothing);
+          expect(find.text('JavaScript'), findsNothing);
+          await tester.ensureVisible(code);
+          await tester.pumpAndSettle();
+          final scrollbar = tester.widget<Scrollbar>(
+            find.descendant(of: code, matching: find.byType(Scrollbar)),
+          );
+          expect(scrollbar.thumbVisibility, isTrue);
+          expect(
+            scrollbar.controller!.position.maxScrollExtent,
+            greaterThan(0),
+          );
+          await tester.dragFrom(
+            tester.getBottomRight(code) - const Offset(24, 6),
+            const Offset(-120, 0),
+          );
+          await tester.pumpAndSettle();
+          expect(scrollbar.controller!.offset, greaterThan(0));
+          // Restore the start of the snippet before capturing the complete page.
+          scrollbar.controller!.jumpTo(0);
+          final pageScroll = tester
+              .widget<ListView>(find.byType(ListView))
+              .controller!;
+          pageScroll.jumpTo(0);
+          await tester.pumpAndSettle();
+          await _screenshot(tester, 'quiz-code-$mode-text$scale');
+
+          await _tap(tester, _text('The message'));
+          await _tap(tester, _button('Submit quiz'), settle: false);
+          expect(find.text('You passed!'), findsOneWidget);
+          await tester.ensureVisible(code);
+          await tester.pump(const Duration(milliseconds: 400));
+          expect(tester.widget<FccCodeBlock>(code).plain, isTrue);
+          expect(find.byTooltip('Copy code'), findsNothing);
+          expect(tester.takeException(), isNull);
+        },
+      );
+    }
     testWidgets('lesson and question preview $mode', (tester) async {
       await _pump(
         tester,
@@ -638,9 +722,9 @@ void main() {
       await _screenshot(tester, 'learn-quiz-$mode');
       await _answerQuiz(tester, correct: 9, settleResult: false);
       await _screenshot(tester, 'learn-quiz-results-$mode');
-      await tester.pumpAndSettle();
+      await tester.pump(const Duration(milliseconds: 400));
       await tester.scrollUntilVisible(find.text('QUESTION 10'), 300);
-      await tester.pumpAndSettle();
+      await tester.pump(const Duration(milliseconds: 400));
       expect(
         find.textContaining('Your answer: Other choice 10', findRichText: true),
         findsOneWidget,
