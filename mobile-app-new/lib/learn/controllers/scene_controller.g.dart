@@ -1,6 +1,6 @@
 // GENERATED CODE - DO NOT MODIFY BY HAND
 
-part of 'scene_viewmodel.dart';
+part of 'scene_controller.dart';
 
 // **************************************************************************
 // RiverpodGenerator

@@ -11,7 +11,7 @@ import 'package:mobile_app_new/learn/ui/challenge/widgets/challenge_video.dart';
 import 'package:mobile_app_new/learn/ui/challenge/challenge_viewmodel.dart';
 import 'package:mobile_app_new/learn/ui/challenge/widgets/help_dialog.dart';
 import 'package:mobile_app_new/learn/ui/challenge/widgets/questions.dart';
-import 'package:mobile_app_new/learn/ui/challenge/widgets/scene/scene_view.dart';
+import 'package:mobile_app_new/learn/ui/widgets/scene/scene_view.dart';
 
 class LessonView extends StatefulWidget {
   const LessonView({super.key, required this.challenge, required this.block});

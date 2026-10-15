@@ -9,8 +9,8 @@ import 'package:mobile_app_new/learn/services/curriculum_service.dart';
 import 'package:mobile_app_new/services/audio_service.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
-part 'scene_viewmodel.freezed.dart';
-part 'scene_viewmodel.g.dart';
+part 'scene_controller.freezed.dart';
+part 'scene_controller.g.dart';
 
 const _cdn =
     'https://cdn.freecodecamp.org/curriculum/english/animation-assets/images';

@@ -3,8 +3,8 @@ import 'package:flutter/services.dart';
 import 'package:go_router/go_router.dart';
 import 'package:mobile_app_new/fcc_theme.dart';
 import 'package:mobile_app_new/learn/models/challenge_model.dart';
-import 'package:mobile_app_new/learn/ui/challenge/widgets/scene/scene_canvas.dart';
-import 'package:mobile_app_new/learn/ui/challenge/widgets/scene/scene_controls.dart';
+import 'package:mobile_app_new/learn/ui/widgets/scene/scene_canvas.dart';
+import 'package:mobile_app_new/learn/ui/widgets/scene/scene_controls.dart';
 
 class SceneFullscreenView extends StatefulWidget {
   const SceneFullscreenView({
