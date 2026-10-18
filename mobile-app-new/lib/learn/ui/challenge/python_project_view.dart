@@ -122,7 +122,8 @@ class _PythonProjectViewState extends State<PythonProjectView> {
               ),
             ChallengeButton(
               label: 'Ask for Help',
-              onPressed: () => showHelpDialog(context, challenge, widget.block),
+              onPressed: () =>
+                  showHelpDialog(context, challenge, widget.block.name),
             ),
           ],
         ),

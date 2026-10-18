@@ -58,4 +58,4 @@ final class LearnDailyChallengeRepositoryProvider
 }
 
 String _$learnDailyChallengeRepositoryHash() =>
-    r'f0b3449fec3dd27a62ca11a3751026067c2a57a6';
+    r'7dbaae4a48c7b3346ac9fdc1fc680c8b92a996a3';

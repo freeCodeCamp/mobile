@@ -6,6 +6,7 @@ import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:mobile_app_new/fcc_theme.dart';
 import 'package:mobile_app_new/firebase_options.dart';
+import 'package:mobile_app_new/learn/services/daily_challenge_reminder_service.dart';
 import 'package:mobile_app_new/podcasts/services/library_service.dart';
 import 'package:mobile_app_new/routing/router.dart';
 import 'package:mobile_app_new/services/audio_service.dart';
@@ -41,12 +42,18 @@ class _MyAppState extends ConsumerState<MyApp> {
     super.initState();
 
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      unawaited(ref.read(notificationServiceProvider).requestPermission());
+      unawaited(_scheduleReminders());
       // NOTE: Starts restoring the stored session so the drawer rarely sees it loading.
       ref.read(authProvider);
       // NOTE: Deletes audio and artwork that no store row points at
       unawaited(ref.read(podcastLibraryServiceProvider).sweepOrphanedFiles());
     });
+  }
+
+  Future<void> _scheduleReminders() async {
+    await ref.read(notificationServiceProvider).requestPermission();
+    final user = await ref.read(authProvider.future).catchError((_) => null);
+    await ref.read(learnDailyChallengeReminderServiceProvider).reschedule(user);
   }
 
   @override

@@ -1,4 +1,5 @@
 import 'package:freezed_annotation/freezed_annotation.dart';
+import 'package:mobile_app_new/learn/models/challenge_file_model.dart';
 
 part 'challenge_model.freezed.dart';
 part 'challenge_model.g.dart';
@@ -24,10 +25,35 @@ abstract class Challenge with _$Challenge {
     @Default([]) List<Nodule> nodules,
     FillInTheBlank? fillInTheBlank,
     Scene? scene,
+    @Default([]) List<ChallengeTest> tests,
+    @Default([]) List<ChallengeFile> challengeFiles,
+    @Default(Hooks()) Hooks hooks,
   }) = _Challenge;
 
   factory Challenge.fromJson(Map<String, dynamic> json) =>
       _$ChallengeFromJson(json);
+}
+
+@freezed
+abstract class ChallengeTest with _$ChallengeTest {
+  const factory ChallengeTest({
+    required String text,
+    required String testString,
+  }) = _ChallengeTest;
+
+  factory ChallengeTest.fromJson(Map<String, dynamic> json) =>
+      _$ChallengeTestFromJson(json);
+}
+
+@freezed
+abstract class Hooks with _$Hooks {
+  const factory Hooks({
+    @Default('') String beforeAll,
+    @Default('') String beforeEach,
+    @Default('') String afterEach,
+  }) = _Hooks;
+
+  factory Hooks.fromJson(Map<String, dynamic> json) => _$HooksFromJson(json);
 }
 
 @freezed

@@ -131,7 +131,8 @@ class _EnglishViewState extends State<EnglishView> {
               ChallengeButton(label: 'Check Answers', onPressed: _check),
             ChallengeButton(
               label: 'Ask for Help',
-              onPressed: () => showHelpDialog(context, challenge, widget.block),
+              onPressed: () =>
+                  showHelpDialog(context, challenge, widget.block.name),
             ),
           ],
         ),

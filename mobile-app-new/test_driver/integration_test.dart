@@ -5,6 +5,7 @@ import 'package:integration_test/integration_test_driver_extended.dart';
 Future<void> main() async {
   try {
     await integrationDriver(
+      writeResponseOnFailure: true,
       onScreenshot: (String name, List<int> bytes, [Map<String, Object?>? _]) async {
         final image = await File('screenshots/$name.png').create(recursive: true);
         image.writeAsBytesSync(bytes);

@@ -50,6 +50,7 @@ dependencies:
   url_launcher: 6.3.2
   youtube_player_iframe: 6.0.2
   phone_ide: 2.0.1
+  flutter_inappwebview: 6.2.0-beta.3
   photo_view: 0.15.0
   share_plus: 13.3.0
   algolia_helper_flutter: 1.6.0
@@ -108,6 +109,15 @@ flutter:
     - .env
     - assets/images/
     - assets/learn/
+    - assets/test_runner/dist/
+    - assets/test_runner/babel/
+  fonts:
+    - family: Lato
+      fonts:
+        - asset: assets/fonts/Lato-Regular.ttf
+    - family: Hack
+      fonts:
+        - asset: assets/fonts/Hack-Regular.ttf
   #   - images/a_dot_burr.jpeg
   #   - images/a_dot_ham.jpeg
 

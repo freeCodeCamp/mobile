@@ -129,7 +129,7 @@ class _LessonViewState extends State<LessonView> {
               ChallengeButton(
                 label: 'Ask for Help',
                 onPressed: () =>
-                    showHelpDialog(context, challenge, widget.block),
+                    showHelpDialog(context, challenge, widget.block.name),
               ),
           ],
         ),

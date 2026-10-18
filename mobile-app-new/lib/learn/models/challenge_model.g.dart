@@ -45,6 +45,19 @@ _Challenge _$ChallengeFromJson(Map<String, dynamic> json) => _Challenge(
   scene: json['scene'] == null
       ? null
       : Scene.fromJson(json['scene'] as Map<String, dynamic>),
+  tests:
+      (json['tests'] as List<dynamic>?)
+          ?.map((e) => ChallengeTest.fromJson(e as Map<String, dynamic>))
+          .toList() ??
+      const [],
+  challengeFiles:
+      (json['challengeFiles'] as List<dynamic>?)
+          ?.map((e) => ChallengeFile.fromJson(e as Map<String, dynamic>))
+          .toList() ??
+      const [],
+  hooks: json['hooks'] == null
+      ? const Hooks()
+      : Hooks.fromJson(json['hooks'] as Map<String, dynamic>),
 );
 
 Map<String, dynamic> _$ChallengeToJson(_Challenge instance) =>
@@ -67,7 +80,31 @@ Map<String, dynamic> _$ChallengeToJson(_Challenge instance) =>
       'nodules': instance.nodules,
       'fillInTheBlank': instance.fillInTheBlank,
       'scene': instance.scene,
+      'tests': instance.tests,
+      'challengeFiles': instance.challengeFiles,
+      'hooks': instance.hooks,
     };
+
+_ChallengeTest _$ChallengeTestFromJson(Map<String, dynamic> json) =>
+    _ChallengeTest(
+      text: json['text'] as String,
+      testString: json['testString'] as String,
+    );
+
+Map<String, dynamic> _$ChallengeTestToJson(_ChallengeTest instance) =>
+    <String, dynamic>{'text': instance.text, 'testString': instance.testString};
+
+_Hooks _$HooksFromJson(Map<String, dynamic> json) => _Hooks(
+  beforeAll: json['beforeAll'] as String? ?? '',
+  beforeEach: json['beforeEach'] as String? ?? '',
+  afterEach: json['afterEach'] as String? ?? '',
+);
+
+Map<String, dynamic> _$HooksToJson(_Hooks instance) => <String, dynamic>{
+  'beforeAll': instance.beforeAll,
+  'beforeEach': instance.beforeEach,
+  'afterEach': instance.afterEach,
+};
 
 _Question _$QuestionFromJson(Map<String, dynamic> json) => _Question(
   text: json['text'] as String,
