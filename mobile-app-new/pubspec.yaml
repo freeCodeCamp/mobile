@@ -69,6 +69,10 @@ dependencies:
   flutter_heatmap_calendar: 1.0.5
   firebase_core: 4.15.0
   firebase_remote_config: 6.7.0
+  firebase_analytics: 12.6.0
+  firebase_crashlytics: 5.4.0
+  upgrader: 13.7.0
+  package_info_plus: 10.2.2
   flutter_svg: 2.3.0
   timezone: 0.11.1
 

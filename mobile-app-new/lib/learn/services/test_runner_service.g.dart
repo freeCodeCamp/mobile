@@ -19,7 +19,7 @@ final class LearnTestRunnerServerProvider
     : super(
         from: null,
         argument: null,
-        retry: _noRetry,
+        retry: noRetry,
         name: r'learnTestRunnerServerProvider',
         isAutoDispose: false,
         dependencies: null,
@@ -41,7 +41,7 @@ final class LearnTestRunnerServerProvider
 }
 
 String _$learnTestRunnerServerHash() =>
-    r'fd6d1be88aeb26dbd82b68fa7f988ff07db6bae6';
+    r'89c48950d65c444fb2a9b53fba87b1b79ea65a3c';
 
 @ProviderFor(learnTestRunnerService)
 final learnTestRunnerServiceProvider = LearnTestRunnerServiceFamily._();
@@ -60,7 +60,7 @@ final class LearnTestRunnerServiceProvider
     required LearnTestRunnerServiceFamily super.from,
     required String super.argument,
   }) : super(
-         retry: _noRetry,
+         retry: noRetry,
          name: r'learnTestRunnerServiceProvider',
          isAutoDispose: true,
          dependencies: null,
@@ -102,13 +102,13 @@ final class LearnTestRunnerServiceProvider
 }
 
 String _$learnTestRunnerServiceHash() =>
-    r'12356eb790c0604aa12d884a47f031b614b9a61d';
+    r'fd8a905a211dccc0cee57f657ef4268f9996810d';
 
 final class LearnTestRunnerServiceFamily extends $Family
     with $FunctionalFamilyOverride<FutureOr<LearnTestRunnerService>, String> {
   LearnTestRunnerServiceFamily._()
     : super(
-        retry: _noRetry,
+        retry: noRetry,
         name: r'learnTestRunnerServiceProvider',
         dependencies: null,
         $allTransitiveDependencies: null,

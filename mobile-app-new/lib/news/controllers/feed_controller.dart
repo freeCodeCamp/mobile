@@ -66,6 +66,7 @@ class NewsFeedNotifier extends _$NewsFeedNotifier {
         ref.read(newsApiServiceProvider),
         current.cursor,
       );
+      if (!ref.mounted) return;
 
       state = AsyncData(
         current.copyWith(
@@ -76,6 +77,7 @@ class NewsFeedNotifier extends _$NewsFeedNotifier {
         ),
       );
     } catch (error) {
+      if (!ref.mounted) return;
       // Keep the loaded posts; only the append failed.
       state = AsyncData(
         current.copyWith(isLoadingMore: false, loadMoreError: error),

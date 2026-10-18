@@ -156,6 +156,7 @@ class _ScrubberState extends ConsumerState<_Scrubber> {
     final total = player.duration;
     final isSeekable = total != null && total > Duration.zero;
     final elapsed = isSeekable && position > total ? total : position;
+    final canSeek = isSeekable && player.isCurrent;
 
     return Column(
       children: [
@@ -167,10 +168,10 @@ class _ScrubberState extends ConsumerState<_Scrubber> {
             value: isSeekable
                 ? elapsed.inMilliseconds / total.inMilliseconds
                 : 0,
-            onChanged: isSeekable
+            onChanged: canSeek
                 ? (value) => setState(() => _scrubbing = total * value)
                 : null,
-            onChangeEnd: isSeekable
+            onChangeEnd: canSeek
                 ? (value) {
                     ref
                         .read(podcastPlayerProvider.notifier)
@@ -209,6 +210,7 @@ class _Controls extends ConsumerWidget {
     final status = ref.watch(
       podcastPlayerProvider.select(
         (state) => (
+          isCurrent: state.isCurrent(episode.id),
           isPlaying: state.isPlayingEpisode(episode.id),
           isBusy: state.isBusyWith(episode.id),
           speed: state.speed,
@@ -221,16 +223,19 @@ class _Controls extends ConsumerWidget {
       children: [
         DropdownButtonHideUnderline(
           child: DropdownButton<double>(
-            value: podcastSpeedOptions.contains(status.speed)
+            value:
+                status.isCurrent && podcastSpeedOptions.contains(status.speed)
                 ? status.speed
                 : 1.0,
             dropdownColor: FccColors.gray90,
             icon: const SizedBox.shrink(),
-            onChanged: (value) {
-              if (value != null) {
-                ref.read(podcastPlayerProvider.notifier).setSpeed(value);
-              }
-            },
+            onChanged: status.isCurrent
+                ? (value) {
+                    if (value != null) {
+                      ref.read(podcastPlayerProvider.notifier).setSpeed(value);
+                    }
+                  }
+                : null,
             items: [
               for (final option in podcastSpeedOptions)
                 DropdownMenuItem(
@@ -250,7 +255,9 @@ class _Controls extends ConsumerWidget {
             Icons.replay_10_rounded,
             semanticLabel: 'Rewind 10 seconds',
           ),
-          onPressed: () => ref.read(podcastPlayerProvider.notifier).rewind(),
+          onPressed: status.isCurrent
+              ? () => ref.read(podcastPlayerProvider.notifier).rewind()
+              : null,
         ),
         IconButton(
           iconSize: 80,
@@ -280,8 +287,9 @@ class _Controls extends ConsumerWidget {
             Icons.forward_30_rounded,
             semanticLabel: 'Fast forward 30 seconds',
           ),
-          onPressed: () =>
-              ref.read(podcastPlayerProvider.notifier).fastForward(),
+          onPressed: status.isCurrent
+              ? () => ref.read(podcastPlayerProvider.notifier).fastForward()
+              : null,
         ),
         PodcastDownloadButton(podcast: podcast, episode: episode, size: 45),
       ],

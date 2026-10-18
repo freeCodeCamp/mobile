@@ -147,7 +147,7 @@ final class ChallengeSubmitNotifierProvider
 }
 
 String _$challengeSubmitNotifierHash() =>
-    r'fa7d481a681cc41fcb7ae32bb97333719ad979f1';
+    r'9bb6ff7516f2234b8604744bc5a092b0281edc95';
 
 final class ChallengeSubmitNotifierFamily extends $Family
     with

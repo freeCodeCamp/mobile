@@ -14,7 +14,7 @@ T _$identity<T>(T value) => value;
 /// @nodoc
 mixin _$RemoteConfig {
 
- Map<String, bool> get activationOverrides;
+ Map<String, bool> get activationOverrides; String get minAppVersion;
 /// Create a copy of RemoteConfig
 /// with the given fields replaced by the non-null parameter values.
 @JsonKey(includeFromJson: false, includeToJson: false)
@@ -25,16 +25,16 @@ $RemoteConfigCopyWith<RemoteConfig> get copyWith => _$RemoteConfigCopyWithImpl<R
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is RemoteConfig&&const DeepCollectionEquality().equals(other.activationOverrides, activationOverrides));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is RemoteConfig&&const DeepCollectionEquality().equals(other.activationOverrides, activationOverrides)&&(identical(other.minAppVersion, minAppVersion) || other.minAppVersion == minAppVersion));
 }
 
 
 @override
-int get hashCode => Object.hash(runtimeType,const DeepCollectionEquality().hash(activationOverrides));
+int get hashCode => Object.hash(runtimeType,const DeepCollectionEquality().hash(activationOverrides),minAppVersion);
 
 @override
 String toString() {
-  return 'RemoteConfig(activationOverrides: $activationOverrides)';
+  return 'RemoteConfig(activationOverrides: $activationOverrides, minAppVersion: $minAppVersion)';
 }
 
 
@@ -45,7 +45,7 @@ abstract mixin class $RemoteConfigCopyWith<$Res>  {
   factory $RemoteConfigCopyWith(RemoteConfig value, $Res Function(RemoteConfig) _then) = _$RemoteConfigCopyWithImpl;
 @useResult
 $Res call({
- Map<String, bool> activationOverrides
+ Map<String, bool> activationOverrides, String minAppVersion
 });
 
 
@@ -62,10 +62,11 @@ class _$RemoteConfigCopyWithImpl<$Res>
 
 /// Create a copy of RemoteConfig
 /// with the given fields replaced by the non-null parameter values.
-@pragma('vm:prefer-inline') @override $Res call({Object? activationOverrides = null,}) {
+@pragma('vm:prefer-inline') @override $Res call({Object? activationOverrides = null,Object? minAppVersion = null,}) {
   return _then(_self.copyWith(
 activationOverrides: null == activationOverrides ? _self.activationOverrides : activationOverrides // ignore: cast_nullable_to_non_nullable
-as Map<String, bool>,
+as Map<String, bool>,minAppVersion: null == minAppVersion ? _self.minAppVersion : minAppVersion // ignore: cast_nullable_to_non_nullable
+as String,
   ));
 }
 
@@ -150,10 +151,10 @@ return $default(_that);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( Map<String, bool> activationOverrides)?  $default,{required TResult orElse(),}) {final _that = this;
+@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( Map<String, bool> activationOverrides,  String minAppVersion)?  $default,{required TResult orElse(),}) {final _that = this;
 switch (_that) {
 case _RemoteConfig() when $default != null:
-return $default(_that.activationOverrides);case _:
+return $default(_that.activationOverrides,_that.minAppVersion);case _:
   return orElse();
 
 }
@@ -171,10 +172,10 @@ return $default(_that.activationOverrides);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( Map<String, bool> activationOverrides)  $default,) {final _that = this;
+@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( Map<String, bool> activationOverrides,  String minAppVersion)  $default,) {final _that = this;
 switch (_that) {
 case _RemoteConfig():
-return $default(_that.activationOverrides);case _:
+return $default(_that.activationOverrides,_that.minAppVersion);case _:
   throw StateError('Unexpected subclass');
 
 }
@@ -191,10 +192,10 @@ return $default(_that.activationOverrides);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( Map<String, bool> activationOverrides)?  $default,) {final _that = this;
+@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( Map<String, bool> activationOverrides,  String minAppVersion)?  $default,) {final _that = this;
 switch (_that) {
 case _RemoteConfig() when $default != null:
-return $default(_that.activationOverrides);case _:
+return $default(_that.activationOverrides,_that.minAppVersion);case _:
   return null;
 
 }
@@ -206,16 +207,17 @@ return $default(_that.activationOverrides);case _:
 
 
 class _RemoteConfig extends RemoteConfig {
-  const _RemoteConfig({final  Map<String, bool> activationOverrides = const {}}): _activationOverrides = activationOverrides,super._();
+  const _RemoteConfig({required final  Map<String, bool> activationOverrides, required this.minAppVersion}): _activationOverrides = activationOverrides,super._();
   
 
  final  Map<String, bool> _activationOverrides;
-@override@JsonKey() Map<String, bool> get activationOverrides {
+@override Map<String, bool> get activationOverrides {
   if (_activationOverrides is EqualUnmodifiableMapView) return _activationOverrides;
   // ignore: implicit_dynamic_type
   return EqualUnmodifiableMapView(_activationOverrides);
 }
 
+@override final  String minAppVersion;
 
 /// Create a copy of RemoteConfig
 /// with the given fields replaced by the non-null parameter values.
@@ -227,16 +229,16 @@ _$RemoteConfigCopyWith<_RemoteConfig> get copyWith => __$RemoteConfigCopyWithImp
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is _RemoteConfig&&const DeepCollectionEquality().equals(other._activationOverrides, _activationOverrides));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is _RemoteConfig&&const DeepCollectionEquality().equals(other._activationOverrides, _activationOverrides)&&(identical(other.minAppVersion, minAppVersion) || other.minAppVersion == minAppVersion));
 }
 
 
 @override
-int get hashCode => Object.hash(runtimeType,const DeepCollectionEquality().hash(_activationOverrides));
+int get hashCode => Object.hash(runtimeType,const DeepCollectionEquality().hash(_activationOverrides),minAppVersion);
 
 @override
 String toString() {
-  return 'RemoteConfig(activationOverrides: $activationOverrides)';
+  return 'RemoteConfig(activationOverrides: $activationOverrides, minAppVersion: $minAppVersion)';
 }
 
 
@@ -247,7 +249,7 @@ abstract mixin class _$RemoteConfigCopyWith<$Res> implements $RemoteConfigCopyWi
   factory _$RemoteConfigCopyWith(_RemoteConfig value, $Res Function(_RemoteConfig) _then) = __$RemoteConfigCopyWithImpl;
 @override @useResult
 $Res call({
- Map<String, bool> activationOverrides
+ Map<String, bool> activationOverrides, String minAppVersion
 });
 
 
@@ -264,10 +266,11 @@ class __$RemoteConfigCopyWithImpl<$Res>
 
 /// Create a copy of RemoteConfig
 /// with the given fields replaced by the non-null parameter values.
-@override @pragma('vm:prefer-inline') $Res call({Object? activationOverrides = null,}) {
+@override @pragma('vm:prefer-inline') $Res call({Object? activationOverrides = null,Object? minAppVersion = null,}) {
   return _then(_RemoteConfig(
 activationOverrides: null == activationOverrides ? _self._activationOverrides : activationOverrides // ignore: cast_nullable_to_non_nullable
-as Map<String, bool>,
+as Map<String, bool>,minAppVersion: null == minAppVersion ? _self.minAppVersion : minAppVersion // ignore: cast_nullable_to_non_nullable
+as String,
   ));
 }
 

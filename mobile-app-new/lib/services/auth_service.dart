@@ -1,5 +1,6 @@
 import 'package:mobile_app_new/auth/models/user_model.dart';
 import 'package:mobile_app_new/auth/services/session_service.dart';
+import 'package:mobile_app_new/utils/riverpod.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
 part 'auth_service.g.dart';
@@ -8,10 +9,8 @@ extension AuthStatus on AsyncValue<FccUserModel?> {
   bool get isLoggedIn => value != null;
 }
 
-Duration? _noRetry(int retryCount, Object error) => null;
-
 // NOTE: The signed-in user, or null when signed out. The only place auth state changes.
-@Riverpod(keepAlive: true, retry: _noRetry)
+@Riverpod(keepAlive: true, retry: noRetry)
 class AuthNotifier extends _$AuthNotifier {
   @override
   Future<FccUserModel?> build() {

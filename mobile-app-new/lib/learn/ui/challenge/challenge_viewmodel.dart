@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:developer';
 
 import 'package:collection/collection.dart';
 import 'package:mobile_app_new/learn/controllers/curriculum_controller.dart';
@@ -52,6 +53,7 @@ class ChallengeSubmitNotifier extends _$ChallengeSubmitNotifier {
 
     final isDaily = const {28, 29}.contains(challenge.challengeType);
     state = const AsyncLoading();
+    final link = ref.keepAlive();
     try {
       if (isDaily) {
         await ref.read(learnDailyChallengeServiceProvider).complete(challenge);
@@ -66,7 +68,10 @@ class ChallengeSubmitNotifier extends _$ChallengeSubmitNotifier {
                   .filesPayload(challenge),
             );
       }
-      await ref.read(authProvider.notifier).refresh();
+      await ref
+          .read(authProvider.notifier)
+          .refresh()
+          .catchError((Object e) => log('submit: profile refresh failed: $e'));
       if (isDaily) {
         unawaited(
           ref
@@ -79,6 +84,8 @@ class ChallengeSubmitNotifier extends _$ChallengeSubmitNotifier {
     } catch (e, stack) {
       if (ref.mounted) state = AsyncError(e, stack);
       return false;
+    } finally {
+      link.close();
     }
   }
 }

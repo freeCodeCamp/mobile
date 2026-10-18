@@ -91,6 +91,7 @@ class PodcastEpisodesNotifier extends _$PodcastEpisodesNotifier {
         final page = await ref
             .read(podcastApiServiceProvider)
             .getEpisodes(podcastId, page: next);
+        if (!ref.mounted) return;
 
         state = AsyncData(
           current.copyWith(
@@ -101,6 +102,7 @@ class PodcastEpisodesNotifier extends _$PodcastEpisodesNotifier {
           ),
         );
       } catch (error) {
+        if (!ref.mounted) return;
         state = AsyncData(
           current.copyWith(isLoadingMore: false, loadMoreError: error),
         );

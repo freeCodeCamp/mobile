@@ -4,6 +4,7 @@ import 'dart:developer';
 import 'package:flutter/foundation.dart';
 import 'package:flutter_inappwebview/flutter_inappwebview.dart';
 import 'package:mobile_app_new/learn/models/challenge_model.dart';
+import 'package:mobile_app_new/utils/riverpod.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
 part 'test_runner_service.g.dart';
@@ -11,17 +12,15 @@ part 'test_runner_service.g.dart';
 typedef TestResult = ({bool pass, Map<dynamic, dynamic>? err});
 
 // NOTE: No auto-retry; the editor offers a manual retry instead.
-Duration? _noRetry(int retryCount, Object error) => null;
-
 // NOTE: keepAlive so the next challenge never races the previous one for port 8080.
-@Riverpod(keepAlive: true, retry: _noRetry)
+@Riverpod(keepAlive: true, retry: noRetry)
 Future<void> learnTestRunnerServer(Ref ref) async {
   final server = InAppLocalhostServer(documentRoot: 'assets/test_runner');
   ref.onDispose(server.close);
   await server.start();
 }
 
-@Riverpod(retry: _noRetry)
+@Riverpod(retry: noRetry)
 Future<LearnTestRunnerService> learnTestRunnerService(
   Ref ref,
   String workerType,

@@ -19,7 +19,7 @@ final class ProfileRefreshProvider
     : super(
         from: null,
         argument: null,
-        retry: null,
+        retry: noRetry,
         name: r'profileRefreshProvider',
         isAutoDispose: true,
         dependencies: null,
@@ -40,4 +40,4 @@ final class ProfileRefreshProvider
   }
 }
 
-String _$profileRefreshHash() => r'7a23bf3bf8e7cc2011690cdf77401ce8ac0796f1';
+String _$profileRefreshHash() => r'8bd67e16ba253230e44e0de68638fd49409f1e4c';
