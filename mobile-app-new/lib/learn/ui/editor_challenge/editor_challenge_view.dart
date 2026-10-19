@@ -301,7 +301,7 @@ class _EditorChallengeViewState extends ConsumerState<EditorChallengeView> {
                             constraints.maxHeight * .32,
                           ),
                         ),
-                        widget.selector ?? _fileTabs(state),
+                        _fileSelector(state),
                         Expanded(
                           child: LayoutBuilder(
                             builder: (context, editorSpace) => Stack(
@@ -494,6 +494,41 @@ class _EditorChallengeViewState extends ConsumerState<EditorChallengeView> {
             ),
         ],
       ),
+    );
+  }
+
+  Widget _fileSelector(EditorChallengeState state) {
+    final theme = Theme.of(context);
+    final dark = theme.brightness == Brightness.dark;
+    final shadow = theme.colorScheme.shadow;
+    return Stack(
+      children: [
+        widget.selector ?? _fileTabs(state),
+        // Paint after the opaque tabs so the instruction panel's shadow is visible.
+        if (_instructionsExpanded)
+          Positioned(
+            top: 0,
+            left: 0,
+            right: 0,
+            height: 20,
+            child: IgnorePointer(
+              child: DecoratedBox(
+                decoration: BoxDecoration(
+                  gradient: LinearGradient(
+                    begin: Alignment.topCenter,
+                    end: Alignment.bottomCenter,
+                    stops: const [0, .5, 1],
+                    colors: [
+                      shadow.withValues(alpha: dark ? .28 : .12),
+                      shadow.withValues(alpha: dark ? .08 : .035),
+                      shadow.withValues(alpha: 0),
+                    ],
+                  ),
+                ),
+              ),
+            ),
+          ),
+      ],
     );
   }
 
