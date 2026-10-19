@@ -45,6 +45,9 @@ class _EditorChallengeViewState extends ConsumerState<EditorChallengeView> {
   TextFieldData? _focused;
   _EditorSheet? _sheet;
   bool _instructionsExpanded = true;
+  final _instructionBodyKey = GlobalKey();
+  double? _instructionHeight;
+  double? _instructionDragHeight;
   bool _hintViewed = false;
   int _editorLoad = 0;
   int _codeEdit = 0;
@@ -65,6 +68,8 @@ class _EditorChallengeViewState extends ConsumerState<EditorChallengeView> {
       _sheet = null;
       _hintViewed = false;
       _instructionsExpanded = true;
+      _instructionHeight = null;
+      _instructionDragHeight = null;
       _modifiedFiles.clear();
       _loadEditor(ref.read(_provider).file);
     }
@@ -319,6 +324,7 @@ class _EditorChallengeViewState extends ConsumerState<EditorChallengeView> {
                               ],
                             ),
                           ),
+                          _instructionHeightLimit(constraints.maxHeight),
                         ),
                       ],
                     ),
@@ -415,9 +421,38 @@ class _EditorChallengeViewState extends ConsumerState<EditorChallengeView> {
     );
   }
 
-  Widget _instructions(double maxBodyHeight) {
+  double _instructionHeightLimit(double availableHeight) {
+    final scale = MediaQuery.textScalerOf(context);
+    // Reserve the header, file/language selector and at least 80px of editor.
+    final headerHeight = math.max(44, scale.scale(14) * 1.5 + 22);
+    final selectorHeight = math.max(44, scale.scale(16) * 1.5 + 22);
+    return math.max(
+      0,
+      math.min(
+        availableHeight * .65,
+        availableHeight - headerHeight - selectorHeight - 80,
+      ),
+    );
+  }
+
+  void _finishInstructionDrag(double limit) {
+    final height = _instructionDragHeight;
+    if (height == null) return;
+    setState(() {
+      _instructionsExpanded = height >= math.min(48, limit) && height > 0;
+      if (_instructionsExpanded) _instructionHeight = height;
+      _instructionDragHeight = null;
+    });
+  }
+
+  Widget _instructions(double defaultBodyHeight, double maxBodyHeight) {
     final colors = Theme.of(context).colorScheme;
     final dark = Theme.of(context).brightness == Brightness.dark;
+    final customHeight = _instructionDragHeight ?? _instructionHeight;
+    final bodyHeight = (customHeight ?? defaultBodyHeight).clamp(
+      0.0,
+      maxBodyHeight,
+    );
     final summary =
         parseFragment(
           widget.challenge.instructions,
@@ -428,66 +463,94 @@ class _EditorChallengeViewState extends ConsumerState<EditorChallengeView> {
       child: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
-          InkWell(
-            key: const ValueKey('editor-instructions-toggle'),
-            onTap: () =>
-                setState(() => _instructionsExpanded = !_instructionsExpanded),
-            child: Container(
-              constraints: const BoxConstraints(minHeight: 44),
-              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
-              decoration: BoxDecoration(
-                border: Border.symmetric(
-                  horizontal: BorderSide(color: colors.outlineVariant),
-                ),
+          GestureDetector(
+            behavior: HitTestBehavior.opaque,
+            onVerticalDragStart: (_) {
+              _instructionDragHeight = _instructionsExpanded
+                  ? _instructionBodyKey.currentContext?.size?.height ??
+                        bodyHeight
+                  : 0;
+            },
+            onVerticalDragUpdate: (details) => setState(() {
+              _instructionDragHeight =
+                  ((_instructionDragHeight ?? 0) + details.delta.dy).clamp(
+                    0.0,
+                    maxBodyHeight,
+                  );
+              _instructionsExpanded = _instructionDragHeight! > 0;
+            }),
+            onVerticalDragEnd: (_) => _finishInstructionDrag(maxBodyHeight),
+            onVerticalDragCancel: () => _finishInstructionDrag(maxBodyHeight),
+            child: InkWell(
+              key: const ValueKey('editor-instructions-toggle'),
+              onTap: () => setState(
+                () => _instructionsExpanded = !_instructionsExpanded,
               ),
-              child: Row(
-                children: [
-                  Icon(
-                    Icons.menu_book_outlined,
-                    size: 18,
-                    color: colors.primary,
+              child: Container(
+                constraints: const BoxConstraints(minHeight: 44),
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 16,
+                  vertical: 10,
+                ),
+                decoration: BoxDecoration(
+                  border: Border.symmetric(
+                    horizontal: BorderSide(color: colors.outlineVariant),
                   ),
-                  const SizedBox(width: 10),
-                  Expanded(
-                    child: Text(
-                      _instructionsExpanded || summary.isEmpty
-                          ? 'Instructions'
-                          : summary,
-                      maxLines: 1,
-                      overflow: TextOverflow.ellipsis,
-                      style: TextStyle(
-                        fontSize: 14,
-                        fontWeight: _instructionsExpanded
-                            ? FontWeight.w700
-                            : FontWeight.w400,
+                ),
+                child: Row(
+                  children: [
+                    Icon(
+                      Icons.menu_book_outlined,
+                      size: 18,
+                      color: colors.primary,
+                    ),
+                    const SizedBox(width: 10),
+                    Expanded(
+                      child: Text(
+                        _instructionsExpanded || summary.isEmpty
+                            ? 'Instructions'
+                            : summary,
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
+                        style: TextStyle(
+                          fontSize: 14,
+                          fontWeight: _instructionsExpanded
+                              ? FontWeight.w700
+                              : FontWeight.w400,
+                        ),
                       ),
                     ),
-                  ),
-                  const SizedBox(width: 8),
-                  Text(
-                    _instructionsExpanded ? 'Hide' : 'Show',
-                    style: TextStyle(
-                      color: colors.primary,
-                      fontSize: 14,
-                      fontWeight: FontWeight.w800,
+                    const SizedBox(width: 8),
+                    Text(
+                      _instructionsExpanded ? 'Hide' : 'Show',
+                      style: TextStyle(
+                        color: colors.primary,
+                        fontSize: 14,
+                        fontWeight: FontWeight.w800,
+                      ),
                     ),
-                  ),
-                  const SizedBox(width: 8),
-                  Icon(
-                    _instructionsExpanded
-                        ? Icons.keyboard_arrow_up
-                        : Icons.keyboard_arrow_down,
-                    color: colors.primary,
-                    size: 18,
-                  ),
-                ],
+                    const SizedBox(width: 8),
+                    Icon(
+                      _instructionsExpanded
+                          ? Icons.keyboard_arrow_up
+                          : Icons.keyboard_arrow_down,
+                      color: colors.primary,
+                      size: 18,
+                    ),
+                  ],
+                ),
               ),
             ),
           ),
           if (_instructionsExpanded)
             ConstrainedBox(
-              constraints: BoxConstraints(maxHeight: maxBodyHeight),
+              key: _instructionBodyKey,
+              constraints: BoxConstraints(
+                minHeight: customHeight == null ? 0 : bodyHeight,
+                maxHeight: bodyHeight,
+              ),
               child: InstructionPanel(
+                key: const ValueKey('editor-instructions-body'),
                 challenge: widget.challenge,
                 block: widget.block,
               ),

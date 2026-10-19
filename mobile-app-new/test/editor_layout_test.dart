@@ -56,6 +56,13 @@ const _challenge = Challenge(
     ),
   ],
 );
+final _longInstructionsChallenge = _challenge.copyWith(
+  description: '<p>Build your first page with an HTML heading.</p>',
+  instructions: [
+    for (var paragraph = 1; paragraph <= 12; paragraph++)
+      '<p>Instruction $paragraph: add a heading, check its contents, and keep the surrounding HTML intact.</p>',
+  ].join(),
+);
 const _block = Block(
   superBlock: 'responsive-web-design',
   dashedName: 'build-a-cat-photo-app',
@@ -73,6 +80,10 @@ Finder _sheet(String name) => find.byKey(ValueKey('editor-sheet-$name'));
 Finder _file(String name) => find.byKey(ValueKey('editor-file-$name'));
 Finder _tool(String label) => find.widgetWithText(TextButton, label);
 Finder _text(String text) => find.textContaining(text, findRichText: true);
+Finder get _instructionsToggle =>
+    find.byKey(const ValueKey('editor-instructions-toggle'));
+Finder get _instructionsBody =>
+    find.byKey(const ValueKey('editor-instructions-body'));
 Finder get _editable => find.descendant(
   of: find.byType(Editor),
   matching: find.byWidgetPredicate(
@@ -116,6 +127,7 @@ class _Fixture {
     this.router,
     this.keyboard,
     this.capture,
+    this.challenge,
   );
   final ProviderContainer container;
   final _Code code;
@@ -123,9 +135,10 @@ class _Fixture {
   final GoRouter router;
   final ValueNotifier<double> keyboard;
   final GlobalKey capture;
+  final Challenge challenge;
 
   EditorChallengeState get state =>
-      container.read(editorChallengeProvider(_challenge));
+      container.read(editorChallengeProvider(challenge));
 }
 
 Future<void> _shot(WidgetTester tester, _Fixture fixture, String name) async {
@@ -148,6 +161,7 @@ Future<_Fixture> _pump(
   WidgetTester tester, {
   bool dark = false,
   double scale = 1,
+  Challenge challenge = _challenge,
 }) async {
   SharedPreferences.setMockInitialValues({});
   tester.view.devicePixelRatio = 1;
@@ -179,7 +193,7 @@ Future<_Fixture> _pump(
           GoRoute(
             path: 'editor',
             builder: (_, _) =>
-                const EditorChallengeView(challenge: _challenge, block: _block),
+                EditorChallengeView(challenge: challenge, block: _block),
           ),
         ],
       ),
@@ -223,7 +237,15 @@ Future<_Fixture> _pump(
     ),
   );
   await _settle(tester);
-  return _Fixture(container, code, runner, router, keyboard, capture);
+  return _Fixture(
+    container,
+    code,
+    runner,
+    router,
+    keyboard,
+    capture,
+    challenge,
+  );
 }
 
 void main() {
@@ -246,6 +268,138 @@ void main() {
   });
 
   for (final dark in [false, true]) {
+    testWidgets(
+      'instruction header dragging resizes and restores height dark=$dark',
+      (tester) async {
+        final fixture = await _pump(
+          tester,
+          dark: dark,
+          challenge: _longInstructionsChallenge,
+        );
+        await tester.enterText(_editable, '<h1>Edited heading</h1>');
+        await _settle(tester);
+        final editor = tester.state<EditorState>(find.byType(Editor));
+        final controller = tester.widget<TextField>(_editable).controller!;
+        const selection = TextSelection(baseOffset: 4, extentOffset: 10);
+        controller.selection = selection;
+        await tester.pump();
+        final initialHeight = tester.getSize(_instructionsBody).height;
+
+        await tester.drag(_instructionsToggle, const Offset(0, 90));
+        await _settle(tester);
+        final grownHeight = tester.getSize(_instructionsBody).height;
+        expect(grownHeight, greaterThan(initialHeight + 20));
+        await tester.drag(_instructionsToggle, const Offset(0, -50));
+        await _settle(tester);
+        final customHeight = tester.getSize(_instructionsBody).height;
+        expect(customHeight, lessThan(grownHeight));
+        expect(customHeight, greaterThan(0));
+        await tester.tap(_instructionsToggle);
+        await _settle(tester);
+        expect(_instructionsBody, findsNothing);
+        await tester.tap(_instructionsToggle);
+        await _settle(tester);
+        expect(
+          tester.getSize(_instructionsBody).height,
+          closeTo(customHeight, 1),
+        );
+
+        await tester.drag(_instructionsToggle, const Offset(0, -700));
+        await _settle(tester);
+        expect(_instructionsBody, findsNothing);
+        await tester.drag(_instructionsToggle, const Offset(0, 110));
+        await _settle(tester);
+        expect(_instructionsBody, findsOneWidget);
+        expect(tester.getSize(_instructionsBody).height, greaterThan(0));
+        expect(tester.state<EditorState>(find.byType(Editor)), same(editor));
+        expect(
+          tester.widget<TextField>(_editable).controller,
+          same(controller),
+        );
+        expect(controller.text, '<h1>Edited heading</h1>');
+        expect(controller.selection, selection);
+        expect(
+          await fixture.code.contents(_longInstructionsChallenge, _html),
+          '<h1>Edited heading</h1>',
+        );
+        await _shot(tester, fixture, 'editor-instructions-resized-dark$dark');
+        expect(tester.takeException(), isNull);
+      },
+    );
+
+    testWidgets(
+      'instruction content scrolls without resizing the panel dark=$dark',
+      (tester) async {
+        await _pump(tester, dark: dark, challenge: _longInstructionsChallenge);
+        final scrollable = find.descendant(
+          of: _instructionsBody,
+          matching: find.byType(Scrollable),
+        );
+        final scroll = tester.state<ScrollableState>(scrollable).position;
+        final height = tester.getSize(_instructionsBody).height;
+        expect(scroll.pixels, 0);
+        await tester.drag(_instructionsBody, const Offset(0, -110));
+        await _settle(tester);
+        expect(scroll.pixels, greaterThan(0));
+        expect(tester.getSize(_instructionsBody).height, closeTo(height, 1));
+        expect(
+          tester.widget<TextField>(_editable).controller!.text,
+          _html.contents,
+        );
+        expect(tester.takeException(), isNull);
+      },
+    );
+
+    for (final scale in [1.0, 2.0]) {
+      testWidgets(
+        'instruction resizing stays usable above keyboard dark=$dark scale=$scale',
+        (tester) async {
+          final fixture = await _pump(
+            tester,
+            dark: dark,
+            scale: scale,
+            challenge: _longInstructionsChallenge,
+          );
+          await tester.drag(_instructionsToggle, const Offset(0, 1500));
+          await _settle(tester);
+          final expandedHeight = tester.getSize(_instructionsBody).height;
+          _insideViewport(tester, _file('index.html'));
+          _insideViewport(tester, find.byType(Editor));
+          _insideViewport(tester, find.text('Check'));
+          expect(tester.getSize(find.byType(Editor)).height, greaterThan(0));
+
+          await tester.showKeyboard(_editable);
+          fixture.keyboard.value = 290;
+          await _settle(tester);
+          final keyboardHeight = tester.getSize(_instructionsBody).height;
+          expect(keyboardHeight, lessThan(expandedHeight));
+          _insideViewport(tester, _file('index.html'), keyboard: 290);
+          _insideViewport(tester, find.byType(Editor), keyboard: 290);
+          _insideViewport(tester, find.text('Check'), keyboard: 290);
+          expect(tester.getSize(find.byType(Editor)).height, greaterThan(0));
+          await _shot(
+            tester,
+            fixture,
+            'editor-instructions-keyboard-dark$dark-scale$scale',
+          );
+
+          fixture.keyboard.value = 0;
+          await _settle(tester);
+          expect(
+            tester.getSize(_instructionsBody).height,
+            closeTo(expandedHeight, 1),
+          );
+          await tester.drag(_instructionsToggle, const Offset(0, -1500));
+          await _settle(tester);
+          expect(_instructionsBody, findsNothing);
+          _insideViewport(tester, _file('index.html'));
+          _insideViewport(tester, find.byType(Editor));
+          _insideViewport(tester, find.text('Check'));
+          expect(tester.takeException(), isNull);
+        },
+      );
+    }
+
     testWidgets('editing passed code keeps keyboard focus dark=$dark', (
       tester,
     ) async {
