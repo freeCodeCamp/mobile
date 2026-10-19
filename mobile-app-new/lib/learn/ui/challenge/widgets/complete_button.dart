@@ -15,6 +15,7 @@ class CompleteButton extends ConsumerWidget {
     this.solution,
     this.enabled = true,
     this.buttonStyle,
+    this.trailingIcon,
   });
 
   final Challenge challenge;
@@ -23,6 +24,7 @@ class CompleteButton extends ConsumerWidget {
   final String? solution;
   final bool enabled;
   final ButtonStyle? buttonStyle;
+  final IconData? trailingIcon;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -47,6 +49,7 @@ class CompleteButton extends ConsumerWidget {
         ChallengeButton(
           label: label,
           style: buttonStyle,
+          trailingIcon: trailingIcon,
           loading: submit.isLoading,
           onPressed: !enabled
               ? null

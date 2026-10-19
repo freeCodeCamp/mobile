@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:mobile_app_new/fcc_theme.dart';
 import 'package:mobile_app_new/learn/models/daily_challenge_model.dart';
 import 'package:mobile_app_new/learn/services/daily_challenge_service.dart';
 import 'package:mobile_app_new/learn/ui/daily_challenge/daily_challenge_viewmodel.dart';
@@ -57,30 +56,51 @@ class _LanguageSelector extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final colors = Theme.of(context).colorScheme;
     Text label(DailyChallengeLanguage language) => Text(
       language.label,
       style: TextStyle(
-        color: language == selected ? FccColors.blue50 : Colors.white,
-        fontWeight: language == selected ? FontWeight.bold : FontWeight.normal,
+        fontSize: 16,
+        color: language == selected ? colors.primary : colors.onSurface,
+        fontWeight: language == selected ? FontWeight.w700 : FontWeight.w400,
       ),
     );
 
-    return DropdownButton<DailyChallengeLanguage>(
-      isExpanded: true,
-      dropdownColor: FccColors.gray85,
-      underline: const SizedBox.shrink(),
-      value: selected,
-      items: [
-        for (final language in DailyChallengeLanguage.values)
-          DropdownMenuItem(value: language, child: label(language)),
-      ],
-      selectedItemBuilder: (_) => [
-        for (final language in DailyChallengeLanguage.values)
-          Center(child: label(language)),
-      ],
-      onChanged: (language) {
-        if (language != null) onSelected(language);
-      },
+    return Container(
+      constraints: const BoxConstraints(minHeight: 44),
+      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 6),
+      decoration: BoxDecoration(
+        color: colors.surface,
+        border: Border(bottom: BorderSide(color: colors.outlineVariant)),
+      ),
+      child: DropdownButton<DailyChallengeLanguage>(
+        isExpanded: true,
+        isDense: true,
+        itemHeight: null,
+        alignment: Alignment.centerLeft,
+        dropdownColor: colors.surface,
+        borderRadius: BorderRadius.circular(12),
+        icon: Icon(Icons.expand_more, color: colors.onSurfaceVariant),
+        underline: const SizedBox.shrink(),
+        value: selected,
+        items: [
+          for (final language in DailyChallengeLanguage.values)
+            DropdownMenuItem(
+              value: language,
+              child: Padding(
+                padding: const EdgeInsets.symmetric(vertical: 12),
+                child: label(language),
+              ),
+            ),
+        ],
+        selectedItemBuilder: (_) => [
+          for (final language in DailyChallengeLanguage.values)
+            Align(alignment: Alignment.centerLeft, child: label(language)),
+        ],
+        onChanged: (language) {
+          if (language != null) onSelected(language);
+        },
+      ),
     );
   }
 }

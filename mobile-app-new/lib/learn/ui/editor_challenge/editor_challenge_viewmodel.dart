@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:convert';
 import 'dart:developer';
 
@@ -40,11 +41,16 @@ Future<MotivationalQuote> passQuote(Ref ref) =>
 
 @riverpod
 class EditorChallengeNotifier extends _$EditorChallengeNotifier {
+  int _codeRevision = 0;
+  bool _running = false;
+  bool _resetting = false;
+
   LearnTestRunnerServiceProvider get _runner =>
       learnTestRunnerServiceProvider(workerTypeOf(challenge.challengeType));
 
   @override
   EditorChallengeState build(Challenge challenge) {
+    _codeRevision++;
     final files = challenge.challengeFiles;
     return EditorChallengeState(
       file:
@@ -65,16 +71,35 @@ class EditorChallengeNotifier extends _$EditorChallengeNotifier {
   void showPanel(EditorPanel panel) => state = state.copyWith(panel: panel);
 
   Future<void> codeChanged(ChallengeFile file, String text) async {
-    if (state.passed) state = state.copyWith(passed: false);
+    _invalidateResults();
     await ref.read(learnCodeServiceProvider).save(challenge, file, text);
   }
 
   Future<void> reset() async {
-    await ref.read(learnCodeServiceProvider).reset(challenge);
-    if (!ref.mounted) return;
-    state = EditorChallengeState(
-      file: state.file,
-      resetCount: state.resetCount + 1,
+    if (_resetting) return;
+    _resetting = true;
+    _invalidateResults();
+    try {
+      await ref.read(learnCodeServiceProvider).reset(challenge);
+      if (!ref.mounted) return;
+      state = EditorChallengeState(
+        file: state.file,
+        testsRunning: _running,
+        resetCount: state.resetCount + 1,
+      );
+    } finally {
+      _resetting = false;
+    }
+  }
+
+  void _invalidateResults() {
+    _codeRevision++;
+    state = state.copyWith(
+      passed: false,
+      testResults: null,
+      hint: '',
+      testConsole: [],
+      userConsole: [],
     );
   }
 
@@ -89,23 +114,34 @@ class EditorChallengeNotifier extends _$EditorChallengeNotifier {
   }
 
   Future<void> runTests() async {
-    final runner = await ref.read(_runner.future);
-    final code = ref.read(learnCodeServiceProvider);
+    if (_running || _resetting) return;
+    _running = true;
+    final revision = _codeRevision;
+    bool isCurrent() => ref.mounted && revision == _codeRevision;
+    StreamSubscription<String>? logs;
+    var runnerReady = false;
 
     state = state.copyWith(
       testsRunning: true,
+      passed: false,
       testConsole: ['<p>// running tests</p>'],
       userConsole: [],
       testResults: null,
     );
-    final logs = runner.consoleMessages.listen((message) {
-      if (!ref.mounted) return;
-      state = state.copyWith(
-        userConsole: [...state.userConsole, '<p>$message</p>'],
-      );
-    });
-
     try {
+      final runner = await ref.read(_runner.future);
+      if (!isCurrent()) return;
+      runnerReady = true;
+      final code = ref.read(learnCodeServiceProvider);
+      logs = runner.consoleMessages.listen((message) {
+        if (!isCurrent()) return;
+        state = state.copyWith(
+          userConsole: [
+            ...state.userConsole,
+            '<p>${const HtmlEscape().convert(message)}</p>',
+          ],
+        );
+      });
       final String userCode;
       try {
         userCode = await code.userCode(
@@ -113,7 +149,7 @@ class EditorChallengeNotifier extends _$EditorChallengeNotifier {
           (js) => runner.transpile(js, challengeId: challenge.id),
         );
       } on BabelException catch (e) {
-        if (!ref.mounted) return;
+        if (!isCurrent()) return;
         final hint = syntaxErrorHint(e);
         state = state.copyWith(
           panel: EditorPanel.hint,
@@ -126,25 +162,33 @@ class EditorChallengeNotifier extends _$EditorChallengeNotifier {
         );
         return;
       }
+      if (!isCurrent()) return;
 
       if (runner.workerType == 'javascript') {
         final error = await runner.evaluate(userCode);
-        if (!ref.mounted) return;
+        if (!isCurrent()) return;
         if (error != null) {
           state = state.copyWith(
-            userConsole: [...state.userConsole, '<p>$error</p>'],
+            userConsole: [
+              ...state.userConsole,
+              '<p>${const HtmlEscape().convert(error)}</p>',
+            ],
           );
         }
       }
 
+      final combinedCode = await code.combinedCode(challenge);
+      if (!isCurrent()) return;
+      final editableContents = await code.editableContents(challenge);
+      if (!isCurrent()) return;
       final results = await runner.run(
         userCode: userCode,
-        combinedCode: await code.combinedCode(challenge),
-        editableContents: await code.editableContents(challenge),
+        combinedCode: combinedCode,
+        editableContents: editableContents,
         hooks: challenge.hooks,
         tests: challenge.tests,
       );
-      if (!ref.mounted) return;
+      if (!isCurrent()) return;
 
       final failures = [
         for (final (i, result) in results.indexed)
@@ -166,7 +210,8 @@ class EditorChallengeNotifier extends _$EditorChallengeNotifier {
       );
     } catch (e, stack) {
       log('Editor: tests failed to run', error: e, stackTrace: stack);
-      if (!ref.mounted) return;
+      if (!isCurrent()) return;
+      if (!runnerReady) rethrow;
       state = state.copyWith(
         testConsole: [
           ...state.testConsole,
@@ -175,12 +220,24 @@ class EditorChallengeNotifier extends _$EditorChallengeNotifier {
         ],
       );
     } finally {
-      await logs.cancel();
-      if (ref.mounted) state = state.copyWith(testsRunning: false);
+      try {
+        await logs?.cancel();
+      } finally {
+        // Reset invalidates results, but the shared native runner still has to
+        // finish before a new run can safely replace its working context.
+        _running = false;
+        if (ref.mounted) state = state.copyWith(testsRunning: false);
+      }
     }
   }
 
   String _fillPlaceholders(String text, Map<dynamic, dynamic>? err) => text
-      .replaceAll('--fcc-expected--', '${err?['expected'] ?? ''}')
-      .replaceAll('--fcc-actual--', '${err?['actual'] ?? ''}');
+      .replaceAll(
+        '--fcc-expected--',
+        const HtmlEscape().convert('${err?['expected'] ?? ''}'),
+      )
+      .replaceAll(
+        '--fcc-actual--',
+        const HtmlEscape().convert('${err?['actual'] ?? ''}'),
+      );
 }
