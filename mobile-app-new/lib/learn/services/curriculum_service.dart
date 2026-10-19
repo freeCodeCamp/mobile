@@ -177,13 +177,23 @@ class LearnCurriculumService {
   Future<SceneAssets> getSceneAssets() async =>
       SceneAssets.fromJson(await _repo.getSceneAssets());
 
-  Future<void> submit(Challenge challenge, {String? solution}) async {
+  Future<void> submit(
+    Challenge challenge, {
+    String? solution,
+    List<Map<String, dynamic>>? files,
+  }) async {
     final submitTypes = await _repo.getSubmitTypes();
     final body = {'id': challenge.id, 'challengeType': challenge.challengeType};
 
     switch (submitTypes['${challenge.challengeType}']) {
       case 'tests':
-        await _repo.postModernChallengeCompleted(body);
+        await _repo.postModernChallengeCompleted({
+          ...body,
+          if (challenge.challengeType == 14 ||
+              challenge.block ==
+                  'javascript-algorithms-and-data-structures-projects')
+            'files': files,
+        });
       case 'project.backEnd':
         await _repo.postProjectCompleted({...body, 'solution': solution});
     }

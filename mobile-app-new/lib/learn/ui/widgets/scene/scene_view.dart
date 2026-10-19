@@ -2,9 +2,10 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:mobile_app_new/learn/models/challenge_model.dart';
-import 'package:mobile_app_new/learn/ui/challenge/widgets/scene/scene_canvas.dart';
-import 'package:mobile_app_new/learn/ui/challenge/widgets/scene/scene_controls.dart';
-import 'package:mobile_app_new/learn/ui/challenge/widgets/scene/scene_viewmodel.dart';
+import 'package:mobile_app_new/learn/models/scene_assets_model.dart';
+import 'package:mobile_app_new/learn/ui/widgets/scene/scene_canvas.dart';
+import 'package:mobile_app_new/learn/ui/widgets/scene/scene_controls.dart';
+import 'package:mobile_app_new/learn/controllers/scene_controller.dart';
 import 'package:mobile_app_new/routing/learn.dart';
 
 class SceneView extends ConsumerStatefulWidget {
@@ -26,13 +27,8 @@ class SceneView extends ConsumerStatefulWidget {
 class _SceneViewState extends ConsumerState<SceneView> {
   bool _precached = false;
 
-  @override
-  void didChangeDependencies() {
-    super.didChangeDependencies();
-    if (_precached) return;
+  void _precache(SceneAssets assets) {
     _precached = true;
-
-    final assets = ref.read(sceneAssetsProvider).value;
     final backgrounds = {
       widget.scene.setup.background,
       for (final c in widget.scene.commands) ?c.background,
@@ -47,6 +43,9 @@ class _SceneViewState extends ConsumerState<SceneView> {
 
   @override
   Widget build(BuildContext context) {
+    final assets = ref.watch(sceneAssetsProvider).value;
+    if (assets != null && !_precached) _precache(assets);
+
     final colors = Theme.of(context).colorScheme;
     return Container(
       margin: widget.edgeToEdge

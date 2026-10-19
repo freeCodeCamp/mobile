@@ -1,13 +1,12 @@
 import 'package:mobile_app_new/code_radio/models/code_radio_model.dart';
 import 'package:mobile_app_new/code_radio/services/code_radio_service.dart';
 import 'package:mobile_app_new/services/audio_service.dart';
+import 'package:mobile_app_new/utils/riverpod.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
 part 'player_viewmodel.g.dart';
 
-Duration? _noRetry(int retryCount, Object error) => null;
-
-@Riverpod(retry: _noRetry)
+@Riverpod(retry: noRetry)
 Stream<CodeRadio> codeRadioNowPlaying(Ref ref) {
   final service = ref.watch(codeRadioServiceProvider);
 

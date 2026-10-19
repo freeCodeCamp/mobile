@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
-import 'package:mobile_app_new/learn/ui/challenge/challenge_placeholder_view.dart';
 import 'package:mobile_app_new/learn/ui/challenge/challenge_view.dart';
 import 'package:mobile_app_new/learn/models/challenge_model.dart';
+import 'package:mobile_app_new/learn/ui/daily_challenge/daily_challenge_view.dart';
 import 'package:mobile_app_new/learn/ui/daily_challenge_archive/daily_challenge_archive_view.dart';
 import 'package:mobile_app_new/learn/ui/landing/landing_view.dart';
 import 'package:mobile_app_new/learn/ui/module/module_view.dart';
@@ -40,7 +40,6 @@ class LearnDailyChallengeArchiveRoute extends GoRouteData
       const DailyChallengeArchiveView();
 }
 
-// TODO: Iteration 4 replaces the placeholder with the daily challenge editor.
 @TypedGoRoute<LearnDailyChallengeRoute>(path: learnDailyChallengePath)
 class LearnDailyChallengeRoute extends GoRouteData
     with $LearnDailyChallengeRoute {
@@ -51,7 +50,7 @@ class LearnDailyChallengeRoute extends GoRouteData
 
   @override
   Widget build(BuildContext context, GoRouterState state) =>
-      ChallengePlaceholderView(details: 'Daily challenge $day');
+      DailyChallengeView(day: day);
 }
 
 @TypedGoRoute<LearnSceneFullscreenRoute>(path: learnSceneFullscreenPath)

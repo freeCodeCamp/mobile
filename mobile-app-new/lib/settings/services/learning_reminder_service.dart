@@ -19,8 +19,48 @@ class LearningReminderService {
   static const notificationId = 1843001;
   final NotificationService _notifications;
   final _plugin = FlutterLocalNotificationsPlugin();
+  Future<void> _pending = Future.value();
+  bool _changedInSettings = false;
 
-  Future<void> enable() async {
+  Future<void> enable() {
+    _changedInSettings = true;
+    return _enqueue(_enable);
+  }
+
+  Future<void> cancel() {
+    _changedInSettings = true;
+    return _enqueue(_cancel);
+  }
+
+  Future<void> restore({required Future<bool> Function() readEnabled}) {
+    return _enqueue(() async {
+      // Settings already applied the recurring schedule for this session.
+      // A delayed startup/completion callback must not reverse that choice.
+      if (_changedInSettings) return;
+      final enabled = await readEnabled();
+      if (_changedInSettings) return;
+      if (enabled) {
+        await _enable();
+      } else {
+        await _cancel();
+      }
+    });
+  }
+
+  Future<void> _enqueue(Future<void> Function() operation) {
+    final result = _pending.then((_) => operation());
+    _pending = result.then<void>((_) {}, onError: (Object _, StackTrace _) {});
+    return result;
+  }
+
+  Future<void> _cancelMigratedReminders() async {
+    for (var id = 9000; id < 9007; id++) {
+      await _notifications.cancel(id);
+    }
+  }
+
+  Future<void> _enable() async {
+    await _cancelMigratedReminders();
     if (!await _notifications.requestPermission()) {
       throw ReminderPermissionDenied();
     }
@@ -50,7 +90,10 @@ class LearningReminderService {
     );
   }
 
-  Future<void> cancel() => _plugin.cancel(id: notificationId);
+  Future<void> _cancel() async {
+    await _notifications.cancel(notificationId);
+    await _cancelMigratedReminders();
+  }
 }
 
 /// Construct calendar dates instead of adding 24 hours across DST changes.

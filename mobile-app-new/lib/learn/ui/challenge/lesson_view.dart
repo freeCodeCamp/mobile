@@ -14,7 +14,7 @@ import 'package:mobile_app_new/learn/ui/challenge/widgets/example_editor.dart';
 import 'package:mobile_app_new/learn/ui/challenge/widgets/challenge_video.dart';
 import 'package:mobile_app_new/learn/ui/challenge/widgets/questions.dart';
 import 'package:mobile_app_new/learn/ui/challenge/widgets/review_content.dart';
-import 'package:mobile_app_new/learn/ui/challenge/widgets/scene/scene_view.dart';
+import 'package:mobile_app_new/learn/ui/widgets/scene/scene_view.dart';
 import 'package:mobile_app_new/learn/ui/challenge/widgets/task_explanation.dart';
 
 class LessonView extends StatefulWidget {

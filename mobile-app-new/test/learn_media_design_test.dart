@@ -8,7 +8,7 @@ import 'package:mobile_app_new/learn/models/challenge_model.dart';
 import 'package:mobile_app_new/learn/models/curriculum_model.dart';
 import 'package:mobile_app_new/learn/ui/challenge/widgets/help_dialog.dart';
 import 'package:mobile_app_new/learn/ui/challenge/widgets/quiz_audio_player.dart';
-import 'package:mobile_app_new/learn/ui/challenge/widgets/scene/scene_controls.dart';
+import 'package:mobile_app_new/learn/ui/widgets/scene/scene_controls.dart';
 import 'package:mobile_app_new/services/audio_service.dart';
 
 const _challenge = Challenge(
@@ -82,7 +82,8 @@ void main() {
             home: Scaffold(
               body: Builder(
                 builder: (context) => TextButton(
-                  onPressed: () => showHelpDialog(context, _challenge, _block),
+                  onPressed: () =>
+                      showHelpDialog(context, _challenge, _block.name),
                   child: const Text('Help'),
                 ),
               ),

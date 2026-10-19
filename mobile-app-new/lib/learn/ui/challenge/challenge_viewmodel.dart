@@ -1,8 +1,14 @@
+import 'dart:async';
+import 'dart:developer';
+
 import 'package:collection/collection.dart';
 import 'package:mobile_app_new/learn/controllers/curriculum_controller.dart';
 import 'package:mobile_app_new/learn/models/challenge_model.dart';
 import 'package:mobile_app_new/learn/models/curriculum_model.dart';
+import 'package:mobile_app_new/learn/services/code_service.dart';
 import 'package:mobile_app_new/learn/services/curriculum_service.dart';
+import 'package:mobile_app_new/learn/services/daily_challenge_reminder_service.dart';
+import 'package:mobile_app_new/learn/services/daily_challenge_service.dart';
 import 'package:mobile_app_new/services/auth_service.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
@@ -45,17 +51,41 @@ class ChallengeSubmitNotifier extends _$ChallengeSubmitNotifier {
   Future<bool> submit(Challenge challenge, {String? solution}) async {
     if (!ref.read(authProvider).isLoggedIn) return true;
 
+    final isDaily = const {28, 29}.contains(challenge.challengeType);
     state = const AsyncLoading();
+    final link = ref.keepAlive();
     try {
+      if (isDaily) {
+        await ref.read(learnDailyChallengeServiceProvider).complete(challenge);
+      } else {
+        await ref
+            .read(learnCurriculumServiceProvider)
+            .submit(
+              challenge,
+              solution: solution,
+              files: await ref
+                  .read(learnCodeServiceProvider)
+                  .filesPayload(challenge),
+            );
+      }
       await ref
-          .read(learnCurriculumServiceProvider)
-          .submit(challenge, solution: solution);
-      await ref.read(authProvider.notifier).refresh();
+          .read(authProvider.notifier)
+          .refresh()
+          .catchError((Object e) => log('submit: profile refresh failed: $e'));
+      if (isDaily) {
+        unawaited(
+          ref
+              .read(learnDailyChallengeReminderServiceProvider)
+              .reschedule(ref.read(authProvider).value),
+        );
+      }
       if (ref.mounted) state = const AsyncData(null);
       return true;
     } catch (e, stack) {
       if (ref.mounted) state = AsyncError(e, stack);
       return false;
+    } finally {
+      link.close();
     }
   }
 }

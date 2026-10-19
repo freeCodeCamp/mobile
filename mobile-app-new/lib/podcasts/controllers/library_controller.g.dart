@@ -34,7 +34,7 @@ final class PodcastLibraryNotifierProvider
 }
 
 String _$podcastLibraryNotifierHash() =>
-    r'72bd2cd9299b782bf76958b6b03fd0ca6ca966d8';
+    r'eea18b471341bc853fac6f5e169b55277f2967b5';
 
 abstract class _$PodcastLibraryNotifier extends $AsyncNotifier<PodcastLibrary> {
   FutureOr<PodcastLibrary> build();

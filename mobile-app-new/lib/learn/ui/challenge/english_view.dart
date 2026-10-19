@@ -3,6 +3,7 @@ import 'package:html/parser.dart';
 import 'package:mobile_app_new/fcc_theme.dart';
 import 'package:mobile_app_new/learn/models/challenge_model.dart';
 import 'package:mobile_app_new/learn/models/curriculum_model.dart';
+import 'package:mobile_app_new/learn/ui/challenge/widgets/assignment_tile.dart';
 import 'package:mobile_app_new/learn/ui/challenge/widgets/challenge_card.dart';
 import 'package:mobile_app_new/learn/ui/challenge/widgets/html_card.dart';
 import 'package:mobile_app_new/learn/ui/challenge/widgets/parsed_html.dart';
@@ -10,7 +11,7 @@ import 'package:mobile_app_new/learn/ui/challenge/widgets/challenge_button.dart'
 import 'package:mobile_app_new/learn/ui/challenge/widgets/complete_button.dart';
 import 'package:mobile_app_new/learn/ui/challenge/widgets/challenge_layout.dart';
 import 'package:mobile_app_new/learn/ui/challenge/widgets/task_explanation.dart';
-import 'package:mobile_app_new/learn/ui/challenge/widgets/scene/scene_view.dart';
+import 'package:mobile_app_new/learn/ui/widgets/scene/scene_view.dart';
 
 const _wordStyle = TextStyle(fontSize: 24, height: 1.5, letterSpacing: 0);
 
@@ -29,6 +30,10 @@ class EnglishView extends StatefulWidget {
 class _EnglishViewState extends State<EnglishView> {
   late final _blanks = widget.challenge.fillInTheBlank?.blanks ?? const [];
   late final _inputs = [for (final _ in _blanks) TextEditingController()];
+  late final _assignments = List.filled(
+    widget.challenge.assignments.length,
+    false,
+  );
   List<bool>? _results;
 
   bool get _allCorrect => _results?.every((r) => r) ?? false;
@@ -83,6 +88,23 @@ class _EnglishViewState extends State<EnglishView> {
                     ParsedHtml(challenge.description),
                   if (challenge.instructions.isNotEmpty)
                     ParsedHtml(challenge.instructions),
+                  if (challenge.assignments.isNotEmpty)
+                    ChallengeCard(
+                      title: 'Assignments',
+                      child: Column(
+                        children: [
+                          for (final (i, assignment)
+                              in challenge.assignments.indexed)
+                            AssignmentTile(
+                              label: assignment,
+                              value: _assignments[i],
+                              onToggle: () => setState(
+                                () => _assignments[i] = !_assignments[i],
+                              ),
+                            ),
+                        ],
+                      ),
+                    ),
                   if (challenge.fillInTheBlank case final fill?) ...[
                     if (challenge.instructions.isNotEmpty)
                       const SizedBox(height: 12),
@@ -194,6 +216,7 @@ class _EnglishViewState extends State<EnglishView> {
                 block: widget.block,
                 label: dialogue ? 'Start tasks' : 'Continue',
                 buttonStyle: _buttonStyle,
+                enabled: _assignments.every((done) => done),
               )
             : ChallengeButton(
                 label: _results == null ? 'Check answer' : 'Check again',
@@ -269,7 +292,7 @@ class _EnglishViewState extends State<EnglishView> {
       },
     );
     final painter = TextPainter(
-      text: TextSpan(text: _blanks[index].answer, style: _wordStyle),
+      text: TextSpan(text: '${_blanks[index].answer}mm', style: _wordStyle),
       textDirection: TextDirection.ltr,
       textScaler: MediaQuery.textScalerOf(context),
     )..layout();

@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:go_router/go_router.dart' show GoRouterHelper;
 import 'package:mobile_app_new/learn/models/challenge_model.dart';
 import 'package:mobile_app_new/learn/models/curriculum_model.dart';
 import 'package:mobile_app_new/learn/ui/challenge/challenge_viewmodel.dart';
@@ -19,7 +18,7 @@ class CompleteButton extends ConsumerWidget {
   });
 
   final Challenge challenge;
-  final Block block;
+  final Block? block;
   final String label;
   final String? solution;
   final bool enabled;
@@ -63,9 +62,13 @@ class CompleteButton extends ConsumerWidget {
   }
 
   void _goToNext(BuildContext context) {
-    final index = block.challenges.indexWhere((c) => c.id == challenge.id);
-    if (index == -1 || index == block.challenges.length - 1) {
-      context.pop();
+    final block = this.block;
+    final index =
+        block?.challenges.indexWhere((c) => c.id == challenge.id) ?? -1;
+    if (block == null || index == -1 || index == block.challenges.length - 1) {
+      // NOTE: Inside an open drawer a plain pop only closes the drawer.
+      final route = ModalRoute.of(context);
+      Navigator.of(context).popUntil((r) => r != route);
       return;
     }
 

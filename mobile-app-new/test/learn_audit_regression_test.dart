@@ -17,7 +17,7 @@ import 'package:mobile_app_new/learn/ui/challenge/lesson_view.dart';
 import 'package:mobile_app_new/learn/ui/challenge/python_project_view.dart';
 import 'package:mobile_app_new/learn/ui/challenge/quiz_view.dart';
 import 'package:mobile_app_new/learn/ui/challenge/widgets/help_dialog.dart';
-import 'package:mobile_app_new/learn/ui/challenge/widgets/scene/scene_controls.dart';
+import 'package:mobile_app_new/learn/ui/widgets/scene/scene_controls.dart';
 import 'package:mobile_app_new/learn/ui/widgets/block_card.dart';
 import 'package:mobile_app_new/services/audio_service.dart';
 import 'package:mobile_app_new/services/auth_service.dart';
@@ -178,7 +178,7 @@ void main() {
         Scaffold(
           body: Builder(
             builder: (context) => TextButton(
-              onPressed: () => showHelpDialog(context, _challenge, _block),
+              onPressed: () => showHelpDialog(context, _challenge, _block.name),
               child: const Text('Help'),
             ),
           ),

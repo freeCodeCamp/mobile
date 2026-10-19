@@ -20,7 +20,7 @@ final class CodeRadioNowPlayingProvider
     : super(
         from: null,
         argument: null,
-        retry: _noRetry,
+        retry: noRetry,
         name: r'codeRadioNowPlayingProvider',
         isAutoDispose: true,
         dependencies: null,
@@ -42,7 +42,7 @@ final class CodeRadioNowPlayingProvider
 }
 
 String _$codeRadioNowPlayingHash() =>
-    r'4e8aa95e62f6b2d4dd82363283a5134708abf4b2';
+    r'cd9c2cdc5fffc2ec92987f11106f837aa1681426';
 
 @ProviderFor(codeRadioElapsed)
 final codeRadioElapsedProvider = CodeRadioElapsedProvider._();

@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:mobile_app_new/learn/models/challenge_model.dart';
-import 'package:mobile_app_new/learn/ui/challenge/challenge_placeholder_view.dart';
+import 'package:mobile_app_new/learn/ui/editor_challenge/editor_challenge_view.dart';
 import 'package:mobile_app_new/learn/ui/challenge/challenge_viewmodel.dart';
 import 'package:mobile_app_new/learn/ui/challenge/english_view.dart';
 import 'package:mobile_app_new/learn/ui/challenge/lesson_view.dart';
@@ -82,27 +81,12 @@ class ChallengeView extends ConsumerWidget {
             challenge: challenge,
             block: block,
           ),
-          // NOTE: The editor challenge types arrive in Learn iteration 4.
-          // html
-          0 => _editorPlaceholder(challenge),
-          // js
-          1 => _editorPlaceholder(challenge),
-          // multifileCertProject
-          14 => _editorPlaceholder(challenge),
-          // python
-          20 => _editorPlaceholder(challenge),
-          // multifilePythonCertProject
-          23 => _editorPlaceholder(challenge),
-          // lab
-          25 => _editorPlaceholder(challenge),
-          // jsLab
-          26 => _editorPlaceholder(challenge),
-          // pyLab
-          27 => _editorPlaceholder(challenge),
-          // dailyChallengeJs
-          28 => _editorPlaceholder(challenge),
-          // dailyChallengePy
-          29 => _editorPlaceholder(challenge),
+          // Editor challenges, including multi-file projects and labs.
+          0 || 1 || 14 || 20 || 23 || 25 || 26 || 27 => EditorChallengeView(
+            key: ValueKey(challenge.id),
+            challenge: challenge,
+            block: block,
+          ),
           final type => _Message(
             child: Text(
               'This challenge type ($type) is not available in the app yet.',
@@ -120,10 +104,6 @@ class ChallengeView extends ConsumerWidget {
     };
   }
 }
-
-Widget _editorPlaceholder(Challenge challenge) => ChallengePlaceholderView(
-  details: '${challenge.title} (type ${challenge.challengeType})',
-);
 
 class _Message extends StatelessWidget {
   const _Message({required this.child});

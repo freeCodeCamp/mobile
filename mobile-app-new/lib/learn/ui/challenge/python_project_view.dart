@@ -76,7 +76,8 @@ class _PythonProjectViewState extends State<PythonProjectView> {
           IconButton(
             tooltip: 'Ask for help',
             icon: const Icon(Icons.help_outline),
-            onPressed: () => showHelpDialog(context, challenge, widget.block),
+            onPressed: () =>
+                showHelpDialog(context, challenge, widget.block.name),
           ),
         ],
       ),

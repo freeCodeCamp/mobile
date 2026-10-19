@@ -5,6 +5,7 @@ import 'dart:math' show Random, pow;
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:mobile_app_new/fcc_theme.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
+import 'package:timezone/timezone.dart' as tz;
 
 part 'notification_service.g.dart';
 
@@ -55,6 +56,41 @@ class NotificationService {
     }
 
     return true;
+  }
+
+  Future<bool> enabled() async {
+    await _ensureInitialised();
+    if (!Platform.isAndroid) return true;
+
+    return await _plugin
+            .resolvePlatformSpecificImplementation<
+              AndroidFlutterLocalNotificationsPlugin
+            >()
+            ?.areNotificationsEnabled() ??
+        false;
+  }
+
+  Future<void> schedule({
+    required int id,
+    required String title,
+    required String body,
+    required DateTime at,
+    required NotificationDetails details,
+  }) async {
+    await _ensureInitialised();
+    await _plugin.zonedSchedule(
+      id: id,
+      title: title,
+      body: body,
+      scheduledDate: tz.TZDateTime.from(at, tz.local),
+      notificationDetails: details,
+      androidScheduleMode: AndroidScheduleMode.inexact,
+    );
+  }
+
+  Future<void> cancel(int id) async {
+    await _ensureInitialised();
+    await _plugin.cancel(id: id);
   }
 
   Future<void> showNotification(String title, String body) async {

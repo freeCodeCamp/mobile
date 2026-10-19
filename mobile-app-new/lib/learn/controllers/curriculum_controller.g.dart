@@ -48,7 +48,7 @@ final class CurriculumStagesProvider
   }
 }
 
-String _$curriculumStagesHash() => r'838f632062a1e4199ad902508de54dd207f91873';
+String _$curriculumStagesHash() => r'4deed0b888f89433b7f5847f63d049a50644e201';
 
 @ProviderFor(superBlock)
 final superBlockProvider = SuperBlockFamily._();
@@ -104,7 +104,7 @@ final class SuperBlockProvider
   }
 }
 
-String _$superBlockHash() => r'5fe767b8aaafb0c3a25b05ea14d570f183997d97';
+String _$superBlockHash() => r'5d5a095729fd2638b80918c93fe6411e6cc4a53f';
 
 final class SuperBlockFamily extends $Family
     with $FunctionalFamilyOverride<FutureOr<SuperBlock>, String> {

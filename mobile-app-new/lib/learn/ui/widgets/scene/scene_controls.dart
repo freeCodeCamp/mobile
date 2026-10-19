@@ -2,7 +2,7 @@ import 'package:audio_service/audio_service.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:mobile_app_new/learn/models/challenge_model.dart';
-import 'package:mobile_app_new/learn/ui/challenge/widgets/scene/scene_viewmodel.dart';
+import 'package:mobile_app_new/learn/controllers/scene_controller.dart';
 import 'package:mobile_app_new/services/audio_service.dart';
 
 class SceneControls extends ConsumerWidget {

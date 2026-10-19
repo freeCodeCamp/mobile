@@ -18,7 +18,7 @@ final class AuthNotifierProvider
     : super(
         from: null,
         argument: null,
-        retry: _noRetry,
+        retry: noRetry,
         name: r'authProvider',
         isAutoDispose: false,
         dependencies: null,
@@ -33,7 +33,7 @@ final class AuthNotifierProvider
   AuthNotifier create() => AuthNotifier();
 }
 
-String _$authNotifierHash() => r'8a83aa80bb58addb8d06a66c4d893a193e3734a3';
+String _$authNotifierHash() => r'2592c7431cd018c7ea85a93247819fff219276c7';
 
 abstract class _$AuthNotifier extends $AsyncNotifier<FccUserModel?> {
   FutureOr<FccUserModel?> build();

@@ -11,9 +11,8 @@ class PodcastLibraryNotifier extends _$PodcastLibraryNotifier {
       ref.watch(podcastLibraryServiceProvider).getLibrary();
 
   Future<void> refresh() async {
-    state = AsyncData(
-      await ref.read(podcastLibraryServiceProvider).getLibrary(),
-    );
+    final library = await ref.read(podcastLibraryServiceProvider).getLibrary();
+    if (ref.mounted) state = AsyncData(library);
   }
 
   Future<void> remove(String podcastId, String episodeId) async {
@@ -23,6 +22,7 @@ class PodcastLibraryNotifier extends _$PodcastLibraryNotifier {
     await ref
         .read(podcastLibraryServiceProvider)
         .removeEpisode(podcastId, episodeId);
+    if (!ref.mounted) return;
 
     await refresh();
   }

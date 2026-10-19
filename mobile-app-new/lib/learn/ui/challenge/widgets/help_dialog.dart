@@ -4,7 +4,6 @@ import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:mobile_app_new/fcc_theme.dart';
 import 'package:mobile_app_new/learn/models/challenge_model.dart';
-import 'package:mobile_app_new/learn/models/curriculum_model.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 const _forum = 'https://forum.freecodecamp.org';
@@ -17,10 +16,11 @@ const _maxUrlLength = 8000;
 Future<void> showHelpDialog(
   BuildContext context,
   Challenge challenge,
-  Block block,
-) async {
+  String blockName, {
+  String code = '',
+}) async {
   final search = Uri.parse(
-    '$_forum/search?q=${Uri.encodeComponent('${block.name} - ${challenge.title} in:title')}',
+    '$_forum/search?q=${Uri.encodeComponent('$blockName - ${challenge.title} in:title')}',
   );
 
   final proceed = await showModalBottomSheet<bool>(
@@ -38,13 +38,19 @@ Future<void> showHelpDialog(
     barrierDismissible: false,
     builder: (context) => _CreatePostDialog(
       search: search,
-      postUrl: (description) => _forumPostUrl(challenge, block, description),
+      postUrl: (description) =>
+          _forumPostUrl(challenge, blockName, description, code),
     ),
   );
 }
 
-Uri _forumPostUrl(Challenge challenge, Block block, String description) {
-  final title = '${block.name} - ${challenge.title}';
+Uri _forumPostUrl(
+  Challenge challenge,
+  String blockName,
+  String description,
+  String code,
+) {
+  final title = '$blockName - ${challenge.title}';
   final ending =
       '**Your mobile information:**\n```txt\n${Platform.operatingSystem} ${Platform.operatingSystemVersion}\n```\n\n'
       '**Challenge:** $title\n\n'
@@ -52,7 +58,8 @@ Uri _forumPostUrl(Challenge challenge, Block block, String description) {
       'https://www.freecodecamp.org/learn/${challenge.superBlock}/${challenge.block}/${challenge.dashedName}';
 
   final body =
-      "**Tell us what's happening:**\nDescribe your issue in detail here. \n\n$description \n\n$ending";
+      "**Tell us what's happening:**\nDescribe your issue in detail here. \n\n$description \n\n"
+      '${code.isEmpty ? '' : '**Your code so far**$code\n\n'}$ending';
 
   final base =
       '$_forum/new-topic?category=${Uri.encodeComponent(challenge.helpCategory)}&title=${Uri.encodeComponent(title)}&body=';

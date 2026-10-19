@@ -21,6 +21,10 @@ abstract class ChallengeFile with _$ChallengeFile {
     @JsonKey(readValue: _readFileKey) required String fileKey,
   }) = _ChallengeFile;
 
+  const ChallengeFile._();
+
+  String get fileName => '$name.${ext.name}';
+
   factory ChallengeFile.fromJson(Map<String, Object?> json) =>
       _$ChallengeFileFromJson(json);
 }

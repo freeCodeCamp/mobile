@@ -215,8 +215,8 @@ return $default(_that.ext,_that.name,_that.head,_that.tail,_that.contents,_that.
 /// @nodoc
 @JsonSerializable()
 
-class _ChallengeFile implements ChallengeFile {
-  const _ChallengeFile({@JsonKey(unknownEnumValue: Ext.html) required this.ext, required this.name, this.head, this.tail, required this.contents, final  List<String> history = const [], final  List<int> editableRegionBoundaries = const [], @JsonKey(readValue: _readFileKey) required this.fileKey}): _history = history,_editableRegionBoundaries = editableRegionBoundaries;
+class _ChallengeFile extends ChallengeFile {
+  const _ChallengeFile({@JsonKey(unknownEnumValue: Ext.html) required this.ext, required this.name, this.head, this.tail, required this.contents, final  List<String> history = const [], final  List<int> editableRegionBoundaries = const [], @JsonKey(readValue: _readFileKey) required this.fileKey}): _history = history,_editableRegionBoundaries = editableRegionBoundaries,super._();
   factory _ChallengeFile.fromJson(Map<String, dynamic> json) => _$ChallengeFileFromJson(json);
 
 @override@JsonKey(unknownEnumValue: Ext.html) final  Ext ext;

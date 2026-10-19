@@ -1,6 +1,6 @@
 // GENERATED CODE - DO NOT MODIFY BY HAND
 
-part of 'scene_viewmodel.dart';
+part of 'scene_controller.dart';
 
 // **************************************************************************
 // RiverpodGenerator
@@ -97,7 +97,7 @@ final class SceneNotifierProvider
   }
 }
 
-String _$sceneNotifierHash() => r'c18ab33636b696c31d3b0687ac5ce3d407c01326';
+String _$sceneNotifierHash() => r'e266f5ffe2d003eb329eeb3fb692f976a090b28b';
 
 final class SceneNotifierFamily extends $Family
     with

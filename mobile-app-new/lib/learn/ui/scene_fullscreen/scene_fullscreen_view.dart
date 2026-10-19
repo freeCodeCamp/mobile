@@ -2,8 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:go_router/go_router.dart';
 import 'package:mobile_app_new/learn/models/challenge_model.dart';
-import 'package:mobile_app_new/learn/ui/challenge/widgets/scene/scene_canvas.dart';
-import 'package:mobile_app_new/learn/ui/challenge/widgets/scene/scene_controls.dart';
+import 'package:mobile_app_new/learn/ui/widgets/scene/scene_canvas.dart';
+import 'package:mobile_app_new/learn/ui/widgets/scene/scene_controls.dart';
 
 class SceneFullscreenView extends StatefulWidget {
   const SceneFullscreenView({
@@ -20,9 +20,6 @@ class SceneFullscreenView extends StatefulWidget {
 }
 
 class _SceneFullscreenViewState extends State<SceneFullscreenView> {
-  final _controlsKey = GlobalKey();
-  double _controlsHeight = 0;
-
   @override
   void initState() {
     super.initState();
@@ -31,12 +28,6 @@ class _SceneFullscreenViewState extends State<SceneFullscreenView> {
       DeviceOrientation.landscapeRight,
     ]);
     SystemChrome.setEnabledSystemUIMode(SystemUiMode.immersiveSticky);
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      final box = _controlsKey.currentContext?.findRenderObject() as RenderBox?;
-      if (mounted && box != null && box.hasSize) {
-        setState(() => _controlsHeight = box.size.height);
-      }
-    });
   }
 
   @override
@@ -50,14 +41,16 @@ class _SceneFullscreenViewState extends State<SceneFullscreenView> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.black,
+      extendBody: true,
+      bottomNavigationBar: SceneControls(
+        scene: widget.scene,
+        title: widget.title,
+        fullscreen: true,
+      ),
       body: Stack(
         children: [
           Positioned.fill(
-            child: SceneCanvas(
-              scene: widget.scene,
-              title: widget.title,
-              captionsBottom: _controlsHeight,
-            ),
+            child: SceneCanvas(scene: widget.scene, title: widget.title),
           ),
           Positioned(
             top: 16,
@@ -76,17 +69,6 @@ class _SceneFullscreenViewState extends State<SceneFullscreenView> {
                 ),
                 onPressed: () => context.pop(),
               ),
-            ),
-          ),
-          Positioned(
-            left: 0,
-            right: 0,
-            bottom: 0,
-            child: SceneControls(
-              key: _controlsKey,
-              scene: widget.scene,
-              title: widget.title,
-              fullscreen: true,
             ),
           ),
         ],

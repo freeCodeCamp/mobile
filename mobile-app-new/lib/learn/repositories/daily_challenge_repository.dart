@@ -1,24 +1,24 @@
 import 'package:dio/dio.dart';
-import 'package:flutter_dotenv/flutter_dotenv.dart';
+import 'package:mobile_app_new/auth/repositories/session_repository.dart';
 import 'package:mobile_app_new/services/dio_service.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
 part 'daily_challenge_repository.g.dart';
 
-const _prodUrl = 'https://api.freecodecamp.org/daily-coding-challenge';
-const _devUrl = 'https://api.freecodecamp.dev/daily-coding-challenge';
-
 @riverpod
 LearnDailyChallengeRepository learnDailyChallengeRepository(Ref ref) =>
-    LearnDailyChallengeRepository(ref.watch(dioProvider));
+    LearnDailyChallengeRepository(
+      ref.watch(dioProvider),
+      ref.watch(authSessionRepositoryProvider),
+    );
 
 class LearnDailyChallengeRepository {
-  LearnDailyChallengeRepository(this._dio);
+  LearnDailyChallengeRepository(this._dio, this._session);
 
   final Dio _dio;
+  final AuthSessionRepository _session;
 
-  String get _baseUrl =>
-      dotenv.getBool('DEVELOPMENT_MODE', fallback: false) ? _devUrl : _prodUrl;
+  String get _baseUrl => '${_session.apiUrl}/daily-coding-challenge';
 
   Future<Map<String, dynamic>> getToday() async {
     final response = await _dio.get<Map<String, dynamic>>('$_baseUrl/today');
@@ -33,4 +33,20 @@ class LearnDailyChallengeRepository {
         if (entry is Map) Map<String, dynamic>.from(entry),
     ];
   }
+
+  Future<Map<String, dynamic>> getDay(String monthDay) async {
+    final response = await _dio.get<Map<String, dynamic>>(
+      '$_baseUrl/day/$monthDay',
+    );
+    return response.data!;
+  }
+
+  Future<void> postCompleted(Map<String, dynamic> body) =>
+      _session.authenticated(
+        (options) => _dio.post<void>(
+          '${_session.apiUrl}/daily-coding-challenge-completed',
+          data: body,
+          options: options,
+        ),
+      );
 }

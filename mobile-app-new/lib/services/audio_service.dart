@@ -59,6 +59,7 @@ Future<AudioPlayerHandler> initAudioService() => AudioService.init(
 class AudioPlayerHandler extends BaseAudioHandler {
   AudioPlayerHandler() {
     _notifyAudioHandlerAboutPlaybackEvents();
+    _trackCodeRadioLiveEdge();
   }
 
   static const _skipForward = Duration(seconds: 30);
@@ -82,7 +83,8 @@ class AudioPlayerHandler extends BaseAudioHandler {
   // NOTE: Pausing a live stream does not pause the source: the buffer keeps filling
   // while the playhead sits still, so resuming plays out the backlog instead
   // of what the station is broadcasting now. Reconnecting on resume is the
-  // only way back to the live edge.
+  // only way back to the live edge. just_audio pauses and resumes the player
+  // itself on interruptions and unplugging, so the flag follows playingStream.
   bool _resumeNeedsLiveEdge = false;
 
   String? get codeRadioSongId =>
@@ -107,6 +109,8 @@ class AudioPlayerHandler extends BaseAudioHandler {
 
   @override
   Future<void> play() async {
+    if (_audioConfig == null) return;
+
     if (_resumeNeedsLiveEdge) {
       _resumeNeedsLiveEdge = false;
 
@@ -119,11 +123,7 @@ class AudioPlayerHandler extends BaseAudioHandler {
   }
 
   @override
-  Future<void> pause() async {
-    if (_audioConfig is CodeRadioAudioConfig) _resumeNeedsLiveEdge = true;
-
-    await _audioPlayer.pause();
-  }
+  Future<void> pause() => _audioPlayer.pause();
 
   @override
   Future<void> stop() async {
@@ -319,6 +319,19 @@ class AudioPlayerHandler extends BaseAudioHandler {
         compactIndices: const [0, 1],
       ),
     };
+  }
+
+  void _trackCodeRadioLiveEdge() {
+    _audioPlayer.playingStream.listen((playing) {
+      if (_audioConfig is! CodeRadioAudioConfig) return;
+
+      if (!playing) {
+        _resumeNeedsLiveEdge = true;
+      } else if (_resumeNeedsLiveEdge) {
+        _resumeNeedsLiveEdge = false;
+        unawaited(_rejoinCodeRadioLiveEdge());
+      }
+    });
   }
 
   void _notifyAudioHandlerAboutPlaybackEvents() {

@@ -3,24 +3,20 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:mobile_app_new/fcc_theme.dart';
 import 'package:mobile_app_new/learn/models/challenge_model.dart';
-import 'package:mobile_app_new/learn/ui/challenge/widgets/scene/scene_viewmodel.dart';
+import 'package:mobile_app_new/learn/controllers/scene_controller.dart';
 
 class SceneCanvas extends ConsumerWidget {
-  const SceneCanvas({
-    super.key,
-    required this.scene,
-    required this.title,
-    this.captionsBottom = 0,
-  });
+  const SceneCanvas({super.key, required this.scene, required this.title});
 
   final Scene scene;
   final String title;
-  final double captionsBottom;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final state = ref.watch(sceneProvider(scene, title));
     final assets = ref.watch(sceneAssetsProvider).value;
+    if (assets == null) return const ColoredBox(color: FccColors.gray75);
+
     final line = state.line;
     // NOTE: Lower z is further back, so it paints first.
     final characters = [...state.characters]
@@ -42,17 +38,18 @@ class SceneCanvas extends ConsumerWidget {
             ),
           ),
           for (final character in characters)
-            _Character(
-              key: ValueKey(character.name),
-              state: character,
-              sprites: characterSprites(assets, character),
-              canvas: constraints.biggest,
-            ),
+            if (characterSprites(assets, character) case final sprites?)
+              _Character(
+                key: ValueKey(character.name),
+                state: character,
+                sprites: sprites,
+                canvas: constraints.biggest,
+              ),
           if (state.showCaptions && line != null)
             Positioned(
               left: 0,
               right: 0,
-              bottom: captionsBottom,
+              bottom: MediaQuery.paddingOf(context).bottom,
               child: _Caption(line: line),
             ),
         ],

@@ -14,9 +14,9 @@ import 'package:mobile_app_new/learn/models/curriculum_model.dart';
 import 'package:mobile_app_new/learn/models/scene_assets_model.dart';
 import 'package:mobile_app_new/learn/ui/challenge/english_view.dart';
 import 'package:mobile_app_new/learn/ui/challenge/widgets/parsed_html.dart';
-import 'package:mobile_app_new/learn/ui/challenge/widgets/scene/scene_canvas.dart';
-import 'package:mobile_app_new/learn/ui/challenge/widgets/scene/scene_view.dart';
-import 'package:mobile_app_new/learn/ui/challenge/widgets/scene/scene_viewmodel.dart';
+import 'package:mobile_app_new/learn/ui/widgets/scene/scene_canvas.dart';
+import 'package:mobile_app_new/learn/ui/widgets/scene/scene_view.dart';
+import 'package:mobile_app_new/learn/controllers/scene_controller.dart';
 import 'package:mobile_app_new/services/audio_service.dart';
 import 'package:mobile_app_new/services/auth_service.dart';
 
