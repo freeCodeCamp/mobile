@@ -188,17 +188,26 @@ void main() {
             matching: find.byType(TextButton),
           );
           final colors = Theme.of(context).colorScheme;
-          final design = FccDesignColors.of(context);
           for (var i = 0; i < 2; i++) {
             final completed = tester.widget<TextButton>(buttons.at(i));
             expect(
               completed.style!.backgroundColor!.resolve({}),
-              design.successContainer,
+              dark ? const Color(0xFF013B1B) : const Color(0xFFCBFBD7),
             );
             expect(
               completed.style!.foregroundColor!.resolve({}),
-              design.success,
+              dark ? const Color(0xFF8DDBA3) : const Color(0xFF02743B),
             );
+            final completedShape =
+                completed.style!.shape!.resolve({})! as RoundedRectangleBorder;
+            expect(
+              completedShape.side.style,
+              dark ? BorderStyle.solid : BorderStyle.none,
+            );
+            expect(completedShape.side.width, dark ? 1.5 : 0);
+            if (dark) {
+              expect(completedShape.side.color, const Color(0xFF8DDBA3));
+            }
           }
           final current = tester.widget<TextButton>(buttons.at(2));
           expect(

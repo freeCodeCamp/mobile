@@ -255,7 +255,6 @@ void main() {
           expect(_tile(13), findsNothing);
           final theme = dark ? FccTheme.themeDark : FccTheme.themeLight;
           final colors = theme.colorScheme;
-          final design = theme.extension<FccDesignColors>()!;
           for (var i = 1; i <= 12; i++) {
             final size = tester.getSize(_tile(i));
             expect(size.width, closeTo(size.height, .01));
@@ -268,12 +267,22 @@ void main() {
           final done = tester.widget<TextButton>(_tile(1));
           expect(
             done.style!.backgroundColor!.resolve({}),
-            design.successContainer,
+            dark ? const Color(0xFF013B1B) : const Color(0xFFCBFBD7),
           );
-          expect(done.style!.foregroundColor!.resolve({}), design.success);
+          expect(
+            done.style!.foregroundColor!.resolve({}),
+            dark ? const Color(0xFF8DDBA3) : const Color(0xFF02743B),
+          );
           final doneShape =
               done.style!.shape!.resolve({})! as RoundedRectangleBorder;
-          expect(doneShape.side.color, design.successContainer);
+          expect(
+            doneShape.side.style,
+            dark ? BorderStyle.solid : BorderStyle.none,
+          );
+          expect(doneShape.side.width, dark ? 1.5 : 0);
+          if (dark) {
+            expect(doneShape.side.color, const Color(0xFF8DDBA3));
+          }
           expect(
             find.descendant(of: _tile(1), matching: find.byIcon(Icons.check)),
             findsNothing,

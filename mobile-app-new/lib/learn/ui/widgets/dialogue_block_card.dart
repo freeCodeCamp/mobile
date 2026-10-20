@@ -467,21 +467,28 @@ class _TaskGrid extends StatelessWidget {
                   padding: EdgeInsets.zero,
                   minimumSize: Size.zero,
                   tapTargetSize: MaterialTapTargetSize.shrinkWrap,
-                  foregroundColor: done ? design.success : colors.onSurface,
+                  foregroundColor: done
+                      ? design.onSuccessContainer
+                      : colors.onSurface,
                   backgroundColor: done
                       ? design.successContainer
                       : colors.surface,
                   textStyle: style.copyWith(fontFamily: 'Lato'),
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(9),
-                    side: BorderSide(
-                      color: done
-                          ? design.successContainer
-                          : active
-                          ? colors.primary
-                          : colors.outlineVariant,
-                      width: active ? 2 : 1,
-                    ),
+                    side: done
+                        ? colors.brightness == Brightness.dark
+                              ? BorderSide(
+                                  color: design.onSuccessContainer,
+                                  width: 1.5,
+                                )
+                              : BorderSide.none
+                        : BorderSide(
+                            color: active
+                                ? colors.primary
+                                : colors.outlineVariant,
+                            width: active ? 2 : 1,
+                          ),
                   ),
                 ),
                 onPressed: () => _open(context, block, task),

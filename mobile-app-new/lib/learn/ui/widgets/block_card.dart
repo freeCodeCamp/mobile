@@ -438,16 +438,23 @@ class _StepGrid extends StatelessWidget {
                         : active
                         ? colors.surfaceContainer
                         : colors.surface,
-                    foregroundColor: done ? design.success : colors.onSurface,
+                    foregroundColor: done
+                        ? design.onSuccessContainer
+                        : colors.onSurface,
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(8),
-                      side: BorderSide(
-                        color: done
-                            ? design.successContainer
-                            : active
-                            ? colors.primary
-                            : colors.outlineVariant,
-                      ),
+                      side: done
+                          ? colors.brightness == Brightness.dark
+                                ? BorderSide(
+                                    color: design.onSuccessContainer,
+                                    width: 1.5,
+                                  )
+                                : BorderSide.none
+                          : BorderSide(
+                              color: active
+                                  ? colors.primary
+                                  : colors.outlineVariant,
+                            ),
                     ),
                   ),
                   onPressed: () => _openChallenge(context, block, challenge.id),

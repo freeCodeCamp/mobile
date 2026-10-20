@@ -6,12 +6,14 @@ class FccDesignColors extends ThemeExtension<FccDesignColors> {
   const FccDesignColors({
     required this.success,
     required this.successContainer,
+    required this.onSuccessContainer,
     required this.accentText,
     required this.hero,
   });
 
   final Color success;
   final Color successContainer;
+  final Color onSuccessContainer;
   final Color accentText;
   final Color hero;
 
@@ -22,11 +24,13 @@ class FccDesignColors extends ThemeExtension<FccDesignColors> {
   FccDesignColors copyWith({
     Color? success,
     Color? successContainer,
+    Color? onSuccessContainer,
     Color? accentText,
     Color? hero,
   }) => FccDesignColors(
     success: success ?? this.success,
     successContainer: successContainer ?? this.successContainer,
+    onSuccessContainer: onSuccessContainer ?? this.onSuccessContainer,
     accentText: accentText ?? this.accentText,
     hero: hero ?? this.hero,
   );
@@ -39,6 +43,11 @@ class FccDesignColors extends ThemeExtension<FccDesignColors> {
       successContainer: Color.lerp(
         successContainer,
         other.successContainer,
+        t,
+      )!,
+      onSuccessContainer: Color.lerp(
+        onSuccessContainer,
+        other.onSuccessContainer,
         t,
       )!,
       accentText: Color.lerp(accentText, other.accentText, t)!,
@@ -282,7 +291,8 @@ class FccTheme {
       extensions: [
         FccDesignColors(
           success: Color(dark ? 0xFF8DDBA3 : 0xFF1E7F46),
-          successContainer: Color(dark ? 0xFF003D1B : 0xFFCCFBD7),
+          successContainer: Color(dark ? 0xFF013B1B : 0xFFCBFBD7),
+          onSuccessContainer: Color(dark ? 0xFF8DDBA3 : 0xFF02743B),
           accentText: accentText,
           hero: Color(dark ? 0xFF3E329C : 0xFF5B4BDB),
         ),
