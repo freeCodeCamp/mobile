@@ -3,6 +3,7 @@ import 'dart:math' as math;
 import 'package:flutter/material.dart';
 import 'package:flutter_html/flutter_html.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:mobile_app_new/fcc_theme.dart';
 import 'package:mobile_app_new/learn/models/curriculum_model.dart';
 import 'package:mobile_app_new/learn/ui/widgets/dialogue_block_card.dart';
 import 'package:mobile_app_new/learn/ui/widgets/learn_presentation.dart';
@@ -368,6 +369,7 @@ class _StepGrid extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final colors = Theme.of(context).colorScheme;
+    final design = FccDesignColors.of(context);
     final next = challenges.where((c) => !completed.contains(c.id)).firstOrNull;
     return LayoutBuilder(
       builder: (context, constraints) {
@@ -432,15 +434,19 @@ class _StepGrid extends StatelessWidget {
                   style: TextButton.styleFrom(
                     padding: EdgeInsets.zero,
                     backgroundColor: done
-                        ? colors.primary
+                        ? design.successContainer
                         : active
                         ? colors.surfaceContainer
                         : colors.surface,
-                    foregroundColor: done ? colors.onPrimary : colors.onSurface,
+                    foregroundColor: done ? design.success : colors.onSurface,
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(8),
                       side: BorderSide(
-                        color: done || active ? colors.primary : colors.outline,
+                        color: done
+                            ? design.successContainer
+                            : active
+                            ? colors.primary
+                            : colors.outlineVariant,
                       ),
                     ),
                   ),

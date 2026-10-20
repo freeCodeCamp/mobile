@@ -5,11 +5,13 @@ import 'package:flutter/material.dart';
 class FccDesignColors extends ThemeExtension<FccDesignColors> {
   const FccDesignColors({
     required this.success,
+    required this.successContainer,
     required this.accentText,
     required this.hero,
   });
 
   final Color success;
+  final Color successContainer;
   final Color accentText;
   final Color hero;
 
@@ -17,18 +19,28 @@ class FccDesignColors extends ThemeExtension<FccDesignColors> {
       Theme.of(context).extension<FccDesignColors>()!;
 
   @override
-  FccDesignColors copyWith({Color? success, Color? accentText, Color? hero}) =>
-      FccDesignColors(
-        success: success ?? this.success,
-        accentText: accentText ?? this.accentText,
-        hero: hero ?? this.hero,
-      );
+  FccDesignColors copyWith({
+    Color? success,
+    Color? successContainer,
+    Color? accentText,
+    Color? hero,
+  }) => FccDesignColors(
+    success: success ?? this.success,
+    successContainer: successContainer ?? this.successContainer,
+    accentText: accentText ?? this.accentText,
+    hero: hero ?? this.hero,
+  );
 
   @override
   FccDesignColors lerp(covariant FccDesignColors? other, double t) {
     if (other == null) return this;
     return FccDesignColors(
       success: Color.lerp(success, other.success, t)!,
+      successContainer: Color.lerp(
+        successContainer,
+        other.successContainer,
+        t,
+      )!,
       accentText: Color.lerp(accentText, other.accentText, t)!,
       hero: Color.lerp(hero, other.hero, t)!,
     );
@@ -270,6 +282,7 @@ class FccTheme {
       extensions: [
         FccDesignColors(
           success: Color(dark ? 0xFF8DDBA3 : 0xFF1E7F46),
+          successContainer: Color(dark ? 0xFF003D1B : 0xFFCCFBD7),
           accentText: accentText,
           hero: Color(dark ? 0xFF3E329C : 0xFF5B4BDB),
         ),

@@ -408,6 +408,7 @@ class _TaskGrid extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final colors = Theme.of(context).colorScheme;
+    final design = FccDesignColors.of(context);
     final current = tasks
         .where((task) => !completed.contains(task.id))
         .firstOrNull;
@@ -466,13 +467,19 @@ class _TaskGrid extends StatelessWidget {
                   padding: EdgeInsets.zero,
                   minimumSize: Size.zero,
                   tapTargetSize: MaterialTapTargetSize.shrinkWrap,
-                  foregroundColor: done ? colors.onPrimary : colors.onSurface,
-                  backgroundColor: done ? colors.primary : colors.surface,
+                  foregroundColor: done ? design.success : colors.onSurface,
+                  backgroundColor: done
+                      ? design.successContainer
+                      : colors.surface,
                   textStyle: style.copyWith(fontFamily: 'Lato'),
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(9),
                     side: BorderSide(
-                      color: active || done ? colors.primary : colors.outline,
+                      color: done
+                          ? design.successContainer
+                          : active
+                          ? colors.primary
+                          : colors.outlineVariant,
                       width: active ? 2 : 1,
                     ),
                   ),

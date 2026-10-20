@@ -187,6 +187,38 @@ void main() {
             of: find.byType(GridView),
             matching: find.byType(TextButton),
           );
+          final colors = Theme.of(context).colorScheme;
+          final design = FccDesignColors.of(context);
+          for (var i = 0; i < 2; i++) {
+            final completed = tester.widget<TextButton>(buttons.at(i));
+            expect(
+              completed.style!.backgroundColor!.resolve({}),
+              design.successContainer,
+            );
+            expect(
+              completed.style!.foregroundColor!.resolve({}),
+              design.success,
+            );
+          }
+          final current = tester.widget<TextButton>(buttons.at(2));
+          expect(
+            current.style!.backgroundColor!.resolve({}),
+            colors.surfaceContainer,
+          );
+          expect(
+            (current.style!.shape!.resolve({})! as RoundedRectangleBorder)
+                .side
+                .color,
+            colors.primary,
+          );
+          final pending = tester.widget<TextButton>(buttons.at(3));
+          expect(pending.style!.backgroundColor!.resolve({}), colors.surface);
+          expect(
+            (pending.style!.shape!.resolve({})! as RoundedRectangleBorder)
+                .side
+                .color,
+            colors.outlineVariant,
+          );
           for (final element in buttons.evaluate()) {
             final size = (element.renderObject! as RenderBox).size;
             expect(size.width, closeTo(size.height, .01));

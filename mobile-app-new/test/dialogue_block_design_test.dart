@@ -253,8 +253,9 @@ void main() {
           _expectExpanded(tester, 1, false);
           expect(_tile(12), findsOneWidget);
           expect(_tile(13), findsNothing);
-          final colors =
-              (dark ? FccTheme.themeDark : FccTheme.themeLight).colorScheme;
+          final theme = dark ? FccTheme.themeDark : FccTheme.themeLight;
+          final colors = theme.colorScheme;
+          final design = theme.extension<FccDesignColors>()!;
           for (var i = 1; i <= 12; i++) {
             final size = tester.getSize(_tile(i));
             expect(size.width, closeTo(size.height, .01));
@@ -265,8 +266,14 @@ void main() {
             );
           }
           final done = tester.widget<TextButton>(_tile(1));
-          expect(done.style!.backgroundColor!.resolve({}), colors.primary);
-          expect(done.style!.foregroundColor!.resolve({}), colors.onPrimary);
+          expect(
+            done.style!.backgroundColor!.resolve({}),
+            design.successContainer,
+          );
+          expect(done.style!.foregroundColor!.resolve({}), design.success);
+          final doneShape =
+              done.style!.shape!.resolve({})! as RoundedRectangleBorder;
+          expect(doneShape.side.color, design.successContainer);
           expect(
             find.descendant(of: _tile(1), matching: find.byIcon(Icons.check)),
             findsNothing,
@@ -276,6 +283,15 @@ void main() {
               current.style!.shape!.resolve({})! as RoundedRectangleBorder;
           expect(shape.side.width, 2);
           expect(shape.side.color, colors.primary);
+          expect(current.style!.backgroundColor!.resolve({}), colors.surface);
+          expect(current.style!.foregroundColor!.resolve({}), colors.onSurface);
+          final pending = tester.widget<TextButton>(_tile(5));
+          final pendingShape =
+              pending.style!.shape!.resolve({})! as RoundedRectangleBorder;
+          expect(pendingShape.side.color, colors.outlineVariant);
+          expect(pendingShape.side.width, 1);
+          expect(pending.style!.backgroundColor!.resolve({}), colors.surface);
+          expect(pending.style!.foregroundColor!.resolve({}), colors.onSurface);
           expect(find.bySemanticsLabel('Task 1, completed'), findsOneWidget);
           expect(find.bySemanticsLabel('Task 4, current'), findsOneWidget);
           expect(
