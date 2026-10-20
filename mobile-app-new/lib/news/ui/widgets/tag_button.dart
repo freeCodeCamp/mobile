@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:mobile_app_new/fcc_theme.dart';
 import 'package:mobile_app_new/routing/news.dart';
 
 class TagButton extends StatelessWidget {
@@ -32,7 +33,7 @@ class TagButton extends StatelessWidget {
           decoration: compact
               ? null
               : ShapeDecoration(
-                  color: colors.surfaceContainerLow,
+                  color: colors.surfaceContainer,
                   shape: const StadiumBorder(),
                 ),
           child: Text(
@@ -43,7 +44,7 @@ class TagButton extends StatelessWidget {
               fontFamily: 'Lato',
               fontSize: compact ? 12 : 13,
               fontWeight: compact ? FontWeight.w500 : FontWeight.w600,
-              color: colors.primary,
+              color: FccDesignColors.of(context).accentText,
               letterSpacing: 0,
             ),
           ),

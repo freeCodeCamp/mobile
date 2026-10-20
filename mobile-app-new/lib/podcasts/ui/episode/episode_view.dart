@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_html/flutter_html.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:html/parser.dart' as html_parser;
+import 'package:mobile_app_new/fcc_theme.dart';
 import 'package:mobile_app_new/podcasts/constants.dart';
 import 'package:mobile_app_new/podcasts/controllers/player_controller.dart';
 import 'package:mobile_app_new/podcasts/models/episode_model.dart';
@@ -155,7 +156,9 @@ class _PodcastEpisodeViewState extends State<PodcastEpisodeView> {
                             color: colors.onSurface,
                             fontSize: FontSize(16),
                           ),
-                          'a': Style(color: colors.primary),
+                          'a': Style(
+                            color: FccDesignColors.of(context).accentText,
+                          ),
                         },
                         onLinkTap: (url, _, _) {
                           final uri = url == null ? null : Uri.tryParse(url);

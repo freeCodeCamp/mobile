@@ -93,11 +93,11 @@ class _DeleteAccountViewState extends ConsumerState<DeleteAccountView> {
                         alignment: Alignment.centerLeft,
                         child: CircleAvatar(
                           radius: 28,
-                          backgroundColor: design.donate,
+                          backgroundColor: colors.error.withValues(alpha: .12),
                           child: Icon(
                             Icons.delete_outline,
                             size: 28,
-                            color: design.onDonate,
+                            color: colors.error,
                           ),
                         ),
                       ),
@@ -148,8 +148,8 @@ class _DeleteAccountViewState extends ConsumerState<DeleteAccountView> {
                       CheckboxListTile(
                         contentPadding: EdgeInsets.zero,
                         controlAffinity: ListTileControlAffinity.leading,
-                        activeColor: design.onDonate,
-                        checkColor: colors.surface,
+                        activeColor: colors.error,
+                        checkColor: colors.onError,
                         title: const Text(
                           'I am 100% certain. Delete everything related to this account.',
                         ),
@@ -206,8 +206,8 @@ class _DeleteAccountViewState extends ConsumerState<DeleteAccountView> {
                             ? _delete
                             : null,
                         style: FilledButton.styleFrom(
-                          backgroundColor: design.onDonate,
-                          foregroundColor: colors.surface,
+                          backgroundColor: colors.error,
+                          foregroundColor: colors.onError,
                           shape: RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(12),
                           ),

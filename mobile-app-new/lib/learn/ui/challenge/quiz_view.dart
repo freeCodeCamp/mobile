@@ -158,7 +158,7 @@ class _QuizViewState extends State<QuizView> {
                               side: BorderSide(
                                 color: i == _current
                                     ? colors.primary
-                                    : colors.outlineVariant,
+                                    : colors.outline,
                               ),
                               shape: RoundedRectangleBorder(
                                 borderRadius: BorderRadius.circular(10),
@@ -345,13 +345,13 @@ class _QuizViewState extends State<QuizView> {
                       child: CircleAvatar(
                         radius: 12,
                         backgroundColor: _selected[i] == q.solution
-                            ? const Color(0xFF1E7F46)
-                            : const Color(0xFFD6245A),
+                            ? success
+                            : colors.error,
                         child: Icon(
                           _selected[i] == q.solution
                               ? Icons.check
                               : Icons.close,
-                          color: const Color(0xFFFFF8EC),
+                          color: colors.surface,
                           size: 17,
                         ),
                       ),
@@ -409,7 +409,7 @@ class _QuizViewState extends State<QuizView> {
         ),
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
         side: secondary
-            ? BorderSide(color: Theme.of(context).colorScheme.outlineVariant)
+            ? BorderSide(color: Theme.of(context).colorScheme.outline)
             : BorderSide.none,
       );
 

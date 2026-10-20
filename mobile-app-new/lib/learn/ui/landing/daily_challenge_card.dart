@@ -47,16 +47,17 @@ class _DailyChallengeCardState extends ConsumerState<DailyChallengeCard> {
 
   @override
   Widget build(BuildContext context) {
+    final colors = Theme.of(context).colorScheme;
     final today = ref.watch(dailyChallengeTodayProvider);
     final challenge = today.value;
     if (challenge == null) {
-      final design = FccDesignColors.of(context);
       return Container(
         margin: const EdgeInsets.only(top: 12),
         padding: const EdgeInsets.all(16),
         decoration: BoxDecoration(
-          color: design.donate,
+          color: colors.surface,
           borderRadius: BorderRadius.circular(14),
+          border: Border.all(color: colors.outlineVariant),
         ),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -91,8 +92,6 @@ class _DailyChallengeCardState extends ConsumerState<DailyChallengeCard> {
         ),
       );
     }
-    final colors = Theme.of(context).colorScheme;
-    final design = FccDesignColors.of(context);
     final isCompleted = ref.watch(
       authProvider.select(
         (s) =>
@@ -106,9 +105,9 @@ class _DailyChallengeCardState extends ConsumerState<DailyChallengeCard> {
       margin: const EdgeInsets.only(top: 12),
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: design.donate,
+        color: colors.surface,
         borderRadius: BorderRadius.circular(14),
-        border: Border.all(color: design.onDonate.withValues(alpha: .2)),
+        border: Border.all(color: colors.outlineVariant),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -116,7 +115,7 @@ class _DailyChallengeCardState extends ConsumerState<DailyChallengeCard> {
           Text(
             'Daily challenge',
             style: TextStyle(
-              color: design.onDonate,
+              color: colors.onSurface,
               fontFamily: 'Lato',
               letterSpacing: 0,
               fontSize: 11,
@@ -161,23 +160,8 @@ class _DailyChallengeCardState extends ConsumerState<DailyChallengeCard> {
                     fontWeight: FontWeight.w700,
                     height: 1.25,
                   ),
-                  backgroundColor:
-                      Theme.of(context).brightness == Brightness.light
-                      ? colors.onSurface
-                      : showArchiveLink
-                      ? Colors.transparent
-                      : design.onDonate,
-                  foregroundColor:
-                      Theme.of(context).brightness == Brightness.light
-                      ? Theme.of(context).scaffoldBackgroundColor
-                      : showArchiveLink
-                      ? design.onDonate
-                      : design.donate,
-                  side: BorderSide(
-                    color: Theme.of(context).brightness == Brightness.light
-                        ? colors.onSurface
-                        : design.onDonate,
-                  ),
+                  backgroundColor: colors.secondary,
+                  foregroundColor: colors.onSecondary,
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(8),
                   ),
@@ -230,7 +214,7 @@ class _ArchiveLink extends StatelessWidget {
   @override
   Widget build(BuildContext context) => TextButton(
     style: TextButton.styleFrom(
-      foregroundColor: FccDesignColors.of(context).onDonate,
+      foregroundColor: FccDesignColors.of(context).accentText,
       padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 10),
       textStyle: const TextStyle(
         fontFamily: 'Lato',

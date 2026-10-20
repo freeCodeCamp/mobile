@@ -82,7 +82,7 @@ class LearnLandingView extends ConsumerWidget {
   List<Widget> _stage(BuildContext context, CurriculumStage stage) {
     final colors = Theme.of(context).colorScheme;
     final accents = [
-      colors.tertiary,
+      FccDesignColors.of(context).accentText,
       Theme.of(context).brightness == Brightness.dark
           ? colors.secondary
           : const Color(0xFF9C6B00),
@@ -211,7 +211,9 @@ class _ResumeCard extends ConsumerWidget {
             ] else if (resume.isLoading) ...[
               const Text('Finding your next step…'),
               const SizedBox(height: 12),
-              const LinearProgressIndicator(
+              LinearProgressIndicator(
+                color: Theme.of(context).colorScheme.secondary,
+                backgroundColor: Colors.white24,
                 semanticsLabel: 'Loading your next step',
               ),
             ] else

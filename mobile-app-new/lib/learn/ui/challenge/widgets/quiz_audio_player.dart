@@ -1,6 +1,7 @@
 import 'package:audio_service/audio_service.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:mobile_app_new/fcc_theme.dart';
 import 'package:mobile_app_new/learn/models/challenge_model.dart';
 import 'package:mobile_app_new/services/audio_service.dart';
 
@@ -152,14 +153,14 @@ class _QuizAudioPlayerState extends ConsumerState<QuizAudioPlayer> {
               childrenPadding: const EdgeInsets.fromLTRB(16, 0, 16, 8),
               textColor: colors.onSurface,
               collapsedTextColor: colors.onSurface,
-              iconColor: colors.primary,
+              iconColor: FccDesignColors.of(context).accentText,
               collapsedIconColor: colors.onSurfaceVariant,
               shape: const Border(),
               collapsedShape: const Border(),
               expandedCrossAxisAlignment: CrossAxisAlignment.start,
               expandedAlignment: Alignment.centerLeft,
               children: [
-                for (final (index, line) in widget.audioData.transcript.indexed)
+                for (final line in widget.audioData.transcript)
                   Padding(
                     padding: const EdgeInsets.only(bottom: 12),
                     child: Text.rich(
@@ -169,9 +170,7 @@ class _QuizAudioPlayerState extends ConsumerState<QuizAudioPlayer> {
                             text: '${line.character}: ',
                             style: TextStyle(
                               fontWeight: FontWeight.w700,
-                              color: index.isEven
-                                  ? colors.tertiary
-                                  : colors.primary,
+                              color: FccDesignColors.of(context).accentText,
                             ),
                           ),
                           TextSpan(text: line.text),

@@ -56,9 +56,7 @@ class _BackToTopButtonState extends State<BackToTopButton> {
         child: FloatingActionButton(
           onPressed: _goToTop,
           shape: RoundedRectangleBorder(
-            side: BorderSide(
-              color: Theme.of(context).colorScheme.outlineVariant,
-            ),
+            side: BorderSide(color: Theme.of(context).colorScheme.outline),
             borderRadius: BorderRadius.circular(100),
           ),
           backgroundColor: Theme.of(context).colorScheme.surface,

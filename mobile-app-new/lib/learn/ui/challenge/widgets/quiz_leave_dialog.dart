@@ -84,7 +84,7 @@ Future<bool> showQuizLeaveDialog(
                       minimumSize: const Size(double.infinity, 50),
                       padding: const EdgeInsets.all(12),
                       foregroundColor: colors.error,
-                      side: BorderSide(color: colors.outlineVariant),
+                      side: BorderSide(color: colors.outline),
                       textStyle: const TextStyle(
                         fontFamily: 'Lato',
                         fontSize: 16,

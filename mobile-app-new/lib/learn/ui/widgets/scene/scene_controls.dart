@@ -1,6 +1,7 @@
 import 'package:audio_service/audio_service.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:mobile_app_new/fcc_theme.dart';
 import 'package:mobile_app_new/learn/models/challenge_model.dart';
 import 'package:mobile_app_new/learn/controllers/scene_controller.dart';
 import 'package:mobile_app_new/services/audio_service.dart';
@@ -53,7 +54,7 @@ class SceneControls extends ConsumerWidget {
                       sceneState.error!,
                       style: TextStyle(
                         color: fullscreen
-                            ? const Color(0xFFFF8FA8)
+                            ? FccTheme.themeDark.colorScheme.error
                             : colors.error,
                       ),
                     ),
@@ -165,7 +166,7 @@ class SceneControls extends ConsumerWidget {
                       tooltip: 'Fullscreen',
                       style: IconButton.styleFrom(
                         foregroundColor: foreground,
-                        side: BorderSide(color: colors.outlineVariant),
+                        side: BorderSide(color: colors.outline),
                         shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(12),
                         ),

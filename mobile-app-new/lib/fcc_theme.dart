@@ -136,14 +136,16 @@ class FccTheme {
   static ThemeData _build(Brightness brightness) {
     final dark = brightness == Brightness.dark;
     final background = Color(dark ? 0xFF1A1530 : 0xFFFFF8EC);
-    final surface = Color(dark ? 0xFF251E42 : 0xFFFFFFFF);
-    final raised = Color(dark ? 0xFF2F2752 : 0xFFFFF1D6);
-    final line = Color(dark ? 0xFF3D3466 : 0xFFF1E2C8);
+    final surface = Color(dark ? 0xFF2B2140 : 0xFFFFFFFF);
+    final raised = Color(dark ? 0xFF3F3557 : 0xFFFFF1D6);
+    final line = Color(dark ? 0xFF4C4066 : 0xFFF1E2C8);
+    final controlEdge = Color(dark ? 0xFF7D709D : 0xFF9D9280);
     final foreground = Color(dark ? 0xFFFFF8EC : 0xFF2B2140);
-    final muted = Color(dark ? 0xFFCFC6E6 : 0xFF5E5470);
-    final hint = Color(dark ? 0xFFA79DC6 : 0xFF6F6582);
-    final accent = Color(dark ? 0xFFA99BFF : 0xFF5B4BDB);
-    final tint = Color(dark ? 0xFF3D3466 : 0xFFECE8FF);
+    final muted = Color(dark ? 0xFFCABEEA : 0xFF5E5470);
+    final hint = Color(dark ? 0xFFCABEEA : 0xFF6F6582);
+    final accent = Color(dark ? 0xFF9EA1FE : 0xFF5B4BDB);
+    final accentText = Color(dark ? 0xFFBBBFFF : 0xFF5B4BDB);
+    final tint = Color(dark ? 0xFF29216C : 0xFFECE8FF);
     const yellow = Color(0xFFFFC83D);
     final colors = ColorScheme(
       brightness: brightness,
@@ -155,14 +157,14 @@ class FccTheme {
       onSecondary: const Color(0xFF2B2140),
       secondaryContainer: raised,
       onSecondaryContainer: foreground,
-      tertiary: Color(dark ? 0xFFFF8FC0 : 0xFFC2185B),
+      tertiary: Color(dark ? 0xFFFFAABC : 0xFFC2185B),
       onTertiary: dark ? const Color(0xFF1A1530) : Colors.white,
-      error: Color(dark ? 0xFFFF8FA8 : 0xFFD6245A),
+      error: Color(dark ? 0xFFFFAEA2 : 0xFFD6245A),
       onError: dark ? const Color(0xFF1A1530) : Colors.white,
       surface: surface,
       onSurface: foreground,
       onSurfaceVariant: muted,
-      outline: hint,
+      outline: controlEdge,
       outlineVariant: line,
       surfaceContainerLowest: background,
       surfaceContainerLow: tint,
@@ -258,7 +260,7 @@ class FccTheme {
           (states) => TextStyle(
             fontFamily: 'Lato',
             fontSize: 12,
-            color: states.contains(WidgetState.selected) ? accent : muted,
+            color: states.contains(WidgetState.selected) ? accentText : muted,
           ),
         ),
         iconTheme: WidgetStateProperty.resolveWith(
@@ -291,13 +293,13 @@ class FccTheme {
         style: OutlinedButton.styleFrom(
           foregroundColor: foreground,
           backgroundColor: surface,
-          side: BorderSide(color: line),
+          side: BorderSide(color: controlEdge),
           minimumSize: const Size(48, 48),
         ),
       ),
       textButtonTheme: TextButtonThemeData(
         style: TextButton.styleFrom(
-          foregroundColor: dark ? const Color(0xFFB3A8FF) : accent,
+          foregroundColor: accentText,
           minimumSize: const Size(48, 48),
         ),
       ),
@@ -310,14 +312,14 @@ class FccTheme {
       chipTheme: ChipThemeData(
         backgroundColor: surface,
         selectedColor: accent,
-        side: BorderSide(color: line),
+        side: BorderSide(color: controlEdge),
         shape: const StadiumBorder(),
         labelStyle: TextStyle(fontFamily: 'Lato', color: foreground),
         padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 10),
       ),
       inputDecorationTheme: InputDecorationThemeData(
         filled: true,
-        fillColor: surface,
+        fillColor: raised,
         hintStyle: TextStyle(color: hint),
         contentPadding: const EdgeInsets.symmetric(
           horizontal: 16,
@@ -325,11 +327,11 @@ class FccTheme {
         ),
         border: OutlineInputBorder(
           borderRadius: BorderRadius.circular(12),
-          borderSide: BorderSide(color: line),
+          borderSide: BorderSide(color: controlEdge),
         ),
         enabledBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(12),
-          borderSide: BorderSide(color: line),
+          borderSide: BorderSide(color: controlEdge),
         ),
         focusedBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(12),
@@ -337,7 +339,7 @@ class FccTheme {
         ),
       ),
       bottomSheetTheme: BottomSheetThemeData(
-        backgroundColor: background,
+        backgroundColor: surface,
         showDragHandle: true,
         dragHandleColor: line,
         shape: const RoundedRectangleBorder(
@@ -361,12 +363,12 @@ class FccTheme {
       ),
       extensions: [
         FccDesignColors(
-          success: Color(dark ? 0xFF7DE3B0 : 0xFF1E7F46),
+          success: Color(dark ? 0xFF8DDBA3 : 0xFF1E7F46),
           hint: hint,
-          accentText: Color(dark ? 0xFFB3A8FF : 0xFF5B4BDB),
-          hero: Color(dark ? 0xFF4F40D0 : 0xFF5B4BDB),
-          donate: Color(dark ? 0xFF3D1A33 : 0xFFFFE8F0),
-          onDonate: Color(dark ? 0xFFFF8FC0 : 0xFFC2185B),
+          accentText: accentText,
+          hero: Color(dark ? 0xFF3E329C : 0xFF5B4BDB),
+          donate: Color(dark ? 0xFF5B0928 : 0xFFFFE8F0),
+          onDonate: Color(dark ? 0xFFFFAABC : 0xFFC2185B),
         ),
       ],
     );

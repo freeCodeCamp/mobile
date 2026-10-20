@@ -524,7 +524,7 @@ class _EditorChallengeViewState extends ConsumerState<EditorChallengeView> {
                     Text(
                       _instructionsExpanded ? 'Hide' : 'Show',
                       style: TextStyle(
-                        color: colors.primary,
+                        color: FccDesignColors.of(context).accentText,
                         fontSize: 14,
                         fontWeight: FontWeight.w800,
                       ),
@@ -723,7 +723,7 @@ class _EditorChallengeViewState extends ConsumerState<EditorChallengeView> {
         availableHeight * .88,
       ),
       decoration: BoxDecoration(
-        color: Theme.of(context).scaffoldBackgroundColor,
+        color: colors.surface,
         borderRadius: const BorderRadius.vertical(top: Radius.circular(16)),
         boxShadow: [
           BoxShadow(
@@ -1137,7 +1137,7 @@ class _SymbolBar extends StatelessWidget {
                   minimumSize: const Size(44, 48),
                   padding: const EdgeInsets.all(10),
                   backgroundColor: colors.surface,
-                  side: BorderSide(color: colors.outlineVariant),
+                  side: BorderSide(color: colors.outline),
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(10),
                   ),

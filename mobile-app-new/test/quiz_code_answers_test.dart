@@ -239,7 +239,7 @@ void main() {
             expect(_tokenColors(text, 'img'), everyElement(design.accentText));
             expect(
               _tokenColors(text, 'alt'),
-              everyElement(theme.colorScheme.tertiary),
+              everyElement(Color(dark ? 0xFFFF8FC0 : 0xFFC2185B)),
             );
             expect(
               _tokenColors(text, 'A sunny landscape'),

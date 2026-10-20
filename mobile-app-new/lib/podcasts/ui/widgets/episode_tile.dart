@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:mobile_app_new/fcc_theme.dart';
 import 'package:mobile_app_new/podcasts/models/episode_model.dart';
 import 'package:mobile_app_new/podcasts/models/podcast_model.dart';
 import 'package:mobile_app_new/podcasts/ui/widgets/download_button.dart';
@@ -48,7 +49,7 @@ class PodcastEpisodeTile extends StatelessWidget {
                 height: 52,
                 alignment: Alignment.center,
                 decoration: BoxDecoration(
-                  color: colors.surfaceContainerLow,
+                  color: colors.surfaceContainer,
                   borderRadius: BorderRadius.circular(13),
                 ),
                 child: Padding(
@@ -61,7 +62,7 @@ class PodcastEpisodeTile extends StatelessWidget {
                       softWrap: false,
                       semanticsLabel: 'Episode $number',
                       style: TextStyle(
-                        color: colors.primary,
+                        color: FccDesignColors.of(context).accentText,
                         fontSize: 12,
                         fontWeight: FontWeight.w700,
                       ),

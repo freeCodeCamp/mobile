@@ -88,7 +88,7 @@ class _HelpDialog extends StatelessWidget {
               children: [
                 CircleAvatar(
                   backgroundColor: colors.primaryContainer,
-                  foregroundColor: colors.primary,
+                  foregroundColor: FccDesignColors.of(context).accentText,
                   radius: 22,
                   child: const Icon(Icons.chat_bubble_outline),
                 ),

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:mobile_app_new/fcc_theme.dart';
 import 'package:mobile_app_new/podcasts/controllers/player_controller.dart';
 import 'package:mobile_app_new/podcasts/models/episode_model.dart';
 import 'package:mobile_app_new/podcasts/models/podcast_model.dart';
@@ -57,12 +58,12 @@ class EpisodePlayButton extends ConsumerWidget {
         ? colors.onSecondary
         : playing
         ? colors.onPrimary
-        : colors.primary;
+        : FccDesignColors.of(context).accentText;
     final background = prominent
         ? colors.secondary
         : playing
         ? colors.primary
-        : colors.surfaceContainerLow;
+        : colors.surfaceContainer;
     final icon = busy
         ? SizedBox.square(
             dimension: compact ? 13 : 24,

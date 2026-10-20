@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+import 'package:mobile_app_new/fcc_theme.dart';
 import 'package:mobile_app_new/news/controllers/feed_controller.dart';
 import 'package:mobile_app_new/news/models/post_model.dart';
 import 'package:mobile_app_new/news/models/post_summary_model.dart';
@@ -39,10 +40,10 @@ class _NewsFeedViewState extends ConsumerState<NewsFeedView> {
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 20),
             child: Material(
-              color: colors.surface,
+              color: colors.surfaceContainer,
               shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(14),
-                side: BorderSide(color: colors.outlineVariant),
+                side: BorderSide(color: colors.outline),
               ),
               clipBehavior: Clip.antiAlias,
               child: InkWell(
@@ -58,7 +59,7 @@ class _NewsFeedViewState extends ConsumerState<NewsFeedView> {
                           'Search articles',
                           style: TextStyle(
                             fontSize: 17,
-                            color: colors.onSurfaceVariant,
+                            color: FccDesignColors.of(context).hint,
                           ),
                         ),
                       ),
@@ -99,9 +100,7 @@ class _NewsFeedViewState extends ConsumerState<NewsFeedView> {
           color: selected ? colors.onPrimary : colors.onSurface,
           fontWeight: selected ? FontWeight.w700 : FontWeight.w400,
         ),
-        side: BorderSide(
-          color: selected ? colors.primary : colors.outlineVariant,
-        ),
+        side: BorderSide(color: selected ? colors.primary : colors.outline),
         shape: const StadiumBorder(),
         padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 11),
         onSelected: (_) => setState(() => _selectedTag = tag),

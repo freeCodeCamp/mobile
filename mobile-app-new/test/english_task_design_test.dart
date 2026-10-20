@@ -451,7 +451,7 @@ void main() {
         final originalState = tester.state(find.byType(ParsedHtml));
         expect(
           _pillDecoration(tester, 'code-marker').color,
-          colors.outlineVariant,
+          colors.surfaceContainer,
         );
         expect(_pillDecoration(tester, 'code-marker').border, isNull);
         expect(_codeText('span-marker'), findsNothing);
@@ -486,7 +486,7 @@ void main() {
         await tester.pumpAndSettle();
         expect(
           _pillDecoration(tester, 'code-marker').color,
-          colors.outlineVariant,
+          colors.surfaceContainer,
         );
         expect(_pillDecoration(tester, 'code-marker').border, isNull);
         expect(_codeText('span-marker'), findsNothing);

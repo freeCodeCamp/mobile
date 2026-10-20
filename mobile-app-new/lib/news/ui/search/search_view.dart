@@ -59,14 +59,14 @@ class _NewsSearchViewState extends ConsumerState<NewsSearchView> {
                               _search('');
                             },
                           ),
-                    fillColor: colors.surface,
+                    fillColor: colors.surfaceContainer,
                     filled: true,
                     border: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(14),
                     ),
                     enabledBorder: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(14),
-                      borderSide: BorderSide(color: colors.outlineVariant),
+                      borderSide: BorderSide(color: colors.outline),
                     ),
                   ),
                 ),

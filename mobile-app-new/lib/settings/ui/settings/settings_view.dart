@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+import 'package:mobile_app_new/fcc_theme.dart';
 import 'package:mobile_app_new/routing/auth.dart';
 import 'package:mobile_app_new/routing/podcasts.dart';
 import 'package:mobile_app_new/routing/settings.dart';
@@ -349,11 +350,9 @@ class _ThemeChoice extends StatelessWidget {
               ? colors.primaryContainer
               : Colors.transparent,
           foregroundColor: selected
-              ? colors.onPrimaryContainer
+              ? FccDesignColors.of(context).accentText
               : colors.onSurfaceVariant,
-          side: BorderSide(
-            color: selected ? colors.primary : colors.outlineVariant,
-          ),
+          side: BorderSide(color: selected ? colors.primary : colors.outline),
           shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
         ),
         onPressed: onPressed,

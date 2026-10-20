@@ -57,7 +57,7 @@ class NewsShell extends StatelessWidget {
       style: OutlinedButton.styleFrom(
         backgroundColor: colors.surface,
         foregroundColor: colors.onSurface,
-        side: BorderSide(color: colors.outlineVariant),
+        side: BorderSide(color: colors.outline),
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
         minimumSize: Size(48, bookmarkHeight),
         padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 12),

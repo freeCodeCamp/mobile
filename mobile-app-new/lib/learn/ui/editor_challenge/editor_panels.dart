@@ -145,9 +145,7 @@ class PassPanel extends ConsumerWidget {
                       width: 48,
                       height: 48,
                       decoration: BoxDecoration(
-                        color: dark
-                            ? const Color(0xFF8DDAA2)
-                            : const Color(0xFFB0EEBF),
+                        color: dark ? success : const Color(0xFFB0EEBF),
                         shape: BoxShape.circle,
                       ),
                       child: Icon(

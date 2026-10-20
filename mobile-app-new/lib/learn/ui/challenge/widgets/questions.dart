@@ -96,7 +96,7 @@ class Questions extends StatelessWidget {
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(14),
             side: BorderSide(
-              color: isSelected ? accent : colors.outlineVariant,
+              color: isSelected ? accent : colors.outline,
               width: isSelected ? 2 : 1,
             ),
           ),

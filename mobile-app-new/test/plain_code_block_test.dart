@@ -226,7 +226,7 @@ void main() {
           find.ancestor(of: inline, matching: find.byType(Container)).first,
         );
         final decoration = container.decoration! as BoxDecoration;
-        expect(decoration.color, theme.colorScheme.outlineVariant);
+        expect(decoration.color, theme.colorScheme.surfaceContainer);
         expect(decoration.borderRadius, BorderRadius.circular(6));
         await tester.tap(inline);
         await _settle(tester);

@@ -7,7 +7,7 @@ Color blockLabelColor(BuildContext context, BlockLabel label) {
   return switch (label) {
     BlockLabel.workshop ||
     BlockLabel.practice => Color(dark ? 0xFFC8B0FF : 0xFF8B3FD9),
-    BlockLabel.lab || BlockLabel.learn => FccDesignColors.of(context).success,
+    BlockLabel.lab || BlockLabel.learn => Color(dark ? 0xFF5FD3D6 : 0xFF1E7F46),
     BlockLabel.quiz ||
     BlockLabel.review ||
     BlockLabel.exam => Color(dark ? 0xFFFFAF85 : 0xFFB93D0A),

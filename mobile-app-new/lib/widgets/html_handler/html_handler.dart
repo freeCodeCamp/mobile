@@ -140,24 +140,25 @@ class HTMLParser {
       'body': Style(color: colors.onSurface),
       for (final heading in ['h1', 'h2', 'h3', 'h4', 'h5', 'h6'])
         heading: Style(color: colors.onSurface),
-      'a': Style(color: colors.primary, textDecorationColor: colors.primary),
+      'a': Style(
+        color: FccDesignColors.of(context).accentText,
+        textDecorationColor: FccDesignColors.of(context).accentText,
+      ),
       'td': Style(
         backgroundColor: colors.surface,
         color: colors.onSurface,
         border: Border(bottom: BorderSide(color: colors.outlineVariant)),
       ),
       'th': Style(
-        backgroundColor: colors.surfaceContainerLow,
+        backgroundColor: colors.surfaceContainer,
         color: colors.onSurface,
       ),
       'th strong': Style(color: colors.onSurface),
       'code': Style(
-        backgroundColor: colors.surfaceContainerLow,
+        backgroundColor: colors.surfaceContainer,
         color: colors.onSurface,
       ),
-      'span.highlighted-text': Style(
-        backgroundColor: colors.surfaceContainerLow,
-      ),
+      'span.highlighted-text': Style(backgroundColor: colors.surfaceContainer),
     };
     Widget inlineCode(ExtensionContext child, {bool copyable = true}) {
       final parsed = parser.parseFragment(child.innerHtml).text ?? '';
@@ -165,7 +166,7 @@ class HTMLParser {
       final pill = Container(
         padding: EdgeInsets.symmetric(horizontal: outlinedInlineCode ? 4 : 3),
         decoration: BoxDecoration(
-          color: outlinedInlineCode ? colors.surface : colors.outlineVariant,
+          color: outlinedInlineCode ? colors.surface : colors.surfaceContainer,
           border: outlinedInlineCode
               ? Border.all(color: colors.outlineVariant)
               : null,

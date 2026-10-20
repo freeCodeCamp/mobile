@@ -15,7 +15,7 @@ class TaskExplanation extends StatelessWidget {
         color: colors.surface,
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(12),
-          side: BorderSide(color: colors.outlineVariant),
+          side: BorderSide(color: colors.outline),
         ),
         clipBehavior: Clip.antiAlias,
         child: ExpansionTile(

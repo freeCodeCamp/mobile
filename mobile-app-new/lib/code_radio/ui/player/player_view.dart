@@ -103,7 +103,7 @@ class CodeRadioAlbumArt extends StatelessWidget {
       height: size,
       clipBehavior: Clip.antiAlias,
       decoration: BoxDecoration(
-        color: colors.surfaceContainerLow,
+        color: colors.surfaceContainer,
         borderRadius: BorderRadius.circular(22),
         border: Border.all(color: colors.outlineVariant),
         boxShadow: [
@@ -248,7 +248,7 @@ class CodeRadioNextSong extends StatelessWidget {
                 child: SizedBox.square(
                   dimension: 48,
                   child: ColoredBox(
-                    color: colors.surfaceContainerLow,
+                    color: colors.surfaceContainer,
                     child: _RadioArtwork(url: song.art),
                   ),
                 ),

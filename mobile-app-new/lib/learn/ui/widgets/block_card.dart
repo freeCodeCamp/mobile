@@ -316,14 +316,10 @@ class _ChallengeTile extends StatelessWidget {
     return Padding(
       padding: const EdgeInsets.only(bottom: 8),
       child: Material(
-        color: active
-            ? colors.primaryContainer.withValues(alpha: 0.4)
-            : colors.surface,
+        color: active ? colors.primaryContainer : colors.surface,
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(12),
-          side: BorderSide(
-            color: active ? colors.primary : colors.outlineVariant,
-          ),
+          side: BorderSide(color: active ? colors.primary : colors.outline),
         ),
         clipBehavior: Clip.antiAlias,
         child: InkWell(
@@ -444,9 +440,7 @@ class _StepGrid extends StatelessWidget {
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(8),
                       side: BorderSide(
-                        color: done || active
-                            ? colors.primary
-                            : colors.outlineVariant,
+                        color: done || active ? colors.primary : colors.outline,
                       ),
                     ),
                   ),

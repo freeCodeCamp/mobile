@@ -126,7 +126,7 @@ class _ConfettiStream extends ChangeNotifier {
     final random = math.Random(36 + index * 7919);
     const colors = [
       Color(0xFFFFC83D),
-      Color(0xFFA99BFF),
+      Color(0xFF9EA1FE),
       Color(0xFF8EC5FF),
       Color(0xFFD6245A),
     ];

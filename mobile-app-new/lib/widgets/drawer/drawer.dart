@@ -5,6 +5,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+import 'package:mobile_app_new/fcc_theme.dart';
 import 'package:mobile_app_new/routing/auth.dart';
 import 'package:mobile_app_new/routing/code_radio.dart';
 import 'package:mobile_app_new/routing/learn.dart';
@@ -178,7 +179,9 @@ class DrawerWidget extends ConsumerWidget {
               DrawerTile(
                 component: auth.isLoggedIn ? 'Log out' : 'Sign in',
                 icon: auth.isLoggedIn ? Icons.logout : Icons.login,
-                textColor: auth.isLoggedIn ? colors.error : colors.primary,
+                textColor: auth.isLoggedIn
+                    ? colors.error
+                    : FccDesignColors.of(context).accentText,
                 route: () => auth.isLoggedIn
                     ? _signOut(context, ref)
                     : _navigate(

@@ -161,7 +161,7 @@ class _ProfileBody extends StatelessWidget {
               child: _Stat(
                 value: user.points,
                 label: 'Points',
-                color: colors.primary,
+                color: design.accentText,
                 background: colors.primaryContainer,
               ),
             ),
@@ -170,8 +170,8 @@ class _ProfileBody extends StatelessWidget {
               child: _Stat(
                 value: streak.current,
                 label: 'Current streak',
-                color: design.onDonate,
-                background: design.donate,
+                color: colors.onSurface,
+                background: colors.surfaceContainer,
               ),
             ),
             const SizedBox(width: 8),
@@ -228,7 +228,6 @@ class _Header extends StatelessWidget {
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     final colors = theme.colorScheme;
-    final design = FccDesignColors.of(context);
     final links = [
       if (user.githubProfile?.trim().isNotEmpty ?? false)
         ('GitHub', user.githubProfile!),
@@ -245,7 +244,7 @@ class _Header extends StatelessWidget {
             children: [
               CircleAvatar(
                 radius: 30,
-                backgroundColor: design.donate,
+                backgroundColor: colors.surfaceContainer,
                 backgroundImage: user.picture.isEmpty
                     ? null
                     : CachedNetworkImageProvider(user.picture),
@@ -253,7 +252,7 @@ class _Header extends StatelessWidget {
                     ? Icon(
                         Icons.person_outline,
                         size: 30,
-                        color: design.onDonate,
+                        color: colors.onSurfaceVariant,
                       )
                     : null,
               ),
@@ -654,7 +653,7 @@ class _PortfolioCard extends StatelessWidget {
                 Text(
                   url,
                   style: TextStyle(
-                    color: Theme.of(context).colorScheme.primary,
+                    color: FccDesignColors.of(context).accentText,
                   ),
                   overflow: TextOverflow.ellipsis,
                 ),

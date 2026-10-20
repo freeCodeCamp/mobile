@@ -32,7 +32,7 @@ class PodcastArtwork extends ConsumerWidget {
           ),
         );
     final fallback = ColoredBox(
-      color: colors.surfaceContainerLow,
+      color: colors.surfaceContainer,
       child: Center(
         child: Icon(
           Icons.podcasts_rounded,
@@ -47,7 +47,7 @@ class PodcastArtwork extends ConsumerWidget {
       height: size,
       clipBehavior: Clip.antiAlias,
       decoration: BoxDecoration(
-        color: colors.surfaceContainerLow,
+        color: colors.surfaceContainer,
         borderRadius: BorderRadius.circular(radius),
         border: Border.all(color: colors.outlineVariant),
       ),

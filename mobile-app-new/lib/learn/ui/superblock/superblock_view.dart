@@ -6,6 +6,7 @@ import 'package:collection/collection.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:mobile_app_new/fcc_theme.dart';
 import 'package:mobile_app_new/learn/constants/curriculum.dart';
 import 'package:mobile_app_new/learn/controllers/curriculum_controller.dart';
 import 'package:mobile_app_new/learn/models/curriculum_model.dart';
@@ -198,23 +199,29 @@ class _CourseHero extends ConsumerWidget {
       margin: const EdgeInsets.only(bottom: 16),
       padding: const EdgeInsets.all(20),
       decoration: BoxDecoration(
-        color: colors.primaryContainer,
+        color: FccDesignColors.of(context).hero,
         borderRadius: BorderRadius.circular(18),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
-          Text(title, style: Theme.of(context).textTheme.headlineSmall),
+          Text(
+            title,
+            style: Theme.of(
+              context,
+            ).textTheme.headlineSmall?.copyWith(color: const Color(0xFFFFF8EC)),
+          ),
           const SizedBox(height: 14),
           LearnProgress(
             done: done,
             total: challenges.length,
-            backgroundColor: colors.surface,
+            color: colors.secondary,
+            backgroundColor: Colors.white24,
           ),
           const SizedBox(height: 10),
           Text(
             '$done of ${challenges.length} steps complete',
-            style: TextStyle(color: colors.onSurfaceVariant, fontSize: 12),
+            style: const TextStyle(color: Color(0xFFFFF8EC), fontSize: 12),
           ),
           if (nextBlock != null) ...[
             const SizedBox(height: 14),
@@ -294,7 +301,9 @@ class _ChapterCard extends ConsumerWidget {
               style: TextStyle(
                 fontSize: 22,
                 fontWeight: FontWeight.w800,
-                color: active ? colors.onPrimary : colors.primary,
+                color: active
+                    ? colors.onPrimary
+                    : FccDesignColors.of(context).accentText,
               ),
             ),
           ),
@@ -373,19 +382,10 @@ class _ModuleButton extends ConsumerWidget {
     return Padding(
       padding: const EdgeInsets.only(bottom: 4),
       child: Material(
-        color: active
-            ? Color.alphaBlend(
-                colors.primaryContainer.withValues(alpha: .4),
-                colors.surface,
-              )
-            : Colors.transparent,
+        color: active ? colors.primaryContainer : Colors.transparent,
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(12),
-          side: BorderSide(
-            color: active
-                ? colors.primary.withValues(alpha: .4)
-                : Colors.transparent,
-          ),
+          side: BorderSide(color: active ? colors.primary : Colors.transparent),
         ),
         clipBehavior: Clip.antiAlias,
         child: InkWell(

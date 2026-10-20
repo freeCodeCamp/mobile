@@ -207,7 +207,7 @@ async function request() { return axios.get(message, 42); }''',
       expect(_stylesFor(jsText, 'const').single.color, design.accentText);
       expect(
         _stylesFor(jsText, 'split').single.color,
-        theme.colorScheme.tertiary,
+        Color(theme.brightness == Brightness.dark ? 0xFFFF8FC0 : 0xFFC2185B),
       );
       expect(_colorsIn(jsText, r'/\s+/'), everyElement(design.success));
       expect(
@@ -217,7 +217,7 @@ async function request() { return axios.get(message, 42); }''',
       expect(_stylesFor(htmlText, 'header', exact: true), hasLength(2));
       expect(
         _stylesFor(htmlText, 'class', exact: true).single.color,
-        theme.colorScheme.tertiary,
+        Color(theme.brightness == Brightness.dark ? 0xFFFF8FC0 : 0xFFC2185B),
       );
       expect(
         _stylesFor(htmlText, 'header-section').single.color,

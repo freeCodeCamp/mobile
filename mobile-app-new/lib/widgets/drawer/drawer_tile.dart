@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:mobile_app_new/fcc_theme.dart';
 
 class DrawerTile extends StatelessWidget {
   const DrawerTile({
@@ -20,7 +21,10 @@ class DrawerTile extends StatelessWidget {
   Widget build(BuildContext context) {
     final colors = Theme.of(context).colorScheme;
     final foreground =
-        textColor ?? (selected ? colors.primary : colors.onSurfaceVariant);
+        textColor ??
+        (selected
+            ? FccDesignColors.of(context).accentText
+            : colors.onSurfaceVariant);
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 2),
       child: ListTile(

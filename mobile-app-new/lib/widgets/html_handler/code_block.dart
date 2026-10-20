@@ -116,7 +116,7 @@ class _FccCodeBlockState extends State<FccCodeBlock> {
                     tooltip: 'Copy code',
                     onPressed: _copy,
                     style: IconButton.styleFrom(
-                      foregroundColor: colors.outline,
+                      foregroundColor: colors.onSurfaceVariant,
                       minimumSize: const Size(44, 44),
                       tapTargetSize: MaterialTapTargetSize.shrinkWrap,
                     ),
@@ -237,7 +237,8 @@ class _CodePalette {
       0xFF98C379: design.success,
       0xFFD19A66: number,
       0xFFE5C07B: type,
-      0xFF61AFEF: colors.tertiary,
+      // Syntax accents are independent of the donation palette.
+      0xFF61AFEF: Color(dark ? 0xFFFF8FC0 : 0xFFC2185B),
       0xFFE06C75: foreground,
       0xFF56B6C2: foreground,
       0xFF5CAEEF: foreground,

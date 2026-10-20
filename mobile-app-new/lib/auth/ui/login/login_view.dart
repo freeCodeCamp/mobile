@@ -4,6 +4,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:mobile_app_new/auth/ui/login/login_viewmodel.dart';
+import 'package:mobile_app_new/fcc_theme.dart';
 import 'package:mobile_app_new/routing/learn.dart';
 import 'package:mobile_app_new/services/auth_service.dart';
 import 'package:mobile_app_new/utils/custom_tab.dart';
@@ -312,7 +313,9 @@ class _LoginViewState extends ConsumerState<LoginView> {
                                   TextSpan(
                                     text: 'Terms of Service',
                                     style: TextStyle(
-                                      color: colors.primary,
+                                      color: FccDesignColors.of(
+                                        context,
+                                      ).accentText,
                                       decoration: TextDecoration.underline,
                                     ),
                                     recognizer: _termsRecognizer,
@@ -321,7 +324,9 @@ class _LoginViewState extends ConsumerState<LoginView> {
                                   TextSpan(
                                     text: 'Privacy Policy',
                                     style: TextStyle(
-                                      color: colors.primary,
+                                      color: FccDesignColors.of(
+                                        context,
+                                      ).accentText,
                                       decoration: TextDecoration.underline,
                                     ),
                                     recognizer: _privacyRecognizer,
@@ -398,7 +403,7 @@ class _CodeInputState extends State<_CodeInput> {
                           height: 58,
                           alignment: Alignment.center,
                           decoration: BoxDecoration(
-                            color: colors.surface,
+                            color: colors.surfaceContainer,
                             borderRadius: BorderRadius.circular(12),
                             border: Border.all(
                               color: widget.incorrect
@@ -406,7 +411,7 @@ class _CodeInputState extends State<_CodeInput> {
                                   : _focusNode.hasFocus &&
                                         i == widget.controller.text.length
                                   ? colors.primary
-                                  : colors.outlineVariant,
+                                  : colors.outline,
                             ),
                           ),
                           child: Text(

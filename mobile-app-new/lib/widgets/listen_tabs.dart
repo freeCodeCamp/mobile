@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/foundation.dart';
+import 'package:mobile_app_new/fcc_theme.dart';
 import 'package:mobile_app_new/routing/code_radio.dart';
 import 'package:mobile_app_new/routing/podcasts.dart';
 
@@ -19,7 +20,7 @@ class ListenTabs extends StatelessWidget {
       padding: const EdgeInsets.all(4),
       decoration: BoxDecoration(
         color: colors.surface,
-        border: Border.all(color: colors.outlineVariant),
+        border: Border.all(color: colors.outline),
         borderRadius: BorderRadius.circular(12),
       ),
       child: Row(
@@ -30,7 +31,9 @@ class ListenTabs extends StatelessWidget {
                 selected: isRadio == radio,
                 child: TextButton(
                   style: TextButton.styleFrom(
-                    foregroundColor: colors.onSurface,
+                    foregroundColor: isRadio == radio
+                        ? FccDesignColors.of(context).accentText
+                        : colors.onSurfaceVariant,
                     backgroundColor: isRadio == radio
                         ? colors.surfaceContainerLow
                         : Colors.transparent,

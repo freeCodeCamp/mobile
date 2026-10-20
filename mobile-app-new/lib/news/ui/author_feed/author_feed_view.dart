@@ -136,7 +136,7 @@ class _AuthorDetails extends StatelessWidget {
               style: OutlinedButton.styleFrom(
                 backgroundColor: colors.surface,
                 foregroundColor: colors.onSurface,
-                side: BorderSide(color: colors.outlineVariant),
+                side: BorderSide(color: colors.outline),
                 padding: const EdgeInsets.symmetric(
                   horizontal: 18,
                   vertical: 14,

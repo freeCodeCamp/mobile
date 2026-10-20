@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:mobile_app_new/fcc_theme.dart';
 import 'package:mobile_app_new/learn/models/daily_challenge_model.dart';
 import 'package:mobile_app_new/learn/services/daily_challenge_service.dart';
 import 'package:mobile_app_new/learn/ui/daily_challenge/daily_challenge_viewmodel.dart';
@@ -61,7 +62,9 @@ class _LanguageSelector extends StatelessWidget {
       language.label,
       style: TextStyle(
         fontSize: 16,
-        color: language == selected ? colors.primary : colors.onSurface,
+        color: language == selected
+            ? FccDesignColors.of(context).accentText
+            : colors.onSurface,
         fontWeight: language == selected ? FontWeight.w700 : FontWeight.w400,
       ),
     );

@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:mobile_app_new/fcc_theme.dart';
 import 'package:mobile_app_new/podcasts/models/episode_model.dart';
 import 'package:mobile_app_new/podcasts/models/podcast_model.dart';
 import 'package:mobile_app_new/podcasts/ui/episode_list/episode_list_viewmodel.dart';
@@ -99,18 +100,23 @@ class _PodcastEpisodeListViewState
               for (final value in [false, true]) ...[
                 Material(
                   color: _oldestFirst == value
-                      ? Theme.of(context).colorScheme.surfaceContainerLow
+                      ? Theme.of(context).colorScheme.primaryContainer
                       : Theme.of(context).colorScheme.surface,
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(14),
                     side: BorderSide(
-                      color: Theme.of(context).colorScheme.outlineVariant,
+                      color: Theme.of(context).colorScheme.outline,
                     ),
                   ),
                   child: ListTile(
                     title: Text(
                       value ? 'Oldest first' : 'Newest first',
-                      style: const TextStyle(fontWeight: FontWeight.w600),
+                      style: TextStyle(
+                        fontWeight: FontWeight.w600,
+                        color: _oldestFirst == value
+                            ? FccDesignColors.of(context).accentText
+                            : Theme.of(context).colorScheme.onSurface,
+                      ),
                     ),
                     trailing: _oldestFirst == value
                         ? Icon(

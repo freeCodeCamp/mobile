@@ -65,7 +65,7 @@ class PodcastDownloadButton extends ConsumerWidget {
       iconSize: size,
       style: IconButton.styleFrom(
         backgroundColor: outlined ? colors.surface : null,
-        side: outlined ? BorderSide(color: colors.outlineVariant) : null,
+        side: outlined ? BorderSide(color: colors.outline) : null,
         fixedSize: outlined ? const Size(52, 48) : null,
       ),
       icon: icon,

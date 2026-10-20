@@ -155,7 +155,7 @@ class _NewsImageViewState extends State<NewsImageView> {
                         const Text(
                           'Double-tap to zoom · Swipe down to close',
                           style: TextStyle(
-                            color: Color(0xFFCFC6E6),
+                            color: Color(0xFFCABEEA),
                             height: 1.4,
                           ),
                         ),

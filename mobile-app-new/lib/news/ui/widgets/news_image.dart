@@ -31,7 +31,7 @@ class NewsImage extends StatelessWidget {
       height: height,
       clipBehavior: Clip.antiAlias,
       decoration: BoxDecoration(
-        color: colors.surfaceContainerLow,
+        color: colors.surfaceContainer,
         borderRadius: BorderRadius.circular(isAvatar ? 100 : 12),
         border: Border.all(color: colors.outlineVariant),
       ),
@@ -40,8 +40,7 @@ class NewsImage extends StatelessWidget {
           : CachedNetworkImage(
               imageUrl: url!,
               fit: BoxFit.cover,
-              placeholder: (_, _) =>
-                  ColoredBox(color: colors.surfaceContainerLow),
+              placeholder: (_, _) => ColoredBox(color: colors.surfaceContainer),
               errorWidget: (_, _, _) => fallback,
             ),
     );

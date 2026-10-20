@@ -472,9 +472,7 @@ class _TaskGrid extends StatelessWidget {
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(9),
                     side: BorderSide(
-                      color: active || done
-                          ? colors.primary
-                          : colors.outlineVariant,
+                      color: active || done ? colors.primary : colors.outline,
                       width: active ? 2 : 1,
                     ),
                   ),
