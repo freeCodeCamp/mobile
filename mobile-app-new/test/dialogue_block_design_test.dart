@@ -9,7 +9,6 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:go_router/go_router.dart' hide Block;
 import 'package:mobile_app_new/auth/models/user_model.dart';
 import 'package:mobile_app_new/fcc_theme.dart';
-import 'package:mobile_app_new/learn/models/challenge_model.dart';
 import 'package:mobile_app_new/learn/models/curriculum_model.dart';
 import 'package:mobile_app_new/learn/ui/challenge/challenge_viewmodel.dart';
 import 'package:mobile_app_new/learn/ui/widgets/block_card.dart';
@@ -62,36 +61,6 @@ class _Auth extends AuthNotifier {
   void complete(Set<String> ids) => state = AsyncData(_user(ids));
 }
 
-Challenge _dialogue(String id) => Challenge(
-  id: id,
-  block: _block.dashedName,
-  superBlock: _block.superBlock,
-  title: _titles[int.parse(id.split('-').last) - 1],
-  dashedName: id,
-  challengeType: 21,
-  scene: Scene(
-    setup: const SceneSetup(
-      background: 'office',
-      audio: AudioClip(filename: 'fixture.mp3'),
-      characters: [],
-    ),
-    commands: [
-      for (var i = 0; i < 9; i++)
-        SceneCommand(
-          character: 'Maria',
-          startTime: i,
-          dialogue: SceneDialogue(text: 'Dialogue line $i', align: 'left'),
-        ),
-      const SceneCommand(character: 'Maria', startTime: 10, opacity: 0),
-      const SceneCommand(
-        character: 'Tom',
-        startTime: 11,
-        dialogue: SceneDialogue(text: '  ', align: 'right'),
-      ),
-    ],
-  ),
-);
-
 final _capture = GlobalKey();
 
 Future<({GoRouter router, ProviderContainer container})> _pump(
@@ -100,7 +69,6 @@ Future<({GoRouter router, ProviderContainer container})> _pump(
   double scale = 1,
   Set<String> completed = const {'dialogue-1', 'task-1', 'task-2', 'task-3'},
   List<String>? metadataLoads,
-  bool metadataFails = false,
   Block? blockOverride,
 }) async {
   tester.view.devicePixelRatio = 1;
@@ -118,10 +86,9 @@ Future<({GoRouter router, ProviderContainer container})> _pump(
         ).overrideWith((ref) async {
           final id = 'dialogue-$i';
           metadataLoads?.add(id);
-          if (metadataFails) {
-            throw StateError('Fixture metadata unavailable');
-          }
-          return (challenge: _dialogue(id), block: _block);
+          throw StateError(
+            'Scene metadata should only load on the challenge screen.',
+          );
         }),
     ],
   );
@@ -246,9 +213,10 @@ void main() {
           }
           expect(find.text('3 of 33 tasks'), findsOneWidget);
           expect(find.text('61 tasks'), findsOneWidget);
-          expect(find.text('9 lines, with captions'), findsOneWidget);
+          expect(find.textContaining('with captions'), findsNothing);
+          expect(find.text('Watch and listen'), findsNothing);
           expect(find.text('Watched'), findsOneWidget);
-          expect(loads, ['dialogue-1']);
+          expect(loads, isEmpty);
           _expectExpanded(tester, 0, true);
           _expectExpanded(tester, 1, false);
           expect(_tile(12), findsOneWidget);
@@ -331,7 +299,7 @@ void main() {
           await _tap(tester, _header(1));
           _expectExpanded(tester, 1, true);
           expect(_tile(34), findsOneWidget);
-          expect(loads.toSet(), {'dialogue-1', 'dialogue-2'});
+          expect(loads, isEmpty);
           expect(find.text('Watched'), findsNothing);
           expect(tester.takeException(), isNull);
         },
@@ -342,7 +310,8 @@ void main() {
   testWidgets(
     'watch and numbered task actions route to their actual challenge ids',
     (tester) async {
-      final (:router, :container) = await _pump(tester);
+      final loads = <String>[];
+      final (:router, :container) = await _pump(tester, metadataLoads: loads);
       await _tap(tester, find.text('Watch the dialogue'));
       expect(
         find.text(
@@ -361,6 +330,7 @@ void main() {
         container.read(authProvider).value!.completedChallenges,
         hasLength(4),
       );
+      expect(loads, isEmpty);
       expect(tester.takeException(), isNull);
     },
   );
@@ -459,18 +429,20 @@ void main() {
     },
   );
 
-  testWidgets('failed metadata does not block watching or task navigation', (
+  testWidgets('watch action stays available without scene metadata', (
     tester,
   ) async {
-    await _pump(tester, metadataFails: true);
-    expect(find.text('Watch and listen'), findsOneWidget);
-    expect(find.text('9 lines, with captions'), findsNothing);
+    final loads = <String>[];
+    await _pump(tester, metadataLoads: loads);
+    expect(find.text('Watch and listen'), findsNothing);
+    expect(find.textContaining('with captions'), findsNothing);
     expect(_tile(4), findsOneWidget);
     await _tap(tester, find.text('Watch the dialogue'));
     expect(
       find.text('/learn/${_block.superBlock}/${_block.dashedName}/dialogue-1'),
       findsOneWidget,
     );
+    expect(loads, isEmpty);
     expect(tester.takeException(), isNull);
   });
 }

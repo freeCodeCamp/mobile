@@ -4,7 +4,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:mobile_app_new/fcc_theme.dart';
 import 'package:mobile_app_new/learn/models/curriculum_model.dart';
-import 'package:mobile_app_new/learn/ui/challenge/challenge_viewmodel.dart';
 import 'package:mobile_app_new/learn/ui/widgets/learn_presentation.dart';
 import 'package:mobile_app_new/routing/learn.dart';
 import 'package:mobile_app_new/services/auth_service.dart';
@@ -277,7 +276,7 @@ class _DialogueCardState extends State<_DialogueCard> {
   }
 }
 
-class _WatchDialogue extends ConsumerWidget {
+class _WatchDialogue extends StatelessWidget {
   const _WatchDialogue({
     required this.block,
     required this.challenge,
@@ -289,16 +288,8 @@ class _WatchDialogue extends ConsumerWidget {
   final bool watched;
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
+  Widget build(BuildContext context) {
     final colors = Theme.of(context).colorScheme;
-    // Only expanded dialogues fetch their scene metadata; failures must not
-    // prevent opening the watch screen, which has its own retry handling.
-    final data = ref.watch(
-      challengeScreenProvider(block.superBlock, block.dashedName, challenge.id),
-    );
-    final lines = data.value?.challenge.scene?.commands
-        .where((command) => command.dialogue?.text.trim().isNotEmpty ?? false)
-        .length;
 
     final status = Row(
       mainAxisSize: MainAxisSize.min,
@@ -355,17 +346,6 @@ class _WatchDialogue extends ConsumerWidget {
                             fontSize: 16,
                             height: 1.15,
                             fontWeight: FontWeight.w700,
-                          ),
-                        ),
-                        const SizedBox(height: 2),
-                        Text(
-                          lines != null && lines > 0
-                              ? '${countLabel(lines, 'line')}, with captions'
-                              : 'Watch and listen',
-                          style: TextStyle(
-                            fontSize: 12,
-                            height: 1.2,
-                            color: colors.onSurfaceVariant,
                           ),
                         ),
                         if (watched && stacked) ...[
