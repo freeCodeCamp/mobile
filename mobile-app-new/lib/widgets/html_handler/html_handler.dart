@@ -41,47 +41,22 @@ final Map<String, Style> defaultStyles = {
   ),
   '*:not(h1):not(h2):not(h3):not(h4):not(h5):not(h6)': Style(
     fontSize: FontSize.xLarge,
-    color: Colors.white.withValues(alpha: 0.87),
   ),
   'body': Style(
     fontFamily: 'Lato',
     padding: HtmlPaddings.only(left: 4, right: 4),
   ),
   'strong': Style(fontWeight: FontWeight.bold),
-  'a': Style(
-    color: Colors.white,
-    textDecoration: TextDecoration.underline,
-    textDecorationColor: Colors.white,
-  ),
+  'a': Style(textDecoration: TextDecoration.underline),
   'p': Style(fontSize: FontSize(20), margin: Margins.only(top: 8, bottom: 8)),
   'li': Style(margin: Margins.only(top: 8), lineHeight: const LineHeight(1.5)),
-  'td': Style(
-    border: const Border(bottom: BorderSide(color: Colors.grey)),
-    padding: HtmlPaddings.all(12),
-    backgroundColor: Colors.white,
-    color: Colors.black,
-    fontSize: FontSize.medium,
-  ),
-  'th': Style(
-    padding: HtmlPaddings.all(12),
-    backgroundColor: FccColors.gray10,
-    color: Colors.black,
-  ),
-  'th strong': Style(color: Colors.black, fontSize: FontSize.medium),
+  'td': Style(padding: HtmlPaddings.all(12), fontSize: FontSize.medium),
+  'th': Style(padding: HtmlPaddings.all(12)),
+  'th strong': Style(fontSize: FontSize.medium),
   'figure': Style(margin: Margins.zero, textAlign: TextAlign.center),
   'figcaption': Style(fontSize: FontSize.medium),
-  'code': Style(
-    fontFamily: 'monospace',
-    backgroundColor: FccColors.gray75,
-    color: Colors.white.withValues(alpha: 0.87),
-    fontSize: FontSize.xLarge,
-  ),
+  'code': Style(fontFamily: 'monospace', fontSize: FontSize.xLarge),
   'pre': Style(fontFamily: 'monospace'),
-  // NOTE: Text within backticks in en-US, es, and zh-CN challenge files is
-  // parsed into spans with this class.
-  'span.highlighted-text': Style(
-    backgroundColor: FccSemanticColors.backgroundTertiary,
-  ),
 };
 
 class HTMLParser {
@@ -158,6 +133,7 @@ class HTMLParser {
         backgroundColor: colors.surfaceContainer,
         color: colors.onSurface,
       ),
+      // Backticks in en-US, es, and zh-CN challenges produce this class.
       'span.highlighted-text': Style(backgroundColor: colors.surfaceContainer),
     };
     Widget inlineCode(ExtensionContext child, {bool copyable = true}) {

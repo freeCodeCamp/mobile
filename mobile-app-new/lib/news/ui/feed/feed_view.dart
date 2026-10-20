@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
-import 'package:mobile_app_new/fcc_theme.dart';
 import 'package:mobile_app_new/news/controllers/feed_controller.dart';
 import 'package:mobile_app_new/news/models/post_model.dart';
 import 'package:mobile_app_new/news/models/post_summary_model.dart';
@@ -59,7 +58,7 @@ class _NewsFeedViewState extends ConsumerState<NewsFeedView> {
                           'Search articles',
                           style: TextStyle(
                             fontSize: 17,
-                            color: FccDesignColors.of(context).hint,
+                            color: Theme.of(context).hintColor,
                           ),
                         ),
                       ),

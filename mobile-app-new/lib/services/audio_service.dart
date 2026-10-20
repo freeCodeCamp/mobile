@@ -46,13 +46,13 @@ AudioPlayerHandler audioHandler(Ref ref) => throw UnimplementedError(
 
 Future<AudioPlayerHandler> initAudioService() => AudioService.init(
   builder: () => AudioPlayerHandler(),
-  config: const AudioServiceConfig(
+  config: AudioServiceConfig(
     androidNotificationChannelId: 'org.freecodecamp.channel.audio',
     androidNotificationChannelName: 'Audio playback',
     androidNotificationOngoing: true,
     androidStopForegroundOnPause: true,
     androidNotificationIcon: 'drawable/notification_icon',
-    notificationColor: FccColors.gray90,
+    notificationColor: FccTheme.themeLight.colorScheme.onSurface,
   ),
 );
 
