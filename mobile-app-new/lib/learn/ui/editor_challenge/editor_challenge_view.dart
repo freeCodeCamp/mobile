@@ -305,6 +305,7 @@ class _EditorChallengeViewState extends ConsumerState<EditorChallengeView> {
                             keyboard > 0 ? 140 : 220,
                             constraints.maxHeight * .32,
                           ),
+                          _instructionHeightLimit(constraints.maxHeight),
                         ),
                         _fileSelector(state),
                         Expanded(
@@ -324,7 +325,6 @@ class _EditorChallengeViewState extends ConsumerState<EditorChallengeView> {
                               ],
                             ),
                           ),
-                          _instructionHeightLimit(constraints.maxHeight),
                         ),
                       ],
                     ),
