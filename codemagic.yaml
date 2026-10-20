@@ -5,10 +5,9 @@ workflows:
     max_build_duration: 30
 
     triggering:
-      # Pull requests run iOS integration tests in .github/workflows/flutter-ios.yml.
-      # Keep the release IPA build on main.
       events:
         - push
+        - pull_request
       branch_patterns:
         - pattern: main
           include: true
@@ -18,18 +17,52 @@ workflows:
     environment:
       flutter: 3.44.3
       xcode: latest
-      cocoapods: default
+      vars: &ios_build_vars
+        HOMEBREW_NO_AUTO_UPDATE: "1"
+        FLUTTER_XCODE_COMPILATION_CACHE_ENABLE_CACHING: "YES"
+        FLUTTER_XCODE_COMPILATION_CACHE_ENABLE_DIAGNOSTIC_REMARKS: "YES"
+        FLUTTER_XCODE_SWIFT_ENABLE_EXPLICIT_MODULES: "YES"
       groups:
         - Mobile
 
-    cache:
+    cache: &ios_cache
       cache_paths:
-        - $FLUTTER_ROOT/.pub-cache
-        - $HOME/Library/Caches/CocoaPods
+        - $HOME/.pub-cache
+        - $HOME/Library/Caches/org.swift.swiftpm
+        # Flutter supplies this directory to Xcode's -clonedSourcePackagesDirPath.
+        - $CM_BUILD_DIR/mobile-app/build/ios/SourcePackages
+        - $HOME/Library/Developer/Xcode/DerivedData/CompilationCache.noindex
 
     working_directory: mobile-app
 
     scripts:
+      - &prepare_ios_cache
+        name: Configure and inspect iOS caches
+        script: |
+          set -e
+          xcodebuild -version
+          compilation_cache="$HOME/Library/Developer/Xcode/DerivedData/CompilationCache.noindex"
+          echo "FLUTTER_XCODE_COMPILATION_CACHE_CAS_PATH=$compilation_cache" >> "$CM_ENV"
+          echo "XCBUILD_METRICS_PATH=$CM_BUILD_DIR/mobile-app/xcode-build-metrics.json" >> "$CM_ENV"
+          for cache_path in "$HOME/.pub-cache" \
+            "$HOME/Library/Caches/org.swift.swiftpm" \
+            "$CM_BUILD_DIR/mobile-app/build/ios/SourcePackages" \
+            "$compilation_cache"; do
+            if [ -d "$cache_path" ]; then
+              du -sh "$cache_path"
+            else
+              echo "Cache not restored: $cache_path"
+            fi
+          done
+
+      - &start_ios_simulator
+        name: Start iOS simulator
+        script: |
+          set -e
+          echo "Starting simulator: $DEVICE_NAME"
+          xcrun simctl shutdown all
+          xcrun simctl boot "$DEVICE_NAME"
+
       - name: Create .env file
         script: |
           echo "HASHNODE_PUBLICATION_ID=$HASHNODE_PUBLICATION_ID" > .env
@@ -45,32 +78,55 @@ workflows:
         script: flutter pub get
 
       - name: Analyze code
-        script: flutter analyze --no-fatal-warnings
+        script: flutter analyze --no-pub --no-fatal-warnings
 
-      - name: Install applesimutils
+      - &install_applesimutils
+        name: Install applesimutils
         script: |
-          brew tap wix/brew
-          brew trust --formula wix/brew/applesimutils
-          brew install applesimutils
+          set -e
+          if ! command -v applesimutils >/dev/null 2>&1; then
+            brew tap wix/brew
+            brew trust --formula wix/brew/applesimutils
+            brew install applesimutils
+          fi
 
-      - name: Boot iOS simulator
+      - &wait_for_ios_simulator
+        name: Wait for iOS simulator
+        script: xcrun simctl bootstatus "$DEVICE_NAME" -b
+
+      - &run_ios_tests
+        name: Run integration tests
         script: |
-          echo "Booting simulator: $DEVICE_NAME"
-          xcrun simctl shutdown all
-          xcrun simctl boot "$DEVICE_NAME"
-          xcrun simctl bootstatus "$DEVICE_NAME"
-
-      - name: Run integration tests
-        script: dart integration_test_runner.dart --ios
+          set -o pipefail
+          dart integration_test_runner.dart --ios 2>&1 | tee ios-integration-tests.log
 
       - name: Move screenshots to artifacts
         script: cp -r screenshots $CM_EXPORT_DIR
         ignore_failure: true
 
       - name: Build iOS app
-        script: flutter build ipa --release --no-codesign
+        script: flutter build ipa --release --no-pub --no-codesign
+
+    artifacts:
+      - mobile-app/ios-integration-tests.log
+      - mobile-app/xcode-build-metrics.json
 
     publishing:
+      scripts:
+        - &report_ios_cache
+          name: Report Xcode compilation cache metrics
+          ignore_failure: true
+          script: |
+            if [ -s "$CM_BUILD_DIR/mobile-app/xcode-build-metrics.json" ]; then
+              cat "$CM_BUILD_DIR/mobile-app/xcode-build-metrics.json"
+              printf '\n'
+            else
+              echo "Xcode compilation cache metrics unavailable."
+            fi
+            cache_path="$HOME/Library/Developer/Xcode/DerivedData/CompilationCache.noindex"
+            if [ -d "$cache_path" ]; then
+              du -sh "$cache_path"
+            fi
       email:
         recipients:
           - niraj@freecodecamp.org
@@ -91,17 +147,14 @@ workflows:
     environment:
       flutter: 3.44.3
       xcode: latest
-      cocoapods: default
+      vars: *ios_build_vars
       ios_signing:
         distribution_type: app_store
         bundle_identifier: org.freecodecamp.ios
       groups:
         - Mobile
 
-    cache:
-      cache_paths:
-        - $FLUTTER_ROOT/.pub-cache
-        - $HOME/Library/Caches/CocoaPods
+    cache: *ios_cache
 
     working_directory: mobile-app
 
@@ -109,6 +162,9 @@ workflows:
       app_store_connect: CodeMagic CI
 
     scripts:
+      - *prepare_ios_cache
+      - *start_ios_simulator
+
       - name: Create .env file
         script: |
           echo "HASHNODE_PUBLICATION_ID=$HASHNODE_PUBLICATION_ID" > .env
@@ -124,23 +180,11 @@ workflows:
         script: flutter pub get
 
       - name: Analyze code
-        script: flutter analyze --no-fatal-warnings
+        script: flutter analyze --no-pub --no-fatal-warnings
 
-      - name: Install applesimutils
-        script: |
-          brew tap wix/brew
-          brew trust --formula wix/brew/applesimutils
-          brew install applesimutils
-
-      - name: Boot iOS simulator
-        script: |
-          echo "Booting simulator: $DEVICE_NAME"
-          xcrun simctl shutdown all
-          xcrun simctl boot "$DEVICE_NAME"
-          xcrun simctl bootstatus "$DEVICE_NAME"
-
-      - name: Run integration tests
-        script: dart integration_test_runner.dart --ios
+      - *install_applesimutils
+      - *wait_for_ios_simulator
+      - *run_ios_tests
 
       - name: Move screenshots to artifacts
         script: cp -r screenshots $CM_EXPORT_DIR
@@ -150,12 +194,16 @@ workflows:
         script: xcode-project use-profiles
 
       - name: Build iOS app
-        script: flutter build ipa --release --export-options-plist=/Users/builder/export_options.plist
+        script: flutter build ipa --release --no-pub --export-options-plist=/Users/builder/export_options.plist
 
     artifacts:
       - build/ios/ipa/*.ipa
+      - mobile-app/ios-integration-tests.log
+      - mobile-app/xcode-build-metrics.json
 
     publishing:
+      scripts:
+        - *report_ios_cache
       email:
         recipients:
           - niraj@freecodecamp.org
