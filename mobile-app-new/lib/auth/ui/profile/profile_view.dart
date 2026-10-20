@@ -1,18 +1,14 @@
-import 'package:mobile_app_new/widgets/app_page_title.dart';
-import 'package:mobile_app_new/widgets/app_bottom_navigation.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
 import 'package:jiffy/jiffy.dart';
 import 'package:mobile_app_new/auth/models/user_model.dart';
 import 'package:mobile_app_new/auth/ui/profile/profile_viewmodel.dart';
 import 'package:mobile_app_new/fcc_theme.dart';
 import 'package:mobile_app_new/routing/auth.dart';
-import 'package:mobile_app_new/routing/podcasts.dart';
-import 'package:mobile_app_new/routing/settings.dart';
 import 'package:mobile_app_new/services/auth_service.dart';
 import 'package:mobile_app_new/utils/custom_tab.dart';
-import 'package:mobile_app_new/widgets/drawer/drawer.dart';
 import 'package:mobile_app_new/widgets/error_retry.dart';
 import 'package:url_launcher/url_launcher.dart';
 
@@ -44,14 +40,14 @@ class ProfileView extends ConsumerWidget {
     final refresh = ref.watch(profileRefreshProvider);
     final user = auth.value;
     return Scaffold(
-      bottomNavigationBar: const AppNavigationFooter(
-        selected: AppDestination.profile,
-      ),
       appBar: AppBar(
-        title: const AppPageTitle('Profile'),
-        toolbarHeight: AppPageTitle.toolbarHeight(context),
+        leading: BackButton(
+          onPressed: () => context.canPop()
+              ? context.pop()
+              : const AccountRoute().go(context),
+        ),
+        title: const Text('Public profile'),
       ),
-      drawer: const DrawerWidget(),
       body: auth.isLoading && user == null
           ? const Center(child: CircularProgressIndicator())
           : auth.hasError || refresh.hasError
@@ -131,8 +127,6 @@ class _GuestProfile extends StatelessWidget {
             ],
           ),
         ),
-        const SizedBox(height: 20),
-        const _ProfileLinks(),
       ],
     );
   }
@@ -144,46 +138,50 @@ class _ProfileBody extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final colors = Theme.of(context).colorScheme;
-    final design = FccDesignColors.of(context);
     final days = user.heatMapCal;
     final streak = _calculateStreak(days);
+    final statistics = [
+      (user.points, 'Points'),
+      (streak.current, 'Current streak'),
+      (streak.longest, 'Longest streak'),
+    ];
     return ListView(
       padding: const EdgeInsets.fromLTRB(16, 12, 16, 32),
       physics: const AlwaysScrollableScrollPhysics(),
       children: [
         _Header(user: user),
         const SizedBox(height: 14),
-        Row(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Expanded(
-              child: _Stat(
-                value: user.points,
-                label: 'Points',
-                color: design.accentText,
-                background: colors.primaryContainer,
-              ),
-            ),
-            const SizedBox(width: 8),
-            Expanded(
-              child: _Stat(
-                value: streak.current,
-                label: 'Current streak',
-                color: colors.onSurface,
-                background: colors.surfaceContainer,
-              ),
-            ),
-            const SizedBox(width: 8),
-            Expanded(
-              child: _Stat(
-                value: streak.longest,
-                label: 'Longest streak',
-                color: design.success,
-                background: design.success.withValues(alpha: 0.13),
-              ),
-            ),
-          ],
+        _Section(
+          padding: EdgeInsets.zero,
+          child: LayoutBuilder(
+            builder: (context, constraints) {
+              final textScale = MediaQuery.textScalerOf(context).scale(12) / 12;
+              final stacked = constraints.maxWidth < 240 * textScale;
+              if (stacked) {
+                return Column(
+                  children: [
+                    for (final (index, stat) in statistics.indexed) ...[
+                      if (index > 0) const Divider(),
+                      _Stat(value: stat.$1, label: stat.$2, horizontal: true),
+                    ],
+                  ],
+                );
+              }
+              return IntrinsicHeight(
+                child: Row(
+                  crossAxisAlignment: CrossAxisAlignment.stretch,
+                  children: [
+                    for (final (index, stat) in statistics.indexed) ...[
+                      if (index > 0) const VerticalDivider(width: 1),
+                      Expanded(
+                        child: _Stat(value: stat.$1, label: stat.$2),
+                      ),
+                    ],
+                  ],
+                ),
+              );
+            },
+          ),
         ),
         const SizedBox(height: 14),
         _Section(child: _Heatmap(days: days)),
@@ -198,8 +196,6 @@ class _ProfileBody extends StatelessWidget {
             const SizedBox(height: 10),
           ],
         ],
-        const SizedBox(height: 22),
-        const _ProfileLinks(),
       ],
     );
   }
@@ -244,7 +240,7 @@ class _Header extends StatelessWidget {
             children: [
               CircleAvatar(
                 radius: 30,
-                backgroundColor: colors.surfaceContainer,
+                backgroundColor: colors.primaryContainer,
                 backgroundImage: user.picture.isEmpty
                     ? null
                     : CachedNetworkImageProvider(user.picture),
@@ -275,12 +271,18 @@ class _Header extends StatelessWidget {
                           vertical: 3,
                         ),
                         decoration: BoxDecoration(
-                          color: colors.surfaceContainer,
+                          color: user.isDonating
+                              ? colors.tertiary.withValues(alpha: 0.12)
+                              : colors.primaryContainer,
                           borderRadius: BorderRadius.circular(20),
                         ),
                         child: Text(
                           user.isDonating ? 'Supporter' : 'Top contributor',
-                          style: theme.textTheme.labelSmall,
+                          style: theme.textTheme.labelSmall?.copyWith(
+                            color: user.isDonating
+                                ? colors.tertiary
+                                : FccDesignColors.of(context).accentText,
+                          ),
                         ),
                       ),
                     ],
@@ -309,6 +311,10 @@ class _Header extends StatelessWidget {
                   OutlinedButton(
                     style: OutlinedButton.styleFrom(
                       padding: const EdgeInsets.symmetric(horizontal: 12),
+                      minimumSize: const Size(48, 40),
+                      side: BorderSide(color: colors.outlineVariant),
+                      shape: const StadiumBorder(),
+                      textStyle: theme.textTheme.bodySmall,
                     ),
                     onPressed: () {
                       final uri = Uri.tryParse(url);
@@ -332,34 +338,41 @@ class _Stat extends StatelessWidget {
   const _Stat({
     required this.value,
     required this.label,
-    required this.color,
-    required this.background,
+    this.horizontal = false,
   });
   final int value;
   final String label;
-  final Color color;
-  final Color background;
+  final bool horizontal;
 
   @override
-  Widget build(BuildContext context) => Container(
-    width: double.infinity,
-    constraints: const BoxConstraints(minHeight: 76),
-    padding: const EdgeInsets.all(10),
-    decoration: BoxDecoration(
-      color: background,
-      borderRadius: BorderRadius.circular(14),
-    ),
-    child: Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Text('$value', style: Theme.of(context).textTheme.titleLarge),
-        Text(
-          label,
-          style: Theme.of(context).textTheme.labelSmall?.copyWith(color: color),
-        ),
-      ],
-    ),
-  );
+  Widget build(BuildContext context) {
+    final valueText = FittedBox(
+      fit: BoxFit.scaleDown,
+      alignment: horizontal ? Alignment.centerRight : Alignment.centerLeft,
+      child: Text('$value', style: Theme.of(context).textTheme.titleLarge),
+    );
+    final labelText = Text(label, style: Theme.of(context).textTheme.bodySmall);
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 14),
+      child: horizontal
+          ? Row(
+              children: [
+                Expanded(flex: 2, child: labelText),
+                const SizedBox(width: 12),
+                Flexible(
+                  child: Align(
+                    alignment: Alignment.centerRight,
+                    child: valueText,
+                  ),
+                ),
+              ],
+            )
+          : Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [valueText, labelText],
+            ),
+    );
+  }
 }
 
 class _Heatmap extends StatelessWidget {
@@ -394,13 +407,18 @@ class _Heatmap extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Row(
-          children: [
-            Expanded(
-              child: Text('Activity', style: theme.textTheme.titleMedium),
-            ),
-            Text('Last 12 weeks', style: theme.textTheme.bodySmall),
-          ],
+        SizedBox(
+          width: double.infinity,
+          child: Wrap(
+            alignment: WrapAlignment.spaceBetween,
+            crossAxisAlignment: WrapCrossAlignment.center,
+            spacing: 12,
+            runSpacing: 4,
+            children: [
+              Text('Activity', style: theme.textTheme.titleMedium),
+              Text('Last 12 weeks', style: theme.textTheme.bodySmall),
+            ],
+          ),
         ),
         const SizedBox(height: 12),
         LayoutBuilder(
@@ -577,33 +595,96 @@ class _CertificateList extends StatelessWidget {
   final String username;
 
   @override
-  Widget build(BuildContext context) => _Section(
-    padding: EdgeInsets.zero,
-    child: Column(
-      children: [
-        for (final (index, certificate) in certificates.indexed) ...[
-          if (index > 0) const Divider(),
-          ListTile(
-            leading: CircleAvatar(
-              backgroundColor: Theme.of(context).colorScheme.surfaceContainer,
-              child: Icon(
-                Icons.emoji_events_outlined,
-                color: Theme.of(context).colorScheme.onSurfaceVariant,
+  Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    final design = FccDesignColors.of(context);
+    return _Section(
+      padding: EdgeInsets.zero,
+      child: Column(
+        children: [
+          for (final (index, certificate) in certificates.indexed) ...[
+            if (index > 0) const Divider(),
+            Padding(
+              padding: const EdgeInsets.all(14),
+              child: LayoutBuilder(
+                builder: (context, constraints) {
+                  final stacked =
+                      constraints.maxWidth < 380 &&
+                      MediaQuery.textScalerOf(context).scale(14) > 20;
+                  final identity = Row(
+                    children: [
+                      Container(
+                        width: 40,
+                        height: 40,
+                        decoration: BoxDecoration(
+                          color: design.successContainer,
+                          borderRadius: BorderRadius.circular(10),
+                        ),
+                        child: Icon(
+                          Icons.emoji_events_outlined,
+                          color: design.onSuccessContainer,
+                          size: 22,
+                        ),
+                      ),
+                      const SizedBox(width: 12),
+                      Expanded(
+                        child: Text(
+                          certificate.$1,
+                          style: theme.textTheme.bodyMedium,
+                        ),
+                      ),
+                    ],
+                  );
+                  final viewButton = Semantics(
+                    label: 'View ${certificate.$1} certification',
+                    child: OutlinedButton(
+                      style: OutlinedButton.styleFrom(
+                        padding: const EdgeInsets.symmetric(horizontal: 12),
+                        minimumSize: const Size(48, 44),
+                        side: BorderSide(
+                          color: theme.colorScheme.outlineVariant,
+                        ),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(8),
+                        ),
+                        textStyle: theme.textTheme.bodySmall,
+                      ),
+                      onPressed: () => openInCustomTab(
+                        Uri.https(
+                          'www.freecodecamp.org',
+                          '/certification/$username/${certificate.$2}',
+                        ).toString(),
+                      ),
+                      child: const Text('View'),
+                    ),
+                  );
+                  return stacked
+                      ? Column(
+                          crossAxisAlignment: CrossAxisAlignment.stretch,
+                          children: [
+                            identity,
+                            const SizedBox(height: 12),
+                            Align(
+                              alignment: Alignment.centerRight,
+                              child: viewButton,
+                            ),
+                          ],
+                        )
+                      : Row(
+                          children: [
+                            Expanded(child: identity),
+                            const SizedBox(width: 10),
+                            viewButton,
+                          ],
+                        );
+                },
               ),
             ),
-            title: Text(certificate.$1),
-            trailing: const Icon(Icons.open_in_new, size: 18),
-            onTap: () => openInCustomTab(
-              Uri.https(
-                'www.freecodecamp.org',
-                '/certification/$username/${certificate.$2}',
-              ).toString(),
-            ),
-          ),
+          ],
         ],
-      ],
-    ),
-  );
+      ),
+    );
+  }
 }
 
 class _PortfolioCard extends StatelessWidget {
@@ -664,42 +745,4 @@ class _PortfolioCard extends StatelessWidget {
       ),
     );
   }
-}
-
-class _ProfileLinks extends StatelessWidget {
-  const _ProfileLinks();
-
-  @override
-  Widget build(BuildContext context) => Column(
-    crossAxisAlignment: CrossAxisAlignment.start,
-    children: [
-      ListTile(
-        leading: const Icon(Icons.settings_outlined),
-        title: const Text('Settings'),
-        trailing: const Icon(Icons.chevron_right),
-        onTap: () => const SettingsRoute().push<void>(context),
-      ),
-      const Divider(),
-      ListTile(
-        leading: const Icon(Icons.download_outlined),
-        title: const Text('Downloads'),
-        trailing: const Icon(Icons.chevron_right),
-        onTap: () => const PodcastDownloadsRoute().go(context),
-      ),
-      const Divider(),
-      ListTile(
-        leading: const Icon(Icons.error_outline),
-        title: const Text('Report an issue'),
-        trailing: const Icon(Icons.open_in_new, size: 18),
-        onTap: () =>
-            openInCustomTab('https://github.com/freeCodeCamp/mobile/issues'),
-      ),
-      const SizedBox(height: 18),
-      Text(
-        'freeCodeCamp is a donor-supported tax-exempt 501(c)(3) nonprofit organization.',
-        textAlign: TextAlign.center,
-        style: Theme.of(context).textTheme.bodySmall,
-      ),
-    ],
-  );
 }

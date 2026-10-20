@@ -397,6 +397,8 @@ void main() {
       tester,
     ) async {
       final router = await _pump(tester, const LearnLandingView(), dark: dark);
+      expect(find.byType(Drawer), findsNothing);
+      expect(find.byType(DrawerButton), findsNothing);
       expect(find.text('CONTINUE'), findsNothing);
       expect(find.text('Continue'), findsNothing);
       expect(

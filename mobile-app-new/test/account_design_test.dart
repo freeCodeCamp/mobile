@@ -8,10 +8,12 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:go_router/go_router.dart';
 import 'package:mobile_app_new/auth/models/user_model.dart';
+import 'package:mobile_app_new/auth/ui/account/account_view.dart';
 import 'package:mobile_app_new/auth/ui/login/login_view.dart';
 import 'package:mobile_app_new/auth/ui/login/login_viewmodel.dart';
 import 'package:mobile_app_new/auth/ui/profile/profile_view.dart';
 import 'package:mobile_app_new/fcc_theme.dart';
+import 'package:mobile_app_new/routing/auth.dart' as auth_routes;
 import 'package:mobile_app_new/services/auth_service.dart';
 import 'package:mobile_app_new/settings/ui/settings/settings_view.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -26,14 +28,17 @@ import 'package:mobile_app_new/settings/ui/settings/delete_account/delete_accoun
 import 'support/fake_audio_handler.dart';
 
 class _FakeAuth extends AuthNotifier {
-  _FakeAuth(this.user);
+  _FakeAuth(this.user, {this.refreshFails = false});
   final FccUserModel? user;
+  final bool refreshFails;
 
   @override
   Future<FccUserModel?> build() async => user;
 
   @override
-  Future<void> refresh() async {}
+  Future<void> refresh() async {
+    if (refreshFails) throw StateError('Offline');
+  }
 
   @override
   Future<void> signOut() async {
@@ -83,6 +88,7 @@ Future<void> _pump(
   _FakeDelete? deletion,
   Future<SharedPreferences> Function()? preferencesLoader,
   bool settle = true,
+  bool refreshFails = false,
 }) async {
   final router = GoRouter(
     routes: [
@@ -91,11 +97,7 @@ Future<void> _pump(
         path: '/learn',
         builder: (_, _) => const Scaffold(body: Text('Learning home')),
       ),
-      GoRoute(
-        path: '/profile',
-        builder: (_, _) => const Scaffold(body: Text('Profile home')),
-      ),
-      GoRoute(path: '/login', builder: (_, _) => const LoginView()),
+      ...auth_routes.$appRoutes,
       GoRoute(path: '/settings', builder: (_, _) => const SettingsView()),
       GoRoute(
         path: '/podcasts/downloads',
@@ -128,7 +130,9 @@ Future<void> _pump(
         localDataResetServiceProvider.overrideWithValue(reset ?? _mockReset()),
         if (deletion != null)
           deleteAccountProvider.overrideWith(() => deletion),
-        authProvider.overrideWith(() => _FakeAuth(user)),
+        authProvider.overrideWith(
+          () => _FakeAuth(user, refreshFails: refreshFails),
+        ),
         if (login != null) loginProvider.overrideWith(() => login),
       ],
       child: RepaintBoundary(
@@ -336,81 +340,109 @@ void main() {
     );
   });
 
-  testWidgets('plain guest profile links preserve every destination', (
-    tester,
-  ) async {
-    const channel = MethodChannel(
-      'plugins.flutter.droibit.github.io/custom_tabs',
-    );
-    final openedUrls = <String>[];
-    tester.binding.defaultBinaryMessenger.setMockMethodCallHandler(channel, (
-      call,
-    ) async {
-      if (call.method == 'launch') {
-        openedUrls.add((call.arguments as Map)['url'] as String);
-      }
-      return null;
-    });
-    addTearDown(
-      () => tester.binding.defaultBinaryMessenger.setMockMethodCallHandler(
-        channel,
-        null,
-      ),
-    );
-    await _pump(tester, const ProfileView(), login: _FakeLogin());
-    expect(find.text("You're learning as a guest"), findsOneWidget);
-    expect(
-      find.text(
-        'Sign in to save progress across devices and earn certifications.',
-      ),
-      findsOneWidget,
-    );
-    expect(find.text('App'), findsNothing);
-    expect(find.text('Feedback'), findsNothing);
-    for (final title in ['Settings', 'Downloads', 'Report an issue']) {
+  testWidgets(
+    'guest Account links preserve every destination without a drawer',
+    (tester) async {
+      const channel = MethodChannel(
+        'plugins.flutter.droibit.github.io/custom_tabs',
+      );
+      final openedUrls = <String>[];
+      tester.binding.defaultBinaryMessenger.setMockMethodCallHandler(channel, (
+        call,
+      ) async {
+        if (call.method == 'launch') {
+          openedUrls.add((call.arguments as Map)['url'] as String);
+        }
+        return null;
+      });
+      addTearDown(
+        () => tester.binding.defaultBinaryMessenger.setMockMethodCallHandler(
+          channel,
+          null,
+        ),
+      );
+      await _pump(tester, const AccountView(), login: _FakeLogin());
+      expect(find.byType(Drawer), findsNothing);
+      expect(find.byType(DrawerButton), findsNothing);
+      expect(find.text('View profile'), findsNothing);
+      expect(find.text("You're learning as a guest"), findsOneWidget);
       expect(
-        find.ancestor(
-          of: find.widgetWithText(ListTile, title),
-          matching: find.byType(Card),
+        find.text(
+          'Sign in to save progress across devices and earn certifications.',
+        ),
+        findsOneWidget,
+      );
+      expect(find.text('App'), findsNothing);
+      expect(find.text('Feedback'), findsNothing);
+      for (final title in ['Settings', 'Downloads', 'Report an issue']) {
+        expect(
+          find.ancestor(
+            of: find.widgetWithText(ListTile, title),
+            matching: find.byType(Card),
+          ),
+          findsOneWidget,
+        );
+      }
+      expect(
+        find.text(
+          'freeCodeCamp is a donor-supported tax-exempt 501(c)(3) charity.',
+        ),
+        findsOneWidget,
+      );
+      expect(
+        find.descendant(
+          of: find.byType(AppBar),
+          matching: find.byTooltip('Settings'),
         ),
         findsNothing,
       );
-    }
-    expect(
-      find.text(
-        'freeCodeCamp is a donor-supported tax-exempt 501(c)(3) nonprofit organization.',
-      ),
-      findsOneWidget,
-    );
-    expect(
-      find.descendant(
-        of: find.byType(AppBar),
-        matching: find.byTooltip('Settings'),
-      ),
-      findsNothing,
-    );
-    expect(find.widgetWithText(ListTile, 'Settings'), findsOneWidget);
-    expect(find.text('Activity'), findsNothing);
-    await tester.tap(find.widgetWithText(FilledButton, 'Sign in'));
-    await tester.pumpAndSettle();
-    expect(find.text('Sign in to freeCodeCamp'), findsOneWidget);
-    await tester.tap(find.byTooltip('Close'));
-    await tester.pumpAndSettle();
-    await tester.ensureVisible(find.text('Report an issue'));
-    await tester.tap(find.text('Report an issue'));
-    await tester.pumpAndSettle();
-    expect(openedUrls, ['https://github.com/freeCodeCamp/mobile/issues']);
-    await tester.ensureVisible(find.widgetWithText(ListTile, 'Settings'));
-    await tester.tap(find.widgetWithText(ListTile, 'Settings'));
-    await tester.pumpAndSettle();
-    expect(find.text('Theme'), findsOneWidget);
-    await tester.tap(find.byType(BackButton));
-    await tester.pumpAndSettle();
-    await tester.ensureVisible(find.text('Downloads'));
-    await tester.tap(find.text('Downloads'));
-    await tester.pumpAndSettle();
-    expect(find.text('Your downloaded episodes'), findsOneWidget);
-  });
+      expect(find.widgetWithText(ListTile, 'Settings'), findsOneWidget);
+      expect(find.text('Activity'), findsNothing);
+      await tester.tap(find.widgetWithText(FilledButton, 'Sign in'));
+      await tester.pumpAndSettle();
+      expect(find.text('Sign in to freeCodeCamp'), findsOneWidget);
+      await tester.tap(find.byTooltip('Close'));
+      await tester.pumpAndSettle();
+      await tester.ensureVisible(find.text('Report an issue'));
+      await tester.tap(find.text('Report an issue'));
+      await tester.pumpAndSettle();
+      expect(openedUrls, ['https://github.com/freeCodeCamp/mobile/issues']);
+      await tester.ensureVisible(find.widgetWithText(ListTile, 'Settings'));
+      await tester.tap(find.widgetWithText(ListTile, 'Settings'));
+      await tester.pumpAndSettle();
+      expect(find.text('Theme'), findsOneWidget);
+      await tester.tap(find.byType(BackButton));
+      await tester.pumpAndSettle();
+      await tester.ensureVisible(find.text('Downloads'));
+      await tester.tap(find.text('Downloads'));
+      await tester.pumpAndSettle();
+      expect(find.text('Your downloaded episodes'), findsOneWidget);
+    },
+  );
+
+  testWidgets(
+    'Account keeps local actions available when profile refresh fails',
+    (tester) async {
+      final user = FccUserModel(
+        id: 'test',
+        username: 'camper',
+        email: 'camper@example.com',
+        joinDate: DateTime(2020),
+      );
+      await _pump(tester, const AccountView(), user: user, refreshFails: true);
+      expect(find.text('Unable to refresh your account.'), findsOneWidget);
+      expect(find.text('View profile'), findsOneWidget);
+      for (final title in ['Settings', 'Downloads', 'Report an issue']) {
+        expect(find.widgetWithText(ListTile, title), findsOneWidget);
+      }
+      expect(find.widgetWithText(OutlinedButton, 'Log out'), findsOneWidget);
+      await tester.ensureVisible(find.text('Downloads'));
+      await tester.tap(find.text('Downloads'));
+      await tester.pumpAndSettle();
+      expect(find.text('Your downloaded episodes'), findsOneWidget);
+      expect(tester.takeException(), isNull);
+    },
+  );
 
   testWidgets(
     'profile renders real points, streaks and earned certifications on a narrow screen',
@@ -439,12 +471,23 @@ void main() {
         },
       );
       await _pump(tester, const ProfileView(), user: user, dark: true);
+      expect(find.text('Public profile'), findsOneWidget);
+      expect(find.byType(NavigationBar), findsNothing);
+      expect(find.byType(Drawer), findsNothing);
+      expect(find.text('Settings'), findsNothing);
       expect(find.text('123'), findsOneWidget);
       expect(find.text('2'), findsNWidgets(2));
       expect(find.text('Activity'), findsOneWidget);
       await tester.scrollUntilVisible(find.text('Legacy certifications'), 180);
       expect(find.text('Responsive Web Design'), findsOneWidget);
       expect(find.text('Legacy certifications'), findsOneWidget);
+      await tester.tap(find.byType(BackButton));
+      await tester.pumpAndSettle();
+      expect(find.text('View profile'), findsOneWidget);
+      expect(
+        find.widgetWithText(NavigationDestination, 'Account'),
+        findsOneWidget,
+      );
       expect(tester.takeException(), isNull);
     },
   );
@@ -529,8 +572,14 @@ void main() {
         find.widgetWithText(ListTile, 'Language'),
       );
       expect(language.onTap, isNull);
-      expect(language.trailing, isNull);
-      expect((language.subtitle! as Text).data, 'English');
+      expect(language.subtitle, isNull);
+      expect(
+        find.descendant(
+          of: find.widgetWithText(ListTile, 'Language'),
+          matching: find.text('English'),
+        ),
+        findsOneWidget,
+      );
       expect(find.byType(AlertDialog), findsNothing);
       expect(tester.takeException(), isNull);
     },
@@ -727,9 +776,78 @@ void main() {
       (width: 320.0, scale: 2.0),
     ]) {
       final name = '${dark ? 'dark' : 'light'}-${dimensions.width.toInt()}';
-      testWidgets('simplified profile and login remain usable in $name', (
+      testWidgets('Account opens Public profile and returns in $name', (
         tester,
       ) async {
+        tester.view.physicalSize = Size(dimensions.width, 844);
+        tester.view.devicePixelRatio = 1;
+        addTearDown(tester.view.resetPhysicalSize);
+        addTearDown(tester.view.resetDevicePixelRatio);
+        final user = FccUserModel(
+          id: 'test',
+          username: 'camper',
+          email: 'camper@example.com',
+          name: 'Camper',
+          joinDate: DateTime(2020, 4),
+          points: 123,
+          isDonating: true,
+          isRespWebDesignCert: true,
+          isFrontEndCert: true,
+          about: 'Learning to build for the web.',
+          location: 'Earth',
+          githubProfile: 'https://github.com/camper',
+          linkedin: 'https://www.linkedin.com/in/camper',
+          website: 'https://example.com',
+        );
+        await _pump(
+          tester,
+          const AccountView(),
+          user: user,
+          dark: dark,
+          scale: dimensions.scale,
+        );
+        expect(find.text('Camper'), findsOneWidget);
+        expect(find.text('@camper'), findsOneWidget);
+        expect(find.text('Activity'), findsNothing);
+        expect(find.byType(DrawerButton), findsNothing);
+        expect(find.byType(BackButton), findsNothing);
+        expect(
+          find.widgetWithText(NavigationDestination, 'Account'),
+          findsOneWidget,
+        );
+        await _screenshot(tester, 'account-signed-in-$name');
+        await tester.ensureVisible(find.text('View profile'));
+        await tester.tap(find.text('View profile'));
+        await tester.pumpAndSettle();
+        expect(find.text('Public profile'), findsOneWidget);
+        expect(find.text('Supporter'), findsOneWidget);
+        expect(find.byType(NavigationBar), findsNothing);
+        expect(find.text('Settings'), findsNothing);
+        expect(find.text('Report an issue'), findsNothing);
+        await _screenshot(tester, 'public-profile-$name');
+        expect(tester.takeException(), isNull);
+        await tester.scrollUntilVisible(find.text('Certifications'), 200);
+        await tester.pumpAndSettle();
+        await tester.ensureVisible(
+          find.widgetWithText(OutlinedButton, 'View').first,
+        );
+        await _screenshot(tester, 'public-certifications-$name');
+        expect(tester.takeException(), isNull);
+        await tester.tap(find.byType(BackButton));
+        await tester.pumpAndSettle();
+        expect(find.text('View profile'), findsOneWidget);
+        expect(find.byType(NavigationBar), findsOneWidget);
+        await tester.ensureVisible(
+          find.widgetWithText(OutlinedButton, 'Log out'),
+        );
+        await tester.tap(find.widgetWithText(OutlinedButton, 'Log out'));
+        await tester.pumpAndSettle();
+        expect(find.text("You're learning as a guest"), findsOneWidget);
+        expect(find.text('View profile'), findsNothing);
+        expect(find.text('Log out'), findsNothing);
+        expect(tester.takeException(), isNull);
+      });
+      testWidgets('Account and login remain usable in $name', (tester) async {
         tester.view.physicalSize = Size(dimensions.width, 844);
         tester.view.devicePixelRatio = 1;
         addTearDown(tester.view.resetPhysicalSize);
@@ -737,12 +855,12 @@ void main() {
         final login = _FakeLogin();
         await _pump(
           tester,
-          const ProfileView(),
+          const AccountView(),
           login: login,
           dark: dark,
           scale: dimensions.scale,
         );
-        await _screenshot(tester, 'profile-guest-$name');
+        await _screenshot(tester, 'account-guest-$name');
         await tester.ensureVisible(find.text('Report an issue'));
         await tester.pumpAndSettle();
         for (final title in ['Settings', 'Downloads', 'Report an issue']) {
@@ -751,12 +869,12 @@ void main() {
               of: find.widgetWithText(ListTile, title),
               matching: find.byType(Card),
             ),
-            findsNothing,
+            findsOneWidget,
           );
         }
         expect(find.text('App'), findsNothing);
         expect(find.text('Feedback'), findsNothing);
-        await _screenshot(tester, 'profile-links-$name');
+        await _screenshot(tester, 'account-links-$name');
         await tester.ensureVisible(
           find.widgetWithText(FilledButton, 'Sign in'),
         );
@@ -824,7 +942,13 @@ void main() {
           find.widgetWithText(ListTile, 'Language'),
         );
         expect(language.onTap, isNull);
-        expect(language.trailing, isNull);
+        expect(
+          find.descendant(
+            of: find.widgetWithText(ListTile, 'Language'),
+            matching: find.byIcon(Icons.chevron_right),
+          ),
+          findsNothing,
+        );
         expect(find.byType(AlertDialog), findsNothing);
         await _screenshot(
           tester,

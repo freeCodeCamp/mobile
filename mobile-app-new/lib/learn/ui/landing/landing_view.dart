@@ -14,7 +14,6 @@ import 'package:mobile_app_new/learn/ui/landing/landing_viewmodel.dart';
 import 'package:mobile_app_new/learn/ui/landing/superblock_button.dart';
 import 'package:mobile_app_new/learn/ui/widgets/learn_presentation.dart';
 import 'package:mobile_app_new/routing/learn.dart';
-import 'package:mobile_app_new/widgets/drawer/drawer.dart';
 import 'package:mobile_app_new/widgets/error_retry.dart';
 
 class LearnLandingView extends ConsumerWidget {
@@ -37,10 +36,10 @@ class LearnLandingView extends ConsumerWidget {
         selected: AppDestination.learn,
       ),
       appBar: AppBar(
+        automaticallyImplyLeading: false,
         title: const AppPageTitle('Courses'),
         toolbarHeight: AppPageTitle.toolbarHeight(context),
       ),
-      drawer: const DrawerWidget(),
       body: RefreshIndicator(
         onRefresh: () => _refresh(ref),
         child: SingleChildScrollView(

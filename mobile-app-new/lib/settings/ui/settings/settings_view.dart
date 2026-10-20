@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
-import 'package:mobile_app_new/fcc_theme.dart';
 import 'package:mobile_app_new/routing/auth.dart';
 import 'package:mobile_app_new/routing/podcasts.dart';
 import 'package:mobile_app_new/routing/settings.dart';
@@ -88,7 +87,7 @@ class _SettingsViewState extends ConsumerState<SettingsView> {
                     ? null
                     : () => context.canPop()
                           ? context.pop()
-                          : const ProfileRoute().go(context),
+                          : const AccountRoute().go(context),
               ),
             ),
             body: SafeArea(
@@ -109,11 +108,9 @@ class _SettingsViewState extends ConsumerState<SettingsView> {
                               children: [
                                 Text(
                                   'Theme',
-                                  style: Theme.of(
-                                    context,
-                                  ).textTheme.titleMedium,
+                                  style: Theme.of(context).textTheme.bodyLarge,
                                 ),
-                                const SizedBox(height: 12),
+                                const SizedBox(height: 8),
                                 if (preferences.isLoading)
                                   const LinearProgressIndicator()
                                 else if (preferences.hasError)
@@ -127,56 +124,61 @@ class _SettingsViewState extends ConsumerState<SettingsView> {
                                     ),
                                   )
                                 else
-                                  LayoutBuilder(
-                                    builder: (context, constraints) {
-                                      final largeText =
-                                          MediaQuery.textScalerOf(
-                                            context,
-                                          ).scale(14) >
-                                          20;
-                                      final buttons = [
-                                        for (final mode in ThemeMode.values)
-                                          _ThemeChoice(
-                                            mode: mode,
-                                            selected:
-                                                current!.themeMode == mode,
-                                            onPressed: () => _change(
-                                              () => ref
-                                                  .read(
-                                                    appPreferencesProvider
-                                                        .notifier,
-                                                  )
-                                                  .setTheme(mode),
+                                  Container(
+                                    padding: const EdgeInsets.all(4),
+                                    decoration: BoxDecoration(
+                                      color: colors.surfaceContainer,
+                                      borderRadius: BorderRadius.circular(12),
+                                    ),
+                                    child: LayoutBuilder(
+                                      builder: (context, constraints) {
+                                        final largeText =
+                                            MediaQuery.textScalerOf(
+                                              context,
+                                            ).scale(14) >
+                                            20;
+                                        final buttons = [
+                                          for (final mode in ThemeMode.values)
+                                            _ThemeChoice(
+                                              mode: mode,
+                                              selected:
+                                                  current!.themeMode == mode,
+                                              onPressed: () => _change(
+                                                () => ref
+                                                    .read(
+                                                      appPreferencesProvider
+                                                          .notifier,
+                                                    )
+                                                    .setTheme(mode),
+                                              ),
                                             ),
-                                          ),
-                                      ];
-                                      return largeText &&
-                                              constraints.maxWidth < 400
-                                          ? Column(
-                                              crossAxisAlignment:
-                                                  CrossAxisAlignment.stretch,
-                                              children: [
-                                                for (final button in buttons)
-                                                  Padding(
-                                                    padding:
-                                                        const EdgeInsets.only(
-                                                          bottom: 4,
-                                                        ),
-                                                    child: button,
-                                                  ),
-                                              ],
-                                            )
-                                          : Row(
-                                              children: [
-                                                for (final (index, button)
-                                                    in buttons.indexed) ...[
-                                                  if (index > 0)
-                                                    const SizedBox(width: 4),
-                                                  Expanded(child: button),
+                                        ];
+                                        return largeText &&
+                                                constraints.maxWidth < 400
+                                            ? Column(
+                                                crossAxisAlignment:
+                                                    CrossAxisAlignment.stretch,
+                                                children: [
+                                                  for (final (index, button)
+                                                      in buttons.indexed) ...[
+                                                    if (index > 0)
+                                                      const SizedBox(height: 4),
+                                                    button,
+                                                  ],
                                                 ],
-                                              ],
-                                            );
-                                    },
+                                              )
+                                            : Row(
+                                                children: [
+                                                  for (final (index, button)
+                                                      in buttons.indexed) ...[
+                                                    if (index > 0)
+                                                      const SizedBox(width: 4),
+                                                    Expanded(child: button),
+                                                  ],
+                                                ],
+                                              );
+                                      },
+                                    ),
                                   ),
                               ],
                             ),
@@ -187,13 +189,19 @@ class _SettingsViewState extends ConsumerState<SettingsView> {
                         title: 'Learning',
                         children: [
                           SwitchListTile.adaptive(
+                            minTileHeight: 76,
                             contentPadding: const EdgeInsets.symmetric(
                               horizontal: 16,
-                              vertical: 10,
                             ),
-                            title: const Text('Daily reminder'),
-                            subtitle: const Text(
-                              'Remind me to learn at 9:00 AM',
+                            title: Text(
+                              'Daily challenge reminder',
+                              style: Theme.of(
+                                context,
+                              ).textTheme.bodyLarge?.copyWith(height: 1.35),
+                            ),
+                            subtitle: Text(
+                              'A daily nudge to learn at 9:00 AM',
+                              style: Theme.of(context).textTheme.bodySmall,
                             ),
                             value: current?.dailyReminder ?? false,
                             onChanged: current == null || _busy
@@ -206,7 +214,7 @@ class _SettingsViewState extends ConsumerState<SettingsView> {
                           ),
                           const _SettingsTile(
                             title: 'Language',
-                            subtitle: 'English',
+                            trailingLabel: 'English',
                           ),
                         ],
                       ),
@@ -350,9 +358,14 @@ class _ThemeChoice extends StatelessWidget {
               ? colors.primaryContainer
               : Colors.transparent,
           foregroundColor: selected
-              ? FccDesignColors.of(context).accentText
+              ? colors.onSurface
               : colors.onSurfaceVariant,
-          side: BorderSide(color: selected ? colors.primary : colors.outline),
+          textStyle: Theme.of(context).textTheme.labelLarge?.copyWith(
+            fontWeight: selected ? FontWeight.w700 : FontWeight.w400,
+          ),
+          side: selected
+              ? BorderSide(color: colors.primary, width: 1.5)
+              : BorderSide.none,
           shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
         ),
         onPressed: onPressed,
@@ -380,7 +393,7 @@ class _Group extends StatelessWidget {
         if (title case final title?) ...[
           Text(
             title,
-            style: Theme.of(context).textTheme.titleSmall?.copyWith(
+            style: Theme.of(context).textTheme.bodyMedium?.copyWith(
               color: Theme.of(context).colorScheme.onSurfaceVariant,
             ),
           ),
@@ -407,28 +420,40 @@ class _SettingsTile extends StatelessWidget {
     required this.title,
     this.onTap,
     this.subtitle,
+    this.trailingLabel,
     this.destructive = false,
     this.external = false,
   });
   final String title;
   final String? subtitle;
+  final String? trailingLabel;
   final VoidCallback? onTap;
   final bool destructive;
   final bool external;
 
   @override
   Widget build(BuildContext context) => ListTile(
-    contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+    minTileHeight: 76,
+    contentPadding: const EdgeInsets.symmetric(horizontal: 16),
     title: Text(
       title,
-      style: Theme.of(context).textTheme.titleMedium?.copyWith(
+      style: Theme.of(context).textTheme.bodyLarge?.copyWith(
+        height: 1.35,
         color: destructive ? Theme.of(context).colorScheme.error : null,
       ),
     ),
-    subtitle: subtitle == null ? null : Text(subtitle!),
-    trailing: onTap == null
+    subtitle: subtitle == null
         ? null
-        : Icon(external ? Icons.open_in_new : Icons.chevron_right, size: 20),
+        : Text(subtitle!, style: Theme.of(context).textTheme.bodySmall),
+    trailing: trailingLabel != null
+        ? Text(trailingLabel!, style: Theme.of(context).textTheme.bodySmall)
+        : onTap == null
+        ? null
+        : Icon(
+            external ? Icons.open_in_new : Icons.chevron_right,
+            size: 20,
+            color: Theme.of(context).colorScheme.onSurfaceVariant,
+          ),
     onTap: onTap,
   );
 }

@@ -69,7 +69,6 @@ class CompleteButton extends ConsumerWidget {
     final index =
         block?.challenges.indexWhere((c) => c.id == challenge.id) ?? -1;
     if (block == null || index == -1 || index == block.challenges.length - 1) {
-      // NOTE: Inside an open drawer a plain pop only closes the drawer.
       final route = ModalRoute.of(context);
       Navigator.of(context).popUntil((r) => r != route);
       return;

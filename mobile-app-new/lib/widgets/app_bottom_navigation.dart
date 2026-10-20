@@ -8,7 +8,7 @@ import 'package:mobile_app_new/services/audio_service.dart';
 import 'package:mobile_app_new/utils/custom_tab.dart';
 import 'package:mobile_app_new/widgets/mini_player.dart';
 
-enum AppDestination { learn, tutorials, donate, listen, profile }
+enum AppDestination { learn, tutorials, donate, listen, account }
 
 class AppBottomNavigation extends StatelessWidget {
   const AppBottomNavigation({super.key, required this.selected});
@@ -46,8 +46,8 @@ class AppBottomNavigation extends StatelessWidget {
             }
           case AppDestination.listen:
             const PodcastListRoute().go(context);
-          case AppDestination.profile:
-            const ProfileRoute().go(context);
+          case AppDestination.account:
+            const AccountRoute().go(context);
         }
       },
       destinations: const [
@@ -70,7 +70,8 @@ class AppBottomNavigation extends StatelessWidget {
         ),
         NavigationDestination(
           icon: Icon(Icons.person_outline),
-          label: 'Profile',
+          selectedIcon: Icon(Icons.person),
+          label: 'Account',
         ),
       ],
     ),
